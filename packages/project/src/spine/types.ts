@@ -26,12 +26,21 @@ export interface SpineImportInput {
 }
 
 export type SpineImportDiagnosticCode =
-  | "SPINE_INPUT_INVALID" | "SPINE_LIMIT_EXCEEDED" | "SPINE_JSON_SYNTAX"
-  | "SPINE_JSON_DUPLICATE_KEY" | "SPINE_JSON_SCHEMA" | "SPINE_VERSION_INVALID"
-  | "SPINE_VERSION_PRERELEASE" | "SPINE_VERSION_MISMATCH" | "SPINE_ATLAS_SYNTAX"
-  | "SPINE_ATLAS_PROFILE_UNSUPPORTED" | "SPINE_ATLAS_DUPLICATE"
-  | "SPINE_PAGE_BINDING_INVALID" | "SPINE_PROFILE_UNSUPPORTED"
-  | "SPINE_INVENTORY_PARTIAL" | "SPINE_PROVENANCE_UNVERIFIED";
+  | "SPINE_INPUT_INVALID"
+  | "SPINE_LIMIT_EXCEEDED"
+  | "SPINE_JSON_SYNTAX"
+  | "SPINE_JSON_DUPLICATE_KEY"
+  | "SPINE_JSON_SCHEMA"
+  | "SPINE_VERSION_INVALID"
+  | "SPINE_VERSION_PRERELEASE"
+  | "SPINE_VERSION_MISMATCH"
+  | "SPINE_ATLAS_SYNTAX"
+  | "SPINE_ATLAS_PROFILE_UNSUPPORTED"
+  | "SPINE_ATLAS_DUPLICATE"
+  | "SPINE_PAGE_BINDING_INVALID"
+  | "SPINE_PROFILE_UNSUPPORTED"
+  | "SPINE_INVENTORY_PARTIAL"
+  | "SPINE_PROVENANCE_UNVERIFIED";
 
 export interface SpineSourceSpan {
   readonly source: "skeleton" | "atlas";
@@ -57,8 +66,14 @@ type ExtraField = {
   readonly value: string;
   readonly span: SpineSourceSpan;
 };
-type AtlasFilter = "Nearest" | "Linear" | "MipMap" | "MipMapNearestNearest"
-  | "MipMapLinearNearest" | "MipMapNearestLinear" | "MipMapLinearLinear";
+type AtlasFilter =
+  | "Nearest"
+  | "Linear"
+  | "MipMap"
+  | "MipMapNearestNearest"
+  | "MipMapLinearNearest"
+  | "MipMapNearestLinear"
+  | "MipMapLinearLinear";
 
 export interface SpineRegionPlan {
   readonly name: string;
@@ -82,8 +97,7 @@ export interface SpinePagePlan {
   readonly provenance: SpineProvenance;
   readonly width: number;
   readonly height: number;
-  readonly format: "Alpha" | "Intensity" | "LuminanceAlpha" | "RGB565"
-    | "RGBA4444" | "RGB888" | "RGBA8888";
+  readonly format: "Alpha" | "Intensity" | "LuminanceAlpha" | "RGB565" | "RGBA4444" | "RGB888" | "RGBA8888";
   readonly minFilter: AtlasFilter;
   readonly magFilter: AtlasFilter;
   readonly repeat: "x" | "y" | "xy" | "none";
@@ -122,9 +136,19 @@ export interface SpineImportPlan {
   };
   readonly pages: readonly SpinePagePlan[];
   readonly observations: readonly {
-    readonly kind: "unknown-root-field" | "slot-blend" | "slot-dark"
-      | "attachment-type" | "attachment-sequence" | "constraint" | "dark-timeline"
-      | "atlas-sampler" | "atlas-repeat" | "atlas-pma" | "atlas-format" | "extra-atlas-field";
+    readonly kind:
+      | "unknown-root-field"
+      | "slot-blend"
+      | "slot-dark"
+      | "attachment-type"
+      | "attachment-sequence"
+      | "constraint"
+      | "dark-timeline"
+      | "atlas-sampler"
+      | "atlas-repeat"
+      | "atlas-pma"
+      | "atlas-format"
+      | "extra-atlas-field";
     readonly pointer: string;
     readonly span: SpineSourceSpan;
     readonly value?: string;
@@ -138,6 +162,5 @@ export interface SpineImportPlan {
 }
 
 export type SpineImportResult =
-  | { readonly ok: true; readonly value: SpineImportPlan;
-      readonly diagnostics: readonly SpineImportDiagnostic[] }
+  | { readonly ok: true; readonly value: SpineImportPlan; readonly diagnostics: readonly SpineImportDiagnostic[] }
   | { readonly ok: false; readonly diagnostics: readonly SpineImportDiagnostic[] };

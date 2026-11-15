@@ -4,8 +4,15 @@ import type { Scope } from '@egret/engine';
 import type { Skeleton } from '@esotericsoftware/spine-core';
 import type { SpineInstance } from './instanceTypes.js';
 import type { SpineAssetPort } from './assetAuthority.js';
-export interface SpineDrawCandidate { commit(): void; abort(): void; retire?(): void; }
-export interface SpineDrawSink { prepare(skeleton: Skeleton): SpineDrawCandidate; dispose(): void; }
+export interface SpineDrawCandidate {
+  commit(): void;
+  abort(): void;
+  retire?(): void;
+}
+export interface SpineDrawSink {
+  prepare(skeleton: Skeleton): SpineDrawCandidate;
+  dispose(): void;
+}
 /**
  * One entry of a track, current, queued or being mixed out of: its animation, by what a later version
  * must match, every scalar of its position, and what it remembers of the rotations it mixes.
@@ -20,7 +27,17 @@ export interface SpinePreservedEntry {
   readonly rotations: readonly (number | undefined)[];
   /** How Core applies each timeline of the entry. An entry that keeps its holds reads them from here. */
   readonly modes: readonly number[];
-  readonly policy: Readonly<{ plays: number | null; completed: number; finite: boolean; duration: number; nextBoundary: number; nextPlay: number; restart: boolean }> | undefined;
+  readonly policy:
+    | Readonly<{
+        plays: number | null;
+        completed: number;
+        finite: boolean;
+        duration: number;
+        nextBoundary: number;
+        nextPlay: number;
+        restart: boolean;
+      }>
+    | undefined;
 }
 /** Playback of one instance between two advances. Private to this package; no upstream object is in it. */
 export interface SpinePreservedPlayback {
@@ -49,7 +66,11 @@ export interface SpineRenderPort {
 }
 const ports = new WeakMap<object, SpineRenderPort>();
 /** Private genuine-instance capability; copied snapshots never authorize rendering. */
-export function registerSpineRender(instance: SpineInstance, port: SpineRenderPort): void { ports.set(instance, port); }
+export function registerSpineRender(instance: SpineInstance, port: SpineRenderPort): void {
+  ports.set(instance, port);
+}
 export function requireSpineRender(instance: SpineInstance): SpineRenderPort {
-  const port = ports.get(instance); if (!port) throw new EgretError('SPINE_DISPLAY_INSTANCE_INVALID'); return port;
+  const port = ports.get(instance);
+  if (!port) throw new EgretError('SPINE_DISPLAY_INSTANCE_INVALID');
+  return port;
 }

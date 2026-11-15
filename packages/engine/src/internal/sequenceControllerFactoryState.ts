@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
-import {CancellationController, EgretError, Scope} from '@egret/runtime';
-import type {CancellationSignal, Diagnostic, ScopeValue} from '@egret/contracts';
-import type {GameClock} from '../gameClockTypes.js';
-import type {SequenceTargetClaims} from '../sequenceTargetClaims.js';
+import { CancellationController, EgretError, Scope } from '@egret/runtime';
+import type { CancellationSignal, Diagnostic, ScopeValue } from '@egret/contracts';
+import type { GameClock } from '../gameClockTypes.js';
+import type { SequenceTargetClaims } from '../sequenceTargetClaims.js';
 
 export interface SequenceScopePort {
   readonly scope: Scope;
@@ -47,11 +47,16 @@ const use = Scope.prototype.use;
 const dispose = Scope.prototype.dispose;
 const signalPrototype = Object.getPrototypeOf(new CancellationController().signal) as object;
 const aborted = Object.getOwnPropertyDescriptor(signalPrototype, 'aborted')!.get!;
-const add = Object.getOwnPropertyDescriptor(signalPrototype, 'addEventListener')!.value as CancellationSignal['addEventListener'];
-const remove = Object.getOwnPropertyDescriptor(signalPrototype, 'removeEventListener')!.value as CancellationSignal['removeEventListener'];
+const add = Object.getOwnPropertyDescriptor(signalPrototype, 'addEventListener')!
+  .value as CancellationSignal['addEventListener'];
+const remove = Object.getOwnPropertyDescriptor(signalPrototype, 'removeEventListener')!
+  .value as CancellationSignal['removeEventListener'];
 
 /** Capture authentic lifecycle and clock authority without loading optional animation logic. */
-export function registerSequenceControllerEngine(engine: object, assembly: SequenceControllerAssembly): SequenceControllerEngineOwner {
+export function registerSequenceControllerEngine(
+  engine: object,
+  assembly: SequenceControllerAssembly
+): SequenceControllerEngineOwner {
   const scopes = new WeakMap<Scope, CancellationSignal>();
   const closers = new Set<() => void>();
   let closed = false;
@@ -66,44 +71,60 @@ export function registerSequenceControllerEngine(engine: object, assembly: Seque
     }
     assertOpen();
     return Object.freeze({
-      scope: original, assertOpen,
-      use(value: ScopeValue): void { apply(use, original, [value]); },
-      dispose(): void { apply(dispose, original, []); },
-      add(listener: () => void): void { apply(add, signal, ['abort', listener, Object.freeze({once: true})]); },
-      remove(listener: () => void): void { apply(remove, signal, ['abort', listener]); },
+      scope: original,
+      assertOpen,
+      use(value: ScopeValue): void {
+        apply(use, original, [value]);
+      },
+      dispose(): void {
+        apply(dispose, original, []);
+      },
+      add(listener: () => void): void {
+        apply(add, signal, ['abort', listener, Object.freeze({ once: true })]);
+      },
+      remove(listener: () => void): void {
+        apply(remove, signal, ['abort', listener]);
+      }
     });
   }
   const port: SequenceControllerEnginePort = Object.freeze({
     assertOpen: assembly.assertOpen,
     scope,
-    createScope(): SequenceScopePort { return scope(assembly.createScope()); },
+    createScope(): SequenceScopePort {
+      return scope(assembly.createScope());
+    },
     clock: assembly.clock,
     isClockBusy: assembly.isClockBusy,
     claims: assembly.claims,
     onClose(callback: () => void): () => void {
       assembly.assertOpen();
       closers.add(callback);
-      return (): void => { closers.delete(callback); };
+      return (): void => {
+        closers.delete(callback);
+      };
     },
     report: assembly.report,
-    captureCleanup: assembly.captureCleanup,
+    captureCleanup: assembly.captureCleanup
   });
   engines.set(engine, port);
   return Object.freeze({
-    registerScope(scope: Scope): void { scopes.set(scope, scope.signal); },
+    registerScope(scope: Scope): void {
+      scopes.set(scope, scope.signal);
+    },
     close(): void {
       if (closed) return;
       closed = true;
       const callbacks = [...closers];
       closers.clear();
       for (const callback of callbacks) {
-        try { callback(); }
-        catch (cause) {
+        try {
+          callback();
+        } catch (cause) {
           assembly.captureCleanup(cause);
-          assembly.report({code: 'ANIMATION_CLEANUP_FAILED', phase: 'engine', severity: 'error', cause});
+          assembly.report({ code: 'ANIMATION_CLEANUP_FAILED', phase: 'engine', severity: 'error', cause });
         }
       }
-    },
+    }
   });
 }
 

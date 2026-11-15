@@ -13,7 +13,13 @@ interface LeaseState {
 }
 
 const states = new WeakMap<object, LeaseState>();
-export let createAssetLease: <T>(engine: EngineContext, leaseId: number, generation: number, read: () => T, release: () => void) => AssetLease<T>;
+export let createAssetLease: <T>(
+  engine: EngineContext,
+  leaseId: number,
+  generation: number,
+  read: () => T,
+  release: () => void
+) => AssetLease<T>;
 
 /** One independently revocable CPU-value borrow, bound to its originating Engine. */
 export class AssetLease<T> {
@@ -21,7 +27,14 @@ export class AssetLease<T> {
   public readonly leaseId: number;
   public readonly resourceGeneration: number;
 
-  private constructor(engine: EngineContext, leaseId: number, generation: number, read: () => T, release: () => void, token: typeof CREATION_TOKEN) {
+  private constructor(
+    engine: EngineContext,
+    leaseId: number,
+    generation: number,
+    read: () => T,
+    release: () => void,
+    token: typeof CREATION_TOKEN
+  ) {
     if (token !== CREATION_TOKEN) throw new EgretError("ASSET_LEASE_FACTORY_REQUIRED");
     this.leaseId = leaseId;
     this.resourceGeneration = generation;
@@ -31,8 +44,13 @@ export class AssetLease<T> {
   }
 
   static {
-    createAssetLease = <T>(engine: EngineContext, leaseId: number, generation: number, read: () => T, release: () => void): AssetLease<T> =>
-      new AssetLease(engine, leaseId, generation, read, release, CREATION_TOKEN);
+    createAssetLease = <T>(
+      engine: EngineContext,
+      leaseId: number,
+      generation: number,
+      read: () => T,
+      release: () => void
+    ): AssetLease<T> => new AssetLease(engine, leaseId, generation, read, release, CREATION_TOKEN);
   }
 
   public get value(): T {
@@ -72,7 +90,9 @@ export function observeAssetLeaseRetirement(lease: unknown, onRetired: () => voi
 }
 
 /** Runtime-private identity guard; proxies and lookalikes cannot supply entitlement. */
-export function isAssetLease(value: unknown): value is AssetLease<unknown> { return states.has(value as object); }
+export function isAssetLease(value: unknown): value is AssetLease<unknown> {
+  return states.has(value as object);
+}
 
 /** Read the manager-owned value, without overridable getters or descriptor callbacks. */
 export function readAssetLeaseValue(value: unknown): unknown {

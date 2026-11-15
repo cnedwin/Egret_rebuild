@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import type {DisplayObject, EventType, Scope} from '@egret/runtime';
-import type {Engine} from './Engine.js';
+import type { DisplayObject, EventType, Scope } from '@egret/runtime';
+import type { Engine } from './Engine.js';
 
 /** Pointers that can be over the scene without pressing it. A finger cannot. */
 export type HoverPointerType = 'mouse' | 'pen';
@@ -11,8 +11,19 @@ export type HoverInputState = 'active' | 'suspended' | 'closed';
  * the mapping of the surface changed; the window or the page went away; or the input was
  * suspended, disposed or failed.
  */
-export type HoverLeaveReason = 'target' | 'outside' | 'contact' | 'pointercancel' | 'owner' | 'viewport'
-  | 'blur' | 'hidden' | 'pagehide' | 'suspended' | 'dispose' | 'error';
+export type HoverLeaveReason =
+  | 'target'
+  | 'outside'
+  | 'contact'
+  | 'pointercancel'
+  | 'owner'
+  | 'viewport'
+  | 'blur'
+  | 'hidden'
+  | 'pagehide'
+  | 'suspended'
+  | 'dispose'
+  | 'error';
 export type WheelUnit = 'pixel' | 'line' | 'page';
 
 export interface HoverSample {
@@ -79,7 +90,7 @@ export interface HoverInputOptions {
 export interface HoverInputEvents {
   readonly enter: EventType<HoverTransition>;
   readonly move: EventType<HoverPoint>;
-  readonly leave: EventType<HoverTransition & {readonly reason: HoverLeaveReason}>;
+  readonly leave: EventType<HoverTransition & { readonly reason: HoverLeaveReason }>;
   readonly wheel: EventType<WheelPoint>;
 }
 export interface HoverState {

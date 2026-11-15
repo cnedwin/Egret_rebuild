@@ -1,7 +1,11 @@
 import { createScanner, visit } from "./json-foundation.js";
 import type { JSONPath, ScanError, SyntaxKind } from "./json-foundation.js";
 import { utf8Length } from "./unicode.js";
-import type { LegacyResourceDiagnostic, LegacyResourceDiagnosticCode, LegacyResourceJSONResult } from "./legacy-res-report.js";
+import type {
+  LegacyResourceDiagnostic,
+  LegacyResourceDiagnosticCode,
+  LegacyResourceJSONResult
+} from "./legacy-res-report.js";
 
 // Fixed public declaration values from jsonc-parser 3.3.1 main.d.ts. Its ambient
 // const enums remain type-only under the existing strict NodeNext configuration.
@@ -13,11 +17,20 @@ const EOF: SyntaxKind = 17;
 const NO_SCAN_ERROR: ScanError = 0;
 
 function diagnostic(code: LegacyResourceDiagnosticCode, jsonPointer = ""): LegacyResourceDiagnostic {
-  return Object.freeze({ code, source: "text", severity: "error", jsonPointer,
-    message: code === "LEGACY_RES_INTERNAL_FAILED" ? "Resource declaration analysis failed internally."
-      : code === "LEGACY_RES_SYNTAX_INVALID" ? "Input is not strict JSON."
-      : code === "LEGACY_RES_INPUT_INVALID" ? "Input contains invalid Unicode or is not a primitive string."
-      : "Resource declaration limit exceeded." });
+  return Object.freeze({
+    code,
+    source: "text",
+    severity: "error",
+    jsonPointer,
+    message:
+      code === "LEGACY_RES_INTERNAL_FAILED"
+        ? "Resource declaration analysis failed internally."
+        : code === "LEGACY_RES_SYNTAX_INVALID"
+          ? "Input is not strict JSON."
+          : code === "LEGACY_RES_INPUT_INVALID"
+            ? "Input contains invalid Unicode or is not a primitive string."
+            : "Resource declaration limit exceeded."
+  });
 }
 
 function pointer(path: JSONPath): string {
@@ -57,10 +70,20 @@ export function readLegacyResourceJSON(text: string): LegacyResourceJSONResult {
       const position = scanner.getPosition();
       const offset = scanner.getTokenOffset();
       const length = scanner.getTokenLength();
-      if (!Number.isSafeInteger(kind) || kind < 1 || kind > 17
-        || !Number.isSafeInteger(position) || !Number.isSafeInteger(offset) || !Number.isSafeInteger(length)
-        || offset !== priorPosition || length < 0 || position !== offset + length || position > text.length
-        || ++tokens > text.length + 1) throw undefined;
+      if (
+        !Number.isSafeInteger(kind) ||
+        kind < 1 ||
+        kind > 17 ||
+        !Number.isSafeInteger(position) ||
+        !Number.isSafeInteger(offset) ||
+        !Number.isSafeInteger(length) ||
+        offset !== priorPosition ||
+        length < 0 ||
+        position !== offset + length ||
+        position > text.length ||
+        ++tokens > text.length + 1
+      )
+        throw undefined;
       if (kind === EOF) {
         if (length !== 0 || position !== text.length) throw undefined;
         break;
@@ -70,8 +93,11 @@ export function readLegacyResourceJSON(text: string): LegacyResourceJSONResult {
       if (kind === OPEN_BRACE || kind === OPEN_BRACKET) {
         if (nesting.length === 16) reject("LEGACY_RES_LIMIT_EXCEEDED");
         nesting.push(kind);
-      } else if ((kind === CLOSE_BRACE && nesting[nesting.length - 1] === OPEN_BRACE)
-        || (kind === CLOSE_BRACKET && nesting[nesting.length - 1] === OPEN_BRACKET)) nesting.pop();
+      } else if (
+        (kind === CLOSE_BRACE && nesting[nesting.length - 1] === OPEN_BRACE) ||
+        (kind === CLOSE_BRACKET && nesting[nesting.length - 1] === OPEN_BRACKET)
+      )
+        nesting.pop();
     }
 
     const frames: (Set<string> | null)[] = [];
@@ -85,24 +111,38 @@ export function readLegacyResourceJSON(text: string): LegacyResourceJSONResult {
       if (frames.length === 16) reject("LEGACY_RES_LIMIT_EXCEEDED");
       frames.push(keys);
     };
-    const admitted = visit(text, {
-      onObjectBegin() { begin(new Set()); },
-      onArrayBegin() { begin(null); },
-      onObjectEnd() { frames.pop(); },
-      onArrayEnd() { frames.pop(); },
-      onObjectProperty(key, _offset, _length, _line, _column, path) {
-        const at = pointer([...path(), key]);
-        checkString(key, at);
-        const keys = frames[frames.length - 1];
-        if (!(keys instanceof Set)) throw undefined;
-        if (keys.has(key)) reject("LEGACY_RES_SYNTAX_INVALID");
-        keys.add(key);
+    const admitted = visit(
+      text,
+      {
+        onObjectBegin() {
+          begin(new Set());
+        },
+        onArrayBegin() {
+          begin(null);
+        },
+        onObjectEnd() {
+          frames.pop();
+        },
+        onArrayEnd() {
+          frames.pop();
+        },
+        onObjectProperty(key, _offset, _length, _line, _column, path) {
+          const at = pointer([...path(), key]);
+          checkString(key, at);
+          const keys = frames[frames.length - 1];
+          if (!(keys instanceof Set)) throw undefined;
+          if (keys.has(key)) reject("LEGACY_RES_SYNTAX_INVALID");
+          keys.add(key);
+        },
+        onLiteralValue(value: unknown, _offset, _length, _line, _column, path) {
+          if (typeof value === "string") checkString(value, pointer(path()));
+        },
+        onError() {
+          reject("LEGACY_RES_SYNTAX_INVALID");
+        }
       },
-      onLiteralValue(value: unknown, _offset, _length, _line, _column, path) {
-        if (typeof value === "string") checkString(value, pointer(path()));
-      },
-      onError() { reject("LEGACY_RES_SYNTAX_INVALID"); }
-    }, { disallowComments: true, allowTrailingComma: false, allowEmptyContent: false });
+      { disallowComments: true, allowTrailingComma: false, allowEmptyContent: false }
+    );
     if (!admitted || frames.length !== 0) throw undefined;
     // One private native graph, no reviver or second visitor-built graph. JSON
     // number syntax (including overflow) does not certify finite JsonValue.

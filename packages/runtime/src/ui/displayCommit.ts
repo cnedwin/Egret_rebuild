@@ -5,11 +5,35 @@ import type { Stage } from '../Stage.js';
 import { Scope } from '../Scope.js';
 import { EgretError } from '../EgretError.js';
 import { engineOf, ownerOf, preflightBinding } from '../ownership.js';
-import { captureUiChildren, childAtOf, childCountOf, detachNode, isDisplayNode, isStageRoot, isTerminated, parentOf, publishUiTree, validateUiChildren } from '../displayTreeState.js';
+import {
+  captureUiChildren,
+  childAtOf,
+  childCountOf,
+  detachNode,
+  isDisplayNode,
+  isStageRoot,
+  isTerminated,
+  parentOf,
+  publishUiTree,
+  validateUiChildren
+} from '../displayTreeState.js';
 import type { UiTreeReplacement } from '../displayTreeState.js';
-import { copyRect, finite, recordVisualChange, visualOf, VISUAL_APPEARANCE, VISUAL_TRANSFORM } from '../displayVisualState.js';
+import {
+  copyRect,
+  finite,
+  recordVisualChange,
+  visualOf,
+  VISUAL_APPEARANCE,
+  VISUAL_TRANSFORM
+} from '../displayVisualState.js';
 import { readDisplayHitState } from '../displayHitState.js';
-import { cleanupManagedWrapper, isManagedWrapper, managedBy, managedTerminal, registerManagedWrapper } from './managedState.js';
+import {
+  cleanupManagedWrapper,
+  isManagedWrapper,
+  managedBy,
+  managedTerminal,
+  registerManagedWrapper
+} from './managedState.js';
 
 /** Internal cross-package assembly, never exposed by the Engine facade. */
 export interface UiDisplayUpdate {
@@ -32,9 +56,12 @@ export interface UiDisplayOperations {
   disposeWrapper(wrapper: DisplayObjectContainer): void;
   assertStage(): void;
   /** Authenticated root-only presentation; does not traverse/rebuild its content. */
-  presentRoot(root: DisplayObjectContainer, value: Readonly<{x:number;y:number;visible:boolean;interactive:boolean;index?:number}>): void;
+  presentRoot(
+    root: DisplayObjectContainer,
+    value: Readonly<{ x: number; y: number; visible: boolean; interactive: boolean; index?: number }>
+  ): void;
   /** Lifetime revocation, like detach: remains legal while the owning Scope/Engine closes. */
-  releaseRoot(root:DisplayObjectContainer,value:Readonly<{x:number;y:number;visible:boolean}>):void;
+  releaseRoot(root: DisplayObjectContainer, value: Readonly<{ x: number; y: number; visible: boolean }>): void;
 }
 const scopeUse = Scope.prototype.use;
 const scopeState = Object.getOwnPropertyDescriptor(Scope.prototype, 'state')!.get!;
@@ -51,9 +78,13 @@ interface VisualUpdate {
   readonly wrapper: DisplayObjectContainer;
   readonly visual: ReturnType<typeof visualOf>;
   readonly hit: ReturnType<typeof readDisplayHitState>;
-  readonly x: number; readonly y: number; readonly visible: boolean;
-  readonly clipRect: Rectangle2D | undefined; readonly hitArea: Rectangle2D | undefined;
-  readonly touchEnabled: boolean; readonly touchChildren: boolean;
+  readonly x: number;
+  readonly y: number;
+  readonly visible: boolean;
+  readonly clipRect: Rectangle2D | undefined;
+  readonly hitArea: Rectangle2D | undefined;
+  readonly touchEnabled: boolean;
+  readonly touchChildren: boolean;
 }
 interface Plan {
   readonly epoch: number;
@@ -62,12 +93,15 @@ interface Plan {
   readonly replacements: readonly UiTreeReplacement[];
   readonly updates: readonly VisualUpdate[];
 }
-function refuse(code = 'UI_CONTENT_INVALID'): never { throw new EgretError(code); }
+function refuse(code = 'UI_CONTENT_INVALID'): never {
+  throw new EgretError(code);
+}
 /** A callback-capable array exposes exactly one admitted finite capture boundary. */
 function captureArrayCount(value: readonly unknown[]): number {
   if (!Array.isArray(value)) refuse('UI_CAP_EXCEEDED');
   const count = value.length;
-  if (typeof count !== 'number' || !Number.isInteger(count) || count < 0 || count > MAX_UPDATES) refuse('UI_CAP_EXCEEDED');
+  if (typeof count !== 'number' || !Number.isInteger(count) || count < 0 || count > MAX_UPDATES)
+    refuse('UI_CAP_EXCEEDED');
   return count;
 }
 function rectangle(value: Rectangle2D | undefined): Rectangle2D | undefined {
@@ -92,11 +126,20 @@ export function createUiDisplayOperations(stage: Stage): UiDisplayOperations {
     engine!.assertOpen();
     if (isTerminated(stage)) refuse('UI_OWNER_INVALID');
     const state = visualOf(stage);
-    if (state.x !== 0 || state.y !== 0 || state.scaleX !== 1 || state.scaleY !== 1 || state.rotation !== 0
-        || state.anchorOffsetX !== 0 || state.anchorOffsetY !== 0) refuse('UI_STAGE_TRANSFORM_UNSUPPORTED');
+    if (
+      state.x !== 0 ||
+      state.y !== 0 ||
+      state.scaleX !== 1 ||
+      state.scaleY !== 1 ||
+      state.rotation !== 0 ||
+      state.anchorOffsetX !== 0 ||
+      state.anchorOffsetY !== 0
+    )
+      refuse('UI_STAGE_TRANSFORM_UNSUPPORTED');
   }
   function assertWrapper(wrapper: DisplayObjectContainer): void {
-    if (!managedBy(wrapper, authority) || isTerminated(wrapper) || engineOf(wrapper) !== engine) refuse('UI_OWNER_INVALID');
+    if (!managedBy(wrapper, authority) || isTerminated(wrapper) || engineOf(wrapper) !== engine)
+      refuse('UI_OWNER_INVALID');
     const scope = ownerOf(wrapper);
     if (scope === undefined || scopeState.call(scope) !== 'open') refuse('UI_OWNER_INVALID');
   }
@@ -105,10 +148,20 @@ export function createUiDisplayOperations(stage: Stage): UiDisplayOperations {
     const pending = [{ node: content, depth: 1 }];
     const seen = new Set<DisplayObject>();
     while (pending.length !== 0) {
-      const {node, depth} = pending.pop()!;
-      if (!isDisplayNode(node) || isTerminated(node) || isStageRoot(node) || seen.has(node)
-          || depth > 8 || seen.size >= 32 || ownerOf(node) !== scope || engineOf(node) !== engine
-          || isManagedWrapper(node) || managedTerminal(node)) refuse();
+      const { node, depth } = pending.pop()!;
+      if (
+        !isDisplayNode(node) ||
+        isTerminated(node) ||
+        isStageRoot(node) ||
+        seen.has(node) ||
+        depth > 8 ||
+        seen.size >= 32 ||
+        ownerOf(node) !== scope ||
+        engineOf(node) !== engine ||
+        isManagedWrapper(node) ||
+        managedTerminal(node)
+      )
+        refuse();
       seen.add(node);
       const parent = parentOf(node);
       if (node === content && parent !== undefined && !managedBy(parent, authority)) refuse();
@@ -118,29 +171,38 @@ export function createUiDisplayOperations(stage: Stage): UiDisplayOperations {
       for (let index = 0; index < childCount; index++) {
         const child = childAtOf(node, index)!;
         if (parentOf(child) !== node) refuse();
-        pending.push({node: child, depth: depth + 1});
+        pending.push({ node: child, depth: depth + 1 });
       }
     }
   }
   function capture(node: DisplayObject): NodeCapture {
     const children: DisplayObject[] = [];
-    for (let index = 0; index < childCountOf(node); index++) children.push(childAtOf(node,index)!);
-    return {node, parent: parentOf(node), owner: ownerOf(node), children};
+    for (let index = 0; index < childCountOf(node); index++) children.push(childAtOf(node, index)!);
+    return { node, parent: parentOf(node), owner: ownerOf(node), children };
   }
   function validatePlan(plan: Plan): void {
-    if (detached || plan.epoch !== epoch || (mountedRoot !== undefined && mountedRoot !== plan.root)) refuse('UI_STALE_PREPARATION');
+    if (detached || plan.epoch !== epoch || (mountedRoot !== undefined && mountedRoot !== plan.root))
+      refuse('UI_STALE_PREPARATION');
     for (let index = 0; index < plan.nodes.length; index++) {
-      const item = plan.nodes[index]!, node = item.node;
-      if (isTerminated(node) || ownerOf(node) !== item.owner || engineOf(node) !== engine
-          || parentOf(node) !== item.parent || childCountOf(node) !== item.children.length) refuse('UI_STALE_PREPARATION');
+      const item = plan.nodes[index]!,
+        node = item.node;
+      if (
+        isTerminated(node) ||
+        ownerOf(node) !== item.owner ||
+        engineOf(node) !== engine ||
+        parentOf(node) !== item.parent ||
+        childCountOf(node) !== item.children.length
+      )
+        refuse('UI_STALE_PREPARATION');
       for (let childIndex = 0; childIndex < item.children.length; childIndex++) {
-        if (childAtOf(node,childIndex) !== item.children[childIndex] || parentOf(item.children[childIndex]!) !== node) refuse('UI_STALE_PREPARATION');
+        if (childAtOf(node, childIndex) !== item.children[childIndex] || parentOf(item.children[childIndex]!) !== node)
+          refuse('UI_STALE_PREPARATION');
       }
       if (item.owner !== undefined && scopeState.call(item.owner) !== 'open') refuse('UI_STALE_PREPARATION');
     }
     for (let index = 0; index < plan.replacements.length; index++) {
       const replacement = plan.replacements[index]!;
-      if (!validateUiChildren(replacement.parent,replacement.previous)) refuse('UI_STALE_PREPARATION');
+      if (!validateUiChildren(replacement.parent, replacement.previous)) refuse('UI_STALE_PREPARATION');
     }
   }
   assertStage();
@@ -154,61 +216,77 @@ export function createUiDisplayOperations(stage: Stage): UiDisplayOperations {
         if (engineOf(wrapper) !== engine) refuse('UI_OWNER_INVALID');
         registerManagedWrapper(wrapper, authority, () => containerDispose.call(wrapper));
         return wrapper;
-      } catch (cause) { containerDispose.call(wrapper); throw cause; }
+      } catch (cause) {
+        containerDispose.call(wrapper);
+        throw cause;
+      }
     },
     validateContent,
     prepare(root: DisplayObjectContainer, sources: readonly UiDisplayUpdate[]): object {
-      assertStage(); assertWrapper(root);
+      assertStage();
+      assertWrapper(root);
       if (detached || (mountedRoot !== undefined && mountedRoot !== root)) refuse('UI_OWNER_INVALID');
       const baseEpoch = epoch;
       const sourceCount = captureArrayCount(sources);
       const replacements: UiTreeReplacement[] = [];
       const updates: VisualUpdate[] = [];
       const seen = new Set<DisplayObjectContainer>();
-      const contents: {node: DisplayObject; scope: Scope}[] = [];
+      const contents: { node: DisplayObject; scope: Scope }[] = [];
       for (let index = 0; index < sourceCount; index++) {
-        const source = sources[index]!, wrapper = source.wrapper;
+        const source = sources[index]!,
+          wrapper = source.wrapper;
         assertWrapper(wrapper);
         if (seen.has(wrapper)) refuse('UI_CONTENT_INVALID');
         seen.add(wrapper);
-        const visual = visualOf(wrapper), hit = readDisplayHitState(wrapper);
-        const x = own.call(source,'x') ? source.x : visual.x, y = own.call(source,'y') ? source.y : visual.y;
-        const visible = own.call(source,'visible') ? source.visible : visual.visible;
-        const touchEnabled = own.call(source,'touchEnabled') ? source.touchEnabled : hit.touchEnabled;
-        const touchChildren = own.call(source,'touchChildren') ? source.touchChildren : hit.touchChildren!;
-        const clipRect = own.call(source,'clipRect') ? rectangle(source.clipRect) : visual.clipRect;
-        const hitArea = own.call(source,'hitArea') ? rectangle(source.hitArea) : hit.hitArea;
-        if (!finite(x) || !finite(y) || typeof visible !== 'boolean' || typeof touchEnabled !== 'boolean' || typeof touchChildren !== 'boolean') refuse('UI_VALUE_INVALID');
-        updates.push({wrapper,visual,hit,x,y,visible,touchEnabled,touchChildren,clipRect,hitArea});
+        const visual = visualOf(wrapper),
+          hit = readDisplayHitState(wrapper);
+        const x = own.call(source, 'x') ? source.x : visual.x,
+          y = own.call(source, 'y') ? source.y : visual.y;
+        const visible = own.call(source, 'visible') ? source.visible : visual.visible;
+        const touchEnabled = own.call(source, 'touchEnabled') ? source.touchEnabled : hit.touchEnabled;
+        const touchChildren = own.call(source, 'touchChildren') ? source.touchChildren : hit.touchChildren!;
+        const clipRect = own.call(source, 'clipRect') ? rectangle(source.clipRect) : visual.clipRect;
+        const hitArea = own.call(source, 'hitArea') ? rectangle(source.hitArea) : hit.hitArea;
+        if (
+          !finite(x) ||
+          !finite(y) ||
+          typeof visible !== 'boolean' ||
+          typeof touchEnabled !== 'boolean' ||
+          typeof touchChildren !== 'boolean'
+        )
+          refuse('UI_VALUE_INVALID');
+        updates.push({ wrapper, visual, hit, x, y, visible, touchEnabled, touchChildren, clipRect, hitArea });
         const children = source.children;
         if (children !== undefined) {
           const childCount = captureArrayCount(children);
           const next: DisplayObject[] = [];
           for (let childIndex = 0; childIndex < childCount; childIndex++) {
             const child = children[childIndex]!;
-            if (managedBy(child,authority)) assertWrapper(child as DisplayObjectContainer);
+            if (managedBy(child, authority)) assertWrapper(child as DisplayObjectContainer);
             else {
               const scope = ownerOf(wrapper) as Scope;
-              validateContent(child,scope);
-              contents.push({node:child,scope});
+              validateContent(child, scope);
+              contents.push({ node: child, scope });
             }
             next.push(child);
           }
-          replacements.push({parent:wrapper,previous:captureUiChildren(wrapper),next});
+          replacements.push({ parent: wrapper, previous: captureUiChildren(wrapper), next });
         }
       }
       // Hooks are preparation only. Revalidate every content after the final hook.
-      for (let index = 0; index < contents.length; index++) preflightBinding(contents[index]!.node,engine!);
-      for (let index = 0; index < contents.length; index++) validateContent(contents[index]!.node,contents[index]!.scope);
-      assertStage(); assertWrapper(root);
+      for (let index = 0; index < contents.length; index++) preflightBinding(contents[index]!.node, engine!);
+      for (let index = 0; index < contents.length; index++)
+        validateContent(contents[index]!.node, contents[index]!.scope);
+      assertStage();
+      assertWrapper(root);
       if (epoch !== baseEpoch || detached) refuse('UI_STALE_PREPARATION');
       const stageChildren = captureUiChildren(stage);
       const rootParent = parentOf(root);
       if (rootParent !== undefined && rootParent !== stage) refuse('UI_CONTENT_INVALID');
       const nextStage = stageChildren.slice();
       if (rootParent === undefined) nextStage.push(root);
-      replacements.push({parent:stage,previous:stageChildren,next:nextStage});
-      const desiredParents = new Map<DisplayObject,DisplayObjectContainer>();
+      replacements.push({ parent: stage, previous: stageChildren, next: nextStage });
+      const desiredParents = new Map<DisplayObject, DisplayObjectContainer>();
       const replaced = new Set<DisplayObjectContainer>();
       for (let index = 0; index < replacements.length; index++) replaced.add(replacements[index]!.parent);
       for (let index = 0; index < replacements.length; index++) {
@@ -216,7 +294,7 @@ export function createUiDisplayOperations(stage: Stage): UiDisplayOperations {
         for (let childIndex = 0; childIndex < item.next.length; childIndex++) {
           const child = item.next[childIndex]!;
           if (desiredParents.has(child)) refuse();
-          desiredParents.set(child,item.parent);
+          desiredParents.set(child, item.parent);
           const oldParent = parentOf(child);
           if (oldParent !== undefined && oldParent !== item.parent && !replaced.has(oldParent)) refuse();
         }
@@ -229,7 +307,8 @@ export function createUiDisplayOperations(stage: Stage): UiDisplayOperations {
           if (ancestors.has(current)) refuse();
           ancestors.add(current);
           const previous = parentOf(current);
-          current = desiredParents.get(current) ?? (previous !== undefined && replaced.has(previous) ? undefined : previous);
+          current =
+            desiredParents.get(current) ?? (previous !== undefined && replaced.has(previous) ? undefined : previous);
         }
       }
       const nodes: NodeCapture[] = [];
@@ -237,79 +316,133 @@ export function createUiDisplayOperations(stage: Stage): UiDisplayOperations {
       const pending: DisplayObject[] = [root];
       for (let index = 0; index < replacements.length; index++) {
         const item = replacements[index]!;
-        if (item.parent !== stage) for (let childIndex = 0; childIndex < item.next.length; childIndex++) pending.push(item.next[childIndex]!);
+        if (item.parent !== stage)
+          for (let childIndex = 0; childIndex < item.next.length; childIndex++) pending.push(item.next[childIndex]!);
       }
-      for (let index = 0; index < updates.length; index++) { assertWrapper(updates[index]!.wrapper); pending.push(updates[index]!.wrapper); }
+      for (let index = 0; index < updates.length; index++) {
+        assertWrapper(updates[index]!.wrapper);
+        pending.push(updates[index]!.wrapper);
+      }
       for (let index = 0; index < contents.length; index++) pending.push(contents[index]!.node);
       while (pending.length !== 0) {
         const node = pending.pop()!;
         if (captured.has(node)) continue;
         captured.add(node);
-        const entry = capture(node); nodes.push(entry);
+        const entry = capture(node);
+        nodes.push(entry);
         for (let index = 0; index < entry.children.length; index++) pending.push(entry.children[index]!);
       }
-      const plan: Plan = {epoch,root,nodes,replacements,updates};
+      const plan: Plan = { epoch, root, nodes, replacements, updates };
       validatePlan(plan);
-      const token = Object.freeze({}); plans.set(token,plan); return token;
+      const token = Object.freeze({});
+      plans.set(token, plan);
+      return token;
     },
     commit(token: object): void {
       const plan = plans.get(token);
       if (plan === undefined) refuse('UI_STALE_PREPARATION');
       plans.delete(token);
-      assertStage(); validatePlan(plan);
+      assertStage();
+      validatePlan(plan);
       // All callbacks, validation and allocations precede this straight-line publication.
       publishUiTree(plan.replacements);
       for (let index = 0; index < plan.updates.length; index++) {
         const item = plan.updates[index]!;
-        item.visual.x = item.x; item.visual.y = item.y; item.visual.visible = item.visible;
+        item.visual.x = item.x;
+        item.visual.y = item.y;
+        item.visual.visible = item.visible;
         item.visual.clipRect = item.clipRect;
-        item.hit.hitArea = item.hitArea; item.hit.touchEnabled = item.touchEnabled; item.hit.touchChildren = item.touchChildren;
-        recordVisualChange(item.wrapper,VISUAL_TRANSFORM | VISUAL_APPEARANCE);
+        item.hit.hitArea = item.hitArea;
+        item.hit.touchEnabled = item.touchEnabled;
+        item.hit.touchChildren = item.touchChildren;
+        recordVisualChange(item.wrapper, VISUAL_TRANSFORM | VISUAL_APPEARANCE);
       }
-      mountedRoot = plan.root; epoch++;
+      mountedRoot = plan.root;
+      epoch++;
     },
-    presentRoot(root:DisplayObjectContainer, value:Readonly<{x:number;y:number;visible:boolean;interactive:boolean;index?:number}>): void {
+    presentRoot(
+      root: DisplayObjectContainer,
+      value: Readonly<{ x: number; y: number; visible: boolean; interactive: boolean; index?: number }>
+    ): void {
       // Capture external descriptors before revalidating the genuine owned root/Stage.
-      const x=value.x,y=value.y,visible=value.visible,interactive=value.interactive,index=value.index;
-      if(!finite(x)||!finite(y)||typeof visible!=='boolean'||typeof interactive!=='boolean'
-          ||index!==undefined&&(!Number.isInteger(index)||index<0||index>=childCountOf(stage)))refuse('UI_VALUE_INVALID');
-      assertStage();assertWrapper(root);
-      if(detached||mountedRoot!==root||parentOf(root)!==stage)refuse('UI_OWNER_INVALID');
-      if(index!==undefined){
-        const previous=captureUiChildren(stage),next=previous.slice(),at=next.indexOf(root);
-        if(at<0)refuse('UI_OWNER_INVALID');
-        if(at!==index){next.splice(at,1);next.splice(index,0,root);publishUiTree([{parent:stage,previous,next}]);}
+      const x = value.x,
+        y = value.y,
+        visible = value.visible,
+        interactive = value.interactive,
+        index = value.index;
+      if (
+        !finite(x) ||
+        !finite(y) ||
+        typeof visible !== 'boolean' ||
+        typeof interactive !== 'boolean' ||
+        (index !== undefined && (!Number.isInteger(index) || index < 0 || index >= childCountOf(stage)))
+      )
+        refuse('UI_VALUE_INVALID');
+      assertStage();
+      assertWrapper(root);
+      if (detached || mountedRoot !== root || parentOf(root) !== stage) refuse('UI_OWNER_INVALID');
+      if (index !== undefined) {
+        const previous = captureUiChildren(stage),
+          next = previous.slice(),
+          at = next.indexOf(root);
+        if (at < 0) refuse('UI_OWNER_INVALID');
+        if (at !== index) {
+          next.splice(at, 1);
+          next.splice(index, 0, root);
+          publishUiTree([{ parent: stage, previous, next }]);
+        }
       }
-      const visual=visualOf(root),hit=readDisplayHitState(root);
-      if(visual.x!==x||visual.y!==y||visual.visible!==visible||hit.touchChildren!==interactive){
-        visual.x=x;visual.y=y;visual.visible=visible;hit.touchEnabled=false;hit.touchChildren=interactive;
-        recordVisualChange(root,VISUAL_TRANSFORM|VISUAL_APPEARANCE);
+      const visual = visualOf(root),
+        hit = readDisplayHitState(root);
+      if (visual.x !== x || visual.y !== y || visual.visible !== visible || hit.touchChildren !== interactive) {
+        visual.x = x;
+        visual.y = y;
+        visual.visible = visible;
+        hit.touchEnabled = false;
+        hit.touchChildren = interactive;
+        recordVisualChange(root, VISUAL_TRANSFORM | VISUAL_APPEARANCE);
       }
       epoch++;
     },
-    releaseRoot(root:DisplayObjectContainer,value:Readonly<{x:number;y:number;visible:boolean}>):void {
-      const x=value.x,y=value.y,visible=value.visible;
-      if(!finite(x)||!finite(y)||typeof visible!=='boolean')refuse('UI_VALUE_INVALID');
-      if(!managedBy(root,authority)||isTerminated(root)||detached||mountedRoot!==root||parentOf(root)!==stage)refuse('UI_OWNER_INVALID');
-      const visual=visualOf(root),hit=readDisplayHitState(root);
-      visual.x=x;visual.y=y;visual.visible=visible;hit.touchEnabled=false;hit.touchChildren=visible;
-      recordVisualChange(root,VISUAL_TRANSFORM|VISUAL_APPEARANCE);epoch++;
+    releaseRoot(root: DisplayObjectContainer, value: Readonly<{ x: number; y: number; visible: boolean }>): void {
+      const x = value.x,
+        y = value.y,
+        visible = value.visible;
+      if (!finite(x) || !finite(y) || typeof visible !== 'boolean') refuse('UI_VALUE_INVALID');
+      if (
+        !managedBy(root, authority) ||
+        isTerminated(root) ||
+        detached ||
+        mountedRoot !== root ||
+        parentOf(root) !== stage
+      )
+        refuse('UI_OWNER_INVALID');
+      const visual = visualOf(root),
+        hit = readDisplayHitState(root);
+      visual.x = x;
+      visual.y = y;
+      visual.visible = visible;
+      hit.touchEnabled = false;
+      hit.touchChildren = visible;
+      recordVisualChange(root, VISUAL_TRANSFORM | VISUAL_APPEARANCE);
+      epoch++;
     },
     detach(root: DisplayObjectContainer): void {
       if (detached) return;
-      if (!managedBy(root,authority) && !managedTerminal(root)) refuse('UI_OWNER_INVALID');
+      if (!managedBy(root, authority) && !managedTerminal(root)) refuse('UI_OWNER_INVALID');
       if (mountedRoot !== undefined && root !== mountedRoot) refuse('UI_OWNER_INVALID');
-      detached = true; epoch++;
+      detached = true;
+      epoch++;
       visualOf(root).visible = false;
       readDisplayHitState(root).touchEnabled = false;
       detachNode(root);
-      recordVisualChange(root,VISUAL_APPEARANCE);
+      recordVisualChange(root, VISUAL_APPEARANCE);
     },
     disposeWrapper(wrapper: DisplayObjectContainer): void {
       if (managedTerminal(wrapper)) return;
-      if (!managedBy(wrapper,authority)) refuse('UI_OWNER_INVALID');
+      if (!managedBy(wrapper, authority)) refuse('UI_OWNER_INVALID');
       epoch++;
       cleanupManagedWrapper(wrapper);
-    },
+    }
   });
 }

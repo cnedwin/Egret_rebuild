@@ -13,7 +13,9 @@ export interface SpineAssetPort {
 }
 const assets = new WeakMap<object, SpineAssetPort>();
 /** Only loader-created, group-lifetime views may authorize an instance. */
-export function registerSpineAsset(asset: SpineAsset, port: SpineAssetPort): void { assets.set(asset, port); }
+export function registerSpineAsset(asset: SpineAsset, port: SpineAssetPort): void {
+  assets.set(asset, port);
+}
 export function requireSpineAsset(asset: SpineAsset): SpineAssetPort {
   const port = assets.get(asset);
   if (!port) throw new EgretError('SPINE_INSTANCE_ASSET_INVALID');

@@ -99,11 +99,11 @@ if(!process.env.PROJECT_ORACLE_COPY){
  const variants=[
   ['swapped UTF16','canonical.js','keys.sort();','keys.sort((a,b)=>b<a?-1:b>a?1:0);','UTF16 canonical bytes','ERR_ASSERTION'],
   ['getter evaluation','live-input.js','const descriptor = Object.getOwnPropertyDescriptor(value, key);','const descriptor = Object.getOwnPropertyDescriptor(value, key); if (descriptor && !("value" in descriptor)) Reflect.get(value, key);','getter input','ERR_ASSERTION'],
-  ['Number-only integer','validation-order.js','|| token && (!token.integerSafe || token.negativeZero)','|| false','exact mathematical integer','ERR_ASSERTION'],
+  ['Number-only integer','validation-order.js','(token && (!token.integerSafe || token.negativeZero))','false','exact mathematical integer','ERR_ASSERTION'],
   ['retry after CAS','commit.js','const identity = state.identities.get(command.transactionId);','if(command.baseRevision !== state.head.revision) return fail("PROJECT_REVISION_CONFLICT", "/baseRevision"); const identity = state.identities.get(command.transactionId);','known canonical retry','ERR_ASSERTION'],
   ['empty envelope omitted','state.js','history.value > limits.maxHistoryUtf8Bytes','false','empty history admission','ERR_ASSERTION'],
   ['duplicate journal retry','history.js','if (state.identities.has(command.value.value.transactionId))','if (false)','duplicate journal retry','ERR_ASSERTION',true],
-  ['retirement rewind','restore.js','new Set([...current.entities.map(item => item.id), ...current.retiredEntityIds, ...target.retiredEntityIds])','new Set(target.retiredEntityIds)','restore preserves','ERR_ASSERTION'],
+  ['retirement rewind','restore.js','new Set([\n        ...current.entities.map(item => item.id),\n        ...current.retiredEntityIds,\n        ...target.retiredEntityIds\n    ])','new Set(target.retiredEntityIds)','restore preserves','ERR_ASSERTION'],
   ['local P','commit.js','state.prefixCosts[command.targetRevision - state.baseline.revision]','state.prefixCosts[0]','complete retained target P','ERR_ASSERTION'],
   ['recursive P omission','replay-cost.js','return cost;','return targetCost === undefined ? cost : nextPrefixCost(previous, commandNodes, snapshotNodes, undefined, limit);','complete retained target P','ERR_ASSERTION'],
   ['head before validation','store.js','const transition = commitPrepared(state, checked.value, restoreCandidate);','state = { ...state, head: { ...state.head, revision: state.head.revision + 1 } }; const transition = commitPrepared(state, checked.value, restoreCandidate);','rejected final reference','ERR_ASSERTION']

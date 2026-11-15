@@ -2587,7 +2587,7 @@ test('M1.5 maintenance reads six exact source owners and refuses unreviewed post
   assert(newPairs.filter(row=>row.binding.startsWith('m15Resource')).every(row=>row.rows.every(value=>value.identity==='current')));
   for(const row of newPairs.filter(row=>row.binding==='m15InterfaceProjectedSuccessor')){
    assert.equal(row.comparison,'transformed-pair-raw-observation-only');assert.equal(row.rows[0].identity,'neither');
-   assert.equal(row.rows[0].current.bytes,4824);
+   assert.equal(row.rows[0].current.bytes,4765);
   }
   assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
   for(const pin of expected){

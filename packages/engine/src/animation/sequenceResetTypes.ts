@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
-import type {Bitmap} from '@egret/runtime';
-import type {SharedFrameOptions2D, SharedRenderFrame2D} from '@egret/contracts';
-import type {ContentLoader} from '../contentTypes.js';
-import type {SequenceController, SequenceControllerOptions} from './types.js';
+import type { Bitmap } from '@egret/runtime';
+import type { SharedFrameOptions2D, SharedRenderFrame2D } from '@egret/contracts';
+import type { ContentLoader } from '../contentTypes.js';
+import type { SequenceController, SequenceControllerOptions } from './types.js';
 
 export interface SequenceResetInitial {
   /** Application label only, never resource or Host generation authority. */
@@ -10,7 +10,9 @@ export interface SequenceResetInitial {
   readonly bitmap: Bitmap;
   readonly controller: SequenceController;
 }
-export interface SequenceResetActive extends SequenceResetInitial { readonly ownership: 'borrowed' | 'owned'; }
+export interface SequenceResetActive extends SequenceResetInitial {
+  readonly ownership: 'borrowed' | 'owned';
+}
 export interface SequenceResetRequest {
   readonly policy: 'reset';
   readonly version: string;

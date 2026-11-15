@@ -60,40 +60,50 @@ export interface SharedMeshCommand2D extends SharedDrawState2D {
 
 /** Frozen effect inputs captured with the same frame and image ownership. */
 export interface SharedEffect2D {
-  readonly blurRadius:number;
+  readonly blurRadius: number;
   /** Egret's twenty numbers, applied to colour as it is seen after the blur. */
-  readonly colorMatrix?:readonly number[];
+  readonly colorMatrix?: readonly number[];
   /** A glow or a hard outline from the alpha of the group, in logical pixels. */
-  readonly glow?:SharedGlow2D;
-  readonly maskPageIndex:number|undefined;
-  readonly maskRect:Rectangle2D|undefined;
-  readonly matrix:Matrix2D;
-  readonly clips:readonly ClipRectangle2D[];
+  readonly glow?: SharedGlow2D;
+  readonly maskPageIndex: number | undefined;
+  readonly maskRect: Rectangle2D | undefined;
+  readonly matrix: Matrix2D;
+  readonly clips: readonly ClipRectangle2D[];
 }
 export interface SharedGlow2D {
-  readonly kind:'glow'|'outline';
-  readonly color:number;
-  readonly alpha:number;
+  readonly kind: 'glow' | 'outline';
+  readonly color: number;
+  readonly alpha: number;
   /** How far it spreads: the blur of a glow, the width of an outline. */
-  readonly spread:number;
-  readonly strength:number;
-  readonly inner:boolean;
-  readonly knockout:boolean;
-  readonly offsetX:number;
-  readonly offsetY:number;
+  readonly spread: number;
+  readonly strength: number;
+  readonly inner: boolean;
+  readonly knockout: boolean;
+  readonly offsetX: number;
+  readonly offsetY: number;
 }
 export interface SharedBarrierCommand2D {
-  readonly effect?:SharedEffect2D;
+  readonly effect?: SharedEffect2D;
 
   readonly kind: 'barrier';
   readonly ordinal: number;
   readonly occurrenceId: number;
   readonly boundaryId: number;
-  readonly reason: 'explicit-enter' | 'explicit-exit' | 'clip-enter' | 'clip-exit' | 'empty' | 'effect-enter' | 'effect-exit';
+  readonly reason:
+    | 'explicit-enter'
+    | 'explicit-exit'
+    | 'clip-enter'
+    | 'clip-exit'
+    | 'empty'
+    | 'effect-enter'
+    | 'effect-exit';
 }
 
-export type SharedRenderCommand2D = SharedRectangleCommand2D | SharedImageCommand2D
-  | SharedMeshCommand2D | SharedBarrierCommand2D;
+export type SharedRenderCommand2D =
+  | SharedRectangleCommand2D
+  | SharedImageCommand2D
+  | SharedMeshCommand2D
+  | SharedBarrierCommand2D;
 
 declare const sharedRenderFrame2DBrand: unique symbol;
 export interface SharedRenderFrame2D {

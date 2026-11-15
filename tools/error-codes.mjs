@@ -33,7 +33,7 @@ export function collectErrorCodes() {
     for (const match of text.matchAll(/['"]([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)['"]/g)) if (describeErrorCode(match[1], 'en') !== '') codes.add(match[1]);
     // A part that throws through a helper of its own, which puts the part's name before a short one: the helper is the
     // function on whose line the prefix is joined to its argument, and the codes are its calls with a short name written out.
-    for (const helper of text.matchAll(/(?:const|let|function)\s+(\w+)\b[^\n]{0,200}?new EgretError\(\s*['"]([A-Z][A-Z0-9_]*_)['"]\s*\+\s*\w+\s*[,)]/g)) {
+    for (const helper of text.matchAll(/(?:const|let|function)\s+(\w+)\b(?:(?!\b(?:const|let|function)\b)[\s\S]){0,400}?new EgretError\(\s*['"]([A-Z][A-Z0-9_]*_)['"]\s*\+\s*\w+\s*[,)]/g)) {
       const calls = new RegExp('\\b' + helper[1] + '\\(\\s*[\'"]([A-Z][A-Z0-9_]*[A-Z0-9])[\'"]', 'g');
       for (const call of text.matchAll(calls)) codes.add(helper[2] + call[1]);
     }

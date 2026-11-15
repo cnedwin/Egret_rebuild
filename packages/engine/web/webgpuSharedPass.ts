@@ -1,5 +1,12 @@
 import type { SharedMaterial2D } from '@egret/contracts';
-export const SHARED_BLENDS = ['normal', 'add-accumulate', 'add-preserve', 'multiply-factor', 'screen', 'erase'] as const;
+export const SHARED_BLENDS = [
+  'normal',
+  'add-accumulate',
+  'add-preserve',
+  'multiply-factor',
+  'screen',
+  'erase'
+] as const;
 // The 128-byte block holds what is the same for every draw of a batch. `pageUnits0` and `pageUnits1` name the
 // pages of the eight texture units: the index of the page in the frame, or 0xffffffff for a unit without one.
 // The last two values of `viewport`, the first three of `domain` and the first two of `pageExecution` are zero:
@@ -21,7 +28,10 @@ const TINT = `fn tint(value: vec4<f32>, light: vec4<f32>, dark: vec3<f32>, opaci
 }
 `;
 // A draw without a region has no region table to read.
-const SOLID = BLOCK + TINT + `struct VertexOutput {
+const SOLID =
+  BLOCK +
+  TINT +
+  `struct VertexOutput {
     @builtin(position) position: vec4<f32>, @location(0) uv: vec2<f32>,
     @location(1) light: vec4<f32>, @location(2) dark: vec3<f32>, @location(3) @interpolate(flat) opacity: f32,
 }
@@ -38,7 +48,10 @@ const SOLID = BLOCK + TINT + `struct VertexOutput {
 // vec4<u32> for each of 341 regions, and hands it to every fragment of the triangle unchanged. The row names
 // the region's page; `page` is the texture unit that holds that page, and the page's width and height.
 // A batch of one page has that page in the first unit, and its pipeline looks for no other.
-const header = (paged: boolean): string => BLOCK + TINT + `struct RegionWindow { regions: array<vec4<u32>, 1023> }
+const header = (paged: boolean): string =>
+  BLOCK +
+  TINT +
+  `struct RegionWindow { regions: array<vec4<u32>, 1023> }
 @group(1) @binding(0) var<uniform> regionWindow: RegionWindow;
 struct VertexOutput {
     @builtin(position) position: vec4<f32>, @location(0) uv: vec2<f32>,
@@ -56,9 +69,13 @@ struct VertexOutput {
     result.logicalTrim = regionWindow.regions[row]; result.contentOrigin = regionWindow.regions[row + 1u];
     let last = regionWindow.regions[row + 2u];
     result.quarterTurn = last.x;
-    var unit = 0u;${paged ? `
+    var unit = 0u;${
+      paged
+        ? `
     for (var i = 1u; i < 4u; i++) { if (draw.pageUnits0[i] == last.y) { unit = i; } }
-    for (var i = 0u; i < 4u; i++) { if (draw.pageUnits1[i] == last.y) { unit = i + 4u; } }` : ''}
+    for (var i = 0u; i < 4u; i++) { if (draw.pageUnits1[i] == last.y) { unit = i + 4u; } }`
+        : ''
+    }
     result.page = vec3<u32>(unit, last.zw); return result;
 }
 `;
@@ -135,24 +152,69 @@ fn sampled(input: VertexOutput) -> vec4<f32> {
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4<f32> { return tint(sampled(input), input.light, input.dark, input.opacity); }
 `;
 function blendState(blend: SharedMaterial2D['blend']): GPUBlendState {
-    const alpha: GPUBlendComponent = { operation: 'add', srcFactor: 'one', dstFactor: 'one-minus-src-alpha' };
-    if (blend === 'add-accumulate') return { color: { operation: 'add', srcFactor: 'one', dstFactor: 'one' }, alpha: { operation: 'add', srcFactor: 'one', dstFactor: 'one' } };
-    // What is drawn takes away from what is there, by its alpha, and adds nothing.
-    if (blend === 'erase') return { color: { operation: 'add', srcFactor: 'zero', dstFactor: 'one-minus-src-alpha' }, alpha: { operation: 'add', srcFactor: 'zero', dstFactor: 'one-minus-src-alpha' } };
-    if (blend === 'add-preserve') return { color: { operation: 'add', srcFactor: 'one', dstFactor: 'one' }, alpha: { operation: 'add', srcFactor: 'zero', dstFactor: 'one' } };
-    return { color: { operation: 'add', srcFactor: blend === 'multiply-factor' ? 'dst' : 'one',
-        dstFactor: blend === 'screen' ? 'one-minus-src' : 'one-minus-src-alpha' }, alpha };
+  const alpha: GPUBlendComponent = { operation: 'add', srcFactor: 'one', dstFactor: 'one-minus-src-alpha' };
+  if (blend === 'add-accumulate')
+    return {
+      color: { operation: 'add', srcFactor: 'one', dstFactor: 'one' },
+      alpha: { operation: 'add', srcFactor: 'one', dstFactor: 'one' }
+    };
+  // What is drawn takes away from what is there, by its alpha, and adds nothing.
+  if (blend === 'erase')
+    return {
+      color: { operation: 'add', srcFactor: 'zero', dstFactor: 'one-minus-src-alpha' },
+      alpha: { operation: 'add', srcFactor: 'zero', dstFactor: 'one-minus-src-alpha' }
+    };
+  if (blend === 'add-preserve')
+    return {
+      color: { operation: 'add', srcFactor: 'one', dstFactor: 'one' },
+      alpha: { operation: 'add', srcFactor: 'zero', dstFactor: 'one' }
+    };
+  return {
+    color: {
+      operation: 'add',
+      srcFactor: blend === 'multiply-factor' ? 'dst' : 'one',
+      dstFactor: blend === 'screen' ? 'one-minus-src' : 'one-minus-src-alpha'
+    },
+    alpha
+  };
 }
 /** The pipelines of a draw without a region, of a batch of one page, and of a batch of several pages. */
 export const SHARED_PIPELINE_KINDS = ['solid', 'sampled', 'paged'] as const;
 /** All shaders and promises are immediately owned by the Host's captured startup boundaries. */
-export function createSharedWebGPUPipeline(shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule,
-    pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>, kind: typeof SHARED_PIPELINE_KINDS[number], blend: SharedMaterial2D['blend']): Promise<GPURenderPipeline> {
-    const module = shader({ code: kind === 'solid' ? SOLID : header(kind === 'paged') + pages(kind === 'paged') + SAMPLED });
-    return pipeline({ layout: 'auto', vertex: { module, entryPoint: 'vertexMain', buffers: [{ arrayStride: 52, stepMode: 'vertex', attributes: [
-        { shaderLocation: 0, offset: 0, format: 'float32x2' }, { shaderLocation: 1, offset: 8, format: 'float32x2' },
-        { shaderLocation: 2, offset: 16, format: 'float32x4' }, { shaderLocation: 3, offset: 32, format: 'float32x3' },
-        { shaderLocation: 4, offset: 44, format: 'float32x2' },
-    ] }] }, fragment: { module, entryPoint: 'fragmentMain', targets: [{ format: 'rgba8unorm-srgb', writeMask: 15, blend: blendState(blend) }] },
-    primitive: { topology: 'triangle-list', frontFace: 'ccw', cullMode: 'none', unclippedDepth: false }, multisample: { count: 1, alphaToCoverageEnabled: false } });
+export function createSharedWebGPUPipeline(
+  shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule,
+  pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>,
+  kind: (typeof SHARED_PIPELINE_KINDS)[number],
+  blend: SharedMaterial2D['blend']
+): Promise<GPURenderPipeline> {
+  const module = shader({
+    code: kind === 'solid' ? SOLID : header(kind === 'paged') + pages(kind === 'paged') + SAMPLED
+  });
+  return pipeline({
+    layout: 'auto',
+    vertex: {
+      module,
+      entryPoint: 'vertexMain',
+      buffers: [
+        {
+          arrayStride: 52,
+          stepMode: 'vertex',
+          attributes: [
+            { shaderLocation: 0, offset: 0, format: 'float32x2' },
+            { shaderLocation: 1, offset: 8, format: 'float32x2' },
+            { shaderLocation: 2, offset: 16, format: 'float32x4' },
+            { shaderLocation: 3, offset: 32, format: 'float32x3' },
+            { shaderLocation: 4, offset: 44, format: 'float32x2' }
+          ]
+        }
+      ]
+    },
+    fragment: {
+      module,
+      entryPoint: 'fragmentMain',
+      targets: [{ format: 'rgba8unorm-srgb', writeMask: 15, blend: blendState(blend) }]
+    },
+    primitive: { topology: 'triangle-list', frontFace: 'ccw', cullMode: 'none', unclippedDepth: false },
+    multisample: { count: 1, alphaToCoverageEnabled: false }
+  });
 }

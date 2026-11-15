@@ -1,0 +1,114 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.7/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "packages/*/src/**/*.ts",
+      "packages/*/web/**/*.ts",
+      "packages/*/rendering/**/*.ts",
+      "!**/*.generated.ts"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "quoteProperties": "preserve",
+      "semicolons": "always",
+      "arrowParentheses": "asNeeded",
+      "trailingCommas": "none"
+    }
+  },
+  "linter": {
+    "enabled": false
+  },
+  "assist": {
+    "enabled": false
+  },
+  "overrides": [
+    {
+      "includes": [
+        "packages/contracts/src/CancellationSignal.ts",
+        "packages/contracts/src/Diagnostic.ts",
+        "packages/engine/src/closeHost.ts",
+        "packages/engine/src/surfaceOwnership.ts",
+        "packages/project/src/api.ts",
+        "packages/project/src/atlas/types.ts",
+        "packages/project/src/canonical.ts",
+        "packages/project/src/commit.ts",
+        "packages/project/src/diagnostics.ts",
+        "packages/project/src/diff.ts",
+        "packages/project/src/edit.ts",
+        "packages/project/src/history-bytes.ts",
+        "packages/project/src/history.ts",
+        "packages/project/src/index.ts",
+        "packages/project/src/integer-token.ts",
+        "packages/project/src/internal.ts",
+        "packages/project/src/json-foundation.ts",
+        "packages/project/src/legacy-res-json.ts",
+        "packages/project/src/legacy-res-plan.ts",
+        "packages/project/src/legacy-res-report.ts",
+        "packages/project/src/limits.ts",
+        "packages/project/src/live-input.ts",
+        "packages/project/src/paths.ts",
+        "packages/project/src/public.ts",
+        "packages/project/src/restore.ts",
+        "packages/project/src/shape.ts",
+        "packages/project/src/spine/index.ts",
+        "packages/project/src/spine/preflight.ts",
+        "packages/project/src/spine/types.ts",
+        "packages/project/src/state.ts",
+        "packages/project/src/store.ts",
+        "packages/project/src/text-input.ts",
+        "packages/project/src/unicode.ts",
+        "packages/project/src/validate-snapshot.ts",
+        "packages/project/src/validate-transaction.ts",
+        "packages/project/src/validation-order.ts",
+        "packages/runtime/src/AssetLease.ts",
+        "packages/runtime/src/AssetManager.ts",
+        "packages/runtime/src/AssetRef.ts",
+        "packages/runtime/src/Bitmap.ts",
+        "packages/runtime/src/ByteReader.ts",
+        "packages/runtime/src/ByteWriter.ts",
+        "packages/runtime/src/CancellationController.ts",
+        "packages/runtime/src/DisplayObjectContainer.ts",
+        "packages/runtime/src/Event.ts",
+        "packages/runtime/src/EventDispatcher.ts",
+        "packages/runtime/src/Graphics.ts",
+        "packages/runtime/src/Mesh2D.ts",
+        "packages/runtime/src/NineSliceBitmap.ts",
+        "packages/runtime/src/NineSliceGeometry2D.ts",
+        "packages/runtime/src/Scope.ts",
+        "packages/runtime/src/Stage.ts",
+        "packages/runtime/src/Texture.ts",
+        "packages/runtime/src/assetManagerOwnerState.ts",
+        "packages/runtime/src/assetState.ts",
+        "packages/runtime/src/diagnostics.ts",
+        "packages/runtime/src/displayInputOperations.ts",
+        "packages/runtime/src/displayTreeState.ts",
+        "packages/runtime/src/displayVisualState.ts",
+        "packages/runtime/src/index.ts",
+        "packages/runtime/src/input/PointerRouter.ts",
+        "packages/runtime/src/input/index.ts",
+        "packages/runtime/src/input/types.ts",
+        "packages/runtime/src/meshDisplayState.ts",
+        "packages/runtime/src/spriteSheet.ts"
+      ],
+      "javascript": {
+        "formatter": {
+          "quoteStyle": "double"
+        }
+      }
+    }
+  ]
+}

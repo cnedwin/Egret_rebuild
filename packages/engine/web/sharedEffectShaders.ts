@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 /** Fixed separable box kernel, a spread of the group's alpha for a glow or an outline, Egret's colour matrix, and
  * source-over Alpha mask, in linear PMA space. Native targets encode sRGB on store; integer loads decode once on read. */
-export type SharedEffectPass='horizontal'|'vertical'|'spread'|'composite';
-export const EFFECT_PASSES:readonly SharedEffectPass[]=['horizontal','vertical','spread','composite'];
+export type SharedEffectPass = 'horizontal' | 'vertical' | 'spread' | 'composite';
+export const EFFECT_PASSES: readonly SharedEffectPass[] = ['horizontal', 'vertical', 'spread', 'composite'];
 /** The uniform of a group, in vectors of four floats; see prepareEffects2D for what each holds. */
-const VECTORS=36;
+const VECTORS = 36;
 /** The bytes of one group's uniform, as prepareEffects2D fills it. */
-export const EFFECT_UNIFORM_BYTES=VECTORS*16;
-export function sharedEffectGLSL(mode:SharedEffectPass):string {
-  return `#version 300 es
+export const EFFECT_UNIFORM_BYTES = VECTORS * 16;
+export function sharedEffectGLSL(mode: SharedEffectPass): string {
+  return (
+    `#version 300 es
 precision highp float;
 precision highp int;
 uniform highp sampler2D sourceTexture;
@@ -29,7 +30,9 @@ vec3 encodeColor(vec3 c){return mix(c*12.92,1.055*pow(c,vec3(1.0/2.4))-0.055,ste
 float alphaAt(highp sampler2D image,ivec2 p,ivec2 size){return all(greaterThanEqual(p,ivec2(0)))&&all(lessThan(p,size))?texelFetch(image,p,0).a:0.0;}
 void main(){
   ivec2 size=textureSize(sourceTexture,0),at=ivec2(gl_FragCoord.xy);
-`+(mode==='composite'?`
+` +
+    (mode === 'composite'
+      ? `
   vec2 point=vec2(gl_FragCoord.x,float(size.y)-gl_FragCoord.y);
   for(int i=0;i<8;i++){if(i>=int(params[0].z))break;if(!inside(point,4+i*3)){fragmentColor=vec4(0.0);return;}}
   float alpha=1.0;
@@ -59,36 +62,61 @@ void main(){
     }
   }
   fragmentColor=c*alpha;
-`:mode==='spread'?`
+`
+      : mode === 'spread'
+        ? `
   // Across, from where the glow is moved from: the stage's y runs down, the target's up.
   int r=int(params[28].z),kind=int(params[28].y+0.5);ivec2 from=at-ivec2(int(params[30].x),-int(params[30].y));float g=0.0;
   for(int i=-16;i<=16;i++){if(abs(i)>r)continue;float t=alphaAt(sourceTexture,from+ivec2(i,0),size);g=kind==2?max(g,t):g+t;}
   if(kind==1)g/=float(2*r+1);
   fragmentColor=vec4(0.0,0.0,0.0,g);
-`:`
+`
+        : `
   vec4 sum=vec4(0.0);int radius=int(params[0].x);
-  for(int i=-16;i<=16;i++){if(abs(i)>radius)continue;ivec2 p=at+`+(mode==='horizontal'?'ivec2(i,0)':'ivec2(0,i)')+`;
+  for(int i=-16;i<=16;i++){if(abs(i)>radius)continue;ivec2 p=at+` +
+          (mode === 'horizontal' ? 'ivec2(i,0)' : 'ivec2(0,i)') +
+          `;
     if(all(greaterThanEqual(p,ivec2(0)))&&all(lessThan(p,size)))sum+=texelFetch(sourceTexture,p,0);}
   fragmentColor=sum/float(2*radius+1);
-`)+`}
-`;
+`) +
+    `}
+`
+  );
 }
-export function createSharedEffectPipeline(shader:(d:GPUShaderModuleDescriptor)=>GPUShaderModule,pipeline:(d:GPURenderPipelineDescriptor)=>Promise<GPURenderPipeline>,mode:SharedEffectPass):Promise<GPURenderPipeline>{
-  const module=shader({code:`
+export function createSharedEffectPipeline(
+  shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule,
+  pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>,
+  mode: SharedEffectPass
+): Promise<GPURenderPipeline> {
+  const module = shader({
+    code:
+      `
 struct Params { values:array<vec4<f32>,${VECTORS}> }
 @group(0) @binding(0) var<uniform> params:Params;
 @group(0) @binding(1) var sourceTexture:texture_2d<f32>;
-`+(mode==='composite'?'@group(0) @binding(2) var maskTexture:texture_2d<f32>;\n@group(0) @binding(3) var glowTexture:texture_2d<f32>;':'')+`
+` +
+      (mode === 'composite'
+        ? '@group(0) @binding(2) var maskTexture:texture_2d<f32>;\n@group(0) @binding(3) var glowTexture:texture_2d<f32>;'
+        : '') +
+      `
 fn localPoint(point:vec2<f32>,base:u32)->vec2<f32>{let m=params.values[base];let t=params.values[base+1u];return vec2<f32>(m.x*point.x+m.z*point.y,m.y*point.x+m.w*point.y)+t.xy;}
 fn inside(point:vec2<f32>,base:u32)->bool{let p=localPoint(point,base)-params.values[base+1u].zw;return all(p>=vec2<f32>(0.0))&&all(p<params.values[base+2u].xy);}
 fn decodeColor(c:vec3<f32>)->vec3<f32>{return select(pow((c+0.055)/1.055,vec3<f32>(2.4)),c/12.92,c<vec3<f32>(0.04045));}
 fn encodeColor(c:vec3<f32>)->vec3<f32>{return select(1.055*pow(c,vec3<f32>(1.0/2.4))-0.055,c*12.92,c<vec3<f32>(0.0031308));}
 @vertex fn vertexMain(@builtin(vertex_index) index:u32)->@builtin(position) vec4<f32>{let p=array<vec2<f32>,3>(vec2<f32>(-1.0,-1.0),vec2<f32>(3.0,-1.0),vec2<f32>(-1.0,3.0));return vec4<f32>(p[index],0.0,1.0);}
-`+(mode==='composite'?`fn glowAt(p:vec2<i32>,size:vec2<i32>)->f32{if(all(p>=vec2<i32>(0))&&all(p<size)){return textureLoad(glowTexture,p,0).a;}return 0.0;}
-`:mode==='spread'?`fn alphaAt(p:vec2<i32>,size:vec2<i32>)->f32{if(all(p>=vec2<i32>(0))&&all(p<size)){return textureLoad(sourceTexture,p,0).a;}return 0.0;}
-`:'')+`@fragment fn fragmentMain(@builtin(position) position:vec4<f32>)->@location(0) vec4<f32>{
+` +
+      (mode === 'composite'
+        ? `fn glowAt(p:vec2<i32>,size:vec2<i32>)->f32{if(all(p>=vec2<i32>(0))&&all(p<size)){return textureLoad(glowTexture,p,0).a;}return 0.0;}
+`
+        : mode === 'spread'
+          ? `fn alphaAt(p:vec2<i32>,size:vec2<i32>)->f32{if(all(p>=vec2<i32>(0))&&all(p<size)){return textureLoad(sourceTexture,p,0).a;}return 0.0;}
+`
+          : '') +
+      `@fragment fn fragmentMain(@builtin(position) position:vec4<f32>)->@location(0) vec4<f32>{
  let at=vec2<i32>(position.xy);let size=vec2<i32>(textureDimensions(sourceTexture));
-`+(mode==='composite'?`
+` +
+      (mode === 'composite'
+        ? `
  for(var i=0u;i<8u;i++){if(i>=u32(params.values[0].z)){break;}if(!inside(position.xy,4u+i*3u)){return vec4<f32>(0.0);}}
  var alpha=1.0;
  if(params.values[0].w>0.5){if(!inside(position.xy,1u)){return vec4<f32>(0.0);}let uv=(localPoint(position.xy,1u)-params.values[2].zw)/params.values[3].xy;alpha=textureLoad(maskTexture,vec2<i32>(floor(uv*vec2<f32>(textureDimensions(maskTexture)))),0).a;}
@@ -114,17 +142,34 @@ fn encodeColor(c:vec3<f32>)->vec3<f32>{return select(1.055*pow(c,vec3<f32>(1.0/2
   }
  }
  return c*alpha;
-`:mode==='spread'?`
+`
+        : mode === 'spread'
+          ? `
  let r=i32(params.values[28].z);let kind=i32(params.values[28].y+0.5);let sampleOrigin=at-vec2<i32>(i32(params.values[30].x),i32(params.values[30].y));var g=0.0;
  for(var i=-16;i<=16;i++){if(abs(i)>r){continue;}let t=alphaAt(sampleOrigin+vec2<i32>(i,0),size);if(kind==2){g=max(g,t);}else{g+=t;}}
  if(kind==1){g=g/f32(2*r+1);}
  return vec4<f32>(0.0,0.0,0.0,g);
-`:`
+`
+          : `
  var sum=vec4<f32>(0.0);let radius=i32(params.values[0].x);
- for(var i=-16;i<=16;i++){if(abs(i)>radius){continue;}let p=at+`+(mode==='horizontal'?'vec2<i32>(i,0)':'vec2<i32>(0,i)')+`;if(all(p>=vec2<i32>(0))&&all(p<size)){sum+=textureLoad(sourceTexture,p,0);}}
+ for(var i=-16;i<=16;i++){if(abs(i)>radius){continue;}let p=at+` +
+            (mode === 'horizontal' ? 'vec2<i32>(i,0)' : 'vec2<i32>(0,i)') +
+            `;if(all(p>=vec2<i32>(0))&&all(p<size)){sum+=textureLoad(sourceTexture,p,0);}}
  return sum/f32(2*radius+1);
-`)+`}`});
-  const target:GPUColorTargetState={format:'rgba8unorm-srgb',writeMask:15};
-  if(mode==='composite')target.blend={color:{operation:'add',srcFactor:'one',dstFactor:'one-minus-src-alpha'},alpha:{operation:'add',srcFactor:'one',dstFactor:'one-minus-src-alpha'}};
-  return pipeline({layout:'auto',vertex:{module,entryPoint:'vertexMain'},fragment:{module,entryPoint:'fragmentMain',targets:[target]},primitive:{topology:'triangle-list',frontFace:'ccw',cullMode:'none'},multisample:{count:1,alphaToCoverageEnabled:false}});
+`) +
+      `}`
+  });
+  const target: GPUColorTargetState = { format: 'rgba8unorm-srgb', writeMask: 15 };
+  if (mode === 'composite')
+    target.blend = {
+      color: { operation: 'add', srcFactor: 'one', dstFactor: 'one-minus-src-alpha' },
+      alpha: { operation: 'add', srcFactor: 'one', dstFactor: 'one-minus-src-alpha' }
+    };
+  return pipeline({
+    layout: 'auto',
+    vertex: { module, entryPoint: 'vertexMain' },
+    fragment: { module, entryPoint: 'fragmentMain', targets: [target] },
+    primitive: { topology: 'triangle-list', frontFace: 'ccw', cullMode: 'none' },
+    multisample: { count: 1, alphaToCoverageEnabled: false }
+  });
 }

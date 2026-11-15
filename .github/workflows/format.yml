@@ -1,0 +1,26 @@
+name: Source layout
+on:
+  pull_request:
+    paths: ['packages/**', 'biome.json', 'tools/format.mjs', 'tools/format/**', '.github/workflows/format.yml']
+  push:
+    branches: [main]
+    paths: ['packages/**', 'biome.json', 'tools/format.mjs', 'tools/format/**', '.github/workflows/format.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  format:
+    name: Sources are laid out by the formatter
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      # The formatter is installed apart from the workspace, from its own lockfile.
+      # 格式化工具独立于工作区安装，使用它自己的锁文件。
+      - run: npm ci --ignore-scripts --prefix tools/format
+      - run: node tools/format.mjs --check

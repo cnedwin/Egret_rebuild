@@ -21,7 +21,9 @@ export interface BitmapBindingOwner {
   }>;
   close(): void;
 }
-const APPLY = Reflect.apply, FREEZE = Object.freeze, IS_ARRAY = Array.isArray;
+const APPLY = Reflect.apply,
+  FREEZE = Object.freeze,
+  IS_ARRAY = Array.isArray;
 const HAS_OWN = Object.prototype.hasOwnProperty;
 const SCOPE_STATE = Object.getOwnPropertyDescriptor(Scope.prototype, 'state')!.get!;
 const SCOPE_USE = Scope.prototype.use;
@@ -60,7 +62,8 @@ function assertOperation(record: TicketRecord, phase: 'captured' | 'prepared'): 
 function markTerminal(record: TicketRecord, conflict = false): void {
   record.conflict = record.conflict || conflict;
   record.phase = 'terminal';
-  record.captured = undefined; record.prepared = undefined;
+  record.captured = undefined;
+  record.prepared = undefined;
   record.inventory.delete(record);
 }
 function clearPublication(record: TicketRecord): void {
@@ -78,19 +81,30 @@ function observeRefusal(record: TicketRecord, cause: unknown): void {
 }
 /** Revalidate even thrown undefined before selecting a caller-read error. */
 function callerRead<T>(read: () => T, code: string, revalidate: () => void): T {
-  let value!: T, failed = false;
+  let value!: T,
+    failed = false;
   let cause: unknown;
-  try { value = read(); } catch (failure) { failed = true; cause = failure; }
+  try {
+    value = read();
+  } catch (failure) {
+    failed = true;
+    cause = failure;
+  }
   revalidate();
   if (failed) throw new EgretError(code, { cause });
   return value;
 }
-function snapshotArray(input: unknown, code: string, expected: number | undefined, revalidate: () => void): readonly unknown[] {
+function snapshotArray(
+  input: unknown,
+  code: string,
+  expected: number | undefined,
+  revalidate: () => void
+): readonly unknown[] {
   if (!callerRead(() => IS_ARRAY(input), code, revalidate)) throw new EgretError(code);
   const array = input as readonly unknown[];
   const length = callerRead(() => array.length, code, revalidate);
-  if (!Number.isInteger(length) || length < 1 || length > 128
-    || (expected !== undefined && length !== expected)) throw new EgretError(code);
+  if (!Number.isInteger(length) || length < 1 || length > 128 || (expected !== undefined && length !== expected))
+    throw new EgretError(code);
   const snapshot: unknown[] = [];
   for (let index = 0; index < length; index++) {
     if (!callerRead(() => APPLY(HAS_OWN, array, [index]) as boolean, code, revalidate)) throw new EgretError(code);
@@ -104,11 +118,17 @@ function prepare(record: TicketRecord, members: unknown): void {
   record.reading = true;
   try {
     snapshot = snapshotArray(members, 'BITMAP_BINDING_MEMBERS_INVALID', record.count, () => assertAvailable(record));
-  } finally { record.reading = false; }
+  } finally {
+    record.reading = false;
+  }
   try {
     const prepared = record.operations.prepareBatch(record.captured!, snapshot as readonly AssetLease<Texture>[]);
-    record.prepared = prepared; record.phase = 'prepared';
-  } catch (cause) { observeRefusal(record, cause); throw cause; }
+    record.prepared = prepared;
+    record.phase = 'prepared';
+  } catch (cause) {
+    observeRefusal(record, cause);
+    throw cause;
+  }
 }
 function commit(record: TicketRecord): void {
   assertOperation(record, 'prepared');
@@ -116,29 +136,48 @@ function commit(record: TicketRecord): void {
     const publication = record.operations.commitBatch(record.captured!, record.prepared!);
     // Runtime returns an already allocated publication; these writes call nobody.
     record.publication = publication;
-    record.prepared = undefined; record.captured = undefined; record.phase = 'committed';
-  } catch (cause) { observeRefusal(record, cause); throw cause; }
+    record.prepared = undefined;
+    record.captured = undefined;
+    record.phase = 'committed';
+  } catch (cause) {
+    observeRefusal(record, cause);
+    throw cause;
+  }
 }
 function handleFor(record: TicketRecord, handles: WeakMap<object, TicketRecord>): BitmapBindingTicket {
   const receiver = (value: unknown): void => {
     if (value !== handle) throw new EgretError('BITMAP_BINDING_INVALID');
   };
   const handle: BitmapBindingTicket = FREEZE({
-    prepare(members: readonly AssetLease<Texture>[]): void { receiver(this); prepare(record, members); },
-    commit(): void { receiver(this); commit(record); },
-    dispose(): void { receiver(this); dispose(record); },
+    prepare(members: readonly AssetLease<Texture>[]): void {
+      receiver(this);
+      prepare(record, members);
+    },
+    commit(): void {
+      receiver(this);
+      commit(record);
+    },
+    dispose(): void {
+      receiver(this);
+      dispose(record);
+    }
   });
   handles.set(handle, record);
   return handle;
 }
-export function createBitmapBindingOwner(context: BitmapBindingContext, targets: WeakMap<Bitmap, Operations>): BitmapBindingOwner {
+export function createBitmapBindingOwner(
+  context: BitmapBindingContext,
+  targets: WeakMap<Bitmap, Operations>
+): BitmapBindingOwner {
   const inventory = new Set<TicketRecord>();
   // Exact handles point back to the sole existing record, including terminal records.
   const handles = new WeakMap<object, TicketRecord>();
   return FREEZE({
     capture(scope: unknown, input: unknown): BitmapBindingTicket {
       assertLifetime(context, scope);
-      const snapshot = snapshotArray(input, 'BITMAP_BINDING_TARGETS_INVALID', undefined, () => assertLifetime(context, scope));
+      const snapshot = snapshotArray(input, 'BITMAP_BINDING_TARGETS_INVALID', undefined, () =>
+        assertLifetime(context, scope)
+      );
       const seen = new Set<unknown>();
       let operations: Operations | undefined;
       // All caller reads finished before authenticating final current targets.
@@ -147,15 +186,31 @@ export function createBitmapBindingOwner(context: BitmapBindingContext, targets:
         if (current === undefined || seen.has(target) || (operations !== undefined && operations !== current)) {
           throw new EgretError('BITMAP_BINDING_TARGETS_INVALID');
         }
-        seen.add(target); operations = current;
+        seen.add(target);
+        operations = current;
       }
       const captured = operations!.captureBatch(snapshot as readonly Bitmap[]);
-      const record: TicketRecord = { context, scope, operations: operations!, inventory,
-        phase: 'captured', conflict: false, reading: false, captured, prepared: undefined, publication: undefined, count: snapshot.length };
+      const record: TicketRecord = {
+        context,
+        scope,
+        operations: operations!,
+        inventory,
+        phase: 'captured',
+        conflict: false,
+        reading: false,
+        captured,
+        prepared: undefined,
+        publication: undefined,
+        count: snapshot.length
+      };
       const handle = handleFor(record, handles);
       inventory.add(record);
-      try { APPLY(SCOPE_USE, scope, [handle]); }
-      catch (cause) { dispose(record); throw cause; }
+      try {
+        APPLY(SCOPE_USE, scope, [handle]);
+      } catch (cause) {
+        dispose(record);
+        throw cause;
+      }
       return handle;
     },
     readPreparedForCapture(ticket: unknown) {
@@ -164,12 +219,18 @@ export function createBitmapBindingOwner(context: BitmapBindingContext, targets:
       if (record === undefined) throw new EgretError('BITMAP_BINDING_INVALID');
       assertOperation(record, 'prepared');
       return FREEZE({
-        validate(): void { assertOperation(record, 'prepared'); },
+        validate(): void {
+          assertOperation(record, 'prepared');
+        },
         captureContent(stage: Stage): CapturedSharedContent2D {
           assertOperation(record, 'prepared');
-          try { return record.operations.capturePreparedSharedContent(stage, record.captured!, record.prepared!); }
-          catch (cause) { observeRefusal(record, cause); throw cause; }
-        },
+          try {
+            return record.operations.capturePreparedSharedContent(stage, record.captured!, record.prepared!);
+          } catch (cause) {
+            observeRefusal(record, cause);
+            throw cause;
+          }
+        }
       });
     },
     close(): void {
@@ -177,6 +238,6 @@ export function createBitmapBindingOwner(context: BitmapBindingContext, targets:
       // Every ticket is terminal before any matching publication is cleared.
       for (const record of records) markTerminal(record);
       for (const record of records) clearPublication(record);
-    },
+    }
   });
 }

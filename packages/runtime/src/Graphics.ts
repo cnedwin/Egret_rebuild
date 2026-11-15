@@ -1,7 +1,29 @@
 import type { DisplayObject } from "./DisplayObject.js";
 import { EgretError } from "./EgretError.js";
-import { assertVisualMutable, color, unit, finite, copyRect, visualOf, recordVisualChange, VISUAL_CONTENT } from "./displayVisualState.js";
-import { GRAPHICS_SHAPE_LIMITS, addOutline, addPath, arcPoints, bezierPoints, copyDrawing, createShapeState, curveSegments, drawingFits, ellipseOutline, roundRectOutline, shapeFits } from "./graphicsShape.js";
+import {
+  assertVisualMutable,
+  color,
+  unit,
+  finite,
+  copyRect,
+  visualOf,
+  recordVisualChange,
+  VISUAL_CONTENT
+} from "./displayVisualState.js";
+import {
+  GRAPHICS_SHAPE_LIMITS,
+  addOutline,
+  addPath,
+  arcPoints,
+  bezierPoints,
+  copyDrawing,
+  createShapeState,
+  curveSegments,
+  drawingFits,
+  ellipseOutline,
+  roundRectOutline,
+  shapeFits
+} from "./graphicsShape.js";
 import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
 import type { AssetLease } from "./AssetLease.js";
 import { isTexture, readTextureSnapshot } from "./Texture.js";
@@ -21,13 +43,28 @@ export interface LineStyleOptions {
   readonly dash?: readonly number[];
 }
 /** A colour of a gradient: where it is, from 0 at the start to 1 at the end, its colour, and its alpha, 1 unless given. */
-export interface GradientColorStop { readonly offset: number; readonly color: number; readonly alpha?: number; }
+export interface GradientColorStop {
+  readonly offset: number;
+  readonly color: number;
+  readonly alpha?: number;
+}
 /** The matrix of an older gradient call: it places a square 1638.4 units wide, centred on the origin, in the node. */
-export interface GradientBoxMatrix { readonly a: number; readonly b: number; readonly c: number; readonly d: number; readonly tx: number; readonly ty: number; }
+export interface GradientBoxMatrix {
+  readonly a: number;
+  readonly b: number;
+  readonly c: number;
+  readonly d: number;
+  readonly tx: number;
+  readonly ty: number;
+}
 
 const invalid = (): EgretError => new EgretError("GRAPHICS_VALUE_INVALID");
-const numbers = (...values: readonly unknown[]): void => { for (const value of values) if (!finite(value)) throw invalid(); };
-const size = (...values: readonly unknown[]): void => { for (const value of values) if (!finite(value) || (value as number) < 0) throw invalid(); };
+const numbers = (...values: readonly unknown[]): void => {
+  for (const value of values) if (!finite(value)) throw invalid();
+};
+const size = (...values: readonly unknown[]): void => {
+  for (const value of values) if (!finite(value) || (value as number) < 0) throw invalid();
+};
 
 /**
  * Drawing state belongs to one node; every shape snapshots its fill and its line. A node that draws only filled
@@ -48,7 +85,9 @@ export class Graphics {
    * which is that much larger. A fill under a line has no band of its own. Filled rectangles alone stay rectangles,
    * and an image fill has no band.
    */
-  public get smoothing(): number { return this.soft; }
+  public get smoothing(): number {
+    return this.soft;
+  }
   public set smoothing(value: number) {
     assertVisualMutable(this.owner);
     if (!finite(value) || value < 0 || value > 8) throw invalid();
@@ -70,38 +109,89 @@ export class Graphics {
   /** The line of the shapes drawn after it: its width in the node's units, colour and alpha. No width, or 0, ends the line. */
   public lineStyle(thickness?: number, value = 0, alpha = 1, options: LineStyleOptions = {}): this {
     assertVisualMutable(this.owner);
-    if (thickness !== undefined && (!finite(thickness) || thickness < 0 || thickness > GRAPHICS_SHAPE_LIMITS.maxLineWidth)) throw invalid();
+    if (
+      thickness !== undefined &&
+      (!finite(thickness) || thickness < 0 || thickness > GRAPHICS_SHAPE_LIMITS.maxLineWidth)
+    )
+      throw invalid();
     if (!color(value) || !unit(alpha) || typeof options !== "object" || options === null) throw invalid();
-    const caps = options.caps ?? "none", joints = options.joints ?? "miter", miterLimit = options.miterLimit ?? 4, given = options.dash;
-    if ((caps !== "none" && caps !== "round" && caps !== "square") || (joints !== "miter" && joints !== "round" && joints !== "bevel") || !finite(miterLimit) || miterLimit < 1) throw invalid();
+    const caps = options.caps ?? "none",
+      joints = options.joints ?? "miter",
+      miterLimit = options.miterLimit ?? 4,
+      given = options.dash;
+    if (
+      (caps !== "none" && caps !== "round" && caps !== "square") ||
+      (joints !== "miter" && joints !== "round" && joints !== "bevel") ||
+      !finite(miterLimit) ||
+      miterLimit < 1
+    )
+      throw invalid();
     let dash: number[] | undefined;
     if (given !== undefined) {
       if (!Array.isArray(given) || given.length > 16) throw invalid();
       let sum = 0;
-      for (const length of given) { if (!finite(length) || length < 0) throw invalid(); sum += length; }
+      for (const length of given) {
+        if (!finite(length) || length < 0) throw invalid();
+        sum += length;
+      }
       // No lengths, or lengths of nothing, are no dashes.
       if (sum > 0) dash = given.slice();
     }
     this.finishPath();
-    this.line = thickness === undefined || thickness === 0 ? undefined : { width: thickness, color: value, alpha, caps, joints, miterLimit, dash };
+    this.line =
+      thickness === undefined || thickness === 0
+        ? undefined
+        : { width: thickness, color: value, alpha, caps, joints, miterLimit, dash };
     return this;
   }
 
   /** A fill whose colour runs along the line from one point to another, and stays the end colours beyond them. */
-  public beginLinearGradientFill(x0: number, y0: number, x1: number, y1: number, stops: readonly GradientColorStop[]): this {
+  public beginLinearGradientFill(
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number,
+    stops: readonly GradientColorStop[]
+  ): this {
     assertVisualMutable(this.owner);
     numbers(x0, y0, x1, y1);
-    const dx = x1 - x0, dy = y1 - y0, square = dx * dx + dy * dy;
+    const dx = x1 - x0,
+      dy = y1 - y0,
+      square = dx * dx + dy * dy;
     if (!(square > 0) || !finite(1 / square)) throw invalid();
-    return this.gradient({ radial: false, a: dx / square, c: dy / square, tx: -(x0 * dx + y0 * dy) / square, b: 0, d: 0, ty: 0, stops: gradientStops(stops) });
+    return this.gradient({
+      radial: false,
+      a: dx / square,
+      c: dy / square,
+      tx: -(x0 * dx + y0 * dy) / square,
+      b: 0,
+      d: 0,
+      ty: 0,
+      stops: gradientStops(stops)
+    });
   }
 
   /** A fill whose colour runs from a centre out to a circle, or to an ellipse when `radiusY` is given, and stays the last colour beyond it. */
-  public beginRadialGradientFill(x: number, y: number, radius: number, stops: readonly GradientColorStop[], radiusY = radius): this {
+  public beginRadialGradientFill(
+    x: number,
+    y: number,
+    radius: number,
+    stops: readonly GradientColorStop[],
+    radiusY = radius
+  ): this {
     assertVisualMutable(this.owner);
     numbers(x, y, radius, radiusY);
     if (!(radius > 0) || !(radiusY > 0) || !finite(1 / radius) || !finite(1 / radiusY)) throw invalid();
-    return this.gradient({ radial: true, a: 1 / radius, c: 0, tx: -x / radius, b: 0, d: 1 / radiusY, ty: -y / radiusY, stops: gradientStops(stops) });
+    return this.gradient({
+      radial: true,
+      a: 1 / radius,
+      c: 0,
+      tx: -x / radius,
+      b: 0,
+      d: 1 / radiusY,
+      ty: -y / radiusY,
+      stops: gradientStops(stops)
+    });
   }
 
   /**
@@ -109,19 +199,60 @@ export class Graphics {
    * that places the gradient's square of 1638.4 units, centred on the origin, in the node. Without a matrix that
    * square is where it is.
    */
-  public beginGradientFill(type: "linear" | "radial", colors: readonly number[], alphas: readonly number[], ratios: readonly number[], matrix?: GradientBoxMatrix): this {
+  public beginGradientFill(
+    type: "linear" | "radial",
+    colors: readonly number[],
+    alphas: readonly number[],
+    ratios: readonly number[],
+    matrix?: GradientBoxMatrix
+  ): this {
     assertVisualMutable(this.owner);
-    if ((type !== "linear" && type !== "radial") || !Array.isArray(colors) || !Array.isArray(alphas) || !Array.isArray(ratios) || colors.length !== alphas.length || colors.length !== ratios.length) throw invalid();
+    if (
+      (type !== "linear" && type !== "radial") ||
+      !Array.isArray(colors) ||
+      !Array.isArray(alphas) ||
+      !Array.isArray(ratios) ||
+      colors.length !== alphas.length ||
+      colors.length !== ratios.length
+    )
+      throw invalid();
     const m = matrix ?? { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
     if (typeof m !== "object" || m === null) throw invalid();
     numbers(m.a, m.b, m.c, m.d, m.tx, m.ty);
     for (const ratio of ratios) if (!finite(ratio) || ratio < 0 || ratio > 255) throw invalid();
-    const det = m.a * m.d - m.b * m.c, stops = gradientStops(colors.map((value, i) => ({ offset: (ratios[i] as number) / 255, color: value, alpha: alphas[i] as number })));
+    const det = m.a * m.d - m.b * m.c,
+      stops = gradientStops(
+        colors.map((value, i) => ({ offset: (ratios[i] as number) / 255, color: value, alpha: alphas[i] as number }))
+      );
     if (det === 0 || !finite(1 / det)) throw invalid();
     // The node's point in the square's units, then along the square for a linear gradient or out from its centre for a radial one.
-    const ia = m.d / det, ic = -m.c / det, itx = (m.c * m.ty - m.d * m.tx) / det, ib = -m.b / det, id = m.a / det, ity = (m.b * m.tx - m.a * m.ty) / det;
-    if (type === "linear") return this.gradient({ radial: false, a: ia / 1638.4, c: ic / 1638.4, tx: itx / 1638.4 + 0.5, b: 0, d: 0, ty: 0, stops });
-    return this.gradient({ radial: true, a: ia / 819.2, c: ic / 819.2, tx: itx / 819.2, b: ib / 819.2, d: id / 819.2, ty: ity / 819.2, stops });
+    const ia = m.d / det,
+      ic = -m.c / det,
+      itx = (m.c * m.ty - m.d * m.tx) / det,
+      ib = -m.b / det,
+      id = m.a / det,
+      ity = (m.b * m.tx - m.a * m.ty) / det;
+    if (type === "linear")
+      return this.gradient({
+        radial: false,
+        a: ia / 1638.4,
+        c: ic / 1638.4,
+        tx: itx / 1638.4 + 0.5,
+        b: 0,
+        d: 0,
+        ty: 0,
+        stops
+      });
+    return this.gradient({
+      radial: true,
+      a: ia / 819.2,
+      c: ic / 819.2,
+      tx: itx / 819.2,
+      b: ib / 819.2,
+      d: id / 819.2,
+      ty: ity / 819.2,
+      stops
+    });
   }
 
   public drawRect(x: number, y: number, width: number, height: number): this {
@@ -130,28 +261,53 @@ export class Graphics {
     this.paintRequired();
     const state = visualOf(this.owner);
     // Filled rectangles alone stay rectangles, which a frame draws without a geometry.
-    if (state.shape === undefined && this.line === undefined && this.fill!.gradient === undefined && this.fill!.bitmap === undefined) { state.primitives.push({ rect, ...this.fill! }); recordVisualChange(this.owner, VISUAL_CONTENT); return this; }
+    if (
+      state.shape === undefined &&
+      this.line === undefined &&
+      this.fill!.gradient === undefined &&
+      this.fill!.bitmap === undefined
+    ) {
+      state.primitives.push({ rect, ...this.fill! });
+      recordVisualChange(this.owner, VISUAL_CONTENT);
+      return this;
+    }
     return this.outline([x, y, x + width, y, x + width, y + height, x, y + height], true);
   }
 
   public drawCircle(x: number, y: number, radius: number): this {
     assertVisualMutable(this.owner);
-    numbers(x, y); size(radius); this.paintRequired();
+    numbers(x, y);
+    size(radius);
+    this.paintRequired();
     return this.outline(ellipseOutline(x, y, radius, radius), true);
   }
 
   /** An ellipse inside the rectangle of this corner and size. */
   public drawEllipse(x: number, y: number, width: number, height: number): this {
     assertVisualMutable(this.owner);
-    numbers(x, y); size(width, height); this.paintRequired();
+    numbers(x, y);
+    size(width, height);
+    this.paintRequired();
     return this.outline(ellipseOutline(x + width / 2, y + height / 2, width / 2, height / 2), true);
   }
 
   /** A rectangle whose corners are quarter ellipses: `ellipseWidth` and `ellipseHeight` are the whole widths and heights of those ellipses. */
-  public drawRoundRect(x: number, y: number, width: number, height: number, ellipseWidth: number, ellipseHeight = ellipseWidth): this {
+  public drawRoundRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    ellipseWidth: number,
+    ellipseHeight = ellipseWidth
+  ): this {
     assertVisualMutable(this.owner);
-    numbers(x, y); size(width, height, ellipseWidth, ellipseHeight); this.paintRequired();
-    return this.outline(roundRectOutline(x, y, width, height, Math.min(ellipseWidth, width) / 2, Math.min(ellipseHeight, height) / 2), true);
+    numbers(x, y);
+    size(width, height, ellipseWidth, ellipseHeight);
+    this.paintRequired();
+    return this.outline(
+      roundRectOutline(x, y, width, height, Math.min(ellipseWidth, width) / 2, Math.min(ellipseHeight, height) / 2),
+      true
+    );
   }
 
   /** Starts a new part of the path at a point. A path is filled and lined with the fill and line it was begun under. */
@@ -175,27 +331,56 @@ export class Graphics {
   public curveTo(controlX: number, controlY: number, anchorX: number, anchorY: number): this {
     assertVisualMutable(this.owner);
     numbers(controlX, controlY, anchorX, anchorY);
-    const mark = this.mark(), points = this.current(), n = points.length;
+    const mark = this.mark(),
+      points = this.current(),
+      n = points.length;
     points.push(...bezierPoints([points[n - 2]!, points[n - 1]!], [controlX, controlY], [anchorX, anchorY]));
     return this.changed(mark);
   }
 
   /** A curve from where the path is to an anchor, bent towards two control points. */
-  public cubicCurveTo(controlX1: number, controlY1: number, controlX2: number, controlY2: number, anchorX: number, anchorY: number): this {
+  public cubicCurveTo(
+    controlX1: number,
+    controlY1: number,
+    controlX2: number,
+    controlY2: number,
+    anchorX: number,
+    anchorY: number
+  ): this {
     assertVisualMutable(this.owner);
     numbers(controlX1, controlY1, controlX2, controlY2, anchorX, anchorY);
-    const mark = this.mark(), points = this.current(), n = points.length;
-    points.push(...bezierPoints([points[n - 2]!, points[n - 1]!], [controlX1, controlY1, controlX2, controlY2], [anchorX, anchorY]));
+    const mark = this.mark(),
+      points = this.current(),
+      n = points.length;
+    points.push(
+      ...bezierPoints(
+        [points[n - 2]!, points[n - 1]!],
+        [controlX1, controlY1, controlX2, controlY2],
+        [anchorX, anchorY]
+      )
+    );
     return this.changed(mark);
   }
 
   /** An arc of a circle, in radians from the positive x axis, clockwise on the screen unless `anticlockwise`. A path already begun is joined to its start by a line. */
-  public drawArc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise = false): this {
+  public drawArc(
+    x: number,
+    y: number,
+    radius: number,
+    startAngle: number,
+    endAngle: number,
+    anticlockwise = false
+  ): this {
     assertVisualMutable(this.owner);
-    numbers(x, y, startAngle, endAngle); size(radius);
+    numbers(x, y, startAngle, endAngle);
+    size(radius);
     if (typeof anticlockwise !== "boolean") throw invalid();
-    const mark = this.mark(), path = this.path(), startX = x + radius * Math.cos(startAngle), startY = y + radius * Math.sin(startAngle);
-    if (path.subpaths.length === 0) path.subpaths.push([startX, startY]); else path.subpaths[path.subpaths.length - 1]!.push(startX, startY);
+    const mark = this.mark(),
+      path = this.path(),
+      startX = x + radius * Math.cos(startAngle),
+      startY = y + radius * Math.sin(startAngle);
+    if (path.subpaths.length === 0) path.subpaths.push([startX, startY]);
+    else path.subpaths[path.subpaths.length - 1]!.push(startX, startY);
     path.subpaths[path.subpaths.length - 1]!.push(...arcPoints(x, y, radius, startAngle, endAngle, anticlockwise));
     return this.changed(mark);
   }
@@ -210,7 +395,8 @@ export class Graphics {
 
   public clear(): void {
     assertVisualMutable(this.owner);
-    const state = visualOf(this.owner), changed = state.primitives.length !== 0 || state.shape !== undefined;
+    const state = visualOf(this.owner),
+      changed = state.primitives.length !== 0 || state.shape !== undefined;
     state.primitives = [];
     state.shape = undefined;
     this.fill = undefined;
@@ -229,25 +415,41 @@ export class Graphics {
     if (!isAssetLease(lease) || typeof repeat !== "boolean") throw invalid();
     const texture = readAssetLeaseValue(lease);
     if (!isTexture(texture)) throw invalid();
-    const snapshot = readTextureSnapshot(texture), width = snapshot.image.width, height = snapshot.image.height, rect = snapshot.sourceRect;
+    const snapshot = readTextureSnapshot(texture),
+      width = snapshot.image.width,
+      height = snapshot.image.height,
+      rect = snapshot.sourceRect;
     // A part of an atlas cannot repeat by itself: the image around it would show.
-    if (snapshot.viewRegion !== null || rect.x !== 0 || rect.y !== 0 || rect.width !== width || rect.height !== height) throw invalid();
+    if (snapshot.viewRegion !== null || rect.x !== 0 || rect.y !== 0 || rect.width !== width || rect.height !== height)
+      throw invalid();
     const m = matrix ?? { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
     if (typeof m !== "object" || m === null) throw invalid();
     numbers(m.a, m.b, m.c, m.d, m.tx, m.ty);
     const det = m.a * m.d - m.b * m.c;
     if (det === 0 || !finite(1 / det)) throw invalid();
     // The node's point as a pixel of the image, then as a part of its width and height.
-    const bitmap = { lease, repeat, width, height, a: m.d / det / width, c: -m.c / det / width, tx: (m.c * m.ty - m.d * m.tx) / det / width,
-      b: -m.b / det / height, d: m.a / det / height, ty: (m.b * m.tx - m.a * m.ty) / det / height };
-    for (const value of [bitmap.a, bitmap.b, bitmap.c, bitmap.d, bitmap.tx, bitmap.ty]) if (!finite(value)) throw invalid();
+    const bitmap = {
+      lease,
+      repeat,
+      width,
+      height,
+      a: m.d / det / width,
+      c: -m.c / det / width,
+      tx: (m.c * m.ty - m.d * m.tx) / det / width,
+      b: -m.b / det / height,
+      d: m.a / det / height,
+      ty: (m.b * m.tx - m.a * m.ty) / det / height
+    };
+    for (const value of [bitmap.a, bitmap.b, bitmap.c, bitmap.d, bitmap.tx, bitmap.ty])
+      if (!finite(value)) throw invalid();
     this.finishPath();
     this.fill = { color: 0xffffff, alpha: 1, bitmap };
     return this;
   }
 
   private gradient(gradient: ShapeGradient): this {
-    for (const value of [gradient.a, gradient.b, gradient.c, gradient.d, gradient.tx, gradient.ty]) if (!finite(value)) throw invalid();
+    for (const value of [gradient.a, gradient.b, gradient.c, gradient.d, gradient.tx, gradient.ty])
+      if (!finite(value)) throw invalid();
     this.finishPath();
     const first = gradient.stops[0]!;
     this.fill = { color: first.color, alpha: first.alpha, gradient };
@@ -262,7 +464,22 @@ export class Graphics {
     if (state.shape === undefined) {
       const shape = createShapeState();
       for (const { rect, color: value, alpha } of state.primitives)
-        addOutline(shape, [rect.x, rect.y, rect.x + rect.width, rect.y, rect.x + rect.width, rect.y + rect.height, rect.x, rect.y + rect.height], true, { color: value, alpha }, undefined);
+        addOutline(
+          shape,
+          [
+            rect.x,
+            rect.y,
+            rect.x + rect.width,
+            rect.y,
+            rect.x + rect.width,
+            rect.y + rect.height,
+            rect.x,
+            rect.y + rect.height
+          ],
+          true,
+          { color: value, alpha },
+          undefined
+        );
       state.primitives = [];
       state.shape = shape;
     }
@@ -270,7 +487,7 @@ export class Graphics {
   }
   private path(): ShapeState["path"] & object {
     const shape = this.shape();
-    return shape.path ??= { fill: this.edged(this.fill), line: this.edged(this.line), subpaths: [] };
+    return (shape.path ??= { fill: this.edged(this.fill), line: this.edged(this.line), subpaths: [] });
   }
   /** The part of the path being drawn; a path that was not begun with moveTo begins at the origin. */
   private current(): number[] {
@@ -295,52 +512,109 @@ export class Graphics {
   private outline(points: number[], convex: boolean): this {
     this.finishPath();
     const mark = this.mark();
-    if (!addOutline(this.shape(), points, convex, this.edged(this.fill), this.edged(this.line))) { mark(); throw new EgretError("GRAPHICS_BUDGET"); }
+    if (!addOutline(this.shape(), points, convex, this.edged(this.fill), this.edged(this.line))) {
+      mark();
+      throw new EgretError("GRAPHICS_BUDGET");
+    }
     return this.changed(mark);
   }
   /** What the node's drawing is before a shape or a point is added, so that one that does not fit can be taken back. */
   private mark(): () => void {
-    const state = visualOf(this.owner), shape = state.shape;
-    if (shape === undefined) { const primitives = state.primitives; return () => { state.shape = undefined; state.primitives = primitives; }; }
-    const positions = shape.positions.length, colors = shape.colors.length, uvs = shape.uvs.length, indices = shape.indices.length, done = shape.done.length, bitmap = shape.bitmap;
-    const path = shape.path, parts = path?.subpaths.length ?? 0, last = parts === 0 ? 0 : path!.subpaths[parts - 1]!.length;
+    const state = visualOf(this.owner),
+      shape = state.shape;
+    if (shape === undefined) {
+      const primitives = state.primitives;
+      return () => {
+        state.shape = undefined;
+        state.primitives = primitives;
+      };
+    }
+    const positions = shape.positions.length,
+      colors = shape.colors.length,
+      uvs = shape.uvs.length,
+      indices = shape.indices.length,
+      done = shape.done.length,
+      bitmap = shape.bitmap;
+    const path = shape.path,
+      parts = path?.subpaths.length ?? 0,
+      last = parts === 0 ? 0 : path!.subpaths[parts - 1]!.length;
     return () => {
       // A batch begun since is given up, and the one that was being added to is added to again.
-      if (shape.done.length > done) { const batch = shape.done[done]!; shape.positions = batch.positions; shape.colors = batch.colors; shape.uvs = batch.uvs; shape.indices = batch.indices; shape.done.length = done; }
+      if (shape.done.length > done) {
+        const batch = shape.done[done]!;
+        shape.positions = batch.positions;
+        shape.colors = batch.colors;
+        shape.uvs = batch.uvs;
+        shape.indices = batch.indices;
+        shape.done.length = done;
+      }
       shape.bitmap = bitmap;
-      shape.positions.length = positions; shape.colors.length = colors; shape.uvs.length = uvs; shape.indices.length = indices;
+      shape.positions.length = positions;
+      shape.colors.length = colors;
+      shape.uvs.length = uvs;
+      shape.indices.length = indices;
       if (path === undefined) shape.path = undefined;
-      else { path.subpaths.length = parts; if (parts !== 0) path.subpaths[parts - 1]!.length = last; }
+      else {
+        path.subpaths.length = parts;
+        if (parts !== 0) path.subpaths[parts - 1]!.length = last;
+      }
     };
   }
   /** Refuses a drawing one geometry could not hold, leaving the node as it was, then publishes the change. */
   private changed(undo: () => void): this {
-    const shape = visualOf(this.owner).shape!, path = shape.path;
-    let pending = 0, parts = 0, length = 0;
-    if (path !== undefined) for (const points of path.subpaths) {
-      pending += points.length / 2; parts++;
-      if (path.line?.dash !== undefined) for (let i = 2; i < points.length; i += 2) length += Math.hypot(points[i]! - points[i - 2]!, points[i + 1]! - points[i - 1]!);
+    const shape = visualOf(this.owner).shape!,
+      path = shape.path;
+    let pending = 0,
+      parts = 0,
+      length = 0;
+    if (path !== undefined)
+      for (const points of path.subpaths) {
+        pending += points.length / 2;
+        parts++;
+        if (path.line?.dash !== undefined)
+          for (let i = 2; i < points.length; i += 2)
+            length += Math.hypot(points[i]! - points[i - 2]!, points[i + 1]! - points[i - 1]!);
+      }
+    if (pending > GRAPHICS_SHAPE_LIMITS.maxPathPoints) {
+      undo();
+      throw new EgretError("GRAPHICS_BUDGET");
     }
-    if (pending > GRAPHICS_SHAPE_LIMITS.maxPathPoints) { undo(); throw new EgretError("GRAPHICS_BUDGET"); }
     // The most a path point can give: a vertex and a triangle of its fill, and for its line the two triangles of a
     // piece and its corner. A dash adds two ends. A fill by the non-zero rule, or of a gradient, has no such count
     // before it is made.
-    let vertices = shape.positions.length / 2, indices = shape.indices.length;
+    let vertices = shape.positions.length / 2,
+      indices = shape.indices.length;
     if (path !== undefined) {
-      const line = path.line, round = line === undefined ? 0 : curveSegments(line.width / 2) / 2 + 2;
-      if (path.fill !== undefined) { vertices += pending; indices += 3 * pending; }
+      const line = path.line,
+        round = line === undefined ? 0 : curveSegments(line.width / 2) / 2 + 2;
+      if (path.fill !== undefined) {
+        vertices += pending;
+        indices += 3 * pending;
+      }
       if (line !== undefined) {
-        const corner = line.joints === "round" ? round : line.joints === "miter" ? 2 : 1, end = line.caps === "round" ? round : 0;
+        const corner = line.joints === "round" ? round : line.joints === "miter" ? 2 : 1,
+          end = line.caps === "round" ? round : 0;
         let dashes = 0;
-        if (line.dash !== undefined) { let period = 0; for (const part of line.dash) period += part; dashes = Math.ceil(length / period + 1) * Math.ceil(line.dash.length / 2) + parts; }
+        if (line.dash !== undefined) {
+          let period = 0;
+          for (const part of line.dash) period += part;
+          dashes = Math.ceil(length / period + 1) * Math.ceil(line.dash.length / 2) + parts;
+        }
         const ends = 2 * (parts + dashes);
-        vertices += pending * (2 + corner) + ends * (2 + end); indices += pending * (6 + 3 * corner) + ends * 3 * end;
+        vertices += pending * (2 + corner) + ends * (2 + end);
+        indices += pending * (6 + 3 * corner) + ends * 3 * end;
       }
     }
     // Past that count the path is made, to see what it really takes.
     let fits = shapeFits(vertices, indices) && drawingFits(shape);
-    if (!fits && path !== undefined) { const trial = copyDrawing(shape); fits = addPath(trial, path) && drawingFits(trial); }
-    if (!fits) { undo(); throw new EgretError("GRAPHICS_BUDGET"); }
+    if (!fits && path !== undefined) {
+      const trial = copyDrawing(shape);
+      fits = addPath(trial, path) && drawingFits(trial);
+    }
+    if (!fits) {
+      undo();
+      throw new EgretError("GRAPHICS_BUDGET");
+    }
     shape.resolved = undefined;
     recordVisualChange(this.owner, VISUAL_CONTENT);
     return this;
@@ -349,12 +623,14 @@ export class Graphics {
 
 /** Two to sixteen colours in order of their places, as a gradient keeps them. */
 function gradientStops(stops: readonly GradientColorStop[]): GradientStop[] {
-  if (!Array.isArray(stops) || stops.length < 2 || stops.length > GRAPHICS_SHAPE_LIMITS.maxGradientStops) throw invalid();
+  if (!Array.isArray(stops) || stops.length < 2 || stops.length > GRAPHICS_SHAPE_LIMITS.maxGradientStops)
+    throw invalid();
   const out: GradientStop[] = [];
   let before = 0;
   for (const stop of stops) {
     if (typeof stop !== "object" || stop === null) throw invalid();
-    const offset = stop.offset, alpha = stop.alpha ?? 1;
+    const offset = stop.offset,
+      alpha = stop.alpha ?? 1;
     if (!finite(offset) || offset < before || offset > 1 || !color(stop.color) || !unit(alpha)) throw invalid();
     out.push({ offset, color: stop.color, alpha });
     before = offset;

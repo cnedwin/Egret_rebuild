@@ -21,8 +21,12 @@ const APPLY = Reflect.apply;
 const SCOPE_STATE = Object.getOwnPropertyDescriptor(Scope.prototype, 'state')!.get!;
 
 /** Metadata only: default collectors never import the text cache or leaf class. */
-export function hasTextFieldState(value: object): boolean { return states.has(value); }
-export function readTextFieldState(value: object): TextFieldDisplayState | undefined { return states.get(value); }
+export function hasTextFieldState(value: object): boolean {
+  return states.has(value);
+}
+export function readTextFieldState(value: object): TextFieldDisplayState | undefined {
+  return states.get(value);
+}
 export function writeTextFieldState(value: object, state: TextFieldDisplayState): void {
   const changed = readPublishedState(value) !== state;
   states.set(value, state);

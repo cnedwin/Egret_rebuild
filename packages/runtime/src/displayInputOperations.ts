@@ -66,6 +66,6 @@ export function createDisplayInputOperations(stage: Stage): DisplayInputOperatio
       if (route === undefined) return false;
       // No public dispatch, lifetime, parent or candidate hook is input authority.
       return dispatchDisplayInputEvent(target, event, route.slice(1));
-    },
+    }
   });
 }

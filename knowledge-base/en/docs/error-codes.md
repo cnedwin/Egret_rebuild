@@ -1324,10 +1324,29 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
+| `WEB_PNG_BITMAP_INVALID` | The bitmap given to the browser image provider is not valid. |
+| `WEB_PNG_BLOB_FAILED` | The blob of the browser image provider failed. The cause is in cause. |
+| `WEB_PNG_BYTES_INVALID` | The bytes given to the browser image provider is not valid. |
+| `WEB_PNG_CANCELLED` | The browser image provider was cancelled. |
 | `WEB_PNG_CLEANUP_FAILED` | Cleaning up the browser image provider failed. Each cause is in cleanupErrors. |
 | `WEB_PNG_CLOSE_INCOMPLETE` | The browser image provider closed, but not everything it held could be released. The reasons are in cleanupErrors. |
+| `WEB_PNG_CONTEXT_INVALID` | The context given to the browser image provider is not valid. |
+| `WEB_PNG_DECODE_FAILED` | The decode of the browser image provider failed. The cause is in cause. |
 | `WEB_PNG_DESCRIPTOR_READ_FAILED` | The descriptor read of the browser image provider failed. The cause is in cause. |
+| `WEB_PNG_INPUT_LIMIT` | The input limit of the browser image provider was passed. |
+| `WEB_PNG_JOB_LIMIT` | The job limit of the browser image provider was passed. |
+| `WEB_PNG_OPTIONS_INVALID` | The options given to the browser image provider are not valid: one is missing, of the wrong type or out of range. |
+| `WEB_PNG_PROFILE_UNSUPPORTED` | The profile is not supported by the browser image provider. |
+| `WEB_PNG_PROVIDER_CLOSED` | The provider of the browser image provider was closed and takes nothing more. |
+| `WEB_PNG_PROVIDER_INVALID` | The provider given to the browser image provider is not valid. |
 | `WEB_PNG_RASTER_FAILED` | The raster of the browser image provider failed. The cause is in cause. |
+| `WEB_PNG_READBACK_INVALID` | The readback given to the browser image provider is not valid. |
+| `WEB_PNG_READ_FAILED` | The read of the browser image provider failed. The cause is in cause. |
+| `WEB_PNG_SIGNAL_READ_FAILED` | The signal read of the browser image provider failed. The cause is in cause. |
+| `WEB_PNG_STRUCTURE_INVALID` | The structure given to the browser image provider is not valid. |
+| `WEB_PNG_SURFACE_INVALID` | The surface given to the browser image provider is not valid. |
+| `WEB_PNG_UNAVAILABLE` | The browser image provider is not available here. |
+| `WEB_PNG_VALUE_INVALID` | The value given to the browser image provider is not valid. |
 
 ### WEB_RESOURCE
 

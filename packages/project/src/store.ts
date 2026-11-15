@@ -14,22 +14,36 @@ import { historyBytes } from "./history-bytes.js";
 export function makeStore(initial: StoreState): ProjectStore {
   let state = initial;
   const store: ProjectStore = {
-    limits: state.limits, earliestRevision: state.baseline.revision,
+    limits: state.limits,
+    earliestRevision: state.baseline.revision,
     getSnapshot: () => state.head,
     commit(transaction: ProjectTransaction): ProjectCommitResult {
       const copied = cloneLive(transaction, "transaction", state.limits);
-      const checked = copied.ok ? validateTransaction(copied.value, { limits: state.limits, pointerPrefix: "" }) : copied;
+      const checked = copied.ok
+        ? validateTransaction(copied.value, { limits: state.limits, pointerPrefix: "" })
+        : copied;
       if (!checked.ok) {
         const head = validateSnapshot(state.head as unknown as JsonValue, { limits: state.limits, pointerPrefix: "" });
         if (!head.ok) throw new TypeError("Private admitted head is invalid.");
-        return Object.freeze({ status: "rejected", snapshot: state.head, diagnostics: Object.freeze([...checked.diagnostics, ...head.diagnostics]) });
+        return Object.freeze({
+          status: "rejected",
+          snapshot: state.head,
+          diagnostics: Object.freeze([...checked.diagnostics, ...head.diagnostics])
+        });
       }
       const transition = commitPrepared(state, checked.value, restoreCandidate);
       if (transition.result.status === "committed") state = transition.state;
       return transition.result;
     },
-    exportHistory: () => Object.freeze({ ok: true as const, value: historyBytes(state.baseline, state.commands), diagnostics: Object.freeze([]) })
+    exportHistory: () =>
+      Object.freeze({
+        ok: true as const,
+        value: historyBytes(state.baseline, state.commands),
+        diagnostics: Object.freeze([])
+      })
   };
-  Object.freeze(store.getSnapshot); Object.freeze(store.commit); Object.freeze(store.exportHistory);
+  Object.freeze(store.getSnapshot);
+  Object.freeze(store.commit);
+  Object.freeze(store.exportHistory);
   return Object.freeze(store);
 }
