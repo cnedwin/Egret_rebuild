@@ -54,10 +54,18 @@ function assertOwnerOpen(state: OwnerState): void {
 /** Called once from the manager constructor; no cache or provider import is needed. */
 export function registerAssetManagerOwner(manager: object, owner: AssetManagerOwner): void {
   if (APPLY(WEAK_HAS, states, [manager])) throw new EgretError("TEXT_ASSETS_INVALID");
-  APPLY(WEAK_SET, states, [manager, {
-    owner: FREEZE(owner), closed: false, creationBusy: false,
-    lifetimeCommitted: false, closeCache: undefined, paragraphLifetimeCommitted: false, closeParagraphCache: undefined,
-  } satisfies OwnerState]);
+  APPLY(WEAK_SET, states, [
+    manager,
+    {
+      owner: FREEZE(owner),
+      closed: false,
+      creationBusy: false,
+      lifetimeCommitted: false,
+      closeCache: undefined,
+      paragraphLifetimeCommitted: false,
+      closeParagraphCache: undefined
+    } satisfies OwnerState
+  ]);
 }
 
 /** Return the immutable intrinsic operations, never a structural caller port. */
@@ -102,24 +110,33 @@ export function closeOwnedTextCache(manager: object): void {
   state.closeCache = undefined;
   const closeParagraphCache = state.closeParagraphCache;
   state.closeParagraphCache = undefined;
-  try { closeCache?.(); } finally { closeParagraphCache?.(); }
+  try {
+    closeCache?.();
+  } finally {
+    closeParagraphCache?.();
+  }
 }
 
 /** One additional fixed paragraph profile shares the same manager and shutdown boundary. */
 export function beginParagraphCacheCreation(manager: object): () => void {
   const state = requireState(manager);
   assertOwnerOpen(state);
-  if (state.paragraphLifetimeCommitted) throw new EgretError('PARAGRAPH_CACHE_ALREADY_CREATED');
-  if (state.creationBusy) throw new EgretError('TEXT_CACHE_REENTRANT');
+  if (state.paragraphLifetimeCommitted) throw new EgretError("PARAGRAPH_CACHE_ALREADY_CREATED");
+  if (state.creationBusy) throw new EgretError("TEXT_CACHE_REENTRANT");
   state.creationBusy = true;
   let active = true;
-  return (): void => { if (active) { active = false; state.creationBusy = false; } };
+  return (): void => {
+    if (active) {
+      active = false;
+      state.creationBusy = false;
+    }
+  };
 }
 export function commitParagraphCacheLifetime(manager: object, close: () => void): void {
   const state = requireState(manager);
   assertOwnerOpen(state);
-  if (state.paragraphLifetimeCommitted) throw new EgretError('PARAGRAPH_CACHE_ALREADY_CREATED');
-  if (!state.creationBusy) throw new EgretError('TEXT_CACHE_REENTRANT');
+  if (state.paragraphLifetimeCommitted) throw new EgretError("PARAGRAPH_CACHE_ALREADY_CREATED");
+  if (!state.creationBusy) throw new EgretError("TEXT_CACHE_REENTRANT");
   state.paragraphLifetimeCommitted = true;
   state.closeParagraphCache = close;
 }

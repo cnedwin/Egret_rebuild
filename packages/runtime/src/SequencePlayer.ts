@@ -36,9 +36,15 @@ export class SequencePlayer {
     // Authenticate before reading even frozen-looking public clip dimensions.
     sampleSequenceClip(clip, 0, { mode });
     const { image, sourceRect } = snapshot;
-    if (snapshot.viewRegion !== null || sourceRect.x !== 0 || sourceRect.y !== 0
-      || sourceRect.width !== image.width || sourceRect.height !== image.height
-      || clip.atlasWidth !== image.width || clip.atlasHeight !== image.height) {
+    if (
+      snapshot.viewRegion !== null ||
+      sourceRect.x !== 0 ||
+      sourceRect.y !== 0 ||
+      sourceRect.width !== image.width ||
+      sourceRect.height !== image.height ||
+      clip.atlasWidth !== image.width ||
+      clip.atlasHeight !== image.height
+    ) {
       throw new EgretError('SEQ_ATLAS_MISMATCH');
     }
     states.set(this, { binding: { bitmap, lease: target.lease, clip, mode }, lastSample: undefined });
@@ -62,9 +68,15 @@ export class SequencePlayer {
     return sample;
   }
 
-  public get lastSample(): SequenceSample | undefined { return stateOf(this).lastSample; }
-  public get isDisposed(): boolean { return stateOf(this).binding === undefined; }
+  public get lastSample(): SequenceSample | undefined {
+    return stateOf(this).lastSample;
+  }
+  public get isDisposed(): boolean {
+    return stateOf(this).binding === undefined;
+  }
 
   /** Drop every borrow; the last owned immutable sample is safe to retain. */
-  public dispose(): void { stateOf(this).binding = undefined; }
+  public dispose(): void {
+    stateOf(this).binding = undefined;
+  }
 }

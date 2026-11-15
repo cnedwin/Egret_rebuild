@@ -1,12 +1,12 @@
-import { assertManagedMutable } from './ui/managedState.js';
+import { assertManagedMutable } from "./ui/managedState.js";
 import type { Rectangle2D, SharedMaterial2D } from "@egret/contracts";
 import type { DisplayObject } from "./DisplayObject.js";
 import { assertLive, isDisplayNode } from "./displayTreeState.js";
 import { engineOf } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
 
-import type { RenderEffect2D } from './renderEffect.js';
-import type { ShapeState } from './graphicsShape.js';
+import type { RenderEffect2D } from "./renderEffect.js";
+import type { ShapeState } from "./graphicsShape.js";
 
 export interface Primitive {
   readonly rect: Rectangle2D;
@@ -28,13 +28,14 @@ export interface VisualState {
   scaleY: number;
   rotation: number;
   /** Degrees by which the y axis and the x axis are turned beyond the rotation; 0 and 0 is no skew. */
-  skewX: number; skewY: number;
+  skewX: number;
+  skewY: number;
   /** A name the application gives, for getChildByName. */
   name: string;
   alpha: number;
   visible: boolean;
   sharedMaterial: SharedMaterial2D | null;
-  renderBoundary: 'none' | 'isolate';
+  renderBoundary: "none" | "isolate";
   renderEffect: RenderEffect2D | undefined;
   clipRect: Rectangle2D | undefined;
   primitives: Primitive[];
@@ -70,11 +71,13 @@ export function recordVisualChange(node: object, changes: number): void {
   const state = readRevisionState(node as DisplayObject);
   if (state === undefined) return;
   state.changes++;
-  if (((changes & VISUAL_STRUCTURE) !== 0 && state.structureRevision >= REVISION_RESTART)
-    || ((changes & VISUAL_TRANSFORM) !== 0 && state.transformRevision >= REVISION_RESTART)
-    || ((changes & VISUAL_APPEARANCE) !== 0 && state.appearanceRevision >= REVISION_RESTART)
-    || ((changes & VISUAL_CONTENT) !== 0 && state.contentRevision >= REVISION_RESTART)
-    || ((changes & VISUAL_BINDING) !== 0 && state.bindingRevision >= REVISION_RESTART)) {
+  if (
+    ((changes & VISUAL_STRUCTURE) !== 0 && state.structureRevision >= REVISION_RESTART) ||
+    ((changes & VISUAL_TRANSFORM) !== 0 && state.transformRevision >= REVISION_RESTART) ||
+    ((changes & VISUAL_APPEARANCE) !== 0 && state.appearanceRevision >= REVISION_RESTART) ||
+    ((changes & VISUAL_CONTENT) !== 0 && state.contentRevision >= REVISION_RESTART) ||
+    ((changes & VISUAL_BINDING) !== 0 && state.bindingRevision >= REVISION_RESTART)
+  ) {
     state.structureRevision = 0;
     state.transformRevision = 0;
     state.appearanceRevision = 0;
@@ -90,11 +93,32 @@ export function recordVisualChange(node: object, changes: number): void {
 
 export function registerVisual(node: DisplayObject): void {
   states.set(node, {
-    structureRevision: 0, transformRevision: 0, appearanceRevision: 0, contentRevision: 0, bindingRevision: 0,
-    x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, skewX: 0, skewY: 0, name: '', alpha: 1,
-    anchorOffsetX: 0, anchorOffsetY: 0,
-    visible: true, renderEffect: undefined, sharedMaterial: null, renderBoundary: 'none', clipRect: undefined, primitives: [], shape: undefined,
-    sharedCapture: undefined, changes: 0, seenBy: 0,
+    structureRevision: 0,
+    transformRevision: 0,
+    appearanceRevision: 0,
+    contentRevision: 0,
+    bindingRevision: 0,
+    x: 0,
+    y: 0,
+    scaleX: 1,
+    scaleY: 1,
+    rotation: 0,
+    skewX: 0,
+    skewY: 0,
+    name: "",
+    alpha: 1,
+    anchorOffsetX: 0,
+    anchorOffsetY: 0,
+    visible: true,
+    renderEffect: undefined,
+    sharedMaterial: null,
+    renderBoundary: "none",
+    clipRect: undefined,
+    primitives: [],
+    shape: undefined,
+    sharedCapture: undefined,
+    changes: 0,
+    seenBy: 0
   });
 }
 

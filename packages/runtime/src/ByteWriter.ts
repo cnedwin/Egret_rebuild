@@ -69,8 +69,14 @@ function requireCapacity(state: WriterState, width: number): void {
   if (width > state.capacity - state.length) throw new RangeFault("Insufficient remaining capacity");
 }
 
-function appendScalar(receiver: unknown, value: unknown, width: number, operation: ScalarWrite,
-  minimum?: number, maximum?: number): void {
+function appendScalar(
+  receiver: unknown,
+  value: unknown,
+  width: number,
+  operation: ScalarWrite,
+  minimum?: number,
+  maximum?: number
+): void {
   const state = openState(receiver);
   if (typeof value !== "number") throw new TypeFault("Scalar value must be numeric");
   if (minimum !== undefined && (!safeInteger(value) || value < minimum || value > maximum!)) {
@@ -91,7 +97,8 @@ function sourceLength(source: unknown): number {
   const backing = apply(bufferGetter, source, []) as ArrayBuffer;
   // The ordinary-buffer intrinsic also rejects cross-realm shared backing.
   apply(bufferLengthGetter, backing, []);
-  if (resizableGetter && apply(resizableGetter, backing, [])) throw new TypeFault("Resizable source backing is unsupported");
+  if (resizableGetter && apply(resizableGetter, backing, []))
+    throw new TypeFault("Resizable source backing is unsupported");
   if (detachedGetter) {
     if (apply(detachedGetter, backing, [])) throw new TypeFault("Detached source backing is unsupported");
   } else {
@@ -116,21 +123,51 @@ export class ByteWriter implements Disposable {
     apply(weakSet, states, [this, { bytes, view, capacity: size, length: 0, endian: order, disposed: false }]);
   }
 
-  public get capacity(): number { return stateOf(this).capacity; }
-  public get length(): number { return stateOf(this).length; }
-  public get remainingCapacity(): number { const state = stateOf(this); return state.capacity - state.length; }
-  public get disposed(): boolean { return stateOf(this).disposed; }
-  public get endian(): ByteOrder { return stateOf(this).endian; }
-  public set endian(value: ByteOrder) { const state = openState(this); state.endian = byteOrder(value); }
+  public get capacity(): number {
+    return stateOf(this).capacity;
+  }
+  public get length(): number {
+    return stateOf(this).length;
+  }
+  public get remainingCapacity(): number {
+    const state = stateOf(this);
+    return state.capacity - state.length;
+  }
+  public get disposed(): boolean {
+    return stateOf(this).disposed;
+  }
+  public get endian(): ByteOrder {
+    return stateOf(this).endian;
+  }
+  public set endian(value: ByteOrder) {
+    const state = openState(this);
+    state.endian = byteOrder(value);
+  }
 
-  public writeByte(value: number): void { appendScalar(this, value, 1, signedByte, -128, 127); }
-  public writeUnsignedByte(value: number): void { appendScalar(this, value, 1, unsignedByte, 0, 255); }
-  public writeShort(value: number): void { appendScalar(this, value, 2, signedShort, -32768, 32767); }
-  public writeUnsignedShort(value: number): void { appendScalar(this, value, 2, unsignedShort, 0, 65535); }
-  public writeInt(value: number): void { appendScalar(this, value, 4, signedInt, -2147483648, 2147483647); }
-  public writeUnsignedInt(value: number): void { appendScalar(this, value, 4, unsignedInt, 0, 4294967295); }
-  public writeFloat(value: number): void { appendScalar(this, value, 4, float); }
-  public writeDouble(value: number): void { appendScalar(this, value, 8, double); }
+  public writeByte(value: number): void {
+    appendScalar(this, value, 1, signedByte, -128, 127);
+  }
+  public writeUnsignedByte(value: number): void {
+    appendScalar(this, value, 1, unsignedByte, 0, 255);
+  }
+  public writeShort(value: number): void {
+    appendScalar(this, value, 2, signedShort, -32768, 32767);
+  }
+  public writeUnsignedShort(value: number): void {
+    appendScalar(this, value, 2, unsignedShort, 0, 65535);
+  }
+  public writeInt(value: number): void {
+    appendScalar(this, value, 4, signedInt, -2147483648, 2147483647);
+  }
+  public writeUnsignedInt(value: number): void {
+    appendScalar(this, value, 4, unsignedInt, 0, 4294967295);
+  }
+  public writeFloat(value: number): void {
+    appendScalar(this, value, 4, float);
+  }
+  public writeDouble(value: number): void {
+    appendScalar(this, value, 8, double);
+  }
 
   public writeBytes(source: Uint8Array<ArrayBuffer>): void {
     const state = openState(this);

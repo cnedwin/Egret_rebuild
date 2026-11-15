@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { DisplayObject } from '@egret/runtime';
 
-export interface PhysicsVector { readonly x: number; readonly y: number; }
+export interface PhysicsVector {
+  readonly x: number;
+  readonly y: number;
+}
 /** A shape about the place of its body. A box and a polygon turn with the body; a circle has no turn to show. */
 export type PhysicsShape =
   | { readonly kind: 'circle'; readonly radius: number }
@@ -137,7 +140,10 @@ export interface PhysicsWorld {
   onContact(listener: (contact: PhysicsContact) => void): () => void;
   /** The bodies whose shapes hold a point, or meet a rectangle. */
   queryPoint(x: number, y: number, mask?: number): readonly PhysicsBody[];
-  queryRect(rect: { readonly x: number; readonly y: number; readonly width: number; readonly height: number }, mask?: number): readonly PhysicsBody[];
+  queryRect(
+    rect: { readonly x: number; readonly y: number; readonly width: number; readonly height: number },
+    mask?: number
+  ): readonly PhysicsBody[];
   /** The first body a segment meets, sensors left out. */
   raycast(from: PhysicsVector, to: PhysicsVector, mask?: number): PhysicsRayHit | undefined;
   /** Moves a body by a distance at once, sliding along what is solid instead of passing into it. For characters. */

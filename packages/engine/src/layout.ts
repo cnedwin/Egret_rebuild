@@ -5,12 +5,15 @@ export type {
   LinearLayoutItem,
   LinearLayoutOptions,
   LinearLayoutPlacement,
-  LinearLayoutPlan,
+  LinearLayoutPlan
 } from './layoutTypes.js';
 
 function isArray(value: unknown): value is unknown[] {
-  try { return Array.isArray(value); }
-  catch (cause) { throw new EgretError('LAYOUT_OPTIONS_INVALID', { cause }); }
+  try {
+    return Array.isArray(value);
+  } catch (cause) {
+    throw new EgretError('LAYOUT_OPTIONS_INVALID', { cause });
+  }
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -20,8 +23,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function read(value: object, key: PropertyKey): unknown {
   // Keep the catch around only the caller's Get: even a caller EgretError needs
   // a fresh wrapper, while our own validation failures must not be wrapped again.
-  try { return (value as Record<PropertyKey, unknown>)[key]; }
-  catch (cause) { throw new EgretError('LAYOUT_OPTIONS_INVALID', { cause }); }
+  try {
+    return (value as Record<PropertyKey, unknown>)[key];
+  } catch (cause) {
+    throw new EgretError('LAYOUT_OPTIONS_INVALID', { cause });
+  }
 }
 
 function dimension(value: unknown): number {
@@ -46,8 +52,13 @@ export function planLinearLayout(options: LinearLayoutOptions): LinearLayoutPlan
   const items = read(options, 'items');
   if (!isArray(items)) throw new EgretError('LAYOUT_OPTIONS_INVALID');
   const length = read(items, 'length');
-  if (typeof length !== 'number' || !Number.isInteger(length)
-    || !Number.isFinite(length) || length < 0 || length > 0xffffffff) {
+  if (
+    typeof length !== 'number' ||
+    !Number.isInteger(length) ||
+    !Number.isFinite(length) ||
+    length < 0 ||
+    length > 0xffffffff
+  ) {
     throw new EgretError('LAYOUT_OPTIONS_INVALID');
   }
   // This one observed bound also governs Proxy arrays and must win over getters
@@ -112,18 +123,20 @@ export function planLinearLayout(options: LinearLayoutOptions): LinearLayoutPlan
         crossPosition = finiteResult(padding + remaining);
       }
     }
-    placements.push(Object.freeze({
-      index,
-      x: horizontal ? item.mainPosition : crossPosition,
-      y: horizontal ? crossPosition : item.mainPosition,
-      width: item.width,
-      height: item.height,
-    }));
+    placements.push(
+      Object.freeze({
+        index,
+        x: horizontal ? item.mainPosition : crossPosition,
+        y: horizontal ? crossPosition : item.mainPosition,
+        width: item.width,
+        height: item.height
+      })
+    );
     index++;
   }
   return Object.freeze({
     width: horizontal ? mainExtent : crossExtent,
     height: horizontal ? crossExtent : mainExtent,
-    placements: Object.freeze(placements),
+    placements: Object.freeze(placements)
   });
 }

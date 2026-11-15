@@ -8,13 +8,25 @@ export interface SpinePlaybackEvent {
   readonly track: number;
   readonly animation: string;
   readonly trackTime: number;
-  readonly event?: Readonly<{ name: string; time: number; intValue: number; floatValue: number; stringValue: string | null }>;
+  readonly event?: Readonly<{
+    name: string;
+    time: number;
+    intValue: number;
+    floatValue: number;
+    stringValue: string | null;
+  }>;
 }
 export interface SpineBonePose {
   readonly name: string;
-  readonly x: number; readonly y: number; readonly rotation: number;
-  readonly a: number; readonly b: number; readonly c: number; readonly d: number;
-  readonly worldX: number; readonly worldY: number;
+  readonly x: number;
+  readonly y: number;
+  readonly rotation: number;
+  readonly a: number;
+  readonly b: number;
+  readonly c: number;
+  readonly d: number;
+  readonly worldX: number;
+  readonly worldY: number;
 }
 export interface SpineInstanceSnapshot {
   readonly state: SpineInstanceState;
@@ -29,7 +41,16 @@ export interface SpineInstanceSnapshot {
   readonly pendingCommands: number;
   readonly bones: readonly SpineBonePose[];
   readonly slots: readonly Readonly<{ name: string; attachment: string | null }>[];
-  readonly tracks: readonly Readonly<{ index: number; animation: string; trackTime: number; animationTime: number; loop: boolean; plays: number | null; completedPlays: number; queued: number }>[];
+  readonly tracks: readonly Readonly<{
+    index: number;
+    animation: string;
+    trackTime: number;
+    animationTime: number;
+    loop: boolean;
+    plays: number | null;
+    completedPlays: number;
+    queued: number;
+  }>[];
   readonly events: readonly SpinePlaybackEvent[];
 }
 /** The work a seek may do and the history kept for it. Every limit is positive and bounded. */
@@ -83,7 +104,9 @@ export interface SpineAnimationOptions {
   readonly plays?: number;
   readonly mixSeconds?: number;
 }
-export interface SpineQueuedAnimationOptions extends SpineAnimationOptions { readonly delaySeconds?: number; }
+export interface SpineQueuedAnimationOptions extends SpineAnimationOptions {
+  readonly delaySeconds?: number;
+}
 export interface SpineInstance {
   readonly isDisposed: boolean;
   /** Commands commit at the next explicit advance, including commands from listeners. */

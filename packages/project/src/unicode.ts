@@ -16,8 +16,17 @@ export function utf8Length(text: string): ProjectValueResult<number> {
 }
 
 function invalidUnicode(): ProjectValueResult<never> {
-  return Object.freeze({ ok: false, diagnostics: Object.freeze([Object.freeze({
-    code: "PROJECT_INPUT_INVALID", phase: "parse", severity: "error", jsonPointer: "",
-    message: "Input contains invalid Unicode.", details: Object.freeze(Object.create(null))
-  })]) });
+  return Object.freeze({
+    ok: false,
+    diagnostics: Object.freeze([
+      Object.freeze({
+        code: "PROJECT_INPUT_INVALID",
+        phase: "parse",
+        severity: "error",
+        jsonPointer: "",
+        message: "Input contains invalid Unicode.",
+        details: Object.freeze(Object.create(null))
+      })
+    ])
+  });
 }

@@ -16,7 +16,10 @@ export interface BoundsQueryOptions {
   readonly maxPrimitives?: number;
 }
 
-function live(node: DisplayObject): void { assertLive(node); engineOf(node)?.assertOpen(); }
+function live(node: DisplayObject): void {
+  assertLive(node);
+  engineOf(node)?.assertOpen();
+}
 
 function budgetsOf(node: DisplayObject, options: unknown): { maxNodes: number; maxPrimitives: number } {
   let nodes: unknown, primitives: unknown;
@@ -25,13 +28,18 @@ function budgetsOf(node: DisplayObject, options: unknown): { maxNodes: number; m
     let array: boolean;
     // Revoked Proxy admission can throw. Array rejection is a semantic failure
     // outside the source catch, and normal lookup retains inherited getters.
-    try { array = Array.isArray(options); }
-    catch (cause) { throw new EgretError('BOUNDS_INPUT_INVALID', { cause }); }
+    try {
+      array = Array.isArray(options);
+    } catch (cause) {
+      throw new EgretError('BOUNDS_INPUT_INVALID', { cause });
+    }
     if (array) throw new EgretError('BOUNDS_INPUT_INVALID');
     try {
       nodes = (options as BoundsQueryOptions).maxNodes;
       primitives = (options as BoundsQueryOptions).maxPrimitives;
-    } catch (cause) { throw new EgretError('BOUNDS_INPUT_INVALID', { cause }); }
+    } catch (cause) {
+      throw new EgretError('BOUNDS_INPUT_INVALID', { cause });
+    }
   }
   // Finish both successful source reads before lifetime and numeric semantics.
   // Throwing reads retain exact supplied causes, even after terminal side effects.
@@ -60,8 +68,15 @@ export function queryDisplayBounds(receiver: unknown, options: unknown): Rectang
   const node = receiver as DisplayObject;
   live(node);
   const { maxNodes, maxPrimitives } = budgetsOf(node, options);
-  const seen = new Set<DisplayObject>(), visited: DisplayObject[] = [], stack: TraversalFrame[] = [];
-  let items = 0, hasContent = false, minX = 0, minY = 0, maxX = 0, maxY = 0;
+  const seen = new Set<DisplayObject>(),
+    visited: DisplayObject[] = [],
+    stack: TraversalFrame[] = [];
+  let items = 0,
+    hasContent = false,
+    minX = 0,
+    minY = 0,
+    maxX = 0,
+    maxY = 0;
 
   function admitItem(): void {
     // Admission precedes indexing the next primitive's geometry or Bitmap size.
@@ -72,32 +87,50 @@ export function queryDisplayBounds(receiver: unknown, options: unknown): Rectang
     const px = matrix.a * x + matrix.c * y + matrix.tx;
     const py = matrix.b * x + matrix.d * y + matrix.ty;
     if (!finite(px) || !finite(py)) throw new EgretError('BOUNDS_ARITHMETIC_RANGE');
-    if (!hasContent) { minX = maxX = px; minY = maxY = py; hasContent = true; }
-    else { minX = Math.min(minX, px); minY = Math.min(minY, py); maxX = Math.max(maxX, px); maxY = Math.max(maxY, py); }
+    if (!hasContent) {
+      minX = maxX = px;
+      minY = maxY = py;
+      hasContent = true;
+    } else {
+      minX = Math.min(minX, px);
+      minY = Math.min(minY, py);
+      maxX = Math.max(maxX, px);
+      maxY = Math.max(maxY, py);
+    }
   }
   function rectangle(matrix: Matrix2D, x: number, y: number, width: number, height: number): void {
     // Authored zero extent consumes budget but does not evaluate endpoints.
     // Positive content may still collapse to a point or line through rounding.
     if (width === 0 || height === 0) return;
-    const right = x + width, bottom = y + height;
+    const right = x + width,
+      bottom = y + height;
     if (!finite(right) || !finite(bottom)) throw new EgretError('BOUNDS_ARITHMETIC_RANGE');
-    point(matrix, x, y); point(matrix, right, y);
-    point(matrix, right, bottom); point(matrix, x, bottom);
+    point(matrix, x, y);
+    point(matrix, right, y);
+    point(matrix, right, bottom);
+    point(matrix, x, bottom);
   }
   function enter(current: DisplayObject, matrix: Matrix2D): void {
     if (!isDisplayNode(current) || seen.has(current)) throw new EgretError('DISPLAY_TREE_INVARIANT');
-    live(current); seen.add(current); visited.push(current);
+    live(current);
+    seen.add(current);
+    visited.push(current);
     const primitives = visualOf(current).primitives;
     for (let index = 0; index < primitives.length; index++) {
       admitItem();
       const rect = primitives[index]!.rect;
       rectangle(matrix, rect.x, rect.y, rect.width, rect.height);
     }
-    const shapeState = visualOf(current).shape, shape = shapeState === undefined ? undefined : resolveShape(shapeState);
-    if (shape !== undefined) { admitItem(); rectangle(matrix, shape.bounds.x, shape.bounds.y, shape.bounds.width, shape.bounds.height); }
+    const shapeState = visualOf(current).shape,
+      shape = shapeState === undefined ? undefined : resolveShape(shapeState);
+    if (shape !== undefined) {
+      admitItem();
+      rectangle(matrix, shape.bounds.x, shape.bounds.y, shape.bounds.width, shape.bounds.height);
+    }
     const bitmap = readBitmapState(current);
     if (bitmap !== undefined) {
-      admitItem(); rectangle(matrix, 0, 0, bitmap.width, bitmap.height);
+      admitItem();
+      rectangle(matrix, 0, 0, bitmap.width, bitmap.height);
     }
     const mesh = readMeshState(current);
     if (mesh !== undefined) {
@@ -106,7 +139,9 @@ export function queryDisplayBounds(receiver: unknown, options: unknown): Rectang
         // Debit before all three index reads; shared geometry still costs per use.
         admitItem();
         const offset = 3 * triangle;
-        const first = geometry.indices[offset]!, second = geometry.indices[offset + 1]!, third = geometry.indices[offset + 2]!;
+        const first = geometry.indices[offset]!,
+          second = geometry.indices[offset + 1]!,
+          third = geometry.indices[offset + 2]!;
         // Logical bounds retain authored point/line triangles and skip unused XY.
         point(matrix, geometry.positions[2 * first]!, geometry.positions[2 * first + 1]!);
         point(matrix, geometry.positions[2 * second]!, geometry.positions[2 * second + 1]!);
@@ -130,7 +165,10 @@ export function queryDisplayBounds(receiver: unknown, options: unknown): Rectang
   enter(node, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
   while (stack.length !== 0) {
     const frame = stack[stack.length - 1]!;
-    if (frame.nextChild === frame.children) { stack.pop(); continue; }
+    if (frame.nextChild === frame.children) {
+      stack.pop();
+      continue;
+    }
     // Check before indexed retrieval: no eager child snapshot or sibling stack.
     if (visited.length >= maxNodes) throw new EgretError('BOUNDS_TREE_LIMIT');
     const child = childAtOf(frame.node, frame.nextChild++);
@@ -145,10 +183,16 @@ export function queryDisplayBounds(receiver: unknown, options: unknown): Rectang
     }
     enter(child, matrix);
   }
-  const width = hasContent ? maxX - minX : 0, height = hasContent ? maxY - minY : 0;
+  const width = hasContent ? maxX - minX : 0,
+    height = hasContent ? maxY - minY : 0;
   if (!finite(width) || !finite(height)) throw new EgretError('BOUNDS_ARITHMETIC_RANGE');
   for (const current of visited) live(current);
   // Ordinary binary64 subtraction is intentional, not an outward enclosure.
   // Saved output retains no authority, options, primitive or resource reference.
-  return Object.freeze({ x: minX === 0 ? 0 : minX, y: minY === 0 ? 0 : minY, width: width === 0 ? 0 : width, height: height === 0 ? 0 : height });
+  return Object.freeze({
+    x: minX === 0 ? 0 : minX,
+    y: minY === 0 ? 0 : minY,
+    width: width === 0 ? 0 : width,
+    height: height === 0 ? 0 : height
+  });
 }

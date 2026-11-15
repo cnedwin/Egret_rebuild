@@ -1,13 +1,13 @@
 import { DisplayObjectContainer } from "./DisplayObjectContainer.js";
-import type { DisplayObject } from './DisplayObject.js';
-import { queryDisplayHit } from './displayHitTest.js';
-import type { HitTestOptions } from './displayHitTest.js';
+import type { DisplayObject } from "./DisplayObject.js";
+import { queryDisplayHit } from "./displayHitTest.js";
+import type { HitTestOptions } from "./displayHitTest.js";
 import { ASSERT_ATTACHABLE, bind } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
 import { markStageRoot } from "./displayTreeState.js";
 
-import { createPreparedDisplayOperations } from './preparedDisplaySubtree.js';
+import { createPreparedDisplayOperations } from "./preparedDisplaySubtree.js";
 
 export let createStage: (engine: EngineContext) => Stage;
 const CREATION_TOKEN: unique symbol = Symbol("egret.stageFactory");
@@ -32,5 +32,7 @@ export class Stage extends DisplayObjectContainer {
   }
 
   // A Stage is an engine root and cannot become another display node's child.
-  public override [ASSERT_ATTACHABLE](): void { throw new EgretError("STAGE_ROOT_ONLY"); }
+  public override [ASSERT_ATTACHABLE](): void {
+    throw new EgretError("STAGE_ROOT_ONLY");
+  }
 }

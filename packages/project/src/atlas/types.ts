@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-export type AtlasImportProfile = 'aseprite-json-array-1.3.18.6-v1';
+export type AtlasImportProfile = "aseprite-json-array-1.3.18.6-v1";
 export interface AtlasProvenance {
   readonly origin: string;
   readonly license: string;
@@ -24,7 +24,7 @@ export interface AtlasImportInput {
   readonly page: AtlasPageBinding;
 }
 export interface AtlasSourceSpan {
-  readonly source: 'metadata';
+  readonly source: "metadata";
   readonly sourceId: string;
   readonly offset: number;
   readonly length: number;
@@ -33,8 +33,8 @@ export interface AtlasSourceSpan {
 }
 export interface AtlasImportDiagnostic {
   readonly code: AtlasImportDiagnosticCode;
-  readonly severity: 'error';
-  readonly source: 'input' | 'metadata';
+  readonly severity: "error";
+  readonly source: "input" | "metadata";
   readonly pointer: string;
   readonly message: string;
   readonly span?: AtlasSourceSpan;
@@ -81,14 +81,14 @@ export interface AtlasFrameOrigin {
 export interface AtlasImportPlan {
   readonly planVersion: 1;
   readonly profile: AtlasImportProfile;
-  readonly exportVersion: '1.3.18.6';
+  readonly exportVersion: "1.3.18.6";
   readonly sourceDeclarations: {
     readonly metadata: {
       readonly id: string;
       readonly provenance: AtlasProvenance;
       readonly utf8Bytes: number;
-      readonly hashVerification: 'declared_unverified';
-    }
+      readonly hashVerification: "declared_unverified";
+    };
   };
   readonly page: AtlasPageBinding;
   readonly names: readonly string[];
@@ -96,23 +96,37 @@ export interface AtlasImportPlan {
   readonly sequenceInput: AtlasSequenceInput;
   readonly origins: readonly AtlasFrameOrigin[];
   readonly acceptance: {
-    readonly exporterArtifact: 'unverified';
-    readonly assetPixels: 'not_run';
-    readonly runtimeComposition: 'not_run';
-    readonly rendering: 'not_run';
-    readonly licenseEntitlement: 'unverified';
+    readonly exporterArtifact: "unverified";
+    readonly assetPixels: "not_run";
+    readonly runtimeComposition: "not_run";
+    readonly rendering: "not_run";
+    readonly licenseEntitlement: "unverified";
   };
 }
-export type AtlasImportResult = | {
-  readonly ok: true;
-  readonly value: AtlasImportPlan;
-  readonly diagnostics: readonly []
-}
-| {
-  readonly ok: false;
-  readonly diagnostics: readonly [AtlasImportDiagnostic]
-};
-export type AtlasImportDiagnosticCode = "ATLAS_INPUT_INVALID" | "ATLAS_READ_FAILED" | "ATLAS_LIMIT_EXCEEDED" | "ATLAS_JSON_SYNTAX" | "ATLAS_JSON_DUPLICATE_KEY" | "ATLAS_SCHEMA_INVALID" | "ATLAS_MARKER_MISSING" | "ATLAS_MARKER_INVALID" | "ATLAS_PROFILE_UNSUPPORTED" | "ATLAS_PAGE_BINDING_INVALID" | "ATLAS_NAME_INVALID" | "ATLAS_REGION_INVALID" | "ATLAS_TIME_INVALID";
+export type AtlasImportResult =
+  | {
+      readonly ok: true;
+      readonly value: AtlasImportPlan;
+      readonly diagnostics: readonly [];
+    }
+  | {
+      readonly ok: false;
+      readonly diagnostics: readonly [AtlasImportDiagnostic];
+    };
+export type AtlasImportDiagnosticCode =
+  | "ATLAS_INPUT_INVALID"
+  | "ATLAS_READ_FAILED"
+  | "ATLAS_LIMIT_EXCEEDED"
+  | "ATLAS_JSON_SYNTAX"
+  | "ATLAS_JSON_DUPLICATE_KEY"
+  | "ATLAS_SCHEMA_INVALID"
+  | "ATLAS_MARKER_MISSING"
+  | "ATLAS_MARKER_INVALID"
+  | "ATLAS_PROFILE_UNSUPPORTED"
+  | "ATLAS_PAGE_BINDING_INVALID"
+  | "ATLAS_NAME_INVALID"
+  | "ATLAS_REGION_INVALID"
+  | "ATLAS_TIME_INVALID";
 export interface AtlasImportLimits {
   readonly maxSourceUtf8Bytes: number;
   readonly maxJsonDepth: number;

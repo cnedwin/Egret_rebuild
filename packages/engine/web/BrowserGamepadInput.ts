@@ -30,9 +30,16 @@ export interface BrowserGamepadInput {
   /** The same as disposing the input. A scope can own the pads of a game through this. */
   dispose(): void;
 }
-interface Pair { readonly target: EventTarget; readonly type: string; readonly listener: EventListener; }
-interface Actuator { playEffect?(type: string, parameters: object): Promise<unknown> | undefined; }
-const within = (value: unknown, least: number, most: number): value is number => typeof value === 'number' && value >= least && value <= most;
+interface Pair {
+  readonly target: EventTarget;
+  readonly type: string;
+  readonly listener: EventListener;
+}
+interface Actuator {
+  playEffect?(type: string, parameters: object): Promise<unknown> | undefined;
+}
+const within = (value: unknown, least: number, most: number): value is number =>
+  typeof value === 'number' && value >= least && value <= most;
 
 /**
  * The pads of a page. A browser tells nothing when a button goes down: it has to be asked, so the
@@ -40,14 +47,18 @@ const within = (value: unknown, least: number, most: number): value is number =>
  * loses the person, because what happens to a pad then is not told either.
  */
 export function createBrowserGamepadInput(options: BrowserGamepadInputOptions = {}): BrowserGamepadInput {
-  if (options === null || typeof options !== 'object' || Array.isArray(options)) throw new EgretError('GAMEPAD_OPTIONS_INVALID');
+  if (options === null || typeof options !== 'object' || Array.isArray(options))
+    throw new EgretError('GAMEPAD_OPTIONS_INVALID');
   const { onError, ...configuration } = options;
   if (onError !== undefined && typeof onError !== 'function') throw new EgretError('GAMEPAD_OPTIONS_INVALID');
-  const host = globalThis.navigator, page = globalThis.document, win = globalThis.window;
+  const host = globalThis.navigator,
+    page = globalThis.document,
+    win = globalThis.window;
   if (host === undefined || typeof host.getGamepads !== 'function') throw new EgretError('GAMEPAD_HOST_UNAVAILABLE');
   const input = createGamepadInput(configuration);
   const pairs: Pair[] = [];
-  let closed = false, last = 0;
+  let closed = false,
+    last = 0;
 
   function report(cause: unknown): void {
     if (onError !== undefined) onError(cause);
@@ -61,14 +72,25 @@ export function createBrowserGamepadInput(options: BrowserGamepadInputOptions = 
   function cleanup(): void {
     if (closed) return;
     closed = true;
-    for (const pair of pairs.splice(0).reverse()) try { pair.target.removeEventListener(pair.type, pair.listener); } catch (cause) { report(cause); }
+    for (const pair of pairs.splice(0).reverse())
+      try {
+        pair.target.removeEventListener(pair.type, pair.listener);
+      } catch (cause) {
+        report(cause);
+      }
   }
   const letGo: EventListener = () => {
     if (closed) return;
-    try { input.release(); } catch (cause) { report(cause); }
+    try {
+      input.release();
+    } catch (cause) {
+      report(cause);
+    }
   };
   try {
-    listen(page, 'visibilitychange', event => { if (page!.visibilityState === 'hidden') letGo(event); });
+    listen(page, 'visibilitychange', event => {
+      if (page!.visibilityState === 'hidden') letGo(event);
+    });
     listen(win, 'blur', letGo);
     listen(win, 'pagehide', letGo);
   } catch (cause) {
@@ -87,9 +109,14 @@ export function createBrowserGamepadInput(options: BrowserGamepadInputOptions = 
         // A browser keeps a place for a pad that was taken away.
         if (pad === null || pad === undefined || pad.connected === false) continue;
         samples.push({
-          index: pad.index, id: pad.id, mapping: pad.mapping,
-          buttons: Array.from(pad.buttons, button => ({ pressed: button.pressed, value: Math.min(1, Math.max(0, button.value)) })),
-          axes: Array.from(pad.axes, axis => Number.isFinite(axis) ? Math.min(1, Math.max(-1, axis)) : 0),
+          index: pad.index,
+          id: pad.id,
+          mapping: pad.mapping,
+          buttons: Array.from(pad.buttons, button => ({
+            pressed: button.pressed,
+            value: Math.min(1, Math.max(0, button.value))
+          })),
+          axes: Array.from(pad.axes, axis => (Number.isFinite(axis) ? Math.min(1, Math.max(-1, axis)) : 0))
         });
       }
       // A clock of the page may be coarse or handed in out of step: the input is never told that time went back.
@@ -99,20 +126,38 @@ export function createBrowserGamepadInput(options: BrowserGamepadInputOptions = 
     rumble(index: number, rumble: GamepadRumble = {}): boolean {
       if (rumble === null || typeof rumble !== 'object') throw new EgretError('GAMEPAD_OPTIONS_INVALID');
       const { duration = 200, weak = 0.5, strong = 0.5 } = rumble;
-      if (!Number.isSafeInteger(index) || !within(index, 0, 31) || !within(duration, 0, 5000) || !within(weak, 0, 1) || !within(strong, 0, 1)) throw new EgretError('GAMEPAD_OPTIONS_INVALID');
+      if (
+        !Number.isSafeInteger(index) ||
+        !within(index, 0, 31) ||
+        !within(duration, 0, 5000) ||
+        !within(weak, 0, 1) ||
+        !within(strong, 0, 1)
+      )
+        throw new EgretError('GAMEPAD_OPTIONS_INVALID');
       if (closed || page?.visibilityState === 'hidden') return false;
-      const pad = [...host.getGamepads()].find(candidate => candidate !== null && candidate !== undefined && candidate.index === index && candidate.connected !== false);
+      const pad = [...host.getGamepads()].find(
+        candidate =>
+          candidate !== null && candidate !== undefined && candidate.index === index && candidate.connected !== false
+      );
       const actuator = (pad as { vibrationActuator?: Actuator | null } | undefined)?.vibrationActuator;
       if (actuator === null || actuator === undefined || typeof actuator.playEffect !== 'function') return false;
       try {
-        const played = actuator.playEffect('dual-rumble', { startDelay: 0, duration, weakMagnitude: weak, strongMagnitude: strong });
+        const played = actuator.playEffect('dual-rumble', {
+          startDelay: 0,
+          duration,
+          weakMagnitude: weak,
+          strongMagnitude: strong
+        });
         if (played !== undefined && typeof played.then === 'function') played.then(undefined, report);
-      } catch (cause) { report(cause); return false; }
+      } catch (cause) {
+        report(cause);
+        return false;
+      }
       return true;
     },
     dispose(): void {
       cleanup();
       input.dispose();
-    },
+    }
   });
 }

@@ -89,26 +89,58 @@ const DISPOSE = Bitmap.prototype.dispose;
 const DISPOSE_DISPLAY = DisplayObject.prototype.dispose;
 /** Public accessors read original private slots despite later instance/prototype shadows. */
 export const bitmapButtonOperations = Object.freeze({
-  lease(bitmap: Bitmap): AssetLease<Texture> | undefined { return APPLY(LEASE, bitmap, []) as AssetLease<Texture> | undefined; },
-  crop(bitmap: Bitmap): TextureRegion2D | undefined { return APPLY(CROP, bitmap, []) as TextureRegion2D | undefined; },
-  hit(bitmap: Bitmap): Rectangle2D | undefined { return APPLY(HIT, bitmap, []) as Rectangle2D | undefined; },
-  touch(bitmap: Bitmap): boolean { return APPLY(TOUCH, bitmap, []) as boolean; },
-  disposed(bitmap: Bitmap): boolean { return APPLY(DISPOSED, bitmap, []) as boolean; },
-  setLease(bitmap: Bitmap, lease: AssetLease<Texture> | undefined): void { APPLY(SET_LEASE, bitmap, [lease]); },
-  setCrop(bitmap: Bitmap, crop: TextureRegion2D): void { APPLY(SET_CROP, bitmap, [crop]); },
-  setHit(bitmap: Bitmap, hit: Rectangle2D): void { APPLY(SET_HIT, bitmap, [hit]); },
-  setTouch(bitmap: Bitmap, enabled: boolean): void { APPLY(SET_TOUCH, bitmap, [enabled]); },
-  dispose(bitmap: Bitmap): void { APPLY(DISPOSE, bitmap, []); },
-  disposeDisplay(bitmap: Bitmap): void { APPLY(DISPOSE_DISPLAY, bitmap, []); },
-  invoke(callback: (payload: MouseInputPayload) => void, payload: MouseInputPayload): unknown { return APPLY(callback, undefined, [payload]); },
+  lease(bitmap: Bitmap): AssetLease<Texture> | undefined {
+    return APPLY(LEASE, bitmap, []) as AssetLease<Texture> | undefined;
+  },
+  crop(bitmap: Bitmap): TextureRegion2D | undefined {
+    return APPLY(CROP, bitmap, []) as TextureRegion2D | undefined;
+  },
+  hit(bitmap: Bitmap): Rectangle2D | undefined {
+    return APPLY(HIT, bitmap, []) as Rectangle2D | undefined;
+  },
+  touch(bitmap: Bitmap): boolean {
+    return APPLY(TOUCH, bitmap, []) as boolean;
+  },
+  disposed(bitmap: Bitmap): boolean {
+    return APPLY(DISPOSED, bitmap, []) as boolean;
+  },
+  setLease(bitmap: Bitmap, lease: AssetLease<Texture> | undefined): void {
+    APPLY(SET_LEASE, bitmap, [lease]);
+  },
+  setCrop(bitmap: Bitmap, crop: TextureRegion2D): void {
+    APPLY(SET_CROP, bitmap, [crop]);
+  },
+  setHit(bitmap: Bitmap, hit: Rectangle2D): void {
+    APPLY(SET_HIT, bitmap, [hit]);
+  },
+  setTouch(bitmap: Bitmap, enabled: boolean): void {
+    APPLY(SET_TOUCH, bitmap, [enabled]);
+  },
+  dispose(bitmap: Bitmap): void {
+    APPLY(DISPOSE, bitmap, []);
+  },
+  disposeDisplay(bitmap: Bitmap): void {
+    APPLY(DISPOSE_DISPLAY, bitmap, []);
+  },
+  invoke(callback: (payload: MouseInputPayload) => void, payload: MouseInputPayload): unknown {
+    return APPLY(callback, undefined, [payload]);
+  }
 });
 
 const INPUT_PARENT = Object.getOwnPropertyDescriptor(DisplayObject.prototype, 'parent')!.get!;
 const INPUT_VISIBLE = Object.getOwnPropertyDescriptor(DisplayObject.prototype, 'visible')!.get!;
 const inputRuntimePrimitives = Object.freeze({
-  parent(target: DisplayObject): DisplayObject | undefined { return APPLY(INPUT_PARENT, target, []) as DisplayObject | undefined; },
-  visible(target: DisplayObject): boolean { return APPLY(INPUT_VISIBLE, target, []) as boolean; },
-  disposed(target: DisplayObject): boolean { return APPLY(DISPOSED, target, []) as boolean; },
+  parent(target: DisplayObject): DisplayObject | undefined {
+    return APPLY(INPUT_PARENT, target, []) as DisplayObject | undefined;
+  },
+  visible(target: DisplayObject): boolean {
+    return APPLY(INPUT_VISIBLE, target, []) as boolean;
+  },
+  disposed(target: DisplayObject): boolean {
+    return APPLY(DISPOSED, target, []) as boolean;
+  }
 });
 /** Optional keyboard admission reuses getters captured before Engine publication. */
-export function captureMouseInputRuntimePrimitives(): typeof inputRuntimePrimitives { return inputRuntimePrimitives; }
+export function captureMouseInputRuntimePrimitives(): typeof inputRuntimePrimitives {
+  return inputRuntimePrimitives;
+}

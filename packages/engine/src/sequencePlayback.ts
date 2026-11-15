@@ -3,7 +3,7 @@ import { EgretError, Scope, SequencePlayer } from '@egret/runtime';
 import type { Bitmap, SequenceClip, SequencePlaybackMode, SequenceSample } from '@egret/runtime';
 import type { GameClock, GameClockHandler, GameClockSubscription, GameClockTick } from './gameClockTypes.js';
 import type { SequencePlayback, SequencePlaybackState } from './sequencePlaybackTypes.js';
-import type {SequenceTargetClaims} from './sequenceTargetClaims.js';
+import type { SequenceTargetClaims } from './sequenceTargetClaims.js';
 
 export interface SequencePlaybackContext {
   assertOpen(): void;
@@ -68,13 +68,19 @@ function admitMode(context: SequencePlaybackContext, scope: Scope, options: unkn
   if (options === undefined) return 'once';
   if (options === null || typeof options !== 'object') throw new EgretError('SEQ_PLAYBACK_OPTIONS_INVALID');
   let array: boolean;
-  try { array = Array.isArray(options); }
-  catch (cause) { throw new EgretError('SEQ_PLAYBACK_OPTIONS_INVALID', { cause }); }
+  try {
+    array = Array.isArray(options);
+  } catch (cause) {
+    throw new EgretError('SEQ_PLAYBACK_OPTIONS_INVALID', { cause });
+  }
   if (array) throw new EgretError('SEQ_PLAYBACK_OPTIONS_INVALID');
   assertLifetime(context, scope);
   let mode: unknown;
-  try { mode = (options as { readonly mode?: unknown }).mode; }
-  catch (cause) { throw new EgretError('SEQ_PLAYBACK_OPTIONS_INVALID', { cause }); }
+  try {
+    mode = (options as { readonly mode?: unknown }).mode;
+  } catch (cause) {
+    throw new EgretError('SEQ_PLAYBACK_OPTIONS_INVALID', { cause });
+  }
   // A throwing read preserves its own occurrence, including throw undefined.
   assertLifetime(context, scope);
   // The authentic player owns enum validation after its original resource checks.
@@ -83,8 +89,11 @@ function admitMode(context: SequencePlaybackContext, scope: Scope, options: unkn
 
 function captureSecondary(context: SequencePlaybackContext, cause: unknown): void {
   // Cleanup recording must not prevent the original Engine close barriers.
-  try { context.captureCleanup(cause); }
-  catch { /* A recording failure cannot replace an already chosen primary cause. */ }
+  try {
+    context.captureCleanup(cause);
+  } catch {
+    /* A recording failure cannot replace an already chosen primary cause. */
+  }
 }
 
 /** Terminal identity is committed before cleanup; every acquired entry is attempted. */
@@ -106,19 +115,33 @@ function retire(record: PlaybackRecord, terminal: 'completed' | 'stopped' | 'fai
   let failed = false;
   let firstFailure: unknown;
   function attempt(cleanup: () => void): void {
-    try { cleanup(); }
-    catch (cause) {
-      if (!failed) { failed = true; firstFailure = cause; }
+    try {
+      cleanup();
+    } catch (cause) {
+      if (!failed) {
+        failed = true;
+        firstFailure = cause;
+      }
       captureSecondary(record.context, cause);
     }
   }
-  if (target !== undefined && claims !== undefined) attempt((): void => {
-    // An old Scope's historical handle must never remove a newer target claim.
-    claims.release(target, record);
-  });
-  if (owner !== undefined) attempt((): void => { owner.delete(record); });
-  if (subscription !== undefined) attempt((): void => { subscription.dispose(); });
-  if (player !== undefined) attempt((): void => { apply(playerDispose, player, []); });
+  if (target !== undefined && claims !== undefined)
+    attempt((): void => {
+      // An old Scope's historical handle must never remove a newer target claim.
+      claims.release(target, record);
+    });
+  if (owner !== undefined)
+    attempt((): void => {
+      owner.delete(record);
+    });
+  if (subscription !== undefined)
+    attempt((): void => {
+      subscription.dispose();
+    });
+  if (player !== undefined)
+    attempt((): void => {
+      apply(playerDispose, player, []);
+    });
   if (failed && !preservePrimary) throw firstFailure;
 }
 
@@ -132,7 +155,10 @@ function assertControl(record: PlaybackRecord): void {
 function canCommit(record: PlaybackRecord, expected: SequencePlaybackState): boolean {
   if (record.state !== expected || isTerminal(record.state)) return false;
   record.context.assertOpen();
-  if (!scopeIsOpen(record)) { retire(record, 'stopped'); return false; }
+  if (!scopeIsOpen(record)) {
+    retire(record, 'stopped');
+    return false;
+  }
   return true;
 }
 
@@ -166,15 +192,21 @@ function activate(record: PlaybackRecord, expected: 'idle' | 'paused', elapsed: 
     record.state = 'running';
   } catch (cause) {
     if (acquired !== undefined) {
-      try { acquired.dispose(); }
-      catch (cleanupCause) { captureSecondary(record.context, cleanupCause); }
+      try {
+        acquired.dispose();
+      } catch (cleanupCause) {
+        captureSecondary(record.context, cleanupCause);
+      }
     }
     if (applying) retire(record, 'failed', true);
     else if (record.subscription !== undefined) {
       const subscription = record.subscription;
       record.subscription = undefined;
-      try { subscription.dispose(); }
-      catch (cleanupCause) { captureSecondary(record.context, cleanupCause); }
+      try {
+        subscription.dispose();
+      } catch (cleanupCause) {
+        captureSecondary(record.context, cleanupCause);
+      }
     }
     throw cause;
   } finally {
@@ -196,8 +228,11 @@ function pausePlayback(record: PlaybackRecord): void {
   record.state = 'paused';
   const subscription = record.subscription;
   record.subscription = undefined;
-  try { subscription?.dispose(); }
-  finally { record.operationBusy = false; }
+  try {
+    subscription?.dispose();
+  } finally {
+    record.operationBusy = false;
+  }
 }
 
 function resumePlayback(record: PlaybackRecord): void {
@@ -212,14 +247,18 @@ function advancePlayback(record: PlaybackRecord, tick: GameClockTick): undefined
   try {
     record.context.assertOpen();
     // Cancellation enters closing before reverse cleanup can reach this handle.
-    if (!scopeIsOpen(record)) { retire(record, 'stopped'); return undefined; }
+    if (!scopeIsOpen(record)) {
+      retire(record, 'stopped');
+      return undefined;
+    }
     const delta = tick.elapsedSeconds - record.anchor;
     if (delta <= 0) return undefined;
     if (!Number.isFinite(delta)) throw new EgretError('SEQ_PLAYBACK_TIME_RANGE');
     const final = record.mode === 'once' && delta >= record.durationSeconds - record.runBase;
     // Cap once before addition; looping never silently loses a positive interval.
     const elapsed = final ? record.durationSeconds : record.runBase + delta;
-    if (!final && (!Number.isFinite(elapsed) || elapsed <= record.elapsedSeconds)) throw new EgretError('SEQ_PLAYBACK_TIME_RANGE');
+    if (!final && (!Number.isFinite(elapsed) || elapsed <= record.elapsedSeconds))
+      throw new EgretError('SEQ_PLAYBACK_TIME_RANGE');
     const sample: SequenceSample = apply(playerApply, record.player!, [elapsed]);
     if (!canCommit(record, 'running')) return undefined;
     record.elapsedSeconds = elapsed;
@@ -241,15 +280,42 @@ function makeHandle(record: PlaybackRecord): SequencePlayback {
     if (receiver !== handle) throw new EgretError('SEQ_PLAYBACK_INVALID');
   }
   const handle = Object.freeze({
-    get state(): SequencePlaybackState { assertReceiver(this); return record.state; },
-    get isDisposed(): boolean { assertReceiver(this); return isTerminal(record.state); },
-    get elapsedSeconds(): number { assertReceiver(this); return record.elapsedSeconds; },
-    get lastSample(): SequenceSample | undefined { assertReceiver(this); return record.lastSample; },
-    start(): void { assertReceiver(this); startPlayback(record); },
-    pause(): void { assertReceiver(this); pausePlayback(record); },
-    resume(): void { assertReceiver(this); resumePlayback(record); },
-    stop(): void { assertReceiver(this); retire(record, 'stopped'); },
-    dispose(): void { assertReceiver(this); retire(record, 'stopped'); },
+    get state(): SequencePlaybackState {
+      assertReceiver(this);
+      return record.state;
+    },
+    get isDisposed(): boolean {
+      assertReceiver(this);
+      return isTerminal(record.state);
+    },
+    get elapsedSeconds(): number {
+      assertReceiver(this);
+      return record.elapsedSeconds;
+    },
+    get lastSample(): SequenceSample | undefined {
+      assertReceiver(this);
+      return record.lastSample;
+    },
+    start(): void {
+      assertReceiver(this);
+      startPlayback(record);
+    },
+    pause(): void {
+      assertReceiver(this);
+      pausePlayback(record);
+    },
+    resume(): void {
+      assertReceiver(this);
+      resumePlayback(record);
+    },
+    stop(): void {
+      assertReceiver(this);
+      retire(record, 'stopped');
+    },
+    dispose(): void {
+      assertReceiver(this);
+      retire(record, 'stopped');
+    }
   }) as SequencePlayback;
   return handle;
 }
@@ -272,17 +338,32 @@ export function createSequencePlaybackOwner(context: SequencePlaybackContext): S
         player = new playerConstructor(bitmap, clip, mode);
         // Seal before the first intrinsic Scope adoption, including late cleanup.
         Object.defineProperty(player, 'dispose', {
-          value: disposeOwnedPlayer, enumerable: false, writable: false, configurable: false,
+          value: disposeOwnedPlayer,
+          enumerable: false,
+          writable: false,
+          configurable: false
         });
         assertLifetime(context, scope);
         // An option getter may have admitted the other profile after the first capacity check.
         if (claims.size >= MAX_PLAYBACKS) throw new EgretError('SEQ_PLAYBACK_LIMIT');
         if (claims.has(bitmap)) throw new EgretError('SEQ_PLAYBACK_TARGET_BUSY');
         record = {
-          context, scope, mode, durationSeconds: clip.durationSeconds,
-          player, target: bitmap, clip, owner: undefined, claims: undefined,
-          subscription: undefined, state: 'idle', elapsedSeconds: 0, lastSample: undefined,
-          runBase: 0, anchor: 0, operationBusy: false,
+          context,
+          scope,
+          mode,
+          durationSeconds: clip.durationSeconds,
+          player,
+          target: bitmap,
+          clip,
+          owner: undefined,
+          claims: undefined,
+          subscription: undefined,
+          state: 'idle',
+          elapsedSeconds: 0,
+          lastSample: undefined,
+          runBase: 0,
+          anchor: 0,
+          operationBusy: false
         };
         player = undefined; // The mutable record is now the sole cleanup borrow.
         const handle = makeHandle(record);
@@ -299,8 +380,11 @@ export function createSequencePlaybackOwner(context: SequencePlaybackContext): S
       } catch (cause) {
         if (record !== undefined) retire(record, 'stopped', true);
         else if (player !== undefined) {
-          try { apply(playerDispose, player, []); }
-          catch (cleanupCause) { captureSecondary(context, cleanupCause); }
+          try {
+            apply(playerDispose, player, []);
+          } catch (cleanupCause) {
+            captureSecondary(context, cleanupCause);
+          }
         }
         throw cause;
       } finally {
@@ -310,6 +394,6 @@ export function createSequencePlaybackOwner(context: SequencePlaybackContext): S
     close(): void {
       // Secondary faults are collected per record; no record can block clock close.
       for (const record of records) retire(record, 'stopped', true);
-    },
+    }
   });
 }

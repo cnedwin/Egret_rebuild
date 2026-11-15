@@ -29,13 +29,21 @@ export interface LegacyResourceConversionResult {
 }
 
 /** Plan relative copy/reference intents without file I/O or content certification. */
-export function planLegacyResourceManifestConversion(text: unknown, resourceRoot: unknown): LegacyResourceConversionResult {
+export function planLegacyResourceManifestConversion(
+  text: unknown,
+  resourceRoot: unknown
+): LegacyResourceConversionResult {
   // Provenance comes from this one internal producer call. Caller-shaped reports
   // are never accepted; existing analyzer admission and diagnostics keep precedence.
   const report = analyzeLegacyResourceManifest(text, resourceRoot);
   if (report.status !== "recognized") {
-    return Object.freeze({ planVersion: "0.1", scope: "legacy-res-conversion-intents",
-      status: report.status, report, plan: null });
+    return Object.freeze({
+      planVersion: "0.1",
+      scope: "legacy-res-conversion-intents",
+      status: report.status,
+      report,
+      plan: null
+    });
   }
   if (typeof report.resourceRoot !== "string") throw new Error("LEGACY_RES_PLAN_INVARIANT");
 
@@ -71,8 +79,11 @@ export function planLegacyResourceManifestConversion(text: unknown, resourceRoot
   }
   // Publish only after every record/reference is prepared. Allocation failures
   // may escape; no partial plan or manufactured analyzer report is returned.
-  const plan = Object.freeze({ resourceRoot: report.resourceRoot, files: Object.freeze(files),
-    resources: Object.freeze(resources), groups: Object.freeze(groups) });
-  return Object.freeze({ planVersion: "0.1", scope: "legacy-res-conversion-intents",
-    status: "planned", report, plan });
+  const plan = Object.freeze({
+    resourceRoot: report.resourceRoot,
+    files: Object.freeze(files),
+    resources: Object.freeze(resources),
+    groups: Object.freeze(groups)
+  });
+  return Object.freeze({ planVersion: "0.1", scope: "legacy-res-conversion-intents", status: "planned", report, plan });
 }

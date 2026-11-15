@@ -52,9 +52,15 @@ export interface AdmittedResourceManifest {
   readonly versions: ProjectVersionPins;
   readonly entries: readonly ResourceManifestEntry[];
 }
-export type ResourceManifestDiagnosticCode = 'RESOURCE_INPUT_INVALID' | 'RESOURCE_LIMIT_EXCEEDED'
-  | 'RESOURCE_FORMAT_UNSUPPORTED' | 'RESOURCE_DEPENDENCY_INVALID' | 'RESOURCE_ID_DUPLICATE'
-  | 'RESOURCE_KEY_MISMATCH' | 'RESOURCE_FILE_MISMATCH' | 'RESOURCE_PATH_INVALID';
+export type ResourceManifestDiagnosticCode =
+  | 'RESOURCE_INPUT_INVALID'
+  | 'RESOURCE_LIMIT_EXCEEDED'
+  | 'RESOURCE_FORMAT_UNSUPPORTED'
+  | 'RESOURCE_DEPENDENCY_INVALID'
+  | 'RESOURCE_ID_DUPLICATE'
+  | 'RESOURCE_KEY_MISMATCH'
+  | 'RESOURCE_FILE_MISMATCH'
+  | 'RESOURCE_PATH_INVALID';
 export interface ResourceManifestDiagnostic {
   readonly code: ResourceManifestDiagnosticCode;
   readonly pointer: string;

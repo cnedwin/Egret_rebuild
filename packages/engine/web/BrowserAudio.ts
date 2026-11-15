@@ -1,7 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 import { EgretError } from '@egret/runtime';
 import { createAudioMixer } from '@egret/engine/audio';
-import type { AudioBackend, AudioBackendBus, AudioBackendSound, AudioBackendStart, AudioBackendVoice, AudioMixer, AudioMixerOptions } from '@egret/engine/audio';
+import type {
+  AudioBackend,
+  AudioBackendBus,
+  AudioBackendSound,
+  AudioBackendStart,
+  AudioBackendVoice,
+  AudioMixer,
+  AudioMixerOptions
+} from '@egret/engine/audio';
 
 export interface BrowserAudioOptions extends Omit<AudioMixerOptions, 'backend' | 'locked'> {
   /** An output the page made. It is used as it is and is not closed with the mixer. Without it one is made. */
@@ -26,28 +34,56 @@ export interface BrowserAudio {
 }
 
 /** A straight line a gain follows, kept here because a browser does not always say where a gain is. */
-interface Line { readonly from: number; readonly to: number; readonly start: number; readonly end: number; }
-interface Pair { readonly target: EventTarget; readonly type: string; readonly listener: EventListener; }
-interface Strip { readonly gain: GainNode; setGain(value: number, seconds: number): void; setPan(pan: number): void; release(): void; }
+interface Line {
+  readonly from: number;
+  readonly to: number;
+  readonly start: number;
+  readonly end: number;
+}
+interface Pair {
+  readonly target: EventTarget;
+  readonly type: string;
+  readonly listener: EventListener;
+}
+interface Strip {
+  readonly gain: GainNode;
+  setGain(value: number, seconds: number): void;
+  setPan(pan: number): void;
+  release(): void;
+}
 /** A file a media element plays as it reads it, and the node that brings it into the graph. */
-interface Stream { readonly element: HTMLAudioElement; readonly node: MediaElementAudioSourceNode; }
+interface Stream {
+  readonly element: HTMLAudioElement;
+  readonly node: MediaElementAudioSourceNode;
+}
 /** Shorter than a click can be heard, long enough that a step in volume makes none. */
 const SMOOTH = 0.005;
 const gestures = ['pointerdown', 'pointerup', 'touchend', 'keydown', 'click'] as const;
 const passive: AddEventListenerOptions = Object.freeze({ capture: true, passive: true });
-const at = (line: Line, time: number): number => time >= line.end ? line.to : time <= line.start ? line.from
-  : line.from + (line.to - line.from) * (time - line.start) / (line.end - line.start);
+const at = (line: Line, time: number): number =>
+  time >= line.end
+    ? line.to
+    : time <= line.start
+      ? line.from
+      : line.from + ((line.to - line.from) * (time - line.start)) / (line.end - line.start);
 
 /**
  * Sound for a page on Web Audio. A page may not sound before the person has touched it: until
  * then the mixer is locked, music asked for waits, and the first touch or key lets it start.
  */
 export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAudio {
-  if (options === null || typeof options !== 'object' || Array.isArray(options)) throw new EgretError('AUDIO_OPTIONS_INVALID');
+  if (options === null || typeof options !== 'object' || Array.isArray(options))
+    throw new EgretError('AUDIO_OPTIONS_INVALID');
   const { context: given, unlockTarget, pauseWhenHidden = true, onError, ...configuration } = options;
-  const Live = globalThis.AudioContext, page = globalThis.document;
-  if ((given !== undefined && (given === null || typeof given !== 'object')) || typeof pauseWhenHidden !== 'boolean' || (onError !== undefined && typeof onError !== 'function')
-    || (unlockTarget !== undefined && (unlockTarget === null || typeof unlockTarget.addEventListener !== 'function'))) throw new EgretError('AUDIO_OPTIONS_INVALID');
+  const Live = globalThis.AudioContext,
+    page = globalThis.document;
+  if (
+    (given !== undefined && (given === null || typeof given !== 'object')) ||
+    typeof pauseWhenHidden !== 'boolean' ||
+    (onError !== undefined && typeof onError !== 'function') ||
+    (unlockTarget !== undefined && (unlockTarget === null || typeof unlockTarget.addEventListener !== 'function'))
+  )
+    throw new EgretError('AUDIO_OPTIONS_INVALID');
   if (given === undefined && typeof Live !== 'function') throw new EgretError('AUDIO_HOST_UNAVAILABLE');
   const context: BaseAudioContext = given ?? new Live();
   /** Only an output that runs in real time can be suspended, resumed and locked. */
@@ -59,7 +95,10 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
   const sounding = new Set<HTMLAudioElement>();
   const pairs: Pair[] = [];
   const armed: Pair[] = [];
-  let closed = false, desired = true, output: GainNode | undefined, silent: AudioBuffer | undefined;
+  let closed = false,
+    desired = true,
+    output: GainNode | undefined,
+    silent: AudioBuffer | undefined;
 
   function report(cause: unknown): void {
     if (onError !== undefined) onError(cause);
@@ -68,8 +107,12 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
   function ramp(parameter: AudioParam, line: Line | undefined, value: number, seconds: number): Line {
     const time = context.currentTime;
     // The first value of a gain is where it starts, not a movement.
-    if (line === undefined) { parameter.value = value; return { from: value, to: value, start: time, end: time }; }
-    const from = at(line, time), end = time + Math.max(seconds, SMOOTH);
+    if (line === undefined) {
+      parameter.value = value;
+      return { from: value, to: value, start: time, end: time };
+    }
+    const from = at(line, time),
+      end = time + Math.max(seconds, SMOOTH);
     parameter.cancelScheduledValues(time);
     parameter.setValueAtTime(from, time);
     parameter.linearRampToValueAtTime(value, end);
@@ -80,7 +123,12 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
     list.push({ target, type, listener });
   }
   function unlisten(list: Pair[]): void {
-    for (const pair of list.splice(0).reverse()) try { pair.target.removeEventListener(pair.type, pair.listener, passive); } catch (cause) { report(cause); }
+    for (const pair of list.splice(0).reverse())
+      try {
+        pair.target.removeEventListener(pair.type, pair.listener, passive);
+      } catch (cause) {
+        report(cause);
+      }
   }
   /** After the output or what is wanted of it changed: the lock of the mixer follows the output. */
   function settle(): void {
@@ -95,7 +143,9 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
         arm();
         mixer.setLocked(true);
       }
-    } catch (cause) { report(cause); }
+    } catch (cause) {
+      report(cause);
+    }
   }
   /** An output that refused to start is waited for as a locked one is: the next touch asks again. */
   function refused(cause: unknown): void {
@@ -114,7 +164,9 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       // A media element is let play by the touch it is started in.
       if (desired) for (const element of sounding) if (element.paused) element.play().catch(held);
       live.resume().then(settle, refused);
-    } catch (cause) { report(cause); }
+    } catch (cause) {
+      report(cause);
+    }
   };
   function arm(): void {
     const target = unlockTarget ?? page;
@@ -124,8 +176,10 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
 
   /** The way of one voice from what makes its sound to its bus: its gain, and its two sides once it leaves the middle. */
   function makeStrip(input: AudioNode, bus: GainNode, request: AudioBackendStart): Strip {
-    const gain = context.createGain(), time = context.currentTime;
-    let sides: { readonly left: GainNode; readonly right: GainNode; readonly nodes: readonly AudioNode[] } | undefined, line: Line;
+    const gain = context.createGain(),
+      time = context.currentTime;
+    let sides: { readonly left: GainNode; readonly right: GainNode; readonly nodes: readonly AudioNode[] } | undefined,
+      line: Line;
     if (request.fadeIn > 0) {
       gain.gain.setValueAtTime(0, time);
       gain.gain.linearRampToValueAtTime(request.gain, time + request.fadeIn);
@@ -138,13 +192,20 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
     function place(pan: number): void {
       if (sides === undefined) {
         if (pan === 0) return;
-        const splitter = context.createChannelSplitter(2), merger = context.createChannelMerger(2), left = context.createGain(), right = context.createGain();
+        const splitter = context.createChannelSplitter(2),
+          merger = context.createChannelMerger(2),
+          left = context.createGain(),
+          right = context.createGain();
         // One channel is heard on both sides before the sides are told apart.
-        gain.channelCount = 2; gain.channelCountMode = 'explicit'; gain.channelInterpretation = 'speakers';
+        gain.channelCount = 2;
+        gain.channelCountMode = 'explicit';
+        gain.channelInterpretation = 'speakers';
         gain.disconnect();
         gain.connect(splitter);
-        splitter.connect(left, 0); splitter.connect(right, 1);
-        left.connect(merger, 0, 0); right.connect(merger, 0, 1);
+        splitter.connect(left, 0);
+        splitter.connect(right, 1);
+        left.connect(merger, 0, 0);
+        right.connect(merger, 0, 1);
         merger.connect(bus);
         sides = { left, right, nodes: [splitter, left, right, merger] };
       }
@@ -156,9 +217,13 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
     place(request.pan);
     return {
       gain,
-      setGain(value: number, seconds: number): void { line = ramp(gain.gain, line, value, seconds); },
+      setGain(value: number, seconds: number): void {
+        line = ramp(gain.gain, line, value, seconds);
+      },
       setPan: place,
-      release(): void { for (const node of [gain, ...sides?.nodes ?? []]) node.disconnect(); },
+      release(): void {
+        for (const node of [gain, ...(sides?.nodes ?? [])]) node.disconnect();
+      }
     };
   }
   /** What a media element was refused: without a touch it waits for one; a pause that overtook it is nothing. */
@@ -175,9 +240,16 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       else if (!run && !element.paused) element.pause();
     }
   }
-  function startStream(stream: Stream, bus: GainNode, request: AudioBackendStart, ended: () => void): AudioBackendVoice {
-    const { element, node } = stream, strip = makeStrip(node, bus, request);
-    let over = false, timer: AudioBufferSourceNode | undefined;
+  function startStream(
+    stream: Stream,
+    bus: GainNode,
+    request: AudioBackendStart,
+    ended: () => void
+  ): AudioBackendVoice {
+    const { element, node } = stream,
+      strip = makeStrip(node, bus, request);
+    let over = false,
+      timer: AudioBufferSourceNode | undefined;
     function finish(): void {
       if (over) return;
       over = true;
@@ -185,10 +257,16 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       try {
         element.removeEventListener('ended', finish);
         element.pause();
-        if (timer !== undefined) { timer.onended = null; timer.stop(); timer.disconnect(); }
+        if (timer !== undefined) {
+          timer.onended = null;
+          timer.stop();
+          timer.disconnect();
+        }
         node.disconnect(strip.gain);
         strip.release();
-      } catch (cause) { report(cause); }
+      } catch (cause) {
+        report(cause);
+      }
       ended();
     }
     element.loop = request.loop;
@@ -201,11 +279,16 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
     follow();
     return {
       setGain: strip.setGain,
-      setRate(value: number): void { element.playbackRate = value; },
+      setRate(value: number): void {
+        element.playbackRate = value;
+      },
       setPan: strip.setPan,
       stop(seconds: number): void {
         if (over) return;
-        if (seconds <= 0) { finish(); return; }
+        if (seconds <= 0) {
+          finish();
+          return;
+        }
         // The end of a fade is a time on the clock of the output: a silent source that stops then tells it.
         silent ??= context.createBuffer(1, 1, context.sampleRate);
         timer = context.createBufferSource();
@@ -216,12 +299,14 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
         timer.start(0);
         timer.stop(context.currentTime + seconds);
       },
-      position: (): number => element.currentTime,
+      position: (): number => element.currentTime
     };
   }
 
   const backend: AudioBackend = {
-    get time(): number { return context.currentTime; },
+    get time(): number {
+      return context.currentTime;
+    },
     async decode(bytes: Uint8Array): Promise<AudioBackendSound> {
       // Decoding takes the buffer it is given away from its owner: it is given a copy.
       const copy = bytes.slice().buffer;
@@ -229,7 +314,14 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
         const result = context.decodeAudioData(copy, resolve, reject) as Promise<AudioBuffer> | undefined;
         if (result !== undefined && typeof result.then === 'function') result.then(resolve, reject);
       });
-      const sound: AudioBackendSound = { duration: buffer.duration, channels: buffer.numberOfChannels, sampleRate: buffer.sampleRate, release(): void { buffers.delete(sound); } };
+      const sound: AudioBackendSound = {
+        duration: buffer.duration,
+        channels: buffer.numberOfChannels,
+        sampleRate: buffer.sampleRate,
+        release(): void {
+          buffers.delete(sound);
+        }
+      };
       buffers.set(sound, buffer);
       return sound;
     },
@@ -241,16 +333,28 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       // A file of another origin is asked for in the way that lets its samples into the graph, or not at all.
       element.crossOrigin = 'anonymous';
       await new Promise<void>((resolve, reject) => {
-        const done = (): void => { element.removeEventListener('loadedmetadata', loaded); element.removeEventListener('error', failed); };
-        const loaded = (): void => { done(); resolve(); };
-        const failed = (): void => { done(); reject(element.error ?? new EgretError('AUDIO_STREAM_FAILED')); };
+        const done = (): void => {
+          element.removeEventListener('loadedmetadata', loaded);
+          element.removeEventListener('error', failed);
+        };
+        const loaded = (): void => {
+          done();
+          resolve();
+        };
+        const failed = (): void => {
+          done();
+          reject(element.error ?? new EgretError('AUDIO_STREAM_FAILED'));
+        };
         element.addEventListener('loadedmetadata', loaded);
         element.addEventListener('error', failed);
         element.src = url;
       });
       const node = live.createMediaElementSource(element);
       const sound: AudioBackendSound = {
-        duration: element.duration, channels: node.channelCount, sampleRate: live.sampleRate, streamed: true,
+        duration: element.duration,
+        channels: node.channelCount,
+        sampleRate: live.sampleRate,
+        streamed: true,
         release(): void {
           streams.delete(sound);
           sounding.delete(element);
@@ -258,31 +362,39 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
           element.removeAttribute('src');
           element.load();
           node.disconnect();
-        },
+        }
       };
       streams.set(sound, { element, node });
       return sound;
     },
     createBus(parent: AudioBackendBus | undefined): AudioBackendBus {
-      const node = context.createGain(), target = parent === undefined ? context.destination : nodes.get(parent);
+      const node = context.createGain(),
+        target = parent === undefined ? context.destination : nodes.get(parent);
       if (target === undefined) throw new EgretError('AUDIO_BACKEND_FAILED');
       node.connect(target);
       output ??= node;
       let line: Line | undefined;
       const bus: AudioBackendBus = {
-        setGain(value: number, seconds: number): void { line = ramp(node.gain, line, value, seconds); },
-        release(): void { nodes.delete(bus); node.disconnect(); },
+        setGain(value: number, seconds: number): void {
+          line = ramp(node.gain, line, value, seconds);
+        },
+        release(): void {
+          nodes.delete(bus);
+          node.disconnect();
+        }
       };
       nodes.set(bus, node);
       return bus;
     },
     start(request: AudioBackendStart, ended: () => void): AudioBackendVoice {
-      const bus = nodes.get(request.bus), stream = streams.get(request.sound);
+      const bus = nodes.get(request.bus),
+        stream = streams.get(request.sound);
       if (bus === undefined) throw new EgretError('AUDIO_BACKEND_FAILED');
       if (stream !== undefined) return startStream(stream, bus, request, ended);
       const buffer = buffers.get(request.sound);
       if (buffer === undefined) throw new EgretError('AUDIO_BACKEND_FAILED');
-      const source = context.createBufferSource(), strip = makeStrip(source, bus, request);
+      const source = context.createBufferSource(),
+        strip = makeStrip(source, bus, request);
       let over = false;
       source.buffer = buffer;
       source.loop = request.loop;
@@ -291,18 +403,25 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
         if (over) return;
         over = true;
         source.onended = null;
-        try { source.disconnect(); strip.release(); } catch (cause) { report(cause); }
+        try {
+          source.disconnect();
+          strip.release();
+        } catch (cause) {
+          report(cause);
+        }
         ended();
       };
       source.start(0, request.offset);
       return {
         setGain: strip.setGain,
-        setRate(value: number): void { source.playbackRate.value = value; },
+        setRate(value: number): void {
+          source.playbackRate.value = value;
+        },
         setPan: strip.setPan,
         stop(seconds: number): void {
           if (over) return;
           source.stop(seconds > 0 ? context.currentTime + seconds : 0);
-        },
+        }
       };
     },
     suspend(): void {
@@ -322,7 +441,7 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       unlisten(armed);
       unlisten(pairs);
       if (live !== undefined && given === undefined) live.close().catch(report);
-    },
+    }
   };
 
   let mixer: AudioMixer;
@@ -337,20 +456,33 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       listen(pairs, live, 'statechange', settle);
       if (pauseWhenHidden && page !== undefined) {
         const visibility: EventListener = () => {
-          try { if (page.visibilityState === 'hidden') mixer.suspend('hidden'); else mixer.resume('hidden'); } catch (cause) { report(cause); }
+          try {
+            if (page.visibilityState === 'hidden') mixer.suspend('hidden');
+            else mixer.resume('hidden');
+          } catch (cause) {
+            report(cause);
+          }
         };
         listen(pairs, page, 'visibilitychange', visibility);
         if (page.visibilityState === 'hidden') mixer.suspend('hidden');
       }
       if (live.state !== 'running') arm();
     } catch (cause) {
-      try { mixer.dispose(); } catch { /* the first failure is the one told */ }
+      try {
+        mixer.dispose();
+      } catch {
+        /* the first failure is the one told */
+      }
       throw cause;
     }
   }
 
   return Object.freeze({
-    mixer, context, output: output!,
-    dispose(): void { mixer.dispose(); },
+    mixer,
+    context,
+    output: output!,
+    dispose(): void {
+      mixer.dispose();
+    }
   });
 }

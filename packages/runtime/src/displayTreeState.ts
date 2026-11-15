@@ -19,26 +19,44 @@ const readParent = parents.get.bind(parents);
 const deleteParent = parents.delete.bind(parents);
 const readStageRoot = roots.has.bind(roots);
 
-export function registerNode(node: DisplayObject): void { nodes.add(node); }
-export function registerContainer(node: DisplayObjectContainer): void { childLists.set(node, []); }
+export function registerNode(node: DisplayObject): void {
+  nodes.add(node);
+}
+export function registerContainer(node: DisplayObjectContainer): void {
+  childLists.set(node, []);
+}
 /** Authenticate an actual registered container without inspecting its shape. */
 export function assertContainer(value: object): void {
   if (readChildList(value as DisplayObjectContainer) === undefined) throw new EgretError("INVALID_DISPLAY_CONTAINER");
 }
-export function markStageRoot(node: DisplayObject): void { roots.add(node); }
+export function markStageRoot(node: DisplayObject): void {
+  roots.add(node);
+}
 /** Identity-only authentication never reads a forged or proxied Stage. */
-export function isStageRoot(value: unknown): value is Stage { return roots.has(value as object); }
-export function isDisplayNode(value: object): value is DisplayObject { return nodes.has(value); }
-export function isTerminated(node: DisplayObject): boolean { return terminated.has(node); }
-export function parentOf(node: DisplayObject): DisplayObjectContainer | undefined { return parents.get(node); }
+export function isStageRoot(value: unknown): value is Stage {
+  return roots.has(value as object);
+}
+export function isDisplayNode(value: object): value is DisplayObject {
+  return nodes.has(value);
+}
+export function isTerminated(node: DisplayObject): boolean {
+  return terminated.has(node);
+}
+export function parentOf(node: DisplayObject): DisplayObjectContainer | undefined {
+  return parents.get(node);
+}
 /** Return a snapshot so callers cannot mutate the authoritative child list. */
 export function childrenOf(node: DisplayObject): readonly DisplayObject[] {
   return [...(childLists.get(node as DisplayObjectContainer) ?? [])];
 }
 
 /** Callback-free O(1) readers for budgeted traversal; never clone the list. */
-export function childCountOf(node: DisplayObject): number { return childLists.get(node as DisplayObjectContainer)?.length ?? 0; }
-export function childAtOf(node: DisplayObject, index: number): DisplayObject | undefined { return childLists.get(node as DisplayObjectContainer)?.[index]; }
+export function childCountOf(node: DisplayObject): number {
+  return childLists.get(node as DisplayObjectContainer)?.length ?? 0;
+}
+export function childAtOf(node: DisplayObject, index: number): DisplayObject | undefined {
+  return childLists.get(node as DisplayObjectContainer)?.[index];
+}
 
 /** Read the exact direct-child index in O(n), without a snapshot or callbacks. */
 export function childIndexOf(parent: DisplayObjectContainer, child: DisplayObject): number {
@@ -142,7 +160,6 @@ export function terminateNode(node: DisplayObject): void {
   detachNode(node);
 }
 
-
 // Indexed insertion has its own captured authority; legacy operations stay unchanged.
 const insertionHasNode = nodes.has.bind(nodes);
 const insertionIsTerminated = terminated.has.bind(terminated);
@@ -151,8 +168,14 @@ const insertionWriteChildren = childLists.set.bind(childLists);
 const insertionWriteParent = parents.set.bind(parents);
 const insertionInteger = Number.isInteger;
 const InsertionSet = Set;
-const insertionSeenHas = Set.prototype.has.call.bind(Set.prototype.has) as (set: Set<unknown>, value: unknown) => boolean;
-const insertionSeenAdd = Set.prototype.add.call.bind(Set.prototype.add) as (set: Set<unknown>, value: unknown) => Set<unknown>;
+const insertionSeenHas = Set.prototype.has.call.bind(Set.prototype.has) as (
+  set: Set<unknown>,
+  value: unknown
+) => boolean;
+const insertionSeenAdd = Set.prototype.add.call.bind(Set.prototype.add) as (
+  set: Set<unknown>,
+  value: unknown
+) => Set<unknown>;
 
 // An indexed insertion that walked a receiver's whole tree and left every node in it bound to one
 // Engine records that Engine here, so the next insertion into the same receiver does not walk the
@@ -216,7 +239,7 @@ function copyInsertionList(list: readonly DisplayObject[]): DisplayObject[] {
 function captureInsertionNode(
   node: DisplayObject | undefined,
   edgeParent: DisplayObjectContainer | undefined,
-  repeated: boolean,
+  repeated: boolean
 ): CapturedInsertionNode {
   const genuine = insertionHasNode(node as object);
   const actualParent = readParent(node as DisplayObject);
@@ -234,17 +257,21 @@ function captureInsertionNode(
     edgeAgrees = parentChildren !== undefined && occurrences === 1;
   }
   return {
-    node, actualParent, children, genuine,
+    node,
+    actualParent,
+    children,
+    genuine,
     terminated: insertionIsTerminated(node as object),
     stageRoot: insertionIsRoot(node as object),
-    repeated, edgeAgrees,
+    repeated,
+    edgeAgrees
   };
 }
 
 function captureInsertionTree(root: DisplayObject): CapturedInsertionNode[] {
   const records: CapturedInsertionNode[] = [];
   const pending: { readonly node: DisplayObject | undefined; readonly parent: DisplayObjectContainer | undefined }[] = [
-    { node: root, parent: undefined },
+    { node: root, parent: undefined }
   ];
   const seen = new InsertionSet<unknown>();
   while (pending.length !== 0) {
@@ -269,14 +296,19 @@ export function captureChildInsertion(receiver: DisplayObjectContainer, child: D
   // walked again: every record that walk would produce is valid and carries that Engine, so the
   // receiver contributes its own record only.
   const receiverEngine = engineOf(receiver);
-  const receiverTree = receiverEngine !== undefined && readVerifiedInsertionTree(receiver) === receiverEngine
-    ? [captureInsertionNode(receiver, undefined, false)] : captureInsertionTree(receiver);
+  const receiverTree =
+    receiverEngine !== undefined && readVerifiedInsertionTree(receiver) === receiverEngine
+      ? [captureInsertionNode(receiver, undefined, false)]
+      : captureInsertionTree(receiver);
   const incomingTree = captureInsertionTree(child);
   const receiverAncestors: DisplayObject[] = [];
   const seenAncestors = new InsertionSet<unknown>();
   let repeatedAncestor = false;
   for (let current: DisplayObject | undefined = receiver; current !== undefined; current = readParent(current)) {
-    if (insertionSeenHas(seenAncestors, current)) { repeatedAncestor = true; break; }
+    if (insertionSeenHas(seenAncestors, current)) {
+      repeatedAncestor = true;
+      break;
+    }
     insertionSeenAdd(seenAncestors, current);
     receiverAncestors[receiverAncestors.length] = current;
   }
@@ -289,7 +321,8 @@ export function captureChildInsertion(receiver: DisplayObjectContainer, child: D
   const sourceSeen = new InsertionSet<unknown>();
   if (sourceChildren !== undefined) {
     for (let index = 0; index < sourceChildren.length; index++) {
-      const node = sourceChildren[index], repeated = insertionSeenHas(sourceSeen, node);
+      const node = sourceChildren[index],
+        repeated = insertionSeenHas(sourceSeen, node);
       insertionSeenAdd(sourceSeen, node);
       sourceEdges[index] = captureInsertionNode(node, oldParent, repeated);
     }
@@ -297,26 +330,44 @@ export function captureChildInsertion(receiver: DisplayObjectContainer, child: D
   const previousChildren = oldParent === receiver ? targetChildren : sourceChildren;
   let oldIndex = -1;
   if (previousChildren !== undefined) {
-    for (let index = 0; index < previousChildren.length; index++) if (previousChildren[index] === child) { oldIndex = index; break; }
+    for (let index = 0; index < previousChildren.length; index++)
+      if (previousChildren[index] === child) {
+        oldIndex = index;
+        break;
+      }
   }
   return {
-    receiver, child, receiverTree, incomingTree, receiverAncestors, repeatedAncestor,
-    targetChildren, oldParent, sourceChildren, sourceEdges,
+    receiver,
+    child,
+    receiverTree,
+    incomingTree,
+    receiverAncestors,
+    repeatedAncestor,
+    targetChildren,
+    oldParent,
+    sourceChildren,
+    sourceEdges,
     sourceContainerGenuine: !distinctSource || actualSource !== undefined,
-    oldIndex,
+    oldIndex
   };
 }
 
 /** Inclusive index checks never coerce boxed, string or other caller values. */
 export function assertChildInsertionIndex(receiver: DisplayObjectContainer, index: number): void {
-  if (typeof index !== "number" || !insertionInteger(index) || index < 0 || index > (readChildList(receiver)?.length ?? 0)) {
+  if (
+    typeof index !== "number" ||
+    !insertionInteger(index) ||
+    index < 0 ||
+    index > (readChildList(receiver)?.length ?? 0)
+  ) {
     throw new EgretError("INVALID_INDEX");
   }
 }
 
 /** Engine openness is checked by ownership before these ordered root semantics. */
 export function validateCapturedInsertionRoots(capture: CapturedChildInsertion, index: number): void {
-  const receiver = capture.receiverTree[0]!, child = capture.incomingTree[0]!;
+  const receiver = capture.receiverTree[0]!,
+    child = capture.incomingTree[0]!;
   if (receiver.terminated) throw new EgretError("OBJECT_DISPOSED");
   if (child.terminated) throw new EgretError("OBJECT_DISPOSED");
   if (child.stageRoot) throw new EgretError("STAGE_ROOT_ONLY");
@@ -339,7 +390,8 @@ export function validateCapturedInsertionNode(record: CapturedInsertionNode): vo
 export function validateCapturedInsertionSource(capture: CapturedChildInsertion): void {
   if (capture.repeatedAncestor || !capture.sourceContainerGenuine) throw new EgretError("DISPLAY_TREE_INVARIANT");
   if (capture.oldParent !== undefined && capture.oldIndex < 0) throw new EgretError("DISPLAY_TREE_INVARIANT");
-  for (let index = 0; index < capture.sourceEdges.length; index++) validateCapturedInsertionNode(capture.sourceEdges[index]!);
+  for (let index = 0; index < capture.sourceEdges.length; index++)
+    validateCapturedInsertionNode(capture.sourceEdges[index]!);
 }
 
 /** Build both replacements solely from the validated capture; no mapping writes occur. */
@@ -431,11 +483,18 @@ export function publishUiTree(replacements: readonly UiTreeReplacement[]): void 
 }
 
 /** One validated borrowed-child replacement; all storage was allocated in preparation. */
-export function publishPreparedChildren(parent: DisplayObjectContainer, previous: readonly DisplayObject[], next: DisplayObject[]): void {
-  for (let i=0;i<previous.length;i++) { deleteParent(previous[i]!); recordVisualChange(previous[i]!,VISUAL_STRUCTURE); }
-  insertionWriteChildren(parent,next);
-  insertionWriteParent(next[0]!,parent);
-  recordVisualChange(parent,VISUAL_STRUCTURE);
-  recordVisualChange(next[0]!,VISUAL_STRUCTURE);
+export function publishPreparedChildren(
+  parent: DisplayObjectContainer,
+  previous: readonly DisplayObject[],
+  next: DisplayObject[]
+): void {
+  for (let i = 0; i < previous.length; i++) {
+    deleteParent(previous[i]!);
+    recordVisualChange(previous[i]!, VISUAL_STRUCTURE);
+  }
+  insertionWriteChildren(parent, next);
+  insertionWriteParent(next[0]!, parent);
+  recordVisualChange(parent, VISUAL_STRUCTURE);
+  recordVisualChange(next[0]!, VISUAL_STRUCTURE);
   forgetVerifiedInsertionTrees(parent);
 }

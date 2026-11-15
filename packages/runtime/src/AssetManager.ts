@@ -4,9 +4,13 @@ import { assertAssetRef, assertAssetType } from "./AssetRef.js";
 import type { AssetRef, AssetType } from "./AssetRef.js";
 import { CancellationController } from "./CancellationController.js";
 import { EgretError } from "./EgretError.js";
-import { closeOwnedTextCache, markAssetManagerOwnerClosed, registerAssetManagerOwner } from "./assetManagerOwnerState.js";
-import type { AssetGroupOperations } from './assetManagerOwnerState.js';
-import { claimOwner, engineOf, ownerOf } from './ownership.js';
+import {
+  closeOwnedTextCache,
+  markAssetManagerOwnerClosed,
+  registerAssetManagerOwner
+} from "./assetManagerOwnerState.js";
+import type { AssetGroupOperations } from "./assetManagerOwnerState.js";
+import { claimOwner, engineOf, ownerOf } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
 import type { AssetLoadContext, Entry, Identity, ProviderBinding, Waiter } from "./assetState.js";
 
@@ -60,22 +64,39 @@ export class AssetManager {
     const claimGroupLease = this.prototype.claimGroupLease;
     const releaseGroupLease = AssetLease.prototype.release;
     bindAssetManagerOwner = (manager, context): void => {
-      registerAssetManagerOwner(manager, FREEZE({
-        context,
-        assertOpen: (): void => { APPLY(assertOpen, manager, []); },
-        register: <T>(type: AssetType<T>, provider: AssetProvider<NoInfer<T>>): void => { APPLY(register, manager, [type, provider]); },
-        acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions): Promise<AssetLease<T>> => APPLY(acquire, manager, [ref, options]) as Promise<AssetLease<T>>,
-        invalidate: <T>(ref: AssetRef<T>): void => { APPLY(invalidate, manager, [ref]); },
-      }));
+      registerAssetManagerOwner(
+        manager,
+        FREEZE({
+          context,
+          assertOpen: (): void => {
+            APPLY(assertOpen, manager, []);
+          },
+          register: <T>(type: AssetType<T>, provider: AssetProvider<NoInfer<T>>): void => {
+            APPLY(register, manager, [type, provider]);
+          },
+          acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions): Promise<AssetLease<T>> =>
+            APPLY(acquire, manager, [ref, options]) as Promise<AssetLease<T>>,
+          invalidate: <T>(ref: AssetRef<T>): void => {
+            APPLY(invalidate, manager, [ref]);
+          }
+        })
+      );
       // Genuine construction alone supplies the captured, frozen narrow bridge.
       // Text-cache owner state and contexts without this callback are unchanged.
       const registerGroupOperations = context.registerAssetGroupOperations;
       if (registerGroupOperations !== undefined) {
         const operations: AssetGroupOperations = FREEZE({
-          admitGroupRefs: (refs: readonly unknown[]): void => { APPLY(admitGroupRefs, manager, [refs]); },
-          acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions): Promise<AssetLease<T>> => APPLY(acquire, manager, [ref, options]) as Promise<AssetLease<T>>,
-          claimGroupLease: (lease: unknown, group: object): void => { APPLY(claimGroupLease, manager, [lease, group]); },
-          releaseGroupLease: (lease: unknown): void => { APPLY(releaseGroupLease, lease, []); },
+          admitGroupRefs: (refs: readonly unknown[]): void => {
+            APPLY(admitGroupRefs, manager, [refs]);
+          },
+          acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions): Promise<AssetLease<T>> =>
+            APPLY(acquire, manager, [ref, options]) as Promise<AssetLease<T>>,
+          claimGroupLease: (lease: unknown, group: object): void => {
+            APPLY(claimGroupLease, manager, [lease, group]);
+          },
+          releaseGroupLease: (lease: unknown): void => {
+            APPLY(releaseGroupLease, lease, []);
+          }
         });
         APPLY(registerGroupOperations, context, [operations]);
       }
@@ -85,8 +106,11 @@ export class AssetManager {
 
   private assertOpen(): void {
     if (this.closed) throw new EgretError("ASSET_MANAGER_CLOSED");
-    try { this.#engine.assertOpen(); }
-    catch (cause) { throw new EgretError("ASSET_MANAGER_CLOSED", { cause }); }
+    try {
+      this.#engine.assertOpen();
+    } catch (cause) {
+      throw new EgretError("ASSET_MANAGER_CLOSED", { cause });
+    }
   }
 
   /** Snapshot method identity and receiver once, including getter reentry checks. */
@@ -102,7 +126,9 @@ export class AssetManager {
     this.providers.set(type, {
       // Intrinsic invocation ignores mutable own .call properties on callbacks.
       load: (ref, context) => Reflect.apply(load, provider, [ref as unknown as AssetRef<T>, context]) as Promise<T>,
-      dispose: (value) => { Reflect.apply(dispose, provider, [value as T]); },
+      dispose: value => {
+        Reflect.apply(dispose, provider, [value as T]);
+      }
     });
   }
 
@@ -135,24 +161,42 @@ export class AssetManager {
           identity.generation = generation;
           this.taskId = taskId;
           entry = {
-            ref, provider, generation, taskId,
-            controller: new CancellationController((diagnostic) => this.diagnose(diagnostic.code, diagnostic.cause)),
-            waiters: new Set(), leases: new Set(), state: "loading", started: false,
-            hasValue: false, cleanupAttempted: false, value: undefined,
+            ref,
+            provider,
+            generation,
+            taskId,
+            controller: new CancellationController(diagnostic => this.diagnose(diagnostic.code, diagnostic.cause)),
+            waiters: new Set(),
+            leases: new Set(),
+            state: "loading",
+            started: false,
+            hasValue: false,
+            cleanupAttempted: false,
+            value: undefined
           };
           this.current.set(ref.id, entry);
           this.entries.add(entry);
         }
         const waiter: Waiter = {
-          entry, signal, pending: true, installing: false, listening: false,
-          resolve: lease => resolve(lease as unknown as AssetLease<T>), reject,
+          entry,
+          signal,
+          pending: true,
+          installing: false,
+          listening: false,
+          resolve: lease => resolve(lease as unknown as AssetLease<T>),
+          reject,
           listener: () => {
             if (!waiter.pending) return;
             let reason: unknown;
-            try { reason = signal?.reason; }
-            catch (cause) { this.failWaiter(waiter, new EgretError("ASSET_SIGNAL_FAILED", { cause })); this.diagnose("ASSET_SIGNAL_FAILED", cause); return; }
+            try {
+              reason = signal?.reason;
+            } catch (cause) {
+              this.failWaiter(waiter, new EgretError("ASSET_SIGNAL_FAILED", { cause }));
+              this.diagnose("ASSET_SIGNAL_FAILED", cause);
+              return;
+            }
             this.failWaiter(waiter, new EgretError("ASSET_ACQUIRE_CANCELLED", { cause: reason }));
-          },
+          }
         };
         entry.waiters.add(waiter);
         this.installSignal(waiter);
@@ -181,11 +225,11 @@ export class AssetManager {
     const admitted = new Map<string, object>();
     for (const ref of refs) {
       assertAssetRef(ref);
-      if (!this.providers.has(ref.type)) throw new EgretError('ASSET_PROVIDER_MISSING');
+      if (!this.providers.has(ref.type)) throw new EgretError("ASSET_PROVIDER_MISSING");
       const existing = this.identities.get(ref.id);
       const inputType = admitted.get(ref.id);
-      if ((existing !== undefined && existing.type !== ref.type)
-        || (inputType !== undefined && inputType !== ref.type)) throw new EgretError('ASSET_TYPE_MISMATCH');
+      if ((existing !== undefined && existing.type !== ref.type) || (inputType !== undefined && inputType !== ref.type))
+        throw new EgretError("ASSET_TYPE_MISMATCH");
       admitted.set(ref.id, ref.type);
     }
   }
@@ -193,9 +237,13 @@ export class AssetManager {
   /** Lease identity, affinity and one cleanup owner are checked before publication. */
   private claimGroupLease(lease: unknown, group: object): void {
     this.assertOpen();
-    if (!isAssetLease(lease) || engineOf(lease) !== this.#engine || ownerOf(lease) !== undefined) throw new EgretError('ASSET_GROUP_MEMBER_INVALID');
-    try { readAssetLeaseValue(lease); }
-    catch (cause) { throw new EgretError('ASSET_GROUP_MEMBER_INVALID', { cause }); }
+    if (!isAssetLease(lease) || engineOf(lease) !== this.#engine || ownerOf(lease) !== undefined)
+      throw new EgretError("ASSET_GROUP_MEMBER_INVALID");
+    try {
+      readAssetLeaseValue(lease);
+    } catch (cause) {
+      throw new EgretError("ASSET_GROUP_MEMBER_INVALID", { cause });
+    }
     claimOwner(lease, group);
   }
 
@@ -235,36 +283,60 @@ export class AssetManager {
   private detach(waiter: Waiter): { readonly failed: boolean; readonly cause?: unknown } {
     if (waiter.installing || !waiter.listening || waiter.signal === undefined) return { failed: false };
     waiter.listening = false;
-    try { waiter.signal.removeEventListener("abort", waiter.listener); return { failed: false }; }
-    catch (cause) { return { failed: true, cause }; }
+    try {
+      waiter.signal.removeEventListener("abort", waiter.listener);
+      return { failed: false };
+    } catch (cause) {
+      return { failed: true, cause };
+    }
   }
 
   private start(entry: Entry): void {
     entry.started = true;
     let promise: Promise<unknown>;
     try {
-      promise = entry.provider.load(entry.ref, Object.freeze({ signal: entry.controller.signal, resourceGeneration: entry.generation, taskId: entry.taskId }));
+      promise = entry.provider.load(
+        entry.ref,
+        Object.freeze({ signal: entry.controller.signal, resourceGeneration: entry.generation, taskId: entry.taskId })
+      );
     } catch (cause) {
       this.failEntry(entry, new EgretError("ASSET_LOAD_FAILED", { cause }));
       return;
     }
     // Resolve thenables through Promise machinery; every internal rejection is observed.
-    void Promise.resolve(promise).then(
-      value => this.receive(entry, value),
-      cause => this.failEntry(entry, new EgretError("ASSET_LOAD_FAILED", { cause })),
-    ).catch(cause => { this.failEntry(entry, new EgretError("ASSET_LOAD_FAILED", { cause })); });
+    void Promise.resolve(promise)
+      .then(
+        value => this.receive(entry, value),
+        cause => this.failEntry(entry, new EgretError("ASSET_LOAD_FAILED", { cause }))
+      )
+      .catch(cause => {
+        this.failEntry(entry, new EgretError("ASSET_LOAD_FAILED", { cause }));
+      });
   }
 
   private receive(entry: Entry, value: unknown): void {
     entry.hasValue = true;
     entry.value = value;
-    if (this.isTerminal(entry)) { this.cleanup(entry); return; }
+    if (this.isTerminal(entry)) {
+      this.cleanup(entry);
+      return;
+    }
     let valid: boolean;
-    try { valid = entry.ref.type.is(value); }
-    catch (cause) { this.failEntry(entry, new EgretError("ASSET_VALUE_INVALID", { cause })); return; }
+    try {
+      valid = entry.ref.type.is(value);
+    } catch (cause) {
+      this.failEntry(entry, new EgretError("ASSET_VALUE_INVALID", { cause }));
+      return;
+    }
     // Validator callbacks can cancel demand or close the manager synchronously.
-    if (this.isTerminal(entry)) { this.cleanup(entry); return; }
-    if (!valid) { this.failEntry(entry, new EgretError("ASSET_VALUE_INVALID")); return; }
+    if (this.isTerminal(entry)) {
+      this.cleanup(entry);
+      return;
+    }
+    if (!valid) {
+      this.failEntry(entry, new EgretError("ASSET_VALUE_INVALID"));
+      return;
+    }
     entry.state = "ready";
     for (const waiter of [...entry.waiters]) this.deliver(waiter);
     this.retireUnused(entry);
@@ -276,10 +348,16 @@ export class AssetManager {
     let lease: AssetLease<unknown>;
     try {
       this.leaseId = nextIdentity(this.leaseId);
-      lease = createAssetLease(this.#engine, this.leaseId, entry.generation, () => entry.value, () => {
-        entry.leases.delete(lease);
-        this.retireUnused(entry);
-      });
+      lease = createAssetLease(
+        this.#engine,
+        this.leaseId,
+        entry.generation,
+        () => entry.value,
+        () => {
+          entry.leases.delete(lease);
+          this.retireUnused(entry);
+        }
+      );
     } catch (cause) {
       this.failWaiter(waiter, cause instanceof EgretError ? cause : new EgretError("ASSET_ACQUIRE_FAILED", { cause }));
       return;
@@ -330,7 +408,9 @@ export class AssetManager {
     entry.leases.clear();
   }
 
-  private isTerminal(entry: Entry): boolean { return entry.state === "terminal"; }
+  private isTerminal(entry: Entry): boolean {
+    return entry.state === "terminal";
+  }
 
   private retireUnused(entry: Entry): void {
     if (entry.state === "terminal" || entry.waiters.size !== 0 || entry.leases.size !== 0) return;
@@ -346,8 +426,11 @@ export class AssetManager {
     entry.hasValue = false;
     const value = entry.value;
     entry.value = undefined;
-    try { entry.provider.dispose(value); }
-    catch (cause) { this.diagnose("ASSET_CLEANUP_FAILED", cause); }
+    try {
+      entry.provider.dispose(value);
+    } catch (cause) {
+      this.diagnose("ASSET_CLEANUP_FAILED", cause);
+    }
   }
 
   private diagnose(code: string, cause: unknown): void {
@@ -372,6 +455,9 @@ export class AssetManager {
       waiter.reject(error);
       if (removal.failed) this.diagnose("ASSET_SIGNAL_FAILED", removal.cause);
     }
-    for (const entry of entries) { entry.controller.abort(error); this.cleanup(entry); }
+    for (const entry of entries) {
+      entry.controller.abort(error);
+      this.cleanup(entry);
+    }
   }
 }

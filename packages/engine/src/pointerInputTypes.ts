@@ -1,8 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
-import type {DisplayObject, EventType, Scope} from '@egret/runtime';
-import type {PointerCancelReason, PointerContact, PointerEventKind, PointerRouter} from '@egret/runtime/input';
-import type {Engine} from './Engine.js';
-export type {PointerCancelReason, PointerContact, PointerEventKind, PointerSample, PointerSession, PointerType, PointerUpdate, PointerRouterState} from '@egret/runtime/input';
+import type { DisplayObject, EventType, Scope } from '@egret/runtime';
+import type { PointerCancelReason, PointerContact, PointerEventKind, PointerRouter } from '@egret/runtime/input';
+import type { Engine } from './Engine.js';
+export type {
+  PointerCancelReason,
+  PointerContact,
+  PointerEventKind,
+  PointerSample,
+  PointerSession,
+  PointerType,
+  PointerUpdate,
+  PointerRouterState
+} from '@egret/runtime/input';
 
 export interface PointerNotification {
   readonly kind: PointerEventKind;
@@ -25,7 +34,7 @@ export interface PointerInputEvents {
   readonly begin: EventType<PointerContact>;
   readonly move: EventType<PointerContact>;
   readonly end: EventType<PointerContact>;
-  readonly cancel: EventType<PointerContact & {readonly reason: PointerCancelReason}>;
+  readonly cancel: EventType<PointerContact & { readonly reason: PointerCancelReason }>;
   /** After an `end` on the target its contact began on, no more than 12 stage units from where it began. */
   readonly tap: EventType<PointerContact>;
 }

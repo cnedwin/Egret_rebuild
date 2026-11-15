@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "biome.json",
+      "originRole": "First-party configuration of the source formatter: which files it lays out and how; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/format.test.mjs",
+      "originRole": "First-party test that the sources are laid out as the formatter lays them out; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/bitmapButton.ts",
+      "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/src/bitmapResourceSlot.ts",
+      "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/src/layout.ts",
+      "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/image.ts",
+      "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
+    },
+    {
+      "path": "packages/runtime/src/ByteReader.ts",
+      "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
+    },
+    {
+      "path": "packages/runtime/src/atlasFrameLayout.ts",
+      "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
+    },
+    {
+      "path": "packages/runtime/src/bitmapAtlasPlacement.ts",
+      "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

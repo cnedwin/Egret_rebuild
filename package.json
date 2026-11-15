@@ -18,11 +18,13 @@
     "doctor": "node tools/doctor.mjs",
     "setup:dev": "node tools/setup-dev.mjs",
     "example:browser": "node tools/serve-example.mjs",
+    "format": "biome format . --write",
     "check:quick": "node tools/check-quick.mjs",
     "check:merge": "node tools/prepush.mjs",
     "test:onboarding": "node --test tests/publication/m0-foundations.test.mjs"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.7",
     "@egret/contracts": "workspace:*",
     "@egret/runtime": "workspace:*",
     "@egret/spine": "workspace:*",

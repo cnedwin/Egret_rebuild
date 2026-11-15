@@ -4,12 +4,25 @@
 
 import { decodeSRGBByte } from './srgbBytes.js';
 
-export interface GradientStop { readonly offset: number; readonly color: number; readonly alpha: number; }
+export interface GradientStop {
+  readonly offset: number;
+  readonly color: number;
+  readonly alpha: number;
+}
 /**
  * A gradient as the map from a node's units to its own: `u = a·x + c·y + tx` and `v = b·x + d·y + ty`. A linear gradient
  * runs from u = 0 to u = 1; a radial one from the point u = v = 0 to the circle of radius 1.
  */
-export interface ShapeGradient { readonly radial: boolean; readonly a: number; readonly b: number; readonly c: number; readonly d: number; readonly tx: number; readonly ty: number; readonly stops: readonly GradientStop[]; }
+export interface ShapeGradient {
+  readonly radial: boolean;
+  readonly a: number;
+  readonly b: number;
+  readonly c: number;
+  readonly d: number;
+  readonly tx: number;
+  readonly ty: number;
+  readonly stops: readonly GradientStop[];
+}
 
 /**
  * The linear-light value of an sRGB value from 0 to 255 that need not be whole: between the two bytes it lies between,
@@ -26,32 +39,57 @@ function toLinear(value: number): number {
 export function gradientColor(gradient: ShapeGradient, x: number, y: number, out: number[], at = 0): void {
   const u = gradient.a * x + gradient.c * y + gradient.tx;
   let t = gradient.radial ? Math.hypot(u, gradient.b * x + gradient.d * y + gradient.ty) : u;
-  const stops = gradient.stops, last = stops.length - 1;
-  if (!(t > 0)) t = 0; else if (t > 1) t = 1;
+  const stops = gradient.stops,
+    last = stops.length - 1;
+  if (!(t > 0)) t = 0;
+  else if (t > 1) t = 1;
   let i = 0;
   while (i < last && stops[i + 1]!.offset <= t) i++;
   const from = stops[i]!;
-  let color = from.color, alpha = from.alpha, r = color >> 16 & 255, g = color >> 8 & 255, b = color & 255;
+  let color = from.color,
+    alpha = from.alpha,
+    r = (color >> 16) & 255,
+    g = (color >> 8) & 255,
+    b = color & 255;
   if (i < last && t > from.offset) {
-    const to = stops[i + 1]!, f = (t - from.offset) / (to.offset - from.offset);
+    const to = stops[i + 1]!,
+      f = (t - from.offset) / (to.offset - from.offset);
     color = to.color;
-    r += ((color >> 16 & 255) - r) * f; g += ((color >> 8 & 255) - g) * f; b += ((color & 255) - b) * f; alpha += (to.alpha - alpha) * f;
+    r += (((color >> 16) & 255) - r) * f;
+    g += (((color >> 8) & 255) - g) * f;
+    b += ((color & 255) - b) * f;
+    alpha += (to.alpha - alpha) * f;
   }
-  out[at] = toLinear(r); out[at + 1] = toLinear(g); out[at + 2] = toLinear(b); out[at + 3] = alpha;
+  out[at] = toLinear(r);
+  out[at + 1] = toLinear(g);
+  out[at + 2] = toLinear(b);
+  out[at + 3] = alpha;
 }
 
 /** Whether an outline, taken as closed, has two sides that cross. */
 export function outlineCrosses(points: readonly number[]): boolean {
   const count = points.length / 2;
   for (let i = 0; i < count; i++) {
-    const ax = points[2 * i]!, ay = points[2 * i + 1]!, bx = points[2 * ((i + 1) % count)]!, by = points[2 * ((i + 1) % count) + 1]!;
-    const left = Math.min(ax, bx), right = Math.max(ax, bx), top = Math.min(ay, by), bottom = Math.max(ay, by);
+    const ax = points[2 * i]!,
+      ay = points[2 * i + 1]!,
+      bx = points[2 * ((i + 1) % count)]!,
+      by = points[2 * ((i + 1) % count) + 1]!;
+    const left = Math.min(ax, bx),
+      right = Math.max(ax, bx),
+      top = Math.min(ay, by),
+      bottom = Math.max(ay, by);
     for (let j = i + 2; j < count; j++) {
       if (i === 0 && j === count - 1) continue;
-      const cx = points[2 * j]!, cy = points[2 * j + 1]!, dx = points[2 * ((j + 1) % count)]!, dy = points[2 * ((j + 1) % count) + 1]!;
-      if (Math.max(cx, dx) < left || Math.min(cx, dx) > right || Math.max(cy, dy) < top || Math.min(cy, dy) > bottom) continue;
-      const d1 = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax), d2 = (bx - ax) * (dy - ay) - (by - ay) * (dx - ax);
-      const d3 = (dx - cx) * (ay - cy) - (dy - cy) * (ax - cx), d4 = (dx - cx) * (by - cy) - (dy - cy) * (bx - cx);
+      const cx = points[2 * j]!,
+        cy = points[2 * j + 1]!,
+        dx = points[2 * ((j + 1) % count)]!,
+        dy = points[2 * ((j + 1) % count) + 1]!;
+      if (Math.max(cx, dx) < left || Math.min(cx, dx) > right || Math.max(cy, dy) < top || Math.min(cy, dy) > bottom)
+        continue;
+      const d1 = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax),
+        d2 = (bx - ax) * (dy - ay) - (by - ay) * (dx - ax);
+      const d3 = (dx - cx) * (ay - cy) - (dy - cy) * (ax - cx),
+        d4 = (dx - cx) * (by - cy) - (dy - cy) * (bx - cx);
       if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return true;
       // A corner that lies on another side, or sides that run along each other, is left to the non-zero fill too.
       if (d1 === 0 || d2 === 0 || d3 === 0 || d4 === 0) return true;
@@ -67,24 +105,52 @@ export function outlineCrosses(points: readonly number[]): boolean {
  * band's edge share every corner on it, so no seam opens between bands under any transform.
  */
 export function fillNonZero(outlines: readonly (readonly number[])[], maxTriangles: number): number[] | undefined {
-  const x0: number[] = [], y0: number[] = [], x1: number[] = [], y1: number[] = [], turn: number[] = [];
+  const x0: number[] = [],
+    y0: number[] = [],
+    x1: number[] = [],
+    y1: number[] = [],
+    turn: number[] = [];
   for (const points of outlines) {
     const count = points.length / 2;
     if (count < 3) continue;
     for (let i = 0; i < count; i++) {
-      const ax = points[2 * i]!, ay = points[2 * i + 1]!, j = (i + 1) % count, bx = points[2 * j]!, by = points[2 * j + 1]!;
+      const ax = points[2 * i]!,
+        ay = points[2 * i + 1]!,
+        j = (i + 1) % count,
+        bx = points[2 * j]!,
+        by = points[2 * j + 1]!;
       if (ay === by) continue;
-      if (ay < by) { x0.push(ax); y0.push(ay); x1.push(bx); y1.push(by); turn.push(1); } else { x0.push(bx); y0.push(by); x1.push(ax); y1.push(ay); turn.push(-1); }
+      if (ay < by) {
+        x0.push(ax);
+        y0.push(ay);
+        x1.push(bx);
+        y1.push(by);
+        turn.push(1);
+      } else {
+        x0.push(bx);
+        y0.push(by);
+        x1.push(ax);
+        y1.push(ay);
+        turn.push(-1);
+      }
     }
   }
   const edges = x0.length;
   if (edges === 0) return [];
-  const order: number[] = []; for (let i = 0; i < edges; i++) order.push(i);
+  const order: number[] = [];
+  for (let i = 0; i < edges; i++) order.push(i);
   order.sort((p, q) => y0[p]! - y0[q]!);
   const levels = new Set<number>();
-  for (let i = 0; i < edges; i++) { levels.add(y0[i]!); levels.add(y1[i]!); }
+  for (let i = 0; i < edges; i++) {
+    levels.add(y0[i]!);
+    levels.add(y1[i]!);
+  }
   for (let p = 0; p < edges; p++) {
-    const i = order[p]!, bottom = y1[i]!, si = (x1[i]! - x0[i]!) / (bottom - y0[i]!), li = Math.min(x0[i]!, x1[i]!), ri = Math.max(x0[i]!, x1[i]!);
+    const i = order[p]!,
+      bottom = y1[i]!,
+      si = (x1[i]! - x0[i]!) / (bottom - y0[i]!),
+      li = Math.min(x0[i]!, x1[i]!),
+      ri = Math.max(x0[i]!, x1[i]!);
     for (let q = p + 1; q < edges; q++) {
       const j = order[q]!;
       if (y0[j]! >= bottom) break;
@@ -98,35 +164,65 @@ export function fillNonZero(outlines: readonly (readonly number[])[], maxTriangl
   // Levels closer than stored coordinates can tell apart are one level, and every side ends on a level, so that no
   // band is thinner than a stored coordinate can say.
   let reach = 1;
-  for (let i = 0; i < edges; i++) reach = Math.max(reach, Math.abs(y0[i]!), Math.abs(y1[i]!), Math.abs(x0[i]!), Math.abs(x1[i]!));
+  for (let i = 0; i < edges; i++)
+    reach = Math.max(reach, Math.abs(y0[i]!), Math.abs(y1[i]!), Math.abs(x0[i]!), Math.abs(x1[i]!));
   const ys: number[] = [];
-  for (const y of [...levels].sort((p, q) => p - q)) if (ys.length === 0 || y - ys[ys.length - 1]! > reach * 1e-6) ys.push(y);
+  for (const y of [...levels].sort((p, q) => p - q))
+    if (ys.length === 0 || y - ys[ys.length - 1]! > reach * 1e-6) ys.push(y);
   const level = (y: number): number => {
-    let low = 0, high = ys.length - 1;
-    while (low < high) { const middle = (low + high + 1) >> 1; if (ys[middle]! <= y) low = middle; else high = middle - 1; }
+    let low = 0,
+      high = ys.length - 1;
+    while (low < high) {
+      const middle = (low + high + 1) >> 1;
+      if (ys[middle]! <= y) low = middle;
+      else high = middle - 1;
+    }
     return ys[low]!;
   };
-  for (let i = 0; i < edges; i++) { y0[i] = level(y0[i]!); y1[i] = level(y1[i]!); }
+  for (let i = 0; i < edges; i++) {
+    y0[i] = level(y0[i]!);
+    y1[i] = level(y1[i]!);
+  }
   const bands = ys.length - 1;
-  const at = (edge: number, y: number): number => y === y0[edge] ? x0[edge]! : y === y1[edge] ? x1[edge]! : x0[edge]! + (y - y0[edge]!) * (x1[edge]! - x0[edge]!) / (y1[edge]! - y0[edge]!);
+  const at = (edge: number, y: number): number =>
+    y === y0[edge]
+      ? x0[edge]!
+      : y === y1[edge]
+        ? x1[edge]!
+        : x0[edge]! + ((y - y0[edge]!) * (x1[edge]! - x0[edge]!)) / (y1[edge]! - y0[edge]!);
   // For each band, the spans inside it: left and right at its top, then left and right at its bottom.
-  const spans: number[][] = [], corners: number[][] = [];
+  const spans: number[][] = [],
+    corners: number[][] = [];
   for (let k = 0; k <= bands; k++) corners.push([]);
-  let active: number[] = [], next = 0, total = 0;
+  let active: number[] = [],
+    next = 0,
+    total = 0;
   for (let k = 0; k < bands; k++) {
-    const top = ys[k]!, bottom = ys[k + 1]!;
+    const top = ys[k]!,
+      bottom = ys[k + 1]!;
     active = active.filter(edge => y1[edge]! > top);
-    while (next < edges && y0[order[next]!]! <= top) { if (y1[order[next]!]! > top) active.push(order[next]!); next++; }
-    const here = active.map(edge => { const xt = at(edge, top), xb = at(edge, bottom); return { edge, xt, xb, middle: (xt + xb) / 2 }; }).sort((p, q) => p.middle - q.middle || p.xb - q.xb);
+    while (next < edges && y0[order[next]!]! <= top) {
+      if (y1[order[next]!]! > top) active.push(order[next]!);
+      next++;
+    }
+    const here = active
+      .map(edge => {
+        const xt = at(edge, top),
+          xb = at(edge, bottom);
+        return { edge, xt, xb, middle: (xt + xb) / 2 };
+      })
+      .sort((p, q) => p.middle - q.middle || p.xb - q.xb);
     const band: number[] = [];
-    let winding = 0, left = here[0];
+    let winding = 0,
+      left = here[0];
     for (const side of here) {
       const before = winding;
       winding += turn[side.edge]!;
       if (before === 0 && winding !== 0) left = side;
       else if (before !== 0 && winding === 0 && (left!.xt !== side.xt || left!.xb !== side.xb)) {
         band.push(left!.xt, side.xt, left!.xb, side.xb);
-        corners[k]!.push(left!.xt, side.xt); corners[k + 1]!.push(left!.xb, side.xb);
+        corners[k]!.push(left!.xt, side.xt);
+        corners[k + 1]!.push(left!.xb, side.xb);
       }
     }
     spans.push(band);
@@ -134,20 +230,31 @@ export function fillNonZero(outlines: readonly (readonly number[])[], maxTriangl
   }
   if (total > 2 * maxTriangles) return undefined;
   for (const line of corners) line.sort((p, q) => p - q);
-  const out: number[] = [], topRow: number[] = [], bottomRow: number[] = [];
+  const out: number[] = [],
+    topRow: number[] = [],
+    bottomRow: number[] = [];
   const row = (line: readonly number[], from: number, to: number, into: number[]): void => {
-    into.length = 0; into.push(from);
+    into.length = 0;
+    into.push(from);
     for (const x of line) if (x > from && x < to && x !== into[into.length - 1]) into.push(x);
     if (to !== from) into.push(to);
   };
   for (let k = 0; k < bands; k++) {
-    const band = spans[k]!, top = ys[k]!, bottom = ys[k + 1]!;
+    const band = spans[k]!,
+      top = ys[k]!,
+      bottom = ys[k + 1]!;
     for (let s = 0; s < band.length; s += 4) {
-      row(corners[k]!, band[s]!, band[s + 1]!, topRow); row(corners[k + 1]!, band[s + 2]!, band[s + 3]!, bottomRow);
+      row(corners[k]!, band[s]!, band[s + 1]!, topRow);
+      row(corners[k + 1]!, band[s + 2]!, band[s + 3]!, bottomRow);
       // The two rows are joined like a zip, always from the row whose next corner comes first.
-      for (let i = 0, j = 0; i + 1 < topRow.length || j + 1 < bottomRow.length;) {
-        if (i + 1 < topRow.length && (j + 1 === bottomRow.length || topRow[i + 1]! <= bottomRow[j + 1]!)) { out.push(topRow[i]!, top, topRow[i + 1]!, top, bottomRow[j]!, bottom); i++; }
-        else { out.push(topRow[i]!, top, bottomRow[j + 1]!, bottom, bottomRow[j]!, bottom); j++; }
+      for (let i = 0, j = 0; i + 1 < topRow.length || j + 1 < bottomRow.length; ) {
+        if (i + 1 < topRow.length && (j + 1 === bottomRow.length || topRow[i + 1]! <= bottomRow[j + 1]!)) {
+          out.push(topRow[i]!, top, topRow[i + 1]!, top, bottomRow[j]!, bottom);
+          i++;
+        } else {
+          out.push(topRow[i]!, top, bottomRow[j + 1]!, bottom, bottomRow[j]!, bottom);
+          j++;
+        }
       }
       if (out.length > 6 * maxTriangles) return undefined;
     }
@@ -161,35 +268,94 @@ const TOLERANCE = 2 / 255;
  * Cuts triangles until the colours of their corners, mixed across each side, stay within the tolerance of the gradient.
  * Whether a side is cut depends on its two ends alone, so two triangles that share a side cut it alike.
  */
-export function refineForGradient(triangles: readonly number[], gradient: ShapeGradient, maxTriangles: number): number[] {
-  const ca = [0, 0, 0, 0], cb = [0, 0, 0, 0], cm = [0, 0, 0, 0];
+export function refineForGradient(
+  triangles: readonly number[],
+  gradient: ShapeGradient,
+  maxTriangles: number
+): number[] {
+  const ca = [0, 0, 0, 0],
+    cb = [0, 0, 0, 0],
+    cm = [0, 0, 0, 0];
   const cut = (ax: number, ay: number, bx: number, by: number): boolean => {
-    if (ax > bx || (ax === bx && ay > by)) { const x = ax, y = ay; ax = bx; ay = by; bx = x; by = y; }
-    const dx = bx - ax, dy = by - ay;
+    if (ax > bx || (ax === bx && ay > by)) {
+      const x = ax,
+        y = ay;
+      ax = bx;
+      ay = by;
+      bx = x;
+      by = y;
+    }
+    const dx = bx - ax,
+      dy = by - ay;
     if (dx * dx + dy * dy < 0.25) return false;
-    gradientColor(gradient, ax, ay, ca); gradientColor(gradient, bx, by, cb);
+    gradientColor(gradient, ax, ay, ca);
+    gradientColor(gradient, bx, by, cb);
     for (let step = 1; step < 4; step++) {
       const f = step / 4;
       gradientColor(gradient, ax + dx * f, ay + dy * f, cm);
-      for (let i = 0; i < 3; i++) if (Math.abs(Math.sqrt(cm[i]!) - Math.sqrt(ca[i]! + (cb[i]! - ca[i]!) * f)) > TOLERANCE) return true;
+      for (let i = 0; i < 3; i++)
+        if (Math.abs(Math.sqrt(cm[i]!) - Math.sqrt(ca[i]! + (cb[i]! - ca[i]!) * f)) > TOLERANCE) return true;
       if (Math.abs(cm[3]! - (ca[3]! + (cb[3]! - ca[3]!) * f)) > TOLERANCE) return true;
     }
     return false;
   };
-  const stack = triangles.slice(), out: number[] = [];
+  const stack = triangles.slice(),
+    out: number[] = [];
   let count = triangles.length / 6;
   while (stack.length !== 0) {
     const p = stack.splice(stack.length - 6, 6);
-    const flags = count < maxTriangles ? [cut(p[0]!, p[1]!, p[2]!, p[3]!), cut(p[2]!, p[3]!, p[4]!, p[5]!), cut(p[4]!, p[5]!, p[0]!, p[1]!)] : [false, false, false];
+    const flags =
+      count < maxTriangles
+        ? [cut(p[0]!, p[1]!, p[2]!, p[3]!), cut(p[2]!, p[3]!, p[4]!, p[5]!), cut(p[4]!, p[5]!, p[0]!, p[1]!)]
+        : [false, false, false];
     const cuts = (flags[0] ? 1 : 0) + (flags[1] ? 1 : 0) + (flags[2] ? 1 : 0);
-    if (cuts === 0) { out.push(...p); continue; }
+    if (cuts === 0) {
+      out.push(...p);
+      continue;
+    }
     // Turned so that with one cut it is the first side, and with two the uncut side is the last.
     const turnBy = cuts === 3 ? 0 : cuts === 1 ? flags.indexOf(true) : (flags.indexOf(false) + 1) % 3;
-    const ax = p[2 * turnBy]!, ay = p[2 * turnBy + 1]!, bx = p[2 * ((turnBy + 1) % 3)]!, by = p[2 * ((turnBy + 1) % 3) + 1]!, cx = p[2 * ((turnBy + 2) % 3)]!, cy = p[2 * ((turnBy + 2) % 3) + 1]!;
-    const abx = (ax + bx) / 2, aby = (ay + by) / 2, bcx = (bx + cx) / 2, bcy = (by + cy) / 2, cax = (cx + ax) / 2, cay = (cy + ay) / 2;
+    const ax = p[2 * turnBy]!,
+      ay = p[2 * turnBy + 1]!,
+      bx = p[2 * ((turnBy + 1) % 3)]!,
+      by = p[2 * ((turnBy + 1) % 3) + 1]!,
+      cx = p[2 * ((turnBy + 2) % 3)]!,
+      cy = p[2 * ((turnBy + 2) % 3) + 1]!;
+    const abx = (ax + bx) / 2,
+      aby = (ay + by) / 2,
+      bcx = (bx + cx) / 2,
+      bcy = (by + cy) / 2,
+      cax = (cx + ax) / 2,
+      cay = (cy + ay) / 2;
     if (cuts === 1) stack.push(ax, ay, abx, aby, cx, cy, abx, aby, bx, by, cx, cy);
     else if (cuts === 2) stack.push(abx, aby, bx, by, bcx, bcy, ax, ay, abx, aby, bcx, bcy, ax, ay, bcx, bcy, cx, cy);
-    else stack.push(ax, ay, abx, aby, cax, cay, abx, aby, bx, by, bcx, bcy, cax, cay, bcx, bcy, cx, cy, abx, aby, bcx, bcy, cax, cay);
+    else
+      stack.push(
+        ax,
+        ay,
+        abx,
+        aby,
+        cax,
+        cay,
+        abx,
+        aby,
+        bx,
+        by,
+        bcx,
+        bcy,
+        cax,
+        cay,
+        bcx,
+        bcy,
+        cx,
+        cy,
+        abx,
+        aby,
+        bcx,
+        bcy,
+        cax,
+        cay
+      );
     count += cuts;
   }
   return out;

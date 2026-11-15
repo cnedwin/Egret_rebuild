@@ -1,7 +1,24 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /** The buttons of a pad in the standard layout, by where they are: `a` is the lower face button. */
-export type GamepadButtonName = 'a' | 'b' | 'x' | 'y' | 'l1' | 'r1' | 'l2' | 'r2' | 'select' | 'start' | 'l3' | 'r3' | 'up' | 'down' | 'left' | 'right' | 'home';
+export type GamepadButtonName =
+  | 'a'
+  | 'b'
+  | 'x'
+  | 'y'
+  | 'l1'
+  | 'r1'
+  | 'l2'
+  | 'r2'
+  | 'select'
+  | 'start'
+  | 'l3'
+  | 'r3'
+  | 'up'
+  | 'down'
+  | 'left'
+  | 'right'
+  | 'home';
 export type GamepadStickName = 'left' | 'right';
 export interface GamepadButtonSample {
   readonly pressed: boolean;

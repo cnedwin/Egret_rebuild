@@ -58,7 +58,8 @@ function byteOrder(value: unknown): ByteOrder {
 }
 function integer(value: unknown): number {
   if (typeof value !== "number") throw new TypeFault("Byte position or count must be numeric");
-  if (!safeInteger(value) || value < 0) throw new RangeFault("Byte position or count must be a nonnegative safe integer");
+  if (!safeInteger(value) || value < 0)
+    throw new RangeFault("Byte position or count must be a nonnegative safe integer");
   return value === 0 ? 0 : value;
 }
 function requireAvailable(state: ReaderState, count: number): void {
@@ -83,7 +84,8 @@ export class ByteReader implements Disposable {
     const backing = apply(bufferGetter, source, []) as ArrayBuffer;
     // Ordinary ArrayBuffer branding rejects shared storage across realms too.
     apply(bufferLengthGetter, backing, []);
-    if (resizableGetter && apply(resizableGetter, backing, [])) throw new TypeFault("Resizable source backing is unsupported");
+    if (resizableGetter && apply(resizableGetter, backing, []))
+      throw new TypeFault("Resizable source backing is unsupported");
     if (detachedGetter) {
       if (apply(detachedGetter, backing, [])) throw new TypeFault("Detached source backing is unsupported");
     } else {
@@ -102,12 +104,26 @@ export class ByteReader implements Disposable {
     apply(weakSet, states, [this, { bytes, view, length, position: 0, endian: order, disposed: false }]);
   }
 
-  public get length(): number { return stateOf(this).length; }
-  public get position(): number { return stateOf(this).position; }
-  public get bytesAvailable(): number { const state = stateOf(this); return state.length - state.position; }
-  public get disposed(): boolean { return stateOf(this).disposed; }
-  public get endian(): ByteOrder { return stateOf(this).endian; }
-  public set endian(value: ByteOrder) { const state = openState(this); state.endian = byteOrder(value); }
+  public get length(): number {
+    return stateOf(this).length;
+  }
+  public get position(): number {
+    return stateOf(this).position;
+  }
+  public get bytesAvailable(): number {
+    const state = stateOf(this);
+    return state.length - state.position;
+  }
+  public get disposed(): boolean {
+    return stateOf(this).disposed;
+  }
+  public get endian(): ByteOrder {
+    return stateOf(this).endian;
+  }
+  public set endian(value: ByteOrder) {
+    const state = openState(this);
+    state.endian = byteOrder(value);
+  }
 
   public seek(position: number): void {
     const state = openState(this);
@@ -122,14 +138,30 @@ export class ByteReader implements Disposable {
     state.position += width;
   }
 
-  public readByte(): number { return readScalar(this, 1, signedByte); }
-  public readUnsignedByte(): number { return readScalar(this, 1, unsignedByte); }
-  public readShort(): number { return readScalar(this, 2, signedShort); }
-  public readUnsignedShort(): number { return readScalar(this, 2, unsignedShort); }
-  public readInt(): number { return readScalar(this, 4, signedInt); }
-  public readUnsignedInt(): number { return readScalar(this, 4, unsignedInt); }
-  public readFloat(): number { return readScalar(this, 4, float); }
-  public readDouble(): number { return readScalar(this, 8, double); }
+  public readByte(): number {
+    return readScalar(this, 1, signedByte);
+  }
+  public readUnsignedByte(): number {
+    return readScalar(this, 1, unsignedByte);
+  }
+  public readShort(): number {
+    return readScalar(this, 2, signedShort);
+  }
+  public readUnsignedShort(): number {
+    return readScalar(this, 2, unsignedShort);
+  }
+  public readInt(): number {
+    return readScalar(this, 4, signedInt);
+  }
+  public readUnsignedInt(): number {
+    return readScalar(this, 4, unsignedInt);
+  }
+  public readFloat(): number {
+    return readScalar(this, 4, float);
+  }
+  public readDouble(): number {
+    return readScalar(this, 8, double);
+  }
 
   public readBytes(count?: number): Uint8Array<ArrayBuffer> {
     const state = openState(this);

@@ -9,168 +9,417 @@ import type { AssetRef } from '../AssetRef.js';
 import { EgretError } from '../EgretError.js';
 import { createTexture, isTexture } from '../Texture.js';
 import type { Texture } from '../Texture.js';
-import { beginParagraphCacheCreation, commitParagraphCacheLifetime, requireAssetManagerOwner } from '../assetManagerOwnerState.js';
+import {
+  beginParagraphCacheCreation,
+  commitParagraphCacheLifetime,
+  requireAssetManagerOwner
+} from '../assetManagerOwnerState.js';
 import { commitBinding } from '../ownership.js';
 import { createParagraphNode } from './Paragraph.js';
 import { snapshotParagraphRequest, snapshotParagraphRaster } from './request.js';
 import { snapshotParagraphTextGeometry } from './geometry.js';
-import type { ParagraphCache, ParagraphCacheOptions, ParagraphProvider, ParagraphRequest, ParagraphRequestInput, PreparedParagraph } from './types.js';
+import type {
+  ParagraphCache,
+  ParagraphCacheOptions,
+  ParagraphProvider,
+  ParagraphRequest,
+  ParagraphRequestInput,
+  PreparedParagraph
+} from './types.js';
 
 type Owner = ReturnType<typeof requireAssetManagerOwner>;
-interface Result { readonly texture: Texture; readonly prepared: Omit<PreparedParagraph, 'lease'>; readonly bytes: number; readonly geometryBytes: number; }
-interface Slot { readonly ref: AssetRef<Texture>; key: string | undefined; request: ParagraphRequest | undefined; result: Result | undefined; callers: number; resident: AssetLease<Texture> | undefined; residentPending: boolean; used: number; }
-interface State { readonly owner: Owner; readonly provider: ParagraphProvider; readonly prepare: ParagraphProvider['prepare']; readonly hasFontSet: ParagraphProvider['hasFontSet']; readonly supportsTextAlign: boolean; readonly supportsMaxLines: boolean; readonly supportsTextGeometry: boolean; readonly supportsStyledRuns: boolean; readonly maxGeometryBytes: number; geometryBytes: number; readonly slots: readonly Slot[]; readonly maxBytes: number; readonly maxJobs: number; readonly textures: Map<Texture, Result>; closed: boolean; generation: number; clock: number; jobs: number; bytes: number; }
+interface Result {
+  readonly texture: Texture;
+  readonly prepared: Omit<PreparedParagraph, 'lease'>;
+  readonly bytes: number;
+  readonly geometryBytes: number;
+}
+interface Slot {
+  readonly ref: AssetRef<Texture>;
+  key: string | undefined;
+  request: ParagraphRequest | undefined;
+  result: Result | undefined;
+  callers: number;
+  resident: AssetLease<Texture> | undefined;
+  residentPending: boolean;
+  used: number;
+}
+interface State {
+  readonly owner: Owner;
+  readonly provider: ParagraphProvider;
+  readonly prepare: ParagraphProvider['prepare'];
+  readonly hasFontSet: ParagraphProvider['hasFontSet'];
+  readonly supportsTextAlign: boolean;
+  readonly supportsMaxLines: boolean;
+  readonly supportsTextGeometry: boolean;
+  readonly supportsStyledRuns: boolean;
+  readonly maxGeometryBytes: number;
+  geometryBytes: number;
+  readonly slots: readonly Slot[];
+  readonly maxBytes: number;
+  readonly maxJobs: number;
+  readonly textures: Map<Texture, Result>;
+  closed: boolean;
+  generation: number;
+  clock: number;
+  jobs: number;
+  bytes: number;
+}
 const states = new WeakMap<object, State>();
-const releaseLease = (lease: AssetLease<Texture> | undefined): void => { lease?.release(); };
-function stateOf(cache: unknown): State { const s=states.get(cache as object); if (!s) throw new EgretError('PARAGRAPH_CACHE_INVALID'); return s; }
-function live(s: State): void { s.owner.assertOpen(); if(s.closed) throw new EgretError('PARAGRAPH_CACHE_CLOSED'); }
+const releaseLease = (lease: AssetLease<Texture> | undefined): void => {
+  lease?.release();
+};
+function stateOf(cache: unknown): State {
+  const s = states.get(cache as object);
+  if (!s) throw new EgretError('PARAGRAPH_CACHE_INVALID');
+  return s;
+}
+function live(s: State): void {
+  s.owner.assertOpen();
+  if (s.closed) throw new EgretError('PARAGRAPH_CACHE_CLOSED');
+}
 function limit(value: unknown, fallback: number, min: number, max: number): number {
   if (value === undefined) return fallback;
-  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < min || value > max) throw new EgretError('PARAGRAPH_CACHE_OPTIONS_INVALID');
+  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < min || value > max)
+    throw new EgretError('PARAGRAPH_CACHE_OPTIONS_INVALID');
   return value;
 }
 function retire(s: State, slot: Slot): void {
-  slot.key=undefined; slot.request=undefined; slot.result=undefined;
-  const resident=slot.resident; slot.resident=undefined;
+  slot.key = undefined;
+  slot.request = undefined;
+  slot.result = undefined;
+  const resident = slot.resident;
+  slot.resident = undefined;
   // Revoke the current generation before releasing residency; caller leases remain valid.
-  s.owner.invalidate(slot.ref); releaseLease(resident);
+  s.owner.invalidate(slot.ref);
+  releaseLease(resident);
 }
 function evictFor(s: State, needed: number, metadata: number, except: Slot): void {
-  while(s.bytes + needed > s.maxBytes || s.geometryBytes + metadata > s.maxGeometryBytes) {
-    const candidate=s.slots.filter(slot=>slot!==except && slot.key!==undefined && slot.callers===0 && !slot.residentPending).sort((a,b)=>a.used-b.used)[0];
+  while (s.bytes + needed > s.maxBytes || s.geometryBytes + metadata > s.maxGeometryBytes) {
+    const candidate = s.slots
+      .filter(slot => slot !== except && slot.key !== undefined && slot.callers === 0 && !slot.residentPending)
+      .sort((a, b) => a.used - b.used)[0];
     if (!candidate) throw new EgretError('PARAGRAPH_CACHE_BUDGET');
-    retire(s,candidate);
+    retire(s, candidate);
   }
 }
 function close(s: State): void {
-  if(s.closed) return;
-  s.closed=true;
-  let first: unknown, failed=false;
-  for(const slot of s.slots) {
+  if (s.closed) return;
+  s.closed = true;
+  let first: unknown,
+    failed = false;
+  for (const slot of s.slots) {
     // Manager shutdown already owns invalidation; explicit cache disposal still retires its refs.
-    const resident=slot.resident;slot.resident=undefined;slot.key=undefined;slot.request=undefined;slot.result=undefined;
-    try { s.owner.invalidate(slot.ref); } catch(cause) { if(!failed){first=cause;failed=true;} }
-    try { releaseLease(resident); } catch(cause) { if(!failed){first=cause;failed=true;} }
+    const resident = slot.resident;
+    slot.resident = undefined;
+    slot.key = undefined;
+    slot.request = undefined;
+    slot.result = undefined;
+    try {
+      s.owner.invalidate(slot.ref);
+    } catch (cause) {
+      if (!failed) {
+        first = cause;
+        failed = true;
+      }
+    }
+    try {
+      releaseLease(resident);
+    } catch (cause) {
+      if (!failed) {
+        first = cause;
+        failed = true;
+      }
+    }
   }
-  if(failed) { try { s.owner.assertOpen(); } catch { return; } throw first; }
+  if (failed) {
+    try {
+      s.owner.assertOpen();
+    } catch {
+      return;
+    }
+    throw first;
+  }
 }
-function checkFontSet(s:State,request:ParagraphRequest):void {
-  if(request.fontSet===undefined)return;
-  if(!s.hasFontSet)throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
-  if(Reflect.apply(s.hasFontSet,s.provider,[request.fontSet])!==true)throw new EgretError('PARAGRAPH_FONT_SET_RETIRED');
+function checkFontSet(s: State, request: ParagraphRequest): void {
+  if (request.fontSet === undefined) return;
+  if (!s.hasFontSet) throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
+  if (Reflect.apply(s.hasFontSet, s.provider, [request.fontSet]) !== true)
+    throw new EgretError('PARAGRAPH_FONT_SET_RETIRED');
   live(s);
 }
-async function acquire(this: ParagraphCache, input: ParagraphRequestInput, options: Readonly<{signal?: CancellationSignal}> = {}): Promise<PreparedParagraph> {
-  const s=stateOf(this);live(s);
-  const request=snapshotParagraphRequest(input), signal=options.signal;
-  live(s); if(signal?.aborted) throw new EgretError('PARAGRAPH_CANCELLED',{cause:signal.reason});
+async function acquire(
+  this: ParagraphCache,
+  input: ParagraphRequestInput,
+  options: Readonly<{ signal?: CancellationSignal }> = {}
+): Promise<PreparedParagraph> {
+  const s = stateOf(this);
+  live(s);
+  const request = snapshotParagraphRequest(input),
+    signal = options.signal;
+  live(s);
+  if (signal?.aborted) throw new EgretError('PARAGRAPH_CANCELLED', { cause: signal.reason });
   // Feature refusal happens before reserving a slot or invoking an older provider.
-  if ((request.textAlign !== undefined && !s.supportsTextAlign) || (request.maxLines !== undefined && !s.supportsMaxLines) || (request.textGeometry && !s.supportsTextGeometry) || (request.runs !== undefined && !s.supportsStyledRuns)) throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
-  checkFontSet(s,request);
-  if(s.slots.reduce((total,slot)=>total+slot.callers,0)>=256)throw new EgretError('PARAGRAPH_CACHE_BUDGET');
-  const key=JSON.stringify(request);
-  let slot=s.slots.find(slot=>slot.key===key);
-  if(!slot) {
-    slot=s.slots.find(slot=>slot.key===undefined && slot.callers===0 && !slot.residentPending);
-    if(!slot) {
-      slot=s.slots.filter(slot=>slot.callers===0 && !slot.residentPending).sort((a,b)=>a.used-b.used)[0];
-      if(!slot) throw new EgretError('PARAGRAPH_CACHE_BUDGET');
-      retire(s,slot);
+  if (
+    (request.textAlign !== undefined && !s.supportsTextAlign) ||
+    (request.maxLines !== undefined && !s.supportsMaxLines) ||
+    (request.textGeometry && !s.supportsTextGeometry) ||
+    (request.runs !== undefined && !s.supportsStyledRuns)
+  )
+    throw new EgretError('PARAGRAPH_FEATURE_UNSUPPORTED');
+  checkFontSet(s, request);
+  if (s.slots.reduce((total, slot) => total + slot.callers, 0) >= 256) throw new EgretError('PARAGRAPH_CACHE_BUDGET');
+  const key = JSON.stringify(request);
+  let slot = s.slots.find(slot => slot.key === key);
+  if (!slot) {
+    slot = s.slots.find(slot => slot.key === undefined && slot.callers === 0 && !slot.residentPending);
+    if (!slot) {
+      slot = s.slots.filter(slot => slot.callers === 0 && !slot.residentPending).sort((a, b) => a.used - b.used)[0];
+      if (!slot) throw new EgretError('PARAGRAPH_CACHE_BUDGET');
+      retire(s, slot);
     }
-    slot.key=key;slot.request=request;
+    slot.key = key;
+    slot.request = request;
   }
-  const selected=slot;selected.used=++s.clock;selected.callers++;
-  let lease: AssetLease<Texture> | undefined, observed=false;
+  const selected = slot;
+  selected.used = ++s.clock;
+  selected.callers++;
+  let lease: AssetLease<Texture> | undefined,
+    observed = false;
   try {
-    lease=await s.owner.acquire(selected.ref,signal===undefined?{}:{signal});
-    live(s);if(signal?.aborted)throw new EgretError('PARAGRAPH_CANCELLED',{cause:signal.reason});
-    checkFontSet(s,request);
-    const texture=readAssetLeaseValue(lease) as Texture, result=s.textures.get(texture);
-    if(!result) throw new EgretError('PARAGRAPH_CACHE_INVALID');
-    if(!observeAssetLeaseRetirement(lease,()=>{selected.callers--;})) throw new EgretError('PARAGRAPH_CACHE_INVALID');
-    observed=true;
+    lease = await s.owner.acquire(selected.ref, signal === undefined ? {} : { signal });
+    live(s);
+    if (signal?.aborted) throw new EgretError('PARAGRAPH_CANCELLED', { cause: signal.reason });
+    checkFontSet(s, request);
+    const texture = readAssetLeaseValue(lease) as Texture,
+      result = s.textures.get(texture);
+    if (!result) throw new EgretError('PARAGRAPH_CACHE_INVALID');
+    if (
+      !observeAssetLeaseRetirement(lease, () => {
+        selected.callers--;
+      })
+    )
+      throw new EgretError('PARAGRAPH_CACHE_INVALID');
+    observed = true;
     // One bounded resident borrow keeps unchanged paragraphs out of shape/raster work.
-    if(!selected.resident && !selected.residentPending && selected.key===key && selected.result===result) {
-      selected.residentPending=true;
-      void s.owner.acquire(selected.ref).then(resident=>{
-        selected.residentPending=false;
-        if(!s.closed && selected.key===key && selected.result===result) selected.resident=resident;
-        else resident.release();
-      },()=>{selected.residentPending=false;});
+    if (!selected.resident && !selected.residentPending && selected.key === key && selected.result === result) {
+      selected.residentPending = true;
+      void s.owner.acquire(selected.ref).then(
+        resident => {
+          selected.residentPending = false;
+          if (!s.closed && selected.key === key && selected.result === result) selected.resident = resident;
+          else resident.release();
+        },
+        () => {
+          selected.residentPending = false;
+        }
+      );
     }
-    return Object.freeze({lease,...result.prepared});
-  } catch(cause) {
+    return Object.freeze({ lease, ...result.prepared });
+  } catch (cause) {
     // No observer was installed for a failed delivery.
-    if(lease) lease.release();
-    if(!observed)selected.callers--;
-    if(selected.callers===0 && !selected.resident && !selected.residentPending) retire(s,selected);
+    if (lease) lease.release();
+    if (!observed) selected.callers--;
+    if (selected.callers === 0 && !selected.resident && !selected.residentPending) retire(s, selected);
     throw cause;
   }
 }
 function invalidate(this: ParagraphCache): void {
-  const s=stateOf(this);live(s);s.generation++;
-  for(const slot of s.slots) if(slot.key!==undefined) retire(s,slot);
+  const s = stateOf(this);
+  live(s);
+  s.generation++;
+  for (const slot of s.slots) if (slot.key !== undefined) retire(s, slot);
 }
 function getStatus(this: ParagraphCache): ReturnType<ParagraphCache['getStatus']> {
-  const s=stateOf(this);return Object.freeze({closed:s.closed,generation:s.generation,entries:s.slots.filter(slot=>slot.key!==undefined).length,imageBytes:s.bytes,geometryBytes:s.geometryBytes,pendingJobs:s.jobs,callerLeases:s.slots.reduce((sum,slot)=>sum+slot.callers,0)});
+  const s = stateOf(this);
+  return Object.freeze({
+    closed: s.closed,
+    generation: s.generation,
+    entries: s.slots.filter(slot => slot.key !== undefined).length,
+    imageBytes: s.bytes,
+    geometryBytes: s.geometryBytes,
+    pendingJobs: s.jobs,
+    callerLeases: s.slots.reduce((sum, slot) => sum + slot.callers, 0)
+  });
 }
-function dispose(this: ParagraphCache): void {close(stateOf(this));}
+function dispose(this: ParagraphCache): void {
+  close(stateOf(this));
+}
 
 /** A fixed optional profile shares Engine/AssetManager leases and their shutdown authority. */
 export function createParagraphCache(assets: AssetManager, options: ParagraphCacheOptions): ParagraphCache {
-  const owner=requireAssetManagerOwner(assets),finish=beginParagraphCacheCreation(assets);
+  const owner = requireAssetManagerOwner(assets),
+    finish = beginParagraphCacheCreation(assets);
   try {
-    const provider=options.provider,identity=provider.identity,prepare=provider.prepare;
-    const capabilities=provider.capabilities;
-    if (capabilities !== undefined && (capabilities === null || typeof capabilities !== 'object' || Array.isArray(capabilities))) throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
-    const textAlign=capabilities?.textAlign, maxLines=capabilities?.maxLines, textGeometry=capabilities?.textGeometry, styledRuns=capabilities?.styledRuns;
-    if ((textAlign !== undefined && typeof textAlign !== 'boolean') || (maxLines !== undefined && typeof maxLines !== 'boolean') || (textGeometry !== undefined && typeof textGeometry !== 'boolean') || (styledRuns !== undefined && typeof styledRuns !== 'boolean')) throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
-    const supportsTextAlign=textAlign === true, supportsMaxLines=maxLines === true, supportsTextGeometry=textGeometry === true, supportsStyledRuns=styledRuns === true;
-    const fontSets=capabilities?.fontSets,hasFontSet=fontSets===true?provider.hasFontSet:undefined;
-    if(fontSets!==undefined&&typeof fontSets!=='boolean'||fontSets===true&&typeof hasFontSet!=='function')throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
-    const maxGeometryBytes=limit(options.maxGeometryBytes,2097152,0,67108864);
-    const count=limit(options.maxEntries,32,1,32),maxBytes=limit(options.maxImageBytes,16777216,4,67108864),maxJobs=limit(options.maxPendingJobs,32,1,32);
-    if(typeof identity!=='string' || identity.length<1 || identity.length>8192 || typeof prepare!=='function')throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
+    const provider = options.provider,
+      identity = provider.identity,
+      prepare = provider.prepare;
+    const capabilities = provider.capabilities;
+    if (
+      capabilities !== undefined &&
+      (capabilities === null || typeof capabilities !== 'object' || Array.isArray(capabilities))
+    )
+      throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
+    const textAlign = capabilities?.textAlign,
+      maxLines = capabilities?.maxLines,
+      textGeometry = capabilities?.textGeometry,
+      styledRuns = capabilities?.styledRuns;
+    if (
+      (textAlign !== undefined && typeof textAlign !== 'boolean') ||
+      (maxLines !== undefined && typeof maxLines !== 'boolean') ||
+      (textGeometry !== undefined && typeof textGeometry !== 'boolean') ||
+      (styledRuns !== undefined && typeof styledRuns !== 'boolean')
+    )
+      throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
+    const supportsTextAlign = textAlign === true,
+      supportsMaxLines = maxLines === true,
+      supportsTextGeometry = textGeometry === true,
+      supportsStyledRuns = styledRuns === true;
+    const fontSets = capabilities?.fontSets,
+      hasFontSet = fontSets === true ? provider.hasFontSet : undefined;
+    if (
+      (fontSets !== undefined && typeof fontSets !== 'boolean') ||
+      (fontSets === true && typeof hasFontSet !== 'function')
+    )
+      throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
+    const maxGeometryBytes = limit(options.maxGeometryBytes, 2097152, 0, 67108864);
+    const count = limit(options.maxEntries, 32, 1, 32),
+      maxBytes = limit(options.maxImageBytes, 16777216, 4, 67108864),
+      maxJobs = limit(options.maxPendingJobs, 32, 1, 32);
+    if (typeof identity !== 'string' || identity.length < 1 || identity.length > 8192 || typeof prepare !== 'function')
+      throw new EgretError('PARAGRAPH_PROVIDER_INVALID');
     owner.assertOpen();
-    const type=createAssetType<Texture>('egret.paragraph.v1.texture',isTexture);
-    const slots=Object.freeze(Array.from({length:count},(_,index):Slot=>({ref:createAssetRef(type,'egret.paragraph.v1.slot.'+index),key:undefined,request:undefined,result:undefined,callers:0,resident:undefined,residentPending:false,used:0})));
-    const s:State={owner,provider,prepare,hasFontSet,supportsTextAlign,supportsMaxLines,supportsTextGeometry,supportsStyledRuns,maxGeometryBytes,geometryBytes:0,slots,maxBytes,maxJobs,textures:new Map(),closed:false,generation:1,clock:0,jobs:0,bytes:0};
-    const cache=Object.freeze({profile:'readonly-paragraph-v1',acquire,invalidate,getStatus,dispose}) as ParagraphCache;
-    states.set(cache,s);commitBinding([cache],owner.context);
-    commitParagraphCacheLifetime(assets,()=>close(s));
+    const type = createAssetType<Texture>('egret.paragraph.v1.texture', isTexture);
+    const slots = Object.freeze(
+      Array.from(
+        { length: count },
+        (_, index): Slot => ({
+          ref: createAssetRef(type, 'egret.paragraph.v1.slot.' + index),
+          key: undefined,
+          request: undefined,
+          result: undefined,
+          callers: 0,
+          resident: undefined,
+          residentPending: false,
+          used: 0
+        })
+      )
+    );
+    const s: State = {
+      owner,
+      provider,
+      prepare,
+      hasFontSet,
+      supportsTextAlign,
+      supportsMaxLines,
+      supportsTextGeometry,
+      supportsStyledRuns,
+      maxGeometryBytes,
+      geometryBytes: 0,
+      slots,
+      maxBytes,
+      maxJobs,
+      textures: new Map(),
+      closed: false,
+      generation: 1,
+      clock: 0,
+      jobs: 0,
+      bytes: 0
+    };
+    const cache = Object.freeze({
+      profile: 'readonly-paragraph-v1',
+      acquire,
+      invalidate,
+      getStatus,
+      dispose
+    }) as ParagraphCache;
+    states.set(cache, s);
+    commitBinding([cache], owner.context);
+    commitParagraphCacheLifetime(assets, () => close(s));
     try {
-      owner.register(type,{
-        async load(ref,context): Promise<Texture> {
-          live(s);if(s.jobs>=s.maxJobs)throw new EgretError('PARAGRAPH_CACHE_BUDGET');
-          const slot=slots.find(slot=>slot.ref===ref),request=slot?.request;
-          if(!slot || !request)throw new EgretError('PARAGRAPH_CACHE_INVALID');
-          const key=slot.key;s.jobs++;
+      owner.register(type, {
+        async load(ref, context): Promise<Texture> {
+          live(s);
+          if (s.jobs >= s.maxJobs) throw new EgretError('PARAGRAPH_CACHE_BUDGET');
+          const slot = slots.find(slot => slot.ref === ref),
+            request = slot?.request;
+          if (!slot || !request) throw new EgretError('PARAGRAPH_CACHE_INVALID');
+          const key = slot.key;
+          s.jobs++;
           try {
-            const output=await Reflect.apply(prepare,provider,[request,Object.freeze({signal:context.signal})]);
-            live(s);if(context.signal.aborted || slot.key!==key)throw new EgretError('PARAGRAPH_CANCELLED');
-            checkFontSet(s,request);
-            const prepared=snapshotParagraphRaster(output,request);
-            live(s);if(context.signal.aborted || slot.key!==key)throw new EgretError('PARAGRAPH_CANCELLED');
-            const image=prepared.image??createImageData2D({width:1,height:1,pixels:new Uint8Array(4),alphaMode:'straight',colorSpace:'srgb'});
-            const geometry=request.textGeometry?snapshotParagraphTextGeometry(prepared.geometry!,request,prepared.metrics):undefined;
-            const geometryBytes=geometry?.storageBytes??0;
-            const bytes=image.width*image.height*4;evictFor(s,bytes,geometryBytes,slot);
-            live(s);if(context.signal.aborted || slot.key!==key)throw new EgretError('PARAGRAPH_CANCELLED');
-            const texture=createTexture(image),result:Result={texture,bytes,geometryBytes,prepared:Object.freeze({metrics:prepared.metrics,offsetX:prepared.offsetX,offsetY:prepared.offsetY,density:request.density,...(geometry?{geometry}:{})})};
-            s.textures.set(texture,result);s.bytes+=bytes;s.geometryBytes+=geometryBytes;slot.result=result;
+            const output = await Reflect.apply(prepare, provider, [request, Object.freeze({ signal: context.signal })]);
+            live(s);
+            if (context.signal.aborted || slot.key !== key) throw new EgretError('PARAGRAPH_CANCELLED');
+            checkFontSet(s, request);
+            const prepared = snapshotParagraphRaster(output, request);
+            live(s);
+            if (context.signal.aborted || slot.key !== key) throw new EgretError('PARAGRAPH_CANCELLED');
+            const image =
+              prepared.image ??
+              createImageData2D({
+                width: 1,
+                height: 1,
+                pixels: new Uint8Array(4),
+                alphaMode: 'straight',
+                colorSpace: 'srgb'
+              });
+            const geometry = request.textGeometry
+              ? snapshotParagraphTextGeometry(prepared.geometry!, request, prepared.metrics)
+              : undefined;
+            const geometryBytes = geometry?.storageBytes ?? 0;
+            const bytes = image.width * image.height * 4;
+            evictFor(s, bytes, geometryBytes, slot);
+            live(s);
+            if (context.signal.aborted || slot.key !== key) throw new EgretError('PARAGRAPH_CANCELLED');
+            const texture = createTexture(image),
+              result: Result = {
+                texture,
+                bytes,
+                geometryBytes,
+                prepared: Object.freeze({
+                  metrics: prepared.metrics,
+                  offsetX: prepared.offsetX,
+                  offsetY: prepared.offsetY,
+                  density: request.density,
+                  ...(geometry ? { geometry } : {})
+                })
+              };
+            s.textures.set(texture, result);
+            s.bytes += bytes;
+            s.geometryBytes += geometryBytes;
+            slot.result = result;
             return texture;
-          }finally{s.jobs--;}
+          } finally {
+            s.jobs--;
+          }
         },
         dispose(texture): void {
-          const result=s.textures.get(texture);if(result){s.textures.delete(texture);s.bytes-=result.bytes;s.geometryBytes-=result.geometryBytes;}
+          const result = s.textures.get(texture);
+          if (result) {
+            s.textures.delete(texture);
+            s.bytes -= result.bytes;
+            s.geometryBytes -= result.geometryBytes;
+          }
           texture.dispose();
-        },
+        }
       });
-      owner.context.registerTextFieldCache?.(cache,scope=>createParagraphNode(scope,{
-        context:owner.context,assertOpen:()=>live(s),generation:()=>s.generation,
-        acquire:(request,signal)=>acquire.call(cache,request,{signal}),
-      }),'paragraph');
-    }catch(cause){close(s);throw cause;}
+      owner.context.registerTextFieldCache?.(
+        cache,
+        scope =>
+          createParagraphNode(scope, {
+            context: owner.context,
+            assertOpen: () => live(s),
+            generation: () => s.generation,
+            acquire: (request, signal) => acquire.call(cache, request, { signal })
+          }),
+        'paragraph'
+      );
+    } catch (cause) {
+      close(s);
+      throw cause;
+    }
     return cache;
-  }finally{finish();}
+  } finally {
+    finish();
+  }
 }

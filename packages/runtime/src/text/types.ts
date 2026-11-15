@@ -134,7 +134,12 @@ export interface TextRasterAcquireOptions {
 }
 export type PreparedTextRaster =
   | { readonly kind: 'empty'; readonly request: TextRasterRequest; readonly metrics: TextRasterMetrics }
-  | { readonly kind: 'image'; readonly request: TextRasterRequest; readonly metrics: TextRasterMetrics; readonly lease: AssetLease<Texture> };
+  | {
+      readonly kind: 'image';
+      readonly request: TextRasterRequest;
+      readonly metrics: TextRasterMetrics;
+      readonly lease: AssetLease<Texture>;
+    };
 /** Logical charges include retained and quarantined work, which may survive cache close. */
 export interface TextRasterCacheStatus {
   readonly closed: boolean;

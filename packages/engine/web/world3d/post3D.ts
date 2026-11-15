@@ -5,10 +5,10 @@
 //   -> optional FXAA -> canvas or target.
 // Bloom uses a dual-filter pyramid: each level is one 5-tap downsample and
 // one 8-tap upsample, which is cheap enough for integrated and mobile GPUs.
-import type {Camera3D} from '../../rendering/world3d/Camera3D.js';
-import {World3DError} from '../../rendering/world3d/core3D.js';
-import {mat4Invert} from '../../rendering/world3d/math3D.js';
-import type {ToneMapping3D} from './frame3D.js';
+import type { Camera3D } from '../../rendering/world3d/Camera3D.js';
+import { World3DError } from '../../rendering/world3d/core3D.js';
+import { mat4Invert } from '../../rendering/world3d/math3D.js';
+import type { ToneMapping3D } from './frame3D.js';
 
 /**
  * A full-screen hook that runs after ambient occlusion and bloom and before
@@ -20,124 +20,191 @@ import type {ToneMapping3D} from './frame3D.js';
  * volumes, outlines, contact shadows and similar screen-space effects.
  */
 export interface CustomPost3D {
-    /** Identifies the source; equal keys share one compiled program. */
-    readonly key: string;
-    readonly glsl?: string;
-    readonly wgsl?: string;
-    /** Four vec4 parameters written by the application. */
-    readonly uniforms: Float32Array;
+  /** Identifies the source; equal keys share one compiled program. */
+  readonly key: string;
+  readonly glsl?: string;
+  readonly wgsl?: string;
+  /** Four vec4 parameters written by the application. */
+  readonly uniforms: Float32Array;
 }
-export function createCustomPost3D(input: {readonly key: string; readonly glsl?: string; readonly wgsl?: string; readonly uniforms?: ArrayLike<number>}): CustomPost3D {
-    if (!input || typeof input.key !== 'string' || input.key.length === 0 || /[\s|/]/.test(input.key)) throw new World3DError('WORLD3D_INPUT_INVALID', 'post key');
-    if (input.glsl === undefined && input.wgsl === undefined) throw new World3DError('WORLD3D_INPUT_INVALID', 'post source');
-    const uniforms = new Float32Array(16);
-    if (input.uniforms) uniforms.set(Array.from(input.uniforms).slice(0, 16));
-    return Object.freeze({key: input.key, ...(input.glsl === undefined ? {} : {glsl: input.glsl}), ...(input.wgsl === undefined ? {} : {wgsl: input.wgsl}), uniforms});
+export function createCustomPost3D(input: {
+  readonly key: string;
+  readonly glsl?: string;
+  readonly wgsl?: string;
+  readonly uniforms?: ArrayLike<number>;
+}): CustomPost3D {
+  if (!input || typeof input.key !== 'string' || input.key.length === 0 || /[\s|/]/.test(input.key))
+    throw new World3DError('WORLD3D_INPUT_INVALID', 'post key');
+  if (input.glsl === undefined && input.wgsl === undefined)
+    throw new World3DError('WORLD3D_INPUT_INVALID', 'post source');
+  const uniforms = new Float32Array(16);
+  if (input.uniforms) uniforms.set(Array.from(input.uniforms).slice(0, 16));
+  return Object.freeze({
+    key: input.key,
+    ...(input.glsl === undefined ? {} : { glsl: input.glsl }),
+    ...(input.wgsl === undefined ? {} : { wgsl: input.wgsl }),
+    uniforms
+  });
 }
 export interface PostProcessSettings3D {
-    /** Master switch. While false the renderer draws directly and nothing here costs anything. */
-    enabled: boolean;
-    bloom: boolean;
-    /** Linear brightness above which pixels start to glow. */
-    bloomThreshold: number;
-    /** Width of the soft transition below the threshold, in [0, 1]. */
-    bloomKnee: number;
-    bloomIntensity: number;
-    /** Pyramid depth, 1 to 8; more levels give a wider glow. */
-    bloomLevels: number;
-    /** Fast approximate anti-aliasing on the final image. Canvas multisampling does not apply while post-processing is on. */
-    fxaa: boolean;
-    /** 0 is grayscale, 1 unchanged. */
-    saturation: number;
-    /** Contrast around middle gray; 1 unchanged. */
-    contrast: number;
-    /** Linear multiplier applied before tone mapping; 1 unchanged. */
-    brightness: number;
-    /** Darkening toward the corners, in [0, 1]; 0 disables it. */
-    vignette: number;
-    /** Screen-space ambient occlusion: darkens creases and contact areas using scene depth. */
-    ssao: boolean;
-    /** World-space reach of the occlusion search. */
-    ssaoRadius: number;
-    ssaoIntensity: number;
-    /** Ignores occluders this close to the surface plane, against self-shadowing on flat faces. */
-    ssaoBias: number;
-    /** Depth of field: blur what lies nearer or farther than the focused range. */
-    dof: boolean;
-    /** Distance from the camera, in world units, that is perfectly sharp. */
-    dofFocus: number;
-    /** Half-depth of the sharp zone around the focus distance, in world units. */
-    dofRange: number;
-    /** Largest blur radius in pixels. */
-    dofRadius: number;
-    /** Optional application pass; see CustomPost3D. */
-    custom: CustomPost3D | undefined;
-    /**
-     * Layer bits of the objects to outline; 0 turns outlines off. Give the
-     * objects one of these bits in `layers` and they are traced on screen, even
-     * where something stands in front of them.
-     */
-    outlineLayers: number;
-    /** Linear RGB of the outline. */
-    outlineColor: [number, number, number];
-    /** Outline width in pixels. */
-    outlineThickness: number;
+  /** Master switch. While false the renderer draws directly and nothing here costs anything. */
+  enabled: boolean;
+  bloom: boolean;
+  /** Linear brightness above which pixels start to glow. */
+  bloomThreshold: number;
+  /** Width of the soft transition below the threshold, in [0, 1]. */
+  bloomKnee: number;
+  bloomIntensity: number;
+  /** Pyramid depth, 1 to 8; more levels give a wider glow. */
+  bloomLevels: number;
+  /** Fast approximate anti-aliasing on the final image. Canvas multisampling does not apply while post-processing is on. */
+  fxaa: boolean;
+  /** 0 is grayscale, 1 unchanged. */
+  saturation: number;
+  /** Contrast around middle gray; 1 unchanged. */
+  contrast: number;
+  /** Linear multiplier applied before tone mapping; 1 unchanged. */
+  brightness: number;
+  /** Darkening toward the corners, in [0, 1]; 0 disables it. */
+  vignette: number;
+  /** Screen-space ambient occlusion: darkens creases and contact areas using scene depth. */
+  ssao: boolean;
+  /** World-space reach of the occlusion search. */
+  ssaoRadius: number;
+  ssaoIntensity: number;
+  /** Ignores occluders this close to the surface plane, against self-shadowing on flat faces. */
+  ssaoBias: number;
+  /** Depth of field: blur what lies nearer or farther than the focused range. */
+  dof: boolean;
+  /** Distance from the camera, in world units, that is perfectly sharp. */
+  dofFocus: number;
+  /** Half-depth of the sharp zone around the focus distance, in world units. */
+  dofRange: number;
+  /** Largest blur radius in pixels. */
+  dofRadius: number;
+  /** Optional application pass; see CustomPost3D. */
+  custom: CustomPost3D | undefined;
+  /**
+   * Layer bits of the objects to outline; 0 turns outlines off. Give the
+   * objects one of these bits in `layers` and they are traced on screen, even
+   * where something stands in front of them.
+   */
+  outlineLayers: number;
+  /** Linear RGB of the outline. */
+  outlineColor: [number, number, number];
+  /** Outline width in pixels. */
+  outlineThickness: number;
 }
 /** Camera values the depth-reading passes need. */
 export interface PostView3D {
-    readonly inverseProjection: Float32Array;
+  readonly inverseProjection: Float32Array;
 }
 export function postViewFromCamera3D(camera: Camera3D): PostView3D {
-    // Oblique projections encode X and Y in clip depth. Unproject the full
-    // homogeneous clip position instead of assuming depth depends on Z alone.
-    const inverseProjection = new Float32Array(16);
-    if (!mat4Invert(inverseProjection, camera.projectionMatrix)) throw new World3DError('WORLD3D_INPUT_INVALID', 'post-processing projection is singular');
-    return {inverseProjection};
+  // Oblique projections encode X and Y in clip depth. Unproject the full
+  // homogeneous clip position instead of assuming depth depends on Z alone.
+  const inverseProjection = new Float32Array(16);
+  if (!mat4Invert(inverseProjection, camera.projectionMatrix))
+    throw new World3DError('WORLD3D_INPUT_INVALID', 'post-processing projection is singular');
+  return { inverseProjection };
 }
 /** True when the settings ask for outlines. */
-export function outlineActive3D(settings: PostProcessSettings3D): boolean { return settings.outlineLayers !== 0 && settings.outlineThickness > 0; }
+export function outlineActive3D(settings: PostProcessSettings3D): boolean {
+  return settings.outlineLayers !== 0 && settings.outlineThickness > 0;
+}
 /** Post uniform layout: a, b, flags, custom[4], outline and inverse projection. */
 export const POST_PARAMS_FLOATS_3D = 48;
-export function writePostParams3D(out: Float32Array, a: ArrayLike<number>, b: ArrayLike<number>, view: PostView3D, aoEnabled: boolean, width: number, height: number, custom?: CustomPost3D,
-    outline?: PostProcessSettings3D): void {
-    out.fill(0);
-    out.set(a, 0); out.set(b, 4);
-    out[9] = aoEnabled ? 1 : 0; out[10] = 1 / width; out[11] = 1 / height;
-    if (custom) out.set(custom.uniforms, 12);
-    if (outline) { out.set(outline.outlineColor, 28); out[31] = outline.outlineThickness; }
-    out.set(view.inverseProjection, 32);
+export function writePostParams3D(
+  out: Float32Array,
+  a: ArrayLike<number>,
+  b: ArrayLike<number>,
+  view: PostView3D,
+  aoEnabled: boolean,
+  width: number,
+  height: number,
+  custom?: CustomPost3D,
+  outline?: PostProcessSettings3D
+): void {
+  out.fill(0);
+  out.set(a, 0);
+  out.set(b, 4);
+  out[9] = aoEnabled ? 1 : 0;
+  out[10] = 1 / width;
+  out[11] = 1 / height;
+  if (custom) out.set(custom.uniforms, 12);
+  if (outline) {
+    out.set(outline.outlineColor, 28);
+    out[31] = outline.outlineThickness;
+  }
+  out.set(view.inverseProjection, 32);
 }
-export const POST3D_LIMITS = Object.freeze({maxBloomLevels: 8} as const);
+export const POST3D_LIMITS = Object.freeze({ maxBloomLevels: 8 } as const);
 export function createPostProcessSettings3D(): PostProcessSettings3D {
-    return {enabled: false, bloom: true, bloomThreshold: 1, bloomKnee: 0.5, bloomIntensity: 0.6, bloomLevels: 5, fxaa: true, saturation: 1, contrast: 1, brightness: 1, vignette: 0,
-        ssao: false, ssaoRadius: 0.5, ssaoIntensity: 1, ssaoBias: 0.025, dof: false, dofFocus: 10, dofRange: 3, dofRadius: 6, custom: undefined,
-        outlineLayers: 0, outlineColor: [1, 0.6, 0.1], outlineThickness: 2};
+  return {
+    enabled: false,
+    bloom: true,
+    bloomThreshold: 1,
+    bloomKnee: 0.5,
+    bloomIntensity: 0.6,
+    bloomLevels: 5,
+    fxaa: true,
+    saturation: 1,
+    contrast: 1,
+    brightness: 1,
+    vignette: 0,
+    ssao: false,
+    ssaoRadius: 0.5,
+    ssaoIntensity: 1,
+    ssaoBias: 0.025,
+    dof: false,
+    dofFocus: 10,
+    dofRange: 3,
+    dofRadius: 6,
+    custom: undefined,
+    outlineLayers: 0,
+    outlineColor: [1, 0.6, 0.1],
+    outlineThickness: 2
+  };
 }
 /** Number of bloom levels that fit the output size. */
 export function bloomLevelCount3D(settings: PostProcessSettings3D, width: number, height: number): number {
-    if (!settings.bloom || !(settings.bloomIntensity > 0)) return 0;
-    const wanted = Math.min(Math.max(Math.floor(settings.bloomLevels) || 1, 1), POST3D_LIMITS.maxBloomLevels);
-    let levels = 0, w = width, h = height;
-    while (levels < wanted && w >= 4 && h >= 4) { w >>= 1; h >>= 1; levels++; }
-    return levels;
+  if (!settings.bloom || !(settings.bloomIntensity > 0)) return 0;
+  const wanted = Math.min(Math.max(Math.floor(settings.bloomLevels) || 1, 1), POST3D_LIMITS.maxBloomLevels);
+  let levels = 0,
+    w = width,
+    h = height;
+  while (levels < wanted && w >= 4 && h >= 4) {
+    w >>= 1;
+    h >>= 1;
+    levels++;
+  }
+  return levels;
 }
 /** Composite parameters in the order both shader languages read them: two vec4. */
-export function writeCompositeParams3D(out: Float32Array, settings: PostProcessSettings3D, levels: number, toneMapping: ToneMapping3D, encode: boolean): void {
-    out[0] = levels > 0 ? settings.bloomIntensity / levels : 0;
-    out[1] = toneMapping === 'aces' ? 2 : toneMapping === 'reinhard' ? 1 : 0;
-    out[2] = encode ? 1 : 0;
-    out[3] = Math.min(Math.max(settings.vignette, 0), 1);
-    out[4] = Math.max(settings.saturation, 0); out[5] = Math.max(settings.contrast, 0); out[6] = Math.max(settings.brightness, 0); out[7] = 0;
+export function writeCompositeParams3D(
+  out: Float32Array,
+  settings: PostProcessSettings3D,
+  levels: number,
+  toneMapping: ToneMapping3D,
+  encode: boolean
+): void {
+  out[0] = levels > 0 ? settings.bloomIntensity / levels : 0;
+  out[1] = toneMapping === 'aces' ? 2 : toneMapping === 'reinhard' ? 1 : 0;
+  out[2] = encode ? 1 : 0;
+  out[3] = Math.min(Math.max(settings.vignette, 0), 1);
+  out[4] = Math.max(settings.saturation, 0);
+  out[5] = Math.max(settings.contrast, 0);
+  out[6] = Math.max(settings.brightness, 0);
+  out[7] = 0;
 }
 
-export const POST_VERTEX_GLSL_3D = /* glsl */`#version 300 es
+export const POST_VERTEX_GLSL_3D = /* glsl */ `#version 300 es
 out vec2 vUv;
 void main() {
     vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
     vUv = p;
     gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
 }`;
-const GLSL_HEAD = /* glsl */`#version 300 es
+const GLSL_HEAD = /* glsl */ `#version 300 es
 precision highp float;
 in vec2 vUv;
 out vec4 outColor;
@@ -145,7 +212,7 @@ uniform sampler2D uSource;
 uniform vec4 uA; // per pass, see below
 uniform vec4 uB;
 `;
-const GLSL_DEPTH = /* glsl */`
+const GLSL_DEPTH = /* glsl */ `
 uniform highp sampler2D uDepth;
 uniform mat4 uInverseProjection;
 uniform vec4 uFlags;       // y: ambient occlusion on; z, w: texel size
@@ -162,7 +229,10 @@ vec3 unprojectDepth(vec2 uv, float depth) {
 float sceneDepth(vec2 uv) { return -unprojectDepth(uv, rawDepth(uv)).z; }
 `;
 /** uA: radius, intensity, bias. Writes occlusion (1 = open) to every channel. */
-export const POST_SSAO_GLSL_3D = GLSL_HEAD + GLSL_DEPTH + /* glsl */`
+export const POST_SSAO_GLSL_3D =
+  GLSL_HEAD +
+  GLSL_DEPTH +
+  /* glsl */ `
 vec3 viewPosition(vec2 uv) {
     return unprojectDepth(uv, rawDepth(uv));
 }
@@ -190,7 +260,9 @@ void main() {
     outColor = vec4(vec3(open), 1.0);
 }`;
 /** uA: xy source texel, z threshold, w knee. uB.x: 1 applies the brightness prefilter. */
-export const POST_DOWN_GLSL_3D = GLSL_HEAD + /* glsl */`
+export const POST_DOWN_GLSL_3D =
+  GLSL_HEAD +
+  /* glsl */ `
 void main() {
     vec3 c = texture(uSource, vUv).rgb * 4.0;
     c += texture(uSource, vUv + uA.xy).rgb + texture(uSource, vUv - uA.xy).rgb;
@@ -207,7 +279,9 @@ void main() {
     outColor = vec4(c, 1.0);
 }`;
 /** uA.xy: source texel. Drawn with additive blending onto the next larger level. */
-export const POST_UP_GLSL_3D = GLSL_HEAD + /* glsl */`
+export const POST_UP_GLSL_3D =
+  GLSL_HEAD +
+  /* glsl */ `
 void main() {
     vec2 h = uA.xy;
     vec3 c = texture(uSource, vUv + vec2(-2.0 * h.x, 0.0)).rgb + texture(uSource, vUv + vec2(2.0 * h.x, 0.0)).rgb
@@ -217,7 +291,10 @@ void main() {
     outColor = vec4(c / 12.0, 1.0);
 }`;
 /** uA: focus distance, sharp half-range, largest radius in pixels. Blurs by distance from the focused zone. */
-export const POST_DOF_GLSL_3D = GLSL_HEAD + GLSL_DEPTH + /* glsl */`
+export const POST_DOF_GLSL_3D =
+  GLSL_HEAD +
+  GLSL_DEPTH +
+  /* glsl */ `
 float blurRadius(vec2 uv) { return clamp((abs(sceneDepth(uv) - uA.x) - uA.y) / max(uA.y, 0.001), 0.0, 1.0) * uA.z; }
 void main() {
     vec4 center = texture(uSource, vUv);
@@ -239,7 +316,13 @@ void main() {
 }`;
 /** uA: bloom scale, tone mapping, sRGB encode, vignette. uB: saturation, contrast, brightness. */
 export function postCompositeGlsl3D(customPost?: string): string {
-    return GLSL_HEAD.replace('#version 300 es\n', '#version 300 es\n' + (customPost === undefined ? '' : '#define CUSTOM_POST\n')) + GLSL_DEPTH + /* glsl */`
+  return (
+    GLSL_HEAD.replace(
+      '#version 300 es\n',
+      '#version 300 es\n' + (customPost === undefined ? '' : '#define CUSTOM_POST\n')
+    ) +
+    GLSL_DEPTH +
+    /* glsl */ `
 uniform sampler2D uBloom;
 uniform sampler2D uAo;
 uniform sampler2D uMask;
@@ -278,10 +361,13 @@ void main() {
     }
     if (uA.z > 0.5) c = mix(c * 12.92, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), c));
     outColor = vec4(c, scene.a);
-}`;
+}`
+  );
 }
 /** uA.xy: source texel; uA.z: 1 converts the sRGB-encoded result back to linear for an encoding target. */
-export const POST_FXAA_GLSL_3D = GLSL_HEAD + /* glsl */`
+export const POST_FXAA_GLSL_3D =
+  GLSL_HEAD +
+  /* glsl */ `
 float luma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
 void main() {
     vec2 t = uA.xy;
@@ -304,7 +390,7 @@ void main() {
     outColor = vec4(result, middle.a);
 }`;
 
-const WGSL_HEAD = /* wgsl */`
+const WGSL_HEAD = /* wgsl */ `
 struct Params {
     a: vec4f,
     b: vec4f,
@@ -345,7 +431,9 @@ fn unprojectDepth(uv: vec2f, depth: f32) -> vec3f {
 /** Distance from the camera plane, in world units. */
 fn sceneDepth(uv: vec2f) -> f32 { return -unprojectDepth(uv, rawDepth(uv)).z; }
 `;
-export const POST_SSAO_WGSL_3D = WGSL_HEAD + /* wgsl */`
+export const POST_SSAO_WGSL_3D =
+  WGSL_HEAD +
+  /* wgsl */ `
 fn viewPosition(uv: vec2f) -> vec3f {
     return unprojectDepth(uv, rawDepth(uv));
 }
@@ -372,7 +460,9 @@ fn viewPosition(uv: vec2f) -> vec3f {
     if (depth >= 0.99999) { open = 1.0; }
     return vec4f(vec3f(open), 1.0);
 }`;
-export const POST_DOWN_WGSL_3D = WGSL_HEAD + /* wgsl */`
+export const POST_DOWN_WGSL_3D =
+  WGSL_HEAD +
+  /* wgsl */ `
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
     let o = params.a.xy;
     var c = tap(input.uv) * 4.0 + tap(input.uv + o) + tap(input.uv - o) + tap(input.uv + vec2f(o.x, -o.y)) + tap(input.uv + vec2f(-o.x, o.y));
@@ -387,7 +477,9 @@ export const POST_DOWN_WGSL_3D = WGSL_HEAD + /* wgsl */`
     }
     return vec4f(c, 1.0);
 }`;
-export const POST_UP_WGSL_3D = WGSL_HEAD + /* wgsl */`
+export const POST_UP_WGSL_3D =
+  WGSL_HEAD +
+  /* wgsl */ `
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
     let h = params.a.xy;
     let uv = input.uv;
@@ -395,7 +487,9 @@ export const POST_UP_WGSL_3D = WGSL_HEAD + /* wgsl */`
     c += 2.0 * (tap(uv + vec2f(-h.x, h.y)) + tap(uv + vec2f(h.x, h.y)) + tap(uv + vec2f(h.x, -h.y)) + tap(uv + vec2f(-h.x, -h.y)));
     return vec4f(c / 12.0, 1.0);
 }`;
-export const POST_DOF_WGSL_3D = WGSL_HEAD + /* wgsl */`
+export const POST_DOF_WGSL_3D =
+  WGSL_HEAD +
+  /* wgsl */ `
 fn blurRadius(uv: vec2f) -> f32 { return clamp((abs(sceneDepth(uv) - params.a.x) - params.a.y) / max(params.a.y, 0.001), 0.0, 1.0) * params.a.z; }
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
     let center = textureSampleLevel(source, linearSampler, input.uv, 0.0);
@@ -416,7 +510,10 @@ fn blurRadius(uv: vec2f) -> f32 { return clamp((abs(sceneDepth(uv) - params.a.x)
     return vec4f(sum / weight, center.a);
 }`;
 export function postCompositeWgsl3D(customPost?: string): string {
-    return WGSL_HEAD + (customPost ?? '') + /* wgsl */`
+  return (
+    WGSL_HEAD +
+    (customPost ?? '') +
+    /* wgsl */ `
 fn occlusionTap(uv: vec2f) -> f32 { return textureSampleLevel(aoTexture, linearSampler, uv, 0.0).r; }
 fn maskAt(uv: vec2f) -> f32 { return textureSampleLevel(maskTexture, linearSampler, uv, 0.0).r; }
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
@@ -447,9 +544,12 @@ fn maskAt(uv: vec2f) -> f32 { return textureSampleLevel(maskTexture, linearSampl
     }
     if (params.a.z > 0.5) { c = mix(c * 12.92, 1.055 * pow(c, vec3f(1.0 / 2.4)) - 0.055, step(vec3f(0.0031308), c)); }
     return vec4f(c, scene.a);
-}`;
+}`
+  );
 }
-export const POST_FXAA_WGSL_3D = WGSL_HEAD + /* wgsl */`
+export const POST_FXAA_WGSL_3D =
+  WGSL_HEAD +
+  /* wgsl */ `
 fn luma(c: vec3f) -> f32 { return dot(c, vec3f(0.299, 0.587, 0.114)); }
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
     let t = params.a.xy;

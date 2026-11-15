@@ -1324,10 +1324,29 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `WEB_PNG_BITMAP_INVALID` | 交给浏览器图片提供者的 `bitmap` 无效。 |
+| `WEB_PNG_BLOB_FAILED` | 浏览器图片提供者的 `blob` 失败了。原因在 cause 中。 |
+| `WEB_PNG_BYTES_INVALID` | 交给浏览器图片提供者的 `bytes` 无效。 |
+| `WEB_PNG_CANCELLED` | 浏览器图片提供者被取消了。 |
 | `WEB_PNG_CLEANUP_FAILED` | 清理浏览器图片提供者时失败。各个原因在 cleanupErrors 中。 |
 | `WEB_PNG_CLOSE_INCOMPLETE` | 浏览器图片提供者已关闭，但它持有的东西没能全部释放。各个原因在 cleanupErrors 中。 |
+| `WEB_PNG_CONTEXT_INVALID` | 交给浏览器图片提供者的 `context` 无效。 |
+| `WEB_PNG_DECODE_FAILED` | 浏览器图片提供者的 `decode` 失败了。原因在 cause 中。 |
 | `WEB_PNG_DESCRIPTOR_READ_FAILED` | 浏览器图片提供者的 `descriptor read` 失败了。原因在 cause 中。 |
+| `WEB_PNG_INPUT_LIMIT` | 超出了浏览器图片提供者的 `input` 上限。 |
+| `WEB_PNG_JOB_LIMIT` | 超出了浏览器图片提供者的 `job` 上限。 |
+| `WEB_PNG_OPTIONS_INVALID` | 交给浏览器图片提供者的选项无效：缺少某一项、类型不对或超出范围。 |
+| `WEB_PNG_PROFILE_UNSUPPORTED` | 浏览器图片提供者不支持 `profile`。 |
+| `WEB_PNG_PROVIDER_CLOSED` | 浏览器图片提供者的 `provider` 已关闭，不再接受任何操作。 |
+| `WEB_PNG_PROVIDER_INVALID` | 交给浏览器图片提供者的 `provider` 无效。 |
 | `WEB_PNG_RASTER_FAILED` | 浏览器图片提供者的 `raster` 失败了。原因在 cause 中。 |
+| `WEB_PNG_READBACK_INVALID` | 交给浏览器图片提供者的 `readback` 无效。 |
+| `WEB_PNG_READ_FAILED` | 浏览器图片提供者的 `read` 失败了。原因在 cause 中。 |
+| `WEB_PNG_SIGNAL_READ_FAILED` | 浏览器图片提供者的 `signal read` 失败了。原因在 cause 中。 |
+| `WEB_PNG_STRUCTURE_INVALID` | 交给浏览器图片提供者的 `structure` 无效。 |
+| `WEB_PNG_SURFACE_INVALID` | 交给浏览器图片提供者的 `surface` 无效。 |
+| `WEB_PNG_UNAVAILABLE` | 浏览器图片提供者在这里不可用。 |
+| `WEB_PNG_VALUE_INVALID` | 交给浏览器图片提供者的 `value` 无效。 |
 
 ### WEB_RESOURCE
 

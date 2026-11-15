@@ -10,13 +10,25 @@ export interface TextFieldEnginePort {
 const engines = new WeakMap<object, TextFieldEnginePort>();
 
 /** Only Engine assembly can install the closed-over instance/cache authority. */
-export function registerTextFieldEngine(engine: object, assertOpen: () => void,
-  isEngineScope: (value: unknown) => value is Scope): TextFieldEnginePort {
-  const caches = new WeakMap<object, { construct: (scope: Scope) => DisplayObject; kind: 'explicit-lines' | 'paragraph' }>();
+export function registerTextFieldEngine(
+  engine: object,
+  assertOpen: () => void,
+  isEngineScope: (value: unknown) => value is Scope
+): TextFieldEnginePort {
+  const caches = new WeakMap<
+    object,
+    { construct: (scope: Scope) => DisplayObject; kind: 'explicit-lines' | 'paragraph' }
+  >();
   const port: TextFieldEnginePort = Object.freeze({
-    assertOpen, isEngineScope,
-    registerCache(cache: object, construct: (scope: Scope) => DisplayObject, kind: 'explicit-lines' | 'paragraph' = 'explicit-lines'): void {
-      assertOpen(); caches.set(cache, {construct, kind});
+    assertOpen,
+    isEngineScope,
+    registerCache(
+      cache: object,
+      construct: (scope: Scope) => DisplayObject,
+      kind: 'explicit-lines' | 'paragraph' = 'explicit-lines'
+    ): void {
+      assertOpen();
+      caches.set(cache, { construct, kind });
     },
     construct(scope: Scope, cache: object, kind: 'explicit-lines' | 'paragraph' = 'explicit-lines'): DisplayObject {
       assertOpen();
@@ -24,7 +36,7 @@ export function registerTextFieldEngine(engine: object, assertOpen: () => void,
       const registered = caches.get(cache);
       if (registered === undefined || registered.kind !== kind) throw new EgretError('TEXT_FIELD_INVALID');
       return registered.construct(scope);
-    },
+    }
   });
   engines.set(engine, port);
   return port;

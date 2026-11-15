@@ -3,9 +3,39 @@
  * What a control is to someone who cannot see the canvas. The set is closed: it is the first
  * control set of the UI, and each role is projected to the page in one known way.
  */
-export type SemanticRole = 'group' | 'image' | 'text' | 'button' | 'checkbox' | 'switch' | 'radiogroup' | 'radio'
-  | 'listbox' | 'option' | 'list' | 'listitem' | 'scrollbar' | 'slider' | 'spinbutton' | 'progressbar' | 'tablist' | 'tab' | 'tabpanel' | 'menu' | 'menuitem' | 'dialog' | 'textbox'
-  | 'status' | 'alert' | 'grid' | 'row' | 'gridcell' | 'columnheader' | 'tree' | 'treeitem' | 'heading';
+export type SemanticRole =
+  | 'group'
+  | 'image'
+  | 'text'
+  | 'button'
+  | 'checkbox'
+  | 'switch'
+  | 'radiogroup'
+  | 'radio'
+  | 'listbox'
+  | 'option'
+  | 'list'
+  | 'listitem'
+  | 'scrollbar'
+  | 'slider'
+  | 'spinbutton'
+  | 'progressbar'
+  | 'tablist'
+  | 'tab'
+  | 'tabpanel'
+  | 'menu'
+  | 'menuitem'
+  | 'dialog'
+  | 'textbox'
+  | 'status'
+  | 'alert'
+  | 'grid'
+  | 'row'
+  | 'gridcell'
+  | 'columnheader'
+  | 'tree'
+  | 'treeitem'
+  | 'heading';
 /** What assistive technology may ask of a node: its activation, or the keyboard focus. */
 export type SemanticAction = 'activate' | 'focus';
 export type SemanticChecked = boolean | 'mixed';
