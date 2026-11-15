@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Selected tests use the source formatter — 2026-11-15
+
+Biome 2.6.7 checks 165 test modules and reformats 163 of them. In the selected files, lines exceeding 120 characters fell from 5,340 to 953. The changed files have equivalent parsed JavaScript, normalized source and comment text. Test scripts registered with fixed source identities and scripts asserted as literal text keep their original bytes, as do compiler diagnostic fixtures. The formatter can read the existing 1.6 MiB incremental-checks test, and the Source layout workflow now checks the selected tests.
+
 ## Selected tools use the source formatter — 2026-11-15
 
 Biome 2.6.7 formats 36 tool scripts. In these scripts, lines exceeding 120 characters fell from 622 to 64. A parser and a source printer independently confirmed identical syntax and normalized JavaScript, and comment text was checked in full. The remaining 88 scripts retain their original bytes to preserve exact-source checks, fixed digests and native verification inputs. The existing Source layout workflow now checks the selected tools.

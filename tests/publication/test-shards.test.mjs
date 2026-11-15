@@ -9,7 +9,22 @@ const read = relative => readFileSync(new URL('../../' + relative, import.meta.u
 test('TS01 a shard is an exact index within a bounded count', () => {
   assert.deepEqual(parseShard('1/4'), { index: 1, count: 4 });
   assert.deepEqual(parseShard('16/16'), { index: 16, count: 16 });
-  for (const text of ['', '0/4', '5/4', '1/0', '1/17', '01/4', '1/4 ', ' 1/4', '1-4', '1/4/2', '-1/4', '1.0/4', undefined, 1]) {
+  for (const text of [
+    '',
+    '0/4',
+    '5/4',
+    '1/0',
+    '1/17',
+    '01/4',
+    '1/4 ',
+    ' 1/4',
+    '1-4',
+    '1/4/2',
+    '-1/4',
+    '1.0/4',
+    undefined,
+    1
+  ]) {
     assert.throws(() => parseShard(text), TypeError, String(text));
   }
 });
@@ -34,7 +49,14 @@ test('TS03 malformed lists and positions are refused', () => {
   assert.throws(() => selectShard(['a', ''], 1, 2), TypeError);
   assert.throws(() => selectShard('a', 1, 2), TypeError);
   assert.throws(() => selectShard(['a'], 1, 2, ['b', 'b']), TypeError);
-  for (const [index, count] of [[0, 2], [3, 2], [1, 0], [1.5, 2], [1, 2.5]]) assert.throws(() => selectShard(['a'], index, count), RangeError);
+  for (const [index, count] of [
+    [0, 2],
+    [3, 2],
+    [1, 0],
+    [1.5, 2],
+    [1, 2.5]
+  ])
+    assert.throws(() => selectShard(['a'], index, count), RangeError);
 });
 
 test('TS04 the workflow runs every shard of the count it names and requires them all', () => {
@@ -45,16 +67,24 @@ test('TS04 the workflow runs every shard of the count it names and requires them
   const commands = [...workflow.matchAll(/node tools\/test\.mjs --shard=\$\{\{ matrix\.shard \}\}\/([0-9]+)\n/g)];
   assert.equal(commands.length, 1);
   const count = Number(commands[0][1]);
-  assert.deepEqual(shards, Array.from({ length: count }, (_, index) => index + 1));
+  assert.deepEqual(
+    shards,
+    Array.from({ length: count }, (_, index) => index + 1)
+  );
   assert.ok(workflow.includes('      fail-fast: false\n      matrix:\n        shard: ['));
   // The job without test files and the shards are both required by the final check.
   assert.equal(workflow.split('node tools/prepush.mjs --integrated --no-tests\n').length, 2);
   assert.ok(workflow.includes('    needs: [retained, route, windows, windows-tests, cpu]\n'));
-  assert.ok(workflow.includes('              test "$ROUTE_PROFILE" = full\n              test "$WINDOWS_TESTS_RESULT" = success\n'));
+  assert.ok(
+    workflow.includes(
+      '              test "$ROUTE_PROFILE" = full\n              test "$WINDOWS_TESTS_RESULT" = success\n'
+    )
+  );
 });
 
 test('TS05 the slow list of the runner names existing files once', () => {
-  const runner = read('tools/test.mjs'), list = /\nconst slow = (\[[^\]]*\]);\n/.exec(runner);
+  const runner = read('tools/test.mjs'),
+    list = /\nconst slow = (\[[^\]]*\]);\n/.exec(runner);
   assert.ok(list, 'The slow list is one literal');
   const slow = JSON.parse(list[1]);
   assert.equal(new Set(slow).size, slow.length);
@@ -64,11 +94,20 @@ test('TS05 the slow list of the runner names existing files once', () => {
 
 test('TS06 the browser PNG controls are dealt to exactly four files', () => {
   const owner = read('tests/browser-png-boundaries.test.mjs');
-  assert.ok(owner.includes("const parts = 4, part = Number(new URL(import.meta.url).searchParams.get('part') ?? '1');"));
-  const siblings = readdirSync(new URL('../', import.meta.url)).filter(name => /^browser-png-boundaries-[0-9]+\.test\.mjs$/.test(name)).sort();
-  assert.deepEqual(siblings, [2, 3, 4].map(part => 'browser-png-boundaries-' + part + '.test.mjs'));
+  assert.ok(
+    owner.includes("const parts = 4, part = Number(new URL(import.meta.url).searchParams.get('part') ?? '1');")
+  );
+  const siblings = readdirSync(new URL('../', import.meta.url))
+    .filter(name => /^browser-png-boundaries-[0-9]+\.test\.mjs$/.test(name))
+    .sort();
+  assert.deepEqual(
+    siblings,
+    [2, 3, 4].map(part => 'browser-png-boundaries-' + part + '.test.mjs')
+  );
   for (const part of [2, 3, 4]) {
-    const lines = read('tests/browser-png-boundaries-' + part + '.test.mjs').split('\n').filter(line => line && !line.startsWith('//'));
+    const lines = read('tests/browser-png-boundaries-' + part + '.test.mjs')
+      .split('\n')
+      .filter(line => line && !line.startsWith('//'));
     assert.deepEqual(lines, ["import './browser-png-boundaries.test.mjs?part=" + part + "';"]);
   }
 });

@@ -13,7 +13,10 @@ import { decodeSharedSRGB, decodeSharedSRGBByte } from '../packages/engine/dist/
 test('SRT01 the three written tables are the same recorded numbers, one ulp at most from the transfer function', () => {
   const values = Float64Array.from({ length: 256 }, (_, code) => rendering(code));
   // Little-endian IEEE 754 doubles, as every supported platform stores them.
-  assert.equal(createHash('sha256').update(new Uint8Array(values.buffer)).digest('hex'), '145b17b23c87fbcc4311d4d22dc15aa62e87719367d51313e3a11156fa57eb66');
+  assert.equal(
+    createHash('sha256').update(new Uint8Array(values.buffer)).digest('hex'),
+    '145b17b23c87fbcc4311d4d22dc15aa62e87719367d51313e3a11156fa57eb66'
+  );
   for (let code = 0; code < 256; code++) {
     assert.ok(Object.is(core(code), values[code]), 'core ' + code);
     assert.ok(Object.is(runtime(code), values[code]), 'runtime ' + code);

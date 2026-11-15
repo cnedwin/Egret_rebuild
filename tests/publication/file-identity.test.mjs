@@ -5,11 +5,24 @@ import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 import {
-  mkdirSync, mkdtempSync, readFileSync, writeFileSync, realpathSync,
-  symlinkSync, lstatSync, unlinkSync, rmSync, existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  writeFileSync,
+  realpathSync,
+  symlinkSync,
+  lstatSync,
+  unlinkSync,
+  rmSync,
+  existsSync
 } from 'node:fs';
 import {
-  logicalPath, physicalPathKey, samePhysicalPath, ownerRelativePath, fingerprintFile, canonicalTextBytes,
+  logicalPath,
+  physicalPathKey,
+  samePhysicalPath,
+  ownerRelativePath,
+  fingerprintFile,
+  canonicalTextBytes
 } from '../../tools/lib/file-identity.mjs';
 
 // These tests concern development-tool identities, not Engine/runtime APIs.
@@ -17,16 +30,34 @@ import {
 const rawSha = bytes => createHash('sha256').update(bytes).digest('hex');
 
 for (const value of [
-  'src/Bitmap.ts', 'knowledge-base/Cns/docs/文档 名称.md',
-  'knowledge-base/en/docs/source-origin.md', '.gitattributes', '.editorconfig',
-  'docs/e\u0301.md', 'docs/é.md',
+  'src/Bitmap.ts',
+  'knowledge-base/Cns/docs/文档 名称.md',
+  'knowledge-base/en/docs/source-origin.md',
+  '.gitattributes',
+  '.editorconfig',
+  'docs/e\u0301.md',
+  'docs/é.md'
 ]) {
   test('logical path keeps exact POSIX spelling: ' + value, () => assert.equal(logicalPath(value), value));
 }
 for (const value of [
-  '', null, 1, '/src/a.ts', 'C:/src/a.ts', '\\\\server\\share\\a.ts',
-  'src\\a.ts', './src/a.ts', 'src/./a.ts', 'src/../a.ts', '../a.ts',
-  'src//a.ts', 'src/', 'src/a.ts:stream', 'src/a\0.ts', 'src./a.ts', 'src/a.ts ',
+  '',
+  null,
+  1,
+  '/src/a.ts',
+  'C:/src/a.ts',
+  '\\\\server\\share\\a.ts',
+  'src\\a.ts',
+  './src/a.ts',
+  'src/./a.ts',
+  'src/../a.ts',
+  '../a.ts',
+  'src//a.ts',
+  'src/',
+  'src/a.ts:stream',
+  'src/a\0.ts',
+  'src./a.ts',
+  'src/a.ts '
 ]) {
   test('noncanonical logical path is refused: ' + JSON.stringify(value), () => assert.throws(() => logicalPath(value)));
 }
@@ -37,9 +68,9 @@ test('logical identities keep case and Unicode code points distinct', () => {
 const windowsPairs = [
   ['C:\\Repo\\packages\\Runtime\\A.ts', 'c:/repo/packages/runtime/a.ts'],
   ['C:/Repo/Sub/../Asset.bin', 'c:\\repo\\asset.bin'],
-  ['\\\\Server\\Share\\Repo\\A.ts', '//server/share/repo/a.ts'],
+  ['\\\\Server\\Share\\Repo\\A.ts', '//server/share/repo/a.ts']
 ];
-for (const [left,right] of windowsPairs) {
+for (const [left, right] of windowsPairs) {
   test('Windows absolute lexical key admits drive/UNC slash and case equivalents', () => {
     assert.equal(physicalPathKey(left, 'win32'), physicalPathKey(right, 'win32'));
     assert.equal(samePhysicalPath(left, right, 'win32'), true);
@@ -85,8 +116,11 @@ async function ownedFixture(body) {
   const owner = realpathSync(mkdtempSync(path.join(physicalParent, 'case-')));
   const links = [];
   let primary, cleanup;
-  try { await body(owner, links); }
-  catch (cause) { primary = { cause }; }
+  try {
+    await body(owner, links);
+  } catch (cause) {
+    primary = { cause };
+  }
   try {
     for (const link of links) {
       const relative = path.relative(owner, link);
@@ -94,15 +128,19 @@ async function ownedFixture(body) {
       assert.ok(lstatSync(link).isSymbolicLink());
       unlinkSync(link); // Remove the owned link itself before recursive cleanup.
     }
-    const resolved = realpathSync(owner), relative = path.relative(physicalParent, resolved);
+    const resolved = realpathSync(owner),
+      relative = path.relative(physicalParent, resolved);
     assert.equal(resolved, owner);
     assert.equal(path.dirname(resolved), physicalParent);
     assert.ok(relative && relative !== '..' && !relative.startsWith('..' + path.sep) && !path.isAbsolute(relative));
     assert.ok(path.basename(resolved).startsWith('case-'));
     rmSync(resolved, { recursive: true, force: false });
     assert.equal(existsSync(resolved), false);
-  } catch (cause) { cleanup = { cause }; }
-  if (primary && cleanup) throw new AggregateError([primary.cause,cleanup.cause], 'FILE_IDENTITY_FIXTURE_AND_CLEANUP_FAILED');
+  } catch (cause) {
+    cleanup = { cause };
+  }
+  if (primary && cleanup)
+    throw new AggregateError([primary.cause, cleanup.cause], 'FILE_IDENTITY_FIXTURE_AND_CLEANUP_FAILED');
   if (cleanup) throw cleanup.cause;
   if (primary) throw primary.cause;
 }
@@ -119,55 +157,69 @@ async function exactPin(owner, logical, bytes) {
   assert.equal(actual.sha256, rawSha(bytes));
   return actual;
 }
-test('raw fingerprint distinguishes LF, CRLF and BOM without text normalization', async () => ownedFixture(async owner => {
-  const logical = 'src/identity.ts', lf = Buffer.from('one\ntwo\n'), crlf = Buffer.from('one\r\ntwo\r\n');
-  put(owner, logical, lf);
-  const a = await exactPin(owner, logical, lf);
-  put(owner, logical, crlf);
-  const b = await exactPin(owner, logical, crlf);
-  assert.notEqual(a.sha256, b.sha256); assert.notEqual(a.bytes, b.bytes);
-  const bom = Buffer.concat([Buffer.from([239,187,191]), lf]);
-  put(owner, logical, bom);
-  const c = await exactPin(owner, logical, bom);
-  assert.notEqual(c.sha256, a.sha256); assert.equal(c.bytes, a.bytes + 3);
-  assert.deepEqual(readFileSync(path.join(owner, 'src/identity.ts')), bom);
-}));
-test('same basename at distinct complete logical paths never collapses identity', async () => ownedFixture(async owner => {
-  const bytes = Buffer.from('same bytes\n');
-  put(owner, 'one/value.bin', bytes); put(owner, 'two/value.bin', bytes);
-  const a = await exactPin(owner, 'one/value.bin', bytes), b = await exactPin(owner, 'two/value.bin', bytes);
-  assert.equal(a.sha256, b.sha256);
-  assert.notEqual(a.path, b.path);
-  assert.deepEqual([a.path,b.path], ['one/value.bin','two/value.bin']);
-}));
-test('raw binary fingerprint preserves NUL and non-UTF8 bytes', async () => ownedFixture(async owner => {
-  const bytes = Buffer.from([0,255,13,10,128,0,10]);
-  put(owner, 'assets/original.bin', bytes);
-  await exactPin(owner, 'assets/original.bin', bytes);
-}));
-test('fingerprint refuses traversal after a genuine complete-file baseline', async () => ownedFixture(async owner => {
-  const bytes = Buffer.from('baseline\n');
-  put(owner, 'src/good.ts', bytes); await exactPin(owner, 'src/good.ts', bytes);
-  await assert.rejects(async () => fingerprintFile(owner, '../good.ts'));
-  await assert.rejects(async () => fingerprintFile(owner, 'src/../src/good.ts'));
-}));
-test('fingerprint refuses directory values and symbolic path segments', async () => ownedFixture(async (owner, links) => {
-  const bytes = Buffer.from('owned baseline\n');
-  const target = path.join(owner, 'real');
-  put(owner, 'real/value.ts', bytes); await exactPin(owner, 'real/value.ts', bytes);
-  await assert.rejects(async () => fingerprintFile(owner, 'real'));
-  const alias = path.join(owner, 'alias');
-  symlinkSync(target, alias, process.platform === 'win32' ? 'junction' : 'dir'); links.push(alias);
-  await assert.rejects(async () => fingerprintFile(owner, 'alias/value.ts'));
-  assert.deepEqual(readFileSync(path.join(target, 'value.ts')), bytes);
-}));
+test('raw fingerprint distinguishes LF, CRLF and BOM without text normalization', async () =>
+  ownedFixture(async owner => {
+    const logical = 'src/identity.ts',
+      lf = Buffer.from('one\ntwo\n'),
+      crlf = Buffer.from('one\r\ntwo\r\n');
+    put(owner, logical, lf);
+    const a = await exactPin(owner, logical, lf);
+    put(owner, logical, crlf);
+    const b = await exactPin(owner, logical, crlf);
+    assert.notEqual(a.sha256, b.sha256);
+    assert.notEqual(a.bytes, b.bytes);
+    const bom = Buffer.concat([Buffer.from([239, 187, 191]), lf]);
+    put(owner, logical, bom);
+    const c = await exactPin(owner, logical, bom);
+    assert.notEqual(c.sha256, a.sha256);
+    assert.equal(c.bytes, a.bytes + 3);
+    assert.deepEqual(readFileSync(path.join(owner, 'src/identity.ts')), bom);
+  }));
+test('same basename at distinct complete logical paths never collapses identity', async () =>
+  ownedFixture(async owner => {
+    const bytes = Buffer.from('same bytes\n');
+    put(owner, 'one/value.bin', bytes);
+    put(owner, 'two/value.bin', bytes);
+    const a = await exactPin(owner, 'one/value.bin', bytes),
+      b = await exactPin(owner, 'two/value.bin', bytes);
+    assert.equal(a.sha256, b.sha256);
+    assert.notEqual(a.path, b.path);
+    assert.deepEqual([a.path, b.path], ['one/value.bin', 'two/value.bin']);
+  }));
+test('raw binary fingerprint preserves NUL and non-UTF8 bytes', async () =>
+  ownedFixture(async owner => {
+    const bytes = Buffer.from([0, 255, 13, 10, 128, 0, 10]);
+    put(owner, 'assets/original.bin', bytes);
+    await exactPin(owner, 'assets/original.bin', bytes);
+  }));
+test('fingerprint refuses traversal after a genuine complete-file baseline', async () =>
+  ownedFixture(async owner => {
+    const bytes = Buffer.from('baseline\n');
+    put(owner, 'src/good.ts', bytes);
+    await exactPin(owner, 'src/good.ts', bytes);
+    await assert.rejects(async () => fingerprintFile(owner, '../good.ts'));
+    await assert.rejects(async () => fingerprintFile(owner, 'src/../src/good.ts'));
+  }));
+test('fingerprint refuses directory values and symbolic path segments', async () =>
+  ownedFixture(async (owner, links) => {
+    const bytes = Buffer.from('owned baseline\n');
+    const target = path.join(owner, 'real');
+    put(owner, 'real/value.ts', bytes);
+    await exactPin(owner, 'real/value.ts', bytes);
+    await assert.rejects(async () => fingerprintFile(owner, 'real'));
+    const alias = path.join(owner, 'alias');
+    symlinkSync(target, alias, process.platform === 'win32' ? 'junction' : 'dir');
+    links.push(alias);
+    await assert.rejects(async () => fingerprintFile(owner, 'alias/value.ts'));
+    assert.deepEqual(readFileSync(path.join(target, 'value.ts')), bytes);
+  }));
 
 test('fresh text writer canonicalizes CRLF and final LF only', () => {
   for (const [source, expected] of [
     ['alpha\r\nbeta\r\n', 'alpha\nbeta\n'],
     ['alpha', 'alpha\n'],
     ['alpha\n\n\n', 'alpha\n'],
-    ['', ''],
+    ['', '']
   ]) {
     const result = canonicalTextBytes(source);
     assert.ok(result instanceof Uint8Array);
@@ -177,7 +229,8 @@ test('fresh text writer canonicalizes CRLF and final LF only', () => {
 test('fresh text writer preserves interior blank lines, Unicode and Markdown hard breaks', () => {
   const text = 'first  \r\n\r\n😀 second  \r\n\r\n';
   assert.deepEqual([...canonicalTextBytes(text)], [...Buffer.from('first  \n\n😀 second  \n')]);
-  const first = canonicalTextBytes('owned'), second = canonicalTextBytes('owned');
+  const first = canonicalTextBytes('owned'),
+    second = canonicalTextBytes('owned');
   assert.notEqual(first, second);
   first.fill(0);
   assert.deepEqual([...second], [...Buffer.from('owned\n')]);
