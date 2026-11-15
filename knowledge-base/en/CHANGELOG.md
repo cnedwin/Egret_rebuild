@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Private UI root display preparation gets its own module — 2026-11-15
+
+The UI root keeps the transaction, revision, cancellation and cleanup logic. Private modules now hold its data model, validation helpers and detached display staging. The existing public entry and declarations, paint order and disposal order are preserved.
+
 ## Advisory source lint — 2026-11-15
 
 Install the locked formatter with `npm ci --ignore-scripts --prefix tools/format`, then run `node tools/lint.mjs`. The separate Biome configuration reports recommended rules for package TypeScript sources. The cognitive complexity threshold is 30, or 60 under the engine rendering and web directories. Reports include totals and up to 12 findings. Findings are advisory, and setup, configuration or source parsing failures still fail the lint job.
