@@ -35,12 +35,19 @@ export function requireManifestAssetRef(value: unknown): ManifestBindingState {
   return state;
 }
 
-export function createManifestAssetBinding<T>(manifest: AdmittedResourceManifest, assetId: string, type: AssetType<T>): ManifestAssetBinding<T> {
+export function createManifestAssetBinding<T>(
+  manifest: AdmittedResourceManifest,
+  assetId: string,
+  type: AssetType<T>
+): ManifestAssetBinding<T> {
   if (!isAdmittedResourceManifest(manifest)) throw new EgretError('MANIFEST_BINDING_MANIFEST_INVALID');
   if (typeof assetId !== 'string') throw new EgretError('MANIFEST_BINDING_ASSET_INVALID');
   let entry: ResourceManifestEntry | undefined;
   for (const candidate of manifest.entries) {
-    if (candidate.id === assetId) { entry = candidate; break; }
+    if (candidate.id === assetId) {
+      entry = candidate;
+      break;
+    }
   }
   if (entry === undefined) throw new EgretError('MANIFEST_BINDING_ASSET_INVALID');
 

@@ -12,13 +12,17 @@ class Signal implements CancellationSignal {
   private cancellationReason: unknown = undefined;
   private readonly subscriptions = new Map<CancellationListener, Subscription>();
 
-  public get aborted(): boolean { return this.cancelled; }
-  public get reason(): unknown { return this.cancellationReason; }
+  public get aborted(): boolean {
+    return this.cancelled;
+  }
+  public get reason(): unknown {
+    return this.cancellationReason;
+  }
 
   public addEventListener(
     _type: "abort",
     listener: CancellationListener,
-    options: { readonly once?: boolean } = {},
+    options: { readonly once?: boolean } = {}
   ): void {
     if (this.cancelled || this.subscriptions.has(listener)) return;
     this.subscriptions.set(listener, { listener, once: options.once ?? false, active: true });
@@ -47,7 +51,12 @@ class Signal implements CancellationSignal {
       try {
         candidate.listener();
       } catch (cause) {
-        reportDiagnostic(onDiagnostic, { code: "CANCELLATION_LISTENER_FAILED", phase: "cancellation", severity: "error", cause });
+        reportDiagnostic(onDiagnostic, {
+          code: "CANCELLATION_LISTENER_FAILED",
+          phase: "cancellation",
+          severity: "error",
+          cause
+        });
       }
     }
     this.subscriptions.clear();
@@ -60,6 +69,10 @@ export class CancellationController {
   private readonly onDiagnostic: DiagnosticHandler | undefined;
   public readonly signal: CancellationSignal = this.mutableSignal;
 
-  public constructor(onDiagnostic?: DiagnosticHandler) { this.onDiagnostic = onDiagnostic; }
-  public abort(reason?: unknown): void { this.mutableSignal.abort(reason, this.onDiagnostic); }
+  public constructor(onDiagnostic?: DiagnosticHandler) {
+    this.onDiagnostic = onDiagnostic;
+  }
+  public abort(reason?: unknown): void {
+    this.mutableSignal.abort(reason, this.onDiagnostic);
+  }
 }

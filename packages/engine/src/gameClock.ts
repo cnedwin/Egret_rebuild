@@ -1,8 +1,16 @@
 import type { Diagnostic } from '@egret/contracts';
 import { EgretError, Scope } from '@egret/runtime';
-import type { GameClock, GameClockHandler, GameClockState, GameClockSubscription, GameClockTick } from './gameClockTypes.js';
+import type {
+  GameClock,
+  GameClockHandler,
+  GameClockState,
+  GameClockSubscription,
+  GameClockTick
+} from './gameClockTypes.js';
 
-export interface AdmittedGameClockOptions { readonly maxDeltaSeconds: number; }
+export interface AdmittedGameClockOptions {
+  readonly maxDeltaSeconds: number;
+}
 export interface GameClockContext {
   assertOpen(): void;
   isEngineScope(scope: unknown): scope is Scope;
@@ -27,14 +35,21 @@ export function admitGameClockOptions(value: unknown): AdmittedGameClockOptions 
   if (value !== undefined) {
     if (value === null || typeof value !== 'object') throw new EgretError('CLOCK_OPTIONS_INVALID');
     let isArray: boolean;
-    try { isArray = Array.isArray(value); }
-    catch (cause) { throw new EgretError('CLOCK_OPTIONS_INVALID', { cause }); }
+    try {
+      isArray = Array.isArray(value);
+    } catch (cause) {
+      throw new EgretError('CLOCK_OPTIONS_INVALID', { cause });
+    }
     if (isArray) throw new EgretError('CLOCK_OPTIONS_INVALID');
-    try { maximum = (value as { readonly maxDeltaSeconds?: unknown }).maxDeltaSeconds; }
-    catch (cause) { throw new EgretError('CLOCK_OPTIONS_INVALID', { cause }); }
+    try {
+      maximum = (value as { readonly maxDeltaSeconds?: unknown }).maxDeltaSeconds;
+    } catch (cause) {
+      throw new EgretError('CLOCK_OPTIONS_INVALID', { cause });
+    }
   }
   if (maximum === undefined) maximum = 0.25;
-  if (typeof maximum !== 'number' || !Number.isFinite(maximum) || maximum <= 0 || maximum > 1) throw new EgretError('CLOCK_OPTIONS_INVALID');
+  if (typeof maximum !== 'number' || !Number.isFinite(maximum) || maximum <= 0 || maximum > 1)
+    throw new EgretError('CLOCK_OPTIONS_INVALID');
   return Object.freeze({ maxDeltaSeconds: maximum });
 }
 
@@ -48,10 +63,14 @@ interface SubscriptionRecord {
 /** Invalid asynchronous returns are observed, never awaited or accepted. */
 function observeRejectedResult(result: unknown): void {
   const ignoreRejection = (): void => {};
-  try { void Reflect.apply(Promise.prototype.then, result, [undefined, ignoreRejection]); }
-  catch {
-    try { void Promise.resolve(result).then(undefined, ignoreRejection); }
-    catch { /* Observation cannot replace CLOCK_CALLBACK_RETURN_INVALID. */ }
+  try {
+    void Reflect.apply(Promise.prototype.then, result, [undefined, ignoreRejection]);
+  } catch {
+    try {
+      void Promise.resolve(result).then(undefined, ignoreRejection);
+    } catch {
+      /* Observation cannot replace CLOCK_CALLBACK_RETURN_INVALID. */
+    }
   }
 }
 
@@ -69,7 +88,9 @@ export function createGameClockOwner(context: GameClockContext, options: Admitte
   let idle: Promise<void> | undefined;
   let releaseIdle: (() => void) | undefined;
   // Slots retain only live registrations. Scope's historical handles remain its own.
-  const slots: (SubscriptionRecord | undefined)[] = new Array<SubscriptionRecord | undefined>(MAX_SUBSCRIPTIONS).fill(undefined);
+  const slots: (SubscriptionRecord | undefined)[] = new Array<SubscriptionRecord | undefined>(MAX_SUBSCRIPTIONS).fill(
+    undefined
+  );
 
   function retire(record: SubscriptionRecord): void {
     if (record.disposed) return;
@@ -86,10 +107,22 @@ export function createGameClockOwner(context: GameClockContext, options: Admitte
   }
 
   const clock = Object.freeze({
-    get state(): GameClockState { assertClock(this); return state; },
-    get elapsedSeconds(): number { assertClock(this); return elapsedSeconds; },
-    get tickId(): number { assertClock(this); return tickId; },
-    get maxDeltaSeconds(): number { assertClock(this); return options.maxDeltaSeconds; },
+    get state(): GameClockState {
+      assertClock(this);
+      return state;
+    },
+    get elapsedSeconds(): number {
+      assertClock(this);
+      return elapsedSeconds;
+    },
+    get tickId(): number {
+      assertClock(this);
+      return tickId;
+    },
+    get maxDeltaSeconds(): number {
+      assertClock(this);
+      return options.maxDeltaSeconds;
+    },
     onTick(scope: Scope, handler: GameClockHandler): GameClockSubscription {
       assertClock(this);
       context.assertOpen();
@@ -97,7 +130,8 @@ export function createGameClockOwner(context: GameClockContext, options: Admitte
       if (Reflect.apply(scopeState, scope, []) !== 'open') throw new EgretError('SCOPE_CLOSED');
       if (typeof handler !== 'function') throw new EgretError('CLOCK_HANDLER_INVALID');
       if (liveCount >= MAX_SUBSCRIPTIONS) throw new EgretError('CLOCK_CALLBACK_LIMIT');
-      if (!Number.isSafeInteger(nextSequence) || nextSequence <= 0) throw new EgretError('CLOCK_SUBSCRIPTION_ID_EXHAUSTED');
+      if (!Number.isSafeInteger(nextSequence) || nextSequence <= 0)
+        throw new EgretError('CLOCK_SUBSCRIPTION_ID_EXHAUSTED');
       const slot = slots.indexOf(undefined);
       const record: SubscriptionRecord = { sequence: nextSequence, slot, disposed: false, handler };
       const subscription = Object.freeze({
@@ -108,10 +142,14 @@ export function createGameClockOwner(context: GameClockContext, options: Admitte
         dispose(): void {
           if (this !== subscription) throw new EgretError('CLOCK_SUBSCRIPTION_INVALID');
           retire(record);
-        },
+        }
       }) as GameClockSubscription;
-      try { Reflect.apply(scopeUse, scope, [subscription]); }
-      catch (cause) { retire(record); throw cause; }
+      try {
+        Reflect.apply(scopeUse, scope, [subscription]);
+      } catch (cause) {
+        retire(record);
+        throw cause;
+      }
       // No caller operation runs between intrinsic adoption and slot publication.
       slots[slot] = record;
       liveCount++;
@@ -128,8 +166,11 @@ export function createGameClockOwner(context: GameClockContext, options: Admitte
       context.assertOpen();
       if (busy) throw new EgretError('CLOCK_REENTRANT');
       // Only an actual paused-to-running transition discards the old anchor.
-      if (state === 'paused') { state = 'running'; anchor = undefined; }
-    },
+      if (state === 'paused') {
+        state = 'running';
+        anchor = undefined;
+      }
+    }
   }) as GameClock;
 
   return Object.freeze({
@@ -137,12 +178,20 @@ export function createGameClockOwner(context: GameClockContext, options: Admitte
     advance(sourceSeconds: unknown): GameClockTick | undefined {
       context.assertOpen();
       if (busy || context.isFrameBusy()) throw new EgretError('CLOCK_REENTRANT');
-      if (typeof sourceSeconds !== 'number' || !Number.isFinite(sourceSeconds) || sourceSeconds < 0) throw new EgretError('CLOCK_SOURCE_INVALID');
+      if (typeof sourceSeconds !== 'number' || !Number.isFinite(sourceSeconds) || sourceSeconds < 0)
+        throw new EgretError('CLOCK_SOURCE_INVALID');
       const source = sourceSeconds === 0 ? 0 : sourceSeconds;
       if (acceptedSource !== undefined && source < acceptedSource) throw new EgretError('CLOCK_SOURCE_BACKWARDS');
       // Paused, initial, resumed and equal samples dispatch no gameplay tick.
-      if (state === 'paused') { acceptedSource = source; return undefined; }
-      if (anchor === undefined) { acceptedSource = source; anchor = source; return undefined; }
+      if (state === 'paused') {
+        acceptedSource = source;
+        return undefined;
+      }
+      if (anchor === undefined) {
+        acceptedSource = source;
+        anchor = source;
+        return undefined;
+      }
       if (source === acceptedSource) return undefined;
       const deltaSeconds = source - anchor;
       // Refused samples cannot advance the accepted floor, anchor or game time.
@@ -153,8 +202,12 @@ export function createGameClockOwner(context: GameClockContext, options: Admitte
       if (!Number.isSafeInteger(nextTickId) || nextTickId <= 0) throw new EgretError('CLOCK_TICK_ID_EXHAUSTED');
       const tick: GameClockTick = Object.freeze({ tickId: nextTickId, elapsedSeconds: nextElapsed, deltaSeconds });
       // Snapshot identities, not slot numbers: reuse cannot substitute a new handler.
-      const candidates = slots.filter((record): record is SubscriptionRecord => record !== undefined).sort((a, b) => a.sequence - b.sequence);
-      idle = new Promise<void>(resolve => { releaseIdle = resolve; });
+      const candidates = slots
+        .filter((record): record is SubscriptionRecord => record !== undefined)
+        .sort((a, b) => a.sequence - b.sequence);
+      idle = new Promise<void>(resolve => {
+        releaseIdle = resolve;
+      });
       busy = true;
       // Commit before callbacks: failure never rolls back time or replays candidates.
       acceptedSource = source;
@@ -194,7 +247,11 @@ export function createGameClockOwner(context: GameClockContext, options: Admitte
       state = 'closed';
       for (const record of slots) if (record !== undefined) retire(record);
     },
-    isBusy(): boolean { return busy; },
-    whenIdle(): Promise<void> { return idle ?? Promise.resolve(); },
+    isBusy(): boolean {
+      return busy;
+    },
+    whenIdle(): Promise<void> {
+      return idle ?? Promise.resolve();
+    }
   });
 }

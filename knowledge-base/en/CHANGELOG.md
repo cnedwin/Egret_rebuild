@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## The engine's sources are laid out by a formatter — 2026-11-15
+
+Biome 2.6.7 lays out the 408 TypeScript sources under `packages/*/src`, `packages/*/web` and `packages/*/rendering`: two spaces, lines of at most 120 characters, and the quotes each file already used. 369 files changed; they went from 70,423 lines to 110,781, and the lines longer than 120 characters from 6,281 to 320. No behaviour changed: each of the 410 built `.js` files, printed again from its syntax tree without comments or layout, is the same text as before, and of the 410 declaration files one differs, by a pair of brackets that mean the same. `node tools/format.mjs` lays the sources out, and the `Source layout` workflow fails a pull request in which a file is not laid out. The formatter is installed from a lockfile of its own under `tools/format`, apart from the workspace, whose lockfile several checks hold byte for byte. Three places in the boundary check that held source text as it used to be spaced or quoted now hold it as it is, and the scanner of error codes follows a helper written over several lines, which found 19 codes it had missed. The built bytes are new, so evidence bound to the earlier bytes no longer holds until it is taken again.
+
 ## An API reference written from the declarations, and the guides apart from the contracts — 2026-11-15
 
 `knowledge-base/*/docs/api-reference.md` lists every name each of the 40 entries of `@egret/engine` exports, 1,131 in all, with its kind and the first sentence written above it in the sources. `node tools/api-reference.mjs` writes it from the built declarations and `tests/api-reference.test.mjs` fails when it is stale or a name is not found. It also shows what is missing: 707 exports have no sentence above them yet. The knowledge base index now begins with the guides for writing a game, apart from the contracts and plans.

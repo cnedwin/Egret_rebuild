@@ -60,15 +60,20 @@ function callerRead<T>(read: () => T, code: string, context: AssetGroupContext, 
   let value!: T;
   let failed = false;
   let cause: unknown;
-  try { value = read(); }
-  catch (failure) { failed = true; cause = failure; }
+  try {
+    value = read();
+  } catch (failure) {
+    failed = true;
+    cause = failure;
+  }
   assertLifetime(context, scope);
   if (failed) throw new EgretError(code, { cause });
   return value;
 }
 
 function admitRefs(context: AssetGroupContext, scope: Scope, refs: unknown): readonly unknown[] {
-  if (!callerRead(() => IS_ARRAY(refs), 'ASSET_GROUP_REFS_INVALID', context, scope)) throw new EgretError('ASSET_GROUP_REFS_INVALID');
+  if (!callerRead(() => IS_ARRAY(refs), 'ASSET_GROUP_REFS_INVALID', context, scope))
+    throw new EgretError('ASSET_GROUP_REFS_INVALID');
   const array = refs as unknown[];
   const length = callerRead(() => array.length, 'ASSET_GROUP_REFS_INVALID', context, scope);
   if (!Number.isInteger(length) || length < 0 || length > 128) throw new EgretError('ASSET_GROUP_REFS_INVALID');
@@ -85,17 +90,27 @@ function admitRefs(context: AssetGroupContext, scope: Scope, refs: unknown): rea
 function admitConcurrency(context: AssetGroupContext, scope: Scope, options: unknown): number {
   if (options === undefined) return 4;
   if (typeof options !== 'object' || options === null) throw new EgretError('ASSET_GROUP_OPTIONS_INVALID');
-  if (callerRead(() => IS_ARRAY(options), 'ASSET_GROUP_OPTIONS_INVALID', context, scope)) throw new EgretError('ASSET_GROUP_OPTIONS_INVALID');
-  const requested = callerRead(() => (options as { readonly concurrency?: unknown }).concurrency, 'ASSET_GROUP_OPTIONS_INVALID', context, scope);
+  if (callerRead(() => IS_ARRAY(options), 'ASSET_GROUP_OPTIONS_INVALID', context, scope))
+    throw new EgretError('ASSET_GROUP_OPTIONS_INVALID');
+  const requested = callerRead(
+    () => (options as { readonly concurrency?: unknown }).concurrency,
+    'ASSET_GROUP_OPTIONS_INVALID',
+    context,
+    scope
+  );
   const concurrency = requested === undefined ? 4 : requested;
-  if (typeof concurrency !== 'number' || !Number.isInteger(concurrency) || concurrency < 1 || concurrency > 16) throw new EgretError('ASSET_GROUP_OPTIONS_INVALID');
+  if (typeof concurrency !== 'number' || !Number.isInteger(concurrency) || concurrency < 1 || concurrency > 16)
+    throw new EgretError('ASSET_GROUP_OPTIONS_INVALID');
   return concurrency;
 }
 
 /** This is an observation-order choice, never a synthesized acquisition failure. */
 function disposalCause(record: GroupRecord): unknown {
-  try { record.context.assertOpen(); }
-  catch (cause) { return cause; }
+  try {
+    record.context.assertOpen();
+  } catch (cause) {
+    return cause;
+  }
   const scope = record.scope;
   if (scope !== undefined && APPLY(SCOPE_STATE, scope, []) !== 'open') return new EgretError('SCOPE_CLOSED');
   return undefined;
@@ -107,7 +122,11 @@ function reportCleanup(record: GroupRecord, cause: unknown): void {
 }
 
 /** Consume routing and member borrows before cancellation/disposal can reenter. */
-function commitTerminal(record: GroupRecord, state: 'failed' | 'disposed', cause: unknown): CleanupSnapshot | undefined {
+function commitTerminal(
+  record: GroupRecord,
+  state: 'failed' | 'disposed',
+  cause: unknown
+): CleanupSnapshot | undefined {
   if (record.state === 'failed' || record.state === 'disposed') return undefined;
   const pending = record.state === 'pending';
   record.state = state;
@@ -124,15 +143,21 @@ function commitTerminal(record: GroupRecord, state: 'failed' | 'disposed', cause
 }
 
 function releaseMember(record: GroupRecord, lease: unknown): void {
-  try { record.operations.releaseGroupLease(lease); }
-  catch (cause) { reportCleanup(record, cause); }
+  try {
+    record.operations.releaseGroupLease(lease);
+  } catch (cause) {
+    reportCleanup(record, cause);
+  }
 }
 
 /** Manager-caught provider faults keep its ASSET_CLEANUP_FAILED diagnostic. */
 function runCleanup(snapshot: CleanupSnapshot): void {
   const { record, error, members } = snapshot;
-  try { APPLY(ABORT, record.controller, [error]); }
-  catch (cause) { reportCleanup(record, cause); }
+  try {
+    APPLY(ABORT, record.controller, [error]);
+  } catch (cause) {
+    reportCleanup(record, cause);
+  }
   for (let index = members.length - 1; index >= 0; index--) {
     const member = members[index];
     if (member !== undefined) releaseMember(record, member);
@@ -146,14 +171,23 @@ function terminate(record: GroupRecord, state: 'failed' | 'disposed', cause: unk
 
 function requirePendingLifetime(record: GroupRecord): boolean {
   if (record.state !== 'pending') return false;
-  try { assertLifetime(record.context, record.scope); return true; }
-  catch (cause) { terminate(record, 'disposed', cause); return false; }
+  try {
+    assertLifetime(record.context, record.scope);
+    return true;
+  } catch (cause) {
+    terminate(record, 'disposed', cause);
+    return false;
+  }
 }
 
 function fulfillMember(record: GroupRecord, index: number, lease: AssetLease<unknown>): void {
-  if (!requirePendingLifetime(record)) { releaseMember(record, lease); return; }
-  try { record.operations.claimGroupLease(lease, record.facade!); }
-  catch (cause) {
+  if (!requirePendingLifetime(record)) {
+    releaseMember(record, lease);
+    return;
+  }
+  try {
+    record.operations.claimGroupLease(lease, record.facade!);
+  } catch (cause) {
     // Commit failure first, then retire the unpublished lease alongside known members.
     terminate(record, 'failed', cause);
     releaseMember(record, lease);
@@ -187,12 +221,27 @@ function startMember(record: GroupRecord, index: number, ref: unknown): void {
   try {
     const promise = record.operations.acquire(ref as AssetRef<unknown>, { signal: record.controller.signal });
     const continuation = APPLY(PROMISE_THEN, promise, [
-      (lease: AssetLease<unknown>): void => { retireSlot(); fulfillMember(record, index, lease); },
-      (cause: unknown): void => { retireSlot(); rejectMember(record, cause); },
+      (lease: AssetLease<unknown>): void => {
+        retireSlot();
+        fulfillMember(record, index, lease);
+      },
+      (cause: unknown): void => {
+        retireSlot();
+        rejectMember(record, cause);
+      }
     ]) as Promise<void>;
     // Consume even an unexpected internal handler throw without a detached rejection.
-    void APPLY(PROMISE_THEN, continuation, [undefined, (cause: unknown): void => { retireSlot(); rejectMember(record, cause); }]);
-  } catch (cause) { retireSlot(); rejectMember(record, cause); }
+    void APPLY(PROMISE_THEN, continuation, [
+      undefined,
+      (cause: unknown): void => {
+        retireSlot();
+        rejectMember(record, cause);
+      }
+    ]);
+  } catch (cause) {
+    retireSlot();
+    rejectMember(record, cause);
+  }
 }
 
 /** The window bounds this group's unsettled acquisitions, not provider activity. */
@@ -207,19 +256,44 @@ function schedule(record: GroupRecord): void {
       const index = record.nextIndex++;
       startMember(record, index, refs[index]);
     }
-  } finally { record.scheduling = false; }
+  } finally {
+    record.scheduling = false;
+  }
 }
 
-function makeRecord(context: AssetGroupContext, operations: AssetGroupOperations, scope: Scope, refs: readonly unknown[], concurrency: number): GroupRecord {
+function makeRecord(
+  context: AssetGroupContext,
+  operations: AssetGroupOperations,
+  scope: Scope,
+  refs: readonly unknown[],
+  concurrency: number
+): GroupRecord {
   let resolveReady!: GroupRecord['resolveReady'];
   let rejectReady!: GroupRecord['rejectReady'];
-  const ready = new Promise<readonly AssetLease<unknown>[]>((resolve, reject) => { resolveReady = resolve; rejectReady = reject; });
+  const ready = new Promise<readonly AssetLease<unknown>[]>((resolve, reject) => {
+    resolveReady = resolve;
+    rejectReady = reject;
+  });
   // Own the rejection from creation, including disposal during the first loader.
   void APPLY(PROMISE_THEN, ready, [undefined, (): void => {}]);
   return {
-    context, operations, scope, refs, concurrency, ready, resolveReady, rejectReady,
-    controller: new CancellationController(), members: Array(refs.length), owner: undefined,
-    facade: undefined, state: 'pending', nextIndex: 0, outstanding: 0, completed: 0, scheduling: false,
+    context,
+    operations,
+    scope,
+    refs,
+    concurrency,
+    ready,
+    resolveReady,
+    rejectReady,
+    controller: new CancellationController(),
+    members: Array(refs.length),
+    owner: undefined,
+    facade: undefined,
+    state: 'pending',
+    nextIndex: 0,
+    outstanding: 0,
+    completed: 0,
+    scheduling: false
   };
 }
 
@@ -228,9 +302,18 @@ function makeHandle<T>(record: GroupRecord): AssetGroup<T> {
     if (receiver !== group) throw new EgretError('ASSET_GROUP_INVALID');
   }
   const group = FREEZE({
-    get state(): AssetGroupState { assertReceiver(this); return record.state; },
-    get ready(): Promise<readonly AssetLease<unknown>[]> { assertReceiver(this); return record.ready; },
-    dispose(): void { assertReceiver(this); terminate(record, 'disposed', disposalCause(record)); },
+    get state(): AssetGroupState {
+      assertReceiver(this);
+      return record.state;
+    },
+    get ready(): Promise<readonly AssetLease<unknown>[]> {
+      assertReceiver(this);
+      return record.ready;
+    },
+    dispose(): void {
+      assertReceiver(this);
+      terminate(record, 'disposed', disposalCause(record));
+    }
   });
   record.facade = group;
   return group as unknown as AssetGroup<T>;
@@ -253,14 +336,22 @@ export function createAssetGroupOwner(context: AssetGroupContext, operations: As
         operations.admitGroupRefs(snapshot);
         record = makeRecord(context, operations, scope, snapshot, concurrency);
         group = makeHandle<T>(record);
-        try { APPLY(SCOPE_USE, scope, [group]); assertLifetime(context, scope); }
-        catch (cause) { terminate(record, 'disposed', cause); throw cause; }
+        try {
+          APPLY(SCOPE_USE, scope, [group]);
+          assertLifetime(context, scope);
+        } catch (cause) {
+          terminate(record, 'disposed', cause);
+          throw cause;
+        }
         record.owner = records;
         records.add(record);
-      } finally { admissionBusy = false; }
+      } finally {
+        admissionBusy = false;
+      }
       if (record.members.length === 0) {
         if (requirePendingLifetime(record)) {
-          record.state = 'ready'; record.refs = undefined;
+          record.state = 'ready';
+          record.refs = undefined;
           record.resolveReady(FREEZE([]));
         }
       } else schedule(record);
@@ -274,6 +365,6 @@ export function createAssetGroupOwner(context: AssetGroupContext, operations: As
         if (snapshot !== undefined) snapshots.push(snapshot);
       }
       for (const snapshot of snapshots) runCleanup(snapshot);
-    },
+    }
   });
 }

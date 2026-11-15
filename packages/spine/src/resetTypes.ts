@@ -37,7 +37,9 @@ export interface SpinePreserveRequest {
   readonly onEvent?: (event: SpinePlaybackEvent) => void;
 }
 export type SpineResetState = 'loading' | 'ready' | 'prepared' | 'committed' | 'cancelled' | 'failed';
-export interface SpineResetActive extends SpineResetInitial { readonly ownership: 'borrowed' | 'owned'; }
+export interface SpineResetActive extends SpineResetInitial {
+  readonly ownership: 'borrowed' | 'owned';
+}
 export interface SpineResetTicket {
   /** CPU assets/pose only. This is not Host upload readiness. */
   readonly ready: Promise<void>;

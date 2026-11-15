@@ -1,5 +1,5 @@
-import { captureAtlasFrameLayout, copyAtlasFrameLayout } from './atlasFrameLayout.js';
-import type { SequenceRegion } from './sequenceClip.js';
+import { captureAtlasFrameLayout, copyAtlasFrameLayout } from "./atlasFrameLayout.js";
+import type { SequenceRegion } from "./sequenceClip.js";
 import type { ImageData2D, TextureRegion2D, TextureViewRegion2D } from "@egret/contracts";
 import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
 import { AssetLease } from "./AssetLease.js";
@@ -8,9 +8,9 @@ import { hasBitmapState, readBitmapState, writeBitmapState } from "./bitmapDispl
 import type { BitmapCaptureState, BitmapCaptureView } from "./bitmapDisplayState.js";
 export type { BitmapCaptureState } from "./bitmapDisplayState.js";
 import { assertLive, isStageRoot, isTerminated } from "./displayTreeState.js";
-import type { Stage } from './Stage.js';
-import { collectPreparedSharedFrameContent } from './sharedFrameCapture.js';
-import type { CapturedSharedContent2D } from './sharedFrameCapture.js';
+import type { Stage } from "./Stage.js";
+import { collectPreparedSharedFrameContent } from "./sharedFrameCapture.js";
+import type { CapturedSharedContent2D } from "./sharedFrameCapture.js";
 import { EgretError } from "./EgretError.js";
 import { claimOwner, ownerOf, commitBinding, engineOf } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
@@ -26,7 +26,7 @@ export let spriteSheetBitmapOperations: Readonly<{
 
 const mutations = new WeakSet<object>();
 const freezeAtlasState = Object.freeze;
-type ResourceTargetOperations = Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1];
+type ResourceTargetOperations = Parameters<NonNullable<EngineContext["registerBitmapResourceTarget"]>>[1];
 const resourceTargetOperations = new WeakMap<EngineContext, ResourceTargetOperations>();
 const freezeResourceOperations = Object.freeze;
 const releaseResourceLease = AssetLease.prototype.release;
@@ -55,12 +55,13 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
   const batchPreparedStates = new WeakMap<object, BatchPrepared>();
   const batchPublications = new WeakMap<object, BatchPublication>();
   const affinity = (value: object): void => {
-    if (engineOf(value) !== context) throw new EgretError('ENGINE_MISMATCH');
+    if (engineOf(value) !== context) throw new EgretError("ENGINE_MISMATCH");
   };
 
   const batchAffinity = (targets: readonly Bitmap[]): void => {
     for (let index = 0; index < targets.length; index++) {
-      affinity(targets[index]!); assertBitmap(targets[index]!);
+      affinity(targets[index]!);
+      assertBitmap(targets[index]!);
     }
   };
   const batchLife = (targets: readonly Bitmap[]): void => {
@@ -69,19 +70,19 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
   };
   const capturedBatch = (captured: object): BatchCapture => {
     const entry = batchCaptures.get(captured);
-    if (entry === undefined) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+    if (entry === undefined) throw new EgretError("BITMAP_RESOURCE_PREPARED_INVALID");
     return entry;
   };
   const expectedBatch = (entry: BatchCapture): void => {
     // Complete the entire token pass before reading even the first entitlement.
     for (let index = 0; index < entry.targets.length; index++) {
       if (readBitmapState(entry.targets[index]!) !== entry.expected[index]) {
-        throw new EgretError('BITMAP_RESOURCE_BINDING_CHANGED');
+        throw new EgretError("BITMAP_RESOURCE_BINDING_CHANGED");
       }
     }
   };
   const batchImage = (lease: AssetLease<Texture>): TextureSnapshot2D => {
-    if (!isAssetLease(lease)) throw new EgretError('BITMAP_LEASE_INVALID');
+    if (!isAssetLease(lease)) throw new EgretError("BITMAP_LEASE_INVALID");
     affinity(lease);
     return readBitmapImage(lease);
   };
@@ -92,90 +93,110 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
     affinity(bitmap);
     const state = readBitmapBinding(bitmap);
     // A changed binding wins before any external entitlement revocation.
-    if (expected !== undefined && state !== expected) throw new EgretError('BITMAP_RESOURCE_BINDING_CHANGED');
-    if (state === undefined) throw new EgretError('BITMAP_RESOURCE_TEXTURE_REQUIRED');
+    if (expected !== undefined && state !== expected) throw new EgretError("BITMAP_RESOURCE_BINDING_CHANGED");
+    if (state === undefined) throw new EgretError("BITMAP_RESOURCE_TEXTURE_REQUIRED");
     readBitmapImage(state.lease);
     return state;
   };
   operations = freezeResourceOperations({
-    capture(bitmap: Bitmap, expected?: object): object { return liveBinding(bitmap, expected); },
+    capture(bitmap: Bitmap, expected?: object): object {
+      return liveBinding(bitmap, expected);
+    },
     prepare(bitmap: Bitmap, lease: AssetLease<Texture>): object {
-      affinity(bitmap); affinity(lease);
+      affinity(bitmap);
+      affinity(lease);
       liveBinding(bitmap);
       const snapshot = readBitmapImage(lease);
       // Use the captured intrinsic; no late public setter or freeze callback.
       const state: BitmapCaptureState = freezeResourceOperations({
-        lease, sourceRect: snapshot.sourceRect, viewRegion: snapshot.viewRegion,
+        lease,
+        sourceRect: snapshot.sourceRect,
+        viewRegion: snapshot.viewRegion,
         width: snapshot.viewRegion?.logicalWidth ?? snapshot.sourceRect.width,
-        height: snapshot.viewRegion?.logicalHeight ?? snapshot.sourceRect.height,
+        height: snapshot.viewRegion?.logicalHeight ?? snapshot.sourceRect.height
       });
       preparedStates.set(state, { bitmap, state });
       return state;
     },
     commit(bitmap: Bitmap, expected: object, prepared: object): void {
-      affinity(bitmap); assertBitmap(bitmap);
+      affinity(bitmap);
+      assertBitmap(bitmap);
       const entry = preparedStates.get(prepared);
-      if (entry === undefined || entry.bitmap !== bitmap) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+      if (entry === undefined || entry.bitmap !== bitmap) throw new EgretError("BITMAP_RESOURCE_PREPARED_INVALID");
       affinity(entry.state.lease);
-      assertLive(bitmap); context.assertOpen();
-      if (mutations.has(bitmap)) throw new EgretError('BITMAP_MUTATION_REENTRANT');
+      assertLive(bitmap);
+      context.assertOpen();
+      if (mutations.has(bitmap)) throw new EgretError("BITMAP_MUTATION_REENTRANT");
       const current = readBitmapState(bitmap);
-      if (current !== expected) throw new EgretError('BITMAP_RESOURCE_BINDING_CHANGED');
+      if (current !== expected) throw new EgretError("BITMAP_RESOURCE_BINDING_CHANGED");
       // Both entitlements are fresh even when expected state identity is unchanged.
-      if (current === undefined) throw new EgretError('BITMAP_RESOURCE_TEXTURE_REQUIRED');
-      readBitmapImage(current.lease); readBitmapImage(entry.state.lease);
+      if (current === undefined) throw new EgretError("BITMAP_RESOURCE_TEXTURE_REQUIRED");
+      readBitmapImage(current.lease);
+      readBitmapImage(entry.state.lease);
       preparedStates.delete(prepared);
       writeBitmapState(bitmap, entry.state);
     },
     clearIfCurrent(bitmap: Bitmap, expected: object): boolean {
-      affinity(bitmap); assertBitmap(bitmap);
+      affinity(bitmap);
+      assertBitmap(bitmap);
       const current = readBitmapState(bitmap);
       if (current === undefined || current !== expected) return false;
       writeBitmapState(bitmap, undefined);
       return true;
     },
     claim(bitmap: Bitmap, lease: AssetLease<Texture>, owner: object): void {
-      affinity(bitmap); affinity(lease);
-      assertBitmap(bitmap); assertLive(bitmap); context.assertOpen();
-      if (!isAssetLease(lease) || ownerOf(lease) !== undefined) throw new EgretError('BITMAP_RESOURCE_LEASE_INVALID');
+      affinity(bitmap);
+      affinity(lease);
+      assertBitmap(bitmap);
+      assertLive(bitmap);
+      context.assertOpen();
+      if (!isAssetLease(lease) || ownerOf(lease) !== undefined) throw new EgretError("BITMAP_RESOURCE_LEASE_INVALID");
       readAssetLeaseValue(lease);
       claimOwner(lease, owner);
     },
     release(lease: AssetLease<Texture>): void {
       affinity(lease);
-      if (!isAssetLease(lease)) throw new EgretError('BITMAP_RESOURCE_LEASE_INVALID');
+      if (!isAssetLease(lease)) throw new EgretError("BITMAP_RESOURCE_LEASE_INVALID");
       applyResourceOperation(releaseResourceLease, lease, []);
     },
     captureBatch(targets: readonly Bitmap[]): object {
       if (!Array.isArray(targets) || targets.length < 1 || targets.length > 128) {
-        throw new EgretError('BITMAP_BINDING_TARGETS_INVALID');
+        throw new EgretError("BITMAP_BINDING_TARGETS_INVALID");
       }
-      const copied: Bitmap[] = [], seen = new Set<Bitmap>();
+      const copied: Bitmap[] = [],
+        seen = new Set<Bitmap>();
       for (let index = 0; index < targets.length; index++) {
         const bitmap = targets[index]!;
-        affinity(bitmap); assertBitmap(bitmap);
-        if (seen.has(bitmap)) throw new EgretError('BITMAP_BINDING_TARGETS_INVALID');
-        seen.add(bitmap); copied.push(bitmap);
+        affinity(bitmap);
+        assertBitmap(bitmap);
+        if (seen.has(bitmap)) throw new EgretError("BITMAP_BINDING_TARGETS_INVALID");
+        seen.add(bitmap);
+        copied.push(bitmap);
       }
       batchLife(copied);
       const expected: BitmapCaptureState[] = [];
       for (let index = 0; index < copied.length; index++) {
         const state = readBitmapState(copied[index]!);
-        if (state === undefined) throw new EgretError('BITMAP_RESOURCE_TEXTURE_REQUIRED');
+        if (state === undefined) throw new EgretError("BITMAP_RESOURCE_TEXTURE_REQUIRED");
         expected.push(state);
       }
       for (let index = 0; index < expected.length; index++) batchImage(expected[index]!.lease);
       const captured = freezeResourceOperations({});
-      batchCaptures.set(captured, freezeResourceOperations({
-        targets: freezeResourceOperations(copied), expected: freezeResourceOperations(expected),
-      }));
+      batchCaptures.set(
+        captured,
+        freezeResourceOperations({
+          targets: freezeResourceOperations(copied),
+          expected: freezeResourceOperations(expected)
+        })
+      );
       return captured;
     },
     prepareBatch(captured: object, members: readonly AssetLease<Texture>[]): object {
       const entry = capturedBatch(captured);
-      batchAffinity(entry.targets); batchLife(entry.targets);
+      batchAffinity(entry.targets);
+      batchLife(entry.targets);
       if (!Array.isArray(members) || members.length !== entry.targets.length) {
-        throw new EgretError('BITMAP_BINDING_MEMBERS_INVALID');
+        throw new EgretError("BITMAP_BINDING_MEMBERS_INVALID");
       }
       const leases: AssetLease<Texture>[] = [];
       for (let index = 0; index < entry.targets.length; index++) leases.push(members[index]!);
@@ -187,22 +208,32 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
       const states: BitmapCaptureState[] = [];
       for (let index = 0; index < snapshots.length; index++) {
         const snapshot = snapshots[index]!;
-        states.push(freezeResourceOperations({ lease: leases[index]!, sourceRect: snapshot.sourceRect, viewRegion: snapshot.viewRegion,
-          width: snapshot.viewRegion?.logicalWidth ?? snapshot.sourceRect.width,
-          height: snapshot.viewRegion?.logicalHeight ?? snapshot.sourceRect.height }));
+        states.push(
+          freezeResourceOperations({
+            lease: leases[index]!,
+            sourceRect: snapshot.sourceRect,
+            viewRegion: snapshot.viewRegion,
+            width: snapshot.viewRegion?.logicalWidth ?? snapshot.sourceRect.width,
+            height: snapshot.viewRegion?.logicalHeight ?? snapshot.sourceRect.height
+          })
+        );
       }
       const prepared = freezeResourceOperations({});
-      batchPreparedStates.set(prepared, freezeResourceOperations({ captured, states: freezeResourceOperations(states) }));
+      batchPreparedStates.set(
+        prepared,
+        freezeResourceOperations({ captured, states: freezeResourceOperations(states) })
+      );
       return prepared;
     },
     commitBatch(captured: object, prepared: object): object {
       const entry = capturedBatch(captured);
       batchAffinity(entry.targets);
       const candidate = batchPreparedStates.get(prepared);
-      if (candidate === undefined || candidate.captured !== captured) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+      if (candidate === undefined || candidate.captured !== captured)
+        throw new EgretError("BITMAP_RESOURCE_PREPARED_INVALID");
       batchLife(entry.targets);
       for (let index = 0; index < entry.targets.length; index++) {
-        if (mutations.has(entry.targets[index]!)) throw new EgretError('BITMAP_MUTATION_REENTRANT');
+        if (mutations.has(entry.targets[index]!)) throw new EgretError("BITMAP_MUTATION_REENTRANT");
       }
       expectedBatch(entry);
       oldBatchImages(entry);
@@ -211,21 +242,25 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
       const publication = freezeResourceOperations({});
       batchPublications.set(publication, { targets: entry.targets, states: candidate.states, active: true });
       batchPreparedStates.delete(prepared);
-      for (let index = 0; index < entry.targets.length; index++) writeBitmapState(entry.targets[index]!, candidate.states[index]!);
+      for (let index = 0; index < entry.targets.length; index++)
+        writeBitmapState(entry.targets[index]!, candidate.states[index]!);
       return publication;
     },
     capturePreparedSharedContent(stage: Stage, captured: object, prepared: object): CapturedSharedContent2D {
-      const entry = capturedBatch(captured), candidate = batchPreparedStates.get(prepared);
-      if (candidate === undefined || candidate.captured !== captured) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+      const entry = capturedBatch(captured),
+        candidate = batchPreparedStates.get(prepared);
+      if (candidate === undefined || candidate.captured !== captured)
+        throw new EgretError("BITMAP_RESOURCE_PREPARED_INVALID");
       const validate = (): void => {
         if (batchCaptures.get(captured) !== entry || batchPreparedStates.get(prepared) !== candidate) {
-          throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+          throw new EgretError("BITMAP_RESOURCE_PREPARED_INVALID");
         }
-        if (!isStageRoot(stage)) throw new EgretError('FRAME_STAGE_INVALID');
+        if (!isStageRoot(stage)) throw new EgretError("FRAME_STAGE_INVALID");
         affinity(stage);
-        batchAffinity(entry.targets); batchLife(entry.targets);
+        batchAffinity(entry.targets);
+        batchLife(entry.targets);
         for (let index = 0; index < entry.targets.length; index++) {
-          if (mutations.has(entry.targets[index]!)) throw new EgretError('BITMAP_MUTATION_REENTRANT');
+          if (mutations.has(entry.targets[index]!)) throw new EgretError("BITMAP_MUTATION_REENTRANT");
         }
         expectedBatch(entry);
         oldBatchImages(entry);
@@ -233,11 +268,14 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
       };
       validate();
       const selected = new Map<DisplayObject, BitmapCaptureState>();
-      for (let index = 0; index < entry.targets.length; index++) selected.set(entry.targets[index]!, candidate.states[index]!);
+      for (let index = 0; index < entry.targets.length; index++)
+        selected.set(entry.targets[index]!, candidate.states[index]!);
       // The completed map never escapes this frozen view or receives another write.
       // Whole states preserve crop, logical dimensions, rotation and atlas metadata.
       const view: BitmapCaptureView = freezeResourceOperations({
-        read(node: DisplayObject): BitmapCaptureState | undefined { return selected.get(node) ?? readBitmapState(node); },
+        read(node: DisplayObject): BitmapCaptureState | undefined {
+          return selected.get(node) ?? readBitmapState(node);
+        }
       });
       const content = collectPreparedSharedFrameContent(stage, view);
       validate();
@@ -245,7 +283,7 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
     },
     clearBatchIfCurrent(publication: object): void {
       const entry = batchPublications.get(publication);
-      if (entry === undefined) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+      if (entry === undefined) throw new EgretError("BITMAP_RESOURCE_PREPARED_INVALID");
       batchAffinity(entry.targets);
       if (!entry.active) return;
       entry.active = false;
@@ -254,7 +292,7 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
         const target = entry.targets[index]!;
         if (readBitmapState(target) === entry.states[index]) writeBitmapState(target, undefined);
       }
-    },
+    }
   });
   resourceTargetOperations.set(context, operations);
   return operations;
@@ -264,9 +302,18 @@ function assertBitmap(value: unknown): void {
   if (!hasBitmapState(value as object)) throw new EgretError("BITMAP_INVALID");
 }
 
-function captureState(lease: AssetLease<Texture>, sourceRect: TextureRegion2D, viewRegion: TextureViewRegion2D | null = null): BitmapCaptureState {
-  return Object.freeze({ lease, sourceRect, viewRegion,
-    width: viewRegion?.logicalWidth ?? sourceRect.width, height: viewRegion?.logicalHeight ?? sourceRect.height });
+function captureState(
+  lease: AssetLease<Texture>,
+  sourceRect: TextureRegion2D,
+  viewRegion: TextureViewRegion2D | null = null
+): BitmapCaptureState {
+  return Object.freeze({
+    lease,
+    sourceRect,
+    viewRegion,
+    width: viewRegion?.logicalWidth ?? sourceRect.width,
+    height: viewRegion?.logicalHeight ?? sourceRect.height
+  });
 }
 
 /** Shared lease/crop guard starts after the established lifecycle priority. */
@@ -324,11 +371,20 @@ function regionInteger(value: unknown, positive: boolean): number {
 
 /** Absolute crops stay within the authenticated Texture's immutable image view. */
 function copyRegion(base: TextureRegion2D, fields: RegionFields): TextureRegion2D {
-  const x = regionInteger(fields.x, false), y = regionInteger(fields.y, false);
-  const width = regionInteger(fields.width, true), height = regionInteger(fields.height, true);
-  const right = x + width, bottom = y + height;
-  if (!Number.isSafeInteger(right) || !Number.isSafeInteger(bottom)
-    || x < base.x || y < base.y || right > base.x + base.width || bottom > base.y + base.height) {
+  const x = regionInteger(fields.x, false),
+    y = regionInteger(fields.y, false);
+  const width = regionInteger(fields.width, true),
+    height = regionInteger(fields.height, true);
+  const right = x + width,
+    bottom = y + height;
+  if (
+    !Number.isSafeInteger(right) ||
+    !Number.isSafeInteger(bottom) ||
+    x < base.x ||
+    y < base.y ||
+    right > base.x + base.width ||
+    bottom > base.y + base.height
+  ) {
     throw new EgretError("BITMAP_REGION_INVALID", { cause: new RangeError("Bitmap region exceeds its Texture view") });
   }
   return Object.freeze({ x, y, width, height });
@@ -355,8 +411,12 @@ export class Bitmap extends DisplayObject {
     const apply = Reflect.apply;
     spriteSheetBitmapOperations = Object.freeze({
       construct: (lease: AssetLease<Texture>): Bitmap => new OriginalBitmap(lease),
-      setCrop: (bitmap: Bitmap, region: TextureRegion2D): void => { apply(setCrop, bitmap, [region]); },
-      dispose: (bitmap: Bitmap): void => { apply(dispose, bitmap, []); },
+      setCrop: (bitmap: Bitmap, region: TextureRegion2D): void => {
+        apply(setCrop, bitmap, [region]);
+      },
+      dispose: (bitmap: Bitmap): void => {
+        apply(dispose, bitmap, []);
+      }
     });
   }
 
@@ -369,7 +429,10 @@ export class Bitmap extends DisplayObject {
     const engine = beginMutation(this);
     try {
       const previous = readBitmapState(this);
-      if (value === undefined) { writeBitmapState(this, undefined); return; }
+      if (value === undefined) {
+        writeBitmapState(this, undefined);
+        return;
+      }
       if (!isAssetLease(value)) throw new EgretError("BITMAP_LEASE_INVALID");
       if (engineOf(value) !== engine) throw new EgretError("ENGINE_MISMATCH");
       const snapshot = readBitmapImage(value);
@@ -414,8 +477,14 @@ export class Bitmap extends DisplayObject {
     }
   }
 
-  public get naturalWidth(): number { assertBitmap(this); return readBitmapState(this)?.width ?? 0; }
-  public get naturalHeight(): number { assertBitmap(this); return readBitmapState(this)?.height ?? 0; }
+  public get naturalWidth(): number {
+    assertBitmap(this);
+    return readBitmapState(this)?.width ?? 0;
+  }
+  public get naturalHeight(): number {
+    assertBitmap(this);
+    return readBitmapState(this)?.height ?? 0;
+  }
 
   /** Drop the borrow before base cleanup/reentry; the caller still owns the lease. */
   public override dispose(): void {
@@ -427,7 +496,9 @@ export class Bitmap extends DisplayObject {
 }
 
 /** Brand and slot only: geometry may be validated before any lease read. */
-export function bitmapCaptureState(node: DisplayObject): BitmapCaptureState | undefined { return readBitmapState(node); }
+export function bitmapCaptureState(node: DisplayObject): BitmapCaptureState | undefined {
+  return readBitmapState(node);
+}
 
 /** Internal binding authority; a cleared slot remains distinguishable from retirement. */
 export function readBitmapBinding(node: Bitmap): BitmapCaptureState | undefined {
@@ -460,29 +531,48 @@ export function applyBitmapAtlasFrame(bitmap: Bitmap, region: SequenceRegion): v
   const engine = beginMutation(bitmap);
   try {
     const previous = readBitmapState(bitmap);
-    if (previous === undefined) throw new EgretError('BITMAP_TEXTURE_REQUIRED');
+    if (previous === undefined) throw new EgretError("BITMAP_TEXTURE_REQUIRED");
     const initial = readBitmapImage(previous.lease);
     // Internal atlas bridges obey the same immutable-view rule as public crop.
     if (initial.viewRegion !== null) throw new EgretError("TEXTURE_VIEW_REGION_IMMUTABLE");
     const fields = readRegion(region);
-    const captured = captureAtlasFrameLayout(region, (source, key) => {
-      try {
-        const present = Object.hasOwn(source, key);
-        return { present, value: present ? (source as Record<string, unknown>)[key] : undefined };
-      } catch (cause) { throw new EgretError('BITMAP_REGION_INVALID', { cause }); }
-    }, callback => {
-      try { return callback(); } catch (cause) { throw new EgretError('BITMAP_REGION_INVALID', { cause }); }
-    });
+    const captured = captureAtlasFrameLayout(
+      region,
+      (source, key) => {
+        try {
+          const present = Object.hasOwn(source, key);
+          return { present, value: present ? (source as Record<string, unknown>)[key] : undefined };
+        } catch (cause) {
+          throw new EgretError("BITMAP_REGION_INVALID", { cause });
+        }
+      },
+      callback => {
+        try {
+          return callback();
+        } catch (cause) {
+          throw new EgretError("BITMAP_REGION_INVALID", { cause });
+        }
+      }
+    );
     revalidateMutation(bitmap, engine, previous);
     const snapshot = readBitmapImage(previous.lease);
     const sourceRect = copyRegion(snapshot.sourceRect, fields);
-    const layout = copyAtlasFrameLayout(captured, sourceRect.width, sourceRect.height,
-      () => { throw new EgretError('BITMAP_REGION_INVALID'); });
-    const next = freezeAtlasState({ lease: previous.lease, sourceRect, layout, viewRegion: null,
-      width: layout.sourceWidth, height: layout.sourceHeight });
+    const layout = copyAtlasFrameLayout(captured, sourceRect.width, sourceRect.height, () => {
+      throw new EgretError("BITMAP_REGION_INVALID");
+    });
+    const next = freezeAtlasState({
+      lease: previous.lease,
+      sourceRect,
+      layout,
+      viewRegion: null,
+      width: layout.sourceWidth,
+      height: layout.sourceHeight
+    });
     revalidateMutation(bitmap, engine, previous);
     readBitmapImage(previous.lease);
     // Publish one new token, even for identical crop/layout scalars (ABA protection).
     writeBitmapState(bitmap, next);
-  } finally { mutations.delete(bitmap); }
+  } finally {
+    mutations.delete(bitmap);
+  }
 }

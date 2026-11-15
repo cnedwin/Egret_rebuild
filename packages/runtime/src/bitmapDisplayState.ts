@@ -25,9 +25,13 @@ const states = new WeakMap<object, BitmapCaptureState | undefined>();
 const readPublishedState = states.get.bind(states);
 
 /** A registered cleared slot remains different from an unregistered receiver. */
-export function hasBitmapState(value: unknown): boolean { return states.has(value as object); }
+export function hasBitmapState(value: unknown): boolean {
+  return states.has(value as object);
+}
 /** Read cached metadata only; this port grants no live image entitlement. */
-export function readBitmapState(node: DisplayObject): BitmapCaptureState | undefined { return states.get(node); }
+export function readBitmapState(node: DisplayObject): BitmapCaptureState | undefined {
+  return states.get(node);
+}
 /** Bitmap alone writes its slot, preserving existing mutation/lifetime guards. */
 export function writeBitmapState(node: DisplayObject, value: BitmapCaptureState | undefined): void {
   const changed = readPublishedState(node) !== value;

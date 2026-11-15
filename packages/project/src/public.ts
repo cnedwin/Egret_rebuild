@@ -1,4 +1,14 @@
-import type { ProjectId, EntityId, FileId, TransactionId, ProjectRevision, JsonObject, ProjectSnapshot, ProjectTransactionSource, ProjectTransaction } from "@egret/contracts";
+import type {
+  ProjectId,
+  EntityId,
+  FileId,
+  TransactionId,
+  ProjectRevision,
+  JsonObject,
+  ProjectSnapshot,
+  ProjectTransactionSource,
+  ProjectTransaction
+} from "@egret/contracts";
 
 // These operational declarations preserve the contract's exact public surface.
 // Readonly annotations describe ownership; public adapters and the store enforce
@@ -15,15 +25,24 @@ export interface ProjectDiff {
 }
 
 export type ProjectDiagnosticCode =
-  | "PROJECT_INPUT_INVALID" | "PROJECT_FORMAT_UNSUPPORTED"
-  | "PROJECT_LIMIT_EXCEEDED" | "PROJECT_ID_INVALID"
-  | "PROJECT_ID_DUPLICATE" | "PROJECT_ID_REUSED"
-  | "PROJECT_REFERENCE_MISSING" | "PROJECT_REFERENCE_TYPE_MISMATCH"
-  | "PROJECT_PATH_INVALID" | "PROJECT_PATH_COLLISION"
-  | "PROJECT_SCOPE_VIOLATION" | "PROJECT_OPERATION_DUPLICATE"
-  | "PROJECT_REVISION_CONFLICT" | "PROJECT_TRANSACTION_ID_REUSED"
-  | "PROJECT_RESTORE_UNAVAILABLE" | "PROJECT_HISTORY_INVALID"
-  | "PROJECT_KIND_UNCHECKED" | "PROJECT_CONTENT_UNVERIFIED";
+  | "PROJECT_INPUT_INVALID"
+  | "PROJECT_FORMAT_UNSUPPORTED"
+  | "PROJECT_LIMIT_EXCEEDED"
+  | "PROJECT_ID_INVALID"
+  | "PROJECT_ID_DUPLICATE"
+  | "PROJECT_ID_REUSED"
+  | "PROJECT_REFERENCE_MISSING"
+  | "PROJECT_REFERENCE_TYPE_MISMATCH"
+  | "PROJECT_PATH_INVALID"
+  | "PROJECT_PATH_COLLISION"
+  | "PROJECT_SCOPE_VIOLATION"
+  | "PROJECT_OPERATION_DUPLICATE"
+  | "PROJECT_REVISION_CONFLICT"
+  | "PROJECT_TRANSACTION_ID_REUSED"
+  | "PROJECT_RESTORE_UNAVAILABLE"
+  | "PROJECT_HISTORY_INVALID"
+  | "PROJECT_KIND_UNCHECKED"
+  | "PROJECT_CONTENT_UNVERIFIED";
 
 export interface ProjectDiagnostic {
   readonly code: ProjectDiagnosticCode;
@@ -41,8 +60,7 @@ export interface ProjectDiagnostic {
 }
 
 export type ProjectValueResult<T> =
-  | { readonly ok: true; readonly value: T;
-      readonly diagnostics: readonly ProjectDiagnostic[] }
+  | { readonly ok: true; readonly value: T; readonly diagnostics: readonly ProjectDiagnostic[] }
   | { readonly ok: false; readonly diagnostics: readonly ProjectDiagnostic[] };
 
 export interface ProjectTransactionReceipt {
@@ -54,13 +72,17 @@ export interface ProjectTransactionReceipt {
 }
 
 export type ProjectCommitResult =
-  | { readonly status: "committed" | "replayed";
+  | {
+      readonly status: "committed" | "replayed";
       readonly snapshot: ProjectSnapshot;
       readonly receipt: ProjectTransactionReceipt;
-      readonly diagnostics: readonly ProjectDiagnostic[] }
-  | { readonly status: "rejected";
+      readonly diagnostics: readonly ProjectDiagnostic[];
+    }
+  | {
+      readonly status: "rejected";
       readonly snapshot: ProjectSnapshot;
-      readonly diagnostics: readonly ProjectDiagnostic[] };
+      readonly diagnostics: readonly ProjectDiagnostic[];
+    };
 
 export interface ProjectLimits {
   readonly maxSnapshotUtf8Bytes: number;

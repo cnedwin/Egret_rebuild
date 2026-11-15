@@ -4626,7 +4626,7 @@ for(const file of ['packages/engine/web/MouseInput.ts','packages/engine/dist/web
 }
 const mouseEngine=mouseRead('packages/engine/src/Engine.ts'),mouseStart=mouseRead('packages/engine/src/startEngine.ts'),mouseOwner=mouseRead('packages/engine/src/mouseInput.ts');
 if(!/createDisplayInputOperations\(stage\)/.test(mouseEngine)||!/createMouseInputOwner\(this,/.test(mouseEngine)||!/\.registerScope\(scope\)/.test(mouseEngine))throw new Error('MI1: genuine Engine display/scope assembly guard missing');
-const closing=mouseEngine.indexOf('this.#currentState = "closing"'),inputGate=mouseEngine.indexOf('this.#mouseInputOwner.close()',closing),owners=mouseEngine.indexOf('this.#assetGroupOwner.close()',closing);
+const closing=mouseEngine.indexOf("this.#currentState = 'closing'"),inputGate=mouseEngine.indexOf('this.#mouseInputOwner.close()',closing),owners=mouseEngine.indexOf('this.#assetGroupOwner.close()',closing);
 if(closing<0||inputGate<closing||owners<inputGate)throw new Error('MI1: early Engine input gate order mismatch');
 if(!/await\s+host\.start\?\.\(\)\s*;\s*markMouseInputEngineStarted\(engine\)\s*;\s*return\s+engine/.test(mouseStart)
   ||!/if\s*\(!started\)\s*throw\s+new\s+EgretError\(['"]MOUSE_INPUT_INVALID['"]\)/.test(mouseOwner))throw new Error('MI1: successful startup readiness guard missing');
@@ -5567,7 +5567,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
   if(Object.hasOwn(semanticAllowed,resolved)&&!semanticAllowed[resolved].includes(relative))throw new Error('Semantics: implementation module imported outside its entry: '+relative);
  }
 }
-if(!/const primitives=captureMouseInputRuntimePrimitives\(\)/.test(uiRead('packages/engine/src/keyboardInput.ts'))||!/const INPUT_PARENT = Object.getOwnPropertyDescriptor\(DisplayObject.prototype, 'parent'\)/.test(uiRead('packages/engine/src/internal/mouseInputFactoryState.ts')))throw new Error('M3.3: original eager display admission capture missing');
+if(!/const primitives = captureMouseInputRuntimePrimitives\(\)/.test(uiRead('packages/engine/src/keyboardInput.ts'))||!/const INPUT_PARENT = Object.getOwnPropertyDescriptor\(DisplayObject.prototype, 'parent'\)/.test(uiRead('packages/engine/src/internal/mouseInputFactoryState.ts')))throw new Error('M3.3: original eager display admission capture missing');
 // Exact public values remain separate from default UI, Canvas and Engine entries.
 for(const [entry,names] of [['@egret/runtime/ui/editing',['createTextEditState']],['@egret/engine/ui/editing',['createUiTextEditor']],['@egret/engine/web/editing',['createBrowserEditorFontProvider','createBrowserTextEditor']]])
  if(!uiSame(Object.keys(await import(entry)),names))throw new Error('M3.3: native editing public values differ: '+entry);

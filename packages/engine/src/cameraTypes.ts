@@ -1,8 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { DisplayObject } from '@egret/runtime';
 
-export interface CameraPoint { readonly x: number; readonly y: number; }
-export interface CameraRect { readonly x: number; readonly y: number; readonly width: number; readonly height: number; }
+export interface CameraPoint {
+  readonly x: number;
+  readonly y: number;
+}
+export interface CameraRect {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+}
 /** What the camera follows: a display object inside the world, or a function that says where to look. */
 export type CameraTarget = DisplayObject | (() => CameraPoint);
 export interface CameraFollowOptions {

@@ -13,7 +13,9 @@ import { readBitmapState } from './bitmapDisplayState.js';
 import { resolveShape } from './graphicsShape.js';
 
 /** Receiver-inclusive whole-tree admission precedes all hit arithmetic. */
-export interface HitTestOptions { readonly maxNodes?: number; }
+export interface HitTestOptions {
+  readonly maxNodes?: number;
+}
 
 function live(node: DisplayObject, engine: EngineContext): void {
   assertLive(node);
@@ -25,11 +27,17 @@ function budgetOf(root: Stage, engine: EngineContext, source: unknown): number {
   if (source !== undefined) {
     if (source === null || typeof source !== 'object') throw new EgretError('HIT_TEST_INPUT_INVALID');
     let array: boolean;
-    try { array = Array.isArray(source); }
-    catch (cause) { throw new EgretError('HIT_TEST_INPUT_INVALID', { cause }); }
+    try {
+      array = Array.isArray(source);
+    } catch (cause) {
+      throw new EgretError('HIT_TEST_INPUT_INVALID', { cause });
+    }
     if (array) throw new EgretError('HIT_TEST_INPUT_INVALID');
-    try { requested = (source as HitTestOptions).maxNodes; }
-    catch (cause) { throw new EgretError('HIT_TEST_INPUT_INVALID', { cause }); }
+    try {
+      requested = (source as HitTestOptions).maxNodes;
+    } catch (cause) {
+      throw new EgretError('HIT_TEST_INPUT_INVALID', { cause });
+    }
   }
   live(root, engine);
   const maximum = requested === undefined ? 4096 : requested;
@@ -47,10 +55,12 @@ interface StructuralCursor {
 
 /** Ascending order fixes integrity failure priority without sibling snapshots. */
 function admitStructure(root: Stage, engine: EngineContext, maximum: number): void {
-  const seen = new Set<DisplayObject>(), stack: StructuralCursor[] = [];
+  const seen = new Set<DisplayObject>(),
+    stack: StructuralCursor[] = [];
   function enter(node: DisplayObject, parent: DisplayObject | undefined): void {
     if (seen.size >= maximum) throw new EgretError('HIT_TEST_TREE_LIMIT');
-    if (!isDisplayNode(node) || seen.has(node) || parentOf(node) !== parent) throw new EgretError('DISPLAY_TREE_INVARIANT');
+    if (!isDisplayNode(node) || seen.has(node) || parentOf(node) !== parent)
+      throw new EgretError('DISPLAY_TREE_INVARIANT');
     assertLive(node);
     if (engineOf(node) !== engine) throw new EgretError('ENGINE_MISMATCH');
     seen.add(node);
@@ -59,7 +69,10 @@ function admitStructure(root: Stage, engine: EngineContext, maximum: number): vo
   enter(root, undefined);
   while (stack.length !== 0) {
     const cursor = stack[stack.length - 1]!;
-    if (cursor.nextChild === cursor.childCount) { stack.pop(); continue; }
+    if (cursor.nextChild === cursor.childCount) {
+      stack.pop();
+      continue;
+    }
     // Debit before retrieving a child, including hidden/suppressed descendants.
     if (seen.size >= maximum) throw new EgretError('HIT_TEST_TREE_LIMIT');
     const child = childAtOf(cursor.node, cursor.nextChild++);
@@ -69,8 +82,9 @@ function admitStructure(root: Stage, engine: EngineContext, maximum: number): vo
 }
 
 function inversePoint(matrix: Matrix2D, x: number, y: number): Point2D {
-  try { return invertCoordinatePoint(matrix, x, y); }
-  catch (cause) {
+  try {
+    return invertCoordinatePoint(matrix, x, y);
+  } catch (cause) {
     if (cause instanceof EgretError && cause.code === 'COORDINATE_ARITHMETIC_RANGE') {
       throw new EgretError('HIT_TEST_ARITHMETIC_RANGE', { cause });
     }
@@ -81,16 +95,22 @@ function inversePoint(matrix: Matrix2D, x: number, y: number): Point2D {
 function nonsingular(matrix: Matrix2D): boolean {
   // This exact-rank probe has zero inverse coordinates when rank is full. It
   // avoids overflowing an irrelevant requested-point inverse on an ancestor.
-  try { inversePoint(matrix, matrix.tx, matrix.ty); return true; }
-  catch (cause) {
+  try {
+    inversePoint(matrix, matrix.tx, matrix.ty);
+    return true;
+  } catch (cause) {
     if (cause instanceof EgretError && cause.code === 'COORDINATE_TRANSFORM_SINGULAR') return false;
     throw cause;
   }
 }
 
 function contains(rectangle: Rectangle2D, point: Point2D): boolean {
-  return point.x >= rectangle.x && point.x < rectangle.x + rectangle.width
-    && point.y >= rectangle.y && point.y < rectangle.y + rectangle.height;
+  return (
+    point.x >= rectangle.x &&
+    point.x < rectangle.x + rectangle.width &&
+    point.y >= rectangle.y &&
+    point.y < rectangle.y + rectangle.height
+  );
 }
 
 /**
@@ -98,7 +118,9 @@ function contains(rectangle: Rectangle2D, point: Point2D): boolean {
  * of its shapes, or its bitmap's rectangle. A node that is touch enabled and has no hit area is hit by this.
  */
 function onContent(node: DisplayObject, point: Point2D): boolean {
-  const visual = visualOf(node), x = point.x, y = point.y;
+  const visual = visualOf(node),
+    x = point.x,
+    y = point.y;
   for (const { rect } of visual.primitives) if (rect.width > 0 && rect.height > 0 && contains(rect, point)) return true;
   const bitmap = readBitmapState(node);
   if (bitmap !== undefined && x >= 0 && y >= 0 && x < bitmap.width && y < bitmap.height) return true;
@@ -107,11 +129,21 @@ function onContent(node: DisplayObject, point: Point2D): boolean {
   const bounds = shape.bounds;
   if (x < bounds.x || y < bounds.y || x > bounds.x + bounds.width || y > bounds.y + bounds.height) return false;
   for (const { geometry } of shape.parts) {
-    const positions = geometry.positions, indices = geometry.indices;
+    const positions = geometry.positions,
+      indices = geometry.indices;
     for (let i = 0; i < geometry.indexCount; i += 3) {
-      const a = 2 * indices[i]!, b = 2 * indices[i + 1]!, c = 2 * indices[i + 2]!;
-      const ax = positions[a]!, ay = positions[a + 1]!, bx = positions[b]!, by = positions[b + 1]!, cx = positions[c]!, cy = positions[c + 1]!;
-      const d1 = (bx - ax) * (y - ay) - (by - ay) * (x - ax), d2 = (cx - bx) * (y - by) - (cy - by) * (x - bx), d3 = (ax - cx) * (y - cy) - (ay - cy) * (x - cx);
+      const a = 2 * indices[i]!,
+        b = 2 * indices[i + 1]!,
+        c = 2 * indices[i + 2]!;
+      const ax = positions[a]!,
+        ay = positions[a + 1]!,
+        bx = positions[b]!,
+        by = positions[b + 1]!,
+        cx = positions[c]!,
+        cy = positions[c + 1]!;
+      const d1 = (bx - ax) * (y - ay) - (by - ay) * (x - ax),
+        d2 = (cx - bx) * (y - by) - (cy - by) * (x - bx),
+        d3 = (ax - cx) * (y - cy) - (ay - cy) * (x - cx);
       if ((d1 >= 0 && d2 >= 0 && d3 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0)) return true;
     }
   }
@@ -128,7 +160,12 @@ interface NumericalCursor {
 }
 
 /** Private state only; all active arithmetic completes before a borrowed result. */
-export function queryDisplayHit(receiver: unknown, x: unknown, y: unknown, options: unknown): DisplayObject | undefined {
+export function queryDisplayHit(
+  receiver: unknown,
+  x: unknown,
+  y: unknown,
+  options: unknown
+): DisplayObject | undefined {
   if (!isStageRoot(receiver)) throw new EgretError('HIT_TEST_RECEIVER_INVALID');
   const root = receiver;
   assertLive(root);
@@ -136,7 +173,8 @@ export function queryDisplayHit(receiver: unknown, x: unknown, y: unknown, optio
   if (engine === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
   engine.assertOpen();
   if (!finite(x) || !finite(y)) throw new EgretError('HIT_TEST_INPUT_INVALID');
-  const globalX = x, globalY = y;
+  const globalX = x,
+    globalY = y;
   const maximum = budgetOf(root, engine, options);
   admitStructure(root, engine, maximum);
   const identity: Matrix2D = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
@@ -147,8 +185,14 @@ export function queryDisplayHit(receiver: unknown, x: unknown, y: unknown, optio
     const visual = visualOf(node);
     if (!visual.visible) return;
     const matrix = composeDisplayTransform(parentMatrix, visual);
-    if (!finite(matrix.a) || !finite(matrix.b) || !finite(matrix.c)
-        || !finite(matrix.d) || !finite(matrix.tx) || !finite(matrix.ty)) {
+    if (
+      !finite(matrix.a) ||
+      !finite(matrix.b) ||
+      !finite(matrix.c) ||
+      !finite(matrix.d) ||
+      !finite(matrix.tx) ||
+      !finite(matrix.ty)
+    ) {
       throw new EgretError('HIT_TEST_ARITHMETIC_RANGE');
     }
     if (!nonsingular(matrix)) return;
@@ -157,7 +201,8 @@ export function queryDisplayHit(receiver: unknown, x: unknown, y: unknown, optio
     if (clip !== undefined) {
       // Existing clip admission allows finite dimensions with infinite sums.
       // Evaluate endpoint validity before empty suppression, only when active.
-      if (!finite(clip.x + clip.width) || !finite(clip.y + clip.height)) throw new EgretError('HIT_TEST_ARITHMETIC_RANGE');
+      if (!finite(clip.x + clip.width) || !finite(clip.y + clip.height))
+        throw new EgretError('HIT_TEST_ARITHMETIC_RANGE');
       if (clip.width === 0 || clip.height === 0) return;
       localPoint = inversePoint(matrix, globalX, globalY);
       if (!contains(clip, localPoint)) return;
@@ -165,9 +210,21 @@ export function queryDisplayHit(receiver: unknown, x: unknown, y: unknown, optio
     const state = readDisplayHitState(node);
     const authored = state.hitArea;
     // An authored area of no size stays what it was: nothing to hit. Without an area, the node's own drawing is the area.
-    const area = node === root || !state.touchEnabled ? undefined : authored === undefined ? true as const
-      : authored.width > 0 && authored.height > 0 ? authored : undefined;
-    stack.push({ node, matrix, area, localPoint, nextChild: state.touchChildren === false ? -1 : childCountOf(node) - 1 });
+    const area =
+      node === root || !state.touchEnabled
+        ? undefined
+        : authored === undefined
+          ? (true as const)
+          : authored.width > 0 && authored.height > 0
+            ? authored
+            : undefined;
+    stack.push({
+      node,
+      matrix,
+      area,
+      localPoint,
+      nextChild: state.touchChildren === false ? -1 : childCountOf(node) - 1
+    });
   }
 
   enter(root, identity);
@@ -183,7 +240,11 @@ export function queryDisplayHit(receiver: unknown, x: unknown, y: unknown, optio
       const localPoint = cursor.localPoint ?? inversePoint(cursor.matrix, globalX, globalY);
       // Keep evaluating every eligible candidate after the first winner so a
       // topmost hit cannot hide another active branch's arithmetic failure.
-      if (winner === undefined && (cursor.area === true ? onContent(cursor.node, localPoint) : contains(cursor.area, localPoint))) winner = cursor.node;
+      if (
+        winner === undefined &&
+        (cursor.area === true ? onContent(cursor.node, localPoint) : contains(cursor.area, localPoint))
+      )
+        winner = cursor.node;
     }
     stack.pop();
   }

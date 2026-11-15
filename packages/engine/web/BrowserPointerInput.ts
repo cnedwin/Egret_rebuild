@@ -1,12 +1,30 @@
 import { EgretError } from '@egret/runtime';
 import { bindPointerSurface, createPointerInput } from '#egret-pointer-input';
-import type { PointerInput, PointerInputOptions, PointerCancelReason, PointerSession, PointerUpdate } from '#egret-pointer-input';
+import type {
+  PointerInput,
+  PointerInputOptions,
+  PointerCancelReason,
+  PointerSession,
+  PointerUpdate
+} from '#egret-pointer-input';
 
 const APPLY = Reflect.apply;
 const ownedSurfaces = new WeakSet<object>();
 type Operation = (...args: unknown[]) => unknown;
-interface Rectangle { readonly left: number; readonly top: number; readonly width: number; readonly height: number; }
-interface Pair { readonly target: EventTarget; readonly type: string; readonly listener: EventListener; readonly capture: boolean; adding: boolean; removed: boolean; }
+interface Rectangle {
+  readonly left: number;
+  readonly top: number;
+  readonly width: number;
+  readonly height: number;
+}
+interface Pair {
+  readonly target: EventTarget;
+  readonly type: string;
+  readonly listener: EventListener;
+  readonly capture: boolean;
+  adding: boolean;
+  removed: boolean;
+}
 function getter(prototype: object | undefined, name: string): Operation {
   const operation = prototype === undefined ? undefined : Object.getOwnPropertyDescriptor(prototype, name)?.get;
   if (typeof operation !== 'function') throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
@@ -17,12 +35,17 @@ function method(prototype: object | undefined, name: string): Operation {
   if (typeof operation !== 'function') throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
   return operation as Operation;
 }
-function finite(value: unknown): value is number { return typeof value === 'number' && Number.isFinite(value); }
-function sameRectangle(a: Rectangle, b: Rectangle): boolean { return a.left === b.left && a.top === b.top && a.width === b.width && a.height === b.height; }
+function finite(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+function sameRectangle(a: Rectangle, b: Rectangle): boolean {
+  return a.left === b.left && a.top === b.top && a.width === b.width && a.height === b.height;
+}
 
 /** Pointer Events adapter for the explicit connected, untransformed Canvas profile. */
 export function createBrowserPointerInput(options: PointerInputOptions): PointerInput {
-  if (options === null || typeof options !== 'object' || Array.isArray(options)) throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');
+  if (options === null || typeof options !== 'object' || Array.isArray(options))
+    throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');
   const configuration = { ...options };
   const { width, height, onContact } = configuration;
   if (onContact !== undefined && typeof onContact !== 'function') throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');
@@ -38,21 +61,51 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
   let report = (_cause: unknown): void => {};
   function finalizeCleanup(): void {
     if (!closed || capturesInFlight !== 0 || pairs.some(pair => pair.adding)) return;
-    if (ownedSurface !== undefined) { ownedSurfaces.delete(ownedSurface); ownedSurface = undefined; }
+    if (ownedSurface !== undefined) {
+      ownedSurfaces.delete(ownedSurface);
+      ownedSurface = undefined;
+    }
     pairs.length = 0;
-    releaseNative = () => {}; removePair = () => {}; restoreStyle = () => {}; removeClose = () => {}; report = () => {};
+    releaseNative = () => {};
+    removePair = () => {};
+    restoreStyle = () => {};
+    removeClose = () => {};
+    report = () => {};
   }
   function cleanup(): void {
     if (closed) return;
     closed = true;
     const failures: unknown[] = [];
-    for (const pair of pairs.slice().reverse()) try { removePair(pair); } catch (cause) { failures.push(cause); }
+    for (const pair of pairs.slice().reverse())
+      try {
+        removePair(pair);
+      } catch (cause) {
+        failures.push(cause);
+      }
     // Clear logical native ownership before release can synchronously emit lostcapture.
-    const ids = [...sessions.keys()]; sessions.clear();
-    for (const id of ids) try { releaseNative(id); } catch (cause) { failures.push(cause); }
-    try { restoreStyle(); } catch (cause) { failures.push(cause); }
-    try { removeClose(); } catch (cause) { failures.push(cause); }
-    try { for (const cause of failures) report(cause); } finally { finalizeCleanup(); }
+    const ids = [...sessions.keys()];
+    sessions.clear();
+    for (const id of ids)
+      try {
+        releaseNative(id);
+      } catch (cause) {
+        failures.push(cause);
+      }
+    try {
+      restoreStyle();
+    } catch (cause) {
+      failures.push(cause);
+    }
+    try {
+      removeClose();
+    } catch (cause) {
+      failures.push(cause);
+    }
+    try {
+      for (const cause of failures) report(cause);
+    } finally {
+      finalizeCleanup();
+    }
   }
   const input = createPointerInput({
     ...configuration,
@@ -62,14 +115,22 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
         const { session } = notification.contact;
         if (sessions.get(session.pointerId) === session) {
           sessions.delete(session.pointerId);
-          try { releaseNative(session.pointerId); } catch (cause) { failures.push(cause); }
+          try {
+            releaseNative(session.pointerId);
+          } catch (cause) {
+            failures.push(cause);
+          }
         }
       }
       // Application terminal cleanup still runs if a native release operation fails.
-      try { onContact?.(notification); } catch (cause) { failures.push(cause); }
+      try {
+        onContact?.(notification);
+      } catch (cause) {
+        failures.push(cause);
+      }
       if (failures.length === 1) throw failures[0];
       if (failures.length > 1) throw new AggregateError(failures, 'Pointer notification failed');
-    },
+    }
   });
   try {
     const bridge = bindPointerSurface(input);
@@ -77,7 +138,8 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     report = diagnose;
     removeClose = bridge.onClose(cleanup);
     const surface = bridge.surface;
-    const win = globalThis.window, document = globalThis.document;
+    const win = globalThis.window,
+      document = globalThis.document;
     if (win === undefined || document === undefined) throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
     const canvasBrand = getter(globalThis.HTMLCanvasElement?.prototype, 'width');
     const ownerDocument = getter(globalThis.Node?.prototype, 'ownerDocument');
@@ -113,7 +175,9 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     const buttons = getter(globalThis.MouseEvent?.prototype, 'buttons');
     const computedStyle = win.getComputedStyle;
     if (typeof computedStyle !== 'function') throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
-    function assertOpen(): void { if (closed || input.state === 'closed') throw new EgretError('POINTER_INPUT_CLOSED'); }
+    function assertOpen(): void {
+      if (closed || input.state === 'closed') throw new EgretError('POINTER_INPUT_CLOSED');
+    }
     function dom(operation: Operation, receiver: unknown, args: readonly unknown[] = []): unknown {
       assertOpen();
       const value = APPLY(operation, receiver, args);
@@ -127,31 +191,65 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     }
     function profile(): Rectangle {
       dom(canvasBrand, surface);
-      if (dom(ownerDocument, surface) !== document || dom(defaultView, document) !== win || dom(connected, surface) !== true) throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+      if (
+        dom(ownerDocument, surface) !== document ||
+        dom(defaultView, document) !== win ||
+        dom(connected, surface) !== true
+      )
+        throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
       let current: unknown = surface;
       const seen = new Set<unknown>();
       // Ordinary ancestors only: unsupported transforms/shadow roots are refused.
       while (current !== document) {
-        if (current === null || current === undefined || seen.has(current) || seen.size >= 64 || dom(nodeType, current) !== 1) throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+        if (
+          current === null ||
+          current === undefined ||
+          seen.has(current) ||
+          seen.size >= 64 ||
+          dom(nodeType, current) !== 1
+        )
+          throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
         seen.add(current);
         const style = dom(computedStyle as Operation, win, [current]);
-        if (['transform', 'perspective', 'translate', 'rotate', 'scale'].some(name => css(style, name) !== 'none')) throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+        if (['transform', 'perspective', 'translate', 'rotate', 'scale'].some(name => css(style, name) !== 'none'))
+          throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
         const zoom = css(style, 'zoom');
         if (zoom !== 'normal' && zoom !== '1') throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
         if (current === surface) {
-          const edges = ['padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'];
-          if (css(style, 'object-fit') !== 'fill' || edges.some(name => { const value = css(style, name); return value !== '0px' && value !== '0'; })) throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+          const edges = [
+            'padding-top',
+            'padding-right',
+            'padding-bottom',
+            'padding-left',
+            'border-top-width',
+            'border-right-width',
+            'border-bottom-width',
+            'border-left-width'
+          ];
+          if (
+            css(style, 'object-fit') !== 'fill' ||
+            edges.some(name => {
+              const value = css(style, name);
+              return value !== '0px' && value !== '0';
+            })
+          )
+            throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
         }
         current = dom(parentNode, current);
       }
       const value = dom(rectangle, surface);
-      const left = dom(rectLeft, value), top = dom(rectTop, value), width = dom(rectWidth, value), height = dom(rectHeight, value);
-      if (!finite(left) || !finite(top) || !finite(width) || !finite(height) || width <= 0 || height <= 0) throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+      const left = dom(rectLeft, value),
+        top = dom(rectTop, value),
+        width = dom(rectWidth, value),
+        height = dom(rectHeight, value);
+      if (!finite(left) || !finite(top) || !finite(width) || !finite(height) || width <= 0 || height <= 0)
+        throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
       return { left, top, width, height };
     }
     let bounds = profile();
     if (ownedSurfaces.has(surface)) throw new EgretError('POINTER_INPUT_SURFACE_BUSY');
-    ownedSurfaces.add(surface); ownedSurface = surface;
+    ownedSurfaces.add(surface);
+    ownedSurface = surface;
     releaseNative = (id): void => {
       if (APPLY(hasCapture, surface, [id]) === true) APPLY(releaseCapture, surface, [id]);
     };
@@ -163,7 +261,8 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     const style = dom(inlineStyle, surface);
     const previousValue = dom(styleValue, style, ['touch-action']);
     const previousPriority = dom(stylePriority, style, ['touch-action']);
-    if (typeof previousValue !== 'string' || typeof previousPriority !== 'string') throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+    if (typeof previousValue !== 'string' || typeof previousPriority !== 'string')
+      throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
     let styleChanged = true;
     restoreStyle = (): void => {
       if (!styleChanged) return;
@@ -175,20 +274,31 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     dom(styleSet, style, ['touch-action', 'none', 'important']);
     function fail(cause: unknown): void {
       cleanup();
-      try { if (input.state !== 'closed') input.cancelAll('error'); }
-      catch (secondary) { diagnose(secondary); }
-      finally { try { input.dispose(); } catch (secondary) { diagnose(secondary); } }
+      try {
+        if (input.state !== 'closed') input.cancelAll('error');
+      } catch (secondary) {
+        diagnose(secondary);
+      } finally {
+        try {
+          input.dispose();
+        } catch (secondary) {
+          diagnose(secondary);
+        }
+      }
       diagnose(cause);
     }
     function guard(action: () => void): void {
       if (closed) return;
-      try { action(); }
-      catch (cause) {
+      try {
+        action();
+      } catch (cause) {
         if (cause instanceof EgretError && cause.code === 'POINTER_INPUT_CAPACITY') diagnose(cause);
         else fail(cause);
       }
     }
-    function cancel(reason: PointerCancelReason): void { input.cancelAll(reason); }
+    function cancel(reason: PointerCancelReason): void {
+      input.cancelAll(reason);
+    }
     function refresh(force: boolean): Rectangle {
       const next = profile();
       if (force || !sameRectangle(bounds, next)) {
@@ -204,36 +314,69 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     }
     function identify(event: unknown): { id: number; type: 'mouse' | 'touch' | 'pen' } | undefined {
       let id: unknown;
-      try { id = APPLY(pointerId, event, []); } catch { return undefined; }
+      try {
+        id = APPLY(pointerId, event, []);
+      } catch {
+        return undefined;
+      }
       const type = APPLY(pointerType, event, []);
-      if (!finite(id) || !Number.isSafeInteger(id) || id < 0 || (type !== 'mouse' && type !== 'touch' && type !== 'pen')) return undefined;
+      if (
+        !finite(id) ||
+        !Number.isSafeInteger(id) ||
+        id < 0 ||
+        (type !== 'mouse' && type !== 'touch' && type !== 'pen')
+      )
+        return undefined;
       return { id, type };
     }
     function update(event: unknown, rect: Rectangle): PointerUpdate {
-      const x = APPLY(clientX, event, []), y = APPLY(clientY, event, []);
-      const heldButtons = APPLY(buttons, event, []), time = APPLY(timestamp, event, []);
-      const p = APPLY(pressure, event, []), w = APPLY(contactWidth, event, []), h = APPLY(contactHeight, event, []);
-      if (!finite(x) || !finite(y) || !finite(heldButtons) || !finite(time) || !finite(p) || !finite(w) || !finite(h)) throw new EgretError('POINTER_INPUT_EVENT_INVALID');
+      const x = APPLY(clientX, event, []),
+        y = APPLY(clientY, event, []);
+      const heldButtons = APPLY(buttons, event, []),
+        time = APPLY(timestamp, event, []);
+      const p = APPLY(pressure, event, []),
+        w = APPLY(contactWidth, event, []),
+        h = APPLY(contactHeight, event, []);
+      if (!finite(x) || !finite(y) || !finite(heldButtons) || !finite(time) || !finite(p) || !finite(w) || !finite(h))
+        throw new EgretError('POINTER_INPUT_EVENT_INVALID');
       // Map CSS coordinates once. Device pixel ratio belongs to rendering only.
-      return { globalX: (x - rect.left) * width / rect.width, globalY: (y - rect.top) * height / rect.height, buttons: heldButtons, timestamp: time, pressure: p, width: w, height: h };
+      return {
+        globalX: ((x - rect.left) * width) / rect.width,
+        globalY: ((y - rect.top) * height) / rect.height,
+        buttons: heldButtons,
+        timestamp: time,
+        pressure: p,
+        width: w,
+        height: h
+      };
     }
     function acquireNative(id: number, session: PointerSession): void {
       capturesInFlight++;
-      let failed = false, failure: unknown;
-      try { dom(setCapture, surface, [id]); }
-      catch (cause) { failed = true; failure = cause; throw cause; }
-      finally {
+      let failed = false,
+        failure: unknown;
+      try {
+        dom(setCapture, surface, [id]);
+      } catch (cause) {
+        failed = true;
+        failure = cause;
+        throw cause;
+      } finally {
         try {
           // A controlled native operation may close/cancel before completing capture.
           // Compensate after it returns, while retaining this surface's ownership.
           if (closed || sessions.get(id) !== session) {
-            try { if (APPLY(hasCapture, surface, [id]) === true) APPLY(releaseCapture, surface, [id]); }
-            catch (cause) {
-              if (failed) throw new EgretError('POINTER_INPUT_NATIVE_FAILED', { cause: failure, cleanupErrors: [cause] });
+            try {
+              if (APPLY(hasCapture, surface, [id]) === true) APPLY(releaseCapture, surface, [id]);
+            } catch (cause) {
+              if (failed)
+                throw new EgretError('POINTER_INPUT_NATIVE_FAILED', { cause: failure, cleanupErrors: [cause] });
               throw cause;
             }
           }
-        } finally { capturesInFlight--; finalizeCleanup(); }
+        } finally {
+          capturesInFlight--;
+          finalizeCleanup();
+        }
       }
     }
     function pointer(event: Event, kind: 'down' | 'move' | 'up' | 'cancel' | 'lost'): void {
@@ -257,22 +400,31 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     }
     function listen(target: EventTarget, type: string, capture: boolean, action: (event: Event) => void): void {
       assertOpen();
-      const listener: EventListener = event => guard(() => {
-        if (APPLY(eventType, event, []) === type) action(event);
-      });
+      const listener: EventListener = event =>
+        guard(() => {
+          if (APPLY(eventType, event, []) === type) action(event);
+        });
       const pair: Pair = { target, type, listener, capture, adding: true, removed: false };
       pairs.push(pair);
-      let failed = false, failure: unknown;
-      try { APPLY(add, target, [type, listener, capture]); }
-      catch (cause) { failed = true; failure = cause; throw cause; }
-      finally {
+      let failed = false,
+        failure: unknown;
+      try {
+        APPLY(add, target, [type, listener, capture]);
+      } catch (cause) {
+        failed = true;
+        failure = cause;
+        throw cause;
+      } finally {
         pair.adding = false;
         if (closed) {
-          try { removePair(pair); }
-          catch (cause) {
+          try {
+            removePair(pair);
+          } catch (cause) {
             if (failed) throw new EgretError('POINTER_INPUT_NATIVE_FAILED', { cause: failure, cleanupErrors: [cause] });
             throw cause;
-          } finally { finalizeCleanup(); }
+          } finally {
+            finalizeCleanup();
+          }
         }
       }
       assertOpen();
@@ -284,21 +436,37 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     listen(surface as EventTarget, 'lostpointercapture', false, event => pointer(event, 'lost'));
     listen(win, 'blur', false, () => cancel('blur'));
     listen(win, 'pagehide', false, () => cancel('pagehide'));
-    listen(document, 'visibilitychange', false, () => { if (dom(visibility, document) !== 'visible') cancel('hidden'); });
-    listen(win, 'resize', false, () => { refresh(true); });
-    listen(win, 'orientationchange', false, () => { refresh(true); });
-    listen(win, 'scroll', true, () => { refresh(true); });
+    listen(document, 'visibilitychange', false, () => {
+      if (dom(visibility, document) !== 'visible') cancel('hidden');
+    });
+    listen(win, 'resize', false, () => {
+      refresh(true);
+    });
+    listen(win, 'orientationchange', false, () => {
+      refresh(true);
+    });
+    listen(win, 'scroll', true, () => {
+      refresh(true);
+    });
     const viewport = win.visualViewport;
     if (viewport !== null && viewport !== undefined) {
-      listen(viewport, 'resize', false, () => { refresh(true); });
-      listen(viewport, 'scroll', false, () => { refresh(true); });
+      listen(viewport, 'resize', false, () => {
+        refresh(true);
+      });
+      listen(viewport, 'scroll', false, () => {
+        refresh(true);
+      });
     }
     // Restoration is intentionally application-owned: host readiness must precede resume.
     listen(surface as EventTarget, 'webglcontextlost', false, () => input.setInteractive(false));
     return input;
   } catch (cause) {
     cleanup();
-    try { input.dispose(); } catch (secondary) { report(secondary); }
+    try {
+      input.dispose();
+    } catch (secondary) {
+      report(secondary);
+    }
     throw new EgretError('POINTER_INPUT_SURFACE_INVALID', { cause });
   }
 }

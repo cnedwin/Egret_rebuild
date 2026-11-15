@@ -38,7 +38,8 @@ function live(node: DisplayObject): void {
 }
 
 export function writeDisplayTouchEnabled(receiver: unknown, value: unknown): void {
-  const state = readDisplayHitState(receiver), node = receiver as DisplayObject;
+  const state = readDisplayHitState(receiver),
+    node = receiver as DisplayObject;
   live(node);
   if (typeof value !== 'boolean') throw new EgretError('HIT_TEST_VALUE_INVALID');
   state.touchEnabled = value;
@@ -61,13 +62,20 @@ export function writeDisplayTouchChildren(receiver: unknown, value: unknown): vo
 
 /** Read caller fields once in fixed order; source faults never become semantics. */
 export function writeDisplayHitArea(receiver: unknown, source: unknown): void {
-  const state = readDisplayHitState(receiver), node = receiver as DisplayObject;
+  const state = readDisplayHitState(receiver),
+    node = receiver as DisplayObject;
   live(node);
-  if (source === undefined) { state.hitArea = undefined; return; }
+  if (source === undefined) {
+    state.hitArea = undefined;
+    return;
+  }
   if (source === null || typeof source !== 'object') throw new EgretError('HIT_TEST_AREA_INVALID');
   let array: boolean;
-  try { array = Array.isArray(source); }
-  catch (cause) { throw new EgretError('HIT_TEST_AREA_INVALID', { cause }); }
+  try {
+    array = Array.isArray(source);
+  } catch (cause) {
+    throw new EgretError('HIT_TEST_AREA_INVALID', { cause });
+  }
   if (array) throw new EgretError('HIT_TEST_AREA_INVALID');
   let x: unknown, y: unknown, width: unknown, height: unknown;
   try {
@@ -83,8 +91,16 @@ export function writeDisplayHitArea(receiver: unknown, source: unknown): void {
   // Successful source reads may terminate or rebind the current node. Their
   // completed reentrant effects stand; this outer admission commits only here.
   live(node);
-  if (!finite(x) || !finite(y) || !finite(width) || !finite(height)
-      || width < 0 || height < 0 || !finite(x + width) || !finite(y + height)) {
+  if (
+    !finite(x) ||
+    !finite(y) ||
+    !finite(width) ||
+    !finite(height) ||
+    width < 0 ||
+    height < 0 ||
+    !finite(x + width) ||
+    !finite(y + height)
+  ) {
     throw new EgretError('HIT_TEST_AREA_INVALID');
   }
   state.hitArea = Object.freeze({ x, y, width, height });

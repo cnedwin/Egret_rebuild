@@ -62,28 +62,48 @@ const backpressure = (error: unknown): boolean => {
  */
 export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): BrowserFrameLoop {
   if (options === null || typeof options !== 'object') throw invalid();
-  const { engine, frame, host, update, onError } = options, limit = options.maxPendingFrames ?? 2;
-  const request = options.requestFrame ?? ((callback: (milliseconds: number) => void): number => requestAnimationFrame(callback));
+  const { engine, frame, host, update, onError } = options,
+    limit = options.maxPendingFrames ?? 2;
+  const request =
+    options.requestFrame ?? ((callback: (milliseconds: number) => void): number => requestAnimationFrame(callback));
   const cancel = options.cancelFrame ?? ((handle: number): void => cancelAnimationFrame(handle));
-  if (engine === null || typeof engine !== 'object' || typeof engine.advanceTime !== 'function' || typeof engine.renderSharedFrame !== 'function'
-    || frame === undefined || frame === null
-    || (host !== undefined && (host === null || typeof host !== 'object' || typeof host.getStatus !== 'function'))
-    || !Number.isSafeInteger(limit) || limit < 1
-    || (update !== undefined && typeof update !== 'function') || (onError !== undefined && typeof onError !== 'function')
-    || typeof request !== 'function' || typeof cancel !== 'function') throw invalid();
-  const clockLimit = engine.clock?.maxDeltaSeconds, asked = options.maxStepSeconds ?? 0.1;
+  if (
+    engine === null ||
+    typeof engine !== 'object' ||
+    typeof engine.advanceTime !== 'function' ||
+    typeof engine.renderSharedFrame !== 'function' ||
+    frame === undefined ||
+    frame === null ||
+    (host !== undefined && (host === null || typeof host !== 'object' || typeof host.getStatus !== 'function')) ||
+    !Number.isSafeInteger(limit) ||
+    limit < 1 ||
+    (update !== undefined && typeof update !== 'function') ||
+    (onError !== undefined && typeof onError !== 'function') ||
+    typeof request !== 'function' ||
+    typeof cancel !== 'function'
+  )
+    throw invalid();
+  const clockLimit = engine.clock?.maxDeltaSeconds,
+    asked = options.maxStepSeconds ?? 0.1;
   if (typeof clockLimit !== 'number' || !(clockLimit > 0) || typeof asked !== 'number' || !(asked > 0)) throw invalid();
   const maxStep = Math.min(asked, clockLimit);
 
-  let state: BrowserFrameLoopState = 'idle', handle: number | undefined, last: number | undefined;
-  let seconds = 0, steps = 0, frames = 0, skipped = 0, failure: unknown;
+  let state: BrowserFrameLoopState = 'idle',
+    handle: number | undefined,
+    last: number | undefined;
+  let seconds = 0,
+    steps = 0,
+    frames = 0,
+    skipped = 0,
+    failure: unknown;
   const tick = (milliseconds: number): void => {
     handle = undefined;
     if (state !== 'running') return;
     try {
       // The clock is given the loop's own seconds, which never jump: a long gap counts as one step of the longest length.
       const delta = last === undefined ? 0 : Math.min(maxStep, Math.max(0, (milliseconds - last) / 1000));
-      last = milliseconds; seconds += delta;
+      last = milliseconds;
+      seconds += delta;
       engine.advanceTime(seconds);
       steps++;
       update?.(delta);
@@ -91,32 +111,48 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
       if (state !== 'running') return;
       if (host !== undefined && host.getStatus().pendingFrames >= limit) skipped++;
       else {
-        try { engine.renderSharedFrame(typeof frame === 'function' ? (frame as () => F)() : frame); frames++; }
-        catch (error) { if (host !== undefined || !backpressure(error)) throw error; skipped++; }
+        try {
+          engine.renderSharedFrame(typeof frame === 'function' ? (frame as () => F)() : frame);
+          frames++;
+        } catch (error) {
+          if (host !== undefined || !backpressure(error)) throw error;
+          skipped++;
+        }
       }
       handle = request(tick);
     } catch (error) {
-      state = 'failed'; failure = error;
+      state = 'failed';
+      failure = error;
       if (onError === undefined) throw error;
       onError(error);
     }
   };
   const stop = (): void => {
-    if (handle !== undefined) { cancel(handle); handle = undefined; }
+    if (handle !== undefined) {
+      cancel(handle);
+      handle = undefined;
+    }
     if (state === 'running') state = 'idle';
   };
   const loop: BrowserFrameLoop = {
-    get state() { return state; },
+    get state() {
+      return state;
+    },
     start(): void {
       if (state === 'closed') throw new EgretError('FRAME_LOOP_CLOSED');
       if (state === 'running') return;
       // What stopped the loop is forgotten when it is started again; the gap since it ran is not a step.
-      state = 'running'; failure = undefined; last = undefined;
+      state = 'running';
+      failure = undefined;
+      last = undefined;
       handle = request(tick);
     },
     stop,
     snapshot: () => Object.freeze({ state, steps, frames, skipped, seconds, failure }),
-    dispose(): void { stop(); state = 'closed'; },
+    dispose(): void {
+      stop();
+      state = 'closed';
+    }
   };
   return Object.freeze(loop);
 }

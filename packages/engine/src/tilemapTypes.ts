@@ -4,7 +4,10 @@ import type { TexturedGeometry2D } from '@egret/contracts';
 
 export type TileMapPropertyValue = string | number | boolean;
 export type TileMapProperties = Readonly<Record<string, TileMapPropertyValue>>;
-export interface TileAnimationFrame { readonly tileId: number; readonly duration: number; }
+export interface TileAnimationFrame {
+  readonly tileId: number;
+  readonly duration: number;
+}
 export interface TileSetData {
   readonly name: string;
   /** The global id of the first tile of the set. */
@@ -21,7 +24,14 @@ export interface TileSetData {
   readonly imageHeight: number;
   readonly properties: TileMapProperties;
   /** What a tile of the set says of itself, by its id in the set. */
-  readonly tiles: ReadonlyMap<number, { readonly properties: TileMapProperties; readonly animation?: readonly TileAnimationFrame[]; readonly type?: string }>;
+  readonly tiles: ReadonlyMap<
+    number,
+    {
+      readonly properties: TileMapProperties;
+      readonly animation?: readonly TileAnimationFrame[];
+      readonly type?: string;
+    }
+  >;
 }
 export interface TileLayerData {
   readonly type: 'tile';
@@ -105,7 +115,12 @@ export interface TileMapChunk {
   readonly row: number;
   readonly visible: boolean;
   /** One mesh for each tileset the chunk draws from. */
-  readonly meshes: readonly { readonly tileset: string; readonly mesh: Mesh2D; readonly geometry: TexturedGeometry2D; readonly tiles: number }[];
+  readonly meshes: readonly {
+    readonly tileset: string;
+    readonly mesh: Mesh2D;
+    readonly geometry: TexturedGeometry2D;
+    readonly tiles: number;
+  }[];
 }
 export interface TileMapLayer {
   readonly name: string;

@@ -4,15 +4,22 @@ import type { DisplayObject, DisplayObjectContainer } from '@egret/runtime';
 import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
 import type { SharedFrameProfile2D, SharedFrameOptions2D, SharedRenderFrame2D } from '@egret/contracts';
 import { collectSharedFrameContent } from '@egret/runtime';
-import type { Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
-import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic, createDisplayInputOperations } from "@egret/runtime";
-import type { AssetGroupOperations, AssetManager, AssetRef, Scope, Stage } from "@egret/runtime";
-import type { EngineContext } from "@egret/runtime";
+import type { Diagnostic, DiagnosticHandler, HostAdapter } from '@egret/contracts';
+import {
+  EgretError,
+  createScope,
+  createStage,
+  createAssetManager,
+  reportDiagnostic,
+  createDisplayInputOperations
+} from '@egret/runtime';
+import type { AssetGroupOperations, AssetManager, AssetRef, Scope, Stage } from '@egret/runtime';
+import type { EngineContext } from '@egret/runtime';
 import { createBitmapResourceSlotOwner } from './bitmapResourceSlot.js';
 import type { BitmapResourceSlot, BitmapResourceSlotOwner } from './bitmapResourceSlot.js';
 import { createBitmapBindingOwner } from './bitmapBindingTicket.js';
 import type { BitmapBindingOwner, BitmapBindingTicket } from './bitmapBindingTicket.js';
-import { closeHost } from "./closeHost.js";
+import { closeHost } from './closeHost.js';
 import { registerSharedFrame } from './internal/texturedFrameState.js';
 import { createGameClockOwner } from './gameClock.js';
 import type { AdmittedGameClockOptions, GameClockOwner } from './gameClock.js';
@@ -34,11 +41,11 @@ import { createSequencePlaybackOwner } from './sequencePlayback.js';
 import type { SequencePlaybackOwner } from './sequencePlayback.js';
 import type { SequencePlayback, SequencePlaybackOptions } from './sequencePlaybackTypes.js';
 import type { Bitmap, SequenceClip } from '@egret/runtime';
-import {registerUiEngine} from './internal/uiFactoryState.js';
-import type {UiEngineOwner} from './internal/uiFactoryState.js';
-import {createSequenceTargetClaims} from './sequenceTargetClaims.js';
-import {registerSequenceControllerEngine} from './internal/sequenceControllerFactoryState.js';
-import type {SequenceControllerEngineOwner} from './internal/sequenceControllerFactoryState.js';
+import { registerUiEngine } from './internal/uiFactoryState.js';
+import type { UiEngineOwner } from './internal/uiFactoryState.js';
+import { createSequenceTargetClaims } from './sequenceTargetClaims.js';
+import { registerSequenceControllerEngine } from './internal/sequenceControllerFactoryState.js';
+import type { SequenceControllerEngineOwner } from './internal/sequenceControllerFactoryState.js';
 import { registerContentEngine } from './internal/contentFactoryState.js';
 
 export interface EngineOptions {
@@ -52,9 +59,16 @@ export interface CapturedEngineFramePorts {
   readonly shared: ((frame: SharedRenderFrame2D) => unknown) | undefined;
   readonly sharedProfile: SharedFrameProfile2D | undefined;
 }
-export let constructEngine: (options: EngineOptions, timeoutMs: number, surface: object, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions) => Engine;
+export let constructEngine: (
+  options: EngineOptions,
+  timeoutMs: number,
+  surface: object,
+  releaseSurface: () => void,
+  ports: CapturedEngineFramePorts,
+  clockOptions: AdmittedGameClockOptions
+) => Engine;
 const freezeSharedFrame = Object.freeze;
-const CREATION_TOKEN: unique symbol = Symbol("egret.engineFactory");
+const CREATION_TOKEN: unique symbol = Symbol('egret.engineFactory');
 
 /** Observation does not accept asynchronous submission or prove host completion. */
 function observeRejectedRenderResult(result: unknown): void {
@@ -66,8 +80,11 @@ function observeRejectedRenderResult(result: unknown): void {
   } catch {
     // Ordinary thenables (including throwing then getters) are assimilated into
     // a handled Promise. Observation must not replace the invalid-port cause.
-    try { void Promise.resolve(result).then(undefined, ignoreRejection); }
-    catch { /* A hostile constructor cannot make this return type acceptable. */ }
+    try {
+      void Promise.resolve(result).then(undefined, ignoreRejection);
+    } catch {
+      /* A hostile constructor cannot make this return type acceptable. */
+    }
   }
 }
 /** One headless run. Construct with createEngine(), not directly. */
@@ -82,7 +99,10 @@ export class Engine {
   readonly #manifestAssetGroupOwner: ManifestAssetGroupOwner;
   readonly #bitmapResourceSlotOwner: BitmapResourceSlotOwner;
   readonly #bitmapBindingOwner: BitmapBindingOwner;
-  readonly #bitmapResourceTargets = new WeakMap<Bitmap, Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]>();
+  readonly #bitmapResourceTargets = new WeakMap<
+    Bitmap,
+    Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]
+  >();
   readonly #mouseInputOwner: MouseInputOwner;
   readonly #uiOwner: UiEngineOwner;
   readonly #engineScopes = new WeakSet<Scope>();
@@ -91,7 +111,7 @@ export class Engine {
   private frameIdle: Promise<void> | undefined;
   private releaseFrame: (() => void) | undefined;
   private readonly sharedRenderer: ((frame: SharedRenderFrame2D) => unknown) | undefined;
-   #currentState: "open" | "closing" | "closed" = "open";
+  #currentState: 'open' | 'closing' | 'closed' = 'open';
   private readonly scopes = new Set<Scope>();
   private readonly cleanupErrors: unknown[] = [];
   private closePromise: Promise<void> | undefined;
@@ -105,8 +125,16 @@ export class Engine {
   public readonly sharedFrameProfile: SharedFrameProfile2D | undefined;
   public readonly clock: GameClock;
 
-  private constructor(options: EngineOptions, timeoutMs: number, surface: object, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions, token: typeof CREATION_TOKEN) {
-    if (token !== CREATION_TOKEN) throw new EgretError("ENGINE_FACTORY_REQUIRED");
+  private constructor(
+    options: EngineOptions,
+    timeoutMs: number,
+    surface: object,
+    releaseSurface: () => void,
+    ports: CapturedEngineFramePorts,
+    clockOptions: AdmittedGameClockOptions,
+    token: typeof CREATION_TOKEN
+  ) {
+    if (token !== CREATION_TOKEN) throw new EgretError('ENGINE_FACTORY_REQUIRED');
     this.host = options.host;
     this.sharedRenderer = ports.shared;
     this.sharedFrameProfile = ports.sharedProfile;
@@ -116,114 +144,178 @@ export class Engine {
     const assertOpen = (): void => {
       if (this.#currentState !== 'open') throw new EgretError('ENGINE_CLOSED');
     };
-    const textFields = registerTextFieldEngine(this, assertOpen,
-      (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope));
-    let preparedDisplayOperations: Parameters<NonNullable<EngineContext['registerPreparedDisplayOperations']>>[0] | undefined;
+    const textFields = registerTextFieldEngine(
+      this,
+      assertOpen,
+      (scope: unknown): scope is Scope =>
+        typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope)
+    );
+    let preparedDisplayOperations:
+      | Parameters<NonNullable<EngineContext['registerPreparedDisplayOperations']>>[0]
+      | undefined;
     let assetGroupOperations: AssetGroupOperations | undefined;
     // The context is never retained in a named public property by its consumers.
     this.#context = Object.freeze({
       assertOpen: (): void => {
-        if (this.#currentState !== "open") throw new EgretError("ENGINE_CLOSED");
+        if (this.#currentState !== 'open') throw new EgretError('ENGINE_CLOSED');
       },
       report: (diagnostic: Diagnostic): void => reportDiagnostic(this.onDiagnostic, diagnostic),
       captureCleanup: (cause: unknown): void => {
-        if (this.#currentState === "closing") this.cleanupErrors.push(cause);
+        if (this.#currentState === 'closing') this.cleanupErrors.push(cause);
       },
       registerTextFieldCache: textFields.registerCache,
-      registerPreparedDisplayOperations: (operations: Parameters<NonNullable<EngineContext['registerPreparedDisplayOperations']>>[0]) => { preparedDisplayOperations = operations; },
-      registerBitmapResourceTarget: (bitmap: Bitmap, operations: Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]): void => {
+      registerPreparedDisplayOperations: (
+        operations: Parameters<NonNullable<EngineContext['registerPreparedDisplayOperations']>>[0]
+      ) => {
+        preparedDisplayOperations = operations;
+      },
+      registerBitmapResourceTarget: (
+        bitmap: Bitmap,
+        operations: Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]
+      ): void => {
         this.#bitmapResourceTargets.set(bitmap, operations);
       },
-      registerAssetGroupOperations: (operations: AssetGroupOperations): void => { assetGroupOperations = operations; },
+      registerAssetGroupOperations: (operations: AssetGroupOperations): void => {
+        assetGroupOperations = operations;
+      }
     });
     // The inert owner precedes publication and uses private Scope membership.
-    this.#gameClockOwner = createGameClockOwner({
-      assertOpen: this.#context.assertOpen,
-      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
-      isFrameBusy: (): boolean => this.frameBusy,
-      report: this.#context.report,
-    }, clockOptions);
+    this.#gameClockOwner = createGameClockOwner(
+      {
+        assertOpen: this.#context.assertOpen,
+        isEngineScope: (scope: unknown): scope is Scope =>
+          typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+        isFrameBusy: (): boolean => this.frameBusy,
+        report: this.#context.report
+      },
+      clockOptions
+    );
     // Tween assembly receives the authentic private clock before publication.
     this.#tweenOwner = createTweenOwner({
       assertOpen: this.#context.assertOpen,
-      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
-      clock: this.#gameClockOwner.clock,
+      isEngineScope: (scope: unknown): scope is Scope =>
+        typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      clock: this.#gameClockOwner.clock
     });
     const sequenceClaims = createSequenceTargetClaims();
     // Sequence playback borrows the private clock and authentic Scope authority.
     this.#sequencePlaybackOwner = createSequencePlaybackOwner({
       assertOpen: this.#context.assertOpen,
-      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      isEngineScope: (scope: unknown): scope is Scope =>
+        typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
       clock: this.#gameClockOwner.clock,
       claims: sequenceClaims,
-      captureCleanup: this.#context.captureCleanup,
+      captureCleanup: this.#context.captureCleanup
     });
     this.#sequenceControllerOwner = registerSequenceControllerEngine(this, {
-      assertOpen: this.#context.assertOpen, createScope: (): Scope => this.#createScope(),
-      clock: this.#gameClockOwner.clock, isClockBusy: this.#gameClockOwner.isBusy,
-      claims: sequenceClaims, report: this.#context.report, captureCleanup: this.#context.captureCleanup,
+      assertOpen: this.#context.assertOpen,
+      createScope: (): Scope => this.#createScope(),
+      clock: this.#gameClockOwner.clock,
+      isClockBusy: this.#gameClockOwner.isBusy,
+      claims: sequenceClaims,
+      report: this.#context.report,
+      captureCleanup: this.#context.captureCleanup
     });
     this.clock = this.#gameClockOwner.clock;
     const stage = createStage(this.#context);
     this.#uiOwner = registerUiEngine(this, {
-      stage, assertOpen: this.#context.assertOpen, isFrameBusy: (): boolean => this.frameBusy,
-      createScope: (): Scope => this.#createScope(), report: this.#context.report,
-      captureCleanup: this.#context.captureCleanup,
+      stage,
+      assertOpen: this.#context.assertOpen,
+      isFrameBusy: (): boolean => this.frameBusy,
+      createScope: (): Scope => this.#createScope(),
+      report: this.#context.report,
+      captureCleanup: this.#context.captureCleanup
     });
     const rawInput = createDisplayInputOperations(stage);
     const deliverInput = this.#uiOwner.deliver;
     const inputOperations = Object.freeze({
-      pick: rawInput.pick, isAttached: rawInput.isAttached,
+      pick: rawInput.pick,
+      isAttached: rawInput.isAttached,
       dispatch: <T>(...args: Parameters<typeof rawInput.dispatch<T>>): boolean =>
-        deliverInput(() => rawInput.dispatch<T>(...args)),
+        deliverInput(() => rawInput.dispatch<T>(...args))
     });
     // Capture original startup and Stage authority before publishing replaceable readonly fields.
     this.#mouseInputOwner = createMouseInputOwner(this, {
-      surface, operations: inputOperations, assertOpen: this.#context.assertOpen,
-      report: this.#context.report, captureCleanup: this.#context.captureCleanup,
+      surface,
+      operations: inputOperations,
+      assertOpen: this.#context.assertOpen,
+      report: this.#context.report,
+      captureCleanup: this.#context.captureCleanup
     });
     this.stage = stage;
-    this.#displaySubtreeTickets = createDisplaySubtreeTickets({
-      assertOpen: this.#context.assertOpen,
-      isEngineScope: (scope: unknown): scope is Scope => this.#engineScopes.has(scope as Scope),
-      isBusy: () => this.frameBusy || this.#gameClockOwner.isBusy(),
-    }, preparedDisplayOperations!);
+    this.#displaySubtreeTickets = createDisplaySubtreeTickets(
+      {
+        assertOpen: this.#context.assertOpen,
+        isEngineScope: (scope: unknown): scope is Scope => this.#engineScopes.has(scope as Scope),
+        isBusy: () => this.frameBusy || this.#gameClockOwner.isBusy()
+      },
+      preparedDisplayOperations!
+    );
     this.assets = createAssetManager(this.#context);
-    this.#bitmapBindingOwner = createBitmapBindingOwner({
-      assertOpen: this.#context.assertOpen,
-      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
-    }, this.#bitmapResourceTargets);
+    this.#bitmapBindingOwner = createBitmapBindingOwner(
+      {
+        assertOpen: this.#context.assertOpen,
+        isEngineScope: (scope: unknown): scope is Scope =>
+          typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope)
+      },
+      this.#bitmapResourceTargets
+    );
     // Authentic manager construction captured the operations before publication.
-    this.#bitmapResourceSlotOwner = createBitmapResourceSlotOwner({
-      assertOpen: this.#context.assertOpen,
-      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
-      report: this.#context.report, captureCleanup: this.#context.captureCleanup,
-    }, assetGroupOperations!, this.#bitmapResourceTargets);
-    this.#assetGroupOwner = createAssetGroupOwner({
-      assertOpen: this.#context.assertOpen,
-      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
-      report: this.#context.report,
-      captureCleanup: this.#context.captureCleanup,
-    }, assetGroupOperations!);
-    this.#manifestAssetGroupOwner = createManifestAssetGroupOwner({
-      assertOpen: this.#context.assertOpen,
-      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
-      report: this.#context.report,
-      captureCleanup: this.#context.captureCleanup,
-    }, assetGroupOperations!);
+    this.#bitmapResourceSlotOwner = createBitmapResourceSlotOwner(
+      {
+        assertOpen: this.#context.assertOpen,
+        isEngineScope: (scope: unknown): scope is Scope =>
+          typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+        report: this.#context.report,
+        captureCleanup: this.#context.captureCleanup
+      },
+      assetGroupOperations!,
+      this.#bitmapResourceTargets
+    );
+    this.#assetGroupOwner = createAssetGroupOwner(
+      {
+        assertOpen: this.#context.assertOpen,
+        isEngineScope: (scope: unknown): scope is Scope =>
+          typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+        report: this.#context.report,
+        captureCleanup: this.#context.captureCleanup
+      },
+      assetGroupOperations!
+    );
+    this.#manifestAssetGroupOwner = createManifestAssetGroupOwner(
+      {
+        assertOpen: this.#context.assertOpen,
+        isEngineScope: (scope: unknown): scope is Scope =>
+          typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+        report: this.#context.report,
+        captureCleanup: this.#context.captureCleanup
+      },
+      assetGroupOperations!
+    );
     const assets = this.assets;
     const register = assets.register;
     registerContentEngine(this, {
       assertOpen,
-      isScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
-      register: (type, provider): void => { Reflect.apply(register, assets, [type, provider]); },
-      group: (scope, manifest, roots, bindings, options) => this.#manifestAssetGroupOwner.create(scope, manifest, roots, bindings, options),
-      own: (dispose): (() => void) => { assertOpen(); this.#contentLoaders.add(dispose); return (): void => { this.#contentLoaders.delete(dispose); }; },
+      isScope: (scope: unknown): scope is Scope =>
+        typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      register: (type, provider): void => {
+        Reflect.apply(register, assets, [type, provider]);
+      },
+      group: (scope, manifest, roots, bindings, options) =>
+        this.#manifestAssetGroupOwner.create(scope, manifest, roots, bindings, options),
+      own: (dispose): (() => void) => {
+        assertOpen();
+        this.#contentLoaders.add(dispose);
+        return (): void => {
+          this.#contentLoaders.delete(dispose);
+        };
+      }
     });
   }
 
   static {
-    constructEngine = (options, timeoutMs, surface, releaseSurface, ports, clockOptions): Engine => new Engine(options, timeoutMs, surface, releaseSurface, ports, clockOptions, CREATION_TOKEN);
+    constructEngine = (options, timeoutMs, surface, releaseSurface, ports, clockOptions): Engine =>
+      new Engine(options, timeoutMs, surface, releaseSurface, ports, clockOptions, CREATION_TOKEN);
   }
 
   public advanceTime(sourceSeconds: number): GameClockTick | undefined {
@@ -244,12 +336,19 @@ export class Engine {
    * Uses authenticated already-bound private state, not fresh subclass hooks/getters.
    * Run application semantic guards before preparation; Scope ownership is not their approval.
    */
-  public prepareDisplaySubtree(scope: Scope, target: DisplayObjectContainer, candidate: DisplayObject): DisplaySubtreeTicket {
+  public prepareDisplaySubtree(
+    scope: Scope,
+    target: DisplayObjectContainer,
+    candidate: DisplayObject
+  ): DisplaySubtreeTicket {
     return this.#displaySubtreeTickets.prepare(scope, target, candidate);
   }
 
   /** Immutable candidate snapshot; the live Stage remains unchanged. */
-  public capturePreparedDisplaySharedFrame(ticket: DisplaySubtreeTicket, options: SharedFrameOptions2D): SharedRenderFrame2D {
+  public capturePreparedDisplaySharedFrame(
+    ticket: DisplaySubtreeTicket,
+    options: SharedFrameOptions2D
+  ): SharedRenderFrame2D {
     return this.executeSharedFrame(options, false, undefined, [ticket]);
   }
 
@@ -258,18 +357,31 @@ export class Engine {
   }
 
   /** Busy precedes all external reads; cleanup waits for the finally barrier. */
-  private executeSharedFrame(options: SharedFrameOptions2D, render: boolean, candidate?: readonly [BitmapBindingTicket], displayCandidate?: readonly [DisplaySubtreeTicket]): SharedRenderFrame2D {
+  private executeSharedFrame(
+    options: SharedFrameOptions2D,
+    render: boolean,
+    candidate?: readonly [BitmapBindingTicket],
+    displayCandidate?: readonly [DisplaySubtreeTicket]
+  ): SharedRenderFrame2D {
     this.#context.assertOpen();
     if (this.frameBusy) throw new EgretError('FRAME_REENTRANT');
     if (this.#gameClockOwner.isBusy()) throw new EgretError('CLOCK_REENTRANT');
     this.frameBusy = true;
-    this.frameIdle = new Promise<void>(resolve => { this.releaseFrame = resolve; });
+    this.frameIdle = new Promise<void>(resolve => {
+      this.releaseFrame = resolve;
+    });
     try {
       const renderer = this.sharedRenderer;
       if (render && renderer === undefined) throw new EgretError('RENDERER_REQUIRED');
-      const prepared = displayCandidate !== undefined ? this.#displaySubtreeTickets.read(displayCandidate[0]) : candidate === undefined ? undefined : this.#bitmapBindingOwner.readPreparedForCapture(candidate[0]);
+      const prepared =
+        displayCandidate !== undefined
+          ? this.#displaySubtreeTickets.read(displayCandidate[0])
+          : candidate === undefined
+            ? undefined
+            : this.#bitmapBindingOwner.readPreparedForCapture(candidate[0]);
       let width: unknown, height: unknown, colorInput: unknown, alphaInput: unknown, outputInput: unknown;
-      let optionsFailed = false, optionsCause: unknown;
+      let optionsFailed = false,
+        optionsCause: unknown;
       try {
         width = options.width;
         height = options.height;
@@ -279,7 +391,8 @@ export class Engine {
       } catch (cause) {
         // Even a caller-thrown EgretError is an external read failure here.
         if (prepared === undefined) throw new EgretError('INVALID_FRAME_OPTIONS', { cause });
-        optionsFailed = true; optionsCause = cause;
+        optionsFailed = true;
+        optionsCause = cause;
       }
       // Candidate lifetime/phase wins even when an option getter threw undefined.
       // Binding, target and entitlement preflight waits for valid options below.
@@ -288,22 +401,44 @@ export class Engine {
       const outputAlpha = outputInput === undefined ? 'premultiplied' : outputInput;
       const clearColor = colorInput === undefined ? 0 : colorInput;
       const clearAlpha = alphaInput === undefined ? (outputAlpha === 'opaque' ? 1 : 0) : alphaInput;
-      if (typeof width !== 'number' || !Number.isFinite(width) || width <= 0
-        || typeof height !== 'number' || !Number.isFinite(height) || height <= 0
-        || typeof clearColor !== 'number' || !Number.isInteger(clearColor) || clearColor < 0 || clearColor > 0xffffff
-        || typeof clearAlpha !== 'number' || !Number.isFinite(clearAlpha) || clearAlpha < 0 || clearAlpha > 1
-        || (outputAlpha !== 'opaque' && outputAlpha !== 'premultiplied')
-        || (outputAlpha === 'opaque' && clearAlpha !== 1)) throw new EgretError('INVALID_FRAME_OPTIONS');
+      if (
+        typeof width !== 'number' ||
+        !Number.isFinite(width) ||
+        width <= 0 ||
+        typeof height !== 'number' ||
+        !Number.isFinite(height) ||
+        height <= 0 ||
+        typeof clearColor !== 'number' ||
+        !Number.isInteger(clearColor) ||
+        clearColor < 0 ||
+        clearColor > 0xffffff ||
+        typeof clearAlpha !== 'number' ||
+        !Number.isFinite(clearAlpha) ||
+        clearAlpha < 0 ||
+        clearAlpha > 1 ||
+        (outputAlpha !== 'opaque' && outputAlpha !== 'premultiplied') ||
+        (outputAlpha === 'opaque' && clearAlpha !== 1)
+      )
+        throw new EgretError('INVALID_FRAME_OPTIONS');
       this.#context.assertOpen();
-      const content = prepared === undefined ? collectSharedFrameContent(this.stage) : prepared.captureContent(this.stage);
+      const content =
+        prepared === undefined ? collectSharedFrameContent(this.stage) : prepared.captureContent(this.stage);
       this.#context.assertOpen();
       prepared?.validate();
       if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) throw new EgretError('FRAME_ID_EXHAUSTED');
       const frame = freezeSharedFrame({
-        profile: SHARED_FRAME_PROFILE_2D, colorRecipe: 'egret.linear-srgb-pma/1',
+        profile: SHARED_FRAME_PROFILE_2D,
+        colorRecipe: 'egret.linear-srgb-pma/1',
         targetRepresentation: 'egret.srgb-pma8-target/1',
-        outputRepresentation: outputAlpha === 'opaque' ? 'egret.srgb-opaque-unorm8/1' : 'egret.srgb-premultiplied-unorm8/1',
-        frameId: this.nextFrameId, width, height, clearColor, clearAlpha, outputAlpha, ...content,
+        outputRepresentation:
+          outputAlpha === 'opaque' ? 'egret.srgb-opaque-unorm8/1' : 'egret.srgb-premultiplied-unorm8/1',
+        frameId: this.nextFrameId,
+        width,
+        height,
+        clearColor,
+        clearAlpha,
+        outputAlpha,
+        ...content
       }) as SharedRenderFrame2D;
       registerSharedFrame(frame);
       this.nextFrameId++;
@@ -329,11 +464,15 @@ export class Engine {
     }
   }
 
-  public createScope(): Scope { return this.#createScope(); }
+  public createScope(): Scope {
+    return this.#createScope();
+  }
 
   #createScope(): Scope {
     this.#context.assertOpen();
-    const scope = createScope(this.#context, (closed): void => { this.scopes.delete(closed); });
+    const scope = createScope(this.#context, (closed): void => {
+      this.scopes.delete(closed);
+    });
     this.scopes.add(scope);
     this.#engineScopes.add(scope);
     this.#sequenceControllerOwner.registerScope(scope);
@@ -347,7 +486,12 @@ export class Engine {
   }
 
   /** Create an idle, Scope-owned sequence controller without rendering or ticking. */
-  public createSequencePlayback(scope: Scope, bitmap: Bitmap, clip: SequenceClip, options?: SequencePlaybackOptions): SequencePlayback {
+  public createSequencePlayback(
+    scope: Scope,
+    bitmap: Bitmap,
+    clip: SequenceClip,
+    options?: SequencePlaybackOptions
+  ): SequencePlayback {
     return this.#sequencePlaybackOwner.create(scope, bitmap, clip, options);
   }
 
@@ -366,7 +510,13 @@ export class Engine {
   }
 
   /** Acquire an admitted dependency closure with independent group-owned leases. */
-  public createManifestGroup(scope: Scope, manifest: AdmittedResourceManifest, roots: readonly string[], bindings: readonly ManifestBinding[], options?: ManifestGroupOptions): ManifestAssetGroup {
+  public createManifestGroup(
+    scope: Scope,
+    manifest: AdmittedResourceManifest,
+    roots: readonly string[],
+    bindings: readonly ManifestBinding[],
+    options?: ManifestGroupOptions
+  ): ManifestAssetGroup {
     return this.#manifestAssetGroupOwner.create(scope, manifest, roots, bindings, options);
   }
 
@@ -375,9 +525,12 @@ export class Engine {
     if (this.closePromise !== undefined) return this.closePromise;
     let resolveClose: () => void = (): void => {};
     let rejectClose: (cause: unknown) => void = (): void => {};
-    this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
+    this.closePromise = new Promise<void>((resolve, reject) => {
+      resolveClose = resolve;
+      rejectClose = reject;
+    });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
-    this.#currentState = "closing";
+    this.#currentState = 'closing';
     // Revoke content wrappers before manifest leases and callback-capable cleanup.
     for (const dispose of [...this.#contentLoaders]) dispose();
     // Detach managed UI before input and ordinary Scope/Stage cleanup.
@@ -404,30 +557,34 @@ export class Engine {
       if (this.frameIdle !== undefined) await this.frameIdle;
       if (this.#gameClockOwner.isBusy()) await this.#gameClockOwner.whenIdle();
       for (const scope of [...this.scopes].reverse()) {
-        try { scope.dispose(); }
-        catch (cause) {
+        try {
+          scope.dispose();
+        } catch (cause) {
           this.cleanupErrors.push(cause);
-          this.#context.report({ code: "ENGINE_SCOPE_CLEANUP_FAILED", phase: "engine", severity: "error", cause });
+          this.#context.report({ code: 'ENGINE_SCOPE_CLEANUP_FAILED', phase: 'engine', severity: 'error', cause });
         }
       }
-      try { this.stage.dispose(); }
-      catch (cause) {
+      try {
+        this.stage.dispose();
+      } catch (cause) {
         this.cleanupErrors.push(cause);
-        this.#context.report({ code: "ENGINE_STAGE_CLEANUP_FAILED", phase: "engine", severity: "error", cause });
+        this.#context.report({ code: 'ENGINE_STAGE_CLEANUP_FAILED', phase: 'engine', severity: 'error', cause });
       }
-      try { this.assets.dispose(); }
-      catch (cause) {
+      try {
+        this.assets.dispose();
+      } catch (cause) {
         this.cleanupErrors.push(cause);
-        this.#context.report({ code: "ENGINE_ASSETS_CLEANUP_FAILED", phase: "assets", severity: "error", cause });
+        this.#context.report({ code: 'ENGINE_ASSETS_CLEANUP_FAILED', phase: 'assets', severity: 'error', cause });
       }
-      try { this.host.stop?.(); }
-      catch (cause) {
+      try {
+        this.host.stop?.();
+      } catch (cause) {
         this.cleanupErrors.push(cause);
-        this.#context.report({ code: "HOST_STOP_FAILED", phase: "engine", severity: "error", cause });
+        this.#context.report({ code: 'HOST_STOP_FAILED', phase: 'engine', severity: 'error', cause });
       }
       await closeHost(this.host, this.timeoutMs, this.releaseSurface, this.cleanupErrors, this.onDiagnostic);
     } finally {
-      this.#currentState = "closed";
+      this.#currentState = 'closed';
     }
   }
 }

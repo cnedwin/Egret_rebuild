@@ -3,8 +3,17 @@
 export type PointerType = "mouse" | "touch" | "pen";
 export type PointerEventKind = "begin" | "move" | "end" | "cancel";
 export type PointerRouterState = "active" | "suspended" | "closed";
-export type PointerCancelReason = "pointercancel" | "lostcapture" | "blur" | "hidden" | "pagehide"
-  | "viewport" | "owner" | "suspended" | "dispose" | "error";
+export type PointerCancelReason =
+  | "pointercancel"
+  | "lostcapture"
+  | "blur"
+  | "hidden"
+  | "pagehide"
+  | "viewport"
+  | "owner"
+  | "suspended"
+  | "dispose"
+  | "error";
 
 declare const sessionIdentity: unique symbol;
 
@@ -44,7 +53,12 @@ export interface PointerRouterOptions<T extends object> {
   readonly viewportRevision?: number;
   readonly pick: (globalX: number, globalY: number) => T | undefined;
   readonly eligible: (target: T) => boolean;
-  readonly dispatch: (kind: PointerEventKind, contact: PointerContact, target: T | undefined, reason?: PointerCancelReason) => void;
+  readonly dispatch: (
+    kind: PointerEventKind,
+    contact: PointerContact,
+    target: T | undefined,
+    reason?: PointerCancelReason
+  ) => void;
 }
 
 /** DOM-free routing kernel; the owner supplies picking and eligibility authority. */

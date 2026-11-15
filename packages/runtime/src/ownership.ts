@@ -3,12 +3,22 @@ import type { Texture } from './Texture.js';
 import type { Bitmap } from './Bitmap.js';
 import type { Stage } from './Stage.js';
 import type { CapturedSharedContent2D } from './sharedFrameCapture.js';
-import type { Diagnostic } from "@egret/contracts";
-import { EgretError } from "./EgretError.js";
-import { recordVisualChange, VISUAL_BINDING } from "./displayVisualState.js";
-import { assertLive, captureChildInsertion, childrenOf, isDisplayNode, prepareCapturedInsertionTree, publishCapturedInsertionTree, validateCapturedInsertionNode, validateCapturedInsertionRoots, validateCapturedInsertionSource } from "./displayTreeState.js";
-import type { CapturedInsertionNode, PreparedInsertionTree } from "./displayTreeState.js";
-import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
+import type { Diagnostic } from '@egret/contracts';
+import { EgretError } from './EgretError.js';
+import { recordVisualChange, VISUAL_BINDING } from './displayVisualState.js';
+import {
+  assertLive,
+  captureChildInsertion,
+  childrenOf,
+  isDisplayNode,
+  prepareCapturedInsertionTree,
+  publishCapturedInsertionTree,
+  validateCapturedInsertionNode,
+  validateCapturedInsertionRoots,
+  validateCapturedInsertionSource
+} from './displayTreeState.js';
+import type { CapturedInsertionNode, PreparedInsertionTree } from './displayTreeState.js';
+import type { DisplayObjectContainer } from './DisplayObjectContainer.js';
 import type { Scope } from './Scope.js';
 import type { DisplayObject } from './DisplayObject.js';
 import type { AssetGroupOperations } from './assetManagerOwnerState.js';
@@ -16,47 +26,62 @@ import type { AssetGroupOperations } from './assetManagerOwnerState.js';
 /** Internal instance port; runtime never imports the Engine implementation. */
 export interface EngineContext {
   /** @internal Registered once by the genuine Stage; never a caller scene callback. */
-  readonly registerPreparedDisplayOperations?: (operations: Readonly<{
-    prepare(target: DisplayObjectContainer, candidate: DisplayObject): object;
-    validate(token: object): void;
-    capture(token: object): CapturedSharedContent2D;
-    commit(token: object): void;
-    dispose(token: object): void;
-  }>) => void;
+  readonly registerPreparedDisplayOperations?: (
+    operations: Readonly<{
+      prepare(target: DisplayObjectContainer, candidate: DisplayObject): object;
+      validate(token: object): void;
+      capture(token: object): CapturedSharedContent2D;
+      commit(token: object): void;
+      dispose(token: object): void;
+    }>
+  ) => void;
   /** @internal Genuine Bitmap assembly; no runtime root forwards these operations. */
-  readonly registerBitmapResourceTarget?: (bitmap: Bitmap, operations: Readonly<{
-    capture(bitmap: Bitmap, expected?: object): object;
-    prepare(bitmap: Bitmap, lease: AssetLease<Texture>): object;
-    commit(bitmap: Bitmap, expected: object, prepared: object): void;
-    claim(bitmap: Bitmap, lease: AssetLease<Texture>, owner: object): void;
-    release(lease: AssetLease<Texture>): void;
-    clearIfCurrent(bitmap: Bitmap, expected: object): boolean;
-    captureBatch(targets: readonly Bitmap[]): object;
-    prepareBatch(captured: object, members: readonly AssetLease<Texture>[]): object;
-    commitBatch(captured: object, prepared: object): object;
-    capturePreparedSharedContent(stage: Stage, captured: object, prepared: object): CapturedSharedContent2D;
-    clearBatchIfCurrent(publication: object): void;
-  }>) => void;
+  readonly registerBitmapResourceTarget?: (
+    bitmap: Bitmap,
+    operations: Readonly<{
+      capture(bitmap: Bitmap, expected?: object): object;
+      prepare(bitmap: Bitmap, lease: AssetLease<Texture>): object;
+      commit(bitmap: Bitmap, expected: object, prepared: object): void;
+      claim(bitmap: Bitmap, lease: AssetLease<Texture>, owner: object): void;
+      release(lease: AssetLease<Texture>): void;
+      clearIfCurrent(bitmap: Bitmap, expected: object): boolean;
+      captureBatch(targets: readonly Bitmap[]): object;
+      prepareBatch(captured: object, members: readonly AssetLease<Texture>[]): object;
+      commitBatch(captured: object, prepared: object): object;
+      capturePreparedSharedContent(stage: Stage, captured: object, prepared: object): CapturedSharedContent2D;
+      clearBatchIfCurrent(publication: object): void;
+    }>
+  ) => void;
   assertOpen(): void;
   report(diagnostic: Diagnostic): void;
   captureCleanup(cause: unknown): void;
   /** @internal Optional explicit-text assembly; ordinary runtime contexts need not supply it. */
-  readonly registerTextFieldCache?: (cache: object, construct: (scope: Scope) => DisplayObject, kind?: 'explicit-lines' | 'paragraph') => void;
+  readonly registerTextFieldCache?: (
+    cache: object,
+    construct: (scope: Scope) => DisplayObject,
+    kind?: 'explicit-lines' | 'paragraph'
+  ) => void;
   /** @internal Optional group assembly; ordinary runtime contexts remain unchanged. */
   readonly registerAssetGroupOperations?: (operations: AssetGroupOperations) => void;
 }
 
-export const OWNERSHIP_CHILDREN: unique symbol = Symbol("egret.ownershipChildren");
-export const ASSERT_BINDABLE: unique symbol = Symbol("egret.assertBindable");
-export const ASSERT_ATTACHABLE: unique symbol = Symbol("egret.assertAttachable");
+export const OWNERSHIP_CHILDREN: unique symbol = Symbol('egret.ownershipChildren');
+export const ASSERT_BINDABLE: unique symbol = Symbol('egret.assertBindable');
+export const ASSERT_ATTACHABLE: unique symbol = Symbol('egret.assertAttachable');
 
 // Cleanup ownership and engine affinity are separate lifetime identities.
 const owners = new WeakMap<object, object>();
 const engines = new WeakMap<object, EngineContext>();
 
-export function ownerOf(value: object): object | undefined { return owners.get(value); }
-export function engineOf(value: object): EngineContext | undefined { return engines.get(value); }
-export function claimOwner(value: object, owner: object): void { owners.set(value, owner); }
+export function ownerOf(value: object): object | undefined {
+  return owners.get(value);
+}
+export function engineOf(value: object): EngineContext | undefined {
+  return engines.get(value);
+}
+export function claimOwner(value: object, owner: object): void {
+  owners.set(value, owner);
+}
 
 export function engineInSubtree(value: object): EngineContext | undefined {
   const pending: object[] = [value];
@@ -79,7 +104,7 @@ export function preflightBinding(value: object, engine: EngineContext): readonly
     const current = pending.pop();
     if (current === undefined) break;
     const existing = engineOf(current);
-    if (existing !== undefined && existing !== engine) throw new EgretError("ENGINE_MISMATCH");
+    if (existing !== undefined && existing !== engine) throw new EgretError('ENGINE_MISMATCH');
     if (isDisplayNode(current)) {
       current[ASSERT_BINDABLE]();
       pending.push(...childrenOf(current));
@@ -98,7 +123,7 @@ export function validateBinding(value: object, engine: EngineContext): readonly 
     const current = pending.pop();
     if (current === undefined) break;
     const existing = engineOf(current);
-    if (existing !== undefined && existing !== engine) throw new EgretError("ENGINE_MISMATCH");
+    if (existing !== undefined && existing !== engine) throw new EgretError('ENGINE_MISMATCH');
     if (isDisplayNode(current)) {
       assertLive(current);
       pending.push(...childrenOf(current));
@@ -122,13 +147,18 @@ export function bind(value: object, engine: EngineContext): void {
   commitBinding(validateBinding(value, engine), engine);
 }
 
-
 // The new finite coordinator owns captured affinity reads/writes, separate from legacy bind.
 const readInsertionEngine = engines.get.bind(engines);
 const writeInsertionEngine = engines.set.bind(engines);
 const InsertionBindingSet = Set;
-const insertionBindingHas = Set.prototype.has.call.bind(Set.prototype.has) as (set: Set<unknown>, value: unknown) => boolean;
-const insertionBindingAdd = Set.prototype.add.call.bind(Set.prototype.add) as (set: Set<unknown>, value: unknown) => Set<unknown>;
+const insertionBindingHas = Set.prototype.has.call.bind(Set.prototype.has) as (
+  set: Set<unknown>,
+  value: unknown
+) => boolean;
+const insertionBindingAdd = Set.prototype.add.call.bind(Set.prototype.add) as (
+  set: Set<unknown>,
+  value: unknown
+) => Set<unknown>;
 
 interface CapturedInsertionAffinity {
   readonly record: CapturedInsertionNode;
@@ -161,16 +191,23 @@ function firstInsertionEngine(records: readonly CapturedInsertionAffinity[]): En
   return undefined;
 }
 
-function validateInsertionAffinities(records: readonly CapturedInsertionAffinity[], engine: EngineContext | undefined): void {
+function validateInsertionAffinities(
+  records: readonly CapturedInsertionAffinity[],
+  engine: EngineContext | undefined
+): void {
   for (let index = 0; index < records.length; index++) {
     const current = records[index]!;
     validateCapturedInsertionNode(current.record);
-    if (current.engine !== undefined && current.engine !== engine) throw new EgretError("ENGINE_MISMATCH");
+    if (current.engine !== undefined && current.engine !== engine) throw new EgretError('ENGINE_MISMATCH');
   }
 }
 
 /** One post-last-hook capture supplies Engine selection, validation and all preparation. */
-export function prepareChildInsertion(receiver: DisplayObjectContainer, child: DisplayObject, index: number): PreparedChildInsertion {
+export function prepareChildInsertion(
+  receiver: DisplayObjectContainer,
+  child: DisplayObject,
+  index: number
+): PreparedChildInsertion {
   const capture = captureChildInsertion(receiver, child);
   const receiverAffinities = captureInsertionAffinities(capture.receiverTree);
   const incomingAffinities = captureInsertionAffinities(capture.incomingTree);
@@ -188,7 +225,8 @@ export function prepareChildInsertion(receiver: DisplayObjectContainer, child: D
     for (let treeIndex = 0; treeIndex < 2; treeIndex++) {
       const records = treeIndex === 0 ? receiverAffinities : incomingAffinities;
       for (let position = 0; position < records.length; position++) {
-        const current = records[position]!, node = current.record.node;
+        const current = records[position]!,
+          node = current.record.node;
         if (current.engine === undefined && node !== undefined && !insertionBindingHas(seen, node)) {
           insertionBindingAdd(seen, node);
           stagedBindings[stagedBindings.length] = node;

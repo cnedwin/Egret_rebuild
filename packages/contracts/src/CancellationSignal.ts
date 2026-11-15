@@ -5,10 +5,6 @@ export type CancellationListener = () => void;
 export interface CancellationSignal {
   readonly aborted: boolean;
   readonly reason: unknown;
-  addEventListener(
-    type: "abort",
-    listener: CancellationListener,
-    options?: { readonly once?: boolean },
-  ): void;
+  addEventListener(type: "abort", listener: CancellationListener, options?: { readonly once?: boolean }): void;
   removeEventListener(type: "abort", listener: CancellationListener): void;
 }

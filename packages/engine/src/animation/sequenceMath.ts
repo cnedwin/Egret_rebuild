@@ -13,18 +13,20 @@ export type SequencePosition = Readonly<{
   complete: boolean;
 }>;
 
-export type PlannedSequenceEvent = Readonly<{
-  kind: 'marker';
-  id: string;
-  markerIndex: number;
-  playIndex: number;
-  timelineSeconds: number;
-  positionSeconds: number;
-}> | Readonly<{
-  kind: 'complete';
-  totalPlays: number;
-  timelineSeconds: number;
-}>;
+export type PlannedSequenceEvent =
+  | Readonly<{
+      kind: 'marker';
+      id: string;
+      markerIndex: number;
+      playIndex: number;
+      timelineSeconds: number;
+      positionSeconds: number;
+    }>
+  | Readonly<{
+      kind: 'complete';
+      totalPlays: number;
+      timelineSeconds: number;
+    }>;
 
 export interface SequenceEventPlanOptions {
   readonly includeStart?: boolean;
@@ -60,8 +62,12 @@ function boundsFor(duration: number, totalPlays: number | 'infinite'): Bounds {
 }
 
 function assertTime(time: number, bounds: Bounds): void {
-  if (!Number.isFinite(time) || time < 0 || time > MAX_TIME ||
-      (bounds.finite ? time > bounds.endpoint : time >= bounds.endpoint)) {
+  if (
+    !Number.isFinite(time) ||
+    time < 0 ||
+    time > MAX_TIME ||
+    (bounds.finite ? time > bounds.endpoint : time >= bounds.endpoint)
+  ) {
     throw new EgretError('ANIMATION_TIME_LIMIT');
   }
 }
@@ -72,18 +78,14 @@ function boundary(duration: number, index: number): number {
 }
 
 /** Locate one admitted position without dividing by a possibly subnormal duration. */
-export function locatePosition(
-  duration: number,
-  totalPlays: number | 'infinite',
-  time: number,
-): SequencePosition {
+export function locatePosition(duration: number, totalPlays: number | 'infinite', time: number): SequencePosition {
   const bounds = boundsFor(duration, totalPlays);
   assertTime(time, bounds);
   if (bounds.finite && time === bounds.endpoint) {
     return Object.freeze({
       playIndex: bounds.plays - 1,
       positionSeconds: duration,
-      complete: true,
+      complete: true
     });
   }
 
@@ -112,12 +114,7 @@ function occurrence(duration: number, markerTime: number, playIndex: number): nu
 }
 
 /** Return the first actual play whose occurrence is strictly after time. */
-function occurrenceUpperBound(
-  duration: number,
-  markerTime: number,
-  plays: number,
-  time: number,
-): number {
+function occurrenceUpperBound(duration: number, markerTime: number, plays: number, time: number): number {
   let low = 0;
   let high = plays;
   while (low < high) {
@@ -148,7 +145,7 @@ export function planEvents(
   oldElapsed: number,
   newElapsed: number,
   options: SequenceEventPlanOptions,
-  remainingBudget: number,
+  remainingBudget: number
 ): readonly PlannedSequenceEvent[] {
   const bounds = boundsFor(duration, totalPlays);
   assertTime(oldElapsed, bounds);
@@ -160,8 +157,8 @@ export function planEvents(
   const markerCount = markers.length;
   if (markerCount > MAX_MARKERS) throw new EgretError('ANIMATION_EVENT_LIMIT');
   const includeStart = options.includeStart === true && oldElapsed === 0;
-  const includeComplete = options.includeComplete === true && bounds.finite &&
-    newElapsed === bounds.endpoint && newElapsed > oldElapsed;
+  const includeComplete =
+    options.includeComplete === true && bounds.finite && newElapsed === bounds.endpoint && newElapsed > oldElapsed;
   let eventCount = includeComplete ? 1 : 0;
   if (eventCount > remainingBudget) throw new EgretError('ANIMATION_EVENT_LIMIT');
   const ranges: MarkerRange[] = [];
@@ -172,8 +169,8 @@ export function planEvents(
     if (!Number.isFinite(markerTime) || markerTime < 0 || markerTime > duration) {
       throw new EgretError('ANIMATION_TIME_LIMIT');
     }
-    const first = includeStart && markerTime === 0 ? 0 :
-      occurrenceUpperBound(duration, markerTime, bounds.plays, oldElapsed);
+    const first =
+      includeStart && markerTime === 0 ? 0 : occurrenceUpperBound(duration, markerTime, bounds.plays, oldElapsed);
     const afterLast = occurrenceUpperBound(duration, markerTime, bounds.plays, newElapsed);
     eventCount += afterLast - first;
     if (eventCount > remainingBudget) throw new EgretError('ANIMATION_EVENT_LIMIT');
@@ -188,32 +185,44 @@ export function planEvents(
       const start = boundary(duration, playIndex);
       const end = boundary(duration, playIndex + 1);
       const timelineSeconds = occurrence(duration, marker.timeSeconds, playIndex);
-      if (!(start < end) || (marker.timeSeconds !== 0 && marker.timeSeconds !== duration &&
-          !(timelineSeconds > start && timelineSeconds < end))) {
+      if (
+        !(start < end) ||
+        (marker.timeSeconds !== 0 &&
+          marker.timeSeconds !== duration &&
+          !(timelineSeconds > start && timelineSeconds < end))
+      ) {
         throw new EgretError('ANIMATION_PRECISION_LIMIT');
       }
-      events.push(Object.freeze({
-        kind: 'marker',
-        id: marker.id,
-        markerIndex: marker.markerIndex,
-        playIndex,
-        timelineSeconds,
-        positionSeconds: marker.timeSeconds === 0 ? 0 : marker.timeSeconds,
-      }));
+      events.push(
+        Object.freeze({
+          kind: 'marker',
+          id: marker.id,
+          markerIndex: marker.markerIndex,
+          playIndex,
+          timelineSeconds,
+          positionSeconds: marker.timeSeconds === 0 ? 0 : marker.timeSeconds
+        })
+      );
     }
   }
   // End-of-play markers precede the next play's zero markers at the same B(k).
   // Rounded interior ties retain authored time order, then original input order.
-  events.sort((left, right) => left.timelineSeconds - right.timelineSeconds ||
-    left.playIndex - right.playIndex || left.positionSeconds - right.positionSeconds ||
-    left.markerIndex - right.markerIndex);
+  events.sort(
+    (left, right) =>
+      left.timelineSeconds - right.timelineSeconds ||
+      left.playIndex - right.playIndex ||
+      left.positionSeconds - right.positionSeconds ||
+      left.markerIndex - right.markerIndex
+  );
   const result: PlannedSequenceEvent[] = events;
   if (includeComplete) {
-    result.push(Object.freeze({
-      kind: 'complete',
-      totalPlays: bounds.plays,
-      timelineSeconds: bounds.endpoint,
-    }));
+    result.push(
+      Object.freeze({
+        kind: 'complete',
+        totalPlays: bounds.plays,
+        timelineSeconds: bounds.endpoint
+      })
+    );
   }
   return Object.freeze(result);
 }

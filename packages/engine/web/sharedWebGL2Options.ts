@@ -4,76 +4,117 @@ import type { SharedStorageLimits2D } from './sharedSubmissionStorage2D.js';
 import type { WebGL2HostDiagnostic } from './webgl2Types.js';
 
 export interface SharedWebGL2Configuration extends SharedPreparationOptions2D, SharedStorageLimits2D {
-    /** Distinct regions one frame may name; at most the profile's 4,096. */
-    readonly maxFrameRegions: number;
-    /** Bytes of distinct pages one frame may name; at most the profile's 64 MiB. */
-    readonly maxFramePageBytes: number;
-    /** Bytes of page textures kept ready between frames; at most 128 MiB. */
-    readonly maxReadyPageBytes: number;
-    readonly maxBackingPixels: number;
-    readonly enableReadback: boolean;
-    readonly enableEffects: boolean;
-    readonly outputAlpha: 'premultiplied' | 'opaque';
-    readonly restoreTimeoutMs: number;
+  /** Distinct regions one frame may name; at most the profile's 4,096. */
+  readonly maxFrameRegions: number;
+  /** Bytes of distinct pages one frame may name; at most the profile's 64 MiB. */
+  readonly maxFramePageBytes: number;
+  /** Bytes of page textures kept ready between frames; at most 128 MiB. */
+  readonly maxReadyPageBytes: number;
+  readonly maxBackingPixels: number;
+  readonly enableReadback: boolean;
+  readonly enableEffects: boolean;
+  readonly outputAlpha: 'premultiplied' | 'opaque';
+  readonly restoreTimeoutMs: number;
 }
 export interface SharedWebGL2HostOptions extends Partial<SharedWebGL2Configuration> {
-    readonly canvas: HTMLCanvasElement;
-    readonly onDiagnostic?: (diagnostic: WebGL2HostDiagnostic) => unknown;
-    /** Collect bounded CPU elapsed timings for shared frames. Defaults to false. */
-    readonly measureSharedFrames?: boolean;
+  readonly canvas: HTMLCanvasElement;
+  readonly onDiagnostic?: (diagnostic: WebGL2HostDiagnostic) => unknown;
+  /** Collect bounded CPU elapsed timings for shared frames. Defaults to false. */
+  readonly measureSharedFrames?: boolean;
 }
 
 const DEFAULTS: SharedWebGL2Configuration = Object.freeze({
-    pixelRatio: 1, maxBackingPixels: 16777216, maxCommands: 65536, maxClipRectangles: 262144,
-    maxPreparedVertices: 1048576, maxClipEdgeTests: 4194304, maxUploadBytes: 33554432,
-    maxPendingUploadBytes: 67108864, maxPendingFrames: 2, maxReadbackBytes: 67108864,
-    enableReadback: false, enableEffects: false, maxSourceTriangles: 65536, maxFrameGeometryBytes: 16777216,
-    maxPendingGeometryBytes: 33554432, maxTupleComparisons: 1048576,
-    outputAlpha: 'premultiplied', restoreTimeoutMs: 10000,
-    // Read and judged after every earlier option, so their arrival changes no earlier refusal.
-    maxFrameRegions: 4096, maxFramePageBytes: 67108864, maxReadyPageBytes: 134217728,
+  pixelRatio: 1,
+  maxBackingPixels: 16777216,
+  maxCommands: 65536,
+  maxClipRectangles: 262144,
+  maxPreparedVertices: 1048576,
+  maxClipEdgeTests: 4194304,
+  maxUploadBytes: 33554432,
+  maxPendingUploadBytes: 67108864,
+  maxPendingFrames: 2,
+  maxReadbackBytes: 67108864,
+  enableReadback: false,
+  enableEffects: false,
+  maxSourceTriangles: 65536,
+  maxFrameGeometryBytes: 16777216,
+  maxPendingGeometryBytes: 33554432,
+  maxTupleComparisons: 1048576,
+  outputAlpha: 'premultiplied',
+  restoreTimeoutMs: 10000,
+  // Read and judged after every earlier option, so their arrival changes no earlier refusal.
+  maxFrameRegions: 4096,
+  maxFramePageBytes: 67108864,
+  maxReadyPageBytes: 134217728
 });
-const KEYS = ['canvas', 'onDiagnostic', 'pixelRatio', 'maxBackingPixels', 'maxCommands',
-    'maxClipRectangles', 'maxPreparedVertices', 'maxClipEdgeTests', 'maxUploadBytes',
-    'maxPendingUploadBytes', 'maxPendingFrames', 'maxReadbackBytes', 'enableReadback',
-    'maxSourceTriangles', 'maxFrameGeometryBytes', 'maxPendingGeometryBytes',
-    'maxTupleComparisons', 'enableEffects', 'outputAlpha', 'restoreTimeoutMs', 'measureSharedFrames',
-    'maxFrameRegions', 'maxFramePageBytes', 'maxReadyPageBytes'] as const;
+const KEYS = [
+  'canvas',
+  'onDiagnostic',
+  'pixelRatio',
+  'maxBackingPixels',
+  'maxCommands',
+  'maxClipRectangles',
+  'maxPreparedVertices',
+  'maxClipEdgeTests',
+  'maxUploadBytes',
+  'maxPendingUploadBytes',
+  'maxPendingFrames',
+  'maxReadbackBytes',
+  'enableReadback',
+  'maxSourceTriangles',
+  'maxFrameGeometryBytes',
+  'maxPendingGeometryBytes',
+  'maxTupleComparisons',
+  'enableEffects',
+  'outputAlpha',
+  'restoreTimeoutMs',
+  'measureSharedFrames',
+  'maxFrameRegions',
+  'maxFramePageBytes',
+  'maxReadyPageBytes'
+] as const;
 function object(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null;
+  return typeof value === 'object' && value !== null;
 }
 
 /** Capture all successful reads before semantics; preserve the first thrown getter value. */
 export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions): {
-    surface: HTMLCanvasElement;
-    configuration: SharedWebGL2Configuration;
-    callback: ((diagnostic: WebGL2HostDiagnostic) => unknown) | undefined;
-    measureSharedFrames: boolean;
+  surface: HTMLCanvasElement;
+  configuration: SharedWebGL2Configuration;
+  callback: ((diagnostic: WebGL2HostDiagnostic) => unknown) | undefined;
+  measureSharedFrames: boolean;
 } {
-    if (!object(input)) throw new TypeError('options');
-    const captured = {} as Record<typeof KEYS[number], unknown>;
-    for (const key of KEYS) captured[key] = input[key];
-    if (!object(captured.canvas)) throw new TypeError('canvas');
-    if (captured.onDiagnostic !== undefined && typeof captured.onDiagnostic !== 'function') throw new TypeError('diagnostic callback');
-    if (captured.measureSharedFrames !== undefined && typeof captured.measureSharedFrames !== 'boolean') throw new TypeError('measureSharedFrames');
-    const configuration = {} as SharedWebGL2Configuration;
-    for (const key of Object.keys(DEFAULTS) as (keyof SharedWebGL2Configuration)[]) {
-        const value = captured[key] === undefined ? DEFAULTS[key] : captured[key];
-        if (key === 'enableReadback' || key === 'enableEffects') {
-            if (typeof value !== 'boolean') throw new TypeError(key);
-        } else if (key === 'outputAlpha') {
-            if (value !== 'premultiplied' && value !== 'opaque') throw new TypeError(key);
-        } else {
-            if (typeof value !== 'number' || !Number.isFinite(value) || (key !== 'pixelRatio' && !Number.isSafeInteger(value))) throw new TypeError(key);
-            const maximum = key === 'restoreTimeoutMs' ? 30000 : DEFAULTS[key];
-            if (value <= 0 || (key !== 'pixelRatio' && value > maximum)) throw new RangeError(key);
-        }
-        Object.defineProperty(configuration, key, { value, enumerable: true });
+  if (!object(input)) throw new TypeError('options');
+  const captured = {} as Record<(typeof KEYS)[number], unknown>;
+  for (const key of KEYS) captured[key] = input[key];
+  if (!object(captured.canvas)) throw new TypeError('canvas');
+  if (captured.onDiagnostic !== undefined && typeof captured.onDiagnostic !== 'function')
+    throw new TypeError('diagnostic callback');
+  if (captured.measureSharedFrames !== undefined && typeof captured.measureSharedFrames !== 'boolean')
+    throw new TypeError('measureSharedFrames');
+  const configuration = {} as SharedWebGL2Configuration;
+  for (const key of Object.keys(DEFAULTS) as (keyof SharedWebGL2Configuration)[]) {
+    const value = captured[key] === undefined ? DEFAULTS[key] : captured[key];
+    if (key === 'enableReadback' || key === 'enableEffects') {
+      if (typeof value !== 'boolean') throw new TypeError(key);
+    } else if (key === 'outputAlpha') {
+      if (value !== 'premultiplied' && value !== 'opaque') throw new TypeError(key);
+    } else {
+      if (
+        typeof value !== 'number' ||
+        !Number.isFinite(value) ||
+        (key !== 'pixelRatio' && !Number.isSafeInteger(value))
+      )
+        throw new TypeError(key);
+      const maximum = key === 'restoreTimeoutMs' ? 30000 : DEFAULTS[key];
+      if (value <= 0 || (key !== 'pixelRatio' && value > maximum)) throw new RangeError(key);
     }
-    return {
-        surface: captured.canvas as unknown as HTMLCanvasElement,
-        configuration: Object.freeze(configuration),
-        callback: captured.onDiagnostic as ((diagnostic: WebGL2HostDiagnostic) => unknown) | undefined,
-        measureSharedFrames: captured.measureSharedFrames === true,
-    };
+    Object.defineProperty(configuration, key, { value, enumerable: true });
+  }
+  return {
+    surface: captured.canvas as unknown as HTMLCanvasElement,
+    configuration: Object.freeze(configuration),
+    callback: captured.onDiagnostic as ((diagnostic: WebGL2HostDiagnostic) => unknown) | undefined,
+    measureSharedFrames: captured.measureSharedFrames === true
+  };
 }

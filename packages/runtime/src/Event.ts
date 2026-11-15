@@ -49,13 +49,29 @@ export class Event<T> {
   public constructor(type: EventType<T>, payload: NoInfer<T>) {
     this.type = type;
     this.payload = payload;
-    states.set(this, { active: false, stopped: false, immediate: false, prevented: false, target: undefined, currentTarget: undefined, phase: undefined });
+    states.set(this, {
+      active: false,
+      stopped: false,
+      immediate: false,
+      prevented: false,
+      target: undefined,
+      currentTarget: undefined,
+      phase: undefined
+    });
   }
 
-  public get target(): EventDispatcher | undefined { return stateOf(this).target; }
-  public get currentTarget(): EventDispatcher | undefined { return stateOf(this).currentTarget; }
-  public get eventPhase(): EventPhase | undefined { return stateOf(this).phase; }
-  public get defaultPrevented(): boolean { return stateOf(this).prevented; }
+  public get target(): EventDispatcher | undefined {
+    return stateOf(this).target;
+  }
+  public get currentTarget(): EventDispatcher | undefined {
+    return stateOf(this).currentTarget;
+  }
+  public get eventPhase(): EventPhase | undefined {
+    return stateOf(this).phase;
+  }
+  public get defaultPrevented(): boolean {
+    return stateOf(this).prevented;
+  }
 
   public stopPropagation(): void {
     const state = stateOf(this);

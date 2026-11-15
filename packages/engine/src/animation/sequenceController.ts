@@ -1,27 +1,50 @@
 // SPDX-License-Identifier: Apache-2.0
-import {EgretError, SequencePlayer} from '@egret/runtime';
-import type {Bitmap, Scope, SequenceClip, SequenceSample} from '@egret/runtime';
-import type {Engine} from '../Engine.js';
-import type {GameClockTick} from '../gameClockTypes.js';
-import {requireSequenceControllerEngine} from '../internal/sequenceControllerFactoryState.js';
-import type {SequenceControllerEnginePort, SequenceScopePort} from '../internal/sequenceControllerFactoryState.js';
-import {assertNotCapturing, captureInput, coordinatorSize, deliver, mustQueue, requireCoordinator} from './sequenceCoordinator.js';
-import type {SequenceCoordinator, SequenceDelivery, SequenceDriver} from './sequenceCoordinator.js';
-import {admitRate, captureOptions, captureSeek} from './sequenceInput.js';
-import type {CapturedOptions, Command} from './sequenceInput.js';
-import {locatePosition, planEvents} from './sequenceMath.js';
-import type {CapturedSequenceMarker, PlannedSequenceEvent} from './sequenceMath.js';
-import type {SequenceController, SequenceControllerEvent, SequenceControllerOptions,
-  SequenceControllerState, SequenceControllerStatus, SequenceEventSource, SequenceSeekRequest} from './types.js';
+import { EgretError, SequencePlayer } from '@egret/runtime';
+import type { Bitmap, Scope, SequenceClip, SequenceSample } from '@egret/runtime';
+import type { Engine } from '../Engine.js';
+import type { GameClockTick } from '../gameClockTypes.js';
+import { requireSequenceControllerEngine } from '../internal/sequenceControllerFactoryState.js';
+import type { SequenceControllerEnginePort, SequenceScopePort } from '../internal/sequenceControllerFactoryState.js';
+import {
+  assertNotCapturing,
+  captureInput,
+  coordinatorSize,
+  deliver,
+  mustQueue,
+  requireCoordinator
+} from './sequenceCoordinator.js';
+import type { SequenceCoordinator, SequenceDelivery, SequenceDriver } from './sequenceCoordinator.js';
+import { admitRate, captureOptions, captureSeek } from './sequenceInput.js';
+import type { CapturedOptions, Command } from './sequenceInput.js';
+import { locatePosition, planEvents } from './sequenceMath.js';
+import type { CapturedSequenceMarker, PlannedSequenceEvent } from './sequenceMath.js';
+import type {
+  SequenceController,
+  SequenceControllerEvent,
+  SequenceControllerOptions,
+  SequenceControllerState,
+  SequenceControllerStatus,
+  SequenceEventSource,
+  SequenceSeekRequest
+} from './types.js';
 
 const apply = Reflect.apply;
 const playerApply = SequencePlayer.prototype.applyAt;
 const playerDispose = SequencePlayer.prototype.dispose;
 const playerConstructor = SequencePlayer;
 const EMPTY_MARKERS: readonly CapturedSequenceMarker[] = Object.freeze([]);
-interface Issue {readonly code: string; readonly clockTickId: number; readonly cause?: unknown;}
-interface Pending {readonly tick: number; readonly command: Command;}
-interface DeliveryToken {active: boolean;}
+interface Issue {
+  readonly code: string;
+  readonly clockTickId: number;
+  readonly cause?: unknown;
+}
+interface Pending {
+  readonly tick: number;
+  readonly command: Command;
+}
+interface DeliveryToken {
+  active: boolean;
+}
 interface RecordState {
   port: SequenceControllerEnginePort | undefined;
   scope: SequenceScopePort | undefined;
@@ -51,7 +74,10 @@ interface RecordState {
   revision: object;
   delivery: DeliveryToken | undefined;
 }
-interface StagedEvent {readonly event: PlannedSequenceEvent; readonly source: SequenceEventSource;}
+interface StagedEvent {
+  readonly event: PlannedSequenceEvent;
+  readonly source: SequenceEventSource;
+}
 interface Candidate {
   state: SequenceControllerState;
   elapsed: number;
@@ -71,32 +97,65 @@ function codeOf(cause: unknown, fallback: string): string {
   return cause instanceof EgretError ? cause.code : fallback;
 }
 function remember(record: RecordState, issue: Issue): void {
-  record.lastIssue = Object.freeze({code: issue.code, clockTickId: issue.clockTickId});
+  record.lastIssue = Object.freeze({ code: issue.code, clockTickId: issue.clockTickId });
 }
-function originalDispose(this: SequencePlayer): void { apply(playerDispose, this, []); }
+function originalDispose(this: SequencePlayer): void {
+  apply(playerDispose, this, []);
+}
 
 /** Revoke first; every acquired borrow is then attempted independently. */
-function retire(record: RecordState, state: 'completed' | 'stopped' | 'faulted', keepDelivery = false): Issue | undefined {
+function retire(
+  record: RecordState,
+  state: 'completed' | 'stopped' | 'faulted',
+  keepDelivery = false
+): Issue | undefined {
   if (!keepDelivery && record.delivery !== undefined) record.delivery.active = false;
   if (terminal(record.state) && record.port === undefined) return undefined;
   record.state = state;
-  const port = record.port, scope = record.scope, coordinator = record.coordinator;
-  const driver = record.driver, player = record.player, target = record.target, abort = record.abort;
+  const port = record.port,
+    scope = record.scope,
+    coordinator = record.coordinator;
+  const driver = record.driver,
+    player = record.player,
+    target = record.target,
+    abort = record.abort;
   const claimed = record.claimed;
-  record.port = undefined; record.scope = undefined; record.coordinator = undefined;
-  record.driver = undefined; record.player = undefined; record.clip = undefined; record.target = undefined;
-  record.abort = undefined; record.claimed = false; record.listener = undefined;
-  record.markers = EMPTY_MARKERS; record.pending = [];
+  record.port = undefined;
+  record.scope = undefined;
+  record.coordinator = undefined;
+  record.driver = undefined;
+  record.player = undefined;
+  record.clip = undefined;
+  record.target = undefined;
+  record.abort = undefined;
+  record.claimed = false;
+  record.listener = undefined;
+  record.markers = EMPTY_MARKERS;
+  record.pending = [];
   let first: Issue | undefined;
   for (const cleanup of [
-    (): void => { if (abort !== undefined) scope?.remove(abort); },
-    (): void => { if (claimed && target !== undefined) port?.claims.release(target, record.claimToken); },
-    (): void => { if (driver !== undefined) coordinator?.remove(driver); },
-    (): void => { if (player !== undefined) apply(playerDispose, player, []); },
+    (): void => {
+      if (abort !== undefined) scope?.remove(abort);
+    },
+    (): void => {
+      if (claimed && target !== undefined) port?.claims.release(target, record.claimToken);
+    },
+    (): void => {
+      if (driver !== undefined) coordinator?.remove(driver);
+    },
+    (): void => {
+      if (player !== undefined) apply(playerDispose, player, []);
+    }
   ]) {
-    try { cleanup(); } catch (cause) {
-      first ??= {code: 'ANIMATION_CLEANUP_FAILED', clockTickId: port?.clock.tickId ?? 0, cause};
-      try { port?.captureCleanup(cause); } catch { /* Preserve the primary transition outcome. */ }
+    try {
+      cleanup();
+    } catch (cause) {
+      first ??= { code: 'ANIMATION_CLEANUP_FAILED', clockTickId: port?.clock.tickId ?? 0, cause };
+      try {
+        port?.captureCleanup(cause);
+      } catch {
+        /* Preserve the primary transition outcome. */
+      }
     }
   }
   if (first !== undefined) remember(record, first);
@@ -105,32 +164,74 @@ function retire(record: RecordState, state: 'completed' | 'stopped' | 'faulted',
 function assertControl(record: RecordState): SequenceControllerEnginePort {
   const port = record.port;
   if (port === undefined || terminal(record.state)) throw new EgretError('ANIMATION_TERMINAL');
-  assertNotCapturing(port); port.assertOpen(); record.scope!.assertOpen();
+  assertNotCapturing(port);
+  port.assertOpen();
+  record.scope!.assertOpen();
   if (record.busy) throw new EgretError('ANIMATION_REENTRANT');
   return port;
 }
 function snapshot(record: RecordState): SequenceControllerStatus {
-  return Object.freeze({state: record.state, isDisposed: terminal(record.state),
-    elapsedSeconds: record.elapsed, positionSeconds: record.position, playIndex: record.play,
-    rate: record.rate, totalPlays: record.totalPlays, lastSample: record.lastSample,
-    pendingCommands: record.pending.length, committedEventCount: record.eventCount, lastIssue: record.lastIssue});
+  return Object.freeze({
+    state: record.state,
+    isDisposed: terminal(record.state),
+    elapsedSeconds: record.elapsed,
+    positionSeconds: record.position,
+    playIndex: record.play,
+    rate: record.rate,
+    totalPlays: record.totalPlays,
+    lastSample: record.lastSample,
+    pendingCommands: record.pending.length,
+    committedEventCount: record.eventCount,
+    lastIssue: record.lastIssue
+  });
 }
 function begin(record: RecordState): Candidate {
-  return {state: record.state, elapsed: record.elapsed, position: record.position, play: record.play,
-    rate: record.rate, baseline: record.baseline, applyTarget: false, consumed: 0,
-    terminalCommand: false, events: []};
+  return {
+    state: record.state,
+    elapsed: record.elapsed,
+    position: record.position,
+    play: record.play,
+    rate: record.rate,
+    baseline: record.baseline,
+    applyTarget: false,
+    consumed: 0,
+    terminalCommand: false,
+    events: []
+  };
 }
-function appendEvents(record: RecordState, candidate: Candidate, to: number, source: SequenceEventSource,
-  includeStart = false, includeComplete = true): void {
-  const events = planEvents(record.duration, record.totalPlays, record.markers,
-    candidate.elapsed, to, {includeStart, includeComplete}, 1024 - candidate.events.length);
-  if (!Number.isSafeInteger(record.eventCount + candidate.events.length + events.length)) throw new EgretError('ANIMATION_EVENT_SEQUENCE_LIMIT');
-  for (const event of events) candidate.events.push({event, source});
+function appendEvents(
+  record: RecordState,
+  candidate: Candidate,
+  to: number,
+  source: SequenceEventSource,
+  includeStart = false,
+  includeComplete = true
+): void {
+  const events = planEvents(
+    record.duration,
+    record.totalPlays,
+    record.markers,
+    candidate.elapsed,
+    to,
+    { includeStart, includeComplete },
+    1024 - candidate.events.length
+  );
+  if (!Number.isSafeInteger(record.eventCount + candidate.events.length + events.length))
+    throw new EgretError('ANIMATION_EVENT_SEQUENCE_LIMIT');
+  for (const event of events) candidate.events.push({ event, source });
 }
-function move(record: RecordState, candidate: Candidate, to: number, source: SequenceEventSource, replay: boolean): void {
+function move(
+  record: RecordState,
+  candidate: Candidate,
+  to: number,
+  source: SequenceEventSource,
+  replay: boolean
+): void {
   const position = locatePosition(record.duration, record.totalPlays, to);
   if (replay) appendEvents(record, candidate, to, source);
-  candidate.elapsed = to; candidate.position = position.positionSeconds; candidate.play = position.playIndex;
+  candidate.elapsed = to;
+  candidate.position = position.positionSeconds;
+  candidate.play = position.playIndex;
   candidate.applyTarget = true;
   if (position.complete) candidate.state = 'completed';
 }
@@ -154,55 +255,83 @@ function commandCandidate(record: RecordState, candidate: Candidate, command: Co
     case 'start':
       if (candidate.state !== 'idle') throw new EgretError('ANIMATION_ALREADY_STARTED');
       appendEvents(record, candidate, 0, 'start', true, false);
-      candidate.elapsed = 0; candidate.position = 0; candidate.play = 0; candidate.baseline = now;
-      candidate.state = candidate.rate === 0 ? 'paused' : 'running'; candidate.applyTarget = true;
+      candidate.elapsed = 0;
+      candidate.position = 0;
+      candidate.play = 0;
+      candidate.baseline = now;
+      candidate.state = candidate.rate === 0 ? 'paused' : 'running';
+      candidate.applyTarget = true;
       return;
     case 'pause':
       if (candidate.state === 'idle') throw new EgretError('ANIMATION_NOT_STARTED');
-      candidate.state = 'paused'; candidate.baseline = now; return;
+      candidate.state = 'paused';
+      candidate.baseline = now;
+      return;
     case 'resume':
       if (candidate.state === 'idle') throw new EgretError('ANIMATION_NOT_STARTED');
       if (candidate.state === 'running') return;
       if (candidate.rate === 0) throw new EgretError('ANIMATION_RATE_ZERO');
-      candidate.state = 'running'; candidate.baseline = now; return;
+      candidate.state = 'running';
+      candidate.baseline = now;
+      return;
     case 'rate':
       candidate.rate = command.rate;
       if (candidate.state === 'running' && command.rate === 0) candidate.state = 'paused';
-      candidate.baseline = now; return;
+      candidate.baseline = now;
+      return;
     case 'seek':
       if (candidate.state === 'idle') throw new EgretError('ANIMATION_NOT_STARTED');
       if (command.replay && command.time < candidate.elapsed) throw new EgretError('ANIMATION_SEEK_BACKWARDS');
-      move(record, candidate, command.time, 'seek', command.replay); candidate.baseline = now; return;
+      move(record, candidate, command.time, 'seek', command.replay);
+      candidate.baseline = now;
+      return;
   }
 }
 function observeRejected(result: unknown): void {
   const ignore = (): void => {};
-  try { void apply(Promise.prototype.then, result, [undefined, ignore]); }
-  catch {
-    try { void Promise.resolve(result).then(undefined, ignore); }
-    catch { /* Return observation cannot replace the committed callback outcome. */ }
+  try {
+    void apply(Promise.prototype.then, result, [undefined, ignore]);
+  } catch {
+    try {
+      void Promise.resolve(result).then(undefined, ignore);
+    } catch {
+      /* Return observation cannot replace the committed callback outcome. */
+    }
   }
 }
 
 /** Event delivery owns a short-lived borrow independent of the retired controller. */
-function makeDelivery(record: RecordState, port: SequenceControllerEnginePort, scope: SequenceScopePort,
-  listener: CapturedOptions['listener'], events: readonly SequenceControllerEvent[], token: DeliveryToken,
-  initialIssue?: Issue): SequenceDelivery {
+function makeDelivery(
+  record: RecordState,
+  port: SequenceControllerEnginePort,
+  scope: SequenceScopePort,
+  listener: CapturedOptions['listener'],
+  events: readonly SequenceControllerEvent[],
+  token: DeliveryToken,
+  initialIssue?: Issue
+): SequenceDelivery {
   let issue = initialIssue;
   return {
     events(): void {
       if (listener === undefined) return;
       for (const event of events) {
         if (!token.active) break;
-        try { port.assertOpen(); scope.assertOpen(); }
-        catch { token.active = false; break; }
+        try {
+          port.assertOpen();
+          scope.assertOpen();
+        } catch {
+          token.active = false;
+          break;
+        }
         try {
           const result: unknown = listener(event);
           if (result !== undefined) {
             observeRejected(result);
-            issue ??= {code: 'ANIMATION_CALLBACK_RETURN_INVALID', clockTickId: event.clockTickId};
+            issue ??= { code: 'ANIMATION_CALLBACK_RETURN_INVALID', clockTickId: event.clockTickId };
           }
-        } catch (cause) { issue ??= {code: 'ANIMATION_CALLBACK_FAILED', clockTickId: event.clockTickId, cause}; }
+        } catch (cause) {
+          issue ??= { code: 'ANIMATION_CALLBACK_FAILED', clockTickId: event.clockTickId, cause };
+        }
       }
     },
     diagnostics(): void {
@@ -213,52 +342,85 @@ function makeDelivery(record: RecordState, port: SequenceControllerEnginePort, s
         // failure evidence, but deliver ordinary profile callbacks only while live.
         // Cleanup failures remain reportable during authoritative teardown.
         if (issue.code !== 'ANIMATION_CLEANUP_FAILED') {
-          try { port.assertOpen(); scope.assertOpen(); } catch { return; }
+          try {
+            port.assertOpen();
+            scope.assertOpen();
+          } catch {
+            return;
+          }
         }
-        port.report({code: issue.code, phase: 'engine', severity: 'error', cause: issue.cause});
+        port.report({ code: issue.code, phase: 'engine', severity: 'error', cause: issue.cause });
       } finally {
         if (record.delivery === token) record.delivery = undefined;
       }
-    },
+    }
   };
 }
-function refusal(record: RecordState, port: SequenceControllerEnginePort, scope: SequenceScopePort,
-  cause: unknown, tick: number, code?: string): SequenceDelivery {
-  const issue = {code: code ?? codeOf(cause, 'ANIMATION_COMMAND_INVALID'), clockTickId: tick, cause};
+function refusal(
+  record: RecordState,
+  port: SequenceControllerEnginePort,
+  scope: SequenceScopePort,
+  cause: unknown,
+  tick: number,
+  code?: string
+): SequenceDelivery {
+  const issue = { code: code ?? codeOf(cause, 'ANIMATION_COMMAND_INVALID'), clockTickId: tick, cause };
   remember(record, issue);
-  return makeDelivery(record, port, scope, undefined, [], {active: false}, issue);
+  return makeDelivery(record, port, scope, undefined, [], { active: false }, issue);
 }
 function bindingError(cause: unknown): boolean {
-  return cause instanceof EgretError && ['SEQ_BINDING_CHANGED','OBJECT_DISPOSED','LEASE_RELEASED',
-    'TEXTURE_DISPOSED','ASSET_LEASE_RELEASED','ASSET_DISPOSED','BITMAP_TEXTURE_REQUIRED'].includes(cause.code);
+  return (
+    cause instanceof EgretError &&
+    [
+      'SEQ_BINDING_CHANGED',
+      'OBJECT_DISPOSED',
+      'LEASE_RELEASED',
+      'TEXTURE_DISPOSED',
+      'ASSET_LEASE_RELEASED',
+      'ASSET_DISPOSED',
+      'BITMAP_TEXTURE_REQUIRED'
+    ].includes(cause.code)
+  );
 }
 
 /** Pure preparation precedes one original player apply and callback-free publication. */
 function commit(record: RecordState, candidate: Candidate, tick: number, replaced: boolean): SequenceDelivery {
-  const port = record.port!, scope = record.scope!, listener = record.listener;
+  const port = record.port!,
+    scope = record.scope!,
+    listener = record.listener;
   scope.assertOpen();
   let sample = record.lastSample;
   if (candidate.applyTarget) {
-    try { sample = apply(playerApply, record.player!, [candidate.position]) as SequenceSample; }
-    catch (cause) {
+    try {
+      sample = apply(playerApply, record.player!, [candidate.position]) as SequenceSample;
+    } catch (cause) {
       const code = bindingError(cause) ? 'ANIMATION_BINDING_INVALID' : 'ANIMATION_APPLY_FAILED';
-      const issue = {code, clockTickId: tick, cause};
-      retire(record, 'faulted'); remember(record, issue);
-      throw new EgretError(code, {cause});
+      const issue = { code, clockTickId: tick, cause };
+      retire(record, 'faulted');
+      remember(record, issue);
+      throw new EgretError(code, { cause });
     }
   }
   scope.assertOpen();
-  const events = candidate.events.map(({event, source}, index): SequenceControllerEvent =>
-    Object.freeze({...event, source, clockTickId: tick, sequence: record.eventCount + index + 1}));
-  const token: DeliveryToken = {active: true};
-  record.elapsed = candidate.elapsed; record.position = candidate.position; record.play = candidate.play;
-  record.rate = candidate.rate; record.baseline = candidate.baseline; record.state = candidate.state;
-  record.lastSample = sample; record.eventCount += events.length;
-  if (replaced) record.pending = []; else record.pending.splice(0, candidate.consumed);
+  const events = candidate.events.map(
+    ({ event, source }, index): SequenceControllerEvent =>
+      Object.freeze({ ...event, source, clockTickId: tick, sequence: record.eventCount + index + 1 })
+  );
+  const token: DeliveryToken = { active: true };
+  record.elapsed = candidate.elapsed;
+  record.position = candidate.position;
+  record.play = candidate.play;
+  record.rate = candidate.rate;
+  record.baseline = candidate.baseline;
+  record.state = candidate.state;
+  record.lastSample = sample;
+  record.eventCount += events.length;
+  if (replaced) record.pending = [];
+  else record.pending.splice(0, candidate.consumed);
   record.delivery = token;
   let issue: Issue | undefined;
-  if (candidate.terminalCommand) issue = {code: 'ANIMATION_TERMINAL_COMMAND', clockTickId: tick};
-  else if (replaced) issue = {code: 'ANIMATION_COMMANDS_REPLACED', clockTickId: tick};
+  if (candidate.terminalCommand) issue = { code: 'ANIMATION_TERMINAL_COMMAND', clockTickId: tick };
+  else if (replaced) issue = { code: 'ANIMATION_COMMANDS_REPLACED', clockTickId: tick };
   if (candidate.state === 'completed') {
     const cleanupIssue = retire(record, 'completed', true);
     issue ??= cleanupIssue;
@@ -267,7 +429,8 @@ function commit(record: RecordState, candidate: Candidate, tick: number, replace
 }
 function advance(record: RecordState, tick: GameClockTick): SequenceDelivery | undefined {
   if (record.port === undefined || terminal(record.state)) return undefined;
-  const port = record.port, scope = record.scope!;
+  const port = record.port,
+    scope = record.scope!;
   record.busy = true;
   try {
     scope.assertOpen();
@@ -277,30 +440,39 @@ function advance(record: RecordState, tick: GameClockTick): SequenceDelivery | u
     else {
       for (const pending of record.pending) {
         if (pending.tick > tick.tickId) break;
-        try { commandCandidate(record, candidate, pending.command, tick.elapsedSeconds); }
-        catch (cause) { throw new EgretError('ANIMATION_COMMAND_INVALID', {cause}); }
+        try {
+          commandCandidate(record, candidate, pending.command, tick.elapsedSeconds);
+        } catch (cause) {
+          throw new EgretError('ANIMATION_COMMAND_INVALID', { cause });
+        }
         candidate.consumed++;
         if (terminal(candidate.state)) {
-          candidate.terminalCommand = record.pending.length > candidate.consumed; break;
+          candidate.terminalCommand = record.pending.length > candidate.consumed;
+          break;
         }
       }
     }
     return commit(record, candidate, tick.tickId, false);
   } catch (cause) {
     if (codeOf(cause, '') === 'SCOPE_CLOSED' || codeOf(cause, '') === 'ENGINE_CLOSED') {
-      retire(record, 'stopped'); return undefined;
+      retire(record, 'stopped');
+      return undefined;
     }
     return refusal(record, port, scope, cause, tick.tickId);
-  } finally { record.busy = false; }
+  } finally {
+    record.busy = false;
+  }
 }
 function execute(record: RecordState, command: Command, revision?: object): void {
-  const port = assertControl(record), scope = record.scope!;
+  const port = assertControl(record),
+    scope = record.scope!;
   record.revision = revision ?? {};
   const tick = port.clock.tickId;
   if (mustQueue(port)) {
     if (record.pending.length >= 16) throw new EgretError('ANIMATION_COMMAND_LIMIT');
     if (!Number.isSafeInteger(tick + 1)) throw new EgretError('ANIMATION_TIME_LIMIT');
-    record.pending.push(Object.freeze({tick: tick + 1, command})); return;
+    record.pending.push(Object.freeze({ tick: tick + 1, command }));
+    return;
   }
   const replace = command.kind === 'seek' && !command.replay;
   if (record.pending.length !== 0 && !replace) throw new EgretError('ANIMATION_COMMANDS_PENDING');
@@ -308,48 +480,88 @@ function execute(record: RecordState, command: Command, revision?: object): void
   record.busy = true;
   let batch: SequenceDelivery | undefined;
   try {
-    const candidate = begin(record), now = port.clock.elapsedSeconds;
+    const candidate = begin(record),
+      now = port.clock.elapsedSeconds;
     if (command.kind === 'pause' || command.kind === 'rate') settle(record, candidate, now, 'control');
     if (candidate.state === 'completed') candidate.terminalCommand = true;
     else commandCandidate(record, candidate, command, now);
     batch = commit(record, candidate, tick, replaced);
   } catch (cause) {
     batch = refusal(record, port, scope, cause, tick);
-    record.busy = false; deliver(port, batch); throw cause;
-  } finally { record.busy = false; }
+    record.busy = false;
+    deliver(port, batch);
+    throw cause;
+  } finally {
+    record.busy = false;
+  }
   deliver(port, batch);
 }
 function stop(record: RecordState, ownedCancellation = false): void {
-  const port = record.port, scope = record.scope;
+  const port = record.port,
+    scope = record.scope;
   if (port !== undefined && !ownedCancellation) assertNotCapturing(port);
   // A refused reentrant command cannot invalidate an otherwise prepared RESET.
   record.revision = {};
-  const issue = retire(record, terminal(record.state) ? record.state as 'completed' | 'stopped' | 'faulted' : 'stopped');
-  if (issue !== undefined && port !== undefined && scope !== undefined) deliver(port,
-    makeDelivery(record, port, scope, undefined, [], {active: false}, issue));
+  const issue = retire(
+    record,
+    terminal(record.state) ? (record.state as 'completed' | 'stopped' | 'faulted') : 'stopped'
+  );
+  if (issue !== undefined && port !== undefined && scope !== undefined)
+    deliver(port, makeDelivery(record, port, scope, undefined, [], { active: false }, issue));
 }
 function handleFor(record: RecordState): SequenceController {
-  function receiver(value: unknown): void { if (value !== handle) throw new EgretError('ANIMATION_CONTROLLER_INVALID'); }
+  function receiver(value: unknown): void {
+    if (value !== handle) throw new EgretError('ANIMATION_CONTROLLER_INVALID');
+  }
   const handle = Object.freeze({
     profile: 'egret.sequence-control/1' as const,
-    start(): void { receiver(this); execute(record, Object.freeze({kind: 'start'})); },
-    pause(): void { receiver(this); execute(record, Object.freeze({kind: 'pause'})); },
-    resume(): void { receiver(this); execute(record, Object.freeze({kind: 'resume'})); },
+    start(): void {
+      receiver(this);
+      execute(record, Object.freeze({ kind: 'start' }));
+    },
+    pause(): void {
+      receiver(this);
+      execute(record, Object.freeze({ kind: 'pause' }));
+    },
+    resume(): void {
+      receiver(this);
+      execute(record, Object.freeze({ kind: 'resume' }));
+    },
     setRate(rate: number): void {
-      receiver(this); const port = assertControl(record);
-      execute(record, captureInput(port, (): Command => Object.freeze({kind: 'rate', rate: admitRate(rate)})));
+      receiver(this);
+      const port = assertControl(record);
+      execute(
+        record,
+        captureInput(port, (): Command => Object.freeze({ kind: 'rate', rate: admitRate(rate) }))
+      );
     },
     seek(request: SequenceSeekRequest): void {
-      receiver(this); const port = assertControl(record);
-      execute(record, captureInput(port, (): Command => captureSeek(request)));
+      receiver(this);
+      const port = assertControl(record);
+      execute(
+        record,
+        captureInput(port, (): Command => captureSeek(request))
+      );
     },
-    stop(): void { receiver(this); stop(record); },
-    dispose(): void { receiver(this); stop(record); },
-    getStatus(): SequenceControllerStatus { receiver(this); return snapshot(record); },
+    stop(): void {
+      receiver(this);
+      stop(record);
+    },
+    dispose(): void {
+      receiver(this);
+      stop(record);
+    },
+    getStatus(): SequenceControllerStatus {
+      receiver(this);
+      return snapshot(record);
+    }
   }) as SequenceController;
   resetControllers.set(handle, record);
   let targets = resetTargets.get(record.target!);
-  if (!targets) { targets = new WeakMap(); resetTargets.set(record.target!, targets); }
+  if (!targets) {
+    targets = new WeakMap();
+    resetTargets.set(record.target!, targets);
+  }
   targets.set(handle, record.port!);
   return handle;
 }
@@ -359,22 +571,35 @@ const resetControllers = new WeakMap<object, RecordState>();
 const resetTargets = new WeakMap<Bitmap, WeakMap<object, SequenceControllerEnginePort>>();
 function requireResetRecord(value: unknown, port: SequenceControllerEnginePort, bitmap: Bitmap): RecordState {
   const record = resetControllers.get(value as object);
-  if (!record || resetTargets.get(bitmap)?.get(value as object) !== port) throw new EgretError('SEQUENCE_RESET_INITIAL_INVALID');
+  if (!record || resetTargets.get(bitmap)?.get(value as object) !== port)
+    throw new EgretError('SEQUENCE_RESET_INITIAL_INVALID');
   return record;
 }
 /** Optional assembly only: authenticate the exact Engine, original controller and Bitmap. */
-export function requireResetController(value: unknown, port: SequenceControllerEnginePort, bitmap: Bitmap): () => object {
+export function requireResetController(
+  value: unknown,
+  port: SequenceControllerEnginePort,
+  bitmap: Bitmap
+): () => object {
   const record = requireResetRecord(value, port, bitmap);
   return (): object => record.revision;
 }
 
 /** Reserve the replacement pause revision before synchronous event delivery can reenter the slot. */
-export function pauseSequenceForReplacement(value: SequenceController, port: SequenceControllerEnginePort,
-  bitmap: Bitmap, revision: object): void {
-  execute(requireResetRecord(value, port, bitmap), {kind: 'pause'}, revision);
+export function pauseSequenceForReplacement(
+  value: SequenceController,
+  port: SequenceControllerEnginePort,
+  bitmap: Bitmap,
+  revision: object
+): void {
+  execute(requireResetRecord(value, port, bitmap), { kind: 'pause' }, revision);
 }
 
-function requirePreserveRecord(value: SequenceController, port: SequenceControllerEnginePort, bitmap: Bitmap): RecordState {
+function requirePreserveRecord(
+  value: SequenceController,
+  port: SequenceControllerEnginePort,
+  bitmap: Bitmap
+): RecordState {
   const record = requireResetRecord(value, port, bitmap);
   if ((record.state !== 'running' && record.state !== 'paused') || record.pending.length !== 0) {
     throw new EgretError('SEQUENCE_RESET_PRESERVE_STATE');
@@ -382,24 +607,41 @@ function requirePreserveRecord(value: SequenceController, port: SequenceControll
   assertControl(record);
   return record;
 }
-export function requireSequencePreserveSource(value: SequenceController, port: SequenceControllerEnginePort,
-  bitmap: Bitmap): {clip: SequenceClip; totalPlays: number | 'infinite';
-    markers: readonly {readonly id: string; readonly timeSeconds: number; readonly markerIndex: number}[]} {
+export function requireSequencePreserveSource(
+  value: SequenceController,
+  port: SequenceControllerEnginePort,
+  bitmap: Bitmap
+): {
+  clip: SequenceClip;
+  totalPlays: number | 'infinite';
+  markers: readonly { readonly id: string; readonly timeSeconds: number; readonly markerIndex: number }[];
+} {
   const record = requirePreserveRecord(value, port, bitmap);
-  return {clip: record.clip!, totalPlays: record.totalPlays, markers: record.markers};
+  return { clip: record.clip!, totalPlays: record.totalPlays, markers: record.markers };
 }
 
 /** Stage an event-free successor at the paused source position. The slot has checked both timelines. */
-export function stageSequencePreserve(port: SequenceControllerEnginePort, from: SequenceController, fromBitmap: Bitmap,
-  to: SequenceController, toBitmap: Bitmap, running: boolean): () => void {
-  const source = requirePreserveRecord(from, port, fromBitmap), next = requireResetRecord(to, port, toBitmap);
+export function stageSequencePreserve(
+  port: SequenceControllerEnginePort,
+  from: SequenceController,
+  fromBitmap: Bitmap,
+  to: SequenceController,
+  toBitmap: Bitmap,
+  running: boolean
+): () => void {
+  const source = requirePreserveRecord(from, port, fromBitmap),
+    next = requireResetRecord(to, port, toBitmap);
   assertControl(next);
   if (source.state !== 'paused' || next.state !== 'idle' || source.totalPlays !== next.totalPlays) {
     throw new EgretError('SEQUENCE_RESET_PRESERVE_STATE');
   }
   const candidate = begin(next);
-  candidate.elapsed = source.elapsed; candidate.position = source.position; candidate.play = source.play;
-  candidate.rate = source.rate; candidate.state = 'paused'; candidate.applyTarget = true;
+  candidate.elapsed = source.elapsed;
+  candidate.position = source.position;
+  candidate.play = source.play;
+  candidate.rate = source.rate;
+  candidate.state = 'paused';
+  candidate.applyTarget = true;
   candidate.baseline = port.clock.elapsedSeconds;
   commit(next, candidate, port.clock.tickId, false).diagnostics();
   next.eventCount = source.eventCount;
@@ -412,8 +654,13 @@ export function stageSequencePreserve(port: SequenceControllerEnginePort, from: 
 }
 
 /** Opt-in sequence controls share Engine ownership but never create a second timer. */
-export function createSequenceController(engine: Engine, scope: Scope, bitmap: Bitmap, clip: SequenceClip,
-  options: SequenceControllerOptions): SequenceController {
+export function createSequenceController(
+  engine: Engine,
+  scope: Scope,
+  bitmap: Bitmap,
+  clip: SequenceClip,
+  options: SequenceControllerOptions
+): SequenceController {
   const port = requireSequenceControllerEngine(engine);
   const owned = port.scope(scope);
   assertNotCapturing(port);
@@ -423,32 +670,71 @@ export function createSequenceController(engine: Engine, scope: Scope, bitmap: B
   try {
     // Original constructor authenticates Bitmap/clip before reading clip dimensions.
     player = new playerConstructor(bitmap, clip, 'once');
-    Object.defineProperty(player, 'dispose', {value: originalDispose, writable: false, configurable: false});
+    Object.defineProperty(player, 'dispose', { value: originalDispose, writable: false, configurable: false });
     const admitted = captureInput(port, (): CapturedOptions => captureOptions(options, clip.durationSeconds));
     owned.assertOpen();
     if (port.claims.has(bitmap)) throw new EgretError('ANIMATION_TARGET_BUSY');
     coordinator = requireCoordinator(port);
-    record = {port, scope: owned, coordinator, driver: undefined, player, clip, target: bitmap,
-      claimed: false, claimToken: {}, abort: undefined, duration: clip.durationSeconds,
-      totalPlays: admitted.totalPlays, markers: admitted.markers, listener: admitted.listener,
-      state: 'idle', elapsed: 0, position: 0, play: 0, rate: admitted.rate,
-      baseline: port.clock.elapsedSeconds, lastSample: undefined, eventCount: 0,
-      lastIssue: undefined, pending: [], busy: false, revision: {}, delivery: undefined};
+    record = {
+      port,
+      scope: owned,
+      coordinator,
+      driver: undefined,
+      player,
+      clip,
+      target: bitmap,
+      claimed: false,
+      claimToken: {},
+      abort: undefined,
+      duration: clip.durationSeconds,
+      totalPlays: admitted.totalPlays,
+      markers: admitted.markers,
+      listener: admitted.listener,
+      state: 'idle',
+      elapsed: 0,
+      position: 0,
+      play: 0,
+      rate: admitted.rate,
+      baseline: port.clock.elapsedSeconds,
+      lastSample: undefined,
+      eventCount: 0,
+      lastIssue: undefined,
+      pending: [],
+      busy: false,
+      revision: {},
+      delivery: undefined
+    };
     player = undefined;
     const current = record;
     const handle = handleFor(current);
-    const driver: SequenceDriver = {advance: (tick): SequenceDelivery | undefined => advance(current, tick), stop: (): void => stop(current, true)};
+    const driver: SequenceDriver = {
+      advance: (tick): SequenceDelivery | undefined => advance(current, tick),
+      stop: (): void => stop(current, true)
+    };
     current.driver = driver;
-    owned.use(current.player!); owned.use(handle);
+    owned.use(current.player!);
+    owned.use(handle);
     current.abort = (): void => stop(current, true);
-    owned.add(current.abort); owned.assertOpen();
-    port.claims.acquire(bitmap, current.claimToken); current.claimed = true;
+    owned.add(current.abort);
+    owned.assertOpen();
+    port.claims.acquire(bitmap, current.claimToken);
+    current.claimed = true;
     coordinator.add(driver);
     return handle;
   } catch (cause) {
     if (record !== undefined) retire(record, 'stopped');
-    else if (player !== undefined) { try { apply(playerDispose, player, []); } catch (cleanupCause) { port.captureCleanup(cleanupCause); } }
-    try { coordinator?.discardIfEmpty(); } catch (cleanupCause) { port.captureCleanup(cleanupCause); }
+    else if (player !== undefined) {
+      try {
+        apply(playerDispose, player, []);
+      } catch (cleanupCause) {
+        port.captureCleanup(cleanupCause);
+      }
+    }
+    try {
+      coordinator?.discardIfEmpty();
+    } catch (cleanupCause) {
+      port.captureCleanup(cleanupCause);
+    }
     throw cause;
   }
 }

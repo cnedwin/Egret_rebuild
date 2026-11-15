@@ -5,19 +5,41 @@
 
 /** Fixed vertex attribute locations shared by every program and vertex array. */
 export const ATTRIBUTE_LOCATIONS_3D = Object.freeze({
-    position: 0, normal: 1, uv: 2, tangent: 3, color: 4, joints: 5, weights: 6, uv1: 7,
-    instanceMatrix: 8, instanceColor: 12, instanceAnimation: 13, instanceAnimation2: 14, instanceLook: 15,
+  position: 0,
+  normal: 1,
+  uv: 2,
+  tangent: 3,
+  color: 4,
+  joints: 5,
+  weights: 6,
+  uv1: 7,
+  instanceMatrix: 8,
+  instanceColor: 12,
+  instanceAnimation: 13,
+  instanceAnimation2: 14,
+  instanceLook: 15
 } as const);
 
 /** Fixed texture units; samplers are assigned once when a program is linked. */
 export const TEXTURE_UNITS_3D = Object.freeze({
-    map: 0, normalMap: 1, metallicRoughnessMap: 2, occlusionMap: 3, emissiveMap: 4,
-    environment: 5, shadow: 6, bones: 7, morph: 8, lightMap: 9, sceneColor: 10, reflectionMap: 11, sceneDepth: 12,
+  map: 0,
+  normalMap: 1,
+  metallicRoughnessMap: 2,
+  occlusionMap: 3,
+  emissiveMap: 4,
+  environment: 5,
+  shadow: 6,
+  bones: 7,
+  morph: 8,
+  lightMap: 9,
+  sceneColor: 10,
+  reflectionMap: 11,
+  sceneDepth: 12
 } as const);
 
 export const MAX_MORPH_INFLUENCES_3D = 8;
 
-const FRAME_BLOCK = /* glsl */`
+const FRAME_BLOCK = /* glsl */ `
 layout(std140) uniform Frame {
     mat4 uViewProjection;
     mat4 uView;
@@ -48,7 +70,7 @@ layout(std140) uniform Frame {
 };
 `;
 
-const VERTEX_SOURCE = /* glsl */`
+const VERTEX_SOURCE = /* glsl */ `
 layout(location = 0) in vec3 aPosition;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aUv;
@@ -283,7 +305,7 @@ void main() {
 }
 `;
 
-const FRAGMENT_SOURCE = /* glsl */`
+const FRAGMENT_SOURCE = /* glsl */ `
 ${FRAME_BLOCK}
 uniform vec4 uColor;             // linear rgb and opacity
 uniform vec3 uEmissive;
@@ -762,18 +784,33 @@ void main() {
 `;
 
 export interface ShaderSources3D {
-    readonly vertex: string;
-    readonly fragment: string;
+  readonly vertex: string;
+  readonly fragment: string;
 }
 /** Specialize the material shader pair with a list of preprocessor symbols. */
-export function buildMaterialShader3D(defines: readonly string[], customFragment = '', customVertex = '', customNormal = ''): ShaderSources3D {
-    const header = '#version 300 es\nprecision highp float;\nprecision highp int;\n' + defines.map(name => '#define ' + name + '\n').join('');
-    return {vertex: header + VERTEX_SOURCE.replace('/*CUSTOM_VERTEX*/', () => customVertex), fragment: header + FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment).replace('/*CUSTOM_NORMAL*/', () => customNormal)};
+export function buildMaterialShader3D(
+  defines: readonly string[],
+  customFragment = '',
+  customVertex = '',
+  customNormal = ''
+): ShaderSources3D {
+  const header =
+    '#version 300 es\nprecision highp float;\nprecision highp int;\n' +
+    defines.map(name => '#define ' + name + '\n').join('');
+  return {
+    vertex: header + VERTEX_SOURCE.replace('/*CUSTOM_VERTEX*/', () => customVertex),
+    fragment:
+      header +
+      FRAGMENT_SOURCE.replace('/*CUSTOM_FRAGMENT*/', () => customFragment).replace(
+        '/*CUSTOM_NORMAL*/',
+        () => customNormal
+      )
+  };
 }
 
 /** Full-screen triangle that samples a cube map along the view ray; drawn at the far plane. */
 export const SKYBOX_SHADER_3D: ShaderSources3D = Object.freeze({
-    vertex: /* glsl */`#version 300 es
+  vertex: /* glsl */ `#version 300 es
 precision highp float;
 uniform mat4 uInverseViewProjection;
 out vec3 vDirection;
@@ -785,7 +822,7 @@ void main() {
     gl_Position = vec4(corner, 1.0, 1.0);
 }
 `,
-    fragment: /* glsl */`#version 300 es
+  fragment: /* glsl */ `#version 300 es
 precision highp float;
 uniform samplerCube uEnvironment;
 uniform vec4 uOutput; // x: intensity, y: 1 keeps linear output, z: exposure, w: tone mapping
@@ -799,5 +836,5 @@ void main() {
     if (uOutput.y < 0.5) color = mix(color * 12.92, 1.055 * pow(color, vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), color));
     outColor = vec4(color, 1.0);
 }
-`,
+`
 });

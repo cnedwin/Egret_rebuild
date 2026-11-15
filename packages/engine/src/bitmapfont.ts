@@ -3,5 +3,12 @@
 export { parseBitmapFont } from './bitmapFontParse.js';
 export { createBitmapText, layoutBitmapText } from './bitmapText.js';
 export type {
-  BitmapFont, BitmapGlyph, BitmapText, BitmapTextGlyph, BitmapTextLayout, BitmapTextLayoutOptions, BitmapTextLine, BitmapTextOptions,
+  BitmapFont,
+  BitmapGlyph,
+  BitmapText,
+  BitmapTextGlyph,
+  BitmapTextLayout,
+  BitmapTextLayoutOptions,
+  BitmapTextLine,
+  BitmapTextOptions
 } from './bitmapFontTypes.js';

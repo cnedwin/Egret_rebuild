@@ -9,4 +9,3 @@ export interface Diagnostic {
 
 /** Observation only: throwing cannot change cleanup or cancellation progress. */
 export type DiagnosticHandler = (diagnostic: Diagnostic) => void;
-

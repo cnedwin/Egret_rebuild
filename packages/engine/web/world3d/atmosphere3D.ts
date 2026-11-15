@@ -3,29 +3,29 @@
 // distance and thins with height, in closed form along each view ray; shafts
 // are the open sky around the sun smeared toward the viewer, so anything that
 // stands in front of the sun cuts dark streaks into the haze.
-import type {Camera3D} from '../../rendering/world3d/Camera3D.js';
-import {World3DError, requireFinite3D} from '../../rendering/world3d/core3D.js';
-import {colorFromHex} from '../../rendering/world3d/math3D.js';
-import {type CustomPost3D, createCustomPost3D} from './post3D.js';
+import type { Camera3D } from '../../rendering/world3d/Camera3D.js';
+import { World3DError, requireFinite3D } from '../../rendering/world3d/core3D.js';
+import { colorFromHex } from '../../rendering/world3d/math3D.js';
+import { type CustomPost3D, createCustomPost3D } from './post3D.js';
 
 export interface AtmosphereOptions3D {
-    /** Fog color, 0xRRGGBB. Default a pale blue-grey. */
-    readonly fogColor?: number;
-    /** Fog thickness per world unit at `fogHeight`; 0 turns fog off. Default 0.01. */
-    readonly fogDensity?: number;
-    /** World height at which the fog has its stated density. Default 0. */
-    readonly fogHeight?: number;
-    /** How quickly the fog thins with height, per world unit; 0 gives uniform fog. Default 0.08. */
-    readonly fogFalloff?: number;
-    /** Brightness of the light shafts; 0 turns them off. Default 0.6. */
-    readonly shaftIntensity?: number;
-    /** How far the shafts reach across the screen, 0 to 1. Default 0.6. */
-    readonly shaftLength?: number;
+  /** Fog color, 0xRRGGBB. Default a pale blue-grey. */
+  readonly fogColor?: number;
+  /** Fog thickness per world unit at `fogHeight`; 0 turns fog off. Default 0.01. */
+  readonly fogDensity?: number;
+  /** World height at which the fog has its stated density. Default 0. */
+  readonly fogHeight?: number;
+  /** How quickly the fog thins with height, per world unit; 0 gives uniform fog. Default 0.08. */
+  readonly fogFalloff?: number;
+  /** Brightness of the light shafts; 0 turns them off. Default 0.6. */
+  readonly shaftIntensity?: number;
+  /** How far the shafts reach across the screen, 0 to 1. Default 0.6. */
+  readonly shaftLength?: number;
 }
 
 // uniforms: [0] fog rgb, density; [1] falloff, base height, sky distance, shaft intensity;
 //           [2] sun uv, sun visibility, shaft length; [3] the camera's world Y axis in view space, camera height.
-const GLSL = /* glsl */`
+const GLSL = /* glsl */ `
 vec3 customPost(vec3 color, vec2 uv) {
     vec4 fog = uPostCustom[0], shape = uPostCustom[1], sun = uPostCustom[2], up = uPostCustom[3];
     vec3 view = unprojectDepth(uv, rawDepth(uv));
@@ -57,7 +57,7 @@ vec3 customPost(vec3 color, vec2 uv) {
     return color;
 }
 `;
-const WGSL = /* wgsl */`
+const WGSL = /* wgsl */ `
 fn customPost(color: vec3f, uv: vec2f) -> vec3f {
     let fog = params.custom[0];
     let shape = params.custom[1];
@@ -103,60 +103,101 @@ fn customPost(color: vec3f, uv: vec2f) -> vec3f {
  * to know where the camera and the sun are.
  */
 export class Atmosphere3D {
-    readonly post: CustomPost3D;
-    readonly #scratch = [0, 0, 0];
+  readonly post: CustomPost3D;
+  readonly #scratch = [0, 0, 0];
 
-    constructor(options: AtmosphereOptions3D = {}) {
-        this.post = createCustomPost3D({key: 'world3d-atmosphere', glsl: GLSL, wgsl: WGSL});
-        colorFromHex(this.post.uniforms, options.fogColor ?? 0xb4c4d4);
-        this.fogDensity = options.fogDensity ?? 0.01;
-        this.fogHeight = options.fogHeight ?? 0;
-        this.fogFalloff = options.fogFalloff ?? 0.08;
-        this.shaftIntensity = options.shaftIntensity ?? 0.6;
-        this.shaftLength = options.shaftLength ?? 0.6;
-    }
-    get fogDensity(): number { return this.post.uniforms[3]!; }
-    set fogDensity(value: number) { this.post.uniforms[3] = this.amount(value, 'fogDensity'); }
-    get fogFalloff(): number { return this.post.uniforms[4]!; }
-    set fogFalloff(value: number) { this.post.uniforms[4] = this.amount(value, 'fogFalloff'); }
-    get fogHeight(): number { return this.post.uniforms[5]!; }
-    set fogHeight(value: number) { this.post.uniforms[5] = requireFinite3D(value, 'fogHeight'); }
-    get shaftIntensity(): number { return this.post.uniforms[7]!; }
-    set shaftIntensity(value: number) { this.post.uniforms[7] = this.amount(value, 'shaftIntensity'); }
-    get shaftLength(): number { return this.post.uniforms[11]!; }
-    set shaftLength(value: number) { const length = this.amount(value, 'shaftLength'); if (length > 1) throw new World3DError('WORLD3D_INPUT_INVALID', 'shaftLength'); this.post.uniforms[11] = length; }
-    /** Linear RGB fog color. */
-    setFogColor(r: number, g: number, b: number): void { this.post.uniforms[0] = requireFinite3D(r, 'color'); this.post.uniforms[1] = requireFinite3D(g, 'color'); this.post.uniforms[2] = requireFinite3D(b, 'color'); }
-    /**
-     * Refresh the camera and sun data. `sunDirection` is the direction the
-     * sunlight travels in, as a directional light's world direction; pass
-     * undefined when there is no sun, which leaves only the fog.
-     */
-    update(camera: Camera3D, sunDirection?: ArrayLike<number>): void {
-        camera.updateViewMatrices();
-        const u = this.post.uniforms, world = camera.matrixWorld;
-        // World up expressed in view space is the second row of the camera's rotation.
-        const sx = Math.hypot(world[0]!, world[1]!, world[2]!) || 1, sy = Math.hypot(world[4]!, world[5]!, world[6]!) || 1, sz = Math.hypot(world[8]!, world[9]!, world[10]!) || 1;
-        u[12] = world[1]! / sx; u[13] = world[5]! / sy; u[14] = world[9]! / sz; u[15] = world[13]!;
-        u[6] = camera.far * 0.98;
-        u[10] = 0;
-        if (!sunDirection) return;
-        const dx = requireFinite3D(sunDirection[0], 'sunDirection'), dy = requireFinite3D(sunDirection[1], 'sunDirection'), dz = requireFinite3D(sunDirection[2], 'sunDirection'), length = Math.hypot(dx, dy, dz);
-        if (length < 1e-9) return;
-        // The sun sits far away against the light's travel; project that point to the screen.
-        const far = camera.far * 0.5, at = this.#scratch;
-        at[0] = world[12]! - dx / length * far; at[1] = world[13]! - dy / length * far; at[2] = world[14]! - dz / length * far;
-        const forward = -(world[8]! * -dx + world[9]! * -dy + world[10]! * -dz) / (length * sz);
-        if (forward <= 0.05) return;
-        camera.worldToScreenPoint(at, at);
-        u[8] = at[0]! * 0.5 + 0.5; u[9] = at[1]! * 0.5 + 0.5;
-        // Fade the shafts out as the sun leaves the view.
-        const off = Math.max(Math.abs(at[0]!), Math.abs(at[1]!));
-        u[10] = Math.min(1, forward * 2) * Math.max(0, Math.min(1, (1.8 - off) / 0.8));
-    }
-    private amount(value: number, field: string): number {
-        if (requireFinite3D(value, field) < 0) throw new World3DError('WORLD3D_INPUT_INVALID', field);
-        return value;
-    }
+  constructor(options: AtmosphereOptions3D = {}) {
+    this.post = createCustomPost3D({ key: 'world3d-atmosphere', glsl: GLSL, wgsl: WGSL });
+    colorFromHex(this.post.uniforms, options.fogColor ?? 0xb4c4d4);
+    this.fogDensity = options.fogDensity ?? 0.01;
+    this.fogHeight = options.fogHeight ?? 0;
+    this.fogFalloff = options.fogFalloff ?? 0.08;
+    this.shaftIntensity = options.shaftIntensity ?? 0.6;
+    this.shaftLength = options.shaftLength ?? 0.6;
+  }
+  get fogDensity(): number {
+    return this.post.uniforms[3]!;
+  }
+  set fogDensity(value: number) {
+    this.post.uniforms[3] = this.amount(value, 'fogDensity');
+  }
+  get fogFalloff(): number {
+    return this.post.uniforms[4]!;
+  }
+  set fogFalloff(value: number) {
+    this.post.uniforms[4] = this.amount(value, 'fogFalloff');
+  }
+  get fogHeight(): number {
+    return this.post.uniforms[5]!;
+  }
+  set fogHeight(value: number) {
+    this.post.uniforms[5] = requireFinite3D(value, 'fogHeight');
+  }
+  get shaftIntensity(): number {
+    return this.post.uniforms[7]!;
+  }
+  set shaftIntensity(value: number) {
+    this.post.uniforms[7] = this.amount(value, 'shaftIntensity');
+  }
+  get shaftLength(): number {
+    return this.post.uniforms[11]!;
+  }
+  set shaftLength(value: number) {
+    const length = this.amount(value, 'shaftLength');
+    if (length > 1) throw new World3DError('WORLD3D_INPUT_INVALID', 'shaftLength');
+    this.post.uniforms[11] = length;
+  }
+  /** Linear RGB fog color. */
+  setFogColor(r: number, g: number, b: number): void {
+    this.post.uniforms[0] = requireFinite3D(r, 'color');
+    this.post.uniforms[1] = requireFinite3D(g, 'color');
+    this.post.uniforms[2] = requireFinite3D(b, 'color');
+  }
+  /**
+   * Refresh the camera and sun data. `sunDirection` is the direction the
+   * sunlight travels in, as a directional light's world direction; pass
+   * undefined when there is no sun, which leaves only the fog.
+   */
+  update(camera: Camera3D, sunDirection?: ArrayLike<number>): void {
+    camera.updateViewMatrices();
+    const u = this.post.uniforms,
+      world = camera.matrixWorld;
+    // World up expressed in view space is the second row of the camera's rotation.
+    const sx = Math.hypot(world[0]!, world[1]!, world[2]!) || 1,
+      sy = Math.hypot(world[4]!, world[5]!, world[6]!) || 1,
+      sz = Math.hypot(world[8]!, world[9]!, world[10]!) || 1;
+    u[12] = world[1]! / sx;
+    u[13] = world[5]! / sy;
+    u[14] = world[9]! / sz;
+    u[15] = world[13]!;
+    u[6] = camera.far * 0.98;
+    u[10] = 0;
+    if (!sunDirection) return;
+    const dx = requireFinite3D(sunDirection[0], 'sunDirection'),
+      dy = requireFinite3D(sunDirection[1], 'sunDirection'),
+      dz = requireFinite3D(sunDirection[2], 'sunDirection'),
+      length = Math.hypot(dx, dy, dz);
+    if (length < 1e-9) return;
+    // The sun sits far away against the light's travel; project that point to the screen.
+    const far = camera.far * 0.5,
+      at = this.#scratch;
+    at[0] = world[12]! - (dx / length) * far;
+    at[1] = world[13]! - (dy / length) * far;
+    at[2] = world[14]! - (dz / length) * far;
+    const forward = -(world[8]! * -dx + world[9]! * -dy + world[10]! * -dz) / (length * sz);
+    if (forward <= 0.05) return;
+    camera.worldToScreenPoint(at, at);
+    u[8] = at[0]! * 0.5 + 0.5;
+    u[9] = at[1]! * 0.5 + 0.5;
+    // Fade the shafts out as the sun leaves the view.
+    const off = Math.max(Math.abs(at[0]!), Math.abs(at[1]!));
+    u[10] = Math.min(1, forward * 2) * Math.max(0, Math.min(1, (1.8 - off) / 0.8));
+  }
+  private amount(value: number, field: string): number {
+    if (requireFinite3D(value, field) < 0) throw new World3DError('WORLD3D_INPUT_INVALID', field);
+    return value;
+  }
 }
-export function createAtmosphere3D(options: AtmosphereOptions3D = {}): Atmosphere3D { return new Atmosphere3D(options); }
+export function createAtmosphere3D(options: AtmosphereOptions3D = {}): Atmosphere3D {
+  return new Atmosphere3D(options);
+}

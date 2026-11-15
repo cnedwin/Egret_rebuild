@@ -1,4 +1,4 @@
-import { cleanupManagedWrapper } from './ui/managedState.js';
+import { cleanupManagedWrapper } from "./ui/managedState.js";
 import type { CancellationSignal, ScopeValue } from "@egret/contracts";
 import { CancellationController } from "./CancellationController.js";
 import { EgretError } from "./EgretError.js";
@@ -11,7 +11,9 @@ export let createScope: (engine: EngineContext, onClosed: (scope: Scope) => void
 const CREATION_TOKEN: unique symbol = Symbol("egret.scopeFactory");
 const scopes = new WeakSet<object>();
 /** Runtime-private identity for owner-chain lifetime validation. */
-export function isScope(value: object): value is Scope { return scopes.has(value); }
+export function isScope(value: object): value is Scope {
+  return scopes.has(value);
+}
 const activeRegistrations = new WeakSet<object>();
 
 function cleanup(value: ScopeValue): void {
@@ -22,7 +24,7 @@ function cleanup(value: ScopeValue): void {
 
 /** Synchronous ownership boundary. Use Engine.createScope() to obtain one. */
 export class Scope {
-   #currentState: ScopeState = "open";
+  #currentState: ScopeState = "open";
   // Runtime-private ownership paths ignore harmless public old-name shadows.
   readonly #values: ScopeValue[] = [];
   readonly #controller: CancellationController;
@@ -35,7 +37,7 @@ export class Scope {
     scopes.add(this);
     this.#engine = engine;
     this.#onClosed = onClosed;
-    this.#controller = new CancellationController((diagnostic) => {
+    this.#controller = new CancellationController(diagnostic => {
       this.#engine.captureCleanup(diagnostic.cause);
       this.#engine.report(diagnostic);
     });
@@ -46,7 +48,9 @@ export class Scope {
     createScope = (engine, onClosed): Scope => new Scope(engine, onClosed, CREATION_TOKEN);
   }
 
-  public get state(): ScopeState { return this.#currentState; }
+  public get state(): ScopeState {
+    return this.#currentState;
+  }
 
   /** Accept one cleanup owner after callback-free validation of the current tree. */
   public use<T extends ScopeValue>(value: T): T {
@@ -77,8 +81,9 @@ export class Scope {
     let closedError: EgretError | undefined;
     if (this.#currentState !== "open") closedError = new EgretError("SCOPE_CLOSED");
     else {
-      try { this.#engine.assertOpen(); }
-      catch (cause) {
+      try {
+        this.#engine.assertOpen();
+      } catch (cause) {
         closedError = cause instanceof EgretError ? cause : new EgretError("ENGINE_CLOSED", { cause });
       }
     }
@@ -86,8 +91,9 @@ export class Scope {
       const cleanupErrors: unknown[] = [];
       // A late unowned value must be cleaned up; a foreign owner stays authoritative.
       if (existingOwner === undefined) {
-        try { cleanup(value); }
-        catch (cause) {
+        try {
+          cleanup(value);
+        } catch (cause) {
           cleanupErrors.push(cause);
           this.#engine.captureCleanup(cause);
           this.#engine.report({ code: "SCOPE_LATE_CLEANUP_FAILED", phase: "scope", severity: "error", cause });
@@ -107,8 +113,9 @@ export class Scope {
       for (let index = this.#values.length - 1; index >= 0; index--) {
         const value = this.#values[index];
         if (value === undefined) continue;
-        try { cleanup(value); }
-        catch (cause) {
+        try {
+          cleanup(value);
+        } catch (cause) {
           this.#engine.captureCleanup(cause);
           this.#engine.report({ code: "SCOPE_CLEANUP_FAILED", phase: "scope", severity: "error", cause });
         }

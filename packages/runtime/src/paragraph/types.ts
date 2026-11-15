@@ -6,14 +6,20 @@ import type { DisplayObjectContainer } from '../DisplayObjectContainer.js';
 
 export type ParagraphTextAffinity = 'upstream' | 'downstream';
 export interface ParagraphTextBox {
-  readonly left: number; readonly top: number; readonly right: number; readonly bottom: number;
+  readonly left: number;
+  readonly top: number;
+  readonly right: number;
+  readonly bottom: number;
 }
 export interface ParagraphTextCluster extends ParagraphTextBox {
-  readonly start: number; readonly end: number; readonly lineIndex: number;
+  readonly start: number;
+  readonly end: number;
+  readonly lineIndex: number;
   readonly direction: 'ltr' | 'rtl';
 }
 export interface ParagraphTextLine extends ParagraphTextBox {
-  readonly start: number; readonly end: number;
+  readonly start: number;
+  readonly end: number;
 }
 /** Provider data is copied before it acquires cache or committed-display authority. */
 export interface ParagraphTextGeometryData {
@@ -21,12 +27,20 @@ export interface ParagraphTextGeometryData {
   readonly clusters: readonly ParagraphTextCluster[];
 }
 export interface ParagraphTextCaret {
-  readonly offset: number; readonly affinity: ParagraphTextAffinity; readonly lineIndex: number;
-  readonly x: number; readonly top: number; readonly bottom: number;
+  readonly offset: number;
+  readonly affinity: ParagraphTextAffinity;
+  readonly lineIndex: number;
+  readonly x: number;
+  readonly top: number;
+  readonly bottom: number;
 }
-export interface ParagraphTextHit extends ParagraphTextCaret { readonly inside: boolean; }
+export interface ParagraphTextHit extends ParagraphTextCaret {
+  readonly inside: boolean;
+}
 export interface ParagraphTextSelection extends ParagraphTextBox {
-  readonly start: number; readonly end: number; readonly lineIndex: number;
+  readonly start: number;
+  readonly end: number;
+  readonly lineIndex: number;
   readonly direction: 'ltr' | 'rtl';
 }
 /** Detached logical coordinates, independent of raster guards and density. */
@@ -133,10 +147,21 @@ declare const cacheBrand: unique symbol;
 export interface ParagraphCache {
   readonly [cacheBrand]: true;
   readonly profile: 'readonly-paragraph-v1';
-  acquire(request: ParagraphRequestInput, options?: Readonly<{ signal?: CancellationSignal }>): Promise<PreparedParagraph>;
+  acquire(
+    request: ParagraphRequestInput,
+    options?: Readonly<{ signal?: CancellationSignal }>
+  ): Promise<PreparedParagraph>;
   /** Retire cached generations without invalidating already borrowed images. */
   invalidate(): void;
-  getStatus(): Readonly<{ closed: boolean; generation: number; entries: number; imageBytes: number; geometryBytes: number; pendingJobs: number; callerLeases: number }>;
+  getStatus(): Readonly<{
+    closed: boolean;
+    generation: number;
+    entries: number;
+    imageBytes: number;
+    geometryBytes: number;
+    pendingJobs: number;
+    callerLeases: number;
+  }>;
   dispose(): void;
 }
 declare const paragraphBrand: unique symbol;

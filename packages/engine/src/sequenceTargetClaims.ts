@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import {EgretError} from '@egret/runtime';
-import type {Bitmap} from '@egret/runtime';
+import { EgretError } from '@egret/runtime';
+import type { Bitmap } from '@egret/runtime';
 
 /** Private Engine-owned claims shared by the original and optional playback profiles. */
 export interface SequenceTargetClaims {
@@ -14,8 +14,12 @@ export function createSequenceTargetClaims(): SequenceTargetClaims {
   const targets = new WeakMap<Bitmap, object>();
   let size = 0;
   return Object.freeze({
-    get size(): number { return size; },
-    has(target: Bitmap): boolean { return targets.has(target); },
+    get size(): number {
+      return size;
+    },
+    has(target: Bitmap): boolean {
+      return targets.has(target);
+    },
     acquire(target: Bitmap, token: object): void {
       // Admission is callback-free; refusal never replaces a previous claimant.
       if (size >= 256) throw new EgretError('ANIMATION_LIMIT');
@@ -28,6 +32,6 @@ export function createSequenceTargetClaims(): SequenceTargetClaims {
       if (targets.get(target) !== token) return;
       targets.delete(target);
       size--;
-    },
+    }
   });
 }

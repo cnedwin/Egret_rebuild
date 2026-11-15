@@ -44,7 +44,8 @@ function stateOf(dispatcher: EventDispatcher): DispatcherState {
 }
 
 function candidatesOf(dispatcher: EventDispatcher, type: object, capture: boolean): readonly Subscription[] {
-  return [...stateOf(dispatcher).subscriptions].filter((entry) => entry.type === type && entry.capture === capture)
+  return [...stateOf(dispatcher).subscriptions]
+    .filter(entry => entry.type === type && entry.capture === capture)
     .sort((a, b) => b.priority - a.priority || a.sequence - b.sequence);
 }
 
@@ -57,7 +58,7 @@ function executeDispatch<T>(
   target: EventDispatcher,
   event: Event<T>,
   route: () => readonly EventDispatcher[],
-  select: (node: EventDispatcher, type: object, capture: boolean) => readonly Subscription[],
+  select: (node: EventDispatcher, type: object, capture: boolean) => readonly Subscription[]
 ): boolean {
   const state = beginDispatch(event, target);
   try {
@@ -68,9 +69,14 @@ function executeDispatch<T>(
       if (node !== undefined) visits.push({ node, phase: "capturing", candidates: select(node, event.type, true) });
     }
     // Target groups share one visit so stopPropagation preserves both groups.
-    visits.push({ node: target, phase: "atTarget", candidates: [...select(target, event.type, true), ...select(target, event.type, false)] });
+    visits.push({
+      node: target,
+      phase: "atTarget",
+      candidates: [...select(target, event.type, true), ...select(target, event.type, false)]
+    });
     if (event.type.bubbles) {
-      for (const node of ancestors) visits.push({ node, phase: "bubbling", candidates: select(node, event.type, false) });
+      for (const node of ancestors)
+        visits.push({ node, phase: "bubbling", candidates: select(node, event.type, false) });
     }
     for (const visit of visits) {
       visitDispatch(event, visit.node, visit.phase);
@@ -80,10 +86,20 @@ function executeDispatch<T>(
         // Remove once-listeners before invocation to prevent reentrant duplicates.
         if (candidate.once) candidate.unsubscribe();
         const returned = candidate.invoke(event);
-        if (returned !== null && (typeof returned === "object" || typeof returned === "function") && "then" in returned && typeof returned.then === "function") {
+        if (
+          returned !== null &&
+          (typeof returned === "object" || typeof returned === "function") &&
+          "then" in returned &&
+          typeof returned.then === "function"
+        ) {
           // Invalid asynchronous handlers must not create an unhandled rejection.
           void Promise.resolve(returned).catch((cause: unknown): void => {
-            engineOf(target)?.report({ code: "ASYNC_EVENT_HANDLER_REJECTED", phase: "engine", severity: "error", cause });
+            engineOf(target)?.report({
+              code: "ASYNC_EVENT_HANDLER_REJECTED",
+              phase: "engine",
+              severity: "error",
+              cause
+            });
           });
           throw new EgretError("ASYNC_EVENT_HANDLER");
         }
@@ -100,7 +116,7 @@ function executeDispatch<T>(
 export function dispatchDisplayInputEvent<T>(
   target: EventDispatcher,
   event: Event<T>,
-  ancestors: readonly EventDispatcher[],
+  ancestors: readonly EventDispatcher[]
 ): boolean {
   return executeDispatch(target, event, (): readonly EventDispatcher[] => ancestors, candidatesOf);
 }
@@ -112,13 +128,15 @@ export class EventDispatcher {
   }
 
   protected assertUsable(): void {}
-  protected eventParent(): EventDispatcher | undefined { return undefined; }
+  protected eventParent(): EventDispatcher | undefined {
+    return undefined;
+  }
 
   /** Async handlers are excluded by types and rejected if returned at runtime. */
   public on<T, H extends (event: Event<T>) => unknown>(
     type: EventType<T>,
     handler: H & (Extract<ReturnType<H>, PromiseLike<unknown>> extends never ? unknown : never),
-    options: EventListenerOptions = {},
+    options: EventListenerOptions = {}
   ): () => void {
     this.assertUsable();
     const priority = options.priority ?? 0;
@@ -140,7 +158,7 @@ export class EventDispatcher {
         subscription.active = false;
         state.subscriptions.delete(subscription);
         signal?.removeEventListener("abort", subscription.unsubscribe);
-      },
+      }
     };
     if (isDisplayNode(this)) assertLive(this);
     state.subscriptions.add(subscription);
@@ -155,8 +173,11 @@ export class EventDispatcher {
       subscription.active = false;
       state.subscriptions.delete(subscription);
       const cleanupErrors: unknown[] = [];
-      try { signal?.removeEventListener("abort", subscription.unsubscribe); }
-      catch (rollbackCause) { cleanupErrors.push(rollbackCause); }
+      try {
+        signal?.removeEventListener("abort", subscription.unsubscribe);
+      } catch (rollbackCause) {
+        cleanupErrors.push(rollbackCause);
+      }
       throw new EgretError("EVENT_SUBSCRIPTION_FAILED", { cause, cleanupErrors });
     }
     return subscription.unsubscribe;
@@ -169,19 +190,26 @@ export class EventDispatcher {
   /** Ordinary public dispatch retains subclass preflight and route hooks. */
   public dispatchEvent<T>(event: Event<T>): boolean {
     this.assertUsable();
-    return executeDispatch(this, event, (): readonly EventDispatcher[] => {
-      const ancestors: EventDispatcher[] = [];
-      for (let parent = this.eventParent(); parent !== undefined; parent = parent.eventParent()) ancestors.push(parent);
-      return ancestors;
-    }, (node, type, capture): readonly Subscription[] => node.candidates(type, capture));
+    return executeDispatch(
+      this,
+      event,
+      (): readonly EventDispatcher[] => {
+        const ancestors: EventDispatcher[] = [];
+        for (let parent = this.eventParent(); parent !== undefined; parent = parent.eventParent())
+          ancestors.push(parent);
+        return ancestors;
+      },
+      (node, type, capture): readonly Subscription[] => node.candidates(type, capture)
+    );
   }
 
   protected clearListeners(): void {
     const failures: unknown[] = [];
     const engine = engineOf(this);
     for (const subscription of [...stateOf(this).subscriptions]) {
-      try { subscription.unsubscribe(); }
-      catch (cause) {
+      try {
+        subscription.unsubscribe();
+      } catch (cause) {
         if (engine === undefined) failures.push(cause);
         else {
           engine.captureCleanup(cause);
@@ -189,6 +217,7 @@ export class EventDispatcher {
         }
       }
     }
-    if (failures.length !== 0) throw new EgretError("EVENT_LISTENER_CLEANUP_FAILED", { cause: failures[0], cleanupErrors: failures.slice(1) });
+    if (failures.length !== 0)
+      throw new EgretError("EVENT_LISTENER_CLEANUP_FAILED", { cause: failures[0], cleanupErrors: failures.slice(1) });
   }
 }

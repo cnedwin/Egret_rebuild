@@ -3,6 +3,18 @@
 export { createGamepadInput } from './gamepadInput.js';
 export { bindGamepadKeys } from './gamepadKeys.js';
 export type {
-  GamepadButtonChange, GamepadButtonName, GamepadButtonSample, GamepadConnectionChange, GamepadInput, GamepadInputOptions, GamepadKeyAction, GamepadKeys,
-  GamepadKeysOptions, GamepadKeyTarget, GamepadPad, GamepadSample, GamepadStick, GamepadStickName,
+  GamepadButtonChange,
+  GamepadButtonName,
+  GamepadButtonSample,
+  GamepadConnectionChange,
+  GamepadInput,
+  GamepadInputOptions,
+  GamepadKeyAction,
+  GamepadKeys,
+  GamepadKeysOptions,
+  GamepadKeyTarget,
+  GamepadPad,
+  GamepadSample,
+  GamepadStick,
+  GamepadStickName
 } from './gamepadTypes.js';

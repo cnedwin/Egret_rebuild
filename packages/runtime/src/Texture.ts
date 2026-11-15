@@ -20,7 +20,11 @@ interface TextureState {
   readonly viewRegion: TextureViewRegion2D | null;
 }
 const states = new WeakMap<object, TextureState>();
-let createInstance: (image: ImageData2D, sourceRect: TextureRegion2D, viewRegion?: TextureViewRegion2D | null) => Texture;
+let createInstance: (
+  image: ImageData2D,
+  sourceRect: TextureRegion2D,
+  viewRegion?: TextureViewRegion2D | null
+) => Texture;
 
 function stateOf(value: unknown): TextureState {
   const state = apply(weakGet, states, [value]) as TextureState | undefined;
@@ -33,12 +37,22 @@ function copyRegion(image: ImageData2D, input: TextureRegion2D | undefined): Tex
   if (input === undefined) return freeze({ x: 0, y: 0, width: image.width, height: image.height });
   try {
     if (input === null || typeof input !== "object") throw new TypeError("Texture region must be a record");
-    const x = input.x, y = input.y, width = input.width, height = input.height;
-    for (const [value, positive] of [[x, false], [y, false], [width, true], [height, true]] as const) {
+    const x = input.x,
+      y = input.y,
+      width = input.width,
+      height = input.height;
+    for (const [value, positive] of [
+      [x, false],
+      [y, false],
+      [width, true],
+      [height, true]
+    ] as const) {
       if (typeof value !== "number") throw new TypeError("Texture region fields must be numbers");
-      if (!Number.isSafeInteger(value) || (positive ? value <= 0 : value < 0)) throw new RangeError("Texture region integer range");
+      if (!Number.isSafeInteger(value) || (positive ? value <= 0 : value < 0))
+        throw new RangeError("Texture region integer range");
     }
-    const right = x + width, bottom = y + height;
+    const right = x + width,
+      bottom = y + height;
     if (!Number.isSafeInteger(right) || !Number.isSafeInteger(bottom) || right > image.width || bottom > image.height) {
       throw new RangeError("Texture region exceeds its image");
     }
@@ -49,7 +63,7 @@ function copyRegion(image: ImageData2D, input: TextureRegion2D | undefined): Tex
 }
 
 function viewInteger(value: unknown, positive: boolean, maximum: number): number {
-  if (typeof value !== 'number') throw new TypeFault("Texture view region fields must be numbers");
+  if (typeof value !== "number") throw new TypeFault("Texture view region fields must be numbers");
   if (!safeInteger(value) || (positive ? value <= 0 : value < 0) || value > maximum) {
     throw new RangeFault("Texture view region integer range");
   }
@@ -59,7 +73,7 @@ function viewInteger(value: unknown, positive: boolean, maximum: number): number
 /** Stage the entire region before validation, then own both immutable records. */
 function copyViewRegion(image: ImageData2D, input: TextureViewRegionInput2D): TextureViewRegion2D {
   try {
-    if (typeof input !== 'object' || input === null || isArray(input)) {
+    if (typeof input !== "object" || input === null || isArray(input)) {
       throw new TypeFault("Texture view region must be a record");
     }
     const packedInput = input.packed;
@@ -69,7 +83,7 @@ function copyViewRegion(image: ImageData2D, input: TextureViewRegionInput2D): Te
     const trimYInput = input.trimY;
     const quarterTurnInput = input.quarterTurn;
     // A late top-level getter outranks an earlier malformed packed record.
-    if (typeof packedInput !== 'object' || packedInput === null || isArray(packedInput)) {
+    if (typeof packedInput !== "object" || packedInput === null || isArray(packedInput)) {
       throw new TypeFault("Texture view region must be a record");
     }
     const xInput = packedInput.x;
@@ -85,7 +99,8 @@ function copyViewRegion(image: ImageData2D, input: TextureViewRegionInput2D): Te
     const trimX = viewInteger(trimXInput, false, 1048576);
     const trimY = viewInteger(trimYInput, false, 1048576);
     const quarterTurn = viewInteger(quarterTurnInput, false, 3);
-    const right = x + width, bottom = y + height;
+    const right = x + width,
+      bottom = y + height;
     if (!safeInteger(right) || !safeInteger(bottom) || right > image.width || bottom > image.height) {
       throw new RangeFault("Texture view region exceeds its image");
     }
@@ -96,8 +111,7 @@ function copyViewRegion(image: ImageData2D, input: TextureViewRegionInput2D): Te
       throw new RangeFault("Texture view content exceeds its logical region");
     }
     const packed = freeze({ x, y, width, height });
-    return freeze({ packed, logicalWidth, logicalHeight, trimX, trimY,
-      quarterTurn: quarterTurn as 0 | 1 | 2 | 3 });
+    return freeze({ packed, logicalWidth, logicalHeight, trimX, trimY, quarterTurn: quarterTurn as 0 | 1 | 2 | 3 });
   } catch (cause) {
     throw new EgretError("TEXTURE_VIEW_REGION_INVALID", { cause });
   }
@@ -107,7 +121,12 @@ function copyViewRegion(image: ImageData2D, input: TextureViewRegionInput2D): Te
 export class Texture {
   declare private readonly textureBrand: void;
 
-  private constructor(image: ImageData2D, sourceRect: TextureRegion2D, token: typeof CREATION_TOKEN, viewRegion: TextureViewRegion2D | null) {
+  private constructor(
+    image: ImageData2D,
+    sourceRect: TextureRegion2D,
+    token: typeof CREATION_TOKEN,
+    viewRegion: TextureViewRegion2D | null
+  ) {
     if (token !== CREATION_TOKEN) throw new EgretError("TEXTURE_FACTORY_REQUIRED");
     // The original registry operation prevents descriptor callbacks from adding
     // a new callback between completed CPU ownership and identity publication.
@@ -115,38 +134,59 @@ export class Texture {
   }
 
   static {
-    createInstance = (image, sourceRect, viewRegion = null) => new Texture(image, sourceRect, CREATION_TOKEN, viewRegion);
+    createInstance = (image, sourceRect, viewRegion = null) =>
+      new Texture(image, sourceRect, CREATION_TOKEN, viewRegion);
   }
 
-  public get imageData(): ImageData2D { return readTextureSnapshot(this).image; }
-  public get sourceRect(): TextureRegion2D { return stateOf(this).sourceRect; }
-  public get viewRegion(): TextureViewRegion2D | null { return stateOf(this).viewRegion; }
-  public get width(): number { return stateOf(this).sourceRect.width; }
-  public get height(): number { return stateOf(this).sourceRect.height; }
-  public get isDisposed(): boolean { return stateOf(this).image === undefined; }
+  public get imageData(): ImageData2D {
+    return readTextureSnapshot(this).image;
+  }
+  public get sourceRect(): TextureRegion2D {
+    return stateOf(this).sourceRect;
+  }
+  public get viewRegion(): TextureViewRegion2D | null {
+    return stateOf(this).viewRegion;
+  }
+  public get width(): number {
+    return stateOf(this).sourceRect.width;
+  }
+  public get height(): number {
+    return stateOf(this).sourceRect.height;
+  }
+  public get isDisposed(): boolean {
+    return stateOf(this).image === undefined;
+  }
 
   /** Drop only the wrapper reference; saved image values keep their own pixels. */
   public dispose(): void {
     const state = stateOf(this);
-    if (state.image !== undefined) apply(weakSet, states, [this, freeze({ image: undefined, sourceRect: state.sourceRect, viewRegion: state.viewRegion })]);
+    if (state.image !== undefined)
+      apply(weakSet, states, [
+        this,
+        freeze({ image: undefined, sourceRect: state.sourceRect, viewRegion: state.viewRegion })
+      ]);
   }
 }
 
 export function createTexture(image: ImageData2D, sourceRect?: TextureRegion2D): Texture {
-  if (!isImageData2D(image)) throw new EgretError("TEXTURE_IMAGE_INVALID", { cause: new TypeError("Authentic ImageData2D required") });
+  if (!isImageData2D(image))
+    throw new EgretError("TEXTURE_IMAGE_INVALID", { cause: new TypeError("Authentic ImageData2D required") });
   return createInstance(image, copyRegion(image, sourceRect));
 }
 
 /** Create an explicit logical view over an authentic straight CPU image. */
 export function createTextureView(image: ImageData2D, region: TextureViewRegionInput2D): Texture {
-  if (!isImageData2D(image)) throw new EgretError("TEXTURE_IMAGE_INVALID", { cause: new TypeFault("Authentic ImageData2D required") });
+  if (!isImageData2D(image))
+    throw new EgretError("TEXTURE_IMAGE_INVALID", { cause: new TypeFault("Authentic ImageData2D required") });
   const viewRegion = copyViewRegion(image, region);
   // Instance allocation/registry failures are outside region-error wrapping.
   return createInstance(image, viewRegion.packed, viewRegion);
 }
 
 /** Brand-only: disposal does not change the identity of a Texture. */
-export function isTexture(value: unknown): value is Texture { return apply(weakHas, states, [value]); }
+export function isTexture(value: unknown): value is Texture {
+  return apply(weakHas, states, [value]);
+}
 
 export interface TextureSnapshot2D {
   readonly image: ImageData2D;

@@ -8,12 +8,20 @@ export interface ContentEngineOperations {
   assertOpen(): void;
   isScope(value: unknown): value is Scope;
   register<T>(type: AssetType<T>, provider: AssetProvider<T>): void;
-  group(scope: Scope, manifest: AdmittedResourceManifest, roots: readonly string[], bindings: readonly ManifestBinding[], options?: ManifestGroupOptions): ManifestAssetGroup;
+  group(
+    scope: Scope,
+    manifest: AdmittedResourceManifest,
+    roots: readonly string[],
+    bindings: readonly ManifestBinding[],
+    options?: ManifestGroupOptions
+  ): ManifestAssetGroup;
   own(dispose: () => void): () => void;
 }
 const engines = new WeakMap<object, ContentEngineOperations>();
 /** Only genuine Engine construction installs captured manager and Scope authority. */
-export function registerContentEngine(engine: object, operations: ContentEngineOperations): void { engines.set(engine, Object.freeze(operations)); }
+export function registerContentEngine(engine: object, operations: ContentEngineOperations): void {
+  engines.set(engine, Object.freeze(operations));
+}
 export function requireContentEngine(engine: unknown): ContentEngineOperations {
   const value = engines.get(engine as object);
   if (value === undefined) throw new EgretError('CONTENT_ENGINE_INVALID');
@@ -23,7 +31,10 @@ export function requireContentEngine(engine: unknown): ContentEngineOperations {
 
 /** Private loader identity and catalog relationship; no structural loader grants authority. */
 const contentLoaders = new WeakMap<object, (scope: Scope, imageId: string, sequenceId: string) => void>();
-export function registerContentLoader(loader: object, authenticate: (scope: Scope, imageId: string, sequenceId: string) => void): void {
+export function registerContentLoader(
+  loader: object,
+  authenticate: (scope: Scope, imageId: string, sequenceId: string) => void
+): void {
   contentLoaders.set(loader, authenticate);
 }
 export function authenticateContentLoader(loader: unknown, scope: Scope, imageId: string, sequenceId: string): void {
@@ -36,11 +47,18 @@ export function authenticateContentLoader(loader: unknown, scope: Scope, imageId
 const sequenceTimelines = new WeakMap<SequenceClip, readonly number[]>();
 export function registerSequenceTimeline(clip: SequenceClip, frames: readonly SequenceFrameInput[]): void {
   let end = 0;
-  sequenceTimelines.set(clip, Object.freeze(frames.map(frame => end += frame.durationSeconds)));
+  sequenceTimelines.set(clip, Object.freeze(frames.map(frame => (end += frame.durationSeconds))));
 }
-export function hasSequenceTimeline(clip: SequenceClip): boolean { return sequenceTimelines.has(clip); }
+export function hasSequenceTimeline(clip: SequenceClip): boolean {
+  return sequenceTimelines.has(clip);
+}
 export function hasMatchingSequenceTimeline(source: SequenceClip, candidate: SequenceClip): boolean {
-  const first = sequenceTimelines.get(source), second = sequenceTimelines.get(candidate);
-  return first !== undefined && second !== undefined && first.length === second.length
-    && first.every((end, index) => end === second[index]);
+  const first = sequenceTimelines.get(source),
+    second = sequenceTimelines.get(candidate);
+  return (
+    first !== undefined &&
+    second !== undefined &&
+    first.length === second.length &&
+    first.every((end, index) => end === second[index])
+  );
 }

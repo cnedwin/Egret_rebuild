@@ -85,7 +85,7 @@ test('RG1 boundary genuine four-package baseline passes the exact production che
 }));
 
 const enginePort = "export type { AssetGroup, AssetGroupState, AssetGroupOptions } from './assetGroupTypes.js';";
-const runtimePort = "export type { AssetGroupOperations } from './assetManagerOwnerState.js';";
+const runtimePort = 'export type { AssetGroupOperations } from "./assetManagerOwnerState.js";';
 const factorySignature = 'createAssetGroup<T>(scope: Scope, refs: readonly AssetRef<T>[], options?: AssetGroupOptions): AssetGroup<T>';
 const mutations = [
   ['missing-source-type', 'packages/engine/src/index.ts', raw => replaced(raw, enginePort, ''), 'root source: exact AssetGroup type-only export surface mismatch'],

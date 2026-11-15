@@ -17,10 +17,14 @@ const states = new WeakMap<object, MeshCaptureState | undefined>();
 const readPublishedState = states.get.bind(states);
 
 /** Slot registration survives cleanup; it is not display-class identity. */
-export function hasMeshState(value: unknown): boolean { return states.has(value as object); }
+export function hasMeshState(value: unknown): boolean {
+  return states.has(value as object);
+}
 
 /** Cached content conveys no active lease entitlement or live Texture authority. */
-export function readMeshState(node: DisplayObject): MeshCaptureState | undefined { return states.get(node); }
+export function readMeshState(node: DisplayObject): MeshCaptureState | undefined {
+  return states.get(node);
+}
 
 /** Authentic Mesh2D/NineSliceBitmap operations publish only privately admitted content. */
 export function writeMeshState(node: DisplayObject, value: MeshCaptureState | undefined): void {

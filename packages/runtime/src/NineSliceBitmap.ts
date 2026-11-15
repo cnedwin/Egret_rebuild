@@ -70,8 +70,11 @@ function descriptor(value: unknown): object {
     throw new TypeFault("NineSliceBitmap descriptor must be a non-array object");
   }
   let array: boolean;
-  try { array = isArray(value); }
-  catch (cause) { throw new TypeFault("NineSliceBitmap descriptor admission failed", { cause }); }
+  try {
+    array = isArray(value);
+  } catch (cause) {
+    throw new TypeFault("NineSliceBitmap descriptor admission failed", { cause });
+  }
   if (array) throw new TypeFault("NineSliceBitmap descriptor must be a non-array object");
   return value;
 }
@@ -79,24 +82,44 @@ function descriptor(value: unknown): object {
 /** Throwing reads keep their original cause; only successful reads checkpoint. */
 function read(source: object, key: string, engine: EngineContext, lease: AssetLease<Texture>): unknown {
   let value: unknown;
-  try { value = (source as Record<string, unknown>)[key]; }
-  catch (cause) { throw new TypeFault("NineSliceBitmap descriptor read failed", { cause }); }
+  try {
+    value = (source as Record<string, unknown>)[key];
+  } catch (cause) {
+    throw new TypeFault("NineSliceBitmap descriptor read failed", { cause });
+  }
   checkpoint(engine, lease);
   return value;
 }
 
 function primitiveNumber(value: unknown): number {
-  if (typeof value !== "number") throw new TypeFault("NineSliceBitmap dimensions and borders must be primitive numbers");
+  if (typeof value !== "number")
+    throw new TypeFault("NineSliceBitmap dimensions and borders must be primitive numbers");
   return value === 0 ? 0 : value;
 }
 
-function geometry(sourceRect: TextureRegion2D, viewRegion: TextureViewRegion2D | null, width: number, height: number, insets: NineSliceInsets2D): TexturedGeometry2D {
+function geometry(
+  sourceRect: TextureRegion2D,
+  viewRegion: TextureViewRegion2D | null,
+  width: number,
+  height: number,
+  insets: NineSliceInsets2D
+): TexturedGeometry2D {
   // The existing NS1 factory owns all range, precision and grid admission.
-  return geometryFactory({ sourceWidth: viewRegion?.logicalWidth ?? sourceRect.width, sourceHeight: viewRegion?.logicalHeight ?? sourceRect.height,
-    targetWidth: width, targetHeight: height, insets });
+  return geometryFactory({
+    sourceWidth: viewRegion?.logicalWidth ?? sourceRect.width,
+    sourceHeight: viewRegion?.logicalHeight ?? sourceRect.height,
+    targetWidth: width,
+    targetHeight: height,
+    insets
+  });
 }
 
-function content(lease: AssetLease<Texture>, owned: TexturedGeometry2D, sourceRect: TextureRegion2D, viewRegion: TextureViewRegion2D | null): MeshCaptureState {
+function content(
+  lease: AssetLease<Texture>,
+  owned: TexturedGeometry2D,
+  sourceRect: TextureRegion2D,
+  viewRegion: TextureViewRegion2D | null
+): MeshCaptureState {
   return freeze({ lease, geometry: owned, sourceRect, viewRegion, regionOnly: true });
 }
 
@@ -122,15 +145,24 @@ export class NineSliceBitmap extends DisplayObject {
     const bottomInput = read(inset, "bottom", engine, textureLease);
 
     // Finish every primitive check before NS1 performs any numeric range check.
-    const width = primitiveNumber(widthInput), height = primitiveNumber(heightInput);
-    const left = primitiveNumber(leftInput), top = primitiveNumber(topInput);
-    const right = primitiveNumber(rightInput), bottom = primitiveNumber(bottomInput);
+    const width = primitiveNumber(widthInput),
+      height = primitiveNumber(heightInput);
+    const left = primitiveNumber(leftInput),
+      top = primitiveNumber(topInput);
+    const right = primitiveNumber(rightInput),
+      bottom = primitiveNumber(bottomInput);
     const insets = { left, top, right, bottom };
     const owned = geometry(initial.sourceRect, initial.viewRegion, width, height, insets);
     const fixedInsets = freeze(insets);
     const size = freeze({ width, height });
     const slot = content(textureLease, owned, initial.sourceRect, initial.viewRegion);
-    const state: LeafState = { sourceRect: initial.sourceRect, viewRegion: initial.viewRegion, insets: fixedInsets, lease: textureLease, size };
+    const state: LeafState = {
+      sourceRect: initial.sourceRect,
+      viewRegion: initial.viewRegion,
+      insets: fixedInsets,
+      lease: textureLease,
+      size
+    };
     checkpoint(engine, textureLease);
 
     // All allocations/admission precede the callback-free affinity/content commit.
@@ -140,10 +172,18 @@ export class NineSliceBitmap extends DisplayObject {
   }
 
   /** Identity-only borrow metadata conveys no live resource entitlement. */
-  public get textureLease(): AssetLease<Texture> | undefined { return stateOf(this).lease; }
-  public get targetWidth(): number { return stateOf(this).size.width; }
-  public get targetHeight(): number { return stateOf(this).size.height; }
-  public get insets(): NineSliceInsets2D { return stateOf(this).insets; }
+  public get textureLease(): AssetLease<Texture> | undefined {
+    return stateOf(this).lease;
+  }
+  public get targetWidth(): number {
+    return stateOf(this).size.width;
+  }
+  public get targetHeight(): number {
+    return stateOf(this).size.height;
+  }
+  public get insets(): NineSliceInsets2D {
+    return stateOf(this).insets;
+  }
 
   public resize(width: number, height: number): void {
     const state = stateOf(this);
@@ -152,7 +192,8 @@ export class NineSliceBitmap extends DisplayObject {
     engine.assertOpen();
     const lease = state.lease!;
     textureOf(lease);
-    const targetWidth = primitiveNumber(width), targetHeight = primitiveNumber(height);
+    const targetWidth = primitiveNumber(width),
+      targetHeight = primitiveNumber(height);
     const owned = geometry(state.sourceRect, state.viewRegion, targetWidth, targetHeight, state.insets);
     const size = freeze({ width: targetWidth, height: targetHeight });
     const slot = content(lease, owned, state.sourceRect, state.viewRegion);

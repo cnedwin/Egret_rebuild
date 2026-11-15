@@ -22,7 +22,8 @@ export interface BitmapResourceSlotOwner {
   create(scope: unknown, bitmap: unknown): BitmapResourceSlot;
   close(): void;
 }
-const APPLY = Reflect.apply, FREEZE = Object.freeze;
+const APPLY = Reflect.apply,
+  FREEZE = Object.freeze;
 const THEN = Promise.prototype.then;
 const SCOPE_STATE = Object.getOwnPropertyDescriptor(Scope.prototype, 'state')!.get!;
 const SCOPE_USE = Scope.prototype.use;
@@ -67,16 +68,27 @@ function report(record: Record, cause: unknown): void {
   record.context.report({ code: 'BITMAP_RESOURCE_CLEANUP_FAILED', phase: 'assets', severity: 'error', cause });
 }
 function release(record: Record, lease: AssetLease<Texture>, errors?: unknown[]): void {
-  try { record.operations.release(lease); }
-  catch (cause) { errors?.push(cause); report(record, cause); }
+  try {
+    record.operations.release(lease);
+  } catch (cause) {
+    errors?.push(cause);
+    report(record, cause);
+  }
 }
 function abort(record: Record, request: Request, reason: unknown, errors?: unknown[]): void {
-  try { APPLY(ABORT, request.controller, [reason]); }
-  catch (cause) { errors?.push(cause); report(record, cause); }
+  try {
+    APPLY(ABORT, request.controller, [reason]);
+  } catch (cause) {
+    errors?.push(cause);
+    report(record, cause);
+  }
 }
 function closingCause(record: Record): unknown {
-  try { record.context.assertOpen(); }
-  catch (cause) { return cause; }
+  try {
+    record.context.assertOpen();
+  } catch (cause) {
+    return cause;
+  }
   if (APPLY(SCOPE_STATE, record.scope, []) !== 'open') return new EgretError('SCOPE_CLOSED');
   return undefined;
 }
@@ -84,16 +96,24 @@ function closingCause(record: Record): unknown {
 /** Retire all logical authority and matching borrows before any cleanup callout. */
 function retire(record: Record, cause: unknown): Cleanup | undefined {
   if (record.state === 'disposed') return undefined;
-  const request = record.request, lease = record.owned, expected = record.expected;
+  const request = record.request,
+    lease = record.owned,
+    expected = record.expected;
   const error = new EgretError('BITMAP_RESOURCE_DISPOSED', { cause });
   record.state = 'disposed';
-  record.request = undefined; record.owned = undefined; record.expected = undefined;
-  record.inventory.delete(record); record.claims.delete(record.bitmap);
+  record.request = undefined;
+  record.owned = undefined;
+  record.expected = undefined;
+  record.inventory.delete(record);
+  record.claims.delete(record.bitmap);
   request?.reject(error);
   const errors: unknown[] = [];
   if (lease !== undefined && expected !== undefined) {
-    try { record.operations.clearIfCurrent(record.bitmap, expected); }
-    catch (failure) { errors.push(failure); }
+    try {
+      record.operations.clearIfCurrent(record.bitmap, expected);
+    } catch (failure) {
+      errors.push(failure);
+    }
   }
   return { record, request, lease, cause: error, errors };
 }
@@ -108,7 +128,8 @@ function cleanup(snapshot: Cleanup | undefined): void {
 function conflict(record: Record): EgretError {
   const error = new EgretError('BITMAP_RESOURCE_BINDING_CHANGED');
   const request = record.request;
-  record.request = undefined; record.state = 'conflicted';
+  record.request = undefined;
+  record.state = 'conflicted';
   request?.reject(error);
   if (request !== undefined) abort(record, request, error);
   return error;
@@ -119,7 +140,8 @@ function fail(record: Record, request: Request, cause: unknown, candidate?: Asse
     if (candidate !== undefined) release(record, candidate);
     return;
   }
-  record.request = undefined; record.state = 'failed';
+  record.request = undefined;
+  record.state = 'failed';
   const errors: unknown[] = [];
   abort(record, request, cause, errors);
   if (candidate !== undefined) release(record, candidate, errors);
@@ -127,13 +149,18 @@ function fail(record: Record, request: Request, cause: unknown, candidate?: Asse
 }
 function inspectTarget(record: Record): void {
   let token: object;
-  try { token = record.operations.capture(record.bitmap, record.expected); }
-  catch (cause) {
+  try {
+    token = record.operations.capture(record.bitmap, record.expected);
+  } catch (cause) {
     if (cause instanceof EgretError && cause.code === 'OBJECT_DISPOSED') {
-      cleanup(retire(record, cause)); throw cause;
+      cleanup(retire(record, cause));
+      throw cause;
     }
-    if (cause instanceof EgretError
-      && (cause.code === 'BITMAP_RESOURCE_TEXTURE_REQUIRED' || cause.code === 'BITMAP_RESOURCE_BINDING_CHANGED')) throw conflict(record);
+    if (
+      cause instanceof EgretError &&
+      (cause.code === 'BITMAP_RESOURCE_TEXTURE_REQUIRED' || cause.code === 'BITMAP_RESOURCE_BINDING_CHANGED')
+    )
+      throw conflict(record);
     const request = record.request;
     if (request !== undefined) fail(record, request, cause);
     else record.state = 'failed';
@@ -149,20 +176,36 @@ function assertControl(record: Record): void {
 }
 function active(record: Record, request: Request): boolean {
   if (record.request !== request) return false;
-  try { assertLifetime(record.context, record.scope); }
-  catch (cause) { cleanup(retire(record, cause)); return false; }
-  try { inspectTarget(record); } catch { return false; }
+  try {
+    assertLifetime(record.context, record.scope);
+  } catch (cause) {
+    cleanup(retire(record, cause));
+    return false;
+  }
+  try {
+    inspectTarget(record);
+  } catch {
+    return false;
+  }
   return record.request === request;
 }
 function makeRequest(record: Record): Request {
   let resolve!: () => void, reject!: (cause: unknown) => void;
-  const promise = new Promise<void>((yes, no) => { resolve = yes; reject = no; });
+  const promise = new Promise<void>((yes, no) => {
+    resolve = yes;
+    reject = no;
+  });
   // A discarded returned Promise must not produce an unhandled rejection.
   void APPLY(THEN, promise, [undefined, IGNORE]);
-  return { promise, resolve, reject,
+  return {
+    promise,
+    resolve,
+    reject,
     controller: new CancellationController(diagnostic => {
-      record.context.captureCleanup(diagnostic.cause); record.context.report(diagnostic);
-    }) };
+      record.context.captureCleanup(diagnostic.cause);
+      record.context.report(diagnostic);
+    })
+  };
 }
 function fulfilled(record: Record, request: Request, candidate: AssetLease<Texture>): void {
   let cell: AssetLease<Texture> | undefined = candidate;
@@ -174,14 +217,19 @@ function fulfilled(record: Record, request: Request, candidate: AssetLease<Textu
     record.operations.commit(record.bitmap, record.expected!, prepared);
     const previous = record.owned;
     // No application callback lies between runtime commit and owner publication.
-    record.owned = candidate; record.expected = prepared;
-    record.request = undefined; record.state = 'ready'; cell = undefined;
+    record.owned = candidate;
+    record.expected = prepared;
+    record.request = undefined;
+    record.state = 'ready';
+    cell = undefined;
     request.resolve();
     // Visible success cannot be undone by old-value cleanup or its reentry.
     if (previous !== undefined) release(record, previous);
   } catch (cause) {
     if (record.request === request) {
-      const failed = cell; cell = undefined; fail(record, request, cause, failed);
+      const failed = cell;
+      cell = undefined;
+      fail(record, request, cause, failed);
     }
   } finally {
     // Cancellation may have lost manager delivery before this Promise reaction.
@@ -196,22 +244,36 @@ function replace(record: Record, ref: AssetRef<Texture>): Promise<void> {
   // Synchronous authentic admission preserves any existing intent on invalid input.
   record.acquisitions.admitGroupRefs([ref]);
   assertControl(record);
-  const request = makeRequest(record), previous = record.request;
-  record.request = request; record.state = 'pending';
+  const request = makeRequest(record),
+    previous = record.request;
+  record.request = request;
+  record.state = 'pending';
   if (previous !== undefined) {
     const error = new EgretError('BITMAP_RESOURCE_SUPERSEDED');
-    previous.reject(error); abort(record, previous, error);
+    previous.reject(error);
+    abort(record, previous, error);
   }
   if (!active(record, request)) return request.promise;
   try {
     const acquired = record.acquisitions.acquire(ref, { signal: request.controller.signal });
     // Always observe started work, including synchronous loader supersession.
     const observed = APPLY(THEN, acquired, [
-      (lease: AssetLease<Texture>): void => { fulfilled(record, request, lease); },
-      (cause: unknown): void => { rejected(record, request, cause); },
+      (lease: AssetLease<Texture>): void => {
+        fulfilled(record, request, lease);
+      },
+      (cause: unknown): void => {
+        rejected(record, request, cause);
+      }
     ]) as Promise<void>;
-    void APPLY(THEN, observed, [undefined, (cause: unknown): void => { rejected(record, request, cause); }]);
-  } catch (cause) { rejected(record, request, cause); }
+    void APPLY(THEN, observed, [
+      undefined,
+      (cause: unknown): void => {
+        rejected(record, request, cause);
+      }
+    ]);
+  } catch (cause) {
+    rejected(record, request, cause);
+  }
   return request.promise;
 }
 function handleFor(record: Record): BitmapResourceSlot {
@@ -219,38 +281,72 @@ function handleFor(record: Record): BitmapResourceSlot {
     if (value !== handle) throw new EgretError('BITMAP_RESOURCE_INVALID');
   };
   const handle: BitmapResourceSlot = FREEZE({
-    get state(): BitmapResourceSlotState { receiver(this); return record.state; },
-    replace(ref: AssetRef<Texture>): Promise<void> { receiver(this); return replace(record, ref); },
+    get state(): BitmapResourceSlotState {
+      receiver(this);
+      return record.state;
+    },
+    replace(ref: AssetRef<Texture>): Promise<void> {
+      receiver(this);
+      return replace(record, ref);
+    },
     cancel(reason?: unknown): void {
-      receiver(this); assertControl(record);
+      receiver(this);
+      assertControl(record);
       const request = record.request;
       if (request === undefined) return;
-      record.request = undefined; record.state = record.owned === undefined ? 'idle' : 'ready';
+      record.request = undefined;
+      record.state = record.owned === undefined ? 'idle' : 'ready';
       const error = new EgretError('BITMAP_RESOURCE_CANCELLED', { cause: reason });
-      request.reject(error); abort(record, request, error);
+      request.reject(error);
+      abort(record, request, error);
     },
-    dispose(): void { receiver(this); cleanup(retire(record, closingCause(record))); },
+    dispose(): void {
+      receiver(this);
+      cleanup(retire(record, closingCause(record)));
+    }
   });
   record.facade = handle;
   return handle;
 }
-export function createBitmapResourceSlotOwner(context: BitmapResourceSlotContext,
-  acquisitions: AssetGroupOperations, targets: WeakMap<Bitmap, Operations>): BitmapResourceSlotOwner {
-  const inventory = new Set<Record>(), claims = new WeakMap<Bitmap, Record>();
+export function createBitmapResourceSlotOwner(
+  context: BitmapResourceSlotContext,
+  acquisitions: AssetGroupOperations,
+  targets: WeakMap<Bitmap, Operations>
+): BitmapResourceSlotOwner {
+  const inventory = new Set<Record>(),
+    claims = new WeakMap<Bitmap, Record>();
   return FREEZE({
     create(scope: unknown, target: unknown): BitmapResourceSlot {
       assertLifetime(context, scope);
-      const bitmap = target as Bitmap, operations = targets.get(bitmap);
+      const bitmap = target as Bitmap,
+        operations = targets.get(bitmap);
       if (operations === undefined) throw new EgretError('BITMAP_RESOURCE_TARGET_INVALID');
       const expected = operations.capture(bitmap);
       if (claims.has(bitmap)) throw new EgretError('BITMAP_RESOURCE_TARGET_BUSY');
       if (inventory.size >= 256) throw new EgretError('BITMAP_RESOURCE_LIMIT');
-      const record: Record = { context, acquisitions, operations, scope, bitmap, inventory, claims,
-        state: 'idle', expected, owned: undefined, request: undefined, facade: undefined };
+      const record: Record = {
+        context,
+        acquisitions,
+        operations,
+        scope,
+        bitmap,
+        inventory,
+        claims,
+        state: 'idle',
+        expected,
+        owned: undefined,
+        request: undefined,
+        facade: undefined
+      };
       const handle = handleFor(record);
-      claims.set(bitmap, record); inventory.add(record);
-      try { APPLY(SCOPE_USE, scope, [handle]); }
-      catch (cause) { cleanup(retire(record, cause)); throw cause; }
+      claims.set(bitmap, record);
+      inventory.add(record);
+      try {
+        APPLY(SCOPE_USE, scope, [handle]);
+      } catch (cause) {
+        cleanup(retire(record, cause));
+        throw cause;
+      }
       return handle;
     },
     close(): void {
@@ -261,6 +357,6 @@ export function createBitmapResourceSlotOwner(context: BitmapResourceSlotContext
       }
       // All slots are terminal/cleared before the first abort/disposer/diagnostic.
       for (const snapshot of snapshots) cleanup(snapshot);
-    },
+    }
   });
 }
