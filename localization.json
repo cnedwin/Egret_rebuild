@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "682e83a3d339731b1ed83ecb1ee39855dbca78d27539e1b7ec02703bb76c22c3",
-      "zhSha256": "f16be2570539c027754e23c621ee74ffe3cacdfd1004a3e902fb8d051b686888"
+      "enSha256": "fe461bf284e013dac8e681d97edaecfd6993f877d3577958c392fc9e2ce0d510",
+      "zhSha256": "5575f7b4387b5ae64350571d6076f9e18b1017083e70754cc74faeb4e98a7f27"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "1fa3671fea9f6e4947c62ce6112f7b336b27f666c8caadd929532e7300a0d230",
-      "zhSha256": "d942103d47af0f3285817529fd18e72ea9e893dc15dab086275380c5166c414e"
+      "enSha256": "b3bdc0aca3b95aadb2b01c0e2a3940c23871e44033b2faede8f36a6593a7a9dd",
+      "zhSha256": "9874e39e045ec129b144a68e1b0e37dd129da079ee0ca2aaaf3530d6bbf75e06"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -1240,8 +1240,8 @@
       "zh": "knowledge-base/Cns/docs/显示树扩展性.md",
       "en": "knowledge-base/en/docs/display-tree-scaling.md",
       "kind": "public_reading",
-      "enSha256": "83cc7eb03551b0b2d6e2e26475e572d724a76105e4906bf952301aeee1af4e2b",
-      "zhSha256": "19acb89f8ddcec2f7600cf2c26b710dbc53046db7b774182962f913ae79147fe"
+      "enSha256": "d180ee64630fd1ceaf1f27b14396e3ae336f5c0a67cec3dd7122eb4d6297a469",
+      "zhSha256": "d538d9d249eb006fa73291a0e4178ce79acd43013a57270b7bdac0df7897f0a1"
     },
     {
       "zh": "knowledge-base/Cns/docs/Canvas文字WC1.md",
@@ -1949,8 +1949,8 @@
       "en": "knowledge-base/en/docs/multi-pointer-input.md",
       "zh": "knowledge-base/Cns/docs/multi-pointer-input.md",
       "kind": "public_reading",
-      "enSha256": "ce3309d2ed90224f4e45af869ddc212dc2edda499acf588de746b2fb17dfa0e3",
-      "zhSha256": "5a884bcbd4b48208d34d5c237f216f757e645e9ac2ec8c06fe3e9e8f86d230ea"
+      "enSha256": "be070b9072d66c27988130fafc419516db4c0b970ae563ad4a3320f873d5c181",
+      "zhSha256": "c7978e82c4a1086346fe72cd0ebe7adafd2831341461f3690928dc2fe0fad4e9"
     },
     {
       "en": "examples/multi-pointer/README.md",
@@ -2579,22 +2579,22 @@
       "en": "knowledge-base/en/docs/blend-modes.md",
       "zh": "knowledge-base/Cns/docs/blend-modes.md",
       "kind": "public_reading",
-      "enSha256": "821de64f76beb36d70c9292ec693f800b6475ad409402eddadecd2198a5917f6",
-      "zhSha256": "a662446abcf91fdfab196cbb875747e61d1dc7fe20e671ff8d1180bf66517739"
+      "enSha256": "87e3acc48e02c5bdb57af8fe33332e3a2120a064ec883bf08759c4251c0f2916",
+      "zhSha256": "4a7f6c6662a5087dd02eed4c3c15702bba1df8c05b396758b1362168cc14411c"
     },
     {
       "en": "examples/filters/README.md",
       "zh": "examples/filters/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "dc368e0e78c8fbd5ba4148f9fbd918506efeebd74660b35e5446b0918fbfab9b",
-      "zhSha256": "ba8ac138ec67a4e385edbadb066211bad161379e6d7755d9d7bc437506ca4b07"
+      "enSha256": "757b88f4e9476ce1c58cd4e6700e9cafd30bf942c870f54541669572ac76433f",
+      "zhSha256": "913ea4799fb89658005774339a082218ee5080fd7a982bd252a413550f950eeb"
     },
     {
       "en": "knowledge-base/en/docs/filters.md",
       "zh": "knowledge-base/Cns/docs/filters.md",
       "kind": "public_reading",
-      "enSha256": "0eee315041a0bfcbe783feef690876eb9dc79700c8a824eba0687ef7aa4d4cbf",
-      "zhSha256": "f07ea9dafc480a812fe9c6807588a3729dcf3f5dbc4874fd04b261422f503fcb"
+      "enSha256": "a80aae099ec372afcec20a1bba157524aa0b47b0504a5df945c52aff38660f44",
+      "zhSha256": "be9121f0b5b03838f63158aa708b732bea54c4b7e7fd46c400697f04082eb244"
     },
     {
       "en": "examples/video/README.md",
@@ -2614,22 +2614,22 @@
       "en": "knowledge-base/en/docs/browser-game.md",
       "zh": "knowledge-base/Cns/docs/browser-game.md",
       "kind": "public_reading",
-      "enSha256": "8db4b2dd761ca9ea4a7d4e2fb1136e5e489e6e181ea8daf5d7b3e457094f55c1",
-      "zhSha256": "25b970aa829f4c3572c3cad9250b8f5ad1d069e81fb6b71e04c18af821a79d67"
+      "enSha256": "05e97a67f5d6156d8e834b2f18a0b40451b2471a17435397925a8def8a0867c8",
+      "zhSha256": "174226eee246506e13cb09f30c57d34430b7e769b50734349f1f709776ae096f"
     },
     {
       "en": "knowledge-base/en/docs/egret-api-migration.md",
       "zh": "knowledge-base/Cns/docs/egret-api-migration.md",
       "kind": "public_reading",
-      "enSha256": "02b2936b6811ede9d232a7d4fcdc37493d42bd2ba47dbf692fc31076c280a2ee",
-      "zhSha256": "6d11c6cdcf3fc9c8512f7fcda246a9fa664cdba9356c86152be0aea6c90eb223"
+      "enSha256": "73602432c590ea1dbac5c60e61eaed32391039baf78ced5343fb3d750f1a63a2",
+      "zhSha256": "406bd1eb8f0c92f197b0c9badec9f9f0fae9a57a95b667e3ba9c27a6023b4fb6"
     },
     {
       "en": "knowledge-base/en/docs/error-codes.md",
       "zh": "knowledge-base/Cns/docs/error-codes.md",
       "kind": "public_reading",
-      "enSha256": "15b7fc1138844093d121f0a50b7c98d445432609803cc329027459b983f19235",
-      "zhSha256": "0b449085f525edc3f38f4a53e014379877f44cf5304f89bd74088c07f6e6e2c2"
+      "enSha256": "a1f1450171dd83652eaf0303ee199436e0b9d8b26eb2df0495e0fd78ad811323",
+      "zhSha256": "99aff1cbb34e3db7a2853c9af9ca80c47594a6f82febccac9e653d6d09e7140e"
     },
     {
       "en": "examples/README.md",
@@ -2649,29 +2649,43 @@
       "en": "examples/graphics/README.md",
       "zh": "examples/graphics/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "846a7a7fb5b7a27df39c422fed8283f2ae7941ff195dd8a0e2870c3c63afd18d",
-      "zhSha256": "1fee57d7b97423a2dd82dd4705f174cf39a047b1a11da5168e92f18bb7c869c5"
+      "enSha256": "aa1c7e1da5311fa01db50171413c6772447f80d863f8ee89cfd5ffc5cff4a839",
+      "zhSha256": "124b10f3ed8c14aaefbdd883b963a043ac9b94a540c39cfda986d722b9ebc642"
     },
     {
       "en": "knowledge-base/en/docs/graphics.md",
       "zh": "knowledge-base/Cns/docs/graphics.md",
       "kind": "public_reading",
-      "enSha256": "8c3982a4575ee56b8c921895ab75e9be17a55408746b70fe690dc8fdd280bebb",
-      "zhSha256": "cf5422ef3e8925547163279a4bf797b9f465cbf86d5f910712441b1b29a7592b"
+      "enSha256": "7d6f158a3ee2beb3c90b93d24752985b44d42c4b92782a3d01330f496c96d678",
+      "zhSha256": "68ca80e1f7a55be40af6ffffa0e994e239568aeeda93e5a8aaf7edd39617c0ad"
     },
     {
       "en": "examples/starter/README.md",
       "zh": "examples/starter/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "4ff34ce94b92e97eb52eca83383fa277260d2032c5ec28a867122aac53d944eb",
-      "zhSha256": "d9b085d3c0ccce06738b8a31442c21f6619a740658f3e4c0807703d678455ac1"
+      "enSha256": "8a364e651579f63d15fe8568a776a34b833576b9d86e9384f0ec4da86dc36242",
+      "zhSha256": "d6637e00918434b861beb090cdc82f7a839d72faff02b9b21331f532f5b5d838"
     },
     {
       "en": "knowledge-base/en/docs/entry-points.md",
       "zh": "knowledge-base/Cns/docs/entry-points.md",
       "kind": "public_reading",
-      "enSha256": "04828dc74211f8aadb000981d06923162a10a571178a95512786b1a4abeaf19b",
-      "zhSha256": "6c5f070b0e407b876c3d794bfccc05356c90b2585ffe5b16e2f8094314064b73"
+      "enSha256": "bb04a23cedbd80dfb9c3f21941a8bbc00228daab883bc75961528b68d6e9d866",
+      "zhSha256": "4d31729150e019fc927a5ab2c9c3bcb8e7087b20bda4a85ca5bf3859ef7deae3"
+    },
+    {
+      "en": "knowledge-base/en/docs/api-reference.md",
+      "zh": "knowledge-base/Cns/docs/api-reference.md",
+      "kind": "public_reading",
+      "enSha256": "3ce8aedc9f0d2f7c1ee7e3910653b33eb3d89536f01d3ca0984c57149cdc691b",
+      "zhSha256": "5c3b5a30271a4a034c75bf60f62ed4d866dd80d16d3c7a50e946e1c605f4d134"
+    },
+    {
+      "en": "knowledge-base/en/docs/shared-2d-hardware-results.md",
+      "zh": "knowledge-base/Cns/docs/shared-2d-hardware-results.md",
+      "kind": "public_reading",
+      "enSha256": "5e396f15a13153e8234b762716c2f8bcd87ea11431fb54ab13721931d23fd534",
+      "zhSha256": "c4f78dcb12f2264ed072e4bcb1065edf2c5d0788960b0d379875f0f44e0394ef"
     }
   ],
   "registries": [
@@ -2919,11 +2933,11 @@
     },
     {
       "path": "packages/runtime/src/DisplayObject.ts",
-      "sha256": "1439d38d1031ca4c1066503aa419680186f287d3b9782b408c57b239d78e9e79"
+      "sha256": "1a631c36d16d4a28ec836d05581ee651de86a918553e6f96f7fb4aa3f50be5f1"
     },
     {
       "path": "packages/runtime/src/DisplayObjectContainer.ts",
-      "sha256": "340e353940c995c3f3a67d384cff0624e0b0202acaa035c74d7be01bedd09b88"
+      "sha256": "ffb54ca3bde62243d702461d8f402e48adbd20a6ca93b65724d3353fe5f009f4"
     },
     {
       "path": "packages/runtime/src/EgretError.ts",
@@ -2939,7 +2953,7 @@
     },
     {
       "path": "packages/runtime/src/Graphics.ts",
-      "sha256": "ff80fde930c905f4e7b9fa983ae2b92ab924520d09fb5daf85e0754994a0ceed"
+      "sha256": "e32cb7e44635b8827101ec3c5416de666f9ea7daca4675081a1f91c89a2e764b"
     },
     {
       "path": "packages/runtime/src/Scope.ts",
@@ -2971,7 +2985,7 @@
     },
     {
       "path": "packages/runtime/src/displayVisualState.ts",
-      "sha256": "b9b8c6b09aefbde883552c1a2097fde170b9896a87d9a468bc86d35448cff1b7"
+      "sha256": "a905397e6e995da9ddc2d1660c7f8bd51a3a1325c5c2590aefc0e0e03f7000b1"
     },
     {
       "path": "packages/runtime/src/ownership.ts",
@@ -3001,7 +3015,7 @@
     {
       "path": "packages/runtime/src/displayTransform.ts",
       "bytes": 697,
-      "sha256": "74ce654a07a401d0a4b527d2888d72c24168b51a3142b150e5a33f1542fe2c6d"
+      "sha256": "5f67dfd4843a7bed7cd7fb35b6b52a6682044b1d0a09a6cba41f3d141067f942"
     },
     {
       "path": "packages/runtime/src/displayCoordinates.ts",
@@ -3149,7 +3163,7 @@
     },
     {
       "path": "packages/runtime/src/displayHitTest.ts",
-      "sha256": "87de8d0a1957cf33e04f025dd95b471f4a584a3d2fe2c4622319029a05f2312d"
+      "sha256": "10129ba000137f478179c682c638b1a18a0727b71564bd91fa25312a46938ae8"
     },
     {
       "path": "examples/hit-test/scene.mjs",
@@ -3269,11 +3283,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "cad0d8b1ce73bde986a8ff78dff751baea1ae1bdf519577e5b1bd0c67659623b"
+      "sha256": "a2c055e16c3fd2da1160683735315c033f3938cc34d736856a953929074cbbc4"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "6d876638eaf7799959801c789479cbce30c8a1db8eba5c899e09b87d98e6bed1"
+      "sha256": "69ef764fb68c0fd8795c9879111c88addf8f80291f2f43994fd2d255e718b024"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -3989,7 +4003,7 @@
     },
     {
       "path": "packages/runtime/src/sharedFrameCapture.ts",
-      "sha256": "516d9273aecb03702ef605049ee0eb454e6d4343963a7c47e9b0660162555da0"
+      "sha256": "2983c05f50e4f7292f7f216945d137c0366fc82819a8de5e3701c405830d30ac"
     },
     {
       "path": "packages/engine/web/WebGL2Host.ts",
@@ -4097,11 +4111,11 @@
     },
     {
       "path": "packages/engine/src/pointerInput.ts",
-      "sha256": "220e8ba79cd17fc5c20314a1d04164177e60d247656d8745ebcff7a99297daf6"
+      "sha256": "d788d753bd935e5b3167f0c8932073bc219241abd4e3da02e739da4657d3d2bb"
     },
     {
       "path": "packages/engine/src/pointerInputTypes.ts",
-      "sha256": "745803ff3f07642d35b66e5940e0eade6b2594ccae6a151b1521c08cfe7b13d7"
+      "sha256": "7632c13a151bc419c3d125d9836d1d04307821790772feb2652da67728c32f4e"
     },
     {
       "path": "packages/engine/web/BrowserPointerInput.ts",
@@ -4345,7 +4359,7 @@
     },
     {
       "path": "packages/spine/src/web.ts",
-      "sha256": "f6cf371cfdddca3b0a46c686885c97e6d738f8591733646b85c1ee32a0b5e49b"
+      "sha256": "ce1ab3a4a6f3bdc35a5d663eae3227c91cbb5235b10497f9c907f2ad7227f194"
     },
     {
       "path": "packages/engine/src/ui/keyboardFocus.ts",
@@ -4469,7 +4483,7 @@
     },
     {
       "path": "packages/engine/web/sharedEffectShaders.ts",
-      "sha256": "ca07608dcdfcc7a77b1dc1092ba1dc5b496b5c175fb7afbebbf19f14fcadc163"
+      "sha256": "6d3335ad3f8669e05a714d201929d9cce66734edf7f62b12242b33734a23a7e1"
     },
     {
       "path": "tests/shared-effects.test.mjs",
@@ -4921,7 +4935,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Physics3D.ts",
-      "sha256": "c21f4b9b648ea218d6bf932268debb628352e7efe6192f0fa572a39045273587"
+      "sha256": "f0178feb89f65ad1c743bcadd05145cea3dc3da5fb013551ecc9b0c6ded8e568"
     },
     {
       "path": "packages/engine/rendering/world3d/Serialize3D.ts",
@@ -4969,7 +4983,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/PhysicsMesh3D.ts",
-      "sha256": "fe434452ef1c11784f036b32890e32145f0f2f34dc07eb126619b5ff5dc01738"
+      "sha256": "708dc46359320d695af3f88ed0eeb6eeac37e9281d429fb1cbc81de59f8be411"
     },
     {
       "path": "packages/engine/rendering/world3d/Batch3D.ts",
@@ -4993,7 +5007,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Character3D.ts",
-      "sha256": "e290d33a53d54d102e7f53be366a6a993e67ba1d48ae8196846515b3cb67a7cf"
+      "sha256": "4a2d4cd56915fc35b5831c5ea5c597e4f352d7ca35b38a9ff91912f89d6085ac"
     },
     {
       "path": "packages/engine/web/world3d/FollowControls3D.ts",
@@ -5733,11 +5747,11 @@
     },
     {
       "path": "examples/filters/main.mjs",
-      "sha256": "4967da4c0f89e4ee0f8aa1dca315e319913708cd53737a793286042537159c53"
+      "sha256": "d34a129b041185a9d57dd6f4c7245e2990ea81ad4e57fa0f98c4cd389885ab63"
     },
     {
       "path": "examples/filters/verify.mjs",
-      "sha256": "605118c18c57f6795b58fc023bf8d09402ee3b12c98e644c9fa1a7216bf26b35"
+      "sha256": "2bf56fa8523ea0b89e3247c041f44d970810ba2e3af748a0583cb5a3e8cafb1e"
     },
     {
       "path": "packages/spine/src/binaryAdmission.ts",
@@ -5785,7 +5799,7 @@
     },
     {
       "path": "packages/engine/web/BrowserGame.ts",
-      "sha256": "796692b0485a7b1e893dbedb154fc984eff587fc78ec1e8419c34a4af2c0c979"
+      "sha256": "7550f36e441197ced48ed13c1153ba8f484450735a8d3ad7a7add173972b2f78"
     },
     {
       "path": "packages/engine/web/BrowserStatsPanel.ts",
@@ -5793,27 +5807,27 @@
     },
     {
       "path": "packages/engine/web/game.ts",
-      "sha256": "239d4349f3a9b800052a49ca10c137cab63938ff130d33b54011531cf49690e5"
+      "sha256": "c5c1cefe8304c496fedffeffd8c7815f66d73023f89c05d9657820520c23b872"
     },
     {
       "path": "tests/browser-game.test.mjs",
-      "sha256": "e02e21669da4841a74c4f1167e6a01de157067abc6147daf2818dbc29e5ae1a6"
+      "sha256": "db303d22194dba90232819a433e88a653f1d7904f65d3e98578f10941904a2d3"
     },
     {
       "path": "packages/runtime/src/errorHelp.ts",
-      "sha256": "f05dde25055895a5e5eff32b779f08ab760afc2418cff702ae5bb2d3b66ef785"
+      "sha256": "b23253253c9772060fb847261ba8ff48d3f4b25c3fc7e4a75d2a0db05f1fd4d9"
     },
     {
       "path": "packages/runtime/src/errorHelpZh.ts",
-      "sha256": "f8f57d989e441bab3a1b56aa4a8f62d90c98b6a1688a6e5f0c21b7651ac8af6e"
+      "sha256": "c24ac8f4a051b0a669f2878a6b6f041b9e37abdc3ec02008e86e4331feb8f64b"
     },
     {
       "path": "tools/error-codes.mjs",
-      "sha256": "69d5c379a51e5d27831c0202e1aa94d1aeeef9c2ae22babdc2c63eba4a802cde"
+      "sha256": "214ec7d651286c8a0e44cc718cff4bb66704206aa47d4fe86ec1b94226de3721"
     },
     {
       "path": "tests/error-codes.test.mjs",
-      "sha256": "8dcde1465a5e52a1c1d9d0db5f5fd1feda80b1b2d9dab6b26df4b8193c53b314"
+      "sha256": "8f806cdc908757fea1da1647096b9d6a89ff9045aa0d3a922b06f5dd8256ba6a"
     },
     {
       "path": "packages/engine/web/BrowserFrameLoop.ts",
@@ -5833,15 +5847,15 @@
     },
     {
       "path": "packages/runtime/src/graphicsFill.ts",
-      "sha256": "760431c7a23bf49bcf025e8171021d78b5ed1242f00c0bbe52984046d8a2367b"
+      "sha256": "ae1da8e204c71d91ecf9381dc0ba33b469f572602d2fa02c4a604f7145a2c428"
     },
     {
       "path": "tests/graphics-fills.test.mjs",
-      "sha256": "2945174ad13a7fe83bba66e153be622d71ac4f6bf31d4bb5c10501b15d7fbdcc"
+      "sha256": "f289f5ad201d0d18baecb7bf8e6e23db4eeebb887e8859b4e2da950306fb5a38"
     },
     {
       "path": "packages/runtime/src/graphicsShape.ts",
-      "sha256": "f1014626d14623ea481934a7d462ff5c3179141685f7bf7e9573da79dbf6b49f"
+      "sha256": "4634eca638cdb74397cd65cb18f0a5d07960fe8b287201dccc7a334521861b73"
     },
     {
       "path": "packages/runtime/src/srgbBytes.ts",
@@ -5853,11 +5867,11 @@
     },
     {
       "path": "examples/graphics/main.mjs",
-      "sha256": "599e185703bfa5cf7809257fab3f5db8079a60d82ac33cb663e6ca8ef09f7afc"
+      "sha256": "0f29fe02e596820b2df7217a01c6f650cbe83c27960498ce87aaa3949fca859a"
     },
     {
       "path": "examples/graphics/verify.mjs",
-      "sha256": "31fe96732bb49b5a5f5c215d3334e9c095551a67627624ee536f06e984e2e25e"
+      "sha256": "c088b2d8d5cb75c722c813910f1fa60bf11534133510b8f226a290ad04801265"
     },
     {
       "path": "packages/engine/rendering/srgbBytes.ts",
@@ -5873,11 +5887,43 @@
     },
     {
       "path": "examples/starter/main.mjs",
-      "sha256": "a23cc603c71476d6af1627eb0846c5dd11bf3590b662681ac20e762474521d9a"
+      "sha256": "1c3238e341fa45ee869f4669f41126505c1e69b18d58ee0d8751dfbab0d998bd"
     },
     {
       "path": "examples/starter/verify.mjs",
-      "sha256": "8765664d5ca5efcd9a312c80170c4830258d9ad6ecd02cf395bdd255e91f3a31"
+      "sha256": "26258c4cb46a52afbfde7e05ff76df21ae02998c3a92eeca85d7bf6c36d7f242"
+    },
+    {
+      "path": "tools/api-reference.mjs",
+      "sha256": "019b691af6ad6619cc368d053f41e360cb3199579ddb90d1438a74de10d4d1b8"
+    },
+    {
+      "path": "tests/api-reference.test.mjs",
+      "sha256": "60d1762ec553fe8bbe11f2bcaaddf757b613129434c2468d085ba2104a358753"
+    },
+    {
+      "path": "tests/types/game.ts",
+      "sha256": "472158afe421baa9c6d72f2e90e593e8c964a394d50bdaaa3ec4703be9eee5ec"
+    },
+    {
+      "path": "tests/display-members.test.mjs",
+      "sha256": "0136fee887466295715b026751028945b193a6353df2e785b483e1dbc7c96b16"
+    },
+    {
+      "path": "tests/graphics-smoothing.test.mjs",
+      "sha256": "120ac272e30a4a542735f4eb6a3bc4994eb6ce0ce5a9c298085b23e50e815208"
+    },
+    {
+      "path": "tests/hit-drawing.test.mjs",
+      "sha256": "c1951139ebfe0ed6f0a2d93d182d15b87ae59f07a474e9fdc24bc9b144678ee6"
+    },
+    {
+      "path": "packages/engine/src/motion.ts",
+      "sha256": "0df941ae87dc7bbf38fd85edac94e0753d7b447b8b9007343e1945d9f964b878"
+    },
+    {
+      "path": "tests/motion.test.mjs",
+      "sha256": "bff8d1ac89d8bb8816e30b008c4f55c11e7feec5bcc29a39a9ccaeedd22762f5"
     }
   ],
   "historicalSemanticReview": {
