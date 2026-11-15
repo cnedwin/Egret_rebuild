@@ -9,7 +9,8 @@
 ## 使用
 
 ```js
-import { createEngineProbe, createHandleTracker } from '@egret/devtools';
+import { createBrowserFrameLoop } from '@egret/engine/web/loop';
+import { createEngineProbe, createHandleTracker, frameLoopSource } from '@egret/devtools';
 import { attachPerformanceMonitor, sharedHostSource } from '@egret/devtools/web';
 
 const { monitor } = attachPerformanceMonitor({ canvas, backend: 'webgl2' });
@@ -18,11 +19,19 @@ const tracker = createHandleTracker();
 
 const engine = await createEngineForProfile({ host: probe.wrapHost(host) }, 'egret.shared-frame2d/1');
 const tracked = tracker.engine(engine);
-monitor.addSource('host', sharedHostSource(host));
-monitor.addSource('handles', tracker.source());
-
 const scope = tracked.createScope();
 
+// 引擎自带的帧循环，带测量：每一步就是一帧的工作量。
+const loop = createBrowserFrameLoop(probe.frameLoop({ engine, host, frame: frameOptions, update: updateGame }));
+monitor.addSource('loop', frameLoopSource(loop));
+monitor.addSource('host', sharedHostSource(host));
+monitor.addSource('handles', tracker.source());
+loop.start();
+```
+
+`probe.frameLoop` 接收 `createBrowserFrameLoop` 的选项，返回时引擎、update 和显示回调都已带上测量，其他选项原样保留。自己写循环的游戏可以直接调用监控：
+
+```js
 function frame() {
   monitor.beginFrame();
   monitor.measure('logic', () => updateGame());
@@ -33,6 +42,8 @@ function frame() {
 }
 ```
 
+`createBrowserGame` 在内部创建宿主和帧循环，没有留出测量的位置。用它时监控能显示帧节奏、通过 `frameLoopSource(game.loop)` 读到的循环计数，以及游戏在 `update` 里用 `monitor.measure` 测的内容。要看引擎耗时拆分和帧统计，请像上面那样用各自的入口创建宿主、引擎和帧循环；`createBrowserGame` 内部做的就是这些。
+
 在页面地址后加 `?egretDebug=1` 进入调试模式。这个选择会按站点记住，`?egretDebug=0` 退出。也可以传入 `enabled: true` 或 `enabled: false` 由代码决定，例如根据构建开关。
 
 徽标显示每秒帧数、平均帧耗时和最近的帧间隔。点击徽标展开面板，拖动可以移动。按反引号键或三指触摸可隐藏和显示。位置、状态和打开的标签页会被记住。
@@ -40,21 +51,22 @@ function frame() {
 ## 面板
 
 - **概览。** 帧间隔图和预算线、分位数、分段耗时堆叠条，以及提示。
-- **渲染。** 最近一帧共享帧的统计、宿主状态、WebGL2 宿主阶段和 World3D 数值。
+- **渲染。** 最近一帧共享帧的统计、帧循环、宿主状态、WebGL2 宿主阶段和 World3D 数值。
 - **资源。** 各类句柄的存活数，以及内存：帧内页面、宿主持有的字节数，浏览器提供时还有 JS 堆估算。
 - **卡顿。** 长帧列表，最新的在前。点开一条可以看它的分段耗时和当时绘制的帧。
 - **自定义。** 你登记的计数、仪表和其他数据源。
 
 **暂停**会定住面板显示的内容以便阅读，监控继续采集。**重置**清空测量数据。
 
-提示说明数字的含义。慢帧会被判断为受页面自身工作限制（并指出最大的分段），或在页面工作很少时判断为受 GPU 和显示限制。其他提示包括：最近的长帧、区域接近或达到每帧上限、批次主要被同一原因打断、特效通道过多、宿主失败、停止或积压，以及句柄数量持续增长。`evaluateHints(snapshot)` 以数据形式返回同样的提示，不需要面板。
+提示说明数字的含义。慢帧会被判断为受页面自身工作限制（并指出最大的分段），或在页面工作很少时判断为受 GPU 和显示限制。其他提示包括：最近的长帧、区域或页面字节接近或达到每帧上限、批次主要被同一原因打断、效果组过多、帧循环停止或有一成的帧被跳过、宿主失败、停止或积压，以及句柄数量持续增长。`evaluateHints(snapshot)` 以数据形式返回同样的提示，不需要面板。
 
 ## 读取的数据
 
 - **帧节奏。** 动画帧之间的间隔：每秒帧数，50、95、99 分位，超过预算 1.5 倍的帧数，以及标签页隐藏之类的暂停。暂停不计为慢帧。
 - **帧内工作与分段。** `beginFrame` 到 `endFrame` 之间的时间，以及每个具名 `measure` 调用的时间。
-- **引擎耗时拆分。** `createEngineProbe` 通过引擎已有的调用为三个分段计时：`clock` 对应 `advanceTime`（游戏时钟、补间、序列），`capture` 对应把显示树读成一帧，`submit` 对应宿主的准备和提交。`probe.wrapHost(host)` 返回一个为帧端口计时的宿主；把它交给引擎，原宿主留着调用它自己的方法。宿主没有包装时，整帧记为一个 `render` 分段。
-- **共享帧统计。** 从 `renderSharedFrame` 返回的帧记录读取：各类命令数、三角形数、特效通道数、页数、区域数及其每帧上限，以及估算的绘制批次和每个批次结束的原因。帧记录不可变，所以不需要在引擎里加钩子。
+- **引擎耗时拆分。** `createEngineProbe` 通过引擎已有的调用为引擎计时：`clock` 对应 `advanceTime`（游戏时钟、补间、序列），`capture` 对应把显示树读成一帧，`submit` 对应宿主的准备和提交。使用 `probe.frameLoop` 时，游戏自己的一步记为 `update` 分段。`probe.wrapHost(host)` 返回一个为帧端口计时的宿主；把它交给引擎，原宿主留着调用它自己的方法。宿主没有包装时，整帧记为一个 `render` 分段。
+- **共享帧统计。** 从 `renderSharedFrame` 返回的帧记录读取：各类命令数、三角形数、效果组数及其内容（模糊、颜色矩阵、发光、描边、遮罩）、非普通混合的绘制数、页数、区域数及其每帧上限 4,096，以及估算的绘制批次和每个批次结束的原因。帧记录不可变，所以不需要在引擎里加钩子。
+- **帧循环。** `frameLoopSource(loop)` 读取 `createBrowserFrameLoop` 循环的状态、走过的步数、画出的帧数和因宿主繁忙而跳过的帧数，以及最近一秒的跳帧比例。
 - **宿主状态。** `sharedHostSource(host)` 读取共享 WebGL2 或 WebGPU 宿主已经公开的状态。`sharedWebGL2TimingSource(host)` 按阶段读取 WebGL2 宿主内部的耗时，前提是宿主创建时传入了 `measureSharedFrames: true`。`world3DSource(renderer)` 读取 World3D 渲染器的计数，`recordWorld3DFrame(monitor, renderer.measureFrame(draw))` 记录它测得的一帧，渲染器解析出 GPU 时间后也会记录。
 - **句柄。** `createHandleTracker` 统计通过 `tracker.engine(engine)` 创建的 Scope、补间、序列、资源组、位图槽和票据，以及其中仍然存活的数量。连续二十秒只增不减的计数会被标记为增长。跟踪器只弱引用句柄。
 - **自定义数值。** `addCount`、`setGauge` 和 `addSource`。
@@ -70,6 +82,7 @@ function frame() {
 - 页面字节数按每个页面像素四字节计算，不是 GPU 测量值。
 - `submit` 是宿主的准备和提交之和。只有 WebGL2 宿主公开内部阶段，WebGPU 宿主没有。
 - 票据没有可读的状态，所以在它的 Scope 关闭之前都算存活，即使已经提交或释放。直接在引擎上创建、没有经过 `tracker.engine(engine)` 的句柄不计入。
+- 用 `createBrowserGame` 创建的游戏无法拆分引擎耗时，也无法统计帧，因为它的宿主和循环是在那次调用内部创建的。
 - 引擎没有改动。引擎没有作为调用公开的步骤，这里无法计时。
 - 监控测量主线程上的时间。GPU 时间只有 World3D 的 WebGL2 渲染器自己测得时才会显示。
 

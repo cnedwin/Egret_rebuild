@@ -26,6 +26,11 @@
       "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it."
     },
     {
+      "path": "devtools/src/core/loopSource.ts",
+      "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
+      "criticalComment": true
+    },
+    {
       "path": "devtools/src/core/monitor.ts",
       "originRole": "First-party Egret performance monitor source authored with AI assistance under Apache-2.0. It has no dependencies and reads only public engine values passed to it.",
       "criticalComment": true
@@ -59,6 +64,10 @@
     },
     {
       "path": "devtools/tests/engine-probe.test.mjs",
+      "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
+    },
+    {
+      "path": "devtools/tests/frame-loop.test.mjs",
       "originRole": "First-party Egret performance monitor validation, example or tool authored with AI assistance under Apache-2.0, using generated inputs and the built public entries."
     },
     {

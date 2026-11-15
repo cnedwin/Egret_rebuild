@@ -7,12 +7,27 @@ import type { SharedFrameLike } from './frameStats.js';
 import type { PerformanceMonitor } from './types.js';
 
 /** Section names written by the probe. */
-export const ENGINE_SECTIONS = Object.freeze({ clock: 'clock', capture: 'capture', submit: 'submit', render: 'render' } as const);
+export const ENGINE_SECTIONS = Object.freeze({ clock: 'clock', update: 'update', capture: 'capture', submit: 'submit', render: 'render' } as const);
 
 interface ClockEngineLike { advanceTime(sourceSeconds: number): unknown; }
 interface FrameEngineLike<Options, Frame extends SharedFrameLike> { renderSharedFrame(options: Options): Frame; }
 
+/** The part of createBrowserFrameLoop's options the probe reads and replaces. */
+export interface FrameLoopOptionsLike {
+    readonly engine: { readonly clock: unknown; advanceTime(sourceSeconds: number): unknown; renderSharedFrame(options: never): unknown };
+    readonly update?: (deltaSeconds: number) => void;
+    readonly requestFrame?: (callback: (milliseconds: number) => void) => number;
+}
+
 export interface EngineProbe {
+    /**
+     * Options for createBrowserFrameLoop that measure the loop: each step of
+     * the display is one frame of work, the engine's clock is the clock
+     * section, the game's update is the update section, and drawing is timed
+     * and counted as renderSharedFrame is. Every other option is kept. With
+     * the inert monitor the options themselves are returned.
+     */
+    frameLoop<O extends FrameLoopOptionsLike>(options: O): O;
     /**
      * Return a host that times its shared frame port. Pass the result to
      * createEngineForProfile in place of the host; keep the original for its
@@ -68,26 +83,52 @@ export function createEngineProbe(monitor: PerformanceMonitor): EngineProbe {
         return Object.freeze(wrapper) as T;
     }
 
+    function renderSharedFrame<Options, Frame extends SharedFrameLike>(engine: FrameEngineLike<Options, Frame>, options: Options): Frame {
+        if (!monitor.active || rendering) return engine.renderSharedFrame(options);
+        const started = monitor.now();
+        rendering = true; hostMs = Number.NaN;
+        let frame: Frame | undefined;
+        try { frame = engine.renderSharedFrame(options); return frame; }
+        finally {
+            rendering = false;
+            const total = monitor.now() - started;
+            if (Number.isNaN(hostMs)) {
+                // The host was not wrapped: one number, and the counts are read here instead.
+                monitor.addTime(ENGINE_SECTIONS.render, total);
+                if (frame !== undefined) monitor.observeSharedFrame(frame);
+            } else monitor.addTime(ENGINE_SECTIONS.capture, Math.max(0, total - hostMs));
+        }
+    }
+
+    function frameLoop<O extends FrameLoopOptionsLike>(options: O): O {
+        if (!monitor.active) return options;
+        const { engine, update } = options;
+        const request = options.requestFrame ?? (globalThis as { readonly requestAnimationFrame?: (callback: (milliseconds: number) => void) => number }).requestAnimationFrame;
+        if (typeof request !== 'function') throw new TypeError('There is no requestAnimationFrame; pass requestFrame.');
+        // The loop reads the clock's limit from the engine it is given, so the stand-in passes the clock through.
+        const timedEngine = Object.freeze({
+            get clock(): unknown { return engine.clock; },
+            advanceTime: (sourceSeconds: number): unknown => monitor.measure(ENGINE_SECTIONS.clock, () => engine.advanceTime(sourceSeconds)),
+            renderSharedFrame: (given: unknown): unknown => renderSharedFrame(engine as unknown as FrameEngineLike<unknown, SharedFrameLike>, given),
+        });
+        return {
+            ...options,
+            engine: timedEngine,
+            ...(update === undefined ? {} : { update: (deltaSeconds: number): void => { monitor.measure(ENGINE_SECTIONS.update, () => update(deltaSeconds)); } }),
+            // The loop does all of a frame's work inside the display's callback, so the callback is the frame.
+            requestFrame: (callback: (milliseconds: number) => void): number => Reflect.apply(request, globalThis, [(milliseconds: number): void => {
+                monitor.beginFrame();
+                try { callback(milliseconds); } finally { monitor.endFrame(); }
+            }]) as number,
+        } as O;
+    }
+
     return Object.freeze({
+        frameLoop,
         wrapHost,
         advanceTime<E extends ClockEngineLike>(engine: E, sourceSeconds: number): ReturnType<E['advanceTime']> {
             return monitor.measure(ENGINE_SECTIONS.clock, () => engine.advanceTime(sourceSeconds)) as ReturnType<E['advanceTime']>;
         },
-        renderSharedFrame<Options, Frame extends SharedFrameLike>(engine: FrameEngineLike<Options, Frame>, options: Options): Frame {
-            if (!monitor.active || rendering) return engine.renderSharedFrame(options);
-            const started = monitor.now();
-            rendering = true; hostMs = Number.NaN;
-            let frame: Frame | undefined;
-            try { frame = engine.renderSharedFrame(options); return frame; }
-            finally {
-                rendering = false;
-                const total = monitor.now() - started;
-                if (Number.isNaN(hostMs)) {
-                    // The host was not wrapped: one number, and the counts are read here instead.
-                    monitor.addTime(ENGINE_SECTIONS.render, total);
-                    if (frame !== undefined) monitor.observeSharedFrame(frame);
-                } else monitor.addTime(ENGINE_SECTIONS.capture, Math.max(0, total - hostMs));
-            }
-        },
+        renderSharedFrame,
     });
 }

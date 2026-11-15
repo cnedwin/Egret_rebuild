@@ -25,8 +25,10 @@ export interface AttachPerformanceMonitorOptions extends PerformanceMonitorOptio
     readonly autoTick?: boolean;
     /** KeyboardEvent.code that shows or hides the monitor. Default Backquote; null for none. */
     readonly toggleKey?: string | null;
-    /** Regions one shared frame may hold; the warning appears at 80 percent. Default 128. */
+    /** Regions one shared frame may hold; the warning appears at 80 percent. Default 4096. */
     readonly regionLimit?: number;
+    /** Page bytes one shared frame may hold. Default 64 MiB. */
+    readonly pageByteLimit?: number;
     readonly language?: 'en' | 'zh';
     /** Key for the remembered position and state. Default egret.devtools.monitor. */
     readonly storageKey?: string;
@@ -59,6 +61,7 @@ const TEXT = {
         overview: 'Overview', renderTab: 'Render', resources: 'Resources', hitchTab: 'Hitches', custom: 'Custom',
         frame: 'Frame interval', work: 'Frame work', dropped: 'dropped', hitches: 'hitches', pauses: 'pauses', sections: 'Sections',
         render: 'Shared frame', commands: 'commands', runs: 'runs (est.)', triangles: 'triangles', effects: 'effect passes',
+        effectKinds: 'effects', blended: 'blended draws', blur: 'blur', colorMatrix: 'color matrix', glow: 'glow', outline: 'outline', mask: 'mask',
         breaks: 'breaks', regions: 'regions', pages: 'pages', counters: 'Counters', gauges: 'Gauges', hints: 'Hints', other: 'other',
         exportLabel: 'Export', reset: 'Reset', hide: 'Hide', pause: 'Pause', resume: 'Resume', overhead: 'monitor',
         material: 'material', page: 'page', region: 'region', clip: 'clip', barrier: 'barrier', waiting: 'waiting for frames',
@@ -70,6 +73,7 @@ const TEXT = {
         overview: '概览', renderTab: '渲染', resources: '资源', hitchTab: '卡顿', custom: '自定义',
         frame: '帧间隔', work: '帧内工作', dropped: '掉帧', hitches: '卡顿', pauses: '暂停', sections: '分段耗时',
         render: '共享帧', commands: '命令', runs: '批次（估算）', triangles: '三角形', effects: '离屏通道',
+        effectKinds: '效果', blended: '非普通混合绘制', blur: '模糊', colorMatrix: '颜色矩阵', glow: '发光', outline: '描边', mask: '遮罩',
         breaks: '打断', regions: '区域', pages: '页', counters: '计数', gauges: '仪表', hints: '提示', other: '其余',
         exportLabel: '导出', reset: '重置', hide: '隐藏', pause: '暂停', resume: '继续', overhead: '监控自身',
         material: '材质', page: '换页', region: '区域', clip: '裁剪', barrier: '屏障', waiting: '等待帧数据',
@@ -130,7 +134,10 @@ function hintSentence(hint: Hint, zh: boolean, words: Words): string {
         case 'regions-full': return zh ? `帧内区域已达上限（${value} / ${limit}），更多不同的图集帧会被拒绝。` : `Regions are at the per-frame limit (${value} of ${limit}); more distinct atlas frames will be refused.`;
         case 'regions-near-limit': return zh ? `帧内区域接近上限（${value} / ${limit}）。` : `Regions are near the per-frame limit (${value} of ${limit}).`;
         case 'run-breaks': return zh ? `${limit} 个批次中有 ${value} 个被“${reason}”打断。` : `${value} of ${limit} runs end at a ${reason} change.`;
-        case 'effect-passes': return zh ? `本帧有 ${value} 个模糊或遮罩通道，每个都要离屏绘制。` : `This frame has ${value} blur or mask passes; each is drawn offscreen.`;
+        case 'effect-passes': return zh ? `本帧有 ${value} 个滤镜或遮罩组，每个都要离屏绘制。` : `This frame has ${value} filter or mask groups; each is drawn offscreen.`;
+        case 'pages-near-limit': return zh ? `帧内页面占用 ${bytes(value)}，${value >= limit ? '已达' : '接近'}每帧上限 ${bytes(limit)}。` : `Frame pages hold ${bytes(value)}, ${value >= limit ? 'at' : 'near'} the per-frame limit of ${bytes(limit)}.`;
+        case 'loop-failed': return zh ? `帧循环已停止${subject ? `：${subject}` : ''}。` : `The frame loop stopped${subject ? `: ${subject}` : ''}.`;
+        case 'frames-skipped': return zh ? `最近有 ${value}% 的帧被跳过：宿主还没完成之前的帧。` : `${value}% of recent frames were skipped: the host had not finished earlier ones.`;
         case 'host-failed': return zh ? `宿主报告失败：${subject}。` : `The host reported a failure: ${subject}.`;
         case 'host-not-active': return zh ? `宿主状态为 ${subject}，当前没有在绘制。` : `The host is ${subject} and is not drawing.`;
         case 'host-backlog': return zh ? `宿主有 ${value} 帧尚未完成，提交快于 GPU 完成。` : `The host has ${value} unfinished frames: submission is outrunning the GPU.`;
@@ -156,7 +163,7 @@ export function attachPerformanceMonitor(options: AttachPerformanceMonitorOption
     const zh = (options.language ?? (navigator.language?.toLowerCase().startsWith('zh') ? 'zh' : 'en')) === 'zh';
     const text: Words = zh ? TEXT.zh : TEXT.en;
     const storageKey = options.storageKey ?? 'egret.devtools.monitor';
-    const regionLimit = options.regionLimit ?? 128;
+    const regionLimit = options.regionLimit ?? 4096, pageByteLimit = options.pageByteLimit ?? 67108864;
     const corner = options.corner ?? 'top-left';
 
     let saved: { x?: number; y?: number; expanded?: boolean; visible?: boolean; tab?: string } = {};
@@ -257,10 +264,13 @@ export function attachPerformanceMonitor(options: AttachPerformanceMonitorOption
 
     function frameSection(frame: SharedFrameStats): HTMLElement {
         const switches = frame.switches, reasons = (['material', 'page', 'region', 'clip', 'barrier'] as const).filter((key) => switches[key] > 0);
+        const kinds = (['blur', 'colorMatrix', 'glow', 'outline', 'mask'] as const).filter((key) => frame.effectKinds[key] > 0);
         return section(`${text.render} #${frame.frameId} · ${frame.width}×${frame.height}`, [
             [text.commands, `${frame.commands} → ${frame.runs} ${text.runs}`],
             [text.breaks, reasons.length > 0 ? reasons.map((key) => `${text[key]} ${switches[key]}`).join(' · ') : '0'],
             [`${text.triangles} / ${text.effects}`, `${frame.triangles} / ${frame.effects}`],
+            ...(kinds.length > 0 ? [[text.effectKinds, kinds.map((key) => `${text[key]} ${frame.effectKinds[key]}`).join(' · ')] as Row] : []),
+            ...(frame.blendedDraws > 0 ? [[text.blended, String(frame.blendedDraws)] as Row] : []),
             [text.regions, `${frame.regions} / ${regionLimit}`, frame.regions >= regionLimit ? 'bad' : frame.regions >= regionLimit * 0.8 ? 'warn' : undefined],
             [text.pages, `${frame.pages} · ${bytes(frame.pageBytes)}`],
         ]);
@@ -320,7 +330,7 @@ export function attachPerformanceMonitor(options: AttachPerformanceMonitorOption
         parts.push(head);
         const split = breakdown(snapshot);
         if (split) parts.push(split);
-        const hints = evaluateHints(snapshot, { regionLimit, hitches });
+        const hints = evaluateHints(snapshot, { regionLimit, pageByteLimit, hitches });
         if (hints.length > 0) {
             const element = section(text.hints, []);
             for (const hint of hints) element.append(make('div', hint.severity === 'problem' ? 'hint bad' : 'hint', hintSentence(hint, zh, text)));
@@ -330,7 +340,7 @@ export function attachPerformanceMonitor(options: AttachPerformanceMonitorOption
         return parts;
     }
 
-    const isRenderSource = (name: string): boolean => name === 'host' || name.startsWith('webgl2') || name.startsWith('webgpu') || name.startsWith('world3d');
+    const isRenderSource = (name: string): boolean => name === 'host' || name === 'loop' || name.startsWith('webgl2') || name.startsWith('webgpu') || name.startsWith('world3d');
 
     function renderTab(snapshot: PerformanceSnapshot): HTMLElement[] {
         const parts: HTMLElement[] = [];

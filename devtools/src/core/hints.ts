@@ -7,7 +7,8 @@ import type { HitchRecord, PerformanceSnapshot } from './types.js';
 export type HintId =
     | 'cpu-bound' | 'present-bound' | 'slow-frames' | 'recent-hitch'
     | 'regions-full' | 'regions-near-limit' | 'run-breaks' | 'effect-passes'
-    | 'host-failed' | 'host-not-active' | 'host-backlog' | 'handles-growing';
+    | 'host-failed' | 'host-not-active' | 'host-backlog' | 'handles-growing'
+    | 'pages-near-limit' | 'loop-failed' | 'frames-skipped';
 
 export interface Hint {
     readonly id: HintId;
@@ -21,8 +22,10 @@ export interface Hint {
 }
 
 export interface HintOptions {
-    /** Regions one shared frame may hold. Default 128. */
+    /** Regions one shared frame may hold. Default 4096, the shared hosts' own bound. */
     readonly regionLimit?: number;
+    /** Page bytes one shared frame may hold. Default 64 MiB, the shared hosts' own bound. */
+    readonly pageByteLimit?: number;
     /** The hitch log, for the latest long frame. */
     readonly hitches?: readonly HitchRecord[];
     /** A hitch counts as recent for this many frames. Default 600. */
@@ -59,9 +62,11 @@ export function evaluateHints(snapshot: PerformanceSnapshot, options: HintOption
 
     const frame = snapshot.frame;
     if (frame !== null) {
-        const limit = options.regionLimit ?? 128;
+        const limit = options.regionLimit ?? 4096;
         if (frame.regions >= limit) hints.push({ id: 'regions-full', severity: 'problem', value: frame.regions, limit });
         else if (frame.regions >= limit * 0.8) hints.push({ id: 'regions-near-limit', severity: 'warning', value: frame.regions, limit });
+        const pageLimit = options.pageByteLimit ?? 67108864;
+        if (frame.pageBytes >= pageLimit * 0.8) hints.push({ id: 'pages-near-limit', severity: frame.pageBytes >= pageLimit ? 'problem' : 'warning', value: frame.pageBytes, limit: pageLimit });
         const reason = largest(frame.switches as unknown as Record<string, number>);
         if (reason !== undefined && frame.runs >= 16) {
             const count = (frame.switches as unknown as Record<string, number>)[reason] as number;
@@ -76,6 +81,14 @@ export function evaluateHints(snapshot: PerformanceSnapshot, options: HintOption
         if (typeof failure === 'string') hints.push({ id: 'host-failed', severity: 'problem', subject: failure });
         else if (typeof state === 'string' && state !== 'active') hints.push({ id: 'host-not-active', severity: 'problem', subject: state });
         if (typeof pending === 'number' && pending >= 2) hints.push({ id: 'host-backlog', severity: 'warning', value: pending, limit: 2 });
+    }
+
+    const loop = snapshot.sources['loop'];
+    if (loop !== undefined) {
+        const share = loop['skippedShare'];
+        if (loop['state'] === 'failed') hints.push({ id: 'loop-failed', severity: 'problem', ...(typeof loop['failure'] === 'string' ? { subject: loop['failure'] } : {}) });
+        // A tenth of the display's frames drew nothing because the host still held earlier ones.
+        else if (typeof share === 'number' && share >= 0.1) hints.push({ id: 'frames-skipped', severity: 'warning', value: Math.round(share * 100), limit: 10 });
     }
 
     const handles = snapshot.sources['handles'];

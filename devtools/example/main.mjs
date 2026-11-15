@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Moving sprites on a shared 2D host, with the performance monitor attached.
 import { Bitmap, createAssetRef, createAssetType, createEngineForProfile, createImageData2D, createTexture, isTexture } from '@egret/engine';
-import { createEngineProbe, createHandleTracker } from '@egret/devtools';
+import { createBrowserFrameLoop } from '@egret/engine/web/loop';
+import { createEngineProbe, createHandleTracker, frameLoopSource } from '@egret/devtools';
 import { attachPerformanceMonitor, describeWebGLAdapter, sharedHostSource, sharedWebGL2TimingSource } from '@egret/devtools/web';
 
 const canvas = document.querySelector('#stage');
@@ -76,46 +77,36 @@ engine.clock.onTick(scope, tick => {
   }
 });
 
-let stall = 0, elapsed = 0, last = performance.now(), request = 0, closed = false;
+let stall = 0, closed = false;
 document.querySelector('#more').addEventListener('click', () => add(200));
 document.querySelector('#hitch').addEventListener('click', () => { stall = 80; });
 
-function frame(now) {
-  if (closed) return;
-  request = requestAnimationFrame(frame);
-  // The first timestamp can predate the page clock read above; never step backwards.
-  const seconds = Math.max(0, Math.min(0.1, (now - last) / 1000));
-  last = now;
-  monitor.beginFrame();
-  monitor.measure('logic', () => {
-    if (stall > 0) { const until = performance.now() + stall; stall = 0; while (performance.now() < until); }
-  });
-  elapsed += seconds;
-  probe.advanceTime(engine, elapsed);
-  // The host still owns the previous submission: draw the newest state next time.
-  if (host.getStatus().pendingFrames === 0) {
-    try {
-      const rendered = probe.renderSharedFrame(engine, frameOptions);
-      canvas.dataset.frame = String(rendered.frameId);
-      canvas.dataset.phase = 'ready';
-    } catch (error) {
-      canvas.dataset.phase = 'failed';
-      status.textContent = `Rendering failed / 渲染失败 · ${error.message}`;
-      void close();
-    }
-  } else monitor.addCount('skipped');
-  monitor.endFrame();
+function failed(error) {
+  canvas.dataset.phase = 'failed';
+  status.textContent = `Rendering failed / 渲染失败 · ${error?.message ?? error}`;
+  void close();
 }
+
+// The engine's own frame loop, measured: probe.frameLoop times the clock, the update and the drawing of each step.
+const loop = createBrowserFrameLoop(probe.frameLoop({
+  engine, host, frame: frameOptions, onError: failed,
+  update() {
+    if (stall > 0) { const until = performance.now() + stall; stall = 0; while (performance.now() < until); }
+    const drawn = loop.snapshot().frames;
+    if (drawn > 0) { canvas.dataset.frame = String(drawn); canvas.dataset.phase = 'ready'; }
+  },
+}));
+monitor.addSource('loop', frameLoopSource(loop));
 
 async function close() {
   if (closed) return;
   closed = true;
-  cancelAnimationFrame(request);
+  loop.dispose();
   handle.dispose();
   try { await engine.dispose(); } finally { await host.close(); }
 }
 
 status.textContent = (useWebGPU ? 'WebGPU' : 'WebGL2') + (handle.enabled ? ' · debug mode / 调试模式' : ' · add ?egretDebug=1 / 加上 ?egretDebug=1');
 addEventListener('pagehide', event => { if (!event.persisted) void close(); });
-globalThis.__devtoolsExample = { handle, tracker, get sprites() { return sprites.length; }, close };
-request = requestAnimationFrame(frame);
+globalThis.__devtoolsExample = { handle, tracker, loop, get sprites() { return sprites.length; }, close };
+loop.start();

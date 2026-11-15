@@ -43,9 +43,9 @@ test('a recent hitch names its largest section and ages out', () => {
 });
 
 test('regions warn at four fifths of the limit and are a problem at the limit', () => {
-    assert.deepEqual(evaluateHints(snapshot({ frame: frameStats({ regions: 102 }) })), []);
-    assert.deepEqual(evaluateHints(snapshot({ frame: frameStats({ regions: 103 }) })), [{ id: 'regions-near-limit', severity: 'warning', value: 103, limit: 128 }]);
-    assert.deepEqual(evaluateHints(snapshot({ frame: frameStats({ regions: 128 }) })), [{ id: 'regions-full', severity: 'problem', value: 128, limit: 128 }]);
+    assert.deepEqual(evaluateHints(snapshot({ frame: frameStats({ regions: 3276 }) })), []);
+    assert.deepEqual(evaluateHints(snapshot({ frame: frameStats({ regions: 3277 }) })), [{ id: 'regions-near-limit', severity: 'warning', value: 3277, limit: 4096 }]);
+    assert.deepEqual(evaluateHints(snapshot({ frame: frameStats({ regions: 4096 }) })), [{ id: 'regions-full', severity: 'problem', value: 4096, limit: 4096 }]);
     assert.deepEqual(ids(evaluateHints(snapshot({ frame: frameStats({ regions: 8 }) }), { regionLimit: 10 })), ['regions-near-limit']);
 });
 
@@ -74,7 +74,7 @@ test('growing handle kinds are named with their count', () => {
 });
 
 test('problems are listed before warnings and the result is frozen', () => {
-    const hints = evaluateHints(snapshot({ interval: timing(30), work: timing(3), frame: frameStats({ regions: 128, effects: 6 }), sources: { host: { state: 'active', pendingFrames: 3 } } }));
+    const hints = evaluateHints(snapshot({ interval: timing(30), work: timing(3), frame: frameStats({ regions: 4096, effects: 6 }), sources: { host: { state: 'active', pendingFrames: 3 } } }));
     assert.deepEqual(ids(hints), ['regions-full', 'present-bound', 'effect-passes', 'host-backlog']);
     assert.ok(Object.isFrozen(hints) && Object.isFrozen(hints[0]));
 });
