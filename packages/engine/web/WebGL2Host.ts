@@ -18,7 +18,6 @@ import type { SharedWebGL2FrameTiming, SharedWebGL2TimingPhase, SharedWebGL2Timi
 import type {
   SharedLayerWebGL2Host,
   SharedWebGL2Layer2D,
-  SharedWebGL2LayerEffect2D,
   SharedWebGL2LayerPlacement2D,
   SharedWebGL2LayerStatus,
   SharedWebGL2Readback,
@@ -78,11 +77,17 @@ import {
   sharedWebGL2SolidFragmentSource,
   sharedWebGL2ResolveVertexSource,
   sharedWebGL2ResolveFragmentSource,
-  sharedWebGL2BlendFactors,
-  sharedWebGL2LayerVertexSource,
-  sharedWebGL2LayerFragmentSource,
-  sharedWebGL2LayerEffectFragmentSource
+  sharedWebGL2BlendFactors
 } from './sharedWebGL2Shaders.js';
+import {
+  MAX_LAYER_HANDLES,
+  MAX_LAYER_EXTENT,
+  MAX_LAYER_BYTES,
+  createWebGL2LayerProgram,
+  readWebGL2LayerEffect,
+  readWebGL2LayerPlacement
+} from './webgl2LayerState.js';
+import type { LayerRevision, LayerRead, LayerProgram } from './webgl2LayerState.js';
 
 function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void; reject: (cause: unknown) => void } {
   let resolve!: (value: T) => void, reject!: (cause: unknown) => void;
@@ -141,15 +146,6 @@ interface Page {
   ready: boolean;
   pins: number;
 }
-const MAX_LAYER_HANDLES = 512;
-const MAX_LAYER_EXTENT = 2048;
-const MAX_LAYER_BYTES = 32 * 1024 * 1024;
-interface LayerRevision {
-  readonly owner: GLNativeOwner;
-  readonly native: GLNativeSession;
-  pins: number;
-  retained: boolean;
-}
 interface LayerSlot {
   ready: LayerRevision | undefined;
   pending: LayerWrite | undefined;
@@ -161,38 +157,6 @@ interface LayerWrite {
   readonly done: ReturnType<typeof deferred<void>>;
   submitted: boolean;
   revision: LayerRevision | undefined;
-}
-interface LayerEffect {
-  readonly left: number;
-  readonly top: number;
-  readonly right: number;
-  readonly bottom: number;
-  readonly scale: readonly [number, number, number];
-  readonly emission: readonly [number, number, number];
-}
-interface LayerRead {
-  readonly revision: LayerRevision;
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-  readonly effect: LayerEffect | undefined;
-}
-interface LayerProgram {
-  readonly program: WebGLProgram;
-  readonly origin: WebGLUniformLocation | null;
-  readonly extent: WebGLUniformLocation | null;
-  readonly viewport: WebGLUniformLocation | null;
-  readonly texture: WebGLUniformLocation | null;
-  readonly effect:
-    | {
-        readonly min: WebGLUniformLocation | null;
-        readonly max: WebGLUniformLocation | null;
-        readonly scaleRG: WebGLUniformLocation | null;
-        readonly scaleBAddR: WebGLUniformLocation | null;
-        readonly addGB: WebGLUniformLocation | null;
-      }
-    | undefined;
 }
 type LayerInput = { readonly write: LayerWrite } | { readonly placements: readonly SharedWebGL2LayerPlacement2D[] };
 const DRAW_UNIFORM_MEMBERS = [
@@ -1152,114 +1116,19 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       const item = input[index];
       if (!item || typeof item !== 'object') throw glFailure('WEBGL2_LAYER_INVALID');
       const { layer, x, y, width, height, effect } = item;
-      const light = effect === undefined ? undefined : this.readLayerEffect(effect, frameWidth, frameHeight);
+      const light =
+        effect === undefined ? undefined : readWebGL2LayerEffect(this.options, effect, frameWidth, frameHeight);
       this.active();
       const slot = this.layers.get(layer);
       if (!slot) throw glFailure('WEBGL2_LAYER_INVALID');
       const revision = slot.ready;
       if (!revision || revision.native !== this.native || revision.owner.outcome !== 'owned')
         throw glFailure('WEBGL2_LAYER_NOT_READY');
-      if (
-        typeof x !== 'number' ||
-        typeof y !== 'number' ||
-        typeof width !== 'number' ||
-        typeof height !== 'number' ||
-        width <= 0 ||
-        height <= 0
-      )
-        throw glFailure('WEBGL2_LAYER_INVALID');
-      const physicalX = x * ratio,
-        physicalY = y * ratio,
-        physicalWidth = width * ratio,
-        physicalHeight = height * ratio;
-      if (
-        ![
-          physicalX,
-          physicalY,
-          physicalWidth,
-          physicalHeight,
-          physicalX + physicalWidth,
-          physicalY + physicalHeight
-        ].every(value => Number.isFinite(value) && Math.abs(value) <= 8388608)
-      )
-        throw glFailure('WEBGL2_LAYER_INVALID');
-      const visibleLight =
-        light &&
-        light.left < physicalX + physicalWidth &&
-        light.right > physicalX &&
-        light.top < physicalY + physicalHeight &&
-        light.bottom > physicalY
-          ? light
-          : undefined;
-      reads.push({
-        revision,
-        x: physicalX,
-        y: physicalY,
-        width: physicalWidth,
-        height: physicalHeight,
-        effect: visibleLight
-      });
+      reads.push(readWebGL2LayerPlacement(revision, x, y, width, height, ratio, light));
     }
     // A later placement getter may have disposed an earlier revision.
     if (reads.some(read => !read.revision.retained)) throw glFailure('WEBGL2_LAYER_NOT_READY');
     return reads;
-  }
-
-  private readLayerEffect(
-    input: SharedWebGL2LayerEffect2D,
-    frameWidth: number,
-    frameHeight: number
-  ): LayerEffect | undefined {
-    if (!this.options.enableEffects || !input || typeof input !== 'object')
-      throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-    const { bounds, multiply, add } = input;
-    if (!bounds || typeof bounds !== 'object') throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-    const { x, y, width, height } = bounds;
-    if (
-      typeof x !== 'number' ||
-      typeof y !== 'number' ||
-      typeof width !== 'number' ||
-      typeof height !== 'number' ||
-      width <= 0 ||
-      height <= 0
-    )
-      throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-    const ratio = this.options.pixelRatio,
-      left = x * ratio,
-      top = y * ratio,
-      right = (x + width) * ratio,
-      bottom = (y + height) * ratio;
-    if (
-      ![left, top, right, bottom].every(value => Number.isFinite(value) && Math.abs(value) <= 8388608) ||
-      right <= left ||
-      bottom <= top
-    )
-      throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-    const scale = multiply === undefined ? undefined : this.readLayerColor(multiply, 4);
-    const emission = add === undefined ? undefined : this.readLayerColor(add, 1);
-    if ((!scale || scale.every(value => value === 1)) && (!emission || emission.every(value => value === 0)))
-      return undefined;
-    // Ceil-sized backing buffers can contain centers beyond the logical frame.
-    const clippedLeft = Math.max(0, left),
-      clippedTop = Math.max(0, top);
-    const clippedRight = Math.min(frameWidth * ratio, right),
-      clippedBottom = Math.min(frameHeight * ratio, bottom);
-    if (clippedRight <= clippedLeft || clippedBottom <= clippedTop) return undefined;
-    return {
-      left: clippedLeft,
-      top: clippedTop,
-      right: clippedRight,
-      bottom: clippedBottom,
-      scale: scale ?? [1, 1, 1],
-      emission: emission ?? [0, 0, 0]
-    };
-  }
-  private readLayerColor(input: readonly [number, number, number], max: number): readonly [number, number, number] {
-    if (!Array.isArray(input) || input.length !== 3) throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-    const rgb = [input[0], input[1], input[2]] as const;
-    if (!rgb.every(value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= max))
-      throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-    return rgb;
   }
 
   private finishLayerRecord(record: Record2D): void {
@@ -2269,28 +2138,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
   private getLayerProgram(native: GLNativeSession, effect: boolean): LayerProgram {
     const existing = effect ? this.layerEffectProgram : this.layerProgram;
     if (existing) return existing;
-    const gl = native.gl,
-      program = native.program(
-        sharedWebGL2LayerVertexSource,
-        effect ? sharedWebGL2LayerEffectFragmentSource : sharedWebGL2LayerFragmentSource
-      );
-    const location = (name: string) => gl.getUniformLocation(program, name);
-    const variant: LayerProgram = {
-      program,
-      origin: location('origin'),
-      extent: location('extent'),
-      viewport: location('viewportSize'),
-      texture: location('layerTexture'),
-      effect: effect
-        ? {
-            min: location('effectMin'),
-            max: location('effectMax'),
-            scaleRG: location('multiplyRG'),
-            scaleBAddR: location('multiplyBAddR'),
-            addGB: location('addGB')
-          }
-        : undefined
-    };
+    const variant = createWebGL2LayerProgram(native, effect);
     if (effect) this.layerEffectProgram = variant;
     else this.layerProgram = variant;
     return variant;
