@@ -4,6 +4,18 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Share one deferred Promise helper between the browser hosts — 2026-11-15
+
+WebGL2 and WebGPU now use the same private deferred helper. It constructs the Promise and attaches rejection observation in the original order. The existing WebGPU lifetime import forwards to the helper, and each host keeps its own settlement decisions and resource ownership.
+
+## One authoring source for sRGB byte tables — 2026-11-15
+
+The handwritten sRGB table in `packages/runtime/src/srgbBytes.ts` is the authoring source. Run `node tools/sync-srgb-byte-tables.mjs --write` to refresh both engine copies and `node tools/sync-srgb-byte-tables.mjs --check` to check for drift. Each module retains its own literal and import boundary. The existing numeric test continues to verify all 256 entries against their recorded digest.
+
+## Unused bitmap placement helper retired — 2026-11-15
+
+The private `bitmapAtlasPlacement.ts` module had no current consumers. The atlas type check still rejects the helper through the public runtime entry. A fresh build removed four private artifacts and reproduced the other 1,636 artifacts byte for byte. Prior receipts and exact replay records retain their recorded source paths.
+
 ## WebGPU Host image residency planning — 2026-11-15
 
 The WebGPU Host delegates ready image demand and victim selection to a private module. It still owns generation validation, image upload, lease promotion, resource retirement and submission. Public declarations, image budget and eviction order stayed the same.

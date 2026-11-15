@@ -50,10 +50,6 @@
     {
       "path": "packages/runtime/src/atlasFrameLayout.ts",
       "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
-    },
-    {
-      "path": "packages/runtime/src/bitmapAtlasPlacement.ts",
-      "originRole": "First-party source of an earlier work package of this project, listed among the files for the first time now that the formatter has laid it out; Apache-2.0."
     }
   ],
   "documents": []

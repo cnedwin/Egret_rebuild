@@ -491,9 +491,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       "packages/engine/web/sharedWebGPUOptions.ts": [["static","./WebGPUHost.js"]],
       "packages/engine/dist/web/sharedWebGPUOptions.js": [],
       "packages/engine/dist/web/sharedWebGPUOptions.d.ts": [["static","./WebGPUHost.js"]],
-      "packages/engine/web/webgpuLifetime.ts": [],
-      "packages/engine/dist/web/webgpuLifetime.js": [],
-      "packages/engine/dist/web/webgpuLifetime.d.ts": [],
+      "packages/engine/web/webgpuLifetime.ts": [["static","./sharedHostDeferred.js"]],
+      "packages/engine/dist/web/webgpuLifetime.js": [["static","./sharedHostDeferred.js"]],
+      "packages/engine/dist/web/webgpuLifetime.d.ts": [["static","./sharedHostDeferred.js"]],
+      "packages/engine/web/sharedHostDeferred.ts": [],
+      "packages/engine/dist/web/sharedHostDeferred.js": [],
+      "packages/engine/dist/web/sharedHostDeferred.d.ts": [],
       "packages/engine/web/webgpuRetentionPool.ts": [["static","./sharedRetentionLedger.js"],["static","./sharedRetentionLedger.js"],["static","./webgpuLifetime.js"]],
       "packages/engine/dist/web/webgpuRetentionPool.js": [["static","./sharedRetentionLedger.js"]],
       "packages/engine/dist/web/webgpuRetentionPool.d.ts": [["static","./sharedRetentionLedger.js"],["static","./webgpuLifetime.js"]],
@@ -715,6 +718,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     ]) if(!existsSync(path.join(root,file)))write(file,'export {};\n');
     // Preserve named clauses and all existing mutant additions. Complete only
     // the fixed missing literal edges; this never consults the checker source.
+    m15FixtureGraph['packages/engine/web/WebGL2Host.ts'].push(['static','./sharedHostDeferred.js']);
+    m15FixtureGraph['packages/engine/dist/web/WebGL2Host.js'].push(['static','./sharedHostDeferred.js']);
     for(const [file,edges]of Object.entries(m15FixtureGraph)) {
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
