@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": ".github/workflows/lint.yml",
+      "originRole": "First-party advisory CI workflow for package source lint reporting; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "biome.lint.json",
+      "originRole": "First-party standalone Biome lint configuration for package sources; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/lint.mjs",
+      "originRole": "First-party bounded reporter for advisory lint diagnostics and tool failures; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

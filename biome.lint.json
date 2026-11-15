@@ -1,0 +1,37 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.7/schema.json",
+  "extends": ["./biome.json"],
+  "linter": {
+    "enabled": true,
+    "includes": [
+      "packages/*/src/**/*.ts",
+      "packages/*/web/**/*.ts",
+      "packages/*/rendering/**/*.ts",
+      "!**/*.generated.ts"
+    ],
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": { "maxAllowedComplexity": 30 }
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/engine/rendering/**", "packages/engine/web/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "warn",
+              "options": { "maxAllowedComplexity": 60 }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
