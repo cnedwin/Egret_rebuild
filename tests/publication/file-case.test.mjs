@@ -10,13 +10,16 @@ import { checkPublication } from '../../tools/check-publication.mjs';
 async function fixture(run) {
   const root = await mkdtemp(path.join(tmpdir(), 'egret-file-case-'));
   try {
-    const body = '/** Original source bytes require exact portable path identities. */\nexport const original = true;\n';
+    const body =
+      '/** Original source bytes require exact portable path identities. */\nexport const original = true;\n';
     await mkdir(path.join(root, 'src'));
     await writeFile(path.join(root, 'src/core.ts'), body);
     const inventory = {
-      schemaVersion: 1, semanticReview: { status: 'reviewed_with_scope' },
-      documents: [], registries: [],
-      criticalComments: [{ path: 'src/core.ts', sha256: createHash('sha256').update(body).digest('hex') }],
+      schemaVersion: 1,
+      semanticReview: { status: 'reviewed_with_scope' },
+      documents: [],
+      registries: [],
+      criticalComments: [{ path: 'src/core.ts', sha256: createHash('sha256').update(body).digest('hex') }]
     };
     const save = () => writeFile(path.join(root, 'localization.json'), JSON.stringify(inventory));
     await save();
@@ -30,16 +33,18 @@ async function fixture(run) {
   }
 }
 
-test('publication refuses a Windows-readable directory case alias', () => fixture(async (root, inventory, save) => {
-  inventory.criticalComments[0].path = 'SRC/core.ts';
-  await save();
-  const result = await checkPublication(root);
-  assert.ok(result.issues.length > 0, 'different portable spelling must not borrow the original fingerprint');
-}));
+test('publication refuses a Windows-readable directory case alias', () =>
+  fixture(async (root, inventory, save) => {
+    inventory.criticalComments[0].path = 'SRC/core.ts';
+    await save();
+    const result = await checkPublication(root);
+    assert.ok(result.issues.length > 0, 'different portable spelling must not borrow the original fingerprint');
+  }));
 
-test('publication refuses duplicate fingerprint rows using case aliases', () => fixture(async (root, inventory, save) => {
-  inventory.criticalComments.push({ ...inventory.criticalComments[0], path: 'src/CORE.ts' });
-  await save();
-  const result = await checkPublication(root);
-  assert.ok(result.issues.length > 0, 'one physical file must not satisfy two differently spelled path identities');
-}));
+test('publication refuses duplicate fingerprint rows using case aliases', () =>
+  fixture(async (root, inventory, save) => {
+    inventory.criticalComments.push({ ...inventory.criticalComments[0], path: 'src/CORE.ts' });
+    await save();
+    const result = await checkPublication(root);
+    assert.ok(result.issues.length > 0, 'one physical file must not satisfy two differently spelled path identities');
+  }));

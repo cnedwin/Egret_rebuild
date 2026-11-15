@@ -4,17 +4,47 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  Attribute3D, Geometry3D, Lod3D, Mesh3D, Object3D, RenderTarget3D, Scene3D, Texture3D, World3DError,
-  createBoxGeometry3D, createCapsuleGeometry3D, createConeGeometry3D, createCylinderGeometry3D, createGeometry3D,
-  createGradientCubeTexture3D, createGridGeometry3D, createOrthographicCamera3D, createPerspectiveCamera3D,
-  createPlaneGeometry3D, createSphereGeometry3D, createStandardMaterial3D, createTorusGeometry3D, createUnlitMaterial3D,
-  frustumIntersectsSphere, mat4Compose, mat4Decompose, mat4Invert, mat4Multiply, quatFromAxisAngle, quatFromEuler, quatSlerp,
-  rayIntersectTriangle, srgbToLinear, linearToSrgb, vec3TransformMat4,
+  Attribute3D,
+  Geometry3D,
+  Lod3D,
+  Mesh3D,
+  Object3D,
+  RenderTarget3D,
+  Scene3D,
+  Texture3D,
+  World3DError,
+  createBoxGeometry3D,
+  createCapsuleGeometry3D,
+  createConeGeometry3D,
+  createCylinderGeometry3D,
+  createGeometry3D,
+  createGradientCubeTexture3D,
+  createGridGeometry3D,
+  createOrthographicCamera3D,
+  createPerspectiveCamera3D,
+  createPlaneGeometry3D,
+  createSphereGeometry3D,
+  createStandardMaterial3D,
+  createTorusGeometry3D,
+  createUnlitMaterial3D,
+  frustumIntersectsSphere,
+  mat4Compose,
+  mat4Decompose,
+  mat4Invert,
+  mat4Multiply,
+  quatFromAxisAngle,
+  quatFromEuler,
+  quatSlerp,
+  rayIntersectTriangle,
+  srgbToLinear,
+  linearToSrgb,
+  vec3TransformMat4
 } from '@egret/engine/world3d';
 
 const near = (actual, expected, epsilon = 1e-5) => {
   assert.equal(actual.length, expected.length);
-  for (let i = 0; i < expected.length; i++) assert.ok(Math.abs(actual[i] - expected[i]) <= epsilon, `[${i}] ${actual[i]} != ${expected[i]}`);
+  for (let i = 0; i < expected.length; i++)
+    assert.ok(Math.abs(actual[i] - expected[i]) <= epsilon, `[${i}] ${actual[i]} != ${expected[i]}`);
 };
 const code = value => error => error instanceof World3DError && error.code === value;
 
@@ -24,9 +54,13 @@ test('W3C01 compose, invert and decompose round-trip an affine transform', () =>
   const inverse = new Float32Array(16);
   assert.equal(mat4Invert(inverse, m), true);
   near(mat4Multiply(new Float32Array(16), m, inverse), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 1e-5);
-  const t = [0, 0, 0], r = [0, 0, 0, 1], s = [0, 0, 0];
+  const t = [0, 0, 0],
+    r = [0, 0, 0, 1],
+    s = [0, 0, 0];
   mat4Decompose(m, t, r, s);
-  near(t, [1, 2, 3]); near(s, [2, 3, 4]); near(r, Array.from(q));
+  near(t, [1, 2, 3]);
+  near(s, [2, 3, 4]);
+  near(r, Array.from(q));
   assert.equal(mat4Invert(new Float32Array(16), new Float32Array(16)), false);
 });
 
@@ -44,7 +78,8 @@ test('W3C02 quaternion helpers follow right-handed rotation and shortest-path sl
 
 test('W3C03 color conversion round-trips and ray-triangle reports distance, barycentrics and facing', () => {
   for (const value of [0, 0.002, 0.2, 0.5, 1]) assert.ok(Math.abs(linearToSrgb(srgbToLinear(value)) - value) < 1e-6);
-  const out = [0, 0, 0], triangle = [0, 0, 0, 1, 0, 0, 0, 1, 0];
+  const out = [0, 0, 0],
+    triangle = [0, 0, 0, 1, 0, 0, 0, 1, 0];
   assert.equal(rayIntersectTriangle(out, [0.25, 0.5, 5], [0, 0, -1], triangle, 0, 3, 6, true), true);
   near(out, [5, 0.25, 0.5]);
   assert.equal(rayIntersectTriangle(out, [2, 2, 5], [0, 0, -1], triangle, 0, 3, 6, false), false);
@@ -54,9 +89,14 @@ test('W3C03 color conversion round-trips and ray-triangle reports distance, bary
 });
 
 test('W3C04 hierarchy edits keep one parent, refuse cycles and propagate world matrices lazily', () => {
-  const root = new Object3D(), arm = new Object3D(), hand = new Object3D();
-  root.addChild(arm); arm.addChild(hand);
-  root.setPosition(1, 0, 0); arm.setPosition(0, 2, 0); hand.setPosition(0, 0, 3);
+  const root = new Object3D(),
+    arm = new Object3D(),
+    hand = new Object3D();
+  root.addChild(arm);
+  arm.addChild(hand);
+  root.setPosition(1, 0, 0);
+  arm.setPosition(0, 2, 0);
+  hand.setPosition(0, 0, 3);
   near(hand.getWorldPosition([0, 0, 0]), [1, 2, 3]);
   const version = hand.worldVersion;
   root.updateWorldMatrices();
@@ -76,25 +116,37 @@ test('W3C04 hierarchy edits keep one parent, refuse cycles and propagate world m
 });
 
 test('W3C05 lookAt orients negative Z toward the target, also under a rotated parent', () => {
-  const parent = new Object3D(), node = new Object3D();
+  const parent = new Object3D(),
+    node = new Object3D();
   parent.setRotation(0, 1.1, 0).setPosition(2, 0, -1);
   parent.addChild(node);
   node.setPosition(0, 1, 0);
   node.lookAt(5, 3, 4);
   node.updateWorldMatrix();
-  const origin = node.getWorldPosition([0, 0, 0]), m = node.matrixWorld;
-  const forward = [-m[8], -m[9], -m[10]], want = [5 - origin[0], 3 - origin[1], 4 - origin[2]];
+  const origin = node.getWorldPosition([0, 0, 0]),
+    m = node.matrixWorld;
+  const forward = [-m[8], -m[9], -m[10]],
+    want = [5 - origin[0], 3 - origin[1], 4 - origin[2]];
   const length = Math.hypot(...want);
-  near(forward, want.map(value => value / length), 1e-4);
+  near(
+    forward,
+    want.map(value => value / length),
+    1e-4
+  );
 });
 
 test('W3C06 clone copies the subtree and shares geometry and material by reference', () => {
-  const geometry = createBoxGeometry3D(), material = createUnlitMaterial3D({color: 0xff0000});
+  const geometry = createBoxGeometry3D(),
+    material = createUnlitMaterial3D({ color: 0xff0000 });
   const mesh = new Mesh3D(geometry, material);
-  mesh.name = 'box'; mesh.setPosition(1, 2, 3); mesh.addChild(new Object3D()).name = 'child';
+  mesh.name = 'box';
+  mesh.setPosition(1, 2, 3);
+  mesh.addChild(new Object3D()).name = 'child';
   const copy = mesh.clone();
-  assert.notEqual(copy, mesh); assert.notEqual(copy.id, mesh.id);
-  assert.equal(copy.geometry, geometry); assert.equal(copy.material, material);
+  assert.notEqual(copy, mesh);
+  assert.notEqual(copy.id, mesh.id);
+  assert.equal(copy.geometry, geometry);
+  assert.equal(copy.material, material);
   assert.equal(copy.getObjectByName('child') !== mesh.getObjectByName('child'), true);
   near(copy.position, [1, 2, 3]);
   const independent = material.clone();
@@ -104,20 +156,22 @@ test('W3C06 clone copies the subtree and shares geometry and material by referen
 });
 
 test('W3C07 cameras build projections, rays and frusta with OpenGL clip conventions', () => {
-  const camera = createPerspectiveCamera3D({fov: 90, aspect: 2, near: 1, far: 100});
+  const camera = createPerspectiveCamera3D({ fov: 90, aspect: 2, near: 1, far: 100 });
   camera.setPosition(0, 0, 5);
   camera.updateViewMatrices();
   near(camera.worldToScreenPoint([0, 0, 0], [0, 0, 4]), [0, 0, -1], 1e-5);
   near(camera.worldToScreenPoint([0, 0, 0], [0, 0, -95]), [0, 0, 1], 1e-4);
   // With a 90 degree vertical field of view and aspect 2, x = 2 * depth is the right edge.
   near(Array.from(camera.worldToScreenPoint([0, 0, 0], [8, 4, 1])).slice(0, 2), [1, 1], 1e-5);
-  const origin = [0, 0, 0], direction = [0, 0, 0];
+  const origin = [0, 0, 0],
+    direction = [0, 0, 0];
   camera.screenPointToRay(0, 0, origin, direction);
-  near(direction, [0, 0, -1]); near(origin, [0, 0, 4], 1e-4);
+  near(direction, [0, 0, -1]);
+  near(origin, [0, 0, 4], 1e-4);
   assert.equal(frustumIntersectsSphere(camera.frustum, [0, 0, 0, 1]), true);
   assert.equal(frustumIntersectsSphere(camera.frustum, [0, 0, 10, 1]), false);
   assert.equal(frustumIntersectsSphere(camera.frustum, [50, 0, 0, 1]), false);
-  const ortho = createOrthographicCamera3D({height: 4, aspect: 1, near: 0, far: 10});
+  const ortho = createOrthographicCamera3D({ height: 4, aspect: 1, near: 0, far: 10 });
   ortho.updateViewMatrices();
   near(ortho.worldToScreenPoint([0, 0, 0], [2, -2, -5]), [1, -1, 0], 1e-5);
   camera.far = 0.5;
@@ -143,68 +197,92 @@ test('camera clone retains an independent custom projection', () => {
 
 test('W3C08 primitives are closed, outward-facing and correctly bounded', () => {
   const builders = [
-    ['box', createBoxGeometry3D({width: 2, height: 4, depth: 6}), [-1, -2, -3, 1, 2, 3]],
-    ['sphere', createSphereGeometry3D({radius: 2}), [-2, -2, -2, 2, 2, 2]],
-    ['cylinder', createCylinderGeometry3D({radiusTop: 1, radiusBottom: 1, height: 2}), [-1, -1, -1, 1, 1, 1]],
-    ['cone', createConeGeometry3D({radius: 1, height: 2}), [-1, -1, -1, 1, 1, 1]],
-    ['torus', createTorusGeometry3D({radius: 2, tube: 0.5}), undefined],
-    ['capsule', createCapsuleGeometry3D({radius: 0.5, height: 1}), undefined],
+    ['box', createBoxGeometry3D({ width: 2, height: 4, depth: 6 }), [-1, -2, -3, 1, 2, 3]],
+    ['sphere', createSphereGeometry3D({ radius: 2 }), [-2, -2, -2, 2, 2, 2]],
+    ['cylinder', createCylinderGeometry3D({ radiusTop: 1, radiusBottom: 1, height: 2 }), [-1, -1, -1, 1, 1, 1]],
+    ['cone', createConeGeometry3D({ radius: 1, height: 2 }), [-1, -1, -1, 1, 1, 1]],
+    ['torus', createTorusGeometry3D({ radius: 2, tube: 0.5 }), undefined],
+    ['capsule', createCapsuleGeometry3D({ radius: 0.5, height: 1 }), undefined]
   ];
   for (const [name, geometry, box] of builders) {
-    const positions = geometry.getAttribute('position').data, normals = geometry.getAttribute('normal').data, index = geometry.index.data;
+    const positions = geometry.getAttribute('position').data,
+      normals = geometry.getAttribute('normal').data,
+      index = geometry.index.data;
     assert.equal(index.length % 3, 0, name);
     assert.equal(geometry.getAttribute('uv').count, geometry.vertexCount, name);
     if (box) near(geometry.boundingBox, box, 1e-5);
     // Signed volume is positive when triangles wind counter-clockwise seen from outside.
-    let volume = 0, agree = 0;
+    let volume = 0,
+      agree = 0;
     for (let i = 0; i < index.length; i += 3) {
-      const a = index[i] * 3, b = index[i + 1] * 3, c = index[i + 2] * 3;
-      const ax = positions[a], ay = positions[a + 1], az = positions[a + 2], bx = positions[b], by = positions[b + 1], bz = positions[b + 2], cx = positions[c], cy = positions[c + 1], cz = positions[c + 2];
+      const a = index[i] * 3,
+        b = index[i + 1] * 3,
+        c = index[i + 2] * 3;
+      const ax = positions[a],
+        ay = positions[a + 1],
+        az = positions[a + 2],
+        bx = positions[b],
+        by = positions[b + 1],
+        bz = positions[b + 2],
+        cx = positions[c],
+        cy = positions[c + 1],
+        cz = positions[c + 2];
       volume += (ax * (by * cz - bz * cy) - ay * (bx * cz - bz * cx) + az * (bx * cy - by * cx)) / 6;
-      const nx = (by - ay) * (cz - az) - (bz - az) * (cy - ay), ny = (bz - az) * (cx - ax) - (bx - ax) * (cz - az), nz = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+      const nx = (by - ay) * (cz - az) - (bz - az) * (cy - ay),
+        ny = (bz - az) * (cx - ax) - (bx - ax) * (cz - az),
+        nz = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
       if (nx * normals[a] + ny * normals[a + 1] + nz * normals[a + 2] >= -1e-6) agree++;
     }
     assert.ok(volume > 0, name + ' volume ' + volume);
     assert.equal(agree, index.length / 3, name + ' vertex normals agree with face winding');
   }
-  assert.equal(createPlaneGeometry3D({width: 2, height: 2}).boundingSphere[3] > 1.41, true);
+  assert.equal(createPlaneGeometry3D({ width: 2, height: 2 }).boundingSphere[3] > 1.41, true);
   assert.equal(createGridGeometry3D(4, 4).topology, 'lines');
 });
 
 test('W3C09 geometry validates input, computes normals and tangents, and versions its layout', () => {
   assert.throws(() => new Attribute3D(new Float32Array(5), 3), code('WORLD3D_INPUT_INVALID'));
-  assert.throws(() => createGeometry3D({positions: [0, 0]}), code('WORLD3D_INPUT_INVALID'));
-  const geometry = createGeometry3D({positions: [0, 0, 0, 1, 0, 0, 0, 1, 0], uvs: [0, 0, 1, 0, 0, 1], indices: [0, 1, 2]});
+  assert.throws(() => createGeometry3D({ positions: [0, 0] }), code('WORLD3D_INPUT_INVALID'));
+  const geometry = createGeometry3D({
+    positions: [0, 0, 0, 1, 0, 0, 0, 1, 0],
+    uvs: [0, 0, 1, 0, 0, 1],
+    indices: [0, 1, 2]
+  });
   near(geometry.getAttribute('normal').data, [0, 0, 1, 0, 0, 1, 0, 0, 1]);
   geometry.computeTangents();
   near(Array.from(geometry.getAttribute('tangent').data).slice(0, 4), [1, 0, 0, 1]);
-  const layout = geometry.layoutVersion, version = geometry.getAttribute('position').version;
+  const layout = geometry.layoutVersion,
+    version = geometry.getAttribute('position').version;
   geometry.getAttribute('position').touch();
   assert.equal(geometry.getAttribute('position').version, version + 1);
   geometry.setAttribute('color', new Attribute3D(new Float32Array(9), 3));
   assert.ok(geometry.layoutVersion > layout);
   assert.throws(() => geometry.setIndex([0, 1, 5]), code('WORLD3D_INPUT_INVALID'));
   geometry.addGroup(0, 3, 1);
-  assert.deepEqual(geometry.groups, [{start: 0, count: 3, materialIndex: 1}]);
-  assert.throws(() => geometry.setMorphTargets([{name: 'bad', position: new Float32Array(3)}]), code('WORLD3D_INPUT_INVALID'));
+  assert.deepEqual(geometry.groups, [{ start: 0, count: 3, materialIndex: 1 }]);
+  assert.throws(
+    () => geometry.setMorphTargets([{ name: 'bad', position: new Float32Array(3) }]),
+    code('WORLD3D_INPUT_INVALID')
+  );
 });
 
 test('W3C10 resources notify backends exactly once on disposal and refuse later use', () => {
-  const texture = new Texture3D({width: 2, height: 1, data: new Uint8Array(8)});
+  const texture = new Texture3D({ width: 2, height: 1, data: new Uint8Array(8) });
   const calls = [];
   const unsubscribe = texture.onDispose(() => calls.push('a'));
   texture.onDispose(() => calls.push('b'));
   unsubscribe();
   const version = texture.version;
-  texture.setSource({width: 1, height: 1, data: new Uint8Array(4)});
+  texture.setSource({ width: 1, height: 1, data: new Uint8Array(4) });
   assert.equal(texture.version, version + 1);
-  texture.dispose(); texture.dispose();
+  texture.dispose();
+  texture.dispose();
   assert.deepEqual(calls, ['b']);
   assert.equal(texture.isDisposed, true);
-  assert.throws(() => texture.setSource({width: 1, height: 1, data: new Uint8Array(4)}), code('WORLD3D_DISPOSED'));
+  assert.throws(() => texture.setSource({ width: 1, height: 1, data: new Uint8Array(4) }), code('WORLD3D_DISPOSED'));
   texture.onDispose(() => calls.push('late'));
   assert.deepEqual(calls, ['b', 'late'], 'a listener added after disposal runs immediately');
-  assert.throws(() => new Texture3D({width: 2, height: 2, data: new Uint8Array(4)}), code('WORLD3D_INPUT_INVALID'));
+  assert.throws(() => new Texture3D({ width: 2, height: 2, data: new Uint8Array(4) }), code('WORLD3D_INPUT_INVALID'));
   const target = new RenderTarget3D(64, 32);
   assert.equal(target.texture.source, target);
   target.setSize(32, 32);
@@ -220,14 +298,22 @@ test('W3C10 resources notify backends exactly once on disposal and refuse later 
 });
 
 test('W3C11 materials default alpha handling from opacity and LOD shows one level by distance', () => {
-  const glass = createStandardMaterial3D({opacity: 0.5});
-  assert.equal(glass.alphaMode, 'blend'); assert.equal(glass.depthWrite, false); assert.equal(glass.isTransparent, true);
-  const solid = createStandardMaterial3D({color: [0.2, 0.4, 0.6], metallic: 1});
-  assert.equal(solid.alphaMode, 'opaque'); assert.equal(solid.depthWrite, true); near(solid.color, [0.2, 0.4, 0.6]);
-  assert.throws(() => createStandardMaterial3D({color: 'red'}), code('WORLD3D_INPUT_INVALID'));
-  const lod = new Lod3D(), nearLevel = new Object3D(), midLevel = new Object3D(), farLevel = new Object3D();
+  const glass = createStandardMaterial3D({ opacity: 0.5 });
+  assert.equal(glass.alphaMode, 'blend');
+  assert.equal(glass.depthWrite, false);
+  assert.equal(glass.isTransparent, true);
+  const solid = createStandardMaterial3D({ color: [0.2, 0.4, 0.6], metallic: 1 });
+  assert.equal(solid.alphaMode, 'opaque');
+  assert.equal(solid.depthWrite, true);
+  near(solid.color, [0.2, 0.4, 0.6]);
+  assert.throws(() => createStandardMaterial3D({ color: 'red' }), code('WORLD3D_INPUT_INVALID'));
+  const lod = new Lod3D(),
+    nearLevel = new Object3D(),
+    midLevel = new Object3D(),
+    farLevel = new Object3D();
   lod.addLevel(farLevel, 50).addLevel(nearLevel, 0).addLevel(midLevel, 10);
-  lod.setPosition(0, 0, -5); lod.updateWorldMatrix();
+  lod.setPosition(0, 0, -5);
+  lod.updateWorldMatrix();
   lod.select(0, 0, 0);
   assert.deepEqual([nearLevel.visible, midLevel.visible, farLevel.visible], [true, false, false]);
   lod.select(0, 0, 20);
@@ -237,12 +323,22 @@ test('W3C11 materials default alpha handling from opacity and LOD shows one leve
 });
 
 test('W3C20 a parent refreshed on its own still carries its change to descendants on the next traversal', () => {
-  const scene = new Scene3D(), parent = new Object3D(), child = new Object3D(), grandchild = new Object3D();
-  scene.addChild(parent); parent.addChild(child); child.addChild(grandchild);
-  parent.setPosition(2, 0, 0); child.setPosition(1, 0, 0); grandchild.setPosition(0, 0, 1);
+  const scene = new Scene3D(),
+    parent = new Object3D(),
+    child = new Object3D(),
+    grandchild = new Object3D();
+  scene.addChild(parent);
+  parent.addChild(child);
+  child.addChild(grandchild);
+  parent.setPosition(2, 0, 0);
+  child.setPosition(1, 0, 0);
+  grandchild.setPosition(0, 0, 1);
   scene.updateWorldMatrices();
-  parent.setPosition(10, 0, 0); parent.setScale(2); quatFromAxisAngle(parent.quaternion, [0, 1, 0], Math.PI / 2); parent.markTransformDirty();
-  assert.equal(parent.updateWorldMatrix(), true);               // the single-node call refreshes the parent only
+  parent.setPosition(10, 0, 0);
+  parent.setScale(2);
+  quatFromAxisAngle(parent.quaternion, [0, 1, 0], Math.PI / 2);
+  parent.markTransformDirty();
+  assert.equal(parent.updateWorldMatrix(), true); // the single-node call refreshes the parent only
   assert.equal(child.matrixWorld[12], 3);
   scene.updateWorldMatrices();
   const at = node => [node.matrixWorld[12], node.matrixWorld[13], node.matrixWorld[14]];
@@ -250,9 +346,10 @@ test('W3C20 a parent refreshed on its own still carries its change to descendant
   at(grandchild).forEach((value, i) => assert.ok(Math.abs(value - [12, 0, -2][i]) < 1e-6));
   const versions = [parent.worldVersion, child.worldVersion, grandchild.worldVersion];
   scene.updateWorldMatrices();
-  assert.deepEqual([parent.worldVersion, child.worldVersion, grandchild.worldVersion], versions);   // nothing changed, nothing recomputed
+  assert.deepEqual([parent.worldVersion, child.worldVersion, grandchild.worldVersion], versions); // nothing changed, nothing recomputed
   // Reading a deep node first resolves its ancestors and leaves the middle one consistent too.
   parent.setPosition(0, 5, 0);
-  grandchild.updateWorldMatrix(); scene.updateWorldMatrices();
+  grandchild.updateWorldMatrix();
+  scene.updateWorldMatrices();
   assert.ok(Math.abs(child.matrixWorld[13] - 5) < 1e-6);
 });
