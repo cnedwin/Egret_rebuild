@@ -6,6 +6,8 @@ A `Sprite` draws with its `graphics`: filled rectangles, circles, ellipses and r
 
 The original checks used Node and headless Chromium with software WebGL2. See the [Shared 2D hardware results](shared-2d-hardware-results.md) for the later native Windows and Android evidence and its workload limits.
 
+[Starter and Graphics hardware results](starter-graphics-hardware.md) records the later Windows and Android checks and measurements.
+
 ## Use
 
 ```js

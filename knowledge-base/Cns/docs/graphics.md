@@ -6,6 +6,8 @@
 
 早期检查使用 Node 和无头 Chromium 软件 WebGL2。后续 Windows 与 Android 真机结果及负载范围见[共享二维真机结果](shared-2d-hardware-results.md)。
 
+[启动器与绘图真机结果](starter-graphics-hardware.md)记录后续 Windows 与 Android 实测及其范围。
+
 ## 用法
 
 ```js

@@ -252,10 +252,11 @@ export function fillPolygon(target: Target, outline: readonly number[], color: S
     target.indices.push(first + ring[0]!, first + ring[i]!, first + ring[i + 1]!);
 }
 /** Triangles given as x, y of each corner, added with one vertex for each different corner. */
-function addTriangles(target: Target, triangles: readonly number[], color: ShapePaint): void {
+function addTriangles(target: Target, triangles: readonly number[], color: ShapePaint, boundary?: number[]): void {
   const known = new Map<string, number>(),
     one = [0, 0],
     corner = [0, 0, 0];
+  let kept = 0;
   for (let i = 0; i < triangles.length; i += 6) {
     for (let k = 0; k < 3; k++) {
       const x = triangles[i + 2 * k]!,
@@ -270,9 +271,42 @@ function addTriangles(target: Target, triangles: readonly number[], color: Shape
       }
       corner[k] = index;
     }
-    if (corner[0] !== corner[1] && corner[1] !== corner[2] && corner[2] !== corner[0])
+    if (corner[0] !== corner[1] && corner[1] !== corner[2] && corner[2] !== corner[0]) {
       target.indices.push(corner[0]!, corner[1]!, corner[2]!);
+      if (boundary !== undefined) boundary[kept++] = boundary[i / 6]!;
+    }
   }
+  if (boundary !== undefined) boundary.length = kept;
+}
+/** Three side bits per original triangle. Coincident vertices share the same edge identity. */
+function originalBoundary(target: Target, firstIndex: number): number[] {
+  const { positions, indices } = target;
+  const masks = new Array<number>((indices.length - firstIndex) / 3).fill(0);
+  const places = new Map<string, number>(),
+    sides = new Map<string, number>();
+  const same = (vertex: number): number => {
+    const key = positions[2 * vertex]! + ',' + positions[2 * vertex + 1]!;
+    const found = places.get(key);
+    if (found !== undefined) return found;
+    places.set(key, vertex);
+    return vertex;
+  };
+  for (let at = firstIndex; at < indices.length; at += 3) {
+    const corners = [same(indices[at]!), same(indices[at + 1]!), same(indices[at + 2]!)];
+    if (corners[0] === corners[1] || corners[1] === corners[2] || corners[2] === corners[0]) continue;
+    for (let side = 0; side < 3; side++) {
+      const a = corners[side]!,
+        b = corners[(side + 1) % 3]!,
+        key = a < b ? a + ':' + b : b + ':' + a;
+      sides.set(key, sides.has(key) ? -1 : at - firstIndex + side);
+    }
+  }
+  for (const side of sides.values())
+    if (side >= 0) {
+      const triangle = Math.floor(side / 3);
+      masks[triangle] = masks[triangle]! | (1 << (side % 3));
+    }
+  return masks;
 }
 /** The triangles added to a target since a mark, taken back out of it as x, y of each corner. */
 function takeTriangles(target: Target, vertices: number, indices: number): number[] {
@@ -313,10 +347,15 @@ export function fillOutlines(
     if (triangles === undefined) return false;
     addTriangles(target, triangles, color);
   }
-  if (color.gradient !== undefined)
-    addTriangles(target, refineForGradient(takeTriangles(target, vertices, indices), color.gradient, max), color);
-  // An image that repeats is drawn no farther than this many of its pixels from its start: beyond it a frame cannot place it exactly.
   const bitmap = color.bitmap;
+  const feather = edge && bitmap === undefined ? (color.feather ?? 0) : 0;
+  let boundary: number[] | undefined;
+  if (color.gradient !== undefined) {
+    if (feather > 0) boundary = originalBoundary(target, indices);
+    const refined = refineForGradient(takeTriangles(target, vertices, indices), color.gradient, max, boundary);
+    addTriangles(target, refined, color, boundary);
+  }
+  // An image that repeats is drawn no farther than this many of its pixels from its start: beyond it a frame cannot place it exactly.
   if (bitmap !== undefined)
     for (let i = 2 * vertices; i < target.uvs.length; i += 2)
       if (
@@ -324,8 +363,7 @@ export function fillOutlines(
         Math.abs(target.uvs[i + 1]! * bitmap.height) > GRAPHICS_SHAPE_LIMITS.maxRepeatPixels
       )
         return false;
-  if (edge && bitmap === undefined && color.feather !== undefined && color.feather > 0)
-    featherEdges(target, indices, color.feather);
+  if (feather > 0) featherEdges(target, indices, feather, boundary);
   return true;
 }
 /**
@@ -333,7 +371,7 @@ export function fillOutlines(
  * nothing: what smooths an edge that would otherwise be a stair of pixels. An edge of theirs is a side that only one
  * of the triangles has; where two edges meet the band turns with them, no farther out than twice its width.
  */
-function featherEdges(target: Target, firstIndex: number, width: number): void {
+function featherEdges(target: Target, firstIndex: number, width: number, boundary?: readonly number[]): void {
   const P = target.positions,
     I = target.indices,
     last = I.length;
@@ -348,9 +386,12 @@ function featherEdges(target: Target, firstIndex: number, width: number): void {
     };
   const sides = new Map<string, { u: number; v: number; nx: number; ny: number; times: number }>();
   for (let i = firstIndex; i + 2 < last; i += 3) {
+    const mask = boundary?.[(i - firstIndex) / 3] ?? 7;
+    if (mask === 0) continue;
     const t = [same(I[i]!), same(I[i + 1]!), same(I[i + 2]!)];
     if (t[0] === t[1] || t[1] === t[2] || t[2] === t[0]) continue;
     for (let k = 0; k < 3; k++) {
+      if ((mask & (1 << k)) === 0) continue;
       const u = t[k]!,
         v = t[(k + 1) % 3]!,
         w = t[(k + 2) % 3]!,
