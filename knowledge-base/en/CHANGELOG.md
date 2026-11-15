@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## World3D physics queries use a private module — 2026-11-15
+
+World3D's static-body tree and shape-level ray tests now live in a private query module. The world passes its existing mesh-normal scratch into ray traversal, including compound shapes. The extraction preserves query order, solver logic and public declarations.
+
 ## Private UI root display preparation gets its own module — 2026-11-15
 
 The UI root keeps the transaction, revision, cancellation and cleanup logic. Private modules now hold its data model, validation helpers and detached display staging. The existing public entry and declarations, paint order and disposal order are preserved.
