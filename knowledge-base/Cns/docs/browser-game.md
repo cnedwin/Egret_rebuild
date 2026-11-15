@@ -4,7 +4,9 @@
 
 `@egret/engine/web/game` 用一次调用在页面里启动一个 2D 游戏，并带有一个显示游戏开销的面板。
 
-**核对了什么，没核对什么。** 选项和面板在 Node 中核对。[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)运行在 `createBrowserGame` 之上，并在无头 Chromium 中用软件渲染核对，全部使用 WebGL2：能绘制，能响应点击、按键和触摸，能按地址加载图片，加上 `?stats` 能显示面板。自动选择核对了两种情况：浏览器没有 WebGPU，以及浏览器的 WebGPU 不给适配器，两者都得到 WebGL2。选中 WebGPU 的情况没有核对：该浏览器的软件 WebGPU 适配器会丢失设备或永远画不完一帧，用 `?backend=webgpu` 时也一样，所以这里早先写的“绘制了若干帧且没有失败”说得比实际看到的多。没有在硬件 GPU 和手机上运行。
+初版[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)在无头 Chromium 中使用软件 WebGL2。Node 检查选项与统计面板，浏览器检查绘制、点击、按键、触摸、图片加载，以及 WebGPU 或其适配器不可用时回退到 WebGL2。
+
+[启动器与绘图真机结果](starter-graphics-hardware.md)记录后续 Windows 与 Android 实测及其范围。
 
 ## 用法
 
