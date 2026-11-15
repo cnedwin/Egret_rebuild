@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Remove two unused private rendering exports — 2026-11-15
+
+Removed the unused mesh clipping policy and the old one-corner UV wrapper. Shared draws still use the existing clipping and float32 UV checks.
+
 ## Share one deferred Promise helper between the browser hosts — 2026-11-15
 
 WebGL2 and WebGPU now use the same private deferred helper. It constructs the Promise and attaches rejection observation in the original order. The existing WebGPU lifetime import forwards to the helper, and each host keeps its own settlement decisions and resource ownership.
