@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/webgpuImageResidency.ts",
+      "originRole": "First-party WebGPU image demand and eviction selection moved from WebGPUHost.ts; independently maintained with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
