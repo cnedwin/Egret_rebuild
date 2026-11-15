@@ -3,12 +3,14 @@ import { createHitTestApplication } from './application.mjs';
 
 const canvas = document.querySelector('#scene');
 const application = createHitTestApplication({
-  host: await createExampleHost({ canvas, pixelRatio: 1 }), canvas,
+  host: await createExampleHost({ canvas, pixelRatio: 1 }),
+  canvas,
   upperButton: document.querySelector('#toggle-upper'),
   gateButton: document.querySelector('#toggle-gate'),
   childrenButton: document.querySelector('#toggle-children'),
   closeButton: document.querySelector('#close'),
-  status: document.querySelector('#status'), windowTarget: window,
+  status: document.querySelector('#status'),
+  windowTarget: window
 });
 
 /** Scalar observation only; no display nodes or query authority cross this port. */

@@ -10,6 +10,8 @@
       "packages/*/src/**/*.ts",
       "packages/*/web/**/*.ts",
       "packages/*/rendering/**/*.ts",
+      "examples/**/*.mjs",
+      "!examples/**/*.test.mjs",
       "!**/*.generated.ts"
     ]
   },

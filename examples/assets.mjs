@@ -3,20 +3,30 @@ import { readFile } from 'node:fs/promises';
 import { createEngine, createAssetType, createAssetRef } from '@egret/engine';
 
 // Filesystem and JSON decoding belong to this injected provider, outside the core.
-const panelType = createAssetType('cpu-panel-json', value =>
-  typeof value === 'object' && value !== null && typeof value.title === 'string' &&
-  Array.isArray(value.items) && value.items.every(item => typeof item === 'string'));
+const panelType = createAssetType(
+  'cpu-panel-json',
+  value =>
+    typeof value === 'object' &&
+    value !== null &&
+    typeof value.title === 'string' &&
+    Array.isArray(value.items) &&
+    value.items.every(item => typeof item === 'string')
+);
 const panelRef = createAssetRef(panelType, 'ui/panel');
 const trace = [];
-const engine = await createEngine({ host: {
-  surface: {},
-  stop: () => trace.push('host.stop'),
-  close: async () => { trace.push('host.close'); },
-  setTimeout: (callback, milliseconds) => {
-    const timer = setTimeout(callback, milliseconds);
-    return () => clearTimeout(timer);
-  },
-} });
+const engine = await createEngine({
+  host: {
+    surface: {},
+    stop: () => trace.push('host.stop'),
+    close: async () => {
+      trace.push('host.close');
+    },
+    setTimeout: (callback, milliseconds) => {
+      const timer = setTimeout(callback, milliseconds);
+      return () => clearTimeout(timer);
+    }
+  }
+});
 let loads = 0;
 let cleanups = 0;
 engine.assets.register(panelType, {
@@ -31,14 +41,14 @@ engine.assets.register(panelType, {
   dispose(value) {
     cleanups++;
     trace.push(`dispose:${value.title}`);
-  },
+  }
 });
 
 try {
   const scope = engine.createScope();
   const [first, second] = await Promise.all([
     engine.assets.acquire(panelRef, { signal: scope.signal }),
-    engine.assets.acquire(panelRef),
+    engine.assets.acquire(panelRef)
   ]);
   scope.use(first);
   assert.equal(loads, 1);

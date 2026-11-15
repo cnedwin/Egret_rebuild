@@ -1,10 +1,10 @@
 name: Source layout
 on:
   pull_request:
-    paths: ['packages/**', 'biome.json', 'tools/format.mjs', 'tools/format/**', '.github/workflows/format.yml']
+    paths: ['packages/**', 'examples/**/*.mjs', 'biome.json', 'tools/format.mjs', 'tools/format/**', '.github/workflows/format.yml']
   push:
     branches: [main]
-    paths: ['packages/**', 'biome.json', 'tools/format.mjs', 'tools/format/**', '.github/workflows/format.yml']
+    paths: ['packages/**', 'examples/**/*.mjs', 'biome.json', 'tools/format.mjs', 'tools/format/**', '.github/workflows/format.yml']
   workflow_dispatch:
 permissions:
   contents: read

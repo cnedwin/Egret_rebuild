@@ -2,15 +2,19 @@
 // A public-entry CPU scene example; captured frames do not prove GPU rendering.
 import assert from 'node:assert/strict';
 import {
-  Bitmap, createAssetRef, createAssetType, createEngine, createImageData2D,
-  createSequenceClip, createTexture, isTexture,
+  Bitmap,
+  createAssetRef,
+  createAssetType,
+  createEngine,
+  createImageData2D,
+  createSequenceClip,
+  createTexture,
+  isTexture
 } from '@egret/engine';
 
 const pixels = new Uint8Array([
-  255, 0, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255,
-  0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255,
-  255, 0, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255,
-  0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255,
+  255, 0, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 0, 0, 255, 255,
+  0, 0, 255, 0, 255, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255
 ]);
 const diagnostics = [];
 const host = {
@@ -19,9 +23,10 @@ const host = {
   setTimeout(callback, delayMs) {
     const timer = setTimeout(callback, delayMs);
     return () => clearTimeout(timer);
-  },
+  }
 };
-let loads = 0, disposals = 0;
+let loads = 0,
+  disposals = 0;
 const engine = await createEngine({ host, onDiagnostic: diagnostic => diagnostics.push(diagnostic) });
 const observations = [];
 let playback, lease;
@@ -31,20 +36,27 @@ try {
   const texture = createTexture(image);
   const atlasType = createAssetType('example-sequence-atlas', isTexture);
   engine.assets.register(atlasType, {
-    async load() { loads++; return texture; },
-    dispose(value) { disposals++; value.dispose(); },
+    async load() {
+      loads++;
+      return texture;
+    },
+    dispose(value) {
+      disposals++;
+      value.dispose();
+    }
   });
   // Reverse Scope cleanup stops playback before releasing the Bitmap and lease.
   lease = scope.use(await engine.assets.acquire(createAssetRef(atlasType, 'original-colour-atlas')));
   const bitmap = scope.use(new Bitmap(lease));
   engine.stage.addChild(bitmap);
   const clip = createSequenceClip({
-    atlasWidth: 6, atlasHeight: 2,
+    atlasWidth: 6,
+    atlasHeight: 2,
     frames: [
       { x: 0, y: 0, width: 2, height: 2, durationSeconds: 0.125 },
       { x: 2, y: 0, width: 1, height: 2, durationSeconds: 0.25 },
-      { x: 3, y: 0, width: 3, height: 1, durationSeconds: 0.125 },
-    ],
+      { x: 3, y: 0, width: 3, height: 1, durationSeconds: 0.125 }
+    ]
   });
   // Creation is inert; start applies the first frame using the existing lease.
   playback = engine.createSequencePlayback(scope, bitmap, clip);
@@ -53,9 +65,12 @@ try {
   function capture(label) {
     const frame = engine.captureSharedFrame({ width: 8, height: 4, clearColor: 0, clearAlpha: 0 });
     observations.push({
-      label, state: playback.state, elapsedSeconds: playback.elapsedSeconds,
-      sample: playback.lastSample, frameId: frame.frameId,
-      crop: frame.regions[frame.commands[0].regionIndex].packed,
+      label,
+      state: playback.state,
+      elapsedSeconds: playback.elapsedSeconds,
+      sample: playback.lastSample,
+      frameId: frame.frameId,
+      crop: frame.regions[frame.commands[0].regionIndex].packed
     });
   }
   capture('started-red');
@@ -81,8 +96,17 @@ try {
 assert.equal(loads, 1);
 assert.equal(disposals, 1);
 assert.deepEqual(diagnostics, []);
-console.log(JSON.stringify({
-  scope: 'CPU-only explicit-clock sequence playback',
-  observations, loads, disposals,
-  finalState: playback.state, retainedSample: playback.lastSample,
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      scope: 'CPU-only explicit-clock sequence playback',
+      observations,
+      loads,
+      disposals,
+      finalState: playback.state,
+      retainedSample: playback.lastSample
+    },
+    null,
+    2
+  )
+);

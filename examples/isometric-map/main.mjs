@@ -1,5 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
-import { Bitmap, Sprite, createAssetRef, createAssetType, createEngineForProfile, createImageData2D, createTexture, isTexture } from '@egret/engine';
+import {
+  Bitmap,
+  Sprite,
+  createAssetRef,
+  createAssetType,
+  createEngineForProfile,
+  createImageData2D,
+  createTexture,
+  isTexture
+} from '@egret/engine';
 import { createBrowserKeyboardInput } from '@egret/engine/web/keyboard';
 import { createSharedWebGL2Host } from '@egret/engine/webgl2';
 
@@ -9,7 +18,12 @@ const stop = document.querySelector('#stop');
 const size = 7;
 const block = { x: 3, y: 3 };
 const actor = { x: 3, y: 5 };
-const steps = new Map([['ArrowUp', [0, -1]], ['ArrowDown', [0, 1]], ['ArrowLeft', [-1, 0]], ['ArrowRight', [1, 0]]]);
+const steps = new Map([
+  ['ArrowUp', [0, -1]],
+  ['ArrowDown', [0, 1]],
+  ['ArrowLeft', [-1, 0]],
+  ['ArrowRight', [1, 0]]
+]);
 const frameOptions = { width: 384, height: 232, clearColor: 0x203736, clearAlpha: 1, outputAlpha: 'opaque' };
 
 function polygon(context, color, points) {
@@ -20,27 +34,52 @@ function polygon(context, color, points) {
   context.fill();
 }
 
-const tile = (context, color) => polygon(context, color, [[24, 0], [48, 12], [24, 24], [0, 12]]);
+const tile = (context, color) =>
+  polygon(context, color, [
+    [24, 0],
+    [48, 12],
+    [24, 24],
+    [0, 12]
+  ]);
 const art = {
   grass: { width: 48, height: 24, anchor: [24, 12], draw: context => tile(context, '#668163') },
   path: { width: 48, height: 24, anchor: [24, 12], draw: context => tile(context, '#b8a476') },
   block: {
-    width: 80, height: 66, anchor: [40, 64],
+    width: 80,
+    height: 66,
+    anchor: [40, 64],
     draw(context) {
-      polygon(context, '#d79768', [[4, 16], [34, 2], [77, 17], [47, 32]]);
-      polygon(context, '#754b4d', [[4, 16], [47, 32], [47, 65], [4, 49]]);
-      polygon(context, '#9b5945', [[47, 32], [77, 17], [77, 49], [47, 65]]);
-    },
+      polygon(context, '#d79768', [
+        [4, 16],
+        [34, 2],
+        [77, 17],
+        [47, 32]
+      ]);
+      polygon(context, '#754b4d', [
+        [4, 16],
+        [47, 32],
+        [47, 65],
+        [4, 49]
+      ]);
+      polygon(context, '#9b5945', [
+        [47, 32],
+        [77, 17],
+        [77, 49],
+        [47, 65]
+      ]);
+    }
   },
   actor: {
-    width: 14, height: 30, anchor: [7, 28],
+    width: 14,
+    height: 30,
+    anchor: [7, 28],
     draw(context) {
       context.fillStyle = '#315b70';
       context.fillRect(1, 1, 12, 27);
       context.fillStyle = '#42c6e4';
       context.fillRect(2, 4, 10, 20);
-    },
-  },
+    }
+  }
 };
 
 // Project each grid point to a ground contact. Apply the texture anchor after projection.
@@ -118,9 +157,19 @@ async function start() {
     engine = await createEngineForProfile({ host }, 'egret.shared-frame2d/1');
     const scope = engine.createScope();
     const type = createAssetType('isometric-map-art', isTexture);
-    engine.assets.register(type, { async load(ref) { return loadArt(ref.id); }, dispose(texture) { texture.dispose(); } });
+    engine.assets.register(type, {
+      async load(ref) {
+        return loadArt(ref.id);
+      },
+      dispose(texture) {
+        texture.dispose();
+      }
+    });
     const keys = Object.keys(art);
-    const group = engine.createAssetGroup(scope, keys.map(key => createAssetRef(type, key)));
+    const group = engine.createAssetGroup(
+      scope,
+      keys.map(key => createAssetRef(type, key))
+    );
     const leases = await group.ready;
     const textures = new Map(keys.map((key, index) => [key, leases[index]]));
     const ground = engine.stage.addChild(scope.use(new Sprite()));
@@ -155,25 +204,41 @@ async function start() {
 
     const keyboard = createBrowserKeyboardInput({ engine, scope });
     keyboard.registerTarget({ id: 'map', target: objects });
-    engine.stage.on(keyboard.events.keyDown, event => {
-      const step = steps.get(event.payload.code);
-      if (!step) return;
-      event.preventDefault();
-      if (event.payload.repeat) return;
-      const x = actor.x + step[0];
-      const y = actor.y + step[1];
-      if (x < 0 || y < 0 || x >= size || y >= size || (x === block.x && y === block.y)) {
-        status.textContent = `Blocked / 无法通行 · (${actor.x}, ${actor.y})`;
-        return;
-      }
-      Object.assign(actor, { x, y });
-      update();
-    }, { signal: scope.signal });
+    engine.stage.on(
+      keyboard.events.keyDown,
+      event => {
+        const step = steps.get(event.payload.code);
+        if (!step) return;
+        event.preventDefault();
+        if (event.payload.repeat) return;
+        const x = actor.x + step[0];
+        const y = actor.y + step[1];
+        if (x < 0 || y < 0 || x >= size || y >= size || (x === block.x && y === block.y)) {
+          status.textContent = `Blocked / 无法通行 · (${actor.x}, ${actor.y})`;
+          return;
+        }
+        Object.assign(actor, { x, y });
+        update();
+      },
+      { signal: scope.signal }
+    );
     keyboard.focus('map');
     canvas.focus({ preventScroll: true });
     stop.disabled = false;
-    stop.addEventListener('click', () => { void close(); }, { signal: listeners.signal });
-    addEventListener('pagehide', event => { if (!event.persisted) void close(); }, { signal: listeners.signal });
+    stop.addEventListener(
+      'click',
+      () => {
+        void close();
+      },
+      { signal: listeners.signal }
+    );
+    addEventListener(
+      'pagehide',
+      event => {
+        if (!event.persisted) void close();
+      },
+      { signal: listeners.signal }
+    );
     update();
   } catch (error) {
     await close(error);

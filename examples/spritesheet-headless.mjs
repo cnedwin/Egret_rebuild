@@ -2,65 +2,113 @@
 // This recording host demonstrates public composition; it does not draw pixels.
 import assert from 'node:assert/strict';
 import {
-  createAssetRef, createAssetType, createEngineForProfile, createImageData2D,
-  createSequenceClip, createSpriteSheet, createTexture, isTexture, SHARED_FRAME_PROFILE_2D,
+  createAssetRef,
+  createAssetType,
+  createEngineForProfile,
+  createImageData2D,
+  createSequenceClip,
+  createSpriteSheet,
+  createTexture,
+  isTexture,
+  SHARED_FRAME_PROFILE_2D
 } from '@egret/engine';
 
 const pixels = new Uint8Array([
-  255,0,0,255, 255,0,0,255, 0,255,0,255, 0,0,255,255, 0,0,255,255, 0,0,255,255,
-  255,0,0,255, 255,0,0,255, 0,255,0,255, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+  255, 0, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 0, 0, 255, 255,
+  0, 0, 255, 0, 255, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 ]);
 const input = [
   { name: 'red', x: 0, y: 0, width: 2, height: 2 },
   { name: 'green', x: 2, y: 0, width: 1, height: 2 },
   { name: 'blue', x: 3, y: 0, width: 3, height: 1 },
-  { name: '__proto__', x: 3, y: 0, width: 3, height: 1 },
+  { name: '__proto__', x: 3, y: 0, width: 3, height: 1 }
 ];
-const trace = [], timers = new Set(), recorded = [], diagnostics = [], ticks = [];
+const trace = [],
+  timers = new Set(),
+  recorded = [],
+  diagnostics = [],
+  ticks = [];
 const host = {
   surface: {},
-  start() { trace.push('start'); },
-  stop() { trace.push('stop'); },
-  async close() { trace.push('close'); },
+  start() {
+    trace.push('start');
+  },
+  stop() {
+    trace.push('stop');
+  },
+  async close() {
+    trace.push('close');
+  },
   sharedFrameProfile: SHARED_FRAME_PROFILE_2D,
-  renderSharedFrame(frame) { recorded.push(frame); },
+  renderSharedFrame(frame) {
+    recorded.push(frame);
+  },
   setTimeout(callback, delayMs) {
     const timer = setTimeout(callback, delayMs);
     timers.add(timer);
-    return () => { clearTimeout(timer); timers.delete(timer); };
-  },
+    return () => {
+      clearTimeout(timer);
+      timers.delete(timer);
+    };
+  }
 };
-const engine = await createEngineForProfile({
-  host, clock: { maxDeltaSeconds: 0.5 },
-  onDiagnostic(value) { diagnostics.push(value); },
-}, SHARED_FRAME_PROFILE_2D);
-let loads = 0, disposals = 0, sheet, lease, actor, icon, once, loop;
+const engine = await createEngineForProfile(
+  {
+    host,
+    clock: { maxDeltaSeconds: 0.5 },
+    onDiagnostic(value) {
+      diagnostics.push(value);
+    }
+  },
+  SHARED_FRAME_PROFILE_2D
+);
+let loads = 0,
+  disposals = 0,
+  sheet,
+  lease,
+  actor,
+  icon,
+  once,
+  loop;
 const observations = [];
 try {
-  const resources = engine.createScope(), animation = engine.createScope();
+  const resources = engine.createScope(),
+    animation = engine.createScope();
   const image = createImageData2D({ width: 6, height: 2, pixels });
   const texture = createTexture(image);
   const type = createAssetType('example-spritesheet-texture', isTexture);
   engine.assets.register(type, {
-    async load() { loads++; return texture; },
-    dispose(value) { disposals++; value.dispose(); },
+    async load() {
+      loads++;
+      return texture;
+    },
+    dispose(value) {
+      disposals++;
+      value.dispose();
+    }
   });
   lease = resources.use(await engine.assets.acquire(createAssetRef(type, 'original-colour-atlas')));
   sheet = resources.use(createSpriteSheet(lease, input));
   // The sheet borrows this exact lease. The caller owns each returned Bitmap.
   actor = resources.use(sheet.createBitmap('red'));
   icon = resources.use(sheet.createBitmap('__proto__'));
-  actor.x = 1; actor.y = 1;
-  icon.x = 4; icon.y = 1;
+  actor.x = 1;
+  actor.y = 1;
+  icon.x = 4;
+  icon.y = 1;
   engine.stage.addChild(actor);
   engine.stage.addChild(icon);
   const clip = createSequenceClip({
-    atlasWidth: sheet.atlasWidth, atlasHeight: sheet.atlasHeight,
+    atlasWidth: sheet.atlasWidth,
+    atlasHeight: sheet.atlasHeight,
     frames: ['red', 'green', 'blue'].map((name, index) => ({
-      ...sheet.getRegion(name), durationSeconds: [0.125, 0.25, 0.125][index],
-    })),
+      ...sheet.getRegion(name),
+      durationSeconds: [0.125, 0.25, 0.125][index]
+    }))
   });
-  engine.clock.onTick(animation, tick => { ticks.push(tick); });
+  engine.clock.onTick(animation, tick => {
+    ticks.push(tick);
+  });
   // Source times below are absolute seconds. Zero seeds the clock without a tick.
   engine.advanceTime(0);
   assert.equal(ticks.length, 0);
@@ -76,9 +124,13 @@ try {
     assert.equal(icon.textureLease, lease);
     assert.deepEqual(crop(frame.commands[1]), { x: 3, y: 0, width: 3, height: 1 });
     observations.push({
-      label, state: playback.state, elapsedSeconds: playback.elapsedSeconds,
-      sample: playback.lastSample, frameId: frame.frameId,
-      actorCrop: crop(frame.commands[0]), iconCrop: crop(frame.commands[1]),
+      label,
+      state: playback.state,
+      elapsedSeconds: playback.elapsedSeconds,
+      sample: playback.lastSample,
+      frameId: frame.frameId,
+      actorCrop: crop(frame.commands[0]),
+      iconCrop: crop(frame.commands[1])
     });
     return frame;
   }
@@ -122,9 +174,20 @@ assert.equal(icon.isDisposed, true);
 assert.equal(loop.isDisposed, true);
 assert.throws(() => lease.value, { code: 'ASSET_LEASE_RELEASED' });
 assert.deepEqual(diagnostics, []);
-console.log(JSON.stringify({
-  status: 'SPRITESHEET_HEADLESS_COMPLETE',
-  scope: 'Public SpriteSheet composition with a CPU recording host',
-  observations, ticks, loads, disposals, hostTrace: trace,
-  finalClockState: engine.clock.state, sheetNames: sheet.names,
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      status: 'SPRITESHEET_HEADLESS_COMPLETE',
+      scope: 'Public SpriteSheet composition with a CPU recording host',
+      observations,
+      ticks,
+      loads,
+      disposals,
+      hostTrace: trace,
+      finalClockState: engine.clock.state,
+      sheetNames: sheet.names
+    },
+    null,
+    2
+  )
+);

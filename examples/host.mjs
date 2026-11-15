@@ -17,42 +17,74 @@ export function chooseBackend(search = globalThis.location?.search ?? '', gpu = 
  * submits it once the Host is free; a refused frame that a later one replaces is never drawn.
  */
 export function paceExampleHost(host) {
-  let waiting, scheduled = false, closed = false;
+  let waiting,
+    scheduled = false,
+    closed = false;
   const submit = frame => {
-    try { return host.renderSharedFrame(frame); }
-    catch (error) {
+    try {
+      return host.renderSharedFrame(frame);
+    } catch (error) {
       if (closed || !/_BACKPRESSURE$/.test(String(error?.code))) throw error;
       waiting = frame;
-      if (!scheduled) { scheduled = true; host.whenIdle().then(flush, flush); }
+      if (!scheduled) {
+        scheduled = true;
+        host.whenIdle().then(flush, flush);
+      }
       return undefined;
     }
   };
   const flush = () => {
     scheduled = false;
-    const frame = waiting; waiting = undefined;
+    const frame = waiting;
+    waiting = undefined;
     if (frame === undefined || closed) return;
-    try { submit(frame); } catch { /* The Host states its own failure; the page reads it from the Host. */ }
+    try {
+      submit(frame);
+    } catch {
+      /* The Host states its own failure; the page reads it from the Host. */
+    }
   };
   const own = {
     renderSharedFrame: submit,
-    async whenIdle() { do { await host.whenIdle(); } while (waiting !== undefined || scheduled); },
-    close() { closed = true; waiting = undefined; return host.close(); },
+    async whenIdle() {
+      do {
+        await host.whenIdle();
+      } while (waiting !== undefined || scheduled);
+    },
+    close() {
+      closed = true;
+      waiting = undefined;
+      return host.close();
+    }
   };
   // Every other member is the Host's own, called on the Host.
-  const paced = {}, names = new Set(Object.keys(own));
+  const paced = {},
+    names = new Set(Object.keys(own));
   for (let owner = host; owner !== null && owner !== Object.prototype; owner = Object.getPrototypeOf(owner))
     for (const name of Object.getOwnPropertyNames(owner)) if (name !== 'constructor') names.add(name);
-  for (const name of names) Object.defineProperty(paced, name, Object.hasOwn(own, name)
-    ? { enumerable: true, value: own[name] }
-    : { enumerable: true, get() { const value = host[name]; return typeof value === 'function' ? value.bind(host) : value; } });
+  for (const name of names)
+    Object.defineProperty(
+      paced,
+      name,
+      Object.hasOwn(own, name)
+        ? { enumerable: true, value: own[name] }
+        : {
+            enumerable: true,
+            get() {
+              const value = host[name];
+              return typeof value === 'function' ? value.bind(host) : value;
+            }
+          }
+    );
   return Object.freeze(paced);
 }
 
 /** The Host factory of the chosen backend, paced for an example. Only the chosen backend's module is loaded. */
 export async function loadExampleHostFactory(backend = chooseBackend()) {
-  const factory = backend === 'webgpu'
-    ? (await import('@egret/engine/webgpu')).createSharedWebGPUHost
-    : (await import('@egret/engine/webgl2')).createSharedWebGL2Host;
+  const factory =
+    backend === 'webgpu'
+      ? (await import('@egret/engine/webgpu')).createSharedWebGPUHost
+      : (await import('@egret/engine/webgl2')).createSharedWebGL2Host;
   return options => paceExampleHost(factory(options));
 }
 

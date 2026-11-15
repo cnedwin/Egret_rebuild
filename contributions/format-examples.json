@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/prepared-resource-groups/coordinator.mjs",
+      "originRole": "First-party prepared resource group coordinator from an earlier Egret work package; formatted in this change; Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-resource-groups/dependencies.mjs",
+      "originRole": "First-party prepared resource group dependencies from an earlier Egret work package; formatted in this change; Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-resource-groups/source.mjs",
+      "originRole": "First-party prepared resource group source adapter from an earlier Egret work package; formatted in this change; Apache-2.0."
+    },
+    {
+      "path": "examples/trimmed-atlas-playback/image.mjs",
+      "originRole": "First-party image helper in the trimmed atlas playback example; formatted in this change; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

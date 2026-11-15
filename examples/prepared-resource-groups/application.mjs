@@ -8,14 +8,19 @@ import { createPreparedSceneDependencies } from './dependencies.mjs';
 import { createPreparedResourceSceneSession } from './session.mjs';
 
 const FREEZE = Object.freeze;
-const WIDTH = 192, HEIGHT = 128;
+const WIDTH = 192,
+  HEIGHT = 128;
 const fault = (code, cause) => new EgretError('PREPARED_APPLICATION_' + code, { cause });
 function errorView(cause, depth = 0) {
-  const view = { wasUndefined: cause === undefined, code: typeof cause?.code === 'string' ? cause.code : null,
-    message: String(cause?.message ?? cause) };
+  const view = {
+    wasUndefined: cause === undefined,
+    code: typeof cause?.code === 'string' ? cause.code : null,
+    message: String(cause?.message ?? cause)
+  };
   if (depth < 8 && cause !== null && (typeof cause === 'object' || typeof cause === 'function')) {
     if (Object.hasOwn(cause, 'cause')) view.cause = errorView(cause.cause, depth + 1);
-    if (Array.isArray(cause.cleanupErrors)) view.cleanupErrors = FREEZE(cause.cleanupErrors.map(value => errorView(value, depth + 1)));
+    if (Array.isArray(cause.cleanupErrors))
+      view.cleanupErrors = FREEZE(cause.cleanupErrors.map(value => errorView(value, depth + 1)));
   }
   return FREEZE(view);
 }
@@ -25,70 +30,137 @@ export function createPreparedResourceApplication(options) {
   const { canvas, profile = 'shared-2d' } = options;
   if (profile !== 'shared-2d') throw fault('PROFILE_UNSUPPORTED');
   if (!canvas || typeof canvas.getContext !== 'function') throw fault('OPTIONS_INVALID');
-  let state = 'starting', source, dependencies, host, session, input, ready, closePromise;
-  let serial = Promise.resolve(), pendingPresentations = 0, completedPresentations = 0;
+  let state = 'starting',
+    source,
+    dependencies,
+    host,
+    session,
+    input,
+    ready,
+    closePromise;
+  let serial = Promise.resolve(),
+    pendingPresentations = 0,
+    completedPresentations = 0;
   let initialPresentation, lastPresentation;
-  let sourceClosing, dependencyClosing, sessionClosing, sessionCloseStarted = false, safeSurface = false;
-  const diagnostics = [], cleanupErrors = [];
+  let sourceClosing,
+    dependencyClosing,
+    sessionClosing,
+    sessionCloseStarted = false,
+    safeSurface = false;
+  const diagnostics = [],
+    cleanupErrors = [];
   function diagnostic(operation, cause) {
     if (diagnostics.length < 64) diagnostics.push(FREEZE({ operation, error: errorView(cause) }));
   }
-  function remember(operation, cause) { cleanupErrors.push({ operation, cause }); }
-  function open() { if (state !== 'ready') throw fault(state === 'starting' ? 'NOT_READY' : 'CLOSED'); }
-  function starting() { if (state !== 'starting') throw fault('CLOSED'); }
-  function handled(promise) { void promise.catch(() => undefined); return promise; }
+  function remember(operation, cause) {
+    cleanupErrors.push({ operation, cause });
+  }
+  function open() {
+    if (state !== 'ready') throw fault(state === 'starting' ? 'NOT_READY' : 'CLOSED');
+  }
+  function starting() {
+    if (state !== 'starting') throw fault('CLOSED');
+  }
+  function handled(promise) {
+    void promise.catch(() => undefined);
+    return promise;
+  }
   function closeSession() {
     if (session === undefined || sessionCloseStarted) return;
     sessionCloseStarted = true;
-    try { sessionClosing = handled(session.close()); } catch (cause) { remember('session.close call', cause); }
+    try {
+      sessionClosing = handled(session.close());
+    } catch (cause) {
+      remember('session.close call', cause);
+    }
   }
   function closeExternal() {
     if (source && sourceClosing === undefined) {
-      try { sourceClosing = handled(Promise.resolve(source.close())); }
-      catch (cause) { sourceClosing = handled(Promise.reject(cause)); }
+      try {
+        sourceClosing = handled(Promise.resolve(source.close()));
+      } catch (cause) {
+        sourceClosing = handled(Promise.reject(cause));
+      }
     }
     if (dependencies && dependencyClosing === undefined) {
-      try { dependencyClosing = handled(Promise.resolve(dependencies.close())); }
-      catch (cause) { dependencyClosing = handled(Promise.reject(cause)); }
+      try {
+        dependencyClosing = handled(Promise.resolve(dependencies.close()));
+      } catch (cause) {
+        dependencyClosing = handled(Promise.reject(cause));
+      }
     }
   }
   async function draw(label) {
     await session.scene.textReady;
     if (state === 'closing' || state === 'closed') throw fault('CLOSED');
     const frame = session.capture();
-    const metadata = { label, frameId: frame.frameId, width: WIDTH, height: HEIGHT,
+    const metadata = {
+      label,
+      frameId: frame.frameId,
+      width: WIDTH,
+      height: HEIGHT,
       frameImagesBytes: frame.pages.reduce((sum, page) => sum + page.source.byteLength, 0),
-      geometryLogicalBytes: frame.geometries.reduce((sum, geometry) => sum + geometry.logicalByteLength, 0) };
+      geometryLogicalBytes: frame.geometries.reduce((sum, geometry) => sum + geometry.logicalByteLength, 0)
+    };
     // The ticket is armed before its frame is rendered.
-    const ticket = host.requestReadback(); void ticket.catch(() => undefined);
+    const ticket = host.requestReadback();
+    void ticket.catch(() => undefined);
     host.renderSharedFrame(frame);
-    const result = await ticket; await host.whenIdle();
+    const result = await ticket;
+    await host.whenIdle();
     const bytes = new Uint8Array(result.bytes);
-    if (result.width !== WIDTH || result.height !== HEIGHT || bytes.byteLength !== WIDTH * HEIGHT * 4) throw fault('READBACK_INVALID');
-    lastPresentation = FREEZE({ ...metadata, serial: result.serial, bytes }); completedPresentations++;
+    if (result.width !== WIDTH || result.height !== HEIGHT || bytes.byteLength !== WIDTH * HEIGHT * 4)
+      throw fault('READBACK_INVALID');
+    lastPresentation = FREEZE({ ...metadata, serial: result.serial, bytes });
+    completedPresentations++;
     return lastPresentation;
   }
   function enqueue(label) {
     if (typeof label !== 'string' || !/^[a-z0-9-]{1,64}$/.test(label)) throw fault('LABEL_INVALID');
     pendingPresentations++;
     const original = serial.then(() => draw(label));
-    serial = original.then(() => { pendingPresentations--; }, () => { pendingPresentations--; });
+    serial = original.then(
+      () => {
+        pendingPresentations--;
+      },
+      () => {
+        pendingPresentations--;
+      }
+    );
     return original;
   }
   async function initialize() {
     source = options.outfitSource ?? createPreparedOutfitSource();
     dependencies = options.dependencyOwner ?? createPreparedSceneDependencies();
-    await dependencies.ready; starting();
-    host = (await loadExampleHostFactory())({ canvas, pixelRatio: 1, enableReadback: true }); starting();
-    session = createPreparedResourceSceneSession({ host, profile, outfitSource: source, dependencies: dependencies.dependencies });
-    await session.ready; starting();
-    initialPresentation = await enqueue('startup'); starting();
-    input = createMouseInput({ engine: session.scene.engine, scope: session.scene.inputScope, width: WIDTH, height: HEIGHT });
-    session.scene.engine.stage.on(input.events.activate, event => {
-      if (state !== 'ready' || !session.selectTarget(event.target)) return;
-      // The native callback stays synchronous; its original presentation has its own barrier.
-      void enqueue('native-selection').catch(cause => diagnostic('native selection presentation', cause));
-    }, { signal: session.scene.inputScope.signal });
+    await dependencies.ready;
+    starting();
+    host = (await loadExampleHostFactory())({ canvas, pixelRatio: 1, enableReadback: true });
+    starting();
+    session = createPreparedResourceSceneSession({
+      host,
+      profile,
+      outfitSource: source,
+      dependencies: dependencies.dependencies
+    });
+    await session.ready;
+    starting();
+    initialPresentation = await enqueue('startup');
+    starting();
+    input = createMouseInput({
+      engine: session.scene.engine,
+      scope: session.scene.inputScope,
+      width: WIDTH,
+      height: HEIGHT
+    });
+    session.scene.engine.stage.on(
+      input.events.activate,
+      event => {
+        if (state !== 'ready' || !session.selectTarget(event.target)) return;
+        // The native callback stays synchronous; its original presentation has its own barrier.
+        void enqueue('native-selection').catch(cause => diagnostic('native selection presentation', cause));
+      },
+      { signal: session.scene.inputScope.signal }
+    );
     state = 'ready';
     return initialPresentation;
   }
@@ -96,21 +168,37 @@ export function createPreparedResourceApplication(options) {
     // Include presentations admitted during the preceding await without retaining history.
     let observed;
     do {
-      observed = serial; await observed;
+      observed = serial;
+      await observed;
     } while (serial !== observed);
     return lastPresentation;
   }
   function close() {
     if (closePromise !== undefined) return closePromise;
     let resolve, reject;
-    closePromise = handled(new Promise((yes, no) => { resolve = yes; reject = no; }));
+    closePromise = handled(
+      new Promise((yes, no) => {
+        resolve = yes;
+        reject = no;
+      })
+    );
     state = 'closing';
-    try { input?.dispose(); } catch (cause) { remember('input.dispose', cause); }
+    try {
+      input?.dispose();
+    } catch (cause) {
+      remember('input.dispose', cause);
+    }
     closeSession();
     // No session can borrow partial dependencies after startup close has won.
     if (session === undefined) closeExternal();
     void (async () => {
-      const keep = async (operation, run) => { try { await run(); } catch (cause) { remember(operation, cause); } };
+      const keep = async (operation, run) => {
+        try {
+          await run();
+        } catch (cause) {
+          remember(operation, cause);
+        }
+      };
       try {
         await ready.catch(() => undefined);
         closeSession();
@@ -122,37 +210,86 @@ export function createPreparedResourceApplication(options) {
         let hostCloseFailure;
         let closed = host === undefined;
         if (host) {
-          try { await host.close(); closed = true; } catch (cause) { hostCloseFailure = { cause }; }
+          try {
+            await host.close();
+            closed = true;
+          } catch (cause) {
+            hostCloseFailure = { cause };
+          }
         }
         if (hostCloseFailure !== undefined) remember('host.close', hostCloseFailure.cause);
         safeSurface = closed;
-        if (safeSurface) await keep('canvas retirement', () => { canvas.width = 0; canvas.height = 0; canvas.remove(); });
+        if (safeSurface)
+          await keep('canvas retirement', () => {
+            canvas.width = 0;
+            canvas.height = 0;
+            canvas.remove();
+          });
         else remember('surface quarantined', fault('HOST_UNSAFE'));
-      } finally { state = 'closed'; }
+      } finally {
+        state = 'closed';
+      }
       if (cleanupErrors.length === 1) throw cleanupErrors[0].cause;
-      if (cleanupErrors.length > 1) throw new EgretError('PREPARED_APPLICATION_CLOSE_FAILED', {
-        cause: cleanupErrors[0].cause, cleanupErrors: cleanupErrors.slice(1).map(value => value.cause) });
+      if (cleanupErrors.length > 1)
+        throw new EgretError('PREPARED_APPLICATION_CLOSE_FAILED', {
+          cause: cleanupErrors[0].cause,
+          cleanupErrors: cleanupErrors.slice(1).map(value => value.cause)
+        });
     })().then(resolve, reject);
     return closePromise;
   }
   const application = FREEZE({
-    get ready() { return ready; }, get session() { return session; }, get source() { return source; },
-    get dependencies() { return dependencies; }, get host() { return host; }, get input() { return input; },
-    present(label = 'frame') { open(); return enqueue(label); }, whenIdle, close,
+    get ready() {
+      return ready;
+    },
+    get session() {
+      return session;
+    },
+    get source() {
+      return source;
+    },
+    get dependencies() {
+      return dependencies;
+    },
+    get host() {
+      return host;
+    },
+    get input() {
+      return input;
+    },
+    present(label = 'frame') {
+      open();
+      return enqueue(label);
+    },
+    whenIdle,
+    close,
     inspect() {
       const { bytes, ...lastFrame } = lastPresentation ?? {};
       // The ready Promise retains its initial result. Count the latest result once when identical.
-      const handleHeldRGBABytes = (initialPresentation?.bytes.byteLength ?? 0)
-        + (lastPresentation !== initialPresentation ? lastPresentation?.bytes.byteLength ?? 0 : 0);
-      return FREEZE({ state, session: session?.inspect() ?? null, source: source?.snapshot() ?? null,
-        dependencies: dependencies?.snapshot() ?? null, pendingPresentations, completedPresentations,
-        lastFrame: lastPresentation ? FREEZE(lastFrame) : null, handleHeldRGBABytes,
+      const handleHeldRGBABytes =
+        (initialPresentation?.bytes.byteLength ?? 0) +
+        (lastPresentation !== initialPresentation ? (lastPresentation?.bytes.byteLength ?? 0) : 0);
+      return FREEZE({
+        state,
+        session: session?.inspect() ?? null,
+        source: source?.snapshot() ?? null,
+        dependencies: dependencies?.snapshot() ?? null,
+        pendingPresentations,
+        completedPresentations,
+        lastFrame: lastPresentation ? FREEZE(lastFrame) : null,
+        handleHeldRGBABytes,
         host: null,
-        diagnostics: FREEZE([...diagnostics]), cleanupErrors: FREEZE(cleanupErrors.map(value =>
-          FREEZE({ operation: value.operation, error: errorView(value.cause) }))), safeSurface });
-    },
+        diagnostics: FREEZE([...diagnostics]),
+        cleanupErrors: FREEZE(
+          cleanupErrors.map(value => FREEZE({ operation: value.operation, error: errorView(value.cause) }))
+        ),
+        safeSurface
+      });
+    }
   });
   ready = initialize();
-  void ready.catch(() => { if (state === 'starting') void close().catch(() => undefined); });
+  void ready.catch(() => {
+    if (state === 'starting') void close().catch(() => undefined);
+  });
   return application;
 }

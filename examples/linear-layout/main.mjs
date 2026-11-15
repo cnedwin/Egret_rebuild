@@ -1,22 +1,27 @@
 // SPDX-License-Identifier: Apache-2.0
-import {createLinearLayoutSession} from './session.mjs';
-import {chooseBackend, loadExampleHostFactory} from '../host.mjs';
+import { createLinearLayoutSession } from './session.mjs';
+import { chooseBackend, loadExampleHostFactory } from '../host.mjs';
 
 const query = new URL(location.href).searchParams;
 const backend = chooseBackend();
 const preset = query.get('preset') === 'verification' ? 'verification' : 'preview';
-const canvas = document.querySelector('#scene'), status = document.querySelector('#status');
+const canvas = document.querySelector('#scene'),
+  status = document.querySelector('#status');
 const selector = document.querySelector('#backend');
 const actions = ['horizontal', 'vertical', 'filter', 'reinsert', 'disabled', 'enabled', 'invalid', 'replay', 'live'];
 export let session;
 export let renderHost;
 const readbacks = [];
 /** Every original WebGPU ticket, including the helper's ancillary first frame. */
-export function getReadbacks() { return Object.freeze([...readbacks]); }
+export function getReadbacks() {
+  return Object.freeze([...readbacks]);
+}
 function verificationHost(original) {
   return Object.freeze({
     surface: original.surface,
-    start: () => original.start(), stop: () => original.stop(), close: () => original.close(),
+    start: () => original.start(),
+    stop: () => original.stop(),
+    close: () => original.close(),
     setTimeout: (callback, delay) => original.setTimeout(callback, delay),
     sharedFrameProfile: original.sharedFrameProfile,
     renderSharedFrame(frame) {
@@ -26,7 +31,7 @@ function verificationHost(original) {
       readbacks.push(ticket);
       void ticket.catch(() => {});
       return original.renderSharedFrame(frame);
-    },
+    }
   });
 }
 function waitForStartupReadback() {
@@ -39,10 +44,12 @@ function waitForStartupReadback() {
   }
   return readbacks[0];
 }
-let closeRequested = false, closePromise;
+let closeRequested = false,
+  closePromise;
 function refresh() {
   if (!session) return;
-  const view = session.inspect(), active = view.state === 'ready';
+  const view = session.inspect(),
+    active = view.state === 'ready';
   for (const id of actions) document.querySelector('#' + id).disabled = !active;
   document.querySelector('#close').disabled = view.state === 'closing' || view.state === 'closed';
   status.dataset.state = view.state;
@@ -55,7 +62,7 @@ function refresh() {
   status.dataset.secondActivations = String(view.buttons.activations[1]);
   status.dataset.lastRejectedCode = view.lastRejectedCode ?? '';
   const size = view.currentPlan ? view.currentPlan.width + ' × ' + view.currentPlan.height : '—';
-  const labels = {starting: '启动中', ready: '就绪', closing: '关闭中', closed: '已关闭'};
+  const labels = { starting: '启动中', ready: '就绪', closing: '关闭中', closed: '已关闭' };
   status.textContent = [
     view.state + ' / ' + labels[view.state],
     'Mode / 模式: ' + view.mode + '; axis / 方向: ' + view.axis,
@@ -64,14 +71,19 @@ function refresh() {
     'Second / 第二个: ' + view.buttons.buttonStates[1] + '; activations / 激活: ' + view.buttons.activations[1],
     'Presented / 显示: ' + view.presentation,
     'Atlas loads / 图集加载: ' + view.buttons.loads + '; disposals / 释放: ' + view.buttons.disposals,
-    view.lastRejectedCode ? 'Expected refusal; scene retained / 预期拒绝，场景保持: ' + view.lastRejectedCode : '',
-  ].filter(Boolean).join('\n');
+    view.lastRejectedCode ? 'Expected refusal; scene retained / 预期拒绝，场景保持: ' + view.lastRejectedCode : ''
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 function close() {
   closeRequested = true;
   if (closePromise) return closePromise;
   let resolve, reject;
-  closePromise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  closePromise = new Promise((yes, no) => {
+    resolve = yes;
+    reject = no;
+  });
   void closePromise.catch(() => {});
   if (!session) {
     status.dataset.state = 'closed';
@@ -82,8 +94,19 @@ function close() {
     try {
       const retirement = session.close();
       refresh();
-      void retirement.then(() => { refresh(); resolve(); }, cause => { refresh(); reject(cause); });
-    } catch (cause) { reject(cause); }
+      void retirement.then(
+        () => {
+          refresh();
+          resolve();
+        },
+        cause => {
+          refresh();
+          reject(cause);
+        }
+      );
+    } catch (cause) {
+      reject(cause);
+    }
   }
   return closePromise;
 }
@@ -92,10 +115,13 @@ function failed(error) {
   status.textContent += '\nUnavailable or failed / 不可用或失败: ' + (error?.code ?? 'EXAMPLE_FAILURE');
 }
 function operationFailed(error) {
-  void close().then(() => failed(error), cleanup => {
-    failed(error);
-    status.textContent += '\nCleanup failed / 清理失败: ' + (cleanup?.code ?? 'EXAMPLE_CLEANUP_FAILURE');
-  });
+  void close().then(
+    () => failed(error),
+    cleanup => {
+      failed(error);
+      status.textContent += '\nCleanup failed / 清理失败: ' + (cleanup?.code ?? 'EXAMPLE_CLEANUP_FAILURE');
+    }
+  );
 }
 selector.value = backend;
 selector.addEventListener('change', () => {
@@ -103,33 +129,60 @@ selector.addEventListener('change', () => {
   next.searchParams.set('backend', selector.value);
   selector.disabled = true;
   // A fresh page starts only after the original Engine/Host has settled.
-  void close().then(() => { location.href = next.href; }, cause => {
-    selector.disabled = false; selector.value = backend; failed(cause);
-  });
+  void close().then(
+    () => {
+      location.href = next.href;
+    },
+    cause => {
+      selector.disabled = false;
+      selector.value = backend;
+      failed(cause);
+    }
+  );
 });
-document.querySelector('#close').addEventListener('click', () => { void close().catch(failed); });
-window.addEventListener('pagehide', () => { void close().catch(() => {}); }, {once: true});
+document.querySelector('#close').addEventListener('click', () => {
+  void close().catch(failed);
+});
+window.addEventListener(
+  'pagehide',
+  () => {
+    void close().catch(() => {});
+  },
+  { once: true }
+);
 try {
   const createHost = await loadExampleHostFactory(backend);
   if (!closeRequested) {
     canvas.width = canvas.height = 24;
     canvas.style.width = canvas.style.height = '192px';
-    const host = createHost({canvas, pixelRatio: 1, enableReadback: preset === 'verification'});
+    const host = createHost({ canvas, pixelRatio: 1, enableReadback: preset === 'verification' });
     renderHost = host;
     const admittedHost = preset === 'verification' ? verificationHost(host) : host;
     session = createLinearLayoutSession({
-      host: admittedHost, preset, onUpdate: refresh,
-      waitForStartupIdle: preset === 'verification' ? waitForStartupReadback : undefined,
+      host: admittedHost,
+      preset,
+      onUpdate: refresh,
+      waitForStartupIdle: preset === 'verification' ? waitForStartupReadback : undefined
     });
     const operations = {
-      horizontal: () => session.horizontal(), vertical: () => session.vertical(),
-      filter: () => session.filterFirst(), reinsert: () => session.reinsertFirst(),
-      disabled: () => session.disableFirst(), enabled: () => session.enableFirst(), invalid: () => session.rejectInvalidPlan(),
-      replay: () => session.replaySavedHorizontal(), live: () => session.showLive(),
+      horizontal: () => session.horizontal(),
+      vertical: () => session.vertical(),
+      filter: () => session.filterFirst(),
+      reinsert: () => session.reinsertFirst(),
+      disabled: () => session.disableFirst(),
+      enabled: () => session.enableFirst(),
+      invalid: () => session.rejectInvalidPlan(),
+      replay: () => session.replaySavedHorizontal(),
+      live: () => session.showLive()
     };
     for (const [id, operation] of Object.entries(operations)) {
       document.querySelector('#' + id).addEventListener('click', () => {
-        try { operation(); refresh(); } catch (cause) { operationFailed(cause); }
+        try {
+          operation();
+          refresh();
+        } catch (cause) {
+          operationFailed(cause);
+        }
       });
     }
     refresh();
@@ -137,6 +190,10 @@ try {
     refresh();
   }
 } catch (cause) {
-  try { await close(); } catch { /* Keep the original startup cause visible. */ }
+  try {
+    await close();
+  } catch {
+    /* Keep the original startup cause visible. */
+  }
   failed(cause);
 }
