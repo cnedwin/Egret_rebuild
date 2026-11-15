@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": ".git-blame-ignore-revs", "originRole": "First-party list of the commits that only changed layout, for git blame to pass over; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": []
+}
