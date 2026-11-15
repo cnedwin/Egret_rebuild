@@ -102,7 +102,6 @@
         "packages/runtime/src/input/index.ts",
         "packages/runtime/src/input/types.ts",
         "packages/runtime/src/meshDisplayState.ts",
-        "packages/runtime/src/ownership.ts",
         "packages/runtime/src/spriteSheet.ts"
       ],
       "javascript": {

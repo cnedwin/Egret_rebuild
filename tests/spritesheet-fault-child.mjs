@@ -27,8 +27,12 @@ assertDisk();
 
 const originalPort = `        spriteSheetBitmapOperations = Object.freeze({
             construct: (lease) => new OriginalBitmap(lease),
-            setCrop: (bitmap, region) => { apply(setCrop, bitmap, [region]); },
-            dispose: (bitmap) => { apply(dispose, bitmap, []); },
+            setCrop: (bitmap, region) => {
+                apply(setCrop, bitmap, [region]);
+            },
+            dispose: (bitmap) => {
+                apply(dispose, bitmap, []);
+            }
         });`;
 const auditKey = Symbol.for('egret.test.ss1.originalBitmapUnit');
 const audit = {

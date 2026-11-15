@@ -1,11 +1,11 @@
-import type { AssetLease } from "./AssetLease.js";
-import type { Texture } from "./Texture.js";
-import type { Bitmap } from "./Bitmap.js";
-import type { Stage } from "./Stage.js";
-import type { CapturedSharedContent2D } from "./sharedFrameCapture.js";
-import type { Diagnostic } from "@egret/contracts";
-import { EgretError } from "./EgretError.js";
-import { recordVisualChange, VISUAL_BINDING } from "./displayVisualState.js";
+import type { AssetLease } from './AssetLease.js';
+import type { Texture } from './Texture.js';
+import type { Bitmap } from './Bitmap.js';
+import type { Stage } from './Stage.js';
+import type { CapturedSharedContent2D } from './sharedFrameCapture.js';
+import type { Diagnostic } from '@egret/contracts';
+import { EgretError } from './EgretError.js';
+import { recordVisualChange, VISUAL_BINDING } from './displayVisualState.js';
 import {
   assertLive,
   captureChildInsertion,
@@ -16,12 +16,12 @@ import {
   validateCapturedInsertionNode,
   validateCapturedInsertionRoots,
   validateCapturedInsertionSource
-} from "./displayTreeState.js";
-import type { CapturedInsertionNode, PreparedInsertionTree } from "./displayTreeState.js";
-import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
-import type { Scope } from "./Scope.js";
-import type { DisplayObject } from "./DisplayObject.js";
-import type { AssetGroupOperations } from "./assetManagerOwnerState.js";
+} from './displayTreeState.js';
+import type { CapturedInsertionNode, PreparedInsertionTree } from './displayTreeState.js';
+import type { DisplayObjectContainer } from './DisplayObjectContainer.js';
+import type { Scope } from './Scope.js';
+import type { DisplayObject } from './DisplayObject.js';
+import type { AssetGroupOperations } from './assetManagerOwnerState.js';
 
 /** Internal instance port; runtime never imports the Engine implementation. */
 export interface EngineContext {
@@ -59,15 +59,15 @@ export interface EngineContext {
   readonly registerTextFieldCache?: (
     cache: object,
     construct: (scope: Scope) => DisplayObject,
-    kind?: "explicit-lines" | "paragraph"
+    kind?: 'explicit-lines' | 'paragraph'
   ) => void;
   /** @internal Optional group assembly; ordinary runtime contexts remain unchanged. */
   readonly registerAssetGroupOperations?: (operations: AssetGroupOperations) => void;
 }
 
-export const OWNERSHIP_CHILDREN: unique symbol = Symbol("egret.ownershipChildren");
-export const ASSERT_BINDABLE: unique symbol = Symbol("egret.assertBindable");
-export const ASSERT_ATTACHABLE: unique symbol = Symbol("egret.assertAttachable");
+export const OWNERSHIP_CHILDREN: unique symbol = Symbol('egret.ownershipChildren');
+export const ASSERT_BINDABLE: unique symbol = Symbol('egret.assertBindable');
+export const ASSERT_ATTACHABLE: unique symbol = Symbol('egret.assertAttachable');
 
 // Cleanup ownership and engine affinity are separate lifetime identities.
 const owners = new WeakMap<object, object>();
@@ -104,7 +104,7 @@ export function preflightBinding(value: object, engine: EngineContext): readonly
     const current = pending.pop();
     if (current === undefined) break;
     const existing = engineOf(current);
-    if (existing !== undefined && existing !== engine) throw new EgretError("ENGINE_MISMATCH");
+    if (existing !== undefined && existing !== engine) throw new EgretError('ENGINE_MISMATCH');
     if (isDisplayNode(current)) {
       current[ASSERT_BINDABLE]();
       pending.push(...childrenOf(current));
@@ -123,7 +123,7 @@ export function validateBinding(value: object, engine: EngineContext): readonly 
     const current = pending.pop();
     if (current === undefined) break;
     const existing = engineOf(current);
-    if (existing !== undefined && existing !== engine) throw new EgretError("ENGINE_MISMATCH");
+    if (existing !== undefined && existing !== engine) throw new EgretError('ENGINE_MISMATCH');
     if (isDisplayNode(current)) {
       assertLive(current);
       pending.push(...childrenOf(current));
@@ -198,7 +198,7 @@ function validateInsertionAffinities(
   for (let index = 0; index < records.length; index++) {
     const current = records[index]!;
     validateCapturedInsertionNode(current.record);
-    if (current.engine !== undefined && current.engine !== engine) throw new EgretError("ENGINE_MISMATCH");
+    if (current.engine !== undefined && current.engine !== engine) throw new EgretError('ENGINE_MISMATCH');
   }
 }
 
