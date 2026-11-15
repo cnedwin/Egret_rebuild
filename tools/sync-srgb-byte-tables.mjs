@@ -65,8 +65,11 @@ if (mode === '--check' && changes.length) {
     }
   } catch (error) {
     const rollback = [];
-    for (const { file, current } of attempted.reverse()) {
+    for (const { file, current, expected } of attempted.reverse()) {
       try {
+        const observed = read(file);
+        if (observed === current) continue;
+        if (observed !== expected) throw new Error('Concurrent edit preserved during recovery: ' + file);
         write(file, current);
       } catch (failure) {
         rollback.push(failure);
