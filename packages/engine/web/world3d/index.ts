@@ -3,7 +3,7 @@
 // controls, browser loaders and the Engine clock binding. Nothing here is
 // loaded by the default Engine, Canvas or shared 2D entries.
 export { WebGL2Renderer3D, createWebGL2Renderer3D } from './WebGL2Renderer3D.js';
-export type { WebGL2Renderer3DOptions } from './WebGL2Renderer3D.js';
+export type { WebGL2ProgramVariant3D, WebGL2Renderer3DOptions } from './WebGL2Renderer3D.js';
 export type {
   World3DFrameMetrics,
   World3DFramePass,

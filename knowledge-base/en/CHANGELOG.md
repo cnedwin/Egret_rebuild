@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Prepare World3D WebGL2 program variants — 2026-11-17
+
+`preparePrograms` links selected material variants, including the scene color and shadow programs, during loading. It polls supported WebGL2 devices for completion before querying link status and uniforms. A Windows RTX 5090 Laptop GPU comparison moved the first transparent-material link out of the interaction, reducing that callback interval from 179.2 ms to 4.1 ms. [World3D contract and evidence](docs/world3d.md#webgl2-program-preparation)
+
 ## Browser PNG loading on WebKit — 2026-11-16
 
 The browser PNG provider accepts omitted alpha and color-space metadata on its own fresh canvas and uses the canvas and readback defaults. Custom ports still report both context attributes and the readback color space. This applies to textures loaded by `createBrowserGame` and to manifest textures.

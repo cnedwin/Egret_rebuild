@@ -91,6 +91,23 @@ Output is tone mapped (`none`, `reinhard` or `aces`) and sRGB encoded. Normal an
 
 Both renderers fold repeated meshes into instanced draws by themselves. After sorting, a run of at least eight plain meshes that share a geometry, a material, layers and whether they receive shadows is drawn once, with the members' world matrices as instances; shadow casters are grouped the same way. The meshes in the scene are untouched and stay pickable one by one, a member that moves is picked up on the next frame, and the instance data is uploaded again only when a member changed. Skinned, morphing, mirrored, blended and see-through meshes, sprites and wireframes are drawn on their own as before. `renderer.autoInstancing = false` switches it off. When the same items are visible as in the frame before, their sorted order is kept instead of being sorted again.
 
+### WebGL2 program preparation
+
+Call `preparePrograms` during loading for material variants an interaction will need. Pass the mesh that will be drawn and the material it will use after the change. Each descriptor selects one program using the same geometry features and shader defines as the draw path. For a mesh with material groups, supply a descriptor for each material you plan to prepare. An automatic instanced batch can use a different variant from an individual mesh.
+
+```ts
+await renderer.preparePrograms([
+  { mesh: roof, material: translucentRoof, receiveShadows: true, fog: true },
+  { mesh: wall, material: wallMaterial, pass: 'shadow' }
+]);
+```
+
+The default `pass` is `'color'`. Match the future view with `fog`, `environment`, `receiveShadows`, `softDepth`, and `transmission`. Set `receiveShadows` when that view will produce shadow maps and the mesh receives shadows. The renderer derives tone mapping and output from its current settings and the optional output `target`. An enabled post chain already renders scene color to an internal linear HDR target. The `'shadow'` and `'depth-prepass'` requests select the depth program. Post effects themselves have separate programs.
+
+Preparation links the program and initializes uniforms without drawing the scene or uploading geometry and textures. Requests for the same key share a link with each other and with rendering. With `KHR_parallel_shader_compile`, it waits for `COMPLETION_STATUS_KHR` before querying link status or uniforms. Without the extension, the link-status check can block inside preparation. Await preparation before the interaction. Drawing an unready program can still block, and draw-specific work may remain after the program is ready. After context restoration, prepare the variants again. [Khronos extension](https://registry.khronos.org/webgl/extensions/KHR_parallel_shader_compile/)
+
+In a fixed three-box scene on Windows Edge 157 with an RTX 5090 Laptop GPU (ANGLE D3D11), the first transition to a shadow-receiving transparent material showed a 179.2 ms frame callback interval and 182.0 ms inside `LINK_STATUS`. With the same variant prepared, the transition took 4.1 ms with zero new links. Preparation took 179.3 ms, including a 0.4 ms initial call, with zero draws and a longest observed callback interval of 4.3 ms while pending. RGBA8 readback matched exactly for the reference and three controls that separately changed opacity, fog and shadow reception. This was one same-machine comparison of browser callback intervals and CPU-side API time.
+
 ### WebGL2 application-frame metrics
 
 Call `measureFrame` around the synchronous render work for one application frame. `PlanarReflection3D` identifies its mirror draw automatically. Direct renders to other targets are reported as offscreen views. `frame.reflections.rendered` counts successful planar reflection renders. `frame.reflections.reused` counts interval skips that keep a prior reflection texture. A reused texture adds no reflection pass or draw calls.

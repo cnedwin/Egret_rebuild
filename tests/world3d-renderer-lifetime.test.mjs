@@ -90,6 +90,337 @@ function webGLFixture() {
   };
 }
 
+function shaderPreparationFixture({ parallel = true } = {}) {
+  const fixture = webGLFixture();
+  const { canvas, gl } = fixture;
+  const extension = { COMPLETION_STATUS_KHR: 0x91b1 };
+  const sources = new WeakMap();
+  const programActions = [],
+    linked = [],
+    checked = [],
+    inspected = [],
+    deletedPrograms = [],
+    deletedShaders = [];
+  const firstPoll = Promise.withResolvers();
+  const previousProgram = {};
+  let currentProgram = previousProgram,
+    complete = false,
+    successful = true,
+    draws = 0,
+    buffers = 0;
+  const getParameter = gl.getParameter;
+  Object.assign(gl, {
+    ACTIVE_UNIFORMS: 0x8b86,
+    CURRENT_PROGRAM: 0x8b8d,
+    LINK_STATUS: 0x8b82,
+    INVALID_INDEX: 0xffffffff,
+    TRIANGLES: 0x0004,
+    DEPTH_COMPONENT24: 0x81a6,
+    DEPTH_ATTACHMENT: 0x8d00,
+    drawingBufferWidth: 16,
+    drawingBufferHeight: 16,
+    getExtension(name) {
+      if (!parallel || name !== 'KHR_parallel_shader_compile') return null;
+      programActions.push('enable-extension');
+      return extension;
+    },
+    getParameter: parameter => (parameter === gl.CURRENT_PROGRAM ? currentProgram : getParameter(parameter)),
+    createBuffer() {
+      buffers++;
+      return {};
+    },
+    createVertexArray: () => ({}),
+    createShader: () => ({}),
+    createProgram: () => ({}),
+    shaderSource(shader, source) {
+      sources.set(shader, source);
+    },
+    attachShader(program, shader) {
+      (program.shaders ??= []).push(shader);
+    },
+    linkProgram(program) {
+      programActions.push('link');
+      linked.push(program);
+    },
+    getProgramParameter(program, parameter) {
+      if (parameter === extension.COMPLETION_STATUS_KHR) {
+        firstPoll.resolve();
+        return complete || gl.isContextLost();
+      }
+      if (parameter === gl.LINK_STATUS) {
+        checked.push(program);
+        return successful;
+      }
+      assert.equal(parameter, gl.ACTIVE_UNIFORMS);
+      inspected.push(program);
+      return 1;
+    },
+    getActiveUniform: () => ({ name: 'uMap' }),
+    getUniformLocation: () => ({}),
+    getUniformBlockIndex: () => gl.INVALID_INDEX,
+    getShaderInfoLog: () => '',
+    getProgramInfoLog: () => 'test link failure',
+    useProgram(program) {
+      currentProgram = program;
+    },
+    uniform1i() {},
+    deleteProgram(program) {
+      deletedPrograms.push(program);
+    },
+    deleteShader(shader) {
+      deletedShaders.push(shader);
+    },
+    drawArrays() {
+      draws++;
+    },
+    drawElements() {
+      draws++;
+    }
+  });
+  for (const name of [
+    'bindBuffer',
+    'bindBufferBase',
+    'bindVertexArray',
+    'blendFuncSeparate',
+    'bufferData',
+    'bufferSubData',
+    'clear',
+    'clearColor',
+    'clearDepth',
+    'colorMask',
+    'compileShader',
+    'cullFace',
+    'deleteBuffer',
+    'deleteVertexArray',
+    'depthFunc',
+    'depthMask',
+    'disable',
+    'disableVertexAttribArray',
+    'drawBuffers',
+    'enable',
+    'enableVertexAttribArray',
+    'frontFace',
+    'polygonOffset',
+    'readBuffer',
+    'scissor',
+    'texStorage2D',
+    'vertexAttribPointer',
+    'viewport'
+  ])
+    gl[name] = () => {};
+
+  const renderer = createWebGL2Renderer3D({ canvas });
+  const geometry = createBoxGeometry3D({});
+  const material = createStandardMaterial3D({ alphaMode: 'blend', opacity: 0.22 });
+  const mesh = new Mesh3D(geometry, material);
+  mesh.receiveShadow = true;
+  return {
+    ...fixture,
+    renderer,
+    mesh,
+    material,
+    programActions,
+    linked,
+    checked,
+    inspected,
+    deletedPrograms,
+    deletedShaders,
+    previousProgram,
+    firstPoll: firstPoll.promise,
+    programDefines(program) {
+      const source = program.shaders.map(shader => sources.get(shader)).join('\n');
+      return new Set(Array.from(source.matchAll(/^#define (\w+)/gm), match => match[1]));
+    },
+    finish(linkedSuccessfully = true) {
+      complete = true;
+      successful = linkedSuccessfully;
+    },
+    get draws() {
+      return draws;
+    },
+    get buffers() {
+      return buffers;
+    },
+    dispose() {
+      renderer.dispose();
+      geometry.dispose();
+      material.dispose();
+    }
+  };
+}
+
+test('World3D program preparation shares pending work, waits before introspection and leaves draw state alone', {
+  timeout: 2000
+}, async () => {
+  const f = shaderPreparationFixture();
+  try {
+    const request = { mesh: f.mesh, material: f.material, receiveShadows: true, fog: true };
+    const preparation = Promise.all([f.renderer.preparePrograms([request]), f.renderer.preparePrograms([request])]);
+    void preparation.catch(() => {});
+    await Promise.race([f.firstPoll, preparation]);
+    assert.equal(f.programActions[0], 'enable-extension');
+    assert.equal(f.linked.length, 1);
+    assert.deepEqual(f.checked, []);
+    assert.deepEqual(f.inspected, []);
+    assert.equal(f.gl.getParameter(f.gl.CURRENT_PROGRAM), f.previousProgram);
+    assert.equal(f.draws, 0);
+    assert.equal(f.buffers, 0);
+    assert.equal(f.allocations(), 0);
+    const defines = f.programDefines(f.linked[0]);
+    for (const define of ['SHADING_STANDARD', 'ALPHA_BLEND', 'RECEIVE_SHADOW', 'USE_FOG'])
+      assert.ok(defines.has(define), 'Missing ' + define);
+
+    f.finish();
+    await preparation;
+    assert.deepEqual(f.checked, f.linked);
+    assert.deepEqual(f.inspected, f.linked);
+    assert.equal(f.gl.getParameter(f.gl.CURRENT_PROGRAM), f.previousProgram);
+    await f.renderer.preparePrograms([request]);
+    assert.equal(f.linked.length, 1);
+  } finally {
+    f.dispose();
+  }
+});
+
+test('World3D program preparation and an early render share one native program', { timeout: 2000 }, async () => {
+  const f = shaderPreparationFixture();
+  try {
+    const scene = new Scene3D();
+    scene.addChild(f.mesh);
+    const camera = createPerspectiveCamera3D({ fov: 60, aspect: 1, near: 0.1, far: 20 });
+    camera.setPosition(0, 0, 5).lookAt(0, 0, 0);
+    const preparation = f.renderer.preparePrograms([{ mesh: f.mesh, material: f.material }]);
+    void preparation.catch(() => {});
+    await Promise.race([f.firstPoll, preparation]);
+    assert.deepEqual(f.checked, []);
+    assert.equal(f.renderer.render(scene, camera), true);
+    await preparation;
+    assert.equal(f.draws, 1);
+    assert.equal(f.linked.length, 1);
+    assert.deepEqual(f.checked, f.linked);
+    assert.deepEqual(f.inspected, f.linked);
+  } finally {
+    f.dispose();
+  }
+});
+
+test('World3D program preparation covers color and shadow variants without KHR', async () => {
+  const f = shaderPreparationFixture({ parallel: false });
+  const target = new RenderTarget3D(2, 2, { format: 'rgba16f' });
+  try {
+    const base = { mesh: f.mesh, material: f.material };
+    await f.renderer.preparePrograms([
+      base,
+      { ...base, target },
+      { ...base, pass: 'shadow' },
+      { ...base, pass: 'depth-prepass' }
+    ]);
+    assert.equal(f.linked.length, 3);
+    assert.deepEqual(f.checked, f.linked);
+    const defines = f.linked.map(f.programDefines);
+    const color = defines.find(item => !item.has('LINEAR_OUTPUT') && !item.has('DEPTH_ONLY'));
+    const linear = defines.find(item => item.has('LINEAR_OUTPUT'));
+    const shadow = defines.find(item => item.has('DEPTH_ONLY'));
+    assert.equal(color?.has('TONE_MAPPED'), true);
+    assert.equal(linear?.has('TONE_MAPPED'), false);
+    assert.equal(shadow?.has('ALPHA_BLEND'), true);
+    for (const name of ['SHADING_STANDARD', 'TONE_MAPPED', 'LINEAR_OUTPUT']) assert.equal(shadow.has(name), false);
+    f.renderer.postProcess.enabled = true;
+    await f.renderer.preparePrograms([base]);
+    assert.equal(f.linked.length, 3);
+    assert.deepEqual(f.checked, f.linked);
+    assert.equal(f.draws, 0);
+    assert.equal(f.allocations(), 0);
+  } finally {
+    target.dispose();
+    f.dispose();
+  }
+});
+
+test('World3D program preparation invalidates old work across WebGL2 restoration', { timeout: 2000 }, async () => {
+  const f = shaderPreparationFixture();
+  try {
+    const request = { mesh: f.mesh, material: f.material };
+    const abandoned = assert.rejects(f.renderer.preparePrograms([request]), code('WORLD3D_CONTEXT_LOST'));
+    await Promise.race([f.firstPoll, abandoned]);
+    f.lose();
+    f.restore();
+    f.finish();
+    await abandoned;
+    await f.renderer.preparePrograms([request]);
+    assert.equal(f.linked.length, 2);
+    assert.deepEqual(f.checked, f.linked.slice(1));
+    assert.deepEqual(f.inspected, f.linked.slice(1));
+  } finally {
+    f.dispose();
+  }
+});
+
+test('World3D program preparation retires pending and failed native handles once', { timeout: 2000 }, async () => {
+  const f = shaderPreparationFixture();
+  try {
+    const request = { mesh: f.mesh, material: f.material };
+    const pending = assert.rejects(f.renderer.preparePrograms([request]), code('WORLD3D_DISPOSED'));
+    await Promise.race([f.firstPoll, pending]);
+    f.renderer.dispose();
+    await pending;
+    assert.deepEqual(f.checked, []);
+    assert.deepEqual(f.deletedPrograms, f.linked);
+    assert.deepEqual(f.deletedShaders, f.linked[0].shaders);
+  } finally {
+    f.dispose();
+  }
+
+  const retry = shaderPreparationFixture();
+  try {
+    const request = { mesh: retry.mesh, material: retry.material };
+    retry.finish(false);
+    await assert.rejects(retry.renderer.preparePrograms([request]), code('WORLD3D_SHADER_FAILED'));
+    assert.deepEqual(retry.deletedPrograms, retry.linked);
+    assert.deepEqual(retry.deletedShaders, retry.linked[0].shaders);
+    assert.deepEqual(retry.inspected, []);
+    retry.finish();
+    await retry.renderer.preparePrograms([request]);
+    assert.equal(retry.linked.length, 2);
+    assert.deepEqual(retry.checked, retry.linked);
+    assert.deepEqual(retry.inspected, retry.linked.slice(1));
+  } finally {
+    retry.dispose();
+  }
+});
+
+test('World3D program preparation drains an earlier link if a later program cannot start', {
+  timeout: 2000
+}, async () => {
+  const f = shaderPreparationFixture();
+  try {
+    const request = { mesh: f.mesh, material: f.material };
+    const error = new Error('test program startup failure');
+    const createProgram = f.gl.createProgram;
+    f.gl.createProgram = () => {
+      if (f.linked.length === 1) throw error;
+      return createProgram();
+    };
+    const rejected = assert.rejects(
+      f.renderer.preparePrograms([request, { ...request, fog: true }]),
+      cause => cause === error
+    );
+    void rejected.catch(() => {});
+    await Promise.race([f.firstPoll, rejected]);
+    assert.equal(f.linked.length, 1);
+    assert.deepEqual(f.checked, []);
+    f.finish();
+    await rejected;
+    assert.deepEqual(f.checked, f.linked);
+    assert.equal(f.deletedShaders.length, 4);
+    assert.deepEqual(f.deletedPrograms, []);
+    await f.renderer.preparePrograms([request]);
+    assert.equal(f.linked.length, 1);
+  } finally {
+    f.dispose();
+  }
+});
+
 test('world3d WebGL2 preserves framebuffer and texture state during readback allocation and resize', async () => {
   const { canvas, gl } = webGLFixture();
   const renderer = createWebGL2Renderer3D({ canvas });

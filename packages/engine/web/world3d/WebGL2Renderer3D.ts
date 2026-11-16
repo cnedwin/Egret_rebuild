@@ -25,7 +25,7 @@ import type { Renderer3D, Renderer3DInfo, ToneMapping3D } from './frame3D.js';
 import { WebGL2FrameMetrics3D } from './webGL2FrameMetrics3D.js';
 import type { World3DFrameMetrics, World3DPassKind, World3DViewKind } from './webGL2FrameMetrics3D.js';
 import { GpuResources3D } from './gpuResources3D.js';
-import type { GeometryGpu3D, Program3D } from './gpuResources3D.js';
+import type { GeometryGpu3D, Program3D, ProgramRequest3D } from './gpuResources3D.js';
 import {
   applyMaterialWebGL23D,
   buildMaterialDefinesWebGL23D,
@@ -48,7 +48,31 @@ export interface WebGL2Renderer3DOptions {
   readonly onContextLost?: () => void;
   readonly onContextRestored?: () => void;
 }
+
+/** One material program for an expected draw. Color flags describe the view and its available inputs. */
+export interface WebGL2ProgramVariant3D {
+  readonly mesh: Mesh3D;
+  readonly material: Material3D;
+  readonly pass?: 'color' | 'shadow' | 'depth-prepass';
+  /** The render output target. An enabled post chain uses its own HDR scene target. */
+  readonly target?: RenderTarget3D;
+  readonly fog?: boolean;
+  readonly environment?: boolean;
+  readonly receiveShadows?: boolean;
+  readonly softDepth?: boolean;
+  readonly transmission?: boolean;
+}
+
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+function colorProgramFlags(fog: boolean, toneMapping: ToneMapping3D, environment: boolean, linear: boolean): number {
+  return (
+    (fog ? V.fog : 0) |
+    (toneMapping !== 'none' ? V.toneMapped : 0) |
+    (environment ? V.environment : 0) |
+    (linear ? V.linearOutput : 0)
+  );
+}
 
 interface ShadowAtlas3D {
   readonly texture: WebGLTexture;
@@ -147,6 +171,7 @@ export class WebGL2Renderer3D implements Renderer3D {
       // Without preventDefault the browser never restores the context.
       event.preventDefault();
       this.#lost = true;
+      this.#resources.reset();
       this.#frameMetrics.reset(true);
       this.#validReflections = new WeakSet();
       options.onContextLost?.();
@@ -171,6 +196,39 @@ export class WebGL2Renderer3D implements Renderer3D {
   }
   get isContextLost(): boolean {
     return this.#lost || this.#gl.isContextLost();
+  }
+  /** Link and initialize the specified draw variants without submitting any draws. */
+  async preparePrograms(requests: readonly WebGL2ProgramVariant3D[]): Promise<void> {
+    if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
+    if (this.isContextLost) throw new World3DError('WORLD3D_CONTEXT_LOST', 'program preparation');
+    const programs = requests.map(request => {
+      const { mesh, material, target } = request;
+      const geometry = mesh.geometry;
+      if (geometry.isDisposed || material.isDisposed || target?.isDisposed)
+        throw new World3DError('WORLD3D_DISPOSED', 'program preparation input');
+      const pass = request.pass ?? 'color';
+      if (pass !== 'color' && pass !== 'shadow' && pass !== 'depth-prepass')
+        throw new World3DError('WORLD3D_INPUT_INVALID', 'program preparation pass');
+      // renderPost draws the scene into a linear rgba16f target before composition.
+      const post = this.postProcess.enabled;
+      const toneMapping = post || target?.format === 'rgba16f' ? 'none' : this.toneMapping;
+      const flags =
+        pass === 'color'
+          ? colorProgramFlags(
+              request.fog === true,
+              toneMapping,
+              request.environment === true,
+              post || Boolean(target)
+            ) |
+            (request.receiveShadows ? V.receiveShadow : 0) |
+            (request.softDepth ? V.softDepth : 0) |
+            (request.transmission ? V.transmission : 0)
+          : V.depthOnly;
+      const morphs = geometry.morphTargets;
+      const morphAttributes = !morphs.length ? 0 : morphs.some(morph => morph.normal) ? 2 : 1;
+      return this.programRequest(material, this.meshProgramVariant(mesh, geometry, material, flags, morphAttributes));
+    });
+    await this.#resources.preparePrograms(programs);
   }
   /** The underlying context, for advanced interop. Restore any state you change. */
   get context(): WebGL2RenderingContext {
@@ -350,11 +408,7 @@ export class WebGL2Renderer3D implements Renderer3D {
       this.#frameData[FRAME_OFFSETS_3D.clipInfo + 2] = view ? view[2] : 1;
       this.#frameData[FRAME_OFFSETS_3D.clipInfo + 3] = view ? view[3] : 1;
       this.uploadFrameBlock();
-      const flags =
-        (scene.fog ? V.fog : 0) |
-        (toneMapping !== 'none' ? V.toneMapped : 0) |
-        (scene.environment ? V.environment : 0) |
-        (target ? V.linearOutput : 0);
+      const flags = colorProgramFlags(Boolean(scene.fog), toneMapping, Boolean(scene.environment), Boolean(target));
       for (const item of list.opaque) this.draw(item, flags);
       if (background instanceof CubeTexture3D) this.drawSkybox(background, scene.backgroundIntensity, camera);
       // See-through surfaces read a copy of everything drawn so far.
@@ -738,6 +792,12 @@ export class WebGL2Renderer3D implements Renderer3D {
     }
     let program = cache.variants.get(variant);
     if (program) return program;
+    const { key, sources } = this.programRequest(material, variant);
+    program = this.#resources.program(key, sources);
+    cache.variants.set(variant, program);
+    return program;
+  }
+  private programRequest(material: Material3D, variant: number): ProgramRequest3D {
     const depthOnly = (variant & V.depthOnly) !== 0;
     const defines = buildMaterialDefinesWebGL23D(material, variant, depthOnly);
     const custom = depthOnly ? undefined : material.shader?.glsl,
@@ -749,15 +809,14 @@ export class WebGL2Renderer3D implements Renderer3D {
     if (custom !== undefined) defines.push('CUSTOM_FRAGMENT');
     if (customVertex !== undefined) defines.push('CUSTOM_VERTEX');
     if (customNormal !== undefined) defines.push('CUSTOM_NORMAL');
-    program = this.#resources.program(
-      defines.join(' ') +
+    return {
+      key:
+        defines.join(' ') +
         (custom === undefined && customVertex === undefined && customNormal === undefined
           ? ''
           : '|' + material.shader!.key),
-      () => buildMaterialShader3D(defines, custom, customVertex, customNormal)
-    );
-    cache.variants.set(variant, program);
-    return program;
+      sources: () => buildMaterialShader3D(defines, custom, customVertex, customNormal)
+    };
   }
   private applyMaterial(program: Program3D, material: Material3D, depthOnly: boolean): void {
     applyMaterialWebGL23D(this.#gl, program.uniforms, this.#resources, this.#scratch9, material, depthOnly);
@@ -813,19 +872,19 @@ export class WebGL2Renderer3D implements Renderer3D {
   }
 
   // ---- drawing -----------------------------------------------------------------
-  private draw(item: RenderItem3D, frameFlags: number, depthPass?: 'shadow' | 'scene'): void {
-    const depthOnly = depthPass !== undefined,
-      shadow = depthPass === 'shadow';
-    const gl = this.#gl,
-      { mesh, geometry, material } = item,
-      resources = this.#resources;
-    const gpu: GeometryGpu3D = resources.geometry(geometry);
+  private meshProgramVariant(
+    mesh: Mesh3D,
+    geometry: Geometry3D,
+    material: Material3D,
+    variant: number,
+    morphAttributes: number
+  ): number {
+    const depthOnly = (variant & V.depthOnly) !== 0;
     const instanced = mesh.isInstanced,
       skinned =
         mesh.skeleton !== undefined &&
         geometry.getAttribute('joints') !== undefined &&
         geometry.getAttribute('weights') !== undefined;
-    let variant = depthOnly ? V.depthOnly : frameFlags;
     if (geometry.getAttribute('normal')) variant |= V.normal;
     // Baked instances already fill the vertex inputs both backends can count on; they do without tangents, vertex colors and second coordinates.
     const baked = mesh instanceof SkinnedInstancedMesh3D && mesh.skeleton === undefined;
@@ -844,21 +903,42 @@ export class WebGL2Renderer3D implements Renderer3D {
     }
     if (material.vertexColors && geometry.getAttribute('color') && !baked) variant |= V.color;
     if (skinned) variant |= V.skin;
-    if (gpu.morph) variant |= V.morph | (gpu.morph.attributes === 2 ? V.morphNormals : 0);
+    if (morphAttributes > 0) variant |= V.morph | (morphAttributes === 2 ? V.morphNormals : 0);
     if (instanced) variant |= V.instancing | ((mesh as InstancedMesh3D).instanceColors ? V.instanceColor : 0);
-    const crowd =
+    if (
       !skinned &&
       mesh instanceof SkinnedInstancedMesh3D &&
       geometry.getAttribute('joints') !== undefined &&
       geometry.getAttribute('weights') !== undefined
-        ? mesh
-        : undefined;
-    if (crowd) variant |= V.skinInstancing;
+    )
+      variant |= V.skinInstancing;
     if (instanced && mesh instanceof GpuParticles3D) variant |= V.gpuParticles;
-    if (!depthOnly && material.softness > 0 && this.#sceneDepthReady) variant |= V.softDepth;
     if (geometry.topology === 'points') variant |= V.points;
-    if (!depthOnly && mesh.receiveShadow && this.#shadowCount > 0) variant |= V.receiveShadow;
-    if (!depthOnly && material.transmission > 0 && this.#grabbed) variant |= V.transmission;
+    if (!depthOnly) {
+      if (!(material.softness > 0)) variant &= ~V.softDepth;
+      if (!mesh.receiveShadow) variant &= ~V.receiveShadow;
+      if (!(material.transmission > 0)) variant &= ~V.transmission;
+    }
+    return variant;
+  }
+
+  private draw(item: RenderItem3D, frameFlags: number, depthPass?: 'shadow' | 'scene'): void {
+    const depthOnly = depthPass !== undefined,
+      shadow = depthPass === 'shadow';
+    const gl = this.#gl,
+      { mesh, geometry, material } = item,
+      resources = this.#resources;
+    const gpu: GeometryGpu3D = resources.geometry(geometry);
+    const flags = depthOnly
+      ? V.depthOnly
+      : frameFlags |
+        (this.#sceneDepthReady ? V.softDepth : 0) |
+        (this.#shadowCount > 0 ? V.receiveShadow : 0) |
+        (this.#grabbed ? V.transmission : 0);
+    const variant = this.meshProgramVariant(mesh, geometry, material, flags, gpu.morph?.attributes ?? 0);
+    const instanced = (variant & V.instancing) !== 0,
+      skinned = (variant & V.skin) !== 0;
+    const crowd = (variant & V.skinInstancing) !== 0 ? (mesh as SkinnedInstancedMesh3D) : undefined;
     const program = this.selectProgram(material, variant),
       u = program.uniforms,
       frame = this.#list.frame;
