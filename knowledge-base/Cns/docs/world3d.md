@@ -107,6 +107,12 @@ console.table(frame.passes);
 
 CPU 提交耗时包含渲染列表处理和驱动等待。分阶段 CPU 耗时只统计各阶段内部操作。GPU 计时需显式启用，查询异步完成。轮询后重新读取 `pass.gpuTime` 可获得结果或状态。缺少计时计数器时返回不支持。计时失效和上下文丢失的样本会被丢弃。采样有数量上限，且不会等待 GPU 完成。 [WebGL2 计时查询规范](https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query_webgl2/)
 
+WebGL2 的 `pass.gpuTime` 在就绪时表示原生查询边界之间的经过时间，可能包含队列或调度间隔。归因到具体渲染阶段前，要对齐同一帧的回调间隔和 CPU 提交耗时，并保留一组关闭 GPU 查询的对照。
+
+Windows Edge 157 在 RTX 5090 Laptop GPU（ANGLE D3D11）上运行 `pointShadows` 和 `skinnedCrowd` 固定用例，画布分辨率为 640 × 400。两场景分别按正序和反序测量五种模式，每组 192 帧。五种模式分别为直接渲染、仅 CPU 统计、逐帧阶段 GPU 查询、每四帧一次的阶段 GPU 查询，以及独立的整次渲染 WebGL2 查询。共 3,840 个前台回调间隔均小于 6.5 ms，最大 4.9 ms。首次逐帧阶段查询中，点光源阴影场景和骨骼人群场景的阶段查询总和最高分别为 7.81 ms 和 9.14 ms。点光源场景的绘制次数相同，两次独立整帧查询的 p95 分别为 0.18 ms 和 4.16 ms。
+
+另一次负对照在查询区间内完全不绘制。把绘制移到查询区间之外时，即使出现 8.2–8.5 ms 的回调间隔，空查询也至多返回 0.000224 ms。独立的无绘制窗口里，768 次空查询有 5 次达到或超过 3 ms，最高 81.30 ms，同组回调间隔最大 4.5 ms。单独一次查询尖峰不足以归因到阴影或主画面绘制。本轮没有采集驱动内部调度和实际呈现时间。 [固定用例](https://github.com/cnedwin/Egret_rebuild/blob/042231238489f9542eaca36966b49dc3bd33de92/tools/world3d/cases.mjs) · [受测版本](https://github.com/cnedwin/Egret_rebuild/commit/042231238489f9542eaca36966b49dc3bd33de92)
+
 ## 压缩资源
 
 纹理源可以是块压缩的多级链：`{width, height, format, levels}`，`format` 为 `bc1`、`bc3`、`bc7`、`etc2-rgb8`、`etc2-rgba8` 或 `astc-4x4`。数据按存储的样子上传，在显存中保持压缩。`renderer.supportsCompressedFormat(format)` 报告设备是否接受某种格式；桌面 GPU 通常提供 BC，移动 GPU 提供 ETC2 和 ASTC。
