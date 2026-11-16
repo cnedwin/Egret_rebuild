@@ -7,6 +7,9 @@
 ## Spine：接入以预乘方式存储的图集页面 — 2026-11-16
 
 图集页面声明 `pma: true`（Spine 纹理打包器的默认导出方式）时，以前会被 `SPINE_PAGE_ALPHA_PROFILE_FAILED` 拒绝。现在加载器为这样的页面制作一份非预乘副本并从副本绘制：红、绿、蓝各除以透明度并四舍五入，透明度为 0 的像素变为透明黑。副本按每像素四字节计入该设置的费用，由共享该设置的各组共用，并随设置一起释放。`info.pages[i].sourcePremultiplied` 现在是布尔值，标明哪些页面做了副本；此前它恒为 `false`。预乘页面在透明度为零处叠加的光不会保留；这条规则目前只有自有测试，没有来自 Editor 导出的参考。
+## 组合动画场景各部分的开销 — 2026-11-16
+
+`examples/animation-outfits/measure.mjs` 把含 20 个 Spine 实例和 200 个序列控制器的场景打开两次，每次之后对 240 步计时，分别报告动画、采集、渲染和等待完成；场景模块为此新增了 `measure` 函数。在 RTX 5090 Laptop 的 WebGPU 上，一步在 p95 下是动画 1.3 ms、采集 0.5 ms、渲染 2.1 ms，4.8 ms 内完成。由处理器绘制的 WebGL2 的结果一并记录，但不能说明显卡上的情况。这些都是单次运行，不是预算验收；显卡上的 WebGL2 没有运行，因为在隐藏的面板里 Host 等待 GPU 时超时了。
 ## 可安装的发行归档 — 2026-11-16
 
 `node tools/pack-release.mjs --version <版本> --out <目录>` 为五个包各打一个归档。归档带有给定的版本，不是私有包，附带许可证和声明，并用同一发行版中各归档的地址来指明工作区里的其他包，所以 `npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<版本>/egret-engine-<版本>.tgz` 就能装上引擎及其所需。仓库里的包仍是私有的 0.0.0，不向 npm 发布任何内容。推送标签 `v<版本>` 会运行 `Release archives` 工作流：构建、打包、把归档装进干净工程并导入，再附到 GitHub release 上。`tools/verify-release.mjs` 就是这项安装检查。0.1.0-preview.1 的归档已在 Linux 上用 npm 安装并导入；工作流本身还没有运行过。

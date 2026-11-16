@@ -99,6 +99,59 @@ function update(delta, change) {
 export function step(delta = 1 / 60) {
   return update(delta);
 }
+/**
+ * Times `frames` steps of 1/60 second, each part by itself, in milliseconds: `animation` is the engine advancing every
+ * Spine instance and sequence controller; `capture` is the engine taking the shared frame; `render` is taking it again
+ * and the Host preparing and submitting it; `settle` is the wait until the Host has nothing in flight. The frame is
+ * captured twice in a step, so `render` less `capture` is roughly the Host's part. Nothing is written to the page
+ * between steps.
+ */
+export function measure(frames = 120) {
+  const r = assertReady();
+  if (!Number.isSafeInteger(frames) || frames < 1 || frames > 3600) throw Error('MEASURE_RANGE');
+  r.work = (r.work ?? Promise.resolve())
+    .catch(() => {})
+    .then(async () => {
+      const rows = { animation: [], capture: [], render: [], settle: [] },
+        heap = () => performance.memory?.usedJSHeapSize ?? null,
+        before = heap();
+      for (let i = 0; i < frames; i++) {
+        if (r !== current || r.state !== 'ready') throw Error('SCENE_NOT_READY');
+        await r.host.whenIdle();
+        r.seconds += 1 / 60;
+        const t0 = performance.now();
+        r.engine.advanceTime(r.seconds);
+        const t1 = performance.now();
+        r.engine.captureSharedFrame(frameOptions);
+        const t2 = performance.now();
+        render();
+        const t3 = performance.now();
+        await r.host.whenIdle();
+        const t4 = performance.now();
+        rows.animation.push(t1 - t0);
+        rows.capture.push(t2 - t1);
+        rows.render.push(t3 - t2);
+        rows.settle.push(t4 - t3);
+      }
+      const summary = values => {
+        const sorted = [...values].sort((x, y) => x - y),
+          at = q => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))];
+        return { p50: at(0.5), p95: at(0.95), max: sorted[sorted.length - 1] };
+      };
+      describe();
+      return {
+        frames,
+        backend,
+        counts: r.scene.inspect().counts,
+        animation: summary(rows.animation),
+        capture: summary(rows.capture),
+        render: summary(rows.render),
+        settle: summary(rows.settle),
+        heapBytes: before === null ? null : { before, after: heap() }
+      };
+    });
+  return r.work;
+}
 export function edit(index, values) {
   const r = assertReady();
   return update(1 / 60, () => r.scene.edit(index, values));
