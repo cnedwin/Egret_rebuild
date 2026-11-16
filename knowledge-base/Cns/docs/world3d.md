@@ -89,6 +89,27 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 两个渲染器都会自动把重复的网格合并成实例化绘制。排序之后，连续至少八个共享几何体、材质、层以及是否接收阴影的普通网格只绘制一次，各成员的世界矩阵作为实例；投射阴影的网格也按同样方式分组。场景中的网格本身不变，仍可逐个拾取；成员移动后下一帧即生效，只有成员发生变化时才重新上传实例数据。蒙皮、变形、镜像、混合和透射的网格，以及精灵和线框，仍然像以前一样单独绘制。`renderer.autoInstancing = false` 可以关闭它。当可见的绘制项与上一帧相同时，沿用上一帧的排序结果而不再排序。
 
+### WebGL2 程序预准备
+
+加载时调用 `preparePrograms`，准备交互即将用到的材质变体。传入将要绘制的网格及切换后的材质。每个请求按绘制路径相同的几何特征和着色器宏选定一个程序。网格包含多个材质组时，逐个传入需要准备的材质。自动实例化合批使用的变体可能与单独网格不同。
+
+```ts
+await renderer.preparePrograms([
+  { mesh: roof, material: translucentRoof, receiveShadows: true, fog: true },
+  { mesh: wall, material: wallMaterial, pass: 'shadow' }
+]);
+```
+
+`pass` 默认为 `'color'`。用 `fog`、`environment`、`receiveShadows`、`softDepth` 和 `transmission` 指定后续视图的条件。视图会生成阴影图且网格接收阴影时，设置 `receiveShadows`。渲染器根据当前设置和可选输出 `target` 选择色调映射与输出方式。开启后处理时，场景颜色使用内部线性 HDR 目标。`'shadow'` 和 `'depth-prepass'` 选择深度程序。后处理效果使用各自的程序。
+
+对于动态创建的 `CustomShader3D` 特效，可使用未挂载到场景的网格和特效材质预准备。之后新建的网格、材质及着色器，只要 `shader.key`、适用的 GLSL 和绘制变体一致，就可以复用该程序。GLSL 改动后使用新键，各材质可独立设置 uniform。片元和法线钩子只影响颜色通道，顶点钩子也可以影响深度程序。
+
+预准备会链接程序并初始化 uniform，期间不绘制场景或上传几何与纹理。相同缓存键的请求与渲染共用一次链接。支持 `KHR_parallel_shader_compile` 时，先等 `COMPLETION_STATUS_KHR` 完成，再读取链接状态和 uniform。不支持扩展时，准备阶段的链接状态查询可能阻塞。交互开始前等待准备完成。绘制尚未准备好的程序仍可能等待，程序就绪后也可能有绘制专属工作。上下文恢复后需要重新准备。 [Khronos 扩展规范](https://registry.khronos.org/webgl/extensions/KHR_parallel_shader_compile/)
+
+在 Windows Edge 157、RTX 5090 Laptop GPU（ANGLE D3D11）的固定三箱体场景中，首次切换到接收阴影的半透明材质时，帧回调间隔为 179.2 ms，`LINK_STATUS` 内耗时 182.0 ms。预准备同一变体后，切换帧为 4.1 ms，且没有新链接。准备耗时 179.3 ms，首次调用耗时 0.4 ms。等待期间没有绘制，最长帧回调间隔为 4.3 ms。参考画面与分别改变透明度、雾和接收阴影的三组对照，原版和准备版的 RGBA8 回读逐字节一致。本次为一次同机对照，记录浏览器帧回调间隔及 CPU 侧 API 时间。
+
+同一硬件还复跑了 SnowTemple 的独立用例。它用一张程序生成的四边形和 `CustomShader3D` 片元钩子。预准备前，首次显示帧回调间隔为 87.4 ms，单独测得 `LINK_STATUS` 内耗时 88.6 ms。预准备后，首次显示帧回调间隔为 4.2 ms。准备阶段历时 79.4 ms，首次调用耗时 0.6 ms，零绘制，轮询完成状态 25 次。新建着色器、材质和网格复用了准备好的 GL 程序，首次显示时没有新链接，也没有查询链接状态。两次首次显示的 RGBA8 回读逐字节一致，仅绘制地面的对照画面像素不同。
+
 ### WebGL2 应用帧统计
 
 用 `measureFrame` 包裹一帧应用的同步渲染操作。`PlanarReflection3D` 自动标记镜像绘制。直接绘制到其他渲染目标会记为离屏视图。`frame.reflections.rendered` 统计成功的平面反射绘制，`frame.reflections.reused` 统计因更新间隔而复用上一张纹理的次数。复用帧不增加反射通道或绘制次数。
