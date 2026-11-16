@@ -393,8 +393,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "b8d01d3cf9a5e6e22d871f3e392da49d6a16dfe53d99833f4390a229de4bea68",
-      "zhSha256": "61ff46e91fa2b8c464a40ed12d0f9a9a3cfcec6dd704f362ebb8934be109ff38"
+      "enSha256": "18ea53af7838b6678473f78c6630f99a6ba5a369f25acc784b69db4c09c28e9f",
+      "zhSha256": "4eb67230d84b0ebe056d748ff62d22b6741d5efb53a39489fbb422aa8f79d421"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -1016,8 +1016,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "b3bdc0aca3b95aadb2b01c0e2a3940c23871e44033b2faede8f36a6593a7a9dd",
-      "zhSha256": "9874e39e045ec129b144a68e1b0e37dd129da079ee0ca2aaaf3530d6bbf75e06"
+      "enSha256": "2de017f39e27f1560e5aeb34fbb9ba04fb1ebf1d0e2216e207b509112ec7f2f3",
+      "zhSha256": "79c5026282d81afedbf8710d7d408967e2540321eeaa60b453f152c8d4d3d612"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -2117,8 +2117,8 @@
       "en": "knowledge-base/en/docs/spine-content-ingress.md",
       "zh": "knowledge-base/Cns/docs/spine-content-ingress.md",
       "kind": "public_reading",
-      "enSha256": "398729c78f72bddc68144c7c10ea48c1fc4c7e5a0db3b4c623925b879688a9c1",
-      "zhSha256": "9059bbde7cb3728a7ab92c351752f69a97155abfcc6979f1910e2dd5e4e3dec1"
+      "enSha256": "d8c2a77dd9a9de34b5ad5a6d42d828705e55835b411ff4dab6d882fb9fce917f",
+      "zhSha256": "0638985bc2d75dd803dfdf9059d493540b6deae1491c5a3e67b4a2f7c0b2e105"
     },
     {
       "en": "packages/spine/README.md",
@@ -2131,8 +2131,8 @@
       "en": "examples/animation-outfits/README.md",
       "zh": "examples/animation-outfits/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "9475bd86c1345f2dded16b2df937bb11c4852e6db6b99a09a3fbbf80a54f2c42",
-      "zhSha256": "1acf109753364fe446cae396afc1a34a641781bf58adb284d8882dd431b1a798"
+      "enSha256": "a0843b22d3b65bc15583a5291e75096ffea766de61d09d312c16c16ed9608544",
+      "zhSha256": "ff277d6fda140a0db3e69b414ad2540f45059a54d6942f492123e3d74dd7dd74"
     },
     {
       "en": "examples/animation-outfits/PROVENANCE.md",
@@ -2693,6 +2693,13 @@
       "kind": "public_reading",
       "enSha256": "cab6416ef126f1d6d1cc66808983bde2b47348611fc260a437c7b69159c3501d",
       "zhSha256": "69efca91653c76138cc92b16e24eb66489e1592b1142e8133e40207f4ce44352"
+    },
+    {
+      "en": "knowledge-base/en/docs/release-archives.md",
+      "zh": "knowledge-base/Cns/docs/release-archives.md",
+      "kind": "public_reading",
+      "enSha256": "0e542f2393a651605ff6fd6d70c8f37a5c582388620acb9ea218a64e8fa8253d",
+      "zhSha256": "1cd5f2c319cbc6c2438ad35669a72eee21ff917e79feb3ea38efd14c35c8865c"
     }
   ],
   "registries": [
@@ -4350,15 +4357,15 @@
     },
     {
       "path": "packages/spine/src/loader.ts",
-      "sha256": "b6e954acfb02cffd57fd16b616de6617fa10b3ef25c34bf8d926f4231fc61555"
+      "sha256": "492c2b108b39ad1df4f9f8fd2ecfdb6b5126945a5e3d6cb032c599ad566d24bf"
     },
     {
       "path": "packages/spine/src/parse.ts",
-      "sha256": "4fda4b7d95fc3db622ba4614e1cd92afacc502446b50c70f06931e389609f3cf"
+      "sha256": "24808c8d89b4e33b3ab42b721d0de78a57edcb2bb61e9be97dbf872849dd30dd"
     },
     {
       "path": "packages/spine/src/types.ts",
-      "sha256": "7da1511f156ee1e2680f6f41d96bbbbe83a09913d4125fb79e6c2ed53ca6e441"
+      "sha256": "8a04329d29f6d67e4fa29186d5a417fa492ae5b6ed7f98d3faed120ceec3f18c"
     },
     {
       "path": "packages/spine/src/web.ts",
@@ -4390,7 +4397,7 @@
     },
     {
       "path": "packages/spine/src/drawGeometry.ts",
-      "sha256": "5f76fb41e35a7e5ae2e8171ead9131807b0a31aaa8b25f5493f510494344d660"
+      "sha256": "1402faefab2dd45b7cdc9c162cf3c4af8bf3dca91c616c55aca3247b1013e815"
     },
     {
       "path": "packages/spine/src/display.ts",
@@ -5979,6 +5986,26 @@
     {
       "path": "packages/engine/web/world3d/webgpuPacking3D.ts",
       "sha256": "f18eca4f39bea2976d553092360006d2d493d59d1628ca28b9e735d6f322538f"
+    },
+    {
+      "path": "examples/animation-outfits/measure.mjs",
+      "sha256": "f96563270e5df97bc2f2ddcb6bd74456c91be88686b1ac1318a22f3b23584742"
+    },
+    {
+      "path": "tools/pack-release.mjs",
+      "sha256": "ae8c7730189ff89a9b3ab6529f455e60e90eb7c68e1dfc162015f7d750874662"
+    },
+    {
+      "path": "tools/verify-release.mjs",
+      "sha256": "dad47a79107ad0d092fc497e482c6fafb935b61628a18a5753ceee7aa37cbdaf"
+    },
+    {
+      "path": "tests/pack-release.test.mjs",
+      "sha256": "16df93588d02249e16332bebca4973ad21cf887eb66f13af91abe1381ff0bfe1"
+    },
+    {
+      "path": "packages/spine/test/premultiplied.test.mjs",
+      "sha256": "aa6750f56ef3149d46cca25f2aa0748cbba222d9d479e7080950443d874c40d7"
     }
   ],
   "historicalSemanticReview": {
