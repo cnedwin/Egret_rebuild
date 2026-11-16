@@ -2,15 +2,13 @@
 
 [English](DOCUMENTATION.md) | 简体中文
 
-建议按下列顺序了解产品与工程，再查阅所需子系统的接口契约。知识库提供完整 [English](knowledge-base/en/README.md) 和[简体中文](knowledge-base/Cns/README.md)版本。
-
-[核心能力页](knowledge-base/Cns/docs/core-progress.md)记录源码复盘基线。历史契约和证据保留各自的日期与范围。
+可以从下列入口开始，或查阅完整的 [English](knowledge-base/en/README.md) 和[简体中文](knowledge-base/Cns/README.md)知识库。
 
 ## 当前项目入口
 
-[已有能力](knowledge-base/Cns/docs/core-progress.md) → [需求](knowledge-base/Cns/docs/产品需求说明书.md) → [白皮书](knowledge-base/Cns/docs/技术白皮书.md) → [工程顺序](knowledge-base/Cns/docs/工程规划.md) → [交付](knowledge-base/Cns/docs/交付计划.md)。
-
-[运行／贡献](knowledge-base/Cns/docs/getting-started.md) · [Android 证据](knowledge-base/Cns/docs/android-device-validation.md) · [原工作包](https://github.com/users/cnedwin/projects/2)
+- **开始做游戏。** [上手指南](knowledge-base/Cns/docs/getting-started.md) · [公共导入入口](knowledge-base/Cns/docs/entry-points.md)
+- **查已有能力。** [核心能力](knowledge-base/Cns/docs/core-progress.md) · [Android 证据](knowledge-base/Cns/docs/android-device-validation.md) · [更新日志](knowledge-base/Cns/CHANGELOG.md)
+- **参与贡献。** [贡献指南](CONTRIBUTING.zh-CN.md) · [工程规划](knowledge-base/Cns/docs/工程规划.md) · [项目看板](https://github.com/users/cnedwin/projects/2)
 
 ## M2–M4 架构与社区交付
 
