@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Installable release archives — 2026-11-16
+
+`node tools/pack-release.mjs --version <version> --out <directory>` packs one archive for each of the five packages. An archive has the version given, is not private, carries the licence and notice, and names the other packages of the workspace by the address of their archives in the same release, so `npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<version>/egret-engine-<version>.tgz` installs the engine and what it needs. The packages in the repository stay private at 0.0.0, and nothing is published to npm. Pushing a tag `v<version>` runs the `Release archives` workflow, which builds, packs, installs the archives into a clean project, imports them and attaches them to a GitHub release. `tools/verify-release.mjs` is that install check. The archives of 0.1.0-preview.1 were installed and imported on Linux with npm; the workflow itself has not run.
+
 ## Windows evidence after the readability pass — 2026-11-15
 
 The Windows inventory records the product identity table, 20 historical replay tool outcomes and 67 saved evidence files. The original receipts retain their historical scope, and current acceptance uses separately identified checks and browser runs.

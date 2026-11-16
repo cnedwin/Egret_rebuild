@@ -10,7 +10,7 @@
 
 | 目的 | 阅读入口 |
 | --- | --- |
-| 起步 | [上手指南](docs/getting-started.md) · [一次调用启动游戏](docs/browser-game.md) · [该引哪个入口](docs/entry-points.md) · [从白鹭 5 迁移](docs/egret-api-migration.md) |
+| 起步 | [上手指南](docs/getting-started.md) · [一次调用启动游戏](docs/browser-game.md) · [该引哪个入口](docs/entry-points.md) · [从白鹭 5 迁移](docs/egret-api-migration.md) · [安装发行版](docs/release-archives.md) |
 | 绘制与运动 | [绘图](docs/graphics.md) · [帧循环](docs/frame-loop.md) · [相机](docs/camera-2d.md) · [瓦片地图](docs/tilemap.md) · [粒子](docs/particles.md) · [位图字体](docs/bitmap-font.md) · [混合模式](docs/blend-modes.md) · [滤镜](docs/filters.md) |
 | 碰撞、声音与操控 | [碰撞与物理](docs/physics-2d.md) · [2D 游戏的声音](docs/audio.md) · [视频](docs/video.md) · [手柄](docs/gamepad.md) |
 | 看懂报错、查一个名字 | [错误码](docs/error-codes.md) · [API 参考](docs/api-reference.md) |

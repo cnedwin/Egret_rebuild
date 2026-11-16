@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "tools/pack-release.mjs", "originRole": "First-party tool that packs one installable archive for each package of the workspace; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tools/verify-release.mjs", "originRole": "First-party tool that installs the release archives into a clean project and imports them; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/pack-release.test.mjs", "originRole": "First-party tests of the release archives: manifests, contents and refusals; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": ".github/workflows/release.yml", "originRole": "First-party workflow that packs, checks and attaches the archives when a version tag is pushed; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/en/docs/release-archives.md", "originRole": "First-party guide to installing and making a release; AI-assisted; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/release-archives.md", "originRole": "First-party Chinese reading of the guide to installing and making a release; AI-assisted; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "knowledge-base/en/docs/release-archives.md", "zh": "knowledge-base/Cns/docs/release-archives.md"}
+  ]
+}
