@@ -7,7 +7,8 @@ import { COMPRESSED_BLOCK_BYTES_3D, CubeTexture3D, RenderTarget3D, isCompressedP
 import { FRAME_BLOCK_FLOATS_3D, FRAME_OFFSETS_3D, planShadows3D, writeFrameBlock3D } from './frame3D.js';
 import { createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D } from './post3D.js';
 import { PostChainWebGPU3D } from './postWebGPU3D.js';
-import { MATERIAL_BLOCK_BYTES_3D, MAX_MORPH_INFLUENCES_WGSL_3D, MIPMAP_WGSL_3D, OBJECT_BLOCK_BYTES_3D, SKYBOX_WGSL_3D, buildMaterialWgsl3D, shaderFeatureKey3D } from './wgsl3D.js';
+import { MATERIAL_BLOCK_BYTES_3D, MIPMAP_WGSL_3D, OBJECT_BLOCK_BYTES_3D, SKYBOX_WGSL_3D, buildMaterialWgsl3D, shaderFeatureKey3D } from './wgsl3D.js';
+import { convertVertexAttribute3D, packMorphStorage3D, packWireIndices3D, writeObjectMorph3D } from './webgpuPacking3D.js';
 // WebGPU flag values, spelled out so this module needs no global constant namespaces.
 const SHADER_STAGE = Object.freeze({ VERTEX: 1, FRAGMENT: 2 });
 const BUFFER_USAGE = Object.freeze({
@@ -554,30 +555,7 @@ export class WebGPURenderer3D {
     }
     // ---- geometry ---------------------------------------------------------------
     convert(name, attribute) {
-        const data = attribute.data;
-        // Joint indices stay integers; everything else is uploaded as 32-bit floats,
-        // which sidesteps the vertex formats WebGPU does not offer.
-        if (name === 'joints')
-            return data instanceof Uint32Array ? data : Uint32Array.from(data);
-        if (data instanceof Float32Array)
-            return data;
-        const out = new Float32Array(data.length);
-        if (!attribute.normalized) {
-            out.set(data);
-            return out;
-        }
-        const signed = data instanceof Int8Array || data instanceof Int16Array, max = signed
-            ? data instanceof Int8Array
-                ? 127
-                : 32767
-            : data instanceof Uint8Array
-                ? 255
-                : data instanceof Uint16Array
-                    ? 65535
-                    : 4294967295;
-        for (let i = 0; i < data.length; i++)
-            out[i] = signed ? Math.max(data[i] / max, -1) : data[i] / max;
-        return out;
+        return convertVertexAttribute3D(name, attribute);
     }
     geometry(geometry) {
         let entry = this.#geometries.get(geometry);
@@ -636,19 +614,7 @@ export class WebGPURenderer3D {
             const targets = geometry.morphTargets;
             if (targets.length > 0) {
                 const vertexCount = geometry.vertexCount, channels = targets.some(target => target.normal) ? 2 : 1;
-                const data = new Float32Array(targets.length * channels * vertexCount * 4);
-                targets.forEach((target, t) => {
-                    [target.position, target.normal].slice(0, channels).forEach((source, k) => {
-                        if (!source)
-                            return;
-                        const base = (t * channels + k) * vertexCount * 4;
-                        for (let v = 0; v < vertexCount; v++) {
-                            data[base + v * 4] = source[v * 3];
-                            data[base + v * 4 + 1] = source[v * 3 + 1];
-                            data[base + v * 4 + 2] = source[v * 3 + 2];
-                        }
-                    });
-                });
+                const data = packMorphStorage3D(targets, channels, vertexCount);
                 if (data.byteLength > this.device.limits.maxStorageBufferBindingSize)
                     throw new World3DError('WORLD3D_BUDGET', 'morph target data');
                 entry.morph = { buffer: this.writeBuffer(undefined, data, BUFFER_USAGE.STORAGE).buffer, channels, vertexCount };
@@ -663,11 +629,7 @@ export class WebGPURenderer3D {
     wireframe(geometry, entry) {
         if (entry.wire && entry.wire.version === geometry.version)
             return entry.wire;
-        const source = geometry.index?.data, triangles = Math.floor(geometry.drawCount / 3), lines = new Uint32Array(triangles * 6);
-        for (let t = 0; t < triangles; t++) {
-            const a = source ? source[t * 3] : t * 3, b = source ? source[t * 3 + 1] : t * 3 + 1, c = source ? source[t * 3 + 2] : t * 3 + 2;
-            lines.set([a, b, b, c, c, a], t * 6);
-        }
+        const lines = packWireIndices3D(geometry);
         entry.wire?.buffer.destroy();
         const wire = {
             buffer: this.writeBuffer(undefined, lines, BUFFER_USAGE.INDEX).buffer,
@@ -1116,35 +1078,7 @@ export class WebGPURenderer3D {
             }
         }
         if (gpu.morph) {
-            // Keep the strongest influences; the shader blends at most a fixed number.
-            const weights = mesh.morphWeights, indices = o + 48, values = o + 56;
-            let count = 0;
-            for (let i = 0; i < weights.length; i++) {
-                const weight = weights[i];
-                if (weight === 0)
-                    continue;
-                if (count < MAX_MORPH_INFLUENCES_WGSL_3D) {
-                    ints[indices + count] = i;
-                    floats[values + count] = weight;
-                    count++;
-                    continue;
-                }
-                let weakest = 0;
-                for (let k = 1; k < count; k++)
-                    if (Math.abs(floats[values + k]) < Math.abs(floats[values + weakest]))
-                        weakest = k;
-                if (Math.abs(weight) > Math.abs(floats[values + weakest])) {
-                    ints[indices + weakest] = i;
-                    floats[values + weakest] = weight;
-                }
-            }
-            // Baked instances take their morph weights from the table; the shader only needs to know how many targets to read.
-            if (mesh instanceof SkinnedInstancedMesh3D && !mesh.skeleton)
-                count = Math.min(MAX_MORPH_INFLUENCES_WGSL_3D, mesh.animations.morphCount, mesh.geometry.morphTargets.length);
-            ints[o + 44] = gpu.morph.vertexCount;
-            ints[o + 45] = gpu.morph.channels;
-            ints[o + 46] = count;
-            ints[o + 47] = 0;
+            writeObjectMorph3D(mesh, gpu, floats, ints, o);
         }
         else
             ints[o + 46] = 0;

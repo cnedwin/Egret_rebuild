@@ -1,68 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 import { requireUiTheme, sameThemeMetrics, applyUiTheme } from './theme.js';
-import { EgretError, Sprite, DisplayObject } from '@egret/runtime';
+import { EgretError, DisplayObject } from '@egret/runtime';
 import { captureUiLayout, planUiLayout, UiHeightIndex, createUiDisplayOperations } from '@egret/runtime/ui';
 import { requireUiEngine } from '../internal/uiFactoryState.js';
 import { registerUiRoot } from '../internal/uiRootState.js';
 import { captureSource, captureReveal, revealScroll } from './virtualList.js';
 import { createUiKeyboardFocus } from './keyboardFocus.js';
 import { captureUiTree, leafConstraintTree, leafMeasuredTree, fixedLeafMeasurement } from './leafContent.js';
+import { withoutSources, preparationError, fail, next, number, viewport, origin } from './uiRootModel.js';
+import { createUiRootDisplayDraft, stageUiRootDisplay } from './uiRootDisplay.js';
 const freeze = Object.freeze;
-const sourceMarker = freeze({});
-// Layout caches retain numeric descriptors, never historical data source snapshots.
-function withoutSources(tree) {
-    function copy(node) {
-        const result = freeze({
-            ...node,
-            ...(node.kind === 'virtualList'
-                ? {
-                    source: sourceMarker
-                }
-                : {}),
-            ...(node.children === undefined
-                ? {}
-                : {
-                    children: freeze(node.children.map(copy))
-                })
-        });
-        return result;
-    }
-    const root = copy(tree.root);
-    return captureUiLayout(root);
-}
-function preparationError(cause, cleanupErrors) {
-    if (cause instanceof EgretError && cleanupErrors.length === 0)
-        return cause;
-    return new EgretError(cause instanceof EgretError ? cause.code : 'UI_PREPARE_FAILED', { cause, cleanupErrors });
-}
-function fail(code) {
-    throw new EgretError(code);
-}
-function next(value) {
-    if (value >= Number.MAX_SAFE_INTEGER)
-        fail('UI_REVISION_EXHAUSTED');
-    return value + 1;
-}
-function number(value, min, max) {
-    if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max)
-        fail('UI_VALUE_INVALID');
-    return value === 0 ? 0 : value;
-}
-function viewport(value) {
-    return freeze({
-        width: number(value.width, Number.MIN_VALUE, 16384),
-        height: number(value.height, Number.MIN_VALUE, 16384)
-    });
-}
-function origin(value, size) {
-    const x = number(value.x, -1048576, 1048576), y = number(value.y, -1048576, 1048576);
-    if (Math.abs(x + size.width) > 1048576 || Math.abs(y + size.height) > 1048576)
-        fail('UI_VALUE_INVALID');
-    return freeze({
-        x,
-        y
-    });
-}
 /** One owned transaction domain over the genuine display and input authorities. */
 export function createUiRoot(options) {
     const port = requireUiEngine(options.engine);
@@ -741,143 +688,26 @@ export function createUiRoot(options) {
             }
             return token('pending');
         }
-        const updates = [], nextBindings = new Map(), nextShells = new Map(), freshShells = [], fillScopes = [], rows = [];
-        const available = [...pool, ...[...shells].filter(([key]) => !finalKeys.includes(key)).map(([, s]) => s)];
-        const childWrappers = [];
+        const draft = createUiRootDisplayDraft(pool, shells, finalKeys);
+        const { updates, nextBindings, nextShells, freshShells, fillScopes, rows } = draft;
         try {
-            let priorIndex = -2, priorEnd = 0;
-            for (const key of finalKeys) {
-                const b = w.bindings.get(key), i = view.indexOf(key), top = i === priorIndex + 1 ? priorEnd : view.prefix(i), y = top - w.scroll, h = view.heightAt(i), visible = y + h > 0 && y < w.height;
-                priorIndex = i;
-                priorEnd = top + h;
-                const shell = shells.get(key) ??
-                    available.shift() ??
-                    (() => {
-                        const scope = port.scope(port.createScope());
-                        const item = {
-                            scope,
-                            wrapper: display.createWrapper(scope.scope)
-                        };
-                        freshShells.push(item);
-                        return item;
-                    })();
-                nextBindings.set(key, b);
-                nextShells.set(key, shell);
-                childWrappers.push(shell.wrapper);
-                updates.push({
-                    wrapper: shell.wrapper,
-                    x: 0,
-                    y,
-                    visible,
-                    children: [b.wrapper],
-                    touchEnabled: false,
-                    touchChildren: true
-                });
-                updates.push({
-                    wrapper: b.wrapper,
-                    x: 0,
-                    y: 0,
-                    visible,
-                    children: [b.content],
-                    hitArea: {
-                        x: 0,
-                        y: 0,
-                        width: w.width,
-                        height: h
-                    },
-                    touchEnabled: visible,
-                    touchChildren: false
-                });
-                rows.push(freeze({
-                    key,
-                    index: i,
-                    bindingGeneration: b.generation,
-                    contentVersion: b.version,
-                    box: freeze({
-                        x: w.box.innerX,
-                        y: w.box.innerY + y,
-                        width: w.width,
-                        height: h
-                    }),
-                    visible
-                }));
-            }
-            const rootChildren = [], paintOrder = new Map();
-            for (const [paintIndex, box] of w.plan.boxes.entries()) {
-                const node = tree.nodes.get(box.id);
-                if (node.kind === 'leaf' && node.fill !== undefined) {
-                    const scope = port.scope(port.createScope());
-                    fillScopes.push(scope);
-                    const shape = new Sprite();
-                    scope.use(shape);
-                    const color = node.fill;
-                    shape.graphics
-                        .beginFill(color.color, color.alpha ?? 1)
-                        .drawRect(0, 0, box.width, box.height)
-                        .endFill();
-                    const wrapper = display.createWrapper(scope.scope);
-                    updates.push({
-                        wrapper,
-                        x: box.x,
-                        y: box.y,
-                        children: [shape],
-                        touchEnabled: false,
-                        touchChildren: false
-                    });
-                    rootChildren.push(wrapper);
-                    paintOrder.set(wrapper, paintIndex);
-                }
-            }
-            for (const [paintIndex, box] of w.plan.boxes.entries()) {
-                const binding = w.leafBindings.get(box.id);
-                if (binding === undefined)
-                    continue;
-                updates.push({
-                    wrapper: binding.wrapper,
-                    x: box.innerX,
-                    y: box.innerY,
-                    children: [binding.content],
-                    hitArea: { x: 0, y: 0, width: box.innerWidth, height: box.innerHeight },
-                    touchEnabled: false,
-                    touchChildren: true
-                });
-                rootChildren.push(binding.wrapper);
-                paintOrder.set(binding.wrapper, paintIndex);
-            }
-            if (w.box !== undefined && listWrapper !== undefined) {
-                rootChildren.push(listWrapper);
-                paintOrder.set(listWrapper, w.plan.boxes.findIndex(box => box.id === listId));
-                updates.push({
-                    wrapper: listWrapper,
-                    x: w.box.innerX,
-                    y: w.box.innerY,
-                    clipRect: {
-                        x: 0,
-                        y: 0,
-                        width: w.width,
-                        height: w.height
-                    },
-                    children: childWrappers,
-                    touchEnabled: false,
-                    touchChildren: true
-                });
-            }
-            updates.push({
-                wrapper: rootWrapper,
-                x: layerOrigin?.x ?? position.x,
-                y: layerOrigin?.y ?? position.y,
-                clipRect: {
-                    x: 0,
-                    y: 0,
-                    width: size.width,
-                    height: size.height
-                },
-                children: rootChildren,
-                visible: layerVisible,
-                touchEnabled: false,
-                touchChildren: layerPointer
+            stageUiRootDisplay(draft, {
+                w,
+                finalKeys,
+                view,
+                shells,
+                port,
+                display,
+                tree,
+                listWrapper,
+                listId,
+                rootWrapper,
+                layerOrigin,
+                position,
+                size,
+                layerVisible,
+                layerPointer
             });
-            rootChildren.sort((a, b) => paintOrder.get(a) - paintOrder.get(b));
             const displayToken = display.prepare(rootWrapper, updates);
             check(revision);
             const nextSnapshot = freeze({

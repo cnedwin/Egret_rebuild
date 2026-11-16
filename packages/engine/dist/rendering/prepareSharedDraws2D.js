@@ -32,12 +32,6 @@ function add(used, value, limit) {
         sharedFailure('budget');
     return used + value;
 }
-/** Address qualification follows f32 preparation and never clamps/modulos authored vertices. */
-export function qualifySharedUV(point, draw, frame) {
-    const domain = sharedUVDomain(draw, frame);
-    if (domain !== undefined)
-        qualifySharedUVIn(point.u, point.v, domain);
-}
 /** Undefined for a draw without a page, whose corners are not qualified. */
 export function sharedUVDomain(draw, frame) {
     if (draw.pageIndex === undefined)
@@ -49,7 +43,7 @@ export function sharedUVDomain(draw, frame) {
         (material.addressU !== 'clamp-to-edge' || material.addressV !== 'clamp-to-edge');
     return { width, height, limit: periodic ? 8192 : 1048576 };
 }
-/** `qualifySharedUV` of one corner's two texture coordinates, with the draw's domain already found. */
+/** Check one corner using the resolved draw domain and f32 preparation without clamping or wrapping authored UVs. */
 export function qualifySharedUVIn(pointU, pointV, domain) {
     const limit = domain.limit, u = Math.fround(pointU), v = Math.fround(pointV), x = Math.fround(u * domain.width), y = Math.fround(v * domain.height);
     if (!Number.isFinite(u) ||

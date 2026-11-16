@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "scope": "Original editable 20-Spine/200-sequence scene; bounded functional evidence, not complete M2.4 acceptance",
+  "date": "2026-11-04",
+  "environment": {
+    "browser": "156.0.4314.58",
+    "channel": "msedge",
+    "headed": true,
+    "extraLaunchFlags": [],
+    "playwright": "1.62.1",
+    "node": "26.7.0"
+  },
+  "cases": [
+    {
+      "backend": "webgpu",
+      "passed": true,
+      "initialCounts": {
+        "spine": 20,
+        "sequences": 200
+      },
+      "sharedSetups": 1,
+      "liveSpineInstances": 20,
+      "literalInitialPixelChecks": 242,
+      "wrongDefaultOutfitRefused": true,
+      "finitePlays": 2,
+      "closedCounts": {
+        "spine": 0,
+        "sequences": 0
+      },
+      "closedLoader": {
+        "isDisposed": true,
+        "groups": 0,
+        "liveInstances": 0,
+        "activeSourceLoads": 0,
+        "liveSourceValues": 0,
+        "pendingSetups": 0,
+        "liveSetups": 0,
+        "setupBytes": 0
+      },
+      "cancelledLoader": {
+        "isDisposed": true,
+        "groups": 0,
+        "liveInstances": 0,
+        "activeSourceLoads": 0,
+        "liveSourceValues": 0,
+        "pendingSetups": 0,
+        "liveSetups": 0,
+        "setupBytes": 0
+      },
+      "immediateCancelState": "closed",
+      "domControlsPassed": true,
+      "consoleErrors": []
+    },
+    {
+      "backend": "webgl2",
+      "passed": true,
+      "initialCounts": {
+        "spine": 20,
+        "sequences": 200
+      },
+      "sharedSetups": 1,
+      "liveSpineInstances": 20,
+      "literalInitialPixelChecks": 242,
+      "wrongDefaultOutfitRefused": true,
+      "finitePlays": 2,
+      "closedCounts": {
+        "spine": 0,
+        "sequences": 0
+      },
+      "closedLoader": {
+        "isDisposed": true,
+        "groups": 0,
+        "liveInstances": 0,
+        "activeSourceLoads": 0,
+        "liveSourceValues": 0,
+        "pendingSetups": 0,
+        "liveSetups": 0,
+        "setupBytes": 0
+      },
+      "cancelledLoader": {
+        "isDisposed": true,
+        "groups": 0,
+        "liveInstances": 0,
+        "activeSourceLoads": 0,
+        "liveSourceValues": 0,
+        "pendingSetups": 0,
+        "liveSetups": 0,
+        "setupBytes": 0
+      },
+      "immediateCancelState": "closed",
+      "domControlsPassed": true,
+      "consoleErrors": []
+    }
+  ],
+  "behavior": {
+    "command": "node --test tests/animation-outfits.test.mjs tests/sequence-controller.test.mjs tests/sequence-controller-lifecycle.test.mjs tests/sequence-controller-integration.test.mjs",
+    "passed": 42,
+    "failed": 0
+  },
+  "server": {
+    "passed": 14,
+    "failed": 0
+  },
+  "repairs": [
+    {
+      "observation": "The 65th new sequence controller was refused.",
+      "repair": "Raise both admission sites to existing combined 256-target ceiling; exact 256/257/reuse regression and bounded-work documentation."
+    },
+    {
+      "observation": "Double-rate 0.1-second step exceeded the default eight Spine segments.",
+      "repair": "Scene explicitly requests sixteen segments; public controls remain bounded at 0.1 seconds and rate two."
+    },
+    {
+      "observation": "Authored head was below the body on both backends.",
+      "repair": "Use positive Spine Y for the authored head/rise; preserve independently selected expected screen coordinates."
+    },
+    {
+      "observation": "Applying an outfit with a zero-delta clock did not commit queued commands.",
+      "repair": "Apply advances one real shared 1/60-second tick."
+    },
+    {
+      "observation": "Burst render requests exceeded native Host admission.",
+      "repair": "Serialize pending steps through existing Host completion; await them in the collector."
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "inputs.json",
+      "bytes": 210508,
+      "sha256": "8cc1ef6d0194089d3a03e21a570564be02bd505de8b8129a384e9500ab80dae7"
+    },
+    {
+      "file": "result.json",
+      "bytes": 3656534,
+      "sha256": "200794faa7dc4eec586ea037b40b44473446d24c26b957822347f5a9c7cd8038"
+    },
+    {
+      "file": "webgl2-initial.rgba",
+      "bytes": 1024000,
+      "sha256": "350621405ca301a84c594f986bc57a141c8f4751a764a2dccc368350ac925e1d"
+    },
+    {
+      "file": "webgl2-outfit.rgba",
+      "bytes": 1024000,
+      "sha256": "d38916d3bb0d75ebfae635d40621be402de68dfa948f3fc8883a184986625dce"
+    },
+    {
+      "file": "webgl2-scene.png",
+      "bytes": 62711,
+      "sha256": "40ef748f735c0ad35efc13d3516c4b4c2eb5ae8fed33ab115d322e51beec0457"
+    },
+    {
+      "file": "webgpu-initial.rgba",
+      "bytes": 1024000,
+      "sha256": "350621405ca301a84c594f986bc57a141c8f4751a764a2dccc368350ac925e1d"
+    },
+    {
+      "file": "webgpu-outfit.rgba",
+      "bytes": 1024000,
+      "sha256": "d38916d3bb0d75ebfae635d40621be402de68dfa948f3fc8883a184986625dce"
+    },
+    {
+      "file": "webgpu-scene.png",
+      "bytes": 62695,
+      "sha256": "381dc12827c3c5e1db96f8bb77a925580fa923223dfb52f6fbf438ee2a6bbed0"
+    }
+  ],
+  "sourceBoundary": "Browser runtime and first-party collector/server helper bytes plus runtime vendor admission metadata are frozen in inputs.json. Generated content is captured after authoring. Node, pngjs and Playwright are the pinned external tool environment; no complete external-tool source closure is asserted. This non-executable summary is refreshed after collection and excluded from execution pins. Source, native evidence and PR/Main delivery remain separate.",
+  "limits": [
+    "Desktop default Edge only",
+    "Original geometry, not Editor export qualification",
+    "No physical-memory, device-recovery, hot-replacement or performance acceptance",
+    "No cold/warm cache or incremental build qualification",
+    "No complete Spine/Core semantics or Editor-export rights qualification",
+    "M1.2 10.3 ms versus 8 ms remains open",
+    "No PR, CI or Main completion asserted by this record"
+  ],
+  "collection": "native-8",
+  "freezeRepair": {
+    "priorCollection": "native-6",
+    "priorExecution": "passed within its observed behavior scope",
+    "priorInputClosure": "incomplete",
+    "missingInputs": [
+      "tools/lib/local-package.mjs",
+      "tools/lib/file-identity.mjs",
+      "node_modules/@esotericsoftware/spine-core/package.json"
+    ],
+    "priorArtifactsPreserved": true,
+    "repair": "Freeze the three actually used inputs and rerun the unchanged native schedule once; exclude the non-executable summary from execution inputs.",
+    "currentCollection": "native-7",
+    "currentInputScope": {
+      "execution": "Browser runtime and first-party collector/server helpers, including vendor admission metadata",
+      "generatedContent": "Exact outputs after authoring",
+      "externalTools": "Pinned Node, pngjs and Playwright environment; not a source-closure assertion for external tools",
+      "excludedReports": [
+        "examples/animation-outfits/verification-summary.json"
+      ]
+    }
+  },
+  "declaredInstallRepair": {
+    "failedRunId": 41803839573,
+    "failedHead": "4d448a91cad85db43cfe72ce7cd090747ab57f93",
+    "observedCI": {
+      "tests": 5339,
+      "passed": 5338,
+      "failed": 1
+    },
+    "failure": "ERR_MODULE_NOT_FOUND: @egret/spine from the root-owned example test",
+    "cause": "The local manually created workspace link masked the missing root development dependency.",
+    "repair": "Declare @egret/spine workspace:* only in root devDependencies, generate the matching lock importer with pinned pnpm, and install using the frozen lockfile with scripts disabled.",
+    "validation": {
+      "manualAliasRemovedMissingEntryReproduced": true,
+      "entireManualRootInstallRetiredBeforeInstall": true,
+      "workspaceLinkCreatedByPnpm": true,
+      "focusedTestsPassed": 57,
+      "focusedTestsFailed": 0,
+      "currentOwnerInverseTestsPassed": 2,
+      "defaultEngineDependencyGraphUnchanged": true,
+      "configuration": [
+        {
+          "file": "package.json",
+          "bytes": 1165,
+          "sha256": "6e9855e62a56dafb463a293b2a5955fc70d552fe0c658cd3f99e6034dd983ced"
+        },
+        {
+          "file": "pnpm-lock.yaml",
+          "bytes": 9876,
+          "sha256": "7bf20612bfb56d834d35106fa29b0684314e60e3dbc6f83d04aef36bb44549e9"
+        }
+      ]
+    },
+    "priorNativeCollection": "native-7",
+    "priorNativeArtifactsPreserved": true,
+    "currentNativeCollection": "native-8",
+    "recollectionReason": "The declared lockfile is part of the frozen input inventory. Recollect once with final dependency and lock bytes, without rewriting earlier evidence.",
+    "publication": "Local repair and bounded evidence only; remote retry and CI acceptance are separate."
+  },
+  "typePolicyRepair": {
+    "failedCiRun": "41810113784",
+    "failedHead": "b1c336fe010049e4f40c058a1d2c14438d6df964",
+    "failure": "The complete type lane stopped at the sequence compiler configuration check because current type-policy selectors still recorded the predecessor lockfile. The earlier dependency repair had updated source-boundary owners but omitted active type selectors.",
+    "scope": "Refresh only current package/lock selectors in the shared strict successor and SpriteSheet/PNG type gates, authenticate the shared helper in twelve wrappers, and preserve complete historical wrapper inverses. Product files, package/lock bytes and historical diagnostic inventories remain unchanged.",
+    "validation": [
+      "Complete tools/check-types.mjs chain and tools/browser-png-types.mjs pass after the repair",
+      "All ten source-boundary entries from tools/verify.mjs pass",
+      "Four focused current-owner and missing-input maintenance tests pass",
+      "All 1159 native-8 frozen inputs remain byte-identical; no browser recollection needed"
+    ],
+    "remoteCi": "Pending root-owned retry; the prior failed run remains retained"
+  }
+}

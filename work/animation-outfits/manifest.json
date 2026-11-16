@@ -1,0 +1,237 @@
+{
+  "format": "egret.resource-manifest/1",
+  "projectId": "p_animation_outfits",
+  "targetProfile": "web-shared/1",
+  "versions": {
+    "engineVersion": "0.0.0",
+    "resourceFormatVersion": "1.0",
+    "toolProtocolVersion": "1.0"
+  },
+  "entries": [
+    {
+      "id": "e_atlas",
+      "resourceKind": "spine-atlas",
+      "source": {
+        "id": "f_source_atlas",
+        "path": "sources/atlas",
+        "role": "source",
+        "mediaType": "text/plain",
+        "sha256": "8dfb3d8610d16084e9a0574eb8c3ef2654659af1b98f94444f34749357d96386",
+        "byteLength": 177
+      },
+      "artifact": {
+        "id": "f_asset_atlas",
+        "path": "assets/atlas",
+        "role": "asset",
+        "mediaType": "text/plain",
+        "sha256": "8dfb3d8610d16084e9a0574eb8c3ef2654659af1b98f94444f34749357d96386",
+        "byteLength": 177
+      },
+      "importer": {
+        "id": "egret.spine-atlas",
+        "version": "1.0.0"
+      },
+      "settings": {
+        "coreVersion": "4.3.13",
+        "pageNames": [
+          "warm.png",
+          "cool.png"
+        ]
+      },
+      "artifactFormatVersion": "spine-atlas/4.3-1",
+      "targetProfile": "web-shared/1",
+      "dependencies": [
+        "e_warm",
+        "e_cool"
+      ],
+      "provenance": {
+        "origin": "Original Egret animation outfit reference scene",
+        "license": "Apache-2.0",
+        "notice": "Programmatic geometry and pixels; no Editor-export or complete Spine qualification."
+      },
+      "buildKey": "cae61f49e32243a76620203bd255560c6e6df4a700b6b387e08ae47bd088ff8d",
+      "runtimeIdentity": "10ee8450c09b222a8fc1c6f81b84fedcd1092ce6b8367bb34712fc35eed7141e"
+    },
+    {
+      "id": "e_character",
+      "resourceKind": "spine",
+      "source": {
+        "id": "f_source_character",
+        "path": "sources/character",
+        "role": "source",
+        "mediaType": "application/json",
+        "sha256": "3be6ab34b7602a1e90dcb7c5a44d17205b75d0e48dc917a788437d400b922112",
+        "byteLength": 808
+      },
+      "artifact": {
+        "id": "f_asset_character",
+        "path": "assets/character",
+        "role": "asset",
+        "mediaType": "application/json",
+        "sha256": "3be6ab34b7602a1e90dcb7c5a44d17205b75d0e48dc917a788437d400b922112",
+        "byteLength": 808
+      },
+      "importer": {
+        "id": "egret.spine-json",
+        "version": "1.0.0"
+      },
+      "settings": {
+        "coreVersion": "4.3.13"
+      },
+      "artifactFormatVersion": "spine-json/4.3-1",
+      "targetProfile": "web-shared/1",
+      "dependencies": [
+        "e_atlas"
+      ],
+      "provenance": {
+        "origin": "Original Egret animation outfit reference scene",
+        "license": "Apache-2.0",
+        "notice": "Programmatic geometry and pixels; no Editor-export or complete Spine qualification."
+      },
+      "buildKey": "713410dde23ffe4d8ffdb206ce0aa02f5998794d584c77998f0f1b16cc291c25",
+      "runtimeIdentity": "0d936b6b9d2d5faba83687848790c5df6d2ccb66380ba9a0500886c9b53e73a2"
+    },
+    {
+      "id": "e_cool",
+      "resourceKind": "image",
+      "source": {
+        "id": "f_source_cool",
+        "path": "sources/cool",
+        "role": "source",
+        "mediaType": "image/png",
+        "sha256": "fb4b93e6671b6f2c7f8ae60af5b713009757c80ba9b1d1662ad6555faeaddbf5",
+        "byteLength": 76
+      },
+      "artifact": {
+        "id": "f_asset_cool",
+        "path": "assets/cool",
+        "role": "asset",
+        "mediaType": "image/png",
+        "sha256": "fb4b93e6671b6f2c7f8ae60af5b713009757c80ba9b1d1662ad6555faeaddbf5",
+        "byteLength": 76
+      },
+      "importer": {
+        "id": "egret.png",
+        "version": "1.0.0"
+      },
+      "settings": {},
+      "artifactFormatVersion": "png/1",
+      "targetProfile": "web-shared/1",
+      "dependencies": [],
+      "provenance": {
+        "origin": "Original Egret animation outfit reference scene",
+        "license": "Apache-2.0",
+        "notice": "Programmatic geometry and pixels; no Editor-export or complete Spine qualification."
+      },
+      "buildKey": "c7bcc4b2a0985b5e77dec9141e29786e374fc77d0ce58dc77403e718d0354096",
+      "runtimeIdentity": "cdde7a29e6d974a18204630b38fe9ebd8231a807fea4618bebc6099b371ffed4"
+    },
+    {
+      "id": "e_sequence",
+      "resourceKind": "sequence",
+      "source": {
+        "id": "f_source_sequence",
+        "path": "sources/sequence",
+        "role": "source",
+        "mediaType": "application/json",
+        "sha256": "61858da0d1df02c1d47609c763f8965a12c7c2fc9fd93f4267854ab907d5fc9d",
+        "byteLength": 157
+      },
+      "artifact": {
+        "id": "f_asset_sequence",
+        "path": "assets/sequence",
+        "role": "asset",
+        "mediaType": "application/json",
+        "sha256": "61858da0d1df02c1d47609c763f8965a12c7c2fc9fd93f4267854ab907d5fc9d",
+        "byteLength": 157
+      },
+      "importer": {
+        "id": "egret.sequence",
+        "version": "1.0.0"
+      },
+      "settings": {},
+      "artifactFormatVersion": "sequence/1",
+      "targetProfile": "web-shared/1",
+      "dependencies": [
+        "e_sparks"
+      ],
+      "provenance": {
+        "origin": "Original Egret animation outfit reference scene",
+        "license": "Apache-2.0",
+        "notice": "Programmatic geometry and pixels; no Editor-export or complete Spine qualification."
+      },
+      "buildKey": "fa0cbe95eb25cd1e4da4e1e9adb6bd4d5e005f812d1e8bc7bda4987461a1b13d",
+      "runtimeIdentity": "d08ddf216383534842d8e54d7ad211c1f9b9a4b15e75416674fbf696f7a965ca"
+    },
+    {
+      "id": "e_sparks",
+      "resourceKind": "image",
+      "source": {
+        "id": "f_source_sparks",
+        "path": "sources/sparks",
+        "role": "source",
+        "mediaType": "image/png",
+        "sha256": "5c8196e06d11248a33c6c0038e8487af028f7825fe8bcf42adc0363188aec005",
+        "byteLength": 74
+      },
+      "artifact": {
+        "id": "f_asset_sparks",
+        "path": "assets/sparks",
+        "role": "asset",
+        "mediaType": "image/png",
+        "sha256": "5c8196e06d11248a33c6c0038e8487af028f7825fe8bcf42adc0363188aec005",
+        "byteLength": 74
+      },
+      "importer": {
+        "id": "egret.png",
+        "version": "1.0.0"
+      },
+      "settings": {},
+      "artifactFormatVersion": "png/1",
+      "targetProfile": "web-shared/1",
+      "dependencies": [],
+      "provenance": {
+        "origin": "Original Egret animation outfit reference scene",
+        "license": "Apache-2.0",
+        "notice": "Programmatic geometry and pixels; no Editor-export or complete Spine qualification."
+      },
+      "buildKey": "eaaa97654d9c66c5e5e4f12b976a890ab85bf44ef67733f9226d1711d86b41ff",
+      "runtimeIdentity": "951c2252746c1c244c4b8ef60eb0caf12dd54c6ee3ec7122ab3062ff9b705808"
+    },
+    {
+      "id": "e_warm",
+      "resourceKind": "image",
+      "source": {
+        "id": "f_source_warm",
+        "path": "sources/warm",
+        "role": "source",
+        "mediaType": "image/png",
+        "sha256": "6c82fdfe13ec5682015891cdda52c07f273aea1691628cc71cef2c4989a6fb9c",
+        "byteLength": 76
+      },
+      "artifact": {
+        "id": "f_asset_warm",
+        "path": "assets/warm",
+        "role": "asset",
+        "mediaType": "image/png",
+        "sha256": "6c82fdfe13ec5682015891cdda52c07f273aea1691628cc71cef2c4989a6fb9c",
+        "byteLength": 76
+      },
+      "importer": {
+        "id": "egret.png",
+        "version": "1.0.0"
+      },
+      "settings": {},
+      "artifactFormatVersion": "png/1",
+      "targetProfile": "web-shared/1",
+      "dependencies": [],
+      "provenance": {
+        "origin": "Original Egret animation outfit reference scene",
+        "license": "Apache-2.0",
+        "notice": "Programmatic geometry and pixels; no Editor-export or complete Spine qualification."
+      },
+      "buildKey": "6579d5479825ae145a8a1fe45b4c2cdf7dd617915cf082cb910928c49b6d2446",
+      "runtimeIdentity": "079b2bc27c6c2dee8695bc0fcb63fc00386ec3497388f2fc85867866c32243b5"
+    }
+  ]
+}

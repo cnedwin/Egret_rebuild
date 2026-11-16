@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+import { deferred } from './sharedHostDeferred.js';
 import { sharedEffectGLSL, EFFECT_PASSES, EFFECT_UNIFORM_BYTES } from './sharedEffectShaders.js';
 import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
 import { readOwnedSharedFrame } from '#egret-textured-frame-state';
@@ -15,16 +16,8 @@ import { planSharedStorageFees2D, withSharedReadbackLayout2D, checkSharedCapacit
 import { planSharedWebGL2Arenas, checkSharedWebGL2ArenaCapacity, qualifySharedWebGL2Alignment } from './sharedWebGL2Arena.js';
 import { createRetentionLedger } from './sharedRetentionLedger.js';
 import { GLNativeSession, glFailure, isGLFailure } from './webgl2Native.js';
-import { sharedWebGL2VertexSource, sharedWebGL2FragmentSource, sharedWebGL2PagedFragmentSource, sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragmentSource, sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragmentSource, sharedWebGL2BlendFactors, sharedWebGL2LayerVertexSource, sharedWebGL2LayerFragmentSource, sharedWebGL2LayerEffectFragmentSource } from './sharedWebGL2Shaders.js';
-function deferred() {
-    let resolve, reject;
-    const promise = new Promise((a, b) => {
-        resolve = a;
-        reject = b;
-    });
-    promise.catch(() => undefined);
-    return { promise, resolve, reject };
-}
+import { sharedWebGL2VertexSource, sharedWebGL2FragmentSource, sharedWebGL2PagedFragmentSource, sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragmentSource, sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragmentSource, sharedWebGL2BlendFactors } from './sharedWebGL2Shaders.js';
+import { MAX_LAYER_HANDLES, MAX_LAYER_EXTENT, MAX_LAYER_BYTES, createWebGL2LayerProgram, readWebGL2LayerEffect, readWebGL2LayerPlacement } from './webgl2LayerState.js';
 const schedule = globalThis.setTimeout.bind(globalThis), cancel = globalThis.clearTimeout.bind(globalThis);
 const invoke = Reflect.apply;
 const clock = () => performance.now();
@@ -52,9 +45,6 @@ const ATTRIBUTES = Object.freeze({
     stencil: false,
     preserveDrawingBuffer: false
 });
-const MAX_LAYER_HANDLES = 512;
-const MAX_LAYER_EXTENT = 2048;
-const MAX_LAYER_BYTES = 32 * 1024 * 1024;
 const DRAW_UNIFORM_MEMBERS = [
     'viewport',
     'materialLight',
@@ -888,7 +878,7 @@ class SharedGLHost {
             if (!item || typeof item !== 'object')
                 throw glFailure('WEBGL2_LAYER_INVALID');
             const { layer, x, y, width, height, effect } = item;
-            const light = effect === undefined ? undefined : this.readLayerEffect(effect, frameWidth, frameHeight);
+            const light = effect === undefined ? undefined : readWebGL2LayerEffect(this.options, effect, frameWidth, frameHeight);
             this.active();
             const slot = this.layers.get(layer);
             if (!slot)
@@ -896,88 +886,12 @@ class SharedGLHost {
             const revision = slot.ready;
             if (!revision || revision.native !== this.native || revision.owner.outcome !== 'owned')
                 throw glFailure('WEBGL2_LAYER_NOT_READY');
-            if (typeof x !== 'number' ||
-                typeof y !== 'number' ||
-                typeof width !== 'number' ||
-                typeof height !== 'number' ||
-                width <= 0 ||
-                height <= 0)
-                throw glFailure('WEBGL2_LAYER_INVALID');
-            const physicalX = x * ratio, physicalY = y * ratio, physicalWidth = width * ratio, physicalHeight = height * ratio;
-            if (![
-                physicalX,
-                physicalY,
-                physicalWidth,
-                physicalHeight,
-                physicalX + physicalWidth,
-                physicalY + physicalHeight
-            ].every(value => Number.isFinite(value) && Math.abs(value) <= 8388608))
-                throw glFailure('WEBGL2_LAYER_INVALID');
-            const visibleLight = light &&
-                light.left < physicalX + physicalWidth &&
-                light.right > physicalX &&
-                light.top < physicalY + physicalHeight &&
-                light.bottom > physicalY
-                ? light
-                : undefined;
-            reads.push({
-                revision,
-                x: physicalX,
-                y: physicalY,
-                width: physicalWidth,
-                height: physicalHeight,
-                effect: visibleLight
-            });
+            reads.push(readWebGL2LayerPlacement(revision, x, y, width, height, ratio, light));
         }
         // A later placement getter may have disposed an earlier revision.
         if (reads.some(read => !read.revision.retained))
             throw glFailure('WEBGL2_LAYER_NOT_READY');
         return reads;
-    }
-    readLayerEffect(input, frameWidth, frameHeight) {
-        if (!this.options.enableEffects || !input || typeof input !== 'object')
-            throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-        const { bounds, multiply, add } = input;
-        if (!bounds || typeof bounds !== 'object')
-            throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-        const { x, y, width, height } = bounds;
-        if (typeof x !== 'number' ||
-            typeof y !== 'number' ||
-            typeof width !== 'number' ||
-            typeof height !== 'number' ||
-            width <= 0 ||
-            height <= 0)
-            throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-        const ratio = this.options.pixelRatio, left = x * ratio, top = y * ratio, right = (x + width) * ratio, bottom = (y + height) * ratio;
-        if (![left, top, right, bottom].every(value => Number.isFinite(value) && Math.abs(value) <= 8388608) ||
-            right <= left ||
-            bottom <= top)
-            throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-        const scale = multiply === undefined ? undefined : this.readLayerColor(multiply, 4);
-        const emission = add === undefined ? undefined : this.readLayerColor(add, 1);
-        if ((!scale || scale.every(value => value === 1)) && (!emission || emission.every(value => value === 0)))
-            return undefined;
-        // Ceil-sized backing buffers can contain centers beyond the logical frame.
-        const clippedLeft = Math.max(0, left), clippedTop = Math.max(0, top);
-        const clippedRight = Math.min(frameWidth * ratio, right), clippedBottom = Math.min(frameHeight * ratio, bottom);
-        if (clippedRight <= clippedLeft || clippedBottom <= clippedTop)
-            return undefined;
-        return {
-            left: clippedLeft,
-            top: clippedTop,
-            right: clippedRight,
-            bottom: clippedBottom,
-            scale: scale ?? [1, 1, 1],
-            emission: emission ?? [0, 0, 0]
-        };
-    }
-    readLayerColor(input, max) {
-        if (!Array.isArray(input) || input.length !== 3)
-            throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-        const rgb = [input[0], input[1], input[2]];
-        if (!rgb.every(value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= max))
-            throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-        return rgb;
     }
     finishLayerRecord(record) {
         for (const read of record.layerReads ?? [])
@@ -1990,24 +1904,7 @@ class SharedGLHost {
         const existing = effect ? this.layerEffectProgram : this.layerProgram;
         if (existing)
             return existing;
-        const gl = native.gl, program = native.program(sharedWebGL2LayerVertexSource, effect ? sharedWebGL2LayerEffectFragmentSource : sharedWebGL2LayerFragmentSource);
-        const location = (name) => gl.getUniformLocation(program, name);
-        const variant = {
-            program,
-            origin: location('origin'),
-            extent: location('extent'),
-            viewport: location('viewportSize'),
-            texture: location('layerTexture'),
-            effect: effect
-                ? {
-                    min: location('effectMin'),
-                    max: location('effectMax'),
-                    scaleRG: location('multiplyRG'),
-                    scaleBAddR: location('multiplyBAddR'),
-                    addGB: location('addGB')
-                }
-                : undefined
-        };
+        const variant = createWebGL2LayerProgram(native, effect);
         if (effect)
             this.layerEffectProgram = variant;
         else

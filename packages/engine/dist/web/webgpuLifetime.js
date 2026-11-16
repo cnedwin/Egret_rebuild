@@ -12,15 +12,7 @@ export function observeWebGPUDeviceLoss(value, cell) {
 export function observeAuthenticatedWebGPUDeviceLoss(value, cell) {
     observed(value).then(info => cell.notify?.(info), cause => cell.unknown?.(cause));
 }
-export function deferred() {
-    let resolve, reject;
-    const promise = new Promise((a, b) => {
-        resolve = a;
-        reject = b;
-    });
-    promise.catch(() => undefined);
-    return { promise, resolve, reject };
-}
+export { deferred } from './sharedHostDeferred.js';
 /** One cleanup attempt per captured resource, including best-effort failure paths. */
 export function cleanupWebGPUBuffer(resource) {
     if (resource.cleaned)

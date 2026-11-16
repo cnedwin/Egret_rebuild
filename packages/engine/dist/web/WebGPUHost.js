@@ -14,6 +14,7 @@ import { readOwnedSharedFrame } from '#egret-textured-frame-state';
 import { EgretError } from '@egret/runtime';
 import { GeometryPreparationError } from '../rendering/prepareRectangles2D.js';
 import { PreparedBatchScratch2D } from '../rendering/preparedBatches2D.js';
+import { collectWebGPUImageDemand, selectWebGPUImageVictims } from './webgpuImageResidency.js';
 import { observed, deferred, cleanupWebGPUBuffer, cleanupWebGPUTexture, observeWebGPUDeviceLoss, observeAuthenticatedWebGPUDeviceLoss } from './webgpuLifetime.js';
 import { runOwnedPreparationScope } from '../rendering/ownedPreparationFailure2D.js';
 import { createWebGPUBindingCache } from './webgpuBindingCache.js';
@@ -1321,64 +1322,9 @@ class WebGPUHostImplementation {
     planImageResidency(projectionPlan, draws, shared = false) {
         this.active();
         const hits = new Map(), candidates = new Map();
-        const buckets = new Map();
-        let bytes = 0;
-        for (const draw of draws) {
-            if (draw.kind === 'rect' ||
-                draw.packed.vertexCount === 0 ||
-                hits.has(draw.viewIndex) ||
-                candidates.has(draw.viewIndex))
-                continue;
-            const view = projectionPlan.views[draw.viewIndex], region = view.region;
-            const cropKey = (shared ? 'shared:egret.alpha8-capped-srgb-pma8/1:rgba8unorm-srgb:' : '') +
-                `${region.x},${region.y},${region.width},${region.height}`;
-            let bucket = this.imageDirectory.get(view.image) ?? buckets.get(view.image);
-            if (!bucket) {
-                bucket = new Map();
-                buckets.set(view.image, bucket);
-            }
-            const entry = bucket.get(cropKey);
-            if (this.imageEnabled && entry?.epoch === this.imageEpoch && entry.state === 'ready')
-                hits.set(draw.viewIndex, entry);
-            else {
-                candidates.set(draw.viewIndex, {
-                    image: view.image,
-                    viewIndex: draw.viewIndex,
-                    transferred: false,
-                    entry: {
-                        format: shared ? 'rgba8unorm-srgb' : 'rgba8unorm',
-                        identity: {},
-                        epoch: this.imageEpoch,
-                        bucket,
-                        cropKey,
-                        bytes: view.byteLength,
-                        resource: undefined,
-                        view: undefined,
-                        pinCount: 0,
-                        previous: undefined,
-                        next: undefined,
-                        state: 'cold'
-                    }
-                });
-                bytes += view.byteLength;
-            }
-        }
-        const protectedHits = new Set(hits.values()), victims = [];
-        let available = this.allocatedImageBytes + this.reservedImageBytes, count = this.readyCount;
-        for (let entry = this.imageOldest; entry; entry = entry.next) {
-            // Every profile of this Host shares one ready residence; a shared Host may lower its bytes.
-            if (available + bytes <= (SHARED_OPTIONS.get(this)?.maxReadyPageBytes ?? 33554432) &&
-                count + candidates.size <= 256)
-                break;
-            if (entry.epoch !== this.imageEpoch ||
-                entry.state !== 'ready' ||
-                entry.pinCount !== 0 ||
-                protectedHits.has(entry))
-                continue;
-            victims.push(entry);
-            available -= entry.bytes;
-            count--;
-        }
+        const bytes = collectWebGPUImageDemand(projectionPlan, draws, shared, this.imageDirectory, this.imageEnabled, this.imageEpoch, hits, candidates);
+        // Every profile of this Host shares one ready residence; a shared Host may lower its bytes.
+        const victims = selectWebGPUImageVictims(this.imageOldest, this.imageEpoch, this.allocatedImageBytes + this.reservedImageBytes, this.readyCount, SHARED_OPTIONS.get(this)?.maxReadyPageBytes ?? 33554432, bytes, candidates.size, hits);
         return {
             epoch: this.imageEpoch,
             revision: this.imageRevision,

@@ -1,0 +1,15 @@
+warm.png
+size: 2,2
+filter: Nearest,Nearest
+repeat: none
+pma: false
+warm
+bounds: 0,0,2,2
+
+cool.png
+size: 2,2
+filter: Nearest,Nearest
+repeat: none
+pma: false
+cool
+bounds: 0,0,2,2

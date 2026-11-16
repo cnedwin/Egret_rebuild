@@ -9,11 +9,7 @@ export declare function observeAuthenticatedWebGPUDeviceLoss(value: PromiseLike<
     notify?: (cause: unknown) => void;
     unknown?: (cause: unknown) => void;
 }): void;
-export declare function deferred<T>(): {
-    promise: Promise<T>;
-    resolve: (value: T) => void;
-    reject: (cause: unknown) => void;
-};
+export { deferred } from './sharedHostDeferred.js';
 export interface WebGPUResourceGeneration {
     readonly invalidated: boolean;
 }

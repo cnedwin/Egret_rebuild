@@ -1,5 +1,5 @@
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
-import { GeometryPreparationError, coordinate, finishPolygonWinding2D } from './prepareRectangles2D.js';
+import { GeometryPreparationError } from './prepareRectangles2D.js';
 function fail(reason) {
     throw noteOwnedPreparationFailure(new GeometryPreparationError(reason));
 }
@@ -77,88 +77,5 @@ export class TexturedPreparationBudget2D {
             tupleComparisonsCharged: this.#tupleComparisonsCharged
         });
     }
-}
-function attribute(value) {
-    if (!Number.isFinite(value) || value < 0 || value > 1)
-        fail('precision');
-    return value === 0 ? 0 : value;
-}
-/** Complete tuples remain attached to collinear corners, reversal and crossing caches. */
-export function createMeshClipPolicy2D(budget) {
-    const before = (first, second) => {
-        budget.admitTupleComparison();
-        return first.x < second.x || (first.x === second.x && first.y < second.y);
-    };
-    const sameXY = (first, second) => {
-        budget.admitTupleComparison();
-        return first.x === second.x && first.y === second.y;
-    };
-    const sameAttributes = (first, second) => {
-        budget.admitTupleComparison();
-        return (first.u === second.u &&
-            first.v === second.v &&
-            first.r === second.r &&
-            first.g === second.g &&
-            first.b === second.b &&
-            first.a === second.a);
-    };
-    const sameTuple = (first, second) => sameXY(first, second) && sameAttributes(first, second);
-    const assertAppend = (currentLength) => {
-        if (!Number.isSafeInteger(currentLength) || currentLength < 0 || currentLength >= 64)
-            fail('budget');
-    };
-    const normalize = (preparation, input) => {
-        if (input.length > 64)
-            fail('budget');
-        const points = [];
-        for (const point of input) {
-            const owned = {
-                x: coordinate(point.x),
-                y: coordinate(point.y),
-                u: attribute(point.u),
-                v: attribute(point.v),
-                r: attribute(point.r),
-                g: attribute(point.g),
-                b: attribute(point.b),
-                a: attribute(point.a)
-            };
-            const previous = points[points.length - 1];
-            if (previous && sameXY(previous, owned)) {
-                if (!sameAttributes(previous, owned))
-                    fail('precision');
-            }
-            else {
-                assertAppend(points.length);
-                points.push(owned);
-            }
-        }
-        if (points.length > 1 && sameXY(points[0], points[points.length - 1])) {
-            if (!sameAttributes(points[0], points[points.length - 1]))
-                fail('precision');
-            points.pop();
-        }
-        for (let i = 0; i < points.length; i++) {
-            for (let j = i + 1; j < points.length; j++) {
-                if (sameXY(points[i], points[j])) {
-                    // A nonadjacent repeat is invalid even when all six attributes agree.
-                    sameAttributes(points[i], points[j]);
-                    fail('precision');
-                }
-            }
-        }
-        if (points.length < 3)
-            return [];
-        return finishPolygonWinding2D(preparation, points);
-    };
-    const policy = {
-        maxCorners: 64,
-        before,
-        sameXY,
-        sameAttributes,
-        sameTuple,
-        assertAppend,
-        normalize
-    };
-    return Object.freeze(policy);
 }
 //# sourceMappingURL=texturedPreparationBudget2D.js.map
