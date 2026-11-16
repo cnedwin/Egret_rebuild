@@ -6,11 +6,11 @@ Use this entry to find product and engineering documents for the community rebui
 
 ## Write a game
 
-These are the guides: what to call and what comes back. The other documents on this page are contracts, plans and evidence, written for those who change the engine.
+These guides cover the APIs used to make games. The later sections link engine contracts, plans, and test evidence.
 
 | To | Read |
 | --- | --- |
-| Start | [Getting started](docs/getting-started.md) · [One call for a game](docs/browser-game.md) · [What to import](docs/entry-points.md) · [Coming from Egret 5](docs/egret-api-migration.md) · [Install a release](docs/release-archives.md) |
+| Start | [Getting started](docs/getting-started.md) · [Browser game entry](docs/browser-game.md) · [Public imports](docs/entry-points.md) · [Egret 5 migration](docs/egret-api-migration.md) · [Preview archive tooling](docs/release-archives.md) |
 | Draw and move | [Graphics](docs/graphics.md) · [The frame loop](docs/frame-loop.md) · [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) · [Filters](docs/filters.md) |
 | Collide, sound and control | [Collision and physics](docs/physics-2d.md) · [Sound for a 2D game](docs/audio.md) · [Video](docs/video.md) · [Gamepads](docs/gamepad.md) |
 | Read an error, look up a name | [Error codes](docs/error-codes.md) · [API reference](docs/api-reference.md) |
@@ -20,7 +20,7 @@ These are the guides: what to call and what comes back. The other documents on t
 | Question | Read |
 | --- | --- |
 | What can I run now? | [Core capabilities and remaining work](docs/core-progress.md) |
-| How do I start or contribute? | [Getting started](docs/getting-started.md) · [What to import](docs/entry-points.md) · [Coming from Egret 5](docs/egret-api-migration.md) · [One call for a game](docs/browser-game.md) · [The frame loop](docs/frame-loop.md) · [Error codes](docs/error-codes.md) · [Contribution guide](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) |
+| How do I contribute? | [Contribution guide](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) · [Project board](https://github.com/users/cnedwin/projects/2) |
 | What should be built next? | [Engineering plan](docs/engineering-plan.md) · [M2–M4 roadmap](docs/m2-m4-delivery-plan.md) |
 | What is the complete product? | [Requirements](docs/product-requirements.md) · [Components](docs/product-components.md) · [Positioning](docs/design-philosophy-and-positioning.md) |
 | How does it work? | [White paper](docs/technical-white-paper.md) · [Architecture plan](docs/architecture-and-engineering-plan.md) · [Actual/future package structure](docs/engineering-architecture-and-project-structure.md) |

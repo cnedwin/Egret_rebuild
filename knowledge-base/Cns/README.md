@@ -6,11 +6,11 @@
 
 ## 写一个游戏
 
-这些是使用指南：调用什么，得到什么。本页其余文档是契约、计划和证据，写给修改引擎的人。
+这里汇总做游戏时使用的 API 指南，后续章节提供引擎契约、规划和验证证据。
 
 | 目的 | 阅读入口 |
 | --- | --- |
-| 起步 | [上手指南](docs/getting-started.md) · [一次调用启动游戏](docs/browser-game.md) · [该引哪个入口](docs/entry-points.md) · [从白鹭 5 迁移](docs/egret-api-migration.md) · [安装发行版](docs/release-archives.md) |
+| 起步 | [上手指南](docs/getting-started.md) · [浏览器游戏入口](docs/browser-game.md) · [公共导入入口](docs/entry-points.md) · [从白鹭 5 迁移](docs/egret-api-migration.md) · [预览归档工具](docs/release-archives.md) |
 | 绘制与运动 | [绘图](docs/graphics.md) · [帧循环](docs/frame-loop.md) · [相机](docs/camera-2d.md) · [瓦片地图](docs/tilemap.md) · [粒子](docs/particles.md) · [位图字体](docs/bitmap-font.md) · [混合模式](docs/blend-modes.md) · [滤镜](docs/filters.md) |
 | 碰撞、声音与操控 | [碰撞与物理](docs/physics-2d.md) · [2D 游戏的声音](docs/audio.md) · [视频](docs/video.md) · [手柄](docs/gamepad.md) |
 | 看懂报错、查一个名字 | [错误码](docs/error-codes.md) · [API 参考](docs/api-reference.md) |
@@ -20,7 +20,7 @@
 | 问题 | 阅读入口 |
 | --- | --- |
 | 现在能运行什么？ | [核心能力与剩余工作](docs/core-progress.md) |
-| 怎样上手或参与？ | [上手指南](docs/getting-started.md) · [该引哪个入口](docs/entry-points.md) · [从白鹭 5 迁移](docs/egret-api-migration.md) · [一次调用启动游戏](docs/browser-game.md) · [帧循环](docs/frame-loop.md) · [错误码](docs/error-codes.md) · [贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.zh-CN.md) |
+| 怎样参与贡献？ | [贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.zh-CN.md) · [项目看板](https://github.com/users/cnedwin/projects/2) |
 | 接下来开发什么？ | [工程计划](docs/工程规划.md) · [M2–M4 路线图](docs/m2-m4-delivery-plan.md) |
 | 完整产品是什么？ | [产品需求](docs/产品需求说明书.md) · [产品组成](docs/产品组成.md) · [定位](docs/设计理念与定位.md) |
 | 技术如何组织？ | [白皮书](docs/技术白皮书.md) · [架构计划](docs/architecture-and-engineering-plan.md) · [实际／未来包结构](docs/工程技术架构与项目结构.md) |

@@ -2,15 +2,13 @@
 
 English | [简体中文](DOCUMENTATION.zh-CN.md)
 
-Read the product documents in the order below, then follow the relevant subsystem contracts. Complete editions are available in the [English knowledge base](knowledge-base/en/README.md) and [中文知识库](knowledge-base/Cns/README.md).
-
-The [capability map](knowledge-base/en/docs/core-progress.md) records the reviewed source baseline. Historical contracts and evidence retain their dates and scope.
+Choose a starting point below, or browse the full [English knowledge base](knowledge-base/en/README.md) and [中文知识库](knowledge-base/Cns/README.md).
 
 ## Current project entry
 
-[Capabilities](knowledge-base/en/docs/core-progress.md) → [Requirements](knowledge-base/en/docs/product-requirements.md) → [White paper](knowledge-base/en/docs/technical-white-paper.md) → [Engineering sequence](knowledge-base/en/docs/engineering-plan.md) → [Delivery](knowledge-base/en/docs/delivery-plan.md).
-
-[Run/contribute](knowledge-base/en/docs/getting-started.md) · [Android evidence](knowledge-base/en/docs/android-device-validation.md) · [Existing work packages](https://github.com/users/cnedwin/projects/2)
+- **Build a game.** [Get started](knowledge-base/en/docs/getting-started.md) · [Public imports](knowledge-base/en/docs/entry-points.md)
+- **Check coverage.** [Core capabilities](knowledge-base/en/docs/core-progress.md) · [Android evidence](knowledge-base/en/docs/android-device-validation.md) · [Changelog](knowledge-base/en/CHANGELOG.md)
+- **Contribute.** [Contribution guide](CONTRIBUTING.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md) · [Project board](https://github.com/users/cnedwin/projects/2)
 
 ## M2–M4 architecture and community delivery
 
