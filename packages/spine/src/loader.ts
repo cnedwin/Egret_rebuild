@@ -9,7 +9,10 @@ import {
   createAssetRef,
   isTexture,
   CancellationController,
-  EgretError
+  EgretError,
+  createTexture,
+  createImageData2D,
+  copyImageData2DPixels
 } from '@egret/engine';
 import type { AssetProvider, AssetRef, AssetType, AssetLoadContext } from '@egret/engine';
 import { createManifestAssetBinding } from '@egret/engine/resources';
@@ -55,6 +58,23 @@ type SetupValue = {
 type Stage = { id: string; active: () => boolean };
 function leaseValue<T>(lease: AssetLease<T>): T {
   return APPLY(VALUE, lease, []) as T;
+}
+/**
+ * Straight colour from premultiplied, in place: each of red, green and blue is divided by alpha and rounded to the
+ * nearest byte, never above 255. A pixel of no alpha has no colour to recover and becomes transparent black, so light
+ * that a premultiplied page adds where its alpha is zero is not kept.
+ */
+export function straightenPremultiplied(pixels: Uint8Array<ArrayBuffer>): Uint8Array<ArrayBuffer> {
+  for (let i = 0; i + 3 < pixels.length; i += 4) {
+    const alpha = pixels[i + 3]!;
+    if (alpha === 255) continue;
+    if (alpha === 0) {
+      pixels[i] = pixels[i + 1] = pixels[i + 2] = 0;
+      continue;
+    }
+    for (let k = 0; k < 3; k++) pixels[i + k] = Math.min(255, Math.round((pixels[i + k]! * 255) / alpha));
+  }
+  return pixels;
 }
 function release<T>(lease: AssetLease<T>): void {
   APPLY(RELEASE, lease, []);
@@ -142,6 +162,11 @@ export function createSpineContentLoader(
       'egret.spine.setup',
       (v: unknown): v is SetupValue => typeof v === 'object' && v !== null && setupValues.has(v)
     );
+  // A page stored premultiplied is drawn from a straight copy: its own asset, made from the page's lease and holding it.
+  const straight = createAssetType<Texture>('egret.spine.page-straight', isTexture),
+    straightRefs = new Map<string, AssetRef<Texture>>(),
+    straightImages = new Map<string, string>(),
+    straightSources = new WeakMap<Texture, AssetLease<Texture>>();
   const descriptions: SpineContentBinding[] = [];
   for (const entry of catalog.selected) {
     const kind =
@@ -152,6 +177,11 @@ export function createSpineContentLoader(
         : createManifestAssetBinding(manifest, entry.id, metadata);
     bindings.set(entry.id, binding);
     descriptions.push(FREEZE({ id: entry.id, kind, binding }));
+    if (kind === 'image') {
+      const ref = createAssetRef(straight, 'spine.straight:' + (binding as ManifestAssetBinding<unknown>).ref.id);
+      straightRefs.set(entry.id, ref);
+      straightImages.set(ref.id, entry.id);
+    }
   }
   // Genuine source ref identities include the manifest binding's type token, so overlapping
   // loader generations cannot reserve the same ID with different private types.
@@ -253,6 +283,43 @@ export function createSpineContentLoader(
   function checkContext(context: AssetLoadContext): void {
     if (disposed || context.signal.aborted) throw spineFault('CANCELLED', '', context.signal.reason);
   }
+  const straightProvider: AssetProvider<Texture> = {
+    load(ref, context) {
+      return track(
+        (async () => {
+          checkContext(context);
+          const imageId = straightImages.get(ref.id);
+          if (imageId === undefined) throw spineFault('SOURCE_STAGE', ref.id);
+          const lease = (await APPLY(ACQUIRE, manager, [
+            binding<Texture>(imageId).ref,
+            { signal: context.signal }
+          ])) as AssetLease<Texture>;
+          try {
+            checkContext(context);
+            const image = leaseValue(lease).imageData,
+              texture = createTexture(
+                createImageData2D({
+                  width: image.width,
+                  height: image.height,
+                  pixels: straightenPremultiplied(copyImageData2DPixels(image))
+                })
+              );
+            straightSources.set(texture, lease);
+            return texture;
+          } catch (cause) {
+            release(lease);
+            throw cause;
+          }
+        })()
+      );
+    },
+    dispose(texture) {
+      const lease = straightSources.get(texture);
+      straightSources.delete(texture);
+      if (lease) release(lease);
+    }
+  };
+  APPLY(REGISTER, manager, [straight, straightProvider]);
   const setupProvider: AssetProvider<SetupValue> = {
     load(ref, context) {
       pendingSetups++;
@@ -303,6 +370,23 @@ export function createSpineContentLoader(
               allowPrerelease
             );
             checkContext(context);
+            // Each premultiplied page is replaced by its straight copy, which this setup pays for: four bytes a pixel.
+            for (let i = 0; i < parsed.info.pages.length; i++) {
+              const page = parsed.info.pages[i]!;
+              if (!page.sourcePremultiplied) continue;
+              const copyFee = page.width * page.height * 4;
+              reserve(copyFee, source.id);
+              fee += copyFee;
+              const copy = (await APPLY(ACQUIRE, manager, [
+                  straightRefs.get(page.imageId)!,
+                  { signal: context.signal }
+                ])) as AssetLease<Texture>,
+                original = pages[i]!;
+              acquired[acquired.indexOf(original as AssetLease<unknown>)] = copy as AssetLease<unknown>;
+              pages[i] = copy;
+              release(original);
+              checkContext(context);
+            }
             const extra =
               parsed.info.boneCount * 32 +
               parsed.info.slotCount * 32 +

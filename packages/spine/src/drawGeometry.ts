@@ -71,8 +71,8 @@ export function copySpineDraws(
         : page.minFilter === TextureFilter.Linear
           ? 'linear'
           : undefined;
+    // A premultiplied page is no exception here: its lease is of the straight copy the loader made.
     if (
-      page.pma ||
       !filter ||
       page.magFilter !== page.minFilter ||
       page.uWrap !== TextureWrap.ClampToEdge ||

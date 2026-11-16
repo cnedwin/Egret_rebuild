@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "packages/spine/test/premultiplied.test.mjs", "originRole": "First-party tests of atlas pages declared premultiplied: the straight copy, its fee and its release; independently authored with AI assistance; Apache-2.0.", "criticalComment": true}
+  ],
+  "documents": []
+}

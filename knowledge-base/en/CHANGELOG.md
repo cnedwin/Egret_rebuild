@@ -4,6 +4,9 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Spine: atlas pages stored premultiplied are admitted — 2026-11-16
+
+An atlas page declared `pma: true`, which is how Spine's texture packer exports by default, was refused with `SPINE_PAGE_ALPHA_PROFILE_FAILED`. The loader now makes a straight copy of such a page and draws from it: each of red, green and blue is divided by alpha and rounded, and a pixel of alpha 0 becomes transparent black. The copy is charged to the setup at four bytes a pixel, shared by the groups that share the setup, and released with it. `info.pages[i].sourcePremultiplied` is now a boolean that says which pages were copied; it was always `false`. Light that a premultiplied page adds where its alpha is zero is not kept, and the rule has first-party tests only, with no reference from an Editor export.
 ## Installable release archives — 2026-11-16
 
 `node tools/pack-release.mjs --version <version> --out <directory>` packs one archive for each of the five packages. An archive has the version given, is not private, carries the licence and notice, and names the other packages of the workspace by the address of their archives in the same release, so `npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<version>/egret-engine-<version>.tgz` installs the engine and what it needs. The packages in the repository stay private at 0.0.0, and nothing is published to npm. Pushing a tag `v<version>` runs the `Release archives` workflow, which builds, packs, installs the archives into a clean project, imports them and attaches them to a GitHub release. `tools/verify-release.mjs` is that install check. The archives of 0.1.0-preview.1 were installed and imported on Linux with npm; the workflow itself has not run.

@@ -24,7 +24,8 @@ export interface SpinePageInfo {
   readonly imageId: string;
   readonly width: number;
   readonly height: number;
-  readonly sourcePremultiplied: false;
+  /** Whether the atlas declares the page's image premultiplied (`pma: true`); it is then drawn from a straight copy. */
+  readonly sourcePremultiplied: boolean;
 }
 export interface SpineAssetInfo {
   readonly coreVersion: '4.3.13';
