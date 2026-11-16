@@ -4,6 +4,9 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 组合动画场景各部分的开销 — 2026-11-16
+
+`examples/animation-outfits/measure.mjs` 把含 20 个 Spine 实例和 200 个序列控制器的场景打开两次，每次之后对 240 步计时，分别报告动画、采集、渲染和等待完成；场景模块为此新增了 `measure` 函数。在 RTX 5090 Laptop 的 WebGPU 上，一步在 p95 下是动画 1.3 ms、采集 0.5 ms、渲染 2.1 ms，4.8 ms 内完成。由处理器绘制的 WebGL2 的结果一并记录，但不能说明显卡上的情况。这些都是单次运行，不是预算验收；显卡上的 WebGL2 没有运行，因为在隐藏的面板里 Host 等待 GPU 时超时了。
 ## 可安装的发行归档 — 2026-11-16
 
 `node tools/pack-release.mjs --version <版本> --out <目录>` 为五个包各打一个归档。归档带有给定的版本，不是私有包，附带许可证和声明，并用同一发行版中各归档的地址来指明工作区里的其他包，所以 `npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<版本>/egret-engine-<版本>.tgz` 就能装上引擎及其所需。仓库里的包仍是私有的 0.0.0，不向 npm 发布任何内容。推送标签 `v<版本>` 会运行 `Release archives` 工作流：构建、打包、把归档装进干净工程并导入，再附到 GitHub release 上。`tools/verify-release.mjs` 就是这项安装检查。0.1.0-preview.1 的归档已在 Linux 上用 npm 安装并导入；工作流本身还没有运行过。
