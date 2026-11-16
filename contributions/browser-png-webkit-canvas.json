@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/browser-png-lifecycle.test.mjs",
+      "originRole": "First-party browser PNG lifecycle tests, including metadata refusals and transient retirement. Original authorship is recorded in repository history. Independently extended with AI assistance, Apache-2.0."
+    }
+  ],
+  "documents": []
+}

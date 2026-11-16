@@ -4,6 +4,12 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Browser PNG loading on WebKit — 2026-11-16
+
+The browser PNG provider accepts omitted alpha and color-space metadata on its own fresh canvas and uses the canvas and readback defaults. Custom ports still report both context attributes and the readback color space. This applies to textures loaded by `createBrowserGame` and to manifest textures.
+
+On Windows, Playwright WebKit 26.5 reproduced `ASSET_LOAD_FAILED ← WEB_PNG_SURFACE_INVALID`. The fix passed exact fixture pixel checks for direct RGB and RGBA loads, the digest-checked manifest load, and `game.loadTexture()` on WebGL2. Edge 157.0.4341.46 passed the same checks before and after. Physical iPhone Safari and iOS WebGPU remain unverified. [Provider contract](docs/browser-png-contract.md) · [Lantern Shadows report](https://github.com/cnedwin/PortedGamesEgret/pull/38)
+
 ## Spine: atlas pages stored premultiplied are admitted — 2026-11-16
 
 An atlas page declared `pma: true`, which is how Spine's texture packer exports by default, was refused with `SPINE_PAGE_ALPHA_PROFILE_FAILED`. The loader now makes a straight copy of such a page and draws from it: each of red, green and blue is divided by alpha and rounded, and a pixel of alpha 0 becomes transparent black. The copy is charged to the setup at four bytes a pixel, shared by the groups that share the setup, and released with it. `info.pages[i].sourcePremultiplied` is now a boolean that says which pages were copied; it was always `false`. Light that a premultiplied page adds where its alpha is zero is not kept, and the rule has first-party tests only, with no reference from an Editor export.

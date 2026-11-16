@@ -193,6 +193,44 @@ control('BIP05 createCanvas closing callback transfers a safe fresh surface only
   assert.equal(fixture.bitmaps.at(-1).closed, 1);
   assert.equal(fixture.events.filter(item => item === 'context.draw').length, draws);
 });
+for (const [name, reported] of [
+  ['unreported alpha', { colorSpace: 'srgb' }],
+  ['unreported color space', { alpha: true }],
+  ['opaque backing', { alpha: false, colorSpace: 'srgb' }],
+  ['non-sRGB backing', { alpha: true, colorSpace: 'display-p3' }]
+]) {
+  control('BIP05 supplied ports reject ' + name + ' and retire transients', async (provider, fixture) => {
+    let canvas;
+    fixture.controls.createCanvas = () => {
+      canvas = fixture.makeCanvas();
+      canvas.context.getContextAttributes = () => reported;
+      return canvas;
+    };
+    await rejection(provider.load(fixture.ref, fixture.context), code('SURFACE_INVALID'), { cleanupErrors: [] });
+    assert.equal(fixture.bitmaps.at(-1).closed, 1);
+    assert.deepEqual(canvas.resets, ['width', 'height']);
+  });
+}
+
+for (const [name, reported] of [
+  ['unreported readback color space', {}],
+  ['non-sRGB readback', { colorSpace: 'display-p3' }]
+]) {
+  control('BIP05 supplied ports reject ' + name + ' and retire transients', async (provider, fixture) => {
+    let canvas;
+    fixture.controls.createCanvas = () => {
+      canvas = fixture.makeCanvas();
+      canvas.context.getImageData = () => ({
+        width: fixture.width, height: fixture.height, data: fixture.pixels, ...reported
+      });
+      return canvas;
+    };
+    await rejection(provider.load(fixture.ref, fixture.context), code('READBACK_INVALID'), { cleanupErrors: [] });
+    assert.equal(fixture.bitmaps.at(-1).closed, 1);
+    assert.deepEqual(canvas.resets, ['width', 'height']);
+  });
+}
+
 control('BIP05 readback rejects nonclamped bytes and still retires both transients', async (provider, fixture) => {
   let canvas;
   fixture.controls.createCanvas = () => {
