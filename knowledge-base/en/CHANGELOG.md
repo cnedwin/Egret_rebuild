@@ -4,6 +4,9 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Spine: atlas pages stored premultiplied are admitted — 2026-11-16
+
+An atlas page declared `pma: true`, which is how Spine's texture packer exports by default, was refused with `SPINE_PAGE_ALPHA_PROFILE_FAILED`. The loader now makes a straight copy of such a page and draws from it: each of red, green and blue is divided by alpha and rounded, and a pixel of alpha 0 becomes transparent black. The copy is charged to the setup at four bytes a pixel, shared by the groups that share the setup, and released with it. `info.pages[i].sourcePremultiplied` is now a boolean that says which pages were copied; it was always `false`. Light that a premultiplied page adds where its alpha is zero is not kept, and the rule has first-party tests only, with no reference from an Editor export.
 ## What the combined animation scene costs, part by part — 2026-11-16
 
 `examples/animation-outfits/measure.mjs` opens the scene of 20 Spine instances and 200 sequence controllers twice and times 240 steps after each, reporting animation, capture, render and settling separately; the scene's module has a `measure` function for it. On an RTX 5090 Laptop with WebGPU, one step was 1.3 ms of animation, 0.5 ms of capture and 2.1 ms of render at p95, and settled in 4.8 ms. WebGL2 drawn on a processor is recorded beside it and says nothing about a graphics card. These are single runs and not a budget acceptance; WebGL2 on the graphics card was not run, because in a hidden pane the Host's wait for the GPU timed out.
