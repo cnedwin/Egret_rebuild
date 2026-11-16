@@ -4,6 +4,9 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## What the combined animation scene costs, part by part — 2026-11-16
+
+`examples/animation-outfits/measure.mjs` opens the scene of 20 Spine instances and 200 sequence controllers twice and times 240 steps after each, reporting animation, capture, render and settling separately; the scene's module has a `measure` function for it. On an RTX 5090 Laptop with WebGPU, one step was 1.3 ms of animation, 0.5 ms of capture and 2.1 ms of render at p95, and settled in 4.8 ms. WebGL2 drawn on a processor is recorded beside it and says nothing about a graphics card. These are single runs and not a budget acceptance; WebGL2 on the graphics card was not run, because in a hidden pane the Host's wait for the GPU timed out.
 ## Installable release archives — 2026-11-16
 
 `node tools/pack-release.mjs --version <version> --out <directory>` packs one archive for each of the five packages. An archive has the version given, is not private, carries the licence and notice, and names the other packages of the workspace by the address of their archives in the same release, so `npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<version>/egret-engine-<version>.tgz` installs the engine and what it needs. The packages in the repository stay private at 0.0.0, and nothing is published to npm. Pushing a tag `v<version>` runs the `Release archives` workflow, which builds, packs, installs the archives into a clean project, imports them and attaches them to a GitHub release. `tools/verify-release.mjs` is that install check. The archives of 0.1.0-preview.1 were installed and imported on Linux with npm; the workflow itself has not run.
