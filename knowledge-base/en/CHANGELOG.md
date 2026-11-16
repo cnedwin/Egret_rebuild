@@ -8,7 +8,9 @@ Version labels below identify engineering checkpoints; workspace packages remain
 
 The browser PNG provider accepts omitted alpha and color-space metadata on its own fresh canvas and uses the canvas and readback defaults. Custom ports still report both context attributes and the readback color space. This applies to textures loaded by `createBrowserGame` and to manifest textures.
 
-On Windows, Playwright WebKit 26.5 reproduced `ASSET_LOAD_FAILED ← WEB_PNG_SURFACE_INVALID`. The fix passed exact fixture pixel checks for direct RGB and RGBA loads, the digest-checked manifest load, and `game.loadTexture()` on WebGL2. Edge 157.0.4341.46 passed the same checks before and after. Physical iPhone Safari and iOS WebGPU remain unverified. [Provider contract](docs/browser-png-contract.md) · [Lantern Shadows report](https://github.com/cnedwin/PortedGamesEgret/pull/38)
+On Windows, Playwright WebKit 26.5 reproduced `ASSET_LOAD_FAILED ← WEB_PNG_SURFACE_INVALID`. The fix passed exact fixture pixel checks for direct RGB and RGBA loads, the digest-checked manifest load, and `game.loadTexture()` on WebGL2. Edge 157.0.4341.46 passed the same checks before and after.
+
+On an iPhone 16 Pro Max with iOS and Safari 27.2, the original Lantern Shadows build reproduced the same error. With the merged engine, the same game source and assets reached gameplay on WebGL2 and WebGPU. The standalone harness exercised both backends and passed exact RGB/RGBA sample pixels, same-URL texture sharing, digest-checked manifest loading and disposal. [Provider contract](docs/browser-png-contract.md) · [Lantern Shadows report](https://github.com/cnedwin/PortedGamesEgret/pull/38) · [Engine fix](https://github.com/cnedwin/Egret_rebuild/pull/341)
 
 ## Spine: atlas pages stored premultiplied are admitted — 2026-11-16
 
