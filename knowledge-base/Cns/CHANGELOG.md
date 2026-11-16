@@ -4,6 +4,12 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## WebKit 浏览器加载 PNG — 2026-11-16
+
+默认 PNG 提供器在自建画布省略透明度或色彩空间元数据时，采用画布和像素回读的默认值。自定义端口仍须报告两个上下文属性和回读颜色空间。这一修改覆盖 `createBrowserGame` 加载的纹理和清单纹理。
+
+Windows 上的 Playwright WebKit 26.5 复现了 `ASSET_LOAD_FAILED ← WEB_PNG_SURFACE_INVALID`。修复后，RGB 和 RGBA 直读、带摘要校验的清单加载，以及 WebGL2 上的 `game.loadTexture()` 均通过固定样本的逐像素核对。Edge 157.0.4341.46 修复前后都通过同样的检查。实体 iPhone Safari 和 iOS WebGPU 尚待验证。[提供器契约](docs/浏览器PNG纹理Provider契约.md) · [《灯影·闹天宫》故障记录](https://github.com/cnedwin/PortedGamesEgret/pull/38)
+
 ## Spine：接入以预乘方式存储的图集页面 — 2026-11-16
 
 图集页面声明 `pma: true`（Spine 纹理打包器的默认导出方式）时，以前会被 `SPINE_PAGE_ALPHA_PROFILE_FAILED` 拒绝。现在加载器为这样的页面制作一份非预乘副本并从副本绘制：红、绿、蓝各除以透明度并四舍五入，透明度为 0 的像素变为透明黑。副本按每像素四字节计入该设置的费用，由共享该设置的各组共用，并随设置一起释放。`info.pages[i].sourcePremultiplied` 现在是布尔值，标明哪些页面做了副本；此前它恒为 `false`。预乘页面在透明度为零处叠加的光不会保留；这条规则目前只有自有测试，没有来自 Editor 导出的参考。
