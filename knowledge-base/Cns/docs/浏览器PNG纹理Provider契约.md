@@ -118,4 +118,10 @@ Manager invalidate 仅移除未来路由，旧 waiter/lease 可以在旧 entry �
 | BIP07 | 真公开 SpriteSheet/Bitmap/clip/clock 合成，默认真实浏览器 RGB／RGBA opaque+transparent-black decode，Canvas/WebGPU pixels 与保存 image/frame 生命周期；执行前固定 counts/tolerances。 |
 | BIP08 | 无 suppression 严格 types、baseline-first policy controls、独立 native/source/actual review、中英来源／含义及完整 prepush／hook／交付。 |
 
-显式 ports 的 CPU 结果验证适配器行为。原生 codec／渲染接受须使用默认真实浏览器路径、第一方原始 PNG 和独立的 RGBA 字面预期；该运行仍待完成。手机、小游戏、Native SDK、实体 GPU、耗电与性能覆盖未验证。这个独立实现的 Egret 适配器不增加运行时依赖。完整 PNG／alpha／3D material、完整 Spine R020/V020 及迁移 R008/V006 保持 OPEN。相关既有契约：[资源](资源核心合同.md)、[命名图集](命名图集契约.md)及[时钟驱动序列动画](时钟驱动序列动画契约.md)。
+显式端口的 CPU 结果验证适配器行为。完整 BIP07 仍需覆盖组合、画面像素和生命周期矩阵。小游戏、Native SDK、更广泛的手机覆盖、耗电及性能仍待验收。此适配器不增加运行时依赖。完整 PNG、透明度和 3D 材质、完整 Spine R020/V020 及迁移 R008/V006 保持开放。相关契约包括[资源](资源核心合同.md)、[命名图集](命名图集契约.md)和[时钟驱动序列动画](时钟驱动序列动画契约.md)。
+
+## 8. #341 的实体 iPhone 复验
+
+在 iPhone 16 Pro Max（iOS 27.2，Safari 27.2）前台运行《灯影·闹天宫》。游戏固定在 `a32c0a1c`，先用原引擎，再换用合并提交 `57ff83fd` 构建的引擎。两组共用游戏源码、资源和可信 HTTPS 来源。原引擎的 WebGL2 启动报出 `ASSET_LOAD_FAILED ← WEB_PNG_SURFACE_INVALID`。修复版分别报告实际使用的 WebGL2 和 WebGPU，均可「开锣」并进入游戏。受测构建通过 Safari 检查器的本地响应覆盖提供，线上发布保持原样。 [游戏源码](https://github.com/cnedwin/PortedGamesEgret/commit/a32c0a1cbebd339ef8e0342a76f21b84a77dc195) · [受测引擎](https://github.com/cnedwin/Egret_rebuild/commit/57ff83fd31cbaf96d7257f3725d688a082ba1b74)
+
+最小用例通过 `createBrowserGame` 分别强制两个后端，使用原生解码器。两端均通过两个 2 × 1 RGB 和 RGBA 纹理的解码像素检查、同地址纹理共享、清单条目 `e_a0`（32 × 32）的摘要校验和加载，以及释放检查。本次覆盖选定样本及其解码纹理像素。GPU 帧缓冲像素一致性、其他设备、iOS 版本和 PNG 格式仍需另行验证。

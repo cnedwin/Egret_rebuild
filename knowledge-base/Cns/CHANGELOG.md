@@ -8,7 +8,9 @@
 
 默认 PNG 提供器在自建画布省略透明度或色彩空间元数据时，采用画布和像素回读的默认值。自定义端口仍须报告两个上下文属性和回读颜色空间。这一修改覆盖 `createBrowserGame` 加载的纹理和清单纹理。
 
-Windows 上的 Playwright WebKit 26.5 复现了 `ASSET_LOAD_FAILED ← WEB_PNG_SURFACE_INVALID`。修复后，RGB 和 RGBA 直读、带摘要校验的清单加载，以及 WebGL2 上的 `game.loadTexture()` 均通过固定样本的逐像素核对。Edge 157.0.4341.46 修复前后都通过同样的检查。实体 iPhone Safari 和 iOS WebGPU 尚待验证。[提供器契约](docs/浏览器PNG纹理Provider契约.md) · [《灯影·闹天宫》故障记录](https://github.com/cnedwin/PortedGamesEgret/pull/38)
+Windows 上的 Playwright WebKit 26.5 复现了 `ASSET_LOAD_FAILED ← WEB_PNG_SURFACE_INVALID`。修复后，RGB 和 RGBA 直读、带摘要校验的清单加载，以及 WebGL2 上的 `game.loadTexture()` 均通过固定样本的逐像素核对。Edge 157.0.4341.46 修复前后都通过同样的检查。
+
+iPhone 16 Pro Max（iOS 和 Safari 27.2）上的《灯影·闹天宫》原版复现了同一报错。换用已合并的引擎后，同一份游戏源码和资源在 WebGL2 和 WebGPU 上都能进入游戏。两个后端的最小用例也通过了 RGB／RGBA 样本像素、同地址纹理共享、带摘要校验的清单加载和释放检查。 [提供器契约](docs/浏览器PNG纹理Provider契约.md) · [《灯影·闹天宫》故障记录](https://github.com/cnedwin/PortedGamesEgret/pull/38) · [引擎修复](https://github.com/cnedwin/Egret_rebuild/pull/341)
 
 ## Spine：接入以预乘方式存储的图集页面 — 2026-11-16
 
