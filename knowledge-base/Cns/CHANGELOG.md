@@ -6,7 +6,7 @@
 
 ## World3D WebGL2 程序预准备 — 2026-11-17
 
-`preparePrograms` 可在加载期链接选定材质的场景颜色和阴影程序。在支持扩展的 WebGL2 设备上先轮询完成，再读取链接状态和 uniform。Windows RTX 5090 Laptop GPU 同机对照把首次透明材质链接移出交互，帧回调间隔从 179.2 ms 降到 4.1 ms。 [World3D 契约与证据](docs/world3d.md#webgl2-程序预准备)
+`preparePrograms` 可在加载期链接选定材质的场景颜色和阴影程序。在支持扩展的 WebGL2 设备上先轮询完成，再读取链接状态和 uniform。Windows RTX 5090 Laptop GPU 同机对照把首次透明材质链接移出交互，帧回调间隔从 179.2 ms 降到 4.1 ms。 新建 `CustomShader3D` 特效复用了准备好的程序，零新链接，RGBA8 像素一致。提前准备耗时 79.4 ms，首次显示帧回调间隔由 87.4 ms 降至 4.2 ms。 [World3D 契约与证据](docs/world3d.md#webgl2-程序预准备)
 
 ## WebKit 浏览器加载 PNG — 2026-11-16
 

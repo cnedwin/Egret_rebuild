@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 40 entries, 1131 exports; 707 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 40 entries, 1132 exports; 707 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -740,6 +740,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `TextureLoadOptions3D` | interface | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
 | `ToneMapping3D` | type |  |
 | `TransformControls3D` | class |  |
+| `WebGL2ProgramVariant3D` | interface | One material program for an expected draw. |
 | `WebGL2Renderer3D` | class |  |
 | `WebGL2Renderer3DOptions` | interface |  |
 | `World3DAssetOptions` | interface |  |

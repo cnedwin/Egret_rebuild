@@ -6,7 +6,7 @@ Version labels below identify engineering checkpoints; workspace packages remain
 
 ## Prepare World3D WebGL2 program variants — 2026-11-17
 
-`preparePrograms` links selected material variants, including the scene color and shadow programs, during loading. It polls supported WebGL2 devices for completion before querying link status and uniforms. A Windows RTX 5090 Laptop GPU comparison moved the first transparent-material link out of the interaction, reducing that callback interval from 179.2 ms to 4.1 ms. [World3D contract and evidence](docs/world3d.md#webgl2-program-preparation)
+`preparePrograms` links selected material variants, including the scene color and shadow programs, during loading. It polls supported WebGL2 devices for completion before querying link status and uniforms. A Windows RTX 5090 Laptop GPU comparison moved the first transparent-material link out of the interaction, reducing that callback interval from 179.2 ms to 4.1 ms.  A separately created `CustomShader3D` effect reused its prepared program with zero new links and identical RGBA8 pixels. Its first visible frame interval fell from 87.4 ms to 4.2 ms after 79.4 ms of preparation. [World3D contract and evidence](docs/world3d.md#webgl2-program-preparation)
 
 ## Browser PNG loading on WebKit — 2026-11-16
 

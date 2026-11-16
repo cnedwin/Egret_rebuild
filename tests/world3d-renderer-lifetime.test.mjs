@@ -8,6 +8,7 @@ import {
   Scene3D,
   World3DError,
   createBoxGeometry3D,
+  createCustomShader3D,
   createDirectionalLight3D,
   createPerspectiveCamera3D,
   createStandardMaterial3D
@@ -334,6 +335,49 @@ test('World3D program preparation covers color and shadow variants without KHR',
   } finally {
     target.dispose();
     f.dispose();
+  }
+});
+
+test('World3D program preparation reuses a custom shader across different materials', async () => {
+  const f = shaderPreparationFixture({ parallel: false });
+  const geometry = createBoxGeometry3D({});
+  const material = createStandardMaterial3D({ alphaMode: 'blend', opacity: 0.22 });
+  try {
+    const source = {
+      key: 'program-preparation-custom',
+      glsl: 'vec4 customFragment(vec4 c, vec3 p, vec3 n, vec2 uv) { return c * uCustom[0]; }'
+    };
+    f.material.shader = createCustomShader3D({ ...source, uniforms: [1, 1, 1, 1] });
+    material.shader = createCustomShader3D({ ...source, uniforms: [0.25, 0.5, 0.75, 0.5] });
+    f.gl.getActiveUniform = program => ({
+      name: f.programDefines(program).has('CUSTOM_FRAGMENT') ? 'uCustom[0]' : 'uMap'
+    });
+    const uploads = [];
+    f.gl.uniform4fv = (_location, values) => {
+      uploads.push({ program: f.gl.getParameter(f.gl.CURRENT_PROGRAM), values: [...values] });
+    };
+    const request = { mesh: f.mesh, material: f.material };
+    await f.renderer.preparePrograms([request, { ...request, pass: 'shadow' }]);
+    const [color, shadow] = f.linked;
+    assert.equal(f.linked.length, 2);
+    assert.ok(f.programDefines(color).has('CUSTOM_FRAGMENT'));
+    assert.ok(f.programDefines(shadow).has('DEPTH_ONLY'));
+    assert.ok(!f.programDefines(shadow).has('CUSTOM_FRAGMENT'));
+    assert.deepEqual(uploads, []);
+
+    const scene = new Scene3D();
+    scene.addChild(new Mesh3D(geometry, material));
+    const camera = createPerspectiveCamera3D({ fov: 60, aspect: 1, near: 0.1, far: 20 });
+    camera.setPosition(0, 0, 5).lookAt(0, 0, 0);
+    assert.equal(f.renderer.render(scene, camera), true);
+    assert.equal(f.draws, 1);
+    assert.equal(f.linked.length, 2);
+    assert.deepEqual(f.checked, [color, shadow]);
+    assert.deepEqual(uploads, [{ program: color, values: [...material.shader.uniforms] }]);
+  } finally {
+    f.dispose();
+    geometry.dispose();
+    material.dispose();
   }
 });
 
