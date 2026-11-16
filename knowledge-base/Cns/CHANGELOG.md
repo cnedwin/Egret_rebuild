@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 可安装的发行归档 — 2026-11-16
+
+`node tools/pack-release.mjs --version <版本> --out <目录>` 为五个包各打一个归档。归档带有给定的版本，不是私有包，附带许可证和声明，并用同一发行版中各归档的地址来指明工作区里的其他包，所以 `npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<版本>/egret-engine-<版本>.tgz` 就能装上引擎及其所需。仓库里的包仍是私有的 0.0.0，不向 npm 发布任何内容。推送标签 `v<版本>` 会运行 `Release archives` 工作流：构建、打包、把归档装进干净工程并导入，再附到 GitHub release 上。`tools/verify-release.mjs` 就是这项安装检查。0.1.0-preview.1 的归档已在 Linux 上用 npm 安装并导入；工作流本身还没有运行过。
+
 ## 可读性整改后的 Windows 证据 — 2026-11-15
 
 Windows 核查记录产品身份表、20 项历史重放工具和 67 份保存的证据文件。原始回执保留历史适用范围，当前验收依据单独标记源码身份的检查和浏览器实测。

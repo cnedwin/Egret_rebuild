@@ -1,0 +1,43 @@
+name: Release archives
+# Pushing a tag v<version> builds the packages, packs one installable archive for each, installs them into a clean
+# project to see that they load, and attaches them to a GitHub release of that tag. Nothing is sent to npm.
+# 推送标签 v<版本> 会构建各包、为每个包打出一个可安装的归档、装进干净工程确认能加载，并把它们附到该标签的
+# GitHub release 上。不会向 npm 发布任何内容。
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  release:
+    name: Pack, check and attach the archives
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - run: npm install --global pnpm@11.25.0 --ignore-scripts
+      - run: node tools/setup-dev.mjs
+      - name: Pack the archives
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node tools/pack-release.mjs --version "${TAG#v}" --out "$RUNNER_TEMP/release"
+      - name: Install them into a clean project
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node tools/verify-release.mjs --archives "$RUNNER_TEMP/release" --version "${TAG#v}"
+      - name: Attach them to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          case "$TAG" in *-*) kind=--prerelease ;; *) kind=--latest ;; esac
+          gh release create "$TAG" "$RUNNER_TEMP"/release/*.tgz "$RUNNER_TEMP/release/release.json" \
+            --repo "$GITHUB_REPOSITORY" --verify-tag $kind --title "$TAG" \
+            --notes "Install the engine: \`npm install https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/egret-engine-${TAG#v}.tgz\`. The archives were packed by tools/pack-release.mjs from this tag and installed into a clean project before they were attached. See knowledge-base/en/docs/release-archives.md."
