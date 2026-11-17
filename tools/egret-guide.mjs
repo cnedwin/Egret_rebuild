@@ -139,7 +139,7 @@ export function loadCards(guide = GUIDE) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1))) {
       const file = path.join(dir, entry.name);
       if (entry.isDirectory()) walk(file);
-      else if (entry.name.endsWith('.md')) {
+      else if (entry.name.endsWith('.txt')) {
         const relative = path.relative(guide, file).split(path.sep).join('/');
         cards.push(parseCard(fs.readFileSync(file, 'utf8'), relative));
       }
@@ -150,7 +150,7 @@ export function loadCards(guide = GUIDE) {
 }
 
 export function readIndex(guide = GUIDE) {
-  return fs.readFileSync(path.join(guide, 'index.md'), 'utf8');
+  return fs.readFileSync(path.join(guide, 'index.txt'), 'utf8');
 }
 
 const STOP = new Set(

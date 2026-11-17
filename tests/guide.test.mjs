@@ -235,7 +235,7 @@ test('GD06 every card has its front matter: id, title, applies, triggers and evi
     assert.match(card.id, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     assert.ok(!ids.has(card.id), card.id + ' twice');
     ids.add(card.id);
-    assert.equal(path.basename(card.file, '.md'), card.id);
+    assert.equal(path.basename(card.file, '.txt'), card.id);
     assert.ok(typeof card.title === 'string' && card.title.length > 10, card.id);
     assert.ok(card.body.startsWith('# ' + card.title + '\n'), card.id + ': the body starts with the title');
     assert.ok(card.applies.length > 0 && card.applies.every(item => APPLIES.includes(item)), card.id);
@@ -335,7 +335,7 @@ test('GD10 the full file holds the index and every card, and is a build output',
 // Break caught: llms.txt losing its way to the guide.
 test('GD11 llms.txt points to the index and the command line', () => {
   const page = read('llms.txt');
-  assert.ok(page.includes('](guide/index.md)'));
+  assert.ok(page.includes('](guide/index.txt)'));
   assert.ok(page.includes('node tools/egret-guide.mjs'));
 });
 

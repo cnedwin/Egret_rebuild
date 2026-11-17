@@ -512,4 +512,4 @@ export default async function (player) {
 
 ## Find more
 
-For a larger game, ask the [guide](guide/index.md) instead of reading more pages: it holds small cards, each learnt from games built on the engine. In a checkout, `node tools/egret-guide.mjs <words, an engine name, an error code or a devtools hint id>` prints the two or three cards that answer, and `--card <id>` prints one.
+For a larger game, ask the [guide](guide/index.txt) instead of reading more pages: it holds small cards, each learnt from games built on the engine. In a checkout, `node tools/egret-guide.mjs <words, an engine name, an error code or a devtools hint id>` prints the two or three cards that answer, and `--card <id>` prints one.

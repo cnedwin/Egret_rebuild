@@ -1,0 +1,51 @@
+# Egret guide: cards on demand
+
+Small cards for coding agents that write games with Egret. Each card is one topic, under about 800 tokens, with the rule, a short example and the measured reason or the game it was learnt from. Read only the cards a task needs.
+
+- Ask: `node tools/egret-guide.mjs <words | API name | ERROR_CODE | hint-id>` prints the best two or three cards within `--budget` tokens (2,500 by default).
+- One card: `node tools/egret-guide.mjs --card <id>`. This list: `--list`.
+- Every card in one file, for tools that want one: `node tools/egret-guide.mjs --full --out <file>`.
+
+`applies` says which way of using the engine a card is for: `play`, `play3d`, `engine` (the core and feature entries), `world3d`, `web` (a page made by hand). A card marked stale was learnt at an older engine pin; its card says what changed.
+
+## Structure
+
+- [sim-view-split](cards/structure/sim-view-split.txt) · engine world3d web · Rules apart from the picture, seeded Node tests and whole runs without a page.
+
+## Entries
+
+- [choose-entry](cards/entries/choose-entry.txt) · play play3d engine world3d web · Which call and entry to start from, and how to pick WebGL2 or WebGPU.
+- [vendor-engine](cards/entries/vendor-engine.txt) · engine world3d web · Copying a pinned engine build into a game folder, and refreshing it.
+
+## Performance
+
+- [frame-budget](cards/perf/frame-budget.txt) · engine web world3d · Measuring a frame with @egret/devtools and reading its hints.
+- [frame-loop-backpressure](cards/perf/frame-loop-backpressure.txt) · engine web · Let the engine's loop pace drawing; backpressure, skipped frames and lost devices.
+- [world3d-draw-cost](cards/perf/world3d-draw-cost.txt) · world3d play3d · What to cut first when a 3D frame is GPU bound, with measured savings.
+- [prepare-programs](cards/perf/prepare-programs.txt) · world3d play3d · First-use shader stalls and preparing programs during loading.
+
+## Input and screen
+
+- [touch-controls](cards/input/touch-controls.txt) · engine web world3d play play3d · Touch controls that keep one finger per control.
+- [mobile-viewport](cards/input/mobile-viewport.txt) · web world3d play play3d · Viewport, safe areas, pixel ratio and quality on phones.
+
+## World3D
+
+- [world3d-lights-shadows](cards/world3d/world3d-lights-shadows.txt) · world3d play3d · Light limits, tiled lights, shadow atlas and cascades. (stale lesson flagged)
+
+## Audio
+
+- [synthesized-audio](cards/audio/synthesized-audio.txt) · play play3d engine web · Sounds made in code, played through the mixer with cues and a limiter.
+
+## Assets
+
+- [asset-loading](cards/assets/asset-loading.txt) · world3d play3d engine web · Loading models with progress, a deadline, retry and quality variants.
+
+## Verification and errors
+
+- [verify-end-to-end](cards/verify/verify-end-to-end.txt) · play play3d engine world3d web · From rule tests to device runs, and how to record what was checked.
+- [read-engine-errors](cards/errors/read-engine-errors.txt) · play play3d engine world3d web · Reading an engine error by its code, cause and ending.
+
+## How cards are made
+
+Cards come from games built on the engine and from its documents. `tools/harvest-games.mjs` reads a games repository and proposes missing or stale cards; `tests/guide.test.mjs` checks every card's names, codes, size, evidence and retrieval. See [the agent guide loop](../knowledge-base/en/docs/agent-guide.md).
