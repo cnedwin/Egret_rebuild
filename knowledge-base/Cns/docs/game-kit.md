@@ -4,7 +4,7 @@
 
 大多数游戏在规则之外都需要同样几样小东西：按动作而不是按键读取输入、新版本也能读的存档、可以复现的随机数、听起来不机械的音效，以及触屏上的控件。`@egret/engine/kit` 提供不需要页面的部分，`@egret/engine/web/kit` 从页面为它们提供输入。
 
-**验证了什么、没验证什么。** 两部分都在 Node 中验证，浏览器部分用替身事件目标、手柄和存储。在无头 Chromium 中：通过自动化协议按下的按键驱动了一个按钮和长度为 1 的斜向向量，页面没有滚动；用 `encodeWav` 合成的一声点击由 Web Audio 解码，经音效提示和限幅器在离线输出中播放，峰值 0.26；资源包按字节范围读回；存档写入了页面存储。没有在手机、Safari 和实体手柄上运行。
+**验证了什么、没验证什么。** 两部分都在 Node 中验证，浏览器部分用替身事件目标、手柄和存储。在无头 Chromium 中：通过自动化协议按下的按键驱动了一个按钮和长度为 1 的斜向向量，页面没有滚动；用 `encodeWav` 合成的一声点击由 Web Audio 解码，经音效提示和限幅器在离线输出中播放，峰值 0.26；资源包按字节范围读回；存档写入了页面存储。另一次运行中，8 MB 的存档写入 IndexedDB，重新打开后读回；读过一次的资源包条目在网络被拒绝时从 Cache API 再次读出。没有在手机、Safari 和实体手柄上运行。
 
 ## 按动作读取输入
 
@@ -122,6 +122,40 @@ const files = await bundle.read(wanted);
 
 文件由 12 字节的文件头、记录名称、偏移、大小、类型、标签和校验值的 JSON 索引，以及依次排列的各条目组成，每个条目从 4 字节的整数倍处开始。打开时先请求前 64 KB，索引更长时再请求一次。`read` 取回指定条目，相距不到 64 KB 的条目合并为一次请求，并逐个按索引校验。`bundle.ranged` 说明服务器是否响应了范围请求，`bundle.transferred` 给出已传输的字节数。游戏手头已有字节时，可用 `readAssetBundleIndex`、`sliceAssetBundle` 和 `planAssetBundleRanges` 做同样的处理。
 
+## 按画质选择模型
+
+```js
+import { pickQualityFiles, pickQualityVariant } from '@egret/engine/kit';
+
+const hero = pickQualityVariant({ low: 'hero-low.glb', high: 'hero-high.glb' }, app.quality);  // medium 取 low
+const wanted = pickQualityFiles(bundle.index.entries.map(e => e.name), app.quality);
+```
+
+`pickQualityVariant` 取所要的档位；没有时取下面最近的一档，再没有时取上面最近的一档。`pickQualityFiles` 把形如 `<名称>-<档位>.<扩展名>` 的名称分组，每组按画质只保留一个，没有档位的名称原样保留；所以带有 `hero-high.glb`、`hero-medium.glb` 和 `hero-low.glb` 的资源包或目录只会加载一个主角。`createWorld3DApp` 的 `app.quality` 就是档位名。
+
+## 不开页面跑整局规则
+
+```js
+import { runHeadless } from '@egret/engine/kit';
+
+const runs = runHeadless({
+  createGame: seed => createGame({ seed }),
+  createPlayer: (game, seed) => createBot(game, { seed }).think,
+  done: game => game.state === 'won' || game.state === 'dead',
+  seeds: 8,
+  summary: game => ({ state: game.state, time: Math.round(game.t), kills: game.stats.kills }),
+});
+console.table(runs.map(run => ({ seed: run.seed, ...run.summary, ms: run.averageMs.toFixed(3) })));
+```
+
+每个种子一局新游戏和一个代打玩家，按 `step` 秒一步（默认 1/60）一直跑到 `done` 或 `maxSeconds`（默认 1,200）。每局报告是否结束、游戏秒数、步数、每步的平均与最慢毫秒数，以及游戏的 `summary`。规则与画面分开，再配合 `vendor/node-register.mjs`，整局游戏就可以在 Node 里测试和调数值。
+
+## 大存档与离线游玩
+
+`openIndexedDBSaveStorage({ database })` 是基于 IndexedDB 的存档存储，用于本地存储放不下的大存档。打开时把所有存档字符串读入内存，所以 `createSaveStore` 用它和用本地存储一样；每次写入立即进内存，随后写入数据库。`flush()` 等待写入完成；数据库拒绝的写入会告诉 `onError`，并在下一次写入时报错。
+
+`openBrowserBundleCache(name)` 用 Cache API 保存资源包的索引和读过的每个条目，传给 `openBrowserAssetBundle(url, { cache })` 即可。条目按资源包地址和校验值保存，所以重新构建的资源包不会读到旧字节。资源包取不到时，已保存的索引仍能打开它，`bundle.offline` 为 true，已保存的条目照常读取。`cache.prune(keep)` 清除其他地址的条目。
+
 ## 把引擎拷贝进游戏
 
 不用包管理器发布的游戏目录，需要带上它加载的那部分引擎。在已构建的引擎仓库中运行：
@@ -156,4 +190,7 @@ node tools/vendor-game.mjs ../MyGame @egret/engine @egret/engine/webgl2/world3d 
 | `ASSET_BUNDLE_CHECK_FAILED` | 条目字节与校验值不符 |
 | `ASSET_BUNDLE_RANGE_INVALID` | 服务器返回的范围与请求不同 |
 | `ASSET_BUNDLE_FETCH_FAILED` | 服务器返回错误；`cause` 中有状态码 |
+| `QUALITY_VARIANT_INVALID`、`QUALITY_VARIANT_MISSING` | 档位不是 low、medium 或 high；一个变体也没有 |
+| `HEADLESS_RUN_INVALID` | 缺少函数，或步长、上限、种子列表不对 |
+| `BROWSER_STORAGE_UNAVAILABLE`、`BROWSER_STORAGE_WRITE_FAILED`、`BROWSER_STORAGE_CLOSED` | 没有 IndexedDB；数据库拒绝了写入；`close` 之后还在写 |
 | `AUDIO_WAV_INVALID` | 声道长度不一、没有采样，或采样率超出范围 |

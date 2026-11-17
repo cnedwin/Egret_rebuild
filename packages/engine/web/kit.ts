@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-/** Browser parts a game builds on: pictures as textures, input from the page and touch controls, browser storage for saves, and asset bundles over HTTP. Importing the entry performs no browser work. */
+/** Browser parts a game builds on: pictures as textures, input from the page and touch controls, browser storage for saves (local storage and IndexedDB), and asset bundles over HTTP with a cache. Importing the entry performs no browser work. */
 export {
   createBrowserImageTextureProvider,
   decodeBrowserImage,
@@ -31,3 +31,5 @@ export type {
 } from './BrowserInputActions.js';
 export { openBrowserAssetBundle } from './BrowserAssetBundle.js';
 export type { BrowserAssetBundle, BrowserAssetBundleOptions } from './BrowserAssetBundle.js';
+export { openBrowserBundleCache, openIndexedDBSaveStorage } from './BrowserStorage.js';
+export type { BundleCache, IndexedDBSaveStorage, IndexedDBSaveStorageOptions } from './BrowserStorage.js';

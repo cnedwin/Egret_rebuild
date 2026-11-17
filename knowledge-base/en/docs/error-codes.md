@@ -288,6 +288,15 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | --- | --- |
 | `BROWSER_STATS_OPTIONS_INVALID` | The options given to the stats panel are not valid: one is missing, of the wrong type or out of range. |
 
+### BROWSER_STORAGE
+
+| Code | Meaning |
+| --- | --- |
+| `BROWSER_STORAGE_CLOSED` | The browser storage was closed and takes nothing more. |
+| `BROWSER_STORAGE_OPTIONS_INVALID` | The options given to the browser storage are not valid: one is missing, of the wrong type or out of range. |
+| `BROWSER_STORAGE_UNAVAILABLE` | The browser storage is not available here. |
+| `BROWSER_STORAGE_WRITE_FAILED` | The write of the browser storage failed. The cause is in cause. |
+
 ### BROWSER_TEXT_EDITOR
 
 | Code | Meaning |
@@ -514,6 +523,12 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `GRAPHICS_BUDGET` | The drawing is more than one sprite holds: a path of 8,192 points, a line of 16,384 dashes, a fill with holes or crossings of 16,384 triangles, 16 meshes, or an image repeated beyond 8,192 of its pixels. What the sprite had drawn before stays. Draw the rest into another sprite. |
 | `GRAPHICS_FILL_REQUIRED` | A shape needs a fill or a line. Call beginFill or lineStyle before drawing it. |
 | `GRAPHICS_VALUE_INVALID` | A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is 0 to 1. |
+
+### HEADLESS_RUN
+
+| Code | Meaning |
+| --- | --- |
+| `HEADLESS_RUN_INVALID` | What was given to a headless run is not valid. |
 
 ### HIT_TEST
 
@@ -778,6 +793,13 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `POINTER_INPUT_SURFACE_BUSY` | The surface of pointer input is still busy with an earlier request. |
 | `POINTER_INPUT_SURFACE_INVALID` | The surface given to pointer input is not valid. |
 | `POINTER_INPUT_VIEWPORT` | The viewport revision given to pointer input is not a whole number above the last one. |
+
+### QUALITY_VARIANT
+
+| Code | Meaning |
+| --- | --- |
+| `QUALITY_VARIANT_INVALID` | What was given to the quality variants is not valid. |
+| `QUALITY_VARIANT_MISSING` | Something the quality variants needs is missing. |
 
 ### RANDOM
 

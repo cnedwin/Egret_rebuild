@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 42 entries, 1246 exports; 766 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 42 entries, 1259 exports; 771 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1324,6 +1324,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `describeInputBinding` | function | A readable name for a binding, for settings screens: `Key:KeyW` is `W`, `Mouse:0` is `Left button`. |
 | `encodeWav` | function | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
 | `hashSeed` | function | Turns a string or number into a 32-bit seed. |
+| `HeadlessGame` | interface | What a headless run needs of a game: its state and one step of its rules. |
+| `HeadlessRunOptions` | interface |  |
+| `HeadlessRunResult` | interface |  |
 | `InputActionDefinition` | interface | An action and the controls that drive it. |
 | `InputActionKind` | type |  |
 | `InputActionMap` | type |  |
@@ -1332,11 +1335,16 @@ For which entry to import from, see [What to import](entry-points.md).
 | `InputBindingSlot` | type | A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... |
 | `InputBindingsSave` | interface |  |
 | `InputVector` | interface |  |
+| `pickQualityFiles` | function | Names of the form `<base>-<tier>.<ext>` grouped by base and chosen for `quality`, as a bundle or a folder lists them: `hero-high.glb`, `hero-low.glb` and `hall.webp` give `hero-low.glb` (for `medium`) and `hall.webp`. |
+| `pickQualityVariant` | function | Of several variants of one asset, the one for `quality`: an exact tier, or else the nearest below, or else the nearest above. |
 | `planAssetBundleRanges` | function | Ranges of the file that hold the named entries, joined where they touch or lie within `gap` bytes. |
+| `QUALITY_TIERS` | value | Quality tiers from lowest to highest, as World3D names them. |
+| `QualityTier` | type |  |
 | `Random` | interface |  |
 | `RandomState` | type | Four 32-bit words. |
 | `readAssetBundleHeader` | function | The index length a header gives, so a reader can ask for exactly the bytes of the index. |
 | `readAssetBundleIndex` | function | The index of a bundle from its first bytes: at least the header and the index. |
+| `runHeadless` | function | Plays the game once per seed with the stand-in player and reports each run. |
 | `SaveProblem` | interface |  |
 | `SaveProblemKind` | type |  |
 | `SaveStorage` | interface | Where a save is kept: strings by key. |
@@ -1363,12 +1371,17 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserInputActions` | interface |  |
 | `BrowserInputActionsOptions` | interface |  |
 | `browserSaveStorage` | function | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
+| `BundleCache` | interface | Where fetched bundle entries are kept between visits; used as `cache` of `openBrowserAssetBundle`. |
 | `createBrowserImageTextureProvider` | function | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
 | `createTouchButton` | function | Makes `element` an on-screen button that holds `binding` (such as `Touch:jump`) while a finger is on it. |
 | `createTouchStick` | function | A stick that appears where a finger lands in its zone of `element` and follows it. |
 | `decodeBrowserImage` | function | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
 | `fitBrowserImageSize` | function | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
+| `IndexedDBSaveStorage` | interface |  |
+| `IndexedDBSaveStorageOptions` | interface |  |
 | `openBrowserAssetBundle` | function | Opens the bundle at `url`, reading its index. |
+| `openBrowserBundleCache` | function | A bundle cache in the Cache API under `name`. |
+| `openIndexedDBSaveStorage` | function | A save storage over IndexedDB. |
 | `sniffBrowserImageFormat` | function | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | function | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
 | `TouchControl` | interface |  |
