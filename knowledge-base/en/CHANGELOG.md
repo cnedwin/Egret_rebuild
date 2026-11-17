@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Draw shapes without sampling their white pixel on WebGL2 — 2026-11-17
+
+A Graphics shape that is not a plain rectangle (a circle, a rounded rectangle, a polygon, a line) is triangles over one white pixel, and the WebGL2 host drew it with the program that samples an image: four fetches and four colour decodes for every pixel, to read 1. It now draws such a shape with the program of a rectangle, which samples nothing. The picture is the same to the byte. On software WebGL2 in headless Chromium, 64 rounded rectangles went from 19 to 60 frames a second, and generated games made of shapes from 7 to 26 and from 11 to 37. A real GPU was not measured, and the WebGPU host is as it was.
+
 ## Play: push-out, buttons, waiting for tweens, restart — 2026-11-17
 
 `@egret/engine/play` gains what twelve generated games still wrote by hand. `game.pushOut(a, b)` says how far to move `a` out of `b`, which is how a character stands on a platform; `game.near` tests circles and `game.hitsAll` gives every hit. `game.tween(...).done` and `game.wait(seconds)` are promises, so steps can follow one another. `game.button`, `game.pointer.over`, `game.toFront` and `game.restart` are new. `rect` and `circle` take a layer, and a text can be made in a sprite, to move with it, with `baseline: 'middle'` to centre it. The guide now says where a sprite's origin is, how sprites are ordered, which sprite gets a tap, that a text takes `\n`, and what a pause stops.

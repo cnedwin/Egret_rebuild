@@ -135,9 +135,19 @@ interface Page {
   readonly source: ImageData2D;
   readonly native: GLNativeOwner;
   readonly generation: number;
+  /** Whether the page is one opaque white pixel, as the page of every shape is: each sample of it is 1. */
+  readonly white: boolean;
   ready: boolean;
   pins: number;
 }
+const whitePixel = (source: ImageData2D, pixels: Uint8Array): boolean =>
+  source.width === 1 &&
+  source.height === 1 &&
+  pixels.length === 4 &&
+  pixels[0] === 255 &&
+  pixels[1] === 255 &&
+  pixels[2] === 255 &&
+  pixels[3] === 255;
 interface LayerSlot {
   ready: LayerRevision | undefined;
   pending: LayerWrite | undefined;
@@ -1695,7 +1705,14 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       if (!pixels) continue;
       const source = record.storage.projectionPlan.views[index]!.image,
         owner = native.create('Texture', source.byteLength, undefined, record);
-      const page: Page = { source, native: owner, generation: record.generation, ready: false, pins: 1 };
+      const page: Page = {
+        source,
+        native: owner,
+        generation: record.generation,
+        white: whitePixel(source, pixels),
+        ready: false,
+        pins: 1
+      };
       record.pages.push(page);
       work.layout.pageTextures.set(index, page);
       native.texture(owner, source.width, source.height, false);
@@ -2004,7 +2021,14 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         if (!pixels) continue;
         const source = p.storage.projectionPlan.views[index]!.image,
           owner = native.create('Texture', source.byteLength, undefined, record);
-        const page: Page = { source, native: owner, generation: this.generation, ready: false, pins: 1 };
+        const page: Page = {
+          source,
+          native: owner,
+          generation: this.generation,
+          white: whitePixel(source, pixels),
+          ready: false,
+          pins: 1
+        };
         record.pages.push(page);
         pageTextures.set(index, page);
         native.texture(owner, source.width, source.height, false);
@@ -2188,11 +2212,29 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       units.length = 0;
       gl.enable(gl.BLEND);
     };
+    // A shape is triangles over one white pixel. Every sample of that pixel is 1, whatever the filter and the
+    // address, when every region of the page is the whole pixel: a draw of it then gives what a draw without a page
+    // gives, so it takes that program and samples nothing. Asked once for a page of a record.
+    const plainPages = new Map<number, boolean>();
+    const plainPage = (index: number): boolean => {
+      let plain = plainPages.get(index);
+      if (plain === undefined) {
+        plain =
+          pageTextures.get(index)!.white &&
+          frame.regions.every(
+            region =>
+              region.pageIndex !== index ||
+              (region.logicalWidth === 1 && region.logicalHeight === 1 && region.trimX === 0 && region.trimY === 0)
+          );
+        plainPages.set(index, plain);
+      }
+      return plain;
+    };
     const drawOne = (range: SharedWebGL2ArenaPlan['sharedRanges'][number]): void => {
       const draw = range.draw,
         page = draw.prepared.pageIndex;
-      const wanted =
-        page === undefined ? this.solidProgram! : draw.pages.length > 1 ? this.pagedProgram! : this.program!;
+      const plain = page === undefined || (draw.pages.length === 1 && plainPage(draw.pages[0]!));
+      const wanted = plain ? this.solidProgram! : draw.pages.length > 1 ? this.pagedProgram! : this.program!;
       if (wanted !== program) {
         gl.useProgram(wanted);
         program = wanted;

@@ -474,6 +474,92 @@ test('GL G03 draws of different regions and opacities of one page are one draw t
     }
   }));
 
+// Break caught: sample the white pixel under a shape, or draw without sampling a white pixel whose region is trimmed
+// or a pixel that is not white.
+test('GL G03 a shape is drawn without sampling its white pixel; a trimmed region or another colour is sampled', async () =>
+  author(async a => {
+    const pixel = bytes => egret.createImageData2D({ width: 1, height: 1, pixels: new Uint8Array(bytes) });
+    const whole = {
+      packed: { x: 0, y: 0, width: 1, height: 1 },
+      logicalWidth: 1,
+      logicalHeight: 1,
+      trimX: 0,
+      trimY: 0
+    };
+    const cases = {
+      // The middle pixel of a logical three by three: the eight around it are transparent.
+      trimmed: [pixel([255, 255, 255, 255]), { ...whole, logicalWidth: 3, logicalHeight: 3, trimX: 1, trimY: 1 }],
+      red: [pixel([255, 0, 0, 255]), whole],
+      clear: [pixel([255, 255, 255, 254]), whole],
+      white: [pixel([255, 255, 255, 255]), whole]
+    };
+    const type = egret.createAssetType('gl-white-pixel', egret.isTexture),
+      textures = [];
+    a.engine.assets.register(type, {
+      async load(ref) {
+        const [page, region] = cases[ref.id];
+        const texture = egret.createTextureView(page, { ...region, quarterTurn: 0 });
+        textures.push(texture);
+        return texture;
+      },
+      dispose(value) {
+        value.dispose();
+      }
+    });
+    const f = glPorts(),
+      h = createSharedWebGL2Host({ canvas: f.canvas });
+    await h.start();
+    const programs = f.events.filter(row => row[0] === 'linkProgram').map(row => row[1]),
+      [sampled, solid] = programs;
+    assert.ok(/texelFetch/.test(sampled.shaders[1].source) && !/texelFetch/.test(solid.shaders[1].source));
+    // The programs of the draws of one frame, without the resolve that ends it.
+    const drawn = async () => {
+      const before = f.events.length;
+      h.renderSharedFrame(a.frame());
+      await h.whenIdle();
+      let current;
+      const used = [];
+      for (const row of f.events.slice(before)) {
+        if (row[0] === 'useProgram') current = row[1];
+        else if (row[0] === 'drawArrays')
+          used.push(current === solid ? 'solid' : current === sampled ? 'sampled' : 'other');
+      }
+      return used.slice(0, -1);
+    };
+    // A circle, a rounded rectangle and a line, beside the fixture's rectangle: no draw of the frame samples.
+    const shape = a.scope.use(new egret.Sprite());
+    shape.graphics.beginFill(0x00ff00).drawCircle(4, 4, 3).endFill();
+    shape.graphics.beginFill(0x0000ff).drawRoundRect(1, 1, 5, 5, 2).endFill();
+    shape.graphics.lineStyle(1, 0xffffff).moveTo(0, 0).lineTo(7, 7);
+    a.engine.stage.addChild(shape);
+    assert.ok(a.frame().commands.some(command => command.kind === 'mesh'));
+    const shapes = await drawn();
+    assert.ok(shapes.length >= 1);
+    assert.ok(
+      shapes.every(program => program === 'solid'),
+      shapes.join()
+    );
+    shape.visible = false;
+    a.sprite.visible = false;
+    // A bitmap of one pixel is drawn without sampling only when that pixel is opaque white and is its whole region.
+    for (const [id, expected] of [
+      ['trimmed', 'sampled'],
+      ['red', 'sampled'],
+      ['clear', 'sampled'],
+      ['white', 'solid']
+    ]) {
+      const lease = a.scope.use(
+        await a.engine.assets.acquire(egret.createAssetRef(type, id), { signal: a.scope.signal })
+      );
+      const node = a.scope.use(new egret.Bitmap(lease));
+      a.engine.stage.addChild(node);
+      assert.deepEqual(await drawn(), [expected], id);
+      node.visible = false;
+    }
+    await h.close();
+    assert.equal(f.live().length, 0);
+  }));
+
 test('GL G03 contained clips preserve packed attributes and exact tuple admission', async () =>
   author(async a => {
     const unclipped = a.frame();
