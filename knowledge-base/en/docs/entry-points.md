@@ -23,7 +23,7 @@ Every factory is named `create...` and returns an object with `dispose()`.
 | Start a game in a page with one call: Host, Engine, input and loop | `createBrowserGame` | `@egret/engine/web/game` |
 | ... and see frames a second and what a frame holds | `createBrowserStatsPanel`, or `stats: true` | `@egret/engine/web/game` |
 | Run the game on each frame the display shows | `createBrowserFrameLoop` | `@egret/engine/web/loop` |
-| Load an image as a texture | `game.loadTexture(url)` of `createBrowserGame`, or `createBrowserTextureProvider` | `@egret/engine/web/game`, `@egret/engine/web/image` |
+| Load an image as a texture | `game.loadTexture(url)` of `createBrowserGame`, `createBrowserTextureProvider` for exact PNG, or [`decodeBrowserImage` and `textureFromCanvas`](browser-images.md) for any picture or a painted canvas | `@egret/engine/web/game`, `@egret/engine/web/image`, `@egret/engine/web/kit` |
 | Load atlases, sequences and fonts from a built manifest | `createContentLoader`, `createFontContentLoader`, `createManifestAssetBinding` | `@egret/engine/resources` |
 | ... and fetch their bytes in a page | `createManifestByteSource`, `createManifestFontContentLoader` | `@egret/engine/web/resources` |
 | Play a frame sequence | `createSequenceController`, `createSequenceResetSlot` | `@egret/engine/animation` |

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 40 entries, 1133 exports; 707 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 41 entries, 1146 exports; 713 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1250,6 +1250,24 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createBrowserFrameLoop` | function | The frame loop of a game in a page. |
 | `FrameLoopEngine` | interface | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | interface | What the loop asks of a Host: how many frames it holds that it has not finished. |
+
+## `@egret/engine/web/kit`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `BrowserDecodedImage` | interface |  |
+| `BrowserImageCanvas` | interface |  |
+| `BrowserImageContext` | interface |  |
+| `BrowserImageFormat` | type | The picture formats the browser route recognises by their first bytes. |
+| `BrowserImageOptions` | interface |  |
+| `BrowserImagePorts` | interface |  |
+| `BrowserImageSource` | type | What `textureFromCanvas` and `decodeBrowserImage` can read pixels from. |
+| `BrowserImageTextureProviderOptions` | interface |  |
+| `createBrowserImageTextureProvider` | function | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
+| `decodeBrowserImage` | function | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
+| `fitBrowserImageSize` | function | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
+| `sniffBrowserImageFormat` | function | The picture format the bytes start with, or undefined when they start like none of them. |
+| `textureFromCanvas` | function | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
 
 ## `@egret/engine/web/game`
 

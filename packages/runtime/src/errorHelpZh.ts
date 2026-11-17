@@ -19,6 +19,7 @@ export const ZH_AREAS: readonly (readonly [string, string])[] = [
   ['BITMAP', '位图'],
   ['BOUNDS', '边界查询'],
   ['BROWSER_GAME', 'createBrowserGame '],
+  ['BROWSER_IMAGE', '浏览器图片读取'],
   ['BROWSER_STATS', '调试面板'],
   ['BROWSER_TEXT_EDITOR', '浏览器文本编辑器'],
   ['BROWSER_TEXT_INPUT', '浏览器文本输入'],

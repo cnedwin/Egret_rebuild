@@ -23,7 +23,7 @@
 | 一次调用启动页面里的游戏：Host、Engine、输入和循环 | `createBrowserGame` | `@egret/engine/web/game` |
 | ……并查看每秒帧数和一帧的内容 | `createBrowserStatsPanel`，或 `stats: true` | `@egret/engine/web/game` |
 | 显示器每显示一帧就驱动一次游戏 | `createBrowserFrameLoop` | `@egret/engine/web/loop` |
-| 把图片加载为纹理 | `createBrowserGame` 的 `game.loadTexture(url)`，或 `createBrowserTextureProvider` | `@egret/engine/web/game`、`@egret/engine/web/image` |
+| 把图片加载为纹理 | `createBrowserGame` 的 `game.loadTexture(url)`；确切的 PNG 用 `createBrowserTextureProvider`；任意图片或画好的画布用 [`decodeBrowserImage` 和 `textureFromCanvas`](browser-images.md) | `@egret/engine/web/game`、`@egret/engine/web/image`、`@egret/engine/web/kit` |
 | 从构建好的清单加载图集、序列帧和字体 | `createContentLoader`、`createFontContentLoader`、`createManifestAssetBinding` | `@egret/engine/resources` |
 | ……并在页面中取回它们的字节 | `createManifestByteSource`、`createManifestFontContentLoader` | `@egret/engine/web/resources` |
 | 播放序列帧 | `createSequenceController`、`createSequenceResetSlot` | `@egret/engine/animation` |

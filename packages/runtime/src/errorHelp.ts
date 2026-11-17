@@ -20,6 +20,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['BITMAP', 'a bitmap'],
   ['BOUNDS', 'a bounds query'],
   ['BROWSER_GAME', 'the browser game'],
+  ['BROWSER_IMAGE', 'the browser image reader'],
   ['BROWSER_STATS', 'the stats panel'],
   ['BROWSER_TEXT_EDITOR', 'the browser text editor'],
   ['BROWSER_TEXT_INPUT', 'the browser text input'],

@@ -248,6 +248,17 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `BROWSER_GAME_IMAGE_FAILED` | The image of the browser game failed. The cause is in cause. |
 | `BROWSER_GAME_OPTIONS_INVALID` | The options given to the browser game are not valid: one is missing, of the wrong type or out of range. |
 
+### BROWSER_IMAGE
+
+| Code | Meaning |
+| --- | --- |
+| `BROWSER_IMAGE_BYTES_INVALID` | The bytes given to the browser image reader is not valid. |
+| `BROWSER_IMAGE_DECODE_FAILED` | The decode of the browser image reader failed. The cause is in cause. |
+| `BROWSER_IMAGE_FORMAT_UNKNOWN` | No such format is known to the browser image reader. |
+| `BROWSER_IMAGE_PROVIDER_INVALID` | The provider given to the browser image reader is not valid. |
+| `BROWSER_IMAGE_SIZE_INVALID` | The size given to the browser image reader is not valid. |
+| `BROWSER_IMAGE_UNAVAILABLE` | The browser image reader is not available here. |
+
 ### BROWSER_STATS
 
 | Code | Meaning |

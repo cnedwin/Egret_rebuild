@@ -276,6 +276,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     if (name === 'engine') { textExports['./video'] = {types:'./dist/video.d.ts',import:'./dist/video.js'}; textExports['./web/video'] = {types:'./dist/web/video.d.ts',import:'./dist/web/video.js'}; }
     // Frame loop: one optional browser entry.
     if (name === 'engine') textExports['./web/loop'] = {types:'./dist/web/loop.d.ts',import:'./dist/web/loop.js'};
+    // Game kit: one optional browser entry.
+    if (name === 'engine') textExports['./web/kit'] = {types:'./dist/web/kit.d.ts',import:'./dist/web/kit.js'};
     // Browser game: one optional browser entry that puts the Host, loop and input entries together.
     if (name === 'engine') textExports['./web/game'] = {types:'./dist/web/game.d.ts',import:'./dist/web/game.js'};
     // Gamepad: one DOM-free entry and one optional browser entry.

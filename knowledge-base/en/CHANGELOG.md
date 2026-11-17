@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Pictures as textures in any browser; catch-up steps in the frame loop — 2026-11-17
+
+The new entry `@egret/engine/web/kit` holds a forgiving picture route beside the strict PNG provider of `@egret/engine/web/image`. `decodeBrowserImage` takes PNG, JPEG, WebP, GIF and AVIF bytes, decodes them with the browser, falls back to an image element where `createImageBitmap` refuses, and scales pictures larger than the 2D limits down instead of refusing them. `textureFromCanvas` turns a painted canvas into a texture, and `createBrowserImageTextureProvider` registers the route as an asset provider. `createBrowserFrameLoop` takes `catchUpSeconds`: a slow frame is played back as several steps before one draw. [Pictures as textures](docs/browser-images.md) · [The frame loop](docs/frame-loop.md)
+
 ## Keep the World3D lights nearest the camera — 2026-11-17
 
 When more point or spot lights are lit than a frame draws (eight and four), each frame now keeps those whose range reaches the camera and then the brightest at the camera's distance, instead of the first ones in scene order. `renderer.info.lightsDropped` counts the rest. A material created with additive, multiply or premultiplied blending now defaults to the blended pass instead of drawing as an opaque square. [World3D lights](docs/world3d.md#lights-and-shadows)

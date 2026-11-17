@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 在任何浏览器里把图片变成纹理；帧循环支持追帧 — 2026-11-17
+
+新入口 `@egret/engine/web/kit` 提供一条宽松的图片路线，与 `@egret/engine/web/image` 中严格的 PNG 提供者并存。`decodeBrowserImage` 接受 PNG、JPEG、WebP、GIF 和 AVIF 字节，由浏览器解码；`createImageBitmap` 拒绝时退回到图片元素；超过 2D 上限的图片等比缩小而不是被拒绝。`textureFromCanvas` 把画好的画布变成纹理，`createBrowserImageTextureProvider` 把这条路线注册为资源提供者。`createBrowserFrameLoop` 新增 `catchUpSeconds`：慢的一帧在画出之前拆成若干步补上。[图片变纹理](docs/browser-images.md) · [帧循环](docs/frame-loop.md)
+
 ## World3D 保留离相机最近的灯 — 2026-11-17
 
 点光源或聚光灯点亮的数量超过一帧的上限（八盏和四盏）时，每帧改为先保留范围照得到相机的灯，再按相机处的亮度取最亮的，不再取场景顺序里的前几盏。`renderer.info.lightsDropped` 记录其余的灯数。用加法、乘法或预乘混合创建的材质默认进入混合通道，不再画成不透明方块。[World3D 灯光](docs/world3d.md#灯光与阴影)

@@ -248,6 +248,17 @@
 | `BROWSER_GAME_IMAGE_FAILED` | createBrowserGame 的 `image` 失败了。原因在 cause 中。 |
 | `BROWSER_GAME_OPTIONS_INVALID` | 交给createBrowserGame 的选项无效：缺少某一项、类型不对或超出范围。 |
 
+### BROWSER_IMAGE
+
+| 错误码 | 含义 |
+| --- | --- |
+| `BROWSER_IMAGE_BYTES_INVALID` | 交给浏览器图片读取的 `bytes` 无效。 |
+| `BROWSER_IMAGE_DECODE_FAILED` | 浏览器图片读取的 `decode` 失败了。原因在 cause 中。 |
+| `BROWSER_IMAGE_FORMAT_UNKNOWN` | 浏览器图片读取中没有这样的 `format`。 |
+| `BROWSER_IMAGE_PROVIDER_INVALID` | 交给浏览器图片读取的 `provider` 无效。 |
+| `BROWSER_IMAGE_SIZE_INVALID` | 交给浏览器图片读取的 `size` 无效。 |
+| `BROWSER_IMAGE_UNAVAILABLE` | 浏览器图片读取在这里不可用。 |
+
 ### BROWSER_STATS
 
 | 错误码 | 含义 |
