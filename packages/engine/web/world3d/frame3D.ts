@@ -35,6 +35,8 @@ export interface Renderer3DInfo {
   triangles: number;
   visited: number;
   culled: number;
+  /** Point and spot lights left out of the last frame because more were lit than the renderer draws. */
+  lightsDropped: number;
   shadowMaps: number;
   programs: number;
   geometries: number;

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/world3d-light-selection.test.mjs",
+      "originRole": "First-party tests of which point and spot lights a World3D frame keeps when more are lit than it draws, and of the blended pass that non-normal blending selects; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
