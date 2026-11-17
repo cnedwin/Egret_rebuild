@@ -13,6 +13,7 @@ import type { InstancedMesh3D, Mesh3D, Skeleton3D } from '../../rendering/world3
 import { type AnimationTexture3D, SkinnedInstancedMesh3D } from '../../rendering/world3d/AnimationTexture3D.js';
 import { GpuParticles3D } from '../../rendering/world3d/GpuParticles3D.js';
 import type { Scene3D } from '../../rendering/world3d/Object3D.js';
+import type { PlanarReflectionPass3D } from '../../rendering/world3d/Water3D.js';
 import { RenderList3D } from '../../rendering/world3d/RenderList3D.js';
 import type { RenderItem3D } from '../../rendering/world3d/RenderList3D.js';
 import {
@@ -24,7 +25,13 @@ import {
 } from '../../rendering/world3d/Texture3D.js';
 import type { CompressedFormat3D } from '../../rendering/world3d/Texture3D.js';
 import type { Texture3D, TextureSource3D } from '../../rendering/world3d/Texture3D.js';
-import { FRAME_BLOCK_FLOATS_3D, FRAME_OFFSETS_3D, planShadows3D, writeFrameBlock3D } from './frame3D.js';
+import {
+  FRAME_BLOCK_FLOATS_3D,
+  FRAME_OFFSETS_3D,
+  outputToneMapping3D,
+  planShadows3D,
+  writeFrameBlock3D
+} from './frame3D.js';
 import { createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D } from './post3D.js';
 import type { PostProcessSettings3D } from './post3D.js';
 import { PostChainWebGPU3D } from './postWebGPU3D.js';
@@ -170,6 +177,7 @@ export class WebGPURenderer3D implements Renderer3D {
   autoClear = true;
   #post: PostChainWebGPU3D | undefined;
   #inPost = false;
+  #frameToneMapping: ToneMapping3D = 'none';
   readonly info: Renderer3DInfo = {
     frame: 0,
     drawCalls: 0,
@@ -1119,7 +1127,7 @@ export class WebGPURenderer3D implements Renderer3D {
         ? { customKey: material.shader.key, customNormalWgsl: material.shader.wgslNormal }
         : {}),
       reflectionMap: lit && material.shading === 'standard' && material.reflectionMap !== undefined,
-      toneMapped: !depthOnly && kind !== 'hdr' && this.toneMapping !== 'none' && material.toneMapped,
+      toneMapped: !depthOnly && this.#frameToneMapping !== 'none' && material.toneMapped,
       linearOutput: kind === 'target' || kind === 'hdr'
     };
   }
@@ -1349,7 +1357,7 @@ export class WebGPURenderer3D implements Renderer3D {
       (mesh.receiveShadow && this.#shadowCount > 0 ? 128 : 0) |
       (frameFlags.fog ? 256 : 0) |
       (frameFlags.environment ? 512 : 0) |
-      (this.toneMapping !== 'none' ? 1024 : 0) |
+      (this.#frameToneMapping !== 'none' ? 1024 : 0) |
       (instanced && (mesh as InstancedMesh3D).instanceColorSize === 4 ? 2048 : 0) |
       (material.side === 'double' ? 4096 : material.side === 'back' ? 8192 : 0) |
       (mesh instanceof SkinnedInstancedMesh3D ? 16384 : 0) |
@@ -1570,7 +1578,7 @@ export class WebGPURenderer3D implements Renderer3D {
     data[16] = intensity;
     data[17] = kind === 'canvas' ? 0 : 1;
     data[18] = this.exposure;
-    data[19] = kind === 'hdr' ? 0 : this.toneMapping === 'aces' ? 2 : this.toneMapping === 'reinhard' ? 1 : 0;
+    data[19] = this.#frameToneMapping === 'aces' ? 2 : this.#frameToneMapping === 'reinhard' ? 1 : 0;
     device.queue.writeBuffer(this.#skyBuffer, 0, data);
     const cube = this.textureCube(texture),
       groupKey = texture.id + ':' + texture.version;
@@ -1609,16 +1617,35 @@ export class WebGPURenderer3D implements Renderer3D {
     this.#list.autoInstanceThreshold = value ? 8 : 0;
   }
   render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean {
+    return this.renderView(scene, camera, target);
+  }
+
+  /** Draw the mirror directly with its own output, shadows and object selection. */
+  renderReflectionPass(scene: Scene3D, camera: Camera3D, pass: PlanarReflectionPass3D): boolean {
+    return this.renderView(scene, camera, pass.target, pass);
+  }
+
+  /** The retained mirror image must still belong to the live WebGPU device. */
+  reuseReflection(target: RenderTarget3D): boolean {
+    return !this.#disposed && !this.#lost && this.#targets.get(target)?.version === target.version;
+  }
+
+  private renderView(
+    scene: Scene3D,
+    camera: Camera3D,
+    target: RenderTarget3D | undefined,
+    reflection?: PlanarReflectionPass3D
+  ): boolean {
     if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
     if (this.#lost) return false;
-    if (this.postProcess.enabled && !this.#inPost) return this.renderPost(scene, camera, target);
-    // Half-float targets keep scene-referred light; tone mapping happens when they are displayed.
+    if (!reflection && this.postProcess.enabled && !this.#inPost) return this.renderPost(scene, camera, target);
     const device = this.device,
       list = this.#list,
       info = this.info,
       kind: PassKind = target ? (target.format === 'rgba16f' ? 'hdr' : 'target') : 'canvas';
     if (target?.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
-    list.build(scene, camera);
+    this.#frameToneMapping = outputToneMapping3D(reflection?.toneMapping ?? this.toneMapping, target);
+    list.build(scene, camera, reflection);
     this.#serial++;
     this.#objectCount = 0;
     info.frame = list.frame;
@@ -1631,7 +1658,7 @@ export class WebGPURenderer3D implements Renderer3D {
       this.#frameData,
       list,
       this.#shadowAtlasSize,
-      this.shadowsEnabled,
+      this.shadowsEnabled && (reflection?.shadows ?? true),
       true,
       this.#shadowSlots,
       camera
@@ -1641,7 +1668,7 @@ export class WebGPURenderer3D implements Renderer3D {
       scene.environment && !scene.environment.isDisposed ? this.textureCube(scene.environment) : undefined;
     writeFrameBlock3D(this.#frameData, scene, camera, list, this.#shadowSlots, {
       exposure: this.exposure,
-      toneMapping: kind === 'hdr' ? 'none' : this.toneMapping,
+      toneMapping: this.#frameToneMapping,
       environmentMaxMip: environment?.maxMip ?? 0
     });
     this.#frameData[FRAME_OFFSETS_3D.clipInfo + 2] = this.viewport ? this.viewport[2] : 1;

@@ -12,12 +12,19 @@ import { linearToSrgb, mat3NormalFromMat4, mat4Invert } from '../../rendering/wo
 import type { InstancedMesh3D, Mesh3D } from '../../rendering/world3d/Mesh3D.js';
 import { SkinnedInstancedMesh3D } from '../../rendering/world3d/AnimationTexture3D.js';
 import { GpuParticles3D } from '../../rendering/world3d/GpuParticles3D.js';
-import type { Scene3D } from '../../rendering/world3d/Object3D.js';
+import type { Object3D, Scene3D } from '../../rendering/world3d/Object3D.js';
+import type { PlanarReflectionPass3D } from '../../rendering/world3d/Water3D.js';
 import { RenderList3D } from '../../rendering/world3d/RenderList3D.js';
 import type { RenderItem3D } from '../../rendering/world3d/RenderList3D.js';
 import { CubeTexture3D, RenderTarget3D } from '../../rendering/world3d/Texture3D.js';
 import type { CompressedFormat3D } from '../../rendering/world3d/Texture3D.js';
-import { FRAME_BLOCK_FLOATS_3D, FRAME_OFFSETS_3D, planShadows3D, writeFrameBlock3D } from './frame3D.js';
+import {
+  FRAME_BLOCK_FLOATS_3D,
+  FRAME_OFFSETS_3D,
+  outputToneMapping3D,
+  planShadows3D,
+  writeFrameBlock3D
+} from './frame3D.js';
 import { createPostProcessSettings3D, outlineActive3D, postViewFromCamera3D } from './post3D.js';
 import type { PostProcessSettings3D } from './post3D.js';
 import { PostChainWebGL23D } from './postWebGL23D.js';
@@ -56,11 +63,20 @@ export interface WebGL2ProgramVariant3D {
   readonly pass?: 'color' | 'shadow' | 'depth-prepass';
   /** The render output target. An enabled post chain uses its own HDR scene target. */
   readonly target?: RenderTarget3D;
+  /** Reflected output and object selection. The reflection has no post chain. */
+  readonly reflection?: PlanarReflectionPass3D;
   readonly fog?: boolean;
   readonly environment?: boolean;
   readonly receiveShadows?: boolean;
   readonly softDepth?: boolean;
   readonly transmission?: boolean;
+}
+
+function includesReflectionMesh(mesh: Mesh3D, reflection: PlanarReflectionPass3D, shadow: boolean): boolean {
+  if (!shadow && (mesh.layers & reflection.layerMask) === 0) return false;
+  for (let node: Object3D | undefined = mesh; node; node = node.parent)
+    if (reflection.hidden.includes(node)) return false;
+  return true;
 }
 
 const IDENTITY4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -201,17 +217,27 @@ export class WebGL2Renderer3D implements Renderer3D {
   async preparePrograms(requests: readonly WebGL2ProgramVariant3D[]): Promise<void> {
     if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
     if (this.isContextLost) throw new World3DError('WORLD3D_CONTEXT_LOST', 'program preparation');
-    const programs = requests.map(request => {
-      const { mesh, material, target } = request;
+    const programs: ProgramRequest3D[] = [];
+    for (const request of requests) {
+      const { mesh, material, reflection } = request;
+      const target = reflection?.target ?? request.target;
+      if (reflection && request.target && reflection.target !== request.target)
+        throw new World3DError('WORLD3D_INPUT_INVALID', 'reflection program target');
       const geometry = mesh.geometry;
       if (geometry.isDisposed || material.isDisposed || target?.isDisposed)
         throw new World3DError('WORLD3D_DISPOSED', 'program preparation input');
       const pass = request.pass ?? 'color';
       if (pass !== 'color' && pass !== 'shadow' && pass !== 'depth-prepass')
         throw new World3DError('WORLD3D_INPUT_INVALID', 'program preparation pass');
-      // renderPost draws the scene into a linear rgba16f target before composition.
-      const post = this.postProcess.enabled;
-      const toneMapping = post || target?.format === 'rgba16f' ? 'none' : this.toneMapping;
+      const shadows = this.shadowsEnabled && (reflection?.shadows ?? true);
+      if (
+        reflection &&
+        ((pass === 'shadow' && !shadows) || !includesReflectionMesh(mesh, reflection, pass === 'shadow'))
+      )
+        continue;
+      // The main post chain draws into a linear HDR scene target. The mirror uses its own output.
+      const post = !reflection && this.postProcess.enabled;
+      const toneMapping = post ? 'none' : outputToneMapping3D(reflection?.toneMapping ?? this.toneMapping, target);
       const flags =
         pass === 'color'
           ? colorProgramFlags(
@@ -220,14 +246,16 @@ export class WebGL2Renderer3D implements Renderer3D {
               request.environment === true,
               post || Boolean(target)
             ) |
-            (request.receiveShadows ? V.receiveShadow : 0) |
+            (request.receiveShadows && (!reflection || shadows) ? V.receiveShadow : 0) |
             (request.softDepth ? V.softDepth : 0) |
             (request.transmission ? V.transmission : 0)
           : V.depthOnly;
       const morphs = geometry.morphTargets;
       const morphAttributes = !morphs.length ? 0 : morphs.some(morph => morph.normal) ? 2 : 1;
-      return this.programRequest(material, this.meshProgramVariant(mesh, geometry, material, flags, morphAttributes));
-    });
+      programs.push(
+        this.programRequest(material, this.meshProgramVariant(mesh, geometry, material, flags, morphAttributes))
+      );
+    }
     await this.#resources.preparePrograms(programs);
   }
   /** The underlying context, for advanced interop. Restore any state you change. */
@@ -296,15 +324,23 @@ export class WebGL2Renderer3D implements Renderer3D {
     const saved = this.#reflectionTarget;
     this.#reflectionTarget = target;
     try {
-      const rendered = this.render(scene, camera, target);
-      if (rendered) {
-        this.#validReflections.add(target);
-        this.#frameMetrics.recordReflection('rendered');
-      }
-      return rendered;
+      return this.recordReflection(target, this.render(scene, camera, target));
     } finally {
       this.#reflectionTarget = saved;
     }
+  }
+
+  /** Draw the mirror directly with its own output, shadows and object selection. */
+  renderReflectionPass(scene: Scene3D, camera: Camera3D, pass: PlanarReflectionPass3D): boolean {
+    return this.recordReflection(pass.target, this.renderMeasuredView(scene, camera, pass.target, 'reflection', pass));
+  }
+
+  private recordReflection(target: RenderTarget3D, rendered: boolean): boolean {
+    if (rendered) {
+      this.#validReflections.add(target);
+      this.#frameMetrics.recordReflection('rendered');
+    }
+    return rendered;
   }
 
   /** The retained mirror image must still belong to the live WebGL2 context. */
@@ -318,20 +354,26 @@ export class WebGL2Renderer3D implements Renderer3D {
     scene: Scene3D,
     camera: Camera3D,
     target: RenderTarget3D | undefined,
-    kind: World3DViewKind
+    kind: World3DViewKind,
+    reflection?: PlanarReflectionPass3D
   ): boolean {
     if (this.#disposed) throw new World3DError('WORLD3D_DISPOSED', 'renderer');
     if (this.isContextLost) return false;
     const viewIndex = this.#frameMetrics.beginView();
+    const post = !reflection && this.postProcess.enabled;
     if (viewIndex < 0)
-      return this.postProcess.enabled ? this.renderPost(scene, camera, target) : this.renderView(scene, camera, target);
+      return post
+        ? this.renderPost(scene, camera, target)
+        : this.renderView(scene, camera, target, 'color', reflection);
     const start = performance.now(),
       oldIndex = this.#viewIndex,
       oldKind = this.#viewKind;
     this.#viewIndex = viewIndex;
     this.#viewKind = kind;
     try {
-      return this.postProcess.enabled ? this.renderPost(scene, camera, target) : this.renderView(scene, camera, target);
+      return post
+        ? this.renderPost(scene, camera, target)
+        : this.renderView(scene, camera, target, 'color', reflection);
     } finally {
       this.#viewIndex = oldIndex;
       this.#viewKind = oldKind;
@@ -343,22 +385,25 @@ export class WebGL2Renderer3D implements Renderer3D {
     scene: Scene3D,
     camera: Camera3D,
     target?: RenderTarget3D,
-    passKind: World3DPassKind = 'color'
+    passKind: World3DPassKind = 'color',
+    reflection?: PlanarReflectionPass3D
   ): boolean {
     if (target?.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
     const gl = this.#gl,
       list = this.#list,
       info = this.info;
-    // Half-float targets keep scene-referred light; tone mapping happens when they are displayed.
-    const toneMapping = (this.#frameToneMapping = target?.format === 'rgba16f' ? 'none' : this.toneMapping);
-    list.build(scene, camera);
+    const toneMapping = (this.#frameToneMapping = outputToneMapping3D(
+      reflection?.toneMapping ?? this.toneMapping,
+      target
+    ));
+    list.build(scene, camera, reflection);
     info.frame = list.frame;
     info.drawCalls = info.triangles = 0;
     info.visited = list.stats.visited;
     info.culled = list.stats.culled;
     this.resetState();
     this.bindFrameBlock();
-    this.renderShadows(camera);
+    this.renderShadows(camera, this.shadowsEnabled && (reflection?.shadows ?? true));
     // Surfaces that fade near solid geometry read its depth, drawn once up front.
     this.#sceneDepthReady =
       list.transparent.some(item => item.material.softness > 0) && this.renderSceneDepth(camera, target);
@@ -623,9 +668,8 @@ export class WebGL2Renderer3D implements Renderer3D {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     return { texture, framebuffer, size };
   }
-  private renderShadows(camera: Camera3D): void {
-    const gl = this.#gl,
-      enabled = this.shadowsEnabled;
+  private renderShadows(camera: Camera3D, enabled: boolean): void {
+    const gl = this.#gl;
     // A shadow-free reflection can run before the main view. Keep its comparison sampler complete
     // without replacing the full atlas needed by the next pass.
     const atlas = enabled
