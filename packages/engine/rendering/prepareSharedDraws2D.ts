@@ -579,7 +579,23 @@ export function prepareSharedDraws2D(
       for (const p of points) transform(p, m, ratio);
       const sign = preparation.sign(points[0]!, points[1]!, points[2]!);
       if (sign === 0) return;
-      if (sign !== authored * rank) sharedFailure('precision');
+      if (sign !== authored * rank) {
+        // A matrix that presses a shape thinner than any pixel, as a scale on its way through nothing does, leaves
+        // triangles that the rounding of their corners turns over. Such a triangle covers nothing and is not drawn;
+        // one with any height that has turned over is refused as before.
+        const a = points[0]!,
+          b = points[1]!,
+          c = points[2]!,
+          ux = b.x - a.x,
+          uy = b.y - a.y,
+          vx = c.x - a.x,
+          vy = c.y - a.y,
+          wx = c.x - b.x,
+          wy = c.y - b.y,
+          longest = Math.sqrt(Math.max(ux * ux + uy * uy, vx * vx + vy * vy, wx * wx + wy * wy));
+        if (!(Math.abs(ux * vy - uy * vx) <= longest * SLIVER_HEIGHT)) sharedFailure('precision');
+        return;
+      }
       polygon = normalizeOwned(preparation, points);
     }
     for (const clip of clips) polygon = intersect(polygon, clip);
