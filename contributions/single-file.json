@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/pack-single-file.mjs",
+      "originRole": "First-party tool that writes the 2D engine as one file for a script tag and one for import, with a report of names and sizes; the bundler is named by the person packing; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/verify-game.mjs",
+      "originRole": "First-party tool that runs one game page in a headless browser and reports whether it starts, draws, keeps drawing, answers input and makes sound; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/single-file.test.mjs",
+      "originRole": "First-party tests of the parts of the single-file packer and of the game check that need neither a bundler nor a browser; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/llms.test.mjs",
+      "originRole": "First-party tests that hold every name of llms.txt to the sources and each of its games to the play example; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "llms.txt",
+      "originRole": "First-party page for an agent that writes a game with play: the page, the rules, every call and three whole games; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/play/index.html",
+      "originRole": "First-party page of the play example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/play/breakout.mjs",
+      "originRole": "First-party breakout made with one call to play; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/platformer.mjs",
+      "originRole": "First-party platformer made with one call to play; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/memory.mjs",
+      "originRole": "First-party game of matching pairs made with one call to play; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify.mjs",
+      "originRole": "First-party browser check that plays the three games of the play example to their ends by keyboard and mouse; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/README.md",
+      "originRole": "First-party guide to the play example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/play/README.zh-CN.md",
+      "originRole": "First-party Chinese guide to the play example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/single-file.md",
+      "originRole": "First-party guide to the 2D engine in one file; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/single-file.md",
+      "originRole": "First-party Chinese guide to the 2D engine in one file; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/single-file.md",
+      "zh": "knowledge-base/Cns/docs/single-file.md"
+    },
+    {
+      "en": "examples/play/README.md",
+      "zh": "examples/play/README.zh-CN.md"
+    }
+  ]
+}

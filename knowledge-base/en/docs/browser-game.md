@@ -71,7 +71,7 @@ For the rest of a game: `animate` moves and fades display objects in a chain (`i
 | `pixelRatio` | Canvas pixels for each unit of the canvas's own width | The device's ratio, at most 2 |
 | `clearColor`, `clearAlpha` | What a frame is cleared to | `0x000000` and 1 |
 | `update(seconds)` | One step of the game, before each frame | No step |
-| `onError(error)` | Told once of what stopped the loop | The failure is thrown where the console shows it |
+| `onError(error)` | Told of what stopped the loop, and of an error the Engine can only report, such as a listener of a tap that threw and so ended pointer input | The failure is thrown, or reported to the page, where the console shows it |
 | `pointer`, `keyboard` | `false` leaves that input out | Both are made |
 | `stats` | `true` shows the panel | No panel |
 | `fit`, `fitTo` | How the canvas fills an element: `'contain'` whole inside it, `'cover'` covering it, `'stretch'` to its shape. `fitTo` is that element | `'none'`, and the canvas's parent |

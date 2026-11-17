@@ -171,3 +171,28 @@ test('BG04 a strict consumer compiles against the entry with the calls a game ma
   );
   assert.equal(result.status, 0, result.stdout + result.stderr);
 });
+
+// Break caught: tell no one of an error the Engine can only report, such as the listener that ended pointer input.
+test('BG05 an error the Engine reports is told as a failure of the loop is, and a warning is not', async () => {
+  const { gameDiagnostics } = await import('../packages/engine/dist/web/BrowserGame.js');
+  const told = [],
+    cause = new egret.EgretError('POINTER_INPUT_CALLBACK_FAILED');
+  const handler = gameDiagnostics(error => told.push(error));
+  handler({ code: 'POINTER_INPUT_HOST_FAILED', phase: 'engine', severity: 'error', cause });
+  handler({ code: 'SOMETHING_SLOW', phase: 'engine', severity: 'warning', cause: new Error('slow') });
+  handler({ code: 'ENGINE_CLOSE_FAILED', phase: 'engine', severity: 'error' });
+  assert.equal(told.length, 2);
+  assert.equal(told[0], cause);
+  assert.ok(told[1] instanceof egret.EgretError && told[1].code === 'ENGINE_CLOSE_FAILED');
+  // Without onError it goes to the page: reportError where there is one, else a promise that nothing handles.
+  const page = [],
+    before = globalThis.reportError;
+  globalThis.reportError = error => page.push(error);
+  try {
+    gameDiagnostics(undefined)({ code: 'POINTER_INPUT_HOST_FAILED', phase: 'engine', severity: 'error', cause });
+    gameDiagnostics(undefined)({ code: 'SOMETHING_SLOW', phase: 'engine', severity: 'warning' });
+  } finally {
+    globalThis.reportError = before;
+  }
+  assert.deepEqual(page, [cause]);
+});

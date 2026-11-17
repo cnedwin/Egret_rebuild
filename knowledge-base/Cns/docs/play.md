@@ -100,7 +100,7 @@ await play({
 | `game.pointer.down`、`.pressed`、`.released` | 是否按着、刚按下、刚松开 |
 | `game.pointer.swipe` | 一次滑动结束后的那次 update 里为 `'left'`、`'right'`、`'up'` 或 `'down'` |
 | `game.pointer.over(sprite)` | 指针是否在精灵画出的内容上 |
-| `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击 |
+| `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
 
 键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。在舞台任何位置按下，`game.pointer.pressed` 都为真，按在按钮上也一样；不希望按钮下面的游戏收到这次按下时，先判断 `game.pointer.over(button)`。
 
@@ -182,6 +182,8 @@ for (const block of blocks) {
 ```
 
 不需要别的东西：`play` 会创建画布并让它占满窗口，保持舞台的比例，窗口比例不同时两侧留边。
+
+页面也可以把引擎作为[一个文件](single-file.md)使用，不需要 import map：`<script src="egret.global.js"></script>`，然后 `const { play } = Egret;`。[play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)里有三个完整的游戏。
 
 ## 游戏变大之后
 

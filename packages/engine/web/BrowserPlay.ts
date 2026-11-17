@@ -151,6 +151,23 @@ export interface PlayBurstOptions {
   readonly gravity?: number;
 }
 
+/**
+ * The listener the Engine is given for a tap. A listener of the Engine runs to its end and returns nothing, and one
+ * that returns a promise is refused, which ends pointer input; so what the game's function returns is not handed on.
+ * When it is a promise, as an `async` function returns, its failure is told as the function's own would be.
+ */
+export function tapListener(callback: () => unknown, fail: (cause: unknown) => void): () => void {
+  return () => {
+    try {
+      const result = callback() as { then?: unknown } | null | undefined;
+      if (result !== null && result !== undefined && typeof result.then === 'function')
+        (result as PromiseLike<unknown>).then(undefined, fail);
+    } catch (cause) {
+      fail(cause);
+    }
+  };
+}
+
 export interface PlayGame {
   readonly width: number;
   readonly height: number;
@@ -652,7 +669,18 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     point.released = false;
     point.swipe = undefined;
   };
+  // What the function of a tap threw, now or when its promise failed: it stops the game at the next step, as what
+  // `update` throws does, and is told the same way.
+  let failure: { readonly cause: unknown } | undefined;
+  const fail = (cause: unknown): void => {
+    failure ??= { cause };
+  };
   function step(real: number): void {
+    if (failure !== undefined) {
+      const { cause } = failure;
+      failure = undefined;
+      throw cause;
+    }
     if (api === undefined || paused) {
       endFrame();
       return;
@@ -821,7 +849,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       if (typeof callback !== 'function') throw invalid('onTap takes a sprite and a function');
       if (browser.pointer === undefined) return;
       node.touchEnabled = true;
-      node.on(browser.pointer.events.tap, () => callback());
+      node.on(browser.pointer.events.tap, tapListener(callback, fail));
     },
     overlaps(a, b, shrink = 0) {
       if (!seen(a) || !seen(b)) return false;

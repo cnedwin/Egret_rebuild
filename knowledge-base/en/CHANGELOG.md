@@ -4,6 +4,14 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Play: a tap's function may be async, and an error the Engine reports is told — 2026-11-17
+
+`game.onTap` and `game.button` handed the Engine what the game's function returned. An `async` function returns a promise, the Engine refuses a listener that does, and that ended pointer input: after the first such tap no tap or button answered, and nothing said why. The function's result is no longer handed on, and what it throws, at once or later, stops the game as what `update` throws does. `createBrowserGame` now gives an error the Engine can only report to `onError`, or to the page where the console shows it; it used to be told to no one.
+
+## For an agent: one file, one page, three games and a check — 2026-11-17
+
+`llms.txt` at the root is the page an agent reads to write a game with `play`: the page, the rules that are easy to get wrong, every call, and three whole games. A test holds every name in it to the sources and each game to `examples/play`, whose check plays the breakout, the platformer and the memory game to their ends in a browser by keyboard and mouse. `tools/pack-single-file.mjs` writes the 2D engine as `egret.global.js` for a script tag (everything on the global `Egret`) and `egret.js` for import, with a report of names and sizes: 197 KiB with gzip, both hosts included. The bundler is named by the person packing and is not a dependency. `tools/verify-game.mjs` runs any game page in a headless browser and reports whether it started, drew, kept running, answered input and made sound. Nothing is published to a registry.
+
 ## Draw a shape whose scale passes through nothing — 2026-11-17
 
 A tween of `scaleX` or `scaleY` to 0, as a card turning over makes, ends on a rounding error before it ends on 0. A circle, a rounded rectangle, an ellipse or a line at such a scale is thinner than any pixel, the rounding of its corners turned some of its triangles over, and preparation refused them with `precision`: the frame failed with `FRAME_RENDER_FAILED` and the game's loop stopped. Such a triangle is now left out and the frame is drawn. A plain rectangle was not affected.

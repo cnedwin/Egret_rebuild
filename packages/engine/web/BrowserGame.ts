@@ -11,6 +11,7 @@ import {
 } from '@egret/engine';
 import type {
   AssetLease,
+  DiagnosticHandler,
   Engine,
   Scope,
   Stage,
@@ -134,6 +135,26 @@ async function chooseBackend(asked: 'auto' | BrowserGameBackend): Promise<Browse
 }
 
 /**
+ * What a game does with the diagnostics of its Engine. An error the Engine can only report, such as a listener of
+ * pointer input that threw, which ends that input, is told as a failure of the loop is: to `onError`, or to the page,
+ * where the console shows it. Without this it was told to no one, and the game went on without its input.
+ */
+export function gameDiagnostics(onError: ((error: unknown) => void) | undefined): DiagnosticHandler {
+  return diagnostic => {
+    if (diagnostic.severity !== 'error') return;
+    const error = diagnostic.cause ?? new EgretError(diagnostic.code);
+    if (onError !== undefined) {
+      onError(error);
+      return;
+    }
+    const tell = (globalThis as { reportError?: (error: unknown) => void }).reportError;
+    if (typeof tell === 'function') tell(error);
+    // A page without reportError still shows a promise that nothing handled.
+    else void Promise.reject(error);
+  };
+}
+
+/**
  * Makes a game ready to draw: `await createBrowserGame({ canvas, width, height, update })`, then add display objects
  * to `game.stage`. Everything it makes is what the separate entries make; a game that outgrows it takes them apart.
  */
@@ -177,7 +198,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       : (await import('./webgl2.js')).createSharedWebGL2Host({ canvas, pixelRatio });
   let engine: Engine;
   try {
-    engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
+    engine = await createEngineForProfile({ host, onDiagnostic: gameDiagnostics(onError) }, SHARED_FRAME_PROFILE_2D);
   } catch (cause) {
     try {
       await host.close();

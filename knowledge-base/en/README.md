@@ -10,7 +10,7 @@ These guides cover the APIs used to make games. The later sections link engine c
 
 | To | Read |
 | --- | --- |
-| Start | [**Play: a whole small game from one call**](docs/play.md) · [Getting started](docs/getting-started.md) · [Browser game entry](docs/browser-game.md) · [Public imports](docs/entry-points.md) · [Egret 5 migration](docs/egret-api-migration.md) · [Preview archive tooling](docs/release-archives.md) |
+| Start | [**Play: a whole small game from one call**](docs/play.md) · [The engine in one file](docs/single-file.md) · [Getting started](docs/getting-started.md) · [Browser game entry](docs/browser-game.md) · [Public imports](docs/entry-points.md) · [Egret 5 migration](docs/egret-api-migration.md) · [Preview archive tooling](docs/release-archives.md) |
 | Draw and move | [Graphics](docs/graphics.md) · [The frame loop](docs/frame-loop.md) · [Pictures as textures](docs/browser-images.md) · [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) · [Filters](docs/filters.md) |
 | Collide, sound and control | [Actions, saves and touch controls](docs/game-kit.md) · [Collision and physics](docs/physics-2d.md) · [Sound for a 2D game](docs/audio.md) · [Video](docs/video.md) · [Gamepads](docs/gamepad.md) |
 | Build in 3D | [World3D](docs/world3d.md) · [A 3D game in one call](docs/world3d-app.md) |

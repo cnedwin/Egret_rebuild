@@ -100,7 +100,7 @@ A sprite turns and scales about its own origin: the middle of a `rect` or a `cir
 | `game.pointer.down`, `.pressed`, `.released` | Whether a button or finger is down, went down, or came up |
 | `game.pointer.swipe` | `'left'`, `'right'`, `'up'` or `'down'` in the update after a swipe ends |
 | `game.pointer.over(sprite)` | Whether the pointer is over what the sprite draws |
-| `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked. Where sprites overlap, the one in front gets the tap |
+| `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked. Where sprites overlap, the one in front gets the tap. The function may be `async`; what it throws, at once or later, stops the game as what `update` throws does |
 
 A key is `'left'`, `'right'`, `'up'`, `'down'`, `'space'`, `'enter'`, `'escape'`, `'shift'`, a letter, a digit, or a `KeyboardEvent.code` such as `'KeyQ'`. The arrows and Space do not scroll the page while the game runs. Before the mouse has moved, the pointer is at the middle of the stage. `game.pointer.pressed` is true for a press anywhere on the stage, on a button as well; where a press should not reach the game under a button, test `game.pointer.over(button)` first.
 
@@ -182,6 +182,8 @@ Use these and not `setTimeout`: they stop with a pause, a hit stop and a hidden 
 ```
 
 Nothing else is needed: `play` makes the canvas and fills the window with it, keeping the stage's shape with bars where the window's differs.
+
+A page can also take the engine as [one file](single-file.md), with no import map: `<script src="egret.global.js"></script>`, then `const { play } = Egret;`. Three whole games are in the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md).
 
 ## When a game outgrows it
 

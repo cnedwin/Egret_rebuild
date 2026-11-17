@@ -144,3 +144,31 @@ test('PL05 what is not a recipe is told apart', () => {
     ])
   );
 });
+
+// Break caught: hand the Engine the promise of an `async` tap, which it refuses and which ends pointer input; or
+// lose what a tap's function threw.
+test('PL06 the listener of a tap returns nothing, and what its function throws or rejects with is told', async () => {
+  const { tapListener } = await import('../packages/engine/dist/web/BrowserPlay.js');
+  const told = [],
+    fail = cause => told.push(cause);
+  let calls = 0;
+  assert.equal(tapListener(() => ++calls, fail)(), undefined);
+  assert.equal(tapListener(async () => ++calls, fail)(), undefined);
+  assert.equal(calls, 2);
+  const thrown = new Error('thrown'),
+    rejected = new Error('rejected');
+  assert.equal(
+    tapListener(() => {
+      throw thrown;
+    }, fail)(),
+    undefined
+  );
+  assert.deepEqual(told, [thrown]);
+  tapListener(async () => {
+    throw rejected;
+  }, fail)();
+  tapListener(() => ({ then: 'not a promise' }), fail)();
+  tapListener(() => null, fail)();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(told, [thrown, rejected]);
+});
