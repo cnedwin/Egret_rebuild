@@ -1370,10 +1370,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     const loopGraphFiles=['web/loop.ts','web/BrowserFrameLoop.ts','dist/web/loop.js','dist/web/loop.d.ts','dist/web/BrowserFrameLoop.js','dist/web/BrowserFrameLoop.d.ts'];
     // Browser game: inert copies of its modules and their build output, for the same reason.
     const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
-    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles,...audioGraphFiles,...gamepadGraphFiles,...videoGraphFiles,...loopGraphFiles,...gameGraphFiles,...bitmapfontGraphFiles,...physics2dGraphFiles,...particlesGraphFiles,...tilemapGraphFiles,...cameraGraphFiles]){
+    // World3D app: names what it imports from the main entry, so it is copied as it is.
+    const world3dAppFiles=['web/world3d/app3D.ts','dist/web/world3d/app3D.js','dist/web/world3d/app3D.d.ts'];
+    for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles,...audioGraphFiles,...gamepadGraphFiles,...videoGraphFiles,...loopGraphFiles,...gameGraphFiles,...world3dAppFiles,...bitmapfontGraphFiles,...physics2dGraphFiles,...particlesGraphFiles,...tilemapGraphFiles,...cameraGraphFiles]){
       const file='packages/engine/'+relative,original=readFileSync(path.join(repository,file),'utf8');
       // The game's modules name what they import from the main entry, which the check reads: they are copied as they are.
-      if(!file.endsWith('.js')||gameGraphFiles.includes(relative)){write(file,original);continue;}
+      if(!file.endsWith('.js')||gameGraphFiles.includes(relative)||world3dAppFiles.includes(relative)){write(file,original);continue;}
       const clean=original.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
       const clauses=[...clean.matchAll(/\b(import|export)\s*(?:\{[^}]+\}\s*from\s*|\*\s*from\s*)?['"]([^'"]+)['"]\s*;?/g)];
       const ports=clauses.map(match=>match[1]==='export'?match[0]:'import '+JSON.stringify(match[2])+';');

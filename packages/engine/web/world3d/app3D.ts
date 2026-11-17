@@ -1,0 +1,412 @@
+// SPDX-License-Identifier: Apache-2.0
+// A World3D game in a page from one call: the backend chosen from the address or the device, an Engine on a
+// World3D host, a renderer set up for a picture quality, a frame loop, and a drawing resolution that follows the
+// frame rate. Each piece is made the way its own module makes it, and one dispose ends them all.
+import { createEngine } from '@egret/engine';
+import type { Engine } from '@egret/engine';
+import type { Scope } from '@egret/runtime';
+import type { Disposable } from '@egret/contracts';
+import { World3DError } from '../../rendering/world3d/core3D.js';
+import type { Camera3D } from '../../rendering/world3d/Camera3D.js';
+import type { Scene3D } from '../../rendering/world3d/Object3D.js';
+import type { AnimationMixer3D } from '../../rendering/world3d/Animation3D.js';
+import type { Renderer3D, ToneMapping3D } from './frame3D.js';
+import { createWorld3DHost, startWorld3DLoop } from './host3D.js';
+import { World3DView } from './World3DView.js';
+import type { OrbitControls3D } from './OrbitControls3D.js';
+
+export type World3DBackend = 'webgl2' | 'webgpu';
+export type World3DQuality = 'low' | 'medium' | 'high';
+
+/** What one picture quality turns on. */
+export interface World3DQualityPreset {
+  /** Largest device pixel ratio drawn at. */
+  readonly pixelRatio: number;
+  /** Multisampling of the canvas; fixed when the renderer is made. */
+  readonly antialias: boolean;
+  readonly shadows: boolean;
+  /** Edge of the shadow atlas in texels; fixed when the renderer is made. */
+  readonly shadowAtlasSize: number;
+  /** The post-processing chain, and which of its parts run. */
+  readonly post: boolean;
+  readonly bloom: boolean;
+  readonly ssao: boolean;
+  readonly fxaa: boolean;
+}
+
+/** The three qualities. A phone gets `low`, a desktop `high`; `medium` sits between for weaker computers. */
+export const WORLD3D_QUALITY_PRESETS: Readonly<Record<World3DQuality, World3DQualityPreset>> = Object.freeze({
+  low: Object.freeze({
+    pixelRatio: 1,
+    antialias: false,
+    shadows: false,
+    shadowAtlasSize: 1024,
+    post: false,
+    bloom: false,
+    ssao: false,
+    fxaa: false
+  }),
+  medium: Object.freeze({
+    pixelRatio: 1.5,
+    antialias: true,
+    shadows: true,
+    shadowAtlasSize: 2048,
+    post: true,
+    bloom: true,
+    ssao: false,
+    fxaa: true
+  }),
+  high: Object.freeze({
+    pixelRatio: 2,
+    antialias: true,
+    shadows: true,
+    shadowAtlasSize: 4096,
+    post: true,
+    bloom: true,
+    ssao: true,
+    fxaa: true
+  })
+});
+
+/** What `pickWorld3DQuality` reads about the device. Every field is optional; missing ones are read from the page. */
+export interface World3DDeviceHints {
+  /** The page address's query, as `location.search` or its parsed form. `quality=low|medium|high` wins. */
+  readonly query?: string | URLSearchParams;
+  /** A quality the player chose before, as kept in a save. Wins over the device, not over the address. */
+  readonly stored?: string | null;
+  /** True when the main pointer is a finger. */
+  readonly coarsePointer?: boolean;
+  /** The shorter side of the window, in CSS pixels. */
+  readonly shortSide?: number;
+  /** `navigator.deviceMemory`, in gigabytes, where the browser reports it. */
+  readonly deviceMemory?: number;
+}
+
+const QUALITIES: readonly string[] = ['low', 'medium', 'high'];
+const isQuality = (value: unknown): value is World3DQuality => typeof value === 'string' && QUALITIES.includes(value);
+const params = (query: string | URLSearchParams | undefined): URLSearchParams | undefined => {
+  if (query instanceof URLSearchParams) return query;
+  if (typeof query === 'string') return new URLSearchParams(query);
+  const search = (globalThis as { location?: { search?: string } }).location?.search;
+  return typeof search === 'string' ? new URLSearchParams(search) : undefined;
+};
+
+/**
+ * The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a
+ * window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise.
+ */
+export function pickWorld3DQuality(hints: World3DDeviceHints = {}): World3DQuality {
+  const asked = params(hints.query)?.get('quality');
+  if (isQuality(asked)) return asked;
+  if (isQuality(hints.stored)) return hints.stored;
+  const g = globalThis as {
+    matchMedia?: (query: string) => { matches: boolean };
+    innerWidth?: number;
+    innerHeight?: number;
+    navigator?: { deviceMemory?: number };
+  };
+  const coarse = hints.coarsePointer ?? g.matchMedia?.('(pointer: coarse)').matches ?? false;
+  const shortSide = hints.shortSide ?? Math.min(g.innerWidth ?? 1200, g.innerHeight ?? 800);
+  if (coarse || shortSide < 600) return 'low';
+  const memory = hints.deviceMemory ?? g.navigator?.deviceMemory;
+  if (typeof memory === 'number' && memory <= 4) return 'medium';
+  return 'high';
+}
+
+/** The backend asked for by the address (`backend=webgpu`), or `fallback`. */
+export function pickWorld3DBackend(
+  query?: string | URLSearchParams,
+  fallback: World3DBackend = 'webgl2'
+): World3DBackend {
+  const asked = params(query)?.get('backend');
+  return asked === 'webgpu' || asked === 'webgl2' ? asked : fallback;
+}
+
+export interface DynamicResolutionOptions3D {
+  /** Smallest share of the quality's pixel ratio drawn at. Defaults to 0.6. */
+  readonly min?: number;
+  /** Largest share. Defaults to 1. */
+  readonly max?: number;
+  /** How much one change moves the share. Defaults to 0.15. */
+  readonly step?: number;
+  /** Below this smoothed frame rate the share goes down. Defaults to 45. */
+  readonly lowFps?: number;
+  /** Above this smoothed frame rate the share goes up. Defaults to 57. */
+  readonly highFps?: number;
+  /** Seconds the rate must stay low before going down. Defaults to 1.5. */
+  readonly downAfter?: number;
+  /** Seconds the rate must stay high before going up. Defaults to 6. */
+  readonly upAfter?: number;
+}
+/** A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. */
+export interface DynamicResolution3D {
+  /** The share of the pixel ratio to draw at now. */
+  readonly scale: number;
+  /** The smoothed frame rate. */
+  readonly fps: number;
+  /** Takes one frame's seconds and returns the share to draw at. */
+  update(deltaSeconds: number): number;
+  /** Back to the largest share, as after a change of scene. */
+  reset(): void;
+}
+
+export function createDynamicResolution3D(options: DynamicResolutionOptions3D = {}): DynamicResolution3D {
+  const min = options.min ?? 0.6,
+    max = options.max ?? 1,
+    step = options.step ?? 0.15,
+    lowFps = options.lowFps ?? 45,
+    highFps = options.highFps ?? 57,
+    downAfter = options.downAfter ?? 1.5,
+    upAfter = options.upAfter ?? 6;
+  const numbers = [min, max, step, lowFps, highFps, downAfter, upAfter];
+  if (!numbers.every(n => typeof n === 'number' && Number.isFinite(n) && n > 0) || min > max || lowFps >= highFps)
+    throw new World3DError('WORLD3D_INPUT_INVALID', 'dynamic resolution');
+  let scale = max,
+    fps = 60,
+    slow = 0,
+    fast = 0;
+  return {
+    get scale() {
+      return scale;
+    },
+    get fps() {
+      return fps;
+    },
+    update(deltaSeconds: number): number {
+      // A frame of zero or of a hidden tab says nothing about the device.
+      if (!(deltaSeconds > 0) || deltaSeconds > 0.5) return scale;
+      fps += (1 / deltaSeconds - fps) * 0.05;
+      slow = fps < lowFps ? slow + deltaSeconds : 0;
+      fast = fps > highFps ? fast + deltaSeconds : 0;
+      if (slow >= downAfter && scale > min) {
+        scale = Math.max(min, scale - step);
+        slow = 0;
+      } else if (fast >= upAfter && scale < max) {
+        scale = Math.min(max, scale + step);
+        fast = 0;
+      }
+      return scale;
+    },
+    reset(): void {
+      scale = max;
+      fps = 60;
+      slow = fast = 0;
+    }
+  };
+}
+
+export interface World3DAppOptions {
+  /** `webgl2` or `webgpu`. Defaults to what the address asks (`backend=`), else WebGL2. */
+  readonly backend?: World3DBackend;
+  /** A fixed quality, or `auto` (the default) for `pickWorld3DQuality`. */
+  readonly quality?: World3DQuality | 'auto';
+  /** A quality the player chose before; used by `auto` after the address. */
+  readonly storedQuality?: string | null;
+  /** The address's query; `location.search` by default. */
+  readonly query?: string | URLSearchParams;
+  /** Let the drawing resolution follow the frame rate. On by default; pass options or `false`. */
+  readonly dynamicResolution?: boolean | DynamicResolutionOptions3D;
+  readonly toneMapping?: ToneMapping3D;
+  readonly exposure?: number;
+  readonly powerPreference?: 'default' | 'low-power' | 'high-performance';
+  /** Told of failures while updating or drawing and of a stopped loop. Without it they are thrown. */
+  readonly onError?: (cause: unknown) => void;
+  /** Told once when the graphics device is lost. */
+  readonly onDeviceLost?: (message: string) => void;
+}
+export interface World3DShowOptions {
+  /** Called every frame before animation and drawing. */
+  readonly onUpdate?: (deltaSeconds: number, elapsedSeconds: number) => void;
+  readonly mixers?: readonly AnimationMixer3D[];
+  readonly controls?: OrbitControls3D;
+}
+export interface World3DApp extends Disposable {
+  readonly engine: Engine;
+  /** The Engine scope the app's view and renderer belong to. */
+  readonly scope: Scope;
+  readonly renderer: Renderer3D;
+  /** The backend in use. A WebGPU request falls back to WebGL2 when the browser has no adapter. */
+  readonly backend: World3DBackend;
+  /** True when WebGPU was asked for and WebGL2 is drawing instead. */
+  readonly fellBack: boolean;
+  readonly quality: World3DQuality;
+  /** The share of the quality's pixel ratio drawn at, 1 without dynamic resolution. */
+  readonly resolutionScale: number;
+  /** The view showing now, if any. */
+  readonly view: World3DView | undefined;
+  /** Applies another quality's shadows, post-processing and pixel ratio. Antialiasing and the atlas size stay. */
+  setQuality(quality: World3DQuality): void;
+  /** Shows a scene through a camera, replacing what was shown. The loop starts if it is not running. */
+  show(scene: Scene3D, camera: Camera3D, options?: World3DShowOptions): World3DView;
+  /** Starts or stops the frame loop. */
+  start(): void;
+  stop(): void;
+}
+
+async function hasWebGPUAdapter(powerPreference: string | undefined): Promise<boolean> {
+  const gpu = (globalThis as { navigator?: { gpu?: { requestAdapter(options?: object): Promise<unknown> } } }).navigator
+    ?.gpu;
+  if (!gpu || typeof gpu.requestAdapter !== 'function') return false;
+  try {
+    const options = powerPreference && powerPreference !== 'default' ? { powerPreference } : undefined;
+    return (await gpu.requestAdapter(options)) != null;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop.
+ * Call `show(scene, camera)` to draw. `dispose()` ends the loop, the view, the renderer and the Engine.
+ */
+export async function createWorld3DApp(
+  canvas: HTMLCanvasElement | OffscreenCanvas,
+  options: World3DAppOptions = {}
+): Promise<World3DApp> {
+  if (typeof canvas !== 'object' || canvas === null) throw new World3DError('WORLD3D_INPUT_INVALID', 'canvas');
+  if (typeof options !== 'object' || options === null) throw new World3DError('WORLD3D_INPUT_INVALID', 'options');
+  const asked = options.backend ?? pickWorld3DBackend(options.query);
+  if (asked !== 'webgl2' && asked !== 'webgpu') throw new World3DError('WORLD3D_INPUT_INVALID', 'backend');
+  const askedQuality = options.quality ?? 'auto';
+  if (askedQuality !== 'auto' && !isQuality(askedQuality)) throw new World3DError('WORLD3D_INPUT_INVALID', 'quality');
+  let quality: World3DQuality =
+    askedQuality === 'auto'
+      ? pickWorld3DQuality({
+          ...(options.query === undefined ? {} : { query: options.query }),
+          ...(options.storedQuality === undefined ? {} : { stored: options.storedQuality })
+        })
+      : askedQuality;
+  const preset = WORLD3D_QUALITY_PRESETS[quality];
+  const resolution =
+    options.dynamicResolution === false
+      ? undefined
+      : createDynamicResolution3D(options.dynamicResolution === true ? {} : options.dynamicResolution);
+
+  const backend: World3DBackend =
+    asked === 'webgpu' && (await hasWebGPUAdapter(options.powerPreference)) ? 'webgpu' : 'webgl2';
+  const common = {
+    canvas,
+    antialias: preset.antialias,
+    shadows: preset.shadows,
+    shadowAtlasSize: preset.shadowAtlasSize,
+    ...(options.toneMapping === undefined ? {} : { toneMapping: options.toneMapping }),
+    ...(options.exposure === undefined ? {} : { exposure: options.exposure })
+  };
+  const engine = await createEngine({ host: createWorld3DHost(canvas) });
+  let renderer: Renderer3D;
+  try {
+    if (backend === 'webgpu') {
+      const { createWebGPURenderer3D } = await import('./WebGPURenderer3D.js');
+      renderer = await createWebGPURenderer3D({
+        ...common,
+        ...(options.powerPreference && options.powerPreference !== 'default'
+          ? { powerPreference: options.powerPreference }
+          : {}),
+        ...(options.onDeviceLost ? { onDeviceLost: options.onDeviceLost } : {})
+      });
+    } else {
+      const { createWebGL2Renderer3D } = await import('./WebGL2Renderer3D.js');
+      renderer = createWebGL2Renderer3D({
+        ...common,
+        ...(options.powerPreference ? { powerPreference: options.powerPreference } : {}),
+        ...(options.onDeviceLost ? { onContextLost: () => options.onDeviceLost!('context lost') } : {})
+      });
+    }
+  } catch (cause) {
+    await engine.dispose();
+    throw cause;
+  }
+  const scope = engine.createScope();
+  scope.use(renderer);
+
+  const apply = (next: World3DQualityPreset): void => {
+    renderer.shadowsEnabled = next.shadows;
+    const post = renderer.postProcess;
+    post.enabled = next.post;
+    post.bloom = next.bloom;
+    post.ssao = next.ssao;
+    post.fxaa = next.fxaa;
+  };
+  apply(preset);
+
+  let view: World3DView | undefined,
+    loop: Disposable | undefined,
+    disposed = false;
+  const fail = (cause: unknown): void => {
+    if (!options.onError) throw cause;
+    options.onError(cause);
+  };
+  const resize = (camera: Camera3D): void => {
+    const dpr = typeof devicePixelRatio === 'number' ? devicePixelRatio : 1;
+    const ratio = Math.min(dpr, WORLD3D_QUALITY_PRESETS[quality].pixelRatio) * (resolution?.scale ?? 1);
+    renderer.resizeToDisplaySize(ratio);
+    const drawn = renderer.canvas;
+    if (drawn.height > 0) camera.aspect = drawn.width / drawn.height;
+  };
+
+  const app: World3DApp = {
+    engine,
+    scope,
+    renderer,
+    backend,
+    fellBack: asked === 'webgpu' && backend === 'webgl2',
+    get quality() {
+      return quality;
+    },
+    get resolutionScale() {
+      return resolution?.scale ?? 1;
+    },
+    get view() {
+      return view;
+    },
+    setQuality(next: World3DQuality): void {
+      if (!isQuality(next)) throw new World3DError('WORLD3D_INPUT_INVALID', 'quality');
+      quality = next;
+      apply(WORLD3D_QUALITY_PRESETS[next]);
+      resolution?.reset();
+    },
+    show(scene: Scene3D, camera: Camera3D, show: World3DShowOptions = {}): World3DView {
+      if (disposed) throw new World3DError('WORLD3D_DISPOSED', 'app');
+      view?.dispose();
+      resolution?.reset();
+      const created = new World3DView(engine, scope, {
+        renderer,
+        scene,
+        camera,
+        autoResize: false,
+        ...(show.mixers ? { mixers: show.mixers } : {}),
+        ...(show.controls ? { controls: show.controls } : {}),
+        ...(options.onError ? { onError: options.onError } : {}),
+        onUpdate(deltaSeconds, elapsedSeconds) {
+          resolution?.update(deltaSeconds);
+          resize(created.camera);
+          show.onUpdate?.(deltaSeconds, elapsedSeconds);
+        }
+      });
+      view = created;
+      app.start();
+      return created;
+    },
+    start(): void {
+      if (disposed) throw new World3DError('WORLD3D_DISPOSED', 'app');
+      loop ??= startWorld3DLoop(engine, cause => {
+        loop = undefined;
+        fail(cause);
+      });
+    },
+    stop(): void {
+      loop?.dispose();
+      loop = undefined;
+    },
+    dispose(): void {
+      if (disposed) return;
+      disposed = true;
+      app.stop();
+      view?.dispose();
+      view = undefined;
+      // Closing the Engine closes its scopes, which dispose the renderer.
+      void engine.dispose();
+    }
+  };
+  return app;
+}

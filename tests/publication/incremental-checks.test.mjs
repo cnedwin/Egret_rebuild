@@ -9383,7 +9383,9 @@ function restoreScene3dEntries(raw) {
                 withoutTilemapEntry(
                   withoutParticlesEntry(
                     withoutPhysics2dEntry(
-                      withoutBitmapfontEntry(withoutVideoEntry(withoutLoopEntry(withoutGameEntry(withoutWebKitEntry(raw)))))
+                      withoutBitmapfontEntry(
+                        withoutVideoEntry(withoutLoopEntry(withoutGameEntry(withoutWebKitEntry(raw))))
+                      )
                     )
                   )
                 )

@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 41 个入口、1146 个导出，其中 713 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 41 个入口、1196 个导出，其中 743 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -353,6 +353,7 @@
 | `createFatLine3D` | 函数 |  |
 | `createFollowCamera3D` | 函数 |  |
 | `createGeometry3D` | 函数 | Build a geometry from plain arrays; missing normals are computed for triangles. |
+| `createGeometryBuilder3D` | 函数 | A builder that merges placed, coloured parts into one geometry. |
 | `createGlassMaterial3D` | 函数 | A standard material set up as glass: smooth and see-through, with reflections kept. |
 | `createGpuParticles3D` | 函数 |  |
 | `createGradientCubeTexture3D` | 函数 | Procedural sky cube: a vertical gradient from `ground` through `horizon` to `zenith`, in sRGB bytes. |
@@ -446,8 +447,10 @@
 | `frustumIntersectsSphere` | 函数 |  |
 | `Geometry3D` | 类 |  |
 | `GEOMETRY3D_LIMITS` | 值 |  |
+| `GeometryBuilder3D` | 接口 |  |
 | `GeometryGroup3D` | 接口 |  |
 | `GeometryInput3D` | 接口 |  |
+| `GeometryPart3D` | 接口 |  |
 | `GizmoHandle3D` | 类型 | A single axis, a plane spanned by two axes, or 'xyz' for the center handle of the scale mode. |
 | `GizmoMode3D` | 类型 |  |
 | `GizmoSpace3D` | 类型 |  |
@@ -488,6 +491,7 @@
 | `LightOptions3D` | 接口 |  |
 | `LightShadow3D` | 接口 |  |
 | `LightType3D` | 类型 |  |
+| `linearColor3D` | 函数 | A hex colour as seen on screen in the linear RGB the renderer lights, for vertex colours written by hand. |
 | `linearToSrgb` | 函数 |  |
 | `LineCurve3D` | 类 |  |
 | `LineHelper3D` | 类 | Shared base: a line mesh whose vertices are rewritten by update(). |
@@ -557,6 +561,7 @@
 | `Point3D` | 类型 |  |
 | `PointLightOptions3D` | 接口 |  |
 | `PolyhedronOptions3D` | 接口 |  |
+| `projectToViewport3D` | 函数 | Projects a world point into a viewport of `width` by `height` pixels through `camera`. |
 | `QuadraticBezierCurve3D` | 类 |  |
 | `quatCopy` | 函数 |  |
 | `quatFromAxisAngle` | 函数 |  |
@@ -681,6 +686,7 @@
 | `Vehicle3D` | 类 | Drives a chassis body on ray wheels. |
 | `VEHICLE3D_LIMITS` | 值 |  |
 | `VehicleOptions3D` | 接口 |  |
+| `ViewportPoint3D` | 接口 | Where a world point falls in a viewport, for labels, markers and pointers drawn over the picture. |
 | `VolumetricFog3D` | 类 | Add one to the scene's root and keep `receiveShadow` on. |
 | `VolumetricFogOptions3D` | 接口 |  |
 | `Water3D` | 类 | A horizontal water surface. |
@@ -703,18 +709,24 @@
 | `createAtmosphere3D` | 函数 |  |
 | `createAudioListener3D` | 函数 |  |
 | `createCustomPost3D` | 函数 |  |
+| `createDynamicResolution3D` | 函数 |  |
 | `createFlyControls3D` | 函数 |  |
 | `createFollowControls3D` | 函数 |  |
 | `createOrbitControls3D` | 函数 |  |
 | `createPositionalAudio3D` | 函数 |  |
 | `createPostProcessSettings3D` | 函数 |  |
+| `createScreenMarkers3D` | 函数 | A layer of page elements that follow scene points. |
 | `createTransformControls3D` | 函数 |  |
 | `createWebGL2Renderer3D` | 函数 |  |
+| `createWorld3DApp` | 函数 | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | 函数 | Host adapter that reserves `canvas` for one Engine. |
+| `createWorld3DStats` | 函数 |  |
 | `createWorld3DView` | 函数 |  |
 | `CUBE_TEXTURE_ASSET_3D` | 值 | A cube texture. |
 | `CubeCaptureOptions3D` | 接口 |  |
 | `CustomPost3D` | 接口 | A full-screen hook that runs after ambient occlusion and bloom and before tone mapping. |
+| `DynamicResolution3D` | 接口 | A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. |
+| `DynamicResolutionOptions3D` | 接口 |  |
 | `FlyControls3D` | 类 |  |
 | `FlyControlsKeys3D` | 接口 |  |
 | `FlyControlsOptions3D` | 接口 |  |
@@ -728,6 +740,8 @@
 | `loadTexture3D` | 函数 | Load an image or KTX2 file as a texture. |
 | `OrbitControls3D` | 类 |  |
 | `OrbitControlsOptions3D` | 接口 |  |
+| `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
+| `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | 类 | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | 接口 |  |
 | `POST3D_LIMITS` | 值 |  |
@@ -736,6 +750,10 @@
 | `Renderer3D` | 接口 | What both world3d backends provide; views and tools depend on this only. |
 | `Renderer3DInfo` | 接口 |  |
 | `SCENE_ASSET_3D` | 值 | A scene document written by serializeScene3D. |
+| `ScreenMarker3D` | 接口 |  |
+| `ScreenMarkerOptions3D` | 接口 |  |
+| `ScreenMarkers3D` | 接口 |  |
+| `ScreenMarkersOptions3D` | 接口 |  |
 | `startWorld3DLoop` | 函数 | Advance the Engine clock once per display frame. |
 | `TEXTURE_ASSET_3D` | 值 | A 2D texture loaded from an image or KTX2 file. |
 | `TextureLoadOptions3D` | 接口 | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
@@ -744,13 +762,23 @@
 | `WebGL2ProgramVariant3D` | 接口 | One material program for an expected draw. |
 | `WebGL2Renderer3D` | 类 |  |
 | `WebGL2Renderer3DOptions` | 接口 |  |
+| `WORLD3D_QUALITY_PRESETS` | 值 | The three qualities. |
+| `World3DApp` | 接口 |  |
+| `World3DAppOptions` | 接口 |  |
 | `World3DAssetOptions` | 接口 |  |
+| `World3DBackend` | 类型 |  |
 | `World3DClockSource` | 接口 | The part of an Engine this view needs: its explicit game clock. |
+| `World3DDeviceHints` | 接口 | What `pickWorld3DQuality` reads about the device. |
 | `World3DFrameMetrics` | 接口 |  |
 | `World3DFramePass` | 接口 |  |
 | `World3DGpuTiming` | 类型 |  |
 | `World3DLoopSource` | 接口 |  |
 | `World3DPassKind` | 类型 |  |
+| `World3DQuality` | 类型 |  |
+| `World3DQualityPreset` | 接口 | What one picture quality turns on. |
+| `World3DShowOptions` | 接口 |  |
+| `World3DStats` | 接口 |  |
+| `World3DStatsOptions` | 接口 |  |
 | `World3DView` | 类 |  |
 | `World3DViewKind` | 类型 |  |
 | `World3DViewOptions` | 接口 |  |
@@ -767,18 +795,24 @@
 | `createAtmosphere3D` | 函数 |  |
 | `createAudioListener3D` | 函数 |  |
 | `createCustomPost3D` | 函数 |  |
+| `createDynamicResolution3D` | 函数 |  |
 | `createFlyControls3D` | 函数 |  |
 | `createFollowControls3D` | 函数 |  |
 | `createOrbitControls3D` | 函数 |  |
 | `createPositionalAudio3D` | 函数 |  |
 | `createPostProcessSettings3D` | 函数 |  |
+| `createScreenMarkers3D` | 函数 | A layer of page elements that follow scene points. |
 | `createTransformControls3D` | 函数 |  |
 | `createWebGPURenderer3D` | 函数 | Acquire a device (unless one is borrowed) and create the WebGPU renderer. |
+| `createWorld3DApp` | 函数 | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | 函数 | Host adapter that reserves `canvas` for one Engine. |
+| `createWorld3DStats` | 函数 |  |
 | `createWorld3DView` | 函数 |  |
 | `CUBE_TEXTURE_ASSET_3D` | 值 | A cube texture. |
 | `CubeCaptureOptions3D` | 接口 |  |
 | `CustomPost3D` | 接口 | A full-screen hook that runs after ambient occlusion and bloom and before tone mapping. |
+| `DynamicResolution3D` | 接口 | A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. |
+| `DynamicResolutionOptions3D` | 接口 |  |
 | `FlyControls3D` | 类 |  |
 | `FlyControlsKeys3D` | 接口 |  |
 | `FlyControlsOptions3D` | 接口 |  |
@@ -792,6 +826,8 @@
 | `loadTexture3D` | 函数 | Load an image or KTX2 file as a texture. |
 | `OrbitControls3D` | 类 |  |
 | `OrbitControlsOptions3D` | 接口 |  |
+| `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
+| `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | 类 | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | 接口 |  |
 | `POST3D_LIMITS` | 值 |  |
@@ -800,6 +836,10 @@
 | `Renderer3D` | 接口 | What both world3d backends provide; views and tools depend on this only. |
 | `Renderer3DInfo` | 接口 |  |
 | `SCENE_ASSET_3D` | 值 | A scene document written by serializeScene3D. |
+| `ScreenMarker3D` | 接口 |  |
+| `ScreenMarkerOptions3D` | 接口 |  |
+| `ScreenMarkers3D` | 接口 |  |
+| `ScreenMarkersOptions3D` | 接口 |  |
 | `startWorld3DLoop` | 函数 | Advance the Engine clock once per display frame. |
 | `TEXTURE_ASSET_3D` | 值 | A 2D texture loaded from an image or KTX2 file. |
 | `TextureLoadOptions3D` | 接口 | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
@@ -807,9 +847,19 @@
 | `TransformControls3D` | 类 |  |
 | `WebGPURenderer3D` | 类 |  |
 | `WebGPURenderer3DOptions` | 接口 |  |
+| `WORLD3D_QUALITY_PRESETS` | 值 | The three qualities. |
+| `World3DApp` | 接口 |  |
+| `World3DAppOptions` | 接口 |  |
 | `World3DAssetOptions` | 接口 |  |
+| `World3DBackend` | 类型 |  |
 | `World3DClockSource` | 接口 | The part of an Engine this view needs: its explicit game clock. |
+| `World3DDeviceHints` | 接口 | What `pickWorld3DQuality` reads about the device. |
 | `World3DLoopSource` | 接口 |  |
+| `World3DQuality` | 类型 |  |
+| `World3DQualityPreset` | 接口 | What one picture quality turns on. |
+| `World3DShowOptions` | 接口 |  |
+| `World3DStats` | 接口 |  |
+| `World3DStatsOptions` | 接口 |  |
 | `World3DView` | 类 |  |
 | `World3DViewOptions` | 接口 |  |
 

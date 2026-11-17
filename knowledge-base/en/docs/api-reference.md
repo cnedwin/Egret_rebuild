@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 41 entries, 1146 exports; 713 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 41 entries, 1196 exports; 743 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -353,6 +353,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createFatLine3D` | function |  |
 | `createFollowCamera3D` | function |  |
 | `createGeometry3D` | function | Build a geometry from plain arrays; missing normals are computed for triangles. |
+| `createGeometryBuilder3D` | function | A builder that merges placed, coloured parts into one geometry. |
 | `createGlassMaterial3D` | function | A standard material set up as glass: smooth and see-through, with reflections kept. |
 | `createGpuParticles3D` | function |  |
 | `createGradientCubeTexture3D` | function | Procedural sky cube: a vertical gradient from `ground` through `horizon` to `zenith`, in sRGB bytes. |
@@ -446,8 +447,10 @@ For which entry to import from, see [What to import](entry-points.md).
 | `frustumIntersectsSphere` | function |  |
 | `Geometry3D` | class |  |
 | `GEOMETRY3D_LIMITS` | value |  |
+| `GeometryBuilder3D` | interface |  |
 | `GeometryGroup3D` | interface |  |
 | `GeometryInput3D` | interface |  |
+| `GeometryPart3D` | interface |  |
 | `GizmoHandle3D` | type | A single axis, a plane spanned by two axes, or 'xyz' for the center handle of the scale mode. |
 | `GizmoMode3D` | type |  |
 | `GizmoSpace3D` | type |  |
@@ -488,6 +491,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `LightOptions3D` | interface |  |
 | `LightShadow3D` | interface |  |
 | `LightType3D` | type |  |
+| `linearColor3D` | function | A hex colour as seen on screen in the linear RGB the renderer lights, for vertex colours written by hand. |
 | `linearToSrgb` | function |  |
 | `LineCurve3D` | class |  |
 | `LineHelper3D` | class | Shared base: a line mesh whose vertices are rewritten by update(). |
@@ -557,6 +561,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `Point3D` | type |  |
 | `PointLightOptions3D` | interface |  |
 | `PolyhedronOptions3D` | interface |  |
+| `projectToViewport3D` | function | Projects a world point into a viewport of `width` by `height` pixels through `camera`. |
 | `QuadraticBezierCurve3D` | class |  |
 | `quatCopy` | function |  |
 | `quatFromAxisAngle` | function |  |
@@ -681,6 +686,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `Vehicle3D` | class | Drives a chassis body on ray wheels. |
 | `VEHICLE3D_LIMITS` | value |  |
 | `VehicleOptions3D` | interface |  |
+| `ViewportPoint3D` | interface | Where a world point falls in a viewport, for labels, markers and pointers drawn over the picture. |
 | `VolumetricFog3D` | class | Add one to the scene's root and keep `receiveShadow` on. |
 | `VolumetricFogOptions3D` | interface |  |
 | `Water3D` | class | A horizontal water surface. |
@@ -703,18 +709,24 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createAtmosphere3D` | function |  |
 | `createAudioListener3D` | function |  |
 | `createCustomPost3D` | function |  |
+| `createDynamicResolution3D` | function |  |
 | `createFlyControls3D` | function |  |
 | `createFollowControls3D` | function |  |
 | `createOrbitControls3D` | function |  |
 | `createPositionalAudio3D` | function |  |
 | `createPostProcessSettings3D` | function |  |
+| `createScreenMarkers3D` | function | A layer of page elements that follow scene points. |
 | `createTransformControls3D` | function |  |
 | `createWebGL2Renderer3D` | function |  |
+| `createWorld3DApp` | function | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | function | Host adapter that reserves `canvas` for one Engine. |
+| `createWorld3DStats` | function |  |
 | `createWorld3DView` | function |  |
 | `CUBE_TEXTURE_ASSET_3D` | value | A cube texture. |
 | `CubeCaptureOptions3D` | interface |  |
 | `CustomPost3D` | interface | A full-screen hook that runs after ambient occlusion and bloom and before tone mapping. |
+| `DynamicResolution3D` | interface | A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. |
+| `DynamicResolutionOptions3D` | interface |  |
 | `FlyControls3D` | class |  |
 | `FlyControlsKeys3D` | interface |  |
 | `FlyControlsOptions3D` | interface |  |
@@ -728,6 +740,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `loadTexture3D` | function | Load an image or KTX2 file as a texture. |
 | `OrbitControls3D` | class |  |
 | `OrbitControlsOptions3D` | interface |  |
+| `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
+| `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | interface |  |
 | `POST3D_LIMITS` | value |  |
@@ -736,6 +750,10 @@ For which entry to import from, see [What to import](entry-points.md).
 | `Renderer3D` | interface | What both world3d backends provide; views and tools depend on this only. |
 | `Renderer3DInfo` | interface |  |
 | `SCENE_ASSET_3D` | value | A scene document written by serializeScene3D. |
+| `ScreenMarker3D` | interface |  |
+| `ScreenMarkerOptions3D` | interface |  |
+| `ScreenMarkers3D` | interface |  |
+| `ScreenMarkersOptions3D` | interface |  |
 | `startWorld3DLoop` | function | Advance the Engine clock once per display frame. |
 | `TEXTURE_ASSET_3D` | value | A 2D texture loaded from an image or KTX2 file. |
 | `TextureLoadOptions3D` | interface | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
@@ -744,13 +762,23 @@ For which entry to import from, see [What to import](entry-points.md).
 | `WebGL2ProgramVariant3D` | interface | One material program for an expected draw. |
 | `WebGL2Renderer3D` | class |  |
 | `WebGL2Renderer3DOptions` | interface |  |
+| `WORLD3D_QUALITY_PRESETS` | value | The three qualities. |
+| `World3DApp` | interface |  |
+| `World3DAppOptions` | interface |  |
 | `World3DAssetOptions` | interface |  |
+| `World3DBackend` | type |  |
 | `World3DClockSource` | interface | The part of an Engine this view needs: its explicit game clock. |
+| `World3DDeviceHints` | interface | What `pickWorld3DQuality` reads about the device. |
 | `World3DFrameMetrics` | interface |  |
 | `World3DFramePass` | interface |  |
 | `World3DGpuTiming` | type |  |
 | `World3DLoopSource` | interface |  |
 | `World3DPassKind` | type |  |
+| `World3DQuality` | type |  |
+| `World3DQualityPreset` | interface | What one picture quality turns on. |
+| `World3DShowOptions` | interface |  |
+| `World3DStats` | interface |  |
+| `World3DStatsOptions` | interface |  |
 | `World3DView` | class |  |
 | `World3DViewKind` | type |  |
 | `World3DViewOptions` | interface |  |
@@ -767,18 +795,24 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createAtmosphere3D` | function |  |
 | `createAudioListener3D` | function |  |
 | `createCustomPost3D` | function |  |
+| `createDynamicResolution3D` | function |  |
 | `createFlyControls3D` | function |  |
 | `createFollowControls3D` | function |  |
 | `createOrbitControls3D` | function |  |
 | `createPositionalAudio3D` | function |  |
 | `createPostProcessSettings3D` | function |  |
+| `createScreenMarkers3D` | function | A layer of page elements that follow scene points. |
 | `createTransformControls3D` | function |  |
 | `createWebGPURenderer3D` | function | Acquire a device (unless one is borrowed) and create the WebGPU renderer. |
+| `createWorld3DApp` | function | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | function | Host adapter that reserves `canvas` for one Engine. |
+| `createWorld3DStats` | function |  |
 | `createWorld3DView` | function |  |
 | `CUBE_TEXTURE_ASSET_3D` | value | A cube texture. |
 | `CubeCaptureOptions3D` | interface |  |
 | `CustomPost3D` | interface | A full-screen hook that runs after ambient occlusion and bloom and before tone mapping. |
+| `DynamicResolution3D` | interface | A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. |
+| `DynamicResolutionOptions3D` | interface |  |
 | `FlyControls3D` | class |  |
 | `FlyControlsKeys3D` | interface |  |
 | `FlyControlsOptions3D` | interface |  |
@@ -792,6 +826,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `loadTexture3D` | function | Load an image or KTX2 file as a texture. |
 | `OrbitControls3D` | class |  |
 | `OrbitControlsOptions3D` | interface |  |
+| `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
+| `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | interface |  |
 | `POST3D_LIMITS` | value |  |
@@ -800,6 +836,10 @@ For which entry to import from, see [What to import](entry-points.md).
 | `Renderer3D` | interface | What both world3d backends provide; views and tools depend on this only. |
 | `Renderer3DInfo` | interface |  |
 | `SCENE_ASSET_3D` | value | A scene document written by serializeScene3D. |
+| `ScreenMarker3D` | interface |  |
+| `ScreenMarkerOptions3D` | interface |  |
+| `ScreenMarkers3D` | interface |  |
+| `ScreenMarkersOptions3D` | interface |  |
 | `startWorld3DLoop` | function | Advance the Engine clock once per display frame. |
 | `TEXTURE_ASSET_3D` | value | A 2D texture loaded from an image or KTX2 file. |
 | `TextureLoadOptions3D` | interface | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
@@ -807,9 +847,19 @@ For which entry to import from, see [What to import](entry-points.md).
 | `TransformControls3D` | class |  |
 | `WebGPURenderer3D` | class |  |
 | `WebGPURenderer3DOptions` | interface |  |
+| `WORLD3D_QUALITY_PRESETS` | value | The three qualities. |
+| `World3DApp` | interface |  |
+| `World3DAppOptions` | interface |  |
 | `World3DAssetOptions` | interface |  |
+| `World3DBackend` | type |  |
 | `World3DClockSource` | interface | The part of an Engine this view needs: its explicit game clock. |
+| `World3DDeviceHints` | interface | What `pickWorld3DQuality` reads about the device. |
 | `World3DLoopSource` | interface |  |
+| `World3DQuality` | type |  |
+| `World3DQualityPreset` | interface | What one picture quality turns on. |
+| `World3DShowOptions` | interface |  |
+| `World3DStats` | interface |  |
+| `World3DStatsOptions` | interface |  |
 | `World3DView` | class |  |
 | `World3DViewOptions` | interface |  |
 
