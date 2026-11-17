@@ -184,7 +184,7 @@ Use these and not `setTimeout`: they stop with a pause, a hit stop and a hidden 
 
 Nothing else is needed: `play` makes the canvas and fills the window with it, keeping the stage's shape with bars where the window's differs.
 
-A page can also take the engine as [one file](single-file.md), with no import map: `<script src="egret.global.js"></script>`, then `const { play } = Egret;`. Three whole games are in the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md).
+A page can also take the engine as [one file](single-file.md), with no import map: `<script src="egret2d.js"></script>`, then `const { play } = Egret;`. Three whole games are in the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md).
 
 ## In three dimensions
 

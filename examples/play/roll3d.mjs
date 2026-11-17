@@ -20,7 +20,7 @@ await play3d({
     // The ground is 24 across with its top at height 0; a box is placed by its middle.
     blocks.push(game.ground(24, 0x2d6a4f));
     blocks.push(game.box(4, 1, 4, 0x4d6fa8, { x: 6, y: 0.5, z: -4 }));
-    ball = game.sphere(0.5, 0xe8453c, { y: 3 });
+    ball = game.sphere(0.5, 0xe8453c, { y: 1 });
     for (const [x, y, z] of [
       [3, 0.9, 0],
       [-4, 0.9, -3],

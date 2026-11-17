@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 单文件改名为 egret2d.js 和 egret3d.js — 2026-11-17
+
+打包工具现在写出用于 script 标签的 `egret2d.js`、用于 import 的 `egret2d.mjs`，以及包含 World3D 和 `play3d` 的 `egret3d.js` 和 `egret3d.mjs`（原来叫 `egret.global.js`、`egret.js`、`egret3d.global.js` 和 `egret3d.js`）。它还在旁边放上 `llms.txt`、许可证、NOTICE 和 robust-predicates 的许可证，所以输出目录就是一次发布要交出的内容。`play3d` 创建的地面厚度从 1 改为 8：在较慢的第一帧里落下的球曾经穿过地面。
+
 ## Play3D：一次调用做出一个完整的 3D 小游戏 — 2026-11-17
 
 `@egret/engine/webgl2/world3d` 的 `play3d` 是下面垫了一个三维世界的 `play`：一个画在自己画布上的 World3D 应用，上面透明地画着 `play` 的按键、指针、声音、时间、文字和按钮。它增加了用普通数字摆放、可以补间的方块、球、圆柱、圆锥和地面，会跟随的相机，太阳，三维的重叠和推出，相机晃动和碎块迸出。`play` 支持 `transparent: true`。单文件打包工具另外写出包含 World3D 和 `play3d` 的 `egret3d.global.js`，gzip 后 402 KiB；`llms.txt` 增加了 3D 一节和一个 3D 游戏，示例的核对脚本会把它玩到结束。
