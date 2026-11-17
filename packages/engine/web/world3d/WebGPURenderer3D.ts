@@ -9,6 +9,7 @@ import type { Attribute3D, Geometry3D } from '../../rendering/world3d/Geometry3D
 import type { Light3D } from '../../rendering/world3d/Light3D.js';
 import type { Material3D } from '../../rendering/world3d/Material3D.js';
 import { linearToSrgb, mat3NormalFromMat4, mat4Invert } from '../../rendering/world3d/math3D.js';
+import { instanceStreamRevisions3D } from '../../rendering/world3d/Mesh3D.js';
 import type { InstancedMesh3D, Mesh3D, Skeleton3D } from '../../rendering/world3d/Mesh3D.js';
 import { type AnimationTexture3D, SkinnedInstancedMesh3D } from '../../rendering/world3d/AnimationTexture3D.js';
 import { GpuParticles3D } from '../../rendering/world3d/GpuParticles3D.js';
@@ -86,11 +87,13 @@ interface GeometryGpu {
   serial: number;
   readonly unsubscribe: () => void;
 }
+interface InstanceBufferGpu extends BufferGpu {
+  source: Float32Array | undefined;
+}
 interface InstanceGpu {
-  matrices: BufferGpu;
-  colors: BufferGpu | undefined;
-  animation?: BufferGpu;
-  version: number;
+  matrices: InstanceBufferGpu;
+  colors: InstanceBufferGpu | undefined;
+  animation?: InstanceBufferGpu;
   lastFrame: number;
 }
 interface TextureGpu {
@@ -817,31 +820,34 @@ export class WebGPURenderer3D implements Renderer3D {
     entry.wire?.buffer.destroy();
     entry.morph?.buffer.destroy();
   }
+  private uploadInstances(
+    entry: InstanceBufferGpu | undefined,
+    source: Float32Array,
+    version: number
+  ): InstanceBufferGpu {
+    if (entry?.source === source && entry.version === version) return entry;
+    const buffer = this.writeBuffer(entry, source, BUFFER_USAGE.VERTEX) as InstanceBufferGpu;
+    buffer.source = source;
+    buffer.version = version;
+    return buffer;
+  }
+
   private instances(mesh: InstancedMesh3D, frame: number): InstanceGpu {
+    const crowd = mesh instanceof SkinnedInstancedMesh3D ? mesh : undefined;
+    const revisions = crowd ? undefined : instanceStreamRevisions3D(mesh);
+    const matrices = crowd?.drawMatrices ?? mesh.instanceMatrices;
+    const matrixVersion = revisions?.matrices ?? mesh.instanceVersion;
     let entry = this.#instances.get(mesh);
-    if (!entry)
-      this.#instances.set(
-        mesh,
-        (entry = {
-          matrices: this.writeBuffer(undefined, mesh.instanceMatrices, BUFFER_USAGE.VERTEX),
-          colors: undefined,
-          version: -1,
-          lastFrame: frame
-        })
-      );
+    const resident = this.uploadInstances(entry?.matrices, matrices, matrixVersion);
+    if (!entry) {
+      entry = { matrices: resident, colors: undefined, lastFrame: frame };
+      this.#instances.set(mesh, entry);
+    } else entry.matrices = resident;
     entry.lastFrame = frame;
-    if (entry.version !== mesh.instanceVersion) {
-      const crowd = mesh instanceof SkinnedInstancedMesh3D ? mesh : undefined;
-      const colors = crowd ? crowd.drawColors : mesh.instanceColors;
-      entry.matrices = this.writeBuffer(
-        entry.matrices,
-        crowd?.drawMatrices ?? mesh.instanceMatrices,
-        BUFFER_USAGE.VERTEX
-      );
-      if (colors) entry.colors = this.writeBuffer(entry.colors, colors, BUFFER_USAGE.VERTEX);
-      if (crowd) entry.animation = this.writeBuffer(entry.animation, crowd.drawAnimation, BUFFER_USAGE.VERTEX);
-      entry.version = mesh.instanceVersion;
-    }
+    const colors = crowd ? crowd.drawColors : mesh.instanceColors;
+    if (colors) entry.colors = this.uploadInstances(entry.colors, colors, revisions?.colors ?? mesh.instanceVersion);
+    else if (entry.colors) entry.colors.source = undefined;
+    if (crowd) entry.animation = this.uploadInstances(entry.animation, crowd.drawAnimation, mesh.instanceVersion);
     return entry;
   }
   /** Bind group holding the bone matrices and morph deltas for a mesh. */

@@ -147,6 +147,85 @@ test('WebGL2 refreshes changed inactive instance data when the active count grow
   }
 });
 
+function instanceStreamScene(geometry, material) {
+  const scene = new Scene3D();
+  const camera = createPerspectiveCamera3D({ fov: 45, aspect: 1 });
+  camera.setPosition(0, 0, 6).lookAt(0, 0, 0);
+  scene.addChild(camera);
+  const mesh = new InstancedMesh3D(geometry, material, 2, 4);
+  mesh.setTransformAt(1, [1, 0, 0]);
+  mesh.setColorAt(1, 1, 0, 0);
+  scene.addChild(mesh);
+  return { scene, camera, mesh };
+}
+
+function assertInstanceStreamUploads(mesh, render, uploads) {
+  const takeStreams = () => uploads.splice(0).sort();
+  assert.equal(render(), true);
+  uploads.length = 0;
+  assert.equal(render(), true);
+  assert.deepEqual(takeStreams(), []);
+
+  mesh.setTransformAt(1, [2, 0, 0]);
+  assert.equal(render(), true);
+  assert.deepEqual(takeStreams(), ['matrices']);
+
+  mesh.setColorAt(1, 0, 1, 0, 0.5);
+  assert.equal(render(), true);
+  assert.deepEqual(takeStreams(), ['colors']);
+
+  mesh.setColorAt(0, 1, 0, 0, 1);
+  mesh.instanceMatrices[16 + 12] = 1.5;
+  mesh.instanceColors[4 + 2] = 1;
+  mesh.instanceVersion++;
+  mesh.setTransformAt(0, [-1, 0, 0]);
+  assert.equal(render(), true);
+  assert.deepEqual(takeStreams(), ['colors', 'matrices']);
+
+  assert.equal(render(), true);
+  assert.deepEqual(takeStreams(), []);
+
+  const replaced = mesh.instanceColors.slice();
+  replaced[0] = 0.25;
+  mesh.instanceColors = replaced;
+  assert.equal(render(), true);
+  assert.deepEqual(takeStreams(), ['colors']);
+
+  mesh.instanceColors = undefined;
+  assert.equal(render(), true);
+  assert.deepEqual(takeStreams(), []);
+
+  replaced[0] = 0.75;
+  mesh.instanceColors = replaced;
+  assert.equal(render(), true);
+  assert.deepEqual(takeStreams(), ['colors']);
+}
+
+function observeWebGL2Uploads(gl, mesh) {
+  const uploads = [];
+  const record = data => {
+    if (data === mesh.instanceMatrices) uploads.push('matrices');
+    if (mesh.instanceColors && data === mesh.instanceColors) uploads.push('colors');
+  };
+  gl.vertexAttribDivisor = () => {};
+  gl.drawElementsInstanced = () => {};
+  gl.bufferData = (_target, data) => record(data);
+  gl.bufferSubData = (_target, _offset, data) => record(data);
+  return uploads;
+}
+
+test('WebGL2 uploads only the changed instance stream and preserves raw edits', () => {
+  const fixture = shaderPreparationFixture({ parallel: false });
+  const { renderer, gl } = fixture;
+  const { scene, camera, mesh } = instanceStreamScene(fixture.mesh.geometry, fixture.material);
+  const uploads = observeWebGL2Uploads(gl, mesh);
+  try {
+    assertInstanceStreamUploads(mesh, () => renderer.render(scene, camera), uploads);
+  } finally {
+    fixture.dispose();
+  }
+});
+
 function shaderPreparationFixture({ parallel = true } = {}) {
   const fixture = webGLFixture();
   const { canvas, gl } = fixture;
@@ -1031,6 +1110,53 @@ function webGPUFixture(t) {
     }
   };
 }
+
+test('WebGPU uploads only the changed instance stream and preserves raw edits', async t => {
+  const { canvas, device } = webGPUFixture(t);
+  const geometry = createBoxGeometry3D({});
+  const material = createStandardMaterial3D({});
+  const target = new RenderTarget3D(16, 16);
+  const { scene, camera, mesh } = instanceStreamScene(geometry, material);
+  const uploads = [];
+  device.queue.writeBuffer = (_buffer, _offset, data) => {
+    const source = ArrayBuffer.isView(data) ? data.buffer : data;
+    if (source === mesh.instanceMatrices.buffer) uploads.push('matrices');
+    if (source === mesh.instanceColors?.buffer) uploads.push('colors');
+  };
+  device.createShaderModule = () => ({});
+  device.createRenderPipeline = () => ({});
+  device.createCommandEncoder = () => ({
+    beginRenderPass: () => ({
+      setPipeline() {},
+      setBindGroup() {},
+      setVertexBuffer() {},
+      setIndexBuffer() {},
+      drawIndexed() {},
+      end() {}
+    }),
+    finish: () => ({})
+  });
+  const renderer = await createWebGPURenderer3D({ canvas, device, shadows: false });
+  const peer = shaderPreparationFixture({ parallel: false });
+  const peerUploads = observeWebGL2Uploads(peer.gl, mesh);
+  try {
+    assertInstanceStreamUploads(mesh, () => renderer.render(scene, camera, target), uploads);
+
+    assert.equal(peer.renderer.render(scene, camera), true);
+    peerUploads.length = 0;
+    mesh.setTransformAt(0, [0, 0, 0]);
+    assert.equal(renderer.render(scene, camera, target), true);
+    assert.equal(peer.renderer.render(scene, camera), true);
+    assert.deepEqual(uploads, ['matrices']);
+    assert.deepEqual(peerUploads, ['matrices']);
+  } finally {
+    peer.dispose();
+    target.dispose();
+    renderer.dispose();
+    geometry.dispose();
+    material.dispose();
+  }
+});
 
 test('world3d WebGPU readbacks respect resource lifetime and release fallbacks on a borrowed device', async t => {
   const { canvas, device, textures, deviceDestroys, lose } = webGPUFixture(t);

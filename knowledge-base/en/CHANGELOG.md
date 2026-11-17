@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Separate World3D instance uploads — 2026-11-17
+
+Instance matrix and color setters update their own GPU buffers. The Windows SnowTemple replay removed 17,600 bytes of steady snow-color uploads per frame (−17.4% of measured buffer writes). Frame-interval p95 stayed at 4.3 ms. The grass-cell experiment reduced triangles and increased draws, so the existing single batch was retained for that route. [World3D instancing and evidence](docs/world3d.md#meshes-instancing-skinning-and-morphing)
+
 ## Share World3D planar reflection settings — 2026-11-17
 
 Reflection draws use their own tone mapping, shadows, layer mask and excluded subtrees without changing the main view. WebGL2 program preparation accepts the same pass settings. A Windows hardware replay of the SnowTemple wet-stone route observed zero new links during the first entry and return. At first entry and return, both the mirror and the full canvas matched the legacy draw pixel for pixel. The route reused one native color texture across three reflection draws and six skips. [World3D reflection contract](docs/world3d.md#terrain-and-water)
