@@ -6,9 +6,9 @@ Coding agents write most of the games built on this engine. They need to know th
 
 ## What a developer's agent reads
 
-[`llms.txt`](../../../llms.txt) is the one page an agent reads to write a small game. Everything beyond it is in the guide, delivered on demand:
+[`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) is the one page an agent reads to write a small game. Everything beyond it is in the guide, delivered on demand:
 
-- [`guide/index.txt`](../../../guide/index.txt) lists every card in one line: its id, the ways of using the engine it applies to (`play`, `play3d`, `engine`, `world3d`, `web`) and what it answers. It stays under 150 lines.
+- [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) lists every card in one line: its id, the ways of using the engine it applies to (`play`, `play3d`, `engine`, `world3d`, `web`) and what it answers. It stays under 150 lines.
 - `guide/cards/<area>/<id>.txt` is one topic in under 800 tokens as printed: short rules, a minimal example, and the measured reason or the game a rule was learnt from.
 - `node tools/egret-guide.mjs <question>` prints the best two or three cards within a budget (2,500 tokens by default, `--budget` to change it). A question may be words, an engine name, an error code or a devtools hint id. `--card <id>` prints one card and `--list` the index.
 - `node tools/egret-guide.mjs --full --out <file>` writes the index and every card as one file for tools that want a single file. It is a build output and is not committed.

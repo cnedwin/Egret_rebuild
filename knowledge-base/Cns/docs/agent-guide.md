@@ -6,9 +6,9 @@
 
 ## 开发者的智能体读什么
 
-[`llms.txt`](../../../llms.txt) 是智能体写一个小游戏时要读的唯一页面。超出它的内容都在指南里，按需提供：
+[`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) 是智能体写一个小游戏时要读的唯一页面。超出它的内容都在指南里，按需提供：
 
-- [`guide/index.txt`](../../../guide/index.txt) 每张卡片占一行：卡片 id、它适用的引擎用法（`play`、`play3d`、`engine`、`world3d`、`web`），以及它回答什么问题。索引保持在 150 行以内。
+- [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) 每张卡片占一行：卡片 id、它适用的引擎用法（`play`、`play3d`、`engine`、`world3d`、`web`），以及它回答什么问题。索引保持在 150 行以内。
 - `guide/cards/<area>/<id>.txt` 是一个主题，打印出来不超过 800 个 token：简短的规则、一个最小示例，以及规则所依据的测量结果或总结出它的游戏。
 - `node tools/egret-guide.mjs <问题>` 在预算内（默认 2,500 个 token，用 `--budget` 调整）打印最匹配的两到三张卡片。问题可以是普通词语、引擎名字、错误码或 devtools 提示 id。`--card <id>` 打印一张卡片，`--list` 打印索引。
 - `node tools/egret-guide.mjs --full --out <文件>` 把索引和所有卡片写成一个文件，供只接受单个文件的工具使用。它是构建产物，不提交到仓库。
