@@ -319,3 +319,5 @@ export { GpuParticles3D, createGpuParticles3D, type GpuParticlesOptions3D } from
 export { VolumetricFog3D, createVolumetricFog3D, type VolumetricFogOptions3D } from './VolumetricFog3D.js';
 export { createGeometryBuilder3D, linearColor3D, projectToViewport3D } from './GeometryBuilder3D.js';
 export type { GeometryBuilder3D, GeometryPart3D, ViewportPoint3D } from './GeometryBuilder3D.js';
+export { retargetAnimationClip3D } from './Retarget3D.js';
+export type { RetargetOptions3D } from './Retarget3D.js';
