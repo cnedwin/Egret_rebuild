@@ -4,13 +4,16 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## World3D 动画在骨架之间重定向 — 2026-11-17
+
+`retargetAnimationClip3D` 把一套骨架的动画放到体型和骨骼朝向不同的另一套骨架上：每根骨骼相对静止姿势的转动在骨架空间中转移，根骨骼的位移按高度缩放。[World3D 动画](docs/world3d.md#动画)
+
 ## 一次调用启动 World3D 游戏；拼模型、画面标记和性能读数 — 2026-11-17
 
 `createWorld3DApp(canvas, options)` 根据地址选择 WebGL2 或 WebGPU，WebGPU 没有适配器时退回到 WebGL2；根据地址、已保存的选择或设备选出低、中、高画质；创建 Engine、渲染器和循环，并在帧率偏低时降低绘制分辨率。`pickWorld3DQuality`、`pickWorld3DBackend`、`WORLD3D_QUALITY_PRESETS` 和 `createDynamicResolution3D` 也可以单独使用。`createGeometryBuilder3D` 把摆好位置、上了颜色的零件合成一个几何体；`createScreenMarkers3D` 让网页元素跟随场景中的点，需要时贴在屏幕边缘；`createWorld3DStats` 显示性能读数。[一次调用启动 3D 游戏](docs/world3d-app.md)
 ## 按动作读取输入、带版本的存档、可复现的随机数、音效提示和触屏控件 — 2026-11-17
 
 `@egret/engine/kit` 新增 `createInputActions`（覆盖按键、鼠标按钮、手柄按钮和摇杆以及屏幕控件的按钮、轴和向量动作，支持改键并保存）、`createSaveStore`（带版本和升级步骤的存档，存储已满或不可用时也不会抛出异常）、`createRandom`（带种子的 sfc32，可分叉、可保存状态）、`createAudioCues`（按名字播放音效，轮换录音、变化音高、冷却并限制同时发声数）、用于合成声音的 `encodeWav`，以及把许多资源合成一个文件、按字节范围读取的 `writeAssetBundle` 和 `openBrowserAssetBundle`。`tools/vendor-game.mjs` 把游戏所用入口加载的文件拷贝进游戏目录，并生成 import map 和 Node 加载器。`createBrowserAudio` 新增 `limiter`。`@egret/engine/web/kit` 新增 `bindBrowserInputActions`、`createTouchStick`、`createTouchButton` 和 `browserSaveStorage`。[游戏工具包](docs/game-kit.md)
-
 ## 在任何浏览器里把图片变成纹理；帧循环支持追帧 — 2026-11-17
 
 新入口 `@egret/engine/web/kit` 提供一条宽松的图片路线，与 `@egret/engine/web/image` 中严格的 PNG 提供者并存。`decodeBrowserImage` 接受 PNG、JPEG、WebP、GIF 和 AVIF 字节，由浏览器解码；`createImageBitmap` 拒绝时退回到图片元素；超过 2D 上限的图片等比缩小而不是被拒绝。`textureFromCanvas` 把画好的画布变成纹理，`createBrowserImageTextureProvider` 把这条路线注册为资源提供者。`createBrowserFrameLoop` 新增 `catchUpSeconds`：慢的一帧在画出之前拆成若干步补上。[图片变纹理](docs/browser-images.md) · [帧循环](docs/frame-loop.md)

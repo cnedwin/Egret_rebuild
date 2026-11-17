@@ -4,13 +4,16 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Retarget World3D animation between rigs — 2026-11-17
+
+`retargetAnimationClip3D` plays one rig's clip on another of other proportions and other bone axes: each bone's turn away from rest is carried over in rig space, and the root's travel is scaled by height. [World3D animation](docs/world3d.md#animation)
+
 ## Start a World3D game in one call; models, markers and a readout — 2026-11-17
 
 `createWorld3DApp(canvas, options)` chooses WebGL2 or WebGPU from the address and falls back to WebGL2 when WebGPU has no adapter. It picks a low, medium or high picture quality from the address, a stored choice or the device, makes the Engine, renderer and loop, and lowers the drawing resolution while frames are slow. `pickWorld3DQuality`, `pickWorld3DBackend`, `WORLD3D_QUALITY_PRESETS` and `createDynamicResolution3D` are available on their own. `createGeometryBuilder3D` merges placed, coloured parts into one geometry; `createScreenMarkers3D` keeps page elements on scene points, clinging to the screen edge where asked; `createWorld3DStats` shows a performance readout. [A 3D game in one call](docs/world3d-app.md)
 ## Input by action, versioned saves, repeatable random numbers, sound cues and touch controls — 2026-11-17
 
 `@egret/engine/kit` adds `createInputActions` (buttons, axes and vectors over keys, mouse buttons, gamepad buttons and sticks and on-screen controls, with rebinding and saved bindings), `createSaveStore` (a versioned save with migrations that never throws for a full or missing storage) `createRandom` (seeded sfc32 with forks and saved state), `createAudioCues` (named effects that rotate takes, vary pitch, cool down and cap their voices) `encodeWav` for synthesised sounds, and `writeAssetBundle` with `openBrowserAssetBundle` for many assets in one file read by byte ranges. `tools/vendor-game.mjs` copies the files a game's entries load into its folder, with an import map and a Node loader. `createBrowserAudio` takes `limiter`. `@egret/engine/web/kit` adds `bindBrowserInputActions`, `createTouchStick`, `createTouchButton` and `browserSaveStorage`. [The game kit](docs/game-kit.md)
-
 ## Pictures as textures in any browser; catch-up steps in the frame loop — 2026-11-17
 
 The new entry `@egret/engine/web/kit` holds a forgiving picture route beside the strict PNG provider of `@egret/engine/web/image`. `decodeBrowserImage` takes PNG, JPEG, WebP, GIF and AVIF bytes, decodes them with the browser, falls back to an image element where `createImageBitmap` refuses, and scales pictures larger than the 2D limits down instead of refusing them. `textureFromCanvas` turns a painted canvas into a texture, and `createBrowserImageTextureProvider` registers the route as an asset provider. `createBrowserFrameLoop` takes `catchUpSeconds`: a slow frame is played back as several steps before one draw. [Pictures as textures](docs/browser-images.md) · [The frame loop](docs/frame-loop.md)
