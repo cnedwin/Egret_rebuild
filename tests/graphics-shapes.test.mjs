@@ -374,3 +374,31 @@ test('GS09 a mesh of shapes follows the node: its matrix, alpha, clip and blend 
     node.visible = false;
     assert.equal(frame().commands.length, 0);
   }));
+
+test('GS-clear clear() returns the graphics like every other call, so drawing follows it in one chain', () =>
+  withStage(({ sprite }) => {
+    const node = sprite(),
+      g = node.graphics;
+    g.beginFill(0xff0000).drawRect(0, 0, 10, 10).endFill();
+    assert.equal(g.clear(), g);
+    assert.equal(g.clear().beginFill(0x00ff00).drawCircle(5, 5, 5).endFill(), g);
+    assert.equal(node.getBounds().width, 10);
+  }));
+
+test('GS-value a refused display value says which property it was and what it was given', () =>
+  withStage(({ sprite }) => {
+    const node = sprite();
+    assert.throws(
+      () => (node.alpha = 1.3),
+      error => error.code === 'DISPLAY_VALUE_INVALID' && /Cause: RangeError: alpha was given 1\.3$/.test(error.message)
+    );
+    assert.throws(
+      () => (node.x = NaN),
+      error => /x was given NaN$/.test(error.message)
+    );
+    assert.throws(
+      () => (node.name = 5),
+      error => /name was given 5$/.test(error.message)
+    );
+    assert.equal(node.alpha, 1);
+  }));

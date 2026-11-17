@@ -80,6 +80,8 @@ export interface World3DDeviceHints {
   readonly shortSide?: number;
   /** `navigator.deviceMemory`, in gigabytes, where the browser reports it. */
   readonly deviceMemory?: number;
+  /** True when the page is drawn by software, without a graphics card. Not read from the page: see `isSoftwareRendered3D`. */
+  readonly softwareRenderer?: boolean;
 }
 
 const QUALITIES: readonly string[] = ['low', 'medium', 'high'];
@@ -92,8 +94,8 @@ const params = (query: string | URLSearchParams | undefined): URLSearchParams | 
 };
 
 /**
- * The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a
- * window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise.
+ * The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software
+ * rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise.
  */
 export function pickWorld3DQuality(hints: World3DDeviceHints = {}): World3DQuality {
   const asked = params(hints.query)?.get('quality');
@@ -105,12 +107,31 @@ export function pickWorld3DQuality(hints: World3DDeviceHints = {}): World3DQuali
     innerHeight?: number;
     navigator?: { deviceMemory?: number };
   };
+  // Drawn by the processor, every effect is paid for many times over.
+  if (hints.softwareRenderer === true) return 'low';
   const coarse = hints.coarsePointer ?? g.matchMedia?.('(pointer: coarse)').matches ?? false;
   const shortSide = hints.shortSide ?? Math.min(g.innerWidth ?? 1200, g.innerHeight ?? 800);
   if (coarse || shortSide < 600) return 'low';
   const memory = hints.deviceMemory ?? g.navigator?.deviceMemory;
   if (typeof memory === 'number' && memory <= 4) return 'medium';
   return 'high';
+}
+
+/**
+ * Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual
+ * machine or a page whose graphics card is blocked. It asks a throwaway context for its renderer's name.
+ */
+export function isSoftwareRendered3D(document: Document = globalThis.document): boolean {
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    if (!gl) return false;
+    const info = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return /swiftshader|llvmpipe|softpipe|software/i.test(name);
+  } catch {
+    return false;
+  }
 }
 
 /** The backend asked for by the address (`backend=webgpu`), or `fallback`. */
@@ -273,7 +294,8 @@ export async function createWorld3DApp(
     askedQuality === 'auto'
       ? pickWorld3DQuality({
           ...(options.query === undefined ? {} : { query: options.query }),
-          ...(options.storedQuality === undefined ? {} : { stored: options.storedQuality })
+          ...(options.storedQuality === undefined ? {} : { stored: options.storedQuality }),
+          softwareRenderer: isSoftwareRendered3D('ownerDocument' in canvas ? canvas.ownerDocument : undefined)
         })
       : askedQuality;
   const preset = WORLD3D_QUALITY_PRESETS[quality];

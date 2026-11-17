@@ -226,3 +226,26 @@ test('MO05 what is not a motion is refused', () =>
     assert.throws(() => motion.start(), coded('MOTION_ALREADY_STARTED'));
     assert.match(String(new egret.EgretError('MOTION_ALREADY_STARTED').message), /^MOTION_ALREADY_STARTED: /);
   }));
+
+test('MO06 an easing that overshoots stops alpha at its ends, and other numbers overshoot as written', () =>
+  withEngine(({ engine, scope, advance }) => {
+    const sprite = scope.use(new egret.Sprite());
+    sprite.alpha = 0.2;
+    sprite.scaleX = 1;
+    let highest = 0,
+      widest = 0;
+    egret.animate(engine, scope, sprite).to({ alpha: 1, scaleX: 2 }, 1, 'backOut').start();
+    for (let i = 0; i < 104; i++) {
+      // Each step would throw DISPLAY_VALUE_INVALID and stop the clock if alpha went past 1.
+      advance(0.01);
+      highest = Math.max(highest, sprite.alpha);
+      widest = Math.max(widest, sprite.scaleX);
+    }
+    assert.equal(highest, 1);
+    assert.ok(widest > 2, 'scale overshoots: ' + widest);
+    assert.equal(sprite.alpha, 1);
+    assert.equal(sprite.scaleX, 2);
+    egret.animate(engine, scope, sprite).to({ alpha: 0 }, 1, 'backIn').start();
+    advance(1.04);
+    assert.equal(sprite.alpha, 0);
+  }));

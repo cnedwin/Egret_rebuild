@@ -28,6 +28,36 @@ test('WA02 quality comes from the address, then a stored choice, then the device
   assert.equal(pickWorld3DQuality({ ...desktop, query: '', coarsePointer: true }), 'low');
   assert.equal(pickWorld3DQuality({ ...desktop, query: '', shortSide: 420 }), 'low');
   assert.equal(pickWorld3DQuality({ ...desktop, query: '', deviceMemory: 4 }), 'medium');
+  // Software rendering takes the lowest quality, unless the address or the player asked otherwise.
+  assert.equal(pickWorld3DQuality({ ...desktop, query: '', softwareRenderer: true }), 'low');
+  assert.equal(pickWorld3DQuality({ ...desktop, query: '?quality=high', softwareRenderer: true }), 'high');
+  assert.equal(pickWorld3DQuality({ ...desktop, query: '', stored: 'medium', softwareRenderer: true }), 'medium');
+  // The renderer's name is asked of a throwaway context; a page without WebGL is not software rendered.
+  const { isSoftwareRendered3D } = webgl2;
+  const page = name => ({
+    createElement: () => ({
+      getContext: () => ({
+        RENDERER: 1,
+        getExtension: ext => (ext === 'WEBGL_debug_renderer_info' ? { UNMASKED_RENDERER_WEBGL: 2 } : null),
+        getParameter: key => (key === 2 ? name : 'WebKit WebGL')
+      })
+    })
+  });
+  assert.equal(
+    isSoftwareRendered3D(page('ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0)), SwiftShader driver)')),
+    true
+  );
+  assert.equal(isSoftwareRendered3D(page('llvmpipe (LLVM 15.0.7, 256 bits)')), true);
+  assert.equal(isSoftwareRendered3D(page('ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 vs_5_0 ps_5_0)')), false);
+  assert.equal(isSoftwareRendered3D({ createElement: () => ({ getContext: () => null }) }), false);
+  assert.equal(
+    isSoftwareRendered3D({
+      createElement: () => {
+        throw new Error('no DOM');
+      }
+    }),
+    false
+  );
 });
 
 test('WA03 the backend comes from the address, WebGL2 otherwise', () => {

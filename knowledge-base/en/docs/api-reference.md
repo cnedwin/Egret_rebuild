@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 42 entries, 1265 exports; 775 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 42 entries, 1267 exports; 775 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -737,6 +737,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `FollowControlsOptions3D` | interface |  |
 | `GLTF_ASSET_3D` | value | A loaded glTF file. |
 | `GltfUrlLoadOptions3D` | interface | glTF loading options: download limits plus the optional KTX2, meshopt and Draco decoders. |
+| `isSoftwareRendered3D` | function | Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual machine or a page whose graphics card is blocked. |
 | `loadCubeTexture3D` | function | Load six square images in +X, -X, +Y, -Y, +Z, -Z order as a cube texture. |
 | `loadGltfFromUrl3D` | function | Load a .glb or .gltf file; relative buffer and image URIs resolve against `url`. |
 | `LoadOptions3D` | interface |  |
@@ -744,7 +745,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `OrbitControls3D` | class |  |
 | `OrbitControlsOptions3D` | interface |  |
 | `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
-| `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
+| `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | interface |  |
 | `POST3D_LIMITS` | value |  |
@@ -826,6 +827,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `FollowControlsOptions3D` | interface |  |
 | `GLTF_ASSET_3D` | value | A loaded glTF file. |
 | `GltfUrlLoadOptions3D` | interface | glTF loading options: download limits plus the optional KTX2, meshopt and Draco decoders. |
+| `isSoftwareRendered3D` | function | Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual machine or a page whose graphics card is blocked. |
 | `loadCubeTexture3D` | function | Load six square images in +X, -X, +Y, -Y, +Z, -Z order as a cube texture. |
 | `loadGltfFromUrl3D` | function | Load a .glb or .gltf file; relative buffer and image URIs resolve against `url`. |
 | `LoadOptions3D` | interface |  |
@@ -833,7 +835,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `OrbitControls3D` | class |  |
 | `OrbitControlsOptions3D` | interface |  |
 | `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
-| `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
+| `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | interface |  |
 | `POST3D_LIMITS` | value |  |

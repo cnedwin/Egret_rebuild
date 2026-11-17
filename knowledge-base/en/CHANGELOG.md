@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Fix what stopped first games from starting — 2026-11-17
+
+An error's message now ends with its cause (`… Cause: DISPLAY_VALUE_INVALID: … Cause: RangeError: alpha was given 1.07`), and a refused display value says which property and what it was given. Pointer and hover input accept a canvas whose ancestors are moved or scaled with CSS, as centring with `transform: translate(-50%, -50%)` does; a refusal says which rule was broken. Labels of `createBrowserGame` wait their turn, so many may be made or changed together without `TEXT_CACHE_BUDGET`. `animate` stops alpha at 0 and 1 under an overshooting ease. `graphics.clear()` returns the graphics. The browser game guide says when the loop starts and that returned objects are frozen; the World3D app guide's geometry calls take options.
+
 ## Light more than eight point lights by screen tile — 2026-11-17
 
 World3D lights up to 256 further point lights per frame by screen tile (tiled forward lighting) on WebGL2 and WebGPU, instead of dropping them. `renderer.info.lightsTiled` counts them; `renderer.tiledLights = false` restores dropping. Tiled lights cast no shadows.

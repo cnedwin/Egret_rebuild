@@ -362,15 +362,21 @@ test('HB06 a canvas that moved or changed size is mapped anew, and what was hove
 test('HB07 a canvas whose mapping is not one scale and one offset is refused, and nothing stays installed', async () => {
   const cases = [
     [
-      'a transformed ancestor',
+      'a turned ancestor',
       dom => {
-        dom.body.css.transform = 'matrix(1, 0, 0, 1, 0, 0)';
+        dom.body.css.transform = 'matrix(0, 1, -1, 0, 0, 0)';
       }
     ],
     [
-      'a scaled canvas',
+      'a mirrored canvas',
       dom => {
-        dom.canvas.css.scale = '2';
+        dom.canvas.css.scale = '-1 1';
+      }
+    ],
+    [
+      'a rotated canvas',
+      dom => {
+        dom.canvas.css.rotate = '10deg';
       }
     ],
     [

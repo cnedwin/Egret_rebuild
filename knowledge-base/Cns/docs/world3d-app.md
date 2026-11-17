@@ -39,9 +39,9 @@ app.show(scene, camera, { onUpdate: (seconds) => game.update(seconds) });
 
 1. 地址中的 `?quality=`；
 2. `storedQuality`，玩家之前的选择；
-3. 设备：手指操作或窗口短边小于 600 像素时为 `low`，内存不超过 4 GB 时为 `medium`，否则为 `high`。
+3. 设备：WebGL 由软件绘制（无头浏览器、虚拟机、显卡被禁用）、手指操作或窗口短边小于 600 像素时为 `low`；内存不超过 4 GB 时为 `medium`；否则为 `high`。
 
-`pickWorld3DQuality(hints)` 给出同样的结果。
+把 `softwareRenderer` 提示设为 `isSoftwareRendered3D()` 时，`pickWorld3DQuality(hints)` 给出同样的结果；应用会替你查询。
 
 | 画质 | 像素比 | 抗锯齿 | 阴影 | 后期处理 |
 | --- | --- | --- | --- | --- |
@@ -63,8 +63,8 @@ app.show(scene, camera, { onUpdate: (seconds) => game.update(seconds) });
 import { createBoxGeometry3D, createCylinderGeometry3D, createGeometryBuilder3D, createStandardMaterial3D, Mesh3D } from '@egret/engine/world3d';
 
 const truck = createGeometryBuilder3D()
-  .add(createBoxGeometry3D(2, 1, 1.6), { position: [0, 1, 0], color: 0x4b5d3a })
-  .add(createCylinderGeometry3D(0.4, 0.4, 0.3), { position: [0.7, 0.4, 0.85], rotation: [Math.PI / 2, 0, 0], color: 0x1a1a1a })
+  .add(createBoxGeometry3D({ width: 2, height: 1, depth: 1.6 }), { position: [0, 1, 0], color: 0x4b5d3a })
+  .add(createCylinderGeometry3D({ radiusTop: 0.4, radiusBottom: 0.4, height: 0.3 }), { position: [0.7, 0.4, 0.85], rotation: [Math.PI / 2, 0, 0], color: 0x1a1a1a })
   .build();
 scene.addChild(new Mesh3D(truck, createStandardMaterial3D({ vertexColors: true })));
 ```

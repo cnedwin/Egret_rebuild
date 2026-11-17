@@ -25,6 +25,23 @@ hero.graphics.beginFill(0x4a7bd0).drawRect(0, 0, 24, 24).endFill();
 
 这就是一个完整的游戏：方块会移动。`await game.dispose()` 结束它。
 
+## 先知道三件事
+
+**调用一返回，循环就开始。** `createBrowserGame` 完成后的下一帧就会调用 `update`，之后每帧都调用，不管调用下面的代码还在等什么。接着去 `await` 文字或声音的游戏，这期间 `update` 已经在运行：写在更下面的 `let` 或 `const` 还不存在（`Cannot access 'state' before initialization`），这个错误会让循环停下。把 `update` 要读的东西都放在后面第一个 `await` 之前创建，或者等准备完成后自己启动循环：
+
+```js
+const game = await createBrowserGame({ canvas, width: 480, height: 270, autoStart: false, update });
+const score = await game.createLabel({ text: '0' });   // 这时 update 还没有运行
+const state = { score: 0 };
+game.loop.start();
+```
+
+**引擎返回的对象不能再加东西。** `game`、文字标签、输入动作等引擎返回的对象都是冻结的：`label.centre = () => …` 会抛出 `Cannot add property centre, object is not extensible`。自己的数据放在自己的对象里，和它们并排存放，例如 `{ label, anchorX: 0.5 }`。
+
+**错误信息的末尾是它的原因。** 让循环停下的错误会抛到控制台，或交给 `onError`。信息从外向内读：`CLOCK_CALLBACK_FAILED: … Cause: DISPLAY_VALUE_INVALID: … Cause: RangeError: alpha was given 1.07`，最后一段就是最先出错的地方。`error.code` 是最外层的代码，`error.cause` 是里面的下一个错误。
+
+游戏的其余部分：[`animate`](api-reference.md) 以链式写法移动和淡入淡出显示对象，[2D 相机](camera-2d.md)负责跟随、缩放和震屏，[游戏工具包](game-kit.md)有输入动作、音效、随机数和存档，[音频](audio.md)负责播放和混音，[Graphics](graphics.md) 绘制图形，另有[粒子](particles.md)和 [2D 物理](physics-2d.md)。
+
 ## 这次调用创建了什么
 
 | 部分 | 在 game 上 | 创建方式 |
@@ -39,7 +56,7 @@ hero.graphics.beginFill(0x4a7bd0).drawRect(0, 0, 24, 24).endFill();
 
 `await game.loadTexture(url)` 加载一张 PNG 图片并给出其纹理的租约，可用于 `new Bitmap(lease)` 或 `graphics.beginBitmapFill(lease)`；租约属于 `game.scope`，同一地址加载两次得到同一张纹理。其他格式不能读取，请使用[内容构建](content-build-pipeline.md)。`game.host` 是 Host，可读取它的状态。
 
-**文本。** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` 创建一行文本；把 `label.display` 加到舞台上并定位，之后文字变化时设置 `label.text`。新文字准备好后才画出来，在此之前保留旧文字；`await label.ready` 可以等它完成。字体用页面自己的：系统字体族，或页面已加载的字体。第一个 label 会加载页面的文本光栅化器，所以 import map 需要 `@egret/engine/text`、`@egret/engine/web/text` 和 `@egret/runtime/text`。
+**文本。** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` 创建一行文本；把 `label.display` 加到舞台上并定位，之后文字变化时设置 `label.text`。新文字准备好后才画出来，在此之前保留旧文字；`await label.ready` 可以等它完成。可以同时创建或修改任意多个 label：它们每次画两个，其余排队；正在绘制时文字又变了的 label，接着画最新的文字。`ready` 之后，`label.display.width` 和 `.height` 就是文字的大小，所以 `label.display.x = centre - label.display.width / 2` 可以让它居中。字体用页面自己的：系统字体族，或页面已加载的字体。第一个 label 会加载页面的文本光栅化器，所以 import map 需要 `@egret/engine/text`、`@egret/engine/web/text` 和 `@egret/runtime/text`。
 
 **画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。任何模式下舞台都保持自己单位的宽高，指针位置跟随画布。
 `game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。

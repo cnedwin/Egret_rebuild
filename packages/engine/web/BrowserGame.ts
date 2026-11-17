@@ -268,6 +268,24 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     }
     // Text: one cache for the Engine, made with the page's rasterizer when the first label is asked for.
     let textCache: Promise<TextRasterCache> | undefined;
+    // The text cache takes four drawings at a time and refuses more. Labels wait their turn here instead, two at a
+    // time, so a game may make or change any number of them together.
+    const LABEL_LANES = 2;
+    let labelsDrawing = 0;
+    const labelsWaiting: (() => void)[] = [];
+    const enterLabelLane = (): Promise<void> | void => {
+      if (labelsDrawing < LABEL_LANES) {
+        labelsDrawing++;
+        return;
+      }
+      // The lane is handed over by the label that leaves it, so no newcomer takes it first.
+      return new Promise<void>(resolve => labelsWaiting.push(resolve));
+    };
+    const leaveLabelLane = (): void => {
+      const next = labelsWaiting.shift();
+      if (next) next();
+      else labelsDrawing--;
+    };
     async function createLabel(given: BrowserGameLabelOptions = {}): Promise<BrowserGameLabel> {
       if (given === null || typeof given !== 'object') throw invalid();
       textCache ??= import('./text.js').then(text =>
@@ -285,10 +303,11 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         locale: 'en',
         direction: 'ltr'
       };
-      let ready: Promise<void> = Promise.resolve();
-      const apply = (next: BrowserGameLabelOptions): void => {
-        if (next === null || typeof next !== 'object') throw invalid();
-        now = { ...now, ...next };
+      let ready: Promise<void> = Promise.resolve(),
+        asked = 0,
+        drawing = false,
+        running: Promise<void> | undefined;
+      const request = (): void =>
         field.setRequest({
           text: now.text,
           fontFamily: now.fontFamily,
@@ -301,10 +320,50 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           density: pixelRatio,
           fillColor: now.color
         });
-        const pending = field.prepare().then(() => {});
+      // Draws the label's newest words. Words changed while it draws are asked for when that drawing is done, never
+      // over it, so a label holds one drawing of the text cache at a time however often its words change.
+      const draw = async (): Promise<void> => {
+        try {
+          await enterLabelLane();
+          try {
+            for (let shown = -1; shown !== asked; ) {
+              if (shown !== -1) request();
+              shown = asked;
+              drawing = true;
+              try {
+                // The cache frees a drawing's place a few turns after the drawing is handed over. A refusal for
+                // want of a place is waited out, without a timer; one that lasts is the label's failure.
+                for (let attempt = 0; ; attempt++) {
+                  try {
+                    await field.prepare();
+                    break;
+                  } catch (cause) {
+                    if (!(cause instanceof EgretError) || cause.code !== 'TEXT_CACHE_BUDGET' || attempt >= 400)
+                      throw cause;
+                    await Promise.resolve();
+                  }
+                }
+              } finally {
+                drawing = false;
+              }
+            }
+          } finally {
+            leaveLabelLane();
+          }
+        } finally {
+          running = undefined;
+        }
+      };
+      const apply = (next: BrowserGameLabelOptions): void => {
+        if (next === null || typeof next !== 'object') throw invalid();
+        now = { ...now, ...next };
+        // Refused at once when nothing is being drawn; otherwise when its turn comes, through `ready`.
+        if (!drawing) request();
+        asked++;
+        running ??= draw();
         // A failure is the label's to tell through `ready`; it is not left unheard.
-        pending.catch(() => {});
-        ready = pending;
+        running.catch(() => {});
+        ready = running;
       };
       apply(given);
       return Object.freeze({

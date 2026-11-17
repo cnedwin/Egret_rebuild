@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 42 个入口、1265 个导出，其中 775 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 42 个入口、1267 个导出，其中 775 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -737,6 +737,7 @@
 | `FollowControlsOptions3D` | 接口 |  |
 | `GLTF_ASSET_3D` | 值 | A loaded glTF file. |
 | `GltfUrlLoadOptions3D` | 接口 | glTF loading options: download limits plus the optional KTX2, meshopt and Draco decoders. |
+| `isSoftwareRendered3D` | 函数 | Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual machine or a page whose graphics card is blocked. |
 | `loadCubeTexture3D` | 函数 | Load six square images in +X, -X, +Y, -Y, +Z, -Z order as a cube texture. |
 | `loadGltfFromUrl3D` | 函数 | Load a .glb or .gltf file; relative buffer and image URIs resolve against `url`. |
 | `LoadOptions3D` | 接口 |  |
@@ -744,7 +745,7 @@
 | `OrbitControls3D` | 类 |  |
 | `OrbitControlsOptions3D` | 接口 |  |
 | `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
-| `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
+| `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | 类 | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | 接口 |  |
 | `POST3D_LIMITS` | 值 |  |
@@ -826,6 +827,7 @@
 | `FollowControlsOptions3D` | 接口 |  |
 | `GLTF_ASSET_3D` | 值 | A loaded glTF file. |
 | `GltfUrlLoadOptions3D` | 接口 | glTF loading options: download limits plus the optional KTX2, meshopt and Draco decoders. |
+| `isSoftwareRendered3D` | 函数 | Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual machine or a page whose graphics card is blocked. |
 | `loadCubeTexture3D` | 函数 | Load six square images in +X, -X, +Y, -Y, +Z, -Z order as a cube texture. |
 | `loadGltfFromUrl3D` | 函数 | Load a .glb or .gltf file; relative buffer and image URIs resolve against `url`. |
 | `LoadOptions3D` | 接口 |  |
@@ -833,7 +835,7 @@
 | `OrbitControls3D` | 类 |  |
 | `OrbitControlsOptions3D` | 接口 |  |
 | `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
-| `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
+| `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | 类 | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | 接口 |  |
 | `POST3D_LIMITS` | 值 |  |

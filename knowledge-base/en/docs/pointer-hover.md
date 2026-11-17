@@ -71,7 +71,7 @@ A wheel is dispatched to what is under it as `events.wheel`. The payload has `de
 
 ## Mapping, interruption and ownership
 
-The browser adapter accepts the profile of the contact adapter: a connected canvas with untransformed, unzoomed ancestors, no border or padding, and `object-fit: fill`. One scale and one offset map CSS pixels to stage units, and the device pixel ratio plays no part. A canvas outside this profile is refused with `HOVER_INPUT_SURFACE_INVALID`. A second adapter on the same canvas is refused with `HOVER_INPUT_SURFACE_BUSY`.
+The browser adapter accepts the profile of the contact adapter: a connected canvas whose ancestors are unzoomed and at most moved and scaled by positive amounts (rotation, skew, mirroring and perspective are refused), with no border or padding, and `object-fit: fill`. One scale and one offset map CSS pixels to stage units, and the device pixel ratio plays no part. A canvas outside this profile is refused with `HOVER_INPUT_SURFACE_INVALID`. A second adapter on the same canvas is refused with `HOVER_INPUT_SURFACE_BUSY`.
 
 When the canvas moves or changes size, what is hovered is left under the old `viewportRevision`, and the next movement is mapped under the new one. A resize, a scroll and an orientation change do this at once. A layout change that raises no event is noticed at the next pointer event.
 

@@ -193,8 +193,12 @@ export function animate<T extends object>(engine: Engine, scope: Scope, target: 
           return;
         }
         const eased = fraction === 1 ? 1 : step.ease(fraction);
-        for (let i = 0; i < step.names.length; i++)
-          record[step.names[i]!] = fraction === 1 ? step.ends[i]! : starts[i]! + (step.ends[i]! - starts[i]!) * eased;
+        for (let i = 0; i < step.names.length; i++) {
+          const name = step.names[i]!,
+            value = fraction === 1 ? step.ends[i]! : starts[i]! + (step.ends[i]! - starts[i]!) * eased;
+          // An easing that overshoots (back, elastic) would take alpha past what it can be; it stops at the ends.
+          record[name] = name === 'alpha' ? Math.min(1, Math.max(0, value)) : value;
+        }
       });
       return;
     }

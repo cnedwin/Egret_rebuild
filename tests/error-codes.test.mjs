@@ -50,7 +50,9 @@ test('EC01 a thrown error carries its code alone and a message of the code and a
 test('EC02 a code of no known area has its code as its message, and a cause is kept', () => {
   const cause = new Error('inner');
   const plain = new egret.EgretError('ZZ_NOT_A_CODE', { cause });
-  assert.equal(plain.message, 'ZZ_NOT_A_CODE');
+  assert.equal(new egret.EgretError('ZZ_NOT_A_CODE').message, 'ZZ_NOT_A_CODE');
+  // The cause is told after it; see EC-cause.
+  assert.equal(plain.message, 'ZZ_NOT_A_CODE Cause: Error: inner');
   assert.equal(plain.code, 'ZZ_NOT_A_CODE');
   assert.equal(plain.cause, cause);
   assert.equal(describeErrorCode('ZZ_NOT_A_CODE'), '');
@@ -137,4 +139,33 @@ test('EC05 the sentence of a message is in the language that was set, and the co
   }
   assert.equal(new egret.EgretError('FRAME_RENDER_FAILED').message, english.message);
   assert.equal(describeErrorCode('FRAME_RENDER_FAILED', 'de'), '');
+});
+
+test('EC-cause a message ends with what caused the error, so a log of the message alone names the first failure', () => {
+  const { EgretError } = egret;
+  const plain = new EgretError('CLOCK_CALLBACK_FAILED');
+  assert.equal(plain.message, 'CLOCK_CALLBACK_FAILED: ' + describeErrorCode('CLOCK_CALLBACK_FAILED'));
+  // Another error is told by its name and message.
+  const bug = new ReferenceError("Cannot access 'state' before initialization");
+  const stopped = new EgretError('CLOCK_CALLBACK_FAILED', { cause: bug });
+  assert.equal(stopped.cause, bug);
+  assert.equal(stopped.code, 'CLOCK_CALLBACK_FAILED');
+  assert.equal(stopped.message, plain.message + " Cause: ReferenceError: Cannot access 'state' before initialization");
+  // An SDK error is told by its own message, which carries its own cause: the chain reads to the first failure.
+  const value = new EgretError('DISPLAY_VALUE_INVALID', { cause: new RangeError('alpha was given 1.07') });
+  const outer = new EgretError('FRAME_RENDER_FAILED', {
+    cause: new EgretError('CLOCK_CALLBACK_FAILED', { cause: value })
+  });
+  assert.match(
+    outer.message,
+    /^FRAME_RENDER_FAILED: .* Cause: CLOCK_CALLBACK_FAILED: .* Cause: DISPLAY_VALUE_INVALID: .* Cause: RangeError: alpha was given 1\.07$/
+  );
+  // The same code wrapped again is not said twice.
+  const twice = new EgretError('DISPLAY_VALUE_INVALID', { cause: value });
+  assert.equal(twice.message, value.message);
+  // What is not an error, or says nothing, adds nothing; a long cause is cut.
+  assert.equal(new EgretError('CLOCK_CALLBACK_FAILED', { cause: 'text' }).message, plain.message);
+  assert.equal(new EgretError('CLOCK_CALLBACK_FAILED', { cause: new Error('') }).message, plain.message);
+  const long = new EgretError('CLOCK_CALLBACK_FAILED', { cause: new Error('x'.repeat(2000)) });
+  assert.ok(long.message.length < plain.message.length + 520 && long.message.endsWith('…'));
 });

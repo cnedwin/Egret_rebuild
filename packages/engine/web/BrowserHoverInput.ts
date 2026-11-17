@@ -96,14 +96,33 @@ export function createBrowserHoverInput(options: BrowserHoverInputOptions): Hove
         throw new EgretError('HOVER_INPUT_SURFACE_INVALID');
       let current: Node | null = surface,
         depth = 0;
-      // Ordinary ancestors only: a transform or a zoom would need a mapping this adapter does not have.
+      // Ordinary ancestors only: a turn, a skew, a mirror or a zoom would need a mapping this adapter does not have.
       while (current !== page) {
         if (current === null || current.nodeType !== 1 || ++depth > 64)
           throw new EgretError('HOVER_INPUT_SURFACE_INVALID');
         const style = win.getComputedStyle(current as Element),
           read = (name: string): string => style.getPropertyValue(name).trim();
-        if (['transform', 'perspective', 'translate', 'rotate', 'scale'].some(name => read(name) !== 'none'))
-          throw new EgretError('HOVER_INPUT_SURFACE_INVALID');
+        // Moving and positive scaling keep the canvas an upright rectangle, which the bounding rectangle maps as it is.
+        const matrix = /^matrix\(([^)]*)\)$/.exec(read('transform'))?.[1]?.split(',').map(Number),
+          scale = read('scale');
+        if (
+          (read('transform') !== 'none' &&
+            !(
+              matrix !== undefined &&
+              matrix.length === 6 &&
+              matrix.every(Number.isFinite) &&
+              matrix[0]! > 0 &&
+              matrix[3]! > 0 &&
+              matrix[1] === 0 &&
+              matrix[2] === 0
+            )) ||
+          read('rotate') !== 'none' ||
+          read('perspective') !== 'none' ||
+          (scale !== 'none' && !scale.split(/\s+/).every(part => Number(part) > 0))
+        )
+          throw new EgretError('HOVER_INPUT_SURFACE_INVALID', {
+            cause: new Error('the canvas or an element around it is rotated, skewed, mirrored or in perspective')
+          });
         const zoom = read('zoom');
         if (zoom !== 'normal' && zoom !== '1') throw new EgretError('HOVER_INPUT_SURFACE_INVALID');
         if (current === surface) {
