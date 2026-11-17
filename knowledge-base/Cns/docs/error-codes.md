@@ -102,6 +102,17 @@
 | `ASSET_TYPE_MISMATCH` | 交给资源管理器的 `type` 不匹配。 |
 | `ASSET_VALUE_INVALID` | 交给资源管理器的 `value` 无效。 |
 
+### ASSET_BUNDLE
+
+| 错误码 | 含义 |
+| --- | --- |
+| `ASSET_BUNDLE_CHECK_FAILED` | 资源包的 `check` 失败了。原因在 cause 中。 |
+| `ASSET_BUNDLE_ENTRY_MISSING` | 缺少资源包需要的 `entry`。 |
+| `ASSET_BUNDLE_FETCH_FAILED` | 资源包的 `fetch` 失败了。原因在 cause 中。 |
+| `ASSET_BUNDLE_FORMAT_INVALID` | 交给资源包的 `format` 无效。 |
+| `ASSET_BUNDLE_INVALID` | 交给资源包的内容无效。 |
+| `ASSET_BUNDLE_RANGE_INVALID` | 交给资源包的 `range` 无效。 |
+
 ### ASSET_GROUP
 
 | 错误码 | 含义 |
@@ -161,6 +172,18 @@
 | `AUDIO_STREAM_FAILED` | 音频混音器的 `stream` 失败了。原因在 cause 中。 |
 | `AUDIO_STREAM_UNSUPPORTED` | 音频混音器不支持 `stream`。 |
 | `AUDIO_URL_INVALID` | 交给音频混音器的 `url` 无效。 |
+
+### AUDIO_CUES
+
+| 错误码 | 含义 |
+| --- | --- |
+| `AUDIO_CUES_INVALID` | 交给音效提示的内容无效。 |
+
+### AUDIO_WAV
+
+| 错误码 | 含义 |
+| --- | --- |
+| `AUDIO_WAV_INVALID` | 交给WAV 编码的内容无效。 |
 
 ### BITMAP
 
@@ -521,6 +544,12 @@
 | `HOVER_INPUT_SURFACE_INVALID` | 交给悬停输入的 `surface` 无效。 |
 | `HOVER_INPUT_VIEWPORT` | 交给悬停输入的视口版本号不是比上一次更大的整数。 |
 
+### INPUT_ACTIONS
+
+| 错误码 | 含义 |
+| --- | --- |
+| `INPUT_ACTIONS_INVALID` | 交给输入动作的内容无效。 |
+
 ### KEYBOARD
 
 | 错误码 | 含义 |
@@ -749,6 +778,19 @@
 | `POINTER_INPUT_SURFACE_BUSY` | 指针输入的 `surface` 还在处理之前的请求。 |
 | `POINTER_INPUT_SURFACE_INVALID` | 交给指针输入的 `surface` 无效。 |
 | `POINTER_INPUT_VIEWPORT` | 交给指针输入的视口版本号不是比上一次更大的整数。 |
+
+### RANDOM
+
+| 错误码 | 含义 |
+| --- | --- |
+| `RANDOM_RANGE_INVALID` | 交给随机数生成器的 `range` 无效。 |
+| `RANDOM_SEED_INVALID` | 交给随机数生成器的 `seed` 无效。 |
+
+### SAVE_STORE
+
+| 错误码 | 含义 |
+| --- | --- |
+| `SAVE_STORE_OPTIONS_INVALID` | 交给存档的选项无效：缺少某一项、类型不对或超出范围。 |
 
 ### SCOPE
 

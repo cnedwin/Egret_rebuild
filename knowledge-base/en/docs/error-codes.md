@@ -102,6 +102,17 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `ASSET_TYPE_MISMATCH` | The type given to the asset manager does not match. |
 | `ASSET_VALUE_INVALID` | The value given to the asset manager is not valid. |
 
+### ASSET_BUNDLE
+
+| Code | Meaning |
+| --- | --- |
+| `ASSET_BUNDLE_CHECK_FAILED` | The check of an asset bundle failed. The cause is in cause. |
+| `ASSET_BUNDLE_ENTRY_MISSING` | A entry that an asset bundle needs is missing. |
+| `ASSET_BUNDLE_FETCH_FAILED` | The fetch of an asset bundle failed. The cause is in cause. |
+| `ASSET_BUNDLE_FORMAT_INVALID` | The format given to an asset bundle is not valid. |
+| `ASSET_BUNDLE_INVALID` | What was given to an asset bundle is not valid. |
+| `ASSET_BUNDLE_RANGE_INVALID` | The range given to an asset bundle is not valid. |
+
 ### ASSET_GROUP
 
 | Code | Meaning |
@@ -161,6 +172,18 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `AUDIO_STREAM_FAILED` | The stream of the audio mixer failed. The cause is in cause. |
 | `AUDIO_STREAM_UNSUPPORTED` | The stream is not supported by the audio mixer. |
 | `AUDIO_URL_INVALID` | The url given to the audio mixer is not valid. |
+
+### AUDIO_CUES
+
+| Code | Meaning |
+| --- | --- |
+| `AUDIO_CUES_INVALID` | What was given to the sound cues is not valid. |
+
+### AUDIO_WAV
+
+| Code | Meaning |
+| --- | --- |
+| `AUDIO_WAV_INVALID` | What was given to the WAV encoder is not valid. |
 
 ### BITMAP
 
@@ -521,6 +544,12 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `HOVER_INPUT_SURFACE_INVALID` | The surface given to hover input is not valid. |
 | `HOVER_INPUT_VIEWPORT` | The viewport revision given to hover input is not a whole number above the last one. |
 
+### INPUT_ACTIONS
+
+| Code | Meaning |
+| --- | --- |
+| `INPUT_ACTIONS_INVALID` | What was given to the input actions is not valid. |
+
 ### KEYBOARD
 
 | Code | Meaning |
@@ -749,6 +778,19 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `POINTER_INPUT_SURFACE_BUSY` | The surface of pointer input is still busy with an earlier request. |
 | `POINTER_INPUT_SURFACE_INVALID` | The surface given to pointer input is not valid. |
 | `POINTER_INPUT_VIEWPORT` | The viewport revision given to pointer input is not a whole number above the last one. |
+
+### RANDOM
+
+| Code | Meaning |
+| --- | --- |
+| `RANDOM_RANGE_INVALID` | The range given to the random number generator is not valid. |
+| `RANDOM_SEED_INVALID` | The seed given to the random number generator is not valid. |
+
+### SAVE_STORE
+
+| Code | Meaning |
+| --- | --- |
+| `SAVE_STORE_OPTIONS_INVALID` | The options given to the save store are not valid: one is missing, of the wrong type or out of range. |
 
 ### SCOPE
 

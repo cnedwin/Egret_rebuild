@@ -23,7 +23,21 @@ export interface BrowserAudioOptions extends Omit<AudioMixerOptions, 'backend' |
    * output was asked to start or stop. Without it the failure is reported to the page.
    */
   readonly onError?: (cause: unknown) => void;
+  /**
+   * A limiter on the way out, so many sounds at once do not clip. `true` uses a gentle setting that leaves
+   * ordinary transients alone; an object sets the compressor itself. Off by default.
+   */
+  readonly limiter?: boolean | BrowserAudioLimiter;
 }
+/** The compressor of the limiter, in its own units: decibels for threshold and knee, seconds for the times. */
+export interface BrowserAudioLimiter {
+  readonly threshold?: number;
+  readonly knee?: number;
+  readonly ratio?: number;
+  readonly attack?: number;
+  readonly release?: number;
+}
+const LIMITER = { threshold: -6, knee: 4, ratio: 12, attack: 0.003, release: 0.16 } as const;
 export interface BrowserAudio {
   readonly mixer: AudioMixer;
   readonly context: BaseAudioContext;
@@ -74,14 +88,15 @@ const at = (line: Line, time: number): number =>
 export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAudio {
   if (options === null || typeof options !== 'object' || Array.isArray(options))
     throw new EgretError('AUDIO_OPTIONS_INVALID');
-  const { context: given, unlockTarget, pauseWhenHidden = true, onError, ...configuration } = options;
+  const { context: given, unlockTarget, pauseWhenHidden = true, onError, limiter: limit, ...configuration } = options;
   const Live = globalThis.AudioContext,
     page = globalThis.document;
   if (
     (given !== undefined && (given === null || typeof given !== 'object')) ||
     typeof pauseWhenHidden !== 'boolean' ||
     (onError !== undefined && typeof onError !== 'function') ||
-    (unlockTarget !== undefined && (unlockTarget === null || typeof unlockTarget.addEventListener !== 'function'))
+    (unlockTarget !== undefined && (unlockTarget === null || typeof unlockTarget.addEventListener !== 'function')) ||
+    (limit !== undefined && typeof limit !== 'boolean' && (limit === null || typeof limit !== 'object'))
   )
     throw new EgretError('AUDIO_OPTIONS_INVALID');
   if (given === undefined && typeof Live !== 'function') throw new EgretError('AUDIO_HOST_UNAVAILABLE');
@@ -89,6 +104,20 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
   /** Only an output that runs in real time can be suspended, resumed and locked. */
   const live = typeof Live === 'function' && context instanceof Live ? context : undefined;
   const buffers = new WeakMap<AudioBackendSound, AudioBuffer>();
+  // The limiter sits between the master volume and the speakers.
+  let limiter: DynamicsCompressorNode | undefined;
+  if (limit) {
+    const settings = { ...LIMITER, ...(limit === true ? {} : limit) };
+    for (const value of Object.values(settings))
+      if (!Number.isFinite(value)) throw new EgretError('AUDIO_OPTIONS_INVALID');
+    limiter = context.createDynamicsCompressor();
+    limiter.threshold.value = settings.threshold;
+    limiter.knee.value = settings.knee;
+    limiter.ratio.value = settings.ratio;
+    limiter.attack.value = settings.attack;
+    limiter.release.value = settings.release;
+    limiter.connect(context.destination);
+  }
   const nodes = new WeakMap<AudioBackendBus, GainNode>();
   const streams = new WeakMap<AudioBackendSound, Stream>();
   /** The media elements that should be heard now. */
@@ -369,7 +398,7 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
     },
     createBus(parent: AudioBackendBus | undefined): AudioBackendBus {
       const node = context.createGain(),
-        target = parent === undefined ? context.destination : nodes.get(parent);
+        target = parent === undefined ? (limiter ?? context.destination) : nodes.get(parent);
       if (target === undefined) throw new EgretError('AUDIO_BACKEND_FAILED');
       node.connect(target);
       output ??= node;
@@ -440,6 +469,7 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
       closed = true;
       unlisten(armed);
       unlisten(pairs);
+      limiter?.disconnect();
       if (live !== undefined && given === undefined) live.close().catch(report);
     }
   };

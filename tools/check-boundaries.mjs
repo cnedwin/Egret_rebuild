@@ -280,6 +280,7 @@ for (const [name, allowed] of Object.entries(expected)) {
     // Frame loop: one optional browser entry.
     if (name === 'engine') textExports['./web/loop'] = {types:'./dist/web/loop.d.ts',import:'./dist/web/loop.js'};
     // Game kit: one optional browser entry.
+    if (name === 'engine') textExports['./kit'] = {types:'./dist/kit.d.ts',import:'./dist/kit.js'};
     if (name === 'engine') textExports['./web/kit'] = {types:'./dist/web/kit.d.ts',import:'./dist/web/kit.js'};
     // Browser game: one optional browser entry that puts the Host, loop and input entries together.
     if (name === 'engine') textExports['./web/game'] = {types:'./dist/web/game.d.ts',import:'./dist/web/game.js'};
@@ -372,6 +373,11 @@ for (const [name, allowed] of Object.entries(expected)) {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/BrowserHoverInput.ts','dist/web/BrowserHoverInput.js','dist/web/BrowserHoverInput.d.ts'].includes(relative))
           throw new Error('Hover: logical hover entry imported outside the named browser module: '+relative);
+      } else if (imported === '@egret/engine/kit') {
+        // The browser half of the game kit is built on the public DOM-free kit entry and on nothing private.
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/BrowserInputActions.ts','dist/web/BrowserInputActions.js','dist/web/BrowserInputActions.d.ts','web/BrowserAssetBundle.ts','dist/web/BrowserAssetBundle.js','dist/web/BrowserAssetBundle.d.ts'].includes(relative))
+          throw new Error('Game kit: DOM-free kit entry imported outside the named browser module: '+relative);
       } else if (imported === '@egret/engine/input/gamepad') {
         // The browser adapter of the pads is built on the public logical entry and on nothing private.
         const relative=path.relative(dir,file).split(path.sep).join('/');

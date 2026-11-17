@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/inputActions.ts",
+      "originRole": "First-party named input actions over keys, buttons, sticks and touch controls, with rebinding and saved bindings; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/saveStore.ts",
+      "originRole": "First-party versioned game save with migrations and storage failures reported, never thrown; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/random.ts",
+      "originRole": "First-party repeatable sfc32 random numbers for game rules, with forks and saved state; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/kit.ts",
+      "originRole": "First-party DOM-free game kit entry; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/audioCues.ts",
+      "originRole": "First-party named sound cues that rotate takes, vary pitch, cool down and cap voices, and a 16-bit WAV encoder for synthesised sounds; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/assetBundle.ts",
+      "originRole": "First-party asset bundle format: writer, index reader, checked slices and range planning; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserInputActions.ts",
+      "originRole": "First-party browser feed of input actions from keys, mouse buttons and gamepads, touch sticks and buttons, and guarded browser storage for saves; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserAssetBundle.ts",
+      "originRole": "First-party HTTP reader of asset bundles by byte ranges, with a whole-file fallback; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/game-kit.test.mjs",
+      "originRole": "First-party tests of input actions, saves and random numbers; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/asset-bundle.test.mjs",
+      "originRole": "First-party tests of asset bundles and their HTTP reader; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/game-kit-browser.test.mjs",
+      "originRole": "First-party tests of the browser game kit with stand-in event targets, gamepads and storage; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/game-kit.md",
+      "originRole": "First-party guide to input actions, saves, random numbers and touch controls; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/game-kit.md",
+      "originRole": "First-party Chinese reading of the game kit guide; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tools/vendor-game.mjs",
+      "originRole": "First-party tool that copies the import closure of named engine entries into a game folder, with an import map, a Node loader and a source record; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/vendor-game.test.mjs",
+      "originRole": "First-party tests of the game vendoring tool; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/game-kit.md",
+      "zh": "knowledge-base/Cns/docs/game-kit.md"
+    }
+  ]
+}

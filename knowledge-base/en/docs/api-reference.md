@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 41 entries, 1196 exports; 743 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 42 entries, 1244 exports; 765 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1301,10 +1301,55 @@ For which entry to import from, see [What to import](entry-points.md).
 | `FrameLoopEngine` | interface | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | interface | What the loop asks of a Host: how many frames it holds that it has not finished. |
 
+## `@egret/engine/kit`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `ASSET_BUNDLE_HEADER_BYTES` | value | How many bytes from the start must be read to know the index's length: the header. |
+| `assetBundleCheck` | function | FNV-1a over the bytes, as eight hex digits. |
+| `AssetBundleEntry` | interface |  |
+| `AssetBundleIndex` | interface |  |
+| `AssetBundleInput` | interface | One file to put in a bundle. |
+| `AudioCueDefinition` | interface |  |
+| `AudioCuePlayOptions` | interface |  |
+| `AudioCues` | interface |  |
+| `AudioCuesOptions` | interface |  |
+| `createAudioCues` | function | Names the sound effects of a game over `mixer`. |
+| `createInputActions` | function | Makes the actions of `map`. |
+| `createMemorySaveStorage` | function | Storage kept in memory: for tests, for a page without browser storage, or for a game played once. |
+| `createRandom` | function | A generator from a seed (a number or string) or a saved state. |
+| `createSaveStore` | function | Opens the save under `options.key`, migrating an older one. |
+| `describeInputBinding` | function | A readable name for a binding, for settings screens: `Key:KeyW` is `W`, `Mouse:0` is `Left button`. |
+| `encodeWav` | function | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
+| `hashSeed` | function | Turns a string or number into a 32-bit seed. |
+| `InputActionDefinition` | interface | An action and the controls that drive it. |
+| `InputActionKind` | type |  |
+| `InputActionMap` | type |  |
+| `InputActions` | interface |  |
+| `InputBinding` | type | One physical control, written as a short string: `Key:KeyW` (a `KeyboardEvent.code`), `Mouse:0` (a button number), `Pad:a` or `Pad:7` (a standard gamepad button name or number), `Pad:leftStick` / `Pad:rightStick` (a stick, for vector actions), `Pad:leftStickX+` (one half of a stick axis, for buttons and axes), and `Touch:<name>` for an on-screen control. |
+| `InputBindingSlot` | type | A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... |
+| `InputBindingsSave` | interface |  |
+| `InputVector` | interface |  |
+| `planAssetBundleRanges` | function | Ranges of the file that hold the named entries, joined where they touch or lie within `gap` bytes. |
+| `Random` | interface |  |
+| `RandomState` | type | Four 32-bit words. |
+| `readAssetBundleHeader` | function | The index length a header gives, so a reader can ask for exactly the bytes of the index. |
+| `readAssetBundleIndex` | function | The index of a bundle from its first bytes: at least the header and the index. |
+| `SaveProblem` | interface |  |
+| `SaveProblemKind` | type |  |
+| `SaveStorage` | interface | Where a save is kept: strings by key. |
+| `SaveStore` | interface |  |
+| `SaveStoreOptions` | interface |  |
+| `sliceAssetBundle` | function | The bytes of one entry from bytes of the bundle that start at `start` (0 for the whole file), checked against the index. |
+| `writeAssetBundle` | function | One file holding every input, in the order given, each starting at a multiple of four bytes. |
+
 ## `@egret/engine/web/kit`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
+| `bindBrowserInputActions` | function | Listens to the page for the controls of `actions`. |
+| `BrowserAssetBundle` | interface |  |
+| `BrowserAssetBundleOptions` | interface |  |
 | `BrowserDecodedImage` | interface |  |
 | `BrowserImageCanvas` | interface |  |
 | `BrowserImageContext` | interface |  |
@@ -1313,11 +1358,19 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserImagePorts` | interface |  |
 | `BrowserImageSource` | type | What `textureFromCanvas` and `decodeBrowserImage` can read pixels from. |
 | `BrowserImageTextureProviderOptions` | interface |  |
+| `BrowserInputActions` | interface |  |
+| `BrowserInputActionsOptions` | interface |  |
+| `browserSaveStorage` | function | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
 | `createBrowserImageTextureProvider` | function | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
+| `createTouchButton` | function | Makes `element` an on-screen button that holds `binding` (such as `Touch:jump`) while a finger is on it. |
+| `createTouchStick` | function | A stick that appears where a finger lands in its zone of `element` and follows it. |
 | `decodeBrowserImage` | function | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
 | `fitBrowserImageSize` | function | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
+| `openBrowserAssetBundle` | function | Opens the bundle at `url`, reading its index. |
 | `sniffBrowserImageFormat` | function | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | function | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
+| `TouchControl` | interface |  |
+| `TouchStickOptions` | interface |  |
 
 ## `@egret/engine/web/game`
 
