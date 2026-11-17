@@ -57,6 +57,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | --- | --- | --- |
 | `width`, `height` | The size of the stage in the game's own units: whole numbers above 0. The canvas is scaled to fit and keeps this shape | Required |
 | `background` | The colour a frame is cleared to | Black |
+| `transparent` | `true` clears a frame to nothing, so what the page has under the canvas shows through | The background is drawn |
 | `setup(game)` | Builds the game; may be `async` | Nothing is built |
 | `update(seconds, game)` | One step of the game | No step |
 | `parent` | An element to put the canvas in. It fills the element's width; an element with no height of its own takes the stage's shape | The game fills the window |
@@ -184,6 +185,10 @@ Use these and not `setTimeout`: they stop with a pause, a hit stop and a hidden 
 Nothing else is needed: `play` makes the canvas and fills the window with it, keeping the stage's shape with bars where the window's differs.
 
 A page can also take the engine as [one file](single-file.md), with no import map: `<script src="egret.global.js"></script>`, then `const { play } = Egret;`. Three whole games are in the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md).
+
+## In three dimensions
+
+[`play3d`](play3d.md) is this with a world of boxes, balls and a ground under it, a camera that follows and a sun: the keys, the pointer, sound, time, text and buttons are the same.
 
 ## When a game outgrows it
 

@@ -57,6 +57,7 @@ await play({
 | --- | --- | --- |
 | `width`、`height` | 舞台大小，使用游戏自己的单位：大于 0 的整数。画布会缩放以适应页面，并保持这个比例 | 必填 |
 | `background` | 每帧清除成的颜色 | 黑色 |
+| `transparent` | `true` 时每帧清为透明，页面上位于画布下面的内容会透出来 | 绘制背景色 |
 | `setup(game)` | 搭建游戏；可以是 `async` | 什么都不搭建 |
 | `update(seconds, game)` | 游戏的一步 | 没有这一步 |
 | `parent` | 放画布的元素。画布占满它的宽度；元素自己没有高度时，按舞台的比例取高度 | 游戏占满窗口 |
@@ -184,6 +185,10 @@ for (const block of blocks) {
 不需要别的东西：`play` 会创建画布并让它占满窗口，保持舞台的比例，窗口比例不同时两侧留边。
 
 页面也可以把引擎作为[一个文件](single-file.md)使用，不需要 import map：`<script src="egret.global.js"></script>`，然后 `const { play } = Egret;`。[play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)里有三个完整的游戏。
+
+## 三维
+
+[`play3d`](play3d.md) 就是下面垫了一个由方块、球和地面组成的世界、带跟随相机和太阳的它：按键、指针、声音、时间、文字和按钮都一样。
 
 ## 游戏变大之后
 

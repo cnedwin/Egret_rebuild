@@ -11,29 +11,35 @@ import { SFX_PRESETS } from '@egret/engine/play';
 
 const read = file => fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8');
 const page = read('llms.txt'),
-  source = read('packages/engine/web/BrowserPlay.ts');
-/** The names of the members of an interface of the play entry, from its source. */
-const members = name => {
-  const start = source.indexOf('export interface ' + name + ' {');
+  flat = read('packages/engine/web/BrowserPlay.ts'),
+  deep = read('packages/engine/web/world3d/BrowserPlay3D.ts');
+/** The names of the members of an interface of play or of play3d, from its source. */
+const members = (name, source = flat) => {
+  const start = source.search(new RegExp('export interface ' + name + '\\b[^{]*\\{'));
   assert.ok(start >= 0, name);
   const body = source.slice(start, source.indexOf('\n}', start));
   return [...body.matchAll(/^ {2}(?:readonly )?([A-Za-z]+)[?(<:]/gm)].map(match => match[1]);
 };
-const GAME = members('PlayGame'),
+const GAME = [...new Set([...members('PlayGame'), ...members('Play3DGame', deep)])],
   PARTS = { keys: members('PlayKeys'), pointer: members('PlayPointer'), sfx: members('PlaySfx') };
 
 // Break caught: change a game of the example without changing the page, or the page without the example.
 test('LL01 each game of the page is a game of the play example, which is played to its end in a browser', () => {
-  for (const game of ['breakout', 'platformer', 'memory']) {
+  for (const [game, call, from] of [
+    ['breakout', 'play', '@egret/engine/play'],
+    ['platformer', 'play', '@egret/engine/play'],
+    ['memory', 'play', '@egret/engine/play'],
+    ['roll3d', 'play3d', '@egret/engine/webgl2/world3d']
+  ]) {
     const lines = read('examples/play/' + game + '.mjs').split('\n');
-    const first = lines.indexOf("import { play } from '@egret/engine/play';");
+    const first = lines.indexOf('import { ' + call + " } from '" + from + "';");
     assert.ok(first > 0 && lines.slice(0, first).every(line => line.startsWith('//')), game);
     const body = lines
       .slice(first + 1)
       .join('\n')
       .trimEnd();
     assert.ok(
-      page.includes('```js\nconst { play } = Egret;\n' + body + '\n```'),
+      page.includes('```js\nconst { ' + call + ' } = Egret;\n' + body + '\n```'),
       game + ' is not in llms.txt as it is in the example'
     );
   }
@@ -82,7 +88,7 @@ test('LL03 the sounds, the drawing calls and the options the page lists are the 
 
 // Break caught: let the page grow past what an agent reads at once, or point it at a guide that is not there.
 test('LL04 the page stays short and every guide it links is in the repository', () => {
-  assert.ok(page.split('\n').length <= 420, page.split('\n').length + ' lines');
+  assert.ok(page.split('\n').length <= 540, page.split('\n').length + ' lines');
   const links = [...page.matchAll(/\]\(([^)]+)\)/g)].map(match => match[1]);
   assert.ok(links.length >= 10);
   for (const link of links) assert.ok(fs.existsSync(new URL('../' + link, import.meta.url)), link);

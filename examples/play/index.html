@@ -8,6 +8,7 @@
   <script type="importmap">{
   "imports": {
     "@egret/engine/play": "/packages/engine/dist/web/play.js",
+    "@egret/engine/webgl2/world3d": "/packages/engine/dist/web/world3d/index.js",
     "@egret/engine": "/packages/engine/dist/index.js",
     "@egret/engine/audio": "/packages/engine/dist/audio.js",
     "@egret/engine/kit": "/packages/engine/dist/kit.js",
@@ -26,9 +27,9 @@
 </head>
 <body>
   <script type="module">
-    // One game fills the window: ?game=breakout, ?game=platformer or ?game=memory.
+    // One game fills the window: ?game=breakout, ?game=platformer, ?game=memory or, in 3D, ?game=roll3d.
     const game = new URLSearchParams(location.search).get('game');
-    await import(['platformer', 'memory'].includes(game) ? `./${game}.mjs` : './breakout.mjs');
+    await import(['platformer', 'memory', 'roll3d'].includes(game) ? `./${game}.mjs` : './breakout.mjs');
   </script>
 </body>
 </html>

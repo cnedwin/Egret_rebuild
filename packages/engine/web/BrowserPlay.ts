@@ -21,6 +21,8 @@ export interface PlayOptions {
   readonly height: number;
   /** What a frame is cleared to. Black unless given. */
   readonly background?: number;
+  /** Clears a frame to nothing, so that what the page has under the canvas shows through. `background` is then not drawn. */
+  readonly transparent?: boolean;
   /** Where the canvas goes. Without it the game fills the window. */
   readonly parent?: HTMLElement;
   /** A canvas of the page to draw on, as it is placed there. Without it one is made and fitted. */
@@ -346,7 +348,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     canvas: surface,
     width,
     height,
-    clearColor: background,
+    clearColor: options.transparent === true ? 0 : background,
+    ...(options.transparent === true ? { clearAlpha: 0 } : {}),
     autoStart: false,
     keyboard: false,
     ...(holder === undefined ? {} : { fit: 'contain' as const, fitTo: holder }),

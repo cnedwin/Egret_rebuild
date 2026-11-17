@@ -373,6 +373,109 @@ function win(game) {
 }
 ```
 
+## 3D
+
+`play3d` is `play` with a world of three dimensions under it. The page loads `egret3d.global.js` instead of `egret.global.js`, and the script starts with `const { play3d } = Egret;`. Everything above is the same and is the flat interface over the picture, in the units of `width` and `height`: `game.text`, `game.button`, `game.keys`, `game.pointer`, `game.sfx`, `game.tween`, `game.after`, `game.flash`, `game.restart`. What is added is the world. `x` is right, `y` is up, `z` is towards the camera; a ball of radius 0.5 on a ground of 24 reads well.
+
+| Call | Gives |
+| --- | --- |
+| `game.box(width, height, depth, color, { x, y, z })` | A box, its middle at the place |
+| `game.sphere(radius, color, { x, y, z })`, `game.cylinder(radius, height, color, { x, y, z })`, `game.cone(radius, height, color, { x, y, z })` | A ball; a cylinder on its end; a cone on its base |
+| `game.ground(size, color, y = 0)` | A square floor whose top is at height `y` |
+| `game.remove(thing)` | Takes it out of the world; `thing.removed` is then true, and setting it does nothing |
+| `game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6 })` | Keeps the camera that far from a thing, looking at it |
+| `game.overlaps(a, b)`, `game.hits(a, list)`, `game.hitsAll(a, list)` | Overlap of things as upright boxes |
+| `game.near(a, b, distance?)` | Whether their middles are within a distance, the sum of their radii unless given |
+| `game.pushOut(a, b)` | How far to move `a` out of `b`: `{ x, y, z }`, one of them not 0, or `undefined`. A `y` above 0 means `a` stands on `b` |
+| `game.shake(amount = 0.3, seconds = 0.25)` | Shakes the camera, in units of the world |
+| `game.burst(x, y, z, { color, count, speed, life, size, gravity })` | Throws small pieces out from a point |
+
+A thing has `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `scale`, `scaleX`, `scaleY`, `scaleZ`, `visible` and `color`, all of which can be set and tweened, and takes properties of your own. Without `follow`, set `game.camera.x`, `.y`, `.z` and call `game.camera.lookAt(x, y, z)`. `game.sun` lights the world and every thing casts and takes shadows: nothing to set. Shadows are drawn at the quality the device gets (`medium` or `high`); a software-rendered browser gets `low`, without them, and `game.app.setQuality('medium')` asks for them anyway. A turned thing is still tested as an upright box of its unturned size; `game.scene` and `game.app` are the World3D scene and app under it. There is no gravity: move things yourself, and use `pushOut` to stand them on one another.
+
+```js
+const { play3d } = Egret;
+
+const SPEED = 6,
+  GRAVITY = 20;
+let ball, blocks, stars, vy, got, label, done;
+
+await play3d({
+  width: 960,
+  height: 540,
+  background: 0x0b1020,
+  setup(game) {
+    blocks = [];
+    stars = [];
+    vy = 0;
+    got = 0;
+    done = false;
+    // The ground is 24 across with its top at height 0; a box is placed by its middle.
+    blocks.push(game.ground(24, 0x2d6a4f));
+    blocks.push(game.box(4, 1, 4, 0x4d6fa8, { x: 6, y: 0.5, z: -4 }));
+    ball = game.sphere(0.5, 0xe8453c, { y: 3 });
+    for (const [x, y, z] of [
+      [3, 0.9, 0],
+      [-4, 0.9, -3],
+      [6, 1.9, -4],
+      [0, 0.9, 5]
+    ])
+      stars.push(game.cone(0.4, 0.8, 0xffd23f, { x, y, z }));
+    game.follow(ball, { y: 6, z: 9 });
+    // Text and buttons are the flat interface over the picture, in the units of width and height.
+    label = game.text('Stars 0/4', { x: 16, y: 12, size: 28 });
+  },
+  update(dt, game) {
+    if (done) return;
+    // Keys, or a finger held on a side of the screen. On the ground x is right and z is towards the camera.
+    const move = game.keys.axis();
+    if (game.pointer.down) {
+      move.x = game.pointer.x < 320 ? -1 : game.pointer.x > 640 ? 1 : 0;
+      move.y = game.pointer.y < 180 ? -1 : game.pointer.y > 360 ? 1 : 0;
+    }
+    ball.x += move.x * SPEED * dt;
+    ball.z += move.y * SPEED * dt;
+    ball.rotationZ -= move.x * 300 * dt;
+    ball.rotationX += move.y * 300 * dt;
+    vy -= GRAVITY * dt;
+    ball.y += vy * dt;
+    // Pushed up out of a block, it stands on it.
+    let onGround = false;
+    for (const block of blocks) {
+      const push = game.pushOut(ball, block);
+      if (!push) continue;
+      ball.x += push.x;
+      ball.y += push.y;
+      ball.z += push.z;
+      if (push.y !== 0) vy = 0;
+      if (push.y > 0) onGround = true;
+    }
+    if (onGround && (game.keys.pressed('space') || game.pointer.pressed)) {
+      vy = 8;
+      game.sfx.play('jump');
+    }
+    for (const star of stars) star.rotationY += 120 * dt;
+    const star = game.hits(ball, stars);
+    if (star) {
+      stars = stars.filter(other => other !== star);
+      game.burst(star.x, star.y, star.z, { color: 0xffd23f });
+      game.remove(star);
+      label.text = 'Stars ' + ++got + '/4';
+      game.sfx.play('coin');
+      game.shake(0.2, 0.2);
+      if (got === 4) end(game, 'All four!', 'win');
+    }
+    if (ball.y < -12) end(game, 'Fell off', 'lose');
+  }
+});
+
+function end(game, words, sound) {
+  done = true;
+  game.sfx.play(sound);
+  game.text(words, { x: 480, y: 200, size: 48, align: 'center' });
+  game.button('Play again', { x: 480, y: 300 }, () => game.restart());
+}
+```
+
 ## Check a game
 
 In a checkout, `node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs]` runs the page in a headless browser, plays it blind with keys and clicks, and reports whether it started without an error, drew, kept running, changed under input and made a sound. Run it after writing or changing a game, and read the three pictures it saves.
@@ -399,5 +502,5 @@ export default async function (player) {
 - [Audio](knowledge-base/en/docs/audio.md): music and sound files
 - [The game kit](knowledge-base/en/docs/game-kit.md): input by action, gamepads, touch controls, larger saves
 - [2D camera](knowledge-base/en/docs/camera-2d.md), [tile maps](knowledge-base/en/docs/tilemap.md), [particles](knowledge-base/en/docs/particles.md), [2D physics](knowledge-base/en/docs/physics-2d.md), [interface controls](knowledge-base/en/docs/ui-controls.md)
-- [World3D](knowledge-base/en/docs/world3d-app.md): 3D, which `play` does not cover
+- [Play3D, in full](knowledge-base/en/docs/play3d.md), and [World3D](knowledge-base/en/docs/world3d-app.md) under it: models, materials, lights, physics
 - [Error codes](knowledge-base/en/docs/error-codes.md) and [every entry](knowledge-base/en/docs/entry-points.md)
