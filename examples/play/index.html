@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret play / 一次调用的小游戏</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">{
+  "imports": {
+    "@egret/engine/play": "/packages/engine/dist/web/play.js",
+    "@egret/engine": "/packages/engine/dist/index.js",
+    "@egret/engine/audio": "/packages/engine/dist/audio.js",
+    "@egret/engine/kit": "/packages/engine/dist/kit.js",
+    "@egret/engine/text": "/packages/engine/dist/text.js",
+    "@egret/runtime": "/packages/runtime/dist/index.js",
+    "@egret/runtime/input": "/packages/runtime/dist/input/index.js",
+    "@egret/runtime/text": "/packages/runtime/dist/text/index.js",
+    "@egret/contracts": "/packages/contracts/dist/index.js",
+    "@egret/contracts/resources": "/packages/contracts/dist/resources/index.js",
+    "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+    "#egret-pointer-input": "/packages/engine/dist/pointerInput.js",
+    "#egret-keyboard-input": "/packages/engine/dist/keyboardInput.js",
+    "robust-predicates": "/packages/engine/node_modules/robust-predicates/index.js"
+  }
+}</script>
+</head>
+<body>
+  <script type="module">
+    // One game fills the window: ?game=breakout, ?game=platformer or ?game=memory.
+    const game = new URLSearchParams(location.search).get('game');
+    await import(['platformer', 'memory'].includes(game) ? `./${game}.mjs` : './breakout.mjs');
+  </script>
+</body>
+</html>

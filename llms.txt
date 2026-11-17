@@ -1,0 +1,391 @@
+# Egret
+
+> Egret is a 2D and 3D game engine for the browser. A whole small 2D game is one call, `play({ width, height, setup, update })`, and one file, `egret.global.js`. This page is everything needed to write one. It needs no image, sound or font file and no build step.
+
+## The page
+
+```html
+<!doctype html>
+<meta charset="utf-8">
+<title>Game</title>
+<script src="egret.global.js"></script>
+<script type="module">
+const { play } = Egret;
+
+await play({
+  width: 480, height: 270, background: 0x101828,
+  setup(game) { /* make the sprites; called again by game.restart() */ },
+  update(dt, game) { /* one step; dt is the seconds since the last one */ },
+});
+</script>
+```
+
+`play` makes the canvas, fills the window with it and keeps the stage's shape. Do not add a canvas, CSS or a loop. The page opens from a folder or from a server. `egret.global.js` is beside the page: it is in a release, or `node tools/pack-single-file.mjs` makes it in a checkout. In a project with modules, `import { play } from '@egret/engine/play'` is the same function.
+
+## Rules that are easy to get wrong
+
+- `x`, `y` of `game.rect` and `game.circle` is the **middle** of the shape. `y` of `game.text` is the **top** of the words.
+- A colour is a number, `0xRRGGBB`. A string such as `'#ff0000'` is refused.
+- `dt` is in **seconds**: move by `speed * dt`, with speed in units a second.
+- Give every variable of the game its value in `setup`, not where it is declared: `game.restart()` runs `setup` again.
+- Use `game.after`, `game.every`, `game.wait` and `game.tween`, never `setTimeout`, `setInterval` or `requestAnimationFrame`.
+- When a sprite leaves the game, call `game.remove(sprite)` and take it out of your own lists.
+- To change how a sprite looks, draw it again: `sprite.graphics.clear().beginFill(color).drawRect(-10, -10, 20, 20).endFill()`.
+- A browser plays no sound before the first key or click. That is expected; do not work around it.
+- An error's message says what was wrong and ends with `Cause: …`. Read it to the end before changing anything.
+
+## Options of `play`
+
+`width` and `height` are the stage in the game's own units, whole numbers above 0, and are required. `background` is the colour behind everything, black unless given. `setup(game)` builds the game and may be `async`; `update(dt, game)` is one step, and is not called before `setup` has finished. `parent` is an element to put the canvas in instead of filling the window. `seed` makes `game.random` repeat. `onError(error)` is told of what stopped the game, which is otherwise thrown to the console.
+
+## Drawing
+
+| Call | Gives |
+| --- | --- |
+| `game.rect(x, y, width, height, color, layer?)` | A filled rectangle, its middle at (x, y) |
+| `game.circle(x, y, radius, color, layer?)` | A filled circle, its middle at (x, y) |
+| `game.sprite(g => …, layer?)` | A sprite with what the function draws around its own (0, 0) |
+| `game.text(words, { x, y, size, color, align, bold, baseline, layer })` | Text: `size` 24, `color` white, `align` `'left'`, `'center'` or `'right'`, `baseline` `'top'` or `'middle'` |
+| `game.button(words, { x, y, width, height, color, textColor, size, layer }, onTap)` | A button, its middle at (x, y); `button.label.text` changes its words |
+| `game.remove(sprite)` | Takes it and what is in it off the stage |
+| `game.toFront(sprite)` | Puts it in front of the others of its layer |
+
+`g` draws with `beginFill(color, alpha?)`, `drawRect(x, y, w, h)`, `drawRoundRect(x, y, w, h, corner)`, `drawCircle(x, y, r)`, `drawEllipse(x, y, w, h)`, `lineStyle(thickness, color, alpha?)`, `moveTo(x, y)`, `lineTo(x, y)`, `curveTo(cx, cy, x, y)`, `endFill()` and `clear()`; each returns `g`. A triangle is `g.beginFill(c).moveTo(0, -10).lineTo(8, 8).lineTo(-8, 8).endFill()`.
+
+Every one of these is a sprite. Set `x`, `y`, `rotation` (degrees), `scaleX`, `scaleY`, `alpha` (0 to 1) and `visible`; read `width` and `height`; add properties of your own (`enemy.hp = 3`). It turns and scales about its origin. Sprites are drawn in the order they were made, later ones in front.
+
+Layers: `game.world` holds what is made, and scrolls with `game.view.x` and `game.view.y`. `game.ui` is over it and stays put; text and buttons go there. Pass `game.ui` as `layer` for a bar or a panel. Pass a sprite as `layer` to make something inside it, moving, turning and fading with it. `game.text` takes `layer: 'world'` for words that scroll with the world, and `layer: sprite` for words on a sprite.
+
+Text: `label.text = 'Score ' + n` changes it. `\n` starts a new line. It is a sprite, so it can be tweened and removed.
+
+`game.width` and `game.height` are the stage; `game.time` is the seconds of play.
+
+## Input
+
+| Ask | Answer |
+| --- | --- |
+| `game.keys.down('left', 'a')` | Whether any of these keys is held |
+| `game.keys.pressed('space')` | Whether it went down since the last update |
+| `game.keys.released('space')` | Whether it came up since the last update |
+| `game.keys.axis()` | Arrows and WASD as `{ x, y }`, each -1 to 1, y down |
+| `game.pointer.x`, `game.pointer.y` | Where the mouse or finger is, on the stage |
+| `game.pointer.down`, `.pressed`, `.released` | Whether it is down, went down, or came up |
+| `game.pointer.swipe` | `'left'`, `'right'`, `'up'` or `'down'` in the update after a swipe, else `undefined` |
+| `game.pointer.over(sprite)` | Whether the pointer is over the sprite |
+| `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked; the one in front gets it |
+
+A key is `'left'`, `'right'`, `'up'`, `'down'`, `'space'`, `'enter'`, `'escape'`, `'shift'`, a letter or a digit. Make every game playable with the pointer as well as keys, so it works on a phone.
+
+## Sound
+
+`game.sfx.play(name)` plays an effect made in code: `jump`, `coin`, `hit`, `hurt`, `explosion`, `shoot`, `powerup`, `bounce`, `pop`, `click`, `win`, `lose`. `game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` changes one play. Any other name is refused unless defined: `game.sfx.define('zap', { wave: 'saw', from: 1200, to: 200, seconds: 0.15 })`, with `wave` one of `'sine'`, `'square'`, `'saw'`, `'triangle'`, `'noise'`; a list of tones is a jingle. `game.sfx.names` lists them; `game.sfx.volume` and `game.sfx.muted` act on all.
+
+## Overlap
+
+| Ask | Answer |
+| --- | --- |
+| `game.overlaps(a, b)` | Whether two sprites overlap, as upright boxes |
+| `game.hits(a, list)` | The first sprite of the list that overlaps `a`, or `undefined` |
+| `game.hitsAll(a, list)` | Every sprite of the list that overlaps `a` |
+| `game.near(a, b, distance)` | Whether their middles are within `distance`: the test for circles |
+| `game.pushOut(a, b)` | How far to move `a` out of `b` by the shorter way, `{ x, y }`, or `undefined` when apart |
+
+A hidden or removed sprite overlaps nothing, and a sprite never hits itself.
+
+## Time and motion
+
+| Call | Does |
+| --- | --- |
+| `game.after(seconds, fn)` | Calls `fn` once; returns a function that calls it off |
+| `game.every(seconds, fn)` | Calls `fn` again and again; returns a function that ends it |
+| `await game.wait(seconds)` | Waits, in an `async` function |
+| `game.tween(sprite).to({ x: 100, alpha: 0 }, 0.3, 'quadOut')` | Moves numbers over time; starts by itself. Chain `.to`, `.wait(s)`, `.call(fn)`, `.loop(times)` |
+| `await game.tween(sprite).to({ y: 200 }, 0.2).done` | Waits for it to finish |
+| `game.timeScale = 0.5` | Slow motion |
+| `game.pause()`, `game.resume()`, `game.paused` | Stops and starts updates and timers; a button still works while paused |
+| `game.restart()` | Clears the world, the ui, timers and tweens, and runs `setup` again |
+
+Easings: `linear`, `quadIn`, `quadOut`, `quadInOut`, `cubicOut`, `backOut`, `elasticOut`, `bounceOut`.
+
+## Feel
+
+| Call | Does |
+| --- | --- |
+| `game.shake(amount = 6, seconds = 0.25)` | Shakes the world; the ui stays put |
+| `game.flash(color = 0xffffff, seconds = 0.15)` | A colour over the stage that fades |
+| `game.hitStop(seconds = 0.06)` | Freezes play for a moment |
+| `game.burst(x, y, { color, count, speed, life, size, gravity })` | Throws pieces out from a point of the world |
+
+Use them: a hit wants a sound, a burst and a small shake; a death wants a flash.
+
+## Chance and saves
+
+`game.random.int(1, 6)`, `.range(0, 1)`, `.chance(0.25)`, `.pick(list)` and `.shuffle(list)`, which gives a new list. `game.save('best', score)` keeps a value between visits and `game.load('best', 0)` reads it, or gives the second argument.
+
+## Three whole games
+
+Each is the whole script of the page above.
+
+### Breakout: an arcade game with a ball, lives, a win and a loss
+
+```js
+const { play } = Egret;
+
+const W = 480,
+  H = 320;
+let paddle, ball, bricks, score, lives, label, vx, vy, over;
+
+await play({
+  width: W,
+  height: H,
+  background: 0x101828,
+  setup(game) {
+    bricks = [];
+    score = 0;
+    lives = 3;
+    vx = 150;
+    vy = -180;
+    over = false;
+    paddle = game.rect(W / 2, H - 20, 70, 10, 0x8fa8ff);
+    ball = game.circle(W / 2, H - 60, 6, 0xffffff);
+    for (let r = 0; r < 4; r++)
+      for (let c = 0; c < 8; c++)
+        bricks.push(game.rect(40 + c * 57, 40 + r * 20, 50, 14, [0xff4d6d, 0xffa64d, 0xffe14d, 0x7be069][r]));
+    label = game.text('Score 0   Lives 3', { x: W / 2, y: 6, size: 18, align: 'center' });
+  },
+  update(dt, game) {
+    if (over) return;
+    paddle.x += game.keys.axis().x * 300 * dt;
+    if (game.pointer.down) paddle.x = game.pointer.x;
+    paddle.x = Math.max(35, Math.min(W - 35, paddle.x));
+    ball.x += vx * dt;
+    ball.y += vy * dt;
+    if ((ball.x < 6 && vx < 0) || (ball.x > W - 6 && vx > 0)) {
+      vx = -vx;
+      game.sfx.play('bounce');
+    }
+    if (ball.y < 6 && vy < 0) {
+      vy = -vy;
+      game.sfx.play('bounce');
+    }
+    if (vy > 0 && game.overlaps(ball, paddle)) {
+      // Where it lands on the paddle steers it.
+      vy = -vy;
+      vx = (ball.x - paddle.x) * 6;
+      game.sfx.play('jump');
+    }
+    const hit = game.hits(ball, bricks);
+    if (hit) {
+      bricks = bricks.filter(brick => brick !== hit);
+      game.burst(hit.x, hit.y, { color: 0xffe14d });
+      game.remove(hit);
+      vy = -vy;
+      score += 10;
+      game.sfx.play('coin');
+      game.shake(4, 0.15);
+      if (bricks.length === 0) end(game, 'You win!', 'win');
+    }
+    if (ball.y > H + 10) {
+      lives--;
+      game.flash(0xff2040);
+      game.sfx.play('hurt');
+      if (lives === 0) end(game, 'Game over', 'lose');
+      else {
+        ball.x = paddle.x;
+        ball.y = H - 60;
+        vx = 150;
+        vy = -180;
+      }
+    }
+    label.text = 'Score ' + score + '   Lives ' + lives;
+  }
+});
+
+function end(game, words, sound) {
+  over = true;
+  game.sfx.play(sound);
+  game.text(words, { x: W / 2, y: 120, size: 32, align: 'center' });
+  game.button('Play again', { x: W / 2, y: 200 }, () => game.restart());
+}
+```
+
+### Platformer: gravity, platforms, a level wider than the stage
+
+```js
+const { play } = Egret;
+
+const W = 480,
+  H = 270,
+  LEVEL = 1200,
+  GRAVITY = 900;
+let hero, blocks, coins, goal, vy, onGround, got, label, won;
+
+await play({
+  width: W,
+  height: H,
+  background: 0x1b2440,
+  setup(game) {
+    blocks = [];
+    coins = [];
+    vy = 0;
+    onGround = false;
+    got = 0;
+    won = false;
+    // A rect is placed by its middle. The ground, a wall at each end, then four platforms with a coin over each.
+    const block = (x, y, w, h) => blocks.push(game.rect(x, y, w, h, 0x4a6fa5));
+    block(LEVEL / 2, 255, LEVEL, 30);
+    block(-10, H / 2, 20, H);
+    block(LEVEL + 10, H / 2, 20, H);
+    [260, 420, 600, 760].forEach((x, i) => {
+      const y = i % 2 ? 145 : 195;
+      block(x, y, 90, 14);
+      coins.push(game.circle(x, y - 25, 7, 0xffd23f));
+    });
+    coins.push(game.circle(1000, 215, 7, 0xffd23f));
+    goal = game.rect(1150, 215, 16, 50, 0x7be069);
+    hero = game.rect(60, 200, 18, 24, 0xff6b6b);
+    // Text is in the ui layer: it stays put while the world scrolls.
+    label = game.text('Coins 0/5', { x: 8, y: 6, size: 16 });
+  },
+  update(dt, game) {
+    if (won) return;
+    // Keys, or a finger: hold a side of the screen to run, tap the upper half to jump.
+    let run = game.keys.axis().x;
+    if (game.pointer.down) run = game.pointer.x < W / 2 ? -1 : 1;
+    hero.x += run * 170 * dt;
+    const jump = game.keys.pressed('space', 'up', 'w') || (game.pointer.pressed && game.pointer.y < H / 2);
+    if (onGround && jump) {
+      vy = -420;
+      game.sfx.play('jump');
+    }
+    vy += GRAVITY * dt;
+    hero.y += vy * dt;
+    onGround = false;
+    // Pushed up out of a block, it has landed; pushed down, it has hit its head.
+    for (const block of blocks) {
+      const push = game.pushOut(hero, block);
+      if (!push) continue;
+      hero.x += push.x;
+      hero.y += push.y;
+      if (push.y !== 0) vy = 0;
+      if (push.y < 0) onGround = true;
+    }
+    const coin = game.hits(hero, coins);
+    if (coin) {
+      coins = coins.filter(other => other !== coin);
+      game.burst(coin.x, coin.y, { color: 0xffd23f, count: 8 });
+      game.remove(coin);
+      label.text = 'Coins ' + ++got + '/5';
+      game.sfx.play('coin');
+    }
+    if (game.overlaps(hero, goal)) {
+      won = true;
+      game.sfx.play('win');
+      game.text('You made it!', { x: W / 2, y: 80, size: 28, align: 'center' });
+      game.button('Play again', { x: W / 2, y: 150 }, () => game.restart());
+    }
+    // The camera follows the hero.
+    game.view.x = Math.max(0, Math.min(LEVEL - W, hero.x - W / 2));
+  }
+});
+```
+
+### Memory: taps, turns that wait for one another, a best score
+
+```js
+const { play } = Egret;
+
+const W = 360,
+  H = 520,
+  SIZE = 70,
+  GAP = 12,
+  BACK = 0x3a506b;
+const FACES = [0xff6b6b, 0xffd23f, 0x7be069, 0x4dabf7, 0xb197fc, 0xff9f43, 0x63e6be, 0xf783ac];
+let open, busy, pairs, moves, label;
+
+await play({
+  width: W,
+  height: H,
+  background: 0x14213d,
+  setup(game) {
+    open = [];
+    busy = false;
+    pairs = 0;
+    moves = 0;
+    label = game.text('Moves 0', { x: W / 2, y: 20, size: 22, align: 'center' });
+    game.random.shuffle([...FACES, ...FACES]).forEach((face, i) => {
+      const card = game.sprite(g => paint(g, BACK));
+      card.x = 57 + (i % 4) * (SIZE + GAP);
+      card.y = 115 + Math.floor(i / 4) * (SIZE + GAP);
+      // A sprite takes properties of the game's own.
+      card.face = face;
+      card.up = false;
+      game.onTap(card, () => flip(game, card));
+    });
+  }
+});
+
+function paint(g, color) {
+  g.clear()
+    .beginFill(color)
+    .drawRoundRect(-SIZE / 2, -SIZE / 2, SIZE, SIZE, 16)
+    .endFill();
+}
+
+// A card turns about its middle: narrow to nothing, change face, widen again.
+async function turn(game, card, up) {
+  await game.tween(card).to({ scaleX: 0 }, 0.1).done;
+  paint(card.graphics, up ? card.face : BACK);
+  card.up = up;
+  await game.tween(card).to({ scaleX: 1 }, 0.1).done;
+}
+
+async function flip(game, card) {
+  if (busy || card.up) return;
+  busy = true;
+  game.sfx.play('click');
+  await turn(game, card, true);
+  open.push(card);
+  if (open.length === 2) {
+    const [a, b] = open;
+    open = [];
+    label.text = 'Moves ' + ++moves;
+    if (a.face === b.face) {
+      game.sfx.play('coin');
+      game.burst(a.x, a.y, { color: a.face });
+      game.burst(b.x, b.y, { color: b.face });
+      if (++pairs === FACES.length) win(game);
+    } else {
+      await game.wait(0.5);
+      game.sfx.play('hit');
+      await Promise.all([turn(game, a, false), turn(game, b, false)]);
+    }
+  }
+  busy = false;
+}
+
+function win(game) {
+  const best = Math.min(moves, game.load('best', moves));
+  game.save('best', best);
+  game.sfx.play('win');
+  game.text('Done in ' + moves + ' moves\nBest ' + best, { x: W / 2, y: 425, size: 18, align: 'center' });
+  game.button('Again', { x: W / 2, y: 492, height: 36 }, () => game.restart());
+}
+```
+
+## Check a game
+
+In a checkout, `node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory>` runs the page in a headless browser, plays it blind with keys and clicks, and reports whether it started without an error, drew, kept running, changed under input and made a sound. Run it after writing or changing a game, and read the three pictures it saves.
+
+## Beyond this page
+
+`game.browser`, `game.engine` and `game.scope` are the engine under `play`; what the other entries make can be added to `game.world` and `game.ui`.
+
+- [Play, in full](knowledge-base/en/docs/play.md): every option, sound recipes, what is checked
+- [Graphics](knowledge-base/en/docs/graphics.md): gradients, dashes, arcs, image fills
+- [The browser game](knowledge-base/en/docs/browser-game.md): images, labels and the loop without `play`
+- [Audio](knowledge-base/en/docs/audio.md): music and sound files
+- [The game kit](knowledge-base/en/docs/game-kit.md): input by action, gamepads, touch controls, larger saves
+- [2D camera](knowledge-base/en/docs/camera-2d.md), [tile maps](knowledge-base/en/docs/tilemap.md), [particles](knowledge-base/en/docs/particles.md), [2D physics](knowledge-base/en/docs/physics-2d.md), [interface controls](knowledge-base/en/docs/ui-controls.md)
+- [World3D](knowledge-base/en/docs/world3d-app.md): 3D, which `play` does not cover
+- [Error codes](knowledge-base/en/docs/error-codes.md) and [every entry](knowledge-base/en/docs/entry-points.md)

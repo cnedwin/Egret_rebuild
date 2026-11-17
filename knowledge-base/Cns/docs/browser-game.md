@@ -71,7 +71,7 @@ game.loop.start();
 | `pixelRatio` | 画布自身宽度的每个单位对应多少画布像素 | 设备的像素比，最多 2 |
 | `clearColor`、`clearAlpha` | 每帧先清成什么颜色 | `0x000000` 和 1 |
 | `update(seconds)` | 游戏的一步，在每帧之前调用 | 没有这一步 |
-| `onError(error)` | 循环被什么停下时通知一次 | 失败会抛出到控制台能看到的地方 |
+| `onError(error)` | 循环被什么停下时收到通知；Engine 只能上报的错误也会通知，例如点击的监听函数抛错并因此结束了指针输入 | 失败会抛出或上报给页面，在控制台能看到 |
 | `pointer`、`keyboard` | 给 `false` 则不创建该输入 | 两者都创建 |
 | `stats` | 给 `true` 则显示面板 | 没有面板 |
 | `fit`、`fitTo` | 画布怎样填充一个元素：`'contain'` 完整放入，`'cover'` 盖满，`'stretch'` 拉伸成它的形状。`fitTo` 就是那个元素 | `'none'`，以及画布的父元素 |
