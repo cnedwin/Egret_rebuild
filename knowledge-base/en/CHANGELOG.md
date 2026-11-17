@@ -11,6 +11,9 @@ Version labels below identify engineering checkpoints; workspace packages remain
 
 `pickQualityVariant` and `pickQualityFiles` choose the model or picture for a picture quality, falling to the nearest tier. `runHeadless` plays a game's rules once per seed with a stand-in player and reports each run. `openIndexedDBSaveStorage` gives saves larger than local storage holds, and `openBrowserBundleCache` keeps a bundle's index and entries so it opens and reads again offline. A bundle shorter than the first range asked for now opens. [The game kit](docs/game-kit.md)
 
+## Draw transforms that are all but the identity — 2026-11-17
+
+A display transform whose numbers fall below 2^-100, as from a shake that has died away, was refused by both shared Hosts with `WEBGL2_GEOMETRY_RANGE` or `WEBGPU_GEOMETRY_RANGE`. Such magnitudes are now taken as zero while the geometry is prepared; numbers that are not finite or are beyond 2^20 are still refused.
 ## Start a World3D game in one call; models, markers and a readout — 2026-11-17
 
 `createWorld3DApp(canvas, options)` chooses WebGL2 or WebGPU from the address and falls back to WebGL2 when WebGPU has no adapter. It picks a low, medium or high picture quality from the address, a stored choice or the device, makes the Engine, renderer and loop, and lowers the drawing resolution while frames are slow. `pickWorld3DQuality`, `pickWorld3DBackend`, `WORLD3D_QUALITY_PRESETS` and `createDynamicResolution3D` are available on their own. `createGeometryBuilder3D` merges placed, coloured parts into one geometry; `createScreenMarkers3D` keeps page elements on scene points, clinging to the screen edge where asked; `createWorld3DStats` shows a performance readout. [A 3D game in one call](docs/world3d-app.md)
