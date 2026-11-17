@@ -4,6 +4,9 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Draw a shape whose scale passes through nothing — 2026-11-17
+
+A tween of `scaleX` or `scaleY` to 0, as a card turning over makes, ends on a rounding error before it ends on 0. A circle, a rounded rectangle, an ellipse or a line at such a scale is thinner than any pixel, the rounding of its corners turned some of its triangles over, and preparation refused them with `precision`: the frame failed with `FRAME_RENDER_FAILED` and the game's loop stopped. Such a triangle is now left out and the frame is drawn. A plain rectangle was not affected.
 ## Draw shapes without sampling their white pixel on WebGL2 — 2026-11-17
 
 A Graphics shape that is not a plain rectangle (a circle, a rounded rectangle, a polygon, a line) is triangles over one white pixel, and the WebGL2 host drew it with the program that samples an image: four fetches and four colour decodes for every pixel, to read 1. It now draws such a shape with the program of a rectangle, which samples nothing. The picture is the same to the byte. On software WebGL2 in headless Chromium, 64 rounded rectangles went from 19 to 60 frames a second, and generated games made of shapes from 7 to 26 and from 11 to 37. A real GPU was not measured, and the WebGPU host is as it was.
