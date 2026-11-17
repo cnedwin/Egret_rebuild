@@ -407,6 +407,9 @@ async function digest(seed) {
 // The captured frame, the clipped geometry without its upload sum, and the eleven first values of every vertex row.
 // Recorded from the build before draws were batched across regions, which reproduced the recording made
 // before the capture and preparation paths were made cheaper.
+// The twelfth value of both lists was recorded again when a clipped polygon that is degenerate by a rounding error
+// stopped being refused: in seed 12's `mixed` scene, three views whose geometry was `refused: precision` are now
+// prepared, packed and batched. Every other stage of every seed, with every charge, is as it was recorded.
 const EXPECTED_BEFORE = [
   '3e6e3ca3d12ab01486b17bb21750cef54064dccacd73e20218d85055994f665d',
   'b05a8563dd1b47772fde32483d7a145b5a553b5df7121ddca17d5f27fe6441d8',
@@ -419,7 +422,7 @@ const EXPECTED_BEFORE = [
   '8ab5c210476a9b3e2f4ae504421fc8a747085b7bf605091b66710a4f0edb4d70',
   '1a1e0ff3c04f3acf1b7f22a2fa9dac6dd9ee8b9d45040d3f5783c79584088162',
   '5fa50afccee9827714b1f3dac66e5e40321c5690cbe0d0762dc4b14cb7eb5b60',
-  '71005f5030cf8d0f1291c32bc30337102874f02230b0aca406b2f731fcbfecbb'
+  '8c2c139094b4e8d736573a91f22182839d8646c5fb6bf74c93c3f52949b4054b'
 ];
 // The rows, uniform blocks and batches as they are uploaded, recorded with batching across regions.
 const EXPECTED = [
@@ -434,7 +437,7 @@ const EXPECTED = [
   'bee283d1332f29537bef99cc857df89e2493515aa44942fd9a66ebc88d74c501',
   '476f7edcb96dc2b2155cba7b0560b7e65bd9a3c33f74330f17fce64c0e9bf4d6',
   '68ea6f2d88092229beea433f45b29b7cac334356bad9669a2850f8325939f884',
-  'e3ecbf3cb832adcb4be43cb9062d2672dad89a8b342e013368dba32f3a2e078f'
+  'c2c890cfd90e94bca5d9de0f1ef6338497a426993540e5da976746e2954d368c'
 ];
 
 test('SHG01 captured frames, clipped geometry, vertex rows and batches reproduce the recorded values', async () => {

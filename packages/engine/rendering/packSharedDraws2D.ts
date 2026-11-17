@@ -41,6 +41,8 @@ export const SHARED_BATCH_PAGES_2D = 8,
 const ROW = SHARED_VERTEX_BYTES_2D / 4,
   BLOCK = 128,
   NO_PAGES: readonly number[] = Object.freeze([]);
+/** The height, in backing pixels, under which a triangle that turns the wrong way counts as collapsed. */
+const SLIVER_HEIGHT = 1 / 1024;
 // One polygon's represented corners. Packing is synchronous and calls no caller code, so the storage is shared.
 let corners = new Float32Array(64 * ROW);
 const address = (value: string): number => (value === 'repeat' ? 1 : value === 'mirror-repeat' ? 2 : 0);
@@ -331,8 +333,23 @@ export function packSharedDraws2D(prepared: PreparedSharedFrame2D): PackedShared
             corners[c + 1]!,
             budget
           );
-          if (!Number.isFinite(sign) || sign < 0) sharedFailure('precision');
+          if (!Number.isFinite(sign)) sharedFailure('precision');
           if (sign === 0) continue;
+          if (sign < 0) {
+            // A reversal thinner than a thousandth of a pixel is a collapse that rounding tipped over, as where a
+            // corner of a turned rectangle all but touches the edge of the view and its two crossings of that edge
+            // land a rounding error apart. It covers nothing, so it is left out like a collapse; a reversal with
+            // any body to it still refuses.
+            const ux = corners[b]! - corners[0]!,
+              uy = corners[b + 1]! - corners[1]!,
+              vx = corners[c]! - corners[0]!,
+              vy = corners[c + 1]! - corners[1]!,
+              wx = vx - ux,
+              wy = vy - uy;
+            const longest = Math.sqrt(Math.max(ux * ux + uy * uy, vx * vx + vy * vy, wx * wx + wy * wy));
+            if (!(Math.abs(ux * vy - uy * vx) <= longest * SLIVER_HEIGHT)) sharedFailure('precision');
+            continue;
+          }
           for (let k = 0; k < ROW; k++) {
             rows[used + k] = corners[k]!;
             rows[used + ROW + k] = corners[b + k]!;

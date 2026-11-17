@@ -40,7 +40,7 @@ game.loop.start();
 
 **错误信息的末尾是它的原因。** 让循环停下的错误会抛到控制台，或交给 `onError`。信息从外向内读：`CLOCK_CALLBACK_FAILED: … Cause: DISPLAY_VALUE_INVALID: … Cause: RangeError: alpha was given 1.07`，最后一段就是最先出错的地方。`error.code` 是最外层的代码，`error.cause` 是里面的下一个错误。
 
-游戏的其余部分：[`animate`](api-reference.md) 以链式写法移动和淡入淡出显示对象，[2D 相机](camera-2d.md)负责跟随、缩放和震屏，[游戏工具包](game-kit.md)有输入动作、音效、随机数和存档，[音频](audio.md)负责播放和混音，[Graphics](graphics.md) 绘制图形，另有[粒子](particles.md)和 [2D 物理](physics-2d.md)。
+游戏的其余部分：`animate` 以链式写法移动和淡入淡出显示对象（`import { animate } from '@egret/engine'`，然后 `animate(game.engine, game.scope, sprite).to({ x: 100, alpha: 0 }, 0.3, 'quadOut').start()`；见 [API 参考](api-reference.md)），[2D 相机](camera-2d.md)负责跟随、缩放和震屏，[游戏工具包](game-kit.md)有输入动作、音效、随机数和存档，[音频](audio.md)负责播放和混音，[Graphics](graphics.md) 绘制图形，另有[粒子](particles.md)和 [2D 物理](physics-2d.md)。
 
 ## 这次调用创建了什么
 

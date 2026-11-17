@@ -139,6 +139,8 @@ export function qualifySharedUVIn(pointU: number, pointV: number, domain: Shared
   )
     sharedFailure('precision');
 }
+/** The height, in backing pixels, under which a corner that turns against its polygon counts as collapsed. */
+const SLIVER_HEIGHT = 1 / 1024;
 function policyFor(budget: TexturedPreparationBudget2D) {
   const sameXY = (a: SharedPoint2D, b: SharedPoint2D): boolean => {
     budget.admitTupleComparison();
@@ -174,7 +176,69 @@ function policyFor(budget: TexturedPreparationBudget2D) {
   };
   // `owned` marks corners this preparation created itself and nothing else reads: they are checked and
   // made canonical where they are, in the same order, instead of being copied into new objects.
-  const finish = (preparation: Preparation, input: readonly SharedPoint2D[], owned: boolean): SharedPoint2D[] => {
+  // What a clip gives back may be degenerate by a rounding error where a corner all but touches the clip's edge:
+  // its two crossings of that edge land on one place with weights a rounding apart, or a hair to either side of
+  // each other, which makes a turn against the polygon thinner than any pixel. Such a polygon is settled here
+  // instead of refusing the frame. Corners the caller wrote are held to the exact rules as before.
+  const settle = (preparation: Preparation, points: SharedPoint2D[]): void => {
+    for (let again = true; again && points.length >= 3; ) {
+      again = false;
+      const n = points.length;
+      const turn = (i: number): number => {
+        const a = points[(i + n - 1) % n]!,
+          b = points[i]!,
+          c = points[(i + 1) % n]!;
+        return (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
+      };
+      let widest = 0;
+      for (let i = 1; i < n; i++) if (Math.abs(turn(i)) > Math.abs(turn(widest))) widest = i;
+      if (turn(widest) === 0) return;
+      let way: number | undefined;
+      for (let i = 0; i < n; i++) {
+        if (i === widest) continue;
+        const a = points[(i + n - 1) % n]!,
+          b = points[i]!,
+          c = points[(i + 1) % n]!;
+        // A spike out to one corner and back to the same place covers nothing.
+        if (a.x === c.x && a.y === c.y) {
+          points.splice(i, 1);
+          again = true;
+          break;
+        }
+        const longest = Math.sqrt(
+          Math.max(
+            (b.x - a.x) ** 2 + (b.y - a.y) ** 2,
+            (c.x - b.x) ** 2 + (c.y - b.y) ** 2,
+            (c.x - a.x) ** 2 + (c.y - a.y) ** 2
+          )
+        );
+        if (!(Math.abs(turn(i)) <= longest * SLIVER_HEIGHT)) continue;
+        // Only a thin corner is asked the exact question, and only one that turns against the polygon goes.
+        way ??= preparation.sign(points[(widest + n - 1) % n]!, points[widest]!, points[(widest + 1) % n]!);
+        const sign = preparation.sign(a, b, c);
+        if (sign !== 0 && sign !== way) {
+          points.splice(i, 1);
+          again = true;
+          break;
+        }
+      }
+      // Taking a corner out may bring two crossings of one place together.
+      for (let i = 0; !again && i < points.length; i++) {
+        const next = (i + 1) % points.length;
+        // Compared without the budget's count: an ordinary polygon is charged exactly what it was.
+        if (next !== i && points[i]!.x === points[next]!.x && points[i]!.y === points[next]!.y) {
+          points.splice(next, 1);
+          again = true;
+        }
+      }
+    }
+  };
+  const finish = (
+    preparation: Preparation,
+    input: readonly SharedPoint2D[],
+    owned: boolean,
+    clipped = false
+  ): SharedPoint2D[] => {
     if (input.length > 64) sharedFailure('budget');
     const result: SharedPoint2D[] = [];
     for (const p of input) {
@@ -209,26 +273,63 @@ function policyFor(budget: TexturedPreparationBudget2D) {
         };
       const previous = result[result.length - 1];
       if (previous && sameXY(previous, value)) {
-        if (!sameAttributes(previous, value)) sharedFailure('precision');
+        // The comparison is made, and charged, as it always was; only its refusal is spared a clip's own corners.
+        if (!sameAttributes(previous, value) && !clipped) sharedFailure('precision');
       } else {
         assertAppend(result.length);
         result.push(value);
       }
     }
     if (result.length > 1 && sameXY(result[0]!, result[result.length - 1]!)) {
-      if (!sameAttributes(result[0]!, result[result.length - 1]!)) sharedFailure('precision');
+      if (!sameAttributes(result[0]!, result[result.length - 1]!) && !clipped) sharedFailure('precision');
       result.pop();
     }
-    for (let i = 0; i < result.length; i++)
+    if (!clipped) {
+      for (let i = 0; i < result.length; i++)
+        for (let j = i + 1; j < result.length; j++)
+          if (sameXY(result[i]!, result[j]!)) {
+            sameAttributes(result[i]!, result[j]!);
+            sharedFailure('precision');
+          }
+      return result.length < 3 ? [] : finishPolygonWinding2D(preparation, result);
+    }
+    // A clip's own polygon is asked the same questions in the same order, so one that passes is charged exactly
+    // what it always was. Where it would have been refused, it is settled first and asked again.
+    let degenerate = false;
+    search: for (let i = 0; i < result.length; i++)
       for (let j = i + 1; j < result.length; j++)
         if (sameXY(result[i]!, result[j]!)) {
           sameAttributes(result[i]!, result[j]!);
-          sharedFailure('precision');
+          degenerate = true;
+          break search;
         }
+    if (!degenerate) {
+      if (result.length < 3) return [];
+      let winding = 0;
+      for (let i = 0; i < result.length; i++) {
+        const sign = preparation.sign(result[i]!, result[(i + 1) % result.length]!, result[(i + 2) % result.length]!);
+        if (sign !== 0) {
+          if (winding !== 0 && winding !== sign) {
+            degenerate = true;
+            break;
+          }
+          winding = sign;
+        }
+      }
+      if (!degenerate) {
+        if (winding === 0) return [];
+        if (winding < 0) result.reverse();
+        return result;
+      }
+    }
+    settle(preparation, result);
+    for (let i = 0; i < result.length; i++)
+      for (let j = i + 1; j < result.length; j++) if (sameXY(result[i]!, result[j]!)) sharedFailure('precision');
     return result.length < 3 ? [] : finishPolygonWinding2D(preparation, result);
   };
+  // The clip's own normalization: its input is what the clip made.
   const normalize = (preparation: Preparation, input: readonly SharedPoint2D[]): SharedPoint2D[] =>
-    finish(preparation, input, false);
+    finish(preparation, input, false, true);
   const normalizeOwned = (preparation: Preparation, input: readonly SharedPoint2D[]): SharedPoint2D[] =>
     finish(preparation, input, true);
   return { policy, normalize, normalizeOwned };
