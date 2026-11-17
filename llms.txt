@@ -509,3 +509,7 @@ export default async function (player) {
 - [2D camera](knowledge-base/en/docs/camera-2d.md), [tile maps](knowledge-base/en/docs/tilemap.md), [particles](knowledge-base/en/docs/particles.md), [2D physics](knowledge-base/en/docs/physics-2d.md), [interface controls](knowledge-base/en/docs/ui-controls.md)
 - [Play3D, in full](knowledge-base/en/docs/play3d.md), and [World3D](knowledge-base/en/docs/world3d-app.md) under it: models, materials, lights, physics
 - [Error codes](knowledge-base/en/docs/error-codes.md) and [every entry](knowledge-base/en/docs/entry-points.md)
+
+## Find more
+
+For a larger game, ask the [guide](guide/index.md) instead of reading more pages: it holds small cards, each learnt from games built on the engine. In a checkout, `node tools/egret-guide.mjs <words, an engine name, an error code or a devtools hint id>` prints the two or three cards that answer, and `--card <id>` prints one.

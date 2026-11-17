@@ -1,0 +1,36 @@
+---
+id: read-engine-errors
+title: Read an engine error by its code before changing code
+applies: [play, play3d, engine, world3d, web]
+triggers: [describeErrorCode, setErrorLanguage, EgretError, OBJECT_DISPOSED, SCOPE_CLOSED, ENGINE_CLOSED, ENGINE_MISMATCH, DISPLAY_VALUE_INVALID, FRAME_TRANSFORM_INVALID, FRAME_BUDGET_EXCEEDED, FRAME_IMAGE_BUDGET, GRAPHICS_FILL_REQUIRED, ASYNC_EVENT_HANDLER, "error code", "engine error", "Cause:", "error message", "cleanupErrors", "disposed object", "used after dispose"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/error-codes.md, line: 9, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/runtime/src/errorHelp.ts, line: 1, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/Egret_rebuild, path: llms.txt, line: 35, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Read an engine error by its code before changing code
+
+Every error the engine throws is an `EgretError` with a stable `code`. The message is the code, a sentence, and for many codes what to do. `error.cause` holds what made it happen (the Host's own error, or what a game callback threw); `error.cleanupErrors` holds what failed while cleaning up.
+
+A code is an area and an ending. The ending says what kind of thing went wrong:
+
+| Ending | Means | Usual fix |
+| --- | --- | --- |
+| `_OPTIONS_INVALID`, `_VALUE_INVALID` | a value given was refused | read the sentence: it names the rule (finite numbers, colour 0 to 0xffffff, alpha 0 to 1) |
+| `_CLOSED`, `_DISPOSED`, `_RETIRED` | used after its end | stop holding it after its scope closes, or make a new one |
+| `_REENTRANT` | called from inside its own callback | defer the call to the next frame |
+| `_LIMIT`, `_BUDGET` | a limit was passed | do less per frame; the sentence gives the limit |
+| `_FAILED` | something underneath failed | read `error.cause` |
+| `_MISMATCH` | objects of two engines mixed | one display tree, scope and resources per Engine |
+
+Rules:
+
+- Read the whole message, including `Cause:`, before changing anything. Compare `error.code` in code, never the message text, which may change.
+- Look a code up in `knowledge-base/en/docs/error-codes.md`, or ask the guide: `node tools/egret-guide.mjs FRAME_BUDGET_EXCEEDED`.
+- `describeErrorCode(code, 'en')` gives the sentence to a program; `setErrorLanguage('zh')` puts Chinese sentences in messages for Chinese players and developers.
+- Show failures that stop the game on screen with a reload button and keep the stack for automated checks, as FPS does. A frozen canvas with an error only in the console is reported by players as "the game hangs".
+- An error thrown by your own callback comes back wrapped, with your error in `cause`. Fix your callback, not the engine call around it.
+- Common first errors: `OBJECT_DISPOSED` (a sprite kept in a list after removal), `GRAPHICS_FILL_REQUIRED` (draw without `beginFill` or `lineStyle`), `ASYNC_EVENT_HANDLER` (a listener returned a promise), `FRAME_BUDGET_EXCEEDED` (too many nodes or triangles in one frame).

@@ -1,0 +1,44 @@
+---
+id: touch-controls
+title: Touch controls where each finger keeps its own control
+applies: [engine, web, world3d, play, play3d]
+triggers: [createTouchStick, createTouchButton, createInputActions, bindBrowserInputActions, "touch controls", "on-screen joystick", "virtual stick", "second finger", "multi touch", "pointer capture", "pointercancel", "touch drag look", "button stuck pressed", "joystick stops working", "mobile input", "pause button does not work on phone"]
+local: [bindTouch]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/input.mjs, line: 60, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: e5da770 }
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/input.mjs, line: 88, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: 46a3909 }
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/src/input.mjs, line: 128, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: f1fbd9093c47dd83a770a0a13aa88901edc0b90d, fix: cde9ae4 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/game-kit.md, line: 11, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Touch controls where each finger keeps its own control
+
+Touch input is the most repeated fix in the collection: Rally (twice), Jelly Pandas (three commits) and FPS each reworked it after play on a real phone. The failures were the same: a second finger stole the first finger's control, a drag that left a button kept it pressed, and a pause button did nothing while the stick was held because the browser sent no `click` for the second finger.
+
+Prefer the kit, which already binds by contact:
+
+```js
+import { createInputActions } from '@egret/engine/kit';
+import { bindBrowserInputActions, createTouchButton, createTouchStick } from '@egret/engine/web/kit';
+
+const input = createInputActions({
+  jump: { bindings: ['Key:Space', 'Pad:a', 'Touch:jump'] },
+  move: { kind: 'vector', up: ['Key:KeyW'], down: ['Key:KeyS'], left: ['Key:KeyA'], right: ['Key:KeyD'], sticks: ['Pad:leftStick', 'Touch:stick'] },
+});
+const page = bindBrowserInputActions(input, { pointerTarget: canvas });
+createTouchStick(touchLayer, input);
+createTouchButton(jumpButton, input, 'Touch:jump');
+```
+
+When writing touch handling by hand, follow what the fixed games converged on:
+
+- A control owns exactly one `pointerId` from `pointerdown` until that contact ends. Ignore other contacts on it; keep a map from id to owner so a second finger can use another control.
+- Call `setPointerCapture` in a `try`, and route `pointermove`/`pointerup` by id on the window too, since capture may be unavailable.
+- End a contact on `pointerup`, `pointercancel` and `lostpointercapture`. Release all controls when the page is hidden or loses focus.
+- Act on `pointerup` inside the button's rectangle with less than about 12 px of travel, not on `click`.
+- Set `touch-action: none` on the play area during play, and `event.preventDefault()` on `pointerdown`, so the page does not scroll or zoom.
+- Keep look-drag on the open right side and the stick on the left. Hide touch controls for mouse pointers.
+- Write Node tests that feed synthetic pointer events: two fingers, a drag off a button, a cancel. Jelly Pandas and Rally test this in `test/input.test.mjs`.
+
+A controlled test does not prove a phone works. Play once on a real device and record which one (see `verify-end-to-end`).

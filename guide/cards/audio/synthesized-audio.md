@@ -1,0 +1,45 @@
+---
+id: synthesized-audio
+title: Sound made in code, through the engine's mixer
+applies: [play, play3d, engine, web]
+triggers: [createBrowserAudio, encodeWav, createAudioCues, SFX_PRESETS, "no sound", "sound does not play", "audio locked", "audio context", "web audio", "synthesized sound", "procedural sound", "sound effects in code", "sounds clip", "too loud when many sounds", "repetitive sound"]
+local: [tone]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/audio.mjs, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/README.md, line: 87, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/game-kit.md, line: 100, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/audio.md, line: 25, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Sound made in code, through the engine's mixer
+
+Every game in the collection makes its sound in code: tones, sweeps and noise bursts, with no audio files. They each built their own Web Audio graph. The engine now offers the parts they rebuilt.
+
+- `play` and `play3d`: `game.sfx.play(name)` with the names in `SFX_PRESETS`. Nothing else is needed.
+- Larger games: render a sound into samples once, encode it, and play it through the mixer, so made and recorded sounds share buses, cues and the limiter.
+
+```js
+import { createAudioCues, encodeWav } from '@egret/engine/kit';
+import { createBrowserAudio } from '@egret/engine/web/audio';
+
+const audio = scope.use(createBrowserAudio({ limiter: true, buses: ['effects', { name: 'music', volume: 0.6 }] }));
+const rate = 44100, samples = new Float32Array(rate * 0.12);
+for (let i = 0; i < samples.length; i++) {            // a short falling blip
+  const t = i / rate, f = 880 - 4000 * t;
+  samples[i] = Math.sin(2 * Math.PI * f * t) * Math.exp(-t * 30) * 0.4;
+}
+const blip = await audio.mixer.decode(encodeWav([samples], rate));
+const cues = createAudioCues(audio.mixer, { hit: { sounds: [blip], rate: [0.92, 1.08], cooldown: 0.05, maxVoices: 4 } });
+cues.play('hit');
+```
+
+Rules:
+
+- No sound plays before the first press or key; `mixer.state` is `'locked'` until then. Do not work around it. Start music with `mixer.playMusic`, which waits for the press.
+- Render each sound once at load, not per play. Vary it at play time with a `rate` and `volume` range so repeats do not sound mechanical.
+- Use `cooldown` and `maxVoices` per cue. A crowd (a horde dying, an automatic rifle) otherwise piles up dozens of voices and clips; `limiter: true` catches the rest.
+- A hidden page is silent by default. Keep it so.
+- Keep a master volume and a mute in settings, and store them.
+- Distance and side: pass `volume` and `pan` per play, worked out from the listener, rather than building a 3D audio graph.
+- Listening is its own check. FPS records that its sound had no dedicated listening test; say so too when it is true.

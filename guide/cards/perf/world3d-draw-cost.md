@@ -1,0 +1,36 @@
+---
+id: world3d-draw-cost
+title: Cut what a World3D frame draws before cutting effects
+applies: [world3d, play3d]
+triggers: [createWorld3DStats, InstancedMesh3D, PlanarReflection3D, createWater3D, present-bound, "too many triangles", "draw calls", "gpu bound", "slow on phone", "reflection cost", "water reflection slow", "pixel ratio", "dynamic resolution", "quality setting"]
+local: [DETAIL]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/view.mjs, line: 254, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: ddd18ce }
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/src/scenery.mjs, line: 457, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: f1fbd9093c47dd83a770a0a13aa88901edc0b90d, fix: ee391d0 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/world3d-app.md, line: 56, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Cut what a World3D frame draws before cutting effects
+
+Measured in Jelly Pandas, a busy moment with about 190 enemies at high quality: 4.8 million triangles and about 500 draw calls a frame before one change, under 1 million and about 340 after. The look was kept. What it did:
+
+- Coarser shapes for things only ever seen small (eyes, petals, grass, shots).
+- The water's mirror image leaves out shadows and small details: `reflection.shadows = false` and `reflection.layerMask = ~DETAIL`, with small props put on a `DETAIL` layer.
+- Two shadow cascades instead of three.
+
+Rally renders its lake mirror every third frame: `water.reflection.interval = 3`.
+
+Rules, in order of cost saved per look lost:
+
+1. Read `renderer.info` (draw calls, triangles) or `createWorld3DStats` first. Know which number is high.
+2. Many copies of one thing: one `InstancedMesh3D` with per-instance transform and colour. Refill it each frame for things that move (Rally's coins and drums). The renderer also folds runs of eight or more plain meshes that share geometry and material by itself.
+3. Detail that is small on screen: fewer segments. Merge static scenery into a few meshes per material (FPS).
+4. Extra views (mirrors, reflections): smaller `reflectionSize`, fewer layers, no shadows, a render `interval`.
+5. Shadows: fewer cascades, smaller `mapSize`, `castShadow` only on things whose shadow reads.
+6. Pixels: cap the pixel ratio. All three large games pass `maxPixelRatio: 1.5` to `createWorld3DView` and offer `?ratio=1`. `createWorld3DApp` also lowers resolution while the smoothed rate stays under 45 fps (`dynamicResolution`).
+7. Only then turn off post effects (ambient occlusion, bloom, depth of field), and as a quality tier, not for everyone.
+
+Offer high, medium and low quality on the title screen and say "lower the quality if the frame rate drops". Each game in the collection does.
+
+Why the order: post effects are a few full-screen passes; triangles, draw calls and mirror passes scale with the scene and are where the measured savings were.
