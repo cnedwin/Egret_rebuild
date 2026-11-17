@@ -175,6 +175,15 @@ export function color(value: unknown): value is number {
   return finite(value) && Number.isInteger(value) && value >= 0 && value <= 0xffffff;
 }
 
+/**
+ * An alpha as it is kept: a finite number, held to 0 and 1. A game's arithmetic often lands a hair outside (a fade
+ * that runs one step long, an easing that overshoots), and that is not worth stopping a frame for. What is not a
+ * finite number gives undefined, for the caller to refuse.
+ */
+export function alphaOf(value: unknown): number | undefined {
+  return finite(value) ? (value < 0 ? 0 : value > 1 ? 1 : value) : undefined;
+}
+
 export function unit(value: unknown): value is number {
   return finite(value) && value >= 0 && value <= 1;
 }

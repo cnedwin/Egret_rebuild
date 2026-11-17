@@ -276,7 +276,8 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   RENDERER_REQUIRED:
     '要求 Engine 绘制，但创建它时没有给能绘制的 Host。请把 createSharedWebGL2Host 或 createSharedWebGPUHost 得到的 Host 交给 createEngine。',
   OWNERSHIP_CONFLICT: '对象已经属于另一个作用域。一个对象只能用 scope.use 交给一个作用域，且只交一次。',
-  DISPLAY_VALUE_INVALID: '交给显示对象的值无效：位置、缩放和旋转是有限数字，alpha 在 0 到 1 之间，visible 是布尔值。',
+  DISPLAY_VALUE_INVALID:
+    '交给显示对象的值无效：位置、缩放、旋转和 alpha 是有限数字（alpha 会被限制在 0 到 1 之间），visible 是布尔值。',
   DISPLAY_SIZE_UNAVAILABLE:
     '该对象没有画任何内容，所以没有可以缩放到指定大小的宽或高。请先绘制，或者直接设置 scaleX 和 scaleY。',
   DISPLAY_CYCLE: '容器不能添加到它自己或它的后代中。',
@@ -288,7 +289,7 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   INVALID_DISPLAY_OBJECT: '给出的不是本 SDK 创建的显示对象。',
   INVALID_DISPLAY_CONTAINER: '给出的不是本 SDK 创建的显示容器。',
   GRAPHICS_VALUE_INVALID:
-    '交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 在 0 到 1 之间。',
+    '交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 是有限数字（会被限制在 0 到 1 之间）。',
   GRAPHICS_FILL_REQUIRED: '形状需要填充或线条。请在绘制前调用 beginFill 或 lineStyle。',
   GRAPHICS_BUDGET:
     '绘图超出了一个 sprite 的上限：一条路径 8,192 个点、一条线 16,384 段虚线、一次带孔或自相交的填充 16,384 个三角形、16 个网格，或把图片重复到超过自身 8,192 个像素之外。sprite 之前画的内容保留。请把其余部分画到另一个 sprite 中。',

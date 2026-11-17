@@ -3,7 +3,7 @@ import { EgretError } from "./EgretError.js";
 import {
   assertVisualMutable,
   color,
-  unit,
+  alphaOf,
   finite,
   copyRect,
   visualOf,
@@ -100,9 +100,10 @@ export class Graphics {
 
   public beginFill(value: number, alpha = 1): this {
     assertVisualMutable(this.owner);
-    if (!color(value) || !unit(alpha)) throw invalid();
+    const held = alphaOf(alpha);
+    if (!color(value) || held === undefined) throw invalid();
     this.finishPath();
-    this.fill = { color: value, alpha };
+    this.fill = { color: value, alpha: held };
     return this;
   }
 
@@ -114,7 +115,8 @@ export class Graphics {
       (!finite(thickness) || thickness < 0 || thickness > GRAPHICS_SHAPE_LIMITS.maxLineWidth)
     )
       throw invalid();
-    if (!color(value) || !unit(alpha) || typeof options !== "object" || options === null) throw invalid();
+    const held = alphaOf(alpha);
+    if (!color(value) || held === undefined || typeof options !== "object" || options === null) throw invalid();
     const caps = options.caps ?? "none",
       joints = options.joints ?? "miter",
       miterLimit = options.miterLimit ?? 4,
@@ -141,7 +143,7 @@ export class Graphics {
     this.line =
       thickness === undefined || thickness === 0
         ? undefined
-        : { width: thickness, color: value, alpha, caps, joints, miterLimit, dash };
+        : { width: thickness, color: value, alpha: held, caps, joints, miterLimit, dash };
     return this;
   }
 
@@ -632,8 +634,8 @@ function gradientStops(stops: readonly GradientColorStop[]): GradientStop[] {
   for (const stop of stops) {
     if (typeof stop !== "object" || stop === null) throw invalid();
     const offset = stop.offset,
-      alpha = stop.alpha ?? 1;
-    if (!finite(offset) || offset < before || offset > 1 || !color(stop.color) || !unit(alpha)) throw invalid();
+      alpha = alphaOf(stop.alpha ?? 1);
+    if (!finite(offset) || offset < before || offset > 1 || !color(stop.color) || alpha === undefined) throw invalid();
     out.push({ offset, color: stop.color, alpha });
     before = offset;
   }

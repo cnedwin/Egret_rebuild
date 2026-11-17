@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Hold an alpha to 0 and 1 instead of refusing it — 2026-11-17
+
+An alpha outside 0 to 1 is now held to the nearer end, on a display object and in a Graphics fill, line and gradient stop. It used to throw `DISPLAY_VALUE_INVALID` or `GRAPHICS_VALUE_INVALID`, and inside an update that stopped the game's loop: a fade that ran one step long was enough. What is not a finite number is still refused. `animate` no longer treats a property named `alpha` specially.
+
 ## Draw a turned shape whose corner touches the edge of the view — 2026-11-17
 
 A rotated shape or sprite with a corner within a rounding error of the view's edge, as any quarter turn can leave it, made a clipped polygon that preparation or packing refused with `precision`; the frame failed with `FRAME_RENDER_FAILED` and a game's loop stopped. Such a polygon is now settled and drawn. Polygons that were accepted before are prepared with the same corners and the same charges.

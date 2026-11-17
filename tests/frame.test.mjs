@@ -77,7 +77,8 @@ test('fill snapshots, clips, ancestor suppression and atomic validation', async(
  c.graphics.beginFill(4).drawRect(0,0,0,1).beginFill(5,0).drawRect(0,0,1,1);
  let f=captureDrawn(engine, {width:10,height:10});assert.deepEqual(f.commands.map(x=>[x.color,x.alpha]),[[1,.5],[2,.125],[3,.25]]);assert.equal(f.commands[1].clips[0].rect.width,10);assert.ok(Object.isFrozen(f.commands[1].clips));
  for(const bad of [NaN,Infinity,'1',new Number(1),null]) {assert.throws(()=>{c.x=bad;},{code:'DISPLAY_VALUE_INVALID'});assert.equal(c.x,0);assert.throws(()=>c.graphics.beginFill(bad),{code:'GRAPHICS_VALUE_INVALID'});}
- for(const bad of [-1,1.1,Infinity]) assert.throws(()=>{c.alpha=bad;},{code:'DISPLAY_VALUE_INVALID'});
+ // An alpha is held to 0 and 1; what is not a finite number is refused and leaves the old value.
+ {const was=c.alpha;for(const bad of [NaN,Infinity,-Infinity,'1',null]){assert.throws(()=>{c.alpha=bad;},{code:'DISPLAY_VALUE_INVALID'});assert.equal(c.alpha,was);}for(const [given,held] of [[-1,0],[1.1,1],[-1e-9,0],[1+1e-9,1],[0.25,0.25]]){c.alpha=given;assert.equal(c.alpha,held);}c.alpha=was;}
  assert.throws(()=>{c.visible=1;},{code:'DISPLAY_VALUE_INVALID'});assert.throws(()=>{c.clipRect={x:0,y:0,width:-1,height:1};},{code:'DISPLAY_VALUE_INVALID'});
  p.visible=false;assert.equal(captureDrawn(engine, {width:1,height:1}).commands.length,0);p.visible=true;p.alpha=0;assert.equal(captureDrawn(engine, {width:1,height:1}).commands.length,0);
  p.alpha=.5; p.removeChild(c);await engine.dispose();assert.throws(()=>{c.x=1;},{code:'ENGINE_CLOSED'});assert.throws(()=>c.graphics.clear(),{code:'ENGINE_CLOSED'});c.dispose();

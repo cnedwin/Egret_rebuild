@@ -31,12 +31,12 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `SCOPE_CLOSED` | The scope was disposed, and everything it owned with it. Create a new scope. |
 | `ENGINE_CLOSED` | The Engine was closed. Nothing made with it can be used any more. |
 | `ENGINE_MISMATCH` | The object belongs to another Engine. A display tree, a scope and their resources all belong to one Engine. |
-| `DISPLAY_VALUE_INVALID` | A value given to a display object is not valid: positions, scales and rotation are finite numbers, alpha is 0 to 1 and visible is a boolean. |
+| `DISPLAY_VALUE_INVALID` | A value given to a display object is not valid: positions, scales, rotation and alpha are finite numbers (an alpha is held to 0 and 1) and visible is a boolean. |
 | `FRAME_TRANSFORM_INVALID` | A display object is placed where its corners are not finite numbers. Check its x, y, scale and rotation, and those of its parents. |
 | `FRAME_BUDGET_EXCEEDED` | The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 4,096 different geometries or 65,536 mesh triangles. A circle of radius 40 is 32 triangles. |
 | `FRAME_IMAGE_BUDGET` | The frame uses more images than it takes: 64 pages, 4,096 regions or 64 MiB of distinct pixels. Pack images into fewer atlases. |
 | `GRAPHICS_FILL_REQUIRED` | A shape needs a fill or a line. Call beginFill or lineStyle before drawing it. |
-| `GRAPHICS_VALUE_INVALID` | A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is 0 to 1. |
+| `GRAPHICS_VALUE_INVALID` | A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is a finite number (held to 0 and 1). |
 | `ASSET_PROVIDER_MISSING` | No provider is registered for this type of asset. Register one with engine.assets.register before acquiring it. |
 | `ASSET_LOAD_FAILED` | A provider failed to load the asset. What it threw is in cause. |
 | `BITMAP_TEXTURE_REQUIRED` | A Bitmap is made with a lease of a texture from engine.assets.acquire. |
@@ -404,7 +404,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `DISPLAY_CHILD_CLEANUP_FAILED` | Cleaning up a display object failed. Each cause is in cleanupErrors. |
 | `DISPLAY_CYCLE` | A container cannot be added to itself or to one of its own descendants. |
 | `DISPLAY_SIZE_UNAVAILABLE` | The object draws nothing, so it has no width or height to scale to a size. Draw it first, or set scaleX and scaleY. |
-| `DISPLAY_VALUE_INVALID` | A value given to a display object is not valid: positions, scales and rotation are finite numbers, alpha is 0 to 1 and visible is a boolean. |
+| `DISPLAY_VALUE_INVALID` | A value given to a display object is not valid: positions, scales, rotation and alpha are finite numbers (an alpha is held to 0 and 1) and visible is a boolean. |
 
 ### DISPLAY_EFFECT
 
@@ -522,7 +522,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | --- | --- |
 | `GRAPHICS_BUDGET` | The drawing is more than one sprite holds: a path of 8,192 points, a line of 16,384 dashes, a fill with holes or crossings of 16,384 triangles, 16 meshes, or an image repeated beyond 8,192 of its pixels. What the sprite had drawn before stays. Draw the rest into another sprite. |
 | `GRAPHICS_FILL_REQUIRED` | A shape needs a fill or a line. Call beginFill or lineStyle before drawing it. |
-| `GRAPHICS_VALUE_INVALID` | A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is 0 to 1. |
+| `GRAPHICS_VALUE_INVALID` | A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is a finite number (held to 0 and 1). |
 
 ### HEADLESS_RUN
 

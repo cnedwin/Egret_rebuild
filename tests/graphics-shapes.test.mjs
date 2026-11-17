@@ -322,7 +322,8 @@ test('GS08 what is not a drawing is refused, and a drawing too large leaves the 
       () => g.lineStyle(-1),
       () => g.lineStyle(2000),
       () => g.lineStyle(1, -1),
-      () => g.lineStyle(1, 0, 2),
+      () => g.lineStyle(1, 0, Infinity),
+      () => g.beginFill(0, NaN),
       () => g.beginFill(0x1000000)
     ])
       assert.throws(bad, coded('GRAPHICS_VALUE_INVALID'));
@@ -389,8 +390,8 @@ test('GS-value a refused display value says which property it was and what it wa
   withStage(({ sprite }) => {
     const node = sprite();
     assert.throws(
-      () => (node.alpha = 1.3),
-      error => error.code === 'DISPLAY_VALUE_INVALID' && /Cause: RangeError: alpha was given 1\.3$/.test(error.message)
+      () => (node.alpha = NaN),
+      error => error.code === 'DISPLAY_VALUE_INVALID' && /Cause: RangeError: alpha was given NaN$/.test(error.message)
     );
     assert.throws(
       () => (node.x = NaN),
@@ -401,4 +402,27 @@ test('GS-value a refused display value says which property it was and what it wa
       error => /name was given 5$/.test(error.message)
     );
     assert.equal(node.alpha, 1);
+  }));
+
+test('GS-alpha an alpha past 0 or 1 is held there: on a node, a fill, a line and a gradient stop', () =>
+  withStage(({ sprite, frame }) => {
+    const node = sprite(),
+      g = node.graphics;
+    node.alpha = 1.3;
+    assert.equal(node.alpha, 1);
+    node.alpha = -0.2;
+    assert.equal(node.alpha, 0);
+    node.alpha = 1;
+    // Drawn as if 1 and 0 had been written.
+    g.beginFill(0xff0000, 1.5).drawRect(0, 0, 10, 10).endFill();
+    g.beginFill(0x00ff00, -3).drawRect(20, 0, 10, 10).endFill();
+    g.lineStyle(2, 0x0000ff, 7).moveTo(0, 20).lineTo(30, 20);
+    g.lineStyle();
+    g.beginLinearGradientFill(0, 30, 10, 30, [
+      { offset: 0, color: 0xffffff, alpha: 2 },
+      { offset: 1, color: 0, alpha: -1 }
+    ])
+      .drawRect(0, 30, 10, 10)
+      .endFill();
+    assert.ok(frame().commands.length > 0);
   }));

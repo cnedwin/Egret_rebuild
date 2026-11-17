@@ -318,7 +318,7 @@ const WRITTEN: Readonly<Record<string, string>> = {
   OWNERSHIP_CONFLICT:
     'The object already belongs to another scope. An object is given to one scope with scope.use, once.',
   DISPLAY_VALUE_INVALID:
-    'A value given to a display object is not valid: positions, scales and rotation are finite numbers, alpha is 0 to 1 and visible is a boolean.',
+    'A value given to a display object is not valid: positions, scales, rotation and alpha are finite numbers (an alpha is held to 0 and 1) and visible is a boolean.',
   DISPLAY_SIZE_UNAVAILABLE:
     'The object draws nothing, so it has no width or height to scale to a size. Draw it first, or set scaleX and scaleY.',
   DISPLAY_CYCLE: 'A container cannot be added to itself or to one of its own descendants.',
@@ -330,7 +330,7 @@ const WRITTEN: Readonly<Record<string, string>> = {
   INVALID_DISPLAY_OBJECT: 'What was given is not a display object made by this SDK.',
   INVALID_DISPLAY_CONTAINER: 'What was given is not a display container made by this SDK.',
   GRAPHICS_VALUE_INVALID:
-    'A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is 0 to 1.',
+    'A value given to graphics is not valid: coordinates are finite numbers, sizes are not negative, a colour is 0 to 0xffffff and an alpha is a finite number (held to 0 and 1).',
   GRAPHICS_FILL_REQUIRED: 'A shape needs a fill or a line. Call beginFill or lineStyle before drawing it.',
   GRAPHICS_BUDGET:
     'The drawing is more than one sprite holds: a path of 8,192 points, a line of 16,384 dashes, a fill with holes or crossings of 16,384 triangles, 16 meshes, or an image repeated beyond 8,192 of its pixels. What the sprite had drawn before stays. Draw the rest into another sprite.',
