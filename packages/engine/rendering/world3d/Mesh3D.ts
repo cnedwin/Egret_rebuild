@@ -221,6 +221,19 @@ export class Mesh3D extends Object3D {
 }
 
 const scratchScale = new Float32Array(3);
+interface InstanceStreamRevisions {
+  observed: number;
+  matrices: number;
+  colors: number;
+}
+
+const readInstanceStreamRevisions = Symbol('instanceStreamRevisions3D');
+
+/** Reconcile legacy bulk edits before a renderer checks either instance stream. */
+export function instanceStreamRevisions3D(mesh: InstancedMesh3D): Readonly<InstanceStreamRevisions> {
+  return mesh[readInstanceStreamRevisions]();
+}
+
 /** Draw one geometry many times in a single call with per-instance transforms and colors. */
 export class InstancedMesh3D extends Mesh3D {
   readonly capacity: number;
@@ -234,6 +247,7 @@ export class InstancedMesh3D extends Mesh3D {
   readonly instanceColorSize: 3 | 4;
   /** Bump after editing instance arrays directly. */
   instanceVersion = 1;
+  readonly #streamRevisions: InstanceStreamRevisions = { observed: 1, matrices: 1, colors: 1 };
   /** Multiplies each instance's bounding radius, for instances that move beyond the geometry, such as animated ones. */
   boundsScale = 1;
   #boundsVersion = 0;
@@ -262,7 +276,7 @@ export class InstancedMesh3D extends Mesh3D {
     if (!Number.isSafeInteger(index) || index < 0 || index >= this.capacity)
       throw new World3DError('WORLD3D_INPUT_INVALID', 'instance index');
     for (let i = 0; i < 16; i++) this.instanceMatrices[index * 16 + i] = matrix[i]!;
-    this.instanceVersion++;
+    this.touchInstanceStream('matrices');
   }
   setTransformAt(
     index: number,
@@ -275,7 +289,7 @@ export class InstancedMesh3D extends Mesh3D {
     const s =
       typeof scale === 'number' ? ((scratchScale[0] = scratchScale[1] = scratchScale[2] = scale), scratchScale) : scale;
     mat4Compose(this.instanceMatrices.subarray(index * 16, index * 16 + 16), position, quaternion, s);
-    this.instanceVersion++;
+    this.touchInstanceStream('matrices');
   }
   setColorAt(index: number, r: number, g: number, b: number, a = 1): void {
     if (!Number.isSafeInteger(index) || index < 0 || index >= this.capacity)
@@ -286,7 +300,24 @@ export class InstancedMesh3D extends Mesh3D {
     colors[index * size + 1] = g;
     colors[index * size + 2] = b;
     if (size === 4) colors[index * size + 3] = a;
-    this.instanceVersion++;
+    this.touchInstanceStream('colors');
+  }
+
+  [readInstanceStreamRevisions](): InstanceStreamRevisions {
+    const revisions = this.#streamRevisions;
+    if (revisions.observed !== this.instanceVersion) {
+      revisions.observed = this.instanceVersion;
+      revisions.matrices++;
+      revisions.colors++;
+    }
+    return revisions;
+  }
+
+  private touchInstanceStream(stream: 'matrices' | 'colors'): void {
+    // A raw write can precede a narrow setter before either stream reaches a renderer.
+    const revisions = this[readInstanceStreamRevisions]();
+    revisions.observed = ++this.instanceVersion;
+    revisions[stream]++;
   }
   /** Sphere enclosing every instance, in world space. */
   override get worldBoundingSphere(): Float32Array {
