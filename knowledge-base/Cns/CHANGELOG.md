@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Play：推出方向、按钮、等待缓动、重新开始 — 2026-11-17
+
+`@egret/engine/play` 补上了十二个生成的游戏仍在手写的部分。`game.pushOut(a, b)` 给出把 `a` 移出 `b` 需要的距离，角色站在平台上用的就是它；`game.near` 做圆形判定，`game.hitsAll` 返回所有命中。`game.tween(...).done` 和 `game.wait(seconds)` 是 Promise，动画可以一步接一步。新增 `game.button`、`game.pointer.over`、`game.toFront` 和 `game.restart`。`rect` 和 `circle` 可以指定层；文字可以创建在精灵里并跟着它移动，用 `baseline: 'middle'` 垂直居中。指南补充了精灵的原点、绘制顺序、重叠时谁收到点击、文字支持 `\n` 换行，以及暂停会停下什么。
+
 ## Play：一次调用做出一个完整的小游戏 — 2026-11-17
 
 新入口 `@egret/engine/play`。`play({ width, height, setup, update })` 创建画布、让它适应页面，并在 `setup` 完成后才开始 update。返回的 game 提供每帧可询问的键盘和指针、十二个用代码合成的音效以及用于添加更多音效的 `sfx.define`、`overlaps` 和 `hits`、`after` 和 `every`、可居中且可立即修改的文字、自动开始的缓动、`burst`、`shake`、`flash`、`hitStop`、可卷动的 `view`、可重复的随机数以及 `save`/`load`。它建立在浏览器游戏、音频和工具包入口之上，并通过 `game.browser` 保留对它们的访问。

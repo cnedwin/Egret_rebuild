@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1282 个导出，其中 782 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1285 个导出，其中 783 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1419,8 +1419,11 @@
 | `isSfxRecipe` | 函数 | Whether a value is a recipe `synthesizeSfx` takes. |
 | `play` | 函数 | Starts a game in the page. |
 | `PlayBurstOptions` | 接口 |  |
+| `PlayButton` | 类型 | A button: a sprite whose middle is at (x, y), with its words in `label`. |
+| `PlayButtonOptions` | 接口 |  |
 | `PlayGame` | 接口 |  |
 | `PlayKeys` | 接口 |  |
+| `PlayMotion` | 类型 | A tween of `game.tween`: a motion that can be waited for. |
 | `PlayOptions` | 接口 |  |
 | `PlayPointer` | 接口 |  |
 | `PlaySfx` | 接口 |  |

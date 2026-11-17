@@ -49,8 +49,14 @@ export interface PlayTextOptions {
   /** Which part of the words `x` is: their left end (the default), their middle or their right end. */
   readonly align?: 'left' | 'center' | 'right';
   readonly bold?: boolean;
-  /** `'ui'` (the default) stays put over the game; `'world'` moves with `game.view` and the shake. */
-  readonly layer?: 'ui' | 'world';
+  /**
+   * Where the text goes. `'ui'` (the default) stays put over the game; `'world'` moves with `game.view` and the
+   * shake; a sprite makes the text its child, so the two move, turn, fade and go together, and `x` and `y` are
+   * then measured from the sprite's own origin.
+   */
+  readonly layer?: 'ui' | 'world' | Sprite;
+  /** Which part of the words `y` is: their top (the default) or their middle. */
+  readonly baseline?: 'top' | 'middle';
   /** The language of the words, as `'zh'` or `'en'`. Chosen from the words unless given. */
   readonly locale?: string;
 }
@@ -97,7 +103,29 @@ export interface PlayPointer {
   readonly released: boolean;
   /** The way of a swipe that ended since the last update. */
   readonly swipe: 'left' | 'right' | 'up' | 'down' | undefined;
+  /** Whether the pointer is over what a sprite draws, taken as an upright box. */
+  over(node: DisplayObject): boolean;
 }
+/** A tween of `game.tween`: a motion that can be waited for. */
+export type PlayMotion<T extends object> = Motion<T> & {
+  /** Resolves when the motion has finished or been stopped: `await game.tween(s).to({ x: 9 }, 0.2).done`. */
+  readonly done: Promise<void>;
+};
+export interface PlayButtonOptions {
+  readonly x: number;
+  readonly y: number;
+  /** 160 by 44 unless given. */
+  readonly width?: number;
+  readonly height?: number;
+  readonly color?: number;
+  readonly textColor?: number;
+  /** The height of the letters; 0.45 of the button's height unless given. */
+  readonly size?: number;
+  /** `game.ui` unless given. */
+  readonly layer?: Sprite;
+}
+/** A button: a sprite whose middle is at (x, y), with its words in `label`. */
+export type PlayButton = Sprite & { readonly label: PlayText };
 export interface PlaySfx {
   /** Plays an effect by name: one of `names`. `pitch` is 1 as written, 2 an octave up. */
   play(name: string, options?: { readonly volume?: number; readonly pitch?: number }): void;
@@ -143,10 +171,14 @@ export interface PlayGame {
   timeScale: number;
   /** A new sprite in the world (or in `layer`), with what `draw` draws in it. */
   sprite(draw?: (graphics: Graphics) => void, layer?: Sprite): Sprite;
-  /** A filled rectangle whose middle is at (x, y). */
-  rect(x: number, y: number, width: number, height: number, color: number): Sprite;
-  /** A filled circle whose middle is at (x, y). */
-  circle(x: number, y: number, radius: number, color: number): Sprite;
+  /** A filled rectangle whose middle is at (x, y), in the world or in `layer`. */
+  rect(x: number, y: number, width: number, height: number, color: number, layer?: Sprite): Sprite;
+  /** A filled circle whose middle is at (x, y), in the world or in `layer`. */
+  circle(x: number, y: number, radius: number, color: number, layer?: Sprite): Sprite;
+  /** A button with words on it, in the `ui` layer. `onTap` is called when it is tapped or clicked. */
+  button(words: string, options: PlayButtonOptions, onTap: () => void): PlayButton;
+  /** Puts a sprite in front of the others of its layer. Sprites are otherwise drawn in the order they were made. */
+  toFront(node: DisplayObject): void;
   /** A line of text. It appears a moment after it is made; nothing has to wait for it. */
   text(text: string | number, options?: PlayTextOptions): PlayText;
   /** Takes a sprite off the stage and ends it. */
@@ -157,10 +189,21 @@ export interface PlayGame {
   overlaps(a: DisplayObject, b: DisplayObject, shrink?: number): boolean;
   /** The first of the sprites that overlaps `a`, or undefined. */
   hits<T extends DisplayObject>(a: DisplayObject, others: readonly T[], shrink?: number): T | undefined;
+  /** Every one of the sprites that overlaps `a`. */
+  hitsAll<T extends DisplayObject>(a: DisplayObject, others: readonly T[], shrink?: number): T[];
+  /**
+   * How far to move `a` so that it no longer overlaps `b`, by the shorter way out: `{ x, y }`, one of them 0, or
+   * undefined when they do not overlap. A `y` below 0 means `a` was pushed up, onto `b`.
+   */
+  pushOut(a: DisplayObject, b: DisplayObject): { x: number; y: number } | undefined;
+  /** Whether the middles of what two sprites draw are within `distance` of each other: a test of circles. */
+  near(a: DisplayObject, b: DisplayObject, distance: number): boolean;
   /** Moves numbers of an object over time: `game.tween(s).to({ x: 100, alpha: 0 }, 0.3, 'quadOut')`. It starts by itself. */
-  tween<T extends object>(target: T): Motion<T>;
+  tween<T extends object>(target: T): PlayMotion<T>;
   /** Calls a function once, after seconds of play. The function returned calls it off. */
   after(seconds: number, callback: () => void): () => void;
+  /** A promise that resolves after seconds of play: `await game.wait(0.3)`. */
+  wait(seconds: number): Promise<void>;
   /** Calls a function again and again, seconds of play apart. The function returned ends it. */
   every(seconds: number, callback: () => void): () => void;
   /** Shakes the world by up to `amount` units for `seconds`. */
@@ -174,9 +217,15 @@ export interface PlayGame {
   /** Keeps a value in the page's storage, as JSON, and reads one back. */
   save(key: string, value: unknown): void;
   load<T>(key: string, fallback: T): T;
+  /** Stops updates and timers; `update` is not called while paused. The keys and the pointer can still be asked from a tap or a timer of the page. */
   pause(): void;
   resume(): void;
   readonly paused: boolean;
+  /**
+   * Starts the game again: everything in the world and the `ui` layer is removed, timers and tweens are called
+   * off, and `setup` runs again. Updates begin when it has finished.
+   */
+  restart(): Promise<void>;
   /** The game `play` is built on: its Engine, scope, loop and input, for what this entry does not cover. */
   readonly browser: BrowserGame;
   readonly engine: Engine;
@@ -371,6 +420,13 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     get swipe() {
       return point.swipe;
+    },
+    over(node) {
+      if (!seen(node)) return false;
+      const box = boxOf(node);
+      return (
+        box !== undefined && point.x >= box.left && point.x <= box.right && point.y >= box.top && point.y <= box.bottom
+      );
     }
   };
   const listening: [EventTarget, string, EventListener][] = [
@@ -457,8 +513,10 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     };
   };
 
-  // Tweens start by themselves at the next update, so a chain is written without a last `.start()`.
+  // Tweens start by themselves at the next update, so a chain is written without a last `.start()`. Each is
+  // watched until it has finished or been stopped, which is when its `done` resolves.
   let waiting: Motion<object>[] = [];
+  let moving: { readonly motion: Motion<object>; readonly settle: () => void }[] = [];
 
   // Pieces of a burst: a pool of small sprites, drawn again only when their colour or size changes.
   interface Piece {
@@ -490,6 +548,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         () => {
           if (gone) return;
           made.display.x = align === 'center' ? -made.display.width / 2 : align === 'right' ? -made.display.width : 0;
+          made.display.y = o.baseline === 'middle' ? -made.display.height / 2 : 0;
           made.display.visible = true;
         },
         () => {}
@@ -504,7 +563,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     );
     node.x = finite(o.x) ? o.x : 0;
     node.y = finite(o.y) ? o.y : 0;
-    (o.layer === 'world' ? world : ui).addChild(node);
+    if (o.baseline !== undefined && o.baseline !== 'top' && o.baseline !== 'middle')
+      throw invalid("baseline is 'top' or 'middle'");
+    const into = o.layer === undefined || o.layer === 'ui' ? ui : o.layer === 'world' ? world : o.layer;
+    if (!(into instanceof Sprite) || into.isDisposed) throw invalid("layer is 'ui', 'world' or a sprite");
+    into.addChild(node);
     const words = node.text;
     browser
       .createLabel({
@@ -606,6 +669,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         waiting = [];
         for (const motion of starting) if (motion.state === 'idle') motion.start();
       }
+      if (moving.length > 0)
+        moving = moving.filter(entry => {
+          if (entry.motion.state !== 'finished' && entry.motion.state !== 'stopped') return true;
+          entry.settle();
+          return false;
+        });
       if (timers.length > 0) {
         // A timer may add or call off timers; those added now wait for the next step.
         const due = timers;
@@ -691,28 +760,58 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       into.addChild(node);
       return node;
     },
-    rect(x, y, w, h, color) {
+    rect(x, y, w, h, color, into) {
       if (![x, y, w, h].every(finite) || w < 0 || h < 0 || !colour(color))
         throw invalid('rect takes x, y, a width, a height and a colour');
-      const node = game.sprite(g =>
-        g
-          .beginFill(color)
+      if (into !== undefined && !(into instanceof Sprite)) throw invalid('the layer of a rect is a sprite');
+      const node = game.sprite(g => {
+        g.beginFill(color)
           .drawRect(-w / 2, -h / 2, w, h)
-          .endFill()
-      );
+          .endFill();
+      }, into);
       node.x = x;
       node.y = y;
       return node;
     },
-    circle(x, y, radius, color) {
+    circle(x, y, radius, color, into) {
       if (![x, y, radius].every(finite) || radius < 0 || !colour(color))
         throw invalid('circle takes x, y, a radius and a colour');
-      const node = game.sprite(g => g.beginFill(color).drawCircle(0, 0, radius).endFill());
+      if (into !== undefined && !(into instanceof Sprite)) throw invalid('the layer of a circle is a sprite');
+      const node = game.sprite(g => {
+        g.beginFill(color).drawCircle(0, 0, radius).endFill();
+      }, into);
       node.x = x;
       node.y = y;
       return node;
     },
     text,
+    button(words, o, onTap) {
+      if (o === null || typeof o !== 'object' || !finite(o.x) || !finite(o.y) || typeof onTap !== 'function')
+        throw invalid('a button takes its words, { x, y } and a function');
+      const { width: w = 160, height: h = 44, color = 0x3b82f6, textColor = 0xffffff } = o;
+      if (!finite(w) || !finite(h) || w <= 0 || h <= 0 || !colour(color) || !colour(textColor))
+        throw invalid('a button has a width and a height above 0 and colours');
+      const node = game.sprite(g => {
+        g.beginFill(color)
+          .drawRoundRect(-w / 2, -h / 2, w, h, Math.min(w, h) * 0.25)
+          .endFill();
+      }, o.layer ?? ui) as Sprite & { label: PlayText };
+      node.x = o.x;
+      node.y = o.y;
+      node.label = text(words, {
+        size: finite(o.size) && o.size > 0 ? o.size : h * 0.45,
+        color: textColor,
+        align: 'center',
+        baseline: 'middle',
+        layer: node
+      });
+      game.onTap(node, onTap);
+      return node;
+    },
+    toFront(node) {
+      if (node === undefined || node === null || node.isDisposed) return;
+      node.parent?.addChild(node);
+    },
     remove(node) {
       if (node === undefined || node === null || node.isDisposed) return;
       removers.get(node)?.();
@@ -735,16 +834,64 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const first = boxOf(a);
       if (first === undefined) return undefined;
       for (const other of others) {
-        if (!seen(other)) continue;
+        // A sprite does not hit itself, so a list may hold it.
+        if ((other as DisplayObject) === a || !seen(other)) continue;
         const second = boxOf(other);
         if (second !== undefined && meet(first, second, shrink)) return other;
       }
       return undefined;
     },
+    hitsAll(a, others, shrink = 0) {
+      const found: (typeof others)[number][] = [];
+      if (!seen(a)) return found;
+      const first = boxOf(a);
+      if (first === undefined) return found;
+      for (const other of others) {
+        if ((other as DisplayObject) === a || !seen(other)) continue;
+        const second = boxOf(other);
+        if (second !== undefined && meet(first, second, shrink)) found.push(other);
+      }
+      return found;
+    },
+    pushOut(a, b) {
+      if (!seen(a) || !seen(b)) return undefined;
+      const first = boxOf(a),
+        second = boxOf(b);
+      if (first === undefined || second === undefined || !meet(first, second, 0)) return undefined;
+      // The four ways out; the shortest is taken, and of two the same length the vertical one, so a box set
+      // down on a floor is lifted and not slid.
+      const left = second.left - first.right,
+        right = second.right - first.left,
+        up = second.top - first.bottom,
+        down = second.bottom - first.top;
+      const x = -left < right ? left : right,
+        y = -up < down ? up : down;
+      return Math.abs(x) < Math.abs(y) ? { x, y: 0 } : { x: 0, y };
+    },
+    near(a, b, distance) {
+      if (!finite(distance) || !seen(a) || !seen(b)) return false;
+      const first = boxOf(a),
+        second = boxOf(b);
+      if (first === undefined || second === undefined) return false;
+      const dx = (first.left + first.right - second.left - second.right) / 2,
+        dy = (first.top + first.bottom - second.top - second.bottom) / 2;
+      return dx * dx + dy * dy <= distance * distance;
+    },
     tween(target) {
-      const motion = animate(engine, scope, target);
+      const motion = animate(engine, scope, target) as PlayMotion<typeof target>;
+      let settle!: () => void;
+      const done = new Promise<void>(resolve => {
+        settle = resolve;
+      });
+      Object.defineProperty(motion, 'done', { value: done, enumerable: true });
       waiting.push(motion as Motion<object>);
+      moving.push({ motion: motion as Motion<object>, settle });
       return motion;
+    },
+    wait(seconds) {
+      return new Promise<void>(resolve => {
+        timer(seconds, resolve, false);
+      });
     },
     after: (seconds, callback) => timer(seconds, callback, false),
     every: (seconds, callback) => timer(seconds, callback, true),
@@ -843,6 +990,34 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     get paused() {
       return paused;
+    },
+    async restart() {
+      if (disposed) return;
+      // No update runs while the game is taken down and set up again.
+      api = undefined;
+      timers = [];
+      waiting = [];
+      for (const entry of moving) {
+        entry.motion.stop();
+        entry.settle();
+      }
+      moving = [];
+      for (const made of [world, ui]) while (made.numChildren > 0) game.remove(made.getChildAt(0));
+      for (const piece of pieces) {
+        piece.life = 0;
+        piece.node.visible = false;
+      }
+      view.x = view.y = 0;
+      time = 0;
+      timeScale = 1;
+      paused = false;
+      stopped = shakeLeft = flashLeft = 0;
+      cover.visible = false;
+      try {
+        await setup?.(game);
+      } finally {
+        api = game;
+      }
     },
     browser,
     engine,
