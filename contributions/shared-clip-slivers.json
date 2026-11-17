@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/shared-clip-slivers.test.mjs",
+      "originRole": "First-party tests that a turned shape whose corner all but touches the edge of the view is prepared and packed instead of refused; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

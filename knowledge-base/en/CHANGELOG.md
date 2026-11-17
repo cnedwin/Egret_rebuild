@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Draw a turned shape whose corner touches the edge of the view — 2026-11-17
+
+A rotated shape or sprite with a corner within a rounding error of the view's edge, as any quarter turn can leave it, made a clipped polygon that preparation or packing refused with `precision`; the frame failed with `FRAME_RENDER_FAILED` and a game's loop stopped. Such a polygon is now settled and drawn. Polygons that were accepted before are prepared with the same corners and the same charges.
+
 ## Fix what stopped first games from starting — 2026-11-17
 
 An error's message now ends with its cause (`… Cause: DISPLAY_VALUE_INVALID: … Cause: RangeError: alpha was given 1.07`), and a refused display value says which property and what it was given. Pointer and hover input accept a canvas whose ancestors are moved or scaled with CSS, as centring with `transform: translate(-50%, -50%)` does; a refusal says which rule was broken. Labels of `createBrowserGame` wait their turn, so many may be made or changed together without `TEXT_CACHE_BUDGET`. `animate` stops alpha at 0 and 1 under an overshooting ease. `graphics.clear()` returns the graphics. The browser game guide says when the loop starts and that returned objects are frozen; the World3D app guide's geometry calls take options.
