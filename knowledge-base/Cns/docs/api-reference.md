@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 42 个入口、1267 个导出，其中 775 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1282 个导出，其中 782 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1411,6 +1411,26 @@
 | `BrowserStatsSnapshot` | 接口 | The numbers the panel shows, as of its last refresh. |
 | `createBrowserGame` | 函数 | Makes a game ready to draw: `await createBrowserGame({ canvas, width, height, update })`, then add display objects to `game.stage`. |
 | `createBrowserStatsPanel` | 函数 |  |
+
+## `@egret/engine/play`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `isSfxRecipe` | 函数 | Whether a value is a recipe `synthesizeSfx` takes. |
+| `play` | 函数 | Starts a game in the page. |
+| `PlayBurstOptions` | 接口 |  |
+| `PlayGame` | 接口 |  |
+| `PlayKeys` | 接口 |  |
+| `PlayOptions` | 接口 |  |
+| `PlayPointer` | 接口 |  |
+| `PlaySfx` | 接口 |  |
+| `PlayText` | 类 | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
+| `PlayTextOptions` | 接口 |  |
+| `SFX_PRESETS` | 值 | The effects every game is given, by name. |
+| `SfxRecipe` | 类型 | An effect: one tone, or several played one after another. |
+| `SfxTone` | 接口 | One tone of an effect. |
+| `SfxWave` | 类型 | The wave of a tone. |
+| `synthesizeSfx` | 函数 | The samples of an effect, one channel, from -1 to 1. |
 
 ## `@egret/engine/audio`
 

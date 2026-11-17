@@ -66,6 +66,7 @@ export const ZH_AREAS: readonly (readonly [string, string])[] = [
   ['PARAGRAPH', '段落'],
   ['PARTICLE', '粒子发射器'],
   ['PHYSICS', '物理世界'],
+  ['PLAY', 'play'],
   ['POINTER_INPUT', '指针输入'],
   ['QUALITY_VARIANT', '画质变体'],
   ['RANDOM', '随机数生成器'],

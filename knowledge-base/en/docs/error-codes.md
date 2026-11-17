@@ -771,6 +771,13 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `PHYSICS_LISTENER_FAILED` | A listener the application gave to the physics world threw. What it threw is in cause. |
 | `PHYSICS_OPTIONS_INVALID` | The options given to the physics world are not valid: one is missing, of the wrong type or out of range. |
 
+### PLAY
+
+| Code | Meaning |
+| --- | --- |
+| `PLAY_OPTIONS_INVALID` | The options given to play are not valid: one is missing, of the wrong type or out of range. |
+| `PLAY_SFX_UNKNOWN` | No such sfx is known to play. |
+
 ### POINTER_INPUT
 
 | Code | Meaning |

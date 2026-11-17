@@ -2,7 +2,7 @@
 
 [English](../../en/docs/browser-game.md) | 简体中文
 
-`@egret/engine/web/game` 用一次调用在页面里启动一个 2D 游戏，并带有一个显示游戏开销的面板。
+`@egret/engine/web/game` 用一次调用在页面里启动一个 2D 游戏，并带有一个显示游戏开销的面板。想做一个完整的小游戏，输入、声音、文字和定时器都现成可用，请从 [`play`](play.md) 开始，它建立在这个入口之上。
 
 初版[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.zh-CN.md)在无头 Chromium 中使用软件 WebGL2。Node 检查选项与统计面板，浏览器检查绘制、点击、按键、触摸、图片加载，以及 WebGPU 或其适配器不可用时回退到 WebGL2。
 

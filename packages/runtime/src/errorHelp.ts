@@ -67,6 +67,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['PARAGRAPH', 'a paragraph'],
   ['PARTICLE', 'a particle emitter'],
   ['PHYSICS', 'the physics world'],
+  ['PLAY', 'play'],
   ['POINTER_INPUT', 'pointer input'],
   ['QUALITY_VARIANT', 'the quality variants'],
   ['RANDOM', 'the random number generator'],

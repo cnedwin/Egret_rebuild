@@ -34,7 +34,7 @@ pnpm exec node tools/verify-clean-consumer.mjs <仓库之外的新目录的绝�
 | `archives` | 每个归档包含该包声明的全部模块和类型文件、许可证文本，依赖写成版本号。 |
 | `install` | 新工程里 `pnpm install --ignore-scripts` 成功。安装了四个包，可选包一个也没有。 |
 | `entries` | `@egret/engine` 的 27 个入口都解析到消费者内部的声明文件，类型文件存在，并且能在 Node 中加载。 |
-| `separation` | 非 Web 入口不加载 Web 模块。非 3D 入口不加载 3D 模块。只有 `webgl2` 和 `webgpu` 加载 `robust-predicates`。没有任何模块来自消费者之外。 |
+| `separation` | 非 Web 入口（Web 入口指 `/web/…`、`/webgl2`、`/webgpu` 和 `/play`）不加载 Web 模块。非 3D 入口不加载 3D 模块。只有 `webgl2` 和 `webgpu` 加载 `robust-predicates`。没有任何模块来自消费者之外。 |
 | `examples` | 公开示例逐字节复制到消费者后可以运行，输出与在仓库里运行时相同。 |
 | `types` | 使用默认入口和 `@egret/engine/layout` 的严格 TypeScript 消费者能按已安装的类型编译，错误的调用仍然报错。 |
 | `notices` | 每个已安装的包都带有许可证文件。 |

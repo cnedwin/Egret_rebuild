@@ -771,6 +771,13 @@
 | `PHYSICS_LISTENER_FAILED` | 应用交给物理世界的监听器抛出了异常。抛出的内容在 cause 中。 |
 | `PHYSICS_OPTIONS_INVALID` | 交给物理世界的选项无效：缺少某一项、类型不对或超出范围。 |
 
+### PLAY
+
+| 错误码 | 含义 |
+| --- | --- |
+| `PLAY_OPTIONS_INVALID` | 交给play的选项无效：缺少某一项、类型不对或超出范围。 |
+| `PLAY_SFX_UNKNOWN` | play中没有这样的 `sfx`。 |
+
 ### POINTER_INPUT
 
 | 错误码 | 含义 |

@@ -133,6 +133,12 @@ test('CC03 each kind of leak between entries is named', () => {
     return faults[0];
   };
   assert.match(one('@egret/engine', engine('dist/web/webgl2.js')), /loads the web module dist\/web\/webgl2\.js/);
+  // The play entry is a browser entry, as the two Hosts are; an entry that merely has the word in its name is not.
+  assert.deepEqual(
+    separationFaults('@egret/engine/play', [...plain, engine('dist/web/play.js')], { draws: false }),
+    []
+  );
+  assert.match(one('@egret/engine/playback', engine('dist/web/play.js')), /loads the web module dist\/web\/play\.js/);
   assert.match(one('@egret/engine/layout', engine('dist/rendering/world3d/index.js')), /loads the 3D module/);
   assert.match(one('@egret/engine/webgl2', engine('dist/rendering/world3d/index.js'), true), /loads the 3D module/);
   assert.match(one('@egret/engine/ui', other(THIRD_PARTY.name)), /loads robust-predicates/);

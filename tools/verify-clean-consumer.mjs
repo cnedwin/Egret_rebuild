@@ -120,7 +120,8 @@ export function admitOutput(checkout, directory) {
  */
 export function separationFaults(entry, loaded, { draws }) {
   const faults = [],
-    web = entry.split('/').some(part => part === 'web' || part === 'webgl2' || part === 'webgpu'),
+    // `play` is a browser entry by its own name, as the two Hosts are: a whole game in a page.
+    web = entry.split('/').some(part => part === 'web' || part === 'webgl2' || part === 'webgpu' || part === 'play'),
     world = entry.includes('world3d');
   for (const file of loaded) {
     if (file.outside) faults.push(entry + ' loads ' + file.path + ' from outside the consumer');
