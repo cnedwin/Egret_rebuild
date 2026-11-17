@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  InstancedMesh3D,
   Mesh3D,
   PlanarReflection3D,
   RenderTarget3D,
@@ -90,6 +91,60 @@ function webGLFixture() {
     }
   };
 }
+
+test('WebGL2 refreshes changed inactive instance data when the active count grows', () => {
+  const { renderer, gl, mesh: template } = shaderPreparationFixture({ parallel: false });
+  const scene = new Scene3D();
+  const camera = createPerspectiveCamera3D({ fov: 45, aspect: 1 });
+  camera.setPosition(0, 0, 6).lookAt(0, 0, 0);
+  scene.addChild(camera);
+  const mesh = new InstancedMesh3D(template.geometry, template.material, 2, 4);
+  scene.addChild(mesh);
+  mesh.setTransformAt(1, [1, 0, 0]);
+  mesh.setColorAt(1, 1, 0, 0);
+
+  const uploads = [];
+  const drawnCounts = [];
+  gl.vertexAttribDivisor = () => {};
+  gl.drawElementsInstanced = (_mode, _length, _type, _offset, count) => drawnCounts.push(count);
+  gl.bufferSubData = (_target, _offset, data, start, length) => {
+    if (data === mesh.instanceMatrices || data === mesh.instanceColors)
+      uploads.push(Array.from(data.subarray(start, start + length)));
+  };
+
+  try {
+    assert.equal(renderer.render(scene, camera), true);
+    assert.deepEqual(drawnCounts, [2]);
+
+    mesh.count = 1;
+    mesh.setTransformAt(1, [2, 0, 0]);
+    mesh.setColorAt(1, 0, 1, 0, 0.5);
+    assert.equal(renderer.render(scene, camera), true);
+    assert.deepEqual(
+      uploads.splice(0).map(data => data.length),
+      [16, 4]
+    );
+
+    mesh.count = 2;
+    assert.equal(renderer.render(scene, camera), true);
+    assert.deepEqual(
+      uploads.map(data => data.length),
+      [32, 8]
+    );
+    assert.equal(uploads[0][16 + 12], 2);
+    assert.deepEqual(uploads[1].slice(4), [0, 1, 0, 0.5]);
+    uploads.length = 0;
+
+    mesh.count = 1;
+    assert.equal(renderer.render(scene, camera), true);
+    mesh.count = 2;
+    assert.equal(renderer.render(scene, camera), true);
+    assert.deepEqual(drawnCounts, [2, 1, 2, 1, 2]);
+    assert.deepEqual(uploads, []);
+  } finally {
+    renderer.dispose();
+  }
+});
 
 function shaderPreparationFixture({ parallel = true } = {}) {
   const fixture = webGLFixture();

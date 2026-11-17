@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 修复 World3D 实例数量变化 — 2026-11-17
+
+调整 `InstancedMesh3D.count` 后，裁剪包围体会按当前活跃实例重新计算。活跃范围超出当前版本已上传的前缀时，WebGL2 会刷新矩阵和颜色。在 Windows Edge 157、RTX 5090 Laptop GPU 上，两个实例的用例通过了 WebGL2 和 WebGPU 验证。只把数量从 1 改为 2 再改回 1，第二个实例会出现再消失。在它不活跃时修改数据，再次启用后的位置、颜色和透明度都符合预期。[World3D 实例化](docs/world3d.md#网格实例化蒙皮与变形)
+
 ## World3D WebGL2 程序预准备 — 2026-11-17
 
 `preparePrograms` 可在加载期链接选定材质的场景颜色和阴影程序。在支持扩展的 WebGL2 设备上先轮询完成，再读取链接状态和 uniform。Windows RTX 5090 Laptop GPU 同机对照把首次透明材质链接移出交互，帧回调间隔从 179.2 ms 降到 4.1 ms。 新建 `CustomShader3D` 特效复用了准备好的程序，零新链接，RGBA8 像素一致。提前准备耗时 79.4 ms，首次显示帧回调间隔由 87.4 ms 降至 4.2 ms。 [World3D 契约与证据](docs/world3d.md#webgl2-程序预准备)

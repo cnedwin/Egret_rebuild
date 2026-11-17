@@ -237,6 +237,7 @@ export class InstancedMesh3D extends Mesh3D {
   /** Multiplies each instance's bounding radius, for instances that move beyond the geometry, such as animated ones. */
   boundsScale = 1;
   #boundsVersion = 0;
+  #boundsCount = -1;
   readonly #instanceSphere = new Float32Array(4);
 
   constructor(
@@ -290,7 +291,7 @@ export class InstancedMesh3D extends Mesh3D {
   /** Sphere enclosing every instance, in world space. */
   override get worldBoundingSphere(): Float32Array {
     const sphere = this.#instanceSphere;
-    if (this.#boundsVersion !== this.instanceVersion) {
+    if (this.#boundsVersion !== this.instanceVersion || this.#boundsCount !== this.count) {
       const base = this.geometry.boundingSphere,
         box = box3Empty(new Float32Array(6)),
         m = this.instanceMatrices;
@@ -318,6 +319,7 @@ export class InstancedMesh3D extends Mesh3D {
       sphereFromBox(this.localSphere, box);
       if (this.localSphere[3]! >= 0) this.localSphere[3]! += radius;
       this.#boundsVersion = this.instanceVersion;
+      this.#boundsCount = this.count;
     }
     return sphereTransform(sphere, this.localSphere, this.matrixWorld) as Float32Array;
   }
