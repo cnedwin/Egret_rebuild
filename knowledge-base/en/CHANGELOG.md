@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Play: push-out, buttons, waiting for tweens, restart — 2026-11-17
+
+`@egret/engine/play` gains what twelve generated games still wrote by hand. `game.pushOut(a, b)` says how far to move `a` out of `b`, which is how a character stands on a platform; `game.near` tests circles and `game.hitsAll` gives every hit. `game.tween(...).done` and `game.wait(seconds)` are promises, so steps can follow one another. `game.button`, `game.pointer.over`, `game.toFront` and `game.restart` are new. `rect` and `circle` take a layer, and a text can be made in a sprite, to move with it, with `baseline: 'middle'` to centre it. The guide now says where a sprite's origin is, how sprites are ordered, which sprite gets a tap, that a text takes `\n`, and what a pause stops.
+
 ## Play: a whole small game from one call — 2026-11-17
 
 New entry `@egret/engine/play`. `play({ width, height, setup, update })` makes the canvas, fits it to the page and starts updates when `setup` has finished. The game it gives has keys and a pointer to ask each frame, twelve sound effects made in code and `sfx.define` for more, `overlaps` and `hits`, `after` and `every`, text that can be centred and changed at once, tweens that start by themselves, `burst`, `shake`, `flash`, `hitStop`, a scrolling `view`, repeatable random numbers and `save`/`load`. It is built on the browser game, audio and kit entries, which it leaves open through `game.browser`.

@@ -72,17 +72,21 @@ await play({
 
 | 调用 | 得到 |
 | --- | --- |
-| `game.rect(x, y, width, height, color)` | 一个填充矩形，**中心**在 (x, y) |
-| `game.circle(x, y, radius, color)` | 一个填充圆，中心在 (x, y) |
+| `game.rect(x, y, width, height, color, layer?)` | 一个填充矩形，**中心**在 (x, y) |
+| `game.circle(x, y, radius, color, layer?)` | 一个填充圆，中心在 (x, y) |
 | `game.sprite(g => …)` | 一个精灵，内容由函数绘制：`g` 是它的 [Graphics](graphics.md)，例如 `g.beginFill(0xff0000).drawRoundRect(-20, -10, 40, 20, 6).endFill()` |
 | `game.text(words, { x, y, size, color, align, bold })` | 一行文字，见下文 |
-| `game.remove(sprite)` | 把它从舞台上拿掉并结束它 |
+| `game.button(words, { x, y, width, height, color }, onTap)` | `ui` 层里的一个按钮，中心在 (x, y)，文字居中；用 `button.label.text` 修改文字 |
+| `game.remove(sprite)` | 把它连同里面的内容从舞台上拿掉并结束它。重复移除不会出错 |
+| `game.toFront(sprite)` | 把它放到同一层其他精灵的前面 |
 
-每个调用都返回一个精灵。可以随时设置它的 `x`、`y`、`rotation`（角度）、`scaleX`、`scaleY`、`alpha`（0 到 1）和 `visible`，也可以加上自己的属性（`enemy.hp = 3`）。颜色是一个数字 `0xRRGGBB`。
+每个调用都返回一个精灵。可以随时设置它的 `x`、`y`、`rotation`（角度）、`scaleX`、`scaleY`、`alpha`（0 到 1）和 `visible`，读取它的 `width` 和 `height`，也可以加上自己的属性（`enemy.hp = 3`）。颜色是一个数字 `0xRRGGBB`。
 
-`game.world` 是这些内容所在的层。`game.ui` 是盖在它上面、保持不动的层；做按钮或面板时把它作为最后一个参数传入：`game.sprite(draw, game.ui)`。`game.view.x` 和 `game.view.y` 决定看到世界的哪一部分，比舞台宽的关卡用 `game.view.x = hero.x - game.width / 2` 就能卷动。
+精灵绕自己的原点旋转和缩放：`rect` 和 `circle` 的原点在中心，`game.sprite` 的原点是绘制内容的 (0, 0)。所以把 `scaleX` 缓动到 0 再回来，卡片就绕中心翻转。精灵按创建顺序绘制，后创建的在前面。要改变精灵的样子，就重新画一遍：`sprite.graphics.clear().beginFill(0x00ff00).drawRect(-10, -10, 20, 20).endFill()`。
 
-**文字。** `const score = game.text('分数 0', { x: 240, y: 8, align: 'center' })` 画在 `ui` 层，创建后立刻可用；内容变化时设置 `score.text = '分数 ' + n`（直接给数字也可以）。`align` 说明 `x` 是文字的哪一部分：`'left'`、`'center'` 或 `'right'`。不指定时 `size` 为 24，`color` 为白色。`{ layer: 'world' }` 把文字放进世界层，例如命中后向上飘的数字。文字就是一个精灵，可以像精灵一样移动、淡出、缓动和移除。
+`game.world` 是这些内容所在的层。`game.ui` 是盖在它上面、保持不动的层；做状态条或面板时把它作为最后一个参数传入，例如 `game.rect(240, 20, 480, 40, 0x000000, game.ui)`。任何精灵都可以当作层：在它里面创建的内容会跟着它一起移动、旋转、淡出和移除。`game.view.x` 和 `game.view.y` 决定看到世界的哪一部分，比舞台宽的关卡用 `game.view.x = hero.x - game.width / 2` 就能卷动。
+
+**文字。** `const score = game.text('分数 0', { x: 240, y: 8, align: 'center' })` 画在 `ui` 层，创建后立刻可用；内容变化时设置 `score.text = '分数 ' + n`（直接给数字也可以）。`align` 说明 `x` 是文字的哪一部分：`'left'`、`'center'` 或 `'right'`。不指定时 `size` 为 24，`color` 为白色。`y` 是文字的顶部，加上 `baseline: 'middle'` 则是文字的中线。文字里的 `\n` 会换行。`{ layer: 'world' }` 把文字放进世界层，例如命中后向上飘的数字；`{ layer: tile, align: 'center', baseline: 'middle' }` 把文字放在一个精灵上，位于精灵的原点，并跟着它移动。文字就是一个精灵，可以像精灵一样移动、淡出、缓动和移除。字体用页面自己的，设备上有中文、日文、韩文字体时就能显示。
 
 ## 输入
 
@@ -95,9 +99,10 @@ await play({
 | `game.pointer.x`、`.y` | 鼠标或手指在舞台上的位置；不按键时也跟随鼠标 |
 | `game.pointer.down`、`.pressed`、`.released` | 是否按着、刚按下、刚松开 |
 | `game.pointer.swipe` | 一次滑动结束后的那次 update 里为 `'left'`、`'right'`、`'up'` 或 `'down'` |
-| `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数 |
+| `game.pointer.over(sprite)` | 指针是否在精灵画出的内容上 |
+| `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击 |
 
-键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。
+键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。在舞台任何位置按下，`game.pointer.pressed` 都为真，按在按钮上也一样；不希望按钮下面的游戏收到这次按下时，先判断 `game.pointer.over(button)`。
 
 ## 声音
 
@@ -109,7 +114,29 @@ await play({
 
 ## 重叠
 
-`game.overlaps(a, b)` 判断两个精灵画出的内容是否重叠，按舞台上的正放矩形计算；`game.hits(a, list)` 返回列表里第一个与 `a` 重叠的精灵，没有则是 `undefined`。第三个参数让双方每一边都缩进这么多单位，判定更宽松。隐藏的、已移除的或什么都没画的精灵不与任何东西重叠。
+| 询问 | 回答 |
+| --- | --- |
+| `game.overlaps(a, b)` | 两个精灵画出的内容是否重叠，按舞台上的正放矩形计算 |
+| `game.hits(a, list)` | 列表里第一个与 `a` 重叠的精灵，没有则是 `undefined` |
+| `game.hitsAll(a, list)` | 列表里所有与 `a` 重叠的精灵 |
+| `game.near(a, b, distance)` | 两者的中心是否在 `distance` 以内：圆形判定，例如半径为 6 和 14 时写 `game.near(bullet, enemy, 6 + 14)` |
+| `game.pushOut(a, b)` | 要让 `a` 不再与 `b` 重叠，需要把 `a` 移动多少（走较短的方向）：`{ x, y }`，其中一个为 0；不重叠时是 `undefined` |
+
+`overlaps`、`hits` 和 `hitsAll` 的第三个参数让双方每一边都缩进这么多单位，判定更宽松。隐藏的、已移除的或什么都没画的精灵不与任何东西重叠；精灵不会和自己碰撞，所以列表里可以包含它自己。
+
+角色站在平台上、被墙挡住，用的就是 `pushOut`：
+
+```js
+hero.y += vy * dt;
+for (const block of blocks) {
+  const push = game.pushOut(hero, block);
+  if (!push) continue;
+  hero.x += push.x;
+  hero.y += push.y;
+  if (push.y < 0) { vy = 0; onGround = true; }   // 被向上推：落地了
+  if (push.y > 0) vy = 0;                         // 被向下推：撞到头了
+}
+```
 
 ## 时间
 
@@ -118,9 +145,12 @@ await play({
 | `game.after(seconds, fn)` | 游戏进行这么久之后调用一次 `fn`。返回一个用来取消它的函数 |
 | `game.every(seconds, fn)` | 每隔这么久调用一次 `fn`。返回一个用来结束它的函数 |
 | `game.tween(sprite).to({ x: 100, alpha: 0 }, 0.3, 'quadOut')` | 让对象的数值从当前值随时间变化，自动开始。可以接着写 `.to`、`.wait(seconds)`、`.call(fn)`、`.loop(times)` 和 `.onFinish(fn)`。缓动：`linear`、`quadIn`、`quadOut`、`quadInOut`、`cubicOut`、`backOut`、`elasticOut`、`bounceOut`，以及 [`animate`](api-reference.md) 的其余缓动 |
+| `await game.tween(sprite).to({ y: 200 }, 0.2).done` | 等一个缓动结束，这样在 `async` 函数里可以一步接一步 |
+| `await game.wait(seconds)` | 等游戏进行这么久 |
 | `game.time` | 游戏已进行的秒数 |
 | `game.timeScale = 0.5` | 慢动作；1 为正常速度 |
-| `game.pause()`、`game.resume()`、`game.paused` | 停止和恢复 update 与定时器 |
+| `game.pause()`、`game.resume()`、`game.paused` | 停止和恢复 update 与定时器。暂停时不调用 `update`；按钮的 `onTap` 仍然会调用，暂停的游戏就靠它恢复 |
+| `game.restart()` | 移除世界层和 `ui` 层里的所有内容，取消定时器和缓动，然后重新运行 `setup` |
 
 请用这些而不是 `setTimeout`：暂停、顿帧和页面被隐藏时，它们会和游戏一起停下。
 
@@ -135,7 +165,7 @@ await play({
 
 ## 随机与存档
 
-`game.random` 给出的数字在 `seed` 相同时可以重复：`int(1, 6)`、`range(0, 1)`、`chance(0.25)`、`pick(list)`、`shuffle(list)`。
+`game.random` 给出的数字在 `seed` 相同时可以重复：`int(1, 6)`、`range(0, 1)`、`chance(0.25)`、`pick(list)`，以及 `shuffle(list)`，它返回一个新列表，不改动传入的列表。
 
 `game.save('best', score)` 把一个值以 JSON 形式保存在页面的存储里，`game.load('best', 0)` 把它读回来，没有时返回第二个参数。页面没有存储时，值只在这次访问期间保留。
 
