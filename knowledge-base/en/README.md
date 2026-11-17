@@ -11,7 +11,7 @@ These guides cover the APIs used to make games. The later sections link engine c
 | To | Read |
 | --- | --- |
 | Start | [Getting started](docs/getting-started.md) · [Browser game entry](docs/browser-game.md) · [Public imports](docs/entry-points.md) · [Egret 5 migration](docs/egret-api-migration.md) · [Preview archive tooling](docs/release-archives.md) |
-| Draw and move | [Graphics](docs/graphics.md) · [The frame loop](docs/frame-loop.md) · [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) · [Filters](docs/filters.md) |
+| Draw and move | [Graphics](docs/graphics.md) · [The frame loop](docs/frame-loop.md) · [Pictures as textures](docs/browser-images.md) · [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) · [Filters](docs/filters.md) |
 | Collide, sound and control | [Collision and physics](docs/physics-2d.md) · [Sound for a 2D game](docs/audio.md) · [Video](docs/video.md) · [Gamepads](docs/gamepad.md) |
 | Read an error, look up a name | [Error codes](docs/error-codes.md) · [API reference](docs/api-reference.md) |
 

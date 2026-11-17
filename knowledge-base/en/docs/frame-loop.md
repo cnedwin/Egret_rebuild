@@ -54,9 +54,10 @@ A failure in `update` or in drawing stops the loop. Its state becomes `failed` a
 | `maxPendingFrames` | How many unfinished frames the Host takes. Defaults to 2 |
 | `update` | One step of the game, with the seconds since the step before |
 | `maxStepSeconds` | The longest step. Defaults to 0.1 |
+| `catchUpSeconds` | How much of a long frame is played back as several steps of at most `maxStepSeconds` before one draw. Defaults to 0: one step of the longest length |
 | `onError` | Told once of what stopped the loop |
 | `requestFrame`, `cancelFrame` | The display's frame callback and its cancellation, for a test or another scheduler. `requestAnimationFrame` and `cancelAnimationFrame` by default |
 
 ## Limits
 
-The loop takes one step for each frame the display shows, of the length that passed. It has no fixed-rate step with catch-up: physics that needs one divides the seconds it is given. It does not pause by itself when the page is hidden; the browser stops calling it, and the first step afterwards is the longest length.
+The loop takes one step for each frame the display shows, of the length that passed. With `catchUpSeconds` a frame longer than `maxStepSeconds` is given as several steps, so a device that draws at 8 frames a second still plays at full speed, up to that many seconds a frame; the rest of a longer gap is dropped. It has no fixed-rate step: physics that needs one divides the seconds it is given. It does not pause by itself when the page is hidden; the browser stops calling it, and the first step afterwards is the longest length.

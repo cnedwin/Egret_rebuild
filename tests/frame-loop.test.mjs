@@ -327,3 +327,44 @@ test('FL07 a strict consumer compiles against the entry, and four misuses are re
   for (const entry of ['@egret/engine', '@egret/engine/webgl2', '@egret/runtime'])
     assert.equal('createBrowserFrameLoop' in (await import(entry)), false, entry);
 });
+
+test('FL08 with catchUpSeconds a slow frame is played back as several steps before one draw', () => {
+  const screen = display(),
+    engine = recorder(0.05),
+    steps = [];
+  const loop = createBrowserFrameLoop({
+    engine,
+    frame: FRAME,
+    update: delta => steps.push(+delta.toFixed(3)),
+    maxStepSeconds: 0.04,
+    catchUpSeconds: 0.25,
+    ...screen
+  });
+  loop.start();
+  screen.present(0);
+  // A frame of 130 ms: four steps, the last one short, then one draw.
+  screen.present(130);
+  assert.deepEqual(steps, [0, 0.04, 0.04, 0.04, 0.01]);
+  assert.deepEqual(engine.calls.slice(-2), ['time 0.130', 'draw 320']);
+  assert.equal(engine.calls.filter(call => call.startsWith('draw')).length, 2);
+  // A hidden minute is played back only up to catchUpSeconds.
+  screen.present(60130);
+  assert.equal(
+    +steps
+      .slice(5)
+      .reduce((sum, step) => sum + step, 0)
+      .toFixed(3),
+    0.25
+  );
+  assert.ok(steps.slice(5).every(step => step <= 0.04));
+  assert.equal(+loop.snapshot().seconds.toFixed(3), 0.38);
+  // An ordinary frame is one step as before.
+  screen.present(60146);
+  assert.equal(steps.at(-1), 0.016);
+  loop.dispose();
+  for (const catchUpSeconds of [-1, NaN, Infinity, '1'])
+    assert.throws(
+      () => createBrowserFrameLoop({ engine, frame: FRAME, catchUpSeconds, ...display() }),
+      coded('FRAME_LOOP_OPTIONS_INVALID')
+    );
+});

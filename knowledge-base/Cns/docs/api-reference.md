@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 40 个入口、1133 个导出，其中 707 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 41 个入口、1146 个导出，其中 713 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1250,6 +1250,24 @@
 | `createBrowserFrameLoop` | 函数 | The frame loop of a game in a page. |
 | `FrameLoopEngine` | 接口 | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | 接口 | What the loop asks of a Host: how many frames it holds that it has not finished. |
+
+## `@egret/engine/web/kit`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `BrowserDecodedImage` | 接口 |  |
+| `BrowserImageCanvas` | 接口 |  |
+| `BrowserImageContext` | 接口 |  |
+| `BrowserImageFormat` | 类型 | The picture formats the browser route recognises by their first bytes. |
+| `BrowserImageOptions` | 接口 |  |
+| `BrowserImagePorts` | 接口 |  |
+| `BrowserImageSource` | 类型 | What `textureFromCanvas` and `decodeBrowserImage` can read pixels from. |
+| `BrowserImageTextureProviderOptions` | 接口 |  |
+| `createBrowserImageTextureProvider` | 函数 | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
+| `decodeBrowserImage` | 函数 | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
+| `fitBrowserImageSize` | 函数 | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
+| `sniffBrowserImageFormat` | 函数 | The picture format the bytes start with, or undefined when they start like none of them. |
+| `textureFromCanvas` | 函数 | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
 
 ## `@egret/engine/web/game`
 

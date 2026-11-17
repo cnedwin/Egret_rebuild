@@ -23,6 +23,13 @@ export interface BrowserFrameLoopOptions<F> {
   readonly update?: (deltaSeconds: number) => void;
   /** The longest step, in seconds. A tab that was hidden comes back with one step of this length. Defaults to 0.1, and is never more than the Engine's clock takes. */
   readonly maxStepSeconds?: number;
+  /**
+   * How much of a long gap is played back. A frame that took longer than `maxStepSeconds` is given as several
+   * steps of at most that length, up to this many seconds in all, before one frame is drawn; the rest of the gap
+   * is dropped. 0, the default, gives one step of the longest length, so a slow device plays slower instead of
+   * jumping. A tab that comes back from being hidden still loses the time it was hidden beyond this.
+   */
+  readonly catchUpSeconds?: number;
   /** Told once of what stopped the loop. Without it the failure is thrown from the display's callback, where the console shows it. */
   readonly onError?: (error: unknown) => void;
   /** The display's frame callback and its cancellation; `requestAnimationFrame` and `cancelAnimationFrame` by default. */
@@ -84,9 +91,21 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
   )
     throw invalid();
   const clockLimit = engine.clock?.maxDeltaSeconds,
-    asked = options.maxStepSeconds ?? 0.1;
-  if (typeof clockLimit !== 'number' || !(clockLimit > 0) || typeof asked !== 'number' || !(asked > 0)) throw invalid();
+    asked = options.maxStepSeconds ?? 0.1,
+    catchUp = options.catchUpSeconds ?? 0;
+  if (
+    typeof clockLimit !== 'number' ||
+    !(clockLimit > 0) ||
+    typeof asked !== 'number' ||
+    !(asked > 0) ||
+    typeof catchUp !== 'number' ||
+    !(catchUp >= 0) ||
+    !Number.isFinite(catchUp)
+  )
+    throw invalid();
   const maxStep = Math.min(asked, clockLimit);
+  // Steps of one long frame are capped too, so a stalled page cannot spend a frame catching up forever.
+  const maxStepsPerFrame = Math.max(1, Math.ceil(Math.max(catchUp, maxStep) / maxStep));
 
   let state: BrowserFrameLoopState = 'idle',
     handle: number | undefined,
@@ -100,15 +119,22 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
     handle = undefined;
     if (state !== 'running') return;
     try {
-      // The clock is given the loop's own seconds, which never jump: a long gap counts as one step of the longest length.
-      const delta = last === undefined ? 0 : Math.min(maxStep, Math.max(0, (milliseconds - last) / 1000));
+      // The clock is given the loop's own seconds, which never jump. A long gap counts as one step of the longest
+      // length, or, with catchUpSeconds, as several such steps up to that much time.
+      const gap = last === undefined ? 0 : Math.max(0, (milliseconds - last) / 1000);
       last = milliseconds;
-      seconds += delta;
-      engine.advanceTime(seconds);
-      steps++;
-      update?.(delta);
-      // The update may have stopped or disposed the loop.
-      if (state !== 'running') return;
+      let owed = catchUp > 0 ? Math.min(gap, Math.max(catchUp, maxStep)) : Math.min(gap, maxStep);
+      for (let step = 0; step < maxStepsPerFrame; step++) {
+        const delta = Math.min(maxStep, owed);
+        owed -= delta;
+        seconds += delta;
+        engine.advanceTime(seconds);
+        steps++;
+        update?.(delta);
+        // The update may have stopped or disposed the loop.
+        if (state !== 'running') return;
+        if (!(owed > 1e-9)) break;
+      }
       if (host !== undefined && host.getStatus().pendingFrames >= limit) skipped++;
       else {
         try {
