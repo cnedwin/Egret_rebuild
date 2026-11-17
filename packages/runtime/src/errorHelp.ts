@@ -109,7 +109,8 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['WEBGPU', 'the WebGPU Host'],
   ['WEB_PNG', 'the browser image provider'],
   ['WEB_RESOURCE', 'the browser resource source'],
-  ['WEB_TEXT', 'the browser text provider']
+  ['WEB_TEXT', 'the browser text provider'],
+  ['WORLD3D_OVERLAY', 'the World3D overlay']
 ];
 /** What went wrong, by ending, longest first. `{a}` is the area, `{o}` what stands between the area and the ending. */
 const ENDINGS: readonly (readonly [string, string, string?])[] = [

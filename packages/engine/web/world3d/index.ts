@@ -63,3 +63,5 @@ export { createScreenMarkers3D } from './markers3D.js';
 export type { ScreenMarker3D, ScreenMarkerOptions3D, ScreenMarkers3D, ScreenMarkersOptions3D } from './markers3D.js';
 export { createWorld3DStats } from './stats3D.js';
 export type { World3DStats, World3DStatsOptions } from './stats3D.js';
+export { createWorld3DOverlay } from './overlay3D.js';
+export type { World3DOverlay, World3DOverlayOptions } from './overlay3D.js';

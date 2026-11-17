@@ -29,6 +29,8 @@ import type { Texture3D, TextureSource3D } from '../../rendering/world3d/Texture
 import {
   FRAME_BLOCK_FLOATS_3D,
   FRAME_OFFSETS_3D,
+  TILED_LIGHTS_3D,
+  writeTiledLights3D,
   outputToneMapping3D,
   planShadows3D,
   writeFrameBlock3D
@@ -188,6 +190,7 @@ export class WebGPURenderer3D implements Renderer3D {
     visited: 0,
     culled: 0,
     lightsDropped: 0,
+    lightsTiled: 0,
     shadowMaps: 0,
     programs: 0,
     geometries: 0,
@@ -201,6 +204,8 @@ export class WebGPURenderer3D implements Renderer3D {
   readonly #list = new RenderList3D();
   readonly #frameData = new Float32Array(FRAME_BLOCK_FLOATS_3D);
   readonly #frameBuffer: GPUBuffer;
+  readonly #tiledTable = new Float32Array(TILED_LIGHTS_3D.width * TILED_LIGHTS_3D.rows * 4);
+  readonly #tiledBuffer: GPUBuffer;
   readonly #frameLayout: GPUBindGroupLayout;
   readonly #depthFrameLayout: GPUBindGroupLayout;
   readonly #materialLayout: GPUBindGroupLayout;
@@ -307,7 +312,8 @@ export class WebGPURenderer3D implements Renderer3D {
         { binding: 4, visibility: SHADER_STAGE.FRAGMENT, sampler: {} },
         { binding: 5, visibility: SHADER_STAGE.FRAGMENT, texture: {} },
         { binding: 6, visibility: SHADER_STAGE.FRAGMENT, sampler: {} },
-        { binding: 7, visibility: SHADER_STAGE.FRAGMENT, texture: { sampleType: 'depth' } }
+        { binding: 7, visibility: SHADER_STAGE.FRAGMENT, texture: { sampleType: 'depth' } },
+        { binding: 8, visibility: SHADER_STAGE.FRAGMENT, buffer: { type: 'read-only-storage' } }
       ]
     });
     this.#depthFrameLayout = device.createBindGroupLayout({ entries: [{ binding: 0, visibility: both, buffer: {} }] });
@@ -335,6 +341,10 @@ export class WebGPURenderer3D implements Renderer3D {
     this.#frameBuffer = device.createBuffer({
       size: FRAME_BLOCK_FLOATS_3D * 4,
       usage: BUFFER_USAGE.UNIFORM | BUFFER_USAGE.COPY_DST
+    });
+    this.#tiledBuffer = device.createBuffer({
+      size: this.#tiledTable.byteLength,
+      usage: BUFFER_USAGE.STORAGE | BUFFER_USAGE.COPY_DST
     });
     this.#objectBuffer = this.createObjectBuffer();
     this.#objectGroup = this.createObjectGroup();
@@ -1617,6 +1627,13 @@ export class WebGPURenderer3D implements Renderer3D {
    * instanced draw each, in the main view and in shadow maps. On by default;
    * the meshes themselves are untouched.
    */
+  /** Point lights past the eight nearest are lit by screen tile, up to 256; false drops them instead. */
+  get tiledLights(): boolean {
+    return this.#list.tiledLights;
+  }
+  set tiledLights(value: boolean) {
+    this.#list.tiledLights = Boolean(value);
+  }
   get autoInstancing(): boolean {
     return this.#list.autoInstanceThreshold > 1;
   }
@@ -1681,6 +1698,29 @@ export class WebGPURenderer3D implements Renderer3D {
     });
     this.#frameData[FRAME_OFFSETS_3D.clipInfo + 2] = this.viewport ? this.viewport[2] : 1;
     this.#frameData[FRAME_OFFSETS_3D.clipInfo + 3] = this.viewport ? this.viewport[3] : 1;
+    {
+      // Lights past the eight in the frame block go to the tiled list, read by screen tile.
+      const fullWidth = target ? target.width : this.#context.getCurrentTexture().width,
+        fullHeight = target ? target.height : this.#context.getCurrentTexture().height;
+      const rect = this.viewport;
+      const tileWidth = rect ? Math.max(Math.round(rect[2] * fullWidth), 1) : fullWidth,
+        tileHeight = rect ? Math.max(Math.round(rect[3] * fullHeight), 1) : fullHeight;
+      const originX = rect ? Math.round(rect[0] * fullWidth) : 0,
+        originY = rect ? Math.max(fullHeight - Math.round(rect[1] * fullHeight) - tileHeight, 0) : 0;
+      const tiled = writeTiledLights3D(
+        this.#frameData,
+        this.#tiledTable,
+        list.tiledPointLights,
+        camera.viewProjectionMatrix,
+        tileWidth,
+        tileHeight,
+        true,
+        originX,
+        originY
+      );
+      if (tiled > 0) device.queue.writeBuffer(this.#tiledBuffer, 0, this.#tiledTable);
+      this.info.lightsTiled = tiled;
+    }
     device.queue.writeBuffer(this.#frameBuffer, 0, this.#frameData);
     // Surfaces that fade near solid geometry read its depth, drawn once before the frame.
     const soft = list.transparent.some(item => item.material.softness > 0);
@@ -1727,7 +1767,8 @@ export class WebGPURenderer3D implements Renderer3D {
           { binding: 4, resource: environment?.sampler ?? this.#defaultSampler },
           { binding: 5, resource: this.#white },
           { binding: 6, resource: this.#grabSampler },
-          { binding: 7, resource: sceneDepthView }
+          { binding: 7, resource: sceneDepthView },
+          { binding: 8, resource: { buffer: this.#tiledBuffer } }
         ]
       });
       this.#frameGroupKey = frameKey;
@@ -1900,7 +1941,8 @@ export class WebGPURenderer3D implements Renderer3D {
             { binding: 4, resource: environment?.sampler ?? this.#defaultSampler },
             { binding: 5, resource: entry.view },
             { binding: 6, resource: this.#grabSampler },
-            { binding: 7, resource: sceneDepthView }
+            { binding: 7, resource: sceneDepthView },
+            { binding: 8, resource: { buffer: this.#tiledBuffer } }
           ]
         });
         entry.key = frameKey;
@@ -2098,6 +2140,7 @@ export class WebGPURenderer3D implements Renderer3D {
     this.#pipelines.clear();
     this.#modules.clear();
     this.#frameBuffer.destroy();
+    this.#tiledBuffer.destroy();
     this.#objectBuffer.destroy();
     this.#skyBuffer?.destroy();
     this.#dummyBones.destroy();

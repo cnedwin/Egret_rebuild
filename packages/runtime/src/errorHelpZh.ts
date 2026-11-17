@@ -108,7 +108,8 @@ export const ZH_AREAS: readonly (readonly [string, string])[] = [
   ['WEBGPU', 'WebGPU Host'],
   ['WEB_PNG', '浏览器图片提供者'],
   ['WEB_RESOURCE', '浏览器资源来源'],
-  ['WEB_TEXT', '浏览器文本提供者']
+  ['WEB_TEXT', '浏览器文本提供者'],
+  ['WORLD3D_OVERLAY', 'World3D 叠加层']
 ];
 export const ZH_ENDINGS: readonly (readonly [string, string, string?])[] = [
   ['OPTIONS_INVALID', '交给{a}的选项无效：缺少某一项、类型不对或超出范围。'],

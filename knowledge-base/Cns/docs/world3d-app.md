@@ -6,7 +6,7 @@
 
 `createWorld3DApp` 在一个画布上启动 3D 游戏：选择后端，在 World3D 宿主上创建 Engine，按画质创建渲染器，运行帧循环，并在帧率偏低时降低绘制分辨率。`@egret/engine/webgl2/world3d` 和 `@egret/engine/webgpu/world3d` 都导出它。
 
-**验证了什么、没验证什么。** 选择逻辑、画质预设和分辨率控制器在 Node 中验证。在使用软件 WebGL2 的无头 Chromium 中，一个请求 WebGPU 的应用在没有可用适配器时退回到 WebGL2，绘制了 2.5 秒场景，执行了 `setQuality('low')` 并完成销毁；51 个零件合成的模型一次绘制完成，标签跟随方块，相机后方目标的标记停在底边，性能读数正常显示。WebGPU 和硬件没有运行。
+**验证了什么、没验证什么。** 选择逻辑、画质预设和分辨率控制器在 Node 中验证。在使用软件 WebGL2 的无头 Chromium 中，一个请求 WebGPU 的应用在没有可用适配器时退回到 WebGL2，绘制了 2.5 秒场景，执行了 `setQuality('low')` 并完成销毁；51 个零件合成的模型一次绘制完成，标签跟随方块，相机后方目标的标记停在底边，性能读数正常显示。在该应用的画布上，2D 叠加层把一个红色按钮画在蓝色方块和绿色背景之上（截图中合成正确）；点按钮只有 2D 舞台收到，点场景只有 3D 画布收到。WebGPU 和硬件没有运行。
 
 ## 用法
 
@@ -83,10 +83,30 @@ markers.update();
 
 元素用 CSS 变换移动，所以给它设 `position: absolute; left: 0; top: 0`。目标在相机后方或超过 `maxDistance` 时，标记隐藏。设了 `clampToEdge` 的标记则停在屏幕边缘，带上 `data-on-edge`，`marker.angle` 给出箭头应指的方向。自己画标记的代码可用 `projectToViewport3D(camera, point, width, height)` 得到同样的投影。
 
+## 引擎的 2D 界面叠在场景上
+
+```js
+import { createWorld3DApp, createWorld3DOverlay } from '@egret/engine/webgl2/world3d';
+import { Sprite } from '@egret/engine';
+
+const app = await createWorld3DApp(canvas);
+const ui = await createWorld3DOverlay(canvas, { width: 1280, height: 720 });
+const pause = new Sprite();
+pause.graphics.beginFill(0x203040).drawRect(0, 0, 120, 48).endFill();
+pause.touchEnabled = true;
+ui.game.stage.addChild(pause);
+```
+
+`createWorld3DOverlay` 在 3D 画布正上方放一块透明画布（3D 画布须放在定位的父元素里），并用 `createBrowserGame` 在上面启动一个 2D 游戏。菜单、血条、文字、位图按钮和 `ui` 控件随后用引擎的 2D 舞台画在场景之上。页面尺寸变化时，叠加层跟随 3D 画布的位置和大小。
+
+落在设了 `touchEnabled` 的 2D 节点上的按下、点击或滚轮交给 2D 舞台；落在界面空白处的则继续交给下面的 3D 画布，整个拖动过程都是，所以场景仍然可以旋转、瞄准和拾取。悬停移动交给界面空白处下方的画布。`passThrough: false` 让所有事件都留在叠加层上。`ui.dispose()` 结束 2D 游戏并移除叠加层。
+
+2D 舞台默认用 WebGL2，这样 3D 渲染器使用 WebGPU 时不必共用。两块画布由页面合成，彼此之间不复制任何内容。
+
 ## 性能读数
 
 `createWorld3DStats(renderer, { container })` 显示帧时间、游戏自己各部分的耗时，以及渲染器画了什么：绘制次数、三角形数、被舍去的灯、程序、几何体和纹理。每帧开始时调用 `begin()`，每部分之后调用 `lap(name)`，绘制之后调用 `end()`。不传 `container` 时仍会收集数字，供自动检查使用。
 
 ## 限制
 
-应用同一时间只用一个相机绘制一个场景。需要第二个视图、画中画，或在同一画布上叠加 2D 层的游戏，自行驱动 `World3DView`。设备丢失会报告给 `onDeviceLost`，恢复的办法是重新创建一个应用。
+应用同一时间只用一个相机绘制一个场景。需要第二个视图或画中画的游戏，自行驱动 `World3DView`。设备丢失会报告给 `onDeviceLost`，恢复的办法是重新创建一个应用。

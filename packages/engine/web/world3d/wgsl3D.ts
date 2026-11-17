@@ -92,8 +92,11 @@ struct Frame {
     pointShadow: vec4f,
     clipPlanes: array<vec4f, 4>,
     clipInfo: vec4f,
+    tileGrid: vec4f,   // tiles across, tiles down, tile edge in pixels, viewport origin x
+    tileInfo: vec4f,   // x: tiled point lights (0 = none), y: header base, z: index base, w: viewport origin y
 }
 @group(0) @binding(0) var<uniform> frame: Frame;
+@group(0) @binding(8) var<storage, read> tiledLights: array<vec4f>;
 @group(0) @binding(1) var shadowMap: texture_depth_2d;
 @group(0) @binding(2) var shadowSampler: sampler_comparison;
 @group(0) @binding(3) var environmentMap: texture_cube<f32>;
@@ -733,6 +736,23 @@ fn fragmentMain(input: VertexOutput, @builtin(front_facing) frontFacing: bool) -
         var visible = 1.0;
         ${f.receiveShadow ? 'if (f32(i) == frame.pointShadow.x) { visible = pointShadowFactor(i32(frame.pointShadow.y), -toLight, input.worldPosition, s.normal); }' : ''}
         color += shade(s, toLight / max(dist, 0.0001), frame.pointColor[i].rgb * rangeFalloff(dist, frame.pointPosition[i].w)) * visible;
+    }
+    // Point lights past the eight: only those whose range reaches this pixel's screen tile are visited.
+    if (frame.tileInfo.x > 0.5) {
+        let tileAt = clamp(vec2i((input.clip.xy - vec2f(frame.tileGrid.w, frame.tileInfo.w)) / frame.tileGrid.z), vec2i(0), vec2i(frame.tileGrid.xy) - vec2i(1));
+        let head = tiledLights[i32(frame.tileInfo.y) + tileAt.y * i32(frame.tileGrid.x) + tileAt.x];
+        let first = i32(head.x);
+        let tileCount = min(i32(head.y), 32);
+        for (var k = 0; k < tileCount; k++) {
+            let slot = first + k;
+            let lightIndex = i32(tiledLights[i32(frame.tileInfo.z) + slot / 4][slot % 4]);
+            let lightPosition = tiledLights[lightIndex * 2];
+            let lightColor = tiledLights[lightIndex * 2 + 1];
+            let toLight = lightPosition.xyz - input.worldPosition;
+            let dist = length(toLight);
+            if (dist >= lightPosition.w) { continue; }
+            color += shade(s, toLight / max(dist, 0.0001), lightColor.rgb * rangeFalloff(dist, lightPosition.w));
+        }
     }
     for (var i = 0; i < spotCount; i++) {
         let toLight = frame.spotPosition[i].xyz - input.worldPosition;

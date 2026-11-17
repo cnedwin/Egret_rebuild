@@ -34,7 +34,8 @@ export const TEXTURE_UNITS_3D = Object.freeze({
   lightMap: 9,
   sceneColor: 10,
   reflectionMap: 11,
-  sceneDepth: 12
+  sceneDepth: 12,
+  tiledLights: 13
 } as const);
 
 export const MAX_MORPH_INFLUENCES_3D = 8;
@@ -67,6 +68,8 @@ layout(std140) uniform Frame {
     vec4 uPointShadow;             // x: shadowed point light index or -1, y: first of its four slots
     vec4 uClipPlanes[4];           // world-space planes; the negative side is discarded
     vec4 uClipInfo;                // x: plane count; zw: share of the output the view covers
+    vec4 uTileGrid;                // tiles across, tiles down, tile edge in pixels, viewport origin x
+    vec4 uTileInfo;                // x: tiled point lights (0 = none), y: header base, z: index base, w: viewport origin y
 };
 `;
 
@@ -322,6 +325,10 @@ uniform sampler2D uEmissiveMap;
 uniform sampler2D uLightMap;
 uniform vec4 uSheen;             // color scaled by strength, roughness
 uniform vec2 uExtra;             // light map intensity, transmission
+uniform highp sampler2D uTiledLights; // tiled point lights: lights, tile headers, light indices
+vec4 tiledTexel(int i) {
+    return texelFetch(uTiledLights, ivec2(i % 512, i / 512), 0);
+}
 #ifdef USE_TRANSMISSION
 uniform sampler2D uSceneColor;   // what was drawn before the see-through surfaces
 uniform vec4 uRefraction;        // index of refraction, thickness, attenuation distance (0 = none)
@@ -701,6 +708,22 @@ void main() {
         if (float(i) == uPointShadow.x) visible = pointShadowFactor(int(uPointShadow.y), -toLight, vWorldPosition, s.normal);
         #endif
         color += shade(s, toLight / max(dist, 0.0001), uPointColor[i].rgb * rangeFalloff(dist, uPointPosition[i].w)) * visible;
+    }
+    // Point lights past the eight: only those whose range reaches this pixel's screen tile are visited.
+    if (uTileInfo.x > 0.5) {
+        ivec2 tileAt = clamp(ivec2((gl_FragCoord.xy - vec2(uTileGrid.w, uTileInfo.w)) / uTileGrid.z), ivec2(0), ivec2(uTileGrid.xy) - 1);
+        vec4 head = tiledTexel(int(uTileInfo.y) + tileAt.y * int(uTileGrid.x) + tileAt.x);
+        int first = int(head.x), tileCount = int(head.y);
+        for (int k = 0; k < 32; k++) {
+            if (k >= tileCount) break;
+            int slot = first + k;
+            int lightIndex = int(tiledTexel(int(uTileInfo.z) + slot / 4)[slot % 4]);
+            vec4 lightPosition = tiledTexel(lightIndex * 2), lightColor = tiledTexel(lightIndex * 2 + 1);
+            vec3 toLight = lightPosition.xyz - vWorldPosition;
+            float dist = length(toLight);
+            if (dist >= lightPosition.w) continue;
+            color += shade(s, toLight / max(dist, 0.0001), lightColor.rgb * rangeFalloff(dist, lightPosition.w));
+        }
     }
     for (int i = 0; i < spotCount; i++) {
         vec3 toLight = uSpotPosition[i].xyz - vWorldPosition;

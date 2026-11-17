@@ -4,9 +4,17 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 八盏以外的点光源按屏幕分块照明 — 2026-11-17
+
+World3D 每帧在 WebGL2 和 WebGPU 上按屏幕分块额外照亮最多 256 盏点光源（分块前向光照），不再舍去。`renderer.info.lightsTiled` 记录数量；设置 `renderer.tiledLights = false` 恢复舍去。分块照明的灯不投射阴影。
+
 ## World3D 动画在骨架之间重定向 — 2026-11-17
 
 `retargetAnimationClip3D` 把一套骨架的动画放到体型和骨骼朝向不同的另一套骨架上：每根骨骼相对静止姿势的转动在骨架空间中转移，根骨骼的位移按高度缩放。[World3D 动画](docs/world3d.md#动画)
+## 引擎的 2D 界面叠在 World3D 场景上 — 2026-11-17
+
+`createWorld3DOverlay(canvas, { width, height })` 在 World3D 画布上叠一块透明的 2D 舞台，并用 `createBrowserGame` 启动它，菜单、血条、文字和控件因此可以用引擎的 2D 舞台画在场景之上。落在设了 `touchEnabled` 的 2D 节点上的按下交给界面；落在界面空白处的按下、拖动、滚轮和悬停继续交给 3D 画布。[一次调用启动 3D 游戏](docs/world3d-app.md)
+
 ## 按画质选模型、无界面跑整局、IndexedDB 存档和离线资源包 — 2026-11-17
 
 `pickQualityVariant` 和 `pickQualityFiles` 按画质选择模型或图片，缺少的档位取最近的一档。`runHeadless` 用代打玩家按种子逐局跑完游戏规则并报告每局结果。`openIndexedDBSaveStorage` 用于本地存储放不下的大存档，`openBrowserBundleCache` 保存资源包的索引和条目，离线时也能打开和读取。比首次请求范围还短的资源包现在也能打开。[游戏工具包](docs/game-kit.md)

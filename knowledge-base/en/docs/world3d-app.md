@@ -6,7 +6,7 @@ This page covers what most 3D games built their own: starting, models made in co
 
 `createWorld3DApp` starts a 3D game on a canvas. It chooses the backend, makes an Engine on a World3D host, makes a renderer for a picture quality, runs the frame loop, and lowers the drawing resolution while frames are slow. It is exported by both `@egret/engine/webgl2/world3d` and `@egret/engine/webgpu/world3d`.
 
-**What is checked and what is not.** The choices, presets and the resolution controller are checked in Node. In headless Chromium with software WebGL2, an app that asked for WebGPU fell back to WebGL2 when no adapter was offered, drew a scene for 2.5 seconds, applied `setQuality('low')` and disposed; a merged model of 51 parts drew in one call, a label followed a box, a marker for a point behind the camera stayed at the bottom edge, and the readout showed its numbers. WebGPU and hardware were not run.
+**What is checked and what is not.** The choices, presets and the resolution controller are checked in Node. In headless Chromium with software WebGL2, an app that asked for WebGPU fell back to WebGL2 when no adapter was offered, drew a scene for 2.5 seconds, applied `setQuality('low')` and disposed; a merged model of 51 parts drew in one call, a label followed a box, a marker for a point behind the camera stayed at the bottom edge, and the readout showed its numbers. Over that app's canvas, a 2D overlay drew a red button above the blue box and green background (composited as expected in a screenshot); a click on the button reached the 2D stage alone and a click on the scene reached the 3D canvas alone. WebGPU and hardware were not run.
 
 ## Use
 
@@ -83,10 +83,30 @@ markers.update();
 
 An element is moved with a CSS transform, so give it `position: absolute; left: 0; top: 0`. A marker hides while its target is behind the camera or beyond `maxDistance`. With `clampToEdge` it stays at the edge of the screen instead, gets `data-on-edge`, and `marker.angle` gives the direction for an arrow. `projectToViewport3D(camera, point, width, height)` gives the same projection to code that draws its own markers.
 
+## The engine's 2D interface over the scene
+
+```js
+import { createWorld3DApp, createWorld3DOverlay } from '@egret/engine/webgl2/world3d';
+import { Sprite } from '@egret/engine';
+
+const app = await createWorld3DApp(canvas);
+const ui = await createWorld3DOverlay(canvas, { width: 1280, height: 720 });
+const pause = new Sprite();
+pause.graphics.beginFill(0x203040).drawRect(0, 0, 120, 48).endFill();
+pause.touchEnabled = true;
+ui.game.stage.addChild(pause);
+```
+
+`createWorld3DOverlay` lays a transparent canvas exactly over the 3D canvas, which must sit in a positioned parent, and starts a 2D game on it with `createBrowserGame`. Menus, bars, text, bitmap buttons and the `ui` controls then draw with the engine's 2D stage on top of the scene. The overlay follows the 3D canvas's box as the page resizes.
+
+A press, click or wheel that lands on a 2D node with `touchEnabled` goes to the 2D stage. One that lands where the interface is empty goes on to the 3D canvas, and so does the rest of that drag, so the scene can still be orbited, aimed at and picked. Hover moves go wherever the interface is empty. `passThrough: false` keeps every event on the overlay. `ui.dispose()` ends the 2D game and takes the overlay away.
+
+The 2D stage uses WebGL2 by default, so the 3D renderer keeps WebGPU for itself where it uses it. The two canvases are composited by the page; nothing is copied between them.
+
 ## A performance readout
 
 `createWorld3DStats(renderer, { container })` shows frame time, the game's own parts of a frame, and what the renderer drew: draw calls, triangles, lights dropped, programs, geometries and textures. Call `begin()` at the start of a frame, `lap(name)` after each part, and `end()` after drawing. Without `container` the numbers are still gathered, for automated checks.
 
 ## Limits
 
-The app draws one scene through one camera at a time. A game with a second view, a picture-in-picture or a 2D layer on the same canvas drives `World3DView` itself. A device that is lost is reported to `onDeviceLost`; making a new app is the way back.
+The app draws one scene through one camera at a time. A game with a second view or a picture-in-picture drives `World3DView` itself. A device that is lost is reported to `onDeviceLost`; making a new app is the way back.

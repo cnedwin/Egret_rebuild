@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/world3d/overlay3D.ts",
+      "originRole": "First-party transparent 2D stage over a World3D canvas, with presses on empty interface passed to the scene; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-overlay.test.mjs",
+      "originRole": "First-party tests of the World3D overlay's exports and refusals; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-tiled-lights.test.mjs",
+      "originRole": "First-party tests of tiled point lights: which lights go to the tiled list and which screen tiles list them; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

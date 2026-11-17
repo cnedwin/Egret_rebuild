@@ -262,6 +262,7 @@ export class GpuResources3D {
       uLightMap: TEXTURE_UNITS_3D.lightMap,
       uReflectionMap: TEXTURE_UNITS_3D.reflectionMap,
       uSceneDepth: TEXTURE_UNITS_3D.sceneDepth,
+      uTiledLights: TEXTURE_UNITS_3D.tiledLights,
       uSplatWeights: TEXTURE_UNITS_3D.lightMap,
       uSplat0: TEXTURE_UNITS_3D.map,
       uSplat1: TEXTURE_UNITS_3D.emissiveMap,
