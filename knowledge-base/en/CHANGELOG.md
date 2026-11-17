@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Play contracts and resource retirement — 2026-11-18
+
+Offset model collisions use the actual bounds centres, and imported rotations keep their original axes. Play tweens follow pause, time scale and hit-stop through the same gameplay clock as timers and updates. Remove, restart and dispose retire owned primitive resources while preserving borrowed models and pooled geometry ownership. The game checker now requires input-phase frame progress and includes errors and requests observed during scripted play.
+
 ## Play: models, taps on things, loops, the mouse and the gamepad — 2026-11-17
 
 What the demo games of PortedGamesEgret each wrote for themselves, `play` and `play3d` now have. `game.add(model)` makes any mesh, group or loaded glTF a thing of `play3d`, with its box worked out from its geometry, and `game.onTap(thing)` finds it by a ray from the camera. `game.sfx.loop(name)` plays a sound until it is stopped, with a volume, a pitch and a pan to change as it plays; `hum` and `wind` are made to be looped, and a tone takes `seamless`. `game.pointer` gives `dx`, `dy` and `wheel`, and `lock()` for a first-person view; `keys.axis()` reads a gamepad's left stick and `keys.look()` its right one.

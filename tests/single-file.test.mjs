@@ -4,6 +4,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { runInNewContext } from 'node:vm';
 import {
   SINGLE_FILE_ENTRIES,
   SINGLE_FILE_ENTRIES_3D,
@@ -13,7 +15,15 @@ import {
   singleFileSource,
   workspaceModules
 } from '../tools/pack-single-file.mjs';
-import { coloursAlike, gameChecks, keyOf, pictureChange, pictureStats, stagePlace } from '../tools/verify-game.mjs';
+import {
+  coloursAlike,
+  gameChecks,
+  keyOf,
+  pictureChange,
+  pictureStats,
+  stagePlace,
+  verifyGame
+} from '../tools/verify-game.mjs';
 
 const refused = run => {
   try {
@@ -171,6 +181,8 @@ test('SF05 a run passes only when nothing failed, something was drawn, frames we
   assert.deepEqual(failing({ canvases: [] }), ['hasCanvas']);
   assert.deepEqual(failing({ start: { colors: 1, dominant: 1 } }), ['drawsSomething']);
   assert.deepEqual(failing({ framesPerSecondIdle: 0 }), ['keepsRunning']);
+  assert.deepEqual(failing({ framesPerSecondPlaying: 0 }), ['keepsRunning']);
+  assert.deepEqual(failing({ framesPerSecondPlaying: 1.9 }), ['keepsRunning']);
   assert.deepEqual(failing({ changedMostDuringInput: 0.001 }), ['reactsOrMoves']);
   assert.deepEqual(failing({ soundsStarted: 0 }), ['makesSound']);
   assert.equal(gameChecks(good).noErrors.errors.length, 0);
@@ -203,4 +215,100 @@ test("SF06 a script plays in the stage's own units, with the names a game asks i
   assert.ok(coloursAlike(0x3b82f6, 0x3a80f8));
   assert.ok(!coloursAlike(0x3b82f6, 0x3b82d0));
   assert.ok(!coloursAlike(0xffffff, 0xf0f0f0, 6));
+});
+
+// Frozen browser observations exercise the real runner without starting a browser or measuring a device.
+function observedBrowser() {
+  const listeners = new Map();
+  let route,
+    frames = 0,
+    pictures = 0;
+  const canvas = { x: 0, y: 0, w: 960, h: 640, pixelWidth: 960, pixelHeight: 640 };
+  const initial = picture(10, 10, (x, y) => [x < 3 ? 255 : 0, y < 3 ? 255 : 0, 40, 255]);
+  const changed = picture(10, 10, (x, y) => [x < 5 ? 255 : 0, y < 3 ? 255 : 0, 40, 255]);
+  const tab = {
+    on(name, handler) {
+      listeners.set(name, handler);
+    },
+    async route(pattern, handler) {
+      route = handler;
+    },
+    async addInitScript() {},
+    async goto() {},
+    async waitForTimeout(milliseconds) {
+      frames += milliseconds / 20;
+      await new Promise(resolve => setTimeout(resolve, 1));
+    },
+    async screenshot() {
+      return ++pictures === 1 ? initial : changed;
+    },
+    async evaluate(read) {
+      return structuredClone(
+        runInNewContext('(' + read + ')()', {
+          window: { __verify: { frames, audioContexts: 1, soundsStarted: 2, rejections: [] } },
+          document: {
+            querySelectorAll: () => [
+              {
+                width: canvas.pixelWidth,
+                height: canvas.pixelHeight,
+                getBoundingClientRect: () => ({ x: canvas.x, y: canvas.y, width: canvas.w, height: canvas.h })
+              }
+            ]
+          }
+        })
+      );
+    },
+    mouse: { async click() {}, async move() {}, async down() {}, async up() {} },
+    keyboard: { async press() {}, async down() {}, async up() {} }
+  };
+  return {
+    chromium: {
+      async launch() {
+        return {
+          async newPage() {
+            return tab;
+          },
+          async close() {}
+        };
+      }
+    },
+    PNG: { sync: { read: bytes => bytes } },
+    file: fileURLToPath(new URL('../examples/play/index.html', import.meta.url)),
+    out: '.',
+    failRequest(url) {
+      listeners.get('requestfailed')({ url: () => url, failure: () => ({ errorText: 'net::ERR_ABORTED' }) });
+    },
+    async externalRequest(url) {
+      await route({ request: () => ({ url: () => url }), async abort() {}, async continue() {} });
+    }
+  };
+}
+
+// Break caught: freeze network pass flags before the optional script adds a caught failure without a console error.
+test('SF07 network failures from the scripted run fail the final report without a console error', async () => {
+  const clean = observedBrowser();
+  assert.equal((await verifyGame({ ...clean, script: { default: async () => {} } })).pass, true);
+
+  const aborted = observedBrowser();
+  const failed = await verifyGame({
+    ...aborted,
+    script: { default: async () => aborted.failRequest('http://127.0.0.1/late') }
+  });
+  assert.equal(failed.checks.played.pass, true, 'the scripted semantic witness itself completed');
+  assert.deepEqual(failed.checks.noErrors.failedRequests, ['http://127.0.0.1/late net::ERR_ABORTED']);
+  assert.equal(failed.checks.noErrors.pass, false);
+  assert.equal(failed.pass, false);
+});
+
+// Break caught: leave the final network boundary flag unchanged when a scripted play asks another origin.
+test('SF08 external requests from the scripted run fail the final report', async () => {
+  const external = observedBrowser();
+  const refused = await verifyGame({
+    ...external,
+    script: { default: async () => external.externalRequest('https://example.invalid/late') }
+  });
+  assert.equal(refused.checks.played.pass, true, 'the scripted semantic witness itself completed');
+  assert.deepEqual(refused.checks.noExternalRequests.externalRequests, ['https://example.invalid/late']);
+  assert.equal(refused.checks.noExternalRequests.pass, false);
+  assert.equal(refused.pass, false);
 });

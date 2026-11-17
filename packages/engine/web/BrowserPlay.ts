@@ -13,6 +13,7 @@ import { createBrowserAudio } from './audio.js';
 import { createBrowserGamepadInput } from './gamepad.js';
 import type { BrowserGamepadInput } from './gamepad.js';
 import { createBrowserGame } from './game.js';
+import { createBrowserFrameLoop } from './loop.js';
 import type { BrowserGame, BrowserGameBackend, BrowserGameLabel } from './game.js';
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 import type { SfxRecipe } from './playSfx.js';
@@ -491,7 +492,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const surface = canvas;
 
   let api: PlayGame | undefined;
-  const browser = await createBrowserGame({
+  const baseBrowser = await createBrowserGame({
     canvas: surface,
     width,
     height,
@@ -501,13 +502,70 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     keyboard: false,
     ...(holder === undefined ? {} : { fit: 'contain' as const, fitTo: holder }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),
-    update: seconds => step(seconds),
     ...(onError === undefined ? {} : { onError })
   }).catch((cause: unknown) => {
     holder?.remove();
     throw cause;
   });
-  const { engine, scope, stage } = browser;
+  const { engine, scope, stage } = baseBrowser;
+  let sourceSeconds = 0,
+    clockSeconds = 0,
+    realStep = 0,
+    playStep = 0,
+    generation = 0;
+  // Rendering keeps its wall-clock cadence; the real Engine clock advances only by gameplay time.
+  const playLoop = createBrowserFrameLoop({
+    engine: {
+      clock: engine.clock,
+      advanceTime(source) {
+        realStep = Math.max(0, source - sourceSeconds);
+        sourceSeconds = source;
+        playStep = api === undefined || paused ? 0 : realStep * timeScale;
+        if (api !== undefined && !paused && stopped > 0) {
+          stopped = Math.max(0, stopped - realStep);
+          playStep = 0;
+        }
+        const end = clockSeconds + playStep,
+          version = generation;
+        // Use headroom so subtraction of large absolute timestamps cannot exceed the admitted delta by rounding.
+        const limit = engine.clock.maxDeltaSeconds / 2;
+        const valid = (): boolean =>
+          !disposed &&
+          api !== undefined &&
+          !paused &&
+          stopped <= 0 &&
+          generation === version &&
+          playLoop.state === 'running';
+        playStep = 0;
+        do {
+          const next = Math.min(end, clockSeconds + limit);
+          const delta = next - clockSeconds;
+          clockSeconds = next;
+          playStep += delta;
+          time += delta;
+          engine.advanceTime(clockSeconds);
+          // Tween callbacks can pause, restart or dispose the game from inside a clock tick.
+          if (!valid()) return;
+        } while (clockSeconds < end);
+      },
+      renderSharedFrame: frame => engine.renderSharedFrame(frame)
+    },
+    host: baseBrowser.host,
+    frame: baseBrowser.frame,
+    update: () => {
+      if (!disposed && playLoop.state === 'running') step(realStep, playStep);
+    },
+    ...(onError === undefined ? {} : { onError })
+  });
+  const browser: BrowserGame = Object.freeze({
+    ...baseBrowser,
+    loop: playLoop,
+    dispose() {
+      playLoop.dispose();
+      stopMotions();
+      return baseBrowser.dispose();
+    }
+  });
   const layer = (): Sprite => stage.addChild(scope.use(new Sprite()));
   const world = layer(),
     effects = layer(),
@@ -814,6 +872,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // watched until it has finished or been stopped, which is when its `done` resolves.
   let waiting: Motion<object>[] = [];
   let moving: { readonly motion: Motion<object>; readonly settle: () => void }[] = [];
+  function stopMotions(): void {
+    waiting = [];
+    const ending = moving;
+    moving = [];
+    for (const entry of ending) {
+      entry.motion.stop();
+      entry.settle();
+    }
+  }
 
   // Pieces of a burst: a pool of small sprites, drawn again only when their colour or size changes.
   interface Piece {
@@ -978,10 +1045,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // What the function of a tap threw, now or when its promise failed: it stops the game at the next step, as what
   // `update` throws does, and is told the same way.
   let failure: { readonly cause: unknown } | undefined;
+  let disposal: Promise<void> | undefined;
   const fail = (cause: unknown): void => {
     failure ??= { cause };
   };
-  function step(real: number): void {
+  function step(real: number, seconds: number): void {
     if (failure !== undefined) {
       const { cause } = failure;
       failure = undefined;
@@ -992,21 +1060,32 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     } catch {
       // A pad that cannot be read is not there.
     }
-    if (api === undefined || paused) {
+    const version = generation;
+    const active = (): boolean =>
+      !disposed &&
+      api !== undefined &&
+      !paused &&
+      stopped <= 0 &&
+      version === generation &&
+      playLoop.state === 'running';
+    if (api === undefined || paused || disposed || playLoop.state !== 'running') {
       endFrame();
       return;
     }
-    let seconds = real * timeScale;
-    if (stopped > 0) {
-      stopped -= real;
-      seconds = 0;
-    }
-    if (seconds > 0) {
-      time += seconds;
+    if (seconds > 0 && stopped <= 0) {
       if (waiting.length > 0) {
         const starting = waiting;
         waiting = [];
-        for (const motion of starting) if (motion.state === 'idle') motion.start();
+        for (let index = 0; index < starting.length; index++) {
+          const motion = starting[index]!;
+          if (motion.state === 'idle') motion.start();
+          if (!active()) {
+            if (!disposed && version === generation && api !== undefined)
+              waiting.push(...starting.slice(index + 1).filter(motion => motion.state === 'idle'));
+            endFrame();
+            return;
+          }
+        }
       }
       if (moving.length > 0)
         moving = moving.filter(entry => {
@@ -1018,17 +1097,31 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         // A timer may add or call off timers; those added now wait for the next step.
         const due = timers;
         timers = [];
-        for (const entry of due) {
+        for (let index = 0; index < due.length; index++) {
+          const entry = due[index]!;
           if (!entry.live) continue;
           if (entry.at <= time) {
             if (entry.every > 0) entry.at = Math.max(entry.at + entry.every, time);
             else entry.live = false;
             entry.callback();
           }
+          if (disposed || version !== generation || api === undefined) {
+            endFrame();
+            return;
+          }
           if (entry.live) timers.push(entry);
+          if (!active()) {
+            timers.push(...due.slice(index + 1).filter(entry => entry.live));
+            endFrame();
+            return;
+          }
         }
       }
       update?.(seconds, api);
+      if (!active()) {
+        endFrame();
+        return;
+      }
       for (const piece of pieces) {
         if (piece.life <= 0) continue;
         piece.life -= seconds;
@@ -1339,16 +1432,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     async restart() {
       if (disposed) return;
+      generation++;
       // No update runs while the game is taken down and set up again.
       api = undefined;
       timers = [];
-      waiting = [];
       stopLoops();
-      for (const entry of moving) {
-        entry.motion.stop();
-        entry.settle();
-      }
-      moving = [];
+      stopMotions();
       for (const made of [world, ui]) while (made.numChildren > 0) game.remove(made.getChildAt(0));
       endRemoved();
       for (const piece of pieces) {
@@ -1371,13 +1460,13 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     engine,
     scope,
     canvas: surface,
-    async dispose() {
-      if (disposed) return;
+    dispose() {
+      if (disposal !== undefined) return disposal;
       disposed = true;
       stopLoops();
       for (const [target, type, listener] of listening) target.removeEventListener(type, listener);
-      await browser.dispose();
-      holder?.remove();
+      disposal = browser.dispose().finally(() => holder?.remove());
+      return disposal;
     }
   };
   cover.visible = false;

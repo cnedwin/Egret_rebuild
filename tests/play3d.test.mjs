@@ -153,3 +153,124 @@ test('P3D04 a model of your own is a thing whose box is worked out from all its 
     [...createStandardMaterial3D({ color: 0x3355ff }).color].map(value => Math.round(value * 1000))
   );
 });
+
+// Break caught: choose an escape by model origins instead of their offset, scaled box centres.
+test('P3D05 an offset model leaves a block on the side nearest its box centre', () => {
+  for (const axis of ['x', 'y', 'z']) {
+    for (const scale of [1, -1]) {
+      const half = [0.5, 0.5, 0.5],
+        middle = [0, 0, 0],
+        at = ['x', 'y', 'z'].indexOf(axis);
+      half[at] = 1;
+      middle[at] = scale;
+      const thing = new PlayThing3D(new Object3D(), 0xffffff, half, middle);
+      thing.scale = scale;
+      thing[axis] = 0.25;
+      const dimensions = [10, 10, 10];
+      dimensions[at] = 1;
+      const block = box(...dimensions, { [axis]: 1 });
+      const push = pushOut3D(thing, block);
+      assert.equal(push[axis], 1.25, axis + ' is pushed towards its nearer positive face');
+      for (const other of ['x', 'y', 'z']) if (other !== axis) assert.equal(push[other], 0);
+      for (const direction of ['x', 'y', 'z']) thing[direction] += push[direction];
+      assert.ok(
+        overlap3D(thing, block).some(depth => depth <= 0),
+        'applying the move separates the boxes'
+      );
+    }
+  }
+});
+
+// Break caught: setting one rotation axis discards the other axes of an imported root.
+test('P3D06 a model starts with its imported rotation and keeps the other axes when turned', () => {
+  const root = new Object3D();
+  root.setRotation(Math.PI / 2, 0, -Math.PI / 6);
+  root.setScale(3);
+  const thing = new PlayThing3D(root, 0xffffff, [1, 2, 3]);
+  assert.equal(thing.node, root, 'the model keeps its identity');
+  assert.ok(Math.abs(thing.rotationX - 90) < 1e-4);
+  assert.ok(Math.abs(thing.rotationZ + 30) < 1e-4);
+  thing.rotationY = 10;
+  const expected = new Object3D().setRotation(Math.PI / 2, Math.PI / 18, -Math.PI / 6);
+  const alignment = Math.abs([...root.quaternion].reduce((sum, value, i) => sum + value * expected.quaternion[i], 0));
+  assert.ok(alignment > 0.999999, 'changing Y preserves the imported X and Z');
+  assert.equal(thing.scale, 3);
+  // Euler angles are not unique at a pole; writing the reported axes must preserve its orientation.
+  for (const y of [Math.PI / 2, -Math.PI / 2, Math.PI / 2 - 0.00001]) {
+    const model = new Object3D().setRotation(0.4, y, -0.2),
+      before = [...model.quaternion];
+    const imported = new PlayThing3D(model, 0xffffff, [1, 1, 1]);
+    imported.rotationX = imported.rotationX;
+    const same = Math.abs([...model.quaternion].reduce((sum, value, i) => sum + value * before[i], 0));
+    assert.ok(same > 0.999999, 'the gimbal-pole representation keeps the quaternion orientation');
+  }
+});
+
+// Break caught: a removed primitive keeps its owned GPU-backed resources alive, or disposes a borrowed model.
+test('P3D07 leaving disposes owned primitive resources once and keeps borrowed model resources live', () => {
+  const primitive = box(1, 2, 3),
+    mesh = primitive.node;
+  let geometryEnds = 0,
+    materialEnds = 0;
+  mesh.geometry.onDispose(() => geometryEnds++);
+  mesh.material.onDispose(() => materialEnds++);
+  primitive.leave();
+  primitive.leave();
+  assert.deepEqual(
+    [mesh.geometry.isDisposed, mesh.material.isDisposed, geometryEnds, materialEnds],
+    [true, true, 1, 1]
+  );
+  // The caller still owns a model and any resources shared by its meshes.
+  const sharedGeometry = createBoxGeometry3D({ width: 1, height: 1, depth: 1 });
+  const sharedMaterial = createStandardMaterial3D({ color: 0xffffff });
+  const group = new Object3D();
+  group.addChild(new Mesh3D(sharedGeometry, sharedMaterial));
+  const borrowed = new PlayThing3D(group, 0xffffff, [0.5, 0.5, 0.5]);
+  borrowed.leave();
+  assert.deepEqual([sharedGeometry.isDisposed, sharedMaterial.isDisposed], [false, false]);
+  sharedGeometry.dispose();
+  sharedMaterial.dispose();
+});
+
+// Break caught: a failed geometry release prevents its separately owned material from being released.
+test('P3D08 a resource listener failure still retires the other resources of a thing', () => {
+  const primitive = box(1, 1, 1),
+    failure = new Error('geometry release failed');
+  primitive.node.geometry.onDispose(() => {
+    throw failure;
+  });
+  assert.throws(
+    () => primitive.leave(),
+    cause => cause === failure
+  );
+  assert.ok(primitive.node.geometry.isDisposed);
+  assert.ok(primitive.node.material.isDisposed);
+  assert.ok(primitive.removed);
+  assert.doesNotThrow(() => primitive.leave(), 'a failed cleanup is not repeated');
+});
+
+// Break caught: a caller-owned detach method throws before the primitive can release its resources.
+test('P3D09 a failed detach still releases the owned geometry and material', () => {
+  const primitive = box(1, 1, 1),
+    failure = new Error('detach failed');
+  const parent = new Object3D();
+  parent.addChild(primitive.node);
+  const detach = primitive.node.removeFromParent;
+  // This is the test's genuine mesh instance; no shared or native prototype is changed.
+  primitive.node.removeFromParent = () => {
+    throw failure;
+  };
+  try {
+    assert.throws(
+      () => primitive.leave(),
+      cause => cause === failure
+    );
+    assert.ok(primitive.node.geometry.isDisposed);
+    assert.ok(primitive.node.material.isDisposed);
+    assert.ok(primitive.removed);
+    assert.doesNotThrow(() => primitive.leave(), 'a failed cleanup is not repeated');
+  } finally {
+    primitive.node.removeFromParent = detach;
+    primitive.node.removeFromParent();
+  }
+});
