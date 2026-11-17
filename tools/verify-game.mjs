@@ -90,10 +90,10 @@ export function gameChecks(seen) {
       note: 'colours are counted in steps of sixteen; dominant is the share of the commonest colour'
     },
     keepsRunning: {
-      pass: seen.framesPerSecondIdle >= 2,
+      pass: seen.framesPerSecondIdle >= 2 && seen.framesPerSecondPlaying >= 2,
       framesPerSecondIdle: seen.framesPerSecondIdle,
       framesPerSecondPlaying: seen.framesPerSecondPlaying,
-      note: 'software rendering: the check fails only when frames stop'
+      note: 'software rendering: frames must keep advancing while idle and during input'
     },
     reactsOrMoves: {
       pass: changed > 0.004,
@@ -389,7 +389,7 @@ export async function verifyGame({ chromium, PNG, file, out, script }) {
       audioContexts: end.audioContexts,
       soundsStarted: end.soundsStarted
     });
-    const checks = gameChecks(seen);
+    let scripted;
     if (script !== undefined) {
       // The game is played from its start: the page is loaded again, and what goes wrong from here is the script's.
       const before = [seen.pageErrors.length, seen.consoleErrors.length];
@@ -407,6 +407,7 @@ export async function verifyGame({ chromium, PNG, file, out, script }) {
         await script.default(game);
         const errors = [...seen.pageErrors.slice(before[0]), ...seen.consoleErrors.slice(before[1])],
           rejections = await tab.evaluate(() => window.__verify?.rejections ?? []);
+        seen.rejections.push(...rejections);
         if (errors.length + rejections.length > 0)
           throw new Error('The page failed while it was played: ' + [...errors, ...rejections][0]);
         played.pass = true;
@@ -414,8 +415,11 @@ export async function verifyGame({ chromium, PNG, file, out, script }) {
         played.error = String(error.stack ?? error).slice(0, 1200);
         await tab.screenshot({ path: path.join(out, 'played-failed.png') }).catch(() => {});
       }
-      checks.played = played;
+      scripted = played;
     }
+    // Network and error observers stay active through scripted play; decide every flag from their final values.
+    const checks = gameChecks(seen);
+    if (scripted !== undefined) checks.played = scripted;
     return {
       file,
       pass: Object.values(checks).every(check => check.pass),

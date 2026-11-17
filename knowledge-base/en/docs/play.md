@@ -6,7 +6,9 @@ English | [简体中文](../../Cns/docs/play.md)
 
 It is built from the public entries ([the browser game](browser-game.md), [audio](audio.md), [the game kit](game-kit.md), [Graphics](graphics.md)), which stay there for what it does not cover.
 
-**What is checked.** Options, the sound effect recipes and their samples are checked in Node. In headless Chromium on software WebGL2, the game below started, drew, took keys and the pointer, broke bricks, played its effects and showed its centred text. Other browsers, phones and WebGPU were not run.
+**What is checked.** Options, the sound effect recipes and their samples are checked in Node. In headless Chromium on software WebGL2, the game below started, drew, took keys and the pointer, broke bricks, played its effects and showed its centred text. That original full-game run did not cover hardware GPUs.
+
+On November 18, 2026, the contract repairs based on main `ec17a5a2` passed on Windows Edge 157.0.4341.60 / RTX 5090 Laptop and Galaxy Z Fold7 / Android 17 / Chrome 157.0.8103.78 / Adreno 830, each with explicit WebGPU and WebGL2 and no software fallback. Edge remained in the system foreground; the phone stayed awake and unlocked during capture. Protocol mouse/touch on the actual devices changed the centre pixel from RGBA `255,32,64,255` to `32,255,96,255` on all four combinations. Pause, zero scale, half/eight-times scale, hit-stop, callback pause, loop stop/start and callback disposal passed in bounded public-SDK fixtures. Pending timers survived loop restart, and no chained callback ran after disposal. This does not qualify the complete games, audio audibility or performance.
 
 ## A game
 
@@ -169,6 +171,8 @@ Use these and not `setTimeout`: they stop with a pause, a hit stop and a hidden 
 | `game.flash(color = 0xffffff, seconds = 0.15)` | Covers the stage with a colour that fades away |
 | `game.hitStop(seconds = 0.06)` | Stops play for a moment: no updates and no timers |
 | `game.burst(x, y, { color, count, speed, life, size, gravity })` | Throws pieces out from a point of the world. 12 white pieces unless said otherwise |
+
+Tweens, timers and `update` use the same gameplay seconds. Pause and a zero `timeScale` hold their progress; `hitStop` holds it for its duration. Drawing and input continue, so an interface can resume a paused game. A callback that pauses, restarts or closes the game prevents the old update from continuing. The active loop is `game.browser.loop`. Closing the game stops pending motions, and repeated `dispose()` calls wait for the same cleanup.
 
 ## Chance and saves
 

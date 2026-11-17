@@ -28,6 +28,8 @@ Everything is on the global `Egret`. The second script is a module only so that 
 
 In a page served over HTTP, `import { play } from './egret2d.mjs'` loads the other file, which is the same engine as a module.
 
+`tools/verify-game.mjs` requires frame progress during both its idle and input phases. It decides network and error checks after any optional play script has finished, so requests refused during that script affect the final result. `played` remains a separate check of the script's assertions. The sound witness counts source starts. Audibility and device performance require separate observations.
+
 ## Make the files
 
 ```text
