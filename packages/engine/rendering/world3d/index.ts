@@ -317,3 +317,5 @@ export { Trail3D, createTrail3D, TRAIL3D_LIMITS, type TrailOptions3D } from './T
 export { createDecalGeometry3D, createDecal3D, DECAL3D_LIMITS, type DecalOptions3D } from './Decal3D.js';
 export { GpuParticles3D, createGpuParticles3D, type GpuParticlesOptions3D } from './GpuParticles3D.js';
 export { VolumetricFog3D, createVolumetricFog3D, type VolumetricFogOptions3D } from './VolumetricFog3D.js';
+export { createGeometryBuilder3D, linearColor3D, projectToViewport3D } from './GeometryBuilder3D.js';
+export type { GeometryBuilder3D, GeometryPart3D, ViewportPoint3D } from './GeometryBuilder3D.js';

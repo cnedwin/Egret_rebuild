@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/world3d/app3D.ts",
+      "originRole": "First-party one-call start of a World3D game: backend and quality choice, quality presets, a resolution that follows the frame rate, and the app that owns Engine, renderer, view and loop; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/GeometryBuilder3D.ts",
+      "originRole": "First-party builder that merges placed, coloured parts into one World3D geometry, with a viewport projection for markers; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/world3d/markers3D.ts",
+      "originRole": "First-party layer of page elements that follow World3D scene points and cling to the screen edge; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/world3d/stats3D.ts",
+      "originRole": "First-party World3D performance readout of frame parts and renderer counts; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-app.test.mjs",
+      "originRole": "First-party tests of the World3D app's choices, presets and resolution controller; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/world3d-app.md",
+      "originRole": "First-party guide to starting a World3D game in one call; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/world3d-app.md",
+      "originRole": "First-party Chinese reading of the guide to starting a World3D game in one call; AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/world3d-app.md",
+      "zh": "knowledge-base/Cns/docs/world3d-app.md"
+    }
+  ]
+}

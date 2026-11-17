@@ -41,3 +41,25 @@ export { FollowControls3D, createFollowControls3D } from './FollowControls3D.js'
 export type { FollowControlsOptions3D } from './FollowControls3D.js';
 export { Atmosphere3D, createAtmosphere3D } from './atmosphere3D.js';
 export type { AtmosphereOptions3D } from './atmosphere3D.js';
+export {
+  WORLD3D_QUALITY_PRESETS,
+  createDynamicResolution3D,
+  createWorld3DApp,
+  pickWorld3DBackend,
+  pickWorld3DQuality
+} from './app3D.js';
+export type {
+  DynamicResolution3D,
+  DynamicResolutionOptions3D,
+  World3DApp,
+  World3DAppOptions,
+  World3DBackend,
+  World3DDeviceHints,
+  World3DQuality,
+  World3DQualityPreset,
+  World3DShowOptions
+} from './app3D.js';
+export { createScreenMarkers3D } from './markers3D.js';
+export type { ScreenMarker3D, ScreenMarkerOptions3D, ScreenMarkers3D, ScreenMarkersOptions3D } from './markers3D.js';
+export { createWorld3DStats } from './stats3D.js';
+export type { World3DStats, World3DStatsOptions } from './stats3D.js';

@@ -22,6 +22,9 @@ function files(dir) {
 }
 // M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
 const m15DeepClauses = {
+"packages/engine/web/world3d/app3D.ts":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
+"packages/engine/dist/web/world3d/app3D.js":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"}],
+"packages/engine/dist/web/world3d/app3D.d.ts":[{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
 "packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
 "packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"}],
 "packages/engine/dist/web/BrowserGame.d.ts":[{"operation":"import","kind":"type","members":["AssetLease","Engine","Scope","Stage","SharedFrameOptions2D","Texture"],"target":"@egret/engine"}],
