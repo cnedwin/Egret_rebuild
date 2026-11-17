@@ -6,7 +6,9 @@ This page covers what most 3D games built their own: starting, models made in co
 
 `createWorld3DApp` starts a 3D game on a canvas. It chooses the backend, makes an Engine on a World3D host, makes a renderer for a picture quality, runs the frame loop, and lowers the drawing resolution while frames are slow. It is exported by both `@egret/engine/webgl2/world3d` and `@egret/engine/webgpu/world3d`.
 
-**What is checked and what is not.** The choices, presets and the resolution controller are checked in Node. In headless Chromium with software WebGL2, an app that asked for WebGPU fell back to WebGL2 when no adapter was offered, drew a scene for 2.5 seconds, applied `setQuality('low')` and disposed; a merged model of 51 parts drew in one call, a label followed a box, a marker for a point behind the camera stayed at the bottom edge, and the readout showed its numbers. Over that app's canvas, a 2D overlay drew a red button above the blue box and green background (composited as expected in a screenshot); a click on the button reached the 2D stage alone and a click on the scene reached the 3D canvas alone. WebGPU and hardware were not run.
+**Verification.** Node checks cover backend selection, presets and resolution control. The original software-WebGL2 run covered fallback, geometry merging, markers, the statistics readout and overlay compositing. Windows Edge 157 on an RTX 5090 Laptop GPU and Fold7 Chrome on an Adreno 830 subsequently exercised app start, pause, resize and disposal, markers, skinned retargeting and instance range changes on WebGPU and WebGL2.
+
+In the hardware check of baseline `c049bc38`, the ninth point light had no effect on a 128 × 65 WebGPU target even though selection reported it. A full-target comparison against the same light in the direct path confirmed this on Windows. The 128 × 64 control and both WebGL2 sizes retained the light. With fragment-space row assignment corrected, all 33,280 RGBA8 bytes at 128 × 65 matched the direct path on both devices. This is pixel and lifecycle evidence for the sampled scenes.
 
 ## Use
 
@@ -99,7 +101,7 @@ ui.game.stage.addChild(pause);
 
 `createWorld3DOverlay` lays a transparent canvas exactly over the 3D canvas, which must sit in a positioned parent, and starts a 2D game on it with `createBrowserGame`. Menus, bars, text, bitmap buttons and the `ui` controls then draw with the engine's 2D stage on top of the scene. The overlay follows the 3D canvas's box as the page resizes.
 
-A press, click or wheel that lands on a 2D node with `touchEnabled` goes to the 2D stage. One that lands where the interface is empty goes on to the 3D canvas, and so does the rest of that drag, so the scene can still be orbited, aimed at and picked. Hover moves go wherever the interface is empty. `passThrough: false` keeps every event on the overlay. `ui.dispose()` ends the 2D game and takes the overlay away.
+A press or wheel over a 2D node with `touchEnabled` stays on the overlay. A press in an empty area and the rest of its drag go to the 3D canvas. A browser-native primary click goes to the scene only if it comes from a scene-owned press that also ended in an empty area. The forwarded event is a DOM copy. A drag from a 2D control into an empty area keeps its original ownership. Hover moves go where the interface is empty. `passThrough: false` keeps every event on the overlay. `ui.dispose()` ends the 2D game and removes the overlay. Windows mouse and Fold7 touch automation verified click routing and the drag control on both backends.
 
 The 2D stage uses WebGL2 by default, so the 3D renderer keeps WebGPU for itself where it uses it. The two canvases are composited by the page; nothing is copied between them.
 

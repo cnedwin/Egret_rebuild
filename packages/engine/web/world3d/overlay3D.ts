@@ -35,6 +35,7 @@ const FORWARDED = [
   'pointermove',
   'pointerup',
   'pointercancel',
+  'click',
   'wheel',
   'contextmenu',
   'dblclick'
@@ -95,6 +96,7 @@ export async function createWorld3DOverlay(
 
   // Pointers that started on an empty part of the interface belong to the 3D canvas until they lift.
   const passing = new Set<number>();
+  let pendingClick: { id: number; x: number; y: number } | undefined;
   const empty = (event: MouseEvent): boolean => {
     const box = overlay.getBoundingClientRect();
     if (!(box.width > 0 && box.height > 0)) return true;
@@ -112,10 +114,28 @@ export async function createWorld3DOverlay(
     const id = typeof pointer.pointerId === 'number' ? pointer.pointerId : -1;
     let send: boolean;
     if (event.type === 'pointerdown') {
+      if (pointer.isPrimary) pendingClick = undefined;
       send = empty(pointer);
       if (send) passing.add(id);
     } else if (event.type === 'pointerup' || event.type === 'pointercancel') {
       send = passing.delete(id);
+      if (pointer.isPrimary) {
+        // Native click is separate from the pointer pair. A drag out of UI cannot acquire scene click ownership.
+        pendingClick =
+          send && event.isTrusted && event.type === 'pointerup' && pointer.button === 0 && empty(pointer)
+            ? { id, x: pointer.clientX, y: pointer.clientY }
+            : undefined;
+      }
+    } else if (event.type === 'click') {
+      const claimed = pendingClick;
+      if (event.isTrusted) pendingClick = undefined;
+      // Older browsers can report a trusted click as MouseEvent without an identifier.
+      send =
+        event.isTrusted &&
+        pointer.detail > 0 &&
+        claimed !== undefined &&
+        (id === claimed.id ||
+          (id === -1 && Math.abs(pointer.clientX - claimed.x) <= 1 && Math.abs(pointer.clientY - claimed.y) <= 1));
     } else if (event.type === 'pointermove') {
       // A drag that began on the scene stays with it; a hover goes where the interface is empty.
       send = passing.has(id) || (pointer.buttons === 0 && empty(pointer));
@@ -128,6 +148,7 @@ export async function createWorld3DOverlay(
       bubbles: true,
       cancelable: true,
       composed: true,
+      detail: pointer.detail,
       clientX: pointer.clientX,
       clientY: pointer.clientY,
       screenX: pointer.screenX,

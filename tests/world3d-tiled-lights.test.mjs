@@ -116,3 +116,26 @@ test('TL04 a large viewport uses larger tiles so the table never overflows', () 
   assert.ok(tilesX * tilesY <= TILED_LIGHTS_3D.maxTiles);
   assert.equal(data[FRAME_OFFSETS_3D.tileGrid + 2], 128);
 });
+
+test('TL05 partial-height viewports assign a light to the tile in fragment row order', () => {
+  const { scene, camera } = setup();
+  camera.aspect = 128 / 65;
+  const light = lamp(scene, 0, -1.35, -6, 0.35);
+  camera.updateViewMatrices();
+  light.updateWorldMatrix();
+  const data = new Float32Array(FRAME_BLOCK_FLOATS_3D);
+  const table = new Float32Array(TILED_LIGHTS_3D.width * TILED_LIGHTS_3D.rows * 4);
+
+  // Its reach occupies bottom-origin row 0, but top-origin row 1, with a partial third tile.
+  writeTiledLights3D(data, table, [light], camera.viewProjectionMatrix, 128, 65, false, 9, 17);
+  const bottomUp = tilesOf(table, data, 0);
+  assert.ok(bottomUp.length > 0 && bottomUp.every(([, row]) => row === 0));
+
+  writeTiledLights3D(data, table, [light], camera.viewProjectionMatrix, 128, 65, true, 9, 17);
+  assert.deepEqual(
+    tilesOf(table, data, 0),
+    bottomUp.map(([column]) => [column, 1])
+  );
+  assert.equal(data[FRAME_OFFSETS_3D.tileGrid + 3], 9);
+  assert.equal(data[FRAME_OFFSETS_3D.tileInfo + 3], 17);
+});
