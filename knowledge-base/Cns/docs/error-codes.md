@@ -31,12 +31,12 @@
 | `SCOPE_CLOSED` | 作用域已销毁，它拥有的一切也随之销毁。请新建一个作用域。 |
 | `ENGINE_CLOSED` | Engine 已关闭。用它创建的任何东西都不能再使用。 |
 | `ENGINE_MISMATCH` | 对象属于另一个 Engine。显示树、作用域及其资源都只属于一个 Engine。 |
-| `DISPLAY_VALUE_INVALID` | 交给显示对象的值无效：位置、缩放和旋转是有限数字，alpha 在 0 到 1 之间，visible 是布尔值。 |
+| `DISPLAY_VALUE_INVALID` | 交给显示对象的值无效：位置、缩放、旋转和 alpha 是有限数字（alpha 会被限制在 0 到 1 之间），visible 是布尔值。 |
 | `FRAME_TRANSFORM_INVALID` | 某个显示对象被放到了角点不是有限数字的位置。请检查它及其父级的 x、y、缩放和旋转。 |
 | `FRAME_BUDGET_EXCEEDED` | 舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、4,096 个不同的几何体或 65,536 个网格三角形。半径 40 的圆是 32 个三角形。 |
 | `FRAME_IMAGE_BUDGET` | 这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。 |
 | `GRAPHICS_FILL_REQUIRED` | 形状需要填充或线条。请在绘制前调用 beginFill 或 lineStyle。 |
-| `GRAPHICS_VALUE_INVALID` | 交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 在 0 到 1 之间。 |
+| `GRAPHICS_VALUE_INVALID` | 交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 是有限数字（会被限制在 0 到 1 之间）。 |
 | `ASSET_PROVIDER_MISSING` | 没有为这种资源类型注册提供者。请在获取之前用 engine.assets.register 注册。 |
 | `ASSET_LOAD_FAILED` | 提供者加载资源失败。它抛出的内容在 cause 中。 |
 | `BITMAP_TEXTURE_REQUIRED` | Bitmap 要用 engine.assets.acquire 得到的纹理租约创建。 |
@@ -404,7 +404,7 @@
 | `DISPLAY_CHILD_CLEANUP_FAILED` | 清理显示对象时失败。各个原因在 cleanupErrors 中。 |
 | `DISPLAY_CYCLE` | 容器不能添加到它自己或它的后代中。 |
 | `DISPLAY_SIZE_UNAVAILABLE` | 该对象没有画任何内容，所以没有可以缩放到指定大小的宽或高。请先绘制，或者直接设置 scaleX 和 scaleY。 |
-| `DISPLAY_VALUE_INVALID` | 交给显示对象的值无效：位置、缩放和旋转是有限数字，alpha 在 0 到 1 之间，visible 是布尔值。 |
+| `DISPLAY_VALUE_INVALID` | 交给显示对象的值无效：位置、缩放、旋转和 alpha 是有限数字（alpha 会被限制在 0 到 1 之间），visible 是布尔值。 |
 
 ### DISPLAY_EFFECT
 
@@ -522,7 +522,7 @@
 | --- | --- |
 | `GRAPHICS_BUDGET` | 绘图超出了一个 sprite 的上限：一条路径 8,192 个点、一条线 16,384 段虚线、一次带孔或自相交的填充 16,384 个三角形、16 个网格，或把图片重复到超过自身 8,192 个像素之外。sprite 之前画的内容保留。请把其余部分画到另一个 sprite 中。 |
 | `GRAPHICS_FILL_REQUIRED` | 形状需要填充或线条。请在绘制前调用 beginFill 或 lineStyle。 |
-| `GRAPHICS_VALUE_INVALID` | 交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 在 0 到 1 之间。 |
+| `GRAPHICS_VALUE_INVALID` | 交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 是有限数字（会被限制在 0 到 1 之间）。 |
 
 ### HEADLESS_RUN
 

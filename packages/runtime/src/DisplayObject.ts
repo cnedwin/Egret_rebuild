@@ -17,9 +17,9 @@ import { EgretError } from './EgretError.js';
 import {
   assertVisualMutable,
   copyRect,
+  alphaOf,
   finite,
   invalidDisplayValue,
-  unit,
   registerVisual,
   visualOf,
   readAnchorOffset,
@@ -203,10 +203,11 @@ export class DisplayObject extends EventDispatcher {
   }
   public set alpha(value: number) {
     assertVisualMutable(this);
-    if (!unit(value)) throw invalidDisplayValue('alpha', value);
+    const alpha = alphaOf(value);
+    if (alpha === undefined) throw invalidDisplayValue('alpha', value);
     const state = visualOf(this),
-      changed = !sameVisualValue(state.alpha, value);
-    state.alpha = value;
+      changed = !sameVisualValue(state.alpha, alpha);
+    state.alpha = alpha;
     if (changed) recordVisualChange(this, VISUAL_APPEARANCE);
   }
   public get visible(): boolean {

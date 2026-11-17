@@ -38,7 +38,7 @@ game.loop.start();
 
 **What the engine gives back is closed.** `game`, a label, input actions and the other objects the engine returns are frozen: `label.centre = () => …` throws `Cannot add property centre, object is not extensible`. Keep your own data in an object of your own beside them, such as `{ label, anchorX: 0.5 }`.
 
-**An error's message ends with its cause.** What stops the loop is thrown where the console shows it, or given to `onError`. Its message reads from the outside in, `CLOCK_CALLBACK_FAILED: … Cause: DISPLAY_VALUE_INVALID: … Cause: RangeError: alpha was given 1.07`; the last part is the first thing that went wrong. `error.code` is the outermost code and `error.cause` the next error in.
+**An error's message ends with its cause.** What stops the loop is thrown where the console shows it, or given to `onError`. Its message reads from the outside in, `CLOCK_CALLBACK_FAILED: … Cause: DISPLAY_VALUE_INVALID: … Cause: RangeError: x was given NaN`; the last part is the first thing that went wrong. `error.code` is the outermost code and `error.cause` the next error in.
 
 For the rest of a game: `animate` moves and fades display objects in a chain (`import { animate } from '@egret/engine'`, then `animate(game.engine, game.scope, sprite).to({ x: 100, alpha: 0 }, 0.3, 'quadOut').start()`; see the [API reference](api-reference.md)), the [2D camera](camera-2d.md) follows, zooms and shakes, the [game kit](game-kit.md) has input actions, sound cues, random numbers and saves, [audio](audio.md) plays and mixes, [Graphics](graphics.md) draws shapes, and there are [particles](particles.md) and [2D physics](physics-2d.md).
 
