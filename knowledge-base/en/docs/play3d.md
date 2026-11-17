@@ -50,13 +50,15 @@ Those of [`play`](play.md#options), without `canvas`: `play3d` makes its two can
 | `game.cylinder(radius, height, color, { x, y, z })` | A cylinder standing on its end |
 | `game.cone(radius, height, color, { x, y, z })` | A cone standing on its base |
 | `game.ground(size, color, y = 0)` | A square floor of that size whose top is at height `y`. It is 8 deep, so a thing falling fast in a slow frame is pushed back up out of it |
+| `game.add(model, { x, y, z })` | Makes a model of your own a thing: a `Mesh3D` of your own geometry, a group of them, or what `loadGltf3D` loaded. Its box for the tests is worked out from all its meshes, placed as they are under it, so a figure whose feet are at its place stands on a floor. It keeps its own materials, and `color` does not change it |
 | `game.remove(thing)` | Takes it out of the world |
+| `game.onTap(thing, () => …)` | Calls the function when the thing is tapped or clicked: a ray from the camera through the pointer, and the nearest thing it meets with a tap gets it. A press on a thing is still `game.pointer.pressed`. A sprite of the interface is given to `onTap` as in `play` |
 
 Each gives a thing. Set `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `scale` or `scaleX`, `scaleY`, `scaleZ`, `visible` and `color` on it at any time; they can be tweened, as in `game.tween(door).to({ y: 4 }, 0.5)`. Add properties of your own (`enemy.hp = 3`). `thing.removed` says whether it has been removed; setting a removed thing does nothing and does not fail. `thing.node` is its [Mesh3D](world3d.md).
 
 ## The camera and the sun
 
-`game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6 })` keeps the camera that far from a thing, looking at it, and catching up with it smoothly; `smooth: 0` holds it exactly. Without `follow`, set `game.camera.x`, `.y` and `.z` and call `game.camera.lookAt(x, y, z)`; `game.camera.fov` is the angle it sees, 55 degrees unless set. It starts at (0, 6, 12) looking at the middle of the world.
+`game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6 })` keeps the camera that far from a thing, looking at it, and catching up with it smoothly; `smooth: 0` holds it exactly, and `turn: true` turns that place with the thing's `rotationY`, so the camera stays behind a car or a figure whichever way it faces. Without `follow`, set `game.camera.x`, `.y` and `.z` and call `game.camera.lookAt(x, y, z)`; `game.camera.fov` is the angle it sees, 55 degrees unless set. It starts at (0, 6, 12) looking at the middle of the world.
 
 `game.sun` is the light of the day, with a soft light from the sky. It keeps its direction and stays over what the camera looks at. Every thing casts and takes shadows; nothing needs setting. They are drawn at the [quality](world3d-app.md#quality) the app chose for the device, `medium` or `high`; a software-rendered browser gets `low`, without shadows, and `game.app.setQuality('medium')` asks for them anyway.
 

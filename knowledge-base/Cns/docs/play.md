@@ -96,18 +96,24 @@ await play({
 | `game.keys.down('left', 'a')` | 这些键里是否有按住的 |
 | `game.keys.pressed('space')` | 自上次 update 以来是否按下 |
 | `game.keys.released('space')` | 自上次 update 以来是否松开 |
-| `game.keys.axis()` | 方向键和 WASD 合成的 `{ x, y }`，各自在 -1 到 1 之间，y 向下，长度最多为 1 |
+| `game.keys.axis()` | 方向键和 WASD 合成的 `{ x, y }`，各自在 -1 到 1 之间，y 向下，长度最多为 1；手柄的左摇杆也算在内 |
+| `game.keys.look()` | 手柄右摇杆的 `{ x, y }`，用于转视角或瞄准；没有手柄时为 0 和 0 |
 | `game.pointer.x`、`.y` | 鼠标或手指在舞台上的位置；不按键时也跟随鼠标 |
 | `game.pointer.down`、`.pressed`、`.released` | 是否按着、刚按下、刚松开 |
 | `game.pointer.swipe` | 一次滑动结束后的那次 update 里为 `'left'`、`'right'`、`'up'` 或 `'down'` |
 | `game.pointer.over(sprite)` | 指针是否在精灵画出的内容上 |
+| `game.pointer.dx`、`.dy` | 自上次更新以来鼠标移动了多少屏幕像素，指针锁定时也照常计数 |
+| `game.pointer.wheel` | 自上次更新以来鼠标滚轮转了几格，朝向玩家为正。游戏下面的页面不会跟着滚动 |
+| `game.pointer.lock()`、`.unlock()`、`.locked` | 隐藏光标并把鼠标留在游戏里，用于第一人称视角。浏览器只允许在一次点击之后锁定，所以要在点击回调里或 `pressed` 为真时调用；按 Escape 会交还鼠标 |
 | `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
 
 键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。按在舞台上、且下面没有按钮和带 `onTap` 的精灵时，`game.pointer.pressed` 为真：按在它们上面的那一下只属于它们，所以“按哪里就在哪里放东西”的游戏不会把东西放到自己的按钮下面。任何按下都会让 `game.pointer.down` 为真。
 
 ## 声音
 
-`game.sfx.play('coin')` 播放一个用代码合成的音效。可用的名字有 `jump`、`coin`、`hit`、`hurt`、`explosion`、`shoot`、`powerup`、`bounce`、`pop`、`click`、`win` 和 `lose`。`game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` 只改变这一次播放。不存在的名字会以 `PLAY_SFX_UNKNOWN` 被拒绝，错误信息里列出全部名字。
+`game.sfx.play('coin')` 播放一个用代码合成的音效。可用的名字有 `jump`、`coin`、`hit`、`hurt`、`explosion`、`shoot`、`powerup`、`bounce`、`pop`、`click`、`hum`、`wind`、`win` 和 `lose`。`game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` 只改变这一次播放。不存在的名字会以 `PLAY_SFX_UNKNOWN` 被拒绝，错误信息里列出全部名字。
+
+**持续的声音。** `const engine = game.sfx.loop('hum', { volume: 0.5 })` 会一遍又一遍地播放一个音效，直到 `engine.stop()`；停止时默认用十分之一秒淡出，也可以给出秒数。车加速时设置 `engine.pitch = 1 + speed / 20`，播放过程中 `volume` 和 `pan` 也可以随时修改。`hum` 和 `wind` 是专为循环做的；用 `define` 定义的旋律可以循环成音乐，带 `seamless: true` 的音调在长度是整数个波时首尾相接不会有咔哒声。暂停会让所有循环停住，`restart` 和 `dispose` 会停止它们。
 
 玩家按键或点击之前，浏览器不播放任何声音；在那之前请求的音效听不到，游戏照常进行。
 

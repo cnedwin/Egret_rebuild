@@ -50,13 +50,15 @@ await play3d({
 | `game.cylinder(radius, height, color, { x, y, z })` | 一个竖立的圆柱 |
 | `game.cone(radius, height, color, { x, y, z })` | 一个底面朝下的圆锥 |
 | `game.ground(size, color, y = 0)` | 一块该大小的方形地面，顶面在高度 `y`。它有 8 个单位厚，所以在慢的一帧里快速下落的物体仍会被推回到它上面 |
+| `game.add(model, { x, y, z })` | 把自己的模型变成一个物体：自己几何体的 `Mesh3D`、由它们组成的组，或 `loadGltf3D` 加载的模型。用于判断的包围盒由它所有的网格按各自在其中的位置算出，所以脚站在原点的人物会站在地面上。它保留自己的材质，设置 `color` 不会改变它 |
 | `game.remove(thing)` | 把它从世界中拿掉 |
+| `game.onTap(thing, () => …)` | 物体被点击或轻触时调用函数：从相机穿过指针发出一条射线，它遇到的最近一个设置了点击的物体收到。按在物体上的那一下仍然算作 `game.pointer.pressed`。界面上的精灵和 `play` 中一样交给 `onTap` |
 
 每个调用都返回一个物体。可以随时设置它的 `x`、`y`、`z`、`rotationX`、`rotationY`、`rotationZ`（角度）、`scale` 或 `scaleX`、`scaleY`、`scaleZ`、`visible` 和 `color`；它们都可以补间，例如 `game.tween(door).to({ y: 4 }, 0.5)`。也可以加上自己的属性（`enemy.hp = 3`）。`thing.removed` 表示它是否已被移除；设置已移除的物体不起作用，也不会出错。`thing.node` 是它的 [Mesh3D](world3d.md)。
 
 ## 相机和太阳
 
-`game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6 })` 让相机与一个物体保持这样的距离、看着它，并平滑地跟上；`smooth: 0` 让它严格保持在那里。不用 `follow` 时，设置 `game.camera.x`、`.y` 和 `.z`，并调用 `game.camera.lookAt(x, y, z)`；`game.camera.fov` 是它的视角，不设置时为 55 度。它一开始在 (0, 6, 12)，看着世界的中心。
+`game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6 })` 让相机与一个物体保持这样的距离、看着它，并平滑地跟上；`smooth: 0` 让它严格保持在那里；`turn: true` 让这个位置随物体的 `rotationY` 一起转，所以无论车或人物朝哪边，相机都在它后面。不用 `follow` 时，设置 `game.camera.x`、`.y` 和 `.z`，并调用 `game.camera.lookAt(x, y, z)`；`game.camera.fov` 是它的视角，不设置时为 55 度。它一开始在 (0, 6, 12)，看着世界的中心。
 
 `game.sun` 是白天的光，另有来自天空的柔光。它保持方向不变，并始终位于相机所看之处的上方。每个物体都会投下并接收阴影，不需要设置。阴影在应用为设备选择的[画质](world3d-app.md#画质)为 `medium` 或 `high` 时绘制；软件渲染的浏览器得到 `low`，没有阴影，用 `game.app.setQuality('medium')` 可以强制打开。
 

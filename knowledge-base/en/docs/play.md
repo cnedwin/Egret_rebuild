@@ -96,18 +96,24 @@ A sprite turns and scales about its own origin: the middle of a `rect` or a `cir
 | `game.keys.down('left', 'a')` | Whether any of these keys is held |
 | `game.keys.pressed('space')` | Whether it went down since the last update |
 | `game.keys.released('space')` | Whether it came up since the last update |
-| `game.keys.axis()` | The arrows and WASD as `{ x, y }`, each from -1 to 1, y down, of length 1 at most |
+| `game.keys.axis()` | The arrows and WASD as `{ x, y }`, each from -1 to 1, y down, of length 1 at most; a gamepad's left stick counts as well |
+| `game.keys.look()` | A gamepad's right stick as `{ x, y }`, for looking or aiming; 0 and 0 without a pad |
 | `game.pointer.x`, `.y` | Where the mouse or finger is, on the stage; it follows the mouse with no button held |
 | `game.pointer.down`, `.pressed`, `.released` | Whether a button or finger is down, went down, or came up |
 | `game.pointer.swipe` | `'left'`, `'right'`, `'up'` or `'down'` in the update after a swipe ends |
 | `game.pointer.over(sprite)` | Whether the pointer is over what the sprite draws |
+| `game.pointer.dx`, `.dy` | How far the mouse moved since the last update, in pixels of the screen, also while it is locked |
+| `game.pointer.wheel` | The turns of the mouse wheel since the last update, above 0 towards the player. The page does not scroll under the game |
+| `game.pointer.lock()`, `.unlock()`, `.locked` | Hides the cursor and keeps the mouse to the game, for a first-person view. A browser allows it only after a click, so call it from a tap or when `pressed` is true; Escape gives the mouse back |
 | `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked. Where sprites overlap, the one in front gets the tap. The function may be `async`; what it throws, at once or later, stops the game as what `update` throws does |
 
 A key is `'left'`, `'right'`, `'up'`, `'down'`, `'space'`, `'enter'`, `'escape'`, `'shift'`, a letter, a digit, or a `KeyboardEvent.code` such as `'KeyQ'`. The arrows and Space do not scroll the page while the game runs. Before the mouse has moved, the pointer is at the middle of the stage. `game.pointer.pressed` is true for a press on the stage that no button and no sprite with `onTap` is under: a press on one of those is theirs alone, so a game that places something wherever the stage is pressed does not place it under its own buttons. `game.pointer.down` is true for any press.
 
 ## Sound
 
-`game.sfx.play('coin')` plays an effect made in code. The names are `jump`, `coin`, `hit`, `hurt`, `explosion`, `shoot`, `powerup`, `bounce`, `pop`, `click`, `win` and `lose`. `game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` changes one play. A name that is not there is refused with `PLAY_SFX_UNKNOWN`, and the message lists the names.
+`game.sfx.play('coin')` plays an effect made in code. The names are `jump`, `coin`, `hit`, `hurt`, `explosion`, `shoot`, `powerup`, `bounce`, `pop`, `click`, `hum`, `wind`, `win` and `lose`. `game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` changes one play. A name that is not there is refused with `PLAY_SFX_UNKNOWN`, and the message lists the names.
+
+**Sounds that go on.** `const engine = game.sfx.loop('hum', { volume: 0.5 })` plays an effect again and again until `engine.stop()`, which fades it over a tenth of a second, or over the seconds given. Set `engine.pitch = 1 + speed / 20` as a car speeds up, and `volume` and `pan` likewise while it plays. `hum` and `wind` are made to be looped; a tune defined with `define` loops as music, and a tone with `seamless: true` joins itself without a click when it is whole waves long. A pause holds every loop, and `restart` and `dispose` stop them.
 
 A browser plays no sound until the player has pressed a key or clicked; effects asked for before that are not heard, and the game goes on.
 

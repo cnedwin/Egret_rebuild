@@ -62,6 +62,8 @@ test('PL03 every preset is a recipe, lasts as long as its tones and stays within
     'bounce',
     'pop',
     'click',
+    'hum',
+    'wind',
     'win',
     'lose'
   ]);
@@ -86,8 +88,9 @@ test('PL03 every preset is a recipe, lasts as long as its tones and stays within
     // Heard, and not clipped flat.
     assert.ok(peak > 0.1 && peak <= 0.8, `${name} peak ${peak}`);
     assert.ok(energy / samples.length > 1e-4, `${name} is all but silent`);
-    // It starts and ends at rest, so it does not click.
-    assert.ok(Math.abs(samples[0]) < 0.01 && Math.abs(samples[samples.length - 1]) < 0.01, name);
+    // It starts and ends at rest, so it does not click; one made to be looped joins itself instead (PL08).
+    if (!tones.some(tone => tone.seamless))
+      assert.ok(Math.abs(samples[0]) < 0.01 && Math.abs(samples[samples.length - 1]) < 0.01, name);
     // The samples are what the mixer decodes as a WAV file.
     const wav = encodeWav([samples], 22050);
     assert.equal(wav.length, 44 + samples.length * 2);
@@ -195,4 +198,21 @@ test('PL07 the colour and the size of a text are set after it is made, and what 
   const plain = new PlayText('x', () => {});
   plain.color = 0xff0000;
   assert.deepEqual([plain.color, plain.size], [0xff0000, 24]);
+});
+
+// Break caught: ease the ends of a tone made to be looped, which clicks at every turn of the loop; or join a hum
+// that does not end where it began.
+test('PL08 a seamless tone is not eased at its ends, and the hum joins itself', () => {
+  const eased = synthesizeSfx({ wave: 'saw', from: 55, seconds: 1, decay: 0 }, 22050),
+    seamless = synthesizeSfx(SFX_PRESETS.hum, 22050);
+  assert.ok(Math.abs(eased[0]) < 1e-9 && Math.abs(eased.at(-1)) < 1e-9);
+  assert.ok(Math.abs(seamless[1]) > 0.05 && Math.abs(seamless.at(-1)) > 0.05);
+  // 55 hertz for a second is 55 whole waves: the last step of the loop is as small as the steps inside it.
+  const step = Math.abs(seamless[0] - seamless.at(-1)),
+    inside = Math.max(
+      ...Array.from(seamless.slice(1, 400), (value, i) => (i === 0 ? 0 : Math.abs(value - seamless[i])))
+    );
+  assert.ok(step <= inside * 1.5, step + ' against ' + inside);
+  assert.ok(isSfxRecipe({ from: 110, seconds: 1, seamless: true }));
+  assert.equal(isSfxRecipe({ from: 110, seconds: 1, seamless: 'yes' }), false);
 });

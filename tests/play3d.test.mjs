@@ -4,8 +4,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { play3d, PlayThing3D } from '@egret/engine/webgl2/world3d';
-import { createBoxGeometry3D } from '@egret/engine/world3d';
-import { overlap3D, pushOut3D } from '../packages/engine/dist/web/world3d/BrowserPlay3D.js';
+import { Mesh3D, Object3D, createBoxGeometry3D, createStandardMaterial3D } from '@egret/engine/world3d';
+import { modelBox3D, overlap3D, pushOut3D } from '../packages/engine/dist/web/world3d/BrowserPlay3D.js';
 
 const refusal = async run => {
   try {
@@ -111,4 +111,45 @@ test('P3D03 two things overlap as upright boxes, and the way out is the shortest
   Object.assign(ball, { x: 9, y: 0.5, z: -4, scale: 3 });
   assert.ok(overlap3D(ball, block).every(depth => depth > 0));
   assert.ok(overlap3D(ball, block, 0.3)[0] <= 0);
+});
+
+// Break caught: take a model's box about its place when its geometry stands above it, or leave out what is under it.
+test('P3D04 a model of your own is a thing whose box is worked out from all its meshes, placed as they are', () => {
+  const material = createStandardMaterial3D({ color: 0x3355ff });
+  // A figure whose feet are at its place: 2 tall, from 0 up.
+  const legs = createBoxGeometry3D({ width: 1, height: 2, depth: 0.5 });
+  const standing = new Object3D();
+  const body = new Mesh3D(legs, material);
+  body.setPosition(0, 1, 0);
+  standing.addChild(body);
+  // A crown above it, turned a quarter and moved to one side, under a group that is itself moved.
+  const hat = new Object3D();
+  hat.setPosition(0.5, 2, 0);
+  const crown = new Mesh3D(createBoxGeometry3D({ width: 2, height: 0.5, depth: 1 }), material);
+  crown.setRotation(0, Math.PI / 2, 0);
+  hat.addChild(crown);
+  standing.addChild(hat);
+  // Where the model itself is put does not move its box.
+  standing.setPosition(40, 40, 40);
+  standing.setScale(3);
+  const { half, middle } = modelBox3D(standing);
+  const close = (a, b) => a.every((value, i) => Math.abs(value - b[i]) < 1e-6);
+  // x from -0.5 to 1 (the crown turned is 1 wide about 0.5), y from 0 to 2.25, z from -1 to 1 (the crown turned is 2 deep).
+  assert.ok(close(half, [0.75, 1.125, 1]), JSON.stringify(half));
+  assert.ok(close(middle, [0.25, 1.125, 0]), JSON.stringify(middle));
+  // A model of nothing is a box of 1 about its place.
+  assert.deepEqual(modelBox3D(new Object3D()), { half: [0.5, 0.5, 0.5], middle: [0, 0, 0] });
+  // As a thing, its box stands on its place, so a floor under its place pushes it up by how far it is sunk.
+  const thing = new PlayThing3D(standing, 0xffffff, half, middle);
+  Object.assign(thing, { x: 0, y: -0.25, z: 0, scale: 1 });
+  const floor = box(24, 1, 24, { y: -0.5 });
+  const push = pushOut3D(thing, floor);
+  assert.ok(push.x === 0 && push.z === 0 && Math.abs(push.y - 0.25) < 1e-6, JSON.stringify(push));
+  // It keeps its own colours: a colour set on it is not taken.
+  thing.color = 0xff0000;
+  assert.equal(thing.color, 0xffffff);
+  assert.deepEqual(
+    [...material.color].map(value => Math.round(value * 1000)),
+    [...createStandardMaterial3D({ color: 0x3355ff }).color].map(value => Math.round(value * 1000))
+  );
 });

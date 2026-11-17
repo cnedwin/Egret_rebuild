@@ -7,7 +7,7 @@ import { EgretError } from '@egret/runtime';
 import type { DisplayObject } from '@egret/runtime';
 import { play } from '../play.js';
 import type { PlayGame, PlayOptions } from '../play.js';
-import { Scene3D } from '../../rendering/world3d/Object3D.js';
+import { Object3D, Scene3D } from '../../rendering/world3d/Object3D.js';
 import { Mesh3D } from '../../rendering/world3d/Mesh3D.js';
 import type { Geometry3D } from '../../rendering/world3d/Geometry3D.js';
 import type { Camera3D } from '../../rendering/world3d/Camera3D.js';
@@ -22,6 +22,8 @@ import {
   createSphereGeometry3D
 } from '../../rendering/world3d/primitives3D.js';
 import { linearColor3D } from '../../rendering/world3d/GeometryBuilder3D.js';
+import { Raycaster3D } from '../../rendering/world3d/Raycast3D.js';
+import { mat4Identity, mat4Multiply, vec3TransformMat4 } from '../../rendering/world3d/math3D.js';
 import { createWorld3DApp } from './app3D.js';
 import type { World3DApp } from './app3D.js';
 
@@ -44,24 +46,45 @@ export interface PlayPlace3D {
  * can be set at any time and tweened, and it takes properties of the game's own.
  */
 export class PlayThing3D {
-  /** The mesh the thing is drawn with, for what this class does not cover. */
-  public readonly node: Mesh3D;
+  /** What the thing is drawn with: its own mesh, or the model given to `game.add`. */
+  public readonly node: Object3D;
   /** Half its width, height and depth as made, before its scale. */
   public readonly halfX: number;
   public readonly halfY: number;
   public readonly halfZ: number;
-  #material: Material3D;
+  /**
+   * Where the middle of its box is from its place, before its scale: 0 for what `play3d` makes, and for a model
+   * whatever its geometry says, as for a figure that stands on its place.
+   */
+  public readonly middleX: number;
+  public readonly middleY: number;
+  public readonly middleZ: number;
+  #material: Material3D | undefined;
   #color: number;
   #turn: [number, number, number] = [0, 0, 0];
   #removed = false;
   [own: string]: unknown;
-  public constructor(geometry: Geometry3D, color: number, half: readonly [number, number, number]) {
-    this.#material = createStandardMaterial3D({ color, roughness: 0.75 });
+  /**
+   * A thing of its own geometry and colour, or one of a model made elsewhere: then `half` and `middle` are its box,
+   * and its colour is the model's own.
+   */
+  public constructor(
+    shape: Geometry3D | Object3D,
+    color: number,
+    half: readonly [number, number, number],
+    middle: readonly [number, number, number] = [0, 0, 0]
+  ) {
     this.#color = color;
-    this.node = new Mesh3D(geometry, this.#material);
-    this.node.castShadow = true;
-    this.node.receiveShadow = true;
+    if (shape instanceof Object3D) this.node = shape;
+    else {
+      this.#material = createStandardMaterial3D({ color, roughness: 0.75 });
+      const mesh = new Mesh3D(shape, this.#material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      this.node = mesh;
+    }
     [this.halfX, this.halfY, this.halfZ] = half;
+    [this.middleX, this.middleY, this.middleZ] = middle;
   }
   #place(index: 0 | 1 | 2, value: number): void {
     if (!finite(value)) return;
@@ -149,12 +172,12 @@ export class PlayThing3D {
   public set visible(value: boolean) {
     this.node.visible = value === true;
   }
-  /** Its colour, `0xRRGGBB`. What is not a colour is not taken. */
+  /** Its colour, `0xRRGGBB`. What is not a colour is not taken; a model keeps the colours it has. */
   public get color(): number {
     return this.#color;
   }
   public set color(value: number) {
-    if (!colour(value)) return;
+    if (!colour(value) || this.#material === undefined) return;
     this.#color = value;
     setColor3D(this.#material.color, value);
   }
@@ -187,6 +210,11 @@ export interface PlayFollow3D {
   readonly z?: number;
   /** How quickly it catches up: 6 unless given; 0 keeps it exactly there. */
   readonly smooth?: number;
+  /**
+   * Turns the place of the camera with the thing's `rotationY`, so that it stays behind a car or a figure that turns:
+   * `{ y: 3, z: 7, turn: true }` is above and behind whichever way the thing faces. False unless given.
+   */
+  readonly turn?: boolean;
 }
 export interface PlayBurst3D {
   readonly color?: number;
@@ -200,7 +228,10 @@ type Body = PlayThing3D | DisplayObject;
 
 /** What `play3d` gives: everything `play` gives for the interface and the game's time, and a world of things. */
 export interface Play3DGame
-  extends Omit<PlayGame, 'remove' | 'near' | 'overlaps' | 'hits' | 'hitsAll' | 'pushOut' | 'burst' | 'shake'> {
+  extends Omit<
+    PlayGame,
+    'remove' | 'near' | 'overlaps' | 'hits' | 'hitsAll' | 'pushOut' | 'burst' | 'shake' | 'onTap'
+  > {
   readonly scene: Scene3D;
   readonly camera: PlayCamera3D;
   /** The light of the day. It keeps its direction and stays over what the camera looks at. */
@@ -217,6 +248,16 @@ export interface Play3DGame
   cone(radius: number, height: number, color: number, at?: PlayPlace3D): PlayThing3D;
   /** A square floor of this size whose top is at the height given, 0 unless said. */
   ground(size: number, color: number, y?: number): PlayThing3D;
+  /**
+   * Makes a model of your own a thing of the world: a mesh of your geometry, a group, or what `loadGltf3D` gave.
+   * Its box for the tests is worked out from its geometry; it keeps its own materials.
+   */
+  add(model: Object3D, at?: PlayPlace3D): PlayThing3D;
+  /**
+   * Calls the function when the thing is tapped or clicked, by a ray from the camera through the pointer; the
+   * nearest thing hit gets it. A sprite of the interface is given to `onTap` of `play` as before.
+   */
+  onTap(target: PlayThing3D | DisplayObject, callback: () => unknown): void;
   /** Takes a thing out of the world, or a sprite off the interface. */
   remove(body: Body): void;
   /** Whether the middles of two things are within a distance: the sum of their radii unless given. */
@@ -259,9 +300,9 @@ const GROUND_DEPTH = 8;
 /** The upright box of a thing in the world: its middle and half its size, scaled. */
 function boxOf(thing: PlayThing3D): [number, number, number, number, number, number] {
   return [
-    thing.x,
-    thing.y,
-    thing.z,
+    thing.x + thing.middleX * thing.scaleX,
+    thing.y + thing.middleY * thing.scaleY,
+    thing.z + thing.middleZ * thing.scaleZ,
     thing.halfX * Math.abs(thing.scaleX),
     thing.halfY * Math.abs(thing.scaleY),
     thing.halfZ * Math.abs(thing.scaleZ)
@@ -277,6 +318,44 @@ export function overlap3D(a: PlayThing3D, b: PlayThing3D, shrink = 0): [number, 
     p[5] + q[5] - 2 * shrink - Math.abs(p[2] - q[2])
   ];
 }
+/**
+ * The box of a model, in its own units and about its own place: half its size and where its middle is. Every mesh
+ * under it counts, placed as it is under it; the model's own place, turn and scale do not.
+ */
+export function modelBox3D(model: Object3D): { half: [number, number, number]; middle: [number, number, number] } {
+  const low = [Infinity, Infinity, Infinity],
+    high = [-Infinity, -Infinity, -Infinity],
+    corner = new Float32Array(3);
+  const visit = (node: Object3D, matrix: Float32Array): void => {
+    const geometry = (node as { geometry?: Geometry3D }).geometry;
+    if (geometry !== undefined && geometry.vertexCount > 0) {
+      const box = geometry.boundingBox;
+      for (let i = 0; i < 8; i++) {
+        corner[0] = i & 1 ? box[3]! : box[0]!;
+        corner[1] = i & 2 ? box[4]! : box[1]!;
+        corner[2] = i & 4 ? box[5]! : box[2]!;
+        vec3TransformMat4(corner, corner, matrix);
+        for (let k = 0; k < 3; k++) {
+          low[k] = Math.min(low[k]!, corner[k]!);
+          high[k] = Math.max(high[k]!, corner[k]!);
+        }
+      }
+    }
+    for (const child of node.children) {
+      child.updateWorldMatrix();
+      const placed = new Float32Array(16);
+      mat4Multiply(placed, matrix, child.matrix);
+      visit(child, placed);
+    }
+  };
+  visit(model, mat4Identity(new Float32Array(16)) as Float32Array);
+  if (!(low[0]! <= high[0]!)) return { half: [0.5, 0.5, 0.5], middle: [0, 0, 0] };
+  return {
+    half: [(high[0]! - low[0]!) / 2, (high[1]! - low[1]!) / 2, (high[2]! - low[2]!) / 2],
+    middle: [(high[0]! + low[0]!) / 2, (high[1]! + low[1]!) / 2, (high[2]! + low[2]!) / 2]
+  };
+}
+
 /** The move that takes `a` out of `b` by the shortest way, or undefined when they are apart. */
 export function pushOut3D(a: PlayThing3D, b: PlayThing3D): { x: number; y: number; z: number } | undefined {
   const [x, y, z] = overlap3D(a, b);
@@ -313,6 +392,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     aim = [0, 0, 0],
     shaken = [0, 0, 0];
   let followed: PlayThing3D | undefined,
+    turning = false,
     offset = [0, 4, 8],
     smooth = 6,
     shakeAmount = 0,
@@ -373,9 +453,45 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     return thing;
   };
   const isThing = (body: unknown): body is PlayThing3D => body instanceof PlayThing3D;
+  // Taps on things: found by a ray from the camera through the pointer when it goes down.
+  const taps = new Map<PlayThing3D, () => unknown>(),
+    ray = new Raycaster3D();
+  let tapFailure: { readonly cause: unknown } | undefined;
+  const tapped = (flat: PlayGame): void => {
+    if (taps.size === 0 || !flat.pointer.pressed) return;
+    for (const thing of taps.keys()) if (thing.removed) taps.delete(thing);
+    eye.updateWorldMatrices();
+    scene.updateWorldMatrices();
+    ray.setFromCamera((flat.pointer.x / flat.width) * 2 - 1, 1 - (flat.pointer.y / flat.height) * 2, eye);
+    let hits;
+    try {
+      hits = ray.intersect(scene);
+    } catch {
+      return;
+    }
+    for (const hit of hits) {
+      // The thing a mesh that was hit belongs to: the nearest one up its line that has a tap.
+      for (let node: Object3D | undefined = hit.object; node !== undefined; node = node.parent) {
+        const thing = [...taps.keys()].find(each => each.node === node);
+        if (thing === undefined || !thing.visible) continue;
+        const callback = taps.get(thing)!;
+        try {
+          const result = callback() as { then?: unknown } | null | undefined;
+          if (result !== null && result !== undefined && typeof result.then === 'function')
+            (result as PromiseLike<unknown>).then(undefined, cause => {
+              tapFailure ??= { cause };
+            });
+        } catch (cause) {
+          tapFailure ??= { cause };
+        }
+        return;
+      }
+    }
+  };
   const clear = (): void => {
     for (const thing of things) thing.leave();
     things.clear();
+    taps.clear();
     for (const piece of pieces) {
       piece.life = 0;
       piece.thing.visible = false;
@@ -388,12 +504,24 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     shakeLeft = 0;
     shaken[0] = shaken[1] = shaken[2] = 0;
   };
+  // Where the camera keeps to by a thing: its offset, turned with the thing when asked.
+  const placeBy = (thing: PlayThing3D): [number, number, number] => {
+    let [x, y, z] = offset as [number, number, number];
+    if (turning) {
+      const turn = thing.rotationY * RADIANS,
+        c = Math.cos(turn),
+        s = Math.sin(turn);
+      [x, z] = [x * c + z * s, -x * s + z * c];
+    }
+    return [thing.x + x, thing.y + y, thing.z + z];
+  };
   const after = (seconds: number): void => {
     if (followed !== undefined && !followed.removed) {
-      const share = smooth > 0 ? 1 - Math.exp(-smooth * seconds) : 1;
-      base[0] = base[0]! + (followed.x + offset[0]! - base[0]!) * share;
-      base[1] = base[1]! + (followed.y + offset[1]! - base[1]!) * share;
-      base[2] = base[2]! + (followed.z + offset[2]! - base[2]!) * share;
+      const share = smooth > 0 ? 1 - Math.exp(-smooth * seconds) : 1,
+        [x, y, z] = placeBy(followed);
+      base[0] = base[0]! + (x - base[0]!) * share;
+      base[1] = base[1]! + (y - base[1]!) * share;
+      base[2] = base[2]! + (z - base[2]!) * share;
       aim[0] = followed.x;
       aim[1] = followed.y;
       aim[2] = followed.z;
@@ -467,6 +595,27 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         thing.node.castShadow = false;
         return thing;
       },
+      add(model, at = {}) {
+        if (!(model instanceof Object3D)) throw invalid('add takes a mesh, a group or a loaded model');
+        if (at === null || typeof at !== 'object') throw invalid('a place is an object with x, y and z');
+        if (model.parent !== undefined) model.removeFromParent();
+        const { half, middle } = modelBox3D(model);
+        const thing = new PlayThing3D(model, 0xffffff, half, middle);
+        if (finite(at.x)) thing.x = at.x;
+        if (finite(at.y)) thing.y = at.y;
+        if (finite(at.z)) thing.z = at.z;
+        scene.addChild(model);
+        things.add(thing);
+        return thing;
+      },
+      onTap(target, callback) {
+        if (typeof callback !== 'function') throw invalid('onTap takes a thing or a sprite, and a function');
+        if (!isThing(target)) {
+          flat.onTap(target, callback as () => void);
+          return;
+        }
+        taps.set(target, callback);
+      },
       remove(body) {
         if (isThing(body)) {
           body.leave();
@@ -510,10 +659,9 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         if (thing === undefined) return;
         offset = [finite(where.x) ? where.x : 0, finite(where.y) ? where.y : 4, finite(where.z) ? where.z : 8];
         smooth = finite(where.smooth) && where.smooth >= 0 ? where.smooth : 6;
+        turning = where.turn === true;
         // It starts where it will stay, and does not fly in from where the camera was.
-        base[0] = thing.x + offset[0]!;
-        base[1] = thing.y + offset[1]!;
-        base[2] = thing.z + offset[2]!;
+        [base[0], base[1], base[2]] = placeBy(thing);
         aim[0] = thing.x;
         aim[1] = thing.y;
         aim[2] = thing.z;
@@ -630,6 +778,12 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     },
     update(seconds) {
       if (game === undefined) return;
+      if (tapFailure !== undefined) {
+        const { cause } = tapFailure;
+        tapFailure = undefined;
+        throw cause;
+      }
+      tapped(game as unknown as PlayGame);
       update?.(seconds, game);
       after(seconds);
     }
