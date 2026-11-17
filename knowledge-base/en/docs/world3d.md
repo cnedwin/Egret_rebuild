@@ -54,6 +54,8 @@ Directional and spot lights can cast shadows. Up to four shadow lights share one
 
 `Mesh3D` pairs a geometry with one material or one material per group. `InstancedMesh3D` draws one geometry many times with per-instance matrices and optional RGB or RGBA colors. `Sprite3D` is a camera-facing quad.
 
+For `InstancedMesh3D`, `count` selects the active prefix of the instance arrays. Changing `count` refreshes the aggregate culling bounds, even when no transforms have changed. WebGL2 uploads the current matrix and color data when the active prefix extends past the range uploaded for this data revision. Shrinking and growing within the uploaded range can reuse it. Increment `instanceVersion` after editing the arrays directly.
+
 Skinning uses `Bone3D` nodes and a `Skeleton3D` with inverse bind matrices; four influences per vertex are blended on the GPU. Morph targets store position and optional normal deltas; a draw blends the eight strongest weights.
 
 `Lod3D` shows one child according to camera distance.

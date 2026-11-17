@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Fix World3D instance-count changes — 2026-11-17
+
+Changing `InstancedMesh3D.count` now rebuilds culling bounds for the active instances. WebGL2 refreshes matrices and colors when the active range grows beyond the prefix uploaded for the current revision. A two-instance fixture on Windows Edge 157 and an RTX 5090 Laptop GPU passed on both WebGL2 and WebGPU. Changing only the count from 1 to 2 and back showed and hid the second instance. After editing it while inactive, it appeared in its new position with the expected color and alpha. [World3D instancing](docs/world3d.md#meshes-instancing-skinning-and-morphing)
+
 ## Prepare World3D WebGL2 program variants — 2026-11-17
 
 `preparePrograms` links selected material variants, including the scene color and shadow programs, during loading. It polls supported WebGL2 devices for completion before querying link status and uniforms. A Windows RTX 5090 Laptop GPU comparison moved the first transparent-material link out of the interaction, reducing that callback interval from 179.2 ms to 4.1 ms.  A separately created `CustomShader3D` effect reused its prepared program with zero new links and identical RGBA8 pixels. Its first visible frame interval fell from 87.4 ms to 4.2 ms after 79.4 ms of preparation. [World3D contract and evidence](docs/world3d.md#webgl2-program-preparation)

@@ -41,6 +41,35 @@ function crowd(count, make) {
   return { scene, camera, meshes };
 }
 
+test('count-only changes refresh the instanced mesh culling bounds', () => {
+  const scene = new Scene3D();
+  const camera = createPerspectiveCamera3D({ fov: 45, aspect: 1, near: 0.1, far: 30 });
+  camera.setPosition(100, 0, 6).lookAt(100, 0, 0);
+  scene.addChild(camera);
+  const mesh = new InstancedMesh3D(createBoxGeometry3D(), createStandardMaterial3D(), 2);
+  mesh.setTransformAt(0, [0, 0, 0]);
+  mesh.setTransformAt(1, [100, 0, 0]);
+  scene.addChild(mesh);
+
+  const list = new RenderList3D();
+  const instanceVersion = mesh.instanceVersion;
+  mesh.count = 1;
+  list.build(scene, camera);
+  assert.equal(list.opaque.length, 0);
+  mesh.count = 2;
+  list.build(scene, camera);
+  assert.equal(list.opaque[0]?.mesh.id, mesh.id);
+  mesh.count = 1;
+  list.build(scene, camera);
+  assert.equal(list.opaque.length, 0);
+  mesh.count = 0;
+  assert.ok(mesh.worldBoundingSphere[3] < 0);
+  mesh.count = 2;
+  list.build(scene, camera);
+  assert.equal(list.opaque[0]?.mesh.id, mesh.id);
+  assert.equal(mesh.instanceVersion, instanceVersion);
+});
+
 test('runs of like meshes become one instanced item each', () => {
   const box = createBoxGeometry3D({}),
     ball = createSphereGeometry3D({}),

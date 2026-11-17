@@ -63,6 +63,7 @@ interface InstanceEntry {
   layoutVersion: number;
   geometryId: number;
   capacityBytes: number;
+  uploadedCount: number;
   lastFrame: number;
 }
 interface TextureEntry {
@@ -513,6 +514,7 @@ export class GpuResources3D {
           layoutVersion: -1,
           geometryId: -1,
           capacityBytes: -1,
+          uploadedCount: 0,
           lastFrame: frame
         })
       );
@@ -528,7 +530,8 @@ export class GpuResources3D {
       entry.geometryId !== geometry.id ||
       (mesh.instanceColors !== undefined && !entry.colors) ||
       (animated !== undefined && !entry.animation);
-    if (entry.version !== mesh.instanceVersion) {
+    // A partial upload covers only the active prefix of this revision.
+    if (entry.version !== mesh.instanceVersion || count > entry.uploadedCount) {
       gl.bindBuffer(gl.ARRAY_BUFFER, entry.matrices);
       if (entry.capacityBytes === matrices.byteLength) gl.bufferSubData(gl.ARRAY_BUFFER, 0, matrices, 0, count * 16);
       else {
@@ -550,6 +553,7 @@ export class GpuResources3D {
         else gl.bufferSubData(gl.ARRAY_BUFFER, 0, animated, 0, count * 12);
       }
       entry.version = mesh.instanceVersion;
+      entry.uploadedCount = count;
     }
     if (rebind) {
       gl.bindVertexArray(entry.vao);
