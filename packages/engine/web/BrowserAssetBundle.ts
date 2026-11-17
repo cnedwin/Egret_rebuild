@@ -22,6 +22,15 @@ export interface BrowserAssetBundleOptions {
   readonly signal?: AbortSignal;
   /** Fetch the whole file at once instead of by ranges. */
   readonly whole?: boolean;
+  /**
+   * Keeps the index and every entry read, so the bundle opens and reads again without the network. Entries are
+   * kept by the bundle's address and their checksums, so a rebuilt bundle never serves an old one.
+   * `openBrowserBundleCache` makes one.
+   */
+  readonly cache?: {
+    match(key: string): Promise<Uint8Array | undefined>;
+    put(key: string, bytes: Uint8Array): Promise<void>;
+  };
 }
 export interface BrowserAssetBundle {
   readonly url: string;
@@ -36,6 +45,8 @@ export interface BrowserAssetBundle {
   get(name: string): Promise<Uint8Array>;
   /** Bytes fetched so far. */
   readonly transferred: number;
+  /** True when the index came from the cache because the bundle could not be fetched. */
+  readonly offline: boolean;
 }
 
 /** Opens the bundle at `url`, reading its index. */
@@ -66,7 +77,10 @@ export async function openBrowserAssetBundle(
       const bytes = await body(response);
       const range = /^bytes (\d+)-(\d+)\/(\d+|\*)$/.exec(response.headers.get('Content-Range') ?? '');
       const from = range ? Number(range[1]) : start;
-      if (from > start || from + bytes.length < end)
+      // A file shorter than the range asked for ends the answer early: that is the whole of what was asked.
+      const total = range && range[3] !== '*' ? Number(range[3]) : undefined;
+      const reachesEnd = total !== undefined && from + bytes.length === total;
+      if (from > start || (from + bytes.length < end && !reachesEnd))
         throw new EgretError('ASSET_BUNDLE_RANGE_INVALID', {
           cause: new Error(`asked ${start}-${end}, got ${from}+${bytes.length}`)
         });
@@ -79,11 +93,13 @@ export async function openBrowserAssetBundle(
     throw new EgretError('ASSET_BUNDLE_FETCH_FAILED', { cause: new Error(String(response.status)) });
   };
 
-  let index: AssetBundleIndex;
-  if (options.whole) {
-    whole = await fetchWhole();
-    index = readAssetBundleIndex(whole);
-  } else {
+  const cache = options.cache;
+  const indexKey = url + '#index';
+  const openIndex = async (): Promise<AssetBundleIndex> => {
+    if (options.whole) {
+      whole = await fetchWhole();
+      return readAssetBundleIndex(whole);
+    }
     // The header and a guess at the index in one request; a second when the index is longer.
     const guess = 64 * 1024;
     const first = await fetchRange(0, guess);
@@ -92,14 +108,50 @@ export async function openBrowserAssetBundle(
     let head = first.bytes;
     if (head.length < ASSET_BUNDLE_HEADER_BYTES + indexBytes)
       head = (await fetchRange(0, ASSET_BUNDLE_HEADER_BYTES + indexBytes)).bytes;
-    index = readAssetBundleIndex(head);
+    const read = readAssetBundleIndex(head);
+    await cache?.put(indexKey, head.slice(0, ASSET_BUNDLE_HEADER_BYTES + indexBytes));
+    return read;
+  };
+  let index: AssetBundleIndex;
+  let offline = false;
+  try {
+    index = await openIndex();
+  } catch (cause) {
+    // Without the network a kept index still opens the bundle; entries then come only from the cache.
+    const kept = cache && (await cache.match(indexKey));
+    if (!kept || (cause instanceof EgretError && cause.code === 'ASSET_BUNDLE_FORMAT_INVALID')) throw cause;
+    index = readAssetBundleIndex(kept);
+    offline = true;
   }
+  const entryKey = (name: string): string => {
+    const entry = index.entries.find(e => e.name === name);
+    return url + '#' + name + '@' + (entry?.check ?? '');
+  };
 
   const read = async (names: readonly string[]): Promise<Map<string, Uint8Array>> => {
     const out = new Map<string, Uint8Array>();
-    for (const range of planAssetBundleRanges(index, names)) {
+    const missing: string[] = [];
+    for (const name of names) {
+      const kept = cache && (await cache.match(entryKey(name)));
+      // A kept entry is checked like a fetched one, so a damaged cache is fetched past.
+      if (kept) {
+        try {
+          out.set(name, sliceAssetBundle(index, name, kept, index.entries.find(e => e.name === name)!.offset));
+          continue;
+        } catch {
+          /* fetched again below */
+        }
+      }
+      missing.push(name);
+    }
+    if (missing.length && offline) throw new EgretError('ASSET_BUNDLE_FETCH_FAILED', { cause: new Error('offline') });
+    for (const range of planAssetBundleRanges(index, missing)) {
       const got = await fetchRange(range.start, range.end);
-      for (const name of range.names) out.set(name, sliceAssetBundle(index, name, got.bytes, got.start));
+      for (const name of range.names) {
+        const bytes = sliceAssetBundle(index, name, got.bytes, got.start);
+        out.set(name, bytes);
+        await cache?.put(entryKey(name), bytes);
+      }
     }
     return out;
   };
@@ -111,6 +163,9 @@ export async function openBrowserAssetBundle(
     },
     get transferred() {
       return transferred;
+    },
+    get offline() {
+      return offline;
     },
     entries: (...tags) => index.entries.filter(entry => tags.every(tag => entry.tags.includes(tag))),
     read,

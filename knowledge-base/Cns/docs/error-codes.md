@@ -288,6 +288,15 @@
 | --- | --- |
 | `BROWSER_STATS_OPTIONS_INVALID` | 交给调试面板的选项无效：缺少某一项、类型不对或超出范围。 |
 
+### BROWSER_STORAGE
+
+| 错误码 | 含义 |
+| --- | --- |
+| `BROWSER_STORAGE_CLOSED` | 浏览器存储已关闭，不再接受任何操作。 |
+| `BROWSER_STORAGE_OPTIONS_INVALID` | 交给浏览器存储的选项无效：缺少某一项、类型不对或超出范围。 |
+| `BROWSER_STORAGE_UNAVAILABLE` | 浏览器存储在这里不可用。 |
+| `BROWSER_STORAGE_WRITE_FAILED` | 浏览器存储的 `write` 失败了。原因在 cause 中。 |
+
 ### BROWSER_TEXT_EDITOR
 
 | 错误码 | 含义 |
@@ -514,6 +523,12 @@
 | `GRAPHICS_BUDGET` | 绘图超出了一个 sprite 的上限：一条路径 8,192 个点、一条线 16,384 段虚线、一次带孔或自相交的填充 16,384 个三角形、16 个网格，或把图片重复到超过自身 8,192 个像素之外。sprite 之前画的内容保留。请把其余部分画到另一个 sprite 中。 |
 | `GRAPHICS_FILL_REQUIRED` | 形状需要填充或线条。请在绘制前调用 beginFill 或 lineStyle。 |
 | `GRAPHICS_VALUE_INVALID` | 交给 graphics 的值无效：坐标是有限数字，尺寸不能为负，颜色在 0 到 0xffffff 之间，alpha 在 0 到 1 之间。 |
+
+### HEADLESS_RUN
+
+| 错误码 | 含义 |
+| --- | --- |
+| `HEADLESS_RUN_INVALID` | 交给无界面运行的内容无效。 |
 
 ### HIT_TEST
 
@@ -778,6 +793,13 @@
 | `POINTER_INPUT_SURFACE_BUSY` | 指针输入的 `surface` 还在处理之前的请求。 |
 | `POINTER_INPUT_SURFACE_INVALID` | 交给指针输入的 `surface` 无效。 |
 | `POINTER_INPUT_VIEWPORT` | 交给指针输入的视口版本号不是比上一次更大的整数。 |
+
+### QUALITY_VARIANT
+
+| 错误码 | 含义 |
+| --- | --- |
+| `QUALITY_VARIANT_INVALID` | 交给画质变体的内容无效。 |
+| `QUALITY_VARIANT_MISSING` | 缺少画质变体需要的内容。 |
 
 ### RANDOM
 

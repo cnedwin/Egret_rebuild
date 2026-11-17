@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/game-kit.md)
 
 Most games need the same small parts around their rules: input by action rather than by key, a save that survives a new build, random numbers that repeat, sound effects that do not sound mechanical, and controls for a touch screen. `@egret/engine/kit` has the parts that need no page; `@egret/engine/web/kit` feeds them from the page.
 
-**What is checked and what is not.** Both halves are checked in Node, the browser half with stand-in event targets, gamepads and storage. In headless Chromium, keys pressed through the automation protocol drove a button and a diagonal of length 1 without scrolling the page; a click synthesised with `encodeWav` was decoded by Web Audio and played through a cue and the limiter in an offline output, peaking at 0.26; a bundle was read back by byte ranges; and a save was written to the page's storage. A phone, Safari and a physical gamepad were not run.
+**What is checked and what is not.** Both halves are checked in Node, the browser half with stand-in event targets, gamepads and storage. In headless Chromium, keys pressed through the automation protocol drove a button and a diagonal of length 1 without scrolling the page; a click synthesised with `encodeWav` was decoded by Web Audio and played through a cue and the limiter in an offline output, peaking at 0.26; a bundle was read back by byte ranges; and a save was written to the page's storage. In a second run an 8 MB save went to IndexedDB and was read back after reopening, and a bundle entry read once was read again from the Cache API with the network refused. A phone, Safari and a physical gamepad were not run.
 
 ## Input by action
 
@@ -122,6 +122,40 @@ const files = await bundle.read(wanted);
 
 The file is a 12-byte header, a JSON index of names, offsets, sizes, types, tags and checksums, and the entries one after another, each starting at a multiple of four bytes. Opening asks for the first 64 KB, and once more when the index is longer. `read` fetches the named entries, joining neighbours less than 64 KB apart into one request, and checks each against the index. `bundle.ranged` says whether the host answered ranges, and `bundle.transferred` gives the bytes fetched. `readAssetBundleIndex`, `sliceAssetBundle` and `planAssetBundleRanges` do the same work on bytes a game already has.
 
+## Models by picture quality
+
+```js
+import { pickQualityFiles, pickQualityVariant } from '@egret/engine/kit';
+
+const hero = pickQualityVariant({ low: 'hero-low.glb', high: 'hero-high.glb' }, app.quality);  // medium gets low
+const wanted = pickQualityFiles(bundle.index.entries.map(e => e.name), app.quality);
+```
+
+`pickQualityVariant` takes the tier asked for, or else the nearest tier below it, or else the nearest above. `pickQualityFiles` groups names of the form `<base>-<tier>.<ext>` and keeps one of each group for the quality, with names that have no tier passed through, so a bundle or a folder with `hero-high.glb`, `hero-medium.glb` and `hero-low.glb` loads only one hero. `app.quality` from `createWorld3DApp` names the tier.
+
+## Playing the rules without a page
+
+```js
+import { runHeadless } from '@egret/engine/kit';
+
+const runs = runHeadless({
+  createGame: seed => createGame({ seed }),
+  createPlayer: (game, seed) => createBot(game, { seed }).think,
+  done: game => game.state === 'won' || game.state === 'dead',
+  seeds: 8,
+  summary: game => ({ state: game.state, time: Math.round(game.t), kills: game.stats.kills }),
+});
+console.table(runs.map(run => ({ seed: run.seed, ...run.summary, ms: run.averageMs.toFixed(3) })));
+```
+
+Each seed gets a new game and a stand-in player, and steps of `step` seconds (1/60 by default) run until `done` or `maxSeconds` (1,200 by default). Every run reports whether it finished, its game seconds, its steps, the average and slowest milliseconds of a step, and the game's `summary`. With the rules kept apart from the picture and `vendor/node-register.mjs`, a whole game can be tested and balanced from Node.
+
+## Large saves and playing offline
+
+`openIndexedDBSaveStorage({ database })` is a save storage over IndexedDB, for saves larger than local storage holds. Opening reads every saved string into memory, so `createSaveStore` uses it as it does local storage; each write goes to memory at once and to the database after. `flush()` waits for the writes, and a write the database refuses is told to `onError` and refused at the next write.
+
+`openBrowserBundleCache(name)` keeps the index of an asset bundle and every entry read, in the Cache API. Give it to `openBrowserAssetBundle(url, { cache })`. Entries are kept by the bundle's address and checksum, so a rebuilt bundle never serves old bytes. When the bundle cannot be fetched, a kept index still opens it, `bundle.offline` is true, and kept entries read as before. `cache.prune(keep)` forgets entries of other addresses.
+
 ## Copying the engine into a game
 
 A game folder that ships without a package manager carries the part of the engine it loads. From a built checkout:
@@ -156,4 +190,7 @@ Running it again refreshes the copy and takes away files no entry needs any more
 | `ASSET_BUNDLE_CHECK_FAILED` | An entry's bytes differ from its checksum |
 | `ASSET_BUNDLE_RANGE_INVALID` | The host answered a different range than asked |
 | `ASSET_BUNDLE_FETCH_FAILED` | The host answered with an error; `cause` has its status |
+| `QUALITY_VARIANT_INVALID`, `QUALITY_VARIANT_MISSING` | A tier that is not low, medium or high; no variant at all |
+| `HEADLESS_RUN_INVALID` | Missing functions, or a bad step, limit or seed list |
+| `BROWSER_STORAGE_UNAVAILABLE`, `BROWSER_STORAGE_WRITE_FAILED`, `BROWSER_STORAGE_CLOSED` | No IndexedDB; a write the database refused; a write after `close` |
 | `AUDIO_WAV_INVALID` | Channels of different lengths, no samples, or a sample rate out of range |

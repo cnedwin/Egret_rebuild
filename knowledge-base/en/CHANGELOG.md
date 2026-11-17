@@ -7,6 +7,9 @@ Version labels below identify engineering checkpoints; workspace packages remain
 ## Retarget World3D animation between rigs — 2026-11-17
 
 `retargetAnimationClip3D` plays one rig's clip on another of other proportions and other bone axes: each bone's turn away from rest is carried over in rig space, and the root's travel is scaled by height. [World3D animation](docs/world3d.md#animation)
+## Models by picture quality, headless runs, IndexedDB saves and offline bundles — 2026-11-17
+
+`pickQualityVariant` and `pickQualityFiles` choose the model or picture for a picture quality, falling to the nearest tier. `runHeadless` plays a game's rules once per seed with a stand-in player and reports each run. `openIndexedDBSaveStorage` gives saves larger than local storage holds, and `openBrowserBundleCache` keeps a bundle's index and entries so it opens and reads again offline. A bundle shorter than the first range asked for now opens. [The game kit](docs/game-kit.md)
 
 ## Start a World3D game in one call; models, markers and a readout — 2026-11-17
 

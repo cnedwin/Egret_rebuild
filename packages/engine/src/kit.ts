@@ -27,3 +27,5 @@ export {
   writeAssetBundle
 } from './assetBundle.js';
 export type { AssetBundleEntry, AssetBundleIndex, AssetBundleInput } from './assetBundle.js';
+export { QUALITY_TIERS, pickQualityFiles, pickQualityVariant, runHeadless } from './gameRun.js';
+export type { HeadlessGame, HeadlessRunOptions, HeadlessRunResult, QualityTier } from './gameRun.js';

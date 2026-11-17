@@ -376,7 +376,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       } else if (imported === '@egret/engine/kit') {
         // The browser half of the game kit is built on the public DOM-free kit entry and on nothing private.
         const relative=path.relative(dir,file).split(path.sep).join('/');
-        if(name!=='engine'||!['web/BrowserInputActions.ts','dist/web/BrowserInputActions.js','dist/web/BrowserInputActions.d.ts','web/BrowserAssetBundle.ts','dist/web/BrowserAssetBundle.js','dist/web/BrowserAssetBundle.d.ts'].includes(relative))
+        if(name!=='engine'||!['web/BrowserInputActions.ts','dist/web/BrowserInputActions.js','dist/web/BrowserInputActions.d.ts','web/BrowserAssetBundle.ts','dist/web/BrowserAssetBundle.js','dist/web/BrowserAssetBundle.d.ts','web/BrowserStorage.ts','dist/web/BrowserStorage.js','dist/web/BrowserStorage.d.ts'].includes(relative))
           throw new Error('Game kit: DOM-free kit entry imported outside the named browser module: '+relative);
       } else if (imported === '@egret/engine/input/gamepad') {
         // The browser adapter of the pads is built on the public logical entry and on nothing private.

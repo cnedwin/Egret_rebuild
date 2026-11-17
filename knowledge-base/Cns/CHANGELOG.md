@@ -7,6 +7,9 @@
 ## World3D 动画在骨架之间重定向 — 2026-11-17
 
 `retargetAnimationClip3D` 把一套骨架的动画放到体型和骨骼朝向不同的另一套骨架上：每根骨骼相对静止姿势的转动在骨架空间中转移，根骨骼的位移按高度缩放。[World3D 动画](docs/world3d.md#动画)
+## 按画质选模型、无界面跑整局、IndexedDB 存档和离线资源包 — 2026-11-17
+
+`pickQualityVariant` 和 `pickQualityFiles` 按画质选择模型或图片，缺少的档位取最近的一档。`runHeadless` 用代打玩家按种子逐局跑完游戏规则并报告每局结果。`openIndexedDBSaveStorage` 用于本地存储放不下的大存档，`openBrowserBundleCache` 保存资源包的索引和条目，离线时也能打开和读取。比首次请求范围还短的资源包现在也能打开。[游戏工具包](docs/game-kit.md)
 
 ## 一次调用启动 World3D 游戏；拼模型、画面标记和性能读数 — 2026-11-17
 

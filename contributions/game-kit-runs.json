@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/gameRun.ts",
+      "originRole": "First-party quality variant choice and headless runs of game rules by seed; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserStorage.ts",
+      "originRole": "First-party IndexedDB save storage and Cache API bundle cache; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/game-kit-runs.test.mjs",
+      "originRole": "First-party tests of quality variants, headless runs, IndexedDB saves and the bundle cache; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

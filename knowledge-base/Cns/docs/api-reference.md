@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 42 个入口、1246 个导出，其中 766 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 42 个入口、1259 个导出，其中 771 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1324,6 +1324,9 @@
 | `describeInputBinding` | 函数 | A readable name for a binding, for settings screens: `Key:KeyW` is `W`, `Mouse:0` is `Left button`. |
 | `encodeWav` | 函数 | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
 | `hashSeed` | 函数 | Turns a string or number into a 32-bit seed. |
+| `HeadlessGame` | 接口 | What a headless run needs of a game: its state and one step of its rules. |
+| `HeadlessRunOptions` | 接口 |  |
+| `HeadlessRunResult` | 接口 |  |
 | `InputActionDefinition` | 接口 | An action and the controls that drive it. |
 | `InputActionKind` | 类型 |  |
 | `InputActionMap` | 类型 |  |
@@ -1332,11 +1335,16 @@
 | `InputBindingSlot` | 类型 | A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... |
 | `InputBindingsSave` | 接口 |  |
 | `InputVector` | 接口 |  |
+| `pickQualityFiles` | 函数 | Names of the form `<base>-<tier>.<ext>` grouped by base and chosen for `quality`, as a bundle or a folder lists them: `hero-high.glb`, `hero-low.glb` and `hall.webp` give `hero-low.glb` (for `medium`) and `hall.webp`. |
+| `pickQualityVariant` | 函数 | Of several variants of one asset, the one for `quality`: an exact tier, or else the nearest below, or else the nearest above. |
 | `planAssetBundleRanges` | 函数 | Ranges of the file that hold the named entries, joined where they touch or lie within `gap` bytes. |
+| `QUALITY_TIERS` | 值 | Quality tiers from lowest to highest, as World3D names them. |
+| `QualityTier` | 类型 |  |
 | `Random` | 接口 |  |
 | `RandomState` | 类型 | Four 32-bit words. |
 | `readAssetBundleHeader` | 函数 | The index length a header gives, so a reader can ask for exactly the bytes of the index. |
 | `readAssetBundleIndex` | 函数 | The index of a bundle from its first bytes: at least the header and the index. |
+| `runHeadless` | 函数 | Plays the game once per seed with the stand-in player and reports each run. |
 | `SaveProblem` | 接口 |  |
 | `SaveProblemKind` | 类型 |  |
 | `SaveStorage` | 接口 | Where a save is kept: strings by key. |
@@ -1363,12 +1371,17 @@
 | `BrowserInputActions` | 接口 |  |
 | `BrowserInputActionsOptions` | 接口 |  |
 | `browserSaveStorage` | 函数 | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
+| `BundleCache` | 接口 | Where fetched bundle entries are kept between visits; used as `cache` of `openBrowserAssetBundle`. |
 | `createBrowserImageTextureProvider` | 函数 | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
 | `createTouchButton` | 函数 | Makes `element` an on-screen button that holds `binding` (such as `Touch:jump`) while a finger is on it. |
 | `createTouchStick` | 函数 | A stick that appears where a finger lands in its zone of `element` and follows it. |
 | `decodeBrowserImage` | 函数 | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
 | `fitBrowserImageSize` | 函数 | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
+| `IndexedDBSaveStorage` | 接口 |  |
+| `IndexedDBSaveStorageOptions` | 接口 |  |
 | `openBrowserAssetBundle` | 函数 | Opens the bundle at `url`, reading its index. |
+| `openBrowserBundleCache` | 函数 | A bundle cache in the Cache API under `name`. |
+| `openIndexedDBSaveStorage` | 函数 | A save storage over IndexedDB. |
 | `sniffBrowserImageFormat` | 函数 | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | 函数 | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
 | `TouchControl` | 接口 |  |
