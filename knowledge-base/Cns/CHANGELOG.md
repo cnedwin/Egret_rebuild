@@ -8,6 +8,9 @@
 
 `retargetAnimationClip3D` 把一套骨架的动画放到体型和骨骼朝向不同的另一套骨架上：每根骨骼相对静止姿势的转动在骨架空间中转移，根骨骼的位移按高度缩放。[World3D 动画](docs/world3d.md#动画)
 
+## 绘制几乎等于单位变换的变换 — 2026-11-17
+
+显示变换中的数值小于 2^-100 时（例如快要停下的震屏），两个共享宿主都会以 `WEBGL2_GEOMETRY_RANGE` 或 `WEBGPU_GEOMETRY_RANGE` 拒绝。现在准备几何时把这么小的数值当作零；非有限值或超过 2^20 的数值仍会被拒绝。
 ## 一次调用启动 World3D 游戏；拼模型、画面标记和性能读数 — 2026-11-17
 
 `createWorld3DApp(canvas, options)` 根据地址选择 WebGL2 或 WebGPU，WebGPU 没有适配器时退回到 WebGL2；根据地址、已保存的选择或设备选出低、中、高画质；创建 Engine、渲染器和循环，并在帧率偏低时降低绘制分辨率。`pickWorld3DQuality`、`pickWorld3DBackend`、`WORLD3D_QUALITY_PRESETS` 和 `createDynamicResolution3D` 也可以单独使用。`createGeometryBuilder3D` 把摆好位置、上了颜色的零件合成一个几何体；`createScreenMarkers3D` 让网页元素跟随场景中的点，需要时贴在屏幕边缘；`createWorld3DStats` 显示性能读数。[一次调用启动 3D 游戏](docs/world3d-app.md)
