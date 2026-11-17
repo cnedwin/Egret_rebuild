@@ -172,3 +172,27 @@ test('PL06 the listener of a tap returns nothing, and what its function throws o
   await new Promise(resolve => setImmediate(resolve));
   assert.deepEqual(told, [thrown, rejected]);
 });
+
+// Break caught: leave the colour or the size of a text as it was made, saying nothing; or take what is not one.
+test('PL07 the colour and the size of a text are set after it is made, and what is not one is not taken', () => {
+  const styled = [];
+  const label = new PlayText(
+    '2',
+    () => {},
+    0xffffff,
+    24,
+    style => styled.push(style)
+  );
+  assert.deepEqual([label.color, label.size], [0xffffff, 24]);
+  label.color = 0x776e65;
+  label.size = 48;
+  label.color = 0x776e65;
+  assert.deepEqual(styled, [{ color: 0x776e65 }, { size: 48 }]);
+  for (const bad of ['#ff0000', -1, 0x1000000, 1.5, NaN]) label.color = bad;
+  for (const bad of [0, -4, Infinity, '12']) label.size = bad;
+  assert.deepEqual([label.color, label.size, styled.length], [0x776e65, 48, 2]);
+  // A text made as before, without a colour, a size or a way to restyle, is white and 24.
+  const plain = new PlayText('x', () => {});
+  plain.color = 0xff0000;
+  assert.deepEqual([plain.color, plain.size], [0xff0000, 24]);
+});

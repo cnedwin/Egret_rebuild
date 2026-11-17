@@ -93,6 +93,25 @@ async function stageOf(page, width, height) {
         return (png.data[o] << 16) | (png.data[o + 1] << 8) | png.data[o + 2];
       };
     },
+    /** The same of a small part of the page around a place, which is quick enough to watch something that moves. */
+    async lookNear(x, y, reach) {
+      const [left, top] = at(x - reach, y - reach),
+        [right, bottom] = at(x + reach, y + reach);
+      const clip = {
+        x: Math.floor(left),
+        y: Math.floor(top),
+        width: Math.ceil(right - left),
+        height: Math.ceil(bottom - top)
+      };
+      const png = PNG.sync.read(await page.screenshot({ clip }));
+      return (px, py) => {
+        const [ax, ay] = at(px, py),
+          cx = Math.min(png.width - 1, Math.max(0, Math.round(ax - clip.x))),
+          cy = Math.min(png.height - 1, Math.max(0, Math.round(ay - clip.y))),
+          o = 4 * (cy * png.width + cx);
+        return (png.data[o] << 16) | (png.data[o + 1] << 8) | png.data[o + 2];
+      };
+    },
     move: (x, y) => page.mouse.move(...at(x, y)),
     async tap(x, y) {
       await page.mouse.move(...at(x, y));
@@ -169,13 +188,13 @@ await scenario(
     // Held down, the pointer carries the paddle; let go, the arrows move it.
     await stage.move(110, 200);
     await page.mouse.down();
-    await page.waitForTimeout(250);
-    is((await stage.look())(110, 300), PADDLE, 'the paddle under the pointer');
+    // A lost ball flashes the stage for a moment, so each is looked for until it is seen.
+    await until(page, stage, look => alike(look(110, 300), PADDLE), 'the paddle coming under the pointer', 3);
     await page.mouse.up();
     await page.keyboard.down('ArrowRight');
     await page.waitForTimeout(500);
     await page.keyboard.up('ArrowRight');
-    assert.ok(!alike((await stage.look())(90, 300), PADDLE), 'the arrows moved the paddle away');
+    await until(page, stage, look => alike(look(90, 300), 0x101828), 'the arrows moving the paddle away', 3);
     // The ball breaks a brick of the lowest row, and the game makes a sound of it.
     await until(
       page,
@@ -250,6 +269,7 @@ await scenario(
   520,
   async (page, stage) => {
     const BACK = 0x3a506b,
+      TABLE = 0x14213d,
       place = i => [57 + (i % 4) * 82, 115 + Math.floor(i / 4) * 82];
     const backs = look => [...Array(16).keys()].filter(i => alike(look(...place(i)), BACK)).length;
     assert.equal(backs(await stage.look()), 16, 'sixteen cards face down');
@@ -264,10 +284,12 @@ await scenario(
     const turn = async i => {
       for (let tries = 0; tries < 8; tries++) {
         await stage.tap(...place(i));
+        // Two cards that differ show their faces for half a second: the card alone is looked at, again and again,
+        // which is quick enough not to miss it.
         for (const end = Date.now() + 900; Date.now() < end; ) {
-          const colour = shows(await stage.look(), i);
-          if (colour !== undefined && !alike(colour, BACK)) return colour;
-          await page.waitForTimeout(100);
+          const colour = shows(await stage.lookNear(...place(i), 32), i);
+          // Half way through its turn a card is too narrow to see, and what shows is the table under it.
+          if (colour !== undefined && !alike(colour, BACK) && !alike(colour, TABLE)) return colour;
         }
       }
       assert.fail('card ' + i + ' did not turn');
@@ -285,11 +307,14 @@ await scenario(
       else await down(i, i + 1);
     }
     const kinds = faces.filter((face, i) => faces.findIndex(other => alike(other, face, 4)) === i);
-    assert.equal(kinds.length, 8, 'eight faces, two cards of each');
+    assert.equal(kinds.length, 8, 'eight faces, two cards of each: ' + faces.map(hex).join(' '));
     for (let i = 0; i < 16; i++) {
       if (matched.has(i)) continue;
       const other = faces.findIndex((face, j) => j > i && !matched.has(j) && alike(face, faces[i], 4));
-      assert.ok(other > i, 'card ' + i + ' has a twin');
+      assert.ok(
+        other > i,
+        'card ' + i + ' has a twin: ' + faces.map(hex).join(' ') + ' matched ' + [...matched].join(',')
+      );
       await turn(i);
       await turn(other);
       matched.add(i).add(other);

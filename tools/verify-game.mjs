@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Usage: node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory>
+// Usage: node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs]
 // Runs one game page in a headless browser with software rendering and says whether it starts, draws, keeps drawing,
 // answers input and makes sound. It is the check to run after writing or changing a game: it prints a report, writes
 // it as report.json beside three pictures of the page, and exits with 1 when a check fails.
@@ -9,6 +9,20 @@
 // pictures. A page inside this checkout is served from its root, so that an import map to /packages works; any
 // other page is served from its own folder, and asking for anything outside the server fails `noExternalRequests`.
 // Frame rates under software rendering are far below a device's and are not a measure of the game.
+//
+// Blind play does not reach the end of a game. A fourth argument names a script that plays it as a person would:
+//
+//   export const stage = { width: 480, height: 270 };       // the width and height given to `play`
+//   export default async function (player) {
+//     await player.key('right', 2);                            // hold a key for two seconds; player.key('space') presses it
+//     await player.tap(240, 150);                              // in the stage's own units, as are move, press and release
+//     await player.until(look => player.alike(look(240, 150), 0x3b82f6), 'the button to show', 20);
+//     player.expect((await player.sounds()) > 0, 'a sound was made');
+//     await player.picture('won');
+//   }
+//
+// `look` gives the colour the page shows at a place of the stage. The script runs on the page loaded afresh, after
+// the blind checks; what it throws fails the check `played`.
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
@@ -131,8 +145,106 @@ function counters() {
   }
 }
 
-/** Runs the page at `file` and gives the report. `chromium` is Playwright's; `PNG` is pngjs's. */
-export async function verifyGame({ chromium, PNG, file, out }) {
+/** Whether two colours, each `0xRRGGBB`, are the same but for `tolerance` in each part. */
+export function coloursAlike(a, b, tolerance = 12) {
+  return [16, 8, 0].every(shift => Math.abs(((a >> shift) & 255) - ((b >> shift) & 255)) <= tolerance);
+}
+const KEYS = {
+  left: 'ArrowLeft',
+  right: 'ArrowRight',
+  up: 'ArrowUp',
+  down: 'ArrowDown',
+  space: 'Space',
+  enter: 'Enter',
+  escape: 'Escape',
+  shift: 'ShiftLeft'
+};
+/** The key Playwright is asked for, from the name a game asks its keys by. */
+export function keyOf(name) {
+  const key = String(name);
+  if (KEYS[key.toLowerCase()] !== undefined) return KEYS[key.toLowerCase()];
+  if (/^[a-z]$/i.test(key)) return 'Key' + key.toUpperCase();
+  if (/^[0-9]$/.test(key)) return 'Digit' + key;
+  return key;
+}
+/** Where a place of a stage of `width` by `height` is on a page whose canvas has the box given. */
+export function stagePlace(box, width, height, x, y) {
+  return [box.x + (x * box.w) / width, box.y + (y * box.h) / height];
+}
+/** What a script is given to play a game with: input in the stage's own units, and the page read from its pictures. */
+function driver(tab, PNG, out, size) {
+  const box = async () => {
+    const canvases = await tab.evaluate(() =>
+      [...document.querySelectorAll('canvas')].map(canvas => {
+        const bounds = canvas.getBoundingClientRect();
+        return { x: bounds.x, y: bounds.y, w: bounds.width, h: bounds.height };
+      })
+    );
+    const largest = canvases.filter(one => one.w > 0 && one.h > 0).sort((p, q) => q.w * q.h - p.w * p.h)[0];
+    if (largest === undefined) throw new Error('The page has no canvas to play on');
+    return largest;
+  };
+  const at = async (x, y) => {
+    const canvas = await box();
+    return stagePlace(canvas, size?.width ?? canvas.w, size?.height ?? canvas.h, x, y);
+  };
+  const game = {
+    page: tab,
+    alike: coloursAlike,
+    wait: seconds => tab.waitForTimeout(seconds * 1000),
+    move: async (x, y) => tab.mouse.move(...(await at(x, y))),
+    async press(x, y) {
+      await tab.mouse.move(...(await at(x, y)));
+      await tab.mouse.down();
+    },
+    release: () => tab.mouse.up(),
+    async tap(x, y) {
+      await game.press(x, y);
+      await tab.waitForTimeout(60);
+      await tab.mouse.up();
+    },
+    async key(name, seconds = 0) {
+      await tab.keyboard.down(keyOf(name));
+      await tab.waitForTimeout(Math.max(40, seconds * 1000));
+      await tab.keyboard.up(keyOf(name));
+    },
+    hold: name => tab.keyboard.down(keyOf(name)),
+    letGo: name => tab.keyboard.up(keyOf(name)),
+    async look() {
+      const canvas = await box(),
+        png = PNG.sync.read(await tab.screenshot());
+      return (x, y) => {
+        const [px, py] = stagePlace(canvas, size?.width ?? canvas.w, size?.height ?? canvas.h, x, y),
+          o = 4 * (Math.round(py) * png.width + Math.round(px));
+        return (png.data[o] << 16) | (png.data[o + 1] << 8) | png.data[o + 2];
+      };
+    },
+    async until(test, label = 'what was waited for', seconds = 20) {
+      for (const end = Date.now() + seconds * 1000; Date.now() < end; ) {
+        const result = await test(await game.look());
+        if (result) return result;
+        await tab.waitForTimeout(120);
+      }
+      throw new Error(label + ' did not happen in ' + seconds + ' seconds');
+    },
+    sounds: () => tab.evaluate(() => window.__verify.soundsStarted),
+    expect(condition, message) {
+      if (!condition) throw new Error('Expected: ' + message);
+    },
+    async picture(name) {
+      const target = path.join(out, 'played-' + String(name).replace(/[^A-Za-z0-9_-]+/g, '-') + '.png');
+      await tab.screenshot({ path: target });
+      return target;
+    }
+  };
+  return game;
+}
+
+/**
+ * Runs the page at `file` and gives the report. `chromium` is Playwright's; `PNG` is pngjs's. `script`, where given,
+ * is the module of a script that plays the game: its default export, and the `stage` it names.
+ */
+export async function verifyGame({ chromium, PNG, file, out, script }) {
   const inside = !path.relative(root, file).startsWith('..'),
     base = inside ? root : path.dirname(file);
   const server = http.createServer((request, response) => {
@@ -207,11 +319,9 @@ export async function verifyGame({ chromium, PNG, file, out }) {
           };
         })
       }));
+    const address = origin + path.relative(base, file).split(path.sep).join('/');
     try {
-      await tab.goto(origin + path.relative(base, file).split(path.sep).join('/'), {
-        waitUntil: 'load',
-        timeout: 30000
-      });
+      await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
     } catch (error) {
       seen.loadError = String(error.message);
     }
@@ -280,6 +390,32 @@ export async function verifyGame({ chromium, PNG, file, out }) {
       soundsStarted: end.soundsStarted
     });
     const checks = gameChecks(seen);
+    if (script !== undefined) {
+      // The game is played from its start: the page is loaded again, and what goes wrong from here is the script's.
+      const before = [seen.pageErrors.length, seen.consoleErrors.length];
+      const played = { pass: false, pictures: [] };
+      try {
+        await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
+        await tab.waitForTimeout(1500);
+        const game = driver(tab, PNG, out, script.stage),
+          keep = game.picture;
+        game.picture = async name => {
+          const target = await keep(name);
+          played.pictures.push(target);
+          return target;
+        };
+        await script.default(game);
+        const errors = [...seen.pageErrors.slice(before[0]), ...seen.consoleErrors.slice(before[1])],
+          rejections = await tab.evaluate(() => window.__verify?.rejections ?? []);
+        if (errors.length + rejections.length > 0)
+          throw new Error('The page failed while it was played: ' + [...errors, ...rejections][0]);
+        played.pass = true;
+      } catch (error) {
+        played.error = String(error.stack ?? error).slice(0, 1200);
+        await tab.screenshot({ path: path.join(out, 'played-failed.png') }).catch(() => {});
+      }
+      checks.played = played;
+    }
     return {
       file,
       pass: Object.values(checks).every(check => check.pass),
@@ -294,11 +430,13 @@ export async function verifyGame({ chromium, PNG, file, out }) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const [playwright, page, output] = process.argv.slice(2);
-  if (!playwright || !page || !output || !path.isAbsolute(playwright) || process.argv.length !== 5)
+  const [playwright, page, output, play] = process.argv.slice(2);
+  if (!playwright || !page || !output || !path.isAbsolute(playwright) || process.argv.length > 6)
     throw new Error(
-      'Usage: node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory>'
+      'Usage: node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs]'
     );
+  if (play !== undefined && !fs.existsSync(path.resolve(play)))
+    throw new Error('There is no script at ' + path.resolve(play));
   const file = path.resolve(page),
     out = path.resolve(output);
   if (!fs.existsSync(file) || !fs.statSync(file).isFile()) throw new Error('There is no page at ' + file);
@@ -306,7 +444,10 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   fs.mkdirSync(out, { recursive: true });
   const { chromium } = await import(pathToFileURL(playwright).href),
     { PNG } = createRequire(import.meta.url)('pngjs');
-  const report = await verifyGame({ chromium, PNG, file, out });
+  const script = play === undefined ? undefined : await import(pathToFileURL(path.resolve(play)).href);
+  if (script !== undefined && typeof script.default !== 'function')
+    throw new Error('The script has no default export to play the game with: ' + path.resolve(play));
+  const report = await verifyGame({ chromium, PNG, file, out, script });
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   console.log(JSON.stringify(report, null, 2));
   process.exit(report.pass ? 0 : 1);
