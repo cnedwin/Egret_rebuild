@@ -24,6 +24,11 @@ import type { PostProcessSettings3D } from './post3D.js';
 import type { CompressedFormat3D, RenderTarget3D } from '../../rendering/world3d/Texture3D.js';
 
 export type ToneMapping3D = 'none' | 'reinhard' | 'aces';
+
+/** Half-float targets keep scene-referred light until composition. */
+export function outputToneMapping3D(toneMapping: ToneMapping3D, target?: RenderTarget3D): ToneMapping3D {
+  return target?.format === 'rgba16f' ? 'none' : toneMapping;
+}
 export interface Renderer3DInfo {
   frame: number;
   drawCalls: number;

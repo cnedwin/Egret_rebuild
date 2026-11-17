@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   InstancedMesh3D,
   Mesh3D,
+  Object3D,
   PlanarReflection3D,
   RenderTarget3D,
   Scene3D,
@@ -393,6 +394,84 @@ test('World3D program preparation covers color and shadow variants without KHR',
   }
 });
 
+test('WebGL2 reflection preparation and drawing share the scoped color program', async () => {
+  const f = shaderPreparationFixture({ parallel: false });
+  const { renderer, gl, mesh, material } = f;
+  const scene = new Scene3D();
+  const camera = createPerspectiveCamera3D({ fov: 60, aspect: 1, near: 0.1, far: 20 });
+  camera.setPosition(0, 3, 5).lookAt(0, 1, 0);
+  camera.layerMask = 7;
+  const mirror = new PlanarReflection3D({ width: 16, height: 16 });
+  mirror.layerMask = 1;
+  mirror.toneMapping = 'reinhard';
+  mirror.shadows = false;
+  renderer.toneMapping = 'aces';
+  renderer.shadowsEnabled = true;
+  renderer.postProcess.enabled = true;
+  mesh.setPosition(0, 1, 0);
+  scene.addChild(mesh);
+
+  const other = createStandardMaterial3D({});
+  const layerExcluded = new Mesh3D(mesh.geometry, other);
+  layerExcluded.layers = 2;
+  layerExcluded.setPosition(0, 1, 0);
+  scene.addChild(layerExcluded);
+  const hidden = new Object3D();
+  const descendant = new Mesh3D(mesh.geometry, other);
+  descendant.setPosition(0, 1, 0);
+  hidden.addChild(descendant);
+  scene.addChild(hidden);
+
+  try {
+    const reflection = mirror.createPass(camera, [hidden]);
+    await renderer.preparePrograms([
+      { mesh, material, reflection, receiveShadows: true },
+      { mesh, material, reflection, pass: 'shadow' },
+      { mesh: layerExcluded, material: other, reflection },
+      { mesh: layerExcluded, material: other, reflection, pass: 'depth-prepass' },
+      { mesh: descendant, material: other, reflection }
+    ]);
+    assert.equal(f.linked.length, 1);
+    const color = f.linked[0];
+    const defines = f.programDefines(color);
+    assert.equal(defines.has('LINEAR_OUTPUT'), true);
+    assert.equal(defines.has('TONE_MAPPED'), true);
+    for (const name of ['RECEIVE_SHADOW', 'DEPTH_ONLY']) assert.equal(defines.has(name), false);
+    assert.equal(f.draws, 0);
+    assert.equal(f.allocations(), 0);
+
+    const drawElements = gl.drawElements;
+    gl.drawElements = (...args) => {
+      assert.equal(gl.getParameter(gl.CURRENT_PROGRAM), color);
+      assert.equal(renderer.toneMapping, 'aces');
+      assert.equal(renderer.shadowsEnabled, true);
+      assert.equal(renderer.postProcess.enabled, true);
+      assert.equal(camera.layerMask, 7);
+      assert.equal(hidden.visible, true);
+      assert.equal(descendant.visible, true);
+      drawElements(...args);
+    };
+    assert.equal(mirror.render(renderer, scene, camera, [0, 1, 0, 0], [hidden]), true);
+    assert.equal(f.draws, 1);
+    assert.deepEqual(f.linked, [color]);
+    assert.deepEqual(f.checked, [color]);
+
+    const allocations = f.allocations();
+    mirror.interval = 4;
+    const draw = () => assert.equal(mirror.render(renderer, scene, camera, [0, 1, 0, 0], [hidden]), true);
+    assert.deepEqual(renderer.measureFrame(draw).reflections, { rendered: 1, reused: 0 });
+    assert.deepEqual(renderer.measureFrame(draw).reflections, { rendered: 0, reused: 1 });
+    mirror.invalidate();
+    assert.deepEqual(renderer.measureFrame(draw).reflections, { rendered: 1, reused: 0 });
+    assert.equal(f.allocations(), allocations);
+    assert.deepEqual(f.linked, [color]);
+  } finally {
+    f.dispose();
+    mirror.dispose();
+    other.dispose();
+  }
+});
+
 test('World3D program preparation reuses a custom shader across different materials', async () => {
   const f = shaderPreparationFixture({ parallel: false });
   const geometry = createBoxGeometry3D({});
@@ -655,11 +734,11 @@ test('world3d WebGL2 reuses shadow atlases across reflection, restore and dispos
   gl.drawArrays = (mode, _first, count) => record(mode, count);
   gl.drawElements = (mode, count) => record(mode, count);
   const renderer = createWebGL2Renderer3D({ canvas, shadowAtlasSize: 64 });
-  const render = renderer.render.bind(renderer);
+  const renderReflectionPass = renderer.renderReflectionPass.bind(renderer);
   let mirrorCalls = 0;
-  renderer.render = (scene, camera, target) => {
-    if (target?.name === 'planar-reflection') mirrorCalls++;
-    return render(scene, camera, target);
+  renderer.renderReflectionPass = (scene, camera, pass) => {
+    mirrorCalls++;
+    return renderReflectionPass(scene, camera, pass);
   };
   const scene = new Scene3D();
   const camera = createPerspectiveCamera3D({ fov: 60, aspect: 1, near: 0.1, far: 20 });

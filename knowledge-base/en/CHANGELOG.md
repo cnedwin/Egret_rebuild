@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Share World3D planar reflection settings — 2026-11-17
+
+Reflection draws use their own tone mapping, shadows, layer mask and excluded subtrees without changing the main view. WebGL2 program preparation accepts the same pass settings. A Windows hardware replay of the SnowTemple wet-stone route observed zero new links during the first entry and return. At first entry and return, both the mirror and the full canvas matched the legacy draw pixel for pixel. The route reused one native color texture across three reflection draws and six skips. [World3D reflection contract](docs/world3d.md#terrain-and-water)
+
 ## Fix World3D instance-count changes — 2026-11-17
 
 Changing `InstancedMesh3D.count` now rebuilds culling bounds for the active instances. WebGL2 refreshes matrices and colors when the active range grows beyond the prefix uploaded for the current revision. A two-instance fixture on Windows Edge 157 and an RTX 5090 Laptop GPU passed on both WebGL2 and WebGPU. Changing only the count from 1 to 2 and back showed and hid the second instance. After editing it while inactive, it appeared in its new position with the expected color and alpha. [World3D instancing](docs/world3d.md#meshes-instancing-skinning-and-morphing)

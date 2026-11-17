@@ -12,6 +12,16 @@ import type { Object3D, Scene3D } from './Object3D.js';
 import { RenderTarget3D, TEXTURE3D_LIMITS } from './Texture3D.js';
 import { colorFromHex, mat4Invert, quatFromRotationMatrix } from './math3D.js';
 
+/** Output and inclusion settings shared by reflection draws and program preparation. */
+export interface PlanarReflectionPass3D {
+  readonly target: RenderTarget3D;
+  /** Undefined uses the renderer's tone mapping. The target still owns its color encoding. */
+  readonly toneMapping: 'none' | 'reinhard' | 'aces' | undefined;
+  readonly shadows: boolean;
+  readonly layerMask: number;
+  readonly hidden: readonly Object3D[];
+}
+
 /** Anything that can draw a scene into a render target: both first-party renderers qualify. */
 export interface ReflectionRenderer3D {
   render(scene: Scene3D, camera: Camera3D, target?: RenderTarget3D): boolean;
@@ -19,6 +29,8 @@ export interface ReflectionRenderer3D {
   renderReflection?(scene: Scene3D, camera: Camera3D, target: RenderTarget3D): boolean;
   /** Allows the renderer to verify and record reuse of the previous mirror result. */
   reuseReflection?(target: RenderTarget3D): boolean;
+  /** Draw a configured mirror view without changing the main view settings. */
+  renderReflectionPass?(scene: Scene3D, camera: Camera3D, pass: PlanarReflectionPass3D): boolean;
   /** When present, post-processing is switched off while the mirror image is drawn. */
   readonly postProcess?: { enabled: boolean };
   /** When present, shadows can be left out of the mirror image. */
@@ -47,8 +59,22 @@ export class PlanarReflection3D {
   layerMask = 0xffffffff;
   /** false leaves shadows out of the mirror image, which saves the shadow passes for it. */
   shadows = true;
+  /** Override tone mapping in the mirror only. Undefined inherits the renderer's setting. */
+  toneMapping: PlanarReflectionPass3D['toneMapping'] = undefined;
   #calls = 0;
-  #drawn: { renderer: ReflectionRenderer3D; scene: Scene3D; version: number } | undefined;
+  #drawn:
+    | {
+        renderer: ReflectionRenderer3D;
+        scene: Scene3D;
+        version: number;
+        toneMapping: string | undefined;
+        shadows: boolean;
+        layerMask: number;
+        hidden: readonly Object3D[];
+        plane: readonly number[];
+        clipBias: number;
+      }
+    | undefined;
   readonly #projection = new Float32Array(16);
   readonly #perspectiveProjection = new Float32Array(16);
   readonly #orthographicProjection = new Float32Array(16);
@@ -63,6 +89,21 @@ export class PlanarReflection3D {
   }
   get texture(): RenderTarget3D['texture'] {
     return this.target.texture;
+  }
+  /** Capture the reflection settings for this viewing camera and the excluded subtrees. */
+  createPass(camera: Camera3D, hidden: readonly Object3D[] = []): PlanarReflectionPass3D {
+    return {
+      target: this.target,
+      toneMapping: this.toneMapping,
+      shadows: this.shadows,
+      layerMask: camera.layerMask & this.layerMask,
+      hidden: [...hidden]
+    };
+  }
+  /** Refresh on the next call, for example after a camera cut or a skipped region. */
+  invalidate(): void {
+    this.#calls = 0;
+    this.#drawn = undefined;
   }
   /**
    * Place the mirror camera for a viewing camera and a world plane given as
@@ -157,7 +198,13 @@ export class PlanarReflection3D {
       this.#drawn = undefined;
       return false;
     }
-    this.camera.layerMask = camera.layerMask & this.layerMask;
+    const pass = this.createPass(camera, hidden);
+    this.camera.layerMask = pass.layerMask;
+    if (pass.toneMapping !== undefined && !renderer.renderReflectionPass)
+      throw new World3DError('WORLD3D_INPUT_INVALID', 'reflection tone mapping requires a pass-aware renderer');
+    const inheritedTone = 'toneMapping' in renderer ? renderer.toneMapping : undefined;
+    const toneMapping = pass.toneMapping ?? (typeof inheritedTone === 'string' ? inheritedTone : undefined);
+    const shadows = pass.shadows && renderer.shadowsEnabled !== false;
     const scheduled = this.#calls === 0;
     this.#calls = (this.#calls + 1) % interval;
     const drawn = this.#drawn;
@@ -166,11 +213,36 @@ export class PlanarReflection3D {
       drawn?.renderer === renderer &&
       drawn.scene === scene &&
       drawn.version === this.target.version &&
+      drawn.toneMapping === toneMapping &&
+      drawn.shadows === shadows &&
+      drawn.layerMask === pass.layerMask &&
+      drawn.clipBias === this.clipBias &&
+      drawn.plane.every((value, index) => value === plane[index]) &&
+      drawn.hidden.length === pass.hidden.length &&
+      drawn.hidden.every((object, index) => object === pass.hidden[index]) &&
       (renderer.reuseReflection?.(this.target) ?? true)
     )
       return true;
     this.#drawn = undefined;
+    const result = renderer.renderReflectionPass
+      ? renderer.renderReflectionPass(scene, this.camera, pass)
+      : this.renderLegacy(renderer, scene, hidden);
+    if (result)
+      this.#drawn = {
+        renderer,
+        scene,
+        version: this.target.version,
+        toneMapping,
+        shadows,
+        layerMask: pass.layerMask,
+        hidden: pass.hidden,
+        plane: [plane[0]!, plane[1]!, plane[2]!, plane[3]!],
+        clipBias: this.clipBias
+      };
+    return result;
+  }
 
+  private renderLegacy(renderer: ReflectionRenderer3D, scene: Scene3D, hidden: readonly Object3D[]): boolean {
     const shadowsEnabled = renderer.shadowsEnabled,
       post = renderer.postProcess,
       postEnabled = post?.enabled;
@@ -228,7 +300,6 @@ export class PlanarReflection3D {
       throw new AggregateError(causes, 'WORLD3D_REFLECTION_FAILED');
     }
     if (primary) throw primary.cause;
-    if (result) this.#drawn = { renderer, scene, version: this.target.version };
     return result;
   }
   dispose(): void {

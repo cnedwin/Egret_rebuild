@@ -298,6 +298,7 @@ export {
   Water3D,
   createWater3D,
   createWaterMaterial3D,
+  type PlanarReflectionPass3D,
   type ReflectionRenderer3D,
   type WaterOptions3D
 } from './Water3D.js';

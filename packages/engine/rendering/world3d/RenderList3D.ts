@@ -105,7 +105,11 @@ export class RenderList3D {
     return this.#frame;
   }
 
-  build(scene: Scene3D, camera: Camera3D): void {
+  build(
+    scene: Scene3D,
+    camera: Camera3D,
+    filter?: { readonly layerMask: number; readonly hidden: readonly Object3D[] }
+  ): void {
     this.#override = scene.overrideMaterial && !scene.overrideMaterial.isDisposed ? scene.overrideMaterial : undefined;
     this.#frame++;
     this.#used = 0;
@@ -120,7 +124,7 @@ export class RenderList3D {
     this.stats.visited = this.stats.culled = 0;
     scene.updateWorldMatrices();
     camera.updateViewMatrices();
-    this.visit(scene, camera);
+    this.visit(scene, camera, filter?.layerMask ?? camera.layerMask, filter?.hidden);
     // The same items as last frame, in the same roles: last frame's order still groups them by material and geometry.
     if (!this.#same || this.#used !== this.#lastUsed) {
       const sorted = this.#sorted,
@@ -333,16 +337,16 @@ export class RenderList3D {
     }
     for (const [key, list] of this.#casterGroups) if (list.length === 0) this.#casterGroups.delete(key);
   }
-  private visit(object: Object3D, camera: Camera3D): void {
-    if (!object.visible) return;
+  private visit(object: Object3D, camera: Camera3D, layerMask: number, hidden: readonly Object3D[] | undefined): void {
+    if (!object.visible || hidden?.includes(object)) return;
     if (object instanceof Lod3D) {
       const eye = camera.matrixWorld;
       object.select(eye[12]!, eye[13]!, eye[14]!);
     }
-    if (object.kind === 'mesh') this.addMesh(object as Mesh3D, camera);
+    if (object.kind === 'mesh') this.addMesh(object as Mesh3D, camera, layerMask);
     else if (object.kind === 'light') this.addLight(object as Light3D);
     const children = object.children;
-    for (let i = 0; i < children.length; i++) this.visit(children[i]!, camera);
+    for (let i = 0; i < children.length; i++) this.visit(children[i]!, camera, layerMask, hidden);
   }
   private addLight(light: Light3D): void {
     const intensity = light.intensity;
@@ -369,7 +373,7 @@ export class RenderList3D {
         break;
     }
   }
-  private addMesh(mesh: Mesh3D, camera: Camera3D): void {
+  private addMesh(mesh: Mesh3D, camera: Camera3D, layerMask: number): void {
     // Meshes that build their geometry on demand (batches, camera-facing lines) do it here.
     mesh.beforeRender?.(camera);
     const geometry = mesh.geometry;
@@ -378,7 +382,7 @@ export class RenderList3D {
     if (mesh.skeleton) mesh.skeleton.update(this.#frame);
     if (mesh instanceof ScreenLayer3D && mesh.autoUpdate) mesh.refreshSource();
     if (mesh.castShadow) this.#casters.push(mesh);
-    if ((mesh.layers & camera.layerMask) === 0) return;
+    if ((mesh.layers & layerMask) === 0) return;
     const sphere = worldRenderSphere3D(mesh);
     if (mesh.frustumCulled && sphere && sphere[3]! >= 0 && !frustumIntersectsSphere(camera.frustum, sphere)) {
       this.stats.culled++;

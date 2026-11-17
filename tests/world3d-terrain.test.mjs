@@ -625,6 +625,87 @@ test('async terrain creation records the failure and retires the request', async
   stream.dispose();
 });
 
+test('a scoped reflection refreshes stale output and retains its target between draws', () => {
+  const scene = new Scene3D();
+  const camera = createPerspectiveCamera3D({});
+  camera.setPosition(0, 5, 5).lookAt(0, 0, 0);
+  camera.layerMask = 7;
+  const mirror = new PlanarReflection3D({ width: 16, height: 8 });
+  mirror.interval = 32;
+  mirror.layerMask = 3;
+  mirror.toneMapping = 'none';
+  mirror.shadows = false;
+  const texture = mirror.texture;
+  const target = mirror.target;
+  const plane = [0, 1, 0, 0];
+  const roof = new Object3D();
+  const paving = new Object3D();
+  scene.addChild(roof);
+  scene.addChild(paving);
+  const hidden = [roof];
+
+  let draws = 0;
+  let reuses = 0;
+  const renderer = {
+    toneMapping: 'aces',
+    shadowsEnabled: true,
+    postProcess: { enabled: true },
+    render() {
+      assert.fail('Pass-aware renderer took the legacy path');
+    },
+    renderReflectionPass(input, view, pass) {
+      draws++;
+      assert.equal(input, scene);
+      assert.equal(view, mirror.camera);
+      assert.equal(pass.target, target);
+      assert.equal(pass.toneMapping, mirror.toneMapping);
+      assert.equal(pass.shadows, mirror.shadows);
+      assert.equal(pass.layerMask, mirror.layerMask & camera.layerMask);
+      assert.deepEqual(pass.hidden, hidden);
+      assert.equal(this.toneMapping, 'aces');
+      assert.equal(this.shadowsEnabled, true);
+      assert.equal(this.postProcess.enabled, true);
+      assert.equal(camera.layerMask, 7);
+      assert.equal(roof.visible, true);
+      assert.equal(paving.visible, true);
+      return true;
+    },
+    reuseReflection(input) {
+      assert.equal(input, target);
+      reuses++;
+      return true;
+    }
+  };
+  const draw = objects => assert.equal(mirror.render(renderer, scene, camera, plane, objects), true);
+  try {
+    draw(hidden);
+    draw([...hidden]);
+    assert.deepEqual([draws, reuses], [1, 1]);
+
+    mirror.toneMapping = 'reinhard';
+    draw(hidden);
+    mirror.shadows = true;
+    draw(hidden);
+    mirror.layerMask = 1;
+    draw(hidden);
+    hidden[0] = paving;
+    draw(hidden);
+    plane[3] = -0.25;
+    draw(hidden);
+    assert.deepEqual([draws, reuses], [6, 1]);
+
+    mirror.invalidate();
+    draw(hidden);
+    draw(hidden);
+    assert.deepEqual([draws, reuses], [7, 2]);
+    assert.equal(mirror.target, target);
+    assert.equal(mirror.texture, texture);
+    assert.equal(target.isDisposed, false);
+  } finally {
+    mirror.dispose();
+  }
+});
+
 test('a water mirror restores renderer state and retries after an unsuccessful draw', () => {
   const water = createWater3D({ segments: 1, reflectionSize: 16 }),
     scene = new Scene3D();
