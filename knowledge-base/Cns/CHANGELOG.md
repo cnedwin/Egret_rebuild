@@ -4,6 +4,9 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Play：一次调用做出一个完整的小游戏 — 2026-11-17
+
+新入口 `@egret/engine/play`。`play({ width, height, setup, update })` 创建画布、让它适应页面，并在 `setup` 完成后才开始 update。返回的 game 提供每帧可询问的键盘和指针、十二个用代码合成的音效以及用于添加更多音效的 `sfx.define`、`overlaps` 和 `hits`、`after` 和 `every`、可居中且可立即修改的文字、自动开始的缓动、`burst`、`shake`、`flash`、`hitStop`、可卷动的 `view`、可重复的随机数以及 `save`/`load`。它建立在浏览器游戏、音频和工具包入口之上，并通过 `game.browser` 保留对它们的访问。
 ## alpha 越界时限制在 0 到 1，不再拒绝 — 2026-11-17
 
 超出 0 到 1 的 alpha 现在会被限制到较近的一端，显示对象以及 Graphics 的填充、线条和渐变色标都是如此。此前会抛出 `DISPLAY_VALUE_INVALID` 或 `GRAPHICS_VALUE_INVALID`，在 update 里发生时会让游戏循环停止：一次多走了一步的淡出就足以触发。不是有限数字的值仍然被拒绝。`animate` 不再对名为 `alpha` 的属性做特殊处理。

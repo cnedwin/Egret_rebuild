@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/entry-points.md)
 
-`@egret/engine` has one main entry and 39 smaller ones. This page says which one a task needs. The [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) uses the main entry and `@egret/engine/web/game`, which loads a Host for it, and nothing else.
+`@egret/engine` has one main entry and 42 smaller ones. This page says which one a task needs. The [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) uses the main entry and `@egret/engine/web/game`, which loads a Host for it, and nothing else.
 
 ## How the entries are arranged
 
@@ -20,6 +20,7 @@ Every factory is named `create...` and returns an object with `dispose()`.
 | Start an Engine and draw a stage | `createEngineForProfile`, `SHARED_FRAME_PROFILE_2D`, `Sprite`, `Bitmap`, `DisplayObjectContainer` | `@egret/engine` |
 | Draw with WebGPU | `createSharedWebGPUHost` | `@egret/engine/webgpu` |
 | Draw with WebGL2 | `createSharedWebGL2Host` | `@egret/engine/webgl2` |
+| Make a whole small game: canvas, loop, keys, pointer, sound effects, overlap, timers, text, tweens | [`play`](play.md) | `@egret/engine/play` |
 | Start a game in a page with one call: Host, Engine, input and loop | `createBrowserGame` | `@egret/engine/web/game` |
 | ... and see frames a second and what a frame holds | `createBrowserStatsPanel`, or `stats: true` | `@egret/engine/web/game` |
 | Run the game on each frame the display shows | `createBrowserFrameLoop` | `@egret/engine/web/loop` |

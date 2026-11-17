@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/browser-game.md)
 
-`@egret/engine/web/game` starts a 2D game in a page with one call, and has a panel that shows what the game takes.
+`@egret/engine/web/game` starts a 2D game in a page with one call, and has a panel that shows what the game takes. For a whole small game, with input, sound, text and timers ready to use, start at [`play`](play.md), which is built on this entry.
 
 The initial [starter example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/README.md) ran on software WebGL2 in headless Chromium. Node covers option handling and the statistics panel. The browser checks cover drawing, clicks, keys, taps, image loading and WebGL2 fallback when WebGPU or its adapter is unavailable.
 

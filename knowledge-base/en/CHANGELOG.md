@@ -4,6 +4,9 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Play: a whole small game from one call — 2026-11-17
+
+New entry `@egret/engine/play`. `play({ width, height, setup, update })` makes the canvas, fits it to the page and starts updates when `setup` has finished. The game it gives has keys and a pointer to ask each frame, twelve sound effects made in code and `sfx.define` for more, `overlaps` and `hits`, `after` and `every`, text that can be centred and changed at once, tweens that start by themselves, `burst`, `shake`, `flash`, `hitStop`, a scrolling `view`, repeatable random numbers and `save`/`load`. It is built on the browser game, audio and kit entries, which it leaves open through `game.browser`.
 ## Hold an alpha to 0 and 1 instead of refusing it — 2026-11-17
 
 An alpha outside 0 to 1 is now held to the nearer end, on a display object and in a Graphics fill, line and gradient stop. It used to throw `DISPLAY_VALUE_INVALID` or `GRAPHICS_VALUE_INVALID`, and inside an update that stopped the game's loop: a fade that ran one step long was enough. What is not a finite number is still refused. `animate` no longer treats a property named `alpha` specially.

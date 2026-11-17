@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 42 entries, 1267 exports; 775 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1282 exports; 782 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1411,6 +1411,26 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserStatsSnapshot` | interface | The numbers the panel shows, as of its last refresh. |
 | `createBrowserGame` | function | Makes a game ready to draw: `await createBrowserGame({ canvas, width, height, update })`, then add display objects to `game.stage`. |
 | `createBrowserStatsPanel` | function |  |
+
+## `@egret/engine/play`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `isSfxRecipe` | function | Whether a value is a recipe `synthesizeSfx` takes. |
+| `play` | function | Starts a game in the page. |
+| `PlayBurstOptions` | interface |  |
+| `PlayGame` | interface |  |
+| `PlayKeys` | interface |  |
+| `PlayOptions` | interface |  |
+| `PlayPointer` | interface |  |
+| `PlaySfx` | interface |  |
+| `PlayText` | class | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
+| `PlayTextOptions` | interface |  |
+| `SFX_PRESETS` | value | The effects every game is given, by name. |
+| `SfxRecipe` | type | An effect: one tone, or several played one after another. |
+| `SfxTone` | interface | One tone of an effect. |
+| `SfxWave` | type | The wave of a tone. |
+| `synthesizeSfx` | function | The samples of an effect, one channel, from -1 to 1. |
 
 ## `@egret/engine/audio`
 

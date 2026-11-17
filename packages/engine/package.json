@@ -156,6 +156,10 @@
       "types": "./dist/web/game.d.ts",
       "import": "./dist/web/game.js"
     },
+    "./play": {
+      "types": "./dist/web/play.d.ts",
+      "import": "./dist/web/play.js"
+    },
     "./audio": {
       "types": "./dist/audio.d.ts",
       "import": "./dist/audio.js"

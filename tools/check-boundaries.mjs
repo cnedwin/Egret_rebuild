@@ -22,6 +22,9 @@ function files(dir) {
 }
 // M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
 const m15DeepClauses = {
+"packages/engine/web/BrowserPlay.ts":[{"operation":"import","kind":"value","members":["Sprite","animate"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["DisplayObject","Engine","Graphics","Motion","Scope"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserPlay.js":[{"operation":"import","kind":"value","members":["Sprite","animate"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserPlay.d.ts":[{"operation":"import","kind":"value","members":["Sprite"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["DisplayObject","Engine","Graphics","Motion","Scope"],"target":"@egret/engine"}],
 "packages/engine/web/world3d/app3D.ts":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
 "packages/engine/dist/web/world3d/app3D.js":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"}],
 "packages/engine/dist/web/world3d/app3D.d.ts":[{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
@@ -284,6 +287,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     if (name === 'engine') textExports['./web/kit'] = {types:'./dist/web/kit.d.ts',import:'./dist/web/kit.js'};
     // Browser game: one optional browser entry that puts the Host, loop and input entries together.
     if (name === 'engine') textExports['./web/game'] = {types:'./dist/web/game.d.ts',import:'./dist/web/game.js'};
+    // Play: one optional browser entry for a whole small game, built on the game, sound and kit entries.
+    if (name === 'engine') textExports['./play'] = {types:'./dist/web/play.d.ts',import:'./dist/web/play.js'};
     // Gamepad: one DOM-free entry and one optional browser entry.
     if (name === 'engine') {
       textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
@@ -376,7 +381,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       } else if (imported === '@egret/engine/kit') {
         // The browser half of the game kit is built on the public DOM-free kit entry and on nothing private.
         const relative=path.relative(dir,file).split(path.sep).join('/');
-        if(name!=='engine'||!['web/BrowserInputActions.ts','dist/web/BrowserInputActions.js','dist/web/BrowserInputActions.d.ts','web/BrowserAssetBundle.ts','dist/web/BrowserAssetBundle.js','dist/web/BrowserAssetBundle.d.ts','web/BrowserStorage.ts','dist/web/BrowserStorage.js','dist/web/BrowserStorage.d.ts'].includes(relative))
+        if(name!=='engine'||!['web/BrowserInputActions.ts','dist/web/BrowserInputActions.js','dist/web/BrowserInputActions.d.ts','web/BrowserAssetBundle.ts','dist/web/BrowserAssetBundle.js','dist/web/BrowserAssetBundle.d.ts','web/BrowserStorage.ts','dist/web/BrowserStorage.js','dist/web/BrowserStorage.d.ts','web/BrowserPlay.ts','dist/web/BrowserPlay.js','dist/web/BrowserPlay.d.ts'].includes(relative))
           throw new Error('Game kit: DOM-free kit entry imported outside the named browser module: '+relative);
       } else if (imported === '@egret/engine/input/gamepad') {
         // The browser adapter of the pads is built on the public logical entry and on nothing private.

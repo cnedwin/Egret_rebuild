@@ -34,7 +34,7 @@ Add `--offline` to take `robust-predicates` from the installed copy of the check
 | `archives` | Each archive holds every module and type file its package declares, the licence text, and dependencies written as versions. |
 | `install` | `pnpm install --ignore-scripts` succeeds in the new project. Four packages are installed and none of the optional ones. |
 | `entries` | All 27 entries of `@egret/engine` resolve to the declared file inside the consumer, have their type file, and load in Node. |
-| `separation` | An entry that is not a web entry loads no web module. An entry that is not a 3D entry loads no 3D module. Only `webgl2` and `webgpu` load `robust-predicates`. Nothing is loaded from outside the consumer. |
+| `separation` | An entry that is not a web entry (`/web/…`, `/webgl2`, `/webgpu` or `/play`) loads no web module. An entry that is not a 3D entry loads no 3D module. Only `webgl2` and `webgpu` load `robust-predicates`. Nothing is loaded from outside the consumer. |
 | `examples` | The public examples, copied byte for byte, run in the consumer and print what they print in the checkout. |
 | `types` | A strict TypeScript consumer of the default entry and of `@egret/engine/layout` compiles against the installed types, and a wrong call is still an error. |
 | `notices` | Each installed package carries a licence file. |

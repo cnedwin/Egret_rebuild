@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/play.ts",
+      "originRole": "First-party optional entry for a whole small game from one call; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserPlay.ts",
+      "originRole": "First-party play(): canvas, loop, polled keys and pointer, synthesised sound effects, overlap tests, timers, text, tweens and hit effects, built on the public entries; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/playSfx.ts",
+      "originRole": "First-party sound effect recipes and their synthesis to samples; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/play.test.mjs",
+      "originRole": "First-party tests of the play entry's exports, refusals and sound effect synthesis; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/play.md",
+      "originRole": "First-party guide to the play entry; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/play.md",
+      "originRole": "First-party Chinese guide to the play entry; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/play.md",
+      "zh": "knowledge-base/Cns/docs/play.md"
+    }
+  ]
+}
