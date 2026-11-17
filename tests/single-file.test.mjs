@@ -12,7 +12,7 @@ import {
   singleFileSource,
   workspaceModules
 } from '../tools/pack-single-file.mjs';
-import { gameChecks, pictureChange, pictureStats } from '../tools/verify-game.mjs';
+import { coloursAlike, gameChecks, keyOf, pictureChange, pictureStats, stagePlace } from '../tools/verify-game.mjs';
 
 const refused = run => {
   try {
@@ -166,4 +166,32 @@ test('SF05 a run passes only when nothing failed, something was drawn, frames we
   assert.deepEqual(failing({ soundsStarted: 0 }), ['makesSound']);
   assert.equal(gameChecks(good).noErrors.errors.length, 0);
   assert.deepEqual(gameChecks({ ...good, consoleErrors: ['boom'] }).noErrors.errors, ['console.error: boom']);
+});
+
+// Break caught: aim a script's tap at the wrong place of a letterboxed canvas, or press another key than the game asks.
+test("SF06 a script plays in the stage's own units, with the names a game asks its keys by", () => {
+  const box = { x: 120, y: 0, w: 720, h: 480 };
+  assert.deepEqual(stagePlace(box, 480, 320, 0, 0), [120, 0]);
+  assert.deepEqual(stagePlace(box, 480, 320, 240, 160), [480, 240]);
+  assert.deepEqual(stagePlace(box, 480, 320, 480, 320), [840, 480]);
+  assert.deepEqual(
+    ['left', 'Right', 'up', 'down', 'space', 'enter', 'escape', 'shift', 'a', 'W', '7', 'KeyQ'].map(keyOf),
+    [
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+      'Space',
+      'Enter',
+      'Escape',
+      'ShiftLeft',
+      'KeyA',
+      'KeyW',
+      'Digit7',
+      'KeyQ'
+    ]
+  );
+  assert.ok(coloursAlike(0x3b82f6, 0x3a80f8));
+  assert.ok(!coloursAlike(0x3b82f6, 0x3b82d0));
+  assert.ok(!coloursAlike(0xffffff, 0xf0f0f0, 6));
 });

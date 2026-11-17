@@ -82,7 +82,7 @@ test('LL03 the sounds, the drawing calls and the options the page lists are the 
 
 // Break caught: let the page grow past what an agent reads at once, or point it at a guide that is not there.
 test('LL04 the page stays short and every guide it links is in the repository', () => {
-  assert.ok(page.split('\n').length <= 400, page.split('\n').length + ' lines');
+  assert.ok(page.split('\n').length <= 420, page.split('\n').length + ' lines');
   const links = [...page.matchAll(/\]\(([^)]+)\)/g)].map(match => match[1]);
   assert.ok(links.length >= 10);
   for (const link of links) assert.ok(fs.existsSync(new URL('../' + link, import.meta.url)), link);

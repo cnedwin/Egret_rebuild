@@ -63,22 +63,50 @@ export interface PlayTextOptions {
 /** A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. */
 export class PlayText extends Sprite {
   #text: string;
+  #color: number;
+  #size: number;
   #changed: (text: string) => void;
-  /** @internal */
-  public constructor(text: string, changed: (text: string) => void) {
+  #styled: (style: { readonly color?: number; readonly size?: number }) => void;
+  public constructor(
+    text: string,
+    changed: (text: string) => void,
+    color = 0xffffff,
+    size = 24,
+    styled: (style: { readonly color?: number; readonly size?: number }) => void = () => {}
+  ) {
     super();
     this.#text = text;
     this.#changed = changed;
+    this.#color = color;
+    this.#size = size;
+    this.#styled = styled;
   }
   public get text(): string {
     return this.#text;
   }
-  /** Anything is taken and shown as its string, so a score can be given as the number it is. */
   public set text(value: string | number) {
     const next = String(value);
     if (next === this.#text) return;
     this.#text = next;
     this.#changed(next);
+  }
+  /** The colour of the words, `0xRRGGBB`. What is not a colour is not taken. */
+  public get color(): number {
+    return this.#color;
+  }
+  public set color(value: number) {
+    if (!Number.isInteger(value) || value < 0 || value > 0xffffff || value === this.#color) return;
+    this.#color = value;
+    this.#styled({ color: value });
+  }
+  /** The size of the words. What is not a size above 0 is not taken. */
+  public get size(): number {
+    return this.#size;
+  }
+  public set size(value: number) {
+    if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0 || value === this.#size) return;
+    this.#size = value;
+    this.#styled({ size: value });
   }
 }
 
@@ -397,10 +425,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       point.y = at.y;
     }
   };
+  // The sprites a tap is given to. A press on one of them is the sprite's, and is not also told as `pressed`: a game
+  // that places something wherever the stage is pressed would place it under its own buttons.
+  let tappable: DisplayObject[] = [];
   const pointerDown = (event: PointerEvent): void => {
     place(event);
     point.down = true;
-    point.pressed = true;
+    tappable = tappable.filter(node => !node.isDisposed);
+    point.pressed = !tappable.some(node => pointer.over(node));
     point.fromX = point.x;
     point.fromY = point.y;
     // Keys reach the page only once it has been clicked, where the game sits in a frame.
@@ -572,11 +604,24 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       );
     };
     const node = scope.use(
-      new PlayText(String(given), next => {
-        if (label === undefined) return;
-        label.text = next;
-        settle();
-      })
+      new PlayText(
+        String(given),
+        next => {
+          if (label === undefined) return;
+          label.text = next;
+          settle();
+        },
+        color,
+        size,
+        style => {
+          if (label === undefined) return;
+          label.set({
+            ...(style.color === undefined ? {} : { color: style.color }),
+            ...(style.size === undefined ? {} : { fontSize: style.size })
+          });
+          settle();
+        }
+      )
     );
     node.x = finite(o.x) ? o.x : 0;
     node.y = finite(o.y) ? o.y : 0;
@@ -605,6 +650,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           made.display.visible = false;
           node.addChild(made.display);
           if (node.text !== words) made.text = node.text;
+          // What was set while the words were being made.
+          if (node.color !== color || node.size !== size) made.set({ color: node.color, fontSize: node.size });
           settle();
         },
         () => {}
@@ -662,7 +709,17 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     flashLeft = 0,
     flashSpan = 1,
     disposed = false;
+  // What `remove` took off the stage, until it is ended.
+  const left = new WeakSet<object>();
+  let leaving: DisplayObject[] = [];
+  const endRemoved = (): void => {
+    if (leaving.length === 0) return;
+    const ending = leaving;
+    leaving = [];
+    for (const node of ending) if (!node.isDisposed) node.dispose();
+  };
   const endFrame = (): void => {
+    endRemoved();
     wentDown.clear();
     cameUp.clear();
     point.pressed = false;
@@ -841,15 +898,20 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       node.parent?.addChild(node);
     },
     remove(node) {
-      if (node === undefined || node === null || node.isDisposed) return;
+      if (node === undefined || node === null || node.isDisposed || left.has(node)) return;
+      left.add(node);
       removers.get(node)?.();
-      node.dispose();
+      // Off the stage at once, and ended when the step is over: the rest of an update that still holds it, as a
+      // loop over a list it was in does, may set it without failing.
+      node.parent?.removeChild(node);
+      leaving.push(node);
     },
     onTap(node, callback) {
       if (typeof callback !== 'function') throw invalid('onTap takes a sprite and a function');
       if (browser.pointer === undefined) return;
       node.touchEnabled = true;
       node.on(browser.pointer.events.tap, tapListener(callback, fail));
+      if (!tappable.includes(node)) tappable.push(node);
     },
     overlaps(a, b, shrink = 0) {
       if (!seen(a) || !seen(b)) return false;
@@ -1031,6 +1093,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       }
       moving = [];
       for (const made of [world, ui]) while (made.numChildren > 0) game.remove(made.getChildAt(0));
+      endRemoved();
       for (const piece of pieces) {
         piece.life = 0;
         piece.node.visible = false;

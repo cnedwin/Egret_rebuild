@@ -50,6 +50,11 @@
       "criticalComment": true
     },
     {
+      "path": "examples/play/play-breakout.mjs",
+      "originRole": "First-party script for the game check that plays the breakout of the play example to its end; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "examples/play/README.md",
       "originRole": "First-party guide to the play example; independently authored with AI assistance; Apache-2.0."
     },

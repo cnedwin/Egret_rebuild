@@ -77,16 +77,16 @@ await play({
 | `game.sprite(g => …)` | 一个精灵，内容由函数绘制：`g` 是它的 [Graphics](graphics.md)，例如 `g.beginFill(0xff0000).drawRoundRect(-20, -10, 40, 20, 6).endFill()` |
 | `game.text(words, { x, y, size, color, align, bold })` | 一行文字，见下文 |
 | `game.button(words, { x, y, width, height, color }, onTap)` | `ui` 层里的一个按钮，中心在 (x, y)，文字居中；用 `button.label.text` 修改文字 |
-| `game.remove(sprite)` | 把它连同里面的内容从舞台上拿掉并结束它。重复移除不会出错 |
+| `game.remove(sprite)` | 立刻把它连同里面的内容从舞台上拿掉，并在这次更新结束时结束它。重复移除不会出错 |
 | `game.toFront(sprite)` | 把它放到同一层其他精灵的前面 |
 
-每个调用都返回一个精灵。可以随时设置它的 `x`、`y`、`rotation`（角度）、`scaleX`、`scaleY`、`alpha`（0 到 1）和 `visible`，读取它的 `width` 和 `height`，也可以加上自己的属性（`enemy.hp = 3`）。颜色是一个数字 `0xRRGGBB`。
+每个调用都返回一个精灵。可以随时设置它的 `x`、`y`、`rotation`（角度，顺时针）、`scaleX`、`scaleY`、`alpha`（0 到 1）和 `visible`，读取它的 `width` 和 `height`，也可以加上自己的属性（`enemy.hp = 3`）。颜色是一个数字 `0xRRGGBB`。已移除的精灵在移除它的那次更新结束之前仍然可以设置，所以还拿着它的循环不会出错；之后再设置会抛出 `OBJECT_DISPOSED`，此时 `sprite.isDisposed` 为真。
 
 精灵绕自己的原点旋转和缩放：`rect` 和 `circle` 的原点在中心，`game.sprite` 的原点是绘制内容的 (0, 0)。所以把 `scaleX` 缓动到 0 再回来，卡片就绕中心翻转。精灵按创建顺序绘制，后创建的在前面。要改变精灵的样子，就重新画一遍：`sprite.graphics.clear().beginFill(0x00ff00).drawRect(-10, -10, 20, 20).endFill()`。
 
 `game.world` 是这些内容所在的层。`game.ui` 是盖在它上面、保持不动的层；做状态条或面板时把它作为最后一个参数传入，例如 `game.rect(240, 20, 480, 40, 0x000000, game.ui)`。任何精灵都可以当作层：在它里面创建的内容会跟着它一起移动、旋转、淡出和移除。`game.view.x` 和 `game.view.y` 决定看到世界的哪一部分，比舞台宽的关卡用 `game.view.x = hero.x - game.width / 2` 就能卷动。
 
-**文字。** `const score = game.text('分数 0', { x: 240, y: 8, align: 'center' })` 画在 `ui` 层，创建后立刻可用；内容变化时设置 `score.text = '分数 ' + n`（直接给数字也可以）。`align` 说明 `x` 是文字的哪一部分：`'left'`、`'center'` 或 `'right'`。不指定时 `size` 为 24，`color` 为白色。`y` 是文字的顶部，加上 `baseline: 'middle'` 则是文字的中线。文字里的 `\n` 会换行。`{ layer: 'world' }` 把文字放进世界层，例如命中后向上飘的数字；`{ layer: tile, align: 'center', baseline: 'middle' }` 把文字放在一个精灵上，位于精灵的原点，并跟着它移动。文字就是一个精灵，可以像精灵一样移动、淡出、缓动和移除。字体用页面自己的，设备上有中文、日文、韩文字体时就能显示。
+**文字。** `const score = game.text('分数 0', { x: 240, y: 8, align: 'center' })` 画在 `ui` 层，创建后立刻可用；内容变化时设置 `score.text = '分数 ' + n`（直接给数字也可以）。`align` 说明 `x` 是文字的哪一部分：`'left'`、`'center'` 或 `'right'`。不指定时 `size` 为 24，`color` 为白色；之后可以用 `score.color` 和 `score.size` 修改。`y` 是文字的顶部，加上 `baseline: 'middle'` 则是文字的中线。文字里的 `\n` 会换行。`{ layer: 'world' }` 把文字放进世界层，例如命中后向上飘的数字；`{ layer: tile, align: 'center', baseline: 'middle' }` 把文字放在一个精灵上，位于精灵的原点，并跟着它移动。文字就是一个精灵，可以像精灵一样移动、淡出、缓动和移除。字体用页面自己的，设备上有中文、日文、韩文字体时就能显示。
 
 ## 输入
 
@@ -102,7 +102,7 @@ await play({
 | `game.pointer.over(sprite)` | 指针是否在精灵画出的内容上 |
 | `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
 
-键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。在舞台任何位置按下，`game.pointer.pressed` 都为真，按在按钮上也一样；不希望按钮下面的游戏收到这次按下时，先判断 `game.pointer.over(button)`。
+键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。按在舞台上、且下面没有按钮和带 `onTap` 的精灵时，`game.pointer.pressed` 为真：按在它们上面的那一下只属于它们，所以“按哪里就在哪里放东西”的游戏不会把东西放到自己的按钮下面。任何按下都会让 `game.pointer.down` 为真。
 
 ## 声音
 
@@ -122,7 +122,7 @@ await play({
 | `game.near(a, b, distance)` | 两者的中心是否在 `distance` 以内：圆形判定，例如半径为 6 和 14 时写 `game.near(bullet, enemy, 6 + 14)` |
 | `game.pushOut(a, b)` | 要让 `a` 不再与 `b` 重叠，需要把 `a` 移动多少（走较短的方向）：`{ x, y }`，其中一个为 0；不重叠时是 `undefined` |
 
-`overlaps`、`hits` 和 `hitsAll` 的第三个参数让双方每一边都缩进这么多单位，判定更宽松。隐藏的、已移除的或什么都没画的精灵不与任何东西重叠；精灵不会和自己碰撞，所以列表里可以包含它自己。
+`overlaps`、`hits` 和 `hitsAll` 的第三个参数让双方每一边都缩进这么多单位，判定更宽松。用 `visible = false` 隐藏的、已移除的或什么都没画的精灵不与任何东西重叠；`alpha` 为 0 的精灵仍然会重叠。精灵不会和自己碰撞，所以列表里可以包含它自己。
 
 角色站在平台上、被墙挡住，用的就是 `pushOut`：
 

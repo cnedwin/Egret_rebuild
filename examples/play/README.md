@@ -46,4 +46,4 @@ node examples/play/verify.mjs <absolute Playwright index.mjs> <new absolute outp
 
 It plays each game to its end with the keyboard and the mouse, reading the page from its pictures: nothing in a game is there for the check. In the breakout the paddle follows the pointer and the arrows, a brick breaks with a sound, the paddle is then kept away from the ball until three are lost, and the button brings every brick back. In the platformer the hero lands, jumps, runs by a held pointer and by a key to the goal, and the button puts it back at the start. In the memory game the check turns cards two at a time, remembers their colours, finds all eight pairs, and the button turns the sixteen face down again. Sounds are counted, not heard. It runs WebGL2 on software rendering; a phone, other browsers and WebGPU were not run.
 
-To check a game of your own that is one page, see `tools/verify-game.mjs`.
+To check a game of your own that is one page, see `tools/verify-game.mjs`. It plays blind; given a script, it plays the game as a person would, and [play-breakout.mjs](play-breakout.mjs) is one, taking the breakout to its end.
