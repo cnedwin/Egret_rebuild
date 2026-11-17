@@ -534,15 +534,17 @@ export function writeTiledLights3D(
     if (!inFront) continue;
     if (behind) (minX = -1), (minY = -1), (maxX = 1), (maxY = 1);
     if (maxX < -1 || minX > 1 || maxY < -1 || minY > 1) continue;
-    // Normalized device coordinates to tiles, in the fragment's row order.
+    // Choose the fragment's coordinate origin before dividing by the tile size.
+    // Flipping tile indices would mirror the padding in a partial tile too.
     const left = Math.max(0, Math.floor((((Math.max(minX, -1) + 1) / 2) * width) / tile)),
       right = Math.min(tilesX - 1, Math.floor((((Math.min(maxX, 1) + 1) / 2) * width) / tile)),
-      lowRow = Math.floor((((Math.max(minY, -1) + 1) / 2) * height) / tile),
-      highRow = Math.floor((((Math.min(maxY, 1) + 1) / 2) * height) / tile);
-    let bottom = Math.max(0, Math.min(lowRow, highRow)),
-      top = Math.min(tilesY - 1, Math.max(lowRow, highRow));
-    if (yDown) [bottom, top] = [Math.max(0, tilesY - 1 - top), Math.min(tilesY - 1, tilesY - 1 - bottom)];
-    for (let ty = bottom; ty <= top; ty++)
+      ndcMinY = Math.max(minY, -1),
+      ndcMaxY = Math.min(maxY, 1),
+      firstY = (yDown ? 1 - ndcMaxY : 1 + ndcMinY) * 0.5 * height,
+      lastY = (yDown ? 1 - ndcMinY : 1 + ndcMaxY) * 0.5 * height,
+      firstRow = Math.floor(firstY / tile),
+      lastRow = Math.min(tilesY - 1, Math.floor(lastY / tile));
+    for (let ty = firstRow; ty <= lastRow; ty++)
       for (let tx = left; tx <= right; tx++) {
         const list = lists[ty * tilesX + tx]!;
         if (list.length < T.maxPerTile) list.push(i);
