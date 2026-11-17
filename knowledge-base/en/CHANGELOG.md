@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Play: models, taps on things, loops, the mouse and the gamepad — 2026-11-17
+
+What the demo games of PortedGamesEgret each wrote for themselves, `play` and `play3d` now have. `game.add(model)` makes any mesh, group or loaded glTF a thing of `play3d`, with its box worked out from its geometry, and `game.onTap(thing)` finds it by a ray from the camera. `game.sfx.loop(name)` plays a sound until it is stopped, with a volume, a pitch and a pan to change as it plays; `hum` and `wind` are made to be looped, and a tone takes `seamless`. `game.pointer` gives `dx`, `dy` and `wheel`, and `lock()` for a first-person view; `keys.axis()` reads a gamepad's left stick and `keys.look()` its right one.
+
 ## The single files are egret2d.js and egret3d.js — 2026-11-17
 
 The packer now writes `egret2d.js` for a script tag and `egret2d.mjs` for import, and `egret3d.js` and `egret3d.mjs` with World3D and `play3d` (they were `egret.global.js`, `egret.js`, `egret3d.global.js` and `egret3d.js`). Beside them it puts `llms.txt`, the licence, the notice and the licence of robust-predicates, so its directory is what a release hands over. A ground made by `play3d` is 8 deep instead of 1: a ball dropped in a slow first frame fell through it.

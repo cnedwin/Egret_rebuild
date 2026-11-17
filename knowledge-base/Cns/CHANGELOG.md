@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## Play：模型、点击物体、循环声音、鼠标视角和手柄 — 2026-11-17
+
+PortedGamesEgret 中每个示例游戏各自手写的部分，`play` 和 `play3d` 现在都提供了。`game.add(model)` 把任意网格、组或加载的 glTF 变成 `play3d` 的物体，包围盒由几何体算出；`game.onTap(thing)` 用相机射线找到被点中的物体。`game.sfx.loop(name)` 循环播放声音直到停止，播放中可以改音量、音高和声像；`hum` 和 `wind` 专为循环而做，音调支持 `seamless`。`game.pointer` 提供 `dx`、`dy`、`wheel`，以及用于第一人称视角的 `lock()`；`keys.axis()` 读取手柄左摇杆，`keys.look()` 读取右摇杆。
+
 ## 单文件改名为 egret2d.js 和 egret3d.js — 2026-11-17
 
 打包工具现在写出用于 script 标签的 `egret2d.js`、用于 import 的 `egret2d.mjs`，以及包含 World3D 和 `play3d` 的 `egret3d.js` 和 `egret3d.mjs`（原来叫 `egret.global.js`、`egret.js`、`egret3d.global.js` 和 `egret3d.js`）。它还在旁边放上 `llms.txt`、许可证、NOTICE 和 robust-predicates 的许可证，所以输出目录就是一次发布要交出的内容。`play3d` 创建的地面厚度从 1 改为 8：在较慢的第一帧里落下的球曾经穿过地面。

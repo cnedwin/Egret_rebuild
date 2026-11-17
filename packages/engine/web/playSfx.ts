@@ -20,6 +20,11 @@ export interface SfxTone {
   readonly decay?: number;
   /** White noise mixed into the wave, 0 to 1; 0 unless given. */
   readonly noise?: number;
+  /**
+   * Made to be looped: its ends are not eased, so a tone of whole waves joins itself without a click. Give it a
+   * `decay` of 0 and a length of whole waves, as `hum` has: 110 hertz for 1 second is 110 waves.
+   */
+  readonly seamless?: boolean;
 }
 /** An effect: one tone, or several played one after another. */
 export type SfxRecipe = SfxTone | readonly SfxTone[];
@@ -44,6 +49,9 @@ export const SFX_PRESETS: Readonly<Record<string, SfxRecipe>> = Object.freeze({
   bounce: { wave: 'sine', from: 420, to: 250, seconds: 0.09, volume: 0.6, decay: 4 },
   pop: { wave: 'sine', from: 650, to: 1150, seconds: 0.07, volume: 0.5, decay: 5 },
   click: { wave: 'square', from: 800, seconds: 0.04, volume: 0.5, decay: 5 },
+  // Made for sfx.loop: an engine or a machine, whose pitch a game raises with its speed, and the wind.
+  hum: [{ wave: 'saw', from: 55, seconds: 1, volume: 0.35, decay: 0, noise: 0.08, seamless: true }],
+  wind: { wave: 'noise', from: 600, seconds: 2, volume: 0.3, decay: 0, seamless: true },
   win: [
     { wave: 'square', from: 523, seconds: 0.1, volume: 0.35, decay: 1 },
     { wave: 'square', from: 659, seconds: 0.1, volume: 0.35, decay: 1 },
@@ -82,7 +90,8 @@ export function isSfxRecipe(recipe: unknown): recipe is SfxRecipe {
         tone.seconds <= 3 &&
         (tone.volume === undefined || (finite(tone.volume) && tone.volume >= 0 && tone.volume <= 1)) &&
         (tone.decay === undefined || (finite(tone.decay) && tone.decay >= 0 && tone.decay <= 40)) &&
-        (tone.noise === undefined || (finite(tone.noise) && tone.noise >= 0 && tone.noise <= 1))
+        (tone.noise === undefined || (finite(tone.noise) && tone.noise >= 0 && tone.noise <= 1)) &&
+        (tone.seamless === undefined || typeof tone.seamless === 'boolean')
     )
   );
 }
@@ -112,7 +121,7 @@ export function synthesizeSfx(recipe: SfxRecipe, sampleRate = 22050, seed = 1): 
       decay = tone.decay ?? 4,
       mixed = tone.noise ?? 0;
     // The ends are eased over a few milliseconds, so a tone neither starts nor stops with a click.
-    const edge = Math.min(Math.round(sampleRate * 0.004), length >> 1);
+    const edge = tone.seamless === true ? 0 : Math.min(Math.round(sampleRate * 0.004), length >> 1);
     let phase = 0,
       held = random();
     for (let i = 0; i < length; i++) {
@@ -131,7 +140,7 @@ export function synthesizeSfx(recipe: SfxRecipe, sampleRate = 22050, seed = 1): 
         value = held;
       }
       if (mixed > 0) value = value * (1 - mixed) + random() * mixed;
-      const fade = Math.min(1, i / (edge || 1), (length - 1 - i) / (edge || 1));
+      const fade = edge === 0 ? 1 : Math.min(1, i / edge, (length - 1 - i) / edge);
       samples[at + i] = Math.max(-1, Math.min(1, value * volume * Math.exp(-decay * u) * fade));
     }
     at += length;

@@ -10,6 +10,8 @@ import type { DisplayObject, Engine, Graphics, Motion, Scope } from '@egret/engi
 import { createRandom, encodeWav } from '@egret/engine/kit';
 import type { Random } from '@egret/engine/kit';
 import { createBrowserAudio } from './audio.js';
+import { createBrowserGamepadInput } from './gamepad.js';
+import type { BrowserGamepadInput } from './gamepad.js';
 import { createBrowserGame } from './game.js';
 import type { BrowserGame, BrowserGameBackend, BrowserGameLabel } from './game.js';
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
@@ -119,8 +121,13 @@ export interface PlayKeys {
   pressed(...keys: string[]): boolean;
   /** Whether any of the keys came up since the last update. */
   released(...keys: string[]): boolean;
-  /** The arrows and WASD as a direction: x and y from -1 to 1, y down, of length 1 at most. */
+  /**
+   * The arrows and WASD as a direction: x and y from -1 to 1, y down, of length 1 at most. The left stick of a
+   * gamepad counts as well, as far as it is pushed.
+   */
   axis(): { x: number; y: number };
+  /** The right stick of a gamepad, for looking or aiming: x and y from -1 to 1, y down; 0 and 0 without one. */
+  look(): { x: number; y: number };
 }
 export interface PlayPointer {
   /** Where the mouse, pen or finger is, on the stage. It follows the mouse whether or not a button is held. */
@@ -135,6 +142,23 @@ export interface PlayPointer {
   readonly swipe: 'left' | 'right' | 'up' | 'down' | undefined;
   /** Whether the pointer is over what a sprite draws, taken as an upright box. */
   over(node: DisplayObject): boolean;
+  /**
+   * How far the mouse moved since the last update, in pixels of the screen: for looking about with the mouse. It
+   * goes on counting at the edge of the screen while the pointer is locked.
+   */
+  readonly dx: number;
+  readonly dy: number;
+  /**
+   * Hides the cursor and keeps the mouse to the game, for looking about. A browser allows it only after a click, so
+   * call it from a tap or from an update where `pressed` is true; Escape gives the mouse back.
+   */
+  lock(): void;
+  /** Gives the mouse back. */
+  unlock(): void;
+  /** Whether the pointer is locked to the game. */
+  readonly locked: boolean;
+  /** The turn of the mouse wheel since the last update: above 0 towards the user. */
+  readonly wheel: number;
 }
 /** A tween of `game.tween`: a motion that can be waited for. */
 export type PlayMotion<T extends object> = Motion<T> & {
@@ -156,9 +180,29 @@ export interface PlayButtonOptions {
 }
 /** A button: a sprite whose middle is at (x, y), with its words in `label`. */
 export type PlayButton = Sprite & { readonly label: PlayText };
+/** A sound that goes on until it is stopped: music, an engine, the wind. Change it while it plays. */
+export interface PlayLoop {
+  /** 0 to 1. */
+  volume: number;
+  /** 1 as written, 2 an octave up, from 0.25 to 4: an engine's pitch follows its speed. */
+  pitch: number;
+  /** -1 the left side alone, 1 the right alone. */
+  pan: number;
+  /** Ends it, over `seconds` of fading, 0.1 unless given. Stopping it twice does nothing. */
+  stop(seconds?: number): void;
+  readonly stopped: boolean;
+}
 export interface PlaySfx {
   /** Plays an effect by name: one of `names`. `pitch` is 1 as written, 2 an octave up. */
-  play(name: string, options?: { readonly volume?: number; readonly pitch?: number }): void;
+  play(name: string, options?: { readonly volume?: number; readonly pitch?: number; readonly pan?: number }): void;
+  /**
+   * Plays an effect again and again until it is stopped: `hum` and `wind` are made to be looped, and a list of tones
+   * defined with `define` loops as a tune. `restart` and `dispose` stop every loop; a pause holds them.
+   */
+  loop(
+    name: string,
+    options?: { readonly volume?: number; readonly pitch?: number; readonly pan?: number; readonly fadeIn?: number }
+  ): PlayLoop;
   /** Adds an effect, or replaces one. It can be played from the next update on. */
   define(name: string, recipe: SfxRecipe): void;
   /** The names that can be played. */
@@ -310,6 +354,109 @@ function codeOf(key: string): string {
 const SWIPE = 24;
 const PIECES = 256;
 
+type MixerLike = ReturnType<typeof createBrowserAudio>['mixer'];
+type VoiceLike = ReturnType<MixerLike['play']>;
+/** A loop of `sfx.loop`. Its voice starts once its sound is made, which is at once for the effects every game has. */
+class PlayingLoop implements PlayLoop {
+  #voice: VoiceLike | undefined;
+  #volume: number;
+  #pitch: number;
+  #pan: number;
+  #master = 1;
+  #stopped = false;
+  public constructor(
+    sound: () => Parameters<MixerLike['play']>[0] | undefined,
+    mixer: MixerLike,
+    volume: number,
+    pitch: number,
+    pan: number,
+    fadeIn: number
+  ) {
+    this.#volume = Math.max(0, Math.min(1, volume));
+    this.#pitch = Math.max(0.25, Math.min(4, pitch));
+    this.#pan = Math.max(-1, Math.min(1, pan));
+    const made = sound();
+    if (made === undefined) return;
+    try {
+      this.#voice = mixer.play(made, {
+        loop: true,
+        volume: 0,
+        rate: this.#pitch,
+        pan: this.#pan,
+        whileSilent: 'start',
+        ...(fadeIn > 0 ? { fadeIn: Math.min(fadeIn, 60) } : {})
+      });
+    } catch {
+      // Sound never stops a game.
+    }
+  }
+  /** The volume of every effect, or 0 while they are muted. */
+  public heard(master: number): void {
+    this.#master = master;
+    this.#apply();
+  }
+  #apply(): void {
+    try {
+      this.#voice?.setVolume(this.#stopped ? 0 : this.#volume * this.#master);
+    } catch {
+      /* A voice that has ended takes nothing. */
+    }
+  }
+  public get volume(): number {
+    return this.#volume;
+  }
+  public set volume(value: number) {
+    if (!finite(value)) return;
+    this.#volume = Math.max(0, Math.min(1, value));
+    this.#apply();
+  }
+  public get pitch(): number {
+    return this.#pitch;
+  }
+  public set pitch(value: number) {
+    if (!finite(value)) return;
+    this.#pitch = Math.max(0.25, Math.min(4, value));
+    try {
+      this.#voice?.setRate(this.#pitch);
+    } catch {
+      /* As above. */
+    }
+  }
+  public get pan(): number {
+    return this.#pan;
+  }
+  public set pan(value: number) {
+    if (!finite(value)) return;
+    this.#pan = Math.max(-1, Math.min(1, value));
+    try {
+      this.#voice?.setPan(this.#pan);
+    } catch {
+      /* As above. */
+    }
+  }
+  public get stopped(): boolean {
+    return this.#stopped;
+  }
+  public stop(seconds = 0.1): void {
+    if (this.#stopped) return;
+    this.#stopped = true;
+    try {
+      this.#voice?.stop(finite(seconds) && seconds > 0 ? { fade: Math.min(seconds, 60) } : undefined);
+    } catch {
+      /* As above. */
+    }
+  }
+  /** Held while the game is paused. */
+  public hold(held: boolean): void {
+    try {
+      if (held) this.#voice?.pause();
+      else this.#voice?.resume();
+    } catch {
+      /* As above. */
+    }
+  }
+}
+
 /** Starts a game in the page. See the guide `play.md`. */
 export async function play(options: PlayOptions): Promise<PlayGame> {
   if (options === null || typeof options !== 'object') throw invalid('play takes an object of options');
@@ -398,28 +545,71 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     point.down = false;
   };
   const any = (set: Set<string>, keys: readonly string[]): boolean => keys.some(key => set.has(codeOf(String(key))));
+  // A gamepad, where the page has them: polled once a step. Its sticks count in `axis` and `look`.
+  let pads: BrowserGamepadInput | undefined;
+  try {
+    pads = scope.use(createBrowserGamepadInput());
+  } catch {
+    pads = undefined;
+  }
+  const stick = (name: 'left' | 'right'): { x: number; y: number } => {
+    const pad = pads?.input.pads[0];
+    if (pad === undefined) return { x: 0, y: 0 };
+    try {
+      const at = pad.stick(name);
+      return { x: finite(at.x) ? at.x : 0, y: finite(at.y) ? at.y : 0 };
+    } catch {
+      return { x: 0, y: 0 };
+    }
+  };
   const keys: PlayKeys = {
     down: (...names) => any(held, names),
     pressed: (...names) => any(wentDown, names),
     released: (...names) => any(cameUp, names),
     axis() {
-      const x = (any(held, ['right', 'd']) ? 1 : 0) - (any(held, ['left', 'a']) ? 1 : 0),
+      let x = (any(held, ['right', 'd']) ? 1 : 0) - (any(held, ['left', 'a']) ? 1 : 0),
         y = (any(held, ['down', 's']) ? 1 : 0) - (any(held, ['up', 'w']) ? 1 : 0);
       const length = x !== 0 && y !== 0 ? Math.SQRT1_2 : 1;
-      return { x: x * length, y: y * length };
-    }
+      x *= length;
+      y *= length;
+      const pushed = stick('left');
+      if (x === 0 && y === 0 && (pushed.x !== 0 || pushed.y !== 0)) {
+        const reach = Math.hypot(pushed.x, pushed.y);
+        return reach > 1 ? { x: pushed.x / reach, y: pushed.y / reach } : pushed;
+      }
+      return { x, y };
+    },
+    look: () => stick('right')
   };
 
   // The pointer: where it is, on the stage, and what changed since the last update.
   const point = {
     x: width / 2,
     y: height / 2,
+    dx: 0,
+    dy: 0,
+    wheel: 0,
     down: false,
     pressed: false,
     released: false,
     swipe: undefined as PlayPointer['swipe'],
     fromX: 0,
     fromY: 0
+  };
+  // The first move a page sees has no move before it, and some browsers give it the whole way from the corner.
+  let seenMove = false;
+  const moved = (event: PointerEvent): void => {
+    if (seenMove || page.pointerLockElement === surface) {
+      if (finite(event.movementX)) point.dx += event.movementX;
+      if (finite(event.movementY)) point.dy += event.movementY;
+    }
+    seenMove = true;
+    place(event);
+  };
+  const turned = (event: WheelEvent): void => {
+    if (finite(event.deltaY)) point.wheel += event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0;
+    // The wheel turns the game, not the page under it.
+    event.preventDefault();
   };
   const place = (event: PointerEvent): void => {
     const at = browser.toStage(event.clientX, event.clientY);
@@ -473,6 +663,35 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     get swipe() {
       return point.swipe;
     },
+    get dx() {
+      return point.dx;
+    },
+    get dy() {
+      return point.dy;
+    },
+    get wheel() {
+      return point.wheel;
+    },
+    lock() {
+      try {
+        const asked = (surface as { requestPointerLock?: () => unknown }).requestPointerLock?.();
+        // A browser that answers with a promise refuses through it, as when no click came first.
+        if (asked !== null && typeof asked === 'object' && 'catch' in asked)
+          (asked as Promise<unknown>).catch(() => {});
+      } catch {
+        // Not allowed now: the game goes on with the mouse free.
+      }
+    },
+    unlock() {
+      try {
+        if (page.pointerLockElement === surface) page.exitPointerLock?.();
+      } catch {
+        // As above.
+      }
+    },
+    get locked() {
+      return page.pointerLockElement === surface;
+    },
     over(node) {
       if (!seen(node)) return false;
       const box = boxOf(node);
@@ -486,7 +705,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     [win, 'keyup', keyUp as EventListener],
     [win, 'blur', letGo],
     [surface, 'pointerdown', pointerDown as EventListener],
-    [win, 'pointermove', place as EventListener],
+    [win, 'pointermove', moved as EventListener],
+    [surface, 'wheel', turned as EventListener],
     [win, 'pointerup', pointerUp as EventListener],
     [win, 'pointercancel', pointerCancel]
   ];
@@ -505,6 +725,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     }
   };
   const names = new Set(Object.keys(SFX_PRESETS));
+  const loops = new Set<PlayingLoop>();
+  const stopLoops = (): void => {
+    for (const each of loops) each.stop(0);
+    loops.clear();
+  };
   let volume = 1,
     muted = false;
   const sfx: PlaySfx = {
@@ -516,12 +741,30 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const sound = sounds.get(name);
       if (sound === undefined || muted) return;
       const loud = Math.max(0, Math.min(1, (finite(given.volume) ? given.volume : 1) * volume)),
-        rate = Math.max(0.25, Math.min(4, finite(given.pitch) ? given.pitch : 1));
+        rate = Math.max(0.25, Math.min(4, finite(given.pitch) ? given.pitch : 1)),
+        pan = Math.max(-1, Math.min(1, finite(given.pan) ? given.pan : 0));
       try {
-        audio.mixer.play(sound, { volume: loud, rate, maxInstances: 6 });
+        audio.mixer.play(sound, { volume: loud, rate, pan, maxInstances: 6 });
       } catch {
         // Sound never stops a game.
       }
+    },
+    loop(name, given = {}) {
+      if (!names.has(name))
+        throw new EgretError('PLAY_SFX_UNKNOWN', {
+          cause: new Error(`"${String(name)}" is not one of: ${[...names].join(', ')}`)
+        });
+      const made = new PlayingLoop(
+        () => sounds.get(name),
+        audio.mixer,
+        finite(given.volume) ? given.volume : 1,
+        finite(given.pitch) ? given.pitch : 1,
+        finite(given.pan) ? given.pan : 0,
+        finite(given.fadeIn) ? given.fadeIn : 0
+      );
+      loops.add(made);
+      made.heard(muted ? 0 : volume);
+      return made;
     },
     define(name, recipe) {
       if (typeof name !== 'string' || name === '' || !isSfxRecipe(recipe))
@@ -537,12 +780,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     set volume(value: number) {
       if (finite(value)) volume = Math.max(0, Math.min(1, value));
+      for (const each of loops) each.heard(muted ? 0 : volume);
     },
     get muted() {
       return muted;
     },
     set muted(value: boolean) {
       muted = Boolean(value);
+      for (const each of loops) each.heard(muted ? 0 : volume);
     }
   };
 
@@ -728,6 +973,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     point.pressed = false;
     point.released = false;
     point.swipe = undefined;
+    point.dx = point.dy = point.wheel = 0;
   };
   // What the function of a tap threw, now or when its promise failed: it stops the game at the next step, as what
   // `update` throws does, and is told the same way.
@@ -740,6 +986,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const { cause } = failure;
       failure = undefined;
       throw cause;
+    }
+    try {
+      pads?.poll();
+    } catch {
+      // A pad that cannot be read is not there.
     }
     if (api === undefined || paused) {
       endFrame();
@@ -1077,9 +1328,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     pause() {
       paused = true;
+      for (const each of loops) each.hold(true);
     },
     resume() {
       paused = false;
+      for (const each of loops) each.hold(false);
     },
     get paused() {
       return paused;
@@ -1090,6 +1343,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       api = undefined;
       timers = [];
       waiting = [];
+      stopLoops();
       for (const entry of moving) {
         entry.motion.stop();
         entry.settle();
@@ -1120,6 +1374,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     async dispose() {
       if (disposed) return;
       disposed = true;
+      stopLoops();
       for (const [target, type, listener] of listening) target.removeEventListener(type, listener);
       await browser.dispose();
       holder?.remove();
