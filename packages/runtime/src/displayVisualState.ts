@@ -153,6 +153,20 @@ export function assertVisualMutable(node: DisplayObject): void {
   engineOf(node)?.assertOpen();
 }
 
+/** A refused display value: the error says which property was set and what it was given. */
+export function invalidDisplayValue(property: string, value: unknown): Error {
+  // An object is named by its kind alone: a refused value is never read.
+  const given =
+    typeof value === "string"
+      ? JSON.stringify(value.length > 40 ? value.slice(0, 40) + "…" : value)
+      : value === null || (typeof value !== "object" && typeof value !== "function" && typeof value !== "symbol")
+        ? String(value)
+        : typeof value === "object"
+          ? "an object"
+          : "a " + typeof value;
+  return new EgretError("DISPLAY_VALUE_INVALID", { cause: new RangeError(`${property} was given ${given}`) });
+}
+
 export function finite(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }

@@ -405,10 +405,24 @@ test('MP browser viewport cancels before revision changes and only fresh downs r
     assert.equal(f.notifications.at(-1).contact.globalX, 40);
     assert.equal(f.notifications.at(-1).contact.viewportRevision, revision + 1);
   }));
+test('MP browser an ancestor that is only moved or scaled, as centring does, keeps input open', async () =>
+  fixture(f => {
+    f.browser.emit(f.browser.canvas, 'pointerdown');
+    f.browser.css(f.browser.parent, 'transform', 'matrix(1, 0, 0, 1, -480, -320)');
+    f.browser.emit(f.browser.window, 'pointermove');
+    assert.equal(f.input.state, 'active');
+    f.browser.css(f.browser.parent, 'transform', 'matrix(0.5, 0, 0, 0.5, 12, 0)');
+    f.browser.css(f.browser.parent, 'translate', '10px 4px');
+    f.browser.css(f.browser.parent, 'scale', '1.25');
+    f.browser.emit(f.browser.window, 'pointermove');
+    assert.equal(f.input.state, 'active');
+    assert.equal(f.diagnostics.length, 0);
+  }));
 test('MP browser unsupported ancestor transform retires input and reports', async () =>
   fixture(f => {
     f.browser.emit(f.browser.canvas, 'pointerdown');
-    f.browser.css(f.browser.parent, 'transform', 'matrix(1, 0, 0, 1, 1, 0)');
+    // A turn is not an upright rectangle any more.
+    f.browser.css(f.browser.parent, 'transform', 'matrix(0, 1, -1, 0, 0, 0)');
     f.browser.emit(f.browser.window, 'pointermove');
     assert.equal(f.input.state, 'closed');
     assert.equal(f.input.contacts.length, 0);

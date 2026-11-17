@@ -189,6 +189,20 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
       if (typeof value !== 'string') throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
       return value.trim();
     }
+    // A refusal says which rule of the page's layout was broken, since the code alone cannot.
+    const refused = (why: string): EgretError =>
+      new EgretError('POINTER_INPUT_SURFACE_INVALID', { cause: new Error(why) });
+    /**
+     * Whether a computed `transform` keeps the element an upright rectangle: none, or a matrix that only moves and
+     * scales it by positive amounts. The bounding rectangle then still maps the pointer straight onto the canvas.
+     */
+    function upright(transform: string): boolean {
+      if (transform === 'none') return true;
+      const match = /^matrix\(([^)]*)\)$/.exec(transform);
+      if (!match) return false;
+      const m = match[1]!.split(',').map(Number);
+      return m.length === 6 && m.every(Number.isFinite) && m[0]! > 0 && m[3]! > 0 && m[1] === 0 && m[2] === 0;
+    }
     function profile(): Rectangle {
       dom(canvasBrand, surface);
       if (
@@ -196,10 +210,10 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
         dom(defaultView, document) !== win ||
         dom(connected, surface) !== true
       )
-        throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+        throw refused('the canvas is not in this page: add it to the document before starting input');
       let current: unknown = surface;
       const seen = new Set<unknown>();
-      // Ordinary ancestors only: unsupported transforms/shadow roots are refused.
+      // Ordinary ancestors only: shadow roots and anything that turns, skews or mirrors the canvas are refused.
       while (current !== document) {
         if (
           current === null ||
@@ -208,13 +222,24 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
           seen.size >= 64 ||
           dom(nodeType, current) !== 1
         )
-          throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+          throw refused(
+            'the canvas must be inside ordinary elements of the page, at most 64 deep and not in a shadow root'
+          );
         seen.add(current);
         const style = dom(computedStyle as Operation, win, [current]);
-        if (['transform', 'perspective', 'translate', 'rotate', 'scale'].some(name => css(style, name) !== 'none'))
-          throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+        const where = current === surface ? 'the canvas' : 'an element around the canvas';
+        if (!upright(css(style, 'transform')))
+          throw refused(
+            where +
+              ' has a CSS transform that rotates, skews or mirrors it; only moving and positive scaling are supported'
+          );
+        if (css(style, 'rotate') !== 'none') throw refused(where + ' has a CSS rotate');
+        if (css(style, 'perspective') !== 'none') throw refused(where + ' has a CSS perspective');
+        const scale = css(style, 'scale');
+        if (scale !== 'none' && !scale.split(/\s+/).every(part => Number(part) > 0))
+          throw refused(where + ' has a CSS scale that is not positive');
         const zoom = css(style, 'zoom');
-        if (zoom !== 'normal' && zoom !== '1') throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+        if (zoom !== 'normal' && zoom !== '1') throw refused(where + ' has a CSS zoom other than 1');
         if (current === surface) {
           const edges = [
             'padding-top',
@@ -226,14 +251,14 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
             'border-bottom-width',
             'border-left-width'
           ];
+          if (css(style, 'object-fit') !== 'fill') throw refused('the canvas has a CSS object-fit other than fill');
           if (
-            css(style, 'object-fit') !== 'fill' ||
             edges.some(name => {
               const value = css(style, name);
               return value !== '0px' && value !== '0';
             })
           )
-            throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+            throw refused('the canvas has a CSS border or padding; put them on an element around it instead');
         }
         current = dom(parentNode, current);
       }
@@ -243,7 +268,7 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
         width = dom(rectWidth, value),
         height = dom(rectHeight, value);
       if (!finite(left) || !finite(top) || !finite(width) || !finite(height) || width <= 0 || height <= 0)
-        throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
+        throw refused('the canvas has no size on the page: give it or the element around it a width and a height');
       return { left, top, width, height };
     }
     let bounds = profile();

@@ -393,7 +393,8 @@ export class Graphics {
     return this;
   }
 
-  public clear(): void {
+  /** Removes everything drawn and ends the fill and the line. Returns the graphics, so drawing can follow at once. */
+  public clear(): this {
     assertVisualMutable(this.owner);
     const state = visualOf(this.owner),
       changed = state.primitives.length !== 0 || state.shape !== undefined;
@@ -402,6 +403,7 @@ export class Graphics {
     this.fill = undefined;
     this.line = undefined;
     if (changed) recordVisualChange(this.owner, VISUAL_CONTENT);
+    return this;
   }
 
   /**

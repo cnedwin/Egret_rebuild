@@ -46,7 +46,8 @@ export {
   createDynamicResolution3D,
   createWorld3DApp,
   pickWorld3DBackend,
-  pickWorld3DQuality
+  pickWorld3DQuality,
+  isSoftwareRendered3D
 } from './app3D.js';
 export type {
   DynamicResolution3D,

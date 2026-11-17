@@ -39,9 +39,9 @@ app.show(scene, camera, { onUpdate: (seconds) => game.update(seconds) });
 
 1. the address's `?quality=`;
 2. `storedQuality`, a choice the player made before;
-3. the device: `low` for a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, `high` otherwise.
+3. the device: `low` when WebGL is drawn by software (a headless browser, a virtual machine, a blocked graphics card), for a finger or for a window shorter than 600 pixels; `medium` for 4 GB of memory or less; `high` otherwise.
 
-`pickWorld3DQuality(hints)` gives the same answer.
+`pickWorld3DQuality(hints)` gives the same answer when its `softwareRenderer` hint is `isSoftwareRendered3D()`, which the app asks for you.
 
 | Quality | Pixel ratio | Antialias | Shadows | Post-processing |
 | --- | --- | --- | --- | --- |
@@ -63,8 +63,8 @@ The drawing resolution follows the frame rate unless `dynamicResolution: false` 
 import { createBoxGeometry3D, createCylinderGeometry3D, createGeometryBuilder3D, createStandardMaterial3D, Mesh3D } from '@egret/engine/world3d';
 
 const truck = createGeometryBuilder3D()
-  .add(createBoxGeometry3D(2, 1, 1.6), { position: [0, 1, 0], color: 0x4b5d3a })
-  .add(createCylinderGeometry3D(0.4, 0.4, 0.3), { position: [0.7, 0.4, 0.85], rotation: [Math.PI / 2, 0, 0], color: 0x1a1a1a })
+  .add(createBoxGeometry3D({ width: 2, height: 1, depth: 1.6 }), { position: [0, 1, 0], color: 0x4b5d3a })
+  .add(createCylinderGeometry3D({ radiusTop: 0.4, radiusBottom: 0.4, height: 0.3 }), { position: [0.7, 0.4, 0.85], rotation: [Math.PI / 2, 0, 0], color: 0x1a1a1a })
   .build();
 scene.addChild(new Mesh3D(truck, createStandardMaterial3D({ vertexColors: true })));
 ```

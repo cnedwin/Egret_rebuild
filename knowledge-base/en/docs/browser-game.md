@@ -25,6 +25,23 @@ hero.graphics.beginFill(0x4a7bd0).drawRect(0, 0, 24, 24).endFill();
 
 That is a whole game: the square moves. `await game.dispose()` ends it.
 
+## Three things to know first
+
+**The loop starts when the call returns.** `update` is called on the next frame after `createBrowserGame` resolves, and on every frame after it, whatever the code below the call is still waiting for. A game that goes on to `await` its labels or sounds has `update` running meanwhile: a `let` or `const` declared further down is not there yet (`Cannot access 'state' before initialization`), and that error stops the loop. Make everything `update` reads before the first later `await`, or start the loop yourself when the setup is done:
+
+```js
+const game = await createBrowserGame({ canvas, width: 480, height: 270, autoStart: false, update });
+const score = await game.createLabel({ text: '0' });   // update is not running yet
+const state = { score: 0 };
+game.loop.start();
+```
+
+**What the engine gives back is closed.** `game`, a label, input actions and the other objects the engine returns are frozen: `label.centre = () => …` throws `Cannot add property centre, object is not extensible`. Keep your own data in an object of your own beside them, such as `{ label, anchorX: 0.5 }`.
+
+**An error's message ends with its cause.** What stops the loop is thrown where the console shows it, or given to `onError`. Its message reads from the outside in, `CLOCK_CALLBACK_FAILED: … Cause: DISPLAY_VALUE_INVALID: … Cause: RangeError: alpha was given 1.07`; the last part is the first thing that went wrong. `error.code` is the outermost code and `error.cause` the next error in.
+
+For the rest of a game: [`animate`](api-reference.md) moves and fades display objects in a chain, the [2D camera](camera-2d.md) follows, zooms and shakes, the [game kit](game-kit.md) has input actions, sound cues, random numbers and saves, [audio](audio.md) plays and mixes, [Graphics](graphics.md) draws shapes, and there are [particles](particles.md) and [2D physics](physics-2d.md).
+
 ## What the call makes
 
 | Part | On the game | Made as |
@@ -39,7 +56,7 @@ That is a whole game: the square moves. `await game.dispose()` ends it.
 
 `await game.loadTexture(url)` loads a PNG image and gives the lease of its texture, for `new Bitmap(lease)` or `graphics.beginBitmapFill(lease)`; the lease belongs to `game.scope`, and one address loaded twice is one texture. Other formats are not read: use the [content build](content-build-pipeline.md) for them. `game.host` is the Host, for its status.
 
-**Text.** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` makes a line of text; add `label.display` to the stage and place it, then set `label.text` whenever the words change. The new words are drawn when they are ready and the old ones stay until then; `await label.ready` waits for them. The fonts are the page's own: a system family, or one the page has loaded. The first label loads the page's text rasterizer, so the import map needs `@egret/engine/text`, `@egret/engine/web/text` and `@egret/runtime/text`.
+**Text.** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` makes a line of text; add `label.display` to the stage and place it, then set `label.text` whenever the words change. The new words are drawn when they are ready and the old ones stay until then; `await label.ready` waits for them. Any number of labels may be made or changed together: they are drawn two at a time and the rest wait their turn, and a label whose words change while it is drawn draws the newest next. After `ready`, `label.display.width` and `.height` are the size of the words, so `label.display.x = centre - label.display.width / 2` centres them. The fonts are the page's own: a system family, or one the page has loaded. The first label loads the page's text rasterizer, so the import map needs `@egret/engine/text`, `@egret/engine/web/text` and `@egret/runtime/text`.
 
 **Fitting the canvas.** With `fit`, the game sizes the canvas inside its element now and whenever that element changes size, centred. The element needs a size of its own: one that takes its height from the canvas has nothing to fit to. With `'cover'` the canvas is larger than the element, which should hide what overflows. The stage keeps its width and height in its own units in every mode, and pointer places follow the canvas.
  `game.frame` is the frame the loop draws, and `game.toStage(clientX, clientY)` turns a place on the page, as a pointer event of the page gives it, into a place on the stage.

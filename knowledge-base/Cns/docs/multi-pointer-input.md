@@ -39,7 +39,7 @@ button.on(input.events.tap, () => start());
 
 视口修订变化时，先按旧修订取消全部触点，再发布新映射，随后需要新的按下。`setInteractive(false)` 暂停准入并取消活动触点；`setInteractive(true)` 不重放输入。应用须将设备就绪状态连接到此开关：WebGL 上下文丢失会暂停浏览器桥接，应用仅在渲染宿主就绪后恢复。WebGPU 和其他宿主须显式连接真实丢失/就绪通知。
 
-浏览器配置要求同一 realm 中已连接的 Canvas、无变换的普通祖先、正常 zoom、Canvas 零边框与内边距，以及 object-fit fill。正数 CSS 边界只映射一次到逻辑坐标，DPR 仅影响渲染。尺寸变化、滚动、方向和可视视口变化会在采用新映射前取消触点；拒绝不支持的 CSS 变换。适配器在触点开始前仅为 Canvas 设置 `touch-action: none`，清理时恢复原内联声明。只监听 Pointer Events，避免额外兼容鼠标通道重复激活。
+浏览器配置要求同一 realm 中已连接的 Canvas、最多只做了平移和正数缩放的普通祖先（用 `transform: translate(-50%, -50%)` 居中可以接受；旋转、倾斜、镜像和透视会被拒绝）、正常 zoom、Canvas 零边框与内边距，以及 object-fit fill。被拒绝时抛出 `POINTER_INPUT_SURFACE_INVALID`，错误信息末尾说明违反的是哪一条。正数 CSS 边界只映射一次到逻辑坐标，DPR 仅影响渲染。尺寸变化、滚动、方向和可视视口变化会在采用新映射前取消触点；拒绝不支持的 CSS 变换。适配器在触点开始前仅为 Canvas 设置 `touch-action: none`，清理时恢复原内联声明。只监听 Pointer Events，避免额外兼容鼠标通道重复激活。
 
 窗口失焦、文档隐藏、pagehide、pointercancel 和活动原生捕获丢失会清除触点。Scope 销毁和 Engine 关闭会终止桥接并清理监听器；Engine 在等待宿主结束前启动该清理。重新交互需要新的按下。普通编辑焦点变化不等于窗口失焦。悬停和滚轮有自己的可选入口和[指南](pointer-hover.md)，并与本桥接共用画布。小游戏/原生适配器，以及浏览器键盘和 IME 集成仍有各自 M3.3 验收项。
 

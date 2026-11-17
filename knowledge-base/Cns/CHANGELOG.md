@@ -4,6 +4,10 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 修复让第一个游戏跑不起来的问题 — 2026-11-17
+
+错误信息现在以原因结尾（`… Cause: DISPLAY_VALUE_INVALID: … Cause: RangeError: alpha was given 1.07`），被拒绝的显示属性值会说明是哪个属性、给了什么值。指针和悬停输入接受祖先被 CSS 平移或缩放的画布，例如用 `transform: translate(-50%, -50%)` 居中；拒绝时说明违反了哪条规则。`createBrowserGame` 的 label 会排队绘制，可以同时创建或修改很多个而不出现 `TEXT_CACHE_BUDGET`。`animate` 在回弹类缓动下把 alpha 限制在 0 到 1。`graphics.clear()` 返回 graphics 本身。浏览器游戏指南说明了循环何时开始、返回的对象是冻结的；World3D 应用指南里的几何体调用改为传入选项对象。
+
 ## 八盏以外的点光源按屏幕分块照明 — 2026-11-17
 
 World3D 每帧在 WebGL2 和 WebGPU 上按屏幕分块额外照亮最多 256 盏点光源（分块前向光照），不再舍去。`renderer.info.lightsTiled` 记录数量；设置 `renderer.tiledLights = false` 恢复舍去。分块照明的灯不投射阴影。
