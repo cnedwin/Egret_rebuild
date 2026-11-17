@@ -187,6 +187,7 @@ export class WebGPURenderer3D implements Renderer3D {
     triangles: 0,
     visited: 0,
     culled: 0,
+    lightsDropped: 0,
     shadowMaps: 0,
     programs: 0,
     geometries: 0,
@@ -1658,6 +1659,7 @@ export class WebGPURenderer3D implements Renderer3D {
     info.drawCalls = info.triangles = 0;
     info.visited = list.stats.visited;
     info.culled = list.stats.culled;
+    info.lightsDropped = list.stats.lightsDropped;
 
     const atlas = this.ensureShadowAtlas();
     const plans = planShadows3D(

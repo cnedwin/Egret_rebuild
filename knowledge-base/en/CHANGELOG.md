@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Keep the World3D lights nearest the camera — 2026-11-17
+
+When more point or spot lights are lit than a frame draws (eight and four), each frame now keeps those whose range reaches the camera and then the brightest at the camera's distance, instead of the first ones in scene order. `renderer.info.lightsDropped` counts the rest. A material created with additive, multiply or premultiplied blending now defaults to the blended pass instead of drawing as an opaque square. [World3D lights](docs/world3d.md#lights-and-shadows)
+
 ## Separate World3D instance uploads — 2026-11-17
 
 Instance matrix and color setters update their own GPU buffers. The Windows SnowTemple replay removed 17,600 bytes of steady snow-color uploads per frame (−17.4% of measured buffer writes). Frame-interval p95 stayed at 4.3 ms. The grass-cell experiment reduced triangles and increased draws, so the existing single batch was retained for that route. [World3D instancing and evidence](docs/world3d.md#meshes-instancing-skinning-and-morphing)
