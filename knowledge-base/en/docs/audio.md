@@ -29,6 +29,8 @@ The adapter fetches nothing for `decode`: a game reads the bytes of a file the w
 
 **A hidden page** is silent: the adapter asks for silence under the name `'hidden'` while `document.visibilityState` is `'hidden'`. `pauseWhenHidden: false` turns this off.
 
+**A limiter** keeps a crowd of sounds from clipping: `createBrowserAudio({ limiter: true })` puts a compressor between the master volume and the speakers, and an object sets its `threshold`, `knee`, `ratio`, `attack` and `release`. Named effects that rotate takes and cool down are in [the game kit](game-kit.md#sound-effects-by-name).
+
 What fails where nothing can be returned, in a listener of the page or after the output was asked to start or stop, goes to `onError`, or to `reportError` of the page without it.
 
 ## Sounds

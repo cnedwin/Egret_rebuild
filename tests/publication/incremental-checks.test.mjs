@@ -9220,7 +9220,20 @@ function withoutSemanticsEntries(raw) {
   );
   return prior;
 }
-// The browser game kit entry is the newest. Taking it out gives the package as the browser game entry left it.
+// The DOM-free game kit entry is the newest. Taking it out gives the package as the browser kit entry left it.
+function withoutKitEntry(raw) {
+  const value = JSON.parse(raw);
+  if (!Object.hasOwn(value.exports, './kit')) return raw;
+  assert.deepEqual(value.exports['./kit'], { types: './dist/kit.d.ts', import: './dist/kit.js' });
+  delete value.exports['./kit'];
+  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+  assert.deepEqual(
+    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
+    { bytes: 5434, sha256: 'a970db03f9fe60884a9f4955178475d2a1ce9ac0bbdd1d99af177bb0c2732812' }
+  );
+  return prior;
+}
+// Taking the browser game kit entry out gives the package as the browser game entry left it.
 function withoutWebKitEntry(raw) {
   const value = JSON.parse(raw);
   if (!Object.hasOwn(value.exports, './web/kit')) return raw;
@@ -9384,7 +9397,7 @@ function restoreScene3dEntries(raw) {
                   withoutParticlesEntry(
                     withoutPhysics2dEntry(
                       withoutBitmapfontEntry(
-                        withoutVideoEntry(withoutLoopEntry(withoutGameEntry(withoutWebKitEntry(raw))))
+                        withoutVideoEntry(withoutLoopEntry(withoutGameEntry(withoutWebKitEntry(withoutKitEntry(raw)))))
                       )
                     )
                   )

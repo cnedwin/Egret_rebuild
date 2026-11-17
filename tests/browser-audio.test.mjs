@@ -115,6 +115,12 @@ function page(options = {}) {
       context.nodes.push(node);
       return node;
     },
+    createDynamicsCompressor() {
+      const node = new Node('compressor');
+      for (const name of ['threshold', 'knee', 'ratio', 'attack', 'release']) node[name] = new Param(0);
+      context.nodes.push(node);
+      return node;
+    },
     createChannelSplitter(count) {
       const node = new Node('splitter');
       node.count = count;
@@ -1423,3 +1429,39 @@ test('BA31 a page hidden and shown in the same turn ends sounding', async () =>
     },
     { page: { state: 'running' } }
   ));
+
+test('BA32 a limiter sits between the master volume and the speakers when asked for', async () => {
+  await fixture(
+    async ({ audio, context }) => {
+      const compressor = context.nodes.find(node => node.kind === 'compressor');
+      assert.ok(compressor, 'a compressor is made');
+      assert.deepEqual(compressor.to, [context.destination]);
+      assert.equal(audio.output.to[0], compressor, 'the master volume goes through it');
+      assert.deepEqual(
+        ['threshold', 'knee', 'ratio', 'attack', 'release'].map(name => compressor[name].value),
+        [-10, 4, 12, 0.003, 0.16]
+      );
+      audio.dispose();
+      assert.equal(compressor.to.length, 0, 'taken off when the sound ends');
+    },
+    { audio: { limiter: { threshold: -10 } }, page: { state: 'running' } }
+  );
+  await fixture(
+    async ({ audio, context }) => {
+      assert.equal(
+        context.nodes.some(node => node.kind === 'compressor'),
+        false,
+        'none by default'
+      );
+      assert.equal(audio.output.to[0], context.destination);
+    },
+    { page: { state: 'running' } }
+  );
+  await fixture(
+    async () => {
+      assert.throws(() => createBrowserAudio({ limiter: 'loud' }), coded('AUDIO_OPTIONS_INVALID'));
+      assert.throws(() => createBrowserAudio({ limiter: { ratio: NaN } }), coded('AUDIO_OPTIONS_INVALID'));
+    },
+    { create: false }
+  );
+});

@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 41 个入口、1196 个导出，其中 743 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 42 个入口、1244 个导出，其中 765 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1301,10 +1301,55 @@
 | `FrameLoopEngine` | 接口 | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | 接口 | What the loop asks of a Host: how many frames it holds that it has not finished. |
 
+## `@egret/engine/kit`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `ASSET_BUNDLE_HEADER_BYTES` | 值 | How many bytes from the start must be read to know the index's length: the header. |
+| `assetBundleCheck` | 函数 | FNV-1a over the bytes, as eight hex digits. |
+| `AssetBundleEntry` | 接口 |  |
+| `AssetBundleIndex` | 接口 |  |
+| `AssetBundleInput` | 接口 | One file to put in a bundle. |
+| `AudioCueDefinition` | 接口 |  |
+| `AudioCuePlayOptions` | 接口 |  |
+| `AudioCues` | 接口 |  |
+| `AudioCuesOptions` | 接口 |  |
+| `createAudioCues` | 函数 | Names the sound effects of a game over `mixer`. |
+| `createInputActions` | 函数 | Makes the actions of `map`. |
+| `createMemorySaveStorage` | 函数 | Storage kept in memory: for tests, for a page without browser storage, or for a game played once. |
+| `createRandom` | 函数 | A generator from a seed (a number or string) or a saved state. |
+| `createSaveStore` | 函数 | Opens the save under `options.key`, migrating an older one. |
+| `describeInputBinding` | 函数 | A readable name for a binding, for settings screens: `Key:KeyW` is `W`, `Mouse:0` is `Left button`. |
+| `encodeWav` | 函数 | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
+| `hashSeed` | 函数 | Turns a string or number into a 32-bit seed. |
+| `InputActionDefinition` | 接口 | An action and the controls that drive it. |
+| `InputActionKind` | 类型 |  |
+| `InputActionMap` | 类型 |  |
+| `InputActions` | 接口 |  |
+| `InputBinding` | 类型 | One physical control, written as a short string: `Key:KeyW` (a `KeyboardEvent.code`), `Mouse:0` (a button number), `Pad:a` or `Pad:7` (a standard gamepad button name or number), `Pad:leftStick` / `Pad:rightStick` (a stick, for vector actions), `Pad:leftStickX+` (one half of a stick axis, for buttons and axes), and `Touch:<name>` for an on-screen control. |
+| `InputBindingSlot` | 类型 | A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... |
+| `InputBindingsSave` | 接口 |  |
+| `InputVector` | 接口 |  |
+| `planAssetBundleRanges` | 函数 | Ranges of the file that hold the named entries, joined where they touch or lie within `gap` bytes. |
+| `Random` | 接口 |  |
+| `RandomState` | 类型 | Four 32-bit words. |
+| `readAssetBundleHeader` | 函数 | The index length a header gives, so a reader can ask for exactly the bytes of the index. |
+| `readAssetBundleIndex` | 函数 | The index of a bundle from its first bytes: at least the header and the index. |
+| `SaveProblem` | 接口 |  |
+| `SaveProblemKind` | 类型 |  |
+| `SaveStorage` | 接口 | Where a save is kept: strings by key. |
+| `SaveStore` | 接口 |  |
+| `SaveStoreOptions` | 接口 |  |
+| `sliceAssetBundle` | 函数 | The bytes of one entry from bytes of the bundle that start at `start` (0 for the whole file), checked against the index. |
+| `writeAssetBundle` | 函数 | One file holding every input, in the order given, each starting at a multiple of four bytes. |
+
 ## `@egret/engine/web/kit`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
+| `bindBrowserInputActions` | 函数 | Listens to the page for the controls of `actions`. |
+| `BrowserAssetBundle` | 接口 |  |
+| `BrowserAssetBundleOptions` | 接口 |  |
 | `BrowserDecodedImage` | 接口 |  |
 | `BrowserImageCanvas` | 接口 |  |
 | `BrowserImageContext` | 接口 |  |
@@ -1313,11 +1358,19 @@
 | `BrowserImagePorts` | 接口 |  |
 | `BrowserImageSource` | 类型 | What `textureFromCanvas` and `decodeBrowserImage` can read pixels from. |
 | `BrowserImageTextureProviderOptions` | 接口 |  |
+| `BrowserInputActions` | 接口 |  |
+| `BrowserInputActionsOptions` | 接口 |  |
+| `browserSaveStorage` | 函数 | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
 | `createBrowserImageTextureProvider` | 函数 | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
+| `createTouchButton` | 函数 | Makes `element` an on-screen button that holds `binding` (such as `Touch:jump`) while a finger is on it. |
+| `createTouchStick` | 函数 | A stick that appears where a finger lands in its zone of `element` and follows it. |
 | `decodeBrowserImage` | 函数 | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
 | `fitBrowserImageSize` | 函数 | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
+| `openBrowserAssetBundle` | 函数 | Opens the bundle at `url`, reading its index. |
 | `sniffBrowserImageFormat` | 函数 | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | 函数 | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
+| `TouchControl` | 接口 |  |
+| `TouchStickOptions` | 接口 |  |
 
 ## `@egret/engine/web/game`
 

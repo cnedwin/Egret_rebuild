@@ -7,6 +7,9 @@ Version labels below identify engineering checkpoints; workspace packages remain
 ## Start a World3D game in one call; models, markers and a readout — 2026-11-17
 
 `createWorld3DApp(canvas, options)` chooses WebGL2 or WebGPU from the address and falls back to WebGL2 when WebGPU has no adapter. It picks a low, medium or high picture quality from the address, a stored choice or the device, makes the Engine, renderer and loop, and lowers the drawing resolution while frames are slow. `pickWorld3DQuality`, `pickWorld3DBackend`, `WORLD3D_QUALITY_PRESETS` and `createDynamicResolution3D` are available on their own. `createGeometryBuilder3D` merges placed, coloured parts into one geometry; `createScreenMarkers3D` keeps page elements on scene points, clinging to the screen edge where asked; `createWorld3DStats` shows a performance readout. [A 3D game in one call](docs/world3d-app.md)
+## Input by action, versioned saves, repeatable random numbers, sound cues and touch controls — 2026-11-17
+
+`@egret/engine/kit` adds `createInputActions` (buttons, axes and vectors over keys, mouse buttons, gamepad buttons and sticks and on-screen controls, with rebinding and saved bindings), `createSaveStore` (a versioned save with migrations that never throws for a full or missing storage) `createRandom` (seeded sfc32 with forks and saved state), `createAudioCues` (named effects that rotate takes, vary pitch, cool down and cap their voices) `encodeWav` for synthesised sounds, and `writeAssetBundle` with `openBrowserAssetBundle` for many assets in one file read by byte ranges. `tools/vendor-game.mjs` copies the files a game's entries load into its folder, with an import map and a Node loader. `createBrowserAudio` takes `limiter`. `@egret/engine/web/kit` adds `bindBrowserInputActions`, `createTouchStick`, `createTouchButton` and `browserSaveStorage`. [The game kit](docs/game-kit.md)
 
 ## Pictures as textures in any browser; catch-up steps in the frame loop — 2026-11-17
 

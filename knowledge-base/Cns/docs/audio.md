@@ -29,6 +29,8 @@ button.onActivate = () => mixer.play(click, { maxInstances: 2 });
 
 **隐藏的页面**是静音的：`document.visibilityState` 为 `'hidden'` 期间，适配器以 `'hidden'` 这个名字请求静音。`pauseWhenHidden: false` 可以关闭这一行为。
 
+**限幅器**让许多声音同时响时不削波：`createBrowserAudio({ limiter: true })` 在总音量和扬声器之间加一个压缩器，传对象可设置 `threshold`、`knee`、`ratio`、`attack` 和 `release`。轮换录音并带冷却的音效提示见[游戏工具包](game-kit.md#按名字播放音效)。
+
 在无法返回结果的地方发生的失败（页面的监听器里，或请求输出开始、停止之后）会交给 `onError`；没有提供时交给页面的 `reportError`。
 
 ## 声音
