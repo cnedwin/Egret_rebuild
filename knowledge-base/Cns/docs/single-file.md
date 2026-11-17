@@ -39,6 +39,7 @@ node tools/pack-single-file.mjs --esbuild <已安装的 esbuild 模块> --out <�
 | --- | --- |
 | `egret.global.js` | 用于 `<script src>`；定义全局对象 `Egret` |
 | `egret.js` | 用于 `import` |
+| `egret3d.global.js`、`egret3d.js` | 同样的两个文件，另外包含 World3D 和 [`play3d`](play3d.md)，用于 3D 游戏。一个页面只加载其中一个文件 |
 | `report.json` | 打包器及其版本、各入口、全部名称，以及每个文件写出时的大小、gzip 和 Brotli 之后的大小、SHA-256 和字节的来源 |
 
 打包器是 [esbuild](https://esbuild.github.io/)。它不是本仓库的依赖：由打包的人指定一份已安装的副本，就像浏览器核对脚本指定一份已安装的 Playwright 一样。文件里除了定义导出的几行以外，没有打包器的代码。每个文件的第一行写明引擎的许可证 Apache-2.0，以及渲染器用到的 `robust-predicates`（Unlicense）。
@@ -56,7 +57,9 @@ node tools/pack-single-file.mjs --esbuild <已安装的 esbuild 模块> --out <�
 
 文件里的每个名称与它所在入口里的是同一个东西；两个不同的东西使用同一个名称时，打包工具会拒绝。文本、图像、音频、补间以及中英文的错误说明都在里面，因为这些入口会加载它们。
 
-不在里面的仍然是各自的入口，以模块方式加载：World3D、界面控件、瓦片地图、2D 相机、带纹理的粒子、2D 物理、段落、文本输入、Spine。需要其中之一的游戏使用各个包，见[在干净的项目中使用预览版](clean-consumer.md)。
+`egret3d.global.js` 包含以上全部，以及两个 World3D 入口 `@egret/engine/world3d` 和 `@egret/engine/webgl2/world3d`，其中有 `play3d`：一共 394 个名称。
+
+两个文件都不包含的仍然是各自的入口，以模块方式加载：界面控件、瓦片地图、2D 相机、带纹理的粒子、2D 物理、段落、文本输入、Spine。需要其中之一的游戏使用各个包，见[在干净的项目中使用预览版](clean-consumer.md)。
 
 ## 有多大
 
@@ -64,8 +67,10 @@ node tools/pack-single-file.mjs --esbuild <已安装的 esbuild 模块> --out <�
 
 | 文件 | KiB | gzip 后 KiB | Brotli 后 KiB |
 | --- | ---: | ---: | ---: |
-| `egret.global.js` | 627.6 | 197.3 | 161.0 |
-| `egret.js` | 627.1 | 197.2 | 160.8 |
+| `egret.global.js` | 628.4 | 197.7 | 161.2 |
+| `egret.js` | 628.0 | 197.5 | 161.1 |
+| `egret3d.global.js` | 1236.0 | 401.7 | 321.8 |
+| `egret3d.js` | 1235.3 | 401.6 | 321.7 |
 
 `egret.global.js` 压缩前的字节来自：
 

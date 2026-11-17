@@ -332,6 +332,49 @@ await scenario(
   }
 );
 
+await scenario(
+  'roll3d: the ball lands, rolls by key to a star, jumps, falls off the edge, and starts again',
+  'roll3d',
+  960,
+  540,
+  async (page, stage) => {
+    // A picture of three dimensions is lit, so colours are read by which part of them is the largest.
+    const parts = colour => [16, 8, 0].map(shift => (colour >> shift) & 255);
+    const red = colour => {
+      const [r, g, b] = parts(colour);
+      return r > 120 && r > 1.6 * g && r > 1.6 * b;
+    };
+    const green = colour => {
+      const [r, g, b] = parts(colour);
+      return g > 60 && g > 1.2 * r && g > 1.1 * b;
+    };
+    // The camera follows the ball, which stays at the middle of the stage, with the ground about it.
+    const ball = look => red(look(480, 270)) || red(look(480, 285)) || red(look(480, 255));
+    await until(page, stage, look => ball(look) && green(look(480, 420)), 'the ball landing on the ground', 15);
+    // A star is three units to the right: rolling there takes it, with a sound.
+    const before = await sounds(page);
+    await page.keyboard.down('ArrowRight');
+    await until(page, stage, async () => (await sounds(page)) > before, 'the star being taken', 10);
+    await page.keyboard.up('ArrowRight');
+    const taken = await sounds(page);
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(400);
+    assert.ok((await sounds(page)) > taken, 'the jump was heard');
+    // Rolling on to the right leaves the ground, twelve units from its middle, and the game ends with its button.
+    await page.keyboard.down('ArrowRight');
+    await until(page, stage, look => alike(look(410, 300), BUTTON), 'falling off the edge', 30);
+    await page.keyboard.up('ArrowRight');
+    await stage.tap(480, 300);
+    await until(
+      page,
+      stage,
+      look => !alike(look(410, 300), BUTTON) && ball(look) && green(look(480, 420)),
+      'the game starting again',
+      15
+    );
+  }
+);
+
 fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(
   report.cases

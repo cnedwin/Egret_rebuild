@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Play3D: a whole small 3D game from one call — 2026-11-17
+
+`play3d` from `@egret/engine/webgl2/world3d` is `play` with a world of three dimensions under it: a World3D app on a canvas of its own, and the keys, pointer, sound, time, text and buttons of `play` drawn clear over it. It adds boxes, balls, cylinders, cones and a ground placed by plain numbers that can be tweened, a camera that follows, a sun, overlap and push-out in three dimensions, a shake of the camera and bursts. `play` takes `transparent: true`. The single-file packer also writes `egret3d.global.js` with World3D and `play3d`, 402 KiB with gzip; `llms.txt` has a 3D section and a 3D game, played to its end by the example's check.
+
 ## Play after a fourth round: removal, text colour, presses, and a script for the check — 2026-11-17
 
 Ten games were written from `llms.txt` alone; nine ran as first written and none fell back to a browser API. What they met is changed here. `game.remove` takes a sprite off the stage at once and ends it when the update is over, so a loop that still holds it may set it without stopping the game. A text takes `color` and `size` after it is made; they used to be ignored without a word. A press on a button or on a sprite with `onTap` is theirs and is no longer also `game.pointer.pressed`. `llms.txt` says which way `rotation` turns, what `pitch` is, that `alpha` 0 still overlaps and what a pause stops. `tools/verify-game.mjs` takes a script that plays a game as a person would, to a win or a loss that blind play does not reach; `examples/play/play-breakout.mjs` is one.

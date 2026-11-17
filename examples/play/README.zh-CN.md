@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-三个游戏，每个只有一个文件、一次对 `@egret/engine/play` 中 `play` 的调用：打砖块、平台跳跃和翻牌配对。它们都没有图片、声音文件或字体；形状是画出来的，声音由代码合成，每个游戏都可以用键盘和指针来玩。它们就是 [llms.txt](../../llms.txt) 中的三个游戏；那一页是智能体编写游戏时阅读的页面，其中的游戏与这里逐字相同。
+三个游戏，每个只有一个文件、一次对 `@egret/engine/play` 中 `play` 的调用：打砖块、平台跳跃和翻牌配对；还有第四个 3D 游戏，一次对 [`play3d`](../../knowledge-base/Cns/docs/play3d.md) 的调用：滚动小球收集星星。它们都没有图片、声音文件或字体；形状是画出来的，声音由代码合成，每个游戏都可以用键盘和指针来玩。它们就是 [llms.txt](../../llms.txt) 中的三个游戏；那一页是智能体编写游戏时阅读的页面，其中的游戏与这里逐字相同。
 
 ## 运行
 
@@ -11,7 +11,7 @@ node tools/build.mjs
 node tools/serve-canvas.mjs
 ```
 
-在服务器打印的主机和端口上打开 `/examples/play/index.html`，运行的是打砖块；加上 `?game=platformer` 或 `?game=memory` 运行另外两个。游戏铺满窗口。
+在服务器打印的主机和端口上打开 `/examples/play/index.html`，运行的是打砖块；加上 `?game=platformer`、`?game=memory` 或 `?game=roll3d` 运行其他几个。游戏铺满窗口。
 
 ## 可以试什么
 

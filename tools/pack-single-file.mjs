@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 // Usage: node tools/pack-single-file.mjs --esbuild <installed esbuild module> --out <new directory> [--version <version>]
-// Writes the 2D engine as one file, twice, and report.json saying what is in them and how large they are:
-//   egret.global.js  for <script src>; everything is on the global `Egret`, so a game is `Egret.play({ ... })`
-//   egret.js         for `import { play } from './egret.js'`
-// Both hold the entries named in SINGLE_FILE_ENTRIES and everything those load, the WebGL2 and the WebGPU host
-// included, so a page needs no import map and no other file. The bundler is not a dependency of the repository: the
-// person packing names an installed copy, as the browser checks name an installed Playwright. Build first.
+// Writes the engine as one file, and report.json saying what is in each file and how large it is:
+//   egret.global.js    for <script src>; everything is on the global `Egret`, so a game is `Egret.play({ ... })`
+//   egret.js           for `import { play } from './egret.js'`
+//   egret3d.global.js  the same with World3D and `play3d` as well, for a 3D game; a page loads one of the two
+//   egret3d.js
+// Each holds the entries named in SINGLE_FILE_ENTRIES, or SINGLE_FILE_ENTRIES_3D, and everything those load, the
+// WebGL2 and the WebGPU host included, so a page needs no import map and no other file. The bundler is not a
+// dependency of the repository: the person packing names an installed copy, as the browser checks name an installed
+// Playwright. Build first.
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,6 +23,12 @@ export const SINGLE_FILE_ENTRIES = Object.freeze([
   '@egret/engine',
   '@egret/engine/kit',
   '@egret/engine/web/game'
+]);
+/** The entries of the file for a 3D game: those of the other, and World3D with its WebGL2 renderer and `play3d`. */
+export const SINGLE_FILE_ENTRIES_3D = Object.freeze([
+  ...SINGLE_FILE_ENTRIES,
+  '@egret/engine/webgl2/world3d',
+  '@egret/engine/world3d'
 ]);
 /** The packages whose entries and private imports the files are made from. */
 const PACKAGES = Object.freeze(['contracts', 'runtime', 'engine']);
@@ -121,23 +130,20 @@ async function main(args) {
     throw refuse('SINGLE_FILE_BUNDLER', 'Not an esbuild module: ' + options.esbuild);
 
   const modules = workspaceModules();
-  for (const entry of SINGLE_FILE_ENTRIES)
+  for (const entry of SINGLE_FILE_ENTRIES_3D)
     if (!fs.existsSync(modules.get(entry) ?? ''))
       throw refuse('SINGLE_FILE_NOT_BUILT', entry + ' is not built. Run the build first.');
-  const namespaces = [];
-  for (const entry of SINGLE_FILE_ENTRIES)
-    namespaces.push([entry, await import(pathToFileURL(modules.get(entry)).href)]);
-  const names = singleFileNames(namespaces),
-    source = singleFileSource(names);
   // The manifest of the third-party package is beside its entry; its own exports do not name it.
   const thirdParty = createRequire(path.join(root, 'packages', 'engine', 'package.json'));
   let beside = path.dirname(thirdParty.resolve('robust-predicates'));
   while (!fs.existsSync(path.join(beside, 'package.json'))) beside = path.dirname(beside);
   const predicates = JSON.parse(fs.readFileSync(path.join(beside, 'package.json'), 'utf8'));
-  const banner =
+  const bannerOf = what =>
     '/*! Egret engine ' +
     version +
-    ', the 2D engine in one file. https://github.com/cnedwin/Egret_rebuild | Apache-2.0. Includes robust-predicates ' +
+    ', ' +
+    what +
+    ' in one file. https://github.com/cnedwin/Egret_rebuild | Apache-2.0. Includes robust-predicates ' +
     predicates.version +
     ' (Unlicense). */';
   // An import of the workspace is found from the manifests, as Node finds it; anything else is found the usual way.
@@ -151,70 +157,81 @@ async function main(args) {
       });
     }
   };
-  const report = {
-    version,
-    bundler: 'esbuild ' + esbuild.version,
-    entries: [...SINGLE_FILE_ENTRIES],
-    names: [...names.keys()],
-    files: {}
-  };
-  const files = [];
-  for (const [file, format] of [
-    ['egret.global.js', { format: 'iife', globalName: 'Egret' }],
-    ['egret.js', { format: 'esm' }]
+  const report = { version, bundler: 'esbuild ' + esbuild.version, sets: {}, files: {} };
+  const files = [],
+    made = [];
+  for (const [base, entries, what, works] of [
+    ['egret', SINGLE_FILE_ENTRIES, 'the 2D engine', 'play'],
+    ['egret3d', SINGLE_FILE_ENTRIES_3D, 'the 2D and the 3D engine', 'play3d']
   ]) {
-    const result = await esbuild.build({
-      stdin: { contents: source, resolveDir: path.join(root, 'packages', 'engine'), sourcefile: 'single-file.js' },
-      bundle: true,
-      minify: true,
-      write: false,
-      target: 'es2022',
-      platform: 'browser',
-      legalComments: 'none',
-      banner: { js: banner },
-      metafile: true,
-      logLevel: 'silent',
-      plugins: [resolve],
-      ...format
-    });
-    if (result.outputFiles.length !== 1) throw refuse('SINGLE_FILE_SPLIT', file + ' came out as more than one file.');
-    const bytes = Buffer.from(result.outputFiles[0].contents);
-    files.push([file, bytes]);
-    const groups = {};
-    let count = 0;
-    for (const [input, { bytesInOutput }] of Object.entries(Object.values(result.metafile.outputs)[0].inputs)) {
-      if (bytesInOutput === 0) continue;
-      count++;
-      const group = groupOf(path.resolve(root, 'packages', 'engine', input));
-      groups[group] = (groups[group] ?? 0) + bytesInOutput;
+    const namespaces = [];
+    for (const entry of entries) namespaces.push([entry, await import(pathToFileURL(modules.get(entry)).href)]);
+    const names = singleFileNames(namespaces),
+      source = singleFileSource(names),
+      banner = bannerOf(what);
+    report.sets[base] = { entries: [...entries], names: [...names.keys()] };
+    made.push([base, names, works]);
+    for (const [file, format] of [
+      [base + '.global.js', { format: 'iife', globalName: 'Egret' }],
+      [base + '.js', { format: 'esm' }]
+    ]) {
+      const result = await esbuild.build({
+        stdin: { contents: source, resolveDir: path.join(root, 'packages', 'engine'), sourcefile: 'single-file.js' },
+        bundle: true,
+        minify: true,
+        write: false,
+        target: 'es2022',
+        platform: 'browser',
+        legalComments: 'none',
+        banner: { js: banner },
+        metafile: true,
+        logLevel: 'silent',
+        plugins: [resolve],
+        ...format
+      });
+      if (result.outputFiles.length !== 1) throw refuse('SINGLE_FILE_SPLIT', file + ' came out as more than one file.');
+      const bytes = Buffer.from(result.outputFiles[0].contents);
+      files.push([file, bytes]);
+      const groups = {};
+      let count = 0;
+      for (const [input, { bytesInOutput }] of Object.entries(Object.values(result.metafile.outputs)[0].inputs)) {
+        if (bytesInOutput === 0) continue;
+        count++;
+        const group = groupOf(path.resolve(root, 'packages', 'engine', input));
+        groups[group] = (groups[group] ?? 0) + bytesInOutput;
+      }
+      report.files[file] = {
+        ...fileSizes(bytes),
+        modules: count,
+        parts: Object.fromEntries(Object.entries(groups).sort(([, a], [, b]) => b - a))
+      };
     }
-    report.files[file] = {
-      ...fileSizes(bytes),
-      modules: count,
-      parts: Object.fromEntries(Object.entries(groups).sort(([, a], [, b]) => b - a))
-    };
   }
   fs.mkdirSync(out, { recursive: true });
   for (const [file, bytes] of files) fs.writeFileSync(path.join(out, file), bytes);
 
-  // Both files are loaded here before they are called written: each must give every name, and the same things.
-  const scope = new Function(fs.readFileSync(path.join(out, 'egret.global.js'), 'utf8') + '\nreturn Egret;')();
-  const module = await import(pathToFileURL(path.join(out, 'egret.js')).href);
-  for (const [label, given] of [
-    ['egret.global.js', scope],
-    ['egret.js', module]
-  ]) {
-    const got = Object.keys(given).sort();
-    if (got.length !== names.size || got.some((name, index) => name !== report.names[index]))
-      throw refuse('SINGLE_FILE_CHECK', label + ' does not give the names it was made from.');
-    if (typeof given.play !== 'function' || !(given.synthesizeSfx(given.SFX_PRESETS.coin) instanceof Float32Array))
-      throw refuse('SINGLE_FILE_CHECK', label + ' does not work when loaded.');
+  // Every file is loaded here before it is called written: each must give every name of its set, and work.
+  for (const [base, names, works] of made) {
+    const scope = new Function(fs.readFileSync(path.join(out, base + '.global.js'), 'utf8') + '\nreturn Egret;')();
+    const module = await import(pathToFileURL(path.join(out, base + '.js')).href);
+    for (const [label, given] of [
+      [base + '.global.js', scope],
+      [base + '.js', module]
+    ]) {
+      const got = Object.keys(given).sort(),
+        wanted = report.sets[base].names;
+      if (got.length !== names.size || got.some((name, index) => name !== wanted[index]))
+        throw refuse('SINGLE_FILE_CHECK', label + ' does not give the names it was made from.');
+      if (typeof given[works] !== 'function' || !(given.synthesizeSfx(given.SFX_PRESETS.coin) instanceof Float32Array))
+        throw refuse('SINGLE_FILE_CHECK', label + ' does not work when loaded.');
+    }
   }
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   const kib = bytes => (bytes / 1024).toFixed(1) + ' KiB';
   for (const [file, sizes] of Object.entries(report.files))
     console.log(file + ': ' + kib(sizes.bytes) + ', gzip ' + kib(sizes.gzip) + ', brotli ' + kib(sizes.brotli));
-  console.log(names.size + ' names from ' + SINGLE_FILE_ENTRIES.length + ' entries, in ' + out);
+  for (const [base, names] of made) console.log(base + ': ' + names.size + ' names');
+  console.log('in ' + out);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url))

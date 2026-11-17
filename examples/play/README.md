@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Three games, each one file and one call to `play` from `@egret/engine/play`: a breakout, a platformer and a game of matching pairs. None has an image, a sound file or a font; shapes are drawn, sounds are made in code, and each plays by keyboard and by pointer. They are the three games of [llms.txt](../../llms.txt), the page an agent reads to write a game, and that page holds them as they are here.
+Three games, each one file and one call to `play` from `@egret/engine/play`: a breakout, a platformer and a game of matching pairs; and a fourth in 3D, one call to [`play3d`](../../knowledge-base/en/docs/play3d.md), a ball rolled to collect stars. None has an image, a sound file or a font; shapes are drawn, sounds are made in code, and each plays by keyboard and by pointer. They are the three games of [llms.txt](../../llms.txt), the page an agent reads to write a game, and that page holds them as they are here.
 
 ## Run
 
@@ -11,7 +11,7 @@ node tools/build.mjs
 node tools/serve-canvas.mjs
 ```
 
-Open `/examples/play/index.html` on the host and port the server prints. It runs the breakout; add `?game=platformer` or `?game=memory` for the others. A game fills the window.
+Open `/examples/play/index.html` on the host and port the server prints. It runs the breakout; add `?game=platformer`, `?game=memory` or `?game=roll3d` for the others. A game fills the window.
 
 ## What to try
 

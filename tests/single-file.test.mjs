@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
   SINGLE_FILE_ENTRIES,
+  SINGLE_FILE_ENTRIES_3D,
   fileSizes,
   groupOf,
   singleFileNames,
@@ -43,6 +44,14 @@ test('SF02 the names of the file are those of its entries; one name for two thin
   assert.equal(names.get('createBrowserGame'), '@egret/engine/web/game');
   assert.equal(names.size, new Set(namespaces.flatMap(([, namespace]) => Object.keys(namespace))).size);
   assert.deepEqual([...names.keys()], [...names.keys()].sort());
+  // The file for a 3D game holds the same names, and World3D with play3d, without two things under one name.
+  const deeper = [];
+  for (const entry of SINGLE_FILE_ENTRIES_3D) deeper.push([entry, await import(entry)]);
+  const names3d = singleFileNames(deeper);
+  for (const name of names.keys()) assert.ok(names3d.has(name), name);
+  assert.equal(names3d.get('play3d'), '@egret/engine/webgl2/world3d');
+  assert.equal(names3d.get('Scene3D'), '@egret/engine/world3d');
+  assert.ok(names3d.size > names.size + 200);
   const one = () => 1,
     two = () => 2;
   assert.deepEqual(

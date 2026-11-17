@@ -39,6 +39,7 @@ node tools/pack-single-file.mjs --esbuild <installed esbuild module> --out <new 
 | --- | --- |
 | `egret.global.js` | `<script src>`; defines the global `Egret` |
 | `egret.js` | `import` |
+| `egret3d.global.js`, `egret3d.js` | The same two with World3D and [`play3d`](play3d.md) as well, for a 3D game. A page loads one file, not both |
 | `report.json` | The bundler and its version, the entries, every name, and for each file its size as written, with gzip and with Brotli, its SHA-256 and where its bytes come from |
 
 The bundler is [esbuild](https://esbuild.github.io/). It is not a dependency of the repository: the person packing names an installed copy, as the browser checks name an installed Playwright. Nothing of the bundler but a few lines that define the exports is in the files. The first line of each file names the engine's licence, Apache-2.0, and `robust-predicates` (Unlicense), which the renderer uses.
@@ -56,7 +57,9 @@ Four entries and everything they load, the WebGL2 host and the WebGPU host inclu
 
 A name is the same thing in the file as in its entry, and the packer refuses two different things under one name. Text, images, audio, tweens and the errors' sentences in English and Chinese are in it because those entries load them.
 
-What is not in it stays an entry of its own, loaded as modules: World3D, the interface controls, tile maps, the 2D camera, particles with textures, 2D physics, paragraphs, text input, Spine. A game that needs one of them uses the packages, as in [using the preview from a clean project](clean-consumer.md).
+`egret3d.global.js` holds all of that and the two World3D entries, `@egret/engine/world3d` and `@egret/engine/webgl2/world3d`, with `play3d`: 394 names in all.
+
+What is in neither stays an entry of its own, loaded as modules: the interface controls, tile maps, the 2D camera, particles with textures, 2D physics, paragraphs, text input, Spine. A game that needs one of them uses the packages, as in [using the preview from a clean project](clean-consumer.md).
 
 ## How large it is
 
@@ -64,8 +67,10 @@ Measured from main with this change, packed with esbuild 0.28.2, minified.
 
 | File | KiB | KiB gzip | KiB Brotli |
 | --- | ---: | ---: | ---: |
-| `egret.global.js` | 627.6 | 197.3 | 161.0 |
-| `egret.js` | 627.1 | 197.2 | 160.8 |
+| `egret.global.js` | 628.4 | 197.7 | 161.2 |
+| `egret.js` | 628.0 | 197.5 | 161.1 |
+| `egret3d.global.js` | 1236.0 | 401.7 | 321.8 |
+| `egret3d.js` | 1235.3 | 401.6 | 321.7 |
 
 Where the bytes of `egret.global.js` come from, before compression:
 
