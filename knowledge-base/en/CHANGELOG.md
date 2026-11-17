@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## The single files are egret2d.js and egret3d.js — 2026-11-17
+
+The packer now writes `egret2d.js` for a script tag and `egret2d.mjs` for import, and `egret3d.js` and `egret3d.mjs` with World3D and `play3d` (they were `egret.global.js`, `egret.js`, `egret3d.global.js` and `egret3d.js`). Beside them it puts `llms.txt`, the licence, the notice and the licence of robust-predicates, so its directory is what a release hands over. A ground made by `play3d` is 8 deep instead of 1: a ball dropped in a slow first frame fell through it.
+
 ## Play3D: a whole small 3D game from one call — 2026-11-17
 
 `play3d` from `@egret/engine/webgl2/world3d` is `play` with a world of three dimensions under it: a World3D app on a canvas of its own, and the keys, pointer, sound, time, text and buttons of `play` drawn clear over it. It adds boxes, balls, cylinders, cones and a ground placed by plain numbers that can be tweened, a camera that follows, a sun, overlap and push-out in three dimensions, a shake of the camera and bursts. `play` takes `transparent: true`. The single-file packer also writes `egret3d.global.js` with World3D and `play3d`, 402 KiB with gzip; `llms.txt` has a 3D section and a 3D game, played to its end by the example's check.

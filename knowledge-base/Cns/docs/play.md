@@ -184,7 +184,7 @@ for (const block of blocks) {
 
 不需要别的东西：`play` 会创建画布并让它占满窗口，保持舞台的比例，窗口比例不同时两侧留边。
 
-页面也可以把引擎作为[一个文件](single-file.md)使用，不需要 import map：`<script src="egret.global.js"></script>`，然后 `const { play } = Egret;`。[play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)里有三个完整的游戏。
+页面也可以把引擎作为[一个文件](single-file.md)使用，不需要 import map：`<script src="egret2d.js"></script>`，然后 `const { play } = Egret;`。[play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)里有三个完整的游戏。
 
 ## 三维
 

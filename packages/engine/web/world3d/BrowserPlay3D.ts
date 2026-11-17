@@ -253,6 +253,8 @@ interface Piece {
   size: number;
 }
 const PIECES = 96;
+/** How deep a ground is under its top. */
+const GROUND_DEPTH = 8;
 
 /** The upright box of a thing in the world: its middle and half its size, scaled. */
 function boxOf(thing: PlayThing3D): [number, number, number, number, number, number] {
@@ -453,12 +455,13 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       },
       ground(size, color, y = 0) {
         if (!above(size) || !finite(y)) throw invalid('a ground has a size above 0');
+        // Deep, so that a thing falling fast in a slow frame is still pushed back up out of it and not through it.
         const thing = make(
-          createBoxGeometry3D({ width: size, height: 1, depth: size }),
+          createBoxGeometry3D({ width: size, height: GROUND_DEPTH, depth: size }),
           color,
-          [size / 2, 0.5, size / 2],
+          [size / 2, GROUND_DEPTH / 2, size / 2],
           {
-            y: y - 0.5
+            y: y - GROUND_DEPTH / 2
           }
         );
         thing.node.castShadow = false;

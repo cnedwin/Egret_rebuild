@@ -49,7 +49,7 @@ await play3d({
 | `game.sphere(radius, color, { x, y, z })` | 一个球 |
 | `game.cylinder(radius, height, color, { x, y, z })` | 一个竖立的圆柱 |
 | `game.cone(radius, height, color, { x, y, z })` | 一个底面朝下的圆锥 |
-| `game.ground(size, color, y = 0)` | 一块该大小的方形地面，顶面在高度 `y` |
+| `game.ground(size, color, y = 0)` | 一块该大小的方形地面，顶面在高度 `y`。它有 8 个单位厚，所以在慢的一帧里快速下落的物体仍会被推回到它上面 |
 | `game.remove(thing)` | 把它从世界中拿掉 |
 
 每个调用都返回一个物体。可以随时设置它的 `x`、`y`、`z`、`rotationX`、`rotationY`、`rotationZ`（角度）、`scale` 或 `scaleX`、`scaleY`、`scaleZ`、`visible` 和 `color`；它们都可以补间，例如 `game.tween(door).to({ y: 4 }, 0.5)`。也可以加上自己的属性（`enemy.hp = 3`）。`thing.removed` 表示它是否已被移除；设置已移除的物体不起作用，也不会出错。`thing.node` 是它的 [Mesh3D](world3d.md)。
@@ -77,10 +77,10 @@ await play3d({
 
 ## 页面
 
-使用模块时，页面与 [`play`](play.md#页面) 的相同，只是 import map 里要有 `@egret/engine/webgl2/world3d`。使用[单文件](single-file.md)时是 `egret3d.global.js`，其中包含 `play`、`play3d` 和 World3D：
+使用模块时，页面与 [`play`](play.md#页面) 的相同，只是 import map 里要有 `@egret/engine/webgl2/world3d`。使用[单文件](single-file.md)时是 `egret3d.js`，其中包含 `play`、`play3d` 和 World3D：
 
 ```html
-<script src="egret3d.global.js"></script>
+<script src="egret3d.js"></script>
 <script type="module">
 const { play3d } = Egret;
 await play3d({ width: 960, height: 540, setup(game) { … }, update(dt, game) { … } });

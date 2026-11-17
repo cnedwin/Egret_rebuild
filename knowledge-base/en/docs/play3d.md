@@ -49,7 +49,7 @@ Those of [`play`](play.md#options), without `canvas`: `play3d` makes its two can
 | `game.sphere(radius, color, { x, y, z })` | A ball |
 | `game.cylinder(radius, height, color, { x, y, z })` | A cylinder standing on its end |
 | `game.cone(radius, height, color, { x, y, z })` | A cone standing on its base |
-| `game.ground(size, color, y = 0)` | A square floor of that size whose top is at height `y` |
+| `game.ground(size, color, y = 0)` | A square floor of that size whose top is at height `y`. It is 8 deep, so a thing falling fast in a slow frame is pushed back up out of it |
 | `game.remove(thing)` | Takes it out of the world |
 
 Each gives a thing. Set `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `scale` or `scaleX`, `scaleY`, `scaleZ`, `visible` and `color` on it at any time; they can be tweened, as in `game.tween(door).to({ y: 4 }, 0.5)`. Add properties of your own (`enemy.hp = 3`). `thing.removed` says whether it has been removed; setting a removed thing does nothing and does not fail. `thing.node` is its [Mesh3D](world3d.md).
@@ -77,10 +77,10 @@ A hidden or removed thing overlaps nothing. A turned thing is still tested as an
 
 ## The page
 
-With modules, the page is that of [`play`](play.md#the-page) with `@egret/engine/webgl2/world3d` in its import map. With [one file](single-file.md) it is `egret3d.global.js`, which holds `play`, `play3d` and World3D:
+With modules, the page is that of [`play`](play.md#the-page) with `@egret/engine/webgl2/world3d` in its import map. With [one file](single-file.md) it is `egret3d.js`, which holds `play`, `play3d` and World3D:
 
 ```html
-<script src="egret3d.global.js"></script>
+<script src="egret3d.js"></script>
 <script type="module">
 const { play3d } = Egret;
 await play3d({ width: 960, height: 540, setup(game) { … }, update(dt, game) { … } });

@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/single-file.md)
 
 A game made with [`play`](play.md) needs one page and the engine. `tools/pack-single-file.mjs` writes the engine as one file, so the page needs no import map, no package manager and no build step, and opens from a folder as well as from a server. It is the file [llms.txt](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) tells an agent to put beside the page.
 
-**What is checked and what is not.** The packer loads both files it has written and refuses them unless each gives every name it was made from and `play` and the sound effects work. From `egret.global.js` beside a page, the three games of the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) started, drew, took keys and the pointer and made sound in headless Chromium on software WebGL2, both from a server and opened from the folder. The files are not published anywhere: no registry and no CDN has them. Other browsers, phones and WebGPU were not run.
+**What is checked and what is not.** The packer loads both files it has written and refuses them unless each gives every name it was made from and `play` and the sound effects work. From `egret2d.js` beside a page, the three games of the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) started, drew, took keys and the pointer and made sound in headless Chromium on software WebGL2, both from a server and opened from the folder. The files are not published anywhere: no registry and no CDN has them. Other browsers, phones and WebGPU were not run.
 
 ## The page
 
@@ -12,7 +12,7 @@ A game made with [`play`](play.md) needs one page and the engine. `tools/pack-si
 <!doctype html>
 <meta charset="utf-8">
 <title>Game</title>
-<script src="egret.global.js"></script>
+<script src="egret2d.js"></script>
 <script type="module">
 const { play } = Egret;
 
@@ -26,7 +26,7 @@ await play({
 
 Everything is on the global `Egret`. The second script is a module only so that it may use `await` at the top; it imports nothing, which is why the page also opens from a folder.
 
-In a page served over HTTP, `import { play } from './egret.js'` loads the other file, which is the same engine as a module.
+In a page served over HTTP, `import { play } from './egret2d.mjs'` loads the other file, which is the same engine as a module.
 
 ## Make the files
 
@@ -37,9 +37,9 @@ node tools/pack-single-file.mjs --esbuild <installed esbuild module> --out <new 
 
 | File | For |
 | --- | --- |
-| `egret.global.js` | `<script src>`; defines the global `Egret` |
-| `egret.js` | `import` |
-| `egret3d.global.js`, `egret3d.js` | The same two with World3D and [`play3d`](play3d.md) as well, for a 3D game. A page loads one file, not both |
+| `egret2d.js` | `<script src>`; defines the global `Egret` |
+| `egret2d.mjs` | `import` |
+| `egret3d.js`, `egret3d.mjs` | The same two with World3D and [`play3d`](play3d.md) as well, for a 3D game. A page loads one file, not both |
 | `report.json` | The bundler and its version, the entries, every name, and for each file its size as written, with gzip and with Brotli, its SHA-256 and where its bytes come from |
 
 The bundler is [esbuild](https://esbuild.github.io/). It is not a dependency of the repository: the person packing names an installed copy, as the browser checks name an installed Playwright. Nothing of the bundler but a few lines that define the exports is in the files. The first line of each file names the engine's licence, Apache-2.0, and `robust-predicates` (Unlicense), which the renderer uses.
@@ -57,7 +57,7 @@ Four entries and everything they load, the WebGL2 host and the WebGPU host inclu
 
 A name is the same thing in the file as in its entry, and the packer refuses two different things under one name. Text, images, audio, tweens and the errors' sentences in English and Chinese are in it because those entries load them.
 
-`egret3d.global.js` holds all of that and the two World3D entries, `@egret/engine/world3d` and `@egret/engine/webgl2/world3d`, with `play3d`: 394 names in all.
+`egret3d.js` holds all of that and the two World3D entries, `@egret/engine/world3d` and `@egret/engine/webgl2/world3d`, with `play3d`: 394 names in all.
 
 What is in neither stays an entry of its own, loaded as modules: the interface controls, tile maps, the 2D camera, particles with textures, 2D physics, paragraphs, text input, Spine. A game that needs one of them uses the packages, as in [using the preview from a clean project](clean-consumer.md).
 
@@ -67,12 +67,12 @@ Measured from main with this change, packed with esbuild 0.28.2, minified.
 
 | File | KiB | KiB gzip | KiB Brotli |
 | --- | ---: | ---: | ---: |
-| `egret.global.js` | 628.4 | 197.7 | 161.2 |
-| `egret.js` | 628.0 | 197.5 | 161.1 |
-| `egret3d.global.js` | 1236.0 | 401.7 | 321.8 |
-| `egret3d.js` | 1235.3 | 401.6 | 321.7 |
+| `egret2d.js` | 628.4 | 197.7 | 161.2 |
+| `egret2d.mjs` | 628.0 | 197.5 | 161.1 |
+| `egret3d.js` | 1236.0 | 401.7 | 321.8 |
+| `egret3d.mjs` | 1235.3 | 401.6 | 321.7 |
 
-Where the bytes of `egret.global.js` come from, before compression:
+Where the bytes of `egret2d.js` come from, before compression:
 
 | Part | KiB |
 | --- | ---: |

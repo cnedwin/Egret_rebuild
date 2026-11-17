@@ -1,6 +1,6 @@
 # Egret
 
-> Egret is a 2D and 3D game engine for the browser. A whole small 2D game is one call, `play({ width, height, setup, update })`, and one file, `egret.global.js`. This page is everything needed to write one. It needs no image, sound or font file and no build step.
+> Egret is a 2D and 3D game engine for the browser. A whole small 2D game is one call, `play({ width, height, setup, update })`, and one file, `egret2d.js`. This page is everything needed to write one. It needs no image, sound or font file and no build step.
 
 ## The page
 
@@ -8,7 +8,7 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>Game</title>
-<script src="egret.global.js"></script>
+<script src="egret2d.js"></script>
 <script type="module">
 const { play } = Egret;
 
@@ -20,7 +20,7 @@ await play({
 </script>
 ```
 
-`play` makes the canvas, fills the window with it and keeps the stage's shape. Do not add a canvas, CSS or a loop. The page opens from a folder or from a server. `egret.global.js` is beside the page: it is in a release, or `node tools/pack-single-file.mjs` makes it in a checkout. In a project with modules, `import { play } from '@egret/engine/play'` is the same function.
+`play` makes the canvas, fills the window with it and keeps the stage's shape. Do not add a canvas, CSS or a loop. The page opens from a folder or from a server. `egret2d.js` is beside the page: it is in a release, or `node tools/pack-single-file.mjs` makes it in a checkout. In a project with modules, `import { play } from '@egret/engine/play'` is the same function.
 
 ## Rules that are easy to get wrong
 
@@ -375,7 +375,7 @@ function win(game) {
 
 ## 3D
 
-`play3d` is `play` with a world of three dimensions under it. The page loads `egret3d.global.js` instead of `egret.global.js`, and the script starts with `const { play3d } = Egret;`. Everything above is the same and is the flat interface over the picture, in the units of `width` and `height`: `game.text`, `game.button`, `game.keys`, `game.pointer`, `game.sfx`, `game.tween`, `game.after`, `game.flash`, `game.restart`. What is added is the world. `x` is right, `y` is up, `z` is towards the camera; a ball of radius 0.5 on a ground of 24 reads well.
+`play3d` is `play` with a world of three dimensions under it. The page loads `egret3d.js` instead of `egret2d.js`, and the script starts with `const { play3d } = Egret;`. Everything above is the same and is the flat interface over the picture, in the units of `width` and `height`: `game.text`, `game.button`, `game.keys`, `game.pointer`, `game.sfx`, `game.tween`, `game.after`, `game.flash`, `game.restart`. What is added is the world. `x` is right, `y` is up, `z` is towards the camera; a ball of radius 0.5 on a ground of 24 reads well.
 
 | Call | Gives |
 | --- | --- |
@@ -412,7 +412,7 @@ await play3d({
     // The ground is 24 across with its top at height 0; a box is placed by its middle.
     blocks.push(game.ground(24, 0x2d6a4f));
     blocks.push(game.box(4, 1, 4, 0x4d6fa8, { x: 6, y: 0.5, z: -4 }));
-    ball = game.sphere(0.5, 0xe8453c, { y: 3 });
+    ball = game.sphere(0.5, 0xe8453c, { y: 1 });
     for (const [x, y, z] of [
       [3, 0.9, 0],
       [-4, 0.9, -3],

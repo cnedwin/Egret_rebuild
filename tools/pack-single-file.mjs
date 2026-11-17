@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 // Usage: node tools/pack-single-file.mjs --esbuild <installed esbuild module> --out <new directory> [--version <version>]
-// Writes the engine as one file, and report.json saying what is in each file and how large it is:
-//   egret.global.js    for <script src>; everything is on the global `Egret`, so a game is `Egret.play({ ... })`
-//   egret.js           for `import { play } from './egret.js'`
-//   egret3d.global.js  the same with World3D and `play3d` as well, for a 3D game; a page loads one of the two
-//   egret3d.js
+// Writes the engine as one file, and report.json saying what is in each file and how large it is, with llms.txt and the
+// licences beside them:
+//   egret2d.js    for <script src>; everything is on the global `Egret`, so a game is `Egret.play({ ... })`
+//   egret2d.mjs   the same engine as a module, for `import { play } from './egret2d.mjs'`
+//   egret3d.js    the same with World3D and `play3d` as well, for a 3D game; a page loads one of the two
+//   egret3d.mjs
 // Each holds the entries named in SINGLE_FILE_ENTRIES, or SINGLE_FILE_ENTRIES_3D, and everything those load, the
 // WebGL2 and the WebGPU host included, so a page needs no import map and no other file. The bundler is not a
 // dependency of the repository: the person packing names an installed copy, as the browser checks name an installed
@@ -161,7 +162,7 @@ async function main(args) {
   const files = [],
     made = [];
   for (const [base, entries, what, works] of [
-    ['egret', SINGLE_FILE_ENTRIES, 'the 2D engine', 'play'],
+    ['egret2d', SINGLE_FILE_ENTRIES, 'the 2D engine', 'play'],
     ['egret3d', SINGLE_FILE_ENTRIES_3D, 'the 2D and the 3D engine', 'play3d']
   ]) {
     const namespaces = [];
@@ -172,8 +173,8 @@ async function main(args) {
     report.sets[base] = { entries: [...entries], names: [...names.keys()] };
     made.push([base, names, works]);
     for (const [file, format] of [
-      [base + '.global.js', { format: 'iife', globalName: 'Egret' }],
-      [base + '.js', { format: 'esm' }]
+      [base + '.js', { format: 'iife', globalName: 'Egret' }],
+      [base + '.mjs', { format: 'esm' }]
     ]) {
       const result = await esbuild.build({
         stdin: { contents: source, resolveDir: path.join(root, 'packages', 'engine'), sourcefile: 'single-file.js' },
@@ -212,11 +213,11 @@ async function main(args) {
 
   // Every file is loaded here before it is called written: each must give every name of its set, and work.
   for (const [base, names, works] of made) {
-    const scope = new Function(fs.readFileSync(path.join(out, base + '.global.js'), 'utf8') + '\nreturn Egret;')();
-    const module = await import(pathToFileURL(path.join(out, base + '.js')).href);
+    const scope = new Function(fs.readFileSync(path.join(out, base + '.js'), 'utf8') + '\nreturn Egret;')();
+    const module = await import(pathToFileURL(path.join(out, base + '.mjs')).href);
     for (const [label, given] of [
-      [base + '.global.js', scope],
-      [base + '.js', module]
+      [base + '.js', scope],
+      [base + '.mjs', module]
     ]) {
       const got = Object.keys(given).sort(),
         wanted = report.sets[base].names;
@@ -226,6 +227,15 @@ async function main(args) {
         throw refuse('SINGLE_FILE_CHECK', label + ' does not work when loaded.');
     }
   }
+  // What a release hands over with the files: the page an agent reads, and the licences of what is in them.
+  const handed = [
+    ['llms.txt', 'llms.txt'],
+    ['LICENSE', 'LICENSE'],
+    ['NOTICE', 'NOTICE'],
+    ['third-party/robust-predicates-' + predicates.version + '.LICENSE', 'robust-predicates.LICENSE']
+  ];
+  for (const [from, to] of handed) fs.copyFileSync(path.join(root, from), path.join(out, to));
+  report.alongside = handed.map(([, to]) => to);
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   const kib = bytes => (bytes / 1024).toFixed(1) + ' KiB';
   for (const [file, sizes] of Object.entries(report.files))
