@@ -1461,6 +1461,12 @@
 | `WEB_TEXT_STATE_UNSUPPORTED` | 浏览器文本提供者不支持 `state`。 |
 | `WEB_TEXT_UNAVAILABLE` | 浏览器文本提供者在这里不可用。 |
 
+### WORLD3D_OVERLAY
+
+| 错误码 | 含义 |
+| --- | --- |
+| `WORLD3D_OVERLAY_OPTIONS_INVALID` | 交给World3D 叠加层的选项无效：缺少某一项、类型不对或超出范围。 |
+
 ### 其他错误码
 
 | 错误码 | 含义 |

@@ -1461,6 +1461,12 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `WEB_TEXT_STATE_UNSUPPORTED` | The state is not supported by the browser text provider. |
 | `WEB_TEXT_UNAVAILABLE` | The browser text provider is not available here. |
 
+### WORLD3D_OVERLAY
+
+| Code | Meaning |
+| --- | --- |
+| `WORLD3D_OVERLAY_OPTIONS_INVALID` | The options given to the World3D overlay are not valid: one is missing, of the wrong type or out of range. |
+
 ### Other codes
 
 | Code | Meaning |

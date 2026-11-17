@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 42 个入口、1259 个导出，其中 771 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 42 个入口、1265 个导出，其中 775 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -722,6 +722,7 @@
 | `createWebGL2Renderer3D` | 函数 |  |
 | `createWorld3DApp` | 函数 | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | 函数 | Host adapter that reserves `canvas` for one Engine. |
+| `createWorld3DOverlay` | 函数 | Lays a transparent 2D stage over `canvas` (the 3D canvas, which must sit in a positioned parent) and starts it. |
 | `createWorld3DStats` | 函数 |  |
 | `createWorld3DView` | 函数 |  |
 | `CUBE_TEXTURE_ASSET_3D` | 值 | A cube texture. |
@@ -775,6 +776,8 @@
 | `World3DFramePass` | 接口 |  |
 | `World3DGpuTiming` | 类型 |  |
 | `World3DLoopSource` | 接口 |  |
+| `World3DOverlay` | 接口 |  |
+| `World3DOverlayOptions` | 接口 |  |
 | `World3DPassKind` | 类型 |  |
 | `World3DQuality` | 类型 |  |
 | `World3DQualityPreset` | 接口 | What one picture quality turns on. |
@@ -808,6 +811,7 @@
 | `createWebGPURenderer3D` | 函数 | Acquire a device (unless one is borrowed) and create the WebGPU renderer. |
 | `createWorld3DApp` | 函数 | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | 函数 | Host adapter that reserves `canvas` for one Engine. |
+| `createWorld3DOverlay` | 函数 | Lays a transparent 2D stage over `canvas` (the 3D canvas, which must sit in a positioned parent) and starts it. |
 | `createWorld3DStats` | 函数 |  |
 | `createWorld3DView` | 函数 |  |
 | `CUBE_TEXTURE_ASSET_3D` | 值 | A cube texture. |
@@ -857,6 +861,8 @@
 | `World3DClockSource` | 接口 | The part of an Engine this view needs: its explicit game clock. |
 | `World3DDeviceHints` | 接口 | What `pickWorld3DQuality` reads about the device. |
 | `World3DLoopSource` | 接口 |  |
+| `World3DOverlay` | 接口 |  |
+| `World3DOverlayOptions` | 接口 |  |
 | `World3DQuality` | 类型 |  |
 | `World3DQualityPreset` | 接口 | What one picture quality turns on. |
 | `World3DShowOptions` | 接口 |  |

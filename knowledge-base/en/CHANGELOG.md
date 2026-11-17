@@ -4,9 +4,17 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Light more than eight point lights by screen tile — 2026-11-17
+
+World3D lights up to 256 further point lights per frame by screen tile (tiled forward lighting) on WebGL2 and WebGPU, instead of dropping them. `renderer.info.lightsTiled` counts them; `renderer.tiledLights = false` restores dropping. Tiled lights cast no shadows.
+
 ## Retarget World3D animation between rigs — 2026-11-17
 
 `retargetAnimationClip3D` plays one rig's clip on another of other proportions and other bone axes: each bone's turn away from rest is carried over in rig space, and the root's travel is scaled by height. [World3D animation](docs/world3d.md#animation)
+## The engine's 2D interface over a World3D scene — 2026-11-17
+
+`createWorld3DOverlay(canvas, { width, height })` lays a transparent 2D stage over a World3D canvas and starts it with `createBrowserGame`, so menus, bars, text and controls draw with the engine's 2D stage on top of the scene. Presses on `touchEnabled` 2D nodes go to the interface; presses, drags, wheels and hovers where the interface is empty go on to the 3D canvas. [A 3D game in one call](docs/world3d-app.md)
+
 ## Models by picture quality, headless runs, IndexedDB saves and offline bundles — 2026-11-17
 
 `pickQualityVariant` and `pickQualityFiles` choose the model or picture for a picture quality, falling to the nearest tier. `runHeadless` plays a game's rules once per seed with a stand-in player and reports each run. `openIndexedDBSaveStorage` gives saves larger than local storage holds, and `openBrowserBundleCache` keeps a bundle's index and entries so it opens and reads again offline. A bundle shorter than the first range asked for now opens. [The game kit](docs/game-kit.md)

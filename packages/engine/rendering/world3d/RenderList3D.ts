@@ -73,6 +73,13 @@ export class RenderList3D {
   readonly directionalLights: Light3D[] = [];
   readonly pointLights: Light3D[] = [];
   readonly spotLights: Light3D[] = [];
+  /**
+   * Point lights past the eight a frame lights directly, nearest first: they are lit through the tiled light
+   * list instead, each only where its range reaches. Lights with no range are not among them.
+   */
+  readonly tiledPointLights: Light3D[] = [];
+  /** Whether lights past the eight go to the tiled list (the renderer sets this) or are dropped. */
+  tiledLights = true;
   /** Summed ambient radiance, plus hemisphere sky and ground radiance. */
   readonly ambient = new Float32Array(3);
   readonly hemisphereSky = new Float32Array(3);
@@ -132,7 +139,14 @@ export class RenderList3D {
     camera.updateViewMatrices();
     this.#pointFound.length = this.#spotFound.length = 0;
     this.visit(scene, camera, filter?.layerMask ?? camera.layerMask, filter?.hidden);
-    this.keepLights(this.#pointFound, this.pointLights, LIGHT3D_LIMITS.maxPoint, camera);
+    this.tiledPointLights.length = 0;
+    this.keepLights(
+      this.#pointFound,
+      this.pointLights,
+      LIGHT3D_LIMITS.maxPoint,
+      camera,
+      this.tiledLights ? this.tiledPointLights : undefined
+    );
     this.keepLights(this.#spotFound, this.spotLights, LIGHT3D_LIMITS.maxSpot, camera);
     // The same items as last frame, in the same roles: last frame's order still groups them by material and geometry.
     if (!this.#same || this.#used !== this.#lastUsed) {
@@ -388,7 +402,13 @@ export class RenderList3D {
    * casts a shadow counts as reaching. Kept lights stay in scene order, so a frame with no more lights than
    * the limit is unchanged.
    */
-  private keepLights(found: readonly Light3D[], kept: Light3D[], limit: number, camera: Camera3D): void {
+  private keepLights(
+    found: readonly Light3D[],
+    kept: Light3D[],
+    limit: number,
+    camera: Camera3D,
+    rest?: Light3D[]
+  ): void {
     if (found.length <= limit) {
       for (let i = 0; i < found.length; i++) kept.push(found[i]!);
       return;
@@ -414,11 +434,21 @@ export class RenderList3D {
     let above = 0;
     for (let i = 0; i < found.length; i++) if (scores[i]! > threshold) above++;
     let ties = limit - above;
+    const others: number[] = [];
     for (let i = 0; i < found.length; i++) {
       const score = scores[i]!;
       if (score > threshold || (score === threshold && ties-- > 0)) kept.push(found[i]!);
+      else if (rest && found[i]!.range > 0) others.push(i);
     }
-    this.stats.lightsDropped += found.length - limit;
+    if (rest) {
+      // The rest, best first, up to what the tiled list holds.
+      others.sort((a, b) => scores[b]! - scores[a]!);
+      for (const i of others) {
+        if (rest.length >= LIGHT3D_LIMITS.maxTiledPoint) break;
+        rest.push(found[i]!);
+      }
+    }
+    this.stats.lightsDropped += found.length - limit - (rest?.length ?? 0);
   }
   private addMesh(mesh: Mesh3D, camera: Camera3D, layerMask: number): void {
     // Meshes that build their geometry on demand (batches, camera-facing lines) do it here.
@@ -504,6 +534,7 @@ export class RenderList3D {
     this.#casterGroups.clear();
     this.opaque.length = this.transparent.length = this.shadowCasters.length = 0;
     this.directionalLights.length = this.pointLights.length = this.spotLights.length = 0;
+    this.tiledPointLights.length = 0;
     this.#pointFound.length = this.#spotFound.length = 0;
   }
 }

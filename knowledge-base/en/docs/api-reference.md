@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 42 entries, 1259 exports; 771 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 42 entries, 1265 exports; 775 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -722,6 +722,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createWebGL2Renderer3D` | function |  |
 | `createWorld3DApp` | function | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | function | Host adapter that reserves `canvas` for one Engine. |
+| `createWorld3DOverlay` | function | Lays a transparent 2D stage over `canvas` (the 3D canvas, which must sit in a positioned parent) and starts it. |
 | `createWorld3DStats` | function |  |
 | `createWorld3DView` | function |  |
 | `CUBE_TEXTURE_ASSET_3D` | value | A cube texture. |
@@ -775,6 +776,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `World3DFramePass` | interface |  |
 | `World3DGpuTiming` | type |  |
 | `World3DLoopSource` | interface |  |
+| `World3DOverlay` | interface |  |
+| `World3DOverlayOptions` | interface |  |
 | `World3DPassKind` | type |  |
 | `World3DQuality` | type |  |
 | `World3DQualityPreset` | interface | What one picture quality turns on. |
@@ -808,6 +811,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createWebGPURenderer3D` | function | Acquire a device (unless one is borrowed) and create the WebGPU renderer. |
 | `createWorld3DApp` | function | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | function | Host adapter that reserves `canvas` for one Engine. |
+| `createWorld3DOverlay` | function | Lays a transparent 2D stage over `canvas` (the 3D canvas, which must sit in a positioned parent) and starts it. |
 | `createWorld3DStats` | function |  |
 | `createWorld3DView` | function |  |
 | `CUBE_TEXTURE_ASSET_3D` | value | A cube texture. |
@@ -857,6 +861,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `World3DClockSource` | interface | The part of an Engine this view needs: its explicit game clock. |
 | `World3DDeviceHints` | interface | What `pickWorld3DQuality` reads about the device. |
 | `World3DLoopSource` | interface |  |
+| `World3DOverlay` | interface |  |
+| `World3DOverlayOptions` | interface |  |
 | `World3DQuality` | type |  |
 | `World3DQualityPreset` | interface | What one picture quality turns on. |
 | `World3DShowOptions` | interface |  |

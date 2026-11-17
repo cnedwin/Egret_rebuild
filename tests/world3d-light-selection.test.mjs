@@ -36,6 +36,8 @@ test('LS01 the nearest point lights are kept when more are lit than the limit', 
   const lamps = [];
   for (let i = LIGHT3D_LIMITS.maxPoint + 4; i > 0; i--) lamps.push(lamp(scene, createPointLight3D, i * 10));
   const list = new RenderList3D();
+  // Without the tiled list the lights past the eight are dropped.
+  list.tiledLights = false;
   list.build(scene, camera);
   assert.equal(list.pointLights.length, LIGHT3D_LIMITS.maxPoint);
   const kept = new Set(list.pointLights);

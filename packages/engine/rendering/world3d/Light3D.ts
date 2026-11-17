@@ -9,6 +9,8 @@ export type LightType3D = 'ambient' | 'hemisphere' | 'directional' | 'point' | '
 export const LIGHT3D_LIMITS = Object.freeze({
   maxDirectional: 4,
   maxPoint: 8,
+  /** Point lights with a range lit through the tiled list, beyond the eight lit directly. */
+  maxTiledPoint: 256,
   maxSpot: 4,
   maxShadows: 4
 } as const);

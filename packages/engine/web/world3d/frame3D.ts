@@ -37,6 +37,8 @@ export interface Renderer3DInfo {
   culled: number;
   /** Point and spot lights left out of the last frame because more were lit than the renderer draws. */
   lightsDropped: number;
+  /** Point lights past the eight lit through the tiled list in the last frame. */
+  lightsTiled: number;
   shadowMaps: number;
   programs: number;
   geometries: number;
@@ -73,7 +75,7 @@ export interface Renderer3D extends Disposable {
 }
 
 /** Size in floats of the Frame uniform block. */
-export const FRAME_BLOCK_FLOATS_3D = 352;
+export const FRAME_BLOCK_FLOATS_3D = 360;
 /** Offsets, in floats, of the Frame block members. */
 export const FRAME_OFFSETS_3D = Object.freeze({
   viewProjection: 0,
@@ -101,7 +103,9 @@ export const FRAME_OFFSETS_3D = Object.freeze({
   cascadeInfo: 324,
   pointShadow: 328,
   clipPlanes: 332,
-  clipInfo: 348
+  clipInfo: 348,
+  tileGrid: 352,
+  tileInfo: 356
 } as const);
 const F = FRAME_OFFSETS_3D;
 
@@ -438,4 +442,131 @@ export function planShadows3D(
     emit(light, mat4Multiply(new Float32Array(16), scratchProjection, scratchView) as Float32Array, 1);
   }
   return plans;
+}
+
+/**
+ * The tiled light list: point lights past the eight a frame lights directly, and for each screen tile the lights
+ * whose range reaches into it. One RGBA32F table of `TILED_LIGHTS_3D.width` texels a row: lights from texel 0
+ * (two texels each: position and range, then colour), tile headers from `headerBase` (first index and count),
+ * then light indices four to a texel from `indexBase`.
+ */
+export const TILED_LIGHTS_3D = Object.freeze({
+  width: 512,
+  rows: 17,
+  maxLights: 256,
+  headerBase: 512,
+  maxTiles: 4096,
+  indexBase: 512 + 4096,
+  maxIndices: 16384,
+  maxPerTile: 32
+} as const);
+
+/**
+ * Fills `table` with the lights and their tiles for a viewport of `width` by `height` pixels, and the tile members
+ * of the frame block. With no lights the frame block says so and the table is left alone. `yDown` is true where
+ * fragment coordinates count rows from the top (WebGPU), false where from the bottom (WebGL2). `originX` and
+ * `originY` are where the viewport starts in fragment coordinates.
+ */
+export function writeTiledLights3D(
+  data: Float32Array,
+  table: Float32Array,
+  lights: readonly Light3D[],
+  viewProjection: ArrayLike<number>,
+  width: number,
+  height: number,
+  yDown: boolean,
+  originX = 0,
+  originY = 0
+): number {
+  const T = TILED_LIGHTS_3D;
+  const count = Math.min(lights.length, T.maxLights);
+  if (count === 0 || !(width > 0) || !(height > 0)) {
+    data.fill(0, F.tileGrid, F.tileInfo + 4);
+    return 0;
+  }
+  // Tiles of at least 32 pixels, larger where the viewport would need more tiles than the table holds.
+  let tile = 32;
+  while (Math.ceil(width / tile) * Math.ceil(height / tile) > T.maxTiles) tile *= 2;
+  const tilesX = Math.ceil(width / tile),
+    tilesY = Math.ceil(height / tile),
+    tiles = tilesX * tilesY;
+  const lists: number[][] = Array.from({ length: tiles }, () => []);
+  const m = viewProjection;
+  for (let i = 0; i < count; i++) {
+    const light = lights[i]!,
+      w = light.matrixWorld,
+      x = w[12]!,
+      y = w[13]!,
+      z = w[14]!,
+      r = light.range;
+    table[i * 8] = x;
+    table[i * 8 + 1] = y;
+    table[i * 8 + 2] = z;
+    table[i * 8 + 3] = r;
+    table[i * 8 + 4] = light.color[0]! * light.intensity;
+    table[i * 8 + 5] = light.color[1]! * light.intensity;
+    table[i * 8 + 6] = light.color[2]! * light.intensity;
+    table[i * 8 + 7] = 0;
+    // The screen rectangle of the light's bounding cube; a cube reaching behind the camera covers the screen.
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity,
+      behind = false,
+      inFront = false;
+    for (let corner = 0; corner < 8; corner++) {
+      const cx = x + (corner & 1 ? r : -r),
+        cy = y + (corner & 2 ? r : -r),
+        cz = z + (corner & 4 ? r : -r);
+      const pw = m[3]! * cx + m[7]! * cy + m[11]! * cz + m[15]!;
+      if (pw <= 1e-6) {
+        behind = true;
+        continue;
+      }
+      inFront = true;
+      const px = (m[0]! * cx + m[4]! * cy + m[8]! * cz + m[12]!) / pw,
+        py = (m[1]! * cx + m[5]! * cy + m[9]! * cz + m[13]!) / pw;
+      minX = Math.min(minX, px);
+      maxX = Math.max(maxX, px);
+      minY = Math.min(minY, py);
+      maxY = Math.max(maxY, py);
+    }
+    if (!inFront) continue;
+    if (behind) (minX = -1), (minY = -1), (maxX = 1), (maxY = 1);
+    if (maxX < -1 || minX > 1 || maxY < -1 || minY > 1) continue;
+    // Normalized device coordinates to tiles, in the fragment's row order.
+    const left = Math.max(0, Math.floor((((Math.max(minX, -1) + 1) / 2) * width) / tile)),
+      right = Math.min(tilesX - 1, Math.floor((((Math.min(maxX, 1) + 1) / 2) * width) / tile)),
+      lowRow = Math.floor((((Math.max(minY, -1) + 1) / 2) * height) / tile),
+      highRow = Math.floor((((Math.min(maxY, 1) + 1) / 2) * height) / tile);
+    let bottom = Math.max(0, Math.min(lowRow, highRow)),
+      top = Math.min(tilesY - 1, Math.max(lowRow, highRow));
+    if (yDown) [bottom, top] = [Math.max(0, tilesY - 1 - top), Math.min(tilesY - 1, tilesY - 1 - bottom)];
+    for (let ty = bottom; ty <= top; ty++)
+      for (let tx = left; tx <= right; tx++) {
+        const list = lists[ty * tilesX + tx]!;
+        if (list.length < T.maxPerTile) list.push(i);
+      }
+  }
+  let used = 0;
+  for (let t = 0; t < tiles; t++) {
+    const list = lists[t]!,
+      take = Math.min(list.length, T.maxIndices - used);
+    const header = (T.headerBase + t) * 4;
+    table[header] = used;
+    table[header + 1] = take;
+    table[header + 2] = table[header + 3] = 0;
+    for (let k = 0; k < take; k++) table[T.indexBase * 4 + used + k] = list[k]!;
+    used += take;
+  }
+  data[F.tileGrid] = tilesX;
+  data[F.tileGrid + 1] = tilesY;
+  data[F.tileGrid + 2] = tile;
+  // Where the viewport starts in fragment coordinates, so a viewport off the corner finds its tiles.
+  data[F.tileGrid + 3] = originX;
+  data[F.tileInfo] = count;
+  data[F.tileInfo + 1] = T.headerBase;
+  data[F.tileInfo + 2] = T.indexBase;
+  data[F.tileInfo + 3] = originY;
+  return count;
 }
