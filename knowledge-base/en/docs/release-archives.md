@@ -50,6 +50,8 @@ node tools/verify-release.mjs --version 0.1.0-preview.1 --archives ../release
 
 A pre-release rehearsal installed the engine from locally addressed archives in a new Windows project. Headless Edge 157 rendered the square, advanced it by 32 stage units on a click, then by 64 on Space after editing and reloading. The archive-install check uses npm. Independent newcomer, display timing and other package managers have separate acceptance. [Handoff status](https://github.com/cnedwin/Egret_rebuild/issues/93)
 
+[Preview.1](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) ships from commit `51b12255`. The seven public downloads matched their GitHub SHA-256 digests. A fresh npm project installed the starter's engine, runtime and contracts from the release URLs. A separate installation imported the project and Spine entries and matched all five Egret packages against their tarballs. Windows Edge and Galaxy Z Fold7 Chrome rendered the same game bundles through WebGPU and WebGL2. Changing `STEP` from 32 to 64 doubled the distance observed on each device. The [handoff record](https://github.com/cnedwin/Egret_rebuild/issues/93#issuecomment-6967204747) gives the bundle sizes and the time from navigation to the observed movement, including automated input and pixel capture. Independent newcomer and network startup acceptance remain open.
+
 ## Limits
 
 - A release cannot be changed once its tag is used: make a new version.

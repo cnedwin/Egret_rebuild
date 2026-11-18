@@ -50,6 +50,8 @@ node tools/verify-release.mjs --version 0.1.0-preview.1 --archives ../release
 
 发布前演练在 Windows 干净目录从本地归档安装引擎。无头 Edge 157 绘制了方块，点击后移动 32 个舞台单位，修改并刷新后按空格移动 64 个单位。归档安装演练使用 npm。独立新人、呈现时延和其他包管理器另行验收。[交付进度](https://github.com/cnedwin/Egret_rebuild/issues/93)
 
+[Preview.1](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) 对应主干提交 `51b12255`。七个公开下载文件均通过 GitHub SHA-256 核对。全新的 npm 工程从发行地址安装了示例使用的引擎、运行时和契约包。另一个工程导入了工程和 Spine 入口，五个白鹭包的安装文件均与公开归档一致。Windows Edge 与 Galaxy Z Fold7 Chrome 用相同的游戏包分别通过 WebGPU 和 WebGL2 渲染。将 `STEP` 从 32 改为 64 后，两台设备上观察到的移动距离均翻倍。[交付记录](https://github.com/cnedwin/Egret_rebuild/issues/93#issuecomment-6967204747) 列出了包体大小，以及从页面导航到观察到画面移动的耗时，其中包含自动输入和像素采集。独立新人走查和网络启动预算仍待验收。
+
 ## 限制
 
 - 标签一经使用，对应的发行版就不能再改：请另出一个版本。
