@@ -12,12 +12,15 @@ import { recordReleaseAssets } from '../tools/record-release-assets.mjs';
 import {
   archiveName,
   packRelease,
+  registryArchiveName,
+  registryTag,
   releaseBaseUrl,
   releaseManifest,
   RELEASE_PACKAGES,
   RELEASE_VERSION
 } from '../tools/pack-release.mjs';
 import { archiveFiles } from '../tools/verify-release.mjs';
+import { checkRegistryRelease } from '../tools/publish-registry.mjs';
 
 const coded = code => error => error?.code === code;
 const built = fs.existsSync(new URL('../packages/engine/dist/index.js', import.meta.url));
@@ -46,7 +49,11 @@ test('RA01 a version, an archive name and a release address', () => {
   for (const bad of ['', '1.2', 'v1.2.3', '01.2.3', '1.2.3-', '1.2.3+build', '1.2.3 ', 'latest', '1.2.3-a b'])
     assert.doesNotMatch(bad, RELEASE_VERSION);
   assert.equal(archiveName('@egret/engine', '0.1.0-preview.1'), 'egret-engine-0.1.0-preview.1.tgz');
+  assert.equal(registryArchiveName('@egret/engine', '7.0.1-rc.3'), 'npm-egret-engine-7.0.1-rc.3.tgz');
   assert.equal(releaseBaseUrl('0.1.0'), 'https://github.com/cnedwin/Egret_rebuild/releases/download/v0.1.0/');
+  // A candidate never becomes what `npm install @egret/engine` gives.
+  assert.equal(registryTag('7.0.1-rc.3'), 'next');
+  assert.equal(registryTag('7.0.1'), 'latest');
 });
 
 test('RA02 the manifest of an archive has the version, is not private, and names workspace packages by address', () => {
@@ -77,6 +84,17 @@ test('RA02 the manifest of an archive has the version, is not private, and names
     'robust-predicates': '3.0.3'
   });
   assert.deepEqual(out.files, ['dist', 'README.md', 'README.zh-CN.md', 'LICENSE', 'NOTICE']);
+  // For the registry the same packages are named by the version alone.
+  assert.deepEqual(releaseManifest(source, '0.2.0', null, names).dependencies, {
+    '@egret/contracts': '0.2.0',
+    '@egret/runtime': '0.2.0',
+    'robust-predicates': '3.0.3'
+  });
+  // A manifest that names no licence gets the first-party one; one that names its own keeps it.
+  const { license, ...unlicensed } = source;
+  assert.equal(license, 'Apache-2.0');
+  assert.equal(releaseManifest({ ...unlicensed }, '0.2.0', null, names).license, 'Apache-2.0');
+  assert.equal(releaseManifest({ ...unlicensed, license: 'MIT' }, '0.2.0', null, names).license, 'MIT');
   assert.equal(source.private, true);
   assert.equal(source.version, '0.0.0');
   // A workspace package that the release does not hold cannot be named by an address.
@@ -152,7 +170,36 @@ test('RA04 each archive holds the built files, the licence and the notice, and r
       walk(manifest.imports);
       for (const target of targets)
         assert.ok(files.has('package/' + target.replace(/^\.\//, '')), item.name + ' names ' + target);
+      assert.ok(typeof manifest.license === 'string' && manifest.license.length > 0, item.name + ' names no licence');
+      // The registry archive holds the same files; its manifest names the release's packages by version.
+      const row = record.registry.find(entry => entry.name === item.name);
+      assert.equal(row.file, registryArchiveName(item.name, '0.3.0-test.1'));
+      assert.equal(row.tag, 'next');
+      assert.equal(fs.statSync(path.join(out, row.file)).size, row.bytes);
+      const registryFiles = archiveFiles(path.join(out, row.file)),
+        registryManifest = manifestOf(path.join(out, row.file));
+      files.delete('package/package.json');
+      registryFiles.delete('package/package.json');
+      assert.deepEqual([...registryFiles], [...files], row.file);
+      for (const [name, range] of Object.entries(registryManifest.dependencies ?? {}))
+        assert.equal(range, name.startsWith('@egret/') ? '0.3.0-test.1' : manifest.dependencies[name], row.file);
+      assert.deepEqual({ ...registryManifest, dependencies: undefined }, { ...manifest, dependencies: undefined });
     }
+    assert.deepEqual(
+      record.registry.map(item => item.name),
+      record.packages.map(item => item.name)
+    );
+    // What publishes the registry archives holds each to its record, and refuses one that is not.
+    assert.deepEqual(
+      checkRegistryRelease(out).map(item => item.name + '@' + item.version + ' ' + item.tag),
+      record.packages.map(item => item.name + '@0.3.0-test.1 next')
+    );
+    const engine = path.join(out, registryArchiveName('@egret/engine', '0.3.0-test.1'));
+    const original = fs.readFileSync(engine);
+    fs.copyFileSync(path.join(out, archiveName('@egret/engine', '0.3.0-test.1')), engine);
+    assert.throws(() => checkRegistryRelease(out), coded('REGISTRY_DIGEST'));
+    fs.writeFileSync(engine, original);
+    checkRegistryRelease(out);
     // The release index binds the tagged package set and browser packer's verified bytes to the same commit.
     const version = record.version;
     const sourceCommit = 'ab'.repeat(20);

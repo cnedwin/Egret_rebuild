@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Egret Engine 7.0 release candidate `v7.0.1-rc.3`
+
+The five packages are on the public npm registry under the `next` tag: `npm install @egret/engine@next`. There they name each other by version. The GitHub release keeps the archives that name each other by address; both hold the same files. [Downloads and installation](docs/release-archives.md)
+
 ## Egret Engine 7.0 release candidate `v7.0.1-rc.2`
 
 One version tag now identifies the browser 2D and 3D files, the five npm-format archives and the editable starter. [Downloads and installation](docs/release-archives.md)

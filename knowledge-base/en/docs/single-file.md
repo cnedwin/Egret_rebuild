@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/single-file.md)
 
-Extract the engine files, usage guide and licences from the Egret Engine 7.0 [browser archive](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-browser.zip). Put `egret2d.js` next to your HTML page to use [`play`](play.md). For World3D, use `egret3d.js` and [`play3d`](play3d.md). Either classic script works from a local folder. For ES modules, serve the corresponding `.mjs` file over HTTP. [Release notes and SHA-256](release-archives.md)
+Extract the engine files, usage guide and licences from the Egret Engine 7.0 [browser archive](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip). Put `egret2d.js` next to your HTML page to use [`play`](play.md). For World3D, use `egret3d.js` and [`play3d`](play3d.md). Either classic script works from a local folder. For ES modules, serve the corresponding `.mjs` file over HTTP. [Release notes and SHA-256](release-archives.md)
 
 The packer loads all four files, checks their named exports and the `play` or `play3d` entry point, and synthesizes a sound sample. In the earlier single-file test, all three [Play example games](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) started, drew, handled keys and pointer input, and started audio sources in headless Chromium with software WebGL2 over both local files and HTTP.
 
