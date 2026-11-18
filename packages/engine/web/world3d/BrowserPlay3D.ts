@@ -23,7 +23,7 @@ import {
 } from '../../rendering/world3d/primitives3D.js';
 import { linearColor3D } from '../../rendering/world3d/GeometryBuilder3D.js';
 import { Raycaster3D } from '../../rendering/world3d/Raycast3D.js';
-import { mat4Identity, mat4Multiply, vec3TransformMat4 } from '../../rendering/world3d/math3D.js';
+import { mat4Identity, mat4Multiply, quatToEuler, vec3TransformMat4 } from '../../rendering/world3d/math3D.js';
 import { createWorld3DApp } from './app3D.js';
 import type { World3DApp } from './app3D.js';
 
@@ -33,6 +33,23 @@ const above = (value: unknown): value is number => finite(value) && value > 0;
 const colour = (value: unknown): value is number =>
   typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= 0xffffff;
 const RADIANS = Math.PI / 180;
+// Primitive geometry is transferred to its thing. Loaded models remain borrowed; burst geometry belongs to the game.
+const ownedGeometry = new WeakMap<PlayThing3D, Geometry3D>();
+const throwCleanupFailures = (failures: readonly unknown[]): void => {
+  if (failures.length === 1) throw failures[0];
+  if (failures.length > 1) throw new AggregateError(failures, 'Play3D cleanup failed');
+};
+const cleanUp = (actions: readonly (() => void)[]): void => {
+  const failures: unknown[] = [];
+  for (const action of actions) {
+    try {
+      action();
+    } catch (cause) {
+      failures.push(cause);
+    }
+  }
+  throwCleanupFailures(failures);
+};
 
 /** Where a thing is made. What is left out is 0. */
 export interface PlayPlace3D {
@@ -66,7 +83,8 @@ export class PlayThing3D {
   [own: string]: unknown;
   /**
    * A thing of its own geometry and colour, or one of a model made elsewhere: then `half` and `middle` are its box,
-   * and its colour is the model's own.
+   * and its colour is the model's own. Geometry passed directly is owned and released when the thing leaves;
+   * an Object3D and its geometry and materials stay owned by their caller.
    */
   public constructor(
     shape: Geometry3D | Object3D,
@@ -75,8 +93,12 @@ export class PlayThing3D {
     middle: readonly [number, number, number] = [0, 0, 0]
   ) {
     this.#color = color;
-    if (shape instanceof Object3D) this.node = shape;
-    else {
+    if (shape instanceof Object3D) {
+      this.node = shape;
+      quatToEuler(this.#turn, shape.quaternion);
+      for (const axis of [0, 1, 2] as const) this.#turn[axis] /= RADIANS;
+    } else {
+      ownedGeometry.set(this, shape);
       this.#material = createStandardMaterial3D({ color, roughness: 0.75 });
       const mesh = new Mesh3D(shape, this.#material);
       mesh.castShadow = true;
@@ -185,10 +207,13 @@ export class PlayThing3D {
   public get removed(): boolean {
     return this.#removed;
   }
-  /** Used by `game.remove`. */
+  /** Used by game removal and teardown; only resources made for this thing are retired. */
   public leave(): void {
+    if (this.#removed) return;
     this.#removed = true;
-    this.node.removeFromParent();
+    const geometry = ownedGeometry.get(this);
+    ownedGeometry.delete(this);
+    cleanUp([() => this.node.removeFromParent(), () => geometry?.dispose(), () => this.#material?.dispose()]);
   }
 }
 
@@ -360,10 +385,13 @@ export function modelBox3D(model: Object3D): { half: [number, number, number]; m
 export function pushOut3D(a: PlayThing3D, b: PlayThing3D): { x: number; y: number; z: number } | undefined {
   const [x, y, z] = overlap3D(a, b);
   if (!(x > 0 && y > 0 && z > 0)) return undefined;
+  const p = boxOf(a),
+    q = boxOf(b);
+  // Compare the same box centres as the overlap, including offset or mirrored models.
   // Up or down first where the ways are as short as one another: a thing set down on a floor stands on it.
-  if (y <= x && y <= z) return { x: 0, y: a.y >= b.y ? y : -y, z: 0 };
-  if (x <= z) return { x: a.x >= b.x ? x : -x, y: 0, z: 0 };
-  return { x: 0, y: 0, z: a.z >= b.z ? z : -z };
+  if (y <= x && y <= z) return { x: 0, y: p[1] >= q[1] ? y : -y, z: 0 };
+  if (x <= z) return { x: p[0] >= q[0] ? x : -x, y: 0, z: 0 };
+  return { x: 0, y: 0, z: p[2] >= q[2] ? z : -z };
 }
 
 /** Starts a 3D game in the page. See the guide `play3d.md`. */
@@ -379,6 +407,19 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     app: World3DApp | undefined,
     deep: HTMLCanvasElement | undefined,
     unplace: (() => void) | undefined;
+  let clearing = false,
+    closing = false,
+    worldDisposed = false,
+    generation = 0;
+  let disposal: Promise<void> | undefined;
+  const admit = (): void => {
+    if (clearing || closing) throw invalid('the 3D world is clearing or disposed');
+  };
+  const beginClosing = (): void => {
+    if (closing) return;
+    closing = true;
+    generation++;
+  };
   const scene = new Scene3D();
   scene.background = linearColor3D(background);
   const eye = createPerspectiveCamera3D({ fov: 55, near: 0.1, far: 500 });
@@ -443,11 +484,20 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
   const pieceShape = createBoxGeometry3D({ width: 1, height: 1, depth: 1 });
   const pieces: Piece[] = [];
   let nextPiece = 0;
-  const make = (geometry: Geometry3D, color: number, half: readonly [number, number, number], at: PlayPlace3D) => {
+  const make = (
+    geometry: () => Geometry3D,
+    color: number,
+    half: readonly [number, number, number],
+    at: PlayPlace3D
+  ) => {
+    admit();
     if (!colour(color)) throw invalid('a colour is a number from 0 to 0xffffff');
     if (at === null || typeof at !== 'object') throw invalid('a place is an object with x, y and z');
-    const thing = new PlayThing3D(geometry, color, half);
-    thing.node.setPosition(finite(at.x) ? at.x : 0, finite(at.y) ? at.y : 0, finite(at.z) ? at.z : 0);
+    const { x, y, z } = at;
+    // Read caller properties before allocating, then recheck in case a getter began teardown.
+    admit();
+    const thing = new PlayThing3D(geometry(), color, half);
+    thing.node.setPosition(finite(x) ? x : 0, finite(y) ? y : 0, finite(z) ? z : 0);
     scene.addChild(thing.node);
     things.add(thing);
     return thing;
@@ -489,20 +539,41 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     }
   };
   const clear = (): void => {
-    for (const thing of things) thing.leave();
-    things.clear();
-    taps.clear();
-    for (const piece of pieces) {
-      piece.life = 0;
-      piece.thing.visible = false;
+    if (clearing) throw invalid('the 3D world is clearing or disposed');
+    clearing = true;
+    generation++;
+    try {
+      const leaving = [...things];
+      things.clear();
+      taps.clear();
+      for (const piece of pieces) {
+        piece.life = 0;
+        piece.thing.visible = false;
+      }
+      followed = undefined;
+      base[0] = 0;
+      base[1] = 6;
+      base[2] = 12;
+      aim[0] = aim[1] = aim[2] = 0;
+      shakeLeft = 0;
+      shaken[0] = shaken[1] = shaken[2] = 0;
+      cleanUp(leaving.map(thing => () => thing.leave()));
+    } finally {
+      clearing = false;
     }
-    followed = undefined;
-    base[0] = 0;
-    base[1] = 6;
-    base[2] = 12;
-    aim[0] = aim[1] = aim[2] = 0;
-    shakeLeft = 0;
-    shaken[0] = shaken[1] = shaken[2] = 0;
+  };
+  const disposeWorld = (): void => {
+    beginClosing();
+    if (worldDisposed) return;
+    worldDisposed = true;
+    cleanUp([
+      clear,
+      ...pieces.map(piece => () => piece.thing.leave()),
+      () => pieceShape.dispose(),
+      () => unplace?.(),
+      () => app?.dispose(),
+      () => deep?.remove()
+    ]);
   };
   // Where the camera keeps to by a thing: its offset, turned with the thing when asked.
   const placeBy = (thing: PlayThing3D): [number, number, number] => {
@@ -550,42 +621,47 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
   const extend = (flat: PlayGame): Play3DGame => {
     const added: Partial<Play3DGame> = {
       box(width, height, depth, color, at = {}) {
+        admit();
         if (!above(width) || !above(height) || !above(depth))
           throw invalid('a box has a width, height and depth above 0');
-        return make(createBoxGeometry3D({ width, height, depth }), color, [width / 2, height / 2, depth / 2], at);
+        return make(() => createBoxGeometry3D({ width, height, depth }), color, [width / 2, height / 2, depth / 2], at);
       },
       sphere(radius, color, at = {}) {
+        admit();
         if (!above(radius)) throw invalid('a sphere has a radius above 0');
         return make(
-          createSphereGeometry3D({ radius, widthSegments: 24, heightSegments: 16 }),
+          () => createSphereGeometry3D({ radius, widthSegments: 24, heightSegments: 16 }),
           color,
           [radius, radius, radius],
           at
         );
       },
       cylinder(radius, height, color, at = {}) {
+        admit();
         if (!above(radius) || !above(height)) throw invalid('a cylinder has a radius and a height above 0');
         return make(
-          createCylinderGeometry3D({ radiusTop: radius, radiusBottom: radius, height, radialSegments: 24 }),
+          () => createCylinderGeometry3D({ radiusTop: radius, radiusBottom: radius, height, radialSegments: 24 }),
           color,
           [radius, height / 2, radius],
           at
         );
       },
       cone(radius, height, color, at = {}) {
+        admit();
         if (!above(radius) || !above(height)) throw invalid('a cone has a radius and a height above 0');
         return make(
-          createCylinderGeometry3D({ radiusTop: 0, radiusBottom: radius, height, radialSegments: 24 }),
+          () => createCylinderGeometry3D({ radiusTop: 0, radiusBottom: radius, height, radialSegments: 24 }),
           color,
           [radius, height / 2, radius],
           at
         );
       },
       ground(size, color, y = 0) {
+        admit();
         if (!above(size) || !finite(y)) throw invalid('a ground has a size above 0');
         // Deep, so that a thing falling fast in a slow frame is still pushed back up out of it and not through it.
         const thing = make(
-          createBoxGeometry3D({ width: size, height: GROUND_DEPTH, depth: size }),
+          () => createBoxGeometry3D({ width: size, height: GROUND_DEPTH, depth: size }),
           color,
           [size / 2, GROUND_DEPTH / 2, size / 2],
           {
@@ -596,14 +672,18 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         return thing;
       },
       add(model, at = {}) {
+        admit();
         if (!(model instanceof Object3D)) throw invalid('add takes a mesh, a group or a loaded model');
         if (at === null || typeof at !== 'object') throw invalid('a place is an object with x, y and z');
-        if (model.parent !== undefined) model.removeFromParent();
+        const { x, y, z } = at;
+        admit();
         const { half, middle } = modelBox3D(model);
+        admit();
+        if (model.parent !== undefined) model.removeFromParent();
         const thing = new PlayThing3D(model, 0xffffff, half, middle);
-        if (finite(at.x)) thing.x = at.x;
-        if (finite(at.y)) thing.y = at.y;
-        if (finite(at.z)) thing.z = at.z;
+        if (finite(x)) thing.x = x;
+        if (finite(y)) thing.y = y;
+        if (finite(z)) thing.z = z;
         scene.addChild(model);
         things.add(thing);
         return thing;
@@ -618,9 +698,10 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       },
       remove(body) {
         if (isThing(body)) {
-          body.leave();
           things.delete(body);
+          taps.delete(body);
           if (followed === body) followed = undefined;
+          body.leave();
         } else flat.remove(body);
       },
       near(a, b, distance) {
@@ -666,12 +747,17 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         aim[1] = thing.y;
         aim[2] = thing.z;
       },
+      hitStop(seconds = 0.06) {
+        flat.hitStop(seconds);
+        if (above(seconds)) generation++;
+      },
       shake(amount = 0.3, seconds = 0.25) {
         if (!above(amount) || !above(seconds)) return;
         shakeAmount = Math.max(shakeLeft > 0 ? shakeAmount : 0, Math.min(amount, 10));
         shakeLeft = shakeSpan = Math.min(seconds, 5);
       },
       burst(x, y, z, o = {}) {
+        admit();
         if (!finite(x) || !finite(y) || !finite(z) || o === null || typeof o !== 'object') return;
         const count = Math.min(PIECES, Math.max(1, Math.floor(finite(o.count) ? o.count : 12))),
           speed = above(o.speed) ? o.speed : 5,
@@ -679,10 +765,13 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
           size = above(o.size) ? o.size : 0.18,
           gravity = finite(o.gravity) ? o.gravity : 12,
           color = colour(o.color) ? o.color : 0xffffff;
+        admit();
         for (let i = 0; i < count; i++) {
           let piece = pieces[nextPiece];
           if (piece === undefined) {
             const thing = new PlayThing3D(pieceShape, color, [0.5, 0.5, 0.5]);
+            // Pieces own their separate material, while the game owns their one shared shape.
+            ownedGeometry.delete(thing);
             thing.node.castShadow = false;
             scene.addChild(thing.node);
             piece = pieces[nextPiece] = { thing, vx: 0, vy: 0, vz: 0, life: 0, span: 1, gravity: 0, size: 1 };
@@ -707,11 +796,30 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
           piece.thing.visible = true;
         }
       },
-      async dispose() {
-        await flat.dispose();
-        unplace?.();
-        app?.dispose();
-        deep?.remove();
+      dispose() {
+        if (disposal !== undefined) return disposal;
+        beginClosing();
+        // Publish before callbacks, but stop the flat game synchronously so a motion cannot keep chaining.
+        let resolve!: () => void, reject!: (cause: unknown) => void;
+        disposal = new Promise<void>((done, fail) => {
+          resolve = done;
+          reject = fail;
+        });
+        void (async () => {
+          const failures: unknown[] = [];
+          try {
+            await flat.dispose();
+          } catch (cause) {
+            failures.push(cause);
+          }
+          try {
+            disposeWorld();
+          } catch (cause) {
+            failures.push(cause);
+          }
+          throwCleanupFailures(failures);
+        })().then(resolve, reject);
+        return disposal;
       }
     };
     // Everything of the flat game is there under these: its getters read the game's own state, whoever asks.
@@ -734,6 +842,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     backend: options.backend ?? 'webgl2',
     transparent: true,
     async setup(given) {
+      admit();
       if (game === undefined) {
         // The picture goes on a canvas of its own, under the game's, in the same place whatever the page does.
         const over = given.canvas,
@@ -778,19 +887,33 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     },
     update(seconds) {
       if (game === undefined) return;
+      const current = game,
+        version = generation;
+      const running = (): boolean =>
+        generation === version &&
+        !clearing &&
+        !closing &&
+        !current.paused &&
+        current.scope.state === 'open' &&
+        current.browser.loop.state === 'running';
+      if (!running()) return;
       if (tapFailure !== undefined) {
         const { cause } = tapFailure;
         tapFailure = undefined;
         throw cause;
       }
-      tapped(game as unknown as PlayGame);
-      update?.(seconds, game);
+      tapped(current as unknown as PlayGame);
+      if (!running()) return;
+      update?.(seconds, current);
+      if (!running()) return;
       after(seconds);
     }
   }).catch((cause: unknown) => {
-    unplace?.();
-    app?.dispose();
-    deep?.remove();
+    try {
+      disposeWorld();
+    } catch (cleanupFailure) {
+      throw new AggregateError([cause, cleanupFailure], 'Play3D setup and cleanup failed');
+    }
     throw cause;
   });
   return game ?? extend(flat);

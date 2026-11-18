@@ -6,7 +6,9 @@ English | [简体中文](../../Cns/docs/play3d.md)
 
 The picture is a [World3D app](world3d-app.md) on a canvas of its own. The interface is a `play` game drawn clear over it, as the [overlay](world3d-app.md) of an app is, so text and buttons are flat and in the units of `width` and `height`.
 
-**What is checked.** Options, the numbers of a thing and the tests of overlap are checked in Node. In headless Chromium on software WebGL2, the game of the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) was played by keyboard to its end: the ball landed, rolled to a star, jumped, fell off the edge, and the button started it again. Under software rendering the quality is `low`, so shadows and antialiasing were not drawn. A real GPU, phones, other browsers and WebGPU were not run.
+**What is checked.** Options, the numbers of a thing and the tests of overlap are checked in Node. In headless Chromium on software WebGL2, the game of the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) was played by keyboard to its end: the ball landed, rolled to a star, jumped, fell off the edge, and the button started it again. Under software rendering the quality is `low`, so shadows and antialiasing were not drawn. That original full-game run did not cover hardware GPUs.
+
+On November 18, 2026, the contract repairs based on main `ec17a5a2` passed on Windows Edge 157.0.4341.60 / RTX 5090 Laptop and Galaxy Z Fold7 / Android 17 / Chrome 157.0.8103.78 / Adreno 830, each with explicit WebGPU and WebGL2 and no software fallback. OS samples showed Edge in the foreground during capture; the phone stayed awake and unlocked during capture. Protocol mouse/touch on the actual devices changed the centre pixel from RGBA `255,32,64,255` to `32,255,96,255` on all four combinations. The bounded 128 × 96, low-quality World3D fixture also checked offset and mirrored collisions, imported rotation and yaw editing, and a falling ball settling at `y = 0.45`. Each backend/device run completed 24 restarts: five current owned primitives remained live; all five prior primitive geometries/materials retired. Final close also retired the three pooled burst pieces while borrowed model resources remained live. Cleanup refused reentrant box/add/burst operations before borrowed transforms changed, and repeated/reentrant disposal shared one Promise and stopped the native Motion chain. The offscreen target contained visible geometry (6 draws, 972 triangles). These are logical lifecycle and bounded pixel observations, not physical VRAM measurements, high-quality shadow/AA, human input or performance acceptance.
 
 ## A game
 
@@ -55,6 +57,10 @@ Those of [`play`](play.md#options), without `canvas`: `play3d` makes its two can
 | `game.onTap(thing, () => …)` | Calls the function when the thing is tapped or clicked: a ray from the camera through the pointer, and the nearest thing it meets with a tap gets it. A press on a thing is still `game.pointer.pressed`. A sprite of the interface is given to `onTap` as in `play` |
 
 Each gives a thing. Set `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `scale` or `scaleX`, `scaleY`, `scaleZ`, `visible` and `color` on it at any time; they can be tweened, as in `game.tween(door).to({ y: 4 }, 0.5)`. Add properties of your own (`enemy.hp = 3`). `thing.removed` says whether it has been removed; setting a removed thing does nothing and does not fail. `thing.node` is its [Mesh3D](world3d.md).
+
+An imported model keeps its existing root rotation. Editing `rotationY` preserves the other two axes. Collision direction uses the centre of the same scaled bounds that establish overlap, including a model whose origin is at its feet.
+
+Primitive geometries and the materials made for them belong to the game. Removing them, restarting or disposing releases those resources. Models given to `add` remain borrowed, so their geometry, materials and textures remain the caller's responsibility. Burst pieces share one game-owned shape that survives restart and ends at final disposal. Creating or attaching things during world cleanup or after disposal is refused with `PLAY_OPTIONS_INVALID`. Cleanup continues through resource-listener failures and reports them.
 
 ## The camera and the sun
 

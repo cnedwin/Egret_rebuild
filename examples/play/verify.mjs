@@ -180,6 +180,69 @@ await scenario(
   480,
   320,
   async (page, stage, row) => {
+    row.clock = await page.evaluate(async () => {
+      const { play } = await import('@egret/engine/play');
+      const game = await play({ width: 96, height: 64, backend: 'webgl2' });
+      const frames = async count => {
+        for (let i = 0; i < count; i++) await new Promise(resolve => requestAnimationFrame(resolve));
+      };
+      const target = { x: 0 };
+      try {
+        game.tween(target).to({ x: 100 }, 1);
+        await game.wait(0.08);
+        const before = { x: target.x, time: game.time };
+        game.pause();
+        await frames(5);
+        const paused = { x: target.x, time: game.time };
+        if (!(before.x > 0 && before.x === paused.x && before.time === paused.time))
+          throw Error('A paused game advanced its tween');
+        game.resume();
+        await game.wait(0.05);
+        const resumed = { x: target.x, time: game.time };
+        if (!(resumed.x > paused.x)) throw Error('The paused tween did not resume');
+        game.timeScale = 0;
+        await frames(5);
+        const zero = { x: target.x, time: game.time };
+        if (zero.x !== resumed.x || zero.time !== resumed.time) throw Error('Zero game time advanced its tween');
+        game.timeScale = 0.5;
+        await game.wait(0.05);
+        const half = { x: target.x, time: game.time };
+        if (Math.abs(half.x - zero.x - 100 * (half.time - zero.time)) > 1)
+          throw Error('The tween and game time used different scales');
+        game.hitStop(1);
+        await frames(5);
+        const hit = { x: target.x, time: game.time };
+        if (hit.x !== half.x || hit.time !== half.time) throw Error('A hit stop advanced its tween');
+        await game.restart();
+        if (game.time !== 0) throw Error('Restart did not reset game time');
+        const next = { x: 0 };
+        game.tween(next).to({ x: 1 }, 0.05);
+        await game.wait(0.1);
+        if (next.x !== 1) throw Error('The new game generation did not advance');
+        game.timeScale = 8;
+        const fast = { x: 0 };
+        game.tween(fast).to({ x: 1 }, 0.5);
+        await game.wait(0.8);
+        if (fast.x !== 1) throw Error('A high time scale failed the Engine clock limit');
+        let callbacks = 0;
+        game
+          .tween({ x: 0 })
+          .wait(0.03)
+          .call(() => {
+            callbacks++;
+            void game.dispose();
+          })
+          .call(() => {
+            callbacks++;
+          });
+        await frames(8);
+        if (callbacks !== 1 || game.browser.loop.state !== 'closed')
+          throw Error('A tween continued after it closed the game');
+        return { before, paused, resumed, zero, half, hit, restarted: next.x, fast: fast.x, callbacks };
+      } finally {
+        await game.dispose();
+      }
+    });
     const BRICKS = [0xff4d6d, 0xffa64d, 0xffe14d, 0x7be069],
       PADDLE = 0x8fa8ff,
       brick = (look, r, c) => look(40 + c * 57, 40 + r * 20);
