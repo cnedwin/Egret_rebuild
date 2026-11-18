@@ -1,20 +1,25 @@
 name: Release archives
-# Pushing a tag v<version> builds the packages, packs one installable archive for each, installs them into a clean
-# project to see that they load, and attaches them to a GitHub release of that tag. Nothing is sent to npm.
-# 推送标签 v<版本> 会构建各包、为每个包打出一个可安装的归档、装进干净工程确认能加载，并把它们附到该标签的
-# GitHub release 上。不会向 npm 发布任何内容。
 on:
   push:
     tags: ['v*']
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'tools/pack-release.mjs'
+      - 'tools/pack-single-file.mjs'
+      - 'tools/record-release-assets.mjs'
+      - 'tools/verify-release.mjs'
+      - 'examples/starter/release/**'
 permissions:
   contents: read
 jobs:
-  release:
-    name: Pack, check and attach the archives
+  pack:
+    name: Build and verify the distribution
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    permissions:
-      contents: write
+    env:
+      # PRs rehearse the tag build using a disposable version and a read-only token.
+      TAG: ${{ github.event_name == 'push' && github.ref_name || format('v0.0.0-check.{0}', github.run_id) }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -25,30 +30,80 @@ jobs:
       - run: npm install --global pnpm@11.25.0 --ignore-scripts
       - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm build
-      - name: Pack the archives
-        env:
-          TAG: ${{ github.ref_name }}
-        run: node tools/pack-release.mjs --version "${TAG#v}" --out "$RUNNER_TEMP/release"
-      - name: Install them into a clean project
-        env:
-          TAG: ${{ github.ref_name }}
-        run: node tools/verify-release.mjs --archives "$RUNNER_TEMP/release" --version "${TAG#v}"
-      - name: Pack the editable starter
-        env:
-          TAG: ${{ github.ref_name }}
+      - name: Pack and install the five packages
         run: |
-          starter="$RUNNER_TEMP/egret-first-game"
+          node tools/pack-release.mjs --version "${TAG#v}" --out "$RUNNER_TEMP/release"
+          node tools/verify-release.mjs --archives "$RUNNER_TEMP/release" --version "${TAG#v}"
+      - name: Build the browser files and editable starter
+        run: |
+          version="${TAG#v}"
+          release="$RUNNER_TEMP/release"
+          browser="$RUNNER_TEMP/browser"
+          starter="$RUNNER_TEMP/starter"
+          esbuild=$(node -p "require('./examples/starter/release/package.json').devDependencies.esbuild")
+          npm install --prefix "$RUNNER_TEMP/bundler" --no-save --ignore-scripts --no-audit --no-fund "esbuild@$esbuild"
+          node tools/pack-single-file.mjs --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --version "$version" --out "$browser"
+          scripts=(egret2d.js egret2d.mjs egret3d.js egret3d.mjs)
+          (cd "$browser" && cp "${scripts[@]}" "$release/" && zip -q "$release/egret-browser.zip" "${scripts[@]}" llms.txt LICENSE NOTICE robust-predicates.LICENSE report.json)
           mkdir "$starter"
           cp examples/starter/release/{index.html,main.mjs,package.json} LICENSE NOTICE "$starter/"
-          cd "$starter"
-          npm pkg set "dependencies.@egret/engine=https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/egret-engine-${TAG#v}.tgz"
-          zip -q "$RUNNER_TEMP/release/egret-first-game.zip" index.html main.mjs package.json LICENSE NOTICE
-      - name: Attach them to the release
+          engine=$(node -p "require('$release/release.json').packages.find(item => item.name === '@egret/engine').install")
+          (cd "$starter" && npm pkg set "version=$version" "dependencies.@egret/engine=$engine" && zip -q "$release/egret-first-game.zip" index.html main.mjs package.json LICENSE NOTICE)
+          unzip -tq "$release/egret-browser.zip"
+          for file in "${scripts[@]}"; do
+            unzip -p "$release/egret-browser.zip" "$file" | cmp - "$release/$file"
+          done
+          unzip -tq "$release/egret-first-game.zip"
+          unzip -p "$release/egret-first-game.zip" package.json | jq -e --arg version "$version" --arg url "$engine" '.version == $version and .dependencies["@egret/engine"] == $url'
+          commit=$(git rev-parse HEAD)
+          test "$commit" = "$(git rev-parse "$GITHUB_SHA^{commit}")"
+          node tools/record-release-assets.mjs "$release" "$browser/report.json" "$version" "$commit"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: github.event_name == 'push'
+        with:
+          name: egret-release
+          path: ${{ runner.temp }}/release/
+          if-no-files-found: error
+          retention-days: 3
+  publish:
+    name: Publish the verified tag
+    if: github.event_name == 'push'
+    needs: pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: egret-release
+          path: ${{ runner.temp }}/release/
+      - name: Attach the complete distribution and publish
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
-          case "$TAG" in *-*) kind=--prerelease ;; *) kind=--latest ;; esac
-          gh release create "$TAG" "$RUNNER_TEMP"/release/*.tgz "$RUNNER_TEMP/release/release.json" "$RUNNER_TEMP/release/egret-first-game.zip" \
-            --repo "$GITHUB_REPOSITORY" --verify-tag $kind --title "$TAG" \
-            --notes "Download egret-first-game.zip, extract it, then run npm install and npm start. 安装入门示例：解压 egret-first-game.zip，运行 npm install 和 npm start。 Install the engine: \`npm install https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/egret-engine-${TAG#v}.tgz\`. The archives were packed by tools/pack-release.mjs from this tag and installed into a clean project before they were attached. See knowledge-base/en/docs/release-archives.md."
+          release="$RUNNER_TEMP/release"
+          base="https://github.com/$GITHUB_REPOSITORY"
+          download="$base/releases/download/$TAG"
+          guides="$base/blob/$TAG/knowledge-base"
+          series="${TAG#v}"
+          series="${series%%-*}"
+          series="${series%.*}"
+          cat > "$RUNNER_TEMP/notes.md" <<EOF
+          **Egret Engine $series** · \`$TAG\`
+
+          Download the [editable starter]($download/egret-first-game.zip), unpack it, then run \`npm install\` and \`npm start\`. The [browser distribution]($download/egret-browser.zip) includes the 2D and 3D scripts, ES modules, licences and guide. [Package installation and release notes]($guides/en/docs/release-archives.md).
+
+          **白鹭引擎 $series** · \`$TAG\`
+
+          下载[可编辑入门示例]($download/egret-first-game.zip)，解压后运行 \`npm install\` 和 \`npm start\`。[浏览器发行包]($download/egret-browser.zip) 包含 2D、3D 单文件脚本、ES 模块、许可证和指南。[包安装与发行说明]($guides/Cns/docs/release-archives.md)。
+          EOF
+          tagged=$(gh api "repos/$GITHUB_REPOSITORY/commits/$TAG" --jq .sha)
+          test "$tagged" = "$(jq -r '.sourceCommit' "$release/release.json")"
+          (cd "$release" && jq -r '(.packages[], .assets[]) | "\(.sha256)  \(.file)"' release.json | sha256sum --check --strict)
+          kind=(--latest)
+          if [[ "$TAG" == *-* ]]; then kind=(--prerelease --latest=false); fi
+          # With assets, gh creates a draft, uploads the files, then publishes the release.
+          gh release create "$TAG" "$release"/* --repo "$GITHUB_REPOSITORY" --verify-tag "${kind[@]}" \
+            --title "Egret Engine $series · $TAG" --notes-file "$RUNNER_TEMP/notes.md"

@@ -2,11 +2,11 @@
 
 English | [简体中文](../../Cns/docs/clean-consumer.md)
 
-This page says what a project outside this repository receives when it uses the default engine today, how that is checked, and which rows are still open. It belongs to [#93](https://github.com/cnedwin/Egret_rebuild/issues/93).
+To install Egret Engine 7.0, use the [release archives and editable starter](release-archives.md). This page records the earlier [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) rehearsal with three private `0.0.0` archives in a project outside the repository. The steps and results below apply to that rehearsal.
 
 ## What the distribution is
 
-The workspace packages are private at version 0.0.0 and are not published to a registry. The distribution that can be handed over is three archives, packed by the pinned pnpm from a built checkout:
+For that rehearsal, the pinned pnpm packed three private workspace packages at version `0.0.0` from the built checkout.
 
 | Archive | Role | Declared by the consumer |
 | --- | --- | --- |

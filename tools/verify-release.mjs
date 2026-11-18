@@ -11,7 +11,7 @@ import zlib from 'node:zlib';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { packRelease, releaseBaseUrl, RELEASE_PACKAGES } from './pack-release.mjs';
+import { packRelease, releaseBaseUrl, releaseManifest, RELEASE_PACKAGES } from './pack-release.mjs';
 
 /** The files of an archive: path to the SHA-256 of its bytes. Names longer than a header holds come as extended records. */
 export function archiveFiles(file) {
@@ -58,9 +58,21 @@ export function verifyRelease({ version, archives, npm = 'npm' }) {
       const published = JSON.parse(fs.readFileSync(path.join(archives, 'release.json'), 'utf8'));
       if (published.version !== version || published.baseUrl !== releaseBaseUrl(version))
         fail('release.json is for ' + published.version + ' at ' + published.baseUrl);
+      const names = new Set(record.packages.map(item => item.name));
       for (const item of record.packages) {
         const mine = archiveFiles(path.join(local, item.file)),
           theirs = archiveFiles(path.join(archives, item.file));
+        // The installed rehearsal uses file: dependencies. Check the actual publication manifest before comparing the rest.
+        const directory = item.name.slice('@egret/'.length);
+        const source = JSON.parse(
+          fs.readFileSync(new URL('../packages/' + directory + '/package.json', import.meta.url), 'utf8')
+        );
+        const manifest = releaseManifest(source, version, published.baseUrl, names);
+        const expected = crypto
+          .createHash('sha256')
+          .update(JSON.stringify(manifest, null, 2) + '\n')
+          .digest('hex');
+        if (theirs.get('package/package.json') !== expected) fail(item.file + ' has the wrong publication manifest');
         mine.delete('package/package.json');
         theirs.delete('package/package.json');
         if (JSON.stringify([...mine]) !== JSON.stringify([...theirs]))

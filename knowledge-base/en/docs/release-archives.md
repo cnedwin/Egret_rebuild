@@ -1,49 +1,52 @@
-# Release archives
+# Egret Engine 7.0 release notes and installation
 
 English | [简体中文](../../Cns/docs/release-archives.md)
 
-The packages in this repository are private and at version 0.0.0. A release is a set of archives made from them, one for each package, attached to a GitHub release. Nothing is published to npm.
+**Egret Engine 7.0** continues the engine's version history under the community rebuild. The [`v7.0.1-rc.2` release candidate](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.2) builds the following downloads from one tagged commit.
+
+| Use case | Download |
+| --- | --- |
+| Start with an editable 2D game | [Starter project](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-first-game.zip) |
+| Add the engine to a web page | [Browser files and licences](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-browser.zip). For 2D, choose [`egret2d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret2d.js) or [`egret2d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret2d.mjs). For World3D, choose [`egret3d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret3d.js) or [`egret3d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret3d.mjs). |
+| Import modules into an npm project | [`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-engine-7.0.1-rc.2.tgz), [`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-contracts-7.0.1-rc.2.tgz), [`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-runtime-7.0.1-rc.2.tgz), [`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-project-7.0.1-rc.2.tgz), [`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-spine-7.0.1-rc.2.tgz) |
+
+The [release manifest](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/release.json) lists the source commit, file sizes and SHA-256 digests. Serve downloaded browser files from your own game directory or site. Include the licence notices from the browser archive when redistributing them.
+
+[`7.0.1-rc.1` was an earlier browser bundle build](https://github.com/cnedwin/Egret_rebuild/pull/367). Projects pinned to `0.1.0-preview.1` can still use the [early engineering preview](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) and its [original starter ZIP](https://github.com/cnedwin/Egret_rebuild/releases/download/v0.1.0-preview.1/egret-first-game.zip).
 
 ## Run and edit the starter
 
-1. Download `egret-first-game.zip` from the [preview.1 release](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) and extract it into a new folder. Its `package.json` pins the engine archive in that release and esbuild 0.28.2.
+1. Extract the [starter ZIP](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-first-game.zip) into a new folder. Its `package.json` pins the engine archive from this release and esbuild 0.28.2.
 2. With Node.js 26.7.0 and npm, run `npm install`, then `npm start`. Open `http://127.0.0.1:8000`. Click the amber square or press Space. It moves 32 stage units per action.
 3. In `main.mjs`, change `STEP` from `32` to `64`, save and reload the page. The square now moves twice as far. Press Ctrl+C in the terminal to stop the local server.
 
-## Install a release
+## Install with npm
 
-```
-npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<version>/egret-engine-<version>.tgz
+```sh
+npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-engine-7.0.1-rc.2.tgz
 ```
 
-- That one address is enough for the engine: its archive names `@egret/contracts` and `@egret/runtime` by the address of their archives in the same release, and npm fetches them.
-- `@egret/project` and `@egret/spine` are installed the same way, from `egret-project-<version>.tgz` and `egret-spine-<version>.tgz`.
-- `release.json`, attached beside the archives, gives each archive's name, size and SHA-256.
-- pnpm and yarn install from the same addresses.
+npm installs `@egret/engine` from GitHub Releases and fetches `@egret/contracts` and `@egret/runtime` from the same release. To add project format or Spine support, run `npm install` with the corresponding `.tgz` URL in the table. The public npm registry is a separate distribution channel. Use the complete archive URLs for this candidate.
 
 ## What an archive holds
 
-- The built `dist` directory, without source maps; the package's two README files; the repository's `LICENSE` and `NOTICE`.
-- A manifest that differs from the one in the repository in four ways: it has the release's version; it is not private; it lists the files above; and each dependency on another package of this workspace is the address of that package's archive.
-- The entries, the private import names and the third-party dependencies are as in the repository.
+Each npm archive contains the built `dist` directory, both package READMEs, `LICENSE` and `NOTICE`. The private workspace uses version `0.0.0`. Each packed manifest carries the release version, lists its distributable files, and pins its dependencies on other Egret packages to URLs in the same release. Public entries and third-party dependencies come from the source manifest.
 
 ## Make a release
 
-1. Choose a version: three numbers, and for a preview a hyphen and a name, such as `0.1.0-preview.1`.
-2. Push the tag `v<version>` on the commit to release.
-3. The `Release archives` workflow builds, packs, installs the archives into a clean project, imports them there, and attaches them to a GitHub release of the tag. A version with a hyphen is marked as a pre-release.
+Create and push a `v<version>` tag on the commit to distribute. The release workflow reads that tag, builds the tagged commit, and uses the same version for the browser files, package archives and starter. GitHub marks versions with a prerelease suffix as prereleases.
 
-To make the archives without releasing them:
+To rehearse packaging and installation of the five npm archives locally, run the following commands.
 
-```
+```sh
 node tools/build.mjs
-node tools/pack-release.mjs --version 0.1.0-preview.1 --out ../release
-node tools/verify-release.mjs --version 0.1.0-preview.1 --archives ../release
+node tools/pack-release.mjs --version 7.0.1-rc.2 --out ../release
+node tools/verify-release.mjs --version 7.0.1-rc.2 --archives ../release
 ```
 
-`verify-release` packs a second set whose archives name each other by file address, installs those with npm, and compares them file by file with the set given: only the manifests may differ. It needs the network for `robust-predicates`, `jsonc-parser` and `@esotericsoftware/spine-core`.
+The install check uses a second set of archives with local file URLs so it can run before publication. npm downloads third-party dependencies, and the check compares the package payloads against the release archives.
 
-## What has been checked
+## Earlier engineering preview evidence
 
 - `tests/pack-release.test.mjs`: versions and addresses, the manifest, refusals, and the contents of all five archives.
 - On Linux with Node 26.7.0 and npm, the archives of `0.1.0-preview.1` were installed into a clean project outside the repository, and `@egret/engine`, `@egret/engine/web/game`, `@egret/project` and `@egret/spine` were imported there.
