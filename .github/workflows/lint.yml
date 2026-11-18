@@ -27,11 +27,17 @@ jobs:
         with:
           node-version-file: .node-version
       - run: npm ci --ignore-scripts --prefix tools/format
-      - env:
-          EGRET_LINT_PR_BASE: ${{ github.event.pull_request.base.sha }}
-        run: |
+      # A pull request checks out its merge commit. The recorded base SHA is the main tip at the
+      # last push; if main has moved since, it is absent from this fetch. The merge commit's first
+      # parent is the main tip it was built on, so the advisory reports exactly the files the
+      # pull request adds there.
+      - run: |
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-            node tools/lint.mjs --base "$EGRET_LINT_PR_BASE"
+            git rev-parse --verify --quiet 'HEAD^2^{commit}' > /dev/null || {
+              echo 'The pull request checkout is not a merge commit.' >&2
+              exit 1
+            }
+            node tools/lint.mjs --base "$(git rev-parse --verify 'HEAD^1^{commit}')"
           else
             node tools/lint.mjs
           fi
