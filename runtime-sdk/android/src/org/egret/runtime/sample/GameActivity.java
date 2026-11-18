@@ -36,6 +36,10 @@ public final class GameActivity extends Activity {
     private GLSurfaceView surface;
     private FrameRenderer renderer;
     private WebView vm;
+    private EmbeddedSession embedded;
+    private boolean useV8;
+    private String vmProfile, bridge;
+    private JSONObject vmDetails = new JSONObject();
     private FrameLayout root;
     private Frame[] records;
     private ByteBuffer liveBytes;
@@ -72,9 +76,20 @@ public final class GameActivity extends Activity {
             if (!runId.matches("[a-zA-Z0-9_.-]{1,80}")) throw new IllegalArgumentException("runId");
             save(new JSONObject().put("status", "starting"));
             String mode = getIntent().getStringExtra("mode");
-            if (mode == null) mode = "native";
-            if (!mode.equals("native") && !mode.equals("replay")) throw new IllegalArgumentException("mode");
+            if (mode == null) {
+                boolean bundled = java.util.Arrays.asList(getAssets().list("")).contains("v8-profile.txt");
+                mode = bundled ? "v8" : "native";
+            }
+            if (!mode.equals("native") && !mode.equals("replay") && !mode.equals("v8"))
+                throw new IllegalArgumentException("mode");
             replay = mode.equals("replay");
+            useV8 = mode.equals("v8");
+            vmProfile = useV8 ? new String(Fixture.readAsset(getAssets(), "v8-profile.txt", 64),
+                StandardCharsets.US_ASCII).trim() : replay ? "none" : "webview";
+            bridge = replay ? "none" : useV8 ? "array-buffer" : "base64";
+            String requestedBridge = getIntent().getStringExtra("bridge");
+            if (requestedBridge != null && !requestedBridge.equals("auto") && !requestedBridge.equals(bridge))
+                throw new IllegalArgumentException("Requested bridge unavailable: " + requestedBridge);
             verify = getIntent().getBooleanExtra("verify", false);
             recover = getIntent().getBooleanExtra("recover", false);
             finishAfter = getIntent().getBooleanExtra("finish", false);
@@ -101,16 +116,34 @@ public final class GameActivity extends Activity {
             root.setBackgroundColor(Color.BLACK);
             setContentView(root);
             if (replay) installSurface();
+            else if (useV8) installEmbedded();
             else installVm();
         } catch (Exception | LinkageError e) {
             fail(e.toString());
         }
     }
 
-    private void installVm() {
+    private void installEmbedded() {
+        liveBytes = ByteBuffer.allocateDirect(fixture.frameBytes);
+        ByteBuffer atlas = ByteBuffer.allocateDirect(Math.multiplyExact(fixture.atlasWidth * fixture.atlasHeight, 4));
+        embedded = new EmbeddedSession(ui, this::fail);
+        embedded.open(getApplicationContext(), vmProfile, atlas, details -> {
+            vmDetails = details;
+            if (done || demoClosing || frameworkDestroyed) return;
+            try {
+                fixture.atlas = atlas;
+                if (verify) Fixture.checkDigest(atlas, fixture.expectedAtlas);
+                installSurface();
+            } catch (Exception e) { fail(e.toString()); }
+        });
+    }
+
+    private void installVm() throws org.json.JSONException {
         liveBytes = ByteBuffer.allocateDirect(fixture.frameBytes);
         // This WebView executes only the packaged game JS. It is never attached as a rendering surface.
         vm = new WebView(this);
+        android.content.pm.PackageInfo provider = WebView.getCurrentWebViewPackage();
+        if (provider != null) vmDetails.put("provider", provider.packageName).put("version", provider.versionName);
         vm.getSettings().setBlockNetworkLoads(true);
         vm.getSettings().setAllowContentAccess(false);
         vm.getSettings().setAllowFileAccess(false);
@@ -230,24 +263,36 @@ public final class GameActivity extends Activity {
                 frame.offset = frame.index * fixture.frameBytes;
                 frame.dataReadyNs = System.nanoTime();
                 submit(frame);
-            } else {
-                // JS build time includes encoding. The enclosing round trip separately includes VM scheduling.
-                String js = "(()=>{let t=performance.now(),p=EgretRuntimeFixture.frame(" + frame.index
-                    + ");return Math.round((performance.now()-t)*1e6)+':'+p})()";
-                vm.evaluateJavascript(js, raw -> {
+            } else if (useV8) {
+                embedded.capture(frame, liveBytes, () -> {
                     if (done || !active || token != generation) return;
                     frame.vmCallbackNs = System.nanoTime();
+                    if (verify && !fixture.matches(frame.index, liveBytes)) { fail("Frame mismatch " + frame.index); return; }
+                    if (verify) checked++;
+                    frame.bytes = liveBytes;
+                    frame.dataReadyNs = System.nanoTime();
+                    submit(frame);
+                });
+            } else {
+                String js = "EgretRuntimeFixture.timedBase64(" + frame.index + ")";
+                vm.evaluateJavascript(js, raw -> {
+                    if (done || !active || token != generation) return;
+                    frame.transferStartNs = frame.vmCallbackNs = System.nanoTime();
                     try {
                         String value = resultString(raw);
                         int separator = value.indexOf(':');
-                        if (separator <= 0) throw new IllegalArgumentException("Invalid JS result");
+                        int payload = value.indexOf(':', separator + 1);
+                        if (separator <= 0 || payload <= separator) throw new IllegalArgumentException("Invalid JS result");
                         frame.jsWorkNs = Long.parseLong(value.substring(0, separator));
-                        byte[] bytes = Base64.decode(value.substring(separator + 1), Base64.DEFAULT);
+                        frame.generationNs = Long.parseLong(value.substring(separator + 1, payload));
+                        byte[] bytes = Base64.decode(value.substring(payload + 1), Base64.DEFAULT);
                         if (bytes.length != fixture.frameBytes) throw new IllegalStateException("Frame size");
-                        if (verify && !fixture.matches(frame.index, bytes)) throw new IllegalStateException("Frame mismatch " + frame.index);
-                        if (verify) checked++;
                         liveBytes.clear();
                         liveBytes.put(bytes);
+                        liveBytes.flip();
+                        frame.transferEndNs = System.nanoTime();
+                        if (verify && !fixture.matches(frame.index, liveBytes)) throw new IllegalStateException("Frame mismatch " + frame.index);
+                        if (verify) checked++;
                         frame.bytes = liveBytes;
                         frame.dataReadyNs = System.nanoTime();
                         submit(frame);
@@ -296,7 +341,10 @@ public final class GameActivity extends Activity {
         }
         try {
             JSONObject report = new JSONObject();
-            report.put("status", "complete").put("mode", replay ? "replay" : "native")
+            report.put("status", "complete").put("mode", replay ? "replay" : useV8 ? "v8" : "native")
+                .put("vmProfile", vmProfile).put("vmVersion", vmDetails.has("version") ? vmDetails.get("version") : JSONObject.NULL).put("vmDetails", vmDetails)
+                .put("bridge", bridge).put("graphicsDriver", new JSONObject().put("vendor", renderer.vendor)
+                    .put("renderer", renderer.rendererName).put("version", renderer.version))
                 .put("backend", "gles3").put("width", fixture.width).put("height", fixture.height)
                 .put("warmup", warmup).put("samples", samples).put("frameBytes", fixture.frameBytes)
                 .put("verifiedLiveFrameCount", checked).put("lastCycleIndex", frame.index)
@@ -308,15 +356,25 @@ public final class GameActivity extends Activity {
             if (recover && (renderer.abandoned != 1 || renderer.uploads != 2)) {
                 throw new IllegalStateException("EGL context recovery was not observed");
             }
-            String[] fields = {"vsyncNs", "requestNs", "vmCallbackNs", "jsWorkNs", "dataReadyNs", "drawStartNs", "drawEndNs"};
+            String[] fields = {"vsyncNs", "requestNs", "vmCallbackNs", "jsWorkNs", "dataReadyNs", "drawStartNs", "drawEndNs",
+                "generationNs", "transferStartNs", "transferEndNs"};
             JSONArray rows = new JSONArray();
             for (int i = warmup; i < records.length; i++) {
                 Frame f = records[i];
                 rows.put(new JSONArray().put(f.vsyncNs).put(f.requestNs).put(f.vmCallbackNs)
-                    .put(f.jsWorkNs).put(f.dataReadyNs).put(f.drawStartNs).put(f.drawEndNs));
+                    .put(f.jsWorkNs).put(f.dataReadyNs).put(f.drawStartNs).put(f.drawEndNs)
+                    .put(f.generationNs).put(f.transferStartNs).put(f.transferEndNs));
             }
             report.put("fields", new JSONArray(java.util.Arrays.asList(fields))).put("frames", rows);
             if (replay) finishReport(report.put("engineLeaseReleases", JSONObject.NULL));
+            else if (useV8) embedded.close((releases, error) -> {
+                if (done || frameworkDestroyed) return;
+                try {
+                    if (error != null) throw new IllegalStateException("V8 teardown failed", error);
+                    if (releases != 1) throw new IllegalStateException("Egret scope release count: " + releases);
+                    finishReport(report.put("engineLeaseReleases", releases));
+                } catch (Exception e) { fail(e.toString()); }
+            });
             else {
                 pendingClose = report;
                 vm.evaluateJavascript("EgretRuntimeFixture.close().then(r=>{document.title='egret-closed:'+JSON.stringify(r)},"
@@ -330,7 +388,7 @@ public final class GameActivity extends Activity {
         pendingClose = null;
         done = true;
         succeeded = true;
-        Log.i("EgretRuntime", "complete " + (replay ? "replay" : "native"));
+        Log.i("EgretRuntime", "complete " + vmProfile);
         if (finishAfter) finish();
     }
 
@@ -353,6 +411,7 @@ public final class GameActivity extends Activity {
         if (done) return;
         done = true;
         pauseGraphics();
+        closeEmbedded();
         if (vm != null) vm.evaluateJavascript("globalThis.EgretRuntimeFixture?.close().catch(()=>{})", null);
         Log.e("EgretRuntime", text);
         try { save(new JSONObject().put("status", "failed").put("reason", text)); }
@@ -390,7 +449,11 @@ public final class GameActivity extends Activity {
             running = false;
             firstVisibleInSession = false;
             if (!done && !demoClosing) demoState("background", 0, null);
-        } else if (running && !done) fail("Foreground lost; measurement interrupted");
+        } else if (!done) {
+            // Origin-to-first-draw includes VM and surface initialization. Backgrounding
+            // during that interval also invalidates a process-cold timing sample.
+            fail("Foreground lost; measurement interrupted");
+        }
         super.onPause();
     }
 
@@ -411,6 +474,7 @@ public final class GameActivity extends Activity {
     private void demoState(String state, int engineReleases, String error) {
         try {
             JSONObject result = new JSONObject().put("status", state).put("mode", "interactive")
+                .put("vmProfile", vmProfile).put("vmDetails", vmDetails).put("bridge", bridge)
                 .put("frames", demoFrames).put("nextIndex", next).put("resumes", resumeCount)
                 .put("paused", demoPaused).put("engineLeaseReleases", engineReleases);
             if (renderer != null) result.put("atlasUploads", renderer.uploads)
@@ -434,6 +498,14 @@ public final class GameActivity extends Activity {
         demoClosing = true;
         generation++;
         if (active) pauseGraphics();
+        if (embedded != null) {
+            // Back may arrive while a cold isolate or ICU data is still opening.
+            // Close is ordered after initialization and before the owner quits.
+            ui.postDelayed(closeTimeout, 30000);
+            embedded.close((releases, error) -> demoClosed(releases, error != null ? error.toString()
+                : releases == 1 ? null : "Unexpected V8 scope release count: " + releases));
+            return;
+        }
         if (vm == null) { demoClosed(0, "No JS session"); return; }
         vm.onResume();
         ui.postDelayed(closeTimeout, 3000);
@@ -457,13 +529,22 @@ public final class GameActivity extends Activity {
         if (!frameworkDestroyed) finish();
     }
 
+    private void closeEmbedded() {
+        if (embedded != null) embedded.close((releases, error) -> {
+            if (error != null) Log.e("EgretRuntime", "V8 teardown failed", error);
+        });
+    }
+
     @Override public void onDestroy() {
         ui.removeCallbacks(watchdog);
         frameworkDestroyed = true;
         if (demo && !done) closeDemo();
-        else if (vm != null) {
-            vm.destroy();
-            vm = null;
+        else {
+            closeEmbedded();
+            if (vm != null) {
+                vm.destroy();
+                vm = null;
+            }
         }
         super.onDestroy();
     }

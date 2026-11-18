@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-此 arm64 调试 APK 用 Rust GLES3 渲染器运行共享 2D 场景。实时模式在 Android System WebView 中执行随包发布的白鹭游戏，每帧传送一份编码后的命令缓冲给原生 GLSurfaceView。回放模式直接读取固定的命令循环。两种模式使用同一图集、视口和 Rust 执行器。
+此 arm64 调试 APK 用 Rust GLES3 渲染器运行共享 2D 场景。默认通过系统 WebView 运行随包发布的白鹭游戏，也可以选择内置 V8。两种脚本宿主均逐帧向原生绘制表面提交编码后的命令，回放模式直接读取固定的命令循环。所有路径使用同一图集、视口和 Rust 执行器。
 
 ## 构建
 
@@ -14,6 +14,17 @@ node runtime-sdk/android/build.mjs --scene <scene-directory> --output <output-di
 ```
 
 打包工具编译 Rust 静态库、链接 JNI 库、编译 Java、打包游戏和第三方声明，再用本地调试证书签名。最终检查包括签名、嵌套资源的路径及 16 KiB ZIP 对齐。要复用从相同源码构建的库，传入 `--rust-lib <archive>` 和 `--rust-notice <matching-COPYRIGHT-library.html>`。保留输出目录中的 `egret-debug.p12` 以便更新已安装的示例。构建产物和调试密钥应放在仓库之外。
+
+## 可选的 V8 构建
+
+省略 `--v8-profile` 时生成默认的系统 WebView 包。两种 V8 构建使用各自的输出目录，在同一台手机对照时共用签名证书。构建程序将校验和锁定的 Javet 归档下载到指定缓存。标准版还会包含与 V8 匹配的 ICU 数据。缓存备齐后可以离线复用。
+
+```text
+node runtime-sdk/android/build.mjs --scene <scene-directory> --v8-profile standard --v8-cache <cache-directory> --keystore <debug-key> --output <standard-directory>/egret-runtime.apk
+node runtime-sdk/android/build.mjs --scene <scene-directory> --v8-profile trimmed --v8-cache <cache-directory> --keystore <debug-key> --output <trimmed-directory>/egret-runtime.apk
+```
+
+内置 V8 的包可用 `--es mode v8` 启动定长测量。`--es mode native` 选择系统 WebView，`--es mode replay` 回放已捕获的命令。标准版启动时验证中文地区的数字格式，裁剪版省去 `Intl`。请按游戏及其依赖选择配置。[构建配置与真机结果](../../knowledge-base/Cns/docs/runtime-sdk-v8-fold7.md)
 
 ## 在已授权的手机上运行
 

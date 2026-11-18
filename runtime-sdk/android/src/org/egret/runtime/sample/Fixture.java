@@ -17,7 +17,7 @@ final class Fixture {
     final ByteBuffer replay;
 
     Fixture(AssetManager assets, boolean verify, boolean replayMode) throws Exception {
-        JSONObject spec = new JSONObject(new String(read(assets, "fixture.json", 4096), StandardCharsets.UTF_8));
+        JSONObject spec = new JSONObject(new String(readAsset(assets, "scene/fixture.json", 4096), StandardCharsets.UTF_8));
         width = bounded(spec, "width", 2048);
         height = bounded(spec, "height", 2048);
         frameCount = bounded(spec, "frameCount", 1024);
@@ -40,8 +40,8 @@ final class Fixture {
         return value;
     }
 
-    private static byte[] read(AssetManager assets, String name, int limit) throws IOException {
-        try (InputStream input = assets.open("scene/" + name);
+    static byte[] readAsset(AssetManager assets, String name, int limit) throws IOException {
+        try (InputStream input = assets.open(name);
              ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] temp = new byte[8192];
             for (int count; (count = input.read(temp)) != -1;) {
@@ -54,7 +54,7 @@ final class Fixture {
 
     private static ByteBuffer exact(AssetManager assets, String name, int length) throws IOException {
         if (length > 32 * 1024 * 1024) throw new IOException("Oversize " + name);
-        byte[] bytes = read(assets, name, length);
+        byte[] bytes = readAsset(assets, "scene/" + name, length);
         if (bytes.length != length) throw new IOException("Incomplete " + name);
         return (ByteBuffer) ByteBuffer.allocateDirect(length).put(bytes).rewind();
     }
@@ -67,10 +67,12 @@ final class Fixture {
         if (!expected.contentEquals(hex)) throw new IOException("Fixture SHA-256 mismatch");
     }
 
-    boolean matches(int index, byte[] bytes) {
-        if (bytes.length != frameBytes) return false;
-        int start = index * frameBytes;
-        for (int i = 0; i < bytes.length; i++) if (replay.get(start + i) != bytes[i]) return false;
-        return true;
+    boolean matches(int index, ByteBuffer bytes) {
+        if (bytes.remaining() != frameBytes) return false;
+        ByteBuffer expected = replay.duplicate();
+        expected.position(index * frameBytes);
+        expected.limit(expected.position() + frameBytes);
+        return expected.equals(bytes);
     }
+
 }

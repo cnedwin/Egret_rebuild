@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-This arm64 debug APK runs the shared 2D scene on a Rust GLES3 renderer. Live mode executes the packaged Egret game in Android System WebView and passes one encoded command buffer per frame to a native GLSurfaceView. Replay mode reads the frozen cycle directly. Both use the same atlas, viewport and Rust executor.
+This arm64 debug APK runs the shared 2D scene on a Rust GLES3 renderer. The packaged game runs in Android System WebView by default. Optional builds embed V8. Both script hosts send one encoded command buffer per frame to the native surface. Replay reads the frozen cycle directly. All paths use the same atlas, viewport and Rust executor.
 
 ## Build
 
@@ -14,6 +14,17 @@ node runtime-sdk/android/build.mjs --scene <scene-directory> --output <output-di
 ```
 
 The APK builder compiles the Rust archive, links the JNI library, compiles Java, packages the game and third-party notices, signs with a local debug identity and checks the signed APK, including nested asset names and 16 KiB ZIP alignment. To reuse an archive built from this source, pass `--rust-lib <archive>` and `--rust-notice <matching-COPYRIGHT-library.html>`. Keep `egret-debug.p12` beside the output APK to update the same installation. Keep the build output and debug key outside the checkout.
+
+## Optional V8 builds
+
+Omit `--v8-profile` for the default System WebView APK. Use a separate output path for each V8 build and the same signing key if comparing them on one phone. The build downloads checksum-pinned Javet archives into the specified cache. The standard build also includes the matching ICU data. An existing populated cache can be reused offline.
+
+```text
+node runtime-sdk/android/build.mjs --scene <scene-directory> --v8-profile standard --v8-cache <cache-directory> --keystore <debug-key> --output <standard-directory>/egret-runtime.apk
+node runtime-sdk/android/build.mjs --scene <scene-directory> --v8-profile trimmed --v8-cache <cache-directory> --keystore <debug-key> --output <trimmed-directory>/egret-runtime.apk
+```
+
+Use `--es mode v8` to run a timed batch in an embedded build. `--es mode native` selects System WebView and `--es mode replay` selects the captured commands. The standard build checks Chinese number formatting at startup. The trimmed build omits `Intl`. Choose a profile against the game and its dependencies. [Build profiles and hardware results](../../knowledge-base/en/docs/runtime-sdk-v8-fold7.md)
 
 ## Run on an authorized phone
 

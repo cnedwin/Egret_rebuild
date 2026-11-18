@@ -1,10 +1,10 @@
 name: Android Runtime SDK
 on:
   pull_request:
-    paths: ['.cargo/config.toml', 'runtime-sdk/**', '.github/workflows/android-runtime.yml']
+    paths: ['.cargo/config.toml', 'runtime-sdk/**', 'third-party/icu-19dfb44.LICENSE', 'third-party/v8-15.7.112.19.NOTICES', '.github/workflows/android-runtime.yml']
   push:
     branches: [main]
-    paths: ['.cargo/config.toml', 'runtime-sdk/**', '.github/workflows/android-runtime.yml']
+    paths: ['.cargo/config.toml', 'runtime-sdk/**', 'third-party/icu-19dfb44.LICENSE', 'third-party/v8-15.7.112.19.NOTICES', '.github/workflows/android-runtime.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -43,9 +43,14 @@ jobs:
             test -x "$sdkmanager"
             "$sdkmanager" --sdk_root="$ANDROID_HOME" "platforms;android-35" "build-tools;35.0.0" "ndk;27.2.12479018"
           fi
-          node runtime-sdk/android/build.mjs --scene "$RUNNER_TEMP/scene" --output "$RUNNER_TEMP/apk/egret-runtime.apk" --jdk "$JAVA_HOME_17_X64" --ndk "$ANDROID_HOME/ndk/27.2.12479018"
+          cargo build --locked --offline --release --manifest-path runtime-sdk/native/Cargo.toml --target aarch64-linux-android --target-dir "$RUNNER_TEMP/native"
+          host=(--scene "$RUNNER_TEMP/scene" --jdk "$JAVA_HOME_17_X64" --ndk "$ANDROID_HOME/ndk/27.2.12479018" --rust-lib "$RUNNER_TEMP/native/aarch64-linux-android/release/libegret_runtime_native.a")
+          node runtime-sdk/android/build.mjs "${host[@]}" --output "$RUNNER_TEMP/apk/egret-runtime.apk"
+          for profile in standard trimmed; do
+            node runtime-sdk/android/build.mjs "${host[@]}" --v8-profile "$profile" --output "$RUNNER_TEMP/apk/egret-runtime-$profile.apk"
+          done
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: egret-runtime-android-arm64-debug
-          path: ${{ runner.temp }}/apk/egret-runtime.apk
+          path: ${{ runner.temp }}/apk/*.apk
           if-no-files-found: error

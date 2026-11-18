@@ -960,6 +960,16 @@
       "path": "examples/paragraph-panel/vendor/source/patches/09-paragraph-layout.patch",
       "bytes": 4430,
       "sha256": "11db846bc327e14187496f25dd801acd7781fdb6b5c25c4b82ecac47ca4dbc5c"
+    },
+    {
+      "path": "third-party/icu-19dfb44.LICENSE",
+      "bytes": 27718,
+      "sha256": "e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af"
+    },
+    {
+      "path": "third-party/v8-15.7.112.19.NOTICES",
+      "bytes": 82707,
+      "sha256": "5648a319050688ac3e56d798280e4c9e2eb1f1d3d51520bc944e01897b145f7f"
     }
   ]
 }

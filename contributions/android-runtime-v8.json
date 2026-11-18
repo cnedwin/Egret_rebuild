@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/android/src/org/egret/runtime/sample/EmbeddedScene.java",
+      "originRole": "Optional Android script-session contract for the shared 2D scene. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/src/org/egret/runtime/sample/EmbeddedSession.java",
+      "originRole": "Android worker ownership and asynchronous capture and close. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/v8/org/egret/runtime/sample/JavetScene.java",
+      "originRole": "Egret binding for the pinned Javet Android API, optional Intl data and bounded binary frame transfer. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/v8-dependencies.mjs",
+      "originRole": "Pinned acquisition, integrity checks and packaging of the optional V8 dependencies. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/v8-provenance.json",
+      "originRole": "Source and digest inventory for the upstream Android V8, Javet and ICU build inputs. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/pumpedHost.mjs",
+      "originRole": "Host clock and timer service for bundled scene setup and shutdown. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-v8.json",
+      "originRole": "Galaxy Z Fold7 same-device timing, memory and resource lifecycle measurements. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/runtime-sdk-v8-fold7.md",
+      "originRole": "English guide to the Android script-host comparison on Galaxy Z Fold7. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/runtime-sdk-v8-fold7.md",
+      "originRole": "Chinese guide to the Android script-host comparison on Galaxy Z Fold7. Independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/runtime-sdk-v8-fold7.md",
+      "zh": "knowledge-base/Cns/docs/runtime-sdk-v8-fold7.md"
+    }
+  ]
+}

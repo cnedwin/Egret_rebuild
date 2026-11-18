@@ -18,6 +18,7 @@ final class FrameRenderer implements GLSurfaceView.Renderer {
     private long handle;
     private EGLContext context;
     private int width, height;
+    String vendor, rendererName, version;
     private final java.util.concurrent.atomic.AtomicReference<Frame> pending =
         new java.util.concurrent.atomic.AtomicReference<>();
 
@@ -36,6 +37,11 @@ final class FrameRenderer implements GLSurfaceView.Renderer {
         if (handle != 0) {
             Gpu.destroy(handle, false);
             abandoned++;
+        }
+        if (version == null) {
+            vendor = GLES30.glGetString(GLES30.GL_VENDOR);
+            rendererName = GLES30.glGetString(GLES30.GL_RENDERER);
+            version = GLES30.glGetString(GLES30.GL_VERSION);
         }
         handle = Gpu.create();
         context = EGL14.eglGetCurrentContext();

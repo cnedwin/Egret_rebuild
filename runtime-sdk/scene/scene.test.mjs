@@ -3,6 +3,52 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { encodeFrame, FRAME_MAGIC } from './commands.mjs';
 import { CYCLE, HEIGHT, PAGE, WIDTH, createScene } from './scene.mjs';
+import { createPumpedHost } from './pumpedHost.mjs';
+
+test('the isolate services due engine deadlines and honors cancellation', () => {
+  let now = 100;
+  const host = createPumpedHost(() => now);
+  const calls = [];
+  host.setTimeout(() => calls.push('late'), 20);
+  const cancel = host.setTimeout(() => calls.push('cancelled'), 5);
+  host.setTimeout(() => calls.push('first'), 10);
+  cancel();
+  now += 10;
+  host.poll();
+  host.poll();
+  assert.deepEqual(calls, ['first']);
+  now += 10;
+  host.poll();
+  assert.deepEqual(calls, ['first', 'late']);
+});
+
+test('the DOM-free live wire buffers equal the reference cycle and close the engine lease', async () => {
+  globalThis.EgretRuntimeClock = { now: () => performance.now() };
+  const reference = await createScene();
+  try {
+    await import('./host.mjs');
+    const fixture = globalThis.EgretRuntimeFixture;
+    await fixture.ready;
+    assert.deepEqual(new Uint8Array(fixture.textureBuffer()), reference.pageBytes());
+    for (let index = 0; index < CYCLE; index++) {
+      const expected = encodeFrame(reference.capture(index), index, reference.page, PAGE.id);
+      assert.deepEqual(new Uint8Array(fixture.frameBuffer(index)), expected);
+      assert.ok(fixture.generationNs >= 0);
+    }
+    const [workNs, generationNs, payload] = fixture.timedBase64(0).split(':');
+    assert.ok(Number(workNs) >= Number(generationNs));
+    assert.equal(payload, fixture.frame(0));
+    assert.deepEqual(await fixture.close(), { releases: 1 });
+  } finally {
+    try {
+      if (globalThis.EgretRuntimeFixture) await globalThis.EgretRuntimeFixture.close();
+      await reference.close();
+    } finally {
+      delete globalThis.EgretRuntimeFixture;
+      delete globalThis.EgretRuntimeClock;
+    }
+  }
+});
 
 test('EGR1 preserves the real capture order, projected bounds and cropped atlas UVs', async () => {
   const scene = await createScene();
