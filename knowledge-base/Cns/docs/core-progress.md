@@ -28,7 +28,7 @@
 | 素材或操作 | 已验证的范围 | 上线前需要核对什么 |
 | --- | --- | --- |
 | Spine 4.3 角色换装与播放替换 | 可选适配层使用 Core 4.3.13。指定场景的保留播放状态替换已在 Windows Edge 与 Galaxy Z Fold7 Chrome 的 WebGPU、WebGL2 上验证。 | 按功能矩阵核对实际导出版本、图集页、轨道混合和恢复。编辑器导出的独立姿势和像素参照仍待补齐。[动画生命周期](https://github.com/cnedwin/Egret_rebuild/issues/86) |
-| 声明 `pma: true` 的 Spine 图集 | 加载器测试覆盖转换后的像素、页共享、预算和释放。 | 在每个目标后端用获授权的导出素材核对透明边缘和插槽重叠颜色。[Spine 图形](https://github.com/cnedwin/Egret_rebuild/issues/85) |
+| 声明 `pma: true` 的 Spine 图集 | 在 Windows Edge 157（RTX 5090 Laptop）和 Fold7 Chrome 157（Adreno 830）的 WebGPU、WebGL2 四组中，自制的 32 × 32 双插槽画面均与本组的非预乘参照逐字节相同。重叠像素为 RGBA (117, 0, 160, 192)，将同一预乘页故意声明为非预乘时，读数变为 (57, 0, 160, 192)。清理后资源组和活跃 setup 均归零。 | 数值夹具已验证。编辑器导出的独立参照、更多美术素材、采样和混合组合仍待验收。[Spine 图形](https://github.com/cnedwin/Egret_rebuild/issues/85) |
 | 单行与多行文本编辑 | Fold7 上的三星键盘 5.9.40.75 在 WebGPU 上产生英文组合输入，在 WebGL2 上提交了九键拼音候选词“你好”。拼音预编辑过程发生在键盘内。 | 其他键盘、iOS 组合输入、真人选择或取消候选词及无障碍使用仍需分别验证。[Android 编辑器实测](android-native-text-editing.md) |
 | 菜单、控件与播报 | Windows Edge 和 Fold7 Chrome 的专项检查覆盖了两个后端的浏览器无障碍树和指定交互。 | 读屏导航、实际朗读的文字及顺序仍需使用辅助技术的人试听确认。[控件与无障碍](https://github.com/cnedwin/Egret_rebuild/issues/90) |
 
