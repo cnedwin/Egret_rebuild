@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Chorded mouse buttons in the browser game kit — 2026-11-18
+
+Games can hold one mouse action while pressing and releasing another. Windows Edge 157 passed all 12 browser-driven state checks for left, right and middle buttons, including releases outside the bound canvas. [Game kit guide](docs/game-kit.md)
+
 ## Async Play and Play3D restart and disposal — 2026-11-18
 
 Overlapping restarts share one setup and one result. Failed setup cleans up its partial round and supports retry. Closing during a load cancels the pending startup or restart, and later completion cannot reattach game objects. Play3D disposal now includes the World3D Engine close and reports its cleanup errors.
