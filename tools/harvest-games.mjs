@@ -41,7 +41,10 @@ export function english(line) {
       .split('|')
       .map(cell => {
         const parts = cell.split(' · ');
-        return parts.filter(part => !CJK.test(part)).join(' · ').trim();
+        return parts
+          .filter(part => !CJK.test(part))
+          .join(' · ')
+          .trim();
       });
     return cells.some(cell => cell !== '') ? '| ' + cells.join(' | ') + ' |' : '';
   }
@@ -78,15 +81,20 @@ export function claimsOf(text, file) {
 export function importsOf(text) {
   const found = [];
   for (const [, list, from] of text.matchAll(/import\s*\{([^}]+)\}\s*from\s*['"](@egret\/[^'"]+)['"]/g))
-    for (const item of list.split(',')) if (item.trim()) found.push({ entry: from, name: item.trim().split(/\s+as\s+/)[0] });
-  for (const [, from] of text.matchAll(/import\(\s*['"](@egret\/[^'"]+)['"]\s*\)/g)) found.push({ entry: from, name: '*' });
+    for (const item of list.split(','))
+      if (item.trim()) found.push({ entry: from, name: item.trim().split(/\s+as\s+/)[0] });
+  for (const [, from] of text.matchAll(/import\(\s*['"](@egret\/[^'"]+)['"]\s*\)/g))
+    found.push({ entry: from, name: '*' });
   // A backend chosen at run time: `const backend = await (... import('@egret/...') ...)`, then its names by
   // destructuring or as members. They are recorded under the first entry the expression names.
-  for (const [, variable, from] of text.matchAll(/(?:const|let)\s+(\w+)\s*=\s*await\b[^;]*?import\(\s*['"](@egret\/[^'"]+)['"]/g)) {
+  for (const [, variable, from] of text.matchAll(
+    /(?:const|let)\s+(\w+)\s*=\s*await\b[^;]*?import\(\s*['"](@egret\/[^'"]+)['"]/g
+  )) {
     const names = new Set();
     for (const [, list] of text.matchAll(new RegExp('(?:const|let)\\s*\\{([^}]+)\\}\\s*=\\s*' + variable + '\\b', 'g')))
       for (const item of list.split(',')) if (item.trim()) names.add(item.trim().split(/\s*:\s*/)[0]);
-    for (const [, name] of text.matchAll(new RegExp('\\b' + variable + '\\??\\.([A-Za-z_$][\\w$]*)', 'g'))) names.add(name);
+    for (const [, name] of text.matchAll(new RegExp('\\b' + variable + '\\??\\.([A-Za-z_$][\\w$]*)', 'g')))
+      names.add(name);
     for (const name of names) found.push({ entry: from, name });
   }
   return found;
@@ -116,7 +124,16 @@ export function areaOf(files) {
 
 /** Commits that changed a game, with subject, files outside vendor/ and size, and whether they fixed something. */
 function commitsOf(clone, commit, game) {
-  const log = git(clone, ['log', commit, '--no-merges', '--format=@%H%x09%ad%x09%s', '--date=short', '--numstat', '--', game]);
+  const log = git(clone, [
+    'log',
+    commit,
+    '--no-merges',
+    '--format=@%H%x09%ad%x09%s',
+    '--date=short',
+    '--numstat',
+    '--',
+    game
+  ]);
   const commits = [];
   for (const line of log.split('\n')) {
     if (line.startsWith('@')) {
@@ -147,7 +164,9 @@ function harvestGame(clone, commit, game) {
     .map(file => file.slice(game.length + 1));
   const source = show(clone, commit, game + '/vendor/SOURCE.md') ?? '';
   const imports = new Map();
-  for (const file of files.filter(file => /\.m?js$/.test(file) && !/^(vendor|assets|node_modules)\//.test(file) && !/\/vendor\//.test(file))) {
+  for (const file of files.filter(
+    file => /\.m?js$/.test(file) && !/^(vendor|assets|node_modules)\//.test(file) && !/\/vendor\//.test(file)
+  )) {
     for (const { entry, name } of importsOf(show(clone, commit, game + '/' + file) ?? '')) {
       const key = entry + ' ' + name;
       const row = imports.get(key) ?? { entry, name, files: [] };
@@ -157,7 +176,10 @@ function harvestGame(clone, commit, game) {
   }
   const tests = files
     .filter(file => /(^|\/)test\/.*\.m?js$|\.test\.m?js$/.test(file))
-    .map(file => ({ file, cases: ((show(clone, commit, game + '/' + file) ?? '').match(/^\s*test\(/gm) ?? []).length }));
+    .map(file => ({
+      file,
+      cases: ((show(clone, commit, game + '/' + file) ?? '').match(/^\s*test\(/gm) ?? []).length
+    }));
   const claims = {};
   for (const doc of ['README.md', 'STATUS.md'])
     if (files.includes(doc)) {
@@ -206,7 +228,8 @@ export function harvest({ clone, commit, repo = 'cnedwin/PortedGamesEgret', engi
     for (const item of card.evidence.filter(item => item.repo === repo)) {
       const text = show(clone, resolved, item.path);
       if (text === undefined) reasons.push({ reason: 'evidence-missing', path: item.path });
-      else if (text.split('\n').length < item.line) reasons.push({ reason: 'evidence-line-gone', path: item.path, line: item.line });
+      else if (text.split('\n').length < item.line)
+        reasons.push({ reason: 'evidence-line-gone', path: item.path, line: item.line });
       const game = item.path.split('/')[0],
         pin = pins.get(game);
       if (pin && pin !== item.pin) reasons.push({ reason: 'game-pin-changed', game, learntAt: item.pin, now: pin });
@@ -223,7 +246,14 @@ export function harvest({ clone, commit, repo = 'cnedwin/PortedGamesEgret', engi
     uncovered = [];
   for (const fix of fixes) {
     const best = search(cards, fix.subject + ' ' + fix.area)[0];
-    const row = { game: fix.game, commit: fix.commit, subject: fix.subject, area: fix.area, size: fix.size, files: fix.files.map(file => file.path) };
+    const row = {
+      game: fix.game,
+      commit: fix.commit,
+      subject: fix.subject,
+      area: fix.area,
+      size: fix.size,
+      files: fix.files.map(file => file.path)
+    };
     if (best && best.overlap >= 20) covered.push({ ...row, card: best.card.id, score: best.overlap });
     else uncovered.push(row);
   }
@@ -236,13 +266,24 @@ export function harvest({ clone, commit, repo = 'cnedwin/PortedGamesEgret', engi
       fixes: rows.length,
       games: [...new Set(rows.map(row => row.game))],
       suggestedId: area + '-' + (rows[0].subject.toLowerCase().match(/[a-z]{4,}/g) ?? ['lesson']).slice(0, 2).join('-'),
-      evidence: rows.map(row => ({ repo, commit: row.commit, game: row.game, subject: row.subject, files: row.files.slice(0, 6) }))
+      evidence: rows.map(row => ({
+        repo,
+        commit: row.commit,
+        game: row.game,
+        subject: row.subject,
+        files: row.files.slice(0, 6)
+      }))
     }))
     .sort((a, b) => b.fixes - a.fixes || (a.area < b.area ? -1 : 1));
   const repeated = [...new Set(fixes.map(fix => fix.area))]
     .map(area => {
       const rows = fixes.filter(fix => fix.area === area);
-      return { area, fixes: rows.length, games: [...new Set(rows.map(row => row.game))].sort(), cards: [...new Set(covered.filter(row => row.area === area).map(row => row.card))].sort() };
+      return {
+        area,
+        fixes: rows.length,
+        games: [...new Set(rows.map(row => row.game))].sort(),
+        cards: [...new Set(covered.filter(row => row.area === area).map(row => row.card))].sort()
+      };
     })
     .filter(row => row.fixes >= 2)
     .sort((a, b) => b.fixes - a.fixes || (a.area < b.area ? -1 : 1));
@@ -260,16 +301,23 @@ function main(args) {
   const options = {};
   for (let i = 0; i < args.length; i += 2) {
     if (!['--games', '--commit', '--out', '--repo'].includes(args[i]) || args[i + 1] === undefined)
-      throw new TypeError('Usage: node tools/harvest-games.mjs --games <clone> --commit <commit> --out <new directory> [--repo <owner/name>]');
+      throw new TypeError(
+        'Usage: node tools/harvest-games.mjs --games <clone> --commit <commit> --out <new directory> [--repo <owner/name>]'
+      );
     options[args[i].slice(2)] = args[i + 1];
   }
-  if (!options.games || !options.commit || !options.out) throw new TypeError('--games, --commit and --out are required');
+  if (!options.games || !options.commit || !options.out)
+    throw new TypeError('--games, --commit and --out are required');
   const out = path.resolve(options.out),
     inside = path.relative(ROOT, out);
   if (!inside.startsWith('..') && !path.isAbsolute(inside) && !/^work[\\/]/.test(inside))
     throw new TypeError('The harvest is private working data: write it outside the repository or under work/');
   if (fs.existsSync(out)) throw new TypeError('The output directory must not exist yet: ' + out);
-  const result = harvest({ clone: path.resolve(options.games), commit: options.commit, ...(options.repo ? { repo: options.repo } : {}) });
+  const result = harvest({
+    clone: path.resolve(options.games),
+    commit: options.commit,
+    ...(options.repo ? { repo: options.repo } : {})
+  });
   fs.mkdirSync(out, { recursive: true });
   fs.writeFileSync(path.join(out, 'harvest.json'), JSON.stringify(result, null, 2) + '\n');
   fs.writeFileSync(path.join(out, 'proposals.json'), JSON.stringify(result.proposals, null, 2) + '\n');
@@ -277,7 +325,8 @@ function main(args) {
   const lines = [
     `Harvested ${result.games.length} games of ${result.repo} at ${result.commit.slice(0, 9)} into ${out}`,
     ...result.games.map(
-      game => `  ${game.game}: engine ${game.pin?.slice(0, 9) ?? 'unknown'}, ${game.imports.length} names imported, ${game.tests.length} test files, ${game.fixes.length} of ${game.commits} commits fixed something`
+      game =>
+        `  ${game.game}: engine ${game.pin?.slice(0, 9) ?? 'unknown'}, ${game.imports.length} names imported, ${game.tests.length} test files, ${game.fixes.length} of ${game.commits} commits fixed something`
     ),
     `Repeated fixes by area: ${repeated.map(row => `${row.area} ${row.fixes} (${row.cards.join(', ') || 'no card'})`).join('; ') || 'none'}`,
     `Cards to review as stale: ${stale.map(row => row.id + (row.flagged ? ' (flagged)' : '')).join(', ') || 'none'}`,

@@ -48,7 +48,14 @@ function entryExports() {
   ]) {
     const names = new Set();
     for (const [, list] of read(file).matchAll(/export (?:type )?\{([^}]+)\}/g))
-      for (const item of list.split(',')) if (item.trim()) names.add(item.trim().split(/\s+as\s+/).pop());
+      for (const item of list.split(','))
+        if (item.trim())
+          names.add(
+            item
+              .trim()
+              .split(/\s+as\s+/)
+              .pop()
+          );
     entries.set(name, names);
   }
   return entries;
@@ -81,17 +88,40 @@ const CODES = new Set([
 ]);
 /** The hint ids of @egret/devtools, from the union type that names them. */
 const HINTS = new Set(
-  [...read('devtools/src/core/hints.ts').match(/export type HintId =([^;]+);/)[1].matchAll(/'([a-z-]+)'/g)].map(
-    match => match[1]
-  )
+  [
+    ...read('devtools/src/core/hints.ts')
+      .match(/export type HintId =([^;]+);/)[1]
+      .matchAll(/'([a-z-]+)'/g)
+  ].map(match => match[1])
 );
 
 const ALL_CAPS = /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/;
 const KEBAB = /^[a-z0-9]+(?:-[a-z0-9]+)+$/;
-const API_LIKE = /^(?:[A-Z][a-z0-9]+(?:[A-Z][A-Za-z0-9]*)+|(?:create|load|start|open|pick|bind|attach|run|encode|describe|evaluate|record|write|read|set|is|frame|world)[A-Z][A-Za-z0-9]*)$/;
+const API_LIKE =
+  /^(?:[A-Z][a-z0-9]+(?:[A-Z][A-Za-z0-9]*)+|(?:create|load|start|open|pick|bind|attach|run|encode|describe|evaluate|record|write|read|set|is|frame|world)[A-Z][A-Za-z0-9]*)$/;
 /** Names of the web platform a card may call without the engine exporting them. */
-const PLATFORM = new Set(['setTimeout', 'setInterval', 'setPointerCapture', 'releasePointerCapture', 'requestAnimationFrame', 'preventDefault']);
-const PAGE_GLOBALS = new Set(['document', 'window', 'location', 'Math', 'AbortSignal', 'globalThis', 'event', 'element', 'navigator', 'performance', 'console', 'process']);
+const PLATFORM = new Set([
+  'setTimeout',
+  'setInterval',
+  'setPointerCapture',
+  'releasePointerCapture',
+  'requestAnimationFrame',
+  'preventDefault'
+]);
+const PAGE_GLOBALS = new Set([
+  'document',
+  'window',
+  'location',
+  'Math',
+  'AbortSignal',
+  'globalThis',
+  'event',
+  'element',
+  'navigator',
+  'performance',
+  'console',
+  'process'
+]);
 const FILE = /\.(?:m?js|ts|md|html|json|css|glb|gltf|wav|pack)$/;
 
 /** Each name a card states as the engine's, with what it must be. */
@@ -108,23 +138,27 @@ function problemsOf(card) {
         continue;
       }
       for (const item of list.split(','))
-        if (item.trim() && !names.has(item.trim().split(/\s+as\s+/)[0])) problems.push(item.trim() + ' is not exported by ' + from);
+        if (item.trim() && !names.has(item.trim().split(/\s+as\s+/)[0]))
+          problems.push(item.trim() + ' is not exported by ' + from);
     }
     const declared = new Set(
-      [...code.matchAll(/(?:const|let|function)\s+\{?\s*([A-Za-z_$][\w$]*(?:\s*,\s*[A-Za-z_$][\w$]*)*)/g)].flatMap(match =>
-        match[1].split(/\s*,\s*/)
+      [...code.matchAll(/(?:const|let|function)\s+\{?\s*([A-Za-z_$][\w$]*(?:\s*,\s*[A-Za-z_$][\w$]*)*)/g)].flatMap(
+        match => match[1].split(/\s*,\s*/)
       )
     );
     for (const [, name] of code.matchAll(/(?<![.\w$])([a-z][a-z0-9]*[A-Z][A-Za-z0-9]*)\s*\(/g))
-      if (!EXPORTED.has(name) && !local.has(name) && !declared.has(name)) problems.push('call ' + name + ' is not exported');
+      if (!EXPORTED.has(name) && !local.has(name) && !declared.has(name))
+        problems.push('call ' + name + ' is not exported');
   }
   for (const [, span] of prose.matchAll(/`([^`\n]+)`/g)) {
     const token = span.trim();
     if (FILE.test(token) || token.startsWith('_')) continue;
     if (/^[A-Za-z_$][\w$]*$/.test(token)) {
       if (ALL_CAPS.test(token)) {
-        if (!CODES.has(token) && !EXPORTED.has(token) && !local.has(token)) problems.push(token + ' is neither an error code nor exported');
-      } else if (API_LIKE.test(token) && !EXPORTED.has(token) && !local.has(token) && !PLATFORM.has(token)) problems.push(token + ' is not exported');
+        if (!CODES.has(token) && !EXPORTED.has(token) && !local.has(token))
+          problems.push(token + ' is neither an error code nor exported');
+      } else if (API_LIKE.test(token) && !EXPORTED.has(token) && !local.has(token) && !PLATFORM.has(token))
+        problems.push(token + ' is not exported');
       continue;
     }
     const dotted = token.match(/^([A-Za-z_$][\w$]*)((?:\.[A-Za-z_$][\w$]*)+)/);
@@ -134,11 +168,14 @@ function problemsOf(card) {
   }
   for (const trigger of card.triggers.map(String)) {
     if (ALL_CAPS.test(trigger)) {
-      if (!CODES.has(trigger) && !EXPORTED.has(trigger)) problems.push('trigger ' + trigger + ' is neither an error code nor exported');
+      if (!CODES.has(trigger) && !EXPORTED.has(trigger))
+        problems.push('trigger ' + trigger + ' is neither an error code nor exported');
     } else if (KEBAB.test(trigger)) {
-      if (!HINTS.has(trigger)) problems.push('trigger ' + trigger + ' is not a devtools hint id; write words with spaces');
+      if (!HINTS.has(trigger))
+        problems.push('trigger ' + trigger + ' is not a devtools hint id; write words with spaces');
     } else if (/^[A-Za-z_$][\w$]*$/.test(trigger) && /[A-Z]/.test(trigger)) {
-      if (!EXPORTED.has(trigger) && !local.has(trigger) && !WORDS.has(trigger)) problems.push('trigger ' + trigger + ' is not a name in the sources');
+      if (!EXPORTED.has(trigger) && !local.has(trigger) && !WORDS.has(trigger))
+        problems.push('trigger ' + trigger + ' is not a name in the sources');
     }
   }
   return problems;
@@ -173,7 +210,15 @@ test('GD02 the name check refuses a card that names what is not there', () => {
     'fake.md'
   );
   const problems = problemsOf(fake);
-  for (const expected of ['makeWorld', 'spawnEverything', 'loadEverything3D', 'notAField', 'createNothing3D', 'NOT_A_CODE_EVER', 'frames-dropped'])
+  for (const expected of [
+    'makeWorld',
+    'spawnEverything',
+    'loadEverything3D',
+    'notAField',
+    'createNothing3D',
+    'NOT_A_CODE_EVER',
+    'frames-dropped'
+  ])
     assert.ok(
       problems.some(problem => problem.includes(expected)),
       expected + ' was not refused'
@@ -224,7 +269,8 @@ test('GD05 every card is reachable from the index, once, with the same applies',
     assert.deepEqual(applies.trim().split(' ').sort(), [...card.applies].sort(), id);
     assert.ok(hook.length > 20, id);
   }
-  for (const [, link] of index.matchAll(/\]\(([^)]+)\)/g)) assert.ok(fs.existsSync(path.join(ROOT, 'guide', link)), link);
+  for (const [, link] of index.matchAll(/\]\(([^)]+)\)/g))
+    assert.ok(fs.existsSync(path.join(ROOT, 'guide', link)), link);
 });
 
 // Break caught: a card without the evidence or the engine commit it was checked against, or with a bad id.
@@ -353,7 +399,10 @@ test('GD10 the full file holds the index and every card, and is a build output',
   const text = fullText(cards, index);
   assert.ok(text.startsWith(index.trim()));
   for (const card of cards) assert.ok(text.includes('=== ' + card.id + ' · '), card.id);
-  assert.ok(!fs.existsSync(path.join(ROOT, 'llms-full.txt')), 'llms-full.txt is written by node tools/egret-guide.mjs --full');
+  assert.ok(
+    !fs.existsSync(path.join(ROOT, 'llms-full.txt')),
+    'llms-full.txt is written by node tools/egret-guide.mjs --full'
+  );
 });
 
 // Break caught: llms.txt losing its way to the guide.
@@ -369,16 +418,30 @@ test('GD12 the harvest reads a games repository at a commit and proposes what th
   const clone = fs.mkdtempSync(path.join(os.tmpdir(), 'egret-harvest-'));
   t.after(() => fs.rmSync(clone, { recursive: true, force: true }));
   const pin = 'a'.repeat(40);
-  const git = (...args) => execFileSync('git', ['-C', clone, '-c', 'user.name=Harvest test', '-c', 'user.email=harvest@example.invalid', ...args], { encoding: 'utf8' });
+  const git = (...args) =>
+    execFileSync(
+      'git',
+      ['-C', clone, '-c', 'user.name=Harvest test', '-c', 'user.email=harvest@example.invalid', ...args],
+      { encoding: 'utf8' }
+    );
   const write = (file, text) => {
     fs.mkdirSync(path.dirname(path.join(clone, file)), { recursive: true });
     fs.writeFileSync(path.join(clone, file), text);
   };
   git('init', '-q');
-  write('Game/vendor/SOURCE.md', '- Egret, commit [`' + pin + '`](x). Entries: `@egret/engine`, `@egret/engine/kit`.\n');
-  write('Game/src/main.mjs', "import { createEngine } from '@egret/engine';\nimport { runHeadless as run } from '@egret/engine/kit';\n");
+  write(
+    'Game/vendor/SOURCE.md',
+    '- Egret, commit [`' + pin + '`](x). Entries: `@egret/engine`, `@egret/engine/kit`.\n'
+  );
+  write(
+    'Game/src/main.mjs',
+    "import { createEngine } from '@egret/engine';\nimport { runHeadless as run } from '@egret/engine/kit';\n"
+  );
   write('Game/test/sim.test.mjs', "import { test } from 'node:test';\ntest('a', () => {});\ntest('b', () => {});\n");
-  write('Game/STATUS.md', '# Game\n\n## 已知问题 · Known issues\n\n| 问题 · Issue | 影响 · Effect |\n| --- | --- |\n| 灯 · Lamps go dark | 远处 · far away |\n');
+  write(
+    'Game/STATUS.md',
+    '# Game\n\n## 已知问题 · Known issues\n\n| 问题 · Issue | 影响 · Effect |\n| --- | --- |\n| 灯 · Lamps go dark | 远处 · far away |\n'
+  );
   write('Game/src/input.mjs', 'export const input = 1;\n');
   git('add', '.');
   git('commit', '-q', '-m', 'Add the game');
@@ -392,7 +455,11 @@ test('GD12 the harvest reads a games repository at a commit and proposes what th
       'applies: [world3d]',
       'triggers: [lamps]',
       'evidence:',
-      '  - { repo: example/games, path: Game/STATUS.md, line: 99, commit: ' + 'b'.repeat(40) + ', pin: ' + 'c'.repeat(40) + ' }',
+      '  - { repo: example/games, path: Game/STATUS.md, line: 99, commit: ' +
+        'b'.repeat(40) +
+        ', pin: ' +
+        'c'.repeat(40) +
+        ' }',
       'engine: ' + 'd'.repeat(40),
       '---',
       '',
@@ -417,5 +484,8 @@ test('GD12 the harvest reads a games repository at a commit and proposes what th
   assert.equal(result.proposals.covered[0].card, 'touch-controls');
   const stale = result.proposals.stale.find(row => row.id === 'lamps');
   assert.deepEqual(stale.reasons.map(row => row.reason).sort(), ['evidence-line-gone', 'game-pin-changed']);
-  assert.equal(fs.readFileSync(path.join(clone, 'Game/src/input.mjs'), 'utf8'), 'export const input = 2;\nexport const touch = true;\n');
+  assert.equal(
+    fs.readFileSync(path.join(clone, 'Game/src/input.mjs'), 'utf8'),
+    'export const input = 2;\nexport const touch = true;\n'
+  );
 });

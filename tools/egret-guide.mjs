@@ -255,7 +255,11 @@ export function render(card) {
 export function answer(cards, query, budget = DEFAULT_BUDGET) {
   const found = search(cards, query);
   if (found.length === 0)
-    return { ok: false, ids: [], text: `No card matches "${query}". Cards: ${cards.map(card => card.id).join(', ')}\n` };
+    return {
+      ok: false,
+      ids: [],
+      text: `No card matches "${query}". Cards: ${cards.map(card => card.id).join(', ')}\n`
+    };
   // Further cards are printed while they are close to the best one; an exact match is always close.
   const top = Math.max(...found.map(result => result.overlap));
   const chosen = [];
@@ -270,7 +274,8 @@ export function answer(cards, query, budget = DEFAULT_BUDGET) {
     spent += cost;
   }
   const rest = found.length - chosen.length;
-  const footer = rest > 0 ? `(${rest} more cards matched less well; node tools/egret-guide.mjs --list shows all.)\n` : '';
+  const footer =
+    rest > 0 ? `(${rest} more cards matched less well; node tools/egret-guide.mjs --list shows all.)\n` : '';
   return { ok: true, ids: chosen.map(item => item.id), text: chosen.map(item => item.printed).join('\n') + footer };
 }
 
@@ -301,7 +306,8 @@ export function run(args, cards = loadCards()) {
     const arg = args[i];
     if (arg === '--budget') {
       budget = Number(args[++i]);
-      if (!Number.isInteger(budget) || budget < CARD_BUDGET) return { code: 2, text: `--budget takes a whole number of at least ${CARD_BUDGET}.\n` };
+      if (!Number.isInteger(budget) || budget < CARD_BUDGET)
+        return { code: 2, text: `--budget takes a whole number of at least ${CARD_BUDGET}.\n` };
     } else if (arg === '--card') {
       mode = 'card';
       card = args[++i];
@@ -327,7 +333,10 @@ export function run(args, cards = loadCards()) {
       return { code: 2, text: 'Write the full file outside the repository or under work/: ' + target + '\n' };
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.writeFileSync(target, text);
-    return { code: 0, text: `Wrote ${cards.length} cards and the index to ${target} (about ${estimateTokens(text)} tokens).\n` };
+    return {
+      code: 0,
+      text: `Wrote ${cards.length} cards and the index to ${target} (about ${estimateTokens(text)} tokens).\n`
+    };
   }
   if (words.length === 0) return { code: 2, text: usage() };
   const result = answer(cards, words.join(' '), budget);
