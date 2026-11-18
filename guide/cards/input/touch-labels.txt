@@ -1,0 +1,47 @@
+---
+id: touch-labels
+title: Labels and targets that read and press on a phone
+applies: [web, world3d, play, play3d]
+triggers: ["text too small on phone", "unreadable on phone", "buttons too small", "tap target", "touch target size", "44px", "keyboard hints on touch", "button labels", "aria label", "upgrade cards hard to read", "字太小", "看不清", "按钮太小", "点不准", "触屏按钮", "按键提示"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/touch.css, line: 102, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: 94bb21a }
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/src/hud.mjs, line: 233, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: f1fbd9093c47dd83a770a0a13aa88901edc0b90d, fix: ee391d0 }
+  - { repo: cnedwin/PortedGamesEgret, path: JY/web/style.css, line: 680, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe, fix: 7e61c85 }
+  - { repo: cnedwin/PortedGamesEgret, path: LanternShadows/style.css, line: 66, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 2fb4646c1ccec058d31c6f93cc2193061add1979 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Labels and targets that read and press on a phone
+
+Desktop layouts carry text a thumb cannot use: key hints, long button names, small print on cards. Jelly Pandas' upgrade cards, Rally's touch buttons and JY's battle commands were each fixed after play on a phone.
+
+```css
+@media (pointer: coarse) {
+  .cards .pill { min-height: 44px; min-width: 99px; font-size: 13px; }
+  .cards .card p { font-size: 12px; }
+  .cards .card kbd { display: none; }        /* "R to reroll" means nothing to a finger */
+}
+@media (pointer: coarse) and (orientation: portrait) {
+  .cards .deck { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .cards .card { overflow-wrap: anywhere; }
+}
+```
+
+```js
+// Each on-screen control says what it does, in the language the player chose.
+pause.setAttribute('aria-label', t().pause);
+for (const control of touchButtons) control.setAttribute('aria-label', t().touchControls[control.dataset.touch]);
+```
+
+Rules:
+
+- A target is at least 44 × 44 CSS pixels, with a few pixels between targets. JY lays its d-pad and actions out as `repeat(n, minmax(44px, 1fr))`.
+- Body text 12 px or more, titles 14 px or more on a coarse pointer; check the longest translation, not the English.
+- Hide keyboard hints (`kbd`, "press R") for touch, and give touch its own short label where the desktop one names a key: Jelly Pandas shows "Reroll" instead of the key form.
+- Give icon buttons an `aria-label` in both languages; a person with a screen reader and an automated check both read it.
+- Let long card text wrap (`overflow-wrap: anywhere`) instead of clipping; Chinese and English differ greatly in width.
+- Keep a hover-only explanation reachable by a tap, or drop it; there is no hover on a phone.
+- In `play`, `game.button` draws on the stage and scales with it: size it in stage units so it is at least 44 CSS pixels at the smallest window you support.
+
+Layout for short screens is in `short-screen-hud`; finger ownership is in `touch-controls`.

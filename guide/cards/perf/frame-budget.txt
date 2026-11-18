@@ -1,0 +1,50 @@
+---
+id: frame-budget
+title: Find where a frame's time goes with @egret/devtools
+applies: [engine, web, world3d]
+triggers: [attachPerformanceMonitor, createEngineProbe, evaluateHints, frameLoopSource, world3DSource, recordWorld3DFrame, cpu-bound, present-bound, slow-frames, recent-hitch, "low fps", "frame rate drops", "slow frame", "jank", "stutter", "performance monitor", "debug mode", "frame budget", "profile", "性能分析", "测帧", "帧耗时", "性能面板", "卡顿原因", "卡顿", "掉帧", "帧率"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: devtools/src/core/hints.ts, line: 47, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/Egret_rebuild, path: devtools/README.md, line: 11, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/main.mjs, line: 320, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Find where a frame's time goes with @egret/devtools
+
+Measure before changing anything. A slow frame is either the page's own work (rules, view, engine capture and submit) or the wait for the GPU and display. They need different fixes.
+
+```js
+import { createEngineProbe, frameLoopSource } from '@egret/devtools';
+import { attachPerformanceMonitor, world3DSource } from '@egret/devtools/web';
+
+const { monitor } = attachPerformanceMonitor({ canvas, backend: 'webgl2' });
+monitor.addSource('world3d', world3DSource(renderer));
+
+function frame(dt) {            // a game with its own loop
+  monitor.beginFrame();
+  monitor.measure('rules', () => game.update(dt, input));
+  monitor.measure('view', () => view.update(game));
+  monitor.endFrame();
+}
+```
+
+Open the page with `?egretDebug=1`. Outside debug mode the monitor is inert and costs one empty call.
+
+Read the hints, not the raw graph:
+
+| Hint | Means | Do |
+| --- | --- | --- |
+| `cpu-bound` | p95 interval over 1.5 budgets and page work over budget; `subject` is the largest section | shrink that section: fewer steps, cheaper searches, less per-frame allocation |
+| `present-bound` | slow intervals but page work under half a budget | draw less: triangles, draw calls, shadow maps, reflections, pixel ratio (see `world3d-draw-cost`) |
+| `slow-frames` | slow, and neither of the above clearly | split the frame into more `measure` sections |
+| `recent-hitch` | one long frame in the last 600 | open the Hitches tab; first-use shader links are common (see `prepare-programs`) |
+
+Rules:
+
+- Name the sections after the game's parts (`rules`, `view`, `draw`). Jelly Pandas times rules, view and drawing apart in its `?stats=1` readout for this reason.
+- Give `createEngineProbe` the Host and loop the game makes itself to split the engine's share into `clock`, `capture` and `submit`. `createBrowserGame` makes them inside, so only frame pacing is seen there.
+- A 3D game made with `createWorld3DApp` can show `createWorld3DStats` instead: frame time, the game's laps, draw calls, triangles and lights dropped.
+- Compare before and after on the same device, quality and scene, and write both numbers in the commit. A desktop number says nothing about a phone.
+- The monitor measures main-thread time. GPU time appears only where the World3D WebGL2 renderer measured it.

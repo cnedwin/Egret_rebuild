@@ -1,0 +1,39 @@
+---
+id: vendor-engine
+title: Copy a pinned engine build into a game folder
+applies: [engine, world3d, web]
+triggers: ["vendor", "vendor-game.mjs", "SOURCE.md", "engine pin", "update the engine", "refresh engine", "import map", "node-register.mjs", "game without npm", "static page no build", "复制引擎", "更新引擎", "引擎版本"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/game-kit.md, line: 159, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/vendor/SOURCE.md, line: 3, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: f1fbd9093c47dd83a770a0a13aa88901edc0b90d }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/vendor/SOURCE.md, line: 3, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Copy a pinned engine build into a game folder
+
+A game that ships as static files carries the part of the engine it loads. Each game in PortedGamesEgret has a `vendor/` folder and a `vendor/SOURCE.md` naming the exact engine commit.
+
+From a built engine checkout (`pnpm setup:dev` builds it):
+
+```
+node tools/vendor-game.mjs ../MyGame @egret/engine @egret/engine/world3d @egret/engine/webgl2/world3d @egret/engine/webgpu/world3d
+```
+
+It copies only the JavaScript those entries import, the licences, and writes:
+
+| File | Use |
+| --- | --- |
+| `vendor/importmap.json` | paste into the page's import map |
+| `vendor/importmap.js` | or load it with a plain script tag first |
+| `vendor/node-register.mjs` | `node --import ./vendor/node-register.mjs --test` runs rules under the page's names |
+| `vendor/SOURCE.md` | commit and entries; keep it, it is the pin |
+
+Rules:
+
+- Name every entry the game imports, including ones loaded with `import()` at run time, or the page fails on the first missing file.
+- Refresh the engine as its own commit: re-run the tool, run the game's tests, play it once on each backend it supports, then update the README or STATUS with the new pin. Mixing a refresh with gameplay changes hides which one broke a run.
+- After a refresh, re-read the game's known issues. A limit recorded against an older pin may be gone (FPS records eight point lights a frame; the current engine adds tiled lights, see `world3d-lights-shadows`).
+- Do not edit files under `vendor/`. A fix belongs in the engine, then a new copy.
+- Record the pin in any public result: a frame time or a device check is evidence for that pin only.

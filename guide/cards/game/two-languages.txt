@@ -1,0 +1,44 @@
+---
+id: two-languages
+title: A game in Chinese and English, with speech
+applies: [engine, web, world3d, play, play3d]
+triggers: [setErrorLanguage, "two languages", "chinese and english", "translation", "localization", "i18n", "language switch", "page language", "html lang", "chinese font", "text to speech", "speech synthesis", "voice lines", "中英文", "双语", "多语言", "切换语言", "中文字体", "翻译", "语音", "配音", "朗读"]
+local: [pickLanguage, speechSynthesis, getVoices]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/hud.mjs, line: 33, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: 4a6e4e9 }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/text.mjs, line: 320, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/src/data.mjs, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: f1fbd9093c47dd83a770a0a13aa88901edc0b90d }
+  - { repo: cnedwin/PortedGamesEgret, path: Wulin/src/ui/voice.mjs, line: 18, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# A game in Chinese and English, with speech
+
+Seven of the eight games ship in Chinese and English (JY is Chinese only). They converged on one table of words per language, a choice made once at start, and the page told which language it is in.
+
+```js
+// data.mjs: every string the player sees, in both languages, under the same keys.
+export const TEXT = {
+  zh: { pause: '暂停', start: '开始', laps: n => `${n} 圈` },
+  en: { pause: 'Pause', start: 'Start', laps: n => `${n} laps` },
+};
+
+// main.mjs: ?lang= first, then the saved choice, then the browser's language.
+export function pickLanguage(asked) {
+  if (asked === 'zh' || asked === 'en') return asked;
+  return (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+}
+const lang = pickLanguage(new URLSearchParams(location.search).get('lang') ?? saved.lang);
+document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+const t = TEXT[lang];
+```
+
+Rules:
+
+- Set `<html lang>` to the language shown. Browsers choose CJK fonts and line breaking by it, and screen readers choose a voice; Jelly Pandas fixed this after launch.
+- Keep both tables complete. A Node test that both have the same keys catches a missing line before a player does.
+- Keep words out of the rules: the sim reports events and numbers, and the view turns them into text, so a whole run can be tested without choosing a language.
+- Make layouts hold the longer text. English labels are often twice as wide as Chinese ones; Chinese needs a larger size to stay readable (see `touch-labels`). Name a CJK font stack in CSS, such as `"PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif`.
+- Let the player switch language on the title or settings screen and store it with the settings (see `save-data`).
+- For voice, ship recordings for the main lines and use the system's speech only for generated text, as Wulin does. Voices load late: listen for `voiceschanged` on `speechSynthesis`, pick by `voice.lang` (`zh-CN`, `zh-TW`), and stay silent if none fits.
+- `setErrorLanguage` makes the engine's own error sentences Chinese, for developers; it does not translate a game.

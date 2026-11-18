@@ -1,0 +1,35 @@
+---
+id: verify-end-to-end
+title: Verify a game end to end and record what was checked
+applies: [play, play3d, engine, world3d, web]
+triggers: [runHeadless, "verify a game", "test the game", "is it done", "acceptance", "verify-game.mjs", "playwright", "headless browser", "real device test", "STATUS.md", "known issues", "stand-in player", "auto play", "release check", "怎么测试", "测试游戏", "验证游戏", "真机测试"]
+local: [createBot, createGame]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/STATUS.md, line: 29, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/STATUS.md, line: 48, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/main.mjs, line: 40, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/Egret_rebuild, path: llms.txt, line: 486, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Verify a game end to end and record what was checked
+
+Four layers, cheapest first. Each catches what the one before cannot.
+
+1. **Rules in Node.** `node --test` against the sim (see `sim-view-split`). Seeded, fast, run on every change.
+2. **Whole runs in Node.** A stand-in player plays N seeds to the end and prints time, result and the slowest step: `node tools/headless.mjs 5 1` in FPS, `runHeadless` from `@egret/engine/kit` in a new game. A balance change is judged on these numbers.
+3. **The page in a headless browser.** For `play` and `play3d` pages: `node tools/verify-game.mjs <playwright index.mjs> <game.html> <new output dir> [play.mjs]` starts the page, plays blind, and reports whether it started without an error, drew, kept running, changed under input and made a sound. A `play.mjs` script plays to a win or a loss. For a large game, expose a read-only status object for checks (FPS sets `globalThis.__cutoff` with mode, frames and the last error) and an `?auto=1` mode where the stand-in player drives the real page.
+4. **Real devices.** At least one desktop and one phone, through the normal title screen with real input, to the end of a run. Software rendering in a headless browser says nothing about frame rate.
+
+Record the result in the game's STATUS or README, the way FPS does:
+
+- the engine pin, the device and GPU, the browser and version, the backend, the viewport size, the quality, and the input used;
+- what was measured (run time, average fps, p95 and worst frame) and what was not (FPS lists WebGPU, native fullscreen, difficulty and listening as outside its pass);
+- known issues as a table of issue and effect, kept current, with solved problems moved to their own list.
+
+Rules:
+
+- Keep claims apart: "tests pass", "played to the end headless", "played on device X" are three statements.
+- A number measured before a change is history after it. FPS marks its earlier full-run numbers as a baseline from before an art change.
+- When the stand-in player skips a feature (FPS's never searches crates), the automatic run does not cover it; say so.
+- Note the pin with every number, since an engine refresh can move it (see `vendor-engine`).

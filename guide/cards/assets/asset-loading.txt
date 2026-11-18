@@ -1,0 +1,44 @@
+---
+id: asset-loading
+title: Load models and files with progress, a deadline and a way to retry
+applies: [world3d, play3d, engine, web]
+triggers: [loadGltfFromUrl3D, loadGltf3D, openBrowserAssetBundle, writeAssetBundle, pickQualityVariant, ASSET_LOAD_FAILED, ASSET_PROVIDER_MISSING, WEB_RESOURCE_HTTP_STATUS, WEB_RESOURCE_DEADLINE_EXCEEDED, "loading screen", "load models", "glb", "gltf", "model fails to load", "slow start", "progress bar", "cache busting", "asset bundle", "offline", "加载模型", "模型加载", "加载失败", "加载进度", "资源加载"]
+local: [loadModels, describeModel, onProgress]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/asset-models.mjs, line: 82, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/main.mjs, line: 42, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/game-kit.md, line: 104, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Load models and files with progress, a deadline and a way to retry
+
+FPS loads all its GLB art before the title appears. Its loader is a good pattern:
+
+```js
+const signal = AbortSignal.timeout(90_000);
+let complete = 0;
+const assets = await Promise.all(files.map(async file => {
+  try {
+    return await loadGltfFromUrl3D(new URL(file, base), { signal, maxBytes: 24 * 1024 * 1024 });
+  } finally {
+    onProgress(++complete, files.length);      // a bar, and "Loading game art 3 / 12"
+  }
+}));
+```
+
+Rules:
+
+- Start loading at once, in parallel with making the engine and renderer, and await both before the title.
+- Give every request one shared deadline (`AbortSignal.timeout`) and a size cap (`maxBytes`). A stalled request otherwise leaves a loading bar forever.
+- Load each file once even when several roles share it; keep a map from file to promise.
+- Count progress per file in a `finally`, so failures advance the bar too.
+- Required art missing is an error screen with a reload button in the player's language, not a half-drawn game. Optional art falls back to models made in code (FPS keeps `?art=original` for comparisons).
+- Dispose what was loaded when loading is abandoned. Each loaded asset has one `dispose()`.
+- Add a version to file URLs (`?v=<build>`) so a new release is not served stale from a cache.
+- Simplify and texture-compress bought or generated models before shipping; FPS and Rally keep a README beside them with source and changes.
+- Load per quality: `pickQualityVariant({ low: 'hero-low.glb', high: 'hero-high.glb' }, quality)`.
+- Many small files: pack them with `writeAssetBundle` at build time and read them with `openBrowserAssetBundle`, which fetches only the ranges asked for and can keep entries for offline play.
+- Load what is not needed for the first screen after it appears (SnowTemple stages its characters after start-up), but prepare its shader programs before it is first drawn (see `prepare-programs`).
+
+Engine failures carry codes: `ASSET_LOAD_FAILED` with the provider's error in `cause`, `WEB_RESOURCE_HTTP_STATUS` and `WEB_RESOURCE_DEADLINE_EXCEEDED` from the browser resource source.

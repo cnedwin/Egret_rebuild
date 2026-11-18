@@ -1,0 +1,45 @@
+---
+id: save-data
+title: Saves and settings that survive a new build and a private window
+applies: [engine, web, world3d, play, play3d]
+triggers: [createSaveStore, browserSaveStorage, createMemorySaveStorage, openIndexedDBSaveStorage, "save game", "save progress", "load save", "settings saved", "localStorage", "private window", "old save breaks", "save migration", "save version", "export save", "存档", "保存进度", "读档", "存档丢失", "旧存档", "设置保存", "无痕模式"]
+local: [adoptBare]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/src/saves.mjs, line: 6, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: e99e4e4 }
+  - { repo: cnedwin/PortedGamesEgret, path: Wulin/src/core/save.mjs, line: 72, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe }
+  - { repo: cnedwin/PortedGamesEgret, path: LoveElective/src/game.mjs, line: 21, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe, fix: 282f651 }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/main.mjs, line: 86, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/game-kit.md, line: 48, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Saves and settings that survive a new build and a private window
+
+All eight games keep something: settings, progress, best marks, a wardrobe. Each wrote its own `localStorage` code first, and the same three things went wrong. A private window or a blocked site throws on access. A new build reads an old save of another shape. A full storage refuses a write. The kit's save store handles all three:
+
+```js
+import { createSaveStore } from '@egret/engine/kit';
+import { browserSaveStorage } from '@egret/engine/web/kit';
+
+const save = createSaveStore({
+  key: 'my-game',
+  version: 2,
+  defaults: () => ({ best: 0, settings: { quality: 'auto', lang: 'auto', volume: 0.8 } }),
+  migrations: { 1: old => ({ best: old.best ?? 0, settings: { quality: 'auto', lang: 'auto', volume: 0.8 } }) },
+  storage: browserSaveStorage(),
+  onProblem: problem => console.warn(problem.kind),
+});
+save.update(data => { data.best = Math.max(data.best, score); });
+```
+
+The store keeps `{ version, savedAt, data }`, brings older saves forward step by step, keeps a save it cannot read under `<key>.unread` instead of losing it, and returns `false` instead of throwing when a write is refused.
+
+Rules:
+
+- Raise `version` and add a migration whenever the shape changes. LoveElective moved dyes from equipped pieces to a per-character table and had to infer them from old saves; a migration step does that once, in one place.
+- A save from before versions existed is bare data. SnowTemple wraps it as version 1 before opening the store.
+- Check values read back, not only the shape: FPS clamps a saved sensitivity to its range; use `validate` for whole-save checks.
+- Keep settings (quality, language, volume, key bindings from `input.saveBindings()`) apart from progress, so resetting a run does not reset the controls.
+- Save at calm points (a level end, a menu), not every frame.
+- Give a large or precious save a way out: `save.export()` as a file and `save.import(text)`, as Wulin offers when storage is refused. Saves too large for local storage go to `openIndexedDBSaveStorage`.
+- Test migrations in Node with `createMemorySaveStorage()`: write an old save, open the store, check the data and that the old text was not lost.

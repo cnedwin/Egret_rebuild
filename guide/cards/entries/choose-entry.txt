@@ -1,0 +1,42 @@
+---
+id: choose-entry
+title: Choose the smallest entry that does the job
+applies: [play, play3d, engine, world3d, web]
+triggers: [play, play3d, createBrowserGame, createWorld3DApp, createWorld3DView, startWorld3DLoop, pickWorld3DBackend, "which import", "which entry", "entry point", "import map", "webgl2 or webgpu", "start a game", "backend choice", "用哪个入口", "导入哪个", "从哪里开始", "选择后端"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/entry-points.md, line: 9, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/main.mjs, line: 32, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/main.mjs, line: 427, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Choose the smallest entry that does the job
+
+Start at the top of this table and go down only when the game needs what the row lacks.
+
+| Game | Call | From |
+| --- | --- | --- |
+| Small 2D game, one file, no assets | `play` | `@egret/engine/play` (or `egret2d.js`) |
+| Small 3D game: boxes, balls, a follow camera | `play3d` | `@egret/engine/webgl2/world3d` |
+| 2D game with images and its own loop | `createBrowserGame` | `@egret/engine/web/game` |
+| 3D game with models, quality tiers, resolution control | `createWorld3DApp` | `@egret/engine/webgl2/world3d` or `@egret/engine/webgpu/world3d` |
+| Full control of Host, renderer and loop | `createWorld3DView` + `startWorld3DLoop` | same two entries |
+
+Rules:
+
+- `@egret/engine` and every feature entry run without a page. Only `@egret/engine/web/...` and the two backend entries touch the browser. Keep the rules on the first kind (see `sim-view-split`).
+- The root entry loads no Host. A page imports exactly one backend entry, or picks one at run time.
+- Pick the backend once, before anything is made. The large games read `?backend=webgpu` and import the matching entry; `createWorld3DApp` and `pickWorld3DBackend` do the same and fall back to WebGL2 when there is no adapter.
+- WebGL2 is the default in all three large games. WebGPU needs its own device checks before it is called done.
+- Every factory is `create...` and returns an object with `dispose()`. Put long-lived objects in a scope: `scope.use(renderer)`.
+
+```js
+const useWebGPU = new URLSearchParams(location.search).get('backend') === 'webgpu';
+const backend = await (useWebGPU
+  ? import('@egret/engine/webgpu/world3d')
+  : import('@egret/engine/webgl2/world3d'));
+const { createWorld3DHost, createWorld3DView, startWorld3DLoop } = backend;
+```
+
+For an import map without a bundler, list each entry used plus `@egret/runtime`, `@egret/contracts` and `robust-predicates`. A vendored game gets that map from `tools/vendor-game.mjs` (see `vendor-engine`). `knowledge-base/en/docs/entry-points.md` maps every task to its entry.
