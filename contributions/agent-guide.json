@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {"path": "guide/index.txt", "originRole": "First-party index of the agent guide's cards, one line per card; independently authored with AI assistance; Apache-2.0."},
+    {"path": "guide/cards/structure/sim-view-split.txt", "originRole": "First-party guide card distilled from the FPS, Rally and Jelly Pandas games of PortedGamesEgret and the engine documents; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/entries/choose-entry.txt", "originRole": "First-party guide card distilled from the engine's entry documents and the PortedGamesEgret games; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/entries/vendor-engine.txt", "originRole": "First-party guide card distilled from the engine's game kit document and the vendored engine records of PortedGamesEgret; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/perf/frame-budget.txt", "originRole": "First-party guide card distilled from @egret/devtools and the Jelly Pandas readout of PortedGamesEgret; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/perf/frame-loop-backpressure.txt", "originRole": "First-party guide card distilled from the engine's frame loop and error code documents and the PortedGamesEgret games; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/perf/world3d-draw-cost.txt", "originRole": "First-party guide card distilled from measured Jelly Pandas and Rally changes of PortedGamesEgret and the World3D app document; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/perf/prepare-programs.txt", "originRole": "First-party guide card distilled from FPS and Jelly Pandas fixes of PortedGamesEgret and the World3D program preparation measurements; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/input/touch-controls.txt", "originRole": "First-party guide card distilled from Jelly Pandas, Rally and FPS touch fixes of PortedGamesEgret and the game kit document; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/input/mobile-viewport.txt", "originRole": "First-party guide card distilled from the PortedGamesEgret games' page layouts and the World3D app document; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/input/short-screen-hud.txt", "originRole": "First-party guide card distilled from the short-screen layout fixes of JY, SnowTemple and Lantern Shadows in PortedGamesEgret; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/input/touch-labels.txt", "originRole": "First-party guide card distilled from the touch readability fixes of Jelly Pandas, Rally and JY in PortedGamesEgret; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/input/keyboard-shortcuts.txt", "originRole": "First-party guide card distilled from the SnowTemple chord input fix of PortedGamesEgret and the engine's browser input actions; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/input/pause-and-overlays.txt", "originRole": "First-party guide card distilled from the pause and overlay fixes of Rally, Jelly Pandas, SnowTemple and FPS in PortedGamesEgret; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/world3d/world3d-lights-shadows.txt", "originRole": "First-party guide card distilled from the World3D document and the FPS and Jelly Pandas records of PortedGamesEgret, with a flagged stale lesson; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/audio/synthesized-audio.txt", "originRole": "First-party guide card distilled from the PortedGamesEgret games' code-made sound and the engine's audio and game kit documents; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/assets/asset-loading.txt", "originRole": "First-party guide card distilled from the FPS model loader of PortedGamesEgret and the engine's game kit document; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/game/save-data.txt", "originRole": "First-party guide card distilled from the save code of the PortedGamesEgret games and the engine game kit document; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/game/two-languages.txt", "originRole": "First-party guide card distilled from the Chinese and English text, page language and speech code of the PortedGamesEgret games; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/game/balance-from-runs.txt", "originRole": "First-party guide card distilled from the headless, balance and audit tools of the PortedGamesEgret games and the engine game kit document; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/assets/fast-startup.txt", "originRole": "First-party guide card distilled from the measured staged loading of SnowTemple and the startup changes of Lantern Shadows and Wulin in PortedGamesEgret; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/assets/asset-provenance.txt", "originRole": "First-party guide card distilled from the asset ledgers and model records of the PortedGamesEgret games; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/verify/verify-end-to-end.txt", "originRole": "First-party guide card distilled from the FPS status record of PortedGamesEgret, llms.txt and the engine's verification tools; AI-assisted; Apache-2.0."},
+    {"path": "guide/cards/errors/read-engine-errors.txt", "originRole": "First-party guide card distilled from the engine's error code document and errorHelp.ts; AI-assisted; Apache-2.0."},
+    {"path": "tools/egret-guide.mjs", "originRole": "First-party command line that prints guide cards for a question within a token budget, and the single full file; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tools/harvest-games.mjs", "originRole": "First-party tool that reads a games repository at a commit and proposes missing or stale guide cards; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "tests/guide.test.mjs", "originRole": "First-party merge checks of the guide's names, codes, budgets, index, evidence, retrieval and harvest; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
+    {"path": "knowledge-base/en/docs/agent-guide.md", "originRole": "First-party description of the agent guide and the loop that keeps it current; independently authored with AI assistance; Apache-2.0."},
+    {"path": "knowledge-base/Cns/docs/agent-guide.md", "originRole": "First-party Chinese description of the agent guide and the loop that keeps it current; independently authored with AI assistance; Apache-2.0."}
+  ],
+  "documents": [
+    {"en": "knowledge-base/en/docs/agent-guide.md", "zh": "knowledge-base/Cns/docs/agent-guide.md"}
+  ]
+}

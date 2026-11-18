@@ -1,0 +1,38 @@
+---
+id: prepare-programs
+title: Prepare shader programs during loading, not at first use
+applies: [world3d, play3d]
+triggers: [recent-hitch, createCustomShader3D, "first time stutter", "hitch on first use", "pause when an effect first appears", "shader compile", "link status", "warm up", "prewarm", "prepare before play", "pipelines", "freeze on start", "first combat stutter", "第一次卡顿", "首次卡顿", "卡一下", "着色器编译", "预编译", "预热"]
+local: [warm]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/STATUS.md, line: 54, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a, fix: 34208ef }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/view.mjs, line: 1011, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/view.mjs, line: 253, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: f3cbec0 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/world3d.md, line: 121, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Prepare shader programs during loading, not at first use
+
+The first time a material variant is drawn, WebGL2 links its program. On the measured machine (Edge 157, RTX 5090 Laptop, ANGLE D3D11) one link took 179 ms; prepared, the same change took 4.1 ms. FPS saw two stalls of about 130 ms when the first supply crate appeared. Jelly Pandas and FPS each needed a fix commit for this, so expect it in any game with many materials.
+
+A variant is the material plus how it is drawn: fog, shadows received, transparency, instancing, the mirror pass. A crate drawn as an instance and the same crate drawn alone are two programs.
+
+```js
+await renderer.preparePrograms([
+  { mesh: crate, material: crateMaterial, receiveShadows: true, fog: true },
+  { mesh: crate, material: crateMaterial, pass: 'shadow' },
+  { mesh: glow, material: additiveMaterial },
+]);
+```
+
+Rules:
+
+- Call `renderer.preparePrograms` while the loading screen shows, for every variant an interaction will need: effects, pickups, the first enemy, hurt effects. Pass the mesh that will be drawn and the material it will use.
+- For a `CustomShader3D` effect, prepare with a detached mesh and the effect material. Keep the shader's `key` stable; changed GLSL needs a new key.
+- Mirror passes have their own variants. On WebGL2 pass `reflection.createPass(camera, hidden)` as `reflection` in the descriptors.
+- Where a variant is hard to describe, draw it once off screen during loading, as FPS's `view.warm` does (a fixture placed far below the map) and as Jelly Pandas does with zero-scale meshes inside the title's mirror pass. Do not advance game time while doing it.
+- Prepare again after the context is restored.
+- Check it: the devtools `recent-hitch` hint, or a frame-interval log of the first ten seconds of play, should show no frame over about two budgets.
+
+WebGPU builds its pipelines differently; Jelly Pandas reuses instanced pipelines and prepares first-use effects on the title for the same reason.

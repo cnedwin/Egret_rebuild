@@ -1,0 +1,35 @@
+---
+id: world3d-lights-shadows
+title: World3D light limits, tiled lights and shadows
+applies: [world3d, play3d]
+triggers: [createPointLight3D, createSpotLight3D, createDirectionalLight3D, "too many lights", "lights do not light", "lamp has no effect", "ninth light", "point light limit", "shadow", "shadows missing", "cascaded shadows", "shadow acne", "dark in shade", "context lost with shadows", "additive glow is a black square", "灯光", "点光源", "灯不亮", "阴影", "阴影不见", "太黑"]
+local: [NEAR_LIGHTS]
+stale: "FPS/STATUS.md (engine pin 264e172) says the engine lights at most eight point lights; the current engine lights up to 256 more by screen tile. FPS still fades all but five lamps."
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/world3d.md, line: 49, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/world3d.md, line: 51, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/STATUS.md, line: 46, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/view.mjs, line: 143, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/view.mjs, line: 232, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# World3D light limits, tiled lights and shadows
+
+Limits per frame: four directional, eight point and four spot lights are fully lit. When more point or spot lights are on, the renderer keeps those that matter most to the camera (range reaching the camera first, then brightness over distance). Point lights past the eight, up to 256 more, are lit by screen tile: they light diffuse and specular but cast no shadow and need a `range`. `renderer.info.lightsTiled` and `renderer.info.lightsDropped` count them; `renderer.tiledLights = false` turns tiling off.
+
+Rules for lights:
+
+- Give every point and spot light a `range`. Without one it always counts as reaching the camera and crowds out nearer lamps, and it cannot be tiled.
+- A light that drops in or out switches at once. In scenes with many lamps, fade intensity by distance yourself, as FPS does with its lamps.
+- Use emissive materials and glow sprites for lamps far away; a light is for what it lights.
+- An additive glow (sun halo, muzzle flash, sight dot) needs `alphaMode: 'blend'` with `blending: 'additive'` and `depthWrite: false`, or it draws as an opaque square. FPS fixed exactly this.
+
+Rules for shadows:
+
+- Directional and spot lights cast shadows into one atlas of four tiles. One directional light may be cascaded (`shadow.cascades` 2 to 4, `shadow.cascadeDistance`); each cascade takes a tile.
+- One point light may cast shadows, and only when no directional or spot light does: it takes the whole atlas.
+- Opt meshes in with `castShadow` and `receiveShadow`. Small or distant things (grass, sprinkles) should not cast; Jelly Pandas puts them on a detail layer and leaves them out of mirror passes.
+- Two cascades are usually enough for a third-person game; Jelly Pandas went from three to two while cutting its frame cost. Set `mapSize` per quality tier.
+- Very dark shade means too little ambient or hemisphere light, not a shadow bug. FPS lists firs that go nearly black in shade as a known issue.
+- A shadow path can lose the WebGL context on one adapter (FPS on an RTX 5090 Laptop under ANGLE D3D11). Keep a per-adapter switch to turn shadows off, keep the other effects, and record which adapter needed it.

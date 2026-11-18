@@ -1,0 +1,46 @@
+---
+id: sim-view-split
+title: Keep the rules of a large game apart from its picture
+applies: [engine, world3d, web]
+triggers: [runHeadless, "game structure", "large game", "sim view split", "deterministic test", "rules test", "node --test", "headless run", "balance numbers", "fixed seed", "where to put code", "游戏结构", "大型游戏", "代码结构", "规则测试"]
+local: [createGame, idleInput, createBot, createView, createHud, createInput, createAudio]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/README.md, line: 95, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/test/sim.test.mjs, line: 13, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/tools/headless.mjs, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/game-kit.md, line: 136, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Keep the rules of a large game apart from its picture
+
+All three large games (FPS, Rally, Jelly Pandas) use the same layout, and each one can play a whole run in Node:
+
+| File | Holds | Imports the engine? |
+| --- | --- | --- |
+| `src/sim.mjs` | rules: state, `update(dt, input)`, an `events` list | only DOM-free entries (FPS uses `createPhysicsWorld3D`, `createNavMesh3D`) |
+| `src/data.mjs` | numbers and text in both languages | no |
+| `src/view.mjs` | scene, lights, effects; reads the sim, never writes it | yes |
+| `src/hud.mjs`, `src/input.mjs`, `src/audio.mjs` | page interface, input, sound | page only |
+| `src/main.mjs` | makes the engine, runs one frame: input, then sim, then view | yes |
+
+Rules:
+
+- The sim takes a seed and a plain input object, and steps by a fixed `dt` (1/60). It has no `Math.random`, no clock and no DOM. The same seed and inputs give the same run.
+- The sim reports what happened through `game.events`. The view and audio read the events and clear them once a frame.
+- Write Node tests against the sim only (`node --test`). Use a helper that advances N seconds with a scripted input. None of the three sims calls `Math.random`.
+- Add a stand-in player (`createBot`) and a headless script that plays whole runs per seed. It prints times and results, which is how numbers are balanced without opening a page.
+- In a vendored game, load the engine's DOM-free entries in Node with `node --import ./vendor/node-register.mjs`.
+
+```js
+import { runHeadless } from '@egret/engine/kit';
+
+const runs = runHeadless({
+  createGame: seed => createGame({ seed }),
+  createPlayer: (game, seed) => createBot(game, { seed }).think,
+  done: game => game.state === 'won' || game.state === 'dead',
+  seeds: 8,
+});
+```
+
+Why: Jelly Pandas measured its rules alone (1.59 ms a step before a change, 1.28 ms after) with the headless run. That number is not visible when rules and drawing share one frame.

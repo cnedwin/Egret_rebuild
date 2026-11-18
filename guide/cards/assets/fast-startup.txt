@@ -1,0 +1,34 @@
+---
+id: fast-startup
+title: A short way from opening the page to playing
+applies: [engine, web, world3d, play3d]
+triggers: [writeAssetBundle, openBrowserAssetBundle, "slow startup", "slow to start", "first screen", "loading screen", "time to first frame", "cold start", "many modules", "bundle the code", "preload", "load on iphone", "stuck on loading", "启动慢", "加载慢", "首屏", "加载界面", "卡在加载", "冷启动", "苹果手机加载"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/README.md, line: 105, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: 87f213a }
+  - { repo: cnedwin/PortedGamesEgret, path: LanternShadows/README.md, line: 152, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 2fb4646c1ccec058d31c6f93cc2193061add1979, fix: 7647b50 }
+  - { repo: cnedwin/PortedGamesEgret, path: LanternShadows/src/pictures.mjs, line: 18, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 2fb4646c1ccec058d31c6f93cc2193061add1979, fix: e6dd7ac }
+  - { repo: cnedwin/PortedGamesEgret, path: Wulin/src/ui/opening.mjs, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe, fix: e526ab0 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# A short way from opening the page to playing
+
+Four games reworked their start. SnowTemple measured it on Windows: cold page load to first movement went from 3485 ms to 996 ms, and GLB data received before moving from 12.1 MB to 5.5 MB. The change was loading only what the first moment needs and the rest after the first frame. Lantern Shadows packed 260 modules into one file. Wulin turned its start into a playable prologue. Fetching per file is in `asset-loading`; this card is about what comes first.
+
+Order of a start:
+
+1. An illustrated loading screen in plain HTML and CSS, shown before any script runs.
+2. Code and the first screen's files in parallel. List those files in `index.html` (`<link rel="preload">`) so the browser starts on them while the code is still arriving.
+3. Engine, renderer and the hero's model together; draw the first frame with them.
+4. After the first frame, the rest at two requests at a time: other characters, later scenes, music. Prepare their shader programs before they are first drawn (see `prepare-programs`).
+5. If a late file is slow, the part of the game that needs it waits; the rest plays (SnowTemple's fight waits for its roles, the walk does not).
+
+Rules:
+
+- Measure "page opened to first input that moves something", cold and warm, and keep the numbers with the change. Also measure the bytes received by then.
+- Many small modules cost a request each. Bundle the game and its vendored engine for release (Lantern Shadows: `tools/bundle.mjs`, one minified file), and many small assets with `writeAssetBundle`, read with `openBrowserAssetBundle`.
+- Do not put two copies of a model into separate packs: SnowTemple split shared characters out of its scene packs into one pack of their own.
+- Keep the start on the platform's own decoders where they suffice. Lantern Shadows never got past loading on iPhone until its images were decoded by the browser's image element and checked against the manifest's checksums.
+- Show a failure over the stage, in words that can be read and copied, with a way to reload. A dead loading bar tells nobody anything.
+- Give a long start something to do: a prologue, a title with settings, a tutorial card.

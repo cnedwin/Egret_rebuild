@@ -1,0 +1,41 @@
+---
+id: short-screen-hud
+title: HUD and controls on a short landscape screen
+applies: [web, world3d, play, play3d]
+triggers: ["short screen", "short landscape screen", "landscape phone", "hud overlaps", "buttons cut off", "dialogue covers the game", "media query", "max height", "compositor layer", "hud flickers during fade", "横屏", "手机横屏", "矮屏", "界面挡住", "按钮被挡住", "按钮被裁掉", "按钮点不到", "对话框挡住", "界面闪烁"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: JY/web/style.css, line: 693, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe, fix: 7e61c85 }
+  - { repo: cnedwin/PortedGamesEgret, path: JY/web/style.css, line: 911, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe, fix: eb69e94 }
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/style.css, line: 136, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: f26f5a2 }
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/style.css, line: 166, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: b26ad51 }
+  - { repo: cnedwin/PortedGamesEgret, path: LanternShadows/style.css, line: 71, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 2fb4646c1ccec058d31c6f93cc2193061add1979, fix: 15621a1 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# HUD and controls on a short landscape screen
+
+A phone held sideways is about 320 to 430 CSS pixels tall (FPS measured 873 × 325 on a Samsung). Five fixes in four games were the page, not the engine: JY's battle commands and its portrait dialogue were pushed below the screen, SnowTemple's lesson cards and goal line ran into the corner buttons, and Lantern Shadows' crowd line sat under the touch buttons. `play` and `play3d` keep their own stage in shape; this card is for HUD drawn as page elements over the canvas.
+
+Write one rule for the short landscape case and keep it apart from the desktop rules:
+
+```css
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+  .masthead { display: none; }                       /* titles go first */
+  .screen { display: grid; grid-template-columns: minmax(0, 1fr) clamp(246px, 38vw, 320px); }
+  .controls { grid-column: 2; }                      /* commands beside the picture, not under it */
+  .viewport { max-width: calc((100svh - 80px) * 1.7778); }   /* the picture yields height, keeping 16:9 */
+}
+```
+
+Rules the games converged on:
+
+- Move commands to the side in landscape. Height is the scarce dimension; JY put its full battle command set in a right column instead of shrinking it below.
+- Size from the visible height: `svh`/`dvh` and `clamp()`, never fixed pixel heights.
+- While a panel such as a dialogue is open, hide the controls it makes useless. JY keeps only the key that advances the dialogue, so the text and the picture share the height.
+- Keep every command reachable: lay buttons out again (one column, `repeat(n, minmax(44px, 1fr))`) before hiding any. Hide decoration, titles and keyboard hints first.
+- Vertical writing and tall cards do not fit: SnowTemple turns its vertical lesson titles horizontal under `max-height: 420px`.
+- Give each corner one owner. When touch buttons take the foot of the screen, move text that lived there (Lantern Shadows writes its line higher on a coarse pointer).
+- HUD that fades with a cut scene can drop and rebuild its compositor layers, which shows as flicker; SnowTemple keeps `will-change: opacity` on the desktop HUD.
+
+Check it: open the page at 844 × 390 and 667 × 375 in a phone emulation with touch, in every screen (title, play, dialogue, menus, results), and look for clipped or overlapping controls. That is a layout check, not a phone run; record a real device separately (see `verify-end-to-end`). Safe areas and pixel ratio are in `mobile-viewport`; readable labels in `touch-labels`.

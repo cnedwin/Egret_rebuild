@@ -1,0 +1,40 @@
+---
+id: pause-and-overlays
+title: Pause, menus and dialogs over a running game
+applies: [engine, web, world3d, play, play3d]
+triggers: ["pause", "pause button", "pause on phone", "pause when tab hidden", "resume", "menu over game", "dialog over canvas", "overlay", "modal", "keys held after menu", "input after resume", "game keeps running in background", "focus", "暂停", "暂停键", "切后台", "继续游戏", "弹窗", "菜单", "对话框", "恢复后按键"]
+local: [setPaused, readInput]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/src/main.mjs, line: 262, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: f1fbd9093c47dd83a770a0a13aa88901edc0b90d, fix: ee391d0 }
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/input.mjs, line: 138, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: 46a3909 }
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/src/main.mjs, line: 511, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: 1c47df4 }
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/src/hud.mjs, line: 307, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: b26ad51 }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/main.mjs, line: 303, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Pause, menus and dialogs over a running game
+
+Each of these games had to fix how play stops and starts again. Rally had no way to pause a race on a phone until a button went under the minimap. Jelly Pandas' pause did nothing while a thumb held the stick, because the browser sent no `click` for the second finger. SnowTemple first threw away held keys while a lesson page was open, so the hero stood still when it closed.
+
+In `play`, `game.pause()` and `game.resume()` stop updates, timers and tweens; `game.button` still works, so the pause menu is made of buttons. A page made by hand keeps a mode and steps nothing while paused:
+
+```js
+document.addEventListener('visibilitychange', () => { if (document.hidden) setPaused(true); });
+function frame(dt) {
+  page.poll();
+  if (mode === 'play') sim.step(dt, readInput());
+  view.update(mode === 'paused' ? 0 : dt, sim);   // a paused game holds its pose
+  input.endFrame();
+}
+```
+
+Rules:
+
+- Offer pause from every input: Esc or P, a visible button on touch screens, and a gamepad's Start. Act on the button's own `pointerdown` and `pointerup`, not `click` (see `touch-controls`).
+- Pause by itself when the tab is hidden, when fullscreen or pointer lock is lost (FPS), and when the window loses focus during real-time play. Never resume by itself; wait for a press.
+- Decide what a hold means across an overlay. Every hold ends when focus is lost. For an overlay inside the game (a choice page, an inventory), either keep holds so movement goes on when it closes (SnowTemple) or ask for a fresh press. Never let a press from before the menu count as new on resume.
+- Listen for releases on the window in the capture phase; a finger or button lifted over the dialog must still end its hold.
+- A dialog takes focus when it opens (`aria-modal`, its first choice focused), keeps Tab inside and gives focus back to where it was on close. While it is open, the game's keys do nothing.
+- Hold sound and simulation together: pause the music with the game, and do not count paused time towards timers or scores.
+- Test it in Node: open an overlay mid-hold, release over it, close it, and check the next step's input. SnowTemple does this in `test/input-quality.test.mjs`.
