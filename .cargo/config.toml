@@ -1,0 +1,3 @@
+# Keep local Rust products with other ignored worktree build artifacts.
+[build]
+target-dir = "work/cargo-target"
