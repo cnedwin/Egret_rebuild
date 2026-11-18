@@ -33,6 +33,11 @@
       "path": "examples/play/verify-async-lifecycle.mjs",
       "originRole": "First-party browser regression for Play and Play3D asynchronous setup, restart and disposal through the public SDK. Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-primary-pointer.mjs",
+      "originRole": "First-party real-browser regression exercising independent pointer sessions through Play. Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [

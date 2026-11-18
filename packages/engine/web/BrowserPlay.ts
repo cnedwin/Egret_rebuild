@@ -600,7 +600,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const letGo = (): void => {
     for (const code of held) cameUp.add(code);
     held.clear();
-    point.down = false;
+    pointerOwner = undefined;
   };
   const any = (set: Set<string>, keys: readonly string[]): boolean => keys.some(key => set.has(codeOf(String(key))));
   // A gamepad, where the page has them: polled once a step. Its sticks count in `axis` and `look`.
@@ -647,7 +647,6 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     dx: 0,
     dy: 0,
     wheel: 0,
-    down: false,
     pressed: false,
     released: false,
     swipe: undefined as PlayPointer['swipe'],
@@ -656,7 +655,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   };
   // The first move a page sees has no move before it, and some browsers give it the whole way from the corner.
   let seenMove = false;
+  // This convenience view follows one drag; the shared UI router still receives every contact.
+  let pointerOwner: number | undefined;
   const moved = (event: PointerEvent): void => {
+    if (
+      pointerOwner !== undefined
+        ? event.pointerId !== pointerOwner
+        : event.pointerType === 'touch' || event.buttons !== 0
+    )
+      return;
     if (seenMove || page.pointerLockElement === surface) {
       if (finite(event.movementX)) point.dx += event.movementX;
       if (finite(event.movementY)) point.dy += event.movementY;
@@ -680,8 +687,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // that places something wherever the stage is pressed would place it under its own buttons.
   let tappable: DisplayObject[] = [];
   const pointerDown = (event: PointerEvent): void => {
+    if (pointerOwner !== undefined) return;
+    pointerOwner = event.pointerId;
     place(event);
-    point.down = true;
     tappable = tappable.filter(node => !node.isDisposed);
     point.pressed = !tappable.some(node => pointer.over(node));
     point.fromX = point.x;
@@ -690,17 +698,17 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     win.focus?.();
   };
   const pointerUp = (event: PointerEvent): void => {
+    if (event.pointerId !== pointerOwner) return;
+    pointerOwner = undefined;
     place(event);
-    if (!point.down) return;
-    point.down = false;
     point.released = true;
     const dx = point.x - point.fromX,
       dy = point.y - point.fromY;
     if (Math.max(Math.abs(dx), Math.abs(dy)) >= SWIPE)
       point.swipe = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up';
   };
-  const pointerCancel = (): void => {
-    point.down = false;
+  const pointerCancel = (event: PointerEvent): void => {
+    if (event.pointerId === pointerOwner) pointerOwner = undefined;
   };
   const pointer: PlayPointer = {
     get x() {
@@ -710,7 +718,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       return point.y;
     },
     get down() {
-      return point.down;
+      return pointerOwner !== undefined;
     },
     get pressed() {
       return point.pressed;
@@ -766,7 +774,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     [win, 'pointermove', moved as EventListener],
     [surface, 'wheel', turned as EventListener],
     [win, 'pointerup', pointerUp as EventListener],
-    [win, 'pointercancel', pointerCancel]
+    [win, 'pointercancel', pointerCancel as EventListener]
   ];
   for (const [target, type, listener] of listening) target.addEventListener(type, listener, { passive: false });
 

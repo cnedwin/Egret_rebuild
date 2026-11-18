@@ -109,7 +109,9 @@ await play({
 | `game.pointer.lock()`、`.unlock()`、`.locked` | 隐藏光标并把鼠标留在游戏里，用于第一人称视角。浏览器只允许在一次点击之后锁定，所以要在点击回调里或 `pressed` 为真时调用；按 Escape 会交还鼠标 |
 | `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
 
-键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。按在舞台上、且下面没有按钮和带 `onTap` 的精灵时，`game.pointer.pressed` 为真：按在它们上面的那一下只属于它们，所以“按哪里就在哪里放东西”的游戏不会把东西放到自己的按钮下面。任何按下都会让 `game.pointer.down` 为真。
+键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。按在舞台上、且下面没有按钮和带 `onTap` 的精灵时，`game.pointer.pressed` 为真：按在它们上面的那一下只属于它们，所以“按哪里就在哪里放东西”的游戏不会把东西放到自己的按钮下面。主指针按住期间，`game.pointer.down` 保持为真，包括按在按钮上的情况。
+
+在 Play 画布上最先按下的指针负责驱动 `game.pointer`，直到该指针松开或被取消。拖动时，其他手指可点按独立的 UI 控件，拖动坐标、滑动起点和松手状态仍由原指针决定。原指针松开后，已经按住的手指不会自动接管。Galaxy Z Fold7（Android 17、Chrome 157）上的浏览器协议触摸已在 WebGL2 和 WebGPU 验证两种松手顺序、主指滑动、独立点按和取消。
 
 ## 声音
 
