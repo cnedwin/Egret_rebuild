@@ -287,6 +287,11 @@ const QUERIES = [
   ['text too small on phone', 'touch-labels'],
   ['both mouse buttons', 'keyboard-shortcuts'],
   ['pause button on phone', 'pause-and-overlays'],
+  ['private window storage throws', 'save-data'],
+  ['html lang chinese font', 'two-languages'],
+  ['how long is a run balance', 'balance-from-runs'],
+  ['slow startup on phone', 'fast-startup'],
+  ['asset licence credits', 'asset-provenance'],
   // Chinese questions: no spaces between words, so the Chinese triggers are found inside the question.
   ['手机横屏 按钮 点不到', 'short-screen-hud'],
   ['同时按两个键没反应', 'keyboard-shortcuts'],
@@ -296,7 +301,12 @@ const QUERIES = [
   ['着色器第一次卡顿', 'prepare-programs'],
   ['手机上没有声音', 'synthesized-audio'],
   ['点光源太多 灯不亮', 'world3d-lights-shadows'],
-  ['游戏卡顿 掉帧', 'frame-budget']
+  ['游戏卡顿 掉帧', 'frame-budget'],
+  ['旧存档读不出来', 'save-data'],
+  ['切换语言 中英文', 'two-languages'],
+  ['数值平衡 太简单', 'balance-from-runs'],
+  ['苹果手机加载不了', 'fast-startup'],
+  ['素材授权 可以商用', 'asset-provenance']
 ];
 
 // Break caught: a change to the ranking or to a card that sends a known question to the wrong card.

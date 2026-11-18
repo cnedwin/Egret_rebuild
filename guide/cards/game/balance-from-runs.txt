@@ -1,0 +1,47 @@
+---
+id: balance-from-runs
+title: Balance and pacing from whole runs played without a page
+applies: [engine, world3d, play, play3d]
+triggers: [runHeadless, createRandom, hashSeed, "balance", "game balance", "difficulty", "pacing", "run too short", "too easy", "too hard", "tune numbers", "stand-in player", "bot", "audit", "win rate", "数值平衡", "平衡", "难度", "节奏", "太简单", "太难", "一局太短", "调数值"]
+local: [createBot, createGame]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: Wulin/tools/audit.mjs, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe, fix: 9a5f865 }
+  - { repo: cnedwin/PortedGamesEgret, path: Wulin/tools/stacking.mjs, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe, fix: b5b0de9 }
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/tools/balance.mjs, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3 }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/STATUS.md, line: 75, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a, fix: 9968de9 }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Balance and pacing from whole runs played without a page
+
+Six games keep a script that plays whole runs in Node and prints how they went (`tools/headless.mjs`, `balance.mjs`, `audit.mjs`). Numbers were set from those prints, not from one play in a browser. FPS found that a run was over in under a minute and paced it to three to five. Wulin set its rank limits and renown from many worlds played forward, and capped bonuses once it measured them.
+
+Start from the rules apart from the picture (see `sim-view-split`) and a stand-in player, then print a table per seed:
+
+```js
+import { runHeadless } from '@egret/engine/kit';
+
+const runs = runHeadless({
+  createGame: seed => createGame({ seed }),
+  createPlayer: (game, seed) => createBot(game, { seed }).think,
+  done: game => game.over,
+  seeds: 12,
+  summary: game => ({ won: game.won, seconds: Math.round(game.t), hits: game.stats.hitsTaken }),
+});
+console.table(runs.map(run => ({ seed: run.seed, finished: run.finished, ...run.summary })));
+```
+
+What to measure:
+
+- Length of a run, as a spread over seeds (10th, 50th and 90th percentile), against a target written down first ("three to five minutes").
+- Outcome per seed and per difficulty or tier: how often the stand-in wins, and where it loses. SnowTemple prints falls, blows taken and the grade for six seeds a tier.
+- How a long game's numbers run over time. Wulin prints, year by year, the spread of each measure across worlds, and when and how each world was won.
+- What stacked advantages are worth. Wulin gives each bonus a worth in levels: how many levels the other side needs to win half the fights against it. Then it caps the total.
+- Unfinished runs: `finished: false` after `maxSeconds` is a stuck rule or a stand-in that cannot play.
+
+Rules:
+
+- All chance goes through a seeded generator (`createRandom(seed)`, `dice.fork()` for separate streams), so a print can be reproduced and compared before and after a change.
+- Change one number, run the same seeds again, and compare the tables.
+- A stand-in player is not a person. It finds broken rules, stuck states and runaway numbers; difficulty felt by players still needs people playing (FPS's next step is a few people playing three runs each).
+- Turn a balance finding into a test once it holds, such as "no tier-1 seed takes over six minutes".

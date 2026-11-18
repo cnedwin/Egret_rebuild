@@ -1,0 +1,38 @@
+---
+id: asset-provenance
+title: Recording where every model, picture and sound came from
+applies: [play, play3d, engine, world3d, web]
+triggers: ["asset licence", "asset license", "credits", "where assets come from", "third party models", "cc0", "generated art", "ai generated assets", "assets readme", "asset ledger", "can I use this model", "commercial use", "素材来源", "素材授权", "版权", "许可证", "可以商用", "素材台账", "第三方素材", "生成的素材"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: Wulin/ASSETS.md, line: 7, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: b6a392a61348a5ba53a48a0d4fbed514ffd87afe }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/assets/models/README.md, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/assets/track-models/README.md, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: f1fbd9093c47dd83a770a0a13aa88901edc0b90d }
+  - { repo: cnedwin/PortedGamesEgret, path: LanternShadows/README.md, line: 137, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 2fb4646c1ccec058d31c6f93cc2193061add1979 }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/test/asset-models.test.mjs, line: 13, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }
+engine: ec17a5a22eff057b89a2926f638eb51938344459
+---
+
+# Recording where every model, picture and sound came from
+
+A game is published with its files, so every file needs an owner and a licence that allows it. Five games keep this record beside the files: Wulin's `ASSETS.md` ledger, README files in FPS's and Rally's model folders and in SnowTemple's character, dialogue and surface folders, and Lantern Shadows' "where the art comes from".
+
+One row per asset, or per group of the same origin:
+
+```markdown
+| Asset | Source | Licence | Commercial use | Used for |
+|---|---|---|---|---|
+| 28 models of trees and stones (`assets/flora/*.glb`) | flo-bit/low-poly-asset-packs, commit 61bbdb0, files unchanged | CC0 1.0 | yes | vegetation |
+| Voice lines (`assets/audio/voice/*.mp3`) | original lines, synthesized offline with a named model and version | model Apache-2.0 | yes | prologue, callouts |
+| Engine build (`vendor/`) | Egret, see `vendor/SOURCE.md` | Apache-2.0 | yes | rendering |
+```
+
+Rules:
+
+- Name the exact source: repository and commit, shop page and item, or the tool and model that generated it. "From the internet" is no record.
+- Say what was changed (simplified, recoloured, texture-compressed, rescaled), so the next person knows the file is not the original. FPS and Rally record that their models were generated with Tripo Studio, then reduced and fitted; FPS states its simplification error limit and keeps one scale per figure.
+- Mark AI-generated art and audio as such, with the tool, and keep the prompts with the project when they are yours (Wulin keeps `portrait-prompts.json`).
+- Keep the licence texts of third-party packs and the engine's `vendor/` licences in the release; copying the engine with `vendor-game.mjs` copies them (see `vendor-engine`).
+- Leave out what you may not ship. Data a player owns can be imported by the player at run time (JY reads the player's own data in the browser) instead of being published with the game.
+- Prefer art made in code where it serves. Lantern Shadows writes every puppet, scenery piece and level with its own tools, and Wulin generates its buildings and figures, which leaves nothing to license.
+- Test that shipped files match their manifest: FPS checks that every GLB holds every part its manifest names, with its buffers and textures.
