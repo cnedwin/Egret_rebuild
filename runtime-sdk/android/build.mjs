@@ -5,10 +5,11 @@ import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, statSync
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
+import { prepareV8 } from './v8-dependencies.mjs';
 
 const {values} = parseArgs({
   options: Object.fromEntries(['scene', 'output', 'sdk', 'ndk', 'jdk', 'platform', 'build-tools',
-    'rust-lib', 'rust-notice', 'cargo', 'keystore'].map((name) => [name, {type: 'string'}]))
+    'rust-lib', 'rust-notice', 'cargo', 'keystore', 'v8-profile', 'v8-cache'].map((name) => [name, {type: 'string'}]))
 });
 const here = path.dirname(fileURLToPath(import.meta.url));
 const native = path.join(here, '../native');
@@ -18,8 +19,8 @@ function required(value, label) {
   if (!value) throw new Error('Missing ' + label);
   return path.resolve(value);
 }
-function run(file, args, env = process.env) {
-  const result = spawnSync(file, args, {stdio: 'inherit', env});
+function run(file, args, options = {}) {
+  const result = spawnSync(file, args, {stdio: 'inherit', ...options});
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(path.basename(file) + ' exited ' + result.status);
 }
@@ -70,14 +71,22 @@ run(path.join(llvm, executable('clang')), ['--target=aarch64-linux-android26', '
   '-I', path.join(native, 'include'), path.join(here, 'src/renderer_jni.c'), archive,
   '-lGLESv3', '-landroid', '-llog', '-ldl', '-lm', '-o', working('lib/arm64-v8a/libegret_sample.so')]);
 const source = path.join(here, 'src/org/egret/runtime/sample');
-const javaFiles = readdirSync(source).filter((name) => name.endsWith('.java')).sort();
+const javaFiles = readdirSync(source).filter((name) => name.endsWith('.java')).sort().map(name => path.join(source, name));
+const v8 = values['v8-profile'] === undefined ? null : await prepareV8({
+  profile: values['v8-profile'],
+  cache: path.resolve(values['v8-cache'] ?? path.join(path.dirname(output), 'v8-cache')),
+  working, jar: java('jar'), strip: path.join(llvm, executable('llvm-strip')), run
+});
+// The Javet arm64 ELF Android notes declare API 29. The Rust/System WebView host targets API 26.
+const minSdk = v8 ? '29' : '26';
+if (v8) javaFiles.push(path.join(here, 'v8/org/egret/runtime/sample/JavetScene.java'));
 run(java('javac'), ['-encoding', 'UTF-8', '--release', '8', '-classpath',
-  platform, '-d', working('classes'), ...javaFiles.map((name) => path.join(source, name))]);
+  [platform, ...(v8 ? [v8.classes] : [])].join(path.delimiter), '-d', working('classes'), ...javaFiles]);
 run(java('jar'), ['cf', working('classes.jar'), '-C', working('classes'), '.']);
 run(java('java'), ['-cp', path.join(buildTools, 'lib/d8.jar'), 'com.android.tools.r8.D8',
-  '--min-api', '26', '--lib', platform, '--output', working('dex'), working('classes.jar')]);
+  '--min-api', minSdk, '--lib', platform, '--output', working('dex'), working('classes.jar'), ...(v8 ? [v8.classes] : [])]);
 run(tool('aapt2'), ['link', '--manifest', path.join(here, 'AndroidManifest.xml'), '-I', platform,
-  '-o', working('base.apk')]);
+  '--min-sdk-version', minSdk, '-o', working('base.apk')]);
 run(java('jar'), ['uf', working('base.apk'), '-C', working('dex'), 'classes.dex', '-C', work, 'lib',
   '-C', work, 'assets']);
 run(tool('zipalign'), ['-f', '-P', '16', '4', working('base.apk'), working('aligned.apk')]);
@@ -93,6 +102,10 @@ run(java('java'), ['-jar', signer, 'sign', '--ks', key, '--ks-key-alias', 'egret
   '--ks-pass', 'pass:android', '--out', output, working('aligned.apk')]);
 run(java('java'), ['-jar', signer, 'verify', '--verbose', output]);
 run(tool('zipalign'), ['-c', '-P', '16', '4', output]);
+const badging = spawnSync(tool('aapt2'), ['dump', 'badging', output], {encoding: 'utf8'});
+if (badging.status !== 0 || !badging.stdout.split(/\r?\n/).includes("minSdkVersion:'" + minSdk + "'")) {
+  throw new Error('Signed APK does not declare minSdkVersion ' + minSdk);
+}
 // Some Windows aapt2 versions emit backslashes inside nested asset ZIP names.
 // Verify identities in the final signed APK exactly as Android's AssetManager reads them.
 const listing = spawnSync(java('jar'), ['tf', output], {encoding: 'utf8'});
@@ -100,7 +113,7 @@ if (listing.status !== 0) throw new Error('Cannot inspect signed APK');
 const names = listing.stdout.trim().split(/\r?\n/);
 for (const name of ['AndroidManifest.xml', 'classes.dex', 'lib/arm64-v8a/libegret_sample.so',
   'assets/licenses/rust-library.html', 'assets/licenses/android-ndk.txt', 'assets/licenses/android-toolchain.txt',
-  ...sceneFiles.map((file) => 'assets/scene/' + file)]) {
+  ...sceneFiles.map((file) => 'assets/scene/' + file), ...(v8?.entries ?? [])]) {
   if (names.filter((entry) => entry === name).length !== 1) throw new Error('Invalid APK entry: ' + name);
 }
 if (names.some((name) => name.includes('\\'))) throw new Error('Nonportable APK entry');

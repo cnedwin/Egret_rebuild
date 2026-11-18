@@ -40,6 +40,10 @@ Vladimir Agafonkin的[robust-predicates](https://github.com/mourner/robust-predi
 
 GPUWeb的canvas配置/current texture、queue、buffer及device错误API资料和W3C WGSL文献，为独立编写的pass与生命周期合同提供依据。读取日期、实际URL、完整规范获取限制及此前类型/latest抓取失败保留于[来源证据](knowledge-base/evidence/webgpu-source-evidence.json)。真实浏览器门禁另列；鸣谢不表示上游背书或手机/性能/Native SDK验收。
 
+## 可选 Android V8 宿主
+
+Android 内置脚本宿主使用 Javet 6.0.3 接入 V8 15.7.112.19，启用国际化的版本同时打包配套 ICU 数据。场景绑定、逐帧命令传输、渲染和资源生命周期由白鹭实现。构建会校验上游归档，并在 APK 中附上分发许可与归属说明。[上游版本与许可文件清单](runtime-sdk/android/v8-provenance.json) · [Android 构建说明](runtime-sdk/android/README.zh-CN.md)
+
 ## 可选 Spine Core 接入
 
 Esoteric Software 的 [Spine Runtimes](https://github.com/EsotericSoftware/spine-runtimes/tree/b7beb2ccbbce667a12c02f44d070644f59b04968)提供 `@egret/spine` 单独许可的 `@esotericsoftware/spine-core` 4.3.13 依赖，保留[包内原始声明](third-party/spine-core-4.3.13.LICENSE)及[附带条件的许可路径／参考边界](knowledge-base/Cns/docs/spine-content-ingress.md)。白鹭独立实现资产所有权、配置准入和公共 API，不将上游运行库实现或官方美术复制到第一方源码；上游运行库不属于 Apache-2.0。

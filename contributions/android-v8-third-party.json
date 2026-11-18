@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "files": [],
+  "documents": [],
+  "frozenInputs": [
+    {
+      "path": "third-party/icu-19dfb44.LICENSE",
+      "originRole": "Original ICU and Unicode data licenses from Chromium ICU revision 19dfb44a62ae60ce6b0060de8c0cef5d5c527177, as pinned by V8 DEPS.",
+      "bytes": 27718,
+      "sha256": "e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af"
+    },
+    {
+      "path": "third-party/v8-15.7.112.19.NOTICES",
+      "originRole": "Redistribution bundle of upstream V8, Abseil, simdutf and zlib license texts. Each verbatim source follows its immutable URL; two LF bytes separate records.",
+      "bytes": 82707,
+      "sha256": "5648a319050688ac3e56d798280e4c9e2eb1f1d3d51520bc944e01897b145f7f"
+    }
+  ]
+}

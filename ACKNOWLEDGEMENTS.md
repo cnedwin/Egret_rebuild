@@ -40,6 +40,10 @@ First-party code and documentation use the repository's existing [Apache-2.0 lic
 
 The GPUWeb API references for canvas configuration/current texture, queues, buffers and device errors, plus the W3C WGSL publication, inform the independently authored pass/lifetime contract. Reading dates, consulted URLs, full-spec retrieval limit and earlier failed type/latest fetches remain in [source evidence](knowledge-base/evidence/webgpu-source-evidence.json). Actual browser gate results are separate. These credits imply neither upstream endorsement nor phone/performance/Native SDK acceptance.
 
+## Optional Android V8 host
+
+The embedded Android builds use Javet 6.0.3 to run V8 15.7.112.19. The internationalized build also ships the matching ICU data. Egret owns the scene bindings, frame transfer, renderer and resource lifetime. The build verifies the upstream archives and includes their redistribution notices in the APK. [Pinned sources and license identities](runtime-sdk/android/v8-provenance.json) · [Android build instructions](runtime-sdk/android/README.md)
+
 ## Optional Spine Core integration
 
 Esoteric Software's [Spine Runtimes](https://github.com/EsotericSoftware/spine-runtimes/tree/b7beb2ccbbce667a12c02f44d070644f59b04968) supply the separately licensed `@esotericsoftware/spine-core` 4.3.13 dependency of `@egret/spine`. The [exact packaged notice](third-party/spine-core-4.3.13.LICENSE) and [conditional license route/reference limits](knowledge-base/en/docs/spine-content-ingress.md) are retained. Egret independently implements asset ownership, profile admission and public APIs; no upstream runtime implementation or official artwork is copied into first-party sources. The upstream runtime is not Apache-2.0.

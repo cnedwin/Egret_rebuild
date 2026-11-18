@@ -9,6 +9,7 @@ final class Frame {
     ByteBuffer bytes;
     int offset;
     long vmCallbackNs, jsWorkNs, dataReadyNs, drawStartNs, drawEndNs;
+    long generationNs, transferStartNs, transferEndNs;
 
     Frame(int number, int index, int generation, long vsyncNs) {
         this.number = number;
