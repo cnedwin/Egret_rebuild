@@ -144,7 +144,12 @@ export function packRelease({ version, out, baseUrl = releaseBaseUrl(version), n
       const named = registryArchiveName(manifest.name, version);
       const packed = pack(staged, releaseManifest(manifest, version, null, names), path.join(stage, 'registry'));
       fs.renameSync(packed, path.join(out, named));
-      registry.push({ name: manifest.name, file: named, ...fingerprint(path.join(out, named)), tag: registryTag(version) });
+      registry.push({
+        name: manifest.name,
+        file: named,
+        ...fingerprint(path.join(out, named)),
+        tag: registryTag(version)
+      });
     });
   } finally {
     fs.rmSync(stage, { recursive: true, force: true });
