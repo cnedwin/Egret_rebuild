@@ -228,6 +228,72 @@ export async function verifyObliquePostDepth(W, renderer, createCustomPost3D) {
   }
 }
 
+/** A standard receiver must stay visible and draw a shadow with every directional atlas split count. */
+export async function verifyDirectionalShadowReceiver(W, renderer) {
+  const scene = new W.Scene3D();
+  const camera = W.createPerspectiveCamera3D({ fov: 48, near: 0.1, far: 60 });
+  camera.setPosition(4, 4, 8).lookAt(0, 0, 0);
+  const sun = W.createDirectionalLight3D({ intensity: 1.8, castShadow: true });
+  sun.setPosition(4, 7, 3).lookAt(0, 0, 0);
+  Object.assign(sun.shadow, { extent: 7, near: 0.1, far: 35, cascadeDistance: 24 });
+  scene.addChild(sun);
+  scene.addChild(W.createAmbientLight3D({ intensity: 0.2 }));
+  const plane = W.createPlaneGeometry3D({ width: 16, height: 16 });
+  const box = W.createBoxGeometry3D({ width: 1.4, height: 2, depth: 1.4 });
+  const floorMaterial = W.createStandardMaterial3D({ color: 0xcccccc });
+  const boxMaterial = W.createStandardMaterial3D({ color: 0x669933 });
+  const floor = new W.Mesh3D(plane, floorMaterial);
+  floor.setRotation(-Math.PI / 2, 0, 0);
+  floor.castShadow = false;
+  floor.receiveShadow = true;
+  scene.addChild(floor);
+  const caster = new W.Mesh3D(box, boxMaterial);
+  caster.castShadow = true;
+  caster.receiveShadow = true;
+  caster.setPosition(0, 1, 0);
+  scene.addChild(caster);
+  const target = new W.RenderTarget3D(128, 96);
+  const post = { ...renderer.postProcess };
+  const shadows = renderer.shadowsEnabled;
+  async function pixels() {
+    if (!renderer.render(scene, camera, target)) throw new Error('Directional shadow render failed');
+    return await renderer.readRenderTargetPixels(target);
+  }
+  try {
+    Object.assign(renderer.postProcess, { enabled: true, ssao: true, bloom: true, fxaa: true });
+    renderer.shadowsEnabled = false;
+    const reference = await pixels();
+    renderer.shadowsEnabled = true;
+    const counts = [];
+    for (const cascades of [1, 2, 3, 4]) {
+      sun.shadow.cascades = cascades;
+      const shadowed = await pixels();
+      let darkened = 0;
+      let stillLit = 0;
+      for (let i = 0; i < shadowed.length; i += 4) {
+        const red = reference[i] - shadowed[i],
+          green = reference[i + 1] - shadowed[i + 1];
+        if (red > 20 && green > 20) darkened++;
+        if (reference[i] > 48 && reference[i + 1] > 48 && Math.abs(red) < 3 && Math.abs(green) < 3) stillLit++;
+      }
+      if (renderer.info.shadowMaps !== cascades || darkened < 12 || stillLit < 64)
+        throw new Error(
+          `Directional shadows: expected ${cascades} maps, lit and shadowed geometry; got ${renderer.info.shadowMaps} maps, ${stillLit} lit and ${darkened} darkened pixels`
+        );
+      counts.push(darkened);
+    }
+    return counts;
+  } finally {
+    renderer.shadowsEnabled = shadows;
+    Object.assign(renderer.postProcess, post);
+    target.dispose();
+    floorMaterial.dispose();
+    boxMaterial.dispose();
+    plane.dispose();
+    box.dispose();
+  }
+}
+
 /** Folding repeated meshes into instanced draws must not change a pixel, only the number of draws. */
 export async function verifyAutoInstancing(W, renderer) {
   const scene = new W.Scene3D();

@@ -66,7 +66,9 @@ Play3D 遵循 [Play 重开契约](play.md)。初始化失败会释放本轮创�
 
 2026 年 11 月 18 日，Windows Edge 157（RTX 5090 Laptop）和 Galaxy Z Fold7 Chrome 157（Adreno 830）均在 WebGPU、WebGL2 上通过了[异步生命周期用例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/verify-async-lifecycle.mjs)。128 × 96 的场景沿用此前生命周期检查的 World3D 低画质预设。用例在初次加载和重开时控制应用加载完成的时机，用指针操作 UI 和网格触发加载失败，并验证随后显式调用重开可以恢复更新，还通过公开的关闭 Promise 收到资源清理错误。每组均记录到关闭后迟到的对象挂接数为零、残留画布为零、未处理的 Promise 拒绝为零。
 
-在这台 Windows 设备上，单独运行默认高画质 WebGL2 时发生了上下文丢失。未修改的 #369 在单场景、不执行重开的情况下也复现了同一问题。ANGLE 报告 D3D11 动态像素着色器编译错误，渲染器报告 `WORLD3D_SHADER_FAILED: post/ssao`。这套配置的高画质渲染仍待解决。
+未修改的 #369 在 Windows WebGL2 默认高画质下运行单场景时曾丢失上下文。主干 `b3874464` 在 Windows Edge 157.0.4341.60、GeForce RTX 5090 Laptop（ANGLE D3D11）上用一个箱体和 2D 叠层复现。仅关闭 SSAO 后，首先报告错误的着色器从 `post/ssao` 变为 `post/down`。仅关闭箱体的阴影接收，保留 SSAO，场景即可持续运行。
+
+WebGL2 片元着色器现在读取分割距离向量的四个固定分量，选择方向光阴影级联及其远边界，表面阴影与体积阴影共用这一选择。在原高画质设置下保留阴影与 SSAO，同一场景在 120 次浏览器帧回调中更新了 119 次，上下文丢失和渲染错误均为零。另一组 128 × 96 地面与箱体用例核查一至四张阴影图下的受光和阴影像素，在原生 WebGL2 与 WebGPU 上通过。单独使用 SwiftShader 对照修复前后，关闭阴影及一至四张阴影图的五次读回均逐字节一致。以上结果验证画面与运行正确性。
 
 ## 相机和太阳
 

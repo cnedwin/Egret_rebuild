@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Directional shadow receivers on Windows WebGL2 — 2026-11-18
+
+Default high-quality Play3D rendered again on Windows Edge with ANGLE D3D11. Its directional shadow shader selects cascade distances through fixed vector components. [Hardware comparison](docs/play3d.md)
+
 ## Chorded mouse buttons in the browser game kit — 2026-11-18
 
 Games can hold one mouse action while pressing and releasing another. Windows Edge 157 passed all 12 browser-driven state checks for left, right and middle buttons, including releases outside the bound canvas. [Game kit guide](docs/game-kit.md)

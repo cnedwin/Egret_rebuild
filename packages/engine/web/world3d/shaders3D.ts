@@ -418,13 +418,22 @@ float shadowFactor(int slot, vec3 at, vec3 normal) {
     }
     return lit / 9.0;
 }
+// Read the four packed split distances through fixed components. Dynamic vector
+// indexing here can fail ANGLE's D3D11 draw-time pixel shader compilation.
+int selectCascade(float viewDepth, int count, out float edge) {
+    if (count > 3 && viewDepth > uCascadeSplits.z) { edge = uCascadeSplits.w; return 3; }
+    if (count > 2 && viewDepth > uCascadeSplits.y) { edge = uCascadeSplits.z; return 2; }
+    if (count > 1 && viewDepth > uCascadeSplits.x) { edge = uCascadeSplits.y; return 1; }
+    edge = uCascadeSplits.x;
+    return 0;
+}
 // One unfiltered lookup for a point in the air, as fog marching needs many; the flag picks the cascade for that depth.
 float volumeShadow(int slot, vec3 at, bool cascaded) {
     if (cascaded) {
         float viewDepth = -(uView * vec4(at, 1.0)).z;
-        int count = int(uCascadeInfo.y), cascade = 0;
-        for (int c = 0; c < 3; c++) if (c < count - 1 && viewDepth > uCascadeSplits[c]) cascade = c + 1;
-        if (viewDepth >= uCascadeSplits[cascade]) return 1.0;
+        float edge;
+        int cascade = selectCascade(viewDepth, int(uCascadeInfo.y), edge);
+        if (viewDepth >= edge) return 1.0;
         slot += cascade;
     }
     vec4 clip = uShadowMatrix[slot] * vec4(at, 1.0);
@@ -445,9 +454,9 @@ float pointShadowFactor(int slot, vec3 fromLight, vec3 at, vec3 normal) {
 }
 float cascadedShadowFactor(int slot, vec3 at, vec3 normal) {
     float viewDepth = -(uView * vec4(at, 1.0)).z;
-    int count = int(uCascadeInfo.y), cascade = 0;
-    for (int c = 0; c < 3; c++) if (c < count - 1 && viewDepth > uCascadeSplits[c]) cascade = c + 1;
-    float edge = uCascadeSplits[cascade];
+    int count = int(uCascadeInfo.y);
+    float edge;
+    int cascade = selectCascade(viewDepth, count, edge);
     if (viewDepth >= edge) return 1.0;
     float visible = shadowFactor(slot + cascade, at, normal);
     // Blend into the next cascade, or out to unshadowed past the last one.
