@@ -8,6 +8,10 @@ Version labels below identify engineering checkpoints; workspace packages remain
 
 Games can hold one mouse action while pressing and releasing another. Windows Edge 157 passed all 12 browser-driven state checks for left, right and middle buttons, including releases outside the bound canvas. [Game kit guide](docs/game-kit.md)
 
+## Play tracks one drag across overlapping touches — 2026-11-18
+
+The first contact keeps control of position and swipe until it ends, while another finger can tap a UI control. Both release orders and cancellation passed on a Galaxy Z Fold7 with WebGL2 and WebGPU. [Play pointer](docs/play.md)
+
 ## Async Play and Play3D restart and disposal — 2026-11-18
 
 Overlapping restarts share one setup and one result. Failed setup cleans up its partial round and supports retry. Closing during a load cancels the pending startup or restart, and later completion cannot reattach game objects. Play3D disposal now includes the World3D Engine close and reports its cleanup errors.
