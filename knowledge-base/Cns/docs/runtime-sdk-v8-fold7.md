@@ -24,7 +24,7 @@ Android 示例支持用系统 WebView 或内置的 V8 运行随包发布的白�
 | V8 裁剪版 | 0.808 | 0.014 | 1.282 | 0.058 | 0.093 |
 | 原生命令回放 | — | — | 0.001 | 0.103 | 0.110 |
 
-逐轮记录包含签名 APK 身份、固定场景摘要、前后台状态、资源计数及可复算的逐帧纳秒数据。每个 timing 轮的 relativeFrames.data 是经 raw DEFLATE 压缩、再以 Base64 编码的 JSON 数组；按 fields 顺序解释每行，用 SHA-256 校验解压后的字节。[实测记录](../../../runtime-sdk/measurements/fold7-v8.json)
+逐轮记录包含签名 APK 身份、固定场景摘要、前后台状态、资源计数及可复算的逐帧纳秒数据。每个 timing 轮的 relativeFrames.data 是经 raw DEFLATE 压缩、再以 Base64 编码的 JSON 数组；按 fields 顺序解释每行，用 SHA-256 校验解压后的字节。[实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-v8.json)
 
 裁剪版 APK 比标准版小 5.55 MiB（25.2%），四组对照中进程冷启动都更快。标准版在四组中的“请求至命令可用”中位数都更短。四条路径的帧间隔 p95 都约为 8.30 ms。对于已经依赖国际化的游戏，这个场景没有表现出为了帧率而裁去 `Intl` 的收益。
 
@@ -57,4 +57,4 @@ Android 示例支持用系统 WebView 或内置的 V8 运行随包发布的白�
 
 WebView 用 `performance.now()` 量命令生成，然后做 Base64 编码、传回、解码与复制。它的直接传输计时只含 Android 收到回调后的解析、解码与复制。内置 V8 使用暴露给脚本的单调时钟，直接传输计时只含从借用的 ArrayBuffer 复制到 Android 自有内存。两条实时路径都用“发出请求至数据可用”覆盖完整线程调度。两种直接传输计时的边界和脚本时钟精度不同。国际化裁剪效果以两份 V8 之间的对照衡量。
 
-[Android 构建与运行说明](../../../runtime-sdk/android/README.zh-CN.md)
+[Android 构建与运行说明](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/README.zh-CN.md)

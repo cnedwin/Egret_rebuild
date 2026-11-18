@@ -24,7 +24,7 @@ The next table reports medians of the four per-run p50 values in ms. Request-to-
 | V8 without Intl | 0.808 | 0.014 | 1.282 | 0.058 | 0.093 |
 | Native replay | — | — | 0.001 | 0.103 | 0.110 |
 
-The per-run record contains signed APK identities, frozen scene digests, foreground and resource receipts, and per-frame nanosecond data. In each timing run, relativeFrames.data is a Base64-encoded raw DEFLATE stream containing a JSON array of rows. Read each row in fields order and check the SHA-256 of the inflated bytes. [Device measurements](../../../runtime-sdk/measurements/fold7-v8.json)
+The per-run record contains signed APK identities, frozen scene digests, foreground and resource receipts, and per-frame nanosecond data. In each timing run, relativeFrames.data is a Base64-encoded raw DEFLATE stream containing a JSON array of rows. Read each row in fields order and check the SHA-256 of the inflated bytes. [Device measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-v8.json)
 
 The trimmed APK saved 5.55 MiB (25.2%) versus standard. Its startup was faster in all four matched blocks. The standard build had the shorter median request-to-ready interval in all four blocks. All four paths had a frame interval p95 of about 8.30 ms. For a title that already ships locale-aware content, this scene provides no frame-cadence reason to remove `Intl`.
 
@@ -57,4 +57,4 @@ Memory is sampled with the scene resident, in a separate run. The WebView path i
 
 The WebView host measures command generation with `performance.now()`, then Base64-encodes, returns, decodes and copies the packet. Its direct transfer timer covers only Android callback parsing, decoding and copying. Embedded V8 uses a monotonic clock exposed to script and measures the copy from a borrowed ArrayBuffer to Android-owned memory. Request-to-ready includes dispatch on the relevant threads for both paths. The direct transfer timers have different boundaries and the clocks have different resolution. Use the two V8 profiles for a controlled comparison of internationalization.
 
-[Android build and launch instructions](../../../runtime-sdk/android/README.md)
+[Android build and launch instructions](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/README.md)
