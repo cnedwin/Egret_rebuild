@@ -37,6 +37,7 @@
 | 声音与视频 | [2D 游戏的声音](docs/audio.md) · [视频](docs/video.md) |
 | 手柄 | [手柄](docs/gamepad.md) |
 | 2D 世界 | [绘图](docs/graphics.md) · [相机](docs/camera-2d.md) · [瓦片地图](docs/tilemap.md) · [粒子](docs/particles.md) · [碰撞与物理](docs/physics-2d.md) · [位图字体](docs/bitmap-font.md) · [混合模式](docs/blend-modes.md) · [滤镜](docs/filters.md) |
+| Runtime SDK | [五个平台的架构与交付](docs/runtime-sdk.md) · [Android 真机测量](docs/runtime-sdk-fold7.md) |
 | 混合整合 | [M4](docs/m4-core-acceptance-plan.md) · [Android 范围](docs/android-device-validation.md) · [干净消费者](docs/clean-consumer.md) |
 | 3D | [有界 3D 与 2D 合成](docs/authored-scene3d.md) · [独立 World3D](docs/world3d.md) |
 | 后续工具／兼容 | [工程事务](docs/工程事务核心合同.md) · [AI／工程接口](docs/AI创作与工程接口.md) · [完整迁移](docs/旧工程迁移.md) |
