@@ -2,7 +2,7 @@
 id: synthesized-audio
 title: Sound made in code, through the engine's mixer
 applies: [play, play3d, engine, web]
-triggers: [createBrowserAudio, encodeWav, createAudioCues, SFX_PRESETS, "no sound", "sound does not play", "audio locked", "audio context", "web audio", "synthesized sound", "procedural sound", "sound effects in code", "sounds clip", "too loud when many sounds", "repetitive sound"]
+triggers: [createBrowserAudio, encodeWav, createAudioCues, SFX_PRESETS, "no sound", "sound does not play", "audio locked", "audio context", "web audio", "synthesized sound", "procedural sound", "sound effects in code", "sounds clip", "too loud when many sounds", "repetitive sound", "没有声音", "没声音", "音效", "合成音效", "声音太吵", "代码生成声音"]
 local: [tone]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/audio.mjs, line: 1, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }

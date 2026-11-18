@@ -2,7 +2,7 @@
 id: frame-loop-backpressure
 title: Let the engine's frame loop pace drawing
 applies: [engine, web]
-triggers: [createBrowserFrameLoop, frameLoopSource, frames-skipped, host-backlog, loop-failed, host-failed, host-not-active, FRAME_RENDER_FAILED, WEBGL2_BACKPRESSURE, WEBGPU_BACKPRESSURE, CLOCK_DELTA_LIMIT, "requestAnimationFrame loop", "own loop", "tab hidden", "game jumps after tab switch", "frames skipped"]
+triggers: [createBrowserFrameLoop, frameLoopSource, frames-skipped, host-backlog, loop-failed, host-failed, host-not-active, FRAME_RENDER_FAILED, WEBGL2_BACKPRESSURE, WEBGPU_BACKPRESSURE, CLOCK_DELTA_LIMIT, "requestAnimationFrame loop", "own loop", "tab hidden", "game jumps after tab switch", "frames skipped", "跳帧", "设备丢失", "上下文丢失", "画面停住", "帧循环"]
 local: []
 evidence:
   - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/error-codes.md, line: 25, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }

@@ -1,6 +1,6 @@
 # Egret guide: cards on demand
 
-Small cards for coding agents that write games with Egret. Each card is one topic, under about 800 tokens, with the rule, a short example and the measured reason or the game it was learnt from. Read only the cards a task needs.
+Small cards for coding agents that write games with Egret. Each card is one topic, under about 800 tokens, with the rule, a short example and the measured reason or the game it was learnt from. Read only the cards a task needs. A question may be in English or Chinese.
 
 - Ask: `node tools/egret-guide.mjs <words | API name | ERROR_CODE | hint-id>` prints the best two or three cards within `--budget` tokens (2,500 by default).
 - One card: `node tools/egret-guide.mjs --card <id>`. This list: `--list`.
@@ -28,6 +28,10 @@ Small cards for coding agents that write games with Egret. Each card is one topi
 
 - [touch-controls](cards/input/touch-controls.txt) · engine web world3d play play3d · Touch controls that keep one finger per control.
 - [mobile-viewport](cards/input/mobile-viewport.txt) · web world3d play play3d · Viewport, safe areas, pixel ratio and quality on phones.
+- [short-screen-hud](cards/input/short-screen-hud.txt) · web world3d play play3d · HUD, dialogue and commands that fit a phone held sideways.
+- [touch-labels](cards/input/touch-labels.txt) · web world3d play play3d · Text, labels and tap targets that read and press on a phone.
+- [keyboard-shortcuts](cards/input/keyboard-shortcuts.txt) · engine web world3d play play3d · Key combinations, mouse chords and shortcuts the browser leaves alone.
+- [pause-and-overlays](cards/input/pause-and-overlays.txt) · engine web world3d play play3d · Pausing from every input, and holds and focus across menus and dialogs.
 
 ## World3D
 

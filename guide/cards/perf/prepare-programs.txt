@@ -2,7 +2,7 @@
 id: prepare-programs
 title: Prepare shader programs during loading, not at first use
 applies: [world3d, play3d]
-triggers: [recent-hitch, createCustomShader3D, "first time stutter", "hitch on first use", "pause when an effect first appears", "shader compile", "link status", "warm up", "prewarm", "prepare before play", "pipelines", "freeze on start", "first combat stutter"]
+triggers: [recent-hitch, createCustomShader3D, "first time stutter", "hitch on first use", "pause when an effect first appears", "shader compile", "link status", "warm up", "prewarm", "prepare before play", "pipelines", "freeze on start", "first combat stutter", "第一次卡顿", "首次卡顿", "卡一下", "着色器编译", "预编译", "预热"]
 local: [warm]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: FPS/STATUS.md, line: 54, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a, fix: 34208ef }

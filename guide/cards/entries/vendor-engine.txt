@@ -2,7 +2,7 @@
 id: vendor-engine
 title: Copy a pinned engine build into a game folder
 applies: [engine, world3d, web]
-triggers: ["vendor", "vendor-game.mjs", "SOURCE.md", "engine pin", "update the engine", "refresh engine", "import map", "node-register.mjs", "game without npm", "static page no build"]
+triggers: ["vendor", "vendor-game.mjs", "SOURCE.md", "engine pin", "update the engine", "refresh engine", "import map", "node-register.mjs", "game without npm", "static page no build", "复制引擎", "更新引擎", "引擎版本"]
 local: []
 evidence:
   - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/game-kit.md, line: 159, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }

@@ -2,7 +2,7 @@
 id: choose-entry
 title: Choose the smallest entry that does the job
 applies: [play, play3d, engine, world3d, web]
-triggers: [play, play3d, createBrowserGame, createWorld3DApp, createWorld3DView, startWorld3DLoop, pickWorld3DBackend, "which import", "which entry", "entry point", "import map", "webgl2 or webgpu", "start a game", "backend choice"]
+triggers: [play, play3d, createBrowserGame, createWorld3DApp, createWorld3DView, startWorld3DLoop, pickWorld3DBackend, "which import", "which entry", "entry point", "import map", "webgl2 or webgpu", "start a game", "backend choice", "用哪个入口", "导入哪个", "从哪里开始", "选择后端"]
 local: []
 evidence:
   - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/entry-points.md, line: 9, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }

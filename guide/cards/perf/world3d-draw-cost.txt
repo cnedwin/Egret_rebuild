@@ -2,7 +2,7 @@
 id: world3d-draw-cost
 title: Cut what a World3D frame draws before cutting effects
 applies: [world3d, play3d]
-triggers: [createWorld3DStats, InstancedMesh3D, PlanarReflection3D, createWater3D, present-bound, "too many triangles", "draw calls", "gpu bound", "slow on phone", "reflection cost", "water reflection slow", "pixel ratio", "dynamic resolution", "quality setting"]
+triggers: [createWorld3DStats, InstancedMesh3D, PlanarReflection3D, createWater3D, present-bound, "too many triangles", "draw calls", "gpu bound", "slow on phone", "reflection cost", "water reflection slow", "pixel ratio", "dynamic resolution", "quality setting", "手机上卡", "帧率低", "三角形太多", "绘制次数", "倒影", "水面倒影", "画质"]
 local: [DETAIL]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/view.mjs, line: 254, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: ddd18ce }

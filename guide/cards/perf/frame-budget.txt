@@ -2,7 +2,7 @@
 id: frame-budget
 title: Find where a frame's time goes with @egret/devtools
 applies: [engine, web, world3d]
-triggers: [attachPerformanceMonitor, createEngineProbe, evaluateHints, frameLoopSource, world3DSource, recordWorld3DFrame, cpu-bound, present-bound, slow-frames, recent-hitch, "low fps", "frame rate drops", "slow frame", "jank", "stutter", "performance monitor", "debug mode", "frame budget", "profile"]
+triggers: [attachPerformanceMonitor, createEngineProbe, evaluateHints, frameLoopSource, world3DSource, recordWorld3DFrame, cpu-bound, present-bound, slow-frames, recent-hitch, "low fps", "frame rate drops", "slow frame", "jank", "stutter", "performance monitor", "debug mode", "frame budget", "profile", "性能分析", "测帧", "帧耗时", "性能面板", "卡顿原因", "卡顿", "掉帧", "帧率"]
 local: []
 evidence:
   - { repo: cnedwin/Egret_rebuild, path: devtools/src/core/hints.ts, line: 47, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }

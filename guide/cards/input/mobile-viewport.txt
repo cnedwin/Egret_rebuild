@@ -2,7 +2,7 @@
 id: mobile-viewport
 title: Fit the page to a phone screen and its safe areas
 applies: [web, world3d, play, play3d]
-triggers: [createWorld3DView, createWorld3DApp, pickWorld3DQuality, "viewport", "mobile layout", "phone screen", "safe area", "notch", "landscape", "address bar", "page scrolls on phone", "blurry on phone", "device pixel ratio", "hud cut off", "resize"]
+triggers: [createWorld3DView, createWorld3DApp, pickWorld3DQuality, "viewport", "mobile layout", "phone screen", "safe area", "notch", "landscape", "address bar", "page scrolls on phone", "blurry on phone", "device pixel ratio", "hud cut off", "resize", "手机适配", "屏幕适配", "安全区", "刘海", "地址栏", "画面模糊", "像素比"]
 local: []
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/index.html, line: 5, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }

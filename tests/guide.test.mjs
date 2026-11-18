@@ -282,7 +282,21 @@ const QUERIES = [
   ['vendor the engine', 'vendor-engine'],
   ['safe area notch', 'mobile-viewport'],
   ['draw calls too high', 'world3d-draw-cost'],
-  ['webgpu or webgl2', 'choose-entry']
+  ['webgpu or webgl2', 'choose-entry'],
+  ['hud cut off on short landscape screen', 'short-screen-hud'],
+  ['text too small on phone', 'touch-labels'],
+  ['both mouse buttons', 'keyboard-shortcuts'],
+  ['pause button on phone', 'pause-and-overlays'],
+  // Chinese questions: no spaces between words, so the Chinese triggers are found inside the question.
+  ['手机横屏 按钮 点不到', 'short-screen-hud'],
+  ['同时按两个键没反应', 'keyboard-shortcuts'],
+  ['切后台后游戏还在跑', 'pause-and-overlays'],
+  ['手机上字太小看不清', 'touch-labels'],
+  ['虚拟摇杆 第二根手指', 'touch-controls'],
+  ['着色器第一次卡顿', 'prepare-programs'],
+  ['手机上没有声音', 'synthesized-audio'],
+  ['点光源太多 灯不亮', 'world3d-lights-shadows'],
+  ['游戏卡顿 掉帧', 'frame-budget']
 ];
 
 // Break caught: a change to the ranking or to a card that sends a known question to the wrong card.

@@ -2,7 +2,7 @@
 id: world3d-lights-shadows
 title: World3D light limits, tiled lights and shadows
 applies: [world3d, play3d]
-triggers: [createPointLight3D, createSpotLight3D, createDirectionalLight3D, "too many lights", "lights do not light", "lamp has no effect", "ninth light", "point light limit", "shadow", "shadows missing", "cascaded shadows", "shadow acne", "dark in shade", "context lost with shadows", "additive glow is a black square"]
+triggers: [createPointLight3D, createSpotLight3D, createDirectionalLight3D, "too many lights", "lights do not light", "lamp has no effect", "ninth light", "point light limit", "shadow", "shadows missing", "cascaded shadows", "shadow acne", "dark in shade", "context lost with shadows", "additive glow is a black square", "灯光", "点光源", "灯不亮", "阴影", "阴影不见", "太黑"]
 local: [NEAR_LIGHTS]
 stale: "FPS/STATUS.md (engine pin 264e172) says the engine lights at most eight point lights; the current engine lights up to 256 more by screen tile. FPS still fades all but five lamps."
 evidence:

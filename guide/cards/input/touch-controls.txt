@@ -2,7 +2,7 @@
 id: touch-controls
 title: Touch controls where each finger keeps its own control
 applies: [engine, web, world3d, play, play3d]
-triggers: [createTouchStick, createTouchButton, createInputActions, bindBrowserInputActions, "touch controls", "on-screen joystick", "virtual stick", "second finger", "multi touch", "pointer capture", "pointercancel", "touch drag look", "button stuck pressed", "joystick stops working", "mobile input", "pause button does not work on phone"]
+triggers: [createTouchStick, createTouchButton, createInputActions, bindBrowserInputActions, "touch controls", "on-screen joystick", "virtual stick", "second finger", "multi touch", "pointer capture", "pointercancel", "touch drag look", "button stuck pressed", "joystick stops working", "mobile input", "pause button does not work on phone", "触屏", "触屏操作", "虚拟摇杆", "摇杆", "第二根手指", "多点触控", "按钮卡住", "手指"]
 local: [bindTouch]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/input.mjs, line: 60, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419, fix: e5da770 }

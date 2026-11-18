@@ -2,7 +2,7 @@
 id: asset-loading
 title: Load models and files with progress, a deadline and a way to retry
 applies: [world3d, play3d, engine, web]
-triggers: [loadGltfFromUrl3D, loadGltf3D, openBrowserAssetBundle, writeAssetBundle, pickQualityVariant, ASSET_LOAD_FAILED, ASSET_PROVIDER_MISSING, WEB_RESOURCE_HTTP_STATUS, WEB_RESOURCE_DEADLINE_EXCEEDED, "loading screen", "load models", "glb", "gltf", "model fails to load", "slow start", "progress bar", "cache busting", "asset bundle", "offline"]
+triggers: [loadGltfFromUrl3D, loadGltf3D, openBrowserAssetBundle, writeAssetBundle, pickQualityVariant, ASSET_LOAD_FAILED, ASSET_PROVIDER_MISSING, WEB_RESOURCE_HTTP_STATUS, WEB_RESOURCE_DEADLINE_EXCEEDED, "loading screen", "load models", "glb", "gltf", "model fails to load", "slow start", "progress bar", "cache busting", "asset bundle", "offline", "加载模型", "模型加载", "加载失败", "加载进度", "资源加载"]
 local: [loadModels, describeModel, onProgress]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: FPS/src/asset-models.mjs, line: 82, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }

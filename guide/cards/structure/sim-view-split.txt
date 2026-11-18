@@ -2,7 +2,7 @@
 id: sim-view-split
 title: Keep the rules of a large game apart from its picture
 applies: [engine, world3d, web]
-triggers: [runHeadless, "game structure", "large game", "sim view split", "deterministic test", "rules test", "node --test", "headless run", "balance numbers", "fixed seed", "where to put code"]
+triggers: [runHeadless, "game structure", "large game", "sim view split", "deterministic test", "rules test", "node --test", "headless run", "balance numbers", "fixed seed", "where to put code", "游戏结构", "大型游戏", "代码结构", "规则测试"]
 local: [createGame, idleInput, createBot, createView, createHud, createInput, createAudio]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: FPS/README.md, line: 95, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: 264e17227b06298858a06b9fdfe0c4a3a427e13a }

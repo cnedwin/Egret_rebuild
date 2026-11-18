@@ -174,12 +174,16 @@ export function terms(text) {
 
 const normal = text => text.toLowerCase().replace(/\s+/g, ' ').trim();
 
+/** Han characters: a trigger holding one is matched as a substring of the question (see `search`). */
+const HAN = /[㐀-䶿一-鿿豈-﫿]/u;
+
 /**
  * Cards for a query, best first. `exact` is true when the whole query is a trigger or the id; `overlap` is the score
  * without that, which decides whether further cards are close enough to print.
  */
 export function search(cards, query) {
   const wanted = normal(query);
+  const joined = wanted.replace(/ /g, '');
   const queryTerms = [...new Set(terms(query))];
   const asked = new Set(queryTerms);
   const fields = cards.map(card => ({
@@ -189,6 +193,10 @@ export function search(cards, query) {
   const df = term => fields.filter(field => field.head.has(term) || field.body.has(term)).length;
   const idf = new Map(queryTerms.map(term => [term, Math.log(1 + cards.length / Math.max(1, df(term)))]));
   const rarest = Math.log(1 + cards.length);
+  const hanCards = new Map();
+  for (const card of cards)
+    for (const trigger of new Set(card.triggers.map(trigger => normal(String(trigger)))))
+      if (HAN.test(trigger)) hanCards.set(trigger, (hanCards.get(trigger) ?? 0) + 1);
   const results = cards.map((card, i) => {
     let overlap = 0;
     const triggers = card.triggers.map(trigger => normal(String(trigger)));
@@ -203,6 +211,15 @@ export function search(cards, query) {
       const rarity = shared.reduce((sum, term) => sum + idf.get(term), 0) / shared.length / rarest;
       if (shared.length === own.length) overlap += 20 * rarity;
       else if (own.length > 1 && shared.length * 2 >= own.length) overlap += (8 * rarity * shared.length) / own.length;
+    }
+    // Chinese is written without spaces, so a trigger in Chinese counts when the question contains it anywhere.
+    // It weighs up to a whole trigger: less when other cards share it, and less when it is short, since a two-character
+    // word such as 卡顿 is found inside more questions than 第一次卡顿 is.
+    for (const trigger of triggers) {
+      const word = trigger.replace(/ /g, '');
+      if (trigger === wanted || !HAN.test(trigger) || !joined.includes(word)) continue;
+      const length = Math.min(1, [...word].length / 4);
+      overlap += (20 * length * Math.log(1 + cards.length / hanCards.get(trigger))) / rarest;
     }
     for (const term of queryTerms) {
       const weight = idf.get(term);

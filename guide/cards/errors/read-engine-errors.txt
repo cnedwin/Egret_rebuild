@@ -2,7 +2,7 @@
 id: read-engine-errors
 title: Read an engine error by its code before changing code
 applies: [play, play3d, engine, world3d, web]
-triggers: [describeErrorCode, setErrorLanguage, EgretError, OBJECT_DISPOSED, SCOPE_CLOSED, ENGINE_CLOSED, ENGINE_MISMATCH, DISPLAY_VALUE_INVALID, FRAME_TRANSFORM_INVALID, FRAME_BUDGET_EXCEEDED, FRAME_IMAGE_BUDGET, GRAPHICS_FILL_REQUIRED, ASYNC_EVENT_HANDLER, "error code", "engine error", "Cause:", "error message", "cleanupErrors", "disposed object", "used after dispose"]
+triggers: [describeErrorCode, setErrorLanguage, EgretError, OBJECT_DISPOSED, SCOPE_CLOSED, ENGINE_CLOSED, ENGINE_MISMATCH, DISPLAY_VALUE_INVALID, FRAME_TRANSFORM_INVALID, FRAME_BUDGET_EXCEEDED, FRAME_IMAGE_BUDGET, GRAPHICS_FILL_REQUIRED, ASYNC_EVENT_HANDLER, "error code", "engine error", "Cause:", "error message", "cleanupErrors", "disposed object", "used after dispose", "报错", "错误码", "看不懂错误"]
 local: []
 evidence:
   - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/error-codes.md, line: 9, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }

@@ -10,12 +10,12 @@ Coding agents write most of the games built on this engine. They need to know th
 
 - [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) lists every card in one line: its id, the ways of using the engine it applies to (`play`, `play3d`, `engine`, `world3d`, `web`) and what it answers. It stays under 150 lines.
 - `guide/cards/<area>/<id>.txt` is one topic in under 800 tokens as printed: short rules, a minimal example, and the measured reason or the game a rule was learnt from.
-- `node tools/egret-guide.mjs <question>` prints the best two or three cards within a budget (2,500 tokens by default, `--budget` to change it). A question may be words, an engine name, an error code or a devtools hint id. `--card <id>` prints one card and `--list` the index.
+- `node tools/egret-guide.mjs <question>` prints the best two or three cards within a budget (2,500 tokens by default, `--budget` to change it). A question may be words in English or Chinese, an engine name, an error code or a devtools hint id. `--card <id>` prints one card and `--list` the index.
 - `node tools/egret-guide.mjs --full --out <file>` writes the index and every card as one file for tools that want a single file. It is a build output and is not committed.
 
 Like `llms.txt`, the index and the cards are Markdown text kept as `.txt` files in English only. They are data an agent reads through the command, not reading documents, so they have no Chinese twin; this page is the bilingual description.
 
-No file holds everything, because a developer pays for every token an agent reads. The command needs nothing outside the repository: no network, no model. Ranking is deterministic. A question equal to a card's trigger or id comes first; the others are ordered by the terms they share with the question, each weighted by how rare it is among the cards.
+No file holds everything, because a developer pays for every token an agent reads. The command needs nothing outside the repository: no network, no model. Ranking is deterministic. A question equal to a card's trigger or id comes first; the others are ordered by the terms they share with the question, each weighted by how rare it is among the cards. Chinese has no spaces between words, so a card also carries Chinese triggers, and one counts when the question contains it anywhere: `node tools/egret-guide.mjs "手机横屏 按钮 点不到"` finds the card on short landscape screens through 手机横屏 and 按钮点不到. A Chinese trigger weighs less when other cards share it or when it is short, because a two-character word appears inside more questions.
 
 A card's front matter records what the checks need: `id`, `title`, `applies`, `triggers` (engine names, error codes, hint ids and symptoms in plain words), `local` (names that belong to a game, not the engine), `evidence` (repository, path, line, commit and the engine pin of the game at that commit), `engine` (the engine commit the card was checked against) and, when it applies, `stale` (what changed since the lesson was learnt). A stale card is printed with its warning, not withheld.
 
@@ -56,7 +56,7 @@ An agent turns proposals into cards, using its general experience of game develo
 | Size | every card within 800 tokens as printed and 1,000 as a file; the index within 150 lines and 1,500 tokens |
 | Index | every card reached from the index once, with the same `applies`; every link resolves |
 | Evidence | every card has evidence with repository, path, line, commit and engine pin; evidence in this repository points to an existing line |
-| Retrieval | a fixed set of 23 questions returns the expected card first; answers keep to their budget and are the same on every run |
+| Retrieval | a fixed set of 36 questions, 9 of them in Chinese, returns the expected card first; answers keep to their budget and are the same on every run |
 | Harvest | on a small repository made in the test, the harvest reads the pin, imports, tests, claims and fixes and marks a stale card |
 
 The names check reads only generated or source files, so it follows the engine without a ledger of its own. It does not compare bytes and is not part of the evidence lane.
