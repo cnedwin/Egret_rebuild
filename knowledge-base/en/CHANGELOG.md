@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## Async Play and Play3D restart and disposal — 2026-11-18
+
+Overlapping restarts share one setup and one result. Failed setup cleans up its partial round and supports retry. Closing during a load cancels the pending startup or restart, and later completion cannot reattach game objects. Play3D disposal now includes the World3D Engine close and reports its cleanup errors.
+
 ## Play contracts and resource retirement — 2026-11-18
 
 Offset model collisions use the actual bounds centres, and imported rotations keep their original axes. Play tweens follow pause, time scale and hit-stop through the same gameplay clock as timers and updates. Remove, restart and dispose retire owned primitive resources while preserving borrowed models and pooled geometry ownership. The game checker now requires input-phase frame progress and includes errors and requests observed during scripted play.

@@ -174,6 +174,10 @@ Use these and not `setTimeout`: they stop with a pause, a hit stop and a hidden 
 
 Tweens, timers and `update` use the same gameplay seconds. Pause and a zero `timeScale` hold their progress; `hitStop` holds it for its duration. Drawing and input continue, so an interface can resume a paused game. A callback that pauses, restarts or closes the game prevents the old update from continuing. The active loop is `game.browser.loop`. Closing the game stops pending motions, and repeated `dispose()` calls wait for the same cleanup.
 
+Repeated calls to `game.restart()` during setup return the same Promise and run setup once. Gameplay updates resume when setup succeeds. If setup throws or rejects, the Promise reports that error, the partial round is cleaned up and another call to `restart()` retries. A setup callback must finish before its own restart Promise can resolve. Await that Promise from the caller outside setup.
+
+During initial setup or restart, `game.dispose()` closes the game even if an application load is still pending. The interrupted startup or restart rejects with `SCOPE_CLOSED`. If the load later finishes, it cannot attach game objects through the closed SDK handle or resume updates. Applications own cancellation of their external downloads.
+
 ## Chance and saves
 
 `game.random` gives numbers that repeat for the same `seed`: `int(1, 6)`, `range(0, 1)`, `chance(0.25)`, `pick(list)`, and `shuffle(list)`, which gives a new list and leaves the one it was given.
