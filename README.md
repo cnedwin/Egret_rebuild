@@ -18,6 +18,10 @@ Years later, as times change and technology advances, many developers continue t
 
 ## Run an example
 
+For a new game, download `egret-first-game.zip` from the [preview release](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1). Extract it, then run `npm install` and `npm start` in that folder. Open `http://127.0.0.1:8000`, click the square, then change `STEP` in `main.mjs` and reload. The starter installs its engine from the same release. [Preview installation and archive hashes](knowledge-base/en/docs/release-archives.md)
+
+To work on the engine itself:
+
 Use **Node.js 26.7.0** and **pnpm 11.25.0**. Run these commands from the repository root.
 
     pnpm setup:dev
@@ -40,9 +44,10 @@ Find scoped work in the [project board](https://github.com/users/cnedwin/project
 
 | PR | Main change | 主要变化 |
 | --- | --- | --- |
+| [#372](https://github.com/cnedwin/Egret_rebuild/pull/372) | Independent mouse actions while multiple buttons are held | 多个鼠标键交叠按放时分别驱动动作 |
+| [#369](https://github.com/cnedwin/Egret_rebuild/pull/369) · [#370](https://github.com/cnedwin/Egret_rebuild/pull/370) | Play and Play3D clocks, restart, retry and resource cleanup | Play 与 Play3D 时钟、重开、失败重试和资源清理 |
+| [#366](https://github.com/cnedwin/Egret_rebuild/pull/366) · [#367](https://github.com/cnedwin/Egret_rebuild/pull/367) | Play3D entry and single-file browser builds | Play3D 入口与浏览器单文件构建 |
 | [#341](https://github.com/cnedwin/Egret_rebuild/pull/341) · [#342](https://github.com/cnedwin/Egret_rebuild/pull/342) | Safari PNG loading fix, verified on a physical iPhone with WebGL2 and WebGPU | 修复 Safari PNG 加载，已在 iPhone 真机验证两个后端 |
-| [#340](https://github.com/cnedwin/Egret_rebuild/pull/340) | Windows World3D WebGL2 timer controls and interpretation | Windows World3D WebGL2 计时对照与读数说明 |
-| [#337](https://github.com/cnedwin/Egret_rebuild/pull/337) · [#338](https://github.com/cnedwin/Egret_rebuild/pull/338) | Stage-level animation measurements and Spine atlas pages stored with premultiplied alpha | 动画分阶段测量，接入预乘透明度的 Spine 图集页 |
 | [#336](https://github.com/cnedwin/Egret_rebuild/pull/336) | Build and verify installable preview archives | 支持构建和验证可安装的预览包 |
 
 [Full changelog](knowledge-base/en/CHANGELOG.md) · [中文更新日志](knowledge-base/Cns/CHANGELOG.md) · [Earlier preview milestones](https://github.com/cnedwin/Egret_rebuild/blob/ab2527359e475f2f24f6758538d925abcce53846/README.md)
