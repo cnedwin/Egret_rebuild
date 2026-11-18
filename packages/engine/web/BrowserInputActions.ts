@@ -46,6 +46,9 @@ const PAD_BUTTONS = [
 ];
 const PAD_DEAD_ZONE = 0.12;
 
+// PointerEvent.button order: primary, middle, secondary, back, forward, pen eraser.
+const POINTER_BUTTON_MASKS = [1, 4, 2, 8, 16, 32] as const;
+
 interface PadLike {
   readonly connected: boolean;
   readonly mapping: string;
@@ -118,15 +121,24 @@ export function bindBrowserInputActions(
     });
   if (options.pointerTarget) {
     const target = options.pointerTarget;
-    listen(target, 'pointerdown', event => {
+    const mouseButton = (event: Event, pressed: boolean): void => {
       const e = event as PointerEvent;
       if (e.pointerType === 'touch') return;
-      actions.press('Mouse:' + e.button);
-    });
-    listen(win, 'pointerup', event => {
-      const e = event as PointerEvent;
-      if (e.pointerType !== 'touch') actions.release('Mouse:' + e.button);
-    });
+      if (e.type === 'pointermove') {
+        // A chord changes one button on pointermove. Ordinary motion reports button -1.
+        const mask = POINTER_BUTTON_MASKS[e.button];
+        if (mask === undefined || Boolean(e.buttons & mask) !== pressed) return;
+      }
+      const binding = 'Mouse:' + e.button;
+      if (pressed) actions.press(binding);
+      else actions.release(binding);
+    };
+    const pressMouse = (event: Event): void => mouseButton(event, true);
+    const releaseMouse = (event: Event): void => mouseButton(event, false);
+    listen(target, 'pointerdown', pressMouse);
+    listen(target, 'pointermove', pressMouse);
+    listen(win, 'pointermove', releaseMouse);
+    listen(win, 'pointerup', releaseMouse);
     listen(target, 'contextmenu', event => {
       if (bound(actions, 'Mouse:2')) event.preventDefault();
     });

@@ -41,6 +41,8 @@ function frame(seconds) {
 
 页面绑定在窗口失去焦点或页面隐藏时松开所有控件；阻止已绑定的按键滚动页面；玩家在输入框里打字时不处理按键。`dispose()` 移除所有监听。
 
+鼠标可以同时按住多个键。例如，按住右键（`Mouse:2`）瞄准时，可以单独按下和松开左键（`Mouse:0`）射击，瞄准会一直保持。每个键从绑定区域内按下，在同一窗口内移出该区域再松开，也能结束对应动作。
+
 ## 改键
 
 `input.rebind(action, binding, { slot, index })` 把一个控件放到某个动作上，并从其他动作上移除，所以一个键不会同时做两件事。`input.lastPressed` 给出这一帧按下的控件，供“请按一个键”的界面使用；`describeInputBinding(binding)` 给出可读的名字（`W`、`Shift`、`Right button`）。`saveBindings()` 以普通数据返回与默认映射不同的部分；`loadBindings(data)` 应用它，跳过未知动作和格式不对的条目；`resetBindings()` 恢复默认映射。
