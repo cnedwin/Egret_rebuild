@@ -37,6 +37,7 @@ These guides cover the APIs used to make games. The later sections link engine c
 | Sound and video | [Sound for a 2D game](docs/audio.md) · [Video](docs/video.md) |
 | Gamepads | [Gamepads](docs/gamepad.md) |
 | 2D world | [Graphics](docs/graphics.md) · [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Collision and physics](docs/physics-2d.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) · [Filters](docs/filters.md) |
+| Runtime SDK | [Five-platform architecture and delivery](docs/runtime-sdk.md) · [Android hardware measurements](docs/runtime-sdk-fold7.md) |
 | Mixed integration | [M4](docs/m4-core-acceptance-plan.md) · [Android scope](docs/android-device-validation.md) · [Clean consumer](docs/clean-consumer.md) |
 | 3D | [Bounded 3D and 2D composition](docs/authored-scene3d.md) · [Standalone World3D](docs/world3d.md) |
 | Future tools/compatibility | [Project transactions](docs/project-transaction-core-contract.md) · [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) · [Complete migration](docs/legacy-project-migration.md) |

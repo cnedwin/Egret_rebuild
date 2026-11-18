@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": ".cargo/config.toml",
+      "originRole": "First-party Cargo output location for native SDK builds; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": ".github/workflows/android-runtime.yml",
+      "originRole": "First-party CI build and verification for the arm64 debug APK; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/AndroidManifest.xml",
+      "originRole": "First-party Android sample package and activity declaration; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/build.mjs",
+      "originRole": "First-party native and Java compilation, debug signing and portable archive checks; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/src/renderer_jni.c",
+      "originRole": "First-party JNI bridge for bounded direct buffers and Rust renderer ownership; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/src/org/egret/runtime/sample/Fixture.java",
+      "originRole": "First-party load and verify the packaged fixture; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/src/org/egret/runtime/sample/Frame.java",
+      "originRole": "First-party per-frame clocks and byte range; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/src/org/egret/runtime/sample/FrameRenderer.java",
+      "originRole": "First-party GLSurfaceView lifecycle, recovery and pixel readback; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/src/org/egret/runtime/sample/GameActivity.java",
+      "originRole": "First-party Android activity, script execution and measurement controls; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/src/org/egret/runtime/sample/Gpu.java",
+      "originRole": "First-party native GLES entry points; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7.json",
+      "originRole": "First-party sanitized timing deltas and hardware observations from the project-owned deterministic scene; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/.gitignore",
+      "originRole": "First-party local Rust build-output exclusion; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/Cargo.lock",
+      "originRole": "First-party Cargo lockfile for the dependency-free native renderer; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/Cargo.toml",
+      "originRole": "First-party Rust library package definition; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/include/egret_runtime.h",
+      "originRole": "First-party versioned C entry points for the opaque Android 2D profile; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/frame.rs",
+      "originRole": "First-party bounded frame decoder and geometry construction; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/gl.rs",
+      "originRole": "First-party Android NDK GLES function bindings; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/gles.rs",
+      "originRole": "First-party Android graphics resource lifetime and frame submission; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/lib.rs",
+      "originRole": "First-party native library modules; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/browser.mjs",
+      "originRole": "First-party browser baseline and presentation observation; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/build.mjs",
+      "originRole": "First-party bundle and freeze the common measured workload; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/commands.mjs",
+      "originRole": "First-party serialize supported shared rendering commands; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/host.mjs",
+      "originRole": "First-party live bridge to the common scene; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/scene.mjs",
+      "originRole": "First-party original deterministic atlas, display tree and resource leases; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/scene.test.mjs",
+      "originRole": "First-party command identity and engine integration checks; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/runtime-sdk.md",
+      "originRole": "First-party English five-platform architecture and staged delivery; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/runtime-sdk.md",
+      "originRole": "First-party Chinese five-platform architecture and staged delivery; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/runtime-sdk-fold7.md",
+      "originRole": "First-party English Fold7 launch, graphics, bridge and memory measurements; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/runtime-sdk-fold7.md",
+      "originRole": "First-party Chinese Fold7 launch, graphics, bridge and memory measurements; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/README.md",
+      "originRole": "First-party English Android APK build and device reproduction guide; independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/README.zh-CN.md",
+      "originRole": "First-party Chinese Android APK build and device reproduction guide; independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/runtime-sdk.md",
+      "zh": "knowledge-base/Cns/docs/runtime-sdk.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/runtime-sdk-fold7.md",
+      "zh": "knowledge-base/Cns/docs/runtime-sdk-fold7.md"
+    },
+    {
+      "en": "runtime-sdk/android/README.md",
+      "zh": "runtime-sdk/android/README.zh-CN.md"
+    }
+  ]
+}
