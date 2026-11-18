@@ -247,6 +247,23 @@ The candidate completed ten actual loss/rebuild cycles per backend in Windows Ed
 
 The first Fold7 WebGPU sustained run ended after 292.6 seconds when the debugger connection failed. The second recorded 1,800.6 seconds in the foreground with 89 observations and 32,932 completed application frames during the sample span. JS heap readings ranged from 97.4 to 188 MB. The app closed all eight actors and released its wake lock, and the final controller confirmed the original tabs and removal of the owned tab. The browser cleanup receipt also recorded a target-inventory mismatch and a redundant close refusal. The overall run remains incomplete with the sustained-window evidence preserved. WebGL2 soak, complete memory and startup budgets, and the formal device matrix remain open. [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)
 
+#### Fold7 full-dirty geometry diagnosis, 18 November 2026
+
+The X-MTouch/2 portrait scene ran on Galaxy Z Fold7 Chrome 157 at 360 × 640 logical pixels, DPR 2 and an OS-verified 60 Hz. Both versions used the [Outfit Studio import-map fix](https://github.com/cnedwin/Egret_rebuild/pull/376). A is the original 2D preparation path. B skips repeated normalization for a validated triangle after its winding is known. Each run used 5 s of warm-up and three 8 s foreground windows. The table gives the median of the three window percentiles of the interval between completed application frames, in milliseconds.
+
+| Backend | Metric | A1 | B1 | B2 | A2 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| WebGPU | p95 | 52.6 | 55.3 | 51.6 | 51.3 |
+| WebGPU | p99 | 57.4 | 63.6 | 58.0 | 61.1 |
+| WebGL2 | p95 | 55.4 | 58.5 | 56.3 | 53.9 |
+| WebGL2 | p99 | 61.7 | 68.7 | 65.0 | 62.1 |
+
+Across 436 response identities, the only changed module was `prepareSharedDraws2D.js` after normalizing the generated font-config directory. Candidate p95 rose in both orders on both backends, so the engine keeps A. The device's orientation, refresh-rate settings and USB wake setting were restored after collection.
+
+An instrumented baseline separated synchronous World3D submission from the SharedFrame2D overlay. Median window p95 for background / overlay / asynchronous completion was 0.4 / 17.8 / 13.6 ms on WebGPU (615 samples) and 0.3 / 20.0 / 11.2 ms on WebGL2 (557 samples). The collector flagged the intentionally instrumented response at its final file comparison. A separate audit checked the served and original hashes and all three windows. The completion span includes scheduling and host work. GPU execution and presentation remain unmeasured.
+
+A separate structural check loaded the same eight actors and original project assets in Node. At the authored 1/60 s step, 84 transitions covered two full trim cycles. Comparing adjacent draws of each actor in order yielded 0 equivalent geometries across 1,428 draws (559,104 triangles). None of the 1,428 draws had an identical position array in the corresponding slot of the preceding frame. The comparison also covered UVs, light and dark colors and indices. Reusing the preceding complete geometry by content would produce no hits here. The full five-window device matrix, 16.7/33.4 ms frame targets and sustained lifecycle remain open in [#92](https://github.com/cnedwin/Egret_rebuild/issues/92).
+
 ## 7. Connection to the all-in-one creation platform
 
 The longer-term platform combines coding, debugging, main canvas, UI/animation editing, 3D scenes/VFX, worlds/characters and target publication. Visual, code and natural-language editing should share project identity, versioned changes, diagnostics, preview and undo. Compatible editor surfaces may be combined after their workflows are evaluated.
