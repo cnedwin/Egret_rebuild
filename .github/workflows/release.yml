@@ -7,6 +7,7 @@ on:
       - '.github/workflows/release.yml'
       - 'tools/pack-release.mjs'
       - 'tools/pack-single-file.mjs'
+      - 'tools/publish-registry.mjs'
       - 'tools/record-release-assets.mjs'
       - 'tools/verify-release.mjs'
       - 'examples/starter/release/**'
@@ -30,7 +31,7 @@ jobs:
       - run: npm install --global pnpm@11.25.0 --ignore-scripts
       - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm build
-      - name: Pack and install the five packages
+      - name: Pack and install the five packages, in both forms
         run: |
           node tools/pack-release.mjs --version "${TAG#v}" --out "$RUNNER_TEMP/release"
           node tools/verify-release.mjs --archives "$RUNNER_TEMP/release" --version "${TAG#v}"
@@ -101,7 +102,7 @@ jobs:
           EOF
           tagged=$(gh api "repos/$GITHUB_REPOSITORY/commits/$TAG" --jq .sha)
           test "$tagged" = "$(jq -r '.sourceCommit' "$release/release.json")"
-          (cd "$release" && jq -r '(.packages[], .assets[]) | "\(.sha256)  \(.file)"' release.json | sha256sum --check --strict)
+          (cd "$release" && jq -r '(.packages[], .registry[], .assets[]) | "\(.sha256)  \(.file)"' release.json | sha256sum --check --strict)
           kind=(--latest)
           if [[ "$TAG" == *-* ]]; then kind=(--prerelease --latest=false); fi
           # With assets, gh creates a draft, uploads the files, then publishes the release.

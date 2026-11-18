@@ -2,7 +2,7 @@
 
 [English](../../en/docs/single-file.md) | 简体中文
 
-从白鹭引擎 7.0 的[浏览器归档](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-browser.zip)解压引擎文件、使用指南和许可证。把 `egret2d.js` 放在 HTML 页面旁即可调用 [`play`](play.md)；需要 World3D 时选用 `egret3d.js` 和 [`play3d`](play3d.md)。这两种脚本都可以从本地文件夹打开。使用 ES Module 时，从 HTTP 服务器提供对应的 `.mjs` 文件。[发行说明与 SHA-256](release-archives.md)
+从白鹭引擎 7.0 的[浏览器归档](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip)解压引擎文件、使用指南和许可证。把 `egret2d.js` 放在 HTML 页面旁即可调用 [`play`](play.md)；需要 World3D 时选用 `egret3d.js` 和 [`play3d`](play3d.md)。这两种脚本都可以从本地文件夹打开。使用 ES Module 时，从 HTTP 服务器提供对应的 `.mjs` 文件。[发行说明与 SHA-256](release-archives.md)
 
 打包工具会加载四个浏览器文件，按各入口核对导出名称、`play` 或 `play3d`，并生成一段音效采样。早期单文件验证中，[Play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)的三个游戏在无头 Chromium 的软件 WebGL2 上完成了启动、绘制、按键、指针和音源启动检查，覆盖本地文件和 HTTP 两种打开方式。
 

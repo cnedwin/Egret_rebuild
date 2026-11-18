@@ -5,7 +5,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fingerprintFile } from './lib/file-identity.mjs';
-import { archiveName, RELEASE_PACKAGES, releaseBaseUrl, RELEASE_VERSION } from './pack-release.mjs';
+import {
+  archiveName,
+  registryArchiveName,
+  registryTag,
+  RELEASE_PACKAGES,
+  releaseBaseUrl,
+  RELEASE_VERSION
+} from './pack-release.mjs';
 
 const scripts = ['egret2d.js', 'egret2d.mjs', 'egret3d.js', 'egret3d.mjs'];
 const downloads = [...scripts, 'egret-browser.zip', 'egret-first-game.zip'];
@@ -34,8 +41,24 @@ export function recordReleaseAssets(directory, browserReport, version, sourceCom
     assert.equal(row.bytes, file.bytes);
     assert.equal(row.install, release.baseUrl + row.file);
   }
+  assert.deepEqual(
+    release.registry.map(row => row.name),
+    packages
+  );
+  for (const row of release.registry) {
+    assert.equal(row.file, registryArchiveName(row.name, version));
+    const file = fingerprintFile(directory, row.file);
+    assert.equal(row.sha256, file.sha256);
+    assert.equal(row.bytes, file.bytes);
+    assert.equal(row.tag, registryTag(version));
+  }
 
-  const expected = ['release.json', ...release.packages.map(row => row.file), ...downloads];
+  const expected = [
+    'release.json',
+    ...release.packages.map(row => row.file),
+    ...release.registry.map(row => row.file),
+    ...downloads
+  ];
   assert.deepEqual(fs.readdirSync(directory).sort(), expected.sort());
   const assets = downloads.map(file => {
     const { bytes, sha256 } = fingerprintFile(directory, file);
