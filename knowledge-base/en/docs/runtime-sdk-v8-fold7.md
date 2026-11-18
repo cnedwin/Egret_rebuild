@@ -30,7 +30,7 @@ The trimmed APK saved 5.55 MiB (25.2%) versus standard. Its startup was faster i
 
 The correctness launch of the standard profile unpacked 10,824,432 bytes of ICU data and acknowledged the first draw at 127.4 ms, including diagnostic checks. All four formal startup values for that profile used the verified file already on disk. In each diagnostic run the recovered context uploaded its atlas again, abandoned one lost context and released the final GPU page. Each live scene released one engine lease. The standard launcher also resumed after backgrounding and released its lease on Back. A separate timed launch interrupted by backgrounding recorded a failure as intended.
 
-The first two complete timing blocks were retained. Android installation stalled before the next complete block, and Android later rejected one activity start after a package replacement. The interrupted block and the zero-frame start remain in the data. Once Android's package manager was ready, blocks three and four ran in the frozen order. Installation and process-reset work preceded the timing origin.
+The first two complete timing blocks were retained. Android installation stalled before the next complete block, and Android later rejected one activity start after a package replacement. The interrupted block and the zero-frame start remain in the data. Once Android's package manager was ready, blocks three and four ran in the frozen order. Installation and process-reset work preceded the timing origin. A later build change added alternative Maven Central endpoints for the same checksum-locked archives. Rebuilding the base, standard and trimmed APKs reproduced the signed file sizes and every payload entry (18, 27 and 24 entries respectively).
 
 ## Choosing a build
 

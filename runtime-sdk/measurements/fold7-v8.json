@@ -2846,5 +2846,31 @@
     "unrelatedBrowserTabsPreserved": true,
     "ownedTransportCleaned": true,
     "verifiedSamples": 3
+  },
+  "rebuiltAfterMirrorSupport": {
+    "recipe": "runtime-sdk/android/v8-dependencies.mjs",
+    "measuredRecipeSha256": "8b42c0ae66b971b1e3b427bb7fcbd45d8bf10a02795d2e33be08a21eccb6b550",
+    "updatedRecipeSha256": "68f626dc671d41cc8f1cdd4cb039b7d45f5964f83a127be3a7fbc2788da59d07",
+    "comparison": "Every non-directory APK entry compared by path and SHA-256 with the measured artifact, including manifest, DEX, native libraries, scenes and notices. Signing envelopes can differ between builds.",
+    "lanes": {
+      "webview": {
+        "signedBytes": 783620,
+        "measuredBytes": 783620,
+        "matchedPayloadFiles": 18,
+        "equalPayloads": true
+      },
+      "standard": {
+        "signedBytes": 23107494,
+        "measuredBytes": 23107494,
+        "matchedPayloadFiles": 27,
+        "equalPayloads": true
+      },
+      "trimmed": {
+        "signedBytes": 17290970,
+        "measuredBytes": 17290970,
+        "matchedPayloadFiles": 24,
+        "equalPayloads": true
+      }
+    }
   }
 }

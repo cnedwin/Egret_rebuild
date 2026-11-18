@@ -10,6 +10,30 @@ import { fileURLToPath } from 'node:url';
 import provenance from './v8-provenance.json' with {type: 'json'};
 const {profiles, icu} = provenance;
 const javet = provenance.javet.version;
+const mavenCentral = [
+  'https://repo.maven.apache.org/maven2/',
+  'https://repo1.maven.org/maven2/',
+  'https://maven-central.storage-download.googleapis.com/maven2/'
+];
+
+async function openDownload(input) {
+  const failures = [];
+  for (const url of input.urls ?? [input.url]) {
+    let response;
+    try {
+      response = await fetch(url, {signal: AbortSignal.timeout(300_000)});
+    } catch (error) {
+      failures.push(url + ': ' + error.message);
+      continue;
+    }
+    if (response.ok) return response;
+    await response.body?.cancel();
+    const failure = url + ': HTTP ' + response.status;
+    if (![404, 408, 429, 500, 502, 503, 504].includes(response.status)) throw new Error(failure);
+    failures.push(failure);
+  }
+  throw new Error('Cannot download ' + input.name + ' from its pinned sources: ' + failures.join(', '));
+}
 
 async function digest(file) {
   const hash = createHash('sha256');
@@ -26,8 +50,8 @@ async function pinnedFile(cache, input) {
     if (error.code !== 'ENOENT') throw error;
     const temporary = target + '.' + randomUUID() + '.part';
     try {
-      const response = await fetch(input.url, {signal: AbortSignal.timeout(300_000)});
-      if (!response.ok) throw new Error(input.name + ' download returned ' + response.status);
+      // A mirror may recover an unavailable endpoint. The first successful body must match the lock.
+      const response = await openDownload(input);
       if (input.base64) {
         await writeFile(temporary, Buffer.from(await response.text(), 'base64'));
       } else {
@@ -48,8 +72,8 @@ export async function prepareV8({profile, cache, working, jar, strip, run}) {
   if (!Object.hasOwn(profiles, profile)) throw new Error('--v8-profile must be standard or trimmed');
   const {artifact, sha256} = profiles[profile];
   const name = artifact + '-' + javet + '.aar';
-  const url = 'https://repo.maven.apache.org/maven2/com/caoccao/javet/' + artifact + '/' + javet + '/' + name;
-  const aar = await pinnedFile(cache, {name, url, sha256});
+  const coordinate = 'com/caoccao/javet/' + artifact + '/' + javet + '/' + name;
+  const aar = await pinnedFile(cache, {name, urls: mavenCentral.map(base => base + coordinate), sha256});
   const lib = 'lib' + artifact + '.v.' + javet + '.so';
   const upstreamLib = 'jni/arm64-v8a/' + lib;
   const licenses = ['LICENSE', 'LICENSE.node', 'LICENSE.v8'];
