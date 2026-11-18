@@ -4,6 +4,12 @@
 
 仓库里的包是私有的，版本为 0.0.0。一次发行是由它们打出的一组归档，每个包一个，附在 GitHub release 上。不向 npm 发布任何内容。
 
+## 运行与修改入门示例
+
+1. 从 [preview.1 发行页](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) 下载 `egret-first-game.zip`，解压到新目录。`package.json` 已指定本次发行的引擎归档和 esbuild 0.28.2。
+2. 使用 Node.js 26.7.0 和 npm，运行 `npm install`，再运行 `npm start`。打开 `http://127.0.0.1:8000`，点击橙色方块或按空格，每次移动 32 个舞台单位。
+3. 将 `main.mjs` 中的 `STEP` 从 `32` 改为 `64`，保存并刷新。方块每次移动的距离变为两倍。在终端按 Ctrl+C 可停止本地服务器。
+
 ## 安装一个发行版
 
 ```
@@ -42,7 +48,7 @@ node tools/verify-release.mjs --version 0.1.0-preview.1 --archives ../release
 - `tests/pack-release.test.mjs`：版本与地址、清单、拒绝的情况，以及全部五个归档的内容。
 - 在 Linux 上用 Node 26.7.0 和 npm，把 `0.1.0-preview.1` 的归档装进仓库外的干净工程，并在那里导入了 `@egret/engine`、`@egret/engine/web/game`、`@egret/project` 和 `@egret/spine`。
 
-没有检查的：工作流本身，它只在推送标签时运行；用 pnpm 或 yarn 安装；用已安装的发行版构建的浏览器页面，这一项由[干净消费者检查](clean-consumer.md)对私有归档覆盖。
+发布前演练在 Windows 干净目录从本地归档安装引擎。无头 Edge 157 绘制了方块，点击后移动 32 个舞台单位，修改并刷新后按空格移动 64 个单位。归档安装演练使用 npm。独立新人、呈现时延和其他包管理器另行验收。[交付进度](https://github.com/cnedwin/Egret_rebuild/issues/93)
 
 ## 限制
 

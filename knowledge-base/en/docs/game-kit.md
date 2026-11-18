@@ -41,6 +41,8 @@ Keys for two directions held together give a vector of length 1, so a diagonal i
 
 The page binding lets every control go when the window loses focus or the page is hidden. It keeps bound keys from scrolling the page and leaves keys alone while the player types in a field. `dispose()` takes its listeners off.
 
+Mouse buttons can be held together. For example, with `Mouse:2` held to aim, pressing and releasing `Mouse:0` fires and releases the shot while aim stays active. Start each press on the bound target. Releasing a button elsewhere in the same window still ends its action.
+
 ## Rebinding
 
 `input.rebind(action, binding, { slot, index })` puts a control on an action and takes it off any other, so one key never does two things. `input.lastPressed` gives the control pressed this frame, for a "press a key" screen, and `describeInputBinding(binding)` gives a readable name (`W`, `Shift`, `Right button`). `saveBindings()` returns what differs from the map as plain data. `loadBindings(data)` applies it and skips unknown actions and malformed entries. `resetBindings()` goes back to the map.

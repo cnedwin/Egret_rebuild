@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
+import { planVendor } from '../tools/vendor-game.mjs';
 import { test } from 'node:test';
 import { Bitmap } from '@egret/engine';
 import { createStudioScene } from '../examples/outfit-studio/scene.mjs';
@@ -152,5 +153,16 @@ test('mixed profiles keep the fixed workload and replace only the flat backdrop'
     assert.equal(engine.stage.getChildAt(baseline), scene.root);
   } finally {
     await fixture.close();
+  }
+});
+
+test('mixed studio imports both World3D backends and their workspace dependencies', () => {
+  const html = readFileSync(new URL('../examples/outfit-studio/index.html', import.meta.url), 'utf8');
+  const { imports } = JSON.parse(html.match(/<script type="importmap">([\s\S]*?)<\/script>/)[1]);
+  const { map } = planVendor(['@egret/engine/webgpu/world3d', '@egret/engine/webgl2/world3d']);
+  for (const [specifier, file] of Object.entries(map)) {
+    if (specifier.startsWith('@egret/') || specifier.startsWith('#egret-'))
+      assert.equal(imports[specifier], '/packages/' + file, specifier);
+    else assert.ok(Object.hasOwn(imports, specifier), specifier);
   }
 });

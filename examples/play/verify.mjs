@@ -8,6 +8,7 @@
 // bundles runs headless with software rendering. Input is injected through the browser's automation protocol; no
 // person pressed a key, and no sound was heard: the check counts the sounds the page starts.
 import http from 'node:http';
+import { verifyPrimaryPointer } from './verify-primary-pointer.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -196,6 +197,7 @@ await scenario(
         return readInput();
       });
     }
+    row.primaryPointer = await verifyPrimaryPointer(page);
     row.clock = await page.evaluate(async () => {
       const { play } = await import('@egret/engine/play');
       const game = await play({ width: 96, height: 64, backend: 'webgl2' });
