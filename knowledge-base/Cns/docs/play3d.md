@@ -62,6 +62,12 @@ await play3d({
 
 内建几何及其生成的材质归游戏所有，移除、重开或关闭时会释放。传给 `add` 的模型按借用处理，其几何、材质和纹理仍由调用方管理。粒子共用的形状在重开时继续复用，在最终关闭时释放。世界清理期间或关闭后创建、挂接物体，会以 `PLAY_OPTIONS_INVALID` 拒绝。资源释放监听器失败时，其余清理仍会继续，失败会返回给调用方。
 
+Play3D 遵循 [Play 重开契约](play.md)。初始化失败会释放本轮创建的内建图元，并撤下借用模型。等待 `game.dispose()` 即可等到界面层与 World3D Engine 完成关闭，包括渲染器及其 Scope。如果某项资源清理失败，其余清理仍会继续，关闭 Promise 会将错误返回给调用方。并发关闭共用同一个 Promise。
+
+2026 年 11 月 18 日，Windows Edge 157（RTX 5090 Laptop）和 Galaxy Z Fold7 Chrome 157（Adreno 830）均在 WebGPU、WebGL2 上通过了[异步生命周期用例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/verify-async-lifecycle.mjs)。128 × 96 的场景沿用此前生命周期检查的 World3D 低画质预设。用例在初次加载和重开时控制应用加载完成的时机，用指针操作 UI 和网格触发加载失败，并验证随后显式调用重开可以恢复更新，还通过公开的关闭 Promise 收到资源清理错误。每组均记录到关闭后迟到的对象挂接数为零、残留画布为零、未处理的 Promise 拒绝为零。
+
+在这台 Windows 设备上，单独运行默认高画质 WebGL2 时发生了上下文丢失。未修改的 #369 在单场景、不执行重开的情况下也复现了同一问题。ANGLE 报告 D3D11 动态像素着色器编译错误，渲染器报告 `WORLD3D_SHADER_FAILED: post/ssao`。这套配置的高画质渲染仍待解决。
+
 ## 相机和太阳
 
 `game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6 })` 让相机与一个物体保持这样的距离、看着它，并平滑地跟上；`smooth: 0` 让它严格保持在那里；`turn: true` 让这个位置随物体的 `rotationY` 一起转，所以无论车或人物朝哪边，相机都在它后面。不用 `follow` 时，设置 `game.camera.x`、`.y` 和 `.z`，并调用 `game.camera.lookAt(x, y, z)`；`game.camera.fov` 是它的视角，不设置时为 55 度。它一开始在 (0, 6, 12)，看着世界的中心。

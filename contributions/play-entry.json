@@ -28,6 +28,11 @@
     {
       "path": "knowledge-base/Cns/docs/play.md",
       "originRole": "First-party Chinese guide to the play entry; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/play/verify-async-lifecycle.mjs",
+      "originRole": "First-party browser regression for Play and Play3D asynchronous setup, restart and disposal through the public SDK. Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [

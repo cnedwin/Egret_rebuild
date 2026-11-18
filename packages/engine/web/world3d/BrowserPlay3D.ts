@@ -405,11 +405,11 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
 
   let game: Play3DGame | undefined,
     app: World3DApp | undefined,
+    creatingApp: Promise<World3DApp> | undefined,
     deep: HTMLCanvasElement | undefined,
     unplace: (() => void) | undefined;
   let clearing = false,
     closing = false,
-    worldDisposed = false,
     generation = 0;
   let disposal: Promise<void> | undefined;
   const admit = (): void => {
@@ -506,7 +506,8 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
   // Taps on things: found by a ray from the camera through the pointer when it goes down.
   const taps = new Map<PlayThing3D, () => unknown>(),
     ray = new Raycaster3D();
-  let tapFailure: { readonly cause: unknown } | undefined;
+  // A tap reports errors to the scene that received it. A returned restart may reject after that scene is gone.
+  let tapErrors: { failure?: { readonly cause: unknown } } = {};
   const tapped = (flat: PlayGame): void => {
     if (taps.size === 0 || !flat.pointer.pressed) return;
     for (const thing of taps.keys()) if (thing.removed) taps.delete(thing);
@@ -525,14 +526,16 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         const thing = [...taps.keys()].find(each => each.node === node);
         if (thing === undefined || !thing.visible) continue;
         const callback = taps.get(thing)!;
+        const owner = tapErrors;
+        const fail = (cause: unknown): void => {
+          owner.failure ??= { cause };
+        };
         try {
           const result = callback() as { then?: unknown } | null | undefined;
           if (result !== null && result !== undefined && typeof result.then === 'function')
-            (result as PromiseLike<unknown>).then(undefined, cause => {
-              tapFailure ??= { cause };
-            });
+            (result as PromiseLike<unknown>).then(undefined, fail);
         } catch (cause) {
-          tapFailure ??= { cause };
+          fail(cause);
         }
         return;
       }
@@ -546,6 +549,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       const leaving = [...things];
       things.clear();
       taps.clear();
+      tapErrors = {};
       for (const piece of pieces) {
         piece.life = 0;
         piece.thing.visible = false;
@@ -562,18 +566,36 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       clearing = false;
     }
   };
-  const disposeWorld = (): void => {
+  const disposeWorld = async (): Promise<void> => {
     beginClosing();
-    if (worldDisposed) return;
-    worldDisposed = true;
-    cleanUp([
-      clear,
-      ...pieces.map(piece => () => piece.thing.leave()),
-      () => pieceShape.dispose(),
-      () => unplace?.(),
-      () => app?.dispose(),
-      () => deep?.remove()
-    ]);
+    const failures: unknown[] = [];
+    // Join only the SDK factory. Application setup may still be waiting on an unrelated download.
+    if (creatingApp !== undefined) {
+      try {
+        await creatingApp;
+      } catch (cause) {
+        failures.push(cause);
+      }
+    }
+    try {
+      cleanUp([
+        clear,
+        ...pieces.map(piece => () => piece.thing.leave()),
+        () => pieceShape.dispose(),
+        () => unplace?.(),
+        () => app?.dispose(),
+        () => deep?.remove()
+      ]);
+    } catch (cause) {
+      failures.push(cause);
+    }
+    try {
+      // World3DApp is a synchronous Disposable. Its Engine owns the shared asynchronous close result.
+      await app?.engine.dispose();
+    } catch (cause) {
+      failures.push(cause);
+    }
+    throwCleanupFailures(failures);
   };
   // Where the camera keeps to by a thing: its offset, turned with the thing when asked.
   const placeBy = (thing: PlayThing3D): [number, number, number] => {
@@ -813,7 +835,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
             failures.push(cause);
           }
           try {
-            disposeWorld();
+            await disposeWorld();
           } catch (cause) {
             failures.push(cause);
           }
@@ -871,10 +893,16 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
           observer?.disconnect();
           win.removeEventListener('resize', place);
         };
-        app = await createWorld3DApp(under, {
+        creatingApp = createWorld3DApp(under, {
           backend: options.backend === 'webgpu' ? 'webgpu' : 'webgl2',
           ...(options.onError === undefined ? {} : { onError: options.onError })
         });
+        try {
+          app = await creatingApp;
+        } finally {
+          creatingApp = undefined;
+        }
+        if (closing || given.scope.state !== 'open') throw new EgretError('SCOPE_CLOSED');
         scene.addChild(eye);
         scene.addChild(sky);
         scene.addChild(sun);
@@ -882,8 +910,21 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         app.show(scene, eye);
         game = extend(given);
       } else clear();
-      await setup?.(game);
-      settle();
+      try {
+        await setup?.(game);
+        if (closing || given.scope.state !== 'open') throw new EgretError('SCOPE_CLOSED');
+        settle();
+      } catch (cause) {
+        // A failed setup may already have attached borrowed models and allocated owned primitives.
+        if (!closing) {
+          try {
+            clear();
+          } catch (cleanupFailure) {
+            throw new AggregateError([cause, cleanupFailure], 'Play3D setup and rollback failed');
+          }
+        }
+        throw cause;
+      }
     },
     update(seconds) {
       if (game === undefined) return;
@@ -897,9 +938,9 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         current.scope.state === 'open' &&
         current.browser.loop.state === 'running';
       if (!running()) return;
-      if (tapFailure !== undefined) {
-        const { cause } = tapFailure;
-        tapFailure = undefined;
+      if (tapErrors.failure !== undefined) {
+        const { cause } = tapErrors.failure;
+        delete tapErrors.failure;
         throw cause;
       }
       tapped(current as unknown as PlayGame);
@@ -908,10 +949,13 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       if (!running()) return;
       after(seconds);
     }
-  }).catch((cause: unknown) => {
+  }).catch(async (cause: unknown) => {
     try {
-      disposeWorld();
+      // A callback may have closed the published game while its initial setup was pending.
+      if (game === undefined) await disposeWorld();
+      else await game.dispose();
     } catch (cleanupFailure) {
+      if (cause === cleanupFailure) throw cause;
       throw new AggregateError([cause, cleanupFailure], 'Play3D setup and cleanup failed');
     }
     throw cause;

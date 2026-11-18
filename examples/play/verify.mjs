@@ -180,6 +180,22 @@ await scenario(
   480,
   320,
   async (page, stage, row) => {
+    row.asyncLifecycle = await page.evaluate(async () => {
+      const { runPlayLifecycle } = await import('./verify-async-lifecycle.mjs');
+      return runPlayLifecycle('webgl2');
+    });
+    const tapTargets = await page.evaluate(async () => {
+      const { beginInput } = await import('./verify-async-lifecycle.mjs');
+      return beginInput('webgl2');
+    });
+    try {
+      for (const target of [tapTargets.scene, tapTargets.overlay]) await page.mouse.click(target.x, target.y);
+    } finally {
+      row.asyncLifecycle.taps = await page.evaluate(async () => {
+        const { readInput } = await import('./verify-async-lifecycle.mjs');
+        return readInput();
+      });
+    }
     row.clock = await page.evaluate(async () => {
       const { play } = await import('@egret/engine/play');
       const game = await play({ width: 96, height: 64, backend: 'webgl2' });

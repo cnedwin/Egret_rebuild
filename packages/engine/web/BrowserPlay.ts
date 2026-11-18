@@ -315,7 +315,7 @@ export interface PlayGame {
   readonly paused: boolean;
   /**
    * Starts the game again: everything in the world and the `ui` layer is removed, timers and tweens are called
-   * off, and `setup` runs again. Updates begin when it has finished.
+   * off, and `setup` runs again. Concurrent requests share one promise. Updates resume on success; a failed setup can be retried.
    */
   restart(): Promise<void>;
   /** The game `play` is built on: its Engine, scope, loop and input, for what this entry does not cover. */
@@ -1046,9 +1046,16 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // `update` throws does, and is told the same way.
   let failure: { readonly cause: unknown } | undefined;
   let disposal: Promise<void> | undefined;
-  const fail = (cause: unknown): void => {
-    failure ??= { cause };
-  };
+  let setupRequest: ReturnType<typeof pending> | undefined;
+  // Publish the promise before invoking code that can reenter restart or disposal.
+  function pending() {
+    let resolve!: () => void, reject!: (cause: unknown) => void;
+    const promise = new Promise<void>((done, fail) => {
+      resolve = done;
+      reject = fail;
+    });
+    return { promise, resolve, reject };
+  }
   function step(real: number, seconds: number): void {
     if (failure !== undefined) {
       const { cause } = failure;
@@ -1167,6 +1174,63 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const saveKey = (key: string): string =>
     'egret.play:' + (options.saveKey ?? win.location?.pathname ?? '') + ':' + key;
 
+  function resetRound(): void {
+    timers = [];
+    stopLoops();
+    stopMotions();
+    for (const made of [world, ui]) while (made.numChildren > 0) game.remove(made.getChildAt(0));
+    endRemoved();
+    for (const piece of pieces) {
+      piece.life = 0;
+      piece.node.visible = false;
+    }
+    view.x = view.y = 0;
+    time = 0;
+    timeScale = 1;
+    paused = false;
+    stopped = shakeLeft = flashLeft = 0;
+    cover.visible = false;
+  }
+
+  function runSetup(restarting: boolean): Promise<void> {
+    if (setupRequest !== undefined) return setupRequest.promise;
+    const request = pending();
+    setupRequest = request;
+    generation++;
+    api = undefined;
+    void (async () => {
+      try {
+        if (restarting) {
+          failure = undefined;
+          resetRound();
+        }
+        if (disposed) return;
+        await setup?.(game);
+        if (disposed) return;
+        // A tap that returned an unsuccessful restart may have failed the loop.
+        // An explicit retry resumes it, while a deliberately stopped loop stays idle.
+        if (restarting && playLoop.state === 'failed') playLoop.start();
+        api = game;
+        request.resolve();
+      } catch (cause) {
+        // Failed setup may already have placed objects or scheduled work.
+        // Keep updates suspended and leave a clean scene for the next attempt.
+        if (restarting && !disposed) {
+          try {
+            resetRound();
+          } catch (cleanupFailure) {
+            request.reject(new AggregateError([cause, cleanupFailure], 'Play restart and cleanup failed'));
+            return;
+          }
+        }
+        request.reject(cause);
+      } finally {
+        if (setupRequest === request) setupRequest = undefined;
+      }
+    })();
+    return request.promise;
+  }
+
   const game: PlayGame = {
     width,
     height,
@@ -1257,7 +1321,13 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       if (typeof callback !== 'function') throw invalid('onTap takes a sprite and a function');
       if (browser.pointer === undefined) return;
       node.touchEnabled = true;
-      node.on(browser.pointer.events.tap, tapListener(callback, fail));
+      node.on(browser.pointer.events.tap, () => {
+        const round = generation;
+        tapListener(callback, cause => {
+          // A delayed input callback belongs to the round that received the press.
+          if (!disposed && generation === round) failure ??= { cause };
+        })();
+      });
       if (!tappable.includes(node)) tappable.push(node);
     },
     overlaps(a, b, shrink = 0) {
@@ -1430,31 +1500,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     get paused() {
       return paused;
     },
-    async restart() {
-      if (disposed) return;
-      generation++;
-      // No update runs while the game is taken down and set up again.
-      api = undefined;
-      timers = [];
-      stopLoops();
-      stopMotions();
-      for (const made of [world, ui]) while (made.numChildren > 0) game.remove(made.getChildAt(0));
-      endRemoved();
-      for (const piece of pieces) {
-        piece.life = 0;
-        piece.node.visible = false;
-      }
-      view.x = view.y = 0;
-      time = 0;
-      timeScale = 1;
-      paused = false;
-      stopped = shakeLeft = flashLeft = 0;
-      cover.visible = false;
-      try {
-        await setup?.(game);
-      } finally {
-        api = game;
-      }
+    restart() {
+      return disposed ? Promise.resolve() : runSetup(true);
     },
     browser,
     engine,
@@ -1462,10 +1509,23 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     canvas: surface,
     dispose() {
       if (disposal !== undefined) return disposal;
+      const close = pending();
+      disposal = close.promise;
       disposed = true;
-      stopLoops();
-      for (const [target, type, listener] of listening) target.removeEventListener(type, listener);
-      disposal = browser.dispose().finally(() => holder?.remove());
+      api = undefined;
+      // Caller-controlled loading can outlive the game. Release its waiters now;
+      // late completion cannot re-enable updates or restart the closed loop.
+      setupRequest?.reject(new EgretError('SCOPE_CLOSED'));
+      setupRequest = undefined;
+      void (async () => {
+        try {
+          stopLoops();
+          for (const [target, type, listener] of listening) target.removeEventListener(type, listener);
+          await browser.dispose();
+        } finally {
+          holder?.remove();
+        }
+      })().then(close.resolve, close.reject);
       return disposal;
     }
   };
@@ -1473,12 +1533,16 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
 
   try {
     await Promise.all(Object.entries(SFX_PRESETS).map(([name, recipe]) => make(name, recipe)));
-    await setup?.(game);
+    await runSetup(false);
+    if (disposed) throw new EgretError('SCOPE_CLOSED');
+    browser.loop.start();
   } catch (cause) {
-    await game.dispose();
+    try {
+      await game.dispose();
+    } catch (cleanupFailure) {
+      throw new AggregateError([cause, cleanupFailure], 'Play setup and cleanup failed');
+    }
     throw cause;
   }
-  api = game;
-  browser.loop.start();
   return game;
 }
