@@ -35,7 +35,14 @@ jobs:
         run: |
           rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target aarch64-linux-android
           cargo test --locked --offline --manifest-path runtime-sdk/native/Cargo.toml
-          sdkmanager "platforms;android-35" "build-tools;35.0.0" "ndk;27.2.12479018"
+          if [[ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" || ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" || ! -f "$ANDROID_HOME/ndk/27.2.12479018/source.properties" ]]; then
+            sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+            if [[ ! -x "$sdkmanager" ]]; then
+              sdkmanager=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | sort -V | tail -1)
+            fi
+            test -x "$sdkmanager"
+            "$sdkmanager" --sdk_root="$ANDROID_HOME" "platforms;android-35" "build-tools;35.0.0" "ndk;27.2.12479018"
+          fi
           node runtime-sdk/android/build.mjs --scene "$RUNNER_TEMP/scene" --output "$RUNNER_TEMP/apk/egret-runtime.apk" --jdk "$JAVA_HOME_17_X64" --ndk "$ANDROID_HOME/ndk/27.2.12479018"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
