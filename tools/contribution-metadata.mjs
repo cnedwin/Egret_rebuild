@@ -22,8 +22,14 @@ const SPINE_LEGAL = {
 };
 // Reviewed notices for the two optional Android V8 APKs.
 const ANDROID_V8_LEGAL = new Map([
-  ['third-party/icu-19dfb44.LICENSE', { bytes: 27718, sha256: 'e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af' }],
-  ['third-party/v8-15.7.112.19.NOTICES', { bytes: 82707, sha256: '5648a319050688ac3e56d798280e4c9e2eb1f1d3d51520bc944e01897b145f7f' }]
+  [
+    'third-party/icu-19dfb44.LICENSE',
+    { bytes: 27718, sha256: 'e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af' }
+  ],
+  [
+    'third-party/v8-15.7.112.19.NOTICES',
+    { bytes: 82707, sha256: '5648a319050688ac3e56d798280e4c9e2eb1f1d3d51520bc944e01897b145f7f' }
+  ]
 ]);
 // Exact new paragraph-distribution legal originals reviewed with this package.
 const PARAGRAPH_LEGAL = new Map([
@@ -468,7 +474,8 @@ export function planMetadata(root, { base } = {}) {
         throw Error('Invalid frozen compiler or reviewed license path');
       if (row.path === PNGJS_LICENSE.path && (row.bytes !== PNGJS_LICENSE.bytes || row.sha256 !== PNGJS_LICENSE.sha256))
         throw Error('Reviewed license identity differs');
-      const legal = row.path === SPINE_LEGAL.path ? SPINE_LEGAL : PARAGRAPH_LEGAL.get(row.path) ?? ANDROID_V8_LEGAL.get(row.path);
+      const legal =
+        row.path === SPINE_LEGAL.path ? SPINE_LEGAL : (PARAGRAPH_LEGAL.get(row.path) ?? ANDROID_V8_LEGAL.get(row.path));
       if (legal && (row.bytes !== legal.bytes || row.sha256 !== legal.sha256))
         throw Error('Reviewed paragraph legal identity differs');
       logicalPath(row.path);
