@@ -2,7 +2,7 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-2026-11-16 按 main [ab252735](https://github.com/cnedwin/Egret_rebuild/commit/ab2527359e475f2f24f6758538d925abcce53846) 复盘。工程预览提供可运行的公共示例。工作区包为 private 0.0.0，已支持在本地构建和安装预览包，正式发布仍待完成。 [预览归档工具](release-archives.md)
+2026-11-18 核对主干 [b3874464](https://github.com/cnedwin/Egret_rebuild/commit/b3874464236ce20439c06a4f771f0de799b09223)。工作区包仍为 private 0.0.0。外部项目使用的版本化归档和入门工程见[预览安装指南](release-archives.md)。
 
 本页说明当前能力，[工程计划](工程规划.md)说明接下来的工作，子系统契约给出准确 API 和证据范围。历史预览记录不再作为并行的“当前版本”。
 
@@ -22,6 +22,15 @@
 | 声音 | [可选的 2D 混音器](audio.md)：计入预算的已解码声音、以流播放的长音乐、发声位、带渐变的单首音乐、有名字的音量，以及等待第一次点击、页面隐藏时静音的 Web Audio 后端 | 资源清单中的声音、其他宿主，以及扬声器、手机、Safari 和 Firefox 的验证 |
 | 3D | [可选 World3D](world3d.md)提供独立 WebGL2／WebGPU 渲染器，以及 glTF 实例、光照阴影、后处理、蒙皮、变形和文字。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。 | 后端功能与验收范围见契约。更广资产、设备与性能资格及统一 2D／3D 创作流程仍待交付。 |
 | 工程与工具 | 版本化工程快照／事务、换装工作室内打开工程、干净工程包和浏览器冒烟检查、结构化诊断与有界旧 RES／MovieClip 分析 | 工程到运行游戏的创作闭环、集成可视化工具、Agent／Skill／MCP 应用、发布／更新适配和完整迁移 |
+
+## 游戏内容兼容范围
+
+| 素材或操作 | 已验证的范围 | 上线前需要核对什么 |
+| --- | --- | --- |
+| Spine 4.3 角色换装与播放替换 | 可选适配层使用 Core 4.3.13。指定场景的保留播放状态替换已在 Windows Edge 与 Galaxy Z Fold7 Chrome 的 WebGPU、WebGL2 上验证。 | 按功能矩阵核对实际导出版本、图集页、轨道混合和恢复。编辑器导出的独立姿势和像素参照仍待补齐。[动画生命周期](https://github.com/cnedwin/Egret_rebuild/issues/86) |
+| 声明 `pma: true` 的 Spine 图集 | 加载器测试覆盖转换后的像素、页共享、预算和释放。 | 在每个目标后端用获授权的导出素材核对透明边缘和插槽重叠颜色。[Spine 图形](https://github.com/cnedwin/Egret_rebuild/issues/85) |
+| 单行与多行文本编辑 | Fold7 上的三星键盘 5.9.40.75 在 WebGPU 上产生英文组合输入，在 WebGL2 上提交了九键拼音候选词“你好”。拼音预编辑过程发生在键盘内。 | 其他键盘、iOS 组合输入、真人选择或取消候选词及无障碍使用仍需分别验证。[Android 编辑器实测](android-native-text-editing.md) |
+| 菜单、控件与播报 | Windows Edge 和 Fold7 Chrome 的专项检查覆盖了两个后端的浏览器无障碍树和指定交互。 | 读屏导航、实际朗读的文字及顺序仍需使用辅助技术的人试听确认。[控件与无障碍](https://github.com/cnedwin/Egret_rebuild/issues/90) |
 
 ## 验证更新 — 2026-11-16
 

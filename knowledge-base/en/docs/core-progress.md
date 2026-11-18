@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-Reviewed main [ab252735](https://github.com/cnedwin/Egret_rebuild/commit/ab2527359e475f2f24f6758538d925abcce53846) on 2026-11-16. The engineering preview provides runnable public examples. Workspace packages remain private at 0.0.0. Preview archives can be built and installed locally. Publishing an engine release remains open. [Archive tooling](release-archives.md)
+Source checkpoint [b3874464](https://github.com/cnedwin/Egret_rebuild/commit/b3874464236ce20439c06a4f771f0de799b09223), November 18, 2026. Workspace packages stay private at 0.0.0. The [preview installation guide](release-archives.md) identifies the versioned archives and starter for external projects.
 
 Use this page for current capability status, the [engineering plan](engineering-plan.md) for the next work, and subsystem contracts for exact APIs and evidence. Historical previews are not competing current versions.
 
@@ -22,6 +22,15 @@ Egret's product direction combines animation-rich 2D games and complex interface
 | Sound | An [optional 2D mixer](audio.md): decoded sounds under a budget, long music from a stream, voices, one music with fades, named volumes, and a Web Audio backend that waits for the first press and is silent while the page is hidden | Sound in the resource manifest, other hosts, and loudspeaker, phone, Safari and Firefox coverage |
 | 3D | [Optional World3D](world3d.md) provides standalone WebGL2 and WebGPU renderers, with glTF instancing, lighting and shadows, post-processing, skinning, morphs and text. The physics preview includes shape sweeps, compound bodies, solver slices and gameplay helpers. | See the contract for backend and verification scope. Broader asset, device and performance qualification and unified 2D/3D authoring remain open. |
 | Project and tools | Versioned project snapshots/transactions, browser opening in Outfit Studio, a clean-consumer package and browser smoke, structured diagnostics and bounded legacy RES/MovieClip analysis | Project-to-running-game authoring loop, integrated visual tools, Agent/Skill/MCP applications, publication/update adapters and complete migration |
+
+## Compatibility for game content
+
+| Content or interaction | Verified scope | Where to check before shipping |
+| --- | --- | --- |
+| Spine 4.3 character outfit and playback replacement | The optional adapter uses Core 4.3.13. Selected playback-preserving replacements ran on Windows Edge and Galaxy Z Fold7 Chrome on WebGPU and WebGL2. | Validate your export version, atlas pages, track mixes and recovery against the selected feature matrix. Independent editor-export pose and pixel references remain open. [Animation lifecycle](https://github.com/cnedwin/Egret_rebuild/issues/86) |
+| Spine atlas declared `pma: true` | Loader tests check converted pixels, page sharing, budgets and disposal. | Verify transparent edges and overlapping slots from an authorized export on each target backend before relying on this combination. [Spine graphics](https://github.com/cnedwin/Egret_rebuild/issues/85) |
+| Single-line and multiline text | On Fold7, Samsung Keyboard 5.9.40.75 produced English composition on WebGPU and committed the Chinese Pinyin candidate 你好 on WebGL2. The Pinyin preedit stayed in the keyboard. | Other keyboards, iOS composition, physical-user selection/cancellation and accessibility need their own observations. [Android editor evidence](android-native-text-editing.md) |
+| Menus, controls and announcements | Focused Windows Edge and Fold7 Chrome checks cover the browser accessibility tree and selected interactions on both backends. | Reader navigation and the spoken content and order of announcements still need a listener with assistive technology. [Controls and accessibility](https://github.com/cnedwin/Egret_rebuild/issues/90) |
 
 ## Verification updates — 2026-11-16
 
