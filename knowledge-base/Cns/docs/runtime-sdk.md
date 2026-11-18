@@ -16,7 +16,7 @@
 
 普通小游戏采用公开平台接口。手机厂商或应用运营方内置原生 SDK 属于单独合作，需约定设备和分发条件。原生后端候选包括 wgpu，选择依据为所需能力、包体和设备实测成本。[Android 游戏宿主](https://developer.android.com/games/agdk/game-activity/get-started) · [Apple Metal](https://developer.apple.com/metal/) · [华为 XComponent](https://developer.huawei.com/consumer/cn/doc/HarmonyOS-Guides/napi-xcomponent-guidelines/) · [微信接口](https://github.com/wechat-miniprogram/minigame-api-typings) · [抖音运行环境](https://developer.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/dev-guide/bytedance-mini-game) · [抖音 Wasm](https://developer.open-douyin.com/docs/resource/zh-CN/mini-game/guide/minigame/optimization)
 
-Rust 渲染器、Android 宿主和程序生成的场景均为本项目原创。APK 随附项目及内置依赖的许可声明。[来源登记](../../../contributions/android-runtime-sdk.json)
+Rust 渲染器、Android 宿主和程序生成的场景均为本项目原创。APK 随附项目及内置依赖的许可声明。[来源登记](https://github.com/cnedwin/Egret_rebuild/blob/main/contributions/android-runtime-sdk.json)
 
 ## 资源与执行职责
 

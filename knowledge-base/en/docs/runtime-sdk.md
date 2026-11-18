@@ -16,7 +16,7 @@ A game keeps its TypeScript entry point and asset manifest across export targets
 
 Ordinary mini-game export uses the public platform interfaces. An OEM or app operator embedding the native SDK is a separate integration with its own device and distribution agreement. Evaluate native backends, including wgpu, against required features, package size and measured device costs. [Android game host](https://developer.android.com/games/agdk/game-activity/get-started) · [Apple Metal](https://developer.apple.com/metal/) · [Huawei XComponent](https://developer.huawei.com/consumer/en/doc/harmonyos-guides/napi-xcomponent-guidelines/) · [WeChat interfaces](https://github.com/wechat-miniprogram/minigame-api-typings) · [Douyin runtime](https://developer.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/dev-guide/bytedance-mini-game) · [Douyin Wasm](https://developer.open-douyin.com/docs/resource/zh-CN/mini-game/guide/minigame/optimization)
 
-The Rust renderer, Android host and procedural sample are original contributions. The APK carries the project and bundled dependency notices. [Provenance](../../../contributions/android-runtime-sdk.json)
+The Rust renderer, Android host and procedural sample are original contributions. The APK carries the project and bundled dependency notices. [Provenance](https://github.com/cnedwin/Egret_rebuild/blob/main/contributions/android-runtime-sdk.json)
 
 ## Shared ownership
 

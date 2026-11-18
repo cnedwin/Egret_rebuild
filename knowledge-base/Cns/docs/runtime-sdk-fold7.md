@@ -2,11 +2,11 @@
 
 [English](../../en/docs/runtime-sdk-fold7.md) | 简体中文
 
-在同一台 Fold7 上，三条路径画出的最后一帧逐像素一致。实时路径每帧生成并从 Android System WebView 取回 2,040 字节的命令包，各轮中位耗时为 1.50–1.57 ms，GL 线程提交 Rust 绘制的中位耗时为 0.088–0.110 ms。在这个负载下，脚本生成与跨进程传输占用的时间更长。[架构与分期](runtime-sdk.md) · [逐轮数据](../../../runtime-sdk/measurements/fold7.json)
+在同一台 Fold7 上，三条路径画出的最后一帧逐像素一致。实时路径每帧生成并从 Android System WebView 取回 2,040 字节的命令包，各轮中位耗时为 1.50–1.57 ms，GL 线程提交 Rust 绘制的中位耗时为 0.088–0.110 ms。在这个负载下，脚本生成与跨进程传输占用的时间更长。[架构与分期](runtime-sdk.md) · [逐轮数据](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7.json)
 
 ## 场景与设备
 
-三路使用相同的 320 × 192 渲染缓冲、两个纯色矩形、40 个使用图集的动画四边形和一张 32 × 8 RGBA8 纹理。实时 APK 在独立的 WebView 中运行白鹭场景，由 Rust GLES3 绘制原生表面。回放直接循环读取捕获的 60 帧命令，沿用同一 Rust 执行器。Chrome 使用白鹭现有的 SharedFrame2D WebGL2 执行器。APK 为 arm64 调试包，基于引擎提交 `859bd0ee` 构建。[构建与运行](../../../runtime-sdk/android/README.zh-CN.md)
+三路使用相同的 320 × 192 渲染缓冲、两个纯色矩形、40 个使用图集的动画四边形和一张 32 × 8 RGBA8 纹理。实时 APK 在独立的 WebView 中运行白鹭场景，由 Rust GLES3 绘制原生表面。回放直接循环读取捕获的 60 帧命令，沿用同一 Rust 执行器。Chrome 使用白鹭现有的 SharedFrame2D WebGL2 执行器。APK 为 arm64 调试包，基于引擎提交 `859bd0ee` 构建。[构建与运行](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/README.zh-CN.md)
 
 实测设备搭载 Android 17、Chrome/157.0.8103.78 和 Adreno 830，测试期间通过 USB 供电并保持亮屏解锁。三路画面均按比例适配。绘制缓冲分辨率固定，Chrome 工具栏可独立改变 CSS 视口。九轮短测起止时的电池温度为 30.0–30.2 °C，系统热状态为 0。
 
@@ -64,4 +64,4 @@ Android 侧通过应用的服务绑定识别 WebView 渲染进程。Chrome 侧�
 
 ## 像素、恢复与释放
 
-九轮计时结束时，H5、实时与回放在动画槽位 59 的完整自上而下 RGBA 摘要均相同。单独的原生诊断将 60 帧实时命令与回放逐字节比对，校验资源摘要，并强制重建一次 EGL 上下文。两种 APK 模式均报告两次设备创建、两次图集上传、一个旧上下文废弃和一次最终 GL 纹理页释放。实时路径释放了一个引擎资产租约。H5 释放一个租约，关闭时待处理帧、上传字节和回读字节均为零。早期 APK 曾因 Windows 生成混合分隔符导致嵌套资源缺失；修正后的打包器核对最终签名 ZIP 的成员名。APK、帧循环、图集和画面摘要见[逐轮数据](../../../runtime-sdk/measurements/fold7.json)。
+九轮计时结束时，H5、实时与回放在动画槽位 59 的完整自上而下 RGBA 摘要均相同。单独的原生诊断将 60 帧实时命令与回放逐字节比对，校验资源摘要，并强制重建一次 EGL 上下文。两种 APK 模式均报告两次设备创建、两次图集上传、一个旧上下文废弃和一次最终 GL 纹理页释放。实时路径释放了一个引擎资产租约。H5 释放一个租约，关闭时待处理帧、上传字节和回读字节均为零。早期 APK 曾因 Windows 生成混合分隔符导致嵌套资源缺失；修正后的打包器核对最终签名 ZIP 的成员名。APK、帧循环、图集和画面摘要见[逐轮数据](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7.json)。
