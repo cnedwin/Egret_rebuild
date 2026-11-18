@@ -1,0 +1,11 @@
+{
+  "name": "egret-first-game",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "esbuild main.mjs --bundle --format=esm --outfile=game.js --watch --serve=127.0.0.1:8000 --servedir=."
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

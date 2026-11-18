@@ -14,6 +14,10 @@
 
 ## 运行示例
 
+开发新游戏可从[预览发行页](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1)下载 `egret-first-game.zip`。解压后在该目录运行 `npm install` 和 `npm start`，打开 `http://127.0.0.1:8000`。点击方块，再修改 `main.mjs` 中的 `STEP` 并刷新，就能看到每次移动的距离变化。入门工程会安装同一发行版的引擎。[预览安装与归档校验](knowledge-base/Cns/docs/release-archives.md)
+
+参与引擎本身的开发时，可以直接运行仓库里的示例。
+
 使用 **Node.js 26.7.0** 和 **pnpm 11.25.0**，在仓库根目录运行以下命令。
 
     pnpm setup:dev
@@ -36,9 +40,10 @@
 
 | PR | Main change | 主要变化 |
 | --- | --- | --- |
+| [#372](https://github.com/cnedwin/Egret_rebuild/pull/372) | Independent mouse actions while multiple buttons are held | 多个鼠标键交叠按放时分别驱动动作 |
+| [#369](https://github.com/cnedwin/Egret_rebuild/pull/369) · [#370](https://github.com/cnedwin/Egret_rebuild/pull/370) | Play and Play3D clocks, restart, retry and resource cleanup | Play 与 Play3D 时钟、重开、失败重试和资源清理 |
+| [#366](https://github.com/cnedwin/Egret_rebuild/pull/366) · [#367](https://github.com/cnedwin/Egret_rebuild/pull/367) | Play3D entry and single-file browser builds | Play3D 入口与浏览器单文件构建 |
 | [#341](https://github.com/cnedwin/Egret_rebuild/pull/341) · [#342](https://github.com/cnedwin/Egret_rebuild/pull/342) | Safari PNG loading fix, verified on a physical iPhone with WebGL2 and WebGPU | 修复 Safari PNG 加载，已在 iPhone 真机验证两个后端 |
-| [#340](https://github.com/cnedwin/Egret_rebuild/pull/340) | Windows World3D WebGL2 timer controls and interpretation | Windows World3D WebGL2 计时对照与读数说明 |
-| [#337](https://github.com/cnedwin/Egret_rebuild/pull/337) · [#338](https://github.com/cnedwin/Egret_rebuild/pull/338) | Stage-level animation measurements and Spine atlas pages stored with premultiplied alpha | 动画分阶段测量，接入预乘透明度的 Spine 图集页 |
 | [#336](https://github.com/cnedwin/Egret_rebuild/pull/336) | Build and verify installable preview archives | 支持构建和验证可安装的预览包 |
 
 [完整更新日志](knowledge-base/Cns/CHANGELOG.md) · [English changelog](knowledge-base/en/CHANGELOG.md) · [早期预览里程碑](https://github.com/cnedwin/Egret_rebuild/blob/ab2527359e475f2f24f6758538d925abcce53846/README.zh-CN.md)
