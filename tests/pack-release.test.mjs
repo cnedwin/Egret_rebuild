@@ -7,6 +7,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import { createHash } from 'node:crypto';
+import { recordReleaseAssets } from '../tools/record-release-assets.mjs';
 import {
   archiveName,
   packRelease,
@@ -151,6 +153,35 @@ test('RA04 each archive holds the built files, the licence and the notice, and r
       for (const target of targets)
         assert.ok(files.has('package/' + target.replace(/^\.\//, '')), item.name + ' names ' + target);
     }
+    // The release index binds the tagged package set and browser packer's verified bytes to the same commit.
+    const version = record.version;
+    const sourceCommit = 'ab'.repeat(20);
+    const report = { version, files: {} };
+    const reportFile = path.join(path.dirname(out), 'report.json');
+    for (const name of ['egret2d.js', 'egret2d.mjs', 'egret3d.js', 'egret3d.mjs']) {
+      const bytes = Buffer.from('/*! Egret engine ' + version + ', fixture */\n');
+      fs.writeFileSync(path.join(out, name), bytes);
+      report.files[name] = { bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') };
+    }
+    fs.writeFileSync(reportFile, JSON.stringify(report));
+    for (const name of ['egret-browser.zip', 'egret-first-game.zip']) fs.writeFileSync(path.join(out, name), name);
+    recordReleaseAssets(out, reportFile, version, sourceCommit);
+    const complete = JSON.parse(fs.readFileSync(path.join(out, 'release.json'), 'utf8'));
+    assert.equal(complete.sourceCommit, sourceCommit);
+    assert.deepEqual(complete.packages, record.packages);
+    assert.deepEqual(
+      complete.assets.map(row => row.file),
+      [...Object.keys(report.files), 'egret-browser.zip', 'egret-first-game.zip']
+    );
+    for (const row of complete.assets) {
+      const bytes = fs.readFileSync(path.join(out, row.file));
+      assert.equal(row.bytes, bytes.length);
+      assert.equal(row.sha256, createHash('sha256').update(bytes).digest('hex'));
+    }
+    assert.throws(() => recordReleaseAssets(out, reportFile, '1.0.0', sourceCommit));
+    fs.appendFileSync(path.join(out, 'egret2d.js'), 'stale');
+    assert.throws(() => recordReleaseAssets(out, reportFile, version, sourceCommit), /egret2d.js/);
+
     // The repository's own manifests are as they were.
     for (const name of RELEASE_PACKAGES) {
       const own = JSON.parse(

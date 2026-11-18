@@ -1,10 +1,10 @@
-# The 2D engine in one file
+# Use a 2D or 3D engine file in a web page
 
 English | [简体中文](../../Cns/docs/single-file.md)
 
-A game made with [`play`](play.md) needs one page and the engine. `tools/pack-single-file.mjs` writes the engine as one file, so the page needs no import map, no package manager and no build step, and opens from a folder as well as from a server. It is the file [llms.txt](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) tells an agent to put beside the page.
+Extract the engine files, usage guide and licences from the Egret Engine 7.0 [browser archive](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-browser.zip). Put `egret2d.js` next to your HTML page to use [`play`](play.md). For World3D, use `egret3d.js` and [`play3d`](play3d.md). Either classic script works from a local folder. For ES modules, serve the corresponding `.mjs` file over HTTP. [Release notes and SHA-256](release-archives.md)
 
-**What is checked and what is not.** The packer loads both files it has written and refuses them unless each gives every name it was made from and `play` and the sound effects work. From `egret2d.js` beside a page, the three games of the [play example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) started, drew, took keys and the pointer and made sound in headless Chromium on software WebGL2, both from a server and opened from the folder. The files are not published anywhere: no registry and no CDN has them. Other browsers, phones and WebGPU were not run.
+The packer loads all four files, checks their named exports and the `play` or `play3d` entry point, and synthesizes a sound sample. In the earlier single-file test, all three [Play example games](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) started, drew, handled keys and pointer input, and started audio sources in headless Chromium with software WebGL2 over both local files and HTTP.
 
 ## The page
 

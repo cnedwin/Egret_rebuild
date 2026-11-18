@@ -2,7 +2,11 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
-Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
+Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
+
+## Egret Engine 7.0 release candidate `v7.0.1-rc.2`
+
+One version tag now identifies the browser 2D and 3D files, the five npm-format archives and the editable starter. [Downloads and installation](docs/release-archives.md)
 
 ## Directional shadow receivers on Windows WebGL2 — 2026-11-18
 

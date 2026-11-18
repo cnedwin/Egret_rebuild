@@ -1,8 +1,8 @@
-# 白鹭引擎 Egret Engine 社区重建
+# 白鹭引擎 7.0 · 社区重建
 
 [English](README.md) | 简体中文
 
-**白鹭是面向 Web 游戏的开源 TypeScript 引擎。** 当前为工程预览，WebGPU 和 WebGL2 支持 2D 动画与 UI，并可按需启用 World3D。
+**白鹭引擎 7.0 是面向 Web 游戏的开源 TypeScript 引擎。** 当前候选版 [`v7.0.1-rc.2`](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.2) 支持 WebGPU 与 WebGL2 上的 2D 动画和 UI，3D 游戏可按需启用 World3D。
 
 [试玩白鹭游戏](https://github.com/cnedwin/PortedGamesEgret) · [开始开发](#运行示例) · [文档](DOCUMENTATION.zh-CN.md) · [参与贡献](CONTRIBUTING.zh-CN.md) · [项目看板](https://github.com/users/cnedwin/projects/2)
 
@@ -14,7 +14,9 @@
 
 ## 运行示例
 
-开发新游戏可从[预览发行页](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1)下载 `egret-first-game.zip`。解压后在该目录运行 `npm install` 和 `npm start`，打开 `http://127.0.0.1:8000`。点击方块，再修改 `main.mjs` 中的 `STEP` 并刷新，就能看到每次移动的距离变化。入门工程会安装同一发行版的引擎。[预览安装与归档校验](knowledge-base/Cns/docs/release-archives.md)
+使用 Node.js 26.7.0，解压[可编辑入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-first-game.zip)，在该目录运行 `npm install` 和 `npm start`。打开 `http://127.0.0.1:8000`，点击方块，然后把 `main.mjs` 中的 `STEP` 从 32 改为 64 并刷新，方块每次移动的距离就会翻倍。
+
+要在已有网页里使用白鹭，可以[下载浏览器引擎和许可证](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-browser.zip)并选用 2D 或 3D 单文件。使用 npm 的工程可按归档地址安装模块。[7.0 发行说明与校验清单](knowledge-base/Cns/docs/release-archives.md) · [早期工程预览](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) · [旧版入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v0.1.0-preview.1/egret-first-game.zip)
 
 参与引擎本身的开发时，可以直接运行仓库里的示例。
 

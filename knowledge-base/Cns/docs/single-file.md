@@ -1,10 +1,10 @@
-# 单文件的 2D 引擎
+# 在网页中使用 2D 或 3D 单文件
 
 [English](../../en/docs/single-file.md) | 简体中文
 
-用 [`play`](play.md) 写的游戏只需要一个页面和引擎。`tools/pack-single-file.mjs` 把引擎写成一个文件，页面因此不需要 import map、包管理器和构建步骤，从文件夹直接打开和从服务器打开都可以。[llms.txt](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) 让智能体放在页面旁边的就是这个文件。
+从白鹭引擎 7.0 的[浏览器归档](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.2/egret-browser.zip)解压引擎文件、使用指南和许可证。把 `egret2d.js` 放在 HTML 页面旁即可调用 [`play`](play.md)；需要 World3D 时选用 `egret3d.js` 和 [`play3d`](play3d.md)。这两种脚本都可以从本地文件夹打开。使用 ES Module 时，从 HTTP 服务器提供对应的 `.mjs` 文件。[发行说明与 SHA-256](release-archives.md)
 
-**核对了什么，没有核对什么。** 打包工具会加载它写出的两个文件；只有每个文件都给出打包时的全部名称，并且 `play` 和音效可以工作，才算写成。把 `egret2d.js` 放在页面旁边，[play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)的三个游戏在无头 Chromium 的软件 WebGL2 上启动、绘制、接收按键和指针并发出声音，从服务器打开和从文件夹打开都试过。这些文件没有发布到任何地方：没有哪个注册表或 CDN 上有它们。没有在其他浏览器、手机和 WebGPU 上运行。
+打包工具会加载四个浏览器文件，按各入口核对导出名称、`play` 或 `play3d`，并生成一段音效采样。早期单文件验证中，[Play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)的三个游戏在无头 Chromium 的软件 WebGL2 上完成了启动、绘制、按键、指针和音源启动检查，覆盖本地文件和 HTTP 两种打开方式。
 
 ## 页面
 
