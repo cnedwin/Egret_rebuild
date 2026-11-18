@@ -4,6 +4,12 @@ English | [简体中文](../../Cns/docs/release-archives.md)
 
 The packages in this repository are private and at version 0.0.0. A release is a set of archives made from them, one for each package, attached to a GitHub release. Nothing is published to npm.
 
+## Run and edit the starter
+
+1. Download `egret-first-game.zip` from the [preview.1 release](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) and extract it into a new folder. Its `package.json` pins the engine archive in that release and esbuild 0.28.2.
+2. With Node.js 26.7.0 and npm, run `npm install`, then `npm start`. Open `http://127.0.0.1:8000`. Click the amber square or press Space. It moves 32 stage units per action.
+3. In `main.mjs`, change `STEP` from `32` to `64`, save and reload the page. The square now moves twice as far. Press Ctrl+C in the terminal to stop the local server.
+
 ## Install a release
 
 ```
@@ -42,7 +48,7 @@ node tools/verify-release.mjs --version 0.1.0-preview.1 --archives ../release
 - `tests/pack-release.test.mjs`: versions and addresses, the manifest, refusals, and the contents of all five archives.
 - On Linux with Node 26.7.0 and npm, the archives of `0.1.0-preview.1` were installed into a clean project outside the repository, and `@egret/engine`, `@egret/engine/web/game`, `@egret/project` and `@egret/spine` were imported there.
 
-Not checked: the workflow itself, which runs only when a tag is pushed; installing with pnpm or yarn; a browser page built from an installed release, which [the clean consumer check](clean-consumer.md) covers for the private archives.
+A pre-release rehearsal installed the engine from locally addressed archives in a new Windows project. Headless Edge 157 rendered the square, advanced it by 32 stage units on a click, then by 64 on Space after editing and reloading. The archive-install check uses npm. Independent newcomer, display timing and other package managers have separate acceptance. [Handoff status](https://github.com/cnedwin/Egret_rebuild/issues/93)
 
 ## Limits
 

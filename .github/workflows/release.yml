@@ -23,7 +23,8 @@ jobs:
         with:
           node-version-file: .node-version
       - run: npm install --global pnpm@11.25.0 --ignore-scripts
-      - run: node tools/setup-dev.mjs
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm build
       - name: Pack the archives
         env:
           TAG: ${{ github.ref_name }}
@@ -32,12 +33,22 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         run: node tools/verify-release.mjs --archives "$RUNNER_TEMP/release" --version "${TAG#v}"
+      - name: Pack the editable starter
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          starter="$RUNNER_TEMP/egret-first-game"
+          mkdir "$starter"
+          cp examples/starter/release/{index.html,main.mjs,package.json} LICENSE NOTICE "$starter/"
+          cd "$starter"
+          npm pkg set "dependencies.@egret/engine=https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/egret-engine-${TAG#v}.tgz"
+          zip -q "$RUNNER_TEMP/release/egret-first-game.zip" index.html main.mjs package.json LICENSE NOTICE
       - name: Attach them to the release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
           case "$TAG" in *-*) kind=--prerelease ;; *) kind=--latest ;; esac
-          gh release create "$TAG" "$RUNNER_TEMP"/release/*.tgz "$RUNNER_TEMP/release/release.json" \
+          gh release create "$TAG" "$RUNNER_TEMP"/release/*.tgz "$RUNNER_TEMP/release/release.json" "$RUNNER_TEMP/release/egret-first-game.zip" \
             --repo "$GITHUB_REPOSITORY" --verify-tag $kind --title "$TAG" \
-            --notes "Install the engine: \`npm install https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/egret-engine-${TAG#v}.tgz\`. The archives were packed by tools/pack-release.mjs from this tag and installed into a clean project before they were attached. See knowledge-base/en/docs/release-archives.md."
+            --notes "Download egret-first-game.zip, extract it, then run npm install and npm start. 安装入门示例：解压 egret-first-game.zip，运行 npm install 和 npm start。 Install the engine: \`npm install https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/egret-engine-${TAG#v}.tgz\`. The archives were packed by tools/pack-release.mjs from this tag and installed into a clean project before they were attached. See knowledge-base/en/docs/release-archives.md."
