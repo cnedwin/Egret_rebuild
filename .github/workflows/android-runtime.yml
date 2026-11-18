@@ -1,0 +1,51 @@
+name: Android Runtime SDK
+on:
+  pull_request:
+    paths: ['.cargo/config.toml', 'runtime-sdk/**', '.github/workflows/android-runtime.yml']
+  push:
+    branches: [main]
+    paths: ['.cargo/config.toml', 'runtime-sdk/**', '.github/workflows/android-runtime.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  apk:
+    name: Build and verify the arm64 debug APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      RUSTUP_TOOLCHAIN: 1.100.0
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Build the JS workspace and verify the scene
+        run: |
+          npm install --global pnpm@11.25.0 --ignore-scripts
+          pnpm install --frozen-lockfile --ignore-scripts
+          node tools/build.mjs
+          node --test runtime-sdk/scene/scene.test.mjs
+          esbuild=$(node -p "require('./examples/starter/release/package.json').devDependencies.esbuild")
+          npm install --prefix "$RUNNER_TEMP/bundler" --no-save --ignore-scripts --no-audit --no-fund "esbuild@$esbuild"
+          node runtime-sdk/scene/build.mjs --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --out "$RUNNER_TEMP/scene"
+      - name: Test the command decoder and build the native host
+        run: |
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target aarch64-linux-android
+          cargo test --locked --offline --manifest-path runtime-sdk/native/Cargo.toml
+          if [[ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" || ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" || ! -f "$ANDROID_HOME/ndk/27.2.12479018/source.properties" ]]; then
+            sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+            if [[ ! -x "$sdkmanager" ]]; then
+              sdkmanager=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | sort -V | tail -1)
+            fi
+            test -x "$sdkmanager"
+            "$sdkmanager" --sdk_root="$ANDROID_HOME" "platforms;android-35" "build-tools;35.0.0" "ndk;27.2.12479018"
+          fi
+          node runtime-sdk/android/build.mjs --scene "$RUNNER_TEMP/scene" --output "$RUNNER_TEMP/apk/egret-runtime.apk" --jdk "$JAVA_HOME_17_X64" --ndk "$ANDROID_HOME/ndk/27.2.12479018"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: egret-runtime-android-arm64-debug
+          path: ${{ runner.temp }}/apk/egret-runtime.apk
+          if-no-files-found: error
