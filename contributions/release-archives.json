@@ -4,6 +4,7 @@
     {"path":"examples/starter/release/index.html","originRole":"First-party Starter HTML page for an installed preview; independently authored with AI assistance; Apache-2.0."},
     {"path":"examples/starter/release/main.mjs","originRole":"First-party Editable Play starter for an installed preview; independently authored with AI assistance; Apache-2.0.","criticalComment":true},
     {"path":"examples/starter/release/package.json","originRole":"First-party Private consumer manifest for the versioned starter; independently authored with AI assistance; Apache-2.0."},
+    {"path": "tools/record-release-assets.mjs", "originRole": "First-party tool that verifies and records release assets from the tagged checkout; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
     {"path": "tools/pack-release.mjs", "originRole": "First-party tool that packs one installable archive for each package of the workspace; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
     {"path": "tools/verify-release.mjs", "originRole": "First-party tool that installs the release archives into a clean project and imports them; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
     {"path": "tests/pack-release.test.mjs", "originRole": "First-party tests of the release archives: manifests, contents and refusals; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
