@@ -54,6 +54,10 @@
       "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
     },
     {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerChunkCodec.java",
+      "originRole": "Java binding for encoding a bounded package asset chunk with the Android player library. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
       "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerGpu.java",
       "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
     },
@@ -80,6 +84,10 @@
     {
       "path": "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectAssetReadsTest.java",
       "originRole": "Behavior checks for packaged text and binary reads, byte and pending limits, cancellation and retirement. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/src/chunk_base64.c",
+      "originRole": "First-party Base64 encoder for bounded Android package asset reads, including the arm64 vector path and portable tail. Independently prepared with AI assistance; Apache-2.0."
     },
     {
       "path": "runtime-sdk/examples/moon-herbarium/assets/botanicals.png",
@@ -124,6 +132,10 @@
     {
       "path": "runtime-sdk/measurements/fold7-project-binary-assets.json",
       "originRole": "Measured binary integrity, rendering, in-progress read cancellation and session retirement on a Galaxy Z Fold7. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-project-chunk-throughput.json",
+      "originRole": "Continuous packaged asset throughput, per-process memory and stage timings measured on a Galaxy Z Fold7. First-party measurement prepared with AI assistance; Apache-2.0."
     },
     {
       "path": "runtime-sdk/measurements/fold7-project-player.json",

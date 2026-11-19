@@ -45,7 +45,7 @@ try {
   run(path.join(ndk, 'toolchains/llvm/prebuilt', host, 'bin', exe('clang')), [
     '--target=aarch64-linux-android26','-DEGRET_ANDROID_PLAYER','-O2','-fPIC','-shared','-Wl,--no-undefined',
     '-Wl,-z,max-page-size=16384','-Wl,--gc-sections','-Wl,-s','-I',path.join(native,'include'),
-    path.join(here,'../src/renderer_jni.c'), path.resolve(rust), '-lGLESv3','-landroid','-llog',
+    path.join(here,'../src/renderer_jni.c'), path.join(here,'../src/chunk_base64.c'), path.resolve(rust), '-lGLESv3','-landroid','-llog',
     '-ldl','-lm','-o',path.join(jni,'libegret_player.so')]);
   const source = path.join(here,'src/org/egret/runtime/player');
   const sources = dir => readdirSync(dir).filter(file => file.endsWith('.java')).sort().map(file => path.join(dir,file));

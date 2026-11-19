@@ -120,6 +120,39 @@ On a Galaxy Z Fold7, all three hosts checked the same 8,388,645-byte APK asset b
 
 Each host ran one additional scan after warm-up. The test consumer waited 100 ms after processing each block to allow process sampling. Android PSS counts each process’s proportional share of resident memory, including its runtime and rendering state. The WebView app and renderer peaks can occur at different times. The record includes the sampling intervals, RSS and post-read values. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-asset-chunks.json)
 
+### Continuous reads on Galaxy Z Fold7
+
+The player encodes each chunk in its existing arm64 library. It converts 48 input bytes at a time with NEON, handles the tail with scalar code, and returns exactly the Base64 ASCII bytes used to construct the Java string. Games continue to receive owned byte arrays.
+
+The test used the same 8 MiB + 37-byte level as the preceding acceptance run. Both sides used the same non-debuggable, unminified QA consumer with the same signing key, script and compressed asset. The baseline used the previous Java encoder. Each host ran four adjacent pairs of fresh launches with both run orders represented. Each launch completed three warm-up scans after opening, followed by nine timed scans without delays between chunks. Each scan ended at EOF. The test retained that scan’s chunks and verified every byte after stopping its timer.
+
+| Script host | Baseline (MiB/s) | Candidate (MiB/s) | Median paired change | Faster pairs |
+| --- | --- | --- | --- | --- |
+| WebView | 47.1 | 73.0 | +56.5% | 4/4 |
+| Standard V8 | 103.9 | 117.4 | +14.9% | 4/4 |
+| Trimmed V8 | 100.4 | 119.5 | +19.0% | 4/4 |
+
+The next table gives milliseconds per file in separate instrumented runs, from baseline to candidate. The request/notification residual includes transport and scheduling outside the measured native span. The raw record also separates reader and owner queue time. Each column reports its own median.
+
+| Script host | APK read | Base64 encoding and string construction | String retrieval over the bridge | JS Base64 decode | Request and notification residual |
+| --- | --- | --- | --- | --- | --- |
+| WebView | 8.1 → 7.0 | 58.7 → 27.6 | 54.7 → 45.0 | 11.6 → 9.9 | 22.1 → 21.3 |
+| Standard V8 | 6.3 → 6.4 | 47.1 → 26.9 | 16.0 → 15.6 | 8.6 → 8.2 | 8.7 → 8.6 |
+| Trimmed V8 | 5.5 → 6.6 | 45.9 → 26.8 | 13.5 → 15.9 | 7.7 → 8.1 | 7.5 → 7.3 |
+
+In each memory-test launch the game streamed and checked the same file 96 times, retaining only the current chunk. These are the largest samples across two launches per version, with WebView’s bound renderer measured separately. PSS and RSS include the runtime, renderer and application. Samples cannot resolve shorter peaks or isolate the encoder’s allocations.
+
+| Process | Highest sampled PSS (KiB) | Highest sampled RSS (KiB) |
+| --- | --- | --- |
+| WebView app | 195,961 → 196,163 | 342,016 → 342,408 |
+| WebView renderer | 71,269 → 69,969 | 180,808 → 178,792 |
+| Standard V8 app | 259,923 → 261,003 | 380,788 → 381,720 |
+| Trimmed V8 app | 257,403 → 250,639 | 378,332 → 370,772 |
+
+The largest application PSS sample was slightly higher with the new encoder for WebView and standard V8, and lower for trimmed V8. The sampling supports a throughput improvement on this device. It does not establish a general reduction in memory use.
+
+The Fold7 also exercised cancellation and view closure during the second chunk, then checked the retry and reopened game. The record lists per-launch measurements, asset identities, resource counts and pixel comparisons. [Measurement record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-chunk-throughput.json)
+
 ## Embed in an existing Activity
 
 Copy the AAR to the app module's `libs/egret-player.aar` and add `implementation files('libs/egret-player.aar')` to its Gradle dependencies. Export into a fresh directory under that module's assets. Replace the example paths with the existing module, game and bundler locations.
