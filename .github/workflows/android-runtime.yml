@@ -61,6 +61,14 @@ jobs:
           unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP/player-tools"
           node runtime-sdk/android/player/build-aar.mjs --jdk "$JAVA_HOME" --ndk "$ANDROID_HOME/ndk/27.2.12479018" \
             --rust-lib "$RUNNER_TEMP/native/aarch64-linux-android/release/libegret_runtime_native.a" --out "$RUNNER_TEMP/apk/egret-player.aar"
+          # Run the replay format contract against the same classes shipped to a consuming app.
+          replay_test="$RUNNER_TEMP/player-replay-test"
+          mkdir -p "$replay_test"
+          (cd "$replay_test" && "$JAVA_HOME/bin/jar" xf "$RUNNER_TEMP/apk/egret-player.aar" classes.jar)
+          player_cp="$replay_test/classes.jar:$ANDROID_HOME/platforms/android-35/android.jar"
+          "$JAVA_HOME/bin/javac" --release 8 -encoding UTF-8 -cp "$player_cp" -d "$replay_test" \
+            runtime-sdk/android/player/test/org/egret/runtime/player/ProjectReplayTapeTest.java
+          "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectReplayTapeTest
           # The hosted runner can miss Central artifacts which are present on Google's Central mirror.
           cat > "$RUNNER_TEMP/central-mirror.gradle" <<'GRADLE'
           settingsEvaluated { settings ->

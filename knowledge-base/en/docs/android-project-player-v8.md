@@ -47,3 +47,40 @@ On 19 November 2026, Moon Herbarium ran on one Android 17 device with an Adreno 
 All three hosts completed a prescription, scrolled the inventory, edited a name with the system keyboard and started and released the sound effect. Across hosts the same 2,038,968 stationary game pixels matched exactly after excluding the moving character’s path. Each host restored its EGL context after a background transition with matching stationary pixels, released all 14 logical textures on close and opened the game again. A separately built R8-minified trimmed-V8 consumer also opened, closed and reopened on the phone.
 
 The native replay benchmark uses a separate frozen EGR1 workload. The Moon Herbarium measurements cover the three live script hosts above. [Device record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-v8.json) · [Native replay comparison](runtime-sdk-v8-fold7.md)
+
+## Comparing the same game against native replay
+
+The generated embedded Activity offers three opt-in benchmark modes in a debuggable app. In `capture`, the game runs its first 210 submissions at a fixed logical time of `frameIndex × 1000 / 120` milliseconds. The recorder saves the submitted EGR2 command bytes and straight-RGBA page versions, including replacements and removals. It publishes the complete tape atomically in app-private storage. A capture is limited to 64 MiB and 4,096 distinct page versions. Each app retains its latest complete capture. If another capture replaces it, replay checks the requested digest before drawing.
+
+`live` runs the game at the same logical times without recording. `replay` preloads the verified tape and dispatches the same packets to the existing GLES3 renderer without starting a script VM. All lanes ignore gameplay input and hold the last frame, index 209. Recreating the EGL context redraws that frame with the restored pages. Collect timings in separate live and replay launches. Startup of replay includes reading and verifying the tape. Resident PSS after the terminal frame includes the preloaded tape.
+
+For an embedded sample exported with application ID `org.example.herbarium`, run:
+
+```sh
+adb shell am start -S -n org.example.herbarium/org.egret.example.LibraryActivity --es egret.benchmark capture
+adb shell dumpsys activity org.example.herbarium/org.egret.example.LibraryActivity
+```
+
+Read `benchmark.sha256` after `benchmark.complete` becomes true. Keep the app data between runs. Use the following commands in separate runs and read the Activity dump after each run completes. Replace `CAPTURE_SHA256` with the reported lower-case digest.
+
+```sh
+adb shell am start -S -n org.example.herbarium/org.egret.example.LibraryActivity --es egret.benchmark live --ez egret.timing true
+adb shell am start -S -n org.example.herbarium/org.egret.example.LibraryActivity --es egret.benchmark replay --es egret.replaySha256 CAPTURE_SHA256 --ez egret.timing true
+```
+
+The native lane has no script generation or script-to-host copy measurement. For a common comparison, use the dispatch-to-enqueue and submission-callback intervals. Timing starts after the warmup for each lane. A difference in these intervals includes host scheduling and queueing. GPU execution and display presentation need their own instrumentation.
+
+### Fold7 results for the fixed workload
+
+Each lane had four process-cold starts and occupied every position in the run order once. Each start skipped 30 warmup frames and recorded 180 submissions, for 2,880 samples overall. Each run uses nearest-rank p95, then the table reports medians across the four runs. PSS was read while holding the final frame and includes the attributable WebView renderer process.
+
+| Lane | Process start to first callback (ms) | Submission interval p95 (ms) | Dispatch to enqueue p95 (ms) | Resident PSS (MiB) |
+| --- | ---: | ---: | ---: | ---: |
+| System WebView | 329.5 | 15.885 | 7.221 | 222.1 |
+| Standard V8 | 247.9 | 8.830 | 2.291 | 202.0 |
+| Trimmed V8 | 244.3 | 8.788 | 2.296 | 200.4 |
+| Native command replay | 75.2 | 8.812 | 0.012 | 118.4 |
+
+Each of the 210 frames draws 81 quads. Excluding frame IDs, the recording contains 26 distinct command bodies. Native replay spends little time dispatching commands. Both embedded V8 hosts approach its p95 submission interval on this scene. The WebView dispatch-to-enqueue path warrants closer inspection. Its difference includes thread scheduling, command generation and transport; a single copy or GPU execution cannot be identified from this timing.
+
+The three script hosts produced byte-identical files of 2,483,048 bytes. All 2,073,600 pixels of the held viewport matched in all four lanes, including the moving character. For an independent visual check, 280 opaque character texel samples matched the authored atlas on each lane. Each lane restored the same image after EGL recreation, with eight total page uploads and eight releases by close. A mismatched digest was rejected in the debug app; the R8-minified release followed the ordinary game path. [Four-lane record and raw samples](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-replay.json)

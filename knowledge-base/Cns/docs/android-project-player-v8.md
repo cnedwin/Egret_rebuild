@@ -47,3 +47,40 @@ gradle -p out/herbarium-v8 assembleDebug
 三种宿主都完成配药、列表滚动、系统键盘编辑及音效的启动和释放。排除移动角色经过的区域后，各宿主的 2,038,968 个静态游戏像素逐点相同。每个游戏切后台再返回后恢复了 EGL 上下文，静态区域与切后台前一致。关闭时每个宿主均归还了 14 份逻辑纹理，随后重新打开游戏。另一个开启 R8 压缩的裁剪 V8 应用通过了独立的真机启动、关闭和再打开。
 
 原始回放基准使用独立的 EGR1 固定场景。《月下药铺》的数据仅覆盖以上三种实时脚本宿主。[本轮设备记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-v8.json) · [原生命令回放对照](runtime-sdk-v8-fold7.md)
+
+## 在同一款游戏里对照原生命令回放
+
+生成的嵌入示例可在开启调试的应用中选择三种测量模式。`capture` 让游戏按固定逻辑时间运行前 210 次提交，第 n 帧的时间为 `n × 1000 / 120` 毫秒。录制器保存已提交的 EGR2 命令字节及当时对应的未预乘 Alpha 的 RGBA 纹理页，包含纹理替换和移除。完整记录写入应用私有目录后，以原子操作发布。每份记录最多 64 MiB，最多包含 4,096 个纹理页版本。每个应用保留最近一次完整记录。若新录制替换了旧文件，回放会在绘制前核对请求的摘要。
+
+`live` 以相同逻辑时间运行游戏，跳过录制。`replay` 预加载经校验的记录，将相同命令直接提交给原有 GLES3 渲染器，全程无需启动脚本虚拟机。各模式均忽略游戏操作，完成后停在第 209 帧，便于逐像素比较。EGL 上下文重建后，渲染器恢复纹理并重绘该帧。录制、实时计时和回放计时分别启动。回放的启动时间包含读取和校验，下表使用的驻留内存也包含停在末帧时仍保留的预加载记录。
+
+以应用标识为 `org.example.herbarium` 的嵌入示例为例，先执行：
+
+```sh
+adb shell am start -S -n org.example.herbarium/org.egret.example.LibraryActivity --es egret.benchmark capture
+adb shell dumpsys activity org.example.herbarium/org.egret.example.LibraryActivity
+```
+
+等 `benchmark.complete` 为真后读取 `benchmark.sha256`，各轮之间保留应用数据。以下命令分两次执行，每次完成后读取 Activity 诊断输出。将 `CAPTURE_SHA256` 替换为实际得到的小写摘要。
+
+```sh
+adb shell am start -S -n org.example.herbarium/org.egret.example.LibraryActivity --es egret.benchmark live --ez egret.timing true
+adb shell am start -S -n org.example.herbarium/org.egret.example.LibraryActivity --es egret.benchmark replay --es egret.replaySha256 CAPTURE_SHA256 --ez egret.timing true
+```
+
+原生回放没有脚本生成或脚本到宿主的复制阶段。跨模式比较可采用从派发到进入渲染队列的耗时，以及相邻提交成功回调的间隔。各模式预热后开始采样。这两项指标包含宿主调度与队列等待。GPU 执行和屏幕呈现需要单独采集。
+
+### 固定负载的 Fold7 结果
+
+每组四次进程冷启动，轮换测试顺序，让每种模式在四个位置各出现一次。每次均预热 30 帧，再记录 180 次提交，共 2,880 个样本。先按每轮样本计算 p95，再取四轮各项指标的中位数。PSS 在持有末帧时读取，包含实际归属该应用的 WebView 渲染子进程。
+
+| 模式 | 进程启动到首次提交回调（ms） | 提交回调间隔 p95（ms） | 派发到入队 p95（ms） | 驻留 PSS（MiB） |
+| --- | ---: | ---: | ---: | ---: |
+| 系统 WebView | 329.5 | 15.885 | 7.221 | 222.1 |
+| 标准 V8 | 247.9 | 8.830 | 2.291 | 202.0 |
+| 裁剪 V8 | 244.3 | 8.788 | 2.296 | 200.4 |
+| 原生命令回放 | 75.2 | 8.812 | 0.012 | 118.4 |
+
+210 帧中每帧绘制 81 个四边形。去掉帧号后，命令内容有 26 种变化。原生回放的派发耗时很低，两个内置 V8 的提交间隔 p95 与回放接近。对这个场景，WebView 从派发到入队的时间值得优先分析。该差额同时包含线程调度、命令生成和传输，无法单独归因于某一次复制或 GPU 执行。
+
+三种脚本宿主各自录出的文件逐字节相同，大小均为 2,483,048 字节。四组末帧的 2,073,600 个像素完全一致，包括移动角色。取原始角色图集的 280 个不透明采样点逐一核对，四组采样均与原画一致。每组重建 EGL 后再次绘出相同画面，关闭时合计上传和释放纹理各 8 次。调试版拒绝摘要不符的回放，开启 R8 压缩的正式版按普通游戏路径运行。[四组实测及原始样本](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-replay.json)
