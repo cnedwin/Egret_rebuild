@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/measurements/desktop-egr2-record-reuse.json",
+      "originRole": "Independent Windows x64 encoder-level comparison of static, sparsely changing and fully changing quad records, with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-v8-command-stages.json",
+      "originRole": "Calibrated V8 worker and command-generation stage timings from a physical Galaxy Z Fold7. Independently collected with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-v8-direct-writer-pairs.json",
+      "originRole": "Preserved physical Fold7 comparison for the rejected direct-write encoder. Independently collected with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-v8-command-pairs.json",
+      "originRole": "Physical Fold7 matched-pair and native replay timings, resource and image identity results. Independently collected with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

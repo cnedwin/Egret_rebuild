@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { encodeProjectFrame } from './project-frame.mjs';
+import { createCapturedProjectEncoder, encodeProjectFrame } from './project-frame.mjs';
 
 const matrix = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
 const page = {width: 8, height: 4};
@@ -51,6 +51,38 @@ test('empty intersection clips to zero and unsupported commands, materials, atla
   assert.throws(() => encode([image], {}, new Map([[other, 5]])), /page/);
   assert.throws(() => encode([image], {}, new Map([[page, 5], [other, 5]])), /page/);
   assert.throws(() => encode(Array(4097).fill(solid)), /limit/);
+});
+
+test('captured quads follow current atlas bindings and viewport even when the command is reused', () => {
+  const writer = createCapturedProjectEncoder();
+  let id = 0;
+  function compare(input, slots = ids) {
+    const expected = encodeProjectFrame(input, ++id, slots);
+    const actual = writer.encode(input, id, slots);
+    assert.deepEqual(actual, expected);
+    return actual;
+  }
+  const input = {...frame, commands: [image, solid]};
+  compare(input);
+  compare(input).fill(255); // The consumer can overwrite even the packet which warmed the cache.
+  compare(input).fill(128);
+  compare(input);
+  compare({...input, width: 40, height: 20});
+  compare(input, new Map([[page, 12], [other, 6]]));
+  const shifted = {...region, packed: {...region.packed, x: 0}};
+  compare({...input, regions: [shifted]});
+  const larger = {width: 16, height: 8};
+  compare({...input, pages: [{source: larger}]}, new Map([[larger, 17]]));
+  compare({...input, commands: [solid, image]});
+  compare({...input, commands: []});
+  compare(input);
+  assert.throws(() => writer.encode({...input, materials: [{...material, blend: 'erase'}]}, id, ids), /material/);
+  assert.throws(() => writer.encode({...input, regions: [{...region, quarterTurn: 1}]}, id, ids), /atlas/);
+  assert.throws(() => writer.encode(input, id, new Map()), /page/);
+  writer.clear();
+  compare(input);
+  const invalid = {...input, materials: [], get regions() { throw new Error('Region read too early'); }};
+  assert.throws(() => encodeProjectFrame(invalid, id, ids), /Unsupported project material/);
 });
 
 test('a genuine engine capture retains the leased image identity when draw order and visible page set change', async () => {

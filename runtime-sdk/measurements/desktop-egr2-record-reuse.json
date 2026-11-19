@@ -1,0 +1,627 @@
+{
+  "schemaVersion": 1,
+  "platform": {
+    "os": "Windows",
+    "architecture": "x64",
+    "osKernelRelease": "10.0.26300",
+    "node": "v26.7.0",
+    "v8": "14.6.202.34-node.28"
+  },
+  "sources": {
+    "file": "runtime-sdk/scene/project-frame.mjs",
+    "hashDefinition": "Lowercase SHA-256 of the complete encoder module file bytes used by that lane. These identify JavaScript sources, not commits, packages or command packets.",
+    "baseline": {
+      "sha256": "00950692be75b7efc5ca57dd3d5d324275de92ada230dc700f443aca529e84bf",
+      "entry": "encodeProjectFrame(frame, frameId, pageIds): stateless historical encoder from the #386 source checkout"
+    },
+    "candidate": {
+      "sha256": "0c0c85ba4d6c697ff4707d14931a568b0f1f84b0d78a03e52a30635d58fe0112",
+      "entry": "One createCapturedProjectEncoder() per process; each timed invocation calls its encode(frame, frameId, pageIds) method with immutable draw commands."
+    }
+  },
+  "protocol": {
+    "scope": "Synthetic Windows desktop CPU encoding of already-built captured-frame objects. The timer surrounds only one encoder call. Android scheduling, shared-frame capture, Javet, GPU, presentation and power are outside this comparison.",
+    "unit": "microseconds",
+    "clock": "Node performance.now(), elapsed milliseconds multiplied by 1000. Per-process p50 and p95 values retain their original numeric representation.",
+    "processes": "72 fresh sequential processes; 12 paired baseline/candidate runs for each of three loads. Odd-numbered pairs run baseline first and even-numbered pairs run candidate first. The starting load rotates between pairs.",
+    "frames": "Before timing, each process builds 210 synthetic frame inputs. It encodes frame IDs 0 through 209 in a tight loop. IDs 0 through 29 warm up that process. IDs 30 through 209 provide the 180 timed samples.",
+    "aggregation": "Per process, p50 is the arithmetic mean of the two middle observations, and p95 is nearest rank. Across 12 runs in a lane, take the average of its two middle values. Positive paired reduction is faster. Percent change uses the matching baseline p95 as its denominator.",
+    "identity": "Each fresh process encodes every frame and retains its returned packet until after timing. SHA-256 covers all 210 concatenated packets, including headers and warmup frames. All baseline and candidate process digests matched within each load.",
+    "evidenceBoundary": "The original desktop receipts retained per-process p50, p95 and packet hashes. The underlying individual frame timings were not persisted. External CPU load, thread affinity and clock frequencies were not controlled. No mobile performance threshold was applied here."
+  },
+  "commonFixture": {
+    "viewport": [
+      360,
+      640
+    ],
+    "quadCount": 81,
+    "drawOrder": "Even indices draw images (41), odd indices draw rectangles (40).",
+    "geometry": "Each quad has rectangle [0,0,32,32], identity linear transform, x translation equal to its zero-based index and y translation 32. Every fourth quad has no clip; remaining quads use one shared 32×32 clip translated by [14,32].",
+    "materials": "One supported nearest-filtered material; two texture slots, 8 and 9, with 64×64 and 128×80 source pages. Each image uses one of two small atlas regions.",
+    "control": "Geometry, clip, material, opacity, resident pages, atlas coordinates, and draw order are otherwise identical across the three loads. Each modified command is a fresh frozen object with a fresh matrix; only its x translation changes."
+  },
+  "scenarios": {
+    "static": {
+      "workload": "All 81 command identities are reused across all frames.",
+      "concatenatedPacketSha256": "0c585e1a123b7e189cd9d5a87a3b68ca1196385d32ca6ca3da40a63582aed9be",
+      "summary": {
+        "baselineP50Us": 43.82499999999823,
+        "candidateP50Us": 8.074999999999832,
+        "baselineP95Us": 106.55000000000214,
+        "candidateP95Us": 15.549999999999287,
+        "improvedP95Pairs": 12,
+        "medianPairedP95ReductionPercent": 85.36951263444955
+      },
+      "pairs": [
+        {
+          "pair": 1,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 44.99999999999993,
+            "p95Us": 100.10000000000119
+          },
+          "candidate": {
+            "p50Us": 8.050000000000779,
+            "p95Us": 15.800000000002257
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 7.899999999999352,
+            "p95Us": 15.399999999999636
+          },
+          "baseline": {
+            "p50Us": 43.04999999999737,
+            "p95Us": 107.10000000000264
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 42.44999999999877,
+            "p95Us": 95.50000000000125
+          },
+          "candidate": {
+            "p50Us": 8.100000000000662,
+            "p95Us": 14.800000000001035
+          }
+        },
+        {
+          "pair": 4,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 7.900000000002905,
+            "p95Us": 15.399999999999636
+          },
+          "baseline": {
+            "p50Us": 44.10000000000025,
+            "p95Us": 102.800000000002
+          }
+        },
+        {
+          "pair": 5,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 48.34999999999923,
+            "p95Us": 120.80000000000268
+          },
+          "candidate": {
+            "p50Us": 8.300000000000196,
+            "p95Us": 15.699999999998937
+          }
+        },
+        {
+          "pair": 6,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 7.899999999999352,
+            "p95Us": 18.900000000002137
+          },
+          "baseline": {
+            "p50Us": 49.29999999999879,
+            "p95Us": 126.99999999999889
+          }
+        },
+        {
+          "pair": 7,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 43.750000000001066,
+            "p95Us": 114.00000000000077
+          },
+          "candidate": {
+            "p50Us": 8.050000000000779,
+            "p95Us": 14.800000000001035
+          }
+        },
+        {
+          "pair": 8,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 8.099999999998886,
+            "p95Us": 16.70000000000016
+          },
+          "baseline": {
+            "p50Us": 43.84999999999728,
+            "p95Us": 118.20000000000164
+          }
+        },
+        {
+          "pair": 9,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 44.2499999999999,
+            "p95Us": 99.19999999999973
+          },
+          "candidate": {
+            "p50Us": 8.099999999998886,
+            "p95Us": 17.099999999999227
+          }
+        },
+        {
+          "pair": 10,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 8.049999999999002,
+            "p95Us": 14.900000000000801
+          },
+          "baseline": {
+            "p50Us": 43.79999999999917,
+            "p95Us": 106.00000000000165
+          }
+        },
+        {
+          "pair": 11,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 41.00000000000037,
+            "p95Us": 92.79999999999688
+          },
+          "candidate": {
+            "p50Us": 8.699999999999264,
+            "p95Us": 17.600000000001614
+          }
+        },
+        {
+          "pair": 12,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 8.099999999998886,
+            "p95Us": 15.100000000000335
+          },
+          "baseline": {
+            "p50Us": 43.39999999999833,
+            "p95Us": 113.39999999999861
+          }
+        }
+      ]
+    },
+    "sparse": {
+      "workload": "Only draw index 77 is replaced each frame; add frameId + 1 to its initial x translation. The other 80 commands retain identity.",
+      "concatenatedPacketSha256": "ee63b089a0895ffef06f175f0fef5cb68b05813a4ef3b55d4a885527cb2baa7a",
+      "summary": {
+        "baselineP50Us": 44.07500000000031,
+        "candidateP50Us": 9.674999999998768,
+        "baselineP95Us": 106.85000000000144,
+        "candidateP95Us": 18.449999999999633,
+        "improvedP95Pairs": 12,
+        "medianPairedP95ReductionPercent": 82.5441075247067
+      },
+      "pairs": [
+        {
+          "pair": 1,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 43.9500000000006,
+            "p95Us": 109.89999999999611
+          },
+          "candidate": {
+            "p50Us": 9.500000000002728,
+            "p95Us": 17.600000000001614
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 9.600000000000719,
+            "p95Us": 18.499999999999517
+          },
+          "baseline": {
+            "p50Us": 42.60000000000019,
+            "p95Us": 105.09999999999309
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 43.79999999999917,
+            "p95Us": 100.40000000000049
+          },
+          "candidate": {
+            "p50Us": 9.499999999999176,
+            "p95Us": 18.599999999999284
+          }
+        },
+        {
+          "pair": 4,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 9.799999999998477,
+            "p95Us": 16.70000000000016
+          },
+          "baseline": {
+            "p50Us": 42.500000000000426,
+            "p95Us": 94.20000000000073
+          }
+        },
+        {
+          "pair": 5,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 45.20000000000124,
+            "p95Us": 117.10000000000065
+          },
+          "candidate": {
+            "p50Us": 9.69999999999871,
+            "p95Us": 18.299999999999983
+          }
+        },
+        {
+          "pair": 6,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 9.600000000002495,
+            "p95Us": 18.39999999999975
+          },
+          "baseline": {
+            "p50Us": 44.20000000000002,
+            "p95Us": 106.3000000000045
+          }
+        },
+        {
+          "pair": 7,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 44.99999999999815,
+            "p95Us": 115.6999999999968
+          },
+          "candidate": {
+            "p50Us": 9.599999999998943,
+            "p95Us": 16.70000000000016
+          }
+        },
+        {
+          "pair": 8,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 9.80000000000203,
+            "p95Us": 19.80000000000004
+          },
+          "baseline": {
+            "p50Us": 45.20000000000124,
+            "p95Us": 107.39999999999839
+          }
+        },
+        {
+          "pair": 9,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 44.50000000000287,
+            "p95Us": 120.59999999999604
+          },
+          "candidate": {
+            "p50Us": 9.700000000002262,
+            "p95Us": 16.99999999999946
+          }
+        },
+        {
+          "pair": 10,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 9.69999999999871,
+            "p95Us": 20.79999999999771
+          },
+          "baseline": {
+            "p50Us": 46.19999999999713,
+            "p95Us": 134.79999999999848
+          }
+        },
+        {
+          "pair": 11,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 43.59999999999786,
+            "p95Us": 100.20000000000095
+          },
+          "candidate": {
+            "p50Us": 9.649999999998826,
+            "p95Us": 18.700000000002603
+          }
+        },
+        {
+          "pair": 12,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 10.200000000001097,
+            "p95Us": 21.100000000000563
+          },
+          "baseline": {
+            "p50Us": 42.6499999999983,
+            "p95Us": 90.5999999999949
+          }
+        }
+      ]
+    },
+    "all": {
+      "workload": "All 81 commands are replaced each frame; add frameId + 1 to each initial x translation.",
+      "concatenatedPacketSha256": "05cb69cbebd5d2e4e31dc162064f625209e9dcb6206b5c8c7357767fae7a7727",
+      "summary": {
+        "baselineP50Us": 50.0999999999987,
+        "candidateP50Us": 53.625000000000256,
+        "baselineP95Us": 95.29999999999816,
+        "candidateP95Us": 110.6499999999997,
+        "improvedP95Pairs": 1,
+        "medianPairedP95ReductionPercent": -15.472841446715385
+      },
+      "pairs": [
+        {
+          "pair": 1,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 45.84999999999795,
+            "p95Us": 95.799999999997
+          },
+          "candidate": {
+            "p50Us": 53.20000000000036,
+            "p95Us": 116.90000000000111
+          }
+        },
+        {
+          "pair": 2,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 50.550000000001205,
+            "p95Us": 94.5999999999998
+          },
+          "baseline": {
+            "p50Us": 49.799999999997624,
+            "p95Us": 91.29999999999683
+          }
+        },
+        {
+          "pair": 3,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 49.54999999999643,
+            "p95Us": 110.10000000000275
+          },
+          "candidate": {
+            "p50Us": 55.04999999999782,
+            "p95Us": 100.70000000000334
+          }
+        },
+        {
+          "pair": 4,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 51.80000000000007,
+            "p95Us": 110.9999999999971
+          },
+          "baseline": {
+            "p50Us": 47.100000000000364,
+            "p95Us": 76.59999999999911
+          }
+        },
+        {
+          "pair": 5,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 46.90000000000083,
+            "p95Us": 109.99999999999943
+          },
+          "candidate": {
+            "p50Us": 60.499999999997556,
+            "p95Us": 134.3999999999994
+          }
+        },
+        {
+          "pair": 6,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 58.59999999999843,
+            "p95Us": 95.29999999999461
+          },
+          "baseline": {
+            "p50Us": 55.24999999999736,
+            "p95Us": 83.89999999999986
+          }
+        },
+        {
+          "pair": 7,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 50.39999999999978,
+            "p95Us": 91.20000000000061
+          },
+          "candidate": {
+            "p50Us": 54.05000000000015,
+            "p95Us": 122.80000000000513
+          }
+        },
+        {
+          "pair": 8,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 49.250000000004235,
+            "p95Us": 107.4999999999946
+          },
+          "baseline": {
+            "p50Us": 49.399999999998556,
+            "p95Us": 91.59999999999968
+          }
+        },
+        {
+          "pair": 9,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 55.79999999999785,
+            "p95Us": 94.79999999999933
+          },
+          "candidate": {
+            "p50Us": 52.24999999999724,
+            "p95Us": 127.00000000000244
+          }
+        },
+        {
+          "pair": 10,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 57.2499999999998,
+            "p95Us": 110.30000000000229
+          },
+          "baseline": {
+            "p50Us": 51.600000000000534,
+            "p95Us": 100.80000000000666
+          }
+        },
+        {
+          "pair": 11,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "baseline": {
+            "p50Us": 52.15000000000103,
+            "p95Us": 95.90000000000032
+          },
+          "candidate": {
+            "p50Us": 60.40000000000134,
+            "p95Us": 103.00000000000153
+          }
+        },
+        {
+          "pair": 12,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "candidate": {
+            "p50Us": 47.24999999999824,
+            "p95Us": 112.90000000000333
+          },
+          "baseline": {
+            "p50Us": 56.59999999999954,
+            "p95Us": 100.10000000000119
+          }
+        }
+      ]
+    }
+  }
+}
