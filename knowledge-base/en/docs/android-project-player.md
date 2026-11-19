@@ -90,9 +90,35 @@ if (frame === undefined) throw new Error('Unknown atlas frame');
 services.engine.stage.addChild(sheet.createBitmap(frame));
 ```
 
-Text and binary reads share eight request slots per view and the same 256 KiB file limit. Use the optional signal to cancel a read. Closing the view cancels its outstanding requests, and a reopened view starts with its own reader. The same manifest and path errors apply to both methods. This release carries binary results across the Android script bridge as Base64 during loading. Applications receive bytes. Build the AAR and export the game with a version supporting `readBytes`; a text-only player rejects a binary read with `NotSupportedError`.
+`readText` and `readBytes` accept files up to 256 KiB and share the view’s eight request slots with chunk readers. Use the optional signal to cancel a read. Closing the view cancels its outstanding requests, and a reopened view starts with its own reader. The same manifest and path errors apply to both methods. This release carries binary results across the Android script bridge as Base64 during loading. Applications receive bytes. Build the AAR and export the game with a version supporting `readBytes`; a text-only player rejects a binary read with `NotSupportedError`.
 
 On a Galaxy Z Fold7, each host checked all 196,613 bytes of the same packaged level and selected the lantern frame. The full 1080 × 1920 game surface matched the expected image on open and reopen. In the cancellation and close tests, the real APK stream supplied 8,192 bytes. A test wrapper then paused the second read before it requested more bytes from Android. The player interrupted the worker, the stream closed once and the byte count stayed at 8,192. Retry loaded the complete level. Closing during startup submitted zero frames and uploaded zero textures. These observations cover an active read at a controlled chunk boundary. [Fold7 binary asset results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-binary-assets.json)
+
+## Read a large packaged file
+
+Declare the file in the same `assets` list. Use `services.assets.readChunks(path, signal?)` when the game can consume the data incrementally. This also works for small and empty files. For example, a level parser that accepts bytes incrementally can use the following loop.
+
+```ts
+for await (const bytes of services.assets.readChunks('levels/world.bin', services.signal)) {
+  parser.append(bytes);
+}
+parser.finish();
+```
+
+The first pull opens the file. Each pull returns a fresh `Uint8Array` of up to 64 KiB. The final block can be shorter. End of file ends the loop, including for an empty file. Between pulls the reader holds one shared request slot and at most one native stream. A short final block closes the stream immediately. The next pull reports the end and frees the slot. It requests the next block only when the consumer calls `next()`. Await each pull before starting the next one. A simultaneous second pull rejects with `TypeError`. The bridge encodes one block at a time as Base64 and decodes it before returning the byte array. A parser that retains earlier blocks or assembles the whole file will use additional memory.
+
+Breaking out of the loop releases the reader. When calling `next()` manually, use `return()` in a `finally` block on early exit. An abort signal or view closure also releases the reader, including between pulls. To retry, create a new iterator. Reading starts at byte zero. If the installed AAR lacks chunk support, the first pull rejects with `NotSupportedError`.
+
+On a Galaxy Z Fold7, all three hosts checked the same 8,388,645-byte APK asset byte by byte. Opening, retrying after cancellation and reopening after view closure each produced 128 full blocks and a 37-byte tail. With the first block already delivered and 8,192 bytes read from the second, both cancellation and view closure interrupted the worker and closed its stream once. Initial and reopened images matched the expected 1080 × 1920 frame at every pixel.
+
+| Process | Before reading, median PSS (KiB) | During reading, highest sampled PSS (KiB) | Samples during reading |
+| --- | ---: | ---: | ---: |
+| WebView app | 203,393 | 206,267 | 22 |
+| WebView renderer | 33,438 | 41,839 | 22 |
+| Standard V8 app | 208,031 | 222,846 | 30 |
+| Trimmed V8 app | 210,492 | 224,655 | 31 |
+
+Each host ran one additional scan after warm-up. The test consumer waited 100 ms after processing each block to allow process sampling. Android PSS counts each process’s proportional share of resident memory, including its runtime and rendering state. The WebView app and renderer peaks can occur at different times. The record includes the sampling intervals, RSS and post-read values. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-asset-chunks.json)
 
 ## Embed in an existing Activity
 

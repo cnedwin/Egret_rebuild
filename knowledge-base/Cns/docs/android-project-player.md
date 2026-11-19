@@ -90,9 +90,35 @@ if (frame === undefined) throw new Error('Unknown atlas frame');
 services.engine.stage.addChild(sheet.createBitmap(frame));
 ```
 
-文本和二进制读取共用每个视图的八个请求名额，单文件均以 256 KiB 为上限。可通过可选信号取消一次读取，关闭视图会取消该会话未完成的请求，重新打开后使用独立的读取器。清单和路径错误与文本读取相同。本版在资源加载时通过 Base64 传递 Android 宿主与脚本之间的二进制结果，游戏直接使用字节数组。请用支持 `readBytes` 的版本构建 AAR 并导出游戏；仅支持文本读取的旧版播放器在调用二进制读取时返回 `NotSupportedError`。
+`readText` 和 `readBytes` 的单文件上限为 256 KiB，它们与分块读取共用每个视图的八个请求名额。可通过可选信号取消一次读取，关闭视图会取消该会话未完成的请求，重新打开后使用独立的读取器。清单和路径错误与文本读取相同。本版在资源加载时通过 Base64 传递 Android 宿主与脚本之间的二进制结果，游戏直接使用字节数组。请用支持 `readBytes` 的版本构建 AAR 并导出游戏；仅支持文本读取的旧版播放器在调用二进制读取时返回 `NotSupportedError`。
 
 在 Galaxy Z Fold7 上，三个宿主都逐字节核对了同一份 196,613 字节的包内关卡，并选中灯笼帧。首次打开和重新打开时，整幅 1080 × 1920 游戏画面均符合预期。取消与关闭测试中，真实 APK 流先返回了 8,192 字节，测试包装器随后在第二次读取向 Android 请求更多字节前暂停。播放器中断了读取线程，流只关闭一次，字节数停在 8,192。取消后重试读到了完整文件；启动中关闭的会话提交了零帧，上传了零张纹理。这组结果验证了分块读取已在进行时的行为。[Fold7 二进制资源实测](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-binary-assets.json)
+
+## 分块读取包内大文件
+
+在同一份 `assets` 清单中声明文件。游戏能边读边处理数据时，可使用 `services.assets.readChunks(path, signal?)`。小文件和空文件也能按同样的方式读取。下面的关卡解析器逐块接收数据。
+
+```ts
+for await (const bytes of services.assets.readChunks('levels/world.bin', services.signal)) {
+  parser.append(bytes);
+}
+parser.finish();
+```
+
+第一次取块时才打开文件。每次返回独立的 `Uint8Array`，最多 64 KiB，最后一块可以更短。到达文件末尾时循环结束，空文件直接结束。两次取块之间，读取器占用一个共享请求名额，最多保留一个原生文件流。遇到不足 64 KiB 的尾块时，文件流随即关闭，下一次取块会报告结束并释放名额。调用方执行 `next()` 时才会请求下一块，请等待本次取块完成再发起下一次。并行发起的第二次取块会返回 `TypeError`。宿主桥接层逐块进行 Base64 编码，脚本侧解码后再将字节数组交给游戏。解析器如果保留先前的数据块或自行拼接整个文件，还会占用额外内存。
+
+使用 `break` 提前退出循环会释放读取器。手动调用 `next()` 时，可在 `finally` 中调用 `return()` 来处理提前结束。取消信号或关闭视图也会释放读取器，在两次取块之间同样有效。重试时新建迭代器，文件会从头读取。若安装的 AAR 尚未支持分块读取，第一次取块会返回 `NotSupportedError`。
+
+在 Galaxy Z Fold7 上，三个宿主逐字节核对了同一份 8,388,645 字节的包内资源。首次打开、取消后重试和关闭视图后重开，每次都得到 128 个整块和一个 37 字节的尾块。在第一块已交付、第二块已读取 8,192 字节时，取消和关闭均成功中断了工作线程，文件流各关闭一次。首次打开和重开后的 1080 × 1920 画面逐像素符合预期。
+
+| 进程 | 读取前 PSS 中位数（KiB） | 读取中 PSS 采样最大值（KiB） | 读取中样本数 |
+| --- | ---: | ---: | ---: |
+| WebView 应用进程 | 203,393 | 206,267 | 22 |
+| WebView 渲染进程 | 33,438 | 41,839 | 22 |
+| 标准 V8 应用进程 | 208,031 | 222,846 | 30 |
+| 裁剪 V8 应用进程 | 210,492 | 224,655 | 31 |
+
+三个宿主各在预热后另做一次内存采集，测试程序每处理完一块等待 100 ms，供系统采样。Android PSS 按比例分摊进程共享的驻留内存，包含脚本宿主和渲染状态。WebView 应用与渲染进程各自的采样最大值可能出现在不同时刻。采样间隔、RSS 和读取后的数值见[真机记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-asset-chunks.json)。
 
 ## 接入已有 Activity
 

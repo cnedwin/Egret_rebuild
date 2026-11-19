@@ -123,6 +123,8 @@ final class PlayerScripts extends ScriptSession {
         @JavascriptInterface public String raster(String json) { return raster.request(json); }
         @JavascriptInterface public boolean readText(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.UTF8); }
         @JavascriptInterface public boolean readBytes(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.BYTES); }
+        @JavascriptInterface public boolean openChunks(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.CHUNKS); }
+        @JavascriptInterface public boolean nextChunk(int id) { return assetReads.nextChunk(id); }
         @JavascriptInterface public void cancelReadText(int id) { assetReads.cancel(id); }
         @JavascriptInterface public String takeTextResult(int id) { return assetReads.take(id); }
         @JavascriptInterface public void commandWords(int epoch, int[] words, double generationMs) {

@@ -35,11 +35,19 @@ declare module '@egret/android-player-project' {
     drawText(width: number, height: number, runs: readonly PlayerPaintedRun[]): ImageData2D;
   }
 
+  export interface PlayerChunkReader extends AsyncIterableIterator<Uint8Array> {
+    /** Release a reader early, including a pull that is still pending. */
+    return(value?: unknown): Promise<IteratorReturnResult<unknown>>;
+    [Symbol.asyncIterator](): PlayerChunkReader;
+  }
+
   export interface PlayerAssets {
     /** Read a UTF-8 file listed in project.json assets. A closed view cancels all outstanding reads. */
     readText(path: string, signal?: CancellationSignal): Promise<string>;
     /** Read the exact packaged bytes into a new mutable array, up to 256 KiB per file. */
     readBytes(path: string, signal?: CancellationSignal): Promise<Uint8Array>;
+    /** Pull owned blocks of at most 64 KiB from one listed file. Break or return releases the native reader. */
+    readChunks(path: string, signal?: CancellationSignal): PlayerChunkReader;
   }
 
   export interface PlayerServices {
@@ -88,6 +96,9 @@ declare module '@egret/android-player-project' {
     readText?(id: number, path: string): boolean;
     /** Shares cancellation, completion and single-use result retrieval with readText. */
     readBytes?(id: number, path: string): boolean;
+    /** Open a lazy stream and request its first block. Later pulls reuse its request ID. */
+    openChunks?(id: number, path: string): boolean;
+    nextChunk?(id: number): boolean;
     cancelReadText?(id: number): void;
     takeTextResult?(id: number): string | null;
     raster?(request: string): string;
