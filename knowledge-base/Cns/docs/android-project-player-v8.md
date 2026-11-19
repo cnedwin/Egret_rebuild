@@ -10,7 +10,7 @@
 | `standard` | V8 15.7.112.19，带 JavaScript `Intl` 和 ICU 语言数据 | 29 |
 | `trimmed` | 相同版本的 V8，构建时去掉 `Intl` 及其 ICU 数据 | 29 |
 
-游戏依赖 DOM 或优先控制下载体积时，可用系统 WebView。需要自带虚拟机，且使用 `Intl` 进行本地化格式化或排序时，选标准 V8。三种宿主均可调用 Android 字体显示中文。两种内置 V8 使用 Javet 6.0.3 的 arm64 构建。依赖版本、哈希及许可见[来源清单](../../../runtime-sdk/android/v8-provenance.json)。
+游戏依赖 DOM 或优先控制下载体积时，可用系统 WebView。需要自带虚拟机，且使用 `Intl` 进行本地化格式化或排序时，选标准 V8。三种宿主均可调用 Android 字体显示中文。两种内置 V8 使用 Javet 6.0.3 的 arm64 构建。依赖版本、哈希及许可见[来源清单](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/v8-provenance.json)。
 
 ## 构建与运行
 
@@ -46,4 +46,4 @@ gradle -p out/herbarium-v8 assembleDebug
 
 三种宿主都完成配药、列表滚动、系统键盘编辑及音效的启动和释放。排除移动角色经过的区域后，各宿主的 2,038,968 个静态游戏像素逐点相同。每个游戏切后台再返回后恢复了 EGL 上下文，静态区域与切后台前一致。关闭时每个宿主均归还了 14 份逻辑纹理，随后重新打开游戏。另一个开启 R8 压缩的裁剪 V8 应用通过了独立的真机启动、关闭和再打开。
 
-原始回放基准使用独立的 EGR1 固定场景。《月下药铺》的数据仅覆盖以上三种实时脚本宿主。[本轮设备记录](../../../runtime-sdk/measurements/fold7-project-v8.json) · [原生命令回放对照](runtime-sdk-v8-fold7.md)
+原始回放基准使用独立的 EGR1 固定场景。《月下药铺》的数据仅覆盖以上三种实时脚本宿主。[本轮设备记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-v8.json) · [原生命令回放对照](runtime-sdk-v8-fold7.md)

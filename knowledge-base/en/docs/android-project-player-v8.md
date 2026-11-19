@@ -10,7 +10,7 @@ A game exported with the [Android project player](android-project-player.md) can
 | `standard` | V8 15.7.112.19 with JavaScript `Intl` and packaged ICU locale data | 29 |
 | `trimmed` | The same V8 version built without `Intl` or its ICU data | 29 |
 
-Use the WebView build for games that rely on the DOM or need the smallest download. For a self-contained VM, choose standard when the game calls `Intl` for locale-aware formats or sorting. A game can display Chinese with all three hosts through Android's fonts. The two embedded profiles select Javet 6.0.3 arm64 artifacts. Build inputs, versions, hashes and licenses are pinned in the [source manifest](../../../runtime-sdk/android/v8-provenance.json).
+Use the WebView build for games that rely on the DOM or need the smallest download. For a self-contained VM, choose standard when the game calls `Intl` for locale-aware formats or sorting. A game can display Chinese with all three hosts through Android's fonts. The two embedded profiles select Javet 6.0.3 arm64 artifacts. Build inputs, versions, hashes and licenses are pinned in the [source manifest](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/v8-provenance.json).
 
 ## Build and run
 
@@ -46,4 +46,4 @@ On 19 November 2026, Moon Herbarium ran on one Android 17 device with an Adreno 
 
 All three hosts completed a prescription, scrolled the inventory, edited a name with the system keyboard and started and released the sound effect. Across hosts the same 2,038,968 stationary game pixels matched exactly after excluding the moving character’s path. Each host restored its EGL context after a background transition with matching stationary pixels, released all 14 logical textures on close and opened the game again. A separately built R8-minified trimmed-V8 consumer also opened, closed and reopened on the phone.
 
-The native replay benchmark uses a separate frozen EGR1 workload. The Moon Herbarium measurements cover the three live script hosts above. [Device record](../../../runtime-sdk/measurements/fold7-project-v8.json) · [Native replay comparison](runtime-sdk-v8-fold7.md)
+The native replay benchmark uses a separate frozen EGR1 workload. The Moon Herbarium measurements cover the three live script hosts above. [Device record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-v8.json) · [Native replay comparison](runtime-sdk-v8-fold7.md)
