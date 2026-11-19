@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-//! Android native executor for the opaque, nearest-sampled shared-frame profile.
+//! GLES executor for EGR1 baseline frames and EGR2 nearest-filtered project quads.
 
 #[cfg(any(test, target_os = "android"))]
 mod frame;
@@ -7,3 +7,7 @@ mod frame;
 mod gl;
 #[cfg(target_os = "android")]
 mod gles;
+#[cfg(any(test, target_os = "android"))]
+mod project_color;
+#[cfg(target_os = "android")]
+mod project_gles;

@@ -4,6 +4,8 @@
 
 开发者保留一份 TypeScript 游戏入口和资源清单，导出时由打包器选择宿主服务。项目若直接使用 DOM、浏览器图形上下文或目标平台缺少的系统服务，导出器应指出依赖所在位置与所需能力。现有 TypeScript 包 `@egret/runtime` 保留原有职责，原生 SDK 单独维护二进制接口和兼容范围。
 
+Android AAR、游戏导出与 Activity 接入方法见[Android 游戏项目播放器指南](android-project-player.md)。
+
 ## 五个平台的发布路径
 
 | 目标 | 构建产物 | 宿主与首轮验收 |

@@ -1,0 +1,179 @@
+// SPDX-License-Identifier: Apache-2.0
+package org.egret.runtime.player;
+
+import android.opengl.EGL14;
+import android.opengl.EGLContext;
+import android.opengl.GLSurfaceView;
+import android.util.Base64;
+import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.opengles.GL10;
+
+final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLContextFactory {
+    static final int MAX_FRAME_BYTES = 24 + 4096 * 64;
+    private static final int MAX_PAGE_BYTES = 64 << 20, MAX_RESIDENT_BYTES = 256 << 20;
+    private final EgretPlayerView owner;
+    private final AtomicReference<Frame> pending = new AtomicReference<>();
+    private long handle;
+    private EGLContext context;
+    private ByteBuffer commands;
+    private Map<Integer, Page> uploaded = Collections.emptyMap();
+    private int width, height;
+    volatile int contexts, uploads, releases, abandoned;
+
+    PlayerGraphics(EgretPlayerView owner) { this.owner = owner; }
+
+    // Snapshots share immutable pages. A frame always retains the page versions present
+    // when its bytes crossed the bridge, even if a later input edits a texture.
+    static final class Pages {
+        private Map<Integer, Page> current = Collections.emptyMap();
+        private int size;
+        private boolean retired;
+
+        synchronized void publish(int id, int width, int height, String encoded) {
+            if (retired) return;
+            long length = (long) width * height * 4;
+            if (id < 1 || id > 255 || width < 1 || width > 16384 || height < 1 || height > 16384
+                || length > MAX_PAGE_BYTES || encoded == null || encoded.length() != 4 * ((length + 2) / 3))
+                throw new IllegalArgumentException("Invalid RGBA page " + id);
+            Page old = current.get(id);
+            long nextSize = size + length - (old == null ? 0 : old.data.capacity());
+            if (nextSize > MAX_RESIDENT_BYTES) throw new IllegalArgumentException("Page memory budget exceeded");
+            byte[] bytes = Base64.decode(encoded, Base64.NO_WRAP);
+            if (bytes.length != length) throw new IllegalArgumentException("RGBA length mismatch");
+            Map<Integer, Page> copy = new HashMap<>(current);
+            copy.put(id, new Page(width, height, bytes));
+            current = Collections.unmodifiableMap(copy);
+            size = (int) nextSize;
+        }
+
+        synchronized void release(int id) {
+            Page old = current.get(id);
+            if (old == null) return;
+            Map<Integer, Page> copy = new HashMap<>(current);
+            copy.remove(id);
+            size -= old.data.capacity();
+            current = Collections.unmodifiableMap(copy);
+        }
+
+        synchronized Map<Integer, Page> snapshot() { return current; }
+        synchronized void close() { retired = true; current = Collections.emptyMap(); size = 0; }
+    }
+
+    static final class Page {
+        final int width, height;
+        final ByteBuffer data;
+        Page(int width, int height, byte[] bytes) {
+            this.width = width;
+            this.height = height;
+            data = ByteBuffer.allocateDirect(bytes.length);
+            data.put(bytes).flip();
+        }
+    }
+
+    static final class Frame {
+        final int epoch;
+        final byte[] bytes;
+        final Map<Integer, Page> pages;
+        Frame(int epoch, byte[] bytes, Map<Integer, Page> pages) {
+            this.epoch = epoch;
+            this.bytes = bytes;
+            this.pages = pages;
+        }
+        int id() {
+            return (bytes[4] & 255) | (bytes[5] & 255) << 8 | (bytes[6] & 255) << 16 | bytes[7] << 24;
+        }
+    }
+
+    void enqueue(Frame frame) { pending.set(frame); }
+
+    @Override public javax.microedition.khronos.egl.EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig config) {
+        return egl.eglCreateContext(display, config, EGL10.EGL_NO_CONTEXT, new int[]{0x3098, 3, EGL10.EGL_NONE});
+    }
+
+    @Override public void destroyContext(EGL10 egl, EGLDisplay display, javax.microedition.khronos.egl.EGLContext old) {
+        // Surface detach or spontaneous loss can precede the Activity's onPause.
+        // Retire the Rust allocation on the owner thread even with no EGL context current.
+        closeCurrent();
+        egl.eglDestroyContext(display, old);
+    }
+
+    @Override public void onSurfaceCreated(GL10 unused, EGLConfig config) {
+        if (handle != 0) abandon();
+        if (owner.ending) return;
+        try {
+            context = EGL14.eglGetCurrentContext();
+            handle = PlayerGpu.create();
+            if (handle == 0) throw new IllegalStateException("Cannot create GLES 3 renderer");
+            contexts++;
+        } catch (RuntimeException | LinkageError e) { owner.reportFailure(e.toString()); }
+    }
+
+    @Override public void onSurfaceChanged(GL10 unused, int width, int height) {
+        this.width = width;
+        this.height = height;
+        int epoch = owner.epoch;
+        if (handle != 0) owner.ui.post(() -> owner.surfaceReady(epoch));
+    }
+
+    @Override public void onDrawFrame(GL10 unused) {
+        Frame frame = pending.getAndSet(null);
+        if (frame == null || frame.epoch != owner.epoch || owner.ending || handle == 0) return;
+        try {
+            if (uploaded != frame.pages) {
+                for (int id : uploaded.keySet()) {
+                    if (!frame.pages.containsKey(id)) {
+                        check(PlayerGpu.release(handle, id), "release", id);
+                        releases++;
+                    }
+                }
+                for (Map.Entry<Integer, Page> entry : frame.pages.entrySet()) {
+                    int id = entry.getKey();
+                    Page page = entry.getValue();
+                    if (page == uploaded.get(id)) continue;
+                    check(PlayerGpu.upload(handle, id, page.width, page.height, page.data), "upload", id);
+                    uploads++;
+                }
+                uploaded = frame.pages;
+            }
+            if (commands == null || commands.capacity() < frame.bytes.length)
+                commands = ByteBuffer.allocateDirect(frame.bytes.length);
+            commands.clear();
+            commands.put(frame.bytes);
+            check(PlayerGpu.draw(handle, commands, 0, frame.bytes.length, width, height), "draw", frame.id());
+            owner.ui.post(() -> owner.drawn(frame.epoch, frame.id()));
+        } catch (RuntimeException | LinkageError e) { owner.reportFailure(e.toString()); }
+    }
+
+    private static void check(int status, String operation, int id) {
+        if (status != 0) throw new IllegalStateException("GLES " + operation + " failed (" + id + ", status " + status + ")");
+    }
+
+    private void abandon() {
+        PlayerGpu.destroy(handle, false);
+        handle = 0;
+        abandoned++;
+        uploaded = Collections.emptyMap();
+    }
+
+    void closeCurrent() {
+        pending.set(null);
+        commands = null;
+        if (handle == 0) return;
+        if (context == null || EGL14.EGL_NO_CONTEXT.equals(context) || !context.equals(EGL14.eglGetCurrentContext())) {
+            abandon();
+        } else {
+            for (int id : uploaded.keySet()) if (PlayerGpu.release(handle, id) == 0) releases++;
+            PlayerGpu.destroy(handle, true);
+            handle = 0;
+            uploaded = Collections.emptyMap();
+        }
+        context = null;
+    }
+}

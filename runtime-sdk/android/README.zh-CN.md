@@ -4,6 +4,8 @@
 
 此 arm64 调试 APK 用 Rust GLES3 渲染器运行共享 2D 场景。默认通过系统 WebView 运行随包发布的白鹭游戏，也可以选择内置 V8。两种脚本宿主均逐帧向原生绘制表面提交编码后的命令，回放模式直接读取固定的命令循环。所有路径使用同一图集、视口和 Rust 执行器。
 
+如需将自己的游戏打成 APK 或把游戏嵌入现有 Activity，请参阅[Android 工程播放器指南](../../knowledge-base/Cns/docs/android-project-player.md)。
+
 ## 构建
 
 安装项目规定的 Node 版本、JDK 17、Android 平台 35、SDK Build Tools 35.0.0、Android NDK r27c，以及带 `aarch64-linux-android` 目标的 Rust。将 `JAVA_HOME`、`ANDROID_HOME` 和 `ANDROID_NDK_HOME` 指向相应安装目录。Rust 工具链需带有对应版本的 `share/doc/rust/COPYRIGHT-library.html`，供分发时随包保留。先构建 JS 工作区，再通过 esbuild 0.28.2 将场景生成到新目录。
