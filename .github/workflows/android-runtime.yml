@@ -70,7 +70,10 @@ jobs:
             runtime-sdk/android/player/test/org/egret/runtime/player/{ProjectReplayTapeTest,WebViewFrameTransportTest,ProjectAssetReadsTest}.java
           "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectReplayTapeTest
           "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.WebViewFrameTransportTest
-          "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectAssetReadsTest
+          # Exercise the same JNI entry as the AAR, using the host CPU for this JVM check.
+          cc -std=c11 -O2 -shared -fPIC -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" \
+            runtime-sdk/android/src/chunk_base64.c -o "$replay_test/libegret_player.so"
+          "$JAVA_HOME/bin/java" -Djava.library.path="$replay_test" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectAssetReadsTest
           # The hosted runner can miss Central artifacts which are present on Google's Central mirror.
           cat > "$RUNNER_TEMP/central-mirror.gradle" <<'GRADLE'
           settingsEvaluated { settings ->

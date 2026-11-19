@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,7 +139,7 @@ final class ProjectAssetReads {
                 size += count;
             }
             if (size == 0 || cancelled) return null;
-            return Base64.getEncoder().encodeToString(size == block.length ? block : Arrays.copyOf(block, size));
+            return PlayerChunkCodec.encode(block, size);
         }
 
         public void run() {

@@ -259,10 +259,36 @@ public final class ProjectAssetReadsTest {
         } finally { resume.countDown(); reads.close(); }
         activeBinaryRead(false);
         activeBinaryRead(true);
+        chunkEncoding();
         chunkLifecycle();
         activeChunkRead(false);
         activeChunkRead(true);
         System.out.println("Packaged text, bytes and chunk reads, cancellation and close passed.");
+    }
+
+    private static void chunkEncoding() {
+        byte[] source = new byte[64 * 1024];
+        new java.util.Random(394).nextBytes(source);
+        int[] sizes = {0, 1, 2, 3, 4, 46, 47, 48, 49, 50, 95, 96, 97, 255, 256, 65534, 65535, 65536};
+        for (int size : sizes) {
+            byte[] prefix = java.util.Arrays.copyOf(source, size);
+            String expected = java.util.Base64.getEncoder().encodeToString(prefix);
+            check(expected.equals(PlayerChunkCodec.encode(source, size)), "Chunk encoding mismatch at " + size);
+        }
+        rejectChunkLength(source, -1);
+        rejectChunkLength(new byte[1], 2);
+        rejectChunkLength(new byte[65537], 65537);
+        try {
+            PlayerChunkCodec.encode(null, 0);
+            throw new AssertionError("Null chunk buffer accepted");
+        } catch (NullPointerException expected) { /* Null is invalid even for an empty prefix. */ }
+    }
+
+    private static void rejectChunkLength(byte[] bytes, int size) {
+        try {
+            PlayerChunkCodec.encode(bytes, size);
+            throw new AssertionError("Out-of-range chunk length accepted: " + size);
+        } catch (IllegalArgumentException expected) { /* Each byte-count limit is checked independently. */ }
     }
 
     private ProjectAssetReadsTest() {}
