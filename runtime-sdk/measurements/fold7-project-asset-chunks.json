@@ -1,0 +1,577 @@
+{
+  "fixture": {
+    "path": "levels/harbor.bin",
+    "bytes": 8388645,
+    "fnv": "5e0d25cd",
+    "sha256": "a99681d3a24dd8e55f77e002a27e4c408f1ae8f80be0f13c24831682212acf2a",
+    "checksum": "FNV-1a 32, after checking every byte by its absolute offset",
+    "headerHex": "4547423101feff00c0af80ff00ff807f",
+    "followingByte": "(73 * offset + 29 * floor(offset / 256) + 191) % 256",
+    "fullChunks": 128,
+    "chunkBytes": 65536,
+    "tailBytes": 37,
+    "zipMethod": "deflate",
+    "apkCompressedBytes": 181502
+  },
+  "environment": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "webview": "com.google.android.webview, 157.0.8103.50",
+    "systemGles": "GLES: Qualcomm, Adreno (TM) 830, OpenGL ES 3.2 V@0800.64.8",
+    "graphicsBackend": "Android native GLES3",
+    "hardware": "Samsung Galaxy Z Fold7"
+  },
+  "method": {
+    "reader": "Production AAR. The QA consumer validates each yielded Uint8Array and its length without retaining previous chunks. The fifth asset byte selects the lantern atlas frame.",
+    "races": "The app-side test wrapper decorates the real AssetManager stream only for two controlled operations. After yielding one complete chunk and consuming another real 8192 bytes, the wrapper waits inside read number 10. Only SDK cancellation, underlying close or the 40 s test timeout can release it. The initial, memory, retry and reopened scans read from the original AssetManager input stream without a stream wrapper.",
+    "pixels": "Android PixelCopy of the game SurfaceView, compared channel by channel to the known 3-color image after initial load and after reopening.",
+    "memory": "One warmed full-file scan per host after startup, first render and PixelCopy. The consumer waits 100 ms after validating each chunk to create a sampling window. dumpsys meminfo --local, in KiB, sampled per process. Host PID and any isolated renderer bindings are checked at both ends. Only sample intervals wholly within the application-reported streaming window count. Baseline and post are scan-free; their medians use five samples each. Each peak is the maximum observed sample for that metric and process. The scan is intentionally paced and does not measure throughput. Values include live renderer, JS VM, allocators and the Android/Chromium implementation; processes may share RSS.",
+    "evidenceReuse": "The WebView reading window completed before another task temporarily took the display. The installed APK hash and fixture were rechecked before lifecycle tests resumed. The paused Android surface may re-upload on resume; its release accounting is recorded as observed."
+  },
+  "hosts": [
+    {
+      "host": "webview",
+      "vmVersion": null,
+      "conditions": {
+        "wired": true,
+        "batteryTempTenthsC": 329,
+        "thermalStatus": 0
+      },
+      "aarSha256": "3f211f93333396fb0774e69292081600bfd20985b631d8ee53bf7cb1559b2c92",
+      "apkSha256": "a0e3dfbfcbd12b0bf24624e310dcaca7b561d85fa889fe5f103db4da58f349d3",
+      "apkBytes": 1949356,
+      "payload": {
+        "firstOpen": {
+          "event": "selected",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        },
+        "retry": {
+          "event": "retry",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        },
+        "reopen": {
+          "event": "selected",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        }
+      },
+      "missing": [
+        {
+          "path": "levels/missing.bin",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.bin",
+          "error": "NotFoundError"
+        }
+      ],
+      "cancellation": {
+        "error": "AbortError",
+        "calls": 10,
+        "bytesReturned": 73728,
+        "closedCount": 1,
+        "interrupted": true,
+        "timedOut": false
+      },
+      "closeDuringLoading": {
+        "calls": 10,
+        "bytesReturned": 73728,
+        "closedCount": 1,
+        "interrupted": true,
+        "timedOut": false,
+        "events": [
+          "opening",
+          "openingFirst",
+          "openingRejected/AbortError",
+          "closed"
+        ],
+        "ready": false,
+        "frames": 0,
+        "uploads": 0
+      },
+      "lifecycle": {
+        "countsOrder": [
+          "uploads",
+          "releases",
+          "abandoned"
+        ],
+        "regular": [
+          2,
+          2,
+          0
+        ],
+        "unready": [
+          0,
+          0,
+          0
+        ],
+        "unchangedOldEventsAfterReopen": true,
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      },
+      "surfacePixels": {
+        "width": 1080,
+        "height": 1920,
+        "comparedPerImage": 2073600,
+        "initialDifferences": 0,
+        "reopenedDifferences": 0,
+        "rgbaSha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10"
+      },
+      "memory": {
+        "confirmedBoundRendererCount": 1,
+        "windowMs": 13514,
+        "baseline": {
+          "samples": 5,
+          "windowMs": 2218,
+          "medianIntervalMs": 469.75,
+          "maxIntervalMs": 488.5,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 203393,
+                "max": 203957,
+                "last": 203957
+              },
+              "rssKiB": {
+                "median": 370060,
+                "max": 370624,
+                "last": 370624
+              }
+            },
+            "boundRenderer1": {
+              "pssKiB": {
+                "median": 33438,
+                "max": 33822,
+                "last": 33822
+              },
+              "rssKiB": {
+                "median": 157284,
+                "max": 157668,
+                "last": 157668
+              }
+            }
+          }
+        },
+        "reading": {
+          "samples": 22,
+          "windowMs": 13032,
+          "medianIntervalMs": 607,
+          "maxIntervalMs": 633.5,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 183497,
+                "max": 206267,
+                "last": 182069
+              },
+              "rssKiB": {
+                "median": 351204,
+                "max": 373036,
+                "last": 350664
+              }
+            },
+            "boundRenderer1": {
+              "pssKiB": {
+                "median": 38074,
+                "max": 41839,
+                "last": 41824
+              },
+              "rssKiB": {
+                "median": 162156,
+                "max": 167416,
+                "last": 167400
+              }
+            }
+          }
+        },
+        "after": {
+          "samples": 5,
+          "windowMs": 2224,
+          "medianIntervalMs": 475.75,
+          "maxIntervalMs": 481,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 184587,
+                "max": 185131,
+                "last": 185131
+              },
+              "rssKiB": {
+                "median": 353180,
+                "max": 353724,
+                "last": 353724
+              }
+            },
+            "boundRenderer1": {
+              "pssKiB": {
+                "median": 42884,
+                "max": 43245,
+                "last": 43245
+              },
+              "rssKiB": {
+                "median": 168940,
+                "max": 169300,
+                "last": 169300
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "host": "standard",
+      "vmVersion": "15.7.112.19",
+      "conditions": {
+        "wired": true,
+        "batteryTempTenthsC": 327,
+        "thermalStatus": 0
+      },
+      "aarSha256": "995acb74714576b458b816f136c09056c0794a7a119195f206690579b306b172",
+      "apkSha256": "a377189d5616602f0626bc43378fb937b4876c5584b7d16a512e37d9b945bc81",
+      "apkBytes": 72829323,
+      "payload": {
+        "firstOpen": {
+          "event": "selected",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        },
+        "retry": {
+          "event": "retry",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        },
+        "reopen": {
+          "event": "selected",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        }
+      },
+      "missing": [
+        {
+          "path": "levels/missing.bin",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.bin",
+          "error": "NotFoundError"
+        }
+      ],
+      "cancellation": {
+        "error": "AbortError",
+        "calls": 10,
+        "bytesReturned": 73728,
+        "closedCount": 1,
+        "interrupted": true,
+        "timedOut": false
+      },
+      "closeDuringLoading": {
+        "calls": 10,
+        "bytesReturned": 73728,
+        "closedCount": 1,
+        "interrupted": true,
+        "timedOut": false,
+        "events": [
+          "opening",
+          "openingFirst",
+          "openingRejected/AbortError",
+          "closed"
+        ],
+        "ready": false,
+        "frames": 0,
+        "uploads": 0
+      },
+      "lifecycle": {
+        "countsOrder": [
+          "uploads",
+          "releases",
+          "abandoned"
+        ],
+        "regular": [
+          1,
+          1,
+          0
+        ],
+        "unready": [
+          0,
+          0,
+          0
+        ],
+        "unchangedOldEventsAfterReopen": true,
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      },
+      "surfacePixels": {
+        "width": 1080,
+        "height": 1920,
+        "comparedPerImage": 2073600,
+        "initialDifferences": 0,
+        "reopenedDifferences": 0,
+        "rgbaSha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10"
+      },
+      "memory": {
+        "confirmedBoundRendererCount": 0,
+        "windowMs": 14892,
+        "baseline": {
+          "samples": 5,
+          "windowMs": 1810,
+          "medianIntervalMs": 395.75,
+          "maxIntervalMs": 401.5,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 208031,
+                "max": 208151,
+                "last": 208151
+              },
+              "rssKiB": {
+                "median": 342000,
+                "max": 342124,
+                "last": 342124
+              }
+            }
+          }
+        },
+        "reading": {
+          "samples": 30,
+          "windowMs": 14474,
+          "medianIntervalMs": 491,
+          "maxIntervalMs": 523.5,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 211030,
+                "max": 222846,
+                "last": 199670
+              },
+              "rssKiB": {
+                "median": 345920,
+                "max": 357744,
+                "last": 334600
+              }
+            }
+          }
+        },
+        "after": {
+          "samples": 5,
+          "windowMs": 1729,
+          "medianIntervalMs": 374.5,
+          "maxIntervalMs": 395.5,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 200422,
+                "max": 200505,
+                "last": 200505
+              },
+              "rssKiB": {
+                "median": 335352,
+                "max": 335436,
+                "last": 335436
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "host": "trimmed",
+      "vmVersion": "15.7.112.19",
+      "conditions": {
+        "wired": true,
+        "batteryTempTenthsC": 326,
+        "thermalStatus": 0
+      },
+      "aarSha256": "26877dc4f533bfd1f4fb710cf61bc5af319698495b747d47a05831caeb11c931",
+      "apkSha256": "883fad604a37e37a17c122f4f963b0b1d4851000d464eaa6503093b203161b04",
+      "apkBytes": 64991594,
+      "payload": {
+        "firstOpen": {
+          "event": "selected",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        },
+        "retry": {
+          "event": "retry",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        },
+        "reopen": {
+          "event": "selected",
+          "bytes": 8388645,
+          "chunks": 129,
+          "tail": 37,
+          "frame": "lantern",
+          "fingerprint": "5e0d25cd"
+        }
+      },
+      "missing": [
+        {
+          "path": "levels/missing.bin",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.bin",
+          "error": "NotFoundError"
+        }
+      ],
+      "cancellation": {
+        "error": "AbortError",
+        "calls": 10,
+        "bytesReturned": 73728,
+        "closedCount": 1,
+        "interrupted": true,
+        "timedOut": false
+      },
+      "closeDuringLoading": {
+        "calls": 10,
+        "bytesReturned": 73728,
+        "closedCount": 1,
+        "interrupted": true,
+        "timedOut": false,
+        "events": [
+          "opening",
+          "openingFirst",
+          "openingRejected/AbortError",
+          "closed"
+        ],
+        "ready": false,
+        "frames": 0,
+        "uploads": 0
+      },
+      "lifecycle": {
+        "countsOrder": [
+          "uploads",
+          "releases",
+          "abandoned"
+        ],
+        "regular": [
+          1,
+          1,
+          0
+        ],
+        "unready": [
+          0,
+          0,
+          0
+        ],
+        "unchangedOldEventsAfterReopen": true,
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      },
+      "surfacePixels": {
+        "width": 1080,
+        "height": 1920,
+        "comparedPerImage": 2073600,
+        "initialDifferences": 0,
+        "reopenedDifferences": 0,
+        "rgbaSha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10"
+      },
+      "memory": {
+        "confirmedBoundRendererCount": 0,
+        "windowMs": 14967,
+        "baseline": {
+          "samples": 5,
+          "windowMs": 1748,
+          "medianIntervalMs": 376.5,
+          "maxIntervalMs": 389,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 210492,
+                "max": 211252,
+                "last": 211252
+              },
+              "rssKiB": {
+                "median": 343856,
+                "max": 344616,
+                "last": 344616
+              }
+            }
+          }
+        },
+        "reading": {
+          "samples": 31,
+          "windowMs": 14876,
+          "medianIntervalMs": 488.25,
+          "maxIntervalMs": 503.5,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 207928,
+                "max": 224655,
+                "last": 202409
+              },
+              "rssKiB": {
+                "median": 342164,
+                "max": 358928,
+                "last": 336700
+              }
+            }
+          }
+        },
+        "after": {
+          "samples": 5,
+          "windowMs": 1743,
+          "medianIntervalMs": 385.25,
+          "maxIntervalMs": 393,
+          "processes": {
+            "application": {
+              "pssKiB": {
+                "median": 202812,
+                "max": 202900,
+                "last": 202900
+              },
+              "rssKiB": {
+                "median": 337100,
+                "max": 337188,
+                "last": 337188
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "exportedGameSha256": "f6f1e0429712771512dc6a6a81b85bb16405767dcdff2d8eb74fb6f9735cdff6",
+  "runtimeSourceSha256": {
+    "runtime-sdk/project/player-text-assets.mjs": "2cb890a96d484a2e0ee38903ff950dd8858739cbee145193cd345d91ca370f47",
+    "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerScripts.java": "9f79d844ce62eaf07a173887e577ad64e8312431f4496ad019e4a4758c35a61e",
+    "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectAssetReads.java": "f9e0ef2fb8168ab16d2ffab8cc716d553476b67adacc9aab429b707f7a307a4e",
+    "runtime-sdk/android/player/v8/org/egret/runtime/player/JavetProjectScripts.java": "79eec7cd60037fb1dc1fc2ffc43b2ac6415f3ec0baed29c7bed082d458576445"
+  }
+}

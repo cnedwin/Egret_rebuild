@@ -59,6 +59,131 @@ public final class ProjectAssetReadsTest {
         } finally { release.countDown(); reads.close(); }
     }
 
+    private static void chunkLifecycle() throws Exception {
+        final int chunk = 64 * 1024;
+        byte[] bytes = new byte[5 * chunk + 7];
+        for (int i = 0; i < bytes.length; i++) bytes[i] = (byte)(i * 13 + i / chunk);
+        int[] opens = {0}, consumed = {0};
+        java.util.concurrent.atomic.AtomicInteger closes = new java.util.concurrent.atomic.AtomicInteger();
+        LinkedBlockingQueue<Runnable> posts = new LinkedBlockingQueue<>();
+        String[] status = {null};
+        ProjectAssetReads reads = new ProjectAssetReads(path -> {
+            opens[0]++;
+            if ("missing".equals(path)) throw new FileNotFoundException();
+            if ("broken".equals(path)) return new java.io.FilterInputStream(new ByteArrayInputStream(bytes)) {
+                int remaining = chunk;
+                @Override public int read(byte[] dst, int offset, int length) throws java.io.IOException {
+                    if (remaining == 0) throw new java.io.IOException("Second chunk failed");
+                    int count = super.read(dst, offset, Math.min(length, remaining));
+                    remaining -= count;
+                    return count;
+                }
+                @Override public void close() throws java.io.IOException { super.close(); closes.incrementAndGet(); }
+            };
+            int size = "empty".equals(path) ? 0 : "exact".equals(path) ? chunk : bytes.length;
+            return new ByteArrayInputStream(bytes, 0, size) {
+                @Override public synchronized int read(byte[] dst, int offset, int length) {
+                    int n = super.read(dst, offset, Math.min(length, 1309));
+                    if (n > 0) consumed[0] += n;
+                    return n;
+                }
+                @Override public void close() { closes.incrementAndGet(); }
+            };
+        }, posts::add, (id, error) -> status[0] = id + ":" + error);
+        try {
+            check(reads.start(1, "large", ProjectAssetReads.Format.CHUNKS), "Cannot start stream");
+            for (int offset = 0; offset < bytes.length; offset += chunk) {
+                if (offset > 0) check(reads.nextChunk(1), "Cannot pull another chunk");
+                check(!reads.nextChunk(1), "Concurrent pull was accepted");
+                next(posts);
+                check("1:".equals(status[0]), "Chunk status mismatch");
+                check(!reads.nextChunk(1), "Allowed pull before consumer took result");
+                byte[] actual = java.util.Base64.getDecoder().decode(reads.take(1));
+                int end = Math.min(bytes.length, offset + chunk);
+                check(java.util.Arrays.equals(actual, java.util.Arrays.copyOfRange(bytes, offset, end)), "Bad chunk");
+                check(consumed[0] == end && opens[0] == 1 && reads.take(1) == null, "Read ahead or reopened");
+            }
+            check(reads.nextChunk(1), "EOF pull refused");
+            next(posts);
+            check("1:eof".equals(status[0]) && reads.take(1) == null && !reads.nextChunk(1), "EOF mismatch");
+            check(closes.get() == 1, "Completed stream did not close exactly once");
+            for (String path : new String[]{"empty","exact","missing"}) {
+                check(reads.start(1, path, ProjectAssetReads.Format.CHUNKS), "Terminal stream leaked its slot");
+                next(posts);
+                if ("exact".equals(path)) {
+                    check(java.util.Base64.getDecoder().decode(reads.take(1)).length == chunk, "Incorrect exact chunk");
+                    check(reads.nextChunk(1), "Missing exact-sized EOF");
+                    next(posts);
+                }
+                check(("missing".equals(path) ? "1:NotFoundError" : "1:eof").equals(status[0]), "Wrong terminal status");
+            }
+            int beforeFailure = closes.get();
+            check(reads.start(1, "broken", ProjectAssetReads.Format.CHUNKS), "Broken stream refused");
+            next(posts);
+            check(reads.take(1) != null && reads.nextChunk(1), "Unable to pull failing chunk");
+            next(posts);
+            check("1:Error".equals(status[0]) && reads.take(1) == null && closes.get() == beforeFailure + 1,
+                "Failed stream retained a result or an open input");
+            for (int id = 1; id <= 8; id++) {
+                check(reads.start(id, "large", ProjectAssetReads.Format.CHUNKS), "Shared budget too small");
+                next(posts);
+                check(reads.take(id) != null, "Idle reader missing first chunk");
+            }
+            check(!reads.start(9, "large", ProjectAssetReads.Format.BYTES), "Idle streams bypassed shared budget");
+            reads.cancel(3);
+            check(reads.start(3, "empty", ProjectAssetReads.Format.BYTES), "Cannot reuse early-return slot");
+            next(posts);
+            check("".equals(reads.take(3)), "Retry broke whole-file ABI");
+            int beforeClose = closes.get();
+            reads.close();
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+            while (closes.get() < beforeClose + 7 && System.nanoTime() < deadline) Thread.sleep(2);
+            check(closes.get() == beforeClose + 7, "Session leaked idle streams");
+        } finally { reads.close(); }
+    }
+
+    /** The gate is inside a read on the second requested chunk of the same stream. */
+    private static void activeChunkRead(boolean close) throws Exception {
+        final int chunk = 64 * 1024;
+        CountDownLatch inside = new CountDownLatch(1), release = new CountDownLatch(1), closed = new CountDownLatch(1);
+        LinkedBlockingQueue<Runnable> posts = new LinkedBlockingQueue<>();
+        ProjectAssetReads reads = new ProjectAssetReads(path -> {
+            if ("retry".equals(path)) return new ByteArrayInputStream(new byte[]{1});
+            return new java.io.InputStream() {
+                int position;
+                @Override public int read() { throw new AssertionError("Expected block read"); }
+                @Override public int read(byte[] dst, int offset, int length) throws java.io.IOException {
+                    if (position == chunk + 8192) {
+                        inside.countDown();
+                        try { release.await(); }
+                        catch (InterruptedException e) { throw new java.io.InterruptedIOException(); }
+                        return -1;
+                    }
+                    position += length;
+                    return length;
+                }
+                @Override public void close() { closed.countDown(); }
+            };
+        }, posts::add, (id, error) -> check(error.isEmpty(), "Unexpected completion after cancellation"));
+        try {
+            check(reads.start(1, "gated", ProjectAssetReads.Format.CHUNKS), "Gated stream refused");
+            next(posts);
+            check(reads.take(1) != null && reads.nextChunk(1), "Second chunk did not start");
+            check(inside.await(5, TimeUnit.SECONDS), "Second chunk did not enter read");
+            check(reads.start(2, "queued", ProjectAssetReads.Format.CHUNKS), "Queued stream refused");
+            if (close) reads.close();
+            else { reads.cancel(2); reads.cancel(1); }
+            check(closed.await(5, TimeUnit.SECONDS), "Active stream not released after interruption");
+            check(reads.take(1) == null && reads.take(2) == null, "Cancelled bytes escaped");
+            if (!close) {
+                check(reads.start(1, "retry", ProjectAssetReads.Format.CHUNKS), "Retry refused");
+                next(posts);
+                check("AQ==".equals(reads.take(1)), "Retry did not restart at offset zero");
+            }
+            check(posts.isEmpty(), "Cancelled request emitted a stale callback");
+        } finally { release.countDown(); reads.close(); }
+    }
+
     public static void main(String[] args) throws Exception {
         LinkedBlockingQueue<Runnable> posts = new LinkedBlockingQueue<>();
         CountDownLatch entered = new CountDownLatch(1), resume = new CountDownLatch(1);
@@ -134,7 +259,10 @@ public final class ProjectAssetReadsTest {
         } finally { resume.countDown(); reads.close(); }
         activeBinaryRead(false);
         activeBinaryRead(true);
-        System.out.println("Packaged text and binary reads, cancellation and close passed.");
+        chunkLifecycle();
+        activeChunkRead(false);
+        activeChunkRead(true);
+        System.out.println("Packaged text, bytes and chunk reads, cancellation and close passed.");
     }
 
     private ProjectAssetReadsTest() {}

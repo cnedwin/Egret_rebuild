@@ -114,6 +114,10 @@
       "originRole": "Moon Herbarium game content and presentation for the shared Android player. Independently prepared with AI assistance; Apache-2.0."
     },
     {
+      "path": "runtime-sdk/measurements/fold7-project-asset-chunks.json",
+      "originRole": "Fold7 acceptance record for streamed packaged assets in three Android script hosts. Independent first-party measurement; Apache-2.0."
+    },
+    {
       "path": "runtime-sdk/measurements/fold7-project-atlas.json",
       "originRole": "Measured Galaxy Z Fold7 pixel, replay and resource observations for packed atlas frames. First-party test artwork and measurements; Apache-2.0."
     },
@@ -144,6 +148,10 @@
     {
       "path": "runtime-sdk/project/android-player-project.d.ts",
       "originRole": "Egret Android game-script adapter, declarations and lifecycle contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/player-chunks.test.mjs",
+      "originRole": "JavaScript regression tests for incremental packaged asset reads, session ownership and cancellation. First-party contribution prepared with AI assistance; Apache-2.0."
     },
     {
       "path": "runtime-sdk/project/player-project.mjs",

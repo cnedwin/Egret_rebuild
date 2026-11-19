@@ -217,6 +217,8 @@ public final class JavetProjectScripts extends ScriptSession {
         @V8Function public String raster(String json) { return raster.request(json); }
         @V8Function public boolean readText(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.UTF8); }
         @V8Function public boolean readBytes(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.BYTES); }
+        @V8Function public boolean openChunks(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.CHUNKS); }
+        @V8Function public boolean nextChunk(int id) { return assetReads.nextChunk(id); }
         @V8Function public void cancelReadText(int id) { assetReads.cancel(id); }
         @V8Function public String takeTextResult(int id) { return assetReads.take(id); }
         @V8Function public void edit(String initial) { requestEdit(initial); }
