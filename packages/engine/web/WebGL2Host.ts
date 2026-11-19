@@ -41,7 +41,7 @@ import {
 import { PreparedBatchScratch2D } from '../rendering/preparedBatches2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
-import { decodeSharedSRGBByte } from '../rendering/sharedColor2D.js';
+import { decodeSharedSRGBByte, sharedPageLevelLayout2D, sharedPageChainBytes2D } from '../rendering/sharedColor2D.js';
 import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { runOwnedPreparationScope } from '../rendering/ownedPreparationFailure2D.js';
 import {
@@ -137,6 +137,8 @@ interface Page {
   readonly generation: number;
   /** Whether the page is one opaque white pixel, as the page of every shape is: each sample of it is 1. */
   readonly white: boolean;
+  /** Levels the texture holds: 1, or the page and each smaller copy of it. */
+  readonly levels: number;
   ready: boolean;
   pins: number;
 }
@@ -217,7 +219,15 @@ interface UploadControl {
   failure: Error | undefined;
 }
 type UploadWrite =
-  | { kind: 'page'; page: Page; pixels: Uint8Array<ArrayBuffer>; row: number }
+  | {
+      kind: 'page';
+      page: Page;
+      pixels: Uint8Array<ArrayBuffer>;
+      row: number;
+      level: number;
+      width: number;
+      height: number;
+    }
   | {
       kind: 'buffer';
       target: number;
@@ -1271,11 +1281,16 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             )
               throw glFailure('WEBGL2_CONTEXT_LIMIT');
             const projectionPlan = {
-              views: frame.pages.map(({ source: image }) => ({
-                image,
-                region: { x: 0, y: 0, width: image.width, height: image.height },
-                byteLength: image.byteLength
-              })),
+              views: frame.pages.map(({ source: image }, index) => {
+                const levels = prepared.pageLevels?.[index] ?? 1;
+                return {
+                  image,
+                  region: { x: 0, y: 0, width: image.width, height: image.height },
+                  byteLength:
+                    levels === 1 ? image.byteLength : sharedPageChainBytes2D(image.width, image.height, levels),
+                  levels
+                };
+              }),
               commandViews: [],
               projectionBytes: prepared.pageBytes,
               scratchBytes: 0
@@ -1290,7 +1305,13 @@ class SharedGLHost implements SharedLayerWebGL2Host {
               hits = new Map<number, Page>();
             const trackPage = (index: number): void => {
               const hit = this.pages.get(projectionPlan.views[index]!.image);
-              if (hit?.ready && hit.generation === this.generation && hit.native.outcome === 'owned')
+              // A page kept without the smaller copies a draw now samples is uploaded again, with them.
+              if (
+                hit?.ready &&
+                hit.generation === this.generation &&
+                hit.native.outcome === 'owned' &&
+                hit.levels >= (projectionPlan.views[index]!.levels ?? 1)
+              )
                 hits.set(index, hit);
               else cold.add(index);
             };
@@ -1703,20 +1724,36 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     for (let index = 0; index < record.projections.length; index++) {
       const pixels = record.projections[index];
       if (!pixels) continue;
-      const source = record.storage.projectionPlan.views[index]!.image,
-        owner = native.create('Texture', source.byteLength, undefined, record);
+      const view = record.storage.projectionPlan.views[index]!,
+        source = view.image,
+        levels = view.levels ?? 1,
+        owner = native.create('Texture', view.byteLength, undefined, record);
       const page: Page = {
         source,
         native: owner,
         generation: record.generation,
         white: whitePixel(source, pixels),
+        levels,
         ready: false,
         pins: 1
       };
       record.pages.push(page);
       work.layout.pageTextures.set(index, page);
-      native.texture(owner, source.width, source.height, false);
-      work.writes.push({ kind: 'page', page, pixels, row: 0 });
+      native.texture(owner, source.width, source.height, false, levels);
+      for (const [level, { width, height, offset }] of sharedPageLevelLayout2D(
+        source.width,
+        source.height,
+        levels
+      ).entries())
+        work.writes.push({
+          kind: 'page',
+          page,
+          pixels: pixels.subarray(offset, offset + 4 * width * height),
+          row: 0,
+          level,
+          width,
+          height
+        });
     }
     const buffer = (
       target: number,
@@ -1771,20 +1808,19 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       while (work.writeIndex < work.writes.length) {
         const write = work.writes[work.writeIndex]!;
         if (write.kind === 'page') {
-          const { source } = write.page,
-            stride = source.width * 4;
+          const stride = write.width * 4;
           if (stride > 4194304) throw glFailure('WEBGL2_FRAME_BUDGET');
-          const rows = Math.min(source.height - write.row, Math.floor(remaining / stride));
+          const rows = Math.min(write.height - write.row, Math.floor(remaining / stride));
           if (rows === 0) break;
           gl.bindTexture(gl.TEXTURE_2D, write.page.native.value as WebGLTexture);
           const bytes = rows * stride,
             offset = write.row * stride;
           gl.texSubImage2D(
             gl.TEXTURE_2D,
-            0,
+            write.level,
             0,
             write.row,
-            source.width,
+            write.width,
             rows,
             gl.RGBA,
             gl.UNSIGNED_BYTE,
@@ -1792,7 +1828,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
           );
           write.row += rows;
           remaining -= bytes;
-          if (write.row === source.height) work.writeIndex++;
+          if (write.row === write.height) work.writeIndex++;
         } else {
           const bytes = Math.min(write.data.byteLength - write.cursor, Math.floor(remaining / write.unit) * write.unit);
           if (bytes === 0) break;
@@ -2019,20 +2055,38 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       for (let index = 0; index < p.projections.length; index++) {
         const pixels = p.projections[index];
         if (!pixels) continue;
-        const source = p.storage.projectionPlan.views[index]!.image,
-          owner = native.create('Texture', source.byteLength, undefined, record);
+        const view = p.storage.projectionPlan.views[index]!,
+          source = view.image,
+          levels = view.levels ?? 1,
+          owner = native.create('Texture', view.byteLength, undefined, record);
         const page: Page = {
           source,
           native: owner,
           generation: this.generation,
           white: whitePixel(source, pixels),
+          levels,
           ready: false,
           pins: 1
         };
         record.pages.push(page);
         pageTextures.set(index, page);
-        native.texture(owner, source.width, source.height, false);
-        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, source.width, source.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        native.texture(owner, source.width, source.height, false, levels);
+        for (const [level, { width, height, offset }] of sharedPageLevelLayout2D(
+          source.width,
+          source.height,
+          levels
+        ).entries())
+          gl.texSubImage2D(
+            gl.TEXTURE_2D,
+            level,
+            0,
+            0,
+            width,
+            height,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            pixels.subarray(offset, offset + 4 * width * height)
+          );
       }
       if (vertex >= 0) {
         gl.bindBuffer(gl.ARRAY_BUFFER, record.leases[vertex]!.handle.resource.value as WebGLBuffer);

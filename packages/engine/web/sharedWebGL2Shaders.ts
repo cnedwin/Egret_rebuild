@@ -150,6 +150,65 @@ void main() { fragmentColor = tinted(vec4(1.0)); }
 `;
 
 /**
+ * A draw whose material asks for smaller copies reads them when it is drawn smaller than its texels: `rho` is
+ * how many texels one pixel spans. Level 0 is the sample as it is without them; a deeper level is read with the
+ * same bilinear rule on that level's texels, and two levels next to each other are blended. Word 9 of the
+ * block is the deepest level the draw may read and word 10 how it finds its texels there: by the size of the
+ * level (1), or, for a region on a page shared with others, by halving every edge of the region (0).
+ */
+const MIPMAPPED = `vec4 levelPage(vec2 q, int level, uvec2 modes) {
+    ivec2 size = max(ivec2(1), ivec2(pageOfRegion.yz) >> level);
+    vec2 shifted = q * vec2(size) / vec2(pageOfRegion.yz) - vec2(0.5);
+    ivec2 base = ivec2(floor(shifted));
+    vec2 weight = fract(shifted);
+    vec4 taps[4];
+    for (int i = 0; i < 4; i++) {
+        ivec2 at = base + ivec2(i & 1, i >> 1);
+        taps[i] = decodedLevelTap(ivec2(addressed(at.x, size.x, modes.x), addressed(at.y, size.y, modes.y)), level);
+    }
+    return mix(mix(taps[0], taps[1], weight.x), mix(taps[2], taps[3], weight.x), weight.y);
+}
+
+vec4 levelRegionTap(ivec2 logical, int level) {
+    ivec2 extent = ivec2(logicalTrim.xy) >> level;
+    ivec2 index = clamp(logical, ivec2(0), extent - ivec2(1));
+    ivec2 local = index - (ivec2(logicalTrim.zw) >> level);
+    ivec2 size = ivec2(contentOrigin.xy) >> level;
+    if (any(lessThan(local, ivec2(0))) || any(greaterThanEqual(local, size))) { return vec4(0.0); }
+    ivec2 packedCoordinate = local;
+    switch (quarterTurn) {
+        case 1u: packedCoordinate = ivec2(size.y - 1 - local.y, local.x); break;
+        case 2u: packedCoordinate = size - ivec2(1) - local; break;
+        case 3u: packedCoordinate = ivec2(local.y, size.x - 1 - local.x); break;
+        default: break;
+    }
+    return decodedLevelTap((ivec2(contentOrigin.zw) >> level) + packedCoordinate, level);
+}
+
+vec4 atLevel(vec2 coordinate, int level) {
+    if (domain.w == 1u) { return levelPage(coordinate * vec2(pageOfRegion.yz), level, samplerPolicy.xy); }
+    vec2 extent = vec2(logicalTrim.xy);
+    vec2 q = clamp(coordinate * extent, vec2(0.0), extent);
+    if (domain.z == 1u) { return levelPage(q, level, uvec2(0u)); }
+    vec2 shifted = q / float(1 << level) - vec2(0.5);
+    ivec2 base = ivec2(floor(shifted));
+    vec2 weight = fract(shifted);
+    return mix(mix(levelRegionTap(base, level), levelRegionTap(base + ivec2(1, 0), level), weight.x),
+        mix(levelRegionTap(base + ivec2(0, 1), level), levelRegionTap(base + ivec2(1, 1), level), weight.x), weight.y);
+}
+
+vec4 mipmapped(vec4 top, vec2 coordinate, float rho) {
+    int deepest = int(domain.y);
+    float lod = clamp(log2(max(rho, 1e-6)), 0.0, float(deepest));
+    if (lod <= 0.0) { return top; }
+    int level = int(floor(lod));
+    float blend = lod - float(level);
+    vec4 near = level == 0 ? top : atLevel(coordinate, level);
+    if (level >= deepest || blend == 0.0) { return near; }
+    return mix(near, atLevel(coordinate, level + 1), blend);
+}`;
+
+/**
  * The fragment stage of a sampled draw. The program of a batch of one page has one page sampler and reads it
  * directly; the program of a batch of several pages has eight and selects by the unit of the region's page.
  */
@@ -173,20 +232,22 @@ vec3 decoded(vec3 value) {
         greaterThan(value, vec3(0.04045)));
 }
 
-vec4 decodedPageTap(ivec2 index) {
+vec4 decodedLevelTap(ivec2 index, int level) {
     // Canonical rows retain their CPU order on upload. RGBA8 performs no sRGB decode.
     // Every read of a page is this one fetch${paged ? " from the unit that holds the region's page" : ''}.
 ${
   paged
     ? `    vec4 value;
     switch (pageOfRegion.x) {
-${[1, 2, 3, 4, 5, 6, 7].map(unit => `        case ${unit}u: value = texelFetch(page${unit}, index, 0); break;`).join('\n')}
-        default: value = texelFetch(page0, index, 0); break;
+${[1, 2, 3, 4, 5, 6, 7].map(unit => `        case ${unit}u: value = texelFetch(page${unit}, index, level); break;`).join('\n')}
+        default: value = texelFetch(page0, index, level); break;
     }`
-    : '    vec4 value = texelFetch(page, index, 0);'
+    : '    vec4 value = texelFetch(page, index, level);'
 }
     return vec4(decoded(value.rgb), value.a);
 }
+
+vec4 decodedPageTap(ivec2 index) { return decodedLevelTap(index, 0); }
 
 int wrapped(int value, int period) {
     // GLSL ES leaves negative integer remainder undefined. Both % operands stay non-negative.
@@ -265,8 +326,17 @@ vec4 sampled(vec2 coordinate) {
     return linearPage(vec2(contentOrigin.zw) + packedCoordinate, uvec2(0u)) * (coverage.x * coverage.y);
 }
 
+${MIPMAPPED}
 ${TINTED}
-void main() { fragmentColor = tinted(sampled(vertexUV)); }
+void main() {
+    // Derivatives are taken here, where every fragment of the draw runs: the block is the same for all of them.
+    vec2 extent = domain.w == 1u ? vec2(pageOfRegion.yz) : vec2(logicalTrim.xy);
+    vec2 texels = vertexUV * extent;
+    float rho = max(length(dFdx(texels)), length(dFdy(texels)));
+    vec4 value = sampled(vertexUV);
+    if (domain.x == 1u) { value = mipmapped(value, vertexUV, rho); }
+    fragmentColor = tinted(value);
+}
 `;
 export const sharedWebGL2FragmentSource = sampledFragmentSource(false);
 export const sharedWebGL2PagedFragmentSource = sampledFragmentSource(true);

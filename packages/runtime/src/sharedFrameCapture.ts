@@ -198,7 +198,8 @@ function shapeFillMaterial(base: SharedMaterial2D, repeat: boolean): SharedMater
     addressU: address,
     addressV: address,
     minFilter: base.minFilter,
-    magFilter: base.magFilter
+    magFilter: base.magFilter,
+    mipmapFilter: base.mipmapFilter
   }));
 }
 /** The glow or outline of an effect as the frame carries it: one kind of spread from the alpha of the group. */
@@ -457,7 +458,9 @@ function materialKey(material: SharedMaterial2D): string {
     ';' +
     material.magFilter +
     ';' +
-    material.maxAnisotropy
+    material.maxAnisotropy +
+    ';' +
+    material.mipmapFilter
   );
 }
 /** Two numbers that print the same: equal, or both not a number. Either zero prints as "0". */

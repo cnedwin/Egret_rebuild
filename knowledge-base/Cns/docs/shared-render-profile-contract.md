@@ -32,7 +32,7 @@ Mesh2D 的几何泛型默认 TexturedGeometry2D；clear/dispose 后 getter 保�
 
 ## 输入阶段与错误
 
-材质按 light、dark、blend、samplingDomain、filter、addressU、addressV、regionIsolation、mipLevel、minFilter、magFilter、maxAnisotropy 顺序各读一次顶层字段，之后才检查 tuple 品牌/长度、读取自有元素、验证数值和组合，最后发布冻结自有值。几何按 positions、uvs、lightColors、darkColors、indices 读取；所有原生数组 tag 先于任何 backing 检查，shape/capacity 先于所有复制，全部原生复制先于组件验证。不使用调用方 iterator/species。读取抛错立即终止并保留原 cause。
+材质按 light、dark、blend、samplingDomain、filter、addressU、addressV、regionIsolation、mipLevel、minFilter、magFilter、maxAnisotropy、mipmapFilter 顺序各读一次顶层字段，之后才检查 tuple 品牌/长度、读取自有元素、验证数值和组合，最后发布冻结自有值。几何按 positions、uvs、lightColors、darkColors、indices 读取；所有原生数组 tag 先于任何 backing 检查，shape/capacity 先于所有复制，全部原生复制先于组件验证。不使用调用方 iterator/species。读取抛错立即终止并保留原 cause。
 
 纯 contracts 工厂采用规定文本的 TypeError/RangeError；读取包装保留 cause，真实 intrinsic/分配异常保留原身份，不依赖 runtime EgretError。runtime 只新增 TEXTURE_VIEW_REGION_INVALID、TEXTURE_VIEW_REGION_IMMUTABLE、FRAME_PROFILE_METADATA_UNSUPPORTED、SHARED_MATERIAL_UNSUPPORTED。最后一项表示资源资格检查后的有效材质/内容不匹配，不代表工厂选项不支持。旧源、租约、生命周期及首因顺序保持。Engine render 将直接 Host 失败包为 FRAME_RENDER_FAILED 并保留原 cause；直接 Host 调用得到 Host 错误。
 
@@ -58,6 +58,8 @@ region 域 Bitmap 使用完整逻辑四边形及虚拟透明 trim；page 域只�
 ## 材质与颜色解释
 
 材质保存 light RGBA、dark RGB、blend、samplingDomain、filter、addressU/V、regionIsolation、mipLevel、minFilter/magFilter、maxAnisotropy。默认恒等 light、零 dark、normal、region、nearest、clamp-to-edge、bounded、mip 0、各向异性 1。支持 nearest/linear，要求 minFilter = magFilter = filter。region 只支持 clamp，page 额外支持 repeat/mirror-repeat。不支持的请求明确拒绝。page 域 isolation 使用 bounded 占位值，strict 只用于区域隔离。
+
+`mipmapFilter` 默认为 `none`。设为 `linear`（只能配合 linear 过滤）时，画得比纹素小的图片从页面的多级缩小副本采样，并在最近的两级之间混合。帧中只要有绘制这样采样某个页面，准备阶段就为该页生成全部层级，直到 1 个纹素；每级为上一级的一半并向下取整，其字节计入每帧页面上限。每级纹素是上一级 2×2 纹素在线性光、预乘 alpha 下的平均值，再按页面原有编码存储。两个 Host 都上传全部层级，并用显式层级读取。整页、未旋转、无裁边的绘制可读取所有层级，坐标按各级尺寸缩放。与其他区域共用页面的区域，只读取打包矩形、裁边和逻辑尺寸各边都能整除的层级，因此这些层级里不会混入相邻区域的纹素。第 0 级采样与不使用副本时相同。`examples/mipmaps/verify.mjs` 会在浏览器中绘制 `examples/mipmaps` 并读取像素。
 
 light/dark 均为 [0,1] 线性系数。页采样为预乘 (P,a)，顶点系数为 Lv/Kv/tv，材质系数为 Lm/Km/tm，累计显示透明度为 o：
 

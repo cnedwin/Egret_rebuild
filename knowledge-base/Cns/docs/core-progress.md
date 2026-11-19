@@ -13,7 +13,7 @@
 | 领域 | 已有实现 | 仍缺失的能力或验收 |
 | --- | --- | --- |
 | 显示与渲染 | 熟悉的显示对象、坐标、显式命中几何和不可变捕获；有序 WebGPU／WebGL2 共享路径、相邻准备／合批、纹理页、有界缓冲／目标复用、Alpha 遮罩、可分离模糊、沿用 Egret 名称的[混合模式](blend-modes.md)、颜色矩阵、发光、投影和描边[滤镜](filters.md)、作为显示对象的[视频](video.md)及[可选 WebGL2 图层缓存](webgl2-executor-contract.md#可缓存的-2d-图层) | 固定桌面帧节奏与未测 GPU 时间、更广泛设备与宿主、完整功能参考；Canvas 文字和图像提供者继续使用 |
-| 资源与构建 | 清单准入、共享获取／租约、Scope 清理、取消及迟到结果处理，选定 PNG／图集／序列／字体的可复现构建、缓存与工程采用、类型化运行时组，以及对调用方提供的 Spine 4.3 JSON 和二进制数据的有界接入 | Spine 自动构建、选定纹理／mip／压缩变体、更广格式与导出器范围和完整场景验收。 [Spine 接入](spine-content-ingress.md) |
+| 资源与构建 | 清单准入、共享获取／租约、Scope 清理、取消及迟到结果处理，选定 PNG／图集／序列／字体的可复现构建、缓存与工程采用、类型化运行时组，以及对调用方提供的 Spine 4.3 JSON 和二进制数据的有界接入 | Spine 自动构建、选定纹理与压缩变体（共享 2D 绘制已可按需读取页面的[多级缩小副本](shared-render-profile-contract.md)，WebGPU 像素待真机验证）、更广格式与导出器范围和完整场景验收。 [Spine 接入](spine-content-ingress.md) |
 | 动画 | 显式 Engine 时间、Tween、兼容序列替换和共享渲染器上的可选 Spine 播放。独立播放器支持轨道、队列、组合皮肤和有限播放次数。已支持 RESET 和有界跳转／重放，播放保留替换覆盖选定的进行中混合。 | 独立的选定版本参考、导出器变体及组合动画真机生命周期验收。 [#213](https://github.com/cnedwin/Egret_rebuild/pull/213) · [#218](https://github.com/cnedwin/Egret_rebuild/pull/218) · [#219](https://github.com/cnedwin/Egret_rebuild/pull/219) |
 | UI | 托管布局、变高列表与行焦点、主题／皮肤代次、特效和弹出层／模态层。示例已结合语义投影接入开关、选项组、滑条、标签页、进度条、下拉和多选。 | 最新控件的硬件／WebGPU、实体手机和辅助技术验证，以及完整大场景验收。[UI 语义](ui-semantics.md) |
 | 文字与字体 | 只读 CanvasKit／SkParagraph 段落、最终行双向排版、换行、对齐／行数限制、多样式、已提交命中／选区／插入点几何及受管字体集合切换、可选原生单／多行编辑及配对浏览器字体 | 真实 IME 资格、必需文字／字体／墨迹的独立参考、传输／启动及 CPU／Wasm／内存资格 |

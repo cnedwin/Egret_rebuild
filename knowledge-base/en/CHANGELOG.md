@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Smaller copies of pictures drawn small (mipmaps) — 2026-11-20
+
+A material with `mipmapFilter: 'linear'` (and the linear filter) samples a picture drawn smaller than its texels from smaller copies of its page, blended between the two nearest. The engine makes the copies when a frame first samples a page this way, in the page's own encoding, and both Hosts upload every level. A region of a shared atlas page reads only the copies on which its edges halve exactly, so no neighbour's colour enters it. Example: `examples/mipmaps`, checked on WebGL2 with software rendering; WebGPU awaits hardware.
+
 ## Front pages for 7.0.1-rc.3, Play and the Android Runtime SDK — 2026-11-20
 
 The READMEs, the documentation guides and the capability map now describe the current release candidate on npm (`next`), Play and Play3D with the single browser files and `llms.txt`, and the Android Runtime SDK preview, and link their guides. The capability map's checkpoint moves to 47efbb5b.

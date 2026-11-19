@@ -7,6 +7,8 @@ type Domain = 'page' | 'region';
 type Filter = 'nearest' | 'linear';
 type Address = 'clamp-to-edge' | 'repeat' | 'mirror-repeat';
 type Isolation = 'bounded' | 'strict';
+/** `linear` samples a texture drawn smaller than it is from its smaller copies, blended between the two nearest. */
+type MipmapFilter = 'none' | 'linear';
 
 export interface SharedMaterialInput2D {
   readonly light?: readonly number[] | undefined;
@@ -21,6 +23,7 @@ export interface SharedMaterialInput2D {
   readonly minFilter?: Filter | undefined;
   readonly magFilter?: Filter | undefined;
   readonly maxAnisotropy?: number | undefined;
+  readonly mipmapFilter?: MipmapFilter | undefined;
 }
 export interface SharedMaterial2D {
   readonly [sharedMaterial2DBrand]: true;
@@ -36,6 +39,7 @@ export interface SharedMaterial2D {
   readonly minFilter: Filter;
   readonly magFilter: Filter;
   readonly maxAnisotropy: 1;
+  readonly mipmapFilter: MipmapFilter;
 }
 
 // All operations used after an external descriptor read are captured once.
@@ -112,7 +116,7 @@ export function createSharedMaterial2D(input: SharedMaterialInput2D): SharedMate
   if (typeof input !== 'object' || input === null || isArray(input)) {
     throw new TypeFault('Shared material descriptor must be a record');
   }
-  // Complete the twelve top-level reads before examining either tuple.
+  // Complete the thirteen top-level reads before examining either tuple.
   const lightInput = read(input, 'light');
   const darkInput = read(input, 'dark');
   const blendInput = read(input, 'blend');
@@ -125,6 +129,7 @@ export function createSharedMaterial2D(input: SharedMaterialInput2D): SharedMate
   const minInput = read(input, 'minFilter');
   const magInput = read(input, 'magFilter');
   const anisotropyInput = read(input, 'maxAnisotropy');
+  const mipmapInput = read(input, 'mipmapFilter');
   if (lightInput !== undefined) tupleBrand(lightInput);
   if (darkInput !== undefined) tupleBrand(darkInput);
   const lightLength = lightInput === undefined ? 4 : read(lightInput as object, 'length');
@@ -179,6 +184,12 @@ export function createSharedMaterial2D(input: SharedMaterialInput2D): SharedMate
     throw new RangeFault('Shared material numeric range is invalid');
   }
   if (maxAnisotropy !== 1) throw new TypeFault('Shared material option is unsupported');
+  const mipmapFilter = mipmapInput === undefined ? 'none' : mipmapInput;
+  if (mipmapFilter !== 'none' && mipmapFilter !== 'linear')
+    throw new TypeFault('Shared material option is unsupported');
+  // Smaller copies are blended, so they need the linear filter that blends the texels of each.
+  if (mipmapFilter === 'linear' && selectedFilter !== 'linear')
+    throw new TypeFault('Shared material option is unsupported');
   if (
     minFilter !== selectedFilter ||
     magFilter !== selectedFilter ||
@@ -201,7 +212,8 @@ export function createSharedMaterial2D(input: SharedMaterialInput2D): SharedMate
     mipLevel: 0,
     minFilter,
     magFilter,
-    maxAnisotropy: 1
+    maxAnisotropy: 1,
+    mipmapFilter
   }) as SharedMaterial2D;
   apply(weakSet, owned, [material, true]);
   return material;
