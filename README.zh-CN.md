@@ -16,7 +16,7 @@
 
 使用 Node.js 26.7.0，解压[可编辑入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-first-game.zip)，在该目录运行 `npm install` 和 `npm start`。打开 `http://127.0.0.1:8000`，点击方块，然后把 `main.mjs` 中的 `STEP` 从 32 改为 64 并刷新，方块每次移动的距离就会翻倍。
 
-要在已有网页里使用白鹭，可以[下载浏览器引擎和许可证](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip)并选用 2D 或 3D 单文件。使用 npm 的工程可运行 `npm install @egret/engine@next`，也可按归档地址安装模块。[7.0 发行说明与校验清单](knowledge-base/Cns/docs/release-archives.md) · [早期工程预览](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) · [旧版入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v0.1.0-preview.1/egret-first-game.zip)
+要在已有网页里使用白鹭，可以[下载浏览器引擎和许可证](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip)并选用 2D 或 3D 单文件。使用 npm 的工程可运行 `npm install @egret/engine` 安装 `7.0.1-rc.3`，也可按归档地址安装模块。[7.0 发行说明与校验清单](knowledge-base/Cns/docs/release-archives.md) · [早期工程预览](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) · [旧版入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v0.1.0-preview.1/egret-first-game.zip)
 
 参与引擎本身的开发时，可以直接运行仓库里的示例。
 

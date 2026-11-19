@@ -8,7 +8,7 @@ English | [简体中文](../../Cns/docs/release-archives.md)
 | --- | --- |
 | Start with an editable 2D game | [Starter project](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-first-game.zip) |
 | Add the engine to a web page | [Browser files and licences](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip). For 2D, choose [`egret2d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret2d.js) or [`egret2d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret2d.mjs). For World3D, choose [`egret3d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret3d.js) or [`egret3d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret3d.mjs). |
-| Import modules into an npm project | `npm install @egret/engine@next` from the npm registry, or the archives: [`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-engine-7.0.1-rc.3.tgz), [`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-contracts-7.0.1-rc.3.tgz), [`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-runtime-7.0.1-rc.3.tgz), [`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-project-7.0.1-rc.3.tgz), [`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-spine-7.0.1-rc.3.tgz) |
+| Import modules into an npm project | `npm install @egret/engine` from the npm registry, or the archives: [`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-engine-7.0.1-rc.3.tgz), [`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-contracts-7.0.1-rc.3.tgz), [`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-runtime-7.0.1-rc.3.tgz), [`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-project-7.0.1-rc.3.tgz), [`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-spine-7.0.1-rc.3.tgz) |
 
 The [release manifest](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/release.json) lists the source commit, file sizes and SHA-256 digests. Serve downloaded browser files from your own game directory or site. Include the licence notices from the browser archive when redistributing them.
 
@@ -22,13 +22,13 @@ The [release manifest](https://github.com/cnedwin/Egret_rebuild/releases/downloa
 
 ## Install with npm
 
-The candidate is on the public npm registry under the `next` tag:
+For all five Egret packages on npm, `latest` and `next` currently point to release candidate `7.0.1-rc.3`. The following command installs the engine using the default tag (`latest`).
 
 ```sh
-npm install @egret/engine@next
+npm install @egret/engine
 ```
 
-`@egret/engine` brings `@egret/contracts` and `@egret/runtime` of the same version. Add `@egret/project@next` for the project format and `@egret/spine@next` for Spine. A candidate is never published as `latest`, so `npm install @egret/engine` without a tag waits for a final 7.0 release.
+`@egret/engine` brings `@egret/contracts` and `@egret/runtime` of the same version. Add `@egret/project` for the project format or `@egret/spine` for Spine. To select the candidate tag explicitly, run `npm install @egret/engine@next`. To pin this version in `package.json`, run `npm install --save-exact @egret/engine@7.0.1-rc.3`.
 
 The same packages also install from GitHub Releases by archive address, without the registry for Egret's own packages:
 
@@ -42,13 +42,13 @@ npm then fetches `@egret/contracts` and `@egret/runtime` from the same release. 
 
 Each npm archive contains the built `dist` directory, both package READMEs, `LICENSE` and `NOTICE`. The private workspace uses version `0.0.0`. Each packed manifest carries the release version, lists its distributable files and names a licence; a package whose source manifest names none is Apache-2.0. Public entries and third-party dependencies come from the source manifest.
 
-Each package is packed twice. `egret-<name>-<version>.tgz` pins its dependencies on other Egret packages to URLs in the same release. `npm-egret-<name>-<version>.tgz`, the archive published to the registry, names them by the same version. The two hold the same files; only `package.json` differs. `release.json` records the size and SHA-256 of both, and the registry archives' dist-tag.
+Each package is packed twice. `egret-<name>-<version>.tgz` pins its dependencies on other Egret packages to URLs in the same release. `npm-egret-<name>-<version>.tgz`, the archive published to the registry, names them by the same version. The two hold the same files; only `package.json` differs. `release.json` records the size and SHA-256 of both, and the tag used when first publishing the registry archives.
 
 ## Make a release
 
 Create and push a `v<version>` tag on the commit to distribute. The release workflow reads that tag, builds the tagged commit, and uses the same version for the browser files, package archives and starter. GitHub marks versions with a prerelease suffix as prereleases.
 
-Once the GitHub release is published, download `release.json` and the five `npm-*.tgz` archives into a new directory, and run `node tools/publish-registry.mjs --release <directory>` with an npm login that may publish to `@egret`. It holds each archive to `release.json`, publishes the packages in dependency order under `next`, or `latest` for a version without a prerelease suffix, and reads each package's integrity back from the registry. A package already on the registry with the same bytes is left as it is, so the command can be run again after an interruption. `--dry-run` shows what npm would send.
+Once the GitHub release is published, download `release.json` and the five `npm-*.tgz` archives into a new directory, and run `node tools/publish-registry.mjs --release <directory>` with an npm login that may publish to `@egret`. It holds each archive to `release.json`, publishes the packages in dependency order under `next`, or `latest` for a version without a prerelease suffix, and reads each package's integrity back from the registry. A package already on the registry with the same bytes is left as it is, so the command can be run again after an interruption. `--dry-run` shows what npm would send. For `7.0.1-rc.3`, the `latest` tag was moved separately after publication.
 
 To rehearse packaging and installation of the five npm archives locally, run the following commands.
 
