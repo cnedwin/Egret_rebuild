@@ -38,6 +38,16 @@
       "path": "examples/play/verify-primary-pointer.mjs",
       "originRole": "First-party real-browser regression exercising independent pointer sessions through Play. Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/playWidgets.ts",
+      "originRole": "First-party bars, notices, boxes of words with answers, and menus for play, made of the game's own sprites and texts; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/story.mjs",
+      "originRole": "First-party short scene with a story for the play example: a title menu, words answered by key and by tap, a bar, notices and an ending; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [

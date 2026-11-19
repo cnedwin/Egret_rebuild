@@ -4,6 +4,9 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Play: menus, boxes of words, bars and notices — 2026-11-20
+
+`game.say` shows words letter by letter in a box at the bottom, with a name and answers to choose; `game.menu` gives the item chosen; `game.bar` slides to its value and leaves a trail after a fall; `game.toast` shows a notice that fades; `game.asking` tells an update a box or menu is open. All answer keys, a stick, the pointer and a finger, work while paused, and may be awaited in `setup`, whose frames are now drawn while it waits. New example: `examples/play/story.mjs`, played to its end by the example's check.
 ## Smaller copies of pictures drawn small (mipmaps) — 2026-11-20
 
 A material with `mipmapFilter: 'linear'` (and the linear filter) samples a picture drawn smaller than its texels from smaller copies of its page, blended between the two nearest. The engine makes the copies when a frame first samples a page this way, in the page's own encoding, and both Hosts upload every level. A region of a shared atlas page reads only the copies on which its edges halve exactly, so no neighbour's colour enters it. Example: `examples/mipmaps`, checked on WebGL2 with software rendering; WebGPU awaits hardware.

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Optional entry for a whole small game from one call: the canvas, the loop, keys and a pointer to ask each frame,
-// sound effects made in code, overlap tests, timers, text, tweens and the small effects of a hit.
+// sound effects made in code, overlap tests, timers, text, tweens, the small effects of a hit, and bars, notices,
+// boxes of words and menus.
 export { play, PlayText } from './BrowserPlay.js';
 export type {
   PlayBurstOptions,
@@ -14,5 +15,7 @@ export type {
   PlaySfx,
   PlayTextOptions
 } from './BrowserPlay.js';
+export { PlayBar, wrapPlayWords } from './playWidgets.js';
+export type { PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 export { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 export type { SfxRecipe, SfxTone, SfxWave } from './playSfx.js';
