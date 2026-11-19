@@ -39,14 +39,10 @@ export async function createEngineForProfile(options: EngineOptions, profile: Sh
     throw new EgretError('CLOCK_OPTIONS_INVALID', { cause });
   }
   const clockOptions = admitGameClockOptions(clockValue);
-  return startEngine(
-    stableOptions,
-    timeoutMs,
-    {
-      shared: shared as CapturedEngineFramePorts['shared'],
-      sharedProfile: profile,
-      sharedBlendSpace: space === 'srgb' ? 'srgb' : 'linear'
-    },
-    clockOptions
+  // The Engine reads the renderer's blend space beside the declared ports.
+  const ports: CapturedEngineFramePorts = Object.assign(
+    { shared: shared as CapturedEngineFramePorts['shared'], sharedProfile: profile },
+    { sharedBlendSpace: space === 'srgb' ? 'srgb' : 'linear' }
   );
+  return startEngine(stableOptions, timeoutMs, ports, clockOptions);
 }

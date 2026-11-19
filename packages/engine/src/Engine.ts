@@ -58,8 +58,6 @@ export interface EngineOptions {
 export interface CapturedEngineFramePorts {
   readonly shared: ((frame: SharedRenderFrame2D) => unknown) | undefined;
   readonly sharedProfile: SharedFrameProfile2D | undefined;
-  /** The space the renderer mixes in, which every frame records. */
-  readonly sharedBlendSpace: 'linear' | 'srgb';
 }
 export let constructEngine: (
   options: EngineOptions,
@@ -113,7 +111,8 @@ export class Engine {
   private frameIdle: Promise<void> | undefined;
   private releaseFrame: (() => void) | undefined;
   private readonly sharedRenderer: ((frame: SharedRenderFrame2D) => unknown) | undefined;
-  private readonly sharedBlendSpace: 'linear' | 'srgb';
+  /** The space the renderer mixes in, which every frame records; ports may carry it beside their declared members. */
+  readonly #sharedBlendSpace: 'linear' | 'srgb';
   #currentState: 'open' | 'closing' | 'closed' = 'open';
   private readonly scopes = new Set<Scope>();
   private readonly cleanupErrors: unknown[] = [];
@@ -140,7 +139,8 @@ export class Engine {
     if (token !== CREATION_TOKEN) throw new EgretError('ENGINE_FACTORY_REQUIRED');
     this.host = options.host;
     this.sharedRenderer = ports.shared;
-    this.sharedBlendSpace = ports.sharedBlendSpace;
+    this.#sharedBlendSpace =
+      (ports as { readonly sharedBlendSpace?: unknown }).sharedBlendSpace === 'srgb' ? 'srgb' : 'linear';
     this.sharedFrameProfile = ports.sharedProfile;
     this.timeoutMs = timeoutMs;
     this.onDiagnostic = options.onDiagnostic;
@@ -432,7 +432,7 @@ export class Engine {
       if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) throw new EgretError('FRAME_ID_EXHAUSTED');
       const frame = freezeSharedFrame({
         profile: SHARED_FRAME_PROFILE_2D,
-        ...(this.sharedBlendSpace === 'srgb'
+        ...(this.#sharedBlendSpace === 'srgb'
           ? ({ colorRecipe: 'egret.srgb-pma/1', targetRepresentation: 'egret.encoded-srgb-pma8-target/1' } as const)
           : ({ colorRecipe: 'egret.linear-srgb-pma/1', targetRepresentation: 'egret.srgb-pma8-target/1' } as const)),
         outputRepresentation:
