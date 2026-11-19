@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Three games, each one file and one call to `play` from `@egret/engine/play`: a breakout, a platformer and a game of matching pairs; and a fourth in 3D, one call to [`play3d`](../../knowledge-base/en/docs/play3d.md), a ball rolled to collect stars. None has an image, a sound file or a font; shapes are drawn, sounds are made in code, and each plays by keyboard and by pointer. They are the three games of [llms.txt](../../llms.txt), the page an agent reads to write a game, and that page holds them as they are here.
+Three games, each one file and one call to `play` from `@egret/engine/play`: a breakout, a platformer and a game of matching pairs; a short scene with a story, a title menu, words that are read and answered, a bar of health and notices; and one in 3D, one call to [`play3d`](../../knowledge-base/en/docs/play3d.md), a ball rolled to collect stars. None has an image, a sound file or a font; shapes are drawn, sounds are made in code, and each plays by keyboard and by pointer. They are the three games of [llms.txt](../../llms.txt), the page an agent reads to write a game, and that page holds them as they are here.
 
 ## Run
 
@@ -11,7 +11,7 @@ node tools/build.mjs
 node tools/serve-canvas.mjs
 ```
 
-Open `/examples/play/index.html` on the host and port the server prints. It runs the breakout; add `?game=platformer`, `?game=memory` or `?game=roll3d` for the others. A game fills the window.
+Open `/examples/play/index.html` on the host and port the server prints. It runs the breakout; add `?game=platformer`, `?game=memory`, `?game=story` or `?game=roll3d` for the others. A game fills the window.
 
 ## What to try
 
@@ -44,6 +44,6 @@ See the [guide to play](../../knowledge-base/en/docs/play.md).
 node examples/play/verify.mjs <absolute Playwright index.mjs> <new absolute output directory> [software]
 ```
 
-It plays each game to its end with the keyboard and the mouse, reading the page from its pictures: nothing in a game is there for the check. In the breakout the paddle follows the pointer and the arrows, a brick breaks with a sound, the paddle is then kept away from the ball until three are lost, and the button brings every brick back. In the platformer the hero lands, jumps, runs by a held pointer and by a key to the goal, and the button puts it back at the start. In the memory game the check turns cards two at a time, remembers their colours, finds all eight pairs, and the button turns the sixteen face down again. Sounds are counted, not heard. That original full-game run used software WebGL2. The November 18, 2026 hardware contract checks cover pause/tween clocks, collisions, imported rotations, resource retirement and pointer pixels on Windows and Fold7 with both backends; see [Play](../../knowledge-base/en/docs/play.md) and [Play3D](../../knowledge-base/en/docs/play3d.md) for the bounded scope. They do not repeat full-game, audio or performance acceptance.
+It plays each game to its end with the keyboard and the mouse, reading the page from its pictures: nothing in a game is there for the check. In the breakout the paddle follows the pointer and the arrows, a brick breaks with a sound, the paddle is then kept away from the ball until three are lost, and the button brings every brick back. In the platformer the hero lands, jumps, runs by a held pointer and by a key to the goal, and the button puts it back at the start. In the memory game the check turns cards two at a time, remembers their colours, finds all eight pairs, and the button turns the sixteen face down again. In the story the title menu is taken by Enter, the keeper's words appear letter by letter and are shown whole by a key, the second answer is taken by a tap, the yard is played by a held key until the three lanterns are lit, the bar of health stands at a quarter, and the last menu starts the yard again. Sounds are counted, not heard. That original full-game run used software WebGL2. The November 18, 2026 hardware contract checks cover pause/tween clocks, collisions, imported rotations, resource retirement and pointer pixels on Windows and Fold7 with both backends; see [Play](../../knowledge-base/en/docs/play.md) and [Play3D](../../knowledge-base/en/docs/play3d.md) for the bounded scope. They do not repeat full-game, audio or performance acceptance.
 
 To check a game of your own that is one page, see `tools/verify-game.mjs`. It plays blind; given a script, it plays the game as a person would, and [play-breakout.mjs](play-breakout.mjs) is one, taking the breakout to its end.

@@ -264,8 +264,14 @@ await scenario(
     const BRICKS = [0xff4d6d, 0xffa64d, 0xffe14d, 0x7be069],
       PADDLE = 0x8fa8ff,
       brick = (look, r, c) => look(40 + c * 57, 40 + r * 20);
-    const whole = look => BRICKS.every((colour, r) => [0, 3, 7].every(c => alike(brick(look, r, c), colour)));
-    assert.ok(whole(await stage.look()), 'the bricks are drawn');
+    // The ball has been in play through the checks above, so a few bricks may be gone: each row is its colour, and
+    // most of the bricks are there.
+    const standing = look =>
+      BRICKS.reduce(
+        (sum, colour, r) => sum + [...Array(8).keys()].filter(c => alike(brick(look, r, c), colour)).length,
+        0
+      );
+    assert.ok(standing(await stage.look()) >= 24, 'the bricks are drawn');
     // Held down, the pointer carries the paddle; let go, the arrows move it.
     await stage.move(110, 200);
     await page.mouse.down();
@@ -303,7 +309,7 @@ await scenario(
     await stage.tap(240, 200);
     await page.waitForTimeout(500);
     const again = await stage.look();
-    assert.ok(whole(again) && !ended(again), 'the button started the game again with every brick');
+    assert.ok(standing(again) === 32 && !ended(again), 'the button started the game again with every brick');
   }
 );
 
@@ -410,6 +416,61 @@ await scenario(
     assert.ok(!alike(again(110, 492), BUTTON), 'the button is gone');
     // The button's function returned a promise, as the cards' do; taps are still taken after it.
     await turn(5);
+  }
+);
+
+await scenario(
+  'story: a title menu, words that appear and are answered by key and by tap, a bar, notices and an ending',
+  'story',
+  480,
+  300,
+  async (page, stage) => {
+    const CHOSEN = 0xfacc15,
+      PANEL = 0x0b1020,
+      LIT = 0xfacc15,
+      HEALTH = 0xef4444;
+    // The box of words is the panel's colour exactly; the night behind it is close to it.
+    const boxOpen = look => alike(look(240, 260), PANEL, 3);
+    // The title menu, with its first item chosen; the bar of health is full.
+    await until(page, stage, look => alike(look(240, 139), CHOSEN), 'the title menu', 10);
+    is((await stage.look())(130, 18), HEALTH, 'the bar full');
+    await page.keyboard.press('Enter');
+    // The keeper's words appear letter by letter: the end of the line is still covered, then shown by a press.
+    await until(page, stage, look => boxOpen(look), 'the box of words', 10);
+    await page.keyboard.press('Space');
+    // The answers appear above the box; the second is chosen by a tap on it.
+    await until(page, stage, look => alike(look(400, 136), CHOSEN), 'the answers', 10);
+    await stage.tap(400, 168);
+    // The reply; a key closes it and the yard is played.
+    await page.waitForTimeout(800);
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(400);
+    await page.keyboard.press('Space');
+    await until(page, stage, look => !boxOpen(look), 'the box closing', 10);
+    const heard = await sounds(page);
+    await page.keyboard.down('ArrowRight');
+    await until(page, stage, look => alike(look(180, 230), LIT), 'the first lantern lit', 10);
+    // The third lantern ends the yard: the ending's box of words opens over the ground.
+    await until(page, stage, look => boxOpen(look), 'every lantern lit and the ending', 15);
+    await page.keyboard.up('ArrowRight');
+    assert.ok((await sounds(page)) > heard, 'the lanterns were heard');
+    // Three falls of health: the bar is a quarter full.
+    await page.waitForTimeout(600);
+    const bar = await stage.look();
+    is(bar(30, 18), HEALTH, 'the bar a quarter full');
+    assert.ok(!alike(bar(130, 18), HEALTH), 'the rest of the bar is empty');
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(300);
+    await page.keyboard.press('Space');
+    await until(page, stage, look => alike(look(190, 156), CHOSEN), 'the last menu', 10);
+    await stage.tap(190, 156);
+    await until(
+      page,
+      stage,
+      look => alike(look(240, 139), CHOSEN) && !alike(look(180, 230), LIT),
+      'the yard again',
+      10
+    );
   }
 );
 

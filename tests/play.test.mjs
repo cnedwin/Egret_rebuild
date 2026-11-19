@@ -17,8 +17,16 @@ const refusal = async run => {
   return undefined;
 };
 
-test('PL01 the entry gives play, the text class and the sound effect parts', () => {
-  assert.deepEqual(Object.keys(entry).sort(), ['PlayText', 'SFX_PRESETS', 'isSfxRecipe', 'play', 'synthesizeSfx']);
+test('PL01 the entry gives play, the text class, the bar, the sound effect parts and the word wrapping', () => {
+  assert.deepEqual(Object.keys(entry).sort(), [
+    'PlayBar',
+    'PlayText',
+    'SFX_PRESETS',
+    'isSfxRecipe',
+    'play',
+    'synthesizeSfx',
+    'wrapPlayWords'
+  ]);
   assert.equal(typeof play, 'function');
   assert.ok(PlayText.prototype instanceof Sprite);
   assert.ok(describeErrorCode('PLAY_OPTIONS_INVALID').length > 0);
@@ -215,4 +223,39 @@ test('PL08 a seamless tone is not eased at its ends, and the hum joins itself', 
   assert.ok(step <= inside * 1.5, step + ' against ' + inside);
   assert.ok(isSfxRecipe({ from: 110, seconds: 1, seamless: true }));
   assert.equal(isSfxRecipe({ from: 110, seconds: 1, seamless: 'yes' }), false);
+});
+
+// Break caught: break inside a word, count a Chinese character as narrow, or drop the line breaks of the words.
+test('PL09 words wrap at spaces, between wide characters, and at the breaks they have', () => {
+  const { wrapPlayWords } = entry;
+  assert.deepEqual(wrapPlayWords('the lanterns of the yard went out', 10), ['the lanterns of', 'the yard went out']);
+  assert.deepEqual(wrapPlayWords('草料场烧了有人纵火', 4), ['草料场烧', '了有人纵', '火']);
+  assert.deepEqual(wrapPlayWords('one\ntwo', 40), ['one', 'two']);
+  assert.deepEqual(wrapPlayWords('', 5), ['']);
+  // A word longer than a line stands on a line of its own.
+  assert.deepEqual(wrapPlayWords('a extraordinarily b', 4), ['a', 'extraordinarily', 'b']);
+});
+
+// Break caught: jump a bar to its value, let it pass its ends, or leave no trail after a fall.
+test('PL10 a bar slides to its value within its ends, and a fall leaves a trail that catches up', () => {
+  const bar = new entry.PlayBar(100, 10, 3, 4, 0xff0000, 0x222222);
+  assert.equal(bar.value, 3);
+  bar.value = 9;
+  assert.equal(bar.value, 4);
+  bar.value = -2;
+  assert.equal(bar.value, 0);
+  bar.value = 1;
+  bar.step(0.02);
+  const drawn = () => bar.graphics;
+  assert.ok(drawn());
+  for (let i = 0; i < 200; i++) bar.step(1 / 60);
+  // Settled: what is shown is the value, and the trail has caught up.
+  bar.max = 2;
+  assert.equal(bar.max, 2);
+  assert.equal(bar.value, 1);
+  bar.color = 0x00ff00;
+  assert.equal(bar.color, 0x00ff00);
+  bar.color = 'red';
+  assert.equal(bar.color, 0x00ff00);
+  bar.dispose();
 });

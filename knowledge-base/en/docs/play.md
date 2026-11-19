@@ -180,6 +180,32 @@ Repeated calls to `game.restart()` during setup return the same Promise and run 
 
 During initial setup or restart, `game.dispose()` closes the game even if an application load is still pending. The interrupted startup or restart rejects with `SCOPE_CLOSED`. If the load later finishes, it cannot attach game objects through the closed SDK handle or resume updates. Applications own cancellation of their external downloads.
 
+## Words, menus and bars
+
+A story, a title screen and a health bar are the parts most games draw for themselves. Play has them, made of the game's own sprites and texts on the ui layer, so a restart takes them away and each plays by keyboard, pointer and finger.
+
+```js
+async setup(game) {
+  hp = game.bar({ x: 12, y: 12, width: 140, value: 4, max: 4, color: 0xef4444 });
+  if ((await game.menu(['Start', 'Quiet start'], { title: 'The Night Yard' })) === 1) game.sfx.muted = true;
+  const answer = await game.say('Will you light the lanterns?', { who: 'Keeper', choices: ['I will.', 'Why?'] });
+},
+update(seconds, game) {
+  if (game.asking) return; // a box of words or a menu is open
+  // ...
+  hp.value -= 1;           // the bar slides down and leaves a pale trail
+  game.toast('Lantern lit');
+}
+```
+
+- `game.bar({ x, y, width = 120, height = 12, value, max = 1, color, back, layer })` is a sprite whose `x` and `y` are its top left. Setting `value` slides it there, within 0 and `max`.
+- `game.toast(words, { seconds = 2, color })` shows a notice at the top that fades; several stack.
+- `await game.say(words, { who, choices, color, speed = 40 })` opens a box at the bottom whose words appear `speed` letters a second, wrapped to its width. Space, Enter, Z or a tap shows the rest; another closes it, and it gives `undefined`. With `choices` the answers appear once the words have; the arrows or W and S and a stick move between them, Enter, Space, Z or a tap takes one, and it gives its index. A box asked for while one is open waits its turn.
+- `await game.menu(items, { title, x, y, width, color })` opens a list in the middle of the stage, or around `x`, `y`, and gives the index chosen in the same ways. A new menu closes the one open, which then gives nothing.
+- `game.asking` is whether a box or a menu is open.
+
+They answer while the game is paused, and `setup` may await them: frames are drawn while it waits, though `update`, timers and tweens begin only when it has finished. A restart takes them away; what was being awaited is then not answered. The words of a box are drawn once, line by line, and uncovered letter by letter: a box does not draw its words again each frame. `examples/play/story.mjs` uses every one.
+
 ## Chance and saves
 
 `game.random` gives numbers that repeat for the same `seed`: `int(1, 6)`, `range(0, 1)`, `chance(0.25)`, `pick(list)`, and `shuffle(list)`, which gives a new list and leaves the one it was given.

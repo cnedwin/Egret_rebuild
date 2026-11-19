@@ -17,6 +17,8 @@ import { createBrowserFrameLoop } from './loop.js';
 import type { BrowserGame, BrowserGameBackend, BrowserGameLabel } from './game.js';
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 import type { SfxRecipe } from './playSfx.js';
+import { createPlayWidgets } from './playWidgets.js';
+import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 
 export interface PlayOptions {
   /** The size of the stage, in the game's own units: whole numbers above 0. The canvas is scaled to fit. */
@@ -318,6 +320,21 @@ export interface PlayGame {
    * off, and `setup` runs again. Concurrent requests share one promise. Updates resume on success; a failed setup can be retried.
    */
   restart(): Promise<void>;
+  /** A bar of health, time or power, on the ui layer unless given another; set its `value` and it slides there. */
+  bar(options: PlayBarOptions): PlayBar;
+  /** A short notice at the top of the stage that fades after `seconds`; several stack. */
+  toast(words: string, options?: PlayToastOptions): void;
+  /**
+   * A box of words at the bottom of the stage, shown letter by letter, with a name above it when `who` is given. A
+   * press of Space, Enter or Z or a tap shows the rest, and another closes it. With `choices` it gives the index of
+   * the answer chosen by the arrows and Enter or by a tap; without, it gives undefined. Boxes asked for while one is
+   * open wait their turn. A restart closes it, and the promise is then not answered.
+   */
+  say(words: string, options?: PlaySayOptions): Promise<number | undefined>;
+  /** A list to choose from in the middle of the stage, with a title when given; it gives the index chosen. */
+  menu(items: readonly string[], options?: PlayMenuOptions): Promise<number>;
+  /** Whether a box of words or a menu is open: an update can then leave the game alone. */
+  readonly asking: boolean;
   /** The game `play` is built on: its Engine, scope, loop and input, for what this entry does not cover. */
   readonly browser: BrowserGame;
   readonly engine: Engine;
@@ -1083,6 +1100,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       stopped <= 0 &&
       version === generation &&
       playLoop.state === 'running';
+    // Bars, boxes of words and menus answer while the game is paused, as buttons do, and while `setup` awaits one.
+    if (!disposed && playLoop.state === 'running') widgets.tick(real);
     if (api === undefined || paused || disposed || playLoop.state !== 'running') {
       endFrame();
       return;
@@ -1183,6 +1202,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     'egret.play:' + (options.saveKey ?? win.location?.pathname ?? '') + ':' + key;
 
   function resetRound(): void {
+    widgets.reset();
     timers = [];
     stopLoops();
     stopMotions();
@@ -1511,6 +1531,13 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     restart() {
       return disposed ? Promise.resolve() : runSetup(true);
     },
+    bar: options => widgets.bar(options),
+    toast: (words, options) => widgets.toast(words, options),
+    say: (words, options) => widgets.say(words, options),
+    menu: (items, options) => widgets.menu(items, options),
+    get asking() {
+      return widgets.asking;
+    },
     browser,
     engine,
     scope,
@@ -1538,12 +1565,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     }
   };
   cover.visible = false;
+  const widgets = createPlayWidgets(game);
 
   try {
     await Promise.all(Object.entries(SFX_PRESETS).map(([name, recipe]) => make(name, recipe)));
+    // Frames are drawn while `setup` runs, so a menu or a box of words it awaits is seen and answered. The game's
+    // own steps, timers and tweens begin once it has finished.
+    browser.loop.start();
     await runSetup(false);
     if (disposed) throw new EgretError('SCOPE_CLOSED');
-    browser.loop.start();
   } catch (cause) {
     try {
       await game.dispose();

@@ -28,9 +28,9 @@
 </head>
 <body>
   <script type="module">
-    // One game fills the window: ?game=breakout, ?game=platformer, ?game=memory or, in 3D, ?game=roll3d.
+    // One game fills the window: ?game=breakout, ?game=platformer, ?game=memory, ?game=story or, in 3D, ?game=roll3d.
     const game = new URLSearchParams(location.search).get('game');
-    await import(['platformer', 'memory', 'roll3d'].includes(game) ? `./${game}.mjs` : './breakout.mjs');
+    await import(['platformer', 'memory', 'story', 'roll3d'].includes(game) ? `./${game}.mjs` : './breakout.mjs');
   </script>
 </body>
 </html>

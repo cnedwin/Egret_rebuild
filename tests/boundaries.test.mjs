@@ -1372,7 +1372,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
     // World3D app: names what it imports from the main entry, so it is copied as it is.
     const world3dAppFiles=['web/world3d/app3D.ts','dist/web/world3d/app3D.js','dist/web/world3d/app3D.d.ts'];
-    const playFiles=['web/BrowserPlay.ts','dist/web/BrowserPlay.js','dist/web/BrowserPlay.d.ts'];
+    const playFiles=['BrowserPlay','playWidgets'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
     for(const relative of [...keyboardGraphFiles,...textInputGraphFiles,...hoverGraphFiles,...semanticGraphFiles,...audioGraphFiles,...gamepadGraphFiles,...videoGraphFiles,...loopGraphFiles,...gameGraphFiles,...world3dAppFiles,...playFiles,...bitmapfontGraphFiles,...physics2dGraphFiles,...particlesGraphFiles,...tilemapGraphFiles,...cameraGraphFiles]){
       const file='packages/engine/'+relative,original=readFileSync(path.join(repository,file),'utf8');
       // The game's modules name what they import from the main entry, which the check reads: they are copied as they are.

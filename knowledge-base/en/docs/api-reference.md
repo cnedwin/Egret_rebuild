@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1293 exports; 786 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1299 exports; 790 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1426,22 +1426,28 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `isSfxRecipe` | function | Whether a value is a recipe `synthesizeSfx` takes. |
 | `play` | function | Starts a game in the page. |
+| `PlayBar` | class | A bar of health, time or power. |
+| `PlayBarOptions` | interface |  |
 | `PlayBurstOptions` | interface |  |
 | `PlayButton` | type | A button: a sprite whose middle is at (x, y), with its words in `label`. |
 | `PlayButtonOptions` | interface |  |
 | `PlayGame` | interface |  |
 | `PlayKeys` | interface |  |
+| `PlayMenuOptions` | interface |  |
 | `PlayMotion` | type | A tween of `game.tween`: a motion that can be waited for. |
 | `PlayOptions` | interface |  |
 | `PlayPointer` | interface |  |
+| `PlaySayOptions` | interface |  |
 | `PlaySfx` | interface |  |
 | `PlayText` | class | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
 | `PlayTextOptions` | interface |  |
+| `PlayToastOptions` | interface |  |
 | `SFX_PRESETS` | value | The effects every game is given, by name. |
 | `SfxRecipe` | type | An effect: one tone, or several played one after another. |
 | `SfxTone` | interface | One tone of an effect. |
 | `SfxWave` | type | The wave of a tone. |
 | `synthesizeSfx` | function | The samples of an effect, one channel, from -1 to 1. |
+| `wrapPlayWords` | function | Breaks words into lines no wider than `units`: at a space where there is one, between any two wide characters. |
 
 ## `@egret/engine/audio`
 

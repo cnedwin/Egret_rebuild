@@ -180,6 +180,32 @@ for (const block of blocks) {
 
 初次初始化或重开期间，即使应用的加载仍在等待，`game.dispose()` 也能关闭游戏。被中断的启动或重开会以 `SCOPE_CLOSED` 拒绝。之后才完成的加载无法通过已经关闭的 SDK 句柄挂接游戏对象或恢复更新。外部下载由应用负责取消。
 
+## 文字、菜单与血条
+
+剧情对白、标题菜单和血条，是大多数游戏都要自己画的部分。Play 现在自带这些，全部由游戏自己 ui 层上的精灵和文字组成，所以重开时会一并清掉，键盘、指针和手指都能操作。
+
+```js
+async setup(game) {
+  hp = game.bar({ x: 12, y: 12, width: 140, value: 4, max: 4, color: 0xef4444 });
+  if ((await game.menu(['开始', '静音开始'], { title: '夜院' })) === 1) game.sfx.muted = true;
+  const answer = await game.say('你愿意把灯笼重新点亮吗？', { who: '看守', choices: ['我去。', '凭什么？'] });
+},
+update(seconds, game) {
+  if (game.asking) return; // 对白框或菜单打开时
+  // ...
+  hp.value -= 1;           // 血条滑下，并留下一段淡色残影
+  game.toast('点亮了一盏灯');
+}
+```
+
+- `game.bar({ x, y, width = 120, height = 12, value, max = 1, color, back, layer })` 是一个精灵，`x`、`y` 为左上角。设置 `value` 后会滑到该值，范围在 0 到 `max` 之间。
+- `game.toast(words, { seconds = 2, color })` 在顶部显示一条会淡出的提示，多条会叠放。
+- `await game.say(words, { who, choices, color, speed = 40 })` 在底部打开对白框，文字按每秒 `speed` 个字逐字出现，并按框宽换行。空格、回车、Z 或轻触会显示剩余文字，再按一次关闭，返回 `undefined`。带 `choices` 时，文字全部出现后显示选项；方向键或 W、S 以及摇杆移动选择，回车、空格、Z 或轻触确认，返回选项序号。对白框打开期间再请求的对白会排队。
+- `await game.menu(items, { title, x, y, width, color })` 在舞台中间（或 `x`、`y` 处）打开一个列表，以同样方式选择并返回序号。新菜单会关闭正在打开的菜单，被关闭的菜单不返回结果。
+- `game.asking` 表示是否有对白框或菜单打开。
+
+游戏暂停时它们仍可操作，`setup` 也可以等待它们：等待期间照常绘制画面，但 `update`、计时器和缓动要等 `setup` 结束后才开始。重开会移除它们，正在等待的结果不再返回。对白文字按行只绘制一次，再逐字揭开遮罩，不会每帧重绘。`examples/play/story.mjs` 用到了以上全部功能。
+
 ## 随机与存档
 
 `game.random` 给出的数字在 `seed` 相同时可以重复：`int(1, 6)`、`range(0, 1)`、`chance(0.25)`、`pick(list)`，以及 `shuffle(list)`，它返回一个新列表，不改动传入的列表。
