@@ -30,7 +30,10 @@
 
 ## 当前白鹭引擎
 
-预览版包含共享 2D 渲染、资源加载和生命周期管理、序列帧和可选 Spine 动画、托管 UI、多语言文字和浏览器输入。[World3D](knowledge-base/Cns/docs/world3d.md) 提供独立的 3D 渲染和物理能力。
+候选版包含共享 2D 渲染、资源加载和生命周期管理、序列帧和可选 Spine 动画、托管 UI、多语言文字和浏览器输入。[World3D](knowledge-base/Cns/docs/world3d.md) 提供独立的 3D 渲染和物理能力。
+
+- **一个文件就是一个游戏。** [`play`](knowledge-base/Cns/docs/play.md) 和 [`play3d`](knowledge-base/Cns/docs/play3d.md) 一次调用启动 2D 或 3D 小游戏，自带输入、代码合成音效、缓动和重叠检测。[单文件](knowledge-base/Cns/docs/single-file.md) `egret2d.js` 与 `egret3d.js` 无需构建，[`llms.txt`](llms.txt) 是 AI 智能体写游戏时读的说明页。
+- **Android。** [Runtime SDK](knowledge-base/Cns/docs/runtime-sdk.md) 预览版用 Rust GLES3 播放器在 Android 应用中运行导出的 2D 游戏，脚本宿主可选 WebView 或内嵌 V8。AAR 与导出方法见 [Android 项目播放器](knowledge-base/Cns/docs/android-project-player.md)。原生宿主上的 World3D 尚未提供（[#393](https://github.com/cnedwin/Egret_rebuild/issues/393)）。
 
 [核心能力](knowledge-base/Cns/docs/core-progress.md)记录已实现的功能和设备证据，[工程规划](knowledge-base/Cns/docs/工程规划.md)跟踪剩余验收。一体化 AI 辅助创作平台、更多平台发布及旧工程迁移是[路线图](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)上的产品目标。
 
@@ -42,11 +45,11 @@
 
 | PR | Main change | 主要变化 |
 | --- | --- | --- |
-| [#372](https://github.com/cnedwin/Egret_rebuild/pull/372) | Independent mouse actions while multiple buttons are held | 多个鼠标键交叠按放时分别驱动动作 |
-| [#369](https://github.com/cnedwin/Egret_rebuild/pull/369) · [#370](https://github.com/cnedwin/Egret_rebuild/pull/370) | Play and Play3D clocks, restart, retry and resource cleanup | Play 与 Play3D 时钟、重开、失败重试和资源清理 |
-| [#366](https://github.com/cnedwin/Egret_rebuild/pull/366) · [#367](https://github.com/cnedwin/Egret_rebuild/pull/367) | Play3D entry and single-file browser builds | Play3D 入口与浏览器单文件构建 |
-| [#341](https://github.com/cnedwin/Egret_rebuild/pull/341) · [#342](https://github.com/cnedwin/Egret_rebuild/pull/342) | Safari PNG loading fix, verified on a physical iPhone with WebGL2 and WebGPU | 修复 Safari PNG 加载，已在 iPhone 真机验证两个后端 |
-| [#336](https://github.com/cnedwin/Egret_rebuild/pull/336) | Build and verify installable preview archives | 支持构建和验证可安装的预览包 |
+| [#384](https://github.com/cnedwin/Egret_rebuild/pull/384) – [#392](https://github.com/cnedwin/Egret_rebuild/pull/392) | Android project player: embedded V8, native command replay, atlas regions, packaged text and binary assets | Android 项目播放器：内嵌 V8、原生命令重放、图集区域、包内文本与二进制资源 |
+| [#381](https://github.com/cnedwin/Egret_rebuild/pull/381) · [#383](https://github.com/cnedwin/Egret_rebuild/pull/383) | Android Rust Runtime SDK with WebView and V8 hosts, measured on a Galaxy Z Fold7 | Android Rust Runtime SDK，含 WebView 与 V8 宿主，已在 Galaxy Z Fold7 实测 |
+| [#379](https://github.com/cnedwin/Egret_rebuild/pull/379) · [#382](https://github.com/cnedwin/Egret_rebuild/pull/382) | One tag releases browser files, packages and the starter; `7.0.1-rc.3` on npm under `next` | 一个标签发布浏览器文件、包和入门工程；`7.0.1-rc.3` 以 `next` 发布到 npm |
+| [#369](https://github.com/cnedwin/Egret_rebuild/pull/369) – [#373](https://github.com/cnedwin/Egret_rebuild/pull/373) | Play and Play3D clocks, restart and cleanup; agent guide cards; mouse chords and drag pointers | Play 与 Play3D 时钟、重开和清理；智能体指南卡片；鼠标组合键与拖动指针 |
+| [#360](https://github.com/cnedwin/Egret_rebuild/pull/360) – [#368](https://github.com/cnedwin/Egret_rebuild/pull/368) | Play and Play3D, `llms.txt` and the `egret2d.js` / `egret3d.js` single files | Play 与 Play3D、`llms.txt` 以及 `egret2d.js`／`egret3d.js` 单文件 |
 
 [完整更新日志](knowledge-base/Cns/CHANGELOG.md) · [English changelog](knowledge-base/en/CHANGELOG.md) · [早期预览里程碑](https://github.com/cnedwin/Egret_rebuild/blob/ab2527359e475f2f24f6758538d925abcce53846/README.zh-CN.md)
 

@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Front pages for 7.0.1-rc.3, Play and the Android Runtime SDK — 2026-11-20
+
+The READMEs, the documentation guides and the capability map now describe the current release candidate on npm (`next`), Play and Play3D with the single browser files and `llms.txt`, and the Android Runtime SDK preview, and link their guides. The capability map's checkpoint moves to 47efbb5b.
+
 ## Egret Engine 7.0 release candidate `v7.0.1-rc.3`
 
 The five packages are on the public npm registry under the `next` tag: `npm install @egret/engine@next`. There they name each other by version. The GitHub release keeps the archives that name each other by address; both hold the same files. [Downloads and installation](docs/release-archives.md)

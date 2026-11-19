@@ -4,6 +4,10 @@
 
 早期版本号标识工程检查点。工作区包仍使用私有版本 `0.0.0`，宿主协议为 1.0。各检查点的验收范围见其子系统契约和验证记录。
 
+## 首页更新：7.0.1-rc.3、Play 与 Android Runtime SDK — 2026-11-20
+
+README、文档导航和核心能力页现在说明 npm 上的当前候选版（`next`）、Play 与 Play3D 及浏览器单文件和 `llms.txt`、Android Runtime SDK 预览，并链接对应指南。核心能力页的核对点更新到 47efbb5b。
+
 ## 白鹭引擎 7.0 候选版 `v7.0.1-rc.3`
 
 五个包发布到公共 npm 注册表，标签为 `next`：`npm install @egret/engine@next`。注册表上的包按版本号互相依赖。GitHub Release 仍保留按地址互相依赖的归档，两者包含的文件相同。[下载和安装](docs/release-archives.md)

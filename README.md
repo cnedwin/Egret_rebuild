@@ -34,7 +34,10 @@ The [starter](examples/starter/README.md) is a small game entry point you can co
 
 ## Egret today
 
-The preview includes a shared 2D renderer, asset loading and lifetimes, sprite sequences and optional Spine animation, managed UI, multilingual text, and browser input. [World3D](knowledge-base/en/docs/world3d.md) adds standalone 3D rendering and physics.
+The release candidate includes a shared 2D renderer, asset loading and lifetimes, sprite sequences and optional Spine animation, managed UI, multilingual text, and browser input. [World3D](knowledge-base/en/docs/world3d.md) adds standalone 3D rendering and physics.
+
+- **A whole game in one file.** [`play`](knowledge-base/en/docs/play.md) and [`play3d`](knowledge-base/en/docs/play3d.md) start a small 2D or 3D game from one call, with input, sound made in code, tweens and overlap tests. The [single files](knowledge-base/en/docs/single-file.md) `egret2d.js` and `egret3d.js` need no build step, and [`llms.txt`](llms.txt) is the page an AI agent reads to write one.
+- **Android.** The [Runtime SDK](knowledge-base/en/docs/runtime-sdk.md) preview runs an exported 2D game in an Android app through a Rust GLES3 player, with a WebView or optional embedded V8 script host. The [Android project player](knowledge-base/en/docs/android-project-player.md) guide covers the AAR and export. World3D on the native host is not available yet ([#393](https://github.com/cnedwin/Egret_rebuild/issues/393)).
 
 The [capability map](knowledge-base/en/docs/core-progress.md) records supported paths and device evidence. The [engineering plan](knowledge-base/en/docs/engineering-plan.md) tracks remaining acceptance. An integrated AI-assisted creator, publishing to more hosts, and legacy project migration are product goals on the [roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md).
 
@@ -46,11 +49,11 @@ Find scoped work in the [project board](https://github.com/users/cnedwin/project
 
 | PR | Main change | 主要变化 |
 | --- | --- | --- |
-| [#372](https://github.com/cnedwin/Egret_rebuild/pull/372) | Independent mouse actions while multiple buttons are held | 多个鼠标键交叠按放时分别驱动动作 |
-| [#369](https://github.com/cnedwin/Egret_rebuild/pull/369) · [#370](https://github.com/cnedwin/Egret_rebuild/pull/370) | Play and Play3D clocks, restart, retry and resource cleanup | Play 与 Play3D 时钟、重开、失败重试和资源清理 |
-| [#366](https://github.com/cnedwin/Egret_rebuild/pull/366) · [#367](https://github.com/cnedwin/Egret_rebuild/pull/367) | Play3D entry and single-file browser builds | Play3D 入口与浏览器单文件构建 |
-| [#341](https://github.com/cnedwin/Egret_rebuild/pull/341) · [#342](https://github.com/cnedwin/Egret_rebuild/pull/342) | Safari PNG loading fix, verified on a physical iPhone with WebGL2 and WebGPU | 修复 Safari PNG 加载，已在 iPhone 真机验证两个后端 |
-| [#336](https://github.com/cnedwin/Egret_rebuild/pull/336) | Build and verify installable preview archives | 支持构建和验证可安装的预览包 |
+| [#384](https://github.com/cnedwin/Egret_rebuild/pull/384) – [#392](https://github.com/cnedwin/Egret_rebuild/pull/392) | Android project player: embedded V8, native command replay, atlas regions, packaged text and binary assets | Android 项目播放器：内嵌 V8、原生命令重放、图集区域、包内文本与二进制资源 |
+| [#381](https://github.com/cnedwin/Egret_rebuild/pull/381) · [#383](https://github.com/cnedwin/Egret_rebuild/pull/383) | Android Rust Runtime SDK with WebView and V8 hosts, measured on a Galaxy Z Fold7 | Android Rust Runtime SDK，含 WebView 与 V8 宿主，已在 Galaxy Z Fold7 实测 |
+| [#379](https://github.com/cnedwin/Egret_rebuild/pull/379) · [#382](https://github.com/cnedwin/Egret_rebuild/pull/382) | One tag releases browser files, packages and the starter; `7.0.1-rc.3` on npm under `next` | 一个标签发布浏览器文件、包和入门工程；`7.0.1-rc.3` 以 `next` 发布到 npm |
+| [#369](https://github.com/cnedwin/Egret_rebuild/pull/369) – [#373](https://github.com/cnedwin/Egret_rebuild/pull/373) | Play and Play3D clocks, restart and cleanup; agent guide cards; mouse chords and drag pointers | Play 与 Play3D 时钟、重开和清理；智能体指南卡片；鼠标组合键与拖动指针 |
+| [#360](https://github.com/cnedwin/Egret_rebuild/pull/360) – [#368](https://github.com/cnedwin/Egret_rebuild/pull/368) | Play and Play3D, `llms.txt` and the `egret2d.js` / `egret3d.js` single files | Play 与 Play3D、`llms.txt` 以及 `egret2d.js`／`egret3d.js` 单文件 |
 
 [Full changelog](knowledge-base/en/CHANGELOG.md) · [中文更新日志](knowledge-base/Cns/CHANGELOG.md) · [Earlier preview milestones](https://github.com/cnedwin/Egret_rebuild/blob/ab2527359e475f2f24f6758538d925abcce53846/README.md)
 

@@ -7,6 +7,8 @@ Choose a starting point below, or browse the full [English knowledge base](knowl
 ## Current project entry
 
 - **Build a game.** [Get started](knowledge-base/en/docs/getting-started.md) · [Public imports](knowledge-base/en/docs/entry-points.md)
+- **Make a game in one file, or with an AI agent.** [Play](knowledge-base/en/docs/play.md) · [Play3D](knowledge-base/en/docs/play3d.md) · [Single files](knowledge-base/en/docs/single-file.md) · [llms.txt](llms.txt)
+- **Ship to Android.** [Runtime SDK](knowledge-base/en/docs/runtime-sdk.md) · [Android project player](knowledge-base/en/docs/android-project-player.md) · [Release archives and npm](knowledge-base/en/docs/release-archives.md)
 - **Check coverage.** [Core capabilities](knowledge-base/en/docs/core-progress.md) · [Android evidence](knowledge-base/en/docs/android-device-validation.md) · [Changelog](knowledge-base/en/CHANGELOG.md)
 - **Contribute.** [Contribution guide](CONTRIBUTING.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md) · [Project board](https://github.com/users/cnedwin/projects/2)
 
