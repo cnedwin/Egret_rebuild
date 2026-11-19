@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Play after a fifth round: long boxes of words, and what the page left to guessing — 2026-11-20
+
+A box of words whose words do not fit goes on in further boxes instead of spilling out of its panel, with any answers on the last. `llms.txt` now says: declare what the game uses above `await play` (setup runs before it ends); `music.play` takes one object for more; the form of a jingle and of a tone; where `drawEllipse` is placed; that `bar` takes a layer; that boxes do not pause the game; and that the controls on the glass appear on a first touch and go with a restart. These are the gaps three agents writing story games from the page reported.
+
 ## Play: pictures, and the look of a 3D world — 2026-11-20
 
 `await game.image(url, { x, y, width, height, smooth })` places a PNG by its middle, smooth and read from its smaller copies when drawn small, or sharp for pixel art. In Play3D, `game.look('day' | 'dusk' | 'night' | 'fog' | 'snow')`, or an object of its parts, sets the background, the light from above and below, the sun and the fog at once.

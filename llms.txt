@@ -28,6 +28,7 @@ await play({
 - A colour is a number, `0xRRGGBB`. A string such as `'#ff0000'` is refused.
 - `dt` is in **seconds**: move by `speed * dt`, with speed in units a second.
 - Give every variable of the game its value in `setup`, not where it is declared: `game.restart()` runs `setup` again.
+- Declare every variable and constant the game uses above `await play(...)`: `setup` runs before that line ends, and a `const` written below it is not there yet.
 - Use `game.after`, `game.every`, `game.wait` and `game.tween`, never `setTimeout`, `setInterval` or `requestAnimationFrame`.
 - When a sprite leaves the game, call `game.remove(sprite)` and take it out of your own lists. It may still be set until that update ends; after that setting it throws, and its `isDisposed` is true.
 - To change how a sprite looks, draw it again: `sprite.graphics.clear().beginFill(color).drawRect(-10, -10, 20, 20).endFill()`.
@@ -51,7 +52,7 @@ await play({
 | `game.remove(sprite)` | Takes it and what is in it off the stage |
 | `game.toFront(sprite)` | Puts it in front of the others of its layer |
 
-`g` draws with `beginFill(color, alpha?)`, `drawRect(x, y, w, h)`, `drawRoundRect(x, y, w, h, corner)`, `drawCircle(x, y, r)`, `drawEllipse(x, y, w, h)`, `lineStyle(thickness, color, alpha?)`, `moveTo(x, y)`, `lineTo(x, y)`, `curveTo(cx, cy, x, y)`, `endFill()` and `clear()`; each returns `g`. A triangle is `g.beginFill(c).moveTo(0, -10).lineTo(8, 8).lineTo(-8, 8).endFill()`.
+`g` draws with `beginFill(color, alpha?)`, `drawRect(x, y, w, h)`, `drawRoundRect(x, y, w, h, corner)`, `drawCircle(x, y, r)`, `drawEllipse(x, y, w, h)` (x, y is the top left of its box), `lineStyle(thickness, color, alpha?)`, `moveTo(x, y)`, `lineTo(x, y)`, `curveTo(cx, cy, x, y)`, `endFill()` and `clear()`; each returns `g`. A triangle is `g.beginFill(c).moveTo(0, -10).lineTo(8, 8).lineTo(-8, 8).endFill()`.
 
 Every one of these is a sprite. Set `x`, `y`, `rotation` (degrees, clockwise), `scaleX`, `scaleY`, `alpha` (0 to 1) and `visible`; read `width` and `height`; add properties of your own (`enemy.hp = 3`). It turns and scales about its origin. Sprites are drawn in the order they were made, later ones in front.
 
@@ -71,7 +72,7 @@ Text: `label.text = 'Score ' + n` changes it, and `label.color` and `label.size`
 | `game.keys.axis()` | Arrows and WASD, a gamepad's d-pad or left stick, or a stick on the glass, as `{ x, y }`, each -1 to 1, y down |
 | `game.keys.look()` | A gamepad's right stick, for looking or aiming; 0 and 0 without one |
 | `game.keys.down('space', 'pad:a')` | A gamepad's buttons are keys named `pad:a`, `pad:b`, `pad:x`, `pad:y`, `pad:l1`, `pad:r1`, `pad:l2`, `pad:r2`, `pad:select`, `pad:start` and `pad:up` … `pad:right` |
-| `game.touchStick()` | A stick on the glass, bottom left unless `{ x, y, radius }`; it counts in `keys.axis()` |
+| `game.touchStick()` | A stick on the glass, bottom left unless `{ x, y, radius }`; it counts in `keys.axis()`. It and the buttons below appear once a finger touches the stage, or at once with `always: true`; a mouse does not use them. Make them in `setup`: a restart takes them away |
 | `game.touchButton('A', { x, y, key: 'space' })` | A round button on the glass that holds that key while a finger is on it |
 | `game.pointer.x`, `game.pointer.y` | Where the mouse or finger is, on the stage; it follows the mouse with no button held |
 | `game.pointer.down`, `.pressed`, `.released` | Whether it is down, went down, or came up. A press on a button or on a sprite with `onTap` is theirs and is not `pressed` |
@@ -85,11 +86,11 @@ A key is `'left'`, `'right'`, `'up'`, `'down'`, `'space'`, `'enter'`, `'escape'`
 
 ## Sound
 
-`game.sfx.play(name)` plays an effect made in code: `jump`, `coin`, `hit`, `hurt`, `explosion`, `shoot`, `powerup`, `bounce`, `pop`, `click`, `hum`, `wind`, `win`, `lose`. `game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` changes one play; `pitch` multiplies the pitch. Any other name is refused unless defined: `game.sfx.define('zap', { wave: 'saw', from: 1200, to: 200, seconds: 0.15 })`, with `wave` one of `'sine'`, `'square'`, `'saw'`, `'triangle'`, `'noise'`; a list of tones is a jingle. `game.sfx.loop(name, { volume, pitch, pan })` plays one again and again until `.stop()`: music made with `define`, the `hum` of an engine whose `.pitch` a game raises with its speed, the `wind`. Its `volume`, `pitch` and `pan` can be set while it plays; a pause holds it and `restart` stops it. `game.sfx.names` lists them; `game.sfx.volume` and `game.sfx.muted` act on all.
+`game.sfx.play(name)` plays an effect made in code: `jump`, `coin`, `hit`, `hurt`, `explosion`, `shoot`, `powerup`, `bounce`, `pop`, `click`, `hum`, `wind`, `win`, `lose`. `game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` changes one play; `pitch` multiplies the pitch. Any other name is refused unless defined: `game.sfx.define('zap', { wave: 'saw', from: 1200, to: 200, seconds: 0.15 })`, with `wave` one of `'sine'`, `'square'`, `'saw'`, `'triangle'`, `'noise'`; a list of tones is a jingle: `game.sfx.define('chime', [{ wave: 'sine', from: 880, seconds: 0.08 }, { wave: 'sine', from: 1320, seconds: 0.3, volume: 0.4 }])`. A tone is `{ wave, from, to, seconds, volume, decay, noise }`; only `from` and `seconds` are needed. `game.sfx.loop(name, { volume, pitch, pan })` plays one again and again until `.stop()`: music made with `define`, the `hum` of an engine whose `.pitch` a game raises with its speed, the `wind`. Its `volume`, `pitch` and `pan` can be set while it plays; a pause holds it and `restart` stops it. `game.sfx.names` lists them; `game.sfx.volume` and `game.sfx.muted` act on all.
 
 ## Music
 
-`game.music.play('battle')` writes music in code in a mood, `'calm'`, `'mystery'`, `'tense'`, `'battle'` or `'triumph'`, and loops it; `{ mood, seed, tempo, bars }` chooses more. A new piece fades the old one out. `game.music.intensity` (0 to 1, 0.5 unless set) brings in its parts: held chords always, then a bass, drums and a tune; set it as the moment grows, and it follows over a second or so. `game.music.volume` (0.6) and `game.music.stop(seconds)`. Like sound, it is heard after the first key or click; a pause holds it and a restart stops it.
+`game.music.play('battle')` writes music in code in a mood, `'calm'`, `'mystery'`, `'tense'`, `'battle'` or `'triumph'`, and loops it; one object chooses more: `game.music.play({ mood: 'battle', tempo: 150, seed: 2 })`. A new piece fades the old one out. `game.music.intensity` (0 to 1, 0.5 unless set) brings in its parts: held chords always, then a bass, drums and a tune; set it as the moment grows, and it follows over a second or so. `game.music.volume` (0.6) and `game.music.stop(seconds)`. Like sound, it is heard after the first key or click; a pause holds it and a restart stops it.
 
 ## Overlap
 
@@ -133,9 +134,9 @@ Use them: a hit wants a sound, a burst and a small shake; a death wants a flash.
 
 | Call | Does |
 | --- | --- |
-| `game.bar({ x, y, width, height, value, max, color, back })` | A bar of health, time or power; `x`, `y` is its top left. Set `bar.value` and it slides there; a fall leaves a pale trail |
+| `game.bar({ x, y, width, height, value, max, color, back, layer })` | A bar of health, time or power, on the ui unless `layer`; `x`, `y` is its top left. Set `bar.value` and it slides there; a fall leaves a pale trail |
 | `game.toast('Saved')` | A short notice at the top that fades after 2 seconds, or `{ seconds }`; several stack |
-| `await game.say('words', { who, choices, color, speed })` | A box of words at the bottom, shown letter by letter. Space, Enter, Z or a tap shows the rest, another closes it. With `choices` it gives the index chosen with the arrows and Enter or a tap; without, undefined |
+| `await game.say('words', { who, choices, color, speed })` | A box of words at the bottom, shown letter by letter and wrapped; words longer than a box holds (about three lines) go on in a second box. It does not pause the game: check `game.asking`. Space, Enter, Z or a tap shows the rest, another closes it. With `choices` it gives the index chosen with the arrows and Enter or a tap; without, undefined |
 | `await game.menu(['Start', 'Quit'], { title })` | A list in the middle of the stage; gives the index chosen |
 | `game.asking` | Whether a box of words or a menu is open; an `update` can return early while it is |
 

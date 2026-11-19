@@ -173,6 +173,7 @@ export function createPlayWidgets(
   bar(options: PlayBarOptions): PlayBar;
   toast(words: string, options?: PlayToastOptions): void;
   say(words: string, options?: PlaySayOptions): Promise<number | undefined>;
+  sayPage(words: string, options?: PlaySayOptions): Promise<number | undefined>;
   menu(items: readonly string[], options?: PlayMenuOptions): Promise<number>;
   readonly asking: boolean;
   tick(seconds: number): void;
@@ -254,6 +255,21 @@ export function createPlayWidgets(
       label.color = on ? 0x111827 : 0xffffff;
     });
   };
+  /** The size of the words of a box, and how many lines fit under its name. */
+  const boxOf = (named: boolean): { size: number; width: number; lines: number } => {
+    const size = Math.max(14, Math.round(game.height / 22)),
+      h = Math.max(size * 4.6, Math.round(game.height * 0.28)),
+      top = 14 + (named ? Math.round(size * 1.3) : 0),
+      step = Math.round(size * 1.35);
+    return { size, width: game.width - 32 - 36, lines: Math.max(1, Math.floor((h - top - 6) / step)) };
+  };
+  const pagesOf = (words: string, named: boolean): string[] => {
+    const { size, width, lines } = boxOf(named),
+      all = wrapPlayWords(words, width / size),
+      pages: string[] = [];
+    for (let at = 0; at < all.length; at += lines) pages.push(all.slice(at, at + lines).join('\n'));
+    return pages.length > 0 ? pages : [''];
+  };
   /** Moves the choice by the keys or a stick, and gives true when it is taken. */
   const steer = (choice: Choice): boolean => {
     const keys = game.keys,
@@ -332,6 +348,13 @@ export function createPlayWidgets(
         .call(() => game.remove(node));
     },
     say(words: string, o: PlaySayOptions = {}): Promise<number | undefined> {
+      // Words longer than a box holds are shown a box at a time; the answers, if any, come with the last.
+      const pages = pagesOf(String(words), typeof o?.who === 'string' && o.who !== '');
+      const { choices: _answers, ...rest } = o ?? {};
+      for (const page of pages.slice(0, -1)) void widgets.sayPage(page, rest);
+      return widgets.sayPage(pages[pages.length - 1]!, o);
+    },
+    sayPage(words: string, o: PlaySayOptions = {}): Promise<number | undefined> {
       const choices = Array.isArray(o?.choices) && o.choices.length > 0 ? o.choices.map(String) : undefined;
       return new Promise(resolve => {
         const open = (): void => {

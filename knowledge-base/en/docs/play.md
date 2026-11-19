@@ -204,7 +204,7 @@ update(seconds, game) {
 
 - `game.bar({ x, y, width = 120, height = 12, value, max = 1, color, back, layer })` is a sprite whose `x` and `y` are its top left. Setting `value` slides it there, within 0 and `max`.
 - `game.toast(words, { seconds = 2, color })` shows a notice at the top that fades; several stack.
-- `await game.say(words, { who, choices, color, speed = 40 })` opens a box at the bottom whose words appear `speed` letters a second, wrapped to its width. Space, Enter, Z or a tap shows the rest; another closes it, and it gives `undefined`. With `choices` the answers appear once the words have; the arrows or W and S and a stick move between them, Enter, Space, Z or a tap takes one, and it gives its index. A box asked for while one is open waits its turn.
+- `await game.say(words, { who, choices, color, speed = 40 })` opens a box at the bottom whose words appear `speed` letters a second, wrapped to its width. Space, Enter, Z or a tap shows the rest; another closes it, and it gives `undefined`. With `choices` the answers appear once the words have; the arrows or W and S and a stick move between them, Enter, Space, Z or a tap takes one, and it gives its index. A box asked for while one is open waits its turn. Words longer than a box holds go on in further boxes, each closed by a press; the answers come with the last.
 - `await game.menu(items, { title, x, y, width, color })` opens a list in the middle of the stage, or around `x`, `y`, and gives the index chosen in the same ways. A new menu closes the one open, which then gives nothing.
 - `game.asking` is whether a box or a menu is open.
 
