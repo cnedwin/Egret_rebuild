@@ -28,6 +28,8 @@ For the other profiles change `--v8-profile`, the AAR filename and the export di
 
 The embedded worker evaluates the exported `game.js` directly. Game code can use the project clock, timers, resource cancellation, stage input, native text editor, audio and binary frame submission. Local HTML scripts and browser globals such as `document` or `Image` require the System WebView host. The player restricts project loading to packaged assets. Applications that need remote content must provide that integration separately. The player executes trusted, packaged game code.
 
+Read a declared level or dialogue file with `await services.assets.readText(path, signal)`. The three hosts share UTF-8 decoding and cancel pending reads when the game closes. The [Android project player guide](android-project-player.md) shows how a level selects an atlas frame.
+
 Use the optional `services.raster` to decode a declared PNG, measure text runs or draw them onto a texture. The service uses the same Android decoder and fonts in all three builds. Each page accepts at most 1,048,576 pixels, with up to 4,096 pixels per side. Prepare pages when content loads or text changes. Image transfer for this service uses Base64 during preparation. Frame commands use a binary buffer. Each active V8 session owns one worker and isolate. The Android view accepts a replacement game after `onClosed()` reports resource and VM teardown.
 
 ## Measuring the player

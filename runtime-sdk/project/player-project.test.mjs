@@ -306,3 +306,159 @@ test('an aborted workshop PNG detaches both image handlers and preserves the acq
   await assert.rejects(loadPng('assets/second.png', 4, 4, signal), error => error === signal.reason);
   assert.equal(request, previous);
 });
+
+// These host doubles delay completion: receiving an ID does not imply the UI or
+// the isolate has received the result. The physical builds exercise the real bridge.
+function textHost() {
+  const reads = new Map(), replies = new Map(), cancelled = [], taken = [];
+  return {
+    ...host(), reads, replies, cancelled, taken,
+    readText(id, path) { reads.set(id, path); return true; },
+    cancelReadText(id) { cancelled.push(id); replies.delete(id); },
+    takeTextResult(id) {
+      taken.push(id);
+      const value = replies.get(id);
+      replies.delete(id);
+      return value;
+    }
+  };
+}
+
+test('packaged text delivers concurrent UTF-8 and empty results to the initiating read', async () => {
+  const port = textHost();
+  let assets;
+  const project = createPlayerProject({width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; }}, port);
+  try {
+    await project.start();
+    const first = assets.readText('data/level.json'), second = assets.readText('data/empty.txt');
+    const [[a, pathA], [b, pathB]] = port.reads;
+    assert.deepEqual([pathA, pathB], ['data/level.json', 'data/empty.txt']);
+    port.replies.set(b, '');
+    project.textResult(b, '');
+    const level = '{"关卡":"山门🌙","台词":"雪\\n夜"}';
+    port.replies.set(a, level);
+    project.textResult(a, '');
+    project.textResult(a, '');
+    assert.deepEqual(await Promise.all([first, second]), [level, '']);
+    assert.deepEqual(port.taken, [b, a]);
+    assert.deepEqual(port.cancelled, []);
+  } finally { await project.close(); }
+});
+
+test('packaged text distinguishes file, decoding, limit and transport failures and can retry', async () => {
+  const port = textHost();
+  let assets;
+  const project = createPlayerProject({ width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; } }, port);
+  try {
+    await project.start();
+    for (const code of ['NotFoundError', 'EncodingError', 'RangeError', 'TypeError', 'Error']) {
+      const path = 'assets/bad.json';
+      const read = assets.readText(path);
+      project.textResult([...port.reads.keys()].at(-1), code);
+      await assert.rejects(read, error => {
+        if (code === 'RangeError') assert.ok(error instanceof RangeError);
+        if (code === 'TypeError') assert.ok(error instanceof TypeError);
+        return error.name === code && error.message.includes(path);
+      });
+    }
+    const read = port.readText;
+    port.readText = () => false;
+    await assert.rejects(assets.readText('data/full.txt'), { name: 'RangeError' });
+    port.readText = () => { throw Error('bridge unavailable'); };
+    await assert.rejects(assets.readText('data/retry.txt'), /bridge unavailable/);
+    port.readText = read;
+    const retry = assets.readText('data/retry.txt');
+    const id = [...port.reads.keys()].at(-1);
+    port.replies.set(id, '可重试');
+    project.textResult(id, '');
+    assert.equal(await retry, '可重试');
+    assert.deepEqual(port.taken, [id]);
+  } finally { await project.close(); }
+});
+
+test('packaged text cancels caller and session reads independently and ignores late completions', async () => {
+  const port = textHost(), retired = new AbortController(), active = new AbortController();
+  let assets;
+  const project = createPlayerProject({ width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; } }, port);
+  try {
+    await project.start();
+    retired.abort(new Error('already retired'));
+    await assert.rejects(assets.readText('data/a.txt', retired.signal), err => err === retired.signal.reason);
+    assert.equal(port.reads.size, 0);
+    const a = assets.readText('data/a.txt', active.signal), b = assets.readText('data/b.txt');
+    const [aId, bId] = port.reads.keys();
+    active.abort(new Error('player changed levels'));
+    await assert.rejects(a, err => err === active.signal.reason);
+    project.textResult(aId, '');
+    assert.deepEqual(port.cancelled, [aId]);
+    const rejected = assert.rejects(b, {name: 'AbortError'});
+    await project.close();
+    await rejected;
+    project.textResult(bId, '');
+    await assert.rejects(assets.readText('data/after-close.txt'), {name: 'AbortError'});
+    assert.deepEqual(port.cancelled, [aId, bId]);
+    assert.deepEqual(port.taken, []);
+    assert.equal(port.reads.size, 2);
+  } finally { await project.close(); }
+});
+
+test('closing during factory text loading releases scope and prevents a late scene attachment', async () => {
+  const port = textHost(), entered = Promise.withResolvers();
+  let attached = false, disposed = false, lifetime;
+  const project = createPlayerProject({ width: 2, height: 2, async create(ctx) {
+    lifetime = ctx.signal;
+    ctx.scope.use({ dispose() { disposed = true; } });
+    const pending = ctx.assets.readText('levels/open.json', ctx.signal);
+    entered.resolve();
+    await pending;
+    attached = true;
+    return {};
+  } }, port);
+  const opening = project.start();
+  const rejection = assert.rejects(opening, err => err === lifetime.reason);
+  await entered.promise;
+  const closing = project.close();
+  project.textResult([...port.reads.keys()][0], '');
+  await Promise.all([closing, rejection]);
+  assert.ok(disposed);
+  assert.equal(attached, false);
+  assert.equal(port.cancelled.length, 1);
+  assert.deepEqual(port.taken, []);
+  assert.throws(() => project.frame(0), /unavailable/);
+});
+
+test('packaged text caps pending requests and accepts an engine scope cancellation signal', async () => {
+  const port = textHost();
+  let assets, own;
+  const project = createPlayerProject({width: 2, height: 2, create(ctx) {
+    assets = ctx.assets;
+    own = ctx.engine.createScope();
+    return {};
+  }}, port);
+  try {
+    await project.start();
+    const inScope = assets.readText('data/scoped.txt', own.signal);
+    const remaining = Array.from({length: 7}, (_, index) => assets.readText('data/' + index + '.txt'));
+    await assert.rejects(assets.readText('data/ninth.txt'), {name: 'RangeError'});
+    assert.equal(port.reads.size, 8);
+    own.dispose();
+    await assert.rejects(inScope, err => err === own.signal.reason);
+    const replacement = assets.readText('data/replacement.txt');
+    for (const [id, path] of [...port.reads].slice(1)) {
+      port.replies.set(id, path);
+      project.textResult(id, '');
+    }
+    assert.equal(await replacement, 'data/replacement.txt');
+    assert.equal((await Promise.all(remaining)).length, 7);
+  } finally { own?.dispose(); await project.close(); }
+});
+
+test('older native hosts can start projects and report unsupported reads on demand', async () => {
+  let assets;
+  const project = createPlayerProject({width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; }}, host());
+  try {
+    await project.start();
+    await assert.rejects(assets.readText('data/level.json'), {name: 'NotSupportedError'});
+    assert.equal(project.frame(0).byteLength, 24);
+  } finally { await project.close(); }
+});

@@ -6,18 +6,23 @@ import android.net.Uri;
 import android.webkit.WebResourceResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 final class ProjectAssets {
     static final String ORIGIN = "https://egret-player.invalid/";
     private final AssetManager assets;
     private final String root;
+    private final Set<String> declaredAssets = new HashSet<>();
     final int width, height;
     final String entry;
 
@@ -30,6 +35,15 @@ final class ProjectAssets {
         if (width < 1 || width > 16384 || height < 1 || height > 16384)
             throw new IOException("Invalid project stage dimensions");
         entry = ORIGIN + relative(manifest.getString("entry"));
+        // Older project packages may omit the list. Validate the requested path
+        // at open time so this optional service cannot prevent their startup.
+        JSONArray files = manifest.optJSONArray("assets");
+        if (files != null) {
+            for (int i = 0; i < files.length(); i++) {
+                Object name = files.opt(i);
+                if (name instanceof String) declaredAssets.add((String)name);
+            }
+        }
     }
 
     private static String relative(String name) {
@@ -38,6 +52,12 @@ final class ProjectAssets {
             if (!part.matches("[A-Za-z0-9_~.-]+") || part.equals(".") || part.equals(".."))
                 throw new IllegalArgumentException("Invalid asset path");
         return name;
+    }
+
+    InputStream openText(String name) throws IOException {
+        String path = relative(name);
+        if (!declaredAssets.contains(path)) throw new FileNotFoundException("Undeclared project asset");
+        return assets.open(root + "/" + path);
     }
 
     byte[] read(String name, int limit) throws IOException {

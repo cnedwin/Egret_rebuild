@@ -183,6 +183,7 @@ public final class JavetProjectScripts extends ScriptSession {
         synchronized (interruptLock) { toClose = runtime; runtime = null; }
         try { if (toClose != null) toClose.close(); }
         catch (Exception | LinkageError e) { error = withFailure(error, e); }
+        textReads.close();
         pages.close();
         String finalError = error;
         thread.quitSafely();
@@ -214,6 +215,9 @@ public final class JavetProjectScripts extends ScriptSession {
         @V8Function public void page(int id, int width, int height, String rgba) { pages.publish(id, width, height, rgba); }
         @V8Function public void releasePage(int id) { pages.release(id); }
         @V8Function public String raster(String json) { return raster.request(json); }
+        @V8Function public boolean readText(int id, String path) { return textReads.start(id, path); }
+        @V8Function public void cancelReadText(int id) { textReads.cancel(id); }
+        @V8Function public String takeTextResult(int id) { return textReads.take(id); }
         @V8Function public void edit(String initial) { requestEdit(initial); }
         @V8Function public void playSound(String path) { requestSound(path); }
         @V8Function public void state(String json) { owner.ui.post(() -> owner.projectState(json)); }

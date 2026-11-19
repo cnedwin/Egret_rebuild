@@ -52,6 +52,29 @@ installPlayerProject({
 
 TypeScript 项目使用 `@egret/engine` 的类型，并在游戏的 `tsconfig.json` 中包含 `runtime-sdk/project/android-player-project.d.ts` 或其副本。导出器将 `@egret/android-player-project` 解析到本仓库的适配器。每个播放器独立拥有一个 Engine 和 Scope。异步加载时传入宿主提供的 `signal`。调用 `publishPage(id, image)` 将纹理实际使用的 `ImageData2D` 登记到 1 至 255 号槽位，返回句柄的 `release()` 支持重复调用。通过 `edit(text)`、`playSound(assetPath)` 和 `state(value)` 调用 Android 服务。游戏可实现 `input`、`update`、`pause`、`resume`、`close` 和 `closedSnapshot`。输入事件提供舞台坐标、触点 ID、位移或编辑及提交的文字。`update(elapsedMs)` 收到前台累计时间，引擎时钟单次最多推进 100 毫秒，恢复后重新建立时间基准。
 
+## 读取包内关卡文件
+
+在 `project.json` 的 `assets` 中登记文件，例如 `"assets": ["levels/harbor.json"]`，并以 UTF-8 保存。关卡可以通过名称选择图集帧。
+
+```json
+{"关卡":"雾港🌙","图集帧":"lantern","对白":"沿河向东。"}
+```
+
+在项目工厂中，假设 `sheet` 是已加载的图集：
+
+```ts
+const text = await services.assets.readText('levels/harbor.json', services.signal);
+const level = JSON.parse(text);
+const sprite = sheet.createBitmap(level['图集帧']);
+services.engine.stage.addChild(sprite);
+```
+
+系统 WebView、标准 V8 和裁剪 V8 共用这个接口。可以传入 `AbortSignal` 单独取消一次读取。即使省略信号，关闭游戏也会取消这个项目尚未完成的读取。取消时 Promise 以信号的原因拒绝。重新打开游戏会创建独立的读取会话。
+
+单文件上限为 256 KiB，按编码后的字节数计算。读取时会去掉开头的一个 UTF-8 BOM，空文件返回空字符串。使用项目内的相对路径，拼写和大小写需与清单及包内文件一致。文件缺失或未声明时返回 `NotFoundError`，UTF-8 无效时返回 `EncodingError`，路径无效（如 `../level.json`）时返回 `TypeError`，超过大小或并发上限时返回 `RangeError`。可通过 `error.name` 区分这些情况。每个会话最多同时接纳八个读取请求。请用支持此接口的版本构建 AAR 并导出游戏。
+
+Galaxy Z Fold7 上，系统 WebView、标准 V8 和裁剪 V8 读取同一份 UTF-8 关卡，均选中了灯笼图集帧。三个宿主都识别了已声明但包内缺失的文件和未声明路径，取消待处理的读取后重试成功。在首次读取期间关闭时，游戏没有提交画面或上传纹理；重新打开后显示了预期的精灵。测试 Activity 暂时占住读取队列，使两项待处理读取的验证可以复现。[Fold7 结果和像素对照](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-text-assets.json)
+
 ## 接入已有 Activity
 
 将 AAR 放入应用模块的 `libs/egret-player.aar`，在 Gradle 依赖中加入 `implementation files('libs/egret-player.aar')`。把资源导出到该模块 assets 下的新目录。将下例路径替换为自己的游戏、打包器和应用模块路径。

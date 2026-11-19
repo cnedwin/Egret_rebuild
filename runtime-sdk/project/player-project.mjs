@@ -4,12 +4,14 @@ import { createEngine, copyImageData2DPixels } from '@egret/engine';
 import { createCapturedProjectEncoder } from '../scene/project-frame.mjs';
 import { base64 } from '../scene/commands.mjs';
 import { createPlayerRaster } from './player-raster.mjs';
+import { createPlayerTextAssets } from './player-text-assets.mjs';
 
 export function createPlayerProject(definition, native) {
   const encoder = createCapturedProjectEncoder();
   const pageIds = new Map();
   const resident = new Map();
   const lifetime = new AbortController();
+  const { assets, textResult } = createPlayerTextAssets(native, lifetime.signal);
   const frameOptions = Object.freeze({
     width: definition.width, height: definition.height, clearColor: definition.clearColor ?? 0,
     clearAlpha: 1, outputAlpha: 'opaque'
@@ -75,6 +77,7 @@ export function createPlayerProject(definition, native) {
   }
 
   return Object.freeze({
+    textResult,
     start() {
       if (stopped) return Promise.reject(new Error('Project closed'));
       opening ??= (async () => {
@@ -89,7 +92,7 @@ export function createPlayerProject(definition, native) {
           if (stopped) return;
           scope = engine.createScope();
           game = await definition.create({
-            engine, scope, publishPage, signal: lifetime.signal, raster: createPlayerRaster(native, lifetime.signal),
+            engine, scope, assets, publishPage, signal: lifetime.signal, raster: createPlayerRaster(native, lifetime.signal),
             edit: text => native.edit(text),
             state: value => native.state(JSON.stringify(value)),
             playSound: path => native.playSound(path)

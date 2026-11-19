@@ -74,6 +74,14 @@
       "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
     },
     {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectTextReads.java",
+      "originRole": "Session-owned Android asset reading, strict UTF-8 decoding and cancellation. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectTextReadsTest.java",
+      "originRole": "Behavior checks for packaged text, byte and pending limits, cancellation and retirement. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
       "path": "runtime-sdk/examples/moon-herbarium/assets/botanicals.png",
       "originRole": "Original pixel artwork for the Moon Herbarium example. Independently prepared with AI assistance; Apache-2.0."
     },
@@ -114,6 +122,10 @@
       "originRole": "Sanitized Fold7 functional and package identity results for the two Android consumers. Independently prepared with AI assistance; Apache-2.0."
     },
     {
+      "path": "runtime-sdk/measurements/fold7-project-text-assets.json",
+      "originRole": "Galaxy Z Fold7 observations of the packaged UTF-8 level on three Android script hosts. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
       "path": "runtime-sdk/native/src/project_color.rs",
       "originRole": "Rust GLES3 project rendering, compositing and texture conversion. Independently prepared with AI assistance; Apache-2.0."
     },
@@ -136,6 +148,10 @@
     {
       "path": "runtime-sdk/project/player-project.test.mjs",
       "originRole": "Egret Android game-script adapter, declarations and lifecycle contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/player-text-assets.mjs",
+      "originRole": "Project text service for script-owned request promises, native completion and session cancellation. First-party contribution prepared with AI assistance; Apache-2.0."
     },
     {
       "path": "runtime-sdk/scene/project-frame.mjs",
