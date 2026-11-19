@@ -2,7 +2,7 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-2026-11-18 核对主干 [b3874464](https://github.com/cnedwin/Egret_rebuild/commit/b3874464236ce20439c06a4f771f0de799b09223)。工作区包仍为 private 0.0.0。外部项目使用的版本化归档和入门工程见[预览安装指南](release-archives.md)。
+2026-11-19 核对主干 [47efbb5b](https://github.com/cnedwin/Egret_rebuild/commit/47efbb5b)。当前候选版为 [`v7.0.1-rc.3`](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3)，五个包已以 `next` 标签发布到 npm（`npm install @egret/engine@next`）。外部项目使用的归档、浏览器单文件和入门工程见[发行指南](release-archives.md)。
 
 本页说明当前能力，[工程计划](工程规划.md)说明接下来的工作，子系统契约给出准确 API 和证据范围。历史预览记录不再作为并行的“当前版本”。
 
@@ -21,6 +21,8 @@
 | 2D 世界 | 带跟随、边界、缩放、震动和视差图层的[可选相机](camera-2d.md)，从 Tiled 读取、按区块裁剪绘制的[瓦片地图](tilemap.md)、[粒子](particles.md)，以及带传感器、查询、射线和沿墙滑动角色的[碰撞与简单物理](physics-2d.md)，以及读取 BMFont 和 Egret 格式的[位图字体](bitmap-font.md) | 会旋转的刚体、关节和连续碰撞；等距地图和图块动画播放 |
 | 声音 | [可选的 2D 混音器](audio.md)：计入预算的已解码声音、以流播放的长音乐、发声位、带渐变的单首音乐、有名字的音量，以及等待第一次点击、页面隐藏时静音的 Web Audio 后端 | 资源清单中的声音、其他宿主，以及扬声器、手机、Safari 和 Firefox 的验证 |
 | 3D | [可选 World3D](world3d.md)提供独立 WebGL2／WebGPU 渲染器，以及 glTF 实例、光照阴影、后处理、蒙皮、变形和文字。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。 | 后端功能与验收范围见契约。更广资产、设备与性能资格及统一 2D／3D 创作流程仍待交付。 |
+| Play 与 AI 智能体 | [`play`](play.md) 与 [`play3d`](play3d.md) 一次调用运行 2D 或 3D 小游戏，提供键盘、指针、手柄、指针锁定、代码合成音效与循环音、缓动、重叠与推出检测，以及 3D 模型和点选。[单文件](single-file.md) `egret2d.js`、`egret3d.js` 无需构建，[`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) 供智能体阅读，`tools/verify-game.mjs` 在无头浏览器中试玩并检查游戏。 | Play 在实体手柄、指针锁定和手机上的验证；示例的真实 GPU 计时。Play 面向小游戏，大型游戏使用完整引擎。[#360](https://github.com/cnedwin/Egret_rebuild/pull/360) – [#373](https://github.com/cnedwin/Egret_rebuild/pull/373) |
+| 原生运行时（Android） | [Runtime SDK](runtime-sdk.md) 预览：Rust GLES3 播放器、可嵌入 AAR 与游戏导出器，脚本宿主可选 WebView 或内嵌 V8。可绘制导出 2D 画面中的矩形和图片四边形，包括裁边和旋转的图集区域，并读取包内文本与二进制资源（单次最多 256 KiB）。已在 Galaxy Z Fold7 实测。[使用说明](android-project-player.md) | 原生宿主上的网格、特效与 World3D（[#393](https://github.com/cnedwin/Egret_rebuild/issues/393)）；Vulkan；iOS、HarmonyOS 与小游戏宿主。[#381](https://github.com/cnedwin/Egret_rebuild/pull/381) – [#392](https://github.com/cnedwin/Egret_rebuild/pull/392) |
 | 工程与工具 | 版本化工程快照／事务、换装工作室内打开工程、干净工程包和浏览器冒烟检查、结构化诊断与有界旧 RES／MovieClip 分析 | 工程到运行游戏的创作闭环、集成可视化工具、Agent／Skill／MCP 应用、发布／更新适配和完整迁移 |
 
 ## 游戏内容兼容范围
