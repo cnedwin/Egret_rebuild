@@ -11,6 +11,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 final class PlayerScripts extends ScriptSession {
     private WebView web;
     private boolean starting;
@@ -68,7 +71,22 @@ final class PlayerScripts extends ScriptSession {
             + "else if(ArrayBuffer.isView(v))bytes=new Int8Array(v.buffer,v.byteOffset,v.byteLength);"
             + "else throw Error('frame() must return a binary command buffer');"
             + "if(bytes.byteLength<24||bytes.byteLength>" + PlayerGraphics.MAX_FRAME_BYTES + ")throw Error('Invalid command length');"
-            + "EgretNativePlayer.commands(" + epoch + ",bytes,generation)");
+            // Android WebView marshals typed arrays element by element. A native-order word
+            // view carries the same bits with one quarter as many array elements.
+            + "if((bytes.byteOffset%4)===0&&(bytes.byteLength%4)===0){"
+            + "const words=new Int32Array(bytes.buffer,bytes.byteOffset,bytes.byteLength/4);"
+            + "EgretNativePlayer.commandWords(" + epoch + ",words,generation)"
+            + "}else{EgretNativePlayer.commands(" + epoch + ",bytes,generation)}");
+    }
+
+    // Typed arrays use the device byte order. Rebuild the exact byte slice before the
+    // ordinary command handler validates the stage and captures its texture pages.
+    static byte[] unpackCommandWords(int[] words) {
+        if (words == null || words.length < 24 / Integer.BYTES
+                || words.length > PlayerGraphics.MAX_FRAME_BYTES / Integer.BYTES) return null;
+        byte[] frame = new byte[words.length * Integer.BYTES];
+        ByteBuffer.wrap(frame).order(ByteOrder.nativeOrder()).asIntBuffer().put(words);
+        return frame;
     }
 
     void resumeVm() { if (web != null) web.onResume(); }
@@ -102,6 +120,10 @@ final class PlayerScripts extends ScriptSession {
         }
         @JavascriptInterface public void releasePage(int id) { pages.release(id); }
         @JavascriptInterface public String raster(String json) { return raster.request(json); }
+        @JavascriptInterface public void commandWords(int epoch, int[] words, double generationMs) {
+            if (owner.ending || epoch != owner.epoch) return;
+            commands(epoch, unpackCommandWords(words), generationMs);
+        }
         @JavascriptInterface public void commands(int epoch, byte[] frame, double generationMs) {
             long ns = generationMs >= 0 && Double.isFinite(generationMs) ? Math.round(generationMs * 1_000_000.0) : -1;
             PlayerScripts.this.commands(epoch, frame, ns, -1);
