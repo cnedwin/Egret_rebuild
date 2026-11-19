@@ -52,6 +52,29 @@ installPlayerProject({
 
 Use `@egret/engine` types and include `runtime-sdk/project/android-player-project.d.ts` or a copy in the game's `tsconfig.json`. The exporter resolves `@egret/android-player-project` to the adapter in this source tree. Each player owns an Engine and Scope. Pass the supplied `signal` into asynchronous loading. `publishPage(id, image)` binds the same `ImageData2D` used by the texture to a slot from 1 through 255. Its handle has an idempotent `release()`. `edit(text)`, `playSound(assetPath)` and `state(value)` call the Android services. A game can implement `input`, `update`, `pause`, `resume`, `close` and `closedSnapshot`. Input carries stage coordinates, pointer ID and movement, or edited/submitted text. `update(elapsedMs)` receives foreground time. The engine clock advances by at most 100 ms per turn and starts a fresh baseline after resume.
 
+## Read a packaged level
+
+List the file in `project.json` under `assets`, for example `"assets": ["levels/harbor.json"]`. Save it as UTF-8. A level can choose an atlas frame by name:
+
+```json
+{"关卡":"雾港🌙","图集帧":"lantern","对白":"沿河向东。"}
+```
+
+Inside the project factory, with a loaded sprite sheet called `sheet`:
+
+```ts
+const text = await services.assets.readText('levels/harbor.json', services.signal);
+const level = JSON.parse(text);
+const sprite = sheet.createBitmap(level['图集帧']);
+services.engine.stage.addChild(sprite);
+```
+
+System WebView and both embedded V8 profiles use the same API. Pass an optional `AbortSignal` to cancel a particular request. Closing the project cancels its outstanding reads even if the caller omitted the signal. An aborted read rejects with the signal's reason. A new game view owns a separate set of requests.
+
+Each read accepts up to 256 KiB of encoded data. One leading UTF-8 BOM is removed. Empty files return an empty string. The path must be a declared, project-relative asset, with the same spelling and case as the packaged file. A missing or undeclared file rejects with `NotFoundError`, malformed UTF-8 with `EncodingError`. Invalid paths such as `../level.json` reject with `TypeError`. A size or concurrency limit rejects with `RangeError`. Inspect `error.name` when handling these failures. Each session admits up to eight outstanding reads. Build the AAR and export the game with a version that implements this service.
+
+On a Galaxy Z Fold7, the same UTF-8 level selected the lantern sprite in System WebView, standard V8 and trimmed V8. Each host also reported a missing packaged file and an undeclared path, cancelled a pending read and successfully retried. Closing during the first read produced no game frame or texture upload. Reopening displayed the expected sprite. The test Activity held the I/O queue to make the two pending-read cases reproducible. [Fold7 results and pixel comparison](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-text-assets.json)
+
 ## Embed in an existing Activity
 
 Copy the AAR to the app module's `libs/egret-player.aar` and add `implementation files('libs/egret-player.aar')` to its Gradle dependencies. Export into a fresh directory under that module's assets. Replace the example paths with the existing module, game and bundler locations.

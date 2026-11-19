@@ -1,0 +1,278 @@
+{
+  "scene": "Packaged UTF-8 level selects a sprite-sheet frame",
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "webview": "com.google.android.webview, 157.0.8103.50",
+    "systemGles": "GLES: Qualcomm, Adreno (TM) 830, OpenGL ES 3.2 V@0800.64.8"
+  },
+  "source": {
+    "gameFixtureSha256": "9a5b94320128545f7abdda3d552053ad532c40331e7df4f188b21917fadfde3a",
+    "textServiceSha256": "f093fa945badfc2b96c9370b57170c308ada3bc359cbecb7a67f2e2a018b55ef",
+    "gameJs": "b571484c2d2ee598887f46b5b39cb1b984434b4d211213e222e642edb08f1fab",
+    "manifest": "11584cfa6a2a48936d14db49a9b41458eed7be591be9af7fafce0fd2827a3b8b",
+    "level": "df0f3a4ed5be6eda600e4c67abb601af2b9cd8a625230ca5aa472d346c328568",
+    "gles": "02614404afa6be685be8852b84d14f9bcadb37fb4e47935190691790c88b2d40"
+  },
+  "level": {
+    "path": "levels/harbor.json",
+    "json": {
+      "关卡": "雾港🌙",
+      "图集帧": "lantern",
+      "对白": "沿河向东。"
+    },
+    "api": "const level = JSON.parse(await assets.readText('levels/harbor.json', signal)); const bitmap = sheet.createBitmap(level['图集帧']);"
+  },
+  "fixture": {
+    "logicalStage": [
+      360,
+      640
+    ],
+    "backgroundRGBA": "102030ff",
+    "atlas": "8x4 RGBA, two adjacent 4x4 cells: gate (red/purple), lantern (teal/gold). Nearest sampling. The selected frame uses the same resident atlas page on all three hosts.",
+    "position": [
+      100,
+      240
+    ],
+    "scale": [
+      40,
+      40
+    ],
+    "lanternRows": [
+      "agga",
+      "gggg",
+      "agga",
+      "agga"
+    ],
+    "legend": {
+      "a": "206860ff",
+      "g": "f0c040ff"
+    }
+  },
+  "pixels": {
+    "method": "Android PixelCopy of the live GLES SurfaceView, independently compared with a full analytic RGBA image at first open and after reopening each host.",
+    "physicalPixels": [
+      1080,
+      1920
+    ],
+    "pixelsPerSurface": 2073600,
+    "symbolPixels": 230400,
+    "expectedColorCounts": {
+      "102030ff": 1843200,
+      "206860ff": 86400,
+      "f0c040ff": 144000
+    },
+    "rgbaSha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10",
+    "composite": "Separate active-display screenshots include a system overlay. The exploratory WebView screen differed from the analytic surface at 4,141 pixels, all inside x=1058..1079, y=236..430 in stage-viewport coordinates. All screenshot differences and full pixel hashes are retained per host below. PixelCopy covers the entire game surface including that rectangle."
+  },
+  "method": {
+    "missing": "The build exported a declared placeholder at levels/missing.json. Only the packaged QA copy omitted its bytes, retaining the declaration. A second path was absent from the manifest.",
+    "race": "Normal loading used the shipping AAR worker. Only the cancellation and close scenarios inserted a test-owned interruptible latch into the same session executor before a real read. The debug Activity observed its queue length reach one before requesting abort or close. This establishes queued cancellation, not a timing claim for interrupting an OS read. No production test hook.",
+    "sessions": "Session 1: read, missing files, explicit abort, retry, close. Session 2: hold the first read during create and close. Session 3: reopen with no hold and inspect the full surface, original session event log and texture retirement. Page counts are [uploads, releases, abandoned]."
+  },
+  "configurations": {
+    "webview": {
+      "host": {
+        "profile": "webview"
+      },
+      "apkSha256": "725df4283bd675ef8810712c185dd0660e0f759a328dd44aa8c0c238dfaab9c6",
+      "aarSha256": "e40d6e404c2d8c0f46691b62c480b20f8f43d02a95f2b0322b149ee9635453d6",
+      "pixelCopyChanged": [
+        0,
+        0
+      ],
+      "screenChangedFromIdeal": [
+        4141,
+        4141
+      ],
+      "screenSha256": [
+        "681d5cd86ff70f94e7ec15cc3c948b4e90d1a23618d5ce80ff94a19122f51c4e",
+        "681d5cd86ff70f94e7ec15cc3c948b4e90d1a23618d5ce80ff94a19122f51c4e"
+      ],
+      "outsideOverlayChanged": [
+        0,
+        0
+      ],
+      "missing": [
+        {
+          "path": "levels/missing.json",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.json",
+          "error": "NotFoundError"
+        }
+      ],
+      "pendingReadAndAbort": {
+        "queuedBefore": 1,
+        "queuedAfter": 0,
+        "error": "AbortError",
+        "readBackAfterRetry": "lantern"
+      },
+      "closeDuringStartup": {
+        "queued": 1,
+        "opened": false,
+        "result": [
+          "opening",
+          "AbortError"
+        ],
+        "closed": true,
+        "submittedFrames": 0,
+        "uploads": 0,
+        "releases": 0,
+        "abandoned": 0,
+        "earlierSessionUnchangedAfterReopen": true
+      },
+      "pages": {
+        "first": [
+          1,
+          1,
+          0
+        ],
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      },
+      "reopenedFrame": "lantern"
+    },
+    "standard": {
+      "host": {
+        "profile": "standard",
+        "vmVersion": "15.7.112.19",
+        "intl": true
+      },
+      "apkSha256": "284689107be850b94af00a0c2fa4557d73937a044bb24e22ee73a97761698e30",
+      "aarSha256": "3f1ce37bd07c6743253cf4c89ff7f5657e9b26932351c14c689a9838ba0f49e5",
+      "pixelCopyChanged": [
+        0,
+        0
+      ],
+      "screenChangedFromIdeal": [
+        4141,
+        4141
+      ],
+      "screenSha256": [
+        "681d5cd86ff70f94e7ec15cc3c948b4e90d1a23618d5ce80ff94a19122f51c4e",
+        "681d5cd86ff70f94e7ec15cc3c948b4e90d1a23618d5ce80ff94a19122f51c4e"
+      ],
+      "outsideOverlayChanged": [
+        0,
+        0
+      ],
+      "missing": [
+        {
+          "path": "levels/missing.json",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.json",
+          "error": "NotFoundError"
+        }
+      ],
+      "pendingReadAndAbort": {
+        "queuedBefore": 1,
+        "queuedAfter": 0,
+        "error": "AbortError",
+        "readBackAfterRetry": "lantern"
+      },
+      "closeDuringStartup": {
+        "queued": 1,
+        "opened": false,
+        "result": [
+          "opening",
+          "AbortError"
+        ],
+        "closed": true,
+        "submittedFrames": 0,
+        "uploads": 0,
+        "releases": 0,
+        "abandoned": 0,
+        "earlierSessionUnchangedAfterReopen": true
+      },
+      "pages": {
+        "first": [
+          1,
+          1,
+          0
+        ],
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      },
+      "reopenedFrame": "lantern"
+    },
+    "trimmed": {
+      "host": {
+        "profile": "trimmed",
+        "vmVersion": "15.7.112.19",
+        "intl": false
+      },
+      "apkSha256": "1852646b7539690486b8e230645ee3b891af0a05ef77a5898e33f84863e6aab5",
+      "aarSha256": "bccbdc490cb14c74bfe9e3fd35f856bfd47118a2acd8dac00fdb161b65e2cc8e",
+      "pixelCopyChanged": [
+        0,
+        0
+      ],
+      "screenChangedFromIdeal": [
+        4141,
+        4141
+      ],
+      "screenSha256": [
+        "681d5cd86ff70f94e7ec15cc3c948b4e90d1a23618d5ce80ff94a19122f51c4e",
+        "681d5cd86ff70f94e7ec15cc3c948b4e90d1a23618d5ce80ff94a19122f51c4e"
+      ],
+      "outsideOverlayChanged": [
+        0,
+        0
+      ],
+      "missing": [
+        {
+          "path": "levels/missing.json",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.json",
+          "error": "NotFoundError"
+        }
+      ],
+      "pendingReadAndAbort": {
+        "queuedBefore": 1,
+        "queuedAfter": 0,
+        "error": "AbortError",
+        "readBackAfterRetry": "lantern"
+      },
+      "closeDuringStartup": {
+        "queued": 1,
+        "opened": false,
+        "result": [
+          "opening",
+          "AbortError"
+        ],
+        "closed": true,
+        "submittedFrames": 0,
+        "uploads": 0,
+        "releases": 0,
+        "abandoned": 0,
+        "earlierSessionUnchangedAfterReopen": true
+      },
+      "pages": {
+        "first": [
+          1,
+          1,
+          0
+        ],
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      },
+      "reopenedFrame": "lantern"
+    }
+  },
+  "scope": "One physical Fold7 running the native GLES3 project player. Automated Android input. Functional observations, with no frame-speed or power measurements."
+}

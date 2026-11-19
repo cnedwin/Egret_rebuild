@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Include this file in the game's tsconfig. The Android exporter supplies this module at bundle time.
 declare module '@egret/android-player-project' {
-  import type { Engine, ImageData2D, Scope } from '@egret/engine';
+  import type { CancellationSignal, Engine, ImageData2D, Scope } from '@egret/engine';
 
   export interface PlayerInput {
     readonly type: 'down' | 'move' | 'up' | 'cancel' | 'scroll' | 'text' | 'submit';
@@ -35,7 +35,13 @@ declare module '@egret/android-player-project' {
     drawText(width: number, height: number, runs: readonly PlayerPaintedRun[]): ImageData2D;
   }
 
+  export interface PlayerAssets {
+    /** Read a UTF-8 file listed in project.json assets. A closed view cancels all outstanding reads. */
+    readText(path: string, signal?: CancellationSignal): Promise<string>;
+  }
+
   export interface PlayerServices {
+    readonly assets: PlayerAssets;
     readonly engine: Engine;
     readonly raster?: PlayerRaster;
     readonly scope: Scope;
@@ -71,7 +77,15 @@ declare module '@egret/android-player-project' {
     close(): Promise<Record<string, unknown>>;
   }
 
+  /** Native completion channel returned by both project factories. */
+  export interface NativePlayerSession extends PlayerSession {
+    textResult(id: number, errorName: string): void;
+  }
+
   export interface NativePlayer {
+    readText?(id: number, path: string): boolean;
+    cancelReadText?(id: number): void;
+    takeTextResult?(id: number): string | null;
     raster?(request: string): string;
     page(id: number, width: number, height: number, rgbaBase64: string): void;
     releasePage(id: number): void;
@@ -80,6 +94,6 @@ declare module '@egret/android-player-project' {
     playSound(assetPath: string): void;
   }
 
-  export function createPlayerProject(definition: PlayerDefinition, native: NativePlayer): PlayerSession;
-  export function installPlayerProject(definition: PlayerDefinition): PlayerSession;
+  export function createPlayerProject(definition: PlayerDefinition, native: NativePlayer): NativePlayerSession;
+  export function installPlayerProject(definition: PlayerDefinition): NativePlayerSession;
 }
