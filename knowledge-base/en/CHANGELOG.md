@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Play: pictures, and the look of a 3D world — 2026-11-20
+
+`await game.image(url, { x, y, width, height, smooth })` places a PNG by its middle, smooth and read from its smaller copies when drawn small, or sharp for pixel art. In Play3D, `game.look('day' | 'dusk' | 'night' | 'fog' | 'snow')`, or an object of its parts, sets the background, the light from above and below, the sun and the fog at once.
+
 ## Play: controls on the glass, gamepad buttons and music in code — 2026-11-20
 
 `game.touchStick` and `game.touchButton` put a stick and buttons over the stage on a phone: the stick counts in `keys.axis()`, a button holds a key, and each finger keeps its control. A gamepad's buttons are keys named `pad:a` and so on, and its d-pad counts in the axis and steers boxes and menus. `game.music.play(mood)` writes a looping piece in code in five moods, and `game.music.intensity` brings its bass, drums and tune in. A menu or box of words awaited in the first `setup` now starts the frames itself; otherwise they start after `setup`, as before. A box of words no longer takes the release of a press made before it opened.

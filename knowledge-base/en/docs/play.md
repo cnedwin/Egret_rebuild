@@ -180,6 +180,10 @@ Repeated calls to `game.restart()` during setup return the same Promise and run 
 
 During initial setup or restart, `game.dispose()` closes the game even if an application load is still pending. The interrupted startup or restart rejects with `SCOPE_CLOSED`. If the load later finishes, it cannot attach game objects through the closed SDK handle or resume updates. Applications own cancellation of their external downloads.
 
+## Pictures
+
+`await game.image(url, { x, y, width, height, smooth, layer })` loads a PNG from an address and places it with its middle at `x`, `y`, on the world layer unless given another. Given one of `width` and `height` it keeps its shape; given neither, its own size. It is a sprite like the others. It is smooth and is read from its [smaller copies](shared-render-profile-contract.md) when drawn smaller than it is, so a big picture drawn small does not shimmer; `smooth: false` keeps every texel sharp, for pixel art. The same address loaded twice is one texture.
+
 ## Words, menus and bars
 
 A story, a title screen and a health bar are the parts most games draw for themselves. Play has them, made of the game's own sprites and texts on the ui layer, so a restart takes them away and each plays by keyboard, pointer and finger.

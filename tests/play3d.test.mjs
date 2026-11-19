@@ -3,7 +3,7 @@
 // overlap a game stands a ball on a floor with. What needs a page is played in a browser by examples/play/verify.mjs.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { play3d, PlayThing3D } from '@egret/engine/webgl2/world3d';
+import { PLAY_LOOKS_3D, play3d, PlayThing3D } from '@egret/engine/webgl2/world3d';
 import { Mesh3D, Object3D, createBoxGeometry3D, createStandardMaterial3D } from '@egret/engine/world3d';
 import { modelBox3D, overlap3D, pushOut3D } from '../packages/engine/dist/web/world3d/BrowserPlay3D.js';
 
@@ -273,4 +273,21 @@ test('P3D09 a failed detach still releases the owned geometry and material', () 
     primitive.node.removeFromParent = detach;
     primitive.node.removeFromParent();
   }
+});
+
+// Break caught: leave out a part of a look, give a colour that is not one, or a sun from under the ground.
+test('P3D05 every look gives each part, colours as 0xRRGGBB, a sun above and fog of 0 or more', () => {
+  assert.deepEqual(Object.keys(PLAY_LOOKS_3D), ['day', 'dusk', 'night', 'fog', 'snow']);
+  for (const [name, look] of Object.entries(PLAY_LOOKS_3D)) {
+    assert.deepEqual(
+      Object.keys(look).sort(),
+      ['background', 'fog', 'ground', 'light', 'sky', 'sun', 'sunFrom', 'sunIntensity'],
+      name
+    );
+    for (const key of ['background', 'sky', 'ground', 'sun'])
+      assert.ok(Number.isInteger(look[key]) && look[key] >= 0 && look[key] <= 0xffffff, name + ' ' + key);
+    assert.ok(look.sunFrom.length === 3 && look.sunFrom[1] > 0, name);
+    assert.ok(look.fog >= 0 && look.light >= 0 && look.sunIntensity >= 0, name);
+  }
+  assert.ok(Object.isFrozen(PLAY_LOOKS_3D));
 });
