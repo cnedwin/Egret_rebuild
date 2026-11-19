@@ -204,7 +204,7 @@ update(seconds, game) {
 
 - `game.bar({ x, y, width = 120, height = 12, value, max = 1, color, back, layer })` 是一个精灵，`x`、`y` 为左上角。设置 `value` 后会滑到该值，范围在 0 到 `max` 之间。
 - `game.toast(words, { seconds = 2, color })` 在顶部显示一条会淡出的提示，多条会叠放。
-- `await game.say(words, { who, choices, color, speed = 40 })` 在底部打开对白框，文字按每秒 `speed` 个字逐字出现，并按框宽换行。空格、回车、Z 或轻触会显示剩余文字，再按一次关闭，返回 `undefined`。带 `choices` 时，文字全部出现后显示选项；方向键或 W、S 以及摇杆移动选择，回车、空格、Z 或轻触确认，返回选项序号。对白框打开期间再请求的对白会排队。
+- `await game.say(words, { who, choices, color, speed = 40 })` 在底部打开对白框，文字按每秒 `speed` 个字逐字出现，并按框宽换行。空格、回车、Z 或轻触会显示剩余文字，再按一次关闭，返回 `undefined`。带 `choices` 时，文字全部出现后显示选项；方向键或 W、S 以及摇杆移动选择，回车、空格、Z 或轻触确认，返回选项序号。对白框打开期间再请求的对白会排队。超出一个框容量的文字会分到后续的框里，每个框按一次关闭，选项随最后一个框出现。
 - `await game.menu(items, { title, x, y, width, color })` 在舞台中间（或 `x`、`y` 处）打开一个列表，以同样方式选择并返回序号。新菜单会关闭正在打开的菜单，被关闭的菜单不返回结果。
 - `game.asking` 表示是否有对白框或菜单打开。
 
