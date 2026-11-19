@@ -52,6 +52,7 @@ public final class LibraryActivity extends Activity {
                 toggle.setEnabled(true);
             }
         });
+        if (getIntent().getBooleanExtra("egret.timing", false)) player.setTimingEnabled(true);
         slot.addView(player);
         if (foreground) player.onResume();
     }

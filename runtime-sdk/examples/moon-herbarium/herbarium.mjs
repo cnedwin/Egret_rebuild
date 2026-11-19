@@ -2,7 +2,7 @@
 // A small inventory game in the spirit of examples/ui-inventory: combine the requested ingredients
 // to fill a prescription. Stock, selection, payment and shopkeeper name live in this project.
 import { Bitmap, Sprite, createAssetRef, createAssetType, createTexture, isTexture } from '@egret/engine';
-import { hudRuns, loadPng, makeHud, makeLabels } from './lettering.mjs';
+import { hudRuns, herbariumRaster } from './lettering.mjs';
 
 const HERBS = [
   ['月露草', '溪谷采摘'], ['银叶薄荷', '山间清香'], ['紫苏花', '林下野生'], ['桃枝', '初夏新采'],
@@ -27,7 +27,7 @@ function staticText() {
     ...Array.from({ length: 5 }, (_, i) => ['qty' + i, '× ' + i, 13, COLORS.gold])
   ];
 }
-export async function createHerbarium(context, raster = { loadPng, makeLabels, makeHud }) {
+export async function createHerbarium(context, raster = herbariumRaster(context.raster)) {
   const { engine, scope, signal, publishPage, edit, state, playSound } = context;
   const stock = HERBS.map(() => 4), chosen = new Set();
   let order = 0, filled = 0, name = '小掌柜', message = '照药方选入两味药材，再开炉煎药。';

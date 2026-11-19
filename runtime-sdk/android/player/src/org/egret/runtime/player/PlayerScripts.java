@@ -10,19 +10,13 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
-final class PlayerScripts {
-    private final EgretPlayerView owner;
-    private final ProjectAssets project;
-    private final PlayerGraphics.Pages pages = new PlayerGraphics.Pages();
+final class PlayerScripts extends ScriptSession {
     private WebView web;
     private boolean starting;
 
     PlayerScripts(EgretPlayerView owner, Activity activity, ProjectAssets project) {
-        this.owner = owner;
-        this.project = project;
+        super(owner, project);
         web = new WebView(activity);
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -67,12 +61,14 @@ final class PlayerScripts {
     }
 
     void frame(int epoch, double elapsedMs) {
-        invoke("const v=EgretPlayerProject.frame(" + elapsedMs + ");"
+        boolean timed = owner.timing.isEnabled();
+        invoke((timed ? "const begin=performance.now();" : "") + "const v=EgretPlayerProject.frame(" + elapsedMs + ");"
+            + (timed ? "const generation=performance.now()-begin;" : "const generation=-1;")
             + "let bytes;if(v instanceof ArrayBuffer)bytes=new Int8Array(v);"
             + "else if(ArrayBuffer.isView(v))bytes=new Int8Array(v.buffer,v.byteOffset,v.byteLength);"
             + "else throw Error('frame() must return a binary command buffer');"
             + "if(bytes.byteLength<24||bytes.byteLength>" + PlayerGraphics.MAX_FRAME_BYTES + ")throw Error('Invalid command length');"
-            + "EgretNativePlayer.commands(" + epoch + ",bytes)");
+            + "EgretNativePlayer.commands(" + epoch + ",bytes,generation)");
     }
 
     void resumeVm() { if (web != null) web.onResume(); }
@@ -105,35 +101,16 @@ final class PlayerScripts {
             catch (RuntimeException e) { owner.reportFailure("Cannot publish project page: " + e); }
         }
         @JavascriptInterface public void releasePage(int id) { pages.release(id); }
-        @JavascriptInterface public void commands(int epoch, byte[] frame) {
-            if (owner.ending || epoch != owner.epoch) return;
-            if (frame == null || frame.length < 24 || frame.length > PlayerGraphics.MAX_FRAME_BYTES) {
-                owner.reportFailure("Invalid command length on Android bridge");
-                return;
-            }
-            ByteBuffer header = ByteBuffer.wrap(frame).order(ByteOrder.LITTLE_ENDIAN);
-            if (header.getInt(8) != project.width || header.getInt(12) != project.height) {
-                owner.reportFailure("Frame dimensions differ from the project stage");
-                return;
-            }
-            PlayerGraphics.Frame snapshot = new PlayerGraphics.Frame(epoch, frame, pages.snapshot());
-            owner.ui.post(() -> owner.enqueue(snapshot));
+        @JavascriptInterface public String raster(String json) { return raster.request(json); }
+        @JavascriptInterface public void commands(int epoch, byte[] frame, double generationMs) {
+            long ns = generationMs >= 0 && Double.isFinite(generationMs) ? Math.round(generationMs * 1_000_000.0) : -1;
+            PlayerScripts.this.commands(epoch, frame, ns, -1);
         }
         @JavascriptInterface public void state(String json) {
             owner.ui.post(() -> owner.projectState(json));
         }
-        @JavascriptInterface public void edit(String initialText) {
-            int epoch = owner.epoch;
-            owner.ui.post(() -> { if (epoch == owner.epoch) owner.editor(initialText); });
-        }
-        @JavascriptInterface public void playSound(String path) {
-            int epoch = owner.epoch;
-            if (owner.ending) return;
-            try {
-                byte[] bytes = project.read(path, 8 << 20);
-                owner.ui.post(() -> { if (epoch == owner.epoch) owner.sound(bytes); });
-            } catch (Exception e) { owner.reportFailure("Cannot open project sound: " + e); }
-        }
+        @JavascriptInterface public void edit(String initialText) { requestEdit(initialText); }
+        @JavascriptInterface public void playSound(String path) { requestSound(path); }
         @JavascriptInterface public void started() { owner.ui.post(owner::started); }
         @JavascriptInterface public void failure(String reason) { owner.reportFailure(reason); }
         @JavascriptInterface public void finished(String json) { owner.ui.post(() -> owner.finishClose(json, null)); }

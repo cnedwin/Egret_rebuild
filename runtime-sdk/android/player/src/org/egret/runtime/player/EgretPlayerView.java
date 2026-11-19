@@ -37,12 +37,15 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     private ProjectAssets project;
     private GLSurfaceView surface;
     private PlayerGraphics graphics;
-    private PlayerScripts scripts;
+    private ScriptSession scripts;
+    final PlayerTiming timing = new PlayerTiming();
+    private String vmVersion, lastError;
+    private Boolean vmIntl;
     private PlayerInput controls;
     private final PlayerAudio audio = new PlayerAudio(this);
     private final Choreographer.FrameCallback tick = this::tick;
     private final Runnable startupTimeout = () -> fail("Project did not submit its first native frame within 30 seconds");
-    private final Runnable closeTimeout = () -> finishClose(null, "Project close did not complete within 10 seconds");
+    private final Runnable closeTimeout = () -> { if (scripts != null) scripts.timeoutClose(); };
     private boolean wanted, foreground, gpuReady, scriptReady, ready, scheduled, busy, closed, surfacePaused;
     private boolean renderThreadStarted;
     private int contextAtLastReady, lastFrameId;
@@ -66,7 +69,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
             surface.setPreserveEGLContextOnPause(false);
             surface.setContentDescription("Egret game");
             controls = new PlayerInput(this, activity, surface, project);
-            scripts = new PlayerScripts(this, activity, project);
+            scripts = BundledScripts.open(this, activity, project);
         } catch (Exception | LinkageError e) { reportFailure("Cannot open Egret project: " + e); }
     }
 
@@ -147,6 +150,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     }
 
     private void cancelFrame() {
+        timing.discontinuity();
         epoch++;
         Choreographer.getInstance().removeFrameCallback(tick);
         scheduled = false;
@@ -196,11 +200,14 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         if (!isPlaying() || !gpuReady || busy) return;
         busy = true;
         double elapsedMs = (elapsedNs + SystemClock.elapsedRealtimeNanos() - foregroundStartNs) / 1000000.0;
+        timing.begin();
         scripts.frame(epoch, elapsedMs);
     }
 
-    void enqueue(PlayerGraphics.Frame frame) {
+    void enqueue(PlayerGraphics.Frame frame, long generationNs, long transferNs) {
         if (!isPlaying() || !gpuReady || !busy || frame.epoch != epoch) return;
+        timing.script(generationNs, transferNs);
+        timing.enqueued();
         graphics.enqueue(frame);
         surface.requestRender();
     }
@@ -208,9 +215,11 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     void drawn(int token, int frameId) {
         if (token != epoch || !isPlaying() || !busy) return;
         busy = false;
+        timing.submitted();
         lastFrameId = frameId;
         frames++;
         if (!ready) {
+            timing.firstDraw();
             ready = true;
             ui.removeCallbacks(startupTimeout);
             listener.onReady();
@@ -226,7 +235,12 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
 
     private void fail(String reason) {
         if (ending) return;
-        try { listener.onError(reason); } finally { close(); }
+        try { notifyError(reason); } finally { close(); }
+    }
+
+    private void notifyError(String message) {
+        lastError = message == null ? "Project session failed" : message.substring(0, Math.min(512, message.length()));
+        listener.onError(message);
     }
 
     void scriptProcessLost() {
@@ -257,16 +271,22 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
             try { projectClose = new JSONTokener(receipt).nextValue(); }
             catch (JSONException e) { error = "Invalid project close receipt: " + e; }
         }
-        try { if (error != null) listener.onError(error); }
+        try { if (error != null) notifyError(error); }
         finally { listener.onClosed(); }
     }
+
+    /** Enable bounded frame timing for an explicit measurement run. */
+    public void setTimingEnabled(boolean enabled) { mainThread(); timing.setEnabled(enabled); }
+
+    void vmDetails(String version, boolean intl) { vmVersion = version; vmIntl = intl; }
 
     /** A new snapshot of observed session counters. A draw records CPU submission. */
     public JSONObject getDiagnostics() {
         mainThread();
         try {
             return new JSONObject().put("ready", ready).put("foreground", foreground).put("closed", closed)
-                .put("frames", frames).put("lastFrameId", lastFrameId).put("contexts", graphics == null ? 0 : graphics.contexts)
+                .put("lastError", lastError).put("scriptHost", BundledScripts.PROFILE).put("vmVersion", vmVersion).put("intl", vmIntl)
+                .put("timing", timing.snapshot()).put("frames", frames).put("lastFrameId", lastFrameId).put("contexts", graphics == null ? 0 : graphics.contexts)
                 .put("uploads", graphics == null ? 0 : graphics.uploads).put("releases", graphics == null ? 0 : graphics.releases)
                 .put("abandoned", graphics == null ? 0 : graphics.abandoned).put("audioStarts", audio.starts)
                 .put("audioReleases", audio.releases).put("activeSounds", audio.active())

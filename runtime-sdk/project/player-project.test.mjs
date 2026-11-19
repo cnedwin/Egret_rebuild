@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { PNG } from 'pngjs';
-import { Bitmap, createAssetRef, createAssetType, createImageData2D, createTexture, isTexture } from '@egret/engine';
+import { copyImageData2DPixels, Bitmap, createAssetRef, createAssetType, createImageData2D, createTexture, isTexture } from '@egret/engine';
 import { createHerbarium } from '../examples/moon-herbarium/herbarium.mjs';
 import { loadPng } from '../examples/moon-herbarium/lettering.mjs';
+import { createPlayerRaster } from './player-raster.mjs';
 import { createPlayerProject } from './player-project.mjs';
 
 const image = (width, height) => createImageData2D({ width, height, pixels: new Uint8Array(width * height * 4) });
@@ -86,6 +87,72 @@ test('one real Egret project captures animation, alpha and clipped inventory and
     assert.throws(() => project.frame(0), /unavailable/);
   } finally { await project.close(); }
 });
+test('the default game can open and repaint a Unicode signature using only the native raster port', async () => {
+  const port = host(), decoded = new Map(), jobs = [];
+  for (const path of ['assets/workshop.png', 'assets/botanicals.png']) {
+    decoded.set(path, PNG.sync.read(await readFile(new URL('../examples/moon-herbarium/' + path, import.meta.url))));
+  }
+  port.raster = encoded => {
+    const job = JSON.parse(encoded);
+    jobs.push(job);
+    if (job.op === 'png') {
+      const png = decoded.get(job.path);
+      assert.deepEqual([png.width, png.height], [job.width, job.height]);
+      return JSON.stringify({ pixels: png.data.toString('base64') });
+    }
+    // Android fonts and visible glyphs are device assertions. These response doubles
+    // check atlas placement and the complete project-to-host request route without a DOM.
+    if (job.op === 'measure') return JSON.stringify({ widths: job.runs.map(run => run.text.length * run.size) });
+    assert.equal(job.op, 'text');
+    for (const run of job.runs) {
+      assert.ok(run.x >= 0 && run.x < job.width && run.y >= 0 && run.y < job.height);
+      assert.ok(run.maxWidth > 0 && run.x + run.maxWidth <= job.width);
+    }
+    return JSON.stringify({ pixels: Buffer.alloc(job.width * job.height * 4).toString('base64') });
+  };
+  const project = createPlayerProject({ width: 360, height: 640, create: createHerbarium }, port);
+  try {
+    await project.start();
+    assert.deepEqual(jobs.filter(job => job.op === 'png').map(job => job.path).sort(), [...decoded.keys()].sort());
+    assert.equal(jobs.filter(job => job.op === 'measure').length, 1);
+    const framed = project.frame(0);
+    assert.equal(Buffer.from(framed.subarray(0, 4)).toString(), 'EGR2');
+    project.input({ type: 'submit', text: '药师🌙' });
+    await tick();
+    assert.ok(jobs.at(-1).runs.some(run => run.text === '药师🌙'));
+    assert.deepEqual(port.uploads, [1, 2, 3, 4, 4]);
+    const snapshot = await project.close();
+    assert.equal(snapshot.pagesReleased, 4);
+    assert.equal(snapshot.texturesLoaded, snapshot.texturesReleased);
+  } finally { await project.close(); }
+});
+
+test('raster responses preserve straight RGBA and respect load and project cancellation', async () => {
+  const lifetime = new AbortController(), stop = new AbortController(), jobs = [];
+  let response = '{"pixels":"/wECgA=="}';
+  const service = createPlayerRaster({ raster(value) { jobs.push(JSON.parse(value)); return response; } }, lifetime.signal);
+  assert.equal(createPlayerRaster({}, lifetime.signal), undefined);
+  const pending = service.loadPng('ignored.png', 1, 1, stop.signal);
+  stop.abort(Error('asset retired'));
+  await assert.rejects(pending, error => error === stop.signal.reason);
+  assert.equal(jobs.length, 0);
+  const rgba = await service.loadPng('a.png', 1, 1);
+  assert.deepEqual([...copyImageData2DPixels(rgba)], [255, 1, 2, 128]);
+  assert.throws(() => service.drawText(4096, 4096, []), /dimensions/);
+  assert.equal(jobs.length, 1);
+  response = '{"error":"PNG dimensions differ"}';
+  await assert.rejects(service.loadPng('wrong.png', 1, 1), /PNG dimensions differ/);
+  response = '{"pixels":"AA=="}';
+  assert.throws(() => service.drawText(1, 1, []), /Incomplete/);
+  response = '{"widths":[]}';
+  assert.throws(() => service.measureText([{ text: '药', size: 24 }]), /widths/);
+  lifetime.abort(Error('closed'));
+  const count = jobs.length;
+  await assert.rejects(service.loadPng('late.png', 1, 1), error => error === lifetime.signal.reason);
+  assert.throws(() => service.measureText([]), error => error === lifetime.signal.reason);
+  assert.equal(jobs.length, count);
+});
+
 test('partial initialization retires every published page and closes its scope', async () => {
   const port = host();
   let released = false;
