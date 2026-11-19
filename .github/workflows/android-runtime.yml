@@ -88,7 +88,16 @@ jobs:
             cp "$app/build/outputs/apk/debug/EgretGame-debug.apk" "$RUNNER_TEMP/apk/game-$variant.apk"
             if [[ "$variant" == trimmed ]]; then
               # Exercise the distributed AAR's Java/JNI retention rules in a consuming app.
-              echo "android.buildTypes.release { minifyEnabled true; proguardFiles getDefaultProguardFile('proguard-android-optimize.txt') }" >> "$app/build.gradle"
+              cat >> "$app/build.gradle" <<'R8'
+          android {
+            buildTypes {
+              release {
+                minifyEnabled true
+                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+              }
+            }
+          }
+          R8
               "$RUNNER_TEMP/player-tools/gradle-8.9/bin/gradle" --init-script "$RUNNER_TEMP/central-mirror.gradle" -p "$app" minifyReleaseWithR8
             fi
           done
