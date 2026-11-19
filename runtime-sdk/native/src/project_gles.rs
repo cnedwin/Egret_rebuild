@@ -4,12 +4,8 @@
 use crate::{frame::{Batch, Header, PAGE_SLOTS}, gl::*, gles::{link_program, VERTEX}, project_color::decode_srgb};
 use std::ptr;
 
-const DRAW: &[u8] = b"#version 300 es\nprecision highp float;\n\
-uniform highp sampler2D page; uniform float opacity; uniform vec4 region; in vec2 uv; in vec4 color; out vec4 pixel;\n\
-vec3 linearRGB(vec3 c){return mix(c/12.92,pow((c+0.055)/1.055,vec3(2.4)),greaterThan(c,vec3(0.04045)));}\n\
-void main(){ivec2 size=textureSize(page,0); ivec2 lo=ivec2(round(region.xy*vec2(size)));\n\
-ivec2 hi=ivec2(round(region.zw*vec2(size)))-ivec2(1);\n\
-ivec2 tap=clamp(ivec2(floor(uv*vec2(size))),lo,hi); vec4 p=texelFetch(page,tap,0); pixel=vec4(linearRGB(p.rgb)*linearRGB(color.rgb),p.a)*opacity;}\n\0";
+const DRAW: &[u8] = concat!("#version 300 es\n", include_str!("project_draw.frag"), "\0").as_bytes();
+const ATLAS_DRAW: &[u8] = concat!("#version 300 es\n#define EGRET_MAPPED_ATLAS\n", include_str!("project_draw.frag"), "\0").as_bytes();
 const RESOLVE_VERTEX: &[u8] = b"#version 300 es\n\
 void main(){ vec2 p=gl_VertexID==0 ? vec2(-1,-1) : (gl_VertexID==1 ? vec2(3,-1) : vec2(-1,3));\n\
 gl_Position=vec4(p,0,1); }\n\0";
@@ -21,12 +17,37 @@ void main(){vec4 p=texelFetch(working,ivec2(gl_FragCoord.xy),0);\n\
 vec3 c=p.a>0.0 ? p.a*encoded(clamp(p.rgb/p.a,0.0,1.0)) : vec3(0);\n\
 pixel=vec4(srgbWindow ? decoded(c) : c,p.a);}\n\0";
 
-pub(crate) struct ProjectPipeline {
-    draw: u32,
-    resolve: u32,
+struct DrawProgram {
+    name: u32,
     size: i32,
     opacity: i32,
     region: i32,
+    logical_trim: i32,
+    turn: i32,
+}
+
+impl DrawProgram {
+    unsafe fn create(mapped: bool) -> Option<Self> {
+        let name = link_program(VERTEX, if mapped { ATLAS_DRAW } else { DRAW })?;
+        let location = |uniform: &[u8]| glGetUniformLocation(name, uniform.as_ptr().cast());
+        let program = Self {
+            name, size: location(b"size\0"), opacity: location(b"opacity\0"), region: location(b"region\0"),
+            logical_trim: if mapped { location(b"logicalTrim\0") } else { -1 },
+            turn: if mapped { location(b"quarterTurn\0") } else { -1 },
+        };
+        if program.size < 0 || program.opacity < 0 || program.region < 0
+            || (mapped && (program.logical_trim < 0 || program.turn < 0)) {
+            glDeleteProgram(name);
+            return None;
+        }
+        Some(program)
+    }
+}
+
+pub(crate) struct ProjectPipeline {
+    draw: DrawProgram,
+    mapped_draw: Option<DrawProgram>,
+    resolve: u32,
     resolve_vao: u32,
     target: u32,
     target_texture: u32,
@@ -35,15 +56,13 @@ pub(crate) struct ProjectPipeline {
 
 impl ProjectPipeline {
     pub(crate) unsafe fn create() -> Option<Self> {
-        let draw = link_program(VERTEX, DRAW)?;
+        let draw = DrawProgram::create(false)?;
         let Some(resolve) = link_program(RESOLVE_VERTEX, RESOLVE) else {
-            glDeleteProgram(draw);
+            glDeleteProgram(draw.name);
             return None;
         };
         let mut p = Self {
-            draw, resolve, size: glGetUniformLocation(draw, b"size\0".as_ptr().cast()),
-            region: glGetUniformLocation(draw, b"region\0".as_ptr().cast()),
-            opacity: glGetUniformLocation(draw, b"opacity\0".as_ptr().cast()),
+            draw, mapped_draw: None, resolve,
             resolve_vao: 0, target: 0, target_texture: 0, physical: [0; 2],
         };
         glGenVertexArrays(1, &mut p.resolve_vao);
@@ -54,7 +73,7 @@ impl ProjectPipeline {
         glGetFramebufferAttachmentParameteriv(FRAMEBUFFER, BACK, FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &mut encoding);
         glUniform1i(srgb_window, i32::from(encoding == SRGB));
         // Both linked sampler uniforms default to texture unit zero.
-        if p.size < 0 || p.opacity < 0 || p.region < 0 || srgb_window < 0 || p.resolve_vao == 0 || glGetError() != 0 {
+        if srgb_window < 0 || p.resolve_vao == 0 || glGetError() != 0 {
             p.destroy();
             return None;
         }
@@ -65,7 +84,8 @@ impl ProjectPipeline {
         glDeleteFramebuffers(1, &self.target);
         glDeleteTextures(1, &self.target_texture);
         glDeleteVertexArrays(1, &self.resolve_vao);
-        glDeleteProgram(self.draw);
+        glDeleteProgram(self.draw.name);
+        if let Some(draw) = &self.mapped_draw { glDeleteProgram(draw.name); }
         glDeleteProgram(self.resolve);
     }
 
@@ -101,15 +121,21 @@ impl ProjectPipeline {
     pub(crate) unsafe fn render(&mut self, header: &Header, physical: [u32; 2], vao: u32,
                                 pages: &[u32; PAGE_SLOTS], batches: &[Batch]) -> bool {
         if !self.resize(physical) { return false; }
+        // Compile the mapped shader only when the first EGR3 frame needs it.
+        let draw = if header.mapped {
+            if self.mapped_draw.is_none() { self.mapped_draw = DrawProgram::create(true); }
+            let Some(draw) = &self.mapped_draw else { return false; };
+            draw
+        } else { &self.draw };
         glBindFramebuffer(FRAMEBUFFER, self.target);
         glDisable(SCISSOR_TEST);
         let [r, g, b, a] = header.clear;
         let alpha = f32::from(a)/255.;
         glClearColor(decode_srgb(r) as f32 * alpha, decode_srgb(g) as f32 * alpha, decode_srgb(b) as f32 * alpha, alpha);
         glClear(COLOR_BUFFER_BIT);
-        glUseProgram(self.draw);
+        glUseProgram(draw.name);
         glBindVertexArray(vao);
-        glUniform2f(self.size, header.size[0], header.size[1]);
+        glUniform2f(draw.size, header.size[0], header.size[1]);
         glEnable(BLEND);
         glBlendFunc(ONE, ONE_MINUS_SRC_ALPHA);
         glEnable(SCISSOR_TEST);
@@ -117,9 +143,17 @@ impl ProjectPipeline {
             let [x, y, w, h] = batch.scissor(header.size, physical);
             if w == 0 || h == 0 { continue; }
             glScissor(x, y, w, h);
-            glUniform1f(self.opacity, batch.opacity);
+            glUniform1f(draw.opacity, batch.opacity);
             let [u0, v0, u1, v1] = batch.region;
-            glUniform4f(self.region, u0, v0, u1, v1);
+            glUniform4f(draw.region, u0, v0, u1, v1);
+            if header.mapped {
+                if let Some(mapping) = batch.mapping {
+                    glUniform4i(draw.logical_trim, mapping.logical[0], mapping.logical[1], mapping.trim[0], mapping.trim[1]);
+                    glUniform1i(draw.turn, mapping.turn);
+                } else {
+                    glUniform1i(draw.turn, -1);
+                }
+            }
             glBindTexture(TEXTURE_2D, pages[batch.page]);
             glDrawArrays(TRIANGLES, batch.first, batch.count);
         }

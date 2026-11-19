@@ -1,0 +1,213 @@
+{
+  "scene": "Fold7 atlas frame comparison",
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "webview": "com.google.android.webview, 157.0.8103.50",
+    "systemGles": "GLES: Qualcomm, Adreno (TM) 830, OpenGL ES 3.2 V@0800.64.8"
+  },
+  "conditions": {
+    "wired": true,
+    "thermalStatus": 0
+  },
+  "fixture": "24 Bitmap instances, one atlas texture page, four independent unrotated transparent-border reference pages; turns 0..3, trimmed at (2,1) inside 8x8; nearest region domain; scale, mirror plus clip, and half-logical-coordinate on three physical pixels per logical pixel. USB input toggles the texture leases on the same Bitmap nodes and transforms with a visible marker. Both operands switch; tap again restores the full original viewport.",
+  "fixtureSourceSha256": "e36d2c7dfce38640fce33d2657c3d3f2d1ec4c9292dca1eeb7d3997bc289ada9",
+  "encodingSourceSha256": "4b46baee608d9daa21b23d1746168ced5840c7cf36615052670d02cdb49e3f58",
+  "tape": "83a29389bd38a740dcc7e42c27758d9c14eb65feb3a4f78b97af77b09065c95b",
+  "packetSeries": "25658cbeb04cc89da648af90d5430d22325bc3b8d60d95c9a92c27acb8743332",
+  "pixels": "cd154e88b96b5c3d54ce030dcc4cfc7cd80a551df17410bfb6449fae5c0ded58",
+  "native": "02614404afa6be685be8852b84d14f9bcadb37fb4e47935190691790c88b2d40",
+  "gameJs": "14f2d5e369d42c9f473710444c745f431971e03079a09719c1cdb77918359ce6",
+  "gate": "210 commands, 24 quads each, frame ids 0..209, 1080x1920 physical viewport. Captured game W/H are 360x640 and drawn through the Rust GLES3 renderer. For each completion the actual capture was verified before and after a single EGL recreation and the producer closed.",
+  "deviceEquivalence": {
+    "examined": 581256,
+    "positionalMismatches": 0,
+    "sourceTexelTiesPerSide": 384,
+    "physicalLeftIdealDifferences": 72,
+    "physicalRightIdealDifferences": 0,
+    "internalTieErrorsOnLeft": 56,
+    "initialAndSwappedSideBySide": [
+      72,
+      72
+    ],
+    "swappedViewportSha256": "1dbd4c1faa58a9b1671e0d05d83ef327c329b000aa93d38c4997aea8b5b7d634"
+  },
+  "devicePixelBoundary": "The independent floor-based ideal image differs at exactly 18 pixel positions per quarter turn in the left half for the fractional-origin row, both with ordinary and packed textures. The corresponding right-half reference and packed textures match that oracle. Position-matched swaps, interior scales/mirrors and recovery compare every tested color byte exactly.",
+  "sampling": {
+    "reference": {
+      "width": 8,
+      "height": 8,
+      "contentWidth": 4,
+      "contentHeight": 3,
+      "trim": [
+        2,
+        1
+      ]
+    },
+    "packedAtlas": {
+      "width": 16,
+      "height": 8,
+      "rectOrigins": [
+        [
+          1,
+          1
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          8,
+          1
+        ],
+        [
+          12,
+          1
+        ]
+      ],
+      "unusedRgba": [
+        254,
+        0,
+        253,
+        255
+      ]
+    },
+    "referenceContentRgba": "[25+44*x+7*turn, 31+63*y+2*turn, 19+13*x+19*y+11*turn, 255] for content texels x=0..3,y=0..2. Other reference texels are transparent.",
+    "packedCoordinate": "turns 0,1,2,3 correspond to (x,y), (2-y,x), (3-x,2-y), (y,3-x) inside packed rectangle.",
+    "stage": {
+      "width": 360,
+      "height": 640,
+      "clearRgba": [
+        16,
+        32,
+        48,
+        255
+      ]
+    },
+    "draws": "Per turn t and band k, y0=25+40*t+184*k, left/right origins x=0 or 180. Local xy, scale by band: (16,y0),(4,4); (64,y0),(-7,5) with parent clip (13,y0+4,41,15); (16.5,y0+0.5),(2,2). At physical scale 3 compare both x ranges 15..221 and 555..761 and y in [3*y0-3,3*(y0+38))."
+  },
+  "configurations": {
+    "webview": {
+      "host": {
+        "name": "webview",
+        "version": null,
+        "intl": null
+      },
+      "gate": 210,
+      "artifacts": {
+        "apk": "e18f80ff89fd2691c74381e5dad533b3528d5fd3c61025dddf14723fdded1b12",
+        "aar": "13115e4c1f0fd5190eee71f05b4a5297e74ad04a57066ee0d4897ee21eb046ff"
+      },
+      "capturedBytes": 391413,
+      "closed": {
+        "contexts": 2,
+        "uploads": 10,
+        "releases": 10,
+        "abandoned": 0,
+        "projectClose": {
+          "texturesReleased": 8,
+          "turns": 4,
+          "bands": 3,
+          "logicalPages": 5,
+          "pagesReleased": 5
+        }
+      }
+    },
+    "standard": {
+      "host": {
+        "name": "standard",
+        "version": "15.7.112.19",
+        "intl": true
+      },
+      "gate": 210,
+      "artifacts": {
+        "apk": "45c09f121b425a49d346580c04f9ad9eb8031fcfbec300c7466ed94ec0d33ce9",
+        "aar": "c0e723f0f843605a5b12c4ccf2e7b021ba72b80ee21f53ab232a7fd1e4b4253b"
+      },
+      "capturedBytes": 391413,
+      "closed": {
+        "contexts": 2,
+        "uploads": 10,
+        "releases": 10,
+        "abandoned": 0,
+        "projectClose": {
+          "texturesReleased": 8,
+          "turns": 4,
+          "bands": 3,
+          "logicalPages": 5,
+          "pagesReleased": 5
+        }
+      }
+    },
+    "trimmed": {
+      "host": {
+        "name": "trimmed",
+        "version": "15.7.112.19",
+        "intl": false
+      },
+      "gate": 210,
+      "artifacts": {
+        "apk": "dc8c661e2a9637ace781efa2410a2f11e23bdf63ba42abddf9a823add785b33b",
+        "aar": "421899d44c84c987143d2067b4f4ab9f10cf0f9499fd856ef5afa1a5e765c965"
+      },
+      "capturedBytes": 391413,
+      "closed": {
+        "contexts": 2,
+        "uploads": 10,
+        "releases": 10,
+        "abandoned": 0,
+        "projectClose": {
+          "texturesReleased": 8,
+          "turns": 4,
+          "bands": 3,
+          "logicalPages": 5,
+          "pagesReleased": 5
+        }
+      }
+    },
+    "replay": {
+      "host": {
+        "name": "native-replay",
+        "version": null,
+        "intl": null
+      },
+      "gate": 210,
+      "artifacts": {
+        "apk": "e18f80ff89fd2691c74381e5dad533b3528d5fd3c61025dddf14723fdded1b12",
+        "aar": "13115e4c1f0fd5190eee71f05b4a5297e74ad04a57066ee0d4897ee21eb046ff"
+      },
+      "capturedBytes": 391413,
+      "closed": {
+        "contexts": 2,
+        "uploads": 10,
+        "releases": 10,
+        "abandoned": 0,
+        "projectClose": {
+          "replayedFrames": 210,
+          "releasedReplayTape": true
+        }
+      }
+    }
+  },
+  "ordinaryControl": {
+    "scene": "Moon Herbarium",
+    "frames": 210,
+    "quadsPerFrame": 81,
+    "tape": {
+      "bytes": 2483048,
+      "sha256": "9812da4eb3800aeef7ad6dae09346467f2987ef1e9a5104f59df75493140284b",
+      "payload": "e02374134c26f3d49fcc18bed3770a03a75dbc5e2acd19468f19a5a42b2034d6"
+    },
+    "terminalPixels": {
+      "width": 1080,
+      "height": 1920,
+      "sha256": "d196079d26f7328311367f8f6bf48994f49ef9bf8145c9fdac14d8e6a1a71617"
+    },
+    "closed": {
+      "uploads": 4,
+      "releases": 4,
+      "abandoned": 0
+    }
+  },
+  "scope": "One Fold7 and GLES3 hardware; functional evidence only. No throughput, other GPUs, other filtering modes or power claims."
+}

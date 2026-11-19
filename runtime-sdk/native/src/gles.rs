@@ -30,7 +30,7 @@ pub struct EgretRenderer {
     textures: [u32; PAGE_SLOTS],
     opaque_pages: [bool; PAGE_SLOTS],
     project: Option<ProjectPipeline>,
-    page_bytes: [usize; PAGE_SLOTS],
+    page_sizes: [[u32; 2]; PAGE_SLOTS],
     resident_bytes: usize,
     vertices: Vec<Vertex>,
     batches: Vec<Batch>,
@@ -98,7 +98,7 @@ impl EgretRenderer {
         let mut renderer = Self {
             program, buffer: 0, vao: 0, logical_size: -1, texture_limit: 0, buffer_bytes: 0,
             opaque_pages: [true; PAGE_SLOTS], project: None,
-            textures: [0; PAGE_SLOTS], page_bytes: [0; PAGE_SLOTS], resident_bytes: 0,
+            textures: [0; PAGE_SLOTS], page_sizes: [[0; 2]; PAGE_SLOTS], resident_bytes: 0,
             vertices: Vec::new(), batches: Vec::new(),
         };
         glUseProgram(program);
@@ -143,7 +143,7 @@ impl EgretRenderer {
     }
 
     unsafe fn draw(&mut self, bytes: &[u8], width: u32, height: u32) -> i32 {
-        let header = match frame::prepare(bytes, &self.textures, &mut self.vertices, &mut self.batches) {
+        let header = match frame::prepare(bytes, &self.page_sizes, &mut self.vertices, &mut self.batches) {
             Ok(header) => header,
             Err(error) => return error as i32,
         };
@@ -226,8 +226,9 @@ pub unsafe extern "C" fn egret_renderer_upload(
     renderer.textures[index] = name;
     glDeleteTextures(1, &old);
     renderer.resident_bytes += length;
-    renderer.resident_bytes -= renderer.page_bytes[index];
-    renderer.page_bytes[index] = length;
+    let [old_w, old_h] = renderer.page_sizes[index];
+    renderer.resident_bytes -= old_w as usize * old_h as usize * 4;
+    renderer.page_sizes[index] = [width, height];
     0
 }
 
@@ -240,8 +241,9 @@ pub unsafe extern "C" fn egret_renderer_release(ptr: *mut EgretRenderer, page: u
     if name == 0 { return MISSING_PAGE; }
     glDeleteTextures(1, &name);
     renderer.textures[index] = 0;
-    renderer.resident_bytes -= renderer.page_bytes[index];
-    renderer.page_bytes[index] = 0;
+    let [w, h] = renderer.page_sizes[index];
+    renderer.resident_bytes -= w as usize * h as usize * 4;
+    renderer.page_sizes[index] = [0; 2];
     0
 }
 

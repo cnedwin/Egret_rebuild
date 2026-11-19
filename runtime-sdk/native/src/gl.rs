@@ -57,6 +57,7 @@ extern "C" {
     pub fn glGetUniformLocation(program: u32, name: *const c_char) -> i32;
     pub fn glUniform1f(location: i32, x: f32);
     pub fn glUniform1i(location: i32, value: i32);
+    pub fn glUniform4i(location: i32, x: i32, y: i32, z: i32, w: i32);
     pub fn glUniform4f(location: i32, x: f32, y: f32, z: f32, w: f32);
     pub fn glUniform2f(location: i32, x: f32, y: f32);
     pub fn glGenBuffers(count: i32, buffers: *mut u32);

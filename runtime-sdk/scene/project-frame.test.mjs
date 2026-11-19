@@ -47,10 +47,57 @@ test('empty intersection clips to zero and unsupported commands, materials, atla
     {...image, clips: [{matrix: {...matrix, c: 1}, rect}]}]) assert.throws(() => encode([command]), /Unsupported/);
   assert.throws(() => encode([image], {materials: [{...material, blend: 'erase'}]}), /Unsupported/);
   assert.throws(() => encode([image], {materials: [{...material, samplingDomain: 'page'}]}), /Unsupported/);
-  assert.throws(() => encode([image], {regions: [{...region, quarterTurn: 1}]}), /Unsupported/);
+  assert.throws(() => encode([image], {regions: [{...region, quarterTurn: 1}]}), /atlas/);
   assert.throws(() => encode([image], {}, new Map([[other, 5]])), /page/);
   assert.throws(() => encode([image], {}, new Map([[page, 5], [other, 5]])), /page/);
   assert.throws(() => encode(Array(4097).fill(solid)), /limit/);
+});
+
+test('sparse EGR3 entries preserve logical corners, packed UVs and drawable order on cache hits', () => {
+  const packed = {...region, trimX: 1, trimY: 2, logicalWidth: 9, logicalHeight: 8};
+  const regions = [region, ...[0, 1, 2, 3].map(quarterTurn => ({...packed, quarterTurn}))];
+  const draws = regions.map((_, regionIndex) => ({...image, regionIndex}));
+  const commands = [solid, draws[1], {kind: 'barrier', reason: 'explicit-enter'}, draws[0], ...draws.slice(2)];
+  const input = {...frame, commands, regions}, writer = createCapturedProjectEncoder();
+  const originalRecords = encode([solid, ...Array(5).fill(image)]);
+  const tableStart = originalRecords.byteLength;
+  for (let i = 0; i < 3; i++) {
+    const packet = writer.encode(input, 42, ids), view = new DataView(packet.buffer);
+    assert.deepEqual(packet, encodeProjectFrame(input, 42, ids));
+    assert.equal(view.getUint32(0, true), 0x33524745);
+    assert.equal(view.getUint32(20, true), 6);
+    assert.equal(packet.length, tableStart + 4*24);
+    assert.deepEqual(packet.slice(4, tableStart), new Uint8Array(originalRecords.buffer).slice(4));
+    const words = Array.from({length: 24}, (_, word) => view.getUint32(tableStart + word*4, true));
+    assert.deepEqual(words, [1,9,8,1,2,0, 3,9,8,1,2,1, 4,9,8,1,2,2, 5,9,8,1,2,3]);
+    packet.fill(0); // Cached commands and atlas metadata belong to the encoder.
+  }
+  const changed = {...input, regions: regions.map(r => ({...r, trimY: 0}))};
+  assert.deepEqual(writer.encode(changed, 43, ids), encodeProjectFrame(changed, 43, ids));
+  const plain = {...input, regions: regions.map(() => region)};
+  assert.deepEqual(writer.encode(plain, 42, ids), new Uint8Array(originalRecords.buffer));
+});
+
+test('atlas metadata rejects out-of-range texels, malformed logical sizes and transformed page-domain draws', () => {
+  const mapped = {...region, quarterTurn: 1, trimX: 1, trimY: 2, logicalWidth: 3, logicalHeight: 6};
+  for (const fields of [{quarterTurn: 4}, {quarterTurn: 0.5}, {logicalWidth: 2}, {logicalHeight: 5},
+    {trimX: -1}, {trimY: 0.5}, {trimX: Number.NaN}, {logicalWidth: 1048577}, {logicalHeight: 0}]) {
+    assert.throws(() => encode([image], {regions: [{...mapped, ...fields}]}), /atlas/);
+  }
+  for (const fields of [{x: -1}, {x: 1.5}, {width: 0}, {width: 7}, {height: 4}]) {
+    assert.throws(() => encode([image], {regions: [{...mapped, packed: {...region.packed, ...fields}}]}), /atlas/);
+  }
+  const wholePage = {...region, packed: {x: 0, y: 0, width: 8, height: 4}, logicalWidth: 8, logicalHeight: 4};
+  const materials = [{...material, samplingDomain: 'page'}];
+  assert.equal(encode([image], {regions: [wholePage], materials}).getUint32(0, true), 0x32524745);
+  for (const fields of [{trimX: 1, logicalWidth: 9}, {logicalHeight: 8}, {quarterTurn: 2}]) {
+    assert.throws(() => encode([image], {regions: [{...wholePage, ...fields}], materials}), /page/);
+  }
+  const maximum = encode(Array(4096).fill(image), {regions: [{...mapped, logicalWidth: 1048576}]});
+  const last = maximum.byteLength - 24;
+  assert.equal(maximum.byteLength, 24 + 4096*(64 + 24));
+  assert.equal(maximum.getUint32(last, true), 4095);
+  assert.equal(maximum.getUint32(last + 4, true), 1048576);
 });
 
 test('captured quads follow current atlas bindings and viewport even when the command is reused', () => {
@@ -129,4 +176,49 @@ test('a genuine engine capture retains the leased image identity when draw order
     await engine.dispose();
   }
   assert.equal(releases, 2);
+});
+
+test('a public sprite sheet and sequence keep their logical frame when its packed rotation changes', async () => {
+  const {createAssetType, createAssetRef, createEngine, createImageData2D, createTexture,
+    createSpriteSheet, createSequenceClip, isTexture, SequencePlayer} = await import('@egret/engine');
+  const {captureHost} = await import('./scene.mjs');
+  const engine = await createEngine({host: captureHost()}), scope = engine.createScope();
+  try {
+    const source = createImageData2D({width: 8, height: 4, pixels: new Uint8Array(8*4*4)});
+    const type = createAssetType('android-atlas-sequence', isTexture);
+    engine.assets.register(type, {async load() { return createTexture(source); }, dispose(texture) { texture.dispose(); }});
+    const lease = scope.use(await engine.assets.acquire(createAssetRef(type, 'sheet')));
+    const frames = [
+      {name: 'front', x: 1, y: 0, width: 3, height: 2,
+        layout: {sourceWidth: 7, sourceHeight: 6, trimX: 1, trimY: 2, packedRotation: 0}},
+      {name: 'side', x: 4, y: 0, width: 2, height: 3,
+        layout: {sourceWidth: 7, sourceHeight: 6, trimX: 2, trimY: 1, packedRotation: 90}}
+    ];
+    const sheet = scope.use(createSpriteSheet(lease, frames, 'trim-rotation-v1'));
+    const bitmap = scope.use(sheet.createBitmap('front'));
+    bitmap.x = 14;
+    bitmap.scaleX = -2;
+    engine.stage.addChild(bitmap);
+    const clip = createSequenceClip({atlasWidth: 8, atlasHeight: 4,
+      frames: frames.map(f => ({...f, durationSeconds: 0.5}))}, 'trim-rotation-v1');
+    const player = scope.use(new SequencePlayer(bitmap, clip));
+    const writer = createCapturedProjectEncoder(), pages = new Map([[source, 19]]);
+    for (const [time, mapping, uv] of [
+      [0, [0,7,6,1,2,0], [1/8,0,4/8,2/4]],
+      [0.5, [0,7,6,2,1,1], [4/8,0,6/8,3/4]]
+    ]) {
+      player.applyAt(time);
+      const bytes = writer.encode(engine.captureSharedFrame({width: 32, height: 32}), 1, pages);
+      const view = new DataView(bytes.buffer);
+      assert.equal(bytes.length, 112);
+      assert.equal(view.getUint32(0, true), 0x33524745);
+      assert.equal(bytes[24], 19);
+      assert.deepEqual(Array.from({length: 6}, (_, i) => view.getFloat32(32 + 4*i, true)), [14,0,0,0,14,6]);
+      assert.deepEqual(Array.from({length: 4}, (_, i) => view.getFloat32(56 + 4*i, true)), uv);
+      assert.deepEqual(Array.from({length: 6}, (_, i) => view.getUint32(88 + 4*i, true)), mapping);
+    }
+  } finally {
+    scope.dispose();
+    await engine.dispose();
+  }
 });
