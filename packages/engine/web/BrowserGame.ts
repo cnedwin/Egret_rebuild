@@ -75,6 +75,11 @@ export interface BrowserGameOptions {
   /** What a frame is cleared to before the stage is drawn: 0x000000 and 1 unless given. */
   readonly clearColor?: number;
   readonly clearAlpha?: number;
+  /**
+   * Where translucent draws mix with what is under them: "linear" light unless given, or the stored "srgb"
+   * codes, as a 2D canvas and Egret 5 mix them, so a faint white over a dark ground stays faint.
+   */
+  readonly blendSpace?: 'linear' | 'srgb';
   /** One step of the game, called before each frame with the seconds since the step before. */
   readonly update?: (deltaSeconds: number) => void;
   /** Told once of what stopped the game's loop. Without it the failure is thrown where the console shows it. */
@@ -163,7 +168,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
   const { canvas, width, height, update, onError } = options;
   const asked = options.backend ?? 'auto',
     clearColor = options.clearColor ?? 0,
-    clearAlpha = options.clearAlpha ?? 1;
+    clearAlpha = options.clearAlpha ?? 1,
+    blendSpace = options.blendSpace ?? 'linear';
   const device = Number((globalThis as { readonly devicePixelRatio?: unknown }).devicePixelRatio),
     pixelRatio = options.pixelRatio ?? (device > 0 ? Math.min(device, 2) : 1);
   if (
@@ -181,6 +187,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     clearColor > 0xffffff ||
     typeof clearAlpha !== 'number' ||
     !(clearAlpha >= 0 && clearAlpha <= 1) ||
+    (blendSpace !== 'linear' && blendSpace !== 'srgb') ||
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
     [options.pointer, options.keyboard, options.autoStart, options.stats].some(
@@ -194,8 +201,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
   // Only the chosen backend's module is loaded.
   const host =
     backend === 'webgpu'
-      ? (await import('./webgpu.js')).createSharedWebGPUHost({ canvas, pixelRatio })
-      : (await import('./webgl2.js')).createSharedWebGL2Host({ canvas, pixelRatio });
+      ? (await import('./webgpu.js')).createSharedWebGPUHost({ canvas, pixelRatio, blendSpace })
+      : (await import('./webgl2.js')).createSharedWebGL2Host({ canvas, pixelRatio, blendSpace });
   let engine: Engine;
   try {
     engine = await createEngineForProfile({ host, onDiagnostic: gameDiagnostics(onError) }, SHARED_FRAME_PROFILE_2D);
@@ -210,7 +217,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
   let loop: BrowserFrameLoop | undefined, stats: BrowserStatsPanel | undefined, disposal: Promise<void> | undefined;
   try {
     const scope = engine.createScope(),
-      frame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha });
+      frame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha, blendSpace });
     const pointer = options.pointer === false ? undefined : createBrowserPointerInput({ engine, scope, width, height });
     const keyboard = options.keyboard === false ? undefined : createBrowserKeyboardInput({ engine, scope });
     const panel = (stats = options.stats === true ? createBrowserStatsPanel({ canvas, label: backend }) : undefined);

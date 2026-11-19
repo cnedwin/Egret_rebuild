@@ -68,6 +68,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `seed` | The seed of `game.random` | A new one each time |
 | `saveKey` | The name `game.save` keeps its values under | The page's path |
 | `backend` | `'auto'`, `'webgpu'` or `'webgl2'` | `'auto'` |
+| `blendSpace` | How translucent things mix: `'srgb'` as a 2D canvas and Egret 5 do, so white at 10% over a dark ground is a faint white; `'linear'` mixes light, and the same white looks stronger | `'srgb'` |
 
 Options that cannot make a game are refused with `PLAY_OPTIONS_INVALID`; the message ends with which one.
 

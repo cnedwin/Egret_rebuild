@@ -379,7 +379,12 @@ export class Engine {
           : candidate === undefined
             ? undefined
             : this.#bitmapBindingOwner.readPreparedForCapture(candidate[0]);
-      let width: unknown, height: unknown, colorInput: unknown, alphaInput: unknown, outputInput: unknown;
+      let width: unknown,
+        height: unknown,
+        colorInput: unknown,
+        alphaInput: unknown,
+        outputInput: unknown,
+        spaceInput: unknown;
       let optionsFailed = false,
         optionsCause: unknown;
       try {
@@ -388,6 +393,7 @@ export class Engine {
         colorInput = options.clearColor;
         alphaInput = options.clearAlpha;
         outputInput = options.outputAlpha;
+        spaceInput = options.blendSpace;
       } catch (cause) {
         // Even a caller-thrown EgretError is an external read failure here.
         if (prepared === undefined) throw new EgretError('INVALID_FRAME_OPTIONS', { cause });
@@ -401,6 +407,7 @@ export class Engine {
       const outputAlpha = outputInput === undefined ? 'premultiplied' : outputInput;
       const clearColor = colorInput === undefined ? 0 : colorInput;
       const clearAlpha = alphaInput === undefined ? (outputAlpha === 'opaque' ? 1 : 0) : alphaInput;
+      const blendSpace = spaceInput === undefined ? 'linear' : spaceInput;
       if (
         typeof width !== 'number' ||
         !Number.isFinite(width) ||
@@ -417,7 +424,8 @@ export class Engine {
         clearAlpha < 0 ||
         clearAlpha > 1 ||
         (outputAlpha !== 'opaque' && outputAlpha !== 'premultiplied') ||
-        (outputAlpha === 'opaque' && clearAlpha !== 1)
+        (outputAlpha === 'opaque' && clearAlpha !== 1) ||
+        (blendSpace !== 'linear' && blendSpace !== 'srgb')
       )
         throw new EgretError('INVALID_FRAME_OPTIONS');
       this.#context.assertOpen();
@@ -428,8 +436,9 @@ export class Engine {
       if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) throw new EgretError('FRAME_ID_EXHAUSTED');
       const frame = freezeSharedFrame({
         profile: SHARED_FRAME_PROFILE_2D,
-        colorRecipe: 'egret.linear-srgb-pma/1',
-        targetRepresentation: 'egret.srgb-pma8-target/1',
+        ...(blendSpace === 'srgb'
+          ? ({ colorRecipe: 'egret.srgb-pma/1', targetRepresentation: 'egret.encoded-srgb-pma8-target/1' } as const)
+          : ({ colorRecipe: 'egret.linear-srgb-pma/1', targetRepresentation: 'egret.srgb-pma8-target/1' } as const)),
         outputRepresentation:
           outputAlpha === 'opaque' ? 'egret.srgb-opaque-unorm8/1' : 'egret.srgb-premultiplied-unorm8/1',
         frameId: this.nextFrameId,

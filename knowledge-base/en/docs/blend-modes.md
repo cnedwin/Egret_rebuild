@@ -25,7 +25,7 @@ A mode applies to the object and everything under it, as the material does, unle
 | `screen` | `screen` | `S + C(1 − S)` |
 | `erase` | `erase` (new) | `C(1 − a)`, alpha too: the source's colour is not used |
 
-The equations are those of the [shared render profile](shared-render-profile-contract.md), in linear light, so they are not the gamma-space results of Egret's old WebGL renderer: an `add` of two mid colours is brighter here. `erase` on the stage takes away the background too, and the page shows through the canvas; to cut a hole in one picture only, erase inside a container with a render effect, whose group has a transparent target of its own. A material named `add-preserve` reads as `add`.
+The equations are those of the [shared render profile](shared-render-profile-contract.md), in linear light, so they are not the gamma-space results of Egret's old WebGL renderer: an `add` of two mid colours is brighter here. In the `srgb` [blend space](shared-render-profile-contract.md#blend-space), which Play uses unless asked otherwise, the same equations mix the stored codes, as Egret 5 and a 2D canvas do. `erase` on the stage takes away the background too, and the page shows through the canvas; to cut a hole in one picture only, erase inside a container with a render effect, whose group has a transparent target of its own. A material named `add-preserve` reads as `add`.
 
 ## Errors
 

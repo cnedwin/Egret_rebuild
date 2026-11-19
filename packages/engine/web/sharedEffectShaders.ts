@@ -7,7 +7,11 @@ export const EFFECT_PASSES: readonly SharedEffectPass[] = ['horizontal', 'vertic
 const VECTORS = 36;
 /** The bytes of one group's uniform, as prepareEffects2D fills it. */
 export const EFFECT_UNIFORM_BYTES = VECTORS * 16;
-export function sharedEffectGLSL(mode: SharedEffectPass): string {
+/**
+ * In a target that mixes stored codes the colour already is as it is seen, so the matrix reads and writes it
+ * without the transfer.
+ */
+export function sharedEffectGLSL(mode: SharedEffectPass, srgb = false): string {
   return (
     `#version 300 es
 precision highp float;
@@ -25,9 +29,15 @@ bool inside(vec2 point,int base) {
   vec2 p=localPoint(point,base)-params[base+1].zw;
   return all(greaterThanEqual(p,vec2(0.0)))&&all(lessThan(p,params[base+2].xy));
 }
-vec3 decodeColor(vec3 c){return mix(c/12.92,pow((c+0.055)/1.055,vec3(2.4)),step(vec3(0.04045),c));}
+` +
+    (srgb
+      ? `vec3 decodeColor(vec3 c){return c;}
+vec3 encodeColor(vec3 c){return c;}
+`
+      : `vec3 decodeColor(vec3 c){return mix(c/12.92,pow((c+0.055)/1.055,vec3(2.4)),step(vec3(0.04045),c));}
 vec3 encodeColor(vec3 c){return mix(c*12.92,1.055*pow(c,vec3(1.0/2.4))-0.055,step(vec3(0.0031308),c));}
-float alphaAt(highp sampler2D image,ivec2 p,ivec2 size){return all(greaterThanEqual(p,ivec2(0)))&&all(lessThan(p,size))?texelFetch(image,p,0).a:0.0;}
+`) +
+    `float alphaAt(highp sampler2D image,ivec2 p,ivec2 size){return all(greaterThanEqual(p,ivec2(0)))&&all(lessThan(p,size))?texelFetch(image,p,0).a:0.0;}
 void main(){
   ivec2 size=textureSize(sourceTexture,0),at=ivec2(gl_FragCoord.xy);
 ` +
@@ -86,7 +96,8 @@ void main(){
 export function createSharedEffectPipeline(
   shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule,
   pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>,
-  mode: SharedEffectPass
+  mode: SharedEffectPass,
+  srgb = false
 ): Promise<GPURenderPipeline> {
   const module = shader({
     code:
@@ -101,9 +112,15 @@ struct Params { values:array<vec4<f32>,${VECTORS}> }
       `
 fn localPoint(point:vec2<f32>,base:u32)->vec2<f32>{let m=params.values[base];let t=params.values[base+1u];return vec2<f32>(m.x*point.x+m.z*point.y,m.y*point.x+m.w*point.y)+t.xy;}
 fn inside(point:vec2<f32>,base:u32)->bool{let p=localPoint(point,base)-params.values[base+1u].zw;return all(p>=vec2<f32>(0.0))&&all(p<params.values[base+2u].xy);}
-fn decodeColor(c:vec3<f32>)->vec3<f32>{return select(pow((c+0.055)/1.055,vec3<f32>(2.4)),c/12.92,c<vec3<f32>(0.04045));}
+` +
+      (srgb
+        ? `fn decodeColor(c:vec3<f32>)->vec3<f32>{return c;}
+fn encodeColor(c:vec3<f32>)->vec3<f32>{return c;}
+`
+        : `fn decodeColor(c:vec3<f32>)->vec3<f32>{return select(pow((c+0.055)/1.055,vec3<f32>(2.4)),c/12.92,c<vec3<f32>(0.04045));}
 fn encodeColor(c:vec3<f32>)->vec3<f32>{return select(1.055*pow(c,vec3<f32>(1.0/2.4))-0.055,c*12.92,c<vec3<f32>(0.0031308));}
-@vertex fn vertexMain(@builtin(vertex_index) index:u32)->@builtin(position) vec4<f32>{let p=array<vec2<f32>,3>(vec2<f32>(-1.0,-1.0),vec2<f32>(3.0,-1.0),vec2<f32>(-1.0,3.0));return vec4<f32>(p[index],0.0,1.0);}
+`) +
+      `@vertex fn vertexMain(@builtin(vertex_index) index:u32)->@builtin(position) vec4<f32>{let p=array<vec2<f32>,3>(vec2<f32>(-1.0,-1.0),vec2<f32>(3.0,-1.0),vec2<f32>(-1.0,3.0));return vec4<f32>(p[index],0.0,1.0);}
 ` +
       (mode === 'composite'
         ? `fn glowAt(p:vec2<i32>,size:vec2<i32>)->f32{if(all(p>=vec2<i32>(0))&&all(p<size)){return textureLoad(glowTexture,p,0).a;}return 0.0;}
@@ -159,7 +176,7 @@ fn encodeColor(c:vec3<f32>)->vec3<f32>{return select(1.055*pow(c,vec3<f32>(1.0/2
 `) +
       `}`
   });
-  const target: GPUColorTargetState = { format: 'rgba8unorm-srgb', writeMask: 15 };
+  const target: GPUColorTargetState = { format: srgb ? 'rgba8unorm' : 'rgba8unorm-srgb', writeMask: 15 };
   if (mode === 'composite')
     target.blend = {
       color: { operation: 'add', srcFactor: 'one', dstFactor: 'one-minus-src-alpha' },

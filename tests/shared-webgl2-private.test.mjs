@@ -32,7 +32,8 @@ const TOP = [
   'restoreTimeoutMs',
   'maxFrameRegions',
   'maxFramePageBytes',
-  'maxReadyPageBytes'
+  'maxReadyPageBytes',
+  'blendSpace'
 ];
 const DEFAULTS = Object.freeze({
   pixelRatio: 1,
@@ -55,7 +56,8 @@ const DEFAULTS = Object.freeze({
   restoreTimeoutMs: 10000,
   maxFrameRegions: 4096,
   maxFramePageBytes: 67108864,
-  maxReadyPageBytes: 134217728
+  maxReadyPageBytes: 134217728,
+  blendSpace: 'linear'
 });
 const canvas = Object.freeze({
   getContext() {

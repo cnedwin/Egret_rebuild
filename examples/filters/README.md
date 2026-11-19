@@ -11,7 +11,7 @@ node tools/build.mjs
 node tools/serve-canvas.mjs
 ```
 
-Open `/examples/filters/index.html` on the host and port the server prints. Add `?backend=webgl2` or `?backend=webgpu` to choose a backend.
+Open `/examples/filters/index.html` on the host and port the server prints. Add `?backend=webgl2` or `?backend=webgpu` to choose a backend. Add `space=srgb` to mix the filters' colours as a 2D canvas does ([blend space](../blend-space/README.md)).
 
 ## What to try
 

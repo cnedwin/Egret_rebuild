@@ -9,6 +9,36 @@ export function decodeSharedSRGB(value: number): number {
 export function decodeSharedSRGBByte(code: number): number {
   return decodeSRGBByte(code);
 }
+/** The recipe and target a frame records for each blend space. */
+export const SHARED_BLEND_RECIPES_2D = Object.freeze({
+  linear: Object.freeze({
+    colorRecipe: 'egret.linear-srgb-pma/1',
+    targetRepresentation: 'egret.srgb-pma8-target/1'
+  } as const),
+  srgb: Object.freeze({
+    colorRecipe: 'egret.srgb-pma/1',
+    targetRepresentation: 'egret.encoded-srgb-pma8-target/1'
+  } as const)
+});
+/** The blend space of a frame whose recipe and target agree, or undefined. */
+export function sharedBlendSpace2D(frame: {
+  readonly colorRecipe: string;
+  readonly targetRepresentation: string;
+}): 'linear' | 'srgb' | undefined {
+  for (const space of ['linear', 'srgb'] as const) {
+    const recipe = SHARED_BLEND_RECIPES_2D[space];
+    if (frame.colorRecipe === recipe.colorRecipe && frame.targetRepresentation === recipe.targetRepresentation)
+      return space;
+  }
+  return undefined;
+}
+/**
+ * The 0-to-1 value a target of the blend space holds for a channel byte of a colour: its linear light, or the
+ * byte as it is written in a target that mixes the codes.
+ */
+export function sharedTargetChannel2D(space: 'linear' | 'srgb', code: number): number {
+  return space === 'srgb' ? (code & 255) / 255 : decodeSRGBByte(code);
+}
 export function encodeSharedSRGB(value: number): number {
   return value <= 0.0031308 ? 12.92 * value : 1.055 * value ** (1 / 2.4) - 0.055;
 }

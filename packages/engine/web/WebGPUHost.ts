@@ -29,7 +29,7 @@ import type { PackedSharedDraw2D } from '../rendering/packSharedDraws2D.js';
 import { SHARED_BATCH_PAGES_2D } from '../rendering/packSharedDraws2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
-import { decodeSharedSRGBByte, sharedPageLevelLayout2D } from '../rendering/sharedColor2D.js';
+import { sharedBlendSpace2D, sharedPageLevelLayout2D, sharedTargetChannel2D } from '../rendering/sharedColor2D.js';
 import { createSharedWebGPUPipeline, SHARED_BLENDS, SHARED_PIPELINE_KINDS } from './webgpuSharedPass.js';
 import { createSharedEffectPipeline, EFFECT_PASSES, EFFECT_UNIFORM_BYTES } from './sharedEffectShaders.js';
 import type { SharedEffectPass } from './sharedEffectShaders.js';
@@ -1431,17 +1431,20 @@ class WebGPUHostImplementation {
       let synchronous: { readonly cause: unknown } | undefined;
       try {
         this.scoped(null, 'startup', scopes, gate, () => {
+          // A target that mixes stored codes, as a 2D canvas does, is ordinary UNORM; its pipelines write codes.
+          const coded = SHARED_OPTIONS.get(this)!.blendSpace === 'srgb';
           for (const kind of SHARED_PIPELINE_KINDS)
             for (const blend of SHARED_BLENDS)
-              createSharedWebGPUPipeline(capturedShader, capturedPipeline, kind, blend);
+              createSharedWebGPUPipeline(capturedShader, capturedPipeline, kind, blend, coded);
           createSharedResolvePipeline(
             capturedShader,
             capturedPipeline,
             this.format,
-            SHARED_OPTIONS.get(this)!.outputAlpha === 'opaque'
+            SHARED_OPTIONS.get(this)!.outputAlpha === 'opaque',
+            coded
           );
           if (SHARED_OPTIONS.get(this)!.enableEffects)
-            for (const mode of EFFECT_PASSES) createSharedEffectPipeline(capturedShader, capturedPipeline, mode);
+            for (const mode of EFFECT_PASSES) createSharedEffectPipeline(capturedShader, capturedPipeline, mode, coded);
           for (const filter of ['nearest', 'linear'] as const)
             for (const u of ['clamp-to-edge', 'repeat', 'mirror-repeat'] as const)
               for (const v of ['clamp-to-edge', 'repeat', 'mirror-repeat'] as const) {
@@ -2118,6 +2121,7 @@ class WebGPUHostImplementation {
               }
             }
             if (
+              sharedBlendSpace2D(frame) !== options.blendSpace ||
               frame.outputAlpha !== options.outputAlpha ||
               frame.outputRepresentation !==
                 (options.outputAlpha === 'opaque' ? 'egret.srgb-opaque-unorm8/1' : 'egret.srgb-premultiplied-unorm8/1')
@@ -2810,18 +2814,22 @@ class WebGPUHostImplementation {
     if (p.regions) buffer('uniform', 72, p.regions.byteLength);
     for (const group of prepared.effects.groups) buffer('uniform', 72, group.uniform.byteLength);
     const colorId = requests.length;
+    // Working targets hold light, encoded by the format on store, or the codes of a space that mixes them.
+    const target =
+      SHARED_OPTIONS.get(this)!.blendSpace === 'srgb'
+        ? ({ format: 'rgba8unorm', recipe: 'egret.encoded-srgb-pma8-target/1' } as const)
+        : ({ format: 'rgba8unorm-srgb', recipe: 'egret.srgb-pma8-target/1' } as const);
     requests.push({
       kind: 'color',
       id: colorId,
       width,
       height,
-      format: 'rgba8unorm-srgb',
+      ...target,
       usage: 20,
       byteLength: storage.colorBytes,
       sampleCount: 1,
       mipLevelCount: 1,
-      depthOrArrayLayers: 1,
-      recipe: 'egret.srgb-pma8-target/1'
+      depthOrArrayLayers: 1
     });
     for (let i = 0; i < prepared.effects.targetCount; i++)
       requests.push({
@@ -2829,13 +2837,12 @@ class WebGPUHostImplementation {
         id: requests.length,
         width,
         height,
-        format: 'rgba8unorm-srgb',
+        ...target,
         usage: 20,
         byteLength: storage.colorBytes,
         sampleCount: 1,
         mipLevelCount: 1,
-        depthOrArrayLayers: 1,
-        recipe: 'egret.srgb-pma8-target/1'
+        depthOrArrayLayers: 1
       });
     const bufferPlan = this.bufferPool.plan(requests),
       bufferLeases: (RetentionLease | undefined)[] = new Array(requests.length).fill(undefined);
@@ -3163,16 +3170,18 @@ class WebGPUHostImplementation {
     const begin = this.method(encoder, 'beginRenderPass', gate),
       finish = this.method(encoder, 'finish', gate),
       copy = ticket ? this.method(encoder, 'copyTextureToBuffer', gate) : undefined;
+    // The clear colour as the target holds it: light, or the codes of a target that mixes them.
     const c = frame.clearColor,
-      a = frame.clearAlpha;
+      a = frame.clearAlpha,
+      space = SHARED_OPTIONS.get(this)!.blendSpace;
     const attachment: GPURenderPassColorAttachment = {
       view: color.view,
       loadOp: 'clear',
       storeOp: 'store',
       clearValue: {
-        r: a * decodeSharedSRGBByte(c >>> 16),
-        g: a * decodeSharedSRGBByte(c >>> 8),
-        b: a * decodeSharedSRGBByte(c),
+        r: a * sharedTargetChannel2D(space, c >>> 16),
+        g: a * sharedTargetChannel2D(space, c >>> 8),
+        b: a * sharedTargetChannel2D(space, c),
         a
       }
     };

@@ -25,7 +25,7 @@ hole.blendMode = 'erase';             // 按自身 alpha 擦除下方内容
 | `screen` | `screen` | `S + C(1 − S)` |
 | `erase` | `erase`（新增） | `C(1 − a)`，alpha 同样；不使用源的颜色 |
 
-这些公式来自[共享渲染配置](shared-render-profile-contract.md)，在线性光照中计算，因此与 Egret 旧 WebGL 渲染器在 gamma 空间中的结果不同：两个中间色 `add` 的结果在这里更亮。在舞台上使用 `erase` 也会擦掉背景，页面会透过画布显示；如果只想在一张图里挖洞，请在带渲染效果的容器内擦除，效果组有自己的透明目标。名为 `add-preserve` 的材质读作 `add`。
+这些公式来自[共享渲染配置](shared-render-profile-contract.md)，在线性光照中计算，因此与 Egret 旧 WebGL 渲染器在 gamma 空间中的结果不同：两个中间色 `add` 的结果在这里更亮。在 `srgb` [混合空间](shared-render-profile-contract.md#混合空间)中（Play 默认使用），同样的公式作用于存储的编码值，与白鹭 5 和 2D canvas 一致。在舞台上使用 `erase` 也会擦掉背景，页面会透过画布显示；如果只想在一张图里挖洞，请在带渲染效果的容器内擦除，效果组有自己的透明目标。名为 `add-preserve` 的材质读作 `add`。
 
 ## 错误
 

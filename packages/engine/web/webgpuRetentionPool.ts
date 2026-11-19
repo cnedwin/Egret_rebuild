@@ -12,13 +12,13 @@ export interface RetentionTargetRequest {
   readonly id: number;
   readonly width: number;
   readonly height: number;
-  readonly format: 'rgba8unorm-srgb' | 'depth32float';
+  readonly format: 'rgba8unorm-srgb' | 'rgba8unorm' | 'depth32float';
   readonly usage: 20 | 16;
   readonly byteLength: number;
   readonly sampleCount: 1;
   readonly mipLevelCount: 1;
   readonly depthOrArrayLayers: 1;
-  readonly recipe: 'egret.srgb-pma8-target/1' | 'egret.shared-reverse-depth/1';
+  readonly recipe: 'egret.srgb-pma8-target/1' | 'egret.encoded-srgb-pma8-target/1' | 'egret.shared-reverse-depth/1';
 }
 export type RetentionRequest = RetentionBufferRequest | RetentionTargetRequest;
 export type RetentionHandle = (
@@ -93,7 +93,10 @@ export function createWebGPURetentionPool(
       request.mipLevelCount !== 1 ||
       request.depthOrArrayLayers !== 1 ||
       (request.kind === 'color'
-        ? request.format !== 'rgba8unorm-srgb' || request.usage !== 20 || request.recipe !== 'egret.srgb-pma8-target/1'
+        ? !(
+            (request.format === 'rgba8unorm-srgb' && request.recipe === 'egret.srgb-pma8-target/1') ||
+            (request.format === 'rgba8unorm' && request.recipe === 'egret.encoded-srgb-pma8-target/1')
+          ) || request.usage !== 20
         : request.format !== 'depth32float' ||
           request.usage !== 16 ||
           request.recipe !== 'egret.shared-reverse-depth/1')

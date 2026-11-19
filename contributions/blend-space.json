@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/shared-blend-space.test.mjs",
+      "originRole": "First-party tests of the blend space of a frame: the recipe a frame records, colours held as light or as codes, and both Hosts making targets, shaders and clears of their space; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/blend-space/index.html",
+      "originRole": "First-party page of the blend space example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/blend-space/blend.mjs",
+      "originRole": "First-party example drawing translucent colours in a blend space beside the same drawn by a 2D canvas; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/blend-space/verify.mjs",
+      "originRole": "First-party browser check that compares the blend space example with the page's 2D canvas on WebGL2 and WebGPU; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/blend-space/README.md",
+      "originRole": "First-party English guide of the blend space example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/blend-space/README.zh-CN.md",
+      "originRole": "First-party Chinese guide of the blend space example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/blend-space/README.md",
+      "zh": "examples/blend-space/README.zh-CN.md"
+    }
+  ]
+}

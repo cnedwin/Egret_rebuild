@@ -19,6 +19,8 @@ export interface World3DOverlayOptions {
   /** One step of the interface, called before each 2D frame. */
   readonly update?: (deltaSeconds: number) => void;
   readonly onError?: (error: unknown) => void;
+  /** How translucent interface draws mix: `linear` light unless given, or the stored `srgb` codes, as a 2D canvas does. */
+  readonly blendSpace?: 'linear' | 'srgb';
   /** Send presses on empty parts of the interface to the 3D canvas. On by default. */
   readonly passThrough?: boolean;
 }
@@ -83,6 +85,7 @@ export async function createWorld3DOverlay(
       backend: options.backend ?? 'webgl2',
       clearColor: 0,
       clearAlpha: 0,
+      ...(options.blendSpace === undefined ? {} : { blendSpace: options.blendSpace }),
       ...(options.pixelRatio === undefined ? {} : { pixelRatio: options.pixelRatio }),
       ...(options.update ? { update: options.update } : {}),
       ...(options.onError ? { onError: options.onError } : {})

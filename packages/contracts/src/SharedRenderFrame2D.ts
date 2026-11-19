@@ -11,6 +11,12 @@ import type { TextureViewRegion2D } from './TextureViewRegion2D.js';
 export const SHARED_FRAME_PROFILE_2D = 'egret.shared-frame2d/1';
 export type SharedFrameProfile2D = typeof SHARED_FRAME_PROFILE_2D;
 export type SharedOutputAlpha2D = 'premultiplied' | 'opaque';
+/**
+ * Where translucent draws mix with what is under them. `linear` mixes light as it is (the engine's default);
+ * `srgb` mixes the stored colour codes, as a 2D canvas and Egret 5 do, so a faint white over a dark ground stays
+ * faint. The colour of each draw is the same in both; only the mixing differs.
+ */
+export type SharedBlendSpace2D = 'linear' | 'srgb';
 
 export interface SharedFrameOptions2D {
   readonly width: number;
@@ -18,6 +24,8 @@ export interface SharedFrameOptions2D {
   readonly clearColor?: number;
   readonly clearAlpha?: number;
   readonly outputAlpha?: SharedOutputAlpha2D;
+  /** `linear` unless given. A renderer draws only frames of the space it was made for. */
+  readonly blendSpace?: SharedBlendSpace2D;
 }
 
 export interface SharedPage2D {
@@ -109,8 +117,8 @@ declare const sharedRenderFrame2DBrand: unique symbol;
 export interface SharedRenderFrame2D {
   readonly [sharedRenderFrame2DBrand]: true;
   readonly profile: SharedFrameProfile2D;
-  readonly colorRecipe: 'egret.linear-srgb-pma/1';
-  readonly targetRepresentation: 'egret.srgb-pma8-target/1';
+  readonly colorRecipe: 'egret.linear-srgb-pma/1' | 'egret.srgb-pma/1';
+  readonly targetRepresentation: 'egret.srgb-pma8-target/1' | 'egret.encoded-srgb-pma8-target/1';
   readonly outputRepresentation: 'egret.srgb-premultiplied-unorm8/1' | 'egret.srgb-opaque-unorm8/1';
   readonly frameId: number;
   readonly width: number;

@@ -131,6 +131,8 @@ export class GLNativeSession {
   public cleanupFailure: { readonly cause: unknown } | undefined;
   public recordOwners: GLNativeOwner[] | undefined;
   public timingSerial: number | null = null;
+  /** Working targets hold codes (RGBA8, mixed as a 2D canvas mixes) rather than light (SRGB8_ALPHA8). */
+  public codedTargets = false;
   private readonly calls = new Map<string, (...args: unknown[]) => unknown>();
   private readonly qualifiedColorTargets = new WeakSet<WebGLTexture>();
   private readonly qualifiedDepthTargets = new WeakMap<WebGLTexture, WeakSet<WebGLRenderbuffer>>();
@@ -520,7 +522,7 @@ export class GLNativeSession {
     const start = this.recordOwners ? this.startTiming() : undefined;
     try {
       for (const [name, expected] of [
-        [gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, working ? gl.SRGB : gl.LINEAR],
+        [gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, working && !this.codedTargets ? gl.SRGB : gl.LINEAR],
         [gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE, gl.UNSIGNED_NORMALIZED],
         [gl.FRAMEBUFFER_ATTACHMENT_RED_SIZE, 8],
         [gl.FRAMEBUFFER_ATTACHMENT_GREEN_SIZE, 8],
@@ -581,7 +583,7 @@ export class GLNativeSession {
   public texture(owner: GLNativeOwner, width: number, height: number, working: boolean, levels = 1): void {
     const gl = this.gl;
     gl.bindTexture(gl.TEXTURE_2D, owner.value as WebGLTexture);
-    gl.texStorage2D(gl.TEXTURE_2D, levels, working ? gl.SRGB8_ALPHA8 : gl.RGBA8, width, height);
+    gl.texStorage2D(gl.TEXTURE_2D, levels, working && !this.codedTargets ? gl.SRGB8_ALPHA8 : gl.RGBA8, width, height);
     for (const [name, value] of [
       [gl.TEXTURE_MIN_FILTER, gl.NEAREST],
       [gl.TEXTURE_MAG_FILTER, gl.NEAREST],

@@ -28,6 +28,7 @@ export { SHARED_FRAME_PROFILE_2D } from './SharedRenderFrame2D.js';
 export type {
   SharedFrameProfile2D,
   SharedOutputAlpha2D,
+  SharedBlendSpace2D,
   SharedFrameOptions2D,
   SharedPage2D,
   SharedRegion2D,
