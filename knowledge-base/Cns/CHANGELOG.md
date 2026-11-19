@@ -4,6 +4,10 @@
 
 早期版本号标识工程检查点。工作区包仍使用私有版本 `0.0.0`，宿主协议为 1.0。各检查点的验收范围见其子系统契约和验证记录。
 
+## Play3D：组、发光、灯与天气 — 2026-11-20
+
+`game.group([a, b, c], at)` 把几个物体合成一个，作为一个物体放置、旋转、补间和判断。`thing.glow` 让物体以自己的颜色发光。`game.lamp(color, at, { intensity, range })` 加一盏点光源，可移动、可补间，用 `game.remove` 熄灭。`game.weather('snow' | 'rain' | 'none', { amount })` 让雪或雨在相机所看之处周围落下，运动在 GPU 上计算。`examples/play/lanterns3d.mjs` 是用这四项做的雪夜；Play 核对脚本把它玩到结束，在软件 WebGL2 下通过。
+
 ## 混合空间：半透明颜色按 2D canvas 的方式混合 — 2026-11-20
 
 Host 接受 `blendSpace: 'srgb'`（其 Engine 的每一帧都会记录），按存储的颜色编码值混合半透明绘制，与 2D canvas 和白鹭 5 一致，而不是在线性光中混合：深色底上 10% 的白仍是淡淡的白。每次绘制本身的颜色不变；WebGL2 与 WebGPU 的工作目标改为 RGBA8 编码值，清屏色与发光颜色使用编码值，效果的颜色矩阵不再做转换，resolve 直接复制编码值。`createBrowserGame` 与 World3D 覆盖层可传入该选项；`play()` 与 Play3D 的界面层默认 `'srgb'`，传 `'linear'` 可改回。引擎默认仍为 `linear`，现有画面不变。`examples/blend-space` 将两种空间与页面自身的 2D canvas 对比：WebGL2 软件渲染下 `srgb` 每个方块与 canvas 相差不超过 1。WebGPU 像素需在硬件上运行确认。

@@ -54,9 +54,11 @@ await play3d({
 | `game.ground(size, color, y = 0)` | 一块该大小的方形地面，顶面在高度 `y`。它有 8 个单位厚，所以在慢的一帧里快速下落的物体仍会被推回到它上面 |
 | `game.add(model, { x, y, z })` | 把自己的模型变成一个物体：自己几何体的 `Mesh3D`、由它们组成的组，或 `loadGltf3D` 加载的模型。用于判断的包围盒由它所有的网格按各自在其中的位置算出，所以脚站在原点的人物会站在地面上。它保留自己的材质，设置 `color` 不会改变它 |
 | `game.remove(thing)` | 把它从世界中拿掉 |
+| `game.group([a, b, c], { x, y, z })` | 把几个物体合成一个：组作为一个物体放置、旋转、缩放、补间和判断。物体在组里保持原位，位置从此以组的位置为原点，组的位置是 `at`，未给出时为 0。判断时用组而不是它的部分；移除组也会移除它们。一个物体最多属于一个组 |
+| `game.lamp(color, { x, y, z }, { intensity: 4, range: 8 })` | 一盏灯：从一点发出、到 range 处衰减为零的光。可设置和补间它的 `x`、`y`、`z`、`color`、`intensity`、`range` 和 `visible`；`game.remove(lamp)` 熄灭它。八盏以内完整照明，更多的用较粗略的方式照明 |
 | `game.onTap(thing, () => …)` | 物体被点击或轻触时调用函数：从相机穿过指针发出一条射线，它遇到的最近一个设置了点击的物体收到。按在物体上的那一下仍然算作 `game.pointer.pressed`。界面上的精灵和 `play` 中一样交给 `onTap` |
 
-每个调用都返回一个物体。可以随时设置它的 `x`、`y`、`z`、`rotationX`、`rotationY`、`rotationZ`（角度）、`scale` 或 `scaleX`、`scaleY`、`scaleZ`、`visible` 和 `color`；它们都可以补间，例如 `game.tween(door).to({ y: 4 }, 0.5)`。也可以加上自己的属性（`enemy.hp = 3`）。`thing.removed` 表示它是否已被移除；设置已移除的物体不起作用，也不会出错。`thing.node` 是它的 [Mesh3D](world3d.md)。
+每个调用都返回一个物体。可以随时设置它的 `x`、`y`、`z`、`rotationX`、`rotationY`、`rotationZ`（角度）、`scale` 或 `scaleX`、`scaleY`、`scaleZ`、`visible` 和 `color`；它们都可以补间，例如 `game.tween(door).to({ y: 4 }, 0.5)`。也可以加上自己的属性（`enemy.hp = 3`）。`thing.removed` 表示它是否已被移除；设置已移除的物体不起作用，也不会出错。`thing.node` 是它的 [Mesh3D](world3d.md)。 `thing.glow` 让物体以自己的颜色发光，无论是否被照亮：默认 0，1 与它的颜色一样亮，灯笼或屏幕可以更大；它跟随新的 `color`，模型保留自己的材质。
 
 导入模型保留自身已有的根旋转，修改 `rotationY` 会保留其他两个轴。碰撞推出方向使用判定重叠时的同一组缩放后包围盒中心，也适用于原点在脚底的模型。
 
@@ -78,7 +80,7 @@ WebGL2 片元着色器现在读取分割距离向量的四个固定分量，选�
 
 ## 世界的观感
 
-`game.look(name)` 一次设定光线和空气：`'day'`（游戏开始时的样子）、`'dusk'`、`'night'`、`'fog'` 或 `'snow'`。它改变背景、上下两方天光的颜色和强度、太阳的颜色、强度和方向，以及雾（雾色跟随背景色）。传入对象 `{ background, sky, ground, light, sun, sunIntensity, sunFrom, fog }` 只改其中给出的部分。`fog` 是指数雾的浓度：0 为晴朗，0.02 为薄霾，0.06 为浓雾。`sunFrom` 是太阳照来的方向 `[x, y, z]`，y 须大于 0。重开后保持当前观感；五种预设见 `PLAY_LOOKS_3D`。软件渲染的浏览器画质为 `low`，没有阴影和泛光，这些预设是在那里检查的；硬件上会带阴影绘制。
+`game.look(name)` 一次设定光线和空气：`'day'`（游戏开始时的样子）、`'dusk'`、`'night'`、`'fog'` 或 `'snow'`。它改变背景、上下两方天光的颜色和强度、太阳的颜色、强度和方向，以及雾（雾色跟随背景色）。传入对象 `{ background, sky, ground, light, sun, sunIntensity, sunFrom, fog }` 只改其中给出的部分。`fog` 是指数雾的浓度：0 为晴朗，0.02 为薄霾，0.06 为浓雾。`sunFrom` 是太阳照来的方向 `[x, y, z]`，y 须大于 0。重开后保持当前观感；五种预设见 `PLAY_LOOKS_3D`。软件渲染的浏览器画质为 `low`，没有阴影和泛光，这些预设是在那里检查的；硬件上会带阴影绘制。 `game.weather('snow')` 或 `'rain'` 让雪或雨在相机所看之处周围落下，`{ amount }` 从 0 到 3，默认 1；`'none'` 停止，重新开始时同样保留。相机移动时雪花留在落下的地方；它们的运动在 GPU 上计算，每帧不占游戏的时间。
 
 ## 判断
 

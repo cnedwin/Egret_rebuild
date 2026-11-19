@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1315 exports; 800 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1319 exports; 802 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -754,10 +754,14 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayBurst3D` | interface |  |
 | `PlayCamera3D` | interface | The camera: where it is and what it looks at, by plain numbers. |
 | `PlayFollow3D` | interface |  |
+| `PlayLamp3D` | class | A lamp: light from a point of the world that fades out by `range`. |
+| `PlayLampOptions3D` | interface |  |
 | `PlayLook3D` | interface |  |
 | `PlayLookName3D` | type | What `play3d` gives: everything `play` gives for the interface and the game's time, and a world of things. |
 | `PlayPlace3D` | interface | Where a thing is made. |
 | `PlayThing3D` | class | A thing of the world: a box, a ball, a cylinder or a cone. |
+| `PlayWeather3D` | type | What falls from the sky: snow, rain, or nothing. |
+| `PlayWeatherOptions3D` | interface |  |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | interface |  |
 | `POST3D_LIMITS` | value |  |

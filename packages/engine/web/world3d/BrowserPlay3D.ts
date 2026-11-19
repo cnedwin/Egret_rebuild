@@ -2,7 +2,8 @@
 // A whole small 3D game from one call. The picture is a World3D app; everything else is `play`, drawn clear over
 // it on a canvas of its own: the keys, the pointer, sound, timers, tweens, text and buttons. What is added here is
 // what a 3D game makes its world of: boxes, balls and a ground that are placed by plain numbers, a camera that
-// follows, a sun, tests of distance and overlap, and pieces thrown out by a hit.
+// follows, a sun, tests of distance and overlap, and pieces thrown out by a hit; things grouped to move as one,
+// things that glow, lamps, and snow or rain.
 import { EgretError } from '@egret/runtime';
 import type { DisplayObject } from '@egret/runtime';
 import { play } from '../play.js';
@@ -13,7 +14,13 @@ import type { Geometry3D } from '../../rendering/world3d/Geometry3D.js';
 import type { Camera3D } from '../../rendering/world3d/Camera3D.js';
 import { createPerspectiveCamera3D } from '../../rendering/world3d/Camera3D.js';
 import type { Light3D } from '../../rendering/world3d/Light3D.js';
-import { createDirectionalLight3D, createHemisphereLight3D } from '../../rendering/world3d/Light3D.js';
+import {
+  createDirectionalLight3D,
+  createHemisphereLight3D,
+  createPointLight3D
+} from '../../rendering/world3d/Light3D.js';
+import { GpuParticles3D } from '../../rendering/world3d/GpuParticles3D.js';
+import { Texture3D } from '../../rendering/world3d/Texture3D.js';
 import type { Material3D } from '../../rendering/world3d/Material3D.js';
 import { createStandardMaterial3D, setColor3D } from '../../rendering/world3d/Material3D.js';
 import {
@@ -78,6 +85,7 @@ export class PlayThing3D {
   public readonly middleZ: number;
   #material: Material3D | undefined;
   #color: number;
+  #glow = 0;
   #turn: [number, number, number] = [0, 0, 0];
   #removed = false;
   [own: string]: unknown;
@@ -202,6 +210,20 @@ export class PlayThing3D {
     if (!colour(value) || this.#material === undefined) return;
     this.#color = value;
     setColor3D(this.#material.color, value);
+    if (this.#glow > 0) setColor3D(this.#material.emissive, value);
+  }
+  /**
+   * How much it shines with its own colour, lit or not: 0 (the default) not at all, 1 as bright as its colour,
+   * more for a lamp or a screen. A model keeps the materials it has.
+   */
+  public get glow(): number {
+    return this.#glow;
+  }
+  public set glow(value: number) {
+    if (!finite(value) || value < 0 || this.#material === undefined) return;
+    this.#glow = value;
+    setColor3D(this.#material.emissive, value > 0 ? this.#color : 0);
+    this.#material.emissiveIntensity = value;
   }
   /** Whether `game.remove` has taken it out of the world. Setting it afterwards does nothing that is seen. */
   public get removed(): boolean {
@@ -215,6 +237,86 @@ export class PlayThing3D {
     ownedGeometry.delete(this);
     cleanUp([() => this.node.removeFromParent(), () => geometry?.dispose(), () => this.#material?.dispose()]);
   }
+}
+
+/**
+ * A lamp: light from a point of the world that fades out by `range`. It is placed and changed by plain numbers, and
+ * `game.remove` puts it out. Up to eight are lit fully; more are lit by a coarser way.
+ */
+export class PlayLamp3D {
+  public readonly node: Light3D;
+  #color: number;
+  #removed = false;
+  public constructor(color: number, intensity: number, range: number) {
+    this.#color = color;
+    this.node = createPointLight3D({ color, intensity, range });
+  }
+  public get x(): number {
+    return this.node.position[0]!;
+  }
+  public set x(value: number) {
+    if (finite(value)) this.node.setPosition(value, this.node.position[1]!, this.node.position[2]!);
+  }
+  public get y(): number {
+    return this.node.position[1]!;
+  }
+  public set y(value: number) {
+    if (finite(value)) this.node.setPosition(this.node.position[0]!, value, this.node.position[2]!);
+  }
+  public get z(): number {
+    return this.node.position[2]!;
+  }
+  public set z(value: number) {
+    if (finite(value)) this.node.setPosition(this.node.position[0]!, this.node.position[1]!, value);
+  }
+  public get color(): number {
+    return this.#color;
+  }
+  public set color(value: number) {
+    if (!colour(value)) return;
+    this.#color = value;
+    setColor3D(this.node.color, value);
+  }
+  /** How bright it is; 0 is dark. */
+  public get intensity(): number {
+    return this.node.intensity;
+  }
+  public set intensity(value: number) {
+    if (finite(value) && value >= 0) this.node.intensity = value;
+  }
+  /** How far it reaches before it has faded out, in units of the world. */
+  public get range(): number {
+    return this.node.range;
+  }
+  public set range(value: number) {
+    if (above(value)) this.node.range = value;
+  }
+  public get visible(): boolean {
+    return this.node.visible;
+  }
+  public set visible(value: boolean) {
+    this.node.visible = value === true;
+  }
+  public get removed(): boolean {
+    return this.#removed;
+  }
+  public leave(): void {
+    if (this.#removed) return;
+    this.#removed = true;
+    this.node.removeFromParent();
+  }
+}
+export interface PlayLampOptions3D {
+  /** How bright it is: 4 unless given. */
+  readonly intensity?: number;
+  /** How far it reaches: 8 unless given. */
+  readonly range?: number;
+}
+/** What falls from the sky: snow, rain, or nothing. */
+export type PlayWeather3D = 'snow' | 'rain' | 'none';
+export interface PlayWeatherOptions3D {
+  /** How much falls: 1 unless given, from 0 to 3. */
+  readonly amount?: number;
 }
 
 /** The camera: where it is and what it looks at, by plain numbers. */
@@ -357,8 +459,8 @@ export interface Play3DGame
    * nearest thing hit gets it. A sprite of the interface is given to `onTap` of `play` as before.
    */
   onTap(target: PlayThing3D | DisplayObject, callback: () => unknown): void;
-  /** Takes a thing out of the world, or a sprite off the interface. */
-  remove(body: Body): void;
+  /** Takes a thing or a lamp out of the world, or a sprite off the interface. */
+  remove(body: Body | PlayLamp3D): void;
   /** Whether the middles of two things are within a distance: the sum of their radii unless given. */
   near(a: Body, b: Body, distance?: number): boolean;
   /** Whether two things overlap, taken as upright boxes. */
@@ -376,6 +478,19 @@ export interface Play3DGame
   shake(amount?: number, seconds?: number): void;
   /** Throws small pieces out from a point of the world. */
   burst(x: number, y: number, z: number, options?: PlayBurst3D): void;
+  /**
+   * Makes things one: a group that is placed, turned, scaled, tweened and tested as one thing, with the things in
+   * it where they are within it. Their places are now from the group's place, which is `at`, 0 unless given. Test
+   * the group, not its parts, for overlaps; removing the group removes its parts.
+   */
+  group(parts: readonly PlayThing3D[], at?: PlayPlace3D): PlayThing3D;
+  /** A lamp at a place: light of a colour that fades out by its range. */
+  lamp(color: number, at?: PlayPlace3D, options?: PlayLampOptions3D): PlayLamp3D;
+  /**
+   * Snow or rain falling around what the camera looks at, or `'none'` to stop it. `{ amount }` is how much, 1
+   * unless given. A restart keeps it.
+   */
+  weather(kind: PlayWeather3D, options?: PlayWeatherOptions3D): void;
 }
 export interface Play3DOptions extends Omit<PlayOptions, 'setup' | 'update' | 'canvas'> {
   readonly setup?: (game: Play3DGame) => void | Promise<void>;
@@ -502,6 +617,62 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
   sun.shadow.extent = 24;
   sun.shadow.far = 120;
   const things = new Set<PlayThing3D>();
+  // The parts of each group, which leave with it; and the lamps that are lit.
+  const groups = new WeakMap<PlayThing3D, readonly PlayThing3D[]>(),
+    grouped = new WeakSet<PlayThing3D>();
+  const lamps = new Set<PlayLamp3D>();
+  // What falls, made when first asked for and kept over what the camera looks at.
+  // A soft round dot that every flake and drop is drawn with, made when first needed.
+  let dot: Texture3D | undefined;
+  const dotTexture = (): Texture3D => {
+    if (dot !== undefined) return dot;
+    const size = 16,
+      data = new Uint8Array(4 * size * size);
+    for (let y = 0; y < size; y++)
+      for (let x = 0; x < size; x++) {
+        const d = Math.hypot(x + 0.5 - size / 2, y + 0.5 - size / 2) / (size / 2);
+        data.set([255, 255, 255, Math.round(255 * Math.max(0, Math.min(1, (1 - d) * 2.5)))], 4 * (y * size + x));
+      }
+    return (dot = new Texture3D({ width: size, height: size, data }, { wrapS: 'clamp', wrapT: 'clamp' }));
+  };
+  let falling: GpuParticles3D | undefined,
+    fallingKind: PlayWeather3D = 'none',
+    fallingAmount = 1;
+  const fall = (kind: PlayWeather3D, amount: number): void => {
+    if (kind === fallingKind && amount === fallingAmount) return;
+    falling?.removeFromParent();
+    falling?.dispose();
+    falling = undefined;
+    fallingKind = kind;
+    fallingAmount = amount;
+    if (kind === 'none' || amount === 0) return;
+    const snow = kind === 'snow';
+    // A box of sky over what is looked at; flakes are left where they fall as the camera moves.
+    falling = new GpuParticles3D({
+      count: Math.max(1, Math.round((snow ? 1600 : 2400) * amount)),
+      lifetime: snow ? [5, 7] : [0.9, 1.1],
+      speed: snow ? [0.4, 0.9] : [16, 20],
+      direction: [snow ? 0.15 : 0.05, -1, 0],
+      spread: snow ? 0.5 : 0.04,
+      gravity: [0, snow ? -0.4 : -6, 0],
+      startSize: snow ? [0.12, 0.22] : [0.05, 0.07],
+      startColor: snow ? 0xffffff : 0xa8bcd8,
+      startOpacity: snow ? 0.95 : 0.55,
+      endOpacity: snow ? 0.9 : 0.5,
+      fadeIn: 0.05,
+      fadeOut: 0.15,
+      shape: 'box',
+      extents: [22, 0.5, 22],
+      loop: true,
+      space: 'world',
+      seed: 7,
+      map: dotTexture()
+    });
+    falling.castShadow = false;
+    falling.receiveShadow = false;
+    falling.setPosition(aim[0]!, aim[1]! + (snow ? 9 : 16), aim[2]!);
+    scene.addChild(falling);
+  };
   // The camera: where the game put it, what it looks at, and how far a shake has it out of place.
   const base = [0, 6, 12],
     aim = [0, 0, 0],
@@ -654,8 +825,10 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     clearing = true;
     generation++;
     try {
-      const leaving = [...things];
+      const leaving = [...things],
+        unlit = [...lamps];
       things.clear();
+      lamps.clear();
       taps.clear();
       tapErrors = {};
       for (const piece of pieces) {
@@ -669,7 +842,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       aim[0] = aim[1] = aim[2] = 0;
       shakeLeft = 0;
       shaken[0] = shaken[1] = shaken[2] = 0;
-      cleanUp(leaving.map(thing => () => thing.leave()));
+      cleanUp([...leaving.map(thing => () => thing.leave()), ...unlit.map(lamp => () => lamp.leave())]);
     } finally {
       clearing = false;
     }
@@ -690,6 +863,8 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         clear,
         ...pieces.map(piece => () => piece.thing.leave()),
         () => pieceShape.dispose(),
+        () => fall('none', 0),
+        () => dot?.dispose(),
         () => unplace?.(),
         () => app?.dispose(),
         () => deep?.remove()
@@ -731,6 +906,10 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       shakeLeft -= seconds;
       const reach = shakeLeft > 0 ? shakeAmount * (shakeLeft / shakeSpan) : 0;
       for (let i = 0; i < 3; i++) shaken[i] = (Math.random() * 2 - 1) * reach;
+    }
+    if (falling !== undefined) {
+      falling.setPosition(aim[0]!, aim[1]! + (fallingKind === 'snow' ? 9 : 16), aim[2]!);
+      falling.update(seconds);
     }
     for (const piece of pieces) {
       if (piece.life <= 0) continue;
@@ -828,12 +1007,79 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         taps.set(target, callback);
       },
       remove(body) {
-        if (isThing(body)) {
+        if (body instanceof PlayLamp3D) {
+          lamps.delete(body);
+          body.leave();
+        } else if (isThing(body)) {
           things.delete(body);
           taps.delete(body);
           if (followed === body) followed = undefined;
           body.leave();
+          for (const part of groups.get(body) ?? []) whole.remove(part);
         } else flat.remove(body);
+      },
+      group(parts, at = {}) {
+        admit();
+        if (!Array.isArray(parts) || parts.length === 0 || !parts.every(isThing))
+          throw invalid('group takes a list of things');
+        if (
+          parts.some(part => part.removed || !things.has(part) || grouped.has(part)) ||
+          new Set(parts).size !== parts.length
+        )
+          throw invalid('a group is made of things of the world not in a group, each once');
+        if (at === null || typeof at !== 'object') throw invalid('a place is an object with x, y and z');
+        const { x, y, z } = at;
+        admit();
+        // The box of the parts where they are, as the group's own.
+        const low = [Infinity, Infinity, Infinity],
+          high = [-Infinity, -Infinity, -Infinity];
+        for (const part of parts) {
+          const box = boxOf(part);
+          for (let k = 0; k < 3; k++) {
+            low[k] = Math.min(low[k]!, box[k]! - box[k + 3]!);
+            high[k] = Math.max(high[k]!, box[k]! + box[k + 3]!);
+          }
+        }
+        const node = new Object3D();
+        for (const part of parts) {
+          part.node.removeFromParent();
+          node.addChild(part.node);
+        }
+        const thing = new PlayThing3D(
+          node,
+          0xffffff,
+          [0, 1, 2].map(k => (high[k]! - low[k]!) / 2) as [number, number, number],
+          [0, 1, 2].map(k => (high[k]! + low[k]!) / 2) as [number, number, number]
+        );
+        node.setPosition(finite(x) ? x : 0, finite(y) ? y : 0, finite(z) ? z : 0);
+        scene.addChild(node);
+        things.add(thing);
+        groups.set(thing, [...parts]);
+        for (const part of parts) grouped.add(part);
+        return thing;
+      },
+      lamp(color, at = {}, o = {}) {
+        admit();
+        if (!colour(color)) throw invalid('a colour is a number from 0 to 0xffffff');
+        if (at === null || typeof at !== 'object') throw invalid('a place is an object with x, y and z');
+        if (o === null || typeof o !== 'object') throw invalid('a lamp takes { intensity, range }');
+        const { x, y, z } = at;
+        const intensity = finite(o.intensity) && o.intensity >= 0 ? o.intensity : 4,
+          range = above(o.range) ? o.range : 8;
+        admit();
+        const lamp = new PlayLamp3D(color, intensity, range);
+        lamp.node.setPosition(finite(x) ? x : 0, finite(y) ? y : 0, finite(z) ? z : 0);
+        scene.addChild(lamp.node);
+        lamps.add(lamp);
+        return lamp;
+      },
+      weather(kind, o = {}) {
+        admit();
+        if (kind !== 'snow' && kind !== 'rain' && kind !== 'none') throw invalid("weather is 'snow', 'rain' or 'none'");
+        if (o === null || typeof o !== 'object') throw invalid('weather takes { amount }');
+        const amount = finite(o.amount) ? Math.max(0, Math.min(3, o.amount)) : 1;
+        admit();
+        fall(kind, amount);
       },
       near(a, b, distance) {
         if (!isThing(a) || !isThing(b)) return !isThing(a) && !isThing(b) && flat.near(a, b, distance ?? 0);

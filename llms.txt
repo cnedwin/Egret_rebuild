@@ -408,6 +408,7 @@ function win(game) {
 | `game.ground(size, color, y = 0)` | A square floor whose top is at height `y` |
 | `game.add(model, { x, y, z })` | Makes a model of your own a thing: a `Mesh3D` of your geometry, a group, or a loaded glTF. Its box is worked out from its geometry; it keeps its colours |
 | `game.remove(thing)` | Takes it out of the world; `thing.removed` is then true, and setting it does nothing |
+| `game.group([a, b, c], { x, y, z })`; `game.lamp(color, { x, y, z }, { intensity: 4, range: 8 })` | Makes things one thing, moved, turned and tested as one, their places now from the group's (test the group, not its parts); a lamp whose light fades out by its range, with `x`, `y`, `z`, `color`, `intensity` to set, put out by `game.remove(lamp)` |
 | `game.onTap(thing, () => …)` | Calls the function when the thing is tapped or clicked: the nearest one under the pointer |
 | `game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6, turn })` | Keeps the camera that far from a thing, looking at it; `turn: true` keeps it behind as the thing's `rotationY` turns |
 | `game.overlaps(a, b)`, `game.hits(a, list)`, `game.hitsAll(a, list)` | Overlap of things as upright boxes |
@@ -416,9 +417,9 @@ function win(game) {
 | `game.shake(amount = 0.3, seconds = 0.25)` | Shakes the camera, in units of the world |
 | `game.burst(x, y, z, { color, count, speed, life, size, gravity })` | Throws small pieces out from a point |
 
-A thing has `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `scale`, `scaleX`, `scaleY`, `scaleZ`, `visible` and `color`, all of which can be set and tweened, and takes properties of your own. Without `follow`, set `game.camera.x`, `.y`, `.z` and call `game.camera.lookAt(x, y, z)`. `game.sun` lights the world and every thing casts and takes shadows: nothing to set. Shadows are drawn at the quality the device gets (`medium` or `high`); a software-rendered browser gets `low`, without them, and `game.app.setQuality('medium')` asks for them anyway. A turned thing is still tested as an upright box of its unturned size; `game.scene` and `game.app` are the World3D scene and app under it. There is no gravity: move things yourself, and use `pushOut` to stand them on one another.
+A thing has `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `scale`, `scaleX`, `scaleY`, `scaleZ`, `visible`, `color` and `glow` (0 unless set; 1 or more makes it shine with its colour, as a lantern at night), all of which can be set and tweened, and takes properties of your own. Without `follow`, set `game.camera.x`, `.y`, `.z` and call `game.camera.lookAt(x, y, z)`. `game.sun` lights the world and every thing casts and takes shadows: nothing to set. Shadows are drawn at the quality the device gets (`medium` or `high`); a software-rendered browser gets `low`, without them, and `game.app.setQuality('medium')` asks for them anyway. A turned thing is still tested as an upright box of its unturned size; `game.scene` and `game.app` are the World3D scene and app under it. There is no gravity: move things yourself, and use `pushOut` to stand them on one another.
 
-`game.look('dusk')` sets the light and air of the world: `'day'` (as it starts), `'dusk'`, `'night'`, `'fog'` or `'snow'`, or `{ background, sky, ground, light, sun, sunIntensity, sunFrom, fog }` to change parts of one; `fog` is its thickness, 0 clear, 0.02 a haze, 0.06 a fog.
+`game.look('dusk')` sets the light and air of the world: `'day'` (as it starts), `'dusk'`, `'night'`, `'fog'` or `'snow'`, or `{ background, sky, ground, light, sun, sunIntensity, sunFrom, fog }` to change parts of one; `fog` is its thickness, 0 clear, 0.02 a haze, 0.06 a fog. `game.weather('snow')`, `'rain'` or `'none'`, with `{ amount }` 1 unless given, lets snow or rain fall around what the camera looks at.
 
 ```js
 const { play3d } = Egret;
