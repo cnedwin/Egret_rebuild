@@ -1,0 +1,279 @@
+{
+  "scene": "Packaged binary level selects a sprite-sheet frame",
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "webview": "com.google.android.webview, 157.0.8103.50",
+    "systemGles": "GLES: Qualcomm, Adreno (TM) 830, OpenGL ES 3.2 V@0800.64.8"
+  },
+  "source": {
+    "gameJs": "e6c375fa749a143b641f65236048756b570f2ed279a2319fea46c994c749eb04",
+    "level": "bb85360b85e922e772954dd2b7565bd1ad3e7747b2a3cb4dab1978bc4a6ade49",
+    "manifest": "c0eb5f6faef781fc7f4bcbd432d8e7174c033c2d1b3563bb16e9c9e60a2cb60d",
+    "renderer": "02614404afa6be685be8852b84d14f9bcadb37fb4e47935190691790c88b2d40",
+    "scene": "26a52c43b3e3d3a197d844c0e8955bd6237fdad0aee422ddcf715efbc0d97d00",
+    "projectAssetReadsJava": "87df65a8a6a8987337d435a12b51066301e6e08dec95a5a422d6858d1e12a265",
+    "scriptAssetService": "b3b017317aea96ca7c6bc57a25f8f0a9488ea415b4578a5174d6d319169eea57"
+  },
+  "level": {
+    "path": "levels/harbor.bin",
+    "bytes": 196613,
+    "sha256": "bb85360b85e922e772954dd2b7565bd1ad3e7747b2a3cb4dab1978bc4a6ade49",
+    "fnv1a32": "c2c6846d",
+    "headerHex": "4547423101feff00c0af80ff00ff807f",
+    "body": "For offsets i >= 16, byte = (73*i + 29*floor(i/256) + 191) modulo 256.",
+    "selection": "The index in byte 4 selects gate (0) or lantern (1). Each successful read verifies every byte against the fixture specification and computes FNV-1a-32 in game JS."
+  },
+  "visual": {
+    "logicalStage": [
+      360,
+      640
+    ],
+    "physicalViewport": [
+      1080,
+      1920
+    ],
+    "sourceAtlas": "8x4 RGBA page. The 4x4 lantern cells are agga, gggg, agga, agga with a=206860ff and g=f0c040ff. Sprite at (100,240) with scale (40,40), background 102030ff.",
+    "pixelsPerSurface": 2073600,
+    "symbolPixels": 230400,
+    "surfaceRgbaSha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10",
+    "composedRgbaSha256": "681d5cd86ff70f94e7ec15cc3c948b4e90d1a23618d5ce80ff94a19122f51c4e",
+    "method": "PixelCopy of the actual GLES surface at first open and after reopening, every pixel compared to independently generated RGBA. The separate physical-display screenshots include a system overlay within x=1058..1079, y=236..430, relative to the game viewport."
+  },
+  "lifecycle": {
+    "sequence": "(1) Load, exercise both missing cases, cancel during a second binary read, retry and close. (2) Close while the initial read is active. (3) Open a fresh view, compare all bytes, pixels and retired session events, then close.",
+    "activeRead": "Only for the two cancellation cases, the test Activity decorates the session opener. It delegates open and first read to the original APK InputStream. The production loop consumes the 8192 bytes. At the following read call a test-only interruptible latch pauses the worker before reading further APK bytes. The harness checks this state before abort or close. The player interrupts the worker, then closes the underlying stream. The test never releases the latch to make cancellation pass.",
+    "boundary": "The active file read is confirmed after nonzero package bytes have been consumed. The timed point is between OS asset reads; it does not measure interruption latency of an arbitrary kernel or driver call.",
+    "missing": "One declared placeholder is intentionally omitted from the built test APK. A second path is undeclared. The runtime AAR is unmodified.",
+    "pageCounts": "[uploads, releases, abandoned] per session."
+  },
+  "hosts": {
+    "webview": {
+      "host": {
+        "profile": "webview"
+      },
+      "aarSha256": "891d02ffeedd3c4d5cf570ef1baf96629809f492a36f939e77a0e5a055919c5b",
+      "installedApkSha256": "951da57f60b86f33062502fc03d6868882d954fe6f32559ae839d58a317400ef",
+      "data": {
+        "successfulReadsCompared": 3,
+        "bytesComparedPerRead": 196613,
+        "fnv1a32": "c2c6846d",
+        "selectedFrame": "lantern"
+      },
+      "pixels": {
+        "firstOpenDifferences": 0,
+        "reopenDifferences": 0,
+        "screenDifferences": [
+          4141,
+          4141
+        ],
+        "outsideSystemOverlayDifferences": [
+          0,
+          0
+        ]
+      },
+      "missing": [
+        {
+          "path": "levels/missing.bin",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.bin",
+          "error": "NotFoundError"
+        }
+      ],
+      "explicitAbort": {
+        "firstChunkBytes": 8192,
+        "readCallsEntered": 2,
+        "totalPackageBytesRead": 8192,
+        "workerInterrupted": true,
+        "streamCloses": 1,
+        "testHoldTimedOut": false,
+        "reason": "AbortError",
+        "retryFrame": "lantern"
+      },
+      "closeDuringInitialization": {
+        "firstChunkBytes": 8192,
+        "readCallsEntered": 2,
+        "totalPackageBytesRead": 8192,
+        "workerInterrupted": true,
+        "streamCloses": 1,
+        "testHoldTimedOut": false,
+        "reason": "AbortError",
+        "oldSessionFrames": 0,
+        "oldSessionUploads": 0,
+        "oldEventsUnchangedAfterReopen": true
+      },
+      "pages": {
+        "first": [
+          1,
+          1,
+          0
+        ],
+        "unready": [
+          0,
+          0,
+          0
+        ],
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      }
+    },
+    "standard": {
+      "host": {
+        "profile": "standard",
+        "vmVersion": "15.7.112.19",
+        "intl": true
+      },
+      "aarSha256": "5aff318bf98a2ea81996dde36786bfdcfbcd9fef623966e2101cacede73ef2c4",
+      "installedApkSha256": "e2f2dbfa7ffb113964f814b69301587c159f0a9f09fbc51a400088287be20fc3",
+      "data": {
+        "successfulReadsCompared": 3,
+        "bytesComparedPerRead": 196613,
+        "fnv1a32": "c2c6846d",
+        "selectedFrame": "lantern"
+      },
+      "pixels": {
+        "firstOpenDifferences": 0,
+        "reopenDifferences": 0,
+        "screenDifferences": [
+          4141,
+          4141
+        ],
+        "outsideSystemOverlayDifferences": [
+          0,
+          0
+        ]
+      },
+      "missing": [
+        {
+          "path": "levels/missing.bin",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.bin",
+          "error": "NotFoundError"
+        }
+      ],
+      "explicitAbort": {
+        "firstChunkBytes": 8192,
+        "readCallsEntered": 2,
+        "totalPackageBytesRead": 8192,
+        "workerInterrupted": true,
+        "streamCloses": 1,
+        "testHoldTimedOut": false,
+        "reason": "AbortError",
+        "retryFrame": "lantern"
+      },
+      "closeDuringInitialization": {
+        "firstChunkBytes": 8192,
+        "readCallsEntered": 2,
+        "totalPackageBytesRead": 8192,
+        "workerInterrupted": true,
+        "streamCloses": 1,
+        "testHoldTimedOut": false,
+        "reason": "AbortError",
+        "oldSessionFrames": 0,
+        "oldSessionUploads": 0,
+        "oldEventsUnchangedAfterReopen": true
+      },
+      "pages": {
+        "first": [
+          1,
+          1,
+          0
+        ],
+        "unready": [
+          0,
+          0,
+          0
+        ],
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      }
+    },
+    "trimmed": {
+      "host": {
+        "profile": "trimmed",
+        "vmVersion": "15.7.112.19",
+        "intl": false
+      },
+      "aarSha256": "f15acd08d4f1d232d71af77cc6c3d5e2831da6cf27174d6130f79786c63e9ca0",
+      "installedApkSha256": "e01880db967078542e33618dbd3cfca16ca1bc493491667f7cd971d3052053a0",
+      "data": {
+        "successfulReadsCompared": 3,
+        "bytesComparedPerRead": 196613,
+        "fnv1a32": "c2c6846d",
+        "selectedFrame": "lantern"
+      },
+      "pixels": {
+        "firstOpenDifferences": 0,
+        "reopenDifferences": 0,
+        "screenDifferences": [
+          4141,
+          4141
+        ],
+        "outsideSystemOverlayDifferences": [
+          0,
+          0
+        ]
+      },
+      "missing": [
+        {
+          "path": "levels/missing.bin",
+          "error": "NotFoundError"
+        },
+        {
+          "path": "levels/undeclared.bin",
+          "error": "NotFoundError"
+        }
+      ],
+      "explicitAbort": {
+        "firstChunkBytes": 8192,
+        "readCallsEntered": 2,
+        "totalPackageBytesRead": 8192,
+        "workerInterrupted": true,
+        "streamCloses": 1,
+        "testHoldTimedOut": false,
+        "reason": "AbortError",
+        "retryFrame": "lantern"
+      },
+      "closeDuringInitialization": {
+        "firstChunkBytes": 8192,
+        "readCallsEntered": 2,
+        "totalPackageBytesRead": 8192,
+        "workerInterrupted": true,
+        "streamCloses": 1,
+        "testHoldTimedOut": false,
+        "reason": "AbortError",
+        "oldSessionFrames": 0,
+        "oldSessionUploads": 0,
+        "oldEventsUnchangedAfterReopen": true
+      },
+      "pages": {
+        "first": [
+          1,
+          1,
+          0
+        ],
+        "unready": [
+          0,
+          0,
+          0
+        ],
+        "reopened": [
+          1,
+          1,
+          0
+        ]
+      }
+    }
+  },
+  "scope": "One Galaxy Z Fold7 on Android 17 and native GLES3. Automated input. No throughput or power assessment."
+}

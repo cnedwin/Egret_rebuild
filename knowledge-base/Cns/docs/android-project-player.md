@@ -75,6 +75,25 @@ services.engine.stage.addChild(sprite);
 
 Galaxy Z Fold7 上，系统 WebView、标准 V8 和裁剪 V8 读取同一份 UTF-8 关卡，均选中了灯笼图集帧。三个宿主都识别了已声明但包内缺失的文件和未声明路径，取消待处理的读取后重试成功。在首次读取期间关闭时，游戏没有提交画面或上传纹理；重新打开后显示了预期的精灵。测试 Activity 暂时占住读取队列，使两项待处理读取的验证可以复现。[Fold7 结果和像素对照](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-text-assets.json)
 
+## 读取二进制关卡
+
+在 `project.json` 的 `assets` 中登记文件，例如 `"assets": ["levels/harbor.bin"]`。用同一个项目资源服务的 `readBytes` 读取。每次成功都会得到独立的 `Uint8Array`，包内的零字节、开头的 BOM 和无效 UTF-8 字节都原样保留。空文件返回长度为零的数组。
+
+本例由游戏规定关卡格式。前四个字节是 ASCII 标识 `EGB1`，第五个字节选择图集帧。
+
+```ts
+const bytes = await services.assets.readBytes('levels/harbor.bin', services.signal);
+if (bytes.length < 5 || bytes[0] !== 0x45 || bytes[1] !== 0x47 ||
+    bytes[2] !== 0x42 || bytes[3] !== 0x31) throw new Error('Invalid level header');
+const frame = ['gate', 'lantern'][bytes[4]];
+if (frame === undefined) throw new Error('Unknown atlas frame');
+services.engine.stage.addChild(sheet.createBitmap(frame));
+```
+
+文本和二进制读取共用每个视图的八个请求名额，单文件均以 256 KiB 为上限。可通过可选信号取消一次读取，关闭视图会取消该会话未完成的请求，重新打开后使用独立的读取器。清单和路径错误与文本读取相同。本版在资源加载时通过 Base64 传递 Android 宿主与脚本之间的二进制结果，游戏直接使用字节数组。请用支持 `readBytes` 的版本构建 AAR 并导出游戏；仅支持文本读取的旧版播放器在调用二进制读取时返回 `NotSupportedError`。
+
+在 Galaxy Z Fold7 上，三个宿主都逐字节核对了同一份 196,613 字节的包内关卡，并选中灯笼帧。首次打开和重新打开时，整幅 1080 × 1920 游戏画面均符合预期。取消与关闭测试中，真实 APK 流先返回了 8,192 字节，测试包装器随后在第二次读取向 Android 请求更多字节前暂停。播放器中断了读取线程，流只关闭一次，字节数停在 8,192。取消后重试读到了完整文件；启动中关闭的会话提交了零帧，上传了零张纹理。这组结果验证了分块读取已在进行时的行为。[Fold7 二进制资源实测](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-binary-assets.json)
+
 ## 接入已有 Activity
 
 将 AAR 放入应用模块的 `libs/egret-player.aar`，在 Gradle 依赖中加入 `implementation files('libs/egret-player.aar')`。把资源导出到该模块 assets 下的新目录。将下例路径替换为自己的游戏、打包器和应用模块路径。

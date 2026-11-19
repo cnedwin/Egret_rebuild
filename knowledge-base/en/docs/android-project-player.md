@@ -75,6 +75,25 @@ Each read accepts up to 256 KiB of encoded data. One leading UTF-8 BOM is remove
 
 On a Galaxy Z Fold7, the same UTF-8 level selected the lantern sprite in System WebView, standard V8 and trimmed V8. Each host also reported a missing packaged file and an undeclared path, cancelled a pending read and successfully retried. Closing during the first read produced no game frame or texture upload. Reopening displayed the expected sprite. The test Activity held the I/O queue to make the two pending-read cases reproducible. [Fold7 results and pixel comparison](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-text-assets.json)
 
+## Read a binary level
+
+List the file under `assets` in `project.json`, for example `"assets": ["levels/harbor.bin"]`. Call `readBytes` on the same project service as `readText`. Each successful read returns a fresh `Uint8Array` containing the exact bytes in the package, including zero bytes, a leading BOM or invalid UTF-8. An empty file yields an array of length zero.
+
+This level uses the four ASCII bytes `EGB1` as its signature. The next byte selects an atlas frame. The layout belongs to the game.
+
+```ts
+const bytes = await services.assets.readBytes('levels/harbor.bin', services.signal);
+if (bytes.length < 5 || bytes[0] !== 0x45 || bytes[1] !== 0x47 ||
+    bytes[2] !== 0x42 || bytes[3] !== 0x31) throw new Error('Invalid level header');
+const frame = ['gate', 'lantern'][bytes[4]];
+if (frame === undefined) throw new Error('Unknown atlas frame');
+services.engine.stage.addChild(sheet.createBitmap(frame));
+```
+
+Text and binary reads share eight request slots per view and the same 256 KiB file limit. Use the optional signal to cancel a read. Closing the view cancels its outstanding requests, and a reopened view starts with its own reader. The same manifest and path errors apply to both methods. This release carries binary results across the Android script bridge as Base64 during loading. Applications receive bytes. Build the AAR and export the game with a version supporting `readBytes`; a text-only player rejects a binary read with `NotSupportedError`.
+
+On a Galaxy Z Fold7, each host checked all 196,613 bytes of the same packaged level and selected the lantern frame. The full 1080 × 1920 game surface matched the expected image on open and reopen. In the cancellation and close tests, the real APK stream supplied 8,192 bytes. A test wrapper then paused the second read before it requested more bytes from Android. The player interrupted the worker, the stream closed once and the byte count stayed at 8,192. Retry loaded the complete level. Closing during startup submitted zero frames and uploaded zero textures. These observations cover an active read at a controlled chunk boundary. [Fold7 binary asset results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-binary-assets.json)
+
 ## Embed in an existing Activity
 
 Copy the AAR to the app module's `libs/egret-player.aar` and add `implementation files('libs/egret-player.aar')` to its Gradle dependencies. Export into a fresh directory under that module's assets. Replace the example paths with the existing module, game and bundler locations.

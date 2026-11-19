@@ -462,3 +462,126 @@ test('older native hosts can start projects and report unsupported reads on dema
     assert.equal(project.frame(0).byteLength, 24);
   } finally { await project.close(); }
 });
+
+function byteHost() {
+  const port = textHost();
+  port.readBytes = (id, path) => { port.reads.set(id, path); return true; };
+  return port;
+}
+
+test('binary assets return owned bytes while text completions retain their encoding', async () => {
+  const port = byteHost();
+  let assets;
+  const project = createPlayerProject({width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; }}, port);
+  try {
+    await project.start();
+    const payload = Uint8Array.from([0xef, 0xbb, 0xbf, ...Array.from({length: 256}, (_, i) => i)]);
+    const packed = Buffer.from(payload).toString('base64');
+    const text = assets.readText('level/name.txt');
+    const one = assets.readBytes('level/map.bin');
+    const two = assets.readBytes('level/map.bin');
+    const empty = assets.readBytes('level/empty.bin');
+    const [a, b, c, d] = port.reads.keys();
+    for (const [id, reply] of [[c, packed], [d, ''], [b, packed], [a, 'AQ==']]) {
+      port.replies.set(id, reply);
+      project.textResult(id, '');
+    }
+    const [first, second] = await Promise.all([one, two]);
+    assert.deepEqual(first, payload);
+    assert.deepEqual(second, payload);
+    first[0] = 0;
+    assert.equal(second[0], 0xef);
+    assert.equal(await text, 'AQ==');
+    assert.deepEqual(await empty, new Uint8Array(0));
+    assert.deepEqual(port.taken, [c, d, b, a]);
+  } finally { await project.close(); }
+});
+
+test('text and byte reads share capacity, cancellation, close and stale reply handling', async () => {
+  const port = byteHost();
+  const abort = new AbortController();
+  let assets;
+  const project = createPlayerProject({width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; }}, port);
+  try {
+    await project.start();
+    const pending = assets.readBytes('levels/map.bin', abort.signal);
+    const others = Array.from({ length: 7 }, (_, i) => assets.readText('levels/' + i + '.txt'));
+    await assert.rejects(assets.readBytes('levels/ninth.bin'), RangeError);
+    const firstId = [...port.reads.keys()][0];
+    abort.abort(new Error('leave level'));
+    await assert.rejects(pending, error => error === abort.signal.reason);
+    const retry = assets.readBytes('levels/map.bin');
+    project.textResult(firstId, '');
+    const retryId = [...port.reads.keys()].at(-1);
+    port.replies.set(retryId, '/w==');
+    project.textResult(retryId, '');
+    assert.deepEqual(await retry, Uint8Array.of(255));
+    const last = assets.readBytes('levels/missing.bin');
+    project.textResult([...port.reads.keys()].at(-1), 'NotFoundError');
+    await assert.rejects(last, { name: 'NotFoundError' });
+    const closingRead = assets.readBytes('levels/open.bin');
+    const closeId = [...port.reads.keys()].at(-1);
+    const rejected = [...others, closingRead].map(result => assert.rejects(result, { name: 'AbortError' }));
+    await project.close();
+    await Promise.all(rejected);
+    project.textResult(closeId, '');
+    assert.deepEqual(port.taken, [retryId]);
+    assert.equal(port.cancelled.length, 9);
+  } finally { await project.close(); }
+});
+
+test('a text-only AAR accepts text and rejects binary on demand', async () => {
+  const port = textHost();
+  let assets;
+  const project = createPlayerProject({width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; }}, port);
+  try {
+    await project.start();
+    await assert.rejects(assets.readBytes('map.bin'), {name: 'NotSupportedError'});
+    assert.equal(port.reads.size, 0);
+    const legacy = assets.readText('map.txt');
+    const [id] = port.reads.keys();
+    port.replies.set(id, '旧地图');
+    project.textResult(id, '');
+    assert.equal(await legacy, '旧地图');
+  } finally { await project.close(); }
+});
+
+test('a WebView without the typed-array Base64 codec reads binary assets', async t => {
+  const descriptor = Object.getOwnPropertyDescriptor(Uint8Array, 'fromBase64');
+  t.after(() => Object.defineProperty(Uint8Array, 'fromBase64', descriptor));
+  Object.defineProperty(Uint8Array, 'fromBase64', { ...descriptor, value: undefined });
+  const port = byteHost();
+  let assets;
+  const project = createPlayerProject({width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; }}, port);
+  try {
+    await project.start();
+    const read = assets.readBytes('map.bin');
+    const [id] = port.reads.keys();
+    port.replies.set(id, 'AP8=');
+    project.textResult(id, '');
+    assert.deepEqual(await read, Uint8Array.of(0, 255));
+  } finally { await project.close(); }
+});
+
+test('binary reads admit the full byte limit and reject an oversized bridge result', async () => {
+  const port = byteHost();
+  let assets;
+  const project = createPlayerProject({width: 2, height: 2, create(ctx) { assets = ctx.assets; return {}; }}, port);
+  try {
+    await project.start();
+    // Adjacent sizes can have the same number of Base64 characters.
+    for (const size of [256 * 1024, 256 * 1024 + 1, 256 * 1024 + 3]) {
+      const read = assets.readBytes('levels/block.bin');
+      const id = [...port.reads.keys()].at(-1);
+      port.replies.set(id, Buffer.alloc(size, 0xfe).toString('base64'));
+      project.textResult(id, '');
+      if (size === 256 * 1024) {
+        const bytes = await read;
+        assert.equal(bytes.length, size);
+        assert.equal(bytes.at(-1), 0xfe);
+      } else {
+        await assert.rejects(read, RangeError);
+      }
+    }
+  } finally { await project.close(); }
+});

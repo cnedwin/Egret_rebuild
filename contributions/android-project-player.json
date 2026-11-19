@@ -70,16 +70,16 @@
       "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
     },
     {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectAssetReads.java",
+      "originRole": "Session-owned Android asset reads, binary transfer, strict UTF-8 decoding and cancellation. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
       "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectAssets.java",
       "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
     },
     {
-      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectTextReads.java",
-      "originRole": "Session-owned Android asset reading, strict UTF-8 decoding and cancellation. First-party contribution prepared with AI assistance; Apache-2.0."
-    },
-    {
-      "path": "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectTextReadsTest.java",
-      "originRole": "Behavior checks for packaged text, byte and pending limits, cancellation and retirement. First-party contribution prepared with AI assistance; Apache-2.0."
+      "path": "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectAssetReadsTest.java",
+      "originRole": "Behavior checks for packaged text and binary reads, byte and pending limits, cancellation and retirement. First-party contribution prepared with AI assistance; Apache-2.0."
     },
     {
       "path": "runtime-sdk/examples/moon-herbarium/assets/botanicals.png",
@@ -118,6 +118,10 @@
       "originRole": "Measured Galaxy Z Fold7 pixel, replay and resource observations for packed atlas frames. First-party test artwork and measurements; Apache-2.0."
     },
     {
+      "path": "runtime-sdk/measurements/fold7-project-binary-assets.json",
+      "originRole": "Measured binary integrity, rendering, in-progress read cancellation and session retirement on a Galaxy Z Fold7. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
       "path": "runtime-sdk/measurements/fold7-project-player.json",
       "originRole": "Sanitized Fold7 functional and package identity results for the two Android consumers. Independently prepared with AI assistance; Apache-2.0."
     },
@@ -151,7 +155,7 @@
     },
     {
       "path": "runtime-sdk/project/player-text-assets.mjs",
-      "originRole": "Project text service for script-owned request promises, native completion and session cancellation. First-party contribution prepared with AI assistance; Apache-2.0."
+      "originRole": "Project text and binary services for script-owned request promises, native completion and session cancellation. First-party contribution prepared with AI assistance; Apache-2.0."
     },
     {
       "path": "runtime-sdk/scene/project-frame.mjs",

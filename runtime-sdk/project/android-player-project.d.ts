@@ -38,6 +38,8 @@ declare module '@egret/android-player-project' {
   export interface PlayerAssets {
     /** Read a UTF-8 file listed in project.json assets. A closed view cancels all outstanding reads. */
     readText(path: string, signal?: CancellationSignal): Promise<string>;
+    /** Read the exact packaged bytes into a new mutable array, up to 256 KiB per file. */
+    readBytes(path: string, signal?: CancellationSignal): Promise<Uint8Array>;
   }
 
   export interface PlayerServices {
@@ -84,6 +86,8 @@ declare module '@egret/android-player-project' {
 
   export interface NativePlayer {
     readText?(id: number, path: string): boolean;
+    /** Shares cancellation, completion and single-use result retrieval with readText. */
+    readBytes?(id: number, path: string): boolean;
     cancelReadText?(id: number): void;
     takeTextResult?(id: number): string | null;
     raster?(request: string): string;

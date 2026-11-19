@@ -102,7 +102,7 @@ final class PlayerScripts extends ScriptSession {
     }
 
     void destroy() {
-        textReads.close();
+        assetReads.close();
         pages.close();
         if (web != null) {
             web.removeJavascriptInterface("EgretNativePlayer");
@@ -121,9 +121,10 @@ final class PlayerScripts extends ScriptSession {
         }
         @JavascriptInterface public void releasePage(int id) { pages.release(id); }
         @JavascriptInterface public String raster(String json) { return raster.request(json); }
-        @JavascriptInterface public boolean readText(int id, String path) { return textReads.start(id, path); }
-        @JavascriptInterface public void cancelReadText(int id) { textReads.cancel(id); }
-        @JavascriptInterface public String takeTextResult(int id) { return textReads.take(id); }
+        @JavascriptInterface public boolean readText(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.UTF8); }
+        @JavascriptInterface public boolean readBytes(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.BYTES); }
+        @JavascriptInterface public void cancelReadText(int id) { assetReads.cancel(id); }
+        @JavascriptInterface public String takeTextResult(int id) { return assetReads.take(id); }
         @JavascriptInterface public void commandWords(int epoch, int[] words, double generationMs) {
             if (owner.ending || epoch != owner.epoch) return;
             commands(epoch, unpackCommandWords(words), generationMs);
