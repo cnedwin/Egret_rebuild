@@ -54,7 +54,7 @@ final class ProjectAssets {
         return name;
     }
 
-    InputStream openText(String name) throws IOException {
+    InputStream openDeclared(String name) throws IOException {
         String path = relative(name);
         if (!declaredAssets.contains(path)) throw new FileNotFoundException("Undeclared project asset");
         return assets.open(root + "/" + path);

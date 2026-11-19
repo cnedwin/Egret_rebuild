@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -15,8 +16,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/** One session owns its I/O queue, completion notifications and unread strings. */
-final class ProjectTextReads {
+/** One session owns the bounded queue and results of both packaged asset read formats. */
+final class ProjectAssetReads {
+    enum Format { UTF8, BYTES }
     interface Open { InputStream open(String path) throws IOException; }
     interface Completion { void ready(int id, String error); }
 
@@ -30,35 +32,36 @@ final class ProjectTextReads {
         new LinkedBlockingQueue<>(), task -> new Thread(task, "Egret project assets"));
     private boolean closed;
 
-    ProjectTextReads(Open open, Executor dispatch, Completion completion) {
+    ProjectAssetReads(Open open, Executor dispatch, Completion completion) {
         this.open = open;
         this.dispatch = dispatch;
         this.completion = completion;
     }
 
-    synchronized boolean start(int id, String path) {
+    synchronized boolean start(int id, String path, Format format) {
         if (closed || id < 1 || pending.size() >= MAX_PENDING || pending.containsKey(id)) return false;
-        Read job = new Read(id, path);
+        Read job = new Read(id, path, format);
         pending.put(id, job);
         worker.execute(job);
         return true;
     }
 
     // A successful completion carries only the request ID into JS. The bridge
-    // transfers the decoded string as data, without compiling it as JavaScript.
+    // transfers UTF-8 text or Base64 bytes as data, without compiling it as JavaScript.
     synchronized String take(int id) {
         Read job = pending.get(id);
-        if (job == null || job.text == null) return null;
+        if (job == null || job.result == null) return null;
         pending.remove(id);
-        return job.text;
+        return job.result;
     }
 
     synchronized void cancel(int id) {
         Read job = pending.remove(id);
         if (job != null) {
             job.cancelled = true;
-            job.text = null;
-            worker.remove(job);
+            job.result = null;
+            if (job.runner == null) worker.remove(job);
+            else job.runner.interrupt(); // Never read or close package streams on the calling JS thread.
         }
     }
 
@@ -67,7 +70,7 @@ final class ProjectTextReads {
         closed = true;
         for (Read job : pending.values()) {
             job.cancelled = true;
-            job.text = null;
+            job.result = null;
         }
         pending.clear();
         worker.shutdownNow();
@@ -76,13 +79,22 @@ final class ProjectTextReads {
     private final class Read implements Runnable {
         final int id;
         final String path;
+        final Format format;
         volatile boolean cancelled;
-        String text; // Guarded by ProjectTextReads.this.
+        Thread runner; // Set only while this job is reading, under the session lock.
+        String result; // Guarded by ProjectAssetReads.this.
 
-        Read(int id, String path) { this.id = id; this.path = path; }
+        Read(int id, String path, Format format) {
+            this.id = id;
+            this.path = path;
+            this.format = format;
+        }
 
         public void run() {
-            if (cancelled) return;
+            synchronized (ProjectAssetReads.this) {
+                if (cancelled) return;
+                runner = Thread.currentThread();
+            }
             String value = null, error = "";
             try (InputStream input = open.open(path)) {
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -95,22 +107,29 @@ final class ProjectTextReads {
                 }
                 if (cancelled) return;
                 if (error.isEmpty()) {
-                    // The reporting decoder rejects malformed bytes. Match the usual
-                    // UTF-8 text reader by consuming exactly one leading BOM.
-                    value = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(bytes.toByteArray())).toString();
-                    if (value.startsWith("\ufeff")) value = value.substring(1);
+                    byte[] payload = bytes.toByteArray();
+                    if (format == Format.BYTES) {
+                        // Both bridges carry strings losslessly. Conversion happens only at asset load.
+                        value = Base64.getEncoder().encodeToString(payload);
+                    } else {
+                        value = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(payload)).toString();
+                        if (value.startsWith("\ufeff")) value = value.substring(1);
+                    }
                 }
             } catch (FileNotFoundException e) { error = "NotFoundError"; }
             catch (CharacterCodingException e) { error = "EncodingError"; }
             catch (IllegalArgumentException e) { error = "TypeError"; }
             catch (IOException | RuntimeException e) { error = "Error"; }
+            finally {
+                synchronized (ProjectAssetReads.this) { runner = null; }
+            }
             final String status = error;
-            synchronized (ProjectTextReads.this) {
+            synchronized (ProjectAssetReads.this) {
                 if (pending.get(id) != this) return;
-                text = status.isEmpty() ? value : null;
+                result = status.isEmpty() ? value : null;
             }
             dispatch.execute(() -> {
-                synchronized (ProjectTextReads.this) {
+                synchronized (ProjectAssetReads.this) {
                     // A cancelled or closed request can already have a notification
                     // in the owner's queue. An ID reused later refers to a new job.
                     if (pending.get(id) != this) return;

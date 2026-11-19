@@ -28,7 +28,7 @@ gradle -p out/herbarium-v8 assembleDebug
 
 内置 V8 在独立线程直接执行导出的 `game.js`。项目可以使用游戏时钟、定时器、资源取消、舞台输入、原生文字编辑、音效和二进制帧提交。需要执行本地 HTML 脚本或直接访问 `document`、`Image` 等浏览器对象的游戏，应使用系统 WebView。播放器从安装包读取项目资源。需要加载远程内容时，由应用另行接入。播放器面向随包分发的可信游戏脚本。
 
-通过 `await services.assets.readText(path, signal)` 可以读取清单中的关卡或对白文件。三种宿主使用相同的 UTF-8 解码规则，并在游戏关闭时取消未完成的读取。[Android 游戏项目播放器指南](android-project-player.md)给出了按关卡内容选择图集帧的示例。
+二进制关卡可用 `services.assets.readBytes(path, signal)` 读取，三个宿主返回相同的字节。通过 `await services.assets.readText(path, signal)` 可以读取清单中的关卡或对白文件。三种宿主使用相同的 UTF-8 解码规则，并在游戏关闭时取消未完成的读取。[Android 游戏项目播放器指南](android-project-player.md)给出了按关卡内容选择图集帧的示例。
 
 项目可通过可选的 `services.raster` 解码已声明的 PNG，测量文字宽度，或把文字绘入纹理。三种构建使用同一套 Android 解码器和系统字体。每页最多 1,048,576 个像素，每边最多 4,096 像素。在加载资源或文字变化时准备纹理，准备阶段的图像传输采用 Base64。逐帧命令使用二进制缓冲区。每个 V8 游戏会话独占一个线程和一个隔离实例。收到 `onClosed()` 后，宿主可打开下一款游戏，此时上一会话的资源和虚拟机均已清理。
 

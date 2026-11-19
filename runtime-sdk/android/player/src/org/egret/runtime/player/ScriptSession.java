@@ -9,14 +9,14 @@ abstract class ScriptSession {
     final EgretPlayerView owner;
     final ProjectAssets project;
     final PlayerRaster raster;
-    final ProjectTextReads textReads;
+    final ProjectAssetReads assetReads;
     final PlayerGraphics.Pages pages = new PlayerGraphics.Pages();
 
     ScriptSession(EgretPlayerView owner, ProjectAssets project) {
         this.owner = owner;
         this.project = project;
         this.raster = new PlayerRaster(project);
-        textReads = new ProjectTextReads(project::openText, owner.ui::post, (id, status) -> {
+        assetReads = new ProjectAssetReads(project::openDeclared, owner.ui::post, (id, status) -> {
             if (!owner.ending) invoke("EgretPlayerProject.textResult(" + id + ",'" + status + "')");
         });
     }
