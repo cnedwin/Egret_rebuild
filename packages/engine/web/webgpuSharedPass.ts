@@ -91,6 +91,9 @@ const pages = (paged: boolean): string => `@group(0) @binding(1) var page0: text
 ${paged ? [1, 2, 3, 4, 5, 6, 7].map(unit => `@group(0) @binding(${2 + unit}) var page${unit}: texture_2d<f32>;`).join('\n') + '\n' : ''}fn pageLoad(unit: u32, at: vec2<i32>) -> vec4<f32> {
 ${paged ? units(page => `textureLoad(${page}, at, 0)`) : '    return textureLoad(page0, at, 0);'}
 }
+fn levelLoad(unit: u32, at: vec2<i32>, level: i32) -> vec4<f32> {
+${paged ? units(page => `textureLoad(${page}, at, level)`) : '    return textureLoad(page0, at, level);'}
+}
 fn pageSample(unit: u32, at: vec2<f32>) -> vec4<f32> {
 ${paged ? units(page => `textureSampleLevel(${page}, pageSampler, at, 0.0)`) : '    return textureSampleLevel(page0, pageSampler, at, 0.0);'}
 }
@@ -149,7 +152,67 @@ fn sampled(input: VertexOutput) -> vec4<f32> {
     return pageSample(input.page.x, (vec2<f32>(input.contentOrigin.zw) + packed) / pageSize)
         * (coverage.x * coverage.y);
 }
-@fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4<f32> { return tint(sampled(input), input.light, input.dark, input.opacity); }
+// A draw whose material asks for smaller copies reads them when it is drawn smaller than its texels, by the
+// same rules as the WebGL2 Host: see MIPMAPPED there. Its texels are loaded, never filtered by a sampler.
+fn levelPage(q: vec2<f32>, level: i32, modes: vec2<u32>, input: VertexOutput) -> vec4<f32> {
+    let full = vec2<i32>(input.page.yz);
+    let size = max(vec2<i32>(1), full >> vec2<u32>(u32(level)));
+    let shifted = q * vec2<f32>(size) / vec2<f32>(full) - vec2<f32>(0.5);
+    let base = vec2<i32>(floor(shifted)); let w = fract(shifted);
+    var taps: array<vec4<f32>, 4>;
+    for (var i = 0; i < 4; i++) {
+        let at = base + vec2<i32>(i & 1, i >> 1u);
+        taps[i] = levelLoad(input.page.x, vec2<i32>(addressed(at.x, size.x, modes.x), addressed(at.y, size.y, modes.y)), level);
+    }
+    return mix(mix(taps[0], taps[1], w.x), mix(taps[2], taps[3], w.x), w.y);
+}
+fn levelRegionTap(logical: vec2<i32>, level: i32, input: VertexOutput) -> vec4<f32> {
+    let shift = vec2<u32>(u32(level));
+    let extent = vec2<i32>(input.logicalTrim.xy) >> shift;
+    let index = clamp(logical, vec2<i32>(0), extent - vec2<i32>(1));
+    let local = index - (vec2<i32>(input.logicalTrim.zw) >> shift);
+    let size = vec2<i32>(input.contentOrigin.xy) >> shift;
+    if (any(local < vec2<i32>(0)) || any(local >= size)) { return vec4<f32>(0.0); }
+    var packed = local;
+    switch input.quarterTurn {
+        case 1u: { packed = vec2<i32>(size.y - 1 - local.y, local.x); }
+        case 2u: { packed = size - vec2<i32>(1) - local; }
+        case 3u: { packed = vec2<i32>(local.y, size.x - 1 - local.x); }
+        default: {}
+    }
+    return levelLoad(input.page.x, (vec2<i32>(input.contentOrigin.zw) >> shift) + packed, level);
+}
+fn atLevel(input: VertexOutput, level: i32) -> vec4<f32> {
+    if (draw.domain.w == 1u) { return levelPage(input.uv * vec2<f32>(input.page.yz), level, draw.samplerPolicy.xy, input); }
+    let extent = vec2<f32>(input.logicalTrim.xy);
+    let q = clamp(input.uv * extent, vec2<f32>(0.0), extent);
+    if (draw.domain.z == 1u) { return levelPage(q, level, vec2<u32>(0u), input); }
+    let shifted = q / f32(1 << u32(level)) - vec2<f32>(0.5);
+    let base = vec2<i32>(floor(shifted)); let w = fract(shifted);
+    return mix(mix(levelRegionTap(base, level, input), levelRegionTap(base + vec2<i32>(1, 0), level, input), w.x),
+        mix(levelRegionTap(base + vec2<i32>(0, 1), level, input), levelRegionTap(base + vec2<i32>(1, 1), level, input), w.x), w.y);
+}
+fn mipmapped(top: vec4<f32>, input: VertexOutput, rho: f32) -> vec4<f32> {
+    let deepest = i32(draw.domain.y);
+    let lod = clamp(log2(max(rho, 1e-6)), 0.0, f32(deepest));
+    if (lod <= 0.0) { return top; }
+    let level = i32(floor(lod));
+    let blend = lod - f32(level);
+    var near = top;
+    if (level > 0) { near = atLevel(input, level); }
+    if (level >= deepest || blend == 0.0) { return near; }
+    return mix(near, atLevel(input, level + 1), blend);
+}
+@fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4<f32> {
+    // Derivatives are taken here, where every fragment of the draw runs: the block is the same for all of them.
+    var extent = vec2<f32>(input.logicalTrim.xy);
+    if (draw.domain.w == 1u) { extent = vec2<f32>(input.page.yz); }
+    let texels = input.uv * extent;
+    let rho = max(length(dpdx(texels)), length(dpdy(texels)));
+    var value = sampled(input);
+    if (draw.domain.x == 1u) { value = mipmapped(value, input, rho); }
+    return tint(value, input.light, input.dark, input.opacity);
+}
 `;
 function blendState(blend: SharedMaterial2D['blend']): GPUBlendState {
   const alpha: GPUBlendComponent = { operation: 'add', srcFactor: 'one', dstFactor: 'one-minus-src-alpha' };

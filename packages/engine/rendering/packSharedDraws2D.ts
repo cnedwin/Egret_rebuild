@@ -1,6 +1,7 @@
 import type { PreparedSharedDraw2D, PreparedSharedFrame2D } from './prepareSharedDraws2D.js';
 import { qualifySharedUVIn, sharedFailure, sharedUVDomain } from './prepareSharedDraws2D.js';
 import { packedOrientation } from './packedOrientation.js';
+import { sharedPageLevels2D } from './sharedColor2D.js';
 /**
  * `regionWindow` is the window of the region table this draw's region is in, or -1 for a draw without a region.
  * `pages` are the pages of the frame the draw samples, in the order of the texture units that hold them: the
@@ -70,6 +71,48 @@ export function packSharedRegions2D(frame: PreparedSharedFrame2D['frame']): Uint
   }
   return table;
 }
+/** How many times a number halves exactly: the trailing zero bits of a whole number, and as many as wanted for 0. */
+const halvings = (value: number): number => (value === 0 ? 32 : 31 - Math.clz32(value & -value));
+/**
+ * Which smaller copies of its page a draw that asks for them may read, as words 9 and 10 of its block: the
+ * deepest level, and how the draw finds its texels on a level. A draw that samples its whole page, upright
+ * and untrimmed, scales its coordinates by the size of each level (mode 1), as a GPU does, and reads every
+ * level. A draw of a region of a page shared with other regions reads only the levels on which every edge of
+ * the region, of its trim and of its content, falls between two texels (mode 0): there its texels are exactly
+ * the means of its own texels, and none of a neighbour's.
+ */
+function mipReach(draw: PreparedSharedDraw2D, frame: PreparedSharedFrame2D['frame']): [number, number] {
+  const region = draw.region!,
+    page = frame.pages[region.pageIndex]!.source,
+    deepest = sharedPageLevels2D(page.width, page.height) - 1,
+    p = region.packed;
+  if (
+    draw.material.samplingDomain === 'page' ||
+    (region.quarterTurn === 0 &&
+      p.x === 0 &&
+      p.y === 0 &&
+      p.width === page.width &&
+      p.height === page.height &&
+      region.trimX === 0 &&
+      region.trimY === 0 &&
+      region.logicalWidth === p.width &&
+      region.logicalHeight === p.height)
+  )
+    return [1, deepest];
+  let reach = deepest;
+  for (const edge of [
+    p.x,
+    p.y,
+    p.width,
+    p.height,
+    region.trimX,
+    region.trimY,
+    region.logicalWidth,
+    region.logicalHeight
+  ])
+    reach = Math.min(reach, halvings(edge));
+  return [0, reach];
+}
 /** Writes the block of one draw at float index `f` of a buffer seen as floats and as words. Every word it does not write is zero. */
 function writeBlock(
   floats: Float32Array<ArrayBuffer>,
@@ -77,7 +120,8 @@ function writeBlock(
   f: number,
   width: number,
   height: number,
-  draw: PreparedSharedDraw2D
+  draw: PreparedSharedDraw2D,
+  frame: PreparedSharedFrame2D['frame']
 ): void {
   // Float and word indices of this draw's block: twelve floats, then twenty words from byte 48.
   // The block holds what is the same for a whole batch. The third float, once the opacity, stays zero: the
@@ -114,6 +158,12 @@ function writeBlock(
           : material.regionIsolation === 'strict'
             ? 3
             : 2;
+    if (material.mipmapFilter === 'linear') {
+      const [mode, deepest] = mipReach(draw, frame);
+      words[w + 8] = 1;
+      words[w + 9] = deepest;
+      words[w + 10] = mode;
+    }
     words[w + 11] = material.samplingDomain === 'page' ? 1 : 0;
     words[w + 12] = address(material.addressU);
     words[w + 13] = address(material.addressV);
@@ -169,7 +219,9 @@ export function packSharedDraws2D(prepared: PreparedSharedFrame2D): PackedShared
       other !== undefined &&
       other.material === draw.material &&
       other.pageIndex === draw.pageIndex &&
-      other.command.kind === draw.command.kind
+      other.command.kind === draw.command.kind &&
+      // The levels a draw with smaller copies may read depend on its region.
+      (draw.material.mipmapFilter !== 'linear' || other.region === draw.region)
     )
       return beside!.uniform;
     if (block === blockEnd) {
@@ -180,7 +232,7 @@ export function packSharedDraws2D(prepared: PreparedSharedFrame2D): PackedShared
       block = 0;
       blockEnd = BLOCKS * BLOCK;
     }
-    writeBlock(blockFloats!, blockWords!, block >> 2, prepared.width, prepared.height, draw);
+    writeBlock(blockFloats!, blockWords!, block >> 2, prepared.width, prepared.height, draw, prepared.frame);
     block += BLOCK;
     return blockBytes!.subarray(block - BLOCK, block);
   };
@@ -191,11 +243,13 @@ export function packSharedDraws2D(prepared: PreparedSharedFrame2D): PackedShared
       other !== undefined &&
       other.material === draw.material &&
       other.pageIndex === draw.pageIndex &&
-      other.command.kind === draw.command.kind
+      other.command.kind === draw.command.kind &&
+      // The levels a draw with smaller copies may read depend on its region.
+      (draw.material.mipmapFilter !== 'linear' || other.region === draw.region)
     )
       return beside!.uniform;
     const own = new ArrayBuffer(BLOCK);
-    writeBlock(new Float32Array(own), new Uint32Array(own), 0, prepared.width, prepared.height, draw);
+    writeBlock(new Float32Array(own), new Uint32Array(own), 0, prepared.width, prepared.height, draw, prepared.frame);
     return new Uint8Array(own);
   };
   let fresh: PackedSharedDraw2D | undefined, rested: PackedSharedDraw2D | undefined;

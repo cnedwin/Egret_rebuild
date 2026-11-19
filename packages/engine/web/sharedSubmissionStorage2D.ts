@@ -122,7 +122,7 @@ export function materializeSharedPages2D(
   const before = diagnostics?.canonicalBytes;
   try {
     const projections = storage.projectionPlan.views.map((view, index) =>
-      cold.has(index) ? copySharedPagePixels(view.image, diagnostics) : undefined
+      cold.has(index) ? copySharedPagePixels(view.image, diagnostics, view.levels ?? 1) : undefined
     );
     return { projections, canonicalBytes };
   } catch (cause) {

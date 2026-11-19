@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/shared-mipmaps.test.mjs",
+      "originRole": "First-party tests of smaller copies of a page: the material option, the levels made on the CPU, the levels a draw may read, and both Hosts uploading every level; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/mipmaps/index.html",
+      "originRole": "First-party page of the mipmaps example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/mipmaps/mipmaps.mjs",
+      "originRole": "First-party example drawing pictures smaller than they are with and without their smaller copies; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/mipmaps/verify.mjs",
+      "originRole": "First-party browser check that reads the pixels of the mipmaps example on WebGL2 and WebGPU; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/mipmaps/README.md",
+      "originRole": "First-party English guide of the mipmaps example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/mipmaps/README.zh-CN.md",
+      "originRole": "First-party Chinese guide of the mipmaps example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/mipmaps/README.md",
+      "zh": "examples/mipmaps/README.zh-CN.md"
+    }
+  ]
+}

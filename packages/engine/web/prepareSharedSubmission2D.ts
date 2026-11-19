@@ -8,6 +8,7 @@ import {
 } from '../rendering/packSharedDraws2D.js';
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
 import type { ProjectionPlan2D } from './imageProjections2D.js';
+import { sharedPageChainBytes2D } from '../rendering/sharedColor2D.js';
 import type { SharedWebGPUConfiguration } from './sharedWebGPUOptions.js';
 import {
   SharedStorageError2D,
@@ -76,10 +77,16 @@ export function planSharedSubmission2D(
       hardware.maxBufferSize
   )
     failDevice();
-  const views = prepared.frame.pages.map(page => {
-    const image = page.source;
+  const views = prepared.frame.pages.map((page, index) => {
+    const image = page.source,
+      levels = prepared.pageLevels?.[index] ?? 1;
     if (image.width > hardware.maxTextureDimension2D || image.height > hardware.maxTextureDimension2D) failDevice();
-    return { image, region: { x: 0, y: 0, width: image.width, height: image.height }, byteLength: image.byteLength };
+    return {
+      image,
+      region: { x: 0, y: 0, width: image.width, height: image.height },
+      byteLength: levels === 1 ? image.byteLength : sharedPageChainBytes2D(image.width, image.height, levels),
+      levels
+    };
   });
   const projectionPlan: ProjectionPlan2D = {
     views,

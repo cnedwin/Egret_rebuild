@@ -264,7 +264,8 @@ export class DisplayObject extends EventDispatcher {
       addressV: base?.addressV,
       regionIsolation: base?.regionIsolation,
       minFilter: base?.minFilter,
-      magFilter: base?.magFilter
+      magFilter: base?.magFilter,
+      mipmapFilter: base?.mipmapFilter
     });
     state.sharedMaterial = next;
     recordVisualChange(this, VISUAL_APPEARANCE);

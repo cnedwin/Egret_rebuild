@@ -1620,6 +1620,10 @@ const m13SharedRenderingLiteralClosure = {
     [
       "static",
       "./prepareSharedDraws2D.js"
+    ],
+    [
+      "static",
+      "./sharedColor2D.js"
     ]
   ],
   "packages/engine/dist/rendering/preparedSharedBatches2D.d.ts": [
@@ -1675,6 +1679,10 @@ const m13SharedRenderingLiteralClosure = {
     [
       "static",
       "./prepareSharedDraws2D.js"
+    ],
+    [
+      "static",
+      "./sharedColor2D.js"
     ]
   ],
   "packages/engine/rendering/preparedSharedBatches2D.ts": [
@@ -1803,8 +1811,8 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/engine/rendering/sharedColor2D.ts": [["static","./srgbBytes.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
   "packages/engine/dist/rendering/sharedColor2D.js": [["static","./srgbBytes.js"],["static","@egret/contracts"]],
   "packages/engine/dist/rendering/sharedColor2D.d.ts": [["static","@egret/contracts"]],
-  "packages/engine/web/prepareSharedSubmission2D.ts": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]],
-  "packages/engine/dist/web/prepareSharedSubmission2D.js": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"]],
+  "packages/engine/web/prepareSharedSubmission2D.ts": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]],
+  "packages/engine/dist/web/prepareSharedSubmission2D.js": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"]],
   "packages/engine/dist/web/prepareSharedSubmission2D.d.ts": [["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]]
 };
 

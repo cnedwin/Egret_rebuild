@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-本仓库的 56 个示例，按展示的内容分类。每个示例都有自己的说明页，写明如何运行和可以尝试什么。“已核对”表示示例带有 `verify.mjs`，它在真实浏览器中驱动示例并读取结果；核对的范围见各示例的说明页。
+本仓库的 57 个示例，按展示的内容分类。每个示例都有自己的说明页，写明如何运行和可以尝试什么。“已核对”表示示例带有 `verify.mjs`，它在真实浏览器中驱动示例并读取结果；核对的范围见各示例的说明页。
 
 每个示例的说明页都给出了运行它的命令。多数示例在仓库根目录这样启动：
 
@@ -28,6 +28,7 @@ node tools/serve-canvas.mjs
 | 示例 | 文件夹 | 已核对 |
 | --- | --- | --- |
 | [混合模式](blend-modes/README.zh-CN.md) | `blend-modes` | 是 |
+| [多级缩小：比原图画得更小的图片](mipmaps/README.zh-CN.md) | `mipmaps` | 是 |
 | [滤镜](filters/README.zh-CN.md) | `filters` | 是 |
 | [矢量绘图](graphics/README.zh-CN.md) | `graphics` | 是 |
 | [显示拾取示例](hit-test/README.zh-CN.md) | `hit-test` | — |

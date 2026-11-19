@@ -5,6 +5,8 @@ export interface ProjectionView2D {
   readonly image: ImageData2D;
   readonly region: TextureRegion2D;
   readonly byteLength: number;
+  /** Levels uploaded: 1, or the page and each smaller copy of it. `byteLength` counts them all. Absent is 1. */
+  readonly levels?: number;
 }
 
 export interface ProjectionPlan2D {

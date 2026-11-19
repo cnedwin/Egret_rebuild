@@ -29,7 +29,7 @@ import type { PackedSharedDraw2D } from '../rendering/packSharedDraws2D.js';
 import { SHARED_BATCH_PAGES_2D } from '../rendering/packSharedDraws2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
-import { decodeSharedSRGBByte } from '../rendering/sharedColor2D.js';
+import { decodeSharedSRGBByte, sharedPageLevelLayout2D } from '../rendering/sharedColor2D.js';
 import { createSharedWebGPUPipeline, SHARED_BLENDS, SHARED_PIPELINE_KINDS } from './webgpuSharedPass.js';
 import { createSharedEffectPipeline, EFFECT_PASSES, EFFECT_UNIFORM_BYTES } from './sharedEffectShaders.js';
 import type { SharedEffectPass } from './sharedEffectShaders.js';
@@ -308,6 +308,7 @@ type StageWrite =
       width: number;
       height: number;
       offset: number;
+      mipLevel: number;
     };
 interface StageSignal {
   signal: CancellationSignal;
@@ -1656,7 +1657,7 @@ class WebGPUHostImplementation {
       size: { width: view.region.width, height: view.region.height, depthOrArrayLayers: 1 },
       dimension: '2d',
       format: candidate.entry.format,
-      mipLevelCount: 1,
+      mipLevelCount: view.levels ?? 1,
       sampleCount: 1,
       usage: 2 | 4
     });
@@ -1840,25 +1841,31 @@ class WebGPUHostImplementation {
     const candidate = use.candidates.get(viewIndex)!,
       projection = record.projectionPlan!.views[viewIndex]!;
     const owned = this.ownedTexture(projection, record, gate, candidate);
+    // A page with smaller copies carries each level's bytes after the one before it.
+    const chain = record.projections[viewIndex]!,
+      levels = sharedPageLevelLayout2D(projection.region.width, projection.region.height, projection.levels ?? 1);
     if (record.stage) {
-      record.stage.writes.push({
-        kind: 'texture',
-        texture: owned.texture,
-        data: record.projections[viewIndex]!,
-        width: projection.region.width,
-        height: projection.region.height,
-        offset: 0
-      });
+      for (const [mipLevel, { width, height, offset }] of levels.entries())
+        record.stage.writes.push({
+          kind: 'texture',
+          texture: owned.texture,
+          data: chain.subarray(offset, offset + 4 * width * height),
+          width,
+          height,
+          offset: 0,
+          mipLevel
+        });
       return owned;
     }
     // Attempted queue writes retain the original fence obligation, including throws.
     use.touchedQueue = true;
-    (record.owner?.native.writeTexture ?? this.writeTexture!)(
-      { texture: owned.texture, mipLevel: 0, origin: { x: 0, y: 0, z: 0 }, aspect: 'all' },
-      record.projections[viewIndex]!,
-      { offset: 0, bytesPerRow: 4 * projection.region.width, rowsPerImage: projection.region.height },
-      { width: projection.region.width, height: projection.region.height, depthOrArrayLayers: 1 }
-    );
+    for (const [mipLevel, { width, height, offset }] of levels.entries())
+      (record.owner?.native.writeTexture ?? this.writeTexture!)(
+        { texture: owned.texture, mipLevel, origin: { x: 0, y: 0, z: 0 }, aspect: 'all' },
+        chain.subarray(offset, offset + 4 * width * height),
+        { offset: 0, bytesPerRow: 4 * width, rowsPerImage: height },
+        { width, height, depthOrArrayLayers: 1 }
+      );
     if (record.shared) this.resourcePageWrite(record.projections[viewIndex]!.byteLength);
     gate();
     return owned;
@@ -2535,7 +2542,12 @@ class WebGPUHostImplementation {
                 const row = write.width * 4,
                   rows = count / row;
                 record.owner!.native.writeTexture(
-                  { texture: write.texture, mipLevel: 0, origin: { x: 0, y: write.offset / row, z: 0 }, aspect: 'all' },
+                  {
+                    texture: write.texture,
+                    mipLevel: write.mipLevel,
+                    origin: { x: 0, y: write.offset / row, z: 0 },
+                    aspect: 'all'
+                  },
                   write.data,
                   { offset: write.offset, bytesPerRow: row, rowsPerImage: rows },
                   { width: write.width, height: rows, depthOrArrayLayers: 1 }

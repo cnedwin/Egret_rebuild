@@ -74,7 +74,9 @@ export function collectWebGPUImageDemand(
       region = view.region;
     const cropKey =
       (shared ? 'shared:egret.alpha8-capped-srgb-pma8/1:rgba8unorm-srgb:' : '') +
-      `${region.x},${region.y},${region.width},${region.height}`;
+      `${region.x},${region.y},${region.width},${region.height}` +
+      // A page kept with one level cannot serve a draw that samples its smaller copies.
+      ((view.levels ?? 1) === 1 ? '' : `:levels=${view.levels}`);
     let bucket = directory.get(view.image) ?? buckets.get(view.image);
     if (!bucket) {
       bucket = new Map();

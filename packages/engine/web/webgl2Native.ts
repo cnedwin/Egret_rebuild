@@ -578,17 +578,17 @@ export class GLNativeSession {
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
   }
-  public texture(owner: GLNativeOwner, width: number, height: number, working: boolean): void {
+  public texture(owner: GLNativeOwner, width: number, height: number, working: boolean, levels = 1): void {
     const gl = this.gl;
     gl.bindTexture(gl.TEXTURE_2D, owner.value as WebGLTexture);
-    gl.texStorage2D(gl.TEXTURE_2D, 1, working ? gl.SRGB8_ALPHA8 : gl.RGBA8, width, height);
+    gl.texStorage2D(gl.TEXTURE_2D, levels, working ? gl.SRGB8_ALPHA8 : gl.RGBA8, width, height);
     for (const [name, value] of [
       [gl.TEXTURE_MIN_FILTER, gl.NEAREST],
       [gl.TEXTURE_MAG_FILTER, gl.NEAREST],
       [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE],
       [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE],
       [gl.TEXTURE_BASE_LEVEL, 0],
-      [gl.TEXTURE_MAX_LEVEL, 0]
+      [gl.TEXTURE_MAX_LEVEL, levels - 1]
     ])
       gl.texParameteri(gl.TEXTURE_2D, name!, value!);
   }

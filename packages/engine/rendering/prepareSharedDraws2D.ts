@@ -18,7 +18,7 @@ import type {
 import { TexturedPreparationBudget2D } from './texturedPreparationBudget2D.js';
 import type { TexturedPreparationLimits2D } from './texturedPreparationBudget2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
-import { decodeSharedSRGBByte } from './sharedColor2D.js';
+import { decodeSharedSRGBByte, sharedPageChainBytes2D, sharedPageLevels2D } from './sharedColor2D.js';
 import type { RetainedSharedDraw2D, SharedPreparationRetention2D } from './sharedPreparationRetention2D.js';
 export class SharedPreparationError extends Error {
   public constructor(public readonly reason: 'frame' | 'profile' | 'precision' | 'budget') {
@@ -83,6 +83,8 @@ export interface PreparedSharedFrame2D {
   readonly budget: TexturedPreparationBudget2D;
   readonly geometryBytes: number;
   readonly pageBytes: number;
+  /** For each page of the frame, how many levels it is uploaded with: 1, or all of them when a draw samples its smaller copies. */
+  readonly pageLevels: readonly number[];
   readonly upload: number;
   readonly retention?: SharedPreparationRetention2D;
   readonly retained?: readonly (RetainedSharedDraw2D | undefined)[];
@@ -401,14 +403,33 @@ export function prepareSharedDraws2D(
   for (const command of frame.commands)
     if (command.kind === 'barrier' && command.effect)
       clipsCount = add(clipsCount, command.effect.clips.length, options.maxClipRectangles);
-  for (const page of frame.pages) {
+  // A page sampled by a draw whose material asks for smaller copies is uploaded with all its levels.
+  const pageLevels = frame.pages.map(() => 1);
+  for (const command of frame.commands)
+    if (
+      (command.kind === 'image' || command.kind === 'mesh') &&
+      frame.materials[command.materialIndex]?.mipmapFilter === 'linear'
+    ) {
+      const index = frame.regions[command.regionIndex]?.pageIndex,
+        source = index === undefined ? undefined : frame.pages[index]?.source;
+      if (source !== undefined && isImageData2D(source))
+        pageLevels[index!] = sharedPageLevels2D(source.width, source.height);
+    }
+  for (let index = 0; index < frame.pages.length; index++) {
+    const page = frame.pages[index]!;
     if (
       !isImageData2D(page.source) ||
       page.sourceRepresentation !== 'egret.srgb-straight-rgba8/1' ||
       page.canonicalRepresentation !== 'egret.alpha8-capped-srgb-pma8/1'
     )
       sharedFailure('frame');
-    pageBytes = add(pageBytes, page.source.byteLength, pageLimit);
+    pageBytes = add(
+      pageBytes,
+      pageLevels[index] === 1
+        ? page.source.byteLength
+        : sharedPageChainBytes2D(page.source.width, page.source.height, pageLevels[index]!),
+      pageLimit
+    );
   }
   for (const material of frame.materials) {
     if (!isSharedMaterial2D(material)) sharedFailure('frame');
@@ -788,6 +809,7 @@ export function prepareSharedDraws2D(
     budget,
     geometryBytes,
     pageBytes,
+    pageLevels,
     upload: upload + 48 * frame.regions.length + effects.uniformBytes,
     ...(retention ? { retention, retained: retained! } : {})
   };
