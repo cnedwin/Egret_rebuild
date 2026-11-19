@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Play3D: groups, glow, lamps and weather — 2026-11-20
+
+`game.group([a, b, c], at)` makes things one thing, placed, turned, tweened and tested as one. `thing.glow` makes a thing shine with its own colour. `game.lamp(color, at, { intensity, range })` adds a point light that can be moved and tweened and is put out by `game.remove`. `game.weather('snow' | 'rain' | 'none', { amount })` lets snow or rain fall around what the camera looks at, with the motion worked out on the GPU. `examples/play/lanterns3d.mjs` is a night of snow made with all four; the Play verifier plays it to its end, and it passed with software WebGL2.
+
 ## Blend space: translucent colours that mix as in a 2D canvas — 2026-11-20
 
 A Host takes `blendSpace: 'srgb'`, which every frame of its Engine records, to mix translucent draws by their stored colour codes, as a 2D canvas and Egret 5 do, instead of in linear light: white at 10% over a dark ground stays a faint white. Each draw's colour is unchanged; working targets become RGBA8 codes on WebGL2 and WebGPU, the clear colour and glow colours are codes, the colour matrix of an effect skips the transfer, and the resolve copies codes. `createBrowserGame` and the World3D overlay take the option; `play()` and Play3D's interface use `'srgb'` unless given `'linear'`. The engine's default stays `linear`, so existing pictures do not change. `examples/blend-space` compares both spaces with the page's own 2D canvas: on WebGL2 with software rendering every `srgb` square is within 1 of the canvas. WebGPU pixels await a hardware run.

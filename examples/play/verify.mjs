@@ -574,6 +574,77 @@ await scenario(
   }
 );
 
+await scenario(
+  'lanterns3d: a grouped lantern glows and lights the snow, falling snow moves, a shrine reached glows, and all three end it',
+  'lanterns3d',
+  960,
+  540,
+  async (page, stage) => {
+    const parts = colour => [16, 8, 0].map(shift => (colour >> shift) & 255);
+    // Warm light: red well over blue and bright. Snow: nearly white.
+    const warm = colour => {
+      const [r, g, b] = parts(colour);
+      return r > 200 && g > 150 && r - b > 40;
+    };
+    const white = colour => parts(colour).every(part => part > 200);
+    const count = (look, test, left, top, right, bottom, step = 4) => {
+      let found = 0;
+      for (let y = top; y < bottom; y += step) for (let x = left; x < right; x += step) if (test(look(x, y))) found++;
+      return found;
+    };
+    // The lantern stands at the middle with its light above the post; the ground about it is lit warmer than far off.
+    const lantern = look => count(look, warm, 440, 150, 520, 250, 2) > 6;
+    const pool = look => {
+      const [r, , b] = parts(look(480, 320)),
+        [fr, , fb] = parts(look(480, 520));
+      return r - b > fr - fb + 40;
+    };
+    await until(page, stage, look => lantern(look) && pool(look), 'the lantern glowing and lighting the ground', 15);
+    // Flakes against the night sky, and not the same flakes a moment later.
+    const sky = async () => {
+      const look = await stage.look(),
+        flakes = [];
+      for (let y = 0; y < 80; y += 2) for (let x = 0; x < 960; x += 2) if (white(look(x, y))) flakes.push(x + ',' + y);
+      return flakes;
+    };
+    const first = await sky();
+    await page.waitForTimeout(700);
+    const second = await sky();
+    assert.ok(first.length > 20, 'snow in the sky: ' + first.length);
+    assert.ok(second.filter(at => !first.includes(at)).length > 10, 'the snow falls');
+    // Carried right and away, the lantern reaches the first shrine: it is heard, and its top glows a deep gold that
+    // nothing lit only by the lantern shows.
+    const gold = colour => {
+      const [r, , b] = parts(colour);
+      return r > 200 && r - b > 60;
+    };
+    const before = await sounds(page),
+      goldBefore = count(await stage.look(), gold, 300, 100, 660, 450);
+    await page.keyboard.down('ArrowRight');
+    await page.keyboard.down('ArrowUp');
+    await until(page, stage, async () => (await sounds(page)) > before, 'the first shrine being reached', 10);
+    await page.keyboard.up('ArrowRight');
+    await page.keyboard.up('ArrowUp');
+    await page.waitForTimeout(600);
+    const goldAfter = count(await stage.look(), gold, 300, 100, 660, 450);
+    assert.ok(goldBefore < 5 && goldAfter > 20, 'the shrine glows: ' + goldBefore + ' to ' + goldAfter);
+    // The lantern is one thing: its glowing light is still over its post at the middle as the camera follows it.
+    await until(page, stage, look => lantern(look), 'the lantern carried whole', 5);
+    // The other two: one to the left and away, one between them further off.
+    const hold = async (keys, label) => {
+      const heard = await sounds(page);
+      for (const key of keys) await page.keyboard.down(key);
+      await until(page, stage, async () => (await sounds(page)) > heard, label, 12);
+      for (const key of keys) await page.keyboard.up(key);
+    };
+    await hold(['ArrowLeft'], 'the second shrine being reached');
+    await hold(['ArrowRight', 'ArrowUp'], 'the third shrine being reached');
+    await until(page, stage, look => alike(look(410, 300), BUTTON), 'the night ending with its button', 10);
+    await stage.tap(480, 300);
+    await until(page, stage, look => !alike(look(410, 300), BUTTON) && lantern(look), 'the night starting again', 15);
+  }
+);
+
 fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(
   report.cases

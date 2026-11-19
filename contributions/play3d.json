@@ -17,6 +17,11 @@
       "criticalComment": true
     },
     {
+      "path": "examples/play/lanterns3d.mjs",
+      "originRole": "First-party example of a 3D game from one call to play3d: a grouped glowing lantern with a lamp carried through falling snow to light three shrines; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
       "path": "knowledge-base/en/docs/play3d.md",
       "originRole": "First-party guide to play3d; independently authored with AI assistance; Apache-2.0."
     },

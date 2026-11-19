@@ -3,7 +3,7 @@
 // overlap a game stands a ball on a floor with. What needs a page is played in a browser by examples/play/verify.mjs.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { PLAY_LOOKS_3D, play3d, PlayThing3D } from '@egret/engine/webgl2/world3d';
+import { PLAY_LOOKS_3D, play3d, PlayLamp3D, PlayThing3D } from '@egret/engine/webgl2/world3d';
 import { Mesh3D, Object3D, createBoxGeometry3D, createStandardMaterial3D } from '@egret/engine/world3d';
 import { modelBox3D, overlap3D, pushOut3D } from '../packages/engine/dist/web/world3d/BrowserPlay3D.js';
 
@@ -290,4 +290,55 @@ test('P3D05 every look gives each part, colours as 0xRRGGBB, a sun above and fog
     assert.ok(look.fog >= 0 && look.light >= 0 && look.sunIntensity >= 0, name);
   }
   assert.ok(Object.isFrozen(PLAY_LOOKS_3D));
+});
+
+// Break caught: let a thing glow in a colour it no longer has, take a glow below 0, or make a model's materials glow.
+test('P3D10 a thing glows with its own colour, as strongly as asked, and follows a new colour', () => {
+  const thing = box(1, 1, 1),
+    material = thing.node.material,
+    linear = code => (code / 255 <= 0.04045 ? code / 255 / 12.92 : ((code / 255 + 0.055) / 1.055) ** 2.4);
+  assert.equal(thing.glow, 0);
+  assert.deepEqual([...material.emissive], [0, 0, 0]);
+  thing.color = 0xff8000;
+  thing.glow = 2;
+  assert.equal(material.emissiveIntensity, 2);
+  assert.deepEqual([...material.emissive], [1, linear(0x80), 0].map(Math.fround));
+  thing.color = 0x0000ff;
+  assert.deepEqual([...material.emissive], [0, 0, 1]);
+  for (const bad of [-1, NaN, '2']) thing.glow = bad;
+  assert.equal(thing.glow, 2);
+  thing.glow = 0;
+  assert.deepEqual([...material.emissive, material.emissiveIntensity], [0, 0, 0, 0]);
+  const model = new PlayThing3D(new Object3D(), 0xffffff, [1, 1, 1]);
+  model.glow = 3;
+  assert.equal(model.glow, 0);
+  thing.leave();
+});
+
+// Break caught: give a lamp no range, take a colour that is not one, or leave it lit after it has been put out.
+test('P3D11 a lamp is placed and changed by plain numbers, and put out once', () => {
+  const lamp = new PlayLamp3D(0xffb347, 6, 7),
+    scene = new Object3D();
+  scene.addChild(lamp.node);
+  assert.equal(lamp.node.lightType, 'point');
+  assert.deepEqual([lamp.color, lamp.intensity, lamp.range, lamp.visible], [0xffb347, 6, 7, true]);
+  lamp.x = 2;
+  lamp.y = 3;
+  lamp.z = -1;
+  assert.deepEqual([...lamp.node.position], [2, 3, -1]);
+  lamp.color = 0x00ff00;
+  lamp.intensity = 0;
+  lamp.range = 12;
+  for (const bad of [NaN, -1, '4', 0x1000000, 0.5]) lamp.color = bad;
+  for (const bad of [NaN, -1, '4']) {
+    lamp.intensity = bad;
+    lamp.range = bad;
+  }
+  for (const bad of [NaN, Infinity, '4']) lamp.x = bad;
+  lamp.range = 0;
+  assert.deepEqual([lamp.color, lamp.intensity, lamp.range, lamp.x], [0x00ff00, 0, 12, 2]);
+  assert.deepEqual([...lamp.node.color], [0, 1, 0]);
+  lamp.leave();
+  lamp.leave();
+  assert.deepEqual([lamp.removed, lamp.node.parent], [true, undefined]);
 });
