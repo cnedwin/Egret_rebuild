@@ -46,6 +46,12 @@ export interface PlayOptions {
   readonly seed?: number | string;
   /** `'auto'` unless given. */
   readonly backend?: 'auto' | BrowserGameBackend;
+  /**
+   * How translucent things mix with what is under them. `'srgb'` unless given: as a 2D canvas and Egret 5 mix
+   * them, so a white at 10% over a dark ground is a faint white. `'linear'` mixes light as it is, as the engine
+   * does by default; translucent light colours then look stronger.
+   */
+  readonly blendSpace?: 'linear' | 'srgb';
   /** Under what name `game.save` keeps its values in the page's storage. The page's path unless given. */
   readonly saveKey?: string;
 }
@@ -552,6 +558,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   if (setup !== undefined && typeof setup !== 'function') throw invalid('setup is a function');
   if (update !== undefined && typeof update !== 'function') throw invalid('update is a function');
   if (onError !== undefined && typeof onError !== 'function') throw invalid('onError is a function');
+  const blendSpace = options.blendSpace ?? 'srgb';
+  if (blendSpace !== 'linear' && blendSpace !== 'srgb') throw invalid("blendSpace is 'srgb' or 'linear'");
   const page = options.canvas?.ownerDocument ?? options.parent?.ownerDocument ?? globalThis.document;
   if (page === undefined) throw invalid('play needs a page');
   const win = page.defaultView ?? (globalThis as unknown as Window);
@@ -582,6 +590,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     height,
     clearColor: options.transparent === true ? 0 : background,
     ...(options.transparent === true ? { clearAlpha: 0 } : {}),
+    blendSpace,
     autoStart: false,
     keyboard: false,
     ...(holder === undefined ? {} : { fit: 'contain' as const, fitTo: holder }),

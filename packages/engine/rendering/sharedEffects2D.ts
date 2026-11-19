@@ -52,6 +52,8 @@ export function prepareEffects2D(frame: SharedRenderFrame2D, ratio: number, enab
   const groups: PreparedEffect2D[] = [],
     stack: { id: number; index: number }[] = [];
   let depth = 0;
+  // A frame that mixes stored codes holds a glow's colour as its codes; one that mixes light, as linear light.
+  const channel = frame.colorRecipe === 'egret.srgb-pma/1' ? (code: number) => (code & 255) / 255 : decodeSRGBByte;
   for (const command of frame.commands) {
     if (command.kind !== 'barrier') {
       if (stack.length && frame.materials[command.materialIndex]?.blend === 'add-preserve') fail();
@@ -66,8 +68,8 @@ export function prepareEffects2D(frame: SharedRenderFrame2D, ratio: number, enab
       uniform[0] = radius;
       uniform[2] = e.clips.length;
       let spread = 0;
-      // Vector 28: whether there is a colour matrix, the kind of spread, its radius and its strength; 29: its colour in linear
-      // light and its alpha; 30: its offset in backing pixels, inner and knockout; 31-35: the matrix, by rows, and its offsets.
+      // Vector 28: whether there is a colour matrix, the kind of spread, its radius and its strength; 29: its colour as the
+      // target holds it (linear light, or the code in an sRGB blend space) and its alpha; 30: its offset in backing pixels, inner and knockout; 31-35: the matrix, by rows, and its offsets.
       if (e.colorMatrix !== undefined) {
         if (e.colorMatrix.length !== 20 || e.colorMatrix.some(v => !Number.isFinite(v))) fail();
         uniform[112] = 1;
@@ -87,9 +89,9 @@ export function prepareEffects2D(frame: SharedRenderFrame2D, ratio: number, enab
         uniform[113] = g.kind === 'outline' ? 2 : 1;
         uniform[114] = spread;
         uniform[115] = g.strength;
-        uniform[116] = decodeSRGBByte(g.color >> 16);
-        uniform[117] = decodeSRGBByte(g.color >> 8);
-        uniform[118] = decodeSRGBByte(g.color);
+        uniform[116] = channel(g.color >> 16);
+        uniform[117] = channel(g.color >> 8);
+        uniform[118] = channel(g.color);
         uniform[119] = g.alpha;
         uniform[120] = Math.round(g.offsetX * ratio);
         uniform[121] = Math.round(g.offsetY * ratio);

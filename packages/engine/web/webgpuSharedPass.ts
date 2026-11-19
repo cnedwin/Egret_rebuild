@@ -27,6 +27,24 @@ const TINT = `fn tint(value: vec4<f32>, light: vec4<f32>, dark: vec3<f32>, opaci
     return vec4<f32>(factor * (v * draw.materialLight.rgb + (vec3<f32>(a) - v) * draw.materialDark.rgb), factor * a);
 }
 `;
+/**
+ * What a draw writes to its target: the linear premultiplied colour to a target that mixes light, or, to one that
+ * mixes the stored codes as a 2D canvas does, the colour encoded and then multiplied by its alpha. Light added with
+ * no alpha, as an additive draw may give, is encoded as it is.
+ */
+const finished = (srgb: boolean): string =>
+  srgb
+    ? `fn finished(c: vec4<f32>) -> vec4<f32> {
+    let a = clamp(c.a, 0.0, 1.0);
+    var u = c.rgb; if (a > 0.0) { u = c.rgb / a; }
+    u = clamp(u, vec3<f32>(0.0), vec3<f32>(1.0));
+    let e = select(12.92 * u, 1.055 * pow(u, vec3<f32>(1.0 / 2.4)) - vec3<f32>(0.055), u > vec3<f32>(0.0031308));
+    if (a > 0.0) { return vec4<f32>(a * e, a); }
+    return vec4<f32>(e, a);
+}
+`
+    : `fn finished(c: vec4<f32>) -> vec4<f32> { return c; }
+`;
 // A draw without a region has no region table to read.
 const SOLID =
   BLOCK +
@@ -42,7 +60,9 @@ const SOLID =
         1.0 - 2.0 * position.y / draw.viewport.y, 0.0, 1.0);
     result.uv = uv; result.light = light; result.dark = dark; result.opacity = slotOpacity.y; return result;
 }
-@fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4<f32> { return tint(vec4<f32>(1.0), input.light, input.dark, input.opacity); }
+@fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4<f32> {
+    return finished(tint(vec4<f32>(1.0), input.light, input.dark, input.opacity));
+}
 `;
 // The vertex stage of a sampled draw reads its region from the bound window of the region table, three
 // vec4<u32> for each of 341 regions, and hands it to every fragment of the triangle unchanged. The row names
@@ -211,7 +231,7 @@ fn mipmapped(top: vec4<f32>, input: VertexOutput, rho: f32) -> vec4<f32> {
     let rho = max(length(dpdx(texels)), length(dpdy(texels)));
     var value = sampled(input);
     if (draw.domain.x == 1u) { value = mipmapped(value, input, rho); }
-    return tint(value, input.light, input.dark, input.opacity);
+    return finished(tint(value, input.light, input.dark, input.opacity));
 }
 `;
 function blendState(blend: SharedMaterial2D['blend']): GPUBlendState {
@@ -248,10 +268,11 @@ export function createSharedWebGPUPipeline(
   shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule,
   pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>,
   kind: (typeof SHARED_PIPELINE_KINDS)[number],
-  blend: SharedMaterial2D['blend']
+  blend: SharedMaterial2D['blend'],
+  srgb = false
 ): Promise<GPURenderPipeline> {
   const module = shader({
-    code: kind === 'solid' ? SOLID : header(kind === 'paged') + pages(kind === 'paged') + SAMPLED
+    code: finished(srgb) + (kind === 'solid' ? SOLID : header(kind === 'paged') + pages(kind === 'paged') + SAMPLED)
   });
   return pipeline({
     layout: 'auto',
@@ -275,7 +296,7 @@ export function createSharedWebGPUPipeline(
     fragment: {
       module,
       entryPoint: 'fragmentMain',
-      targets: [{ format: 'rgba8unorm-srgb', writeMask: 15, blend: blendState(blend) }]
+      targets: [{ format: srgb ? 'rgba8unorm' : 'rgba8unorm-srgb', writeMask: 15, blend: blendState(blend) }]
     },
     primitive: { topology: 'triangle-list', frontFace: 'ccw', cullMode: 'none', unclippedDepth: false },
     multisample: { count: 1, alphaToCoverageEnabled: false }

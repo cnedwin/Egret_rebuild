@@ -11,7 +11,7 @@ node tools/build.mjs
 node tools/serve-canvas.mjs
 ```
 
-在服务器打印的主机和端口上打开 `/examples/filters/index.html`。加上 `?backend=webgl2` 或 `?backend=webgpu` 选择后端。
+在服务器打印的主机和端口上打开 `/examples/filters/index.html`。加上 `?backend=webgl2` 或 `?backend=webgpu` 选择后端。加上 `space=srgb` 可按 2D canvas 的方式混合滤镜颜色（[混合空间](../blend-space/README.zh-CN.md)）。
 
 ## 可以试什么
 

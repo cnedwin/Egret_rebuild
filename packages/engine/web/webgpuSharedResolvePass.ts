@@ -3,7 +3,8 @@ export function createSharedResolvePipeline(
   shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule,
   pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>,
   format: 'rgba8unorm' | 'bgra8unorm',
-  opaque: boolean
+  opaque: boolean,
+  srgb = false
 ): Promise<GPURenderPipeline> {
   const module = shader({
     code:
@@ -19,9 +20,14 @@ fn encoded(c: vec3<f32>) -> vec3<f32> {
     let value = textureLoad(workingTexture, vec2<i32>(position.xy), 0);
     let a = clamp(value.a, 0.0, 1.0); let c = clamp(value.rgb, vec3<f32>(0.0), vec3<f32>(a));
     ` +
-      (opaque
-        ? 'return vec4<f32>(encoded(clamp(value.rgb, vec3<f32>(0.0), vec3<f32>(1.0))), 1.0);'
-        : 'if (a == 0.0) { return vec4<f32>(0.0); } return vec4<f32>(a * encoded(c / a), a);') +
+      // A target that mixes codes already holds the canvas's codes.
+      (srgb
+        ? opaque
+          ? 'return vec4<f32>(clamp(value.rgb, vec3<f32>(0.0), vec3<f32>(1.0)), 1.0);'
+          : 'if (a == 0.0) { return vec4<f32>(0.0); } return vec4<f32>(c, a);'
+        : opaque
+          ? 'return vec4<f32>(encoded(clamp(value.rgb, vec3<f32>(0.0), vec3<f32>(1.0))), 1.0);'
+          : 'if (a == 0.0) { return vec4<f32>(0.0); } return vec4<f32>(a * encoded(c / a), a);') +
       '\n}'
   });
   return pipeline({

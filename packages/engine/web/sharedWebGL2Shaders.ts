@@ -77,6 +77,22 @@ const TINTED = `vec4 tinted(vec4 value) {
     return vec4(factor * (v * materialLight.rgb + (vec3(a) - v) * materialDark.rgb), factor * a);
 }
 `;
+/**
+ * What a draw writes to its target. A target that mixes light takes the linear premultiplied colour as it is; one
+ * that mixes the stored codes, as a 2D canvas does, takes the colour encoded and then multiplied by its alpha.
+ * Light added with no alpha, as an additive draw may give, is encoded as it is.
+ */
+const finished = (srgb: boolean): string =>
+  srgb
+    ? `vec4 finished(vec4 c) {
+    float a = clamp(c.a, 0.0, 1.0);
+    vec3 u = clamp(a > 0.0 ? c.rgb / a : c.rgb, vec3(0.0), vec3(1.0));
+    vec3 e = mix(12.92 * u, 1.055 * pow(u, vec3(1.0 / 2.4)) - vec3(0.055), greaterThan(u, vec3(0.0031308)));
+    return vec4(a > 0.0 ? a * e : e, a);
+}
+`
+    : `vec4 finished(vec4 c) { return c; }
+`;
 
 /**
  * Native objects, compilation, linking and all state remain owned by the Host.
@@ -135,7 +151,8 @@ ${POSITION}
 }
 `;
 
-export const sharedWebGL2SolidFragmentSource = `#version 300 es
+/** The fragment stage of a draw without a region, for a target that mixes light or one that mixes codes. */
+export const sharedWebGL2SolidFragment = (srgb: boolean): string => `#version 300 es
 precision highp float;
 precision highp int;
 ${DRAW_UNIFORM}
@@ -146,8 +163,10 @@ flat in float drawOpacity;
 layout(location = 0) out vec4 fragmentColor;
 
 ${TINTED}
-void main() { fragmentColor = tinted(vec4(1.0)); }
+${finished(srgb)}
+void main() { fragmentColor = finished(tinted(vec4(1.0))); }
 `;
+export const sharedWebGL2SolidFragmentSource = sharedWebGL2SolidFragment(false);
 
 /**
  * A draw whose material asks for smaller copies reads them when it is drawn smaller than its texels: `rho` is
@@ -212,7 +231,8 @@ vec4 mipmapped(vec4 top, vec2 coordinate, float rho) {
  * The fragment stage of a sampled draw. The program of a batch of one page has one page sampler and reads it
  * directly; the program of a batch of several pages has eight and selects by the unit of the region's page.
  */
-const sampledFragmentSource = (paged: boolean): string => `#version 300 es
+/** The fragment stage of a sampled draw, of one page or several, for a target that mixes light or codes. */
+export const sampledFragmentSource = (paged: boolean, srgb: boolean): string => `#version 300 es
 precision highp float;
 precision highp int;
 ${DRAW_UNIFORM}
@@ -328,6 +348,7 @@ vec4 sampled(vec2 coordinate) {
 
 ${MIPMAPPED}
 ${TINTED}
+${finished(srgb)}
 void main() {
     // Derivatives are taken here, where every fragment of the draw runs: the block is the same for all of them.
     vec2 extent = domain.w == 1u ? vec2(pageOfRegion.yz) : vec2(logicalTrim.xy);
@@ -335,11 +356,11 @@ void main() {
     float rho = max(length(dFdx(texels)), length(dFdy(texels)));
     vec4 value = sampled(vertexUV);
     if (domain.x == 1u) { value = mipmapped(value, vertexUV, rho); }
-    fragmentColor = tinted(value);
+    fragmentColor = finished(tinted(value));
 }
 `;
-export const sharedWebGL2FragmentSource = sampledFragmentSource(false);
-export const sharedWebGL2PagedFragmentSource = sampledFragmentSource(true);
+export const sharedWebGL2FragmentSource = sampledFragmentSource(false, false);
+export const sharedWebGL2PagedFragmentSource = sampledFragmentSource(true, false);
 
 export const sharedWebGL2ResolveVertexSource = `#version 300 es
 precision highp float;
@@ -351,7 +372,11 @@ void main() {
 }
 `;
 
-export const sharedWebGL2ResolveFragmentSource = `#version 300 es
+/**
+ * Writes the working target to the canvas as it stores colour there: light encoded at the end, or, for a target
+ * that mixes codes, the codes as they are.
+ */
+export const sharedWebGL2ResolveFragment = (srgb: boolean): string => `#version 300 es
 precision highp float;
 precision highp int;
 uniform highp sampler2D workingTexture;
@@ -362,18 +387,19 @@ vec3 encoded(vec3 value) {
         greaterThan(value, vec3(0.0031308)));
 }
 void main() {
-    // SRGB8_ALPHA8 integer fetch already decodes RGB. Both targets use the same GL row.
+    // SRGB8_ALPHA8 integer fetch already decodes RGB; an RGBA8 target holds codes. Both targets use the same GL row.
     vec4 value = texelFetch(workingTexture, ivec2(gl_FragCoord.xy), 0);
     if (opaque) {
-        fragmentColor = vec4(encoded(clamp(value.rgb, vec3(0.0), vec3(1.0))), 1.0);
+        fragmentColor = vec4(${srgb ? 'clamp(value.rgb, vec3(0.0), vec3(1.0))' : 'encoded(clamp(value.rgb, vec3(0.0), vec3(1.0)))'}, 1.0);
         return;
     }
     float a = clamp(value.a, 0.0, 1.0);
     vec3 c = clamp(value.rgb, vec3(0.0), vec3(a));
     if (a == 0.0) { fragmentColor = vec4(0.0); }
-    else { fragmentColor = vec4(a * encoded(c / a), a); }
+    else { fragmentColor = ${srgb ? 'vec4(c, a)' : 'vec4(a * encoded(c / a), a)'}; }
 }
 `;
+export const sharedWebGL2ResolveFragmentSource = sharedWebGL2ResolveFragment(false);
 
 /** FUNC_ADD for RGB and alpha; admission separately restricts add-preserve to opaque output. */
 export function sharedWebGL2BlendFactors(blend: SharedMaterial2D['blend']): readonly [number, number, number, number] {

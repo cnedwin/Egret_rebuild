@@ -15,6 +15,8 @@ export interface SharedWebGL2Configuration extends SharedPreparationOptions2D, S
   readonly enableEffects: boolean;
   readonly outputAlpha: 'premultiplied' | 'opaque';
   readonly restoreTimeoutMs: number;
+  /** Where translucent draws mix: `linear` light (the default) or the stored `srgb` codes, as a 2D canvas does. */
+  readonly blendSpace: 'linear' | 'srgb';
 }
 export interface SharedWebGL2HostOptions extends Partial<SharedWebGL2Configuration> {
   readonly canvas: HTMLCanvasElement;
@@ -45,7 +47,8 @@ const DEFAULTS: SharedWebGL2Configuration = Object.freeze({
   // Read and judged after every earlier option, so their arrival changes no earlier refusal.
   maxFrameRegions: 4096,
   maxFramePageBytes: 67108864,
-  maxReadyPageBytes: 134217728
+  maxReadyPageBytes: 134217728,
+  blendSpace: 'linear'
 });
 const KEYS = [
   'canvas',
@@ -71,7 +74,8 @@ const KEYS = [
   'measureSharedFrames',
   'maxFrameRegions',
   'maxFramePageBytes',
-  'maxReadyPageBytes'
+  'maxReadyPageBytes',
+  'blendSpace'
 ] as const;
 function object(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -99,6 +103,8 @@ export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions): {
       if (typeof value !== 'boolean') throw new TypeError(key);
     } else if (key === 'outputAlpha') {
       if (value !== 'premultiplied' && value !== 'opaque') throw new TypeError(key);
+    } else if (key === 'blendSpace') {
+      if (value !== 'linear' && value !== 'srgb') throw new TypeError(key);
     } else {
       if (
         typeof value !== 'number' ||

@@ -18,7 +18,12 @@ import type {
 import { TexturedPreparationBudget2D } from './texturedPreparationBudget2D.js';
 import type { TexturedPreparationLimits2D } from './texturedPreparationBudget2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
-import { decodeSharedSRGBByte, sharedPageChainBytes2D, sharedPageLevels2D } from './sharedColor2D.js';
+import {
+  decodeSharedSRGBByte,
+  sharedBlendSpace2D,
+  sharedPageChainBytes2D,
+  sharedPageLevels2D
+} from './sharedColor2D.js';
 import type { RetainedSharedDraw2D, SharedPreparationRetention2D } from './sharedPreparationRetention2D.js';
 export class SharedPreparationError extends Error {
   public constructor(public readonly reason: 'frame' | 'profile' | 'precision' | 'budget') {
@@ -379,12 +384,7 @@ export function prepareSharedDraws2D(
   options: SharedPreparationOptions2D,
   retention?: SharedPreparationRetention2D
 ): PreparedSharedFrame2D {
-  if (
-    frame.profile !== 'egret.shared-frame2d/1' ||
-    frame.colorRecipe !== 'egret.linear-srgb-pma/1' ||
-    frame.targetRepresentation !== 'egret.srgb-pma8-target/1'
-  )
-    sharedFailure('profile');
+  if (frame.profile !== 'egret.shared-frame2d/1' || sharedBlendSpace2D(frame) === undefined) sharedFailure('profile');
   if (
     frame.commands.length > options.maxCommands ||
     frame.commands.length > 65536 ||

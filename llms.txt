@@ -37,7 +37,7 @@ await play({
 
 ## Options of `play`
 
-`width` and `height` are the stage in the game's own units, whole numbers above 0, and are required. `background` is the colour behind everything, black unless given. `setup(game)` builds the game and may be `async`; `update(dt, game)` is one step, and is not called before `setup` has finished. `parent` is an element to put the canvas in instead of filling the window. `seed` makes `game.random` repeat. `onError(error)` is told of what stopped the game, which is otherwise thrown to the console.
+`width` and `height` are the stage in the game's own units, whole numbers above 0, and are required. `background` is the colour behind everything, black unless given. `setup(game)` builds the game and may be `async`; `update(dt, game)` is one step, and is not called before `setup` has finished. `parent` is an element to put the canvas in instead of filling the window. `seed` makes `game.random` repeat. `onError(error)` is told of what stopped the game, which is otherwise thrown to the console. Translucent colours mix as in a 2D canvas: white at an alpha of 0.1 over a dark background is a faint white. `blendSpace` set to `'linear'` mixes light instead, which makes the same white look stronger.
 
 ## Drawing
 

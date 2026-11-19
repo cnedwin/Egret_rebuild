@@ -105,6 +105,10 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 
 最终只 resolve 一次，写入普通 preferred rgba8unorm/bgra8unorm 画布视图并关闭混合。目标解码值 (C,a) 先将 RGB 限于 [0,a]；透明输出为 (aE(C/a),a)，a=0 时为零；opaque 输出为 (E(C),1)。画布色彩空间为 sRGB，alpha 模式与输出一致。直接复制内部编码预乘像素到浏览器画布并不等价。回读记录并规范化真实 RGBA/BGRA 通道顺序。
 
+### 混合空间
+
+以上是默认混合空间 `linear`：帧配方 `egret.linear-srgb-pma/1`，目标 `egret.srgb-pma8-target/1`。Host 选项 `blendSpace: 'srgb'` 选择另一种。Host 以 `sharedBlendSpace` 公布它，为该 Host 创建的 Engine 的每一帧都记录它：配方 `egret.srgb-pma/1`，目标 `egret.encoded-srgb-pma8-target/1`。每次绘制先按 `linear` 完全相同地算出颜色，再对预乘 (C,a) 写入 (aE(C/a),a)，夹紧到 [0,1]；a 为零时写入 E(C)、alpha 为零。工作目标是普通 rgba8unorm（WebGL2 为 RGBA8），固定管线混合的是存储的编码值，与 2D canvas 和白鹭 5 一致：0x1c2433 上 10% 的白约为 (51,58,71)，而线性空间为 (93,96,101)。清屏色为编码值乘 clearAlpha；发光颜色为编码值；效果的颜色矩阵直接读写编码值，不做转换；最终 resolve 直接复制编码值，RGB 夹紧到 [0,a]。Host 只绘制自己空间的帧，其他帧按不支持的配置拒绝。纹理内部过滤仍在线性光中进行。Play 默认 `srgb`；引擎、`createBrowserGame` 和 World3D 覆盖层默认 `linear`。Android 工程播放器只接受 `linear` 帧。`examples/blend-space/verify.mjs` 将两种空间与页面自身的 2D canvas 对比。
+
 ## 完成帧、顺序与有限 B1 组合
 
 完成帧拥有冻结的 commands/pages/regions/materials/geometries 数组。按首次真实绘制需要建表：页按源身份，区域按源及完整区域值，材质按完整值，几何按真实不可变身份。每次调用产生新的顶层数组和帧身份，保存帧不持有可变显示对象、租约或 Texture 包装。

@@ -68,6 +68,7 @@ await play({
 | `seed` | `game.random` 的种子 | 每次都不同 |
 | `saveKey` | `game.save` 保存数据时用的名字 | 页面的路径 |
 | `backend` | `'auto'`、`'webgpu'` 或 `'webgl2'` | `'auto'` |
+| `blendSpace` | 半透明颜色的混合方式：`'srgb'` 与 2D canvas 和白鹭 5 一致，深色底上 10% 的白仍是淡淡的白；`'linear'` 按光线混合，同样的白看起来更强 | `'srgb'` |
 
 无法做出游戏的选项会以 `PLAY_OPTIONS_INVALID` 被拒绝；错误信息的末尾说明是哪一项。
 

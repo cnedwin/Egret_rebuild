@@ -36,8 +36,12 @@ const constants = {
   GREATER:516, TRIANGLES:4, SYNC_GPU_COMMANDS_COMPLETE:37143, ALREADY_SIGNALED:37146,
   TIMEOUT_EXPIRED:37147, CONDITION_SATISFIED:37148, WAIT_FAILED:37149,
 };
-/** `parameters` replaces the value of a named capability, by its constant name. */
-export function glPorts({ alignment = 256, colorEncoding = constants.LINEAR, attributes = {}, parameters = {} } = {}) {
+/**
+ * `parameters` replaces the value of a named capability, by its constant name. `workingEncoding` is what a bound
+ * framebuffer's attachment reports: SRGB for working targets of light, LINEAR for RGBA8 targets of codes.
+ */
+export function glPorts({ alignment = 256, colorEncoding = constants.LINEAR, workingEncoding = constants.SRGB,
+  attributes = {}, parameters = {} } = {}) {
   const events = [], owners = [], errors = [], listeners = new Map(), buffers = new Map();
   let ordinal = 0, generation = 1, lost = false, framebuffer = null, program = null, readOrdinal = 0;
   const options = { alpha:true, premultipliedAlpha:true, antialias:false, depth:false, stencil:false, preserveDrawingBuffer:false };
@@ -69,7 +73,7 @@ export function glPorts({ alignment = 256, colorEncoding = constants.LINEAR, att
     getShaderPrecisionFormat() { log('getShaderPrecisionFormat'); return { rangeMin:127, rangeMax:127, precision:23 }; },
     getFramebufferAttachmentParameter(_target, _attachment, key) {
       log('getFramebufferAttachmentParameter', _target, _attachment, key);
-      return key === gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING ? framebuffer ? gl.SRGB : colorEncoding
+      return key === gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING ? framebuffer ? workingEncoding : colorEncoding
         : key === gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE ? gl.UNSIGNED_NORMALIZED : 8;
     },
     checkFramebufferStatus() { log('checkFramebufferStatus'); return gl.FRAMEBUFFER_COMPLETE; },

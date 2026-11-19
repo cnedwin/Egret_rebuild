@@ -41,7 +41,12 @@ import {
 import { PreparedBatchScratch2D } from '../rendering/preparedBatches2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
-import { decodeSharedSRGBByte, sharedPageLevelLayout2D, sharedPageChainBytes2D } from '../rendering/sharedColor2D.js';
+import {
+  sharedBlendSpace2D,
+  sharedPageLevelLayout2D,
+  sharedPageChainBytes2D,
+  sharedTargetChannel2D
+} from '../rendering/sharedColor2D.js';
 import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { runOwnedPreparationScope } from '../rendering/ownedPreparationFailure2D.js';
 import {
@@ -72,12 +77,11 @@ import { GLNativeSession, glFailure, isGLFailure } from './webgl2Native.js';
 import type { GLNativeOwner, GLNativeResourceDiagnostics } from './webgl2Native.js';
 import {
   sharedWebGL2VertexSource,
-  sharedWebGL2FragmentSource,
-  sharedWebGL2PagedFragmentSource,
+  sampledFragmentSource,
   sharedWebGL2SolidVertexSource,
-  sharedWebGL2SolidFragmentSource,
+  sharedWebGL2SolidFragment,
   sharedWebGL2ResolveVertexSource,
-  sharedWebGL2ResolveFragmentSource,
+  sharedWebGL2ResolveFragment,
   sharedWebGL2BlendFactors
 } from './sharedWebGL2Shaders.js';
 import {
@@ -293,6 +297,8 @@ interface Limits {
 class SharedGLHost implements SharedLayerWebGL2Host {
   public readonly surface: HTMLCanvasElement;
   public readonly sharedFrameProfile = SHARED_FRAME_PROFILE_2D;
+  /** The space this Host mixes in; an Engine's frames record it. */
+  public readonly sharedBlendSpace: 'linear' | 'srgb';
   private readonly options: SharedWebGL2Configuration;
   private readonly callback: ((event: WebGL2HostDiagnostic) => unknown) | undefined;
   private state: WebGL2HostState = 'new';
@@ -427,6 +433,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       const admitted = admitSharedWebGL2Options(input);
       this.surface = admitted.surface;
       this.options = admitted.configuration;
+      this.sharedBlendSpace = admitted.configuration.blendSpace;
       this.callback = admitted.callback;
       this.frameTiming = admitted.measureSharedFrames ? createFrameTiming() : undefined;
     } catch (cause) {
@@ -434,6 +441,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     }
     Object.defineProperty(this, 'surface', { writable: false, configurable: false });
     Object.defineProperty(this, 'sharedFrameProfile', { writable: false, configurable: false });
+    Object.defineProperty(this, 'sharedBlendSpace', { writable: false, configurable: false });
     this.cpu.resolve();
   }
   private recordTiming(
@@ -870,6 +878,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         this.resourceNative,
         this.frameTiming ? (phase, started, serial) => this.recordTiming(phase, started, generation, serial) : undefined
       );
+      native.codedTargets = this.options.blendSpace === 'srgb';
       this.native = native;
       const gl = native.gl,
         attrs = gl.getContextAttributes();
@@ -934,22 +943,23 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       if (!native.cleanup(target)) throw glFailure('WEBGL2_CLOSE_UNSAFE', native.cleanupFailure?.cause);
-      this.program = native.program(sharedWebGL2VertexSource, sharedWebGL2FragmentSource);
+      const coded = native.codedTargets;
+      this.program = native.program(sharedWebGL2VertexSource, sampledFragmentSource(false, coded));
       native.block(this.program, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       native.block(this.program, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
-      this.solidProgram = native.program(sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragmentSource);
+      this.solidProgram = native.program(sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragment(coded));
       native.block(this.solidProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
-      this.resolveProgram = native.program(sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragmentSource);
+      this.resolveProgram = native.program(sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragment(coded));
       if (this.options.enableEffects)
         for (const mode of EFFECT_PASSES) {
-          const program = native.program(sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode));
+          const program = native.program(sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode, coded));
           const index = gl.getUniformBlockIndex(program, 'Effect');
           if (index === gl.INVALID_INDEX) throw glFailure('WEBGL2_CONTEXT_LIMIT');
           gl.uniformBlockBinding(program, index, 0);
           this.effectPrograms.set(mode, program);
         }
       // The program of a batch of several pages. Its eight page samplers name the eight units once, here.
-      this.pagedProgram = native.program(sharedWebGL2VertexSource, sharedWebGL2PagedFragmentSource);
+      this.pagedProgram = native.program(sharedWebGL2VertexSource, sampledFragmentSource(true, coded));
       native.block(this.pagedProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       native.block(this.pagedProgram, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
       gl.useProgram(this.pagedProgram);
@@ -1219,6 +1229,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             const options = layerWrite ? { ...this.options, pixelRatio: 1 } : this.options;
             const alpha = layerWrite ? 'premultiplied' : options.outputAlpha;
             if (
+              sharedBlendSpace2D(frame) !== this.options.blendSpace ||
               frame.outputAlpha !== alpha ||
               frame.outputRepresentation !==
                 (alpha === 'opaque' ? 'egret.srgb-opaque-unorm8/1' : 'egret.srgb-premultiplied-unorm8/1')
@@ -2228,10 +2239,12 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
     const c = frame.clearColor,
       a = frame.clearAlpha;
+    // The clear colour as the target holds it: light, or the codes of a target that mixes them.
+    const space = this.options.blendSpace;
     gl.clearColor(
-      a * decodeSharedSRGBByte(c >>> 16),
-      a * decodeSharedSRGBByte(c >>> 8),
-      a * decodeSharedSRGBByte(c),
+      a * sharedTargetChannel2D(space, c >>> 16),
+      a * sharedTargetChannel2D(space, c >>> 8),
+      a * sharedTargetChannel2D(space, c),
       a
     );
     gl.clear(gl.COLOR_BUFFER_BIT);

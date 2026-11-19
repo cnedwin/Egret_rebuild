@@ -8,8 +8,17 @@ const WIDTH = 480,
   HEIGHT = 270;
 const canvas = document.querySelector('#scene'),
   status = document.querySelector('#status');
-const verify = new URLSearchParams(location.search).get('verify') === '1';
-const host = await createExampleHost({ canvas, pixelRatio: 1, enableEffects: true, enableReadback: verify });
+const query = new URLSearchParams(location.search),
+  verify = query.get('verify') === '1',
+  // `?space=srgb` mixes stored colour codes, as a 2D canvas does; the engine's own linear light otherwise.
+  blendSpace = query.get('space') === 'srgb' ? 'srgb' : 'linear';
+const host = await createExampleHost({
+  canvas,
+  pixelRatio: 1,
+  enableEffects: true,
+  enableReadback: verify,
+  blendSpace
+});
 const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
 const scope = engine.createScope();
 const frame = Object.freeze({ width: WIDTH, height: HEIGHT, clearColor: 0x1b1f2a, clearAlpha: 1 });

@@ -13,18 +13,28 @@ export interface SharedWebGPUHostOptions extends WebGPUHostOptions, Partial<Shar
   readonly maxTupleComparisons?: number;
   readonly enableEffects?: boolean;
   readonly outputAlpha?: 'premultiplied' | 'opaque';
+  /** Where translucent draws mix: `linear` light (the default) or the stored `srgb` codes, as a 2D canvas does. */
+  readonly blendSpace?: 'linear' | 'srgb';
   readonly recovery?: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs?: number };
 }
 type BaseConfiguration = Required<
   Omit<
     SharedWebGPUHostOptions,
-    'canvas' | 'device' | 'onDiagnostic' | 'enableEffects' | 'outputAlpha' | 'recovery' | keyof SharedPageLimits2D
+    | 'canvas'
+    | 'device'
+    | 'onDiagnostic'
+    | 'enableEffects'
+    | 'outputAlpha'
+    | 'blendSpace'
+    | 'recovery'
+    | keyof SharedPageLimits2D
   >
 >;
 export type SharedWebGPUConfiguration = BaseConfiguration &
   SharedPageLimits2D & {
     readonly enableEffects: boolean;
     readonly outputAlpha: 'premultiplied' | 'opaque';
+    readonly blendSpace: 'linear' | 'srgb';
     readonly recovery: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs: number } | undefined;
   };
 const DEFAULTS: BaseConfiguration = Object.freeze({
@@ -72,7 +82,8 @@ const KEYS = [
   'outputAlpha',
   'recovery',
   'enableEffects',
-  ...PAGE_KEYS
+  ...PAGE_KEYS,
+  'blendSpace'
 ] as const;
 function object(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -142,9 +153,11 @@ export function admitSharedWebGPUOptions(input: SharedWebGPUHostOptions): {
     if (value <= 0 || value > PAGE_LIMITS[key]) throw new RangeError(key);
     pages[key] = value;
   }
+  const blendSpace = captured.blendSpace === undefined ? 'linear' : captured.blendSpace;
+  if (blendSpace !== 'linear' && blendSpace !== 'srgb') throw new TypeError('blendSpace');
   return {
     surface: captured.canvas as unknown as HTMLCanvasElement,
-    configuration: Object.freeze({ ...configuration, enableEffects, outputAlpha, recovery, ...pages }),
+    configuration: Object.freeze({ ...configuration, enableEffects, outputAlpha, recovery, ...pages, blendSpace }),
     borrowed: kind === 'borrow' ? (borrowed as GPUDevice) : undefined,
     callback: captured.onDiagnostic as ((diagnostic: WebGPUHostDiagnostic) => unknown) | undefined
   };

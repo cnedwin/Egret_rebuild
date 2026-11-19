@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1314 个导出，其中 800 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1315 个导出，其中 800 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -118,6 +118,7 @@
 | `setErrorLanguage` | 函数 | The language of the sentence in the message of every error made from now on: English unless set. |
 | `SHARED_FRAME_PROFILE_2D` | 值 |  |
 | `SharedBarrierCommand2D` | 接口 |  |
+| `SharedBlendSpace2D` | 类型 | Where translucent draws mix with what is under them. |
 | `SharedDrawState2D` | 接口 |  |
 | `SharedEffect2D` | 接口 | Frozen effect inputs captured with the same frame and image ownership. |
 | `SharedFloatArray2D` | 类型 |  |
