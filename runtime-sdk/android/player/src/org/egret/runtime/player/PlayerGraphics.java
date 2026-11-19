@@ -16,7 +16,8 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLContextFactory {
-    static final int MAX_FRAME_BYTES = 24 + 4096 * 64;
+    static final int MAX_QUADS = 4096, QUAD_BYTES = 64, ATLAS_BYTES = 24;
+    static final int MAX_FRAME_BYTES = 24 + MAX_QUADS * (QUAD_BYTES + ATLAS_BYTES);
     private static final int MAX_PAGE_BYTES = 64 << 20, MAX_RESIDENT_BYTES = 256 << 20;
     private final EgretPlayerView owner;
     private final AtomicReference<Frame> pending = new AtomicReference<>();

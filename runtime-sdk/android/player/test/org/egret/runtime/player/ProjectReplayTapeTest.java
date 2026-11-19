@@ -67,6 +67,57 @@ public final class ProjectReplayTapeTest {
         reject(() -> ProjectReplayTape.read(file, W, H));
     }
 
+    private static byte[] atlasPacket(int frameId, int width, int trimX, int turn) {
+        ByteBuffer data = ByteBuffer.allocate(112).order(ByteOrder.LITTLE_ENDIAN);
+        data.put(packet(frameId, 9));
+        data.putInt(0, 0x33524745);
+        // The single captured texel occupies one pixel inside a larger logical image.
+        data.put(25, (byte)255).put(26, (byte)255).put(27, (byte)255);
+        data.putFloat(40, 3f).putFloat(52, 3f);
+        data.putFloat(64, 1f).putFloat(68, 1f).putFloat(80, W).putFloat(84, H);
+        data.putInt(0).putInt(width).putInt(3).putInt(trimX).putInt(1).putInt(turn);
+        return data.array();
+    }
+
+    private static void atlasReplay(File file) throws Exception {
+        Map<Integer, PlayerGraphics.Page> pages = Collections.singletonMap(9, page(120));
+        ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
+        for (int i = 0; i < ProjectReplayTape.FRAMES; i++) {
+            byte[] bytes = i % 2 == 0 ? atlasPacket(i, 3, 1, 1) : packet(i, 9);
+            recorder.add(new PlayerGraphics.Frame(4, bytes, pages));
+        }
+        recorder.write(file);
+        ProjectReplayTape replay = ProjectReplayTape.read(file, W, H);
+        require(Arrays.equals(replay.frame(0, 5).bytes, atlasPacket(0, 3, 1, 1)));
+        require(Arrays.equals(replay.frame(1, 5).bytes, packet(1, 9)));
+
+        ProjectReplayTape.Recorder empty = new ProjectReplayTape.Recorder(W, H);
+        byte[] good = atlasPacket(0, 3, 1, 3);
+        for (byte[] bad : new byte[][] {Arrays.copyOf(good, 88), Arrays.copyOf(good, 111),
+                Arrays.copyOf(good, 136), atlasPacket(0, 3, 3, 0), atlasPacket(0, 1 << 21, 0, 0),
+                atlasPacket(0, 3, 0, 4)}) {
+            reject(() -> empty.add(new PlayerGraphics.Frame(2, bad, pages)));
+        }
+        for (int at : new int[]{0, 24, 88}) {
+            byte[] bad = good.clone();
+            if (at == 0) ByteBuffer.wrap(bad).order(ByteOrder.LITTLE_ENDIAN).putInt(0x32524745);
+            else if (at == 24) bad[at] = 0;
+            else bad[at] = 1;
+            reject(() -> empty.add(new PlayerGraphics.Frame(2, bad, pages)));
+        }
+        byte[] two = new byte[24 + 2 * 64 + 2 * 24];
+        ByteBuffer buffer = ByteBuffer.wrap(two).order(ByteOrder.LITTLE_ENDIAN);
+        buffer.put(good, 0, 88).put(good, 24, 64).put(good, 88, 24).put(good, 88, 24);
+        buffer.putInt(20, 2);
+        reject(() -> empty.add(new PlayerGraphics.Frame(2, two, pages))); // Duplicate draw ordinal.
+        buffer.putInt(152, 1);
+        reject(() -> empty.add(new PlayerGraphics.Frame(2, two, pages))); // Out of order.
+        buffer.putInt(152, 0).putInt(176, 1);
+        require(empty.size() == 0);
+        empty.add(new PlayerGraphics.Frame(2, two, pages));
+        require(empty.size() == 1);
+    }
+
     public static void main(String[] args) throws Exception {
         File dir = Files.createTempDirectory("egret-project-tape-test").toFile();
         File file = new File(dir, "scene.bin");
@@ -111,7 +162,8 @@ public final class ProjectReplayTapeTest {
             reject(() -> ProjectReplayTape.read(file, W, H));
             Files.write(file.toPath(), Arrays.copyOf(original, original.length + 1));
             reject(() -> ProjectReplayTape.read(file, W, H));
-            System.out.println("EGR2 project replay tape: round-trip, page generations, identity and rejection passed.");
+            atlasReplay(file);
+            System.out.println("Project replay: EGR2/EGR3 round-trip, page generations, identity and rejection passed.");
         } finally {
             Files.deleteIfExists(file.toPath());
             Files.deleteIfExists(dir.toPath());

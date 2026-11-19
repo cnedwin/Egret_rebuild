@@ -3,7 +3,9 @@
 // Each record contains page:u8, straight RGB:u8x3, opacity:f32, three affine
 // corners, two UV corners and the intersected logical clip (left,top,right,bottom).
 export const PROJECT_FRAME_MAGIC = 0x32524745;
+const ATLAS_FRAME_MAGIC = 0x33524745;
 const HEADER = 24, QUAD = 64, MAX_QUADS = 4096;
+const MAX_LOGICAL_SIZE = 1 << 20;
 const barriers = new Set(['clip-enter', 'clip-exit', 'explicit-enter', 'explicit-exit', 'empty']);
 
 function unit(value) {
@@ -44,6 +46,36 @@ function supportedMaterial(material) {
     && material.filter === 'nearest' && material.magFilter === 'nearest' && material.minFilter === 'nearest'
     && material.addressU === 'clamp-to-edge' && material.addressV === 'clamp-to-edge'
     && material.mipLevel === 0 && material.maxAnisotropy === 1;
+}
+
+function needsAtlasMapping(region, page) {
+  const {packed, logicalWidth, logicalHeight, trimX, trimY, quarterTurn} = region;
+  if (!packed || !Number.isSafeInteger(packed.x) || !Number.isSafeInteger(packed.y) ||
+    !Number.isSafeInteger(packed.width) || !Number.isSafeInteger(packed.height) ||
+    packed.x < 0 || packed.y < 0 || packed.width < 1 || packed.height < 1 ||
+    packed.x + packed.width > page.width || packed.y + packed.height > page.height ||
+    logicalWidth > MAX_LOGICAL_SIZE || logicalHeight > MAX_LOGICAL_SIZE)
+    throw new RangeError('Invalid project atlas bounds');
+  if (quarterTurn === 0 && trimX === 0 && trimY === 0 &&
+      logicalWidth === packed.width && logicalHeight === packed.height) return false;
+  if (!Number.isSafeInteger(logicalWidth) || !Number.isSafeInteger(logicalHeight) ||
+    !Number.isSafeInteger(trimX) || !Number.isSafeInteger(trimY) || !Number.isSafeInteger(quarterTurn) ||
+    logicalWidth < 1 || logicalHeight < 1 ||
+    trimX < 0 || trimY < 0 || quarterTurn < 0 || quarterTurn > 3)
+    throw new RangeError('Invalid project atlas mapping');
+  const oddTurn = quarterTurn === 1 || quarterTurn === 3;
+  if (trimX + (oddTurn ? packed.height : packed.width) > logicalWidth ||
+      trimY + (oddTurn ? packed.width : packed.height) > logicalHeight)
+    throw new RangeError('Invalid project atlas footprint');
+  return true;
+}
+
+// EGR3 keeps EGR2 geometry and packed UVs. Only transformed atlas draws get a
+// suffix entry, keyed by drawable ordinal so barriers do not affect the lookup.
+function appendAtlasMapping(words, ordinal, region) {
+  words ??= [];
+  words.push(ordinal, region.logicalWidth, region.logicalHeight, region.trimX, region.trimY, region.quarterTurn);
+  return words;
 }
 
 // Captured region table entries can be recreated on every frame. The encoded UVs
@@ -98,6 +130,8 @@ function encode(frame, frameId, pageIds, records) {
   const slots = frame.pages.map(({source}) => {
     const slot = pageIds.get(source);
     if (!Number.isInteger(slot) || slot < 1 || slot > 255 || used.has(slot)) throw new Error('Invalid or missing project page');
+    if (!Number.isSafeInteger(source.width) || !Number.isSafeInteger(source.height) ||
+        source.width < 1 || source.height < 1) throw new RangeError('Invalid project page size');
     used.add(slot);
     return slot;
   });
@@ -117,6 +151,7 @@ function encode(frame, frameId, pageIds, records) {
   const bytes = new Uint8Array(buffer);
   if (records) records.length = count;
   let base = HEADER, index = 0;
+  let atlasWords;
   for (const cmd of frame.commands) {
     if (cmd.kind === 'barrier') continue;
     const material = frame.materials[cmd.materialIndex];
@@ -124,28 +159,29 @@ function encode(frame, frameId, pageIds, records) {
     index++;
     if (saved && canReuse(saved, cmd, material, frame, slots)) {
       bytes.set(saved.bytes, base);
+      if (saved.mapped) atlasWords = appendAtlasMapping(atlasWords, index - 1, saved.region);
       base += QUAD;
       continue;
     }
     if (!supportedMaterial(material)) throw new Error('Unsupported project material');
-    let region, page;
+    let region, page, mapped = false;
     let slot = 0, color = 0xffffff, opacity = unit(cmd.opacity), uv = [0, 0, 1, 1];
     if (cmd.kind === 'rect') {
       color = rgb(cmd.fillColor);
       opacity *= unit(cmd.fillAlpha);
     } else {
       region = frame.regions[cmd.regionIndex];
-      if (!region || region.quarterTurn !== 0 || region.trimX !== 0 || region.trimY !== 0 ||
-          region.logicalWidth !== region.packed.width || region.logicalHeight !== region.packed.height)
-        throw new Error('Unsupported project atlas mapping');
+      if (!region || !Number.isSafeInteger(region.pageIndex) || region.pageIndex < 0)
+        throw new RangeError('Invalid project atlas page');
       page = frame.pages[region.pageIndex]?.source;
       if (!page) throw new Error('Invalid project image page');
       const r = region.packed;
-      if (frame.materials[cmd.materialIndex].samplingDomain === 'page' &&
-          (r.x !== 0 || r.y !== 0 || r.width !== page.width || r.height !== page.height))
+      mapped = needsAtlasMapping(region, page);
+      if (material.samplingDomain === 'page' &&
+          (mapped || r.x !== 0 || r.y !== 0 || r.width !== page.width || r.height !== page.height))
         throw new Error('Unsupported page sampling outside a project atlas crop');
+      if (mapped) atlasWords = appendAtlasMapping(atlasWords, index - 1, region);
       uv = [r.x/page.width, r.y/page.height, (r.x+r.width)/page.width, (r.y+r.height)/page.height];
-      if (uv.some(v => !Number.isFinite(v) || v < 0 || v > 1)) throw new RangeError('Invalid project atlas bounds');
       slot = slots[region.pageIndex];
     }
     view.setUint8(base, slot);
@@ -160,11 +196,17 @@ function encode(frame, frameId, pageIds, records) {
       if (saved === cmd || saved?.command === cmd) {
         const recordBytes = saved === cmd ? new Uint8Array(QUAD) : saved.bytes;
         recordBytes.set(bytes.subarray(base, base + QUAD));
-        records[index - 1] = {command: cmd, material, region, width: frame.width, height: frame.height,
+        records[index - 1] = {command: cmd, material, region, mapped, width: frame.width, height: frame.height,
           slot, pageWidth: page?.width, pageHeight: page?.height, bytes: recordBytes};
       } else records[index - 1] = cmd;
     }
     base += QUAD;
   }
-  return bytes;
+  if (!atlasWords) return bytes;
+  const packet = new Uint8Array(bytes.length + atlasWords.length * 4);
+  packet.set(bytes);
+  const output = new DataView(packet.buffer);
+  output.setUint32(0, ATLAS_FRAME_MAGIC, true);
+  for (let i = 0; i < atlasWords.length; i++) output.setUint32(bytes.length + 4*i, atlasWords[i], true);
+  return packet;
 }

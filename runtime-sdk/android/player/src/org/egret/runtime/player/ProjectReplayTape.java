@@ -24,10 +24,10 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-/** A bounded, local recording of the exact EGR2 submissions and immutable RGBA page versions. */
+/** A bounded, local recording of the exact project submissions and immutable RGBA page versions. */
 final class ProjectReplayTape {
     static final int FRAMES = 210;
-    private static final int MAGIC = 0x45475250, VERSION = 1, EGR2 = 0x32524745;
+    private static final int MAGIC = 0x45475250, VERSION = 1, EGR2 = 0x32524745, EGR3 = 0x33524745;
     private static final int MAX_BYTES = 64 << 20, MAX_GENERATIONS = 4096, CHECKSUM = 32;
     private static final int HEADER = 5 * Integer.BYTES, REUSE = -1;
     private final PlayerGraphics.Frame[] frames;
@@ -231,16 +231,47 @@ final class ProjectReplayTape {
     private static void validatePacket(byte[] bytes, int id, int width, int height, Map<Integer, PlayerGraphics.Page> pages)
         throws IOException {
         if (bytes == null || bytes.length < 24 || bytes.length > PlayerGraphics.MAX_FRAME_BYTES)
-            throw new IOException("Invalid EGR2 packet length");
+            throw new IOException("Invalid project packet length");
         ByteBuffer data = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-        int quads = data.getInt(20);
-        if (data.getInt(0) != EGR2 || data.getInt(4) != id || data.getInt(8) != width
-            || data.getInt(12) != height || quads < 0 || quads > 4096 || bytes.length != 24 + quads * 64)
-            throw new IOException("Invalid or discontinuous EGR2 frame");
-        for (int i = 24; i < bytes.length; i += 64) {
+        int format = data.getInt(0), quads = data.getInt(20);
+        if ((format != EGR2 && format != EGR3) || data.getInt(4) != id || data.getInt(8) != width
+            || data.getInt(12) != height || quads < 0 || quads > PlayerGraphics.MAX_QUADS)
+            throw new IOException("Invalid or discontinuous project frame");
+        int recordsEnd = 24 + quads * PlayerGraphics.QUAD_BYTES;
+        int tail = bytes.length - recordsEnd;
+        if (format == EGR2 ? tail != 0 :
+                tail <= 0 || tail % PlayerGraphics.ATLAS_BYTES != 0 || tail / PlayerGraphics.ATLAS_BYTES > quads)
+            throw new IOException("Invalid project atlas table length");
+        for (int i = 24; i < recordsEnd; i += PlayerGraphics.QUAD_BYTES) {
             int slot = bytes[i] & 255;
-            if (slot != 0 && !pages.containsKey(slot)) throw new IOException("Missing EGR2 page " + slot);
+            if (slot != 0 && !pages.containsKey(slot)) throw new IOException("Missing project page " + slot);
         }
+        // Saved frames may mix packet versions. The sparse suffix always indexes draw records.
+        int previous = -1;
+        for (int i = recordsEnd; i < bytes.length; i += PlayerGraphics.ATLAS_BYTES) {
+            int ordinal = data.getInt(i), w = data.getInt(i+4), h = data.getInt(i+8);
+            int x = data.getInt(i+12), y = data.getInt(i+16), turn = data.getInt(i+20);
+            if (ordinal <= previous || ordinal >= quads || w < 1 || h < 1 || w > (1 << 20) || h > (1 << 20)
+                || x < 0 || x >= w || y < 0 || y >= h || turn < 0 || turn > 3)
+                throw new IOException("Invalid project atlas descriptor");
+            int record = 24 + ordinal * PlayerGraphics.QUAD_BYTES;
+            PlayerGraphics.Page page = pages.get(bytes[record] & 255);
+            if (page == null) throw new IOException("Atlas descriptor requires a texture");
+            int packedWidth = texelEdge(data.getFloat(record+40), page.width) - texelEdge(data.getFloat(record+32), page.width);
+            int packedHeight = texelEdge(data.getFloat(record+44), page.height) - texelEdge(data.getFloat(record+36), page.height);
+            boolean odd = (turn & 1) != 0;
+            if (packedWidth <= 0 || packedHeight <= 0 || (odd ? packedHeight : packedWidth) > w - x
+                || (odd ? packedWidth : packedHeight) > h - y)
+                throw new IOException("Atlas content exceeds its logical region");
+            previous = ordinal;
+        }
+    }
+
+    private static int texelEdge(float uv, int extent) throws IOException {
+        int texel = Math.round(uv * extent);
+        if (!(uv >= 0 && uv <= 1) || (float)texel / extent != uv)
+            throw new IOException("Atlas bounds must identify page texel edges");
+        return texel;
     }
     private static MessageDigest sha256Digest() {
         try { return MessageDigest.getInstance("SHA-256"); }
