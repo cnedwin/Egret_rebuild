@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Play: controls on the glass, gamepad buttons and music in code — 2026-11-20
+
+`game.touchStick` and `game.touchButton` put a stick and buttons over the stage on a phone: the stick counts in `keys.axis()`, a button holds a key, and each finger keeps its control. A gamepad's buttons are keys named `pad:a` and so on, and its d-pad counts in the axis and steers boxes and menus. `game.music.play(mood)` writes a looping piece in code in five moods, and `game.music.intensity` brings its bass, drums and tune in. A menu or box of words awaited in the first `setup` now starts the frames itself; otherwise they start after `setup`, as before. A box of words no longer takes the release of a press made before it opened.
+
 ## Play: menus, boxes of words, bars and notices — 2026-11-20
 
 `game.say` shows words letter by letter in a box at the bottom, with a name and answers to choose; `game.menu` gives the item chosen; `game.bar` slides to its value and leaves a trail after a fall; `game.toast` shows a notice that fades; `game.asking` tells an update a box or menu is open. All answer keys, a stick, the pointer and a finger, work while paused, and may be awaited in `setup`, whose frames are now drawn while it waits. New example: `examples/play/story.mjs`, played to its end by the example's check.

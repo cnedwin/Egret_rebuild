@@ -206,6 +206,24 @@ update(seconds, game) {
 
 游戏暂停时它们仍可操作，`setup` 也可以等待它们：等待期间照常绘制画面，但 `update`、计时器和缓动要等 `setup` 结束后才开始。重开会移除它们，正在等待的结果不再返回。对白文字按行只绘制一次，再逐字揭开遮罩，不会每帧重绘。`examples/play/story.mjs` 用到了以上全部功能。
 
+## 手机、手柄与音乐
+
+为键盘写的游戏，加上屏幕上的控件就能在手机上玩，接手柄则什么都不用改：
+
+```js
+game.touchStick();                                            // 计入 game.keys.axis()
+game.touchButton('A', { x: 430, y: 230, key: 'space' });      // 手指按住时相当于按住空格
+if (game.keys.pressed('space', 'pad:a')) jump();              // 手柄下方的面键
+game.music.play('mystery');
+game.music.intensity = lanterns / 3;                          // 强度越高，加入的声部越多
+```
+
+- `game.touchStick({ x, y, radius = 48, always })` 和 `game.touchButton(words, { x, y, key = 'space', radius = 32, color, always })` 画在 ui 层之上，对白框不会遮住它们；手指第一次触碰舞台后才显示，带 `always` 时立即显示。每根手指在抬起前一直控制它按下时的控件，所以一个拇指按摇杆、另一个按按钮可以同时进行。从别处开始的触摸仍是游戏的指针。
+- 第一个标准布局手柄的按钮是名为 `pad:a`、`pad:b`、`pad:x`、`pad:y`、`pad:l1`、`pad:r1`、`pad:l2`、`pad:r2`、`pad:select`、`pad:start` 以及 `pad:up`、`pad:down`、`pad:left`、`pad:right` 的键，`down`、`pressed` 和 `released` 都能用。十字键计入 `keys.axis()`；`pad:a` 和十字键可以操作对白框和菜单。
+- `game.music.play(mood)` 用代码写一段乐曲（`'calm'`、`'mystery'`、`'tense'`、`'battle'` 或 `'triumph'`），也可以传 `{ mood, seed, tempo, bars }`。乐曲由等长的四个声部组成：持续和弦、贝斯、鼓和旋律，一起循环播放；正在播放的乐曲会淡出。`game.music.intensity`（0 到 1）依次加入贝斯、鼓和旋律，过渡约一秒半。`volume` 默认 0.6，音效的音量和静音同样作用于音乐。`stop(seconds)` 淡出停止。暂停时保持，重开时停止。需要样本数据的游戏可以直接用导出的 `composeMusic` 和 `musicMix`。
+
+第一次 `setup` 等待的菜单或对白框一打开就会开始绘制画面，所以能被看到并操作；否则画面仍在 `setup` 结束后才开始，与以前相同。
+
 ## 随机与存档
 
 `game.random` 给出的数字在 `seed` 相同时可以重复：`int(1, 6)`、`range(0, 1)`、`chance(0.25)`、`pick(list)`，以及 `shuffle(list)`，它返回一个新列表，不改动传入的列表。

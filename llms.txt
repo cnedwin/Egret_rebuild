@@ -67,8 +67,11 @@ Text: `label.text = 'Score ' + n` changes it, and `label.color` and `label.size`
 | `game.keys.down('left', 'a')` | Whether any of these keys is held |
 | `game.keys.pressed('space')` | Whether it went down since the last update |
 | `game.keys.released('space')` | Whether it came up since the last update |
-| `game.keys.axis()` | Arrows and WASD, or a gamepad's left stick, as `{ x, y }`, each -1 to 1, y down |
+| `game.keys.axis()` | Arrows and WASD, a gamepad's d-pad or left stick, or a stick on the glass, as `{ x, y }`, each -1 to 1, y down |
 | `game.keys.look()` | A gamepad's right stick, for looking or aiming; 0 and 0 without one |
+| `game.keys.down('space', 'pad:a')` | A gamepad's buttons are keys named `pad:a`, `pad:b`, `pad:x`, `pad:y`, `pad:l1`, `pad:r1`, `pad:l2`, `pad:r2`, `pad:select`, `pad:start` and `pad:up` … `pad:right` |
+| `game.touchStick()` | A stick on the glass, bottom left unless `{ x, y, radius }`; it counts in `keys.axis()` |
+| `game.touchButton('A', { x, y, key: 'space' })` | A round button on the glass that holds that key while a finger is on it |
 | `game.pointer.x`, `game.pointer.y` | Where the mouse or finger is, on the stage; it follows the mouse with no button held |
 | `game.pointer.down`, `.pressed`, `.released` | Whether it is down, went down, or came up. A press on a button or on a sprite with `onTap` is theirs and is not `pressed` |
 | `game.pointer.swipe` | `'left'`, `'right'`, `'up'` or `'down'` in the update after a swipe, else `undefined` |
@@ -82,6 +85,10 @@ A key is `'left'`, `'right'`, `'up'`, `'down'`, `'space'`, `'enter'`, `'escape'`
 ## Sound
 
 `game.sfx.play(name)` plays an effect made in code: `jump`, `coin`, `hit`, `hurt`, `explosion`, `shoot`, `powerup`, `bounce`, `pop`, `click`, `hum`, `wind`, `win`, `lose`. `game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` changes one play; `pitch` multiplies the pitch. Any other name is refused unless defined: `game.sfx.define('zap', { wave: 'saw', from: 1200, to: 200, seconds: 0.15 })`, with `wave` one of `'sine'`, `'square'`, `'saw'`, `'triangle'`, `'noise'`; a list of tones is a jingle. `game.sfx.loop(name, { volume, pitch, pan })` plays one again and again until `.stop()`: music made with `define`, the `hum` of an engine whose `.pitch` a game raises with its speed, the `wind`. Its `volume`, `pitch` and `pan` can be set while it plays; a pause holds it and `restart` stops it. `game.sfx.names` lists them; `game.sfx.volume` and `game.sfx.muted` act on all.
+
+## Music
+
+`game.music.play('battle')` writes music in code in a mood, `'calm'`, `'mystery'`, `'tense'`, `'battle'` or `'triumph'`, and loops it; `{ mood, seed, tempo, bars }` chooses more. A new piece fades the old one out. `game.music.intensity` (0 to 1, 0.5 unless set) brings in its parts: held chords always, then a bass, drums and a tune; set it as the moment grows, and it follows over a second or so. `game.music.volume` (0.6) and `game.music.stop(seconds)`. Like sound, it is heard after the first key or click; a pause holds it and a restart stops it.
 
 ## Overlap
 

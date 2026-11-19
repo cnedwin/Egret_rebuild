@@ -139,8 +139,8 @@ async function until(page, stage, test, label, seconds = 20) {
 }
 const sounds = page => page.evaluate(() => globalThis.__soundsStarted);
 
-async function scenario(name, game, width, height, body) {
-  const owned = await browser.newContext({ viewport: { width: 960, height: 640 } }),
+async function scenario(name, game, width, height, body, context = {}) {
+  const owned = await browser.newContext({ viewport: { width: 960, height: 640 }, ...context }),
     page = await owned.newPage(),
     row = { name, status: 'INCOMPLETE', errors: [] };
   report.cases.push(row);
@@ -472,6 +472,63 @@ await scenario(
       10
     );
   }
+);
+
+await scenario(
+  'story on a phone: the stick and the button on the glass walk the yard and answer, and the music plays',
+  'story',
+  480,
+  300,
+  async (page, stage) => {
+    const CHOSEN = 0xfacc15,
+      PANEL = 0x0b1020,
+      LIT = 0xfacc15;
+    const boxOpen = look => alike(look(240, 260), PANEL, 3);
+    // Fingers through the browser's protocol: each touch has its own identifier, as on a phone.
+    const cdp = await page.context().newCDPSession(page);
+    const touch = (type, points) =>
+      cdp.send('Input.dispatchTouchEvent', {
+        type,
+        touchPoints: points.map(([x, y, id]) => {
+          const [px, py] = stage.at(x, y);
+          return { x: px, y: py, id };
+        })
+      });
+    const tap = async (x, y) => {
+      await touch('touchStart', [[x, y, 1]]);
+      await page.waitForTimeout(60);
+      await touch('touchEnd', []);
+      await page.waitForTimeout(200);
+    };
+    await until(page, stage, look => alike(look(240, 139), CHOSEN), 'the title menu', 10);
+    // The first touch shows the controls; the menu is taken by a tap on its first item.
+    await tap(240, 139);
+    await until(page, stage, boxOpen, 'the box of words', 10);
+    // The button on the glass is Space: it shows the words, then the first answer is tapped.
+    await tap(430, 230);
+    await until(page, stage, look => alike(look(400, 136), CHOSEN), 'the answers', 10);
+    await tap(400, 136);
+    await page.waitForTimeout(800);
+    await tap(430, 230);
+    await page.waitForTimeout(300);
+    await tap(430, 230);
+    await until(page, stage, look => !boxOpen(look), 'the box closing', 10);
+    // A finger holds the stick to the right, and a second finger presses the button meanwhile.
+    await touch('touchStart', [[76, 224, 2]]);
+    await touch('touchMove', [[120, 224, 2]]);
+    await until(page, stage, look => alike(look(180, 230), LIT), 'the first lantern lit by the stick', 15);
+    await touch('touchStart', [
+      [120, 224, 2],
+      [430, 230, 3]
+    ]);
+    await touch('touchEnd', [[120, 224, 2]]);
+    await touch('touchMove', [[120, 224, 2]]);
+    await until(page, stage, boxOpen, 'every lantern lit and the ending', 20);
+    await touch('touchEnd', []);
+    // Four parts of the music and the effects were started.
+    assert.ok((await sounds(page)) >= 8, 'the music and the effects were heard: ' + (await sounds(page)));
+  },
+  { hasTouch: true, isMobile: true }
 );
 
 await scenario(
