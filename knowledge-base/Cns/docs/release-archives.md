@@ -8,7 +8,7 @@
 | --- | --- |
 | 从可编辑的 2D 游戏开始 | [入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-first-game.zip) |
 | 给已有网页加入引擎 | [浏览器文件与许可证](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip)。2D 可选 [`egret2d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret2d.js) 或 [`egret2d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret2d.mjs)，包含 World3D 的版本可选 [`egret3d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret3d.js) 或 [`egret3d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret3d.mjs)。 |
-| 在现有 npm 工程中导入模块 | 从 npm 注册表运行 `npm install @egret/engine@next`，或使用归档：[`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-engine-7.0.1-rc.3.tgz)、[`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-contracts-7.0.1-rc.3.tgz)、[`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-runtime-7.0.1-rc.3.tgz)、[`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-project-7.0.1-rc.3.tgz)、[`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-spine-7.0.1-rc.3.tgz) |
+| 在现有 npm 工程中导入模块 | 运行 `npm install @egret/engine` 从 npm 注册表安装，或使用归档：[`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-engine-7.0.1-rc.3.tgz)、[`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-contracts-7.0.1-rc.3.tgz)、[`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-runtime-7.0.1-rc.3.tgz)、[`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-project-7.0.1-rc.3.tgz)、[`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-spine-7.0.1-rc.3.tgz) |
 
 [发行清单](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/release.json)记录源提交、文件大小及 SHA-256。下载浏览器单文件后，请放在游戏自己的站点或目录中提供给页面；分发游戏时一并保留浏览器归档里的许可声明。
 
@@ -22,13 +22,13 @@
 
 ## 使用 npm 安装
 
-本候选版已发布到公共 npm 注册表，标签为 `next`：
+五个白鹭 npm 包的 `latest` 和 `next` 标签目前都指向候选版 `7.0.1-rc.3`。使用默认标签 `latest` 安装引擎可运行以下命令。
 
 ```sh
-npm install @egret/engine@next
+npm install @egret/engine
 ```
 
-`@egret/engine` 会一并安装同一版本的 `@egret/contracts` 和 `@egret/runtime`。需要工程格式时加装 `@egret/project@next`，需要 Spine 时加装 `@egret/spine@next`。候选版不会发布为 `latest`，所以不带标签的 `npm install @egret/engine` 要等 7.0 正式版发布后才可用。
+`@egret/engine` 会一并安装同一版本的 `@egret/contracts` 和 `@egret/runtime`。需要工程格式时加装 `@egret/project`，需要 Spine 时加装 `@egret/spine`。要显式选择候选版标签，可运行 `npm install @egret/engine@next`。要在 `package.json` 中固定本版，可运行 `npm install --save-exact @egret/engine@7.0.1-rc.3`。
 
 同样的包也可以按归档地址从 GitHub Releases 安装，白鹭自己的包不经过注册表：
 
@@ -42,13 +42,13 @@ npm 会从同一发行版取得 `@egret/contracts` 和 `@egret/runtime`。需要
 
 npm 归档包含构建后的 `dist`、包的两份 README、`LICENSE` 和 `NOTICE`。仓库内的工作区包使用私有占位版本 `0.0.0`。归档的 `package.json` 写入候选版本号、可分发的文件列表和许可证；源码清单没有写许可证的包使用 Apache-2.0。公共入口和第三方依赖沿用源码中的声明。
 
-每个包打包两次。`egret-<名称>-<版本>.tgz` 将白鹭包之间的依赖固定为同一发行版的地址；发布到注册表的 `npm-egret-<名称>-<版本>.tgz` 则按同一版本号互相依赖。两者包含的文件相同，只有 `package.json` 不同。`release.json` 记录两者的大小和 SHA-256，以及注册表归档的 dist-tag。
+每个包打包两次。`egret-<名称>-<版本>.tgz` 将白鹭包之间的依赖固定为同一发行版的地址；发布到注册表的 `npm-egret-<名称>-<版本>.tgz` 则按同一版本号互相依赖。两者包含的文件相同，只有 `package.json` 不同。`release.json` 记录两者的大小和 SHA-256，以及归档首次发布到注册表时使用的标签。
 
 ## 制作一个发行版
 
 在准备发行的提交上创建并推送 `v<版本>` 标签。发行工作流从该标签取号，编译这一提交，用同一编号生成浏览器单文件、npm 归档和入门工程，再把全部文件附到同一份 GitHub Release。带预发行标识的版本在 GitHub 上标为候选版。
 
-GitHub Release 发布后，把 `release.json` 和五个 `npm-*.tgz` 归档下载到一个新目录，用有权向 `@egret` 发布的 npm 账号运行 `node tools/publish-registry.mjs --release <目录>`。它逐个核对归档与 `release.json` 的记录，按依赖顺序发布：候选版用 `next` 标签，不带预发行标识的版本用 `latest`。发布后再从注册表读回每个包的完整性校验值并比对。注册表上已有且字节相同的包会跳过，所以中断后可以重新运行。加 `--dry-run` 只显示 npm 将要上传的内容。
+GitHub Release 发布后，把 `release.json` 和五个 `npm-*.tgz` 归档下载到一个新目录，用有权向 `@egret` 发布的 npm 账号运行 `node tools/publish-registry.mjs --release <目录>`。它逐个核对归档与 `release.json` 的记录，按依赖顺序发布：候选版用 `next` 标签，不带预发行标识的版本用 `latest`。发布后再从注册表读回每个包的完整性校验值并比对。注册表上已有且字节相同的包会跳过，所以中断后可以重新运行。加 `--dry-run` 只显示 npm 将要上传的内容。`7.0.1-rc.3` 发布后，维护者单独将 `latest` 标签移到了该版本。
 
 本地演练五个 npm 归档的打包及安装可运行以下命令。
 
