@@ -1,0 +1,929 @@
+{
+  "schema": "egret.android.v8.native-allocation-profile/1",
+  "device": "Samsung Galaxy Z Fold7, arm64; cold start and held frame 210 on the #386 scene",
+  "collection": "One start per profile/encoder. The sole data source was android.heapprofd attached to the exact test application. Four independent 14.5 s traces sampled libc.malloc at 65,536 B with 1.5 s scheduled dumps and a 32 MiB client buffer. Standard and trimmed runs used their recorded APKs and unchanged GLES3 renderer.",
+  "units": "Allocation triples are [outstanding sampled bytes at the last dump, cumulative sampled allocations in bytes, cumulative sampled frees in bytes]. These are weighted allocator estimates. Sums are over signed callsite deltas. Caller classes partition each trace once. The V8 rows use distinct categories with a matched V8 ancestor; a graphics allocation made under a V8 callback may appear in the inclusive V8 table and the nearest-caller graphics table.",
+  "anchors": "The +4 s memory comparison is relative to the first device-boot-clock observation of held frame 210. Completed Perfetto packets were independently matched to their allocation timestamps and summed by callsite. A periodic dump can repeat a preceding sampled state; no new sampled event does not rule out allocations below the sampling interval. Distinct allocation epochs differ from collection timestamps.",
+  "symbols": {
+    "standard": {
+      "buildId": "343fd547910b112c5b04a73a1f9643e14dd665c0",
+      "sha256": "afe06611122bc61518456d6381693d34ae7e6023645571cf6d02bef0ad341a6a",
+      "file": "libjavet-v8-android-i18n.v.6.0.3.so"
+    },
+    "trimmed": {
+      "buildId": "c67a006787cd5d5fc25e8799b34d98e88f14bb80",
+      "sha256": "08de775896f1beedd6bc903216fd4be15d8857f88028fe6ef4e4d1dabb5ce3e0",
+      "file": "libjavet-v8-android.v.6.0.3.so"
+    }
+  },
+  "limits": "These traces identify observed CPU allocator paths only. They do not cover all mmap, ART, graphics memory or private driver internals. The unwinder reports partial stacks; entries use the visible portion only. V8 attribution requires a matching ELF GNU Build ID and executable relative PC. Missing JS frames prevent assignment to a particular JS method. Native live bytes, V8 malloced memory and process PSS are separate metrics. Sampling perturbs execution and one profile per combination cannot establish a repeatable change or a cache leak.",
+  "rejectedAttempts": [
+    {
+      "variant": "standardbase",
+      "sha256": "fa25ac1b8163221dbce26f3c11980048e3b32cc6dc59d7e4852eaaba0f34cee3",
+      "samplingBytes": 4096,
+      "firstToLastProfileMs": 195,
+      "bufferOverran": 1,
+      "clientError": 1,
+      "reason": "Client buffer overrun during startup; the held frame was never sampled."
+    },
+    {
+      "variant": "standardcandidate",
+      "sha256": "c2a0ce54762229cf99a532d9fcf91c37d0499e415509c73397818fb6a7045ea6",
+      "samplingBytes": 4096,
+      "firstToLastProfileMs": 142,
+      "bufferOverran": 1,
+      "clientError": 1,
+      "reason": "Client buffer overrun during startup; the held frame was never sampled."
+    },
+    {
+      "variant": "trimmedcandidate",
+      "sha256": "c8df885820862dfcab91e3c54adb27d4bb20f327787422be536e01ccec59640e",
+      "samplingBytes": 4096,
+      "firstToLastProfileMs": 167,
+      "bufferOverran": 1,
+      "clientError": 1,
+      "reason": "Client buffer overrun during startup; the held frame was never sampled."
+    },
+    {
+      "variant": "trimmedbase",
+      "sha256": "4b37d9ddcc0a5ac04ab7a30b71aa4104f870f2829bc2f1127cc05405f18a2aa8",
+      "samplingBytes": 4096,
+      "firstToLastProfileMs": 146,
+      "bufferOverran": 1,
+      "clientError": 1,
+      "reason": "Client buffer overrun during startup; the held frame was never sampled."
+    }
+  ],
+  "lanes": [
+    {
+      "variant": "standardbase",
+      "order": 1,
+      "apkSha256": "6c3fc8703e4b9e145bc9f160637d58285b03a8189c261bb7521a11dc04816a92",
+      "gameJsSha256": "5cebd3f3f34e677a5a71318d09cc8b70ab21f55e20c87346b7ff0a989313f499",
+      "rendererElfSha256": "7910c9681d253bc66089c79f34a96af06f9b6133bacb414c1a798bab74f513fe",
+      "privateTraceSha256": "df15a54d4f8001412445d8eab4ab347a0ac0a8d9bf022252bb9e1373ca68c8b9",
+      "traceBytes": 351244,
+      "sharedBufferBytes": 33554432,
+      "intervalBytes": 65536,
+      "importedDistinctAllocationEpochs": 4,
+      "completedPeriodicDumps": 10,
+      "matchedV8StackNodes": 3327,
+      "terminalProfileStats": {
+        "unwindingErrors": 3157,
+        "heapSamples": 3764,
+        "bufferOverrun": false,
+        "clientError": false
+      },
+      "sampledBytes": [
+        16361186,
+        277667133,
+        261305947
+      ],
+      "nearestNonAllocatorCaller": {
+        "Android managed/runtime": [
+          589824,
+          176530276,
+          175940452
+        ],
+        "other native/unknown": [
+          458752,
+          8848181,
+          8389429
+        ],
+        "Android graphics CPU stack": [
+          9497914,
+          16774004,
+          7276090
+        ],
+        "matching V8 ELF": [
+          5814696,
+          75514672,
+          69699976
+        ]
+      },
+      "inclusiveV8Partitions": {
+        "no matching V8 frame": [
+          7029952,
+          192345711,
+          185315759
+        ],
+        "V8 other": [
+          4311186,
+          29873790,
+          25562604
+        ],
+        "V8 zone without identified compiler frame": [
+          65536,
+          262144,
+          196608
+        ],
+        "V8 zone with compiler frame": [
+          3034704,
+          42151568,
+          39116864
+        ],
+        "V8 compiler without zone": [
+          393216,
+          7536640,
+          7143424
+        ],
+        "V8 backing store without zone/compiler": [
+          1526592,
+          5497280,
+          3970688
+        ]
+      },
+      "directV8Partitions": {
+        "V8 other": [
+          794648,
+          20067040,
+          19272392
+        ],
+        "V8 zone without identified compiler frame": [
+          65536,
+          262144,
+          196608
+        ],
+        "V8 zone with compiler frame": [
+          3034704,
+          42151568,
+          39116864
+        ],
+        "V8 compiler without zone": [
+          393216,
+          7536640,
+          7143424
+        ],
+        "V8 backing store without zone/compiler": [
+          1526592,
+          5497280,
+          3970688
+        ]
+      },
+      "heldPlus4s": {
+        "precedingPeriodicDumpAfterHeldMs": 3229,
+        "followingPeriodicDumpAfterHeldMs": 4730,
+        "lastPeriodicDumpAfterHeldMs": 11706,
+        "precedingDistinctSampleAfterHeldMs": 2745,
+        "followingDistinctSampleAfterHeldMs": 7833,
+        "netBytesAtPrecedingAndFollowingPeriodicDumpsAndLast": {
+          "total": 16361186,
+          "compilerZone": 3034704,
+          "compilerWithoutZone": 393216,
+          "directV8": 5814696,
+          "graphics": 9497914,
+          "backingStore": 1526592
+        },
+        "periodicDumps": [
+          [
+            -1281,
+            1,
+            -1335
+          ],
+          [
+            224,
+            2,
+            -123
+          ],
+          [
+            1728,
+            2,
+            -123
+          ],
+          [
+            3229,
+            3,
+            2745
+          ],
+          [
+            4730,
+            3,
+            2745
+          ],
+          [
+            6233,
+            3,
+            2745
+          ],
+          [
+            7735,
+            3,
+            2745
+          ],
+          [
+            9238,
+            4,
+            7833
+          ],
+          [
+            10740,
+            4,
+            7833
+          ],
+          [
+            11706,
+            4,
+            7833
+          ]
+        ],
+        "periodicDumpColumns": [
+          "completedMsAfterHeld",
+          "lastDistinctSampleEpoch",
+          "lastSampleMsAfterHeld"
+        ]
+      },
+      "illustrativeCompilerZoneStack": {
+        "outstandingBytes": 262144,
+        "frames": [
+          {
+            "elfRelativePc": "0x23a8fec",
+            "function": "v8::internal::AllocAtLeastWithRetry(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x23adc34",
+            "function": "v8::internal::AccountingAllocator::AllocateSegment(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x23af204",
+            "function": "v8::internal::Zone::Expand(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x23af428",
+            "function": "v8::internal::Zone::ExpandAndAllocate(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x25dfab8",
+            "function": "v8::internal::ZoneVector<v8::internal::compiler::PropertyAccessInfo>::operator=(v8::internal::ZoneVector<v8::internal::compiler::PropertyAccessInfo> const&)"
+          },
+          {
+            "elfRelativePc": "0x2cd4668",
+            "function": "v8::internal::compiler::AccessInfoFactory::FinalizePropertyAccessInfos(v8::internal::ZoneVector<v8::internal::compiler::PropertyAccessInfo>, v8::internal::compiler::AccessMode, v8::internal::ZoneVector<v8::internal::comp"
+          },
+          {
+            "elfRelativePc": "0x2563424",
+            "function": "v8::internal::maglev::MaybeReduceResult v8::internal::maglev::MaglevGraphBuilder::TryBuildLoadNamedProperty<v8::internal::maglev::MaglevGraphBuilder::TryBuildLoadNamedProperty(v8::internal::maglev::ValueNode*, v8::intern"
+          },
+          {
+            "elfRelativePc": "0x2563a90",
+            "function": "v8::internal::maglev::MaglevGraphBuilder::VisitGetNamedProperty()"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "standardcandidate",
+      "order": 2,
+      "apkSha256": "74b945adc71668e9498a8d257b0a3f7c55f1d3a6aae56aa1bc5989619325dbe4",
+      "gameJsSha256": "42615810885eba05b24a43d4c67576a1c41d2354dae4252446f0864c9aef42c9",
+      "rendererElfSha256": "7910c9681d253bc66089c79f34a96af06f9b6133bacb414c1a798bab74f513fe",
+      "privateTraceSha256": "47c7d01b9ef31761f0b7c67f8e289b75d6f70e4ec81f81e37aff73d9537f4637",
+      "traceBytes": 346627,
+      "sharedBufferBytes": 33554432,
+      "intervalBytes": 65536,
+      "importedDistinctAllocationEpochs": 3,
+      "completedPeriodicDumps": 10,
+      "matchedV8StackNodes": 3074,
+      "terminalProfileStats": {
+        "unwindingErrors": 2972,
+        "heapSamples": 3719,
+        "bufferOverrun": false,
+        "clientError": false
+      },
+      "sampledBytes": [
+        15882386,
+        272850089,
+        256967703
+      ],
+      "nearestNonAllocatorCaller": {
+        "other native/unknown": [
+          589824,
+          8258357,
+          7668533
+        ],
+        "matching V8 ELF": [
+          5532504,
+          68661568,
+          63129064
+        ],
+        "Android graphics CPU stack": [
+          9170234,
+          17888116,
+          8717882
+        ],
+        "Android managed/runtime": [
+          589824,
+          178042048,
+          177452224
+        ]
+      },
+      "inclusiveV8Partitions": {
+        "no matching V8 frame": [
+          6964416,
+          194903837,
+          187939421
+        ],
+        "V8 zone with compiler frame": [
+          3080192,
+          35822752,
+          32742560
+        ],
+        "V8 other": [
+          4049042,
+          29024044,
+          24975002
+        ],
+        "V8 compiler without zone": [
+          262144,
+          7602176,
+          7340032
+        ],
+        "V8 backing store without zone/compiler": [
+          1526592,
+          5497280,
+          3970688
+        ]
+      },
+      "directV8Partitions": {
+        "V8 zone with compiler frame": [
+          3080192,
+          35822752,
+          32742560
+        ],
+        "V8 other": [
+          663576,
+          19739360,
+          19075784
+        ],
+        "V8 compiler without zone": [
+          262144,
+          7602176,
+          7340032
+        ],
+        "V8 backing store without zone/compiler": [
+          1526592,
+          5497280,
+          3970688
+        ]
+      },
+      "heldPlus4s": {
+        "precedingPeriodicDumpAfterHeldMs": 3267,
+        "followingPeriodicDumpAfterHeldMs": 4769,
+        "lastPeriodicDumpAfterHeldMs": 11769,
+        "precedingDistinctSampleAfterHeldMs": -268,
+        "followingDistinctSampleAfterHeldMs": 7812,
+        "netBytesAtPrecedingAndFollowingPeriodicDumpsAndLast": {
+          "total": 15882386,
+          "compilerZone": 3080192,
+          "compilerWithoutZone": 262144,
+          "directV8": 5532504,
+          "graphics": 9170234,
+          "backingStore": 1526592
+        },
+        "periodicDumps": [
+          [
+            -1247,
+            1,
+            -1280
+          ],
+          [
+            261,
+            2,
+            -268
+          ],
+          [
+            1765,
+            2,
+            -268
+          ],
+          [
+            3267,
+            2,
+            -268
+          ],
+          [
+            4769,
+            2,
+            -268
+          ],
+          [
+            6271,
+            2,
+            -268
+          ],
+          [
+            7772,
+            2,
+            -268
+          ],
+          [
+            9275,
+            3,
+            7812
+          ],
+          [
+            10776,
+            3,
+            7812
+          ],
+          [
+            11769,
+            3,
+            7812
+          ]
+        ],
+        "periodicDumpColumns": [
+          "completedMsAfterHeld",
+          "lastDistinctSampleEpoch",
+          "lastSampleMsAfterHeld"
+        ]
+      },
+      "illustrativeCompilerZoneStack": {
+        "outstandingBytes": 196608,
+        "frames": [
+          {
+            "elfRelativePc": "0x23a8fec",
+            "function": "v8::internal::AllocAtLeastWithRetry(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x23adc34",
+            "function": "v8::internal::AccountingAllocator::AllocateSegment(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x23af204",
+            "function": "v8::internal::Zone::Expand(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x23af428",
+            "function": "v8::internal::Zone::ExpandAndAllocate(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x25af660",
+            "function": "std::__ndk1::pair<std::__ndk1::__tree_iterator<std::__ndk1::__value_type<v8::internal::maglev::ValueNode*, v8::internal::maglev::NodeInfo>, std::__ndk1::__tree_node<std::__ndk1::__value_type<v8::internal::maglev::ValueNo"
+          },
+          {
+            "elfRelativePc": "0x25ae69c",
+            "function": "v8::internal::maglev::KnownNodeAspects::KnownNodeAspects(v8::internal::maglev::KnownNodeAspects const&)"
+          },
+          {
+            "elfRelativePc": "0x2703cd4",
+            "function": "v8::internal::maglev::MergePointInterpreterFrameState::New(v8::internal::maglev::MaglevCompilationUnit const&, v8::internal::maglev::InterpreterFrameState const&, int, int, v8::internal::maglev::BasicBlock*, v8::internal"
+          },
+          {
+            "elfRelativePc": "0x254eb44",
+            "function": "v8::internal::maglev::MaglevGraphBuilder::MergeIntoFrameState(v8::internal::maglev::BasicBlock*, int)"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "trimmedcandidate",
+      "order": 3,
+      "apkSha256": "0ef72444cee854af76bde738e24ca8528dd7a60a84280a2880c18e61391145d5",
+      "gameJsSha256": "42615810885eba05b24a43d4c67576a1c41d2354dae4252446f0864c9aef42c9",
+      "rendererElfSha256": "7910c9681d253bc66089c79f34a96af06f9b6133bacb414c1a798bab74f513fe",
+      "privateTraceSha256": "bfbbafa18da08128c421b3e5a4ef0a7e3854ef8f3c8d4071c72f6c4cdd844f50",
+      "traceBytes": 354799,
+      "sharedBufferBytes": 33554432,
+      "intervalBytes": 65536,
+      "importedDistinctAllocationEpochs": 3,
+      "completedPeriodicDumps": 10,
+      "matchedV8StackNodes": 3239,
+      "terminalProfileStats": {
+        "unwindingErrors": 3162,
+        "heapSamples": 3693,
+        "bufferOverrun": false,
+        "clientError": false
+      },
+      "sampledBytes": [
+        22395010,
+        270282545,
+        247887535
+      ],
+      "nearestNonAllocatorCaller": {
+        "matching V8 ELF": [
+          11455304,
+          68322248,
+          56866944
+        ],
+        "Android graphics CPU stack": [
+          9694522,
+          18346868,
+          8652346
+        ],
+        "Android managed/runtime": [
+          393216,
+          174503104,
+          174109888
+        ],
+        "other native/unknown": [
+          851968,
+          9110325,
+          8258357
+        ]
+      },
+      "inclusiveV8Partitions": {
+        "V8 zone with compiler frame": [
+          7949904,
+          35101856,
+          27151952
+        ],
+        "V8 other": [
+          5429810,
+          30585268,
+          25155458
+        ],
+        "no matching V8 frame": [
+          6571200,
+          191102749,
+          184531549
+        ],
+        "V8 compiler without zone": [
+          851968,
+          8126464,
+          7274496
+        ],
+        "V8 backing store without zone/compiler": [
+          1592128,
+          5300672,
+          3708544
+        ],
+        "V8 zone without identified compiler frame": [
+          0,
+          65536,
+          65536
+        ]
+      },
+      "directV8Partitions": {
+        "V8 zone with compiler frame": [
+          7949904,
+          35101856,
+          27151952
+        ],
+        "V8 compiler without zone": [
+          851968,
+          8126464,
+          7274496
+        ],
+        "V8 other": [
+          1061304,
+          19727720,
+          18666416
+        ],
+        "V8 backing store without zone/compiler": [
+          1592128,
+          5300672,
+          3708544
+        ],
+        "V8 zone without identified compiler frame": [
+          0,
+          65536,
+          65536
+        ]
+      },
+      "heldPlus4s": {
+        "precedingPeriodicDumpAfterHeldMs": 3279,
+        "followingPeriodicDumpAfterHeldMs": 4782,
+        "lastPeriodicDumpAfterHeldMs": 11782,
+        "precedingDistinctSampleAfterHeldMs": -279,
+        "followingDistinctSampleAfterHeldMs": 7805,
+        "netBytesAtPrecedingAndFollowingPeriodicDumpsAndLast": {
+          "total": 22395010,
+          "compilerZone": 7949904,
+          "compilerWithoutZone": 851968,
+          "directV8": 11455304,
+          "graphics": 9694522,
+          "backingStore": 1592128
+        },
+        "periodicDumps": [
+          [
+            -1234,
+            1,
+            -1283
+          ],
+          [
+            273,
+            2,
+            -279
+          ],
+          [
+            1777,
+            2,
+            -279
+          ],
+          [
+            3279,
+            2,
+            -279
+          ],
+          [
+            4782,
+            2,
+            -279
+          ],
+          [
+            6284,
+            2,
+            -279
+          ],
+          [
+            7786,
+            2,
+            -279
+          ],
+          [
+            9288,
+            3,
+            7805
+          ],
+          [
+            10789,
+            3,
+            7805
+          ],
+          [
+            11782,
+            3,
+            7805
+          ]
+        ],
+        "periodicDumpColumns": [
+          "completedMsAfterHeld",
+          "lastDistinctSampleEpoch",
+          "lastSampleMsAfterHeld"
+        ]
+      },
+      "illustrativeCompilerZoneStack": {
+        "outstandingBytes": 262144,
+        "frames": [
+          {
+            "elfRelativePc": "0x225cf18",
+            "function": "v8::internal::AllocAtLeastWithRetry(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x2261b60",
+            "function": "v8::internal::AccountingAllocator::AllocateSegment(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x2263130",
+            "function": "v8::internal::Zone::Expand(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x2263354",
+            "function": "v8::internal::Zone::ExpandAndAllocate(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x22cf524",
+            "function": "void v8::internal::maglev::MaglevAssembler::CheckAndEmitDeferredWriteBarrier<(v8::internal::maglev::MaglevAssembler::StoreMode)0>(v8::internal::Register, std::__ndk1::conditional<(v8::internal::maglev::MaglevAssembler::S"
+          },
+          {
+            "elfRelativePc": "0x22cf220",
+            "function": "v8::internal::maglev::MaglevAssembler::StoreTaggedFieldWithWriteBarrier(v8::internal::Register, int, v8::internal::Register, v8::internal::maglev::RegisterSnapshot, v8::internal::maglev::MaglevAssembler::ValueIsCompresse"
+          },
+          {
+            "elfRelativePc": "0x25f12bc",
+            "function": "v8::internal::maglev::StoreTaggedFieldWithWriteBarrier::GenerateCode(v8::internal::maglev::MaglevAssembler*, v8::internal::maglev::ProcessingState const&)"
+          },
+          {
+            "elfRelativePc": "0x22e2844",
+            "function": "v8::internal::maglev::ProcessResult v8::internal::maglev::(anonymous namespace)::MaglevCodeGeneratingNodeProcessor::Process<v8::internal::maglev::StoreTaggedFieldWithWriteBarrier>(v8::internal::maglev::StoreTaggedFieldWi"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "trimmedbase",
+      "order": 4,
+      "apkSha256": "e09be2bd41d37c52afb53de0b55045ed8404823866ce9cd58fd352d12eb9fd78",
+      "gameJsSha256": "5cebd3f3f34e677a5a71318d09cc8b70ab21f55e20c87346b7ff0a989313f499",
+      "rendererElfSha256": "7910c9681d253bc66089c79f34a96af06f9b6133bacb414c1a798bab74f513fe",
+      "privateTraceSha256": "2127c783310d4f7308c91f91b1186df8b85b5ad126482d5a05cfe31070f0cd54",
+      "traceBytes": 383990,
+      "sharedBufferBytes": 33554432,
+      "intervalBytes": 65536,
+      "importedDistinctAllocationEpochs": 3,
+      "completedPeriodicDumps": 10,
+      "matchedV8StackNodes": 3440,
+      "terminalProfileStats": {
+        "unwindingErrors": 3028,
+        "heapSamples": 3756,
+        "bufferOverrun": false,
+        "clientError": false
+      },
+      "sampledBytes": [
+        20232322,
+        275296197,
+        255063875
+      ],
+      "nearestNonAllocatorCaller": {
+        "Android graphics CPU stack": [
+          10546490,
+          17560436,
+          7013946
+        ],
+        "Android managed/runtime": [
+          524288,
+          175219556,
+          174695268
+        ],
+        "matching V8 ELF": [
+          8375112,
+          74454456,
+          66079344
+        ],
+        "other native/unknown": [
+          786432,
+          8061749,
+          7275317
+        ]
+      },
+      "inclusiveV8Partitions": {
+        "no matching V8 frame": [
+          8340672,
+          191755887,
+          183415215
+        ],
+        "V8 other": [
+          4446770,
+          29403398,
+          24956628
+        ],
+        "V8 zone with compiler frame": [
+          5459536,
+          40316560,
+          34857024
+        ],
+        "V8 compiler without zone": [
+          589824,
+          8847360,
+          8257536
+        ],
+        "V8 zone without identified compiler frame": [
+          0,
+          131072,
+          131072
+        ],
+        "V8 backing store without zone/compiler": [
+          1395520,
+          4841920,
+          3446400
+        ]
+      },
+      "directV8Partitions": {
+        "V8 zone with compiler frame": [
+          5459536,
+          40316560,
+          34857024
+        ],
+        "V8 other": [
+          930232,
+          20317544,
+          19387312
+        ],
+        "V8 compiler without zone": [
+          589824,
+          8847360,
+          8257536
+        ],
+        "V8 zone without identified compiler frame": [
+          0,
+          131072,
+          131072
+        ],
+        "V8 backing store without zone/compiler": [
+          1395520,
+          4841920,
+          3446400
+        ]
+      },
+      "heldPlus4s": {
+        "precedingPeriodicDumpAfterHeldMs": 3293,
+        "followingPeriodicDumpAfterHeldMs": 4795,
+        "lastPeriodicDumpAfterHeldMs": 11787,
+        "precedingDistinctSampleAfterHeldMs": -264,
+        "followingDistinctSampleAfterHeldMs": 7804,
+        "netBytesAtPrecedingAndFollowingPeriodicDumpsAndLast": {
+          "total": 20232322,
+          "compilerZone": 5459536,
+          "compilerWithoutZone": 589824,
+          "directV8": 8375112,
+          "graphics": 10546490,
+          "backingStore": 1395520
+        },
+        "periodicDumps": [
+          [
+            -1222,
+            1,
+            -1296
+          ],
+          [
+            287,
+            2,
+            -264
+          ],
+          [
+            1790,
+            2,
+            -264
+          ],
+          [
+            3293,
+            2,
+            -264
+          ],
+          [
+            4795,
+            2,
+            -264
+          ],
+          [
+            6298,
+            2,
+            -264
+          ],
+          [
+            7799,
+            2,
+            -264
+          ],
+          [
+            9302,
+            3,
+            7804
+          ],
+          [
+            10804,
+            3,
+            7804
+          ],
+          [
+            11787,
+            3,
+            7804
+          ]
+        ],
+        "periodicDumpColumns": [
+          "completedMsAfterHeld",
+          "lastDistinctSampleEpoch",
+          "lastSampleMsAfterHeld"
+        ]
+      },
+      "illustrativeCompilerZoneStack": {
+        "outstandingBytes": 393216,
+        "frames": [
+          {
+            "elfRelativePc": "0x225cf18",
+            "function": "v8::internal::AllocAtLeastWithRetry(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x2261b60",
+            "function": "v8::internal::AccountingAllocator::AllocateSegment(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x2263130",
+            "function": "v8::internal::Zone::Expand(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x2263354",
+            "function": "v8::internal::Zone::ExpandAndAllocate(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x2492540",
+            "function": "v8::internal::ZoneVector<v8::internal::compiler::PropertyAccessInfo>::Grow(unsigned long)"
+          },
+          {
+            "elfRelativePc": "0x2a0a0fc",
+            "function": "v8::internal::compiler::AccessInfoFactory::MergePropertyAccessInfos(v8::internal::ZoneVector<v8::internal::compiler::PropertyAccessInfo>, v8::internal::compiler::AccessMode, v8::internal::ZoneVector<v8::internal::compile"
+          },
+          {
+            "elfRelativePc": "0x2a0a200",
+            "function": "v8::internal::compiler::AccessInfoFactory::FinalizePropertyAccessInfos(v8::internal::ZoneVector<v8::internal::compiler::PropertyAccessInfo>, v8::internal::compiler::AccessMode, v8::internal::ZoneVector<v8::internal::comp"
+          },
+          {
+            "elfRelativePc": "0x2416484",
+            "function": "v8::internal::maglev::MaybeReduceResult v8::internal::maglev::MaglevGraphBuilder::TryBuildLoadNamedProperty<v8::internal::maglev::MaglevGraphBuilder::TryBuildLoadNamedProperty(v8::internal::maglev::ValueNode*, v8::intern"
+          }
+        ]
+      }
+    }
+  ],
+  "observedDelta": {
+    "standard": {
+      "total": -478800,
+      "compilerZone": 45488,
+      "compilerWithoutZone": -131072,
+      "directV8": -282192,
+      "graphics": -327680,
+      "backingStore": 0
+    },
+    "trimmed": {
+      "total": 2162688,
+      "compilerZone": 2490368,
+      "compilerWithoutZone": 262144,
+      "directV8": 3080192,
+      "graphics": -851968,
+      "backingStore": 196608
+    }
+  },
+  "interpretation": "The matched compiler-zone stacks account for 2,490,368 B more retained sampled memory in the single trimmed reuse run; the standard reuse run differs by 45,488 B. All four +4 s bracketing dumps match their terminal net. Neither this sample nor the separate post-GC allocator intervention identifies the encoder as the owner of these bytes. Graphics rows came from CPU code on graphics-related stacks."
+}

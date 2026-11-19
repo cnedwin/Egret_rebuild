@@ -1,0 +1,1037 @@
+{
+  "schemaVersion": 1,
+  "device": {
+    "model": "SM-F966U1",
+    "product": "Galaxy Z Fold7",
+    "android": "17"
+  },
+  "method": "Private Android GLES3 Moon Herbarium benchmark. Both encoders share an installed APK and UID per V8 profile. Within each profile, before and reuse start different cold processes in each of two matched rounds (AB/BA). All five snapshots within a run observe the same live isolate, process and EGL context. The terminal frame remains held; no encoder records are cleared.",
+  "interventions": "The host schedules the probe four seconds after producing the 210th command packet. The V8 worker samples the held state, sleeps for 150 ms, samples again, calls the normal Javet 6.0.3 V8Runtime.await() once, samples, executes void 0 followed by await(), samples again, calls lowMemoryNotification() with records still held, and takes the final sample. Each sample queries V8 then Android memory. The production frame worker already calls await() after its job.",
+  "limits": "The first extra await result is recorded; the second return value is not captured. This is a single fixed stage order and idle workload on one device, with two pairs per profile. These comparisons cannot distinguish snapshot allocations from small process changes, measure individual call duration, predict frame cadence during play, or establish behavior under actual OS memory pressure. V8 low-memory notification is a distinct diagnostic intervention. Android Native Heap summary is private dirty malloc pages.",
+  "finding": "In all eight cold runs, the quiet period and additional await each changed V8 used heap and physical heap by zero bytes. The first extra await returned false in every run. The subsequent empty JavaScript evaluation and await increased used heap by 288 bytes with unchanged physical heap in every run. Only the final low-memory notification reduced both gauges in all eight. These results give no memory-reclamation reason to add recurring pumps or empty scripts to this host. They do not demonstrate the latency or suitability of forced collection during play.",
+  "provenance": {
+    "order": "The pump protocol reused the earlier AB/BA order for the allocator experiment. Only the order was shared.",
+    "defaultAwait": "The bundled Javet 6.0.3 V8Runtime.await() bytecode delegates to await(RunTillNoMoreTasks). The boolean is a return value, not a count of work or completed GC.",
+    "orderFileSha256": "5c5b08c63c93cd722dd3526d3446b1fe65a6a7141d497fa242d8111837ddbac4",
+    "hostFragmentSha256": "e3db7c15b4702062d1a9cb45999259f3445a37f2f0a1f92c9de887444b4140b0",
+    "artifacts": {
+      "standard": {
+        "originalAarSha256": "b886f5afb184619c547acba86eddc782342182c4af8055a662019faeccf0e763",
+        "diagnosticAarSha256": "f866611b691408adaadc3f7cebe76015cf2ffcafc1bd6b8cdc21ac694ab10bce",
+        "diagnosticApkSha256": "ee3f68d15e85510d15b47d8ae8ebc6e4ef535b3ebd0a65d15b26818554fd8707",
+        "bytes": 72760874,
+        "changedAarEntries": [
+          "classes.jar"
+        ],
+        "changedClasses": [
+          "org/egret/runtime/player/JavetProjectScripts.class",
+          "org/egret/runtime/player/JavetProjectScripts$Services.class"
+        ],
+        "stockAndDiagnosticNativeLibSha256": {
+          "lib/arm64-v8a/libjavet-v8-android-i18n.v.6.0.3.so": "7dc52a67f1c9d616bee50101ed8dfca9f7984021cf2aafbfad29f511093a9c71",
+          "lib/arm64-v8a/libegret_player.so": "7910c9681d253bc66089c79f34a96af06f9b6133bacb414c1a798bab74f513fe"
+        },
+        "packagedGameSha256": {
+          "assets/game/game-before.js": "5cebd3f3f34e677a5a71318d09cc8b70ab21f55e20c87346b7ff0a989313f499",
+          "assets/game/game.js": "42615810885eba05b24a43d4c67576a1c41d2354dae4252446f0864c9aef42c9"
+        },
+        "instrumentedJavaSha256": "49a41892ff907128fded3849fbd81aac024a04d80ae54d25ec785b97a5c98634",
+        "installVerificationReceiptSha256": "fe69298428101fff663c5fdc11612d8a193cdc412654a8c777e7a40cc0cb23ef"
+      },
+      "trimmed": {
+        "originalAarSha256": "08200f70de4c4ff13e04b56203243db93d3bc77c5a38a92ae235dc120ee23ffb",
+        "diagnosticAarSha256": "dfb855ead3d1205815eafc363688c54ad11cba98207e24c42fc5c58dde35129b",
+        "diagnosticApkSha256": "13f09986631aa75cbeafb89b8a262f2ebecfed85da14dfb028d18a1c21a704f6",
+        "bytes": 64923145,
+        "changedAarEntries": [
+          "classes.jar"
+        ],
+        "changedClasses": [
+          "org/egret/runtime/player/JavetProjectScripts.class",
+          "org/egret/runtime/player/JavetProjectScripts$Services.class"
+        ],
+        "stockAndDiagnosticNativeLibSha256": {
+          "lib/arm64-v8a/libegret_player.so": "7910c9681d253bc66089c79f34a96af06f9b6133bacb414c1a798bab74f513fe",
+          "lib/arm64-v8a/libjavet-v8-android.v.6.0.3.so": "13c79bcfda0cfa33045c3dff40456ece42e05e898a0694a924fc7a221fe1c22d"
+        },
+        "packagedGameSha256": {
+          "assets/game/game-before.js": "5cebd3f3f34e677a5a71318d09cc8b70ab21f55e20c87346b7ff0a989313f499",
+          "assets/game/game.js": "42615810885eba05b24a43d4c67576a1c41d2354dae4252446f0864c9aef42c9"
+        },
+        "instrumentedJavaSha256": "49a41892ff907128fded3849fbd81aac024a04d80ae54d25ec785b97a5c98634",
+        "installVerificationReceiptSha256": "5064a2ca1c6e65c524cc4b33c856b76d3c417c42eedc52f22fdc042d6df8ed64"
+      }
+    }
+  },
+  "phases": [
+    "held",
+    "quiet",
+    "ordinary-pump",
+    "empty-js-and-pump",
+    "collected-retained"
+  ],
+  "columns": [
+    "msFromHeldSample",
+    "v8UsedBytes",
+    "v8PhysicalBytes",
+    "v8TotalBytes",
+    "v8ExternalBytes",
+    "v8MallocedBytes",
+    "nativeAllocatedBytes",
+    "nativeFreeBytes",
+    "nativeHeapAppSummaryKiB",
+    "totalPssKiB",
+    "gfxAppSummaryKiB",
+    "anonPssRollupKiB"
+  ],
+  "rows": [
+    {
+      "round": 1,
+      "slot": 1,
+      "profile": "standard",
+      "mode": "before",
+      "pumpReturned": false,
+      "frames": 210,
+      "thermalStatus": [
+        0,
+        0
+      ],
+      "sourceReceiptSha256": "b21c12553590c042069ab21404d801872d3b6be7fe052314434e5af97bb25cea",
+      "samples": [
+        [
+          0,
+          6062024,
+          12226560,
+          12226560,
+          1481328,
+          1198468,
+          25169024,
+          7057216,
+          21824,
+          202157,
+          68024,
+          73971
+        ],
+        [
+          184,
+          6062024,
+          12226560,
+          12226560,
+          1481328,
+          1198468,
+          25242272,
+          6991456,
+          21840,
+          202295,
+          68024,
+          74130
+        ],
+        [
+          220,
+          6062024,
+          12226560,
+          12226560,
+          1481328,
+          1198468,
+          25313728,
+          6941632,
+          21908,
+          202399,
+          68024,
+          74234
+        ],
+        [
+          237,
+          6062312,
+          12226560,
+          12226560,
+          1481328,
+          1198468,
+          25385920,
+          6900224,
+          21976,
+          202503,
+          68024,
+          74338
+        ],
+        [
+          264,
+          1145080,
+          1581056,
+          1822720,
+          1387584,
+          49196,
+          23303920,
+          9084816,
+          21712,
+          190999,
+          68024,
+          62550
+        ]
+      ]
+    },
+    {
+      "round": 1,
+      "slot": 2,
+      "profile": "standard",
+      "mode": "reuse",
+      "pumpReturned": false,
+      "frames": 210,
+      "thermalStatus": [
+        0,
+        0
+      ],
+      "sourceReceiptSha256": "febca0fb6018684795b94852a57fbce5c5ef781ab127bfd2750237790575849c",
+      "samples": [
+        [
+          0,
+          4843284,
+          8560640,
+          8560640,
+          1564656,
+          3389204,
+          26729440,
+          6527424,
+          27984,
+          203436,
+          67392,
+          77088
+        ],
+        [
+          197,
+          4843284,
+          8560640,
+          8560640,
+          1564656,
+          3389204,
+          26800960,
+          6503136,
+          28028,
+          203559,
+          67392,
+          77284
+        ],
+        [
+          247,
+          4843284,
+          8560640,
+          8560640,
+          1564656,
+          3389204,
+          26872416,
+          6474112,
+          28104,
+          203675,
+          67392,
+          77396
+        ],
+        [
+          266,
+          4843572,
+          8560640,
+          8560640,
+          1564656,
+          3389204,
+          26944016,
+          6454928,
+          28176,
+          203783,
+          67392,
+          77500
+        ],
+        [
+          292,
+          1172192,
+          1564672,
+          1564672,
+          1387584,
+          49196,
+          22752832,
+          10765344,
+          25584,
+          193399,
+          67392,
+          66892
+        ]
+      ]
+    },
+    {
+      "round": 1,
+      "slot": 3,
+      "profile": "trimmed",
+      "mode": "reuse",
+      "pumpReturned": false,
+      "frames": 210,
+      "thermalStatus": [
+        0,
+        0
+      ],
+      "sourceReceiptSha256": "0a0f6e1385f38fe271142c174b315ddee13c75cfcafaf2a9b6f73f3130f4f63a",
+      "samples": [
+        [
+          0,
+          5159644,
+          8298496,
+          8298496,
+          1621944,
+          5553772,
+          29650192,
+          4451168,
+          30368,
+          205321,
+          67392,
+          79256
+        ],
+        [
+          192,
+          5159644,
+          8298496,
+          8298496,
+          1621944,
+          5553772,
+          29723376,
+          4402944,
+          30388,
+          205487,
+          67392,
+          79424
+        ],
+        [
+          226,
+          5159644,
+          8298496,
+          8298496,
+          1621944,
+          5553772,
+          29794832,
+          4353120,
+          30456,
+          205595,
+          67392,
+          79532
+        ],
+        [
+          244,
+          5159932,
+          8298496,
+          8298496,
+          1621944,
+          5553772,
+          29866432,
+          4338672,
+          30532,
+          205711,
+          67392,
+          79652
+        ],
+        [
+          269,
+          1162720,
+          1363968,
+          1564672,
+          1387584,
+          49196,
+          23268448,
+          10991632,
+          20836,
+          188371,
+          67392,
+          62024
+        ]
+      ]
+    },
+    {
+      "round": 1,
+      "slot": 4,
+      "profile": "trimmed",
+      "mode": "before",
+      "pumpReturned": false,
+      "frames": 210,
+      "thermalStatus": [
+        0,
+        0
+      ],
+      "sourceReceiptSha256": "80a02f16e42216126cce1052ddbe82b43c1de4d3748c486abdab262ebd166299",
+      "samples": [
+        [
+          0,
+          6044204,
+          11964416,
+          11964416,
+          1481328,
+          1198468,
+          24607472,
+          6513488,
+          20748,
+          198368,
+          67392,
+          72740
+        ],
+        [
+          196,
+          6044204,
+          11964416,
+          11964416,
+          1481328,
+          1198468,
+          24679008,
+          6477648,
+          20796,
+          198495,
+          67392,
+          72912
+        ],
+        [
+          243,
+          6044204,
+          11964416,
+          11964416,
+          1481328,
+          1198468,
+          24750464,
+          6446128,
+          20872,
+          198607,
+          67392,
+          73024
+        ],
+        [
+          262,
+          6044492,
+          11964416,
+          11964416,
+          1481328,
+          1198468,
+          24822064,
+          6407808,
+          20936,
+          198707,
+          67392,
+          73124
+        ],
+        [
+          288,
+          1136976,
+          1449984,
+          1560576,
+          1387584,
+          49196,
+          22740112,
+          8622592,
+          20688,
+          187115,
+          67392,
+          61308
+        ]
+      ]
+    },
+    {
+      "round": 2,
+      "slot": 1,
+      "profile": "trimmed",
+      "mode": "before",
+      "pumpReturned": false,
+      "frames": 210,
+      "thermalStatus": [
+        0,
+        0
+      ],
+      "sourceReceiptSha256": "3e52f3a43b9860f6a49fd54a0268e0b11e661e17a0ca76332391f8b667e0c89b",
+      "samples": [
+        [
+          0,
+          5892336,
+          11964416,
+          11964416,
+          1476120,
+          1198468,
+          24678640,
+          6640992,
+          21352,
+          199621,
+          67392,
+          73317
+        ],
+        [
+          198,
+          5892336,
+          11964416,
+          11964416,
+          1476120,
+          1198468,
+          24750304,
+          6576816,
+          21380,
+          199724,
+          67392,
+          73489
+        ],
+        [
+          246,
+          5892336,
+          11964416,
+          11964416,
+          1476120,
+          1198468,
+          24821760,
+          6545296,
+          21464,
+          199844,
+          67392,
+          73609
+        ],
+        [
+          266,
+          5892624,
+          11964416,
+          11964416,
+          1476120,
+          1198468,
+          24893952,
+          6506384,
+          21532,
+          199948,
+          67392,
+          73713
+        ],
+        [
+          293,
+          1136976,
+          1601536,
+          1822720,
+          1387584,
+          49196,
+          22829088,
+          8704208,
+          21332,
+          188456,
+          67392,
+          61932
+        ]
+      ]
+    },
+    {
+      "round": 2,
+      "slot": 2,
+      "profile": "trimmed",
+      "mode": "reuse",
+      "pumpReturned": false,
+      "frames": 210,
+      "thermalStatus": [
+        0,
+        0
+      ],
+      "sourceReceiptSha256": "eb99f738a96d4a8c59b573719d025d83c77f9b37eab36c0464d78c484848a2a2",
+      "samples": [
+        [
+          0,
+          5328628,
+          8298496,
+          8298496,
+          1642776,
+          7259252,
+          31174384,
+          4078192,
+          30908,
+          206015,
+          67392,
+          79909
+        ],
+        [
+          200,
+          5328628,
+          8298496,
+          8298496,
+          1642776,
+          7259252,
+          31246048,
+          4025664,
+          30964,
+          206154,
+          67392,
+          80101
+        ],
+        [
+          244,
+          5328628,
+          8298496,
+          8298496,
+          1642776,
+          7259252,
+          31317504,
+          3996640,
+          31048,
+          206282,
+          67392,
+          80225
+        ],
+        [
+          262,
+          5328916,
+          8298496,
+          8298496,
+          1642776,
+          7259252,
+          31389104,
+          3958320,
+          31120,
+          206394,
+          67392,
+          80337
+        ],
+        [
+          291,
+          1161724,
+          1449984,
+          1564672,
+          1387584,
+          49196,
+          22834288,
+          12527216,
+          20964,
+          188442,
+          67392,
+          62101
+        ]
+      ]
+    },
+    {
+      "round": 2,
+      "slot": 3,
+      "profile": "standard",
+      "mode": "reuse",
+      "pumpReturned": false,
+      "frames": 210,
+      "thermalStatus": [
+        0,
+        0
+      ],
+      "sourceReceiptSha256": "48fc1da81d7bd9430a70ffce5646503a4c6193329bfdaeaab7ae7a18dd502bb7",
+      "samples": [
+        [
+          0,
+          4861072,
+          8560640,
+          8560640,
+          1569864,
+          3389204,
+          26812784,
+          7690656,
+          28748,
+          204929,
+          67392,
+          77837
+        ],
+        [
+          199,
+          4861072,
+          8560640,
+          8560640,
+          1569864,
+          3389204,
+          26884384,
+          7626544,
+          28768,
+          205028,
+          67392,
+          78005
+        ],
+        [
+          243,
+          4861072,
+          8560640,
+          8560640,
+          1569864,
+          3389204,
+          26955840,
+          7595024,
+          28852,
+          205152,
+          67392,
+          78125
+        ],
+        [
+          261,
+          4861360,
+          8560640,
+          8560640,
+          1569864,
+          3389204,
+          27028032,
+          7556112,
+          28912,
+          205248,
+          67392,
+          78221
+        ],
+        [
+          290,
+          1173304,
+          1454080,
+          1564672,
+          1387584,
+          49196,
+          22829552,
+          11887552,
+          25800,
+          194328,
+          67392,
+          67077
+        ]
+      ]
+    },
+    {
+      "round": 2,
+      "slot": 4,
+      "profile": "standard",
+      "mode": "before",
+      "pumpReturned": false,
+      "frames": 210,
+      "thermalStatus": [
+        0,
+        0
+      ],
+      "sourceReceiptSha256": "c3642dd9efda89b52bd40bc9132c4eec40b7b9bf5278a3f1fe97444eaa8d3ac2",
+      "samples": [
+        [
+          0,
+          5942196,
+          12226560,
+          12226560,
+          1470912,
+          1153380,
+          24612016,
+          6725776,
+          20944,
+          200738,
+          67392,
+          73086
+        ],
+        [
+          191,
+          5942196,
+          12226560,
+          12226560,
+          1470912,
+          1153380,
+          24683680,
+          6673248,
+          20996,
+          200869,
+          67392,
+          73282
+        ],
+        [
+          226,
+          5942196,
+          12226560,
+          12226560,
+          1470912,
+          1153380,
+          24755136,
+          6641728,
+          21052,
+          200961,
+          67392,
+          73378
+        ],
+        [
+          248,
+          5942484,
+          12226560,
+          12226560,
+          1470912,
+          1153380,
+          24827328,
+          6602816,
+          21148,
+          201093,
+          67392,
+          73505
+        ],
+        [
+          276,
+          1143928,
+          1691648,
+          1822720,
+          1387584,
+          49196,
+          22835776,
+          8696960,
+          20804,
+          189381,
+          67392,
+          61569
+        ]
+      ]
+    }
+  ],
+  "summaryColumns": [
+    "beforeWithinProcessMedian",
+    "reuseWithinProcessMedian",
+    "medianPairedReuseMinusBefore"
+  ],
+  "summaryMeaning": "Each phase in summary measures the change from the immediately preceding phase, inside each run. Pairs match round within profile. With two observations the median is their mean. The millisecond column records snapshot times since held, including diagnostics and scheduling.",
+  "summary": {
+    "standard": {
+      "quiet": {
+        "v8UsedBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8PhysicalBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8ExternalBytes": [
+          0,
+          0,
+          0
+        ],
+        "nativeAllocatedBytes": [
+          72456,
+          71560,
+          -896
+        ],
+        "nativeHeapAppSummaryKiB": [
+          34,
+          32,
+          -2
+        ],
+        "totalPssKiB": [
+          134.5,
+          111,
+          -23.5
+        ]
+      },
+      "ordinary-pump": {
+        "v8UsedBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8PhysicalBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8ExternalBytes": [
+          0,
+          0,
+          0
+        ],
+        "nativeAllocatedBytes": [
+          71456,
+          71456,
+          0
+        ],
+        "nativeHeapAppSummaryKiB": [
+          62,
+          80,
+          18
+        ],
+        "totalPssKiB": [
+          98,
+          120,
+          22
+        ]
+      },
+      "empty-js-and-pump": {
+        "v8UsedBytes": [
+          288,
+          288,
+          0
+        ],
+        "v8PhysicalBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8ExternalBytes": [
+          0,
+          0,
+          0
+        ],
+        "nativeAllocatedBytes": [
+          72192,
+          71896,
+          -296
+        ],
+        "nativeHeapAppSummaryKiB": [
+          82,
+          66,
+          -16
+        ],
+        "totalPssKiB": [
+          118,
+          102,
+          -16
+        ]
+      },
+      "collected-retained": {
+        "v8UsedBytes": [
+          -4857894,
+          -3679718,
+          1178176
+        ],
+        "v8PhysicalBytes": [
+          -10590208,
+          -7051264,
+          3538944
+        ],
+        "v8ExternalBytes": [
+          -88536,
+          -179676,
+          -91140
+        ],
+        "nativeAllocatedBytes": [
+          -2036776,
+          -4194832,
+          -2158056
+        ],
+        "nativeHeapAppSummaryKiB": [
+          -304,
+          -2852,
+          -2548
+        ],
+        "totalPssKiB": [
+          -11608,
+          -10652,
+          956
+        ]
+      }
+    },
+    "trimmed": {
+      "quiet": {
+        "v8UsedBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8PhysicalBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8ExternalBytes": [
+          0,
+          0,
+          0
+        ],
+        "nativeAllocatedBytes": [
+          71600,
+          72424,
+          824
+        ],
+        "nativeHeapAppSummaryKiB": [
+          38,
+          38,
+          0
+        ],
+        "totalPssKiB": [
+          115,
+          152.5,
+          37.5
+        ]
+      },
+      "ordinary-pump": {
+        "v8UsedBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8PhysicalBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8ExternalBytes": [
+          0,
+          0,
+          0
+        ],
+        "nativeAllocatedBytes": [
+          71456,
+          71456,
+          0
+        ],
+        "nativeHeapAppSummaryKiB": [
+          80,
+          76,
+          -4
+        ],
+        "totalPssKiB": [
+          116,
+          118,
+          2
+        ]
+      },
+      "empty-js-and-pump": {
+        "v8UsedBytes": [
+          288,
+          288,
+          0
+        ],
+        "v8PhysicalBytes": [
+          0,
+          0,
+          0
+        ],
+        "v8ExternalBytes": [
+          0,
+          0,
+          0
+        ],
+        "nativeAllocatedBytes": [
+          71896,
+          71600,
+          -296
+        ],
+        "nativeHeapAppSummaryKiB": [
+          66,
+          74,
+          8
+        ],
+        "totalPssKiB": [
+          102,
+          114,
+          12
+        ]
+      },
+      "collected-retained": {
+        "v8UsedBytes": [
+          -4831582,
+          -4082202,
+          749380
+        ],
+        "v8PhysicalBytes": [
+          -10438656,
+          -6891520,
+          3547136
+        ],
+        "v8ExternalBytes": [
+          -91140,
+          -244776,
+          -153636
+        ],
+        "nativeAllocatedBytes": [
+          -2073408,
+          -7576400,
+          -5502992
+        ],
+        "nativeHeapAppSummaryKiB": [
+          -224,
+          -9926,
+          -9702
+        ],
+        "totalPssKiB": [
+          -11542,
+          -17646,
+          -6104
+        ]
+      }
+    }
+  }
+}

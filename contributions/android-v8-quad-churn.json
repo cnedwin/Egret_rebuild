@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/measurements/fold7-v8-fully-changing-quads.json",
+      "originRole": "Original 81-quad stress fixture, command and pixel oracle, package identities, and physical Fold7 paired encoder and dispatch timings. Independently produced with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-v8-record-memory.json",
+      "originRole": "Physical Fold7 process memory, V8 heap, and same-process allocator intervention measurements and package identity review. Independently produced with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-v8-quad-recheck.json",
+      "originRole": "Fresh Fold7 paired original-scene measurements, command tape, texture release and restored-viewport comparison. Independently produced with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-v8-native-allocation-stacks.json",
+      "originRole": "Process-scoped Fold7 native allocation stack summaries, profile completeness checks and offline library identity matching. Independently produced with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-v8-idle-pump.json",
+      "originRole": "Same-package Fold7 idle task and low-memory controls observed in separate cold starts for both V8 profiles. Independently produced with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
