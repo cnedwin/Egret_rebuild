@@ -4,6 +4,10 @@
 
 早期版本号标识工程检查点。工作区包仍使用私有版本 `0.0.0`，宿主协议为 1.0。各检查点的验收范围见其子系统契约和验证记录。
 
+## Play：图片与 3D 世界观感 — 2026-11-20
+
+`await game.image(url, { x, y, width, height, smooth })` 以中心放置 PNG，默认平滑，缩小时使用多级缩小副本；`smooth: false` 适合像素风。Play3D 的 `game.look('day' | 'dusk' | 'night' | 'fog' | 'snow')`（或部分参数对象）一次设定背景、上下天光、太阳和雾。
+
 ## Play：屏幕控件、手柄按键与代码合成音乐 — 2026-11-20
 
 `game.touchStick` 和 `game.touchButton` 在手机舞台上添加摇杆和按钮：摇杆计入 `keys.axis()`，按钮按住一个键，每根手指各自控制自己的控件。手柄按钮是名为 `pad:a` 等的键，十字键计入方向轴，并可操作对白框和菜单。`game.music.play(mood)` 用代码写出五种情绪的循环乐曲，`game.music.intensity` 逐步加入贝斯、鼓和旋律。第一次 `setup` 中等待的菜单或对白框现在会自行开始绘制画面，否则仍在 `setup` 结束后开始。对白框不再接收它打开之前就已按下的那次松开。

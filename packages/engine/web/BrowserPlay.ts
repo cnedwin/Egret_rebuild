@@ -5,7 +5,7 @@
 // shake, a flash and a hit stop. Everything is built from the public entries, which stay there for a game that
 // outgrows this one.
 import { EgretError } from '@egret/runtime';
-import { Sprite, animate } from '@egret/engine';
+import { Bitmap, Sprite, animate, createSharedMaterial2D } from '@egret/engine';
 import type { DisplayObject, Engine, Graphics, Motion, Scope } from '@egret/engine';
 import { createRandom, encodeWav } from '@egret/engine/kit';
 import type { Random } from '@egret/engine/kit';
@@ -172,6 +172,14 @@ export type PlayMotion<T extends object> = Motion<T> & {
   /** Resolves when the motion has finished or been stopped: `await game.tween(s).to({ x: 9 }, 0.2).done`. */
   readonly done: Promise<void>;
 };
+export interface PlayImageOptions {
+  readonly x?: number;
+  readonly y?: number;
+  readonly width?: number;
+  readonly height?: number;
+  readonly smooth?: boolean;
+  readonly layer?: 'ui' | 'world' | Sprite;
+}
 export interface PlayButtonOptions {
   readonly x: number;
   readonly y: number;
@@ -342,6 +350,13 @@ export interface PlayGame {
    * off, and `setup` runs again. Concurrent requests share one promise. Updates resume on success; a failed setup can be retried.
    */
   restart(): Promise<void>;
+  /**
+   * A picture from an address (a PNG beside the page, say), its middle at `x`, `y`, scaled to `width` and `height`.
+   * Given one of the two, it keeps its shape; given neither, its own size. It is smooth, and drawn from its smaller
+   * copies when small, unless `smooth: false`, which keeps every texel sharp, for pixel art. It goes on the world
+   * layer unless given another, and is a sprite to move, turn, fade and remove.
+   */
+  image(url: string, options?: PlayImageOptions): Promise<Sprite>;
   /** A bar of health, time or power, on the ui layer unless given another; set its `value` and it slides there. */
   bar(options: PlayBarOptions): PlayBar;
   /** A short notice at the top of the stage that fades after `seconds`; several stack. */
@@ -419,6 +434,9 @@ function codeOf(key: string): string {
   return key;
 }
 const SWIPE = 24;
+// A picture is smooth, and read from its smaller copies when drawn small; or sharp, every texel kept.
+const SMOOTH = createSharedMaterial2D({ filter: 'linear', mipmapFilter: 'linear' }),
+  SHARP = createSharedMaterial2D({});
 const PIECES = 256;
 
 type MixerLike = ReturnType<typeof createBrowserAudio>['mixer'];
@@ -1692,6 +1710,30 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     restart() {
       return disposed ? Promise.resolve() : runSetup(true);
+    },
+    async image(url, o = {}) {
+      if (typeof url !== 'string' || url === '') throw invalid('image takes the address of a picture');
+      if (o === null || typeof o !== 'object') throw invalid('the options of an image are an object');
+      const into = o.layer === undefined || o.layer === 'world' ? world : o.layer === 'ui' ? ui : o.layer;
+      if (!(into instanceof Sprite) || into.isDisposed) throw invalid("layer is 'ui', 'world' or a sprite");
+      const lease = await browser.loadTexture(url);
+      const holder = scope.use(new Sprite()),
+        picture = scope.use(new Bitmap(lease));
+      picture.sharedMaterial = o.smooth === false ? SHARP : SMOOTH;
+      const own = { width: picture.width, height: picture.height },
+        w = finite(o.width) && o.width > 0 ? o.width : undefined,
+        h = finite(o.height) && o.height > 0 ? o.height : undefined;
+      const sx = w !== undefined ? w / own.width : h !== undefined ? h / own.height : 1,
+        sy = h !== undefined ? h / own.height : sx;
+      picture.scaleX = sx;
+      picture.scaleY = sy;
+      picture.x = (-own.width * sx) / 2;
+      picture.y = (-own.height * sy) / 2;
+      holder.addChild(picture);
+      holder.x = finite(o.x) ? o.x : 0;
+      holder.y = finite(o.y) ? o.y : 0;
+      into.addChild(holder);
+      return holder;
     },
     bar: options => widgets.bar(options),
     toast: (words, options) => widgets.toast(words, options),

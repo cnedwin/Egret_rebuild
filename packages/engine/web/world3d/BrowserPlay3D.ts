@@ -252,6 +252,74 @@ export interface PlayBurst3D {
 type Body = PlayThing3D | DisplayObject;
 
 /** What `play3d` gives: everything `play` gives for the interface and the game's time, and a world of things. */
+export type PlayLookName3D = 'day' | 'dusk' | 'night' | 'fog' | 'snow';
+export interface PlayLook3D {
+  /** What is behind everything, and the colour of the fog. */
+  readonly background?: number;
+  /** The light from above and from below, and how strong it is. */
+  readonly sky?: number;
+  readonly ground?: number;
+  readonly light?: number;
+  readonly sun?: number;
+  readonly sunIntensity?: number;
+  /** The side the sun shines from, as `[x, y, z]`; y up. */
+  readonly sunFrom?: readonly [number, number, number];
+  /** How thick the air is: 0 is clear, 0.02 a haze, 0.06 a fog. */
+  readonly fog?: number;
+}
+/** The looks every game is given, by name. */
+export const PLAY_LOOKS_3D: Readonly<Record<PlayLookName3D, Required<PlayLook3D>>> = Object.freeze({
+  day: {
+    background: 0x8ec5ff,
+    sky: 0xcfe3ff,
+    ground: 0x4a5a3a,
+    light: 0.9,
+    sun: 0xfff4e0,
+    sunIntensity: 2.4,
+    sunFrom: [8, 16, 10],
+    fog: 0.006
+  },
+  dusk: {
+    background: 0xd98a62,
+    sky: 0xffc18a,
+    ground: 0x2b2238,
+    light: 0.7,
+    sun: 0xff9a5a,
+    sunIntensity: 2,
+    sunFrom: [16, 5, 6],
+    fog: 0.018
+  },
+  night: {
+    background: 0x0b1020,
+    sky: 0x3a4a78,
+    ground: 0x08080c,
+    light: 0.22,
+    sun: 0x9fb8ff,
+    sunIntensity: 0.35,
+    sunFrom: [-6, 14, 8],
+    fog: 0.015
+  },
+  fog: {
+    background: 0xb8c0c8,
+    sky: 0xdfe5ea,
+    ground: 0x6b7076,
+    light: 0.9,
+    sun: 0xffffff,
+    sunIntensity: 1,
+    sunFrom: [8, 16, 10],
+    fog: 0.06
+  },
+  snow: {
+    background: 0xdfe8f2,
+    sky: 0xe6eef8,
+    ground: 0x8a96a6,
+    light: 0.7,
+    sun: 0xfff8f0,
+    sunIntensity: 1.4,
+    sunFrom: [8, 14, 12],
+    fog: 0.025
+  }
+});
 export interface Play3DGame
   extends Omit<
     PlayGame,
@@ -263,6 +331,12 @@ export interface Play3DGame
   readonly sun: Light3D;
   /** The World3D app under the game, for what this does not cover. */
   readonly app: World3DApp;
+  /**
+   * The light and air of the world: `'day'`, `'dusk'`, `'night'`, `'fog'` or `'snow'`, or the parts of one to change:
+   * `{ background, sky, ground, light, sun, sunIntensity, sunFrom, fog }`, colours as `0xRRGGBB`, `sunFrom` the side
+   * the sun shines from as `[x, y, z]`, and `fog` its thickness, 0 for none. A restart keeps it.
+   */
+  look(look: PlayLookName3D | PlayLook3D): void;
   /** A box of this width, height and depth, its middle at the place given. */
   box(width: number, height: number, depth: number, color: number, at?: PlayPlace3D): PlayThing3D;
   /** A ball. */
@@ -439,11 +513,45 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     shakeAmount = 0,
     shakeLeft = 0,
     shakeSpan = 1;
+  // The side the sun shines from; a look changes it.
+  const sunFrom: [number, number, number] = [8, 16, 10];
+  const look = (given: PlayLookName3D | PlayLook3D): void => {
+    const chosen = typeof given === 'string' ? PLAY_LOOKS_3D[given] : given;
+    if (chosen === undefined || chosen === null || typeof chosen !== 'object')
+      throw invalid("look is 'day', 'dusk', 'night', 'fog' or 'snow', or { background, sky, ground, sun, fog }");
+    const hex = (value: unknown): value is number =>
+      Number.isInteger(value) && (value as number) >= 0 && (value as number) <= 0xffffff;
+    if (hex(chosen.background)) {
+      scene.background = linearColor3D(chosen.background);
+      if (scene.fog !== undefined) scene.fog = { ...scene.fog, color: linearColor3D(chosen.background) };
+    }
+    if (hex(chosen.sky)) setColor3D(sky.color, chosen.sky);
+    if (hex(chosen.ground)) setColor3D(sky.groundColor, chosen.ground);
+    if (finite(chosen.light) && chosen.light >= 0) sky.intensity = chosen.light;
+    if (hex(chosen.sun)) setColor3D(sun.color, chosen.sun);
+    if (finite(chosen.sunIntensity) && chosen.sunIntensity >= 0) sun.intensity = chosen.sunIntensity;
+    const from = chosen.sunFrom;
+    if (Array.isArray(from) && from.length === 3 && from.every(finite) && from[1]! > 0) {
+      sunFrom[0] = from[0]!;
+      sunFrom[1] = from[1]!;
+      sunFrom[2] = from[2]!;
+    }
+    if (finite(chosen.fog) && chosen.fog >= 0) {
+      const color = Array.isArray(scene.background)
+        ? (scene.background as readonly [number, number, number])
+        : linearColor3D(background);
+      scene.fog =
+        chosen.fog === 0
+          ? undefined
+          : { kind: 'exponential', color: [...color] as [number, number, number], density: chosen.fog };
+    }
+    settle();
+  };
   const settle = (): void => {
     eye.setPosition(base[0]! + shaken[0]!, base[1]! + shaken[1]!, base[2]! + shaken[2]!);
     eye.lookAt(aim[0]!, aim[1]!, aim[2]!);
     // The sun keeps its direction and stays over what is looked at, so its shadows are there.
-    sun.setPosition(aim[0]! + 8, aim[1]! + 16, aim[2]! + 10);
+    sun.setPosition(aim[0]! + sunFrom[0], aim[1]! + sunFrom[1], aim[2]! + sunFrom[2]);
     sun.lookAt(aim[0]!, aim[1]!, aim[2]!);
   };
   const camera: PlayCamera3D = {
@@ -642,6 +750,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
 
   const extend = (flat: PlayGame): Play3DGame => {
     const added: Partial<Play3DGame> = {
+      look,
       box(width, height, depth, color, at = {}) {
         admit();
         if (!above(width) || !above(height) || !above(depth))

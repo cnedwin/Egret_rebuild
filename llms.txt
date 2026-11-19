@@ -47,6 +47,7 @@ await play({
 | `game.sprite(g => …, layer?)` | A sprite with what the function draws around its own (0, 0) |
 | `game.text(words, { x, y, size, color, align, bold, baseline, layer })` | Text: `size` 24, `color` white, `align` `'left'`, `'center'` or `'right'`, `baseline` `'top'` or `'middle'` |
 | `game.button(words, { x, y, width, height, color, textColor, size, layer }, onTap)` | A button, its middle at (x, y); `button.label.text` changes its words |
+| `await game.image('hero.png', { x, y, width, height, smooth, layer })` | A picture from a file beside the page, its middle at (x, y); one of `width`, `height` keeps its shape. Smooth, and kept clean when drawn small; `smooth: false` for pixel art |
 | `game.remove(sprite)` | Takes it and what is in it off the stage |
 | `game.toFront(sprite)` | Puts it in front of the others of its layer |
 
@@ -415,6 +416,8 @@ function win(game) {
 | `game.burst(x, y, z, { color, count, speed, life, size, gravity })` | Throws small pieces out from a point |
 
 A thing has `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `scale`, `scaleX`, `scaleY`, `scaleZ`, `visible` and `color`, all of which can be set and tweened, and takes properties of your own. Without `follow`, set `game.camera.x`, `.y`, `.z` and call `game.camera.lookAt(x, y, z)`. `game.sun` lights the world and every thing casts and takes shadows: nothing to set. Shadows are drawn at the quality the device gets (`medium` or `high`); a software-rendered browser gets `low`, without them, and `game.app.setQuality('medium')` asks for them anyway. A turned thing is still tested as an upright box of its unturned size; `game.scene` and `game.app` are the World3D scene and app under it. There is no gravity: move things yourself, and use `pushOut` to stand them on one another.
+
+`game.look('dusk')` sets the light and air of the world: `'day'` (as it starts), `'dusk'`, `'night'`, `'fog'` or `'snow'`, or `{ background, sky, ground, light, sun, sunIntensity, sunFrom, fog }` to change parts of one; `fog` is its thickness, 0 clear, 0.02 a haze, 0.06 a fog.
 
 ```js
 const { play3d } = Egret;

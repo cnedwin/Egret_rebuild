@@ -66,12 +66,14 @@ export { createWorld3DStats } from './stats3D.js';
 export type { World3DStats, World3DStatsOptions } from './stats3D.js';
 export { createWorld3DOverlay } from './overlay3D.js';
 export type { World3DOverlay, World3DOverlayOptions } from './overlay3D.js';
-export { play3d, PlayThing3D } from './BrowserPlay3D.js';
+export { play3d, PlayThing3D, PLAY_LOOKS_3D } from './BrowserPlay3D.js';
 export type {
   Play3DGame,
   Play3DOptions,
   PlayBurst3D,
   PlayCamera3D,
   PlayFollow3D,
+  PlayLook3D,
+  PlayLookName3D,
   PlayPlace3D
 } from './BrowserPlay3D.js';

@@ -8,6 +8,7 @@ export type {
   PlayButton,
   PlayButtonOptions,
   PlayGame,
+  PlayImageOptions,
   PlayKeys,
   PlayMusic,
   PlayMotion,

@@ -76,6 +76,10 @@ The WebGL2 fragment shader now selects the directional cascade and its far edge 
 
 `game.sun` is the light of the day, with a soft light from the sky. It keeps its direction and stays over what the camera looks at. Every thing casts and takes shadows; nothing needs setting. They are drawn at the [quality](world3d-app.md#quality) the app chose for the device, `medium` or `high`; a software-rendered browser gets `low`, without shadows, and `game.app.setQuality('medium')` asks for them anyway.
 
+## The look of the world
+
+`game.look(name)` sets the light and the air at once: `'day'` (the look a game starts with), `'dusk'`, `'night'`, `'fog'` or `'snow'`. It changes the background, the colours and strength of the light from above and below, the colour, strength and side of the sun, and the fog, whose colour is the background's. An object `{ background, sky, ground, light, sun, sunIntensity, sunFrom, fog }` changes only the parts it names. `fog` is the thickness of exponential fog: 0 clear, 0.02 a haze, 0.06 a fog. `sunFrom` is the side the sun shines from as `[x, y, z]`, with y above 0. The look stays through a restart; the five are `PLAY_LOOKS_3D`. In a software-rendered browser the quality is `low`, without shadows or bloom, and the looks were checked there; hardware draws them with shadows.
+
 ## Tests
 
 | Ask | Answer |

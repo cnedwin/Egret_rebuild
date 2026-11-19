@@ -22,8 +22,8 @@ function files(dir) {
 }
 // M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
 const m15DeepClauses = {
-"packages/engine/web/BrowserPlay.ts":[{"operation":"import","kind":"value","members":["Sprite","animate"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["DisplayObject","Engine","Graphics","Motion","Scope"],"target":"@egret/engine"}],
-"packages/engine/dist/web/BrowserPlay.js":[{"operation":"import","kind":"value","members":["Sprite","animate"],"target":"@egret/engine"}],
+"packages/engine/web/BrowserPlay.ts":[{"operation":"import","kind":"value","members":["Bitmap","Sprite","animate","createSharedMaterial2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["DisplayObject","Engine","Graphics","Motion","Scope"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserPlay.js":[{"operation":"import","kind":"value","members":["Bitmap","Sprite","animate","createSharedMaterial2D"],"target":"@egret/engine"}],
 "packages/engine/dist/web/BrowserPlay.d.ts":[{"operation":"import","kind":"value","members":["Sprite"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["DisplayObject","Engine","Graphics","Motion","Scope"],"target":"@egret/engine"}],
 "packages/engine/web/playWidgets.ts":[{"operation":"import","kind":"value","members":["Sprite"],"target":"@egret/engine"}],
 "packages/engine/dist/web/playWidgets.js":[{"operation":"import","kind":"value","members":["Sprite"],"target":"@egret/engine"}],
