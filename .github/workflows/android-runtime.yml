@@ -50,7 +50,7 @@ jobs:
           for profile in standard trimmed; do
             node runtime-sdk/android/build.mjs "${host[@]}" --v8-profile "$profile" --output "$RUNNER_TEMP/apk/egret-runtime-$profile.apk"
           done
-      - name: Build the player AAR and both independent consumers
+      - name: Build the player AARs and standalone or embedded consumers
         shell: bash
         env:
           GRADLE_USER_HOME: ${{ runner.temp }}/egret-gradle
@@ -70,13 +70,27 @@ jobs:
             }
           }
           GRADLE
-          for layout in standalone embedded; do
-            app="$RUNNER_TEMP/game-$layout"
-            node runtime-sdk/android/player/create-app.mjs --layout "$layout" --id "org.egret.example.$layout" \
-              --aar "$RUNNER_TEMP/apk/egret-player.aar" --project runtime-sdk/examples/moon-herbarium \
+          for variant in standalone embedded standard trimmed; do
+            aar="$RUNNER_TEMP/apk/egret-player.aar"
+            layout="$variant"
+            if [[ "$variant" == standard || "$variant" == trimmed ]]; then
+              layout=embedded
+              aar="$RUNNER_TEMP/apk/egret-player-$variant.aar"
+              node runtime-sdk/android/player/build-aar.mjs --jdk "$JAVA_HOME" --ndk "$ANDROID_HOME/ndk/27.2.12479018" \
+                --rust-lib "$RUNNER_TEMP/native/aarch64-linux-android/release/libegret_runtime_native.a" \
+                --v8-profile "$variant" --v8-cache "$RUNNER_TEMP/apk/v8-cache" --out "$aar"
+            fi
+            app="$RUNNER_TEMP/game-$variant"
+            node runtime-sdk/android/player/create-app.mjs --layout "$layout" --id "org.egret.example.$variant" \
+              --aar "$aar" --project runtime-sdk/examples/moon-herbarium \
               --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --out "$app"
             "$RUNNER_TEMP/player-tools/gradle-8.9/bin/gradle" --init-script "$RUNNER_TEMP/central-mirror.gradle" -p "$app" assembleDebug
-            cp "$app/build/outputs/apk/debug/EgretGame-debug.apk" "$RUNNER_TEMP/apk/game-$layout.apk"
+            cp "$app/build/outputs/apk/debug/EgretGame-debug.apk" "$RUNNER_TEMP/apk/game-$variant.apk"
+            if [[ "$variant" == trimmed ]]; then
+              # Exercise the distributed AAR's Java/JNI retention rules in a consuming app.
+              echo "android.buildTypes.release { minifyEnabled true; proguardFiles getDefaultProguardFile('proguard-android-optimize.txt') }" >> "$app/build.gradle"
+              "$RUNNER_TEMP/player-tools/gradle-8.9/bin/gradle" --init-script "$RUNNER_TEMP/central-mirror.gradle" -p "$app" minifyReleaseWithR8
+            fi
           done
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:

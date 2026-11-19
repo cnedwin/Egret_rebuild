@@ -13,8 +13,31 @@ declare module '@egret/android-player-project' {
     readonly text?: string;
   }
 
+  export interface PlayerTextRun {
+    readonly text: string;
+    /** Font size in texture pixels, 1–256. */
+    readonly size: number;
+    readonly weight?: number;
+  }
+
+  export interface PlayerPaintedRun extends PlayerTextRun {
+    readonly x: number;
+    /** Top of the run's ascent box in texture pixels. */
+    readonly y: number;
+    readonly maxWidth: number;
+    /** A six-digit RGB color such as #fff0c9. */
+    readonly color: string;
+  }
+
+  export interface PlayerRaster {
+    loadPng(path: string, width: number, height: number, signal?: Pick<AbortSignal, 'aborted' | 'reason'>): Promise<ImageData2D>;
+    measureText(runs: readonly PlayerTextRun[]): readonly number[];
+    drawText(width: number, height: number, runs: readonly PlayerPaintedRun[]): ImageData2D;
+  }
+
   export interface PlayerServices {
     readonly engine: Engine;
+    readonly raster?: PlayerRaster;
     readonly scope: Scope;
     readonly signal: AbortSignal;
     publishPage(id: number, image: ImageData2D): { release(): boolean };
@@ -49,6 +72,7 @@ declare module '@egret/android-player-project' {
   }
 
   export interface NativePlayer {
+    raster?(request: string): string;
     page(id: number, width: number, height: number, rgbaBase64: string): void;
     releasePage(id: number): void;
     edit(initialText: string): void;

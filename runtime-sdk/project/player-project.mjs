@@ -3,6 +3,7 @@
 import { createEngine, copyImageData2DPixels } from '@egret/engine';
 import { encodeProjectFrame } from '../scene/project-frame.mjs';
 import { base64 } from '../scene/commands.mjs';
+import { createPlayerRaster } from './player-raster.mjs';
 
 export function createPlayerProject(definition, native) {
   const pageIds = new Map();
@@ -40,7 +41,7 @@ export function createPlayerProject(definition, native) {
     if (old && old.image === image) return old.handle;
     if (pageIds.has(image)) throw new Error('Texture already bound to another page');
     const bytes = copyImageData2DPixels(image);
-    native.page(id, image.width, image.height, base64(bytes));
+    native.page(id, image.width, image.height, typeof bytes.toBase64 === 'function' ? bytes.toBase64() : base64(bytes));
     if (old) pageIds.delete(old.image);
     const handle = pageHandle(id);
     pageIds.set(image, id);
@@ -86,7 +87,7 @@ export function createPlayerProject(definition, native) {
           if (stopped) return;
           scope = engine.createScope();
           game = await definition.create({
-            engine, scope, publishPage, signal: lifetime.signal,
+            engine, scope, publishPage, signal: lifetime.signal, raster: createPlayerRaster(native, lifetime.signal),
             edit: text => native.edit(text),
             state: value => native.state(JSON.stringify(value)),
             playSound: path => native.playSound(path)

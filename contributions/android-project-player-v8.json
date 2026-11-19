@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/Cns/docs/android-project-player-v8.md",
+      "originRole": "Bilingual Android project VM guide and handset measurement protocol. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/android-project-player-v8.md",
+      "originRole": "Bilingual Android project VM guide and handset measurement protocol. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/bundle-v8.mjs",
+      "originRole": "Android packaging adapter for checksum-pinned Javet dependencies. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/project-bootstrap.test.mjs",
+      "originRole": "Isolated timer and cancellation behavior checks. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerRaster.java",
+      "originRole": "Android image decoding and text rasterization service. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerTiming.java",
+      "originRole": "Bounded Android game-session CPU timing. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ScriptSession.java",
+      "originRole": "Shared game-script session, resource and binary frame bridge. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/v8/org/egret/runtime/player/JavetProjectScripts.java",
+      "originRole": "Egret session adapter for the public Javet API. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/v8/org/egret/runtime/player/ProjectV8Assets.java",
+      "originRole": "Embedded runtime asset and ICU data loading. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/v8/project-bootstrap.js",
+      "originRole": "Project timer and resource cancellation services for embedded V8. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-project-v8.json",
+      "originRole": "Measurements collected from signed Android game builds on a physical Galaxy Z Fold7. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/player-raster.mjs",
+      "originRole": "Project adapter for the Android raster service. Independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/android-project-player-v8.md",
+      "zh": "knowledge-base/Cns/docs/android-project-player-v8.md"
+    }
+  ]
+}

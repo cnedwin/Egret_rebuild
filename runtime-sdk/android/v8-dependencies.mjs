@@ -79,7 +79,7 @@ export async function prepareV8({profile, cache, working, jar, strip, run}) {
   const licenses = ['LICENSE', 'LICENSE.node', 'LICENSE.v8'];
   const extracted = working('javet');
   await mkdir(extracted);
-  run(jar, ['xf', aar, 'classes.jar', upstreamLib, ...licenses.map(f => 'META-INF/' + f)], {cwd: extracted});
+  run(jar, ['xf', aar, 'classes.jar', 'proguard.txt', upstreamLib, ...licenses.map(f => 'META-INF/' + f)], {cwd: extracted});
   const entries = [];
   async function asset(from, relative) {
     await copyFile(from, working(relative));
@@ -100,5 +100,5 @@ export async function prepareV8({profile, cache, working, jar, strip, run}) {
   // Maven archives retain debugging sections. Apply the same release stripping to both profiles.
   run(strip, ['--strip-unneeded', '-o', working(libraryEntry), path.join(extracted, upstreamLib)]);
   await writeFile(working('assets/v8-profile.txt'), profile + '\n');
-  return {classes: path.join(extracted, 'classes.jar'), entries: [...entries, libraryEntry, 'assets/v8-profile.txt']};
+  return {classes: path.join(extracted, 'classes.jar'), consumerRules: path.join(extracted, 'proguard.txt'), entries: [...entries, libraryEntry, 'assets/v8-profile.txt']};
 }

@@ -29,8 +29,11 @@ try {
   await writeFile(path.join(work, 'settings.gradle'), "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }\ndependencyResolutionManagement { repositories { google(); mavenCentral() } }\nrootProject.name = 'EgretGame'\n");
   await writeFile(path.join(work, 'build.gradle'), [
     "plugins { id 'com.android.application' version '8.7.3' }",
+    "// The embedded Javet arm64 binaries require API 29. The System WebView AAR uses API 26.",
+    "def playerMinSdk = new java.util.zip.ZipFile(file('libs/egret-player.aar')).withCloseable { aar ->",
+    "    aar.getEntry('assets/egret-player-host.txt') == null ? 26 : 29", "}",
     "android {", "    namespace 'org.egret.example'", "    compileSdk 35", "    buildToolsVersion '35.0.0'",
-    "    defaultConfig {", "        applicationId '" + id + "'", "        minSdk 26",
+    "    defaultConfig {", "        applicationId '" + id + "'", "        minSdk playerMinSdk",
     "        targetSdk 35", "        versionCode 1", "        versionName '1.0'", "    }", "}",
     "dependencies { implementation files('libs/egret-player.aar') }", ""
   ].join('\n'));

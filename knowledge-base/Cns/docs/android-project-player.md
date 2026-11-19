@@ -2,7 +2,7 @@
 
 [English](../../en/docs/android-project-player.md) | 简体中文
 
-同一份 arm64 Android 库可以把可信的 JavaScript 或 TypeScript 游戏打成独立应用，也可以把游戏作为子视图放入已有 Activity。Android System WebView 运行随包脚本，Rust 通过 OpenGL ES 3 在可见的 `GLSurfaceView` 上绘制游戏。库声明的最低系统版本为 Android API 26，随包提供支持 GLES3 的 arm64 原生代码。脚本环境另需支持 ES2022 和 AbortController 的较新 Android System WebView。下文验证结论以实际跑过的配置为限。
+同一份 arm64 Android 库可以把可信的 JavaScript 或 TypeScript 游戏打成独立应用，也可以把游戏作为子视图放入已有 Activity。默认由 Android System WebView 运行随包脚本。使用播放器服务的游戏也可以选择[内置 V8](android-project-player-v8.md)。Rust 通过 OpenGL ES 3 在可见的 `GLSurfaceView` 上绘制游戏。库声明的最低系统版本为 Android API 26，随包提供支持 GLES3 的 arm64 原生代码。脚本环境另需支持 ES2022 和 AbortController 的较新 Android System WebView。下文验证结论以实际跑过的配置为限。
 
 ## 构建 AAR 和游戏应用
 
@@ -70,6 +70,6 @@ Rust 单元测试覆盖帧长度与取值检查、纹理标识、透明度转换
 
 2026 年 11 月 19 日，两款 Gradle 应用均在 Galaxy Z Fold7（Android 17、系统 WebView 157、Adreno 830）上运行。两份 APK 中的六个游戏文件和原生渲染库逐字节相同。两种模式下，通过 Android 注入点击完成药方，拖动列表滚动，系统键盘成功弹出，音效播放器启动并释放了一次音效。切到后台再返回，第二个 EGL 上下文恢复了四张纹理页。对照切后台前后的药材列表静态区域，独立版的 152,106 个像素和嵌入版的 103,500 个像素均无变化。宿主关闭游戏时归还了全部 14 份逻辑纹理，保留原生控件，随后成功重新打开游戏。本地调试构建中，AAR 为 701,200 字节，独立 APK 为 1,767,567 字节，宿主 APK 为 1,767,575 字节，均使用设备已有的系统 WebView。本轮覆盖功能及生命周期，未测帧速、实际听感和真人输入法组词。[真机与构建产物记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-player.json)
 
-此前的 EGR1 样板另有带 Intl 和不带 Intl 的 Javet/V8 两种可选构建、冻结命令回放及 Galaxy Z Fold7 的耗时和 PSS 记录。该数据对应原样板及其脚本宿主。本项目播放器 AAR 使用设备自带的 Android System WebView。[原样板与实机记录](runtime-sdk-v8-fold7.md)
+此前的 EGR1 样板另有带 Intl 和不带 Intl 的 Javet/V8 两种可选构建、冻结命令回放及 Galaxy Z Fold7 的耗时和 PSS 记录。该数据对应原样板及其脚本宿主。上面的实机记录使用默认的系统 WebView 版 AAR。[原样板与实机记录](runtime-sdk-v8-fold7.md)
 
 项目适配器、Android 视图、Rust 渲染器和示例游戏均为本项目贡献。AAR 的 `assets/egret-player-licenses/` 包含项目 LICENSE/NOTICE，以及 Rust 标准库、NDK/工具链和 robust-predicates 的许可文件。发布应用时请保留这些文件及游戏自带资源适用的许可声明。
