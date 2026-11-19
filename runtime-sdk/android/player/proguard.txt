@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# The VM binds these names outside ordinary Java call sites.
+-keepclasseswithmembernames,includedescriptorclasses class org.egret.runtime.player.** {
+    native <methods>;
+}
+-keepclassmembers class org.egret.runtime.player.** {
+    @android.webkit.JavascriptInterface <methods>;
+}

@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-19",
+  "project": "Moon Herbarium",
+  "platform": {
+    "model": "Samsung Galaxy Z Fold7",
+    "android": "17",
+    "systemWebView": "157.0.8103.50",
+    "systemGlesRenderer": "Qualcomm Adreno 830",
+    "scriptHost": "Android System WebView",
+    "surface": "Rust GLES3, opaque"
+  },
+  "build": {
+    "node": "26.7.0",
+    "gradle": "8.9",
+    "androidGradlePlugin": "8.7.3",
+    "abi": "arm64-v8a",
+    "aar": {
+      "bytes": 701200,
+      "sha256": "8e66aa3b22d5b1998f0fc6ef277c7765b234944c6420fa3c2146441397cad31d"
+    },
+    "nativeSha256": "7910c9681d253bc66089c79f34a96af06f9b6133bacb414c1a798bab74f513fe",
+    "identicalGameFileCount": 6,
+    "gameJsSha256": "9e97f143adbcacc443c17d258d1162c1af21dd027d0da012e2ddae0e504fae84"
+  },
+  "scope": "Hardware functional testing. Android shell-injected touch and text, actual Android IME visibility, compositor screenshots. Pixel counts cover the static inventory region before and after backgrounding in the same game state. No timing, audible playback or human IME composition assessment.",
+  "cases": {
+    "standalone": {
+      "apkBytes": 1767567,
+      "apkSha256": "5af041887950a46e1cb76b03d26acfd0f70a622be8f0b19e35bcb7d8bcf53215",
+      "start": {
+        "logicalPagesUploaded": 4,
+        "submitted": true
+      },
+      "nativeImeShown": true,
+      "contextsAfterResume": 2,
+      "staticInventoryRegionPixels": 152106,
+      "changedPixels": 0,
+      "audioStarts": 1,
+      "audioReleases": 1
+    },
+    "embedded": {
+      "apkBytes": 1767575,
+      "apkSha256": "328bc05f85b77cb27c8064cdd441f0dd3a1a22ec975b8e50de47f5231340d689",
+      "start": {
+        "logicalPagesUploaded": 4,
+        "submitted": true
+      },
+      "nativeImeShown": true,
+      "contextsAfterResume": 2,
+      "staticInventoryRegionPixels": 103500,
+      "changedPixels": 0,
+      "audioStarts": 1,
+      "audioReleases": 1,
+      "closed": {
+        "ordersFilled": 1,
+        "editedNamePreserved": true,
+        "logicalTexturesAcquired": 14,
+        "logicalTexturesReleased": 14,
+        "remainingPageSlotsRetired": 4,
+        "activeSounds": 0,
+        "abandonedContexts": 0
+      },
+      "reopenedWithFreshContext": true
+    }
+  }
+}

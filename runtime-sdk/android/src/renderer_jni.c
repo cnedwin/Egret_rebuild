@@ -4,7 +4,12 @@
 #include <stdint.h>
 #include "egret_runtime.h"
 
+// Both Android hosts compile the same buffer checks. Each library exports its own JNI namespace.
+#ifdef EGRET_ANDROID_PLAYER
+#define METHOD(name) Java_org_egret_runtime_player_PlayerGpu_##name
+#else
 #define METHOD(name) Java_org_egret_runtime_sample_Gpu_##name
+#endif
 
 JNIEXPORT jlong JNICALL METHOD(create)(JNIEnv *env, jclass cls) {
     return (jlong)(intptr_t)egret_renderer_create();

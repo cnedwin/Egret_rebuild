@@ -26,6 +26,17 @@ pub const RGBA: u32 = 0x1908;
 pub const RGBA8: i32 = 0x8058;
 pub const COLOR_BUFFER_BIT: u32 = 0x4000;
 pub const TRIANGLES: u32 = 0x0004;
+pub const FRAMEBUFFER: u32 = 0x8d40;
+pub const FRAMEBUFFER_COMPLETE: u32 = 0x8cd5;
+pub const COLOR_ATTACHMENT0: u32 = 0x8ce0;
+pub const SRGB8_ALPHA8: i32 = 0x8c43;
+pub const SRGB: i32 = 0x8c40;
+pub const BACK: u32 = 0x0405;
+pub const FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING: u32 = 0x8210;
+pub const BLEND: u32 = 0x0be2;
+pub const SCISSOR_TEST: u32 = 0x0c11;
+pub const ONE: u32 = 1;
+pub const ONE_MINUS_SRC_ALPHA: u32 = 0x0303;
 pub const DITHER: u32 = 0x0bd0;
 
 #[link(name = "GLESv3")]
@@ -44,7 +55,9 @@ extern "C" {
     pub fn glDeleteProgram(program: u32);
     pub fn glUseProgram(program: u32);
     pub fn glGetUniformLocation(program: u32, name: *const c_char) -> i32;
+    pub fn glUniform1f(location: i32, x: f32);
     pub fn glUniform1i(location: i32, value: i32);
+    pub fn glUniform4f(location: i32, x: f32, y: f32, z: f32, w: f32);
     pub fn glUniform2f(location: i32, x: f32, y: f32);
     pub fn glGenBuffers(count: i32, buffers: *mut u32);
     pub fn glBindBuffer(target: u32, buffer: u32);
@@ -64,6 +77,15 @@ extern "C" {
     pub fn glTexImage2D(target: u32, level: i32, format: i32, width: i32, height: i32,
                         border: i32, source_format: u32, ty: u32, data: *const c_void);
     pub fn glDeleteTextures(count: i32, textures: *const u32);
+    pub fn glGenFramebuffers(count: i32, names: *mut u32);
+    pub fn glDeleteFramebuffers(count: i32, names: *const u32);
+    pub fn glBindFramebuffer(target: u32, name: u32);
+    pub fn glFramebufferTexture2D(target: u32, attachment: u32, tex_target: u32, texture: u32, level: i32);
+    pub fn glGetFramebufferAttachmentParameteriv(target: u32, attachment: u32, pname: u32, value: *mut i32);
+    pub fn glCheckFramebufferStatus(target: u32) -> u32;
+    pub fn glScissor(x: i32, y: i32, width: i32, height: i32);
+    pub fn glBlendFunc(src: u32, dst: u32);
+    pub fn glEnable(capability: u32);
     pub fn glDisable(capability: u32);
     pub fn glViewport(x: i32, y: i32, width: i32, height: i32);
     pub fn glClearColor(r: f32, g: f32, b: f32, a: f32);

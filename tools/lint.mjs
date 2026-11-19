@@ -120,9 +120,9 @@ function reportAddedFiles(base) {
   for (let index = 0; index < count; index++) {
     const file = logicalPath(fields[index * 2 + 1]);
     const raw = /^:000000 ([0-7]{6}) 0{40} [a-f0-9]{40} A$/.exec(fields[index * 2]);
-    const stat = /^(\d+)\t0\t([\s\S]+)$/.exec(fields[count * 2 + index]);
-    const lines = Number(stat?.[1]);
-    if (!raw || stat?.[2] !== file || !Number.isSafeInteger(lines)) throw new Error('Invalid added-file diff.');
+    // Git reports two dashes for binary assets. Their paths still have to match the raw records.
+    const stat = /^(?:(\d+)\t0|-\t-)\t([\s\S]+)$/.exec(fields[count * 2 + index]);
+    if (!raw || stat?.[2] !== file) throw new Error('Invalid added-file diff.');
     if (raw[1] !== '100644' && raw[1] !== '100755') continue;
     if (!/^(?:packages|examples|tools|tests|devtools)\/.+\.(?:[cm]?js|tsx?)$/.test(file)) continue;
     if (
@@ -130,6 +130,8 @@ function reportAddedFiles(base) {
       /\.(?:generated\.[cm]?[jt]sx?|d\.[cm]?ts)$/.test(file)
     )
       continue;
+    const lines = Number(stat[1]);
+    if (!Number.isSafeInteger(lines)) throw new Error('Invalid added source line count: ' + file);
     checked++;
     if (lines > advisoryLines) warnings.push({ file, lines });
   }

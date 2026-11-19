@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/Cns/docs/android-project-player.md",
+      "originRole": "Android project player integration guide and device acceptance scope. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/android-project-player.md",
+      "originRole": "Android project player integration guide and device acceptance scope. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/AndroidManifest.xml",
+      "originRole": "Android player packaging, exporter or build contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/build-aar.mjs",
+      "originRole": "Android player packaging, exporter or build contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/GameActivity.java",
+      "originRole": "Android consumer example for a separately packaged game. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/GameInsets.java",
+      "originRole": "Android consumer example for a separately packaged game. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/LibraryActivity.java",
+      "originRole": "Android consumer example for a separately packaged game. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/create-app.mjs",
+      "originRole": "Android player packaging, exporter or build contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/export-project.mjs",
+      "originRole": "Android player packaging, exporter or build contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/export-project.test.mjs",
+      "originRole": "Android player packaging, exporter or build contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/proguard.txt",
+      "originRole": "Android player packaging, exporter or build contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/EgretPlayerView.java",
+      "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerAudio.java",
+      "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerGpu.java",
+      "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerGraphics.java",
+      "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerInput.java",
+      "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerScripts.java",
+      "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectAssets.java",
+      "originRole": "Embeddable Android game session, rendering surface and platform services. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/moon-herbarium/assets/botanicals.png",
+      "originRole": "Original pixel artwork for the Moon Herbarium example. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/moon-herbarium/assets/chime.wav",
+      "originRole": "Original synthesized prescription completion sound. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/moon-herbarium/assets/workshop.png",
+      "originRole": "Original pixel artwork for the Moon Herbarium example. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/moon-herbarium/herbarium.mjs",
+      "originRole": "Moon Herbarium game content and presentation for the shared Android player. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/moon-herbarium/index.html",
+      "originRole": "Moon Herbarium game content and presentation for the shared Android player. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/moon-herbarium/lettering.mjs",
+      "originRole": "Moon Herbarium game content and presentation for the shared Android player. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/moon-herbarium/main.mjs",
+      "originRole": "Moon Herbarium game content and presentation for the shared Android player. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/moon-herbarium/project.json",
+      "originRole": "Moon Herbarium game content and presentation for the shared Android player. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-project-player.json",
+      "originRole": "Sanitized Fold7 functional and package identity results for the two Android consumers. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/project_color.rs",
+      "originRole": "Rust GLES3 project rendering, compositing and texture conversion. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/project_gles.rs",
+      "originRole": "Rust GLES3 project rendering, compositing and texture conversion. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/android-player-project.d.ts",
+      "originRole": "Egret Android game-script adapter, declarations and lifecycle contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/player-project.mjs",
+      "originRole": "Egret Android game-script adapter, declarations and lifecycle contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/player-project.test.mjs",
+      "originRole": "Egret Android game-script adapter, declarations and lifecycle contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/project-frame.mjs",
+      "originRole": "Project-frame binary encoder and its correctness contract. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/scene/project-frame.test.mjs",
+      "originRole": "Project-frame binary encoder and its correctness contract. Independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/android-project-player.md",
+      "zh": "knowledge-base/Cns/docs/android-project-player.md"
+    }
+  ]
+}

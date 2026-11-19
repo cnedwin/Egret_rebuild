@@ -1,0 +1,24 @@
+{
+  "name": "Moon Herbarium",
+  "width": 360,
+  "height": 640,
+  "entry": "index.html",
+  "script": "main.mjs",
+  "pages": [
+    {
+      "id": 1,
+      "src": "assets/workshop.png",
+      "width": 328,
+      "height": 164
+    },
+    {
+      "id": 2,
+      "src": "assets/botanicals.png",
+      "width": 240,
+      "height": 60
+    }
+  ],
+  "assets": [
+    "assets/chime.wav"
+  ]
+}

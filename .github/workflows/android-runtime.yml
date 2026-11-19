@@ -27,7 +27,8 @@ jobs:
           npm install --global pnpm@11.25.0 --ignore-scripts
           pnpm install --frozen-lockfile --ignore-scripts
           node tools/build.mjs
-          node --test runtime-sdk/scene/scene.test.mjs
+          node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --strict --target ES2022 --module esnext --moduleResolution bundler runtime-sdk/project/android-player-project.d.ts
+          node --test runtime-sdk/scene/*.test.mjs runtime-sdk/project/*.test.mjs runtime-sdk/android/player/*.test.mjs
           esbuild=$(node -p "require('./examples/starter/release/package.json').devDependencies.esbuild")
           npm install --prefix "$RUNNER_TEMP/bundler" --no-save --ignore-scripts --no-audit --no-fund "esbuild@$esbuild"
           node runtime-sdk/scene/build.mjs --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --out "$RUNNER_TEMP/scene"
@@ -49,8 +50,38 @@ jobs:
           for profile in standard trimmed; do
             node runtime-sdk/android/build.mjs "${host[@]}" --v8-profile "$profile" --output "$RUNNER_TEMP/apk/egret-runtime-$profile.apk"
           done
+      - name: Build the player AAR and both independent consumers
+        shell: bash
+        env:
+          GRADLE_USER_HOME: ${{ runner.temp }}/egret-gradle
+        run: |
+          export JAVA_HOME="$JAVA_HOME_17_X64"
+          curl --fail --location --retry 2 https://services.gradle.org/distributions/gradle-8.9-bin.zip -o "$RUNNER_TEMP/gradle.zip"
+          echo "d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab  $RUNNER_TEMP/gradle.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP/player-tools"
+          node runtime-sdk/android/player/build-aar.mjs --jdk "$JAVA_HOME" --ndk "$ANDROID_HOME/ndk/27.2.12479018" \
+            --rust-lib "$RUNNER_TEMP/native/aarch64-linux-android/release/libegret_runtime_native.a" --out "$RUNNER_TEMP/apk/egret-player.aar"
+          # The hosted runner can miss Central artifacts which are present on Google's Central mirror.
+          cat > "$RUNNER_TEMP/central-mirror.gradle" <<'GRADLE'
+          settingsEvaluated { settings ->
+            settings.pluginManagement.repositories.maven {
+              name = 'MavenCentralGoogleMirror'
+              url = uri('https://maven-central.storage-download.googleapis.com/maven2/')
+            }
+          }
+          GRADLE
+          for layout in standalone embedded; do
+            app="$RUNNER_TEMP/game-$layout"
+            node runtime-sdk/android/player/create-app.mjs --layout "$layout" --id "org.egret.example.$layout" \
+              --aar "$RUNNER_TEMP/apk/egret-player.aar" --project runtime-sdk/examples/moon-herbarium \
+              --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --out "$app"
+            "$RUNNER_TEMP/player-tools/gradle-8.9/bin/gradle" --init-script "$RUNNER_TEMP/central-mirror.gradle" -p "$app" assembleDebug
+            cp "$app/build/outputs/apk/debug/EgretGame-debug.apk" "$RUNNER_TEMP/apk/game-$layout.apk"
+          done
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: egret-runtime-android-arm64-debug
-          path: ${{ runner.temp }}/apk/*.apk
+          path: |
+            ${{ runner.temp }}/apk/*.apk
+            ${{ runner.temp }}/apk/*.aar
           if-no-files-found: error

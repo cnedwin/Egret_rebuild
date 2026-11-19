@@ -4,6 +4,8 @@ English | [简体中文](../../Cns/docs/runtime-sdk.md)
 
 A game keeps its TypeScript entry point and asset manifest across export targets. The packager resolves host services at export time. It should identify the offending import and capability when game code depends on DOM elements, a browser-owned graphics context or an unavailable platform service. The public `@egret/runtime` TypeScript package retains its existing role. The native SDK has its own binary interface and compatibility profile.
 
+For the Android AAR, game export and Activity integration, see the [Android project player guide](android-project-player.md).
+
 ## Platform plan
 
 | Target | Build product | Host and first acceptance |

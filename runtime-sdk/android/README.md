@@ -4,6 +4,8 @@ English | [简体中文](README.zh-CN.md)
 
 This arm64 debug APK runs the shared 2D scene on a Rust GLES3 renderer. The packaged game runs in Android System WebView by default. Optional builds embed V8. Both script hosts send one encoded command buffer per frame to the native surface. Replay reads the frozen cycle directly. All paths use the same atlas, viewport and Rust executor.
 
+For an application built from your own game or a library embedded in an existing Activity, follow the [Android project player guide](../../knowledge-base/en/docs/android-project-player.md).
+
 ## Build
 
 Install the project Node version, JDK 17, Android platform 35, SDK Build Tools 35.0.0, Android NDK r27c, and Rust with the `aarch64-linux-android` target. Set `JAVA_HOME`, `ANDROID_HOME` and `ANDROID_NDK_HOME` to these installations. The Rust installation must include its matching `share/doc/rust/COPYRIGHT-library.html` for distribution. Build the JS workspace, then generate the scene in a fresh output directory using esbuild 0.28.2.
