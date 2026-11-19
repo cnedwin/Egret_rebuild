@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectBenchmark.java",
+      "originRole": "Opt-in fixed-step Android project-player benchmark session. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectReplayTape.java",
+      "originRole": "Bounded binary format for first-party EGR2 frames and their owned page generations. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectReplayTapeTest.java",
+      "originRole": "Host-JDK checks for immutable replay payloads and Android player classes. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-project-replay.json",
+      "originRole": "Physical Fold7 measurement and correctness record for a fixed 2D game workload. Independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

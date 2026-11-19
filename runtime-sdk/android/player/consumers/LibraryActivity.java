@@ -2,6 +2,7 @@
 package org.egret.example;
 
 import android.app.Activity;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -40,7 +41,7 @@ public final class LibraryActivity extends Activity {
         status.setText("Game library · Loading");
         toggle.setText("Close game");
         toggle.setEnabled(true);
-        player = new EgretPlayerView(this, "game", new EgretPlayerView.Listener() {
+        EgretPlayerView.Listener listener = new EgretPlayerView.Listener() {
             @Override public void onReady() { status.setText("Game library · Playing"); }
             @Override public void onError(String message) { status.setText("Game library · " + message); }
             @Override public void onClosed() {
@@ -51,7 +52,11 @@ public final class LibraryActivity extends Activity {
                 toggle.setText("Open game");
                 toggle.setEnabled(true);
             }
-        });
+        };
+        boolean debug = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        String mode = debug ? getIntent().getStringExtra("egret.benchmark") : null;
+        player = mode == null ? new EgretPlayerView(this, "game", listener)
+            : EgretPlayerView.forDebugBenchmark(this, "game", listener, mode, getIntent().getStringExtra("egret.replaySha256"));
         if (getIntent().getBooleanExtra("egret.timing", false)) player.setTimingEnabled(true);
         slot.addView(player);
         if (foreground) player.onResume();

@@ -2,6 +2,7 @@
 package org.egret.runtime.player;
 
 import android.app.Activity;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.Choreographer;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -38,6 +40,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     private GLSurfaceView surface;
     private PlayerGraphics graphics;
     private ScriptSession scripts;
+    private ProjectBenchmark benchmark;
     final PlayerTiming timing = new PlayerTiming();
     private String vmVersion, lastError;
     private Boolean vmIntl;
@@ -55,6 +58,19 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     volatile boolean ending;
 
     public EgretPlayerView(Activity activity, String projectAssetDir, Listener listener) {
+        this(activity, projectAssetDir, listener, null, null);
+    }
+
+    /** Run a fixed workload in a debuggable application. Files stay in the app's private storage. */
+    public static EgretPlayerView forDebugBenchmark(Activity activity, String projectAssetDir,
+                                                   Listener listener, String mode, String expectedCaptureSha256) {
+        if ((activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0)
+            throw new IllegalStateException("Project benchmarks require a debuggable app");
+        if (mode == null) throw new IllegalArgumentException("Missing project benchmark mode");
+        return new EgretPlayerView(activity, projectAssetDir, listener, mode, expectedCaptureSha256);
+    }
+
+    private EgretPlayerView(Activity activity, String projectAssetDir, Listener listener, String mode, String expectedDigest) {
         super(activity);
         mainThread();
         this.listener = listener != null ? listener : new Listener() {};
@@ -69,7 +85,9 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
             surface.setPreserveEGLContextOnPause(false);
             surface.setContentDescription("Egret game");
             controls = new PlayerInput(this, activity, surface, project);
-            scripts = BundledScripts.open(this, activity, project);
+            if (mode != null) benchmark = new ProjectBenchmark(mode, expectedDigest, activity.getFilesDir(), project.width, project.height);
+            scripts = benchmark != null && benchmark.replays()
+                ? benchmark.replaySession(this, project) : BundledScripts.open(this, activity, project);
         } catch (Exception | LinkageError e) { reportFailure("Cannot open Egret project: " + e); }
     }
 
@@ -182,7 +200,14 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         if (contextAtLastReady != graphics.contexts) {
             // Invalidate an outstanding JS or native callback when a context is
             // replaced outside Activity lifecycle (e.g. the window loses EGL).
-            if (contextAtLastReady != 0) { epoch++; busy = false; }
+            if (contextAtLastReady != 0) {
+                epoch++;
+                busy = false;
+                if (benchmark != null) {
+                    try { benchmark.newContext(); }
+                    catch (IOException error) { fail(error.getMessage()); return; }
+                }
+            }
             contextAtLastReady = graphics.contexts;
         }
         gpuReady = true;
@@ -190,7 +215,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     }
 
     private void schedule() {
-        if (!isPlaying() || !gpuReady || busy || scheduled) return;
+        if (!isPlaying() || !gpuReady || busy || scheduled || (benchmark != null && !benchmark.active())) return;
         scheduled = true;
         Choreographer.getInstance().postFrameCallback(tick);
     }
@@ -199,13 +224,19 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         scheduled = false;
         if (!isPlaying() || !gpuReady || busy) return;
         busy = true;
-        double elapsedMs = (elapsedNs + SystemClock.elapsedRealtimeNanos() - foregroundStartNs) / 1000000.0;
+        if (benchmark != null && benchmark.redrawTerminal(this)) return;
+        double elapsedMs = benchmark != null ? benchmark.elapsedMs() :
+            (elapsedNs + SystemClock.elapsedRealtimeNanos() - foregroundStartNs) / 1000000.0;
         timing.begin();
         scripts.frame(epoch, elapsedMs);
     }
 
     void enqueue(PlayerGraphics.Frame frame, long generationNs, long transferNs) {
         if (!isPlaying() || !gpuReady || !busy || frame.epoch != epoch) return;
+        if (benchmark != null) {
+            try { benchmark.enqueued(frame); }
+            catch (IOException error) { fail(error.getMessage()); return; }
+        }
         timing.script(generationNs, transferNs);
         timing.enqueued();
         graphics.enqueue(frame);
@@ -216,6 +247,10 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         if (token != epoch || !isPlaying() || !busy) return;
         busy = false;
         timing.submitted();
+        if (benchmark != null) {
+            try { benchmark.drawn(this); }
+            catch (IOException | RuntimeException error) { fail(error.toString()); return; }
+        }
         lastFrameId = frameId;
         frames++;
         if (!ready) {
@@ -227,7 +262,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         schedule();
     }
 
-    void input(JSONObject event) { if (isPlaying()) scripts.invoke("EgretPlayerProject.input(" + event + ")"); }
+    void input(JSONObject event) { if (benchmark == null && isPlaying()) scripts.invoke("EgretPlayerProject.input(" + event + ")"); }
     void editor(String initial) { if (isPlaying()) controls.edit(initial == null ? "" : initial); }
     void sound(byte[] bytes) { audio.play(bytes); }
     void projectState(String json) { if (!closed) listener.onState(json); }
@@ -263,8 +298,12 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
 
     void finishClose(String receipt, String error) {
         if (!ending || closed) return;
-        closed = true;
         ui.removeCallbacks(closeTimeout);
+        if (benchmark != null) {
+            final String sessionError = error;
+            if (benchmark.releaseOrWait(() -> finishClose(receipt, sessionError))) return;
+        }
+        closed = true;
         if (scripts != null) { scripts.destroy(); scripts = null; }
         if (surface != null) removeView(surface);
         if (receipt != null) {
@@ -276,7 +315,10 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     }
 
     /** Enable bounded frame timing for an explicit measurement run. */
-    public void setTimingEnabled(boolean enabled) { mainThread(); timing.setEnabled(enabled); }
+    public void setTimingEnabled(boolean enabled) {
+        mainThread();
+        timing.setEnabled(enabled && (benchmark == null || !benchmark.captures()));
+    }
 
     void vmDetails(String version, boolean intl) { vmVersion = version; vmIntl = intl; }
 
@@ -285,7 +327,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         mainThread();
         try {
             return new JSONObject().put("ready", ready).put("foreground", foreground).put("closed", closed)
-                .put("lastError", lastError).put("scriptHost", BundledScripts.PROFILE).put("vmVersion", vmVersion).put("intl", vmIntl)
+                .put("benchmark", benchmark == null ? null : benchmark.diagnostics())
+                .put("lastError", lastError).put("scriptHost", benchmark != null && benchmark.replays() ? "native-replay" : BundledScripts.PROFILE).put("vmVersion", vmVersion).put("intl", vmIntl)
                 .put("timing", timing.snapshot()).put("frames", frames).put("lastFrameId", lastFrameId).put("contexts", graphics == null ? 0 : graphics.contexts)
                 .put("uploads", graphics == null ? 0 : graphics.uploads).put("releases", graphics == null ? 0 : graphics.releases)
                 .put("abandoned", graphics == null ? 0 : graphics.abandoned).put("audioStarts", audio.starts)
