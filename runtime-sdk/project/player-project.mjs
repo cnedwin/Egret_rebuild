@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // One engine and root scope belong to one project view. Only captured Egret commands cross the bridge.
 import { createEngine, copyImageData2DPixels } from '@egret/engine';
-import { encodeProjectFrame } from '../scene/project-frame.mjs';
+import { createCapturedProjectEncoder } from '../scene/project-frame.mjs';
 import { base64 } from '../scene/commands.mjs';
 import { createPlayerRaster } from './player-raster.mjs';
 
 export function createPlayerProject(definition, native) {
+  const encoder = createCapturedProjectEncoder();
   const pageIds = new Map();
   const resident = new Map();
   const lifetime = new AbortController();
@@ -62,6 +63,7 @@ export function createPlayerProject(definition, native) {
       try { snapshot = { ...game?.closedSnapshot?.(), pagesReleased }; }
       catch (error) { failures.push(error); }
       finally {
+        encoder.clear();
         pageIds.clear();
         resident.clear();
         engine = scope = game = undefined;
@@ -114,7 +116,7 @@ export function createPlayerProject(definition, native) {
         engine.advanceTime(simulationSeconds);
         game.update?.(elapsedMs);
       }
-      const frame = encodeProjectFrame(engine.captureSharedFrame(frameOptions), frameId, pageIds);
+      const frame = encoder.encode(engine.captureSharedFrame(frameOptions), frameId, pageIds);
       frameId = (frameId + 1) >>> 0;
       return frame;
     },

@@ -107,3 +107,37 @@ The WebView player now sends four command bytes per signed 32-bit array element 
 With the diagnostic probe removed, six process-cold pairs alternated AB and BA on the same phone, WebView 157 and GLES3 renderer. Across runs, the median dispatch p95 went from 6.562 to 3.593 ms. Across matched pairs, the median absolute reduction was 2.894 ms and the median relative reduction was 44.1%. All six pairs improved. The acceptance rule fixed before measurement required at least four improved pairs, a median reduction of at least 0.500 ms and at least 10%. The median submission-callback interval p95 went from 11.024 to 8.930 ms. These are host-side timings; GPU execution, display presentation and power were outside this comparison.
 
 Both builds produced the same 2,483,048-byte capture for all 210 submissions. All 2,073,600 pixels of the held viewport matched before and after EGL recreation. Each build uploaded and released eight textures across two contexts and completed a separate ordinary close and reopen. [Paired samples, package identities and correctness results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-webview-bridge-pairs.json)
+
+### Embedded V8 command generation on Galaxy Z Fold7
+
+Moon Herbarium submitted 210 frames per launch at the fixed #386 logical times. Three diagnostic launches per V8 profile traced frames 30–209 on the same device. EGR2 quad encoding was the largest individual step in all six runs. It accounted for 24.7–30.8% of mean dispatch time on each run’s nine slowest dispatches. Capturing the display tree came second.
+
+Each cell below gives the range across three runs of the mean time on those same nine frames, in milliseconds. The Java-to-V8 invocation and its return are included in generation.
+
+| Host | Dispatch to worker | Game command generation | EGR2 encode (within generation) | VM result copy | Validate and snapshot | UI queue wait | UI handler to enqueue |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Standard | 0.108–0.159 | 0.959–1.941 | 0.377–0.751 | 0.126–0.277 | 0.008–0.017 | 0.089–0.161 | 0.008–0.011 |
+| Trimmed | 0.129–0.164 | 0.949–1.046 | 0.348–0.421 | 0.122–0.128 | 0.008–0.009 | 0.136–0.142 | 0.010–0.011 |
+
+Eight JS markers read the same Android monotonic clock as the worker and UI markers. Two batches of 96 empty calls per launch measured marker overhead. The median interval was 2.8 µs before the run and 17.1–23.3 µs afterward. All stage readings include that overhead. Dispatch, generation and copy reconstructed the existing per-frame timers within 0.5 µs. [Frame timestamps and marker calibration](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-v8-command-stages.json)
+
+A first candidate wrote quad fields directly into the packet. Its median paired generation gain was 72.5 µs (9.0%) on standard V8 and 90.5 µs (10.8%) on trimmed V8. Both fell short of the 100 µs threshold. The second candidate used a fresh six-pair comparison per profile with the same thresholds. [First candidate and raw samples](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-v8-direct-writer-pairs.json)
+
+The player remembers a quad after the same immutable engine command recurs at the same draw position. Subsequent captures can copy its private 64-byte EGR2 record if the material, viewport, atlas mapping, source dimensions and resident slot still match. Changed bindings are validated and encoded again. Continuously changing draw positions retain only the last command identity. Record storage is bounded by the current draw count (at most 256 KiB of record bytes plus metadata) and is cleared on encoding failure or project close. Each returned packet owns its bytes. Re-exporting changed the SDK code in game.js. Each profile used its original AAR, VM binary, native renderer, game source and assets.
+
+The formal comparison removed the stage probes and used six alternating, matched cold-start pairs per profile on the same Fold7. Values are medians of six run-level nearest-rank p95s, in milliseconds. A separate three-launch native replay read the same recorded commands and had a median dispatch p95 of 0.012 ms. Replay has no script generation or VM copy.
+
+| Host | Build | Generation p95 | Copy p95 | Dispatch to enqueue p95 | Submission interval p95 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Standard | Original | 0.834 | 0.142 | 1.276 | 8.727 |
+| Standard | Record reuse | 0.702 | 0.156 | 1.111 | 8.824 |
+| Trimmed | Original | 0.851 | 0.141 | 1.262 | 8.711 |
+| Trimmed | Record reuse | 0.759 | 0.160 | 1.151 | 8.754 |
+
+Standard V8 improved in 6/6 pairs, with median reductions of 0.152 ms and 17.8%. Trimmed V8 improved in 6/6 pairs, with median reductions of 0.114 ms and 13.2%. Each profile had to improve in at least four pairs, with a median gain of at least 0.100 ms and 10%. The paired median dispatch p95 had to hold or improve, and submission-interval p95 could rise by at most 0.250 ms. These host-side intervals cover dispatch through the submission callback. GPU execution, display presentation and power require separate measurements.
+
+Dispatch-to-enqueue p95 fell by a paired median of 0.166 ms for standard V8 and 0.117 ms for trimmed V8. Submission-callback interval p95 rose by 0.088 and 0.030 ms respectively, within the 0.250 ms guard. Median process PSS while holding the terminal frame was 7.1 MiB higher for standard V8 and 4.9 MiB higher for trimmed V8. These point-in-time process measurements do not isolate the memory used by the encoder.
+
+Both V8 profiles and both builds reproduced the #386 command and texture tape byte for byte (2,483,048 bytes). Each matched the 1,080 × 1,920 terminal viewport before and after EGL recreation, with eight total texture uploads and eight releases over two contexts. Ordinary interaction, close and reopen also passed. [Paired frame samples, replay and lifecycle receipts](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-v8-command-pairs.json)
+
+A separate Windows x64 Node control isolated the encoder with 81 quads and twelve cold-process pairs per workload. With one quad changing, median run p95 went from 106.85 to 18.45 µs. With every quad changing, it rose from 95.30 to 110.65 µs. These results characterize per-frame churn on the desktop CPU. The full-churn workload has no Fold7 timing in this comparison. [Desktop encoder control](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/desktop-egr2-record-reuse.json)
