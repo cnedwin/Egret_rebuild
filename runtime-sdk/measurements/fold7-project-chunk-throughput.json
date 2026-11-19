@@ -1,0 +1,3271 @@
+{
+  "schema": 1,
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "webview": "com.google.android.webview, 157.0.8103.50",
+    "systemGles": "GLES: Qualcomm, Adreno (TM) 830, OpenGL ES 3.2 V@0800.64.8"
+  },
+  "fixture": {
+    "bytes": 8388645,
+    "fnv": "5e0d25cd",
+    "sha256": "a99681d3a24dd8e55f77e002a27e4c408f1ae8f80be0f13c24831682212acf2a",
+    "compression": "deflate",
+    "packedBytes": 106960,
+    "apkEntry": "assets/game/levels/harbor.bin",
+    "priorDebugApkPackedBytes": 181502
+  },
+  "profiles": {
+    "webview": {
+      "builds": {
+        "A": {
+          "apkSha256": "ad72b86f24f8ee053e1a2afac134e5214c4d7d7033521c7773df5f3a58fc5382",
+          "aarSha256": "3f211f93333396fb0774e69292081600bfd20985b631d8ee53bf7cb1559b2c92",
+          "gameBundleSha256": "dc7fb750c0a8b7ef4ee7a2cb7628b2bbf27d1de6ea50d30d9536cae726626181",
+          "nativeLibraries": {
+            "lib/arm64-v8a/libegret_player.so": "02614404afa6be685be8852b84d14f9bcadb37fb4e47935190691790c88b2d40"
+          }
+        },
+        "B": {
+          "apkSha256": "1e340143f7037d9955a08f1891493b29acfeaee78cdbf5b751cef80af21de25f",
+          "aarSha256": "a92e69310cc10adf890ca4fbf0488d5f434a67019fbd703a9b1efdd3d5d2a9b2",
+          "gameBundleSha256": "dc7fb750c0a8b7ef4ee7a2cb7628b2bbf27d1de6ea50d30d9536cae726626181",
+          "nativeLibraries": {
+            "lib/arm64-v8a/libegret_player.so": "79770dec310d8ffcd0146e73eb86d2eab9a3e444a1a1bb521ad1767d110d9e66"
+          }
+        }
+      },
+      "timing": [
+        {
+          "block": 1,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                323,
+                323
+              ],
+              "readMs": [
+                228.7,
+                197.1,
+                180.6,
+                219.2,
+                192.7,
+                182.6,
+                165.2,
+                148.8,
+                146.7
+              ],
+              "verifyMs": [
+                27,
+                42.9,
+                35.9,
+                44.1,
+                39.4,
+                42.6,
+                41.6,
+                39.4,
+                44.2
+              ],
+              "medianMs": 182.6,
+              "medianMiBps": 43.812
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                323,
+                323
+              ],
+              "readMs": [
+                155.9,
+                181.7,
+                115.5,
+                131.7,
+                104.6,
+                104.4,
+                90.8,
+                110.1,
+                98.1
+              ],
+              "verifyMs": [
+                27,
+                46.3,
+                40.3,
+                40.3,
+                36.4,
+                33.6,
+                33.2,
+                30.2,
+                35.3
+              ],
+              "medianMs": 110.1,
+              "medianMiBps": 72.662
+            }
+          ],
+          "throughputChangePct": 65.849
+        },
+        {
+          "block": 2,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                324,
+                324
+              ],
+              "readMs": [
+                181.2,
+                138,
+                109.7,
+                109.7,
+                101.7,
+                130.1,
+                102.8,
+                107.8,
+                124.5
+              ],
+              "verifyMs": [
+                27.8,
+                41.3,
+                36,
+                35.3,
+                28.8,
+                36.6,
+                37.2,
+                33.9,
+                46.7
+              ],
+              "medianMs": 109.7,
+              "medianMiBps": 72.926
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                324,
+                324
+              ],
+              "readMs": [
+                217.1,
+                194.9,
+                187.1,
+                126.4,
+                137.8,
+                152.3,
+                140.2,
+                186.5,
+                147.9
+              ],
+              "verifyMs": [
+                32.2,
+                40.1,
+                42.1,
+                35.6,
+                43.6,
+                39.7,
+                33.1,
+                45.4,
+                45.2
+              ],
+              "medianMs": 152.3,
+              "medianMiBps": 52.528
+            }
+          ],
+          "throughputChangePct": 38.833
+        },
+        {
+          "block": 3,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                325,
+                325
+              ],
+              "readMs": [
+                124.6,
+                148.8,
+                117.1,
+                110,
+                105.2,
+                96.4,
+                109.5,
+                104.1,
+                98.2
+              ],
+              "verifyMs": [
+                27.5,
+                38.2,
+                33.8,
+                34.7,
+                37.4,
+                33.7,
+                40,
+                32.6,
+                38.7
+              ],
+              "medianMs": 109.5,
+              "medianMiBps": 73.06
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                325,
+                326
+              ],
+              "readMs": [
+                216.8,
+                248.3,
+                179,
+                221.2,
+                126,
+                150.4,
+                144.4,
+                161.1,
+                136.6
+              ],
+              "verifyMs": [
+                28,
+                39,
+                27.4,
+                39.9,
+                38.8,
+                38.6,
+                41.6,
+                43.3,
+                49.9
+              ],
+              "medianMs": 161.1,
+              "medianMiBps": 49.659
+            }
+          ],
+          "throughputChangePct": 47.123
+        },
+        {
+          "block": 4,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                326,
+                326
+              ],
+              "readMs": [
+                289.4,
+                179.7,
+                184.1,
+                120.4,
+                124.5,
+                169.6,
+                186.8,
+                189.5,
+                140.4
+              ],
+              "verifyMs": [
+                30.5,
+                43.8,
+                33.7,
+                40.5,
+                40.9,
+                41.5,
+                42,
+                40.5,
+                42.1
+              ],
+              "medianMs": 179.7,
+              "medianMiBps": 44.519
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                326,
+                326
+              ],
+              "readMs": [
+                199.3,
+                145.8,
+                151.1,
+                135,
+                106.5,
+                93.6,
+                105.6,
+                107.4,
+                102.3
+              ],
+              "verifyMs": [
+                28.7,
+                29.2,
+                29.2,
+                36.5,
+                34.8,
+                28.2,
+                35.5,
+                32.8,
+                33.4
+              ],
+              "medianMs": 107.4,
+              "medianMiBps": 74.488
+            }
+          ],
+          "throughputChangePct": 67.318
+        }
+      ],
+      "memory": [
+        {
+          "block": 1,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                330,
+                330
+              ],
+              "scans": 96,
+              "windowMs": 14650,
+              "insideSamples": 42,
+              "medianIntervalMs": 344.5,
+              "maxIntervalMs": 368,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 1,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 181749,
+                    "readingMax": 195961,
+                    "postMedian": 173097
+                  },
+                  "rssKiB": {
+                    "preMedian": 327800,
+                    "readingMax": 342016,
+                    "postMedian": 320124
+                  }
+                },
+                "boundRenderer1": {
+                  "pssKiB": {
+                    "preMedian": 46822,
+                    "readingMax": 71269,
+                    "postMedian": 71277
+                  },
+                  "rssKiB": {
+                    "preMedian": 155276,
+                    "readingMax": 180808,
+                    "postMedian": 180816
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 228571,
+                    "readingMax": 247367,
+                    "postMedian": 244536
+                  },
+                  "rssKiB": {
+                    "preMedian": 483076,
+                    "readingMax": 503892,
+                    "postMedian": 501100
+                  }
+                }
+              }
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                330,
+                330
+              ],
+              "scans": 96,
+              "windowMs": 12005,
+              "insideSamples": 35,
+              "medianIntervalMs": 344.5,
+              "maxIntervalMs": 365,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 1,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 179275,
+                    "readingMax": 196163,
+                    "postMedian": 167788
+                  },
+                  "rssKiB": {
+                    "preMedian": 325512,
+                    "readingMax": 342408,
+                    "postMedian": 314416
+                  }
+                },
+                "boundRenderer1": {
+                  "pssKiB": {
+                    "preMedian": 47146,
+                    "readingMax": 69849,
+                    "postMedian": 69449
+                  },
+                  "rssKiB": {
+                    "preMedian": 155748,
+                    "readingMax": 178536,
+                    "postMedian": 178136
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 226421,
+                    "readingMax": 246521,
+                    "postMedian": 237237
+                  },
+                  "rssKiB": {
+                    "preMedian": 481260,
+                    "readingMax": 501388,
+                    "postMedian": 492552
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "block": 2,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                341,
+                342
+              ],
+              "scans": 96,
+              "windowMs": 12910,
+              "insideSamples": 35,
+              "medianIntervalMs": 368.5,
+              "maxIntervalMs": 400.5,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 1,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 170985,
+                    "readingMax": 189006,
+                    "postMedian": 155393
+                  },
+                  "rssKiB": {
+                    "preMedian": 317232,
+                    "readingMax": 335256,
+                    "postMedian": 302116
+                  }
+                },
+                "boundRenderer1": {
+                  "pssKiB": {
+                    "preMedian": 47197,
+                    "readingMax": 69969,
+                    "postMedian": 69905
+                  },
+                  "rssKiB": {
+                    "preMedian": 155932,
+                    "readingMax": 178792,
+                    "postMedian": 178728
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 218182,
+                    "readingMax": 239145,
+                    "postMedian": 225494
+                  },
+                  "rssKiB": {
+                    "preMedian": 473164,
+                    "readingMax": 494156,
+                    "postMedian": 481036
+                  }
+                }
+              }
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                342,
+                342
+              ],
+              "scans": 96,
+              "windowMs": 16506,
+              "insideSamples": 42,
+              "medianIntervalMs": 388.5,
+              "maxIntervalMs": 416.5,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 1,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 179638,
+                    "readingMax": 195416,
+                    "postMedian": 168248
+                  },
+                  "rssKiB": {
+                    "preMedian": 325716,
+                    "readingMax": 341512,
+                    "postMedian": 314884
+                  }
+                },
+                "boundRenderer1": {
+                  "pssKiB": {
+                    "preMedian": 46415,
+                    "readingMax": 71139,
+                    "postMedian": 71383
+                  },
+                  "rssKiB": {
+                    "preMedian": 154760,
+                    "readingMax": 180136,
+                    "postMedian": 180412
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 226053,
+                    "readingMax": 245518,
+                    "postMedian": 239999
+                  },
+                  "rssKiB": {
+                    "preMedian": 480476,
+                    "readingMax": 500024,
+                    "postMedian": 495660
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "diagnostic": {
+        "A": {
+          "apkSha256": "21f9f36ef4649ce689c852d1ccae795e25f507834d9da4beee22b9b44c14ff76",
+          "aarSha256": "109d0f2b48aa7dc0630ff006f723c5e44ea52b62fad41afa047d45c9e6f90ba2",
+          "adapterBundleSha256": "dcac09e5bf95322cb6032e6c6c428de94348c8c01e4daeabfcdc563781b0843d",
+          "thermal": [
+            0,
+            0
+          ],
+          "units": "microseconds except counts, codec and instrumentedReadMs",
+          "runs": [
+            {
+              "id": 7,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2564,
+              "open": 144,
+              "read": 6545,
+              "encode": 48269,
+              "ownerQueue": 2828,
+              "nativeSpan": 60746,
+              "readyToTake": 19825,
+              "jsSubmitToCallback": 79600,
+              "jsTake": 47500,
+              "jsDecode": 9400,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 137.2
+            },
+            {
+              "id": 8,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 5787,
+              "open": 208,
+              "read": 12026,
+              "encode": 79583,
+              "ownerQueue": 5361,
+              "nativeSpan": 103735,
+              "readyToTake": 36957,
+              "jsSubmitToCallback": 140700,
+              "jsTake": 84200,
+              "jsDecode": 15600,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 241.6
+            },
+            {
+              "id": 9,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 3096,
+              "open": 146,
+              "read": 10323,
+              "encode": 72822,
+              "ownerQueue": 4773,
+              "nativeSpan": 91754,
+              "readyToTake": 29799,
+              "jsSubmitToCallback": 120300,
+              "jsTake": 67400,
+              "jsDecode": 15500,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 204.1
+            },
+            {
+              "id": 10,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2570,
+              "open": 157,
+              "read": 6691,
+              "encode": 51416,
+              "ownerQueue": 3360,
+              "nativeSpan": 64581,
+              "readyToTake": 20861,
+              "jsSubmitToCallback": 86000,
+              "jsTake": 46600,
+              "jsDecode": 9700,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 142.4
+            },
+            {
+              "id": 11,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2141,
+              "open": 155,
+              "read": 6959,
+              "encode": 54605,
+              "ownerQueue": 2917,
+              "nativeSpan": 67161,
+              "readyToTake": 19964,
+              "jsSubmitToCallback": 87000,
+              "jsTake": 46800,
+              "jsDecode": 10300,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 145
+            },
+            {
+              "id": 12,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2911,
+              "open": 148,
+              "read": 8188,
+              "encode": 58679,
+              "ownerQueue": 3698,
+              "nativeSpan": 74115,
+              "readyToTake": 24513,
+              "jsSubmitToCallback": 98000,
+              "jsTake": 57900,
+              "jsDecode": 11900,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 168.9
+            },
+            {
+              "id": 13,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2641,
+              "open": 155,
+              "read": 8895,
+              "encode": 62997,
+              "ownerQueue": 3824,
+              "nativeSpan": 79067,
+              "readyToTake": 25444,
+              "jsSubmitToCallback": 105300,
+              "jsTake": 55700,
+              "jsDecode": 13300,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 174.7
+            },
+            {
+              "id": 14,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 3260,
+              "open": 156,
+              "read": 8099,
+              "encode": 58740,
+              "ownerQueue": 3319,
+              "nativeSpan": 74046,
+              "readyToTake": 21401,
+              "jsSubmitToCallback": 96100,
+              "jsTake": 54700,
+              "jsDecode": 11600,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 162.5
+            },
+            {
+              "id": 15,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1976,
+              "open": 118,
+              "read": 5920,
+              "encode": 45232,
+              "ownerQueue": 2911,
+              "nativeSpan": 56503,
+              "readyToTake": 21397,
+              "jsSubmitToCallback": 77500,
+              "jsTake": 43600,
+              "jsDecode": 11300,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 132.7
+            }
+          ]
+        },
+        "B": {
+          "apkSha256": "ffc4daa82fe04986b8a682a566f0ff83108cdfe613bb4b19732ceb17dbdfa6c0",
+          "aarSha256": "2002161cd3ca26caf4d2e891eda690e2bd1c7cbe30c5e6185986b519a887a5d3",
+          "adapterBundleSha256": "dcac09e5bf95322cb6032e6c6c428de94348c8c01e4daeabfcdc563781b0843d",
+          "thermal": [
+            0,
+            0
+          ],
+          "units": "microseconds except counts, codec and instrumentedReadMs",
+          "runs": [
+            {
+              "id": 7,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2783,
+              "open": 128,
+              "read": 9288,
+              "encode": 36503,
+              "ownerQueue": 3498,
+              "nativeSpan": 52657,
+              "readyToTake": 29952,
+              "jsSubmitToCallback": 80400,
+              "jsTake": 63500,
+              "jsDecode": 13200,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 157.6
+            },
+            {
+              "id": 8,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2698,
+              "open": 146,
+              "read": 8450,
+              "encode": 33230,
+              "ownerQueue": 3877,
+              "nativeSpan": 48885,
+              "readyToTake": 23523,
+              "jsSubmitToCallback": 71900,
+              "jsTake": 57900,
+              "jsDecode": 12600,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 142.9
+            },
+            {
+              "id": 9,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 4817,
+              "open": 145,
+              "read": 10629,
+              "encode": 39750,
+              "ownerQueue": 4744,
+              "nativeSpan": 60858,
+              "readyToTake": 31668,
+              "jsSubmitToCallback": 92700,
+              "jsTake": 66500,
+              "jsDecode": 14400,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 174.8
+            },
+            {
+              "id": 10,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2092,
+              "open": 168,
+              "read": 7087,
+              "encode": 27605,
+              "ownerQueue": 3141,
+              "nativeSpan": 40505,
+              "readyToTake": 20341,
+              "jsSubmitToCallback": 62500,
+              "jsTake": 46500,
+              "jsDecode": 9700,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 118.9
+            },
+            {
+              "id": 11,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1971,
+              "open": 147,
+              "read": 6867,
+              "encode": 24901,
+              "ownerQueue": 2729,
+              "nativeSpan": 36993,
+              "readyToTake": 17878,
+              "jsSubmitToCallback": 54400,
+              "jsTake": 43300,
+              "jsDecode": 8600,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 106.7
+            },
+            {
+              "id": 12,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2027,
+              "open": 128,
+              "read": 6977,
+              "encode": 28212,
+              "ownerQueue": 2797,
+              "nativeSpan": 40609,
+              "readyToTake": 19713,
+              "jsSubmitToCallback": 61900,
+              "jsTake": 45000,
+              "jsDecode": 10600,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 117.9
+            },
+            {
+              "id": 13,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2220,
+              "open": 151,
+              "read": 6618,
+              "encode": 26634,
+              "ownerQueue": 2796,
+              "nativeSpan": 38758,
+              "readyToTake": 17231,
+              "jsSubmitToCallback": 56200,
+              "jsTake": 43500,
+              "jsDecode": 9200,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 109.4
+            },
+            {
+              "id": 14,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1913,
+              "open": 155,
+              "read": 5589,
+              "encode": 23517,
+              "ownerQueue": 2584,
+              "nativeSpan": 34056,
+              "readyToTake": 16371,
+              "jsSubmitToCallback": 50800,
+              "jsTake": 38800,
+              "jsDecode": 8900,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 99
+            },
+            {
+              "id": 15,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1671,
+              "open": 134,
+              "read": 5610,
+              "encode": 22860,
+              "ownerQueue": 2222,
+              "nativeSpan": 32855,
+              "readyToTake": 20067,
+              "jsSubmitToCallback": 52400,
+              "jsTake": 41800,
+              "jsDecode": 9900,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 104.8
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "A": {
+          "abort": {
+            "name": "AbortError",
+            "acceptedBytes": 73728,
+            "readAttempts": 10,
+            "streamCloses": 1
+          },
+          "retry": {
+            "bytes": 8388645,
+            "fingerprint": "5e0d25cd",
+            "frame": "lantern"
+          },
+          "closeDuringRead": {
+            "acceptedBytes": 73728,
+            "streamCloses": 1,
+            "frames": 0,
+            "uploads": 0,
+            "abandoned": 0
+          },
+          "closeReceipt": {
+            "regular": [
+              1,
+              1,
+              0
+            ],
+            "unready": [
+              0,
+              0,
+              0
+            ],
+            "unchangedOldEventsAfterReopen": true,
+            "reopened": [
+              1,
+              1,
+              0
+            ]
+          },
+          "surface": {
+            "pixels": 2073600,
+            "sha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10",
+            "mismatches": 0,
+            "reopenedMismatches": 0
+          },
+          "host": {
+            "profile": "webview"
+          }
+        },
+        "B": {
+          "abort": {
+            "name": "AbortError",
+            "acceptedBytes": 73728,
+            "readAttempts": 10,
+            "streamCloses": 1
+          },
+          "retry": {
+            "bytes": 8388645,
+            "fingerprint": "5e0d25cd",
+            "frame": "lantern"
+          },
+          "closeDuringRead": {
+            "acceptedBytes": 73728,
+            "streamCloses": 1,
+            "frames": 0,
+            "uploads": 0,
+            "abandoned": 0
+          },
+          "closeReceipt": {
+            "regular": [
+              1,
+              1,
+              0
+            ],
+            "unready": [
+              0,
+              0,
+              0
+            ],
+            "unchangedOldEventsAfterReopen": true,
+            "reopened": [
+              1,
+              1,
+              0
+            ]
+          },
+          "surface": {
+            "pixels": 2073600,
+            "sha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10",
+            "mismatches": 0,
+            "reopenedMismatches": 0
+          },
+          "host": {
+            "profile": "webview"
+          }
+        }
+      },
+      "changedGameAssetsOrNativeLibraries": [
+        "lib/arm64-v8a/libegret_player.so"
+      ],
+      "medianPairedThroughputChangePct": 56.486,
+      "throughputMiBps": {
+        "A": 47.089,
+        "B": 72.993
+      }
+    },
+    "standard": {
+      "builds": {
+        "A": {
+          "apkSha256": "7cd0cbaf3be9b55f945e0a2ab8560ca91fa98e921f96b2b89479ad5c24968879",
+          "aarSha256": "995acb74714576b458b816f136c09056c0794a7a119195f206690579b306b172",
+          "gameBundleSha256": "dc7fb750c0a8b7ef4ee7a2cb7628b2bbf27d1de6ea50d30d9536cae726626181",
+          "nativeLibraries": {
+            "lib/arm64-v8a/libegret_player.so": "02614404afa6be685be8852b84d14f9bcadb37fb4e47935190691790c88b2d40",
+            "lib/arm64-v8a/libjavet-v8-android-i18n.v.6.0.3.so": "7dc52a67f1c9d616bee50101ed8dfca9f7984021cf2aafbfad29f511093a9c71"
+          }
+        },
+        "B": {
+          "apkSha256": "5f4e2826decc9e212350479823a4857463b125b945e3c90c9622c6cf886e6220",
+          "aarSha256": "6d63a7d87b51e5db339a42e7a332716e82910bee2329639f66cbcf827c820eab",
+          "gameBundleSha256": "dc7fb750c0a8b7ef4ee7a2cb7628b2bbf27d1de6ea50d30d9536cae726626181",
+          "nativeLibraries": {
+            "lib/arm64-v8a/libegret_player.so": "79770dec310d8ffcd0146e73eb86d2eab9a3e444a1a1bb521ad1767d110d9e66",
+            "lib/arm64-v8a/libjavet-v8-android-i18n.v.6.0.3.so": "7dc52a67f1c9d616bee50101ed8dfca9f7984021cf2aafbfad29f511093a9c71"
+          }
+        }
+      },
+      "timing": [
+        {
+          "block": 1,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                322,
+                322
+              ],
+              "readMs": [
+                136.314,
+                69.892,
+                68.89,
+                55.637,
+                77.017,
+                61.669,
+                108.43,
+                58.539,
+                55.639
+              ],
+              "verifyMs": [
+                43.993,
+                26.6,
+                41.063,
+                29.312,
+                50.561,
+                38.377,
+                39.59,
+                31.599,
+                28.364
+              ],
+              "medianMs": 68.89,
+              "medianMiBps": 116.128
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                322,
+                323
+              ],
+              "readMs": [
+                83.66,
+                78.376,
+                92.045,
+                77.591,
+                75.006,
+                68.04,
+                74.35,
+                80.091,
+                71.158
+              ],
+              "verifyMs": [
+                39.55,
+                38.854,
+                28.266,
+                39.079,
+                45.426,
+                37.467,
+                40.782,
+                31.52,
+                36.261
+              ],
+              "medianMs": 77.591,
+              "medianMiBps": 103.105
+            }
+          ],
+          "throughputChangePct": 12.631
+        },
+        {
+          "block": 2,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                324,
+                324
+              ],
+              "readMs": [
+                92.613,
+                76.353,
+                73.111,
+                84.91,
+                77.696,
+                72.009,
+                75.698,
+                72.716,
+                77.883
+              ],
+              "verifyMs": [
+                41.473,
+                30.386,
+                33.595,
+                34.994,
+                46.593,
+                28.909,
+                29.019,
+                27.272,
+                33.343
+              ],
+              "medianMs": 76.353,
+              "medianMiBps": 104.776
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                324,
+                324
+              ],
+              "readMs": [
+                65.125,
+                64.38,
+                98.076,
+                58.916,
+                60.526,
+                122.61,
+                69.773,
+                56.528,
+                106.057
+              ],
+              "verifyMs": [
+                42.196,
+                38.346,
+                33.443,
+                28.637,
+                29.993,
+                38.964,
+                43.823,
+                53.94,
+                57.266
+              ],
+              "medianMs": 65.125,
+              "medianMiBps": 122.841
+            }
+          ],
+          "throughputChangePct": 17.241
+        },
+        {
+          "block": 3,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                324,
+                324
+              ],
+              "readMs": [
+                92.207,
+                74.029,
+                73.021,
+                76.695,
+                83.39,
+                75.012,
+                73.937,
+                85.129,
+                70.949
+              ],
+              "verifyMs": [
+                30.674,
+                30,
+                30.717,
+                32.152,
+                41.097,
+                33.133,
+                39.63,
+                29.734,
+                30.614
+              ],
+              "medianMs": 75.012,
+              "medianMiBps": 106.65
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                324,
+                324
+              ],
+              "readMs": [
+                69.046,
+                60.823,
+                61.402,
+                63.971,
+                60.097,
+                115.473,
+                71.378,
+                85.267,
+                78.034
+              ],
+              "verifyMs": [
+                40.174,
+                33.278,
+                34.6,
+                40.412,
+                35.349,
+                37.813,
+                64.092,
+                56.148,
+                42.771
+              ],
+              "medianMs": 69.046,
+              "medianMiBps": 115.866
+            }
+          ],
+          "throughputChangePct": 8.641
+        },
+        {
+          "block": 4,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                327,
+                327
+              ],
+              "readMs": [
+                71.325,
+                68.273,
+                67.404,
+                77.649,
+                63.529,
+                65.485,
+                62.658,
+                55.257,
+                67.614
+              ],
+              "verifyMs": [
+                40.379,
+                40.669,
+                39.744,
+                41.451,
+                38.717,
+                35.035,
+                31.861,
+                26.367,
+                33.047
+              ],
+              "medianMs": 67.404,
+              "medianMiBps": 118.689
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                327,
+                327
+              ],
+              "readMs": [
+                78.91,
+                84.845,
+                78.418,
+                73.51,
+                88.62,
+                96.666,
+                124.04,
+                76.272,
+                84.994
+              ],
+              "verifyMs": [
+                38.496,
+                27.22,
+                38.283,
+                37.331,
+                51.433,
+                29.249,
+                34.498,
+                26.708,
+                39.153
+              ],
+              "medianMs": 84.845,
+              "medianMiBps": 94.29
+            }
+          ],
+          "throughputChangePct": 25.876
+        }
+      ],
+      "memory": [
+        {
+          "block": 1,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                331,
+                333
+              ],
+              "scans": 96,
+              "windowMs": 39878,
+              "insideSamples": 139,
+              "medianIntervalMs": 286.75,
+              "maxIntervalMs": 363.5,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 0,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 197290,
+                    "readingMax": 261003,
+                    "postMedian": 219873
+                  },
+                  "rssKiB": {
+                    "preMedian": 317548,
+                    "readingMax": 381720,
+                    "postMedian": 341156
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 197290,
+                    "readingMax": 261003,
+                    "postMedian": 219873
+                  },
+                  "rssKiB": {
+                    "preMedian": 317548,
+                    "readingMax": 381720,
+                    "postMedian": 341156
+                  }
+                }
+              }
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                335,
+                336
+              ],
+              "scans": 96,
+              "windowMs": 43870,
+              "insideSamples": 154,
+              "medianIntervalMs": 286,
+              "maxIntervalMs": 321.5,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 0,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 191957,
+                    "readingMax": 259923,
+                    "postMedian": 194126
+                  },
+                  "rssKiB": {
+                    "preMedian": 312220,
+                    "readingMax": 380788,
+                    "postMedian": 315632
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 191957,
+                    "readingMax": 259923,
+                    "postMedian": 194126
+                  },
+                  "rssKiB": {
+                    "preMedian": 312220,
+                    "readingMax": 380788,
+                    "postMedian": 315632
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "block": 2,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                342,
+                343
+              ],
+              "scans": 96,
+              "windowMs": 13551,
+              "insideSamples": 49,
+              "medianIntervalMs": 276.5,
+              "maxIntervalMs": 315,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 0,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 187378,
+                    "readingMax": 248322,
+                    "postMedian": 188601
+                  },
+                  "rssKiB": {
+                    "preMedian": 306976,
+                    "readingMax": 368416,
+                    "postMedian": 309596
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 187378,
+                    "readingMax": 248322,
+                    "postMedian": 188601
+                  },
+                  "rssKiB": {
+                    "preMedian": 306976,
+                    "readingMax": 368416,
+                    "postMedian": 309596
+                  }
+                }
+              }
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                343,
+                343
+              ],
+              "scans": 96,
+              "windowMs": 8294,
+              "insideSamples": 30,
+              "medianIntervalMs": 273,
+              "maxIntervalMs": 296,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 0,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 199730,
+                    "readingMax": 222241,
+                    "postMedian": 191848
+                  },
+                  "rssKiB": {
+                    "preMedian": 320008,
+                    "readingMax": 342848,
+                    "postMedian": 313344
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 199730,
+                    "readingMax": 222241,
+                    "postMedian": 191848
+                  },
+                  "rssKiB": {
+                    "preMedian": 320008,
+                    "readingMax": 342848,
+                    "postMedian": 313344
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "diagnostic": {
+        "A": {
+          "apkSha256": "1407e01d05352c26625e4d034c6d6fb84fc2934ac7d71786ff68081a4c9e336f",
+          "aarSha256": "34fa5bbca9ff1b854d6c04abb3fee3d568b92d869d1e490d93b1b3e61c764c7b",
+          "adapterBundleSha256": "dcac09e5bf95322cb6032e6c6c428de94348c8c01e4daeabfcdc563781b0843d",
+          "thermal": [
+            0,
+            0
+          ],
+          "units": "microseconds except counts, codec and instrumentedReadMs",
+          "runs": [
+            {
+              "id": 7,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 5075,
+              "open": 141,
+              "read": 7326,
+              "encode": 53123,
+              "ownerQueue": 3648,
+              "nativeSpan": 69748,
+              "readyToTake": 9295,
+              "jsSubmitToCallback": 78478,
+              "jsTake": 17816,
+              "jsDecode": 9772,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 107.726
+            },
+            {
+              "id": 8,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1648,
+              "open": 134,
+              "read": 5320,
+              "encode": 42574,
+              "ownerQueue": 2353,
+              "nativeSpan": 52317,
+              "readyToTake": 6088,
+              "jsSubmitToCallback": 57978,
+              "jsTake": 12871,
+              "jsDecode": 7723,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 79.724
+            },
+            {
+              "id": 9,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1832,
+              "open": 141,
+              "read": 5039,
+              "encode": 42356,
+              "ownerQueue": 2214,
+              "nativeSpan": 51844,
+              "readyToTake": 6044,
+              "jsSubmitToCallback": 57555,
+              "jsTake": 12708,
+              "jsDecode": 7745,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 79.024
+            },
+            {
+              "id": 10,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2807,
+              "open": 140,
+              "read": 6330,
+              "encode": 47145,
+              "ownerQueue": 2943,
+              "nativeSpan": 59704,
+              "readyToTake": 9926,
+              "jsSubmitToCallback": 68901,
+              "jsTake": 16011,
+              "jsDecode": 9485,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 95.832
+            },
+            {
+              "id": 11,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1712,
+              "open": 135,
+              "read": 4574,
+              "encode": 39547,
+              "ownerQueue": 2505,
+              "nativeSpan": 48750,
+              "readyToTake": 5932,
+              "jsSubmitToCallback": 54347,
+              "jsTake": 11041,
+              "jsDecode": 7173,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 73.442
+            },
+            {
+              "id": 12,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2210,
+              "open": 150,
+              "read": 6643,
+              "encode": 52644,
+              "ownerQueue": 4432,
+              "nativeSpan": 66440,
+              "readyToTake": 11535,
+              "jsSubmitToCallback": 77537,
+              "jsTake": 16252,
+              "jsDecode": 8635,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 103.777
+            },
+            {
+              "id": 13,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1837,
+              "open": 183,
+              "read": 4683,
+              "encode": 39488,
+              "ownerQueue": 2433,
+              "nativeSpan": 48909,
+              "readyToTake": 5756,
+              "jsSubmitToCallback": 54395,
+              "jsTake": 11929,
+              "jsDecode": 6580,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 73.793
+            },
+            {
+              "id": 14,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2685,
+              "open": 221,
+              "read": 7752,
+              "encode": 57408,
+              "ownerQueue": 3564,
+              "nativeSpan": 72038,
+              "readyToTake": 9514,
+              "jsSubmitToCallback": 81060,
+              "jsTake": 16776,
+              "jsDecode": 8775,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 107.825
+            },
+            {
+              "id": 15,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 3756,
+              "open": 167,
+              "read": 11739,
+              "encode": 80543,
+              "ownerQueue": 6660,
+              "nativeSpan": 103462,
+              "readyToTake": 15592,
+              "jsSubmitToCallback": 118327,
+              "jsTake": 26908,
+              "jsDecode": 12695,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 160.051
+            }
+          ]
+        },
+        "B": {
+          "apkSha256": "3fc240549013dd5ae0e043e8ab74751045b0520b50abecdc9b28553071ee6371",
+          "aarSha256": "dcc1af2147f682ee57c518fd6ad8e71c5b03e8e121d941b9d3c79b97365f64da",
+          "adapterBundleSha256": "dcac09e5bf95322cb6032e6c6c428de94348c8c01e4daeabfcdc563781b0843d",
+          "thermal": [
+            0,
+            0
+          ],
+          "units": "microseconds except counts, codec and instrumentedReadMs",
+          "runs": [
+            {
+              "id": 7,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 3091,
+              "open": 347,
+              "read": 8434,
+              "encode": 32448,
+              "ownerQueue": 4206,
+              "nativeSpan": 49785,
+              "readyToTake": 9256,
+              "jsSubmitToCallback": 58353,
+              "jsTake": 16786,
+              "jsDecode": 9954,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 86.441
+            },
+            {
+              "id": 8,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2260,
+              "open": 125,
+              "read": 6411,
+              "encode": 26942,
+              "ownerQueue": 3095,
+              "nativeSpan": 39917,
+              "readyToTake": 10090,
+              "jsSubmitToCallback": 49397,
+              "jsTake": 15115,
+              "jsDecode": 8985,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 74.822
+            },
+            {
+              "id": 9,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 3635,
+              "open": 138,
+              "read": 9584,
+              "encode": 37939,
+              "ownerQueue": 4406,
+              "nativeSpan": 56260,
+              "readyToTake": 13971,
+              "jsSubmitToCallback": 69383,
+              "jsTake": 22864,
+              "jsDecode": 12559,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 106.69
+            },
+            {
+              "id": 10,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 3307,
+              "open": 167,
+              "read": 8665,
+              "encode": 34262,
+              "ownerQueue": 4352,
+              "nativeSpan": 51881,
+              "readyToTake": 10794,
+              "jsSubmitToCallback": 61810,
+              "jsTake": 21471,
+              "jsDecode": 11963,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 97.117
+            },
+            {
+              "id": 11,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2130,
+              "open": 111,
+              "read": 5999,
+              "encode": 24559,
+              "ownerQueue": 2537,
+              "nativeSpan": 35753,
+              "readyToTake": 7885,
+              "jsSubmitToCallback": 43198,
+              "jsTake": 15572,
+              "jsDecode": 7886,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 67.739
+            },
+            {
+              "id": 12,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2023,
+              "open": 148,
+              "read": 5416,
+              "encode": 22631,
+              "ownerQueue": 2637,
+              "nativeSpan": 33580,
+              "readyToTake": 6845,
+              "jsSubmitToCallback": 39950,
+              "jsTake": 13142,
+              "jsDecode": 7427,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 61.41
+            },
+            {
+              "id": 13,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2398,
+              "open": 147,
+              "read": 6699,
+              "encode": 27220,
+              "ownerQueue": 3381,
+              "nativeSpan": 40359,
+              "readyToTake": 11939,
+              "jsSubmitToCallback": 51496,
+              "jsTake": 17236,
+              "jsDecode": 8214,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 78.112
+            },
+            {
+              "id": 14,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2143,
+              "open": 149,
+              "read": 5763,
+              "encode": 23761,
+              "ownerQueue": 2831,
+              "nativeSpan": 35402,
+              "readyToTake": 9855,
+              "jsSubmitToCallback": 42343,
+              "jsTake": 13100,
+              "jsDecode": 6983,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 65.944
+            },
+            {
+              "id": 15,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2127,
+              "open": 141,
+              "read": 5094,
+              "encode": 22292,
+              "ownerQueue": 2388,
+              "nativeSpan": 32297,
+              "readyToTake": 7415,
+              "jsSubmitToCallback": 39233,
+              "jsTake": 12217,
+              "jsDecode": 6909,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 59.35
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "A": {
+          "abort": {
+            "name": "AbortError",
+            "acceptedBytes": 73728,
+            "readAttempts": 10,
+            "streamCloses": 1
+          },
+          "retry": {
+            "bytes": 8388645,
+            "fingerprint": "5e0d25cd",
+            "frame": "lantern"
+          },
+          "closeDuringRead": {
+            "acceptedBytes": 73728,
+            "streamCloses": 1,
+            "frames": 0,
+            "uploads": 0,
+            "abandoned": 0
+          },
+          "closeReceipt": {
+            "regular": [
+              1,
+              1,
+              0
+            ],
+            "unready": [
+              0,
+              0,
+              0
+            ],
+            "unchangedOldEventsAfterReopen": true,
+            "reopened": [
+              1,
+              1,
+              0
+            ]
+          },
+          "surface": {
+            "pixels": 2073600,
+            "sha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10",
+            "mismatches": 0,
+            "reopenedMismatches": 0
+          },
+          "host": {
+            "profile": "standard",
+            "vmVersion": "15.7.112.19",
+            "intl": true
+          }
+        },
+        "B": {
+          "abort": {
+            "name": "AbortError",
+            "acceptedBytes": 73728,
+            "readAttempts": 10,
+            "streamCloses": 1
+          },
+          "retry": {
+            "bytes": 8388645,
+            "fingerprint": "5e0d25cd",
+            "frame": "lantern"
+          },
+          "closeDuringRead": {
+            "acceptedBytes": 73728,
+            "streamCloses": 1,
+            "frames": 0,
+            "uploads": 0,
+            "abandoned": 0
+          },
+          "closeReceipt": {
+            "regular": [
+              1,
+              1,
+              0
+            ],
+            "unready": [
+              0,
+              0,
+              0
+            ],
+            "unchangedOldEventsAfterReopen": true,
+            "reopened": [
+              1,
+              1,
+              0
+            ]
+          },
+          "surface": {
+            "pixels": 2073600,
+            "sha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10",
+            "mismatches": 0,
+            "reopenedMismatches": 0
+          },
+          "host": {
+            "profile": "standard",
+            "vmVersion": "15.7.112.19",
+            "intl": true
+          }
+        }
+      },
+      "changedGameAssetsOrNativeLibraries": [
+        "lib/arm64-v8a/libegret_player.so"
+      ],
+      "medianPairedThroughputChangePct": 14.936,
+      "throughputMiBps": {
+        "A": 103.941,
+        "B": 117.409
+      }
+    },
+    "trimmed": {
+      "builds": {
+        "A": {
+          "apkSha256": "e8b843aaec8e682fe883aeffa513fcd0c7b354cd4525c6355ace0271403499ea",
+          "aarSha256": "26877dc4f533bfd1f4fb710cf61bc5af319698495b747d47a05831caeb11c931",
+          "gameBundleSha256": "dc7fb750c0a8b7ef4ee7a2cb7628b2bbf27d1de6ea50d30d9536cae726626181",
+          "nativeLibraries": {
+            "lib/arm64-v8a/libjavet-v8-android.v.6.0.3.so": "13c79bcfda0cfa33045c3dff40456ece42e05e898a0694a924fc7a221fe1c22d",
+            "lib/arm64-v8a/libegret_player.so": "02614404afa6be685be8852b84d14f9bcadb37fb4e47935190691790c88b2d40"
+          }
+        },
+        "B": {
+          "apkSha256": "db574cf0cf9cdc94569854c341338088cd9947c7e386846d2c7adf3aa83e43d9",
+          "aarSha256": "1f1695cf1e9b1316a73cd020185f02c62e1e8030c6455bb7e83ae604d2790c0b",
+          "gameBundleSha256": "dc7fb750c0a8b7ef4ee7a2cb7628b2bbf27d1de6ea50d30d9536cae726626181",
+          "nativeLibraries": {
+            "lib/arm64-v8a/libjavet-v8-android.v.6.0.3.so": "13c79bcfda0cfa33045c3dff40456ece42e05e898a0694a924fc7a221fe1c22d",
+            "lib/arm64-v8a/libegret_player.so": "79770dec310d8ffcd0146e73eb86d2eab9a3e444a1a1bb521ad1767d110d9e66"
+          }
+        }
+      },
+      "timing": [
+        {
+          "block": 1,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                323,
+                323
+              ],
+              "readMs": [
+                81.448,
+                78.858,
+                80.569,
+                70.24,
+                71.693,
+                96.798,
+                67.528,
+                69.326,
+                74.585
+              ],
+              "verifyMs": [
+                38.322,
+                31.375,
+                32.636,
+                29.097,
+                35.182,
+                38.346,
+                41.975,
+                26.781,
+                24.945
+              ],
+              "medianMs": 74.585,
+              "medianMiBps": 107.26
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                323,
+                323
+              ],
+              "readMs": [
+                57.654,
+                99.097,
+                57.35,
+                106.792,
+                62.447,
+                63.321,
+                98.626,
+                56.162,
+                102.494
+              ],
+              "verifyMs": [
+                44.547,
+                42.623,
+                26.189,
+                45.094,
+                41.708,
+                25.95,
+                40.683,
+                29.541,
+                39.902
+              ],
+              "medianMs": 63.321,
+              "medianMiBps": 126.342
+            }
+          ],
+          "throughputChangePct": 17.79
+        },
+        {
+          "block": 2,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                323,
+                324
+              ],
+              "readMs": [
+                67.726,
+                59.044,
+                67.683,
+                57.414,
+                72.245,
+                87.551,
+                67.204,
+                57.626,
+                71.777
+              ],
+              "verifyMs": [
+                37.629,
+                27.245,
+                27.568,
+                30.507,
+                38.962,
+                42.189,
+                39.841,
+                26.122,
+                30.584
+              ],
+              "medianMs": 67.683,
+              "medianMiBps": 118.199
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                324,
+                324
+              ],
+              "readMs": [
+                73.455,
+                79.92,
+                80.162,
+                72.53,
+                73.604,
+                87.212,
+                73.832,
+                78.837,
+                100.161
+              ],
+              "verifyMs": [
+                39.921,
+                29.769,
+                28.782,
+                31.255,
+                33.785,
+                32.123,
+                29.118,
+                32.174,
+                34.935
+              ],
+              "medianMs": 78.837,
+              "medianMiBps": 101.476
+            }
+          ],
+          "throughputChangePct": 16.48
+        },
+        {
+          "block": 3,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                324,
+                325
+              ],
+              "readMs": [
+                83.169,
+                82.533,
+                105.702,
+                87.211,
+                79.203,
+                75.076,
+                80.057,
+                80.478,
+                72.866
+              ],
+              "verifyMs": [
+                36.54,
+                30.351,
+                29.198,
+                30.306,
+                34.938,
+                29.753,
+                41.902,
+                26.689,
+                31.019
+              ],
+              "medianMs": 80.478,
+              "medianMiBps": 99.406
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                325,
+                325
+              ],
+              "readMs": [
+                56.228,
+                71.461,
+                67.965,
+                60.578,
+                66.961,
+                94.617,
+                71.332,
+                59.891,
+                65.097
+              ],
+              "verifyMs": [
+                33.406,
+                36.927,
+                37.602,
+                31.31,
+                35.343,
+                51.345,
+                26.103,
+                30.231,
+                38.707
+              ],
+              "medianMs": 66.961,
+              "medianMiBps": 119.473
+            }
+          ],
+          "throughputChangePct": 20.186
+        },
+        {
+          "block": 4,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                326,
+                326
+              ],
+              "readMs": [
+                66.034,
+                72.638,
+                95.312,
+                66.889,
+                55.509,
+                94.897,
+                56.587,
+                65.854,
+                73.548
+              ],
+              "verifyMs": [
+                40.292,
+                41.277,
+                45.252,
+                40.957,
+                29.655,
+                36.828,
+                29.299,
+                36.42,
+                40.822
+              ],
+              "medianMs": 66.889,
+              "medianMiBps": 119.601
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                326,
+                327
+              ],
+              "readMs": [
+                95.805,
+                98.039,
+                86.264,
+                83.337,
+                84.537,
+                75.455,
+                118.005,
+                86.574,
+                110.054
+              ],
+              "verifyMs": [
+                38.615,
+                34.015,
+                31.633,
+                32.903,
+                39.457,
+                30.555,
+                27.778,
+                32.696,
+                26.907
+              ],
+              "medianMs": 86.574,
+              "medianMiBps": 92.407
+            }
+          ],
+          "throughputChangePct": 29.429
+        }
+      ],
+      "memory": [
+        {
+          "block": 1,
+          "order": "AB",
+          "launches": [
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                338,
+                338
+              ],
+              "scans": 96,
+              "windowMs": 16436,
+              "insideSamples": 57,
+              "medianIntervalMs": 285,
+              "maxIntervalMs": 318,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 0,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 191459,
+                    "readingMax": 257403,
+                    "postMedian": 193503
+                  },
+                  "rssKiB": {
+                    "preMedian": 311784,
+                    "readingMax": 378332,
+                    "postMedian": 314940
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 191459,
+                    "readingMax": 257403,
+                    "postMedian": 193503
+                  },
+                  "rssKiB": {
+                    "preMedian": 311784,
+                    "readingMax": 378332,
+                    "postMedian": 314940
+                  }
+                }
+              }
+            },
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                339,
+                339
+              ],
+              "scans": 96,
+              "windowMs": 8281,
+              "insideSamples": 30,
+              "medianIntervalMs": 268.5,
+              "maxIntervalMs": 300.5,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 0,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 188002,
+                    "readingMax": 210949,
+                    "postMedian": 177919
+                  },
+                  "rssKiB": {
+                    "preMedian": 308328,
+                    "readingMax": 331612,
+                    "postMedian": 299416
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 188002,
+                    "readingMax": 210949,
+                    "postMedian": 177919
+                  },
+                  "rssKiB": {
+                    "preMedian": 308328,
+                    "readingMax": 331612,
+                    "postMedian": 299416
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "block": 2,
+          "order": "BA",
+          "launches": [
+            {
+              "version": "B",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                339,
+                340
+              ],
+              "scans": 96,
+              "windowMs": 42503,
+              "insideSamples": 147,
+              "medianIntervalMs": 288,
+              "maxIntervalMs": 324.5,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 0,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 186908,
+                    "readingMax": 250639,
+                    "postMedian": 213056
+                  },
+                  "rssKiB": {
+                    "preMedian": 306480,
+                    "readingMax": 370772,
+                    "postMedian": 333988
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 186908,
+                    "readingMax": 250639,
+                    "postMedian": 213056
+                  },
+                  "rssKiB": {
+                    "preMedian": 306480,
+                    "readingMax": 370772,
+                    "postMedian": 333988
+                  }
+                }
+              }
+            },
+            {
+              "version": "A",
+              "thermal": [
+                0,
+                0
+              ],
+              "batteryDeciC": [
+                340,
+                341
+              ],
+              "scans": 96,
+              "windowMs": 13242,
+              "insideSamples": 45,
+              "medianIntervalMs": 293.25,
+              "maxIntervalMs": 319,
+              "preSamples": 5,
+              "postSamples": 5,
+              "confirmedRendererCount": 0,
+              "scopes": {
+                "application": {
+                  "pssKiB": {
+                    "preMedian": 197994,
+                    "readingMax": 256701,
+                    "postMedian": 194612
+                  },
+                  "rssKiB": {
+                    "preMedian": 318332,
+                    "readingMax": 377436,
+                    "postMedian": 316020
+                  }
+                },
+                "attributedSum": {
+                  "pssKiB": {
+                    "preMedian": 197994,
+                    "readingMax": 256701,
+                    "postMedian": 194612
+                  },
+                  "rssKiB": {
+                    "preMedian": 318332,
+                    "readingMax": 377436,
+                    "postMedian": 316020
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "diagnostic": {
+        "A": {
+          "apkSha256": "19f11e74dbf71c4190e18171f85d361652eaa66c4fe29e8284175b9b040c2675",
+          "aarSha256": "97e7ed62b08b32a8bbd495dcb8596284c89275bfd59014a713c7f86a081e7827",
+          "adapterBundleSha256": "dcac09e5bf95322cb6032e6c6c428de94348c8c01e4daeabfcdc563781b0843d",
+          "thermal": [
+            0,
+            0
+          ],
+          "units": "microseconds except counts, codec and instrumentedReadMs",
+          "runs": [
+            {
+              "id": 7,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2501,
+              "open": 239,
+              "read": 6478,
+              "encode": 47081,
+              "ownerQueue": 3120,
+              "nativeSpan": 59754,
+              "readyToTake": 8385,
+              "jsSubmitToCallback": 67633,
+              "jsTake": 13525,
+              "jsDecode": 8734,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 91.227
+            },
+            {
+              "id": 8,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2979,
+              "open": 176,
+              "read": 6893,
+              "encode": 52178,
+              "ownerQueue": 3233,
+              "nativeSpan": 65848,
+              "readyToTake": 8188,
+              "jsSubmitToCallback": 73599,
+              "jsTake": 16159,
+              "jsDecode": 9127,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 100.326
+            },
+            {
+              "id": 9,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2167,
+              "open": 123,
+              "read": 5426,
+              "encode": 45889,
+              "ownerQueue": 2739,
+              "nativeSpan": 56655,
+              "readyToTake": 6827,
+              "jsSubmitToCallback": 63011,
+              "jsTake": 13768,
+              "jsDecode": 8288,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 86.367
+            },
+            {
+              "id": 10,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1920,
+              "open": 134,
+              "read": 4842,
+              "encode": 41572,
+              "ownerQueue": 2257,
+              "nativeSpan": 50992,
+              "readyToTake": 6076,
+              "jsSubmitToCallback": 56586,
+              "jsTake": 11909,
+              "jsDecode": 7425,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 76.987
+            },
+            {
+              "id": 11,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2518,
+              "open": 143,
+              "read": 4867,
+              "encode": 40691,
+              "ownerQueue": 2639,
+              "nativeSpan": 51139,
+              "readyToTake": 7763,
+              "jsSubmitToCallback": 58676,
+              "jsTake": 11068,
+              "jsDecode": 7161,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 77.809
+            },
+            {
+              "id": 12,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2032,
+              "open": 192,
+              "read": 4674,
+              "encode": 39024,
+              "ownerQueue": 2774,
+              "nativeSpan": 48947,
+              "readyToTake": 7517,
+              "jsSubmitToCallback": 55992,
+              "jsTake": 11268,
+              "jsDecode": 6885,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 75.191
+            },
+            {
+              "id": 13,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2510,
+              "open": 163,
+              "read": 5507,
+              "encode": 44447,
+              "ownerQueue": 2896,
+              "nativeSpan": 55837,
+              "readyToTake": 11065,
+              "jsSubmitToCallback": 66542,
+              "jsTake": 13779,
+              "jsDecode": 6745,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 88.049
+            },
+            {
+              "id": 14,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2850,
+              "open": 190,
+              "read": 8139,
+              "encode": 58766,
+              "ownerQueue": 4079,
+              "nativeSpan": 74445,
+              "readyToTake": 9345,
+              "jsSubmitToCallback": 83297,
+              "jsTake": 17015,
+              "jsDecode": 8810,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 110.583
+            },
+            {
+              "id": 15,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2095,
+              "open": 296,
+              "read": 6101,
+              "encode": 49306,
+              "ownerQueue": 3008,
+              "nativeSpan": 61157,
+              "readyToTake": 7052,
+              "jsSubmitToCallback": 67874,
+              "jsTake": 12513,
+              "jsDecode": 7664,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 89.113
+            }
+          ]
+        },
+        "B": {
+          "apkSha256": "e8dd98543a80a192788efc00ee1654dd5b4b3d602abd7ce3c0f83cf5448a1bc7",
+          "aarSha256": "b3e5a000338f203cb5d5bbca5c5bad122f986488a8acdc0571c9ac3127106513",
+          "adapterBundleSha256": "dcac09e5bf95322cb6032e6c6c428de94348c8c01e4daeabfcdc563781b0843d",
+          "thermal": [
+            0,
+            0
+          ],
+          "units": "microseconds except counts, codec and instrumentedReadMs",
+          "runs": [
+            {
+              "id": 7,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2369,
+              "open": 133,
+              "read": 7392,
+              "encode": 30388,
+              "ownerQueue": 3436,
+              "nativeSpan": 44111,
+              "readyToTake": 9639,
+              "jsSubmitToCallback": 52907,
+              "jsTake": 18014,
+              "jsDecode": 10379,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 82.898
+            },
+            {
+              "id": 8,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2227,
+              "open": 139,
+              "read": 7099,
+              "encode": 29469,
+              "ownerQueue": 2902,
+              "nativeSpan": 42176,
+              "readyToTake": 8547,
+              "jsSubmitToCallback": 49981,
+              "jsTake": 17521,
+              "jsDecode": 9804,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 78.831
+            },
+            {
+              "id": 9,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2365,
+              "open": 137,
+              "read": 5451,
+              "encode": 22757,
+              "ownerQueue": 2987,
+              "nativeSpan": 33972,
+              "readyToTake": 7017,
+              "jsSubmitToCallback": 40368,
+              "jsTake": 13092,
+              "jsDecode": 7893,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 62.505
+            },
+            {
+              "id": 10,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2055,
+              "open": 158,
+              "read": 4706,
+              "encode": 19820,
+              "ownerQueue": 2753,
+              "nativeSpan": 30316,
+              "readyToTake": 7736,
+              "jsSubmitToCallback": 37547,
+              "jsTake": 11224,
+              "jsDecode": 7113,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 57.03
+            },
+            {
+              "id": 11,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2218,
+              "open": 273,
+              "read": 5229,
+              "encode": 21425,
+              "ownerQueue": 2742,
+              "nativeSpan": 32286,
+              "readyToTake": 7704,
+              "jsSubmitToCallback": 39635,
+              "jsTake": 13885,
+              "jsDecode": 7733,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 62.196
+            },
+            {
+              "id": 12,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 3245,
+              "open": 344,
+              "read": 10362,
+              "encode": 38547,
+              "ownerQueue": 4212,
+              "nativeSpan": 58595,
+              "readyToTake": 13155,
+              "jsSubmitToCallback": 71042,
+              "jsTake": 21567,
+              "jsDecode": 11199,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 105.503
+            },
+            {
+              "id": 13,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 1927,
+              "open": 145,
+              "read": 6021,
+              "encode": 24532,
+              "ownerQueue": 2560,
+              "nativeSpan": 35515,
+              "readyToTake": 7152,
+              "jsSubmitToCallback": 42259,
+              "jsTake": 14419,
+              "jsDecode": 7482,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 65.121
+            },
+            {
+              "id": 14,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 3438,
+              "open": 151,
+              "read": 10668,
+              "encode": 40266,
+              "ownerQueue": 4763,
+              "nativeSpan": 60649,
+              "readyToTake": 14545,
+              "jsSubmitToCallback": 74363,
+              "jsTake": 23711,
+              "jsDecode": 12082,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 111.985
+            },
+            {
+              "id": 15,
+              "pulls": 130,
+              "takes": 129,
+              "opens": 1,
+              "reads": 1026,
+              "bytes": 8388645,
+              "encodes": 129,
+              "queue": 2685,
+              "open": 123,
+              "read": 6587,
+              "encode": 26790,
+              "ownerQueue": 2766,
+              "nativeSpan": 39291,
+              "readyToTake": 7536,
+              "jsSubmitToCallback": 46466,
+              "jsTake": 15896,
+              "jsDecode": 8137,
+              "codec": "fromBase64",
+              "instrumentedReadMs": 71.826
+            }
+          ]
+        }
+      },
+      "lifecycle": {
+        "A": {
+          "abort": {
+            "name": "AbortError",
+            "acceptedBytes": 73728,
+            "readAttempts": 10,
+            "streamCloses": 1
+          },
+          "retry": {
+            "bytes": 8388645,
+            "fingerprint": "5e0d25cd",
+            "frame": "lantern"
+          },
+          "closeDuringRead": {
+            "acceptedBytes": 73728,
+            "streamCloses": 1,
+            "frames": 0,
+            "uploads": 0,
+            "abandoned": 0
+          },
+          "closeReceipt": {
+            "regular": [
+              1,
+              1,
+              0
+            ],
+            "unready": [
+              0,
+              0,
+              0
+            ],
+            "unchangedOldEventsAfterReopen": true,
+            "reopened": [
+              1,
+              1,
+              0
+            ]
+          },
+          "surface": {
+            "pixels": 2073600,
+            "sha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10",
+            "mismatches": 0,
+            "reopenedMismatches": 0
+          },
+          "host": {
+            "profile": "trimmed",
+            "vmVersion": "15.7.112.19",
+            "intl": false
+          }
+        },
+        "B": {
+          "abort": {
+            "name": "AbortError",
+            "acceptedBytes": 73728,
+            "readAttempts": 10,
+            "streamCloses": 1
+          },
+          "retry": {
+            "bytes": 8388645,
+            "fingerprint": "5e0d25cd",
+            "frame": "lantern"
+          },
+          "closeDuringRead": {
+            "acceptedBytes": 73728,
+            "streamCloses": 1,
+            "frames": 0,
+            "uploads": 0,
+            "abandoned": 0
+          },
+          "closeReceipt": {
+            "regular": [
+              1,
+              1,
+              0
+            ],
+            "unready": [
+              0,
+              0,
+              0
+            ],
+            "unchangedOldEventsAfterReopen": true,
+            "reopened": [
+              1,
+              1,
+              0
+            ]
+          },
+          "surface": {
+            "pixels": 2073600,
+            "sha256": "1d88f7b1750efcc40aca68758ed49ce6b51e37b375eb0b39abda093a1a301d10",
+            "mismatches": 0,
+            "reopenedMismatches": 0
+          },
+          "host": {
+            "profile": "trimmed",
+            "vmVersion": "15.7.112.19",
+            "intl": false
+          }
+        }
+      },
+      "changedGameAssetsOrNativeLibraries": [
+        "lib/arm64-v8a/libegret_player.so"
+      ],
+      "medianPairedThroughputChangePct": 18.988,
+      "throughputMiBps": {
+        "A": 100.441,
+        "B": 119.537
+      }
+    }
+  },
+  "signing": {
+    "commonCertificateSha256": "8ac8cf778d7e6c6ed4fff7e4279b855a69eab343fa72df213544e690e6d5542d",
+    "debuggable": false,
+    "shrinking": false
+  },
+  "armVectors": {
+    "nativeLibrarySha256": "79770dec310d8ffcd0146e73eb86d2eab9a3e444a1a1bb521ad1767d110d9e66",
+    "apkSha256": "1e340143f7037d9955a08f1891493b29acfeaee78cdbf5b751cef80af21de25f",
+    "extraNativeCalls": 614,
+    "sizeCases": 307,
+    "invalidExtra": 2,
+    "repositoryReaderSuitePassed": true
+  },
+  "method": {
+    "unit": "One complete 8 MiB + 37 byte Deflated asset; 128 chunks of 65536 bytes and a 37 byte tail, followed by EOF. FNV-1a and an independent byte-by-byte oracle.",
+    "timing": "Each cold launch uses an identically signed, non-debuggable consumer (no shrinking) and a production, uninstrumented player AAR. Installed package flags verified per launch. After the opening read and first frames, three untimed warm reads then nine unpaced timed reads in the same foreground process. JS performance.now() brackets iteration through EOF. Each pass holds the returned views through EOF and fully verifies bytes outside its timed interval. No memory sampling while timing. Process medians are the units for the four adjacent launch pairs; percentage change refers to per-pair throughput ratios.",
+    "memory": "Independent cold launches, five idle sweeps after a validated opening, 96 back-to-back full reads with rolling verification and no artificial wait, five post sweeps. Only samples with both ends inside the JS wall-clock stream window count. Each sweep measures dumpsys meminfo --local for the app and each renderer bound via Android service records. A process maximum is an observed sample. The attributed sum is a sequential-sweep estimate and does not establish a simultaneous aggregate peak or its lower bound. Process RSS may overlap across processes. PSS/RSS include the entire process state.",
+    "diagnostics": "Private instrumented AAR and project adapter only, 9 full warmed reads per host. Stage sums in microseconds per complete stream. JS callback wait includes native work. readyToTake and jsTake can overlap. JS and Java clocks are never directly subtracted.",
+    "lifecycle": "Identical host/scene loads the same fixture, holds a real stream after 73728 bytes; abort, retry, close during active startup read, reopen, and closed-generation checks. Game-surface PixelCopy compared pixel-for-pixel with analytical atlas oracle."
+  },
+  "jniChecks": {
+    "debuggablePreliminaryLaunchesWithExplicitEnable": 6,
+    "nonDebuggableFormalLaunchesScopedLogChecked": 38,
+    "explicitEnable": 0,
+    "explicitDisable": 0,
+    "noExplicitState": 38
+  },
+  "interruptedThroughputStarts": [
+    {
+      "profile": "webview",
+      "block": 2,
+      "version": "B",
+      "phase": "read-only device-state query before Android launch",
+      "completedTimedReads": 0,
+      "recovery": "Retried the same side as a fresh process; no other test ran between successful sides."
+    }
+  ],
+  "completedFormalTimedReadsDiscarded": 0,
+  "incompleteMemoryWindows": [
+    {
+      "profile": "webview",
+      "version": "A",
+      "block": 1,
+      "completeReadsReported": 96,
+      "completeSamplingWindow": false,
+      "includedInMemoryPeaks": false,
+      "reason": "Device query failed before a complete process-memory sampling record was available. Repeated as a fresh launch."
+    }
+  ],
+  "baselineRevision": "0cd3188c019993f1b1490156472943121b2d02d0",
+  "precedingChunkAcceptance": "https://github.com/cnedwin/Egret_rebuild/pull/394",
+  "candidateSourceSha256": {
+    "runtime-sdk/android/src/chunk_base64.c": "005438966124ce149773d3bcb5c21e2983395da18ea3f379968ad502f01013dd",
+    "runtime-sdk/android/player/src/org/egret/runtime/player/PlayerChunkCodec.java": "c4efbb9c12dcbd52dfddc86b56c68034c6b9de61ecea2b0c2bc323ac64f650db",
+    "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectAssetReads.java": "59e597b14951ea97ece0df64b80620f8feeab6e753afe9c5beb72dc45df56461",
+    "runtime-sdk/android/player/build-aar.mjs": "e1e42daf11bb028dbea42570699326889dbd1cf2ec6c7a9fb244c95352e1c6ce",
+    "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectAssetReadsTest.java": "26e54e9ad2e1dabffe7d5b94ef3af30c90c0ae0120018f85d75c3964b587f139"
+  },
+  "algorithm": {
+    "format": "RFC 4648 section 4, standard alphabet, padding and no line wraps",
+    "specification": "https://www.rfc-editor.org/rfc/rfc4648#section-4",
+    "scope": "Only successful nonempty chunk reads use the arm64 encoder. Existing readBytes and readText, cancellation and the script transport are unchanged.",
+    "vectors": {
+      "testedLibrarySha256": "79770dec310d8ffcd0146e73eb86d2eab9a3e444a1a1bb521ad1767d110d9e66",
+      "repositoryTestSha256": "26e54e9ad2e1dabffe7d5b94ef3af30c90c0ae0120018f85d75c3964b587f139",
+      "sizes": 307,
+      "comparisons": 614,
+      "checks": "Compare against the standard encoder with exact-size inputs and inputs with sentinel bytes beyond the requested prefix. Includes the 48-byte vector boundary and the 64 KiB chunk boundary."
+    }
+  },
+  "selection": {
+    "scope": "Exploratory observations before the final matched application measurements. These trials are excluded from the performance comparison above.",
+    "standaloneJavaMs": {
+      "platform": "Isolated ART process on the same Fold7; median of 12 complete encodes of the fixture",
+      "javaUtil": 15.411,
+      "androidUtilNoWrap": 29.561,
+      "charTable": 19.516
+    },
+    "stringConstructionMs": {
+      "platform": "Isolated ART process on the same Fold7; median of 12 complete encodes per method; an additional four separately timed scans isolate phase costs",
+      "default": {
+        "jdk": 15.711,
+        "jniModifiedUtf8": 14.814,
+        "jniUtf16": 20.111,
+        "jniByteArrayAndJavaLatin1": 12.405
+      },
+      "explicitCheckJNI": {
+        "jdk": 15.516,
+        "jniModifiedUtf8": 18.615,
+        "jniUtf16": 20.021,
+        "jniByteArrayAndJavaLatin1": 12.289
+      }
+    },
+    "earlyCandidate": "Debuggable consumers logged late CheckJNI enablement. Returning a JNI modified-UTF-8 string did not reliably reduce end-to-end time. On WebView its median encode duration was 70.607 ms against 69.595 ms in the same-script baseline. Its debug timings are not combined with the final non-debuggable comparison."
+  }
+}
