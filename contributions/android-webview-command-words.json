@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/android/player/test/org/egret/runtime/player/WebViewFrameTransportTest.java",
+      "originRole": "Android WebView command word bounds and byte ownership checks. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-webview-bridge-diagnostic.json",
+      "originRole": "Frame-aligned diagnostic measurements from the physical Galaxy Z Fold7. Independently collected and prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-webview-bridge-pairs.json",
+      "originRole": "Physical Fold7 paired timings, command capture identity, viewport pixels and EGL resource counts. Independently collected and prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

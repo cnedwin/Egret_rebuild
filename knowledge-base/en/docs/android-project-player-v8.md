@@ -84,3 +84,26 @@ Each lane had four process-cold starts and occupied every position in the run or
 Each of the 210 frames draws 81 quads. Excluding frame IDs, the recording contains 26 distinct command bodies. Native replay spends little time dispatching commands. Both embedded V8 hosts approach its p95 submission interval on this scene. The WebView dispatch-to-enqueue path warrants closer inspection. Its difference includes thread scheduling, command generation and transport; a single copy or GPU execution cannot be identified from this timing.
 
 The three script hosts produced byte-identical files of 2,483,048 bytes. All 2,073,600 pixels of the held viewport matched in all four lanes, including the moving character. For an independent visual check, 280 opaque character texel samples matched the authored atlas on each lane. Each lane restored the same image after EGL recreation, with eight total page uploads and eight releases by close. A mismatched digest was rejected in the debug app; the R8-minified release followed the ordinary game path. [Four-lane record and raw samples](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-replay.json)
+
+### WebView command transport on Galaxy Z Fold7
+
+The 7.221 ms p95 above prompted a closer look at Moon Herbarium. Three fresh, process-cold launches of the original WebView transport recorded 180 frames each after the same 30-frame warmup. The interval from the JS command call to Java receiving the array accounted for 65.2–69.5% of mean dispatch time on each run's slowest nine frames. That interval includes argument conversion, delivery and scheduling.
+
+| Mean on the same nine slowest dispatches (ms) | Run 1 | Run 2 | Run 3 |
+| --- | ---: | ---: | ---: |
+| Dispatch to JS entry | 1.009 | 0.951 | 1.149 |
+| Game command generation | 0.733 | 0.800 | 0.900 |
+| View and length checks | 0.022 | 0.000 | 0.011 |
+| JS call to Java method entry | 4.422 | 3.719 | 5.224 |
+| Java validation and frame snapshot | 0.038 | 0.026 | 0.033 |
+| Wait for the UI handler | 0.152 | 0.196 | 0.180 |
+| UI handler to enqueue marker | 0.017 | 0.010 | 0.019 |
+| Total dispatch to enqueue | 6.392 | 5.702 | 7.515 |
+
+Each run aligned the JS and Android clocks with 24 round trips at each end. For each round trip, expand the clock-offset interval by the observed 100 µs JS timer quantum and 1 µs rounding allowance on both sides. Intersect the 24 intervals in each batch and interpolate linearly between their midpoints at the mean round-trip centers. Endpoint half-widths ranged from 42.6 to 94.4 µs. All 540 dispatch intervals reconstructed the original timer within 1 µs. Short JS operations may fall within one timer tick. [Frame timestamps and calibration samples](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-webview-bridge-diagnostic.json)
+
+The WebView player now sends four command bytes per signed 32-bit array element when the view offset and length are word-aligned. Each 5,208-byte packet crosses the synchronous bridge in 1,302 elements. Java restores the original bytes in native byte order and takes the existing texture-page snapshot before posting the frame. Other slices use the byte-array path.
+
+With the diagnostic probe removed, six process-cold pairs alternated AB and BA on the same phone, WebView 157 and GLES3 renderer. Across runs, the median dispatch p95 went from 6.562 to 3.593 ms. Across matched pairs, the median absolute reduction was 2.894 ms and the median relative reduction was 44.1%. All six pairs improved. The acceptance rule fixed before measurement required at least four improved pairs, a median reduction of at least 0.500 ms and at least 10%. The median submission-callback interval p95 went from 11.024 to 8.930 ms. These are host-side timings; GPU execution, display presentation and power were outside this comparison.
+
+Both builds produced the same 2,483,048-byte capture for all 210 submissions. All 2,073,600 pixels of the held viewport matched before and after EGL recreation. Each build uploaded and released eight textures across two contexts and completed a separate ordinary close and reopen. [Paired samples, package identities and correctness results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-webview-bridge-pairs.json)
