@@ -152,9 +152,9 @@ export function wrapPlayWords(words: string, units: number): string[] {
   return lines;
 }
 
-const NEXT = ['space', 'enter', 'z'],
-  UP = ['up', 'w'],
-  DOWN = ['down', 's'];
+const NEXT = ['space', 'enter', 'z', 'pad:a'],
+  UP = ['up', 'w', 'pad:up'],
+  DOWN = ['down', 's', 'pad:down'];
 
 interface Choice {
   readonly items: readonly string[];
@@ -166,7 +166,10 @@ interface Choice {
 }
 
 /** The widgets of one game. `tick` is called once a step, also while the game is paused, with seconds of the wall. */
-export function createPlayWidgets(game: PlayGame): {
+export function createPlayWidgets(
+  game: PlayGame,
+  wake: () => void = () => {}
+): {
   bar(options: PlayBarOptions): PlayBar;
   toast(words: string, options?: PlayToastOptions): void;
   say(words: string, options?: PlaySayOptions): Promise<number | undefined>;
@@ -193,6 +196,8 @@ export function createPlayWidgets(game: PlayGame): {
         readonly hint: PlayText;
         choice: Choice | undefined;
         readonly choices: readonly string[] | undefined;
+        /** Whether the pointer went down while the box was open: a release of a press from before it does not count. */
+        armed: boolean;
         readonly color: number;
         readonly finish: (index: number | undefined) => void;
       }
@@ -377,6 +382,7 @@ export function createPlayWidgets(game: PlayGame): {
             hint,
             choice: undefined,
             choices,
+            armed: false,
             color,
             finish(index) {
               // A tap and a key in one step answer once.
@@ -393,6 +399,7 @@ export function createPlayWidgets(game: PlayGame): {
         };
         if (talking === undefined) open();
         else queue.push(open);
+        wake();
       });
     },
     menu(items: readonly string[], o: PlayMenuOptions = {}): Promise<number> {
@@ -435,6 +442,7 @@ export function createPlayWidgets(game: PlayGame): {
           }
         );
         menu = opened;
+        wake();
       });
     },
     get asking(): boolean {
@@ -453,7 +461,8 @@ export function createPlayWidgets(game: PlayGame): {
       }
       if (talking === undefined) return;
       const open = talking;
-      const pressed = game.keys.pressed(...NEXT) || game.pointer.released;
+      if (game.pointer.pressed) open.armed = true;
+      const pressed = game.keys.pressed(...NEXT) || (open.armed && game.pointer.released);
       if (open.choice !== undefined) {
         if (steer(open.choice)) {
           click();

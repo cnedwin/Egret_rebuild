@@ -206,6 +206,24 @@ update(seconds, game) {
 
 They answer while the game is paused, and `setup` may await them: frames are drawn while it waits, though `update`, timers and tweens begin only when it has finished. A restart takes them away; what was being awaited is then not answered. The words of a box are drawn once, line by line, and uncovered letter by letter: a box does not draw its words again each frame. `examples/play/story.mjs` uses every one.
 
+## Phones, pads and music
+
+A game written for the keyboard is played on a phone by adding controls on the glass, and on a gamepad without changing anything:
+
+```js
+game.touchStick();                                            // counts in game.keys.axis()
+game.touchButton('A', { x: 430, y: 230, key: 'space' });      // holds Space while a finger is on it
+if (game.keys.pressed('space', 'pad:a')) jump();              // the pad's lower face button
+game.music.play('mystery');
+game.music.intensity = lanterns / 3;                          // parts come in as it rises
+```
+
+- `game.touchStick({ x, y, radius = 48, always })` and `game.touchButton(words, { x, y, key = 'space', radius = 32, color, always })` are drawn over the ui layer, so a box of words does not hide them, once a finger has touched the stage, or at once with `always`. Each finger keeps the control it started on until it lifts, so a thumb on the stick and another on a button work together. A finger that starts elsewhere is the game's pointer as before.
+- The buttons of the first gamepad in the standard layout are keys named `pad:a`, `pad:b`, `pad:x`, `pad:y`, `pad:l1`, `pad:r1`, `pad:l2`, `pad:r2`, `pad:select`, `pad:start` and `pad:up`, `pad:down`, `pad:left`, `pad:right`: `down`, `pressed` and `released` take them. The d-pad counts in `keys.axis()`, and `pad:a` and the d-pad answer boxes of words and menus.
+- `game.music.play(mood)` writes a piece in code (`'calm'`, `'mystery'`, `'tense'`, `'battle'` or `'triumph'`), or from `{ mood, seed, tempo, bars }`, as four parts of one length: held chords, a bass, drums and a tune. It loops them together, and a piece already playing fades out. `game.music.intensity` (0 to 1) brings in the bass, then the drums, then the tune, over about a second and a half. `volume` is 0.6 unless set, and the effects' volume and mute apply too. `stop(seconds)` fades it out. A pause holds it; a restart stops it. `composeMusic` and `musicMix` are exported for a game that wants the samples.
+
+A menu or a box of words that the first `setup` awaits starts the frames as it opens, so it is seen and answered. Otherwise the frames start when `setup` has finished, as before.
+
 ## Chance and saves
 
 `game.random` gives numbers that repeat for the same `seed`: `int(1, 6)`, `range(0, 1)`, `chance(0.25)`, `pick(list)`, and `shuffle(list)`, which gives a new list and leaves the one it was given.

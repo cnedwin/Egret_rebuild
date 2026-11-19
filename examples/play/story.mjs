@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // A short scene with a story from one call to play: a title menu, words that are read and answered, a bar of health
-// and notices, and an ending that depends on the answers. Every part plays by keyboard and by pointer.
+// and notices, music made in code that grows as the yard is lit, and an ending that depends on the answers. Every
+// part plays by keyboard, by pointer, by a gamepad, and on a phone by a stick and a button on the glass.
 import { play } from '@egret/engine/play';
 
 const W = 480,
@@ -25,6 +26,11 @@ await play({
       foes.push(lantern);
     }
     health = game.bar({ x: 12, y: 12, width: 140, value: 4, max: 4, color: 0xef4444 });
+    // On a phone: a stick that walks, and a button that is Space. Both appear once a finger touches the stage.
+    game.touchStick();
+    game.touchButton('A', { x: W - 50, y: H - 70, key: 'space' });
+    game.music.intensity = 0;
+    game.music.play('mystery');
     const choice = await game.menu(['Begin', 'Begin quietly'], { title: 'The Night Yard' });
     game.sfx.muted = choice === 1;
     const answer = await game.say('The lanterns of the yard went out at dusk. Will you light them again?', {
@@ -49,6 +55,8 @@ await play({
       game.burst(lantern.x, lantern.y, { color: 0xfacc15, count: 16 });
       game.sfx.play('coin');
       game.toast('Lantern ' + ++lanterns + ' of 3');
+      // Each lantern brings in more of the music.
+      game.music.intensity = lanterns / 3;
       // The cold takes a little health between lanterns.
       health.value -= 1;
       game.shake(3);
@@ -60,6 +68,7 @@ await play({
 async function finish(game) {
   running = false;
   game.sfx.play('win');
+  game.music.play('triumph');
   const words =
     trust > 0
       ? 'The yard is bright again. The keeper bows: "I knew you would."'

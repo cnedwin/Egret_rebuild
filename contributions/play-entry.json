@@ -48,6 +48,16 @@
       "path": "examples/play/story.mjs",
       "originRole": "First-party short scene with a story for the play example: a title menu, words answered by key and by tap, a bar, notices and an ending; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/playTouch.ts",
+      "originRole": "First-party stick and buttons on the glass for play, holding keys and moving the axis, one finger to each control; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/playMusic.ts",
+      "originRole": "First-party music written in code from a mood and a seed as four looping parts, with their mix by intensity; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [

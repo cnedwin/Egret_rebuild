@@ -18,6 +18,10 @@ import type { BrowserGame, BrowserGameBackend, BrowserGameLabel } from './game.j
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 import type { SfxRecipe } from './playSfx.js';
 import { createPlayWidgets } from './playWidgets.js';
+import { createPlayTouch } from './playTouch.js';
+import type { PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
+import { MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
+import type { MusicOptions, MusicMood } from './playMusic.js';
 import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 
 export interface PlayOptions {
@@ -195,6 +199,24 @@ export interface PlayLoop {
   stop(seconds?: number): void;
   readonly stopped: boolean;
 }
+export interface PlayMusic {
+  /**
+   * Writes a piece in a mood (`'calm'`, `'mystery'`, `'tense'`, `'battle'` or `'triumph'`), or from
+   * `{ mood, seed, tempo, bars }`, and loops it; a piece already playing fades out. It is heard once the page has had
+   * its first key or click. A restart stops it.
+   */
+  play(mood?: MusicMood | MusicOptions): Promise<void>;
+  /** Fades the music out over `seconds`, 1 unless given. */
+  stop(seconds?: number): void;
+  /**
+   * 0 to 1, 0.5 unless set: how much of the piece plays. The pad of held chords always; the bass from about 0.2, the
+   * drums from about 0.5, the tune from about 0.75. A change is heard over a second or so.
+   */
+  intensity: number;
+  /** 0 to 1, 0.6 unless set; the volume and the mute of the sound effects apply too. */
+  volume: number;
+  readonly mood: MusicMood | undefined;
+}
 export interface PlaySfx {
   /** Plays an effect by name: one of `names`. `pitch` is 1 as written, 2 an octave up. */
   play(name: string, options?: { readonly volume?: number; readonly pitch?: number; readonly pan?: number }): void;
@@ -335,6 +357,15 @@ export interface PlayGame {
   menu(items: readonly string[], options?: PlayMenuOptions): Promise<number>;
   /** Whether a box of words or a menu is open: an update can then leave the game alone. */
   readonly asking: boolean;
+  /**
+   * A stick on the glass, near the bottom left unless placed, that counts in `keys.axis()`. It is shown once a finger
+   * has touched the stage, or at once with `always`.
+   */
+  touchStick(options?: PlayStickOptions): Sprite;
+  /** A round button on the glass that holds a key while a finger is on it: `keys.down('space')` sees it. */
+  touchButton(words: string, options: PlayTouchButtonOptions): Sprite;
+  /** Music made in code, in a mood, whose parts come in as `intensity` rises. */
+  readonly music: PlayMusic;
   /** The game `play` is built on: its Engine, scope, loop and input, for what this entry does not cover. */
   readonly browser: BrowserGame;
   readonly engine: Engine;
@@ -362,7 +393,25 @@ const KEY_NAMES: Readonly<Record<string, string>> = {
 };
 /** Keys a game uses that would otherwise scroll or move about the page. */
 const KEPT_FROM_PAGE = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'Tab']);
+/** The buttons of a pad a key name may be, as `'pad:a'`: the standard layout, by where each button is. */
+const PAD_BUTTONS = Object.freeze([
+  'a',
+  'b',
+  'x',
+  'y',
+  'l1',
+  'r1',
+  'l2',
+  'r2',
+  'select',
+  'start',
+  'up',
+  'down',
+  'left',
+  'right'
+] as const);
 function codeOf(key: string): string {
+  if (/^pad:/i.test(key)) return 'Pad:' + key.slice(4).toLowerCase();
   const named = KEY_NAMES[key.toLowerCase()];
   if (named !== undefined) return named;
   if (/^[a-zA-Z]$/.test(key)) return 'Key' + key.toUpperCase();
@@ -587,6 +636,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const world = layer(),
     effects = layer(),
     ui = layer(),
+    glass = layer(),
     cover = layer();
   const view = { x: 0, y: 0 };
   const random = createRandom(options.seed ?? Date.now() + ':' + Math.random());
@@ -637,17 +687,41 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       return { x: 0, y: 0 };
     }
   };
+  // The buttons of the first pad count as keys named `pad:a` and so on: held, pressed and let go as keys are.
+  const pollPadButtons = (): void => {
+    const pad = pads?.input.pads[0];
+    for (const name of PAD_BUTTONS) {
+      let down = false;
+      try {
+        down = pad !== undefined && pad.standard && pad.pressed(name);
+      } catch {
+        down = false;
+      }
+      const code = 'Pad:' + name;
+      if (down && !held.has(code)) {
+        held.add(code);
+        wentDown.add(code);
+      } else if (!down && held.has(code) && !touchHeld.has(code)) {
+        held.delete(code);
+        cameUp.add(code);
+      }
+    }
+  };
+  // Keys a finger holds through a button on the glass, and where a stick on the glass is.
+  const touchHeld = new Set<string>(),
+    touchStick = { x: 0, y: 0 };
   const keys: PlayKeys = {
     down: (...names) => any(held, names),
     pressed: (...names) => any(wentDown, names),
     released: (...names) => any(cameUp, names),
     axis() {
-      let x = (any(held, ['right', 'd']) ? 1 : 0) - (any(held, ['left', 'a']) ? 1 : 0),
-        y = (any(held, ['down', 's']) ? 1 : 0) - (any(held, ['up', 'w']) ? 1 : 0);
+      let x = (any(held, ['right', 'd', 'pad:right']) ? 1 : 0) - (any(held, ['left', 'a', 'pad:left']) ? 1 : 0),
+        y = (any(held, ['down', 's', 'pad:down']) ? 1 : 0) - (any(held, ['up', 'w', 'pad:up']) ? 1 : 0);
       const length = x !== 0 && y !== 0 ? Math.SQRT1_2 : 1;
       x *= length;
       y *= length;
-      const pushed = stick('left');
+      // A stick on the glass, then the pad's left stick, when no key is held.
+      const pushed = touchStick.x !== 0 || touchStick.y !== 0 ? touchStick : stick('left');
       if (x === 0 && y === 0 && (pushed.x !== 0 || pushed.y !== 0)) {
         const reach = Math.hypot(pushed.x, pushed.y);
         return reach > 1 ? { x: pushed.x / reach, y: pushed.y / reach } : pushed;
@@ -675,6 +749,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // This convenience view follows one drag; the shared UI router still receives every contact.
   let pointerOwner: number | undefined;
   const moved = (event: PointerEvent): void => {
+    touch.move(event);
     if (
       pointerOwner !== undefined
         ? event.pointerId !== pointerOwner
@@ -704,6 +779,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // that places something wherever the stage is pressed would place it under its own buttons.
   let tappable: DisplayObject[] = [];
   const pointerDown = (event: PointerEvent): void => {
+    // A finger on a stick or a button on the glass is that control's, and not the game's pointer.
+    if (touch.claim(event)) {
+      event.preventDefault();
+      return;
+    }
     if (pointerOwner !== undefined) return;
     pointerOwner = event.pointerId;
     place(event);
@@ -715,6 +795,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     win.focus?.();
   };
   const pointerUp = (event: PointerEvent): void => {
+    if (touch.end(event)) return;
     if (event.pointerId !== pointerOwner) return;
     pointerOwner = undefined;
     place(event);
@@ -725,6 +806,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       point.swipe = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up';
   };
   const pointerCancel = (event: PointerEvent): void => {
+    if (touch.end(event)) return;
     if (event.pointerId === pointerOwner) pointerOwner = undefined;
   };
   const pointer: PlayPointer = {
@@ -871,6 +953,78 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     set muted(value: boolean) {
       muted = Boolean(value);
       for (const each of loops) each.heard(muted ? 0 : volume);
+    }
+  };
+
+  // Music: the parts of one piece looped together, each a loop whose loudness follows the intensity.
+  let musicParts: { readonly part: (typeof MUSIC_PARTS)[number]; readonly loop: PlayingLoop; level: number }[] = [],
+    musicIntensity = 0.5,
+    musicVolume = 0.6,
+    musicMood: MusicMood | undefined,
+    musicTicket = 0;
+  const musicTick = (seconds: number): void => {
+    if (musicParts.length === 0) return;
+    const mix = musicMix(musicIntensity),
+      rate = Math.min(1, seconds / 1.5);
+    for (const entry of musicParts) {
+      const wanted = musicVolume * mix[entry.part];
+      if (Math.abs(wanted - entry.level) < 1e-3) continue;
+      entry.level += (wanted - entry.level) * rate;
+      entry.loop.volume = entry.level;
+    }
+  };
+  const endMusic = (seconds: number): void => {
+    musicTicket++;
+    for (const { loop } of musicParts) loop.stop(seconds);
+    musicParts = [];
+    musicMood = undefined;
+  };
+  const music: PlayMusic = {
+    async play(given = 'calm') {
+      const chosen: MusicOptions = typeof given === 'string' ? { mood: given } : (given ?? {});
+      if (chosen === null || typeof chosen !== 'object')
+        throw invalid('music.play takes a mood or { mood, seed, tempo, bars }');
+      let piece: ReturnType<typeof composeMusic>;
+      try {
+        piece = composeMusic(chosen, RATE);
+      } catch (cause) {
+        throw invalid(cause instanceof Error ? cause.message : 'music.play takes a mood');
+      }
+      const ticket = ++musicTicket;
+      const made = await Promise.all(
+        MUSIC_PARTS.map(part => audio.mixer.decode(encodeWav([piece.parts[part]], piece.rate)).catch(() => undefined))
+      );
+      // A newer piece, a stop or the end of the game came while this one was being made.
+      if (ticket !== musicTicket || disposed) return;
+      for (const { loop } of musicParts) loop.stop(1.2);
+      const mix = musicMix(musicIntensity);
+      musicParts = MUSIC_PARTS.map((part, index) => {
+        const level = musicVolume * mix[part],
+          loop = new PlayingLoop(() => made[index], audio.mixer, level, 1, 0, 1.2);
+        loops.add(loop);
+        loop.heard(muted ? 0 : volume);
+        if (paused) loop.hold(true);
+        return { part, loop, level };
+      });
+      musicMood = piece.mood;
+    },
+    stop(seconds = 1) {
+      endMusic(finite(seconds) && seconds >= 0 ? seconds : 1);
+    },
+    get intensity() {
+      return musicIntensity;
+    },
+    set intensity(value: number) {
+      if (finite(value)) musicIntensity = Math.max(0, Math.min(1, value));
+    },
+    get volume() {
+      return musicVolume;
+    },
+    set volume(value: number) {
+      if (finite(value)) musicVolume = Math.max(0, Math.min(1, value));
+    },
+    get mood() {
+      return musicMood;
     }
   };
 
@@ -1089,6 +1243,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     }
     try {
       pads?.poll();
+      pollPadButtons();
     } catch {
       // A pad that cannot be read is not there.
     }
@@ -1101,7 +1256,10 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       version === generation &&
       playLoop.state === 'running';
     // Bars, boxes of words and menus answer while the game is paused, as buttons do, and while `setup` awaits one.
-    if (!disposed && playLoop.state === 'running') widgets.tick(real);
+    if (!disposed && playLoop.state === 'running') {
+      widgets.tick(real);
+      musicTick(real);
+    }
     if (api === undefined || paused || disposed || playLoop.state !== 'running') {
       endFrame();
       return;
@@ -1202,11 +1360,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     'egret.play:' + (options.saveKey ?? win.location?.pathname ?? '') + ':' + key;
 
   function resetRound(): void {
+    endMusic(0.3);
     widgets.reset();
+    touch.reset();
+    touchHeld.clear();
+    touchStick.x = touchStick.y = 0;
     timers = [];
     stopLoops();
     stopMotions();
-    for (const made of [world, ui]) while (made.numChildren > 0) game.remove(made.getChildAt(0));
+    for (const made of [world, ui, glass]) while (made.numChildren > 0) game.remove(made.getChildAt(0));
     endRemoved();
     for (const piece of pieces) {
       piece.life = 0;
@@ -1538,6 +1700,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     get asking() {
       return widgets.asking;
     },
+    touchStick: options => touch.stick(options),
+    touchButton: (words, options) => touch.button(words, options),
+    music,
     browser,
     engine,
     scope,
@@ -1565,15 +1730,38 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     }
   };
   cover.visible = false;
-  const widgets = createPlayWidgets(game);
+  // A menu or a box of words that the first `setup` awaits starts the frames, so it is seen and answered. Otherwise
+  // they start when `setup` has finished, as they always have. The game's own steps, timers and tweens begin then.
+  const widgets = createPlayWidgets(game, () => {
+    if (!disposed && browser.loop.state === 'idle') browser.loop.start();
+  });
+  const touch = createPlayTouch(game, {
+    hold(key) {
+      const code = codeOf(key);
+      touchHeld.add(code);
+      if (!held.has(code)) {
+        held.add(code);
+        wentDown.add(code);
+      }
+    },
+    letGo(key) {
+      const code = codeOf(key);
+      touchHeld.delete(code);
+      if (held.delete(code)) cameUp.add(code);
+    },
+    stick(x, y) {
+      touchStick.x = x;
+      touchStick.y = y;
+    },
+    toStage: (x, y) => browser.toStage(x, y),
+    layer: glass
+  });
 
   try {
     await Promise.all(Object.entries(SFX_PRESETS).map(([name, recipe]) => make(name, recipe)));
-    // Frames are drawn while `setup` runs, so a menu or a box of words it awaits is seen and answered. The game's
-    // own steps, timers and tweens begin once it has finished.
-    browser.loop.start();
     await runSetup(false);
     if (disposed) throw new EgretError('SCOPE_CLOSED');
+    if (browser.loop.state === 'idle') browser.loop.start();
   } catch (cause) {
     try {
       await game.dispose();

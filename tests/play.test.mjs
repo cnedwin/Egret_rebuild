@@ -19,10 +19,14 @@ const refusal = async run => {
 
 test('PL01 the entry gives play, the text class, the bar, the sound effect parts and the word wrapping', () => {
   assert.deepEqual(Object.keys(entry).sort(), [
+    'MUSIC_MOODS',
+    'MUSIC_PARTS',
     'PlayBar',
     'PlayText',
     'SFX_PRESETS',
+    'composeMusic',
     'isSfxRecipe',
+    'musicMix',
     'play',
     'synthesizeSfx',
     'wrapPlayWords'
@@ -258,4 +262,45 @@ test('PL10 a bar slides to its value within its ends, and a fall leaves a trail 
   bar.color = 'red';
   assert.equal(bar.color, 0x00ff00);
   bar.dispose();
+});
+
+// Break caught: let a seed write different music, give parts of different lengths, or pass -1..1.
+test('PL11 a piece is the same for a seed, its parts are of one length, in range, and of the mood asked', () => {
+  const { composeMusic, MUSIC_MOODS, MUSIC_PARTS } = entry;
+  for (const mood of MUSIC_MOODS) {
+    const piece = composeMusic({ mood, seed: 3 }, 8000);
+    assert.equal(piece.mood, mood);
+    assert.deepEqual(Object.keys(piece.parts), [...MUSIC_PARTS]);
+    const length = piece.parts.pad.length;
+    assert.ok(Math.abs(length / 8000 - (piece.bars * 4 * 60) / piece.tempo) < 1 / 8000 + 1e-9);
+    for (const part of MUSIC_PARTS) {
+      const samples = piece.parts[part];
+      assert.equal(samples.length, length, part);
+      let peak = 0;
+      for (const value of samples) {
+        assert.ok(Number.isFinite(value));
+        peak = Math.max(peak, Math.abs(value));
+      }
+      assert.ok(peak > 0.1 && peak <= 1, mood + ' ' + part + ' ' + peak);
+    }
+  }
+  const a = composeMusic({ mood: 'battle', seed: 'x' }, 8000),
+    b = composeMusic({ mood: 'battle', seed: 'x' }, 8000),
+    c = composeMusic({ mood: 'battle', seed: 'y' }, 8000);
+  assert.deepEqual([...a.parts.tune], [...b.parts.tune]);
+  assert.notDeepEqual([...a.parts.tune], [...c.parts.tune]);
+  assert.equal(composeMusic({ bars: 4, tempo: 120 }, 8000).seconds, 8);
+  assert.throws(() => composeMusic({ mood: 'sad' }), TypeError);
+  assert.throws(() => composeMusic({}, 100), RangeError);
+});
+
+// Break caught: drop the pad at no intensity, or bring in the tune before the drums.
+test('PL12 the pad always plays, then the bass, the drums and the tune as intensity rises', () => {
+  const { musicMix } = entry;
+  assert.deepEqual(musicMix(0), { pad: 1, bass: 0, drums: 0, tune: 0 });
+  assert.deepEqual(musicMix(1), { pad: 1, bass: 1, drums: 1, tune: 1 });
+  const half = musicMix(0.5);
+  assert.ok(half.bass === 1 && half.drums > 0 && half.drums < 1 && half.tune === 0);
+  assert.deepEqual(musicMix(Number.NaN), musicMix(0));
+  assert.deepEqual(musicMix(7), musicMix(1));
 });

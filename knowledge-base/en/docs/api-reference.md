@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1299 exports; 790 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1310 exports; 797 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1424,7 +1424,15 @@ For which entry to import from, see [What to import](entry-points.md).
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
+| `composeMusic` | function | Writes a piece. |
 | `isSfxRecipe` | function | Whether a value is a recipe `synthesizeSfx` takes. |
+| `MUSIC_MOODS` | value |  |
+| `MUSIC_PARTS` | value | The parts of a piece, from the quietest moment to the most intense. |
+| `musicMix` | function | How loud each part is at an intensity from 0 to 1: the pad always, then the bass, the drums and the tune. |
+| `MusicMood` | type | The moods there are. |
+| `MusicOptions` | interface |  |
+| `MusicPart` | type |  |
+| `MusicPiece` | interface |  |
 | `play` | function | Starts a game in the page. |
 | `PlayBar` | class | A bar of health, time or power. |
 | `PlayBarOptions` | interface |  |
@@ -1435,13 +1443,16 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayKeys` | interface |  |
 | `PlayMenuOptions` | interface |  |
 | `PlayMotion` | type | A tween of `game.tween`: a motion that can be waited for. |
+| `PlayMusic` | interface |  |
 | `PlayOptions` | interface |  |
 | `PlayPointer` | interface |  |
 | `PlaySayOptions` | interface |  |
 | `PlaySfx` | interface |  |
+| `PlayStickOptions` | interface |  |
 | `PlayText` | class | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
 | `PlayTextOptions` | interface |  |
 | `PlayToastOptions` | interface |  |
+| `PlayTouchButtonOptions` | interface |  |
 | `SFX_PRESETS` | value | The effects every game is given, by name. |
 | `SfxRecipe` | type | An effect: one tone, or several played one after another. |
 | `SfxTone` | interface | One tone of an effect. |
