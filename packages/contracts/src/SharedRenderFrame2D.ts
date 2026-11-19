@@ -24,8 +24,6 @@ export interface SharedFrameOptions2D {
   readonly clearColor?: number;
   readonly clearAlpha?: number;
   readonly outputAlpha?: SharedOutputAlpha2D;
-  /** `linear` unless given. A renderer draws only frames of the space it was made for. */
-  readonly blendSpace?: SharedBlendSpace2D;
 }
 
 export interface SharedPage2D {
@@ -135,5 +133,7 @@ export interface SharedRenderFrame2D {
 
 export interface SharedRenderHostAdapter extends HostAdapter {
   readonly sharedFrameProfile: SharedFrameProfile2D;
+  /** The blend space the renderer was made for, `linear` when absent. An Engine's frames record it. */
+  readonly sharedBlendSpace?: SharedBlendSpace2D;
   renderSharedFrame(frame: SharedRenderFrame2D): undefined;
 }

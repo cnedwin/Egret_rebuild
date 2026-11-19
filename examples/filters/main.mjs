@@ -21,7 +21,7 @@ const host = await createExampleHost({
 });
 const engine = await createEngineForProfile({ host }, SHARED_FRAME_PROFILE_2D);
 const scope = engine.createScope();
-const frame = Object.freeze({ width: WIDTH, height: HEIGHT, clearColor: 0x1b1f2a, clearAlpha: 1, blendSpace });
+const frame = Object.freeze({ width: WIDTH, height: HEIGHT, clearColor: 0x1b1f2a, clearAlpha: 1 });
 let failure;
 
 const TILE = 0x3fa7d6,

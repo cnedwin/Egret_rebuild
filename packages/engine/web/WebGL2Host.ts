@@ -297,6 +297,8 @@ interface Limits {
 class SharedGLHost implements SharedLayerWebGL2Host {
   public readonly surface: HTMLCanvasElement;
   public readonly sharedFrameProfile = SHARED_FRAME_PROFILE_2D;
+  /** The space this Host mixes in; an Engine's frames record it. */
+  public readonly sharedBlendSpace: 'linear' | 'srgb';
   private readonly options: SharedWebGL2Configuration;
   private readonly callback: ((event: WebGL2HostDiagnostic) => unknown) | undefined;
   private state: WebGL2HostState = 'new';
@@ -431,6 +433,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       const admitted = admitSharedWebGL2Options(input);
       this.surface = admitted.surface;
       this.options = admitted.configuration;
+      this.sharedBlendSpace = admitted.configuration.blendSpace;
       this.callback = admitted.callback;
       this.frameTiming = admitted.measureSharedFrames ? createFrameTiming() : undefined;
     } catch (cause) {
@@ -438,6 +441,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     }
     Object.defineProperty(this, 'surface', { writable: false, configurable: false });
     Object.defineProperty(this, 'sharedFrameProfile', { writable: false, configurable: false });
+    Object.defineProperty(this, 'sharedBlendSpace', { writable: false, configurable: false });
     this.cpu.resolve();
   }
   private recordTiming(

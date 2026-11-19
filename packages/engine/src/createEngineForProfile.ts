@@ -10,16 +10,23 @@ export async function createEngineForProfile(options: EngineOptions, profile: Sh
   // Unsupported profiles never inspect options, allocate an Engine or reserve a surface.
   if (profile !== SHARED_FRAME_PROFILE_2D) throw new EgretError('ENGINE_RENDER_PROFILE_UNSUPPORTED');
   const host = options.host;
-  let advertisement: unknown, shared: unknown;
+  let advertisement: unknown, shared: unknown, space: unknown;
   try {
-    const source = host as unknown as { readonly sharedFrameProfile?: unknown; readonly renderSharedFrame?: unknown };
+    const source = host as unknown as {
+      readonly sharedFrameProfile?: unknown;
+      readonly renderSharedFrame?: unknown;
+      readonly sharedBlendSpace?: unknown;
+    };
     advertisement = source.sharedFrameProfile;
     shared = source.renderSharedFrame;
+    space = source.sharedBlendSpace;
   } catch (cause) {
     throw new EgretError('INVALID_RENDERER', { cause });
   }
   if (advertisement !== SHARED_FRAME_PROFILE_2D) throw new EgretError('ENGINE_RENDER_PROFILE_UNSUPPORTED');
   if (typeof shared !== 'function') throw new EgretError('INVALID_RENDERER');
+  // The space the renderer mixes in; its frames record it. Linear light unless the renderer says otherwise.
+  if (space !== undefined && space !== 'linear' && space !== 'srgb') throw new EgretError('INVALID_RENDERER');
   const diagnostic = options.onDiagnostic;
   const stableOptions: EngineOptions = { host, ...(diagnostic === undefined ? {} : { onDiagnostic: diagnostic }) };
   const timeoutMs = options.shutdownTimeoutMs ?? 1000;
@@ -37,7 +44,8 @@ export async function createEngineForProfile(options: EngineOptions, profile: Sh
     timeoutMs,
     {
       shared: shared as CapturedEngineFramePorts['shared'],
-      sharedProfile: profile
+      sharedProfile: profile,
+      sharedBlendSpace: space === 'srgb' ? 'srgb' : 'linear'
     },
     clockOptions
   );

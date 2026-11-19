@@ -575,8 +575,11 @@ class WebGPUHostImplementation {
       throw error('WEBGPU_OPTIONS_INVALID', cause);
     }
     this.borrowedPolicy = this.borrowed !== undefined;
+    const admittedSpace = SHARED_OPTIONS.get(this)!.blendSpace;
     Object.defineProperties(this, {
       sharedFrameProfile: { value: SHARED_FRAME_PROFILE_2D, enumerable: true },
+      // The space this Host mixes in; an Engine's frames record it.
+      sharedBlendSpace: { value: admittedSpace, enumerable: true },
       renderSharedFrame: {
         value: (frame: SharedRenderFrame2D): undefined => this.renderSharedOwnedFrame(frame) as undefined,
         enumerable: true

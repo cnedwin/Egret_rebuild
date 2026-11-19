@@ -17,28 +17,56 @@ const decode = code => (code / 255 <= 0.04045 ? code / 255 / 12.92 : ((code / 25
 const GL_LINEAR = 9729;
 const hasCode = code => error => error?.code === code;
 
-/** An Engine whose stage holds one translucent white square, optionally inside a glow. */
+/** A Host for an Engine that captures frames: it advertises the shared profile and the space it mixes in. */
+const capturing = space => ({
+  surface: {},
+  start() {},
+  stop() {},
+  async close() {},
+  setTimeout: () => () => {},
+  sharedFrameProfile: 'egret.shared-frame2d/1',
+  renderSharedFrame() {},
+  ...(space === undefined ? {} : { sharedBlendSpace: space })
+});
+/**
+ * Engines whose stages hold one translucent white square, optionally inside a glow: one whose Host mixes in linear
+ * light (it says nothing of its space) and one whose Host mixes in sRGB. `frame({ blendSpace })` captures a frame of
+ * the one asked for.
+ */
 async function staged(run, { glow = false } = {}) {
-  const engine = await egret.createEngine({
-      host: { surface: {}, start() {}, stop() {}, async close() {}, setTimeout: () => () => {} }
-    }),
-    scope = engine.createScope();
+  const engines = {};
   try {
-    const holder = engine.stage.addChild(scope.use(new egret.DisplayObjectContainer()));
-    const square = holder.addChild(scope.use(new egret.Sprite()));
-    square.graphics.beginFill(0xffffff, 0.1).drawRect(0, 0, 4, 4).endFill();
-    if (glow) holder.renderEffect = { glow: { color: 0x336699, blur: 2, strength: 1 } };
-    await run((options = {}) =>
-      engine.captureSharedFrame({ width: 8, height: 8, clearColor: 0x1c2433, clearAlpha: 1, ...options })
+    for (const space of ['linear', 'srgb']) {
+      const engine = await egret.createEngineForProfile(
+          { host: capturing(space === 'linear' ? undefined : space) },
+          egret.SHARED_FRAME_PROFILE_2D
+        ),
+        scope = engine.createScope();
+      engines[space] = { engine, scope };
+      const holder = engine.stage.addChild(scope.use(new egret.DisplayObjectContainer()));
+      const square = holder.addChild(scope.use(new egret.Sprite()));
+      square.graphics.beginFill(0xffffff, 0.1).drawRect(0, 0, 4, 4).endFill();
+      if (glow) holder.renderEffect = { glow: { color: 0x336699, blur: 2, strength: 1 } };
+    }
+    await run(({ blendSpace = 'linear', ...options } = {}) =>
+      engines[blendSpace].engine.captureSharedFrame({
+        width: 8,
+        height: 8,
+        clearColor: 0x1c2433,
+        clearAlpha: 1,
+        ...options
+      })
     );
   } finally {
-    scope.dispose();
-    await engine.dispose();
+    for (const { engine, scope } of Object.values(engines)) {
+      scope.dispose();
+      await engine.dispose();
+    }
   }
 }
 
 // Break caught: record one recipe for both spaces, pair a recipe with the other space's target, or take any word.
-test('BLD01 a frame records its blend space as a recipe and a target, linear unless given', async () => {
+test('BLD01 a frame records the blend space of its renderer as a recipe and a target, linear unless it says', async () => {
   await staged(async frame => {
     const linear = frame(),
       srgb = frame({ blendSpace: 'srgb' });
@@ -52,9 +80,12 @@ test('BLD01 a frame records its blend space as a recipe and a target, linear unl
       sharedBlendSpace2D({ colorRecipe: 'egret.srgb-pma/1', targetRepresentation: 'egret.srgb-pma8-target/1' }),
       undefined
     );
-    for (const blendSpace of ['gamma', 'SRGB', 1, null])
-      assert.throws(() => frame({ blendSpace }), hasCode('INVALID_FRAME_OPTIONS'));
   });
+  for (const space of ['gamma', 'SRGB', 1, null])
+    await assert.rejects(
+      egret.createEngineForProfile({ host: capturing(space) }, egret.SHARED_FRAME_PROFILE_2D),
+      hasCode('INVALID_RENDERER')
+    );
 });
 
 // Break caught: clear a target of codes to light, or give a glow of an srgb frame its colour in linear light.

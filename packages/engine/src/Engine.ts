@@ -58,6 +58,8 @@ export interface EngineOptions {
 export interface CapturedEngineFramePorts {
   readonly shared: ((frame: SharedRenderFrame2D) => unknown) | undefined;
   readonly sharedProfile: SharedFrameProfile2D | undefined;
+  /** The space the renderer mixes in, which every frame records. */
+  readonly sharedBlendSpace: 'linear' | 'srgb';
 }
 export let constructEngine: (
   options: EngineOptions,
@@ -111,6 +113,7 @@ export class Engine {
   private frameIdle: Promise<void> | undefined;
   private releaseFrame: (() => void) | undefined;
   private readonly sharedRenderer: ((frame: SharedRenderFrame2D) => unknown) | undefined;
+  private readonly sharedBlendSpace: 'linear' | 'srgb';
   #currentState: 'open' | 'closing' | 'closed' = 'open';
   private readonly scopes = new Set<Scope>();
   private readonly cleanupErrors: unknown[] = [];
@@ -137,6 +140,7 @@ export class Engine {
     if (token !== CREATION_TOKEN) throw new EgretError('ENGINE_FACTORY_REQUIRED');
     this.host = options.host;
     this.sharedRenderer = ports.shared;
+    this.sharedBlendSpace = ports.sharedBlendSpace;
     this.sharedFrameProfile = ports.sharedProfile;
     this.timeoutMs = timeoutMs;
     this.onDiagnostic = options.onDiagnostic;
@@ -379,12 +383,7 @@ export class Engine {
           : candidate === undefined
             ? undefined
             : this.#bitmapBindingOwner.readPreparedForCapture(candidate[0]);
-      let width: unknown,
-        height: unknown,
-        colorInput: unknown,
-        alphaInput: unknown,
-        outputInput: unknown,
-        spaceInput: unknown;
+      let width: unknown, height: unknown, colorInput: unknown, alphaInput: unknown, outputInput: unknown;
       let optionsFailed = false,
         optionsCause: unknown;
       try {
@@ -393,7 +392,6 @@ export class Engine {
         colorInput = options.clearColor;
         alphaInput = options.clearAlpha;
         outputInput = options.outputAlpha;
-        spaceInput = options.blendSpace;
       } catch (cause) {
         // Even a caller-thrown EgretError is an external read failure here.
         if (prepared === undefined) throw new EgretError('INVALID_FRAME_OPTIONS', { cause });
@@ -407,7 +405,6 @@ export class Engine {
       const outputAlpha = outputInput === undefined ? 'premultiplied' : outputInput;
       const clearColor = colorInput === undefined ? 0 : colorInput;
       const clearAlpha = alphaInput === undefined ? (outputAlpha === 'opaque' ? 1 : 0) : alphaInput;
-      const blendSpace = spaceInput === undefined ? 'linear' : spaceInput;
       if (
         typeof width !== 'number' ||
         !Number.isFinite(width) ||
@@ -424,8 +421,7 @@ export class Engine {
         clearAlpha < 0 ||
         clearAlpha > 1 ||
         (outputAlpha !== 'opaque' && outputAlpha !== 'premultiplied') ||
-        (outputAlpha === 'opaque' && clearAlpha !== 1) ||
-        (blendSpace !== 'linear' && blendSpace !== 'srgb')
+        (outputAlpha === 'opaque' && clearAlpha !== 1)
       )
         throw new EgretError('INVALID_FRAME_OPTIONS');
       this.#context.assertOpen();
@@ -436,7 +432,7 @@ export class Engine {
       if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) throw new EgretError('FRAME_ID_EXHAUSTED');
       const frame = freezeSharedFrame({
         profile: SHARED_FRAME_PROFILE_2D,
-        ...(blendSpace === 'srgb'
+        ...(this.sharedBlendSpace === 'srgb'
           ? ({ colorRecipe: 'egret.srgb-pma/1', targetRepresentation: 'egret.encoded-srgb-pma8-target/1' } as const)
           : ({ colorRecipe: 'egret.linear-srgb-pma/1', targetRepresentation: 'egret.srgb-pma8-target/1' } as const)),
         outputRepresentation:

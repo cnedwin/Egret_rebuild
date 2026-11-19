@@ -217,7 +217,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
   let loop: BrowserFrameLoop | undefined, stats: BrowserStatsPanel | undefined, disposal: Promise<void> | undefined;
   try {
     const scope = engine.createScope(),
-      frame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha, blendSpace });
+      frame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha });
     const pointer = options.pointer === false ? undefined : createBrowserPointerInput({ engine, scope, width, height });
     const keyboard = options.keyboard === false ? undefined : createBrowserKeyboardInput({ engine, scope });
     const panel = (stats = options.stats === true ? createBrowserStatsPanel({ canvas, label: backend }) : undefined);

@@ -21,5 +21,10 @@ export async function createEngine(options: EngineOptions): Promise<Engine> {
     throw new EgretError('CLOCK_OPTIONS_INVALID', { cause });
   }
   const clockOptions = admitGameClockOptions(clockValue);
-  return startEngine(stableOptions, timeoutMs, { shared: undefined, sharedProfile: undefined }, clockOptions);
+  return startEngine(
+    stableOptions,
+    timeoutMs,
+    { shared: undefined, sharedProfile: undefined, sharedBlendSpace: 'linear' },
+    clockOptions
+  );
 }
