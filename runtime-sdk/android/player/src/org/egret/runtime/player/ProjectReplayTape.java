@@ -27,7 +27,7 @@ import java.util.TreeMap;
 /** A bounded, local recording of the exact project submissions and immutable RGBA page versions. */
 final class ProjectReplayTape {
     static final int FRAMES = 210;
-    private static final int MAGIC = 0x45475250, VERSION = 1, EGR2 = 0x32524745, EGR3 = 0x33524745;
+    private static final int MAGIC = 0x45475250, VERSION = 1, EGR2 = 0x32524745, EGR3 = 0x33524745, EGR4 = 0x34524745;
     private static final int MAX_BYTES = 64 << 20, MAX_GENERATIONS = 4096, CHECKSUM = 32;
     private static final int HEADER = 5 * Integer.BYTES, REUSE = -1;
     private final PlayerGraphics.Frame[] frames;
@@ -234,9 +234,13 @@ final class ProjectReplayTape {
             throw new IOException("Invalid project packet length");
         ByteBuffer data = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
         int format = data.getInt(0), quads = data.getInt(20);
-        if ((format != EGR2 && format != EGR3) || data.getInt(4) != id || data.getInt(8) != width
+        if ((format != EGR2 && format != EGR3 && format != EGR4) || data.getInt(4) != id || data.getInt(8) != width
             || data.getInt(12) != height || quads < 0 || quads > PlayerGraphics.MAX_QUADS)
             throw new IOException("Invalid or discontinuous project frame");
+        if (format == EGR4) {
+            validateIndexedPacket(data, quads, width, height, pages);
+            return;
+        }
         int recordsEnd = 24 + quads * PlayerGraphics.QUAD_BYTES;
         int tail = bytes.length - recordsEnd;
         if (format == EGR2 ? tail != 0 :
@@ -249,22 +253,83 @@ final class ProjectReplayTape {
         // Saved frames may mix packet versions. The sparse suffix always indexes draw records.
         int previous = -1;
         for (int i = recordsEnd; i < bytes.length; i += PlayerGraphics.ATLAS_BYTES) {
-            int ordinal = data.getInt(i), w = data.getInt(i+4), h = data.getInt(i+8);
-            int x = data.getInt(i+12), y = data.getInt(i+16), turn = data.getInt(i+20);
-            if (ordinal <= previous || ordinal >= quads || w < 1 || h < 1 || w > (1 << 20) || h > (1 << 20)
-                || x < 0 || x >= w || y < 0 || y >= h || turn < 0 || turn > 3)
-                throw new IOException("Invalid project atlas descriptor");
+            int ordinal = data.getInt(i);
+            if (ordinal <= previous || ordinal >= quads) throw new IOException("Invalid project atlas descriptor");
             int record = 24 + ordinal * PlayerGraphics.QUAD_BYTES;
-            PlayerGraphics.Page page = pages.get(bytes[record] & 255);
-            if (page == null) throw new IOException("Atlas descriptor requires a texture");
-            int packedWidth = texelEdge(data.getFloat(record+40), page.width) - texelEdge(data.getFloat(record+32), page.width);
-            int packedHeight = texelEdge(data.getFloat(record+44), page.height) - texelEdge(data.getFloat(record+36), page.height);
-            boolean odd = (turn & 1) != 0;
-            if (packedWidth <= 0 || packedHeight <= 0 || (odd ? packedHeight : packedWidth) > w - x
-                || (odd ? packedWidth : packedHeight) > h - y)
-                throw new IOException("Atlas content exceeds its logical region");
+            validateMapping(data, i + 4, pages.get(bytes[record] & 255), record + 32);
             previous = ordinal;
         }
+    }
+
+
+    // EGR4 records are interleaved in painter order. Bounds-check every variable
+    // section before indexing it so malformed tapes cannot publish a partial session.
+    private static void validateIndexedPacket(ByteBuffer data, int draws, int width, int height,
+                                             Map<Integer, PlayerGraphics.Page> pages) throws IOException {
+        int pos = 24;
+        boolean sawMesh = false;
+        for (int draw = 0; draw < draws; draw++) {
+            requireRemaining(data, pos, 4);
+            int kind = data.getInt(pos);
+            pos += 4;
+            if (kind == 0 || kind == 1) {
+                requireRemaining(data, pos, PlayerGraphics.QUAD_BYTES + (kind == 1 ? 20 : 0));
+                int slot = data.get(pos) & 255;
+                PlayerGraphics.Page page = pages.get(slot);
+                if (slot != 0 && page == null) throw new IOException("Missing project page " + slot);
+                if (kind == 1) validateMapping(data, pos + PlayerGraphics.QUAD_BYTES, page, pos + 32);
+                pos += PlayerGraphics.QUAD_BYTES + (kind == 1 ? 20 : 0);
+                continue;
+            }
+            if (kind != 2 && kind != 3) throw new IOException("Unknown indexed project draw");
+            sawMesh = true;
+            requireRemaining(data, pos, 48 + (kind == 3 ? 20 : 0));
+            int slot = data.getInt(pos);
+            PlayerGraphics.Page page = pages.get(slot);
+            if (slot < 1 || slot > 255 || page == null) throw new IOException("Missing mesh texture page");
+            float left = data.getFloat(pos + 8), top = data.getFloat(pos + 12);
+            float right = data.getFloat(pos + 16), bottom = data.getFloat(pos + 20);
+            float u0 = data.getFloat(pos + 24), v0 = data.getFloat(pos + 28);
+            float u1 = data.getFloat(pos + 32), v1 = data.getFloat(pos + 36);
+            if (!unit(data.getFloat(pos + 4)) || !(0 <= left && left <= right && right <= width)
+                || !(0 <= top && top <= bottom && bottom <= height)
+                || !(0 <= u0 && u0 < u1 && u1 <= 1 && 0 <= v0 && v0 < v1 && v1 <= 1))
+                throw new IOException("Invalid mesh opacity, clip or texture region");
+            int vertices = data.getInt(pos + 40), indices = data.getInt(pos + 44);
+            if (vertices < 3 || indices < 3 || indices % 3 != 0) throw new IOException("Invalid triangle counts");
+            if (kind == 3) validateMapping(data, pos + 48, page, pos + 24);
+            pos += 48 + (kind == 3 ? 20 : 0);
+            requireRemaining(data, pos, 16L * vertices + 4L * indices);
+            for (int i = 0; i < vertices; i++, pos += 16) {
+                if (!(Math.abs(data.getFloat(pos)) <= 16777216f && Math.abs(data.getFloat(pos + 4)) <= 16777216f)
+                    || !unit(data.getFloat(pos + 8)) || !unit(data.getFloat(pos + 12)))
+                    throw new IOException("Invalid mesh vertex");
+            }
+            for (int i = 0; i < indices; i++, pos += 4) {
+                int index = data.getInt(pos);
+                if (index < 0 || index >= vertices) throw new IOException("Mesh index outside its vertex table");
+            }
+        }
+        if (!sawMesh || pos != data.limit()) throw new IOException("Invalid indexed project packet length or contents");
+    }
+
+    private static boolean unit(float value) { return 0 <= value && value <= 1; }
+    private static void requireRemaining(ByteBuffer data, int pos, long count) throws IOException {
+        if (count > data.limit() - pos) throw new IOException("Truncated indexed project draw");
+    }
+
+    private static void validateMapping(ByteBuffer data, int pos, PlayerGraphics.Page page, int uv) throws IOException {
+        if (page == null) throw new IOException("Atlas descriptor requires a texture");
+        int w = data.getInt(pos), h = data.getInt(pos + 4), x = data.getInt(pos + 8);
+        int y = data.getInt(pos + 12), turn = data.getInt(pos + 16);
+        if (w < 1 || h < 1 || w > (1 << 20) || h > (1 << 20) || x < 0 || x >= w
+            || y < 0 || y >= h || turn < 0 || turn > 3) throw new IOException("Invalid project atlas descriptor");
+        int packedWidth = texelEdge(data.getFloat(uv + 8), page.width) - texelEdge(data.getFloat(uv), page.width);
+        int packedHeight = texelEdge(data.getFloat(uv + 12), page.height) - texelEdge(data.getFloat(uv + 4), page.height);
+        boolean odd = (turn & 1) != 0;
+        if (packedWidth <= 0 || packedHeight <= 0 || (odd ? packedHeight : packedWidth) > w - x
+            || (odd ? packedWidth : packedHeight) > h - y)
+            throw new IOException("Atlas content exceeds its logical region");
     }
 
     private static int texelEdge(float uv, int extent) throws IOException {

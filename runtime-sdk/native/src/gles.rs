@@ -27,12 +27,15 @@ pub struct EgretRenderer {
     logical_size: i32,
     texture_limit: u32,
     buffer_bytes: usize,
+    index_buffer: u32,
+    index_bytes: usize,
     textures: [u32; PAGE_SLOTS],
     opaque_pages: [bool; PAGE_SLOTS],
     project: Option<ProjectPipeline>,
     page_sizes: [[u32; 2]; PAGE_SLOTS],
     resident_bytes: usize,
     vertices: Vec<Vertex>,
+    indices: Vec<u32>,
     batches: Vec<Batch>,
 }
 
@@ -97,9 +100,10 @@ impl EgretRenderer {
         let program = link_program(VERTEX, FRAGMENT)?;
         let mut renderer = Self {
             program, buffer: 0, vao: 0, logical_size: -1, texture_limit: 0, buffer_bytes: 0,
+            index_buffer: 0, index_bytes: 0,
             opaque_pages: [true; PAGE_SLOTS], project: None,
             textures: [0; PAGE_SLOTS], page_sizes: [[0; 2]; PAGE_SLOTS], resident_bytes: 0,
-            vertices: Vec::new(), batches: Vec::new(),
+            vertices: Vec::new(), indices: Vec::new(), batches: Vec::new(),
         };
         glUseProgram(program);
         renderer.logical_size = glGetUniformLocation(program, b"size\0".as_ptr().cast());
@@ -137,13 +141,35 @@ impl EgretRenderer {
         if let Some(project) = &self.project { project.destroy(); }
         glDeleteTextures(PAGE_SLOTS as i32, self.textures.as_ptr());
         glDeleteBuffers(1, &self.buffer);
+        if self.index_buffer != 0 { glDeleteBuffers(1, &self.index_buffer); }
         glDeleteVertexArrays(1, &self.vao);
         glUseProgram(0);
         glDeleteProgram(self.program);
     }
 
+    unsafe fn upload_indices(&mut self) -> bool {
+        if self.indices.is_empty() { return true; }
+        if self.index_buffer == 0 {
+            glGenBuffers(1, &mut self.index_buffer);
+            if self.index_buffer == 0 { return false; }
+        }
+        // Element buffer bindings belong to the VAO. The resolve pass has its own VAO.
+        glBindVertexArray(self.vao);
+        glBindBuffer(ELEMENT_ARRAY_BUFFER, self.index_buffer);
+        let bytes = self.indices.len() * size_of::<u32>();
+        if bytes > self.index_bytes {
+            let capacity = bytes.next_power_of_two();
+            glBufferData(ELEMENT_ARRAY_BUFFER, capacity as isize, ptr::null(), DYNAMIC_DRAW);
+            if glGetError() != 0 { return false; }
+            self.index_bytes = capacity;
+        }
+        glBufferSubData(ELEMENT_ARRAY_BUFFER, 0, bytes as isize, self.indices.as_ptr().cast());
+        // The shared submission check observes upload and draw errors together.
+        true
+    }
+
     unsafe fn draw(&mut self, bytes: &[u8], width: u32, height: u32) -> i32 {
-        let header = match frame::prepare(bytes, &self.page_sizes, &mut self.vertices, &mut self.batches) {
+        let header = match frame::prepare_frame(bytes, &self.page_sizes, &mut self.vertices, &mut self.batches, &mut self.indices) {
             Ok(header) => header,
             Err(error) => return error as i32,
         };
@@ -158,6 +184,7 @@ impl EgretRenderer {
         }
         glViewport(0, 0, width as i32, height as i32);
         if header.project {
+            if !self.upload_indices() { return GPU_FAILURE; }
             if self.project.is_none() { self.project = ProjectPipeline::create(); }
             let Some(pipeline) = &mut self.project else { return GPU_FAILURE; };
             if size != 0 { glBufferSubData(ARRAY_BUFFER, 0, size as isize, self.vertices.as_ptr().cast()); }

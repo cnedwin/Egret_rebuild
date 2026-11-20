@@ -121,7 +121,7 @@ impl ProjectPipeline {
     pub(crate) unsafe fn render(&mut self, header: &Header, physical: [u32; 2], vao: u32,
                                 pages: &[u32; PAGE_SLOTS], batches: &[Batch]) -> bool {
         if !self.resize(physical) { return false; }
-        // Compile the mapped shader only when the first EGR3 frame needs it.
+        // Compile the mapped shader only when a quad or mesh first needs atlas mapping.
         let draw = if header.mapped {
             if self.mapped_draw.is_none() { self.mapped_draw = DrawProgram::create(true); }
             let Some(draw) = &self.mapped_draw else { return false; };
@@ -155,7 +155,12 @@ impl ProjectPipeline {
                 }
             }
             glBindTexture(TEXTURE_2D, pages[batch.page]);
-            glDrawArrays(TRIANGLES, batch.first, batch.count);
+            if batch.indexed {
+                let offset = batch.first as usize * std::mem::size_of::<u32>();
+                glDrawElements(TRIANGLES, batch.count, UNSIGNED_INT, offset as *const _);
+            } else {
+                glDrawArrays(TRIANGLES, batch.first, batch.count);
+            }
         }
         glDisable(SCISSOR_TEST);
         glDisable(BLEND);

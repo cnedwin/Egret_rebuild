@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-//! GLES executor for EGR1 baseline frames, EGR2 project quads and EGR3 mapped atlases.
+//! GLES executor for EGR1 baseline, EGR2/EGR3 quads, and EGR4 indexed textured meshes.
 
 #[cfg(any(test, target_os = "android"))]
 mod frame;

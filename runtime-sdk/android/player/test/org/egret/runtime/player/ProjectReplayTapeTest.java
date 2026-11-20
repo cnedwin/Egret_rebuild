@@ -118,6 +118,70 @@ public final class ProjectReplayTapeTest {
         require(empty.size() == 1);
     }
 
+
+    private static byte[] indexedPacket(int id, boolean mapped) {
+        ByteBuffer b = ByteBuffer.allocate(24 + 52 + (mapped ? 20 : 0) + 3 * 16 + 3 * 4)
+            .order(ByteOrder.LITTLE_ENDIAN);
+        b.putInt(0x34524745).putInt(id).putInt(W).putInt(H).putInt(0x123456ff).putInt(1);
+        b.putInt(mapped ? 3 : 2).putInt(9).putFloat(1);
+        for (float f : new float[]{0, 0, W, H, 0, 0, 1, 1}) b.putFloat(f);
+        b.putInt(3).putInt(3);
+        if (mapped) b.putInt(4).putInt(5).putInt(1).putInt(2).putInt(1);
+        for (float f : new float[]{8, 8, 0, 0, 24, 8, 1, 0, 8, 24, 0, 1}) b.putFloat(f);
+        b.putInt(2).putInt(0).putInt(1);
+        return b.array();
+    }
+
+    private static byte[] mixedPacket(int id) {
+        byte[] atlas = atlasPacket(id, 3, 1, 1);
+        byte[] plainMesh = indexedPacket(id, false);
+        byte[] mappedMesh = indexedPacket(id, true);
+        ByteBuffer b = ByteBuffer.allocate(24 + 68 + 88 + plainMesh.length - 24 + mappedMesh.length - 24)
+            .order(ByteOrder.LITTLE_ENDIAN);
+        b.put(plainMesh, 0, 24).putInt(20, 4);
+        b.putInt(0).put(atlas, 24, 64);
+        b.put(plainMesh, 24, plainMesh.length - 24);
+        b.putInt(1).put(atlas, 24, 64).put(atlas, 92, 20);
+        b.put(mappedMesh, 24, mappedMesh.length - 24);
+        return b.array();
+    }
+
+    private static void indexedReplay(File file) throws Exception {
+        Map<Integer, PlayerGraphics.Page> pages = Collections.singletonMap(9, page(100));
+        ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
+        for (int i = 0; i < ProjectReplayTape.FRAMES; i++) {
+            byte[] bytes = i % 3 == 0 ? mixedPacket(i) :
+                i % 3 == 1 ? indexedPacket(i, true) : atlasPacket(i, 3, 1, 1);
+            recorder.add(new PlayerGraphics.Frame(4, bytes, pages));
+        }
+        recorder.write(file);
+        ProjectReplayTape replay = ProjectReplayTape.read(file, W, H);
+        require(Arrays.equals(mixedPacket(0), replay.frame(0, 9).bytes));
+        require(Arrays.equals(indexedPacket(1, true), replay.frame(1, 9).bytes));
+        require(replay.frame(0, 9).pages == replay.frame(1, 9).pages);
+
+        ProjectReplayTape.Recorder empty = new ProjectReplayTape.Recorder(W, H);
+        byte[] good = indexedPacket(0, false);
+        for (int[] edit : new int[][]{{24, 4}, {28, 0}, {28, 256}, {32, 0x7fc00000},
+                {44, 0x7f800000}, {60, 0}, {68, -1}, {68, Integer.MAX_VALUE}, {72, 4},
+                {76, 0x7f800000}, {84, 0x7fc00000}, {good.length - 4, 3}}) {
+            byte[] bad = good.clone();
+            ByteBuffer.wrap(bad).order(ByteOrder.LITTLE_ENDIAN).putInt(edit[0], edit[1]);
+            reject(() -> empty.add(new PlayerGraphics.Frame(1, bad, pages)));
+        }
+        byte[] noMesh = Arrays.copyOf(mixedPacket(0), 24 + 68);
+        ByteBuffer.wrap(noMesh).order(ByteOrder.LITTLE_ENDIAN).putInt(20, 1);
+        reject(() -> empty.add(new PlayerGraphics.Frame(1, noMesh, pages)));
+        byte[] badMapping = indexedPacket(0, true);
+        ByteBuffer.wrap(badMapping).order(ByteOrder.LITTLE_ENDIAN).putInt(92, 4);
+        reject(() -> empty.add(new PlayerGraphics.Frame(1, badMapping, pages)));
+        for (int length : new int[]{24, 72, good.length - 1, good.length + 4}) {
+            reject(() -> empty.add(new PlayerGraphics.Frame(1, Arrays.copyOf(good, length), pages)));
+        }
+        reject(() -> empty.add(new PlayerGraphics.Frame(1, good, Collections.emptyMap())));
+        require(empty.size() == 0);
+    }
+
     public static void main(String[] args) throws Exception {
         File dir = Files.createTempDirectory("egret-project-tape-test").toFile();
         File file = new File(dir, "scene.bin");
@@ -163,7 +227,8 @@ public final class ProjectReplayTapeTest {
             Files.write(file.toPath(), Arrays.copyOf(original, original.length + 1));
             reject(() -> ProjectReplayTape.read(file, W, H));
             atlasReplay(file);
-            System.out.println("Project replay: EGR2/EGR3 round-trip, page generations, identity and rejection passed.");
+            indexedReplay(file);
+            System.out.println("Project replay: EGR2/EGR3/EGR4 round-trip, page generations, identity and rejection passed.");
         } finally {
             Files.deleteIfExists(file.toPath());
             Files.deleteIfExists(dir.toPath());

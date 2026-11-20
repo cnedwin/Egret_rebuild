@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/indexed-mesh/assets/mantle.png",
+      "originRole": "Original procedurally drawn cape atlas page for the indexed mesh example. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/indexed-mesh/assets/mask.png",
+      "originRole": "Original procedurally drawn face atlas page for the indexed mesh example. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/indexed-mesh/index.html",
+      "originRole": "Android project player entry for the Kite Courier indexed mesh example. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/indexed-mesh/main.mjs",
+      "originRole": "First-party two-page deforming character, layered UI and texture lifetime fixture. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/indexed-mesh/project.json",
+      "originRole": "Kite Courier project asset manifest and entry point. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/frame_indexed.rs",
+      "originRole": "First-party checked decoder for interleaved quad and indexed triangle draw records. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-project-indexed-mesh.json",
+      "originRole": "Physical Android player indexed mesh fixture, replay and timing measurements. Independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

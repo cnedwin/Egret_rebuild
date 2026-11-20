@@ -1,0 +1,12 @@
+{
+  "name": "Kite Courier",
+  "width": 360,
+  "height": 640,
+  "entry": "index.html",
+  "script": "main.mjs",
+  "pages": [
+    { "id": 1, "src": "assets/mantle.png", "width": 16, "height": 16 },
+    { "id": 2, "src": "assets/mask.png", "width": 16, "height": 16 }
+  ],
+  "assets": []
+}
