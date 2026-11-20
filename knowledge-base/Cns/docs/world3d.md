@@ -173,7 +173,7 @@ Windows Edge 157 在 RTX 5090 Laptop GPU（ANGLE D3D11）上运行 `pointShadows
 
 `registerWorld3DAssets(engine.assets, options)` 注册 `GLTF_ASSET_3D`、`TEXTURE_ASSET_3D`、`CUBE_TEXTURE_ASSET_3D` 和 `SCENE_ASSET_3D` 的提供者。用 `engine.assets.acquire(createAssetRef(GLTF_ASSET_3D, url))` 获取。租约按引用计数：并发请求共用一次加载，取消会中止下载，最后一次释放会销毁该资源创建的全部面向 GPU 的对象。立方体纹理的 id 含有 `{face}`，依次替换为 `px`、`nx`、`py`、`ny`、`pz`、`nz`。
 
-`serializeScene3D(root, options)` 把一棵子树写成可直接转为 JSON 的文档：变换、相机、灯光、网格、实例化网格、材质、几何体、骨架和细节层次组。共享的几何体和材质只保存一份。像素源或压缩源不超过 1 MiB 的纹理内嵌在文档里，并保留 UV 通道。其他纹理以 `options.textureKey` 返回的键保存，`deserializeScene3D(document, {resolveTexture})` 使用调用方解析出的纹理。粒子发射器和屏幕层按普通节点写出，并列在结果的 `skipped` 字段中。`userData` 只保留 JSON 值。`deserializeScene3D` 的结果拥有它创建的资源，通过 `dispose()` 释放。
+`serializeScene3D(root, options)` 把一棵子树写成可直接转为 JSON 的文档：变换、相机、灯光、网格、实例化网格、材质、几何体、骨架和细节层次组。共享的几何体和材质只保存一份。像素源或压缩源不超过 1 MiB 的纹理内嵌在文档里，并保留 UV 通道。其他纹理以 `options.textureKey` 返回的键保存，`deserializeScene3D(document, {resolveTexture})` 使用调用方解析出的纹理。粒子发射器和屏幕层按普通节点写出，并列在结果的 `skipped` 字段中。`userData` 只保留 JSON 值。`deserializeScene3D` 的结果拥有它创建的资源，通过 `dispose()` 释放。`geometryKey(geometry)` 让游戏能重新生成的几何体（例如代码拼出的帐篷）只按键名保存，不存全部顶点；加载时由 `resolveGeometry(key)` 交回，它仍属于游戏。找不到对应几何体的键会加载成空几何体，场景其余部分照常加载。
 
 ## 后处理
 
@@ -335,11 +335,11 @@ WebGL2 上，将 `reflection.createPass(camera, hidden)` 作为 `preparePrograms
 
 `createTextGeometry3D(text, font, {size, depth, align, letterSpacing, lineHeight, curveSegments})` 把字符串变成位于 XY 平面的网格几何体，第一行的基线在 y = 0。设置 `depth` 时它是一个挤出体，带正反面和侧面两个材质分组；`depth: 0` 时是平面文字。`createTextShapes3D` 只返回轮廓，`font.measureText` 返回宽度。
 
-字体来自 `parseTrueTypeFont3D(bytes)`，它直接读取 `.ttf` 文件（也支持带 TrueType 轮廓的 OpenType 文件，以及 `.ttc` 字体集中的第一个字体）；或者来自 `parseTypefaceFont3D(json)`，读取 Web 3D 库常用的 typeface JSON 格式。字形在首次使用时才解码，因此大型的中日韩字体只为用到的文字付出开销。带 PostScript（CFF）轮廓的字体会被拒绝。字符从左到右逐个排列，不做字距调整和字形整形，因此阿拉伯文、天城文等需要连写或重排字母的文字无法正确排版。挤出体的边缘是锐利的，不生成倒角。
+字体来自 `parseTrueTypeFont3D(bytes)`，它直接读取 `.ttf` 文件（也支持带 TrueType 轮廓的 OpenType 文件，以及 `.ttc` 字体集中的第一个字体）；或者来自 `parseTypefaceFont3D(json)`，读取 Web 3D 库常用的 typeface JSON 格式。字形在首次使用时才解码，因此大型的中日韩字体只为用到的文字付出开销。带 PostScript（CFF）轮廓的字体会被拒绝。字符从左到右逐个排列，不做字距调整和字形整形，因此阿拉伯文、天城文等需要连写或重排字母的文字无法正确排版。挤出体的边缘是锐利的，不生成倒角。后端入口的 `createCanvasFont3D({family, weight, style, resolution, tolerance})` 在每个字第一次用到时，从页面自己的字体描出轮廓：把字画到小画布上，沿边缘追踪并平滑成直线段。不需要字体文件，页面能显示的文字（包括中文）都能用；曲线的平滑程度取决于 `resolution`（每 em 像素数，默认 128）。
 
 ## 变换操纵器
 
-浏览器入口的 `createTransformControls3D(camera, element)` 提供用指针移动、旋转和缩放物体的手柄。把 `controls.gizmo` 加入场景，调用 `attach(object)`，并在每帧调用一次 `controls.update()`。`mode` 为 `'translate'`、`'rotate'` 或 `'scale'`；`space` 为 `'world'` 或 `'local'`；操纵器上的 `translationSnap`、`rotationSnap` 和 `scaleSnap` 设置步进值。手柄在屏幕上保持固定大小，并绘制在场景之上。
+浏览器入口的 `createTransformControls3D(camera, element)` 提供用指针移动、旋转和缩放物体的手柄。把 `controls.gizmo` 加入场景，调用 `attach(object)`，并在每帧调用一次 `controls.update()`。`mode` 为 `'translate'`、`'rotate'` 或 `'scale'`；`space` 为 `'world'` 或 `'local'`；操纵器上的 `translationSnap`、`rotationSnap` 和 `scaleSnap` 设置步进值。手柄在屏幕上保持固定大小，并绘制在场景之上。按在手柄上的操作不会再传给同一元素上的轨道、飞行和跟随控制器，无论它们谁先创建，因为手柄在捕获阶段监听；按在其他地方则照常传给它们，相机仍可以绕选中物体转动。
 
 在同一个元素上，变换控制要先于轨道或飞行控制创建：这样按在手柄上的操作不会传给它们。`gizmo.onDraggingChanged` 报告拖动的开始和结束，供自行暂停相机控制的应用使用；`gizmo.onChange` 报告每一次改动。
 

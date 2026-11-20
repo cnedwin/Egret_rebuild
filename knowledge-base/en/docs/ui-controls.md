@@ -6,7 +6,7 @@ English | [简体中文](../../Cns/docs/ui-controls.md)
 
 What these controls are to someone who cannot see them is described by the [semantic tree](ui-semantics.md), which reads the same state.
 
-They own state only. A control adds no listener of the page, draws nothing and decides no routing: it listens on a display object for the events of the [contact input](multi-pointer-input.md) or of the [hover input](pointer-hover.md), and reports changes through callbacks. The application paints each state. `createControlKeys` binds the [usual keys](#keys) of a control to the same methods a pointer reaches.
+They own state only. A control adds no listener of the page, draws nothing and decides no routing: it listens on a display object for the events of the [contact input](multi-pointer-input.md) or of the [hover input](pointer-hover.md), and reports changes through callbacks. The application paints each state. `createControlKeys` binds the [usual keys](#keys) of a control to the same methods a pointer reaches. Callbacks such as `onActivate` run while the press is being delivered and must return at once: an `async` callback returns a promise, which the input refuses with `POINTER_INPUT_CALLBACK_FAILED` (cause `ASYNC_EVENT_HANDLER`). Start the work and let it run, `onActivate: () => { void openCard(); }`, and report its failure yourself.
 
 | Factory | Holds | Driven by |
 | --- | --- | --- |

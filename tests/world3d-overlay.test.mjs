@@ -20,3 +20,10 @@ test('OV01 both backends export the overlay, and bad arguments are refused', asy
     code: 'WORLD3D_OVERLAY_OPTIONS_INVALID'
   });
 });
+
+test('OV02 a fit other than stretch, contain or cover is refused before anything is made', async () => {
+  const placed = { getBoundingClientRect: () => ({}), parentElement: {} };
+  await assert.rejects(webgl2.createWorld3DOverlay(placed, { width: 640, height: 360, fit: 'fill' }), {
+    code: 'WORLD3D_OVERLAY_OPTIONS_INVALID'
+  });
+});

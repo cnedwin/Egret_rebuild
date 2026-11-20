@@ -478,13 +478,20 @@ export function createUiSemantics(options: UiSemanticsOptions = {}): UiSemantics
       const inert = modal !== undefined && !live.has(draft.entry) && !within(draft.entry);
       if (draft.node.controls !== undefined && !present.has(draft.node.controls))
         throw new EgretError('UI_SEMANTICS_RELATION', { cause: new TypeError(draft.entry.id + ': controls') });
-      if (draft.node.focused) {
-        // One node holds the focus, and never one a modal dialog has made inert.
-        if (focused !== undefined || inert)
+      // A node a modal dialog has just made inert may still hold the keyboard focus, for the frame between the dialog
+      // opening and the application moving the focus into it: it is published without the focus, not refused.
+      const holds = draft.node.focused === true && !inert;
+      if (holds) {
+        // One node holds the focus.
+        if (focused !== undefined)
           throw new EgretError('UI_SEMANTICS_FOCUS', { cause: new TypeError(draft.entry.id + ': focused') });
         focused = draft.entry.id;
       }
-      const fresh: SemanticSnapshotNode = { ...draft.node, inert },
+      const fresh: SemanticSnapshotNode = {
+          ...draft.node,
+          inert,
+          ...(draft.node.focused && inert ? { focused: false } : {})
+        },
         before = snapshot.nodes[index];
       const node = before !== undefined && sameNode(before, fresh) ? before : Object.freeze(fresh);
       if (node !== before) changed = true;

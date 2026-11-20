@@ -143,7 +143,7 @@ Nothing more is needed for the rest. The layer manager moves the root when it pl
 
 ### Modal dialogs
 
-While a dialog with `modal: true` is published, every node outside it is `inert` in the snapshot, except the nodes the dialog is inside. An inert node refuses every action. If several modal dialogs are published, the one read last is the one in front. A focused node that is inert is refused: the focus belongs inside the dialog.
+While a dialog with `modal: true` is published, every node outside it is `inert` in the snapshot, except the nodes the dialog is inside. An inert node refuses every action. If several modal dialogs are published, the one read last is the one in front. A focused node that is inert, as when a dialog has just opened over the control that had the focus, is published without the focus, and nothing is focused until the application moves the focus into the dialog: do that when it opens, and give it back when it closes. Give every node inside a dialog the dialog as its `parent`, directly or through its groups; a node beside the dialog is outside it, and inert.
 
 ### Relations
 

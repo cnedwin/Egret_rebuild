@@ -6,7 +6,7 @@
 
 这些控件对看不见它们的人来说是什么，由[语义树](ui-semantics.md)描述，它读取的是同一份状态。
 
-它们只拥有状态。控件不添加页面监听器，不绘制任何东西，也不决定路由：它在显示对象上监听[触点输入](multi-pointer-input.md)或[悬停输入](pointer-hover.md)的事件，并通过回调报告变化。每种状态怎么画由应用决定。`createControlKeys` 把控件的[常用按键](#按键)绑定到指针所到达的同一批方法上。
+它们只拥有状态。控件不添加页面监听器，不绘制任何东西，也不决定路由：它在显示对象上监听[触点输入](multi-pointer-input.md)或[悬停输入](pointer-hover.md)的事件，并通过回调报告变化。每种状态怎么画由应用决定。`createControlKeys` 把控件的[常用按键](#按键)绑定到指针所到达的同一批方法上。`onActivate` 等回调在这次按下仍在分发时运行，必须立即返回：`async` 回调会返回 Promise，输入会以 `POINTER_INPUT_CALLBACK_FAILED`（cause 为 `ASYNC_EVENT_HANDLER`）拒绝它。请启动工作后直接返回，例如 `onActivate: () => { void openCard(); }`，失败由自己报告。
 
 | 工厂 | 保存的状态 | 驱动方式 |
 | --- | --- | --- |

@@ -45,11 +45,21 @@ export interface SceneDocument3D {
 export interface SerializeOptions3D {
   /** Stable key for a texture that should be stored by reference, such as its asset id. */
   readonly textureKey?: (texture: Texture3D) => string | undefined;
+  /**
+   * Stable key for a geometry the game can make again, such as the name of a model it builds in code: the geometry is
+   * then saved as that key alone, not as all its vertices. Undefined, or an empty string, saves it whole.
+   */
+  readonly geometryKey?: (geometry: Geometry3D) => string | undefined;
 }
 /** How a scene is loaded back: how each texture key is turned into a texture. */
 export interface DeserializeOptions3D {
   /** Return the texture for a key written by `textureKey`. */
   readonly resolveTexture?: (key: string) => Texture3D | undefined;
+  /**
+   * Return the geometry for a key written by `geometryKey`. It stays the game's: disposing the loaded scene leaves it.
+   * A key with no geometry gives an empty one, so the rest of the scene still loads.
+   */
+  readonly resolveGeometry?: (key: string) => Geometry3D | undefined;
 }
 /** A scene loaded back: its root, cameras, geometries, materials and textures. */
 export interface DeserializedScene3D {
@@ -255,6 +265,12 @@ export function serializeScene3D(root: Object3D, options: SerializeOptions3D = {
   const geometry = (value: Geometry3D): number => {
     const known = geometryIds.get(value);
     if (known !== undefined) return known;
+    const key = options.geometryKey?.(value);
+    if (typeof key === 'string' && key.length > 0) {
+      geometryIds.set(value, geometries.length);
+      geometries.push({ key });
+      return geometries.length - 1;
+    }
     const attributes: Json = {};
     for (const [name, attribute] of value.attributes)
       attributes[name] = {
@@ -459,6 +475,19 @@ export function deserializeScene3D(saved: SceneDocument3D, options: DeserializeO
       for (const field of MATERIAL_MAPS) if (typeof entry[field] === 'number') material[field] = textures[entry[field]];
     }
     for (const entry of doc['geometries'] as Json[]) {
+      if (typeof entry['key'] === 'string') {
+        const resolved = options.resolveGeometry?.(entry['key']);
+        if (resolved instanceof Geometry3D) {
+          geometries.push(resolved);
+          continue;
+        }
+        // A missing reference gives an empty geometry instead of failing the whole scene.
+        const empty = new Geometry3D();
+        empty.name = entry['key'];
+        created.push(empty);
+        geometries.push(empty);
+        continue;
+      }
       const geometry = new Geometry3D();
       created.push(geometry);
       geometries.push(geometry);
