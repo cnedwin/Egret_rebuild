@@ -9,8 +9,10 @@ import type { Material3D } from './Material3D.js';
 import { Mesh3D } from './Mesh3D.js';
 import { mat4Invert, mat4Multiply } from './math3D.js';
 
+/** The most triangles a decal has. */
 export const DECAL3D_LIMITS = Object.freeze({ maxTriangles: 262144 } as const);
 
+/** A decal to make: where it goes and which way it faces, its size and depth, its rotation, and the steepest surface it covers. */
 export interface DecalOptions3D {
   /** Center of the decal on the surface, in world space. */
   readonly position: ArrayLike<number>;

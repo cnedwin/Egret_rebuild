@@ -8,6 +8,7 @@ import { World3DError } from './core3D.js';
 import { COMPRESSED_BLOCK_BYTES_3D } from './Texture3D.js';
 import type { CompressedFormat3D, CompressedPixels3D, TextureColorSpace3D, TexturePixels3D } from './Texture3D.js';
 
+/** What a KTX2 file holds: its format, size, levels and supercompression. */
 export interface Ktx2Info3D {
   /** Vulkan format number; 0 marks a Basis Universal payload. */
   readonly vkFormat: number;
@@ -21,10 +22,12 @@ export interface Ktx2Info3D {
   /** The complete file, for transcoders that parse the container themselves. */
   readonly file: Uint8Array;
 }
+/** A transcoded KTX2 texture: its pixels and color space. */
 export interface Ktx2Result3D {
   readonly source: TexturePixels3D | CompressedPixels3D;
   readonly colorSpace: TextureColorSpace3D;
 }
+/** How a KTX2 file is transcoded for the GPU in use. */
 export interface Ktx2Options3D {
   /** Convert supercompressed or unknown-format payloads, overriding built-in decompression when provided. */
   readonly transcode?: (info: Ktx2Info3D) => Promise<Ktx2Result3D> | Ktx2Result3D;

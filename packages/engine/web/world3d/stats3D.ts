@@ -5,6 +5,7 @@
 import { World3DError } from '../../rendering/world3d/core3D.js';
 import type { Renderer3DInfo } from './frame3D.js';
 
+/** 3D stats to make: the container they show in, how they smooth, and how often they refresh. */
 export interface World3DStatsOptions {
   /** Where the readout is shown; nothing is shown without it. */
   readonly container?: HTMLElement;
@@ -13,6 +14,7 @@ export interface World3DStatsOptions {
   /** How often the text is rewritten, in milliseconds. Defaults to 250. */
   readonly refreshMs?: number;
 }
+/** Frame times, frame rate, draws and triangles of a 3D view, measured each frame. */
 export interface World3DStats {
   /** Smoothed milliseconds: the whole frame, and each part named in `lap`. */
   readonly average: Readonly<Record<string, number>>;
@@ -32,6 +34,7 @@ export interface World3DStats {
   dispose(): void;
 }
 
+/** Makes a panel that shows a 3D view's frame times and draws. */
 export function createWorld3DStats(
   renderer: { readonly info: Renderer3DInfo },
   options: World3DStatsOptions = {}

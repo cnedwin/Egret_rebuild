@@ -14,6 +14,7 @@ import {
 } from './math3D.js';
 import { Object3D } from './Object3D.js';
 
+/** A perspective camera to make: its vertical field of view, aspect ratio and near and far planes. */
 export interface PerspectiveCameraOptions3D {
   /** Vertical field of view in degrees. */
   readonly fov?: number;
@@ -21,6 +22,7 @@ export interface PerspectiveCameraOptions3D {
   readonly near?: number;
   readonly far?: number;
 }
+/** An orthographic camera to make: the height it sees, its aspect ratio and near and far planes. */
 export interface OrthographicCameraOptions3D {
   /** Visible world height; width follows from the aspect ratio. */
   readonly height?: number;
@@ -29,6 +31,7 @@ export interface OrthographicCameraOptions3D {
   readonly far?: number;
 }
 
+/** A camera: its projection, and calls that turn screen points into rays and world points into screen points. */
 export class Camera3D extends Object3D {
   readonly projectionKind: 'perspective' | 'orthographic';
   fov = 50;
@@ -136,6 +139,7 @@ export class Camera3D extends Object3D {
   }
 }
 
+/** Makes a perspective camera. */
 export function createPerspectiveCamera3D(options: PerspectiveCameraOptions3D = {}): Camera3D {
   const camera = new Camera3D('perspective');
   camera.fov = options.fov ?? 50;
@@ -145,6 +149,7 @@ export function createPerspectiveCamera3D(options: PerspectiveCameraOptions3D = 
   camera.updateProjectionMatrix();
   return camera;
 }
+/** Makes an orthographic camera. */
 export function createOrthographicCamera3D(options: OrthographicCameraOptions3D = {}): Camera3D {
   const camera = new Camera3D('orthographic');
   camera.orthographicHeight = options.height ?? 10;

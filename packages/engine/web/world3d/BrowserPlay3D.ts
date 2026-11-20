@@ -308,6 +308,7 @@ export class PlayLamp3D {
     this.node.removeFromParent();
   }
 }
+/** A lamp to light: how bright, and how far it reaches. */
 export interface PlayLampOptions3D {
   /** How bright it is: 4 unless given. */
   readonly intensity?: number;
@@ -316,6 +317,7 @@ export interface PlayLampOptions3D {
 }
 /** What falls from the sky: snow, rain, or nothing. */
 export type PlayWeather3D = 'snow' | 'rain' | 'none';
+/** Weather to show: how much rain or snow. */
 export interface PlayWeatherOptions3D {
   /** How much falls: 1 unless given, from 0 to 3. */
   readonly amount?: number;
@@ -332,6 +334,7 @@ export interface PlayCamera3D {
   lookAt(x: number, y: number, z: number): void;
   readonly node: Camera3D;
 }
+/** How the camera follows: where it sits behind, how smoothly, and whether it turns with the target. */
 export interface PlayFollow3D {
   /** Where the camera stays from the thing: 0, 4 and 8 unless given, which is above and behind. */
   readonly x?: number;
@@ -345,6 +348,7 @@ export interface PlayFollow3D {
    */
   readonly turn?: boolean;
 }
+/** A burst of particles: its color and count, how fast and how long they fly, their size and gravity. */
 export interface PlayBurst3D {
   readonly color?: number;
   readonly count?: number;
@@ -357,6 +361,7 @@ type Body = PlayThing3D | DisplayObject;
 
 /** What `play3d` gives: everything `play` gives for the interface and the game's time, and a world of things. */
 export type PlayLookName3D = 'day' | 'dusk' | 'night' | 'fog' | 'snow';
+/** How a 3D play game looks: its background and sky, its ground, its light and sun, and its fog. */
 export interface PlayLook3D {
   /** What is behind everything, and the colour of the fog. */
   readonly background?: number;
@@ -428,6 +433,7 @@ export const PLAY_LOOKS_3D: Readonly<Record<PlayLookName3D, Required<PlayLook3D>
     fog: 0.025
   }
 });
+/** Everything a small 3D game is given: its scene and camera, its input, and calls that make, move and light things. */
 export interface Play3DGame
   extends Omit<
     PlayGame,
@@ -498,6 +504,7 @@ export interface Play3DGame
    */
   weather(kind: PlayWeather3D, options?: PlayWeatherOptions3D): void;
 }
+/** A small 3D game to start: its setup and update, and the options of a 2D play game. */
 export interface Play3DOptions extends Omit<PlayOptions, 'setup' | 'update' | 'canvas'> {
   readonly setup?: (game: Play3DGame) => void | Promise<void>;
   readonly update?: (seconds: number, game: Play3DGame) => void;

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1329 exports; 387 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1329 exports; 2 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -275,629 +275,629 @@ For which entry to import from, see [What to import](entry-points.md).
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `AlphaMode3D` | type |  |
-| `ANIMATION3D_LIMITS` | value |  |
-| `ANIMATION_TEXTURE3D_LIMITS` | value |  |
-| `AnimationAction3D` | class |  |
-| `AnimationClip3D` | class |  |
-| `AnimationInterpolation3D` | type |  |
-| `AnimationLoop3D` | type |  |
+| `AlphaMode3D` | type | How a material's alpha is used: ignored, cut at a threshold, or blended. |
+| `ANIMATION3D_LIMITS` | value | The most tracks, keys and actions animations hold. |
+| `ANIMATION_TEXTURE3D_LIMITS` | value | The most bone matrices, clips and frames a second an animation texture holds. |
+| `AnimationAction3D` | class | One clip playing on a mixer: play, stop and reset it, fade it in or out, or cross-fade to another. |
+| `AnimationClip3D` | class | A named animation: its tracks and its length in seconds. |
+| `AnimationInterpolation3D` | type | How a track goes between its keys: it steps, moves in a line, or follows a cubic spline. |
+| `AnimationLoop3D` | type | How an action plays its clip: over and over, once, or back and forth. |
 | `AnimationMixer3D` | class | Plays clips on the subtree under `root`, blending concurrent actions by weight. |
-| `AnimationPath3D` | type |  |
-| `AnimationStateMachine3D` | class |  |
+| `AnimationPath3D` | type | What an animation track moves: a node's position, rotation, scale, or morph weights. |
+| `AnimationStateMachine3D` | class | Plays clips by state, moving between states when their conditions are met. |
 | `AnimationTexture3D` | class | Bone matrices of one skinned mesh for every frame of a set of clips. |
-| `AnimationTrack3D` | interface |  |
-| `AnimationTrackInput3D` | interface |  |
+| `AnimationTrack3D` | interface | One track of a clip: the node it moves, what it moves, its keys and its interpolation. |
+| `AnimationTrackInput3D` | interface | A track to make: the node it moves by name, what it moves, its key times and values, and its interpolation. |
 | `ArrowHelper3D` | class | Arrow from `origin` along `direction`; change them and call update(). |
-| `Attribute3D` | class |  |
+| `Attribute3D` | class | One attribute of a geometry, such as positions: its data, how many numbers each vertex has, and whether they are normalized. |
 | `ATTRIBUTE_3D` | value | Well-known attribute names understood by the built-in materials. |
-| `AttributeArray3D` | type |  |
-| `BakeAnimationOptions3D` | interface |  |
+| `AttributeArray3D` | type | An array of vertex data. |
+| `BakeAnimationOptions3D` | interface | How many frames a second clips are baked at. |
 | `bakeAnimationTexture3D` | function | Sample clips into an animation texture. |
-| `BakedClip3D` | interface |  |
+| `BakedClip3D` | interface | One clip baked into an animation texture: its name, first frame, frame count and length. |
 | `BasisModule3D` | interface | The parts of an initialized Basis Universal transcoder module (`await BASIS()`) this adapter calls. |
-| `BATCH3D_LIMITS` | value |  |
+| `BATCH3D_LIMITS` | value | The most items, vertices and line points a batch holds. |
 | `BatchedMesh3D` | class | Many geometries drawn as one mesh with one material and one draw call. |
-| `Blending3D` | type |  |
-| `BodyType3D` | type |  |
-| `Bone3D` | class |  |
-| `box3Empty` | function |  |
-| `box3ExpandByPoint` | function |  |
-| `box3IsEmpty` | function |  |
+| `Blending3D` | type | How a material's color mixes with what is behind it. |
+| `BodyType3D` | type | Whether a body never moves, is moved by code, or is moved by the simulation. |
+| `Bone3D` | class | A bone of a skeleton. |
+| `box3Empty` | function | Sets a box to empty. |
+| `box3ExpandByPoint` | function | Grows a box to hold a point. |
+| `box3IsEmpty` | function | Whether a box is empty. |
 | `box3Transform` | function | Axis-aligned bounds of a transformed box (Arvo's method). |
-| `box3Union` | function |  |
-| `BoxGeometryOptions3D` | interface |  |
+| `box3Union` | function | The box that holds two boxes. |
+| `BoxGeometryOptions3D` | interface | A box to make: its width, height and depth, and their segments. |
 | `BoxHelper3D` | class | Wire box around an object's world bounds. |
-| `Camera3D` | class |  |
+| `Camera3D` | class | A camera: its projection, and calls that turn screen points into rays and world points into screen points. |
 | `CameraHelper3D` | class | Outline of a camera's view volume. |
-| `CapsuleGeometryOptions3D` | interface |  |
+| `CapsuleGeometryOptions3D` | interface | A capsule to make: its radius, height and segments. |
 | `CatmullRomCurve3D` | class | Smooth curve through every control point. |
-| `CatmullRomKind3D` | type |  |
+| `CatmullRomKind3D` | type | How a Catmull-Rom curve is parameterized between its points. |
 | `CharacterController3D` | class | Kinematic capsule that slides along the world instead of being simulated. |
-| `CharacterControllerOptions3D` | interface |  |
+| `CharacterControllerOptions3D` | interface | A character controller to make: its radius and height, where it starts, the steepest slope it climbs, and what it collides with. |
 | `CharacterMotor3D` | class | A walking, jumping character. |
-| `CharacterMotorOptions3D` | interface |  |
-| `CircleGeometryOptions3D` | interface |  |
-| `clamp` | function |  |
+| `CharacterMotorOptions3D` | interface | How a character moves: its jump and gravity, the steps it climbs, its acceleration and air control, and its grace time to jump. |
+| `CircleGeometryOptions3D` | interface | A circle to make: its radius, segments and arc. |
+| `clamp` | function | The value, kept between `min` and `max`. |
 | `Cloth3D` | class | A rectangular sheet. |
-| `CLOTH3D_LIMITS` | value |  |
-| `ClothOptions3D` | interface |  |
+| `CLOTH3D_LIMITS` | value | The most points and colliders cloth and ropes hold. |
+| `ClothOptions3D` | interface | A cloth to make: its columns and rows, where it starts and which way it spreads, and how stiff it is. |
 | `colorFromHex` | function | Decode a 0xRRGGBB sRGB color into linear RGB in [0, 1]. |
 | `ColorInput3D` | type | A color as 0xRRGGBB sRGB hex or linear RGB components. |
 | `CompoundChild3D` | interface | One part of a compound shape, placed in the body's local frame. |
 | `COMPRESSED_BLOCK_BYTES_3D` | value | Bytes per 4x4 block of each compressed format. |
 | `CompressedFormat3D` | type | Block-compressed GPU formats that can be uploaded without transcoding. |
 | `CompressedPixels3D` | interface | A pre-compressed mip chain, largest level first. |
-| `COMPRESSION3D_LIMITS` | value |  |
+| `COMPRESSION3D_LIMITS` | value | The most bytes a decompression gives. |
 | `computeObjectBounds3D` | function | World-space bounds of an object and its descendants as [minX, minY, minZ, maxX, maxY, maxZ]. |
-| `connectPhysics3D` | function |  |
-| `ConvexHullShape3D` | class |  |
+| `connectPhysics3D` | function | Connects to a physics world run in a worker, through a message port. |
+| `ConvexHullShape3D` | class | A convex hull as a physics shape. |
 | `createAmbientLight3D` | function | Uniform light from every direction. |
-| `createAnimationClip3D` | function |  |
-| `createAnimationStateMachine3D` | function |  |
-| `createArrowHelper3D` | function |  |
+| `createAnimationClip3D` | function | Makes a clip from its name and tracks; malformed tracks are refused. |
+| `createAnimationStateMachine3D` | function | Makes an animation state machine that drives a mixer. |
+| `createArrowHelper3D` | function | Makes an arrow from a point in a direction. |
 | `createAxesGeometry3D` | function | Three colored segments from the origin along +X (red), +Y (green) and +Z (blue). |
 | `createAxesHelper3D` | function | Ready-made axes node colored X red, Y green, Z blue. |
 | `createBasisTranscoder3D` | function | Turn an initialized Basis Universal transcoder module into the `transcodeKtx2` option. |
-| `createBatchedMesh3D` | function |  |
+| `createBatchedMesh3D` | function | Makes a mesh that draws many geometries with one material in one draw. |
 | `createBoxEdgesGeometry3D` | function | The twelve edges of an axis-aligned box given as [minX, minY, minZ, maxX, maxY, maxZ]. |
 | `createBoxGeometry3D` | function | Axis-aligned box centered on the origin with one material group per face (+X, -X, +Y, -Y, +Z, -Z). |
-| `createBoxHelper3D` | function |  |
-| `createCameraHelper3D` | function |  |
+| `createBoxHelper3D` | function | Makes lines that show an object's bounding box. |
+| `createCameraHelper3D` | function | Makes lines that show what a camera sees. |
 | `createCapsuleGeometry3D` | function | Capsule along Y; `height` is the length of the cylindrical middle section. |
-| `createCharacterController3D` | function |  |
-| `createCharacterMotor3D` | function |  |
+| `createCharacterController3D` | function | Makes a capsule that walks and slides along what it hits, for a character. |
+| `createCharacterMotor3D` | function | Makes a character motor that walks, jumps and climbs steps in a physics world. |
 | `createCircleGeometry3D` | function | Flat disc or sector in the XY plane, facing +Z. |
-| `createCloth3D` | function |  |
-| `createConeGeometry3D` | function |  |
+| `createCloth3D` | function | Makes a sheet of cloth that hangs, folds and blows. |
+| `createConeGeometry3D` | function | Makes a cone. |
 | `createConvexHullShape3D` | function | Build a convex hull shape from a geometry's vertices, or from a flat list of points. |
 | `createCubeTextureFromEquirect3D` | function | Build a cube texture from an equirectangular panorama. |
-| `createCustomShader3D` | function |  |
+| `createCustomShader3D` | function | Makes a material drawn by shaders of your own. |
 | `createCylinderGeometry3D` | function | Cylinder or truncated cone along Y. |
 | `createDecal3D` | function | A decal mesh on a target mesh, added as its child so it moves with it. |
 | `createDecalGeometry3D` | function | Cut the part of a mesh's surface that lies inside the decal box. |
 | `createDirectionalLight3D` | function | Parallel rays, such as sunlight. |
-| `createDodecahedronGeometry3D` | function |  |
+| `createDodecahedronGeometry3D` | function | Makes a dodecahedron. |
 | `createDracoDecoder3D` | function | Turn an initialized Draco decoder module into the `decodeDraco` option of the glTF loader. |
 | `createEdgesGeometry3D` | function | Line segments for outline and crease edges only: edges with one face, or whose two faces meet at more than `thresholdAngle` radians. |
 | `createExtrudeGeometry3D` | function | Give an outline thickness. |
-| `createFatLine3D` | function |  |
-| `createFollowCamera3D` | function |  |
+| `createFatLine3D` | function | Makes a line of a given thickness through points. |
+| `createFollowCamera3D` | function | Makes a camera that follows a target and keeps out of walls. |
 | `createGeometry3D` | function | Build a geometry from plain arrays; missing normals are computed for triangles. |
 | `createGeometryBuilder3D` | function | A builder that merges placed, coloured parts into one geometry. |
 | `createGlassMaterial3D` | function | A standard material set up as glass: smooth and see-through, with reflections kept. |
-| `createGpuParticles3D` | function |  |
+| `createGpuParticles3D` | function | Makes particles simulated on the GPU. |
 | `createGradientCubeTexture3D` | function | Procedural sky cube: a vertical gradient from `ground` through `horizon` to `zenith`, in sRGB bytes. |
 | `createGridGeometry3D` | function | Square grid of lines on the XZ plane, centered at the origin. |
 | `createGridHelper3D` | function | Ready-made grid node for editors and debug views. |
-| `createHeightField3D` | function |  |
+| `createHeightField3D` | function | Makes a grid of heights for terrain and physics. |
 | `createHeightFieldFromPixels3D` | function | Height field with one sample per pixel of a decoded RGBA image; the image's top row is the -Z edge. |
 | `createHemisphereLight3D` | function | Sky color from above blending to a ground color from below (world Y axis). |
-| `createIcosahedronGeometry3D` | function |  |
-| `createJelly3D` | function |  |
+| `createIcosahedronGeometry3D` | function | Makes an icosahedron. |
+| `createJelly3D` | function | Makes an object squash, stretch and wobble like jelly as it moves. |
 | `createJellyShader3D` | function | The vertex hook a jelly drives. |
 | `createLambertMaterial3D` | function | Diffuse-only lighting; the cheapest lit model. |
 | `createLatheGeometry3D` | function | Revolve a profile of [x, y] points (x is the distance from the Y axis) around Y. |
-| `createLightHelper3D` | function |  |
+| `createLightHelper3D` | function | Makes lines that show where a light is and where it shines. |
 | `createLineMaterial3D` | function | Unlit line or point material; pair it with a 'lines', 'line-strip' or 'points' geometry. |
 | `createMatcapMaterial3D` | function | Lighting baked into a sphere image: the surface color is looked up by the view-space normal, so no lights are needed. |
 | `createMeshShape3D` | function | Build a collision mesh from a geometry or the unskinned, non-instanced triangle meshes under an object. |
-| `createNavCrowd3D` | function |  |
+| `createNavCrowd3D` | function | Makes a crowd of agents that move along a navigation mesh and keep apart. |
 | `createNavMesh3D` | function | Build a navigation mesh from level geometry: a geometry, or an object whose meshes are merged with their world transforms. |
-| `createOctahedronGeometry3D` | function |  |
-| `createOrthographicCamera3D` | function |  |
-| `createParticleEmitter3D` | function |  |
-| `createPerspectiveCamera3D` | function |  |
+| `createOctahedronGeometry3D` | function | Makes an octahedron. |
+| `createOrthographicCamera3D` | function | Makes an orthographic camera. |
+| `createParticleEmitter3D` | function | Makes a particle emitter. |
+| `createPerspectiveCamera3D` | function | Makes a perspective camera. |
 | `createPhongMaterial3D` | function | Diffuse plus Blinn-Phong specular highlights. |
-| `createPhysicsWorld3D` | function |  |
+| `createPhysicsWorld3D` | function | Makes a 3D physics world. |
 | `createPlaneGeometry3D` | function | Plane in the XY plane facing +Z. |
-| `createPointLight3D` | function |  |
+| `createPointLight3D` | function | Makes a light that shines from a point in every direction. |
 | `createPolyhedronGeometry3D` | function | Project a convex solid's triangles onto a sphere, subdividing each `detail` times. |
 | `createQuadGeometry3D` | function | Unit quad in XY used by sprites: corners at +-0.5, facing +Z. |
-| `createRagdoll3D` | function |  |
+| `createRagdoll3D` | function | Makes a ragdoll of physics bodies that a skeleton follows. |
 | `createRingGeometry3D` | function | Flat ring in the XY plane, facing +Z. |
-| `createRope3D` | function |  |
-| `createScreenLayer3D` | function |  |
+| `createRope3D` | function | Makes a rope of points that hangs and swings. |
+| `createScreenLayer3D` | function | Makes a picture drawn over the whole screen, above or below the scene. |
 | `createShapeGeometry3D` | function | Fill one or more outlines in the XY plane, facing +Z. |
-| `createSkeletonHelper3D` | function |  |
-| `createSkinnedInstancedMesh3D` | function |  |
+| `createSkeletonHelper3D` | function | Makes lines that show the bones of a skeleton. |
+| `createSkinnedInstancedMesh3D` | function | Makes many skinned instances of one mesh, each playing baked clips from an animation texture. |
 | `createSolidTexture3D` | function | Single-color 1x1 texture, useful as a placeholder or constant map. |
 | `createSphereGeometry3D` | function | UV sphere with poles on the Y axis. |
-| `createSpotLight3D` | function |  |
-| `createSprite3D` | function |  |
+| `createSpotLight3D` | function | Makes a light that shines from a point in a cone. |
+| `createSprite3D` | function | Makes a sprite: a picture that always faces the camera. |
 | `createSpriteMaterial3D` | function | Camera-facing unlit quad material for Sprite3D. |
 | `createStandardMaterial3D` | function | Physically based metallic-roughness model, matching glTF 2.0 materials. |
-| `createTerrain3D` | function |  |
+| `createTerrain3D` | function | Makes terrain from a height field, drawn in chunks at levels of detail. |
 | `createTerrainMaterial3D` | function | A standard material whose color is a blend of ground textures, such as sand, grass, rock and snow, painted by a weight map. |
-| `createTerrainStream3D` | function |  |
-| `createTetrahedronGeometry3D` | function |  |
+| `createTerrainStream3D` | function | Makes terrain that loads and unloads tiles around a point. |
+| `createTetrahedronGeometry3D` | function | Makes a tetrahedron. |
 | `createTextGeometry3D` | function | Text as a mesh geometry in the XY plane, facing +Z, with the first baseline on y = 0. |
 | `createTextShapes3D` | function | Outlines of a text as flat shapes; see Font3D.generateShapes. |
 | `createToonMaterial3D` | function | Cel shading: diffuse light quantized into `steps` flat bands. |
 | `createTorusGeometry3D` | function | Torus around the Z axis. |
-| `createTorusKnotGeometry3D` | function |  |
-| `createTrail3D` | function |  |
-| `createTransformGizmo3D` | function |  |
+| `createTorusKnotGeometry3D` | function | Makes a torus knot. |
+| `createTrail3D` | function | Makes a ribbon that follows a moving object and fades behind it. |
+| `createTransformGizmo3D` | function | Makes a transform gizmo seen by a camera. |
 | `createTubeGeometry3D` | function | Sweep a circle along a curve, using twist-free frames. |
 | `createUnlitMaterial3D` | function | Constant color, unaffected by lights. |
-| `createVehicle3D` | function |  |
-| `createVolumetricFog3D` | function |  |
-| `createWater3D` | function |  |
+| `createVehicle3D` | function | Makes a vehicle of wheels on raycast suspension under a chassis body. |
+| `createVolumetricFog3D` | function | Makes fog that light shines through. |
+| `createWater3D` | function | Makes a water surface with waves, reflections and foam. |
 | `createWaterMaterial3D` | function | The material Water3D uses, for a water surface on your own geometry: a standard material that refracts, with the wave hooks attached. |
 | `createWireframeGeometry3D` | function | Line segments for every triangle edge, each drawn once. |
 | `CubeTexture3D` | class | Six square faces in +X, -X, +Y, -Y, +Z, -Z order. |
-| `CubicBezierCurve3D` | class |  |
+| `CubicBezierCurve3D` | class | A cubic Bézier curve through four control points. |
 | `Curve3D` | class | Base for every curve: subclasses implement getPoint(t) for t in [0, 1]. |
-| `CURVE3D_LIMITS` | value |  |
+| `CURVE3D_LIMITS` | value | The most points and divisions a curve has. |
 | `CurvePath3D` | class | Several curves joined end to end and traversed as one, by length. |
 | `CustomShader3D` | interface | A fragment hook that post-processes a material's shaded color. |
-| `CylinderGeometryOptions3D` | interface |  |
-| `DECAL3D_LIMITS` | value |  |
-| `DecalOptions3D` | interface |  |
+| `CylinderGeometryOptions3D` | interface | A cylinder to make: its top and bottom radius, height, segments, and whether its ends are open. |
+| `DECAL3D_LIMITS` | value | The most triangles a decal has. |
+| `DecalOptions3D` | interface | A decal to make: where it goes and which way it faces, its size and depth, its rotation, and the steepest surface it covers. |
 | `decodeMeshopt3D` | function | Decode one EXT_meshopt_compression buffer view. |
 | `decompressZstd3D` | function | Decompress Zstandard data: one or more frames, including skippable ones. |
-| `DEG_TO_RAD_3D` | value |  |
-| `DeserializedScene3D` | interface |  |
-| `DeserializeOptions3D` | interface |  |
+| `DEG_TO_RAD_3D` | value | Degrees times this are radians. |
+| `DeserializedScene3D` | interface | A scene loaded back: its root, cameras, geometries, materials and textures. |
+| `DeserializeOptions3D` | interface | How a scene is loaded back: how each texture key is turned into a texture. |
 | `deserializeScene3D` | function | Rebuild a subtree from data produced by serializeScene3D. |
-| `DisposeListener3D` | type |  |
+| `DisposeListener3D` | type | Called when something is disposed of. |
 | `DracoModule3D` | interface | The parts of an initialized Draco decoder module (`await DracoDecoderModule()`) this adapter calls. |
-| `EPSILON_3D` | value |  |
-| `EquirectOptions3D` | interface |  |
-| `ExtrudeGeometryOptions3D` | interface |  |
+| `EPSILON_3D` | value | How close two numbers must be to count as equal. |
+| `EquirectOptions3D` | interface | How an equirectangular image is turned into a cube: its size, exposure and brightest value. |
+| `ExtrudeGeometryOptions3D` | interface | An extrusion to make: how deep, in how many steps, and along which path. |
 | `FatLine3D` | class | A polyline drawn as a ribbon of triangles that turns to face the camera, so it can be wider than the one pixel that plain lines allow. |
-| `FatLineOptions3D` | interface |  |
+| `FatLineOptions3D` | interface | A thick line to make: its width, whether that width is in screen pixels, its color and whether it closes. |
 | `findGridPath3D` | function | Shortest path on a grid of cells, for tile maps. |
-| `Fog3D` | type |  |
+| `Fog3D` | type | Fog that fades a scene into a color: linearly between two distances, or exponentially by a density. |
 | `FollowCamera3D` | class | Third-person camera: orbits a target at a distance, and moves closer when a wall would hide the target, easing back out afterwards. |
-| `FollowCameraOptions3D` | interface |  |
-| `Font3D` | class |  |
-| `FontSource3D` | interface |  |
-| `frustumFromMatrix` | function |  |
-| `frustumIntersectsBox` | function |  |
-| `frustumIntersectsSphere` | function |  |
-| `Geometry3D` | class |  |
-| `GEOMETRY3D_LIMITS` | value |  |
-| `GeometryBuilder3D` | interface |  |
-| `GeometryGroup3D` | interface |  |
-| `GeometryInput3D` | interface |  |
-| `GeometryPart3D` | interface |  |
+| `FollowCameraOptions3D` | interface | How a follow camera keeps behind its target: its distance and height, its angles, and what it keeps clear of. |
+| `Font3D` | class | A font that gives the outlines of text for 3D text geometry. |
+| `FontSource3D` | interface | A font for 3D text: its metrics, family, and its glyphs' outlines. |
+| `frustumFromMatrix` | function | The six planes of the frustum a projection-view matrix sees. |
+| `frustumIntersectsBox` | function | Whether a box is at least partly inside a frustum. |
+| `frustumIntersectsSphere` | function | Whether a sphere is at least partly inside a frustum. |
+| `Geometry3D` | class | The vertices of a mesh: its attributes and indices, its groups and morph targets, and calls that compute normals and tangents. |
+| `GEOMETRY3D_LIMITS` | value | The most vertices, indices, morph targets and groups a geometry has. |
+| `GeometryBuilder3D` | interface | Joins many geometries, each placed, into one. |
+| `GeometryGroup3D` | interface | A range of a geometry's indices drawn with one of its mesh's materials. |
+| `GeometryInput3D` | interface | A geometry to make: its positions, and its normals, texture coordinates, colors and indices where given. |
+| `GeometryPart3D` | interface | One geometry added to a builder: where, turned and scaled how, and its color. |
 | `GizmoHandle3D` | type | A single axis, a plane spanned by two axes, or 'xyz' for the center handle of the scale mode. |
-| `GizmoMode3D` | type |  |
-| `GizmoSpace3D` | type |  |
-| `GltfAsset3D` | interface |  |
-| `GltfDracoRequest3D` | interface |  |
-| `GltfDracoResult3D` | interface |  |
-| `GltfImageRequest3D` | interface |  |
-| `GltfLoadOptions3D` | interface |  |
-| `GltfMeshoptRequest3D` | interface |  |
+| `GizmoMode3D` | type | Whether a gizmo moves, turns or scales what it is attached to. |
+| `GizmoSpace3D` | type | Whether a gizmo's axes are the world's or the object's own. |
+| `GltfAsset3D` | interface | A loaded glTF file: its scenes, animations, cameras, materials, textures and geometries. |
+| `GltfDracoRequest3D` | interface | Draco data a glTF file needs decoded: its bytes and the attributes and component types it holds. |
+| `GltfDracoResult3D` | interface | Decoded Draco data: its attributes by name and its indices. |
+| `GltfImageRequest3D` | interface | An image a glTF file needs decoded: its index, media type, and its bytes or URI. |
+| `GltfLoadOptions3D` | interface | How a glTF file's parts are loaded: its images, its other buffers, and its KTX2, meshopt and Draco data. |
+| `GltfMeshoptRequest3D` | interface | Meshopt data a glTF file needs decoded: its bytes, count, stride, mode and filter. |
 | `GlyphOutline3D` | interface | One glyph in font units. |
 | `GpuParticles3D` | class | An instanced, camera-facing quad per particle. |
-| `GpuParticlesOptions3D` | interface |  |
-| `GridPathOptions3D` | interface |  |
-| `HDR3D_LIMITS` | value |  |
+| `GpuParticlesOptions3D` | interface | GPU particles to make: how many and how long they live, how they move, grow, turn and fade, where they come from and how they blend. |
+| `GridPathOptions3D` | interface | How a grid path is found: whether it moves diagonally, and how many cells it visits at most. |
+| `HDR3D_LIMITS` | value | The largest HDR image read. |
 | `HdrImage3D` | interface | Linear RGB floats, three per pixel, top row first. |
 | `HeightField3D` | class | Heights on a regular grid in the XZ plane. |
-| `HeightFieldOptions3D` | interface |  |
-| `HeightImageOptions3D` | interface |  |
+| `HeightFieldOptions3D` | interface | A height field to make: its columns and rows, its size, and its heights or a function that gives them. |
+| `HeightImageOptions3D` | interface | How an image becomes heights: the field's size, its lowest and highest height, and how heights are encoded. |
 | `inflate3D` | function | Decompress a zlib stream, or a bare deflate stream when `raw` is set. |
-| `InstanceBlendOptions3D` | interface |  |
-| `InstanceClipOptions3D` | interface |  |
+| `InstanceBlendOptions3D` | interface | How an instance blends two baked clips: from when, how fast, whether they loop and stay in step. |
+| `InstanceClipOptions3D` | interface | How an instance plays a baked clip: from when, how fast, whether it loops and how long it fades. |
 | `InstancedMesh3D` | class | Draw one geometry many times in a single call with per-instance transforms and colors. |
-| `isCompressedPixels3D` | function |  |
+| `isCompressedPixels3D` | function | Whether a value holds compressed pixels. |
 | `isKtx23D` | function | True when `bytes` starts with the KTX 2.0 file identifier. |
-| `isTexturePixels3D` | function |  |
+| `isTexturePixels3D` | function | Whether a value holds plain pixels. |
 | `Jelly3D` | class | Makes everything drawn under `target` behave like jelly. |
-| `JellyOptions3D` | interface |  |
+| `JellyOptions3D` | interface | How a jelly wobbles: its stiffness and damping, how far it squashes, how it reacts, and how it idles. |
 | `Joint3D` | class | A constraint between two bodies, or between a body and the world. |
-| `JointOptions3D` | interface |  |
-| `JointType3D` | type |  |
-| `Ktx2Info3D` | interface |  |
-| `Ktx2Options3D` | interface |  |
-| `Ktx2Result3D` | interface |  |
-| `LatheGeometryOptions3D` | interface |  |
-| `Light3D` | class |  |
-| `LIGHT3D_LIMITS` | value |  |
+| `JointOptions3D` | interface | A joint to make: its kind, the two bodies and anchors, its axis and limits, its motor and spring. |
+| `JointType3D` | type | The kind of a joint: a point, a hinge, fixed, a distance or a slider. |
+| `Ktx2Info3D` | interface | What a KTX2 file holds: its format, size, levels and supercompression. |
+| `Ktx2Options3D` | interface | How a KTX2 file is transcoded for the GPU in use. |
+| `Ktx2Result3D` | interface | A transcoded KTX2 texture: its pixels and color space. |
+| `LatheGeometryOptions3D` | interface | A lathe to make: its segments and the arc it turns through. |
+| `Light3D` | class | A light in a scene: its kind and its shadow. |
+| `LIGHT3D_LIMITS` | value | The most directional, point, tiled point and spot lights a scene lights, and the most shadows. |
 | `LightHelper3D` | class | Shows where a light is and where it points: a ray for directional, a cone for spot, a range sphere for point lights. |
-| `LightOptions3D` | interface |  |
-| `LightShadow3D` | interface |  |
-| `LightType3D` | type |  |
+| `LightOptions3D` | interface | A light to make: its color and intensity, and whether it casts shadows. |
+| `LightShadow3D` | interface | How a light casts shadows: its map size, biases, range, extent, softness and cascades. |
+| `LightType3D` | type | The kind of a light: ambient, hemisphere, directional, point or spot. |
 | `linearColor3D` | function | A hex colour as seen on screen in the linear RGB the renderer lights, for vertex colours written by hand. |
-| `linearToSrgb` | function |  |
-| `LineCurve3D` | class |  |
+| `linearToSrgb` | function | Turns a linear color value into an sRGB one. |
+| `LineCurve3D` | class | A straight line between two points, as a curve. |
 | `LineHelper3D` | class | Shared base: a line mesh whose vertices are rewritten by update(). |
 | `loadGltf3D` | function | Parse a glTF 2.0 asset from .glb bytes, .gltf JSON bytes or an already parsed JSON object. |
 | `Lod3D` | class | Shows exactly one child depending on the distance to the camera. |
 | `mat3NormalFromMat4` | function | 3x3 inverse transpose of the upper-left block, written as nine column-major floats. |
 | `mat4Compose` | function | Affine matrix from translation, unit quaternion and scale. |
-| `mat4Copy` | function |  |
+| `mat4Copy` | function | Copies a 4x4 matrix. |
 | `mat4Decompose` | function | Split an affine matrix; a negative determinant is folded into scale X. |
-| `mat4Determinant` | function |  |
-| `mat4Identity` | function |  |
+| `mat4Determinant` | function | The determinant of a 4x4 matrix. |
+| `mat4Identity` | function | Sets a 4x4 matrix to the identity. |
 | `mat4Invert` | function | Returns false and leaves `out` untouched when the matrix is singular. |
 | `mat4LookAt` | function | World matrix of an object at `eye` whose negative Z axis points at `target`. |
-| `mat4MaxScaleOnAxis` | function |  |
+| `mat4MaxScaleOnAxis` | function | The largest scale a 4x4 matrix applies along an axis. |
 | `mat4Multiply` | function | out = a * b: with column vectors, b applies first. |
-| `mat4Orthographic` | function |  |
+| `mat4Orthographic` | function | Sets a 4x4 matrix to an orthographic projection. |
 | `mat4Perspective` | function | Right-handed perspective projection to clip depth [-1, 1]. |
 | `Material3D` | class | One material class carries the superset of surface parameters; `shading` selects the lighting model. |
-| `MaterialOptions3D` | interface |  |
+| `MaterialOptions3D` | interface | A material to make: its color and maps, its sides and alpha, its blending and depth, and its emission, normals and occlusion. |
 | `mergeGeometries3D` | function | Join geometries that share the same attribute set into one. |
 | `mergeVertices3D` | function | Weld vertices whose every attribute matches within `tolerance`, producing an indexed geometry. |
-| `Mesh3D` | class |  |
-| `MESH3D_LIMITS` | value |  |
-| `MESHOPT3D_LIMITS` | value |  |
-| `MeshoptFilter3D` | type |  |
-| `MeshoptMode3D` | type |  |
-| `MorphTarget3D` | interface |  |
-| `NavAgent3D` | class |  |
-| `NavAgentOptions3D` | interface |  |
+| `Mesh3D` | class | A geometry drawn with materials, with its morph weights and skeleton. |
+| `MESH3D_LIMITS` | value | The most bones, instances and materials a mesh has. |
+| `MESHOPT3D_LIMITS` | value | The largest stride and count of meshopt data. |
+| `MeshoptFilter3D` | type | The filter meshopt data was encoded with. |
+| `MeshoptMode3D` | type | What meshopt data encodes: vertex attributes, triangles or indices. |
+| `MorphTarget3D` | interface | A morph target: the positions, and normals, it moves a geometry toward. |
+| `NavAgent3D` | class | An agent of a crowd: where it is and how it moves; give it a target, or stop it. |
+| `NavAgentOptions3D` | interface | An agent to add: where it starts, its radius, speed and acceleration, and the node it moves. |
 | `NavCrowd3D` | class | Agents walking on one navigation mesh. |
-| `NAVIGATION3D_LIMITS` | value |  |
-| `NavLocation3D` | interface |  |
-| `NavMesh3D` | class |  |
-| `NavMeshOptions3D` | interface |  |
-| `NavPath3D` | interface |  |
-| `NavPathOptions3D` | interface |  |
-| `NavPoint3D` | type |  |
-| `NumericArray3D` | type |  |
-| `Object3D` | class |  |
-| `Object3DKind` | type |  |
-| `OrthographicCameraOptions3D` | interface |  |
+| `NAVIGATION3D_LIMITS` | value | The most triangles, agents and grid cells navigation holds. |
+| `NavLocation3D` | interface | Where a point is on a navigation mesh: its triangle and the point itself. |
+| `NavMesh3D` | class | The walkable surface of a level: find paths, nearest points and ray hits on it, and set the cost of its areas. |
+| `NavMeshOptions3D` | interface | A navigation mesh to make: the steepest walkable slope, and how close vertices are welded. |
+| `NavPath3D` | interface | A path found on a navigation mesh: its points, whether it reaches the goal, and its length. |
+| `NavPathOptions3D` | interface | How a path is found: the agent's radius, whether it follows the ground, and how far its ends may snap. |
+| `NavPoint3D` | type | A point on a navigation mesh as x, y and z. |
+| `NumericArray3D` | type | An array of numbers the 3D math writes into. |
+| `Object3D` | class | A node of a 3D scene: its children, place, rotation and scale, and calls that move and find nodes. |
+| `Object3DKind` | type | What kind of node an object is. |
+| `OrthographicCameraOptions3D` | interface | An orthographic camera to make: the height it sees, its aspect ratio and near and far planes. |
 | `parseKtx23D` | function | Read a KTX 2.0 file holding one 2D texture and its mip chain. |
 | `parseRgbe3D` | function | Decode a Radiance .hdr file (flat or run-length encoded, -Y +X orientation). |
 | `parseTrueTypeFont3D` | function | Read a TrueType font: a .ttf file, an OpenType file with TrueType (glyf) outlines, or the first font of a .ttc collection. |
 | `parseTypefaceFont3D` | function | Read a font in the typeface JSON format (the `*.typeface.json` files used with web 3D libraries). |
-| `ParticleEmitter3D` | class |  |
-| `ParticleEmitterOptions3D` | interface |  |
-| `PARTICLES3D_LIMITS` | value |  |
-| `ParticleShape3D` | type |  |
+| `ParticleEmitter3D` | class | Emits particles on the CPU: burst some, update it each frame, or reset it. |
+| `ParticleEmitterOptions3D` | interface | An emitter to make: how many particles and how often, how long they live, how they move, grow, change color and fade, and where they are born. |
+| `PARTICLES3D_LIMITS` | value | The most particles an emitter holds, and the longest step it takes. |
+| `ParticleShape3D` | type | The shape particles are born in. |
 | `Path2D3D` | class | A 2D outline built with pen commands; used as a contour or a hole. |
-| `PerspectiveCameraOptions3D` | interface |  |
-| `PhongMaterialOptions3D` | interface |  |
-| `PHYSICS3D_LIMITS` | value |  |
-| `PHYSICS_HULL3D_LIMITS` | value |  |
-| `PHYSICS_MESH3D_LIMITS` | value |  |
+| `PerspectiveCameraOptions3D` | interface | A perspective camera to make: its vertical field of view, aspect ratio and near and far planes. |
+| `PhongMaterialOptions3D` | interface | A Phong material's specular color and shininess. |
+| `PHYSICS3D_LIMITS` | value | The most bodies, substeps, solver steps, contacts a pair keeps and parts of a compound. |
+| `PHYSICS_HULL3D_LIMITS` | value | The most points a convex hull keeps and is made from. |
+| `PHYSICS_MESH3D_LIMITS` | value | The most triangles a mesh shape has, and how many a leaf of its tree holds. |
 | `PhysicsClient3D` | class | The page's end of a remote physics world. |
 | `PhysicsContact3D` | interface | What a pair of solid bodies did to each other in one step. |
 | `PhysicsPort3D` | interface | A Worker, a worker's global scope, a MessagePort: anything that posts and receives messages. |
-| `PhysicsRaycastHit3D` | interface |  |
-| `PhysicsShapeCastHit3D` | interface |  |
-| `PhysicsWorld3D` | class |  |
-| `PhysicsWorldOptions3D` | interface |  |
+| `PhysicsRaycastHit3D` | interface | What a ray hit: the body, where, its normal and how far. |
+| `PhysicsShapeCastHit3D` | interface | What a cast shape hit: the body, how far it went, where, and the normal. |
+| `PhysicsWorld3D` | class | A 3D physics world: add bodies and joints, step it, and cast rays and shapes through it. |
+| `PhysicsWorldOptions3D` | interface | A physics world to make: its gravity, its step and substeps, its solver iterations, and whether bodies sleep. |
 | `PlanarReflection3D` | class | A mirror camera and the target it draws into. |
 | `PlanarReflectionPass3D` | interface | Output and inclusion settings shared by reflection draws and program preparation. |
-| `PlaneGeometryOptions3D` | interface |  |
-| `Point2D` | type |  |
-| `Point3D` | type |  |
-| `PointLightOptions3D` | interface |  |
-| `PolyhedronOptions3D` | interface |  |
+| `PlaneGeometryOptions3D` | interface | A plane to make: its width and height, and their segments. |
+| `Point2D` | type | A point in 2D as x and y. |
+| `Point3D` | type | A point in 3D as x, y and z. |
+| `PointLightOptions3D` | interface | A point light to make: how far it reaches. |
+| `PolyhedronOptions3D` | interface | A regular solid to make: its radius, how often it is subdivided, and whether it is smooth. |
 | `projectToViewport3D` | function | Projects a world point into a viewport of `width` by `height` pixels through `camera`. |
-| `QuadraticBezierCurve3D` | class |  |
-| `quatCopy` | function |  |
-| `quatFromAxisAngle` | function |  |
+| `QuadraticBezierCurve3D` | class | A quadratic Bézier curve through three control points. |
+| `quatCopy` | function | Copies a quaternion. |
+| `quatFromAxisAngle` | function | A quaternion that turns by an angle about an axis. |
 | `quatFromEuler` | function | Intrinsic XYZ Euler angles in radians (rotate X, then Y, then Z in local axes). |
 | `quatFromRotationMatrix` | function | Rotation part of a matrix without scale or shear. |
-| `quatIdentity` | function |  |
-| `quatMultiply` | function |  |
-| `quatNormalize` | function |  |
+| `quatIdentity` | function | Sets a quaternion to no rotation. |
+| `quatMultiply` | function | Multiplies two quaternions: the rotation of b, then a. |
+| `quatNormalize` | function | Scales a quaternion to length 1. |
 | `quatSlerp` | function | Shortest-arc spherical interpolation; falls back to nlerp for close inputs. |
 | `quatToEuler` | function | Inverse of quatFromEuler; writes radians into out[0..2]. |
 | `Ragdoll3D` | class | Bodies and joints for a skeleton, created from the current pose by activate() and removed again by deactivate(). |
-| `RAGDOLL3D_LIMITS` | value |  |
-| `RagdollJoint3D` | interface |  |
-| `RagdollOptions3D` | interface |  |
-| `RagdollPart3D` | interface |  |
-| `Raycaster3D` | class |  |
-| `RaycastHit3D` | interface |  |
-| `RaycastOptions3D` | interface |  |
+| `RAGDOLL3D_LIMITS` | value | The most parts a ragdoll has. |
+| `RagdollJoint3D` | interface | How a ragdoll part is joined to its parent: the joint's kind, axis and limits. |
+| `RagdollOptions3D` | interface | A ragdoll to make: its layers, friction, bounce and damping. |
+| `RagdollPart3D` | interface | One part of a ragdoll: its bone, shape and mass, its offset, its parent and its joint. |
+| `Raycaster3D` | class | Casts rays through a scene, from a point or from the camera through a screen point. |
+| `RaycastHit3D` | interface | What a ray hit: how far, where, the object, its face, its texture coordinate and its instance. |
+| `RaycastOptions3D` | interface | How a ray is cast: its near and far distances, its layers, and whether only the first hit is wanted. |
 | `rayIntersectBox` | function | Slab test; returns the entry distance (0 when the origin is inside) or -1. |
 | `rayIntersectSphere` | function | Distance along the ray to the sphere, or -1 when it misses. |
 | `rayIntersectTriangle` | function | Moller-Trumbore. |
 | `ReflectionRenderer3D` | interface | Anything that can draw a scene into a render target: both first-party renderers qualify. |
 | `RemoteBody3D` | class | The page's stand-in for a body that lives behind the port. |
-| `RemoteBodyOptions3D` | interface |  |
-| `RemoteJoint3D` | class |  |
-| `RemoteJointOptions3D` | interface |  |
-| `RemoteRaycastHit3D` | interface |  |
+| `RemoteBodyOptions3D` | interface | A body to add to a physics world in a worker. |
+| `RemoteJoint3D` | class | A joint of a physics world in a worker; remove it to take it out. |
+| `RemoteJointOptions3D` | interface | A joint to add to a physics world in a worker. |
+| `RemoteRaycastHit3D` | interface | What a ray hit in a physics world in a worker. |
 | `RemoteShape3D` | type | Shapes that can be described in a message. |
-| `RenderItem3D` | interface |  |
-| `RenderList3D` | class |  |
-| `RenderStats3D` | interface |  |
+| `RenderItem3D` | interface | One thing to draw: its mesh, geometry and material, its range, its depth and order. |
+| `RenderList3D` | class | What a camera sees, sorted for drawing: opaque and transparent items, shadow casters and lights. |
+| `RenderStats3D` | interface | What building a render list counted: nodes visited, culled, and lights dropped. |
 | `RenderTarget3D` | class | Off-screen color target. |
 | `RenderTargetFormat3D` | type | Color storage of a render target: 8-bit sRGB, or half-float linear for values above 1. |
-| `RenderTargetOptions3D` | interface |  |
+| `RenderTargetOptions3D` | interface | A render target to make: its format, its depth, and its filters and wrapping. |
 | `Resource3D` | class | CPU-side resource with a version counter and terminal disposal. |
 | `retargetAnimationClip3D` | function | A clip for the target rig that moves it as `clip` moves the source rig. |
-| `RetargetOptions3D` | interface |  |
-| `RigidBody3D` | class |  |
-| `RigidBodyOptions3D` | interface |  |
-| `RingGeometryOptions3D` | interface |  |
+| `RetargetOptions3D` | interface | How a clip is moved to another skeleton: from where to where, which bones match, the root, scale and frame rate. |
+| `RigidBody3D` | class | A body in a physics world: its kind, shape and mass, its material and layers, and calls that move and push it. |
+| `RigidBodyOptions3D` | interface | A body to add: its kind, shape and mass, where it is, its material and damping, its layers, and the node it moves. |
+| `RingGeometryOptions3D` | interface | A ring to make: its inner and outer radius, segments and arc. |
 | `Rope3D` | class | A rope or cable. |
-| `RopeOptions3D` | interface |  |
+| `RopeOptions3D` | interface | A rope to make: from where to where, in how many segments, how slack, and which ends are pinned. |
 | `sampleAnimationTrack3D` | function | Evaluate one track at `time` into `out`; `hint` caches the last key index. |
 | `Scene3D` | class | Root of a renderable graph; owns environment-wide settings. |
-| `SCENE_DOCUMENT_FORMAT_3D` | value |  |
-| `SCENE_DOCUMENT_VERSION_3D` | value |  |
-| `SceneDocument3D` | interface |  |
+| `SCENE_DOCUMENT_FORMAT_3D` | value | The format name of a saved scene document. |
+| `SCENE_DOCUMENT_VERSION_3D` | value | The version of the scene document format. |
+| `SceneDocument3D` | interface | A scene saved as JSON: its nodes, geometries, materials, textures and skeletons, and what was skipped. |
 | `ScreenLayer3D` | class | Full-screen image drawn in the same pass as the 3D scene, typically the canvas of a 2D stage. |
-| `ScreenLayerOptions3D` | interface |  |
-| `SERIALIZE3D_LIMITS` | value |  |
-| `SerializeOptions3D` | interface |  |
+| `ScreenLayerOptions3D` | interface | A screen layer to make: its order and opacity, whether it updates itself, and which way its rows run. |
+| `SERIALIZE3D_LIMITS` | value | The most nodes, embedded texture bytes and document bytes a scene document has. |
+| `SerializeOptions3D` | interface | How a scene is saved: the key each texture is saved by. |
 | `serializeScene3D` | function | Write the subtree under `root` as JSON-safe data. |
 | `servePhysics3D` | function | Run a physics world on this end of a port and answer the messages of a PhysicsClient3D. |
-| `setColor3D` | function |  |
-| `Shading3D` | type |  |
+| `setColor3D` | function | Writes a color into a float array as red, green and blue. |
+| `Shading3D` | type | How a material is lit: not at all, Lambert, Phong, physically based, toon, or by a matcap. |
 | `Shape3D` | class | A filled outline with optional holes. |
-| `ShapeDefinition3D` | type |  |
-| `Side3D` | type |  |
-| `signedArea2D` | function |  |
+| `ShapeDefinition3D` | type | The shape of a body: a sphere, box, capsule, plane, convex hull, triangle mesh, or several moving as one. |
+| `Side3D` | type | Which sides of a material's triangles are drawn. |
+| `signedArea2D` | function | The signed area of a 2D polygon: positive when its points run counterclockwise. |
 | `Skeleton3D` | class | Ordered bones with their inverse bind matrices; one instance may drive many meshes. |
 | `SkeletonHelper3D` | class | A line from every bone to its parent bone. |
 | `SkinnedInstancedMesh3D` | class | Many copies of one skinned mesh in a single draw call, each at its own place in its own clip. |
-| `sphereFromBox` | function |  |
-| `SphereGeometryOptions3D` | interface |  |
-| `sphereTransform` | function |  |
-| `SpotLightOptions3D` | interface |  |
+| `sphereFromBox` | function | The sphere around a box. |
+| `SphereGeometryOptions3D` | interface | A sphere to make: its radius and segments. |
+| `sphereTransform` | function | Moves and scales a sphere by a 4x4 matrix. |
+| `SpotLightOptions3D` | interface | A spot light to make: its cone's angle and soft edge. |
 | `Sprite3D` | class | Camera-facing textured quad. |
-| `SpriteMaterialOptions3D` | interface |  |
-| `srgbToLinear` | function |  |
-| `StandardMaterialOptions3D` | interface |  |
-| `STATE_MACHINE3D_LIMITS` | value |  |
-| `StateBlendEntry3D` | interface |  |
-| `StateCondition3D` | interface |  |
-| `StateConditionOperator3D` | type |  |
-| `StateOptions3D` | interface |  |
-| `StateParameter3D` | type |  |
-| `StrandOptions3D` | interface |  |
+| `SpriteMaterialOptions3D` | interface | A sprite material: whether sprites shrink with distance, and their rotation. |
+| `srgbToLinear` | function | Turns an sRGB color value into a linear one. |
+| `StandardMaterialOptions3D` | interface | A physically based material's metalness and roughness, and how much the environment lights it. |
+| `STATE_MACHINE3D_LIMITS` | value | The most states and transitions a state machine has, and how many transitions it takes in one update. |
+| `StateBlendEntry3D` | interface | One clip of a blend state and the parameter value it shows at. |
+| `StateCondition3D` | interface | A condition of a transition: a parameter compared with a value. |
+| `StateConditionOperator3D` | type | How a condition compares a parameter with its value. |
+| `StateOptions3D` | interface | A state to add: its clip or blend, whether it loops, its speed, and what it calls on entering and leaving. |
+| `StateParameter3D` | type | The value of a state machine parameter. |
+| `StrandOptions3D` | interface | How a strand of points behaves: its gravity, damping, iterations, thickness, and what it collides with. |
 | `Terrain3D` | class | A height field drawn as a grid of chunk meshes. |
-| `TERRAIN3D_LIMITS` | value |  |
-| `TerrainMaterialOptions3D` | interface |  |
-| `TerrainOptions3D` | interface |  |
-| `TerrainStream3D` | class |  |
-| `TerrainStreamOptions3D` | interface |  |
-| `TerrainTile3D` | interface |  |
-| `TEXT3D_LIMITS` | value |  |
-| `TextGeometryOptions3D` | interface |  |
-| `TextLayoutOptions3D` | interface |  |
-| `Texture3D` | class |  |
-| `TEXTURE3D_LIMITS` | value |  |
-| `TextureColorSpace3D` | type |  |
-| `TextureFilter3D` | type |  |
-| `TextureOptions3D` | interface |  |
+| `TERRAIN3D_LIMITS` | value | The largest height field, chunk and number of levels and chunks terrain has, and the most streamed tiles. |
+| `TerrainMaterialOptions3D` | interface | A terrain material's layers, their weights, and how often they repeat. |
+| `TerrainOptions3D` | interface | Terrain to make: its chunks, levels of detail and their distance, its skirts, texture scale and colors. |
+| `TerrainStream3D` | class | Terrain loaded in tiles around the camera: read heights, and update it as the camera moves. |
+| `TerrainStreamOptions3D` | interface | Streamed terrain to make: its tile size and view distance, how a tile is loaded, and what is called as tiles come and go. |
+| `TerrainTile3D` | interface | One tile of streamed terrain: where it is, its height field and terrain. |
+| `TEXT3D_LIMITS` | value | The most characters, font bytes and glyph points 3D text has. |
+| `TextGeometryOptions3D` | interface | 3D text to make: how deep it is extruded, and in how many steps. |
+| `TextLayoutOptions3D` | interface | How 3D text is laid out: its size, curve detail, spacing, line height and alignment. |
+| `Texture3D` | class | A texture for 3D materials; set its source to change its picture. |
+| `TEXTURE3D_LIMITS` | value | The largest texture edge and size. |
+| `TextureColorSpace3D` | type | Whether a texture's values are sRGB colors or linear data. |
+| `TextureFilter3D` | type | How a texture is sampled: the nearest texel, or blended. |
+| `TextureOptions3D` | interface | A texture to make: its name, wrapping and filters, its mipmaps and color space, whether it is flipped, and its anisotropy. |
 | `TexturePixels3D` | interface | Tightly packed straight-alpha RGBA8 rows, top row first. |
-| `TextureSource3D` | type |  |
-| `TextureWrap3D` | type |  |
+| `TextureSource3D` | type | What a texture is made from: pixels, compressed pixels, or an image the browser decoded. |
+| `TextureWrap3D` | type | What a texture does past its edges: repeats, clamps or mirrors. |
 | `toNonIndexedGeometry3D` | function | Copy with every triangle owning its vertices, as needed for per-face data. |
-| `Topology3D` | type |  |
-| `TorusGeometryOptions3D` | interface |  |
-| `TorusKnotGeometryOptions3D` | interface |  |
+| `Topology3D` | type | How a geometry's vertices are joined: as triangles, lines, a strip of lines, or points. |
+| `TorusGeometryOptions3D` | interface | A torus to make: its radius, tube and segments. |
+| `TorusKnotGeometryOptions3D` | interface | A torus knot to make: its radius and tube, segments, and its windings p and q. |
 | `Trail3D` | class | Add the trail to the scene itself, not under the object it follows: its vertices are world positions. |
-| `TRAIL3D_LIMITS` | value |  |
-| `TrailOptions3D` | interface |  |
+| `TRAIL3D_LIMITS` | value | The most points a trail has. |
+| `TrailOptions3D` | interface | A trail to make: what it follows, how long it lasts, how far apart its points are, and how its width, color and opacity change. |
 | `transformGeometry3D` | function | Bake a 4x4 transform into positions, normals and tangents, in place. |
-| `TransformGizmo3D` | class |  |
-| `TransformGizmoOptions3D` | interface |  |
-| `TransitionOptions3D` | interface |  |
-| `TriangleMeshShape3D` | class |  |
+| `TransformGizmo3D` | class | Handles to move, turn or scale an object by dragging them, with snapping. |
+| `TransformGizmoOptions3D` | interface | A gizmo to make: its mode, its space and its size. |
+| `TransitionOptions3D` | interface | A transition to add: from and to which state, how long it fades, its conditions, its exit time and whether it can be interrupted. |
+| `TriangleMeshShape3D` | class | A triangle mesh as a physics shape, for bodies that do not move. |
 | `triangulateShape3D` | function | Triangulate an outline with holes by ear clipping. |
-| `TubeGeometryOptions3D` | interface |  |
-| `vec3Add` | function |  |
-| `vec3Copy` | function |  |
-| `vec3Cross` | function |  |
-| `vec3Distance` | function |  |
-| `vec3Dot` | function |  |
-| `vec3Length` | function |  |
-| `vec3Lerp` | function |  |
+| `TubeGeometryOptions3D` | interface | A tube to make along a curve: its segments, radius and whether it closes. |
+| `vec3Add` | function | Adds two vectors. |
+| `vec3Copy` | function | Copies a vector. |
+| `vec3Cross` | function | The cross product of two vectors. |
+| `vec3Distance` | function | The distance between two points. |
+| `vec3Dot` | function | The dot product of two vectors. |
+| `vec3Length` | function | The length of a vector. |
+| `vec3Lerp` | function | The point a fraction of the way from one vector to another. |
 | `vec3Normalize` | function | A zero-length input yields the zero vector instead of NaN. |
-| `vec3Scale` | function |  |
-| `vec3Set` | function |  |
-| `vec3Sub` | function |  |
+| `vec3Scale` | function | Multiplies a vector by a number. |
+| `vec3Set` | function | Sets a vector's x, y and z. |
+| `vec3Sub` | function | Takes one vector from another. |
 | `vec3TransformDirection` | function | Transform a direction (w = 0) by the upper 3x3; the result is not normalized. |
 | `vec3TransformMat4` | function | Transform a point (w = 1) with perspective division. |
-| `vec3TransformQuat` | function |  |
+| `vec3TransformQuat` | function | Turns a vector by a quaternion. |
 | `Vehicle3D` | class | Drives a chassis body on ray wheels. |
-| `VEHICLE3D_LIMITS` | value |  |
-| `VehicleOptions3D` | interface |  |
+| `VEHICLE3D_LIMITS` | value | The most wheels a vehicle has. |
+| `VehicleOptions3D` | interface | A vehicle to make: its wheels, its engine and brakes, its steering, its top speed and how it rolls. |
 | `ViewportPoint3D` | interface | Where a world point falls in a viewport, for labels, markers and pointers drawn over the picture. |
 | `VolumetricFog3D` | class | Add one to the scene's root and keep `receiveShadow` on. |
-| `VolumetricFogOptions3D` | interface |  |
+| `VolumetricFogOptions3D` | interface | Volumetric fog to make: its color and density, its height and falloff, its distance, and how much the sun and lights shine through it. |
 | `Water3D` | class | A horizontal water surface. |
-| `WaterOptions3D` | interface |  |
-| `Wheel3D` | interface |  |
-| `WheelOptions3D` | interface |  |
-| `WORLD3D_LIMITS` | value |  |
+| `WaterOptions3D` | interface | Water to make: its size and detail, its waves and ripples, its colors and clarity, its reflections, foam and caustics. |
+| `Wheel3D` | interface | A wheel of a vehicle: its suspension and grip, and whether it touches the ground. |
+| `WheelOptions3D` | interface | A wheel to add: where, its radius and suspension, whether it steers or drives, its grip and the node it turns. |
+| `WORLD3D_LIMITS` | value | How deep a scene nests, how many children a node has, and how long a name is, at most. |
 | `World3DError` | class | Stable machine-readable code plus a human-readable detail and the original cause. |
-| `World3DErrorCode` | type |  |
+| `World3DErrorCode` | type | What went wrong in the 3D world. |
 
 ## `@egret/engine/webgl2/world3d`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `Atmosphere3D` | class | Height fog and light shafts for `renderer.postProcess.custom`. |
-| `AtmosphereOptions3D` | interface |  |
+| `AtmosphereOptions3D` | interface | An atmosphere to make: its fog's color, density and height, and its light shafts. |
 | `AudioListener3D` | class | Ears of the scene. |
-| `AudioListenerOptions3D` | interface |  |
+| `AudioListenerOptions3D` | interface | An audio listener to make: its audio context and volume. |
 | `captureCubeTexture3D` | function | Render six 90-degree views from `position` and return them as a cube texture with mipmaps. |
-| `createAtmosphere3D` | function |  |
-| `createAudioListener3D` | function |  |
-| `createCustomPost3D` | function |  |
-| `createDynamicResolution3D` | function |  |
-| `createFlyControls3D` | function |  |
-| `createFollowControls3D` | function |  |
-| `createOrbitControls3D` | function |  |
-| `createPositionalAudio3D` | function |  |
-| `createPostProcessSettings3D` | function |  |
+| `createAtmosphere3D` | function | Makes height fog and light shafts for a scene. |
+| `createAudioListener3D` | function | Makes the listener 3D sounds are heard by, usually on the camera. |
+| `createCustomPost3D` | function | Makes a post-processing pass of your own shader. |
+| `createDynamicResolution3D` | function | Makes a resolution scale that drops when frames are slow and rises when they are fast. |
+| `createFlyControls3D` | function | Makes fly controls for a camera on an element. |
+| `createFollowControls3D` | function | Makes follow controls for a follow camera on an element. |
+| `createOrbitControls3D` | function | Makes orbit controls for a camera on an element. |
+| `createPositionalAudio3D` | function | Makes a sound that plays from a place in the scene. |
+| `createPostProcessSettings3D` | function | Post-processing settings with every effect off. |
 | `createScreenMarkers3D` | function | A layer of page elements that follow scene points. |
-| `createTransformControls3D` | function |  |
-| `createWebGL2Renderer3D` | function |  |
+| `createTransformControls3D` | function | Makes transform controls for a camera on an element. |
+| `createWebGL2Renderer3D` | function | Makes a renderer that draws 3D scenes with WebGL2. |
 | `createWorld3DApp` | function | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | function | Host adapter that reserves `canvas` for one Engine. |
 | `createWorld3DOverlay` | function | Lays a transparent 2D stage over `canvas` (the 3D canvas, which must sit in a positioned parent) and starts it. |
-| `createWorld3DStats` | function |  |
-| `createWorld3DView` | function |  |
+| `createWorld3DStats` | function | Makes a panel that shows a 3D view's frame times and draws. |
+| `createWorld3DView` | function | Makes a view that draws a scene on each tick of the Engine's clock. |
 | `CUBE_TEXTURE_ASSET_3D` | value | A cube texture. |
-| `CubeCaptureOptions3D` | interface |  |
+| `CubeCaptureOptions3D` | interface | How a cube is captured around a point: its size, near and far planes, and layers. |
 | `CustomPost3D` | interface | A full-screen hook that runs after ambient occlusion and bloom and before tone mapping. |
 | `DynamicResolution3D` | interface | A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. |
-| `DynamicResolutionOptions3D` | interface |  |
-| `FlyControls3D` | class |  |
-| `FlyControlsKeys3D` | interface |  |
-| `FlyControlsOptions3D` | interface |  |
-| `FollowControls3D` | class |  |
-| `FollowControlsOptions3D` | interface |  |
+| `DynamicResolutionOptions3D` | interface | How dynamic resolution moves: its least and greatest scale, its step, and the frame rates and times that move it. |
+| `FlyControls3D` | class | Moves a camera with the keyboard and mouse, walking or flying. |
+| `FlyControlsKeys3D` | interface | The keys of fly controls: forward, back, left, right, up, down and sprint. |
+| `FlyControlsOptions3D` | interface | Fly controls to make: how fast they move and look, whether they fly, use pointer lock or damp, and their keys. |
+| `FollowControls3D` | class | Turns and zooms a follow camera with the mouse and touch. |
+| `FollowControlsOptions3D` | interface | Follow controls to make: how fast they turn and zoom. |
 | `GLTF_ASSET_3D` | value | A loaded glTF file. |
 | `GltfUrlLoadOptions3D` | interface | glTF loading options: download limits plus the optional KTX2, meshopt and Draco decoders. |
 | `isSoftwareRendered3D` | function | Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual machine or a page whose graphics card is blocked. |
 | `loadCubeTexture3D` | function | Load six square images in +X, -X, +Y, -Y, +Z, -Z order as a cube texture. |
 | `loadGltfFromUrl3D` | function | Load a .glb or .gltf file; relative buffer and image URIs resolve against `url`. |
-| `LoadOptions3D` | interface |  |
+| `LoadOptions3D` | interface | How a 3D asset is loaded: a signal that cancels it, and the most bytes it reads. |
 | `loadTexture3D` | function | Load an image or KTX2 file as a texture. |
-| `OrbitControls3D` | class |  |
-| `OrbitControlsOptions3D` | interface |  |
+| `OrbitControls3D` | class | Turns a camera around a target, pans and zooms it, with the mouse and touch. |
+| `OrbitControlsOptions3D` | interface | Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. |
 | `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `play3d` | function | Starts a 3D game in the page. |
-| `Play3DGame` | interface |  |
-| `Play3DOptions` | interface |  |
+| `Play3DGame` | interface | Everything a small 3D game is given: its scene and camera, its input, and calls that make, move and light things. |
+| `Play3DOptions` | interface | A small 3D game to start: its setup and update, and the options of a 2D play game. |
 | `PLAY_LOOKS_3D` | value | The looks every game is given, by name. |
-| `PlayBurst3D` | interface |  |
+| `PlayBurst3D` | interface | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
 | `PlayCamera3D` | interface | The camera: where it is and what it looks at, by plain numbers. |
-| `PlayFollow3D` | interface |  |
+| `PlayFollow3D` | interface | How the camera follows: where it sits behind, how smoothly, and whether it turns with the target. |
 | `PlayLamp3D` | class | A lamp: light from a point of the world that fades out by `range`. |
-| `PlayLampOptions3D` | interface |  |
-| `PlayLook3D` | interface |  |
+| `PlayLampOptions3D` | interface | A lamp to light: how bright, and how far it reaches. |
+| `PlayLook3D` | interface | How a 3D play game looks: its background and sky, its ground, its light and sun, and its fog. |
 | `PlayLookName3D` | type | What `play3d` gives: everything `play` gives for the interface and the game's time, and a world of things. |
 | `PlayPlace3D` | interface | Where a thing is made. |
 | `PlayThing3D` | class | A thing of the world: a box, a ball, a cylinder or a cone. |
 | `PlayWeather3D` | type | What falls from the sky: snow, rain, or nothing. |
-| `PlayWeatherOptions3D` | interface |  |
+| `PlayWeatherOptions3D` | interface | Weather to show: how much rain or snow. |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
-| `PositionalAudioOptions3D` | interface |  |
-| `POST3D_LIMITS` | value |  |
-| `PostProcessSettings3D` | interface |  |
+| `PositionalAudioOptions3D` | interface | A positional sound to make: its buffer and volume, how it fades with distance, its cone, rate, and whether it is spatial. |
+| `POST3D_LIMITS` | value | The most bloom levels. |
+| `PostProcessSettings3D` | interface | What is done to a frame after it is drawn: bloom, antialiasing, color, vignette, ambient occlusion, depth of field and outlines. |
 | `registerWorld3DAssets` | function | Register the World3D asset providers on an AssetManager. |
 | `Renderer3D` | interface | What both world3d backends provide; views and tools depend on this only. |
-| `Renderer3DInfo` | interface |  |
+| `Renderer3DInfo` | interface | What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. |
 | `SCENE_ASSET_3D` | value | A scene document written by serializeScene3D. |
-| `ScreenMarker3D` | interface |  |
-| `ScreenMarkerOptions3D` | interface |  |
-| `ScreenMarkers3D` | interface |  |
-| `ScreenMarkersOptions3D` | interface |  |
+| `ScreenMarker3D` | interface | A marker over the screen that follows a point of the scene: its element and where it is. |
+| `ScreenMarkerOptions3D` | interface | A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. |
+| `ScreenMarkers3D` | interface | Elements over the screen that follow points of the scene: add them, and update them each frame. |
+| `ScreenMarkersOptions3D` | interface | Screen markers to make: the container they go in, and the camera they follow. |
 | `startWorld3DLoop` | function | Advance the Engine clock once per display frame. |
 | `TEXTURE_ASSET_3D` | value | A 2D texture loaded from an image or KTX2 file. |
 | `TextureLoadOptions3D` | interface | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
-| `ToneMapping3D` | type |  |
-| `TransformControls3D` | class |  |
+| `ToneMapping3D` | type | How a renderer maps bright colors into the screen's range. |
+| `TransformControls3D` | class | Drags a transform gizmo with the mouse and touch to move, turn or scale an object. |
 | `WebGL2ProgramVariant3D` | interface | One material program for an expected draw. |
-| `WebGL2Renderer3D` | class |  |
-| `WebGL2Renderer3DOptions` | interface |  |
+| `WebGL2Renderer3D` | class | Draws 3D scenes with WebGL2: set its size, render a scene from a camera, and read what it drew. |
+| `WebGL2Renderer3DOptions` | interface | A WebGL2 renderer to make: its canvas and context, its tone mapping and exposure, its shadows, and what is called when the context is lost and restored. |
 | `WORLD3D_QUALITY_PRESETS` | value | The three qualities. |
-| `World3DApp` | interface |  |
-| `World3DAppOptions` | interface |  |
-| `World3DAssetOptions` | interface |  |
-| `World3DBackend` | type |  |
+| `World3DApp` | interface | A 3D app: its Engine, renderer and view, its quality and resolution, and calls that show a scene and start and stop it. |
+| `World3DAppOptions` | interface | A 3D app to make: its backend and quality, its dynamic resolution, its tone mapping, and what is called on an error or a lost device. |
+| `World3DAssetOptions` | interface | How a 3D app loads assets: how URLs are resolved, how many bytes, and how textures and compressed data are decoded. |
+| `World3DBackend` | type | Which GPU interface a 3D app draws with. |
 | `World3DClockSource` | interface | The part of an Engine this view needs: its explicit game clock. |
 | `World3DDeviceHints` | interface | What `pickWorld3DQuality` reads about the device. |
-| `World3DFrameMetrics` | interface |  |
-| `World3DFramePass` | interface |  |
-| `World3DGpuTiming` | type |  |
-| `World3DLoopSource` | interface |  |
-| `World3DOverlay` | interface |  |
-| `World3DOverlayOptions` | interface |  |
-| `World3DPassKind` | type |  |
-| `World3DQuality` | type |  |
+| `World3DFrameMetrics` | interface | What a frame drew: its draws and triangles, its CPU time, and its passes and reflections. |
+| `World3DFramePass` | interface | One pass of a frame: its view and kind, its size, its draws and triangles, and its times. |
+| `World3DGpuTiming` | type | How long a pass took on the GPU, or why that is not known. |
+| `World3DLoopSource` | interface | What drives a 3D view: an Engine's clock and the call that advances it. |
+| `World3DOverlay` | interface | A 2D game drawn on a canvas over a 3D view. |
+| `World3DOverlayOptions` | interface | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
+| `World3DPassKind` | type | What a pass drew: color, shadows, a depth prepass, an outline mask or post-processing. |
+| `World3DQuality` | type | How much a 3D app draws: low, medium or high quality. |
 | `World3DQualityPreset` | interface | What one picture quality turns on. |
-| `World3DShowOptions` | interface |  |
-| `World3DStats` | interface |  |
-| `World3DStatsOptions` | interface |  |
-| `World3DView` | class |  |
-| `World3DViewKind` | type |  |
-| `World3DViewOptions` | interface |  |
+| `World3DShowOptions` | interface | What a 3D app shows: its update, mixers and controls. |
+| `World3DStats` | interface | Frame times, frame rate, draws and triangles of a 3D view, measured each frame. |
+| `World3DStatsOptions` | interface | 3D stats to make: the container they show in, how they smooth, and how often they refresh. |
+| `World3DView` | class | Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. |
+| `World3DViewKind` | type | Which view a pass drew: the main one, a reflection, or offscreen. |
+| `World3DViewOptions` | interface | A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. |
 
 ## `@egret/engine/webgpu/world3d`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `Atmosphere3D` | class | Height fog and light shafts for `renderer.postProcess.custom`. |
-| `AtmosphereOptions3D` | interface |  |
+| `AtmosphereOptions3D` | interface | An atmosphere to make: its fog's color, density and height, and its light shafts. |
 | `AudioListener3D` | class | Ears of the scene. |
-| `AudioListenerOptions3D` | interface |  |
+| `AudioListenerOptions3D` | interface | An audio listener to make: its audio context and volume. |
 | `captureCubeTexture3D` | function | Render six 90-degree views from `position` and return them as a cube texture with mipmaps. |
-| `createAtmosphere3D` | function |  |
-| `createAudioListener3D` | function |  |
-| `createCustomPost3D` | function |  |
-| `createDynamicResolution3D` | function |  |
-| `createFlyControls3D` | function |  |
-| `createFollowControls3D` | function |  |
-| `createOrbitControls3D` | function |  |
-| `createPositionalAudio3D` | function |  |
-| `createPostProcessSettings3D` | function |  |
+| `createAtmosphere3D` | function | Makes height fog and light shafts for a scene. |
+| `createAudioListener3D` | function | Makes the listener 3D sounds are heard by, usually on the camera. |
+| `createCustomPost3D` | function | Makes a post-processing pass of your own shader. |
+| `createDynamicResolution3D` | function | Makes a resolution scale that drops when frames are slow and rises when they are fast. |
+| `createFlyControls3D` | function | Makes fly controls for a camera on an element. |
+| `createFollowControls3D` | function | Makes follow controls for a follow camera on an element. |
+| `createOrbitControls3D` | function | Makes orbit controls for a camera on an element. |
+| `createPositionalAudio3D` | function | Makes a sound that plays from a place in the scene. |
+| `createPostProcessSettings3D` | function | Post-processing settings with every effect off. |
 | `createScreenMarkers3D` | function | A layer of page elements that follow scene points. |
-| `createTransformControls3D` | function |  |
+| `createTransformControls3D` | function | Makes transform controls for a camera on an element. |
 | `createWebGPURenderer3D` | function | Acquire a device (unless one is borrowed) and create the WebGPU renderer. |
 | `createWorld3DApp` | function | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | function | Host adapter that reserves `canvas` for one Engine. |
 | `createWorld3DOverlay` | function | Lays a transparent 2D stage over `canvas` (the 3D canvas, which must sit in a positioned parent) and starts it. |
-| `createWorld3DStats` | function |  |
-| `createWorld3DView` | function |  |
+| `createWorld3DStats` | function | Makes a panel that shows a 3D view's frame times and draws. |
+| `createWorld3DView` | function | Makes a view that draws a scene on each tick of the Engine's clock. |
 | `CUBE_TEXTURE_ASSET_3D` | value | A cube texture. |
-| `CubeCaptureOptions3D` | interface |  |
+| `CubeCaptureOptions3D` | interface | How a cube is captured around a point: its size, near and far planes, and layers. |
 | `CustomPost3D` | interface | A full-screen hook that runs after ambient occlusion and bloom and before tone mapping. |
 | `DynamicResolution3D` | interface | A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. |
-| `DynamicResolutionOptions3D` | interface |  |
-| `FlyControls3D` | class |  |
-| `FlyControlsKeys3D` | interface |  |
-| `FlyControlsOptions3D` | interface |  |
-| `FollowControls3D` | class |  |
-| `FollowControlsOptions3D` | interface |  |
+| `DynamicResolutionOptions3D` | interface | How dynamic resolution moves: its least and greatest scale, its step, and the frame rates and times that move it. |
+| `FlyControls3D` | class | Moves a camera with the keyboard and mouse, walking or flying. |
+| `FlyControlsKeys3D` | interface | The keys of fly controls: forward, back, left, right, up, down and sprint. |
+| `FlyControlsOptions3D` | interface | Fly controls to make: how fast they move and look, whether they fly, use pointer lock or damp, and their keys. |
+| `FollowControls3D` | class | Turns and zooms a follow camera with the mouse and touch. |
+| `FollowControlsOptions3D` | interface | Follow controls to make: how fast they turn and zoom. |
 | `GLTF_ASSET_3D` | value | A loaded glTF file. |
 | `GltfUrlLoadOptions3D` | interface | glTF loading options: download limits plus the optional KTX2, meshopt and Draco decoders. |
 | `isSoftwareRendered3D` | function | Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual machine or a page whose graphics card is blocked. |
 | `loadCubeTexture3D` | function | Load six square images in +X, -X, +Y, -Y, +Z, -Z order as a cube texture. |
 | `loadGltfFromUrl3D` | function | Load a .glb or .gltf file; relative buffer and image URIs resolve against `url`. |
-| `LoadOptions3D` | interface |  |
+| `LoadOptions3D` | interface | How a 3D asset is loaded: a signal that cancels it, and the most bytes it reads. |
 | `loadTexture3D` | function | Load an image or KTX2 file as a texture. |
-| `OrbitControls3D` | class |  |
-| `OrbitControlsOptions3D` | interface |  |
+| `OrbitControls3D` | class | Turns a camera around a target, pans and zooms it, with the mouse and touch. |
+| `OrbitControlsOptions3D` | interface | Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. |
 | `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
-| `PositionalAudioOptions3D` | interface |  |
-| `POST3D_LIMITS` | value |  |
-| `PostProcessSettings3D` | interface |  |
+| `PositionalAudioOptions3D` | interface | A positional sound to make: its buffer and volume, how it fades with distance, its cone, rate, and whether it is spatial. |
+| `POST3D_LIMITS` | value | The most bloom levels. |
+| `PostProcessSettings3D` | interface | What is done to a frame after it is drawn: bloom, antialiasing, color, vignette, ambient occlusion, depth of field and outlines. |
 | `registerWorld3DAssets` | function | Register the World3D asset providers on an AssetManager. |
 | `Renderer3D` | interface | What both world3d backends provide; views and tools depend on this only. |
-| `Renderer3DInfo` | interface |  |
+| `Renderer3DInfo` | interface | What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. |
 | `SCENE_ASSET_3D` | value | A scene document written by serializeScene3D. |
-| `ScreenMarker3D` | interface |  |
-| `ScreenMarkerOptions3D` | interface |  |
-| `ScreenMarkers3D` | interface |  |
-| `ScreenMarkersOptions3D` | interface |  |
+| `ScreenMarker3D` | interface | A marker over the screen that follows a point of the scene: its element and where it is. |
+| `ScreenMarkerOptions3D` | interface | A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. |
+| `ScreenMarkers3D` | interface | Elements over the screen that follow points of the scene: add them, and update them each frame. |
+| `ScreenMarkersOptions3D` | interface | Screen markers to make: the container they go in, and the camera they follow. |
 | `startWorld3DLoop` | function | Advance the Engine clock once per display frame. |
 | `TEXTURE_ASSET_3D` | value | A 2D texture loaded from an image or KTX2 file. |
 | `TextureLoadOptions3D` | interface | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
-| `ToneMapping3D` | type |  |
-| `TransformControls3D` | class |  |
-| `WebGPURenderer3D` | class |  |
-| `WebGPURenderer3DOptions` | interface |  |
+| `ToneMapping3D` | type | How a renderer maps bright colors into the screen's range. |
+| `TransformControls3D` | class | Drags a transform gizmo with the mouse and touch to move, turn or scale an object. |
+| `WebGPURenderer3D` | class | Draws 3D scenes with WebGPU: set its size, render a scene from a camera, and read what it drew. |
+| `WebGPURenderer3DOptions` | interface | A WebGPU renderer to make: its canvas and device, its tone mapping and exposure, its shadows, and what is called when the device is lost. |
 | `WORLD3D_QUALITY_PRESETS` | value | The three qualities. |
-| `World3DApp` | interface |  |
-| `World3DAppOptions` | interface |  |
-| `World3DAssetOptions` | interface |  |
-| `World3DBackend` | type |  |
+| `World3DApp` | interface | A 3D app: its Engine, renderer and view, its quality and resolution, and calls that show a scene and start and stop it. |
+| `World3DAppOptions` | interface | A 3D app to make: its backend and quality, its dynamic resolution, its tone mapping, and what is called on an error or a lost device. |
+| `World3DAssetOptions` | interface | How a 3D app loads assets: how URLs are resolved, how many bytes, and how textures and compressed data are decoded. |
+| `World3DBackend` | type | Which GPU interface a 3D app draws with. |
 | `World3DClockSource` | interface | The part of an Engine this view needs: its explicit game clock. |
 | `World3DDeviceHints` | interface | What `pickWorld3DQuality` reads about the device. |
-| `World3DLoopSource` | interface |  |
-| `World3DOverlay` | interface |  |
-| `World3DOverlayOptions` | interface |  |
-| `World3DQuality` | type |  |
+| `World3DLoopSource` | interface | What drives a 3D view: an Engine's clock and the call that advances it. |
+| `World3DOverlay` | interface | A 2D game drawn on a canvas over a 3D view. |
+| `World3DOverlayOptions` | interface | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
+| `World3DQuality` | type | How much a 3D app draws: low, medium or high quality. |
 | `World3DQualityPreset` | interface | What one picture quality turns on. |
-| `World3DShowOptions` | interface |  |
-| `World3DStats` | interface |  |
-| `World3DStatsOptions` | interface |  |
-| `World3DView` | class |  |
-| `World3DViewOptions` | interface |  |
+| `World3DShowOptions` | interface | What a 3D app shows: its update, mixers and controls. |
+| `World3DStats` | interface | Frame times, frame rate, draws and triangles of a 3D view, measured each frame. |
+| `World3DStatsOptions` | interface | 3D stats to make: the container they show in, how they smooth, and how often they refresh. |
+| `World3DView` | class | Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. |
+| `World3DViewOptions` | interface | A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. |
 
 ## `@egret/engine/resources`
 

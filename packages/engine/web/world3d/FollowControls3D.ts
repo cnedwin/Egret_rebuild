@@ -10,6 +10,7 @@ import type { FollowCameraOptions3D } from '../../rendering/world3d/Character3D.
 import { World3DError } from '../../rendering/world3d/core3D.js';
 import type { Object3D } from '../../rendering/world3d/Object3D.js';
 
+/** Follow controls to make: how fast they turn and zoom. */
 export interface FollowControlsOptions3D extends FollowCameraOptions3D {
   /** Radians turned per pixel dragged. Defaults to 0.005. */
   readonly rotateSpeed?: number;
@@ -17,6 +18,7 @@ export interface FollowControlsOptions3D extends FollowCameraOptions3D {
   readonly zoomSpeed?: number;
 }
 
+/** Turns and zooms a follow camera with the mouse and touch. */
 export class FollowControls3D implements Disposable {
   readonly element: HTMLElement;
   /** The camera rig; read `follow.yaw` or call `follow.moveDirection()` to steer a character relative to the view. */
@@ -128,6 +130,7 @@ export class FollowControls3D implements Disposable {
   }
 }
 
+/** Makes follow controls for a follow camera on an element. */
 export function createFollowControls3D(
   camera: Camera3D,
   element: HTMLElement,

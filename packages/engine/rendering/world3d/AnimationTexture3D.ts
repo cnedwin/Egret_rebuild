@@ -28,8 +28,10 @@ function affineScaleBound(m: ArrayLike<number>, o: number): number {
   return Math.sqrt(rows) * Math.sqrt(columns);
 }
 
+/** The most bone matrices, clips and frames a second an animation texture holds. */
 export const ANIMATION_TEXTURE3D_LIMITS = Object.freeze({ maxMatrices: 2097152, maxClips: 256, maxFps: 240 } as const);
 
+/** One clip baked into an animation texture: its name, first frame, frame count and length. */
 export interface BakedClip3D {
   readonly name: string;
   /** First frame of the clip in the table. */
@@ -131,6 +133,7 @@ export class AnimationTexture3D extends Resource3D {
   }
 }
 
+/** How many frames a second clips are baked at. */
 export interface BakeAnimationOptions3D {
   /** Poses stored per second of each clip. Default 30. */
   readonly fps?: number;
@@ -274,6 +277,7 @@ export function bakeAnimationTexture3D(
   return new AnimationTexture3D(boneCount, fps, data, baked, Math.max(1, far / radius + 0.5), morphCount);
 }
 
+/** How an instance plays a baked clip: from when, how fast, whether it loops and how long it fades. */
 export interface InstanceClipOptions3D {
   /** Where in the clip to start, in seconds. Default 0. */
   readonly time?: number;
@@ -284,6 +288,7 @@ export interface InstanceClipOptions3D {
   /** Seconds to cross-fade from the clip the instance is playing now, which keeps running while it fades. Default 0. */
   readonly fade?: number;
 }
+/** How an instance blends two baked clips: from when, how fast, whether they loop and stay in step. */
 export interface InstanceBlendOptions3D {
   readonly time?: number;
   readonly speed?: number;
@@ -677,6 +682,7 @@ export function worldRenderSphere3D(mesh: Mesh3D): Float32Array | undefined {
   return mesh instanceof SkinnedInstancedMesh3D ? undefined : mesh.worldBoundingSphere;
 }
 
+/** Makes many skinned instances of one mesh, each playing baked clips from an animation texture. */
 export function createSkinnedInstancedMesh3D(
   geometry: Geometry3D,
   material: Material3D | Material3D[],

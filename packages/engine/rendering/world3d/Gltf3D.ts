@@ -21,6 +21,7 @@ import { Texture3D, isCompressedPixels3D } from './Texture3D.js';
 import type { TextureColorSpace3D, TextureSource3D, TextureWrap3D } from './Texture3D.js';
 import { mat4Compose, mat4Identity } from './math3D.js';
 
+/** An image a glTF file needs decoded: its index, media type, and its bytes or URI. */
 export interface GltfImageRequest3D {
   readonly index: number;
   readonly mimeType: string | undefined;
@@ -29,6 +30,7 @@ export interface GltfImageRequest3D {
   /** Relative or absolute URI when the image is external. */
   readonly uri: string | undefined;
 }
+/** How a glTF file's parts are loaded: its images, its other buffers, and its KTX2, meshopt and Draco data. */
 export interface GltfLoadOptions3D {
   /** Decode an encoded image into pixels or a host image object. */
   readonly decodeImage?: (request: GltfImageRequest3D) => Promise<TextureSource3D>;
@@ -44,6 +46,7 @@ export interface GltfLoadOptions3D {
   /** Decode one KHR_draco_mesh_compression primitive. */
   readonly decodeDraco?: (request: GltfDracoRequest3D) => Promise<GltfDracoResult3D> | GltfDracoResult3D;
 }
+/** Meshopt data a glTF file needs decoded: its bytes, count, stride, mode and filter. */
 export interface GltfMeshoptRequest3D {
   readonly source: Uint8Array;
   readonly count: number;
@@ -51,6 +54,7 @@ export interface GltfMeshoptRequest3D {
   readonly mode: 'ATTRIBUTES' | 'TRIANGLES' | 'INDICES';
   readonly filter: 'NONE' | 'OCTAHEDRAL' | 'QUATERNION' | 'EXPONENTIAL';
 }
+/** Draco data a glTF file needs decoded: its bytes and the attributes and component types it holds. */
 export interface GltfDracoRequest3D {
   readonly bytes: Uint8Array;
   /** glTF semantic (POSITION, NORMAL, ...) to Draco attribute id. */
@@ -60,6 +64,7 @@ export interface GltfDracoRequest3D {
   /** glTF component type of the index accessor, when the primitive is indexed. */
   readonly indexComponentType: number | undefined;
 }
+/** Decoded Draco data: its attributes by name and its indices. */
 export interface GltfDracoResult3D {
   /** Decoded arrays by glTF semantic, in the component type of the matching accessor. */
   readonly attributes: Readonly<
@@ -67,6 +72,7 @@ export interface GltfDracoResult3D {
   >;
   readonly indices?: Uint32Array | Uint16Array;
 }
+/** A loaded glTF file: its scenes, animations, cameras, materials, textures and geometries. */
 export interface GltfAsset3D {
   /** Root of the default scene (or the first one). */
   readonly scene: Object3D;

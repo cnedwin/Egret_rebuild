@@ -22,6 +22,7 @@ import { createQuadGeometry3D } from './primitives3D.js';
 import type { Texture3D } from './Texture3D.js';
 
 type Range = number | readonly [number, number];
+/** GPU particles to make: how many and how long they live, how they move, grow, turn and fade, where they come from and how they blend. */
 export interface GpuParticlesOptions3D {
   /** Number of particles. Default 10000. */
   readonly count?: number;
@@ -515,6 +516,7 @@ export class GpuParticles3D extends InstancedMesh3D {
     if (!Array.isArray(this.material)) this.material.dispose();
   }
 }
+/** Makes particles simulated on the GPU. */
 export function createGpuParticles3D(options: GpuParticlesOptions3D = {}): GpuParticles3D {
   return new GpuParticles3D(options);
 }

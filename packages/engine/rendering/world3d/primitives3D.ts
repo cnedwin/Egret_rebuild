@@ -48,6 +48,7 @@ function segments(value: number | undefined, fallback: number, min: number, fiel
   return count;
 }
 
+/** A box to make: its width, height and depth, and their segments. */
 export interface BoxGeometryOptions3D {
   readonly width?: number;
   readonly height?: number;
@@ -106,6 +107,7 @@ export function createBoxGeometry3D(options: BoxGeometryOptions3D = {}): Geometr
   return geometry;
 }
 
+/** A plane to make: its width and height, and their segments. */
 export interface PlaneGeometryOptions3D {
   readonly width?: number;
   readonly height?: number;
@@ -127,6 +129,7 @@ export function createPlaneGeometry3D(options: PlaneGeometryOptions3D = {}): Geo
   return builder.build();
 }
 
+/** A sphere to make: its radius and segments. */
 export interface SphereGeometryOptions3D {
   readonly radius?: number;
   readonly widthSegments?: number;
@@ -156,6 +159,7 @@ export function createSphereGeometry3D(options: SphereGeometryOptions3D = {}): G
   return builder.build();
 }
 
+/** A cylinder to make: its top and bottom radius, height, segments, and whether its ends are open. */
 export interface CylinderGeometryOptions3D {
   readonly radiusTop?: number;
   readonly radiusBottom?: number;
@@ -212,6 +216,7 @@ export function createCylinderGeometry3D(options: CylinderGeometryOptions3D = {}
   }
   return builder.build();
 }
+/** Makes a cone. */
 export function createConeGeometry3D(
   options: { readonly radius?: number; readonly height?: number; readonly radialSegments?: number } = {}
 ): Geometry3D {
@@ -223,6 +228,7 @@ export function createConeGeometry3D(
   });
 }
 
+/** A torus to make: its radius, tube and segments. */
 export interface TorusGeometryOptions3D {
   readonly radius?: number;
   readonly tube?: number;
@@ -260,6 +266,7 @@ export function createTorusGeometry3D(options: TorusGeometryOptions3D = {}): Geo
   return builder.build();
 }
 
+/** A capsule to make: its radius, height and segments. */
 export interface CapsuleGeometryOptions3D {
   readonly radius?: number;
   readonly height?: number;

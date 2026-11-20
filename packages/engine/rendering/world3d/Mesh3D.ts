@@ -19,8 +19,10 @@ import {
 import { Object3D } from './Object3D.js';
 import { createQuadGeometry3D } from './primitives3D.js';
 
+/** The most bones, instances and materials a mesh has. */
 export const MESH3D_LIMITS = Object.freeze({ maxBones: 1024, maxInstances: 1048576, maxMaterials: 64 } as const);
 
+/** A bone of a skeleton. */
 export class Bone3D extends Object3D {
   constructor() {
     super('bone');
@@ -95,6 +97,7 @@ export class Skeleton3D {
   }
 }
 
+/** A geometry drawn with materials, with its morph weights and skeleton. */
 export class Mesh3D extends Object3D {
   /** Optional hook the render list calls once per frame before the mesh is culled and sorted. */
   beforeRender?(camera: import('./Camera3D.js').Camera3D): void;
@@ -384,6 +387,7 @@ export class Sprite3D extends Mesh3D {
     return copy;
   }
 }
+/** Makes a sprite: a picture that always faces the camera. */
 export function createSprite3D(options: SpriteMaterialOptions3D = {}): Sprite3D {
   return new Sprite3D(createSpriteMaterial3D(options));
 }

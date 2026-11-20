@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1329 个导出，其中 387 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1329 个导出，其中 2 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -275,629 +275,629 @@
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `AlphaMode3D` | 类型 |  |
-| `ANIMATION3D_LIMITS` | 值 |  |
-| `ANIMATION_TEXTURE3D_LIMITS` | 值 |  |
-| `AnimationAction3D` | 类 |  |
-| `AnimationClip3D` | 类 |  |
-| `AnimationInterpolation3D` | 类型 |  |
-| `AnimationLoop3D` | 类型 |  |
+| `AlphaMode3D` | 类型 | How a material's alpha is used: ignored, cut at a threshold, or blended. |
+| `ANIMATION3D_LIMITS` | 值 | The most tracks, keys and actions animations hold. |
+| `ANIMATION_TEXTURE3D_LIMITS` | 值 | The most bone matrices, clips and frames a second an animation texture holds. |
+| `AnimationAction3D` | 类 | One clip playing on a mixer: play, stop and reset it, fade it in or out, or cross-fade to another. |
+| `AnimationClip3D` | 类 | A named animation: its tracks and its length in seconds. |
+| `AnimationInterpolation3D` | 类型 | How a track goes between its keys: it steps, moves in a line, or follows a cubic spline. |
+| `AnimationLoop3D` | 类型 | How an action plays its clip: over and over, once, or back and forth. |
 | `AnimationMixer3D` | 类 | Plays clips on the subtree under `root`, blending concurrent actions by weight. |
-| `AnimationPath3D` | 类型 |  |
-| `AnimationStateMachine3D` | 类 |  |
+| `AnimationPath3D` | 类型 | What an animation track moves: a node's position, rotation, scale, or morph weights. |
+| `AnimationStateMachine3D` | 类 | Plays clips by state, moving between states when their conditions are met. |
 | `AnimationTexture3D` | 类 | Bone matrices of one skinned mesh for every frame of a set of clips. |
-| `AnimationTrack3D` | 接口 |  |
-| `AnimationTrackInput3D` | 接口 |  |
+| `AnimationTrack3D` | 接口 | One track of a clip: the node it moves, what it moves, its keys and its interpolation. |
+| `AnimationTrackInput3D` | 接口 | A track to make: the node it moves by name, what it moves, its key times and values, and its interpolation. |
 | `ArrowHelper3D` | 类 | Arrow from `origin` along `direction`; change them and call update(). |
-| `Attribute3D` | 类 |  |
+| `Attribute3D` | 类 | One attribute of a geometry, such as positions: its data, how many numbers each vertex has, and whether they are normalized. |
 | `ATTRIBUTE_3D` | 值 | Well-known attribute names understood by the built-in materials. |
-| `AttributeArray3D` | 类型 |  |
-| `BakeAnimationOptions3D` | 接口 |  |
+| `AttributeArray3D` | 类型 | An array of vertex data. |
+| `BakeAnimationOptions3D` | 接口 | How many frames a second clips are baked at. |
 | `bakeAnimationTexture3D` | 函数 | Sample clips into an animation texture. |
-| `BakedClip3D` | 接口 |  |
+| `BakedClip3D` | 接口 | One clip baked into an animation texture: its name, first frame, frame count and length. |
 | `BasisModule3D` | 接口 | The parts of an initialized Basis Universal transcoder module (`await BASIS()`) this adapter calls. |
-| `BATCH3D_LIMITS` | 值 |  |
+| `BATCH3D_LIMITS` | 值 | The most items, vertices and line points a batch holds. |
 | `BatchedMesh3D` | 类 | Many geometries drawn as one mesh with one material and one draw call. |
-| `Blending3D` | 类型 |  |
-| `BodyType3D` | 类型 |  |
-| `Bone3D` | 类 |  |
-| `box3Empty` | 函数 |  |
-| `box3ExpandByPoint` | 函数 |  |
-| `box3IsEmpty` | 函数 |  |
+| `Blending3D` | 类型 | How a material's color mixes with what is behind it. |
+| `BodyType3D` | 类型 | Whether a body never moves, is moved by code, or is moved by the simulation. |
+| `Bone3D` | 类 | A bone of a skeleton. |
+| `box3Empty` | 函数 | Sets a box to empty. |
+| `box3ExpandByPoint` | 函数 | Grows a box to hold a point. |
+| `box3IsEmpty` | 函数 | Whether a box is empty. |
 | `box3Transform` | 函数 | Axis-aligned bounds of a transformed box (Arvo's method). |
-| `box3Union` | 函数 |  |
-| `BoxGeometryOptions3D` | 接口 |  |
+| `box3Union` | 函数 | The box that holds two boxes. |
+| `BoxGeometryOptions3D` | 接口 | A box to make: its width, height and depth, and their segments. |
 | `BoxHelper3D` | 类 | Wire box around an object's world bounds. |
-| `Camera3D` | 类 |  |
+| `Camera3D` | 类 | A camera: its projection, and calls that turn screen points into rays and world points into screen points. |
 | `CameraHelper3D` | 类 | Outline of a camera's view volume. |
-| `CapsuleGeometryOptions3D` | 接口 |  |
+| `CapsuleGeometryOptions3D` | 接口 | A capsule to make: its radius, height and segments. |
 | `CatmullRomCurve3D` | 类 | Smooth curve through every control point. |
-| `CatmullRomKind3D` | 类型 |  |
+| `CatmullRomKind3D` | 类型 | How a Catmull-Rom curve is parameterized between its points. |
 | `CharacterController3D` | 类 | Kinematic capsule that slides along the world instead of being simulated. |
-| `CharacterControllerOptions3D` | 接口 |  |
+| `CharacterControllerOptions3D` | 接口 | A character controller to make: its radius and height, where it starts, the steepest slope it climbs, and what it collides with. |
 | `CharacterMotor3D` | 类 | A walking, jumping character. |
-| `CharacterMotorOptions3D` | 接口 |  |
-| `CircleGeometryOptions3D` | 接口 |  |
-| `clamp` | 函数 |  |
+| `CharacterMotorOptions3D` | 接口 | How a character moves: its jump and gravity, the steps it climbs, its acceleration and air control, and its grace time to jump. |
+| `CircleGeometryOptions3D` | 接口 | A circle to make: its radius, segments and arc. |
+| `clamp` | 函数 | The value, kept between `min` and `max`. |
 | `Cloth3D` | 类 | A rectangular sheet. |
-| `CLOTH3D_LIMITS` | 值 |  |
-| `ClothOptions3D` | 接口 |  |
+| `CLOTH3D_LIMITS` | 值 | The most points and colliders cloth and ropes hold. |
+| `ClothOptions3D` | 接口 | A cloth to make: its columns and rows, where it starts and which way it spreads, and how stiff it is. |
 | `colorFromHex` | 函数 | Decode a 0xRRGGBB sRGB color into linear RGB in [0, 1]. |
 | `ColorInput3D` | 类型 | A color as 0xRRGGBB sRGB hex or linear RGB components. |
 | `CompoundChild3D` | 接口 | One part of a compound shape, placed in the body's local frame. |
 | `COMPRESSED_BLOCK_BYTES_3D` | 值 | Bytes per 4x4 block of each compressed format. |
 | `CompressedFormat3D` | 类型 | Block-compressed GPU formats that can be uploaded without transcoding. |
 | `CompressedPixels3D` | 接口 | A pre-compressed mip chain, largest level first. |
-| `COMPRESSION3D_LIMITS` | 值 |  |
+| `COMPRESSION3D_LIMITS` | 值 | The most bytes a decompression gives. |
 | `computeObjectBounds3D` | 函数 | World-space bounds of an object and its descendants as [minX, minY, minZ, maxX, maxY, maxZ]. |
-| `connectPhysics3D` | 函数 |  |
-| `ConvexHullShape3D` | 类 |  |
+| `connectPhysics3D` | 函数 | Connects to a physics world run in a worker, through a message port. |
+| `ConvexHullShape3D` | 类 | A convex hull as a physics shape. |
 | `createAmbientLight3D` | 函数 | Uniform light from every direction. |
-| `createAnimationClip3D` | 函数 |  |
-| `createAnimationStateMachine3D` | 函数 |  |
-| `createArrowHelper3D` | 函数 |  |
+| `createAnimationClip3D` | 函数 | Makes a clip from its name and tracks; malformed tracks are refused. |
+| `createAnimationStateMachine3D` | 函数 | Makes an animation state machine that drives a mixer. |
+| `createArrowHelper3D` | 函数 | Makes an arrow from a point in a direction. |
 | `createAxesGeometry3D` | 函数 | Three colored segments from the origin along +X (red), +Y (green) and +Z (blue). |
 | `createAxesHelper3D` | 函数 | Ready-made axes node colored X red, Y green, Z blue. |
 | `createBasisTranscoder3D` | 函数 | Turn an initialized Basis Universal transcoder module into the `transcodeKtx2` option. |
-| `createBatchedMesh3D` | 函数 |  |
+| `createBatchedMesh3D` | 函数 | Makes a mesh that draws many geometries with one material in one draw. |
 | `createBoxEdgesGeometry3D` | 函数 | The twelve edges of an axis-aligned box given as [minX, minY, minZ, maxX, maxY, maxZ]. |
 | `createBoxGeometry3D` | 函数 | Axis-aligned box centered on the origin with one material group per face (+X, -X, +Y, -Y, +Z, -Z). |
-| `createBoxHelper3D` | 函数 |  |
-| `createCameraHelper3D` | 函数 |  |
+| `createBoxHelper3D` | 函数 | Makes lines that show an object's bounding box. |
+| `createCameraHelper3D` | 函数 | Makes lines that show what a camera sees. |
 | `createCapsuleGeometry3D` | 函数 | Capsule along Y; `height` is the length of the cylindrical middle section. |
-| `createCharacterController3D` | 函数 |  |
-| `createCharacterMotor3D` | 函数 |  |
+| `createCharacterController3D` | 函数 | Makes a capsule that walks and slides along what it hits, for a character. |
+| `createCharacterMotor3D` | 函数 | Makes a character motor that walks, jumps and climbs steps in a physics world. |
 | `createCircleGeometry3D` | 函数 | Flat disc or sector in the XY plane, facing +Z. |
-| `createCloth3D` | 函数 |  |
-| `createConeGeometry3D` | 函数 |  |
+| `createCloth3D` | 函数 | Makes a sheet of cloth that hangs, folds and blows. |
+| `createConeGeometry3D` | 函数 | Makes a cone. |
 | `createConvexHullShape3D` | 函数 | Build a convex hull shape from a geometry's vertices, or from a flat list of points. |
 | `createCubeTextureFromEquirect3D` | 函数 | Build a cube texture from an equirectangular panorama. |
-| `createCustomShader3D` | 函数 |  |
+| `createCustomShader3D` | 函数 | Makes a material drawn by shaders of your own. |
 | `createCylinderGeometry3D` | 函数 | Cylinder or truncated cone along Y. |
 | `createDecal3D` | 函数 | A decal mesh on a target mesh, added as its child so it moves with it. |
 | `createDecalGeometry3D` | 函数 | Cut the part of a mesh's surface that lies inside the decal box. |
 | `createDirectionalLight3D` | 函数 | Parallel rays, such as sunlight. |
-| `createDodecahedronGeometry3D` | 函数 |  |
+| `createDodecahedronGeometry3D` | 函数 | Makes a dodecahedron. |
 | `createDracoDecoder3D` | 函数 | Turn an initialized Draco decoder module into the `decodeDraco` option of the glTF loader. |
 | `createEdgesGeometry3D` | 函数 | Line segments for outline and crease edges only: edges with one face, or whose two faces meet at more than `thresholdAngle` radians. |
 | `createExtrudeGeometry3D` | 函数 | Give an outline thickness. |
-| `createFatLine3D` | 函数 |  |
-| `createFollowCamera3D` | 函数 |  |
+| `createFatLine3D` | 函数 | Makes a line of a given thickness through points. |
+| `createFollowCamera3D` | 函数 | Makes a camera that follows a target and keeps out of walls. |
 | `createGeometry3D` | 函数 | Build a geometry from plain arrays; missing normals are computed for triangles. |
 | `createGeometryBuilder3D` | 函数 | A builder that merges placed, coloured parts into one geometry. |
 | `createGlassMaterial3D` | 函数 | A standard material set up as glass: smooth and see-through, with reflections kept. |
-| `createGpuParticles3D` | 函数 |  |
+| `createGpuParticles3D` | 函数 | Makes particles simulated on the GPU. |
 | `createGradientCubeTexture3D` | 函数 | Procedural sky cube: a vertical gradient from `ground` through `horizon` to `zenith`, in sRGB bytes. |
 | `createGridGeometry3D` | 函数 | Square grid of lines on the XZ plane, centered at the origin. |
 | `createGridHelper3D` | 函数 | Ready-made grid node for editors and debug views. |
-| `createHeightField3D` | 函数 |  |
+| `createHeightField3D` | 函数 | Makes a grid of heights for terrain and physics. |
 | `createHeightFieldFromPixels3D` | 函数 | Height field with one sample per pixel of a decoded RGBA image; the image's top row is the -Z edge. |
 | `createHemisphereLight3D` | 函数 | Sky color from above blending to a ground color from below (world Y axis). |
-| `createIcosahedronGeometry3D` | 函数 |  |
-| `createJelly3D` | 函数 |  |
+| `createIcosahedronGeometry3D` | 函数 | Makes an icosahedron. |
+| `createJelly3D` | 函数 | Makes an object squash, stretch and wobble like jelly as it moves. |
 | `createJellyShader3D` | 函数 | The vertex hook a jelly drives. |
 | `createLambertMaterial3D` | 函数 | Diffuse-only lighting; the cheapest lit model. |
 | `createLatheGeometry3D` | 函数 | Revolve a profile of [x, y] points (x is the distance from the Y axis) around Y. |
-| `createLightHelper3D` | 函数 |  |
+| `createLightHelper3D` | 函数 | Makes lines that show where a light is and where it shines. |
 | `createLineMaterial3D` | 函数 | Unlit line or point material; pair it with a 'lines', 'line-strip' or 'points' geometry. |
 | `createMatcapMaterial3D` | 函数 | Lighting baked into a sphere image: the surface color is looked up by the view-space normal, so no lights are needed. |
 | `createMeshShape3D` | 函数 | Build a collision mesh from a geometry or the unskinned, non-instanced triangle meshes under an object. |
-| `createNavCrowd3D` | 函数 |  |
+| `createNavCrowd3D` | 函数 | Makes a crowd of agents that move along a navigation mesh and keep apart. |
 | `createNavMesh3D` | 函数 | Build a navigation mesh from level geometry: a geometry, or an object whose meshes are merged with their world transforms. |
-| `createOctahedronGeometry3D` | 函数 |  |
-| `createOrthographicCamera3D` | 函数 |  |
-| `createParticleEmitter3D` | 函数 |  |
-| `createPerspectiveCamera3D` | 函数 |  |
+| `createOctahedronGeometry3D` | 函数 | Makes an octahedron. |
+| `createOrthographicCamera3D` | 函数 | Makes an orthographic camera. |
+| `createParticleEmitter3D` | 函数 | Makes a particle emitter. |
+| `createPerspectiveCamera3D` | 函数 | Makes a perspective camera. |
 | `createPhongMaterial3D` | 函数 | Diffuse plus Blinn-Phong specular highlights. |
-| `createPhysicsWorld3D` | 函数 |  |
+| `createPhysicsWorld3D` | 函数 | Makes a 3D physics world. |
 | `createPlaneGeometry3D` | 函数 | Plane in the XY plane facing +Z. |
-| `createPointLight3D` | 函数 |  |
+| `createPointLight3D` | 函数 | Makes a light that shines from a point in every direction. |
 | `createPolyhedronGeometry3D` | 函数 | Project a convex solid's triangles onto a sphere, subdividing each `detail` times. |
 | `createQuadGeometry3D` | 函数 | Unit quad in XY used by sprites: corners at +-0.5, facing +Z. |
-| `createRagdoll3D` | 函数 |  |
+| `createRagdoll3D` | 函数 | Makes a ragdoll of physics bodies that a skeleton follows. |
 | `createRingGeometry3D` | 函数 | Flat ring in the XY plane, facing +Z. |
-| `createRope3D` | 函数 |  |
-| `createScreenLayer3D` | 函数 |  |
+| `createRope3D` | 函数 | Makes a rope of points that hangs and swings. |
+| `createScreenLayer3D` | 函数 | Makes a picture drawn over the whole screen, above or below the scene. |
 | `createShapeGeometry3D` | 函数 | Fill one or more outlines in the XY plane, facing +Z. |
-| `createSkeletonHelper3D` | 函数 |  |
-| `createSkinnedInstancedMesh3D` | 函数 |  |
+| `createSkeletonHelper3D` | 函数 | Makes lines that show the bones of a skeleton. |
+| `createSkinnedInstancedMesh3D` | 函数 | Makes many skinned instances of one mesh, each playing baked clips from an animation texture. |
 | `createSolidTexture3D` | 函数 | Single-color 1x1 texture, useful as a placeholder or constant map. |
 | `createSphereGeometry3D` | 函数 | UV sphere with poles on the Y axis. |
-| `createSpotLight3D` | 函数 |  |
-| `createSprite3D` | 函数 |  |
+| `createSpotLight3D` | 函数 | Makes a light that shines from a point in a cone. |
+| `createSprite3D` | 函数 | Makes a sprite: a picture that always faces the camera. |
 | `createSpriteMaterial3D` | 函数 | Camera-facing unlit quad material for Sprite3D. |
 | `createStandardMaterial3D` | 函数 | Physically based metallic-roughness model, matching glTF 2.0 materials. |
-| `createTerrain3D` | 函数 |  |
+| `createTerrain3D` | 函数 | Makes terrain from a height field, drawn in chunks at levels of detail. |
 | `createTerrainMaterial3D` | 函数 | A standard material whose color is a blend of ground textures, such as sand, grass, rock and snow, painted by a weight map. |
-| `createTerrainStream3D` | 函数 |  |
-| `createTetrahedronGeometry3D` | 函数 |  |
+| `createTerrainStream3D` | 函数 | Makes terrain that loads and unloads tiles around a point. |
+| `createTetrahedronGeometry3D` | 函数 | Makes a tetrahedron. |
 | `createTextGeometry3D` | 函数 | Text as a mesh geometry in the XY plane, facing +Z, with the first baseline on y = 0. |
 | `createTextShapes3D` | 函数 | Outlines of a text as flat shapes; see Font3D.generateShapes. |
 | `createToonMaterial3D` | 函数 | Cel shading: diffuse light quantized into `steps` flat bands. |
 | `createTorusGeometry3D` | 函数 | Torus around the Z axis. |
-| `createTorusKnotGeometry3D` | 函数 |  |
-| `createTrail3D` | 函数 |  |
-| `createTransformGizmo3D` | 函数 |  |
+| `createTorusKnotGeometry3D` | 函数 | Makes a torus knot. |
+| `createTrail3D` | 函数 | Makes a ribbon that follows a moving object and fades behind it. |
+| `createTransformGizmo3D` | 函数 | Makes a transform gizmo seen by a camera. |
 | `createTubeGeometry3D` | 函数 | Sweep a circle along a curve, using twist-free frames. |
 | `createUnlitMaterial3D` | 函数 | Constant color, unaffected by lights. |
-| `createVehicle3D` | 函数 |  |
-| `createVolumetricFog3D` | 函数 |  |
-| `createWater3D` | 函数 |  |
+| `createVehicle3D` | 函数 | Makes a vehicle of wheels on raycast suspension under a chassis body. |
+| `createVolumetricFog3D` | 函数 | Makes fog that light shines through. |
+| `createWater3D` | 函数 | Makes a water surface with waves, reflections and foam. |
 | `createWaterMaterial3D` | 函数 | The material Water3D uses, for a water surface on your own geometry: a standard material that refracts, with the wave hooks attached. |
 | `createWireframeGeometry3D` | 函数 | Line segments for every triangle edge, each drawn once. |
 | `CubeTexture3D` | 类 | Six square faces in +X, -X, +Y, -Y, +Z, -Z order. |
-| `CubicBezierCurve3D` | 类 |  |
+| `CubicBezierCurve3D` | 类 | A cubic Bézier curve through four control points. |
 | `Curve3D` | 类 | Base for every curve: subclasses implement getPoint(t) for t in [0, 1]. |
-| `CURVE3D_LIMITS` | 值 |  |
+| `CURVE3D_LIMITS` | 值 | The most points and divisions a curve has. |
 | `CurvePath3D` | 类 | Several curves joined end to end and traversed as one, by length. |
 | `CustomShader3D` | 接口 | A fragment hook that post-processes a material's shaded color. |
-| `CylinderGeometryOptions3D` | 接口 |  |
-| `DECAL3D_LIMITS` | 值 |  |
-| `DecalOptions3D` | 接口 |  |
+| `CylinderGeometryOptions3D` | 接口 | A cylinder to make: its top and bottom radius, height, segments, and whether its ends are open. |
+| `DECAL3D_LIMITS` | 值 | The most triangles a decal has. |
+| `DecalOptions3D` | 接口 | A decal to make: where it goes and which way it faces, its size and depth, its rotation, and the steepest surface it covers. |
 | `decodeMeshopt3D` | 函数 | Decode one EXT_meshopt_compression buffer view. |
 | `decompressZstd3D` | 函数 | Decompress Zstandard data: one or more frames, including skippable ones. |
-| `DEG_TO_RAD_3D` | 值 |  |
-| `DeserializedScene3D` | 接口 |  |
-| `DeserializeOptions3D` | 接口 |  |
+| `DEG_TO_RAD_3D` | 值 | Degrees times this are radians. |
+| `DeserializedScene3D` | 接口 | A scene loaded back: its root, cameras, geometries, materials and textures. |
+| `DeserializeOptions3D` | 接口 | How a scene is loaded back: how each texture key is turned into a texture. |
 | `deserializeScene3D` | 函数 | Rebuild a subtree from data produced by serializeScene3D. |
-| `DisposeListener3D` | 类型 |  |
+| `DisposeListener3D` | 类型 | Called when something is disposed of. |
 | `DracoModule3D` | 接口 | The parts of an initialized Draco decoder module (`await DracoDecoderModule()`) this adapter calls. |
-| `EPSILON_3D` | 值 |  |
-| `EquirectOptions3D` | 接口 |  |
-| `ExtrudeGeometryOptions3D` | 接口 |  |
+| `EPSILON_3D` | 值 | How close two numbers must be to count as equal. |
+| `EquirectOptions3D` | 接口 | How an equirectangular image is turned into a cube: its size, exposure and brightest value. |
+| `ExtrudeGeometryOptions3D` | 接口 | An extrusion to make: how deep, in how many steps, and along which path. |
 | `FatLine3D` | 类 | A polyline drawn as a ribbon of triangles that turns to face the camera, so it can be wider than the one pixel that plain lines allow. |
-| `FatLineOptions3D` | 接口 |  |
+| `FatLineOptions3D` | 接口 | A thick line to make: its width, whether that width is in screen pixels, its color and whether it closes. |
 | `findGridPath3D` | 函数 | Shortest path on a grid of cells, for tile maps. |
-| `Fog3D` | 类型 |  |
+| `Fog3D` | 类型 | Fog that fades a scene into a color: linearly between two distances, or exponentially by a density. |
 | `FollowCamera3D` | 类 | Third-person camera: orbits a target at a distance, and moves closer when a wall would hide the target, easing back out afterwards. |
-| `FollowCameraOptions3D` | 接口 |  |
-| `Font3D` | 类 |  |
-| `FontSource3D` | 接口 |  |
-| `frustumFromMatrix` | 函数 |  |
-| `frustumIntersectsBox` | 函数 |  |
-| `frustumIntersectsSphere` | 函数 |  |
-| `Geometry3D` | 类 |  |
-| `GEOMETRY3D_LIMITS` | 值 |  |
-| `GeometryBuilder3D` | 接口 |  |
-| `GeometryGroup3D` | 接口 |  |
-| `GeometryInput3D` | 接口 |  |
-| `GeometryPart3D` | 接口 |  |
+| `FollowCameraOptions3D` | 接口 | How a follow camera keeps behind its target: its distance and height, its angles, and what it keeps clear of. |
+| `Font3D` | 类 | A font that gives the outlines of text for 3D text geometry. |
+| `FontSource3D` | 接口 | A font for 3D text: its metrics, family, and its glyphs' outlines. |
+| `frustumFromMatrix` | 函数 | The six planes of the frustum a projection-view matrix sees. |
+| `frustumIntersectsBox` | 函数 | Whether a box is at least partly inside a frustum. |
+| `frustumIntersectsSphere` | 函数 | Whether a sphere is at least partly inside a frustum. |
+| `Geometry3D` | 类 | The vertices of a mesh: its attributes and indices, its groups and morph targets, and calls that compute normals and tangents. |
+| `GEOMETRY3D_LIMITS` | 值 | The most vertices, indices, morph targets and groups a geometry has. |
+| `GeometryBuilder3D` | 接口 | Joins many geometries, each placed, into one. |
+| `GeometryGroup3D` | 接口 | A range of a geometry's indices drawn with one of its mesh's materials. |
+| `GeometryInput3D` | 接口 | A geometry to make: its positions, and its normals, texture coordinates, colors and indices where given. |
+| `GeometryPart3D` | 接口 | One geometry added to a builder: where, turned and scaled how, and its color. |
 | `GizmoHandle3D` | 类型 | A single axis, a plane spanned by two axes, or 'xyz' for the center handle of the scale mode. |
-| `GizmoMode3D` | 类型 |  |
-| `GizmoSpace3D` | 类型 |  |
-| `GltfAsset3D` | 接口 |  |
-| `GltfDracoRequest3D` | 接口 |  |
-| `GltfDracoResult3D` | 接口 |  |
-| `GltfImageRequest3D` | 接口 |  |
-| `GltfLoadOptions3D` | 接口 |  |
-| `GltfMeshoptRequest3D` | 接口 |  |
+| `GizmoMode3D` | 类型 | Whether a gizmo moves, turns or scales what it is attached to. |
+| `GizmoSpace3D` | 类型 | Whether a gizmo's axes are the world's or the object's own. |
+| `GltfAsset3D` | 接口 | A loaded glTF file: its scenes, animations, cameras, materials, textures and geometries. |
+| `GltfDracoRequest3D` | 接口 | Draco data a glTF file needs decoded: its bytes and the attributes and component types it holds. |
+| `GltfDracoResult3D` | 接口 | Decoded Draco data: its attributes by name and its indices. |
+| `GltfImageRequest3D` | 接口 | An image a glTF file needs decoded: its index, media type, and its bytes or URI. |
+| `GltfLoadOptions3D` | 接口 | How a glTF file's parts are loaded: its images, its other buffers, and its KTX2, meshopt and Draco data. |
+| `GltfMeshoptRequest3D` | 接口 | Meshopt data a glTF file needs decoded: its bytes, count, stride, mode and filter. |
 | `GlyphOutline3D` | 接口 | One glyph in font units. |
 | `GpuParticles3D` | 类 | An instanced, camera-facing quad per particle. |
-| `GpuParticlesOptions3D` | 接口 |  |
-| `GridPathOptions3D` | 接口 |  |
-| `HDR3D_LIMITS` | 值 |  |
+| `GpuParticlesOptions3D` | 接口 | GPU particles to make: how many and how long they live, how they move, grow, turn and fade, where they come from and how they blend. |
+| `GridPathOptions3D` | 接口 | How a grid path is found: whether it moves diagonally, and how many cells it visits at most. |
+| `HDR3D_LIMITS` | 值 | The largest HDR image read. |
 | `HdrImage3D` | 接口 | Linear RGB floats, three per pixel, top row first. |
 | `HeightField3D` | 类 | Heights on a regular grid in the XZ plane. |
-| `HeightFieldOptions3D` | 接口 |  |
-| `HeightImageOptions3D` | 接口 |  |
+| `HeightFieldOptions3D` | 接口 | A height field to make: its columns and rows, its size, and its heights or a function that gives them. |
+| `HeightImageOptions3D` | 接口 | How an image becomes heights: the field's size, its lowest and highest height, and how heights are encoded. |
 | `inflate3D` | 函数 | Decompress a zlib stream, or a bare deflate stream when `raw` is set. |
-| `InstanceBlendOptions3D` | 接口 |  |
-| `InstanceClipOptions3D` | 接口 |  |
+| `InstanceBlendOptions3D` | 接口 | How an instance blends two baked clips: from when, how fast, whether they loop and stay in step. |
+| `InstanceClipOptions3D` | 接口 | How an instance plays a baked clip: from when, how fast, whether it loops and how long it fades. |
 | `InstancedMesh3D` | 类 | Draw one geometry many times in a single call with per-instance transforms and colors. |
-| `isCompressedPixels3D` | 函数 |  |
+| `isCompressedPixels3D` | 函数 | Whether a value holds compressed pixels. |
 | `isKtx23D` | 函数 | True when `bytes` starts with the KTX 2.0 file identifier. |
-| `isTexturePixels3D` | 函数 |  |
+| `isTexturePixels3D` | 函数 | Whether a value holds plain pixels. |
 | `Jelly3D` | 类 | Makes everything drawn under `target` behave like jelly. |
-| `JellyOptions3D` | 接口 |  |
+| `JellyOptions3D` | 接口 | How a jelly wobbles: its stiffness and damping, how far it squashes, how it reacts, and how it idles. |
 | `Joint3D` | 类 | A constraint between two bodies, or between a body and the world. |
-| `JointOptions3D` | 接口 |  |
-| `JointType3D` | 类型 |  |
-| `Ktx2Info3D` | 接口 |  |
-| `Ktx2Options3D` | 接口 |  |
-| `Ktx2Result3D` | 接口 |  |
-| `LatheGeometryOptions3D` | 接口 |  |
-| `Light3D` | 类 |  |
-| `LIGHT3D_LIMITS` | 值 |  |
+| `JointOptions3D` | 接口 | A joint to make: its kind, the two bodies and anchors, its axis and limits, its motor and spring. |
+| `JointType3D` | 类型 | The kind of a joint: a point, a hinge, fixed, a distance or a slider. |
+| `Ktx2Info3D` | 接口 | What a KTX2 file holds: its format, size, levels and supercompression. |
+| `Ktx2Options3D` | 接口 | How a KTX2 file is transcoded for the GPU in use. |
+| `Ktx2Result3D` | 接口 | A transcoded KTX2 texture: its pixels and color space. |
+| `LatheGeometryOptions3D` | 接口 | A lathe to make: its segments and the arc it turns through. |
+| `Light3D` | 类 | A light in a scene: its kind and its shadow. |
+| `LIGHT3D_LIMITS` | 值 | The most directional, point, tiled point and spot lights a scene lights, and the most shadows. |
 | `LightHelper3D` | 类 | Shows where a light is and where it points: a ray for directional, a cone for spot, a range sphere for point lights. |
-| `LightOptions3D` | 接口 |  |
-| `LightShadow3D` | 接口 |  |
-| `LightType3D` | 类型 |  |
+| `LightOptions3D` | 接口 | A light to make: its color and intensity, and whether it casts shadows. |
+| `LightShadow3D` | 接口 | How a light casts shadows: its map size, biases, range, extent, softness and cascades. |
+| `LightType3D` | 类型 | The kind of a light: ambient, hemisphere, directional, point or spot. |
 | `linearColor3D` | 函数 | A hex colour as seen on screen in the linear RGB the renderer lights, for vertex colours written by hand. |
-| `linearToSrgb` | 函数 |  |
-| `LineCurve3D` | 类 |  |
+| `linearToSrgb` | 函数 | Turns a linear color value into an sRGB one. |
+| `LineCurve3D` | 类 | A straight line between two points, as a curve. |
 | `LineHelper3D` | 类 | Shared base: a line mesh whose vertices are rewritten by update(). |
 | `loadGltf3D` | 函数 | Parse a glTF 2.0 asset from .glb bytes, .gltf JSON bytes or an already parsed JSON object. |
 | `Lod3D` | 类 | Shows exactly one child depending on the distance to the camera. |
 | `mat3NormalFromMat4` | 函数 | 3x3 inverse transpose of the upper-left block, written as nine column-major floats. |
 | `mat4Compose` | 函数 | Affine matrix from translation, unit quaternion and scale. |
-| `mat4Copy` | 函数 |  |
+| `mat4Copy` | 函数 | Copies a 4x4 matrix. |
 | `mat4Decompose` | 函数 | Split an affine matrix; a negative determinant is folded into scale X. |
-| `mat4Determinant` | 函数 |  |
-| `mat4Identity` | 函数 |  |
+| `mat4Determinant` | 函数 | The determinant of a 4x4 matrix. |
+| `mat4Identity` | 函数 | Sets a 4x4 matrix to the identity. |
 | `mat4Invert` | 函数 | Returns false and leaves `out` untouched when the matrix is singular. |
 | `mat4LookAt` | 函数 | World matrix of an object at `eye` whose negative Z axis points at `target`. |
-| `mat4MaxScaleOnAxis` | 函数 |  |
+| `mat4MaxScaleOnAxis` | 函数 | The largest scale a 4x4 matrix applies along an axis. |
 | `mat4Multiply` | 函数 | out = a * b: with column vectors, b applies first. |
-| `mat4Orthographic` | 函数 |  |
+| `mat4Orthographic` | 函数 | Sets a 4x4 matrix to an orthographic projection. |
 | `mat4Perspective` | 函数 | Right-handed perspective projection to clip depth [-1, 1]. |
 | `Material3D` | 类 | One material class carries the superset of surface parameters; `shading` selects the lighting model. |
-| `MaterialOptions3D` | 接口 |  |
+| `MaterialOptions3D` | 接口 | A material to make: its color and maps, its sides and alpha, its blending and depth, and its emission, normals and occlusion. |
 | `mergeGeometries3D` | 函数 | Join geometries that share the same attribute set into one. |
 | `mergeVertices3D` | 函数 | Weld vertices whose every attribute matches within `tolerance`, producing an indexed geometry. |
-| `Mesh3D` | 类 |  |
-| `MESH3D_LIMITS` | 值 |  |
-| `MESHOPT3D_LIMITS` | 值 |  |
-| `MeshoptFilter3D` | 类型 |  |
-| `MeshoptMode3D` | 类型 |  |
-| `MorphTarget3D` | 接口 |  |
-| `NavAgent3D` | 类 |  |
-| `NavAgentOptions3D` | 接口 |  |
+| `Mesh3D` | 类 | A geometry drawn with materials, with its morph weights and skeleton. |
+| `MESH3D_LIMITS` | 值 | The most bones, instances and materials a mesh has. |
+| `MESHOPT3D_LIMITS` | 值 | The largest stride and count of meshopt data. |
+| `MeshoptFilter3D` | 类型 | The filter meshopt data was encoded with. |
+| `MeshoptMode3D` | 类型 | What meshopt data encodes: vertex attributes, triangles or indices. |
+| `MorphTarget3D` | 接口 | A morph target: the positions, and normals, it moves a geometry toward. |
+| `NavAgent3D` | 类 | An agent of a crowd: where it is and how it moves; give it a target, or stop it. |
+| `NavAgentOptions3D` | 接口 | An agent to add: where it starts, its radius, speed and acceleration, and the node it moves. |
 | `NavCrowd3D` | 类 | Agents walking on one navigation mesh. |
-| `NAVIGATION3D_LIMITS` | 值 |  |
-| `NavLocation3D` | 接口 |  |
-| `NavMesh3D` | 类 |  |
-| `NavMeshOptions3D` | 接口 |  |
-| `NavPath3D` | 接口 |  |
-| `NavPathOptions3D` | 接口 |  |
-| `NavPoint3D` | 类型 |  |
-| `NumericArray3D` | 类型 |  |
-| `Object3D` | 类 |  |
-| `Object3DKind` | 类型 |  |
-| `OrthographicCameraOptions3D` | 接口 |  |
+| `NAVIGATION3D_LIMITS` | 值 | The most triangles, agents and grid cells navigation holds. |
+| `NavLocation3D` | 接口 | Where a point is on a navigation mesh: its triangle and the point itself. |
+| `NavMesh3D` | 类 | The walkable surface of a level: find paths, nearest points and ray hits on it, and set the cost of its areas. |
+| `NavMeshOptions3D` | 接口 | A navigation mesh to make: the steepest walkable slope, and how close vertices are welded. |
+| `NavPath3D` | 接口 | A path found on a navigation mesh: its points, whether it reaches the goal, and its length. |
+| `NavPathOptions3D` | 接口 | How a path is found: the agent's radius, whether it follows the ground, and how far its ends may snap. |
+| `NavPoint3D` | 类型 | A point on a navigation mesh as x, y and z. |
+| `NumericArray3D` | 类型 | An array of numbers the 3D math writes into. |
+| `Object3D` | 类 | A node of a 3D scene: its children, place, rotation and scale, and calls that move and find nodes. |
+| `Object3DKind` | 类型 | What kind of node an object is. |
+| `OrthographicCameraOptions3D` | 接口 | An orthographic camera to make: the height it sees, its aspect ratio and near and far planes. |
 | `parseKtx23D` | 函数 | Read a KTX 2.0 file holding one 2D texture and its mip chain. |
 | `parseRgbe3D` | 函数 | Decode a Radiance .hdr file (flat or run-length encoded, -Y +X orientation). |
 | `parseTrueTypeFont3D` | 函数 | Read a TrueType font: a .ttf file, an OpenType file with TrueType (glyf) outlines, or the first font of a .ttc collection. |
 | `parseTypefaceFont3D` | 函数 | Read a font in the typeface JSON format (the `*.typeface.json` files used with web 3D libraries). |
-| `ParticleEmitter3D` | 类 |  |
-| `ParticleEmitterOptions3D` | 接口 |  |
-| `PARTICLES3D_LIMITS` | 值 |  |
-| `ParticleShape3D` | 类型 |  |
+| `ParticleEmitter3D` | 类 | Emits particles on the CPU: burst some, update it each frame, or reset it. |
+| `ParticleEmitterOptions3D` | 接口 | An emitter to make: how many particles and how often, how long they live, how they move, grow, change color and fade, and where they are born. |
+| `PARTICLES3D_LIMITS` | 值 | The most particles an emitter holds, and the longest step it takes. |
+| `ParticleShape3D` | 类型 | The shape particles are born in. |
 | `Path2D3D` | 类 | A 2D outline built with pen commands; used as a contour or a hole. |
-| `PerspectiveCameraOptions3D` | 接口 |  |
-| `PhongMaterialOptions3D` | 接口 |  |
-| `PHYSICS3D_LIMITS` | 值 |  |
-| `PHYSICS_HULL3D_LIMITS` | 值 |  |
-| `PHYSICS_MESH3D_LIMITS` | 值 |  |
+| `PerspectiveCameraOptions3D` | 接口 | A perspective camera to make: its vertical field of view, aspect ratio and near and far planes. |
+| `PhongMaterialOptions3D` | 接口 | A Phong material's specular color and shininess. |
+| `PHYSICS3D_LIMITS` | 值 | The most bodies, substeps, solver steps, contacts a pair keeps and parts of a compound. |
+| `PHYSICS_HULL3D_LIMITS` | 值 | The most points a convex hull keeps and is made from. |
+| `PHYSICS_MESH3D_LIMITS` | 值 | The most triangles a mesh shape has, and how many a leaf of its tree holds. |
 | `PhysicsClient3D` | 类 | The page's end of a remote physics world. |
 | `PhysicsContact3D` | 接口 | What a pair of solid bodies did to each other in one step. |
 | `PhysicsPort3D` | 接口 | A Worker, a worker's global scope, a MessagePort: anything that posts and receives messages. |
-| `PhysicsRaycastHit3D` | 接口 |  |
-| `PhysicsShapeCastHit3D` | 接口 |  |
-| `PhysicsWorld3D` | 类 |  |
-| `PhysicsWorldOptions3D` | 接口 |  |
+| `PhysicsRaycastHit3D` | 接口 | What a ray hit: the body, where, its normal and how far. |
+| `PhysicsShapeCastHit3D` | 接口 | What a cast shape hit: the body, how far it went, where, and the normal. |
+| `PhysicsWorld3D` | 类 | A 3D physics world: add bodies and joints, step it, and cast rays and shapes through it. |
+| `PhysicsWorldOptions3D` | 接口 | A physics world to make: its gravity, its step and substeps, its solver iterations, and whether bodies sleep. |
 | `PlanarReflection3D` | 类 | A mirror camera and the target it draws into. |
 | `PlanarReflectionPass3D` | 接口 | Output and inclusion settings shared by reflection draws and program preparation. |
-| `PlaneGeometryOptions3D` | 接口 |  |
-| `Point2D` | 类型 |  |
-| `Point3D` | 类型 |  |
-| `PointLightOptions3D` | 接口 |  |
-| `PolyhedronOptions3D` | 接口 |  |
+| `PlaneGeometryOptions3D` | 接口 | A plane to make: its width and height, and their segments. |
+| `Point2D` | 类型 | A point in 2D as x and y. |
+| `Point3D` | 类型 | A point in 3D as x, y and z. |
+| `PointLightOptions3D` | 接口 | A point light to make: how far it reaches. |
+| `PolyhedronOptions3D` | 接口 | A regular solid to make: its radius, how often it is subdivided, and whether it is smooth. |
 | `projectToViewport3D` | 函数 | Projects a world point into a viewport of `width` by `height` pixels through `camera`. |
-| `QuadraticBezierCurve3D` | 类 |  |
-| `quatCopy` | 函数 |  |
-| `quatFromAxisAngle` | 函数 |  |
+| `QuadraticBezierCurve3D` | 类 | A quadratic Bézier curve through three control points. |
+| `quatCopy` | 函数 | Copies a quaternion. |
+| `quatFromAxisAngle` | 函数 | A quaternion that turns by an angle about an axis. |
 | `quatFromEuler` | 函数 | Intrinsic XYZ Euler angles in radians (rotate X, then Y, then Z in local axes). |
 | `quatFromRotationMatrix` | 函数 | Rotation part of a matrix without scale or shear. |
-| `quatIdentity` | 函数 |  |
-| `quatMultiply` | 函数 |  |
-| `quatNormalize` | 函数 |  |
+| `quatIdentity` | 函数 | Sets a quaternion to no rotation. |
+| `quatMultiply` | 函数 | Multiplies two quaternions: the rotation of b, then a. |
+| `quatNormalize` | 函数 | Scales a quaternion to length 1. |
 | `quatSlerp` | 函数 | Shortest-arc spherical interpolation; falls back to nlerp for close inputs. |
 | `quatToEuler` | 函数 | Inverse of quatFromEuler; writes radians into out[0..2]. |
 | `Ragdoll3D` | 类 | Bodies and joints for a skeleton, created from the current pose by activate() and removed again by deactivate(). |
-| `RAGDOLL3D_LIMITS` | 值 |  |
-| `RagdollJoint3D` | 接口 |  |
-| `RagdollOptions3D` | 接口 |  |
-| `RagdollPart3D` | 接口 |  |
-| `Raycaster3D` | 类 |  |
-| `RaycastHit3D` | 接口 |  |
-| `RaycastOptions3D` | 接口 |  |
+| `RAGDOLL3D_LIMITS` | 值 | The most parts a ragdoll has. |
+| `RagdollJoint3D` | 接口 | How a ragdoll part is joined to its parent: the joint's kind, axis and limits. |
+| `RagdollOptions3D` | 接口 | A ragdoll to make: its layers, friction, bounce and damping. |
+| `RagdollPart3D` | 接口 | One part of a ragdoll: its bone, shape and mass, its offset, its parent and its joint. |
+| `Raycaster3D` | 类 | Casts rays through a scene, from a point or from the camera through a screen point. |
+| `RaycastHit3D` | 接口 | What a ray hit: how far, where, the object, its face, its texture coordinate and its instance. |
+| `RaycastOptions3D` | 接口 | How a ray is cast: its near and far distances, its layers, and whether only the first hit is wanted. |
 | `rayIntersectBox` | 函数 | Slab test; returns the entry distance (0 when the origin is inside) or -1. |
 | `rayIntersectSphere` | 函数 | Distance along the ray to the sphere, or -1 when it misses. |
 | `rayIntersectTriangle` | 函数 | Moller-Trumbore. |
 | `ReflectionRenderer3D` | 接口 | Anything that can draw a scene into a render target: both first-party renderers qualify. |
 | `RemoteBody3D` | 类 | The page's stand-in for a body that lives behind the port. |
-| `RemoteBodyOptions3D` | 接口 |  |
-| `RemoteJoint3D` | 类 |  |
-| `RemoteJointOptions3D` | 接口 |  |
-| `RemoteRaycastHit3D` | 接口 |  |
+| `RemoteBodyOptions3D` | 接口 | A body to add to a physics world in a worker. |
+| `RemoteJoint3D` | 类 | A joint of a physics world in a worker; remove it to take it out. |
+| `RemoteJointOptions3D` | 接口 | A joint to add to a physics world in a worker. |
+| `RemoteRaycastHit3D` | 接口 | What a ray hit in a physics world in a worker. |
 | `RemoteShape3D` | 类型 | Shapes that can be described in a message. |
-| `RenderItem3D` | 接口 |  |
-| `RenderList3D` | 类 |  |
-| `RenderStats3D` | 接口 |  |
+| `RenderItem3D` | 接口 | One thing to draw: its mesh, geometry and material, its range, its depth and order. |
+| `RenderList3D` | 类 | What a camera sees, sorted for drawing: opaque and transparent items, shadow casters and lights. |
+| `RenderStats3D` | 接口 | What building a render list counted: nodes visited, culled, and lights dropped. |
 | `RenderTarget3D` | 类 | Off-screen color target. |
 | `RenderTargetFormat3D` | 类型 | Color storage of a render target: 8-bit sRGB, or half-float linear for values above 1. |
-| `RenderTargetOptions3D` | 接口 |  |
+| `RenderTargetOptions3D` | 接口 | A render target to make: its format, its depth, and its filters and wrapping. |
 | `Resource3D` | 类 | CPU-side resource with a version counter and terminal disposal. |
 | `retargetAnimationClip3D` | 函数 | A clip for the target rig that moves it as `clip` moves the source rig. |
-| `RetargetOptions3D` | 接口 |  |
-| `RigidBody3D` | 类 |  |
-| `RigidBodyOptions3D` | 接口 |  |
-| `RingGeometryOptions3D` | 接口 |  |
+| `RetargetOptions3D` | 接口 | How a clip is moved to another skeleton: from where to where, which bones match, the root, scale and frame rate. |
+| `RigidBody3D` | 类 | A body in a physics world: its kind, shape and mass, its material and layers, and calls that move and push it. |
+| `RigidBodyOptions3D` | 接口 | A body to add: its kind, shape and mass, where it is, its material and damping, its layers, and the node it moves. |
+| `RingGeometryOptions3D` | 接口 | A ring to make: its inner and outer radius, segments and arc. |
 | `Rope3D` | 类 | A rope or cable. |
-| `RopeOptions3D` | 接口 |  |
+| `RopeOptions3D` | 接口 | A rope to make: from where to where, in how many segments, how slack, and which ends are pinned. |
 | `sampleAnimationTrack3D` | 函数 | Evaluate one track at `time` into `out`; `hint` caches the last key index. |
 | `Scene3D` | 类 | Root of a renderable graph; owns environment-wide settings. |
-| `SCENE_DOCUMENT_FORMAT_3D` | 值 |  |
-| `SCENE_DOCUMENT_VERSION_3D` | 值 |  |
-| `SceneDocument3D` | 接口 |  |
+| `SCENE_DOCUMENT_FORMAT_3D` | 值 | The format name of a saved scene document. |
+| `SCENE_DOCUMENT_VERSION_3D` | 值 | The version of the scene document format. |
+| `SceneDocument3D` | 接口 | A scene saved as JSON: its nodes, geometries, materials, textures and skeletons, and what was skipped. |
 | `ScreenLayer3D` | 类 | Full-screen image drawn in the same pass as the 3D scene, typically the canvas of a 2D stage. |
-| `ScreenLayerOptions3D` | 接口 |  |
-| `SERIALIZE3D_LIMITS` | 值 |  |
-| `SerializeOptions3D` | 接口 |  |
+| `ScreenLayerOptions3D` | 接口 | A screen layer to make: its order and opacity, whether it updates itself, and which way its rows run. |
+| `SERIALIZE3D_LIMITS` | 值 | The most nodes, embedded texture bytes and document bytes a scene document has. |
+| `SerializeOptions3D` | 接口 | How a scene is saved: the key each texture is saved by. |
 | `serializeScene3D` | 函数 | Write the subtree under `root` as JSON-safe data. |
 | `servePhysics3D` | 函数 | Run a physics world on this end of a port and answer the messages of a PhysicsClient3D. |
-| `setColor3D` | 函数 |  |
-| `Shading3D` | 类型 |  |
+| `setColor3D` | 函数 | Writes a color into a float array as red, green and blue. |
+| `Shading3D` | 类型 | How a material is lit: not at all, Lambert, Phong, physically based, toon, or by a matcap. |
 | `Shape3D` | 类 | A filled outline with optional holes. |
-| `ShapeDefinition3D` | 类型 |  |
-| `Side3D` | 类型 |  |
-| `signedArea2D` | 函数 |  |
+| `ShapeDefinition3D` | 类型 | The shape of a body: a sphere, box, capsule, plane, convex hull, triangle mesh, or several moving as one. |
+| `Side3D` | 类型 | Which sides of a material's triangles are drawn. |
+| `signedArea2D` | 函数 | The signed area of a 2D polygon: positive when its points run counterclockwise. |
 | `Skeleton3D` | 类 | Ordered bones with their inverse bind matrices; one instance may drive many meshes. |
 | `SkeletonHelper3D` | 类 | A line from every bone to its parent bone. |
 | `SkinnedInstancedMesh3D` | 类 | Many copies of one skinned mesh in a single draw call, each at its own place in its own clip. |
-| `sphereFromBox` | 函数 |  |
-| `SphereGeometryOptions3D` | 接口 |  |
-| `sphereTransform` | 函数 |  |
-| `SpotLightOptions3D` | 接口 |  |
+| `sphereFromBox` | 函数 | The sphere around a box. |
+| `SphereGeometryOptions3D` | 接口 | A sphere to make: its radius and segments. |
+| `sphereTransform` | 函数 | Moves and scales a sphere by a 4x4 matrix. |
+| `SpotLightOptions3D` | 接口 | A spot light to make: its cone's angle and soft edge. |
 | `Sprite3D` | 类 | Camera-facing textured quad. |
-| `SpriteMaterialOptions3D` | 接口 |  |
-| `srgbToLinear` | 函数 |  |
-| `StandardMaterialOptions3D` | 接口 |  |
-| `STATE_MACHINE3D_LIMITS` | 值 |  |
-| `StateBlendEntry3D` | 接口 |  |
-| `StateCondition3D` | 接口 |  |
-| `StateConditionOperator3D` | 类型 |  |
-| `StateOptions3D` | 接口 |  |
-| `StateParameter3D` | 类型 |  |
-| `StrandOptions3D` | 接口 |  |
+| `SpriteMaterialOptions3D` | 接口 | A sprite material: whether sprites shrink with distance, and their rotation. |
+| `srgbToLinear` | 函数 | Turns an sRGB color value into a linear one. |
+| `StandardMaterialOptions3D` | 接口 | A physically based material's metalness and roughness, and how much the environment lights it. |
+| `STATE_MACHINE3D_LIMITS` | 值 | The most states and transitions a state machine has, and how many transitions it takes in one update. |
+| `StateBlendEntry3D` | 接口 | One clip of a blend state and the parameter value it shows at. |
+| `StateCondition3D` | 接口 | A condition of a transition: a parameter compared with a value. |
+| `StateConditionOperator3D` | 类型 | How a condition compares a parameter with its value. |
+| `StateOptions3D` | 接口 | A state to add: its clip or blend, whether it loops, its speed, and what it calls on entering and leaving. |
+| `StateParameter3D` | 类型 | The value of a state machine parameter. |
+| `StrandOptions3D` | 接口 | How a strand of points behaves: its gravity, damping, iterations, thickness, and what it collides with. |
 | `Terrain3D` | 类 | A height field drawn as a grid of chunk meshes. |
-| `TERRAIN3D_LIMITS` | 值 |  |
-| `TerrainMaterialOptions3D` | 接口 |  |
-| `TerrainOptions3D` | 接口 |  |
-| `TerrainStream3D` | 类 |  |
-| `TerrainStreamOptions3D` | 接口 |  |
-| `TerrainTile3D` | 接口 |  |
-| `TEXT3D_LIMITS` | 值 |  |
-| `TextGeometryOptions3D` | 接口 |  |
-| `TextLayoutOptions3D` | 接口 |  |
-| `Texture3D` | 类 |  |
-| `TEXTURE3D_LIMITS` | 值 |  |
-| `TextureColorSpace3D` | 类型 |  |
-| `TextureFilter3D` | 类型 |  |
-| `TextureOptions3D` | 接口 |  |
+| `TERRAIN3D_LIMITS` | 值 | The largest height field, chunk and number of levels and chunks terrain has, and the most streamed tiles. |
+| `TerrainMaterialOptions3D` | 接口 | A terrain material's layers, their weights, and how often they repeat. |
+| `TerrainOptions3D` | 接口 | Terrain to make: its chunks, levels of detail and their distance, its skirts, texture scale and colors. |
+| `TerrainStream3D` | 类 | Terrain loaded in tiles around the camera: read heights, and update it as the camera moves. |
+| `TerrainStreamOptions3D` | 接口 | Streamed terrain to make: its tile size and view distance, how a tile is loaded, and what is called as tiles come and go. |
+| `TerrainTile3D` | 接口 | One tile of streamed terrain: where it is, its height field and terrain. |
+| `TEXT3D_LIMITS` | 值 | The most characters, font bytes and glyph points 3D text has. |
+| `TextGeometryOptions3D` | 接口 | 3D text to make: how deep it is extruded, and in how many steps. |
+| `TextLayoutOptions3D` | 接口 | How 3D text is laid out: its size, curve detail, spacing, line height and alignment. |
+| `Texture3D` | 类 | A texture for 3D materials; set its source to change its picture. |
+| `TEXTURE3D_LIMITS` | 值 | The largest texture edge and size. |
+| `TextureColorSpace3D` | 类型 | Whether a texture's values are sRGB colors or linear data. |
+| `TextureFilter3D` | 类型 | How a texture is sampled: the nearest texel, or blended. |
+| `TextureOptions3D` | 接口 | A texture to make: its name, wrapping and filters, its mipmaps and color space, whether it is flipped, and its anisotropy. |
 | `TexturePixels3D` | 接口 | Tightly packed straight-alpha RGBA8 rows, top row first. |
-| `TextureSource3D` | 类型 |  |
-| `TextureWrap3D` | 类型 |  |
+| `TextureSource3D` | 类型 | What a texture is made from: pixels, compressed pixels, or an image the browser decoded. |
+| `TextureWrap3D` | 类型 | What a texture does past its edges: repeats, clamps or mirrors. |
 | `toNonIndexedGeometry3D` | 函数 | Copy with every triangle owning its vertices, as needed for per-face data. |
-| `Topology3D` | 类型 |  |
-| `TorusGeometryOptions3D` | 接口 |  |
-| `TorusKnotGeometryOptions3D` | 接口 |  |
+| `Topology3D` | 类型 | How a geometry's vertices are joined: as triangles, lines, a strip of lines, or points. |
+| `TorusGeometryOptions3D` | 接口 | A torus to make: its radius, tube and segments. |
+| `TorusKnotGeometryOptions3D` | 接口 | A torus knot to make: its radius and tube, segments, and its windings p and q. |
 | `Trail3D` | 类 | Add the trail to the scene itself, not under the object it follows: its vertices are world positions. |
-| `TRAIL3D_LIMITS` | 值 |  |
-| `TrailOptions3D` | 接口 |  |
+| `TRAIL3D_LIMITS` | 值 | The most points a trail has. |
+| `TrailOptions3D` | 接口 | A trail to make: what it follows, how long it lasts, how far apart its points are, and how its width, color and opacity change. |
 | `transformGeometry3D` | 函数 | Bake a 4x4 transform into positions, normals and tangents, in place. |
-| `TransformGizmo3D` | 类 |  |
-| `TransformGizmoOptions3D` | 接口 |  |
-| `TransitionOptions3D` | 接口 |  |
-| `TriangleMeshShape3D` | 类 |  |
+| `TransformGizmo3D` | 类 | Handles to move, turn or scale an object by dragging them, with snapping. |
+| `TransformGizmoOptions3D` | 接口 | A gizmo to make: its mode, its space and its size. |
+| `TransitionOptions3D` | 接口 | A transition to add: from and to which state, how long it fades, its conditions, its exit time and whether it can be interrupted. |
+| `TriangleMeshShape3D` | 类 | A triangle mesh as a physics shape, for bodies that do not move. |
 | `triangulateShape3D` | 函数 | Triangulate an outline with holes by ear clipping. |
-| `TubeGeometryOptions3D` | 接口 |  |
-| `vec3Add` | 函数 |  |
-| `vec3Copy` | 函数 |  |
-| `vec3Cross` | 函数 |  |
-| `vec3Distance` | 函数 |  |
-| `vec3Dot` | 函数 |  |
-| `vec3Length` | 函数 |  |
-| `vec3Lerp` | 函数 |  |
+| `TubeGeometryOptions3D` | 接口 | A tube to make along a curve: its segments, radius and whether it closes. |
+| `vec3Add` | 函数 | Adds two vectors. |
+| `vec3Copy` | 函数 | Copies a vector. |
+| `vec3Cross` | 函数 | The cross product of two vectors. |
+| `vec3Distance` | 函数 | The distance between two points. |
+| `vec3Dot` | 函数 | The dot product of two vectors. |
+| `vec3Length` | 函数 | The length of a vector. |
+| `vec3Lerp` | 函数 | The point a fraction of the way from one vector to another. |
 | `vec3Normalize` | 函数 | A zero-length input yields the zero vector instead of NaN. |
-| `vec3Scale` | 函数 |  |
-| `vec3Set` | 函数 |  |
-| `vec3Sub` | 函数 |  |
+| `vec3Scale` | 函数 | Multiplies a vector by a number. |
+| `vec3Set` | 函数 | Sets a vector's x, y and z. |
+| `vec3Sub` | 函数 | Takes one vector from another. |
 | `vec3TransformDirection` | 函数 | Transform a direction (w = 0) by the upper 3x3; the result is not normalized. |
 | `vec3TransformMat4` | 函数 | Transform a point (w = 1) with perspective division. |
-| `vec3TransformQuat` | 函数 |  |
+| `vec3TransformQuat` | 函数 | Turns a vector by a quaternion. |
 | `Vehicle3D` | 类 | Drives a chassis body on ray wheels. |
-| `VEHICLE3D_LIMITS` | 值 |  |
-| `VehicleOptions3D` | 接口 |  |
+| `VEHICLE3D_LIMITS` | 值 | The most wheels a vehicle has. |
+| `VehicleOptions3D` | 接口 | A vehicle to make: its wheels, its engine and brakes, its steering, its top speed and how it rolls. |
 | `ViewportPoint3D` | 接口 | Where a world point falls in a viewport, for labels, markers and pointers drawn over the picture. |
 | `VolumetricFog3D` | 类 | Add one to the scene's root and keep `receiveShadow` on. |
-| `VolumetricFogOptions3D` | 接口 |  |
+| `VolumetricFogOptions3D` | 接口 | Volumetric fog to make: its color and density, its height and falloff, its distance, and how much the sun and lights shine through it. |
 | `Water3D` | 类 | A horizontal water surface. |
-| `WaterOptions3D` | 接口 |  |
-| `Wheel3D` | 接口 |  |
-| `WheelOptions3D` | 接口 |  |
-| `WORLD3D_LIMITS` | 值 |  |
+| `WaterOptions3D` | 接口 | Water to make: its size and detail, its waves and ripples, its colors and clarity, its reflections, foam and caustics. |
+| `Wheel3D` | 接口 | A wheel of a vehicle: its suspension and grip, and whether it touches the ground. |
+| `WheelOptions3D` | 接口 | A wheel to add: where, its radius and suspension, whether it steers or drives, its grip and the node it turns. |
+| `WORLD3D_LIMITS` | 值 | How deep a scene nests, how many children a node has, and how long a name is, at most. |
 | `World3DError` | 类 | Stable machine-readable code plus a human-readable detail and the original cause. |
-| `World3DErrorCode` | 类型 |  |
+| `World3DErrorCode` | 类型 | What went wrong in the 3D world. |
 
 ## `@egret/engine/webgl2/world3d`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `Atmosphere3D` | 类 | Height fog and light shafts for `renderer.postProcess.custom`. |
-| `AtmosphereOptions3D` | 接口 |  |
+| `AtmosphereOptions3D` | 接口 | An atmosphere to make: its fog's color, density and height, and its light shafts. |
 | `AudioListener3D` | 类 | Ears of the scene. |
-| `AudioListenerOptions3D` | 接口 |  |
+| `AudioListenerOptions3D` | 接口 | An audio listener to make: its audio context and volume. |
 | `captureCubeTexture3D` | 函数 | Render six 90-degree views from `position` and return them as a cube texture with mipmaps. |
-| `createAtmosphere3D` | 函数 |  |
-| `createAudioListener3D` | 函数 |  |
-| `createCustomPost3D` | 函数 |  |
-| `createDynamicResolution3D` | 函数 |  |
-| `createFlyControls3D` | 函数 |  |
-| `createFollowControls3D` | 函数 |  |
-| `createOrbitControls3D` | 函数 |  |
-| `createPositionalAudio3D` | 函数 |  |
-| `createPostProcessSettings3D` | 函数 |  |
+| `createAtmosphere3D` | 函数 | Makes height fog and light shafts for a scene. |
+| `createAudioListener3D` | 函数 | Makes the listener 3D sounds are heard by, usually on the camera. |
+| `createCustomPost3D` | 函数 | Makes a post-processing pass of your own shader. |
+| `createDynamicResolution3D` | 函数 | Makes a resolution scale that drops when frames are slow and rises when they are fast. |
+| `createFlyControls3D` | 函数 | Makes fly controls for a camera on an element. |
+| `createFollowControls3D` | 函数 | Makes follow controls for a follow camera on an element. |
+| `createOrbitControls3D` | 函数 | Makes orbit controls for a camera on an element. |
+| `createPositionalAudio3D` | 函数 | Makes a sound that plays from a place in the scene. |
+| `createPostProcessSettings3D` | 函数 | Post-processing settings with every effect off. |
 | `createScreenMarkers3D` | 函数 | A layer of page elements that follow scene points. |
-| `createTransformControls3D` | 函数 |  |
-| `createWebGL2Renderer3D` | 函数 |  |
+| `createTransformControls3D` | 函数 | Makes transform controls for a camera on an element. |
+| `createWebGL2Renderer3D` | 函数 | Makes a renderer that draws 3D scenes with WebGL2. |
 | `createWorld3DApp` | 函数 | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | 函数 | Host adapter that reserves `canvas` for one Engine. |
 | `createWorld3DOverlay` | 函数 | Lays a transparent 2D stage over `canvas` (the 3D canvas, which must sit in a positioned parent) and starts it. |
-| `createWorld3DStats` | 函数 |  |
-| `createWorld3DView` | 函数 |  |
+| `createWorld3DStats` | 函数 | Makes a panel that shows a 3D view's frame times and draws. |
+| `createWorld3DView` | 函数 | Makes a view that draws a scene on each tick of the Engine's clock. |
 | `CUBE_TEXTURE_ASSET_3D` | 值 | A cube texture. |
-| `CubeCaptureOptions3D` | 接口 |  |
+| `CubeCaptureOptions3D` | 接口 | How a cube is captured around a point: its size, near and far planes, and layers. |
 | `CustomPost3D` | 接口 | A full-screen hook that runs after ambient occlusion and bloom and before tone mapping. |
 | `DynamicResolution3D` | 接口 | A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. |
-| `DynamicResolutionOptions3D` | 接口 |  |
-| `FlyControls3D` | 类 |  |
-| `FlyControlsKeys3D` | 接口 |  |
-| `FlyControlsOptions3D` | 接口 |  |
-| `FollowControls3D` | 类 |  |
-| `FollowControlsOptions3D` | 接口 |  |
+| `DynamicResolutionOptions3D` | 接口 | How dynamic resolution moves: its least and greatest scale, its step, and the frame rates and times that move it. |
+| `FlyControls3D` | 类 | Moves a camera with the keyboard and mouse, walking or flying. |
+| `FlyControlsKeys3D` | 接口 | The keys of fly controls: forward, back, left, right, up, down and sprint. |
+| `FlyControlsOptions3D` | 接口 | Fly controls to make: how fast they move and look, whether they fly, use pointer lock or damp, and their keys. |
+| `FollowControls3D` | 类 | Turns and zooms a follow camera with the mouse and touch. |
+| `FollowControlsOptions3D` | 接口 | Follow controls to make: how fast they turn and zoom. |
 | `GLTF_ASSET_3D` | 值 | A loaded glTF file. |
 | `GltfUrlLoadOptions3D` | 接口 | glTF loading options: download limits plus the optional KTX2, meshopt and Draco decoders. |
 | `isSoftwareRendered3D` | 函数 | Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual machine or a page whose graphics card is blocked. |
 | `loadCubeTexture3D` | 函数 | Load six square images in +X, -X, +Y, -Y, +Z, -Z order as a cube texture. |
 | `loadGltfFromUrl3D` | 函数 | Load a .glb or .gltf file; relative buffer and image URIs resolve against `url`. |
-| `LoadOptions3D` | 接口 |  |
+| `LoadOptions3D` | 接口 | How a 3D asset is loaded: a signal that cancels it, and the most bytes it reads. |
 | `loadTexture3D` | 函数 | Load an image or KTX2 file as a texture. |
-| `OrbitControls3D` | 类 |  |
-| `OrbitControlsOptions3D` | 接口 |  |
+| `OrbitControls3D` | 类 | Turns a camera around a target, pans and zooms it, with the mouse and touch. |
+| `OrbitControlsOptions3D` | 接口 | Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. |
 | `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `play3d` | 函数 | Starts a 3D game in the page. |
-| `Play3DGame` | 接口 |  |
-| `Play3DOptions` | 接口 |  |
+| `Play3DGame` | 接口 | Everything a small 3D game is given: its scene and camera, its input, and calls that make, move and light things. |
+| `Play3DOptions` | 接口 | A small 3D game to start: its setup and update, and the options of a 2D play game. |
 | `PLAY_LOOKS_3D` | 值 | The looks every game is given, by name. |
-| `PlayBurst3D` | 接口 |  |
+| `PlayBurst3D` | 接口 | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
 | `PlayCamera3D` | 接口 | The camera: where it is and what it looks at, by plain numbers. |
-| `PlayFollow3D` | 接口 |  |
+| `PlayFollow3D` | 接口 | How the camera follows: where it sits behind, how smoothly, and whether it turns with the target. |
 | `PlayLamp3D` | 类 | A lamp: light from a point of the world that fades out by `range`. |
-| `PlayLampOptions3D` | 接口 |  |
-| `PlayLook3D` | 接口 |  |
+| `PlayLampOptions3D` | 接口 | A lamp to light: how bright, and how far it reaches. |
+| `PlayLook3D` | 接口 | How a 3D play game looks: its background and sky, its ground, its light and sun, and its fog. |
 | `PlayLookName3D` | 类型 | What `play3d` gives: everything `play` gives for the interface and the game's time, and a world of things. |
 | `PlayPlace3D` | 接口 | Where a thing is made. |
 | `PlayThing3D` | 类 | A thing of the world: a box, a ball, a cylinder or a cone. |
 | `PlayWeather3D` | 类型 | What falls from the sky: snow, rain, or nothing. |
-| `PlayWeatherOptions3D` | 接口 |  |
+| `PlayWeatherOptions3D` | 接口 | Weather to show: how much rain or snow. |
 | `PositionalAudio3D` | 类 | A sound placed in the scene. |
-| `PositionalAudioOptions3D` | 接口 |  |
-| `POST3D_LIMITS` | 值 |  |
-| `PostProcessSettings3D` | 接口 |  |
+| `PositionalAudioOptions3D` | 接口 | A positional sound to make: its buffer and volume, how it fades with distance, its cone, rate, and whether it is spatial. |
+| `POST3D_LIMITS` | 值 | The most bloom levels. |
+| `PostProcessSettings3D` | 接口 | What is done to a frame after it is drawn: bloom, antialiasing, color, vignette, ambient occlusion, depth of field and outlines. |
 | `registerWorld3DAssets` | 函数 | Register the World3D asset providers on an AssetManager. |
 | `Renderer3D` | 接口 | What both world3d backends provide; views and tools depend on this only. |
-| `Renderer3DInfo` | 接口 |  |
+| `Renderer3DInfo` | 接口 | What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. |
 | `SCENE_ASSET_3D` | 值 | A scene document written by serializeScene3D. |
-| `ScreenMarker3D` | 接口 |  |
-| `ScreenMarkerOptions3D` | 接口 |  |
-| `ScreenMarkers3D` | 接口 |  |
-| `ScreenMarkersOptions3D` | 接口 |  |
+| `ScreenMarker3D` | 接口 | A marker over the screen that follows a point of the scene: its element and where it is. |
+| `ScreenMarkerOptions3D` | 接口 | A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. |
+| `ScreenMarkers3D` | 接口 | Elements over the screen that follow points of the scene: add them, and update them each frame. |
+| `ScreenMarkersOptions3D` | 接口 | Screen markers to make: the container they go in, and the camera they follow. |
 | `startWorld3DLoop` | 函数 | Advance the Engine clock once per display frame. |
 | `TEXTURE_ASSET_3D` | 值 | A 2D texture loaded from an image or KTX2 file. |
 | `TextureLoadOptions3D` | 接口 | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
-| `ToneMapping3D` | 类型 |  |
-| `TransformControls3D` | 类 |  |
+| `ToneMapping3D` | 类型 | How a renderer maps bright colors into the screen's range. |
+| `TransformControls3D` | 类 | Drags a transform gizmo with the mouse and touch to move, turn or scale an object. |
 | `WebGL2ProgramVariant3D` | 接口 | One material program for an expected draw. |
-| `WebGL2Renderer3D` | 类 |  |
-| `WebGL2Renderer3DOptions` | 接口 |  |
+| `WebGL2Renderer3D` | 类 | Draws 3D scenes with WebGL2: set its size, render a scene from a camera, and read what it drew. |
+| `WebGL2Renderer3DOptions` | 接口 | A WebGL2 renderer to make: its canvas and context, its tone mapping and exposure, its shadows, and what is called when the context is lost and restored. |
 | `WORLD3D_QUALITY_PRESETS` | 值 | The three qualities. |
-| `World3DApp` | 接口 |  |
-| `World3DAppOptions` | 接口 |  |
-| `World3DAssetOptions` | 接口 |  |
-| `World3DBackend` | 类型 |  |
+| `World3DApp` | 接口 | A 3D app: its Engine, renderer and view, its quality and resolution, and calls that show a scene and start and stop it. |
+| `World3DAppOptions` | 接口 | A 3D app to make: its backend and quality, its dynamic resolution, its tone mapping, and what is called on an error or a lost device. |
+| `World3DAssetOptions` | 接口 | How a 3D app loads assets: how URLs are resolved, how many bytes, and how textures and compressed data are decoded. |
+| `World3DBackend` | 类型 | Which GPU interface a 3D app draws with. |
 | `World3DClockSource` | 接口 | The part of an Engine this view needs: its explicit game clock. |
 | `World3DDeviceHints` | 接口 | What `pickWorld3DQuality` reads about the device. |
-| `World3DFrameMetrics` | 接口 |  |
-| `World3DFramePass` | 接口 |  |
-| `World3DGpuTiming` | 类型 |  |
-| `World3DLoopSource` | 接口 |  |
-| `World3DOverlay` | 接口 |  |
-| `World3DOverlayOptions` | 接口 |  |
-| `World3DPassKind` | 类型 |  |
-| `World3DQuality` | 类型 |  |
+| `World3DFrameMetrics` | 接口 | What a frame drew: its draws and triangles, its CPU time, and its passes and reflections. |
+| `World3DFramePass` | 接口 | One pass of a frame: its view and kind, its size, its draws and triangles, and its times. |
+| `World3DGpuTiming` | 类型 | How long a pass took on the GPU, or why that is not known. |
+| `World3DLoopSource` | 接口 | What drives a 3D view: an Engine's clock and the call that advances it. |
+| `World3DOverlay` | 接口 | A 2D game drawn on a canvas over a 3D view. |
+| `World3DOverlayOptions` | 接口 | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
+| `World3DPassKind` | 类型 | What a pass drew: color, shadows, a depth prepass, an outline mask or post-processing. |
+| `World3DQuality` | 类型 | How much a 3D app draws: low, medium or high quality. |
 | `World3DQualityPreset` | 接口 | What one picture quality turns on. |
-| `World3DShowOptions` | 接口 |  |
-| `World3DStats` | 接口 |  |
-| `World3DStatsOptions` | 接口 |  |
-| `World3DView` | 类 |  |
-| `World3DViewKind` | 类型 |  |
-| `World3DViewOptions` | 接口 |  |
+| `World3DShowOptions` | 接口 | What a 3D app shows: its update, mixers and controls. |
+| `World3DStats` | 接口 | Frame times, frame rate, draws and triangles of a 3D view, measured each frame. |
+| `World3DStatsOptions` | 接口 | 3D stats to make: the container they show in, how they smooth, and how often they refresh. |
+| `World3DView` | 类 | Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. |
+| `World3DViewKind` | 类型 | Which view a pass drew: the main one, a reflection, or offscreen. |
+| `World3DViewOptions` | 接口 | A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. |
 
 ## `@egret/engine/webgpu/world3d`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `Atmosphere3D` | 类 | Height fog and light shafts for `renderer.postProcess.custom`. |
-| `AtmosphereOptions3D` | 接口 |  |
+| `AtmosphereOptions3D` | 接口 | An atmosphere to make: its fog's color, density and height, and its light shafts. |
 | `AudioListener3D` | 类 | Ears of the scene. |
-| `AudioListenerOptions3D` | 接口 |  |
+| `AudioListenerOptions3D` | 接口 | An audio listener to make: its audio context and volume. |
 | `captureCubeTexture3D` | 函数 | Render six 90-degree views from `position` and return them as a cube texture with mipmaps. |
-| `createAtmosphere3D` | 函数 |  |
-| `createAudioListener3D` | 函数 |  |
-| `createCustomPost3D` | 函数 |  |
-| `createDynamicResolution3D` | 函数 |  |
-| `createFlyControls3D` | 函数 |  |
-| `createFollowControls3D` | 函数 |  |
-| `createOrbitControls3D` | 函数 |  |
-| `createPositionalAudio3D` | 函数 |  |
-| `createPostProcessSettings3D` | 函数 |  |
+| `createAtmosphere3D` | 函数 | Makes height fog and light shafts for a scene. |
+| `createAudioListener3D` | 函数 | Makes the listener 3D sounds are heard by, usually on the camera. |
+| `createCustomPost3D` | 函数 | Makes a post-processing pass of your own shader. |
+| `createDynamicResolution3D` | 函数 | Makes a resolution scale that drops when frames are slow and rises when they are fast. |
+| `createFlyControls3D` | 函数 | Makes fly controls for a camera on an element. |
+| `createFollowControls3D` | 函数 | Makes follow controls for a follow camera on an element. |
+| `createOrbitControls3D` | 函数 | Makes orbit controls for a camera on an element. |
+| `createPositionalAudio3D` | 函数 | Makes a sound that plays from a place in the scene. |
+| `createPostProcessSettings3D` | 函数 | Post-processing settings with every effect off. |
 | `createScreenMarkers3D` | 函数 | A layer of page elements that follow scene points. |
-| `createTransformControls3D` | 函数 |  |
+| `createTransformControls3D` | 函数 | Makes transform controls for a camera on an element. |
 | `createWebGPURenderer3D` | 函数 | Acquire a device (unless one is borrowed) and create the WebGPU renderer. |
 | `createWorld3DApp` | 函数 | Starts a World3D game on `canvas`: an Engine, a renderer for the chosen backend and quality, and a frame loop. |
 | `createWorld3DHost` | 函数 | Host adapter that reserves `canvas` for one Engine. |
 | `createWorld3DOverlay` | 函数 | Lays a transparent 2D stage over `canvas` (the 3D canvas, which must sit in a positioned parent) and starts it. |
-| `createWorld3DStats` | 函数 |  |
-| `createWorld3DView` | 函数 |  |
+| `createWorld3DStats` | 函数 | Makes a panel that shows a 3D view's frame times and draws. |
+| `createWorld3DView` | 函数 | Makes a view that draws a scene on each tick of the Engine's clock. |
 | `CUBE_TEXTURE_ASSET_3D` | 值 | A cube texture. |
-| `CubeCaptureOptions3D` | 接口 |  |
+| `CubeCaptureOptions3D` | 接口 | How a cube is captured around a point: its size, near and far planes, and layers. |
 | `CustomPost3D` | 接口 | A full-screen hook that runs after ambient occlusion and bloom and before tone mapping. |
 | `DynamicResolution3D` | 接口 | A drawing resolution that follows the frame rate: down quickly when frames are slow, up slowly when they are not. |
-| `DynamicResolutionOptions3D` | 接口 |  |
-| `FlyControls3D` | 类 |  |
-| `FlyControlsKeys3D` | 接口 |  |
-| `FlyControlsOptions3D` | 接口 |  |
-| `FollowControls3D` | 类 |  |
-| `FollowControlsOptions3D` | 接口 |  |
+| `DynamicResolutionOptions3D` | 接口 | How dynamic resolution moves: its least and greatest scale, its step, and the frame rates and times that move it. |
+| `FlyControls3D` | 类 | Moves a camera with the keyboard and mouse, walking or flying. |
+| `FlyControlsKeys3D` | 接口 | The keys of fly controls: forward, back, left, right, up, down and sprint. |
+| `FlyControlsOptions3D` | 接口 | Fly controls to make: how fast they move and look, whether they fly, use pointer lock or damp, and their keys. |
+| `FollowControls3D` | 类 | Turns and zooms a follow camera with the mouse and touch. |
+| `FollowControlsOptions3D` | 接口 | Follow controls to make: how fast they turn and zoom. |
 | `GLTF_ASSET_3D` | 值 | A loaded glTF file. |
 | `GltfUrlLoadOptions3D` | 接口 | glTF loading options: download limits plus the optional KTX2, meshopt and Draco decoders. |
 | `isSoftwareRendered3D` | 函数 | Whether WebGL here is drawn by software (SwiftShader, llvmpipe and the like), as in a headless browser, a virtual machine or a page whose graphics card is blocked. |
 | `loadCubeTexture3D` | 函数 | Load six square images in +X, -X, +Y, -Y, +Z, -Z order as a cube texture. |
 | `loadGltfFromUrl3D` | 函数 | Load a .glb or .gltf file; relative buffer and image URIs resolve against `url`. |
-| `LoadOptions3D` | 接口 |  |
+| `LoadOptions3D` | 接口 | How a 3D asset is loaded: a signal that cancels it, and the most bytes it reads. |
 | `loadTexture3D` | 函数 | Load an image or KTX2 file as a texture. |
-| `OrbitControls3D` | 类 |  |
-| `OrbitControlsOptions3D` | 接口 |  |
+| `OrbitControls3D` | 类 | Turns a camera around a target, pans and zooms it, with the mouse and touch. |
+| `OrbitControlsOptions3D` | 接口 | Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. |
 | `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | 类 | A sound placed in the scene. |
-| `PositionalAudioOptions3D` | 接口 |  |
-| `POST3D_LIMITS` | 值 |  |
-| `PostProcessSettings3D` | 接口 |  |
+| `PositionalAudioOptions3D` | 接口 | A positional sound to make: its buffer and volume, how it fades with distance, its cone, rate, and whether it is spatial. |
+| `POST3D_LIMITS` | 值 | The most bloom levels. |
+| `PostProcessSettings3D` | 接口 | What is done to a frame after it is drawn: bloom, antialiasing, color, vignette, ambient occlusion, depth of field and outlines. |
 | `registerWorld3DAssets` | 函数 | Register the World3D asset providers on an AssetManager. |
 | `Renderer3D` | 接口 | What both world3d backends provide; views and tools depend on this only. |
-| `Renderer3DInfo` | 接口 |  |
+| `Renderer3DInfo` | 接口 | What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. |
 | `SCENE_ASSET_3D` | 值 | A scene document written by serializeScene3D. |
-| `ScreenMarker3D` | 接口 |  |
-| `ScreenMarkerOptions3D` | 接口 |  |
-| `ScreenMarkers3D` | 接口 |  |
-| `ScreenMarkersOptions3D` | 接口 |  |
+| `ScreenMarker3D` | 接口 | A marker over the screen that follows a point of the scene: its element and where it is. |
+| `ScreenMarkerOptions3D` | 接口 | A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. |
+| `ScreenMarkers3D` | 接口 | Elements over the screen that follow points of the scene: add them, and update them each frame. |
+| `ScreenMarkersOptions3D` | 接口 | Screen markers to make: the container they go in, and the camera they follow. |
 | `startWorld3DLoop` | 函数 | Advance the Engine clock once per display frame. |
 | `TEXTURE_ASSET_3D` | 值 | A 2D texture loaded from an image or KTX2 file. |
 | `TextureLoadOptions3D` | 接口 | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
-| `ToneMapping3D` | 类型 |  |
-| `TransformControls3D` | 类 |  |
-| `WebGPURenderer3D` | 类 |  |
-| `WebGPURenderer3DOptions` | 接口 |  |
+| `ToneMapping3D` | 类型 | How a renderer maps bright colors into the screen's range. |
+| `TransformControls3D` | 类 | Drags a transform gizmo with the mouse and touch to move, turn or scale an object. |
+| `WebGPURenderer3D` | 类 | Draws 3D scenes with WebGPU: set its size, render a scene from a camera, and read what it drew. |
+| `WebGPURenderer3DOptions` | 接口 | A WebGPU renderer to make: its canvas and device, its tone mapping and exposure, its shadows, and what is called when the device is lost. |
 | `WORLD3D_QUALITY_PRESETS` | 值 | The three qualities. |
-| `World3DApp` | 接口 |  |
-| `World3DAppOptions` | 接口 |  |
-| `World3DAssetOptions` | 接口 |  |
-| `World3DBackend` | 类型 |  |
+| `World3DApp` | 接口 | A 3D app: its Engine, renderer and view, its quality and resolution, and calls that show a scene and start and stop it. |
+| `World3DAppOptions` | 接口 | A 3D app to make: its backend and quality, its dynamic resolution, its tone mapping, and what is called on an error or a lost device. |
+| `World3DAssetOptions` | 接口 | How a 3D app loads assets: how URLs are resolved, how many bytes, and how textures and compressed data are decoded. |
+| `World3DBackend` | 类型 | Which GPU interface a 3D app draws with. |
 | `World3DClockSource` | 接口 | The part of an Engine this view needs: its explicit game clock. |
 | `World3DDeviceHints` | 接口 | What `pickWorld3DQuality` reads about the device. |
-| `World3DLoopSource` | 接口 |  |
-| `World3DOverlay` | 接口 |  |
-| `World3DOverlayOptions` | 接口 |  |
-| `World3DQuality` | 类型 |  |
+| `World3DLoopSource` | 接口 | What drives a 3D view: an Engine's clock and the call that advances it. |
+| `World3DOverlay` | 接口 | A 2D game drawn on a canvas over a 3D view. |
+| `World3DOverlayOptions` | 接口 | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
+| `World3DQuality` | 类型 | How much a 3D app draws: low, medium or high quality. |
 | `World3DQualityPreset` | 接口 | What one picture quality turns on. |
-| `World3DShowOptions` | 接口 |  |
-| `World3DStats` | 接口 |  |
-| `World3DStatsOptions` | 接口 |  |
-| `World3DView` | 类 |  |
-| `World3DViewOptions` | 接口 |  |
+| `World3DShowOptions` | 接口 | What a 3D app shows: its update, mixers and controls. |
+| `World3DStats` | 接口 | Frame times, frame rate, draws and triangles of a 3D view, measured each frame. |
+| `World3DStatsOptions` | 接口 | 3D stats to make: the container they show in, how they smooth, and how often they refresh. |
+| `World3DView` | 类 | Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. |
+| `World3DViewOptions` | 接口 | A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. |
 
 ## `@egret/engine/resources`
 

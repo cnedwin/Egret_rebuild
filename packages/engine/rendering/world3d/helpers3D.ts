@@ -128,6 +128,7 @@ export class Lod3D extends Object3D {
   }
 }
 
+/** A screen layer to make: its order and opacity, whether it updates itself, and which way its rows run. */
 export interface ScreenLayerOptions3D {
   /** 'overlay' draws after the scene with blending; 'underlay' draws first and is covered by it. */
   readonly order?: 'overlay' | 'underlay';
@@ -191,6 +192,7 @@ export class ScreenLayer3D extends Mesh3D {
     );
   }
 }
+/** Makes a picture drawn over the whole screen, above or below the scene. */
 export function createScreenLayer3D(source: TextureSource3D, options: ScreenLayerOptions3D = {}): ScreenLayer3D {
   return new ScreenLayer3D(source, options);
 }

@@ -12,6 +12,7 @@ import type { AnimationTrackInput3D } from './Animation3D.js';
 import { quatMultiply, quatNormalize } from './math3D.js';
 import type { Object3D } from './Object3D.js';
 
+/** How a clip is moved to another skeleton: from where to where, which bones match, the root, scale and frame rate. */
 export interface RetargetOptions3D {
   /** The rig the clip was made for, in its rest pose. */
   readonly source: Object3D;

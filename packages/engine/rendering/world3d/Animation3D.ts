@@ -7,11 +7,16 @@ import { quatNormalize, quatSlerp } from './math3D.js';
 import { Mesh3D } from './Mesh3D.js';
 import type { Object3D } from './Object3D.js';
 
+/** What an animation track moves: a node's position, rotation, scale, or morph weights. */
 export type AnimationPath3D = 'position' | 'quaternion' | 'scale' | 'weights';
+/** How a track goes between its keys: it steps, moves in a line, or follows a cubic spline. */
 export type AnimationInterpolation3D = 'step' | 'linear' | 'cubic';
+/** How an action plays its clip: over and over, once, or back and forth. */
 export type AnimationLoop3D = 'repeat' | 'once' | 'pingpong';
+/** The most tracks, keys and actions animations hold. */
 export const ANIMATION3D_LIMITS = Object.freeze({ maxTracks: 4096, maxKeys: 1048576, maxActions: 256 } as const);
 
+/** A track to make: the node it moves by name, what it moves, its key times and values, and its interpolation. */
 export interface AnimationTrackInput3D {
   /** Name of the animated node, resolved under the mixer root. */
   readonly targetName: string;
@@ -25,6 +30,7 @@ export interface AnimationTrackInput3D {
   readonly values: ArrayLike<number>;
   readonly interpolation?: AnimationInterpolation3D;
 }
+/** One track of a clip: the node it moves, what it moves, its keys and its interpolation. */
 export interface AnimationTrack3D {
   readonly targetName: string;
   readonly path: AnimationPath3D;
@@ -35,6 +41,7 @@ export interface AnimationTrack3D {
   readonly size: number;
 }
 
+/** A named animation: its tracks and its length in seconds. */
 export class AnimationClip3D {
   readonly name: string;
   readonly tracks: readonly AnimationTrack3D[];
@@ -74,6 +81,7 @@ export class AnimationClip3D {
     this.duration = duration === undefined ? end : requireFinite3D(duration, 'clip duration');
   }
 }
+/** Makes a clip from its name and tracks; malformed tracks are refused. */
 export function createAnimationClip3D(input: {
   readonly name?: string;
   readonly tracks: readonly AnimationTrackInput3D[];
@@ -213,6 +221,7 @@ interface BoundTrack {
   readonly hint: { index: number };
 }
 
+/** One clip playing on a mixer: play, stop and reset it, fade it in or out, or cross-fade to another. */
 export class AnimationAction3D {
   /** Blend weight before fading is applied. */
   weight = 1;

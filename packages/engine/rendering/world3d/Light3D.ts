@@ -5,7 +5,9 @@ import { setColor3D } from './Material3D.js';
 import type { ColorInput3D } from './Material3D.js';
 import { Object3D } from './Object3D.js';
 
+/** The kind of a light: ambient, hemisphere, directional, point or spot. */
 export type LightType3D = 'ambient' | 'hemisphere' | 'directional' | 'point' | 'spot';
+/** The most directional, point, tiled point and spot lights a scene lights, and the most shadows. */
 export const LIGHT3D_LIMITS = Object.freeze({
   maxDirectional: 4,
   maxPoint: 8,
@@ -15,6 +17,7 @@ export const LIGHT3D_LIMITS = Object.freeze({
   maxShadows: 4
 } as const);
 
+/** How a light casts shadows: its map size, biases, range, extent, softness and cascades. */
 export interface LightShadow3D {
   /** Edge of this light's square tile in the shared shadow atlas, in texels. */
   mapSize: number;
@@ -40,15 +43,18 @@ export interface LightShadow3D {
   cascadeLambda: number;
 }
 
+/** A light to make: its color and intensity, and whether it casts shadows. */
 export interface LightOptions3D {
   readonly color?: ColorInput3D;
   readonly intensity?: number;
   readonly castShadow?: boolean;
 }
+/** A point light to make: how far it reaches. */
 export interface PointLightOptions3D extends LightOptions3D {
   /** Distance at which the light fades to zero; 0 means unbounded inverse-square falloff. */
   readonly range?: number;
 }
+/** A spot light to make: its cone's angle and soft edge. */
 export interface SpotLightOptions3D extends PointLightOptions3D {
   /** Half angle of the cone in radians. */
   readonly angle?: number;
@@ -56,6 +62,7 @@ export interface SpotLightOptions3D extends PointLightOptions3D {
   readonly penumbra?: number;
 }
 
+/** A light in a scene: its kind and its shadow. */
 export class Light3D extends Object3D {
   readonly lightType: LightType3D;
   readonly color = new Float32Array([1, 1, 1]);
@@ -123,11 +130,13 @@ export function createHemisphereLight3D(
 export function createDirectionalLight3D(options: LightOptions3D = {}): Light3D {
   return base(new Light3D('directional'), options);
 }
+/** Makes a light that shines from a point in every direction. */
 export function createPointLight3D(options: PointLightOptions3D = {}): Light3D {
   const light = base(new Light3D('point'), options);
   light.range = options.range ?? 0;
   return light;
 }
+/** Makes a light that shines from a point in a cone. */
 export function createSpotLight3D(options: SpotLightOptions3D = {}): Light3D {
   const light = base(new Light3D('spot'), options);
   light.range = options.range ?? 0;

@@ -11,8 +11,10 @@ import { Mesh3D } from './Mesh3D.js';
 import type { Object3D } from './Object3D.js';
 import type { Texture3D } from './Texture3D.js';
 
+/** The most points a trail has. */
 export const TRAIL3D_LIMITS = Object.freeze({ maxPoints: 4096 } as const);
 
+/** A trail to make: what it follows, how long it lasts, how far apart its points are, and how its width, color and opacity change. */
 export interface TrailOptions3D {
   /** The object whose world position the trail follows. Without one, feed points with `push`. */
   readonly target?: Object3D;
@@ -233,6 +235,7 @@ export class Trail3D extends Mesh3D {
     this.geometry.invalidateBounds();
   }
 }
+/** Makes a ribbon that follows a moving object and fades behind it. */
 export function createTrail3D(options: TrailOptions3D = {}): Trail3D {
   return new Trail3D(options);
 }

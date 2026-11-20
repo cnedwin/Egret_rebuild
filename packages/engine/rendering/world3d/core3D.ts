@@ -2,6 +2,7 @@
 // Shared error type, identity counters and the disposable resource base used
 // by geometries, textures and materials. DOM-free; no backend dependency.
 
+/** What went wrong in the 3D world. */
 export type World3DErrorCode =
   | 'WORLD3D_INPUT_INVALID'
   | 'WORLD3D_BUDGET'
@@ -48,6 +49,7 @@ export function requireCount3D(value: unknown, field: string, max: number): numb
   return value;
 }
 
+/** Called when something is disposed of. */
 export type DisposeListener3D = () => void;
 
 /**

@@ -42,6 +42,7 @@ import {
 } from './materialWebGL23D.js';
 import { MAX_MORPH_INFLUENCES_3D, SKYBOX_SHADER_3D, TEXTURE_UNITS_3D, buildMaterialShader3D } from './shaders3D.js';
 
+/** A WebGL2 renderer to make: its canvas and context, its tone mapping and exposure, its shadows, and what is called when the context is lost and restored. */
 export interface WebGL2Renderer3DOptions {
   readonly canvas: HTMLCanvasElement | OffscreenCanvas;
   readonly antialias?: boolean;
@@ -98,6 +99,7 @@ interface ShadowAtlas3D {
   readonly size: number;
 }
 
+/** Draws 3D scenes with WebGL2: set its size, render a scene from a camera, and read what it drew. */
 export class WebGL2Renderer3D implements Renderer3D {
   readonly canvas: HTMLCanvasElement | OffscreenCanvas;
   toneMapping: ToneMapping3D;
@@ -1302,6 +1304,7 @@ export class WebGL2Renderer3D implements Renderer3D {
   }
 }
 
+/** Makes a renderer that draws 3D scenes with WebGL2. */
 export function createWebGL2Renderer3D(options: WebGL2Renderer3DOptions): WebGL2Renderer3D {
   return new WebGL2Renderer3D(options);
 }

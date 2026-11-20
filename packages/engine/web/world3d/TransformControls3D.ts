@@ -10,6 +10,7 @@ import { TransformGizmo3D } from '../../rendering/world3d/Gizmo3D.js';
 import type { GizmoMode3D, GizmoSpace3D, TransformGizmoOptions3D } from '../../rendering/world3d/Gizmo3D.js';
 import type { Object3D } from '../../rendering/world3d/Object3D.js';
 
+/** Drags a transform gizmo with the mouse and touch to move, turn or scale an object. */
 export class TransformControls3D implements Disposable {
   readonly camera: Camera3D;
   readonly element: HTMLElement;
@@ -126,6 +127,7 @@ export class TransformControls3D implements Disposable {
   }
 }
 
+/** Makes transform controls for a camera on an element. */
 export function createTransformControls3D(
   camera: Camera3D,
   element: HTMLElement,

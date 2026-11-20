@@ -18,6 +18,7 @@ import { Mesh3D } from './Mesh3D.js';
 import { quatFromRotationMatrix } from './math3D.js';
 import { createQuadGeometry3D } from './primitives3D.js';
 
+/** Volumetric fog to make: its color and density, its height and falloff, its distance, and how much the sun and lights shine through it. */
 export interface VolumetricFogOptions3D {
   readonly color?: ColorInput3D;
   /** Fog thickness per world unit at `height`. Default 0.02. */
@@ -256,6 +257,7 @@ export class VolumetricFog3D extends Mesh3D {
     return value;
   }
 }
+/** Makes fog that light shines through. */
 export function createVolumetricFog3D(options: VolumetricFogOptions3D = {}): VolumetricFog3D {
   return new VolumetricFog3D(options);
 }

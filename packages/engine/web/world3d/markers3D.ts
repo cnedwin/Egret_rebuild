@@ -9,6 +9,7 @@ import type { Object3D } from '../../rendering/world3d/Object3D.js';
 import { projectToViewport3D } from '../../rendering/world3d/GeometryBuilder3D.js';
 import type { ViewportPoint3D } from '../../rendering/world3d/GeometryBuilder3D.js';
 
+/** A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. */
 export interface ScreenMarkerOptions3D {
   /** What the element follows: a node's world position, or a fixed world point. */
   readonly target: Object3D | readonly [number, number, number];
@@ -20,6 +21,7 @@ export interface ScreenMarkerOptions3D {
   /** Hide the element beyond this distance from the camera. */
   readonly maxDistance?: number;
 }
+/** A marker over the screen that follows a point of the scene: its element and where it is. */
 export interface ScreenMarker3D {
   readonly element: HTMLElement;
   /** Where the element was placed last; `onEdge` when it was clamped. */
@@ -32,11 +34,13 @@ export interface ScreenMarker3D {
   /** Takes the marker off; the element is removed from its container when the layer added it. */
   dispose(): void;
 }
+/** Screen markers to make: the container they go in, and the camera they follow. */
 export interface ScreenMarkersOptions3D {
   /** The element markers are placed in; it should cover the canvas and have `position: relative` or similar. */
   readonly container: HTMLElement;
   readonly camera: Camera3D;
 }
+/** Elements over the screen that follow points of the scene: add them, and update them each frame. */
 export interface ScreenMarkers3D {
   readonly markers: readonly ScreenMarker3D[];
   /** The camera markers are projected through; may be replaced. */

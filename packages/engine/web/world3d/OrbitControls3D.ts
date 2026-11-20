@@ -6,6 +6,7 @@ import type { Disposable } from '@egret/contracts';
 import type { Camera3D } from '../../rendering/world3d/Camera3D.js';
 import { World3DError } from '../../rendering/world3d/core3D.js';
 
+/** Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. */
 export interface OrbitControlsOptions3D {
   readonly target?: readonly [number, number, number];
   readonly minDistance?: number;
@@ -27,6 +28,7 @@ export interface OrbitControlsOptions3D {
 
 const EPSILON = 1e-4;
 
+/** Turns a camera around a target, pans and zooms it, with the mouse and touch. */
 export class OrbitControls3D implements Disposable {
   readonly camera: Camera3D;
   readonly element: HTMLElement;
@@ -208,6 +210,7 @@ export class OrbitControls3D implements Disposable {
   }
 }
 
+/** Makes orbit controls for a camera on an element. */
 export function createOrbitControls3D(
   camera: Camera3D,
   element: HTMLElement,

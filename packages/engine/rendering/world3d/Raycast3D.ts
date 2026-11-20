@@ -18,6 +18,7 @@ import type { Geometry3D } from './Geometry3D.js';
 import { InstancedMesh3D, Mesh3D } from './Mesh3D.js';
 import type { Object3D } from './Object3D.js';
 
+/** What a ray hit: how far, where, the object, its face, its texture coordinate and its instance. */
 export interface RaycastHit3D {
   /** Distance from the ray origin in world units. */
   readonly distance: number;
@@ -31,6 +32,7 @@ export interface RaycastHit3D {
   /** Instance index for instanced meshes. */
   readonly instanceId: number | undefined;
 }
+/** How a ray is cast: its near and far distances, its layers, and whether only the first hit is wanted. */
 export interface RaycastOptions3D {
   readonly near?: number;
   readonly far?: number;
@@ -47,6 +49,7 @@ const localOrigin = new Float32Array(3),
 const hit = new Float32Array(3),
   worldPoint = new Float32Array(3);
 
+/** Casts rays through a scene, from a point or from the camera through a screen point. */
 export class Raycaster3D {
   readonly origin = new Float32Array(3);
   readonly direction = new Float32Array([0, 0, -1]);
