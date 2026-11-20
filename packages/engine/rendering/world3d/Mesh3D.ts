@@ -189,7 +189,8 @@ export class Mesh3D extends Object3D {
     if (this.skeleton) return this.skinnedBounds();
     // Compared as numbers: this runs for every mesh on every frame.
     const geometry = this.geometry,
-      version = geometry.version,
+      // A geometry whose points moved in place (cloth, a rope, a trail) has new bounds without a new structure.
+      version = geometry.version * 4294967296 + geometry.boundsVersion,
       world = this.worldVersion;
     if (geometry !== this.#sphereGeometry || version !== this.#sphereVersion || world !== this.#sphereWorld) {
       sphereTransform(this.#worldSphere, geometry.boundingSphere, this.matrixWorld);
@@ -255,6 +256,8 @@ export class InstancedMesh3D extends Mesh3D {
   boundsScale = 1;
   #boundsVersion = 0;
   #boundsCount = -1;
+  #boundsGeometry: unknown = undefined;
+  #boundsShape = -1;
   readonly #instanceSphere = new Float32Array(4);
 
   constructor(
@@ -325,7 +328,13 @@ export class InstancedMesh3D extends Mesh3D {
   /** Sphere enclosing every instance, in world space. */
   override get worldBoundingSphere(): Float32Array {
     const sphere = this.#instanceSphere;
-    if (this.#boundsVersion !== this.instanceVersion || this.#boundsCount !== this.count) {
+    const shape = this.geometry.version * 4294967296 + this.geometry.boundsVersion;
+    if (
+      this.#boundsVersion !== this.instanceVersion ||
+      this.#boundsCount !== this.count ||
+      this.#boundsGeometry !== this.geometry ||
+      this.#boundsShape !== shape
+    ) {
       const base = this.geometry.boundingSphere,
         box = box3Empty(new Float32Array(6)),
         m = this.instanceMatrices;
@@ -354,6 +363,8 @@ export class InstancedMesh3D extends Mesh3D {
       if (this.localSphere[3]! >= 0) this.localSphere[3]! += radius;
       this.#boundsVersion = this.instanceVersion;
       this.#boundsCount = this.count;
+      this.#boundsGeometry = this.geometry;
+      this.#boundsShape = shape;
     }
     return sphereTransform(sphere, this.localSphere, this.matrixWorld) as Float32Array;
   }

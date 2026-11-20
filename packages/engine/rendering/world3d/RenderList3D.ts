@@ -461,6 +461,18 @@ export class RenderList3D {
     this.stats.visited++;
     if (mesh.skeleton) mesh.skeleton.update(this.#frame);
     if (mesh instanceof ScreenLayer3D && mesh.autoUpdate) mesh.refreshSource();
+    // Too far to be seen: neither drawn nor casting a shadow.
+    if (mesh.cullDistance < Infinity) {
+      const bounds = worldRenderSphere3D(mesh);
+      if (bounds && bounds[3]! >= 0) {
+        const eye = camera.matrixWorld,
+          away = Math.hypot(bounds[0]! - eye[12]!, bounds[1]! - eye[13]!, bounds[2]! - eye[14]!) - bounds[3]!;
+        if (away > mesh.cullDistance) {
+          this.stats.culled++;
+          return;
+        }
+      }
+    }
     if (mesh.castShadow) this.#casters.push(mesh);
     if ((mesh.layers & layerMask) === 0) return;
     const sphere = worldRenderSphere3D(mesh);

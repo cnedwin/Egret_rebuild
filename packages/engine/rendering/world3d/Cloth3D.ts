@@ -122,7 +122,9 @@ class Strands3D {
   }
   /**
    * Hold a point where it is now. With a body, the point keeps its place on
-   * that body and follows it as the body moves and turns.
+   * that body and follows it as the body moves and turns. The pin is one-way:
+   * the cloth or rope follows the body and never pulls on it, so a tarp on a
+   * truck does not slow the truck.
    */
   pinPoint(index: number, body?: RigidBody3D): void {
     this.check(index);
@@ -314,7 +316,11 @@ export interface RopeOptions3D extends StrandOptions3D {
   readonly end: readonly [number, number, number];
   /** Number of links. Defaults to 16. */
   readonly segments?: number;
-  /** Extra length as a share of the straight distance, so the rope hangs in a curve. Defaults to 0. */
+  /**
+   * Extra length as a share of the straight distance between its ends, so the rope hangs in a curve: 0 is taut, 0.01
+   * barely sags, 0.1 is a tenth longer, 0.33 hangs loose. It is not a multiple of the length: 1 is a rope twice as long
+   * as the gap, which folds on itself. Defaults to 0.
+   */
   readonly slack?: number;
   /** Hold the first or the last point in place, or on a body. Both ends are free unless pinned. */
   readonly pinStart?: boolean | RigidBody3D;
@@ -478,7 +484,10 @@ export interface ClothOptions3D extends StrandOptions3D {
   readonly rows: number;
   /** World position of the first point of the first row. */
   readonly origin: readonly [number, number, number];
-  /** Vectors along a full row and down a full column. */
+  /**
+   * Vectors along a whole row and down a whole column: the width and the height of the sheet, not the gap between two
+   * points. A tarp 3 wide and 2 deep is `right: [3, 0, 0]`, `down: [0, -2, 0]`, whatever its columns and rows.
+   */
   readonly right: readonly [number, number, number];
   readonly down: readonly [number, number, number];
   /** Add links that skip a point, which makes the cloth resist folding. Defaults to true. */

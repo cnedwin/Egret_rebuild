@@ -53,6 +53,13 @@ export class Object3D {
   castShadow = false;
   receiveShadow = true;
   frustumCulled = true;
+  /**
+   * A mesh further from the camera than this, in world units, from the camera to the near side of its bounds, is not
+   * drawn and casts no shadow: for grass, trees and props that are too small to see far off. Infinity (the default)
+   * keeps it at any distance. For a near and a far version of the same thing, use `Lod3D`. Not written by
+   * `serializeScene3D`.
+   */
+  cullDistance = Infinity;
   /** Free-form application data; never read by the engine. */
   userData: Record<string, unknown> = {};
 
@@ -292,6 +299,7 @@ export class Object3D {
     this.castShadow = source.castShadow;
     this.receiveShadow = source.receiveShadow;
     this.frustumCulled = source.frustumCulled;
+    this.cullDistance = source.cullDistance;
     this.userData = { ...source.userData };
     this.#localDirty = true;
   }

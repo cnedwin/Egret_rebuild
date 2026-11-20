@@ -367,7 +367,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createGeometryBuilder3D` | function | A builder that merges placed, coloured parts into one geometry. |
 | `createGlassMaterial3D` | function | A standard material set up as glass: smooth and see-through, with reflections kept. |
 | `createGpuParticles3D` | function | Makes particles simulated on the GPU. |
-| `createGradientCubeTexture3D` | function | Procedural sky cube: a vertical gradient from `ground` through `horizon` to `zenith`, in sRGB bytes. |
+| `createGradientCubeTexture3D` | function | Procedural sky cube: a vertical gradient from `ground` through `horizon` to `zenith`, in sRGB. |
 | `createGridGeometry3D` | function | Square grid of lines on the XZ plane, centered at the origin. |
 | `createGridHelper3D` | function | Ready-made grid node for editors and debug views. |
 | `createHeightField3D` | function | Makes a grid of heights for terrain and physics. |

@@ -367,7 +367,7 @@
 | `createGeometryBuilder3D` | 函数 | A builder that merges placed, coloured parts into one geometry. |
 | `createGlassMaterial3D` | 函数 | A standard material set up as glass: smooth and see-through, with reflections kept. |
 | `createGpuParticles3D` | 函数 | Makes particles simulated on the GPU. |
-| `createGradientCubeTexture3D` | 函数 | Procedural sky cube: a vertical gradient from `ground` through `horizon` to `zenith`, in sRGB bytes. |
+| `createGradientCubeTexture3D` | 函数 | Procedural sky cube: a vertical gradient from `ground` through `horizon` to `zenith`, in sRGB. |
 | `createGridGeometry3D` | 函数 | Square grid of lines on the XZ plane, centered at the origin. |
 | `createGridHelper3D` | 函数 | Ready-made grid node for editors and debug views. |
 | `createHeightField3D` | 函数 | Makes a grid of heights for terrain and physics. |

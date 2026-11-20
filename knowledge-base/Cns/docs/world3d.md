@@ -24,6 +24,20 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 - 纹理坐标 V = 0 对应存储的第一行。内置基础几何体的 V 轴向上，因此 `loadTexture3D` 默认翻转行；glTF 纹理不翻转。
 - 错误为带稳定 `code` 的 `World3DError`，例如 `WORLD3D_INPUT_INVALID`、`WORLD3D_BUDGET`、`WORLD3D_DISPOSED`、`WORLD3D_GLTF_INVALID`、`WORLD3D_GLTF_UNSUPPORTED` 和 `WORLD3D_CONTEXT_UNAVAILABLE`。
 
+## 哪个入口有什么
+
+`@egret/engine/world3d` 包含场景、几何体、材质、物理、导航、地形，以及其他一切不需要页面的部分。后端入口 `@egret/engine/webgl2/world3d` 和 `@egret/engine/webgpu/world3d` 包含以上全部，外加需要页面、画布或 GPU 的部分。从核心入口导入下面这些会报"缺少导出"：
+
+| 只在后端入口里 | |
+|---|---|
+| 渲染器与应用 | `createWebGL2Renderer3D` / `createWebGPURenderer3D`、`createWorld3DApp`、`createWorld3DHost`、`createWorld3DView`、`startWorld3DLoop`、`pickWorld3DBackend`、`pickWorld3DQuality`、`isSoftwareRendered3D`、`createDynamicResolution3D`、`createWorld3DStats` |
+| 叠加在画面上 | `createWorld3DOverlay`、`createScreenMarkers3D` |
+| 后处理 | `createAtmosphere3D`、`createCustomPost3D`、`createPostProcessSettings3D` |
+| 控制器 | `createOrbitControls3D`、`createFlyControls3D`、`createFollowControls3D`、`createTransformControls3D` |
+| 声音 | `createAudioListener3D`、`createPositionalAudio3D` |
+| 从页面加载 | `loadTexture3D`、`loadCubeTexture3D`、`loadGltfFromUrl3D`、`captureCubeTexture3D`、`registerWorld3DAssets` |
+| `play3d` | 只在 WebGL2 入口 |
+
 ## 场景图
 
 `Object3D` 用类型化数组保存位置、单位四元数和缩放，提供 `setPosition`、`setRotation`、`setQuaternion`、`setScale`、`rotateOnAxis`、`lookAt` 和 `setMatrix`。直接写入数组后需要调用 `markTransformDirty()`。局部和世界矩阵只对脏节点及其后代重新计算，静态子树每帧没有开销。
@@ -40,7 +54,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 `Material3D` 是带 `shading` 模型的单一类：无光照、Lambert、Blinn-Phong 或金属度-粗糙度标准材质。它包含基础色与不透明度、基础色贴图、法线、金属度-粗糙度、遮蔽和自发光贴图，以及面向、Alpha 模式（不透明、遮罩、混合）、混合方式、深度测试与写入、顶点色、平直着色、线框和多边形偏移。标量和颜色修改在下一帧生效。增加贴图或改变 Alpha 模式等会影响着色器特性的修改，需要调用 `touch()`。
 
-`Texture3D` 封装自有 RGBA8 像素或不透明的宿主图像，带环绕、过滤、多级渐远、色彩空间、各向异性和 UV 变换。`CubeTexture3D` 接受六个面。`RenderTarget3D` 是离屏颜色目标，其 `texture` 可用作材质贴图。`createGradientCubeTexture3D` 生成程序化天空。
+`Texture3D` 封装自有 RGBA8 像素或不透明的宿主图像，带环绕、过滤、多级渐远、色彩空间、各向异性和 UV 变换。`CubeTexture3D` 接受六个面。`RenderTarget3D` 是离屏颜色目标，其 `texture` 可用作材质贴图。`createGradientCubeTexture3D(zenith, horizon, ground)` 用三个 sRGB 颜色生成程序化天空，颜色以字节（0 到 255）给出；九个数都不超过 1 时按小数（0 到 1）理解。过去小数会被当成字节，天空几乎是黑的——《茶马古道》在软件渲染下看到的黑色天空盒就是这个原因，不是渲染器的问题。
 
 几何、材质、纹理和渲染目标都是带 `version` 和终结性 `dispose()` 的资源。渲染器依据版本刷新 GPU 副本，并在资源销毁时退役这些副本。核心从不引用后端。
 
@@ -64,7 +78,7 @@ World3D 是白鹭的可选保留式 3D 场景图。应用构建由相机、灯�
 
 蒙皮使用 `Bone3D` 节点和带逆绑定矩阵的 `Skeleton3D`；每个顶点的四个影响在 GPU 上混合。变形目标保存位置和可选的法线增量；一次绘制混合权重最大的八个目标。
 
-`Lod3D` 按相机距离显示其中一个子节点。
+`Lod3D` 按相机距离显示其中一个子节点：`lod.addLevel(near, 0).addLevel(far, 120)`，由渲染器每帧选择。某一级可以是 `InstancedMesh3D`，所以一块地的树木可以近处一组精细的、远处一组简化的。远处只需消失的东西（例如草），给网格设 `cullDistance`：从相机到其包围球近侧超过这个距离，就既不绘制也不投影（实例网格按全部实例的包围球计算）。`serializeScene3D` 不会写入它。
 
 成群的动画角色可以一次绘制。`bakeAnimationTexture3D(root, mesh, clips, {fps})` 把每个动画片段采样到骨架上，按帧保存蒙皮网格每根骨骼的矩阵以及前 16 个变形目标的权重；烘焙结束后骨架恢复原状。`createSkinnedInstancedMesh3D(geometry, material, baked, capacity)` 随后不用骨架就能绘制蒙皮几何体的多个副本。每个实例有自己的变换和颜色；`setClipAt(index, clip, {time, speed, loop, fade})` 设置片段，其中 `fade` 从正在播放的片段交叉淡入；`setBlendAt(index, clip, weight, {sync})` 可以再按权重混入第二个片段，比如从走到跑。`lookBone` 指定一根骨骼，`setBoneRotationAt(index, x, y, z, w)` 让它在每个实例上绕自己的关节转动，比如头部。每帧调用一次 `crowd.update(deltaSeconds)`。只有在能覆盖所有使用的蒙皮、变形目标和骨骼姿态时，才设置以实例原点为中心的正 `crowd.cullRadius`。`cullPadding` 扩大这个半径。有可靠半径且不投射阴影时，相机视锥可剔除实例。开启 `cullInstances` 可启用剔除。未提供姿态包围半径或投射阴影的人群保留全部实例。`count` 及其别名 `total` 都是活动实例数，`drawCount` 报告已准备绘制的数量。原始 `instanceMatrices` 和 `instanceColors` 保留实例编号顺序，`instanceAnimation` 保持原有四值布局。剔除时使用单独的绘制数组。顶点阶段在烘焙表中查找姿态，这张表在 WebGL2 上是浮点纹理，在 WebGPU 上是存储缓冲区；最多应用八个变形目标；阴影使用同样的姿态。一个实例最多混合两个片段，被转动的骨骼不会带动它下面的骨骼；烘焙实例不使用切线、顶点颜色和第二套纹理坐标，因为两个后端都能保证的顶点输入已经用完。两帧之间的姿态按矩阵逐个混合，在默认每秒 30 帧时足够准确，低帧率下的快速旋转会有偏差。克隆会保留正在进行的淡入。绘制列表按批次节点原点排序。
 
@@ -219,9 +233,9 @@ Windows Edge 157 在 RTX 5090 Laptop GPU（ANGLE D3D11）上运行 `pointShadows
 
 `createRagdoll3D(world, root, parts, options)` 在骨架上铺设刚体和关节。每个部件指定一根骨骼（或它在 `root` 下的名称）、一个以世界单位表示的球、胶囊或盒子、在骨骼自身坐标系中相对骨骼原点的 `offset`、`mass`、父部件的序号 `parent`，以及它在那里的连接方式：可带 `coneLimit` 的 `point` 关节，或带骨骼坐标系中的 `axis` 和 `limits` 的 `hinge`。恰好有一个部件没有父部件，并且父部件排在子部件之前。在调用 `activate(velocity, spin)` 之前世界中什么都没有；它按骨架当时的姿态创建刚体，因此角色可以在动画中途带着速度瘫软下来。激活期间，在 `world.step()` 之后调用 `ragdoll.update()` 写回骨骼；没有被任何部件指定的骨骼保持原有姿态，由父骨骼带动。`deactivate()` 移除刚体，骨骼留在落下的位置。布娃娃激活期间，请让动画混合器停止写入同一批骨骼。`solverSteps` 为 4 的世界能把关节拉得明显更紧。激活失败时，布娃娃会移除本次创建的刚体和关节，保持未激活状态。修正失败原因后可以重试。
 
-`createVehicle3D(world, chassis, {wheels, engineForce, brakeForce, maxSteer, topSpeed, rollInfluence})` 用不是刚体的车轮驱动一个动力学车身刚体。每个车轮从车身上的 `position` 向下投射一条射线，在射线碰到地面的地方用弹簧（`stiffness`、`damping`、`restLength`、`travel`）托住车身，并在该点施力来驱动（`driven`）、转向（`steered`）、刹车，以及在 `grip` 允许的范围内抵抗侧滑。设置 `vehicle.throttle`（-1 到 1）、`brake`（0 到 1）和 `steering`（-1 到 1，正值向左），并在每次 `world.step()` 之前调用 `vehicle.update(deltaSeconds)`。每条车轮射线按刚体身份跳过自己的车身，并继续应用碰撞掩码。与车身同层的地面仍可支撑车轮。车身的局部 -Z 是前方，+Y 是上方。`vehicle.speed`、`groundedWheels` 以及每个车轮的 `grounded`、`load`、`length`、`spin` 和 `contact` 反映当前状态；车轮的 `node` 会被放置和转动，适用于车轴沿局部 X 轴的网格。`rollInfluence` 决定轮胎的侧向力有多少会让车身侧倾：1 相当于真实轮胎，高重心的车会翻；默认的 0.2 让车保持贴地。车轮没有宽度，自身不参与碰撞，也没有变速箱和差速器：这是一个街机模型。
+`createVehicle3D(world, chassis, {wheels, engineForce, brakeForce, maxSteer, topSpeed, rollInfluence})` 用不是刚体的车轮驱动一个动力学车身刚体。每个车轮从车身上的 `position` 向下投射一条射线，在射线碰到地面的地方用弹簧（`stiffness`、`damping`、`restLength`、`travel`）托住车身，并在该点施力来驱动（`driven`）、转向（`steered`）、刹车，以及在 `grip` 允许的范围内抵抗侧滑。设置 `vehicle.throttle`（-1 到 1）、`brake`（0 到 1）和 `steering`（-1 到 1，正值向左），并在每次 `world.step()` 之前调用 `vehicle.update(deltaSeconds)`。每条车轮射线按刚体身份跳过自己的车身，并继续应用碰撞掩码。与车身同层的地面仍可支撑车轮。车身的局部 -Z 是前方，+Y 是上方。`vehicle.speed`、`groundedWheels` 以及每个车轮的 `grounded`、`load`、`length`、`spin` 和 `contact` 反映当前状态；车轮的 `node` 会被放置和转动，适用于车轴沿局部 X 轴的网格。`rollInfluence` 决定轮胎的侧向力有多少会让车身侧倾：1 相当于真实轮胎，高重心的车会翻；默认的 0.2 让车保持贴地。车轮没有宽度，自身不参与碰撞，也没有变速箱和差速器：这是一个街机模型。车轮的 `node` 每次更新都按世界坐标摆放，所以要加在场景根上，而不是车身节点下面：`scene.addChild(wheel.node)`。加在车身下面会被移动两次。
 
-`createRope3D({start, end, segments, slack, pinStart, pinEnd})` 和 `createCloth3D({columns, rows, origin, right, down})` 是由定长连杆连接的点，用于装饰场景：缆线、旗帜、披风。每帧调用一次 `update(deltaSeconds)`。`pinPoint(index, body)` 或布料的 `pin(column, row, body)` 把一个点固定在原地，或固定在一个刚体上并随它移动和转动。`colliders` 列出点需要避开的球、胶囊、盒子和平面，间距为 `thickness`；`wind` 是持续的推力；`damping`、`friction` 和 `iterations` 用来调整手感。`createMesh(material)` 返回一个每次更新都会重建的网格：绳索是半径 `radius`、`sides` 个面的管子，布料是带平滑法线的面片，应使用双面材质。点位于世界空间，因此请把网格留在场景原点。它们跟随刚体并从碰撞体上滑开，但不会反推任何东西；布料不与自身碰撞；一次更新中移动距离超过碰撞体厚度的点可能穿过它。
+`createRope3D({start, end, segments, slack, pinStart, pinEnd})` 和 `createCloth3D({columns, rows, origin, right, down})` 是由定长连杆连接的点，用于装饰场景：缆线、旗帜、披风。每帧调用一次 `update(deltaSeconds)`。`pinPoint(index, body)` 或布料的 `pin(column, row, body)` 把一个点固定在原地，或固定在一个刚体上并随它移动和转动。`colliders` 列出点需要避开的球、胶囊、盒子和平面，间距为 `thickness`；`wind` 是持续的推力；`damping`、`friction` 和 `iterations` 用来调整手感。`createMesh(material)` 返回一个每次更新都会重建的网格：绳索是半径 `radius`、`sides` 个面的管子，布料是带平滑法线的面片，应使用双面材质。点位于世界空间，因此请把网格留在场景原点。它们跟随刚体并从碰撞体上滑开，但不会反推任何东西；布料不与自身碰撞；一次更新中移动距离超过碰撞体厚度的点可能穿过它。布料的 `right` 和 `down` 是整块布的宽和高，不是相邻两点的间距。绳子的 `slack` 是比两端距离多出的比例：0 是绷直，0.01 微垂，0.33 松垮；1 是两倍长，会自己打折。钉住是单向的：布跟随刚体，从不拉动刚体。`createMesh` 做出的网格每次更新都会重新计算包围球，不会在原地被剔除。
 
 `servePhysics3D(port)` 和 `connectPhysics3D(port, worldOptions)` 让世界在另一个线程运行。工作线程的全部脚本是 `import {servePhysics3D} from '@egret/engine/world3d'; servePhysics3D(self);`。页面把 `Worker` 传给 `connectPhysics3D`，得到一个带有 `createBody`、`createJoint`、`setGravity`、`raycast`（返回 Promise）、`onContactBegin`、`onContactEnd` 和 `onError` 的客户端。它的刚体是替身，带有 `position`、`quaternion`、`isSleeping`、`node`、`setPosition`、`setQuaternion`、`setLinearVelocity`、`setAngularVelocity`、`applyImpulse`、`applyForce` 和 `remove`。每帧调用一次 `client.step(deltaSeconds)`，并调用 `client.update(alpha)` 放置节点；`alpha` 在最近两步之间混合。还有两步没有得到答复时，`step` 不发送并返回 false，因此较慢的工作线程会在时间上落后，而不是堆积工作。形状在消息中描述：球、盒子、胶囊、平面、它们的组合体，以及由 `points` 给出的凸包。显示的内容比模拟落后大约一步。三角网格刚体、角色控制器、载具、布娃娃、形状扫掠和 `onContact` 的细节不通过端口传递；请在工作线程一侧使用 `servePhysics3D` 返回的世界来运行它们。两端只需要 `postMessage` 和消息监听，因此 `MessagePort` 与工作线程同样可用。
 
@@ -287,7 +301,7 @@ Windows Edge 157 在 RTX 5090 Laptop GPU（ANGLE D3D11）上运行 `pointShadows
 
 `createTerrainMaterial3D({layers, weights, repeat})` 按一张权重图混合最多四张平铺的地表纹理，权重图的 R、G、B、A 通道分别决定各层出现的位置；配合 `uvScale` 为 1 的地形使用，使权重图恰好覆盖整块地形一次。任何材质都可以通过 `material.splat` 带上这样的地表层；它们占用颜色、自发光、遮蔽、金属粗糙度和光照贴图的纹理槽位。`terrain.createDecal(material, options)` 按世界坐标的投影盒从完整细节的高度场裁出贴花，地形缩放时也保持投影尺寸。分块切换层级时贴花保持原样。临时地形片在分配几何前检查贴花三角形预算。销毁地形时会释放仍挂在地形下、由它创建的贴花。材质与已移到其他父节点的贴花由调用方负责。
 
-`createTerrainStream3D({tileSize, viewDistance, load, material, terrain, onLoad, onUnload})` 是随观察者出现和消失的地形：一个由地块组成的网格，每块有自己的高度场和 `Terrain3D`。`update(x, z)` 报告观察者位置后，由近到远请求地块，距离超过 `viewDistance` 的 1.25 倍加四分之一地块大小时释放。`load(x, z)` 立即或以 Promise 返回地块的高度场，来源可以是文件、服务器或公式；`onLoad` 和 `onUnload` 用来添加和移除对应的碰撞体。`heightAt` 可跨已加载的地块查询。
+`createTerrainStream3D({tileSize, viewDistance, load, material, terrain, onLoad, onUnload})` 是随观察者出现和消失的地形：一个由地块组成的网格，每块有自己的高度场和 `Terrain3D`。`update(x, z)` 报告观察者位置后，由近到远请求地块，距离超过 `viewDistance` 的 1.25 倍加四分之一地块大小时释放。`load(x, z)` 立即或以 Promise 返回地块的高度场，来源可以是文件、服务器或公式；`onLoad` 和 `onUnload` 用来添加和移除对应的碰撞体。`heightAt` 可跨已加载的地块查询。地块的高度场以自身中心为原点，而第 (tx, tz) 块的中心放在 `((tx + 0.5) * tileSize, 0, (tz + 0.5) * tileSize)`：在 `onLoad` 里按世界坐标取高度，要先减去这个中心，写成 `field.heightAt(x - cx, z - cz)`；地块装好之后也可以用地形流自己的 `heightAt(x, z)`。
 
 地块保留窗口最多覆盖 256 个地块位置，同时最多等待 32 次加载。加载器返回的高度场宽度和深度必须与 `tileSize` 一致。离开保留范围会结束对应位置的请求。旧结果无法覆盖新请求，但旧加载器在结束前仍占用等待额度，计入 `pendingCount`。`dispose()` 结束流式地形并释放所有地块。`lastFailure` 记录最近一次加载、准备或生命周期失败，包含地块坐标和阶段。
 
@@ -307,7 +321,7 @@ WebGL2 上，将 `reflection.createPass(camera, hidden)` 作为 `preparePrograms
 
 `createTrail3D({target, lifetime, points, width, endWidth, color, endColor, opacity, endOpacity, map})` 是跟在运动物体后面的拖尾：目标移动时记录世界坐标，记录点随时间消失，每次绘制前重新构建并朝向相机，向尾部逐渐变窄、变淡。把它直接加入场景而不是挂在目标之下，并且每帧调用 `update(deltaSeconds)`；`push(x, y, z)` 可以手动送入点，瞬移之后用 `clear()` 清空。
 
-`createDecal3D(mesh, material, {position, normal, width, height, depth, rotation})` 把一张纹理贴到已有的几何体上。目标网格落在贴花盒子内的三角形被取出、按盒子裁剪，作为一个贴合表面的新网格返回，纹理坐标在盒子范围内从 0 到 1；它被加为目标的子节点，因此随目标移动，并像普通网格一样接受光照和阴影。`createDecalGeometry3D` 只返回几何体。目标使用镜像变换时，角度判断遵循目标的可见面。背向贴花的面会被略去，盒子没有碰到表面时返回 `undefined`。在蒙皮网格上，贴花按绑定姿态裁剪并保留关节和权重，再绑定到同一副骨架。插值得到的权重只能近似贴合动画后的表面。边的两端骨骼权重不同时，剧烈形变可能让贴花与表面分离。地形请使用 `terrain.createDecal`，它按完整细节的高度裁剪。
+`createDecal3D(mesh, material, {position, normal, width, height, depth, rotation})` 把一张纹理贴到已有的几何体上。目标网格落在贴花盒子内的三角形被取出、按盒子裁剪，作为一个贴合表面的新网格返回，纹理坐标在盒子范围内从 0 到 1；它被加为目标的子节点，因此随目标移动，并像普通网格一样接受光照和阴影。`createDecalGeometry3D` 只返回几何体。目标使用镜像变换时，角度判断遵循目标的可见面。背向贴花的面会被略去，盒子没有碰到表面时返回 `undefined`。在蒙皮网格上，贴花按绑定姿态裁剪并保留关节和权重，再绑定到同一副骨架。插值得到的权重只能近似贴合动画后的表面。边的两端骨骼权重不同时，剧烈形变可能让贴花与表面分离。地形请使用 `terrain.createDecal`，它按完整细节的高度裁剪。`createDecal3D` 会把传入材质的 `depthWrite` 设为 false 并补上 `polygonOffset`，所以请给贴花单独一份材质，不要和目标共用。
 
 `createGpuParticles3D({count, lifetime, speed, direction, spread, gravity, drag, startSize, endScale, rotation, spin, startColor, endColor, startOpacity, endOpacity, fadeIn, fadeOut, shape, loop, duration, map, blending, softness})` 在顶点阶段计算粒子运动。每个粒子的起点、出生时间、速度、寿命、大小和旋转只写入一次；每帧只有时间在变，由 `update(deltaSeconds)` 设置。循环发射器是一股在时间 0 就已稳定运行的粒子流；`loop: false` 是一次爆发，可用 `isFinished` 查询结束、用 `restart()` 重放。大约一百万个粒子以内都是一次绘制，CPU 每帧不做任何逐粒子工作。代价是运动必须符合公式：发射、重力和阻力。启用 `floor` 后使用无阻力的弹道运动，`bounce` 控制粒子与水平地面发生的一次反弹。粒子已接触地面且向下运动时可以立即反弹。局部空间的剔除包围体涵盖反弹前后的两段弹道。`space: 'world'` 让粒子在发射器移走后留在发射时的位置，`sorted: true` 让远处的粒子先画，适合透明混合的烟雾；这两项各需要 CPU 遍历一遍粒子，分别发生在每次更新时和每次绘制前。可在运行时切换 `sorted`。关闭排序会恢复实例编号顺序，`positionAt()` 和 `respawn()` 始终使用相同的粒子编号。需要与场景几何体碰撞，或受变化的力牵引的粒子仍应使用 `ParticleEmitter3D`。
 
@@ -315,7 +329,7 @@ WebGL2 上，将 `reflection.createPass(camera, hidden)` 作为 `preparePrograms
 
 `createVolumetricFog3D({color, density, height, falloff, distance, anisotropy, sunStrength, ambientStrength, lightStrength})` 是受光照的雾。把它加到场景根节点下：每次绘制前它会自己移到相机前方，每个像素的视线分 24 步走到其后方的实体场景。每一步的雾都会散射到达那里的光：平行光通过各自的阴影贴图（包括级联），因此无论太阳是否在画面内，空气中都会出现光柱和影柱；聚光灯带有光锥和阴影；另有点光源和环境光。它不需要后处理。它是取代而不是叠加 `scene.fog`，点光源不会在雾中投下阴影，密度没有噪声和局部体积，开销是每个像素 24 步、每步读取所有光源。
 
-`createAtmosphere3D({fogColor, fogDensity, fogHeight, fogFalloff, shaftIntensity, shaftLength})` 来自后端入口，把高度雾和光束做成一个后处理钩子：把 `atmosphere.post` 赋给 `renderer.postProcess.custom`，并且每帧调用 `atmosphere.update(camera, sunDirection)`。雾随距离变浓、随高度按指数变薄，沿每条视线以闭式积分求得。光束从每个像素朝太阳在屏幕上的位置走 24 步，累计途中有多少开阔天空，于是挡在太阳前面的物体会在光晕中切出暗条；太阳离开画面时光束随之淡出。这是屏幕空间的近似：雾不受阴影影响，也不按各个光源分别照亮，密度没有噪声和局部体积，光束只在太阳位于屏幕内或附近时存在。它是体积雾的廉价替代方案，占用唯一的自定义后处理槽位。平面镜像在绘制时不做后处理，主画面的后处理随后会作用于它。
+`createAtmosphere3D({fogColor, fogDensity, fogHeight, fogFalloff, shaftIntensity, shaftLength})` 来自后端入口，把高度雾和光束做成一个后处理钩子：把 `atmosphere.post` 赋给 `renderer.postProcess.custom`，并且每帧调用 `atmosphere.update(camera, sunDirection)`。雾随距离变浓、随高度按指数变薄，沿每条视线以闭式积分求得。光束从每个像素朝太阳在屏幕上的位置走 24 步，累计途中有多少开阔天空，于是挡在太阳前面的物体会在光晕中切出暗条；太阳离开画面时光束随之淡出。这是屏幕空间的近似：雾不受阴影影响，也不按各个光源分别照亮，密度没有噪声和局部体积，光束只在太阳位于屏幕内或附近时存在。它是体积雾的廉价替代方案，占用唯一的自定义后处理槽位。平面镜像在绘制时不做后处理，主画面的后处理随后会作用于它。`skyFog`（0 到 1，默认 1）是天空本身承受的雾量：天空在远平面上，为 1 时地平线完全被雾盖住、发灰；为 0 时天空保持清澈，只有天空前面的东西有雾。它在创建时确定，是程序里的常量。
 
 ## 文字
 
