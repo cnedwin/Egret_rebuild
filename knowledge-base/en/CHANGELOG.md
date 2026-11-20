@@ -4,6 +4,34 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Android games can resume across script hosts — 2026-11-20
+
+Pass `services.storage` to `createSaveStore` to keep local checkpoints when switching between System WebView, standard V8 and trimmed V8. Games in the same app use separate asset roots to keep their saves independent. On a Galaxy Z Fold7, all three hosts restored progress after force-stop, migrated an older save once, and finished an admitted write before the game view reported closure.
+
+## Changelog entries as one file per change — 2026-11-20
+
+A change adds its entry as `changes/<name>.json`, with the date and a title and a body in English and in Chinese, instead of editing the two changelogs; two pull requests then never write the same lines, which GitHub's own merge could not resolve. `node tools/changelog.mjs` checks the waiting entries and runs with the tests; `node tools/changelog.mjs --fold` puts them at the top of both changelogs, newest first, and removes their files, as a change of its own made from time to time. The provenance ledger takes an entry as it takes a contribution declaration. A blank line lost between two entries by an earlier union merge is put back.
+
+## Doc comments for the core and browser exports — 2026-11-20
+
+About 415 exports of the contracts, the runtime, the engine and its browser entries that had no sentence in the sources now have one, so editors show what each is and the API reference says it: 804 of 1329 exports were silent, now 387 are, nearly all of them World3D. One comment is left out on purpose: a doc comment on the runtime's `EventListenerOptions` changes which properties TypeScript names first when a value is missing `Bitmap`'s, which the recorded type lanes would see.
+
+## Doc comments for the World3D exports — 2026-11-20
+
+The 338 exports of World3D, its WebGL2 and WebGPU entries and `play3d` that had no sentence in the sources now have one, so editors show what each is and the API reference says it. Of the engine's 1329 exports, 2 are still silent: `EngineOptions`, whose declaration file is held to its size, `EventListenerOptions`, whose comment would change a recorded compiler message.
+
+## One list of the package entries for the boundary check — 2026-11-20
+
+The runtime and engine entries the boundary check approves are one list, `ENTRY_POINTS` in `tools/check-boundaries.mjs`, one line each. The boundary tests build their synthetic packages from that list, and the publication check takes away the entries added after its frozen snapshot by their shape rather than by one function each, so a new entry is one line in the list and its mapping in `package.json`, not edits in three files. An entry in `package.json` that the list does not approve is still refused.
+
+## Masks, gradients and glow where a game looks for them — 2026-11-20
+
+Four games written by agents that knew only `llms.txt` asked for a torch in a dark cave, neon lines, lamps in rain and a lighthouse in a blizzard; what they could not find is now there. `node.mask = sprite`, as Egret 5 code writes it, masks with the sprite's drawing, `node.mask = rectangle` clips, and `null` ends either; it no longer does nothing. A shape mask on the stage with its node now masks where it is on the stage, as Egret places a mask on the display list; off the stage it is still placed as a child. `play` and the 2D overlay of `play3d` draw effects, so masks, glows and outlines show. `llms.txt` gives the gradient fills and lines, `mask`, `blendMode` and glow, and the type of each key of `game.look`. A strength given a colour in `look`, which lit the world white, is refused. A thing that glows in `play3d` is seen through fog and snow.
+
+## Spine content through the content build — 2026-11-20
+
+The content build has three Spine 4.3 producers: `egret.spine-atlas` over one PNG page recipe per named page, and `egret.spine-json` and `egret.spine-binary` over that atlas. Each artifact is the export's own bytes, kept once the Spine 4.3 reader of `@egret/project/spine` has read them through: the atlas must declare exactly its named pages at the size of their PNGs, a JSON skeleton is read with its atlas, and a binary must carry a 4.3 export version. A refused source fails the build with `CONTENT_IMPORT_SPINE` before anything is published. The Spine loader now takes the build's settings envelope, so the build's manifest loads as it is; a hand-written manifest is read as before. A changed skeleton rebuilds itself alone; a changed atlas rebuilds the atlas and its skeletons but not its pages. Licensed exports, mips and compressed variants stay open in #83.
+
 ## Egret 5 code finds more of what it used — 2026-11-20
 
 `createTimer(engine, scope, seconds, repeatCount)` and `after(engine, scope, seconds, fn)` stand for Egret's Timer and setTimeout, on the Engine's clock: they hold while it is paused, end with their scope, and make every call a long frame owes. `Shape` is the `Sprite`. `Point`, `Rectangle` and `Matrix` are classes with Egret's methods, and each is also the plain object the engine takes. A node used as a shape mask is not drawn while it masks, as in Egret.
