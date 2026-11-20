@@ -19,6 +19,8 @@
 
 仓库贡献通过 Issue 与 PR 进行。方案经审阅后再更新其登记状态，草稿或构建成功不等于完整产品能力交付。技术讨论围绕问题、证据和取舍展开。
 
+需要让读者知道的改动，把更新日志条目写成文件 `changes/<名称>.json`，而不是直接修改两个更新日志：`{ "date": "YYYY-MM-DD", "en": { "title", "body" }, "zh": { "title", "body" } }`。这样两个 PR 永远不会改到同一行。`node tools/changelog.mjs` 检查待合入的条目，测试中也会运行；`node tools/changelog.mjs --fold` 在一个单独的改动里把它们按日期从新到旧移入两个更新日志。
+
 ## 复现现有核心检查
 
 使用 Node.js 26.7.0、pnpm 11.25.0 和 TypeScript 7.0.2，在仓库根目录执行：

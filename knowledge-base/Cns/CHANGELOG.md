@@ -19,6 +19,7 @@
 ## 混合空间：半透明颜色按 2D canvas 的方式混合 — 2026-11-20
 
 Host 接受 `blendSpace: 'srgb'`（其 Engine 的每一帧都会记录），按存储的颜色编码值混合半透明绘制，与 2D canvas 和白鹭 5 一致，而不是在线性光中混合：深色底上 10% 的白仍是淡淡的白。每次绘制本身的颜色不变；WebGL2 与 WebGPU 的工作目标改为 RGBA8 编码值，清屏色与发光颜色使用编码值，效果的颜色矩阵不再做转换，resolve 直接复制编码值。`createBrowserGame` 与 World3D 覆盖层可传入该选项；`play()` 与 Play3D 的界面层默认 `'srgb'`，传 `'linear'` 可改回。引擎默认仍为 `linear`，现有画面不变。`examples/blend-space` 将两种空间与页面自身的 2D canvas 对比：WebGL2 软件渲染下 `srgb` 每个方块与 canvas 相差不超过 1。WebGPU 像素需在硬件上运行确认。
+
 ## Play 第五轮后的修正：长对白分页与文档补漏 — 2026-11-20
 
 放不下的对白现在分到后续框中显示，不再溢出面板，选项随最后一个框出现。`llms.txt` 补充说明：游戏用到的变量要在 `await play` 之前声明（setup 在它结束前运行）；`music.play` 用一个对象传更多参数；jingle 和音调对象的写法；`drawEllipse` 的定位；`bar` 可指定层；对白框不会暂停游戏；屏幕控件在第一次触摸时出现、重开时移除。这些都是三个智能体按页面写剧情游戏时报告的缺口。
@@ -34,6 +35,7 @@ Host 接受 `blendSpace: 'srgb'`（其 Engine 的每一帧都会记录），按�
 ## Play：菜单、对白框、血条与提示 — 2026-11-20
 
 `game.say` 在底部对白框里逐字显示文字，可带人物名和选项；`game.menu` 返回所选项；`game.bar` 平滑滑向数值，下降时留下残影；`game.toast` 显示会淡出的提示；`game.asking` 告诉 update 当前有对白框或菜单打开。它们都支持键盘、摇杆、指针和触摸，暂停时可用，也能在 `setup` 中等待；`setup` 等待期间现在会照常绘制画面。新示例 `examples/play/story.mjs`，由示例核对脚本玩到结束。
+
 ## 画小的图片使用多级缩小副本（mipmap） — 2026-11-20
 
 材质设置 `mipmapFilter: 'linear'`（需配合 linear 过滤）后，画得比纹素小的图片会从页面的多级缩小副本采样，并在最近的两级之间混合。某帧第一次这样采样一个页面时，引擎按页面原有编码生成副本，两个 Host 都上传全部层级。共用图集页面的区域只读取各边都能整除的层级，不会混入相邻区域的颜色。示例：`examples/mipmaps`，WebGL2 已用软件渲染检查，WebGPU 待真机验证。
@@ -97,6 +99,7 @@ PortedGamesEgret 中每个示例游戏各自手写的部分，`play` 和 `play3d
 ## 绘制缩放经过零的形状 — 2026-11-17
 
 把 `scaleX` 或 `scaleY` 补间到 0（例如翻牌）时，在到达 0 之前的最后一步是一个舍入误差大小的值。此时圆、圆角矩形、椭圆或线条比任何像素都窄，顶点的舍入使其中一些三角形翻转，准备阶段以 `precision` 拒绝它们：该帧以 `FRAME_RENDER_FAILED` 失败，游戏循环停止。现在这样的三角形被略去，帧照常绘制。纯矩形不受影响。
+
 ## WebGL2 上绘制形状时不再采样它的白色像素 — 2026-11-17
 
 不是纯矩形的 Graphics 形状（圆、圆角矩形、多边形、线条）是铺在一个白色像素上的三角形，WebGL2 宿主过去用采样图像的着色程序绘制它：每个像素取四次样、做四次颜色解码，读到的始终是 1。现在这类形状改用绘制矩形的着色程序，不做任何采样。画面逐字节相同。在无头 Chromium 的软件 WebGL2 上，64 个圆角矩形从每秒 19 帧提高到 60 帧，由形状组成的生成游戏从 7 帧提高到 26 帧、从 11 帧提高到 37 帧。没有在真实 GPU 上测量，WebGPU 宿主未改动。
@@ -108,6 +111,7 @@ PortedGamesEgret 中每个示例游戏各自手写的部分，`play` 和 `play3d
 ## Play：一次调用做出一个完整的小游戏 — 2026-11-17
 
 新入口 `@egret/engine/play`。`play({ width, height, setup, update })` 创建画布、让它适应页面，并在 `setup` 完成后才开始 update。返回的 game 提供每帧可询问的键盘和指针、十二个用代码合成的音效以及用于添加更多音效的 `sfx.define`、`overlaps` 和 `hits`、`after` 和 `every`、可居中且可立即修改的文字、自动开始的缓动、`burst`、`shake`、`flash`、`hitStop`、可卷动的 `view`、可重复的随机数以及 `save`/`load`。它建立在浏览器游戏、音频和工具包入口之上，并通过 `game.browser` 保留对它们的访问。
+
 ## alpha 越界时限制在 0 到 1，不再拒绝 — 2026-11-17
 
 超出 0 到 1 的 alpha 现在会被限制到较近的一端，显示对象以及 Graphics 的填充、线条和渐变色标都是如此。此前会抛出 `DISPLAY_VALUE_INVALID` 或 `GRAPHICS_VALUE_INVALID`，在 update 里发生时会让游戏循环停止：一次多走了一步的淡出就足以触发。不是有限数字的值仍然被拒绝。`animate` 不再对名为 `alpha` 的属性做特殊处理。
@@ -127,6 +131,7 @@ World3D 每帧在 WebGL2 和 WebGPU 上按屏幕分块额外照亮最多 256 盏
 ## World3D 动画在骨架之间重定向 — 2026-11-17
 
 `retargetAnimationClip3D` 把一套骨架的动画放到体型和骨骼朝向不同的另一套骨架上：每根骨骼相对静止姿势的转动在骨架空间中转移，根骨骼的位移按高度缩放。[World3D 动画](docs/world3d.md#动画)
+
 ## 引擎的 2D 界面叠在 World3D 场景上 — 2026-11-17
 
 `createWorld3DOverlay(canvas, { width, height })` 在 World3D 画布上叠一块透明的 2D 舞台，并用 `createBrowserGame` 启动它，菜单、血条、文字和控件因此可以用引擎的 2D 舞台画在场景之上。落在设了 `touchEnabled` 的 2D 节点上的按下交给界面；落在界面空白处的按下、拖动、滚轮和悬停继续交给 3D 画布。[一次调用启动 3D 游戏](docs/world3d-app.md)
@@ -138,12 +143,15 @@ World3D 每帧在 WebGL2 和 WebGPU 上按屏幕分块额外照亮最多 256 盏
 ## 绘制几乎等于单位变换的变换 — 2026-11-17
 
 显示变换中的数值小于 2^-100 时（例如快要停下的震屏），两个共享宿主都会以 `WEBGL2_GEOMETRY_RANGE` 或 `WEBGPU_GEOMETRY_RANGE` 拒绝。现在准备几何时把这么小的数值当作零；非有限值或超过 2^20 的数值仍会被拒绝。
+
 ## 一次调用启动 World3D 游戏；拼模型、画面标记和性能读数 — 2026-11-17
 
 `createWorld3DApp(canvas, options)` 根据地址选择 WebGL2 或 WebGPU，WebGPU 没有适配器时退回到 WebGL2；根据地址、已保存的选择或设备选出低、中、高画质；创建 Engine、渲染器和循环，并在帧率偏低时降低绘制分辨率。`pickWorld3DQuality`、`pickWorld3DBackend`、`WORLD3D_QUALITY_PRESETS` 和 `createDynamicResolution3D` 也可以单独使用。`createGeometryBuilder3D` 把摆好位置、上了颜色的零件合成一个几何体；`createScreenMarkers3D` 让网页元素跟随场景中的点，需要时贴在屏幕边缘；`createWorld3DStats` 显示性能读数。[一次调用启动 3D 游戏](docs/world3d-app.md)
+
 ## 按动作读取输入、带版本的存档、可复现的随机数、音效提示和触屏控件 — 2026-11-17
 
 `@egret/engine/kit` 新增 `createInputActions`（覆盖按键、鼠标按钮、手柄按钮和摇杆以及屏幕控件的按钮、轴和向量动作，支持改键并保存）、`createSaveStore`（带版本和升级步骤的存档，存储已满或不可用时也不会抛出异常）、`createRandom`（带种子的 sfc32，可分叉、可保存状态）、`createAudioCues`（按名字播放音效，轮换录音、变化音高、冷却并限制同时发声数）、用于合成声音的 `encodeWav`，以及把许多资源合成一个文件、按字节范围读取的 `writeAssetBundle` 和 `openBrowserAssetBundle`。`tools/vendor-game.mjs` 把游戏所用入口加载的文件拷贝进游戏目录，并生成 import map 和 Node 加载器。`createBrowserAudio` 新增 `limiter`。`@egret/engine/web/kit` 新增 `bindBrowserInputActions`、`createTouchStick`、`createTouchButton` 和 `browserSaveStorage`。[游戏工具包](docs/game-kit.md)
+
 ## 在任何浏览器里把图片变成纹理；帧循环支持追帧 — 2026-11-17
 
 新入口 `@egret/engine/web/kit` 提供一条宽松的图片路线，与 `@egret/engine/web/image` 中严格的 PNG 提供者并存。`decodeBrowserImage` 接受 PNG、JPEG、WebP、GIF 和 AVIF 字节，由浏览器解码；`createImageBitmap` 拒绝时退回到图片元素；超过 2D 上限的图片等比缩小而不是被拒绝。`textureFromCanvas` 把画好的画布变成纹理，`createBrowserImageTextureProvider` 把这条路线注册为资源提供者。`createBrowserFrameLoop` 新增 `catchUpSeconds`：慢的一帧在画出之前拆成若干步补上。[图片变纹理](docs/browser-images.md) · [帧循环](docs/frame-loop.md)
@@ -179,9 +187,11 @@ iPhone 16 Pro Max（iOS 和 Safari 27.2）上的《灯影·闹天宫》原版复
 ## Spine：接入以预乘方式存储的图集页面 — 2026-11-16
 
 图集页面声明 `pma: true`（Spine 纹理打包器的默认导出方式）时，以前会被 `SPINE_PAGE_ALPHA_PROFILE_FAILED` 拒绝。现在加载器为这样的页面制作一份非预乘副本并从副本绘制：红、绿、蓝各除以透明度并四舍五入，透明度为 0 的像素变为透明黑。副本按每像素四字节计入该设置的费用，由共享该设置的各组共用，并随设置一起释放。`info.pages[i].sourcePremultiplied` 现在是布尔值，标明哪些页面做了副本；此前它恒为 `false`。预乘页面在透明度为零处叠加的光不会保留；这条规则目前只有自有测试，没有来自 Editor 导出的参考。
+
 ## 组合动画场景各部分的开销 — 2026-11-16
 
 `examples/animation-outfits/measure.mjs` 把含 20 个 Spine 实例和 200 个序列控制器的场景打开两次，每次之后对 240 步计时，分别报告动画、采集、渲染和等待完成；场景模块为此新增了 `measure` 函数。在 RTX 5090 Laptop 的 WebGPU 上，一步在 p95 下是动画 1.3 ms、采集 0.5 ms、渲染 2.1 ms，4.8 ms 内完成。由处理器绘制的 WebGL2 的结果一并记录，但不能说明显卡上的情况。这些都是单次运行，不是预算验收；显卡上的 WebGL2 没有运行，因为在隐藏的面板里 Host 等待 GPU 时超时了。
+
 ## 可安装的发行归档 — 2026-11-16
 
 `node tools/pack-release.mjs --version <版本> --out <目录>` 为五个包各打一个归档。归档带有给定的版本，不是私有包，附带许可证和声明，并用同一发行版中各归档的地址来指明工作区里的其他包，所以 `npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<版本>/egret-engine-<版本>.tgz` 就能装上引擎及其所需。仓库里的包仍是私有的 0.0.0，不向 npm 发布任何内容。推送标签 `v<版本>` 会运行 `Release archives` 工作流：构建、打包、把归档装进干净工程并导入，再附到 GitHub release 上。`tools/verify-release.mjs` 就是这项安装检查。0.1.0-preview.1 的归档已在 Linux 上用 npm 安装并导入；工作流本身还没有运行过。
@@ -305,9 +315,11 @@ Biome 2.6.7 对 `packages/*/src`、`packages/*/web` 和 `packages/*/rendering` �
 ## 错误会说明发生了什么 — 2026-11-15
 
 以前 `EgretError` 的 message 就是错误码本身，控制台上的 `FRAME_RENDER_FAILED` 什么也没说明。现在 message 是错误码加一句说明：出了什么问题；对游戏最常遇到的错误码，还会说明该怎么做。`error.code` 不变，程序仍然用它来比较。新增的[错误码对照表](docs/error-codes.md)按部分列出 696 个错误码及其中文含义；它由 `node tools/error-codes.mjs` 根据源码生成，新增错误码而没有说明、或者对照表落后于源码时，测试会失败。以前用 `error.message` 与错误码比较的程序，要改为比较 `error.code`。
+
 ## Graphics：圆、圆角矩形、路径、曲线和线条 — 2026-11-15
 
 sprite 的 `graphics` 现在可以绘制 `drawCircle`、`drawEllipse`、`drawRoundRect`，用 `moveTo`、`lineTo`、`curveTo`、`cubicCurveTo` 和 `drawArc` 绘制路径，用 `lineStyle` 绘制线条，方法名与白鹭一致。以前它只能画填充矩形。只画填充矩形的 sprite 没有变化；任何其他形状都会把它的绘图变成一个由带颜色三角形组成的网格，和其他内容一样跟随 sprite。曲线是与真实曲线相差不超过四分之一单位的直线段，边缘没有抗锯齿，线条是平头端点和尖角转角。绘图相同的 sprite 共用一份绘图；一帧可容纳 128 份不同的绘图。在 Node 中验证，并在无头 Chromium 的软件 WebGL2 中从画布验证；未运行 WebGPU。属于 #289。[指南](docs/graphics.md) · [示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.zh-CN.md)
+
 ## 页面中游戏的帧循环 — 2026-11-15
 
 `@egret/engine/web/loop` 提供 `createBrowserFrameLoop`：显示器每显示一帧，它就推进 Engine 的时钟、调用 `update(seconds)` 并绘制。一步不会超过 `maxStepSeconds`，所以标签页被隐藏后回来，时钟不再拒绝这段时间。Host 已持有它能接受的帧数时，这一帧被跳过并计数，所以慢设备不再让手写循环以 `FRAME_RENDER_FAILED` 结束。起步示例已改用它。在 Node 中验证，并通过起步示例在无头 Chromium 的软件 WebGL2 中验证；未运行 WebGPU。属于 #289。[指南](docs/frame-loop.md)
