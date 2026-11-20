@@ -203,3 +203,24 @@ test('FI04 both hosts have the spread pass, and the composite reads the spread, 
   // The stage's y runs down and a GL target's up: the spread of the offset turns its y round.
   assert.match(spread, /-int\(params\[30\]\.y\)/);
 });
+
+test('FI05 a frame of more than eight effect groups is refused, and says so; effects off say that instead', async () => {
+  const engine = await egret.createEngine({ host: host().adapter }),
+    scope = engine.createScope();
+  try {
+    for (let i = 0; i < 9; i++) {
+      const group = engine.stage.addChild(scope.use(new egret.DisplayObjectContainer()));
+      const sprite = group.addChild(scope.use(new egret.Sprite()));
+      sprite.graphics.beginFill(0xff0000).drawRect(0, 0, 4, 4).endFill();
+      group.renderEffect = { blurRadius: 1 };
+    }
+    const frame = engine.captureSharedFrame({ width: 32, height: 32 });
+    assert.throws(() => prepareEffects2D(frame, 1, true), /more than 8 effect groups in one frame/);
+    assert.throws(() => prepareEffects2D(frame, 1, false), /effects are off/);
+    engine.stage.getChildAt(0).renderEffect = undefined;
+    assert.equal(prepareEffects2D(engine.captureSharedFrame({ width: 32, height: 32 }), 1, true).groups.length, 8);
+  } finally {
+    scope.dispose();
+    await engine.dispose();
+  }
+});
