@@ -24,12 +24,27 @@ export interface World3DOverlayOptions {
   readonly blendSpace?: 'linear' | 'srgb';
   /** Send presses on empty parts of the interface to the 3D canvas. On by default. */
   readonly passThrough?: boolean;
+  /**
+   * How the stage of `width` × `height` is laid over the 3D canvas when their shapes differ, as a phone turns:
+   * `stretch` (the default) fills the canvas and squashes the interface; `contain` keeps its shape, as large as fits,
+   * centred, with the scene showing at the sides; `cover` keeps its shape and fills the canvas, its edges cut off by the
+   * canvas's parent. Read `overlay.box` for where it is.
+   */
+  readonly fit?: 'stretch' | 'contain' | 'cover';
 }
 /** A 2D game drawn on a canvas over a 3D view. */
 export interface World3DOverlay {
   /** The 2D game on the overlay: its stage, scope, pointer, keyboard, loop and textures. */
   readonly game: BrowserGame;
   readonly canvas: HTMLCanvasElement;
+  /** Where the stage is now, in CSS pixels from the 3D canvas's top left corner, and its scale: CSS pixels per unit. */
+  readonly box: {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly scale: number;
+  };
   /** Ends the 2D game and takes the overlay canvas away. The 3D canvas is left as it was. */
   dispose(): Promise<void>;
 }
@@ -57,6 +72,10 @@ export async function createWorld3DOverlay(
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
   if (!options || !(options.width > 0) || !(options.height > 0))
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
+  const fit = options.fit ?? 'stretch';
+  if (fit !== 'stretch' && fit !== 'contain' && fit !== 'cover')
+    throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
+  let placed = { x: 0, y: 0, width: 0, height: 0, scale: 0 };
   const doc = canvas.ownerDocument;
   const overlay = doc.createElement('canvas');
   overlay.className = 'egret-world3d-overlay';
@@ -66,10 +85,22 @@ export async function createWorld3DOverlay(
   const place = (): void => {
     const parent = canvas.parentElement!.getBoundingClientRect(),
       box = canvas.getBoundingClientRect();
-    overlay.style.left = `${box.left - parent.left + canvas.parentElement!.scrollLeft}px`;
-    overlay.style.top = `${box.top - parent.top + canvas.parentElement!.scrollTop}px`;
-    overlay.style.width = `${box.width}px`;
-    overlay.style.height = `${box.height}px`;
+    let width = box.width,
+      height = box.height;
+    if (fit !== 'stretch' && width > 0 && height > 0) {
+      const wide = width / options.width,
+        tall = height / options.height,
+        scale = fit === 'contain' ? Math.min(wide, tall) : Math.max(wide, tall);
+      width = options.width * scale;
+      height = options.height * scale;
+    }
+    const x = (box.width - width) / 2,
+      y = (box.height - height) / 2;
+    placed = Object.freeze({ x, y, width, height, scale: width / options.width });
+    overlay.style.left = `${box.left - parent.left + canvas.parentElement!.scrollLeft + x}px`;
+    overlay.style.top = `${box.top - parent.top + canvas.parentElement!.scrollTop + y}px`;
+    overlay.style.width = `${width}px`;
+    overlay.style.height = `${height}px`;
   };
   place();
   const Resize = (globalThis as { ResizeObserver?: typeof ResizeObserver }).ResizeObserver;
@@ -181,6 +212,9 @@ export async function createWorld3DOverlay(
   return {
     game,
     canvas: overlay,
+    get box() {
+      return placed;
+    },
     async dispose(): Promise<void> {
       for (const type of FORWARDED) win.removeEventListener(type, forward, { capture: true });
       observer?.disconnect();

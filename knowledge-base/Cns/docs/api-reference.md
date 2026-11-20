@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1338 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1342 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -718,9 +718,11 @@
 | `AtmosphereOptions3D` | 接口 | An atmosphere to make: its fog's color, density and height, and its light shafts. |
 | `AudioListener3D` | 类 | Ears of the scene. |
 | `AudioListenerOptions3D` | 接口 | An audio listener to make: its audio context and volume. |
+| `CanvasFontOptions3D` | 接口 | A canvas font to make: the page's font family, weight and style, how finely it is traced, and how much it is smoothed. |
 | `captureCubeTexture3D` | 函数 | Render six 90-degree views from `position` and return them as a cube texture with mipmaps. |
 | `createAtmosphere3D` | 函数 | Makes height fog and light shafts for a scene. |
 | `createAudioListener3D` | 函数 | Makes the listener 3D sounds are heard by, usually on the camera. |
+| `createCanvasFont3D` | 函数 | A `Font3D` whose glyphs are traced from the page's own fonts, for 3D text in any script the page can draw, such as the Chinese of a road sign, without a font file. |
 | `createCustomPost3D` | 函数 | Makes a post-processing pass of your own shader. |
 | `createDynamicResolution3D` | 函数 | Makes a resolution scale that drops when frames are slow and rises when they are fast. |
 | `createFlyControls3D` | 函数 | Makes fly controls for a camera on an element. |
@@ -823,9 +825,11 @@
 | `AtmosphereOptions3D` | 接口 | An atmosphere to make: its fog's color, density and height, and its light shafts. |
 | `AudioListener3D` | 类 | Ears of the scene. |
 | `AudioListenerOptions3D` | 接口 | An audio listener to make: its audio context and volume. |
+| `CanvasFontOptions3D` | 接口 | A canvas font to make: the page's font family, weight and style, how finely it is traced, and how much it is smoothed. |
 | `captureCubeTexture3D` | 函数 | Render six 90-degree views from `position` and return them as a cube texture with mipmaps. |
 | `createAtmosphere3D` | 函数 | Makes height fog and light shafts for a scene. |
 | `createAudioListener3D` | 函数 | Makes the listener 3D sounds are heard by, usually on the camera. |
+| `createCanvasFont3D` | 函数 | A `Font3D` whose glyphs are traced from the page's own fonts, for 3D text in any script the page can draw, such as the Chinese of a road sign, without a font file. |
 | `createCustomPost3D` | 函数 | Makes a post-processing pass of your own shader. |
 | `createDynamicResolution3D` | 函数 | Makes a resolution scale that drops when frames are slow and rises when they are fast. |
 | `createFlyControls3D` | 函数 | Makes fly controls for a camera on an element. |

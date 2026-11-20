@@ -41,6 +41,8 @@ export { FollowControls3D, createFollowControls3D } from './FollowControls3D.js'
 export type { FollowControlsOptions3D } from './FollowControls3D.js';
 export { Atmosphere3D, createAtmosphere3D } from './atmosphere3D.js';
 export type { AtmosphereOptions3D } from './atmosphere3D.js';
+export { createCanvasFont3D } from './canvasFont3D.js';
+export type { CanvasFontOptions3D } from './canvasFont3D.js';
 export {
   WORLD3D_QUALITY_PRESETS,
   createDynamicResolution3D,

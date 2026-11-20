@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1338 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1342 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -718,9 +718,11 @@ For which entry to import from, see [What to import](entry-points.md).
 | `AtmosphereOptions3D` | interface | An atmosphere to make: its fog's color, density and height, and its light shafts. |
 | `AudioListener3D` | class | Ears of the scene. |
 | `AudioListenerOptions3D` | interface | An audio listener to make: its audio context and volume. |
+| `CanvasFontOptions3D` | interface | A canvas font to make: the page's font family, weight and style, how finely it is traced, and how much it is smoothed. |
 | `captureCubeTexture3D` | function | Render six 90-degree views from `position` and return them as a cube texture with mipmaps. |
 | `createAtmosphere3D` | function | Makes height fog and light shafts for a scene. |
 | `createAudioListener3D` | function | Makes the listener 3D sounds are heard by, usually on the camera. |
+| `createCanvasFont3D` | function | A `Font3D` whose glyphs are traced from the page's own fonts, for 3D text in any script the page can draw, such as the Chinese of a road sign, without a font file. |
 | `createCustomPost3D` | function | Makes a post-processing pass of your own shader. |
 | `createDynamicResolution3D` | function | Makes a resolution scale that drops when frames are slow and rises when they are fast. |
 | `createFlyControls3D` | function | Makes fly controls for a camera on an element. |
@@ -823,9 +825,11 @@ For which entry to import from, see [What to import](entry-points.md).
 | `AtmosphereOptions3D` | interface | An atmosphere to make: its fog's color, density and height, and its light shafts. |
 | `AudioListener3D` | class | Ears of the scene. |
 | `AudioListenerOptions3D` | interface | An audio listener to make: its audio context and volume. |
+| `CanvasFontOptions3D` | interface | A canvas font to make: the page's font family, weight and style, how finely it is traced, and how much it is smoothed. |
 | `captureCubeTexture3D` | function | Render six 90-degree views from `position` and return them as a cube texture with mipmaps. |
 | `createAtmosphere3D` | function | Makes height fog and light shafts for a scene. |
 | `createAudioListener3D` | function | Makes the listener 3D sounds are heard by, usually on the camera. |
+| `createCanvasFont3D` | function | A `Font3D` whose glyphs are traced from the page's own fonts, for 3D text in any script the page can draw, such as the Chinese of a road sign, without a font file. |
 | `createCustomPost3D` | function | Makes a post-processing pass of your own shader. |
 | `createDynamicResolution3D` | function | Makes a resolution scale that drops when frames are slow and rises when they are fast. |
 | `createFlyControls3D` | function | Makes fly controls for a camera on an element. |

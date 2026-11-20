@@ -1153,7 +1153,7 @@ test('SM07 one node holds the focus', () => {
   assert.equal(semantics.publish().focused, 'b');
 });
 
-test('SM08 the modal dialog published last makes everything outside it inert', () => {
+test('SM08 the modal dialog published last makes everything outside it inert, and a focus left outside it is not published', () => {
   const { semantics, state, add } = tree(),
     done = [];
   add('page', 'group');
@@ -1187,17 +1187,19 @@ test('SM08 the modal dialog published last makes everything outside it inert', (
   });
   assert.equal(semantics.perform('rename', 'activate'), false);
   assert.equal(semantics.perform('ok', 'activate'), true);
+  // A dialog has just opened over the node with the focus: the node is published without it, until the application
+  // moves the focus into the dialog.
   state.rename.focused = true;
-  assert.throws(() => semantics.publish(), about('UI_SEMANTICS_FOCUS', 'rename: focused'));
+  let published = semantics.publish();
+  assert.equal(published.focused, undefined);
+  assert.equal(published.nodes.find(node => node.id === 'rename').focused, false);
   state.rename.focused = false;
   state.ok.focused = true;
   assert.equal(semantics.publish().focused, 'ok');
   state.second.modal = false;
-  assert.throws(
-    () => semantics.publish(),
-    about('UI_SEMANTICS_FOCUS', 'ok: focused'),
-    'the dialog in front is now the first one'
-  );
+  published = semantics.publish();
+  assert.equal(published.focused, undefined, 'the dialog in front is now the first one: ok is inert and holds nothing');
+  assert.equal(published.nodes.find(node => node.id === 'ok').focused, false);
   state.ok.focused = false;
   assert.deepEqual(
     inert(),
