@@ -136,6 +136,8 @@ await play({
 
 `overlaps`、`hits` 和 `hitsAll` 的第三个参数让双方每一边都缩进这么多单位，判定更宽松。用 `visible = false` 隐藏的、已移除的或什么都没画的精灵不与任何东西重叠；`alpha` 为 0 的精灵仍然会重叠。精灵不会和自己碰撞，所以列表里可以包含它自己。
 
+瓦片关卡只需一次调用：`const map = game.tiles(['##########', '#........#', '##########'], { size: 32, x: 0, y: 0, colors: { '#': 0x445566 } })` 把这些行画成一个精灵 `map.sprite`，左上角在 `x`、`y`。除非用 `solid` 指定实心字符，否则 `#` 是实心的；没有指定颜色的字符不画。`map.pushOut(hero)` 给出把精灵移出它重叠的实心瓦片需要的距离，`{ x, y }` 或 `undefined`，先移出重叠最多的那块；`map.solidAt(x, y)` 和 `map.cellAt(x, y)` 读取所在图层上的一点，`map.at(column, row)` 读取一个格子，`map.set(column, row, '.')` 修改一个格子并重画地图。`game.mix(a, b, t)` 是从颜色 `a` 到 `b`（都是 `0xRRGGBB`）走 `t` 那么远的颜色。
+
 角色站在平台上、被墙挡住，用的就是 `pushOut`：
 
 ```js

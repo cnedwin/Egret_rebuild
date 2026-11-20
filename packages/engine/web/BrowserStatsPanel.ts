@@ -15,6 +15,11 @@ export interface BrowserStatsSample {
   /** Frames drawn and frames skipped so far, as a frame loop's `snapshot()` gives them. */
   readonly frames?: number;
   readonly skipped?: number;
+  /**
+   * The draw calls the Host made for its last frame, `host.getSharedStatus().lastFrameDrawCalls`: fewer than the
+   * frame's commands when they are batched, more when effects need passes of their own.
+   */
+  readonly drawCalls?: number;
 }
 /** The numbers the panel shows, as of its last refresh. */
 export interface BrowserStatsSnapshot {
@@ -29,6 +34,8 @@ export interface BrowserStatsSnapshot {
   readonly pendingFrames: number;
   readonly frames: number;
   readonly skipped: number;
+  /** The draw calls the Host made for the last frame, or 0 when they were not given. */
+  readonly drawCalls: number;
 }
 /** A stats panel to make: the canvas it sits over, its label, and how often it updates. */
 export interface BrowserStatsPanelOptions {
@@ -105,7 +112,8 @@ export function createBrowserStatsPanel(options: BrowserStatsPanelOptions): Brow
     pages = -1,
     pending = -1,
     frames = -1,
-    skipped = -1;
+    skipped = -1,
+    drawCalls = -1;
   let current: BrowserStatsSnapshot = Object.freeze({
     fps: 0,
     longestFrameMs: 0,
@@ -115,7 +123,8 @@ export function createBrowserStatsPanel(options: BrowserStatsPanelOptions): Brow
     pages: 0,
     pendingFrames: 0,
     frames: 0,
-    skipped: 0
+    skipped: 0,
+    drawCalls: 0
   });
   const text = (value: number): string => (value < 0 ? '-' : String(value));
   function refresh(now: number): void {
@@ -130,7 +139,8 @@ export function createBrowserStatsPanel(options: BrowserStatsPanelOptions): Brow
       pages: Math.max(0, pages),
       pendingFrames: Math.max(0, pending),
       frames: Math.max(0, frames),
-      skipped: Math.max(0, skipped)
+      skipped: Math.max(0, skipped),
+      drawCalls: Math.max(0, drawCalls)
     });
     const box = canvas.getBoundingClientRect();
     element.style.left = box.left + 'px';
@@ -144,6 +154,8 @@ export function createBrowserStatsPanel(options: BrowserStatsPanelOptions): Brow
       ' ms\n' +
       'commands ' +
       text(commands) +
+      '  draws ' +
+      text(drawCalls) +
       '  triangles ' +
       text(triangles) +
       '\n' +
@@ -180,6 +192,7 @@ export function createBrowserStatsPanel(options: BrowserStatsPanelOptions): Brow
       pending = count(sample.pendingFrames, pending);
       frames = count(sample.frames, frames);
       skipped = count(sample.skipped, skipped);
+      drawCalls = count(sample.drawCalls, drawCalls);
       if (last !== undefined && now > last) {
         seen++;
         longest = Math.max(longest, now - last);

@@ -219,7 +219,7 @@ await scenario(
     assert.deepEqual([now.stats.commands, now.stats.triangles, now.stats.geometries, now.stats.pages], [7, 14, 0, 1]);
     assert.ok(now.stats.frames >= 2 && now.stats.pendingFrames <= 2);
     const text = await page.evaluate(() => document.body.lastElementChild.textContent);
-    assert.match(text, /^webgl2\nfps \d+\.\d  longest \d+\.\d ms\ncommands 7  triangles 14\n/);
+    assert.match(text, /^webgl2\nfps \d+\.\d  longest \d+\.\d ms\ncommands 7  draws \d+  triangles 14\n/);
   },
   '?backend=webgl2&stats'
 );

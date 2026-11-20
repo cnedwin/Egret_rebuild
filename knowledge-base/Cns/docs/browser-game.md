@@ -86,7 +86,7 @@ game.loop.start();
 ```text
 webgl2
 fps 60.0  longest 17.1 ms
-commands 6  triangles 12
+commands 6  draws 2  triangles 12
 geometries 0  pages 0
 pending 0  drawn 1204  skipped 3
 ```
@@ -95,11 +95,12 @@ pending 0  drawn 1204  skipped 3
 | --- | --- |
 | `fps`、`longest` | 自上次刷新文字以来，显示器每秒的帧数，以及相邻两帧之间最长的间隔 |
 | `commands`、`triangles` | 最近绘制的一帧包含什么：绘制命令数，以及它们画出的三角形数。一个矩形或一张图片是两个三角形 |
+| `draws` | Host 为最近一帧实际发出的绘制调用次数，来自 `host.getSharedStatus().lastFrameDrawCalls`：各个合批、每个效果各一遍、再加一次把帧复制到画布。合批会让它小于 `commands` |
 | `geometries`、`pages` | 该帧中不同的网格几何体数和不同的图片数 |
 | `pending` | Host 持有的尚未完成的帧数 |
 | `drawn`、`skipped` | 循环已绘制的帧数，以及因 Host 已持有两帧而跳过的帧数 |
 
-- **命令数不是绘制调用次数。** Host 会把同一图片、同一材质上连续的命令合成一次绘制。面板显示的是 Engine 要求画的内容，而不是 Host 实际发出了多少次绘制。
+- **命令数不是绘制调用次数。** Host 会把同一图片、同一材质上连续的命令合成一次绘制。`commands` 是 Engine 要求画的内容，`draws` 才是 Host 实际发出的绘制次数。
 - 文字每秒刷新两次。面板盖在画布左上角，不接收指针：它下面的内容仍然可以点击。
 - `game.stats.snapshot()` 把同样的数字交给程序。
 

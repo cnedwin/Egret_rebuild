@@ -111,6 +111,8 @@ export interface SharedWebGL2HostStatus {
   readonly pendingGeometryBytes: number;
   readonly pendingColorBytes: number;
   readonly pendingCanonicalBytes: number;
+  /** Draw calls of the last frame drawn: its draws, effect passes, layers and the resolve to the canvas. */
+  readonly lastFrameDrawCalls: number;
   readonly retention: {
     readonly idleBytes: number;
     readonly idleEntries: number;

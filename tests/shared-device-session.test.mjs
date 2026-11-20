@@ -27,6 +27,7 @@ test('GPU H00 existing shared status and ordinary readback remain genuine baseli
     async ({ f, h, frame }) => {
       assert.deepEqual(Object.keys(h.getSharedStatus()).sort(), [
         'host',
+        'lastFrameDrawCalls',
         'pendingCanonicalBytes',
         'pendingColorBytes',
         'pendingGeometryBytes',

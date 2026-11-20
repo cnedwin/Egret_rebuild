@@ -15,7 +15,9 @@ export type {
   PlayOptions,
   PlayPointer,
   PlaySfx,
-  PlayTextOptions
+  PlayTextOptions,
+  PlayTiles,
+  PlayTilesOptions
 } from './BrowserPlay.js';
 export { PlayBar, wrapPlayWords } from './playWidgets.js';
 export type { PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';

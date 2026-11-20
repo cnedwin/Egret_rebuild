@@ -426,6 +426,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
   private removeListeners: (() => void) | undefined;
   private unsafe = false;
   private retiredUnknownBytes = 0;
+  /** Draw calls of the last frame drawn: its draws, effect passes, layers and the resolve to the canvas. */
+  private frameDrawCalls = 0;
   private retiredUnknownObjects = 0;
 
   public constructor(input: SharedWebGL2HostOptions) {
@@ -2212,6 +2214,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       gl.uniform2f(variant.origin, read.x, read.y);
       gl.uniform2f(variant.extent, read.width, read.height);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
+      this.frameDrawCalls++;
     }
     gl.bindTexture(gl.TEXTURE_2D, null);
   }
@@ -2226,6 +2229,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
   }
 
   private drawRecord(record: Record2D, layout: RecordLayout, arena: SharedWebGL2ArenaPlan): void {
+    this.frameDrawCalls = 0;
     const native = record.native,
       gl = native.gl,
       { width, height, frame } = record.storage.prepared;
@@ -2338,6 +2342,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       const blend = sharedWebGL2BlendFactors(draw.prepared.material.blend);
       gl.blendFuncSeparate(...blend);
       gl.drawArrays(gl.TRIANGLES, range.firstVertex, draw.vertexCount);
+      this.frameDrawCalls++;
     };
     this.drawLayers(record, width, height);
     bindDraw();
@@ -2399,6 +2404,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
           EFFECT_UNIFORM_BYTES
         );
         gl.drawArrays(gl.TRIANGLES, 0, 3);
+        this.frameDrawCalls++;
         gl.activeTexture(gl.TEXTURE0 + 2);
         gl.bindTexture(gl.TEXTURE_2D, null);
         gl.activeTexture(gl.TEXTURE1);
@@ -2451,6 +2457,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     gl.uniform1i(gl.getUniformLocation(this.resolveProgram!, 'workingTexture'), 0);
     gl.uniform1i(gl.getUniformLocation(this.resolveProgram!, 'opaque'), this.options.outputAlpha === 'opaque' ? 1 : 0);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+    this.frameDrawCalls++;
     if (record.ticket) {
       record.pbo = native.create('Buffer', record.storage.staging);
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, record.pbo.value as WebGLBuffer);
@@ -2953,6 +2960,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       pendingGeometryBytes: owner.pendingGeometryBytes,
       pendingColorBytes: owner.pendingColorBytes,
       pendingCanonicalBytes: owner.pendingCanonicalBytes,
+      lastFrameDrawCalls: this.frameDrawCalls,
       resources: this.resourceStatus(),
       retention: Object.freeze({
         idleBytes: retention.idleBytes,
