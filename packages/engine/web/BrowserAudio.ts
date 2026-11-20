@@ -11,6 +11,7 @@ import type {
   AudioMixerOptions
 } from '@egret/engine/audio';
 
+/** Browser audio to make: its audio context, what unlocks it, whether it pauses when the page is hidden, and its limiter. */
 export interface BrowserAudioOptions extends Omit<AudioMixerOptions, 'backend' | 'locked'> {
   /** An output the page made. It is used as it is and is not closed with the mixer. Without it one is made. */
   readonly context?: BaseAudioContext;
@@ -38,6 +39,7 @@ export interface BrowserAudioLimiter {
   readonly release?: number;
 }
 const LIMITER = { threshold: -6, knee: 4, ratio: 12, attack: 0.003, release: 0.16 } as const;
+/** A sound mixer playing through Web Audio, with its context and output node. */
 export interface BrowserAudio {
   readonly mixer: AudioMixer;
   readonly context: BaseAudioContext;

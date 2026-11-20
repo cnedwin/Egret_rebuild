@@ -9,6 +9,7 @@ export interface NineSliceInsets2D {
   readonly bottom: number;
 }
 
+/** The size of a nine-slice picture, the size to stretch it to, and the insets whose corners are not stretched. */
 export interface NineSliceGeometry2DOptions {
   readonly sourceWidth: number;
   readonly sourceHeight: number;

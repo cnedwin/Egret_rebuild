@@ -1,6 +1,7 @@
 import type { Disposable } from "@egret/contracts";
 import type { ByteOrder } from "./ByteReader.js";
 
+/** The largest capacity a ByteWriter has, in bytes. */
 export const BYTE_WRITER_LIMITS = Object.freeze({ maxBytes: 16777216 } as const);
 
 // Capture native slot access and writes once. Caller properties, iterators and

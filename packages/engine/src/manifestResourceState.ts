@@ -35,6 +35,7 @@ export function requireManifestAssetRef(value: unknown): ManifestBindingState {
   return state;
 }
 
+/** Binds one asset of an admitted manifest to an asset type, for its group to load. */
 export function createManifestAssetBinding<T>(
   manifest: AdmittedResourceManifest,
   assetId: string,

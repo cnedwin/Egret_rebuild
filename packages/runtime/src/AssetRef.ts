@@ -22,6 +22,7 @@ function validIdentity(value: unknown): value is string {
   return typeof value === "string" && value.trim().length !== 0;
 }
 
+/** Makes an asset type from a name and a check that a loaded value is of that type. */
 export function createAssetType<T>(name: string, is: (value: unknown) => value is T): AssetType<T> {
   if (!validIdentity(name) || typeof is !== "function") throw new EgretError("ASSET_TYPE_INVALID");
   const type: AssetType<T> = Object.freeze({ name, is });

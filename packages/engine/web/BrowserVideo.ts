@@ -5,6 +5,7 @@ import { createVideo } from '@egret/engine/video';
 import type { Video, VideoFrame, VideoSource, VideoSourceState } from '@egret/engine/video';
 import type { AssetManager } from '@egret/runtime';
 
+/** A browser video to make: its assets, its source or stream or element, and whether it loops, is muted and how loud. */
 export interface BrowserVideoOptions {
   /** The Engine's assets, which lease each picture as a texture. */
   readonly assets: AssetManager;
@@ -21,6 +22,7 @@ export interface BrowserVideoOptions {
   /** For a file from another origin that allows it. */
   readonly crossOrigin?: 'anonymous' | 'use-credentials';
 }
+/** A video played by a video element, its pictures leased as textures. */
 export interface BrowserVideo extends Video {
   /** The page's video element the pictures are read from. */
   readonly element: HTMLVideoElement;

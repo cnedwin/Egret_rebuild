@@ -31,9 +31,11 @@ import type { KeyboardInput } from './keyboard.js';
 import { createBrowserStatsPanel } from './BrowserStatsPanel.js';
 import type { BrowserStatsPanel } from './BrowserStatsPanel.js';
 
+/** Which GPU interface a browser game draws with. */
 export type BrowserGameBackend = 'webgpu' | 'webgl2';
 /** How the canvas fills the element it is in: not at all, whole inside it, covering it, or stretched to it. */
 export type BrowserGameFit = 'none' | 'contain' | 'cover' | 'stretch';
+/** A text label to make: its text, font, size and weight, line height, color, locale and direction. */
 export interface BrowserGameLabelOptions {
   readonly text?: string;
   /** A font the page has: a family of the system, or one the page loaded. "sans-serif" unless given. */
@@ -62,6 +64,7 @@ export interface BrowserGameLabel {
   set(options: BrowserGameLabelOptions): void;
   dispose(): void;
 }
+/** A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. */
 export interface BrowserGameOptions {
   /** The canvas the game is drawn on. The page gives it its size on the screen. */
   readonly canvas: HTMLCanvasElement;
@@ -100,6 +103,7 @@ export interface BrowserGameOptions {
   /** The loop starts at once unless false is given; then `game.loop.start()` starts it. */
   readonly autoStart?: boolean;
 }
+/** A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. */
 export interface BrowserGame {
   readonly backend: BrowserGameBackend;
   readonly engine: Engine;

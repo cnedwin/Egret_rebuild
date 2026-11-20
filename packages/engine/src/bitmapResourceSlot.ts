@@ -3,6 +3,7 @@ import { CancellationController, EgretError, Scope } from '@egret/runtime';
 import type { AssetGroupOperations, AssetLease, AssetRef, Bitmap, EngineContext, Texture } from '@egret/runtime';
 import type { Diagnostic } from '@egret/contracts';
 
+/** Whether a bitmap resource slot is idle, loading a replacement, ready, failed, conflicted or disposed. */
 export type BitmapResourceSlotState = 'idle' | 'pending' | 'ready' | 'failed' | 'conflicted' | 'disposed';
 /** Owns only replacement leases; the exact initial Bitmap binding remains borrowed. */
 export interface BitmapResourceSlot {

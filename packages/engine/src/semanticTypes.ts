@@ -38,10 +38,13 @@ export type SemanticRole =
   | 'heading';
 /** What assistive technology may ask of a node: its activation, or the keyboard focus. */
 export type SemanticAction = 'activate' | 'focus';
+/** Whether a node is checked, not checked, or partly checked. */
 export type SemanticChecked = boolean | 'mixed';
+/** Whether a node runs across or down. */
 export type SemanticOrientation = 'horizontal' | 'vertical';
 /** How the rows of a grid are ordered by one of its columns. */
 export type SemanticSort = 'ascending' | 'descending' | 'none';
+/** Whether a semantic tree is active or closed. */
 export type SemanticsState = 'active' | 'closed';
 
 /** A rectangle in the logical coordinates of the stage, the ones picking uses. */
@@ -51,6 +54,7 @@ export interface SemanticBounds {
   readonly width: number;
   readonly height: number;
 }
+/** The value of a range node and its least and greatest value. */
 export interface SemanticRange {
   readonly now: number;
   readonly min: number;
@@ -112,6 +116,7 @@ export interface SemanticDescription {
   readonly order?: number;
 }
 
+/** A node to add: its id, role and parent, how it is described, and what it does when activated or focused. */
 export interface SemanticNodeOptions {
   /** One to 128 characters, distinct among the nodes of the tree. */
   readonly id: string;
@@ -125,6 +130,7 @@ export interface SemanticNodeOptions {
   readonly onFocus?: () => void;
 }
 
+/** A node of the semantic tree; remove it to take it out. */
 export interface SemanticNode {
   readonly id: string;
   readonly role: SemanticRole;
@@ -163,6 +169,7 @@ export interface SemanticSnapshotNode {
   readonly position: SemanticPosition | undefined;
 }
 
+/** The semantic tree as published: its revisions, its nodes and the focused one. */
 export interface SemanticSnapshot {
   /** Grows by one with every publication that differs from the one before. */
   readonly revision: number;
@@ -173,6 +180,7 @@ export interface SemanticSnapshot {
   readonly focused: string | undefined;
 }
 
+/** A semantic tree to make: how many nodes it holds. */
 export interface UiSemanticsOptions {
   /** Most nodes the tree holds at once. Defaults to 256, and is at most 4,096. */
   readonly maxNodes?: number;

@@ -18,6 +18,7 @@ export interface AssetBundleInput {
   /** Free labels a game can filter by, such as a quality tier or a level. */
   readonly tags?: readonly string[];
 }
+/** One file in an asset bundle: its name, where its bytes are, its type and tags, and its check. */
 export interface AssetBundleEntry {
   readonly name: string;
   /** Bytes from the start of the bundle file. */
@@ -28,6 +29,7 @@ export interface AssetBundleEntry {
   /** FNV-1a 32-bit of the bytes, as eight hex digits: a quick check that a range came back whole. */
   readonly check: string;
 }
+/** The table of an asset bundle: its size, where its data begins, and its entries. */
 export interface AssetBundleIndex {
   readonly version: 1;
   /** Bytes of the whole file. */

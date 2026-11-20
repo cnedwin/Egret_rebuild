@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-20",
+  "en": {
+    "title": "Doc comments for the core and browser exports",
+    "body": "About 415 exports of the contracts, the runtime, the engine and its browser entries that had no sentence in the sources now have one, so editors show what each is and the API reference says it: 804 of 1329 exports were silent, now 387 are, nearly all of them World3D. One comment is left out on purpose: a doc comment on the runtime's `EventListenerOptions` changes which properties TypeScript names first when a value is missing `Bitmap`'s, which the recorded type lanes would see."
+  },
+  "zh": {
+    "title": "核心与浏览器入口导出补齐说明",
+    "body": "contracts、runtime、engine 及其浏览器入口中约 415 个在源码里没有说明的导出补上了一句说明，编辑器悬停和 API 参考都能看到：原先 1329 个导出中有 804 个没有说明，现在剩 387 个，几乎都在 World3D。有意保留一处不加：给 runtime 的 `EventListenerOptions` 加文档注释会改变 TypeScript 在缺少 `Bitmap` 属性时首先列出的属性名，已记录的类型通道会因此变化。"
+  }
+}

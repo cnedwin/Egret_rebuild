@@ -5,12 +5,14 @@
 import { EgretError } from '@egret/runtime';
 import type { SaveStorage } from '@egret/engine/kit';
 
+/** Save storage kept in IndexedDB: flush pending writes, and close it. */
 export interface IndexedDBSaveStorage extends SaveStorage {
   /** Resolves when every write so far has reached the database; rejects with the first that failed. */
   flush(): Promise<void>;
   /** Closes the database; later writes are refused. */
   close(): void;
 }
+/** IndexedDB save storage to open: its database name, the IndexedDB to use, and what is called on an error. */
 export interface IndexedDBSaveStorageOptions {
   /** The database name; one per game. */
   readonly database: string;

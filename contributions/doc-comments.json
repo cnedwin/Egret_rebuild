@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/bitmapButtonTypes.ts",
+      "originRole": "First-party public types of the bitmap button, from the bitmap-button work package; doc comments added with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

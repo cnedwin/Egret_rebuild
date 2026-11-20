@@ -5,11 +5,14 @@
 
 /** The moods there are. Each has its own key, harmony, tempo and parts. */
 export type MusicMood = 'calm' | 'mystery' | 'tense' | 'battle' | 'triumph';
+/** The moods play music can be made in. */
 export const MUSIC_MOODS: readonly MusicMood[] = Object.freeze(['calm', 'mystery', 'tense', 'battle', 'triumph']);
 /** The parts of a piece, from the quietest moment to the most intense. */
 export const MUSIC_PARTS = Object.freeze(['pad', 'bass', 'drums', 'tune'] as const);
+/** One part of a piece of play music. */
 export type MusicPart = (typeof MUSIC_PARTS)[number];
 
+/** Music to make: its mood, seed, tempo and length in bars. */
 export interface MusicOptions {
   readonly mood?: MusicMood;
   /** The same seed writes the same piece. */
@@ -19,6 +22,7 @@ export interface MusicOptions {
   /** Bars of four beats before the piece repeats: 4 or 8; 8 unless given. */
   readonly bars?: 4 | 8;
 }
+/** A piece of music made from a seed: its mood, tempo, length and parts. */
 export interface MusicPiece {
   readonly mood: MusicMood;
   readonly tempo: number;

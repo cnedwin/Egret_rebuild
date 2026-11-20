@@ -3,6 +3,7 @@ import type { SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contra
 import type { SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js';
 import type { SharedFrameUpload, SharedFrameUploadOptions } from './sharedFrameUpload.js';
 
+/** Where a WebGL2 host is: new, starting, active, lost, restoring, stopped, failed, closing or closed. */
 export type WebGL2HostState =
   | 'new'
   | 'starting'
@@ -13,6 +14,7 @@ export type WebGL2HostState =
   | 'failed'
   | 'closing'
   | 'closed';
+/** What went wrong in a WebGL2 host. */
 export type WebGL2HostErrorCode =
   | 'WEBGL2_OPTIONS_INVALID'
   | 'WEBGL2_CONTEXT_UNAVAILABLE'
@@ -63,6 +65,7 @@ export type WebGL2HostErrorCode =
   | 'WEBGL2_LAYER_NOT_READY'
   | 'WEBGL2_LAYER_PENDING'
   | 'WEBGL2_LAYER_DISPOSED';
+/** A failure of a WebGL2 host: its code, the frame and context generation it happened at, the phase, and its cause. */
 export interface WebGL2HostFailure {
   readonly code: WebGL2HostErrorCode;
   readonly serial: number | null;
@@ -70,9 +73,11 @@ export interface WebGL2HostFailure {
   readonly phase: 'startup' | 'frame' | 'readback' | 'context' | 'restore' | 'cleanup' | 'callback';
   readonly cause: unknown;
 }
+/** Something a WebGL2 host reports: a failure, with how serious it is. */
 export interface WebGL2HostDiagnostic extends WebGL2HostFailure {
   readonly severity: 'error';
 }
+/** A WebGL2 host as it is now: its state and generation, frames and bytes pending, and its failures. */
 export interface WebGL2HostStatus {
   readonly state: WebGL2HostState;
   readonly generation: number;
@@ -86,6 +91,7 @@ export interface WebGL2HostStatus {
   readonly lastCallbackFailure: WebGL2HostFailure | null;
   readonly cleanupOutcome: 'not-started' | 'pending' | 'safe' | 'unsafe';
 }
+/** The pixels of a shared frame read back: its generation and frame, size, format, color space, alpha and bytes. */
 export interface SharedWebGL2Readback {
   readonly generation: number;
   readonly serial: number;
@@ -98,6 +104,7 @@ export interface SharedWebGL2Readback {
   readonly alphaMode: 'premultiplied' | 'opaque';
   readonly bytes: Uint8Array;
 }
+/** A shared WebGL2 host as it is now: its resources, host status, bytes pending and retention. */
 export interface SharedWebGL2HostStatus {
   readonly resources: SharedHostResourceStatus;
   readonly host: WebGL2HostStatus;
@@ -115,6 +122,7 @@ export interface SharedWebGL2HostStatus {
     readonly unknownNativeObjects: number;
   };
 }
+/** A layer drawn once and kept on the GPU: update it, or dispose of it. */
 export interface SharedWebGL2Layer2D {
   readonly state: 'empty' | 'ready' | 'stale' | 'disposed';
   /** Bake a transparent Engine capture. The current revision remains usable until the replacement completes. */
@@ -122,12 +130,14 @@ export interface SharedWebGL2Layer2D {
   dispose(): void;
 }
 type LayerRGB = readonly [number, number, number];
+/** How a kept layer is tinted when it is placed: its bounds and its multiplied and added color. */
 export interface SharedWebGL2LayerEffect2D {
   /** Half-open rectangle in logical frame coordinates. */
   readonly bounds: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
   readonly multiply?: LayerRGB;
   readonly add?: LayerRGB;
 }
+/** Where a kept layer is placed in a frame, how large, and with what effect. */
 export interface SharedWebGL2LayerPlacement2D {
   readonly layer: SharedWebGL2Layer2D;
   /** Destination bounds in logical frame coordinates, before the host pixel ratio. */
@@ -137,12 +147,14 @@ export interface SharedWebGL2LayerPlacement2D {
   readonly height: number;
   readonly effect?: SharedWebGL2LayerEffect2D;
 }
+/** The kept layers of a host: the bytes they hold, and how many are ready and pending. */
 export interface SharedWebGL2LayerStatus {
   /** Logical RGBA8 bytes for live targets, including pending and pinned superseded revisions. */
   readonly residentBytes: number;
   readonly readyLayers: number;
   readonly pendingLayers: number;
 }
+/** A phase of drawing a shared frame that the host can time. */
 export type SharedWebGL2TimingPhase =
   | 'texture-prepare'
   | 'texture-upload'
@@ -153,6 +165,7 @@ export type SharedWebGL2TimingPhase =
   | 'completion-error-query'
   | 'retire'
   | 'sync-delete-error-query';
+/** One timed phase of a frame: its generation and frame, the phase, when it began and how long it took. */
 export interface SharedWebGL2TimingSample {
   readonly generation: number;
   /** Null before a frame is assigned a submission serial. */
@@ -161,6 +174,7 @@ export interface SharedWebGL2TimingSample {
   readonly startMs: number;
   readonly durationMs: number;
 }
+/** The timings of a host's frames: totals by phase, the recent samples and how many were dropped. */
 export interface SharedWebGL2FrameTiming {
   readonly totals: Readonly<
     Record<SharedWebGL2TimingPhase, { readonly count: number; readonly totalMs: number; readonly maxMs: number }>
@@ -170,6 +184,7 @@ export interface SharedWebGL2FrameTiming {
   readonly dropped: number;
 }
 
+/** A host that draws shared frames with WebGL2: start and stop it, stage frames, read them back, time them and recover a lost context. */
 export interface SharedWebGL2Host extends SharedRenderHostAdapter {
   readonly surface: HTMLCanvasElement;
   start(): Promise<void>;
@@ -186,6 +201,7 @@ export interface SharedWebGL2Host extends SharedRenderHostAdapter {
   stageSharedFrame(frame: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
   setTimeout(callback: () => void, delayMs: number): () => void;
 }
+/** A shared WebGL2 host that also draws kept layers. */
 export interface SharedLayerWebGL2Host extends SharedWebGL2Host {
   createSharedLayer2D(): SharedWebGL2Layer2D;
   renderSharedFrameWithLayers(frame: SharedRenderFrame2D, layers: readonly SharedWebGL2LayerPlacement2D[]): undefined;

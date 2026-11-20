@@ -168,6 +168,7 @@ export class Texture {
   }
 }
 
+/** A texture of a whole image or of a rectangle of it. */
 export function createTexture(image: ImageData2D, sourceRect?: TextureRegion2D): Texture {
   if (!isImageData2D(image))
     throw new EgretError("TEXTURE_IMAGE_INVALID", { cause: new TypeError("Authentic ImageData2D required") });

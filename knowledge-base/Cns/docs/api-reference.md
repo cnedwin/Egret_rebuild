@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1329 个导出，其中 804 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1329 个导出，其中 387 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -12,46 +12,46 @@
 | --- | --- | --- |
 | `after` | 函数 | Calls a function once, `seconds` from now on the Engine's clock, as Egret's setTimeout. |
 | `animate` | 函数 | A motion of one object: `animate(engine, scope, sprite).to({ x: 100, alpha: 0.5 }, 0.5, 'quadOut').wait(0.2).to({ x: 0 }, 0.5).start()`. |
-| `AssetAcquireOptions` | 接口 |  |
+| `AssetAcquireOptions` | 接口 | Options of one acquisition: a signal that cancels it. |
 | `AssetGroup` | 接口 | One opaque cleanup owner; members remain borrowed genuine invariant leases. |
-| `AssetGroupOptions` | 接口 |  |
-| `AssetGroupState` | 类型 |  |
+| `AssetGroupOptions` | 接口 | How many of a group's assets load at once. |
+| `AssetGroupState` | 类型 | Whether an asset group is loading, ready, failed or disposed. |
 | `AssetLease` | 类 | One independently revocable CPU-value borrow, bound to its originating Engine. |
-| `AssetLoadContext` | 接口 |  |
+| `AssetLoadContext` | 接口 | What a provider is given with each load: the signal that tells it the load is no longer wanted. |
 | `AssetManager` | 类 | CPU acquisition only: demand retains values; completed unused values are evicted. |
-| `AssetProvider` | 接口 |  |
+| `AssetProvider` | 接口 | Loads the value an asset reference names, and disposes of it when it is no longer held. |
 | `AssetRef` | 接口 | A stable manager-local identity paired with its invariant value descriptor. |
 | `AssetType` | 接口 | Factory identity prevents equal names from aliasing; the phantom is invariant. |
 | `AtlasFrameLayout` | 接口 | Logical canvas and unpacked placement of a clockwise-packed atlas rectangle. |
 | `Bitmap` | 类 | A leaf borrowing one exact lease; engine affinity outlives clearing its slot. |
 | `BitmapBindingTicket` | 接口 | Publishes borrowed group members once; owns no initial or candidate lease. |
 | `BitmapResourceSlot` | 接口 | Owns only replacement leases; the exact initial Bitmap binding remains borrowed. |
-| `BitmapResourceSlotState` | 类型 |  |
+| `BitmapResourceSlotState` | 类型 | Whether a bitmap resource slot is idle, loading a replacement, ready, failed, conflicted or disposed. |
 | `BoundsQueryOptions` | 接口 | Receiver-inclusive node and content budgets for logical local measurement. |
-| `BYTE_READER_LIMITS` | 值 |  |
-| `BYTE_WRITER_LIMITS` | 值 |  |
-| `ByteOrder` | 类型 |  |
+| `BYTE_READER_LIMITS` | 值 | The largest snapshot a ByteReader reads, in bytes. |
+| `BYTE_WRITER_LIMITS` | 值 | The largest capacity a ByteWriter has, in bytes. |
+| `ByteOrder` | 类型 | The order of the bytes of a multi-byte number. |
 | `ByteReader` | 类 | Read-only owned binary snapshot. |
 | `ByteWriter` | 类 | Fixed-capacity owned binary appends. |
 | `CancellationController` | 类 | Owns the mutable signal; consumers receive the read-only cancellation port. |
 | `CancellationListener` | 类型 | A DOM-free cancellation listener; it receives no host Event object. |
 | `CancellationSignal` | 接口 | One-way cancellation state. |
-| `ClipRectangle2D` | 接口 |  |
+| `ClipRectangle2D` | 接口 | A clip rectangle together with the matrix that places it on the frame. |
 | `CoordinateQueryOptions` | 接口 | Receiver-inclusive ancestor budget; omitted maxNodes defaults to 4096. |
-| `copyImageData2DPixels` | 函数 |  |
+| `copyImageData2DPixels` | 函数 | A fresh copy of an image's pixels, which the caller owns. |
 | `createAssetRef` | 函数 | Keep the caller's valid ID byte-for-byte; whitespace is not normalization. |
-| `createAssetType` | 函数 |  |
+| `createAssetType` | 函数 | Makes an asset type from a name and a check that a loaded value is of that type. |
 | `createEngine` | 函数 | An Engine without a render port: it captures frames and does not render them. |
 | `createEngineForProfile` | 函数 | Exact negotiation completes all successful port reads before semantics. |
 | `createEventType` | 函数 | Matching uses descriptor object identity; equal key strings do not alias types. |
-| `createImageData2D` | 函数 |  |
+| `createImageData2D` | 函数 | Copies the pixels into an image this module owns; a wrong size or pixel count is refused with a TypeError. |
 | `createNineSliceGeometry2D` | 函数 | Create an owned immutable stretch grid for an existing Mesh2D texture lease. |
-| `createSequenceClip` | 函数 |  |
-| `createSharedGeometry2D` | 函数 |  |
-| `createSharedMaterial2D` | 函数 |  |
+| `createSequenceClip` | 函数 | Checks and freezes a sequence from its atlas size and frames; malformed input is refused. |
+| `createSharedGeometry2D` | 函数 | Copies and checks a mesh into a shared geometry that renderers can draw; malformed arrays are refused. |
+| `createSharedMaterial2D` | 函数 | Checks and freezes a material for shared meshes; values out of range are refused. |
 | `createSpriteSheet` | 函数 | Build one exact-name table from a genuine full-image lease without acquiring another resource. |
-| `createTexture` | 函数 |  |
-| `createTexturedGeometry2D` | 函数 |  |
+| `createTexture` | 函数 | A texture of a whole image or of a rectangle of it. |
+| `createTexturedGeometry2D` | 函数 | Copies and checks a textured mesh; malformed arrays are refused with a TypeError. |
 | `createTextureView` | 函数 | Create an explicit logical view over an authentic straight CPU image. |
 | `createTimer` | 函数 | A timer: `createTimer(engine, scope, 1, 5).onTimer(n => …).onComplete(() => …).start()`. |
 | `Delayed` | 接口 | A call to come: `cancel` takes it back if it has not been made. |
@@ -63,114 +63,114 @@
 | `DisplaySubtreeTicket` | 接口 | Borrows all nodes/resources; disposal only revokes this candidate publication. |
 | `Disposable` | 接口 | Synchronous terminal cleanup. |
 | `EgretError` | 类 | Stable machine-readable code, original cause, and associated cleanup failures. |
-| `EgretErrorOptions` | 接口 |  |
+| `EgretErrorOptions` | 接口 | What an EgretError can carry besides its code: the error or value that caused it. |
 | `Engine` | 类 | One headless run. |
 | `EngineOptions` | 接口 |  |
 | `ErrorLanguage` | 类型 | The languages an error's sentence can be in. |
 | `Event` | 类 | One typed payload with synchronous dispatch state; concurrent reuse is rejected. |
 | `EventDispatcher` | 类 | Synchronous typed listeners with a frozen route and per-dispatch candidates. |
 | `EventListenerOptions` | 接口 |  |
-| `EventPhase` | 类型 |  |
+| `EventPhase` | 类型 | Where an event is on its way: going down to its target, at it, or coming back up. |
 | `EventType` | 接口 | Descriptor identity and invariant payload type belong together. |
-| `EventTypeOptions` | 接口 |  |
-| `GameClock` | 接口 |  |
-| `GameClockHandler` | 类型 |  |
-| `GameClockOptions` | 接口 |  |
-| `GameClockState` | 类型 |  |
-| `GameClockSubscription` | 接口 |  |
-| `GameClockTick` | 接口 |  |
-| `getErrorLanguage` | 函数 |  |
+| `EventTypeOptions` | 接口 | How events of a type travel: whether they bubble and whether they can be cancelled. |
+| `GameClock` | 接口 | The Engine's game clock: it ticks while running, and handlers are called on each tick. |
+| `GameClockHandler` | 类型 | Called on each tick of the game clock. |
+| `GameClockOptions` | 接口 | The longest step the game clock takes in one tick, in seconds. |
+| `GameClockState` | 类型 | Whether the game clock is running, paused or closed. |
+| `GameClockSubscription` | 接口 | A handler's place on the game clock; disposing it stops the calls. |
+| `GameClockTick` | 接口 | One tick of the game clock: its number, the seconds so far and the seconds since the last tick. |
+| `getErrorLanguage` | 函数 | The language error messages are written in. |
 | `Graphics` | 类 | Drawing state belongs to one node; every shape snapshots its fill and its line. |
 | `HitTestOptions` | 接口 | Receiver-inclusive whole-tree admission precedes all hit arithmetic. |
 | `HostAdapter` | 接口 | Host owns the surface and any borrowed device. |
-| `IMAGE_LIMITS_2D` | 值 |  |
+| `IMAGE_LIMITS_2D` | 值 | The largest image accepted: its longest edge and its number of pixels. |
 | `ImageData2D` | 接口 | Immutable CPU byte identity; the brand conveys no asset or GPU authority. |
-| `ImageData2DInput` | 接口 |  |
-| `isImageData2D` | 函数 |  |
+| `ImageData2DInput` | 接口 | The size and pixels of an image to copy: sRGB RGBA, eight bits a channel, rows top to bottom. |
+| `isImageData2D` | 函数 | Whether a value is an image made by `createImageData2D`, without reading any of its properties. |
 | `isTexture` | 函数 | Brand-only: disposal does not change the identity of a Texture. |
-| `isTexturedGeometry2D` | 函数 |  |
+| `isTexturedGeometry2D` | 函数 | Whether a value is a geometry made by `createTexturedGeometry2D`, without reading any of its properties. |
 | `Matrix` | 类 | A matrix of the plane, as Egret's and a canvas's: a point (x, y) goes to (a·x + c·y + tx, b·x + d·y + ty). |
 | `Matrix2D` | 接口 | Immutable logical-coordinate values shared by CPU capture and render hosts. |
-| `MatrixLike` | 接口 |  |
+| `MatrixLike` | 接口 | Anything with a 2D matrix's six numbers. |
 | `Mesh2D` | 类 | A display leaf borrowing an exact lease and an immutable owned geometry. |
 | `Motion` | 接口 | A chain of steps for one object. |
 | `MotionEasing` | 类型 | How a step runs from its start to its end: a name, or a function from 0–1 to 0–1 (it may pass both on the way). |
-| `MotionEasingName` | 类型 |  |
-| `MotionState` | 类型 |  |
+| `MotionEasingName` | 类型 | The name of an easing a motion step can use. |
+| `MotionState` | 类型 | Whether a motion is idle, running, paused, finished or stopped. |
 | `NineSliceBitmap` | 类 | A resizable stretch-only leaf borrowing one exact, caller-owned Texture lease. |
 | `NineSliceBitmapOptions` | 接口 | Required local panel dimensions and fixed source-crop borders. |
-| `NineSliceGeometry2DOptions` | 接口 |  |
+| `NineSliceGeometry2DOptions` | 接口 | The size of a nine-slice picture, the size to stretch it to, and the insets whose corners are not stretched. |
 | `NineSliceInsets2D` | 接口 | Border widths in the same units as the unrotated source crop. |
 | `Point` | 类 | A place: `x` and `y`. |
 | `Point2D` | 接口 | An owned logical-coordinate value; query results are frozen at runtime. |
 | `Rectangle` | 类 | A rectangle: its top left corner `x`, `y`, and its `width` and `height`. |
-| `Rectangle2D` | 接口 |  |
-| `RectangleLike` | 接口 |  |
+| `Rectangle2D` | 接口 | An axis-aligned rectangle in its own coordinate space. |
+| `RectangleLike` | 接口 | Anything with a rectangle's x, y, width and height. |
 | `Releasable` | 接口 | Releases a lease; resource ownership and disposal remain with its provider. |
 | `RenderEffect2D` | 接口 | Render-only subtree effect. |
-| `RenderGlow2D` | 接口 |  |
-| `RenderOutline2D` | 接口 |  |
+| `RenderGlow2D` | 接口 | A glow around a node's picture, or, moved by an offset, a drop shadow. |
+| `RenderOutline2D` | 接口 | An outline around a node's picture: its color, width and alpha. |
 | `Scope` | 类 | Synchronous ownership boundary. |
-| `ScopeState` | 类型 |  |
+| `ScopeState` | 类型 | Whether a scope is open, disposing what it owns, or closed. |
 | `ScopeValue` | 类型 | Scope prefers dispose() when a value implements both cleanup protocols. |
 | `SequenceClip` | 接口 | Public immutable sequence metadata; authentic values come from createSequenceClip. |
-| `SequenceClipInput` | 接口 |  |
-| `SequenceFrameInput` | 接口 |  |
-| `SequencePlayback` | 接口 |  |
-| `SequencePlaybackMode` | 类型 |  |
-| `SequencePlaybackOptions` | 接口 |  |
-| `SequencePlaybackState` | 类型 |  |
+| `SequenceClipInput` | 接口 | The atlas size and the frames of a sequence to make. |
+| `SequenceFrameInput` | 接口 | One frame of a sequence to make: its rectangle on the atlas, how long it shows, and its trim and rotation. |
+| `SequencePlayback` | 接口 | A sequence playing on the game clock: start, pause, resume and stop it, and read its last sample. |
+| `SequencePlaybackMode` | 类型 | Whether a sequence plays once and stops on its last frame, or loops. |
+| `SequencePlaybackOptions` | 接口 | Whether a sequence plays once or loops. |
+| `SequencePlaybackState` | 类型 | Whether a sequence playback is idle, running, paused, completed, stopped or failed. |
 | `SequencePlayer` | 类 | Explicit absolute-time selection borrowing a target and its exact current lease. |
-| `SequenceRegion` | 接口 |  |
-| `SequenceSample` | 接口 |  |
+| `SequenceRegion` | 接口 | The rectangle of the atlas a sequence shows at one moment, with its trim and rotation. |
+| `SequenceSample` | 接口 | What a sequence shows at a position: its frame and region, and whether it has reached its end or stopped. |
 | `setErrorLanguage` | 函数 | The language of the sentence in the message of every error made from now on: English unless set. |
 | `Shape` | 类 | Stable drawing facade; a Sprite never shares or rebinds its Graphics. |
-| `SHARED_FRAME_PROFILE_2D` | 值 |  |
-| `SharedBarrierCommand2D` | 接口 |  |
+| `SHARED_FRAME_PROFILE_2D` | 值 | The name of the shared 2D frame profile that hosts and the engine agree on. |
+| `SharedBarrierCommand2D` | 接口 | A command that ends or begins an effect layer: what came before is finished before what comes after is drawn. |
 | `SharedBlendSpace2D` | 类型 | Where translucent draws mix with what is under them. |
-| `SharedDrawState2D` | 接口 |  |
+| `SharedDrawState2D` | 接口 | What every draw command carries: its order, its material, its matrix, its opacity and its clips. |
 | `SharedEffect2D` | 接口 | Frozen effect inputs captured with the same frame and image ownership. |
-| `SharedFloatArray2D` | 类型 |  |
-| `SharedFrameOptions2D` | 接口 |  |
-| `SharedFrameProfile2D` | 类型 |  |
+| `SharedFloatArray2D` | 类型 | A float array of a shared geometry, in single or double precision. |
+| `SharedFrameOptions2D` | 接口 | The size of a frame to capture, the color it is cleared to, and how its alpha is given. |
+| `SharedFrameProfile2D` | 类型 | The type of the shared frame profile name. |
 | `SharedGeometry2D` | 接口 | Immutable CPU geometry identity; the brand grants no asset or GPU authority. |
-| `SharedGeometryInput2D` | 接口 |  |
-| `SharedGlow2D` | 接口 |  |
-| `SharedImageCommand2D` | 接口 |  |
-| `SharedIndexArray2D` | 类型 |  |
-| `SharedMaterial2D` | 接口 |  |
-| `SharedMaterialInput2D` | 接口 |  |
-| `SharedMeshCommand2D` | 接口 |  |
-| `SharedOutputAlpha2D` | 类型 |  |
-| `SharedPage2D` | 接口 |  |
-| `SharedRectangleCommand2D` | 接口 |  |
-| `SharedRegion2D` | 接口 |  |
-| `SharedRenderCommand2D` | 类型 |  |
-| `SharedRenderFrame2D` | 接口 |  |
-| `SharedRenderHostAdapter` | 接口 |  |
+| `SharedGeometryInput2D` | 接口 | The positions, texture coordinates, light and dark colors and triangle indices of a mesh to share with a renderer. |
+| `SharedGlow2D` | 接口 | A glow or outline drawn around what an effect layer holds. |
+| `SharedImageCommand2D` | 接口 | A draw command that draws a region of a page. |
+| `SharedIndexArray2D` | 类型 | An index array of a shared geometry, in 16 or 32 bits. |
+| `SharedMaterial2D` | 接口 | A checked material for shared meshes; only `createSharedMaterial2D` makes one. |
+| `SharedMaterialInput2D` | 接口 | The colors, blend, sampling and addressing of a material for shared meshes, as plain values to check. |
+| `SharedMeshCommand2D` | 接口 | A draw command that draws a textured or colored mesh. |
+| `SharedOutputAlpha2D` | 类型 | How a frame's output alpha is given: premultiplied, or opaque with alpha ignored. |
+| `SharedPage2D` | 接口 | One image that a frame's commands sample from, with how its pixels are represented. |
+| `SharedRectangleCommand2D` | 接口 | A draw command that fills a rectangle with one color. |
+| `SharedRegion2D` | 接口 | A region of a page, by the page's index in the frame. |
+| `SharedRenderCommand2D` | 类型 | Any command of a shared frame. |
+| `SharedRenderFrame2D` | 接口 | One captured frame: its size, clear color and color recipe, its commands in draw order, and the pages, regions, materials and geometries they use. |
+| `SharedRenderHostAdapter` | 接口 | A host that draws shared frames of this profile. |
 | `Sprite` | 类 | Stable drawing facade; a Sprite never shares or rebinds its Graphics. |
 | `SpriteSheet` | 接口 | Immutable metadata plus a separately revocable borrow of one original lease. |
 | `SpriteSheetFrameInput` | 接口 | One packed absolute rectangle, indexed by its exact UTF-16 name. |
 | `Stage` | 类 | Created and bound by Engine; there is no implicit global stage. |
 | `Texture` | 类 | An immutable CPU image view with a separate, terminal wrapper lifetime. |
-| `TexturedFloatArray2D` | 类型 |  |
+| `TexturedFloatArray2D` | 类型 | A float array of a textured geometry, in single or double precision. |
 | `TexturedGeometry2D` | 接口 | Immutable CPU geometry identity; the brand grants no asset or GPU authority. |
-| `TexturedGeometry2DInput` | 接口 |  |
-| `TexturedIndexArray2D` | 类型 |  |
-| `TextureRegion2D` | 接口 |  |
+| `TexturedGeometry2DInput` | 接口 | The positions, texture coordinates and triangle indices of a textured mesh to copy. |
+| `TexturedIndexArray2D` | 类型 | An index array of a textured geometry, in 16 or 32 bits. |
+| `TextureRegion2D` | 接口 | A rectangle of an image in whole pixels, from its top left corner. |
 | `TextureViewRegion2D` | 接口 | Owned immutable metadata. |
 | `TextureViewRegionInput2D` | 接口 | A packed page rectangle and its unrotated logical, top-left region. |
 | `Timer` | 接口 | Calls a function every `delay` seconds, `repeatCount` times or until it is stopped, as Egret's Timer. |
-| `Tween` | 接口 |  |
-| `TweenEasing` | 类型 |  |
-| `TweenOptions` | 接口 |  |
-| `TweenState` | 类型 |  |
+| `Tween` | 接口 | A number tweened on the game clock: start, pause, resume and stop it, and read its value. |
+| `TweenEasing` | 类型 | The easing a tween uses. |
+| `TweenOptions` | 接口 | A tween to make: from and to which number, for how long, with which easing, and what it calls. |
+| `TweenState` | 类型 | Whether a tween is idle, running, paused, completed, stopped or failed. |
 
 ## `@egret/engine/webgpu`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `createSharedWebGPUHost` | 函数 |  |
+| `createSharedWebGPUHost` | 函数 | A host that draws shared frames with WebGPU on a canvas. |
 | `SharedDeviceSessionState` | 类型 | Shared Host lifecycle metadata. |
 | `SharedDeviceSessionStatus` | 接口 | A frozen observation of one Host, with historical and current failures separate. |
 | `SharedFrameSubmission` | 接口 | Native draw completion is separate from pixel readback and final retirement. |
@@ -178,17 +178,17 @@
 | `SharedFrameUploadOptions` | 接口 | Cancellation revokes an unsubmitted upload without releasing unsettled work. |
 | `SharedFrameUploadReady` | 接口 | Upload completion does not imply that this frame has been presented. |
 | `SharedHostResourceStatus` | 接口 | Fresh immutable data; reads do no native work. |
-| `SharedWebGPUHost` | 接口 |  |
-| `SharedWebGPUHostOptions` | 接口 |  |
-| `SharedWebGPUHostStatus` | 接口 |  |
-| `SharedWebGPUReadback` | 接口 |  |
-| `WebGPUHostDiagnostic` | 接口 |  |
-| `WebGPUHostErrorCode` | 类型 |  |
-| `WebGPUHostFailure` | 接口 |  |
-| `WebGPUHostOptions` | 接口 |  |
-| `WebGPUHostState` | 类型 |  |
-| `WebGPUHostStatus` | 接口 |  |
-| `WebGPUReadback` | 接口 |  |
+| `SharedWebGPUHost` | 接口 | A host that draws shared frames with WebGPU: start and stop it, stage frames, read them back, and recover from a lost device. |
+| `SharedWebGPUHostOptions` | 接口 | A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space and recovery. |
+| `SharedWebGPUHostStatus` | 接口 | A shared WebGPU host as it is now: its host status, the bytes pending, and its resources. |
+| `SharedWebGPUReadback` | 接口 | Pixels read back from a shared frame, with their alpha mode and device generation. |
+| `WebGPUHostDiagnostic` | 接口 | Something a WebGPU host reports: a failure, with how serious it is. |
+| `WebGPUHostErrorCode` | 类型 | What went wrong in a WebGPU host. |
+| `WebGPUHostFailure` | 接口 | A failure of a WebGPU host: its code, the frame it happened at, the phase, and its cause. |
+| `WebGPUHostOptions` | 接口 | A WebGPU host to make: its canvas and device, its pixel ratio, its limits, whether it reads back, and what it reports to. |
+| `WebGPUHostState` | 类型 | Where a WebGPU host is: new, starting, active, stopped, failed, closing or closed. |
+| `WebGPUHostStatus` | 接口 | A WebGPU host as it is now: its state, frames and bytes pending, and its failures. |
+| `WebGPUReadback` | 接口 | The pixels of a frame read back: its frame, size, format, color space and alpha, and its bytes. |
 
 ## `@egret/engine/text`
 
@@ -197,7 +197,7 @@
 | `createTextField` | 函数 | Public explicit entry; shape, proxies and borrowed identities grant no authority. |
 | `createTextRasterCache` | 函数 | Explicit CPU text orchestration; this entry owns no browser font or drawing surface. |
 | `TextField` | 接口 | Factory-produced noneditable leaf; the brand has no runtime value. |
-| `TextFieldStatus` | 接口 |  |
+| `TextFieldStatus` | 接口 | Where a text field is: unprepared, ready or disposed, its revisions and its metrics. |
 
 ## `@egret/engine/layout`
 
@@ -214,25 +214,25 @@
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `BitmapButton` | 接口 | A frozen exact-receiver facade; its accessor setter remains usable. |
-| `BitmapButtonOptions` | 接口 |  |
-| `BitmapButtonState` | 类型 |  |
+| `BitmapButtonOptions` | 接口 | A bitmap button to make: its engine, scope and input, its skins, and what it does when activated. |
+| `BitmapButtonState` | 类型 | Whether a bitmap button is up, pressed, disabled or disposed. |
 | `createBitmapButton` | 函数 | Share a genuine input; own only the new private sheet, Bitmap and facade. |
 | `createMouseInput` | 函数 | Primary mouse activation for the admitted ordinary desktop Canvas layout profile. |
 | `MouseInput` | 接口 | Scope-owned synchronous input. |
-| `MouseInputCancelReason` | 类型 |  |
-| `MouseInputEvents` | 接口 |  |
+| `MouseInputCancelReason` | 类型 | Why a press was cancelled. |
+| `MouseInputEvents` | 接口 | The event types mouse input dispatches: begin, end, activate and cancel. |
 | `MouseInputOptions` | 接口 | Fixed logical dimensions; browser layout scaling does not change game coordinates. |
-| `MouseInputPayload` | 接口 |  |
-| `MouseInputState` | 类型 |  |
+| `MouseInputPayload` | 接口 | A mouse event: which pointer, where on the stage, what made it and which button. |
+| `MouseInputState` | 类型 | Whether mouse input is idle, has a button pressed, or has closed. |
 
 ## `@egret/engine/web/image`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserPngDecodeOptions` | 接口 |  |
-| `BrowserPngPorts` | 接口 |  |
-| `BrowserTextureProvider` | 接口 |  |
-| `BrowserTextureProviderOptions` | 接口 |  |
+| `BrowserPngDecodeOptions` | 接口 | How the browser decodes a PNG: its orientation, alpha and color space conversion. |
+| `BrowserPngPorts` | 接口 | How the browser decodes a PNG and makes a canvas, for PNG textures. |
+| `BrowserTextureProvider` | 接口 | Loads PNG textures in the browser; close it when done. |
+| `BrowserTextureProviderOptions` | 接口 | A PNG texture provider to make: where it reads bytes from, and the ports it decodes with. |
 | `createBrowserTextureProvider` | 函数 | Caller owns async close; managers own issued Textures and their final demand. |
 
 ## `@egret/engine/web/text`
@@ -253,23 +253,23 @@
 | `SharedFrameUploadOptions` | 接口 | Cancellation revokes an unsubmitted upload without releasing unsettled work. |
 | `SharedFrameUploadReady` | 接口 | Upload completion does not imply that this frame has been presented. |
 | `SharedHostResourceStatus` | 接口 | Fresh immutable data; reads do no native work. |
-| `SharedLayerWebGL2Host` | 接口 |  |
-| `SharedWebGL2FrameTiming` | 接口 |  |
-| `SharedWebGL2Host` | 接口 |  |
-| `SharedWebGL2HostOptions` | 接口 |  |
-| `SharedWebGL2HostStatus` | 接口 |  |
-| `SharedWebGL2Layer2D` | 接口 |  |
-| `SharedWebGL2LayerEffect2D` | 接口 |  |
-| `SharedWebGL2LayerPlacement2D` | 接口 |  |
-| `SharedWebGL2LayerStatus` | 接口 |  |
-| `SharedWebGL2Readback` | 接口 |  |
-| `SharedWebGL2TimingPhase` | 类型 |  |
-| `SharedWebGL2TimingSample` | 接口 |  |
-| `WebGL2HostDiagnostic` | 接口 |  |
-| `WebGL2HostErrorCode` | 类型 |  |
-| `WebGL2HostFailure` | 接口 |  |
-| `WebGL2HostState` | 类型 |  |
-| `WebGL2HostStatus` | 接口 |  |
+| `SharedLayerWebGL2Host` | 接口 | A shared WebGL2 host that also draws kept layers. |
+| `SharedWebGL2FrameTiming` | 接口 | The timings of a host's frames: totals by phase, the recent samples and how many were dropped. |
+| `SharedWebGL2Host` | 接口 | A host that draws shared frames with WebGL2: start and stop it, stage frames, read them back, time them and recover a lost context. |
+| `SharedWebGL2HostOptions` | 接口 | A shared WebGL2 host to make: its canvas, what it reports to, and whether it measures frames. |
+| `SharedWebGL2HostStatus` | 接口 | A shared WebGL2 host as it is now: its resources, host status, bytes pending and retention. |
+| `SharedWebGL2Layer2D` | 接口 | A layer drawn once and kept on the GPU: update it, or dispose of it. |
+| `SharedWebGL2LayerEffect2D` | 接口 | How a kept layer is tinted when it is placed: its bounds and its multiplied and added color. |
+| `SharedWebGL2LayerPlacement2D` | 接口 | Where a kept layer is placed in a frame, how large, and with what effect. |
+| `SharedWebGL2LayerStatus` | 接口 | The kept layers of a host: the bytes they hold, and how many are ready and pending. |
+| `SharedWebGL2Readback` | 接口 | The pixels of a shared frame read back: its generation and frame, size, format, color space, alpha and bytes. |
+| `SharedWebGL2TimingPhase` | 类型 | A phase of drawing a shared frame that the host can time. |
+| `SharedWebGL2TimingSample` | 接口 | One timed phase of a frame: its generation and frame, the phase, when it began and how long it took. |
+| `WebGL2HostDiagnostic` | 接口 | Something a WebGL2 host reports: a failure, with how serious it is. |
+| `WebGL2HostErrorCode` | 类型 | What went wrong in a WebGL2 host. |
+| `WebGL2HostFailure` | 接口 | A failure of a WebGL2 host: its code, the frame and context generation it happened at, the phase, and its cause. |
+| `WebGL2HostState` | 类型 | Where a WebGL2 host is: new, starting, active, lost, restoring, stopped, failed, closing or closed. |
+| `WebGL2HostStatus` | 接口 | A WebGL2 host as it is now: its state and generation, frames and bytes pending, and its failures. |
 
 ## `@egret/engine/world3d`
 
@@ -903,59 +903,59 @@
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `ContentBinding` | 接口 |  |
+| `ContentBinding` | 接口 | One resource a content loader binds: its id, its kind and its manifest binding. |
 | `ContentGroup` | 接口 | All returned values are borrowed until this group or its owning Scope retires. |
 | `ContentLoader` | 接口 | One manifest/source identity; multiple groups share the existing asset manager. |
-| `ContentProviderFactory` | 类型 |  |
+| `ContentProviderFactory` | 类型 | Makes the providers that load a content loader's resources, given what they bind. |
 | `ContentProviders` | 接口 | Host providers own byte integrity/UTF-8 decoding; the core validates artifact semantics. |
 | `createContentLoader` | 函数 | One manifest/source catalog, independent of global IDs and of other loaders. |
 | `createFontContentLoader` | 函数 | One typed font catalog over the existing manager and genuine dependency groups. |
-| `createManifestAssetBinding` | 函数 |  |
-| `FontContentAsset` | 接口 |  |
-| `FontContentBinding` | 接口 |  |
-| `FontContentGroup` | 接口 |  |
-| `FontContentLoader` | 接口 |  |
-| `FontContentProviderFactory` | 类型 |  |
+| `createManifestAssetBinding` | 函数 | Binds one asset of an admitted manifest to an asset type, for its group to load. |
+| `FontContentAsset` | 接口 | A loaded font: its id, family and identity, its size and format, and a copy of its bytes. |
+| `FontContentBinding` | 接口 | One font a font content loader binds: its id, family and manifest binding. |
+| `FontContentGroup` | 接口 | Fonts loaded together: wait for them, read them, and dispose of them together. |
+| `FontContentLoader` | 接口 | Loads groups of fonts from a manifest. |
+| `FontContentProviderFactory` | 类型 | Makes the provider that loads the bytes of a font content loader's fonts. |
 | `ManifestAssetBinding` | 接口 | A genuine invariant ref paired with one exact admitted manifest entry. |
 | `ManifestAssetGroup` | 接口 | Scope-owned dependency group. |
 | `ManifestBinding` | 接口 | Immutable resource metadata; only the optional binding factory creates it. |
-| `ManifestGroupOptions` | 接口 |  |
+| `ManifestGroupOptions` | 接口 | How urgently a manifest group loads: for what is needed now, or in the background. |
 
 ## `@egret/engine/web/resources`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `createManifestByteSource` | 函数 |  |
+| `createManifestByteSource` | 函数 | Reads a manifest's files from a base URL, checking each one's length and SHA-256. |
 | `createManifestContentLoader` | 函数 | Integrity-checked PNG/UTF-8 transport plus the DOM-free content assembly. |
 | `createManifestFontContentLoader` | 函数 | Fonts share the authenticated byte transport and the Engine's existing resource manager. |
 | `createManifestTextureProvider` | 函数 | Source authentication precedes every caller-controlled options read. |
-| `ManifestByteSource` | 接口 |  |
-| `ManifestByteSourceOptions` | 接口 |  |
-| `ManifestByteSourceStatus` | 接口 |  |
-| `ManifestContentLoader` | 接口 |  |
-| `ManifestFontContentLoader` | 接口 |  |
-| `ManifestTextureProvider` | 接口 |  |
-| `ManifestTextureProviderOptions` | 接口 |  |
-| `ManifestTextureProviderStatus` | 接口 |  |
+| `ManifestByteSource` | 接口 | Reads a manifest's files over the network and checks their digests. |
+| `ManifestByteSourceOptions` | 接口 | A manifest byte source to make: its profile, the URL it fetches from, its deadline and retries. |
+| `ManifestByteSourceStatus` | 接口 | How many reads a byte source has now and at most, and whether it was full. |
+| `ManifestContentLoader` | 接口 | A content loader for a manifest in the browser: its status, and a call that closes it. |
+| `ManifestFontContentLoader` | 接口 | A font content loader for a manifest, with the byte source it reads from. |
+| `ManifestTextureProvider` | 接口 | A texture provider for a manifest's images, with its status. |
+| `ManifestTextureProviderOptions` | 接口 | A manifest texture provider to make: the ports it decodes with. |
+| `ManifestTextureProviderStatus` | 接口 | How many textures a manifest texture provider holds now and at most, and whether it was full. |
 
 ## `@egret/engine/input`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `createKeyboardInput` | 函数 |  |
-| `createPointerInput` | 函数 |  |
-| `PointerCancelReason` | 类型 |  |
+| `createKeyboardInput` | 函数 | Keyboard input for the stage: key events go to the focused target, and focus moves with Tab. |
+| `createPointerInput` | 函数 | Pointer input for the stage: touches, mouse buttons and pens become contacts delivered to the nodes under them. |
+| `PointerCancelReason` | 类型 | Why a pointer was cancelled. |
 | `PointerContact` | 接口 | A retained value: sequence orders all contacts on this router. |
-| `PointerEventKind` | 类型 |  |
+| `PointerEventKind` | 类型 | What happened to a pointer: it went down, moved, went up or was cancelled. |
 | `PointerInput` | 接口 | Scope-owned input for an explicitly supplied logical host stream. |
-| `PointerInputEvents` | 接口 |  |
-| `PointerInputOptions` | 接口 |  |
-| `PointerNotification` | 接口 |  |
-| `PointerRouterState` | 类型 |  |
-| `PointerSample` | 接口 |  |
+| `PointerInputEvents` | 接口 | The event types pointer input dispatches: begin, move, end, cancel and tap. |
+| `PointerInputOptions` | 接口 | Pointer input to make: its engine and scope, the surface's size, its limits, and what is called. |
+| `PointerNotification` | 接口 | A pointer contact and the target it went to, and why it was cancelled. |
+| `PointerRouterState` | 类型 | Whether a pointer router passes input on, holds it, or has closed. |
+| `PointerSample` | 接口 | One pointer's state at one moment: which pointer it is, what made it and where it is. |
 | `PointerSession` | 接口 | Only the creating router admits this frozen identity; host IDs may be reused. |
-| `PointerType` | 类型 |  |
-| `PointerUpdate` | 接口 |  |
+| `PointerType` | 类型 | What made a pointer: a mouse, a finger or a pen. |
+| `PointerUpdate` | 接口 | Where a pointer is on the stage, which buttons it holds, and when, with its pressure and size where the device gives them. |
 
 ## `@egret/engine/web/pointer`
 
@@ -963,100 +963,100 @@
 | --- | --- | --- |
 | `createBrowserPointerInput` | 函数 | Pointer Events adapter for the explicit connected, untransformed Canvas profile. |
 | `PointerInput` | 接口 | Scope-owned input for an explicitly supplied logical host stream. |
-| `PointerInputOptions` | 接口 |  |
+| `PointerInputOptions` | 接口 | Pointer input to make: its engine and scope, the surface's size, its limits, and what is called. |
 
 ## `@egret/engine/ui`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `ActionControl` | 接口 |  |
-| `ActionControlOptions` | 接口 |  |
+| `ActionControl` | 接口 | A button control: whether it is pressed, how often it was activated, and calls that press or disable it. |
+| `ActionControlOptions` | 接口 | An action control to make: its input and target, and what is called when it is activated or pressed. |
 | `ActionKeysOptions` | 接口 | Space or Enter, released, activates. |
-| `ControlKeys` | 接口 |  |
-| `ControlKeysOptions` | 类型 |  |
+| `ControlKeys` | 接口 | Keys bound to a control: which are pressed now; dispose of it to unbind them. |
+| `ControlKeysOptions` | 类型 | Keys for one control: an action, a toggle, a text field or a selection group. |
 | `ControlKeysSource` | 接口 | The keyboard input, or anything that delivers its three key events. |
-| `createActionControl` | 函数 |  |
-| `createControlKeys` | 函数 |  |
-| `createHoverControl` | 函数 |  |
-| `createMovementControl` | 函数 |  |
-| `createRangeControl` | 函数 |  |
-| `createScrollControl` | 函数 |  |
-| `createSelectionGroup` | 函数 |  |
-| `createTextFieldControl` | 函数 |  |
-| `createToggleControl` | 函数 |  |
+| `createActionControl` | 函数 | A button on a target: a press and release inside it activates it. |
+| `createControlKeys` | 函数 | Binds the keyboard to a control: Space and Enter press an action or a toggle, arrows move a selection. |
+| `createHoverControl` | 函数 | Tells whether a pointer hovers over a target. |
+| `createMovementControl` | 函数 | A virtual stick on a target: dragging inside its radius gives a direction. |
+| `createRangeControl` | 函数 | A slider on a target: dragging along its track or pressing keys sets a value between its least and greatest. |
+| `createScrollControl` | 函数 | Scrolls content past a viewport along one axis, by wheel, by dragging a thumb, or by calls. |
+| `createSelectionGroup` | 函数 | Radio buttons or tabs: one item of the group is selected at a time. |
+| `createTextFieldControl` | 函数 | A text field on a target: pressing it opens the platform's editing, and the value is committed or cancelled. |
+| `createToggleControl` | 函数 | A checkbox or switch on a target: a press and release inside it toggles it. |
 | `createUiLayerManager` | 函数 | Optional Root composition. |
 | `createUiRoot` | 函数 | One owned transaction domain over the genuine display and input authorities. |
-| `createUiTheme` | 函数 |  |
-| `HoverControl` | 接口 |  |
+| `createUiTheme` | 函数 | Checks and freezes a theme from its description. |
+| `HoverControl` | 接口 | Whether a pointer hovers over a target; dispose of it to stop. |
 | `HoverControlOptions` | 接口 | Hover, toggle and single-selection state for controls an application draws itself. |
-| `LayoutNode` | 类型 |  |
-| `MovementControl` | 接口 |  |
-| `MovementControlOptions` | 接口 |  |
+| `LayoutNode` | 类型 | A node of a UI layout tree: a leaf, a stack of children, or a virtual list. |
+| `MovementControl` | 接口 | A virtual stick: where it points now, whether it is held, and calls that set or disable it. |
+| `MovementControlOptions` | 接口 | A movement control to make: its input and target, its radius and dead zone, and what it calls. |
 | `MovementKeysOptions` | 接口 | The keys that are down give the direction; opposite keys cancel each other. |
 | `MovementValue` | 接口 | Reusable movement and action controls over the existing contact stream. |
 | `RangeAxis` | 类型 | One value out of a range, for a slider an application draws itself: a volume, a share, an amount. |
-| `RangeControl` | 接口 |  |
-| `RangeControlOptions` | 接口 |  |
+| `RangeControl` | 接口 | A slider: its value and range, whether it is dragged, and calls that set or step it. |
+| `RangeControlOptions` | 接口 | A range control to make: its input and target, its axis and track, its range and step, and what it calls. |
 | `RangeKeysOptions` | 接口 | Arrow keys move the value by one step, Page Up and Page Down by a page of steps, Home and End go to its ends. |
-| `RowBindContext` | 接口 |  |
-| `RowBinding` | 接口 |  |
-| `RowRetention` | 接口 |  |
-| `RowUnbindInfo` | 接口 |  |
+| `RowBindContext` | 接口 | What binding a row is given: the record, its place, the theme and density, its scope, signal and target. |
+| `RowBinding` | 接口 | What a bound row shows, and its measured height. |
+| `RowRetention` | 接口 | A row kept bound after it leaves the viewport; release it to let it go. |
+| `RowUnbindInfo` | 接口 | A row that was unbound: its key, its binding and content versions, and why. |
 | `ScrollAxis` | 类型 | The scroll position of one axis of a clipped viewport an application draws itself. |
-| `ScrollControl` | 接口 |  |
-| `ScrollControlOptions` | 接口 |  |
+| `ScrollControl` | 接口 | Scrolling along one axis: the offset and its maximum, the thumb, and calls that scroll by lines, pages or to the ends. |
+| `ScrollControlOptions` | 接口 | A scroll control to make: its axis, the lengths of its viewport and content, its wheel and thumb, and what it calls. |
 | `ScrollKeysOptions` | 接口 | The arrow keys of its axis, Page Up, Page Down, Home and End. |
-| `ScrollThumb` | 接口 |  |
-| `ScrollThumbOptions` | 接口 |  |
-| `ScrollWheelOptions` | 接口 |  |
+| `ScrollThumb` | 接口 | Where the thumb is on its track and how long it is. |
+| `ScrollThumbOptions` | 接口 | A scroll thumb to drag: its input and target, its track's length and its shortest length. |
+| `ScrollWheelOptions` | 接口 | How the wheel scrolls: the hover input, the target, and how far one line is. |
 | `SelectionGroup` | 接口 | One of several: a radio group, a segmented control, or a listbox with a single selection. |
-| `SelectionGroupOptions` | 接口 |  |
-| `SelectionItem` | 接口 |  |
+| `SelectionGroupOptions` | 接口 | A selection group to make: its input and items, the one selected, whether it wraps, and what it calls. |
+| `SelectionItem` | 接口 | One item of a selection group: its key, its target and whether it can be chosen. |
 | `SelectionKeysOptions` | 接口 | Arrow keys move the selection, Home and End go to its ends. |
 | `selectUiSkin` | 函数 | The name a skin gives to the state of a control: of the states that hold, the first in `order` that the skin has a name for, and `default` when it has none. |
-| `TextFieldChange` | 接口 |  |
-| `TextFieldControl` | 接口 |  |
-| `TextFieldControlOptions` | 接口 |  |
+| `TextFieldChange` | 接口 | A text field's value after a change, and whether a composition is under way. |
+| `TextFieldControl` | 接口 | A text field: its value and draft, whether it is being edited, and calls that edit, commit or cancel. |
+| `TextFieldControlOptions` | 接口 | A text field to make: its input, target and editor, its value and limits, its labels, and what it calls. |
 | `TextFieldEditor` | 接口 | Shows one field at a time. |
 | `TextFieldKeysOptions` | 接口 | The field opens when the key is released, so that the key types nothing into it. |
 | `TextFieldRectangle` | 接口 | The state of a text field an application draws itself: its text, and whether it is being edited. |
 | `TextFieldSession` | 接口 | What the control adds to the presentation of a field when it opens one. |
-| `ToggleControl` | 接口 |  |
-| `ToggleControlOptions` | 接口 |  |
-| `ToggleKeysOptions` | 接口 |  |
-| `UiCommitResult` | 接口 |  |
-| `UiCounters` | 接口 |  |
-| `UiInvalidationKind` | 类型 |  |
+| `ToggleControl` | 接口 | A checkbox or switch: whether it is checked and pressed, and calls that toggle or set it. |
+| `ToggleControlOptions` | 接口 | A toggle to make: its input and target, whether it starts checked, and what it calls. |
+| `ToggleKeysOptions` | 接口 | Keys for a toggle: which kind of toggle, the control, and what is called when its press changes. |
+| `UiCommitResult` | 接口 | What a commit did, and any errors after it. |
+| `UiCounters` | 接口 | What a UI root counted in its last passes: layouts, records, rows, bindings and measurements. |
+| `UiInvalidationKind` | 类型 | What of a UI root has to be done again: its layout, its content, or both. |
 | `UiKeyboardOptions` | 接口 | Explicit namespace prevents independently authored panels from sharing focus IDs. |
-| `UiLayerAnchor` | 接口 |  |
-| `UiLayerCommitResult` | 接口 |  |
+| `UiLayerAnchor` | 接口 | Where a layer is placed beside its target: on which side, how aligned, and how far from it. |
+| `UiLayerCommitResult` | 接口 | What committing the layers did, and any errors after the commit. |
 | `UiLayerManager` | 接口 | Stage intents, publish participating roots, then sync before editor placement/capture. |
-| `UiLayerManagerOptions` | 接口 |  |
-| `UiLayerOptions` | 接口 |  |
-| `UiLayerRegistration` | 接口 |  |
-| `UiLayerSnapshot` | 接口 |  |
-| `UiLayerTarget` | 类型 |  |
-| `UiLeafContent` | 接口 |  |
+| `UiLayerManagerOptions` | 接口 | A layer manager to make: its engine, scope and input, its viewport and limits. |
+| `UiLayerOptions` | 接口 | A layer to open: its id and root, its kind and anchor, where focus goes, how it closes, and its backdrop. |
+| `UiLayerRegistration` | 接口 | An open layer; dispose of it to close it. |
+| `UiLayerSnapshot` | 接口 | The layers as they are now: committed and desired stacks, each layer, and counters. |
+| `UiLayerTarget` | 类型 | What a layer is anchored to: a leaf of the tree, or a row of a list. |
+| `UiLeafContent` | 接口 | What a leaf shows, prepared for the size it is given. |
 | `UiLeafPrepareContext` | 接口 | Detached content is prepared at the leaf's available inner width. |
-| `UiLimits` | 接口 |  |
-| `UiPreparation` | 接口 |  |
-| `UiRoot` | 接口 |  |
-| `UiRootOptions` | 接口 |  |
-| `UiRowPointerNotification` | 类型 |  |
-| `UiRowSnapshot` | 接口 |  |
-| `UiSkinState` | 类型 |  |
+| `UiLimits` | 接口 | How far past the viewport a list keeps rows, and how many rows it keeps resident and retained. |
+| `UiPreparation` | 接口 | Where a preparation is, and the revisions it works from. |
+| `UiRoot` | 接口 | A tree of UI laid out in a viewport: change its tree, theme or input, then prepare and commit it. |
+| `UiRootOptions` | 接口 | A UI root to make: its theme, engine and scope, its viewport, density and tree, its input, and its limits. |
+| `UiRowPointerNotification` | 类型 | A pointer that began, moved, ended or was cancelled on a row of a list. |
+| `UiRowSnapshot` | 接口 | One row as committed: its key and place, its versions, its box and whether it shows. |
+| `UiSkinState` | 类型 | Which named states of a control are on, to choose its skin. |
 | `UiSkinStateName` | 类型 | The states of a control that a skin may have a name for. |
-| `UiSnapshot` | 接口 |  |
+| `UiSnapshot` | 接口 | A UI root as committed: its theme, revisions, origin, viewport, density and boxes. |
 | `UiTheme` | 接口 | Every factory result is a distinct immutable generation, including equal descriptors. |
-| `UiThemeDescriptor` | 接口 |  |
-| `UiThemeNode` | 接口 |  |
+| `UiThemeDescriptor` | 接口 | A theme to make: its id, colors, spacing, type and skins. |
+| `UiThemeNode` | 接口 | How a node of a theme is filled and spaced. |
 | `UiThemeSkin` | 接口 | Skin names resolve through application-owned, typed asset references, never URLs. |
-| `UiThemeTypography` | 接口 |  |
-| `VirtualDataSource` | 接口 |  |
-| `VirtualListHandle` | 接口 |  |
+| `UiThemeTypography` | 接口 | A theme's type: its font family, size and line height. |
+| `VirtualDataSource` | 接口 | The records of a virtual list, and how a row is bound to a record and unbound from it. |
+| `VirtualListHandle` | 接口 | A virtual list of a UI root: reveal a record, change its source or scroll, and read its snapshot. |
 | `VirtualListRevealOptions` | 接口 | Alignment within the list's authored viewport; tall rows can remain clipped. |
-| `VirtualListSnapshot` | 接口 |  |
-| `VirtualRecord` | 接口 |  |
+| `VirtualListSnapshot` | 接口 | A virtual list as committed: its rows, scroll offset and extent, its anchor and counters. |
+| `VirtualRecord` | 接口 | One record of a virtual list: its key, its content version, its estimated height and its value. |
 
 ## `@egret/engine/animation`
 
@@ -1065,19 +1065,19 @@
 | `createSequenceController` | 函数 | Opt-in sequence controls share Engine ownership but never create a second timer. |
 | `createSequenceResetSlot` | 函数 | One ordinary sole-child container; all candidates use existing content and clock ownership. |
 | `SequenceController` | 接口 | Receiver-checked owned handle; time is driven only by its genuine Engine. |
-| `SequenceControllerEvent` | 类型 |  |
-| `SequenceControllerOptions` | 接口 |  |
-| `SequenceControllerState` | 类型 |  |
-| `SequenceControllerStatus` | 接口 |  |
-| `SequenceEventSource` | 类型 |  |
+| `SequenceControllerEvent` | 类型 | An event a sequence controller reports: a marker it passed, or the end of its plays. |
+| `SequenceControllerOptions` | 接口 | How a sequence controller plays: how many times, how fast, which markers it reports and where. |
+| `SequenceControllerState` | 类型 | Whether a sequence controller is idle, running, paused, completed, stopped or faulted. |
+| `SequenceControllerStatus` | 接口 | Where a sequence controller is: its state, its time and position, and its last sample and issue. |
+| `SequenceEventSource` | 类型 | What caused a controller event: starting, the clock, a seek or a control call. |
 | `SequenceMarker` | 接口 | Immutable authored marker; its input index breaks equal-time ties. |
-| `SequenceResetActive` | 接口 |  |
-| `SequenceResetInitial` | 接口 |  |
-| `SequenceResetRequest` | 接口 |  |
-| `SequenceResetSlot` | 接口 |  |
-| `SequenceResetState` | 类型 |  |
-| `SequenceResetTicket` | 接口 |  |
-| `SequenceSeekRequest` | 接口 |  |
+| `SequenceResetActive` | 接口 | The sequence a reset slot shows now, and whether the slot owns it or borrows it. |
+| `SequenceResetInitial` | 接口 | The sequence a reset slot starts with: its version label, its bitmap and its controller. |
+| `SequenceResetRequest` | 接口 | A request to replace a slot's sequence with another version, loaded from a content loader. |
+| `SequenceResetSlot` | 接口 | Holds a bitmap's sequence and replaces it with a new version without a gap. |
+| `SequenceResetState` | 类型 | Where a reset request is: loading, ready, prepared, committed, cancelled or failed. |
+| `SequenceResetTicket` | 接口 | One pending replacement: wait for it to be ready, then commit it or dispose of it. |
+| `SequenceSeekRequest` | 接口 | Where to seek to, and whether the events passed over are reported. |
 
 ## `@egret/engine/paragraph`
 
@@ -1090,76 +1090,76 @@
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `CanvasKitFontSetProvider` | 接口 |  |
-| `CanvasKitFontSetProviderOptions` | 接口 |  |
-| `CanvasKitParagraphFont` | 接口 |  |
+| `CanvasKitFontSetProvider` | 接口 | Loads font sets for CanvasKit paragraphs. |
+| `CanvasKitFontSetProviderOptions` | 接口 | A CanvasKit font set provider to make: its CanvasKit and build identity. |
+| `CanvasKitParagraphFont` | 接口 | One font for CanvasKit paragraphs: its family, bytes and identity. |
 | `CanvasKitParagraphModule` | 接口 | Minimal host-injected CanvasKit port. |
-| `CanvasKitParagraphProvider` | 接口 |  |
-| `CanvasKitParagraphProviderOptions` | 接口 |  |
+| `CanvasKitParagraphProvider` | 接口 | Lays out and draws paragraphs with CanvasKit; dispose of it when done. |
+| `CanvasKitParagraphProviderOptions` | 接口 | A CanvasKit paragraph provider to make: its CanvasKit, build identity and fonts. |
 | `createCanvasKitFontSetProvider` | 函数 | A stable cache provider routes immutable generations; it never mutates a live native font table. |
-| `createCanvasKitParagraphProvider` | 函数 |  |
-| `ParagraphFontSet` | 接口 |  |
+| `createCanvasKitParagraphProvider` | 函数 | Lays out and draws paragraphs with CanvasKit and the fonts it is given. |
+| `ParagraphFontSet` | 接口 | A set of fonts loaded for paragraphs: its key and families; dispose of it when done. |
 
 ## `@egret/engine/web/keyboard`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `createBrowserKeyboardInput` | 函数 | Canvas-local native keyboard bridge. |
-| `KeyboardCancelPayload` | 接口 |  |
-| `KeyboardCancelReason` | 类型 |  |
-| `KeyboardFocusChange` | 接口 |  |
-| `KeyboardFocusOptions` | 接口 |  |
-| `KeyboardFocusPayload` | 接口 |  |
+| `KeyboardCancelPayload` | 接口 | A key that was let go of without its key up, and why. |
+| `KeyboardCancelReason` | 类型 | Why a held key was let go of without its key up. |
+| `KeyboardFocusChange` | 接口 | Focus that moved: from which target to which, why, and whether it is shown. |
+| `KeyboardFocusOptions` | 接口 | How focus is given: whether it is shown, and why it moved. |
+| `KeyboardFocusPayload` | 接口 | A target that gained or lost focus, the other target, why, and whether focus is shown. |
 | `KeyboardInput` | 接口 | Synchronous logical focus; text editing and IME are outside this channel. |
-| `KeyboardInputEvents` | 接口 |  |
-| `KeyboardInputOptions` | 接口 |  |
-| `KeyboardInputSnapshot` | 接口 |  |
-| `KeyboardKeyPayload` | 接口 |  |
-| `KeyboardSample` | 接口 |  |
-| `KeyboardTargetOptions` | 接口 |  |
-| `KeyboardTargetRegistration` | 接口 |  |
+| `KeyboardInputEvents` | 接口 | The event types keyboard input dispatches: key down and up, cancel, and focus in and out. |
+| `KeyboardInputOptions` | 接口 | Keyboard input to make: its engine and scope, its limits, and what is called when focus moves. |
+| `KeyboardInputSnapshot` | 接口 | Keyboard input as it is now: its state, the focused target, and the keys held. |
+| `KeyboardKeyPayload` | 接口 | A key event and the target it went to. |
+| `KeyboardSample` | 接口 | One key as the host gives it: its code and key, whether it repeats, and the modifiers held. |
+| `KeyboardTargetOptions` | 接口 | A target to register: its id, its display object, its place in Tab order and whether it is disabled. |
+| `KeyboardTargetRegistration` | 接口 | A registered target: change it, or dispose of it to take it out. |
 
 ## `@egret/engine/web/text-input`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserTextInput` | 接口 |  |
-| `BrowserTextInputChange` | 接口 |  |
-| `BrowserTextInputEnterHint` | 类型 |  |
-| `BrowserTextInputMode` | 类型 |  |
-| `BrowserTextInputOptions` | 接口 |  |
+| `BrowserTextInput` | 接口 | A native text field over the canvas, for typing with the platform's keyboard and input methods. |
+| `BrowserTextInputChange` | 接口 | The value after a change, and whether a composition is under way. |
+| `BrowserTextInputEnterHint` | 类型 | What the Enter key of an on-screen keyboard says. |
+| `BrowserTextInputMode` | 类型 | Which on-screen keyboard to ask for. |
+| `BrowserTextInputOptions` | 接口 | Browser text input to make: its canvas and size, the element it goes into, and whether keys are kept from the game. |
 | `BrowserTextInputRectangle` | 接口 | Rectangle in logical stage units, the units of the display tree and of pointer input. |
 | `BrowserTextInputRequest` | 接口 | One editing session. |
-| `BrowserTextInputSnapshot` | 接口 |  |
+| `BrowserTextInputSnapshot` | 接口 | Browser text input as it is now: its state, value and composition. |
 | `createBrowserTextInput` | 函数 | Platform text entry over a canvas: a native field placed on a rectangle of the stage, so that input methods (Chinese, Japanese, Korean), on-screen keyboards, paste and accessibility work as the platform provides them. |
 
 ## `@egret/engine/ui/editing`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `createUiTextEditor` | 函数 |  |
+| `createUiTextEditor` | 函数 | A text editor drawn by the engine, its text and selection kept by the platform's text input. |
 | `TextEditSelection` | 接口 | Source offsets are UTF-16, never glyph indices or guessed advance widths. |
-| `UiTextEditor` | 接口 |  |
-| `UiTextEditorChange` | 接口 |  |
-| `UiTextEditorOptions` | 接口 |  |
-| `UiTextEditorSetOptions` | 接口 |  |
-| `UiTextEditorSnapshot` | 接口 |  |
-| `UiTextEditorStyle` | 接口 |  |
-| `UiTextEditorTarget` | 类型 |  |
+| `UiTextEditor` | 接口 | A text editor: its content, the calls that set its value, selection and style, and the geometry of its text. |
+| `UiTextEditorChange` | 接口 | A change to a text editor's content or selection, and what made it. |
+| `UiTextEditorOptions` | 接口 | A text editor to make: its engine, scope and cache, its mode, value and limits, its style and size, and what it calls. |
+| `UiTextEditorSetOptions` | 接口 | How a value is set: the selection after it, the revision it expects, and whether a composition is cancelled. |
+| `UiTextEditorSnapshot` | 接口 | A text editor as it is now: its content revision, style, and whether the native editor shows. |
+| `UiTextEditorStyle` | 接口 | How a text editor's text looks: its fonts and size, line height, locale and direction, colors and alignment. |
+| `UiTextEditorTarget` | 类型 | What a text editor is drawn in: a leaf of the tree, or a row of a list. |
 
 ## `@egret/engine/web/editing`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserEditorFontProvider` | 接口 |  |
-| `BrowserEditorFontProviderOptions` | 接口 |  |
-| `BrowserEditorFontSet` | 接口 |  |
-| `BrowserTextEditor` | 接口 |  |
-| `BrowserTextEditorOptions` | 接口 |  |
-| `BrowserTextEditorSnapshot` | 接口 |  |
+| `BrowserEditorFontProvider` | 接口 | Loads font sets for browser text editors. |
+| `BrowserEditorFontProviderOptions` | 接口 | An editor font provider to make: its engine and scope, its paragraph provider and deadline. |
+| `BrowserEditorFontSet` | 接口 | Fonts loaded for a text editor: its key, families and identities; dispose of it when done. |
+| `BrowserTextEditor` | 接口 | A UI text editor edited through a native element over the canvas: activate, finish or cancel editing. |
+| `BrowserTextEditorOptions` | 接口 | A browser text editor to make: its editor, root and target, its canvas, fonts and size, its label and keyboard, and what it calls. |
+| `BrowserTextEditorSnapshot` | 接口 | A browser text editor as it is now: its state, revisions, native element and font. |
 | `createBrowserEditorFontProvider` | 函数 | CSS registration is a consumer of existing immutable font resources, not another asset cache. |
 | `createBrowserTextEditor` | 函数 | One visible native editor over an authenticated committed UI binding. |
-| `EditorParagraphFontLoader` | 接口 |  |
+| `EditorParagraphFontLoader` | 接口 | Loads the paragraph fonts a text editor uses. |
 
 ## `@egret/engine/input/hover`
 
@@ -1167,26 +1167,26 @@
 | --- | --- | --- |
 | `createHoverInput` | 函数 | Hover and wheel routing over the display tree of a started Engine. |
 | `HoverInput` | 接口 | Scope-owned hover and wheel routing for an explicitly supplied logical host stream. |
-| `HoverInputEvents` | 接口 |  |
-| `HoverInputOptions` | 接口 |  |
-| `HoverInputState` | 类型 |  |
+| `HoverInputEvents` | 接口 | The event types hover input dispatches: enter, move, leave and wheel. |
+| `HoverInputOptions` | 接口 | Hover input to make: its engine and scope, the surface's size, its limits, and what is called. |
+| `HoverInputState` | 类型 | Whether hover input passes input on, holds it, or has closed. |
 | `HoverLeaveReason` | 类型 | Why a target stopped being hovered: the pointer went to another target or to none, left the surface, pressed, or was cancelled by the platform; the target stopped being a possible target; the mapping of the surface changed; the window or the page went away; or the input was suspended, disposed or failed. |
-| `HoverNotification` | 接口 |  |
+| `HoverNotification` | 接口 | A target that a pointer entered, moved over or left, and why it left. |
 | `HoverPoint` | 接口 | A retained value: sequence orders every hover and wheel observation of this input. |
 | `HoverPointerType` | 类型 | Pointers that can be over the scene without pressing it. |
-| `HoverSample` | 接口 |  |
-| `HoverState` | 接口 |  |
+| `HoverSample` | 接口 | A pointer moving over the surface without a press: which pointer, where and when. |
+| `HoverState` | 接口 | Where a pointer hovers and the target under it. |
 | `HoverTransition` | 接口 | A point of an enter or a leave, with the other end of the movement when there is one. |
-| `WheelNotification` | 接口 |  |
-| `WheelPoint` | 接口 |  |
-| `WheelSample` | 接口 |  |
-| `WheelUnit` | 类型 |  |
+| `WheelNotification` | 接口 | A wheel turn and the target it went to, and whether that target took it. |
+| `WheelPoint` | 接口 | A wheel sample in order, with the viewport it was taken in. |
+| `WheelSample` | 接口 | A turn of a wheel: where the pointer is, how far it turned in each axis, in what unit and when. |
+| `WheelUnit` | 类型 | What a wheel's deltas count: pixels, lines or pages. |
 
 ## `@egret/engine/web/hover`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserHoverInputOptions` | 接口 |  |
+| `BrowserHoverInputOptions` | 接口 | Browser hover input to make: its canvas, how far a page of wheel scrolls, and what is called on an error. |
 | `createBrowserHoverInput` | 函数 | Hover and wheel of the page for the canvas of a started Engine, in the same connected, untransformed profile as the pointer adapter. |
 | `WheelPagePolicy` | 类型 | Whether a wheel over the canvas also scrolls the page: only when nothing consumed it, never (the canvas owns the wheel), or always (the listener is passive and cannot hold the page). |
 
@@ -1196,42 +1196,42 @@
 | --- | --- | --- |
 | `bindGamepadKeys` | 函数 | Drives a keyboard input from the pads: the keys a UI already answers, held and repeated as a pad holds them. |
 | `createGamepadInput` | 函数 | Pads as a stream of samples a host gives it: what is held, how far a stick is pushed, and what changed since the last look. |
-| `GamepadButtonChange` | 接口 |  |
+| `GamepadButtonChange` | 接口 | A button that was pressed or released: on which pad, which button, how far and when. |
 | `GamepadButtonName` | 类型 | The buttons of a pad in the standard layout, by where they are: `a` is the lower face button. |
-| `GamepadButtonSample` | 接口 |  |
-| `GamepadConnectionChange` | 接口 |  |
+| `GamepadButtonSample` | 接口 | A gamepad button now: whether it is pressed, and how far, 0 to 1. |
+| `GamepadConnectionChange` | 接口 | A gamepad that was connected or disconnected: its pad, id, mapping and time. |
 | `GamepadInput` | 接口 | Pads as a stream of samples. |
-| `GamepadInputOptions` | 接口 |  |
+| `GamepadInputOptions` | 接口 | How gamepads are read: the dead zone, how many pads, and what is called on buttons and connections. |
 | `GamepadKeyAction` | 类型 | What a button does: a key, with the way the focus moves when nobody took the key; or a move of the focus alone. |
-| `GamepadKeys` | 接口 |  |
-| `GamepadKeysOptions` | 接口 |  |
+| `GamepadKeys` | 接口 | Keyboard keys held by a gamepad; dispose of it to release them. |
+| `GamepadKeysOptions` | 接口 | How a gamepad presses keyboard keys: which pad, the map of buttons and stick to keys, and the repeat. |
 | `GamepadKeyTarget` | 接口 | The part of a keyboard input that a pad drives. |
 | `GamepadPad` | 接口 | A pad that is connected, as of the last sample. |
 | `GamepadSample` | 接口 | What a host says of one pad at one moment. |
-| `GamepadStick` | 接口 |  |
-| `GamepadStickName` | 类型 |  |
+| `GamepadStick` | 接口 | Where a stick points, each axis -1 to 1, with the dead zone taken out. |
+| `GamepadStickName` | 类型 | Which stick of a gamepad: the left or the right. |
 
 ## `@egret/engine/web/gamepad`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserGamepadInput` | 接口 |  |
-| `BrowserGamepadInputOptions` | 接口 |  |
+| `BrowserGamepadInput` | 接口 | Gamepads read from the browser: poll them each frame, and make one rumble. |
+| `BrowserGamepadInputOptions` | 接口 | Browser gamepad input to make: what is called on an error. |
 | `createBrowserGamepadInput` | 函数 | The pads of a page. |
-| `GamepadRumble` | 接口 |  |
+| `GamepadRumble` | 接口 | A rumble to play: how long, and how strong its weak and strong motors run. |
 
 ## `@egret/engine/camera`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `Camera2D` | 接口 | A view of a 2D world: where it looks, how close, what it follows, and how it shakes. |
-| `Camera2DOptions` | 接口 |  |
-| `CameraFollowOptions` | 接口 |  |
-| `CameraLayerOptions` | 接口 |  |
-| `CameraPoint` | 接口 |  |
-| `CameraRect` | 接口 |  |
-| `CameraShakeOptions` | 接口 |  |
-| `CameraSnapshot` | 接口 |  |
+| `Camera2DOptions` | 接口 | A 2D camera to make: the world it moves, the view's size, where it looks and how far it zooms, its bounds and its shake. |
+| `CameraFollowOptions` | 接口 | How the camera follows a target: how smoothly, the box it may move in unfollowed, and the offset. |
+| `CameraLayerOptions` | 接口 | How a layer moves and zooms with the camera, for parallax. |
+| `CameraPoint` | 接口 | A point in world coordinates. |
+| `CameraRect` | 接口 | A rectangle in world coordinates. |
+| `CameraShakeOptions` | 接口 | How much a shake adds to the camera's trauma. |
+| `CameraSnapshot` | 接口 | The camera as it is now: where it looks, its zoom and rotation, its trauma and its view. |
 | `CameraTarget` | 类型 | What the camera follows: a display object inside the world, or a function that says where to look. |
 | `createCamera2D` | 函数 | A camera over a container that holds the world. |
 
@@ -1241,22 +1241,22 @@
 | --- | --- | --- |
 | `createTileMap` | 函数 | A map drawn from its tilesets. |
 | `importTiledMap` | 函数 | Reads a map saved by Tiled as JSON (`.tmj`, or `.json`), orthogonal, with tile layers as arrays or as base64 without compression, finite or infinite, object layers and groups. |
-| `ObjectLayerData` | 接口 |  |
+| `ObjectLayerData` | 接口 | A layer of objects: its name, offset, opacity and objects. |
 | `TILE_FLIP_MASK` | 值 | The top three bits of a global id say how the tile is turned; the rest is the id. |
-| `TileAnimationFrame` | 接口 |  |
-| `TiledImportOptions` | 接口 |  |
-| `TileInfo` | 接口 |  |
-| `TileLayerData` | 接口 |  |
+| `TileAnimationFrame` | 接口 | One frame of an animated tile: the tile it shows and for how long. |
+| `TiledImportOptions` | 接口 | Tilesets kept in files of their own, for importing a map from Tiled. |
+| `TileInfo` | 接口 | What a cell holds: its tile, tileset and flips, and the tile's properties. |
+| `TileLayerData` | 接口 | A layer of tiles: its name, size, offset, opacity and parallax, and its tiles' global ids. |
 | `TileMap` | 接口 | A map drawn: one container for each tile layer, cut into chunks of meshes that can be left out when they cannot be seen. |
-| `TileMapChunk` | 接口 |  |
+| `TileMapChunk` | 接口 | A chunk of a layer drawn as one: its first cell, whether it shows, and its meshes. |
 | `TileMapData` | 接口 | A map as plain, frozen data: what a tile map is made from. |
-| `TileMapLayer` | 接口 |  |
-| `TileMapLayerData` | 类型 |  |
-| `TileMapObject` | 接口 |  |
-| `TileMapOptions` | 接口 |  |
-| `TileMapProperties` | 类型 |  |
-| `TileMapPropertyValue` | 类型 |  |
-| `TileSetData` | 接口 |  |
+| `TileMapLayer` | 接口 | A layer as drawn: its name and data, its display object and its chunks. |
+| `TileMapLayerData` | 类型 | A layer of a map: tiles or objects. |
+| `TileMapObject` | 接口 | An object of an object layer: its place and size, its shape or tile, its text and properties. |
+| `TileMapOptions` | 接口 | A tile map to make: its map, its tileset textures and the size of its chunks. |
+| `TileMapProperties` | 类型 | The properties of a map, layer, tile or object, by name. |
+| `TileMapPropertyValue` | 类型 | The value of a tile map property. |
+| `TileSetData` | 接口 | A tileset: its tiles' size and count, its image, and the properties and animations of its tiles. |
 
 ## `@egret/engine/particles`
 
@@ -1264,29 +1264,29 @@
 | --- | --- | --- |
 | `createParticleEmitter` | 函数 | A stream of particles over one texture, drawn as one mesh that is built again each update. |
 | `ParticleEmitter` | 接口 | Particles drawn as one mesh. |
-| `ParticleEmitterOptions` | 接口 |  |
+| `ParticleEmitterOptions` | 接口 | An emitter to make: its texture and how many particles, and how they are born, move, grow, fade and turn. |
 | `ParticleRange` | 类型 | A value picked once for each particle, evenly between the two ends; a number is both ends. |
 | `ParticleShape` | 类型 | Where particles are born, around the place of the emitter. |
-| `ParticleSnapshot` | 接口 |  |
-| `ParticleView` | 接口 |  |
+| `ParticleSnapshot` | 接口 | An emitter as it is now: how many particles live, were born and were refused, and its time. |
+| `ParticleView` | 接口 | One live particle: where it is and how fast it moves, its age, scale, alpha, color and rotation. |
 
 ## `@egret/engine/physics2d`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `createPhysicsWorld` | 函数 | A world of bodies that move, meet and push each other apart, in fixed steps, without turning. |
-| `PhysicsBody` | 接口 |  |
+| `PhysicsBody` | 接口 | A body in the physics world: its place and motion, its material and layers, and the calls that push it. |
 | `PhysicsBodyKind` | 类型 | A static body never moves; a kinematic one moves by its speed alone and pushes; a dynamic one is moved by everything. |
-| `PhysicsBodyOptions` | 接口 |  |
-| `PhysicsContact` | 接口 |  |
-| `PhysicsMoveResult` | 接口 |  |
-| `PhysicsRayHit` | 接口 |  |
+| `PhysicsBodyOptions` | 接口 | A body to add: its kind and shape, where it is and how it moves, its material, its layers and what it moves. |
+| `PhysicsContact` | 接口 | Two bodies that began or ended touching, with the normal between them. |
+| `PhysicsMoveResult` | 接口 | Where a moved body ended up, and the normals of what it hit on the way. |
+| `PhysicsRayHit` | 接口 | What a ray hit: the body, where, its normal, and how far along the ray. |
 | `PhysicsShape` | 类型 | A shape about the place of its body. |
-| `PhysicsSnapshot` | 接口 |  |
-| `PhysicsTileColliders` | 接口 |  |
-| `PhysicsVector` | 接口 |  |
+| `PhysicsSnapshot` | 接口 | The physics world as it is now: its bodies, contacts and steps. |
+| `PhysicsTileColliders` | 接口 | A grid of solid tiles to collide with: its size in tiles, its tile size, which are solid and where it is. |
+| `PhysicsVector` | 接口 | A 2D vector of the physics world. |
 | `PhysicsWorld` | 接口 | A world of 2D bodies that collide, without turning: simple, steady physics for a 2D game. |
-| `PhysicsWorldOptions` | 接口 |  |
+| `PhysicsWorldOptions` | 接口 | A physics world to make: its gravity, its step and iterations, and its limits. |
 
 ## `@egret/engine/bitmapfont`
 
@@ -1297,9 +1297,9 @@
 | `BitmapText` | 接口 | Text drawn in a bitmap font, as one mesh for each page it uses. |
 | `BitmapTextGlyph` | 接口 | One character placed: its rectangle in the text and its rectangle on its page. |
 | `BitmapTextLayout` | 接口 | Text laid out in a font, from its top left. |
-| `BitmapTextLayoutOptions` | 接口 |  |
-| `BitmapTextLine` | 接口 |  |
-| `BitmapTextOptions` | 接口 |  |
+| `BitmapTextLayoutOptions` | 接口 | How bitmap text is laid out: its width, alignment, spacing and kerning, and the character to fall back on. |
+| `BitmapTextLine` | 接口 | One laid out line of bitmap text: its characters, width and place. |
+| `BitmapTextOptions` | 接口 | Bitmap text to make: its font, pages, text and color, and how it is laid out. |
 | `createBitmapText` | 函数 | Draws text in a bitmap font as one mesh for each page it uses, laid out again whenever what it shows changes. |
 | `layoutBitmapText` | 函数 | Lays text out in a bitmap font without drawing it: its lines, where each character goes, and its size. |
 | `parseBitmapFont` | 函数 | Reads a bitmap font: the text, XML or JSON forms of BMFont (from AngelCode's generator, Hiero, Glyph Designer, Littera and the like), or Egret's own JSON of frames. |
@@ -1311,28 +1311,28 @@
 | `createVideo` | 函数 | A video as a display object: each new picture its source gives becomes, through the Engine's assets, the texture of one Bitmap. |
 | `Video` | 接口 | A video shown as a display object: each new picture of its source becomes the texture of one Bitmap. |
 | `VideoFrame` | 接口 | One picture of a video, the time of the video it shows. |
-| `VideoOptions` | 接口 |  |
-| `VideoSnapshot` | 接口 |  |
+| `VideoOptions` | 接口 | A video to show: the asset manager that leases its pictures, and its source. |
+| `VideoSnapshot` | 接口 | A video as it is now: its state, its pictures shown and skipped, and its times. |
 | `VideoSource` | 接口 | What a video player reads its pictures from and is driven through. |
 | `VideoSourceState` | 类型 | Where a source is: still opening, able to show a frame, playing, paused, at its end, or unable to play. |
-| `VideoState` | 类型 |  |
+| `VideoState` | 类型 | Whether a video is loading, ready, playing, paused, ended, failed or closed. |
 
 ## `@egret/engine/web/video`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserVideo` | 接口 |  |
-| `BrowserVideoOptions` | 接口 |  |
+| `BrowserVideo` | 接口 | A video played by a video element, its pictures leased as textures. |
+| `BrowserVideoOptions` | 接口 | A browser video to make: its assets, its source or stream or element, and whether it loops, is muted and how loud. |
 | `createBrowserVideo` | 函数 | A video played by a page's video element and shown as a display object. |
 
 ## `@egret/engine/web/loop`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserFrameLoop` | 接口 |  |
-| `BrowserFrameLoopOptions` | 接口 |  |
-| `BrowserFrameLoopSnapshot` | 接口 |  |
-| `BrowserFrameLoopState` | 类型 |  |
+| `BrowserFrameLoop` | 接口 | Steps the Engine and draws a frame on each animation frame of the browser. |
+| `BrowserFrameLoopOptions` | 接口 | A frame loop to run: its engine, frame and host, its update, how long a step and a catch-up may be, and its frame requests. |
+| `BrowserFrameLoopSnapshot` | 接口 | A frame loop as it is now: its state, its steps, frames and skipped frames, its seconds and any failure. |
+| `BrowserFrameLoopState` | 类型 | Whether a frame loop is idle, running, failed or closed. |
 | `createBrowserFrameLoop` | 函数 | The frame loop of a game in a page. |
 | `FrameLoopEngine` | 接口 | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | 接口 | What the loop asks of a Host: how many frames it holds that it has not finished. |
@@ -1343,13 +1343,13 @@
 | --- | --- | --- |
 | `ASSET_BUNDLE_HEADER_BYTES` | 值 | How many bytes from the start must be read to know the index's length: the header. |
 | `assetBundleCheck` | 函数 | FNV-1a over the bytes, as eight hex digits. |
-| `AssetBundleEntry` | 接口 |  |
-| `AssetBundleIndex` | 接口 |  |
+| `AssetBundleEntry` | 接口 | One file in an asset bundle: its name, where its bytes are, its type and tags, and its check. |
+| `AssetBundleIndex` | 接口 | The table of an asset bundle: its size, where its data begins, and its entries. |
 | `AssetBundleInput` | 接口 | One file to put in a bundle. |
-| `AudioCueDefinition` | 接口 |  |
-| `AudioCuePlayOptions` | 接口 |  |
-| `AudioCues` | 接口 |  |
-| `AudioCuesOptions` | 接口 |  |
+| `AudioCueDefinition` | 接口 | A named sound effect: its takes, its bus and volume, and how often and how many at once it plays. |
+| `AudioCuePlayOptions` | 接口 | How one play of a cue differs: its volume, pan and rate. |
+| `AudioCues` | 接口 | Sound effects by name, each with its takes, cool-down and voice limit. |
+| `AudioCuesOptions` | 接口 | The clock and the random numbers cues choose by; give your own for tests and replays. |
 | `createAudioCues` | 函数 | Names the sound effects of a game over `mixer`. |
 | `createInputActions` | 函数 | Makes the actions of `map`. |
 | `createMemorySaveStorage` | 函数 | Storage kept in memory: for tests, for a page without browser storage, or for a game played once. |
@@ -1359,31 +1359,31 @@
 | `encodeWav` | 函数 | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
 | `hashSeed` | 函数 | Turns a string or number into a 32-bit seed. |
 | `HeadlessGame` | 接口 | What a headless run needs of a game: its state and one step of its rules. |
-| `HeadlessRunOptions` | 接口 |  |
-| `HeadlessRunResult` | 接口 |  |
+| `HeadlessRunOptions` | 接口 | A game run without a screen: the game and player to make for each seed, when it is done, and the step. |
+| `HeadlessRunResult` | 接口 | What one seed's headless run did: whether it finished, its seconds and steps, its timings and its summary. |
 | `InputActionDefinition` | 接口 | An action and the controls that drive it. |
-| `InputActionKind` | 类型 |  |
-| `InputActionMap` | 类型 |  |
-| `InputActions` | 接口 |  |
+| `InputActionKind` | 类型 | Whether an action is a button, one axis, or a vector of two. |
+| `InputActionMap` | 类型 | Actions by name, with the controls that drive each. |
+| `InputActions` | 接口 | Named actions driven by keys, buttons and sticks: what is pressed now, values, rebinding and saving. |
 | `InputBinding` | 类型 | One physical control, written as a short string: `Key:KeyW` (a `KeyboardEvent.code`), `Mouse:0` (a button number), `Pad:a` or `Pad:7` (a standard gamepad button name or number), `Pad:leftStick` / `Pad:rightStick` (a stick, for vector actions), `Pad:leftStickX+` (one half of a stick axis, for buttons and axes), and `Touch:<name>` for an on-screen control. |
 | `InputBindingSlot` | 类型 | A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... |
-| `InputBindingsSave` | 接口 |  |
-| `InputVector` | 接口 |  |
+| `InputBindingsSave` | 接口 | Bindings as saved, to load back with `loadBindings`. |
+| `InputVector` | 接口 | The value of a vector action, each axis -1 to 1. |
 | `pickQualityFiles` | 函数 | Names of the form `<base>-<tier>.<ext>` grouped by base and chosen for `quality`, as a bundle or a folder lists them: `hero-high.glb`, `hero-low.glb` and `hall.webp` give `hero-low.glb` (for `medium`) and `hall.webp`. |
 | `pickQualityVariant` | 函数 | Of several variants of one asset, the one for `quality`: an exact tier, or else the nearest below, or else the nearest above. |
 | `planAssetBundleRanges` | 函数 | Ranges of the file that hold the named entries, joined where they touch or lie within `gap` bytes. |
 | `QUALITY_TIERS` | 值 | Quality tiers from lowest to highest, as World3D names them. |
-| `QualityTier` | 类型 |  |
-| `Random` | 接口 |  |
+| `QualityTier` | 类型 | One of the quality tiers, from the lowest to the highest. |
+| `Random` | 接口 | Random numbers from a seed, repeatable: numbers, ranges, choices, shuffles and normal values. |
 | `RandomState` | 类型 | Four 32-bit words. |
 | `readAssetBundleHeader` | 函数 | The index length a header gives, so a reader can ask for exactly the bytes of the index. |
 | `readAssetBundleIndex` | 函数 | The index of a bundle from its first bytes: at least the header and the index. |
 | `runHeadless` | 函数 | Plays the game once per seed with the stand-in player and reports each run. |
-| `SaveProblem` | 接口 |  |
-| `SaveProblemKind` | 类型 |  |
+| `SaveProblem` | 接口 | A problem with a save: what kind, which key, and its cause. |
+| `SaveProblemKind` | 类型 | What went wrong with a save: unreadable, invalid, too new or too old, or a migration or write that failed. |
 | `SaveStorage` | 接口 | Where a save is kept: strings by key. |
-| `SaveStore` | 接口 |  |
-| `SaveStoreOptions` | 接口 |  |
+| `SaveStore` | 接口 | A saved value: read it, change it and save it, reset or remove it, export or import it. |
+| `SaveStoreOptions` | 接口 | A save to keep: its key and version, its defaults and migrations, its check and its storage. |
 | `sliceAssetBundle` | 函数 | The bytes of one entry from bytes of the bundle that start at `start` (0 for the whole file), checked against the index. |
 | `writeAssetBundle` | 函数 | One file holding every input, in the order given, each starting at a multiple of four bytes. |
 
@@ -1392,18 +1392,18 @@
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `bindBrowserInputActions` | 函数 | Listens to the page for the controls of `actions`. |
-| `BrowserAssetBundle` | 接口 |  |
-| `BrowserAssetBundleOptions` | 接口 |  |
-| `BrowserDecodedImage` | 接口 |  |
-| `BrowserImageCanvas` | 接口 |  |
-| `BrowserImageContext` | 接口 |  |
+| `BrowserAssetBundle` | 接口 | An asset bundle opened in the browser: its index and entries, and calls that read an entry's bytes. |
+| `BrowserAssetBundleOptions` | 接口 | An asset bundle to open: how it is fetched and from where, whether it is read whole, and the cache it is kept in. |
+| `BrowserDecodedImage` | 接口 | A decoded image: its source, size, and a call that releases it. |
+| `BrowserImageCanvas` | 接口 | A canvas to draw a decoded image into. |
+| `BrowserImageContext` | 接口 | The drawing context of such a canvas: draw an image and read its pixels. |
 | `BrowserImageFormat` | 类型 | The picture formats the browser route recognises by their first bytes. |
-| `BrowserImageOptions` | 接口 |  |
-| `BrowserImagePorts` | 接口 |  |
+| `BrowserImageOptions` | 接口 | How images are decoded: the largest size accepted, and the ports used. |
+| `BrowserImagePorts` | 接口 | How the browser makes a canvas and decodes an image, for image textures. |
 | `BrowserImageSource` | 类型 | What `textureFromCanvas` and `decodeBrowserImage` can read pixels from. |
-| `BrowserImageTextureProviderOptions` | 接口 |  |
-| `BrowserInputActions` | 接口 |  |
-| `BrowserInputActionsOptions` | 接口 |  |
+| `BrowserImageTextureProviderOptions` | 接口 | Where an image texture provider reads the bytes of each image from. |
+| `BrowserInputActions` | 接口 | Input actions driven by the browser's keys, pointers and gamepads: poll them each frame. |
+| `BrowserInputActionsOptions` | 接口 | Where input actions read the browser: which element takes keys and pointers, whether gamepads count, and which keys pass through. |
 | `browserSaveStorage` | 函数 | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
 | `BundleCache` | 接口 | Where fetched bundle entries are kept between visits; used as `cache` of `openBrowserAssetBundle`. |
 | `createBrowserImageTextureProvider` | 函数 | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
@@ -1411,32 +1411,32 @@
 | `createTouchStick` | 函数 | A stick that appears where a finger lands in its zone of `element` and follows it. |
 | `decodeBrowserImage` | 函数 | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
 | `fitBrowserImageSize` | 函数 | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
-| `IndexedDBSaveStorage` | 接口 |  |
-| `IndexedDBSaveStorageOptions` | 接口 |  |
+| `IndexedDBSaveStorage` | 接口 | Save storage kept in IndexedDB: flush pending writes, and close it. |
+| `IndexedDBSaveStorageOptions` | 接口 | IndexedDB save storage to open: its database name, the IndexedDB to use, and what is called on an error. |
 | `openBrowserAssetBundle` | 函数 | Opens the bundle at `url`, reading its index. |
 | `openBrowserBundleCache` | 函数 | A bundle cache in the Cache API under `name`. |
 | `openIndexedDBSaveStorage` | 函数 | A save storage over IndexedDB. |
 | `sniffBrowserImageFormat` | 函数 | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | 函数 | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
-| `TouchControl` | 接口 |  |
-| `TouchStickOptions` | 接口 |  |
+| `TouchControl` | 接口 | Touch controls on the page: their elements; dispose of them to take them off. |
+| `TouchStickOptions` | 接口 | A touch stick to put on the page: its binding, radius, the zone it appears in and its class. |
 
 ## `@egret/engine/web/game`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserGame` | 接口 |  |
-| `BrowserGameBackend` | 类型 |  |
+| `BrowserGame` | 接口 | A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. |
+| `BrowserGameBackend` | 类型 | Which GPU interface a browser game draws with. |
 | `BrowserGameFit` | 类型 | How the canvas fills the element it is in: not at all, whole inside it, covering it, or stretched to it. |
 | `BrowserGameLabel` | 接口 | A line of text on the stage whose words can be set like a value. |
-| `BrowserGameLabelOptions` | 接口 |  |
-| `BrowserGameOptions` | 接口 |  |
-| `BrowserStatsPanel` | 接口 |  |
-| `BrowserStatsPanelOptions` | 接口 |  |
+| `BrowserGameLabelOptions` | 接口 | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
+| `BrowserGameOptions` | 接口 | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
+| `BrowserStatsPanel` | 接口 | A panel over the canvas showing frame rate and frame times: sample each frame. |
+| `BrowserStatsPanelOptions` | 接口 | A stats panel to make: the canvas it sits over, its label, and how often it updates. |
 | `BrowserStatsSample` | 接口 | What a game knows at one frame of the display. |
 | `BrowserStatsSnapshot` | 接口 | The numbers the panel shows, as of its last refresh. |
 | `createBrowserGame` | 函数 | Makes a game ready to draw: `await createBrowserGame({ canvas, width, height, update })`, then add display objects to `game.stage`. |
-| `createBrowserStatsPanel` | 函数 |  |
+| `createBrowserStatsPanel` | 函数 | Puts a panel over the canvas that shows frame rate and frame times. |
 
 ## `@egret/engine/play`
 
@@ -1444,34 +1444,34 @@
 | --- | --- | --- |
 | `composeMusic` | 函数 | Writes a piece. |
 | `isSfxRecipe` | 函数 | Whether a value is a recipe `synthesizeSfx` takes. |
-| `MUSIC_MOODS` | 值 |  |
+| `MUSIC_MOODS` | 值 | The moods play music can be made in. |
 | `MUSIC_PARTS` | 值 | The parts of a piece, from the quietest moment to the most intense. |
 | `musicMix` | 函数 | How loud each part is at an intensity from 0 to 1: the pad always, then the bass, the drums and the tune. |
 | `MusicMood` | 类型 | The moods there are. |
-| `MusicOptions` | 接口 |  |
-| `MusicPart` | 类型 |  |
-| `MusicPiece` | 接口 |  |
+| `MusicOptions` | 接口 | Music to make: its mood, seed, tempo and length in bars. |
+| `MusicPart` | 类型 | One part of a piece of play music. |
+| `MusicPiece` | 接口 | A piece of music made from a seed: its mood, tempo, length and parts. |
 | `play` | 函数 | Starts a game in the page. |
 | `PlayBar` | 类 | A bar of health, time or power. |
-| `PlayBarOptions` | 接口 |  |
-| `PlayBurstOptions` | 接口 |  |
+| `PlayBarOptions` | 接口 | A bar to show, as for health: where and how large, its value and maximum, its colors and layer. |
+| `PlayBurstOptions` | 接口 | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
 | `PlayButton` | 类型 | A button: a sprite whose middle is at (x, y), with its words in `label`. |
-| `PlayButtonOptions` | 接口 |  |
-| `PlayGame` | 接口 |  |
-| `PlayImageOptions` | 接口 |  |
-| `PlayKeys` | 接口 |  |
-| `PlayMenuOptions` | 接口 |  |
+| `PlayButtonOptions` | 接口 | A button to show: where, how large, its colors, text size and layer. |
+| `PlayGame` | 接口 | Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. |
+| `PlayImageOptions` | 接口 | An image to show: where, how large, whether smoothed, and its layer. |
+| `PlayKeys` | 接口 | The keyboard of a play game: what is held, pressed and released, and axes from the arrow and WASD keys. |
+| `PlayMenuOptions` | 接口 | A menu to show: its title, where it goes, how wide and its color. |
 | `PlayMotion` | 类型 | A tween of `game.tween`: a motion that can be waited for. |
-| `PlayMusic` | 接口 |  |
-| `PlayOptions` | 接口 |  |
-| `PlayPointer` | 接口 |  |
-| `PlaySayOptions` | 接口 |  |
-| `PlaySfx` | 接口 |  |
-| `PlayStickOptions` | 接口 |  |
+| `PlayMusic` | 接口 | The music of a play game: play or stop it, and set its intensity, volume and mood. |
+| `PlayOptions` | 接口 | A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. |
+| `PlayPointer` | 接口 | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
+| `PlaySayOptions` | 接口 | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
+| `PlaySfx` | 接口 | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
+| `PlayStickOptions` | 接口 | A touch stick to show: where, how large, and whether it shows without touch. |
 | `PlayText` | 类 | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
-| `PlayTextOptions` | 接口 |  |
-| `PlayToastOptions` | 接口 |  |
-| `PlayTouchButtonOptions` | 接口 |  |
+| `PlayTextOptions` | 接口 | Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. |
+| `PlayToastOptions` | 接口 | A toast to show: how long and in what color. |
+| `PlayTouchButtonOptions` | 接口 | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
 | `SFX_PRESETS` | 值 | The effects every game is given, by name. |
 | `SfxRecipe` | 类型 | An effect: one tone, or several played one after another. |
 | `SfxTone` | 接口 | One tone of an effect. |
@@ -1486,66 +1486,66 @@
 | `AudioBackend` | 接口 | What a host gives the mixer. |
 | `AudioBackendBus` | 接口 | One gain on the way to the output. |
 | `AudioBackendSound` | 接口 | Decoded samples held by the host, or a file it plays as it reads it. |
-| `AudioBackendStart` | 接口 |  |
+| `AudioBackendStart` | 接口 | What the mixer asks a backend to start: the sound, its bus, where and how it plays. |
 | `AudioBackendVoice` | 接口 | One sound being played once. |
-| `AudioBus` | 接口 |  |
-| `AudioBusOptions` | 接口 |  |
-| `AudioBusSnapshot` | 接口 |  |
+| `AudioBus` | 接口 | A group of voices with one volume and one mute, such as music or effects. |
+| `AudioBusOptions` | 接口 | A bus to make: its name, its volume and whether it is muted. |
+| `AudioBusSnapshot` | 接口 | A bus as it is now: its name, volume, mute and voices. |
 | `AudioEndReason` | 类型 | Why a voice is over: it reached its end; it was stopped; it gave its place to a newer voice; no place could be made for it; it was asked for while nothing could be heard; its sound was released; or the mixer was disposed. |
-| `AudioFade` | 接口 |  |
-| `AudioMixer` | 接口 |  |
-| `AudioMixerOptions` | 接口 |  |
-| `AudioMixerSnapshot` | 接口 |  |
+| `AudioFade` | 接口 | How long a change of volume takes. |
+| `AudioMixer` | 接口 | Plays sounds and music on buses through a backend, within its limits of voices and memory. |
+| `AudioMixerOptions` | 接口 | A mixer to make: its backend and buses, and how many voices, sounds and decoded bytes it holds. |
+| `AudioMixerSnapshot` | 接口 | The mixer as it is now: its state, buses, voices, sounds, decoded bytes and music. |
 | `AudioMixerState` | 类型 | Whether sound comes out. |
-| `AudioMusicOptions` | 接口 |  |
-| `AudioPlayOptions` | 接口 |  |
-| `AudioSound` | 接口 |  |
-| `AudioVoice` | 接口 |  |
-| `AudioVoiceState` | 类型 |  |
+| `AudioMusicOptions` | 接口 | How music is played: its bus, volume, fade, loop and start, and whether the same piece restarts. |
+| `AudioPlayOptions` | 接口 | How a sound is played: its bus, volume, rate, pan, loop, start and fade. |
+| `AudioSound` | 接口 | A sound the mixer can play: its length, channels and rate, and whether it is decoded or streamed. |
+| `AudioVoice` | 接口 | One sound playing: its state and position, and the calls that change or stop it. |
+| `AudioVoiceState` | 类型 | Whether a voice is playing, paused, fading out to stop, or has ended. |
 | `createAudioMixer` | 函数 | Volumes, voices and one music over a backend that makes the sound. |
 
 ## `@egret/engine/web/audio`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserAudio` | 接口 |  |
-| `BrowserAudioOptions` | 接口 |  |
+| `BrowserAudio` | 接口 | A sound mixer playing through Web Audio, with its context and output node. |
+| `BrowserAudioOptions` | 接口 | Browser audio to make: its audio context, what unlocks it, whether it pauses when the page is hidden, and its limiter. |
 | `createBrowserAudio` | 函数 | Sound for a page on Web Audio. |
 
 ## `@egret/engine/ui/semantics`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `createUiListSemantics` | 函数 |  |
+| `createUiListSemantics` | 函数 | Semantic nodes for a list control and its rows, kept in step with the control. |
 | `createUiSemantics` | 函数 | A semantic tree for the controls an application draws. |
 | `SemanticAction` | 类型 | What assistive technology may ask of a node: its activation, or the keyboard focus. |
 | `SemanticBounds` | 接口 | A rectangle in the logical coordinates of the stage, the ones picking uses. |
 | `semanticBoundsOf` | 函数 | The rectangle on the stage that encloses a display object and what it holds, for the bounds of a node. |
 | `semanticBoxOf` | 函数 | The rectangle on the stage of a box a managed UI root laid out: a leaf, a row, a column or a list, by its id in the tree of the root. |
-| `SemanticChecked` | 类型 |  |
+| `SemanticChecked` | 类型 | Whether a node is checked, not checked, or partly checked. |
 | `SemanticDescription` | 接口 | What a node is at this moment, read from the control that draws it. |
 | `SemanticExtent` | 接口 | How many rows and columns a grid has in all, whether or not all of them are published. |
-| `SemanticListRow` | 接口 |  |
+| `SemanticListRow` | 接口 | What one row of a list says: its name, whether it is selected or disabled, its level and its place. |
 | `SemanticListSource` | 接口 | What is read of a managed UI root. |
-| `SemanticNode` | 接口 |  |
-| `SemanticNodeOptions` | 接口 |  |
-| `SemanticOrientation` | 类型 |  |
+| `SemanticNode` | 接口 | A node of the semantic tree; remove it to take it out. |
+| `SemanticNodeOptions` | 接口 | A node to add: its id, role and parent, how it is described, and what it does when activated or focused. |
+| `SemanticOrientation` | 类型 | Whether a node runs across or down. |
 | `SemanticPosition` | 接口 | Where an item stands in its whole set, from one. |
-| `SemanticRange` | 接口 |  |
+| `SemanticRange` | 接口 | The value of a range node and its least and greatest value. |
 | `SemanticRole` | 类型 | What a control is to someone who cannot see the canvas. |
-| `SemanticSnapshot` | 接口 |  |
+| `SemanticSnapshot` | 接口 | The semantic tree as published: its revisions, its nodes and the focused one. |
 | `SemanticSnapshotNode` | 接口 | One published node. |
 | `SemanticSort` | 类型 | How the rows of a grid are ordered by one of its columns. |
-| `SemanticsState` | 类型 |  |
-| `UiListSemantics` | 接口 |  |
-| `UiListSemanticsOptions` | 接口 |  |
+| `SemanticsState` | 类型 | Whether a semantic tree is active or closed. |
+| `UiListSemantics` | 接口 | The semantic nodes of a list control and its rows; sync it when the rows change. |
+| `UiListSemanticsOptions` | 接口 | Semantics for a list control: its tree and list, its role and name, and how its rows are described. |
 | `UiSemantics` | 接口 | The semantic tree of a UI the application draws: what each control is, what it is called and what state it is in. |
-| `UiSemanticsOptions` | 接口 |  |
+| `UiSemanticsOptions` | 接口 | A semantic tree to make: how many nodes it holds. |
 
 ## `@egret/engine/web/semantics`
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `BrowserSemantics` | 接口 |  |
-| `BrowserSemanticsOptions` | 接口 |  |
+| `BrowserSemantics` | 接口 | The semantic tree projected as elements over the canvas, for screen readers: sync it after the tree changes. |
+| `BrowserSemanticsOptions` | 接口 | Browser semantics to make: the semantic tree, the canvas and its size, its label, and what is called on an error. |
 | `createBrowserSemantics` | 函数 | Projects a semantic tree to the page, for assistive technology. |

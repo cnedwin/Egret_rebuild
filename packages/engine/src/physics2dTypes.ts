@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { DisplayObject } from '@egret/runtime';
 
+/** A 2D vector of the physics world. */
 export interface PhysicsVector {
   readonly x: number;
   readonly y: number;
@@ -12,6 +13,7 @@ export type PhysicsShape =
   | { readonly kind: 'polygon'; readonly points: readonly PhysicsVector[] };
 /** A static body never moves; a kinematic one moves by its speed alone and pushes; a dynamic one is moved by everything. */
 export type PhysicsBodyKind = 'static' | 'kinematic' | 'dynamic';
+/** A body to add: its kind and shape, where it is and how it moves, its material, its layers and what it moves. */
 export interface PhysicsBodyOptions {
   readonly kind?: PhysicsBodyKind;
   readonly shape: PhysicsShape;
@@ -39,6 +41,7 @@ export interface PhysicsBodyOptions {
   /** Whatever the game keeps with the body. */
   readonly data?: unknown;
 }
+/** A body in the physics world: its place and motion, its material and layers, and the calls that push it. */
 export interface PhysicsBody {
   readonly id: number;
   readonly kind: PhysicsBodyKind;
@@ -64,6 +67,7 @@ export interface PhysicsBody {
   /** The box around the body, in the world. */
   bounds(): { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
 }
+/** Two bodies that began or ended touching, with the normal between them. */
 export interface PhysicsContact {
   readonly type: 'begin' | 'end';
   readonly a: PhysicsBody;
@@ -73,6 +77,7 @@ export interface PhysicsContact {
   /** One of the two is a sensor: nothing was pushed. */
   readonly sensor: boolean;
 }
+/** What a ray hit: the body, where, its normal, and how far along the ray. */
 export interface PhysicsRayHit {
   readonly body: PhysicsBody;
   readonly point: PhysicsVector;
@@ -80,6 +85,7 @@ export interface PhysicsRayHit {
   /** How far along the ray, from 0 at its start to 1 at its end. */
   readonly fraction: number;
 }
+/** Where a moved body ended up, and the normals of what it hit on the way. */
 export interface PhysicsMoveResult {
   readonly x: number;
   readonly y: number;
@@ -88,6 +94,7 @@ export interface PhysicsMoveResult {
   /** The normals of what it slid along, pointing away from it. */
   readonly normals: readonly PhysicsVector[];
 }
+/** A physics world to make: its gravity, its step and iterations, and its limits. */
 export interface PhysicsWorldOptions {
   /** Units a second, every second. Defaults to 0 across and 0 down. */
   readonly gravity?: PhysicsVector;
@@ -105,6 +112,7 @@ export interface PhysicsWorldOptions {
   /** The most bodies, 1 to 65536. Defaults to 4096. */
   readonly maxBodies?: number;
 }
+/** A grid of solid tiles to collide with: its size in tiles, its tile size, which are solid and where it is. */
 export interface PhysicsTileColliders {
   readonly columns: number;
   readonly rows: number;
@@ -118,6 +126,7 @@ export interface PhysicsTileColliders {
   readonly layer?: number;
   readonly friction?: number;
 }
+/** The physics world as it is now: its bodies, contacts and steps. */
 export interface PhysicsSnapshot {
   readonly bodies: number;
   readonly contacts: number;

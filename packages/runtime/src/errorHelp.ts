@@ -443,6 +443,7 @@ export function setErrorLanguage(value: ErrorLanguage): void {
   if (value !== 'en' && value !== 'zh') throw new TypeError('The language of errors is "en" or "zh".');
   language = value;
 }
+/** The language error messages are written in. */
 export function getErrorLanguage(): ErrorLanguage {
   return language;
 }

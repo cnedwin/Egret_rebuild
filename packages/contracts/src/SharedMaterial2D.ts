@@ -10,6 +10,7 @@ type Isolation = 'bounded' | 'strict';
 /** `linear` samples a texture drawn smaller than it is from its smaller copies, blended between the two nearest. */
 type MipmapFilter = 'none' | 'linear';
 
+/** The colors, blend, sampling and addressing of a material for shared meshes, as plain values to check. */
 export interface SharedMaterialInput2D {
   readonly light?: readonly number[] | undefined;
   readonly dark?: readonly number[] | undefined;
@@ -25,6 +26,7 @@ export interface SharedMaterialInput2D {
   readonly maxAnisotropy?: number | undefined;
   readonly mipmapFilter?: MipmapFilter | undefined;
 }
+/** A checked material for shared meshes; only `createSharedMaterial2D` makes one. */
 export interface SharedMaterial2D {
   readonly [sharedMaterial2DBrand]: true;
   readonly light: readonly [number, number, number, number];
@@ -112,6 +114,7 @@ function address(value: unknown): Address {
   return value;
 }
 
+/** Checks and freezes a material for shared meshes; values out of range are refused. */
 export function createSharedMaterial2D(input: SharedMaterialInput2D): SharedMaterial2D {
   if (typeof input !== 'object' || input === null || isArray(input)) {
     throw new TypeFault('Shared material descriptor must be a record');

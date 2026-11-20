@@ -24,6 +24,7 @@ import { MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
 import type { MusicOptions, MusicMood } from './playMusic.js';
 import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 
+/** A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. */
 export interface PlayOptions {
   /** The size of the stage, in the game's own units: whole numbers above 0. The canvas is scaled to fit. */
   readonly width: number;
@@ -56,6 +57,7 @@ export interface PlayOptions {
   readonly saveKey?: string;
 }
 
+/** Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. */
 export interface PlayTextOptions {
   readonly x?: number;
   readonly y?: number;
@@ -127,6 +129,7 @@ export class PlayText extends Sprite {
   }
 }
 
+/** The keyboard of a play game: what is held, pressed and released, and axes from the arrow and WASD keys. */
 export interface PlayKeys {
   /** Whether any of the keys is held. A key is `'left'`, `'right'`, `'up'`, `'down'`, `'space'`, `'enter'`, `'escape'`, `'shift'`, a letter, a digit, or a `KeyboardEvent.code`. */
   down(...keys: string[]): boolean;
@@ -142,6 +145,7 @@ export interface PlayKeys {
   /** The right stick of a gamepad, for looking or aiming: x and y from -1 to 1, y down; 0 and 0 without one. */
   look(): { x: number; y: number };
 }
+/** The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. */
 export interface PlayPointer {
   /** Where the mouse, pen or finger is, on the stage. It follows the mouse whether or not a button is held. */
   readonly x: number;
@@ -178,6 +182,7 @@ export type PlayMotion<T extends object> = Motion<T> & {
   /** Resolves when the motion has finished or been stopped: `await game.tween(s).to({ x: 9 }, 0.2).done`. */
   readonly done: Promise<void>;
 };
+/** An image to show: where, how large, whether smoothed, and its layer. */
 export interface PlayImageOptions {
   readonly x?: number;
   readonly y?: number;
@@ -186,6 +191,7 @@ export interface PlayImageOptions {
   readonly smooth?: boolean;
   readonly layer?: 'ui' | 'world' | Sprite;
 }
+/** A button to show: where, how large, its colors, text size and layer. */
 export interface PlayButtonOptions {
   readonly x: number;
   readonly y: number;
@@ -213,6 +219,7 @@ export interface PlayLoop {
   stop(seconds?: number): void;
   readonly stopped: boolean;
 }
+/** The music of a play game: play or stop it, and set its intensity, volume and mood. */
 export interface PlayMusic {
   /**
    * Writes a piece in a mood (`'calm'`, `'mystery'`, `'tense'`, `'battle'` or `'triumph'`), or from
@@ -231,6 +238,7 @@ export interface PlayMusic {
   volume: number;
   readonly mood: MusicMood | undefined;
 }
+/** The sound effects of a play game: play or loop one by name, define new ones, and set the volume. */
 export interface PlaySfx {
   /** Plays an effect by name: one of `names`. `pitch` is 1 as written, 2 an octave up. */
   play(name: string, options?: { readonly volume?: number; readonly pitch?: number; readonly pan?: number }): void;
@@ -250,6 +258,7 @@ export interface PlaySfx {
   volume: number;
   muted: boolean;
 }
+/** A burst of particles: its color and count, how fast and how long they fly, their size and gravity. */
 export interface PlayBurstOptions {
   readonly color?: number;
   /** How many pieces; 12 unless given. */
@@ -281,6 +290,7 @@ export function tapListener(callback: () => unknown, fail: (cause: unknown) => v
   };
 }
 
+/** Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. */
 export interface PlayGame {
   readonly width: number;
   readonly height: number;

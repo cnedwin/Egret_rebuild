@@ -6,6 +6,7 @@
 import { EgretError } from '@egret/runtime';
 import type { InputActions } from '@egret/engine/kit';
 
+/** Where input actions read the browser: which element takes keys and pointers, whether gamepads count, and which keys pass through. */
 export interface BrowserInputActionsOptions {
   /** Where keys are listened for; the window by default. */
   readonly keyTarget?: EventTarget;
@@ -18,6 +19,7 @@ export interface BrowserInputActionsOptions {
   /** Keys that are passed on even when bound, such as F5 or F12. */
   readonly passKeys?: readonly string[];
 }
+/** Input actions driven by the browser's keys, pointers and gamepads: poll them each frame. */
 export interface BrowserInputActions {
   /** Reads the gamepads; call once a frame before the game reads its actions. */
   poll(): void;
@@ -196,6 +198,7 @@ export function bindBrowserInputActions(
   };
 }
 
+/** A touch stick to put on the page: its binding, radius, the zone it appears in and its class. */
 export interface TouchStickOptions {
   /** The binding the stick drives; `Touch:stick` by default. Put it in a vector action's `sticks`. */
   readonly binding?: string;
@@ -206,6 +209,7 @@ export interface TouchStickOptions {
   /** Class names of the base and the knob, which the stick creates inside the element. */
   readonly className?: string;
 }
+/** Touch controls on the page: their elements; dispose of them to take them off. */
 export interface TouchControl {
   /** The elements the control made, to style. */
   readonly elements: readonly HTMLElement[];

@@ -14,6 +14,7 @@ export interface SaveStorage {
   removeItem(key: string): void;
 }
 
+/** A save to keep: its key and version, its defaults and migrations, its check and its storage. */
 export interface SaveStoreOptions<T> {
   /** The key the save is kept under. */
   readonly key: string;
@@ -34,13 +35,16 @@ export interface SaveStoreOptions<T> {
   readonly onProblem?: (problem: SaveProblem) => void;
 }
 
+/** What went wrong with a save: unreadable, invalid, too new or too old, or a migration or write that failed. */
 export type SaveProblemKind = 'unreadable' | 'invalid' | 'too-new' | 'too-old' | 'migration-failed' | 'write-failed';
+/** A problem with a save: what kind, which key, and its cause. */
 export interface SaveProblem {
   readonly kind: SaveProblemKind;
   readonly key: string;
   readonly cause?: unknown;
 }
 
+/** A saved value: read it, change it and save it, reset or remove it, export or import it. */
 export interface SaveStore<T> {
   /** The data now: loaded, migrated, or the defaults. */
   readonly data: T;

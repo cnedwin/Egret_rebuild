@@ -1,5 +1,6 @@
 import { captureAtlasFrameLayout, copyAtlasFrameLayout } from './atlasFrameLayout.js';
 import type { AtlasFrameLayout } from './atlasFrameLayout.js';
+/** One frame of a sequence to make: its rectangle on the atlas, how long it shows, and its trim and rotation. */
 export interface SequenceFrameInput {
   readonly layout?: AtlasFrameLayout;
   readonly x: number;
@@ -8,11 +9,13 @@ export interface SequenceFrameInput {
   readonly height: number;
   readonly durationSeconds: number;
 }
+/** The atlas size and the frames of a sequence to make. */
 export interface SequenceClipInput {
   readonly atlasWidth: number;
   readonly atlasHeight: number;
   readonly frames: readonly SequenceFrameInput[];
 }
+/** Whether a sequence plays once and stops on its last frame, or loops. */
 export type SequencePlaybackMode = 'once' | 'loop';
 
 /** Public immutable sequence metadata; authentic values come from createSequenceClip. */
@@ -22,6 +25,7 @@ export interface SequenceClip {
   readonly frameCount: number;
   readonly durationSeconds: number;
 }
+/** The rectangle of the atlas a sequence shows at one moment, with its trim and rotation. */
 export interface SequenceRegion {
   readonly layout?: AtlasFrameLayout;
   readonly x: number;
@@ -29,6 +33,7 @@ export interface SequenceRegion {
   readonly width: number;
   readonly height: number;
 }
+/** What a sequence shows at a position: its frame and region, and whether it has reached its end or stopped. */
 export interface SequenceSample {
   readonly frameIndex: number;
   readonly region: SequenceRegion;
@@ -120,6 +125,7 @@ function positiveZero(value: number): number {
   return value === 0 ? 0 : value;
 }
 
+/** Checks and freezes a sequence from its atlas size and frames; malformed input is refused. */
 export function createSequenceClip(input: unknown, profile?: 'trim-rotation-v1'): SequenceClip {
   const source = admitObject(input);
   if (profile !== undefined && profile !== 'trim-rotation-v1') throw new SequenceClipError('SEQ_INPUT_INVALID');

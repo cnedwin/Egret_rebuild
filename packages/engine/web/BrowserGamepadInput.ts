@@ -3,6 +3,7 @@ import { EgretError } from '@egret/runtime';
 import { createGamepadInput } from '@egret/engine/input/gamepad';
 import type { GamepadInput, GamepadInputOptions, GamepadSample } from '@egret/engine/input/gamepad';
 
+/** Browser gamepad input to make: what is called on an error. */
 export interface BrowserGamepadInputOptions extends GamepadInputOptions {
   /**
    * Told what failed where nothing could be returned: in a listener of the page, or when a pad
@@ -10,6 +11,7 @@ export interface BrowserGamepadInputOptions extends GamepadInputOptions {
    */
   readonly onError?: (cause: unknown) => void;
 }
+/** A rumble to play: how long, and how strong its weak and strong motors run. */
 export interface GamepadRumble {
   /** Milliseconds, up to 5000. Defaults to 200. */
   readonly duration?: number;
@@ -18,6 +20,7 @@ export interface GamepadRumble {
   /** The heavy, slow motor, 0 to 1. Defaults to 0.5. */
   readonly strong?: number;
 }
+/** Gamepads read from the browser: poll them each frame, and make one rumble. */
 export interface BrowserGamepadInput {
   readonly input: GamepadInput;
   /**

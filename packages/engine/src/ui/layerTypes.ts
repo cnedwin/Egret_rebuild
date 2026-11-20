@@ -6,9 +6,11 @@ import type { PointerInput } from '../pointerInputTypes.js';
 import type { KeyboardInput } from '../keyboardInputTypes.js';
 import type { UiRoot } from './types.js';
 
+/** What a layer is anchored to: a leaf of the tree, or a row of a list. */
 export type UiLayerTarget =
   | Readonly<{ kind: 'leaf'; id: string }>
   | Readonly<{ kind: 'row'; listId: string; key: string }>;
+/** Where a layer is placed beside its target: on which side, how aligned, and how far from it. */
 export interface UiLayerAnchor {
   readonly root: UiRoot;
   readonly target: UiLayerTarget;
@@ -17,6 +19,7 @@ export interface UiLayerAnchor {
   readonly align?: 'start' | 'center' | 'end';
   readonly gap?: number;
 }
+/** A layer manager to make: its engine, scope and input, its viewport and limits. */
 export interface UiLayerManagerOptions {
   readonly engine: Engine;
   readonly scope: EngineScope;
@@ -28,6 +31,7 @@ export interface UiLayerManagerOptions {
   /** Request the caller's existing UI publication/capture path, never a second loop. */
   readonly onInvalidate?: () => void;
 }
+/** A layer to open: its id and root, its kind and anchor, where focus goes, how it closes, and its backdrop. */
 export interface UiLayerOptions {
   readonly id: string;
   readonly root: UiRoot;
@@ -39,15 +43,18 @@ export interface UiLayerOptions {
   readonly backdropColor?: number;
   readonly backdropAlpha?: number;
 }
+/** An open layer; dispose of it to close it. */
 export interface UiLayerRegistration {
   readonly id: string;
   dispose(): void;
 }
+/** What committing the layers did, and any errors after the commit. */
 export interface UiLayerCommitResult {
   readonly kind: 'committed' | 'unchanged' | 'pending' | 'closed';
   readonly revision: number;
   readonly postCommitErrors: readonly unknown[];
 }
+/** The layers as they are now: committed and desired stacks, each layer, and counters. */
 export interface UiLayerSnapshot {
   readonly state: 'open' | 'closed';
   readonly committedRevision: number;

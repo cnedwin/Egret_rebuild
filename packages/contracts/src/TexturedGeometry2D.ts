@@ -2,8 +2,11 @@
 // first-party ImageData2D pattern; geometry policy is independently authored.
 declare const texturedGeometry2DBrand: unique symbol;
 
+/** A float array of a textured geometry, in single or double precision. */
 export type TexturedFloatArray2D = Float32Array<ArrayBuffer> | Float64Array<ArrayBuffer>;
+/** An index array of a textured geometry, in 16 or 32 bits. */
 export type TexturedIndexArray2D = Uint16Array<ArrayBuffer> | Uint32Array<ArrayBuffer>;
+/** The positions, texture coordinates and triangle indices of a textured mesh to copy. */
 export interface TexturedGeometry2DInput {
   readonly positions: TexturedFloatArray2D;
   readonly uvs: TexturedFloatArray2D;
@@ -139,6 +142,7 @@ function canonical(
   return freeze(result);
 }
 
+/** Copies and checks a textured mesh; malformed arrays are refused with a TypeError. */
 export function createTexturedGeometry2D(input: TexturedGeometry2DInput): TexturedGeometry2D {
   if (typeof input !== 'object' || input === null)
     throw new TypeFault('Textured geometry descriptor must be an object');
@@ -198,6 +202,7 @@ export function createTexturedGeometry2D(input: TexturedGeometry2DInput): Textur
   return geometry;
 }
 
+/** Whether a value is a geometry made by `createTexturedGeometry2D`, without reading any of its properties. */
 export function isTexturedGeometry2D(value: unknown): value is TexturedGeometry2D {
   // WeakMap identity performs no property read, even on revoked Proxies.
   return typeof value === 'object' && value !== null && apply(weakHas, owned, [value]);

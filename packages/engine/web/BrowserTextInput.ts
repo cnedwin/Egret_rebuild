@@ -8,8 +8,11 @@ export interface BrowserTextInputRectangle {
   readonly width: number;
   readonly height: number;
 }
+/** Which on-screen keyboard to ask for. */
 export type BrowserTextInputMode = 'text' | 'numeric' | 'decimal' | 'tel' | 'email' | 'url' | 'search' | 'none';
+/** What the Enter key of an on-screen keyboard says. */
 export type BrowserTextInputEnterHint = 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
+/** The value after a change, and whether a composition is under way. */
 export interface BrowserTextInputChange {
   readonly value: string;
   /** True while the input method still holds provisional text, such as pinyin before a candidate is chosen. */
@@ -46,6 +49,7 @@ export interface BrowserTextInputRequest extends BrowserTextInputRectangle {
   readonly onCommit?: (value: string) => void;
   readonly onCancel?: () => void;
 }
+/** Browser text input to make: its canvas and size, the element it goes into, and whether keys are kept from the game. */
 export interface BrowserTextInputOptions {
   readonly canvas: HTMLCanvasElement;
   readonly logicalWidth: number;
@@ -57,11 +61,13 @@ export interface BrowserTextInputOptions {
   readonly isolateKeys?: boolean;
   readonly onError?: (error: unknown) => void;
 }
+/** Browser text input as it is now: its state, value and composition. */
 export interface BrowserTextInputSnapshot {
   readonly state: 'idle' | 'open' | 'disposed';
   readonly value: string;
   readonly composing: boolean;
 }
+/** A native text field over the canvas, for typing with the platform's keyboard and input methods. */
 export interface BrowserTextInput {
   /** Opens a field and focuses it. A session that is still open is cancelled first. */
   open(request: BrowserTextInputRequest): void;

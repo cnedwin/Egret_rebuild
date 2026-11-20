@@ -8,6 +8,7 @@ import type { TextEditorHostPort, EditorPresentation } from '#egret-text-editor'
 import type { BrowserEditorFontSet, EditorFontLease } from './editorFonts.js';
 import { assertEditorFonts, borrowEditorFonts } from './editorFonts.js';
 
+/** A browser text editor to make: its editor, root and target, its canvas, fonts and size, its label and keyboard, and what it calls. */
 export interface BrowserTextEditorOptions {
   readonly editor: UiTextEditor;
   readonly root: UiRoot;
@@ -23,6 +24,7 @@ export interface BrowserTextEditorOptions {
   /** Schedule the application's existing frame path when native/canvas visibility changes. */
   readonly onInvalidate?: () => void;
 }
+/** A browser text editor as it is now: its state, revisions, native element and font. */
 export interface BrowserTextEditorSnapshot {
   readonly state: 'inactive' | 'editing' | 'composing' | 'settling' | 'closed';
   readonly interactive: boolean;
@@ -31,6 +33,7 @@ export interface BrowserTextEditorSnapshot {
   readonly nativeElement: boolean;
   readonly fontKey: string;
 }
+/** A UI text editor edited through a native element over the canvas: activate, finish or cancel editing. */
 export interface BrowserTextEditor {
   /** Logical scene point uses the committed paragraph hit result, not character widths. */
   activate(point?: Readonly<{ x: number; y: number }>): void;

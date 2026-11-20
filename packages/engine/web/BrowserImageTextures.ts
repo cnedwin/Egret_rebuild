@@ -21,21 +21,25 @@ export type BrowserImageSource =
 /** The picture formats the browser route recognises by their first bytes. */
 export type BrowserImageFormat = 'png' | 'jpeg' | 'webp' | 'gif' | 'avif';
 
+/** How the browser makes a canvas and decodes an image, for image textures. */
 export interface BrowserImagePorts {
   /** A fresh canvas of the given size with a 2D context that can be read back. */
   readonly createCanvas: (width: number, height: number) => BrowserImageCanvas;
   /** Decodes encoded bytes into something a 2D context can draw. */
   readonly decode: (bytes: Uint8Array<ArrayBuffer>, type: string) => Promise<BrowserDecodedImage>;
 }
+/** A canvas to draw a decoded image into. */
 export interface BrowserImageCanvas {
   width: number;
   height: number;
   getContext(kind: '2d', options?: { willReadFrequently?: boolean }): BrowserImageContext | null;
 }
+/** The drawing context of such a canvas: draw an image and read its pixels. */
 export interface BrowserImageContext {
   drawImage(source: unknown, x: number, y: number, width: number, height: number): void;
   getImageData(x: number, y: number, width: number, height: number): { readonly data: Uint8ClampedArray };
 }
+/** A decoded image: its source, size, and a call that releases it. */
 export interface BrowserDecodedImage {
   readonly source: unknown;
   readonly width: number;
@@ -44,6 +48,7 @@ export interface BrowserDecodedImage {
   readonly release?: () => void;
 }
 
+/** How images are decoded: the largest size accepted, and the ports used. */
 export interface BrowserImageOptions {
   /** Largest area kept, in pixels; larger pictures are scaled down. At most the 2D image limit. */
   readonly maxPixels?: number;
@@ -52,6 +57,7 @@ export interface BrowserImageOptions {
   /** Replaces the browser operations, for tests or other hosts. */
   readonly ports?: BrowserImagePorts;
 }
+/** Where an image texture provider reads the bytes of each image from. */
 export interface BrowserImageTextureProviderOptions extends BrowserImageOptions {
   /** Reads the encoded bytes a reference names. */
   readonly readBytes: (ref: AssetRef<Texture>, context: AssetLoadContext) => Promise<Uint8Array<ArrayBuffer>>;

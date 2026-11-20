@@ -6,6 +6,7 @@ export interface SequenceMarker {
   readonly id: string;
   readonly timeSeconds: number;
 }
+/** How a sequence controller plays: how many times, how fast, which markers it reports and where. */
 export interface SequenceControllerOptions {
   readonly profile: 'egret.sequence-control/1';
   readonly totalPlays?: number | 'infinite';
@@ -13,8 +14,11 @@ export interface SequenceControllerOptions {
   readonly markers?: readonly SequenceMarker[];
   readonly onEvent?: (event: SequenceControllerEvent) => undefined;
 }
+/** Whether a sequence controller is idle, running, paused, completed, stopped or faulted. */
 export type SequenceControllerState = 'idle' | 'running' | 'paused' | 'completed' | 'stopped' | 'faulted';
+/** What caused a controller event: starting, the clock, a seek or a control call. */
 export type SequenceEventSource = 'start' | 'clock' | 'seek' | 'control';
+/** An event a sequence controller reports: a marker it passed, or the end of its plays. */
 export type SequenceControllerEvent =
   | Readonly<{
       kind: 'marker';
@@ -35,10 +39,12 @@ export type SequenceControllerEvent =
       sequence: number;
       source: SequenceEventSource;
     }>;
+/** Where to seek to, and whether the events passed over are reported. */
 export interface SequenceSeekRequest {
   readonly timeSeconds: number;
   readonly replayEvents?: boolean;
 }
+/** Where a sequence controller is: its state, its time and position, and its last sample and issue. */
 export interface SequenceControllerStatus {
   readonly state: SequenceControllerState;
   readonly isDisposed: boolean;

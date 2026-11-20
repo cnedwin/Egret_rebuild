@@ -6,9 +6,11 @@ import type { Engine } from '@egret/engine';
 import { requireEditorEngine } from '#egret-text-editor';
 import type { ParagraphFontSet } from './CanvasKitFontSetProvider.js';
 
+/** Loads the paragraph fonts a text editor uses. */
 export interface EditorParagraphFontLoader {
   load(scope: Scope, loader: FontContentLoader, roots: readonly string[]): Promise<ParagraphFontSet>;
 }
+/** An editor font provider to make: its engine and scope, its paragraph provider and deadline. */
 export interface BrowserEditorFontProviderOptions {
   readonly engine: Engine;
   readonly scope: Scope;
@@ -16,6 +18,7 @@ export interface BrowserEditorFontProviderOptions {
   readonly deadlineMs?: number;
 }
 declare const fontSetBrand: unique symbol;
+/** Fonts loaded for a text editor: its key, families and identities; dispose of it when done. */
 export interface BrowserEditorFontSet {
   readonly [fontSetBrand]: true;
   /** The same key is consumed by the existing paragraph provider. */
@@ -26,6 +29,7 @@ export interface BrowserEditorFontSet {
   readonly closed: Promise<void>;
   dispose(): void;
 }
+/** Loads font sets for browser text editors. */
 export interface BrowserEditorFontProvider {
   load(scope: Scope, loader: FontContentLoader, roots: readonly string[]): Promise<BrowserEditorFontSet>;
   getStatus(): Readonly<{

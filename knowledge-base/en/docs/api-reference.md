@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1329 exports; 804 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1329 exports; 387 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -12,46 +12,46 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `after` | function | Calls a function once, `seconds` from now on the Engine's clock, as Egret's setTimeout. |
 | `animate` | function | A motion of one object: `animate(engine, scope, sprite).to({ x: 100, alpha: 0.5 }, 0.5, 'quadOut').wait(0.2).to({ x: 0 }, 0.5).start()`. |
-| `AssetAcquireOptions` | interface |  |
+| `AssetAcquireOptions` | interface | Options of one acquisition: a signal that cancels it. |
 | `AssetGroup` | interface | One opaque cleanup owner; members remain borrowed genuine invariant leases. |
-| `AssetGroupOptions` | interface |  |
-| `AssetGroupState` | type |  |
+| `AssetGroupOptions` | interface | How many of a group's assets load at once. |
+| `AssetGroupState` | type | Whether an asset group is loading, ready, failed or disposed. |
 | `AssetLease` | class | One independently revocable CPU-value borrow, bound to its originating Engine. |
-| `AssetLoadContext` | interface |  |
+| `AssetLoadContext` | interface | What a provider is given with each load: the signal that tells it the load is no longer wanted. |
 | `AssetManager` | class | CPU acquisition only: demand retains values; completed unused values are evicted. |
-| `AssetProvider` | interface |  |
+| `AssetProvider` | interface | Loads the value an asset reference names, and disposes of it when it is no longer held. |
 | `AssetRef` | interface | A stable manager-local identity paired with its invariant value descriptor. |
 | `AssetType` | interface | Factory identity prevents equal names from aliasing; the phantom is invariant. |
 | `AtlasFrameLayout` | interface | Logical canvas and unpacked placement of a clockwise-packed atlas rectangle. |
 | `Bitmap` | class | A leaf borrowing one exact lease; engine affinity outlives clearing its slot. |
 | `BitmapBindingTicket` | interface | Publishes borrowed group members once; owns no initial or candidate lease. |
 | `BitmapResourceSlot` | interface | Owns only replacement leases; the exact initial Bitmap binding remains borrowed. |
-| `BitmapResourceSlotState` | type |  |
+| `BitmapResourceSlotState` | type | Whether a bitmap resource slot is idle, loading a replacement, ready, failed, conflicted or disposed. |
 | `BoundsQueryOptions` | interface | Receiver-inclusive node and content budgets for logical local measurement. |
-| `BYTE_READER_LIMITS` | value |  |
-| `BYTE_WRITER_LIMITS` | value |  |
-| `ByteOrder` | type |  |
+| `BYTE_READER_LIMITS` | value | The largest snapshot a ByteReader reads, in bytes. |
+| `BYTE_WRITER_LIMITS` | value | The largest capacity a ByteWriter has, in bytes. |
+| `ByteOrder` | type | The order of the bytes of a multi-byte number. |
 | `ByteReader` | class | Read-only owned binary snapshot. |
 | `ByteWriter` | class | Fixed-capacity owned binary appends. |
 | `CancellationController` | class | Owns the mutable signal; consumers receive the read-only cancellation port. |
 | `CancellationListener` | type | A DOM-free cancellation listener; it receives no host Event object. |
 | `CancellationSignal` | interface | One-way cancellation state. |
-| `ClipRectangle2D` | interface |  |
+| `ClipRectangle2D` | interface | A clip rectangle together with the matrix that places it on the frame. |
 | `CoordinateQueryOptions` | interface | Receiver-inclusive ancestor budget; omitted maxNodes defaults to 4096. |
-| `copyImageData2DPixels` | function |  |
+| `copyImageData2DPixels` | function | A fresh copy of an image's pixels, which the caller owns. |
 | `createAssetRef` | function | Keep the caller's valid ID byte-for-byte; whitespace is not normalization. |
-| `createAssetType` | function |  |
+| `createAssetType` | function | Makes an asset type from a name and a check that a loaded value is of that type. |
 | `createEngine` | function | An Engine without a render port: it captures frames and does not render them. |
 | `createEngineForProfile` | function | Exact negotiation completes all successful port reads before semantics. |
 | `createEventType` | function | Matching uses descriptor object identity; equal key strings do not alias types. |
-| `createImageData2D` | function |  |
+| `createImageData2D` | function | Copies the pixels into an image this module owns; a wrong size or pixel count is refused with a TypeError. |
 | `createNineSliceGeometry2D` | function | Create an owned immutable stretch grid for an existing Mesh2D texture lease. |
-| `createSequenceClip` | function |  |
-| `createSharedGeometry2D` | function |  |
-| `createSharedMaterial2D` | function |  |
+| `createSequenceClip` | function | Checks and freezes a sequence from its atlas size and frames; malformed input is refused. |
+| `createSharedGeometry2D` | function | Copies and checks a mesh into a shared geometry that renderers can draw; malformed arrays are refused. |
+| `createSharedMaterial2D` | function | Checks and freezes a material for shared meshes; values out of range are refused. |
 | `createSpriteSheet` | function | Build one exact-name table from a genuine full-image lease without acquiring another resource. |
-| `createTexture` | function |  |
-| `createTexturedGeometry2D` | function |  |
+| `createTexture` | function | A texture of a whole image or of a rectangle of it. |
+| `createTexturedGeometry2D` | function | Copies and checks a textured mesh; malformed arrays are refused with a TypeError. |
 | `createTextureView` | function | Create an explicit logical view over an authentic straight CPU image. |
 | `createTimer` | function | A timer: `createTimer(engine, scope, 1, 5).onTimer(n => …).onComplete(() => …).start()`. |
 | `Delayed` | interface | A call to come: `cancel` takes it back if it has not been made. |
@@ -63,114 +63,114 @@ For which entry to import from, see [What to import](entry-points.md).
 | `DisplaySubtreeTicket` | interface | Borrows all nodes/resources; disposal only revokes this candidate publication. |
 | `Disposable` | interface | Synchronous terminal cleanup. |
 | `EgretError` | class | Stable machine-readable code, original cause, and associated cleanup failures. |
-| `EgretErrorOptions` | interface |  |
+| `EgretErrorOptions` | interface | What an EgretError can carry besides its code: the error or value that caused it. |
 | `Engine` | class | One headless run. |
 | `EngineOptions` | interface |  |
 | `ErrorLanguage` | type | The languages an error's sentence can be in. |
 | `Event` | class | One typed payload with synchronous dispatch state; concurrent reuse is rejected. |
 | `EventDispatcher` | class | Synchronous typed listeners with a frozen route and per-dispatch candidates. |
 | `EventListenerOptions` | interface |  |
-| `EventPhase` | type |  |
+| `EventPhase` | type | Where an event is on its way: going down to its target, at it, or coming back up. |
 | `EventType` | interface | Descriptor identity and invariant payload type belong together. |
-| `EventTypeOptions` | interface |  |
-| `GameClock` | interface |  |
-| `GameClockHandler` | type |  |
-| `GameClockOptions` | interface |  |
-| `GameClockState` | type |  |
-| `GameClockSubscription` | interface |  |
-| `GameClockTick` | interface |  |
-| `getErrorLanguage` | function |  |
+| `EventTypeOptions` | interface | How events of a type travel: whether they bubble and whether they can be cancelled. |
+| `GameClock` | interface | The Engine's game clock: it ticks while running, and handlers are called on each tick. |
+| `GameClockHandler` | type | Called on each tick of the game clock. |
+| `GameClockOptions` | interface | The longest step the game clock takes in one tick, in seconds. |
+| `GameClockState` | type | Whether the game clock is running, paused or closed. |
+| `GameClockSubscription` | interface | A handler's place on the game clock; disposing it stops the calls. |
+| `GameClockTick` | interface | One tick of the game clock: its number, the seconds so far and the seconds since the last tick. |
+| `getErrorLanguage` | function | The language error messages are written in. |
 | `Graphics` | class | Drawing state belongs to one node; every shape snapshots its fill and its line. |
 | `HitTestOptions` | interface | Receiver-inclusive whole-tree admission precedes all hit arithmetic. |
 | `HostAdapter` | interface | Host owns the surface and any borrowed device. |
-| `IMAGE_LIMITS_2D` | value |  |
+| `IMAGE_LIMITS_2D` | value | The largest image accepted: its longest edge and its number of pixels. |
 | `ImageData2D` | interface | Immutable CPU byte identity; the brand conveys no asset or GPU authority. |
-| `ImageData2DInput` | interface |  |
-| `isImageData2D` | function |  |
+| `ImageData2DInput` | interface | The size and pixels of an image to copy: sRGB RGBA, eight bits a channel, rows top to bottom. |
+| `isImageData2D` | function | Whether a value is an image made by `createImageData2D`, without reading any of its properties. |
 | `isTexture` | function | Brand-only: disposal does not change the identity of a Texture. |
-| `isTexturedGeometry2D` | function |  |
+| `isTexturedGeometry2D` | function | Whether a value is a geometry made by `createTexturedGeometry2D`, without reading any of its properties. |
 | `Matrix` | class | A matrix of the plane, as Egret's and a canvas's: a point (x, y) goes to (a·x + c·y + tx, b·x + d·y + ty). |
 | `Matrix2D` | interface | Immutable logical-coordinate values shared by CPU capture and render hosts. |
-| `MatrixLike` | interface |  |
+| `MatrixLike` | interface | Anything with a 2D matrix's six numbers. |
 | `Mesh2D` | class | A display leaf borrowing an exact lease and an immutable owned geometry. |
 | `Motion` | interface | A chain of steps for one object. |
 | `MotionEasing` | type | How a step runs from its start to its end: a name, or a function from 0–1 to 0–1 (it may pass both on the way). |
-| `MotionEasingName` | type |  |
-| `MotionState` | type |  |
+| `MotionEasingName` | type | The name of an easing a motion step can use. |
+| `MotionState` | type | Whether a motion is idle, running, paused, finished or stopped. |
 | `NineSliceBitmap` | class | A resizable stretch-only leaf borrowing one exact, caller-owned Texture lease. |
 | `NineSliceBitmapOptions` | interface | Required local panel dimensions and fixed source-crop borders. |
-| `NineSliceGeometry2DOptions` | interface |  |
+| `NineSliceGeometry2DOptions` | interface | The size of a nine-slice picture, the size to stretch it to, and the insets whose corners are not stretched. |
 | `NineSliceInsets2D` | interface | Border widths in the same units as the unrotated source crop. |
 | `Point` | class | A place: `x` and `y`. |
 | `Point2D` | interface | An owned logical-coordinate value; query results are frozen at runtime. |
 | `Rectangle` | class | A rectangle: its top left corner `x`, `y`, and its `width` and `height`. |
-| `Rectangle2D` | interface |  |
-| `RectangleLike` | interface |  |
+| `Rectangle2D` | interface | An axis-aligned rectangle in its own coordinate space. |
+| `RectangleLike` | interface | Anything with a rectangle's x, y, width and height. |
 | `Releasable` | interface | Releases a lease; resource ownership and disposal remain with its provider. |
 | `RenderEffect2D` | interface | Render-only subtree effect. |
-| `RenderGlow2D` | interface |  |
-| `RenderOutline2D` | interface |  |
+| `RenderGlow2D` | interface | A glow around a node's picture, or, moved by an offset, a drop shadow. |
+| `RenderOutline2D` | interface | An outline around a node's picture: its color, width and alpha. |
 | `Scope` | class | Synchronous ownership boundary. |
-| `ScopeState` | type |  |
+| `ScopeState` | type | Whether a scope is open, disposing what it owns, or closed. |
 | `ScopeValue` | type | Scope prefers dispose() when a value implements both cleanup protocols. |
 | `SequenceClip` | interface | Public immutable sequence metadata; authentic values come from createSequenceClip. |
-| `SequenceClipInput` | interface |  |
-| `SequenceFrameInput` | interface |  |
-| `SequencePlayback` | interface |  |
-| `SequencePlaybackMode` | type |  |
-| `SequencePlaybackOptions` | interface |  |
-| `SequencePlaybackState` | type |  |
+| `SequenceClipInput` | interface | The atlas size and the frames of a sequence to make. |
+| `SequenceFrameInput` | interface | One frame of a sequence to make: its rectangle on the atlas, how long it shows, and its trim and rotation. |
+| `SequencePlayback` | interface | A sequence playing on the game clock: start, pause, resume and stop it, and read its last sample. |
+| `SequencePlaybackMode` | type | Whether a sequence plays once and stops on its last frame, or loops. |
+| `SequencePlaybackOptions` | interface | Whether a sequence plays once or loops. |
+| `SequencePlaybackState` | type | Whether a sequence playback is idle, running, paused, completed, stopped or failed. |
 | `SequencePlayer` | class | Explicit absolute-time selection borrowing a target and its exact current lease. |
-| `SequenceRegion` | interface |  |
-| `SequenceSample` | interface |  |
+| `SequenceRegion` | interface | The rectangle of the atlas a sequence shows at one moment, with its trim and rotation. |
+| `SequenceSample` | interface | What a sequence shows at a position: its frame and region, and whether it has reached its end or stopped. |
 | `setErrorLanguage` | function | The language of the sentence in the message of every error made from now on: English unless set. |
 | `Shape` | class | Stable drawing facade; a Sprite never shares or rebinds its Graphics. |
-| `SHARED_FRAME_PROFILE_2D` | value |  |
-| `SharedBarrierCommand2D` | interface |  |
+| `SHARED_FRAME_PROFILE_2D` | value | The name of the shared 2D frame profile that hosts and the engine agree on. |
+| `SharedBarrierCommand2D` | interface | A command that ends or begins an effect layer: what came before is finished before what comes after is drawn. |
 | `SharedBlendSpace2D` | type | Where translucent draws mix with what is under them. |
-| `SharedDrawState2D` | interface |  |
+| `SharedDrawState2D` | interface | What every draw command carries: its order, its material, its matrix, its opacity and its clips. |
 | `SharedEffect2D` | interface | Frozen effect inputs captured with the same frame and image ownership. |
-| `SharedFloatArray2D` | type |  |
-| `SharedFrameOptions2D` | interface |  |
-| `SharedFrameProfile2D` | type |  |
+| `SharedFloatArray2D` | type | A float array of a shared geometry, in single or double precision. |
+| `SharedFrameOptions2D` | interface | The size of a frame to capture, the color it is cleared to, and how its alpha is given. |
+| `SharedFrameProfile2D` | type | The type of the shared frame profile name. |
 | `SharedGeometry2D` | interface | Immutable CPU geometry identity; the brand grants no asset or GPU authority. |
-| `SharedGeometryInput2D` | interface |  |
-| `SharedGlow2D` | interface |  |
-| `SharedImageCommand2D` | interface |  |
-| `SharedIndexArray2D` | type |  |
-| `SharedMaterial2D` | interface |  |
-| `SharedMaterialInput2D` | interface |  |
-| `SharedMeshCommand2D` | interface |  |
-| `SharedOutputAlpha2D` | type |  |
-| `SharedPage2D` | interface |  |
-| `SharedRectangleCommand2D` | interface |  |
-| `SharedRegion2D` | interface |  |
-| `SharedRenderCommand2D` | type |  |
-| `SharedRenderFrame2D` | interface |  |
-| `SharedRenderHostAdapter` | interface |  |
+| `SharedGeometryInput2D` | interface | The positions, texture coordinates, light and dark colors and triangle indices of a mesh to share with a renderer. |
+| `SharedGlow2D` | interface | A glow or outline drawn around what an effect layer holds. |
+| `SharedImageCommand2D` | interface | A draw command that draws a region of a page. |
+| `SharedIndexArray2D` | type | An index array of a shared geometry, in 16 or 32 bits. |
+| `SharedMaterial2D` | interface | A checked material for shared meshes; only `createSharedMaterial2D` makes one. |
+| `SharedMaterialInput2D` | interface | The colors, blend, sampling and addressing of a material for shared meshes, as plain values to check. |
+| `SharedMeshCommand2D` | interface | A draw command that draws a textured or colored mesh. |
+| `SharedOutputAlpha2D` | type | How a frame's output alpha is given: premultiplied, or opaque with alpha ignored. |
+| `SharedPage2D` | interface | One image that a frame's commands sample from, with how its pixels are represented. |
+| `SharedRectangleCommand2D` | interface | A draw command that fills a rectangle with one color. |
+| `SharedRegion2D` | interface | A region of a page, by the page's index in the frame. |
+| `SharedRenderCommand2D` | type | Any command of a shared frame. |
+| `SharedRenderFrame2D` | interface | One captured frame: its size, clear color and color recipe, its commands in draw order, and the pages, regions, materials and geometries they use. |
+| `SharedRenderHostAdapter` | interface | A host that draws shared frames of this profile. |
 | `Sprite` | class | Stable drawing facade; a Sprite never shares or rebinds its Graphics. |
 | `SpriteSheet` | interface | Immutable metadata plus a separately revocable borrow of one original lease. |
 | `SpriteSheetFrameInput` | interface | One packed absolute rectangle, indexed by its exact UTF-16 name. |
 | `Stage` | class | Created and bound by Engine; there is no implicit global stage. |
 | `Texture` | class | An immutable CPU image view with a separate, terminal wrapper lifetime. |
-| `TexturedFloatArray2D` | type |  |
+| `TexturedFloatArray2D` | type | A float array of a textured geometry, in single or double precision. |
 | `TexturedGeometry2D` | interface | Immutable CPU geometry identity; the brand grants no asset or GPU authority. |
-| `TexturedGeometry2DInput` | interface |  |
-| `TexturedIndexArray2D` | type |  |
-| `TextureRegion2D` | interface |  |
+| `TexturedGeometry2DInput` | interface | The positions, texture coordinates and triangle indices of a textured mesh to copy. |
+| `TexturedIndexArray2D` | type | An index array of a textured geometry, in 16 or 32 bits. |
+| `TextureRegion2D` | interface | A rectangle of an image in whole pixels, from its top left corner. |
 | `TextureViewRegion2D` | interface | Owned immutable metadata. |
 | `TextureViewRegionInput2D` | interface | A packed page rectangle and its unrotated logical, top-left region. |
 | `Timer` | interface | Calls a function every `delay` seconds, `repeatCount` times or until it is stopped, as Egret's Timer. |
-| `Tween` | interface |  |
-| `TweenEasing` | type |  |
-| `TweenOptions` | interface |  |
-| `TweenState` | type |  |
+| `Tween` | interface | A number tweened on the game clock: start, pause, resume and stop it, and read its value. |
+| `TweenEasing` | type | The easing a tween uses. |
+| `TweenOptions` | interface | A tween to make: from and to which number, for how long, with which easing, and what it calls. |
+| `TweenState` | type | Whether a tween is idle, running, paused, completed, stopped or failed. |
 
 ## `@egret/engine/webgpu`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `createSharedWebGPUHost` | function |  |
+| `createSharedWebGPUHost` | function | A host that draws shared frames with WebGPU on a canvas. |
 | `SharedDeviceSessionState` | type | Shared Host lifecycle metadata. |
 | `SharedDeviceSessionStatus` | interface | A frozen observation of one Host, with historical and current failures separate. |
 | `SharedFrameSubmission` | interface | Native draw completion is separate from pixel readback and final retirement. |
@@ -178,17 +178,17 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SharedFrameUploadOptions` | interface | Cancellation revokes an unsubmitted upload without releasing unsettled work. |
 | `SharedFrameUploadReady` | interface | Upload completion does not imply that this frame has been presented. |
 | `SharedHostResourceStatus` | interface | Fresh immutable data; reads do no native work. |
-| `SharedWebGPUHost` | interface |  |
-| `SharedWebGPUHostOptions` | interface |  |
-| `SharedWebGPUHostStatus` | interface |  |
-| `SharedWebGPUReadback` | interface |  |
-| `WebGPUHostDiagnostic` | interface |  |
-| `WebGPUHostErrorCode` | type |  |
-| `WebGPUHostFailure` | interface |  |
-| `WebGPUHostOptions` | interface |  |
-| `WebGPUHostState` | type |  |
-| `WebGPUHostStatus` | interface |  |
-| `WebGPUReadback` | interface |  |
+| `SharedWebGPUHost` | interface | A host that draws shared frames with WebGPU: start and stop it, stage frames, read them back, and recover from a lost device. |
+| `SharedWebGPUHostOptions` | interface | A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space and recovery. |
+| `SharedWebGPUHostStatus` | interface | A shared WebGPU host as it is now: its host status, the bytes pending, and its resources. |
+| `SharedWebGPUReadback` | interface | Pixels read back from a shared frame, with their alpha mode and device generation. |
+| `WebGPUHostDiagnostic` | interface | Something a WebGPU host reports: a failure, with how serious it is. |
+| `WebGPUHostErrorCode` | type | What went wrong in a WebGPU host. |
+| `WebGPUHostFailure` | interface | A failure of a WebGPU host: its code, the frame it happened at, the phase, and its cause. |
+| `WebGPUHostOptions` | interface | A WebGPU host to make: its canvas and device, its pixel ratio, its limits, whether it reads back, and what it reports to. |
+| `WebGPUHostState` | type | Where a WebGPU host is: new, starting, active, stopped, failed, closing or closed. |
+| `WebGPUHostStatus` | interface | A WebGPU host as it is now: its state, frames and bytes pending, and its failures. |
+| `WebGPUReadback` | interface | The pixels of a frame read back: its frame, size, format, color space and alpha, and its bytes. |
 
 ## `@egret/engine/text`
 
@@ -197,7 +197,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createTextField` | function | Public explicit entry; shape, proxies and borrowed identities grant no authority. |
 | `createTextRasterCache` | function | Explicit CPU text orchestration; this entry owns no browser font or drawing surface. |
 | `TextField` | interface | Factory-produced noneditable leaf; the brand has no runtime value. |
-| `TextFieldStatus` | interface |  |
+| `TextFieldStatus` | interface | Where a text field is: unprepared, ready or disposed, its revisions and its metrics. |
 
 ## `@egret/engine/layout`
 
@@ -214,25 +214,25 @@ For which entry to import from, see [What to import](entry-points.md).
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `BitmapButton` | interface | A frozen exact-receiver facade; its accessor setter remains usable. |
-| `BitmapButtonOptions` | interface |  |
-| `BitmapButtonState` | type |  |
+| `BitmapButtonOptions` | interface | A bitmap button to make: its engine, scope and input, its skins, and what it does when activated. |
+| `BitmapButtonState` | type | Whether a bitmap button is up, pressed, disabled or disposed. |
 | `createBitmapButton` | function | Share a genuine input; own only the new private sheet, Bitmap and facade. |
 | `createMouseInput` | function | Primary mouse activation for the admitted ordinary desktop Canvas layout profile. |
 | `MouseInput` | interface | Scope-owned synchronous input. |
-| `MouseInputCancelReason` | type |  |
-| `MouseInputEvents` | interface |  |
+| `MouseInputCancelReason` | type | Why a press was cancelled. |
+| `MouseInputEvents` | interface | The event types mouse input dispatches: begin, end, activate and cancel. |
 | `MouseInputOptions` | interface | Fixed logical dimensions; browser layout scaling does not change game coordinates. |
-| `MouseInputPayload` | interface |  |
-| `MouseInputState` | type |  |
+| `MouseInputPayload` | interface | A mouse event: which pointer, where on the stage, what made it and which button. |
+| `MouseInputState` | type | Whether mouse input is idle, has a button pressed, or has closed. |
 
 ## `@egret/engine/web/image`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserPngDecodeOptions` | interface |  |
-| `BrowserPngPorts` | interface |  |
-| `BrowserTextureProvider` | interface |  |
-| `BrowserTextureProviderOptions` | interface |  |
+| `BrowserPngDecodeOptions` | interface | How the browser decodes a PNG: its orientation, alpha and color space conversion. |
+| `BrowserPngPorts` | interface | How the browser decodes a PNG and makes a canvas, for PNG textures. |
+| `BrowserTextureProvider` | interface | Loads PNG textures in the browser; close it when done. |
+| `BrowserTextureProviderOptions` | interface | A PNG texture provider to make: where it reads bytes from, and the ports it decodes with. |
 | `createBrowserTextureProvider` | function | Caller owns async close; managers own issued Textures and their final demand. |
 
 ## `@egret/engine/web/text`
@@ -253,23 +253,23 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SharedFrameUploadOptions` | interface | Cancellation revokes an unsubmitted upload without releasing unsettled work. |
 | `SharedFrameUploadReady` | interface | Upload completion does not imply that this frame has been presented. |
 | `SharedHostResourceStatus` | interface | Fresh immutable data; reads do no native work. |
-| `SharedLayerWebGL2Host` | interface |  |
-| `SharedWebGL2FrameTiming` | interface |  |
-| `SharedWebGL2Host` | interface |  |
-| `SharedWebGL2HostOptions` | interface |  |
-| `SharedWebGL2HostStatus` | interface |  |
-| `SharedWebGL2Layer2D` | interface |  |
-| `SharedWebGL2LayerEffect2D` | interface |  |
-| `SharedWebGL2LayerPlacement2D` | interface |  |
-| `SharedWebGL2LayerStatus` | interface |  |
-| `SharedWebGL2Readback` | interface |  |
-| `SharedWebGL2TimingPhase` | type |  |
-| `SharedWebGL2TimingSample` | interface |  |
-| `WebGL2HostDiagnostic` | interface |  |
-| `WebGL2HostErrorCode` | type |  |
-| `WebGL2HostFailure` | interface |  |
-| `WebGL2HostState` | type |  |
-| `WebGL2HostStatus` | interface |  |
+| `SharedLayerWebGL2Host` | interface | A shared WebGL2 host that also draws kept layers. |
+| `SharedWebGL2FrameTiming` | interface | The timings of a host's frames: totals by phase, the recent samples and how many were dropped. |
+| `SharedWebGL2Host` | interface | A host that draws shared frames with WebGL2: start and stop it, stage frames, read them back, time them and recover a lost context. |
+| `SharedWebGL2HostOptions` | interface | A shared WebGL2 host to make: its canvas, what it reports to, and whether it measures frames. |
+| `SharedWebGL2HostStatus` | interface | A shared WebGL2 host as it is now: its resources, host status, bytes pending and retention. |
+| `SharedWebGL2Layer2D` | interface | A layer drawn once and kept on the GPU: update it, or dispose of it. |
+| `SharedWebGL2LayerEffect2D` | interface | How a kept layer is tinted when it is placed: its bounds and its multiplied and added color. |
+| `SharedWebGL2LayerPlacement2D` | interface | Where a kept layer is placed in a frame, how large, and with what effect. |
+| `SharedWebGL2LayerStatus` | interface | The kept layers of a host: the bytes they hold, and how many are ready and pending. |
+| `SharedWebGL2Readback` | interface | The pixels of a shared frame read back: its generation and frame, size, format, color space, alpha and bytes. |
+| `SharedWebGL2TimingPhase` | type | A phase of drawing a shared frame that the host can time. |
+| `SharedWebGL2TimingSample` | interface | One timed phase of a frame: its generation and frame, the phase, when it began and how long it took. |
+| `WebGL2HostDiagnostic` | interface | Something a WebGL2 host reports: a failure, with how serious it is. |
+| `WebGL2HostErrorCode` | type | What went wrong in a WebGL2 host. |
+| `WebGL2HostFailure` | interface | A failure of a WebGL2 host: its code, the frame and context generation it happened at, the phase, and its cause. |
+| `WebGL2HostState` | type | Where a WebGL2 host is: new, starting, active, lost, restoring, stopped, failed, closing or closed. |
+| `WebGL2HostStatus` | interface | A WebGL2 host as it is now: its state and generation, frames and bytes pending, and its failures. |
 
 ## `@egret/engine/world3d`
 
@@ -903,59 +903,59 @@ For which entry to import from, see [What to import](entry-points.md).
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `ContentBinding` | interface |  |
+| `ContentBinding` | interface | One resource a content loader binds: its id, its kind and its manifest binding. |
 | `ContentGroup` | interface | All returned values are borrowed until this group or its owning Scope retires. |
 | `ContentLoader` | interface | One manifest/source identity; multiple groups share the existing asset manager. |
-| `ContentProviderFactory` | type |  |
+| `ContentProviderFactory` | type | Makes the providers that load a content loader's resources, given what they bind. |
 | `ContentProviders` | interface | Host providers own byte integrity/UTF-8 decoding; the core validates artifact semantics. |
 | `createContentLoader` | function | One manifest/source catalog, independent of global IDs and of other loaders. |
 | `createFontContentLoader` | function | One typed font catalog over the existing manager and genuine dependency groups. |
-| `createManifestAssetBinding` | function |  |
-| `FontContentAsset` | interface |  |
-| `FontContentBinding` | interface |  |
-| `FontContentGroup` | interface |  |
-| `FontContentLoader` | interface |  |
-| `FontContentProviderFactory` | type |  |
+| `createManifestAssetBinding` | function | Binds one asset of an admitted manifest to an asset type, for its group to load. |
+| `FontContentAsset` | interface | A loaded font: its id, family and identity, its size and format, and a copy of its bytes. |
+| `FontContentBinding` | interface | One font a font content loader binds: its id, family and manifest binding. |
+| `FontContentGroup` | interface | Fonts loaded together: wait for them, read them, and dispose of them together. |
+| `FontContentLoader` | interface | Loads groups of fonts from a manifest. |
+| `FontContentProviderFactory` | type | Makes the provider that loads the bytes of a font content loader's fonts. |
 | `ManifestAssetBinding` | interface | A genuine invariant ref paired with one exact admitted manifest entry. |
 | `ManifestAssetGroup` | interface | Scope-owned dependency group. |
 | `ManifestBinding` | interface | Immutable resource metadata; only the optional binding factory creates it. |
-| `ManifestGroupOptions` | interface |  |
+| `ManifestGroupOptions` | interface | How urgently a manifest group loads: for what is needed now, or in the background. |
 
 ## `@egret/engine/web/resources`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `createManifestByteSource` | function |  |
+| `createManifestByteSource` | function | Reads a manifest's files from a base URL, checking each one's length and SHA-256. |
 | `createManifestContentLoader` | function | Integrity-checked PNG/UTF-8 transport plus the DOM-free content assembly. |
 | `createManifestFontContentLoader` | function | Fonts share the authenticated byte transport and the Engine's existing resource manager. |
 | `createManifestTextureProvider` | function | Source authentication precedes every caller-controlled options read. |
-| `ManifestByteSource` | interface |  |
-| `ManifestByteSourceOptions` | interface |  |
-| `ManifestByteSourceStatus` | interface |  |
-| `ManifestContentLoader` | interface |  |
-| `ManifestFontContentLoader` | interface |  |
-| `ManifestTextureProvider` | interface |  |
-| `ManifestTextureProviderOptions` | interface |  |
-| `ManifestTextureProviderStatus` | interface |  |
+| `ManifestByteSource` | interface | Reads a manifest's files over the network and checks their digests. |
+| `ManifestByteSourceOptions` | interface | A manifest byte source to make: its profile, the URL it fetches from, its deadline and retries. |
+| `ManifestByteSourceStatus` | interface | How many reads a byte source has now and at most, and whether it was full. |
+| `ManifestContentLoader` | interface | A content loader for a manifest in the browser: its status, and a call that closes it. |
+| `ManifestFontContentLoader` | interface | A font content loader for a manifest, with the byte source it reads from. |
+| `ManifestTextureProvider` | interface | A texture provider for a manifest's images, with its status. |
+| `ManifestTextureProviderOptions` | interface | A manifest texture provider to make: the ports it decodes with. |
+| `ManifestTextureProviderStatus` | interface | How many textures a manifest texture provider holds now and at most, and whether it was full. |
 
 ## `@egret/engine/input`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `createKeyboardInput` | function |  |
-| `createPointerInput` | function |  |
-| `PointerCancelReason` | type |  |
+| `createKeyboardInput` | function | Keyboard input for the stage: key events go to the focused target, and focus moves with Tab. |
+| `createPointerInput` | function | Pointer input for the stage: touches, mouse buttons and pens become contacts delivered to the nodes under them. |
+| `PointerCancelReason` | type | Why a pointer was cancelled. |
 | `PointerContact` | interface | A retained value: sequence orders all contacts on this router. |
-| `PointerEventKind` | type |  |
+| `PointerEventKind` | type | What happened to a pointer: it went down, moved, went up or was cancelled. |
 | `PointerInput` | interface | Scope-owned input for an explicitly supplied logical host stream. |
-| `PointerInputEvents` | interface |  |
-| `PointerInputOptions` | interface |  |
-| `PointerNotification` | interface |  |
-| `PointerRouterState` | type |  |
-| `PointerSample` | interface |  |
+| `PointerInputEvents` | interface | The event types pointer input dispatches: begin, move, end, cancel and tap. |
+| `PointerInputOptions` | interface | Pointer input to make: its engine and scope, the surface's size, its limits, and what is called. |
+| `PointerNotification` | interface | A pointer contact and the target it went to, and why it was cancelled. |
+| `PointerRouterState` | type | Whether a pointer router passes input on, holds it, or has closed. |
+| `PointerSample` | interface | One pointer's state at one moment: which pointer it is, what made it and where it is. |
 | `PointerSession` | interface | Only the creating router admits this frozen identity; host IDs may be reused. |
-| `PointerType` | type |  |
-| `PointerUpdate` | interface |  |
+| `PointerType` | type | What made a pointer: a mouse, a finger or a pen. |
+| `PointerUpdate` | interface | Where a pointer is on the stage, which buttons it holds, and when, with its pressure and size where the device gives them. |
 
 ## `@egret/engine/web/pointer`
 
@@ -963,100 +963,100 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `createBrowserPointerInput` | function | Pointer Events adapter for the explicit connected, untransformed Canvas profile. |
 | `PointerInput` | interface | Scope-owned input for an explicitly supplied logical host stream. |
-| `PointerInputOptions` | interface |  |
+| `PointerInputOptions` | interface | Pointer input to make: its engine and scope, the surface's size, its limits, and what is called. |
 
 ## `@egret/engine/ui`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `ActionControl` | interface |  |
-| `ActionControlOptions` | interface |  |
+| `ActionControl` | interface | A button control: whether it is pressed, how often it was activated, and calls that press or disable it. |
+| `ActionControlOptions` | interface | An action control to make: its input and target, and what is called when it is activated or pressed. |
 | `ActionKeysOptions` | interface | Space or Enter, released, activates. |
-| `ControlKeys` | interface |  |
-| `ControlKeysOptions` | type |  |
+| `ControlKeys` | interface | Keys bound to a control: which are pressed now; dispose of it to unbind them. |
+| `ControlKeysOptions` | type | Keys for one control: an action, a toggle, a text field or a selection group. |
 | `ControlKeysSource` | interface | The keyboard input, or anything that delivers its three key events. |
-| `createActionControl` | function |  |
-| `createControlKeys` | function |  |
-| `createHoverControl` | function |  |
-| `createMovementControl` | function |  |
-| `createRangeControl` | function |  |
-| `createScrollControl` | function |  |
-| `createSelectionGroup` | function |  |
-| `createTextFieldControl` | function |  |
-| `createToggleControl` | function |  |
+| `createActionControl` | function | A button on a target: a press and release inside it activates it. |
+| `createControlKeys` | function | Binds the keyboard to a control: Space and Enter press an action or a toggle, arrows move a selection. |
+| `createHoverControl` | function | Tells whether a pointer hovers over a target. |
+| `createMovementControl` | function | A virtual stick on a target: dragging inside its radius gives a direction. |
+| `createRangeControl` | function | A slider on a target: dragging along its track or pressing keys sets a value between its least and greatest. |
+| `createScrollControl` | function | Scrolls content past a viewport along one axis, by wheel, by dragging a thumb, or by calls. |
+| `createSelectionGroup` | function | Radio buttons or tabs: one item of the group is selected at a time. |
+| `createTextFieldControl` | function | A text field on a target: pressing it opens the platform's editing, and the value is committed or cancelled. |
+| `createToggleControl` | function | A checkbox or switch on a target: a press and release inside it toggles it. |
 | `createUiLayerManager` | function | Optional Root composition. |
 | `createUiRoot` | function | One owned transaction domain over the genuine display and input authorities. |
-| `createUiTheme` | function |  |
-| `HoverControl` | interface |  |
+| `createUiTheme` | function | Checks and freezes a theme from its description. |
+| `HoverControl` | interface | Whether a pointer hovers over a target; dispose of it to stop. |
 | `HoverControlOptions` | interface | Hover, toggle and single-selection state for controls an application draws itself. |
-| `LayoutNode` | type |  |
-| `MovementControl` | interface |  |
-| `MovementControlOptions` | interface |  |
+| `LayoutNode` | type | A node of a UI layout tree: a leaf, a stack of children, or a virtual list. |
+| `MovementControl` | interface | A virtual stick: where it points now, whether it is held, and calls that set or disable it. |
+| `MovementControlOptions` | interface | A movement control to make: its input and target, its radius and dead zone, and what it calls. |
 | `MovementKeysOptions` | interface | The keys that are down give the direction; opposite keys cancel each other. |
 | `MovementValue` | interface | Reusable movement and action controls over the existing contact stream. |
 | `RangeAxis` | type | One value out of a range, for a slider an application draws itself: a volume, a share, an amount. |
-| `RangeControl` | interface |  |
-| `RangeControlOptions` | interface |  |
+| `RangeControl` | interface | A slider: its value and range, whether it is dragged, and calls that set or step it. |
+| `RangeControlOptions` | interface | A range control to make: its input and target, its axis and track, its range and step, and what it calls. |
 | `RangeKeysOptions` | interface | Arrow keys move the value by one step, Page Up and Page Down by a page of steps, Home and End go to its ends. |
-| `RowBindContext` | interface |  |
-| `RowBinding` | interface |  |
-| `RowRetention` | interface |  |
-| `RowUnbindInfo` | interface |  |
+| `RowBindContext` | interface | What binding a row is given: the record, its place, the theme and density, its scope, signal and target. |
+| `RowBinding` | interface | What a bound row shows, and its measured height. |
+| `RowRetention` | interface | A row kept bound after it leaves the viewport; release it to let it go. |
+| `RowUnbindInfo` | interface | A row that was unbound: its key, its binding and content versions, and why. |
 | `ScrollAxis` | type | The scroll position of one axis of a clipped viewport an application draws itself. |
-| `ScrollControl` | interface |  |
-| `ScrollControlOptions` | interface |  |
+| `ScrollControl` | interface | Scrolling along one axis: the offset and its maximum, the thumb, and calls that scroll by lines, pages or to the ends. |
+| `ScrollControlOptions` | interface | A scroll control to make: its axis, the lengths of its viewport and content, its wheel and thumb, and what it calls. |
 | `ScrollKeysOptions` | interface | The arrow keys of its axis, Page Up, Page Down, Home and End. |
-| `ScrollThumb` | interface |  |
-| `ScrollThumbOptions` | interface |  |
-| `ScrollWheelOptions` | interface |  |
+| `ScrollThumb` | interface | Where the thumb is on its track and how long it is. |
+| `ScrollThumbOptions` | interface | A scroll thumb to drag: its input and target, its track's length and its shortest length. |
+| `ScrollWheelOptions` | interface | How the wheel scrolls: the hover input, the target, and how far one line is. |
 | `SelectionGroup` | interface | One of several: a radio group, a segmented control, or a listbox with a single selection. |
-| `SelectionGroupOptions` | interface |  |
-| `SelectionItem` | interface |  |
+| `SelectionGroupOptions` | interface | A selection group to make: its input and items, the one selected, whether it wraps, and what it calls. |
+| `SelectionItem` | interface | One item of a selection group: its key, its target and whether it can be chosen. |
 | `SelectionKeysOptions` | interface | Arrow keys move the selection, Home and End go to its ends. |
 | `selectUiSkin` | function | The name a skin gives to the state of a control: of the states that hold, the first in `order` that the skin has a name for, and `default` when it has none. |
-| `TextFieldChange` | interface |  |
-| `TextFieldControl` | interface |  |
-| `TextFieldControlOptions` | interface |  |
+| `TextFieldChange` | interface | A text field's value after a change, and whether a composition is under way. |
+| `TextFieldControl` | interface | A text field: its value and draft, whether it is being edited, and calls that edit, commit or cancel. |
+| `TextFieldControlOptions` | interface | A text field to make: its input, target and editor, its value and limits, its labels, and what it calls. |
 | `TextFieldEditor` | interface | Shows one field at a time. |
 | `TextFieldKeysOptions` | interface | The field opens when the key is released, so that the key types nothing into it. |
 | `TextFieldRectangle` | interface | The state of a text field an application draws itself: its text, and whether it is being edited. |
 | `TextFieldSession` | interface | What the control adds to the presentation of a field when it opens one. |
-| `ToggleControl` | interface |  |
-| `ToggleControlOptions` | interface |  |
-| `ToggleKeysOptions` | interface |  |
-| `UiCommitResult` | interface |  |
-| `UiCounters` | interface |  |
-| `UiInvalidationKind` | type |  |
+| `ToggleControl` | interface | A checkbox or switch: whether it is checked and pressed, and calls that toggle or set it. |
+| `ToggleControlOptions` | interface | A toggle to make: its input and target, whether it starts checked, and what it calls. |
+| `ToggleKeysOptions` | interface | Keys for a toggle: which kind of toggle, the control, and what is called when its press changes. |
+| `UiCommitResult` | interface | What a commit did, and any errors after it. |
+| `UiCounters` | interface | What a UI root counted in its last passes: layouts, records, rows, bindings and measurements. |
+| `UiInvalidationKind` | type | What of a UI root has to be done again: its layout, its content, or both. |
 | `UiKeyboardOptions` | interface | Explicit namespace prevents independently authored panels from sharing focus IDs. |
-| `UiLayerAnchor` | interface |  |
-| `UiLayerCommitResult` | interface |  |
+| `UiLayerAnchor` | interface | Where a layer is placed beside its target: on which side, how aligned, and how far from it. |
+| `UiLayerCommitResult` | interface | What committing the layers did, and any errors after the commit. |
 | `UiLayerManager` | interface | Stage intents, publish participating roots, then sync before editor placement/capture. |
-| `UiLayerManagerOptions` | interface |  |
-| `UiLayerOptions` | interface |  |
-| `UiLayerRegistration` | interface |  |
-| `UiLayerSnapshot` | interface |  |
-| `UiLayerTarget` | type |  |
-| `UiLeafContent` | interface |  |
+| `UiLayerManagerOptions` | interface | A layer manager to make: its engine, scope and input, its viewport and limits. |
+| `UiLayerOptions` | interface | A layer to open: its id and root, its kind and anchor, where focus goes, how it closes, and its backdrop. |
+| `UiLayerRegistration` | interface | An open layer; dispose of it to close it. |
+| `UiLayerSnapshot` | interface | The layers as they are now: committed and desired stacks, each layer, and counters. |
+| `UiLayerTarget` | type | What a layer is anchored to: a leaf of the tree, or a row of a list. |
+| `UiLeafContent` | interface | What a leaf shows, prepared for the size it is given. |
 | `UiLeafPrepareContext` | interface | Detached content is prepared at the leaf's available inner width. |
-| `UiLimits` | interface |  |
-| `UiPreparation` | interface |  |
-| `UiRoot` | interface |  |
-| `UiRootOptions` | interface |  |
-| `UiRowPointerNotification` | type |  |
-| `UiRowSnapshot` | interface |  |
-| `UiSkinState` | type |  |
+| `UiLimits` | interface | How far past the viewport a list keeps rows, and how many rows it keeps resident and retained. |
+| `UiPreparation` | interface | Where a preparation is, and the revisions it works from. |
+| `UiRoot` | interface | A tree of UI laid out in a viewport: change its tree, theme or input, then prepare and commit it. |
+| `UiRootOptions` | interface | A UI root to make: its theme, engine and scope, its viewport, density and tree, its input, and its limits. |
+| `UiRowPointerNotification` | type | A pointer that began, moved, ended or was cancelled on a row of a list. |
+| `UiRowSnapshot` | interface | One row as committed: its key and place, its versions, its box and whether it shows. |
+| `UiSkinState` | type | Which named states of a control are on, to choose its skin. |
 | `UiSkinStateName` | type | The states of a control that a skin may have a name for. |
-| `UiSnapshot` | interface |  |
+| `UiSnapshot` | interface | A UI root as committed: its theme, revisions, origin, viewport, density and boxes. |
 | `UiTheme` | interface | Every factory result is a distinct immutable generation, including equal descriptors. |
-| `UiThemeDescriptor` | interface |  |
-| `UiThemeNode` | interface |  |
+| `UiThemeDescriptor` | interface | A theme to make: its id, colors, spacing, type and skins. |
+| `UiThemeNode` | interface | How a node of a theme is filled and spaced. |
 | `UiThemeSkin` | interface | Skin names resolve through application-owned, typed asset references, never URLs. |
-| `UiThemeTypography` | interface |  |
-| `VirtualDataSource` | interface |  |
-| `VirtualListHandle` | interface |  |
+| `UiThemeTypography` | interface | A theme's type: its font family, size and line height. |
+| `VirtualDataSource` | interface | The records of a virtual list, and how a row is bound to a record and unbound from it. |
+| `VirtualListHandle` | interface | A virtual list of a UI root: reveal a record, change its source or scroll, and read its snapshot. |
 | `VirtualListRevealOptions` | interface | Alignment within the list's authored viewport; tall rows can remain clipped. |
-| `VirtualListSnapshot` | interface |  |
-| `VirtualRecord` | interface |  |
+| `VirtualListSnapshot` | interface | A virtual list as committed: its rows, scroll offset and extent, its anchor and counters. |
+| `VirtualRecord` | interface | One record of a virtual list: its key, its content version, its estimated height and its value. |
 
 ## `@egret/engine/animation`
 
@@ -1065,19 +1065,19 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createSequenceController` | function | Opt-in sequence controls share Engine ownership but never create a second timer. |
 | `createSequenceResetSlot` | function | One ordinary sole-child container; all candidates use existing content and clock ownership. |
 | `SequenceController` | interface | Receiver-checked owned handle; time is driven only by its genuine Engine. |
-| `SequenceControllerEvent` | type |  |
-| `SequenceControllerOptions` | interface |  |
-| `SequenceControllerState` | type |  |
-| `SequenceControllerStatus` | interface |  |
-| `SequenceEventSource` | type |  |
+| `SequenceControllerEvent` | type | An event a sequence controller reports: a marker it passed, or the end of its plays. |
+| `SequenceControllerOptions` | interface | How a sequence controller plays: how many times, how fast, which markers it reports and where. |
+| `SequenceControllerState` | type | Whether a sequence controller is idle, running, paused, completed, stopped or faulted. |
+| `SequenceControllerStatus` | interface | Where a sequence controller is: its state, its time and position, and its last sample and issue. |
+| `SequenceEventSource` | type | What caused a controller event: starting, the clock, a seek or a control call. |
 | `SequenceMarker` | interface | Immutable authored marker; its input index breaks equal-time ties. |
-| `SequenceResetActive` | interface |  |
-| `SequenceResetInitial` | interface |  |
-| `SequenceResetRequest` | interface |  |
-| `SequenceResetSlot` | interface |  |
-| `SequenceResetState` | type |  |
-| `SequenceResetTicket` | interface |  |
-| `SequenceSeekRequest` | interface |  |
+| `SequenceResetActive` | interface | The sequence a reset slot shows now, and whether the slot owns it or borrows it. |
+| `SequenceResetInitial` | interface | The sequence a reset slot starts with: its version label, its bitmap and its controller. |
+| `SequenceResetRequest` | interface | A request to replace a slot's sequence with another version, loaded from a content loader. |
+| `SequenceResetSlot` | interface | Holds a bitmap's sequence and replaces it with a new version without a gap. |
+| `SequenceResetState` | type | Where a reset request is: loading, ready, prepared, committed, cancelled or failed. |
+| `SequenceResetTicket` | interface | One pending replacement: wait for it to be ready, then commit it or dispose of it. |
+| `SequenceSeekRequest` | interface | Where to seek to, and whether the events passed over are reported. |
 
 ## `@egret/engine/paragraph`
 
@@ -1090,76 +1090,76 @@ For which entry to import from, see [What to import](entry-points.md).
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `CanvasKitFontSetProvider` | interface |  |
-| `CanvasKitFontSetProviderOptions` | interface |  |
-| `CanvasKitParagraphFont` | interface |  |
+| `CanvasKitFontSetProvider` | interface | Loads font sets for CanvasKit paragraphs. |
+| `CanvasKitFontSetProviderOptions` | interface | A CanvasKit font set provider to make: its CanvasKit and build identity. |
+| `CanvasKitParagraphFont` | interface | One font for CanvasKit paragraphs: its family, bytes and identity. |
 | `CanvasKitParagraphModule` | interface | Minimal host-injected CanvasKit port. |
-| `CanvasKitParagraphProvider` | interface |  |
-| `CanvasKitParagraphProviderOptions` | interface |  |
+| `CanvasKitParagraphProvider` | interface | Lays out and draws paragraphs with CanvasKit; dispose of it when done. |
+| `CanvasKitParagraphProviderOptions` | interface | A CanvasKit paragraph provider to make: its CanvasKit, build identity and fonts. |
 | `createCanvasKitFontSetProvider` | function | A stable cache provider routes immutable generations; it never mutates a live native font table. |
-| `createCanvasKitParagraphProvider` | function |  |
-| `ParagraphFontSet` | interface |  |
+| `createCanvasKitParagraphProvider` | function | Lays out and draws paragraphs with CanvasKit and the fonts it is given. |
+| `ParagraphFontSet` | interface | A set of fonts loaded for paragraphs: its key and families; dispose of it when done. |
 
 ## `@egret/engine/web/keyboard`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `createBrowserKeyboardInput` | function | Canvas-local native keyboard bridge. |
-| `KeyboardCancelPayload` | interface |  |
-| `KeyboardCancelReason` | type |  |
-| `KeyboardFocusChange` | interface |  |
-| `KeyboardFocusOptions` | interface |  |
-| `KeyboardFocusPayload` | interface |  |
+| `KeyboardCancelPayload` | interface | A key that was let go of without its key up, and why. |
+| `KeyboardCancelReason` | type | Why a held key was let go of without its key up. |
+| `KeyboardFocusChange` | interface | Focus that moved: from which target to which, why, and whether it is shown. |
+| `KeyboardFocusOptions` | interface | How focus is given: whether it is shown, and why it moved. |
+| `KeyboardFocusPayload` | interface | A target that gained or lost focus, the other target, why, and whether focus is shown. |
 | `KeyboardInput` | interface | Synchronous logical focus; text editing and IME are outside this channel. |
-| `KeyboardInputEvents` | interface |  |
-| `KeyboardInputOptions` | interface |  |
-| `KeyboardInputSnapshot` | interface |  |
-| `KeyboardKeyPayload` | interface |  |
-| `KeyboardSample` | interface |  |
-| `KeyboardTargetOptions` | interface |  |
-| `KeyboardTargetRegistration` | interface |  |
+| `KeyboardInputEvents` | interface | The event types keyboard input dispatches: key down and up, cancel, and focus in and out. |
+| `KeyboardInputOptions` | interface | Keyboard input to make: its engine and scope, its limits, and what is called when focus moves. |
+| `KeyboardInputSnapshot` | interface | Keyboard input as it is now: its state, the focused target, and the keys held. |
+| `KeyboardKeyPayload` | interface | A key event and the target it went to. |
+| `KeyboardSample` | interface | One key as the host gives it: its code and key, whether it repeats, and the modifiers held. |
+| `KeyboardTargetOptions` | interface | A target to register: its id, its display object, its place in Tab order and whether it is disabled. |
+| `KeyboardTargetRegistration` | interface | A registered target: change it, or dispose of it to take it out. |
 
 ## `@egret/engine/web/text-input`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserTextInput` | interface |  |
-| `BrowserTextInputChange` | interface |  |
-| `BrowserTextInputEnterHint` | type |  |
-| `BrowserTextInputMode` | type |  |
-| `BrowserTextInputOptions` | interface |  |
+| `BrowserTextInput` | interface | A native text field over the canvas, for typing with the platform's keyboard and input methods. |
+| `BrowserTextInputChange` | interface | The value after a change, and whether a composition is under way. |
+| `BrowserTextInputEnterHint` | type | What the Enter key of an on-screen keyboard says. |
+| `BrowserTextInputMode` | type | Which on-screen keyboard to ask for. |
+| `BrowserTextInputOptions` | interface | Browser text input to make: its canvas and size, the element it goes into, and whether keys are kept from the game. |
 | `BrowserTextInputRectangle` | interface | Rectangle in logical stage units, the units of the display tree and of pointer input. |
 | `BrowserTextInputRequest` | interface | One editing session. |
-| `BrowserTextInputSnapshot` | interface |  |
+| `BrowserTextInputSnapshot` | interface | Browser text input as it is now: its state, value and composition. |
 | `createBrowserTextInput` | function | Platform text entry over a canvas: a native field placed on a rectangle of the stage, so that input methods (Chinese, Japanese, Korean), on-screen keyboards, paste and accessibility work as the platform provides them. |
 
 ## `@egret/engine/ui/editing`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `createUiTextEditor` | function |  |
+| `createUiTextEditor` | function | A text editor drawn by the engine, its text and selection kept by the platform's text input. |
 | `TextEditSelection` | interface | Source offsets are UTF-16, never glyph indices or guessed advance widths. |
-| `UiTextEditor` | interface |  |
-| `UiTextEditorChange` | interface |  |
-| `UiTextEditorOptions` | interface |  |
-| `UiTextEditorSetOptions` | interface |  |
-| `UiTextEditorSnapshot` | interface |  |
-| `UiTextEditorStyle` | interface |  |
-| `UiTextEditorTarget` | type |  |
+| `UiTextEditor` | interface | A text editor: its content, the calls that set its value, selection and style, and the geometry of its text. |
+| `UiTextEditorChange` | interface | A change to a text editor's content or selection, and what made it. |
+| `UiTextEditorOptions` | interface | A text editor to make: its engine, scope and cache, its mode, value and limits, its style and size, and what it calls. |
+| `UiTextEditorSetOptions` | interface | How a value is set: the selection after it, the revision it expects, and whether a composition is cancelled. |
+| `UiTextEditorSnapshot` | interface | A text editor as it is now: its content revision, style, and whether the native editor shows. |
+| `UiTextEditorStyle` | interface | How a text editor's text looks: its fonts and size, line height, locale and direction, colors and alignment. |
+| `UiTextEditorTarget` | type | What a text editor is drawn in: a leaf of the tree, or a row of a list. |
 
 ## `@egret/engine/web/editing`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserEditorFontProvider` | interface |  |
-| `BrowserEditorFontProviderOptions` | interface |  |
-| `BrowserEditorFontSet` | interface |  |
-| `BrowserTextEditor` | interface |  |
-| `BrowserTextEditorOptions` | interface |  |
-| `BrowserTextEditorSnapshot` | interface |  |
+| `BrowserEditorFontProvider` | interface | Loads font sets for browser text editors. |
+| `BrowserEditorFontProviderOptions` | interface | An editor font provider to make: its engine and scope, its paragraph provider and deadline. |
+| `BrowserEditorFontSet` | interface | Fonts loaded for a text editor: its key, families and identities; dispose of it when done. |
+| `BrowserTextEditor` | interface | A UI text editor edited through a native element over the canvas: activate, finish or cancel editing. |
+| `BrowserTextEditorOptions` | interface | A browser text editor to make: its editor, root and target, its canvas, fonts and size, its label and keyboard, and what it calls. |
+| `BrowserTextEditorSnapshot` | interface | A browser text editor as it is now: its state, revisions, native element and font. |
 | `createBrowserEditorFontProvider` | function | CSS registration is a consumer of existing immutable font resources, not another asset cache. |
 | `createBrowserTextEditor` | function | One visible native editor over an authenticated committed UI binding. |
-| `EditorParagraphFontLoader` | interface |  |
+| `EditorParagraphFontLoader` | interface | Loads the paragraph fonts a text editor uses. |
 
 ## `@egret/engine/input/hover`
 
@@ -1167,26 +1167,26 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `createHoverInput` | function | Hover and wheel routing over the display tree of a started Engine. |
 | `HoverInput` | interface | Scope-owned hover and wheel routing for an explicitly supplied logical host stream. |
-| `HoverInputEvents` | interface |  |
-| `HoverInputOptions` | interface |  |
-| `HoverInputState` | type |  |
+| `HoverInputEvents` | interface | The event types hover input dispatches: enter, move, leave and wheel. |
+| `HoverInputOptions` | interface | Hover input to make: its engine and scope, the surface's size, its limits, and what is called. |
+| `HoverInputState` | type | Whether hover input passes input on, holds it, or has closed. |
 | `HoverLeaveReason` | type | Why a target stopped being hovered: the pointer went to another target or to none, left the surface, pressed, or was cancelled by the platform; the target stopped being a possible target; the mapping of the surface changed; the window or the page went away; or the input was suspended, disposed or failed. |
-| `HoverNotification` | interface |  |
+| `HoverNotification` | interface | A target that a pointer entered, moved over or left, and why it left. |
 | `HoverPoint` | interface | A retained value: sequence orders every hover and wheel observation of this input. |
 | `HoverPointerType` | type | Pointers that can be over the scene without pressing it. |
-| `HoverSample` | interface |  |
-| `HoverState` | interface |  |
+| `HoverSample` | interface | A pointer moving over the surface without a press: which pointer, where and when. |
+| `HoverState` | interface | Where a pointer hovers and the target under it. |
 | `HoverTransition` | interface | A point of an enter or a leave, with the other end of the movement when there is one. |
-| `WheelNotification` | interface |  |
-| `WheelPoint` | interface |  |
-| `WheelSample` | interface |  |
-| `WheelUnit` | type |  |
+| `WheelNotification` | interface | A wheel turn and the target it went to, and whether that target took it. |
+| `WheelPoint` | interface | A wheel sample in order, with the viewport it was taken in. |
+| `WheelSample` | interface | A turn of a wheel: where the pointer is, how far it turned in each axis, in what unit and when. |
+| `WheelUnit` | type | What a wheel's deltas count: pixels, lines or pages. |
 
 ## `@egret/engine/web/hover`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserHoverInputOptions` | interface |  |
+| `BrowserHoverInputOptions` | interface | Browser hover input to make: its canvas, how far a page of wheel scrolls, and what is called on an error. |
 | `createBrowserHoverInput` | function | Hover and wheel of the page for the canvas of a started Engine, in the same connected, untransformed profile as the pointer adapter. |
 | `WheelPagePolicy` | type | Whether a wheel over the canvas also scrolls the page: only when nothing consumed it, never (the canvas owns the wheel), or always (the listener is passive and cannot hold the page). |
 
@@ -1196,42 +1196,42 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `bindGamepadKeys` | function | Drives a keyboard input from the pads: the keys a UI already answers, held and repeated as a pad holds them. |
 | `createGamepadInput` | function | Pads as a stream of samples a host gives it: what is held, how far a stick is pushed, and what changed since the last look. |
-| `GamepadButtonChange` | interface |  |
+| `GamepadButtonChange` | interface | A button that was pressed or released: on which pad, which button, how far and when. |
 | `GamepadButtonName` | type | The buttons of a pad in the standard layout, by where they are: `a` is the lower face button. |
-| `GamepadButtonSample` | interface |  |
-| `GamepadConnectionChange` | interface |  |
+| `GamepadButtonSample` | interface | A gamepad button now: whether it is pressed, and how far, 0 to 1. |
+| `GamepadConnectionChange` | interface | A gamepad that was connected or disconnected: its pad, id, mapping and time. |
 | `GamepadInput` | interface | Pads as a stream of samples. |
-| `GamepadInputOptions` | interface |  |
+| `GamepadInputOptions` | interface | How gamepads are read: the dead zone, how many pads, and what is called on buttons and connections. |
 | `GamepadKeyAction` | type | What a button does: a key, with the way the focus moves when nobody took the key; or a move of the focus alone. |
-| `GamepadKeys` | interface |  |
-| `GamepadKeysOptions` | interface |  |
+| `GamepadKeys` | interface | Keyboard keys held by a gamepad; dispose of it to release them. |
+| `GamepadKeysOptions` | interface | How a gamepad presses keyboard keys: which pad, the map of buttons and stick to keys, and the repeat. |
 | `GamepadKeyTarget` | interface | The part of a keyboard input that a pad drives. |
 | `GamepadPad` | interface | A pad that is connected, as of the last sample. |
 | `GamepadSample` | interface | What a host says of one pad at one moment. |
-| `GamepadStick` | interface |  |
-| `GamepadStickName` | type |  |
+| `GamepadStick` | interface | Where a stick points, each axis -1 to 1, with the dead zone taken out. |
+| `GamepadStickName` | type | Which stick of a gamepad: the left or the right. |
 
 ## `@egret/engine/web/gamepad`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserGamepadInput` | interface |  |
-| `BrowserGamepadInputOptions` | interface |  |
+| `BrowserGamepadInput` | interface | Gamepads read from the browser: poll them each frame, and make one rumble. |
+| `BrowserGamepadInputOptions` | interface | Browser gamepad input to make: what is called on an error. |
 | `createBrowserGamepadInput` | function | The pads of a page. |
-| `GamepadRumble` | interface |  |
+| `GamepadRumble` | interface | A rumble to play: how long, and how strong its weak and strong motors run. |
 
 ## `@egret/engine/camera`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `Camera2D` | interface | A view of a 2D world: where it looks, how close, what it follows, and how it shakes. |
-| `Camera2DOptions` | interface |  |
-| `CameraFollowOptions` | interface |  |
-| `CameraLayerOptions` | interface |  |
-| `CameraPoint` | interface |  |
-| `CameraRect` | interface |  |
-| `CameraShakeOptions` | interface |  |
-| `CameraSnapshot` | interface |  |
+| `Camera2DOptions` | interface | A 2D camera to make: the world it moves, the view's size, where it looks and how far it zooms, its bounds and its shake. |
+| `CameraFollowOptions` | interface | How the camera follows a target: how smoothly, the box it may move in unfollowed, and the offset. |
+| `CameraLayerOptions` | interface | How a layer moves and zooms with the camera, for parallax. |
+| `CameraPoint` | interface | A point in world coordinates. |
+| `CameraRect` | interface | A rectangle in world coordinates. |
+| `CameraShakeOptions` | interface | How much a shake adds to the camera's trauma. |
+| `CameraSnapshot` | interface | The camera as it is now: where it looks, its zoom and rotation, its trauma and its view. |
 | `CameraTarget` | type | What the camera follows: a display object inside the world, or a function that says where to look. |
 | `createCamera2D` | function | A camera over a container that holds the world. |
 
@@ -1241,22 +1241,22 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `createTileMap` | function | A map drawn from its tilesets. |
 | `importTiledMap` | function | Reads a map saved by Tiled as JSON (`.tmj`, or `.json`), orthogonal, with tile layers as arrays or as base64 without compression, finite or infinite, object layers and groups. |
-| `ObjectLayerData` | interface |  |
+| `ObjectLayerData` | interface | A layer of objects: its name, offset, opacity and objects. |
 | `TILE_FLIP_MASK` | value | The top three bits of a global id say how the tile is turned; the rest is the id. |
-| `TileAnimationFrame` | interface |  |
-| `TiledImportOptions` | interface |  |
-| `TileInfo` | interface |  |
-| `TileLayerData` | interface |  |
+| `TileAnimationFrame` | interface | One frame of an animated tile: the tile it shows and for how long. |
+| `TiledImportOptions` | interface | Tilesets kept in files of their own, for importing a map from Tiled. |
+| `TileInfo` | interface | What a cell holds: its tile, tileset and flips, and the tile's properties. |
+| `TileLayerData` | interface | A layer of tiles: its name, size, offset, opacity and parallax, and its tiles' global ids. |
 | `TileMap` | interface | A map drawn: one container for each tile layer, cut into chunks of meshes that can be left out when they cannot be seen. |
-| `TileMapChunk` | interface |  |
+| `TileMapChunk` | interface | A chunk of a layer drawn as one: its first cell, whether it shows, and its meshes. |
 | `TileMapData` | interface | A map as plain, frozen data: what a tile map is made from. |
-| `TileMapLayer` | interface |  |
-| `TileMapLayerData` | type |  |
-| `TileMapObject` | interface |  |
-| `TileMapOptions` | interface |  |
-| `TileMapProperties` | type |  |
-| `TileMapPropertyValue` | type |  |
-| `TileSetData` | interface |  |
+| `TileMapLayer` | interface | A layer as drawn: its name and data, its display object and its chunks. |
+| `TileMapLayerData` | type | A layer of a map: tiles or objects. |
+| `TileMapObject` | interface | An object of an object layer: its place and size, its shape or tile, its text and properties. |
+| `TileMapOptions` | interface | A tile map to make: its map, its tileset textures and the size of its chunks. |
+| `TileMapProperties` | type | The properties of a map, layer, tile or object, by name. |
+| `TileMapPropertyValue` | type | The value of a tile map property. |
+| `TileSetData` | interface | A tileset: its tiles' size and count, its image, and the properties and animations of its tiles. |
 
 ## `@egret/engine/particles`
 
@@ -1264,29 +1264,29 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `createParticleEmitter` | function | A stream of particles over one texture, drawn as one mesh that is built again each update. |
 | `ParticleEmitter` | interface | Particles drawn as one mesh. |
-| `ParticleEmitterOptions` | interface |  |
+| `ParticleEmitterOptions` | interface | An emitter to make: its texture and how many particles, and how they are born, move, grow, fade and turn. |
 | `ParticleRange` | type | A value picked once for each particle, evenly between the two ends; a number is both ends. |
 | `ParticleShape` | type | Where particles are born, around the place of the emitter. |
-| `ParticleSnapshot` | interface |  |
-| `ParticleView` | interface |  |
+| `ParticleSnapshot` | interface | An emitter as it is now: how many particles live, were born and were refused, and its time. |
+| `ParticleView` | interface | One live particle: where it is and how fast it moves, its age, scale, alpha, color and rotation. |
 
 ## `@egret/engine/physics2d`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `createPhysicsWorld` | function | A world of bodies that move, meet and push each other apart, in fixed steps, without turning. |
-| `PhysicsBody` | interface |  |
+| `PhysicsBody` | interface | A body in the physics world: its place and motion, its material and layers, and the calls that push it. |
 | `PhysicsBodyKind` | type | A static body never moves; a kinematic one moves by its speed alone and pushes; a dynamic one is moved by everything. |
-| `PhysicsBodyOptions` | interface |  |
-| `PhysicsContact` | interface |  |
-| `PhysicsMoveResult` | interface |  |
-| `PhysicsRayHit` | interface |  |
+| `PhysicsBodyOptions` | interface | A body to add: its kind and shape, where it is and how it moves, its material, its layers and what it moves. |
+| `PhysicsContact` | interface | Two bodies that began or ended touching, with the normal between them. |
+| `PhysicsMoveResult` | interface | Where a moved body ended up, and the normals of what it hit on the way. |
+| `PhysicsRayHit` | interface | What a ray hit: the body, where, its normal, and how far along the ray. |
 | `PhysicsShape` | type | A shape about the place of its body. |
-| `PhysicsSnapshot` | interface |  |
-| `PhysicsTileColliders` | interface |  |
-| `PhysicsVector` | interface |  |
+| `PhysicsSnapshot` | interface | The physics world as it is now: its bodies, contacts and steps. |
+| `PhysicsTileColliders` | interface | A grid of solid tiles to collide with: its size in tiles, its tile size, which are solid and where it is. |
+| `PhysicsVector` | interface | A 2D vector of the physics world. |
 | `PhysicsWorld` | interface | A world of 2D bodies that collide, without turning: simple, steady physics for a 2D game. |
-| `PhysicsWorldOptions` | interface |  |
+| `PhysicsWorldOptions` | interface | A physics world to make: its gravity, its step and iterations, and its limits. |
 
 ## `@egret/engine/bitmapfont`
 
@@ -1297,9 +1297,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BitmapText` | interface | Text drawn in a bitmap font, as one mesh for each page it uses. |
 | `BitmapTextGlyph` | interface | One character placed: its rectangle in the text and its rectangle on its page. |
 | `BitmapTextLayout` | interface | Text laid out in a font, from its top left. |
-| `BitmapTextLayoutOptions` | interface |  |
-| `BitmapTextLine` | interface |  |
-| `BitmapTextOptions` | interface |  |
+| `BitmapTextLayoutOptions` | interface | How bitmap text is laid out: its width, alignment, spacing and kerning, and the character to fall back on. |
+| `BitmapTextLine` | interface | One laid out line of bitmap text: its characters, width and place. |
+| `BitmapTextOptions` | interface | Bitmap text to make: its font, pages, text and color, and how it is laid out. |
 | `createBitmapText` | function | Draws text in a bitmap font as one mesh for each page it uses, laid out again whenever what it shows changes. |
 | `layoutBitmapText` | function | Lays text out in a bitmap font without drawing it: its lines, where each character goes, and its size. |
 | `parseBitmapFont` | function | Reads a bitmap font: the text, XML or JSON forms of BMFont (from AngelCode's generator, Hiero, Glyph Designer, Littera and the like), or Egret's own JSON of frames. |
@@ -1311,28 +1311,28 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createVideo` | function | A video as a display object: each new picture its source gives becomes, through the Engine's assets, the texture of one Bitmap. |
 | `Video` | interface | A video shown as a display object: each new picture of its source becomes the texture of one Bitmap. |
 | `VideoFrame` | interface | One picture of a video, the time of the video it shows. |
-| `VideoOptions` | interface |  |
-| `VideoSnapshot` | interface |  |
+| `VideoOptions` | interface | A video to show: the asset manager that leases its pictures, and its source. |
+| `VideoSnapshot` | interface | A video as it is now: its state, its pictures shown and skipped, and its times. |
 | `VideoSource` | interface | What a video player reads its pictures from and is driven through. |
 | `VideoSourceState` | type | Where a source is: still opening, able to show a frame, playing, paused, at its end, or unable to play. |
-| `VideoState` | type |  |
+| `VideoState` | type | Whether a video is loading, ready, playing, paused, ended, failed or closed. |
 
 ## `@egret/engine/web/video`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserVideo` | interface |  |
-| `BrowserVideoOptions` | interface |  |
+| `BrowserVideo` | interface | A video played by a video element, its pictures leased as textures. |
+| `BrowserVideoOptions` | interface | A browser video to make: its assets, its source or stream or element, and whether it loops, is muted and how loud. |
 | `createBrowserVideo` | function | A video played by a page's video element and shown as a display object. |
 
 ## `@egret/engine/web/loop`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserFrameLoop` | interface |  |
-| `BrowserFrameLoopOptions` | interface |  |
-| `BrowserFrameLoopSnapshot` | interface |  |
-| `BrowserFrameLoopState` | type |  |
+| `BrowserFrameLoop` | interface | Steps the Engine and draws a frame on each animation frame of the browser. |
+| `BrowserFrameLoopOptions` | interface | A frame loop to run: its engine, frame and host, its update, how long a step and a catch-up may be, and its frame requests. |
+| `BrowserFrameLoopSnapshot` | interface | A frame loop as it is now: its state, its steps, frames and skipped frames, its seconds and any failure. |
+| `BrowserFrameLoopState` | type | Whether a frame loop is idle, running, failed or closed. |
 | `createBrowserFrameLoop` | function | The frame loop of a game in a page. |
 | `FrameLoopEngine` | interface | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | interface | What the loop asks of a Host: how many frames it holds that it has not finished. |
@@ -1343,13 +1343,13 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `ASSET_BUNDLE_HEADER_BYTES` | value | How many bytes from the start must be read to know the index's length: the header. |
 | `assetBundleCheck` | function | FNV-1a over the bytes, as eight hex digits. |
-| `AssetBundleEntry` | interface |  |
-| `AssetBundleIndex` | interface |  |
+| `AssetBundleEntry` | interface | One file in an asset bundle: its name, where its bytes are, its type and tags, and its check. |
+| `AssetBundleIndex` | interface | The table of an asset bundle: its size, where its data begins, and its entries. |
 | `AssetBundleInput` | interface | One file to put in a bundle. |
-| `AudioCueDefinition` | interface |  |
-| `AudioCuePlayOptions` | interface |  |
-| `AudioCues` | interface |  |
-| `AudioCuesOptions` | interface |  |
+| `AudioCueDefinition` | interface | A named sound effect: its takes, its bus and volume, and how often and how many at once it plays. |
+| `AudioCuePlayOptions` | interface | How one play of a cue differs: its volume, pan and rate. |
+| `AudioCues` | interface | Sound effects by name, each with its takes, cool-down and voice limit. |
+| `AudioCuesOptions` | interface | The clock and the random numbers cues choose by; give your own for tests and replays. |
 | `createAudioCues` | function | Names the sound effects of a game over `mixer`. |
 | `createInputActions` | function | Makes the actions of `map`. |
 | `createMemorySaveStorage` | function | Storage kept in memory: for tests, for a page without browser storage, or for a game played once. |
@@ -1359,31 +1359,31 @@ For which entry to import from, see [What to import](entry-points.md).
 | `encodeWav` | function | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
 | `hashSeed` | function | Turns a string or number into a 32-bit seed. |
 | `HeadlessGame` | interface | What a headless run needs of a game: its state and one step of its rules. |
-| `HeadlessRunOptions` | interface |  |
-| `HeadlessRunResult` | interface |  |
+| `HeadlessRunOptions` | interface | A game run without a screen: the game and player to make for each seed, when it is done, and the step. |
+| `HeadlessRunResult` | interface | What one seed's headless run did: whether it finished, its seconds and steps, its timings and its summary. |
 | `InputActionDefinition` | interface | An action and the controls that drive it. |
-| `InputActionKind` | type |  |
-| `InputActionMap` | type |  |
-| `InputActions` | interface |  |
+| `InputActionKind` | type | Whether an action is a button, one axis, or a vector of two. |
+| `InputActionMap` | type | Actions by name, with the controls that drive each. |
+| `InputActions` | interface | Named actions driven by keys, buttons and sticks: what is pressed now, values, rebinding and saving. |
 | `InputBinding` | type | One physical control, written as a short string: `Key:KeyW` (a `KeyboardEvent.code`), `Mouse:0` (a button number), `Pad:a` or `Pad:7` (a standard gamepad button name or number), `Pad:leftStick` / `Pad:rightStick` (a stick, for vector actions), `Pad:leftStickX+` (one half of a stick axis, for buttons and axes), and `Touch:<name>` for an on-screen control. |
 | `InputBindingSlot` | type | A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... |
-| `InputBindingsSave` | interface |  |
-| `InputVector` | interface |  |
+| `InputBindingsSave` | interface | Bindings as saved, to load back with `loadBindings`. |
+| `InputVector` | interface | The value of a vector action, each axis -1 to 1. |
 | `pickQualityFiles` | function | Names of the form `<base>-<tier>.<ext>` grouped by base and chosen for `quality`, as a bundle or a folder lists them: `hero-high.glb`, `hero-low.glb` and `hall.webp` give `hero-low.glb` (for `medium`) and `hall.webp`. |
 | `pickQualityVariant` | function | Of several variants of one asset, the one for `quality`: an exact tier, or else the nearest below, or else the nearest above. |
 | `planAssetBundleRanges` | function | Ranges of the file that hold the named entries, joined where they touch or lie within `gap` bytes. |
 | `QUALITY_TIERS` | value | Quality tiers from lowest to highest, as World3D names them. |
-| `QualityTier` | type |  |
-| `Random` | interface |  |
+| `QualityTier` | type | One of the quality tiers, from the lowest to the highest. |
+| `Random` | interface | Random numbers from a seed, repeatable: numbers, ranges, choices, shuffles and normal values. |
 | `RandomState` | type | Four 32-bit words. |
 | `readAssetBundleHeader` | function | The index length a header gives, so a reader can ask for exactly the bytes of the index. |
 | `readAssetBundleIndex` | function | The index of a bundle from its first bytes: at least the header and the index. |
 | `runHeadless` | function | Plays the game once per seed with the stand-in player and reports each run. |
-| `SaveProblem` | interface |  |
-| `SaveProblemKind` | type |  |
+| `SaveProblem` | interface | A problem with a save: what kind, which key, and its cause. |
+| `SaveProblemKind` | type | What went wrong with a save: unreadable, invalid, too new or too old, or a migration or write that failed. |
 | `SaveStorage` | interface | Where a save is kept: strings by key. |
-| `SaveStore` | interface |  |
-| `SaveStoreOptions` | interface |  |
+| `SaveStore` | interface | A saved value: read it, change it and save it, reset or remove it, export or import it. |
+| `SaveStoreOptions` | interface | A save to keep: its key and version, its defaults and migrations, its check and its storage. |
 | `sliceAssetBundle` | function | The bytes of one entry from bytes of the bundle that start at `start` (0 for the whole file), checked against the index. |
 | `writeAssetBundle` | function | One file holding every input, in the order given, each starting at a multiple of four bytes. |
 
@@ -1392,18 +1392,18 @@ For which entry to import from, see [What to import](entry-points.md).
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `bindBrowserInputActions` | function | Listens to the page for the controls of `actions`. |
-| `BrowserAssetBundle` | interface |  |
-| `BrowserAssetBundleOptions` | interface |  |
-| `BrowserDecodedImage` | interface |  |
-| `BrowserImageCanvas` | interface |  |
-| `BrowserImageContext` | interface |  |
+| `BrowserAssetBundle` | interface | An asset bundle opened in the browser: its index and entries, and calls that read an entry's bytes. |
+| `BrowserAssetBundleOptions` | interface | An asset bundle to open: how it is fetched and from where, whether it is read whole, and the cache it is kept in. |
+| `BrowserDecodedImage` | interface | A decoded image: its source, size, and a call that releases it. |
+| `BrowserImageCanvas` | interface | A canvas to draw a decoded image into. |
+| `BrowserImageContext` | interface | The drawing context of such a canvas: draw an image and read its pixels. |
 | `BrowserImageFormat` | type | The picture formats the browser route recognises by their first bytes. |
-| `BrowserImageOptions` | interface |  |
-| `BrowserImagePorts` | interface |  |
+| `BrowserImageOptions` | interface | How images are decoded: the largest size accepted, and the ports used. |
+| `BrowserImagePorts` | interface | How the browser makes a canvas and decodes an image, for image textures. |
 | `BrowserImageSource` | type | What `textureFromCanvas` and `decodeBrowserImage` can read pixels from. |
-| `BrowserImageTextureProviderOptions` | interface |  |
-| `BrowserInputActions` | interface |  |
-| `BrowserInputActionsOptions` | interface |  |
+| `BrowserImageTextureProviderOptions` | interface | Where an image texture provider reads the bytes of each image from. |
+| `BrowserInputActions` | interface | Input actions driven by the browser's keys, pointers and gamepads: poll them each frame. |
+| `BrowserInputActionsOptions` | interface | Where input actions read the browser: which element takes keys and pointers, whether gamepads count, and which keys pass through. |
 | `browserSaveStorage` | function | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
 | `BundleCache` | interface | Where fetched bundle entries are kept between visits; used as `cache` of `openBrowserAssetBundle`. |
 | `createBrowserImageTextureProvider` | function | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
@@ -1411,32 +1411,32 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createTouchStick` | function | A stick that appears where a finger lands in its zone of `element` and follows it. |
 | `decodeBrowserImage` | function | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
 | `fitBrowserImageSize` | function | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
-| `IndexedDBSaveStorage` | interface |  |
-| `IndexedDBSaveStorageOptions` | interface |  |
+| `IndexedDBSaveStorage` | interface | Save storage kept in IndexedDB: flush pending writes, and close it. |
+| `IndexedDBSaveStorageOptions` | interface | IndexedDB save storage to open: its database name, the IndexedDB to use, and what is called on an error. |
 | `openBrowserAssetBundle` | function | Opens the bundle at `url`, reading its index. |
 | `openBrowserBundleCache` | function | A bundle cache in the Cache API under `name`. |
 | `openIndexedDBSaveStorage` | function | A save storage over IndexedDB. |
 | `sniffBrowserImageFormat` | function | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | function | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
-| `TouchControl` | interface |  |
-| `TouchStickOptions` | interface |  |
+| `TouchControl` | interface | Touch controls on the page: their elements; dispose of them to take them off. |
+| `TouchStickOptions` | interface | A touch stick to put on the page: its binding, radius, the zone it appears in and its class. |
 
 ## `@egret/engine/web/game`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserGame` | interface |  |
-| `BrowserGameBackend` | type |  |
+| `BrowserGame` | interface | A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. |
+| `BrowserGameBackend` | type | Which GPU interface a browser game draws with. |
 | `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, or stretched to it. |
 | `BrowserGameLabel` | interface | A line of text on the stage whose words can be set like a value. |
-| `BrowserGameLabelOptions` | interface |  |
-| `BrowserGameOptions` | interface |  |
-| `BrowserStatsPanel` | interface |  |
-| `BrowserStatsPanelOptions` | interface |  |
+| `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
+| `BrowserGameOptions` | interface | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
+| `BrowserStatsPanel` | interface | A panel over the canvas showing frame rate and frame times: sample each frame. |
+| `BrowserStatsPanelOptions` | interface | A stats panel to make: the canvas it sits over, its label, and how often it updates. |
 | `BrowserStatsSample` | interface | What a game knows at one frame of the display. |
 | `BrowserStatsSnapshot` | interface | The numbers the panel shows, as of its last refresh. |
 | `createBrowserGame` | function | Makes a game ready to draw: `await createBrowserGame({ canvas, width, height, update })`, then add display objects to `game.stage`. |
-| `createBrowserStatsPanel` | function |  |
+| `createBrowserStatsPanel` | function | Puts a panel over the canvas that shows frame rate and frame times. |
 
 ## `@egret/engine/play`
 
@@ -1444,34 +1444,34 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `composeMusic` | function | Writes a piece. |
 | `isSfxRecipe` | function | Whether a value is a recipe `synthesizeSfx` takes. |
-| `MUSIC_MOODS` | value |  |
+| `MUSIC_MOODS` | value | The moods play music can be made in. |
 | `MUSIC_PARTS` | value | The parts of a piece, from the quietest moment to the most intense. |
 | `musicMix` | function | How loud each part is at an intensity from 0 to 1: the pad always, then the bass, the drums and the tune. |
 | `MusicMood` | type | The moods there are. |
-| `MusicOptions` | interface |  |
-| `MusicPart` | type |  |
-| `MusicPiece` | interface |  |
+| `MusicOptions` | interface | Music to make: its mood, seed, tempo and length in bars. |
+| `MusicPart` | type | One part of a piece of play music. |
+| `MusicPiece` | interface | A piece of music made from a seed: its mood, tempo, length and parts. |
 | `play` | function | Starts a game in the page. |
 | `PlayBar` | class | A bar of health, time or power. |
-| `PlayBarOptions` | interface |  |
-| `PlayBurstOptions` | interface |  |
+| `PlayBarOptions` | interface | A bar to show, as for health: where and how large, its value and maximum, its colors and layer. |
+| `PlayBurstOptions` | interface | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
 | `PlayButton` | type | A button: a sprite whose middle is at (x, y), with its words in `label`. |
-| `PlayButtonOptions` | interface |  |
-| `PlayGame` | interface |  |
-| `PlayImageOptions` | interface |  |
-| `PlayKeys` | interface |  |
-| `PlayMenuOptions` | interface |  |
+| `PlayButtonOptions` | interface | A button to show: where, how large, its colors, text size and layer. |
+| `PlayGame` | interface | Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. |
+| `PlayImageOptions` | interface | An image to show: where, how large, whether smoothed, and its layer. |
+| `PlayKeys` | interface | The keyboard of a play game: what is held, pressed and released, and axes from the arrow and WASD keys. |
+| `PlayMenuOptions` | interface | A menu to show: its title, where it goes, how wide and its color. |
 | `PlayMotion` | type | A tween of `game.tween`: a motion that can be waited for. |
-| `PlayMusic` | interface |  |
-| `PlayOptions` | interface |  |
-| `PlayPointer` | interface |  |
-| `PlaySayOptions` | interface |  |
-| `PlaySfx` | interface |  |
-| `PlayStickOptions` | interface |  |
+| `PlayMusic` | interface | The music of a play game: play or stop it, and set its intensity, volume and mood. |
+| `PlayOptions` | interface | A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. |
+| `PlayPointer` | interface | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
+| `PlaySayOptions` | interface | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
+| `PlaySfx` | interface | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
+| `PlayStickOptions` | interface | A touch stick to show: where, how large, and whether it shows without touch. |
 | `PlayText` | class | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
-| `PlayTextOptions` | interface |  |
-| `PlayToastOptions` | interface |  |
-| `PlayTouchButtonOptions` | interface |  |
+| `PlayTextOptions` | interface | Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. |
+| `PlayToastOptions` | interface | A toast to show: how long and in what color. |
+| `PlayTouchButtonOptions` | interface | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
 | `SFX_PRESETS` | value | The effects every game is given, by name. |
 | `SfxRecipe` | type | An effect: one tone, or several played one after another. |
 | `SfxTone` | interface | One tone of an effect. |
@@ -1486,66 +1486,66 @@ For which entry to import from, see [What to import](entry-points.md).
 | `AudioBackend` | interface | What a host gives the mixer. |
 | `AudioBackendBus` | interface | One gain on the way to the output. |
 | `AudioBackendSound` | interface | Decoded samples held by the host, or a file it plays as it reads it. |
-| `AudioBackendStart` | interface |  |
+| `AudioBackendStart` | interface | What the mixer asks a backend to start: the sound, its bus, where and how it plays. |
 | `AudioBackendVoice` | interface | One sound being played once. |
-| `AudioBus` | interface |  |
-| `AudioBusOptions` | interface |  |
-| `AudioBusSnapshot` | interface |  |
+| `AudioBus` | interface | A group of voices with one volume and one mute, such as music or effects. |
+| `AudioBusOptions` | interface | A bus to make: its name, its volume and whether it is muted. |
+| `AudioBusSnapshot` | interface | A bus as it is now: its name, volume, mute and voices. |
 | `AudioEndReason` | type | Why a voice is over: it reached its end; it was stopped; it gave its place to a newer voice; no place could be made for it; it was asked for while nothing could be heard; its sound was released; or the mixer was disposed. |
-| `AudioFade` | interface |  |
-| `AudioMixer` | interface |  |
-| `AudioMixerOptions` | interface |  |
-| `AudioMixerSnapshot` | interface |  |
+| `AudioFade` | interface | How long a change of volume takes. |
+| `AudioMixer` | interface | Plays sounds and music on buses through a backend, within its limits of voices and memory. |
+| `AudioMixerOptions` | interface | A mixer to make: its backend and buses, and how many voices, sounds and decoded bytes it holds. |
+| `AudioMixerSnapshot` | interface | The mixer as it is now: its state, buses, voices, sounds, decoded bytes and music. |
 | `AudioMixerState` | type | Whether sound comes out. |
-| `AudioMusicOptions` | interface |  |
-| `AudioPlayOptions` | interface |  |
-| `AudioSound` | interface |  |
-| `AudioVoice` | interface |  |
-| `AudioVoiceState` | type |  |
+| `AudioMusicOptions` | interface | How music is played: its bus, volume, fade, loop and start, and whether the same piece restarts. |
+| `AudioPlayOptions` | interface | How a sound is played: its bus, volume, rate, pan, loop, start and fade. |
+| `AudioSound` | interface | A sound the mixer can play: its length, channels and rate, and whether it is decoded or streamed. |
+| `AudioVoice` | interface | One sound playing: its state and position, and the calls that change or stop it. |
+| `AudioVoiceState` | type | Whether a voice is playing, paused, fading out to stop, or has ended. |
 | `createAudioMixer` | function | Volumes, voices and one music over a backend that makes the sound. |
 
 ## `@egret/engine/web/audio`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserAudio` | interface |  |
-| `BrowserAudioOptions` | interface |  |
+| `BrowserAudio` | interface | A sound mixer playing through Web Audio, with its context and output node. |
+| `BrowserAudioOptions` | interface | Browser audio to make: its audio context, what unlocks it, whether it pauses when the page is hidden, and its limiter. |
 | `createBrowserAudio` | function | Sound for a page on Web Audio. |
 
 ## `@egret/engine/ui/semantics`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `createUiListSemantics` | function |  |
+| `createUiListSemantics` | function | Semantic nodes for a list control and its rows, kept in step with the control. |
 | `createUiSemantics` | function | A semantic tree for the controls an application draws. |
 | `SemanticAction` | type | What assistive technology may ask of a node: its activation, or the keyboard focus. |
 | `SemanticBounds` | interface | A rectangle in the logical coordinates of the stage, the ones picking uses. |
 | `semanticBoundsOf` | function | The rectangle on the stage that encloses a display object and what it holds, for the bounds of a node. |
 | `semanticBoxOf` | function | The rectangle on the stage of a box a managed UI root laid out: a leaf, a row, a column or a list, by its id in the tree of the root. |
-| `SemanticChecked` | type |  |
+| `SemanticChecked` | type | Whether a node is checked, not checked, or partly checked. |
 | `SemanticDescription` | interface | What a node is at this moment, read from the control that draws it. |
 | `SemanticExtent` | interface | How many rows and columns a grid has in all, whether or not all of them are published. |
-| `SemanticListRow` | interface |  |
+| `SemanticListRow` | interface | What one row of a list says: its name, whether it is selected or disabled, its level and its place. |
 | `SemanticListSource` | interface | What is read of a managed UI root. |
-| `SemanticNode` | interface |  |
-| `SemanticNodeOptions` | interface |  |
-| `SemanticOrientation` | type |  |
+| `SemanticNode` | interface | A node of the semantic tree; remove it to take it out. |
+| `SemanticNodeOptions` | interface | A node to add: its id, role and parent, how it is described, and what it does when activated or focused. |
+| `SemanticOrientation` | type | Whether a node runs across or down. |
 | `SemanticPosition` | interface | Where an item stands in its whole set, from one. |
-| `SemanticRange` | interface |  |
+| `SemanticRange` | interface | The value of a range node and its least and greatest value. |
 | `SemanticRole` | type | What a control is to someone who cannot see the canvas. |
-| `SemanticSnapshot` | interface |  |
+| `SemanticSnapshot` | interface | The semantic tree as published: its revisions, its nodes and the focused one. |
 | `SemanticSnapshotNode` | interface | One published node. |
 | `SemanticSort` | type | How the rows of a grid are ordered by one of its columns. |
-| `SemanticsState` | type |  |
-| `UiListSemantics` | interface |  |
-| `UiListSemanticsOptions` | interface |  |
+| `SemanticsState` | type | Whether a semantic tree is active or closed. |
+| `UiListSemantics` | interface | The semantic nodes of a list control and its rows; sync it when the rows change. |
+| `UiListSemanticsOptions` | interface | Semantics for a list control: its tree and list, its role and name, and how its rows are described. |
 | `UiSemantics` | interface | The semantic tree of a UI the application draws: what each control is, what it is called and what state it is in. |
-| `UiSemanticsOptions` | interface |  |
+| `UiSemanticsOptions` | interface | A semantic tree to make: how many nodes it holds. |
 
 ## `@egret/engine/web/semantics`
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `BrowserSemantics` | interface |  |
-| `BrowserSemanticsOptions` | interface |  |
+| `BrowserSemantics` | interface | The semantic tree projected as elements over the canvas, for screen readers: sync it after the tree changes. |
+| `BrowserSemanticsOptions` | interface | Browser semantics to make: the semantic tree, the canvas and its size, its label, and what is called on an error. |
 | `createBrowserSemantics` | function | Projects a semantic tree to the page, for assistive technology. |

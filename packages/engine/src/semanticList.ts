@@ -40,6 +40,7 @@ export interface SemanticListSource {
   };
 }
 
+/** What one row of a list says: its name, whether it is selected or disabled, its level and its place. */
 export interface SemanticListRow {
   /** What the row is called. An option and a menu item need a name; a list item may leave it to the nodes inside it. */
   readonly name?: string;
@@ -55,6 +56,7 @@ export interface SemanticListRow {
   readonly position?: { readonly index: number; readonly size: number };
 }
 
+/** Semantics for a list control: its tree and list, its role and name, and how its rows are described. */
 export interface UiListSemanticsOptions {
   readonly semantics: UiSemantics;
   readonly root: SemanticListSource;
@@ -92,6 +94,7 @@ export interface UiListSemanticsOptions {
   readonly onRowAdded?: (key: string, id: string) => void;
 }
 
+/** The semantic nodes of a list control and its rows; sync it when the rows change. */
 export interface UiListSemantics {
   readonly id: string;
   /** The id of the node of a row, whether or not the row shows now. */
@@ -135,6 +138,7 @@ const text = (value: unknown): value is string =>
   typeof value === 'string' && value.length >= 1 && value.length <= 128 && !value.includes('\0');
 const optional = (value: unknown, type: string): boolean => value === undefined || typeof value === type;
 
+/** Semantic nodes for a list control and its rows, kept in step with the control. */
 export function createUiListSemantics(options: UiListSemanticsOptions): UiListSemantics {
   if (options === null || typeof options !== 'object') throw new EgretError('UI_SEMANTICS_OPTIONS');
   const {

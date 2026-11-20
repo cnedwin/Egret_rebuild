@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { DisplayObject } from '@egret/runtime';
 
+/** A point in world coordinates. */
 export interface CameraPoint {
   readonly x: number;
   readonly y: number;
 }
+/** A rectangle in world coordinates. */
 export interface CameraRect {
   readonly x: number;
   readonly y: number;
@@ -13,6 +15,7 @@ export interface CameraRect {
 }
 /** What the camera follows: a display object inside the world, or a function that says where to look. */
 export type CameraTarget = DisplayObject | (() => CameraPoint);
+/** How the camera follows a target: how smoothly, the box it may move in unfollowed, and the offset. */
 export interface CameraFollowOptions {
   /** Seconds for the camera to close most of the distance (about 63 %). 0 follows at once. Defaults to 0.15. */
   readonly smoothing?: number;
@@ -21,6 +24,7 @@ export interface CameraFollowOptions {
   /** Added to the target's place, in world units. */
   readonly offset?: CameraPoint;
 }
+/** How a layer moves and zooms with the camera, for parallax. */
 export interface CameraLayerOptions {
   /**
    * How far the layer moves with the camera: 0 stands still, 1 moves with the world, 0.5 at half the speed. When the
@@ -30,10 +34,12 @@ export interface CameraLayerOptions {
   /** How much of the zoom the layer takes: 0 none, 1 all of it. Defaults to 1. */
   readonly zoomFactor?: number;
 }
+/** How much a shake adds to the camera's trauma. */
 export interface CameraShakeOptions {
   /** Added trauma, 0 to 1. The shake is as strong as the square of the trauma. Defaults to 0.5. */
   readonly trauma?: number;
 }
+/** A 2D camera to make: the world it moves, the view's size, where it looks and how far it zooms, its bounds and its shake. */
 export interface Camera2DOptions {
   /** The container that holds the world. The camera owns its place, scale, rotation and anchor. */
   readonly world: DisplayObject;
@@ -64,6 +70,7 @@ export interface Camera2DOptions {
   /** Whole stage units for the place of the world, so that pixel art does not shimmer. Defaults to false. */
   readonly roundToPixel?: boolean;
 }
+/** The camera as it is now: where it looks, its zoom and rotation, its trauma and its view. */
 export interface CameraSnapshot {
   readonly center: CameraPoint;
   readonly zoom: number;

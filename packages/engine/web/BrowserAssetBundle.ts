@@ -13,6 +13,7 @@ import {
 } from '@egret/engine/kit';
 import type { AssetBundleEntry, AssetBundleIndex } from '@egret/engine/kit';
 
+/** An asset bundle to open: how it is fetched and from where, whether it is read whole, and the cache it is kept in. */
 export interface BrowserAssetBundleOptions {
   /** `fetch` by default; tests and service workers give their own. */
   readonly fetch?: (
@@ -32,6 +33,7 @@ export interface BrowserAssetBundleOptions {
     put(key: string, bytes: Uint8Array): Promise<void>;
   };
 }
+/** An asset bundle opened in the browser: its index and entries, and calls that read an entry's bytes. */
 export interface BrowserAssetBundle {
   readonly url: string;
   readonly index: AssetBundleIndex;

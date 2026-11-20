@@ -92,6 +92,7 @@ function sample(value: KeyboardSample): Required<KeyboardSample> {
 export function bindKeyboardSurface(input: KeyboardInput): Binding {
   return bindings.get(input) ?? fail('KEYBOARD_INPUT_CLOSED');
 }
+/** Keyboard input for the stage: key events go to the focused target, and focus moves with Tab. */
 export function createKeyboardInput(options: KeyboardInputOptions): KeyboardInput {
   if (!object(options)) fail('KEYBOARD_INPUT_OPTIONS_INVALID');
   const engine = options.engine;

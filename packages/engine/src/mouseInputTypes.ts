@@ -11,8 +11,11 @@ export interface MouseInputOptions {
   readonly height: number;
   readonly maxNodes?: number;
 }
+/** Whether mouse input is idle, has a button pressed, or has closed. */
 export type MouseInputState = 'idle' | 'pressed' | 'closed';
+/** Why a press was cancelled. */
 export type MouseInputCancelReason = 'pointercancel' | 'blur' | 'pagehide';
+/** A mouse event: which pointer, where on the stage, what made it and which button. */
 export interface MouseInputPayload {
   readonly pointerId: number;
   readonly globalX: number;
@@ -20,6 +23,7 @@ export interface MouseInputPayload {
   readonly pointerType: 'mouse';
   readonly button: 0;
 }
+/** The event types mouse input dispatches: begin, end, activate and cancel. */
 export interface MouseInputEvents {
   readonly begin: EventType<MouseInputPayload>;
   readonly end: EventType<MouseInputPayload>;

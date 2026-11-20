@@ -8,8 +8,11 @@ import type { TextureViewRegion2D } from './TextureViewRegion2D.js';
 
 // This erased shape is not frame authority. Only the Engine registers a fully
 // captured immutable value; no public constructor or symbol can do so.
+/** The name of the shared 2D frame profile that hosts and the engine agree on. */
 export const SHARED_FRAME_PROFILE_2D = 'egret.shared-frame2d/1';
+/** The type of the shared frame profile name. */
 export type SharedFrameProfile2D = typeof SHARED_FRAME_PROFILE_2D;
+/** How a frame's output alpha is given: premultiplied, or opaque with alpha ignored. */
 export type SharedOutputAlpha2D = 'premultiplied' | 'opaque';
 /**
  * Where translucent draws mix with what is under them. `linear` mixes light as it is (the engine's default);
@@ -18,6 +21,7 @@ export type SharedOutputAlpha2D = 'premultiplied' | 'opaque';
  */
 export type SharedBlendSpace2D = 'linear' | 'srgb';
 
+/** The size of a frame to capture, the color it is cleared to, and how its alpha is given. */
 export interface SharedFrameOptions2D {
   readonly width: number;
   readonly height: number;
@@ -26,16 +30,19 @@ export interface SharedFrameOptions2D {
   readonly outputAlpha?: SharedOutputAlpha2D;
 }
 
+/** One image that a frame's commands sample from, with how its pixels are represented. */
 export interface SharedPage2D {
   readonly source: ImageData2D;
   readonly sourceRepresentation: 'egret.srgb-straight-rgba8/1';
   readonly canonicalRepresentation: 'egret.alpha8-capped-srgb-pma8/1';
 }
 
+/** A region of a page, by the page's index in the frame. */
 export interface SharedRegion2D extends TextureViewRegion2D {
   readonly pageIndex: number;
 }
 
+/** What every draw command carries: its order, its material, its matrix, its opacity and its clips. */
 export interface SharedDrawState2D {
   readonly ordinal: number;
   readonly occurrenceId: number;
@@ -45,6 +52,7 @@ export interface SharedDrawState2D {
   readonly clips: readonly ClipRectangle2D[];
 }
 
+/** A draw command that fills a rectangle with one color. */
 export interface SharedRectangleCommand2D extends SharedDrawState2D {
   readonly kind: 'rect';
   readonly rect: Rectangle2D;
@@ -52,12 +60,14 @@ export interface SharedRectangleCommand2D extends SharedDrawState2D {
   readonly fillAlpha: number;
 }
 
+/** A draw command that draws a region of a page. */
 export interface SharedImageCommand2D extends SharedDrawState2D {
   readonly kind: 'image';
   readonly rect: Rectangle2D;
   readonly regionIndex: number;
 }
 
+/** A draw command that draws a textured or colored mesh. */
 export interface SharedMeshCommand2D extends SharedDrawState2D {
   readonly kind: 'mesh';
   readonly regionIndex: number;
@@ -76,6 +86,7 @@ export interface SharedEffect2D {
   readonly matrix: Matrix2D;
   readonly clips: readonly ClipRectangle2D[];
 }
+/** A glow or outline drawn around what an effect layer holds. */
 export interface SharedGlow2D {
   readonly kind: 'glow' | 'outline';
   readonly color: number;
@@ -88,6 +99,7 @@ export interface SharedGlow2D {
   readonly offsetX: number;
   readonly offsetY: number;
 }
+/** A command that ends or begins an effect layer: what came before is finished before what comes after is drawn. */
 export interface SharedBarrierCommand2D {
   readonly effect?: SharedEffect2D;
 
@@ -105,6 +117,7 @@ export interface SharedBarrierCommand2D {
     | 'effect-exit';
 }
 
+/** Any command of a shared frame. */
 export type SharedRenderCommand2D =
   | SharedRectangleCommand2D
   | SharedImageCommand2D
@@ -112,6 +125,7 @@ export type SharedRenderCommand2D =
   | SharedBarrierCommand2D;
 
 declare const sharedRenderFrame2DBrand: unique symbol;
+/** One captured frame: its size, clear color and color recipe, its commands in draw order, and the pages, regions, materials and geometries they use. */
 export interface SharedRenderFrame2D {
   readonly [sharedRenderFrame2DBrand]: true;
   readonly profile: SharedFrameProfile2D;
@@ -131,6 +145,7 @@ export interface SharedRenderFrame2D {
   readonly geometries: readonly (TexturedGeometry2D | SharedGeometry2D)[];
 }
 
+/** A host that draws shared frames of this profile. */
 export interface SharedRenderHostAdapter extends HostAdapter {
   readonly sharedFrameProfile: SharedFrameProfile2D;
   /** The blend space the renderer was made for, `linear` when absent. An Engine's frames record it. */
