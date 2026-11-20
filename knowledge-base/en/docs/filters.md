@@ -27,6 +27,23 @@ ghost.renderEffect = { glow: { color: 0x40ff80, knockout: true } };
 
 One effect has a glow or an outline, not both: nest two effects for both. A drop shadow is a glow with an offset; Egret's distance and angle are `offsetX = distance·cos(angle)` and `offsetY = distance·sin(angle)`. Offsets and spreads are in pixels of the surface, multiplied by the host's pixel ratio, and do not turn or scale with the object.
 
+## Masks of shapes
+
+`renderEffect = { shapeMask: sprite }` masks a node by a shape, as Egret's `mask = displayObject` did: what the node and its children draw shows only where the sprite's Graphics covers, and partly where its fill is translucent.
+
+```js
+const window = scope.use(new Sprite());
+window.graphics.beginFill(0xffffff).drawCircle(80, 80, 60).endFill();
+picture.renderEffect = { shapeMask: window };     // picture shows through the circle
+window.x = 40;                                    // the mask moves; the next frame shows it
+```
+
+- The mask is placed as if it were a child of the masked node: its `x`, `y`, scale, rotation and skew count; its alpha and visibility do not. Only its own drawing counts, not its children's.
+- It need not be on the stage. If it is, it is drawn there too, as in Egret where a mask on the stage was hidden: take it off the stage if it should not show.
+- It is drawn on the CPU as an image of its alpha, at twice the size the masked node is seen at, up to 2,048 pixels a side, and that image masks as an `alphaMask` does. It is drawn again when the mask's drawing or place changes, or when the node's size on the screen changes by more than a step of a fifth or so; otherwise the same image is used. A mask that is redrawn every frame costs a new image every frame.
+- One effect has an `alphaMask` or a `shapeMask`. It can share the effect with a blur, a colour matrix, a glow or an outline. A mask that draws nothing hides everything.
+- `createBrowserGame({ effects: true })` makes a game's host with effects on.
+
 ## How it is drawn
 
 In linear premultiplied colour, for the group's colour `c` and alpha field `A`:

@@ -29,6 +29,8 @@ g.beginFill(0x8040c0).moveTo(30, 150).lineTo(120, 150).lineTo(75, 185).endFill()
 | `beginLinearGradientFill(x0, y0, x1, y1, stops)` | 颜色从一点渐变到另一点的填充 |
 | `beginRadialGradientFill(x, y, radius, stops, radiusY = radius)` | 颜色从圆心向外渐变到圆（或椭圆）的填充 |
 | `beginGradientFill(type, colors, alphas, ratios, matrix?)` | 按旧代码的写法给出的渐变填充 |
+| `lineLinearGradientStyle(x0, y0, x1, y1, stops)`、`lineRadialGradientStyle(x, y, radius, stops, radiusY = radius)` | 让线条用渐变代替自身颜色，与同名填充给出的渐变一样。线宽、端点、拐角和虚线不变 |
+| `lineGradientStyle(type, colors, alphas, ratios, matrix?)` | 同上，按旧代码的写法：参数与 `beginGradientFill` 相同 |
 | `beginBitmapFill(lease, matrix?, repeat = true)` | 用图片填充 |
 | `lineStyle(thickness, color = 0, alpha = 1, options?)` | 设置之后所绘内容的线条。不给宽度或给 0 则结束线条。`options` 见下文 |
 | `drawRect(x, y, width, height)` | 矩形 |
@@ -77,7 +79,7 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 - 渐变以三角形顶点的颜色绘制。形状会被切成更小的三角形，直到顶点之间的颜色与渐变相差不超过 2/255，所以颜色对比强烈的大面积渐变需要几百到几千个三角形。一次填充最多 16,384 个；超过后不再细分，渐变会变粗糙。
 - 实际数量（未注明时为两种颜色）：200×100 矩形上的线性渐变，沿边方向是 102 个三角形，沿对角线是 184 个，三种颜色是 234 个；200×60 的圆角按钮是 40 个。径向渐变贵得多，因为除了向外还要绕圆周细分：半径 40 的圆是 2,514 个，600×400 的矩形是 3,018 个，半径 200、三种颜色的圆是 15,296 个，在统计用的机器上细分用了十分之一秒。细分只在绘制形状时做一次，不是每帧都做。径向渐变面积大或需要频繁重画时，优先用线性渐变或图片。
 - `beginGradientFill` 接受旧代码传入的参数：`'linear'` 或 `'radial'`、颜色、透明度、0 到 255 的比例，以及一个矩阵 `{ a, b, c, d, tx, ty }`。该矩阵把渐变自身的正方形（宽 1638.4 个单位，以原点为中心）放到 sprite 中。对于位于某个角点、给定宽高且不旋转的渐变框，矩阵为 `{ a: width / 1638.4, b: 0, c: 0, d: height / 1638.4, tx: x + width / 2, ty: y + height / 2 }`。
-- 线条只有一种颜色，没有线条渐变。
+- 线条也可以用渐变，写在 `lineStyle` 之后：`lineLinearGradientStyle`、`lineRadialGradientStyle`，或参数与 `beginGradientFill` 相同的 `lineGradientStyle`。它与同一渐变的填充一样绘制和细分，颜色和 alpha 都取渐变的。没有设置线条时它不起作用；下一个 `lineStyle` 结束它。
 
 ## 图片填充
 
@@ -93,7 +95,7 @@ sprite.graphics.beginBitmapFill(lease, { a: 2, b: 0, c: 0, d: 2, tx: 140, ty: 10
 - 纹理必须是一整张图片。图集中的一部分会以 `GRAPHICS_VALUE_INVALID` 被拒绝，因为重复时它周围的图片内容会露出来。
 - 重复的图片最远只画到距起点 8,192 个自身像素处。超出这个范围的形状以 `GRAPHICS_BUDGET` 被拒绝。
 - 绘图显示期间要一直持有租约。租约已释放的绘图所在的帧会被拒绝。
-- 线条只有一种颜色；图片只能用于填充，不能用于线条。
+- 图片只能用于填充，不能用于线条。
 
 ## 填充、线条和路径怎样配合
 

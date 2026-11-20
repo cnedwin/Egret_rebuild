@@ -41,7 +41,7 @@
 | `name`、`getChildByName` | 名字相同 | `getChildByName` 只查直接子对象 |
 | `removeChildAt`、`swapChildren`、`contains` | `removeChild(getChildAt(i))`；`setChildIndex`；沿 `parent` 向上查 | |
 | `mask = 矩形`、`scrollRect` | `clipRect = { x, y, width, height }` | 矩形使用对象自己的单位 |
-| `mask = 显示对象` | 没有 | 只能用矩形裁剪 |
+| `mask = 显示对象` | `renderEffect = { shapeMask: sprite }` | 用该 sprite 的 Graphics 遮罩节点，半透明处部分透出，位置按它是节点的子对象计算。与[滤镜](filters.md)一样需要开启效果的 host |
 | `blendMode` | `blendMode`：`'normal'`、`'add'`、`'multiply'`、`'screen'`、`'erase'` | 见[混合模式](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | 有哪些效果见[滤镜](filters.md) |
 | `cacheAsBitmap` | 没有 | |
@@ -60,7 +60,7 @@
 | `lineStyle(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit, lineDash)` | `lineStyle(thickness, color, alpha, { caps, joints, miterLimit, dash })` | 第四个参数是一个对象。省略时线条是平头端点和尖角转角。旧线条是圆头或圆角的，请传 `{ caps: 'round', joints: 'round' }` |
 | `beginGradientFill(type, colors, alphas, ratios, matrix)` | 同一个调用，或 `beginLinearGradientFill` 和 `beginRadialGradientFill` | `matrix` 是普通的 `{ a, b, c, d, tx, ty }` |
 | `beginBitmapFill(bitmapData, matrix, repeat)` | `beginBitmapFill(lease, matrix, repeat)` | 接受一整张图片的纹理租约。`repeat` 为 false 时边缘像素向外延伸 |
-| `lineGradientStyle` | 没有 | |
+| `lineGradientStyle` | 同样的调用，或 `lineLinearGradientStyle` 和 `lineRadialGradientStyle` | 与以前一样写在 `lineStyle` 之后 |
 
 边缘没有抗锯齿，曲线由直线段组成。见[绘图指南](graphics.md)。
 

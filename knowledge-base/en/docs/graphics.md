@@ -31,6 +31,8 @@ Every call returns the graphics, so calls chain. `clear()` removes everything dr
 | `beginGradientFill(type, colors, alphas, ratios, matrix?)` | A gradient fill as older code gives it |
 | `beginBitmapFill(lease, matrix?, repeat = true)` | A fill of an image |
 | `lineStyle(thickness, color = 0, alpha = 1, options?)` | Sets the line of what is drawn next. No thickness, or 0, ends the line. `options` are below |
+| `lineLinearGradientStyle(x0, y0, x1, y1, stops)`, `lineRadialGradientStyle(x, y, radius, stops, radiusY = radius)` | Gives the line a gradient instead of its colour, as the fills of those names give one. Its width, ends, corners and dashes stay |
+| `lineGradientStyle(type, colors, alphas, ratios, matrix?)` | The same, as older code gives it: the arguments of `beginGradientFill` |
 | `drawRect(x, y, width, height)` | A rectangle |
 | `drawCircle(x, y, radius)` | A circle round a centre |
 | `drawEllipse(x, y, width, height)` | An ellipse inside the rectangle of that corner and size |
@@ -77,7 +79,7 @@ sprite.graphics.beginRadialGradientFill(50, 50, 40, [{ offset: 0, color: 0xfffff
 - A gradient is drawn as the colours of the corners of triangles. The shape is cut into smaller triangles until the colour between corners is within two parts in 255 of the gradient, so a large gradient with strong colours takes some hundreds to some thousands of triangles. At most 16,384 for one fill; beyond that the cutting stops and the gradient is coarser.
 - What that comes to, counted with two colours unless said: a linear gradient over a 200 by 100 rectangle is 102 triangles along a side and 184 along the diagonal, with three colours 234; over a rounded button of 200 by 60 it is 40. A radial gradient costs far more, because it has to be cut round the circle as well as outward: 2,514 triangles for a disc of radius 40, 3,018 for a 600 by 400 rectangle, and 15,296 for a disc of radius 200 with three colours, which took a tenth of a second to cut on the machine that counted them. The cutting is done when the shape is drawn, not each frame. Prefer a linear gradient, or an image, where a radial gradient is large or drawn again often.
 - `beginGradientFill` takes what older code passes: `'linear'` or `'radial'`, colours, alphas, ratios from 0 to 255, and a matrix `{ a, b, c, d, tx, ty }` that places the gradient's own square, 1638.4 units wide and centred on the origin, in the sprite. For a box of a width and height at a corner, with no rotation, that matrix is `{ a: width / 1638.4, b: 0, c: 0, d: height / 1638.4, tx: x + width / 2, ty: y + height / 2 }`.
-- A line has one colour. There is no gradient for lines.
+- A line takes a gradient too, after its `lineStyle`: `lineLinearGradientStyle`, `lineRadialGradientStyle`, or `lineGradientStyle` with the arguments of `beginGradientFill`. It is drawn and cut as a fill of the gradient is, and its colours and alphas are the gradient's. With no line set it does nothing; the next `lineStyle` ends it.
 
 ## Image fills
 
@@ -93,7 +95,7 @@ sprite.graphics.beginBitmapFill(lease, { a: 2, b: 0, c: 0, d: 2, tx: 140, ty: 10
 - The texture must be a whole image. A part of an atlas is refused with `GRAPHICS_VALUE_INVALID`, because the image around it would show when it repeats.
 - A repeating image is drawn no farther than 8,192 of its own pixels from where it starts. A shape that reaches beyond that is refused with `GRAPHICS_BUDGET`.
 - Keep the lease for as long as the drawing is shown. A frame with a drawing whose lease was released is refused.
-- A line has one colour; an image fills, it does not line.
+- An image fills, it does not line.
 
 ## How fills, lines and paths go together
 

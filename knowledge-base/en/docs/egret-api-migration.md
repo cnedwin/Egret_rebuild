@@ -41,7 +41,7 @@ Five things change in every file. Knowing them saves most of the guessing.
 | `name`, `getChildByName` | The same names | `getChildByName` looks at direct children |
 | `removeChildAt`, `swapChildren`, `contains` | `removeChild(getChildAt(i))`; `setChildIndex`; walk `parent` | |
 | `mask = rectangle`, `scrollRect` | `clipRect = { x, y, width, height }` | A rectangle in the object's own units |
-| `mask = displayObject` | Not there | Only rectangles clip |
+| `mask = displayObject` | `renderEffect = { shapeMask: sprite }` | The sprite's Graphics masks the node, faded where they are translucent, placed as if it were a child of the node. It needs a host with effects on, as [filters](filters.md) do |
 | `blendMode` | `blendMode`: `'normal'`, `'add'`, `'multiply'`, `'screen'`, `'erase'` | See [blend modes](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | See [filters](filters.md) for which effects there are |
 | `cacheAsBitmap` | Not there | |
@@ -60,7 +60,7 @@ Five things change in every file. Knowing them saves most of the guessing.
 | `lineStyle(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit, lineDash)` | `lineStyle(thickness, color, alpha, { caps, joints, miterLimit, dash })` | The fourth argument is an object. Without it a line has flat ends and mitred corners. Where the old line had round ends or corners, pass `{ caps: 'round', joints: 'round' }` |
 | `beginGradientFill(type, colors, alphas, ratios, matrix)` | The same call, or `beginLinearGradientFill` and `beginRadialGradientFill` | `matrix` is a plain `{ a, b, c, d, tx, ty }` |
 | `beginBitmapFill(bitmapData, matrix, repeat)` | `beginBitmapFill(lease, matrix, repeat)` | It takes the lease of a texture that is a whole image. With `repeat` false the edge pixels go on outwards |
-| `lineGradientStyle` | Not there | |
+| `lineGradientStyle` | The same call, or `lineLinearGradientStyle` and `lineRadialGradientStyle` | After `lineStyle`, as before |
 
 Edges are not smoothed, and a curve is drawn as straight pieces. See the [graphics guide](graphics.md).
 

@@ -2,7 +2,7 @@
 // The shapes of a Graphics, as triangles. A node whose drawing is more than filled rectangles keeps one list of
 // coloured triangles, in drawing order, and a path still being drawn. Capture reads them as one shared geometry.
 import { createImageData2D, createSharedGeometry2D } from '@egret/contracts';
-import type { ImageData2D, Rectangle2D, SharedGeometry2D } from '@egret/contracts';
+import type { ImageData2D, Matrix2D, Rectangle2D, SharedGeometry2D } from '@egret/contracts';
 import { decodeSRGBByte } from './srgbBytes.js';
 import { fillNonZero, gradientColor, outlineCrosses, refineForGradient } from './graphicsFill.js';
 import type { ShapeGradient } from './graphicsFill.js';
@@ -640,11 +640,24 @@ function strokeSolid(target: Target, points: readonly number[], loop: boolean, s
   }
   for (let i = 0; i < segments; i++)
     triangles.push(startPlus[i]!, startMinus[i]!, endMinus[i]!, startPlus[i]!, endMinus[i]!, endPlus[i]!);
-  const first = paint(target, out, style),
+  const vertices = target.positions.length / 2,
+    first = paint(target, out, style),
     from = target.indices.length;
   for (const index of triangles) target.indices.push(first + index);
-  if (style.bitmap === undefined && style.feather !== undefined && style.feather > 0)
-    featherEdges(target, from, style.feather);
+  const feather = style.bitmap === undefined && style.feather !== undefined && style.feather > 0 ? style.feather : 0;
+  // A line of a gradient is cut, as a fill of one is, until the colours of its corners are close enough to it.
+  let boundary: number[] | undefined;
+  if (style.gradient !== undefined) {
+    if (feather > 0) boundary = originalBoundary(target, from);
+    const refined = refineForGradient(
+      takeTriangles(target, vertices, from),
+      style.gradient,
+      GRAPHICS_SHAPE_LIMITS.maxFillTriangles,
+      boundary
+    );
+    addTriangles(target, refined, style, boundary);
+  }
+  if (feather > 0) featherEdges(target, from, feather, boundary);
 }
 
 /** How many straight pieces a curve of this radius is drawn with: each is within a quarter unit of the curve. */
@@ -917,4 +930,216 @@ export function resolveShape(shape: ShapeState): ResolvedShape | undefined {
     );
   }
   return (shape.resolved = resolved);
+}
+
+// A mask of vector shapes: what a Sprite's Graphics covers, as an image of its alpha that the effect group of the
+// masked node multiplies what it draws by, as it multiplies by a bitmap mask. The image is drawn here, on the CPU, at
+// the size the masked node is seen at, and kept while the mask's drawing, its place and that size stay the same.
+
+/** The image of a mask, the region of it that is whole, and where it lies in the masked node's units. */
+export interface ShapeMaskImage {
+  readonly image: ImageData2D;
+  readonly region: {
+    readonly packed: Rectangle2D;
+    readonly logicalWidth: number;
+    readonly logicalHeight: number;
+    readonly trimX: 0;
+    readonly trimY: 0;
+    readonly quarterTurn: 0;
+  };
+  readonly rect: Rectangle2D;
+}
+/** The most pixels a side of a mask's image has, and how many samples a pixel takes on each side. */
+export const SHAPE_MASK_LIMITS = Object.freeze({ maxEdge: 2048, samples: 4 });
+
+const keptMasks = new WeakMap<object, { readonly key: string; readonly value: ShapeMaskImage }>();
+// A drawing resolved once is one object for as long as it is the same; its number stands for it in a key.
+const drawings = new WeakMap<object, number>();
+let nextDrawing = 1;
+const drawingNumber = (drawing: object | undefined): number => {
+  if (drawing === undefined) return 0;
+  let number = drawings.get(drawing);
+  if (number === undefined) drawings.set(drawing, (number = nextDrawing++));
+  return number;
+};
+
+function regionOf(width: number, height: number): ShapeMaskImage['region'] {
+  return Object.freeze({
+    packed: Object.freeze({ x: 0, y: 0, width, height }),
+    logicalWidth: width,
+    logicalHeight: height,
+    trimX: 0 as const,
+    trimY: 0 as const,
+    quarterTurn: 0 as const
+  });
+}
+/** A mask that covers nothing: everything under it is hidden. */
+const EMPTY: ShapeMaskImage = Object.freeze({
+  image: createImageData2D({ width: 1, height: 1, pixels: new Uint8Array([255, 255, 255, 0]) }),
+  region: regionOf(1, 1),
+  rect: Object.freeze({ x: 0, y: 0, width: 1, height: 1 })
+});
+
+/**
+ * The image of what a mask draws, its filled rectangles and its drawing placed by `matrix` in the masked node's units,
+ * at `scale` pixels to a unit of that node. `mask` is what the image is kept for.
+ */
+export function shapeMaskImage(
+  mask: object,
+  primitives: readonly { readonly rect: Rectangle2D; readonly alpha: number }[],
+  shape: ResolvedShape | undefined,
+  matrix: Matrix2D,
+  scale: number
+): ShapeMaskImage {
+  // A size that changes a little keeps its image: it is taken in steps of a quarter of a power of two.
+  const wanted = Math.max(1e-6, Number.isFinite(scale) && scale > 0 ? scale : 1),
+    step = 2 ** (Math.round(4 * Math.log2(wanted)) / 4);
+  const key = [
+    drawingNumber(shape),
+    step,
+    matrix.a,
+    matrix.b,
+    matrix.c,
+    matrix.d,
+    matrix.tx,
+    matrix.ty,
+    ...primitives.flatMap(({ rect, alpha }) => [rect.x, rect.y, rect.width, rect.height, alpha])
+  ].join(',');
+  const before = keptMasks.get(mask);
+  if (before !== undefined && before.key === key) return before.value;
+  // Each triangle as x, y of its corners in the masked node's units, and the alpha of each corner.
+  const points: number[] = [],
+    alphas: number[] = [];
+  const place = (x: number, y: number, alpha: number): void => {
+    points.push(matrix.a * x + matrix.c * y + matrix.tx, matrix.b * x + matrix.d * y + matrix.ty);
+    alphas.push(alpha);
+  };
+  for (const { rect, alpha } of primitives) {
+    const right = rect.x + rect.width,
+      bottom = rect.y + rect.height;
+    for (const [x, y] of [
+      [rect.x, rect.y],
+      [right, rect.y],
+      [right, bottom],
+      [rect.x, rect.y],
+      [right, bottom],
+      [rect.x, bottom]
+    ] as const)
+      place(x, y, alpha);
+  }
+  for (const part of shape?.parts ?? []) {
+    const { positions, lightColors, indices } = part.geometry;
+    // A part over an image covers where it is drawn; the image's own alpha does not count.
+    for (const index of indices)
+      place(
+        positions[2 * index]!,
+        positions[2 * index + 1]!,
+        part.bitmap === undefined ? lightColors[4 * index + 3]! : 1
+      );
+  }
+  if (points.length === 0) return remember(mask, key, EMPTY);
+  let left = Infinity,
+    top = Infinity,
+    right = -Infinity,
+    bottom = -Infinity;
+  for (let i = 0; i < points.length; i += 2) {
+    left = Math.min(left, points[i]!);
+    right = Math.max(right, points[i]!);
+    top = Math.min(top, points[i + 1]!);
+    bottom = Math.max(bottom, points[i + 1]!);
+  }
+  const width = right - left,
+    height = bottom - top;
+  if (!(width > 0) || !(height > 0)) return remember(mask, key, EMPTY);
+  const fit = Math.min(step, SHAPE_MASK_LIMITS.maxEdge / width, SHAPE_MASK_LIMITS.maxEdge / height),
+    columns = Math.max(1, Math.ceil(width * fit)),
+    rows = Math.max(1, Math.ceil(height * fit));
+  const value = Object.freeze({
+    image: createImageData2D({
+      width: columns,
+      height: rows,
+      pixels: rasterize(points, alphas, left, top, width, height, columns, rows)
+    }),
+    region: regionOf(columns, rows),
+    rect: Object.freeze({ x: left, y: top, width, height })
+  });
+  return remember(mask, key, value);
+}
+function remember(mask: object, key: string, value: ShapeMaskImage): ShapeMaskImage {
+  keptMasks.set(mask, { key, value });
+  return value;
+}
+
+/**
+ * The alpha the triangles cover in each pixel of a grid over a rectangle: each pixel is sampled at a grid of points,
+ * each sample takes the triangles over it one upon another, and the pixel is the mean of its samples. Red, green
+ * and blue are white.
+ */
+function rasterize(
+  points: readonly number[],
+  alphas: readonly number[],
+  left: number,
+  top: number,
+  width: number,
+  height: number,
+  columns: number,
+  rows: number
+): Uint8Array<ArrayBuffer> {
+  const n = SHAPE_MASK_LIMITS.samples,
+    across = columns * n,
+    down = rows * n,
+    sx = across / width,
+    sy = down / height;
+  const cover = new Float32Array(across * down);
+  for (let t = 0; t < points.length; t += 6) {
+    const ax = (points[t]! - left) * sx,
+      ay = (points[t + 1]! - top) * sy,
+      bx = (points[t + 2]! - left) * sx,
+      by = (points[t + 3]! - top) * sy,
+      cx = (points[t + 4]! - left) * sx,
+      cy = (points[t + 5]! - top) * sy,
+      alphaA = alphas[t / 2]!,
+      alphaB = alphas[t / 2 + 1]!,
+      alphaC = alphas[t / 2 + 2]!;
+    const area = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+    if (area === 0 || !Number.isFinite(area)) continue;
+    const x0 = Math.max(0, Math.floor(Math.min(ax, bx, cx))),
+      x1 = Math.min(across - 1, Math.ceil(Math.max(ax, bx, cx))),
+      y0 = Math.max(0, Math.floor(Math.min(ay, by, cy))),
+      y1 = Math.min(down - 1, Math.ceil(Math.max(ay, by, cy)));
+    for (let y = y0; y <= y1; y++) {
+      const py = y + 0.5;
+      for (let x = x0; x <= x1; x++) {
+        const px = x + 0.5;
+        // Where the sample is between the corners; a sample on a side shared by two triangles is in one of them.
+        const wa = ((bx - px) * (cy - py) - (by - py) * (cx - px)) / area,
+          wb = ((cx - px) * (ay - py) - (cy - py) * (ax - px)) / area;
+        const wc = 1 - wa - wb;
+        if (wa < 0 || wb < 0 || wc < 0) continue;
+        if ((wa === 0 && !edgeOwns(bx, by, cx, cy, area)) || (wb === 0 && !edgeOwns(cx, cy, ax, ay, area))) continue;
+        if (wc === 0 && !edgeOwns(ax, ay, bx, by, area)) continue;
+        const alpha = Math.max(0, Math.min(1, wa * alphaA + wb * alphaB + wc * alphaC)),
+          at = y * across + x;
+        cover[at] = cover[at]! + alpha * (1 - cover[at]!);
+      }
+    }
+  }
+  const pixels = new Uint8Array(4 * columns * rows);
+  for (let row = 0; row < rows; row++)
+    for (let column = 0; column < columns; column++) {
+      let sum = 0;
+      for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) sum += cover[(row * n + j) * across + column * n + i]!;
+      const at = 4 * (row * columns + column);
+      pixels[at] = pixels[at + 1] = pixels[at + 2] = 255;
+      pixels[at + 3] = Math.round((255 * sum) / (n * n));
+    }
+  return pixels;
+}
+/** The top-left rule: a sample exactly on a side belongs to the triangle on one side of it only. */
+function edgeOwns(fromX: number, fromY: number, toX: number, toY: number, area: number): boolean {
+  const dx = toX - fromX,
+    dy = toY - fromY;
+  // With the corners made to run one way, a top side runs along x and a left side runs down.
+  const sign = area > 0 ? 1 : -1;
+  return sign * dy < 0 || (dy === 0 && sign * dx > 0);
 }
