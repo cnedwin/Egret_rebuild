@@ -1,0 +1,36 @@
+---
+id: save-update-callbacks
+title: Write save.update callbacks as blocks, not expression arrows
+applies: [engine, web, world3d, play, play3d]
+triggers: [createSaveStore, "save update", "save refused", "update returns false", "save not written", "validate save", "arrow function save", "存档没写进去", "存档更新", "存档被拒", "箭头函数", "update 返回 false"]
+local: [data, save, saved, showNotice]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/src/main.mjs, line: 119, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4, fix: 9e36464 }
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/ENGINE-NOTES.md, line: 192, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/ENGINE-NOTES.md, line: 226, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+engine: 687037ac462c48dbfe00523312125b94072ffea4
+---
+
+# Write save.update callbacks as blocks, not expression arrows
+
+`save.update(change)` hands the live data to `change`. Whatever the callback returns, if it is not `undefined`, is taken as the whole new save and must pass `validate`. An expression arrow returns its expression, so this refuses the write and returns `false`:
+
+```js
+save.update(data => (data.settings.music = false)); // returns false: the new "save" is the value false
+```
+
+Write the callback as a block that changes the data in place and returns nothing:
+
+```js
+const saved = save.update(data => {
+  data.settings.music = false;
+});
+if (!saved) showNotice('settings-not-saved'); // storage refused, or validate said no
+```
+
+Rules:
+
+- One block, no return value, for every `update`. A lint rule or a test that greps for `update((data) => (` catches the slip.
+- `update` returns a boolean, not an object: test `if (!saved)`, not `result.ok`.
+- At engine `687037a` a refused `update` has already changed `save.data` in memory (the callback edited it in place) although nothing was written. Do not read `save.data` to decide what the player sees after a `false`; reopen the store or keep your own copy.
+- Test it in Node with `createMemorySaveStorage()`: an expression arrow must return `false` and leave the stored text as it was.

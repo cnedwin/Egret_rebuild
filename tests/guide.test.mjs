@@ -338,6 +338,11 @@ const QUERIES = [
   ['how long is a run balance', 'balance-from-runs'],
   ['slow startup on phone', 'fast-startup'],
   ['asset licence credits', 'asset-provenance'],
+  ['save.update returns false', 'save-update-callbacks'],
+  ['cut the rope', 'rope-joints-2d'],
+  ['tarp disappears', 'cloth-and-rope'],
+  ['trees floating', 'terrain-stream-tiles'],
+  ['UI_BUSY', 'ui-callbacks'],
   // Chinese questions: no spaces between words, so the Chinese triggers are found inside the question.
   ['手机横屏 按钮 点不到', 'short-screen-hud'],
   ['同时按两个键没反应', 'keyboard-shortcuts'],
@@ -352,7 +357,12 @@ const QUERIES = [
   ['切换语言 中英文', 'two-languages'],
   ['数值平衡 太简单', 'balance-from-runs'],
   ['苹果手机加载不了', 'fast-startup'],
-  ['素材授权 可以商用', 'asset-provenance']
+  ['素材授权 可以商用', 'asset-provenance'],
+  ['存档没写进去', 'save-update-callbacks'],
+  ['剪断绳子', 'rope-joints-2d'],
+  ['篷布不见了', 'cloth-and-rope'],
+  ['树悬空', 'terrain-stream-tiles'],
+  ['按钮里打开设置', 'ui-callbacks']
 ];
 
 // Break caught: a change to the ranking or to a card that sends a known question to the wrong card.

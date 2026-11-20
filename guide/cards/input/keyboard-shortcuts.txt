@@ -9,6 +9,7 @@ evidence:
   - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/src/hud.mjs, line: 351, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: b26ad51 }
   - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/test/input-quality.test.mjs, line: 77, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: b26ad51 }
   - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserInputActions.ts, line: 127, commit: f40934fe555f6f2658c1d77ea9831a0810747adf, pin: f40934fe555f6f2658c1d77ea9831a0810747adf }
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/src/input.mjs, line: 88, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: b26ad51 }
 engine: f40934fe555f6f2658c1d77ea9831a0810747adf
 ---
 

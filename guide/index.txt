@@ -32,10 +32,17 @@ Small cards for coding agents that write games with Egret. Each card is one topi
 - [touch-labels](cards/input/touch-labels.txt) · web world3d play play3d · Text, labels and tap targets that read and press on a phone.
 - [keyboard-shortcuts](cards/input/keyboard-shortcuts.txt) · engine web world3d play play3d · Key combinations, mouse chords and shortcuts the browser leaves alone.
 - [pause-and-overlays](cards/input/pause-and-overlays.txt) · engine web world3d play play3d · Pausing from every input, and holds and focus across menus and dialogs.
+- [ui-callbacks](cards/input/ui-callbacks.txt) · engine web world3d play play3d · Synchronous control callbacks, and UI roots opened after the press.
 
 ## World3D
 
 - [world3d-lights-shadows](cards/world3d/world3d-lights-shadows.txt) · world3d play3d · Light limits, tiled lights, shadow atlas and cascades. (stale lesson flagged)
+- [cloth-and-rope](cards/world3d/cloth-and-rope.txt) · world3d play3d · Cloth and rope sizes, slack, culling on vehicles and one-way pins.
+- [terrain-stream-tiles](cards/world3d/terrain-stream-tiles.txt) · world3d play3d · Heights on streamed tiles, per-tile scatter, plant distance and navigation.
+
+## Physics 2D
+
+- [rope-joints-2d](cards/physics/rope-joints-2d.txt) · engine web · Hanging weights on rope joints, cutting them, and bodies that start held.
 
 ## Audio
 
@@ -44,6 +51,7 @@ Small cards for coding agents that write games with Egret. Each card is one topi
 ## Game data
 
 - [save-data](cards/game/save-data.txt) · engine web world3d play play3d · Versioned saves and settings that survive new builds, private windows and full storage.
+- [save-update-callbacks](cards/game/save-update-callbacks.txt) · engine web world3d play play3d · Block callbacks for save.update, its boolean, and a refused write.
 - [two-languages](cards/game/two-languages.txt) · engine web world3d play play3d · Chinese and English text tables, the page language, fonts and speech.
 - [balance-from-runs](cards/game/balance-from-runs.txt) · engine world3d play play3d · Setting numbers and pacing from whole runs played in Node.
 

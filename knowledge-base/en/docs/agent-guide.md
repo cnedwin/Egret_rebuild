@@ -56,7 +56,7 @@ An agent turns proposals into cards, using its general experience of game develo
 | Size | every card within 800 tokens as printed and 1,000 as a file; the index within 150 lines and 1,500 tokens |
 | Index | every card reached from the index once, with the same `applies`; every link resolves |
 | Evidence | every card has evidence with repository, path, line, commit and engine pin; evidence in this repository points to an existing line |
-| Retrieval | a fixed set of 46 questions, 14 of them in Chinese, returns the expected card first; answers keep to their budget and are the same on every run |
+| Retrieval | a fixed set of 56 questions, 19 of them in Chinese, returns the expected card first; answers keep to their budget and are the same on every run |
 | Harvest | on a small repository made in the test, the harvest reads the pin, imports, tests, claims and fixes and marks a stale card |
 
 The names check reads only generated or source files, so it follows the engine without a ledger of its own. It does not compare bytes and is not part of the evidence lane.
