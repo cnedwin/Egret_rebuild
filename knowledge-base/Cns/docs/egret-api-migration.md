@@ -42,7 +42,7 @@
 | `name`、`getChildByName` | 名字相同 | `getChildByName` 只查直接子对象 |
 | `removeChildAt`、`swapChildren`、`contains` | `removeChild(getChildAt(i))`；`setChildIndex`；沿 `parent` 向上查 | |
 | `mask = 矩形`、`scrollRect` | `clipRect = { x, y, width, height }` | 矩形使用对象自己的单位 |
-| `mask = 显示对象` | `renderEffect = { shapeMask: sprite }` | 用该 sprite 的 Graphics 遮罩节点，半透明处部分透出，位置按它是节点的子对象计算。它作为遮罩期间不会被画出来，与以前一样。与[滤镜](filters.md)一样需要开启效果的 host |
+| `mask = 显示对象` | 写法不变，或 `renderEffect = { shapeMask: sprite }` | 用该 sprite 的 Graphics 遮罩节点，半透明处部分透出：它在舞台上时按它在舞台上的位置，不在舞台上时按它是节点的子对象计算。`mask = 矩形` 设置的是 `clipRect`。它作为遮罩期间不会被画出来，与以前一样。与[滤镜](filters.md)一样需要开启效果的 host |
 | `blendMode` | `blendMode`：`'normal'`、`'add'`、`'multiply'`、`'screen'`、`'erase'` | 见[混合模式](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | 有哪些效果见[滤镜](filters.md) |
 | `cacheAsBitmap` | 没有 | |

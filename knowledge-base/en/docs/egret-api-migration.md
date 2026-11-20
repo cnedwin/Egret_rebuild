@@ -42,7 +42,7 @@ Five things change in every file. Knowing them saves most of the guessing.
 | `name`, `getChildByName` | The same names | `getChildByName` looks at direct children |
 | `removeChildAt`, `swapChildren`, `contains` | `removeChild(getChildAt(i))`; `setChildIndex`; walk `parent` | |
 | `mask = rectangle`, `scrollRect` | `clipRect = { x, y, width, height }` | A rectangle in the object's own units |
-| `mask = displayObject` | `renderEffect = { shapeMask: sprite }` | The sprite's Graphics masks the node, faded where they are translucent, placed as if it were a child of the node. While it masks it is not drawn, as before. It needs a host with effects on, as [filters](filters.md) do |
+| `mask = displayObject` | The same, or `renderEffect = { shapeMask: sprite }` | The sprite's Graphics masks the node, faded where they are translucent: where it is on the stage, or placed as if it were a child of the node when it is off the stage. `mask = rectangle` sets `clipRect`. While it masks it is not drawn, as before. It needs a host with effects on, as [filters](filters.md) do |
 | `blendMode` | `blendMode`: `'normal'`, `'add'`, `'multiply'`, `'screen'`, `'erase'` | See [blend modes](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | See [filters](filters.md) for which effects there are |
 | `cacheAsBitmap` | Not there | |

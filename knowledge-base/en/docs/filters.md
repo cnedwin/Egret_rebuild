@@ -38,7 +38,8 @@ picture.renderEffect = { shapeMask: window };     // picture shows through the c
 window.x = 40;                                    // the mask moves; the next frame shows it
 ```
 
-- The mask is placed as if it were a child of the masked node: its `x`, `y`, scale, rotation and skew count; its alpha and visibility do not. Only its own drawing counts, not its children's.
+- A mask on the stage with the masked node masks where it is on the stage, as Egret places a mask on the display list. One off the stage is placed as if it were a child of the masked node. Either way its `x`, `y`, scale, rotation and skew count; its alpha and visibility do not. Only its own drawing counts, not its children's.
+- `node.mask = sprite`, as Egret 5 code writes it, sets this effect and keeps the rest of the node's effect; `node.mask = { x, y, width, height }` sets `clipRect` instead, and `node.mask = null` takes either away. `play` games have effects on.
 - It need not be on the stage. If it is, it is not drawn there while it masks, as in Egret; once no node takes it as a mask it is drawn again.
 - It is drawn on the CPU as an image of its alpha, at twice the size the masked node is seen at, up to 2,048 pixels a side, and that image masks as an `alphaMask` does. It is drawn again when the mask's drawing or place changes, or when the node's size on the screen changes by more than a step of a fifth or so; otherwise the same image is used. A mask that is redrawn every frame costs a new image every frame.
 - One effect has an `alphaMask` or a `shapeMask`. It can share the effect with a blur, a colour matrix, a glow or an outline. A mask that draws nothing hides everything.

@@ -85,6 +85,7 @@ export async function createWorld3DOverlay(
       backend: options.backend ?? 'webgl2',
       clearColor: 0,
       clearAlpha: 0,
+      effects: true,
       ...(options.blendSpace === undefined ? {} : { blendSpace: options.blendSpace }),
       ...(options.pixelRatio === undefined ? {} : { pixelRatio: options.pixelRatio }),
       ...(options.update ? { update: options.update } : {}),

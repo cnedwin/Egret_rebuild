@@ -233,3 +233,66 @@ test('C08 a node is not drawn while it is a shape mask, and is drawn again when 
     assert.equal(drawn(), alone, 'the mask is drawn again');
     scope.dispose();
   }));
+
+// Break caught: take Egret's `mask` and do nothing with it, as a game moved over from Egret 5 found, keep a rectangle
+// and a shape at once, or lose the rest of the effect when the mask goes.
+test('C09 mask takes a display object as a shape mask and a rectangle as a clip, and null takes either away', () =>
+  engine(async e => {
+    const scope = e.createScope();
+    const picture = e.stage.addChild(scope.use(new egret.DisplayObjectContainer()));
+    picture.addChild(scope.use(new egret.Sprite())).graphics.beginFill(0xff0000).drawRect(0, 0, 50, 50).endFill();
+    const circle = e.stage.addChild(scope.use(new egret.Shape()));
+    circle.graphics.beginFill(0xffffff).drawCircle(25, 25, 20).endFill();
+    const drawn = () =>
+      e.captureSharedFrame({ width: 64, height: 64 }).commands.filter(c => c.kind === 'mesh' || c.kind === 'rect')
+        .length;
+    const alone = drawn();
+    assert.equal(picture.mask, undefined);
+    picture.mask = circle;
+    assert.equal(picture.mask, circle);
+    assert.equal(picture.renderEffect.shapeMask, circle);
+    assert.equal(drawn(), alone - 1, 'the mask is not drawn while it masks');
+    picture.renderEffect = { ...picture.renderEffect, glow: { color: 0x00ffff } };
+    picture.mask = { x: 0, y: 0, width: 20, height: 20 };
+    assert.deepEqual({ ...picture.mask }, { x: 0, y: 0, width: 20, height: 20 });
+    assert.equal(picture.renderEffect.shapeMask, undefined, 'a rectangle replaces the shape');
+    assert.equal(picture.renderEffect.glow.color, 0x00ffff, 'the rest of the effect stays');
+    assert.equal(drawn() >= alone, true, 'the circle is drawn again');
+    picture.mask = circle;
+    assert.equal(picture.clipRect, undefined, 'a shape replaces the rectangle');
+    picture.mask = null;
+    assert.deepEqual(
+      [picture.mask, picture.clipRect, picture.renderEffect.shapeMask],
+      [undefined, undefined, undefined]
+    );
+    assert.equal(picture.renderEffect.glow.color, 0x00ffff);
+    picture.renderEffect = undefined;
+    picture.mask = circle;
+    picture.mask = undefined;
+    assert.equal(picture.renderEffect, undefined, 'a mask alone leaves no effect behind');
+    scope.dispose();
+  }));
+
+// Break caught: place a mask on the stage as if it were inside the node, so a torch put where it should shine lights
+// a place as far again from the stage's corner.
+test('C10 a mask on the stage masks where it is on the stage; one off it, as if it were inside the node', () =>
+  engine(async e => {
+    const scope = e.createScope();
+    const picture = e.stage.addChild(scope.use(new egret.Sprite()));
+    picture.graphics.beginFill(0xff0000).drawRect(0, 0, 60, 60).endFill();
+    picture.x = 100;
+    const area = () =>
+      e.captureSharedFrame({ width: 256, height: 128 }).commands.find(c => c.reason === 'effect-enter').effect.maskRect;
+    const loose = scope.use(new egret.Shape());
+    loose.graphics.beginFill(0xffffff).drawCircle(20, 20, 10).endFill();
+    picture.mask = loose;
+    const inside = area();
+    const placed = e.stage.addChild(scope.use(new egret.Shape()));
+    placed.graphics.beginFill(0xffffff).drawCircle(20, 20, 10).endFill();
+    placed.x = 100;
+    picture.mask = placed;
+    assert.deepEqual(area(), inside, 'at x 100 on the stage it is where the loose one is inside the node');
+    placed.x = 0;
+    assert.notDeepEqual(area(), inside);
+    scope.dispose();
+  }));

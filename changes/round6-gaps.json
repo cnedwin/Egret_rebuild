@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-20",
+  "en": {
+    "title": "Masks, gradients and glow where a game looks for them",
+    "body": "Four games written by agents that knew only `llms.txt` asked for a torch in a dark cave, neon lines, lamps in rain and a lighthouse in a blizzard; what they could not find is now there. `node.mask = sprite`, as Egret 5 code writes it, masks with the sprite's drawing, `node.mask = rectangle` clips, and `null` ends either; it no longer does nothing. A shape mask on the stage with its node now masks where it is on the stage, as Egret places a mask on the display list; off the stage it is still placed as a child. `play` and the 2D overlay of `play3d` draw effects, so masks, glows and outlines show. `llms.txt` gives the gradient fills and lines, `mask`, `blendMode` and glow, and the type of each key of `game.look`. A strength given a colour in `look`, which lit the world white, is refused. A thing that glows in `play3d` is seen through fog and snow."
+  },
+  "zh": {
+    "title": "遮罩、渐变和发光放到游戏会找的地方",
+    "body": "四个只读过 `llms.txt` 的 AI 写的游戏分别要做黑暗洞穴里的手电、霓虹连线、雨夜路灯和暴风雪中的灯塔，它们找不到的东西现在都有了。按 Egret 5 的写法 `node.mask = sprite` 会用该 sprite 的绘制遮罩，`node.mask = 矩形` 裁剪，`null` 取消二者，不再静默无效。与节点同在舞台上的形状遮罩现在按它在舞台上的位置遮罩，与 Egret 对显示列表上遮罩的处理一致；不在舞台上的仍按子对象放置。`play` 及 `play3d` 的 2D 覆盖层开启了效果，遮罩、发光和描边都能显示。`llms.txt` 补上了渐变填充与渐变线条、`mask`、`blendMode`、发光，以及 `game.look` 每个键的类型。`look` 中把颜色当强度传入（会把整个世界照成白色）现在会被拒绝。`play3d` 中发光的物体能穿透雾和雪被看见。"
+  }
+}
