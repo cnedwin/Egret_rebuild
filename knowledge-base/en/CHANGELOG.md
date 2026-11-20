@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Masks of shapes and lines of gradients — 2026-11-20
+
+`renderEffect = { shapeMask: sprite }` masks a node by the shape of a Sprite's Graphics, as Egret 5's `mask = displayObject` did, faded where it is translucent and placed as if it were a child of the node. It is drawn on the CPU as an image of its alpha and kept while it stays the same, then masks as an `alphaMask` does on both shared hosts. Lines take gradients: `lineGradientStyle` with Egret's arguments, `lineLinearGradientStyle` and `lineRadialGradientStyle`, cut as gradient fills are. `createBrowserGame({ effects: true })` turns render effects on for a game. `examples/vector-mask` compares both with the page's own 2D canvas: on WebGL2 with software rendering every point is within 8 of it. WebGPU pixels await a hardware run.
+
 ## Play3D: groups, glow, lamps and weather — 2026-11-20
 
 `game.group([a, b, c], at)` makes things one thing, placed, turned, tweened and tested as one. `thing.glow` makes a thing shine with its own colour. `game.lamp(color, at, { intensity, range })` adds a point light that can be moved and tweened and is put out by `game.remove`. `game.weather('snow' | 'rain' | 'none', { amount })` lets snow or rain fall around what the camera looks at, with the motion worked out on the GPU. `examples/play/lanterns3d.mjs` is a night of snow made with all four; the Play verifier plays it to its end, and it passed with software WebGL2.
