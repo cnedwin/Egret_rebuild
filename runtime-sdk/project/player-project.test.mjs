@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { PNG } from 'pngjs';
 import { copyImageData2DPixels, Bitmap, createAssetRef, createAssetType, createImageData2D, createTexture, isTexture } from '@egret/engine';
+import { createSaveStore } from '@egret/engine/kit';
 import { createHerbarium } from '../examples/moon-herbarium/herbarium.mjs';
 import { loadPng } from '../examples/moon-herbarium/lettering.mjs';
 import { createPlayerRaster } from './player-raster.mjs';
@@ -23,6 +24,120 @@ function host() {
     }
   };
 }
+
+function saveProject(native) {
+  let storage;
+  const session = createPlayerProject({width: 2, height: 2, create(services) {
+    storage = services.storage;
+    return {};
+  }}, native);
+  return {session, get storage() { return storage; }};
+}
+
+test('project saves use the engine store across sessions, including migration and removal', async () => {
+  // This bridge double keeps committed strings; process restart and on-disk atomicity are device checks.
+  const data = new Map();
+  const native = {...host(),
+    saveRead(key) { return JSON.stringify({value: data.get(key) ?? null}); },
+    saveWrite(key, value) { data.set(key, value); return true; },
+    saveRemove(key) { data.delete(key); return true; }
+  };
+  const key = '存档🌙', a = saveProject(native), b = saveProject(native);
+  try {
+    await a.session.start();
+    assert.equal(a.storage.getItem(key), null);
+    a.storage.setItem(key, '');
+    assert.equal(a.storage.getItem(key), '');
+    a.storage.removeItem(key);
+    const old = createSaveStore({key, version: 1, defaults: () => ({}), storage: a.storage});
+    assert.equal(old.save({place: '河畔', score: 7}), true);
+    await a.session.close();
+    await b.session.start();
+    const current = createSaveStore({key, version: 2, defaults: () => ({}), storage: b.storage,
+      migrations: {1: value => ({stage: value.place, score: value.score})}});
+    assert.equal(current.loadedVersion, 1);
+    assert.deepEqual(current.data, {stage: '河畔', score: 7});
+    assert.equal(JSON.parse(data.get(key)).version, 2);
+    current.remove();
+    assert.equal(b.storage.getItem(key), null);
+  } finally { await a.session.close(); await b.session.close(); }
+});
+
+test('project saves report unsupported libraries, refused writes and malformed reads', async () => {
+  const native = host(), game = saveProject(native), key = 'slot';
+  try {
+    await game.session.start();
+    assert.throws(() => game.storage.getItem(key), {name: 'NotSupportedError'});
+    assert.throws(() => game.storage.setItem(key, 'value'), {name: 'NotSupportedError'});
+    assert.throws(() => game.storage.removeItem(key), {name: 'NotSupportedError'});
+    let response;
+    const problems = [];
+    native.saveRead = () => response;
+    native.saveWrite = () => false;
+    native.saveRemove = () => false;
+    for (const invalid of [null, 'null', '', '{}', '{"value":7}', '{"value":null,"error":""}', '{"error":"unreadable"}']) {
+      response = invalid;
+      assert.throws(() => game.storage.getItem(key));
+    }
+    const store = createSaveStore({key, version: 1, defaults: () => ({}), storage: game.storage,
+      onProblem: problem => problems.push(problem.kind)});
+    assert.equal(store.save({level: 9}), false);
+    store.remove();
+    assert.deepEqual(problems, ['unreadable', 'write-failed', 'write-failed']);
+    for (const key of ['', 'a'.repeat(257)]) assert.throws(() => game.storage.getItem(key), RangeError);
+    assert.throws(() => game.storage.setItem('save', 7), TypeError);
+    native.saveWrite = () => 'true';
+    assert.throws(() => game.storage.setItem('slot', 'value'), /write failed/);
+  } finally { await game.session.close(); }
+});
+
+test('project saves reject invalid UTF-16 and oversize UTF-8 before calling the bridge', async () => {
+  let calls = 0, accepted;
+  const native = {...host(), saveRead() { calls++; return '{"value":null}'; },
+    saveWrite(key, value) { calls++; accepted = value; return true; }, saveRemove() { calls++; return true; }};
+  const game = saveProject(native);
+  try {
+    await game.session.start();
+    const {storage} = game;
+    for (const invalid of ['\ud800', '\ud800X', '\udfff', '\udc00\ud800']) {
+      assert.throws(() => storage.getItem(invalid), TypeError);
+      assert.throws(() => storage.setItem(invalid, 'v'), TypeError);
+      assert.throws(() => storage.removeItem(invalid), TypeError);
+      assert.throws(() => storage.setItem('k', invalid), TypeError);
+    }
+    const limit = 1024 * 1024;
+    const exact = '字'.repeat((limit - 4) / 3) + '🌙';
+    assert.equal(Buffer.byteLength(exact), limit);
+    for (const value of ['x'.repeat(limit + 1), exact + 'x', 'é'.repeat(limit / 2 + 1)]) {
+      assert.throws(() => storage.setItem('k', value), RangeError);
+    }
+    assert.equal(calls, 0);
+    storage.setItem('档🌙', exact);
+    assert.equal(calls, 1);
+    assert.equal(accepted, exact);
+  } finally { await game.session.close(); }
+});
+
+test('project saves preserve the outcome of an admitted write while closing and prevent later bridge calls', async () => {
+  const calls = [], native = host(), game = saveProject(native);
+  let closing;
+  native.saveWrite = (key, value) => {
+    calls.push([key, value]);
+    // Model close racing a synchronous native commit. The first result is authoritative.
+    closing = game.session.close();
+    return true;
+  };
+  native.saveRead = () => { calls.push('read'); return '{"value":null}'; };
+  native.saveRemove = () => { calls.push('remove'); return true; };
+  try {
+    await game.session.start();
+    game.storage.setItem('slot', '完成');
+    for (const operation of [() => game.storage.setItem('slot', 'later'), () => game.storage.getItem('slot'),
+      () => game.storage.removeItem('slot')]) assert.throws(operation, {name: 'AbortError'});
+    assert.deepEqual(calls, [['slot', '完成']]);
+    await closing;
+  } finally { await game.session.close(); }
+});
 const raster = {
   // Platform fonts are verified by the device run. This test decodes the actual game PNG files.
   async loadPng(file, width, height) {

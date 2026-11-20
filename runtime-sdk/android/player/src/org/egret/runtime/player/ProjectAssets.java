@@ -21,7 +21,7 @@ import org.json.JSONObject;
 final class ProjectAssets {
     static final String ORIGIN = "https://egret-player.invalid/";
     private final AssetManager assets;
-    private final String root;
+    final String root;
     private final Set<String> declaredAssets = new HashSet<>();
     final int width, height;
     final String entry;

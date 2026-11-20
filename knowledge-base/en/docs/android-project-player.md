@@ -52,6 +52,43 @@ installPlayerProject({
 
 Use `@egret/engine` types and include `runtime-sdk/project/android-player-project.d.ts` or a copy in the game's `tsconfig.json`. The exporter resolves `@egret/android-player-project` to the adapter in this source tree. Each player owns an Engine and Scope. Pass the supplied `signal` into asynchronous loading. `publishPage(id, image)` binds the same `ImageData2D` used by the texture to a slot from 1 through 255. Its handle has an idempotent `release()`. `edit(text)`, `playSound(assetPath)` and `state(value)` call the Android services. A game can implement `input`, `update`, `pause`, `resume`, `close` and `closedSnapshot`. Input carries stage coordinates, pointer ID and movement, or edited/submitted text. `update(elapsedMs)` receives foreground time. The engine clock advances by at most 100 ms per turn and starts a fresh baseline after resume.
 
+## Save and resume a game
+
+Pass the project's `storage` service to the existing `createSaveStore` API. System WebView and both V8 profiles read the same Android app-private files. The Android application and the game view's case-sensitive asset root identify the game. Keep the root stable across updates and host changes. Two roots in one application can both use the key `progress` independently. Clearing the application's data clears its local saves. Build the AAR and export the game with save support. An older AAR reports an unsupported storage operation on first use.
+
+```ts
+import { createSaveStore } from '@egret/engine/kit';
+import { installPlayerProject } from '@egret/android-player-project';
+
+installPlayerProject({
+  width: 360, height: 640, clearColor: 0x18281d,
+  create({ storage, state }) {
+    const progress = createSaveStore({
+      key: 'progress', version: 1, storage,
+      defaults: () => ({ level: 1 })
+    });
+    return {
+      input(event) {
+        if (event.type === 'up') {
+          const saved = progress.save({ level: progress.data.level + 1 });
+          state({ checkpointSaved: saved });
+        }
+      }
+    };
+  }
+});
+```
+
+Open the store with the same key on the next launch. For a schema change, raise `version` and supply `migrations[n]` to convert version `n` to `n + 1`. The store writes the migrated value back and reports read or write problems through `onProblem`.
+
+Save at checkpoints while the view is active. An acknowledged `save()` has already replaced the previous file atomically. A failed save returns `false` and the store can still contain the new data in memory. If Android stops the process during replacement, the next launch reads the complete old or new checkpoint. A first write interrupted before commit leaves the slot empty. Closing the view rejects new storage operations and delivers `onClosed` after admitted operations finish.
+
+Each stored string, including the save envelope, can occupy up to 1 MiB in UTF-8. The low-level keys accept 1–256 UTF-16 code units and `createSaveStore` accepts keys up to 200 units. Storage calls are synchronous on the script path. Schedule writes at progress checkpoints to keep filesystem work out of the frame loop.
+
+On a Galaxy Z Fold7, System WebView, standard V8 and trimmed V8 took turns running the same signed application. After force-stop and cold launch, two games using the key `progress` kept their own checkpoints. Across host changes, game A advanced from 1 to 2 to 3 while game B advanced from 10 to 20 to 30. Each host migrated a separate v1 checkpoint to v2 exactly once and read the new version on the next launch. All three read back a 1 MiB UTF-8 string containing Chinese text and an emoji, rejected one extra byte and retained the old value.
+
+A separate diagnostic build paused a real write after the temporary file was synced and before the atomic replacement. Killing the process at that point preserved the previous checkpoint on all three hosts. Closing the game view at the same point allowed the accepted write to finish: the game reported success, the replacement preceded `onClosed`, and a fresh process read the exact new file. [Fold7 save measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-saves.json)
+
 ## Read a packaged level
 
 List the file in `project.json` under `assets`, for example `"assets": ["levels/harbor.json"]`. Save it as UTF-8. A level can choose an atlas frame by name:

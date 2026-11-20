@@ -1,0 +1,836 @@
+{
+  "baseCommit": "9607d53e02c43521a878cf574037cbdf4a4c9dad",
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "webview": "com.google.android.webview, 157.0.8103.50",
+    "systemGles": "GLES: Qualcomm, Adreno (TM) 830, OpenGL ES 3.2 V@0800.64.8"
+  },
+  "fixture": "Checkpoint Atlas",
+  "method": {
+    "store": "Every game opens the existing createSaveStore from @egret/engine/kit, using services.storage and the same key, progress. Both asset roots carry byte-identical game bundles and game names. No browser localStorage or direct native seeding is used.",
+    "continuity": "One signed QA application, package and signing certificate shared by all three hosts. Android replaces the APK with install -r while retaining app data. The runner validates the installed APK SHA-256, runs am force-stop for the current user, and observes the process absent and the package stopped. Each recovery from an active game additionally verifies a different PID and Android COLD launch classification. Preparatory stop commands against an already absent process are counted separately.",
+    "production": "final-v1 and final-v2 use the same production AAR for each host. Application versionCode and authored save schema advance from 1 to 2. Each host seeds an extra game root under v1 so the corresponding host really migrates a v1 value under v2 and observes a v2 read with zero migrations on the following cold launch. The shared A and B roots additionally carry progress across all three host APKs.",
+    "data": "At each checkpoint the fixture rebuilds the expected complete data, checks both in-memory and stored envelopes, and reports load version and migration count. The test separately reads the app-private installed file as its owner and verifies the complete expected JSON data, timestamp shape, encoded byte count and SHA-256. The UTF-8 boundary uses a separate key and contains both a Chinese character and an emoji.",
+    "gate": "The separate diag-single APK uses its diagnostic AAR with private observation calls around atomic rename, after the temporary file has been forced. It holds only an explicitly armed large write. The test reads the old published and complete staged envelopes from the app sandbox. One run force-stops while staged. The next calls the real EgretPlayerView.close, observes onClosed pending, releases the writer and verifies the atomic move precedes onClosed. The game only records the synchronous save result in a local variable; closedSnapshot then returns that value. Stock AARs contain no gate. Millisecond values reflect artificial gate ordering.",
+    "scope": "Observed application-process force-stop and view close/reopen on one Fold7. These trials do not exercise device power loss, backup, cloud synchronization or cross-application storage."
+  },
+  "sameApplicationId": true,
+  "sameSignerCertificateSha256": "8ac8cf778d7e6c6ed4fff7e4279b855a69eab343fa72df213544e690e6d5542d",
+  "gameBundleSha256BySchema": {
+    "stockV1": "7b964740001dded7300e56f6501fca08efb24967adcde396a9fa9eb042cc631a",
+    "stockV2": "ae68a2bcd4b6c5102649f2abbf5e134fd152f3e7f227b58a2c289440c6cc7630",
+    "singleWriteDiagnostic": "6e9339294cb2508453be24022264fd17cee9513a4d01db21f4399c03f0fc6037"
+  },
+  "commonRendererSha256": "179a6e243dd46c1504597e2bd10713c70a310dc60e269845ccc86628e2c34880",
+  "productionStorageJavaSha256": "a5310d9c217b4a2b04b7cd38851478822d687a9e04739bd322458123f29735cf",
+  "diagnosticStorageJavaSha256": "979e6baa547711b3da1079b03a6ce7cd48129ea04c6b683d0a8c0dfce2b364a2",
+  "artifacts": {
+    "final-v1": {
+      "webview": {
+        "versionCode": 1,
+        "apkSha256": "ffde14bf98e7ba1adc93337c67deceb567bb0ca653fa6944f4aa3c44dfabc4ec",
+        "aarSha256": "f1b6df9a6c90a07cafca8ec292e1fb4028f65344b4199ddc8bc7437197cb8ada"
+      },
+      "standard": {
+        "versionCode": 1,
+        "apkSha256": "6dc99940d5d4960151291e9bf6bc64ff02216fa70244c25a68b8ea83eb9afdc4",
+        "aarSha256": "0ad371ce0975cb608fe69e1c3d7b9dcd3a309bad4446351d159f98a45873eef5"
+      },
+      "trimmed": {
+        "versionCode": 1,
+        "apkSha256": "472212df79566748ad4c87cc5725f0ffe9c1a5d10c02dba66c77205e071ade0e",
+        "aarSha256": "253b345ee0fb25a786767bf729014c9bdfd9df81116d5cac54a2a8195c68a1fa"
+      }
+    },
+    "final-v2": {
+      "webview": {
+        "versionCode": 2,
+        "apkSha256": "1839bb7e5a050edcd371ea18818cc9bcc58cbd931b1ac9ed217d588fd44e8b54",
+        "aarSha256": "f1b6df9a6c90a07cafca8ec292e1fb4028f65344b4199ddc8bc7437197cb8ada"
+      },
+      "standard": {
+        "versionCode": 2,
+        "apkSha256": "cfb2f99883034dadb101b3d4d168e762837794160edfe931708c45fbd4890ccb",
+        "aarSha256": "0ad371ce0975cb608fe69e1c3d7b9dcd3a309bad4446351d159f98a45873eef5"
+      },
+      "trimmed": {
+        "versionCode": 2,
+        "apkSha256": "f17a4ede951641d8dadf70a211af8823adb19f325bf1ccedeed5266e0512bc3e",
+        "aarSha256": "253b345ee0fb25a786767bf729014c9bdfd9df81116d5cac54a2a8195c68a1fa"
+      }
+    },
+    "diag-single": {
+      "webview": {
+        "versionCode": 4,
+        "apkSha256": "6d8556676ab868f17cbff3e497b4da2b6c1a460de43a69482f5ea9d051a1d7b1",
+        "aarSha256": "13324a81034155cc42c327ac11c8fcfd04c3d796415b619d1ce18539136896d6"
+      },
+      "standard": {
+        "versionCode": 4,
+        "apkSha256": "60c02efe20ca35162a1bcb64b8f0087bd82496a41b7b919ef9b4c6b6d1bcb889",
+        "aarSha256": "a911f4e1690dae3dbaf617a640ae970cb23b5cb0171aad4aeda41ef94139fa04"
+      },
+      "trimmed": {
+        "versionCode": 4,
+        "apkSha256": "28db3344ca079cd86158147b1c0ae8228eb44aa0db6b920ee49371d291a45402",
+        "aarSha256": "79a560c7c56834369579bb2f4ee76ece54bf677ca2f4f59c75767a24af968aa3"
+      }
+    }
+  },
+  "evidence": {
+    "final-v1": {
+      "webview": {
+        "host": "webview",
+        "vmVersion": null,
+        "intl": null,
+        "coldStarts": 6,
+        "forceStopsWithLiveProcess": 6,
+        "stopCommandsWithProcessAlreadyAbsent": 1,
+        "allStartsCold": true,
+        "cases": {
+          "sharedSlotA": {
+            "root": "game",
+            "startCheckpoint": 0,
+            "inputStoredVersion": null,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 131,
+              "sha256": "f1cdf9610fef60c164c4e0f3c509ed509ef457dae384626217a13517f789db20",
+              "version": 1,
+              "checkpoint": 1,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 1,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "isolatedSlotB": {
+            "root": "game-b",
+            "startCheckpoint": 0,
+            "inputStoredVersion": null,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 134,
+              "sha256": "f74f63b9a58e0c43e5af855169f1b8b37cd2dcce58898327eeb5f889353735fb",
+              "version": 1,
+              "checkpoint": 10,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 10,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "seedOldSchema": {
+            "root": "game-m-webview",
+            "startCheckpoint": 0,
+            "inputStoredVersion": null,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 131,
+              "sha256": "023e85d6f433f0ffcb7e3b6e691c0275b667973917f4cde8d86dace721099469",
+              "version": 1,
+              "checkpoint": 1,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 1,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          }
+        }
+      },
+      "standard": {
+        "host": "standard",
+        "vmVersion": "15.7.112.19",
+        "intl": true,
+        "coldStarts": 6,
+        "forceStopsWithLiveProcess": 6,
+        "stopCommandsWithProcessAlreadyAbsent": 2,
+        "allStartsCold": true,
+        "cases": {
+          "sharedSlotA": {
+            "root": "game",
+            "startCheckpoint": 1,
+            "inputStoredVersion": 1,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 131,
+              "sha256": "a711752972492f7cef023868898709f82ef1f1670c89a63a87645208629d1cc3",
+              "version": 1,
+              "checkpoint": 2,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 2,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "isolatedSlotB": {
+            "root": "game-b",
+            "startCheckpoint": 10,
+            "inputStoredVersion": 1,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 134,
+              "sha256": "d58d486e72ba399d8faa1cdabd2c1391c016f25584a1ad3173253896dbd6968e",
+              "version": 1,
+              "checkpoint": 20,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 20,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "seedOldSchema": {
+            "root": "game-m-standard",
+            "startCheckpoint": 0,
+            "inputStoredVersion": null,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 134,
+              "sha256": "ac9bae5fcc49e8e767cfe2f93bf638e405b9b98d1a563c6bc5d42ac4c331b7f1",
+              "version": 1,
+              "checkpoint": 10,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 10,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          }
+        }
+      },
+      "trimmed": {
+        "host": "trimmed",
+        "vmVersion": "15.7.112.19",
+        "intl": false,
+        "coldStarts": 6,
+        "forceStopsWithLiveProcess": 6,
+        "stopCommandsWithProcessAlreadyAbsent": 2,
+        "allStartsCold": true,
+        "cases": {
+          "sharedSlotA": {
+            "root": "game",
+            "startCheckpoint": 2,
+            "inputStoredVersion": 1,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 131,
+              "sha256": "e78b7b389577f3f0fff669d5db9e56ebe5fc9f429dffef14e0aeea7bbccfcd1f",
+              "version": 1,
+              "checkpoint": 3,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 3,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "isolatedSlotB": {
+            "root": "game-b",
+            "startCheckpoint": 20,
+            "inputStoredVersion": 1,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 134,
+              "sha256": "7e8ead29a124c904e98b6f41e7c97c180b259931a4dd3161b4494b7cca83a892",
+              "version": 1,
+              "checkpoint": 30,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 30,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "seedOldSchema": {
+            "root": "game-m-trimmed",
+            "startCheckpoint": 0,
+            "inputStoredVersion": null,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 12705,
+              "sha256": "6ba19ac6935a298861214457d1e9c82bb391f114ccd09324cf3e834bcad58bbf",
+              "version": 1,
+              "checkpoint": 100,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "restoredCheckpoint": 100,
+            "restoredVersion": 1,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          }
+        }
+      }
+    },
+    "final-v2": {
+      "webview": {
+        "host": "webview",
+        "vmVersion": null,
+        "intl": null,
+        "coldStarts": 7,
+        "forceStopsWithLiveProcess": 7,
+        "stopCommandsWithProcessAlreadyAbsent": 2,
+        "allStartsCold": true,
+        "cases": {
+          "perHostMigration": {
+            "root": "game-m-webview",
+            "startCheckpoint": 1,
+            "inputStoredVersion": 1,
+            "migrationsRun": 1,
+            "writeOrMigratedValue": {
+              "bytes": 145,
+              "sha256": "b3c161c9ec8ed71e70b828dce9e44fc683aa06c0e4de1cb4254ca714e2e0daff",
+              "version": 2,
+              "checkpoint": 1,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 1,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "sharedSlotA": {
+            "root": "game",
+            "startCheckpoint": 3,
+            "inputStoredVersion": 1,
+            "migrationsRun": 1,
+            "writeOrMigratedValue": {
+              "bytes": 145,
+              "sha256": "2157091bfd2e7ed8b49aa9df35f73e5a7392d10adf8ecea51c4cdba42ef7f8b7",
+              "version": 2,
+              "checkpoint": 4,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 4,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "isolatedSlotB": {
+            "root": "game-b",
+            "startCheckpoint": 30,
+            "inputStoredVersion": 1,
+            "migrationsRun": 1,
+            "writeOrMigratedValue": {
+              "bytes": 148,
+              "sha256": "d83965f395eb5a2e99d6a014da3478b9482b0478457c749e4d548f348cd2521e",
+              "version": 2,
+              "checkpoint": 30,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 30,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "utf8Boundary": {
+            "utf8Bytes": 1048576,
+            "utf16CodeUnits": 1048572,
+            "readExactly": true,
+            "oneAdditionalAsciiByteRejected": true,
+            "previousValueUnchanged": true,
+            "removed": true
+          }
+        }
+      },
+      "standard": {
+        "host": "standard",
+        "vmVersion": "15.7.112.19",
+        "intl": true,
+        "coldStarts": 7,
+        "forceStopsWithLiveProcess": 7,
+        "stopCommandsWithProcessAlreadyAbsent": 2,
+        "allStartsCold": true,
+        "cases": {
+          "perHostMigration": {
+            "root": "game-m-standard",
+            "startCheckpoint": 10,
+            "inputStoredVersion": 1,
+            "migrationsRun": 1,
+            "writeOrMigratedValue": {
+              "bytes": 148,
+              "sha256": "702252b64fd05090ecbb9d9c7bcd63a7af86c92912c535b70a3c9bfb6fec0f22",
+              "version": 2,
+              "checkpoint": 10,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 10,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "sharedSlotA": {
+            "root": "game",
+            "startCheckpoint": 4,
+            "inputStoredVersion": 2,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 145,
+              "sha256": "de4c9da53fc5be2adba4e8472b6754424b472fc5bf5be2c7a9003bf484819933",
+              "version": 2,
+              "checkpoint": 5,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 5,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "isolatedSlotB": {
+            "root": "game-b",
+            "startCheckpoint": 30,
+            "inputStoredVersion": 2,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 148,
+              "sha256": "d83965f395eb5a2e99d6a014da3478b9482b0478457c749e4d548f348cd2521e",
+              "version": 2,
+              "checkpoint": 30,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 30,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "utf8Boundary": {
+            "utf8Bytes": 1048576,
+            "utf16CodeUnits": 1048572,
+            "readExactly": true,
+            "oneAdditionalAsciiByteRejected": true,
+            "previousValueUnchanged": true,
+            "removed": true
+          }
+        }
+      },
+      "trimmed": {
+        "host": "trimmed",
+        "vmVersion": "15.7.112.19",
+        "intl": false,
+        "coldStarts": 7,
+        "forceStopsWithLiveProcess": 7,
+        "stopCommandsWithProcessAlreadyAbsent": 2,
+        "allStartsCold": true,
+        "cases": {
+          "perHostMigration": {
+            "root": "game-m-trimmed",
+            "startCheckpoint": 100,
+            "inputStoredVersion": 1,
+            "migrationsRun": 1,
+            "writeOrMigratedValue": {
+              "bytes": 12719,
+              "sha256": "3ffcd8fa91fcd7198337e5468dae6a1c60c26b53c360eea7e56b47e145e36a37",
+              "version": 2,
+              "checkpoint": 100,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "restoredCheckpoint": 100,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "sharedSlotA": {
+            "root": "game",
+            "startCheckpoint": 5,
+            "inputStoredVersion": 2,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 145,
+              "sha256": "e9f007fe0355357ce8061f708483086f3290bac6f4c5ef35f403be9eaf7a931d",
+              "version": 2,
+              "checkpoint": 6,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 6,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "isolatedSlotB": {
+            "root": "game-b",
+            "startCheckpoint": 30,
+            "inputStoredVersion": 2,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 148,
+              "sha256": "d83965f395eb5a2e99d6a014da3478b9482b0478457c749e4d548f348cd2521e",
+              "version": 2,
+              "checkpoint": 30,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 30,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "utf8Boundary": {
+            "utf8Bytes": 1048576,
+            "utf16CodeUnits": 1048572,
+            "readExactly": true,
+            "oneAdditionalAsciiByteRejected": true,
+            "previousValueUnchanged": true,
+            "removed": true
+          }
+        }
+      }
+    },
+    "diag-single": {
+      "webview": {
+        "host": "webview",
+        "vmVersion": null,
+        "intl": null,
+        "coldStarts": 6,
+        "forceStopsWithLiveProcess": 7,
+        "stopCommandsWithProcessAlreadyAbsent": 1,
+        "allStartsCold": true,
+        "cases": {
+          "seedProbe": {
+            "root": "game-g-webview",
+            "startCheckpoint": 0,
+            "inputStoredVersion": null,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 145,
+              "sha256": "fdc1fe0bef1116dc395b7cd8cb4aa3f1688ab5e07ee7f9b2c218bd1ded9dc59e",
+              "version": 2,
+              "checkpoint": 1,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 1,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "killedBeforePublish": {
+            "root": "game-g-webview",
+            "oldValue": {
+              "bytes": 145,
+              "sha256": "fdc1fe0bef1116dc395b7cd8cb4aa3f1688ab5e07ee7f9b2c218bd1ded9dc59e",
+              "version": 2,
+              "checkpoint": 1,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "stagedValue": {
+              "bytes": 12719,
+              "sha256": "97feddff849b51a5ec6c7bd0c13b9a119df2b289706f0d59159d6f86e440b097",
+              "version": 2,
+              "checkpoint": 101,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "readAfterForceStop": {
+              "bytes": 145,
+              "sha256": "fdc1fe0bef1116dc395b7cd8cb4aa3f1688ab5e07ee7f9b2c218bd1ded9dc59e",
+              "version": 2,
+              "checkpoint": 1,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "stagingCompleteBeforePublication": true,
+            "processKilledBeforePublication": true,
+            "reopenedWithNewProcess": true
+          },
+          "closedDuringWrite": {
+            "root": "game-g-webview",
+            "oldValue": {
+              "bytes": 145,
+              "sha256": "fdc1fe0bef1116dc395b7cd8cb4aa3f1688ab5e07ee7f9b2c218bd1ded9dc59e",
+              "version": 2,
+              "checkpoint": 1,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "stagedValue": {
+              "bytes": 12719,
+              "sha256": "92310da2e90f2020c3de2244cbc703db3267c8c777b33cea0e642b118a078e2f",
+              "version": 2,
+              "checkpoint": 101,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "readAfterForceStop": {
+              "bytes": 12719,
+              "sha256": "92310da2e90f2020c3de2244cbc703db3267c8c777b33cea0e642b118a078e2f",
+              "version": 2,
+              "checkpoint": 101,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "stagingCompleteBeforePublication": true,
+            "acceptedWriteReturnedTrueViaGameCloseReceipt": true,
+            "onClosedStillPendingWhileWriteHeld": true,
+            "orderedOffsetsMs": {
+              "stagingSynced": 0,
+              "closeCalled": 856.989,
+              "closeReturned": 857.023,
+              "writerAllowedToPublish": 1184.568,
+              "atomicMoveReturned": 1184.891,
+              "onClosed": 1192.077
+            },
+            "gateTimedOut": false,
+            "reopenedWithNewProcess": true
+          }
+        }
+      },
+      "standard": {
+        "host": "standard",
+        "vmVersion": "15.7.112.19",
+        "intl": true,
+        "coldStarts": 6,
+        "forceStopsWithLiveProcess": 6,
+        "stopCommandsWithProcessAlreadyAbsent": 2,
+        "allStartsCold": true,
+        "cases": {
+          "seedProbe": {
+            "root": "game-g-standard",
+            "startCheckpoint": 0,
+            "inputStoredVersion": null,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 148,
+              "sha256": "b50749543fb0dae41431ad38cd73e282996ba929512a4018e66b6d5d80bd7a6d",
+              "version": 2,
+              "checkpoint": 10,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "restoredCheckpoint": 10,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "killedBeforePublish": {
+            "root": "game-g-standard",
+            "oldValue": {
+              "bytes": 148,
+              "sha256": "b50749543fb0dae41431ad38cd73e282996ba929512a4018e66b6d5d80bd7a6d",
+              "version": 2,
+              "checkpoint": 10,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "stagedValue": {
+              "bytes": 12719,
+              "sha256": "53f60fd7c58895c456b3fb34cf57d3b71be98d2667ad26cc138cbbdf57df6b60",
+              "version": 2,
+              "checkpoint": 110,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "readAfterForceStop": {
+              "bytes": 148,
+              "sha256": "b50749543fb0dae41431ad38cd73e282996ba929512a4018e66b6d5d80bd7a6d",
+              "version": 2,
+              "checkpoint": 10,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "stagingCompleteBeforePublication": true,
+            "processKilledBeforePublication": true,
+            "reopenedWithNewProcess": true
+          },
+          "closedDuringWrite": {
+            "root": "game-g-standard",
+            "oldValue": {
+              "bytes": 148,
+              "sha256": "b50749543fb0dae41431ad38cd73e282996ba929512a4018e66b6d5d80bd7a6d",
+              "version": 2,
+              "checkpoint": 10,
+              "fullValueEqual": true,
+              "bulk": false
+            },
+            "stagedValue": {
+              "bytes": 12719,
+              "sha256": "c4a71887f7b5b187cb2f46df66274a52341b947dbdeb1711be5a15956e0a3f1f",
+              "version": 2,
+              "checkpoint": 110,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "readAfterForceStop": {
+              "bytes": 12719,
+              "sha256": "c4a71887f7b5b187cb2f46df66274a52341b947dbdeb1711be5a15956e0a3f1f",
+              "version": 2,
+              "checkpoint": 110,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "stagingCompleteBeforePublication": true,
+            "acceptedWriteReturnedTrueViaGameCloseReceipt": true,
+            "onClosedStillPendingWhileWriteHeld": true,
+            "orderedOffsetsMs": {
+              "stagingSynced": 0,
+              "closeCalled": 826.56,
+              "closeReturned": 826.596,
+              "writerAllowedToPublish": 1148.422,
+              "atomicMoveReturned": 1148.754,
+              "onClosed": 1157.318
+            },
+            "gateTimedOut": false,
+            "reopenedWithNewProcess": true
+          }
+        }
+      },
+      "trimmed": {
+        "host": "trimmed",
+        "vmVersion": "15.7.112.19",
+        "intl": false,
+        "coldStarts": 6,
+        "forceStopsWithLiveProcess": 6,
+        "stopCommandsWithProcessAlreadyAbsent": 2,
+        "allStartsCold": true,
+        "cases": {
+          "seedProbe": {
+            "root": "game-g-trimmed",
+            "startCheckpoint": 0,
+            "inputStoredVersion": null,
+            "migrationsRun": 0,
+            "writeOrMigratedValue": {
+              "bytes": 12719,
+              "sha256": "ae7f8f8da0ea43f807ed733dbb2643536db4b3e0fd52fed0d66e72d4d1cc135f",
+              "version": 2,
+              "checkpoint": 100,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "restoredCheckpoint": 100,
+            "restoredVersion": 2,
+            "repeatMigrations": 0,
+            "fullStoredAndReportedValueMatched": true,
+            "forceStoppedAndColdRelaunched": true
+          },
+          "killedBeforePublish": {
+            "root": "game-g-trimmed",
+            "oldValue": {
+              "bytes": 12719,
+              "sha256": "ae7f8f8da0ea43f807ed733dbb2643536db4b3e0fd52fed0d66e72d4d1cc135f",
+              "version": 2,
+              "checkpoint": 100,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "stagedValue": {
+              "bytes": 12719,
+              "sha256": "466454c1ab16e55f912156fd87a16244c3eece45e5ec5d81a0efdda4b7a85ee2",
+              "version": 2,
+              "checkpoint": 200,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "readAfterForceStop": {
+              "bytes": 12719,
+              "sha256": "ae7f8f8da0ea43f807ed733dbb2643536db4b3e0fd52fed0d66e72d4d1cc135f",
+              "version": 2,
+              "checkpoint": 100,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "stagingCompleteBeforePublication": true,
+            "processKilledBeforePublication": true,
+            "reopenedWithNewProcess": true
+          },
+          "closedDuringWrite": {
+            "root": "game-g-trimmed",
+            "oldValue": {
+              "bytes": 12719,
+              "sha256": "ae7f8f8da0ea43f807ed733dbb2643536db4b3e0fd52fed0d66e72d4d1cc135f",
+              "version": 2,
+              "checkpoint": 100,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "stagedValue": {
+              "bytes": 12719,
+              "sha256": "4d9de88b996573f0e07cdd87993a98467c5698ae52d470e411ef7c2a33fba7d9",
+              "version": 2,
+              "checkpoint": 200,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "readAfterForceStop": {
+              "bytes": 12719,
+              "sha256": "4d9de88b996573f0e07cdd87993a98467c5698ae52d470e411ef7c2a33fba7d9",
+              "version": 2,
+              "checkpoint": 200,
+              "fullValueEqual": true,
+              "bulk": true
+            },
+            "stagingCompleteBeforePublication": true,
+            "acceptedWriteReturnedTrueViaGameCloseReceipt": true,
+            "onClosedStillPendingWhileWriteHeld": true,
+            "orderedOffsetsMs": {
+              "stagingSynced": 0,
+              "closeCalled": 842.575,
+              "closeReturned": 842.613,
+              "writerAllowedToPublish": 1232.473,
+              "atomicMoveReturned": 1232.949,
+              "onClosed": 1242.063
+            },
+            "gateTimedOut": false,
+            "reopenedWithNewProcess": true
+          }
+        }
+      }
+    }
+  },
+  "fixtureAdjustment": {
+    "initialDiagnosticAppVersionCode": 3,
+    "qualifiedDiagnosticAppVersionCode": 4,
+    "sameDiagnosticAars": true,
+    "reason": "The first diagnostic fixture attempted an extra storage.getItem after its accepted save returned during view close. Standard V8 rejected that new read with closed. The private record confirms publication before onClosed. The final three-host diagnostic uses fresh project roots and makes no second storage call from the game. Its close receipt reports the save return value and a fresh process independently verifies the durable value."
+  },
+  "controlInterruptions": [],
+  "deviceReturn": {
+    "awakeMatches": true,
+    "unlockedMatches": true,
+    "foregroundMatches": true,
+    "usbStayMatches": true,
+    "leaseReleased": true,
+    "packagesRemoved": true
+  }
+}

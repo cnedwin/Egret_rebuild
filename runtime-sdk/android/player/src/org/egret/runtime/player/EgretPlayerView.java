@@ -37,6 +37,9 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     final Handler ui = new Handler(Looper.getMainLooper());
     private final Listener listener;
     private ProjectAssets project;
+    ProjectSaveStorage saves;
+    private boolean drainingSaves;
+    private Runnable closeAfterSaves;
     private GLSurfaceView surface;
     private PlayerGraphics graphics;
     private ScriptSession scripts;
@@ -86,8 +89,12 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
             surface.setContentDescription("Egret game");
             controls = new PlayerInput(this, activity, surface, project);
             if (mode != null) benchmark = new ProjectBenchmark(mode, expectedDigest, activity.getFilesDir(), project.width, project.height);
-            scripts = benchmark != null && benchmark.replays()
-                ? benchmark.replaySession(this, project) : BundledScripts.open(this, activity, project);
+            if (benchmark != null && benchmark.replays()) {
+                scripts = benchmark.replaySession(this, project);
+            } else {
+                saves = new ProjectSaveStorage(activity.getFilesDir(), project.root);
+                scripts = BundledScripts.open(this, activity, project);
+            }
         } catch (Exception | LinkageError e) { reportFailure("Cannot open Egret project: " + e); }
     }
 
@@ -290,14 +297,38 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         if (ending) return;
         ending = true;
         wanted = false;
+        if (saves == null) { closeScripts(); return; }
+        // Retire admission immediately. A save that already entered may finish
+        // its atomic commit without the UI thread waiting on a filesystem lock.
+        drainingSaves = true;
+        saves.closeWhenIdle(() -> {
+            if (Looper.myLooper() == Looper.getMainLooper()) closeScripts();
+            else ui.post(this::closeScripts);
+        });
+    }
+
+    private void closeScripts() {
+        drainingSaves = false;
         if (foreground) deactivate();
         else { cancelFrame(); stopSurface(); audio.stop(); }
+        if (closeAfterSaves != null) {
+            Runnable done = closeAfterSaves;
+            closeAfterSaves = null;
+            done.run();
+            return;
+        }
         if (scripts != null && scripts.requestClose()) ui.postDelayed(closeTimeout, 10000);
         else finishClose(null, null);
     }
 
     void finishClose(String receipt, String error) {
         if (!ending || closed) return;
+        if (drainingSaves) {
+            // A VM can exit while a bridge call is finishing independently.
+            final String pendingError = error;
+            if (closeAfterSaves == null) closeAfterSaves = () -> finishClose(receipt, pendingError);
+            return;
+        }
         ui.removeCallbacks(closeTimeout);
         if (benchmark != null) {
             final String sessionError = error;
