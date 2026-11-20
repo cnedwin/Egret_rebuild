@@ -44,8 +44,10 @@ export interface PhysicsBodyOptions {
 /** A body in the physics world: its place and motion, its material and layers, and the calls that push it. */
 export interface PhysicsBody {
   readonly id: number;
+  /** What it is now; `setKind` changes it. */
   readonly kind: PhysicsBodyKind;
   readonly shape: PhysicsShape;
+  /** Infinity unless it is dynamic. */
   readonly mass: number;
   readonly sensor: boolean;
   readonly state: 'active' | 'removed';
@@ -64,8 +66,43 @@ export interface PhysicsBody {
   applyImpulse(x: number, y: number): void;
   /** Adds to the force on the body for the next step. */
   applyForce(x: number, y: number): void;
+  /**
+   * Makes it static, kinematic or dynamic, keeping its place, its contacts, its joints and what the game keeps with it:
+   * a weight held up until its rope is cut, a crate that falls once struck. A static body stops; one made dynamic has the
+   * mass of its density, as given when it was added. The change takes effect from the next step.
+   */
+  setKind(kind: PhysicsBodyKind): void;
   /** The box around the body, in the world. */
   bounds(): { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
+}
+/**
+ * A joint to add between two bodies, or between a body and a fixed point of the world. `'distance'` keeps the two
+ * anchors at one length, as a rod; `'rope'` keeps them no further apart than it, and lets them come closer, as a rope.
+ * A distance joint of length 0 pins a body to a point, as a pendulum's bob is pinned to its string.
+ */
+export interface PhysicsJointOptions {
+  readonly kind: 'distance' | 'rope';
+  readonly a: PhysicsBody;
+  /** The other body. Without it the joint holds `a` to `point`, a place in the world. */
+  readonly b?: PhysicsBody;
+  readonly point?: PhysicsVector;
+  /** Where on each body the joint is held, from its centre, turned with the body's angle. Default to the centre. */
+  readonly anchorA?: PhysicsVector;
+  readonly anchorB?: PhysicsVector;
+  /** Defaults to the distance between the anchors when the joint is added. */
+  readonly length?: number;
+  /** How firmly a distance joint keeps its length, from above 0 (a soft spring) to 1 (a rod). Defaults to 1. */
+  readonly stiffness?: number;
+}
+/** A joint of the world: its kind, its bodies and its length, which can change, as a rope that is wound in. */
+export interface PhysicsJoint {
+  readonly kind: 'distance' | 'rope';
+  readonly a: PhysicsBody;
+  readonly b: PhysicsBody | undefined;
+  readonly state: 'active' | 'removed';
+  length: number;
+  /** How far apart its anchors are now. */
+  distance(): number;
 }
 /** Two bodies that began or ended touching, with the normal between them. */
 export interface PhysicsContact {
@@ -145,7 +182,15 @@ export interface PhysicsWorld {
   addTileColliders(grid: PhysicsTileColliders): readonly PhysicsBody[];
   /** Takes the time given in fixed steps, and leaves the rest for the next update. Returns the steps taken. */
   step(seconds: number): number;
-  /** Told each contact that begins and ends, after the step it happened in. */
+  /** Joins two bodies, or a body and a point. A joint goes with either of its bodies when that is removed. */
+  addJoint(options: PhysicsJointOptions): PhysicsJoint;
+  removeJoint(joint: PhysicsJoint): void;
+  readonly joints: readonly PhysicsJoint[];
+  /**
+   * Told each contact that begins and ends, after the step it happened in, once that step is done. A listener may change
+   * the world: add and remove bodies and joints, push bodies, change their kind. What it changes takes effect from the
+   * next step, and a body it removes tells the end of its contacts at once. It may not call `step`.
+   */
   onContact(listener: (contact: PhysicsContact) => void): () => void;
   /** The bodies whose shapes hold a point, or meet a rectangle. */
   queryPoint(x: number, y: number, mask?: number): readonly PhysicsBody[];

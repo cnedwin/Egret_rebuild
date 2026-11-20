@@ -768,8 +768,10 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `PHYSICS_BODY_INVALID` | The body given to the physics world is not valid. |
 | `PHYSICS_BODY_LIMIT` | The body limit of the physics world was passed. |
 | `PHYSICS_CLOSED` | The physics world was closed and takes nothing more. |
+| `PHYSICS_JOINT_INVALID` | The joint given to the physics world is not valid. |
 | `PHYSICS_LISTENER_FAILED` | A listener the application gave to the physics world threw. What it threw is in cause. |
 | `PHYSICS_OPTIONS_INVALID` | The options given to the physics world are not valid: one is missing, of the wrong type or out of range. |
+| `PHYSICS_STEP_REENTRANT` | The step of the physics world was called again from inside one of its own callbacks. |
 
 ### PLAY
 

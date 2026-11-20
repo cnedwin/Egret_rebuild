@@ -768,8 +768,10 @@
 | `PHYSICS_BODY_INVALID` | 交给物理世界的 `body` 无效。 |
 | `PHYSICS_BODY_LIMIT` | 超出了物理世界的 `body` 上限。 |
 | `PHYSICS_CLOSED` | 物理世界已关闭，不再接受任何操作。 |
+| `PHYSICS_JOINT_INVALID` | 交给物理世界的 `joint` 无效。 |
 | `PHYSICS_LISTENER_FAILED` | 应用交给物理世界的监听器抛出了异常。抛出的内容在 cause 中。 |
 | `PHYSICS_OPTIONS_INVALID` | 交给物理世界的选项无效：缺少某一项、类型不对或超出范围。 |
+| `PHYSICS_STEP_REENTRANT` | 在物理世界的 `step` 自己的回调里又调用了它。 |
 
 ### PLAY
 

@@ -5419,7 +5419,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  }
 }
 // Physics2d: one DOM-free entry built on the runtime alone. It starts no timer or request, and no other entry has it.
-const physics2dTypes=["PhysicsBody", "PhysicsBodyKind", "PhysicsBodyOptions", "PhysicsContact", "PhysicsMoveResult", "PhysicsRayHit", "PhysicsShape", "PhysicsSnapshot", "PhysicsTileColliders", "PhysicsVector", "PhysicsWorld", "PhysicsWorldOptions"];
+const physics2dTypes=["PhysicsBody", "PhysicsBodyKind", "PhysicsBodyOptions", "PhysicsContact", "PhysicsJoint", "PhysicsJointOptions", "PhysicsMoveResult", "PhysicsRayHit", "PhysicsShape", "PhysicsSnapshot", "PhysicsTileColliders", "PhysicsVector", "PhysicsWorld", "PhysicsWorldOptions"];
 const physics2dValues=["createPhysicsWorld"];
 for(const [file,values,types] of [['packages/engine/src/physics2d.ts',physics2dValues,physics2dTypes],['packages/engine/dist/physics2d.js',physics2dValues,[]],['packages/engine/dist/physics2d.d.ts',physics2dValues,physics2dTypes]]){
  const surface=mouseExports(uiRead(file),file);

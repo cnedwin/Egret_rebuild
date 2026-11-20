@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1336 exports; 2 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1338 exports; 2 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1279,6 +1279,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PhysicsBodyKind` | type | A static body never moves; a kinematic one moves by its speed alone and pushes; a dynamic one is moved by everything. |
 | `PhysicsBodyOptions` | interface | A body to add: its kind and shape, where it is and how it moves, its material, its layers and what it moves. |
 | `PhysicsContact` | interface | Two bodies that began or ended touching, with the normal between them. |
+| `PhysicsJoint` | interface | A joint of the world: its kind, its bodies and its length, which can change, as a rope that is wound in. |
+| `PhysicsJointOptions` | interface | A joint to add between two bodies, or between a body and a fixed point of the world. |
 | `PhysicsMoveResult` | interface | Where a moved body ended up, and the normals of what it hit on the way. |
 | `PhysicsRayHit` | interface | What a ray hit: the body, where, its normal, and how far along the ray. |
 | `PhysicsShape` | type | A shape about the place of its body. |

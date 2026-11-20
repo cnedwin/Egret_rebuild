@@ -859,3 +859,120 @@ test('PH23 what meets slower than the bounce threshold does not bounce, so a bou
   w.addBody({ shape: circle(1), x: 12, y: 34, angle: 45, display });
   assert.deepEqual([display.x, display.y, display.rotation], [12, 34, 45]);
 });
+
+test('PH24 a body pinned to a point swings at its length; a rope lets it fall until it is taut, then holds it', () => {
+  const world = createPhysicsWorld({ gravity: { x: 0, y: 600 } });
+  // A pendulum: a bob 100 to the right of its pin, let go.
+  const bob = world.addBody({ shape: circle(5), x: 100, y: 0 });
+  const rod = world.addJoint({ kind: 'distance', a: bob, point: { x: 0, y: 0 } });
+  near(rod.length, 100, 'the length is the distance when added');
+  let leftmost = Infinity;
+  for (let i = 0; i < 120; i++) {
+    world.step(1 / 60);
+    near(rod.distance(), 100, 'step ' + i, 0.5);
+    leftmost = Math.min(leftmost, bob.x);
+  }
+  assert.ok(leftmost < -50, 'it swung through to the other side: ' + leftmost);
+  // A rope of 80 from (300, 0): the weight hangs at 20 and falls freely until 80, where it stops.
+  const weight = world.addBody({ shape: circle(5), x: 300, y: 20 });
+  const rope = world.addJoint({ kind: 'rope', a: weight, point: { x: 300, y: 0 }, length: 80 });
+  world.step(1 / 60);
+  assert.ok(weight.vy > 0 && rope.distance() < 80, 'slack: it falls');
+  for (let i = 0; i < 120; i++) world.step(1 / 60);
+  near(weight.y, 80, 'it hangs at the length of the rope', 0.5);
+  near(weight.x, 300, 'straight below', 1e-6);
+  // A rope wound in lifts it.
+  rope.length = 40;
+  for (let i = 0; i < 120; i++) world.step(1 / 60);
+  near(weight.y, 40, 'wound in', 0.5);
+  // Cutting the rope lets it fall.
+  world.removeJoint(rope);
+  assert.equal(rope.state, 'removed');
+  world.step(1 / 60);
+  assert.ok(weight.vy > 0);
+  assert.throws(() => world.removeJoint(rope), coded('PHYSICS_JOINT_INVALID'));
+});
+
+test('PH25 a rod between two bodies keeps its length; a joint goes with a body that is removed; joints are checked', () => {
+  const world = createPhysicsWorld({ gravity: { x: 0, y: 600 } });
+  const top = world.addBody({ kind: 'static', shape: box(10, 10), x: 0, y: 0 });
+  const first = world.addBody({ shape: circle(4), x: 0, y: 50 }),
+    second = world.addBody({ shape: circle(4), x: 30, y: 90 });
+  world.addJoint({ kind: 'distance', a: top, b: first });
+  const link = world.addJoint({ kind: 'distance', a: first, b: second });
+  near(link.length, 50, 'from 0,50 to 30,90');
+  for (let i = 0; i < 180; i++) world.step(1 / 60);
+  near(link.distance(), 50, 'the chain held', 1);
+  assert.equal(world.joints.length, 2);
+  world.removeBody(first);
+  assert.equal(world.joints.length, 0);
+  assert.equal(link.state, 'removed');
+  // Anchors are turned with the body.
+  const plank = world.addBody({ kind: 'kinematic', shape: box(100, 10), x: 0, y: 200, angle: 90 });
+  const end = world.addBody({ shape: circle(4), x: 0, y: 260 });
+  const hold = world.addJoint({ kind: 'rope', a: plank, b: end, anchorA: { x: 50, y: 0 } });
+  near(hold.length, 10, 'the anchor at (50, 0) turned 90 degrees is at (0, 250)', 1e-9);
+  for (const bad of [
+    { kind: 'spring', a: end, point: { x: 0, y: 0 } },
+    { kind: 'rope', a: end },
+    { kind: 'rope', a: end, b: plank, point: { x: 0, y: 0 } },
+    { kind: 'rope', a: end, b: end },
+    { kind: 'rope', a: end, point: { x: 0 } },
+    { kind: 'rope', a: end, point: { x: 0, y: 0 }, length: -1 },
+    { kind: 'distance', a: end, point: { x: 0, y: 0 }, stiffness: 0 },
+    { kind: 'distance', a: end, point: { x: 0, y: 0 }, stiffness: 2 },
+    { kind: 'rope', a: {}, point: { x: 0, y: 0 } }
+  ])
+    assert.throws(() => world.addJoint(bad), /PHYSICS_(OPTIONS|BODY)_INVALID/, JSON.stringify(Object.keys(bad)));
+  assert.throws(() => (hold.length = NaN), coded('PHYSICS_OPTIONS_INVALID'));
+  world.dispose();
+  assert.equal(hold.state, 'removed');
+});
+
+test('PH26 a body changes kind in place, keeping its contacts; a contact listener may change the world but not step it', () => {
+  const world = createPhysicsWorld({ gravity: { x: 0, y: 600 } });
+  world.addBody({ kind: 'static', shape: box(400, 20), x: 0, y: 100 });
+  const crate = world.addBody({ kind: 'kinematic', shape: box(20, 20), x: 0, y: 0, density: 2, data: 'crate' });
+  assert.equal(crate.mass, Infinity);
+  world.step(1 / 60);
+  near(crate.y, 0, 'held up');
+  crate.setKind('dynamic');
+  assert.deepEqual([crate.kind, crate.mass, crate.data], ['dynamic', 800, 'crate']);
+  for (let i = 0; i < 60; i++) world.step(1 / 60);
+  near(crate.y, 80, 'it fell onto the floor', 0.5);
+  // A pebble rests on the crate; the crate made static keeps the pebble on it, with no end and no new begin.
+  const pebble = world.addBody({ shape: circle(4), x: 0, y: 60 });
+  for (let i = 0; i < 30; i++) world.step(1 / 60);
+  const told = [];
+  const stop = world.onContact(contact => {
+    if (contact.a === pebble || contact.b === pebble) told.push(contact.type);
+  });
+  crate.setKind('static');
+  assert.deepEqual([crate.kind, crate.vx, crate.vy, crate.mass], ['static', 0, 0, Infinity]);
+  for (let i = 0; i < 10; i++) world.step(1 / 60);
+  assert.deepEqual(told, [], 'a change of kind keeps what it touches');
+  near(pebble.y, 66, 'still resting on it', 0.5);
+  stop();
+  assert.throws(() => crate.setKind('ghost'), coded('PHYSICS_OPTIONS_INVALID'));
+  crate.setKind('dynamic');
+  // A listener breaks what it is told of, pushes another, and is refused a step.
+  const ball = world.addBody({ shape: circle(5), x: 100, y: 60 }),
+    other = world.addBody({ shape: circle(5), x: -100, y: 0 });
+  const refused = [];
+  world.onContact(contact => {
+    if (contact.type !== 'begin' || (contact.a !== ball && contact.b !== ball)) return;
+    try {
+      world.step(1);
+    } catch (error) {
+      refused.push(error.code);
+    }
+    world.removeBody(ball);
+    other.applyImpulse(0, -100000);
+  });
+  for (let i = 0; i < 60 && ball.state === 'active'; i++) world.step(1 / 60);
+  assert.equal(ball.state, 'removed');
+  assert.deepEqual(refused, ['PHYSICS_STEP_REENTRANT']);
+  world.step(1 / 60);
+  assert.ok(other.vy < 0, 'the push took effect');
+  assert.throws(() => ball.setKind('static'), coded('PHYSICS_BODY_INVALID'));
+});
