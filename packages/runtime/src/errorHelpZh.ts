@@ -90,6 +90,7 @@ export const ZH_AREAS: readonly (readonly [string, string])[] = [
   ['TEXT_PLAN', '文本计划'],
   ['TEXT', '文本'],
   ['TILEMAP', '瓦片地图'],
+  ['TIMER', '计时器'],
   ['TWEEN', '缓动'],
   ['UI_CONTROL', 'UI 控件'],
   ['UI_KEYBOARD', 'UI 键盘导航'],

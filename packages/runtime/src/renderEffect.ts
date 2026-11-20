@@ -25,7 +25,7 @@ export interface RenderEffect2D {
    * A mask of vector shapes, as Egret's `mask = displayObject`: what the node draws shows only where this Sprite's
    * Graphics covers, faded where they are translucent. It is placed as if it were a child of the node; only its own
    * drawing counts, not its children's, and its alpha and visibility do not. It need not be on the stage; on it, it is
-   * drawn too. One effect has an alpha mask or a shape mask.
+   * not drawn while it masks, as in Egret. One effect has an alpha mask or a shape mask.
    */
   readonly shapeMask?: DisplayObject;
   /**
@@ -144,6 +144,20 @@ export function setRenderEffect(node: DisplayObject, input: RenderEffect2D | und
   }
   // Descriptor reads may execute application getters; publish only after life recheck.
   assertVisualMutable(node);
-  visualOf(node).renderEffect = value;
+  const state = visualOf(node),
+    before = state.renderEffect?.shapeMask,
+    after = value?.shapeMask;
+  state.renderEffect = value;
   recordVisualChange(node, VISUAL_APPEARANCE);
+  // A node that becomes a mask stops being drawn; one no longer a mask of anything is drawn again.
+  if (before !== after) {
+    if (before !== undefined && !before.isDisposed) {
+      visualOf(before).maskUses--;
+      recordVisualChange(before, VISUAL_APPEARANCE);
+    }
+    if (after !== undefined) {
+      visualOf(after).maskUses++;
+      recordVisualChange(after, VISUAL_APPEARANCE);
+    }
+  }
 }

@@ -91,6 +91,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['TEXT_PLAN', 'a text plan'],
   ['TEXT', 'text'],
   ['TILEMAP', 'a tile map'],
+  ['TIMER', 'a timer'],
   ['TWEEN', 'a tween'],
   ['UI_CONTROL', 'a UI control'],
   ['UI_KEYBOARD', 'UI keyboard navigation'],

@@ -1100,6 +1100,12 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `TILEMAP_TILESET_UNSUPPORTED` | The tileset is not supported by a tile map. |
 | `TILEMAP_TILE_INVALID` | The tile given to a tile map is not valid. |
 
+### TIMER
+
+| Code | Meaning |
+| --- | --- |
+| `TIMER_OPTIONS_INVALID` | The options given to a timer are not valid: one is missing, of the wrong type or out of range. |
+
 ### TWEEN
 
 | Code | Meaning |

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1319 exports; 802 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1329 exports; 804 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -10,6 +10,7 @@ For which entry to import from, see [What to import](entry-points.md).
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
+| `after` | function | Calls a function once, `seconds` from now on the Engine's clock, as Egret's setTimeout. |
 | `animate` | function | A motion of one object: `animate(engine, scope, sprite).to({ x: 100, alpha: 0.5 }, 0.5, 'quadOut').wait(0.2).to({ x: 0 }, 0.5).start()`. |
 | `AssetAcquireOptions` | interface |  |
 | `AssetGroup` | interface | One opaque cleanup owner; members remain borrowed genuine invariant leases. |
@@ -52,6 +53,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createTexture` | function |  |
 | `createTexturedGeometry2D` | function |  |
 | `createTextureView` | function | Create an explicit logical view over an authentic straight CPU image. |
+| `createTimer` | function | A timer: `createTimer(engine, scope, 1, 5).onTimer(n => …).onComplete(() => …).start()`. |
+| `Delayed` | interface | A call to come: `cancel` takes it back if it has not been made. |
 | `describeErrorCode` | function | A sentence for an error code: what went wrong and, for the codes a game meets most, what to do. |
 | `Diagnostic` | interface | Diagnostics describe this headless lifecycle slice only. |
 | `DiagnosticHandler` | type | Observation only: throwing cannot change cleanup or cancellation progress. |
@@ -86,7 +89,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `isImageData2D` | function |  |
 | `isTexture` | function | Brand-only: disposal does not change the identity of a Texture. |
 | `isTexturedGeometry2D` | function |  |
+| `Matrix` | class | A matrix of the plane, as Egret's and a canvas's: a point (x, y) goes to (a·x + c·y + tx, b·x + d·y + ty). |
 | `Matrix2D` | interface | Immutable logical-coordinate values shared by CPU capture and render hosts. |
+| `MatrixLike` | interface |  |
 | `Mesh2D` | class | A display leaf borrowing an exact lease and an immutable owned geometry. |
 | `Motion` | interface | A chain of steps for one object. |
 | `MotionEasing` | type | How a step runs from its start to its end: a name, or a function from 0–1 to 0–1 (it may pass both on the way). |
@@ -96,8 +101,11 @@ For which entry to import from, see [What to import](entry-points.md).
 | `NineSliceBitmapOptions` | interface | Required local panel dimensions and fixed source-crop borders. |
 | `NineSliceGeometry2DOptions` | interface |  |
 | `NineSliceInsets2D` | interface | Border widths in the same units as the unrotated source crop. |
+| `Point` | class | A place: `x` and `y`. |
 | `Point2D` | interface | An owned logical-coordinate value; query results are frozen at runtime. |
+| `Rectangle` | class | A rectangle: its top left corner `x`, `y`, and its `width` and `height`. |
 | `Rectangle2D` | interface |  |
+| `RectangleLike` | interface |  |
 | `Releasable` | interface | Releases a lease; resource ownership and disposal remain with its provider. |
 | `RenderEffect2D` | interface | Render-only subtree effect. |
 | `RenderGlow2D` | interface |  |
@@ -116,6 +124,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SequenceRegion` | interface |  |
 | `SequenceSample` | interface |  |
 | `setErrorLanguage` | function | The language of the sentence in the message of every error made from now on: English unless set. |
+| `Shape` | class | Stable drawing facade; a Sprite never shares or rebinds its Graphics. |
 | `SHARED_FRAME_PROFILE_2D` | value |  |
 | `SharedBarrierCommand2D` | interface |  |
 | `SharedBlendSpace2D` | type | Where translucent draws mix with what is under them. |
@@ -151,6 +160,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `TextureRegion2D` | interface |  |
 | `TextureViewRegion2D` | interface | Owned immutable metadata. |
 | `TextureViewRegionInput2D` | interface | A packed page rectangle and its unrotated logical, top-left region. |
+| `Timer` | interface | Calls a function every `delay` seconds, `repeatCount` times or until it is stopped, as Egret's Timer. |
 | `Tween` | interface |  |
 | `TweenEasing` | type |  |
 | `TweenOptions` | interface |  |

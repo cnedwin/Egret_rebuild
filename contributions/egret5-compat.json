@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/runtime/src/geometry.ts",
+      "originRole": "First-party Point, Rectangle and Matrix classes with the methods Egret 5 code calls, written from the plane geometry they describe; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/timer.ts",
+      "originRole": "First-party timers on the Engine clock for code that used Egret 5's Timer and setTimeout; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/egret5-compat.test.mjs",
+      "originRole": "First-party Node tests of timers, Shape, Point, Rectangle, Matrix and masks not drawn while they mask; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

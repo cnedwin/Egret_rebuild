@@ -37,6 +37,8 @@ export interface VisualState {
   sharedMaterial: SharedMaterial2D | null;
   renderBoundary: "none" | "isolate";
   renderEffect: RenderEffect2D | undefined;
+  /** How many nodes take this one as their shape mask. While any do, it is not drawn, as Egret hid a mask. */
+  maskUses: number;
   clipRect: Rectangle2D | undefined;
   primitives: Primitive[];
   /** What the node draws besides filled rectangles: triangles and a path, which Graphics alone writes. */
@@ -111,6 +113,7 @@ export function registerVisual(node: DisplayObject): void {
     anchorOffsetY: 0,
     visible: true,
     renderEffect: undefined,
+    maskUses: 0,
     sharedMaterial: null,
     renderBoundary: "none",
     clipRect: undefined,

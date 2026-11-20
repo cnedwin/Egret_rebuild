@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1319 个导出，其中 802 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1329 个导出，其中 804 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -10,6 +10,7 @@
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
+| `after` | 函数 | Calls a function once, `seconds` from now on the Engine's clock, as Egret's setTimeout. |
 | `animate` | 函数 | A motion of one object: `animate(engine, scope, sprite).to({ x: 100, alpha: 0.5 }, 0.5, 'quadOut').wait(0.2).to({ x: 0 }, 0.5).start()`. |
 | `AssetAcquireOptions` | 接口 |  |
 | `AssetGroup` | 接口 | One opaque cleanup owner; members remain borrowed genuine invariant leases. |
@@ -52,6 +53,8 @@
 | `createTexture` | 函数 |  |
 | `createTexturedGeometry2D` | 函数 |  |
 | `createTextureView` | 函数 | Create an explicit logical view over an authentic straight CPU image. |
+| `createTimer` | 函数 | A timer: `createTimer(engine, scope, 1, 5).onTimer(n => …).onComplete(() => …).start()`. |
+| `Delayed` | 接口 | A call to come: `cancel` takes it back if it has not been made. |
 | `describeErrorCode` | 函数 | A sentence for an error code: what went wrong and, for the codes a game meets most, what to do. |
 | `Diagnostic` | 接口 | Diagnostics describe this headless lifecycle slice only. |
 | `DiagnosticHandler` | 类型 | Observation only: throwing cannot change cleanup or cancellation progress. |
@@ -86,7 +89,9 @@
 | `isImageData2D` | 函数 |  |
 | `isTexture` | 函数 | Brand-only: disposal does not change the identity of a Texture. |
 | `isTexturedGeometry2D` | 函数 |  |
+| `Matrix` | 类 | A matrix of the plane, as Egret's and a canvas's: a point (x, y) goes to (a·x + c·y + tx, b·x + d·y + ty). |
 | `Matrix2D` | 接口 | Immutable logical-coordinate values shared by CPU capture and render hosts. |
+| `MatrixLike` | 接口 |  |
 | `Mesh2D` | 类 | A display leaf borrowing an exact lease and an immutable owned geometry. |
 | `Motion` | 接口 | A chain of steps for one object. |
 | `MotionEasing` | 类型 | How a step runs from its start to its end: a name, or a function from 0–1 to 0–1 (it may pass both on the way). |
@@ -96,8 +101,11 @@
 | `NineSliceBitmapOptions` | 接口 | Required local panel dimensions and fixed source-crop borders. |
 | `NineSliceGeometry2DOptions` | 接口 |  |
 | `NineSliceInsets2D` | 接口 | Border widths in the same units as the unrotated source crop. |
+| `Point` | 类 | A place: `x` and `y`. |
 | `Point2D` | 接口 | An owned logical-coordinate value; query results are frozen at runtime. |
+| `Rectangle` | 类 | A rectangle: its top left corner `x`, `y`, and its `width` and `height`. |
 | `Rectangle2D` | 接口 |  |
+| `RectangleLike` | 接口 |  |
 | `Releasable` | 接口 | Releases a lease; resource ownership and disposal remain with its provider. |
 | `RenderEffect2D` | 接口 | Render-only subtree effect. |
 | `RenderGlow2D` | 接口 |  |
@@ -116,6 +124,7 @@
 | `SequenceRegion` | 接口 |  |
 | `SequenceSample` | 接口 |  |
 | `setErrorLanguage` | 函数 | The language of the sentence in the message of every error made from now on: English unless set. |
+| `Shape` | 类 | Stable drawing facade; a Sprite never shares or rebinds its Graphics. |
 | `SHARED_FRAME_PROFILE_2D` | 值 |  |
 | `SharedBarrierCommand2D` | 接口 |  |
 | `SharedBlendSpace2D` | 类型 | Where translucent draws mix with what is under them. |
@@ -151,6 +160,7 @@
 | `TextureRegion2D` | 接口 |  |
 | `TextureViewRegion2D` | 接口 | Owned immutable metadata. |
 | `TextureViewRegionInput2D` | 接口 | A packed page rectangle and its unrotated logical, top-left region. |
+| `Timer` | 接口 | Calls a function every `delay` seconds, `repeatCount` times or until it is stopped, as Egret's Timer. |
 | `Tween` | 接口 |  |
 | `TweenEasing` | 类型 |  |
 | `TweenOptions` | 接口 |  |

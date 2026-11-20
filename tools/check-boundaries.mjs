@@ -669,7 +669,7 @@ if (JSON.stringify(Object.keys(contractsFacade)) !== JSON.stringify(completeCont
 for (const name of imageValues) if (facade[name] !== contractsFacade[name]) throw new Error(`engine: image contract identity mismatch: ${name}`);
 for (const name of geometryValues) if (typeof contractsFacade[name] !== 'function' || facade[name] !== contractsFacade[name]) throw new Error(`engine: geometry contract identity mismatch: ${name}`);
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
-const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'animate', 'CancellationController', 'EgretError', 'describeErrorCode', 'setErrorLanguage', 'getErrorLanguage', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'NineSliceBitmap', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
+const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'animate', 'CancellationController', 'EgretError', 'describeErrorCode', 'setErrorLanguage', 'getErrorLanguage', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', 'Shape', 'Point', 'Rectangle', 'Matrix', 'createTimer', 'after', ...imageValues, ...geometryValues, 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'NineSliceBitmap', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
 const completeRootValues = [...texturedRootValues,'createSharedMaterial2D','createSharedGeometry2D','SHARED_FRAME_PROFILE_2D','createTextureView'].sort();
 if (typeof facade.createEngineForProfile !== 'function' || JSON.stringify(Object.keys(facade)) !== JSON.stringify(completeRootValues)) throw new Error('root: executable textured-frame export surface mismatch');
 // The legacy and textured frame records were removed; no entry may present their names again.
@@ -865,7 +865,7 @@ for (const [entry,values,emittedEntry] of textEntries) {
 }
 const expectedRuntimeValues=['CancellationController','EgretError','describeErrorCode','setErrorLanguage','getErrorLanguage','Scope','createScope','Event','createEventType',
   'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','createDisplayInputOperations','reportDiagnostic','AssetManager',
-  'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics',
+  'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','Shape','Point','Rectangle','Matrix',
   'Texture','createTexture','isTexture','Bitmap','Mesh2D','NineSliceBitmap','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS','createNineSliceGeometry2D','createSpriteSheet'].sort();
 const completeRuntimeValues = [...expectedRuntimeValues,'createTextureView','collectSharedFrameContent'].sort();
 if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(completeRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
