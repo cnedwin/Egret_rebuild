@@ -50,9 +50,17 @@ export interface SaveStore<T> {
   readonly data: T;
   /** The version the loaded save had before migration, or undefined for a new game. */
   readonly loadedVersion: number | undefined;
-  /** Replaces the data and writes it. Returns false when the storage refused, as when it is full. */
+  /**
+   * Replaces the data and writes it. Returns false when the storage refused, as when it is full, or when the new
+   * data fails `validate`: then it is reported as `invalid` and the data stays as it was.
+   */
   save(data?: T): boolean;
-  /** Changes the data with `change`, which may edit it in place or return new data, then writes it. */
+  /**
+   * Changes the data with `change`, which may edit it in place or return new data, then writes it. What it returns,
+   * other than `undefined`, replaces the data only if it passes `validate`, so `data => (data.coins = 5)`, which
+   * returns 5, is reported as `invalid` and keeps the save; write such a change as a block, `data => { data.coins = 5; }`.
+   * Data edited in place that no longer passes `validate` is reported and not written.
+   */
   update(change: (data: T) => T | void): boolean;
   /** Back to the defaults, written. */
   reset(): boolean;
@@ -143,6 +151,18 @@ export function createSaveStore<T>(options: SaveStoreOptions<T>): SaveStore<T> {
     }
   }
 
+  // New data that fails the check is not kept or written: the save on disk stays the last good one.
+  const refuse = (value: unknown): false => {
+    report(
+      'invalid',
+      new TypeError(
+        'The new save data fails validate' +
+          (isObject(value) ? '' : ': it is ' + (value === null ? 'null' : typeof value) + ', not an object') +
+          '. A change that edits in place returns nothing; write it as a block.'
+      )
+    );
+    return false;
+  };
   const write = (): boolean => {
     try {
       const envelope: Envelope = { version, savedAt: new Date().toISOString(), data };
@@ -164,13 +184,19 @@ export function createSaveStore<T>(options: SaveStoreOptions<T>): SaveStore<T> {
       return loadedVersion;
     },
     save(next?: T): boolean {
-      if (next !== undefined) data = next;
+      if (next !== undefined) {
+        if (!validate(next)) return refuse(next);
+        data = next;
+      }
       return write();
     },
     update(change: (current: T) => T | void): boolean {
       if (typeof change !== 'function') throw new EgretError('SAVE_STORE_OPTIONS_INVALID');
       const result = change(data);
-      if (result !== undefined) data = result;
+      if (result !== undefined) {
+        if (!validate(result)) return refuse(result);
+        data = result;
+      } else if (!validate(data)) return refuse(data);
       return write();
     },
     reset(): boolean {

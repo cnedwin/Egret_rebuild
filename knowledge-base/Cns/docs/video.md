@@ -22,7 +22,7 @@ function frame() { void intro.update(); engine.renderSharedFrame(frameOptions); 
 | 浏览器选项 | 含义 | 默认值 |
 | --- | --- | --- |
 | `assets` | 引擎的资源系统 | — |
-| `src`、`stream`、`element` | 三者之一：文件地址、`MediaStream`，或页面自己的视频元素（视频释放时保持原样） | — |
+| `src`、`stream`、`element` | 三者之一：文件地址、`MediaStream`，或页面自己的视频元素（视频释放时保持原样）。`src` 也可以是同一段影片的多个文件组成的列表，例如 `['intro.webm', { src: 'intro.mp4', type: 'video/mp4' }]`：它们成为 `<source>` 元素，浏览器播放第一个能播的，加载失败的会让给下一个。给出 `type` 时，浏览器不必加载就能跳过不能播的文件 | — |
 | `loop`、`muted`、`volume` | 传给元素 | false、true、1 |
 | `maxWidth` | 比它宽的画面在成为纹理前缩小到这个宽度 | 1280 |
 | `crossOrigin` | 用于允许跨域的其他来源的文件 | 无 |

@@ -146,6 +146,49 @@ test('GK05 a save starts from the defaults, is written, and loads again', () => 
   assert.equal(storage.getItem('game.save'), null);
 });
 
+// Break caught: let a change that returns what it assigned, `data => (data.tier = 3)`, replace the whole save with 3,
+// as a game's save once became a summary object, or write data that fails the check.
+test('GK05b a returned or edited save that fails validate is reported and not kept or written', () => {
+  const storage = createMemorySaveStorage(),
+    problems = [];
+  const options = {
+    key: 'game.save',
+    version: 1,
+    defaults: () => ({ tier: 1 }),
+    validate: data => typeof data === 'object' && data !== null && Number.isInteger(data.tier),
+    storage,
+    onProblem: problem => problems.push(problem.kind)
+  };
+  const store = createSaveStore(options);
+  assert.equal(
+    store.update(data => (data.tier = 3)),
+    false
+  );
+  assert.deepEqual(store.data, { tier: 3 }, 'the edit in place stays; the returned 3 does not replace it');
+  assert.equal(storage.getItem('game.save'), null, 'nothing was written');
+  assert.equal(
+    store.update(() => ({ summary: 'won' })),
+    false
+  );
+  assert.equal(store.save({ tier: 'x' }), false);
+  assert.deepEqual(problems, ['invalid', 'invalid', 'invalid']);
+  assert.deepEqual(store.data, { tier: 3 });
+  assert.equal(
+    store.update(data => {
+      data.tier = 4;
+    }),
+    true
+  );
+  assert.equal(createSaveStore(options).data.tier, 4);
+  // Without a check of its own, a save is any object: a number returned is still refused.
+  const plain = createSaveStore({ key: 'plain', version: 1, defaults: () => ({ n: 0 }), storage });
+  assert.equal(
+    plain.update(data => (data.n = 1)),
+    false
+  );
+  assert.deepEqual(plain.data, { n: 1 });
+});
+
 test('GK06 older saves are migrated and written back; unusable ones are kept aside', () => {
   const v1 = JSON.stringify({ version: 1, savedAt: 'x', data: { level: 4 } });
   const storage = createMemorySaveStorage({ 'game.save': v1 });

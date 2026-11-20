@@ -51,10 +51,13 @@ For the rest of a game: `animate` moves and fades display objects in a chain (`i
 | A scope for what the game creates | `game.scope` | `engine.createScope()` |
 | Touch, mouse and pen on display objects | `game.pointer` | `createBrowserPointerInput`, see [pointer input](multi-pointer-input.md) |
 | The keyboard | `game.keyboard` | `createBrowserKeyboardInput`, see [keyboard input](keyboard-focus-input.md) |
+| Hover and the mouse wheel, if asked for | `game.hover` | `createBrowserHoverInput`, see [hover input](pointer-hover.md); a scroll control's `wheel` takes it |
 | The frame loop | `game.loop` | `createBrowserFrameLoop`, see [the frame loop](frame-loop.md) |
 | The panel, if asked for | `game.stats` | `createBrowserStatsPanel`, below |
 
 `await game.loadTexture(url)` loads a PNG image and gives the lease of its texture, for `new Bitmap(lease)` or `graphics.beginBitmapFill(lease)`; the lease belongs to `game.scope`, and one address loaded twice is one texture. Other formats are not read: use the [content build](content-build-pipeline.md) for them. `game.host` is the Host, for its status.
+
+**Textures painted in code.** `await game.textureFromCanvas(canvas)` gives the lease of a texture of what a canvas holds now — a particle dot, a splinter, a page of a bitmap font painted at start — and `await game.textureFromPixels(width, height, pixels)` one of RGBA bytes, rows from the top, alpha not multiplied in, as `ImageData` holds them. Each call is a texture of its own, its lease belongs to `game.scope`, and ending the lease ends the texture. A canvas drawn by WebGL is copied through a 2D canvas. At most 4,096 pixels on an edge and 4,194,304 in all; [`textureFromCanvas` of `@egret/engine/web/kit`](browser-images.md) scales larger pictures down and gives a bare texture instead of a lease.
 
 **Text.** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` makes a line of text; add `label.display` to the stage and place it, then set `label.text` whenever the words change. The new words are drawn when they are ready and the old ones stay until then; `await label.ready` waits for them. Any number of labels may be made or changed together: they are drawn two at a time and the rest wait their turn, and a label whose words change while it is drawn draws the newest next. After `ready`, `label.display.width` and `.height` are the size of the words, so `label.display.x = centre - label.display.width / 2` centres them. The fonts are the page's own: a system family, or one the page has loaded. The first label loads the page's text rasterizer, so the import map needs `@egret/engine/text`, `@egret/engine/web/text` and `@egret/runtime/text`.
 
@@ -73,13 +76,14 @@ For the rest of a game: `animate` moves and fades display objects in a chain (`i
 | `update(seconds)` | One step of the game, before each frame | No step |
 | `onError(error)` | Told of what stopped the loop, and of an error the Engine can only report, such as a listener of a tap that threw and so ended pointer input | The failure is thrown, or reported to the page, where the console shows it |
 | `pointer`, `keyboard` | `false` leaves that input out | Both are made |
+| `hover` | `true` makes hover and wheel input, as `game.hover`; its module is loaded only then | No hover input |
 | `stats` | `true` shows the panel | No panel |
 | `fit`, `fitTo` | How the canvas fills an element: `'contain'` whole inside it, `'cover'` covering it, `'stretch'` to its shape. `fitTo` is that element | `'none'`, and the canvas's parent |
 | `autoStart` | `false` leaves the loop for `game.loop.start()` to start | The loop starts at once |
 
 What is not a valid option is refused with `BROWSER_GAME_OPTIONS_INVALID` before anything is made.
 
-**How `'auto'` chooses.** WebGPU when the browser has `navigator.gpu` and gives an adapter; WebGL2 otherwise. The adapter is asked for before the canvas is touched, because a canvas holds one kind of context for good. If WebGPU is chosen and its device then fails, the call fails with the Host's own error: it does not fall back, since the canvas can no longer be given to WebGL2.
+**How `'auto'` chooses.** WebGPU when the browser has `navigator.gpu` and gives an adapter; WebGL2 otherwise. The adapter is asked for before the canvas is touched, because a canvas holds one kind of context for good. If WebGPU is chosen and its device then fails, the call fails with the Host's own error: it does not fall back, since the canvas can no longer be given to WebGL2. Where there is no adapter (a headless browser, for one), the browser itself may write "No available adapters." to the console while it is asked; the page did nothing wrong. A check that fails on any console error should give `backend: 'webgl2'`.
 
 ## The panel
 

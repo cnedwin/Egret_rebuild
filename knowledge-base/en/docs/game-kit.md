@@ -69,6 +69,8 @@ save.update(data => { data.tier = 2; });
 
 A save is kept as `{ version, savedAt, data }`. An older save is brought up to date step by step and written back. A save that cannot be read, fails `validate`, is newer than the build, or is older than the oldest step starts again from `defaults`. The old text is kept under `<key>.unread`, so nothing is lost. A write that the storage refuses, as when it is full, returns `false` and is reported to `onProblem`; it never throws. `export()` and `import(text)` move a save by hand.
 
+**`update(change)`** either edits the data in place and returns nothing, or returns the new data. What it returns must pass `validate` (by default: be an object), and so must the data after an edit in place; otherwise nothing is written, the save is left as it was in memory, `false` is returned and `onProblem` hears `invalid`. Write the change as a block: an arrow such as `data => (data.tier = 2)` returns `2`, which is refused. `save(next)` checks `next` the same way.
+
 `browserSaveStorage()` is the page's local storage, or memory where the page has none (a private window, a blocked site); `persistent` says which. `createMemorySaveStorage()` is the same for tests.
 
 ## Random numbers that repeat

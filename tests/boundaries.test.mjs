@@ -1390,7 +1390,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     const audioResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
     write(keyboardResolverFile,{...audioResolver,exports:{...audioResolver.exports,'./audio':'./audio-mixer.js','./web/audio':'./audio-browser.js'}});
     write('node_modules/@egret/engine/audio-mixer.js','export function createAudioMixer() {}\n');
-    write('node_modules/@egret/engine/audio-browser.js','export function createBrowserAudio() {}\n');
+    write('node_modules/@egret/engine/audio-browser.js','export function createBrowserAudio() {}\nexport function createWebAudioBackend() {}\n');
     const gamepadResolver=JSON.parse(readFileSync(path.join(root,keyboardResolverFile),'utf8'));
     write(keyboardResolverFile,{...gamepadResolver,exports:{...gamepadResolver.exports,'./input/gamepad':'./gamepad-input.js','./web/gamepad':'./gamepad-browser.js'}});
     write('node_modules/@egret/engine/gamepad-input.js','export function createGamepadInput() {}\nexport function bindGamepadKeys() {}\n');

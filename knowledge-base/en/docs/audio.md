@@ -23,6 +23,16 @@ button.onActivate = () => mixer.play(click, { maxInstances: 2 });
 
 `createBrowserAudio` makes an `AudioContext`, or uses the one given as `context` and leaves it open. It returns `mixer`, the `context`, `output` (the node every sound passes on its way out, where an analyser of the page can listen) and `dispose()`.
 
+**The backend alone.** `createWebAudioBackend(options)` of the same entry is the Web Audio half by itself, for a page that makes its mixer with `createAudioMixer`, as its tests do with a backend of their own. It takes `context`, `unlockTarget`, `pauseWhenHidden`, `onError` and `limiter`, as below. Make the mixer locked as the backend says, then attach it, so the lock follows the first press and a hidden page is silent:
+
+```js
+const backend = createWebAudioBackend();
+const mixer = createAudioMixer({ backend, locked: backend.locked, buses: ['music', 'effects'] });
+backend.attach(mixer);
+```
+
+`backend.context` and `backend.output` are as on `createBrowserAudio`, which does these three steps in one call.
+
 The adapter fetches nothing for `decode`: a game reads the bytes of a file the way it reads its other files and gives them to it. A stream is the one thing it is given an address for, because the browser reads that file itself.
 
 **The first press.** A browser lets a page sound only after the person has touched it. Until then `mixer.state` is `'locked'`. The adapter listens for `pointerdown`, `pointerup`, `touchend`, `keydown` and `click` on the document, or on `unlockTarget`, and asks the output to start inside the first of them. When the output runs the state becomes `'running'` and the listeners are removed. An output the system takes away later, as a phone does for a call, locks the mixer again until it is back or the next press brings it back.

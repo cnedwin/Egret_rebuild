@@ -69,6 +69,8 @@ save.update(data => { data.tier = 2; });
 
 存档保存为 `{ version, savedAt, data }`。旧存档逐步升级并写回。读不出、没通过 `validate`、比当前版本新，或比最早的升级步骤还旧的存档，从 `defaults` 重新开始，原文保存在 `<key>.unread` 下，不会丢失。存储拒绝写入（例如已满）时返回 `false` 并报告给 `onProblem`，不会抛出异常。`export()` 和 `import(text)` 用于手动导出导入。
 
+**`update(change)`** 要么原地修改数据、不返回值，要么返回新数据。返回的值必须通过 `validate`（默认要求是对象），原地修改后的数据也一样；不通过时什么也不写入，内存里的存档保持原样，返回 `false`，并以 `invalid` 报告给 `onProblem`。请把修改写成块体：`data => (data.tier = 2)` 这样的箭头函数会返回 `2`，会被拒绝。`save(next)` 对 `next` 做同样的检查。
+
 `browserSaveStorage()` 是页面的本地存储；页面没有可用存储时（无痕窗口、被屏蔽的站点）改用内存，`persistent` 说明是哪一种。`createMemorySaveStorage()` 是供测试使用的同类存储。
 
 ## 可以复现的随机数

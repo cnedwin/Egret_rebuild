@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1331 个导出，其中 2 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1335 个导出，其中 2 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1323,6 +1323,7 @@
 | --- | --- | --- |
 | `BrowserVideo` | 接口 | A video played by a video element, its pictures leased as textures. |
 | `BrowserVideoOptions` | 接口 | A browser video to make: its assets, its source or stream or element, and whether it loops, is muted and how loud. |
+| `BrowserVideoSource` | 接口 | One file of a film offered in several: its address and, when known, its media type. |
 | `createBrowserVideo` | 函数 | A video played by a page's video element and shown as a display object. |
 
 ## `@egret/engine/web/loop`
@@ -1513,6 +1514,9 @@
 | `BrowserAudio` | 接口 | A sound mixer playing through Web Audio, with its context and output node. |
 | `BrowserAudioOptions` | 接口 | Browser audio to make: its audio context, what unlocks it, whether it pauses when the page is hidden, and its limiter. |
 | `createBrowserAudio` | 函数 | Sound for a page on Web Audio. |
+| `createWebAudioBackend` | 函数 | A Web Audio backend for a mixer the page makes itself with `createAudioMixer`: const backend = createWebAudioBackend(); const mixer = createAudioMixer({ backend, locked: backend.locked }); backend.attach(mixer); `createBrowserAudio` does these three steps in one call. |
+| `WebAudioBackend` | 接口 | A backend for `createAudioMixer` that plays through Web Audio. |
+| `WebAudioBackendOptions` | 接口 | The Web Audio half of browser sound alone: its output, what unlocks it, whether it pauses when hidden, its limiter. |
 
 ## `@egret/engine/ui/semantics`
 

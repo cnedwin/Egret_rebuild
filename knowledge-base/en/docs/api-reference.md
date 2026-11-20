@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1331 exports; 2 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1335 exports; 2 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1323,6 +1323,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `BrowserVideo` | interface | A video played by a video element, its pictures leased as textures. |
 | `BrowserVideoOptions` | interface | A browser video to make: its assets, its source or stream or element, and whether it loops, is muted and how loud. |
+| `BrowserVideoSource` | interface | One file of a film offered in several: its address and, when known, its media type. |
 | `createBrowserVideo` | function | A video played by a page's video element and shown as a display object. |
 
 ## `@egret/engine/web/loop`
@@ -1513,6 +1514,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserAudio` | interface | A sound mixer playing through Web Audio, with its context and output node. |
 | `BrowserAudioOptions` | interface | Browser audio to make: its audio context, what unlocks it, whether it pauses when the page is hidden, and its limiter. |
 | `createBrowserAudio` | function | Sound for a page on Web Audio. |
+| `createWebAudioBackend` | function | A Web Audio backend for a mixer the page makes itself with `createAudioMixer`: const backend = createWebAudioBackend(); const mixer = createAudioMixer({ backend, locked: backend.locked }); backend.attach(mixer); `createBrowserAudio` does these three steps in one call. |
+| `WebAudioBackend` | interface | A backend for `createAudioMixer` that plays through Web Audio. |
+| `WebAudioBackendOptions` | interface | The Web Audio half of browser sound alone: its output, what unlocks it, whether it pauses when hidden, its limiter. |
 
 ## `@egret/engine/ui/semantics`
 
