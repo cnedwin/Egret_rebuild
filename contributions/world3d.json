@@ -488,6 +488,16 @@
       "path": "tests/world3d-moving-bounds.test.mjs",
       "originRole": "First-party behaviour tests of bounds that follow geometry moved in place, distance culling, the sky share of the atmosphere fog and sky colours given as fractions; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-ground-agents.test.mjs",
+      "originRole": "First-party behaviour tests of navigation laid over a height field, agents that turn toward the way they walk, and the centre and distance of streamed terrain tiles; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-sound.test.mjs",
+      "originRole": "First-party behaviour tests of a positional sound whose rate changes the voices playing, and of buffers made from samples, on a small stand-in for Web Audio; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [

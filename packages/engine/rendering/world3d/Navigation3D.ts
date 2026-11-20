@@ -9,6 +9,7 @@ import { World3DError, requireFinite3D, requirePositive3D } from './core3D.js';
 import { Geometry3D, createGeometry3D } from './Geometry3D.js';
 import type { Object3D } from './Object3D.js';
 import { createMeshShape3D } from './PhysicsMesh3D.js';
+import { HeightField3D } from './Terrain3D.js';
 
 /** The most triangles, agents and grid cells navigation holds. */
 export const NAVIGATION3D_LIMITS = Object.freeze({
@@ -25,6 +26,16 @@ export interface NavMeshOptions3D {
   readonly slopeLimit?: number;
   /** Corners closer than this are treated as one, which joins triangles that only touch. Defaults to 0.001. */
   readonly weldTolerance?: number;
+  /** From a height field only: where its centre is in the world, `[x, z]`. Defaults to `[0, 0]`. */
+  readonly center?: readonly [number, number];
+  /** From a height field only: the world rectangle to cover, `{ x, z, width, depth }` from its -X, -Z corner. Defaults to the whole field. */
+  readonly region?: { readonly x: number; readonly z: number; readonly width: number; readonly depth: number };
+  /** From a height field only: the size of a cell of the mesh, in world units. Defaults to the field's own cell. */
+  readonly cellSize?: number;
+  /** From a height field only: circles `{ x, z, radius }` in the world left out, around rocks, trees and posts. */
+  readonly holes?: readonly { readonly x: number; readonly z: number; readonly radius: number }[];
+  /** From a height field only: ground lower than this is left out, as under water. */
+  readonly minHeight?: number;
 }
 /** Where a point is on a navigation mesh: its triangle and the point itself. */
 export interface NavLocation3D {
@@ -834,15 +845,81 @@ export class NavMesh3D {
  * `slopeLimit` and faces pointing down are left out.
  */
 export function createNavMesh3D(
-  source: Geometry3D | Object3D | { readonly positions: ArrayLike<number>; readonly indices?: ArrayLike<number> },
+  source:
+    | Geometry3D
+    | Object3D
+    | HeightField3D
+    | { readonly positions: ArrayLike<number>; readonly indices?: ArrayLike<number> },
   options: NavMeshOptions3D = {}
 ): NavMesh3D {
+  if (source instanceof HeightField3D) return heightFieldNavMesh(source, options);
   if (source instanceof Geometry3D || (typeof source === 'object' && source !== null && 'traverse' in source)) {
     const shape = createMeshShape3D(source as Geometry3D | Object3D);
     return new NavMesh3D(shape.positions, shape.indices, options);
   }
   if (!source || !('positions' in source)) throw new World3DError('WORLD3D_INPUT_INVALID', 'navigation source');
   return new NavMesh3D(source.positions, source.indices, options);
+}
+
+/** A grid of two triangles a cell over the ground of a height field, less the holes and what lies too low. */
+function heightFieldNavMesh(field: HeightField3D, options: NavMeshOptions3D): NavMesh3D {
+  const [cx, cz] = options.center ?? [0, 0];
+  requireFinite3D(cx, 'center');
+  requireFinite3D(cz, 'center');
+  const region = options.region ?? {
+    x: cx - field.width / 2,
+    z: cz - field.depth / 2,
+    width: field.width,
+    depth: field.depth
+  };
+  const x0 = requireFinite3D(region.x, 'region'),
+    z0 = requireFinite3D(region.z, 'region'),
+    width = requirePositive3D(region.width, 'region'),
+    depth = requirePositive3D(region.depth, 'region'),
+    cell = requirePositive3D(options.cellSize ?? Math.min(field.cellWidth, field.cellDepth), 'cellSize'),
+    floor = options.minHeight === undefined ? -Infinity : requireFinite3D(options.minHeight, 'minHeight');
+  const holes = (options.holes ?? []).map(hole => [
+    requireFinite3D(hole.x, 'hole'),
+    requireFinite3D(hole.z, 'hole'),
+    requirePositive3D(hole.radius, 'hole')
+  ]);
+  const columns = Math.ceil(width / cell - 1e-9),
+    rows = Math.ceil(depth / cell - 1e-9);
+  if (columns * rows * 2 > NAVIGATION3D_LIMITS.maxTriangles)
+    throw new World3DError('WORLD3D_BUDGET', 'navigation triangles');
+  // Corners clamp to the field: a region past its edge stops at the edge.
+  const halfW = field.width / 2,
+    halfD = field.depth / 2,
+    positions = new Float32Array((columns + 1) * (rows + 1) * 3),
+    open = new Uint8Array((columns + 1) * (rows + 1));
+  for (let row = 0; row <= rows; row++)
+    for (let column = 0; column <= columns; column++) {
+      const x = x0 + Math.min(column * cell, width),
+        z = z0 + Math.min(row * cell, depth),
+        lx = Math.max(-halfW, Math.min(halfW, x - cx)),
+        lz = Math.max(-halfD, Math.min(halfD, z - cz)),
+        y = field.heightAt(lx, lz),
+        i = row * (columns + 1) + column;
+      positions[i * 3] = lx + cx;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = lz + cz;
+      open[i] =
+        y >= floor && holes.every(([hx, hz, r]) => (lx + cx - hx!) ** 2 + (lz + cz - hz!) ** 2 > r! * r!) ? 1 : 0;
+    }
+  const indices: number[] = [];
+  const add = (a: number, b: number, c: number): void => {
+    if (open[a] && open[b] && open[c]) indices.push(a, b, c);
+  };
+  for (let row = 0; row < rows; row++)
+    for (let column = 0; column < columns; column++) {
+      const a = row * (columns + 1) + column,
+        b = a + columns + 1;
+      // Counter-clockwise seen from above: (x, z), (x, z + 1), (x + 1, z), then (x + 1, z), (x, z + 1), (x + 1, z + 1).
+      add(a, b, a + 1);
+      add(a + 1, b, b + 1);
+    }
+  if (indices.length === 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'no walkable ground in the region');
+  return new NavMesh3D(positions, indices, options);
 }
 
 // ---- crowd -----------------------------------------------------------------------
@@ -856,6 +933,11 @@ export interface NavAgentOptions3D {
   readonly acceleration?: number;
   /** Scene node moved with the agent; it must not have a transformed parent. */
   readonly node?: Object3D;
+  /**
+   * Turn the node to face the way the agent walks, about the vertical axis, at most this many radians per second; its
+   * local -Z is its front. Undefined (the default) leaves the node's turning to the game; Infinity turns at once.
+   */
+  readonly turnSpeed?: number;
   readonly userData?: unknown;
 }
 /** An agent of a crowd: where it is and how it moves; give it a target, or stop it. */
@@ -866,6 +948,10 @@ export class NavAgent3D {
   speed: number;
   acceleration: number;
   node: Object3D | undefined;
+  /** Radians per second the node turns to face the way it walks; undefined leaves its turning to the game. */
+  turnSpeed: number | undefined;
+  /** The angle about the vertical axis the node faces, in radians, 0 facing -Z; kept while `turnSpeed` is set. */
+  heading = 0;
   userData: unknown;
   /** True once the agent has reached its target, or has none. */
   arrived = true;
@@ -882,6 +968,9 @@ export class NavAgent3D {
     this.speed = requirePositive3D(options.speed ?? 3.5, 'agent speed');
     this.acceleration = requirePositive3D(options.acceleration ?? 20, 'agent acceleration');
     this.node = options.node;
+    if (options.turnSpeed !== undefined)
+      this.turnSpeed =
+        options.turnSpeed === Infinity ? Infinity : requirePositive3D(options.turnSpeed, 'agent turn speed');
     this.userData = options.userData;
   }
   /** Walk to a point; the path is worked out on the next crowd update. */
@@ -938,10 +1027,23 @@ export class NavCrowd3D {
     const index = this.agents.indexOf(agent);
     if (index >= 0) this.agents.splice(index, 1);
   }
-  private sync(agent: NavAgent3D): void {
+  private sync(agent: NavAgent3D, dt = 0): void {
     const node = agent.node;
     if (node) {
       node.position.set(agent.position);
+      const turn = agent.turnSpeed,
+        vx = agent.velocity[0],
+        vz = agent.velocity[2];
+      // Standing still, or nearly, keeps the way it faced.
+      if (turn !== undefined && dt > 0 && vx * vx + vz * vz > 1e-4) {
+        const wanted = Math.atan2(-vx, -vz);
+        let delta = wanted - agent.heading;
+        delta -= Math.round(delta / (2 * Math.PI)) * 2 * Math.PI;
+        const most = turn * dt;
+        agent.heading += Math.abs(delta) <= most ? delta : Math.sign(delta) * most;
+        agent.heading -= Math.round(agent.heading / (2 * Math.PI)) * 2 * Math.PI;
+        node.setQuaternion(0, Math.sin(agent.heading / 2), 0, Math.cos(agent.heading / 2));
+      }
       node.markTransformDirty();
     }
   }
@@ -1084,7 +1186,7 @@ export class NavCrowd3D {
           }
       }
     }
-    for (const agent of agents) this.sync(agent);
+    for (const agent of agents) this.sync(agent, dt);
   }
 }
 /** Makes a crowd of agents that move along a navigation mesh and keep apart. */
