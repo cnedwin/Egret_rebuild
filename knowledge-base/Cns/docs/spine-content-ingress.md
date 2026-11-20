@@ -14,7 +14,7 @@ M2.1 提供可选的 `@egret/spine` 资产 SDK。它通过官方 Core 4.3.13 读
 
 ## 清单配置
 
-使用既有通用清单／构建接口生成并准入的 `egret.resource-manifest/1`。既有 PNG／图集／序列帧及多页内容配方保持原样，本次不注册 Spine Node producer；调用方提供已准入、声明完整性身份的源产物。
+使用既有通用清单／构建接口生成并准入的 `egret.resource-manifest/1`。清单可以如下手写，也可以由内容构建生成（见下一节）。
 
 | 资源种类 | 导入器（版本 1.0.0） | 产物格式 | 媒体类型 | 有序依赖／设置 |
 | --- | --- | --- | --- | --- |
@@ -23,9 +23,15 @@ M2.1 提供可选的 `@egret/spine` 资产 SDK。它通过官方 Core 4.3.13 读
 | spine-atlas | egret.spine-atlas | spine-atlas/4.3-1 | text/plain | 一至十六张不同 PNG；coreVersion: 4.3.13 和有序 pageNames |
 | image | egret.png | png/1 | image/png | 无依赖；既有 PNG 配置 |
 
-Spine／图集只接受上述精确设置。二进制骨骼（`.skel`，最大 4 MiB）通过受约束的准入由 Core 自己的二进制读取器读取，因为 Core 二进制 API 不提供数量预算，源字节限制本身不足以约束分配：在 Core 读取期间，每个数量、索引和字符串长度（均为正的变长整数）都必须能放进文件剩余的字节（另有 64 KiB 余量），Core 为时间线和顶点创建的数值存储按文件每字节十六个元素计入预算。任一超限都会在创建存储之前以 `SPINE_BINARY_LIMIT_FAILED` 拒绝；这些检查只在该次同步读取期间安装，读取后即移除。工厂收到的二进制骨骼绑定的种类为 `binary`，元数据 provider 以 `Uint8Array` 给出其字节；设置费用为其字节长度。版本、设置上限和页面规则与 JSON 相同，`info.format` 为 `binary`。清单中无关资源仍可由其他加载器使用。页面名称区分大小写，为一至 255 个 UTF-16 单元的 Unicode 标量字符串，不含 ASCII 控制字符；名称次序及实际图集页名必须与图像依赖次序完全一致。名称是绑定标签，不是文件系统路径。
+Spine／图集只接受上述精确设置：写作条目自身的 settings，或在内容构建生成的清单中写作其配方信封的 `options`（`recipeSchemaVersion` 为 1、`outputFormatVersion` 为条目自身格式、`referenceFormatVersion` 为 `none`，并带生产者身份）；其他形状的信封以 `SPINE_PROFILE_FAILED` 拒绝。二进制骨骼（`.skel`，最大 4 MiB）通过受约束的准入由 Core 自己的二进制读取器读取，因为 Core 二进制 API 不提供数量预算，源字节限制本身不足以约束分配：在 Core 读取期间，每个数量、索引和字符串长度（均为正的变长整数）都必须能放进文件剩余的字节（另有 64 KiB 余量），Core 为时间线和顶点创建的数值存储按文件每字节十六个元素计入预算。任一超限都会在创建存储之前以 `SPINE_BINARY_LIMIT_FAILED` 拒绝；这些检查只在该次同步读取期间安装，读取后即移除。工厂收到的二进制骨骼绑定的种类为 `binary`，元数据 provider 以 `Uint8Array` 给出其字节；设置费用为其字节长度。版本、设置上限和页面规则与 JSON 相同，`info.format` 为 `binary`。清单中无关资源仍可由其他加载器使用。页面名称区分大小写，为一至 255 个 UTF-16 单元的 Unicode 标量字符串，不含 ASCII 控制字符；名称次序及实际图集页名必须与图像依赖次序完全一致。名称是绑定标签，不是文件系统路径。
 
 原始图集由 Core 解析。[Spine 格式](https://esotericsoftware.com/spine-atlas-format)中的 90 度旋转为逆时针，而白鹭通用 SpriteSheet 的打包约定是顺时针；本接入不在两者之间强制转换或改写 UV。页面为 PNG。图集声明 `pma: true` 的页面可以接入：加载器为它制作一份非预乘副本并从副本绘制，因为共享帧只接受非预乘图像。红、绿、蓝各除以透明度并四舍五入到最近的字节，不超过 255；透明度为 0 的像素变为透明黑，所以预乘页面在透明度为零处叠加的光不会保留。副本按每像素四字节计入该设置的费用，由共享该设置的各组共用，并随设置一起释放；调用方提供器给出的原页面不被修改。`info.pages[i].sourcePremultiplied` 标明哪些页面做了副本。除法在透明度低时会损失精度：透明度 `a` 下存储的字节 `c` 还原后，与被预乘的原颜色相差不超过 `255 / (2a)`。这条规则目前只有自有测试，没有来自 Editor 导出的参考。采样／颜色等价、mips 和实际绘制属于 M2.3 验收。
+
+## 经内容构建产出
+
+[内容构建](content-build-pipeline.md)提供三个 Spine 生产器。`egret.spine-atlas` 配方以图集文本为源文件，设置 `coreVersion: 4.3.13` 和 `pageNames`，并按页名顺序为每一页依赖一个 `egret.png` 配方。`egret.spine-json` 或 `egret.spine-binary` 配方以骨骼导出为源文件，设置 `coreVersion: 4.3.13`，只依赖该图集配方。每个产物就是导出的原始字节，读通之后原样保留：图集不超过 256 KiB，由 `@egret/project/spine` 的 Spine 4.3 读取器读取，必须恰好声明所列页面，且每页尺寸与其 PNG 一致；JSON 骨骼不超过 4 MiB，由同一读取器连同图集读取；二进制骨骼不超过 4 MiB，文件头须带 4.3 导出版本。读取器拒绝的源文件以 `CONTENT_IMPORT_SPINE` 及读取器诊断使构建失败，此时尚未发布或采用任何内容。构建生成的清单可直接交给 `createSpineContentLoader`。
+
+缓存键沿用构建规则：同一批源文件再次构建时全部命中缓存；改动骨骼只重建该骨骼；改动图集会重建图集及其上的两个骨骼，但不重建页面。这里检查的是导出的结构与版本，不证明导出已获授权，不播放动画，也不生成 mip 或压缩变体；这些仍在 [#83](https://github.com/cnedwin/Egret_rebuild/issues/83) 中开放。
 
 ## 所有权与公共 API
 

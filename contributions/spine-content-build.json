@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/spine/test/content-build.test.mjs",
+      "originRole": "First-party Node tests of Spine 4.3 atlas, JSON and binary skeleton producers in the content build, their cache keys, their refusals and the Spine loader reading the build's manifest; programmatic fixtures only; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

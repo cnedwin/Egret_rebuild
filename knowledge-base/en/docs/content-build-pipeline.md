@@ -6,7 +6,7 @@ M2.1 build/runtime profile · updated 2026-10-30 · PNG, single-page atlas, sequ
 
 ## From authored files to playable resources
 
-A content recipe joins source files already recorded in a project to four fixed importers. The build verifies source bytes, evaluates dependency keys, reuses complete cached outputs or imports changed resources, then binds the results back to that project. Atlas and sequence outputs use the existing SpriteSheet and SequenceClip representation; they do not introduce a second animation player.
+A content recipe joins source files already recorded in a project to a fixed set of importers. The build verifies source bytes, evaluates dependency keys, reuses complete cached outputs or imports changed resources, then binds the results back to that project. Atlas and sequence outputs use the existing SpriteSheet and SequenceClip representation; they do not introduce a second animation player.
 
 The first profile preserves an admitted PNG as the primary distribution artifact and produces a tightly packed, top-left, straight-alpha RGBA8 reference. Atlas metadata produces named normalized frames and sequence inputs. A sequence references its atlas through dependency ordinal zero; a single-page atlas references its page through ordinal zero. Intrinsic artifacts contain no owning project ID, resource ID, file ID or physical path. The admitted resource manifest resolves those dependencies.
 
@@ -24,7 +24,7 @@ The sample pixels and metadata are original synthetic fixtures under Apache-2.0.
 
 The old resource description still requires an actual artifact. Existing keys, runtime identities, manifest bytes and default package entries retain their meaning. There is no placeholder hash and no parallel key implementation.
 
-A recipe has format `egret.content-build-recipe/1`, one `targetProfile`, and recipes with `resourceId`, `sourceFileId`, `importer`, `settings`, `artifactFormatVersion`, ordered `dependencies` and `provenance`. The finite importer identities are `egret.png@1.0.0`, `egret.aseprite-atlas@1.0.0`, `egret.sequence@1.0.0` and `egret.atlas-pages@1.0.0`. The Aseprite single-page profile is `aseprite-json-array-1.3.18.6-v1`; rotations and multiple pages are refused. The output schemas are `png/1`, `egret.atlas/1`, `egret.sequence/1` and the separate `egret.atlas-pages/1`.
+A recipe has format `egret.content-build-recipe/1`, one `targetProfile`, and recipes with `resourceId`, `sourceFileId`, `importer`, `settings`, `artifactFormatVersion`, ordered `dependencies` and `provenance`. The finite importer identities are `egret.png@1.0.0`, `egret.aseprite-atlas@1.0.0`, `egret.sequence@1.0.0`, `egret.atlas-pages@1.0.0`, and for Spine 4.3 `egret.spine-atlas@1.0.0`, `egret.spine-json@1.0.0` and `egret.spine-binary@1.0.0` ([Spine through the content build](spine-content-ingress.md#through-the-content-build)). The Aseprite single-page profile is `aseprite-json-array-1.3.18.6-v1`; rotations and multiple pages are refused. The output schemas are `png/1`, `egret.atlas/1`, `egret.sequence/1` and the separate `egret.atlas-pages/1`.
 
 New recipes receive a reserved settings envelope containing recipe/output/reference versions, their options and the actual Node/pngjs/zlib producer identity. Recipes cannot select executable code. Build tools enforce the installed versions before lookup. Target labels participate in the existing key algorithm, but this first importer set emits shared artifacts; a different label does not qualify a platform or target-specific texture conversion.
 

@@ -6,7 +6,7 @@ M2.1 构建／运行时配置 · 更新于 2026-10-30 · PNG、单页图集、�
 
 ## 从源文件到可播放资源
 
-内容配方把项目中已经登记的源文件交给四种固定导入器。构建过程验证源文件字节、计算依赖键，复用完整缓存或重新导入变化的资源，再将产物绑定到当前项目。图集与序列帧产物沿用现有 SpriteSheet 和 SequenceClip 表示，不增加另一套动画播放器。
+内容配方把项目中已经登记的源文件交给一组固定导入器。构建过程验证源文件字节、计算依赖键，复用完整缓存或重新导入变化的资源，再将产物绑定到当前项目。图集与序列帧产物沿用现有 SpriteSheet 和 SequenceClip 表示，不增加另一套动画播放器。
 
 首批配置保留准入 PNG 作为主分发产物，并生成按行紧密排列、左上原点、直通 Alpha 的 RGBA8 参考产物。图集元数据生成具名规范帧和序列输入。序列通过依赖序号零引用图集，图集通过序号零引用页面。独立产物中不包含所属项目 ID、资源 ID、文件 ID 或物理路径；这些依赖由准入后的资源清单解析。
 
@@ -24,7 +24,7 @@ M2.1 构建／运行时配置 · 更新于 2026-10-30 · PNG、单页图集、�
 
 旧资源描述仍要求真实产物。已有构建键、运行时身份、清单字节和默认包入口保持原有含义，不使用占位哈希，也不增加平行的键算法。
 
-配方格式为 `egret.content-build-recipe/1`，包含一个 `targetProfile` 和若干配方，每项有 `resourceId`、`sourceFileId`、`importer`、`settings`、`artifactFormatVersion`、有序 `dependencies` 与 `provenance`。固定导入器为 `egret.png@1.0.0`、`egret.aseprite-atlas@1.0.0`、`egret.sequence@1.0.0` 和 `egret.atlas-pages@1.0.0`。Aseprite 单页配置为 `aseprite-json-array-1.3.18.6-v1`，拒绝旋转和多页。输出格式分别为 `png/1`、`egret.atlas/1`、`egret.sequence/1` 和独立的 `egret.atlas-pages/1`。
+配方格式为 `egret.content-build-recipe/1`，包含一个 `targetProfile` 和若干配方，每项有 `resourceId`、`sourceFileId`、`importer`、`settings`、`artifactFormatVersion`、有序 `dependencies` 与 `provenance`。固定导入器为 `egret.png@1.0.0`、`egret.aseprite-atlas@1.0.0`、`egret.sequence@1.0.0`、`egret.atlas-pages@1.0.0`，以及 Spine 4.3 的 `egret.spine-atlas@1.0.0`、`egret.spine-json@1.0.0` 和 `egret.spine-binary@1.0.0`（[经内容构建产出 Spine](spine-content-ingress.md#经内容构建产出)）。Aseprite 单页配置为 `aseprite-json-array-1.3.18.6-v1`，拒绝旋转和多页。输出格式分别为 `png/1`、`egret.atlas/1`、`egret.sequence/1` 和独立的 `egret.atlas-pages/1`。
 
 新配方使用受保护的设置封装，纳入配方、输出和参考格式版本、选项以及实际 Node/pngjs/zlib 生产者身份。配方不能指定可执行代码；构建工具在查询缓存前核实已安装版本。目标标签参与现有键算法，但首批导入器生成共享产物；更换标签不代表某个平台或专用纹理转换已经验收。
 

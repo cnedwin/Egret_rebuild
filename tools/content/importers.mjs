@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
-// Four finite Node producers; source/cache verification remains the runner's authority.
+// Finite Node producers; source/cache verification remains the runner's authority.
 import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
 import {types} from 'node:util';
 import {createAtlasImportPlan} from '@egret/project/atlas';
+import {createSpineImportPlan} from '@egret/project/spine';
 import {decodeContentPng} from './png.mjs';
 import {inspectFontArtifact} from '@egret/contracts/resources';
 const require=createRequire(import.meta.url);
@@ -17,7 +18,13 @@ const mappings=Object.freeze({
   'egret.aseprite-atlas':Object.freeze({kind:'atlas',format:'egret.atlas/1',reference:'none',dependency:'image'}),
   'egret.sequence':Object.freeze({kind:'sequence',format:'egret.sequence/1',reference:'none',dependency:'atlas'}),
   'egret.atlas-pages':Object.freeze({kind:'atlas',format:'egret.atlas-pages/1',reference:'none',dependency:'images'}),
+  // Spine 4.3: the atlas text over its PNG pages, and a skeleton exported as JSON or binary over that atlas. Each is
+  // kept as it was exported, once it has been read through; the runtime reads the same bytes.
+  'egret.spine-atlas':Object.freeze({kind:'spine-atlas',format:'spine-atlas/4.3-1',reference:'none',dependency:'pages'}),
+  'egret.spine-json':Object.freeze({kind:'spine',format:'spine-json/4.3-1',reference:'none',dependency:'spine-atlas'}),
+  'egret.spine-binary':Object.freeze({kind:'spine',format:'spine-binary/4.3-1',reference:'none',dependency:'spine-atlas'}),
 });
+const SPINE_CORE='4.3.13',SPINE_ATLAS_LIMIT=262144,SPINE_SKELETON_LIMIT=4194304;
 function fault(code,message,cause){const error=new Error(message,cause===undefined?undefined:{cause});error.code='CONTENT_IMPORT_'+code;return error;}
 function exact(value,keys){
   if(value===null||typeof value!=='object'||Array.isArray(value)||![null,Object.prototype].includes(Object.getPrototypeOf(value)))return false;
@@ -38,12 +45,17 @@ export function getContentProducer(){
 }
 function admitEntry(entry){
   const actual=getContentProducer();
-  if(!entry||!exact(entry.importer,['id','version'])||entry.importer.version!=='1.0.0'||!Object.hasOwn(mappings,entry.importer.id))throw fault('INPUT','Content importer must be one of the four registered 1.0.0 producers.');
+  if(!entry||!exact(entry.importer,['id','version'])||entry.importer.version!=='1.0.0'||!Object.hasOwn(mappings,entry.importer.id))throw fault('INPUT','Content importer must be one of the registered 1.0.0 producers.');
   const mapping=mappings[entry.importer.id],settings=entry.settings;
   if(entry.resourceKind!==mapping.kind||entry.artifactFormatVersion!==mapping.format||!exact(settings,['recipeSchemaVersion','options','producer','outputFormatVersion','referenceFormatVersion'])||settings.recipeSchemaVersion!==1||settings.outputFormatVersion!==mapping.format||settings.referenceFormatVersion!==mapping.reference||!exact(settings.producer,['nodeVersion','pngjsVersion','zlibVersion'])||Object.keys(actual).some(key=>settings.producer[key]!==actual[key]))throw fault('INPUT','Content kind, artifact format, settings envelope and actual producer identity must match the selected finite importer.');
-  if(mapping.kind==='font'?(!exact(settings.options,['family','flavor'])||!text(settings.options.family)||!settings.options.family.length||settings.options.family.length>256||/[\u0000-\u001f\u007f]/u.test(settings.options.family)||!['truetype','opentype'].includes(settings.options.flavor)):mapping.dependency==='images'?!exact(settings.options,[]):mapping.kind==='atlas'?!exact(settings.options,['pageName'])||!text(settings.options.pageName)||!settings.options.pageName:!exact(settings.options,[]))throw fault('INPUT','Only the finite importer options are supported.');
-  if(!Array.isArray(entry.dependencies)||(mapping.dependency==='images'?!integer(entry.dependencies.length,1,16):entry.dependencies.length!==(mapping.dependency?1:0)))throw fault('INPUT','Content importer requires its exact declared dependency count.');
+  if(mapping.kind==='font'?(!exact(settings.options,['family','flavor'])||!text(settings.options.family)||!settings.options.family.length||settings.options.family.length>256||/[\u0000-\u001f\u007f]/u.test(settings.options.family)||!['truetype','opentype'].includes(settings.options.flavor)):mapping.dependency==='images'?!exact(settings.options,[]):mapping.kind==='spine-atlas'?!spinePageNames(settings.options):mapping.kind==='spine'?!exact(settings.options,['coreVersion'])||settings.options.coreVersion!==SPINE_CORE:mapping.kind==='atlas'?!exact(settings.options,['pageName'])||!text(settings.options.pageName)||!settings.options.pageName:!exact(settings.options,[]))throw fault('INPUT','Only the finite importer options are supported.');
+  if(!Array.isArray(entry.dependencies)||(mapping.dependency==='images'?!integer(entry.dependencies.length,1,16):mapping.dependency==='pages'?entry.dependencies.length!==settings.options.pageNames.length:entry.dependencies.length!==(mapping.dependency?1:0)))throw fault('INPUT','Content importer requires its exact declared dependency count.');
   return mapping;
+}
+function spinePageNames(options){
+  if(!exact(options,['coreVersion','pageNames'])||options.coreVersion!==SPINE_CORE||!Array.isArray(options.pageNames)||!integer(options.pageNames.length,1,16))return false;
+  const names=options.pageNames;
+  return new Set(names).size===names.length&&names.every(name=>text(name)&&name.length>0&&name.length<=255&&!/[\u0000-\u001f\u007f]/u.test(name));
 }
 const typedPrototype=Object.getPrototypeOf(Uint8Array.prototype);
 const backingGetter=Object.getOwnPropertyDescriptor(typedPrototype,'buffer').get;
@@ -75,7 +87,7 @@ function dependencyFor(entry,dependencies,mapping){
   const outputs=dependency.outputs,roles=mapping.dependency==='image'?['primary','rgba']:['primary'];
   if(outputs.length!==roles.length||roles.some(name=>outputs.filter(o=>o?.name===name).length!==1))throw fault('INPUT','Dependency must supply its exact intrinsic output roles.');
   for(const output of outputs){
-    const expected=output.name==='rgba'?'application/octet-stream':mapping.dependency==='image'?'image/png':'application/json';
+    const expected=output.name==='rgba'?'application/octet-stream':mapping.dependency==='image'?'image/png':mapping.dependency==='spine-atlas'?'text/plain':'application/json';
     if(!exact(output,['name','mediaType','bytes'])||output.mediaType!==expected)throw fault('INPUT','Dependency output media type or shape is invalid.');
     view(output.bytes);
   }
@@ -151,6 +163,60 @@ function buildAtlasPages(entry,source,dependencies,remainingOutputBytes){
   return artifact({format:'egret.atlas-pages/1',pages},remainingOutputBytes);
 }
 
+const spineProvenance=value=>{try{return provenance(value);}catch(cause){throw fault('SPINE','A Spine source requires origin, license and notice provenance strings.',cause);}};
+function spineRefused(what,result){
+  const first=result.diagnostics.find(d=>d.severity==='error')??result.diagnostics[0];
+  return fault('SPINE',what+' was refused by the Spine 4.3 reader: '+first.code+(first.pointer?' at '+first.pointer:'')+' ('+first.message+')',result.diagnostics);
+}
+/** The atlas, read with a skeleton of one bone so that only the atlas and its pages are judged. */
+const ATLAS_PROBE=JSON.stringify({skeleton:{spine:SPINE_CORE},bones:[{name:'root'}]});
+function spinePlan(entry,skeletonText,atlasEntry,atlasText){
+  const names=atlasEntry.settings.options.pageNames;
+  return createSpineImportPlan({
+    skeleton:{id:entry.id,text:skeletonText,provenance:spineProvenance(entry.provenance)},
+    atlas:{id:atlasEntry.id,text:atlasText,provenance:spineProvenance(atlasEntry.provenance)},
+    pages:names.map((pageName,index)=>({pageName,assetId:atlasEntry.dependencies[index],provenance:spineProvenance(atlasEntry.provenance)}))
+  });
+}
+function buildSpineAtlas(entry,source,dependencies,remainingOutputBytes){
+  if(source.length>SPINE_ATLAS_LIMIT||source.length>remainingOutputBytes)throw fault('LIMIT','A Spine atlas is limited to 256 KiB.');
+  if(!Array.isArray(dependencies)||dependencies.length!==entry.dependencies.length)throw fault('INPUT','Dependency records must exactly match the admitted ordered dependencies.');
+  const atlasText=decodeText(source),result=spinePlan({id:'atlas-probe',provenance:entry.provenance},ATLAS_PROBE,entry,atlasText);
+  if(!result.ok)throw spineRefused('The Spine atlas',result);
+  const names=entry.settings.options.pageNames;
+  if(result.value.pages.length!==names.length)throw fault('SPINE','The Spine atlas must declare exactly the named pages.');
+  for(const page of result.value.pages){
+    const index=names.indexOf(page.name);
+    const dependency=dependencyFor({...entry,dependencies:[entry.dependencies[index]]},[dependencies[index]],{dependency:'image'});
+    const primary=view(dependency.outputs.find(output=>output.name==='primary').bytes),dimensions=header(primary);
+    if(!dimensions)throw fault('INPUT','A Spine atlas page must be a verified PNG dependency.');
+    // A page whose size the export wrote differs from its picture would map every region onto the wrong pixels.
+    if(page.width!==0&&page.height!==0&&(page.width!==dimensions.width||page.height!==dimensions.height))throw fault('SPINE','Spine atlas page '+page.name+' is '+page.width+'x'+page.height+' but its image is '+dimensions.width+'x'+dimensions.height+'.');
+  }
+  return {outputs:[{name:'primary',mediaType:'text/plain',bytes:new Uint8Array(source)}],scanlineBytes:0};
+}
+/** The editor version a Spine binary was exported by: after the 8-byte hash, a string counted by a varint plus one. */
+function spineBinaryVersion(bytes){
+  let at=8,length=0,shift=0,byte;
+  do{if(at>=bytes.length||shift>28)return undefined;byte=bytes[at++];length|=(byte&127)<<shift;shift+=7;}while(byte&128);
+  if(length<2||length>33||at+length-1>bytes.length)return undefined;
+  try{return new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(at,at+length-1));}catch{return undefined;}
+}
+function buildSpineSkeleton(entry,source,dependency,remainingOutputBytes){
+  if(source.length>SPINE_SKELETON_LIMIT||source.length>remainingOutputBytes)throw fault('LIMIT','A Spine skeleton is limited to 4 MiB.');
+  const atlasEntry=dependency.entry,atlasText=decodeText(view(dependency.outputs[0].bytes));
+  if(entry.importer.id==='egret.spine-binary'){
+    const version=spineBinaryVersion(source);
+    if(version===undefined||!/^4\.3\.\d+$/u.test(version))throw fault('SPINE','A Spine binary must be exported by a 4.3 release; this one reads '+(version===undefined?'no version':JSON.stringify(version))+'.');
+    const result=spinePlan({id:entry.id,provenance:entry.provenance},ATLAS_PROBE,atlasEntry,atlasText);
+    if(!result.ok)throw spineRefused('The Spine atlas',result);
+    return {outputs:[{name:'primary',mediaType:'application/octet-stream',bytes:new Uint8Array(source)}],scanlineBytes:0};
+  }
+  const result=spinePlan(entry,decodeText(source),atlasEntry,atlasText);
+  if(!result.ok)throw spineRefused('The Spine skeleton',result);
+  return {outputs:[{name:'primary',mediaType:'application/json',bytes:new Uint8Array(source)}],scanlineBytes:0};
+}
+
 /** Synchronous owned intrinsic bytes; PNG work charges both bounded decompressions. */
 export function buildContentResource(entry,sourceBytes,dependencies,{remainingScanlineBytes=WORK_LIMIT,remainingOutputBytes=OUTPUT_LIMIT}={}){
   const mapping=admitEntry(entry),source=view(sourceBytes);
@@ -159,7 +225,12 @@ export function buildContentResource(entry,sourceBytes,dependencies,{remainingSc
     if(new Set(entry.dependencies).size!==entry.dependencies.length||entry.dependencies.some(id=>typeof id!=='string'||!id))throw fault('INPUT','Atlas page dependencies must be distinct resource IDs.');
     return buildAtlasPages(entry,source,dependencies,remainingOutputBytes);
   }
+  if(mapping.dependency==='pages'){
+    if(new Set(entry.dependencies).size!==entry.dependencies.length||entry.dependencies.some(id=>typeof id!=='string'||!id))throw fault('INPUT','Atlas page dependencies must be distinct resource IDs.');
+    return buildSpineAtlas(entry,source,dependencies,remainingOutputBytes);
+  }
   const dependency=dependencyFor(entry,dependencies,mapping);
+  if(mapping.kind==='spine')return buildSpineSkeleton(entry,source,dependency,remainingOutputBytes);
   if(mapping.kind==='font'){
     if(source.length>33554432||source.length>remainingOutputBytes)throw fault('LIMIT','Font source/output exceeds the declared budget.');
     let info;try{info=inspectFontArtifact(source);}catch(cause){throw fault('FONT','Standalone SFNT admission refused.',cause);}
