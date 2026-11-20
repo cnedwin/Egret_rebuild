@@ -383,6 +383,11 @@ export interface PlayFollow3D {
    * `{ y: 3, z: 7, turn: true }` is above and behind whichever way the thing faces. False unless given.
    */
   readonly turn?: boolean;
+  /**
+   * How far above the thing the camera looks: 0 unless given. A tall tower or a sky the thing moves under is framed by
+   * looking higher; the camera keeps its place.
+   */
+  readonly lookY?: number;
 }
 /** A burst of particles: its color and count, how fast and how long they fly, their size and gravity. */
 export interface PlayBurst3D {
@@ -672,7 +677,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
   const lamps = new Set<PlayLamp3D>();
   // What falls, made when first asked for and kept over what the camera looks at.
   // A soft round dot that every flake and drop is drawn with, made when first needed.
-  let dot: Texture3D | undefined;
+  let dot: Texture3D | undefined, streak: Texture3D | undefined;
   const dotTexture = (): Texture3D => {
     if (dot !== undefined) return dot;
     const size = 16,
@@ -683,6 +688,20 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         data.set([255, 255, 255, Math.round(255 * Math.max(0, Math.min(1, (1 - d) * 2.5)))], 4 * (y * size + x));
       }
     return (dot = new Texture3D({ width: size, height: size, data }, { wrapS: 'clamp', wrapT: 'clamp' }));
+  };
+  // A drop of rain is seen as a streak: a thin upright line, brightest in its middle and fading to its ends.
+  const streakTexture = (): Texture3D => {
+    if (streak !== undefined) return streak;
+    const width = 8,
+      height = 32,
+      data = new Uint8Array(4 * width * height);
+    for (let y = 0; y < height; y++)
+      for (let x = 0; x < width; x++) {
+        const across = Math.max(0, 1 - Math.abs(x + 0.5 - width / 2) / 1.5),
+          along = Math.sin((Math.PI * (y + 0.5)) / height);
+        data.set([255, 255, 255, Math.round(255 * Math.min(1, across) * along)], 4 * (y * width + x));
+      }
+    return (streak = new Texture3D({ width, height, data }, { wrapS: 'clamp', wrapT: 'clamp' }));
   };
   let falling: GpuParticles3D | undefined,
     fallingKind: PlayWeather3D = 'none',
@@ -704,7 +723,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       direction: [snow ? 0.15 : 0.05, -1, 0],
       spread: snow ? 0.5 : 0.04,
       gravity: [0, snow ? -0.4 : -6, 0],
-      startSize: snow ? [0.12, 0.22] : [0.05, 0.07],
+      startSize: snow ? [0.12, 0.22] : [0.3, 0.42],
       startColor: snow ? 0xffffff : 0xa8bcd8,
       startOpacity: snow ? 0.95 : 0.55,
       endOpacity: snow ? 0.9 : 0.5,
@@ -715,7 +734,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       loop: true,
       space: 'world',
       seed: 7,
-      map: dotTexture()
+      map: snow ? dotTexture() : streakTexture()
     });
     falling.castShadow = false;
     falling.receiveShadow = false;
@@ -728,6 +747,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     shaken = [0, 0, 0];
   let followed: PlayThing3D | undefined,
     turning = false,
+    lookAbove = 0,
     offset = [0, 4, 8],
     smooth = 6,
     shakeAmount = 0,
@@ -922,6 +942,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         () => pieceShape.dispose(),
         () => fall('none', 0),
         () => dot?.dispose(),
+        () => streak?.dispose(),
         () => unplace?.(),
         () => app?.dispose(),
         () => deep?.remove()
@@ -956,7 +977,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       base[1] = base[1]! + (y - base[1]!) * share;
       base[2] = base[2]! + (z - base[2]!) * share;
       aim[0] = followed.x;
-      aim[1] = followed.y;
+      aim[1] = followed.y + lookAbove;
       aim[2] = followed.z;
     }
     if (shakeLeft > 0) {
@@ -1175,10 +1196,11 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         offset = [finite(where.x) ? where.x : 0, finite(where.y) ? where.y : 4, finite(where.z) ? where.z : 8];
         smooth = finite(where.smooth) && where.smooth >= 0 ? where.smooth : 6;
         turning = where.turn === true;
+        lookAbove = finite(where.lookY) ? where.lookY : 0;
         // It starts where it will stay, and does not fly in from where the camera was.
         [base[0], base[1], base[2]] = placeBy(thing);
         aim[0] = thing.x;
-        aim[1] = thing.y;
+        aim[1] = thing.y + lookAbove;
         aim[2] = thing.z;
       },
       hitStop(seconds = 0.06) {

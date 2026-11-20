@@ -22,8 +22,11 @@
 //     await player.picture('won');
 //   }
 //
-// `look` gives the colour the page shows at a place of the stage. The script runs on the page loaded afresh, after
-// the blind checks; what it throws fails the check `played`.
+// `look` gives the colour the page shows at a place of the stage. `player.until(test, label, seconds)` looks again
+// about every 0.12 seconds of real time until `test(look)` is true, and fails after `seconds` (20 unless given).
+// `player.read(fn)` runs a function in the page, for what a game keeps on `window`: `player.read(() => window.state.level)`.
+// The script runs on the page loaded afresh, with what blind play saved forgotten, after the blind checks; what it
+// throws fails the check `played`.
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
@@ -239,6 +242,8 @@ function driver(tab, PNG, out, size) {
       throw new Error(label + ' did not happen in ' + seconds + ' seconds');
     },
     sounds: () => tab.evaluate(() => window.__verify.soundsStarted),
+    /** Runs a function in the page and gives what it returns: `player.read(() => window.state.collected)`. */
+    read: (fn, ...args) => tab.evaluate(fn, ...args),
     expect(condition, message) {
       if (!condition) throw new Error('Expected: ' + message);
     },
@@ -418,6 +423,18 @@ export async function verifyGame({ chromium, PNG, file, out, script }) {
       const before = [seen.pageErrors.length, seen.consoleErrors.length];
       const played = { pass: false, pictures: [] };
       try {
+        // What blind play saved (a level reached, a high score) is forgotten, so the script starts a new game.
+        await tab
+          .evaluate(async () => {
+            try {
+              localStorage.clear();
+              sessionStorage.clear();
+              for (const { name } of (await indexedDB.databases?.()) ?? []) if (name) indexedDB.deleteDatabase(name);
+            } catch {
+              /* A page without storage has nothing to forget. */
+            }
+          })
+          .catch(() => {});
         await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
         await tab.waitForTimeout(1500);
         const game = driver(tab, PNG, out, script.stage),

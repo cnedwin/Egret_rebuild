@@ -74,7 +74,7 @@ The WebGL2 fragment shader now selects the directional cascade and its far edge 
 
 ## The camera and the sun
 
-`game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6 })` keeps the camera that far from a thing, looking at it, and catching up with it smoothly; `smooth: 0` holds it exactly, and `turn: true` turns that place with the thing's `rotationY`, so the camera stays behind a car or a figure whichever way it faces. Without `follow`, set `game.camera.x`, `.y` and `.z` and call `game.camera.lookAt(x, y, z)`; `game.camera.fov` is the angle it sees, 55 degrees unless set. It starts at (0, 6, 12) looking at the middle of the world.
+`game.follow(thing, { x: 0, y: 4, z: 8, smooth: 6 })` keeps the camera that far from a thing, looking at it, and catching up with it smoothly; `smooth: 0` holds it exactly, and `turn: true` turns that place with the thing's `rotationY`, so the camera stays behind a car or a figure whichever way it faces. `lookY` looks that far above the thing instead of at it, to frame a tall tower or the sky over a boat; the camera keeps its place. Without `follow`, set `game.camera.x`, `.y` and `.z` and call `game.camera.lookAt(x, y, z)`; `game.camera.fov` is the angle it sees, 55 degrees unless set. It starts at (0, 6, 12) looking at the middle of the world.
 
 `game.sun` is the light of the day, with a soft light from the sky. It keeps its direction and stays over what the camera looks at. Every thing casts and takes shadows; nothing needs setting. They are drawn at the [quality](world3d-app.md#quality) the app chose for the device, `medium` or `high`; a software-rendered browser gets `low`, without shadows, and `game.app.setQuality('medium')` asks for them anyway.
 
