@@ -754,7 +754,8 @@ function captureSharedContent(
       firstOccurrence = nextOccurrence;
     const explicit = state.renderBoundary === 'isolate' ? open('explicit-enter') : undefined;
     const alpha = parentAlpha * state.alpha;
-    if (!state.visible || state.alpha === 0 || alpha === 0) {
+    // A node that is some node's shape mask is not drawn itself, as Egret hid a mask.
+    if (!state.visible || state.maskUses > 0 || state.alpha === 0 || alpha === 0) {
       close(explicit, undefined);
       return false;
     }

@@ -4,6 +4,10 @@
 
 早期版本号标识工程检查点。工作区包仍使用私有版本 `0.0.0`，宿主协议为 1.0。各检查点的验收范围见其子系统契约和验证记录。
 
+## 白鹭 5 代码能找到更多原来用的东西 — 2026-11-20
+
+`createTimer(engine, scope, seconds, repeatCount)` 和 `after(engine, scope, seconds, fn)` 对应白鹭的 Timer 和 setTimeout，走引擎时钟：时钟暂停时它们也停，随 scope 结束，一帧较长时欠下的调用都会补上。`Shape` 就是 `Sprite`。`Point`、`Rectangle` 和 `Matrix` 是带有白鹭方法的类，同时也是引擎接受的普通对象。用作形状遮罩的节点在遮罩期间不会被画出来，与白鹭一致。
+
 ## 形状遮罩与线条渐变 — 2026-11-20
 
 `renderEffect = { shapeMask: sprite }` 用一个 Sprite 的 Graphics 形状遮罩节点，对应白鹭 5 的 `mask = displayObject`：半透明处部分透出，位置按它是节点的子对象计算。它在 CPU 上画成一张 alpha 图，内容不变时沿用，然后在两个共享 host 上像 `alphaMask` 一样遮罩。线条可以用渐变：参数与白鹭相同的 `lineGradientStyle`，以及 `lineLinearGradientStyle` 和 `lineRadialGradientStyle`，与渐变填充一样细分。`createBrowserGame({ effects: true })` 为游戏开启渲染效果。`examples/vector-mask` 将两者与页面自身的 2D canvas 对比：WebGL2 软件渲染下每个点与它相差不超过 8。WebGPU 像素需在硬件上运行确认。

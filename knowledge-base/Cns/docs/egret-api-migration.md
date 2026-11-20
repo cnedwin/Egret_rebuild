@@ -25,7 +25,8 @@
 | `stage.stageWidth`、`stage.stageHeight` | 你给出的 `width` 和 `height` | 舞台大小固定，使用自己的单位 |
 | `index.html` 里的 `scaleMode` | `createBrowserGame` 的 `fit`：`'contain'`（showAll）、`'cover'`（noBorder）、`'stretch'`（exactFit） | 舞台保持自己的单位和大小；会改变舞台大小的模式没有提供。`orientation` 由页面设置 |
 | `egret.startTick(fn)`、`Event.ENTER_FRAME` | `createBrowserGame` 或[帧循环](frame-loop.md)的 `update(seconds)` | `seconds` 是距上一步的时间，最多 0.1 |
-| `egret.Timer`、`egret.setTimeout` | 在 `update` 里累计秒数，或用页面自己的 `setTimeout` | 没有计时器类 |
+| `new egret.Timer(1000, 5)` 与 `TimerEvent.TIMER`、`TIMER_COMPLETE` | `createTimer(engine, scope, 1, 5).onTimer(count => …).onComplete(() => …).start()` | 来自 `@egret/engine`。单位是秒而不是毫秒。它走引擎时钟，时钟暂停时它也停，随 scope 结束。有 `stop`、`reset`、`delay`、`repeatCount`、`currentCount` 和 `running`。一帧比间隔长时，欠下的每次调用都会补上 |
+| `egret.setTimeout(fn, this, 500)`、`egret.clearTimeout(key)` | `const later = after(engine, scope, 0.5, fn)`；`later.cancel()` | 来自 `@egret/engine`，走引擎时钟 |
 | `egret.getTimer()` | `performance.now()`，或累加 `update` 的 `seconds` | |
 | `egret.log` | `console.log` | |
 
@@ -34,21 +35,21 @@
 | 白鹭 5 | 现在 | 说明 |
 | --- | --- | --- |
 | `egret.DisplayObjectContainer` | `DisplayObjectContainer` | `addChild`、`addChildAt`、`removeChild`、`removeChildren`、`getChildAt`、`getChildIndex`、`setChildIndex`、`numChildren` 都有 |
-| `egret.Sprite`、`egret.Shape` | `Sprite` | 没有 `Shape`。`Sprite` 有 `graphics`，也能放子对象 |
+| `egret.Sprite`、`egret.Shape` | `Sprite`，或同一个类 `Shape` | `Sprite` 有 `graphics`，也能放子对象 |
 | `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible`、`anchorOffsetX`、`anchorOffsetY` | 名字相同 | `rotation` 仍然是角度 |
 | `width`、`height` | 名字相同 | 在父级上的大小：对象及其子对象画出的范围乘以缩放。设置其中一个会设置 `scaleX` 或 `scaleY`；什么都没画的对象拒绝设置大小（`DISPLAY_SIZE_UNAVAILABLE`） |
 | `skewX`、`skewY` | 名字相同，单位是角度 | |
 | `name`、`getChildByName` | 名字相同 | `getChildByName` 只查直接子对象 |
 | `removeChildAt`、`swapChildren`、`contains` | `removeChild(getChildAt(i))`；`setChildIndex`；沿 `parent` 向上查 | |
 | `mask = 矩形`、`scrollRect` | `clipRect = { x, y, width, height }` | 矩形使用对象自己的单位 |
-| `mask = 显示对象` | `renderEffect = { shapeMask: sprite }` | 用该 sprite 的 Graphics 遮罩节点，半透明处部分透出，位置按它是节点的子对象计算。与[滤镜](filters.md)一样需要开启效果的 host |
+| `mask = 显示对象` | `renderEffect = { shapeMask: sprite }` | 用该 sprite 的 Graphics 遮罩节点，半透明处部分透出，位置按它是节点的子对象计算。它作为遮罩期间不会被画出来，与以前一样。与[滤镜](filters.md)一样需要开启效果的 host |
 | `blendMode` | `blendMode`：`'normal'`、`'add'`、`'multiply'`、`'screen'`、`'erase'` | 见[混合模式](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | 有哪些效果见[滤镜](filters.md) |
 | `cacheAsBitmap` | 没有 | |
 | `touchEnabled`、`touchChildren` | 名字相同 | 开启 touch 的对象按它画出的内容命中：形状的三角形、矩形、位图的矩形。设置了 `hitArea` 时改用 `hitArea` |
 | `hitTestPoint` | `stage.hitTest(x, y)` | |
 | `localToGlobal`、`globalToLocal` | 名字相同 | 返回 `{ x, y }` |
-| `egret.Point`、`egret.Rectangle`、`egret.Matrix` | 普通对象：`{ x, y }`、`{ x, y, width, height }` | 没有这些类 |
+| `egret.Point`、`egret.Rectangle`、`egret.Matrix` | `@egret/engine` 中的 `Point`、`Rectangle`、`Matrix` | 方法与以前相同：`clone`、`distance`、`polar`、`contains`、`intersection`、`union`、`concat`、`invert`、`rotate`、`transformPoint`、`createGradientBox` 等。角度用弧度。它们同时也是引擎接受的普通对象 `{ x, y }`、`{ x, y, width, height }` 或 `{ a, b, c, d, tx, ty }`，可以直接传入 |
 
 ## 绘图
 

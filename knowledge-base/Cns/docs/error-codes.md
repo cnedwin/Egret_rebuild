@@ -1100,6 +1100,12 @@
 | `TILEMAP_TILESET_UNSUPPORTED` | 瓦片地图不支持 `tileset`。 |
 | `TILEMAP_TILE_INVALID` | 交给瓦片地图的 `tile` 无效。 |
 
+### TIMER
+
+| 错误码 | 含义 |
+| --- | --- |
+| `TIMER_OPTIONS_INVALID` | 交给计时器的选项无效：缺少某一项、类型不对或超出范围。 |
+
 ### TWEEN
 
 | 错误码 | 含义 |
