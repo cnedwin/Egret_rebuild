@@ -75,7 +75,7 @@ Every node has `bounds`, and may have `name`, `hidden`, `focused` and `order`. A
 
 A `slider` and a `tablist` lie along the line unless `orientation` says `'vertical'`; a `scrollbar` stands beside what it scrolls, and the items of a `menu` stand one under another, unless it says `'horizontal'`. A slider and a spin button are moved by [their keys](ui-controls.md#keys) once they hold the focus, so their nodes take `onFocus` and need no activation.
 
-State a role does not have is refused, so a mistake is found when it is made. A refused description throws `UI_SEMANTICS_DESCRIPTION`, and its `cause` names the node and the field: `sound: checked`.
+State a role does not have is refused, so a mistake is found when it is made. A refused description throws `UI_SEMANTICS_DESCRIPTION`, and its `cause` names the node and the field: `sound: checked`. The fields each role takes are in the table above. A `range` is `{ now, min, max }` (`now` between the two), not a `value`; `orientation` is `'horizontal'` or `'vertical'`; `controls` names the id of another node.
 
 ### Order, hiding and virtual rows
 

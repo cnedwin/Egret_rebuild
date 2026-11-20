@@ -227,7 +227,16 @@ test('UI content admission refuses a competing measure and foreign-scope display
         }
       }
     });
-    await assert.rejects(root.prepare(), error => error.code === 'UI_CONTENT_INVALID');
+    // The refusal names the leaf and why.
+    await assert.rejects(
+      root.prepare(),
+      error =>
+        error.code === 'UI_CONTENT_INVALID' &&
+        /^the content of leaf "body": the content does not belong to the scope of the leaf/.test(
+          error.cause?.message
+        ) &&
+        error.message.includes('leaf "body"')
+    );
     assert.equal(staged.state, 'closed');
     assert.equal(foreignScope.state, 'open');
     assert.equal(foreign.isDisposed, false);

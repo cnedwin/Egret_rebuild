@@ -33,6 +33,8 @@ export interface UiEnginePort {
   keyboardScope(input: KeyboardInput, owner: object): UiKeyboardScope;
   assertOpen(): void;
   assertIdle(): void;
+  /** Neither a frame is drawn nor input delivered now. */
+  isIdle(): boolean;
   isEngineScope(value: unknown): value is Scope;
   createScope(): Scope;
   scope(value: unknown): UiScopePort;
@@ -103,7 +105,19 @@ export function registerUiEngine(engine: object, assembly: UiAssembly): UiEngine
     assertOpen: assembly.assertOpen,
     assertIdle(): void {
       assembly.assertOpen();
-      if (assembly.isFrameBusy() || delivery.depth !== 0) throw new EgretError('UI_BUSY');
+      if (assembly.isFrameBusy())
+        throw new EgretError('UI_BUSY', {
+          cause: new Error('a frame is being drawn: call this after the frame, not from inside it')
+        });
+      if (delivery.depth !== 0)
+        throw new EgretError('UI_BUSY', {
+          cause: new Error(
+            'input is being delivered: call this after the delivery, as from a promise that has settled or the next frame'
+          )
+        });
+    },
+    isIdle(): boolean {
+      return !assembly.isFrameBusy() && delivery.depth === 0;
     },
     isEngineScope(value: unknown): value is Scope {
       return scopes.has(value as Scope);

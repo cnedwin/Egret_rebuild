@@ -7,6 +7,7 @@ export type {
   BrowserGameBackend,
   BrowserGameFit,
   BrowserGameLabel,
+  BrowserGameLabelCreateOptions,
   BrowserGameLabelOptions,
   BrowserGameOptions
 } from './BrowserGame.js';

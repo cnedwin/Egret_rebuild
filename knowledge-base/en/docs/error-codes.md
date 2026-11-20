@@ -1131,7 +1131,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `UI_CAP_EXCEEDED` | A limit of the UI was passed. |
 | `UI_CLEANUP_FAILED` | Cleaning up the UI failed. Each cause is in cleanupErrors. |
 | `UI_CLOSED` | The UI was closed and takes nothing more. |
-| `UI_CONTENT_INVALID` | The content given to the UI is not valid. |
+| `UI_CONTENT_INVALID` | What a UI leaf or row gave as its content cannot be shown there. The leaf or row, and the reason, are in cause. |
 | `UI_DUPLICATE_ID` | Two parts of the UI were given the same id. |
 | `UI_DUPLICATE_KEY` | Two rows of a list were given the same key. |
 | `UI_EDITOR_FONTS_CANCELLED` | The editor fonts of the UI was cancelled. |

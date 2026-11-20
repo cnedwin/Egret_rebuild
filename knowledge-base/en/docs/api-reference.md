@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1335 exports; 2 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1336 exports; 2 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1430,6 +1430,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserGameBackend` | type | Which GPU interface a browser game draws with. |
 | `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, or stretched to it. |
 | `BrowserGameLabel` | interface | A line of text on the stage whose words can be set like a value. |
+| `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
 | `BrowserGameOptions` | interface | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
 | `BrowserStatsPanel` | interface | A panel over the canvas showing frame rate and frame times: sample each frame. |

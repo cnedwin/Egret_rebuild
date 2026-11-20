@@ -242,6 +242,7 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   UI_LAYER_MANAGER_OWNED: '这个 Engine 已经有一个 UI 层管理器。一个 Engine 只有一个。',
   UI_LAYER_ROOT_OWNED: '这个 UI 根已经属于某个层。',
   UI_LAYOUT_UNSTABLE: 'UI 的布局经过八轮仍未稳定：某个尺寸一直在改变它所依赖的东西。',
+  UI_CONTENT_INVALID: 'UI 叶子或行给出的内容不能放在那里。是哪个叶子或行、原因是什么，见 cause。',
   UI_ROW_NOT_REALIZED: '该行现在不在屏幕上，没有可以操作的对象。请先把它滚动到可见范围。',
   UI_ROW_RETAINED: '一个正在使用的行被从列表中移除，或者在使用期间被改动了。',
   UI_SEMANTICS_DESCRIPTION: 'UI 语义条目的某个字段无效。条目和字段在 cause 中。',

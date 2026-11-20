@@ -18,6 +18,12 @@ export interface BrowserInputActionsOptions {
   readonly preventDefault?: boolean;
   /** Keys that are passed on even when bound, such as F5 or F12. */
   readonly passKeys?: readonly string[];
+  /**
+   * Leave alone a key something before has already acted on, which says so by `preventDefault`. The game's keyboard input
+   * does this for a key a focused control took — Space on a focused button, the arrows on a focused slider — so with
+   * `true` that key does not also press an action. Off by default.
+   */
+  readonly skipPrevented?: boolean;
 }
 /** Input actions driven by the browser's keys, pointers and gamepads: poll them each frame. */
 export interface BrowserInputActions {
@@ -83,6 +89,8 @@ export function bindBrowserInputActions(
   if (!keyTarget || typeof keyTarget.addEventListener !== 'function') throw new EgretError('INPUT_ACTIONS_INVALID');
   const prevent = options.preventDefault ?? true;
   const pass = new Set(options.passKeys ?? ['F5', 'F11', 'F12']);
+  const skipPrevented = options.skipPrevented ?? false;
+  if (typeof skipPrevented !== 'boolean') throw new EgretError('INPUT_ACTIONS_INVALID');
   const removers: (() => void)[] = [];
   const listen = (
     target: EventTarget,
@@ -102,7 +110,7 @@ export function bindBrowserInputActions(
   };
   listen(keyTarget, 'keydown', event => {
     const e = event as KeyboardEvent;
-    if (typing(e) || !e.code) return;
+    if (typing(e) || !e.code || (skipPrevented && e.defaultPrevented)) return;
     const binding = 'Key:' + e.code;
     if (prevent && !pass.has(e.code) && bound(actions, binding)) e.preventDefault();
     if (!e.repeat) actions.press(binding);

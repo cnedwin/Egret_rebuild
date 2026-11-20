@@ -1131,7 +1131,7 @@
 | `UI_CAP_EXCEEDED` | 超出了UI的一项上限。 |
 | `UI_CLEANUP_FAILED` | 清理UI时失败。各个原因在 cleanupErrors 中。 |
 | `UI_CLOSED` | UI已关闭，不再接受任何操作。 |
-| `UI_CONTENT_INVALID` | 交给UI的 `content` 无效。 |
+| `UI_CONTENT_INVALID` | UI 叶子或行给出的内容不能放在那里。是哪个叶子或行、原因是什么，见 cause。 |
 | `UI_DUPLICATE_ID` | UI 的两个部分使用了同一个 id。 |
 | `UI_DUPLICATE_KEY` | 列表的两行使用了同一个 key。 |
 | `UI_EDITOR_FONTS_CANCELLED` | UI的 `editor fonts` 被取消了。 |

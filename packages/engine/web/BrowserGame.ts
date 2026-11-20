@@ -58,6 +58,14 @@ export interface BrowserGameLabelOptions {
   readonly locale?: string;
   readonly direction?: 'ltr' | 'rtl';
 }
+/** A label to make: its words and style, and the scope that owns it. */
+export interface BrowserGameLabelCreateOptions extends BrowserGameLabelOptions {
+  /**
+   * The scope that owns the label's display object. Defaults to `game.scope`. Give the `context.scope` of a UI leaf to
+   * use the label as that leaf's content; the label then ends with that scope.
+   */
+  readonly scope?: Scope;
+}
 /** A line of text on the stage whose words can be set like a value. */
 export interface BrowserGameLabel {
   /** The text on the stage: place it with `display.x` and `display.y`, add it where it belongs. */
@@ -155,7 +163,7 @@ export interface BrowserGame {
    */
   textureFromCanvas(canvas: HTMLCanvasElement | OffscreenCanvas): Promise<AssetLease<Texture>>;
   /** A line of text for the stage. The first call loads the page's text rasterizer. */
-  createLabel(options?: BrowserGameLabelOptions): Promise<BrowserGameLabel>;
+  createLabel(options?: BrowserGameLabelCreateOptions): Promise<BrowserGameLabel>;
   /** A place in the page, as a pointer event gives it in `clientX` and `clientY`, as a place on the stage. */
   toStage(clientX: number, clientY: number): { x: number; y: number };
   /** Stops the loop and ends the input, the scope, the Engine and its Host. */
@@ -414,12 +422,14 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       if (next) next();
       else labelsDrawing--;
     };
-    async function createLabel(given: BrowserGameLabelOptions = {}): Promise<BrowserGameLabel> {
-      if (given === null || typeof given !== 'object') throw invalid();
+    async function createLabel(options: BrowserGameLabelCreateOptions = {}): Promise<BrowserGameLabel> {
+      if (options === null || typeof options !== 'object') throw invalid();
+      const { scope: owner = scope, ...given } = options;
+      if (owner === null || typeof owner !== 'object') throw invalid();
       textCache ??= import('./text.js').then(text =>
         createTextRasterCache(engine.assets, { provider: text.createCanvasTextRasterProvider() })
       );
-      const field = createTextField(engine, scope, await textCache);
+      const field = createTextField(engine, owner, await textCache);
       let now: Required<BrowserGameLabelOptions> = {
         text: '',
         fontFamily: 'sans-serif',
