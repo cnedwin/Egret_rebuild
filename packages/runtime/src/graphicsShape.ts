@@ -934,7 +934,9 @@ export function resolveShape(shape: ShapeState): ResolvedShape | undefined {
 
 // A mask of vector shapes: what a Sprite's Graphics covers, as an image of its alpha that the effect group of the
 // masked node multiplies what it draws by, as it multiplies by a bitmap mask. The image is drawn here, on the CPU, at
-// the size the masked node is seen at, and kept while the mask's drawing, its place and that size stay the same.
+// the size the masked node is seen at, and kept while the mask's drawing and that size stay the same. A mask that only
+// moves, or grows or shrinks evenly by less than an eighth of an octave, keeps its image too, placed and stretched: a
+// mask that moves or grows a little each frame is drawn again only now and then, not every frame.
 
 /** The image of a mask, the region of it that is whole, and where it lies in the masked node's units. */
 export interface ShapeMaskImage {
@@ -952,7 +954,58 @@ export interface ShapeMaskImage {
 /** The most pixels a side of a mask's image has, and how many samples a pixel takes on each side. */
 export const SHAPE_MASK_LIMITS = Object.freeze({ maxEdge: 2048, samples: 4 });
 
-const keptMasks = new WeakMap<object, { readonly key: string; readonly value: ShapeMaskImage }>();
+interface KeptMask {
+  /** The drawing, its rectangles and the density it was drawn at: what must be the same for the image to be kept. */
+  readonly key: string;
+  /** The placement it was drawn at. */
+  readonly matrix: Matrix2D;
+  readonly value: ShapeMaskImage;
+}
+const keptMasks = new WeakMap<object, KeptMask>();
+/** How far an even change of size may go before the image is drawn again: an eighth of an octave either way. */
+const STRETCH = 2 ** (1 / 8);
+/**
+ * The image kept for a mask placed by `matrix` instead of the matrix it was drawn at: the same when nothing changed, moved
+ * when only the place changed, and moved and stretched when the size changed evenly and a little. Undefined otherwise.
+ */
+function reuse(kept: KeptMask, matrix: Matrix2D): ShapeMaskImage | undefined {
+  const old = kept.matrix;
+  if (
+    old.a === matrix.a &&
+    old.b === matrix.b &&
+    old.c === matrix.c &&
+    old.d === matrix.d &&
+    old.tx === matrix.tx &&
+    old.ty === matrix.ty
+  )
+    return kept.value;
+  // A mask that covers nothing covers nothing wherever it is.
+  if (kept.value === EMPTY) return EMPTY;
+  // The new linear part must be the old one times one ratio.
+  const pick = Math.abs(old.a) >= Math.abs(old.b) ? 'a' : 'b',
+    ratio = old[pick] === 0 ? NaN : matrix[pick] / old[pick];
+  if (!(ratio >= 1 / STRETCH && ratio <= STRETCH)) return undefined;
+  const near = (x: number, y: number): boolean => Math.abs(x - y) <= 1e-9 * Math.max(1, Math.abs(x), Math.abs(y));
+  if (
+    !near(matrix.a, ratio * old.a) ||
+    !near(matrix.b, ratio * old.b) ||
+    !near(matrix.c, ratio * old.c) ||
+    !near(matrix.d, ratio * old.d)
+  )
+    return undefined;
+  const rect = kept.value.rect;
+  // A point drawn at p = L q + t is now at r L q + t' = r (p - t) + t'.
+  return Object.freeze({
+    image: kept.value.image,
+    region: kept.value.region,
+    rect: Object.freeze({
+      x: ratio * (rect.x - old.tx) + matrix.tx,
+      y: ratio * (rect.y - old.ty) + matrix.ty,
+      width: ratio * rect.width,
+      height: ratio * rect.height
+    })
+  });
+}
 // A drawing resolved once is one object for as long as it is the same; its number stands for it in a key.
 const drawings = new WeakMap<object, number>();
 let nextDrawing = 1;
@@ -997,16 +1050,13 @@ export function shapeMaskImage(
   const key = [
     drawingNumber(shape),
     step,
-    matrix.a,
-    matrix.b,
-    matrix.c,
-    matrix.d,
-    matrix.tx,
-    matrix.ty,
     ...primitives.flatMap(({ rect, alpha }) => [rect.x, rect.y, rect.width, rect.height, alpha])
   ].join(',');
   const before = keptMasks.get(mask);
-  if (before !== undefined && before.key === key) return before.value;
+  if (before !== undefined && before.key === key) {
+    const kept = reuse(before, matrix);
+    if (kept !== undefined) return kept;
+  }
   // Each triangle as x, y of its corners in the masked node's units, and the alpha of each corner.
   const points: number[] = [],
     alphas: number[] = [];
@@ -1037,7 +1087,7 @@ export function shapeMaskImage(
         part.bitmap === undefined ? lightColors[4 * index + 3]! : 1
       );
   }
-  if (points.length === 0) return remember(mask, key, EMPTY);
+  if (points.length === 0) return remember(mask, key, matrix, EMPTY);
   let left = Infinity,
     top = Infinity,
     right = -Infinity,
@@ -1050,7 +1100,7 @@ export function shapeMaskImage(
   }
   const width = right - left,
     height = bottom - top;
-  if (!(width > 0) || !(height > 0)) return remember(mask, key, EMPTY);
+  if (!(width > 0) || !(height > 0)) return remember(mask, key, matrix, EMPTY);
   const fit = Math.min(step, SHAPE_MASK_LIMITS.maxEdge / width, SHAPE_MASK_LIMITS.maxEdge / height),
     columns = Math.max(1, Math.ceil(width * fit)),
     rows = Math.max(1, Math.ceil(height * fit));
@@ -1063,10 +1113,14 @@ export function shapeMaskImage(
     region: regionOf(columns, rows),
     rect: Object.freeze({ x: left, y: top, width, height })
   });
-  return remember(mask, key, value);
+  return remember(mask, key, matrix, value);
 }
-function remember(mask: object, key: string, value: ShapeMaskImage): ShapeMaskImage {
-  keptMasks.set(mask, { key, value });
+function remember(mask: object, key: string, matrix: Matrix2D, value: ShapeMaskImage): ShapeMaskImage {
+  keptMasks.set(mask, {
+    key,
+    matrix: Object.freeze({ a: matrix.a, b: matrix.b, c: matrix.c, d: matrix.d, tx: matrix.tx, ty: matrix.ty }),
+    value
+  });
   return value;
 }
 

@@ -87,8 +87,8 @@ test('VM02 a frame masks by an image of the shape, white where it covers and cle
     );
   }));
 
-// Break caught: keep an image after the mask was redrawn or moved, or make a new one every frame it stays the same.
-test('VM03 the image is kept while the mask is the same and drawn anew when it changes or moves', () =>
+// Break caught: keep an image after the mask was redrawn or grown much, or make a new one every frame it stays the same or moves.
+test('VM03 the image is kept while the mask is the same, moves, or grows evenly a little, and drawn anew when it changes', () =>
   scene(async f => {
     const mask = f.scope.use(new egret.Sprite());
     mask.graphics.beginFill(0xffffff).drawRect(0, 0, 20, 20).endFill();
@@ -97,10 +97,24 @@ test('VM03 the image is kept while the mask is the same and drawn anew when it c
     const first = f.capture(),
       again = f.capture();
     assert.equal(imageOf(again), imageOf(first));
+    // Moved, it keeps its image, placed where it is now.
     mask.x = 30;
     const moved = f.capture();
-    assert.notEqual(imageOf(moved), imageOf(first));
+    assert.equal(imageOf(moved), imageOf(first));
     assert.equal(effectOf(moved).maskRect.x, 30);
+    // Grown evenly a little, it keeps it too, stretched; grown more, it is drawn again, finer.
+    mask.scaleX = mask.scaleY = 1.05;
+    const grown = f.capture();
+    assert.equal(imageOf(grown), imageOf(first));
+    assert.ok(Math.abs(effectOf(grown).maskRect.width - 21) < 1e-9, JSON.stringify(effectOf(grown).maskRect));
+    mask.scaleX = mask.scaleY = 2;
+    const doubled = f.capture();
+    assert.notEqual(imageOf(doubled), imageOf(first));
+    assert.equal(imageOf(doubled).width, 2 * imageOf(first).width);
+    // Stretched one way only, it is drawn again.
+    mask.scaleX = 2.05;
+    assert.notEqual(imageOf(f.capture()), imageOf(doubled));
+    mask.scaleX = mask.scaleY = 1;
     mask.graphics.clear().beginFill(0xffffff).drawRect(0, 0, 40, 10).endFill();
     const redrawn = f.capture();
     assert.deepEqual([effectOf(redrawn).maskRect.width, effectOf(redrawn).maskRect.height], [40, 10]);
