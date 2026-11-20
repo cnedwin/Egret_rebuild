@@ -22,6 +22,126 @@ const frame = { profile: 'egret.shared-frame2d/1', colorRecipe: 'egret.linear-sr
 const encode = (commands, override = {}, pages = ids) =>
   new DataView(encodeProjectFrame({...frame, commands, ...override}, 42, pages).buffer);
 
+const patchGeometry = { vertexCount: 4, indexCount: 6, triangleCount: 2,
+  positions: [0, 0, 4, 0, 0, 2, 4, 2], uvs: [0, 0, 1, 0, 0, 1, 1, 1],
+  indices: [0, 1, 2, 2, 1, 3], lightColors: Array(16).fill(1) };
+const meshDraw = {kind: 'mesh', regionIndex: 0, geometryIndex: 0, materialIndex: 0, opacity: 0.75,
+  matrix: {...matrix, c: -1, tx: 10, ty: 12}, clips: [{matrix, rect: {x: 1, y: 2, width: 15, height: 18}}]};
+const floatsAt = (view, start, count) => Array.from({length: count}, (_, i) => view.getFloat32(start + i*4, true));
+const wordsAt = (view, start, count) => Array.from({length: count}, (_, i) => view.getUint32(start + i*4, true));
+
+test('indexed project frames keep two atlas pages and mapped quads in painter order', () => {
+  const mapped = {...region, pageIndex: 1, trimX: 1, trimY: 2, logicalWidth: 4, logicalHeight: 8, quarterTurn: 1};
+  const commands = [solid, meshDraw, {kind: 'barrier', reason: 'explicit-enter'},
+    {...image, regionIndex: 1}, {...meshDraw, regionIndex: 1}, solid];
+  const view = encode(commands, {regions: [region, mapped], geometries: [patchGeometry]});
+  assert.deepEqual(wordsAt(view, 0, 6), [0x34524745, 42, 80, 64, 0x102030ff, 5]);
+  assert.equal(view.byteLength, 24 + 68 + 140 + 88 + 160 + 68);
+  const first = 24 + 68, imageAt = first + 140, second = imageAt + 88;
+  assert.deepEqual(wordsAt(view, first, 2), [2, 17]);
+  assert.equal(view.getFloat32(first + 8, true), 0.75);
+  assert.deepEqual(floatsAt(view, first + 12, 8), [1, 2, 16, 20, 0.25, 0.25, 0.75, 0.75]);
+  assert.deepEqual(wordsAt(view, first + 44, 2), [4, 6]);
+  assert.deepEqual(floatsAt(view, first + 52, 16), [
+    10,12,0.25,0.25, 14,12,0.75,0.25, 8,14,0.25,0.75, 12,14,0.75,0.75
+  ]);
+  assert.deepEqual(wordsAt(view, first + 116, 6), patchGeometry.indices);
+  assert.equal(view.getUint32(imageAt, true), 1);
+  assert.deepEqual(wordsAt(view, imageAt + 68, 5), [4, 8, 1, 2, 1]);
+  assert.deepEqual(wordsAt(view, second, 2), [3, 5]);
+  assert.deepEqual(wordsAt(view, second + 52, 5), [4, 8, 1, 2, 1]);
+  assert.deepEqual(floatsAt(view, second + 72, 16), [10,12,0,0, 14,12,1,0, 8,14,0,1, 12,14,1,1]);
+  assert.deepEqual(wordsAt(view, second + 136, 6), patchGeometry.indices);
+  for (const at of [24, second + 160]) {
+    assert.equal(view.getUint32(at, true), 0);
+    assert.deepEqual(new Uint8Array(view.buffer, at + 4, 64), new Uint8Array(encode([solid]).buffer, 24));
+  }
+});
+
+test('indexed project encoding follows current geometry, page binding and page-domain UVs across frames', () => {
+  const writer = createCapturedProjectEncoder();
+  const warped = {...patchGeometry, positions: patchGeometry.positions.map(x => x + 1), darkColors: Array(12).fill(0)};
+  const input = {...frame, commands: [solid, meshDraw], geometries: [patchGeometry]};
+  for (const geometry of [patchGeometry, patchGeometry, warped, patchGeometry]) {
+    const current = {...input, geometries: [geometry]};
+    assert.deepEqual(writer.encode(current, 42, ids), encodeProjectFrame(current, 42, ids));
+  }
+  const moved = new Map([[page, 29], [other, 11]]);
+  assert.equal(new DataView(writer.encode(input, 42, moved).buffer).getUint32(24 + 68 + 4, true), 29);
+  const view = encode([meshDraw], {materials: [{...material, samplingDomain: 'page'}], geometries: [patchGeometry]});
+  assert.deepEqual(floatsAt(view, 24 + 28, 4), [0,0,1,1]);
+  assert.deepEqual(floatsAt(view, 24 + 52, 4), [10,12,0,0]);
+  assert.deepEqual(writer.encode({...frame, commands: [solid]}, 42, ids), new Uint8Array(encode([solid]).buffer));
+});
+
+test('a public Mesh2D deforms and replaces its leased atlas between UI layers', async () => {
+  const {createEngine, createAssetType, createAssetRef, createImageData2D, createTextureView, isTexture,
+    createTexturedGeometry2D, Mesh2D, Sprite} = await import('@egret/engine');
+  const {captureHost} = await import('./scene.mjs');
+  const engine = await createEngine({host: captureHost()}), scope = engine.createScope();
+  const resident = new Map(), released = [];
+  const type = createAssetType('project-mesh-atlas', isTexture);
+  const geometry = tip => createTexturedGeometry2D({
+    positions: Float32Array.of(0,0,4,0,0,2,tip,2), uvs: new Float32Array(patchGeometry.uvs),
+    lightColors: new Float32Array(16).fill(1), indices: new Uint16Array(patchGeometry.indices)
+  });
+  try {
+    engine.assets.register(type, {
+      async load(ref) {
+        const slot = Number(ref.id), image = createImageData2D({width: 8, height: 4, pixels: new Uint8Array(128)});
+        resident.set(image, slot);
+        return createTextureView(image, {packed: region.packed, trimX: 1, trimY: 2, logicalWidth: 6,
+          logicalHeight: 8, quarterTurn: slot === 9 ? 0 : 1});
+      },
+      dispose(texture) {
+        released.push(resident.get(texture.imageData));
+        resident.delete(texture.imageData);
+        texture.dispose();
+      }
+    });
+    const [first, second] = await engine.createAssetGroup(scope, ['9', '23'].map(id => createAssetRef(type, id))).ready;
+    function addUI(color) {
+      const ui = engine.stage.addChild(scope.use(new Sprite()));
+      ui.graphics.beginFill(color).drawRect(0, 0, 2, 2).endFill();
+    }
+    addUI(0x124458);
+    const mesh = engine.stage.addChild(scope.use(new Mesh2D(first, geometry(4))));
+    addUI(0xccaaee);
+    const writer = createCapturedProjectEncoder(), at = 24 + 68;
+    function check(slot, turn, tip) {
+      const frame = engine.captureSharedFrame({width: 32, height: 32});
+      const view = new DataView(writer.encode(frame, 1, resident).buffer);
+      assert.equal(view.getUint32(20, true), 3);
+      assert.deepEqual(wordsAt(view, at, 2), [3, slot]);
+      assert.equal(view.getUint32(at + 68, true), turn);
+      assert.equal(view.getFloat32(at + 72 + 3*16, true), tip);
+      assert.deepEqual(wordsAt(view, at + 136, 6), patchGeometry.indices);
+      assert.equal(view.getUint32(at + 160, true), 0);
+    }
+    check(9, 0, 4);
+    mesh.setContent(second, geometry(7));
+    check(23, 1, 7);
+  } finally {
+    scope.dispose();
+    await engine.dispose();
+  }
+  assert.deepEqual(released.sort((a,b) => a-b), [9, 23]);
+  assert.equal(resident.size, 0);
+});
+
+test('indexed mesh validation checks shape, local indices, coordinates, neutral tint and total bridge budget', () => {
+  for (const change of [{vertexCount: 0}, {indexCount: 4}, {indices: [0,1,2,2,1,4]},
+    {positions: [0,0,NaN,0,0,2,4,2]}, {uvs: [0,0,2,0,0,1,1,1]},
+    {lightColors: Array(16).fill(0.5)}, {darkColors: Array(12).fill(0.5)}]) {
+    assert.throws(() => encode([meshDraw], {geometries: [{...patchGeometry, ...change}]}), /mesh/i);
+  }
+  assert.throws(() => encode([{...meshDraw, matrix: {...matrix, tx: 16777217}}],
+    {geometries: [patchGeometry]}), /mesh/i);
+  const count = Math.floor((360472 - 24) / 140);
+  assert.equal(encode(Array(count).fill(meshDraw), {geometries: [patchGeometry]}).byteLength, 24 + 140*count);
+  assert.throws(() => encode(Array(count + 1).fill(meshDraw), {geometries: [patchGeometry]}), /limit/);
+});
+
 test('project records preserve device page identity, fractional opacity, affine corners and nested scroll clips', () => {
   const clip = {matrix: {...matrix, a: -2, d: 3, tx: 12}, rect: {x: 1, y: 1, width: 3, height: 4}};
   const clip2 = {matrix, rect: {x: 5, y: 5, width: 3, height: 12}};
@@ -43,8 +163,9 @@ test('project records preserve device page identity, fractional opacity, affine 
 test('empty intersection clips to zero and unsupported commands, materials, atlas transforms and missing pages fail', () => {
   const bytes = encode([{...solid, clips: [{matrix, rect: {x: 90, y: 4, width: 3, height: 2}}]}]);
   assert.equal(bytes.getFloat32(24+48, true), bytes.getFloat32(24+56, true));
-  for (const command of [{...image, kind: 'mesh'}, {kind:'barrier',reason:'effect-enter'},
+  for (const command of [{...image, kind: 'unknown'}, {kind:'barrier',reason:'effect-enter'},
     {...image, clips: [{matrix: {...matrix, c: 1}, rect}]}]) assert.throws(() => encode([command]), /Unsupported/);
+  assert.throws(() => encode([{...image, kind: 'mesh'}]), /mesh geometry/);
   assert.throws(() => encode([image], {materials: [{...material, blend: 'erase'}]}), /Unsupported/);
   assert.throws(() => encode([image], {materials: [{...material, samplingDomain: 'page'}]}), /Unsupported/);
   assert.throws(() => encode([image], {regions: [{...region, quarterTurn: 1}]}), /atlas/);

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
-//! Painter-ordered EGR1 baseline, EGR2 project quads, and EGR3 atlas mappings.
+//! Painter-ordered baseline (EGR1), project quads (EGR2/EGR3), and indexed project meshes (EGR4).
+#[path = "frame_indexed.rs"]
+mod indexed;
 pub(crate) const HEADER_BYTES: usize = 24;
 pub(crate) const QUAD_BYTES: usize = 48;
 const PROJECT_QUAD_BYTES: usize = 64;
@@ -24,7 +26,7 @@ pub(crate) struct AtlasMapping {
 
 impl AtlasMapping {
     fn decode(bytes: &[u8], region: [f32; 4], page: [u32; 2]) -> Result<Self, Error> {
-        let [width, height, x, y, turn] = [4, 8, 12, 16, 20].map(|at| word(bytes, at));
+        let [width, height, x, y, turn] = [0, 4, 8, 12, 16].map(|at| word(bytes, at));
         if !(1..=1 << 20).contains(&width) || !(1..=1 << 20).contains(&height)
             || x >= width || y >= height || turn > 3 {
             return Err(Error::Invalid);
@@ -60,6 +62,8 @@ pub(crate) struct Batch {
     pub clip: [f32; 4],
     pub region: [f32; 4],
     pub mapping: Option<AtlasMapping>,
+    pub indexed: bool,
+    // Vertex offset for arrays, or index offset for indexed batches.
     pub first: i32,
     pub count: i32,
 }
@@ -89,14 +93,86 @@ fn word(bytes: &[u8], offset: usize) -> u32 {
     u32::from_le_bytes(bytes[offset..offset + 4].try_into().unwrap())
 }
 
-pub(crate) fn prepare(
+fn append_batch(batches: &mut Vec<Batch>, batch: Batch) {
+    if let Some(last) = batches.last_mut() {
+        if last.indexed == batch.indexed && last.page == batch.page && last.opacity == batch.opacity
+            && last.clip == batch.clip && last.region == batch.region && last.mapping == batch.mapping {
+            last.count += batch.count;
+            return;
+        }
+    }
+    batches.push(batch);
+}
+
+fn valid_clip(clip: [f32; 4], size: [f32; 2]) -> bool {
+    let [left, top, right, bottom] = clip;
+    (0.0..=size[0]).contains(&left) && (0.0..=size[1]).contains(&top)
+        && (left..=size[0]).contains(&right) && (top..=size[1]).contains(&bottom)
+}
+
+fn decode_quad(record: &[u8], mapping_bytes: Option<&[u8]>, project: bool, size: [f32; 2],
+               page_sizes: &[[u32; 2]; PAGE_SLOTS], vertices: &mut Vec<Vertex>,
+               batches: &mut Vec<Batch>) -> Result<(), Error> {
+    let (page, color, opacity, clip) = if project {
+        let opacity = f32::from_bits(word(record, 4));
+        let clip = [48, 52, 56, 60].map(|at| f32::from_bits(word(record, at)));
+        if !(0.0..=1.0).contains(&opacity) || !valid_clip(clip, size) {
+            return Err(Error::Invalid);
+        }
+        (record[0] as usize, [record[1], record[2], record[3], 255], opacity, clip)
+    } else {
+        let color = word(record, 4).to_be_bytes();
+        if color[3] != 255 { return Err(Error::Invalid); }
+        (word(record, 0) as usize, color, 1.0, [0., 0., size[0], size[1]])
+    };
+    if page >= PAGE_SLOTS || (page != 0 && color != [255; 4]) { return Err(Error::Invalid); }
+    if page != 0 && page_sizes[page][0] == 0 {
+        return Err(Error::MissingPage);
+    }
+    let mut values = [0.0; 10];
+    for (index, value) in values.iter_mut().enumerate() {
+        *value = f32::from_bits(word(record, 8 + 4 * index));
+    }
+    if values[..6].iter().any(|v| !v.is_finite() || v.abs() > 16_777_216.0)
+        || values[6..].iter().any(|v| !(0.0..=1.0).contains(v))
+    {
+        return Err(Error::Invalid);
+    }
+    let [x0, y0, x1, y1, x2, y2, u0, v0, u1, v1] = values;
+    if project && (u0 >= u1 || v0 >= v1) { return Err(Error::Invalid); }
+    let region = if project { [u0, v0, u1, v1] } else { [0., 0., 1., 1.] };
+    let mapping = if let Some(params) = mapping_bytes {
+        if page == 0 { return Err(Error::Invalid); }
+        Some(AtlasMapping::decode(params, region, page_sizes[page])?)
+    } else { None };
+    let [u0, v0, u1, v1] = if mapping.is_some() { [0., 0., 1., 1.] } else { [u0, v0, u1, v1] };
+    let corner = |x, y, u, v| Vertex { position: [x, y], uv: [u, v], color };
+    let a = corner(x0, y0, u0, v0);
+    let b = corner(x1, y1, u1, v0);
+    let c = corner(x2, y2, u0, v1);
+    let d = corner(x1 + x2 - x0, y1 + y2 - y0, u1, v1);
+    let first = vertices.len() as i32;
+    vertices.extend_from_slice(&[a, b, c, c, b, d]);
+    append_batch(batches, Batch { page, indexed: false, first, count: 6, opacity, clip, region, mapping });
+    Ok(())
+}
+
+#[cfg(test)]
+fn prepare(bytes: &[u8], page_sizes: &[[u32; 2]; PAGE_SLOTS], vertices: &mut Vec<Vertex>,
+           batches: &mut Vec<Batch>) -> Result<Header, Error> {
+    prepare_frame(bytes, page_sizes, vertices, batches, &mut Vec::new())
+}
+
+pub(crate) fn prepare_frame(
     bytes: &[u8],
     page_sizes: &[[u32; 2]; PAGE_SLOTS],
     vertices: &mut Vec<Vertex>,
     batches: &mut Vec<Batch>,
+    indices: &mut Vec<u32>,
 ) -> Result<Header, Error> {
     vertices.clear();
     batches.clear();
+    indices.clear();
     if !(HEADER_BYTES..=MAX_FRAME_BYTES).contains(&bytes.len()) {
         return Err(Error::Invalid);
     }
@@ -104,6 +180,7 @@ pub(crate) fn prepare(
         0x31524745 => (false, false, QUAD_BYTES),
         0x32524745 => (true, false, PROJECT_QUAD_BYTES),
         0x33524745 => (true, true, PROJECT_QUAD_BYTES),
+        0x34524745 => (true, false, 0),
         _ => return Err(Error::Invalid),
     };
     let width = word(bytes, 8);
@@ -117,6 +194,11 @@ pub(crate) fn prepare(
     {
         return Err(Error::Invalid);
     }
+    let size = [width as f32, height as f32];
+    if stride == 0 {
+        let mapped = indexed::decode(&bytes[HEADER_BYTES..], count, size, page_sizes, vertices, batches, indices)?;
+        return Ok(Header { project, mapped, size, clear });
+    }
     let records_end = HEADER_BYTES + count * stride;
     let suffix = bytes.get(records_end..).ok_or(Error::Invalid)?;
     let mut descriptors = suffix.chunks_exact(MAPPING_BYTES);
@@ -124,63 +206,15 @@ pub(crate) fn prepare(
         return Err(Error::Invalid);
     }
     let mut next = descriptors.next();
-    let size = [width as f32, height as f32];
     for (ordinal, record) in bytes[HEADER_BYTES..records_end].chunks_exact(stride).enumerate() {
-        let (page, color, opacity, clip) = if project {
-            let opacity = f32::from_bits(word(record, 4));
-            let clip = [48, 52, 56, 60].map(|at| f32::from_bits(word(record, at)));
-            let [left, top, right, bottom] = clip;
-            if !(0.0..=1.0).contains(&opacity) || !(0.0..=size[0]).contains(&left)
-                || !(0.0..=size[1]).contains(&top) || !(left..=size[0]).contains(&right)
-                || !(top..=size[1]).contains(&bottom)
-            {
-                return Err(Error::Invalid);
-            }
-            (record[0] as usize, [record[1], record[2], record[3], 255], opacity, clip)
-        } else {
-            let color = word(record, 4).to_be_bytes();
-            if color[3] != 255 { return Err(Error::Invalid); }
-            (word(record, 0) as usize, color, 1.0, [0., 0., size[0], size[1]])
-        };
-        if page >= PAGE_SLOTS || (page != 0 && color != [255; 4]) { return Err(Error::Invalid); }
-        if page != 0 && page_sizes[page][0] == 0 {
-            return Err(Error::MissingPage);
-        }
-        let mut values = [0.0; 10];
-        for (index, value) in values.iter_mut().enumerate() {
-            *value = f32::from_bits(word(record, 8 + 4 * index));
-        }
-        if values[..6].iter().any(|v| !v.is_finite() || v.abs() > 16_777_216.0)
-            || values[6..].iter().any(|v| !(0.0..=1.0).contains(v))
-        {
-            return Err(Error::Invalid);
-        }
-        let [x0, y0, x1, y1, x2, y2, u0, v0, u1, v1] = values;
-        if project && (u0 >= u1 || v0 >= v1) { return Err(Error::Invalid); }
-        let region = if project { [u0, v0, u1, v1] } else { [0., 0., 1., 1.] };
-        // Consume sparse descriptors in draw order. Duplicate, unsorted or out-of-range
-        // ordinals leave an unconsumed descriptor and reject the whole frame before submission.
         let mapping = match next {
             Some(desc) if word(desc, 0) as usize == ordinal => {
-                if page == 0 { return Err(Error::Invalid); }
                 next = descriptors.next();
-                Some(AtlasMapping::decode(desc, region, page_sizes[page])?)
+                Some(&desc[4..])
             }
             _ => None,
         };
-        let [u0, v0, u1, v1] = if mapping.is_some() { [0., 0., 1., 1.] } else { [u0, v0, u1, v1] };
-        let corner = |x, y, u, v| Vertex { position: [x, y], uv: [u, v], color };
-        let a = corner(x0, y0, u0, v0);
-        let b = corner(x1, y1, u1, v0);
-        let c = corner(x2, y2, u0, v1);
-        let d = corner(x1 + x2 - x0, y1 + y2 - y0, u1, v1);
-        let first = vertices.len() as i32;
-        vertices.extend_from_slice(&[a, b, c, c, b, d]);
-        match batches.last_mut() {
-            Some(last) if last.page == page && last.opacity == opacity && last.clip == clip && last.region == region
-                && last.mapping == mapping => last.count += 6,
-            _ => batches.push(Batch { page, first, count: 6, opacity, clip, region, mapping }),
-        }
+        decode_quad(record, mapping, project, size, page_sizes, vertices, batches)?;
     }
     if next.is_some() { return Err(Error::Invalid); }
     Ok(Header { project, mapped, size, clear })
@@ -352,5 +386,94 @@ mod project_tests {
             assert_eq!(prepare(&bytes, &[[8, 4]; PAGE_SLOTS], &mut vertices, &mut batches).err(), Some(Error::Invalid));
         }
         assert_eq!(prepare(&packet[..packet.len()-1], &[[8, 4]; PAGE_SLOTS], &mut vertices, &mut batches).err(), Some(Error::Invalid));
+    }
+}
+
+#[cfg(test)]
+mod indexed_tests {
+    use super::*;
+
+    fn words(dst: &mut Vec<u8>, values: &[u32]) {
+        for value in values { dst.extend(value.to_le_bytes()); }
+    }
+
+    fn mesh(kind: u32, page: u32) -> Vec<u8> {
+        let mut record = Vec::new();
+        words(&mut record, &[kind, page, 0.5f32.to_bits()]);
+        words(&mut record, &[0., 0., 64., 48., 0., 0., 1., 1.].map(f32::to_bits));
+        words(&mut record, &[4, 6]);
+        if kind == 3 { words(&mut record, &[8, 16, 0, 0, 1]); }
+        for vertex in [[2., 4., 0., 0.], [8., 6., 1., 0.], [1., 9., 0., 1.], [9., 10., 1., 1.]] {
+            words(&mut record, &vertex.map(f32::to_bits));
+        }
+        words(&mut record, &[0, 1, 2, 2, 1, 3]);
+        record
+    }
+
+    fn packet(records: &[Vec<u8>]) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        words(&mut bytes, &[u32::from_le_bytes(*b"EGR4"), 1, 64, 48, 255, records.len() as u32]);
+        for record in records { bytes.extend(record); }
+        bytes
+    }
+
+    fn parse(bytes: &[u8]) -> Result<Header, Error> {
+        prepare(bytes, &[[16, 8]; PAGE_SLOTS], &mut Vec::new(), &mut Vec::new())
+    }
+
+    fn quad(mapped: bool) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        words(&mut bytes, &[u32::from(mapped)]);
+        bytes.extend([1, 255, 255, 255]);
+        let coordinates = [0.5f32, 0., 0., 7., 0., 0., 3., 0., 0., 1., 1., 0., 0., 64., 48.];
+        words(&mut bytes, &coordinates.map(f32::to_bits));
+        if mapped { words(&mut bytes, &[8, 16, 0, 0, 1]); }
+        bytes
+    }
+
+    #[test]
+    fn mixes_quad_and_mesh_draws_with_local_indices_in_paint_order() {
+        let records = [quad(false), mesh(2, 1), mesh(2, 1), mesh(3, 2), quad(true)];
+        let (mut vertices, mut batches, mut indices) = (Vec::new(), Vec::new(), Vec::new());
+        let pages = [[16, 8]; PAGE_SLOTS];
+        let header = prepare_frame(&packet(&records), &pages, &mut vertices, &mut batches, &mut indices).unwrap();
+        assert!(header.project && header.mapped);
+        assert_eq!(vertices.len(), 24); // six per quad, four unique vertices per mesh
+        assert_eq!(indices, [6, 7, 8, 8, 7, 9, 10, 11, 12, 12, 11, 13, 14, 15, 16, 16, 15, 17]);
+        let spans: Vec<_> = batches.iter().map(|b| (b.indexed, b.page, b.first, b.count)).collect();
+        assert_eq!(spans, [(false, 1, 0, 6), (true, 1, 0, 12), (true, 2, 12, 6), (false, 1, 18, 6)]);
+        assert_eq!(batches[2].mapping, batches[3].mapping);
+        assert_eq!(batches[2].mapping.unwrap().logical, [8, 16]);
+        assert_eq!(vertices[17], Vertex { position: [9., 10.], uv: [1., 1.], color: [255; 4] });
+        // The next capture, including a quad-only legacy frame, owns new draw and index ranges.
+        assert!(prepare_frame(&packet(&[quad(false)]), &pages, &mut vertices, &mut batches, &mut indices).is_err());
+        let mut legacy = packet(&[]);
+        legacy[..4].copy_from_slice(b"EGR2");
+        prepare_frame(&legacy, &pages, &mut vertices, &mut batches, &mut indices).unwrap();
+        assert!(vertices.is_empty() && batches.is_empty() && indices.is_empty());
+    }
+
+    #[test]
+    fn rejects_truncation_trailing_bytes_invalid_indices_and_header_fields() {
+        let good = packet(&[mesh(2, 1)]);
+        assert!(parse(&good).is_ok());
+        for end in 0..good.len() { assert_eq!(parse(&good[..end]).err(), Some(Error::Invalid)); }
+        let mut extra = good.clone();
+        extra.extend([0; 4]);
+        assert_eq!(parse(&extra).err(), Some(Error::Invalid));
+        for (at, bad) in [(0, 4), (4, 0), (4, 256), (8, f32::NAN.to_bits()),
+            (12, (-1f32).to_bits()), (20, 65f32.to_bits()), (28, 1f32.to_bits()),
+            (44, 2), (44, u32::MAX), (48, 5), (48, u32::MAX),
+            (52, f32::INFINITY.to_bits()), (60, (-0.1f32).to_bits()),
+            (52 + 4 * 16 + 5 * 4, 4)] {
+            let mut broken = good.clone();
+            broken[HEADER_BYTES + at..HEADER_BYTES + at + 4].copy_from_slice(&bad.to_le_bytes());
+            assert_eq!(parse(&broken).err(), Some(Error::Invalid), "bad field at {at}");
+        }
+        assert_eq!(parse(&packet(&[])).err(), Some(Error::Invalid));
+        assert_eq!(prepare(&good, &[[0; 2]; PAGE_SLOTS], &mut Vec::new(), &mut Vec::new()).err(), Some(Error::MissingPage));
+        let mut broken_mapping = mesh(3, 1);
+        broken_mapping[68..72].copy_from_slice(&4u32.to_le_bytes());
+        assert_eq!(parse(&packet(&[broken_mapping])).err(), Some(Error::Invalid));
     }
 }

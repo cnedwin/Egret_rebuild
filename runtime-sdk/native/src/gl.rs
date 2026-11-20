@@ -10,6 +10,8 @@ pub const FRAGMENT_SHADER: u32 = 0x8b30;
 pub const COMPILE_STATUS: u32 = 0x8b81;
 pub const LINK_STATUS: u32 = 0x8b82;
 pub const ARRAY_BUFFER: u32 = 0x8892;
+pub const ELEMENT_ARRAY_BUFFER: u32 = 0x8893;
+pub const UNSIGNED_INT: u32 = 0x1405;
 pub const DYNAMIC_DRAW: u32 = 0x88e8;
 pub const FLOAT: u32 = 0x1406;
 pub const UNSIGNED_BYTE: u32 = 0x1401;
@@ -92,4 +94,5 @@ extern "C" {
     pub fn glClearColor(r: f32, g: f32, b: f32, a: f32);
     pub fn glClear(mask: u32);
     pub fn glDrawArrays(mode: u32, first: i32, count: i32);
+    pub fn glDrawElements(mode: u32, count: i32, ty: u32, offset: *const c_void);
 }

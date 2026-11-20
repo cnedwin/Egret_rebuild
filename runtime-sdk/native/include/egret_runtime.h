@@ -21,7 +21,7 @@ EgretRenderer *egret_renderer_create(void);
 void egret_renderer_destroy(EgretRenderer *renderer);
 void egret_renderer_abandon(EgretRenderer *renderer);
 /* Upload a top-down, tightly packed, straight sRGB RGBA8 image to slot 1..255.
- * Opaque bytes remain exact. EGR2 and EGR3 accept translucent pages and composite
+ * Opaque bytes remain exact. EGR2 through EGR4 accept translucent pages and composite
  * normal source-over in linear premultiplied space. Slot zero is reserved. */
 int32_t egret_renderer_upload(EgretRenderer *renderer, uint32_t page,
                               uint32_t width, uint32_t height,

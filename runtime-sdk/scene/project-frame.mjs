@@ -4,7 +4,10 @@
 // corners, two UV corners and the intersected logical clip (left,top,right,bottom).
 export const PROJECT_FRAME_MAGIC = 0x32524745;
 const ATLAS_FRAME_MAGIC = 0x33524745;
+const INDEXED_FRAME_MAGIC = 0x34524745;
 const HEADER = 24, QUAD = 64, MAX_QUADS = 4096;
+const MAX_FRAME_BYTES = HEADER + MAX_QUADS * (QUAD + 24);
+const INDEXED_HEADER = 52, INDEXED_VERTEX = 16, INLINE_MAPPING = 20;
 const MAX_LOGICAL_SIZE = 1 << 20;
 const barriers = new Set(['clip-enter', 'clip-exit', 'explicit-enter', 'explicit-exit', 'empty']);
 
@@ -78,6 +81,112 @@ function appendAtlasMapping(words, ordinal, region) {
   return words;
 }
 
+function writeMapping(view, at, region) {
+  view.setUint32(at, region.logicalWidth, true);
+  view.setUint32(at + 4, region.logicalHeight, true);
+  view.setUint32(at + 8, region.trimX, true);
+  view.setUint32(at + 12, region.trimY, true);
+  view.setUint32(at + 16, region.quarterTurn, true);
+}
+
+function textureBinding(frame, cmd, material, slots) {
+  const region = frame.regions[cmd.regionIndex];
+  if (!region || !Number.isSafeInteger(region.pageIndex) || region.pageIndex < 0)
+    throw new RangeError('Invalid project atlas page');
+  const page = frame.pages[region.pageIndex]?.source;
+  if (!page) throw new Error('Invalid project image page');
+  const r = region.packed;
+  const mapped = needsAtlasMapping(region, page);
+  const slot = slots[region.pageIndex];
+  if (material.samplingDomain === 'page') {
+    // A mesh authors page-domain UVs directly. Image corners, by contrast, refer to its view.
+    if (cmd.kind === 'mesh') return {region, page, slot, mapped: false, uv: [0, 0, 1, 1]};
+    if (mapped || r.x !== 0 || r.y !== 0 || r.width !== page.width || r.height !== page.height)
+      throw new Error('Unsupported page sampling outside a project atlas crop');
+  }
+  return {region, page, slot, mapped,
+    uv: [r.x/page.width, r.y/page.height, (r.x+r.width)/page.width, (r.y+r.height)/page.height]};
+}
+
+// EGR4 interleaves typed draws in capture order. Work out the exact allocation
+// and enforce the same bridge ceiling as EGR3 before touching any vertex data.
+function indexedLayout(frame, slots) {
+  let size = HEADER;
+  const draws = [];
+  for (const cmd of frame.commands) {
+    if (cmd.kind === 'barrier') continue;
+    const material = frame.materials[cmd.materialIndex];
+    if (!supportedMaterial(material)) throw new Error('Unsupported project material');
+    const texture = cmd.kind === 'rect' ? undefined : textureBinding(frame, cmd, material, slots);
+    const mappingBytes = texture?.mapped ? INLINE_MAPPING : 0;
+    let kind = texture?.mapped ? 1 : 0;
+    let length = 4 + QUAD + mappingBytes;
+    let geometry;
+    if (cmd.kind === 'mesh') {
+      geometry = frame.geometries?.[cmd.geometryIndex];
+      if (!Number.isSafeInteger(cmd.geometryIndex) || cmd.geometryIndex < 0 || !geometry)
+        throw new RangeError('Invalid project mesh geometry');
+      const {vertexCount, indexCount, positions, uvs, lightColors, darkColors, indices} = geometry;
+      if (!Number.isSafeInteger(vertexCount) || vertexCount < 3 ||
+          !Number.isSafeInteger(indexCount) || indexCount < 3 || indexCount % 3 !== 0 ||
+          geometry.triangleCount !== indexCount / 3 || positions?.length !== vertexCount*2 ||
+          uvs?.length !== vertexCount*2 || lightColors?.length !== vertexCount*4 ||
+          (darkColors !== undefined && darkColors?.length !== vertexCount*3) || indices?.length !== indexCount)
+        throw new RangeError('Invalid project mesh shape');
+      kind += 2;
+      length = INDEXED_HEADER + mappingBytes + INDEXED_VERTEX * vertexCount + 4 * indexCount;
+    }
+    size += length;
+    if (size > MAX_FRAME_BYTES) throw new RangeError('Project frame byte limit exceeded');
+    draws.push({kind, length, geometry, texture});
+  }
+  return {size, draws};
+}
+
+function writeMesh(view, at, cmd, draw, frame) {
+  const {geometry, texture} = draw;
+  const {vertexCount, indexCount, positions, uvs, lightColors, darkColors, indices} = geometry;
+  const {mapped, region, uv, slot} = texture;
+  view.setUint32(at + 4, slot, true);
+  view.setFloat32(at + 8, unit(cmd.opacity), true);
+  const clip = clipBounds(cmd.clips, frame.width, frame.height);
+  for (let i = 0; i < 4; i++) {
+    view.setFloat32(at + 12 + i*4, clip[i], true);
+    view.setFloat32(at + 28 + i*4, uv[i], true);
+  }
+  view.setUint32(at + 44, vertexCount, true);
+  view.setUint32(at + 48, indexCount, true);
+  let cursor = at + INDEXED_HEADER;
+  if (mapped) {
+    writeMapping(view, cursor, region);
+    cursor += INLINE_MAPPING;
+  }
+  const {a, b, c, d, tx, ty} = cmd.matrix;
+  for (let i = 0; i < vertexCount; i++, cursor += INDEXED_VERTEX) {
+    const x = positions[i*2], y = positions[i*2 + 1];
+    const px = a*x + c*y + tx, py = b*x + d*y + ty;
+    const u = uvs[i*2], v = uvs[i*2 + 1];
+    if (!Number.isFinite(px) || !Number.isFinite(py) || Math.abs(px) > 16777216 || Math.abs(py) > 16777216 ||
+        !Number.isFinite(u) || !Number.isFinite(v) || u < 0 || u > 1 || v < 0 || v > 1)
+      throw new RangeError('Invalid project mesh coordinates');
+    for (let channel = 0; channel < 4; channel++) {
+      if (lightColors[i*4 + channel] !== 1 || (channel < 3 && darkColors && darkColors[i*3 + channel] !== 0))
+        throw new Error('Unsupported project mesh vertex tint');
+    }
+    view.setFloat32(cursor, px, true);
+    view.setFloat32(cursor + 4, py, true);
+    // Trimmed margins and quarter-turns must be resolved after interpolation
+    // in the shader. A plain crop can be expressed directly in page UVs.
+    view.setFloat32(cursor + 8, mapped ? u : uv[0] + u*(uv[2]-uv[0]), true);
+    view.setFloat32(cursor + 12, mapped ? v : uv[1] + v*(uv[3]-uv[1]), true);
+  }
+  for (let i = 0; i < indexCount; i++, cursor += 4) {
+    const index = indices[i];
+    if (!Number.isInteger(index) || index < 0 || index >= vertexCount) throw new RangeError('Invalid project mesh index');
+    view.setUint32(cursor, index, true);
+  }
+}
+
 // Captured region table entries can be recreated on every frame. The encoded UVs
 // depend on their values, the source dimensions and the current resident slot.
 function sameRegion(a, b) {
@@ -135,18 +244,20 @@ function encode(frame, frameId, pageIds, records) {
     used.add(slot);
     return slot;
   });
-  let count = 0;
+  let count = 0, hasMesh = false;
   for (const command of frame.commands) {
     if (command.kind === 'barrier') {
       if (!barriers.has(command.reason)) throw new Error('Unsupported project barrier: ' + command.reason);
-    } else if (command.kind === 'rect' || command.kind === 'image') {
-      if (++count > MAX_QUADS) throw new RangeError('Project quad limit exceeded');
+    } else if (command.kind === 'rect' || command.kind === 'image' || command.kind === 'mesh') {
+      if (++count > MAX_QUADS) throw new RangeError('Project draw limit exceeded');
+      if (command.kind === 'mesh') hasMesh = true;
     } else throw new Error('Unsupported project draw: ' + command.kind);
   }
-  const buffer = new ArrayBuffer(HEADER + QUAD * count);
+  const indexed = hasMesh ? indexedLayout(frame, slots) : undefined;
+  const buffer = new ArrayBuffer(indexed?.size ?? (HEADER + QUAD * count));
   const view = new DataView(buffer);
   const clear = rgb(frame.clearColor)*256 + Math.round(unit(frame.clearAlpha)*255);
-  [PROJECT_FRAME_MAGIC, frameId, frame.width, frame.height, clear, count]
+  [indexed ? INDEXED_FRAME_MAGIC : PROJECT_FRAME_MAGIC, frameId, frame.width, frame.height, clear, count]
     .forEach((value, i) => view.setUint32(i*4, value, true));
   const bytes = new Uint8Array(buffer);
   if (records) records.length = count;
@@ -156,11 +267,25 @@ function encode(frame, frameId, pageIds, records) {
     if (cmd.kind === 'barrier') continue;
     const material = frame.materials[cmd.materialIndex];
     const saved = records?.[index];
+    const draw = indexed?.draws[index];
     index++;
+    if (draw) {
+      view.setUint32(base, draw.kind, true);
+      if (draw.geometry) {
+        // Mesh deformation may replace the geometry table entry on each frame.
+        // Quad record retention never takes ownership of these vertex buffers.
+        writeMesh(view, base, cmd, draw, frame);
+        if (records) records[index - 1] = undefined;
+        base += draw.length;
+        continue;
+      }
+      base += 4;
+      if (draw.texture?.mapped) writeMapping(view, base + QUAD, draw.texture.region);
+    }
     if (saved && canReuse(saved, cmd, material, frame, slots)) {
       bytes.set(saved.bytes, base);
-      if (saved.mapped) atlasWords = appendAtlasMapping(atlasWords, index - 1, saved.region);
-      base += QUAD;
+      if (saved.mapped && !indexed) atlasWords = appendAtlasMapping(atlasWords, index - 1, saved.region);
+      base += draw ? draw.length - 4 : QUAD;
       continue;
     }
     if (!supportedMaterial(material)) throw new Error('Unsupported project material');
@@ -170,19 +295,8 @@ function encode(frame, frameId, pageIds, records) {
       color = rgb(cmd.fillColor);
       opacity *= unit(cmd.fillAlpha);
     } else {
-      region = frame.regions[cmd.regionIndex];
-      if (!region || !Number.isSafeInteger(region.pageIndex) || region.pageIndex < 0)
-        throw new RangeError('Invalid project atlas page');
-      page = frame.pages[region.pageIndex]?.source;
-      if (!page) throw new Error('Invalid project image page');
-      const r = region.packed;
-      mapped = needsAtlasMapping(region, page);
-      if (material.samplingDomain === 'page' &&
-          (mapped || r.x !== 0 || r.y !== 0 || r.width !== page.width || r.height !== page.height))
-        throw new Error('Unsupported page sampling outside a project atlas crop');
-      if (mapped) atlasWords = appendAtlasMapping(atlasWords, index - 1, region);
-      uv = [r.x/page.width, r.y/page.height, (r.x+r.width)/page.width, (r.y+r.height)/page.height];
-      slot = slots[region.pageIndex];
+      ({region, page, mapped, uv, slot} = draw?.texture ?? textureBinding(frame, cmd, material, slots));
+      if (mapped && !indexed) atlasWords = appendAtlasMapping(atlasWords, index - 1, region);
     }
     view.setUint8(base, slot);
     view.setUint8(base+1, color >>> 16);
@@ -200,7 +314,7 @@ function encode(frame, frameId, pageIds, records) {
           slot, pageWidth: page?.width, pageHeight: page?.height, bytes: recordBytes};
       } else records[index - 1] = cmd;
     }
-    base += QUAD;
+    base += draw ? draw.length - 4 : QUAD;
   }
   if (!atlasWords) return bytes;
   const packet = new Uint8Array(bytes.length + atlasWords.length * 4);
