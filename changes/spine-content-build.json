@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-20",
+  "en": {
+    "title": "Spine content through the content build",
+    "body": "The content build has three Spine 4.3 producers: `egret.spine-atlas` over one PNG page recipe per named page, and `egret.spine-json` and `egret.spine-binary` over that atlas. Each artifact is the export's own bytes, kept once the Spine 4.3 reader of `@egret/project/spine` has read them through: the atlas must declare exactly its named pages at the size of their PNGs, a JSON skeleton is read with its atlas, and a binary must carry a 4.3 export version. A refused source fails the build with `CONTENT_IMPORT_SPINE` before anything is published. The Spine loader now takes the build's settings envelope, so the build's manifest loads as it is; a hand-written manifest is read as before. A changed skeleton rebuilds itself alone; a changed atlas rebuilds the atlas and its skeletons but not its pages. Licensed exports, mips and compressed variants stay open in #83."
+  },
+  "zh": {
+    "title": "Spine 内容可经内容构建产出",
+    "body": "内容构建新增三个 Spine 4.3 生产器：`egret.spine-atlas` 按页名为每页依赖一个 PNG 页面配方，`egret.spine-json` 与 `egret.spine-binary` 依赖该图集。每个产物就是导出本身的字节，经 `@egret/project/spine` 的 Spine 4.3 读取器读通后原样保留：图集须恰好声明所列页面且尺寸与各自 PNG 一致，JSON 骨骼连同图集读取，二进制文件头须带 4.3 导出版本。被拒绝的源文件以 `CONTENT_IMPORT_SPINE` 使构建失败，此时尚未发布任何内容。Spine 加载器现在接受构建的设置信封，构建生成的清单可直接加载；手写清单照旧读取。改动骨骼只重建该骨骼；改动图集重建图集及其骨骼，不重建页面。授权导出、mip 与压缩变体仍在 #83 中开放。"
+  }
+}
