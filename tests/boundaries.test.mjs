@@ -9,6 +9,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const repository = fileURLToPath(new URL('..', import.meta.url));
 const checker = readFileSync(path.join(repository, 'tools/check-boundaries.mjs'));
 const checkerHash = createHash('sha256').update(checker).digest('hex');
+const checkerText = checker.toString('utf8');
+/** The runtime and engine entries, from the checker's one list, as package.json maps them. */
+function entryPoints(name) {
+  const found = /\/\/ ENTRY_POINTS_BEGIN\n(?:\/\/[^\n]*\n)*const ENTRY_POINTS = (\{[\s\S]*?\n\});\n\/\/ ENTRY_POINTS_END/.exec(checkerText);
+  assert.ok(found, 'the checker keeps its entry list between its markers');
+  return Object.fromEntries(Object.entries(JSON.parse(found[1])[name]).map(([entry, file]) => [entry, { types: `./dist/${file}.d.ts`, import: `./dist/${file}.js` }]));
+}
 const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
@@ -30,42 +37,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         if (declared) dependencyMap.constructor = '1.0.0';
       }
       if (name === 'project') dependencyMap['jsonc-parser'] = '3.3.1';
-      const gpuExport = { types: './dist/web/webgpu.d.ts', import: './dist/web/webgpu.js' };
-      const packageExports = name === 'runtime' ? {
-        '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
-        './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
-        './paragraph': {types:'./dist/paragraph/index.d.ts',import:'./dist/paragraph/index.js'},
-        './input': {types:'./dist/input/index.d.ts',import:'./dist/input/index.js'},
-        './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
-      } : name === 'engine' ? {
-        '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
-        './webgpu': gpuExport,
-        './webgl2': {types:'./dist/web/webgl2.d.ts',import:'./dist/web/webgl2.js'},
-        './world3d': {types:'./dist/rendering/world3d/index.d.ts',import:'./dist/rendering/world3d/index.js'},
-        './webgl2/world3d': {types:'./dist/web/world3d/index.d.ts',import:'./dist/web/world3d/index.js'},
-        './webgpu/world3d': {types:'./dist/web/world3d/webgpu.d.ts',import:'./dist/web/world3d/webgpu.js'},
-        './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
-        './paragraph': {types:'./dist/paragraph.d.ts',import:'./dist/paragraph.js'},
-        './web/paragraph': {types:'./dist/web/paragraph.d.ts',import:'./dist/web/paragraph.js'},
-        './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
-        './animation': {types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'},
-        './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
-        './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
-        './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
-        './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
-        './web/pointer': {types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'},
-        './web/keyboard': {types:'./dist/web/keyboard.d.ts',import:'./dist/web/keyboard.js'},
-        './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
-        './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
-        './web/resources': {types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'},
-      } : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}} : {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}};
-      if(name==='runtime'||name==='engine')packageExports['./ui/editing']={types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
-      if(name==='engine')packageExports['./web/editing']={types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
-      if(name==='engine')packageExports['./web/text-input']={types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'};
-      if(name==='engine'){packageExports['./input/hover']={types:'./dist/hover.d.ts',import:'./dist/hover.js'};packageExports['./web/hover']={types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
-        packageExports['./ui/semantics']={types:'./dist/semantics.d.ts',import:'./dist/semantics.js'};packageExports['./web/semantics']={types:'./dist/web/semantics.d.ts',import:'./dist/web/semantics.js'};
-        packageExports['./camera']={types:'./dist/camera.d.ts',import:'./dist/camera.js'};packageExports['./tilemap']={types:'./dist/tilemap.d.ts',import:'./dist/tilemap.js'};packageExports['./particles']={types:'./dist/particles.d.ts',import:'./dist/particles.js'};packageExports['./physics2d']={types:'./dist/physics2d.d.ts',import:'./dist/physics2d.js'};packageExports['./bitmapfont']={types:'./dist/bitmapfont.d.ts',import:'./dist/bitmapfont.js'};packageExports['./video']={types:'./dist/video.d.ts',import:'./dist/video.js'};packageExports['./web/video']={types:'./dist/web/video.d.ts',import:'./dist/web/video.js'};packageExports['./web/loop']={types:'./dist/web/loop.d.ts',import:'./dist/web/loop.js'};packageExports['./kit']={types:'./dist/kit.d.ts',import:'./dist/kit.js'};packageExports['./web/kit']={types:'./dist/web/kit.d.ts',import:'./dist/web/kit.js'};packageExports['./play']={types:'./dist/web/play.d.ts',import:'./dist/web/play.js'};packageExports['./web/game']={types:'./dist/web/game.d.ts',import:'./dist/web/game.js'};packageExports['./input/gamepad']={types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};packageExports['./web/gamepad']={types:'./dist/web/gamepad.d.ts',import:'./dist/web/gamepad.js'};
-        packageExports['./audio']={types:'./dist/audio.d.ts',import:'./dist/audio.js'};packageExports['./web/audio']={types:'./dist/web/audio.d.ts',import:'./dist/web/audio.js'};}
+      const packageExports = name === 'runtime' || name === 'engine' ? entryPoints(name) : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}} : {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}};
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');

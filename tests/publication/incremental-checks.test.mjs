@@ -9171,259 +9171,55 @@ function restoreWebEntry(raw) {
   });
   return prior;
 }
-// The text input entry is newer than every fixture here. Taking it out gives the package as it was before it.
-function withoutTextInputEntry(raw) {
+// The entries the package had before the browser `./web` entry was restored, in their order. Every entry added since
+// is newer than every fixture here, so taking all of them out gives the package those fixtures were made with. A
+// new entry needs nothing here: it is not on this list, and goes with the rest.
+const ENTRIES_BEFORE_LATER = Object.freeze([
+  '.',
+  './webgpu',
+  './text',
+  './layout',
+  './web/input',
+  './web/image',
+  './web/text',
+  './webgl2',
+  './world3d',
+  './webgl2/world3d',
+  './webgpu/world3d',
+  './resources',
+  './web/resources',
+  './input',
+  './web/pointer',
+  './ui',
+  './animation',
+  './paragraph',
+  './web/paragraph',
+  './web/keyboard',
+  './ui/editing',
+  './web/editing'
+]);
+function withoutLaterEntries(raw) {
   const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './web/text-input')) return raw;
-  assert.deepEqual(value.exports['./web/text-input'], {
-    types: './dist/web/textInput.d.ts',
-    import: './dist/web/textInput.js'
-  });
-  delete value.exports['./web/text-input'];
+  const later = Object.keys(value.exports).filter(key => !ENTRIES_BEFORE_LATER.includes(key));
+  if (later.length === 0) return raw;
+  for (const key of later) {
+    // Each later entry is a public entry of the usual form: its types and its module, of one stem in dist.
+    const mapping = value.exports[key],
+      stem = /^\.\/dist\/(.+)\.js$/.exec(mapping?.import ?? '')?.[1];
+    assert.ok(stem !== undefined, key);
+    assert.deepEqual(mapping, { types: './dist/' + stem + '.d.ts', import: './dist/' + stem + '.js' }, key);
+    delete value.exports[key];
+  }
   const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+  assert.deepEqual(Object.keys(value.exports), ENTRIES_BEFORE_LATER);
   assert.deepEqual(
     { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
     { bytes: 3440, sha256: '4070930d06e98f8213c69ef3e1b2e8f7b850933d86950fe0ce2b851b6c976f78' }
   );
   return prior;
 }
-// The two hover entries are newer still. Taking them out gives the package as the text input entry left it.
-function withoutHoverEntries(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './input/hover') && !Object.hasOwn(value.exports, './web/hover')) return raw;
-  assert.deepEqual(value.exports['./input/hover'], { types: './dist/hover.d.ts', import: './dist/hover.js' });
-  assert.deepEqual(value.exports['./web/hover'], { types: './dist/web/hover.d.ts', import: './dist/web/hover.js' });
-  delete value.exports['./input/hover'];
-  delete value.exports['./web/hover'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 3559, sha256: '47f30da0710131fd945cbc85d57ec19abc29a99f8d6b36502cf7c04da49b091d' }
-  );
-  return prior;
-}
-// Taking the two semantics entries out gives the package as the hover entries left it.
-function withoutSemanticsEntries(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './ui/semantics') && !Object.hasOwn(value.exports, './web/semantics')) return raw;
-  assert.deepEqual(value.exports['./ui/semantics'], { types: './dist/semantics.d.ts', import: './dist/semantics.js' });
-  assert.deepEqual(value.exports['./web/semantics'], {
-    types: './dist/web/semantics.d.ts',
-    import: './dist/web/semantics.js'
-  });
-  delete value.exports['./ui/semantics'];
-  delete value.exports['./web/semantics'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 3765, sha256: 'ca1aad9f66558f25c0e4e26ec74ec7cf4f7cf963654d5e096daf09f52c05fa9b' }
-  );
-  return prior;
-}
-// The play entry is the newest. Taking it out gives the package as the DOM-free game kit entry left it.
-function withoutPlayEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './play')) return raw;
-  assert.deepEqual(value.exports['./play'], { types: './dist/web/play.d.ts', import: './dist/web/play.js' });
-  delete value.exports['./play'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 5522, sha256: '6bc72e173be8de399ee0143518e83e1319a01ca79a58c2774dac17adfd2f12e8' }
-  );
-  return prior;
-}
-// Taking the DOM-free game kit entry out gives the package as the browser kit entry left it.
-function withoutKitEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './kit')) return raw;
-  assert.deepEqual(value.exports['./kit'], { types: './dist/kit.d.ts', import: './dist/kit.js' });
-  delete value.exports['./kit'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 5434, sha256: 'a970db03f9fe60884a9f4955178475d2a1ce9ac0bbdd1d99af177bb0c2732812' }
-  );
-  return prior;
-}
-// Taking the browser game kit entry out gives the package as the browser game entry left it.
-function withoutWebKitEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './web/kit')) return raw;
-  assert.deepEqual(value.exports['./web/kit'], { types: './dist/web/kit.d.ts', import: './dist/web/kit.js' });
-  delete value.exports['./web/kit'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 5334, sha256: '4a1b2802910d63b91fa729decd5be82a2ddef7a3fe3dea7066bdc2e4adfcf033' }
-  );
-  return prior;
-}
-// Taking the browser game entry out gives the package as the frame loop entry left it.
-function withoutGameEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './web/game')) return raw;
-  assert.deepEqual(value.exports['./web/game'], { types: './dist/web/game.d.ts', import: './dist/web/game.js' });
-  delete value.exports['./web/game'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 5231, sha256: 'f7346ba3e0283c2fc1800b939ea2034665b20cd3a035d4acd3e58ea617bf5af2' }
-  );
-  return prior;
-}
-// Taking the frame loop entry out gives the package as the video entries left it.
-function withoutLoopEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './web/loop')) return raw;
-  assert.deepEqual(value.exports['./web/loop'], { types: './dist/web/loop.d.ts', import: './dist/web/loop.js' });
-  delete value.exports['./web/loop'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 5128, sha256: '03335cb1a7de5a6d57f41b59ba61c28b15778d6a05dfbb295f3d7d2e77084fd4' }
-  );
-  return prior;
-}
-// Taking the video entries out gives the package as the bitmapfont entry left it.
-function withoutVideoEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './video') && !Object.hasOwn(value.exports, './web/video')) return raw;
-  assert.deepEqual(value.exports['./video'], { types: './dist/video.d.ts', import: './dist/video.js' });
-  assert.deepEqual(value.exports['./web/video'], { types: './dist/web/video.d.ts', import: './dist/web/video.js' });
-  delete value.exports['./video'];
-  delete value.exports['./web/video'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 4928, sha256: 'e7f51a8ffefa4c5716a049be112b604f2881d0c8da75e62d67294fa33bcba4ef' }
-  );
-  return prior;
-}
-// Taking the bitmapfont entry out gives the package as the physics2d entry left it.
-function withoutBitmapfontEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './bitmapfont')) return raw;
-  assert.deepEqual(value.exports['./bitmapfont'], { types: './dist/bitmapfont.d.ts', import: './dist/bitmapfont.js' });
-  delete value.exports['./bitmapfont'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 4819, sha256: 'a6c323927a4402321b68e5c4f2a6039315fea136dbb7f61bcf8d20ae80f1b486' }
-  );
-  return prior;
-}
-// Taking the physics2d entry out gives the package as the particles entry left it.
-function withoutPhysics2dEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './physics2d')) return raw;
-  assert.deepEqual(value.exports['./physics2d'], { types: './dist/physics2d.d.ts', import: './dist/physics2d.js' });
-  delete value.exports['./physics2d'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 4713, sha256: '73dcbf0640d11df06218006c873a3b53fa3f9e357eb675ce8fe831c5e3410158' }
-  );
-  return prior;
-}
-// Taking the particles entry out gives the package as the tilemap entry left it.
-function withoutParticlesEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './particles')) return raw;
-  assert.deepEqual(value.exports['./particles'], { types: './dist/particles.d.ts', import: './dist/particles.js' });
-  delete value.exports['./particles'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 4607, sha256: '3e9c379763d3801ba8bb9d6595759935a167b23328d730d231ef57f98e1b14d3' }
-  );
-  return prior;
-}
-// Taking the tilemap entry out gives the package as the camera entry left it.
-function withoutTilemapEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './tilemap')) return raw;
-  assert.deepEqual(value.exports['./tilemap'], { types: './dist/tilemap.d.ts', import: './dist/tilemap.js' });
-  delete value.exports['./tilemap'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 4507, sha256: '74243cafe1f034e2c880b5408ee8063ce5b0ef82598e1a3604a38a82e97bb0df' }
-  );
-  return prior;
-}
-// Taking the camera entry out gives the package as the two gamepad entries left it.
-function withoutCameraEntry(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './camera')) return raw;
-  assert.deepEqual(value.exports['./camera'], { types: './dist/camera.d.ts', import: './dist/camera.js' });
-  delete value.exports['./camera'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 4410, sha256: '291c66ce38d543264078733d327dda0176bc0e8020149bd5981b86933bfcffa4' }
-  );
-  return prior;
-}
-// Taking the two gamepad entries out gives the package as the sound entries left it.
-function withoutGamepadEntries(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './input/gamepad') && !Object.hasOwn(value.exports, './web/gamepad')) return raw;
-  assert.deepEqual(value.exports['./input/gamepad'], { types: './dist/gamepad.d.ts', import: './dist/gamepad.js' });
-  assert.deepEqual(value.exports['./web/gamepad'], {
-    types: './dist/web/gamepad.d.ts',
-    import: './dist/web/gamepad.js'
-  });
-  delete value.exports['./input/gamepad'];
-  delete value.exports['./web/gamepad'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 4192, sha256: '9f795a87d30012d315be17332f559567b2e558d32b6ff0ecb4cee20439f4ecbd' }
-  );
-  return prior;
-}
-// Taking the two sound entries out gives the package as the semantics entries left it.
-function withoutAudioEntries(raw) {
-  const value = JSON.parse(raw);
-  if (!Object.hasOwn(value.exports, './audio') && !Object.hasOwn(value.exports, './web/audio')) return raw;
-  assert.deepEqual(value.exports['./audio'], { types: './dist/audio.d.ts', import: './dist/audio.js' });
-  assert.deepEqual(value.exports['./web/audio'], { types: './dist/web/audio.d.ts', import: './dist/web/audio.js' });
-  delete value.exports['./audio'];
-  delete value.exports['./web/audio'];
-  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
-  assert.deepEqual(
-    { bytes: prior.length, sha256: createHash('sha256').update(prior).digest('hex') },
-    { bytes: 3992, sha256: 'b1bf9947c0a409f27ffa0179c03daccfa999332ae069de91bdba4a61e8010cb6' }
-  );
-  return prior;
-}
 function restoreScene3dEntries(raw) {
-  raw = restoreWebEntry(
-    withoutTextInputEntry(
-      withoutHoverEntries(
-        withoutSemanticsEntries(
-          withoutAudioEntries(
-            withoutGamepadEntries(
-              withoutCameraEntry(
-                withoutTilemapEntry(
-                  withoutParticlesEntry(
-                    withoutPhysics2dEntry(
-                      withoutBitmapfontEntry(
-                        withoutVideoEntry(
-                          withoutLoopEntry(withoutGameEntry(withoutWebKitEntry(withoutKitEntry(withoutPlayEntry(raw)))))
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    )
-  );
+  raw = restoreWebEntry(withoutLaterEntries(raw));
   const identity = body => ({ bytes: body.length, sha256: createHash('sha256').update(body).digest('hex') });
   if (
     JSON.stringify(identity(raw)) !==
