@@ -35,6 +35,8 @@ export interface UiEnginePort {
   assertIdle(): void;
   /** Neither a frame is drawn nor input delivered now. */
   isIdle(): boolean;
+  /** Refuses while a frame is drawn; input being delivered is allowed. */
+  assertNotDrawing(): void;
   isEngineScope(value: unknown): value is Scope;
   createScope(): Scope;
   scope(value: unknown): UiScopePort;
@@ -118,6 +120,13 @@ export function registerUiEngine(engine: object, assembly: UiAssembly): UiEngine
     },
     isIdle(): boolean {
       return !assembly.isFrameBusy() && delivery.depth === 0;
+    },
+    assertNotDrawing(): void {
+      assembly.assertOpen();
+      if (assembly.isFrameBusy())
+        throw new EgretError('UI_BUSY', {
+          cause: new Error('a frame is being drawn: call this after the frame, not from inside it')
+        });
     },
     isEngineScope(value: unknown): value is Scope {
       return scopes.has(value as Scope);

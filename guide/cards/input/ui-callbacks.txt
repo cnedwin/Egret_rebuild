@@ -17,7 +17,7 @@ engine: 687037ac462c48dbfe00523312125b94072ffea4
 Two games tripped over the same moment: the press of a button is still being delivered while its `onActivate` runs.
 
 - An `async` callback returns a promise, and pointer input refuses it: `POINTER_INPUT_CALLBACK_FAILED` with the cause `ASYNC_EVENT_HANDLER`. Tea Horse Road's "skip" button waited for new words inside its callback.
-- Making a new root with `createUiRoot` during the delivery fails with `UI_BUSY` ("input is being delivered"). Since `687037a` a root's `prepare()` waits for the delivery to end, but making the root does not. Mechanism City's settings card, made fresh each time it opens, failed this way.
+- Making a new root with `createUiRoot` during the delivery failed with `UI_BUSY` ("input is being delivered") at `687037a`, though `prepare()` already waited for the delivery to end. Mechanism City's settings card, made fresh each time it opens, failed this way. Now both may be called from the callback; `commit()` still waits for its `prepare()`.
 
 ```js
 const action = createActionControl({
@@ -28,14 +28,14 @@ const action = createActionControl({
 });
 
 async function openSettings() {
-  // Leave the press that asked for it, then make the root.
-  await Promise.resolve();
+  // Made from the press itself; its prepare starts once the press is delivered.
   const root = createUiRoot({ /* ... */ });
+  root.commit(await root.prepare());
 }
 ```
 
 Rules:
 
 - A control's callback is synchronous. Start async work with `void` and report its failure yourself.
-- Anything that makes a root (a card, a dialog, a settings page) starts with `await Promise.resolve()`, and guards against a second press while it opens (an `opening` flag).
+- Anything that makes a root (a card, a dialog, a settings page) guards against a second press while it opens (an `opening` flag). On an engine pinned at `687037a` or before, it also starts with `await Promise.resolve()`.
 - Read the error's `cause`: `UI_BUSY` names the delivery it waited on; see the read-engine-errors card.

@@ -13,7 +13,7 @@ engine: 687037ac462c48dbfe00523312125b94072ffea4
 
 # Write save.update callbacks as blocks, not expression arrows
 
-`save.update(change)` hands the live data to `change`. Whatever the callback returns, if it is not `undefined`, is taken as the whole new save and must pass `validate`. An expression arrow returns its expression, so this refuses the write and returns `false`:
+`save.update(change)` hands a copy of the data to `change`, and keeps the copy only if it passes. Whatever the callback returns, if it is not `undefined`, is taken as the whole new save and must pass `validate`. An expression arrow returns its expression, so this refuses the write and returns `false`:
 
 ```js
 save.update(data => (data.settings.music = false)); // returns false: the new "save" is the value false
@@ -32,5 +32,5 @@ Rules:
 
 - One block, no return value, for every `update`. A lint rule or a test that greps for `update((data) => (` catches the slip.
 - `update` returns a boolean, not an object: test `if (!saved)`, not `result.ok`.
-- At engine `687037a` a refused `update` has already changed `save.data` in memory (the callback edited it in place) although nothing was written. Do not read `save.data` to decide what the player sees after a `false`; reopen the store or keep your own copy.
+- A refused `update`, or one that throws, leaves `save.data` as it was. `save.data` is a new object after each update: read it again, do not keep the old one. (At engine `687037a` a refused update had already changed `save.data` in memory; a game still on that pin should not trust `save.data` after a `false`.)
 - Test it in Node with `createMemorySaveStorage()`: an expression arrow must return `false` and leave the stored text as it was.

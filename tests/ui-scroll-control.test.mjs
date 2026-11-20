@@ -464,3 +464,33 @@ test('SR13 a failure while a drag ends is heard through the release that ended i
     assert.equal(scroll.dragging, false);
     assert.throws(() => scroll.setEnabled('no'), coded('UI_CONTROL_OPTIONS'));
   }));
+
+test('SR14 with crossAxis a sideways list scrolls by an ordinary up-and-down wheel; without it, it leaves that wheel', async () =>
+  fixture(({ outer, hover, wheel }) => {
+    const plain = createScrollControl({
+      axis: 'x',
+      viewportLength: 100,
+      contentLength: 400,
+      wheel: { hover, target: outer }
+    });
+    assert.equal(wheel(50, 80, { deltaY: 30 }), false, 'off by default: the page outside gets it');
+    assert.equal(plain.offset, 0);
+    plain.dispose();
+    const sideways = createScrollControl({
+      axis: 'x',
+      viewportLength: 100,
+      contentLength: 400,
+      wheel: { hover, target: outer, crossAxis: true }
+    });
+    assert.equal(wheel(50, 80, { deltaY: 30 }), true);
+    assert.equal(sideways.offset, 30);
+    // A wheel that turns sideways too is read on its own axis.
+    assert.equal(wheel(50, 80, { deltaX: 10, deltaY: 50 }), true);
+    assert.equal(sideways.offset, 40);
+    sideways.dispose();
+    assert.throws(
+      () =>
+        createScrollControl({ viewportLength: 1, contentLength: 2, wheel: { hover, target: outer, crossAxis: 'yes' } }),
+      coded('UI_CONTROL_OPTIONS')
+    );
+  }));
