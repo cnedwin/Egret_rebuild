@@ -34,6 +34,7 @@ export interface ActionKeysOptions extends ControlKeysTarget {
   readonly onPressChange?: (pressed: boolean) => void;
 }
 
+/** Keys for a toggle: which kind of toggle, the control, and what is called when its press changes. */
 export interface ToggleKeysOptions extends ControlKeysTarget {
   readonly kind: 'toggle';
   readonly control: { readonly enabled: boolean; toggle(): void };
@@ -93,6 +94,7 @@ export interface MovementKeysOptions extends ControlKeysTarget {
   readonly onPressChange?: (pressed: boolean) => void;
 }
 
+/** Keys for one control: an action, a toggle, a text field or a selection group. */
 export type ControlKeysOptions =
   | ActionKeysOptions
   | ToggleKeysOptions
@@ -102,6 +104,7 @@ export type ControlKeysOptions =
   | RangeKeysOptions
   | MovementKeysOptions;
 
+/** Keys bound to a control: which are pressed now; dispose of it to unbind them. */
 export interface ControlKeys {
   /** Whether a key of this binding is held: an activation that waits for its release, or a direction. */
   readonly pressed: boolean;
@@ -134,6 +137,7 @@ interface KeyEvent<Payload> {
 }
 type Down = (event: KeyEvent<KeyboardKeyPayload>) => void;
 
+/** Binds the keyboard to a control: Space and Enter press an action or a toggle, arrows move a selection. */
 export function createControlKeys(options: ControlKeysOptions): ControlKeys {
   if (options === null || typeof options !== 'object') throw new EgretError('UI_CONTROL_OPTIONS');
   const { keyboard, target, kind, control } = options;

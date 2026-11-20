@@ -30,6 +30,7 @@ export interface BrowserStatsSnapshot {
   readonly frames: number;
   readonly skipped: number;
 }
+/** A stats panel to make: the canvas it sits over, its label, and how often it updates. */
 export interface BrowserStatsPanelOptions {
   /** The canvas the panel lies over: it is placed at the canvas's top left corner. */
   readonly canvas: HTMLCanvasElement;
@@ -38,6 +39,7 @@ export interface BrowserStatsPanelOptions {
   /** How often the text changes, in milliseconds. 500 unless given; at least 100. */
   readonly intervalMs?: number;
 }
+/** A panel over the canvas showing frame rate and frame times: sample each frame. */
 export interface BrowserStatsPanel {
   /** The panel's element, a child of the page's body. */
   readonly element: HTMLElement;
@@ -62,6 +64,7 @@ function trianglesOf(frame: SharedRenderFrame2D): number {
   return triangles;
 }
 
+/** Puts a panel over the canvas that shows frame rate and frame times. */
 export function createBrowserStatsPanel(options: BrowserStatsPanelOptions): BrowserStatsPanel {
   if (options === null || typeof options !== 'object') throw invalid();
   const { canvas, label } = options,

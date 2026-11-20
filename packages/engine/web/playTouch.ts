@@ -5,6 +5,7 @@
 import { Sprite } from '@egret/engine';
 import type { PlayGame } from './BrowserPlay.js';
 
+/** A touch stick to show: where, how large, and whether it shows without touch. */
 export interface PlayStickOptions {
   /** The middle of the stick. Near the bottom left of the stage unless given. */
   readonly x?: number;
@@ -14,6 +15,7 @@ export interface PlayStickOptions {
   /** Shown before any finger has touched the stage. */
   readonly always?: boolean;
 }
+/** A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. */
 export interface PlayTouchButtonOptions {
   readonly x: number;
   readonly y: number;

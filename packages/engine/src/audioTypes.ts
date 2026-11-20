@@ -12,6 +12,7 @@ export type AudioMixerState = 'running' | 'suspended' | 'locked' | 'closed';
  * released; or the mixer was disposed.
  */
 export type AudioEndReason = 'finished' | 'stopped' | 'stolen' | 'limit' | 'silent' | 'released' | 'closed';
+/** Whether a voice is playing, paused, fading out to stop, or has ended. */
 export type AudioVoiceState = 'playing' | 'paused' | 'stopping' | 'ended';
 
 /** Decoded samples held by the host, or a file it plays as it reads it. */
@@ -30,6 +31,7 @@ export interface AudioBackendBus {
   setGain(value: number, seconds: number): void;
   release(): void;
 }
+/** What the mixer asks a backend to start: the sound, its bus, where and how it plays. */
 export interface AudioBackendStart {
   readonly sound: AudioBackendSound;
   readonly bus: AudioBackendBus;
@@ -73,12 +75,14 @@ export interface AudioBackend {
   close(): void;
 }
 
+/** A bus to make: its name, its volume and whether it is muted. */
 export interface AudioBusOptions {
   readonly name: string;
   /** 0 to 1. Defaults to 1. */
   readonly volume?: number;
   readonly muted?: boolean;
 }
+/** A mixer to make: its backend and buses, and how many voices, sounds and decoded bytes it holds. */
 export interface AudioMixerOptions {
   readonly backend: AudioBackend;
   /** Named volumes under the master one. Defaults to 'music' and 'effects'. */
@@ -95,10 +99,12 @@ export interface AudioMixerOptions {
   /** Decoded samples held at once, as bytes of 32-bit samples. Defaults to 128 MiB. */
   readonly maxDecodedBytes?: number;
 }
+/** How long a change of volume takes. */
 export interface AudioFade {
   /** Seconds, 0 to 60. Defaults to 0. */
   readonly fade?: number;
 }
+/** A group of voices with one volume and one mute, such as music or effects. */
 export interface AudioBus {
   readonly name: string;
   readonly volume: number;
@@ -108,6 +114,7 @@ export interface AudioBus {
   setVolume(value: number, options?: AudioFade): void;
   setMuted(muted: boolean): void;
 }
+/** A sound the mixer can play: its length, channels and rate, and whether it is decoded or streamed. */
 export interface AudioSound {
   readonly duration: number;
   readonly channels: number;
@@ -120,6 +127,7 @@ export interface AudioSound {
   /** Ends its voices and gives the samples back. A scope can own a sound through this. */
   release(): void;
 }
+/** How a sound is played: its bus, volume, rate, pan, loop, start and fade. */
 export interface AudioPlayOptions {
   /** Defaults to 'effects' when the mixer has that bus, otherwise to the first bus. */
   readonly bus?: string;
@@ -142,6 +150,7 @@ export interface AudioPlayOptions {
    */
   readonly whileSilent?: 'drop' | 'start';
 }
+/** How music is played: its bus, volume, fade, loop and start, and whether the same piece restarts. */
 export interface AudioMusicOptions {
   /** Defaults to 'music' when the mixer has that bus, otherwise to the first bus. */
   readonly bus?: string;
@@ -154,6 +163,7 @@ export interface AudioMusicOptions {
   /** Start again even when this sound is already the music. */
   readonly restart?: boolean;
 }
+/** One sound playing: its state and position, and the calls that change or stop it. */
 export interface AudioVoice {
   readonly id: number;
   readonly sound: AudioSound;
@@ -175,12 +185,14 @@ export interface AudioVoice {
   resume(): void;
   stop(options?: AudioFade): void;
 }
+/** A bus as it is now: its name, volume, mute and voices. */
 export interface AudioBusSnapshot {
   readonly name: string;
   readonly volume: number;
   readonly muted: boolean;
   readonly voices: number;
 }
+/** The mixer as it is now: its state, buses, voices, sounds, decoded bytes and music. */
 export interface AudioMixerSnapshot {
   readonly state: AudioMixerState;
   readonly locked: boolean;
@@ -197,6 +209,7 @@ export interface AudioMixerSnapshot {
   readonly started: number;
   readonly dropped: { readonly silent: number; readonly limit: number; readonly stolen: number };
 }
+/** Plays sounds and music on buses through a backend, within its limits of voices and memory. */
 export interface AudioMixer {
   readonly state: AudioMixerState;
   readonly master: AudioBus;

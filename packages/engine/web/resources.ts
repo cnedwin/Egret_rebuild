@@ -16,6 +16,7 @@ import type { ManifestTextureProviderStatus } from './BrowserTextureProvider.js'
 export { createManifestByteSource } from './ManifestByteSource.js';
 export type { ManifestByteSource, ManifestByteSourceOptions, ManifestByteSourceStatus } from './ManifestByteSource.js';
 export type { ManifestTextureProvider, ManifestTextureProviderStatus } from './BrowserTextureProvider.js';
+/** A manifest texture provider to make: the ports it decodes with. */
 export interface ManifestTextureProviderOptions {
   readonly ports?: BrowserPngPorts;
 }
@@ -45,6 +46,7 @@ export function createManifestTextureProvider(
   return createManifestPngTextureProvider(owner, captured);
 }
 
+/** A content loader for a manifest in the browser: its status, and a call that closes it. */
 export interface ManifestContentLoader extends ContentLoader {
   close(): Promise<void>;
   getStatus(): Readonly<{ source: ManifestByteSourceStatus; provider: ManifestTextureProviderStatus }>;

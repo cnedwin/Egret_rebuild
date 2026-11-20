@@ -6,6 +6,7 @@ import type { TextRasterMetrics, TextRasterRequestInput } from '@egret/runtime/t
 export { createTextField } from './textField.js';
 
 declare const textFieldBrand: unique symbol;
+/** Where a text field is: unprepared, ready or disposed, its revisions and its metrics. */
 export interface TextFieldStatus {
   readonly state: 'unprepared' | 'ready' | 'disposed';
   readonly desiredRevision: number;

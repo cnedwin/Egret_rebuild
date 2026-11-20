@@ -11,6 +11,7 @@ export interface EventType<T> {
   readonly [PAYLOAD_TYPE]?: (payload: T) => T;
 }
 
+/** How events of a type travel: whether they bubble and whether they can be cancelled. */
 export interface EventTypeOptions {
   readonly bubbles?: boolean;
   readonly cancelable?: boolean;
@@ -21,6 +22,7 @@ export function createEventType<T>(key: string, options: EventTypeOptions = {}):
   return Object.freeze({ key, bubbles: options.bubbles ?? false, cancelable: options.cancelable ?? false });
 }
 
+/** Where an event is on its way: going down to its target, at it, or coming back up. */
 export type EventPhase = "capturing" | "atTarget" | "bubbling";
 
 interface DispatchState {

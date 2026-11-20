@@ -3,6 +3,7 @@ import { EgretError } from '@egret/runtime';
 import { captureUiLayout } from '@egret/runtime/ui';
 import type { UiLayoutTree, UiLayoutNode } from '@egret/runtime/ui';
 
+/** A theme's type: its font family, size and line height. */
 export interface UiThemeTypography {
   readonly fontFamily: string;
   readonly fontSize: number;
@@ -19,6 +20,7 @@ export interface UiThemeSkin {
   readonly selected?: string;
   readonly expanded?: string;
 }
+/** A theme to make: its id, colors, spacing, type and skins. */
 export interface UiThemeDescriptor {
   readonly id: string;
   readonly colors?: Readonly<Record<string, number>>;
@@ -36,6 +38,7 @@ export interface UiTheme {
   readonly typography: Readonly<Record<string, UiThemeTypography>>;
   readonly skins: Readonly<Record<string, UiThemeSkin>>;
 }
+/** How a node of a theme is filled and spaced. */
 export interface UiThemeNode {
   readonly fill?: string;
   readonly padding?: string;
@@ -81,6 +84,7 @@ function tokens<T>(value: unknown, capture: (value: unknown) => T): Readonly<Rec
   for (const key of Object.keys(input).sort()) result[key] = capture(input[key]);
   return freeze(result);
 }
+/** Checks and freezes a theme from its description. */
 export function createUiTheme(descriptor: UiThemeDescriptor): UiTheme {
   const raw = record(descriptor, ['id', 'colors', 'spacing', 'typography', 'skins']);
   const result = freeze({
@@ -128,6 +132,7 @@ export function createUiTheme(descriptor: UiThemeDescriptor): UiTheme {
 }
 /** The states of a control that a skin may have a name for. */
 export type UiSkinStateName = Exclude<keyof UiThemeSkin, 'default'>;
+/** Which named states of a control are on, to choose its skin. */
 export type UiSkinState = { readonly [Name in UiSkinStateName]?: boolean };
 const skinStates: readonly UiSkinStateName[] = freeze([
   'disabled',

@@ -19,7 +19,9 @@ export type GamepadButtonName =
   | 'left'
   | 'right'
   | 'home';
+/** Which stick of a gamepad: the left or the right. */
 export type GamepadStickName = 'left' | 'right';
+/** A gamepad button now: whether it is pressed, and how far, 0 to 1. */
 export interface GamepadButtonSample {
   readonly pressed: boolean;
   /** 0 to 1: how far a trigger is pulled. A plain button says 0 or 1. */
@@ -35,6 +37,7 @@ export interface GamepadSample {
   /** -1 to 1 each. In the standard layout: left stick x and y, right stick x and y; down and right are positive. */
   readonly axes: readonly number[];
 }
+/** Where a stick points, each axis -1 to 1, with the dead zone taken out. */
 export interface GamepadStick {
   readonly x: number;
   readonly y: number;
@@ -55,6 +58,7 @@ export interface GamepadPad {
   /** A stick with the dead zone taken out: nothing inside it, and the rest stretched to reach 1. */
   stick(name: GamepadStickName): GamepadStick;
 }
+/** A button that was pressed or released: on which pad, which button, how far and when. */
 export interface GamepadButtonChange {
   readonly pad: number;
   /** The number of the button on its pad. */
@@ -65,6 +69,7 @@ export interface GamepadButtonChange {
   readonly value: number;
   readonly timestamp: number;
 }
+/** A gamepad that was connected or disconnected: its pad, id, mapping and time. */
 export interface GamepadConnectionChange {
   readonly pad: number;
   readonly id: string;
@@ -72,6 +77,7 @@ export interface GamepadConnectionChange {
   readonly standard: boolean;
   readonly timestamp: number;
 }
+/** How gamepads are read: the dead zone, how many pads, and what is called on buttons and connections. */
 export interface GamepadInputOptions {
   /** The part of a stick around its middle that counts as the middle, 0 to 0.9. Defaults to 0.15. */
   readonly deadZone?: number;
@@ -117,6 +123,7 @@ export interface GamepadKeyTarget {
 export type GamepadKeyAction =
   | { readonly key: string; readonly code?: string; readonly otherwise?: 'next' | 'previous' }
   | { readonly focus: 'next' | 'previous' };
+/** How a gamepad presses keyboard keys: which pad, the map of buttons and stick to keys, and the repeat. */
 export interface GamepadKeysOptions {
   readonly gamepad: GamepadInput;
   readonly keyboard: GamepadKeyTarget;
@@ -134,6 +141,7 @@ export interface GamepadKeysOptions {
   readonly repeatDelay?: number;
   readonly repeatInterval?: number;
 }
+/** Keyboard keys held by a gamepad; dispose of it to release them. */
 export interface GamepadKeys {
   /** The keys held down now. */
   readonly held: readonly string[];

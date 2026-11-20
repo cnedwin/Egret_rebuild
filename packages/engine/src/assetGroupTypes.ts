@@ -2,8 +2,10 @@ import type { AssetLease } from '@egret/runtime';
 
 declare const assetGroupBrand: unique symbol;
 
+/** Whether an asset group is loading, ready, failed or disposed. */
 export type AssetGroupState = 'pending' | 'ready' | 'failed' | 'disposed';
 
+/** How many of a group's assets load at once. */
 export interface AssetGroupOptions {
   readonly concurrency?: number;
 }

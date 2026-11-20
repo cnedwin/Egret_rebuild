@@ -5,6 +5,7 @@ import { EgretError } from "./EgretError.js";
 import { claimOwner, commitBinding, engineOf, ownerOf, preflightBinding, validateBinding } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
 
+/** Whether a scope is open, disposing what it owns, or closed. */
 export type ScopeState = "open" | "closing" | "closed";
 
 export let createScope: (engine: EngineContext, onClosed: (scope: Scope) => void) => Scope;

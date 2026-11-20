@@ -68,6 +68,7 @@ export function bindPointerSurface(input: PointerInput): SurfaceBinding {
 
 /** How far, in stage units, a contact may end from where it began and still be a tap. */
 const TAP_SLOP = 12;
+/** Pointer input for the stage: touches, mouse buttons and pens become contacts delivered to the nodes under them. */
 export function createPointerInput(options: PointerInputOptions): PointerInput {
   if (options === null || typeof options !== 'object' || Array.isArray(options))
     throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');

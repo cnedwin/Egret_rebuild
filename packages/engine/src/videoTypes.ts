@@ -4,6 +4,7 @@ import type { ImageData2D } from '@egret/contracts';
 
 /** Where a source is: still opening, able to show a frame, playing, paused, at its end, or unable to play. */
 export type VideoSourceState = 'loading' | 'ready' | 'playing' | 'paused' | 'ended' | 'failed';
+/** Whether a video is loading, ready, playing, paused, ended, failed or closed. */
 export type VideoState = VideoSourceState | 'closed';
 
 /** One picture of a video, the time of the video it shows. */
@@ -36,12 +37,14 @@ export interface VideoSource {
   dispose(): void;
 }
 
+/** A video to show: the asset manager that leases its pictures, and its source. */
 export interface VideoOptions {
   /** The Engine's assets, which lease each picture as a texture. */
   readonly assets: AssetManager;
   readonly source: VideoSource;
 }
 
+/** A video as it is now: its state, its pictures shown and skipped, and its times. */
 export interface VideoSnapshot {
   readonly state: VideoState;
   /** Pictures shown since it was made. */

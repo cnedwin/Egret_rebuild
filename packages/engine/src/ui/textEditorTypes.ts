@@ -5,6 +5,7 @@ import type { ParagraphCache, ParagraphTextGeometry } from '@egret/runtime/parag
 import type { Engine } from '../Engine.js';
 import type { UiLeafContent, UiLeafPrepareContext, RowBinding, UiRoot } from './types.js';
 
+/** How a text editor's text looks: its fonts and size, line height, locale and direction, colors and alignment. */
 export interface UiTextEditorStyle {
   readonly fontSet: string;
   readonly fontFamilies: readonly string[];
@@ -16,6 +17,7 @@ export interface UiTextEditorStyle {
   readonly backgroundColor?: number;
   readonly textAlign?: 'left' | 'right' | 'center' | 'start' | 'end';
 }
+/** A change to a text editor's content or selection, and what made it. */
 export interface UiTextEditorChange {
   readonly kind: 'value' | 'style';
   readonly source: 'native' | 'programmatic';
@@ -24,6 +26,7 @@ export interface UiTextEditorChange {
   readonly value: string;
   readonly selection: Required<TextEditSelection>;
 }
+/** A text editor to make: its engine, scope and cache, its mode, value and limits, its style and size, and what it calls. */
 export interface UiTextEditorOptions {
   readonly engine: Engine;
   readonly scope: Scope;
@@ -41,21 +44,25 @@ export interface UiTextEditorOptions {
   /** Stage a new existing UI tree/source revision; never run another frame loop. */
   readonly onChange?: (change: UiTextEditorChange) => void;
 }
+/** What a text editor is drawn in: a leaf of the tree, or a row of a list. */
 export type UiTextEditorTarget =
   | Readonly<{ kind: 'leaf'; id: string }>
   | Readonly<{ kind: 'row'; listId: string; key: string }>;
+/** A text editor as it is now: its content revision, style, and whether the native editor shows. */
 export interface UiTextEditorSnapshot extends Omit<TextEditSnapshot, 'session'> {
   readonly contentRevision: number;
   readonly style: UiTextEditorStyle;
   readonly nativeVisible: boolean;
   readonly livePresentations: number;
 }
+/** How a value is set: the selection after it, the revision it expects, and whether a composition is cancelled. */
 export interface UiTextEditorSetOptions {
   readonly selection?: TextEditSelection;
   readonly expectedRevision?: number;
   readonly cancelComposition?: boolean;
 }
 declare const editorBrand: unique symbol;
+/** A text editor: its content, the calls that set its value, selection and style, and the geometry of its text. */
 export interface UiTextEditor {
   readonly [editorBrand]: true;
   readonly mode: UiTextEditorOptions['mode'];

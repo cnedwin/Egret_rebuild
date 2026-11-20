@@ -20,6 +20,7 @@ export interface HoverControlOptions {
   readonly onHoverChange?: (hovered: boolean) => void;
 }
 
+/** Whether a pointer hovers over a target; dispose of it to stop. */
 export interface HoverControl {
   /** Whether an enabled control has a pointer over it. */
   readonly hovered: boolean;
@@ -28,6 +29,7 @@ export interface HoverControl {
   dispose(): void;
 }
 
+/** A toggle to make: its input and target, whether it starts checked, and what it calls. */
 export interface ToggleControlOptions {
   readonly input: PointerInput;
   readonly target: DisplayObject;
@@ -37,6 +39,7 @@ export interface ToggleControlOptions {
   readonly onPressChange?: (pressed: boolean) => void;
 }
 
+/** A checkbox or switch: whether it is checked and pressed, and calls that toggle or set it. */
 export interface ToggleControl {
   readonly checked: boolean;
   readonly pressed: boolean;
@@ -52,6 +55,7 @@ export interface ToggleControl {
   dispose(): void;
 }
 
+/** One item of a selection group: its key, its target and whether it can be chosen. */
 export interface SelectionItem {
   readonly key: string;
   readonly target: DisplayObject;
@@ -59,6 +63,7 @@ export interface SelectionItem {
   readonly enabled?: boolean;
 }
 
+/** A selection group to make: its input and items, the one selected, whether it wraps, and what it calls. */
 export interface SelectionGroupOptions {
   readonly input: PointerInput;
   /** One to 256 items with distinct keys and distinct targets, in the order movement follows. */
@@ -118,6 +123,7 @@ function within(root: DisplayObject, node: DisplayObject | undefined): boolean {
   return false;
 }
 
+/** Tells whether a pointer hovers over a target. */
 export function createHoverControl(options: HoverControlOptions): HoverControl {
   const { hover, onHoverChange } = record(options) as unknown as HoverControlOptions;
   const target = displayTarget((options as HoverControlOptions).target);
@@ -205,6 +211,7 @@ export function createHoverControl(options: HoverControlOptions): HoverControl {
   });
 }
 
+/** A checkbox or switch on a target: a press and release inside it toggles it. */
 export function createToggleControl(options: ToggleControlOptions): ToggleControl {
   const { input, target, onChange, onPressChange } = record(options) as unknown as ToggleControlOptions;
   let checked = (options as ToggleControlOptions).checked ?? false;
@@ -263,6 +270,7 @@ export function createToggleControl(options: ToggleControlOptions): ToggleContro
   });
 }
 
+/** Radio buttons or tabs: one item of the group is selected at a time. */
 export function createSelectionGroup(options: SelectionGroupOptions): SelectionGroup {
   const { input, onChange } = record(options) as unknown as SelectionGroupOptions;
   const { items, wrap = true } = options;

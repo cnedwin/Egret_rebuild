@@ -9,6 +9,7 @@ export interface ProviderBinding {
   readonly dispose: (value: unknown) => void;
 }
 
+/** What a provider is given with each load: the signal that tells it the load is no longer wanted. */
 export interface AssetLoadContext {
   readonly signal: CancellationSignal;
   readonly resourceGeneration: number;

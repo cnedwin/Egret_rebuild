@@ -8,6 +8,7 @@ import type { HoverInput, HoverInputOptions, HoverLeaveReason, WheelUnit } from 
  * (the canvas owns the wheel), or always (the listener is passive and cannot hold the page).
  */
 export type WheelPagePolicy = 'unconsumed' | 'never' | 'always';
+/** Browser hover input to make: its canvas, how far a page of wheel scrolls, and what is called on an error. */
 export interface BrowserHoverInputOptions extends HoverInputOptions {
   /** The canvas the Engine draws on. Its CSS rectangle is mapped to the logical width and height. */
   readonly canvas: HTMLCanvasElement;

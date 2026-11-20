@@ -214,6 +214,7 @@ export class Rectangle {
     return `(x=${this.x}, y=${this.y}, width=${this.width}, height=${this.height})`;
   }
 }
+/** Anything with a rectangle's x, y, width and height. */
 export interface RectangleLike {
   readonly x: number;
   readonly y: number;
@@ -342,6 +343,7 @@ export class Matrix {
     return `(a=${this.a}, b=${this.b}, c=${this.c}, d=${this.d}, tx=${this.tx}, ty=${this.ty})`;
   }
 }
+/** Anything with a 2D matrix's six numbers. */
 export interface MatrixLike {
   readonly a: number;
   readonly b: number;

@@ -13,6 +13,7 @@ import type { PointerContact, PointerInput } from '../pointerInputTypes.js';
 
 export type RangeAxis = 'x' | 'y';
 
+/** A range control to make: its input and target, its axis and track, its range and step, and what it calls. */
 export interface RangeControlOptions {
   readonly input: PointerInput;
   /** The track. A press on it or on something inside it moves the value there. */
@@ -34,6 +35,7 @@ export interface RangeControlOptions {
   readonly onDragChange?: (dragging: boolean) => void;
 }
 
+/** A slider: its value and range, whether it is dragged, and calls that set or step it. */
 export interface RangeControl {
   readonly value: number;
   readonly min: number;
@@ -55,6 +57,7 @@ export interface RangeControl {
 
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
 
+/** A slider on a target: dragging along its track or pressing keys sets a value between its least and greatest. */
 export function createRangeControl(options: RangeControlOptions): RangeControl {
   if (options === null || typeof options !== 'object') throw new EgretError('UI_CONTROL_OPTIONS');
   const {

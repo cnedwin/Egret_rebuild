@@ -1,5 +1,6 @@
 declare const imageData2DBrand: unique symbol;
 
+/** The size and pixels of an image to copy: sRGB RGBA, eight bits a channel, rows top to bottom. */
 export interface ImageData2DInput {
   readonly width: number;
   readonly height: number;
@@ -21,6 +22,7 @@ export interface ImageData2D {
   readonly alphaMode: 'straight';
   readonly origin: 'top-left';
 }
+/** A rectangle of an image in whole pixels, from its top left corner. */
 export interface TextureRegion2D {
   readonly x: number;
   readonly y: number;
@@ -51,6 +53,7 @@ const weakGet = WeakMap.prototype.get;
 const weakSet = WeakMap.prototype.set;
 const owned = new WeakMap<object, Uint8Array<ArrayBuffer>>();
 
+/** The largest image accepted: its longest edge and its number of pixels. */
 export const IMAGE_LIMITS_2D = freeze({
   // One image is at most 2048 x 2048 pixels, or any other shape of that area within the edge bound.
   maxSourceEdge: 4096,
@@ -86,6 +89,7 @@ function cloneBytes(source: Uint8Array<ArrayBuffer>, length: number): Uint8Array
   return result;
 }
 
+/** Copies the pixels into an image this module owns; a wrong size or pixel count is refused with a TypeError. */
 export function createImageData2D(input: ImageData2DInput): ImageData2D {
   if (typeof input !== 'object' || input === null) throw new TypeFault('Image descriptor must be an object');
   // Complete the ordered snapshot before semantic checks. A later throwing
@@ -145,9 +149,11 @@ export function createImageData2D(input: ImageData2DInput): ImageData2D {
   return image;
 }
 
+/** Whether a value is an image made by `createImageData2D`, without reading any of its properties. */
 export function isImageData2D(value: unknown): value is ImageData2D {
   return typeof value === 'object' && value !== null && apply(weakHas, owned, [value]);
 }
+/** A fresh copy of an image's pixels, which the caller owns. */
 export function copyImageData2DPixels(image: ImageData2D): Uint8Array<ArrayBuffer> {
   // Identity authentication performs no property reads on forged/proxied values.
   if (!isImageData2D(image)) throw new TypeFault('Image identity is not owned by this module');

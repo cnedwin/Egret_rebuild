@@ -146,6 +146,7 @@ export function bindTextEditorHost(editor: UiTextEditor, hooks: HostHooks): Text
   return record.bind(hooks);
 }
 
+/** A text editor drawn by the engine, its text and selection kept by the platform's text input. */
 export function createUiTextEditor(options: UiTextEditorOptions): UiTextEditor {
   if (options === null || typeof options !== 'object') return fail('OPTIONS');
   const engine = options.engine,

@@ -6,6 +6,7 @@
 import { Sprite } from '@egret/engine';
 import type { PlayGame, PlayText } from './BrowserPlay.js';
 
+/** A bar to show, as for health: where and how large, its value and maximum, its colors and layer. */
 export interface PlayBarOptions {
   readonly x: number;
   readonly y: number;
@@ -98,6 +99,7 @@ export class PlayBar extends Sprite {
   }
 }
 
+/** A line of dialogue: who says it, the choices offered, its color and how fast it types. */
 export interface PlaySayOptions {
   /** The name shown above the words. */
   readonly who?: string;
@@ -108,6 +110,7 @@ export interface PlaySayOptions {
   /** Letters a second as the words appear; 0 shows them at once. 40 unless given. */
   readonly speed?: number;
 }
+/** A menu to show: its title, where it goes, how wide and its color. */
 export interface PlayMenuOptions {
   readonly title?: string;
   /** The middle of the menu. The middle of the stage unless given. */
@@ -117,6 +120,7 @@ export interface PlayMenuOptions {
   /** The colour of the chosen item. */
   readonly color?: number;
 }
+/** A toast to show: how long and in what color. */
 export interface PlayToastOptions {
   readonly seconds?: number;
   readonly color?: number;

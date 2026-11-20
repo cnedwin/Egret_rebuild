@@ -15,6 +15,7 @@ import { EgretError } from '@egret/runtime';
  */
 export type InputBinding = string;
 
+/** Whether an action is a button, one axis, or a vector of two. */
 export type InputActionKind = 'button' | 'axis' | 'vector';
 
 /** An action and the controls that drive it. */
@@ -36,16 +37,19 @@ export interface InputActionDefinition {
   readonly deadZone?: number;
 }
 
+/** Actions by name, with the controls that drive each. */
 export type InputActionMap = Readonly<Record<string, InputActionDefinition>>;
 
 /** A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... */
 export type InputBindingSlot = 'bindings' | 'negative' | 'positive' | 'up' | 'down' | 'left' | 'right' | 'sticks';
 
+/** The value of a vector action, each axis -1 to 1. */
 export interface InputVector {
   readonly x: number;
   readonly y: number;
 }
 
+/** Named actions driven by keys, buttons and sticks: what is pressed now, values, rebinding and saving. */
 export interface InputActions {
   /** The names of the actions, in the order they were defined. */
   readonly names: readonly string[];
@@ -87,6 +91,7 @@ export interface InputActions {
   readonly lastPressed: InputBinding | undefined;
 }
 
+/** Bindings as saved, to load back with `loadBindings`. */
 export interface InputBindingsSave {
   readonly version: 1;
   readonly actions: Readonly<Record<string, Partial<Record<InputBindingSlot, readonly InputBinding[]>>>>;

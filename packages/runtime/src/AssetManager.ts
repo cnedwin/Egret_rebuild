@@ -16,11 +16,13 @@ import type { AssetLoadContext, Entry, Identity, ProviderBinding, Waiter } from 
 
 export type { AssetLoadContext } from "./assetState.js";
 
+/** Loads the value an asset reference names, and disposes of it when it is no longer held. */
 export interface AssetProvider<T> {
   load(ref: AssetRef<T>, context: AssetLoadContext): Promise<T>;
   dispose(value: T): void;
 }
 
+/** Options of one acquisition: a signal that cancels it. */
 export interface AssetAcquireOptions {
   readonly signal?: CancellationSignal;
 }

@@ -6,6 +6,7 @@ export interface SharedPageLimits2D {
   readonly maxFramePageBytes: number;
   readonly maxReadyPageBytes: number;
 }
+/** A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space and recovery. */
 export interface SharedWebGPUHostOptions extends WebGPUHostOptions, Partial<SharedPageLimits2D> {
   readonly maxSourceTriangles?: number;
   readonly maxFrameGeometryBytes?: number;

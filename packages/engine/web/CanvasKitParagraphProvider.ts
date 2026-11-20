@@ -120,18 +120,21 @@ export interface CanvasKitParagraphModule {
   _malloc(bytes: number): number;
   _free(pointer: number): void;
 }
+/** One font for CanvasKit paragraphs: its family, bytes and identity. */
 export interface CanvasKitParagraphFont {
   readonly family: string;
   readonly data: Uint8Array;
   /** Caller-declared immutable font identity, preferably the original byte SHA-256. */
   readonly identity: string;
 }
+/** A CanvasKit paragraph provider to make: its CanvasKit, build identity and fonts. */
 export interface CanvasKitParagraphProviderOptions {
   readonly canvasKit: CanvasKitParagraphModule;
   /** Host-declared build identity; omission identifies only this module instance. */
   readonly buildIdentity?: string;
   readonly fonts: readonly CanvasKitParagraphFont[];
 }
+/** Lays out and draws paragraphs with CanvasKit; dispose of it when done. */
 export interface CanvasKitParagraphProvider extends ParagraphProvider {
   /** Explicitly retires this provider's font wrappers; caches borrow the provider. */
   dispose(): void;
@@ -329,6 +332,7 @@ export function canvasKitParagraphCapabilities(ck: CanvasKitParagraphModule) {
   });
 }
 
+/** Lays out and draws paragraphs with CanvasKit and the fonts it is given. */
 export function createCanvasKitParagraphProvider(
   options: CanvasKitParagraphProviderOptions
 ): CanvasKitParagraphProvider {

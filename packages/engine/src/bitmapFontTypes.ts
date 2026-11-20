@@ -40,6 +40,7 @@ export interface BitmapFont {
   kerning(first: number, second: number): number;
 }
 
+/** How bitmap text is laid out: its width, alignment, spacing and kerning, and the character to fall back on. */
 export interface BitmapTextLayoutOptions {
   /** Lines are broken to fit this width: after spaces, and between ideographs. A word wider than it is broken between its characters. */
   readonly maxWidth?: number;
@@ -68,6 +69,7 @@ export interface BitmapTextGlyph {
   readonly sourceY: number;
 }
 
+/** One laid out line of bitmap text: its characters, width and place. */
 export interface BitmapTextLine {
   readonly text: string;
   /** From the left of its first character's advance to the end of its last, spaces at its end left out. */
@@ -88,6 +90,7 @@ export interface BitmapTextLayout {
   readonly missing: number;
 }
 
+/** Bitmap text to make: its font, pages, text and color, and how it is laid out. */
 export interface BitmapTextOptions extends BitmapTextLayoutOptions {
   readonly font: BitmapFont;
   /** A leased texture for each page of the font, in the order of its pages. */

@@ -38,6 +38,7 @@ export interface RenderEffect2D {
   /** A hard line of a colour around what is drawn, a few pixels wide. One effect has a glow or an outline. */
   readonly outline?: RenderOutline2D;
 }
+/** A glow around a node's picture, or, moved by an offset, a drop shadow. */
 export interface RenderGlow2D {
   /** 0xRRGGBB. */
   readonly color: number;
@@ -55,6 +56,7 @@ export interface RenderGlow2D {
   readonly offsetX?: number;
   readonly offsetY?: number;
 }
+/** An outline around a node's picture: its color, width and alpha. */
 export interface RenderOutline2D {
   /** 0xRRGGBB. */
   readonly color: number;

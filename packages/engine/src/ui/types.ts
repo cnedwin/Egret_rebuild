@@ -10,6 +10,7 @@ type LayoutDimensions = Omit<
   UiLayoutNode,
   'kind' | 'children' | 'source' | 'initialScrollOffset' | 'measure' | 'fill'
 > & { readonly theme?: UiThemeNode };
+/** A node of a UI layout tree: a leaf, a stack of children, or a virtual list. */
 export type LayoutNode =
   | (LayoutDimensions & {
       readonly kind: 'leaf';
@@ -33,24 +34,29 @@ export type LayoutNode =
       readonly source: VirtualDataSource<unknown>;
       readonly initialScrollOffset?: number;
     });
+/** What of a UI root has to be done again: its layout, its content, or both. */
 export type UiInvalidationKind = UiDirtyKind;
+/** How far past the viewport a list keeps rows, and how many rows it keeps resident and retained. */
 export interface UiLimits {
   readonly overscan?: number;
   readonly residentCap?: number;
   readonly retainedCap?: number;
 }
+/** One record of a virtual list: its key, its content version, its estimated height and its value. */
 export interface VirtualRecord<T> {
   readonly key: string;
   readonly contentVersion: number;
   readonly estimatedHeight: number;
   readonly value: T;
 }
+/** The records of a virtual list, and how a row is bound to a record and unbound from it. */
 export interface VirtualDataSource<T> {
   readonly revision: number;
   readonly records: readonly VirtualRecord<T>[];
   bind(context: RowBindContext<T>): RowBinding | Promise<RowBinding>;
   unbind(info: RowUnbindInfo): void;
 }
+/** What binding a row is given: the record, its place, the theme and density, its scope, signal and target. */
 export interface RowBindContext<T> {
   readonly theme: UiTheme | undefined;
   readonly key: string;
@@ -77,23 +83,28 @@ export interface UiLeafPrepareContext {
   readonly density: number;
   readonly signal: CancellationSignal;
 }
+/** What a leaf shows, prepared for the size it is given. */
 export interface UiLeafContent {
   readonly revision: number;
   prepare(context: UiLeafPrepareContext): RowBinding | Promise<RowBinding>;
 }
+/** What a bound row shows, and its measured height. */
 export interface RowBinding {
   readonly content: DisplayObjectContainer;
   readonly measuredHeight: number;
 }
+/** A row that was unbound: its key, its binding and content versions, and why. */
 export interface RowUnbindInfo {
   readonly key: string;
   readonly bindingGeneration: number;
   readonly contentVersion: number;
   readonly reason: 'recycle' | 'replace' | 'delete' | 'cancel' | 'dispose' | 'error';
 }
+/** A row kept bound after it leaves the viewport; release it to let it go. */
 export interface RowRetention {
   release(): void;
 }
+/** A pointer that began, moved, ended or was cancelled on a row of a list. */
 export type UiRowPointerNotification =
   | Readonly<{
       kind: 'begin' | 'move' | 'end';
@@ -133,6 +144,7 @@ export interface UiKeyboardOptions {
    */
   readonly tabStop?: number;
 }
+/** A UI root to make: its theme, engine and scope, its viewport, density and tree, its input, and its limits. */
 export interface UiRootOptions {
   readonly theme?: UiTheme;
   readonly engine: Engine;
@@ -154,17 +166,20 @@ export interface UiRootOptions {
   readonly limits?: UiLimits;
 }
 declare const preparationBrand: unique symbol;
+/** Where a preparation is, and the revisions it works from. */
 export interface UiPreparation {
   readonly [preparationBrand]: true;
   readonly status: 'ready' | 'pending' | 'unchanged';
   readonly desiredRevision: number;
   readonly baseCommittedRevision: number;
 }
+/** What a commit did, and any errors after it. */
 export interface UiCommitResult {
   readonly kind: 'unchanged' | 'committed' | 'stale' | 'closed';
   readonly revision: number;
   readonly postCommitErrors: readonly unknown[];
 }
+/** One row as committed: its key and place, its versions, its box and whether it shows. */
 export interface UiRowSnapshot {
   readonly key: string;
   readonly index: number;
@@ -178,6 +193,7 @@ export interface UiRowSnapshot {
   }>;
   readonly visible: boolean;
 }
+/** What a UI root counted in its last passes: layouts, records, rows, bindings and measurements. */
 export interface UiCounters {
   /** Cumulative planner calls, including detached constraint discovery. */
   readonly layoutPasses: number;
@@ -200,6 +216,7 @@ export interface UiCounters {
   readonly resourceDemands: number | undefined;
   readonly resourceLeases: number | undefined;
 }
+/** A virtual list as committed: its rows, scroll offset and extent, its anchor and counters. */
 export interface VirtualListSnapshot {
   readonly id: string;
   readonly rows: readonly UiRowSnapshot[];
@@ -213,6 +230,7 @@ export interface VirtualListSnapshot {
     | undefined;
   readonly counters: UiCounters;
 }
+/** A UI root as committed: its theme, revisions, origin, viewport, density and boxes. */
 export interface UiSnapshot extends VirtualListSnapshot {
   readonly theme: UiTheme | undefined;
   readonly rootId: string;
@@ -235,6 +253,7 @@ export interface UiSnapshot extends VirtualListSnapshot {
 export interface VirtualListRevealOptions {
   readonly align?: 'nearest' | 'start' | 'center' | 'end';
 }
+/** A virtual list of a UI root: reveal a record, change its source or scroll, and read its snapshot. */
 export interface VirtualListHandle<T> {
   /** Stage key-directed scrolling. Undefined cancels an uncommitted reveal. */
   reveal(key: string | undefined, options?: VirtualListRevealOptions): void;
@@ -252,6 +271,7 @@ export interface VirtualListHandle<T> {
   getFocus(): Readonly<{ key: string | undefined; focusVisible: boolean }>;
   snapshot(): VirtualListSnapshot;
 }
+/** A tree of UI laid out in a viewport: change its tree, theme or input, then prepare and commit it. */
 export interface UiRoot {
   readonly id: string;
   readonly state: 'open' | 'closed';

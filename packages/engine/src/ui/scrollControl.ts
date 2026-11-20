@@ -15,6 +15,7 @@ import type { PointerContact, PointerInput } from '../pointerInputTypes.js';
 
 export type ScrollAxis = 'x' | 'y';
 
+/** How the wheel scrolls: the hover input, the target, and how far one line is. */
 export interface ScrollWheelOptions {
   readonly hover: HoverInput;
   /** The viewport. A wheel over it or over a descendant scrolls. */
@@ -23,6 +24,7 @@ export interface ScrollWheelOptions {
   readonly lineLength?: number;
 }
 
+/** A scroll thumb to drag: its input and target, its track's length and its shortest length. */
 export interface ScrollThumbOptions {
   readonly input: PointerInput;
   /** The thumb of the scrollbar. One contact drags it. */
@@ -33,6 +35,7 @@ export interface ScrollThumbOptions {
   readonly minimumLength?: number;
 }
 
+/** A scroll control to make: its axis, the lengths of its viewport and content, its wheel and thumb, and what it calls. */
 export interface ScrollControlOptions {
   /** The axis of the stage the offset moves along. Defaults to 'y'. */
   readonly axis?: ScrollAxis;
@@ -47,12 +50,14 @@ export interface ScrollControlOptions {
   readonly onDragChange?: (dragging: boolean) => void;
 }
 
+/** Where the thumb is on its track and how long it is. */
 export interface ScrollThumb {
   /** Where the thumb begins on its track, and how long it is, in logical units. */
   readonly start: number;
   readonly length: number;
 }
 
+/** Scrolling along one axis: the offset and its maximum, the thumb, and calls that scroll by lines, pages or to the ends. */
 export interface ScrollControl {
   readonly axis: ScrollAxis;
   readonly offset: number;
@@ -88,6 +93,7 @@ function displayTarget(value: unknown): DisplayObject {
   return value as DisplayObject;
 }
 
+/** Scrolls content past a viewport along one axis, by wheel, by dragging a thumb, or by calls. */
 export function createScrollControl(options: ScrollControlOptions): ScrollControl {
   if (options === null || typeof options !== 'object' || Array.isArray(options))
     throw new EgretError('UI_CONTROL_OPTIONS');

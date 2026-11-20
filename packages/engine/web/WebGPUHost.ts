@@ -73,7 +73,9 @@ import type { SubmissionBufferLease, SubmissionBufferRequest } from './webgpuBuf
 import { createWebGPUBindingCache } from './webgpuBindingCache.js';
 import type { DrawBindingCandidate, DrawBindingKey } from './webgpuBindingCache.js';
 
+/** Where a WebGPU host is: new, starting, active, stopped, failed, closing or closed. */
 export type WebGPUHostState = 'new' | 'starting' | 'active' | 'stopped' | 'failed' | 'closing' | 'closed';
+/** What went wrong in a WebGPU host. */
 export type WebGPUHostErrorCode =
   | 'WEBGPU_OPTIONS_INVALID'
   | 'WEBGPU_UNAVAILABLE'
@@ -125,15 +127,18 @@ export type WebGPUHostErrorCode =
   | 'WEBGPU_RECOVERY_FAILED'
   | 'WEBGPU_RECOVERY_LIMIT'
   | 'WEBGPU_GENERATION_EXHAUSTED';
+/** A failure of a WebGPU host: its code, the frame it happened at, the phase, and its cause. */
 export interface WebGPUHostFailure {
   readonly code: WebGPUHostErrorCode;
   readonly serial: number | null;
   readonly phase: 'startup' | 'frame' | 'readback' | 'device' | 'cleanup' | 'callback';
   readonly cause: unknown;
 }
+/** Something a WebGPU host reports: a failure, with how serious it is. */
 export interface WebGPUHostDiagnostic extends WebGPUHostFailure {
   readonly severity: 'error';
 }
+/** A WebGPU host to make: its canvas and device, its pixel ratio, its limits, whether it reads back, and what it reports to. */
 export interface WebGPUHostOptions {
   readonly canvas: HTMLCanvasElement;
   readonly device?: { readonly kind: 'acquire' } | { readonly kind: 'borrow'; readonly device: GPUDevice };
@@ -150,6 +155,7 @@ export interface WebGPUHostOptions {
   readonly enableReadback?: boolean;
   readonly onDiagnostic?: (diagnostic: WebGPUHostDiagnostic) => unknown;
 }
+/** The pixels of a frame read back: its frame, size, format, color space and alpha, and its bytes. */
 export interface WebGPUReadback {
   readonly serial: number;
   readonly frameId: number;
@@ -161,6 +167,7 @@ export interface WebGPUReadback {
   readonly alphaMode: 'premultiplied';
   readonly bytes: Uint8Array;
 }
+/** A WebGPU host as it is now: its state, frames and bytes pending, and its failures. */
 export interface WebGPUHostStatus {
   readonly state: WebGPUHostState;
   readonly lastSerial: number;
@@ -172,10 +179,12 @@ export interface WebGPUHostStatus {
   readonly lastCallbackFailure: WebGPUHostFailure | null;
   readonly cleanupOutcome: 'not-started' | 'pending' | 'safe' | 'unsafe';
 }
+/** Pixels read back from a shared frame, with their alpha mode and device generation. */
 export interface SharedWebGPUReadback extends Omit<WebGPUReadback, 'alphaMode'> {
   readonly alphaMode: 'premultiplied' | 'opaque';
   readonly generation: number;
 }
+/** A shared WebGPU host as it is now: its host status, the bytes pending, and its resources. */
 export interface SharedWebGPUHostStatus {
   readonly host: WebGPUHostStatus;
   readonly pendingGeometryBytes: number;
@@ -183,6 +192,7 @@ export interface SharedWebGPUHostStatus {
   readonly pendingCanonicalBytes: number;
   readonly resources: SharedHostResourceStatus;
 }
+/** A host that draws shared frames with WebGPU: start and stop it, stage frames, read them back, and recover from a lost device. */
 export interface SharedWebGPUHost extends Pick<SharedRenderHostAdapter, 'sharedFrameProfile' | 'renderSharedFrame'> {
   readonly surface: HTMLCanvasElement;
   start(): Promise<void>;
@@ -3831,6 +3841,7 @@ class WebGPUHostImplementation {
     };
   }
 }
+/** A host that draws shared frames with WebGPU on a canvas. */
 export function createSharedWebGPUHost(options: SharedWebGPUHostOptions): SharedWebGPUHost {
   return new WebGPUHostImplementation(options) as unknown as SharedWebGPUHost;
 }
