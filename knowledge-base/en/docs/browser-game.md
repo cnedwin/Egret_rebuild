@@ -95,7 +95,7 @@ pending 0  drawn 1204  skipped 3
 | --- | --- |
 | `fps`, `longest` | Frames of the display a second, and the longest time between two of them, since the text last changed |
 | `commands`, `triangles` | What the last drawn frame holds: its draw commands and the triangles they draw. A rectangle or an image is two triangles |
-| `draws` | The draw calls the Host made for its last frame, from `host.getSharedStatus().lastFrameDrawCalls`: its batches, a pass for each effect and one to copy the frame to the canvas. Batching makes it smaller than `commands` |
+| `draws` | The draw calls the Host made for its last frame, from `host.getFrameDrawCalls()`: its batches, a pass for each effect and one to copy the frame to the canvas. Batching makes it smaller than `commands` |
 | `geometries`, `pages` | The different mesh geometries and the different images of that frame |
 | `pending` | Frames the Host holds that it has not finished |
 | `drawn`, `skipped` | Frames the loop has drawn, and frames it skipped because the Host held two |

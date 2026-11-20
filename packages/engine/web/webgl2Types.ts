@@ -111,8 +111,6 @@ export interface SharedWebGL2HostStatus {
   readonly pendingGeometryBytes: number;
   readonly pendingColorBytes: number;
   readonly pendingCanonicalBytes: number;
-  /** Draw calls of the last frame drawn: its draws, effect passes, layers and the resolve to the canvas. */
-  readonly lastFrameDrawCalls: number;
   readonly retention: {
     readonly idleBytes: number;
     readonly idleEntries: number;
@@ -197,6 +195,8 @@ export interface SharedWebGL2Host extends SharedRenderHostAdapter {
   requestReadback(): Promise<SharedWebGL2Readback>;
   getStatus(): WebGL2HostStatus;
   getSharedStatus(): SharedWebGL2HostStatus;
+  /** Draw calls of the last frame drawn: its batches, a pass for each effect, kept layers and the copy to the canvas. */
+  getFrameDrawCalls(): number;
   /** Bounded CPU elapsed timings, or null when measurement is disabled. */
   getSharedFrameTiming(): SharedWebGL2FrameTiming | null;
   getSessionStatus(): SharedDeviceSessionStatus<WebGL2HostFailure>;

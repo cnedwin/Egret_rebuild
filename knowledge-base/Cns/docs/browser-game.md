@@ -95,7 +95,7 @@ pending 0  drawn 1204  skipped 3
 | --- | --- |
 | `fps`、`longest` | 自上次刷新文字以来，显示器每秒的帧数，以及相邻两帧之间最长的间隔 |
 | `commands`、`triangles` | 最近绘制的一帧包含什么：绘制命令数，以及它们画出的三角形数。一个矩形或一张图片是两个三角形 |
-| `draws` | Host 为最近一帧实际发出的绘制调用次数，来自 `host.getSharedStatus().lastFrameDrawCalls`：各个合批、每个效果各一遍、再加一次把帧复制到画布。合批会让它小于 `commands` |
+| `draws` | Host 为最近一帧实际发出的绘制调用次数，来自 `host.getFrameDrawCalls()`：各个合批、每个效果各一遍、再加一次把帧复制到画布。合批会让它小于 `commands` |
 | `geometries`、`pages` | 该帧中不同的网格几何体数和不同的图片数 |
 | `pending` | Host 持有的尚未完成的帧数 |
 | `drawn`、`skipped` | 循环已绘制的帧数，以及因 Host 已持有两帧而跳过的帧数 |

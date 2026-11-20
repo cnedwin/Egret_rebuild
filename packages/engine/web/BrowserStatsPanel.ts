@@ -16,7 +16,7 @@ export interface BrowserStatsSample {
   readonly frames?: number;
   readonly skipped?: number;
   /**
-   * The draw calls the Host made for its last frame, `host.getSharedStatus().lastFrameDrawCalls`: fewer than the
+   * The draw calls the Host made for its last frame, `host.getFrameDrawCalls()`: fewer than the
    * frame's commands when they are batched, more when effects need passes of their own.
    */
   readonly drawCalls?: number;

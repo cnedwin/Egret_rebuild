@@ -190,8 +190,6 @@ export interface SharedWebGPUHostStatus {
   readonly pendingGeometryBytes: number;
   readonly pendingColorBytes: number;
   readonly pendingCanonicalBytes: number;
-  /** Draw calls of the last frame encoded: its draws, effect passes and the resolve to the canvas. */
-  readonly lastFrameDrawCalls: number;
   readonly resources: SharedHostResourceStatus;
 }
 /** A host that draws shared frames with WebGPU: start and stop it, stage frames, read them back, and recover from a lost device. */
@@ -209,6 +207,8 @@ export interface SharedWebGPUHost extends Pick<SharedRenderHostAdapter, 'sharedF
   stageSharedFrame(frame: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
   requestReadback(): Promise<SharedWebGPUReadback>;
   getSharedStatus(): SharedWebGPUHostStatus;
+  /** Draw calls of the last frame encoded: its batches, a pass for each effect and the copy to the canvas. */
+  getFrameDrawCalls(): number;
 }
 type Ticket = ReturnType<typeof deferred<WebGPUReadback | SharedWebGPUReadback>> & { bound: boolean };
 /** Preallocated ownership until a returned target is registered or destroyed. */
@@ -615,6 +615,10 @@ class WebGPUHostImplementation {
           this.renderSharedOwnedFrame(frame, { options }),
         enumerable: true
       },
+      getFrameDrawCalls: {
+        value: (): number => this.frameDrawCalls,
+        enumerable: true
+      },
       getSharedStatus: {
         value: (): SharedWebGPUHostStatus =>
           Object.freeze({
@@ -622,7 +626,6 @@ class WebGPUHostImplementation {
             pendingGeometryBytes: this.pendingGeometryBytes,
             pendingColorBytes: this.pendingColorBytes,
             pendingCanonicalBytes: this.pendingCanonicalBytes,
-            lastFrameDrawCalls: this.frameDrawCalls,
             resources: this.resourceStatus()
           }),
         enumerable: true

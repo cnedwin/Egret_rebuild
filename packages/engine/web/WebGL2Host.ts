@@ -2951,6 +2951,9 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       cleanupOutcome: this.cleanupOutcome
     });
   }
+  public getFrameDrawCalls(): number {
+    return this.frameDrawCalls;
+  }
   public getSharedStatus(): SharedWebGL2HostStatus {
     const owner = this.snapshot(),
       unknown = this.native?.unknown() ?? { bytes: 0, objects: 0 },
@@ -2960,7 +2963,6 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       pendingGeometryBytes: owner.pendingGeometryBytes,
       pendingColorBytes: owner.pendingColorBytes,
       pendingCanonicalBytes: owner.pendingCanonicalBytes,
-      lastFrameDrawCalls: this.frameDrawCalls,
       resources: this.resourceStatus(),
       retention: Object.freeze({
         idleBytes: retention.idleBytes,
