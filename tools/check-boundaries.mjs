@@ -10,6 +10,67 @@ const expected = {
   engine: ["@egret/contracts", "@egret/runtime"],
   project: ["@egret/contracts"],
 };
+// ENTRY_POINTS_BEGIN
+// The one list of the public entries of the runtime and engine packages: each maps to ./dist/<file>.d.ts and
+// ./dist/<file>.js. A new entry is one line here and its mapping in package.json; an entry in package.json that is
+// not here is refused. The boundary tests build their synthetic packages from this list, so it is plain JSON.
+const ENTRY_POINTS = {
+  "runtime": {
+    ".": "index",
+    "./text": "text/index",
+    "./input": "input/index",
+    "./ui": "ui/index",
+    "./paragraph": "paragraph/index",
+    "./ui/editing": "ui/editing"
+  },
+  "engine": {
+    ".": "index",
+    "./webgpu": "web/webgpu",
+    "./text": "text",
+    "./layout": "layout",
+    "./web/input": "web/input",
+    "./web/image": "web/image",
+    "./web/text": "web/text",
+    "./webgl2": "web/webgl2",
+    "./world3d": "rendering/world3d/index",
+    "./webgl2/world3d": "web/world3d/index",
+    "./webgpu/world3d": "web/world3d/webgpu",
+    "./resources": "resources",
+    "./web/resources": "web/resources",
+    "./input": "input",
+    "./web/pointer": "web/pointer",
+    "./ui": "ui/index",
+    "./animation": "animation/index",
+    "./paragraph": "paragraph",
+    "./web/paragraph": "web/paragraph",
+    "./web/keyboard": "web/keyboard",
+    "./web/text-input": "web/textInput",
+    "./ui/editing": "ui/editing",
+    "./web/editing": "web/editing",
+    "./input/hover": "hover",
+    "./web/hover": "web/hover",
+    "./input/gamepad": "gamepad",
+    "./web/gamepad": "web/gamepad",
+    "./camera": "camera",
+    "./tilemap": "tilemap",
+    "./particles": "particles",
+    "./physics2d": "physics2d",
+    "./bitmapfont": "bitmapfont",
+    "./video": "video",
+    "./web/video": "web/video",
+    "./web/loop": "web/loop",
+    "./kit": "kit",
+    "./web/kit": "web/kit",
+    "./web/game": "web/game",
+    "./play": "web/play",
+    "./audio": "audio",
+    "./web/audio": "web/audio",
+    "./ui/semantics": "semantics",
+    "./web/semantics": "web/semantics"
+  }
+};
+// ENTRY_POINTS_END
+const entryMappings = name => Object.fromEntries(Object.entries(ENTRY_POINTS[name]).map(([entry, file]) => [entry, { types: `./dist/${file}.d.ts`, import: `./dist/${file}.js` }]));
 // External root imports are audited separately from the internal workspace DAG/references.
 const external = { engine: { 'robust-predicates': '3.0.3' }, project: { 'jsonc-parser': '3.3.1' } };
 const projectValues = ['DEFAULT_PROJECT_LIMITS', 'createProjectStore', 'openProjectHistory', 'parseProjectSnapshot', 'parseProjectTransaction', 'serializeProjectSnapshot'];
@@ -240,82 +301,7 @@ for (const [name, allowed] of Object.entries(expected)) {
   if (name === 'contracts' && JSON.stringify(pkg.exports) !== JSON.stringify({'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}})) throw new Error('M15: contracts exact export mapping mismatch');
   if (name === 'project' && JSON.stringify(pkg.exports) !== JSON.stringify({'.': {types:'./dist/index.d.ts', import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}})) throw new Error('project: root export mapping mismatch');
   if (name === 'runtime' || name === 'engine') {
-    const textExports = name === 'runtime' ? {
-      '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
-      './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
-      './paragraph': {types:'./dist/paragraph/index.d.ts',import:'./dist/paragraph/index.js'},
-      './input': {types:'./dist/input/index.d.ts',import:'./dist/input/index.js'},
-      './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
-    } : {
-      '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
-      './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
-      './webgl2': {types:'./dist/web/webgl2.d.ts',import:'./dist/web/webgl2.js'},
-      './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
-      './paragraph': {types:'./dist/paragraph.d.ts',import:'./dist/paragraph.js'},
-      './web/paragraph': {types:'./dist/web/paragraph.d.ts',import:'./dist/web/paragraph.js'},
-      './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
-      './animation': {types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'},
-      './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
-      './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
-      './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
-      './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
-      './web/pointer': {types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'},
-      './web/keyboard': {types:'./dist/web/keyboard.d.ts',import:'./dist/web/keyboard.js'},
-      './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
-      './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
-      './web/resources': {types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'},
-    };
-    textExports['./ui/editing'] = {types:'./dist/ui/editing.d.ts',import:'./dist/ui/editing.js'};
-    if (name === 'engine') textExports['./web/editing'] = {types:'./dist/web/editing.d.ts',import:'./dist/web/editing.js'};
-    // Platform text entry over a canvas: one optional browser entry.
-    if (name === 'engine') textExports['./web/text-input'] = {types:'./dist/web/textInput.d.ts',import:'./dist/web/textInput.js'};
-    // Hover and wheel: one DOM-free entry and one optional browser entry.
-    if (name === 'engine') {
-      textExports['./input/hover'] = {types:'./dist/hover.d.ts',import:'./dist/hover.js'};
-      textExports['./web/hover'] = {types:'./dist/web/hover.d.ts',import:'./dist/web/hover.js'};
-    }
-    // Camera: one DOM-free entry.
-    if (name === 'engine') textExports['./camera'] = {types:'./dist/camera.d.ts',import:'./dist/camera.js'};
-    // Tilemap: one DOM-free entry.
-    if (name === 'engine') textExports['./tilemap'] = {types:'./dist/tilemap.d.ts',import:'./dist/tilemap.js'};
-    // Particles: one DOM-free entry.
-    if (name === 'engine') textExports['./particles'] = {types:'./dist/particles.d.ts',import:'./dist/particles.js'};
-    // Physics2d: one DOM-free entry.
-    if (name === 'engine') textExports['./physics2d'] = {types:'./dist/physics2d.d.ts',import:'./dist/physics2d.js'};
-    // Bitmapfont: one DOM-free entry.
-    if (name === 'engine') textExports['./bitmapfont'] = {types:'./dist/bitmapfont.d.ts',import:'./dist/bitmapfont.js'};
-    // Video: one DOM-free entry and one optional browser entry.
-    if (name === 'engine') { textExports['./video'] = {types:'./dist/video.d.ts',import:'./dist/video.js'}; textExports['./web/video'] = {types:'./dist/web/video.d.ts',import:'./dist/web/video.js'}; }
-    // Frame loop: one optional browser entry.
-    if (name === 'engine') textExports['./web/loop'] = {types:'./dist/web/loop.d.ts',import:'./dist/web/loop.js'};
-    // Game kit: one optional browser entry.
-    if (name === 'engine') textExports['./kit'] = {types:'./dist/kit.d.ts',import:'./dist/kit.js'};
-    if (name === 'engine') textExports['./web/kit'] = {types:'./dist/web/kit.d.ts',import:'./dist/web/kit.js'};
-    // Browser game: one optional browser entry that puts the Host, loop and input entries together.
-    if (name === 'engine') textExports['./web/game'] = {types:'./dist/web/game.d.ts',import:'./dist/web/game.js'};
-    // Play: one optional browser entry for a whole small game, built on the game, sound and kit entries.
-    if (name === 'engine') textExports['./play'] = {types:'./dist/web/play.d.ts',import:'./dist/web/play.js'};
-    // Gamepad: one DOM-free entry and one optional browser entry.
-    if (name === 'engine') {
-      textExports['./input/gamepad'] = {types:'./dist/gamepad.d.ts',import:'./dist/gamepad.js'};
-      textExports['./web/gamepad'] = {types:'./dist/web/gamepad.d.ts',import:'./dist/web/gamepad.js'};
-    }
-    // Sound: one DOM-free mixer entry and one optional Web Audio entry.
-    if (name === 'engine') {
-      textExports['./audio'] = {types:'./dist/audio.d.ts',import:'./dist/audio.js'};
-      textExports['./web/audio'] = {types:'./dist/web/audio.d.ts',import:'./dist/web/audio.js'};
-    }
-    // Semantics: one DOM-free tree entry and one optional browser projection entry.
-    if (name === 'engine') {
-      textExports['./ui/semantics'] = {types:'./dist/semantics.d.ts',import:'./dist/semantics.js'};
-      textExports['./web/semantics'] = {types:'./dist/web/semantics.d.ts',import:'./dist/web/semantics.js'};
-    }
-    // World3D: a DOM-free scene graph entry and one explicit entry per rendering backend.
-    if (name === 'engine') {
-      textExports['./world3d'] = {types:'./dist/rendering/world3d/index.d.ts',import:'./dist/rendering/world3d/index.js'};
-      textExports['./webgl2/world3d'] = {types:'./dist/web/world3d/index.d.ts',import:'./dist/web/world3d/index.js'};
-      textExports['./webgpu/world3d'] = {types:'./dist/web/world3d/webgpu.d.ts',import:'./dist/web/world3d/webgpu.js'};
-    }
+    const textExports = entryMappings(name);
     if (JSON.stringify(Object.keys(pkg.exports ?? {}).sort()) !== JSON.stringify(Object.keys(textExports).sort())
         || Object.entries(textExports).some(([entry, mapping]) => JSON.stringify(pkg.exports[entry]) !== JSON.stringify(mapping)))
       throw new Error(`${name}: text explicit export mapping mismatch`);
