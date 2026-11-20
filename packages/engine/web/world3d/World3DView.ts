@@ -22,6 +22,7 @@ export interface World3DClockSource {
     ): Disposable;
   };
 }
+/** A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. */
 export interface World3DViewOptions {
   readonly renderer: Renderer3D;
   readonly scene: Scene3D;
@@ -40,6 +41,7 @@ export interface World3DViewOptions {
   readonly onError?: (cause: unknown) => void;
 }
 
+/** Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. */
 export class World3DView implements Disposable {
   readonly renderer: Renderer3D;
   scene: Scene3D;
@@ -106,6 +108,7 @@ export class World3DView implements Disposable {
   }
 }
 
+/** Makes a view that draws a scene on each tick of the Engine's clock. */
 export function createWorld3DView(engine: World3DClockSource, scope: Scope, options: World3DViewOptions): World3DView {
   return new World3DView(engine, scope, options);
 }

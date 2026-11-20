@@ -7,24 +7,30 @@ import { AnimationMixer3D } from './Animation3D.js';
 import type { AnimationAction3D, AnimationClip3D } from './Animation3D.js';
 import { World3DError, requireFinite3D } from './core3D.js';
 
+/** The most states and transitions a state machine has, and how many transitions it takes in one update. */
 export const STATE_MACHINE3D_LIMITS = Object.freeze({
   maxStates: 256,
   maxTransitions: 2048,
   maxTransitionsPerUpdate: 8
 } as const);
+/** The value of a state machine parameter. */
 export type StateParameter3D = number | boolean;
+/** How a condition compares a parameter with its value. */
 export type StateConditionOperator3D = '>' | '>=' | '<' | '<=' | '==' | '!=';
+/** A condition of a transition: a parameter compared with a value. */
 export interface StateCondition3D {
   readonly parameter: string;
   /** Comparison against `value`. Omit both to test a boolean or a trigger for true. */
   readonly op?: StateConditionOperator3D;
   readonly value?: StateParameter3D;
 }
+/** One clip of a blend state and the parameter value it shows at. */
 export interface StateBlendEntry3D {
   readonly clip: AnimationClip3D;
   /** Parameter value at which this clip plays alone. */
   readonly threshold: number;
 }
+/** A state to add: its clip or blend, whether it loops, its speed, and what it calls on entering and leaving. */
 export interface StateOptions3D {
   /** A single clip, or omit it and give `blend`. */
   readonly clip?: AnimationClip3D;
@@ -36,6 +42,7 @@ export interface StateOptions3D {
   readonly onEnter?: () => void;
   readonly onExit?: () => void;
 }
+/** A transition to add: from and to which state, how long it fades, its conditions, its exit time and whether it can be interrupted. */
 export interface TransitionOptions3D {
   /** Source state, or '*' for any state. */
   readonly from: string;
@@ -74,6 +81,7 @@ interface Transition {
   readonly canInterrupt: boolean;
 }
 
+/** Plays clips by state, moving between states when their conditions are met. */
 export class AnimationStateMachine3D {
   readonly mixer: AnimationMixer3D;
   /** Called after every state change, including forced ones. */
@@ -314,6 +322,7 @@ export class AnimationStateMachine3D {
   }
 }
 
+/** Makes an animation state machine that drives a mixer. */
 export function createAnimationStateMachine3D(mixer: AnimationMixer3D): AnimationStateMachine3D {
   return new AnimationStateMachine3D(mixer);
 }

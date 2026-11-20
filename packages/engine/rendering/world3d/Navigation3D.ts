@@ -10,24 +10,29 @@ import { Geometry3D, createGeometry3D } from './Geometry3D.js';
 import type { Object3D } from './Object3D.js';
 import { createMeshShape3D } from './PhysicsMesh3D.js';
 
+/** The most triangles, agents and grid cells navigation holds. */
 export const NAVIGATION3D_LIMITS = Object.freeze({
   maxTriangles: 1048576,
   maxAgents: 4096,
   maxGridCells: 16777216,
   maxCellReferences: 8388608
 } as const);
+/** A point on a navigation mesh as x, y and z. */
 export type NavPoint3D = [number, number, number];
+/** A navigation mesh to make: the steepest walkable slope, and how close vertices are welded. */
 export interface NavMeshOptions3D {
   /** Steepest walkable slope in radians. Defaults to 45 degrees. */
   readonly slopeLimit?: number;
   /** Corners closer than this are treated as one, which joins triangles that only touch. Defaults to 0.001. */
   readonly weldTolerance?: number;
 }
+/** Where a point is on a navigation mesh: its triangle and the point itself. */
 export interface NavLocation3D {
   /** Index of the triangle the point lies on. */
   readonly triangle: number;
   readonly point: NavPoint3D;
 }
+/** How a path is found: the agent's radius, whether it follows the ground, and how far its ends may snap. */
 export interface NavPathOptions3D {
   /** Keeps the path this far from the mesh edges at corners, and rules out gaps narrower than twice this. */
   readonly agentRadius?: number;
@@ -36,6 +41,7 @@ export interface NavPathOptions3D {
   /** How far the start and end may lie from the mesh. Defaults to 2. */
   readonly snapDistance?: number;
 }
+/** A path found on a navigation mesh: its points, whether it reaches the goal, and its length. */
 export interface NavPath3D {
   readonly points: NavPoint3D[];
   /** False when the end could not be reached and the path stops at the closest reachable place. */
@@ -91,6 +97,7 @@ class Heap {
   }
 }
 
+/** The walkable surface of a level: find paths, nearest points and ray hits on it, and set the cost of its areas. */
 export class NavMesh3D {
   /** Welded corner positions, three floats each. */
   readonly vertices: Float32Array;
@@ -839,6 +846,7 @@ export function createNavMesh3D(
 }
 
 // ---- crowd -----------------------------------------------------------------------
+/** An agent to add: where it starts, its radius, speed and acceleration, and the node it moves. */
 export interface NavAgentOptions3D {
   readonly position: ArrayLike<number>;
   readonly radius?: number;
@@ -850,6 +858,7 @@ export interface NavAgentOptions3D {
   readonly node?: Object3D;
   readonly userData?: unknown;
 }
+/** An agent of a crowd: where it is and how it moves; give it a target, or stop it. */
 export class NavAgent3D {
   readonly position: NavPoint3D = [0, 0, 0];
   readonly velocity: NavPoint3D = [0, 0, 0];
@@ -1078,11 +1087,13 @@ export class NavCrowd3D {
     for (const agent of agents) this.sync(agent);
   }
 }
+/** Makes a crowd of agents that move along a navigation mesh and keep apart. */
 export function createNavCrowd3D(navMesh: NavMesh3D): NavCrowd3D {
   return new NavCrowd3D(navMesh);
 }
 
 // ---- grids -----------------------------------------------------------------------
+/** How a grid path is found: whether it moves diagonally, and how many cells it visits at most. */
 export interface GridPathOptions3D {
   /** Allow diagonal steps (never cutting a blocked corner). Defaults to true. */
   readonly diagonal?: boolean;

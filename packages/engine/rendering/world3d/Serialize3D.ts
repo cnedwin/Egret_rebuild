@@ -16,8 +16,11 @@ import { Object3D, Scene3D } from './Object3D.js';
 import { ParticleEmitter3D } from './Particles3D.js';
 import { RenderTarget3D, Texture3D, isCompressedPixels3D, isTexturePixels3D } from './Texture3D.js';
 
+/** The format name of a saved scene document. */
 export const SCENE_DOCUMENT_FORMAT_3D = 'egret.world3d.scene';
+/** The version of the scene document format. */
 export const SCENE_DOCUMENT_VERSION_3D = 1;
+/** The most nodes, embedded texture bytes and document bytes a scene document has. */
 export const SERIALIZE3D_LIMITS = Object.freeze({
   maxNodes: 65536,
   maxEmbeddedTextureBytes: 1048576,
@@ -25,6 +28,7 @@ export const SERIALIZE3D_LIMITS = Object.freeze({
 } as const);
 
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+/** A scene saved as JSON: its nodes, geometries, materials, textures and skeletons, and what was skipped. */
 export interface SceneDocument3D {
   readonly format: typeof SCENE_DOCUMENT_FORMAT_3D;
   readonly version: number;
@@ -37,14 +41,17 @@ export interface SceneDocument3D {
   /** Names of nodes that were written as plain objects because their type cannot be saved. */
   readonly skipped: readonly string[];
 }
+/** How a scene is saved: the key each texture is saved by. */
 export interface SerializeOptions3D {
   /** Stable key for a texture that should be stored by reference, such as its asset id. */
   readonly textureKey?: (texture: Texture3D) => string | undefined;
 }
+/** How a scene is loaded back: how each texture key is turned into a texture. */
 export interface DeserializeOptions3D {
   /** Return the texture for a key written by `textureKey`. */
   readonly resolveTexture?: (key: string) => Texture3D | undefined;
 }
+/** A scene loaded back: its root, cameras, geometries, materials and textures. */
 export interface DeserializedScene3D {
   readonly root: Object3D;
   readonly cameras: readonly Camera3D[];

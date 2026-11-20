@@ -22,6 +22,7 @@ export function createWorld3DHost(canvas: HTMLCanvasElement | OffscreenCanvas): 
   };
 }
 
+/** What drives a 3D view: an Engine's clock and the call that advances it. */
 export interface World3DLoopSource {
   advanceTime(sourceSeconds: number): unknown;
   readonly clock: { readonly maxDeltaSeconds: number; pause(): void; resume(): void };

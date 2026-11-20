@@ -4,9 +4,13 @@
 // interprets, which keeps this module DOM-free.
 import { Resource3D, World3DError, requireCount3D } from './core3D.js';
 
+/** What a texture does past its edges: repeats, clamps or mirrors. */
 export type TextureWrap3D = 'repeat' | 'clamp' | 'mirror';
+/** How a texture is sampled: the nearest texel, or blended. */
 export type TextureFilter3D = 'nearest' | 'linear';
+/** Whether a texture's values are sRGB colors or linear data. */
 export type TextureColorSpace3D = 'srgb' | 'linear';
+/** The largest texture edge and size. */
 export const TEXTURE3D_LIMITS = Object.freeze({ maxEdge: 8192, maxBytes: 268435456 } as const);
 
 /** Tightly packed straight-alpha RGBA8 rows, top row first. */
@@ -38,7 +42,9 @@ export interface CompressedPixels3D {
   readonly format: CompressedFormat3D;
   readonly levels: readonly Uint8Array[];
 }
+/** What a texture is made from: pixels, compressed pixels, or an image the browser decoded. */
 export type TextureSource3D = TexturePixels3D | CompressedPixels3D | object;
+/** Whether a value holds compressed pixels. */
 export function isCompressedPixels3D(source: unknown): source is CompressedPixels3D {
   return (
     typeof source === 'object' &&
@@ -48,6 +54,7 @@ export function isCompressedPixels3D(source: unknown): source is CompressedPixel
   );
 }
 
+/** A texture to make: its name, wrapping and filters, its mipmaps and color space, whether it is flipped, and its anisotropy. */
 export interface TextureOptions3D {
   readonly name?: string;
   readonly wrapS?: TextureWrap3D;
@@ -62,6 +69,7 @@ export interface TextureOptions3D {
   readonly channel?: 0 | 1;
 }
 
+/** Whether a value holds plain pixels. */
 export function isTexturePixels3D(source: unknown): source is TexturePixels3D {
   return typeof source === 'object' && source !== null && (source as TexturePixels3D).data instanceof Uint8Array;
 }
@@ -128,6 +136,7 @@ abstract class TextureBase3D extends Resource3D {
   }
 }
 
+/** A texture for 3D materials; set its source to change its picture. */
 export class Texture3D extends TextureBase3D {
   #source: TextureSource3D;
   /** UV transform applied as: uv' = rotate(uv * repeat) + offset. */
@@ -185,6 +194,7 @@ export function createSolidTexture3D(
 
 /** Color storage of a render target: 8-bit sRGB, or half-float linear for values above 1. */
 export type RenderTargetFormat3D = 'rgba8' | 'rgba16f';
+/** A render target to make: its format, its depth, and its filters and wrapping. */
 export interface RenderTargetOptions3D {
   readonly name?: string;
   /**

@@ -5,8 +5,11 @@
 import { Resource3D, World3DError, requireCount3D } from './core3D.js';
 import { box3Empty, box3ExpandByPoint, sphereFromBox } from './math3D.js';
 
+/** An array of vertex data. */
 export type AttributeArray3D = Float32Array | Uint32Array | Uint16Array | Uint8Array | Int16Array | Int8Array;
+/** How a geometry's vertices are joined: as triangles, lines, a strip of lines, or points. */
 export type Topology3D = 'triangles' | 'lines' | 'line-strip' | 'points';
+/** The most vertices, indices, morph targets and groups a geometry has. */
 export const GEOMETRY3D_LIMITS = Object.freeze({
   maxVertices: 4194304,
   maxIndices: 12582912,
@@ -26,6 +29,7 @@ export const ATTRIBUTE_3D = Object.freeze({
   weights: 'weights'
 } as const);
 
+/** One attribute of a geometry, such as positions: its data, how many numbers each vertex has, and whether they are normalized. */
 export class Attribute3D {
   readonly data: AttributeArray3D;
   readonly itemSize: number;
@@ -54,11 +58,13 @@ export class Attribute3D {
   }
 }
 
+/** A range of a geometry's indices drawn with one of its mesh's materials. */
 export interface GeometryGroup3D {
   readonly start: number;
   readonly count: number;
   readonly materialIndex: number;
 }
+/** A morph target: the positions, and normals, it moves a geometry toward. */
 export interface MorphTarget3D {
   readonly name: string;
   /** Per-vertex deltas relative to the base attribute. */
@@ -66,6 +72,7 @@ export interface MorphTarget3D {
   readonly normal?: Float32Array;
 }
 
+/** The vertices of a mesh: its attributes and indices, its groups and morph targets, and calls that compute normals and tangents. */
 export class Geometry3D extends Resource3D {
   topology: Topology3D = 'triangles';
   readonly #attributes = new Map<string, Attribute3D>();
@@ -344,6 +351,7 @@ export class Geometry3D extends Resource3D {
   }
 }
 
+/** A geometry to make: its positions, and its normals, texture coordinates, colors and indices where given. */
 export interface GeometryInput3D {
   readonly positions: ArrayLike<number>;
   readonly normals?: ArrayLike<number>;

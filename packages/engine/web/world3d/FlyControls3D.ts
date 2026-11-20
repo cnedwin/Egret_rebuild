@@ -7,6 +7,7 @@ import type { Disposable } from '@egret/contracts';
 import type { Camera3D } from '../../rendering/world3d/Camera3D.js';
 import { World3DError } from '../../rendering/world3d/core3D.js';
 
+/** Fly controls to make: how fast they move and look, whether they fly, use pointer lock or damp, and their keys. */
 export interface FlyControlsOptions3D {
   /** Units per second. */
   readonly moveSpeed?: number;
@@ -23,6 +24,7 @@ export interface FlyControlsOptions3D {
   /** Key codes (KeyboardEvent.code) for each action. */
   readonly keys?: Partial<FlyControlsKeys3D>;
 }
+/** The keys of fly controls: forward, back, left, right, up, down and sprint. */
 export interface FlyControlsKeys3D {
   readonly forward: readonly string[];
   readonly back: readonly string[];
@@ -43,6 +45,7 @@ const DEFAULT_KEYS: FlyControlsKeys3D = Object.freeze({
 });
 const LIMIT = Math.PI / 2 - 0.001;
 
+/** Moves a camera with the keyboard and mouse, walking or flying. */
 export class FlyControls3D implements Disposable {
   readonly camera: Camera3D;
   readonly element: HTMLElement;
@@ -204,6 +207,7 @@ export class FlyControls3D implements Disposable {
     this.#down.clear();
   }
 }
+/** Makes fly controls for a camera on an element. */
 export function createFlyControls3D(
   camera: Camera3D,
   element: HTMLElement,

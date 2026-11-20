@@ -8,6 +8,7 @@ import { World3DError, requireFinite3D } from '../../rendering/world3d/core3D.js
 import { colorFromHex } from '../../rendering/world3d/math3D.js';
 import { type CustomPost3D, createCustomPost3D } from './post3D.js';
 
+/** An atmosphere to make: its fog's color, density and height, and its light shafts. */
 export interface AtmosphereOptions3D {
   /** Fog color, 0xRRGGBB. Default a pale blue-grey. */
   readonly fogColor?: number;
@@ -198,6 +199,7 @@ export class Atmosphere3D {
     return value;
   }
 }
+/** Makes height fog and light shafts for a scene. */
 export function createAtmosphere3D(options: AtmosphereOptions3D = {}): Atmosphere3D {
   return new Atmosphere3D(options);
 }

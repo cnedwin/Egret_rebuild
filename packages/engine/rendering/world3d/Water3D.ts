@@ -452,6 +452,7 @@ fn customFragment(color: vec4f, worldPosition: vec3f, normal: vec3f, uv: vec2f) 
 }
 `;
 
+/** Water to make: its size and detail, its waves and ripples, its colors and clarity, its reflections, foam and caustics. */
 export interface WaterOptions3D {
   /** Size of the surface along X and Z. Defaults: 100 each. */
   readonly width?: number;
@@ -656,6 +657,7 @@ export class Water3D extends Mesh3D {
     this.reflection?.dispose();
   }
 }
+/** Makes a water surface with waves, reflections and foam. */
 export function createWater3D(options: WaterOptions3D = {}): Water3D {
   return new Water3D(options);
 }

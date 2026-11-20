@@ -7,6 +7,7 @@ import { linearToSrgb, srgbToLinear } from './math3D.js';
 import { CubeTexture3D } from './Texture3D.js';
 import type { TexturePixels3D } from './Texture3D.js';
 
+/** The largest HDR image read. */
 export const HDR3D_LIMITS = Object.freeze({ maxEdge: 16384, maxPixels: 67108864 } as const);
 /** Linear RGB floats, three per pixel, top row first. */
 export interface HdrImage3D {
@@ -101,6 +102,7 @@ export function parseRgbe3D(bytes: Uint8Array): HdrImage3D {
   return { width, height, data };
 }
 
+/** How an equirectangular image is turned into a cube: its size, exposure and brightest value. */
 export interface EquirectOptions3D {
   /** Edge of each cube face in texels. */
   readonly size?: number;

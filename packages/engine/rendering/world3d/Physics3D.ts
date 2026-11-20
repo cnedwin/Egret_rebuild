@@ -13,6 +13,7 @@ import { StaticTree, rayShape } from './PhysicsQueries3D.js';
 
 export const raycastExcludingBody3D = Symbol('physics raycast excluding one body');
 
+/** The most bodies, substeps, solver steps, contacts a pair keeps and parts of a compound. */
 export const PHYSICS3D_LIMITS = Object.freeze({
   maxBodies: 16384,
   maxSubSteps: 8,
@@ -20,7 +21,9 @@ export const PHYSICS3D_LIMITS = Object.freeze({
   maxCompoundChildren: 32,
   maxSolverSteps: 8
 } as const);
+/** Whether a body never moves, is moved by code, or is moved by the simulation. */
 export type BodyType3D = 'static' | 'kinematic' | 'dynamic';
+/** The shape of a body: a sphere, box, capsule, plane, convex hull, triangle mesh, or several moving as one. */
 export type ShapeDefinition3D =
   | { readonly type: 'sphere'; readonly radius: number }
   | { readonly type: 'box'; readonly halfExtents: readonly [number, number, number] }
@@ -43,6 +46,7 @@ export interface CompoundChild3D {
   readonly position?: readonly [number, number, number];
   readonly quaternion?: readonly [number, number, number, number];
 }
+/** A body to add: its kind, shape and mass, where it is, its material and damping, its layers, and the node it moves. */
 export interface RigidBodyOptions3D {
   readonly type?: BodyType3D;
   readonly shape: ShapeDefinition3D;
@@ -71,12 +75,14 @@ export interface RigidBodyOptions3D {
   readonly node?: Object3D;
   readonly userData?: unknown;
 }
+/** What a ray hit: the body, where, its normal and how far. */
 export interface PhysicsRaycastHit3D {
   readonly body: RigidBody3D;
   readonly point: [number, number, number];
   readonly normal: [number, number, number];
   readonly distance: number;
 }
+/** What a cast shape hit: the body, how far it went, where, and the normal. */
 export interface PhysicsShapeCastHit3D {
   readonly body: RigidBody3D;
   /** How far the shape travelled before touching. */
@@ -97,6 +103,7 @@ export interface PhysicsContact3D {
   /** True in the first step the pair touches. */
   readonly began: boolean;
 }
+/** A physics world to make: its gravity, its step and substeps, its solver iterations, and whether bodies sleep. */
 export interface PhysicsWorldOptions3D {
   readonly gravity?: readonly [number, number, number];
   /** Length of one simulation step in seconds. */
@@ -127,6 +134,7 @@ function cross(out: Vec, a: ArrayLike<number>, b: ArrayLike<number>): Vec {
 const clamp = (value: number, low: number, high: number): number => (value < low ? low : value > high ? high : value);
 
 let nextBodyId = 1;
+/** A body in a physics world: its kind, shape and mass, its material and layers, and calls that move and push it. */
 export class RigidBody3D {
   readonly id = nextBodyId++;
   readonly type: BodyType3D;
@@ -1746,7 +1754,9 @@ function collideSimple(m: Manifold, first: RigidBody3D, second: RigidBody3D): bo
 }
 
 // ---- joints -------------------------------------------------------------------
+/** The kind of a joint: a point, a hinge, fixed, a distance or a slider. */
 export type JointType3D = 'point' | 'hinge' | 'fixed' | 'distance' | 'slider';
+/** A joint to make: its kind, the two bodies and anchors, its axis and limits, its motor and spring. */
 export interface JointOptions3D {
   readonly type: JointType3D;
   readonly bodyA: RigidBody3D;
@@ -2113,6 +2123,7 @@ const SLOP = 0.01,
   SLEEP_ANGULAR = 0.2,
   SLEEP_DELAY = 0.5;
 
+/** A 3D physics world: add bodies and joints, step it, and cast rays and shapes through it. */
 export class PhysicsWorld3D {
   readonly gravity = v3(0, -9.81, 0);
   fixedStep: number;
@@ -3406,6 +3417,7 @@ function probeBody(position: ArrayLike<number>, shape: ShapeDefinition3D): Rigid
   return new RigidBody3D({ type: 'kinematic', shape, position: [position[0]!, position[1]!, position[2]!] });
 }
 // ---- character controller -------------------------------------------------------
+/** A character controller to make: its radius and height, where it starts, the steepest slope it climbs, and what it collides with. */
 export interface CharacterControllerOptions3D {
   readonly radius?: number;
   /** Total height including both caps. */
@@ -3533,9 +3545,11 @@ export class CharacterController3D {
   }
 }
 
+/** Makes a 3D physics world. */
 export function createPhysicsWorld3D(options: PhysicsWorldOptions3D = {}): PhysicsWorld3D {
   return new PhysicsWorld3D(options);
 }
+/** Makes a capsule that walks and slides along what it hits, for a character. */
 export function createCharacterController3D(
   world: PhysicsWorld3D,
   options: CharacterControllerOptions3D = {}

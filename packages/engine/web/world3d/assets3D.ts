@@ -54,6 +54,7 @@ export const SCENE_ASSET_3D: AssetType<DeserializedScene3D> = createAssetType(
     typeof value['dispose'] === 'function'
 );
 
+/** How a 3D app loads assets: how URLs are resolved, how many bytes, and how textures and compressed data are decoded. */
 export interface World3DAssetOptions {
   /** Map a reference id to the URL to download. Defaults to using the id as the URL. */
   readonly resolveUrl?: (id: string) => string;
