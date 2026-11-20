@@ -60,6 +60,10 @@ export interface SaveStore<T> {
    * other than `undefined`, replaces the data only if it passes `validate`, so `data => (data.coins = 5)`, which
    * returns 5, is reported as `invalid` and keeps the save; write such a change as a block, `data => { data.coins = 5; }`.
    * Data edited in place that no longer passes `validate` is reported and not written.
+   *
+   * `change` is given a copy of the data, and the copy becomes the data only once it passes: a refused change, or one
+   * that throws, leaves `data` exactly as it was. So `save.data` is a new object after an update; read it again rather
+   * than keeping the old one.
    */
   update(change: (data: T) => T | void): boolean;
   /** Back to the defaults, written. */
@@ -81,6 +85,12 @@ interface Envelope {
 const isObject = (value: unknown): boolean => typeof value === 'object' && value !== null;
 
 /** Opens the save under `options.key`, migrating an older one. */
+/** A deep copy: by `structuredClone` where the platform has it, else through JSON, as the save is stored. */
+function copyOf<V>(value: V): V {
+  const clone = (globalThis as { structuredClone?: <W>(value: W) => W }).structuredClone;
+  return typeof clone === 'function' ? clone(value) : (JSON.parse(JSON.stringify(value)) as V);
+}
+
 export function createSaveStore<T>(options: SaveStoreOptions<T>): SaveStore<T> {
   if (!isObject(options)) throw new EgretError('SAVE_STORE_OPTIONS_INVALID');
   const { key, version, defaults, storage } = options;
@@ -192,11 +202,12 @@ export function createSaveStore<T>(options: SaveStoreOptions<T>): SaveStore<T> {
     },
     update(change: (current: T) => T | void): boolean {
       if (typeof change !== 'function') throw new EgretError('SAVE_STORE_OPTIONS_INVALID');
-      const result = change(data);
-      if (result !== undefined) {
-        if (!validate(result)) return refuse(result);
-        data = result;
-      } else if (!validate(data)) return refuse(data);
+      // A copy, so that a change refused, or one that throws halfway, does not reach the data.
+      const draft = copyOf(data);
+      const result = change(draft);
+      const next = result === undefined ? draft : result;
+      if (!validate(next)) return refuse(next);
+      data = next;
       return write();
     },
     reset(): boolean {

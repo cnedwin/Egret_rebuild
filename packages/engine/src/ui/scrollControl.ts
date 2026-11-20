@@ -22,6 +22,12 @@ export interface ScrollWheelOptions {
   readonly target: DisplayObject;
   /** Logical units of one wheel line. Defaults to 40. */
   readonly lineLength?: number;
+  /**
+   * Reads the other axis of the wheel when its own is still: an ordinary mouse wheel, which turns only up and down,
+   * then scrolls a sideways list. Leave it off for a list inside a page that scrolls the other way, whose wheel should
+   * scroll the page. Defaults to false.
+   */
+  readonly crossAxis?: boolean;
 }
 
 /** A scroll thumb to drag: its input and target, its track's length and its shortest length. */
@@ -126,6 +132,8 @@ export function createScrollControl(options: ScrollControlOptions): ScrollContro
     displayTarget(wheel.target);
     lineLength = wheel.lineLength ?? 40;
     if (!length(lineLength) || lineLength <= 0) throw new EgretError('UI_CONTROL_OPTIONS');
+    if (wheel.crossAxis !== undefined && typeof wheel.crossAxis !== 'boolean')
+      throw new EgretError('UI_CONTROL_OPTIONS');
   }
   if (thumb !== undefined) {
     if (
@@ -181,7 +189,9 @@ export function createScrollControl(options: ScrollControlOptions): ScrollContro
         const point: WheelPoint = event.payload;
         // The zoom gesture of the platform is not a scroll.
         if (point.zoom === true) return;
-        const delta = axis === 'y' ? point.deltaY : point.deltaX;
+        const own = axis === 'y' ? point.deltaY : point.deltaX,
+          other = axis === 'y' ? point.deltaX : point.deltaY;
+        const delta = own === 0 && wheel.crossAxis === true ? other : own;
         const step =
           point.unit === 'pixel' ? delta : point.unit === 'line' ? delta * lineLength : delta * viewportLength;
         // At its end the viewport leaves the wheel to whatever is outside it.

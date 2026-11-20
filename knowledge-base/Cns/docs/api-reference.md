@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1338 个导出，其中 2 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1338 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1357,7 +1357,7 @@
 | `createInputActions` | 函数 | Makes the actions of `map`. |
 | `createMemorySaveStorage` | 函数 | Storage kept in memory: for tests, for a page without browser storage, or for a game played once. |
 | `createRandom` | 函数 | A generator from a seed (a number or string) or a saved state. |
-| `createSaveStore` | 函数 | Opens the save under `options.key`, migrating an older one. |
+| `createSaveStore` | 函数 |  |
 | `describeInputBinding` | 函数 | A readable name for a binding, for settings screens: `Key:KeyW` is `W`, `Mouse:0` is `Left button`. |
 | `encodeWav` | 函数 | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
 | `hashSeed` | 函数 | Turns a string or number into a 32-bit seed. |

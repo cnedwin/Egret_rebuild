@@ -148,7 +148,7 @@ test('GK05 a save starts from the defaults, is written, and loads again', () => 
 
 // Break caught: let a change that returns what it assigned, `data => (data.tier = 3)`, replace the whole save with 3,
 // as a game's save once became a summary object, or write data that fails the check.
-test('GK05b a returned or edited save that fails validate is reported and not kept or written', () => {
+test('GK05b a returned or edited save that fails validate is reported, not kept and not written; the save in memory is as it was', () => {
   const storage = createMemorySaveStorage(),
     problems = [];
   const options = {
@@ -164,15 +164,29 @@ test('GK05b a returned or edited save that fails validate is reported and not ke
     store.update(data => (data.tier = 3)),
     false
   );
-  assert.deepEqual(store.data, { tier: 3 }, 'the edit in place stays; the returned 3 does not replace it');
+  assert.deepEqual(store.data, { tier: 1 }, 'the change was made on a copy: the save in memory is as it was');
   assert.equal(storage.getItem('game.save'), null, 'nothing was written');
   assert.equal(
     store.update(() => ({ summary: 'won' })),
     false
   );
   assert.equal(store.save({ tier: 'x' }), false);
-  assert.deepEqual(problems, ['invalid', 'invalid', 'invalid']);
-  assert.deepEqual(store.data, { tier: 3 });
+  // An edit in place that fails, and a change that throws halfway, leave it too.
+  assert.equal(
+    store.update(data => {
+      data.tier = 'two';
+    }),
+    false
+  );
+  assert.throws(() =>
+    store.update(data => {
+      data.tier = 9;
+      throw new Error('halfway');
+    })
+  );
+  assert.deepEqual(problems, ['invalid', 'invalid', 'invalid', 'invalid']);
+  assert.deepEqual(store.data, { tier: 1 });
+  const before = store.data;
   assert.equal(
     store.update(data => {
       data.tier = 4;
@@ -180,13 +194,15 @@ test('GK05b a returned or edited save that fails validate is reported and not ke
     true
   );
   assert.equal(createSaveStore(options).data.tier, 4);
+  assert.equal(store.data.tier, 4);
+  assert.equal(before.tier, 1, 'the data is a new object after an update; the old one is left as it was');
   // Without a check of its own, a save is any object: a number returned is still refused.
   const plain = createSaveStore({ key: 'plain', version: 1, defaults: () => ({ n: 0 }), storage });
   assert.equal(
     plain.update(data => (data.n = 1)),
     false
   );
-  assert.deepEqual(plain.data, { n: 1 });
+  assert.deepEqual(plain.data, { n: 0 });
 });
 
 test('GK06 older saves are migrated and written back; unusable ones are kept aside', () => {

@@ -34,7 +34,7 @@ Background native sessions settle under editorPolicy and retire their DOM contro
 
 A root has no visibility of its own. To show and hide the same panel without making it again, register its root as an overlay of the layer manager: `open(id)` shows it and `close(id)` hides it, and the root, its leaves and their state are kept between. A panel that is not kept may instead be a new root each time it opens, disposed when it closes; that is as intended.
 
-A root may be prepared from a button's callback: `prepare()` asked for while input is delivered, or while a frame is drawn, starts once that is over. `commit()` is not deferred: call it after the `prepare()` it commits has settled. A `UI_BUSY` names its reason in `cause`: input being delivered, a frame being drawn, an earlier `prepare()` of that root that has not settled, or a commit being made.
+A root may be made and prepared from a button's callback: `createUiRoot` is allowed while input is delivered (it puts nothing on the stage until its first commit), and `prepare()` asked for while input is delivered, or while a frame is drawn, starts once that is over. `commit()` is not deferred: call it after the `prepare()` it commits has settled. A `UI_BUSY` names its reason in `cause`: input being delivered, a frame being drawn, an earlier `prepare()` of that root that has not settled, or a commit being made.
 
 ## Lifetime and example
 

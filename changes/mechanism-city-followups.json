@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-20",
+  "en": {
+    "title": "Saves change a copy; UI roots from button callbacks; sideways lists read the ordinary wheel",
+    "body": "Follow-ups from Mechanism City after 687037a. `save.update` now gives its change a copy and takes it only once it passes `validate`: a refused change, or one that throws halfway, no longer alters the save in memory, which the documentation already promised; `save.data` is a new object after an update. `createUiRoot` may be called from a button's callback while input is delivered, as `prepare()` already could, so a panel made on each open needs no wait. A scroll control's `wheel` takes `crossAxis: true`, so a sideways list scrolls by an ordinary mouse wheel."
+  },
+  "zh": {
+    "title": "存档在副本上修改；可在按钮回调里新建 UI 根；横向列表读普通滚轮",
+    "body": "《千机巧匠》升级到 687037a 后发现的后续问题。`save.update` 现在把副本交给回调，通过 `validate` 后才采用：被拒绝的修改、或中途抛错的修改，都不会再改动内存里的存档（文档原本就是这样承诺的）；每次 update 后 `save.data` 是新对象。输入分发期间（例如按钮回调里）可以调用 `createUiRoot`，和 `prepare()` 一样，每次打开都新建的面板不用再等待。滚动控件的 `wheel` 支持 `crossAxis: true`，横向列表可以用普通鼠标滚轮滚动。"
+  }
+}

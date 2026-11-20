@@ -324,3 +324,23 @@ test('M3 UI a prepare asked for while input is delivered starts once the deliver
     assert.match(refused.message, /input is being delivered/);
     root.dispose();
   }));
+
+test('M3 UI a root may be made from a button callback, while input is delivered, and prepared and committed after', async () =>
+  owned(async (engine, scope) => {
+    const target = rawTarget(engine, scope);
+    const input = createPointerInput({ engine, scope, width: 200, height: 200 });
+    let made, failed;
+    target.on(input.events.begin, () => {
+      try {
+        made = rootFor(engine, scope);
+      } catch (error) {
+        failed = error;
+      }
+    });
+    input.begin(sample());
+    assert.equal(failed, undefined, failed?.cause?.message);
+    assert.ok(made);
+    const token = await made.prepare();
+    assert.equal(made.commit(token).kind, 'committed');
+    made.dispose();
+  }));

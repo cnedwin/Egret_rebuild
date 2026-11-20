@@ -53,7 +53,9 @@ const freeze = Object.freeze;
 export function createUiRoot(options: UiRootOptions): UiRoot {
   const port = requireUiEngine(options.engine);
   port.assertOpen();
-  port.assertIdle();
+  // A root may be made from a button's callback, while input is delivered: making it changes nothing on the stage,
+  // which its first commit does, and its first prepare waits until the delivery is over.
+  port.assertNotDrawing();
   const owner = port.scope(options.scope);
   owner.assertOpen();
   const display = port.display(createUiDisplayOperations);
@@ -1492,7 +1494,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         touchChildren: false
       }
     ]);
-    port.assertIdle();
+    port.assertNotDrawing();
+    // The placeholder is drawn into the root's own wrapper, which is on no stage until it is anchored.
     display.commit(placeholder);
     owner.use({
       dispose: () => api.dispose()
