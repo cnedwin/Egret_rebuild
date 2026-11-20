@@ -18,6 +18,11 @@ export interface AtmosphereOptions3D {
   readonly fogHeight?: number;
   /** How quickly the fog thins with height, per world unit; 0 gives uniform fog. Default 0.08. */
   readonly fogFalloff?: number;
+  /**
+   * How much of the fog lies over the sky itself, from 0 (a clear sky, fog only on what stands before it) to 1 (the
+   * sky fogged as if it were the far plane, which greys the horizon). Default 1, as before. Fixed when made.
+   */
+  readonly skyFog?: number;
   /** Brightness of the light shafts; 0 turns them off. Default 0.6. */
   readonly shaftIntensity?: number;
   /** How far the shafts reach across the screen, 0 to 1. Default 0.6. */
@@ -26,7 +31,7 @@ export interface AtmosphereOptions3D {
 
 // uniforms: [0] fog rgb, density; [1] falloff, base height, sky distance, shaft intensity;
 //           [2] sun uv, sun visibility, shaft length; [3] the camera's world Y axis in view space, camera height.
-const GLSL = /* glsl */ `
+const GLSL = (skyFog: string) => /* glsl */ `
 vec3 customPost(vec3 color, vec2 uv) {
     vec4 fog = uPostCustom[0], shape = uPostCustom[1], sun = uPostCustom[2], up = uPostCustom[3];
     vec3 view = unprojectDepth(uv, rawDepth(uv));
@@ -36,6 +41,8 @@ vec3 customPost(vec3 color, vec2 uv) {
         float rise = dot(up.xyz, view), slope = shape.x * rise;
         float thin = abs(slope) > 0.0001 ? (1.0 - exp(-slope)) / slope : 1.0;
         float depth = fog.a * exp(-shape.x * (up.w - shape.y)) * reach * thin;
+        // The sky lies on the far plane: it takes its own share of the fog.
+        depth *= mix(1.0, ${skyFog}, step(shape.z, reach));
         color = mix(fog.rgb, color, exp(-max(depth, 0.0)));
     }
     if (shape.w > 0.0 && sun.z > 0.0) {
@@ -58,7 +65,7 @@ vec3 customPost(vec3 color, vec2 uv) {
     return color;
 }
 `;
-const WGSL = /* wgsl */ `
+const WGSL = (skyFog: string) => /* wgsl */ `
 fn customPost(color: vec3f, uv: vec2f) -> vec3f {
     let fog = params.custom[0];
     let shape = params.custom[1];
@@ -74,7 +81,7 @@ fn customPost(color: vec3f, uv: vec2f) -> vec3f {
         let slope = shape.x * rise;
         var thin = 1.0;
         if (abs(slope) > 0.0001) { thin = (1.0 - exp(-slope)) / slope; }
-        let depth = fog.a * exp(-shape.x * (up.w - shape.y)) * reach * thin;
+        let depth = fog.a * exp(-shape.x * (up.w - shape.y)) * reach * thin * mix(1.0, ${skyFog}, step(shape.z, reach));
         result = mix(fog.rgb, result, exp(-max(depth, 0.0)));
     }
     if (shape.w > 0.0 && sun.z > 0.0) {
@@ -105,10 +112,21 @@ fn customPost(color: vec3f, uv: vec2f) -> vec3f {
  */
 export class Atmosphere3D {
   readonly post: CustomPost3D;
+  /** How much of the fog lies over the sky, as given when it was made. */
+  readonly skyFog: number;
   readonly #scratch = [0, 0, 0];
 
   constructor(options: AtmosphereOptions3D = {}) {
-    this.post = createCustomPost3D({ key: 'world3d-atmosphere', glsl: GLSL, wgsl: WGSL });
+    const sky = options.skyFog ?? 1;
+    if (typeof sky !== 'number' || !(sky >= 0 && sky <= 1)) throw new World3DError('WORLD3D_INPUT_INVALID', 'skyFog');
+    // A clear sky is a constant of the program: the sixteen numbers of the hook are all in use.
+    const constant = sky.toFixed(4);
+    this.skyFog = Number(constant);
+    this.post = createCustomPost3D({
+      key: sky === 1 ? 'world3d-atmosphere' : 'world3d-atmosphere-sky' + constant,
+      glsl: GLSL(constant),
+      wgsl: WGSL(constant)
+    });
     colorFromHex(this.post.uniforms, options.fogColor ?? 0xb4c4d4);
     this.fogDensity = options.fogDensity ?? 0.01;
     this.fogHeight = options.fogHeight ?? 0;

@@ -271,7 +271,12 @@ export class RenderTarget3D extends Resource3D {
 
 /**
  * Procedural sky cube: a vertical gradient from `ground` through `horizon` to
- * `zenith`, in sRGB bytes. Useful as a background and a soft light probe.
+ * `zenith`, in sRGB. Useful as a background and a soft light probe.
+ *
+ * Colours are bytes, 0 to 255. Colours whose nine numbers are all from 0 to 1,
+ * as the other colours of the 3D world are written, are read as fractions of
+ * 255: `[0.4, 0.6, 1]` is the same sky as `[102, 153, 255]`. (Given as
+ * fractions before this, a sky was nearly black.)
  */
 export function createGradientCubeTexture3D(
   zenith: readonly [number, number, number],
@@ -281,6 +286,15 @@ export function createGradientCubeTexture3D(
 ): CubeTexture3D {
   const edge = requireCount3D(size, 'cube size', 1024);
   if (edge < 2) throw new World3DError('WORLD3D_INPUT_INVALID', 'cube size');
+  const all = [...zenith, ...horizon, ...ground];
+  if (all.length !== 9 || !all.every(v => typeof v === 'number' && v >= 0 && v <= 255))
+    throw new World3DError('WORLD3D_INPUT_INVALID', 'sky colour');
+  if (all.every(v => v <= 1)) {
+    const bytes = (c: readonly [number, number, number]) => c.map(v => v * 255) as unknown as [number, number, number];
+    zenith = bytes(zenith);
+    horizon = bytes(horizon);
+    ground = bytes(ground);
+  }
   const faces: TexturePixels3D[] = [];
   for (let face = 0; face < 6; face++) {
     const data = new Uint8Array(edge * edge * 4);
