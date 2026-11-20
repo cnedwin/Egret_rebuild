@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/vector-mask.test.mjs",
+      "originRole": "First-party tests of masks of vector shapes and lines of gradients: admission, the captured image of a mask, its reuse and renewal, and gradient lines; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/vector-mask/index.html",
+      "originRole": "First-party page of the vector mask example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/vector-mask/vector.mjs",
+      "originRole": "First-party example drawing shape masks and gradient lines beside the same drawn by a 2D canvas; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/vector-mask/verify.mjs",
+      "originRole": "First-party browser check comparing the vector mask example with the page's 2D canvas on WebGL2 and WebGPU; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/vector-mask/README.md",
+      "originRole": "First-party English guide of the vector mask example; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/vector-mask/README.zh-CN.md",
+      "originRole": "First-party Chinese guide of the vector mask example; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/vector-mask/README.md",
+      "zh": "examples/vector-mask/README.zh-CN.md"
+    }
+  ]
+}

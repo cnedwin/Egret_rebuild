@@ -3,7 +3,7 @@ import type { Rectangle2D } from '@egret/contracts';
 import type { Bitmap } from './Bitmap.js';
 import type { DisplayObject } from './DisplayObject.js';
 import { readBitmapState as bitmapCaptureState } from './bitmapDisplayState.js';
-import { assertLive } from './displayTreeState.js';
+import { assertLive, isDisplayNode } from './displayTreeState.js';
 import { engineOf } from './ownership.js';
 import {
   assertVisualMutable,
@@ -21,6 +21,13 @@ export interface RenderEffect2D {
   readonly blurRadius?: number;
   readonly alphaMask?: Bitmap;
   readonly maskRect?: Rectangle2D;
+  /**
+   * A mask of vector shapes, as Egret's `mask = displayObject`: what the node draws shows only where this Sprite's
+   * Graphics covers, faded where they are translucent. It is placed as if it were a child of the node; only its own
+   * drawing counts, not its children's, and its alpha and visibility do not. It need not be on the stage; on it, it is
+   * drawn too. One effect has an alpha mask or a shape mask.
+   */
+  readonly shapeMask?: DisplayObject;
   /**
    * Twenty numbers, as Egret's ColorMatrixFilter: four rows of red, green, blue and alpha, each four factors and an
    * offset from 0 to 255. Applied to colour as it is seen, without its alpha multiplied in, after the blur.
@@ -103,7 +110,8 @@ export function setRenderEffect(node: DisplayObject, input: RenderEffect2D | und
     if (input === null || typeof input !== 'object') throw new EgretError('DISPLAY_EFFECT_INVALID');
     const radius = input.blurRadius ?? 0,
       mask = input.alphaMask,
-      rect = input.maskRect;
+      rect = input.maskRect,
+      shapeMask = input.shapeMask;
     if (!Number.isInteger(radius) || radius < 0 || radius > 8) throw new EgretError('DISPLAY_EFFECT_INVALID');
     let bounds: Rectangle2D | undefined;
     if (mask !== undefined) {
@@ -114,6 +122,13 @@ export function setRenderEffect(node: DisplayObject, input: RenderEffect2D | und
       bounds = copyRect(rect, 'DISPLAY_EFFECT_INVALID');
       if (bounds.width <= 0 || bounds.height <= 0) throw new EgretError('DISPLAY_EFFECT_INVALID');
     } else if (rect !== undefined) throw new EgretError('DISPLAY_EFFECT_INVALID');
+    if (shapeMask !== undefined) {
+      if (mask !== undefined || shapeMask === null || typeof shapeMask !== 'object' || !isDisplayNode(shapeMask))
+        throw new EgretError('DISPLAY_EFFECT_MASK_INVALID');
+      assertLive(shapeMask);
+      if (engineOf(shapeMask) !== engineOf(node)) throw new EgretError('ENGINE_MISMATCH');
+      if (shapeMask === node) throw new EgretError('DISPLAY_EFFECT_MASK_INVALID');
+    }
     const matrix = input.colorMatrix === undefined ? undefined : readMatrix(input.colorMatrix);
     const glow = input.glow === undefined ? undefined : readGlow(input.glow),
       outline = input.outline === undefined ? undefined : readOutline(input.outline);
@@ -121,6 +136,7 @@ export function setRenderEffect(node: DisplayObject, input: RenderEffect2D | und
     value = Object.freeze({
       blurRadius: radius,
       ...(mask === undefined ? {} : { alphaMask: mask, maskRect: bounds! }),
+      ...(shapeMask === undefined ? {} : { shapeMask }),
       ...(matrix === undefined ? {} : { colorMatrix: matrix }),
       ...(glow === undefined ? {} : { glow }),
       ...(outline === undefined ? {} : { outline })

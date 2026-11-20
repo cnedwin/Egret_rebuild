@@ -29,7 +29,7 @@ import { finite, visualOf } from './displayVisualState.js';
 import { composeDisplayTransform } from './displayTransform.js';
 import { bitmapCaptureState, readBitmapImage, readBitmapSource } from './Bitmap.js';
 import { readMeshState } from './meshDisplayState.js';
-import { SHAPE_PAGE, SHAPE_REGION, resolveShape } from './graphicsShape.js';
+import { SHAPE_PAGE, SHAPE_REGION, resolveShape, shapeMaskImage } from './graphicsShape.js';
 import type { ResolvedShape } from './graphicsShape.js';
 import { readMeshCaptureImage } from './meshCaptureSnapshot.js';
 import { assertTextFieldScope, readTextFieldState } from './textDisplayState.js';
@@ -858,6 +858,26 @@ function captureSharedContent(
         budget.source(image);
         maskPageIndex = regions[regionIndex(image, region)]!.pageIndex;
       }
+      // A mask of shapes is drawn as an image of its alpha at the size the node is seen at, twice over for a dense
+      // screen, and then masks as an image does.
+      let maskRect = settings.maskRect;
+      const shapeMask = settings.shapeMask;
+      if (shapeMask !== undefined) {
+        assertLive(shapeMask);
+        if (engineOf(shapeMask) !== engine) throw new EgretError('ENGINE_MISMATCH');
+        // Placed as if it were a child of the node; only its own drawing counts, not its alpha or visibility.
+        const maskState = visualOf(shapeMask),
+          drawn = shapeMaskImage(
+            shapeMask,
+            maskState.primitives,
+            maskState.shape === undefined ? undefined : resolveShape(maskState.shape),
+            composeDisplayTransform(identity, maskState),
+            2 * Math.sqrt(Math.abs(matrix.a * matrix.d - matrix.b * matrix.c))
+          );
+        budget.source(drawn.image);
+        maskPageIndex = regions[regionIndex(drawn.image, drawn.region)]!.pageIndex;
+        maskRect = drawn.rect;
+      }
       effect = { occurrenceId: nextOccurrence++, boundaryId: nextBoundary++ };
       const glow = effectGlow(settings);
       budget.emission(undefined, true);
@@ -871,7 +891,7 @@ function captureSharedContent(
           effect: freeze({
             blurRadius: settings.blurRadius ?? 0,
             maskPageIndex,
-            maskRect: settings.maskRect,
+            maskRect,
             matrix,
             clips: flattenClips(clips),
             ...(settings.colorMatrix === undefined ? {} : { colorMatrix: settings.colorMatrix }),
@@ -1208,8 +1228,10 @@ function captureSharedContent(
     const state = checkNode(node, parent, engine, capture, tree);
     const kept = keeping && drawn && !refused ? (state.sharedCapture as NodeCapture | undefined) : undefined;
     // At rest, the node is a sprite or a bitmap as it was, with as many primitives: its units are those it had.
+    // A node masked by shapes is captured anew: its mask may have changed without it.
     const resting =
       kept !== undefined &&
+      state.renderEffect?.shapeMask === undefined &&
       kept.restChanges === state.changes &&
       kept.parentMatrix === parentMatrix &&
       is(kept.restParentAlpha, parentAlpha) &&

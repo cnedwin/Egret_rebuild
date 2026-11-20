@@ -4,6 +4,10 @@
 
 早期版本号标识工程检查点。工作区包仍使用私有版本 `0.0.0`，宿主协议为 1.0。各检查点的验收范围见其子系统契约和验证记录。
 
+## 形状遮罩与线条渐变 — 2026-11-20
+
+`renderEffect = { shapeMask: sprite }` 用一个 Sprite 的 Graphics 形状遮罩节点，对应白鹭 5 的 `mask = displayObject`：半透明处部分透出，位置按它是节点的子对象计算。它在 CPU 上画成一张 alpha 图，内容不变时沿用，然后在两个共享 host 上像 `alphaMask` 一样遮罩。线条可以用渐变：参数与白鹭相同的 `lineGradientStyle`，以及 `lineLinearGradientStyle` 和 `lineRadialGradientStyle`，与渐变填充一样细分。`createBrowserGame({ effects: true })` 为游戏开启渲染效果。`examples/vector-mask` 将两者与页面自身的 2D canvas 对比：WebGL2 软件渲染下每个点与它相差不超过 8。WebGPU 像素需在硬件上运行确认。
+
 ## Play3D：组、发光、灯与天气 — 2026-11-20
 
 `game.group([a, b, c], at)` 把几个物体合成一个，作为一个物体放置、旋转、补间和判断。`thing.glow` 让物体以自己的颜色发光。`game.lamp(color, at, { intensity, range })` 加一盏点光源，可移动、可补间，用 `game.remove` 熄灭。`game.weather('snow' | 'rain' | 'none', { amount })` 让雪或雨在相机所看之处周围落下，运动在 GPU 上计算。`examples/play/lanterns3d.mjs` 是用这四项做的雪夜；Play 核对脚本把它玩到结束，在软件 WebGL2 下通过。

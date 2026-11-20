@@ -80,6 +80,11 @@ export interface BrowserGameOptions {
    * codes, as a 2D canvas and Egret 5 mix them, so a faint white over a dark ground stays faint.
    */
   readonly blendSpace?: 'linear' | 'srgb';
+  /**
+   * Whether render effects are drawn: blurs, colour matrices, glows, outlines, and masks of images or of shapes.
+   * Off unless given; a frame with an effect is refused without it.
+   */
+  readonly effects?: boolean;
   /** One step of the game, called before each frame with the seconds since the step before. */
   readonly update?: (deltaSeconds: number) => void;
   /** Told once of what stopped the game's loop. Without it the failure is thrown where the console shows it. */
@@ -169,7 +174,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
   const asked = options.backend ?? 'auto',
     clearColor = options.clearColor ?? 0,
     clearAlpha = options.clearAlpha ?? 1,
-    blendSpace = options.blendSpace ?? 'linear';
+    blendSpace = options.blendSpace ?? 'linear',
+    enableEffects = options.effects ?? false;
   const device = Number((globalThis as { readonly devicePixelRatio?: unknown }).devicePixelRatio),
     pixelRatio = options.pixelRatio ?? (device > 0 ? Math.min(device, 2) : 1);
   if (
@@ -188,6 +194,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     typeof clearAlpha !== 'number' ||
     !(clearAlpha >= 0 && clearAlpha <= 1) ||
     (blendSpace !== 'linear' && blendSpace !== 'srgb') ||
+    typeof enableEffects !== 'boolean' ||
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
     [options.pointer, options.keyboard, options.autoStart, options.stats].some(
@@ -201,8 +208,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
   // Only the chosen backend's module is loaded.
   const host =
     backend === 'webgpu'
-      ? (await import('./webgpu.js')).createSharedWebGPUHost({ canvas, pixelRatio, blendSpace })
-      : (await import('./webgl2.js')).createSharedWebGL2Host({ canvas, pixelRatio, blendSpace });
+      ? (await import('./webgpu.js')).createSharedWebGPUHost({ canvas, pixelRatio, blendSpace, enableEffects })
+      : (await import('./webgl2.js')).createSharedWebGL2Host({ canvas, pixelRatio, blendSpace, enableEffects });
   let engine: Engine;
   try {
     engine = await createEngineForProfile({ host, onDiagnostic: gameDiagnostics(onError) }, SHARED_FRAME_PROFILE_2D);

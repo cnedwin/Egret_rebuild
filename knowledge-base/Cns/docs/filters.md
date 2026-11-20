@@ -27,6 +27,23 @@ ghost.renderEffect = { glow: { color: 0x40ff80, knockout: true } };
 
 一个效果只能有发光或描边之一，不能同时有：需要两者时嵌套两个效果。投影就是带偏移的发光；Egret 的 distance 和 angle 对应 `offsetX = distance·cos(angle)`、`offsetY = distance·sin(angle)`。偏移和扩散以表面像素计，乘以宿主的像素比，不随对象旋转或缩放。
 
+## 形状遮罩
+
+`renderEffect = { shapeMask: sprite }` 用一个形状遮罩节点，与 Egret 的 `mask = displayObject` 相同：节点及其子对象只在该 sprite 的 Graphics 覆盖的地方显示，填充半透明的地方部分透出。
+
+```js
+const window = scope.use(new Sprite());
+window.graphics.beginFill(0xffffff).drawCircle(80, 80, 60).endFill();
+picture.renderEffect = { shapeMask: window };     // 图片从圆里透出
+window.x = 40;                                    // 遮罩移动，下一帧就生效
+```
+
+- 遮罩的位置按它是被遮罩节点的子对象计算：它的 `x`、`y`、缩放、旋转和斜切都生效，alpha 和可见性不生效。只算它自己的绘制，不算它的子对象。
+- 它不必在舞台上。如果在舞台上，它也会被画出来；Egret 中舞台上的遮罩会被隐藏，这里需要把它从舞台上拿下来。
+- 它在 CPU 上画成一张 alpha 图，大小是被遮罩节点在屏幕上大小的两倍，每边最多 2048 像素，再像 `alphaMask` 一样遮罩。遮罩的绘制或位置改变、或节点在屏幕上的大小变化超过约五分之一时重新绘制，否则沿用同一张图。每帧重画的遮罩每帧都要生成新图。
+- 一个效果只能有 `alphaMask` 或 `shapeMask` 之一，可以与模糊、颜色矩阵、发光或描边共用一个效果。什么都没画的遮罩会遮住一切。
+- `createBrowserGame({ effects: true })` 创建开启效果的游戏 host。
+
 ## 绘制方式
 
 在线性预乘颜色中，设组的颜色为 `c`，alpha 场为 `A`：
