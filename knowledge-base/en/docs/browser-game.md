@@ -86,7 +86,7 @@ What is not a valid option is refused with `BROWSER_GAME_OPTIONS_INVALID` before
 ```text
 webgl2
 fps 60.0  longest 17.1 ms
-commands 6  triangles 12
+commands 6  draws 2  triangles 12
 geometries 0  pages 0
 pending 0  drawn 1204  skipped 3
 ```
@@ -95,11 +95,12 @@ pending 0  drawn 1204  skipped 3
 | --- | --- |
 | `fps`, `longest` | Frames of the display a second, and the longest time between two of them, since the text last changed |
 | `commands`, `triangles` | What the last drawn frame holds: its draw commands and the triangles they draw. A rectangle or an image is two triangles |
+| `draws` | The draw calls the Host made for its last frame, from `host.getFrameDrawCalls()`: its batches, a pass for each effect and one to copy the frame to the canvas. Batching makes it smaller than `commands` |
 | `geometries`, `pages` | The different mesh geometries and the different images of that frame |
 | `pending` | Frames the Host holds that it has not finished |
 | `drawn`, `skipped` | Frames the loop has drawn, and frames it skipped because the Host held two |
 
-- **Commands are not draw calls.** A Host joins commands that follow each other on one image and one material into one draw. The panel shows what the Engine asked for, not how many draws the Host made of it.
+- **Commands are not draw calls.** A Host joins commands that follow each other on one image and one material into one draw. `commands` is what the Engine asked for; `draws` is how many draws the Host made of it.
 - The text changes twice a second. The panel lies over the top left corner of the canvas and does not take the pointer: what is under it is still pressed.
 - `game.stats.snapshot()` gives the same numbers to a program.
 

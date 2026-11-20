@@ -207,6 +207,8 @@ export interface SharedWebGPUHost extends Pick<SharedRenderHostAdapter, 'sharedF
   stageSharedFrame(frame: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
   requestReadback(): Promise<SharedWebGPUReadback>;
   getSharedStatus(): SharedWebGPUHostStatus;
+  /** Draw calls of the last frame encoded: its batches, a pass for each effect and the copy to the canvas. */
+  getFrameDrawCalls(): number;
 }
 type Ticket = ReturnType<typeof deferred<WebGPUReadback | SharedWebGPUReadback>> & { bound: boolean };
 /** Preallocated ownership until a returned target is registered or destroyed. */
@@ -430,6 +432,7 @@ class WebGPUHostImplementation {
   private pendingGeometryBytes = 0;
   private pendingColorBytes = 0;
   private pendingCanonicalBytes = 0;
+  private frameDrawCalls = 0;
   private readonly ledger = new Set<Submission>();
   private readonly batchScratch = new PreparedBatchScratch2D();
   /** The prepared draws of the last frame. A Host that is not active keeps none. */
@@ -610,6 +613,10 @@ class WebGPUHostImplementation {
       stageSharedFrame: {
         value: (frame: SharedRenderFrame2D, options?: SharedFrameUploadOptions) =>
           this.renderSharedOwnedFrame(frame, { options }),
+        enumerable: true
+      },
+      getFrameDrawCalls: {
+        value: (): number => this.frameDrawCalls,
         enumerable: true
       },
       getSharedStatus: {
@@ -3170,6 +3177,7 @@ class WebGPUHostImplementation {
     ticket: Ticket | undefined,
     gate: () => void
   ): true {
+    this.frameDrawCalls = 0;
     const { storage, batch } = p,
       { frame, width, height } = storage.prepared,
       serial = record.serial;
@@ -3242,6 +3250,7 @@ class WebGPUHostImplementation {
       active.pass.setBindGroup(0, bindings.get(draw)!);
       if (draw.regionWindow >= 0) active.pass.setBindGroup(1, recipe.regionBindings.get(draw)!);
       active.pass.draw(draw.vertexCount);
+      this.frameDrawCalls++;
     };
     if (storage.prepared.effects.groups.length === 0) {
       for (const draw of batch.draws) drawOne(draw);
@@ -3261,6 +3270,7 @@ class WebGPUHostImplementation {
         run.pass.setScissorRect(0, 0, width, height);
         run.pass.setBindGroup(0, recipe.effects.get(group)!.get(mode)!);
         run.pass.draw(3);
+        this.frameDrawCalls++;
         run.end();
         gate();
       };
@@ -3305,6 +3315,7 @@ class WebGPUHostImplementation {
     resolve.setScissorRect(0, 0, width, height);
     resolve.setBindGroup(0, resolveBinding);
     resolve.draw(3);
+    this.frameDrawCalls++;
     endResolve();
     gate();
     if (staging) {

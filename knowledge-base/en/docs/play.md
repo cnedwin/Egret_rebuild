@@ -136,6 +136,8 @@ A browser plays no sound until the player has pressed a key or clicked; effects 
 
 A third argument of `overlaps`, `hits` and `hitsAll` takes that many units off every side of both, for a more forgiving hit. A sprite that is hidden with `visible = false`, removed or draws nothing overlaps nothing; one with `alpha` 0 still overlaps. A sprite never hits itself, so the list may hold it.
 
+A level of tiles is one call: `const map = game.tiles(['##########', '#........#', '##########'], { size: 32, x: 0, y: 0, colors: { '#': 0x445566 } })` draws the rows as one sprite, `map.sprite`, with the top left corner at `x`, `y`. `#` is solid unless `solid` gives the solid characters, and a character without a colour is not drawn. `map.pushOut(hero)` is how far to move a sprite out of the solid tiles it overlaps, `{ x, y }` or `undefined`, out of the most overlapped tile first; `map.solidAt(x, y)` and `map.cellAt(x, y)` read a point of the layer, `map.at(column, row)` a cell, and `map.set(column, row, '.')` changes one and draws the map again. `game.mix(a, b, t)` is the colour a fraction `t` of the way from `a` to `b`, both `0xRRGGBB`.
+
 `pushOut` is how a character stands on a platform and stops at a wall:
 
 ```js

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1329 exports; 2 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1331 exports; 2 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1470,6 +1470,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayStickOptions` | interface | A touch stick to show: where, how large, and whether it shows without touch. |
 | `PlayText` | class | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
 | `PlayTextOptions` | interface | Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. |
+| `PlayTiles` | interface | A map of tiles: read and change its cells, and push a sprite out of its solid ones. |
+| `PlayTilesOptions` | interface | A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. |
 | `PlayToastOptions` | interface | A toast to show: how long and in what color. |
 | `PlayTouchButtonOptions` | interface | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
 | `SFX_PRESETS` | value | The effects every game is given, by name. |

@@ -436,10 +436,13 @@ export function createPlayWidgets(
         menu?.choice.finish(-1);
         const size = Math.max(14, Math.round(game.height / 20)),
           row = Math.round(size * 1.9) + 6,
-          longest = Math.max(...list.map(measure), typeof o?.title === 'string' ? measure(o.title) * 1.2 : 0),
+          titleLines = typeof o?.title === 'string' ? o.title.split('\n') : [],
+          longest = Math.max(...list.map(measure), ...titleLines.map(line => measure(line) * 1.2)),
           w = finite(o?.width) && o.width > 0 ? o.width : Math.min(game.width - 32, longest * size + 64),
           titled = typeof o?.title === 'string' && o.title !== '',
-          h = list.length * row + 24 + (titled ? Math.round(size * 1.8) : 0),
+          // A title of several lines takes as many lines of room, so the first item is never under it.
+          titleHeight = titled ? Math.round(size * (0.35 + 1.45 * titleLines.length)) : 0,
+          h = list.length * row + 24 + titleHeight,
           x = (finite(o?.x) ? o.x : game.width / 2) - w / 2,
           y = (finite(o?.y) ? o.y : game.height / 2) - h / 2;
         const panel = panelOf(x, y, w, h);
@@ -457,7 +460,7 @@ export function createPlayWidgets(
           list,
           panel,
           12,
-          titled ? Math.round(size * 1.8) + 8 : 12,
+          titled ? titleHeight + 8 : 12,
           w - 24,
           size,
           colour(o?.color, 0xfacc15),

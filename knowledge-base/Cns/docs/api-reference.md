@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1329 个导出，其中 2 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1331 个导出，其中 2 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1470,6 +1470,8 @@
 | `PlayStickOptions` | 接口 | A touch stick to show: where, how large, and whether it shows without touch. |
 | `PlayText` | 类 | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
 | `PlayTextOptions` | 接口 | Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. |
+| `PlayTiles` | 接口 | A map of tiles: read and change its cells, and push a sprite out of its solid ones. |
+| `PlayTilesOptions` | 接口 | A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. |
 | `PlayToastOptions` | 接口 | A toast to show: how long and in what color. |
 | `PlayTouchButtonOptions` | 接口 | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
 | `SFX_PRESETS` | 值 | The effects every game is given, by name. |

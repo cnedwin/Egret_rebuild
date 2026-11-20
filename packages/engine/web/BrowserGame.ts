@@ -257,6 +257,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
               panel.sample({
                 ...(drawn === undefined ? {} : { frame: drawn }),
                 pendingFrames: host.getStatus().pendingFrames,
+                drawCalls: host.getFrameDrawCalls(),
                 frames: now.frames,
                 skipped: now.skipped
               });

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-20",
+  "en": {
+    "title": "The panel counts the Host's draw calls",
+    "body": "Both shared Hosts count the draw calls they make for a frame (its batches, a pass for each effect, layers, and the copy to the canvas) and give the last frame's count as `getFrameDrawCalls()`. The browser game's stats panel shows it as `draws` beside `commands`, so batching can be seen: a frame of many commands on one image and material is one draw. The number is counted, not timed; how long the draws take on a GPU is still measured on hardware."
+  },
+  "zh": {
+    "title": "游戏面板显示 Host 实际绘制次数",
+    "body": "两个共享 Host 都会统计每帧实际发出的绘制调用（各个合批、每个效果各一遍、图层，以及复制到画布的一次），通过 `getFrameDrawCalls()` 给出最近一帧的次数。浏览器游戏的统计面板在 `commands` 旁边显示为 `draws`，能直接看到合批效果：同一图片、同一材质上的许多命令只算一次绘制。这里只计次数不计时间；绘制在 GPU 上花多久仍需在真机上测量。"
+  }
+}

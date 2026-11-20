@@ -4,7 +4,7 @@
 // answers input and makes sound. It is the check to run after writing or changing a game: it prints a report, writes
 // it as report.json beside three pictures of the page, and exits with 1 when a check fails.
 //
-// It plays blind: it holds the arrows, W A S D and Space in turn, and clicks five places. A game that needs a
+// It plays blind: it holds the arrows, W A S D and Space in turn, clicks five places and drags twice. A game that needs a
 // particular move to change (a puzzle, a menu) can pass every other check and fail `reactsOrMoves`; look at the
 // pictures. A page inside this checkout is served from its root, so that an import map to /packages works; any
 // other page is served from its own folder, and asking for anything outside the server fails `noExternalRequests`.
@@ -15,7 +15,8 @@
 //   export const stage = { width: 480, height: 270 };       // the width and height given to `play`
 //   export default async function (player) {
 //     await player.key('right', 2);                            // hold a key for two seconds; player.key('space') presses it
-//     await player.tap(240, 150);                              // in the stage's own units, as are move, press and release
+//     await player.tap(240, 150);                              // in the stage's own units, as are move, press, release and drag
+//     await player.drag(100, 100, 300, 100);                   // press, move over 0.3 seconds, and let go
 //     await player.until(look => player.alike(look(240, 150), 0x3b82f6), 'the button to show', 20);
 //     player.expect((await player.sounds()) > 0, 'a sound was made');
 //     await player.picture('won');
@@ -203,6 +204,16 @@ function driver(tab, PNG, out, size) {
       await tab.waitForTimeout(60);
       await tab.mouse.up();
     },
+    /** Presses at one place, moves to another over `seconds` and lets go there, as a finger or a mouse drags. */
+    async drag(x0, y0, x1, y1, seconds = 0.3) {
+      await game.press(x0, y0);
+      const steps = Math.max(2, Math.round(seconds * 30));
+      for (let i = 1; i <= steps; i++) {
+        await tab.mouse.move(...(await at(x0 + ((x1 - x0) * i) / steps, y0 + ((y1 - y0) * i) / steps)));
+        await tab.waitForTimeout((seconds * 1000) / steps);
+      }
+      await tab.mouse.up();
+    },
     async key(name, seconds = 0) {
       await tab.keyboard.down(keyOf(name));
       await tab.waitForTimeout(Math.max(40, seconds * 1000));
@@ -362,6 +373,18 @@ export async function verifyGame({ chromium, PNG, file, out, script }) {
         await tab.mouse.move(middleX + x * spanX, middleY + y * spanY, { steps: 6 });
         await tab.mouse.down();
         await tab.waitForTimeout(60);
+        await tab.mouse.up();
+        await tab.waitForTimeout(120);
+        await sample();
+      }
+      // Two drags across the middle, for a game that is played by dragging.
+      for (const [x0, y0, x1, y1] of [
+        [-0.3, 0, 0.3, 0],
+        [0, -0.3, 0, 0.3]
+      ]) {
+        await tab.mouse.move(middleX + x0 * spanX, middleY + y0 * spanY);
+        await tab.mouse.down();
+        await tab.mouse.move(middleX + x1 * spanX, middleY + y1 * spanY, { steps: 12 });
         await tab.mouse.up();
         await tab.waitForTimeout(120);
         await sample();

@@ -99,14 +99,15 @@ test('BG02 the panel lies over its canvas and shows what a frame holds and how b
     panel.sample({ now: 1000, frame, pendingFrames: 1, frames: 7, skipped: 2 });
     assert.equal(
       panel.element.textContent,
-      'webgl2\nfps 0.0  longest 0.0 ms\ncommands 3  triangles 14\ngeometries 1  pages 1\npending 1  drawn 7  skipped 2'
+      'webgl2\nfps 0.0  longest 0.0 ms\ncommands 3  draws -  triangles 14\ngeometries 1  pages 1\npending 1  drawn 7  skipped 2'
     );
     assert.deepEqual([panel.element.style.left, panel.element.style.top], ['30px', '40px']);
     // Sixty frames a second for half a second, one of them late: the text changes when the interval has passed.
     for (let i = 1; i <= 29; i++)
       panel.sample({ now: 1000 + (i * 1000) / 60, pendingFrames: 0, frames: 7 + i, skipped: 2 });
     assert.match(panel.element.textContent, /^webgl2\nfps 0\.0/);
-    panel.sample({ now: 1000 + (29 * 1000) / 60 + 40, frames: 37, skipped: 3 });
+    // The Host's draw calls, when the game gives them: here two, a batch and the resolve to the canvas.
+    panel.sample({ now: 1000 + (29 * 1000) / 60 + 40, frames: 37, skipped: 3, drawCalls: 2 });
     assert.deepEqual(panel.snapshot(), {
       fps: Math.round((10000 * 30) / ((29 * 1000) / 60 + 40)) / 10,
       longestFrameMs: 40,
@@ -116,11 +117,12 @@ test('BG02 the panel lies over its canvas and shows what a frame holds and how b
       pages: 1,
       pendingFrames: 0,
       frames: 37,
-      skipped: 3
+      skipped: 3,
+      drawCalls: 2
     });
     assert.match(
       panel.element.textContent,
-      /^webgl2\nfps 57\.\d  longest 40\.0 ms\ncommands 3  triangles 14\ngeometries 1  pages 1\npending 0  drawn 37  skipped 3$/
+      /^webgl2\nfps 57\.\d  longest 40\.0 ms\ncommands 3  draws 2  triangles 14\ngeometries 1  pages 1\npending 0  drawn 37  skipped 3$/
     );
     assert.ok(Object.isFrozen(panel.snapshot()));
   } finally {
@@ -132,7 +134,7 @@ test('BG02 the panel lies over its canvas and shows what a frame holds and how b
   bare.sample({ now: 5 });
   assert.equal(
     bare.element.textContent,
-    'fps 0.0  longest 0.0 ms\ncommands -  triangles -\ngeometries -  pages -\npending -  drawn -  skipped -'
+    'fps 0.0  longest 0.0 ms\ncommands -  draws -  triangles -\ngeometries -  pages -\npending -  drawn -  skipped -'
   );
   // Disposed, it leaves the page and takes no more samples.
   bare.dispose();

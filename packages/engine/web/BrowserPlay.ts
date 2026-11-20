@@ -129,6 +129,36 @@ export class PlayText extends Sprite {
   }
 }
 
+/** A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. */
+export interface PlayTilesOptions {
+  /** The width and height of one tile; 32 unless given. */
+  readonly size?: number;
+  readonly x?: number;
+  readonly y?: number;
+  /** The colour of each character's tiles; `#` is grey and the rest are not drawn unless given. */
+  readonly colors?: Readonly<Record<string, number>>;
+  /** The characters that are solid; `'#'` unless given. */
+  readonly solid?: string;
+  readonly layer?: Sprite;
+}
+/** A map of tiles: read and change its cells, and push a sprite out of its solid ones. */
+export interface PlayTiles {
+  /** The sprite the tiles are drawn in. */
+  readonly sprite: Sprite;
+  readonly columns: number;
+  readonly rows: number;
+  readonly size: number;
+  /** The character of a cell, or `''` outside the map. */
+  at(column: number, row: number): string;
+  /** Changes the character of a cell and draws the map again. */
+  set(column: number, row: number, character: string): void;
+  /** The cell under a point of the layer the map is in: `{ column, row }`. */
+  cellAt(x: number, y: number): { column: number; row: number };
+  /** Whether a point of the layer the map is in is on a solid tile. */
+  solidAt(x: number, y: number): boolean;
+  /** How far to move `a` out of the solid tiles it overlaps, `{ x, y }`, or `undefined` when it overlaps none. */
+  pushOut(a: DisplayObject): { x: number; y: number } | undefined;
+}
 /** The keyboard of a play game: what is held, pressed and released, and axes from the arrow and WASD keys. */
 export interface PlayKeys {
   /** Whether any of the keys is held. A key is `'left'`, `'right'`, `'up'`, `'down'`, `'space'`, `'enter'`, `'escape'`, `'shift'`, a letter, a digit, or a `KeyboardEvent.code`. */
@@ -338,6 +368,13 @@ export interface PlayGame {
   pushOut(a: DisplayObject, b: DisplayObject): { x: number; y: number } | undefined;
   /** Whether the middles of what two sprites draw are within `distance` of each other: a test of circles. */
   near(a: DisplayObject, b: DisplayObject, distance: number): boolean;
+  /**
+   * A map of tiles from rows of characters, drawn as one sprite: `game.tiles(['#####', '#...#', '#####'], { size: 32 })`.
+   * `#` is solid unless `solid` says which characters are; `colors` gives each character its colour.
+   */
+  tiles(rows: readonly string[], options?: PlayTilesOptions): PlayTiles;
+  /** The colour a fraction `t` of the way from `a` to `b`, both `0xRRGGBB`: `game.mix(0x000000, 0xffffff, 0.5)`. */
+  mix(a: number, b: number, t: number): number;
   /** Moves numbers of an object over time: `game.tween(s).to({ x: 100, alpha: 0 }, 0.3, 'quadOut')`. It starts by itself. */
   tween<T extends object>(target: T): PlayMotion<T>;
   /** Calls a function once, after seconds of play. The function returned calls it off. */
@@ -1612,6 +1649,118 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const dx = (first.left + first.right - second.left - second.right) / 2,
         dy = (first.top + first.bottom - second.top - second.bottom) / 2;
       return dx * dx + dy * dy <= distance * distance;
+    },
+    tiles(rows, o = {}) {
+      if (!Array.isArray(rows) || rows.length === 0 || rows.some(row => typeof row !== 'string'))
+        throw invalid('tiles takes rows of characters');
+      const size = finite(o?.size) && o.size > 0 ? o.size : 32,
+        solid = typeof o?.solid === 'string' ? o.solid : '#',
+        colors: Record<string, number> = { '#': 0x6b7280, ...(o?.colors ?? {}) },
+        cells = rows.map(row => [...row]),
+        columns = Math.max(...cells.map(row => row.length)),
+        node = game.sprite(undefined, o?.layer ?? world);
+      node.x = finite(o?.x) ? o.x : 0;
+      node.y = finite(o?.y) ? o.y : 0;
+      const draw = (): void => {
+        const g = node.graphics.clear();
+        // An empty fill over the whole map keeps its bounds those of the map.
+        g.beginFill(0, 0)
+          .drawRect(0, 0, columns * size, cells.length * size)
+          .endFill();
+        for (let row = 0; row < cells.length; row++)
+          for (let column = 0; column < cells[row]!.length; column++) {
+            const color = colors[cells[row]![column]!];
+            if (colour(color))
+              g.beginFill(color)
+                .drawRect(column * size, row * size, size, size)
+                .endFill();
+          }
+      };
+      draw();
+      const at = (column: number, row: number): string => cells[row]?.[column] ?? '';
+      const cellAt = (x: number, y: number) => ({
+        column: Math.floor((x - node.x) / size),
+        row: Math.floor((y - node.y) / size)
+      });
+      const corner = (column: number, row: number) => node.localToGlobal(column * size, row * size);
+      return {
+        sprite: node,
+        columns,
+        rows: cells.length,
+        size,
+        at,
+        set(column, row, character) {
+          if (cells[row] === undefined || column < 0 || column >= columns || typeof character !== 'string') return;
+          cells[row]![column] = character.slice(0, 1) || ' ';
+          draw();
+        },
+        cellAt,
+        solidAt(x, y) {
+          const cell = cellAt(x, y);
+          return solid.includes(at(cell.column, cell.row) || '\u0000');
+        },
+        pushOut(a) {
+          if (!seen(a) || !seen(node)) return undefined;
+          const first = boxOf(a);
+          if (first === undefined) return undefined;
+          const origin = corner(0, 0),
+            far = corner(1, 1),
+            unitX = far.x - origin.x,
+            unitY = far.y - origin.y;
+          if (!(unitX > 0) || !(unitY > 0)) return undefined;
+          let moveX = 0,
+            moveY = 0;
+          // Out of the most overlapped solid tile first, then of what still overlaps, a few times at most.
+          for (let round = 0; round < 4; round++) {
+            const box = {
+              left: first.left + moveX,
+              right: first.right + moveX,
+              top: first.top + moveY,
+              bottom: first.bottom + moveY
+            };
+            let best: { x: number; y: number } | undefined,
+              most = 0;
+            const c0 = Math.floor((box.left - origin.x) / unitX),
+              c1 = Math.floor((box.right - origin.x) / unitX),
+              r0 = Math.floor((box.top - origin.y) / unitY),
+              r1 = Math.floor((box.bottom - origin.y) / unitY);
+            for (let row = Math.max(0, r0); row <= Math.min(cells.length - 1, r1); row++)
+              for (let column = Math.max(0, c0); column <= Math.min(columns - 1, c1); column++) {
+                if (!solid.includes(at(column, row) || '\u0000')) continue;
+                const cell = {
+                  left: origin.x + column * unitX,
+                  right: origin.x + (column + 1) * unitX,
+                  top: origin.y + row * unitY,
+                  bottom: origin.y + (row + 1) * unitY
+                };
+                if (!meet(box, cell, 0)) continue;
+                const area =
+                  (Math.min(box.right, cell.right) - Math.max(box.left, cell.left)) *
+                  (Math.min(box.bottom, cell.bottom) - Math.max(box.top, cell.top));
+                if (area <= most) continue;
+                most = area;
+                const left = cell.left - box.right,
+                  right = cell.right - box.left,
+                  up = cell.top - box.bottom,
+                  down = cell.bottom - box.top;
+                const x = -left < right ? left : right,
+                  y = -up < down ? up : down;
+                best = Math.abs(x) < Math.abs(y) ? { x, y: 0 } : { x: 0, y };
+              }
+            if (best === undefined) break;
+            moveX += best.x;
+            moveY += best.y;
+          }
+          return moveX === 0 && moveY === 0 ? undefined : { x: moveX, y: moveY };
+        }
+      };
+    },
+    mix(a, b, t) {
+      if (!colour(a) || !colour(b) || !finite(t)) throw invalid('mix takes two colours 0xRRGGBB and a number');
+      const k = Math.min(1, Math.max(0, t)),
+        part = (shift: number): number =>
+          Math.round(((a >> shift) & 255) + (((b >> shift) & 255) - ((a >> shift) & 255)) * k) << shift;
+      return part(16) | part(8) | part(0);
     },
     tween(target) {
       const motion = animate(engine, scope, target) as PlayMotion<typeof target>;

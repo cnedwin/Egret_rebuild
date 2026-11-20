@@ -86,6 +86,7 @@ export class PlayThing3D {
   #material: Material3D | undefined;
   #color: number;
   #glow = 0;
+  #shadow: boolean | undefined;
   #turn: [number, number, number] = [0, 0, 0];
   #removed = false;
   [own: string]: unknown;
@@ -226,6 +227,41 @@ export class PlayThing3D {
     this.#material.emissiveIntensity = value;
     // What glows is seen through the fog and the snow, as a lighthouse or a lantern is at night.
     this.#material.fog = value === 0;
+    this.#blend();
+  }
+  /** A see-through thing that glows adds its light to what is behind it, as a beam does; any other mixes over it. */
+  #blend(): void {
+    if (this.#material === undefined) return;
+    this.#material.blending = this.#glow > 0 && this.#material.opacity < 1 ? 'additive' : 'normal';
+    // Fog, blending and the alpha mode choose the shader, so a change of them is told to the material.
+    this.#material.touch();
+  }
+  /**
+   * How much of it is seen, 0 to 1: 1 (the default) is solid, less lets what is behind it show through, as glass, a
+   * ghost or, with `glow`, a beam of light, whose light is added to what is behind it. A see-through thing casts no
+   * shadow. A model keeps the materials it has.
+   */
+  public get opacity(): number {
+    return this.#material?.opacity ?? 1;
+  }
+  public set opacity(value: number) {
+    if (!finite(value) || this.#material === undefined) return;
+    const opacity = Math.min(1, Math.max(0, value)),
+      solid = opacity >= 1;
+    this.#material.opacity = opacity;
+    this.#material.alphaMode = solid ? 'opaque' : 'blend';
+    this.#material.depthWrite = solid;
+    this.#blend();
+    if (this.node instanceof Mesh3D) {
+      // It keeps the shadow it had when it is made solid again.
+      if (!solid && this.#shadow === undefined) {
+        this.#shadow = this.node.castShadow;
+        this.node.castShadow = false;
+      } else if (solid && this.#shadow !== undefined) {
+        this.node.castShadow = this.#shadow;
+        this.#shadow = undefined;
+      }
+    }
   }
   /** Whether `game.remove` has taken it out of the world. Setting it afterwards does nothing that is seen. */
   public get removed(): boolean {
