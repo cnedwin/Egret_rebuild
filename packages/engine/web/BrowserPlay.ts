@@ -18,6 +18,7 @@ import type { BrowserGame, BrowserGameBackend, BrowserGameLabel } from './game.j
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 import type { SfxRecipe } from './playSfx.js';
 import { createPlayWidgets } from './playWidgets.js';
+import { prefersReducedMotion, watchReducedMotion } from './BrowserPreferences.js';
 import { createPlayTouch } from './playTouch.js';
 import type { PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
 import { MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
@@ -55,6 +56,11 @@ export interface PlayOptions {
   readonly blendSpace?: 'linear' | 'srgb';
   /** Under what name `game.save` keeps its values in the page's storage. The page's path unless given. */
   readonly saveKey?: string;
+  /**
+   * Less motion for a player who asks for it: shakes are left out and flashes are faint. The system's
+   * `prefers-reduced-motion` unless given, followed as the player changes it; `game.reducedMotion` changes it later.
+   */
+  readonly reducedMotion?: boolean;
 }
 
 /** Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. */
@@ -383,9 +389,11 @@ export interface PlayGame {
   wait(seconds: number): Promise<void>;
   /** Calls a function again and again, seconds of play apart. The function returned ends it. */
   every(seconds: number, callback: () => void): () => void;
-  /** Shakes the world by up to `amount` units for `seconds`. */
+  /** Whether shakes are left out and flashes faint, for a player who asks for less motion. A settings menu may change it. */
+  reducedMotion: boolean;
+  /** Shakes the world by up to `amount` units for `seconds`. Nothing while `reducedMotion` is on. */
   shake(amount?: number, seconds?: number): void;
-  /** Covers the stage with a colour that fades away over `seconds`. */
+  /** Covers the stage with a colour that fades away over `seconds`; faintly while `reducedMotion` is on. */
   flash(color?: number, seconds?: number): void;
   /** Stops play for a moment, as a hard hit does: no updates and no timers for `seconds`. */
   hitStop(seconds?: number): void;
@@ -605,6 +613,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   if (setup !== undefined && typeof setup !== 'function') throw invalid('setup is a function');
   if (update !== undefined && typeof update !== 'function') throw invalid('update is a function');
   if (onError !== undefined && typeof onError !== 'function') throw invalid('onError is a function');
+  if (options.reducedMotion !== undefined && typeof options.reducedMotion !== 'boolean')
+    throw invalid('reducedMotion is true or false');
+  // Given, it is the game's; not given, it follows the system's setting.
+  let reduced = options.reducedMotion ?? prefersReducedMotion(),
+    followSystem = options.reducedMotion === undefined;
+  const unwatchMotion = watchReducedMotion(next => {
+    if (followSystem) reduced = next;
+  });
   const blendSpace = options.blendSpace ?? 'srgb';
   if (blendSpace !== 'linear' && blendSpace !== 'srgb') throw invalid("blendSpace is 'srgb' or 'linear'");
   const page = options.canvas?.ownerDocument ?? options.parent?.ownerDocument ?? globalThis.document;
@@ -1418,7 +1434,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     world.y = effects.y = dy - view.y;
     if (flashLeft > 0) {
       flashLeft -= real;
-      cover.alpha = Math.max(0, flashLeft / flashSpan) * 0.85;
+      cover.alpha = Math.max(0, flashLeft / flashSpan) * (reduced ? 0.3 : 0.85);
       if (flashLeft <= 0) cover.visible = false;
     }
     endFrame();
@@ -1780,8 +1796,17 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     after: (seconds, callback) => timer(seconds, callback, false),
     every: (seconds, callback) => timer(seconds, callback, true),
+    get reducedMotion() {
+      return reduced;
+    },
+    set reducedMotion(value: boolean) {
+      if (typeof value !== 'boolean') throw invalid('reducedMotion is true or false');
+      reduced = value;
+      followSystem = false;
+      if (value) shakeLeft = 0;
+    },
     shake(amount = 6, seconds = 0.25) {
-      if (!finite(amount) || !finite(seconds) || amount <= 0 || seconds <= 0) return;
+      if (reduced || !finite(amount) || !finite(seconds) || amount <= 0 || seconds <= 0) return;
       shakeAmount = Math.max(shakeLeft > 0 ? shakeAmount : 0, Math.min(amount, Math.max(width, height)));
       shakeLeft = shakeSpan = Math.min(seconds, 5);
     },
@@ -1789,7 +1814,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       if (!colour(color) || !finite(seconds) || seconds <= 0) return;
       cover.graphics.clear().beginFill(color).drawRect(0, 0, width, height).endFill();
       cover.visible = true;
-      cover.alpha = 0.85;
+      cover.alpha = reduced ? 0.3 : 0.85;
       flashLeft = flashSpan = Math.min(seconds, 5);
     },
     hitStop(seconds = 0.06) {
@@ -1925,6 +1950,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       disposal = close.promise;
       disposed = true;
       api = undefined;
+      unwatchMotion();
       // Caller-controlled loading can outlive the game. Release its waiters now;
       // late completion cannot re-enable updates or restart the closed loop.
       setupRequest?.reject(new EgretError('SCOPE_CLOSED'));

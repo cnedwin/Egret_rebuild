@@ -172,7 +172,8 @@ for (const block of blocks) {
 
 | 调用 | 作用 |
 | --- | --- |
-| `game.shake(amount = 6, seconds = 0.25)` | 让世界层最多晃动这么多单位；`ui` 层不动 |
+| `game.shake(amount = 6, seconds = 0.25)` | 让世界层最多晃动这么多单位；`ui` 层不动。`game.reducedMotion` 开启时不晃动 |
+| `game.reducedMotion` | 为要求减少动态效果的玩家减少动态：不晃动，闪光变淡。默认跟随系统的 `prefers-reduced-motion`，可由 `reducedMotion` 选项或设置菜单改变 |
 | `game.flash(color = 0xffffff, seconds = 0.15)` | 用一种颜色盖住舞台，然后淡出 |
 | `game.hitStop(seconds = 0.06)` | 让游戏停顿一下：没有 update，也没有定时器 |
 | `game.burst(x, y, { color, count, speed, life, size, gravity })` | 从世界层的一点向外抛出碎片。不指定时是 12 个白色碎片 |

@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1342 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1350 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1362,6 +1362,7 @@
 | `createMemorySaveStorage` | 函数 | Storage kept in memory: for tests, for a page without browser storage, or for a game played once. |
 | `createRandom` | 函数 | A generator from a seed (a number or string) or a saved state. |
 | `createSaveStore` | 函数 |  |
+| `createTextTable` | 函数 | Makes a table of a game's words in its languages. |
 | `describeInputBinding` | 函数 | A readable name for a binding, for settings screens: `Key:KeyW` is `W`, `Mouse:0` is `Left button`. |
 | `encodeWav` | 函数 | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
 | `hashSeed` | 函数 | Turns a string or number into a 32-bit seed. |
@@ -1376,6 +1377,7 @@
 | `InputBindingSlot` | 类型 | A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... |
 | `InputBindingsSave` | 接口 | Bindings as saved, to load back with `loadBindings`. |
 | `InputVector` | 接口 | The value of a vector action, each axis -1 to 1. |
+| `pickLanguage` | 函数 | The language of `languages` that best matches what the player's browser or system asks for (`navigator.languages`, given here as a list, such as `['zh-CN', 'en']`): an exact match first, then the same main language (`zh-TW` asks for `zh`). |
 | `pickQualityFiles` | 函数 | Names of the form `<base>-<tier>.<ext>` grouped by base and chosen for `quality`, as a bundle or a folder lists them: `hero-high.glb`, `hero-low.glb` and `hall.webp` give `hero-low.glb` (for `medium`) and `hall.webp`. |
 | `pickQualityVariant` | 函数 | Of several variants of one asset, the one for `quality`: an exact tier, or else the nearest below, or else the nearest above. |
 | `planAssetBundleRanges` | 函数 | Ranges of the file that hold the named entries, joined where they touch or lie within `gap` bytes. |
@@ -1392,6 +1394,9 @@
 | `SaveStore` | 接口 | A saved value: read it, change it and save it, reset or remove it, export or import it. |
 | `SaveStoreOptions` | 接口 | A save to keep: its key and version, its defaults and migrations, its check and its storage. |
 | `sliceAssetBundle` | 函数 | The bytes of one entry from bytes of the bundle that start at `start` (0 for the whole file), checked against the index. |
+| `TextTable` | 接口 | A game's words in its languages: the current one, a word by key, and who is told when the language changes. |
+| `TextTableOptions` | 接口 | A text table to make: the words of each language, the language to start in and the one to fall back to. |
+| `TextTableWords` | 类型 | The words of one language, by key. |
 | `writeAssetBundle` | 函数 | One file holding every input, in the order given, each starting at a multiple of four bytes. |
 
 ## `@egret/engine/web/kit`
@@ -1411,6 +1416,7 @@
 | `BrowserImageTextureProviderOptions` | 接口 | Where an image texture provider reads the bytes of each image from. |
 | `BrowserInputActions` | 接口 | Input actions driven by the browser's keys, pointers and gamepads: poll them each frame. |
 | `BrowserInputActionsOptions` | 接口 | Where input actions read the browser: which element takes keys and pointers, whether gamepads count, and which keys pass through. |
+| `browserLanguages` | 函数 | The languages the player's browser asks for, most wanted first, such as `['zh-CN', 'en']`; empty where unknown. |
 | `browserSaveStorage` | 函数 | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
 | `BundleCache` | 接口 | Where fetched bundle entries are kept between visits; used as `cache` of `openBrowserAssetBundle`. |
 | `createBrowserImageTextureProvider` | 函数 | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
@@ -1423,10 +1429,12 @@
 | `openBrowserAssetBundle` | 函数 | Opens the bundle at `url`, reading its index. |
 | `openBrowserBundleCache` | 函数 | A bundle cache in the Cache API under `name`. |
 | `openIndexedDBSaveStorage` | 函数 | A save storage over IndexedDB. |
+| `prefersReducedMotion` | 函数 | Whether the player has asked the system for less motion (`prefers-reduced-motion: reduce`): then leave out shakes, flashes, parallax and large moves that are only for show. |
 | `sniffBrowserImageFormat` | 函数 | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | 函数 | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
 | `TouchControl` | 接口 | Touch controls on the page: their elements; dispose of them to take them off. |
 | `TouchStickOptions` | 接口 | A touch stick to put on the page: its binding, radius, the zone it appears in and its class. |
+| `watchReducedMotion` | 函数 | Calls `listener` with the new answer whenever the player changes it. |
 
 ## `@egret/engine/web/game`
 

@@ -124,7 +124,7 @@ Easings: `linear`, `quadIn`, `quadOut`, `quadInOut`, `cubicOut`, `backOut`, `ela
 | Call | Does |
 | --- | --- |
 | `game.shake(amount = 6, seconds = 0.25)` | Shakes the world; the ui stays put |
-| `game.flash(color = 0xffffff, seconds = 0.15)` | A colour over the stage that fades |
+| `game.flash(color = 0xffffff, seconds = 0.15)` | A colour over the stage that fades. With `game.reducedMotion` (follows `prefers-reduced-motion`, settable) flashes are faint and shakes do nothing |
 | `game.hitStop(seconds = 0.06)` | Freezes play for a moment |
 | `game.burst(x, y, { color, count, speed, life, size, gravity })` | Throws pieces out from a point of the world |
 

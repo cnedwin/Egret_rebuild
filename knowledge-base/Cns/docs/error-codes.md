@@ -1031,6 +1031,7 @@
 | `TEXT_REQUEST_LIMIT` | 超出了文本的 `request` 上限。 |
 | `TEXT_RESOURCE_FAILED` | 文本的 `resource` 失败了。原因在 cause 中。 |
 | `TEXT_SIGNAL_FAILED` | 文本的 `signal` 失败了。原因在 cause 中。 |
+| `TEXT_TABLE_INVALID` | 交给文本的 `table` 无效。 |
 
 ### TEXTURE
 

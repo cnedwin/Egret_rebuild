@@ -13,6 +13,7 @@ import {
 } from '@egret/engine';
 import type {
   AssetLease,
+  DisplayObject,
   DiagnosticHandler,
   Engine,
   Scope,
@@ -164,6 +165,20 @@ export interface BrowserGame {
   textureFromCanvas(canvas: HTMLCanvasElement | OffscreenCanvas): Promise<AssetLease<Texture>>;
   /** A line of text for the stage. The first call loads the page's text rasterizer. */
   createLabel(options?: BrowserGameLabelCreateOptions): Promise<BrowserGameLabel>;
+  /**
+   * Stage units in one CSS pixel as the canvas is shown now, the larger of across and down: `44 * game.unitsPerCssPixel`
+   * is a touch target a finger can hit. 1 before the canvas is laid out.
+   */
+  readonly unitsPerCssPixel: number;
+  /**
+   * Gives a display object a hit area at least `cssPixels` (44 unless given) square as the canvas is shown now, centred
+   * on what it draws and never smaller than it, so a small icon is as easy to press as a finger needs. Call it again
+   * after the node, or the canvas, changes size. Returns the area, in the node's own units.
+   */
+  padHitArea(
+    node: DisplayObject,
+    cssPixels?: number
+  ): { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
   /** A place in the page, as a pointer event gives it in `clientX` and `clientY`, as a place on the stage. */
   toStage(clientX: number, clientY: number): { x: number; y: number };
   /** Stops the loop and ends the input, the scope, the Engine and its Host. */
@@ -555,6 +570,36 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           context.drawImage(source, 0, 0);
         }
         return leasePixels(width, height, context.getImageData(0, 0, width, height).data);
+      },
+      padHitArea(node: DisplayObject, cssPixels = 44) {
+        if (
+          node === null ||
+          typeof node !== 'object' ||
+          typeof node.getBounds !== 'function' ||
+          !(typeof cssPixels === 'number' && cssPixels >= 0 && Number.isFinite(cssPixels))
+        )
+          throw invalid();
+        const drawn = node.getBounds(),
+          box = canvas.getBoundingClientRect(),
+          perCss = box.width > 0 && box.height > 0 ? Math.max(width / box.width, height / box.height) : 1;
+        // The node's own units: undo its scale on the stage.
+        const scaleX = Math.abs(node.scaleX) || 1,
+          scaleY = Math.abs(node.scaleY) || 1;
+        const wide = Math.max(drawn.width, (cssPixels * perCss) / scaleX),
+          tall = Math.max(drawn.height, (cssPixels * perCss) / scaleY);
+        const area = Object.freeze({
+          x: drawn.x - (wide - drawn.width) / 2,
+          y: drawn.y - (tall - drawn.height) / 2,
+          width: wide,
+          height: tall
+        });
+        node.hitArea = area;
+        return area;
+      },
+      get unitsPerCssPixel() {
+        const box = canvas.getBoundingClientRect();
+        // Before the page lays the canvas out, one unit is one pixel.
+        return box.width > 0 && box.height > 0 ? Math.max(width / box.width, height / box.height) : 1;
       },
       toStage(clientX: number, clientY: number) {
         const box = canvas.getBoundingClientRect();

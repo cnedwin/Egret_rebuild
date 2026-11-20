@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-/** DOM-free parts a game builds on: named input actions, versioned saves, repeatable random numbers, sound cues and asset bundles. */
+/** DOM-free parts a game builds on: named input actions, versioned saves, repeatable random numbers, sound cues, asset bundles and a table of words in each language. */
 export { createInputActions, describeInputBinding } from './inputActions.js';
 export type {
   InputActionDefinition,
@@ -29,3 +29,5 @@ export {
 export type { AssetBundleEntry, AssetBundleIndex, AssetBundleInput } from './assetBundle.js';
 export { QUALITY_TIERS, pickQualityFiles, pickQualityVariant, runHeadless } from './gameRun.js';
 export type { HeadlessGame, HeadlessRunOptions, HeadlessRunResult, QualityTier } from './gameRun.js';
+export { createTextTable, pickLanguage } from './textTable.js';
+export type { TextTable, TextTableOptions, TextTableWords } from './textTable.js';

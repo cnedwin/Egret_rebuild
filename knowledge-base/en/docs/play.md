@@ -172,7 +172,8 @@ Use these and not `setTimeout`: they stop with a pause, a hit stop and a hidden 
 
 | Call | Does |
 | --- | --- |
-| `game.shake(amount = 6, seconds = 0.25)` | Shakes the world by up to that many units; the `ui` layer stays put |
+| `game.shake(amount = 6, seconds = 0.25)` | Shakes the world by up to that many units; the `ui` layer stays put. Nothing while `game.reducedMotion` is on |
+| `game.reducedMotion` | Less motion for a player who asks for it: no shakes and faint flashes. Follows the system's `prefers-reduced-motion` unless the `reducedMotion` option or a settings menu sets it |
 | `game.flash(color = 0xffffff, seconds = 0.15)` | Covers the stage with a colour that fades away |
 | `game.hitStop(seconds = 0.06)` | Stops play for a moment: no updates and no timers |
 | `game.burst(x, y, { color, count, speed, life, size, gravity })` | Throws pieces out from a point of the world. 12 white pieces unless said otherwise |

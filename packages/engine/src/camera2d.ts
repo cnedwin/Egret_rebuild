@@ -155,6 +155,7 @@ export function createCamera2D(options: Camera2DOptions): Camera2D {
   let cx = c0?.x ?? width / 2,
     cy = c0?.y ?? height / 2,
     trauma = 0,
+    shakeScale = 1,
     time = 0,
     closed = false;
   let follow: Follow | undefined, move: Move | undefined, zoomMove: ZoomMove | undefined;
@@ -345,6 +346,13 @@ export function createCamera2D(options: Camera2DOptions): Camera2D {
       height = newHeight;
       settle();
     },
+    get shakeScale(): number {
+      return shakeScale;
+    },
+    set shakeScale(value: number) {
+      if (!finite(value) || value < 0 || value > 1) throw new EgretError('CAMERA_OPTIONS_INVALID');
+      shakeScale = value;
+    },
     shake(shakeOptions: CameraShakeOptions = {}): void {
       if (!record(shakeOptions)) throw new EgretError('CAMERA_OPTIONS_INVALID');
       const { trauma: added = 0.5 } = shakeOptions;
@@ -414,7 +422,7 @@ export function createCamera2D(options: Camera2DOptions): Camera2D {
         cy += (wantY - cy) * pull;
       }
       trauma = Math.max(0, trauma - shakeDecay * seconds);
-      const strength = trauma * trauma,
+      const strength = trauma * trauma * shakeScale,
         t = time * shakeFrequency;
       shakeX = shakeOffset * strength * noise(seed, 0, t);
       shakeY = shakeOffset * strength * noise(seed, 1, t);

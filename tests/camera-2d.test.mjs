@@ -558,3 +558,31 @@ test('CA17 a strict consumer compiles against the entry, and six misuses are ref
   for (const entry of ['@egret/engine', '@egret/engine/ui', '@egret/engine/input', '@egret/runtime'])
     assert.equal('createCamera2D' in (await import(entry)), false, entry);
 });
+
+test('CA18 a shake scale of 0 keeps the view still for a player who asks for less motion; 0.5 halves it', () => {
+  const run = scale => {
+    const { world } = scene(),
+      camera = createCamera2D({ world, width: 400, height: 300, shakeOffset: 16, shakeRotation: 4, seed: 3 });
+    assert.equal(camera.shakeScale, 1);
+    camera.shakeScale = scale;
+    camera.shake({ trauma: 1 });
+    let farthest = 0;
+    for (let i = 0; i < 20; i++) {
+      camera.update(1 / 60);
+      farthest = Math.max(farthest, Math.abs(world.x - 200), Math.abs(world.y - 150), Math.abs(world.rotation));
+    }
+    // The trauma is kept either way: turned back up, the next shake is as strong as ever.
+    const trauma = camera.snapshot().trauma;
+    for (const bad of [-0.1, 1.5, Number.NaN, '1'])
+      assert.throws(() => (camera.shakeScale = bad), coded('CAMERA_OPTIONS_INVALID'));
+    camera.dispose();
+    return { farthest, trauma };
+  };
+  const full = run(1),
+    half = run(0.5),
+    still = run(0);
+  assert.equal(still.farthest, 0);
+  assert.ok(full.farthest > 1);
+  near(half.farthest, full.farthest / 2, 'half', 0.6);
+  near(still.trauma, full.trauma, 'trauma kept');
+});

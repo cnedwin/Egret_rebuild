@@ -162,6 +162,19 @@ console.table(runs.map(run => ({ seed: run.seed, ...run.summary, ms: run.average
 
 `openBrowserBundleCache(name)` 用 Cache API 保存资源包的索引和读过的每个条目，传给 `openBrowserAssetBundle(url, { cache })` 即可。条目按资源包地址和校验值保存，所以重新构建的资源包不会读到旧字节。资源包取不到时，已保存的索引仍能打开它，`bundle.offline` 为 true，已保存的条目照常读取。`cache.prune(keep)` 清除其他地址的条目。
 
+## 各语言的文字
+
+`createTextTable({ languages, language, fallback, onMissing })` 保存游戏在各语言下的文字。`table.text(key, values)` 返回当前语言的文字并替换其中的 `{name}`，缺失时取回退语言，再缺就返回键名本身；`table.setLanguage(language)` 切换语言并通知每个 `onChange` 监听者重绘。`table.missing()` 按语言列出别的语言有而它缺的键：写一个"每种语言都为空"的测试，英文界面就不会残留中文。`pickLanguage(languages, browserLanguages())`（`browserLanguages()` 来自 `@egret/engine/web/kit`）按玩家浏览器要求的语言开始。
+
+```js
+const words = createTextTable({ languages: { zh: { start: '开始', coins: '{n} 枚铜钱' }, en: { start: 'Start', coins: '{n} coins' } } });
+words.setLanguage(pickLanguage(words.languages, browserLanguages()));
+label.text = words.text('coins', { n: 12 });
+words.onChange(() => (label.text = words.text('coins', { n: coins })));
+```
+
+浏览器工具包的 `prefersReducedMotion()` 和 `watchReducedMotion(listener)` 告诉你玩家是否在系统里要求减少动态效果：这时请去掉只为好看的震屏、闪光和大幅移动。
+
 ## 把引擎拷贝进游戏
 
 不用包管理器发布的游戏目录，需要带上它加载的那部分引擎。在已构建的引擎仓库中运行：

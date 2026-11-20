@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1342 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1350 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1362,6 +1362,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createMemorySaveStorage` | function | Storage kept in memory: for tests, for a page without browser storage, or for a game played once. |
 | `createRandom` | function | A generator from a seed (a number or string) or a saved state. |
 | `createSaveStore` | function |  |
+| `createTextTable` | function | Makes a table of a game's words in its languages. |
 | `describeInputBinding` | function | A readable name for a binding, for settings screens: `Key:KeyW` is `W`, `Mouse:0` is `Left button`. |
 | `encodeWav` | function | 16-bit PCM WAV bytes from channels of samples between -1 and 1, all the same length. |
 | `hashSeed` | function | Turns a string or number into a 32-bit seed. |
@@ -1376,6 +1377,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `InputBindingSlot` | type | A slot of an action that a binding can be put in: `bindings`, `negative`, `positive`, `up`, ... |
 | `InputBindingsSave` | interface | Bindings as saved, to load back with `loadBindings`. |
 | `InputVector` | interface | The value of a vector action, each axis -1 to 1. |
+| `pickLanguage` | function | The language of `languages` that best matches what the player's browser or system asks for (`navigator.languages`, given here as a list, such as `['zh-CN', 'en']`): an exact match first, then the same main language (`zh-TW` asks for `zh`). |
 | `pickQualityFiles` | function | Names of the form `<base>-<tier>.<ext>` grouped by base and chosen for `quality`, as a bundle or a folder lists them: `hero-high.glb`, `hero-low.glb` and `hall.webp` give `hero-low.glb` (for `medium`) and `hall.webp`. |
 | `pickQualityVariant` | function | Of several variants of one asset, the one for `quality`: an exact tier, or else the nearest below, or else the nearest above. |
 | `planAssetBundleRanges` | function | Ranges of the file that hold the named entries, joined where they touch or lie within `gap` bytes. |
@@ -1392,6 +1394,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SaveStore` | interface | A saved value: read it, change it and save it, reset or remove it, export or import it. |
 | `SaveStoreOptions` | interface | A save to keep: its key and version, its defaults and migrations, its check and its storage. |
 | `sliceAssetBundle` | function | The bytes of one entry from bytes of the bundle that start at `start` (0 for the whole file), checked against the index. |
+| `TextTable` | interface | A game's words in its languages: the current one, a word by key, and who is told when the language changes. |
+| `TextTableOptions` | interface | A text table to make: the words of each language, the language to start in and the one to fall back to. |
+| `TextTableWords` | type | The words of one language, by key. |
 | `writeAssetBundle` | function | One file holding every input, in the order given, each starting at a multiple of four bytes. |
 
 ## `@egret/engine/web/kit`
@@ -1411,6 +1416,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserImageTextureProviderOptions` | interface | Where an image texture provider reads the bytes of each image from. |
 | `BrowserInputActions` | interface | Input actions driven by the browser's keys, pointers and gamepads: poll them each frame. |
 | `BrowserInputActionsOptions` | interface | Where input actions read the browser: which element takes keys and pointers, whether gamepads count, and which keys pass through. |
+| `browserLanguages` | function | The languages the player's browser asks for, most wanted first, such as `['zh-CN', 'en']`; empty where unknown. |
 | `browserSaveStorage` | function | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
 | `BundleCache` | interface | Where fetched bundle entries are kept between visits; used as `cache` of `openBrowserAssetBundle`. |
 | `createBrowserImageTextureProvider` | function | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
@@ -1423,10 +1429,12 @@ For which entry to import from, see [What to import](entry-points.md).
 | `openBrowserAssetBundle` | function | Opens the bundle at `url`, reading its index. |
 | `openBrowserBundleCache` | function | A bundle cache in the Cache API under `name`. |
 | `openIndexedDBSaveStorage` | function | A save storage over IndexedDB. |
+| `prefersReducedMotion` | function | Whether the player has asked the system for less motion (`prefers-reduced-motion: reduce`): then leave out shakes, flashes, parallax and large moves that are only for show. |
 | `sniffBrowserImageFormat` | function | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | function | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
 | `TouchControl` | interface | Touch controls on the page: their elements; dispose of them to take them off. |
 | `TouchStickOptions` | interface | A touch stick to put on the page: its binding, radius, the zone it appears in and its class. |
+| `watchReducedMotion` | function | Calls `listener` with the new answer whenever the player changes it. |
 
 ## `@egret/engine/web/game`
 
