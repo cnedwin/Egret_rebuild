@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-20",
+  "en": {
+    "title": "What Mechanism City found in the UI: labels in leaves, clearer refusals, prepare from a button, keys a control took",
+    "body": "Fixes from the UI notes of Mechanism City. `game.createLabel({ scope })` makes a label owned by another scope, such as the `context.scope` of a UI leaf, so a label can be the leaf's content. `UI_CONTENT_INVALID` now says in its cause which leaf or row gave the content and why it was refused, such as a display object that belongs to another scope. `root.prepare()` asked for from a button's callback, while input is delivered or a frame drawn, starts once that is over instead of failing with `UI_BUSY`; every `UI_BUSY` names its reason in cause. `bindBrowserInputActions` takes `skipPrevented`, so a key a focused control took presses no action as well. The UI pages say how to show and hide a root with the layer manager, and what shape a semantic `range` has."
+  },
+  "zh": {
+    "title": "《千机巧匠》在界面上发现的问题：叶子里的文字、更清楚的拒绝原因、按钮回调里的 prepare、焦点控件用掉的键",
+    "body": "按《千机巧匠》界面部分的笔记修正。`game.createLabel({ scope })` 可以让 label 属于别的 scope（例如 UI 叶子的 `context.scope`），这样 label 就能作为叶子的内容。`UI_CONTENT_INVALID` 现在在 cause 里写明是哪个叶子或行给出的内容、为什么被拒绝，例如某个显示对象属于别的 scope。在按钮回调里（输入分发或帧绘制期间）调用 `root.prepare()`，会等那次分发或绘制结束后开始，不再报 `UI_BUSY`；所有 `UI_BUSY` 都在 cause 里写明原因。`bindBrowserInputActions` 支持 `skipPrevented`，焦点控件已经用掉的键不会再触发动作。界面文档写明了怎样用图层管理器显示和隐藏一个根，以及语义节点 `range` 的形状。"
+  }
+}

@@ -244,3 +244,33 @@ test('GB05 browser storage falls back to memory where the page has none', () => 
     else delete globalThis.localStorage;
   }
 });
+
+test('GB07 with skipPrevented a key a focused control already took presses no action; without it, it does', () => {
+  const win = new Target();
+  globalThis.addEventListener = win.addEventListener.bind(win);
+  globalThis.removeEventListener = win.removeEventListener.bind(win);
+  try {
+    // The keyboard input of the canvas prevents a key a focused button took before the event reaches the window.
+    const taken = fields => ({ ...fields, target: {}, defaultPrevented: true });
+    const skipping = createInputActions(MAP),
+      plain = createInputActions(MAP);
+    const keys = new Target();
+    const a = bindBrowserInputActions(skipping, { keyTarget: keys, gamepads: false, skipPrevented: true });
+    const b = bindBrowserInputActions(plain, { keyTarget: keys, gamepads: false });
+    keys.fire('keydown', taken({ code: 'Space' }));
+    assert.equal(skipping.pressed('jump'), false, 'the focused button had Space');
+    assert.equal(plain.pressed('jump'), true, 'off by default');
+    keys.fire('keyup', { code: 'Space' });
+    keys.fire('keydown', { code: 'Space', target: {} });
+    assert.equal(skipping.pressed('jump'), true, 'a key nothing took still presses');
+    a.dispose();
+    b.dispose();
+    assert.throws(
+      () => bindBrowserInputActions(skipping, { keyTarget: keys, skipPrevented: 'yes' }),
+      error => error.code === 'INPUT_ACTIONS_INVALID'
+    );
+  } finally {
+    delete globalThis.addEventListener;
+    delete globalThis.removeEventListener;
+  }
+});

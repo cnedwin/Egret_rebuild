@@ -30,6 +30,12 @@ The top overlay contains logical keyboard/native focus. Tab and Shift+Tab wrap o
 
 Background native sessions settle under editorPolicy and retire their DOM control, font lease and row retention. Resumption or logical focus restoration never opens the native keyboard. On close, restore the saved target only if it remains eligible; otherwise select a valid target in the surviving layer. A removed/hidden/recycled target cannot be resurrected by a saved id. This is logical containment, not a complete browser semantic/inertness or assistive-technology implementation.
 
+## Showing and hiding a root
+
+A root has no visibility of its own. To show and hide the same panel without making it again, register its root as an overlay of the layer manager: `open(id)` shows it and `close(id)` hides it, and the root, its leaves and their state are kept between. A panel that is not kept may instead be a new root each time it opens, disposed when it closes; that is as intended.
+
+A root may be prepared from a button's callback: `prepare()` asked for while input is delivered, or while a frame is drawn, starts once that is over. `commit()` is not deferred: call it after the `prepare()` it commits has settled. A `UI_BUSY` names its reason in `cause`: input being delivered, a frame being drawn, an earlier `prepare()` of that root that has not settled, or a commit being made.
+
 ## Lifetime and example
 
 Each registered overlay owns one backdrop in its own Scope. Repeated open/close reuses it; unregister, root close and manager close retire listeners, target registrations and that scope. Manager disposal preserves borrowed roots/input, resumes bases and leaves overlays hidden. Applications dispose the view outside routed callbacks, then their roots/scopes through the normal lifetime path. A true example width change retires its view and recreates the layers against the same models/fonts/cache, preserving stack, draft and selection; height-only keyboard changes preserve the current view.

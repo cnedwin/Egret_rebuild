@@ -75,7 +75,7 @@ semantics.publish();
 
 `slider` 和 `tablist` 默认沿文字方向横放，除非 `orientation` 为 `'vertical'`；`scrollbar` 默认竖立在它滚动的内容旁边，`menu` 的各项默认自上而下排列，除非为 `'horizontal'`。滑动条和数值调节框在获得焦点后由[它们的按键](ui-controls.md#按键)移动，所以它们的节点接受 `onFocus`，不需要激活。
 
-角色不具有的状态会被拒绝，这样错误在写下时就能发现。被拒绝的描述抛出 `UI_SEMANTICS_DESCRIPTION`，其 `cause` 指明节点和字段，例如 `sound: checked`。
+角色不具有的状态会被拒绝，这样错误在写下时就能发现。被拒绝的描述抛出 `UI_SEMANTICS_DESCRIPTION`，其 `cause` 指明节点和字段，例如 `sound: checked`。每个角色接受哪些字段见上表。`range` 写作 `{ now, min, max }`（`now` 在两者之间），不是 `value`；`orientation` 是 `'horizontal'` 或 `'vertical'`；`controls` 填另一个节点的 id。
 
 ### 顺序、隐藏与虚拟行
 

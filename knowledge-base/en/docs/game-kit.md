@@ -41,6 +41,8 @@ Keys for two directions held together give a vector of length 1, so a diagonal i
 
 The page binding lets every control go when the window loses focus or the page is hidden. It keeps bound keys from scrolling the page and leaves keys alone while the player types in a field. `dispose()` takes its listeners off.
 
+**Keys a focused control took.** The game's keyboard input gives keys to the control that has the focus — Space presses a focused button, the arrows move a focused slider — and marks such a key with `preventDefault` before it reaches the window. With `bindBrowserInputActions(input, { skipPrevented: true })` that key presses no action as well, so Space on a focused button does not also fire, and the arrows on a slider do not also steer. It is off by default.
+
 Mouse buttons can be held together. For example, with `Mouse:2` held to aim, pressing and releasing `Mouse:0` fires and releases the shot while aim stays active. Start each press on the bound target. Releasing a button elsewhere in the same window still ends its action.
 
 ## Rebinding

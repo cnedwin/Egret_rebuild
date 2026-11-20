@@ -120,8 +120,17 @@ export function preparationError(cause: unknown, cleanupErrors: unknown[]): Egre
   if (cause instanceof EgretError && cleanupErrors.length === 0) return cause;
   return new EgretError(cause instanceof EgretError ? cause.code : 'UI_PREPARE_FAILED', { cause, cleanupErrors });
 }
-export function fail(code: string): never {
-  throw new EgretError(code);
+export function fail(code: string, reason?: string): never {
+  throw new EgretError(code, reason === undefined ? {} : { cause: new Error(reason) });
+}
+/** Why a root is busy with its own work: a preparation that has not settled, or a commit being made. */
+export function failBusy(preparing: boolean): never {
+  fail(
+    'UI_BUSY',
+    preparing
+      ? 'an earlier prepare() of this root has not settled yet: await it, then prepare again'
+      : 'a commit of this root is being made'
+  );
 }
 export function next(value: number): number {
   if (value >= Number.MAX_SAFE_INTEGER) fail('UI_REVISION_EXHAUSTED');

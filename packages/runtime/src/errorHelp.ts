@@ -273,6 +273,8 @@ const WRITTEN: Readonly<Record<string, string>> = {
   UI_LAYER_ROOT_OWNED: 'This UI root already belongs to a layer.',
   UI_LAYOUT_UNSTABLE:
     'The layout of the UI did not settle in eight rounds: a size keeps changing something it depends on.',
+  UI_CONTENT_INVALID:
+    'What a UI leaf or row gave as its content cannot be shown there. The leaf or row, and the reason, are in cause.',
   UI_ROW_NOT_REALIZED: 'The row is not on screen now, so there is nothing of it to act on. Scroll it into view first.',
   UI_ROW_RETAINED: 'A row that is in use was removed from its list or changed under it.',
   UI_SEMANTICS_DESCRIPTION: 'A field of a UI semantics entry is not valid. The entry and the field are in cause.',

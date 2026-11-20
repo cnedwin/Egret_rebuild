@@ -31,8 +31,19 @@ import type {
   RowUnbindInfo,
   UiRowPointerNotification
 } from './types.js';
-import { withoutSources, preparationError, fail, next, number, viewport, origin } from './uiRootModel.js';
+import { withoutSources, preparationError, fail, failBusy, next, number, viewport, origin } from './uiRootModel.js';
 import type { ScopePort, Binding, LeafBinding, Shell, WindowState, Candidate, TokenState } from './uiRootModel.js';
+
+/** Content a leaf or row gave is checked; a refusal says which leaf or row, and why. */
+function contentOf(where: string, check: () => void): void {
+  try {
+    check();
+  } catch (e) {
+    if (!(e instanceof EgretError) || e.code !== 'UI_CONTENT_INVALID') throw e;
+    const why = e.cause instanceof Error ? e.cause.message : 'it cannot be shown there';
+    throw new EgretError('UI_CONTENT_INVALID', { cause: new Error('the content of ' + where + ': ' + why) });
+  }
+}
 import { createUiRootDisplayDraft, stageUiRootDisplay } from './uiRootDisplay.js';
 
 type InputPort = ReturnType<ReturnType<typeof requireUiEngine>['requireInput']>;
@@ -424,7 +435,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         }
         const content = value.content,
           height = number(value.measuredHeight, 1, 1048576);
-        display.validateContent(content, scope.scope);
+        contentOf('row ' + JSON.stringify(key), () => display.validateContent(content, scope.scope));
         check(w.revision);
         // Explicit height updates can supersede the measurement retained by a binding.
         const committedPosition = committedIndex?.indexOf(key) ?? -1;
@@ -526,7 +537,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         }
         const content = value.content,
           height = number(value.measuredHeight, 0, 1048576);
-        display.validateContent(content, scope.scope);
+        contentOf('leaf ' + JSON.stringify(name), () => display.validateContent(content, scope.scope));
         check(w.revision);
         if (w.paintOnly && height !== leafBindings.get(name)?.height) fail('UI_THEME_METRICS_CHANGED');
         binding.content = content;
@@ -1109,7 +1120,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
       if (layerOwned && value !== inputIdentity) fail('UI_LAYER_INPUT_MISMATCH');
       admit('input', () => {
         if (value === inputIdentity) return;
-        if (busy || committing) fail('UI_BUSY');
+        if (busy || committing) failBusy(busy);
         port.assertIdle();
         display.assertStage();
         if (input !== undefined && input.state() !== 'closed' && input.activeContacts() !== 0) fail('UI_INPUT_BUSY');
@@ -1158,8 +1169,20 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     },
     async prepare() {
       open();
+      // Asked for while input is delivered or a frame drawn, as from a button's callback: it starts once that is over,
+      // and holds its place meanwhile, so a prepare asked for after it is the one that is busy.
+      if (!port.isIdle()) {
+        if (busy || committing) failBusy(busy);
+        busy = true;
+        try {
+          await Promise.resolve();
+        } finally {
+          busy = false;
+        }
+        open();
+      }
       port.assertIdle();
-      if (busy || committing) fail('UI_BUSY');
+      if (busy || committing) failBusy(busy);
       for (const c of [...candidates]) clearCandidate(c);
       busy = true;
       const revision = desired;
@@ -1192,7 +1215,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         return result('closed', []);
       }
       port.assertIdle();
-      if (busy || committing) fail('UI_BUSY');
+      if (busy || committing) failBusy(busy);
       display.assertStage();
       if (
         entry.retired === true ||
@@ -1376,7 +1399,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
   function presentLayer(value: UiRootLayerPresentation): void {
     open();
     port.assertIdle();
-    if (committing) fail('UI_BUSY');
+    if (committing) failBusy(false);
     const p = origin({ x: value.x, y: value.y }, snapshot.viewport);
     display.presentRoot(rootWrapper, {
       x: p.x,

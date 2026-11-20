@@ -286,3 +286,41 @@ test('M3 UI preparation excludes commit from caller-controlled frame option read
     assert.equal(root.commit(token).kind, 'committed');
     root.dispose();
   }));
+
+test('M3 UI a prepare asked for while input is delivered starts once the delivery is over; busy says why', async () =>
+  owned(async (engine, scope) => {
+    const target = rawTarget(engine, scope);
+    const root = rootFor(engine, scope);
+    const input = createPointerInput({ engine, scope, width: 200, height: 200 });
+    let asked, second, refused;
+    let pending;
+    target.on(input.events.begin, () => {
+      if (pending !== undefined) {
+        try {
+          root.commit(pending);
+        } catch (error) {
+          refused = error;
+        }
+        return;
+      }
+      // As from a button's callback: the delivery is still going on.
+      asked = root.prepare();
+    });
+    input.begin(sample());
+    // A second prepare while the first has not settled is busy, and says it is the earlier prepare.
+    second = root.prepare();
+    await assert.rejects(
+      second,
+      error =>
+        error.code === 'UI_BUSY' && /an earlier prepare\(\) of this root has not settled/.test(error.cause?.message)
+    );
+    const token = await asked;
+    assert.equal(root.commit(token).kind, 'committed');
+    // A commit inside the delivery is still refused, and the cause says it is the delivery.
+    pending = await root.prepare();
+    input.begin(sample(2));
+    assert.equal(refused?.code, 'UI_BUSY');
+    assert.match(refused.cause.message, /^input is being delivered/);
+    assert.match(refused.message, /input is being delivered/);
+    root.dispose();
+  }));
