@@ -765,6 +765,11 @@ export interface TerrainTile3D {
   readonly z: number;
   readonly field: HeightField3D;
   readonly terrain: Terrain3D;
+  /**
+   * The world `[x, z]` of the tile's centre, which is the origin of its `field`: read a height at a world point as
+   * `field.heightAt(x - center[0], z - center[1])`.
+   */
+  readonly center: readonly [number, number];
 }
 /** Streamed terrain to make: its tile size and view distance, how a tile is loaded, and what is called as tiles come and go. */
 export interface TerrainStreamOptions3D {
@@ -834,6 +839,21 @@ export class TerrainStream3D extends Object3D {
     if (this.#loadsPerUpdate === 0) throw new World3DError('WORLD3D_INPUT_INVALID', 'loadsPerUpdate');
     this.#options = options;
   }
+  #viewer: readonly [number, number] | undefined;
+  /**
+   * How far the viewer of the last `update` is from the nearest point of a tile, in world units: for showing the
+   * things a game scattered on it in more or less detail. 0 inside it; Infinity before the first update.
+   */
+  distanceOf(tile: TerrainTile3D): number {
+    const viewer = this.#viewer;
+    if (viewer === undefined) return Infinity;
+    const size = this.tileSize,
+      [x, z] = viewer;
+    return Math.hypot(
+      Math.max(tile.x * size - x, 0, x - (tile.x + 1) * size),
+      Math.max(tile.z * size - z, 0, z - (tile.z + 1) * size)
+    );
+  }
   get tiles(): readonly TerrainTile3D[] {
     return [...this.#tiles.values()];
   }
@@ -877,6 +897,7 @@ export class TerrainStream3D extends Object3D {
     }
     const near = (tx: number, tz: number): number =>
       Math.hypot(Math.max(tx * size - x, 0, x - (tx + 1) * size), Math.max(tz * size - z, 0, z - (tz + 1) * size));
+    this.#viewer = [x, z];
 
     this.#updating = true;
     try {
@@ -937,7 +958,13 @@ export class TerrainStream3D extends Object3D {
         if (!current()) return;
         terrain.setPosition((x + 0.5) * this.tileSize, 0, (z + 0.5) * this.tileSize);
         this.addChild(terrain);
-        const tile: TerrainTile3D = Object.freeze({ x, z, field, terrain });
+        const tile: TerrainTile3D = Object.freeze({
+          x,
+          z,
+          field,
+          terrain,
+          center: Object.freeze([(x + 0.5) * this.tileSize, (z + 0.5) * this.tileSize] as const)
+        });
         this.#tiles.set(key, tile);
         this.#requests.delete(key);
         staged = undefined;

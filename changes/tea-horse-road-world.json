@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-20",
+  "en": {
+    "title": "3D: navigation over height fields, agents that face their way, tile centres, and a pitch that follows",
+    "body": "From the notes of Tea Horse Road. `createNavMesh3D` takes a `HeightField3D` and lays a grid of triangles over the ground, within a `region`, at a `cellSize`, less `holes` and ground below `minHeight`, where a game used to triangulate each ambush by hand. A crowd agent with `turnSpeed` turns its node to face the way it walks. A streamed terrain tile has its `center`, and `stream.distanceOf(tile)` says how far the viewer is from it, for scattered plants in more or less detail. A positional sound's `playbackRate`, and `setPlaybackRate(rate, rampSeconds)`, change the voices playing now, so an engine note follows the speed; `listener.bufferFrom(samples)` makes a buffer from synthesized samples."
+  },
+  "zh": {
+    "title": "3D：在高度场上铺导航网格、角色朝向行走方向、地块中心、可随时变调的声音",
+    "body": "来自《茶马古道》的笔记。`createNavMesh3D` 接受 `HeightField3D`，在地面上按格铺三角形，可以限定 `region`、设 `cellSize`、用 `holes` 挖掉障碍、用 `minHeight` 去掉水下地面，游戏不用再为每处埋伏手工拼三角形。人群角色给了 `turnSpeed` 后，节点会转向行走方向。流式地形的地块有 `center`，`stream.distanceOf(tile)` 给出观察者到地块的距离，便于决定撒在上面的草木用多精细的版本。定位声音的 `playbackRate` 和 `setPlaybackRate(rate, rampSeconds)` 会改变正在播放的声部，发动机声可以跟着车速变调；`listener.bufferFrom(samples)` 用合成的采样建缓冲。"
+  }
+}

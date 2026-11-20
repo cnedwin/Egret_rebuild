@@ -275,13 +275,13 @@ Windows Edge 157 在 RTX 5090 Laptop GPU（ANGLE D3D11）上运行 `pointShadows
 
 ## 导航与寻路
 
-`createNavMesh3D(source, {slopeLimit})` 从关卡几何体构建导航网格：可以传入几何体、一个物体（其下的网格按世界变换合并），或原始的 `{positions, indices}`。比坡度上限更陡的面和朝下的面会被剔除；共用一条边的三角形互为邻居，互不相连的楼层属于不同的区域。
+`createNavMesh3D(source, {slopeLimit})` 从关卡几何体构建导航网格：可以传入几何体、一个物体（其下的网格按世界变换合并），或原始的 `{positions, indices}`。比坡度上限更陡的面和朝下的面会被剔除；共用一条边的三角形互为邻居，互不相连的楼层属于不同的区域。传入 `HeightField3D` 时，它在地面上按格铺两个三角形一格：`center` 把高度场放到世界中的位置，`region`（`{x, z, width, depth}`）限定在一个矩形里（例如一处埋伏），`cellSize` 设格子大小，`holes`（`{x, z, radius}`）挖掉岩石、树和柱子，`minHeight` 去掉水下的地面。超出高度场边缘的区域在边缘处截止。
 
 `navMesh.findPath(start, end, {agentRadius, followSurface})` 返回按代价选择的可行走路线的点列表、路线长度，以及 `complete`：终点无法到达时为 `false`，此时路径停在能到达的最近位置。搜索在三角形上进行，路线再沿所穿过的边被拉直，未加权时再去掉可以直线走过的拐点。`agentRadius` 让路线与拐角保持一个半径的距离，并排除角色挤不过去的缺口；`followSurface` 在每次跨越三角形的位置加一个点，让路径贴着坡面。`setCost(triangle, cost)` 设置某块地面有限且大于零的通行倍率，`setEnabled(triangle, false)` 把它关闭，例如一扇门。
 
 `findNearest(point, maxDistance)` 把点吸附到网格上，`raycast(from, x, z)` 返回直线行走在碰到边界之前能走多远，`moveAlong(from, x, z)` 在三角形之间移动并沿边界滑动，`isReachable` 判断两处能否经由开放的三角形互相到达，`randomPoint()` 按面积均匀地取一个位置。`createDebugGeometry()` 返回由边组成的线几何体。
 
-`createNavCrowd3D(navMesh)` 负责移动一群角色：`crowd.addAgent({position, radius, speed, node})`、`agent.setTarget(point)`，并在每帧调用 `crowd.update(deltaSeconds)`。每个角色沿自己的路径行走，快要重叠时会被推开，不会离开网格，并通过 `arrived` 报告是否到达；在人群中，当目标位置已被占据、角色无法再靠近时，它会停下并视为已到达。
+`createNavCrowd3D(navMesh)` 负责移动一群角色：`crowd.addAgent({position, radius, speed, node})`、`agent.setTarget(point)`，并在每帧调用 `crowd.update(deltaSeconds)`。每个角色沿自己的路径行走，快要重叠时会被推开，不会离开网格，并通过 `arrived` 报告是否到达；在人群中，当目标位置已被占据、角色无法再靠近时，它会停下并视为已到达。角色只写节点的位置，除非给了 `turnSpeed`（弧度每秒，Infinity 表示立即转向）：这时节点绕竖直轴转向行走方向，本地 -Z 为前方，`agent.heading` 就是这个角度。站着不动时保持原来的朝向。
 
 `findGridPath3D(width, height, cost, start, end)` 在有限正代价（包括小数）下搜索瓦片网格的最低代价路线。斜向移动的代价为目标格代价的 √2 倍，且不能穿越阻挡拐角。`maxVisited` 约束搜索范围。导航网格根据三角形代价选择并简化可行通道，空间索引的三角形到网格单元总引用数上限为 8,388,608。
 
@@ -301,7 +301,7 @@ Windows Edge 157 在 RTX 5090 Laptop GPU（ANGLE D3D11）上运行 `pointShadows
 
 `createTerrainMaterial3D({layers, weights, repeat})` 按一张权重图混合最多四张平铺的地表纹理，权重图的 R、G、B、A 通道分别决定各层出现的位置；配合 `uvScale` 为 1 的地形使用，使权重图恰好覆盖整块地形一次。任何材质都可以通过 `material.splat` 带上这样的地表层；它们占用颜色、自发光、遮蔽、金属粗糙度和光照贴图的纹理槽位。`terrain.createDecal(material, options)` 按世界坐标的投影盒从完整细节的高度场裁出贴花，地形缩放时也保持投影尺寸。分块切换层级时贴花保持原样。临时地形片在分配几何前检查贴花三角形预算。销毁地形时会释放仍挂在地形下、由它创建的贴花。材质与已移到其他父节点的贴花由调用方负责。
 
-`createTerrainStream3D({tileSize, viewDistance, load, material, terrain, onLoad, onUnload})` 是随观察者出现和消失的地形：一个由地块组成的网格，每块有自己的高度场和 `Terrain3D`。`update(x, z)` 报告观察者位置后，由近到远请求地块，距离超过 `viewDistance` 的 1.25 倍加四分之一地块大小时释放。`load(x, z)` 立即或以 Promise 返回地块的高度场，来源可以是文件、服务器或公式；`onLoad` 和 `onUnload` 用来添加和移除对应的碰撞体。`heightAt` 可跨已加载的地块查询。地块的高度场以自身中心为原点，而第 (tx, tz) 块的中心放在 `((tx + 0.5) * tileSize, 0, (tz + 0.5) * tileSize)`：在 `onLoad` 里按世界坐标取高度，要先减去这个中心，写成 `field.heightAt(x - cx, z - cz)`；地块装好之后也可以用地形流自己的 `heightAt(x, z)`。
+`createTerrainStream3D({tileSize, viewDistance, load, material, terrain, onLoad, onUnload})` 是随观察者出现和消失的地形：一个由地块组成的网格，每块有自己的高度场和 `Terrain3D`。`update(x, z)` 报告观察者位置后，由近到远请求地块，距离超过 `viewDistance` 的 1.25 倍加四分之一地块大小时释放。`load(x, z)` 立即或以 Promise 返回地块的高度场，来源可以是文件、服务器或公式；`onLoad` 和 `onUnload` 用来添加和移除对应的碰撞体。`heightAt` 可跨已加载的地块查询。地块的高度场以自身中心为原点，而第 (tx, tz) 块的中心放在 `((tx + 0.5) * tileSize, 0, (tz + 0.5) * tileSize)`：在 `onLoad` 里按世界坐标取高度，要先减去这个中心，写成 `field.heightAt(x - cx, z - cz)`；地块装好之后也可以用地形流自己的 `heightAt(x, z)`。每个地块有 `center`，就是这个点。`stream.distanceOf(tile)` 是上一次 `update` 时观察者到地块最近点的距离，可以用来决定游戏撒在地块上的东西用多精细的版本。
 
 地块保留窗口最多覆盖 256 个地块位置，同时最多等待 32 次加载。加载器返回的高度场宽度和深度必须与 `tileSize` 一致。离开保留范围会结束对应位置的请求。旧结果无法覆盖新请求，但旧加载器在结束前仍占用等待额度，计入 `pendingCount`。`dispose()` 结束流式地形并释放所有地块。`lastFailure` 记录最近一次加载、准备或生命周期失败，包含地块坐标和阶段。
 
@@ -349,7 +349,7 @@ WebGL2 上，将 `reflection.createPass(camera, hidden)` 作为 `preparePrograms
 
 `createBoxHelper3D`、`createArrowHelper3D`、`createCameraHelper3D`、`createLightHelper3D` 和 `createSkeletonHelper3D` 是跟随目标的线条节点；目标移动后调用 `update()`。`computeObjectBounds3D(object)` 返回一棵子树的世界包围盒。
 
-`createFlyControls3D(camera, element, options)` 通过指针锁定或拖动来转动视角，用键盘移动，可以飞行，也可以在水平面上行走。`createAudioListener3D()` 和 `createPositionalAudio3D(listener, options)` 把 Web Audio 声源放进场景，支持距离衰减和锥形指向；每帧调用 `listener.update()`，并在用户手势中调用 `listener.resume()`。
+`createFlyControls3D(camera, element, options)` 通过指针锁定或拖动来转动视角，用键盘移动，可以飞行，也可以在水平面上行走。`createAudioListener3D()` 和 `createPositionalAudio3D(listener, options)` 把 Web Audio 声源放进场景，支持距离衰减和锥形指向；每帧调用 `listener.update()`，并在用户手势中调用 `listener.resume()`。设置声源的 `playbackRate`，或调用 `setPlaybackRate(rate, rampSeconds)`，会同时改变正在播放的和之后的声部，循环的发动机声因此可以跟着车速变调。`listener.load(url)` 解码文件；`listener.bufferFrom(samples, sampleRate)` 用代码生成的采样建缓冲：单声道给一个数组，多声道每个声道一个数组，取值 -1 到 1。
 
 ## 从 Three.js 迁移
 
