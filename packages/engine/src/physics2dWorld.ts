@@ -7,6 +7,8 @@ import type {
   PhysicsBodyKind,
   PhysicsBodyOptions,
   PhysicsContact,
+  PhysicsJoint,
+  PhysicsJointOptions,
   PhysicsMoveResult,
   PhysicsRayHit,
   PhysicsShape,
@@ -19,10 +21,11 @@ import type {
 
 interface Body {
   readonly id: number;
-  readonly kind: PhysicsBodyKind;
+  kind: PhysicsBodyKind;
   readonly shape: PhysicsShape;
-  readonly mass: number;
-  readonly inverseMass: number;
+  readonly density: number;
+  mass: number;
+  inverseMass: number;
   readonly sensor: boolean;
   x: number;
   y: number;
@@ -42,6 +45,21 @@ interface Body {
   placed: Placed | undefined;
   box: Box | undefined;
   face: PhysicsBody;
+}
+interface Joint {
+  readonly kind: 'distance' | 'rope';
+  readonly a: Body;
+  readonly b: Body | undefined;
+  readonly px: number;
+  readonly py: number;
+  readonly ax: number;
+  readonly ay: number;
+  readonly bx: number;
+  readonly by: number;
+  readonly stiffness: number;
+  length: number;
+  removed: boolean;
+  face: PhysicsJoint;
 }
 interface Touch {
   readonly a: Body;
@@ -110,6 +128,8 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
     throw new EgretError('PHYSICS_OPTIONS_INVALID');
   let gravity: PhysicsVector = Object.freeze({ x: g0.x, y: g0.y });
   const bodies: Body[] = [];
+  const joints: Joint[] = [];
+  let stepping = false;
   const listeners = new Set<(contact: PhysicsContact) => void>();
   let touching = new Map<string, Touch>(),
     pending = 0,
@@ -171,10 +191,28 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
     });
     const face = {
       id: body.id,
-      kind: body.kind,
+      get kind(): PhysicsBodyKind {
+        return body.kind;
+      },
       shape: body.shape,
-      mass: body.mass,
+      get mass(): number {
+        return body.mass;
+      },
       sensor: body.sensor,
+      setKind(kind: PhysicsBodyKind): void {
+        if (kind !== 'static' && kind !== 'kinematic' && kind !== 'dynamic')
+          throw new EgretError('PHYSICS_OPTIONS_INVALID');
+        if (body.removed) throw new EgretError('PHYSICS_BODY_INVALID');
+        body.kind = kind;
+        body.mass = kind === 'dynamic' ? body.density * areaOf(body.shape) : Infinity;
+        body.inverseMass = kind === 'dynamic' ? 1 / body.mass : 0;
+        body.fx = 0;
+        body.fy = 0;
+        if (kind === 'static') {
+          body.vx = 0;
+          body.vy = 0;
+        }
+      },
       get state(): 'active' | 'removed' {
         return body.removed ? 'removed' : 'active';
       },
@@ -271,6 +309,7 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
       id: ++ids,
       kind,
       shape: frozen,
+      density,
       mass,
       inverseMass: kind === 'dynamic' ? 1 / mass : 0,
       sensor,
@@ -301,6 +340,167 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
       display.rotation = angle;
     }
     return body.face;
+  }
+  /** Where a joint holds a body, in the world: its anchor turned by the body's angle. */
+  function anchorOf(body: Body, ax: number, ay: number): [number, number] {
+    if (ax === 0 && ay === 0) return [body.x, body.y];
+    const turn = (body.angle * Math.PI) / 180,
+      c = Math.cos(turn),
+      s = Math.sin(turn);
+    return [body.x + ax * c - ay * s, body.y + ax * s + ay * c];
+  }
+  function ends(joint: Joint): [number, number, number, number] {
+    const [x1, y1] = anchorOf(joint.a, joint.ax, joint.ay),
+      [x2, y2] = joint.b === undefined ? [joint.px, joint.py] : anchorOf(joint.b, joint.bx, joint.by);
+    return [x1, y1, x2, y2];
+  }
+  /** The line from a to b, its length, and how far that is from the joint's own length; undefined when slack. */
+  function strain(joint: Joint): { nx: number; ny: number; error: number } | undefined {
+    const [x1, y1, x2, y2] = ends(joint),
+      dx = x2 - x1,
+      dy = y2 - y1,
+      distance = Math.hypot(dx, dy),
+      error = distance - joint.length;
+    if (joint.kind === 'rope' && error <= 0) return undefined;
+    // Two anchors at one place have no line between them: a pin holds them together in place only.
+    if (distance < 1e-9) return { nx: 0, ny: 0, error: 0 };
+    return { nx: dx / distance, ny: dy / distance, error };
+  }
+  /** Takes out the speed along a joint that would stretch it, or, for a rod, change its length. */
+  function holdSpeed(joint: Joint, dt: number): void {
+    const a = joint.a,
+      b = joint.b,
+      ib = b === undefined ? 0 : b.inverseMass,
+      total = a.inverseMass + ib;
+    if (total === 0) return;
+    const line = strain(joint);
+    if (line === undefined) return;
+    if (line.nx === 0 && line.ny === 0) {
+      // A pin: the body moves as what it is pinned to does.
+      const vx = b === undefined ? 0 : b.vx,
+        vy = b === undefined ? 0 : b.vy,
+        rx = vx - a.vx,
+        ry = vy - a.vy;
+      a.vx += (rx * a.inverseMass) / total;
+      a.vy += (ry * a.inverseMass) / total;
+      if (b !== undefined) {
+        b.vx -= (rx * ib) / total;
+        b.vy -= (ry * ib) / total;
+      }
+      return;
+    }
+    const along = ((b === undefined ? 0 : b.vx) - a.vx) * line.nx + ((b === undefined ? 0 : b.vy) - a.vy) * line.ny;
+    // A rope pulls only against stretching; a rod against both.
+    const bias = (line.error * joint.stiffness * 0.2) / dt;
+    let j = -(along + bias) / total;
+    if (joint.kind === 'rope' && j > 0) j = 0;
+    j *= joint.stiffness;
+    a.vx -= j * line.nx * a.inverseMass;
+    a.vy -= j * line.ny * a.inverseMass;
+    if (b !== undefined) {
+      b.vx += j * line.nx * ib;
+      b.vy += j * line.ny * ib;
+    }
+  }
+  /** Moves the bodies of a joint back to its length, shared by their inverse masses. */
+  function holdPlace(joint: Joint): void {
+    const a = joint.a,
+      b = joint.b,
+      ib = b === undefined ? 0 : b.inverseMass,
+      total = a.inverseMass + ib;
+    if (total === 0) return;
+    const [x1, y1, x2, y2] = ends(joint),
+      dx = x2 - x1,
+      dy = y2 - y1,
+      distance = Math.hypot(dx, dy);
+    let error = distance - joint.length;
+    if (joint.kind === 'rope' && error <= 0) return;
+    if (Math.abs(error) <= SLOP) return;
+    error *= joint.stiffness * CORRECTION;
+    const nx = distance < 1e-9 ? 0 : dx / distance,
+      ny = distance < 1e-9 ? 0 : dy / distance,
+      push = error / total;
+    a.x += nx * push * a.inverseMass;
+    a.y += ny * push * a.inverseMass;
+    moved(a);
+    if (b !== undefined && ib > 0) {
+      b.x -= nx * push * ib;
+      b.y -= ny * push * ib;
+      moved(b);
+    }
+  }
+  function jointFace(joint: Joint): PhysicsJoint {
+    return Object.freeze(
+      Object.defineProperties(
+        {
+          kind: joint.kind,
+          a: joint.a.face,
+          b: joint.b?.face,
+          distance(): number {
+            const [x1, y1, x2, y2] = ends(joint);
+            return Math.hypot(x2 - x1, y2 - y1);
+          }
+        },
+        {
+          state: { get: () => (joint.removed ? 'removed' : 'active'), enumerable: true },
+          length: {
+            get: () => joint.length,
+            set: (value: number) => {
+              if (!finite(value) || value < 0) throw new EgretError('PHYSICS_OPTIONS_INVALID');
+              joint.length = value;
+            },
+            enumerable: true
+          }
+        }
+      )
+    ) as unknown as PhysicsJoint;
+  }
+  function addJoint(o: PhysicsJointOptions): PhysicsJoint {
+    if (!record(o)) throw new EgretError('PHYSICS_OPTIONS_INVALID');
+    const { kind, point, anchorA = { x: 0, y: 0 }, anchorB = { x: 0, y: 0 }, length, stiffness = 1 } = o;
+    if (
+      (kind !== 'distance' && kind !== 'rope') ||
+      !vector(anchorA) ||
+      !vector(anchorB) ||
+      (length !== undefined && (!finite(length) || length < 0)) ||
+      !finite(stiffness) ||
+      stiffness <= 0 ||
+      stiffness > 1 ||
+      (o.b === undefined) === (point === undefined) ||
+      (point !== undefined && !vector(point))
+    )
+      throw new EgretError('PHYSICS_OPTIONS_INVALID');
+    open();
+    const a = own(o.a),
+      b = o.b === undefined ? undefined : own(o.b);
+    if (a === b) throw new EgretError('PHYSICS_OPTIONS_INVALID');
+    const joint: Joint = {
+      kind,
+      a,
+      b,
+      px: point?.x ?? 0,
+      py: point?.y ?? 0,
+      ax: anchorA.x,
+      ay: anchorA.y,
+      bx: anchorB.x,
+      by: anchorB.y,
+      stiffness,
+      length: 0,
+      removed: false,
+      face: undefined as unknown as PhysicsJoint
+    };
+    if (length === undefined) {
+      const [x1, y1, x2, y2] = ends(joint);
+      joint.length = Math.hypot(x2 - x1, y2 - y1);
+    } else joint.length = length;
+    joint.face = jointFace(joint);
+    joints.push(joint);
+    return joint.face;
+  }
+  function dropJoint(joint: Joint): void {
+    const index = joints.indexOf(joint);
+    if (index >= 0) joints.splice(index, 1);
+    joint.removed = true;
   }
   /** The pairs whose boxes share a cell of the grid, each once, in the order of their ids. */
   function pairs(): [Body, Body][] {
@@ -367,7 +567,7 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
       if (!sensor && (a.kind === 'dynamic' || b.kind === 'dynamic')) solid.push({ a, b, ...meeting });
     }
     // Speeds first, in rounds, so that a stack settles; then the places, so that nothing stays inside another.
-    for (let round = 0; round < iterations; round++)
+    for (let round = 0; round < iterations; round++) {
       for (const c of solid) {
         const { a, b, nx, ny } = c,
           total = a.inverseMass + b.inverseMass;
@@ -400,6 +600,8 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
           b.vy += applied * ty * b.inverseMass;
         }
       }
+      for (const joint of joints) holdSpeed(joint, dt);
+    }
     // A few passes, each measuring again, so that a stack does not sink into what it stands on.
     for (let pass = 0; pass < 3; pass++)
       for (const c of solid) {
@@ -421,6 +623,7 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
           moved(b);
         }
       }
+    for (let pass = 0; pass < 3; pass++) for (const joint of joints) holdPlace(joint);
     const told: PhysicsContact[] = [];
     for (const [key, touch] of now)
       if (!touching.has(key))
@@ -472,6 +675,7 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
     if (index < 0) return;
     bodies.splice(index, 1);
     body.removed = true;
+    for (const joint of [...joints]) if (joint.a === body || joint.b === body) dropJoint(joint);
     const ended: PhysicsContact[] = [];
     for (const [key, touch] of [...touching])
       if (touch.a === body || touch.b === body) {
@@ -513,6 +717,15 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
       return Object.freeze(bodies.map(body => body.face));
     },
     addBody: add,
+    addJoint,
+    removeJoint(value: PhysicsJoint): void {
+      const joint = joints.find(candidate => candidate.face === value);
+      if (joint === undefined) throw new EgretError('PHYSICS_JOINT_INVALID');
+      dropJoint(joint);
+    },
+    get joints(): readonly PhysicsJoint[] {
+      return Object.freeze(joints.map(joint => joint.face));
+    },
     removeBody(value: PhysicsBody): void {
       const body = own(value),
         failures: unknown[] = [];
@@ -582,14 +795,21 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
     step(seconds: number): number {
       if (!finite(seconds) || seconds < 0) throw new EgretError('PHYSICS_OPTIONS_INVALID');
       open();
+      // A contact listener that steps would start a step inside the one it is told of.
+      if (stepping) throw new EgretError('PHYSICS_STEP_REENTRANT');
       pending += seconds;
       let taken = 0;
-      // A tiny remainder of a float is one step, not a step short.
-      while (pending + 1e-9 >= fixedStep && taken < maxSteps) {
-        pending = Math.max(0, pending - fixedStep);
-        once(fixedStep);
-        taken++;
-        steps++;
+      stepping = true;
+      try {
+        // A tiny remainder of a float is one step, not a step short.
+        while (pending + 1e-9 >= fixedStep && taken < maxSteps && !closed) {
+          pending = Math.max(0, pending - fixedStep);
+          once(fixedStep);
+          taken++;
+          steps++;
+        }
+      } finally {
+        stepping = false;
       }
       // What could not be caught up is let go, so that the next update is not behind before it starts.
       if (taken === maxSteps) pending = Math.min(pending, fixedStep);
@@ -721,6 +941,8 @@ export function createPhysicsWorld(options: PhysicsWorldOptions = {}): PhysicsWo
       closed = true;
       for (const body of bodies) body.removed = true;
       bodies.length = 0;
+      for (const joint of joints) joint.removed = true;
+      joints.length = 0;
       touching.clear();
       listeners.clear();
     }

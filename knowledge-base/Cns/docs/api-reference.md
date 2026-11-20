@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1336 个导出，其中 2 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1338 个导出，其中 2 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1279,6 +1279,8 @@
 | `PhysicsBodyKind` | 类型 | A static body never moves; a kinematic one moves by its speed alone and pushes; a dynamic one is moved by everything. |
 | `PhysicsBodyOptions` | 接口 | A body to add: its kind and shape, where it is and how it moves, its material, its layers and what it moves. |
 | `PhysicsContact` | 接口 | Two bodies that began or ended touching, with the normal between them. |
+| `PhysicsJoint` | 接口 | A joint of the world: its kind, its bodies and its length, which can change, as a rope that is wound in. |
+| `PhysicsJointOptions` | 接口 | A joint to add between two bodies, or between a body and a fixed point of the world. |
 | `PhysicsMoveResult` | 接口 | Where a moved body ended up, and the normals of what it hit on the way. |
 | `PhysicsRayHit` | 接口 | What a ray hit: the body, where, its normal, and how far along the ray. |
 | `PhysicsShape` | 类型 | A shape about the place of its body. |
