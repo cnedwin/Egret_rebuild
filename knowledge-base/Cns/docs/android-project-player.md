@@ -52,6 +52,43 @@ installPlayerProject({
 
 TypeScript 项目使用 `@egret/engine` 的类型，并在游戏的 `tsconfig.json` 中包含 `runtime-sdk/project/android-player-project.d.ts` 或其副本。导出器将 `@egret/android-player-project` 解析到本仓库的适配器。每个播放器独立拥有一个 Engine 和 Scope。异步加载时传入宿主提供的 `signal`。调用 `publishPage(id, image)` 将纹理实际使用的 `ImageData2D` 登记到 1 至 255 号槽位，返回句柄的 `release()` 支持重复调用。通过 `edit(text)`、`playSound(assetPath)` 和 `state(value)` 调用 Android 服务。游戏可实现 `input`、`update`、`pause`、`resume`、`close` 和 `closedSnapshot`。输入事件提供舞台坐标、触点 ID、位移或编辑及提交的文字。`update(elapsedMs)` 收到前台累计时间，引擎时钟单次最多推进 100 毫秒，恢复后重新建立时间基准。
 
+## 保存和恢复游戏进度
+
+将游戏服务中的 `storage` 传给已有的 `createSaveStore`。系统 WebView、标准 V8 和裁剪 V8 读写同一份 Android 应用私有文件。应用身份和游戏视图的资源根目录共同决定存档归属，根目录区分大小写。升级游戏或切换宿主时应沿用原目录。同一应用内的两款游戏只要资源根目录不同，就可以分别使用 `progress` 键。清除应用数据会清除本地存档。构建 AAR 和导出游戏时应使用支持存档的版本。在旧 AAR 上首次调用存储操作会得到不支持的错误。
+
+```ts
+import { createSaveStore } from '@egret/engine/kit';
+import { installPlayerProject } from '@egret/android-player-project';
+
+installPlayerProject({
+  width: 360, height: 640, clearColor: 0x18281d,
+  create({ storage, state }) {
+    const progress = createSaveStore({
+      key: 'progress', version: 1, storage,
+      defaults: () => ({ level: 1 })
+    });
+    return {
+      input(event) {
+        if (event.type === 'up') {
+          const saved = progress.save({ level: progress.data.level + 1 });
+          state({ checkpointSaved: saved });
+        }
+      }
+    };
+  }
+});
+```
+
+再次启动时用同一个键打开存档。变更数据格式时，提高 `version`，并提供 `migrations[n]` 将第 `n` 版数据转换成第 `n + 1` 版。存档服务会把迁移结果写回，并通过 `onProblem` 报告读写问题。
+
+在视图仍然打开时保存进度。`save()` 返回 `true` 时，新文件已原子替换旧文件。写入失败时返回 `false`，此时内存中仍可能保留新进度。如果 Android 在替换期间强停进程，重开时会读到完整的旧存档或新存档。首次写入在提交前中断时，该存档位仍为空。关闭视图会拒绝新的存档操作，已经接纳的操作结束后才触发 `onClosed`。
+
+单个存档字符串连同存档封装最多为 1 MiB，按 UTF-8 编码计算。底层键长为 1 至 256 个 UTF-16 单元，`createSaveStore` 的键长上限为 200 个单元。存档会同步占用脚本执行时间，适合在关卡完成等进度节点写入。
+
+在 Galaxy Z Fold7 上，同一签名应用依次使用系统 WebView、标准 V8 和裁剪 V8。强停并冷启动后，两款游戏用同一个 `progress` 键各自恢复进度。切换宿主时，游戏 A 的进度从 1 到 2 再到 3，游戏 B 从 10 到 20 再到 30。每个宿主还分别将一份旧存档从 v1 迁移到 v2，重开后均直接读到 v2。三个宿主均完整读回了恰好 1 MiB、含中文和表情的 UTF-8 字符串，超出一个字节的写入被拒绝，旧值保留。
+
+在独立诊断包中，测试让一次真实写入停在临时文件刷盘后、原子替换前。此时强停进程，三个宿主重开后都读到了完整旧存档。在同一时刻关闭游戏视图，已接纳的写入返回成功，原子替换先于 `onClosed` 完成，新进程读回的文件与待提交的新文件逐字节一致。 [Fold7 存档实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-saves.json)
+
 ## 读取包内关卡文件
 
 在 `project.json` 的 `assets` 中登记文件，例如 `"assets": ["levels/harbor.json"]`，并以 UTF-8 保存。关卡可以通过名称选择图集帧。

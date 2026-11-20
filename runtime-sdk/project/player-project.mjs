@@ -6,6 +6,63 @@ import { base64 } from '../scene/commands.mjs';
 import { createPlayerRaster } from './player-raster.mjs';
 import { createPlayerAssets } from './player-text-assets.mjs';
 
+const MAX_SAVE_BYTES = 1024 * 1024;
+// In Unicode mode a surrogate pair is one code point outside this range.
+const unpairedSurrogate = /[\uD800-\uDFFF]/u;
+
+function checkSaveText(text, maxBytes) {
+  if (text.length > maxBytes) throw new RangeError('Save value exceeds 1 MiB of UTF-8');
+  if (unpairedSurrogate.test(text)) throw new TypeError('Save text contains an unpaired surrogate');
+  // Each well-formed UTF-16 code unit costs at most three UTF-8 bytes. Count
+  // the excess over one byte per unit only when the length alone is inconclusive.
+  if (text.length * 3 <= maxBytes) return;
+  let bytes = text.length;
+  for (let i = 0; i < text.length; i++) {
+    const unit = text.charCodeAt(i);
+    if (unit < 0x80) continue;
+    bytes += unit < 0x800 ? 1 : 2;
+    if (unit >= 0xd800 && unit <= 0xdbff) i++;
+    if (bytes > maxBytes) throw new RangeError('Save value exceeds 1 MiB of UTF-8');
+  }
+}
+
+function createPlayerStorage(native, lifetime) {
+  function check(key, method) {
+    if (lifetime.aborted) throw lifetime.reason;
+    if (typeof native[method] !== 'function')
+      throw Object.assign(new Error('This player library does not support project saves'), {name: 'NotSupportedError'});
+    if (typeof key !== 'string') throw new TypeError('Expected a string save key');
+    if (key.length < 1 || key.length > 256) throw new RangeError('Save keys must have 1–256 UTF-16 code units');
+    if (unpairedSurrogate.test(key)) throw new TypeError('Save key contains an unpaired surrogate');
+  }
+  return Object.freeze({
+    getItem(key) {
+      check(key, 'saveRead');
+      const raw = native.saveRead(key);
+      if (typeof raw !== 'string') throw new Error('Missing Android save response');
+      const result = JSON.parse(raw);
+      if (result && typeof result === 'object' && Object.keys(result).length === 1) {
+        if (Object.hasOwn(result, 'error') && typeof result.error === 'string') throw new Error(result.error);
+        if (Object.hasOwn(result, 'value') && (result.value === null || typeof result.value === 'string'))
+          return result.value;
+      }
+      throw new Error('Invalid Android save response');
+    },
+    setItem(key, value) {
+      check(key, 'saveWrite');
+      if (typeof value !== 'string') throw new TypeError('Expected a string save value');
+      checkSaveText(value, MAX_SAVE_BYTES);
+      // Native success acknowledges the commit. Closing the session after admission
+      // must not turn that success into an error or cause the caller to retry it.
+      if (native.saveWrite(key, value) !== true) throw new Error('Android save write failed');
+    },
+    removeItem(key) {
+      check(key, 'saveRemove');
+      if (native.saveRemove(key) !== true) throw new Error('Android save removal failed');
+    }
+  });
+}
+
 export function createPlayerProject(definition, native) {
   const encoder = createCapturedProjectEncoder();
   const pageIds = new Map();
@@ -93,6 +150,7 @@ export function createPlayerProject(definition, native) {
           scope = engine.createScope();
           game = await definition.create({
             engine, scope, assets, publishPage, signal: lifetime.signal, raster: createPlayerRaster(native, lifetime.signal),
+            storage: createPlayerStorage(native, lifetime.signal),
             edit: text => native.edit(text),
             state: value => native.state(JSON.stringify(value)),
             playSound: path => native.playSound(path)

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.egret.runtime.player;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -43,6 +44,30 @@ abstract class ScriptSession {
         }
         PlayerGraphics.Frame frame = new PlayerGraphics.Frame(epoch, bytes, pages.snapshot());
         owner.ui.post(() -> owner.enqueue(frame, generationNs, transferNs));
+    }
+
+    // Both VMs call on their script/bridge worker. A missing key is distinct
+    // from a refused read; no exception or private storage path crosses into the game.
+    final String readSave(String key) {
+        if (owner.ending) return "{\"error\":\"closed\"}";
+        try {
+            String value = owner.saves.getItem(key);
+            return value == null ? "{\"value\":null}" : "{\"value\":" + org.json.JSONObject.quote(value) + "}";
+        } catch (IOException | RuntimeException failure) {
+            return "{\"error\":\"read-failed\"}";
+        }
+    }
+
+    final boolean writeSave(String key, String value) {
+        if (owner.ending) return false;
+        try { owner.saves.setItem(key, value); return true; }
+        catch (IOException | RuntimeException failure) { return false; }
+    }
+
+    final boolean removeSave(String key) {
+        if (owner.ending) return false;
+        try { owner.saves.removeItem(key); return true; }
+        catch (IOException | RuntimeException failure) { return false; }
     }
 
     final void requestEdit(String initialText) {

@@ -214,6 +214,9 @@ public final class JavetProjectScripts extends ScriptSession {
         }
         @V8Function public void page(int id, int width, int height, String rgba) { pages.publish(id, width, height, rgba); }
         @V8Function public void releasePage(int id) { pages.release(id); }
+        @V8Function public String saveRead(String key) { return readSave(key); }
+        @V8Function public boolean saveWrite(String key, String value) { return writeSave(key, value); }
+        @V8Function public boolean saveRemove(String key) { return removeSave(key); }
         @V8Function public String raster(String json) { return raster.request(json); }
         @V8Function public boolean readText(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.UTF8); }
         @V8Function public boolean readBytes(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.BYTES); }

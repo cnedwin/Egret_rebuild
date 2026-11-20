@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectSaveStorage.java",
+      "originRole": "Android application-private checkpoint storage and view close coordination. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectSaveStorageTest.java",
+      "originRole": "Filesystem and process lifecycle tests for project saves. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-project-saves.json",
+      "originRole": "Physical Android cross-host save, migration and process lifecycle observations. Independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

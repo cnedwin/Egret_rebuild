@@ -2,6 +2,7 @@
 // Include this file in the game's tsconfig. The Android exporter supplies this module at bundle time.
 declare module '@egret/android-player-project' {
   import type { CancellationSignal, Engine, ImageData2D, Scope } from '@egret/engine';
+  import type { SaveStorage } from '@egret/engine/kit';
 
   export interface PlayerInput {
     readonly type: 'down' | 'move' | 'up' | 'cancel' | 'scroll' | 'text' | 'submit';
@@ -53,6 +54,8 @@ declare module '@egret/android-player-project' {
   export interface PlayerServices {
     readonly assets: PlayerAssets;
     readonly engine: Engine;
+    /** App-private saves for this game. Writes return after commit. Older hosts throw on use. */
+    readonly storage: SaveStorage;
     readonly raster?: PlayerRaster;
     readonly scope: Scope;
     readonly signal: AbortSignal;
@@ -93,6 +96,11 @@ declare module '@egret/android-player-project' {
   }
 
   export interface NativePlayer {
+    /** A synchronous JSON reply containing either {value: string | null} or {error: string}. */
+    saveRead?(key: string): string;
+    /** True acknowledges a completed write or removal in this project's namespace. */
+    saveWrite?(key: string, value: string): boolean;
+    saveRemove?(key: string): boolean;
     readText?(id: number, path: string): boolean;
     /** Shares cancellation, completion and single-use result retrieval with readText. */
     readBytes?(id: number, path: string): boolean;

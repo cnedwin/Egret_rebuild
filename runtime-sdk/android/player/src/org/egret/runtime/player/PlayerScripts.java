@@ -120,6 +120,9 @@ final class PlayerScripts extends ScriptSession {
             catch (RuntimeException e) { owner.reportFailure("Cannot publish project page: " + e); }
         }
         @JavascriptInterface public void releasePage(int id) { pages.release(id); }
+        @JavascriptInterface public String saveRead(String key) { return readSave(key); }
+        @JavascriptInterface public boolean saveWrite(String key, String value) { return writeSave(key, value); }
+        @JavascriptInterface public boolean saveRemove(String key) { return removeSave(key); }
         @JavascriptInterface public String raster(String json) { return raster.request(json); }
         @JavascriptInterface public boolean readText(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.UTF8); }
         @JavascriptInterface public boolean readBytes(int id, String path) { return assetReads.start(id, path, ProjectAssetReads.Format.BYTES); }
