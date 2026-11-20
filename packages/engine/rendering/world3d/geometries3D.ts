@@ -36,6 +36,7 @@ function grid(l: Lists, base: number, columns: number, rows: number): void {
     }
 }
 
+/** A circle to make: its radius, segments and arc. */
 export interface CircleGeometryOptions3D {
   readonly radius?: number;
   readonly segments?: number;
@@ -53,6 +54,7 @@ export function createCircleGeometry3D(options: CircleGeometryOptions3D = {}): G
     ...(options.thetaLength === undefined ? {} : { thetaLength: options.thetaLength })
   });
 }
+/** A ring to make: its inner and outer radius, segments and arc. */
 export interface RingGeometryOptions3D {
   readonly innerRadius?: number;
   readonly outerRadius?: number;
@@ -92,6 +94,7 @@ export function createRingGeometry3D(options: RingGeometryOptions3D = {}): Geome
   return build(l);
 }
 
+/** A torus knot to make: its radius and tube, segments, and its windings p and q. */
 export interface TorusKnotGeometryOptions3D {
   readonly radius?: number;
   readonly tube?: number;
@@ -101,6 +104,7 @@ export interface TorusKnotGeometryOptions3D {
   readonly p?: number;
   readonly q?: number;
 }
+/** Makes a torus knot. */
 export function createTorusKnotGeometry3D(options: TorusKnotGeometryOptions3D = {}): Geometry3D {
   const radius = requirePositive3D(options.radius ?? 0.5, 'radius'),
     tube = requirePositive3D(options.tube ?? 0.15, 'tube');
@@ -204,11 +208,13 @@ function mix(a: Point3D, b: Point3D, t: number): Point3D {
 }
 const PHI = (1 + Math.sqrt(5)) / 2,
   INVERSE_PHI = 1 / PHI;
+/** A regular solid to make: its radius, how often it is subdivided, and whether it is smooth. */
 export interface PolyhedronOptions3D {
   readonly radius?: number;
   readonly detail?: number;
   readonly smooth?: boolean;
 }
+/** Makes a tetrahedron. */
 export function createTetrahedronGeometry3D(options: PolyhedronOptions3D = {}): Geometry3D {
   return createPolyhedronGeometry3D(
     [1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1],
@@ -216,6 +222,7 @@ export function createTetrahedronGeometry3D(options: PolyhedronOptions3D = {}): 
     options
   );
 }
+/** Makes an octahedron. */
 export function createOctahedronGeometry3D(options: PolyhedronOptions3D = {}): Geometry3D {
   return createPolyhedronGeometry3D(
     [1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1],
@@ -223,6 +230,7 @@ export function createOctahedronGeometry3D(options: PolyhedronOptions3D = {}): G
     options
   );
 }
+/** Makes an icosahedron. */
 export function createIcosahedronGeometry3D(options: PolyhedronOptions3D = {}): Geometry3D {
   return createPolyhedronGeometry3D(
     [
@@ -270,6 +278,7 @@ export function createIcosahedronGeometry3D(options: PolyhedronOptions3D = {}): 
     options
   );
 }
+/** Makes a dodecahedron. */
 export function createDodecahedronGeometry3D(options: PolyhedronOptions3D = {}): Geometry3D {
   const r = INVERSE_PHI,
     t = PHI;
@@ -346,6 +355,7 @@ export function createDodecahedronGeometry3D(options: PolyhedronOptions3D = {}):
   );
 }
 
+/** A lathe to make: its segments and the arc it turns through. */
 export interface LatheGeometryOptions3D {
   readonly segments?: number;
   readonly phiStart?: number;
@@ -387,6 +397,7 @@ export function createLatheGeometry3D(
   return build(l);
 }
 
+/** A tube to make along a curve: its segments, radius and whether it closes. */
 export interface TubeGeometryOptions3D {
   readonly tubularSegments?: number;
   readonly radius?: number;
@@ -446,6 +457,7 @@ export function createShapeGeometry3D(shapes: Shape3D | readonly Shape3D[]): Geo
   }
   return build(l);
 }
+/** An extrusion to make: how deep, in how many steps, and along which path. */
 export interface ExtrudeGeometryOptions3D {
   /** Thickness along +Z. Ignored when `path` is given. */
   readonly depth?: number;

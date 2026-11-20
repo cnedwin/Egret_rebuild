@@ -3,43 +3,52 @@
 // column-major with column vectors; cameras look down negative view Z.
 // Every function writes into `out` and tolerates `out` aliasing an input.
 
+/** An array of numbers the 3D math writes into. */
 export type NumericArray3D = Float32Array | Float64Array | number[];
+/** How close two numbers must be to count as equal. */
 export const EPSILON_3D = 1e-8;
 
 // ---- vec3 -----------------------------------------------------------------
+/** Sets a vector's x, y and z. */
 export function vec3Set(out: NumericArray3D, x: number, y: number, z: number): NumericArray3D {
   out[0] = x;
   out[1] = y;
   out[2] = z;
   return out;
 }
+/** Copies a vector. */
 export function vec3Copy(out: NumericArray3D, a: ArrayLike<number>): NumericArray3D {
   out[0] = a[0]!;
   out[1] = a[1]!;
   out[2] = a[2]!;
   return out;
 }
+/** Adds two vectors. */
 export function vec3Add(out: NumericArray3D, a: ArrayLike<number>, b: ArrayLike<number>): NumericArray3D {
   out[0] = a[0]! + b[0]!;
   out[1] = a[1]! + b[1]!;
   out[2] = a[2]! + b[2]!;
   return out;
 }
+/** Takes one vector from another. */
 export function vec3Sub(out: NumericArray3D, a: ArrayLike<number>, b: ArrayLike<number>): NumericArray3D {
   out[0] = a[0]! - b[0]!;
   out[1] = a[1]! - b[1]!;
   out[2] = a[2]! - b[2]!;
   return out;
 }
+/** Multiplies a vector by a number. */
 export function vec3Scale(out: NumericArray3D, a: ArrayLike<number>, s: number): NumericArray3D {
   out[0] = a[0]! * s;
   out[1] = a[1]! * s;
   out[2] = a[2]! * s;
   return out;
 }
+/** The dot product of two vectors. */
 export function vec3Dot(a: ArrayLike<number>, b: ArrayLike<number>): number {
   return a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]!;
 }
+/** The cross product of two vectors. */
 export function vec3Cross(out: NumericArray3D, a: ArrayLike<number>, b: ArrayLike<number>): NumericArray3D {
   const ax = a[0]!,
     ay = a[1]!,
@@ -52,9 +61,11 @@ export function vec3Cross(out: NumericArray3D, a: ArrayLike<number>, b: ArrayLik
   out[2] = ax * by - ay * bx;
   return out;
 }
+/** The length of a vector. */
 export function vec3Length(a: ArrayLike<number>): number {
   return Math.hypot(a[0]!, a[1]!, a[2]!);
 }
+/** The distance between two points. */
 export function vec3Distance(a: ArrayLike<number>, b: ArrayLike<number>): number {
   return Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
 }
@@ -67,6 +78,7 @@ export function vec3Normalize(out: NumericArray3D, a: ArrayLike<number>): Numeri
   out[2] = a[2]! * inverse;
   return out;
 }
+/** The point a fraction of the way from one vector to another. */
 export function vec3Lerp(out: NumericArray3D, a: ArrayLike<number>, b: ArrayLike<number>, t: number): NumericArray3D {
   out[0] = a[0]! + (b[0]! - a[0]!) * t;
   out[1] = a[1]! + (b[1]! - a[1]!) * t;
@@ -99,6 +111,7 @@ export function vec3TransformDirection(
   out[2] = m[2]! * x + m[6]! * y + m[10]! * z;
   return out;
 }
+/** Turns a vector by a quaternion. */
 export function vec3TransformQuat(out: NumericArray3D, a: ArrayLike<number>, q: ArrayLike<number>): NumericArray3D {
   const x = a[0]!,
     y = a[1]!,
@@ -118,6 +131,7 @@ export function vec3TransformQuat(out: NumericArray3D, a: ArrayLike<number>, q: 
 }
 
 // ---- quaternion (x, y, z, w) -----------------------------------------------
+/** Sets a quaternion to no rotation. */
 export function quatIdentity(out: NumericArray3D): NumericArray3D {
   out[0] = 0;
   out[1] = 0;
@@ -125,6 +139,7 @@ export function quatIdentity(out: NumericArray3D): NumericArray3D {
   out[3] = 1;
   return out;
 }
+/** Copies a quaternion. */
 export function quatCopy(out: NumericArray3D, a: ArrayLike<number>): NumericArray3D {
   out[0] = a[0]!;
   out[1] = a[1]!;
@@ -132,6 +147,7 @@ export function quatCopy(out: NumericArray3D, a: ArrayLike<number>): NumericArra
   out[3] = a[3]!;
   return out;
 }
+/** Scales a quaternion to length 1. */
 export function quatNormalize(out: NumericArray3D, a: ArrayLike<number>): NumericArray3D {
   const length = Math.hypot(a[0]!, a[1]!, a[2]!, a[3]!);
   if (length === 0) return quatIdentity(out);
@@ -142,6 +158,7 @@ export function quatNormalize(out: NumericArray3D, a: ArrayLike<number>): Numeri
   out[3] = a[3]! * inverse;
   return out;
 }
+/** Multiplies two quaternions: the rotation of b, then a. */
 export function quatMultiply(out: NumericArray3D, a: ArrayLike<number>, b: ArrayLike<number>): NumericArray3D {
   const ax = a[0]!,
     ay = a[1]!,
@@ -157,6 +174,7 @@ export function quatMultiply(out: NumericArray3D, a: ArrayLike<number>, b: Array
   out[3] = aw * bw - ax * bx - ay * by - az * bz;
   return out;
 }
+/** A quaternion that turns by an angle about an axis. */
 export function quatFromAxisAngle(out: NumericArray3D, axis: ArrayLike<number>, radians: number): NumericArray3D {
   const half = radians * 0.5,
     s = Math.sin(half);
@@ -273,6 +291,7 @@ export function quatFromRotationMatrix(out: NumericArray3D, m: ArrayLike<number>
 }
 
 // ---- mat4 -------------------------------------------------------------------
+/** Sets a 4x4 matrix to the identity. */
 export function mat4Identity(out: NumericArray3D): NumericArray3D {
   out[0] = 1;
   out[1] = 0;
@@ -292,6 +311,7 @@ export function mat4Identity(out: NumericArray3D): NumericArray3D {
   out[15] = 1;
   return out;
 }
+/** Copies a 4x4 matrix. */
 export function mat4Copy(out: NumericArray3D, a: ArrayLike<number>): NumericArray3D {
   for (let i = 0; i < 16; i++) out[i] = a[i]!;
   return out;
@@ -399,6 +419,7 @@ export function mat4Decompose(m: ArrayLike<number>, t: NumericArray3D, q: Numeri
   s[1] = sy;
   s[2] = sz;
 }
+/** The determinant of a 4x4 matrix. */
 export function mat4Determinant(m: ArrayLike<number>): number {
   const a00 = m[0]!,
     a01 = m[1]!,
@@ -557,6 +578,7 @@ export function mat4Perspective(
   out[15] = 0;
   return out;
 }
+/** Sets a 4x4 matrix to an orthographic projection. */
 export function mat4Orthographic(
   out: NumericArray3D,
   left: number,
@@ -605,6 +627,7 @@ export function mat3NormalFromMat4(out: NumericArray3D, m: ArrayLike<number>): N
   out[8] = (a00 * a11 - a01 * a10) * d;
   return out;
 }
+/** The largest scale a 4x4 matrix applies along an axis. */
 export function mat4MaxScaleOnAxis(m: ArrayLike<number>): number {
   const x = m[0]! * m[0]! + m[1]! * m[1]! + m[2]! * m[2]!;
   const y = m[4]! * m[4]! + m[5]! * m[5]! + m[6]! * m[6]!;
@@ -613,14 +636,17 @@ export function mat4MaxScaleOnAxis(m: ArrayLike<number>): number {
 }
 
 // ---- bounds: box = [minX, minY, minZ, maxX, maxY, maxZ], sphere = [x, y, z, radius]
+/** Sets a box to empty. */
 export function box3Empty(out: NumericArray3D): NumericArray3D {
   out[0] = out[1] = out[2] = Infinity;
   out[3] = out[4] = out[5] = -Infinity;
   return out;
 }
+/** Whether a box is empty. */
 export function box3IsEmpty(box: ArrayLike<number>): boolean {
   return box[3]! < box[0]! || box[4]! < box[1]! || box[5]! < box[2]!;
 }
+/** Grows a box to hold a point. */
 export function box3ExpandByPoint(box: NumericArray3D, x: number, y: number, z: number): void {
   if (x < box[0]!) box[0] = x;
   if (y < box[1]!) box[1] = y;
@@ -629,6 +655,7 @@ export function box3ExpandByPoint(box: NumericArray3D, x: number, y: number, z: 
   if (y > box[4]!) box[4] = y;
   if (z > box[5]!) box[5] = z;
 }
+/** The box that holds two boxes. */
 export function box3Union(out: NumericArray3D, a: ArrayLike<number>, b: ArrayLike<number>): NumericArray3D {
   out[0] = Math.min(a[0]!, b[0]!);
   out[1] = Math.min(a[1]!, b[1]!);
@@ -660,6 +687,7 @@ export function box3Transform(out: NumericArray3D, box: ArrayLike<number>, m: Ar
   out[5] = max[2]!;
   return out;
 }
+/** The sphere around a box. */
 export function sphereFromBox(out: NumericArray3D, box: ArrayLike<number>): NumericArray3D {
   if (box3IsEmpty(box)) {
     out[0] = out[1] = out[2] = 0;
@@ -672,6 +700,7 @@ export function sphereFromBox(out: NumericArray3D, box: ArrayLike<number>): Nume
   out[3] = Math.hypot(box[3]! - box[0]!, box[4]! - box[1]!, box[5]! - box[2]!) / 2;
   return out;
 }
+/** Moves and scales a sphere by a 4x4 matrix. */
 export function sphereTransform(out: NumericArray3D, sphere: ArrayLike<number>, m: ArrayLike<number>): NumericArray3D {
   const radius = sphere[3]!;
   vec3TransformMat4(out, sphere, m);
@@ -680,6 +709,7 @@ export function sphereTransform(out: NumericArray3D, sphere: ArrayLike<number>, 
 }
 
 // ---- frustum: six inward planes [nx, ny, nz, d] from a view-projection matrix
+/** The six planes of the frustum a projection-view matrix sees. */
 export function frustumFromMatrix(out: NumericArray3D, m: ArrayLike<number>): NumericArray3D {
   const rows = [0, 1, 2];
   let o = 0;
@@ -702,6 +732,7 @@ export function frustumFromMatrix(out: NumericArray3D, m: ArrayLike<number>): Nu
   }
   return out;
 }
+/** Whether a sphere is at least partly inside a frustum. */
 export function frustumIntersectsSphere(frustum: ArrayLike<number>, sphere: ArrayLike<number>): boolean {
   const x = sphere[0]!,
     y = sphere[1]!,
@@ -712,6 +743,7 @@ export function frustumIntersectsSphere(frustum: ArrayLike<number>, sphere: Arra
   }
   return true;
 }
+/** Whether a box is at least partly inside a frustum. */
 export function frustumIntersectsBox(frustum: ArrayLike<number>, box: ArrayLike<number>): boolean {
   for (let o = 0; o < 24; o += 4) {
     const nx = frustum[o]!,
@@ -822,9 +854,11 @@ export function rayIntersectTriangle(
 }
 
 // ---- color -------------------------------------------------------------------
+/** Turns an sRGB color value into a linear one. */
 export function srgbToLinear(value: number): number {
   return value <= 0.04045 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
 }
+/** Turns a linear color value into an sRGB one. */
 export function linearToSrgb(value: number): number {
   return value <= 0.0031308 ? value * 12.92 : 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
 }
@@ -835,7 +869,9 @@ export function colorFromHex(out: NumericArray3D, hex: number): NumericArray3D {
   out[2] = srgbToLinear((hex & 255) / 255);
   return out;
 }
+/** The value, kept between `min` and `max`. */
 export function clamp(value: number, min: number, max: number): number {
   return value < min ? min : value > max ? max : value;
 }
+/** Degrees times this are radians. */
 export const DEG_TO_RAD_3D = Math.PI / 180;

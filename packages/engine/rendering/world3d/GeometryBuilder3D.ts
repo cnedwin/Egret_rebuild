@@ -10,6 +10,7 @@ import { Attribute3D, Geometry3D } from './Geometry3D.js';
 import { colorFromHex, mat3NormalFromMat4, mat4Compose, quatFromEuler, srgbToLinear } from './math3D.js';
 import type { ColorInput3D } from './Material3D.js';
 
+/** One geometry added to a builder: where, turned and scaled how, and its color. */
 export interface GeometryPart3D {
   /** Where the part goes; [0, 0, 0] by default. */
   readonly position?: readonly [number, number, number];
@@ -26,6 +27,7 @@ export interface GeometryPart3D {
   readonly keepColors?: boolean;
 }
 
+/** Joins many geometries, each placed, into one. */
 export interface GeometryBuilder3D {
   /** Parts added so far. */
   readonly parts: number;

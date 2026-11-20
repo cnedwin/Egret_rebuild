@@ -23,12 +23,14 @@ import type { RenderList3D } from '../../rendering/world3d/RenderList3D.js';
 import type { PostProcessSettings3D } from './post3D.js';
 import type { CompressedFormat3D, RenderTarget3D } from '../../rendering/world3d/Texture3D.js';
 
+/** How a renderer maps bright colors into the screen's range. */
 export type ToneMapping3D = 'none' | 'reinhard' | 'aces';
 
 /** Half-float targets keep scene-referred light until composition. */
 export function outputToneMapping3D(toneMapping: ToneMapping3D, target?: RenderTarget3D): ToneMapping3D {
   return target?.format === 'rgba16f' ? 'none' : toneMapping;
 }
+/** What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. */
 export interface Renderer3DInfo {
   frame: number;
   drawCalls: number;

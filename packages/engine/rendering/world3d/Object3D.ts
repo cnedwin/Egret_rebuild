@@ -19,7 +19,9 @@ import {
   vec3TransformMat4
 } from './math3D.js';
 
+/** What kind of node an object is. */
 export type Object3DKind = 'object' | 'scene' | 'mesh' | 'camera' | 'light' | 'bone';
+/** How deep a scene nests, how many children a node has, and how long a name is, at most. */
 export const WORLD3D_LIMITS = Object.freeze({
   maxDepth: 256,
   maxChildren: 65536,
@@ -31,6 +33,7 @@ const scratchMatrix = new Float32Array(16);
 const scratchVector = new Float32Array(3);
 const scratchQuat = new Float32Array(4);
 
+/** A node of a 3D scene: its children, place, rotation and scale, and calls that move and find nodes. */
 export class Object3D {
   readonly id = allocateId3D();
   readonly kind: Object3DKind;
@@ -294,6 +297,7 @@ export class Object3D {
   }
 }
 
+/** Fog that fades a scene into a color: linearly between two distances, or exponentially by a density. */
 export type Fog3D =
   | {
       readonly kind: 'linear';

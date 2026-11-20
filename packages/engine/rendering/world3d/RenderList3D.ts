@@ -16,6 +16,7 @@ import { frustumIntersectsSphere } from './math3D.js';
 import { InstancedMesh3D, Mesh3D } from './Mesh3D.js';
 import type { Object3D, Scene3D } from './Object3D.js';
 
+/** One thing to draw: its mesh, geometry and material, its range, its depth and order. */
 export interface RenderItem3D {
   mesh: Mesh3D;
   geometry: Geometry3D;
@@ -31,6 +32,7 @@ export interface RenderItem3D {
   /** What else must match for meshes to share an instanced draw: layers, receiving shadows, being instanceable at all. */
   group?: number;
 }
+/** What building a render list counted: nodes visited, culled, and lights dropped. */
 export interface RenderStats3D {
   visited: number;
   culled: number;
@@ -65,6 +67,7 @@ function foldable(material: Material3D): boolean {
   return !material.billboard && !material.screenSpace && !material.wireframe;
 }
 
+/** What a camera sees, sorted for drawing: opaque and transparent items, shadow casters and lights. */
 export class RenderList3D {
   readonly opaque: RenderItem3D[] = [];
   readonly transparent: RenderItem3D[] = [];

@@ -10,8 +10,10 @@ import type { Material3D } from './Material3D.js';
 import { Mesh3D } from './Mesh3D.js';
 import type { RigidBody3D } from './Physics3D.js';
 
+/** The most points and colliders cloth and ropes hold. */
 export const CLOTH3D_LIMITS = Object.freeze({ maxPoints: 16384, maxColliders: 32 } as const);
 
+/** How a strand of points behaves: its gravity, damping, iterations, thickness, and what it collides with. */
 export interface StrandOptions3D {
   /** Pull on every point, as an acceleration. Defaults to 9.81 downward. */
   readonly gravity?: readonly [number, number, number];
@@ -306,6 +308,7 @@ class Strands3D {
   }
 }
 
+/** A rope to make: from where to where, in how many segments, how slack, and which ends are pinned. */
 export interface RopeOptions3D extends StrandOptions3D {
   readonly start: readonly [number, number, number];
   readonly end: readonly [number, number, number];
@@ -468,6 +471,7 @@ export class Rope3D extends Strands3D {
   }
 }
 
+/** A cloth to make: its columns and rows, where it starts and which way it spreads, and how stiff it is. */
 export interface ClothOptions3D extends StrandOptions3D {
   /** Number of points across and down; at least two each. */
   readonly columns: number;
@@ -623,9 +627,11 @@ export class Cloth3D extends Strands3D {
   }
 }
 
+/** Makes a rope of points that hangs and swings. */
 export function createRope3D(options: RopeOptions3D): Rope3D {
   return new Rope3D(options);
 }
+/** Makes a sheet of cloth that hangs, folds and blows. */
 export function createCloth3D(options: ClothOptions3D): Cloth3D {
   return new Cloth3D(options);
 }

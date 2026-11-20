@@ -4,8 +4,11 @@
 // lathe, extrude and shape geometries. Points are plain [x, y, z] arrays.
 import { World3DError, requireCount3D, requireFinite3D } from './core3D.js';
 
+/** A point in 3D as x, y and z. */
 export type Point3D = [number, number, number];
+/** A point in 2D as x and y. */
 export type Point2D = [number, number];
+/** The most points and divisions a curve has. */
 export const CURVE3D_LIMITS = Object.freeze({ maxPoints: 65536, maxDivisions: 16384 } as const);
 
 function point(value: ArrayLike<number>, field: string): Point3D {
@@ -164,6 +167,7 @@ function rotate(v: Point3D, axis: Point3D, angle: number): Point3D {
   return [v[0] * c + k[0] * s + axis[0] * d, v[1] * c + k[1] * s + axis[1] * d, v[2] * c + k[2] * s + axis[2] * d];
 }
 
+/** A straight line between two points, as a curve. */
 export class LineCurve3D extends Curve3D {
   readonly start: Point3D;
   readonly end: Point3D;
@@ -181,6 +185,7 @@ export class LineCurve3D extends Curve3D {
     return out;
   }
 }
+/** A quadratic Bézier curve through three control points. */
 export class QuadraticBezierCurve3D extends Curve3D {
   readonly p0: Point3D;
   readonly p1: Point3D;
@@ -200,6 +205,7 @@ export class QuadraticBezierCurve3D extends Curve3D {
     return out;
   }
 }
+/** A cubic Bézier curve through four control points. */
 export class CubicBezierCurve3D extends Curve3D {
   readonly p0: Point3D;
   readonly p1: Point3D;
@@ -222,6 +228,7 @@ export class CubicBezierCurve3D extends Curve3D {
     return out;
   }
 }
+/** How a Catmull-Rom curve is parameterized between its points. */
 export type CatmullRomKind3D = 'centripetal' | 'chordal' | 'uniform';
 /** Smooth curve through every control point. Centripetal spacing avoids loops and cusps. */
 export class CatmullRomCurve3D extends Curve3D {
@@ -393,6 +400,7 @@ export class Shape3D extends Path2D3D {
     if (points) for (const p of points) this.moveTo(p[0], p[1]);
   }
 }
+/** The signed area of a 2D polygon: positive when its points run counterclockwise. */
 export function signedArea2D(points: readonly Point2D[]): number {
   let area = 0;
   for (let i = 0, j = points.length - 1; i < points.length; j = i++)

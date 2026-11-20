@@ -8,6 +8,7 @@ import { EgretError } from '@egret/runtime';
 import { createBrowserGame } from '../game.js';
 import type { BrowserGame, BrowserGameBackend } from '../game.js';
 
+/** A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. */
 export interface World3DOverlayOptions {
   /** The stage size, in the interface's own units. */
   readonly width: number;
@@ -24,6 +25,7 @@ export interface World3DOverlayOptions {
   /** Send presses on empty parts of the interface to the 3D canvas. On by default. */
   readonly passThrough?: boolean;
 }
+/** A 2D game drawn on a canvas over a 3D view. */
 export interface World3DOverlay {
   /** The 2D game on the overlay: its stage, scope, pointer, keyboard, loop and textures. */
   readonly game: BrowserGame;

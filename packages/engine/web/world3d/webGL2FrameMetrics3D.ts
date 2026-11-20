@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
 import { World3DError } from '../../rendering/world3d/core3D.js';
 
+/** Which view a pass drew: the main one, a reflection, or offscreen. */
 export type World3DViewKind = 'main' | 'reflection' | 'offscreen';
+/** What a pass drew: color, shadows, a depth prepass, an outline mask or post-processing. */
 export type World3DPassKind = 'color' | 'shadow' | 'depth-prepass' | 'outline-mask' | 'postprocess';
+/** How long a pass took on the GPU, or why that is not known. */
 export type World3DGpuTiming =
   | { readonly status: 'ready'; readonly milliseconds: number }
   | { readonly status: 'disabled' | 'unsupported' | 'pending' | 'unavailable' | 'disjoint' | 'context-lost' };
 
+/** One pass of a frame: its view and kind, its size, its draws and triangles, and its times. */
 export interface World3DFramePass {
   readonly view: World3DViewKind;
   /** Zero-based render() call within this application frame. */
@@ -23,6 +27,7 @@ export interface World3DFramePass {
   readonly gpuTime: World3DGpuTiming;
 }
 
+/** What a frame drew: its draws and triangles, its CPU time, and its passes and reflections. */
 export interface World3DFrameMetrics {
   readonly drawCalls: number;
   readonly triangles: number;

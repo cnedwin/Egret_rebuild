@@ -7,8 +7,10 @@ import { mat4Compose, mat4Decompose, mat4Invert, mat4Multiply, quatNormalize } f
 import type { Object3D } from './Object3D.js';
 import type { Joint3D, JointOptions3D, PhysicsWorld3D, RigidBody3D, ShapeDefinition3D } from './Physics3D.js';
 
+/** The most parts a ragdoll has. */
 export const RAGDOLL3D_LIMITS = Object.freeze({ maxParts: 64 } as const);
 
+/** How a ragdoll part is joined to its parent: the joint's kind, axis and limits. */
 export interface RagdollJoint3D {
   /** 'point' swings freely like a shoulder; 'hinge' bends one way like a knee. Defaults to 'point'. */
   readonly type?: 'point' | 'hinge';
@@ -19,6 +21,7 @@ export interface RagdollJoint3D {
   /** 'point': the widest swing in radians from the pose at activation. */
   readonly coneLimit?: number;
 }
+/** One part of a ragdoll: its bone, shape and mass, its offset, its parent and its joint. */
 export interface RagdollPart3D {
   /** The bone this part moves, or its name under the ragdoll's root. */
   readonly bone: Object3D | string;
@@ -32,6 +35,7 @@ export interface RagdollPart3D {
   /** How this part is attached to its parent, at this part's bone. */
   readonly joint?: RagdollJoint3D;
 }
+/** A ragdoll to make: its layers, friction, bounce and damping. */
 export interface RagdollOptions3D {
   readonly layer?: number;
   readonly mask?: number;
@@ -234,6 +238,7 @@ export class Ragdoll3D {
   }
 }
 
+/** Makes a ragdoll of physics bodies that a skeleton follows. */
 export function createRagdoll3D(
   world: PhysicsWorld3D,
   root: Object3D,

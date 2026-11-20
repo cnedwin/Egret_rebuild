@@ -6,6 +6,7 @@ import type { Disposable } from '@egret/contracts';
 import { World3DError } from '../../rendering/world3d/core3D.js';
 import { Object3D } from '../../rendering/world3d/Object3D.js';
 
+/** An audio listener to make: its audio context and volume. */
 export interface AudioListenerOptions3D {
   /** Reuse an existing context; otherwise one is created. */
   readonly context?: AudioContext;
@@ -104,6 +105,7 @@ export class AudioListener3D extends Object3D implements Disposable {
   }
 }
 
+/** A positional sound to make: its buffer and volume, how it fades with distance, its cone, rate, and whether it is spatial. */
 export interface PositionalAudioOptions3D {
   readonly buffer?: AudioBuffer;
   readonly loop?: boolean;
@@ -230,9 +232,11 @@ export class PositionalAudio3D extends Object3D implements Disposable {
     this.listener.unregister(this);
   }
 }
+/** Makes the listener 3D sounds are heard by, usually on the camera. */
 export function createAudioListener3D(options: AudioListenerOptions3D = {}): AudioListener3D {
   return new AudioListener3D(options);
 }
+/** Makes a sound that plays from a place in the scene. */
 export function createPositionalAudio3D(
   listener: AudioListener3D,
   options: PositionalAudioOptions3D = {}

@@ -15,7 +15,9 @@ import { createWorld3DHost, startWorld3DLoop } from './host3D.js';
 import { World3DView } from './World3DView.js';
 import type { OrbitControls3D } from './OrbitControls3D.js';
 
+/** Which GPU interface a 3D app draws with. */
 export type World3DBackend = 'webgl2' | 'webgpu';
+/** How much a 3D app draws: low, medium or high quality. */
 export type World3DQuality = 'low' | 'medium' | 'high';
 
 /** What one picture quality turns on. */
@@ -143,6 +145,7 @@ export function pickWorld3DBackend(
   return asked === 'webgpu' || asked === 'webgl2' ? asked : fallback;
 }
 
+/** How dynamic resolution moves: its least and greatest scale, its step, and the frame rates and times that move it. */
 export interface DynamicResolutionOptions3D {
   /** Smallest share of the quality's pixel ratio drawn at. Defaults to 0.6. */
   readonly min?: number;
@@ -171,6 +174,7 @@ export interface DynamicResolution3D {
   reset(): void;
 }
 
+/** Makes a resolution scale that drops when frames are slow and rises when they are fast. */
 export function createDynamicResolution3D(options: DynamicResolutionOptions3D = {}): DynamicResolution3D {
   const min = options.min ?? 0.6,
     max = options.max ?? 1,
@@ -216,6 +220,7 @@ export function createDynamicResolution3D(options: DynamicResolutionOptions3D = 
   };
 }
 
+/** A 3D app to make: its backend and quality, its dynamic resolution, its tone mapping, and what is called on an error or a lost device. */
 export interface World3DAppOptions {
   /** `webgl2` or `webgpu`. Defaults to what the address asks (`backend=`), else WebGL2. */
   readonly backend?: World3DBackend;
@@ -235,12 +240,14 @@ export interface World3DAppOptions {
   /** Told once when the graphics device is lost. */
   readonly onDeviceLost?: (message: string) => void;
 }
+/** What a 3D app shows: its update, mixers and controls. */
 export interface World3DShowOptions {
   /** Called every frame before animation and drawing. */
   readonly onUpdate?: (deltaSeconds: number, elapsedSeconds: number) => void;
   readonly mixers?: readonly AnimationMixer3D[];
   readonly controls?: OrbitControls3D;
 }
+/** A 3D app: its Engine, renderer and view, its quality and resolution, and calls that show a scene and start and stop it. */
 export interface World3DApp extends Disposable {
   readonly engine: Engine;
   /** The Engine scope the app's view and renderer belong to. */

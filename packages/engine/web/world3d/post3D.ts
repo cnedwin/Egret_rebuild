@@ -27,6 +27,7 @@ export interface CustomPost3D {
   /** Four vec4 parameters written by the application. */
   readonly uniforms: Float32Array;
 }
+/** Makes a post-processing pass of your own shader. */
 export function createCustomPost3D(input: {
   readonly key: string;
   readonly glsl?: string;
@@ -46,6 +47,7 @@ export function createCustomPost3D(input: {
     uniforms
   });
 }
+/** What is done to a frame after it is drawn: bloom, antialiasing, color, vignette, ambient occlusion, depth of field and outlines. */
 export interface PostProcessSettings3D {
   /** Master switch. While false the renderer draws directly and nothing here costs anything. */
   enabled: boolean;
@@ -137,7 +139,9 @@ export function writePostParams3D(
   }
   out.set(view.inverseProjection, 32);
 }
+/** The most bloom levels. */
 export const POST3D_LIMITS = Object.freeze({ maxBloomLevels: 8 } as const);
+/** Post-processing settings with every effect off. */
 export function createPostProcessSettings3D(): PostProcessSettings3D {
   return {
     enabled: false,

@@ -6,8 +6,11 @@
 // glTF files compressed this way load without a decoder hook.
 import { World3DError } from './core3D.js';
 
+/** What meshopt data encodes: vertex attributes, triangles or indices. */
 export type MeshoptMode3D = 'ATTRIBUTES' | 'TRIANGLES' | 'INDICES';
+/** The filter meshopt data was encoded with. */
 export type MeshoptFilter3D = 'NONE' | 'OCTAHEDRAL' | 'QUATERNION' | 'EXPONENTIAL';
+/** The largest stride and count of meshopt data. */
 export const MESHOPT3D_LIMITS = Object.freeze({ maxStride: 256, maxElements: 268435456 } as const);
 
 const bad = (detail: string): World3DError => new World3DError('WORLD3D_GLTF_INVALID', 'meshopt ' + detail);

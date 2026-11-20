@@ -11,6 +11,7 @@ import { Mesh3D } from './Mesh3D.js';
 import type { Object3D } from './Object3D.js';
 import type { RigidBody3D } from './Physics3D.js';
 
+/** How a jelly wobbles: its stiffness and damping, how far it squashes, how it reacts, and how it idles. */
 export interface JellyOptions3D {
   /** How many times per second the shape swings back and forth after a knock. Defaults to 3.5. */
   readonly stiffness?: number;
@@ -318,6 +319,7 @@ export class Jelly3D {
   }
 }
 
+/** Makes an object squash, stretch and wobble like jelly as it moves. */
 export function createJelly3D(target: Object3D, options: JellyOptions3D = {}): Jelly3D {
   return new Jelly3D(target, options);
 }

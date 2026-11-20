@@ -288,9 +288,11 @@ export class SkeletonHelper3D extends LineHelper3D {
   }
 }
 
+/** Makes lines that show an object's bounding box. */
 export function createBoxHelper3D(target: Object3D, color?: ColorInput3D): BoxHelper3D {
   return new BoxHelper3D(target, color);
 }
+/** Makes an arrow from a point in a direction. */
 export function createArrowHelper3D(
   direction: ArrayLike<number>,
   origin?: ArrayLike<number>,
@@ -299,12 +301,15 @@ export function createArrowHelper3D(
 ): ArrowHelper3D {
   return new ArrowHelper3D(direction, origin, length, color);
 }
+/** Makes lines that show what a camera sees. */
 export function createCameraHelper3D(camera: Camera3D, color?: ColorInput3D): CameraHelper3D {
   return new CameraHelper3D(camera, color);
 }
+/** Makes lines that show where a light is and where it shines. */
 export function createLightHelper3D(light: Light3D, size?: number, color?: ColorInput3D): LightHelper3D {
   return new LightHelper3D(light, size, color);
 }
+/** Makes lines that show the bones of a skeleton. */
 export function createSkeletonHelper3D(root: Object3D, color?: ColorInput3D): SkeletonHelper3D {
   return new SkeletonHelper3D(root, color);
 }

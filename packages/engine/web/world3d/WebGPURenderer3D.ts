@@ -55,6 +55,7 @@ import {
   writeObjectMorph3D
 } from './webgpuPacking3D.js';
 
+/** A WebGPU renderer to make: its canvas and device, its tone mapping and exposure, its shadows, and what is called when the device is lost. */
 export interface WebGPURenderer3DOptions {
   readonly canvas: HTMLCanvasElement | OffscreenCanvas;
   /** Four-sample multisampling of the canvas pass. Defaults to true. */
@@ -170,6 +171,7 @@ function observeDeviceLoss(device: GPUDevice, listener: ((info: GPUDeviceLostInf
   };
 }
 
+/** Draws 3D scenes with WebGPU: set its size, render a scene from a camera, and read what it drew. */
 export class WebGPURenderer3D implements Renderer3D {
   readonly canvas: HTMLCanvasElement | OffscreenCanvas;
   readonly device: GPUDevice;

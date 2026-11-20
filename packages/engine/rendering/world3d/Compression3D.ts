@@ -6,6 +6,7 @@
 // are skipped rather than verified.
 import { World3DError } from './core3D.js';
 
+/** The most bytes a decompression gives. */
 export const COMPRESSION3D_LIMITS = Object.freeze({ maxOutputBytes: 536870912 } as const);
 const bad = (detail: string): World3DError => new World3DError('WORLD3D_INPUT_INVALID', 'compressed data: ' + detail);
 const tooBig = (): World3DError => new World3DError('WORLD3D_BUDGET', 'decompressed size');
