@@ -31,6 +31,27 @@ function exact(value: unknown, names: readonly string[]): value is Record<string
     Object.keys(value).every(k => names.includes(k))
   );
 }
+/**
+ * The Spine options of an entry. A manifest written by hand carries them as its settings; one from the content build
+ * carries them inside the build's recipe envelope, beside the producer that made the artifact. Anything else is
+ * `undefined`, and refused.
+ */
+export function spineOptions(entry: ResourceManifestEntry): Record<string, unknown> | undefined {
+  const settings = entry.settings;
+  if (!exact(settings, ['recipeSchemaVersion', 'options', 'producer', 'outputFormatVersion', 'referenceFormatVersion']))
+    return settings !== null && typeof settings === 'object' && !Array.isArray(settings)
+      ? (settings as Record<string, unknown>)
+      : undefined;
+  return settings.recipeSchemaVersion === 1 &&
+    settings.outputFormatVersion === entry.artifactFormatVersion &&
+    settings.referenceFormatVersion === 'none' &&
+    exact(settings.producer, ['nodeVersion', 'pngjsVersion', 'zlibVersion']) &&
+    settings.options !== null &&
+    typeof settings.options === 'object' &&
+    !Array.isArray(settings.options)
+    ? (settings.options as Record<string, unknown>)
+    : undefined;
+}
 /** Admit only the optional profile; unrelated game resources stay in the same manifest. */
 export function admitSpineCatalog(manifest: AdmittedResourceManifest): SpineCatalog {
   if (!isAdmittedResourceManifest(manifest)) throw spineFault('MANIFEST', '');
@@ -48,8 +69,8 @@ export function admitSpineCatalog(manifest: AdmittedResourceManifest): SpineCata
       e.artifact.mediaType !== (binary ? 'application/octet-stream' : 'application/json') ||
       e.artifact.byteLength > 4194304 ||
       e.dependencies.length !== 1 ||
-      !exact(e.settings, ['coreVersion']) ||
-      e.settings.coreVersion !== '4.3.13'
+      !exact(spineOptions(e), ['coreVersion']) ||
+      spineOptions(e)!.coreVersion !== '4.3.13'
     )
       throw spineFault('PROFILE', e.id);
     const atlas = entries.get(e.dependencies[0]!);
@@ -63,11 +84,11 @@ export function admitSpineCatalog(manifest: AdmittedResourceManifest): SpineCata
       atlas.artifact.byteLength > 262144 ||
       atlas.dependencies.length < 1 ||
       atlas.dependencies.length > 16 ||
-      !exact(atlas.settings, ['coreVersion', 'pageNames']) ||
-      atlas.settings.coreVersion !== '4.3.13'
+      !exact(spineOptions(atlas), ['coreVersion', 'pageNames']) ||
+      spineOptions(atlas)!.coreVersion !== '4.3.13'
     )
       throw spineFault('ATLAS_PROFILE', e.id);
-    const names = atlas.settings.pageNames;
+    const names = spineOptions(atlas)!.pageNames;
     if (
       !Array.isArray(names) ||
       names.length !== atlas.dependencies.length ||

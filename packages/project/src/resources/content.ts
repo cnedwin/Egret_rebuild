@@ -162,6 +162,7 @@ function producerValue(value: JsonValue | undefined): JsonObject {
     fail('Content producer identity must use Node 26.7.0, pngjs 7.0.0 and a nonempty zlib version.');
   return p;
 }
+const SPINE_CORE = '4.3.13';
 function reserved(options: JsonObject, producer: JsonObject, format: string, kind: string): JsonObject {
   return {
     recipeSchemaVersion: 1,
@@ -194,6 +195,28 @@ function profile(
     return { kind: 'sequence', options: object(settings, []) };
   if (i.id === 'egret.atlas-pages' && format === 'egret.atlas-pages/1')
     return { kind: 'atlas', options: object(settings, []) };
+  // Spine 4.3: the atlas names its pages in the order of its image dependencies; a skeleton has the atlas alone.
+  if (i.id === 'egret.spine-atlas' && format === 'spine-atlas/4.3-1') {
+    const options = object(settings, ['coreVersion', 'pageNames']),
+      names = list(options.pageNames).map(text);
+    if (options.coreVersion !== SPINE_CORE) fail('A Spine atlas is read by Spine Core 4.3.13.');
+    if (
+      names.length < 1 ||
+      names.length > 16 ||
+      new Set(names).size !== names.length ||
+      names.some(n => !n.length || n.length > 255 || /[\p{Surrogate}\u0000-\u001f\u007f]/u.test(n))
+    )
+      fail('A Spine atlas names one to sixteen distinct pages.');
+    return { kind: 'spine-atlas', options };
+  }
+  if (
+    (i.id === 'egret.spine-json' && format === 'spine-json/4.3-1') ||
+    (i.id === 'egret.spine-binary' && format === 'spine-binary/4.3-1')
+  ) {
+    const options = object(settings, ['coreVersion']);
+    if (options.coreVersion !== SPINE_CORE) fail('A Spine skeleton is read by Spine Core 4.3.13.');
+    return { kind: 'spine', options };
+  }
   if (i.id === 'egret.aseprite-atlas' && format === 'egret.atlas/1') {
     const options = object(settings, ['pageName']),
       name = text(options.pageName);
@@ -267,6 +290,17 @@ function describe(
   for (const e of plan.entries) {
     if (e.resourceKind === 'image' || e.resourceKind === 'font') {
       if (e.dependencies.length !== 0) fail('Image/font recipes cannot have dependencies.');
+    } else if (e.resourceKind === 'spine-atlas') {
+      const names = (e.settings.options as JsonObject).pageNames as readonly string[];
+      if (
+        e.dependencies.length !== names.length ||
+        new Set(e.dependencies).size !== e.dependencies.length ||
+        e.dependencies.some(id => byId.get(id)?.importer.id !== 'egret.png')
+      )
+        fail('A Spine atlas needs one PNG image dependency for each page it names.');
+    } else if (e.resourceKind === 'spine') {
+      if (e.dependencies.length !== 1 || byId.get(e.dependencies[0]!)?.resourceKind !== 'spine-atlas')
+        fail('A Spine skeleton needs its one Spine atlas dependency.');
     } else if (e.importer.id === 'egret.atlas-pages') {
       if (
         e.dependencies.length < 1 ||
@@ -394,7 +428,11 @@ function bind(
         ? { primary: 'image/png', rgba: 'application/octet-stream' }
         : e.resourceKind === 'font'
           ? { primary: (e.settings.options as JsonObject).flavor === 'truetype' ? 'font/ttf' : 'font/otf' }
-          : { primary: 'application/json' };
+          : e.resourceKind === 'spine-atlas'
+            ? { primary: 'text/plain' }
+            : e.importer.id === 'egret.spine-binary'
+              ? { primary: 'application/octet-stream' }
+              : { primary: 'application/json' };
     const actual = list(output.files);
     if (actual.length !== Object.keys(wanted).length) fail('The complete registered output set is required.');
     const named = new Map<string, ProjectFile>();

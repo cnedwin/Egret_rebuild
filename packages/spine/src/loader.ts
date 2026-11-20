@@ -33,7 +33,7 @@ import type {
   SpineAsset,
   SpineContentStatus
 } from './types.js';
-import { admitSpineCatalog, selectSpineDependencies, spineFault } from './catalog.js';
+import { admitSpineCatalog, selectSpineDependencies, spineFault, spineOptions } from './catalog.js';
 import { parseSpineSetup } from './parse.js';
 import { registerSpineAsset } from './assetAuthority.js';
 import { registerResetLoader } from './resetAuthority.js';
@@ -364,7 +364,7 @@ export function createSpineContentLoader(
               source.id,
               sourceData,
               atlasText,
-              atlas.settings.pageNames as readonly string[],
+              spineOptions(atlas)!.pageNames as readonly string[],
               atlas.dependencies,
               pages,
               allowPrerelease
