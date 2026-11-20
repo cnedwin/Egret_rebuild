@@ -31,7 +31,7 @@ import {
 import { EventDispatcher } from './EventDispatcher.js';
 import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN } from './ownership.js';
 import type { DisplayObjectContainer } from './DisplayObjectContainer.js';
-import { assertLive, isTerminated, parentOf, registerNode, terminateNode } from './displayTreeState.js';
+import { assertLive, isDisplayNode, isTerminated, parentOf, registerNode, terminateNode } from './displayTreeState.js';
 
 /** Egret's names of blend modes, and the blends of the shared material they are. */
 const BLENDS = Object.freeze({
@@ -276,6 +276,32 @@ export class DisplayObject extends EventDispatcher {
   }
   public set renderEffect(value: RenderEffect2D | undefined) {
     setRenderEffect(this, value);
+  }
+
+  /**
+   * Egret's `mask`. A display object masks this one with its Graphics, as `renderEffect = { shapeMask }`, and is not
+   * drawn while it masks; a rectangle in this object's own units clips it, as `clipRect`. `undefined` or `null` takes
+   * either away. Reading it gives the shape mask, else the clip rectangle. Setting a shape mask keeps the effect's other
+   * parts and replaces an image mask.
+   */
+  public get mask(): DisplayObject | Rectangle2D | undefined {
+    return visualOf(this).renderEffect?.shapeMask ?? visualOf(this).clipRect;
+  }
+  public set mask(value: DisplayObject | Rectangle2D | null | undefined) {
+    assertVisualMutable(this);
+    const effect = visualOf(this).renderEffect;
+    const { alphaMask: _image, maskRect: _area, shapeMask: _shape, ...rest } = effect ?? {};
+    const others = effect === undefined ? undefined : rest;
+    if (value !== null && value !== undefined && isDisplayNode(value)) {
+      setRenderEffect(this, { ...others, shapeMask: value });
+      this.clipRect = undefined;
+      return;
+    }
+    if (effect?.shapeMask !== undefined) {
+      const kept = others !== undefined && Object.entries(others).some(([key, v]) => key !== 'blurRadius' || v !== 0);
+      setRenderEffect(this, kept ? others : undefined);
+    }
+    this.clipRect = value === null || value === undefined ? undefined : (value as Rectangle2D);
   }
 
   /** An ordering boundary is metadata, not another display or resource owner. */

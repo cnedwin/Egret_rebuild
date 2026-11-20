@@ -601,6 +601,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     clearColor: options.transparent === true ? 0 : background,
     ...(options.transparent === true ? { clearAlpha: 0 } : {}),
     blendSpace,
+    // Masks, glows, outlines, blurs and colour matrices are drawn, as Egret 5 code expects of them.
+    effects: true,
     autoStart: false,
     keyboard: false,
     ...(holder === undefined ? {} : { fit: 'contain' as const, fitTo: holder }),

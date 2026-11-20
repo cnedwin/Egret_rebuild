@@ -214,7 +214,7 @@ export class PlayThing3D {
   }
   /**
    * How much it shines with its own colour, lit or not: 0 (the default) not at all, 1 as bright as its colour,
-   * more for a lamp or a screen. A model keeps the materials it has.
+   * more for a lamp or a screen. A thing that glows is not hidden by fog. A model keeps the materials it has.
    */
   public get glow(): number {
     return this.#glow;
@@ -224,6 +224,8 @@ export class PlayThing3D {
     this.#glow = value;
     setColor3D(this.#material.emissive, value > 0 ? this.#color : 0);
     this.#material.emissiveIntensity = value;
+    // What glows is seen through the fog and the snow, as a lighthouse or a lantern is at night.
+    this.#material.fog = value === 0;
   }
   /** Whether `game.remove` has taken it out of the world. Setting it afterwards does nothing that is seen. */
   public get removed(): boolean {
@@ -363,11 +365,15 @@ export type PlayLookName3D = 'day' | 'dusk' | 'night' | 'fog' | 'snow';
 export interface PlayLook3D {
   /** What is behind everything, and the colour of the fog. */
   readonly background?: number;
-  /** The light from above and from below, and how strong it is. */
+  /** The colour of the light from above. */
   readonly sky?: number;
+  /** The colour of the light from below. */
   readonly ground?: number;
+  /** How strong the light from above and below is, 0 to 16: 0.22 at night, 0.9 by day. */
   readonly light?: number;
+  /** The colour of the sun. */
   readonly sun?: number;
+  /** How strong the sun is, 0 to 16: 0.35 at night, 2.4 by day. */
   readonly sunIntensity?: number;
   /** The side the sun shines from, as `[x, y, z]`; y up. */
   readonly sunFrom?: readonly [number, number, number];
@@ -699,6 +705,14 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
       throw invalid("look is 'day', 'dusk', 'night', 'fog' or 'snow', or { background, sky, ground, sun, fog }");
     const hex = (value: unknown): value is number =>
       Number.isInteger(value) && (value as number) >= 0 && (value as number) <= 0xffffff;
+    // A strength given a colour, as 0x2a3550 for `light`, would light the world white: it is refused instead.
+    for (const key of ['light', 'sunIntensity'] as const)
+      if (chosen[key] !== undefined && !(finite(chosen[key]) && chosen[key] >= 0 && chosen[key] <= 16))
+        throw invalid(
+          key +
+            ' is how strong the light is, 0 to 16 (night 0.22, day 0.9); its colour is ' +
+            (key === 'light' ? 'sky' : 'sun')
+        );
     if (hex(chosen.background)) {
       scene.background = linearColor3D(chosen.background);
       if (scene.fog !== undefined) scene.fog = { ...scene.fog, color: linearColor3D(chosen.background) };

@@ -239,6 +239,45 @@ function effectGlow(settings: Effect): SharedGlow2D | undefined {
   return value;
 }
 const identity: Matrix2D = freeze({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
+/** Where a node is on the stage, or undefined when it is not on one. */
+function stagePlacement(node: DisplayObject): Matrix2D | undefined {
+  const chain: DisplayObject[] = [];
+  let at: DisplayObject | undefined = node;
+  while (at !== undefined && !isStageRoot(at)) {
+    chain.push(at);
+    at = parentOf(at) as DisplayObject | undefined;
+  }
+  if (at === undefined) return undefined;
+  let matrix = composeDisplayTransform(identity, visualOf(at));
+  for (let i = chain.length - 1; i >= 0; i--) matrix = composeDisplayTransform(matrix, visualOf(chain[i]!));
+  return matrix;
+}
+/**
+ * Where a shape mask is in the masked node's units: where it is on the stage when both are on it, as Egret places a
+ * mask on the display list, and otherwise as if it were a child of the node.
+ */
+function maskPlacement(node: DisplayObject, mask: DisplayObject, maskState: VisualState): Matrix2D {
+  const own = stagePlacement(mask),
+    of = own === undefined ? undefined : stagePlacement(node);
+  if (own === undefined || of === undefined) return composeDisplayTransform(identity, maskState);
+  const det = of.a * of.d - of.b * of.c;
+  if (det === 0 || !Number.isFinite(det)) return composeDisplayTransform(identity, maskState);
+  // The inverse of the node's placement, times the mask's.
+  const a = of.d / det,
+    b = -of.b / det,
+    c = -of.c / det,
+    d = of.a / det,
+    tx = (of.c * of.ty - of.d * of.tx) / det,
+    ty = (of.b * of.tx - of.a * of.ty) / det;
+  return {
+    a: a * own.a + c * own.b,
+    b: b * own.a + d * own.b,
+    c: a * own.c + c * own.d,
+    d: b * own.c + d * own.d,
+    tx: a * own.tx + c * own.ty + tx,
+    ty: b * own.tx + d * own.ty + ty
+  };
+}
 
 function debit(used: number, count: number, limit: number, code = 'FRAME_BUDGET_EXCEEDED'): number {
   if (!Number.isSafeInteger(count) || count < 0 || count > limit - used) throw new EgretError(code);
@@ -866,13 +905,14 @@ function captureSharedContent(
       if (shapeMask !== undefined) {
         assertLive(shapeMask);
         if (engineOf(shapeMask) !== engine) throw new EgretError('ENGINE_MISMATCH');
-        // Placed as if it were a child of the node; only its own drawing counts, not its alpha or visibility.
+        // On the stage it masks where it is, as in Egret; off it, it is placed as if it were a child of the node. Only
+        // its own drawing counts, not its alpha or visibility.
         const maskState = visualOf(shapeMask),
           drawn = shapeMaskImage(
             shapeMask,
             maskState.primitives,
             maskState.shape === undefined ? undefined : resolveShape(maskState.shape),
-            composeDisplayTransform(identity, maskState),
+            maskPlacement(node, shapeMask, maskState),
             2 * Math.sqrt(Math.abs(matrix.a * matrix.d - matrix.b * matrix.c))
           );
         budget.source(drawn.image);

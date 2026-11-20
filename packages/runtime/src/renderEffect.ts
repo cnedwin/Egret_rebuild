@@ -23,9 +23,10 @@ export interface RenderEffect2D {
   readonly maskRect?: Rectangle2D;
   /**
    * A mask of vector shapes, as Egret's `mask = displayObject`: what the node draws shows only where this Sprite's
-   * Graphics covers, faded where they are translucent. It is placed as if it were a child of the node; only its own
-   * drawing counts, not its children's, and its alpha and visibility do not. It need not be on the stage; on it, it is
-   * not drawn while it masks, as in Egret. One effect has an alpha mask or a shape mask.
+   * Graphics covers, faded where they are translucent. On the stage with the node it masks where it is, as in Egret;
+   * off the stage it is placed as if it were a child of the node. Only its own drawing counts, not its children's, and
+   * its alpha and visibility do not. On the stage it is not drawn while it masks, as in Egret. One effect has an alpha
+   * mask or a shape mask.
    */
   readonly shapeMask?: DisplayObject;
   /**
