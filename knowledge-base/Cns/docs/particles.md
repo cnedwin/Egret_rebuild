@@ -36,10 +36,11 @@ function frame(seconds) { fire.update(seconds); engine.renderSharedFrame(frameOp
 | `rotation`、`spin` | 出生时的旋转角度，以及每秒旋转的角度 | 0、0 |
 | `shape` | 粒子在发射器周围出生的位置：`point` 点、指定宽高的 `rectangle` 矩形，或指定半径的 `circle` 圆（在面积内或仅在 `edge` 边缘上） | 点 |
 | `seed` | 同样的种子在同样的更新下产生同样的粒子 | 1 |
+| `blendMode` | 粒子与下面内容的混合方式：`'normal'`、`'add'`（光晕、火花、火焰）、`'multiply'`、`'screen'` 或 `'erase'`，与 `DisplayObject.blendMode` 相同；等同于设置 `emitter.display.blendMode` | `'normal'` |
 
 `x` 和 `y` 是发射器在其显示对象内的位置；发射器移动时，粒子停留在出生的位置。另有 `start()`、`stop()`（存活的粒子会走完自己的一生）、`burst(count)`、`clear()`、`alive`、`snapshot()` 和 `particles()`（所有存活的粒子，供检查和工具使用）。
 
-粒子的颜色和透明度是其顶点颜色，渲染器把它与纹理相乘。颜色按所见颜色给出，并转换为渲染器使用的线性光照，所以白色纹理显示为所给的颜色。混合方式是渲染器的普通混合：目前还没有加法混合，所以重叠的火焰只与其中最亮的一样亮，不会更亮。
+粒子的颜色和透明度是其顶点颜色，渲染器把它与纹理相乘。颜色按所见颜色给出，并转换为渲染器使用的线性光照，所以白色纹理显示为所给的颜色。普通混合下，重叠的火焰只与其中最亮的一样亮；给 `blendMode: 'add'` 后，重叠处会叠加变亮，火焰和火花应当如此。
 
 ## 错误
 
@@ -60,4 +61,4 @@ function frame(seconds) { fire.update(seconds); engine.renderSharedFrame(frameOp
 
 ## 不在本次范围内
 
-- 加法及其他混合模式；粒子生命周期内播放精灵表的帧；会碰撞的粒子；沿路径移动的发射器。
+- 粒子生命周期内播放精灵表的帧；会碰撞的粒子；沿路径移动的发射器。

@@ -23,6 +23,16 @@ button.onActivate = () => mixer.play(click, { maxInstances: 2 });
 
 `createBrowserAudio` 会创建一个 `AudioContext`；如果通过 `context` 传入了一个，就使用它，并且不会关闭它。它返回 `mixer`、`context`、`output`（所有声音输出前都会经过的节点，页面自己的分析器可以接在这里）和 `dispose()`。
 
+**单独使用后端。** 同一入口的 `createWebAudioBackend(options)` 就是 Web Audio 那一半，供用 `createAudioMixer` 自己建混音器的页面使用（测试里用自己的后端也是这样建的）。它接受 `context`、`unlockTarget`、`pauseWhenHidden`、`onError` 和 `limiter`，含义见下文。按后端给出的 `locked` 建混音器，再 `attach`，锁定状态就会跟随第一次点击，页面隐藏时也会静音：
+
+```js
+const backend = createWebAudioBackend();
+const mixer = createAudioMixer({ backend, locked: backend.locked, buses: ['music', 'effects'] });
+backend.attach(mixer);
+```
+
+`backend.context` 和 `backend.output` 与 `createBrowserAudio` 的相同；`createBrowserAudio` 就是一次完成这三步。
+
 适配器不会为 `decode` 发起任何网络请求：游戏按读取其他文件的方式读取声音文件的字节，再交给它。只有流需要给出地址，因为那个文件是浏览器自己读取的。
 
 **第一次点击。** 浏览器只在用户触碰过页面之后才允许页面发声。在那之前 `mixer.state` 是 `'locked'`。适配器在 document 上（或在 `unlockTarget` 上）监听 `pointerdown`、`pointerup`、`touchend`、`keydown` 和 `click`，并在其中第一个事件里请求输出开始。输出运行起来后，状态变为 `'running'`，监听器随即移除。之后如果系统把输出收走（例如手机来电），混音器会再次锁定，直到输出恢复，或下一次点击把它带回来。

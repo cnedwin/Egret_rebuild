@@ -5,12 +5,22 @@ import { createVideo } from '@egret/engine/video';
 import type { Video, VideoFrame, VideoSource, VideoSourceState } from '@egret/engine/video';
 import type { AssetManager } from '@egret/runtime';
 
+/** One file of a film offered in several: its address and, when known, its media type. */
+export interface BrowserVideoSource {
+  readonly src: string;
+  readonly type?: string;
+}
 /** A browser video to make: its assets, its source or stream or element, and whether it loops, is muted and how loud. */
 export interface BrowserVideoOptions {
   /** The Engine's assets, which lease each picture as a texture. */
   readonly assets: AssetManager;
   /** A file to play, or a stream such as a canvas's or a camera's, or a video element of the page's own. One of the three. */
-  readonly src?: string;
+  /**
+   * One address, or the same film in several files to choose from, as `<source>` elements give them: the first the
+   * browser can play is played, and one that fails to load gives way to the next. A file's `type` (`video/webm`, say)
+   * lets the browser pass over what it cannot play without loading it.
+   */
+  readonly src?: string | readonly (string | BrowserVideoSource)[];
   readonly stream?: MediaStream;
   readonly element?: HTMLVideoElement;
   readonly loop?: boolean;
@@ -30,6 +40,23 @@ export interface BrowserVideo extends Video {
 
 const invalid = (): EgretError => new EgretError('VIDEO_OPTIONS_INVALID');
 
+/** A list of files: not empty, no more than 16, each an address or an address and a type that are not empty. */
+function choices(list: unknown): boolean {
+  return (
+    Array.isArray(list) &&
+    list.length > 0 &&
+    list.length <= 16 &&
+    list.every(item =>
+      typeof item === 'string'
+        ? item.length > 0
+        : item !== null &&
+          typeof item === 'object' &&
+          typeof item.src === 'string' &&
+          item.src.length > 0 &&
+          (item.type === undefined || (typeof item.type === 'string' && item.type.length > 0))
+    )
+  );
+}
 /**
  * A video played by a page's video element and shown as a display object. Each picture the element presents is drawn
  * into a canvas of the size it is shown at, read back, and leased as a texture; a picture not yet changed is not read.
@@ -50,7 +77,7 @@ export function createBrowserVideo(options: BrowserVideoOptions): BrowserVideo {
   const kinds = [src, stream, given].filter(value => value !== undefined).length;
   if (
     kinds !== 1 ||
-    (src !== undefined && (typeof src !== 'string' || src.length === 0)) ||
+    (src !== undefined && !(typeof src === 'string' ? src.length > 0 : choices(src))) ||
     (stream !== undefined && (typeof MediaStream === 'undefined' || !(stream instanceof MediaStream))) ||
     (given !== undefined && !(given instanceof HTMLVideoElement)) ||
     typeof loop !== 'boolean' ||
@@ -147,7 +174,17 @@ export function createBrowserVideo(options: BrowserVideoOptions): BrowserVideo {
     ]
   ];
   for (const [name, listener] of events) element.addEventListener(name, listener);
-  if (src !== undefined) element.src = src;
+  if (typeof src === 'string') element.src = src;
+  else if (src !== undefined)
+    for (const item of src as readonly (string | BrowserVideoSource)[]) {
+      const child = document.createElement('source');
+      if (typeof item === 'string') child.src = item;
+      else {
+        child.src = item.src;
+        if (item.type !== undefined) child.type = item.type;
+      }
+      element.appendChild(child);
+    }
   else if (stream !== undefined) element.srcObject = stream;
   if (element.readyState >= 2) {
     state = element.paused ? 'ready' : 'playing';
@@ -230,6 +267,7 @@ export function createBrowserVideo(options: BrowserVideoOptions): BrowserVideo {
       // A page's own element is left as it was given; one made here lets go of what it was playing.
       if (given === undefined) {
         element.removeAttribute('src');
+        element.replaceChildren();
         element.srcObject = null;
         element.load();
       }

@@ -385,3 +385,23 @@ test('PA13 the edges that are allowed, and options wrong in one part only', asyn
     emitter.update(0.5);
     assert.deepEqual([emitter.alive, emitter.running], [5, false]);
   }));
+
+test('PA14 blendMode is an option: it sets the blend of the display, and a name that is not a blend is refused', async () =>
+  fixture(({ texture, make }) => {
+    assert.equal(make({}).display.blendMode, 'normal');
+    for (const mode of ['normal', 'add', 'multiply', 'screen', 'erase']) {
+      const emitter = make({ blendMode: mode });
+      assert.equal(emitter.display.blendMode, mode);
+      emitter.burst(3);
+      emitter.update(0.1);
+      // The mesh made later draws under that blend: it has no material of its own.
+      assert.equal(emitter.display.numChildren, 1);
+      assert.equal(emitter.display.getChildAt(0).blendMode, 'normal');
+    }
+    for (const blendMode of ['lighten', 7, null, ''])
+      assert.throws(
+        () => createParticleEmitter({ texture, blendMode }),
+        coded('PARTICLE_OPTIONS_INVALID'),
+        String(blendMode)
+      );
+  }));

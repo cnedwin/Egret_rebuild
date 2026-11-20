@@ -51,10 +51,13 @@ game.loop.start();
 | 存放游戏所创建对象的作用域 | `game.scope` | `engine.createScope()` |
 | 显示对象上的触摸、鼠标和笔 | `game.pointer` | `createBrowserPointerInput`，见[指针输入](multi-pointer-input.md) |
 | 键盘 | `game.keyboard` | `createBrowserKeyboardInput`，见[键盘输入](keyboard-focus-input.md) |
+| 悬停和鼠标滚轮（如果要求） | `game.hover` | `createBrowserHoverInput`，见[悬停输入](pointer-hover.md)；滚动控件的 `wheel` 用它 |
 | 帧循环 | `game.loop` | `createBrowserFrameLoop`，见[帧循环](frame-loop.md) |
 | 面板（如果要求） | `game.stats` | `createBrowserStatsPanel`，见下文 |
 
 `await game.loadTexture(url)` 加载一张 PNG 图片并给出其纹理的租约，可用于 `new Bitmap(lease)` 或 `graphics.beginBitmapFill(lease)`；租约属于 `game.scope`，同一地址加载两次得到同一张纹理。其他格式不能读取，请使用[内容构建](content-build-pipeline.md)。`game.host` 是 Host，可读取它的状态。
+
+**代码画出的贴图。** `await game.textureFromCanvas(canvas)` 给出画布此刻内容的纹理租约——开局画好的粒子光点、木屑、位图字体页都可以；`await game.textureFromPixels(width, height, pixels)` 给出 RGBA 字节的纹理租约，行从上到下，alpha 未预乘，与 `ImageData` 相同。每次调用都是一张独立的纹理，租约属于 `game.scope`，租约结束时纹理随之结束。WebGL 画的画布会先复制到一张 2D 画布上再读。单边最多 4,096 像素，总数最多 4,194,304；更大的图请用 [`@egret/engine/web/kit` 的 `textureFromCanvas`](browser-images.md)，它会等比缩小，给出的是纹理本身而不是租约。
 
 **文本。** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` 创建一行文本；把 `label.display` 加到舞台上并定位，之后文字变化时设置 `label.text`。新文字准备好后才画出来，在此之前保留旧文字；`await label.ready` 可以等它完成。可以同时创建或修改任意多个 label：它们每次画两个，其余排队；正在绘制时文字又变了的 label，接着画最新的文字。`ready` 之后，`label.display.width` 和 `.height` 就是文字的大小，所以 `label.display.x = centre - label.display.width / 2` 可以让它居中。字体用页面自己的：系统字体族，或页面已加载的字体。第一个 label 会加载页面的文本光栅化器，所以 import map 需要 `@egret/engine/text`、`@egret/engine/web/text` 和 `@egret/runtime/text`。
 
@@ -73,13 +76,14 @@ game.loop.start();
 | `update(seconds)` | 游戏的一步，在每帧之前调用 | 没有这一步 |
 | `onError(error)` | 循环被什么停下时收到通知；Engine 只能上报的错误也会通知，例如点击的监听函数抛错并因此结束了指针输入 | 失败会抛出或上报给页面，在控制台能看到 |
 | `pointer`、`keyboard` | 给 `false` 则不创建该输入 | 两者都创建 |
+| `hover` | 给 `true` 则创建悬停和滚轮输入，即 `game.hover`；只有这时才加载它的模块 | 不创建悬停输入 |
 | `stats` | 给 `true` 则显示面板 | 没有面板 |
 | `fit`、`fitTo` | 画布怎样填充一个元素：`'contain'` 完整放入，`'cover'` 盖满，`'stretch'` 拉伸成它的形状。`fitTo` 就是那个元素 | `'none'`，以及画布的父元素 |
 | `autoStart` | 给 `false` 则由 `game.loop.start()` 启动循环 | 循环立即启动 |
 
 无效的选项在创建任何东西之前就以 `BROWSER_GAME_OPTIONS_INVALID` 被拒绝。
 
-**`'auto'` 怎样选择。** 浏览器有 `navigator.gpu` 并且给出适配器时用 WebGPU，否则用 WebGL2。先请求适配器，再碰画布，因为一个画布一旦取得某种上下文就不能再换。如果选了 WebGPU 而它的设备随后失败，这次调用以 Host 自己的错误失败，不会回退：那个画布已经不能再交给 WebGL2。
+**`'auto'` 怎样选择。** 浏览器有 `navigator.gpu` 并且给出适配器时用 WebGPU，否则用 WebGL2。先请求适配器，再碰画布，因为一个画布一旦取得某种上下文就不能再换。如果选了 WebGPU 而它的设备随后失败，这次调用以 Host 自己的错误失败，不会回退：那个画布已经不能再交给 WebGL2。没有适配器的环境（例如无头浏览器）里，浏览器在被询问时可能自己往控制台写一条 "No available adapters."，这不是页面的错误。凡是"有控制台错误就不过"的验收，请显式给 `backend: 'webgl2'`。
 
 ## 面板
 

@@ -25,7 +25,7 @@ Every factory is named `create...` and returns an object with `dispose()`.
 | ... and see frames a second and what a frame holds | `createBrowserStatsPanel`, or `stats: true` | `@egret/engine/web/game` |
 | Run the game on each frame the display shows | `createBrowserFrameLoop` | `@egret/engine/web/loop` |
 | Read input by action, rebind, save, repeat random numbers, add touch controls | [`createInputActions`, `createSaveStore`, `createRandom`, `bindBrowserInputActions`, `createTouchStick`](game-kit.md) | `@egret/engine/kit`, `@egret/engine/web/kit` |
-| Load an image as a texture | `game.loadTexture(url)` of `createBrowserGame`, `createBrowserTextureProvider` for exact PNG, or [`decodeBrowserImage` and `textureFromCanvas`](browser-images.md) for any picture or a painted canvas | `@egret/engine/web/game`, `@egret/engine/web/image`, `@egret/engine/web/kit` |
+| Load an image as a texture | `game.loadTexture(url)` of `createBrowserGame` (and `game.textureFromCanvas`, `game.textureFromPixels` for a texture painted in code), `createBrowserTextureProvider` for exact PNG, or [`decodeBrowserImage` and `textureFromCanvas`](browser-images.md) for any picture or a painted canvas | `@egret/engine/web/game`, `@egret/engine/web/image`, `@egret/engine/web/kit` |
 | Load atlases, sequences and fonts from a built manifest | `createContentLoader`, `createFontContentLoader`, `createManifestAssetBinding` | `@egret/engine/resources` |
 | ... and fetch their bytes in a page | `createManifestByteSource`, `createManifestFontContentLoader` | `@egret/engine/web/resources` |
 | Play a frame sequence | `createSequenceController`, `createSequenceResetSlot` | `@egret/engine/animation` |
@@ -57,7 +57,7 @@ Every factory is named `create...` and returns an object with `dispose()`.
 | Roles and names for assistive technology | `createUiSemantics`, `createUiListSemantics` | `@egret/engine/ui/semantics` |
 | ... projected to the page | `createBrowserSemantics` | `@egret/engine/web/semantics` |
 | Sound: music, effects, groups, fades | `createAudioMixer` | `@egret/engine/audio` |
-| ... played by Web Audio | `createBrowserAudio` | `@egret/engine/web/audio` |
+| ... played by Web Audio | `createBrowserAudio`, or `createWebAudioBackend` for a mixer made with `createAudioMixer` | `@egret/engine/web/audio` |
 | Video on a display object | `createVideo` | `@egret/engine/video` |
 | ... from a video element, a file or a stream | `createBrowserVideo` | `@egret/engine/web/video` |
 | Blend modes and filters | `blendMode` and `renderEffect` on a display object | `@egret/engine` |

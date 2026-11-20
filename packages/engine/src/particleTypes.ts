@@ -47,6 +47,11 @@ export interface ParticleEmitterOptions {
   readonly running?: boolean;
   /** Seconds after which it stops by itself. Defaults to running until stopped. */
   readonly duration?: number;
+  /**
+   * How the particles are combined with what is under them, as `DisplayObject.blendMode`: `add` for glows and sparks.
+   * Defaults to `normal`. The same as setting `blendMode` on `emitter.display` after it is made.
+   */
+  readonly blendMode?: 'normal' | 'add' | 'multiply' | 'screen' | 'erase';
 }
 /** An emitter as it is now: how many particles live, were born and were refused, and its time. */
 export interface ParticleSnapshot {

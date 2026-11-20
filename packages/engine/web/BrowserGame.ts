@@ -6,6 +6,8 @@ import {
   createAssetRef,
   createAssetType,
   createEngineForProfile,
+  createImageData2D,
+  createTexture,
   isTexture,
   SHARED_FRAME_PROFILE_2D
 } from '@egret/engine';
@@ -28,6 +30,10 @@ import { createBrowserPointerInput } from './pointer.js';
 import type { PointerInput } from './pointer.js';
 import { createBrowserKeyboardInput } from './keyboard.js';
 import type { KeyboardInput } from './keyboard.js';
+import type { createBrowserHoverInput } from './hover.js';
+
+/** The hover and wheel input of the page, as `createBrowserHoverInput` of `@egret/engine/web/hover` makes it. */
+type BrowserGameHoverInput = ReturnType<typeof createBrowserHoverInput>;
 import { createBrowserStatsPanel } from './BrowserStatsPanel.js';
 import type { BrowserStatsPanel } from './BrowserStatsPanel.js';
 
@@ -95,6 +101,11 @@ export interface BrowserGameOptions {
   /** Touch, mouse and pen on display objects, and the keyboard. Both are made unless false is given. */
   readonly pointer?: boolean;
   readonly keyboard?: boolean;
+  /**
+   * Hover and the mouse wheel over display objects, as `createBrowserHoverInput` makes them: what a scroll control's
+   * `wheel` and a button's hover look need. Made only when true is given; its module is loaded only then.
+   */
+  readonly hover?: boolean;
   /** A panel over the canvas with frames a second, what a frame holds and how busy the Host is. Not made unless true is given. */
   readonly stats?: boolean;
   /** "none" unless given. The canvas is sized inside `fitTo`, or its parent element, and again whenever that changes size. */
@@ -118,12 +129,31 @@ export interface BrowserGame {
   readonly loop: BrowserFrameLoop;
   readonly pointer: PointerInput | undefined;
   readonly keyboard: KeyboardInput | undefined;
+  /** The hover and wheel input, when `hover: true` was given. */
+  readonly hover: BrowserGameHoverInput | undefined;
   readonly stats: BrowserStatsPanel | undefined;
   /**
    * Loads a PNG image from an address and gives the lease of its texture, for `new Bitmap(lease)` or
    * `graphics.beginBitmapFill(lease)`. The lease belongs to the game's scope. The same address loaded twice is one texture.
    */
   loadTexture(url: string): Promise<AssetLease<Texture>>;
+  /**
+   * The lease of a texture of pixels painted in code: `width` × `height` pixels of 4 bytes each, red, green, blue and
+   * alpha, rows from the top, alpha not multiplied in (as `ImageData` holds them). The bytes are copied, so the array can
+   * be changed after. At most 4,096 pixels on an edge and 4,194,304 in all. The lease belongs to the game's scope; each
+   * call is a texture of its own, ended with its lease.
+   */
+  textureFromPixels(
+    width: number,
+    height: number,
+    pixels: Uint8Array | Uint8ClampedArray
+  ): Promise<AssetLease<Texture>>;
+  /**
+   * The lease of a texture of what a canvas holds now, as `textureFromPixels` of its pixels. A canvas with a 2D context,
+   * or none yet, is read with that context; one drawn by WebGL or WebGPU is copied through a 2D canvas first. To scale
+   * down a larger picture, or read an image or bitmap, `textureFromCanvas` of `@egret/engine/web/kit` gives a texture.
+   */
+  textureFromCanvas(canvas: HTMLCanvasElement | OffscreenCanvas): Promise<AssetLease<Texture>>;
   /** A line of text for the stage. The first call loads the page's text rasterizer. */
   createLabel(options?: BrowserGameLabelOptions): Promise<BrowserGameLabel>;
   /** A place in the page, as a pointer event gives it in `clientX` and `clientY`, as a place on the stage. */
@@ -201,7 +231,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     typeof enableEffects !== 'boolean' ||
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
-    [options.pointer, options.keyboard, options.autoStart, options.stats].some(
+    [options.pointer, options.keyboard, options.hover, options.autoStart, options.stats].some(
       flag => flag !== undefined && typeof flag !== 'boolean'
     ) ||
     !['none', 'contain', 'cover', 'stretch'].includes(options.fit ?? 'none') ||
@@ -231,6 +261,19 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       frame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha });
     const pointer = options.pointer === false ? undefined : createBrowserPointerInput({ engine, scope, width, height });
     const keyboard = options.keyboard === false ? undefined : createBrowserKeyboardInput({ engine, scope });
+    const hover =
+      options.hover === true
+        ? scope.use(
+            (await import('./hover.js')).createBrowserHoverInput({
+              engine,
+              scope,
+              canvas,
+              width,
+              height,
+              ...(onError === undefined ? {} : { onError })
+            })
+          )
+        : undefined;
     const panel = (stats = options.stats === true ? createBrowserStatsPanel({ canvas, label: backend }) : undefined);
     let drawn: SharedRenderFrame2D | undefined;
     // With a panel, the loop draws through a step that keeps the frame, and each step tells the panel what the last one did.
@@ -284,6 +327,51 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       }
     });
     engine.assets.register(imageType, images);
+    // Textures painted in code: each call puts its texture under a key of its own, and its lease ends it.
+    const paintedType = createAssetType<Texture>('egret.browser-game.painted', isTexture),
+      painted = new Map<string, Texture>();
+    let paintedCount = 0;
+    engine.assets.register(paintedType, {
+      async load(ref) {
+        const texture = painted.get(ref.id);
+        painted.delete(ref.id);
+        if (texture === undefined) throw invalid();
+        return texture;
+      },
+      dispose(texture) {
+        texture.dispose();
+      }
+    });
+    const leasePixels = async (
+      width: number,
+      height: number,
+      pixels: Uint8Array | Uint8ClampedArray
+    ): Promise<AssetLease<Texture>> => {
+      if (
+        !whole(width) ||
+        !whole(height) ||
+        !(pixels instanceof Uint8Array || pixels instanceof Uint8ClampedArray) ||
+        pixels.length !== width * height * 4
+      )
+        throw invalid();
+      let texture: Texture;
+      try {
+        texture = createTexture(
+          createImageData2D({ width, height, pixels: new Uint8Array(pixels) as Uint8Array<ArrayBuffer> })
+        );
+      } catch (cause) {
+        // Larger than the 2D image limits: 4,096 pixels on an edge, 4,194,304 in all.
+        throw new EgretError('BROWSER_GAME_OPTIONS_INVALID', { cause });
+      }
+      const key = 'painted-' + ++paintedCount;
+      painted.set(key, texture);
+      try {
+        return scope.use(await engine.assets.acquire(createAssetRef(paintedType, key), { signal: scope.signal }));
+      } finally {
+        // Not loaded (the scope ended first): the texture is ended here.
+        if (painted.delete(key)) texture.dispose();
+      }
+    };
     // The canvas in its element: sized now and whenever the element changes size. The stage keeps its own units.
     const fit = options.fit ?? 'none',
       holder = options.fitTo ?? canvas.parentElement;
@@ -433,11 +521,30 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       loop: made,
       pointer,
       keyboard,
+      hover,
       stats: panel,
       createLabel,
       async loadTexture(url: string) {
         if (typeof url !== 'string' || url === '') throw invalid();
         return scope.use(await engine.assets.acquire(createAssetRef(imageType, url), { signal: scope.signal }));
+      },
+      textureFromPixels: leasePixels,
+      async textureFromCanvas(source: HTMLCanvasElement | OffscreenCanvas) {
+        if (source === null || typeof source !== 'object' || typeof source.getContext !== 'function') throw invalid();
+        const { width, height } = source;
+        if (!whole(width) || !whole(height)) throw invalid();
+        let context = source.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+        if (context === null) {
+          // A canvas of another kind of context: drawn onto a 2D canvas of its size, and read there.
+          const copy =
+            typeof OffscreenCanvas === 'function'
+              ? new OffscreenCanvas(width, height)
+              : Object.assign(document.createElement('canvas'), { width, height });
+          context = copy.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+          if (context === null) throw invalid();
+          context.drawImage(source, 0, 0);
+        }
+        return leasePixels(width, height, context.getImageData(0, 0, width, height).data);
       },
       toStage(clientX: number, clientY: number) {
         const box = canvas.getBoundingClientRect();

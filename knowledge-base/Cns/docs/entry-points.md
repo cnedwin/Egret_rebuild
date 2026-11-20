@@ -25,7 +25,7 @@
 | ……并查看每秒帧数和一帧的内容 | `createBrowserStatsPanel`，或 `stats: true` | `@egret/engine/web/game` |
 | 显示器每显示一帧就驱动一次游戏 | `createBrowserFrameLoop` | `@egret/engine/web/loop` |
 | 按动作读取输入、改键、存档、可复现的随机数、触屏控件 | [`createInputActions`、`createSaveStore`、`createRandom`、`bindBrowserInputActions`、`createTouchStick`](game-kit.md) | `@egret/engine/kit`、`@egret/engine/web/kit` |
-| 把图片加载为纹理 | `createBrowserGame` 的 `game.loadTexture(url)`；确切的 PNG 用 `createBrowserTextureProvider`；任意图片或画好的画布用 [`decodeBrowserImage` 和 `textureFromCanvas`](browser-images.md) | `@egret/engine/web/game`、`@egret/engine/web/image`、`@egret/engine/web/kit` |
+| 把图片加载为纹理 | `createBrowserGame` 的 `game.loadTexture(url)`（代码画出的贴图用 `game.textureFromCanvas`、`game.textureFromPixels`）；确切的 PNG 用 `createBrowserTextureProvider`；任意图片或画好的画布用 [`decodeBrowserImage` 和 `textureFromCanvas`](browser-images.md) | `@egret/engine/web/game`、`@egret/engine/web/image`、`@egret/engine/web/kit` |
 | 从构建好的清单加载图集、序列帧和字体 | `createContentLoader`、`createFontContentLoader`、`createManifestAssetBinding` | `@egret/engine/resources` |
 | ……并在页面中取回它们的字节 | `createManifestByteSource`、`createManifestFontContentLoader` | `@egret/engine/web/resources` |
 | 播放序列帧 | `createSequenceController`、`createSequenceResetSlot` | `@egret/engine/animation` |
@@ -57,7 +57,7 @@
 | 供辅助技术使用的角色和名称 | `createUiSemantics`、`createUiListSemantics` | `@egret/engine/ui/semantics` |
 | ……投射到页面 | `createBrowserSemantics` | `@egret/engine/web/semantics` |
 | 声音：音乐、音效、分组、淡入淡出 | `createAudioMixer` | `@egret/engine/audio` |
-| ……由 Web Audio 播放 | `createBrowserAudio` | `@egret/engine/web/audio` |
+| ……由 Web Audio 播放 | `createBrowserAudio`；用 `createAudioMixer` 自建混音器时用 `createWebAudioBackend` | `@egret/engine/web/audio` |
 | 显示对象上的视频 | `createVideo` | `@egret/engine/video` |
 | ……来自视频元素、文件或流 | `createBrowserVideo` | `@egret/engine/web/video` |
 | 混合模式和滤镜 | 显示对象上的 `blendMode` 和 `renderEffect` | `@egret/engine` |

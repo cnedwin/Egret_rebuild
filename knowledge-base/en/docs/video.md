@@ -22,7 +22,7 @@ function frame() { void intro.update(); engine.renderSharedFrame(frameOptions); 
 | Browser option | Meaning | Default |
 | --- | --- | --- |
 | `assets` | The Engine's assets | — |
-| `src`, `stream`, `element` | One of: a file's address, a `MediaStream`, or a video element of the page's own (left as it was when the video is disposed) | — |
+| `src`, `stream`, `element` | One of: a file's address, a `MediaStream`, or a video element of the page's own (left as it was when the video is disposed). `src` may also be a list of the same film in several files, such as `['intro.webm', { src: 'intro.mp4', type: 'video/mp4' }]`: they become `<source>` elements, the first the browser can play is played, and one that fails to load gives way to the next. A `type` lets the browser pass over a file it cannot play without loading it | — |
 | `loop`, `muted`, `volume` | Passed to the element | false, true, 1 |
 | `maxWidth` | Pictures wider than this are scaled down before they become textures | 1280 |
 | `crossOrigin` | For a file from another origin that allows it | none |

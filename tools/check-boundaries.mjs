@@ -95,8 +95,8 @@ const m15DeepClauses = {
 "packages/engine/web/world3d/app3D.ts":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
 "packages/engine/dist/web/world3d/app3D.js":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"}],
 "packages/engine/dist/web/world3d/app3D.d.ts":[{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
-"packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
-"packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"}],
+"packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","createImageData2D","createTexture","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","createImageData2D","createTexture","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"}],
 "packages/engine/dist/web/BrowserGame.d.ts":[{"operation":"import","kind":"type","members":["AssetLease","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","Texture"],"target":"@egret/engine"}],
 "packages/engine/web/BrowserStatsPanel.ts":[{"operation":"import","kind":"type","members":["SharedRenderFrame2D"],"target":"@egret/engine"}],
 "packages/engine/dist/web/BrowserStatsPanel.d.ts":[{"operation":"import","kind":"type","members":["SharedRenderFrame2D"],"target":"@egret/engine"}],
@@ -5398,9 +5398,9 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./image.js','./text.js','./BrowserStatsPanel.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
+const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./text.js','./BrowserStatsPanel.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],
- 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./BrowserStatsPanel.js','@egret/engine','@egret/engine/text'],
+ 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','@egret/engine','@egret/engine/text'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};
 for(const [file,expected] of Object.entries(gameImports)){
  const body=uiRead('packages/engine/'+file),observed=[...new Set(uiGraphEdges(body).map(([,target])=>target))];
@@ -5478,7 +5478,7 @@ for(const [file,values,types] of [['packages/engine/src/video.ts',videoValues,vi
  if(!mouseSame(surface.values,values)||!mouseSame(surface.types,types))throw new Error('Video: exact entry exports mismatch: '+file);
 }
 if(!mouseSame(Object.keys(await import('@egret/engine/video')),videoValues))throw new Error('Video: optional runtime values mismatch');
-for(const [file,types] of [['packages/engine/web/video.ts',['BrowserVideo','BrowserVideoOptions']],['packages/engine/dist/web/video.js',[]],['packages/engine/dist/web/video.d.ts',['BrowserVideo','BrowserVideoOptions']]]){
+for(const [file,types] of [['packages/engine/web/video.ts',['BrowserVideo','BrowserVideoOptions','BrowserVideoSource']],['packages/engine/dist/web/video.js',[]],['packages/engine/dist/web/video.d.ts',['BrowserVideo','BrowserVideoOptions','BrowserVideoSource']]]){
  const surface=mouseExports(uiRead(file),file);
  if(!mouseSame(surface.values,['createBrowserVideo'])||!mouseSame(surface.types,types))throw new Error('Video: exact browser entry exports mismatch: '+file);
 }
@@ -5555,16 +5555,16 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
 // mixer is built on the runtime alone, the browser module on the mixer entry alone, neither starts
 // a timer or a request, and no other entry has either.
 const audioTypes=['AudioBackend','AudioBackendBus','AudioBackendSound','AudioBackendStart','AudioBackendVoice','AudioBus','AudioBusOptions','AudioBusSnapshot','AudioEndReason','AudioFade','AudioMixer','AudioMixerOptions','AudioMixerSnapshot','AudioMixerState','AudioMusicOptions','AudioPlayOptions','AudioSound','AudioVoice','AudioVoiceState'];
-const audioBrowserTypes=['BrowserAudio','BrowserAudioOptions'];
+const audioBrowserTypes=['BrowserAudio','BrowserAudioOptions','WebAudioBackend','WebAudioBackendOptions'],audioBrowserValues=['createBrowserAudio','createWebAudioBackend'];
 for(const [file,value,types] of [['packages/engine/src/audio.ts','createAudioMixer',audioTypes],['packages/engine/dist/audio.js','createAudioMixer',[]],['packages/engine/dist/audio.d.ts','createAudioMixer',audioTypes],
- ['packages/engine/web/audio.ts','createBrowserAudio',audioBrowserTypes],['packages/engine/dist/web/audio.js','createBrowserAudio',[]],['packages/engine/dist/web/audio.d.ts','createBrowserAudio',audioBrowserTypes]]){
+ ['packages/engine/web/audio.ts',audioBrowserValues,audioBrowserTypes],['packages/engine/dist/web/audio.js',audioBrowserValues,[]],['packages/engine/dist/web/audio.d.ts',audioBrowserValues,audioBrowserTypes]]){
  const surface=mouseExports(uiRead(file),file);
- if(!mouseSame(surface.values,[value])||!mouseSame(surface.types,types))throw new Error('Audio: exact entry exports mismatch: '+file);
+ if(!mouseSame(surface.values,Array.isArray(value)?value:[value])||!mouseSame(surface.types,types))throw new Error('Audio: exact entry exports mismatch: '+file);
 }
-if(!mouseSame(Object.keys(await import('@egret/engine/audio')),['createAudioMixer'])||!mouseSame(Object.keys(await import('@egret/engine/web/audio')),['createBrowserAudio']))throw new Error('Audio: optional runtime values mismatch');
+if(!mouseSame(Object.keys(await import('@egret/engine/audio')),['createAudioMixer'])||!mouseSame(Object.keys(await import('@egret/engine/web/audio')),audioBrowserValues))throw new Error('Audio: optional runtime values mismatch');
 for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
- for(const name of [...audioTypes,...audioBrowserTypes,'createAudioMixer','createBrowserAudio'])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Audio: leaked to default/other entry: '+label+'/'+name);
+ for(const name of [...audioTypes,...audioBrowserTypes,'createAudioMixer',...audioBrowserValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Audio: leaked to default/other entry: '+label+'/'+name);
 }
 const audioImports={
  'src/audio.ts':['./audioMixer.js','./audioTypes.js'],

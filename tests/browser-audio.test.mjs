@@ -4,7 +4,8 @@
 // that, and what is heard, is checked separately.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createBrowserAudio } from '@egret/engine/web/audio';
+import { createBrowserAudio, createWebAudioBackend } from '@egret/engine/web/audio';
+import { createAudioMixer } from '@egret/engine/audio';
 import { spawnSync } from 'node:child_process';
 
 const coded = code => error => error?.code === code;
@@ -1025,9 +1026,12 @@ test('BA23 a strict consumer compiles against both entries, and eleven misuses a
   assert.equal(result.status, 0, result.stdout + result.stderr);
 });
 
-test('BA24 each entry exports its factory and nothing else, and no other entry has either', async () => {
+test('BA24 each entry exports its factories and nothing else, and no other entry has either', async () => {
   assert.deepEqual(Object.keys(await import('@egret/engine/audio')), ['createAudioMixer']);
-  assert.deepEqual(Object.keys(await import('@egret/engine/web/audio')), ['createBrowserAudio']);
+  assert.deepEqual(Object.keys(await import('@egret/engine/web/audio')).sort(), [
+    'createBrowserAudio',
+    'createWebAudioBackend'
+  ]);
   for (const entry of [
     '@egret/engine',
     '@egret/engine/input',
@@ -1040,7 +1044,7 @@ test('BA24 each entry exports its factory and nothing else, and no other entry h
     '@egret/runtime'
   ]) {
     const values = await import(entry);
-    for (const name of ['createAudioMixer', 'createBrowserAudio'])
+    for (const name of ['createAudioMixer', 'createBrowserAudio', 'createWebAudioBackend'])
       assert.equal(name in values, false, entry + ' has ' + name);
   }
 });
@@ -1465,3 +1469,31 @@ test('BA32 a limiter sits between the master volume and the speakers when asked 
     { create: false }
   );
 });
+
+test('BA33 the Web Audio backend alone: a mixer the page makes on it is locked and unlocked as one made by createBrowserAudio is', async () =>
+  fixture(
+    async ({ world, document, Context, fire, hide }) => {
+      const backend = createWebAudioBackend({ context: new Context() });
+      assert.equal(backend.locked, true);
+      assert.equal(backend.output, undefined);
+      const mixer = createAudioMixer({ backend, locked: backend.locked });
+      // The mixer made its master bus: that is the output.
+      assert.ok(backend.output !== undefined);
+      assert.equal(mixer.state, 'locked');
+      // Nothing is listened for until the mixer is attached.
+      assert.equal(world.listeners.length, 0);
+      backend.attach(mixer);
+      assert.ok(world.listeners.length > 0);
+      assert.throws(() => backend.attach(mixer), coded('AUDIO_OPTIONS_INVALID'));
+      fire(document, 'click');
+      await settled();
+      assert.equal(mixer.state, 'running');
+      assert.equal(backend.locked, false);
+      hide();
+      assert.equal(mixer.state, 'suspended');
+      mixer.dispose();
+      assert.throws(() => createWebAudioBackend(null), coded('AUDIO_OPTIONS_INVALID'));
+      assert.throws(() => createWebAudioBackend({ limiter: 'loud' }), coded('AUDIO_OPTIONS_INVALID'));
+    },
+    { create: false }
+  ));
