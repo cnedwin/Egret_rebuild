@@ -153,6 +153,24 @@ The largest application PSS sample was slightly higher with the new encoder for 
 
 The Fold7 also exercised cancellation and view closure during the second chunk, then checked the retry and reopened game. The record lists per-launch measurements, asset identities, resource counts and pixel comparisons. [Measurement record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-chunk-throughput.json)
 
+### WebView chunk delivery on Galaxy Z Fold7
+
+The Android player retains synchronous retrieval of Base64 chunks for WebView. Three alternatives delivered the correct bytes but took longer to read the complete file. This comparison used the player from [PR #398](https://github.com/cnedwin/Egret_rebuild/pull/398) as its baseline.
+
+On a Galaxy Z Fold7 running Android 17 and System WebView 157.0.8103.50, the test read the same 8,388,645-byte packaged level in 128 full 64 KiB chunks and one 37-byte tail. Two instrumented launches measured 46.75 and 44.35 ms per file across 129 synchronous result calls. Java spent 0.187 and 0.194 ms respectively retrieving the results, including entry to the reader lock. In a separate control with the same call count, returning strings of the actual chunk lengths cost 24.7 and 23.8 ms more per file than returning four-character strings. This establishes that return size matters. The share of time spent on copying, conversion and scheduling inside Chromium remains unknown.
+
+Each pair used fresh processes on the same device with identically signed, non-debuggable APKs and the same game script on both sides. After three warm-up reads, each process timed nine reads through EOF and verified every byte outside the timed interval. The timings below are per-process medians in milliseconds per file. Each arrow runs from that pair’s #398 baseline to its candidate.
+
+| Candidate | Paired results | Reason for retaining the existing path |
+| --- | --- | --- |
+| Send each Base64 chunk in a window message | 102.3 → 158.0, 114.1 → 162.6, 112.8 → 167.5, 112.4 → 195.8 | All 129 chunks arrived with zero synchronous retrievals. Throughput fell from 71.05 to 48.48 MiB/s, with a median paired change of −34.0%. Separate probes measured about 24 ms per file constructing the messages and 58–59 ms calling Android to post them. The extra delay accumulated before JS received them. |
+| Return a string with one code unit per byte | 113.8 → 230.3 and 111.6 → 234.9 | All byte values survived, including embedded NULs. On the original level, synchronous retrieval rose from 50.2 to 134.9 ms and JS decoding from 10.3 to 35.6 ms. A separate pair on a high-entropy file of the same size took 106.5 → 275.5 ms. |
+| Hand off one private message port per stream | 117.3 → 148.9 and 106.0 → 167.4 | Each file used one port handoff and 129 payloads, avoiding a request ID on every chunk. Throughput still fell by 21.2% and 36.7% in opposite run orders. |
+
+Only the window-message candidate proceeded to the full memory and lifecycle comparison. Each version ran two independent windows of 96 consecutive reads, retaining just the current chunk. Observed peak PSS rose from 204,072 to 231,749 KiB in the app and from 67,918 to 168,191 KiB in the WebView renderer. These are separate process samples whose peaks can occur at different times.
+
+Both versions passed cancellation and view closure after 73,728 bytes had been read, with exactly one stream close in each case. Retry and reopen returned the complete file. The initial and reopened game surfaces each matched all 2,073,600 expected pixels. Standard and trimmed V8 retain their device results from #398. [Three-host baseline measurements](https://github.com/cnedwin/Egret_rebuild/blob/c9b3db2502eb9c311ab8108d1ac324b64eb9db2f/runtime-sdk/measurements/fold7-project-chunk-throughput.json)
+
 ## Embed in an existing Activity
 
 Copy the AAR to the app module's `libs/egret-player.aar` and add `implementation files('libs/egret-player.aar')` to its Gradle dependencies. Export into a fresh directory under that module's assets. Replace the example paths with the existing module, game and bundler locations.
