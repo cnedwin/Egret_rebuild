@@ -245,6 +245,23 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       write(file, readFileSync(path.join(root, file), 'utf8') + "export {createSpriteSheet} from '@egret/runtime';\n" + (file.endsWith('.js') ? '' : "export type {SpriteSheet,SpriteSheetFrameInput} from '@egret/runtime';\n"));
     for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
       write(file, readFileSync(path.join(root, file), 'utf8') + "export {createSpriteSheet} from '../../../packages/runtime/dist/spriteSheet.js';\n");
+    // EC1 baseline is an inert policy surface for Egret 5's geometry classes, Shape and the clock timers; it
+    // carries none of their behavior. Both synthetic roots share these sole values.
+    const geometryFixtureTypes = 'export declare class Point {}\nexport declare class Rectangle {}\nexport declare class Matrix {}\nexport declare class Shape {}\nexport interface RectangleLike {}\nexport interface MatrixLike {}\n';
+    const geometryFixtureBody = 'export class Point {}\nexport class Rectangle {}\nexport class Matrix {}\nexport class Shape {}\n';
+    write('packages/runtime/src/geometry.ts', geometryFixtureTypes);
+    write('packages/runtime/dist/geometry.d.ts', geometryFixtureTypes);
+    write('packages/runtime/dist/geometry.js', geometryFixtureBody);
+    for (const file of ['packages/runtime/src/index.ts', 'packages/runtime/dist/index.js', 'packages/runtime/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {Point,Rectangle,Matrix,Shape} from './geometry.js';\n" + (file.endsWith('.js') ? '' : "export type {RectangleLike,MatrixLike} from './geometry.js';\n"));
+    const timerFixtureTypes = 'export interface Timer {}\nexport interface Delayed {}\nexport declare function createTimer(): Timer;\nexport declare function after(): Delayed;\n';
+    write('packages/engine/src/timer.ts', timerFixtureTypes);
+    write('packages/engine/dist/timer.d.ts', timerFixtureTypes);
+    write('packages/engine/dist/timer.js', 'export function createTimer() {}\nexport function after() {}\n');
+    for (const file of ['packages/engine/src/index.ts', 'packages/engine/dist/index.js', 'packages/engine/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {Point,Rectangle,Matrix,Shape} from '@egret/runtime';\nexport {createTimer,after} from './timer.js';\n" + (file.endsWith('.js') ? '' : "export type {RectangleLike,MatrixLike} from '@egret/runtime';\nexport type {Timer,Delayed} from './timer.js';\n"));
+    write('node_modules/@egret/runtime/index.js', readFileSync(path.join(root, 'node_modules/@egret/runtime/index.js'), 'utf8') + "export {Point,Rectangle,Matrix,Shape} from '../../../packages/runtime/dist/geometry.js';\n");
+    write('node_modules/@egret/engine/index.js', readFileSync(path.join(root, 'node_modules/@egret/engine/index.js'), 'utf8') + "export {Point,Rectangle,Matrix,Shape} from '../../../packages/runtime/dist/geometry.js';\nexport {createTimer,after} from '../../../packages/engine/dist/timer.js';\n");
     // WC1 baseline only: exact opt-in surfaces let retained policy mutants run.
     // The inert synthetic factory reports Node unavailability; it provides no
     // native Canvas, genuine resource, font, TextField or rendering evidence.

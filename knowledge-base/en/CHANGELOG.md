@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Egret 5 code finds more of what it used — 2026-11-20
+
+`createTimer(engine, scope, seconds, repeatCount)` and `after(engine, scope, seconds, fn)` stand for Egret's Timer and setTimeout, on the Engine's clock: they hold while it is paused, end with their scope, and make every call a long frame owes. `Shape` is the `Sprite`. `Point`, `Rectangle` and `Matrix` are classes with Egret's methods, and each is also the plain object the engine takes. A node used as a shape mask is not drawn while it masks, as in Egret.
+
 ## Masks of shapes and lines of gradients — 2026-11-20
 
 `renderEffect = { shapeMask: sprite }` masks a node by the shape of a Sprite's Graphics, as Egret 5's `mask = displayObject` did, faded where it is translucent and placed as if it were a child of the node. It is drawn on the CPU as an image of its alpha and kept while it stays the same, then masks as an `alphaMask` does on both shared hosts. Lines take gradients: `lineGradientStyle` with Egret's arguments, `lineLinearGradientStyle` and `lineRadialGradientStyle`, cut as gradient fills are. `createBrowserGame({ effects: true })` turns render effects on for a game. `examples/vector-mask` compares both with the page's own 2D canvas: on WebGL2 with software rendering every point is within 8 of it. WebGPU pixels await a hardware run.

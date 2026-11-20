@@ -39,7 +39,7 @@ window.x = 40;                                    // the mask moves; the next fr
 ```
 
 - The mask is placed as if it were a child of the masked node: its `x`, `y`, scale, rotation and skew count; its alpha and visibility do not. Only its own drawing counts, not its children's.
-- It need not be on the stage. If it is, it is drawn there too, as in Egret where a mask on the stage was hidden: take it off the stage if it should not show.
+- It need not be on the stage. If it is, it is not drawn there while it masks, as in Egret; once no node takes it as a mask it is drawn again.
 - It is drawn on the CPU as an image of its alpha, at twice the size the masked node is seen at, up to 2,048 pixels a side, and that image masks as an `alphaMask` does. It is drawn again when the mask's drawing or place changes, or when the node's size on the screen changes by more than a step of a fifth or so; otherwise the same image is used. A mask that is redrawn every frame costs a new image every frame.
 - One effect has an `alphaMask` or a `shapeMask`. It can share the effect with a blur, a colour matrix, a glow or an outline. A mask that draws nothing hides everything.
 - `createBrowserGame({ effects: true })` makes a game's host with effects on.

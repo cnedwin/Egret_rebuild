@@ -51,7 +51,10 @@ export type {
 } from '@egret/contracts';
 export { AssetManager, AssetLease, createAssetType, createAssetRef } from '@egret/runtime';
 export type { AssetProvider, AssetAcquireOptions, AssetLoadContext, AssetType, AssetRef } from '@egret/runtime';
-export { Sprite, Graphics } from '@egret/runtime';
+export { Sprite, Graphics, Shape, Point, Rectangle, Matrix } from '@egret/runtime';
+export type { RectangleLike, MatrixLike } from '@egret/runtime';
+export { createTimer, after } from './timer.js';
+export type { Timer, Delayed } from './timer.js';
 export type { Matrix2D, Rectangle2D, ClipRectangle2D } from '@egret/contracts';
 export { IMAGE_LIMITS_2D, createImageData2D, isImageData2D, copyImageData2DPixels } from '@egret/contracts';
 export type { ImageData2DInput, ImageData2D, TextureRegion2D } from '@egret/contracts';

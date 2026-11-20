@@ -24,6 +24,10 @@ export { AssetLease } from "./AssetLease.js";
 export { createAssetType, createAssetRef } from "./AssetRef.js";
 export type { AssetType, AssetRef } from "./AssetRef.js";
 export { Sprite } from "./Sprite.js";
+// Egret 5's Shape is a Sprite here: it has graphics, and may hold children too.
+export { Sprite as Shape } from "./Sprite.js";
+export { Point, Rectangle, Matrix } from "./geometry.js";
+export type { RectangleLike, MatrixLike } from "./geometry.js";
 export { Graphics } from "./Graphics.js";
 export type { LineStyleOptions, GradientColorStop, GradientBoxMatrix } from "./Graphics.js";
 export { collectSharedFrameContent } from "./sharedFrameCapture.js";

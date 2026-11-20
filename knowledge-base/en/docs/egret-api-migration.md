@@ -25,7 +25,8 @@ Five things change in every file. Knowing them saves most of the guessing.
 | `stage.stageWidth`, `stage.stageHeight` | The `width` and `height` you gave | The stage has a fixed size in its own units |
 | `scaleMode` in `index.html` | `fit` of `createBrowserGame`: `'contain'` (showAll), `'cover'` (noBorder), `'stretch'` (exactFit) | The stage keeps its size in its own units; modes that change the stage's size are not there. `orientation` is the page's to set |
 | `egret.startTick(fn)`, `Event.ENTER_FRAME` | `update(seconds)` of `createBrowserGame` or of [the frame loop](frame-loop.md) | `seconds` is the time since the step before, at most 0.1 |
-| `egret.Timer`, `egret.setTimeout` | Count seconds in `update`, or the page's own `setTimeout` | No timer class |
+| `new egret.Timer(1000, 5)` with `TimerEvent.TIMER` and `TIMER_COMPLETE` | `createTimer(engine, scope, 1, 5).onTimer(count => …).onComplete(() => …).start()` | From `@egret/engine`. Seconds, not milliseconds. It runs on the Engine's clock, so it holds while the clock is paused, and ends with its scope. `stop`, `reset`, `delay`, `repeatCount`, `currentCount` and `running` are there. A frame longer than the delay makes every call it owes |
+| `egret.setTimeout(fn, this, 500)`, `egret.clearTimeout(key)` | `const later = after(engine, scope, 0.5, fn)`; `later.cancel()` | From `@egret/engine`, on the Engine's clock |
 | `egret.getTimer()` | `performance.now()`, or sum the `seconds` of `update` | |
 | `egret.log` | `console.log` | |
 
@@ -34,21 +35,21 @@ Five things change in every file. Knowing them saves most of the guessing.
 | Egret 5 | Now | Notes |
 | --- | --- | --- |
 | `egret.DisplayObjectContainer` | `DisplayObjectContainer` | `addChild`, `addChildAt`, `removeChild`, `removeChildren`, `getChildAt`, `getChildIndex`, `setChildIndex`, `numChildren` are there |
-| `egret.Sprite`, `egret.Shape` | `Sprite` | There is no `Shape`. A `Sprite` has `graphics` and can hold children |
+| `egret.Sprite`, `egret.Shape` | `Sprite`, or `Shape`, which is the same class | A `Sprite` has `graphics` and can hold children |
 | `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`, `visible`, `anchorOffsetX`, `anchorOffsetY` | The same names | `rotation` is in degrees, as before |
 | `width`, `height` | The same names | The size on the parent: what the object and its children draw, times the scale. Setting one sets `scaleX` or `scaleY`; an object that draws nothing refuses a size (`DISPLAY_SIZE_UNAVAILABLE`) |
 | `skewX`, `skewY` | The same names, in degrees | |
 | `name`, `getChildByName` | The same names | `getChildByName` looks at direct children |
 | `removeChildAt`, `swapChildren`, `contains` | `removeChild(getChildAt(i))`; `setChildIndex`; walk `parent` | |
 | `mask = rectangle`, `scrollRect` | `clipRect = { x, y, width, height }` | A rectangle in the object's own units |
-| `mask = displayObject` | `renderEffect = { shapeMask: sprite }` | The sprite's Graphics masks the node, faded where they are translucent, placed as if it were a child of the node. It needs a host with effects on, as [filters](filters.md) do |
+| `mask = displayObject` | `renderEffect = { shapeMask: sprite }` | The sprite's Graphics masks the node, faded where they are translucent, placed as if it were a child of the node. While it masks it is not drawn, as before. It needs a host with effects on, as [filters](filters.md) do |
 | `blendMode` | `blendMode`: `'normal'`, `'add'`, `'multiply'`, `'screen'`, `'erase'` | See [blend modes](blend-modes.md) |
 | `filters = [new egret.GlowFilter(...)]` | `renderEffect` | See [filters](filters.md) for which effects there are |
 | `cacheAsBitmap` | Not there | |
 | `touchEnabled`, `touchChildren` | The same names | A touch enabled object is hit on what it draws: its shapes' triangles, its rectangles, its bitmap's rectangle. `hitArea`, when set, is used instead |
 | `hitTestPoint` | `stage.hitTest(x, y)` | |
 | `localToGlobal`, `globalToLocal` | The same names | They return `{ x, y }` |
-| `egret.Point`, `egret.Rectangle`, `egret.Matrix` | Plain objects: `{ x, y }`, `{ x, y, width, height }` | No classes |
+| `egret.Point`, `egret.Rectangle`, `egret.Matrix` | `Point`, `Rectangle`, `Matrix` from `@egret/engine` | Their methods as before: `clone`, `distance`, `polar`, `contains`, `intersection`, `union`, `concat`, `invert`, `rotate`, `transformPoint`, `createGradientBox` and the rest. Angles in radians. Each is also a plain object the engine takes, `{ x, y }`, `{ x, y, width, height }` or `{ a, b, c, d, tx, ty }`, so it can be passed where one is asked for |
 
 ## Drawing
 
