@@ -19,6 +19,8 @@ Keep each contribution focused. Explain the problem, resulting behavior, affecte
 
 Use Issues and PRs for repository contributions. A proposal's recorded status changes only after review; a draft or successful build is not a completed product feature. Maintain technical discussion around the problem, evidence and tradeoffs.
 
+A change that readers should hear of adds its changelog entry as a file, `changes/<name>.json`, rather than editing the two changelogs: `{ "date": "YYYY-MM-DD", "en": { "title", "body" }, "zh": { "title", "body" } }`. Two pull requests then never write the same lines. `node tools/changelog.mjs` checks the waiting entries, and the tests run it; `node tools/changelog.mjs --fold` moves them into both changelogs, newest first, in a change of its own.
+
 ## Reproducing existing core checks
 
 Use Node.js 26.7.0, pnpm 11.25.0 and TypeScript 7.0.2. From the repository root:

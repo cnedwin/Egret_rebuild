@@ -19,6 +19,7 @@ Earlier version labels identify engineering checkpoints. The workspace packages 
 ## Blend space: translucent colours that mix as in a 2D canvas — 2026-11-20
 
 A Host takes `blendSpace: 'srgb'`, which every frame of its Engine records, to mix translucent draws by their stored colour codes, as a 2D canvas and Egret 5 do, instead of in linear light: white at 10% over a dark ground stays a faint white. Each draw's colour is unchanged; working targets become RGBA8 codes on WebGL2 and WebGPU, the clear colour and glow colours are codes, the colour matrix of an effect skips the transfer, and the resolve copies codes. `createBrowserGame` and the World3D overlay take the option; `play()` and Play3D's interface use `'srgb'` unless given `'linear'`. The engine's default stays `linear`, so existing pictures do not change. `examples/blend-space` compares both spaces with the page's own 2D canvas: on WebGL2 with software rendering every `srgb` square is within 1 of the canvas. WebGPU pixels await a hardware run.
+
 ## Play after a fifth round: long boxes of words, and what the page left to guessing — 2026-11-20
 
 A box of words whose words do not fit goes on in further boxes instead of spilling out of its panel, with any answers on the last. `llms.txt` now says: declare what the game uses above `await play` (setup runs before it ends); `music.play` takes one object for more; the form of a jingle and of a tone; where `drawEllipse` is placed; that `bar` takes a layer; that boxes do not pause the game; and that the controls on the glass appear on a first touch and go with a restart. These are the gaps three agents writing story games from the page reported.
@@ -34,6 +35,7 @@ A box of words whose words do not fit goes on in further boxes instead of spilli
 ## Play: menus, boxes of words, bars and notices — 2026-11-20
 
 `game.say` shows words letter by letter in a box at the bottom, with a name and answers to choose; `game.menu` gives the item chosen; `game.bar` slides to its value and leaves a trail after a fall; `game.toast` shows a notice that fades; `game.asking` tells an update a box or menu is open. All answer keys, a stick, the pointer and a finger, work while paused, and may be awaited in `setup`, whose frames are now drawn while it waits. New example: `examples/play/story.mjs`, played to its end by the example's check.
+
 ## Smaller copies of pictures drawn small (mipmaps) — 2026-11-20
 
 A material with `mipmapFilter: 'linear'` (and the linear filter) samples a picture drawn smaller than its texels from smaller copies of its page, blended between the two nearest. The engine makes the copies when a frame first samples a page this way, in the page's own encoding, and both Hosts upload every level. A region of a shared atlas page reads only the copies on which its edges halve exactly, so no neighbour's colour enters it. Example: `examples/mipmaps`, checked on WebGL2 with software rendering; WebGPU awaits hardware.
@@ -97,6 +99,7 @@ Ten games were written from `llms.txt` alone; nine ran as first written and none
 ## Draw a shape whose scale passes through nothing — 2026-11-17
 
 A tween of `scaleX` or `scaleY` to 0, as a card turning over makes, ends on a rounding error before it ends on 0. A circle, a rounded rectangle, an ellipse or a line at such a scale is thinner than any pixel, the rounding of its corners turned some of its triangles over, and preparation refused them with `precision`: the frame failed with `FRAME_RENDER_FAILED` and the game's loop stopped. Such a triangle is now left out and the frame is drawn. A plain rectangle was not affected.
+
 ## Draw shapes without sampling their white pixel on WebGL2 — 2026-11-17
 
 A Graphics shape that is not a plain rectangle (a circle, a rounded rectangle, a polygon, a line) is triangles over one white pixel, and the WebGL2 host drew it with the program that samples an image: four fetches and four colour decodes for every pixel, to read 1. It now draws such a shape with the program of a rectangle, which samples nothing. The picture is the same to the byte. On software WebGL2 in headless Chromium, 64 rounded rectangles went from 19 to 60 frames a second, and generated games made of shapes from 7 to 26 and from 11 to 37. A real GPU was not measured, and the WebGPU host is as it was.
@@ -108,6 +111,7 @@ A Graphics shape that is not a plain rectangle (a circle, a rounded rectangle, a
 ## Play: a whole small game from one call — 2026-11-17
 
 New entry `@egret/engine/play`. `play({ width, height, setup, update })` makes the canvas, fits it to the page and starts updates when `setup` has finished. The game it gives has keys and a pointer to ask each frame, twelve sound effects made in code and `sfx.define` for more, `overlaps` and `hits`, `after` and `every`, text that can be centred and changed at once, tweens that start by themselves, `burst`, `shake`, `flash`, `hitStop`, a scrolling `view`, repeatable random numbers and `save`/`load`. It is built on the browser game, audio and kit entries, which it leaves open through `game.browser`.
+
 ## Hold an alpha to 0 and 1 instead of refusing it — 2026-11-17
 
 An alpha outside 0 to 1 is now held to the nearer end, on a display object and in a Graphics fill, line and gradient stop. It used to throw `DISPLAY_VALUE_INVALID` or `GRAPHICS_VALUE_INVALID`, and inside an update that stopped the game's loop: a fade that ran one step long was enough. What is not a finite number is still refused. `animate` no longer treats a property named `alpha` specially.
@@ -127,6 +131,7 @@ World3D lights up to 256 further point lights per frame by screen tile (tiled fo
 ## Retarget World3D animation between rigs — 2026-11-17
 
 `retargetAnimationClip3D` plays one rig's clip on another of other proportions and other bone axes: each bone's turn away from rest is carried over in rig space, and the root's travel is scaled by height. [World3D animation](docs/world3d.md#animation)
+
 ## The engine's 2D interface over a World3D scene — 2026-11-17
 
 `createWorld3DOverlay(canvas, { width, height })` lays a transparent 2D stage over a World3D canvas and starts it with `createBrowserGame`, so menus, bars, text and controls draw with the engine's 2D stage on top of the scene. Presses on `touchEnabled` 2D nodes go to the interface; presses, drags, wheels and hovers where the interface is empty go on to the 3D canvas. [A 3D game in one call](docs/world3d-app.md)
@@ -138,12 +143,15 @@ World3D lights up to 256 further point lights per frame by screen tile (tiled fo
 ## Draw transforms that are all but the identity — 2026-11-17
 
 A display transform whose numbers fall below 2^-100, as from a shake that has died away, was refused by both shared Hosts with `WEBGL2_GEOMETRY_RANGE` or `WEBGPU_GEOMETRY_RANGE`. Such magnitudes are now taken as zero while the geometry is prepared; numbers that are not finite or are beyond 2^20 are still refused.
+
 ## Start a World3D game in one call; models, markers and a readout — 2026-11-17
 
 `createWorld3DApp(canvas, options)` chooses WebGL2 or WebGPU from the address and falls back to WebGL2 when WebGPU has no adapter. It picks a low, medium or high picture quality from the address, a stored choice or the device, makes the Engine, renderer and loop, and lowers the drawing resolution while frames are slow. `pickWorld3DQuality`, `pickWorld3DBackend`, `WORLD3D_QUALITY_PRESETS` and `createDynamicResolution3D` are available on their own. `createGeometryBuilder3D` merges placed, coloured parts into one geometry; `createScreenMarkers3D` keeps page elements on scene points, clinging to the screen edge where asked; `createWorld3DStats` shows a performance readout. [A 3D game in one call](docs/world3d-app.md)
+
 ## Input by action, versioned saves, repeatable random numbers, sound cues and touch controls — 2026-11-17
 
 `@egret/engine/kit` adds `createInputActions` (buttons, axes and vectors over keys, mouse buttons, gamepad buttons and sticks and on-screen controls, with rebinding and saved bindings), `createSaveStore` (a versioned save with migrations that never throws for a full or missing storage) `createRandom` (seeded sfc32 with forks and saved state), `createAudioCues` (named effects that rotate takes, vary pitch, cool down and cap their voices) `encodeWav` for synthesised sounds, and `writeAssetBundle` with `openBrowserAssetBundle` for many assets in one file read by byte ranges. `tools/vendor-game.mjs` copies the files a game's entries load into its folder, with an import map and a Node loader. `createBrowserAudio` takes `limiter`. `@egret/engine/web/kit` adds `bindBrowserInputActions`, `createTouchStick`, `createTouchButton` and `browserSaveStorage`. [The game kit](docs/game-kit.md)
+
 ## Pictures as textures in any browser; catch-up steps in the frame loop — 2026-11-17
 
 The new entry `@egret/engine/web/kit` holds a forgiving picture route beside the strict PNG provider of `@egret/engine/web/image`. `decodeBrowserImage` takes PNG, JPEG, WebP, GIF and AVIF bytes, decodes them with the browser, falls back to an image element where `createImageBitmap` refuses, and scales pictures larger than the 2D limits down instead of refusing them. `textureFromCanvas` turns a painted canvas into a texture, and `createBrowserImageTextureProvider` registers the route as an asset provider. `createBrowserFrameLoop` takes `catchUpSeconds`: a slow frame is played back as several steps before one draw. [Pictures as textures](docs/browser-images.md) · [The frame loop](docs/frame-loop.md)
@@ -179,9 +187,11 @@ On an iPhone 16 Pro Max with iOS and Safari 27.2, the original Lantern Shadows b
 ## Spine: atlas pages stored premultiplied are admitted — 2026-11-16
 
 An atlas page declared `pma: true`, which is how Spine's texture packer exports by default, was refused with `SPINE_PAGE_ALPHA_PROFILE_FAILED`. The loader now makes a straight copy of such a page and draws from it: each of red, green and blue is divided by alpha and rounded, and a pixel of alpha 0 becomes transparent black. The copy is charged to the setup at four bytes a pixel, shared by the groups that share the setup, and released with it. `info.pages[i].sourcePremultiplied` is now a boolean that says which pages were copied; it was always `false`. Light that a premultiplied page adds where its alpha is zero is not kept, and the rule has first-party tests only, with no reference from an Editor export.
+
 ## What the combined animation scene costs, part by part — 2026-11-16
 
 `examples/animation-outfits/measure.mjs` opens the scene of 20 Spine instances and 200 sequence controllers twice and times 240 steps after each, reporting animation, capture, render and settling separately; the scene's module has a `measure` function for it. On an RTX 5090 Laptop with WebGPU, one step was 1.3 ms of animation, 0.5 ms of capture and 2.1 ms of render at p95, and settled in 4.8 ms. WebGL2 drawn on a processor is recorded beside it and says nothing about a graphics card. These are single runs and not a budget acceptance; WebGL2 on the graphics card was not run, because in a hidden pane the Host's wait for the GPU timed out.
+
 ## Installable release archives — 2026-11-16
 
 `node tools/pack-release.mjs --version <version> --out <directory>` packs one archive for each of the five packages. An archive has the version given, is not private, carries the licence and notice, and names the other packages of the workspace by the address of their archives in the same release, so `npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v<version>/egret-engine-<version>.tgz` installs the engine and what it needs. The packages in the repository stay private at 0.0.0, and nothing is published to npm. Pushing a tag `v<version>` runs the `Release archives` workflow, which builds, packs, installs the archives into a clean project, imports them and attaches them to a GitHub release. `tools/verify-release.mjs` is that install check. The archives of 0.1.0-preview.1 were installed and imported on Linux with npm; the workflow itself has not run.
@@ -305,9 +315,11 @@ A frame used to admit 128 different geometries, so 200 sprites that each drew a 
 ## Errors say what happened — 2026-11-15
 
 An `EgretError` used to carry its code as its whole message, so `FRAME_RENDER_FAILED` on a console said nothing more. Its message is now the code and a sentence: what went wrong and, for the codes a game meets most, what to do. `error.code` is unchanged and is still what a program compares. The new [error code reference](docs/error-codes.md) lists 696 codes by area with their meanings; it is written by `node tools/error-codes.mjs` from the sources, and a test fails when a code is added without a sentence or the reference falls behind. A program that compared `error.message` with a code must compare `error.code`.
+
 ## Graphics: circles, rounded rectangles, paths, curves and lines — 2026-11-15
 
 A sprite's `graphics` now draws `drawCircle`, `drawEllipse`, `drawRoundRect`, paths with `moveTo`, `lineTo`, `curveTo`, `cubicCurveTo` and `drawArc`, and lines with `lineStyle`, by Egret's names. It drew filled rectangles only. A sprite of filled rectangles is unchanged; any other shape makes its drawing one mesh of coloured triangles that follows the sprite like other content. Curves are straight pieces within a quarter unit, edges are not smoothed, and lines have flat ends and mitred corners. Sprites that draw the same thing share one drawing; a frame takes 128 different ones. Checked in Node and from the canvas in headless Chromium with software WebGL2; WebGPU was not run. Part of #289. [Guide](docs/graphics.md) · [Example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/graphics/README.md)
+
 ## A frame loop for a game in a page — 2026-11-15
 
 `@egret/engine/web/loop` gives `createBrowserFrameLoop`: on each frame the display shows, it moves the Engine's clock, calls `update(seconds)` and draws. A step is never longer than `maxStepSeconds`, so a tab that was hidden no longer makes the clock refuse the time. A frame is skipped, and counted, while the Host holds the frames it takes, so a slow device no longer ends a hand-written loop with `FRAME_RENDER_FAILED`. The starter example runs on it. Checked in Node and, through the starter, in headless Chromium with software WebGL2; WebGPU was not run. Part of #289. [Guide](docs/frame-loop.md)

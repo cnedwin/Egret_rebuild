@@ -77,6 +77,8 @@ AI 辅助贡献注明实际范围、资料与作者复核。保留参考出处�
 
 公开简介英文优先，随后附中文。完整阅读版本分别放在 `knowledge-base/en/` 与 `knowledge-base/Cns/`，英文目录使用英文文件名。英文登记册视图从中文权威记录生成并保持只读，ID、状态、数字与来源一致。共享实验代码、原始证据、历史源码身份及上游许可原件保留出处。
 
+需要让读者知道的改动，把更新日志条目写成文件 `changes/<名称>.json`，而不是直接修改两个更新日志：`{ "date": "YYYY-MM-DD", "en": { "title", "body" }, "zh": { "title", "body" } }`。这样两个 PR 永远不会改到同一行。`node tools/changelog.mjs` 检查待合入的条目，测试中也会运行；`node tools/changelog.mjs --fold` 在一个单独的改动里把它们按日期从新到旧移入两个更新日志。
+
 每次推送 GitHub 前，复核来源、公开内容、双语版本及关键英文注释，然后完成已提交快照的推送检查。完整集成合并门禁保留代码/类型/包边界、headless 行为和知识库检查。两种命令都不启动浏览器，也不证明翻译含义正确；采用工程计划中的当前交付分层。
 
 克隆后，贡献者与 CI 必须执行 `git config --local core.hooksPath .githooks` 启用同一推送钩子；应修复失败而非绕过钩子。详见[双语规范](knowledge-base/Cns/docs/双语文档与推送前检查.md)及[目录规范](knowledge-base/Cns/docs/documentation-layout.md)。
