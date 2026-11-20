@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/changelog.mjs",
+      "originRole": "First-party tool that checks changelog entries kept one file per change and folds them into the bilingual changelogs; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/changelog.test.mjs",
+      "originRole": "First-party Node tests of changelog entries as files: their form, their refusal and their folding; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

@@ -77,6 +77,8 @@ Organizing evidence may change presentation and publishable scope, while preserv
 
 Public introductions are English first, followed by Chinese. Maintain complete reading editions in `knowledge-base/en/` and `knowledge-base/Cns/`, using English filenames in the English tree. Generate read-only English registry views from the authoritative Chinese records; IDs, statuses, numbers and sources must match. Shared experiment code, original evidence, historical source identities and upstream legal originals retain their provenance.
 
+A change that readers should hear of adds its changelog entry as a file, `changes/<name>.json`, rather than editing the two changelogs: `{ "date": "YYYY-MM-DD", "en": { "title", "body" }, "zh": { "title", "body" } }`. Two pull requests then never write the same lines. `node tools/changelog.mjs` checks the waiting entries, and the tests run it; `node tools/changelog.mjs --fold` moves them into both changelogs, newest first, in a change of its own.
+
 Before every GitHub push, review source attribution, public content, both language editions and critical English comments, then complete the committed push checks. The full integrated merge gate retains code/type/package boundaries, headless behavior and knowledge-base checks. Neither command launches a browser or certifies translation meaning. See the current delivery tiers in the engineering plan.
 
 After cloning, contributors and CI must enable the same push hook with `git config --local core.hooksPath .githooks`. Fix failures instead of bypassing the hook. See the [bilingual policy](knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md) and [layout policy](knowledge-base/en/docs/documentation-layout.md).
