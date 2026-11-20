@@ -1,0 +1,41 @@
+---
+id: ui-callbacks
+title: Control callbacks return at once; open new UI roots after the press
+applies: [engine, web, world3d, play, play3d]
+triggers: [createUiRoot, createActionControl, UI_BUSY, POINTER_INPUT_CALLBACK_FAILED, ASYNC_EVENT_HANDLER, "async onActivate", "open settings from a button", "dialog from a button throws", "callback returns a promise", "按钮里打开设置", "按钮回调报错", "异步回调", "弹窗打不开", "点按钮就报错"]
+local: [startRound, openSettings, action]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/src/main.mjs, line: 113, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/ui/card.mjs, line: 30, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/ui/kit.mjs, line: 92, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/ENGINE-NOTES.md, line: 240, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+engine: 687037ac462c48dbfe00523312125b94072ffea4
+---
+
+# Control callbacks return at once; open new UI roots after the press
+
+Two games tripped over the same moment: the press of a button is still being delivered while its `onActivate` runs.
+
+- An `async` callback returns a promise, and pointer input refuses it: `POINTER_INPUT_CALLBACK_FAILED` with the cause `ASYNC_EVENT_HANDLER`. Tea Horse Road's "skip" button waited for new words inside its callback.
+- Making a new root with `createUiRoot` during the delivery fails with `UI_BUSY` ("input is being delivered"). Since `687037a` a root's `prepare()` waits for the delivery to end, but making the root does not. Mechanism City's settings card, made fresh each time it opens, failed this way.
+
+```js
+const action = createActionControl({
+  input,
+  target: face,
+  // Return nothing: start the async work and let it run.
+  onActivate: () => { void startRound(); },
+});
+
+async function openSettings() {
+  // Leave the press that asked for it, then make the root.
+  await Promise.resolve();
+  const root = createUiRoot({ /* ... */ });
+}
+```
+
+Rules:
+
+- A control's callback is synchronous. Start async work with `void` and report its failure yourself.
+- Anything that makes a root (a card, a dialog, a settings page) starts with `await Promise.resolve()`, and guards against a second press while it opens (an `opening` flag).
+- Read the error's `cause`: `UI_BUSY` names the delivery it waited on; see the read-engine-errors card.

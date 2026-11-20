@@ -1,0 +1,41 @@
+---
+id: terrain-stream-tiles
+title: Placing things on streamed terrain tiles: centred fields, per-tile scatter
+applies: [world3d, play3d]
+triggers: [createTerrainStream3D, createHeightField3D, createNavMesh3D, heightAt, "trees floating", "objects floating above terrain", "scatter plants on terrain", "terrain tiles", "open world terrain", "streamed terrain", "地形分块", "树悬空", "撒草木", "开放世界地形", "地块加载"]
+local: [tile, cx, cz, size, plantTile, dropTile, groundAt, heightsFor, ground]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/world/flora.mjs, line: 77, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/world/land.mjs, line: 69, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/ENGINE-NOTES.md, line: 86, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/ENGINE-NOTES.md, line: 32, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+engine: 687037ac462c48dbfe00523312125b94072ffea4
+---
+
+# Placing things on streamed terrain tiles: centred fields, per-tile scatter
+
+A streamed terrain loads square tiles around the viewer. Tile `(x, z)` covers `x * size` to `(x + 1) * size`, but the height field a tile holds is centred on its own origin. The first trees Tea Horse Road scattered all floated: read a height at a world point by taking off the tile's centre first.
+
+```js
+const stream = createTerrainStream3D({
+  tileSize: size,
+  viewDistance: 460,
+  load: (x, z) => createHeightField3D({ columns: 65, rows: 65, width: size, depth: size, heights: heightsFor(x, z) }),
+  material: ground,
+  onLoad: tile => plantTile(tile),   // scatter this tile's plants and its collider
+  onUnload: tile => dropTile(tile),  // and take them away again
+});
+
+function plantTile(tile) {
+  const cx = (tile.x + 0.5) * size, cz = (tile.z + 0.5) * size;
+  const groundAt = (x, z) => tile.field.heightAt(x - cx, z - cz);
+  // ...
+}
+```
+
+Rules:
+
+- Everything that belongs to a tile is made in `onLoad` and freed in `onUnload`: plants, stones, colliders, navigation. Nothing global grows as the player travels.
+- The stream's terrain changes detail inside the engine and tells the game nothing; plants need their own distance switch. One instanced mesh per tile for near shapes and one for far shapes, swapped by distance each frame, took Low quality from 6.3 million triangles a frame to 0.4 million.
+- A navigation mesh is not made from the terrain for you: lay a grid of ground heights for the area that needs it (an ambush, a camp), build it with `createNavMesh3D`, and switch off the triangles under water and obstacles.
+- Load heights in a worker when they are computed; keep `loadsPerUpdate` small so a tile's arrival is not one long frame.

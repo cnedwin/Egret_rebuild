@@ -1,0 +1,39 @@
+---
+id: cloth-and-rope
+title: Cloth and rope in 3D: whole edges, slack as a share, culling, one-way pins
+applies: [world3d, play3d]
+triggers: [createCloth3D, createRope3D, Cloth3D, Rope3D, frustumCulled, pinPoint, "cloth collapses", "flag shrinks", "rope sags under", "tarp disappears", "rope vanishes", "cloth on a vehicle", "布料", "绳子消失", "篷布不见了", "经幡缩成一团", "绳子松垮", "吊桥缆绳"]
+local: [lashing, tarp, cable, body, from, to]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/play/effects.mjs, line: 104, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/world/landmarks.mjs, line: 68, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/world/landmarks.mjs, line: 252, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/ENGINE-NOTES.md, line: 17, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+engine: 687037ac462c48dbfe00523312125b94072ffea4
+---
+
+# Cloth and rope in 3D: whole edges, slack as a share, culling, one-way pins
+
+Tea Horse Road ties tarps and lashings on its trucks, hangs prayer flags between poles and slings a bridge on cables. Four things went wrong first, each silent:
+
+```js
+import { createCloth3D, createRope3D } from '@egret/engine/world3d';
+
+// right and down are the WHOLE edges of the cloth, not the gap between two points.
+const tarp = createCloth3D({ columns: 9, rows: 6, origin: [-1.2, 1.1, -0.2], right: [2.3, 0, 0], down: [0, 0, 0.8] });
+for (let c = 0; c < tarp.columns; c++) tarp.pin(c, 0, body); // follows the truck body, does not pull it
+
+// slack is the extra share of length: 0.04 is 4 % longer than the straight line, not 1.04.
+const cable = createRope3D({ start: from, end: to, segments: 40, slack: 0.04, pinStart: true, pinEnd: true });
+
+const mesh = tarp.createMesh(lashing);
+mesh.frustumCulled = false; // its bounds stay where it was made (engine 687037a)
+```
+
+Rules:
+
+- `right` and `down` span the whole cloth. Passed as the spacing, a tarp and every flag shrank to a knot.
+- `slack` is the share added to the straight length. Passed as a factor (1.02), the bridge cables folded under the deck.
+- At `687037a` a cloth or rope mesh keeps the bounding sphere of where it was made, so once it travels with a vehicle it is frustum-culled and vanishes some tens of metres on. Set `frustumCulled = false` on meshes that move far; ones that only sway in place can keep culling.
+- `pin` and `pinPoint` with a body make points follow it; they do not push or drag the body back.
+- Call `update(seconds)` once a frame for each, after the vehicle has moved, and keep the iterations low (6–16): they are paid every frame on the main thread.

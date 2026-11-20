@@ -1,0 +1,36 @@
+---
+id: rope-joints-2d
+title: Hanging weights on rope joints, cut with removeJoint
+applies: [engine, web]
+triggers: [addJoint, removeJoint, setKind, createPhysicsWorld, PHYSICS_STEP_REENTRANT, "rope joint", "hanging weight", "cut the rope", "swing on a rope", "kinematic to dynamic", "绳子", "吊着的重物", "剪断绳子", "绳索关节", "摆动", "托住的物体"]
+local: [weight, rope]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/src/sim/sim.mjs, line: 196, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4, fix: 9e36464 }
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/src/sim/sim.mjs, line: 371, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/ENGINE-NOTES.md, line: 22, commit: 9e41205055730fd7de02d00ececd49fb7c25eca3, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+engine: 687037ac462c48dbfe00523312125b94072ffea4
+---
+
+# Hanging weights on rope joints, cut with removeJoint
+
+Mechanism City hangs crates and stones from ropes that the player shoots through. Before the 2D world had joints, a hanging weight was a kinematic body painted swinging by hand, removed and made again as a dynamic body when its rope was cut. Both halves were wrong in play: nothing could knock it, and the remade body lost the speed it had. With joints the weight is one dynamic body from the start:
+
+```js
+import { createPhysicsWorld } from '@egret/engine/physics2d';
+
+const world = createPhysicsWorld({ gravity: { x: 0, y: 900 }, fixedStep: 1 / 120 });
+const weight = world.addBody({ kind: 'dynamic', shape: { kind: 'box', width: 40, height: 40 }, x: 300, y: 200 });
+// Tie the top of the weight (anchorA, in its own frame) to a fixed point; it swings when struck.
+const rope = world.addJoint({ kind: 'rope', a: weight, point: { x: 300, y: 80 }, anchorA: { x: 0, y: -20 } });
+// The shot crosses the line from the point to the top of the weight: cut it.
+world.removeJoint(rope);
+```
+
+Rules:
+
+- A rope holds at most its length and goes slack when pushed closer; `kind: 'distance'` holds the length both ways, for a rod.
+- Cut by removing the joint, never by removing and remaking the body: the weight keeps its speed and its swing.
+- A body held up until something happens (a crate on a trapdoor, a ball in a clamp) starts `static` or `kinematic` and becomes `dynamic` with `body.setKind('dynamic')`.
+- Contact listeners may add and remove joints; the change acts from the next step. Calling `world.step` inside a listener fails with `PHYSICS_STEP_REENTRANT`. Mechanism City still queues breaks, cuts and unlocks and runs them after the step, so they happen in one fixed order.
+- The 2D world has no turning hinge or torque yet: a seesaw is a kinematic plank whose angle the rules set.
+- Test the cut in Node: step a level with a seed, cut, and check the weight falls from where it swung.
