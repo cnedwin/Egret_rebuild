@@ -42,7 +42,7 @@ function frame(seconds) {
 
 ## 震动
 
-`shake({ trauma })` 增加创伤值，最多到 1。视图沿平滑噪声移动和旋转，幅度为创伤值的平方；创伤值每秒减少 `shakeDecay`，降到零时视图回到原处。同样的种子在同样的时间以同样的方式震动。
+`shake({ trauma })` 增加创伤值，最多到 1。视图沿平滑噪声移动和旋转，幅度为创伤值的平方；创伤值每秒减少 `shakeDecay`，降到零时视图回到原处。同样的种子在同样的时间以同样的方式震动。`camera.shakeScale`（0 到 1，默认 1）缩放震动的幅度：玩家要求减少动态效果时（`@egret/engine/web/kit` 的 `prefersReducedMotion()` 报告）设为 0；创伤值照常保留，调回来后下一次震动和原来一样强。
 
 ## 图层
 

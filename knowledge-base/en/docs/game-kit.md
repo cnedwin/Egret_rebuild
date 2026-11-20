@@ -162,6 +162,19 @@ Each seed gets a new game and a stand-in player, and steps of `step` seconds (1/
 
 `openBrowserBundleCache(name)` keeps the index of an asset bundle and every entry read, in the Cache API. Give it to `openBrowserAssetBundle(url, { cache })`. Entries are kept by the bundle's address and checksum, so a rebuilt bundle never serves old bytes. When the bundle cannot be fetched, a kept index still opens it, `bundle.offline` is true, and kept entries read as before. `cache.prune(keep)` forgets entries of other addresses.
 
+## Words in each language
+
+`createTextTable({ languages, language, fallback, onMissing })` holds a game's words in each of its languages. `table.text(key, values)` gives the word in the current language with each `{name}` replaced, else the fallback's, else the key; `table.setLanguage(language)` changes it and tells each `onChange` listener, which redraws what it shows. `table.missing()` lists, per language, the keys another language has and it lacks: a test that it is empty for every language keeps an English screen free of Chinese. `pickLanguage(languages, browserLanguages())`, with `browserLanguages()` of `@egret/engine/web/kit`, starts in the language the player's browser asks for.
+
+```js
+const words = createTextTable({ languages: { zh: { start: '开始', coins: '{n} 枚铜钱' }, en: { start: 'Start', coins: '{n} coins' } } });
+words.setLanguage(pickLanguage(words.languages, browserLanguages()));
+label.text = words.text('coins', { n: 12 });
+words.onChange(() => (label.text = words.text('coins', { n: coins })));
+```
+
+`prefersReducedMotion()` and `watchReducedMotion(listener)` of the browser kit say whether the player asked the system for less motion: leave out shakes, flashes and large moves that are only for show.
+
 ## Copying the engine into a game
 
 A game folder that ships without a package manager carries the part of the engine it loads. From a built checkout:

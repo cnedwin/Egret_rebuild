@@ -12,6 +12,7 @@
 - `guide/cards/<area>/<id>.txt` 是一个主题，打印出来不超过 800 个 token：简短的规则、一个最小示例，以及规则所依据的测量结果或总结出它的游戏。
 - `node tools/egret-guide.mjs <问题>` 在预算内（默认 2,500 个 token，用 `--budget` 调整）打印最匹配的两到三张卡片。问题可以是英文或中文的词语、引擎名字、错误码或 devtools 提示 id。`--card <id>` 打印一张卡片，`--list` 打印索引。
 - `node tools/egret-guide.mjs --full --out <文件>` 把索引和所有卡片写成一个文件，供只接受单个文件的工具使用。它是构建产物，不提交到仓库。
+- [`guide/entries.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/entries.json) 列出引擎每个公开入口经导入带上的其他入口（`includes`），以及哪些入口带上了它（`partOf`）：例如 `@egret/engine/web/game` 带上指针、键盘和帧循环。统计游戏用到哪些能力的工具（游戏仓库的能力覆盖矩阵）读它，把游戏点名的入口背后的那些入口也算上。它由 `node tools/egret-guide.mjs` 之外的 `node tools/entry-map.mjs` 从构建产物生成，`--check` 检查它是否最新。
 
 与 `llms.txt` 一样，索引和卡片是以 `.txt` 文件保存的 Markdown 文本，只有英文。它们是智能体通过命令读取的数据，而不是阅读文档，因此没有中文对应版本；本页是双语的说明。
 

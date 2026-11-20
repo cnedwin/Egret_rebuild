@@ -104,6 +104,11 @@ export interface Camera2D {
   /** Changes what is shown, as when the canvas is resized. */
   resize(width: number, height: number): void;
   shake(options?: CameraShakeOptions): void;
+  /**
+   * How strongly shakes move the view, from 0 (still) to 1 (as asked, the default). Set it to 0 for a player who asks
+   * for less motion, as the browser kit's `prefersReducedMotion()` reports.
+   */
+  shakeScale: number;
   /** A layer drawn behind or in front of the world that moves at its own speed. The camera owns its place, scale and anchor. */
   addLayer(layer: DisplayObject, options?: CameraLayerOptions): () => void;
   /** Advances the follow, the pan, the zoom and the shake by the seconds given, and places the world and the layers. */

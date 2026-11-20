@@ -42,7 +42,7 @@ function frame(seconds) {
 
 ## Shake
 
-`shake({ trauma })` adds trauma, up to 1. The view moves and turns as far as the square of the trauma, along smooth noise; the trauma falls by `shakeDecay` a second, and at nothing the view is where it was. The same seed shakes the same way at the same time.
+`shake({ trauma })` adds trauma, up to 1. The view moves and turns as far as the square of the trauma, along smooth noise; the trauma falls by `shakeDecay` a second, and at nothing the view is where it was. The same seed shakes the same way at the same time. `camera.shakeScale` (0 to 1, default 1) scales how far shakes move the view: set it to 0 for a player who asks for less motion, as `prefersReducedMotion()` of `@egret/engine/web/kit` reports; the trauma is kept, so turned back up the next shake is as strong as ever.
 
 ## Layers
 

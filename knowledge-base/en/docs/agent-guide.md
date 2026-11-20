@@ -12,6 +12,7 @@ Coding agents write most of the games built on this engine. They need to know th
 - `guide/cards/<area>/<id>.txt` is one topic in under 800 tokens as printed: short rules, a minimal example, and the measured reason or the game a rule was learnt from.
 - `node tools/egret-guide.mjs <question>` prints the best two or three cards within a budget (2,500 tokens by default, `--budget` to change it). A question may be words in English or Chinese, an engine name, an error code or a devtools hint id. `--card <id>` prints one card and `--list` the index.
 - `node tools/egret-guide.mjs --full --out <file>` writes the index and every card as one file for tools that want a single file. It is a build output and is not committed.
+- [`guide/entries.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/entries.json) lists, for each public engine entry, the other entries it brings in through its imports (`includes`) and the entries that bring it in (`partOf`): `@egret/engine/web/game` brings the pointer, the keyboard and the frame loop. A tool that counts what a game uses (the capability matrix of the games repository) reads it to credit the entries behind the one a game names. `node tools/entry-map.mjs` writes it from the built engine, and `--check` says whether it is current.
 
 Like `llms.txt`, the index and the cards are Markdown text kept as `.txt` files in English only. They are data an agent reads through the command, not reading documents, so they have no Chinese twin; this page is the bilingual description.
 

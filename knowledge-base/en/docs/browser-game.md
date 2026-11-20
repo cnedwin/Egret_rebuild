@@ -64,6 +64,8 @@ For the rest of a game: `animate` moves and fades display objects in a chain (`i
 **Fitting the canvas.** With `fit`, the game sizes the canvas inside its element now and whenever that element changes size, centred. The element needs a size of its own: one that takes its height from the canvas has nothing to fit to. With `'cover'` the canvas is larger than the element, which should hide what overflows. The stage keeps its width and height in its own units in every mode, and pointer places follow the canvas.
  `game.frame` is the frame the loop draws, and `game.toStage(clientX, clientY)` turns a place on the page, as a pointer event of the page gives it, into a place on the stage.
 
+**Touch targets.** A finger needs about 44 CSS pixels. `game.unitsPerCssPixel` is how many stage units one CSS pixel is as the canvas is shown now, and `game.padHitArea(node, cssPixels = 44)` gives a node a hit area at least that size, centred on what it draws and never smaller, so a 20-unit icon on a scaled-down phone canvas is still easy to press. Call it again after the node or the canvas changes size.
+
 ## Options
 
 | Option | Meaning | Without it |

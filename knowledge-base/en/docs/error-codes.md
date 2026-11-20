@@ -1031,6 +1031,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `TEXT_REQUEST_LIMIT` | The request limit of text was passed. |
 | `TEXT_RESOURCE_FAILED` | The resource of text failed. The cause is in cause. |
 | `TEXT_SIGNAL_FAILED` | The signal of text failed. The cause is in cause. |
+| `TEXT_TABLE_INVALID` | The table given to text is not valid. |
 
 ### TEXTURE
 

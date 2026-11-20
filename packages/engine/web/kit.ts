@@ -33,3 +33,4 @@ export { openBrowserAssetBundle } from './BrowserAssetBundle.js';
 export type { BrowserAssetBundle, BrowserAssetBundleOptions } from './BrowserAssetBundle.js';
 export { openBrowserBundleCache, openIndexedDBSaveStorage } from './BrowserStorage.js';
 export type { BundleCache, IndexedDBSaveStorage, IndexedDBSaveStorageOptions } from './BrowserStorage.js';
+export { browserLanguages, prefersReducedMotion, watchReducedMotion } from './BrowserPreferences.js';
