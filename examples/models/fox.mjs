@@ -2,7 +2,7 @@
 // A fox, about 0.55 m long. Parts: an egg of a body, a ball of a head set forward and up, a tapered snout, two cone
 // ears leaning out, four tapered legs (one front and one back leg mirrored), and a thick tail rising behind. Colour:
 // orange fur, a cream belly and chin painted on the torso alone, a cream tail tip, dark socks painted on the legs
-// alone, and black eyes and nose in their own group so they stay crisp.
+// alone, and black eyes and nose in their own group so they stay crisp. `rig` gives it bones and a trot.
 export const about = { name: 'Fox', zh: '狐狸', kind: 'animal' };
 export const meshOptions = { triangles: 5000, variation: { amount: 0.05 } };
 
@@ -46,4 +46,82 @@ export default function fox(W) {
     ],
     { smooth: 0.004 }
   );
+}
+
+/**
+ * The fox's rig: a body, a head, a tail and two pairs of legs, with a trot and a sit-and-look idle. The parts given to
+ * the bones only guide which bone each vertex follows, so they are simple shapes near the real ones, not the model's.
+ */
+export function rig(W, options = {}) {
+  const made = W.createSdfRig3D(
+    fox(W),
+    [
+      { name: 'body', at: [0, 0.27, 0], parts: W.sdfEllipsoid([0.1, 0.1, 0.16], { at: [0, 0.27, 0] }) },
+      {
+        name: 'head',
+        parent: 'body',
+        at: [0, 0.33, 0.12],
+        parts: [W.sdfSphere(0.09, { at: [0, 0.37, 0.17] }), W.sdfCapsule([0, 0.35, 0.22], [0, 0.32, 0.33], 0.04)]
+      },
+      {
+        name: 'tail',
+        parent: 'body',
+        at: [0, 0.3, -0.15],
+        parts: W.sdfCapsule([0, 0.32, -0.2], [0, 0.4, -0.38], 0.05)
+      },
+      {
+        name: 'frontLeg',
+        parent: 'body',
+        at: [0.05, 0.22, 0.1],
+        parts: W.sdfCapsule([0.05, 0.2, 0.1], [0.06, 0.02, 0.12], 0.035),
+        mirror: 'x'
+      },
+      {
+        name: 'backLeg',
+        parent: 'body',
+        at: [0.05, 0.22, -0.1],
+        parts: W.sdfCapsule([0.05, 0.2, -0.1], [0.06, 0.02, -0.08], 0.035),
+        mirror: 'x'
+      }
+    ],
+    { ...meshOptions, ...options }
+  );
+  const swing = 0.55,
+    legs = (a, b) => [
+      [0, [a, 0, 0]],
+      [0.25, [b, 0, 0]],
+      [0.5, [a, 0, 0]]
+    ];
+  const trot = made.clip('trot', 0.5, {
+    'frontLeg.L': legs(swing, -swing),
+    'backLeg.R': legs(swing, -swing),
+    'frontLeg.R': legs(-swing, swing),
+    'backLeg.L': legs(-swing, swing),
+    tail: [
+      [0, [0, 0.25, 0]],
+      [0.25, [0, -0.25, 0]],
+      [0.5, [0, 0.25, 0]]
+    ],
+    body: [
+      [0, [0, 0, 0], [0, 0, 0]],
+      [0.125, [0, 0, 0], [0, 0.015, 0]],
+      [0.25, [0, 0, 0], [0, 0, 0]],
+      [0.375, [0, 0, 0], [0, 0.015, 0]],
+      [0.5, [0, 0, 0], [0, 0, 0]]
+    ]
+  });
+  const idle = made.clip('idle', 3, {
+    head: [
+      [0, [0, 0, 0]],
+      [1, [0, 0.5, 0.1]],
+      [2, [0, -0.4, -0.1]],
+      [3, [0, 0, 0]]
+    ],
+    tail: [
+      [0, [0.2, 0.3, 0]],
+      [1.5, [0.3, -0.3, 0]],
+      [3, [0.2, 0.3, 0]]
+    ]
+  });
+  return Object.assign(made, { clips: { trot, idle } });
 }

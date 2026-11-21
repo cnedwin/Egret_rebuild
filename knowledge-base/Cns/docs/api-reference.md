@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1379 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1384 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -399,6 +399,7 @@
 | `createRope3D` | 函数 | Makes a rope of points that hangs and swings. |
 | `createScreenLayer3D` | 函数 | Makes a picture drawn over the whole screen, above or below the scene. |
 | `createSdfGeometry3D` | 函数 | The mesh of the field's surface, with smooth normals and linear vertex colours (draw it with a material that has `vertexColors: true`). |
+| `createSdfRig3D` | 函数 | A rig of `shape`: its mesh, made as `createSdfGeometry3D` makes it, skinned to bones at the joints of the model. |
 | `createShapeGeometry3D` | 函数 | Fill one or more outlines in the XY plane, facing +Z. |
 | `createSkeletonHelper3D` | 函数 | Makes lines that show the bones of a skeleton. |
 | `createSkinnedInstancedMesh3D` | 函数 | Makes many skinned instances of one mesh, each playing baked clips from an animation texture. |
@@ -625,6 +626,7 @@
 | `SceneDocument3D` | 接口 | A scene saved as JSON: its nodes, geometries, materials, textures and skeletons, and what was skipped. |
 | `ScreenLayer3D` | 类 | Full-screen image drawn in the same pass as the 3D scene, typically the canvas of a 2D stage. |
 | `ScreenLayerOptions3D` | 接口 | A screen layer to make: its order and opacity, whether it updates itself, and which way its rows run. |
+| `SdfBone3D` | 接口 | A bone of a rig: where it turns, what it moves, and the bone it hangs from. |
 | `sdfBox` | 函数 | A box of `size` [width, height, depth], its edges rounded by `round` (0 for sharp; more than half the smallest side is taken as that). |
 | `sdfCapsule` | 函数 | A rounded limb from `from` to `to`: `radius` thick at the start, `radiusEnd` (the same unless given) at the end. |
 | `sdfCone` | 函数 | An upright cone of `height` along y, `bottom` wide at its foot and `top` (0 for a point) at its head. |
@@ -641,6 +643,9 @@
 | `SdfOptions3D` | 接口 | Where a shape goes and how it looks: moved by `at`, turned by `rotation`, scaled by `scale`, painted `color`. |
 | `sdfPattern` | 函数 | `shape` with a pattern painted over its colours, in the coordinates of the model; the surface does not move. |
 | `SdfPatternOptions3D` | 接口 | A pattern painted over a shape's colours. |
+| `SdfPoseKey3D` | 类型 | A pose key: a time in seconds, the bone's turn as Euler angles in radians, and optionally how far it moves. |
+| `SdfRig3D` | 接口 | A model that moves: its root to add to a scene, its skinned mesh, its bones by name, and its animation. |
+| `SdfRigOptions3D` | 接口 | How a rig is made: the options of its mesh, its material, and how wide a joint bends. |
 | `sdfRound` | 函数 | The shape grown by `radius` all round, its edges rounded by as much. |
 | `SdfShape3D` | 类 | A shape as a signed distance field: negative inside, positive outside, zero on the surface. |
 | `sdfShell` | 函数 | A hollow skin of the shape, `thickness` thick: bowls, pots, helmets, when cut open. |

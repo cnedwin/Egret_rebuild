@@ -28,10 +28,16 @@ const made = [];
 const started = performance.now();
 for (const name of models) {
   const module = await import(`./${name}.mjs`);
-  const shape = module.default(W);
-  const geometry = shape instanceof W.SdfShape3D ? W.createSdfGeometry3D(shape, module.meshOptions ?? {}) : shape;
-  const box = geometry.boundingBox;
-  made.push({ name, about: module.about, mesh: new W.Mesh3D(geometry, material), box });
+  // A model with a rig is made as its rig and plays its first clip; the others as a plain mesh.
+  if (typeof module.rig === 'function') {
+    const rig = module.rig(W);
+    rig.play(Object.values(rig.clips)[0], 0);
+    made.push({ name, about: module.about, mesh: rig.root, box: rig.mesh.geometry.boundingBox, rig });
+  } else {
+    const shape = module.default(W);
+    const geometry = shape instanceof W.SdfShape3D ? W.createSdfGeometry3D(shape, module.meshOptions ?? {}) : shape;
+    made.push({ name, about: module.about, mesh: new W.Mesh3D(geometry, material), box: geometry.boundingBox });
+  }
   status.textContent = `${made.length} / ${models.length}`;
   await new Promise(resolve => setTimeout(resolve, 0));
 }
@@ -64,10 +70,15 @@ const reach = Math.max(extent.width, extent.depth);
 camera.setPosition(0, reach * 0.55, reach * 0.55);
 const controls = createOrbitControls3D(camera, canvas, { target: [0, 0.4, -extent.depth / 2 + CELL / 2] });
 document.getElementById('real').addEventListener('change', event => layOut(event.target.checked));
-const triangles = made.reduce((sum, m) => sum + m.mesh.geometry.index.count / 3, 0);
+const triangles = made.reduce((sum, m) => sum + (m.rig ? m.rig.mesh : m.mesh).geometry.index.count / 3, 0);
 status.textContent = `${made.length} models, ${triangles} triangles, made in ${Math.round(performance.now() - started)} ms`;
-app.show(scene, camera, { onUpdate: seconds => controls.update?.(seconds) });
+app.show(scene, camera, {
+  onUpdate: seconds => {
+    controls.update?.(seconds);
+    for (const m of made) m.rig?.update(seconds);
+  }
+});
 globalThis.__gallery = {
   ready: true,
-  models: made.map(m => ({ name: m.name, triangles: m.mesh.geometry.index.count / 3 }))
+  models: made.map(m => m.name)
 };

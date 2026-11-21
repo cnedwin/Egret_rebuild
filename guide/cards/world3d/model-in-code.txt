@@ -2,7 +2,7 @@
 id: model-in-code
 title: Model 3D creatures, props and buildings as smooth fields, not stacked boxes
 applies: [world3d, play3d]
-triggers: [createSdfGeometry3D, sdfUnion, sdfSubtract, sdfMirror, sdfCapsule, sdfPattern, sdfLathe, simplifyGeometry3D, exportGlb3D, createGeometryBuilder3D, "model preview", "model looks bad", "models look like boxes", "low quality 3d model", "procedural model", "make a character in code", "too many triangles", "模型很丑", "模型质量差", "代码建模", "像积木", "程序化模型", "面数太多"]
+triggers: [createSdfGeometry3D, createSdfRig3D, "让模型动起来", sdfUnion, sdfSubtract, sdfMirror, sdfCapsule, sdfPattern, sdfLathe, simplifyGeometry3D, exportGlb3D, createGeometryBuilder3D, "model preview", "model looks bad", "models look like boxes", "low quality 3d model", "procedural model", "make a character in code", "too many triangles", "模型很丑", "模型质量差", "代码建模", "像积木", "程序化模型", "面数太多"]
 local: [fur, body, head, face, eyes, critter, material, scene, shape, mesh]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/models/buildings.mjs, line: 80, commit: a669d38516e2cc862c06f35601e0660066def905, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
@@ -37,6 +37,6 @@ const critter = new Mesh3D(
 );
 ```
 
-The material needs `vertexColors: true`; the colours and the baked shade are in the vertices. A mesh is capped at 8000 triangles unless `triangles` says otherwise: 1500 to 4000 suits a prop seen small or many times, 8000 to 15000 a hero seen close. A part thinner than two cells of `resolution` (64 along the longest side) disappears: raise it, or split the model. Make every model once while the level loads, never in a frame, or save it with `exportGlb3D`.
+The material needs `vertexColors: true`; the colours and the baked shade are in the vertices. A mesh is capped at 8000 triangles unless `triangles` says otherwise: 1500 to 4000 suits a prop seen small or many times, 8000 to 15000 a hero seen close. A part thinner than two cells of `resolution` (64 along the longest side) disappears: raise it, or split the model. Make every model once while the level loads, never in a frame, or save it with `exportGlb3D`. To make it move: `createSdfRig3D`, as the villager and fox do.
 
-Crates and walls can stay boxes, but make them `sdfBox(size, { round: 0.03 })` so light catches an edge. For a model generated elsewhere or bought, `simplifyGeometry3D(geometry, { triangles })` brings it down to the same budget and keeps its texture seams and materials.
+For a model generated elsewhere or bought, `simplifyGeometry3D(geometry, { triangles })` brings it down to the same budget and keeps its texture seams and materials.

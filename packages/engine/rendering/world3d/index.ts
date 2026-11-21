@@ -349,6 +349,8 @@ export type {
 } from './Sdf3D.js';
 export { simplifyGeometry3D } from './Simplify3D.js';
 export { exportGlb3D } from './Export3D.js';
+export { createSdfRig3D } from './Rig3D.js';
+export type { SdfBone3D, SdfPoseKey3D, SdfRig3D, SdfRigOptions3D } from './Rig3D.js';
 export type { GlbExportOptions3D } from './Export3D.js';
 export type { SimplifyOptions3D, SimplifyResult3D } from './Simplify3D.js';
 export { retargetAnimationClip3D } from './Retarget3D.js';

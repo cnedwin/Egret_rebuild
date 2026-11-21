@@ -50,6 +50,17 @@ for (const name of models)
     // A model faces +z: it is centred on x, as every model of the library is drawn about its middle.
     assert.ok(Math.abs((box[0] + box[3]) / 2) < size * 0.25, 'centred on x');
     geometry.dispose();
+    // A model with a rig makes it, with at least one clip that names only its bones.
+    if (typeof module.rig === 'function') {
+      const rig = module.rig(W);
+      assert.ok(rig.mesh.skeleton && Object.keys(rig.bones).length >= 2);
+      const clips = Object.values(rig.clips);
+      assert.ok(clips.length >= 1 && clips.every(clip => clip instanceof W.AnimationClip3D));
+      for (const clip of clips)
+        for (const track of clip.tracks) assert.ok(track.targetName in rig.bones, track.targetName);
+      rig.play(clips[0], 0);
+      rig.update(0.3);
+    }
   });
 
 // Break caught: the gallery's import map falling behind the one the 3D engine needs, so the page fails to load.
