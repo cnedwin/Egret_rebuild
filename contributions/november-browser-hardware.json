@@ -1,0 +1,23 @@
+{
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/november-browser-hardware.md",
+      "zh": "knowledge-base/Cns/docs/november-browser-hardware.md"
+    }
+  ],
+  "files": [
+    {
+      "path": "knowledge-base/en/docs/november-browser-hardware.md",
+      "originRole": "First-party physical browser test record and analysis, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/november-browser-hardware.md",
+      "originRole": "First-party physical browser test record and analysis, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "docs/evidence/november-browser-hardware.json",
+      "originRole": "First-party physical browser test record and analysis, independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "schemaVersion": 1
+}

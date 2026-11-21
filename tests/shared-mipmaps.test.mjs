@@ -209,6 +209,9 @@ test('MIP06 the WebGL2 Host allocates and uploads every level, and uploads a kep
         await host.whenIdle();
         const events = f.events.slice(before);
         return {
+          minFilters: events
+            .filter(row => row[0] === 'texParameteri' && row[2] === gl.TEXTURE_MIN_FILTER)
+            .map(row => row[3]),
           storage: events.filter(row => row[0] === 'texStorage2D' && row[3] === gl.RGBA8).map(row => row.slice(1)),
           levels: events.filter(row => row[0] === 'texSubImage2D').map(row => [row[2], row[5], row[6], row[9].length])
         };
@@ -216,12 +219,15 @@ test('MIP06 the WebGL2 Host allocates and uploads every level, and uploads a kep
     const first = await render();
     assert.deepEqual(first.storage, [[gl.TEXTURE_2D, 1, gl.RGBA8, 8, 4]]);
     assert.deepEqual(first.levels, [[0, 8, 4, 128]]);
+    assert.deepEqual([...new Set(first.minFilters)], [gl.NEAREST]);
     // The same page again, kept: nothing is uploaded.
     assert.deepEqual((await render()).levels, []);
     // Now a draw reads its copies: the page is made again with four levels, each uploaded.
     nodes[0].sharedMaterial = egret.createSharedMaterial2D(MIPMAPPED);
     const upgraded = await render();
     assert.deepEqual(upgraded.storage, [[gl.TEXTURE_2D, 4, gl.RGBA8, 8, 4]]);
+    // A mipmap-capable min filter exposes the explicit levels to texelFetch on ANGLE D3D11.
+    assert.deepEqual(upgraded.minFilters, [0x2700]); // NEAREST_MIPMAP_NEAREST
     assert.deepEqual(upgraded.levels, [
       [0, 8, 4, 128],
       [1, 4, 2, 32],
