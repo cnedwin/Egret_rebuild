@@ -71,6 +71,32 @@ scene.addChild(new Mesh3D(truck, createStandardMaterial3D({ vertexColors: true }
 
 零件用 `position`、`rotation`（欧拉角，弧度）或 `quaternion`、`scale` 摆放，也可以直接给 `matrix`。`color` 是屏幕上看到的十六进制颜色或线性 RGB，以线性值写入顶点颜色，所以材质要设 `vertexColors: true`。`keepColors` 会乘上零件原有的顶点颜色。镜像摆放的零件，三角形仍然朝外。合成的几何体有位置、法线、颜色，所有零件都有纹理坐标时也保留纹理坐标。手写顶点颜色时，`linearColor3D(hex)` 给出十六进制颜色的线性值。
 
+## 用距离场塑形的模型
+
+方块互相穿插，看上去就是方块。做动物、道具、房子、植物时，可以把形状描述成平滑相连的圆润零件，由引擎生成网格：`createSdfGeometry3D(shape, options)` 把用 `sdf*` 调用搭出的形状变成一个带颜色的网格，法线平滑，零件相接处颜色自然过渡，褶皱和凹处的阴影烘焙进顶点颜色。
+
+```js
+import { createSdfGeometry3D, createStandardMaterial3D, Mesh3D, sdfCapsule, sdfEllipsoid, sdfMirror, sdfSphere, sdfSubtract, sdfUnion } from '@egret/engine/world3d';
+
+const fur = 0xf0a040;
+const body = sdfUnion([
+  sdfEllipsoid([0.6, 0.5, 0.72], { color: fur }),
+  sdfSphere(0.42, { at: [0, 0.55, 0.55], color: fur }),
+  sdfMirror(sdfEllipsoid([0.1, 0.22, 0.06], { at: [0.25, 0.98, 0.45], rotation: [0, 0, -0.4], color: fur })), // 耳朵
+  sdfMirror(sdfCapsule([0.3, -0.2, 0.3], [0.33, -0.62, 0.36], 0.14, { radiusEnd: 0.11, color: fur })), // 前腿
+  sdfEllipsoid([0.2, 0.14, 0.14], { at: [0, 0.45, 0.9], color: 0xfff0dd }) // 口鼻
+], { smooth: 0.1 });
+const mouth = sdfSubtract(body, sdfEllipsoid([0.1, 0.03, 0.1], { at: [0, 0.37, 1.0], color: 0x6a1a1a }), { smooth: 0.02 });
+const face = sdfUnion([mouth, sdfMirror(sdfSphere(0.07, { at: [0.17, 0.68, 0.9], color: 0x111111 }))], { smooth: 0.01 }); // 眼睛保持清晰
+const critter = new Mesh3D(createSdfGeometry3D(face, { variation: { amount: 0.06 } }), createStandardMaterial3D({ vertexColors: true, roughness: 0.75 }));
+```
+
+零件：`sdfSphere(radius)`、`sdfBox([w, h, d], { round })`、`sdfEllipsoid([rx, ry, rz])`、用于四肢、树枝和角的 `sdfCapsule(from, to, radius, { radiusEnd })`、`sdfCylinder(radius, height, { round })`、`sdfCone(bottom, top, height)` 和 `sdfTorus(radius, tube)`。每个零件都接受 `at`、`rotation`（欧拉角，弧度）、单一的 `scale` 和 `color`；没给颜色的零件取所在组的颜色。组合：`sdfUnion(parts, { smooth })` 在 `smooth` 的范围内把零件融成一体；`sdfSubtract(base, cuts, { smooth })` 挖掉一部分（带颜色的挖切会给挖出的面上色，比如嘴里）；`sdfIntersect(parts)` 只留共有部分；`sdfMirror(part, { axis })` 生成成对的眼睛、耳朵、腿。`sdfRound(shape, r)` 加厚并倒圆，`sdfShell(shape, t)` 掏空，`sdfDisplace(shape, { amount, frequency, seed })` 让石头、树皮、泥土表面起伏。组也接受同样的 `at`、`rotation`、`scale` 和 `color`，所以由几个零件组成的一条腿可以整体摆放。游戏运行时 `shape.distance(x, y, z)` 也有用，可以拿来对模型做命中判断。
+
+网格选项：`resolution`（最长边上的格数，默认 64，范围 8 到 192）、`triangles`（三角形上限，默认 8000；0 表示全部保留）、`occlusion`（褶皱变暗的程度，默认 0.7）、`occlusionRadius`、`variation`（{ `amount`, `frequency`, `seed` }，亮度的起伏，让大块零件不是一整片纯色），以及给没有颜色的零件用的 `color`。模型在初始化时生成一次：默认设置下一个模型要几百毫秒。眼睛、纽扣这类不能融进底下的细节，单独放进一个 `smooth` 很小的组。
+
+`simplifyGeometry3D(geometry, { triangles | ratio, maxError })` 把任何带索引的三角形几何体减到给定的面数，适用于生成或扫描的模型，以及远处的细节层级。它按二次误差度量先折叠代价最小的边，拒绝会让三角形翻面或让表面捏合的折叠，开放边和纹理接缝上的顶点保持原位，每个顶点保留自己的属性，几何体的材质分组也保留，返回 `{ geometry, before, after, error }`。带变形目标的几何体会被拒绝。
+
 ## 画面上的标签和标记
 
 3D 游戏的界面通常是叠在画布上的网页元素。`createScreenMarkers3D({ container, camera })` 让这些元素跟着场景中的点。

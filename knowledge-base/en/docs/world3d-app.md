@@ -71,6 +71,32 @@ scene.addChild(new Mesh3D(truck, createStandardMaterial3D({ vertexColors: true }
 
 A part is placed by `position`, `rotation` (Euler radians) or `quaternion`, and `scale`, or by a `matrix`. `color` is a hex colour as seen on screen or linear RGB; it is written into the vertex colours as linear values, so the material needs `vertexColors: true`. `keepColors` multiplies colours the part already has. A mirrored part keeps its triangles facing out. The merged geometry has positions, normals, colours and, when every part has them, texture coordinates. `linearColor3D(hex)` gives the linear values of a hex colour for vertex colours written by hand.
 
+## Models shaped from distance fields
+
+Boxes pushed through each other read as boxes. For a creature, a prop, a building or a plant, describe the shape as rounded parts joined smoothly, and let the engine make the mesh: `createSdfGeometry3D(shape, options)` turns a shape built from `sdf*` calls into one coloured mesh with smooth normals, colours blended where parts meet, and the shade of creases and hollows baked into its vertex colours.
+
+```js
+import { createSdfGeometry3D, createStandardMaterial3D, Mesh3D, sdfCapsule, sdfEllipsoid, sdfMirror, sdfSphere, sdfSubtract, sdfUnion } from '@egret/engine/world3d';
+
+const fur = 0xf0a040;
+const body = sdfUnion([
+  sdfEllipsoid([0.6, 0.5, 0.72], { color: fur }),
+  sdfSphere(0.42, { at: [0, 0.55, 0.55], color: fur }),
+  sdfMirror(sdfEllipsoid([0.1, 0.22, 0.06], { at: [0.25, 0.98, 0.45], rotation: [0, 0, -0.4], color: fur })), // ears
+  sdfMirror(sdfCapsule([0.3, -0.2, 0.3], [0.33, -0.62, 0.36], 0.14, { radiusEnd: 0.11, color: fur })), // front legs
+  sdfEllipsoid([0.2, 0.14, 0.14], { at: [0, 0.45, 0.9], color: 0xfff0dd }) // muzzle
+], { smooth: 0.1 });
+const mouth = sdfSubtract(body, sdfEllipsoid([0.1, 0.03, 0.1], { at: [0, 0.37, 1.0], color: 0x6a1a1a }), { smooth: 0.02 });
+const face = sdfUnion([mouth, sdfMirror(sdfSphere(0.07, { at: [0.17, 0.68, 0.9], color: 0x111111 }))], { smooth: 0.01 }); // eyes stay crisp
+const critter = new Mesh3D(createSdfGeometry3D(face, { variation: { amount: 0.06 } }), createStandardMaterial3D({ vertexColors: true, roughness: 0.75 }));
+```
+
+Parts: `sdfSphere(radius)`, `sdfBox([w, h, d], { round })`, `sdfEllipsoid([rx, ry, rz])`, `sdfCapsule(from, to, radius, { radiusEnd })` for limbs, branches and horns, `sdfCylinder(radius, height, { round })`, `sdfCone(bottom, top, height)` and `sdfTorus(radius, tube)`. Each takes `at`, `rotation` (Euler radians), a single `scale` and a `color`; a part without a colour takes its group's. Joins: `sdfUnion(parts, { smooth })` blends parts over `smooth` units, `sdfSubtract(base, cuts, { smooth })` carves (a cut with a colour paints its hollow, as the inside of a mouth), `sdfIntersect(parts)` keeps what they share, and `sdfMirror(part, { axis })` makes the pair of an eye, ear or leg. `sdfRound(shape, r)` grows and rounds, `sdfShell(shape, t)` hollows, and `sdfDisplace(shape, { amount, frequency, seed })` roughens rocks, bark and earth. A group takes the same `at`, `rotation`, `scale` and `color`, so a limb built of parts is placed as one. `shape.distance(x, y, z)` stays useful in play, for a hit test against the model.
+
+Mesh options: `resolution` (cells along the longest side, 64 unless given, 8 to 192), `triangles` (at most this many, 8000 unless given; 0 keeps all), `occlusion` (how dark creases get, 0.7 unless given), `occlusionRadius`, `variation` ({ `amount`, `frequency`, `seed` }, uneven brightness so a big part is not one flat tone) and `color` for parts with none. Make models once at setup: at the defaults a model takes a few hundred milliseconds. Keep a separate group with a small `smooth` for eyes, buttons and other details that must not melt into what they sit on.
+
+`simplifyGeometry3D(geometry, { triangles | ratio, maxError })` brings any indexed triangle geometry down to a budget, a generated or scanned model or a far level of detail. It collapses the cheapest edges first by the quadric error metric, refuses collapses that would turn a triangle over or pinch the surface, keeps vertices on open edges and texture seams where they are, keeps each vertex's own attributes and the geometry's material groups, and returns `{ geometry, before, after, error }`. Geometries with morph targets are refused.
+
 ## Labels and markers over the picture
 
 The interface of a 3D game is usually page elements over the canvas. `createScreenMarkers3D({ container, camera })` keeps such elements on scene points.
