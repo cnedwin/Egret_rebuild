@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1350 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1373 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -398,6 +398,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createRingGeometry3D` | function | Flat ring in the XY plane, facing +Z. |
 | `createRope3D` | function | Makes a rope of points that hangs and swings. |
 | `createScreenLayer3D` | function | Makes a picture drawn over the whole screen, above or below the scene. |
+| `createSdfGeometry3D` | function | The mesh of the field's surface, with smooth normals and linear vertex colours (draw it with a material that has `vertexColors: true`). |
 | `createShapeGeometry3D` | function | Fill one or more outlines in the XY plane, facing +Z. |
 | `createSkeletonHelper3D` | function | Makes lines that show the bones of a skeleton. |
 | `createSkinnedInstancedMesh3D` | function | Makes many skinned instances of one mesh, each playing baked clips from an animation texture. |
@@ -622,6 +623,25 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SceneDocument3D` | interface | A scene saved as JSON: its nodes, geometries, materials, textures and skeletons, and what was skipped. |
 | `ScreenLayer3D` | class | Full-screen image drawn in the same pass as the 3D scene, typically the canvas of a 2D stage. |
 | `ScreenLayerOptions3D` | interface | A screen layer to make: its order and opacity, whether it updates itself, and which way its rows run. |
+| `sdfBox` | function | A box of `size` [width, height, depth], its edges rounded by `round` (0 for sharp; more than half the smallest side is taken as that). |
+| `sdfCapsule` | function | A rounded limb from `from` to `to`: `radius` thick at the start, `radiusEnd` (the same unless given) at the end. |
+| `sdfCone` | function | An upright cone of `height` along y, `bottom` wide at its foot and `top` (0 for a point) at its head. |
+| `sdfCylinder` | function | An upright cylinder of `radius` and `height` along y, its rims rounded by `round` (at most the radius or half the height). |
+| `sdfDisplace` | function | The surface pushed in and out by smooth noise: rocks, bark, rough earth, a lumpy creature. |
+| `SdfDisplaceOptions3D` | interface | What `sdfDisplace` does: how far, how fine and which noise. |
+| `sdfEllipsoid` | function | A stretched ball with `radii` [x, y, z]: heads, bodies, eggs and stones. |
+| `SdfGroupOptions3D` | interface | A group of shapes: `smooth` is how far, in the model's units, the blend between them reaches. |
+| `sdfIntersect` | function | What the shapes have in common; with `smooth`, its edges rounded. |
+| `SdfMeshOptions3D` | interface | How a field becomes a mesh. |
+| `sdfMirror` | function | The shape and its mirror image across the plane through the origin square to `axis` ('x' unless given): make one eye, ear, arm or leg on the positive side and get the pair. |
+| `SdfOptions3D` | interface | Where a shape goes and how it looks: moved by `at`, turned by `rotation`, scaled by `scale`, painted `color`. |
+| `sdfRound` | function | The shape grown by `radius` all round, its edges rounded by as much. |
+| `SdfShape3D` | class | A shape as a signed distance field: negative inside, positive outside, zero on the surface. |
+| `sdfShell` | function | A hollow skin of the shape, `thickness` thick: bowls, pots, helmets, when cut open. |
+| `sdfSphere` | function | A ball of `radius`. |
+| `sdfSubtract` | function | `base` with `cut` taken away; with `smooth`, the edges of the hollow rounded. |
+| `sdfTorus` | function | A ring lying flat: `radius` to the middle of the tube, `tube` the tube's radius. |
+| `sdfUnion` | function | The shapes joined into one; with `smooth`, blended where they meet. |
 | `SERIALIZE3D_LIMITS` | value | The most nodes, embedded texture bytes and document bytes a scene document has. |
 | `SerializeOptions3D` | interface | How a scene is saved: the key each texture is saved by. |
 | `serializeScene3D` | function | Write the subtree under `root` as JSON-safe data. |
@@ -632,6 +652,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `ShapeDefinition3D` | type | The shape of a body: a sphere, box, capsule, plane, convex hull, triangle mesh, or several moving as one. |
 | `Side3D` | type | Which sides of a material's triangles are drawn. |
 | `signedArea2D` | function | The signed area of a 2D polygon: positive when its points run counterclockwise. |
+| `simplifyGeometry3D` | function | A copy of an indexed triangle geometry with fewer triangles; the geometry given is not changed. |
+| `SimplifyOptions3D` | interface | How far to simplify. |
+| `SimplifyResult3D` | interface | How a simplification went. |
 | `Skeleton3D` | class | Ordered bones with their inverse bind matrices; one instance may drive many meshes. |
 | `SkeletonHelper3D` | class | A line from every bone to its parent bone. |
 | `SkinnedInstancedMesh3D` | class | Many copies of one skinned mesh in a single draw call, each at its own place in its own clip. |

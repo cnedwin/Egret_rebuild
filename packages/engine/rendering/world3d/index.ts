@@ -319,5 +319,26 @@ export { GpuParticles3D, createGpuParticles3D, type GpuParticlesOptions3D } from
 export { VolumetricFog3D, createVolumetricFog3D, type VolumetricFogOptions3D } from './VolumetricFog3D.js';
 export { createGeometryBuilder3D, linearColor3D, projectToViewport3D } from './GeometryBuilder3D.js';
 export type { GeometryBuilder3D, GeometryPart3D, ViewportPoint3D } from './GeometryBuilder3D.js';
+export {
+  SdfShape3D,
+  createSdfGeometry3D,
+  sdfBox,
+  sdfCapsule,
+  sdfCone,
+  sdfCylinder,
+  sdfDisplace,
+  sdfEllipsoid,
+  sdfIntersect,
+  sdfMirror,
+  sdfRound,
+  sdfShell,
+  sdfSphere,
+  sdfSubtract,
+  sdfTorus,
+  sdfUnion
+} from './Sdf3D.js';
+export type { SdfDisplaceOptions3D, SdfGroupOptions3D, SdfMeshOptions3D, SdfOptions3D } from './Sdf3D.js';
+export { simplifyGeometry3D } from './Simplify3D.js';
+export type { SimplifyOptions3D, SimplifyResult3D } from './Simplify3D.js';
 export { retargetAnimationClip3D } from './Retarget3D.js';
 export type { RetargetOptions3D } from './Retarget3D.js';

@@ -508,6 +508,21 @@
       "path": "tests/world3d-sound.test.mjs",
       "originRole": "First-party behaviour tests of a positional sound whose rate changes the voices playing, and of buffers made from samples, on a small stand-in for Web Audio; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Sdf3D.ts",
+      "originRole": "First-party distance-field modelling: rounded primitives, smooth union, subtraction and intersection, mirroring and displacement, meshed by surface nets with field normals, blended vertex colours and baked occlusion; independently authored with AI assistance; Apache-2.0. The primitive distance functions and the polynomial smooth minimum are the standard published closed forms; surface nets is a standard technique; no third-party source.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Simplify3D.ts",
+      "originRole": "First-party mesh simplification by edge collapse under the quadric error metric (Garland and Heckbert, 1997), keeping open edges, attributes and material groups; independently authored with AI assistance; Apache-2.0. No third-party source.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-sdf.test.mjs",
+      "originRole": "First-party behaviour tests of distance-field shapes, the meshes made from them and the simplifier; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [
