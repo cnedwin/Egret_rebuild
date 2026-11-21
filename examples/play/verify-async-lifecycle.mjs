@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Run against the built public entries on a browser GPU. Gates control setup ordering independently of network speed.
-import { play } from '@egret/engine/play';
+import { play, SFX_PRESETS } from '@egret/engine/play';
 import { play3d } from '@egret/engine/webgl2/world3d';
 
 // Fix the rendering workload to the same preset as the earlier Play lifecycle qualification.
@@ -329,6 +329,119 @@ async function mountFailure(options) {
   }
 }
 
+// Count real Web Audio construction and completed decodes at the public play entry.
+export async function runPlayAudioOwnership(backend) {
+  const parent = document.createElement('div');
+  parent.style.cssText = 'width:128px;height:96px;position:relative';
+  document.body.appendChild(parent);
+  const options = { parent, width: 128, height: 96, backend };
+  const NativeContext = window.AudioContext;
+  const contexts = [];
+  let decodeCalls = 0;
+  let completedDecodes = 0;
+  let game;
+  let external;
+  window.AudioContext = class extends NativeContext {
+    constructor(...args) {
+      super(...args);
+      contexts.push(this);
+    }
+    decodeAudioData(...args) {
+      decodeCalls++;
+      const result = super.decodeAudioData(...args);
+      result.then(
+        () => completedDecodes++,
+        () => {}
+      );
+      return result;
+    }
+  };
+  try {
+    const counts = [];
+    for (const audio of [undefined, true]) {
+      const before = contexts.length;
+      let setups = 0;
+      const previousDecodes = completedDecodes;
+      game = await play({
+        ...options,
+        ...(audio === undefined ? {} : { audio }),
+        setup() {
+          const prepared = completedDecodes - previousDecodes;
+          check(contexts.length === before + 1, 'Default audio did not allocate one context');
+          check(prepared === Object.keys(SFX_PRESETS).length, 'Presets were not ready at setup');
+          if (setups++ === 0) counts.push(prepared);
+        }
+      });
+      const loop = game.sfx.loop('hum');
+      game.pause();
+      check(game.paused, 'Pause did not hold the game');
+      game.resume();
+      check(!game.paused, 'Resume did not release the game');
+      await game.restart();
+      check(setups === 2 && loop.stopped, 'Default restart retained an old voice');
+      const finalLoop = game.sfx.loop('hum');
+      await game.dispose();
+      game = undefined;
+      check(finalLoop.stopped && contexts[before].state === 'closed', 'Disposal retained a built-in voice or context');
+    }
+
+    const beforeCalls = decodeCalls;
+    for (const create of [play, createLifecycleWorld]) {
+      const before = contexts.length;
+      let setups = 0;
+      game = await create({
+        ...options,
+        audio: false,
+        setup() {
+          if (setups++ === 0) {
+            check(contexts.length === before && decodeCalls === beforeCalls, 'Opt-out prepared built-in audio');
+            external = new AudioContext();
+            external.createGain().connect(external.destination);
+          }
+        }
+      });
+      game.sfx.define('fixture-click', { from: 440, seconds: 0.01 });
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', code: 'KeyA', bubbles: true }));
+      game.sfx.play('fixture-click');
+      for (const [code, operation] of [
+        ['PLAY_SFX_UNKNOWN', () => game.sfx.play('unknown-fixture-sound')],
+        ['PLAY_OPTIONS_INVALID', () => game.sfx.define('invalid-fixture', {})],
+        ['PLAY_OPTIONS_INVALID', () => game.music.play('unknown-fixture-mood')]
+      ]) {
+        const receipt = await outcome(Promise.resolve().then(operation));
+        check(!receipt.ok && receipt.error?.code === code, 'Opt-out did not preserve ' + code);
+      }
+      const loop = game.sfx.loop('hum');
+      check(loop.stopped, 'An opt-out voice reported active playback');
+      loop.volume = 0.25;
+      loop.stop();
+      await game.music.play({ mood: 'calm', bars: 4 });
+      check(game.music.mood === undefined, 'Opt-out music reported active playback');
+      game.pause();
+      check(game.paused, 'Pause did not hold the game');
+      game.resume();
+      check(!game.paused, 'Resume did not release the game');
+      await game.restart();
+      await game.dispose();
+      game = undefined;
+      check(setups === 2 && loop.stopped, 'Restart did not retire the previous round');
+      check(contexts.length === before + 1 && decodeCalls === beforeCalls, 'Audio was created or decoded after setup');
+      check(external.state !== 'closed', 'Play closed a caller-owned context');
+      await external.close();
+      external = undefined;
+    }
+    return { presetDecodesAtSetup: counts, callerContextsPerGame: 1, optOutDecodeCalls: decodeCalls - beforeCalls };
+  } finally {
+    try {
+      await game?.dispose();
+      if (external && external.state !== 'closed') await external.close();
+    } finally {
+      window.AudioContext = NativeContext;
+      parent.remove();
+    }
+  }
+}
+
 export async function runPlayLifecycle(backend) {
   const parent = document.createElement('div');
   parent.style.cssText = 'position:relative;width:128px;height:96px';
@@ -340,7 +453,7 @@ export async function runPlayLifecycle(backend) {
   };
   window.addEventListener('unhandledrejection', observe);
   try {
-    const result = { backend, mountFailure: await mountFailure(options) };
+    const result = { backend, mountFailure: await mountFailure(options), audio: await runPlayAudioOwnership(backend) };
     for (const [name, create] of [
       ['play', play],
       ['play3d', createLifecycleWorld]

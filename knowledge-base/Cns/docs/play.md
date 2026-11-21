@@ -60,6 +60,7 @@ await play({
 | `width`、`height` | 舞台大小，使用游戏自己的单位：大于 0 的整数。画布会缩放以适应页面，并保持这个比例 | 必填 |
 | `background` | 每帧清除成的颜色 | 黑色 |
 | `transparent` | `true` 时每帧清为透明，页面上位于画布下面的内容会透出来 | 绘制背景色 |
+| `audio` | 启用内置音效和音乐。静音游戏或自带混音器的游戏可设为 `false` | `true` |
 | `setup(game)` | 搭建游戏；可以是 `async` | 什么都不搭建 |
 | `update(seconds, game)` | 游戏的一步 | 没有这一步 |
 | `parent` | 放画布的元素。画布占满它的宽度；元素自己没有高度时，按舞台的比例取高度 | 游戏占满窗口 |
@@ -116,6 +117,10 @@ await play({
 
 ## 声音
 
+游戏自行管理音频时，给 `play` 或 `play3d` 传入 `audio: false`。在本次游戏的整个生命周期内，Play 跳过音频上下文的创建、首次交互解锁音频的监听，以及 14 个预设的合成和解码。后续调用 `sfx.define`、`sfx.play`、`sfx.loop` 或 `music.play` 都不会启动内置音频。循环音效返回已停止的句柄，可以再次安全地调用 `stop()`。自有混音器的暂停、恢复和释放由游戏负责；重开游戏会再次执行 `setup`，应复用同一个混音器。
+
+显式设置 `audio: true` 或省略此项时，Play 会在 `setup` 前准备好预设。运行时临时静音仍可使用 `game.sfx.muted`。
+
 `game.sfx.play('coin')` 播放一个用代码合成的音效。可用的名字有 `jump`、`coin`、`hit`、`hurt`、`explosion`、`shoot`、`powerup`、`bounce`、`pop`、`click`、`hum`、`wind`、`win` 和 `lose`。`game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` 只改变这一次播放。不存在的名字会以 `PLAY_SFX_UNKNOWN` 被拒绝，错误信息里列出全部名字。
 
 **持续的声音。** `const engine = game.sfx.loop('hum', { volume: 0.5 })` 会一遍又一遍地播放一个音效，直到 `engine.stop()`；停止时默认用十分之一秒淡出，也可以给出秒数。车加速时设置 `engine.pitch = 1 + speed / 20`，播放过程中 `volume` 和 `pan` 也可以随时修改。`hum` 和 `wind` 是专为循环做的；用 `define` 定义的旋律可以循环成音乐，带 `seamless: true` 的音调在长度是整数个波时首尾相接不会有咔哒声。暂停会让所有循环停住，`restart` 和 `dispose` 会停止它们。
@@ -123,6 +128,12 @@ await play({
 玩家按键或点击之前，浏览器不播放任何声音；在那之前请求的音效听不到，游戏照常进行。
 
 `game.sfx.define('zap', { wave: 'saw', from: 1200, to: 200, seconds: 0.15 })` 添加一个音效。一个音有波形 `wave`（`'sine'`、`'square'`、`'saw'`、`'triangle'` 或 `'noise'`）、起始音高 `from` 和可选的结束音高 `to`（单位赫兹）、时长 `seconds`，以及可选的 `volume`（0 到 1）、`decay`（0 为保持，4 像拨弦，10 像一声嘀）和 `noise`（混入的噪声，0 到 1）。一组音依次播放，就是一小段旋律。`game.sfx.volume` 和 `game.sfx.muted` 作用于所有音效。
+
+### Windows 启动实测
+
+在 Windows、Chrome 157 和 RTX 5090 Laptop GPU 上，空白 WebGL2 页面在点击启动后调用 Play，并在 `setup` 中自建混音器。每次使用新的浏览器进程和配置目录，六组交错对照中有五组全程保持前台。开启内置音频时，页面创建两个上下文，解码 14 个预设；传入 `audio: false` 后，仅创建自有的一个上下文，预设解码为零。启动点击到浏览器合成画面首次出现目标颜色的中位数分别为 2726.4 ms 和 2602.7 ms。进入游戏后，第一次点击使像素变色的中位数分别为 9.4 ms 和 9.3 ms。这个用例在两种配置下的首次游戏操作均未触发上下文构造或预设解码。
+
+在同一台电脑上用 WebGPU 运行《哪吒闹海》本地副本第一波，另做了三组对照。导航到标题页可操作的中位数从 830.8 ms 降至 717.7 ms。点击开始到首个包含模拟推进的 GPU 提交调用返回，中位数分别为 72.6 ms 和 72.2 ms。两种配置下，游戏均解码了自有的 23 个声音，其中一部分仍在点击开始后解码。
 
 ## 重叠
 

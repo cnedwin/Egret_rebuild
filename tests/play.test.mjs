@@ -49,7 +49,8 @@ test('PL02 options that cannot make a game are refused before a page is touched,
     [{ width: 480, height: 270, background: 0x1000000 }, 'background'],
     [{ width: 480, height: 270, setup: 5 }, 'setup'],
     [{ width: 480, height: 270, update: 'x' }, 'update'],
-    [{ width: 480, height: 270, onError: {} }, 'onError']
+    [{ width: 480, height: 270, onError: {} }, 'onError'],
+    [{ width: 480, height: 270, audio: 'false' }, 'audio']
   ]) {
     const error = await refusal(() => play(options));
     assert.equal(error?.code, 'PLAY_OPTIONS_INVALID', JSON.stringify(options));
