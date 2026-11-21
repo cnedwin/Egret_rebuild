@@ -670,6 +670,27 @@ class Intersect extends SdfShape3D {
     }
     return d;
   }
+  protected override localColor(x: number, y: number, z: number, out: Float32Array, paint: Float32Array): void {
+    // Shapes with a colour paint what is kept; one without acts as a cutter and paints nothing, as a box that cuts a
+    // ring in half leaves the ring its colour on the cut faces too.
+    const k = this.#k,
+      other = new Float32Array(3);
+    let d: number | undefined;
+    for (const item of this.#items) {
+      if (item.paint === undefined) continue;
+      const e = item.distance(x, y, z);
+      if (d === undefined) {
+        item.colorAt(x, y, z, out, paint);
+        d = e;
+        continue;
+      }
+      item.colorAt(x, y, z, other, paint);
+      const h = k === 0 ? (d >= e ? 1 : 0) : clamp01(0.5 - (0.5 * (e - d)) / k);
+      mix3(out, other, out, h);
+      d = k === 0 ? Math.max(d, e) : e + (d - e) * h + k * h * (1 - h);
+    }
+    if (d === undefined) this.#items[0]!.colorAt(x, y, z, out, paint);
+  }
 }
 
 class Mirror extends SdfShape3D {
@@ -740,7 +761,10 @@ export function sdfSubtract(
   );
 }
 
-/** What the shapes have in common; with `smooth`, its edges rounded. */
+/**
+ * What the shapes have in common; with `smooth`, its edges rounded. The shapes with a colour paint it, cut faces
+ * included; a shape without one only cuts.
+ */
 export function sdfIntersect(items: readonly SdfShape3D[], options?: SdfGroupOptions3D): SdfShape3D {
   return new Intersect(shapes(items, 'sdf intersect shapes'), smoothOf(options), options);
 }

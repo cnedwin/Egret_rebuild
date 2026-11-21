@@ -170,6 +170,17 @@ test('SD05 colours follow the parts, blend where they meet, and creases are dark
     if (inHollow) assert.ok(mc[i * 3] < 0.05, 'the hollow is black');
     if (mp[i * 3 + 2] < -0.5) assert.ok(mc[i * 3] > 0.95, 'the back is white');
   }
+  // An intersection takes its colour from the parts that have one; a part without one only cuts, cut faces included.
+  const half = sdfIntersect([sdfSphere(1, { color: 0x00ff00 }), sdfBox([4, 1, 4], { at: [0, -0.5, 0] })]);
+  const hp = new Float32Array(3);
+  for (const point of [
+    [0, 0, 0],
+    [0, -1, 0],
+    [0.5, -0.3, 0.4]
+  ]) {
+    half.colorAt(...point, hp, new Float32Array([1, 1, 1]));
+    assert.deepEqual([...hp], [0, 1, 0], point.join());
+  }
   // Baked shade: the vertices in the waist between two balls are darker than those on the far sides.
   const shaded = createSdfGeometry3D(
     sdfUnion([sdfSphere(1, { at: [-0.9, 0, 0] }), sdfSphere(1, { at: [0.9, 0, 0] })], { smooth: 0.2 }),
