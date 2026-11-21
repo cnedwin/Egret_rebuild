@@ -120,3 +120,20 @@ declare module '@egret/android-player-project' {
   export function createPlayerProject(definition: PlayerDefinition, native: NativePlayer): NativePlayerSession;
   export function installPlayerProject(definition: PlayerDefinition): NativePlayerSession;
 }
+
+declare module '@egret/android-player-world3d' {
+  import type {Camera3D, Scene3D} from '@egret/engine/world3d';
+  import type {NativePlayerSession, PlayerDefinition, PlayerGame, PlayerServices} from '@egret/android-player-project';
+
+  export interface World3DPlayerGame extends PlayerGame {
+    /** Return the live scene and camera after the game advances. The existing stage supplies the 2D overlay. */
+    world3D(): {readonly scene: Scene3D; readonly camera: Camera3D};
+  }
+
+  export interface World3DPlayerDefinition extends Omit<PlayerDefinition, 'create'> {
+    create(services: PlayerServices): World3DPlayerGame | Promise<World3DPlayerGame>;
+  }
+
+  /** Install a trusted game using the opaque Standard-material GLES3 profile. */
+  export function installWorld3DPlayerProject(definition: World3DPlayerDefinition): NativePlayerSession;
+}

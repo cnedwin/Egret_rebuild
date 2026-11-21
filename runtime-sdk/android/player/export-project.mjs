@@ -64,6 +64,8 @@ export async function exportProject(project, output, esbuildModule) {
   if (bundler.version !== '0.28.2') throw new Error('Use esbuild 0.28.2');
   const workspace = workspaceModules(root);
   workspace.set('@egret/spine', path.join(root, 'packages/spine/dist/index.js'));
+  workspace.set('@egret/android-player-world3d', path.join(root, 'runtime-sdk/project/world3d-player.mjs'));
+  workspace.set('@egret/android-play3d-session', path.join(root, 'packages/engine/dist/web/world3d/BrowserPlay3D.js'));
   workspace.set('@egret/android-player-project', path.join(root, 'runtime-sdk/project/player-project.mjs'));
   await mkdir(path.dirname(output), {recursive: true});
   // A new destination makes a failed export unable to replace a previously shipped project.

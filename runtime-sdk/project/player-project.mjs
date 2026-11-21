@@ -63,7 +63,7 @@ function createPlayerStorage(native, lifetime) {
   });
 }
 
-export function createPlayerProject(definition, native) {
+export function createPlayerProject(definition, native, composeWorld) {
   const encoder = createCapturedProjectEncoder();
   const pageIds = new Map();
   const resident = new Map();
@@ -71,7 +71,7 @@ export function createPlayerProject(definition, native) {
   const { assets, textResult } = createPlayerAssets(native, lifetime.signal);
   const frameOptions = Object.freeze({
     width: definition.width, height: definition.height, clearColor: definition.clearColor ?? 0,
-    clearAlpha: 1, outputAlpha: 'opaque'
+    clearAlpha: composeWorld ? 0 : 1, outputAlpha: composeWorld ? 'premultiplied' : 'opaque'
   });
   let engine, scope, game, opening, closing, retirement, frameId = 0;
   let paused = false, stopped = false, lastTime = -1, pagesReleased = 0;
@@ -125,6 +125,8 @@ export function createPlayerProject(definition, native) {
         encoder.clear();
         pageIds.clear();
         resident.clear();
+        // The optional World3D capture owns a pooled draw list of the last scene.
+        composeWorld = undefined;
         engine = scope = game = undefined;
       }
       if (failures.length) throw new AggregateError(failures, 'Project disposal failed');
@@ -178,8 +180,9 @@ export function createPlayerProject(definition, native) {
         game.update?.(elapsedMs);
       }
       const frame = encoder.encode(engine.captureSharedFrame(frameOptions), frameId, pageIds);
+      const output = composeWorld ? composeWorld(game, frame) : frame;
       frameId = (frameId + 1) >>> 0;
-      return frame;
+      return output;
     },
     input(event) {
       if (!paused && !stopped) game?.input?.(event);

@@ -233,6 +233,11 @@ final class ProjectReplayTape {
         if (bytes == null || bytes.length < 24 || bytes.length > PlayerGraphics.MAX_FRAME_BYTES)
             throw new IOException("Invalid project packet length");
         ByteBuffer data = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
+        if (data.getInt(0) == WorldProjectPacket.MAGIC) {
+            int hud = WorldProjectPacket.validate(data);
+            validatePacket(java.util.Arrays.copyOfRange(bytes, hud, bytes.length), id, width, height, pages);
+            return;
+        }
         int format = data.getInt(0), quads = data.getInt(20);
         if ((format != EGR2 && format != EGR3 && format != EGR4 && format != EGR5) || data.getInt(4) != id || data.getInt(8) != width
             || data.getInt(12) != height || quads < 0 || quads > PlayerGraphics.MAX_QUADS)

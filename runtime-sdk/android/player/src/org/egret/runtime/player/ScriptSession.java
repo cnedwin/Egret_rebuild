@@ -38,7 +38,8 @@ abstract class ScriptSession {
             return;
         }
         ByteBuffer header = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-        if (header.getInt(8) != project.width || header.getInt(12) != project.height) {
+        int stage = WorldProjectPacket.stageOffset(header);
+        if (stage < 0 || header.getInt(stage + 8) != project.width || header.getInt(stage + 12) != project.height) {
             owner.reportFailure("Frame dimensions differ from the project stage");
             return;
         }

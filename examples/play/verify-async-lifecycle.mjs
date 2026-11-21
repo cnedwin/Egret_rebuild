@@ -269,6 +269,66 @@ async function worldCloseFailure(options) {
   }
 }
 
+// Force a synchronous mount failure after the real DOM canvas, observer and
+// resize listener have been acquired. Hold their identities even if Play removes
+// the outer holder; a detached holder can otherwise hide a leaked canvas.
+async function mountFailure(options) {
+  const sentinel = new Error('resize listener failed during Play3D mount');
+  const OriginalObserver = window.ResizeObserver;
+  const add = window.addEventListener;
+  let under,
+    observer,
+    disconnected = false,
+    listener,
+    resizeCalls = 0;
+  const nativeBounds = HTMLCanvasElement.prototype.getBoundingClientRect;
+  window.ResizeObserver = class extends OriginalObserver {
+    observe(target, ...args) {
+      super.observe(target, ...args);
+      const previous = target.previousElementSibling;
+      if (previous instanceof HTMLCanvasElement && previous.style.position === 'absolute') {
+        under = previous;
+        observer = this;
+      }
+    }
+    disconnect() {
+      if (this === observer) disconnected = true;
+      return super.disconnect();
+    }
+  };
+  window.addEventListener = function (type, callback, ...rest) {
+    add.call(this, type, callback, ...rest);
+    if (type === 'resize' && under && !listener) {
+      listener = callback;
+      throw sentinel;
+    }
+  };
+  try {
+    const receipt = await outcome(play3d(options));
+    check(!receipt.ok && receipt.error === sentinel, 'The original synchronous mount error did not reach the caller');
+    HTMLCanvasElement.prototype.getBoundingClientRect = function () {
+      resizeCalls++;
+      return nativeBounds.call(this);
+    };
+    window.dispatchEvent(new Event('resize'));
+    check(
+      under && listener && disconnected && !under.parentNode && resizeCalls === 0,
+      'Partial Play3D mount was retained'
+    );
+    return {
+      originalError: true,
+      underCanvasDetached: true,
+      observerDisconnected: true,
+      staleResizeCalls: resizeCalls
+    };
+  } finally {
+    window.addEventListener = add;
+    window.ResizeObserver = OriginalObserver;
+    HTMLCanvasElement.prototype.getBoundingClientRect = nativeBounds;
+    if (listener) window.removeEventListener('resize', listener);
+  }
+}
+
 export async function runPlayLifecycle(backend) {
   const parent = document.createElement('div');
   parent.style.cssText = 'position:relative;width:128px;height:96px';
@@ -280,7 +340,7 @@ export async function runPlayLifecycle(backend) {
   };
   window.addEventListener('unhandledrejection', observe);
   try {
-    const result = { backend };
+    const result = { backend, mountFailure: await mountFailure(options) };
     for (const [name, create] of [
       ['play', play],
       ['play3d', createLifecycleWorld]

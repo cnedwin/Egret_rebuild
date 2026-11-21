@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-21",
+  "en": {
+    "title": "Play Roll3D on the native Android player",
+    "body": "The optional World3D player draws an indexed 3D scene with depth, Standard lighting and a 2D HUD using trimmed V8 and GLES3. Roll3D uses the existing browser level, touch controls, camera and replay rules."
+  },
+  "zh": {
+    "title": "在 Android 原生播放器中运行 Roll3D",
+    "body": "可选的 World3D 入口使用裁剪 V8 和 GLES3 绘制带深度和标准光照的索引网格场景，并叠加 2D 界面。Roll3D 沿用浏览器原版关卡、触控、跟随镜头和重开规则。"
+  }
+}

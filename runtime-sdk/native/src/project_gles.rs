@@ -2,6 +2,7 @@
 //! Composite into a linear-light sRGB attachment and resolve to the window's
 //! premultiplied display bytes. The EGR1 benchmark retains its direct path.
 use crate::{frame::{Batch, Header, PAGE_SLOTS, MULTIPLY, ADD, LINEAR}, gl::*, gles::{link_program, VERTEX}, project_color::decode_srgb};
+use crate::{world_frame::WorldFrame, world_gles::WorldPipeline};
 use std::ptr;
 
 const DRAW: &[u8] = concat!("#version 300 es\n", include_str!("project_draw.frag"), "\0").as_bytes();
@@ -53,6 +54,8 @@ pub(crate) struct ProjectPipeline {
     resolve_vao: u32,
     target: u32,
     target_texture: u32,
+    depth: u32,
+    world: Option<WorldPipeline>,
     physical: [u32; 2],
 }
 
@@ -65,7 +68,7 @@ impl ProjectPipeline {
         };
         let mut p = Self {
             draw, mapped_draw: None, resolve,
-            resolve_vao: 0, target: 0, target_texture: 0, physical: [0; 2],
+            resolve_vao: 0, target: 0, target_texture: 0, depth: 0, world: None, physical: [0; 2],
         };
         glGenVertexArrays(1, &mut p.resolve_vao);
         glUseProgram(resolve);
@@ -83,6 +86,8 @@ impl ProjectPipeline {
     }
 
     pub(crate) unsafe fn destroy(&self) {
+        if let Some(world) = &self.world { world.destroy(); }
+        glDeleteRenderbuffers(1, &self.depth);
         glDeleteFramebuffers(1, &self.target);
         glDeleteTextures(1, &self.target_texture);
         glDeleteVertexArrays(1, &self.resolve_vao);
@@ -91,11 +96,11 @@ impl ProjectPipeline {
         glDeleteProgram(self.resolve);
     }
 
-    unsafe fn resize(&mut self, physical: [u32; 2]) -> bool {
-        if self.physical == physical { return true; }
+    unsafe fn resize(&mut self, physical: [u32; 2], with_depth: bool) -> bool {
+        if self.physical == physical && with_depth == (self.depth != 0) { return true; }
         let [w, h] = physical;
-        if u64::from(w)*u64::from(h)*4 > 64*1024*1024 { return false; }
-        let (mut target, mut tex) = (0, 0);
+        if u64::from(w)*u64::from(h)*(if with_depth { 8 } else { 4 }) > 64*1024*1024 { return false; }
+        let (mut target, mut tex, mut depth) = (0, 0, 0);
         glGenTextures(1, &mut tex);
         glBindTexture(TEXTURE_2D, tex);
         glTexParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
@@ -104,16 +109,27 @@ impl ProjectPipeline {
         glGenFramebuffers(1, &mut target);
         glBindFramebuffer(FRAMEBUFFER, target);
         glFramebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D, tex, 0);
+        // Only a World3D target needs depth. Replacement is transactional so a
+        // failed resize cannot discard the preceding valid framebuffer.
+        if with_depth {
+            glGenRenderbuffers(1, &mut depth);
+            glBindRenderbuffer(RENDERBUFFER, depth);
+            glRenderbufferStorage(RENDERBUFFER, DEPTH_COMPONENT24, w as i32, h as i32);
+            glFramebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER, depth);
+        }
         let complete = glCheckFramebufferStatus(FRAMEBUFFER) == FRAMEBUFFER_COMPLETE;
         glBindFramebuffer(FRAMEBUFFER, 0);
         let error = glGetError();
-        if tex == 0 || target == 0 || !complete || error != 0 {
+        if tex == 0 || target == 0 || (with_depth && depth == 0) || !complete || error != 0 {
+            glDeleteRenderbuffers(1, &depth);
             glDeleteFramebuffers(1, &target);
             glDeleteTextures(1, &tex);
             return false;
         }
         glDeleteFramebuffers(1, &self.target);
         glDeleteTextures(1, &self.target_texture);
+        glDeleteRenderbuffers(1, &self.depth);
+        self.depth = depth;
         self.target = target;
         self.target_texture = tex;
         self.physical = physical;
@@ -121,8 +137,12 @@ impl ProjectPipeline {
     }
 
     pub(crate) unsafe fn render(&mut self, header: &Header, physical: [u32; 2], vao: u32,
-                                pages: &[u32; PAGE_SLOTS], batches: &[Batch]) -> bool {
-        if !self.resize(physical) { return false; }
+                                pages: &[u32; PAGE_SLOTS], batches: &[Batch], world: Option<&WorldFrame<'_>>) -> bool {
+        if !self.resize(physical, world.is_some()) { return false; }
+        if world.is_some() && self.world.is_none() { self.world = WorldPipeline::create(); }
+        if world.is_none() {
+            if let Some(retired) = self.world.take() { retired.destroy(); }
+        }
         // Compile the mapped shader only when a quad or mesh first needs atlas mapping.
         let draw = if header.mapped {
             if self.mapped_draw.is_none() { self.mapped_draw = DrawProgram::create(true); }
@@ -131,10 +151,16 @@ impl ProjectPipeline {
         } else { &self.draw };
         glBindFramebuffer(FRAMEBUFFER, self.target);
         glDisable(SCISSOR_TEST);
-        let [r, g, b, a] = header.clear;
+        let [r, g, b, a] = world.map_or(header.clear, |scene| scene.clear);
         let alpha = f32::from(a)/255.;
         glClearColor(decode_srgb(r) as f32 * alpha, decode_srgb(g) as f32 * alpha, decode_srgb(b) as f32 * alpha, alpha);
-        glClear(COLOR_BUFFER_BIT);
+        if let Some(scene) = world {
+            let Some(pipeline) = &mut self.world else { return false; };
+            glClear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+            if !pipeline.draw(scene) { return false; }
+        } else {
+            glClear(COLOR_BUFFER_BIT);
+        }
         glUseProgram(draw.name);
         glBindVertexArray(vao);
         glUniform2f(draw.size, header.size[0], header.size[1]);

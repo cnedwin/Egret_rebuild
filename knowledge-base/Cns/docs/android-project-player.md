@@ -264,6 +264,33 @@ node runtime-sdk/android/player/export-project.mjs --project /projects/my-game -
 
 在末姿势，四路在 EGL 上下文重建前后的 1080 × 1920 全幅画面逐像素相同。与独立 CPU 光栅参考比较，远离颜色分界的 2,030,094 个像素全部吻合。剩余区域有 22 个像素与同一网格内的相邻纹素同色，21 个像素与轮廓处的相邻图层同色。这 43 个像素均能在各自的期望 3 × 3 邻域找到相同颜色。每路在两代上下文中各上传两页，关闭时累计释放四次。三个游戏会话各释放两份逻辑纹理，回放释放命令带。[Fold7 测量记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-indexed-mesh.json)
 
+### 在 Android 原生播放器游玩 Roll3D
+
+滚动红球收齐四颗星，其中一颗需要跳上高台。每收一颗，2D 计分都会更新；结算后点击 **Play again** 即可重开。Android 导出工具读取原有关卡并绑定原生宿主，两端共用移动、碰撞、跟随镜头、星星旋转、拾取粒子和重开逻辑。[浏览器原版关卡](https://github.com/cnedwin/Egret_rebuild/blob/dfc3a00010e9e9e9d4fa26c4a3f5a42a82d92b82/examples/play/roll3d.mjs)
+
+先构建仓库，用两个新目录分别放置游戏和 Android 工程，按前文准备裁剪 V8 AAR 和外部签名。
+
+```sh
+node runtime-sdk/examples/roll3d/prepare.mjs out/roll3d-game
+node runtime-sdk/android/player/create-app.mjs --project out/roll3d-game --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.roll3d --name Roll3D --out out/roll3d-app
+gradle -p out/roll3d-app assembleRelease
+```
+
+游戏从 `@egret/android-player-world3d` 导入 `installWorld3DPlayerProject`，在返回的游戏对象中实现 `world3D()`，每次更新后提供当前的 `{scene, camera}`。计分和按钮仍是播放器舞台上的 2D 显示对象。World3D 按相机生成可见绘制列表，E3D1 命令包携带顶点、法线、索引、变换、标准材质参数、相机和光照，末尾附上原有的透明 2D 帧。GLES3 先通过深度测试绘制场景，再叠加 HUD。同一上下文中，多个物体可共享已驻留且内容未变的几何缓冲；每份命令包也保留了在新上下文回放所需的几何数据。
+
+本次采用游戏的低画质设置，支持不透明、正面、无贴图的标准材质、带索引三角形、环境光、半球光、一盏方向光和曝光为 1 的 ACES 色调映射。采样时关闭了阴影、多重采样和后处理，已有 2D 入口继续输出 EGR 帧。[Fold7 真机记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-roll3d.json)
+
+首个 APK 在 16:9 舞台上仍使用默认相机宽高比 1，红球被横向拉宽，高台向右偏移。播放器现于视锥裁剪和绘制采集之前按舞台尺寸更新相机。在同一台 Fold7 上复验，开场 12 个布景和物体取样点的 RGB 各通道最大差均在 1/255 以内。红球、高台和最前方的星星在各自取样区域内的颜色轮廓交并比分别为 95.3%、98.5% 和 97.0%。文字排版和转动边缘与这些布景取样分别核对。
+
+在 Fold7 上，两端都通过触控收齐了四颗星，包括跳上高台取得的那一颗。两端都显示胜利界面，点击重开后计分回到 0/4。触控事件由工具注入真机，Android 使用本地签名的 arm64 Release APK。帧时在另外一轮采集，按 Android 合成器实际呈现相邻两帧的间隔计算。两段移动负载都交替短按左右方向。
+
+| 呈现帧间隔 p95（毫秒） | 静止 | 移动 A | 移动 B |
+| --- | ---: | ---: | ---: |
+| Chrome，WebGL2 | 16.581 | 16.579 | 16.582 |
+| Android，裁剪 V8 和 GLES3 | 16.578 | 16.580 | 16.582 |
+
+两端的 3D 缓冲均为 578 × 325，实际显示节奏接近 60 Hz。Chrome 使用独立的 1920 × 1080 界面层，本轮 APK 将界面绘入同一个 578 × 325 缓冲。六个短窗口均未出现达到 34 毫秒的帧间隔。另测 APK 默认的 1780 × 1001 表面和 120 Hz 模式，静止时 802 个间隔的 p95 为 8.289 毫秒。本次数据反映这台手机的呈现节奏，GPU 执行耗时、功耗和持续运行温控尚待测量。
+
 ### 在 Android 上游玩《灯影·闹天宫》第一幕
 
 浏览器原版固定在 `7b774670`。玩家可以滑动戏单，透过南天门旗帜的缺口看见背景，进入第一幕后可以攻击、跳跃和施放百身术。击退十名天兵并打败哪吒后，游戏进入结算并保存成绩。Android 工程沿用原版规则、Tiled 关卡、Spine 角色动作和存档格式。原生显示树负责戏单和控件排版，滚动列表使用矩形裁剪，固定形状的旗面由三角形绘制。原生标杆静音运行第一幕，浏览器对照未验收声音。[固定版本的游戏源码](https://github.com/cnedwin/PortedGamesEgret/tree/7b774670237666d73247cc793c55530f7f7c1e5f/LanternShadows)

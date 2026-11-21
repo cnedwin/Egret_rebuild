@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/WorldProjectPacket.java",
+      "originRole": "Stage envelope and recorded indexed-scene validation. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/roll3d/hud.mjs",
+      "originRole": "Native player HUD for the original score and replay button. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/roll3d/main.mjs",
+      "originRole": "Original Roll3D session binding and input mapping. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/roll3d/prepare.mjs",
+      "originRole": "Reproducible Android export of the existing first-party game and synthesized effects. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/world_frame.rs",
+      "originRole": "Bounded E3D1 packet decoder and regression coverage. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/world_gles.rs",
+      "originRole": "Native GLES3 draw execution and per-context geometry lifetime. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/world_standard.vert",
+      "originRole": "Model and camera transforms for indexed meshes. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/world_standard.frag",
+      "originRole": "Untextured Standard lighting and ACES matching the existing World3D low preset. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/world3d-frame.mjs",
+      "originRole": "World3D camera, material and mesh capture for the Android project player. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/world3d-player.mjs",
+      "originRole": "Optional World3D project entry point. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/world3d-project.test.mjs",
+      "originRole": "Scene capture, sharing, change and compatibility regressions. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-roll3d.json",
+      "originRole": "Physical Fold7 measurements for the original browser game and signed native Android release. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
