@@ -287,13 +287,16 @@ test('UNIT SST09 pending pages and conversion memory are twice the frame page bu
 
 test('UNIT cold page materialization matches the scalar reference for every alpha and channel byte', () => {
   const width = 256,
-    height = 256,
+    height = 257,
     pixels = new Uint8Array(width * height * 4);
-  for (let alpha = 0; alpha < height; alpha++)
+  for (let alpha = 0; alpha < 256; alpha++)
     for (let code = 0; code < width; code++) {
       const offset = 4 * (alpha * width + code);
       pixels.set([code, 255 - code, (code + 97) & 255, alpha], offset);
     }
+  // The final partial block is transparent at every sampled pair but has opaque and translucent details.
+  const tail = 4 * width * 256;
+  pixels.set([240, 16, 70, 0, 80, 30, 240, 255, 150, 40, 90, 117], tail + 4 * (width - 3));
   const image = createImageData2D({ width, height, pixels }),
     bytes = image.byteLength;
   const storage = {
