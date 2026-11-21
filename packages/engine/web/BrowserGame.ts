@@ -173,7 +173,7 @@ export interface BrowserGame {
   /**
    * Gives a display object a hit area at least `cssPixels` (44 unless given) square as the canvas is shown now, centred
    * on what it draws and never smaller than it, so a small icon is as easy to press as a finger needs. Call it again
-   * after the node, or the canvas, changes size. Returns the area, in the node's own units.
+   * after the node, its ancestors or the canvas change transform or size. Returns the area, in the node's own units.
    */
   padHitArea(
     node: DisplayObject,
@@ -580,13 +580,30 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         )
           throw invalid();
         const drawn = node.getBounds(),
-          box = canvas.getBoundingClientRect(),
-          perCss = box.width > 0 && box.height > 0 ? Math.max(width / box.width, height / box.height) : 1;
-        // The node's own units: undo its scale on the stage.
-        const scaleX = Math.abs(node.scaleX) || 1,
-          scaleY = Math.abs(node.scaleY) || 1;
-        const wide = Math.max(drawn.width, (cssPixels * perCss) / scaleX),
-          tall = Math.max(drawn.height, (cssPixels * perCss) / scaleY);
+          box = canvas.getBoundingClientRect();
+        const laidOut = box.width > 0 && box.height > 0;
+        const halfX = (cssPixels / 2) * (laidOut ? width / box.width : 1);
+        const halfY = (cssPixels / 2) * (laidOut ? height / box.height : 1);
+        let wide = drawn.width,
+          tall = drawn.height;
+        if (cssPixels > 0) {
+          const cx = drawn.x + drawn.width / 2,
+            cy = drawn.y + drawn.height / 2;
+          const center = node.localToGlobal(cx, cy);
+          try {
+            // Opposite corners are symmetric. Two adjacent corners give the local extents of the entire CSS square.
+            const top = node.globalToLocal(center.x + halfX, center.y - halfY);
+            const bottom = node.globalToLocal(center.x + halfX, center.y + halfY);
+            wide = Math.max(wide, 2 * Math.abs(top.x - cx), 2 * Math.abs(bottom.x - cx));
+            tall = Math.max(tall, 2 * Math.abs(top.y - cy), 2 * Math.abs(bottom.y - cy));
+          } catch (cause) {
+            if (!(cause instanceof EgretError) || cause.code !== 'COORDINATE_TRANSFORM_SINGULAR') throw cause;
+            // A collapsed node cannot receive a two-dimensional hit. Keep a finite area until it is laid out again.
+            const perCss = laidOut ? Math.max(width / box.width, height / box.height) : 1;
+            wide = Math.max(wide, (cssPixels * perCss) / (Math.abs(node.scaleX) || 1));
+            tall = Math.max(tall, (cssPixels * perCss) / (Math.abs(node.scaleY) || 1));
+          }
+        }
         const area = Object.freeze({
           x: drawn.x - (wide - drawn.width) / 2,
           y: drawn.y - (tall - drawn.height) / 2,

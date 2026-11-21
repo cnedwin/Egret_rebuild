@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { createBrowserGame, createBrowserStatsPanel } from '@egret/engine/web/game';
 import { host } from './helpers.mjs';
+import { glPorts } from './fixtures/gl-shared-rendering.mjs';
 
 const coded = code => error => error?.code === code;
 /** As much of a page as the panel uses: a body that takes children, and elements with a style, attributes and text. */
@@ -198,4 +199,66 @@ test('BG05 an error the Engine reports is told as a failure of the loop is, and 
     globalThis.reportError = before;
   }
   assert.deepEqual(page, [cause]);
+});
+
+test('padHitArea contains a CSS square after parent scaling, reflection, rotation and canvas stretching', async t => {
+  // The BrowserGame captures its PNG ports at startup. This geometry check never decodes an image.
+  const doc = page().document;
+  const globals = {
+    document: doc,
+    window: { document: doc, createImageBitmap() {} },
+    ImageBitmap: class {
+      close() {}
+    }
+  };
+  for (const [name, value] of Object.entries(globals)) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    t.after(() =>
+      previous ? Object.defineProperty(globalThis, name, previous) : Reflect.deleteProperty(globalThis, name)
+    );
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+  }
+  const { canvas } = glPorts();
+  let css = { width: 200, height: 100 };
+  canvas.getBoundingClientRect = () => css;
+  const game = await createBrowserGame({
+    canvas,
+    width: 200,
+    height: 100,
+    backend: 'webgl2',
+    autoStart: false,
+    pointer: false,
+    keyboard: false
+  });
+  try {
+    const parent = game.stage.addChild(game.scope.use(new egret.Sprite()));
+    const icon = parent.addChild(game.scope.use(new egret.Sprite()));
+    icon.graphics.beginFill(1).drawRect(0, 0, 8, 8).endFill();
+    icon.touchEnabled = true;
+    parent.x = 73;
+    parent.y = 40;
+    const area = () => game.padHitArea(icon, 44);
+    assert.deepEqual(area(), { x: -18, y: -18, width: 44, height: 44 });
+    parent.scaleX = parent.scaleY = 0.5;
+    assert.deepEqual(area(), { x: -40, y: -40, width: 88, height: 88 });
+    css = { width: 300, height: 85 };
+    parent.scaleX = -0.6;
+    parent.scaleY = 1.2;
+    parent.rotation = -37;
+    icon.rotation = 18;
+    icon.skewX = 12;
+    icon.anchorOffsetX = 2;
+    const hit = area();
+    const center = icon.localToGlobal(4, 4);
+    for (const x of [-21, 21])
+      for (const y of [-21, 21]) {
+        assert.equal(game.stage.hitTest(center.x + (x * 200) / css.width, center.y + (y * 100) / css.height), icon);
+      }
+    assert.ok(hit.width >= 8 && hit.height >= 8);
+    parent.scaleX = 0;
+    assert.ok(Object.values(area()).every(Number.isFinite));
+    assert.deepEqual(game.padHitArea(icon, 0), { x: 0, y: 0, width: 8, height: 8 });
+  } finally {
+    await game.dispose();
+  }
 });

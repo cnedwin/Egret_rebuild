@@ -13,6 +13,7 @@ The inventory covers the 98 first-parent merges from November 17 (UTC+8) through
 | In Edge WebGL2 on the NVIDIA D3D11 driver, three minified regions all read the background value 32. The unfiltered control remained visible. The same page rendered correctly on Fold7. | A multi-level texture now uses `NEAREST_MIPMAP_NEAREST` for minification. The single-level and magnification paths retain nearest sampling. The Windows single-variable probe reproduced the change with the same uploaded bytes. On the production build the three regions read 188 with zero spread and no red bleed on Windows WebGL2 and WebGPU. Fold7 WebGL2 passed the same pixel checks after the fix. |
 | The gallery link served by `pnpm example:browser` returned 404. | The server admits the gallery entry points and files from its model registry. Both devices opened all 24 models and responded to the size switch and orbit controls. An HTTP regression checks each registered route and an unrelated file. |
 | The Windows Lanterns example verifier treated any existing gold light as a failure. Its first run counted 41 gold samples before the first shrine and 156 after it. | The verifier measures the additional lit area when the shrine activates. With the shrine's lighting and particles disabled the control rose only from 44 to 47 and was rejected. With the game intact, all seven official desktop scenarios completed, including all three shrines and restart. |
+| A button inside a half-scale parent had only 22 CSS pixels of hit width after requesting 44. On both devices and backends only its center responded; all four corner taps missed. | Padding now maps a CSS square through the full ancestor transform into local coordinates. Direct, half-scale and rotated/mirrored buttons accepted all five test points on each of the four device/backend combinations. Degenerate transforms retain a finite local fallback. |
 
 ## Tested on the same source
 
@@ -29,6 +30,14 @@ On Fold7, Breakout, Platformer, Memory and Lanterns3D completed and restarted on
 Five browser image sources, IndexedDB storage and offline bundle replacement, particle blending, video MIME selection with 404 recovery, horizontal wheel handling, and reduced-motion behavior passed on both backends of each device. On Windows the wheel assertion follows the delta delivered by the browser at the actual display scale.
 
 For #435 the same 1,024 × 1,700 game atlas was converted in a foreground Windows browser using the old and new implementations. The new path was faster in 12 of 12 pairs; the median paired reduction was 1.475 ms (6.500 to 5.025 ms). The mixed-alpha control was faster in 7 of 12 pairs (median saving 0.150 ms). The mid-alpha control was faster in 4 of 12 pairs (median slowdown 0.200 ms). Neither control showed a consistent gain. Output bytes agreed. These CPU conversion measurements cover neither game frame time nor GPU duration.
+
+## Updates merged during the run
+
+[#443](https://github.com/cnedwin/Egret_rebuild/pull/443) and [#444](https://github.com/cnedwin/Egret_rebuild/pull/444) landed during collection. The second pass uses 41cb0cb8. On both devices and backends, hard edges increased axis-aligned box face normals from 86.08% to 100% at the same triangle count. Camera movement selected and drew 1,800, 432, 96 and again 1,800 triangles. Returning to the near view reproduced its pixels. The CLI-baked 89,584-byte, 3,000-triangle crate matched the mesh made at runtime when both received the same wood material. All seven procedural surfaces changed color and lighting when their color and relief inputs were enabled separately.
+
+The updated interactive gallery built 24 models in 7.89–8.02 s on Windows and 10.20–14.80 s on Fold7 in these individual launches. The Windows and Fold7 callback p95 values across the subsequent 90 intervals were 4.3 ms and 41.5–41.6 ms respectively. These single launches do not establish a performance regression between versions.
+
+A UI leaf also created a real browser label under its own scope. Its 30-unit text height matched its committed layout; releasing the leaf removed all glyph pixels while the game's scope stayed open on all four paths.
 
 ## Frame intervals and outstanding scope
 

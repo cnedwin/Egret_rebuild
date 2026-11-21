@@ -108,7 +108,7 @@ test('the documented server serves the gallery and all registered models', async
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
     const url = 'http://127.0.0.1:' + server.address().port + '/examples/models/';
     for (const file of ['index.html', 'gallery.mjs', 'index.mjs', ...models.map(name => name + '.mjs')]) {
-      assert.equal((await fetch(url + file, {method: 'HEAD'})).status, 200, file);
+      assert.equal((await fetch(url + file, { method: 'HEAD' })).status, 200, file);
     }
     assert.equal((await fetch(url + 'README.md')).status, 404);
   } finally {

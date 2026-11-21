@@ -209,7 +209,9 @@ test('MIP06 the WebGL2 Host allocates and uploads every level, and uploads a kep
         await host.whenIdle();
         const events = f.events.slice(before);
         return {
-          minFilters: events.filter(row => row[0] === 'texParameteri' && row[2] === gl.TEXTURE_MIN_FILTER).map(row => row[3]),
+          minFilters: events
+            .filter(row => row[0] === 'texParameteri' && row[2] === gl.TEXTURE_MIN_FILTER)
+            .map(row => row[3]),
           storage: events.filter(row => row[0] === 'texStorage2D' && row[3] === gl.RGBA8).map(row => row.slice(1)),
           levels: events.filter(row => row[0] === 'texSubImage2D').map(row => [row[2], row[5], row[6], row[9].length])
         };
