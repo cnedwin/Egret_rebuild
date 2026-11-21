@@ -4,6 +4,8 @@ package org.egret.runtime.player;
 import android.os.Handler;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,14 +37,18 @@ final class ProjectBenchmark {
 
     boolean captures() { return "capture".equals(mode); }
     boolean replays() { return "replay".equals(mode); }
-    // A capture and the retained terminal image must render on a fresh EGL context.
-    boolean needsFullFrame() { return captures() || frames >= ProjectReplayTape.FRAMES - 1; }
+    // The first and terminal submissions start independently. Interior captures may use the last acknowledged draw.
+    boolean needsFullFrame() { return frames == 0 || frames >= ProjectReplayTape.FRAMES - 1; }
     boolean active() { return frames < ProjectReplayTape.FRAMES || restoreTerminal; }
     double elapsedMs() { return frames * 1000.0 / 120.0; }
 
     void enqueued(PlayerGraphics.Frame frame) throws IOException {
         int expected = Math.min(frames, ProjectReplayTape.FRAMES - 1);
         if (frame.id() != expected) throw new IOException("Benchmark expected frame " + expected + ", got " + frame.id());
+        // A custom producer must honor the full terminal checkpoint requested by the host.
+        if (expected == ProjectReplayTape.FRAMES - 1 &&
+                WorldProjectPacket.isDelta(ByteBuffer.wrap(frame.bytes).order(ByteOrder.LITTLE_ENDIAN).getInt(0)))
+            throw new IOException("Benchmark terminal checkpoint requires a complete frame");
         // Warm and timed live frames retain only the terminal packet. The capture pass owns its own snapshots.
         if (captures() || expected == ProjectReplayTape.FRAMES - 1) pending = frame;
     }
@@ -64,7 +70,9 @@ final class ProjectBenchmark {
 
     void newContext() throws IOException {
         if (frames == ProjectReplayTape.FRAMES) restoreTerminal = true;
-        else if (frames > 0) throw new IOException("Benchmark was interrupted before the terminal frame");
+        else if (frames > 0 && !replays()) throw new IOException("Benchmark was interrupted before the terminal frame");
+        // Replay resumes from its last acknowledged position, even if the old GL callback was dropped.
+        pending = null;
     }
 
     boolean redrawTerminal(EgretPlayerView owner) {
@@ -144,7 +152,16 @@ final class ProjectBenchmark {
             });
         }
 
-        @Override void frame(int epoch, double elapsedMs, long previousFrame, long retryId) { owner.enqueue(tape.frame(frames, epoch), -1, -1); }
+        @Override void frame(int epoch, double elapsedMs, long previousFrame, long retryId) {
+            if (retryId >= 0 && retryId != frames) {
+                owner.reportFailure("Replay retry does not match the current frame");
+                return;
+            }
+            // A fresh context or missing predecessor needs this exact frame and its recorded page versions.
+            PlayerGraphics.Frame next = retryId >= 0 || previousFrame < 0 || previousFrame != frames - 1L
+                ? tape.fullFrame(frames, epoch) : tape.frame(frames, epoch);
+            owner.enqueue(next, -1, -1);
+        }
         @Override void invoke(String expression) {}
         @Override void resumeVm() {}
         @Override void pauseVm() {}

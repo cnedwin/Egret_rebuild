@@ -52,9 +52,11 @@ The native replay benchmark uses a separate frozen EGR1 workload. The Moon Herba
 
 ## Comparing the same game against native replay
 
-The generated embedded Activity offers three opt-in benchmark modes in a debuggable app. In `capture`, the game runs its first 210 submissions at a fixed logical time of `frameIndex × 1000 / 120` milliseconds. The recorder saves the submitted EGR2, EGR3 or EGR4 command bytes and straight-RGBA page versions, including replacements and removals. It publishes the complete tape atomically in app-private storage. A capture is limited to 64 MiB and 4,096 distinct page versions. Each app retains its latest complete capture. If another capture replaces it, replay checks the requested digest before drawing.
+The generated embedded Activity offers three opt-in benchmark modes in a debuggable app. In `capture`, the game runs its first 210 submissions at a fixed logical time of `frameIndex × 1000 / 120` milliseconds. The recorder saves the submitted 2D commands or World3D scene with its ordered draws and 2D overlay, together with the straight-RGBA page versions used by each frame. Draws can share resident geometry, and the recording tracks texture replacements and removals. It publishes the complete tape atomically in app-private storage. A capture is limited to 64 MiB and 4,096 distinct page versions. Each app retains its latest complete capture. If another capture replaces it, replay checks the requested digest before drawing.
 
-`live` runs the game at the same logical times without recording. `replay` preloads the verified tape and dispatches the same packets to the existing GLES3 renderer without starting a script VM. All lanes ignore gameplay input and hold the last frame, index 209. Recreating the EGL context redraws that frame with the restored pages. Collect timings in separate live and replay launches. Startup of replay includes reading and verifying the tape. Resident PSS after the terminal frame includes the preloaded tape.
+Recordings containing only full packets keep the original EGRP version 1 layout and checksum rules. A recording that contains resident-geometry packets uses EGRP version 2 and needs a version 2 reader. The first and last submissions are complete. An intermediate World3D frame references the preceding draw's geometry and keeps its own camera, ordered draws, HUD and texture-page versions. On load, the player checks the chain and each frame's fully expanded size. Recovery assembles one complete packet for the requested frame from the stored geometry slices.
+
+`live` runs the game at the same logical times without recording. `replay` preloads the verified tape and dispatches the same packets to the existing GLES3 renderer without starting a script VM. All lanes ignore gameplay input and hold the last frame, index 209. A new EGL context can redraw the terminal frame with its texture pages. During replay, losing the context midway resumes at the next unacknowledged frame. The player reconstructs that frame from its recorded definitions and then resumes incremental submission. An interrupted capture must be restarted before it can replace the previous complete tape. Collect timings in separate live and replay launches. Startup of replay includes reading and verifying the tape. Resident PSS after the terminal frame includes the preloaded tape.
 
 For an embedded sample exported with application ID `org.example.herbarium`, run:
 
@@ -63,7 +65,7 @@ adb shell am start -S -n org.example.herbarium/org.egret.example.LibraryActivity
 adb shell dumpsys activity org.example.herbarium/org.egret.example.LibraryActivity
 ```
 
-Read `benchmark.sha256` after `benchmark.complete` becomes true. Keep the app data between runs. Use the following commands in separate runs and read the Activity dump after each run completes. Replace `CAPTURE_SHA256` with the reported lower-case digest.
+Read `benchmark.sha256` after `benchmark.complete` becomes true. This identifies the tape payload, excluding the 32-byte SHA-256 trailer. Keep the app data between runs. Use the following commands in separate runs and read the Activity dump after each run completes. Replace `CAPTURE_SHA256` with the reported lower-case digest.
 
 ```sh
 adb shell am start -S -n org.example.herbarium/org.egret.example.LibraryActivity --es egret.benchmark live --ez egret.timing true

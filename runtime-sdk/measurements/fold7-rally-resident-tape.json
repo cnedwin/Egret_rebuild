@@ -1,0 +1,169 @@
+{
+  "date": "2026-11-21",
+  "engineBase": "791147092fc951a0593fe4f9ca8dc37db2d154e6",
+  "device": {
+    "model": "Samsung Galaxy Z Fold7 (SM-F966U1)",
+    "android": 17,
+    "gpu": "Adreno 830",
+    "backend": "OpenGL ES 3",
+    "application": "Signed, debuggable arm64 QA build with the same APK for capture, correctness and timing",
+    "apkSha256": "211f82d630b4c276f88fa81598ea3b44961ad68a80461a4fa7cc5f002bdef85c",
+    "renderBuffer": [
+      873,
+      325
+    ],
+    "power": "USB connected, awake and unlocked"
+  },
+  "game": {
+    "source": "https://github.com/cnedwin/PortedGamesEgret/tree/ce6144533b890be992bea9eb09cb344457f8364c/Rally",
+    "scene": "Same fixed eight-car Rally starting grid and both textured panda GLBs as the resident-geometry bridge test. Camera and look target move by X = 0.025 * sin(frame * pi / 24). The renderer uses the same 2D HUD and 1,332 World3D draw records per tick.",
+    "logicalFrameStepMs": "1000 / 120",
+    "sourceModels": {
+      "assets/track-models/panda-kart.glb": "7a5bd9e963a692a39ffe4e5c2c2643c07f9867b67bce63ba76a3963880005f19",
+      "assets/track-models/panda-driver.glb": "58b83a3557f2714c7db1ae4db23aedda379800d458cdd600f94fad8a50d2dc70"
+    }
+  },
+  "tape": {
+    "containerVersion": 2,
+    "frames": 210,
+    "fileBytes": 33705061,
+    "limitBytes": 67108864,
+    "fileSha256": "286ef7acaa6e2bc576075a178c80eb0cbc7b09d4f761d793e2581c009b3a4132",
+    "payloadSha256": "fda8379b1c8f14f7f660d034d977b76a0265243ec6af54c77a9d48173e2b760e",
+    "fullCheckpointFrameIds": [
+      0,
+      209
+    ],
+    "packetCounts": {
+      "E3D2": 2,
+      "E3D4": 208
+    },
+    "texturePageVersions": 5,
+    "rgbaBytes": 4776816,
+    "storedCommandBytes": 28926448,
+    "storedGeometryDefinitionBytes": 1837296,
+    "geometryDefinitionBytesPerInteriorFrame": 0,
+    "independentlyExpandedCommandBytes": 220004400,
+    "expandedCommandSha256": "7562c24dd91390e98262b80f8f2731725f04cb3975cedb7cc25809154bcf452a"
+  },
+  "correctness": {
+    "scriptHostCapture": "trimmed V8",
+    "scriptHostReplay": "native-replay (no JavaScript VM)",
+    "method": "Each successful native draw in the three proof runs yielded the SHA-256 of the full RGBA framebuffer, the ordered World3D draw table and the HUD. The observer also combined mesh ID, texture slot and index count in actual glDrawElements call order. The verifier derived the expected order independently from the on-disk tape.",
+    "renderedFramesCompared": 210,
+    "worldDrawsPerFrame": 1332,
+    "uniqueFramebufferImages": 25,
+    "matchingPixelsEveryFrame": true,
+    "matchingWorldDrawOrderAndHudEveryFrame": true,
+    "orderedWorldDrawTableSha256": "b41cd69836385524a4253fa41ca981126ab8ada275b12f442ac1179189d641a0",
+    "orderedHudBytesSha256": "e4a8ecfb333bf3f51d74ff376cfad8b32cff9d0f9780a02880bb463200ce3779",
+    "orderedRgbaFrameDigestStreamSha256": "a9ef8ec760be732260f9ba3f0693f65677f27e76f5e18004398b51b188d36cae",
+    "digestStreamFormat": "SHA-256 of the concatenated lowercase hexadecimal SHA-256 framebuffer digests, one UTF-8 hex string per distinct logical frame ID in order.",
+    "terminalDisplayCrop": [
+      2292,
+      853
+    ],
+    "terminalDisplayRgbSha256": "52d1042476f91f8806891b8353399727e0f3abd89a5bc67ae70537107269d52b"
+  },
+  "recovery": {
+    "midReplayResumedLogicalId": 90,
+    "midReplaySuccessfulGlDraws": 211,
+    "midReplayLogicalFrames": 210,
+    "source": "After Activity backgrounding the same replay process rebuilt its EGL context. The unacknowledged logical frame was submitted again in full; subsequent frames resumed incrementally. Separate capture and replay sessions redrew the held terminal frame after EGL recreation."
+  },
+  "release": [
+    {
+      "lane": "capture",
+      "eglContexts": 2,
+      "meshesCreated": 80,
+      "meshesDeleted": 80,
+      "texturePagesUploaded": 10,
+      "texturePagesReleased": 10,
+      "remainingGeometryPayloadBytes": 0,
+      "tapeReleased": null
+    },
+    {
+      "lane": "replay",
+      "eglContexts": 2,
+      "meshesCreated": 80,
+      "meshesDeleted": 80,
+      "texturePagesUploaded": 10,
+      "texturePagesReleased": 10,
+      "remainingGeometryPayloadBytes": 0,
+      "tapeReleased": true
+    },
+    {
+      "lane": "interrupted",
+      "eglContexts": 2,
+      "meshesCreated": 80,
+      "meshesDeleted": 80,
+      "texturePagesUploaded": 10,
+      "texturePagesReleased": 10,
+      "remainingGeometryPayloadBytes": 0,
+      "tapeReleased": true
+    },
+    {
+      "lane": "time1",
+      "eglContexts": 1,
+      "meshesCreated": 40,
+      "meshesDeleted": 40,
+      "texturePagesUploaded": 5,
+      "texturePagesReleased": 5,
+      "remainingGeometryPayloadBytes": 0,
+      "tapeReleased": true
+    },
+    {
+      "lane": "time2",
+      "eglContexts": 1,
+      "meshesCreated": 40,
+      "meshesDeleted": 40,
+      "texturePagesUploaded": 5,
+      "texturePagesReleased": 5,
+      "remainingGeometryPayloadBytes": 0,
+      "tapeReleased": true
+    },
+    {
+      "lane": "time3",
+      "eglContexts": 1,
+      "meshesCreated": 40,
+      "meshesDeleted": 40,
+      "texturePagesUploaded": 5,
+      "texturePagesReleased": 5,
+      "remainingGeometryPayloadBytes": 0,
+      "tapeReleased": true
+    }
+  ],
+  "timing": {
+    "method": "Three separate cold native replay processes used the saved payload digest. Pixel readbacks and draw-order hashing were disabled. After 30 warm-up frames, the player measured successful submission callbacks; SurfaceFlinger presentation intervals were collected independently from the game layer after discarding its first 30 intervals. The app requested 60 Hz.",
+    "samples": [
+      {
+        "callbackIntervals": 180,
+        "physicalPresentIntervals": 178,
+        "presentationP50Ms": 16.577865,
+        "presentationP95Ms": 16.581094,
+        "dispatchToEnqueueP95Us": 34,
+        "enqueueToCallbackP95Us": 4174,
+        "submissionCallbackIntervalP95Us": 19456
+      },
+      {
+        "callbackIntervals": 180,
+        "physicalPresentIntervals": 178,
+        "presentationP50Ms": 16.579844,
+        "presentationP95Ms": 16.582187,
+        "dispatchToEnqueueP95Us": 35,
+        "enqueueToCallbackP95Us": 4490,
+        "submissionCallbackIntervalP95Us": 20107
+      },
+      {
+        "callbackIntervals": 180,
+        "physicalPresentIntervals": 177,
+        "presentationP50Ms": 16.576042,
+        "presentationP95Ms": 16.578855,
+        "dispatchToEnqueueP95Us": 36,
+        "enqueueToCallbackP95Us": 4210,
+        "submissionCallbackIntervalP95Us": 20176
+      }
+    ]
+  },
+  "scope": "These are measurements of the 210-tick moving-camera workload on one Fold7. GPU execution time, power and sustained thermal behavior were not measured."
+}
