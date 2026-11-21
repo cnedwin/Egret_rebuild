@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // A Shiba-like dog standing, about 0.4 m tall. Parts: a long egg of a body, a deep chest, a head with a short boxy
-// snout, upright cone ears, four legs, and a tail curled up over the back from a torus cut in half. Tan above, cream
-// below from a gradient painted on the torso alone, cream cheeks and snout, and a black nose and eyes in their own
-// group.
+// snout, upright cone ears, four legs, and a tail curled up over the back from a torus cut in half, its front end set
+// into the body so it is joined, not floating. Tan above, cream below from a gradient painted on the torso alone, cream
+// cheeks and snout, and a black nose and eyes in their own group.
 export const about = { name: 'Dog', zh: '狗', kind: 'animal' };
 export const meshOptions = { triangles: 5000, variation: { amount: 0.04 } };
 
@@ -10,8 +10,8 @@ export default function dog(W) {
   const tan = 0xc9823d,
     cream = 0xf3e4cc;
   const tail = W.sdfIntersect([
-    W.sdfTorus(0.05, 0.022, { at: [0, 0.33, -0.17], rotation: [0, Math.PI / 2, Math.PI / 2], color: tan }),
-    W.sdfBox([0.2, 0.2, 0.2], { at: [0, 0.43, -0.17] })
+    W.sdfTorus(0.05, 0.022, { at: [0, 0.3, -0.14], rotation: [0, Math.PI / 2, Math.PI / 2], color: tan }),
+    W.sdfBox([0.2, 0.2, 0.2], { at: [0, 0.4, -0.14] })
   ]);
   const torso = W.sdfUnion(
     [

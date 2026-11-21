@@ -4,7 +4,12 @@
 // a box below the eaves, a chimney, a door slab set into its opening, and window frames from thin rounded boxes. The
 // roof gets stripes for the thatch and the walls a gradient of dirt at the foot.
 export const about = { name: 'Cottage', zh: '小屋', kind: 'building' };
-export const meshOptions = { triangles: 8000, edges: { amount: 0.35 }, variation: { amount: 0.06, frequency: 2 } };
+export const meshOptions = {
+  sharp: true,
+  triangles: 8000,
+  edges: { amount: 0.35 },
+  variation: { amount: 0.06, frequency: 2 }
+};
 
 export default function cottage(W) {
   const plaster = 0xefe3c8,
@@ -33,7 +38,7 @@ export default function cottage(W) {
   );
   const details = [
     W.sdfBox([0.3, 0.9, 0.3], { at: [0.75, 2.75, -0.4], round: 0.03, color: 0x8e7f72 }),
-    W.sdfBox([0.5, 1.0, 0.06], { at: [0, 0.5, 0.92], round: 0.02, color: timber }),
+    W.sdfBox([0.5, 1.0, 0.08], { at: [0, 0.5, 0.88], round: 0.02, color: timber }),
     W.sdfMirror(W.sdfBox([0.55, 0.06, 0.12], { at: [0.85, 0.8, 1.0], round: 0.02, color: timber })),
     W.sdfMirror(W.sdfBox([0.06, 0.45, 0.06], { at: [0.85, 1.05, 0.96], round: 0.01, color: timber })),
     W.sdfMirror(W.sdfBox([0.12, 1.8, 0.12], { at: [1.27, 0.9, 0.97], round: 0.02, color: timber }))

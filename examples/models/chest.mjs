@@ -2,7 +2,7 @@
 // A treasure chest, about 0.6 m wide. Parts: a box for the body, a lid from half a cylinder lying along x (cut by a
 // box), iron bands as thin rounded boxes over both, and a gold lock plate with a keyhole cut in it.
 export const about = { name: 'Chest', zh: '宝箱', kind: 'prop' };
-export const meshOptions = { triangles: 4000, edges: { amount: 0.5 } };
+export const meshOptions = { sharp: true, triangles: 4000, edges: { amount: 0.5 } };
 
 export default function chest(W) {
   const wood = 0x8a5a32,

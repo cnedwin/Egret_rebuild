@@ -11,6 +11,31 @@ import * as W from '@egret/engine/world3d';
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DIR = path.join(ROOT, 'examples', 'models');
 const { models } = await import(pathToFileURL(path.join(DIR, 'index.mjs')).href);
+/** How many groups of triangles share no vertex position with the rest. */
+function pieces(geometry) {
+  const p = geometry.getAttribute('position').data,
+    key = new Map(),
+    up = [];
+  const id = v => {
+    const k = p[v * 3].toFixed(5) + ',' + p[v * 3 + 1].toFixed(5) + ',' + p[v * 3 + 2].toFixed(5);
+    if (!key.has(k)) {
+      key.set(k, up.length);
+      up.push(up.length);
+    }
+    return key.get(k);
+  };
+  const find = a => {
+    while (up[a] !== a) a = up[a] = up[up[a]];
+    return a;
+  };
+  const ids = Array.from(geometry.index.data, id);
+  for (let f = 0; f < ids.length; f += 3) {
+    const a = find(ids[f]);
+    up[find(ids[f + 1])] = a;
+    up[find(ids[f + 2])] = a;
+  }
+  return new Set(ids.map(find)).size;
+}
 const KINDS = { animal: [0.05, 1.5], person: [0.8, 2.2], building: [1.5, 8], plant: [0.2, 5], prop: [0.2, 2.5] };
 
 // Break caught: a model file the index forgets, or an index entry with no file.
@@ -49,6 +74,8 @@ for (const name of models)
     assert.ok(size >= low && size <= high, module.about.kind + ' ' + size);
     // A model faces +z: it is centred on x, as every model of the library is drawn about its middle.
     assert.ok(Math.abs((box[0] + box[3]) / 2) < size * 0.25, 'centred on x');
+    // One piece: a part that floats loose, or is too thin to join, comes out as a second piece of the mesh.
+    assert.equal(pieces(geometry), 1, 'one piece');
     geometry.dispose();
     // A model with a rig makes it, with at least one clip that names only its bones.
     if (typeof module.rig === 'function') {

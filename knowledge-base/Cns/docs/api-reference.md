@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1384 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1386 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -399,6 +399,7 @@
 | `createRope3D` | 函数 | Makes a rope of points that hangs and swings. |
 | `createScreenLayer3D` | 函数 | Makes a picture drawn over the whole screen, above or below the scene. |
 | `createSdfGeometry3D` | 函数 | The mesh of the field's surface, with smooth normals and linear vertex colours (draw it with a material that has `vertexColors: true`). |
+| `createSdfLod3D` | 函数 | The model in levels of detail, as a Lod3D whose children are the meshes of the levels, nearest first. |
 | `createSdfRig3D` | 函数 | A rig of `shape`: its mesh, made as `createSdfGeometry3D` makes it, skinned to bones at the joints of the model. |
 | `createShapeGeometry3D` | 函数 | Fill one or more outlines in the XY plane, facing +Z. |
 | `createSkeletonHelper3D` | 函数 | Makes lines that show the bones of a skeleton. |
@@ -638,6 +639,7 @@
 | `SdfGroupOptions3D` | 接口 | A group of shapes: `smooth` is how far, in the model's units, the blend between them reaches. |
 | `sdfIntersect` | 函数 | What the shapes have in common; with `smooth`, its edges rounded. |
 | `sdfLathe` | 函数 | A shape turned about the y axis from its `profile`: points [radius, height] going round a closed outline, as a potter draws half a vase. |
+| `SdfLodOptions3D` | 接口 | How a model is made in levels: the mesh options, its material, and each level's triangles and distance. |
 | `SdfMeshOptions3D` | 接口 | How a field becomes a mesh. |
 | `sdfMirror` | 函数 | The shape and its mirror image across the plane through the origin square to `axis` ('x' unless given): make one eye, ear, arm or leg on the positive side and get the pair. |
 | `SdfOptions3D` | 接口 | Where a shape goes and how it looks: moved by `at`, turned by `rotation`, scaled by `scale`, painted `color`. |

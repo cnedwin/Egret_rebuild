@@ -990,6 +990,13 @@ export interface SdfMeshOptions3D {
    * `color` (a lighter shade of each part unless given). Off unless given.
    */
   readonly edges?: { readonly amount: number; readonly color?: ColorInput3D };
+  /**
+   * Hard surfaces: corners and edges kept sharp, as on crates, walls, roofs, weapons and machines, instead of rounded
+   * to the grid. Each vertex is placed where the planes of the surface around it meet (dual contouring), and the
+   * normals are split where faces meet at more than an angle, so an edge shades as an edge. `true` splits at 40
+   * degrees; a number gives the angle. Off unless given: soft creatures and plants look better without it.
+   */
+  readonly sharp?: boolean | number;
 }
 
 const MAX_RESOLUTION = 192;
@@ -1024,6 +1031,11 @@ export function createSdfGeometry3D(shape: SdfShape3D, options: SdfMeshOptions3D
     edgeAmount = nonNegative(options.edges.amount, 'sdf mesh edges amount');
     if (edgeAmount > 1) throw invalid('sdf mesh edges amount');
     if (options.edges.color !== undefined) edgeColor = linear(options.edges.color, 'sdf mesh edges color');
+  }
+  let crease = 0;
+  if (options.sharp !== undefined && options.sharp !== false) {
+    crease = options.sharp === true ? 40 : positive(options.sharp, 'sdf mesh sharp');
+    if (crease >= 180) throw invalid('sdf mesh sharp');
   }
   const triangles = options.triangles === undefined ? 8000 : options.triangles;
   if (!Number.isInteger(triangles) || triangles < 0) throw invalid('sdf mesh triangles');
@@ -1123,8 +1135,58 @@ export function createSdfGeometry3D(shape: SdfShape3D, options: SdfMeshOptions3D
         let x = ox + (i + px / n) * cell,
           y = oy + (j + py / n) * cell,
           z = oz + (k + pz / n) * cell;
+        if (crease > 0) {
+          // Dual contouring: the point nearest every tangent plane at the crossings, pulled a little towards their
+          // mean so a flat face (where the planes do not pin a point) stays put. It lands on a corner or an edge
+          // where the planes meet there.
+          const ata = new Float64Array(6),
+            atb = new Float64Array(3);
+          for (const [a, c] of EDGES) {
+            const da = corner[a]!,
+              dc = corner[c]!;
+            if (da < 0 === dc < 0) continue;
+            const t = da / (da - dc);
+            const cx = ox + (i + (a & 1) + ((c & 1) - (a & 1)) * t) * cell,
+              cy = oy + (j + ((a >> 1) & 1) + (((c >> 1) & 1) - ((a >> 1) & 1)) * t) * cell,
+              cz = oz + (k + ((a >> 2) & 1) + (((c >> 2) & 1) - ((a >> 2) & 1)) * t) * cell;
+            const g = grad(cx, cy, cz),
+              gl = Math.hypot(g[0], g[1], g[2]);
+            if (gl === 0) continue;
+            const nx0 = g[0] / gl,
+              ny0 = g[1] / gl,
+              nz0 = g[2] / gl;
+            // Relative to the mean, so the solve works on small numbers.
+            const dot = nx0 * (cx - x) + ny0 * (cy - y) + nz0 * (cz - z);
+            ata[0] = ata[0]! + nx0 * nx0;
+            ata[1] = ata[1]! + nx0 * ny0;
+            ata[2] = ata[2]! + nx0 * nz0;
+            ata[3] = ata[3]! + ny0 * ny0;
+            ata[4] = ata[4]! + ny0 * nz0;
+            ata[5] = ata[5]! + nz0 * nz0;
+            atb[0] = atb[0]! + nx0 * dot;
+            atb[1] = atb[1]! + ny0 * dot;
+            atb[2] = atb[2]! + nz0 * dot;
+          }
+          const pull = 0.05;
+          const m = solve3(
+            ata[0]! + pull,
+            ata[1]!,
+            ata[2]!,
+            ata[3]! + pull,
+            ata[4]!,
+            ata[5]! + pull,
+            atb[0]!,
+            atb[1]!,
+            atb[2]!
+          );
+          if (m !== undefined) {
+            x = Math.min(Math.max(x + m[0], ox + i * cell), ox + (i + 1) * cell);
+            y = Math.min(Math.max(y + m[1], oy + j * cell), oy + (j + 1) * cell);
+            z = Math.min(Math.max(z + m[2], oz + k * cell), oz + (k + 1) * cell);
+          }
+        }
         // Onto the surface along the gradient, kept in the cell so a sharp edge cannot fold the mesh.
-        for (let step = 0; step < 2; step++) {
+        for (let step = 0; step < (crease > 0 ? 0 : 2); step++) {
           const d = shape.distance(x, y, z),
             g = grad(x, y, z),
             gg = g[0] * g[0] + g[1] * g[1] + g[2] * g[2];
@@ -1238,8 +1300,113 @@ export function createSdfGeometry3D(shape: SdfShape3D, options: SdfMeshOptions3D
   geometry.setAttribute('normal', new Attribute3D(normals, 3));
   geometry.setAttribute('color', new Attribute3D(colors, 3));
   geometry.setIndex(count > 65535 ? Uint32Array.from(indices) : Uint16Array.from(indices));
-  if (triangles === 0 || indices.length / 3 <= triangles) return geometry;
-  const simple = simplifyGeometry3D(geometry, { triangles }).geometry;
-  geometry.dispose();
-  return simple;
+  let result = geometry;
+  if (triangles > 0 && indices.length / 3 > triangles) {
+    result = simplifyGeometry3D(geometry, { triangles }).geometry;
+    geometry.dispose();
+  }
+  if (crease === 0) return result;
+  const split = creaseNormals(result, crease);
+  result.dispose();
+  return split;
+}
+
+/** The solution of a symmetric 3 x 3 system, or undefined when it has none to speak of. */
+function solve3(
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number,
+  f: number,
+  x: number,
+  y: number,
+  z: number
+): [number, number, number] | undefined {
+  // [a b c; b d e; c e f] v = [x y z], by Cramer's rule.
+  const det = a * (d * f - e * e) - b * (b * f - e * c) + c * (b * e - d * c);
+  if (Math.abs(det) < 1e-12) return undefined;
+  return [
+    (x * (d * f - e * e) - b * (y * f - e * z) + c * (y * e - d * z)) / det,
+    (a * (y * f - e * z) - x * (b * f - e * c) + c * (b * z - y * c)) / det,
+    (a * (d * z - y * e) - b * (b * z - y * c) + x * (b * e - d * c)) / det
+  ];
+}
+
+/**
+ * A copy of a triangle geometry whose normals are those of its faces, averaged only over faces that meet at less than
+ * `degrees`: a vertex on an edge is split into one per side, so the edge shades sharp.
+ */
+function creaseNormals(geometry: Geometry3D, degrees: number): Geometry3D {
+  const P = geometry.getAttribute('position')!.data,
+    I = geometry.index!.data;
+  const faces = I.length / 3;
+  const fn = new Float64Array(faces * 3),
+    area = new Float64Array(faces);
+  for (let f = 0; f < faces; f++) {
+    const a = I[f * 3]!,
+      b = I[f * 3 + 1]!,
+      c = I[f * 3 + 2]!;
+    const ux = P[b * 3]! - P[a * 3]!,
+      uy = P[b * 3 + 1]! - P[a * 3 + 1]!,
+      uz = P[b * 3 + 2]! - P[a * 3 + 2]!,
+      vx = P[c * 3]! - P[a * 3]!,
+      vy = P[c * 3 + 1]! - P[a * 3 + 1]!,
+      vz = P[c * 3 + 2]! - P[a * 3 + 2]!;
+    const nx = uy * vz - uz * vy,
+      ny = uz * vx - ux * vz,
+      nz = ux * vy - uy * vx;
+    const l = Math.hypot(nx, ny, nz) || 1;
+    fn[f * 3] = nx / l;
+    fn[f * 3 + 1] = ny / l;
+    fn[f * 3 + 2] = nz / l;
+    area[f] = l / 2;
+  }
+  const around: number[][] = Array.from({ length: P.length / 3 }, () => []);
+  for (let f = 0; f < faces; f++) for (let k = 0; k < 3; k++) around[I[f * 3 + k]!]!.push(f);
+  const limit = Math.cos((degrees * Math.PI) / 180);
+  const order: number[] = [],
+    normals: number[] = [],
+    index = new Uint32Array(I.length);
+  const made = new Map<string, number>();
+  for (let f = 0; f < faces; f++)
+    for (let k = 0; k < 3; k++) {
+      const v = I[f * 3 + k]!;
+      let nx = 0,
+        ny = 0,
+        nz = 0;
+      for (const g of around[v]!) {
+        if (fn[f * 3]! * fn[g * 3]! + fn[f * 3 + 1]! * fn[g * 3 + 1]! + fn[f * 3 + 2]! * fn[g * 3 + 2]! < limit)
+          continue;
+        nx += fn[g * 3]! * area[g]!;
+        ny += fn[g * 3 + 1]! * area[g]!;
+        nz += fn[g * 3 + 2]! * area[g]!;
+      }
+      const l = Math.hypot(nx, ny, nz) || 1;
+      nx /= l;
+      ny /= l;
+      nz /= l;
+      const key = v + ':' + Math.round(nx * 1e4) + ',' + Math.round(ny * 1e4) + ',' + Math.round(nz * 1e4);
+      let at = made.get(key);
+      if (at === undefined) {
+        at = order.length;
+        made.set(key, at);
+        order.push(v);
+        normals.push(nx, ny, nz);
+      }
+      index[f * 3 + k] = at;
+    }
+  const out = new Geometry3D();
+  for (const [name, attribute] of geometry.attributes) {
+    if (name === 'normal') continue;
+    const size = attribute.itemSize,
+      data = attribute.data;
+    const copy = new (data.constructor as new (length: number) => typeof data)(order.length * size);
+    for (let i = 0; i < order.length; i++)
+      for (let c = 0; c < size; c++) copy[i * size + c] = data[order[i]! * size + c]!;
+    out.setAttribute(name, new Attribute3D(copy, size, attribute.normalized));
+  }
+  out.setAttribute('normal', new Attribute3D(Float32Array.from(normals), 3));
+  out.setIndex(order.length > 65535 ? index : Uint16Array.from(index));
+  return out;
 }

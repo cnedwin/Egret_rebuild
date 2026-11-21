@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1384 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1386 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -399,6 +399,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createRope3D` | function | Makes a rope of points that hangs and swings. |
 | `createScreenLayer3D` | function | Makes a picture drawn over the whole screen, above or below the scene. |
 | `createSdfGeometry3D` | function | The mesh of the field's surface, with smooth normals and linear vertex colours (draw it with a material that has `vertexColors: true`). |
+| `createSdfLod3D` | function | The model in levels of detail, as a Lod3D whose children are the meshes of the levels, nearest first. |
 | `createSdfRig3D` | function | A rig of `shape`: its mesh, made as `createSdfGeometry3D` makes it, skinned to bones at the joints of the model. |
 | `createShapeGeometry3D` | function | Fill one or more outlines in the XY plane, facing +Z. |
 | `createSkeletonHelper3D` | function | Makes lines that show the bones of a skeleton. |
@@ -638,6 +639,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SdfGroupOptions3D` | interface | A group of shapes: `smooth` is how far, in the model's units, the blend between them reaches. |
 | `sdfIntersect` | function | What the shapes have in common; with `smooth`, its edges rounded. |
 | `sdfLathe` | function | A shape turned about the y axis from its `profile`: points [radius, height] going round a closed outline, as a potter draws half a vase. |
+| `SdfLodOptions3D` | interface | How a model is made in levels: the mesh options, its material, and each level's triangles and distance. |
 | `SdfMeshOptions3D` | interface | How a field becomes a mesh. |
 | `sdfMirror` | function | The shape and its mirror image across the plane through the origin square to `axis` ('x' unless given): make one eye, ear, arm or leg on the positive side and get the pair. |
 | `SdfOptions3D` | interface | Where a shape goes and how it looks: moved by `at`, turned by `rotation`, scaled by `scale`, painted `color`. |
