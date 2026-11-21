@@ -8,8 +8,8 @@ import {localPackage} from './lib/local-package.mjs';
 import {logicalPath,samePhysicalPath,fingerprintFile,ownerRelativePath} from './lib/file-identity.mjs';
 const root=fileURLToPath(new URL('..',import.meta.url));
 import {models} from '../examples/models/index.mjs';
-const galleryFiles=new Set(['index.html','index.mjs','gallery.mjs',...models.map(name=>name+'.mjs')]);
-const types={'.css':'text/css; charset=utf-8','.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.json':'application/json; charset=utf-8','.ttf':'font/ttf','.woff2':'font/woff2','.otf':'font/otf','.md':'text/plain; charset=utf-8','.wasm':'application/wasm'};
+const galleryFiles=new Set(['index.html','index.mjs','gallery.mjs','static-models.glb',...models.map(name=>name+'.mjs')]);
+const types={'.glb':'model/gltf-binary','.css':'text/css; charset=utf-8','.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.json':'application/json; charset=utf-8','.ttf':'font/ttf','.woff2':'font/woff2','.otf':'font/otf','.md':'text/plain; charset=utf-8','.wasm':'application/wasm'};
 export function createExampleServer(repository=root){
  return http.createServer((request,response)=>{
   const finish=(status,text)=>{response.writeHead(status,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'});response.end(text);};

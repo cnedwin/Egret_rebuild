@@ -11,7 +11,7 @@ Use Node.js 26.7.0 and pnpm 11.25.0 from the repository root:
     pnpm setup:dev
     pnpm example:browser
 
-Open `http://127.0.0.1:4173/examples/models/index.html`. Every model is made when the page opens, in rows by kind. Drag to turn the view; tick "true sizes" to see them at their real sizes in metres.
+Open `http://127.0.0.1:4173/examples/models/index.html`. The gallery loads 22 static meshes from one GLB and builds the fox and villager with their live animation rigs. Models are grouped by kind. Drag to turn the view; tick "true sizes" to see them at their real sizes in metres.
 
 ## The models
 
@@ -57,4 +57,4 @@ A model that exports `surface` (for example `{ surface: 'wood', strength: 0.4 }`
 
 `node tools/bake-models.mjs examples/models <new folder>` writes every model as a .glb, to be loaded in milliseconds.
 
-Models are generated in a few hundred milliseconds each; make them while a level loads, or save them with `exportGlb3D`. The pictures used to check them were drawn with software rendering in a headless browser, not on devices.
+After changing a static model or its meshing options, run `node tools/bake-models.mjs --gallery` from the repository root and commit the updated `static-models.glb`. The model library tests compare the positions, normals, colours, indices and bounds against the source meshes. The gallery applies each model’s original material. If the pack is unavailable, it builds the meshes from their source modules.

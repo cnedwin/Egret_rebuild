@@ -51,3 +51,18 @@ The fixed 119,000-triangle workload ran for 60 measured foreground callbacks per
 The interactive gallery has a different camera and viewport. On Fold7 its 24 models took 9.23 s (WebGL2) and 11.43 s (WebGPU) to build in the observed openings; 90 subsequent callback intervals had p95 of 41.5 and 41.2 ms. This makes initial model construction and frame pacing measurable targets for the example. GPU time, power and sustained thermal behavior require separate measurements.
 
 Phone input was injected into a browser on the physical device. Human listening, assistive-technology use, physical gamepads, Safari/iPhone and other GPU families require separate evidence. The short device workloads have no bearing on the performance budgets of #55 or #92. The Spine fixture is original numerical content; commercial Editor-export coverage has its own corpus.
+
+## First opening of the model gallery on Fold7
+
+On main `814fcbf8`, building the 22 static models from distance fields occupied 9.24 seconds on WebGL2 and 11.57 seconds on WebGPU in separate diagnostic runs. The browser's vertex and index upload calls on the first frame took about 1.2 and 4.8 milliseconds of page-thread time. The gallery now ships the same 22 meshes in a single 2,727,868-byte GLB. The fox and villager still build and animate their rigs at runtime. In the USB-served candidate the model pack took about 102 ms to receive and 26–27 ms to parse.
+
+We opened fresh foreground pages on the same Galaxy Z Fold7 in Chrome 157, with the browser HTTP cache disabled. Both versions used low quality, portrait orientation and a fixed 411 × 745 drawing buffer. Each loaded 24 models with 119,000 triangles. The first view submitted 22 draws and 105,502 triangles. Each backend ran six before/after pairs with the order balanced.
+
+| Backend | First interactive picture, s (before → after) | Reduction in median time | Frame interval p95, ms (before → after) |
+| --- | ---: | ---: | ---: |
+| WebGL2 | 14.52 → 1.68 | 88.4% | 16.7 → 16.7 |
+| WebGPU | 14.99 → 1.68 | 88.8% | 16.7 → 16.7 |
+
+The first interactive picture is the later of controls becoming ready and Chrome compositing its first frame containing the models, measured from navigation start. Startup times are the median of six runs per version. The percentages compare those medians. The frame interval column is the median of six 90-interval foreground samples per version. Every pair reached the first interactive picture sooner with the pack. The median steady frame interval p95 stayed at about 16.7 ms on both backends.
+
+At a fixed animation pose, the two versions produced identical canvas pixels at both normalized and true sizes. An injected touch drag on the physical phone changed the camera on both versions and both backends. After the drag, setting the camera to the same rotated pose gave identical images on both backends. The browser reached the gallery over USB localhost. The additional GLB transfer depends on network speed for a public deployment. Upload-call durations measure CPU time. The record also gives submit-to-completion observations for the whole frame. [Paired samples, diagnostics and image comparisons](https://github.com/cnedwin/Egret_rebuild/blob/main/docs/evidence/fold7-model-gallery-startup.json)

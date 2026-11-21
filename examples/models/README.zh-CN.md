@@ -11,7 +11,7 @@
     pnpm setup:dev
     pnpm example:browser
 
-打开 `http://127.0.0.1:4173/examples/models/index.html`。页面打开时生成所有模型，按种类分行排列。拖动可以转动视角；勾选“真实尺寸”按米为单位显示真实大小。
+打开 `http://127.0.0.1:4173/examples/models/index.html`。画廊从一个 GLB 文件读取 22 个静态网格，狐狸和村民在打开时生成并播放骨骼动画，所有模型按种类分行排列。拖动可以转动视角；勾选“真实尺寸”按米为单位显示真实大小。
 
 ## 模型
 
@@ -57,4 +57,4 @@ const mesh = new W.Mesh3D(W.createSdfGeometry3D(fox(W), meshOptions), W.createSt
 
 `node tools/bake-models.mjs examples/models <新文件夹>` 把每个模型写成 .glb，加载只要几毫秒。
 
-每个模型生成要几百毫秒：在加载关卡时生成，或者用 `exportGlb3D` 存下来。检查用的图片是在无头浏览器里用软件渲染画的，不是在设备上。
+修改静态模型或网格生成参数后，在仓库根目录运行 `node tools/bake-models.mjs --gallery`，将更新后的 `static-models.glb` 一并提交。模型库测试逐项比较源模型与打包网格的顶点位置、法线、颜色、索引和包围盒。画廊继续使用模型原有的材质。如果无法读取模型包，画廊会从源模块生成网格。
