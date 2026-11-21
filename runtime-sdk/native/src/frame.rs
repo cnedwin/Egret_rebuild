@@ -9,6 +9,11 @@ const MAPPING_BYTES: usize = 24;
 pub(crate) const MAX_QUADS: usize = 4096;
 pub(crate) const MAX_FRAME_BYTES: usize = HEADER_BYTES + MAX_QUADS * (PROJECT_QUAD_BYTES + MAPPING_BYTES);
 pub(crate) const PAGE_SLOTS: usize = 256;
+pub(crate) const MULTIPLY: u32 = 4;
+pub(crate) const ADD: u32 = 8;
+pub(crate) const LINEAR: u32 = 16;
+const VERTEX_LIGHT: u32 = 32;
+const SOLID_PAGE: u32 = 64;
 pub(crate) const MAX_DIMENSION: u32 = 16384;
 
 #[derive(Debug, PartialEq)]
@@ -63,6 +68,7 @@ pub(crate) struct Batch {
     pub region: [f32; 4],
     pub mapping: Option<AtlasMapping>,
     pub indexed: bool,
+    pub policy: u32,
     // Vertex offset for arrays, or index offset for indexed batches.
     pub first: i32,
     pub count: i32,
@@ -95,7 +101,7 @@ fn word(bytes: &[u8], offset: usize) -> u32 {
 
 fn append_batch(batches: &mut Vec<Batch>, batch: Batch) {
     if let Some(last) = batches.last_mut() {
-        if last.indexed == batch.indexed && last.page == batch.page && last.opacity == batch.opacity
+        if last.policy == batch.policy && last.indexed == batch.indexed && last.page == batch.page && last.opacity == batch.opacity
             && last.clip == batch.clip && last.region == batch.region && last.mapping == batch.mapping {
             last.count += batch.count;
             return;
@@ -110,7 +116,7 @@ fn valid_clip(clip: [f32; 4], size: [f32; 2]) -> bool {
         && (left..=size[0]).contains(&right) && (top..=size[1]).contains(&bottom)
 }
 
-fn decode_quad(record: &[u8], mapping_bytes: Option<&[u8]>, project: bool, size: [f32; 2],
+fn decode_quad(record: &[u8], mapping_bytes: Option<&[u8]>, project: bool, size: [f32; 2], policy: u32,
                page_sizes: &[[u32; 2]; PAGE_SLOTS], vertices: &mut Vec<Vertex>,
                batches: &mut Vec<Batch>) -> Result<(), Error> {
     let (page, color, opacity, clip) = if project {
@@ -153,7 +159,7 @@ fn decode_quad(record: &[u8], mapping_bytes: Option<&[u8]>, project: bool, size:
     let d = corner(x1 + x2 - x0, y1 + y2 - y0, u1, v1);
     let first = vertices.len() as i32;
     vertices.extend_from_slice(&[a, b, c, c, b, d]);
-    append_batch(batches, Batch { page, indexed: false, first, count: 6, opacity, clip, region, mapping });
+    append_batch(batches, Batch { page, indexed: false, policy, first, count: 6, opacity, clip, region, mapping });
     Ok(())
 }
 
@@ -163,16 +169,24 @@ fn prepare(bytes: &[u8], page_sizes: &[[u32; 2]; PAGE_SLOTS], vertices: &mut Vec
     prepare_frame(bytes, page_sizes, vertices, batches, &mut Vec::new())
 }
 
-pub(crate) fn prepare_frame(
+#[cfg(test)]
+pub(crate) fn prepare_frame(bytes: &[u8], pages: &[[u32; 2]; PAGE_SLOTS], vertices: &mut Vec<Vertex>,
+                            batches: &mut Vec<Batch>, indices: &mut Vec<u32>) -> Result<Header, Error> {
+    prepare_lit_frame(bytes, pages, vertices, batches, indices, &mut Vec::new())
+}
+
+pub(crate) fn prepare_lit_frame(
     bytes: &[u8],
     page_sizes: &[[u32; 2]; PAGE_SLOTS],
     vertices: &mut Vec<Vertex>,
     batches: &mut Vec<Batch>,
     indices: &mut Vec<u32>,
+    lights: &mut Vec<[f32; 4]>,
 ) -> Result<Header, Error> {
     vertices.clear();
     batches.clear();
     indices.clear();
+    lights.clear();
     if !(HEADER_BYTES..=MAX_FRAME_BYTES).contains(&bytes.len()) {
         return Err(Error::Invalid);
     }
@@ -180,7 +194,7 @@ pub(crate) fn prepare_frame(
         0x31524745 => (false, false, QUAD_BYTES),
         0x32524745 => (true, false, PROJECT_QUAD_BYTES),
         0x33524745 => (true, true, PROJECT_QUAD_BYTES),
-        0x34524745 => (true, false, 0),
+        0x34524745 | 0x35524745 => (true, false, 0),
         _ => return Err(Error::Invalid),
     };
     let width = word(bytes, 8);
@@ -196,7 +210,8 @@ pub(crate) fn prepare_frame(
     }
     let size = [width as f32, height as f32];
     if stride == 0 {
-        let mapped = indexed::decode(&bytes[HEADER_BYTES..], count, size, page_sizes, vertices, batches, indices)?;
+        let mapped = indexed::decode(&bytes[HEADER_BYTES..], count, size, page_sizes, vertices, batches, indices,
+                                     word(bytes, 0) == 0x35524745, lights)?;
         return Ok(Header { project, mapped, size, clear });
     }
     let records_end = HEADER_BYTES + count * stride;
@@ -214,7 +229,7 @@ pub(crate) fn prepare_frame(
             }
             _ => None,
         };
-        decode_quad(record, mapping, project, size, page_sizes, vertices, batches)?;
+        decode_quad(record, mapping, project, size, 0, page_sizes, vertices, batches)?;
     }
     if next.is_some() { return Err(Error::Invalid); }
     Ok(Header { project, mapped, size, clear })
@@ -429,6 +444,39 @@ mod indexed_tests {
         words(&mut bytes, &coordinates.map(f32::to_bits));
         if mapped { words(&mut bytes, &[8, 16, 0, 0, 1]); }
         bytes
+    }
+
+    #[test]
+    fn extended_batches_keep_blend_order_and_interleaved_vertex_lights() {
+        let mut shadow = quad(false);
+        shadow[..4].copy_from_slice(&MULTIPLY.to_le_bytes());
+        let mut puppet = mesh(2, 1);
+        puppet[..4].copy_from_slice(&(2 | LINEAR).to_le_bytes());
+        let plain = mesh(2, 1);
+        let mut spark = plain[..52].to_vec();
+        spark[..4].copy_from_slice(&(2 | ADD | VERTEX_LIGHT).to_le_bytes());
+        for (i, vertex) in plain[52..116].chunks_exact(16).enumerate() {
+            spark.extend(vertex);
+            words(&mut spark, &[0.25, 0.5, i as f32 / 4., 0.75].map(f32::to_bits));
+        }
+        spark.extend(&plain[116..]);
+        let mut bytes = packet(&[shadow, puppet, spark, quad(false)]);
+        bytes[..4].copy_from_slice(b"EGR5");
+        let (mut vertices, mut batches, mut indices, mut lights) = (Vec::new(), Vec::new(), Vec::new(), Vec::new());
+        prepare_lit_frame(&bytes, &[[16,8]; PAGE_SLOTS], &mut vertices, &mut batches, &mut indices, &mut lights).unwrap();
+        assert_eq!(batches.iter().map(|b| b.policy).collect::<Vec<_>>(), [MULTIPLY, LINEAR, ADD, 0]);
+        assert_eq!(lights.len(), vertices.len());
+        assert_eq!(lights[9], [1.; 4]);
+        assert_eq!(lights[13], [0.25, 0.5, 0.75, 0.75]);
+        assert_eq!(lights[14], [1.; 4]);
+        for flags in [64, MULTIPLY | ADD, VERTEX_LIGHT] {
+            let mut bad = bytes.clone();
+            bad[24..28].copy_from_slice(&flags.to_le_bytes());
+            assert!(parse(&bad).is_err());
+        }
+        let color = 24 + 68 + plain.len() + 52 + 16;
+        bytes[color..color + 4].copy_from_slice(&f32::NAN.to_le_bytes());
+        assert!(parse(&bytes).is_err());
     }
 
     #[test]

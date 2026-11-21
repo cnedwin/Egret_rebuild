@@ -8,6 +8,8 @@ import { workspaceModules } from '../../../tools/pack-single-file.mjs';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const require = createRequire(import.meta.url);
+const spineRequire = createRequire(path.join(root, 'packages/spine/package.json'));
+const spineNotice = 'spine-core-4.3.13.LICENSE';
 
 function relativeName(name) {
   if (typeof name !== 'string' || !name.split('/').every(part =>
@@ -61,6 +63,7 @@ export async function exportProject(project, output, esbuildModule) {
   const bundler = require(path.resolve(esbuildModule));
   if (bundler.version !== '0.28.2') throw new Error('Use esbuild 0.28.2');
   const workspace = workspaceModules(root);
+  workspace.set('@egret/spine', path.join(root, 'packages/spine/dist/index.js'));
   workspace.set('@egret/android-player-project', path.join(root, 'runtime-sdk/project/player-project.mjs'));
   await mkdir(path.dirname(output), {recursive: true});
   // A new destination makes a failed export unable to replace a previously shipped project.
@@ -68,16 +71,28 @@ export async function exportProject(project, output, esbuildModule) {
   catch (error) { if (error.code !== 'ENOENT') throw error; }
   const temp = await mkdtemp(path.join(path.dirname(output), 'egret-game-'));
   try {
-    await bundler.build({
+    const result = await bundler.build({
       entryPoints: [entry], outfile: path.join(temp, 'game.js'), platform: 'browser', format: 'iife',
-      bundle: true, minify: true, target: 'es2022', legalComments: 'eof',
+      bundle: true, minify: true, metafile: true, target: 'es2022', legalComments: 'eof',
       plugins: [{name: 'egret-runtime', setup(builder) {
+        // Resolve game and adapter imports against the very same optional runtime.
+        builder.onResolve({filter: /^@esotericsoftware\/spine-core$/}, () => ({
+          path: spineRequire.resolve('@esotericsoftware/spine-core')
+        }));
         builder.onResolve({filter: /^(@egret\/|#)/}, ({path: specifier}) => {
           const file = workspace.get(specifier);
           return file ? {path: file} : undefined;
         });
       }}]
     });
+    // Only a game that actually includes Spine code receives the upstream notice.
+    const usesSpine = Object.values(result.metafile.outputs).some(output =>
+      Object.entries(output.inputs).some(([file, use]) =>
+        use.bytesInOutput > 0 && file.replaceAll('\\', '/').includes('/@esotericsoftware/spine-core/')));
+    if (usesSpine) {
+      if (names.has(spineNotice.toLowerCase())) throw new Error('Conflicting project asset and Spine notice: ' + spineNotice);
+      await copyFile(path.join(root, 'third-party', spineNotice), path.join(temp, spineNotice));
+    }
     for (const [index, name] of files.entries()) {
       const target = path.join(temp, name);
       await mkdir(path.dirname(target), {recursive: true});

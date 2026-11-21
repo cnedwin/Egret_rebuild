@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-21",
+  "en": {
+    "title": "Play the South Gate act of Lantern Shadows on Android",
+    "body": "A local project adapter brings the original first act, Spine characters, scrolling playbill and score records to the trimmed-V8 player. Its native GLES3 draws now support the shadow blend, linear filtering and vertex colors used in this game."
+  },
+  "zh": {
+    "title": "在 Android 原生播放器游玩《灯影·闹天宫》南天门一幕",
+    "body": "本地工程适配器接入原版第一幕、Spine 角色、可滚动戏单和成绩记录。裁剪 V8 播放器的 GLES3 绘制现已支持本作使用的阴影混合、线性采样和逐顶点着色。"
+  }
+}

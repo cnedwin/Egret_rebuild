@@ -38,6 +38,7 @@ pub const FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING: u32 = 0x8210;
 pub const BLEND: u32 = 0x0be2;
 pub const SCISSOR_TEST: u32 = 0x0c11;
 pub const ONE: u32 = 1;
+pub const DST_COLOR: u32 = 0x0306;
 pub const ONE_MINUS_SRC_ALPHA: u32 = 0x0303;
 pub const DITHER: u32 = 0x0bd0;
 
@@ -88,6 +89,9 @@ extern "C" {
     pub fn glCheckFramebufferStatus(target: u32) -> u32;
     pub fn glScissor(x: i32, y: i32, width: i32, height: i32);
     pub fn glBlendFunc(src: u32, dst: u32);
+    pub fn glBlendFuncSeparate(src_rgb: u32, dst_rgb: u32, src_alpha: u32, dst_alpha: u32);
+    pub fn glDisableVertexAttribArray(index: u32);
+    pub fn glVertexAttrib4f(index: u32, x: f32, y: f32, z: f32, w: f32);
     pub fn glEnable(capability: u32);
     pub fn glDisable(capability: u32);
     pub fn glViewport(x: i32, y: i32, width: i32, height: i32);

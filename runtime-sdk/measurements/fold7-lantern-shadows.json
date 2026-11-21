@@ -1,0 +1,471 @@
+{
+  "date": "2026-11-21",
+  "game": "Lantern Shadows – Act I, the South Gate",
+  "source": "https://github.com/cnedwin/PortedGamesEgret/tree/7b774670237666d73247cc793c55530f7f7c1e5f/LanternShadows",
+  "engineBase": "317b209791de08a1ff921b77d2512500a2541e34",
+  "device": {
+    "model": "Samsung Galaxy Z Fold7 (SM-F966U1)",
+    "android": "17",
+    "chrome": "Chrome/157.0.8103.78",
+    "deviceCount": 1,
+    "physical": true
+  },
+  "artifacts": {
+    "apk": {
+      "sha256": "458dc741f52f649f689e1910b3922b02ffa5f5c6fb8555f4b14b8d20710ba2de",
+      "bytes": 66845750,
+      "build": "Locally signed non-debuggable Release, arm64-v8a, trimmed V8 15.7.112.19, GLES3. The test Activity exposes a read-only dumpsys observer of game-reported state for the input driver; it never sets a game or storage value."
+    },
+    "gameJs": {
+      "sha256": "b43a3f42947fb91b7182f03b106c783f11ea75f679878208121bd54b58d4567b",
+      "bytes": 618789,
+      "declaredAssets": 74
+    },
+    "rawReportSha256": {
+      "browser": "1f63a4dfa23f8873cd5ad6dca60a76c33006d65f76f8dee624b358044a81f4fd",
+      "native": "130b74e4492050e6bba03d77a94b6dfd75b15ddfbcb6f74a77589da9a0bf5b08",
+      "openingComparison": "bc12565b8ec9404af4568e9515a494bb2a407678739e39e068a8a4f7042c673c"
+    }
+  },
+  "input": {
+    "browser": "CDP touch on the physical Chrome page, no game-state or storage writes.",
+    "native": "Android public UiAutomation injectInputEvent, targeted MotionEvent; full game via its ordinary player surface.",
+    "route": "Scroll the playbill, open the first act, move, jump, dash, strike, cast the doubles, defeat the ten soldiers and Nezha, show results, restart and recover the first-act record.",
+    "browserGestures": {
+      "move": 171,
+      "dash": 22,
+      "attack": 97,
+      "jumpHeld": 42,
+      "special": 2
+    },
+    "nativeActions": {
+      "left": 12,
+      "right": 29,
+      "jump": 7,
+      "attack": 113,
+      "dash": 28,
+      "special": 3
+    }
+  },
+  "outcomes": {
+    "browser": {
+      "backend": "webgl2",
+      "defeated": 10,
+      "bossHp": 0,
+      "rank": "C",
+      "bestCombo": 13,
+      "elapsedGameSeconds": 94.50000000002127,
+      "falls": 3,
+      "wounds": 18,
+      "initialStorageEmpty": true,
+      "save": "{\"act1\":{\"rank\":\"C\",\"time\":94.50000000002127,\"combo\":13,\"noFalls\":false}}",
+      "reloadEqualsSaved": true,
+      "menuAfterReload": "The Gate C · 1/3",
+      "failedRequests": 0,
+      "pageErrors": 0
+    },
+    "native": {
+      "defeated": 10,
+      "rank": "B",
+      "bestCombo": 22,
+      "elapsedGameSeconds": 52.51666666666433,
+      "falls": 1,
+      "wounds": 6,
+      "save": "{\"act1\":{\"rank\":\"B\",\"time\":52.51666666666433,\"combo\":22,\"noFalls\":false}}",
+      "forceStopAndRelaunchEqualsSaved": true,
+      "menuAfterRelaunch": "南天门 B · 2/3",
+      "firstDrawMs": 707.7969130277634,
+      "firstDrawScope": "Single observed process launch, not a cold-start or performance benchmark."
+    }
+  },
+  "visual": {
+    "method": "960×540 stage coordinates, median per channel in 3×3 logical-point neighborhoods. Capture of idle hero at x=168 prior to applying any movement. 16 per-channel tolerance was fixed before the APK capture. Idle animation phases are independent.",
+    "browserActor": 1.4833333333333305,
+    "nativeActor": 1.3916666666666642,
+    "points": [
+      {
+        "site": "cloth",
+        "x": 260,
+        "y": 130,
+        "browser": [
+          229,
+          200,
+          140
+        ],
+        "native": [
+          229,
+          200,
+          141
+        ],
+        "maxChannelDelta": 1
+      },
+      {
+        "site": "cloth",
+        "x": 505,
+        "y": 210,
+        "browser": [
+          233,
+          217,
+          177
+        ],
+        "native": [
+          233,
+          218,
+          177
+        ],
+        "maxChannelDelta": 1
+      },
+      {
+        "site": "pagoda",
+        "x": 335,
+        "y": 293,
+        "browser": [
+          195,
+          167,
+          119
+        ],
+        "native": [
+          195,
+          167,
+          119
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "site": "pagoda",
+        "x": 609,
+        "y": 337,
+        "browser": [
+          211,
+          191,
+          136
+        ],
+        "native": [
+          212,
+          192,
+          138
+        ],
+        "maxChannelDelta": 2
+      },
+      {
+        "site": "floor",
+        "x": 337,
+        "y": 462,
+        "browser": [
+          81,
+          59,
+          31
+        ],
+        "native": [
+          81,
+          59,
+          31
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "site": "floor",
+        "x": 431,
+        "y": 506,
+        "browser": [
+          76,
+          52,
+          27
+        ],
+        "native": [
+          75,
+          52,
+          26
+        ],
+        "maxChannelDelta": 1
+      },
+      {
+        "site": "frame",
+        "x": 8,
+        "y": 250,
+        "browser": [
+          70,
+          42,
+          36
+        ],
+        "native": [
+          69,
+          41,
+          35
+        ],
+        "maxChannelDelta": 1
+      },
+      {
+        "site": "frame",
+        "x": 478,
+        "y": 532,
+        "browser": [
+          88,
+          57,
+          42
+        ],
+        "native": [
+          94,
+          61,
+          45
+        ],
+        "maxChannelDelta": 6
+      },
+      {
+        "site": "hero-head",
+        "x": 176,
+        "y": 317,
+        "browser": [
+          177,
+          110,
+          56
+        ],
+        "native": [
+          177,
+          110,
+          56
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "site": "hero-torso",
+        "x": 169,
+        "y": 349,
+        "browser": [
+          120,
+          90,
+          25
+        ],
+        "native": [
+          132,
+          100,
+          23
+        ],
+        "maxChannelDelta": 12
+      },
+      {
+        "site": "hero-clothing",
+        "x": 171,
+        "y": 383,
+        "browser": [
+          197,
+          111,
+          29
+        ],
+        "native": [
+          197,
+          111,
+          29
+        ],
+        "maxChannelDelta": 0
+      }
+    ],
+    "staticUnder16": 8,
+    "heroUnder16": 3,
+    "heroRegion": {
+      "bounds": [
+        130,
+        244,
+        205,
+        428
+      ],
+      "total": 14060,
+      "p50MaxChannel": 1,
+      "p95MaxChannel": 126,
+      "fractionWithin16": 0.7377667140825036,
+      "inkPredicate": "g<115 && (r>1.06*g || b>g)",
+      "silhouetteIntersectionOverUnion": 0.6709547738693468
+    },
+    "browserBanner": {
+      "schema": 1,
+      "screen": "natural-banner.png",
+      "coords": "Positions at 0.18, 0.50, 0.82 of the computed banner width, all 4 CSS px above its bottom, and mid-width 8px above its bottom.",
+      "dpr": 2.625,
+      "leftFlap": [
+        142,
+        29,
+        22
+      ],
+      "centerOpening": [
+        169,
+        136,
+        81
+      ],
+      "rightFlap": [
+        142,
+        28,
+        21
+      ],
+      "aboveOpening": [
+        141,
+        29,
+        22
+      ],
+      "sourceClip": "polygon(0px 0px, 100% 0px, 100% 100%, 50% calc(100% - 6.622px), 0px 100%)",
+      "checks": {
+        "flapsSame": true,
+        "centerShowsScene": true,
+        "centerAboveIsBanner": true
+      }
+    },
+    "nativeBanner": {
+      "leftFlap": [
+        143,
+        29,
+        22
+      ],
+      "rightFlap": [
+        143,
+        29,
+        22
+      ],
+      "centerOpening": [
+        209,
+        166,
+        101
+      ],
+      "aboveOpening": [
+        143,
+        29,
+        22
+      ],
+      "flapsMatch": true,
+      "notchExposesScene": true,
+      "aboveNotchIsFlag": true
+    },
+    "scroll": {
+      "interior": {
+        "pixels": 21000,
+        "changedOver8": 1764
+      },
+      "outsideTop": {
+        "pixels": 2200,
+        "changedOver8": 0
+      },
+      "outsideBottom": {
+        "pixels": 2000,
+        "changedOver8": 0
+      }
+    },
+    "surfaces": {
+      "browser": [
+        386.89061737060547,
+        0,
+        1905.1094512939453,
+        853.9844055175781
+      ],
+      "native": [
+        358,
+        79,
+        2138,
+        1080
+      ]
+    },
+    "browserScrollCSSPixels": {
+      "before": 0,
+      "after": 18.66666603088379,
+      "extent": 19
+    },
+    "phaseAlignedOpening": {
+      "browserFrames": 15,
+      "nativeFrames": 15,
+      "naturalTimes": {
+        "browser": [
+          2.499999999999994,
+          23.13333333333266
+        ],
+        "native": [
+          0.5833333333333337,
+          16.116666666666394
+        ]
+      },
+      "rawRange": {
+        "upperMax": 0.916310323762981,
+        "upperMin": 0.4992819530876017
+      },
+      "sameTime": {
+        "browser": 4,
+        "native": 7,
+        "timeDistance": 0.02499999999999858,
+        "upper": 0.8932448733413751,
+        "browserTime": [
+          7.933333333333517,
+          8.833333333333472
+        ],
+        "nativeTime": [
+          7.925000000000184,
+          8.791666666666808
+        ],
+        "lower": {
+          "iou": 0.8547069271758437,
+          "within": 0.7754576659038902,
+          "inkWithin": 0.5960099750623441,
+          "p50": 2,
+          "p95": 70,
+          "commonInkP50": 11,
+          "commonInkP95": 79
+        },
+        "all": {
+          "iou": 0.8689917281466577,
+          "within": 0.818705547652916,
+          "inkWithin": 0.571649086699254,
+          "p50": 1,
+          "p95": 61,
+          "commonInkP50": 12,
+          "commonInkP95": 78
+        }
+      },
+      "shapeMatched": {
+        "browser": 0,
+        "native": 6,
+        "timeDistance": 4.383333333333499,
+        "upper": 0.916310323762981,
+        "browserTime": [
+          2.499999999999994,
+          3.5083333333333235
+        ],
+        "nativeTime": [
+          6.958333333333469,
+          7.816666666666845
+        ],
+        "lower": {
+          "iou": 0.8805374001452433,
+          "within": 0.7996281464530892,
+          "inkWithin": 0.6329896907216495,
+          "p50": 2,
+          "p95": 57,
+          "commonInkP50": 9,
+          "commonInkP95": 65
+        },
+        "all": {
+          "iou": 0.8938738328398997,
+          "within": 0.8354196301564722,
+          "inkWithin": 0.6005095541401274,
+          "p50": 2,
+          "p95": 52,
+          "commonInkP50": 11,
+          "commonInkP95": 67
+        }
+      },
+      "camera": [
+        "{\"x\":480,\"y\":270}"
+      ],
+      "allGameInputsNeutral": true,
+      "method": "15 naturally timed idle captures per backend, no movement. Each screenshot is bracketed by two game-clock readings. One comparison uses the closest bracket midpoints. A second selects the greatest upper-body ink overlap across all 225 pairs (rows 244–336), then checks the independent lower-body region (rows 337–428). Headings all/lower denote the full/lower logical hero ROI, x=130–205 inclusive. IoU is the intersection divided by union of the thresholded ink pixels. Filter, layout and sample phase may affect the residual."
+    }
+  },
+  "commandCompatibility": {
+    "scope": "Separate CPU run using the captured game and frame encoder with fixed visual random seed, including up to 100 simultaneous shadow doubles.",
+    "seed": 73426,
+    "encodedFrames": 2633,
+    "peakBytes": 272832,
+    "frameByteLimit": 360472,
+    "peakDraws": 131,
+    "peakDoubles": 100
+  },
+  "limits": [
+    "The two device sessions used independently timed inputs. Clear times and grades are game outcomes. They do not compare runtime speed.",
+    "The APK has an adapted Chinese-stage HUD and playbill. The browser reference used an English HTML HUD. The game uses a rectangular scrolling clip and a fixed mesh for the notched banner; arbitrary alpha masking is outside this comparison.",
+    "The native project runs silently. Audio, subsequent acts, cross-device save transfer and other Android devices were not evaluated."
+  ]
+}

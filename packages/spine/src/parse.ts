@@ -3,7 +3,7 @@
 import * as Core from '@esotericsoftware/spine-core';
 import { AssetLease, Texture } from '@egret/engine';
 import type { SpineAssetInfo, SpinePageInfo } from './types.js';
-import { spineFault } from './catalog.js';
+import { spineFault, validSpineLabel } from './catalog.js';
 import { readSpineJson } from './jsonAdmission.js';
 import { readSpineBinary } from './binaryAdmission.js';
 
@@ -21,9 +21,6 @@ export interface ParsedSpineSetup {
 }
 function integer(v: number, min: number, max: number): boolean {
   return Number.isSafeInteger(v) && v >= min && v <= max;
-}
-function label(v: string): boolean {
-  return typeof v === 'string' && v.length > 0 && v.length <= 255 && !/[\p{Surrogate}\u0000-\u001f\u007f]/u.test(v);
 }
 /** Dimension-only Core texture: no native renderer or ownership of the borrowed lease. */
 class PageTexture extends Core.Texture {
@@ -105,8 +102,10 @@ export function parseSpineSetup(
     const skins = data.skins.map(s => s.name),
       animations = data.animations.map(a => ({ name: a.name, duration: a.duration }));
     if (
-      skins.some(n => !label(n)) ||
-      animations.some(a => !label(a.name) || !Number.isFinite(a.duration) || a.duration < 0 || a.duration > 86400)
+      skins.some(n => !validSpineLabel(n)) ||
+      animations.some(
+        a => !validSpineLabel(a.name) || !Number.isFinite(a.duration) || a.duration < 0 || a.duration > 86400
+      )
     )
       throw spineFault('SETUP', id);
     const info: SpineAssetInfo = Object.freeze({

@@ -13,8 +13,8 @@ const MAX_PAGE_BYTES: usize = 64 * 1024 * 1024;
 const MAX_RESIDENT_BYTES: usize = 256 * 1024 * 1024;
 pub(crate) const VERTEX: &[u8] = b"#version 300 es\n\
 layout(location=0) in vec2 position; layout(location=1) in vec2 texcoord;\n\
-layout(location=2) in vec4 tint; uniform vec2 size; out vec2 uv; out vec4 color;\n\
-void main(){ uv=texcoord; color=tint; vec2 p=position/size;\n\
+layout(location=2) in vec4 tint; layout(location=3) in vec4 light; uniform vec2 size; out vec2 uv; out vec4 color; out vec4 linearLight;\n\
+void main(){ uv=texcoord; color=tint; linearLight=light; vec2 p=position/size;\n\
 gl_Position=vec4(p.x*2.0-1.0,1.0-p.y*2.0,0.0,1.0); }\n\0";
 const FRAGMENT: &[u8] = b"#version 300 es\nprecision highp float;\n\
 uniform sampler2D page; in vec2 uv; in vec4 color; out vec4 pixel;\n\
@@ -36,6 +36,10 @@ pub struct EgretRenderer {
     resident_bytes: usize,
     vertices: Vec<Vertex>,
     indices: Vec<u32>,
+    lights: Vec<[f32; 4]>,
+    light_buffer: u32,
+    light_bytes: usize,
+    light_enabled: bool,
     batches: Vec<Batch>,
 }
 
@@ -101,6 +105,7 @@ impl EgretRenderer {
         let mut renderer = Self {
             program, buffer: 0, vao: 0, logical_size: -1, texture_limit: 0, buffer_bytes: 0,
             index_buffer: 0, index_bytes: 0,
+            lights: Vec::new(), light_buffer: 0, light_bytes: 0, light_enabled: false,
             opaque_pages: [true; PAGE_SLOTS], project: None,
             textures: [0; PAGE_SLOTS], page_sizes: [[0; 2]; PAGE_SLOTS], resident_bytes: 0,
             vertices: Vec::new(), indices: Vec::new(), batches: Vec::new(),
@@ -125,6 +130,7 @@ impl EgretRenderer {
             glEnableVertexAttribArray(index);
             glVertexAttribPointer(index, count, ty, norm, stride, offset as *const c_void);
         }
+        glVertexAttrib4f(3, 1., 1., 1., 1.);
         glActiveTexture(TEXTURE0);
         glDisable(DITHER);
         renderer.textures[0] = texture(1, 1, &[255; 4]).unwrap_or(0);
@@ -142,9 +148,42 @@ impl EgretRenderer {
         glDeleteTextures(PAGE_SLOTS as i32, self.textures.as_ptr());
         glDeleteBuffers(1, &self.buffer);
         if self.index_buffer != 0 { glDeleteBuffers(1, &self.index_buffer); }
+        if self.light_buffer != 0 { glDeleteBuffers(1, &self.light_buffer); }
         glDeleteVertexArrays(1, &self.vao);
         glUseProgram(0);
         glDeleteProgram(self.program);
+    }
+
+    // Only colored meshes allocate this stream. Ordinary EGR1–4 frames retain
+    // their original vertex layout and upload size, including after an EGR5 frame.
+    unsafe fn upload_lights(&mut self) -> bool {
+        let enabled = !self.lights.is_empty();
+        if !enabled && !self.light_enabled { return true; }
+        glBindVertexArray(self.vao);
+        if !enabled {
+            glDisableVertexAttribArray(3);
+            glVertexAttrib4f(3, 1., 1., 1., 1.);
+        } else {
+            if self.light_buffer == 0 {
+                glGenBuffers(1, &mut self.light_buffer);
+                if self.light_buffer == 0 { return false; }
+            }
+            glBindBuffer(ARRAY_BUFFER, self.light_buffer);
+            if !self.light_enabled {
+                glEnableVertexAttribArray(3);
+                glVertexAttribPointer(3, 4, FLOAT, FALSE, 0, ptr::null());
+            }
+            let bytes = self.lights.len() * size_of::<[f32; 4]>();
+            if bytes > self.light_bytes {
+                let capacity = bytes.next_power_of_two();
+                glBufferData(ARRAY_BUFFER, capacity as isize, ptr::null(), DYNAMIC_DRAW);
+                if glGetError() != 0 { return false; }
+                self.light_bytes = capacity;
+            }
+            glBufferSubData(ARRAY_BUFFER, 0, bytes as isize, self.lights.as_ptr().cast());
+        }
+        self.light_enabled = enabled;
+        true
     }
 
     unsafe fn upload_indices(&mut self) -> bool {
@@ -169,11 +208,12 @@ impl EgretRenderer {
     }
 
     unsafe fn draw(&mut self, bytes: &[u8], width: u32, height: u32) -> i32 {
-        let header = match frame::prepare_frame(bytes, &self.page_sizes, &mut self.vertices, &mut self.batches, &mut self.indices) {
+        let header = match frame::prepare_lit_frame(bytes, &self.page_sizes, &mut self.vertices, &mut self.batches, &mut self.indices, &mut self.lights) {
             Ok(header) => header,
             Err(error) => return error as i32,
         };
         if !header.project && self.batches.iter().any(|b| !self.opaque_pages[b.page]) { return INVALID; }
+        if !self.upload_lights() { return GPU_FAILURE; }
         glBindBuffer(ARRAY_BUFFER, self.buffer);
         let size = self.vertices.len() * size_of::<Vertex>();
         if size > self.buffer_bytes {

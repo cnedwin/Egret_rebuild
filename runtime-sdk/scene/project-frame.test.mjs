@@ -129,10 +129,10 @@ test('a public Mesh2D deforms and replaces its leased atlas between UI layers', 
   assert.equal(resident.size, 0);
 });
 
-test('indexed mesh validation checks shape, local indices, coordinates, neutral tint and total bridge budget', () => {
+test('indexed mesh validation checks shape, local indices, coordinates, finite tint and total bridge budget', () => {
   for (const change of [{vertexCount: 0}, {indexCount: 4}, {indices: [0,1,2,2,1,4]},
     {positions: [0,0,NaN,0,0,2,4,2]}, {uvs: [0,0,2,0,0,1,1,1]},
-    {lightColors: Array(16).fill(0.5)}, {darkColors: Array(12).fill(0.5)}]) {
+    {lightColors: Array(16).fill(-0.5)}, {darkColors: Array(12).fill(0.5)}]) {
     assert.throws(() => encode([meshDraw], {geometries: [{...patchGeometry, ...change}]}), /mesh/i);
   }
   assert.throws(() => encode([{...meshDraw, matrix: {...matrix, tx: 16777217}}],
@@ -167,6 +167,7 @@ test('empty intersection clips to zero and unsupported commands, materials, atla
     {...image, clips: [{matrix: {...matrix, c: 1}, rect}]}]) assert.throws(() => encode([command]), /Unsupported/);
   assert.throws(() => encode([{...image, kind: 'mesh'}]), /mesh geometry/);
   assert.throws(() => encode([image], {materials: [{...material, blend: 'erase'}]}), /Unsupported/);
+  assert.throws(() => encode([image], {materials: [{...material, filter:'linear', magFilter:'linear', minFilter:'linear', mipmapFilter:'linear'}]}), /Unsupported/);
   assert.throws(() => encode([image], {materials: [{...material, samplingDomain: 'page'}]}), /Unsupported/);
   assert.throws(() => encode([image], {regions: [{...region, quarterTurn: 1}]}), /atlas/);
   assert.throws(() => encode([image], {}, new Map([[other, 5]])), /page/);
@@ -342,4 +343,41 @@ test('a public sprite sheet and sequence keep their logical frame when its packe
     scope.dispose();
     await engine.dispose();
   }
+});
+
+test('project EGR5 retains shadow blends, linear puppet sampling and per-vertex particle light', () => {
+  const multiply = {...material, blend: 'multiply-factor'};
+  const linear = {...material, filter: 'linear', minFilter: 'linear', magFilter: 'linear'};
+  const additive = {...material, blend: 'add-accumulate'};
+  const tint = [0.1234, 0.5678, 0.42, 0.8];
+  const geo = {...patchGeometry, lightColors: Array.from({length: 16}, (_, i) => tint[i % 4])};
+  const view = encode([{...image, materialIndex: 0}, {...meshDraw, materialIndex: 1},
+    {...meshDraw, materialIndex: 2}], {materials: [multiply, linear, additive], geometries: [geo]});
+  assert.equal(view.getUint32(0,true), 0x35524745);
+  assert.equal(view.getUint32(24,true), 4);
+  const mesh = 24 + 68;
+  assert.equal(view.getUint32(mesh,true), 2 | 16 | 32);
+  assert.deepEqual(floatsAt(view,mesh+52+16,4), tint.map(Math.fround));
+  assert.equal(view.getUint32(mesh+52+4*32+6*4,true), 2 | 8 | 32);
+  assert.equal(encode([image], {materials:[multiply]}).byteLength, 24 + 68);
+});
+
+test('only the built-in solid Graphics page may use native slot zero', async () => {
+  const {captureHost} = await import('./scene.mjs');
+  const {createEngine, Sprite} = await import('@egret/engine');
+  const engine = await createEngine({host: captureHost()});
+  try {
+    const hits = new Sprite();
+    hits.graphics.beginFill(0xffdc87, 0.86).moveTo(2, 0).lineTo(12, 6).lineTo(0, 8).endFill();
+    engine.stage.addChild(hits);
+    const captured = engine.captureSharedFrame({width:32, height:32});
+    assert.equal(captured.pages.length, 1);
+    assert.equal(captured.pages[0].builtin, 'solid-white');
+    const bytes = encodeProjectFrame(captured, 0, new Map()), header = new DataView(bytes.buffer);
+    assert.equal(header.getUint32(0,true), 0x35524745);
+    assert.ok(header.getUint32(24,true) & 64);
+    assert.equal(header.getUint32(28,true), 0);
+    const {builtin, ...ordinaryPage} = captured.pages[0];
+    assert.throws(() => encodeProjectFrame({...captured, pages:[ordinaryPage]}, 0, new Map()), /missing project page/);
+  } finally { await engine.dispose(); }
 });

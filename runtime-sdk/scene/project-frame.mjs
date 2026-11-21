@@ -5,6 +5,10 @@
 export const PROJECT_FRAME_MAGIC = 0x32524745;
 const ATLAS_FRAME_MAGIC = 0x33524745;
 const INDEXED_FRAME_MAGIC = 0x34524745;
+const MATERIAL_FRAME_MAGIC = 0x35524745;
+// The low two bits retain the EGR4 record kind. EGR5 adds only the fields an
+// actual draw uses, leaving earlier neutral packets byte-for-byte unchanged.
+const MULTIPLY = 4, ADD = 8, LINEAR = 16, VERTEX_LIGHT = 32, SOLID_PAGE = 64;
 const HEADER = 24, QUAD = 64, MAX_QUADS = 4096;
 const MAX_FRAME_BYTES = HEADER + MAX_QUADS * (QUAD + 24);
 const INDEXED_HEADER = 52, INDEXED_VERTEX = 16, INLINE_MAPPING = 20;
@@ -44,11 +48,19 @@ function clipBounds(clips, width, height) {
   return [left, top, Math.max(left, right), Math.max(top, bottom)];
 }
 
-function supportedMaterial(material) {
-  return material?.blend === 'normal' && material.light.every(x => x === 1) && material.dark.every(x => x === 0)
-    && material.filter === 'nearest' && material.magFilter === 'nearest' && material.minFilter === 'nearest'
-    && material.addressU === 'clamp-to-edge' && material.addressV === 'clamp-to-edge'
-    && material.mipLevel === 0 && material.maxAnisotropy === 1;
+function materialFlags(material) {
+  if (!material || !material.light.every(x => x === 1) || !material.dark.every(x => x === 0)
+      || !['normal', 'multiply-factor', 'add-accumulate'].includes(material.blend)
+      || !['linear', 'nearest'].includes(material.filter)
+      || material.magFilter !== material.filter || material.minFilter !== material.filter
+      || material.addressU !== 'clamp-to-edge' || material.addressV !== 'clamp-to-edge'
+      || (material.mipmapFilter != null && material.mipmapFilter !== 'none')
+      || material.mipLevel !== 0 || material.maxAnisotropy !== 1)
+    throw new Error('Unsupported project material');
+  let flags = material.filter === 'linear' ? LINEAR : 0;
+  if (material.blend === 'multiply-factor') flags |= MULTIPLY;
+  if (material.blend === 'add-accumulate') flags |= ADD;
+  return flags;
 }
 
 function needsAtlasMapping(region, page) {
@@ -110,13 +122,14 @@ function textureBinding(frame, cmd, material, slots) {
 
 // EGR4 interleaves typed draws in capture order. Work out the exact allocation
 // and enforce the same bridge ceiling as EGR3 before touching any vertex data.
-function indexedLayout(frame, slots) {
+function indexedLayout(frame, slots, flags) {
+  let extended = false;
   let size = HEADER;
   const draws = [];
   for (const cmd of frame.commands) {
     if (cmd.kind === 'barrier') continue;
     const material = frame.materials[cmd.materialIndex];
-    if (!supportedMaterial(material)) throw new Error('Unsupported project material');
+    let policy = flags[cmd.materialIndex];
     const texture = cmd.kind === 'rect' ? undefined : textureBinding(frame, cmd, material, slots);
     const mappingBytes = texture?.mapped ? INLINE_MAPPING : 0;
     let kind = texture?.mapped ? 1 : 0;
@@ -134,13 +147,18 @@ function indexedLayout(frame, slots) {
           (darkColors !== undefined && darkColors?.length !== vertexCount*3) || indices?.length !== indexCount)
         throw new RangeError('Invalid project mesh shape');
       kind += 2;
-      length = INDEXED_HEADER + mappingBytes + INDEXED_VERTEX * vertexCount + 4 * indexCount;
+      if (texture.slot === 0) policy |= SOLID_PAGE;
+      // Non-neutral particle colors are straight linear RGBA. Preserve them as
+      // floats through interpolation; neutral meshes need no color payload.
+      if (lightColors.some(value => value !== 1)) policy |= VERTEX_LIGHT;
+      length = INDEXED_HEADER + mappingBytes + (INDEXED_VERTEX + (policy & VERTEX_LIGHT ? 16 : 0)) * vertexCount + 4 * indexCount;
     }
     size += length;
     if (size > MAX_FRAME_BYTES) throw new RangeError('Project frame byte limit exceeded');
-    draws.push({kind, length, geometry, texture});
+    extended ||= policy !== 0;
+    draws.push({kind: kind | policy, length, geometry, texture});
   }
-  return {size, draws};
+  return {size, draws, extended};
 }
 
 function writeMesh(view, at, cmd, draw, frame) {
@@ -162,7 +180,8 @@ function writeMesh(view, at, cmd, draw, frame) {
     cursor += INLINE_MAPPING;
   }
   const {a, b, c, d, tx, ty} = cmd.matrix;
-  for (let i = 0; i < vertexCount; i++, cursor += INDEXED_VERTEX) {
+  const withLight = (draw.kind & VERTEX_LIGHT) !== 0;
+  for (let i = 0; i < vertexCount; i++, cursor += withLight ? 32 : INDEXED_VERTEX) {
     const x = positions[i*2], y = positions[i*2 + 1];
     const px = a*x + c*y + tx, py = b*x + d*y + ty;
     const u = uvs[i*2], v = uvs[i*2 + 1];
@@ -170,8 +189,11 @@ function writeMesh(view, at, cmd, draw, frame) {
         !Number.isFinite(u) || !Number.isFinite(v) || u < 0 || u > 1 || v < 0 || v > 1)
       throw new RangeError('Invalid project mesh coordinates');
     for (let channel = 0; channel < 4; channel++) {
-      if (lightColors[i*4 + channel] !== 1 || (channel < 3 && darkColors && darkColors[i*3 + channel] !== 0))
+      const light = lightColors[i*4 + channel];
+      if (!Number.isFinite(light) || light < 0 || light > 1 ||
+          (channel < 3 && darkColors && darkColors[i*3 + channel] !== 0))
         throw new Error('Unsupported project mesh vertex tint');
+      if (withLight) view.setFloat32(cursor + INDEXED_VERTEX + 4*channel, light, true);
     }
     view.setFloat32(cursor, px, true);
     view.setFloat32(cursor + 4, py, true);
@@ -236,7 +258,10 @@ function encode(frame, frameId, pageIds, records) {
       [frame.width, frame.height].some(v => !Number.isInteger(v) || v < 1 || v > 16384))
     throw new RangeError('Invalid project frame header');
   const used = new Set();
-  const slots = frame.pages.map(({source}) => {
+  const slots = frame.pages.map(({source, builtin}) => {
+    // A normal 1×1 white texture is still owned by the game. Only the vector
+    // capture's dedicated page is supplied by the native renderer at slot zero.
+    if (builtin === 'solid-white' && source.width === 1 && source.height === 1) return 0;
     const slot = pageIds.get(source);
     if (!Number.isInteger(slot) || slot < 1 || slot > 255 || used.has(slot)) throw new Error('Invalid or missing project page');
     if (!Number.isSafeInteger(source.width) || !Number.isSafeInteger(source.height) ||
@@ -244,20 +269,23 @@ function encode(frame, frameId, pageIds, records) {
     used.add(slot);
     return slot;
   });
-  let count = 0, hasMesh = false;
+  const flags = [];
+  let count = 0, needsTypedDraws = false;
   for (const command of frame.commands) {
     if (command.kind === 'barrier') {
       if (!barriers.has(command.reason)) throw new Error('Unsupported project barrier: ' + command.reason);
     } else if (command.kind === 'rect' || command.kind === 'image' || command.kind === 'mesh') {
       if (++count > MAX_QUADS) throw new RangeError('Project draw limit exceeded');
-      if (command.kind === 'mesh') hasMesh = true;
+      const index = command.materialIndex;
+      const policy = flags[index] ??= materialFlags(frame.materials[index]);
+      if (command.kind === 'mesh' || policy !== 0) needsTypedDraws = true;
     } else throw new Error('Unsupported project draw: ' + command.kind);
   }
-  const indexed = hasMesh ? indexedLayout(frame, slots) : undefined;
+  const indexed = needsTypedDraws ? indexedLayout(frame, slots, flags) : undefined;
   const buffer = new ArrayBuffer(indexed?.size ?? (HEADER + QUAD * count));
   const view = new DataView(buffer);
   const clear = rgb(frame.clearColor)*256 + Math.round(unit(frame.clearAlpha)*255);
-  [indexed ? INDEXED_FRAME_MAGIC : PROJECT_FRAME_MAGIC, frameId, frame.width, frame.height, clear, count]
+  [indexed?.extended ? MATERIAL_FRAME_MAGIC : indexed ? INDEXED_FRAME_MAGIC : PROJECT_FRAME_MAGIC, frameId, frame.width, frame.height, clear, count]
     .forEach((value, i) => view.setUint32(i*4, value, true));
   const bytes = new Uint8Array(buffer);
   if (records) records.length = count;
@@ -288,7 +316,6 @@ function encode(frame, frameId, pageIds, records) {
       base += draw ? draw.length - 4 : QUAD;
       continue;
     }
-    if (!supportedMaterial(material)) throw new Error('Unsupported project material');
     let region, page, mapped = false;
     let slot = 0, color = 0xffffff, opacity = unit(cmd.opacity), uv = [0, 0, 1, 1];
     if (cmd.kind === 'rect') {

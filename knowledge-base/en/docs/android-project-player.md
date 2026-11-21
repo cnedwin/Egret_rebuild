@@ -243,13 +243,13 @@ Construct `new org.egret.runtime.player.EgretPlayerView(activity, "game", listen
 
 ## Rendering scope and evidence
 
-The player draws rectangles, image quads and indexed texture meshes in capture order. A frame can contain up to 4,096 draws and 360,472 command bytes. It supports affine transforms, neutral material colors, normal source-over, translucent fills and textures, nearest sampling, and intersecting axis-aligned clips. The native executor composites in linear premultiplied color and resolves to display sRGB. The view fits the opaque logical stage to its available area and maps input to stage coordinates. Offscreen effects, rotated clips and other blend or filtering policies are outside this draw profile.
+The player draws rectangles, textured quads and indexed meshes in capture order. Each frame supports up to 4,096 draws and 360,472 command bytes. It composites in linear premultiplied color and resolves to display sRGB. The view fits the opaque logical stage and maps input back into stage coordinates. The command profile supports affine transforms, intersecting axis-aligned clips, normal source-over, multiply-factor and additive accumulation, with nearest or linear sampling at mip level zero. Offscreen effects, rotated clips and general alpha masks remain outside this profile.
 
 ### Indexed texture meshes
 
-Use `Mesh2D` with an existing texture lease and indexed triangles. Publish each atlas page through the same player service used for bitmaps. A changing pose can replace the geometry on its binding while keeping the page resident. The native player preserves the order of meshes and surrounding UI draws. The supported material uses neutral light and dark colors, normal source-over, nearest sampling and normalized UVs in [0,1]. View-domain sampling supports packed regions, transparent trim and quarter-turn rotation. Page-domain meshes interpret UVs against the whole texture page, including when the bound view is cropped.
+Use `Mesh2D` with an existing texture lease and indexed triangles. Publish each atlas page through the same player service used for bitmaps. A changing pose can replace the geometry on its binding while keeping the page resident. The native player preserves the order of meshes and surrounding UI draws. Meshes support normalized UVs in [0,1] and per-vertex light tint. Material-level light and dark colors retain their neutral defaults. View-domain sampling supports packed regions, transparent trim and quarter-turn rotation. Page-domain meshes interpret UVs against the whole texture page, including when the bound view is cropped.
 
-A frame containing a mesh uses EGR4. Each mesh carries its transformed vertices, UVs and local triangle indices. The renderer submits the indices to GLES3 and uses the existing clip, compositing and texture-page lifetime rules. Commands are validated before drawing, including index bounds, page residency and the frame byte budget. The same AAR and project export revision should be used for a mesh game. A recording can interleave EGR2, EGR3 and EGR4 frames.
+A frame containing a neutral nearest-sampled mesh uses EGR4. EGR5 extends the same records for shadow and additive blending, linear filtering, per-vertex light and the engine-owned solid Graphics texture. Each mesh carries its transformed vertices, UVs and local triangle indices. The renderer submits the indices to GLES3 and uses the existing clip, compositing and texture-page lifetime rules. Commands are validated before drawing, including index bounds, page residency and the frame byte budget. The same AAR and project export revision should be used for a mesh game. A recording can interleave EGR2 through EGR5 frames.
 
 The [Kite Courier example](https://github.com/cnedwin/Egret_rebuild/tree/main/runtime-sdk/examples/indexed-mesh) draws two nine-vertex meshes from separate atlas pages. One UI strip crosses the cape behind the face, and another sits in front of the face. The Fold7 capture covered 17 distinct poses in 210 submissions. The three script hosts produced identical command tapes. Native replay consumed the WebView capture.
 
@@ -263,6 +263,30 @@ The [Kite Courier example](https://github.com/cnedwin/Egret_rebuild/tree/main/ru
 The packet consumed by GLES3 was 948 bytes in every lane. The bridge figures count command data and exclude initial texture uploads and transport overhead. Each timing is the median of four process-level p95s, with 30 warm-up submissions and 180 measured callback intervals per process. The timer measures the interval between two successful native submission callbacks received on the Android UI thread. GPU completion and display presentation were outside this measurement.
 
 All four paths produced identical 1080 × 1920 surfaces at the final pose, both before and after EGL context recreation. Against an independent CPU rasterization, all 2,030,094 pixels away from color boundaries matched. Of the remaining pixels, 22 matched the color of a neighboring texel within the same mesh and 21 matched a neighboring layer at a silhouette. Every differing color appeared in the expected 3 × 3 neighborhood. Each execution uploaded both atlas pages once per context and recorded four page releases by close. The three game sessions released both logical textures, and replay released its tape. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-indexed-mesh.json)
+
+### Play the first act of Lantern Shadows on Android
+
+The reference is the existing browser game at commit `7b774670`. Its playbill scrolls, the notched South Gate banner reveals the scenery, and the player can attack, jump and summon up to 100 shadow doubles. Defeating ten soldiers and Nezha opens the result screen and saves the first-act record. The Android project uses the original rules, Tiled level, Spine poses and record format. The native display tree lays out the playbill and controls. It clips the scrolling list to a rectangle and draws the fixed banner silhouette as triangles. The Android benchmark covers the first act in silence. Audio was outside the browser comparison. [Pinned game source](https://github.com/cnedwin/PortedGamesEgret/tree/7b774670237666d73247cc793c55530f7f7c1e5f/LanternShadows)
+
+Start with the matching game checkout and locally built trimmed-V8 AAR. Prepare the game into a fresh directory with the JDK on your path. Supply the external signing settings from the release instructions above.
+
+```sh
+node runtime-sdk/examples/lantern-shadows/prepare.mjs /path/to/PortedGamesEgret/LanternShadows out/lantern-game
+node runtime-sdk/android/player/create-app.mjs --project out/lantern-game --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.lanternshadows --name "Lantern Shadows" --out out/lantern-app
+gradle -p out/lantern-app assembleRelease
+```
+
+The preparer reads locally supplied game sources and artwork. It includes game provenance and the upstream license notices in the generated project. Keep the applicable game and Spine rights when distributing a build. [Spine runtime license](https://github.com/cnedwin/PortedGamesEgret/tree/7b774670237666d73247cc793c55530f7f7c1e5f/LanternShadows/vendor/%40esotericsoftware__spine-core)
+
+On the Galaxy Z Fold7 with Android 17, both Chrome 157 (WebGL2) and the signed arm64 trimmed-V8 APK (GLES3) completed the first act through normal controls. The browser run earned C with a best combo of 13. The native run earned B with a best combo of 22. Reloading the browser page and force-stopping and reopening the APK each restored that run's exact record in the playbill. These are independent playthroughs with different inputs. The recorded times measure progress within each game session.
+
+On the same phone the eight preselected scenery samples differed by at most 6/255 per RGB channel. Three landmarks on the idle hero fell within the preselected 16/255 tolerance. The independently timed idle captures also show differences along the moving puppet's silhouette. The browser uses its HTML playbill and the APK uses a native-stage playbill. Both scroll inside the viewport and show the scenery through the banner notch. [Device measurements and comparison method](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-lantern-shadows.json)
+
+A second stationary opening run captured 15 idle poses on each backend. The pair closest in game-clock midpoint (25 ms apart) had whole-character silhouette overlap of 0.869 and a 95th-percentile maximum RGB-channel difference of 61/255. Selecting the closest upper-body shape and checking the lower body independently gave lower-body overlap of 0.881 and whole-character difference of 52/255 at p95. The capture brackets span roughly 0.9 seconds in these pairs. The two sequences confirm the character and pose while leaving residual edge differences unresolved.
+
+The Release APK used for measurement includes a read-only Activity observer for game state. It receives the same score shown on screen and never supplies input or writes a save.
+
+The packaged Spine reader accepts supplementary characters and rejects isolated UTF-16 surrogate code units on trimmed V8, including configurations without ICU property tables. The original Android run stopped during script parsing before this correction.
 
 ### Packed sprite sheets and animation frames
 

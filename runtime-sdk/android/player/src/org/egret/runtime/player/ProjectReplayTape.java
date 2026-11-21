@@ -27,7 +27,7 @@ import java.util.TreeMap;
 /** A bounded, local recording of the exact project submissions and immutable RGBA page versions. */
 final class ProjectReplayTape {
     static final int FRAMES = 210;
-    private static final int MAGIC = 0x45475250, VERSION = 1, EGR2 = 0x32524745, EGR3 = 0x33524745, EGR4 = 0x34524745;
+    private static final int MAGIC = 0x45475250, VERSION = 1, EGR2 = 0x32524745, EGR3 = 0x33524745, EGR4 = 0x34524745, EGR5 = 0x35524745;
     private static final int MAX_BYTES = 64 << 20, MAX_GENERATIONS = 4096, CHECKSUM = 32;
     private static final int HEADER = 5 * Integer.BYTES, REUSE = -1;
     private final PlayerGraphics.Frame[] frames;
@@ -234,11 +234,11 @@ final class ProjectReplayTape {
             throw new IOException("Invalid project packet length");
         ByteBuffer data = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
         int format = data.getInt(0), quads = data.getInt(20);
-        if ((format != EGR2 && format != EGR3 && format != EGR4) || data.getInt(4) != id || data.getInt(8) != width
+        if ((format != EGR2 && format != EGR3 && format != EGR4 && format != EGR5) || data.getInt(4) != id || data.getInt(8) != width
             || data.getInt(12) != height || quads < 0 || quads > PlayerGraphics.MAX_QUADS)
             throw new IOException("Invalid or discontinuous project frame");
-        if (format == EGR4) {
-            validateIndexedPacket(data, quads, width, height, pages);
+        if (format == EGR4 || format == EGR5) {
+            validateIndexedPacket(data, quads, width, height, pages, format == EGR5);
             return;
         }
         int recordsEnd = 24 + quads * PlayerGraphics.QUAD_BYTES;
@@ -265,12 +265,16 @@ final class ProjectReplayTape {
     // EGR4 records are interleaved in painter order. Bounds-check every variable
     // section before indexing it so malformed tapes cannot publish a partial session.
     private static void validateIndexedPacket(ByteBuffer data, int draws, int width, int height,
-                                             Map<Integer, PlayerGraphics.Page> pages) throws IOException {
+                                             Map<Integer, PlayerGraphics.Page> pages, boolean extended) throws IOException {
         int pos = 24;
-        boolean sawMesh = false;
+        boolean sawMesh = false, sawPolicy = false;
         for (int draw = 0; draw < draws; draw++) {
             requireRemaining(data, pos, 4);
-            int kind = data.getInt(pos);
+            int tag = data.getInt(pos), kind = tag & 3;
+            boolean light = (tag & 32) != 0, white = (tag & 64) != 0;
+            if ((!extended && tag != kind) || (tag & ~127) != 0 || (tag & 12) == 12 || (light && kind < 2) || (white && kind != 2))
+                throw new IOException("Unknown project draw policy");
+            sawPolicy |= tag != kind;
             pos += 4;
             if (kind == 0 || kind == 1) {
                 requireRemaining(data, pos, PlayerGraphics.QUAD_BYTES + (kind == 1 ? 20 : 0));
@@ -286,12 +290,12 @@ final class ProjectReplayTape {
             requireRemaining(data, pos, 48 + (kind == 3 ? 20 : 0));
             int slot = data.getInt(pos);
             PlayerGraphics.Page page = pages.get(slot);
-            if (slot < 1 || slot > 255 || page == null) throw new IOException("Missing mesh texture page");
+            if (slot < 0 || slot > 255 || (slot == 0) != white || (!white && page == null)) throw new IOException("Missing mesh texture page");
             float left = data.getFloat(pos + 8), top = data.getFloat(pos + 12);
             float right = data.getFloat(pos + 16), bottom = data.getFloat(pos + 20);
             float u0 = data.getFloat(pos + 24), v0 = data.getFloat(pos + 28);
             float u1 = data.getFloat(pos + 32), v1 = data.getFloat(pos + 36);
-            if (!unit(data.getFloat(pos + 4)) || !(0 <= left && left <= right && right <= width)
+            if ((white && (u0 != 0 || v0 != 0 || u1 != 1 || v1 != 1)) || !unit(data.getFloat(pos + 4)) || !(0 <= left && left <= right && right <= width)
                 || !(0 <= top && top <= bottom && bottom <= height)
                 || !(0 <= u0 && u0 < u1 && u1 <= 1 && 0 <= v0 && v0 < v1 && v1 <= 1))
                 throw new IOException("Invalid mesh opacity, clip or texture region");
@@ -299,8 +303,11 @@ final class ProjectReplayTape {
             if (vertices < 3 || indices < 3 || indices % 3 != 0) throw new IOException("Invalid triangle counts");
             if (kind == 3) validateMapping(data, pos + 48, page, pos + 24);
             pos += 48 + (kind == 3 ? 20 : 0);
-            requireRemaining(data, pos, 16L * vertices + 4L * indices);
-            for (int i = 0; i < vertices; i++, pos += 16) {
+            int stride = light ? 32 : 16;
+            requireRemaining(data, pos, (long)stride * vertices + 4L * indices);
+            for (int i = 0; i < vertices; i++, pos += stride) {
+                if (light) for (int c = 16; c < 32; c += 4)
+                    if (!unit(data.getFloat(pos + c))) throw new IOException("Invalid mesh vertex light");
                 if (!(Math.abs(data.getFloat(pos)) <= 16777216f && Math.abs(data.getFloat(pos + 4)) <= 16777216f)
                     || !unit(data.getFloat(pos + 8)) || !unit(data.getFloat(pos + 12)))
                     throw new IOException("Invalid mesh vertex");
@@ -310,7 +317,7 @@ final class ProjectReplayTape {
                 if (index < 0 || index >= vertices) throw new IOException("Mesh index outside its vertex table");
             }
         }
-        if (!sawMesh || pos != data.limit()) throw new IOException("Invalid indexed project packet length or contents");
+        if (!(extended ? sawPolicy : sawMesh) || pos != data.limit()) throw new IOException("Invalid indexed project packet length or contents");
     }
 
     private static boolean unit(float value) { return 0 <= value && value <= 1; }
