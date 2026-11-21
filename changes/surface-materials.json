@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-22",
+  "en": {
+    "title": "3D: wood, stone, brick, plaster, metal, cloth and bark drawn by the shader",
+    "body": "`createSurfaceMaterial3D({ surface, scale, strength, bump })` is a standard material whose fragment and normal hooks draw a surface from the world position, projected from the three axes: wood grain, stone with cracks, brick courses, plaster, brushed metal, woven cloth or bark, in colour and in relief, with no texture and no texture coordinates. It adds the detail vertex colours cannot hold, at the size of the pixels. Both WebGL2 and WebGPU draw it, and the same picture comes back from each. The library's wooden props, the cottage and the stone buildings name their surface, and the gallery and the model preview draw them with it."
+  },
+  "zh": {
+    "title": "3D：由着色器画出的木纹、石头、砖、灰泥、金属、布料和树皮",
+    "body": "`createSurfaceMaterial3D({ surface, scale, strength, bump })` 是一个标准材质，它的片元钩子和法线钩子按世界坐标从三个轴向投影画出表面：木纹、带裂缝的石头、砖缝、灰泥、拉丝金属、织布或树皮，既有颜色也有起伏，不需要贴图和纹理坐标。它补上了顶点颜色存不下的细节，精度到像素。WebGL2 和 WebGPU 都能绘制，两者画出的图一致。范例库的木制道具、小屋和石头建筑写明了各自的表面，画廊和模型预览会用它绘制。"
+  }
+}

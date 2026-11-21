@@ -53,6 +53,8 @@ draws the model from four sides into `fox.png` and prints its triangles, size an
 - Every part must touch the next: a tail that floats a centimetre off the back, a door slab loose in its opening, a well whose cut stops short of its lid all make a second piece. The model preview lists the pieces in its `notes`, and the library's test holds every model to one.
 - `sharp: true` for things that really are hard (the crate, the chest, the cottage, the signpost): corners stay corners and faces stay flat.
 
+A model that exports `surface` (for example `{ surface: 'wood', strength: 0.4 }`) is drawn with `createSurfaceMaterial3D(surface)`: wood grain, plaster or stone between its vertices. A baked .glb keeps the mesh and its colours, not the surface: give the loaded mesh the same material.
+
 `node tools/bake-models.mjs examples/models <new folder>` writes every model as a .glb, to be loaded in milliseconds.
 
 Models are generated in a few hundred milliseconds each; make them while a level loads, or save them with `exportGlb3D`. The pictures used to check them were drawn with software rendering in a headless browser, not on devices.

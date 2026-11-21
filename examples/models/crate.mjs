@@ -3,6 +3,7 @@
 // mirrored across all three axes, plank lines as stripes, and lighter worn edges from the mesh option `edges`.
 export const about = { name: 'Crate', zh: '木箱', kind: 'prop' };
 export const meshOptions = { sharp: true, triangles: 3000, edges: { amount: 0.6 } };
+export const surface = { surface: 'wood', strength: 0.4 };
 
 export default function crate(W) {
   const box = W.sdfBox([0.8, 0.8, 0.8], { at: [0, 0.4, 0], round: 0.03, color: 0xa8743f });

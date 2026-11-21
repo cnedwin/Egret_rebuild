@@ -36,7 +36,9 @@ for (const name of models) {
   } else {
     const shape = module.default(W);
     const geometry = shape instanceof W.SdfShape3D ? W.createSdfGeometry3D(shape, module.meshOptions ?? {}) : shape;
-    made.push({ name, about: module.about, mesh: new W.Mesh3D(geometry, material), box: geometry.boundingBox });
+    // A model that names a surface is drawn with it: wood grain, brick courses or plaster between its vertices.
+    const own = module.surface ? W.createSurfaceMaterial3D(module.surface) : material;
+    made.push({ name, about: module.about, mesh: new W.Mesh3D(geometry, own), box: geometry.boundingBox });
   }
   status.textContent = `${made.length} / ${models.length}`;
   await new Promise(resolve => setTimeout(resolve, 0));

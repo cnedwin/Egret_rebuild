@@ -4,6 +4,7 @@
 // with stripes and lighter at their worn edges.
 export const about = { name: 'Signpost', zh: '路牌', kind: 'prop' };
 export const meshOptions = { sharp: true, triangles: 3500, edges: { amount: 0.5 } };
+export const surface = { surface: 'wood', strength: 0.4 };
 
 export default function signpost(W) {
   const arrow = [

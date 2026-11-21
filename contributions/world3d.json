@@ -563,6 +563,16 @@
       "path": "tests/world3d-sdf-hard.test.mjs",
       "originRole": "First-party behaviour tests of sharp hard surfaces, levels of detail, baked models and the notes of the model preview; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/SurfaceMaterial3D.ts",
+      "originRole": "First-party procedural surfaces (wood, stone, brick, plaster, metal, cloth, bark) drawn by fragment and normal hooks in GLSL and WGSL from value noise projected in world space; independently authored with AI assistance; Apache-2.0. Value noise and fractal sums are standard techniques; no third-party source.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-surface-material.test.mjs",
+      "originRole": "First-party tests of the surface materials' sources in both shading languages and of their parameters; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [

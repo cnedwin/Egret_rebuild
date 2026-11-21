@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1386 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1390 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -410,6 +410,7 @@
 | `createSprite3D` | 函数 | Makes a sprite: a picture that always faces the camera. |
 | `createSpriteMaterial3D` | 函数 | Camera-facing unlit quad material for Sprite3D. |
 | `createStandardMaterial3D` | 函数 | Physically based metallic-roughness model, matching glTF 2.0 materials. |
+| `createSurfaceMaterial3D` | 函数 | A standard material with a surface drawn by the shader, over its colour or its vertex colours (on unless `vertexColors: false`): `createSurfaceMaterial3D({ surface: 'wood' })` for a crate made in code. |
 | `createTerrain3D` | 函数 | Makes terrain from a height field, drawn in chunks at levels of detail. |
 | `createTerrainMaterial3D` | 函数 | A standard material whose color is a blend of ground textures, such as sand, grass, rock and snow, painted by a weight map. |
 | `createTerrainStream3D` | 函数 | Makes terrain that loads and unloads tiles around a point. |
@@ -686,6 +687,9 @@
 | `StateOptions3D` | 接口 | A state to add: its clip or blend, whether it loops, its speed, and what it calls on entering and leaving. |
 | `StateParameter3D` | 类型 | The value of a state machine parameter. |
 | `StrandOptions3D` | 接口 | How a strand of points behaves: its gravity, damping, iterations, thickness, and what it collides with. |
+| `SurfaceKind3D` | 类型 | The surfaces the shader can draw. |
+| `SurfaceMaterialOptions3D` | 接口 | A material with a surface: the standard material's options and how the surface looks. |
+| `surfaceShaderSources3D` | 函数 | The shader sources of a surface: its height, the colour it gives and the relief it gives, in GLSL and WGSL. |
 | `Terrain3D` | 类 | A height field drawn as a grid of chunk meshes. |
 | `TERRAIN3D_LIMITS` | 值 | The largest height field, chunk and number of levels and chunks terrain has, and the most streamed tiles. |
 | `TerrainMaterialOptions3D` | 接口 | A terrain material's layers, their weights, and how often they repeat. |

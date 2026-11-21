@@ -74,6 +74,8 @@ for (const name of models)
     assert.ok(size >= low && size <= high, module.about.kind + ' ' + size);
     // A model faces +z: it is centred on x, as every model of the library is drawn about its middle.
     assert.ok(Math.abs((box[0] + box[3]) / 2) < size * 0.25, 'centred on x');
+    // A surface it names is one the shader draws.
+    if (module.surface !== undefined) assert.ok(W.createSurfaceMaterial3D(module.surface).shader, 'surface');
     // One piece: a part that floats loose, or is too thin to join, comes out as a second piece of the mesh.
     assert.equal(pieces(geometry), 1, 'one piece');
     geometry.dispose();
