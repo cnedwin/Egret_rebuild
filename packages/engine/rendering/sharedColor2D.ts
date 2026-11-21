@@ -147,6 +147,26 @@ function sampleCopy(diagnostics: SharedPageCopyDiagnostics2D): void {
     excess ? Number.MAX_SAFE_INTEGER : diagnostics.canonicalBytes + diagnostics.scratchBytes
   );
 }
+function writePremultipliedPixel(source: Uint8Array, output: Uint8Array, offset: number, alpha: number): void {
+  const row = alpha << 8;
+  output[offset] = premultipliedSrgb[row | source[offset]!]!;
+  output[offset + 1] = premultipliedSrgb[row | source[offset + 1]!]!;
+  output[offset + 2] = premultipliedSrgb[row | source[offset + 2]!]!;
+  output[offset + 3] = alpha;
+}
+
+// Four separated neighboring pairs select a loop. Every pixel in the chosen loop still uses its own alpha.
+function hasEndpointRuns(source: Uint8Array, start: number, end: number): boolean {
+  if (end - start < 32) return false;
+  const stride = Math.floor((end - start) / 16) * 4;
+  for (let sample = 0; sample < 4; sample++) {
+    const offset = start + sample * stride + 3;
+    const alpha = source[offset]!;
+    if ((alpha !== 0 && alpha !== 255) || source[offset + 4] !== alpha) return false;
+  }
+  return true;
+}
+
 /** One actual source copy and one tight canonical output; callers reserve that peak first. */
 export function copySharedPagePixels(
   image: ImageData2D,
@@ -167,13 +187,24 @@ export function copySharedPagePixels(
       diagnostics.canonicalBytes += output.byteLength;
       sampleCopy(diagnostics);
     }
-    for (let offset = 0; offset < source.length; offset += 4) {
-      const alpha = source[offset + 3]!,
-        row = alpha << 8;
-      output[offset] = premultipliedSrgb[row | source[offset]!]!;
-      output[offset + 1] = premultipliedSrgb[row | source[offset + 1]!]!;
-      output[offset + 2] = premultipliedSrgb[row | source[offset + 2]!]!;
-      output[offset + 3] = alpha;
+    const sourceWords = new Uint32Array(source.buffer, source.byteOffset, source.length / 4);
+    const outputWords = new Uint32Array(output.buffer, output.byteOffset, sourceWords.length);
+    const blockBytes = 1024 * 4;
+    for (let start = 0; start < source.length; start += blockBytes) {
+      const end = Math.min(start + blockBytes, source.length);
+      if (!hasEndpointRuns(source, start, end)) {
+        for (let offset = start; offset < end; offset += 4) {
+          writePremultipliedPixel(source, output, offset, source[offset + 3]!);
+        }
+        continue;
+      }
+      for (let offset = start; offset < end; offset += 4) {
+        const alpha = source[offset + 3]!;
+        // Transparent black is already zero. Whole-word copying preserves byte order on either endianness.
+        if (alpha === 0) continue;
+        if (alpha === 255) outputWords[offset / 4] = sourceWords[offset / 4]!;
+        else writePremultipliedPixel(source, output, offset, alpha);
+      }
     }
     if (levels > 1) fillSharedLevels2D(output, image.width, image.height, levels);
     return output;

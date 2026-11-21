@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-21",
+  "en": {
+    "title": "Reduce CPU work on first atlas upload",
+    "body": "The shared 2D renderer recognizes blocks with runs of transparent or opaque pixels and avoids color-table lookups there for those pixels. Intermediate alpha, mip generation and resource ownership keep their existing behavior."
+  },
+  "zh": {
+    "title": "降低图集首次上传的 CPU 开销",
+    "body": "共享 2D 渲染器可识别透明或不透明像素成片分布的图集区域，为这些像素省去颜色查表。半透明像素、mip 层生成和资源所有权沿用原有行为。"
+  }
+}
