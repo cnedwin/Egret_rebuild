@@ -1,0 +1,362 @@
+{
+  "date": "2026-11-22",
+  "engineCommit": "d43ce973b2b5114010c9a291c833aee54acd5ab8",
+  "device": {
+    "model": "Samsung Galaxy Z Fold7 (SM-F966U1)",
+    "os": "Android 17",
+    "gpu": "Adreno 830",
+    "backend": "GLES3",
+    "renderBufferPixels": [
+      873,
+      325
+    ],
+    "requestedHz": 60,
+    "build": "Signed debuggable arm64 APK; USB connected, awake, unlocked.",
+    "apkSha256": "6da8a0ae46e140a31985289ab33a182a9c6858ae9744992937f7721c09fbbba0",
+    "captureHost": "Trimmed V8 15.7.112.19",
+    "replayHost": "Native replay without a JavaScript VM"
+  },
+  "workload": {
+    "source": "https://github.com/cnedwin/PortedGamesEgret/tree/ce6144533b890be992bea9eb09cb344457f8364c/Rally",
+    "exportedScriptSha256": "e223d54e46863ea1cb961ba0f7b115f0b56ee7b0ce42a328fc02f5e1d38e4307",
+    "modelSha256": {
+      "panda-driver.glb": "58b83a3557f2714c7db1ae4db23aedda379800d458cdd600f94fad8a50d2dc70",
+      "panda-kart.glb": "7a5bd9e963a692a39ffe4e5c2c2643c07f9867b67bce63ba76a3963880005f19"
+    },
+    "seed": 7,
+    "grid": [
+      3,
+      0,
+      6,
+      4,
+      5,
+      2,
+      7,
+      1
+    ],
+    "logicalFrames": 210,
+    "logicalTickHz": 120,
+    "inputs": "Run the original intro and countdown for 731 fixed ticks. Start recording with all eight cars stationary. Green at frame 14. Deliver right, left and right through the game input handler on [16,32), [81,102) and [172,183). The first driving contact enables automatic acceleration. Seven opponents use the original race AI.",
+    "frameIdsAreZeroBased": true,
+    "initialPlayerSpeedMps": 0,
+    "initialAccelerationFrame": 16,
+    "playerSpeedAtFirstInputMps": 0.2126620263284772,
+    "playerSpeedAtLastFrameMps": 1.2610206540215647,
+    "realHumanTouchMeasured": false
+  },
+  "geometryReuse": {
+    "method": "For each car on each tick, match a chassis part to the submitted draw by geometry ID and world matrix. Verify draw order, unchanged geometry bytes and material. Seven opponents share one chassis geometry ID. Compare every interior definition against the preceding acknowledged visible set and the earlier geometry bytes.",
+    "matchedChassisDraws": 1680,
+    "interiorResendsOfContinuouslyResidentGeometry": 0,
+    "interiorRetransmissionsOfChassisWitnessGeometry": 0,
+    "chassis": [
+      {
+        "slot": 0,
+        "racer": 3,
+        "player": false,
+        "geometryId": 4,
+        "framesVisible": 210,
+        "distinctWorldMatrices": 197,
+        "distinctMaterials": 1,
+        "distinctGeometryContents": 1,
+        "startToEndGroundDisplacementM": 31.83
+      },
+      {
+        "slot": 1,
+        "racer": 0,
+        "player": false,
+        "geometryId": 4,
+        "framesVisible": 210,
+        "distinctWorldMatrices": 197,
+        "distinctMaterials": 1,
+        "distinctGeometryContents": 1,
+        "startToEndGroundDisplacementM": 54.717
+      },
+      {
+        "slot": 2,
+        "racer": 6,
+        "player": false,
+        "geometryId": 4,
+        "framesVisible": 210,
+        "distinctWorldMatrices": 197,
+        "distinctMaterials": 1,
+        "distinctGeometryContents": 1,
+        "startToEndGroundDisplacementM": 54.214
+      },
+      {
+        "slot": 3,
+        "racer": 4,
+        "player": false,
+        "geometryId": 4,
+        "framesVisible": 210,
+        "distinctWorldMatrices": 197,
+        "distinctMaterials": 1,
+        "distinctGeometryContents": 1,
+        "startToEndGroundDisplacementM": 56.532
+      },
+      {
+        "slot": 4,
+        "racer": 5,
+        "player": false,
+        "geometryId": 4,
+        "framesVisible": 210,
+        "distinctWorldMatrices": 197,
+        "distinctMaterials": 1,
+        "distinctGeometryContents": 1,
+        "startToEndGroundDisplacementM": 24.182
+      },
+      {
+        "slot": 5,
+        "racer": 2,
+        "player": false,
+        "geometryId": 4,
+        "framesVisible": 210,
+        "distinctWorldMatrices": 197,
+        "distinctMaterials": 1,
+        "distinctGeometryContents": 1,
+        "startToEndGroundDisplacementM": 53.969
+      },
+      {
+        "slot": 6,
+        "racer": 7,
+        "player": false,
+        "geometryId": 4,
+        "framesVisible": 210,
+        "distinctWorldMatrices": 197,
+        "distinctMaterials": 1,
+        "distinctGeometryContents": 1,
+        "startToEndGroundDisplacementM": 27.851
+      },
+      {
+        "slot": 7,
+        "racer": 1,
+        "player": true,
+        "geometryId": 10,
+        "framesVisible": 210,
+        "distinctWorldMatrices": 195,
+        "distinctMaterials": 1,
+        "distinctGeometryContents": 1,
+        "startToEndGroundDisplacementM": 15.141
+      }
+    ]
+  },
+  "bridge": {
+    "scope": "Frame command bytes received from V8 by ScriptSession.commands. Excludes texture-page operations and observer framing. The 96-byte textured draw includes a 64-byte world matrix.",
+    "packetBytes": 29984264,
+    "headerBytes": 34432,
+    "geometryBytes": 1894240,
+    "geometryHeaderBytes": 1056,
+    "vertexBytes": 1469536,
+    "indexBytes": 423648,
+    "drawBytes": 26885472,
+    "drawMatrixBytes": 17923648,
+    "drawOtherBytes": 8961824,
+    "hudBytes": 1170120,
+    "commandFrames": 210,
+    "drawsTotal": 280057,
+    "minDrawsPerFrame": 1330,
+    "maxDrawsPerFrame": 1339,
+    "fullCheckpointCommands": [
+      {
+        "id": 0,
+        "bytes": 1052156,
+        "geometryBytes": 918648
+      },
+      {
+        "id": 209,
+        "bytes": 1044456,
+        "geometryBytes": 910756
+      }
+    ],
+    "incrementalFrames": 208,
+    "incrementalFramesWithNoDefinitions": 202,
+    "incrementalGeometryBytes": 64836,
+    "incrementalDefinitions": [
+      {
+        "id": 22,
+        "entries": [
+          {
+            "gid": 138,
+            "bytes": 6396,
+            "reason": "first-seen"
+          }
+        ]
+      },
+      {
+        "id": 48,
+        "entries": [
+          {
+            "gid": 228,
+            "bytes": 2444,
+            "reason": "first-seen"
+          }
+        ]
+      },
+      {
+        "id": 118,
+        "entries": [
+          {
+            "gid": 244,
+            "bytes": 2444,
+            "reason": "first-seen"
+          }
+        ]
+      },
+      {
+        "id": 180,
+        "entries": [
+          {
+            "gid": 222,
+            "bytes": 2444,
+            "reason": "first-seen"
+          }
+        ]
+      },
+      {
+        "id": 195,
+        "entries": [
+          {
+            "gid": 140,
+            "bytes": 12780,
+            "reason": "reentered-identical"
+          }
+        ]
+      },
+      {
+        "id": 207,
+        "entries": [
+          {
+            "gid": 128,
+            "bytes": 12780,
+            "reason": "reentered-identical"
+          },
+          {
+            "gid": 130,
+            "bytes": 25548,
+            "reason": "reentered-identical"
+          }
+        ]
+      }
+    ],
+    "commandBytesEqualOnDisk": true
+  },
+  "recording": {
+    "container": "EGRP v2",
+    "fileBytes": 34899699,
+    "limitBytes": 67108864,
+    "packetFormats": {
+      "E3D2": 2,
+      "E3D4": 208
+    },
+    "fullFrameIds": [
+      0,
+      209
+    ],
+    "commandBytes": 29984264,
+    "rgbaBytes": 4911392,
+    "pageVersions": 37,
+    "envelopeAndChecksumBytes": 4043,
+    "fileSha256": "f5abb28d2baee4b5a13d95e83388b584896d7a8d6027d66239ff69ae73ea56c2",
+    "payloadSha256": "c85d7a02f01926c823a667cccb75e51dc019e9feac924daa74c23d66c0444524"
+  },
+  "replay": {
+    "matchedRgbaFrames": 210,
+    "distinctImages": 210,
+    "matchedOrderedDraws": 280057,
+    "method": "After the native GLES draw, compare full RGBA and the order of actual indexed draws (mesh, page and index count). Compare ordered World3D draw records and HUD bytes against the tape. Digest streams concatenate the 210 hexadecimal per-frame hashes as UTF-8.",
+    "rgbaDigestStreamSha256": "d0ed586133dfff5dc4fbf6ec3540669cfec9ae091e2c9c31e60959e72df0d691",
+    "worldDrawDigestStreamSha256": "19af0825ebaf064b73174c4d30179df2e780f725aad5e40fc09c79d848300402",
+    "hudDigestStreamSha256": "f555e261278e0f344db4fc2a585f2be66054cc4f8ad2ef2e905f19ece295e7a6",
+    "recovery": {
+      "firstFrameOnRecreatedContext": 101,
+      "restoredPacketBytes": 1052252,
+      "restoredPacketDefinitions": 40,
+      "completedThroughFrame": 209,
+      "terminalFrameRestoredInCaptureAndReplay": true,
+      "newScriptCommandsOnTerminalRestore": 0
+    },
+    "close": [
+      {
+        "run": "capture",
+        "eglContexts": 2,
+        "meshesCreated": 88,
+        "meshesDeleted": 88,
+        "pagesUploaded": 74,
+        "pagesReleased": 74,
+        "geometryPayloadBytesAfterClose": 0
+      },
+      {
+        "run": "replay",
+        "eglContexts": 2,
+        "meshesCreated": 88,
+        "meshesDeleted": 88,
+        "pagesUploaded": 74,
+        "pagesReleased": 74,
+        "geometryPayloadBytesAfterClose": 0
+      },
+      {
+        "run": "interrupted",
+        "eglContexts": 2,
+        "meshesCreated": 87,
+        "meshesDeleted": 87,
+        "pagesUploaded": 70,
+        "pagesReleased": 70,
+        "geometryPayloadBytesAfterClose": 0
+      },
+      {
+        "run": "time1",
+        "eglContexts": 1,
+        "meshesCreated": 47,
+        "meshesDeleted": 47,
+        "pagesUploaded": 37,
+        "pagesReleased": 37,
+        "geometryPayloadBytesAfterClose": 0
+      },
+      {
+        "run": "time2",
+        "eglContexts": 1,
+        "meshesCreated": 47,
+        "meshesDeleted": 47,
+        "pagesUploaded": 37,
+        "pagesReleased": 37,
+        "geometryPayloadBytesAfterClose": 0
+      },
+      {
+        "run": "time3",
+        "eglContexts": 1,
+        "meshesCreated": 47,
+        "meshesDeleted": 47,
+        "pagesUploaded": 37,
+        "pagesReleased": 37,
+        "geometryPayloadBytesAfterClose": 0
+      }
+    ]
+  },
+  "timing": {
+    "method": "Three separate cold native replay processes with readback and order hashing disabled. Discard the first 30 intervals in each series. Report nearest-rank p95 of game-layer SurfaceFlinger presentation intervals separately from successful submission-callback intervals; there is no one-to-one mapping between the two series.",
+    "runs": [
+      {
+        "run": 1,
+        "presentationSamples": 181,
+        "presentationP95Ms": 16.580469,
+        "callbackSamples": 180,
+        "callbackIntervalP95Ms": 20.4
+      },
+      {
+        "run": 2,
+        "presentationSamples": 179,
+        "presentationP95Ms": 16.581407,
+        "callbackSamples": 180,
+        "callbackIntervalP95Ms": 20.624
+      },
+      {
+        "run": 3,
+        "presentationSamples": 181,
+        "presentationP95Ms": 16.581771,
+        "callbackSamples": 180,
+        "callbackIntervalP95Ms": 19.656
+      }
+    ]
+  },
+  "scope": "One automated driving start on one Fold7. Power, GPU execution time and sustained thermal behavior were not measured."
+}

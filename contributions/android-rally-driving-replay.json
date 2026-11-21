@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/measurements/fold7-rally-driving-replay.json",
+      "originRole": "First-party Galaxy Z Fold7 driving, geometry residency, replay and recovery measurements for the existing local Rally export. Prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
