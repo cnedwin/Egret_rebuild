@@ -58,6 +58,14 @@ await play3d({
 | `game.lamp(color, { x, y, z }, { intensity: 4, range: 8 })` | 一盏灯：从一点发出、到 range 处衰减为零的光。可设置和补间它的 `x`、`y`、`z`、`color`、`intensity`、`range` 和 `visible`；`game.remove(lamp)` 熄灭它。八盏以内完整照明，更多的用较粗略的方式照明 |
 | `game.onTap(thing, () => …)` | 物体被点击或轻触时调用函数：从相机穿过指针发出一条射线，它遇到的最近一个设置了点击的物体收到。按在物体上的那一下仍然算作 `game.pointer.pressed`。界面上的精灵和 `play` 中一样交给 `onTap` |
 
+自己的模型可以用代码塑形：由圆润的零件平滑相连，再作为物体加入，见[用距离场塑形的模型](world3d-app.md#用距离场塑形的模型)：
+
+```js
+const { createSdfGeometry3D, createStandardMaterial3D, Mesh3D, sdfEllipsoid, sdfSphere, sdfUnion } = Egret;
+const shape = sdfUnion([sdfEllipsoid([0.5, 0.4, 0.6], { color: 0xf0a040 }), sdfSphere(0.35, { at: [0, 0.45, 0.45], color: 0xf0a040 })], { smooth: 0.1 });
+const critter = game.add(new Mesh3D(createSdfGeometry3D(shape), createStandardMaterial3D({ vertexColors: true })), { x: 0, y: 0.5, z: 0 });
+```
+
 每个调用都返回一个物体。可以随时设置它的 `x`、`y`、`z`、`rotationX`、`rotationY`、`rotationZ`（角度）、`scale` 或 `scaleX`、`scaleY`、`scaleZ`、`visible` 和 `color`；它们都可以补间，例如 `game.tween(door).to({ y: 4 }, 0.5)`。也可以加上自己的属性（`enemy.hp = 3`）。`thing.removed` 表示它是否已被移除；设置已移除的物体不起作用，也不会出错。`thing.node` 是它的 [Mesh3D](world3d.md)。 `thing.glow` 让物体以自己的颜色发光，无论是否被照亮：默认 0，1 与它的颜色一样亮，灯笼或屏幕可以更大；它跟随新的 `color`，模型保留自己的材质。发光的物体不会被雾遮住。`thing.opacity` 表示物体可见的程度，默认 1：小于 1 时能透过它看到后面，例如玻璃或幽灵，半透明物体不投影；同时有 `glow` 时它的光会叠加到后面，就像光束。每种形状都以中心定位。`rotationY` 让物体向左转，从上往下看是逆时针；为 0 时物体背对相机、朝向 -z，所以向前移动是 `x -= Math.sin(r) * d`、`z -= Math.cos(r) * d`，其中 `r = thing.rotationY * Math.PI / 180`。
 
 导入模型保留自身已有的根旋转，修改 `rotationY` 会保留其他两个轴。碰撞推出方向使用判定重叠时的同一组缩放后包围盒中心，也适用于原点在脚底的模型。

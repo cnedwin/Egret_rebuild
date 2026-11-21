@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1373 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1379 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -445,6 +445,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `DracoModule3D` | interface | The parts of an initialized Draco decoder module (`await DracoDecoderModule()`) this adapter calls. |
 | `EPSILON_3D` | value | How close two numbers must be to count as equal. |
 | `EquirectOptions3D` | interface | How an equirectangular image is turned into a cube: its size, exposure and brightest value. |
+| `exportGlb3D` | function | The model as the bytes of a .glb file: a geometry alone (with a plain material that shows its vertex colours), or an object and everything under it. |
 | `ExtrudeGeometryOptions3D` | interface | An extrusion to make: how deep, in how many steps, and along which path. |
 | `FatLine3D` | class | A polyline drawn as a ribbon of triangles that turns to face the camera, so it can be wider than the one pixel that plain lines allow. |
 | `FatLineOptions3D` | interface | A thick line to make: its width, whether that width is in screen pixels, its color and whether it closes. |
@@ -466,6 +467,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `GizmoHandle3D` | type | A single axis, a plane spanned by two axes, or 'xyz' for the center handle of the scale mode. |
 | `GizmoMode3D` | type | Whether a gizmo moves, turns or scales what it is attached to. |
 | `GizmoSpace3D` | type | Whether a gizmo's axes are the world's or the object's own. |
+| `GlbExportOptions3D` | interface | How a model is written. |
 | `GltfAsset3D` | interface | A loaded glTF file: its scenes, animations, cameras, materials, textures and geometries. |
 | `GltfDracoRequest3D` | interface | Draco data a glTF file needs decoded: its bytes and the attributes and component types it holds. |
 | `GltfDracoResult3D` | interface | Decoded Draco data: its attributes by name and its indices. |
@@ -630,11 +632,15 @@ For which entry to import from, see [What to import](entry-points.md).
 | `sdfDisplace` | function | The surface pushed in and out by smooth noise: rocks, bark, rough earth, a lumpy creature. |
 | `SdfDisplaceOptions3D` | interface | What `sdfDisplace` does: how far, how fine and which noise. |
 | `sdfEllipsoid` | function | A stretched ball with `radii` [x, y, z]: heads, bodies, eggs and stones. |
+| `sdfExtrude` | function | A flat `outline` of points [x, y] in the xy plane, closed, pushed `depth` deep along z about its middle, its edges rounded by `round`: signs, gables, blades, stars, letters, tiles, cut-out shapes. |
 | `SdfGroupOptions3D` | interface | A group of shapes: `smooth` is how far, in the model's units, the blend between them reaches. |
 | `sdfIntersect` | function | What the shapes have in common; with `smooth`, its edges rounded. |
+| `sdfLathe` | function | A shape turned about the y axis from its `profile`: points [radius, height] going round a closed outline, as a potter draws half a vase. |
 | `SdfMeshOptions3D` | interface | How a field becomes a mesh. |
 | `sdfMirror` | function | The shape and its mirror image across the plane through the origin square to `axis` ('x' unless given): make one eye, ear, arm or leg on the positive side and get the pair. |
 | `SdfOptions3D` | interface | Where a shape goes and how it looks: moved by `at`, turned by `rotation`, scaled by `scale`, painted `color`. |
+| `sdfPattern` | function | `shape` with a pattern painted over its colours, in the coordinates of the model; the surface does not move. |
+| `SdfPatternOptions3D` | interface | A pattern painted over a shape's colours. |
 | `sdfRound` | function | The shape grown by `radius` all round, its edges rounded by as much. |
 | `SdfShape3D` | class | A shape as a signed distance field: negative inside, positive outside, zero on the surface. |
 | `sdfShell` | function | A hollow skin of the shape, `thickness` thick: bowls, pots, helmets, when cut open. |

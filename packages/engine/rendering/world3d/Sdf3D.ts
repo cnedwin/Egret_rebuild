@@ -425,6 +425,119 @@ export function sdfTorus(radius: number, tube: number, options?: SdfOptions3D): 
   return new Torus(positive(radius, 'sdf torus radius'), positive(tube, 'sdf torus tube'), options);
 }
 
+type Point2 = readonly [number, number];
+
+function points2(list: unknown, what: string): Point2[] {
+  if (!Array.isArray(list) || list.length < 3) throw invalid(what);
+  for (const p of list) if (!Array.isArray(p) || p.length !== 2 || !p.every(Number.isFinite)) throw invalid(what);
+  return list as Point2[];
+}
+
+/**
+ * The signed distance to a closed polygon in a plane: negative inside. With `axis`, edges lying on x = 0 are not
+ * surface: the axis a profile is turned about.
+ */
+function polygon2(px: number, py: number, v: readonly Point2[], axis = false): number {
+  let d = Infinity,
+    s = 1;
+  for (let i = 0, j = v.length - 1; i < v.length; j = i, i++) {
+    const ex = v[j]![0] - v[i]![0],
+      ey = v[j]![1] - v[i]![1];
+    const wx = px - v[i]![0],
+      wy = py - v[i]![1];
+    if (!(axis && v[i]![0] === 0 && v[j]![0] === 0)) {
+      const t = clamp01((wx * ex + wy * ey) / (ex * ex + ey * ey || 1));
+      const bx = wx - ex * t,
+        by = wy - ey * t;
+      d = Math.min(d, bx * bx + by * by);
+    }
+    const c1 = py >= v[i]![1],
+      c2 = py < v[j]![1],
+      c3 = ex * wy > ey * wx;
+    if ((c1 && c2 && c3) || (!c1 && !c2 && !c3)) s = -s;
+  }
+  return s * Math.sqrt(d);
+}
+
+class Lathe extends SdfShape3D {
+  readonly #profile: readonly Point2[];
+  readonly #round: number;
+  constructor(profile: readonly Point2[], round: number, options?: SdfOptions3D) {
+    let r = 0,
+      y0 = Infinity,
+      y1 = -Infinity;
+    for (const [pr, py] of profile) {
+      r = Math.max(r, pr);
+      y0 = Math.min(y0, py);
+      y1 = Math.max(y1, py);
+    }
+    super(options, [-r - round, y0 - round, -r - round, r + round, y1 + round, r + round]);
+    this.#profile = profile;
+    this.#round = round;
+  }
+  protected local(x: number, y: number, z: number): number {
+    return polygon2(len2(x, z), y, this.#profile, true) - this.#round;
+  }
+}
+
+class Extrude extends SdfShape3D {
+  readonly #outline: readonly Point2[];
+  readonly #half: number;
+  readonly #round: number;
+  constructor(outline: readonly Point2[], depth: number, round: number, options?: SdfOptions3D) {
+    let x0 = Infinity,
+      y0 = Infinity,
+      x1 = -Infinity,
+      y1 = -Infinity;
+    for (const [px, py] of outline) {
+      x0 = Math.min(x0, px);
+      y0 = Math.min(y0, py);
+      x1 = Math.max(x1, px);
+      y1 = Math.max(y1, py);
+    }
+    super(options, [x0, y0, -depth / 2, x1, y1, depth / 2]);
+    this.#outline = outline;
+    this.#half = depth / 2;
+    this.#round = round;
+  }
+  protected local(x: number, y: number, z: number): number {
+    const r = this.#round;
+    // The outline shrunk by the rounding, then grown back round: edges and corners rounded by `round`.
+    const wx = polygon2(x, y, this.#outline) + r,
+      wy = Math.abs(z) - this.#half + r;
+    return Math.min(Math.max(wx, wy), 0) + len2(Math.max(wx, 0), Math.max(wy, 0)) - r;
+  }
+}
+
+/**
+ * A shape turned about the y axis from its `profile`: points [radius, height] going round a closed outline, as a
+ * potter draws half a vase. Vases, bottles, pillars, bells, towers, lamp posts, chess pieces.
+ */
+export function sdfLathe(
+  profile: readonly (readonly [number, number])[],
+  options?: SdfOptions3D & { readonly round?: number }
+): SdfShape3D {
+  const points = points2(profile, 'sdf lathe profile');
+  if (points.some(p => p[0] < 0)) throw invalid('sdf lathe profile');
+  const round = options?.round === undefined ? 0 : nonNegative(options.round, 'sdf lathe round');
+  return new Lathe(points, round, options);
+}
+
+/**
+ * A flat `outline` of points [x, y] in the xy plane, closed, pushed `depth` deep along z about its middle, its
+ * edges rounded by `round`: signs, gables, blades, stars, letters, tiles, cut-out shapes.
+ */
+export function sdfExtrude(
+  outline: readonly (readonly [number, number])[],
+  depth: number,
+  options?: SdfOptions3D & { readonly round?: number }
+): SdfShape3D {
+  const points = points2(outline, 'sdf extrude outline');
+  const d = positive(depth, 'sdf extrude depth');
+  const round = options?.round === undefined ? 0 : nonNegative(options.round, 'sdf extrude round');
+  return new Extrude(points, d, Math.min(round, d / 2), options);
+}
+
 // ---- joining ------------------------------------------------------------------------------------------------------
 
 function shapes(list: unknown, what: string): readonly SdfShape3D[] {
@@ -676,6 +789,125 @@ export function sdfDisplace(shape: SdfShape3D, options: SdfDisplaceOptions3D): S
   });
 }
 
+class Paint extends SdfShape3D {
+  readonly #shape: SdfShape3D;
+  readonly #share: (x: number, y: number, z: number) => number;
+  readonly #color: Float32Array;
+  constructor(shape: SdfShape3D, color: Float32Array, share: (x: number, y: number, z: number) => number) {
+    super(undefined, shape.bounds);
+    this.#shape = shape;
+    this.#share = share;
+    this.#color = color;
+  }
+  protected local(x: number, y: number, z: number): number {
+    return this.#shape.distance(x, y, z);
+  }
+  protected override localColor(x: number, y: number, z: number, out: Float32Array, paint: Float32Array): void {
+    this.#shape.colorAt(x, y, z, out, paint);
+    mix3(out, out, this.#color, clamp01(this.#share(x, y, z)));
+  }
+}
+
+/** A pattern painted over a shape's colours. */
+export interface SdfPatternOptions3D {
+  /**
+   * 'spots' (a coat, a toadstool, lichen), 'stripes' (a tiger, a bee, planks, layers of rock), 'noise' (patches of
+   * moss, dirt, wear, a mottled skin) or 'gradient' (darker feet, a sunset belly, moss creeping up a wall).
+   */
+  readonly kind: 'spots' | 'stripes' | 'noise' | 'gradient';
+  /** The colour painted. */
+  readonly color: ColorInput3D;
+  /** How many spots, stripes or patches per unit; 4 unless given. Not used by 'gradient'. */
+  readonly frequency?: number;
+  /** How much of the colour at most, 0 to 1; 1 unless given. */
+  readonly amount?: number;
+  /** Stripes run across this axis and a gradient along it; 'y' unless given. */
+  readonly axis?: 'x' | 'y' | 'z';
+  /** Spots: their size, 0 to 1 of the space between them (0.35 unless given). Stripes: the share painted (0.5). */
+  readonly size?: number;
+  /** Gradient: where along `axis` the colour is absent and where it is whole; the shape's extent unless given. */
+  readonly from?: number;
+  readonly to?: number;
+  /** Which noise or which spots: the same seed gives the same pattern. 0 unless given. */
+  readonly seed?: number;
+}
+
+const smooth01 = (edge0: number, edge1: number, x: number): number => {
+  const t = clamp01((x - edge0) / (edge1 - edge0));
+  return t * t * (3 - 2 * t);
+};
+
+/**
+ * `shape` with a pattern painted over its colours, in the coordinates of the model; the surface does not move. The
+ * pattern is written into vertex colours, so it is as fine as the mesh: keep `frequency` at a few per unit.
+ */
+export function sdfPattern(shape: SdfShape3D, options: SdfPatternOptions3D): SdfShape3D {
+  const base = shapes(shape, 'sdf pattern shape')[0]!;
+  if (options === null || typeof options !== 'object') throw invalid('sdf pattern options');
+  const color = linear(options.color, 'sdf pattern color');
+  const f = options.frequency === undefined ? 4 : positive(options.frequency, 'sdf pattern frequency');
+  const amount = options.amount === undefined ? 1 : nonNegative(options.amount, 'sdf pattern amount');
+  if (amount > 1) throw invalid('sdf pattern amount');
+  const axisName = options.axis ?? 'y';
+  if (axisName !== 'x' && axisName !== 'y' && axisName !== 'z') throw invalid('sdf pattern axis');
+  const axis = axisName === 'x' ? 0 : axisName === 'y' ? 1 : 2;
+  const seed = options.seed === undefined ? 0 : Math.floor(requireNumber(options.seed, 'sdf pattern seed'));
+  const pick = (x: number, y: number, z: number): number => (axis === 0 ? x : axis === 1 ? y : z);
+  let share: (x: number, y: number, z: number) => number;
+  switch (options.kind) {
+    case 'spots': {
+      const size = options.size === undefined ? 0.35 : positive(options.size, 'sdf pattern size');
+      if (size > 1) throw invalid('sdf pattern size');
+      share = (x, y, z) => {
+        // The nearest of one jittered point per unit cell.
+        const px = x * f,
+          py = y * f,
+          pz = z * f;
+        const cx = Math.floor(px),
+          cy = Math.floor(py),
+          cz = Math.floor(pz);
+        let best = Infinity;
+        for (let i = -1; i <= 1; i++)
+          for (let j = -1; j <= 1; j++)
+            for (let k = -1; k <= 1; k++) {
+              const qx = cx + i + 0.5 + 0.4 * hash3(cx + i, cy + j, cz + k, seed),
+                qy = cy + j + 0.5 + 0.4 * hash3(cx + i, cy + j, cz + k, seed + 1),
+                qz = cz + k + 0.5 + 0.4 * hash3(cx + i, cy + j, cz + k, seed + 2);
+              best = Math.min(best, len3(px - qx, py - qy, pz - qz));
+            }
+        const r = size * 0.5;
+        return amount * (1 - smooth01(r * 0.6, r, best));
+      };
+      break;
+    }
+    case 'stripes': {
+      const size = options.size === undefined ? 0.5 : positive(options.size, 'sdf pattern size');
+      if (size > 1) throw invalid('sdf pattern size');
+      share = (x, y, z) => {
+        const t = pick(x, y, z) * f + 0.15 * noise3(x * f * 0.5, y * f * 0.5, z * f * 0.5, seed);
+        const u = t - Math.floor(t);
+        // Edges soft over a sixth of a stripe: vertex colours cannot hold a line finer than the triangles.
+        const edge = Math.min(0.15, size / 3);
+        return amount * smooth01(0, edge, u) * (1 - smooth01(size - edge, size, u));
+      };
+      break;
+    }
+    case 'noise':
+      share = (x, y, z) => amount * smooth01(-0.15, 0.25, noise3(x * f, y * f, z * f, seed));
+      break;
+    case 'gradient': {
+      const from = options.from === undefined ? base.bounds[axis]! : requireNumber(options.from, 'sdf pattern from');
+      const to = options.to === undefined ? base.bounds[axis + 3]! : requireNumber(options.to, 'sdf pattern to');
+      if (from === to) throw invalid('sdf pattern from');
+      share = (x, y, z) => amount * smooth01(0, 1, (pick(x, y, z) - from) / (to - from));
+      break;
+    }
+    default:
+      throw invalid('sdf pattern kind');
+  }
+  return new Paint(base, color, share);
+}
+
 function requireNumber(value: unknown, what: string): number {
   if (typeof value !== 'number' || !Number.isFinite(value)) throw invalid(what);
   return value;
@@ -729,6 +961,11 @@ export interface SdfMeshOptions3D {
    * prop or a character seen close in a game; 0 keeps every triangle the grid gives.
    */
   readonly triangles?: number;
+  /**
+   * Light caught on the outer edges, as on worn wood, chipped paint or polished stone: `amount` 0 to 1 of the way to
+   * `color` (a lighter shade of each part unless given). Off unless given.
+   */
+  readonly edges?: { readonly amount: number; readonly color?: ColorInput3D };
 }
 
 const MAX_RESOLUTION = 192;
@@ -755,6 +992,14 @@ export function createSdfGeometry3D(shape: SdfShape3D, options: SdfMeshOptions3D
     varAmount = nonNegative(variation.amount, 'sdf mesh variation amount');
     if (variation.frequency !== undefined) varFrequency = positive(variation.frequency, 'sdf mesh variation frequency');
     if (variation.seed !== undefined) varSeed = Math.floor(requireNumber(variation.seed, 'sdf mesh variation seed'));
+  }
+  let edgeAmount = 0,
+    edgeColor: Float32Array | undefined;
+  if (options.edges !== undefined) {
+    if (options.edges === null || typeof options.edges !== 'object') throw invalid('sdf mesh edges');
+    edgeAmount = nonNegative(options.edges.amount, 'sdf mesh edges amount');
+    if (edgeAmount > 1) throw invalid('sdf mesh edges amount');
+    if (options.edges.color !== undefined) edgeColor = linear(options.edges.color, 'sdf mesh edges color');
   }
   const triangles = options.triangles === undefined ? 8000 : options.triangles;
   if (!Number.isInteger(triangles) || triangles < 0) throw invalid('sdf mesh triangles');
@@ -935,6 +1180,31 @@ export function createSdfGeometry3D(shape: SdfShape3D, options: SdfMeshOptions3D
     }
     if (varAmount > 0)
       shade *= 1 + varAmount * noise3(x * varFrequency, y * varFrequency, z * varFrequency, varSeed + 7919);
+    if (edgeAmount > 0) {
+      // How sharply the surface turns outward here: the field's Laplacian, about 2 / radius on a ball, measured a
+      // cell and a half around, so only edges near the grid's own size count.
+      const e = cell * 1.5,
+        d0 = shape.distance(x, y, z);
+      const lap =
+        shape.distance(x + e, y, z) +
+        shape.distance(x - e, y, z) +
+        shape.distance(x, y + e, z) +
+        shape.distance(x, y - e, z) +
+        shape.distance(x, y, z + e) +
+        shape.distance(x, y, z - e) -
+        6 * d0;
+      const t = edgeAmount * smooth01(0.08, 0.5, lap / e);
+      if (t > 0) {
+        const target =
+          edgeColor ??
+          new Float32Array([
+            Math.min(1, rgb[0]! * 1.8 + 0.08),
+            Math.min(1, rgb[1]! * 1.8 + 0.08),
+            Math.min(1, rgb[2]! * 1.8 + 0.08)
+          ]);
+        mix3(rgb, rgb, target, t);
+      }
+    }
     colors[v * 3] = Math.max(0, rgb[0]! * shade);
     colors[v * 3 + 1] = Math.max(0, rgb[1]! * shade);
     colors[v * 3 + 2] = Math.max(0, rgb[2]! * shade);

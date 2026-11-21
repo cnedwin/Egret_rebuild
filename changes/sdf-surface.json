@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-21",
+  "en": {
+    "title": "3D: turned and extruded shapes, painted patterns, worn edges, .glb export and a model preview",
+    "body": "Models made from distance fields get `sdfLathe` (a profile turned about y: vases, pillars, posts) and `sdfExtrude` (an outline pushed along z: signs, stars, blades), `sdfPattern` (spots, stripes, noise patches and gradients painted into the vertex colours) and the mesh option `edges`, which lights outer edges as on worn wood. `simplifyGeometry3D` now weighs vertex colours with position-and-colour quadrics, so stripes and painted trims keep their line at a few thousand triangles. `exportGlb3D` writes a geometry or an object tree as a .glb that `loadGltf3D` and Blender read. `node tools/model-preview.mjs` draws a model module from four sides in a headless browser and reports its triangles, size and build time, so an agent can look at what it made."
+  },
+  "zh": {
+    "title": "3D：旋转体与挤出体、图案上色、边缘磨损、.glb 导出和模型预览",
+    "body": "距离场建模新增 `sdfLathe`（轮廓绕 y 轴旋转：花瓶、柱子、杆子）和 `sdfExtrude`（轮廓沿 z 挤出：路牌、星星、刀刃），`sdfPattern`（斑点、条纹、噪声斑块和渐变，写进顶点颜色），以及网格选项 `edges`，让外侧边缘像磨旧的木头一样变亮。`simplifyGeometry3D` 现在用位置加颜色的二次误差来权衡顶点颜色，减到几千个三角形时条纹和描边依然整齐。`exportGlb3D` 把几何体或对象树写成 .glb，`loadGltf3D` 和 Blender 都能读。`node tools/model-preview.mjs` 在无头浏览器里从四个方向画出模型模块，并报告三角形数、尺寸和生成用时，让 AI 能看到自己做出来的东西。"
+  }
+}

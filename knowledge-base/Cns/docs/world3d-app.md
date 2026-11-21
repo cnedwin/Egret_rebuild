@@ -97,6 +97,14 @@ const critter = new Mesh3D(createSdfGeometry3D(face, { variation: { amount: 0.06
 
 `simplifyGeometry3D(geometry, { triangles | ratio, maxError })` 把任何带索引的三角形几何体减到给定的面数，适用于生成或扫描的模型，以及远处的细节层级。它按二次误差度量先折叠代价最小的边，拒绝会让三角形翻面或让表面捏合的折叠，开放边和纹理接缝上的顶点保持原位，每个顶点保留自己的属性，几何体的材质分组也保留，返回 `{ geometry, before, after, error }`。带变形目标的几何体会被拒绝。
 
+另外两种零件来自轮廓。`sdfLathe(profile, { round })` 把由 [半径, 高度] 点组成的闭合轮廓绕 y 轴旋转：花瓶、瓶子、柱子、钟、路灯杆。`sdfExtrude(outline, depth, { round })` 把由 [x, y] 点组成的闭合轮廓沿 z 方向挤出 `depth` 的厚度：路牌、山墙、刀刃、星星、剪影形状。
+
+`sdfPattern(shape, { kind, color, frequency, amount, axis, size, from, to, seed })` 在形状的颜色上画图案，不改变表面：`'spots'` 斑点（皮毛、毒蘑菇）、横跨 `axis` 的 `'stripes'` 条纹（老虎、木板、岩层）、`'noise'` 斑块（苔藓、泥土、斑驳的皮肤），以及沿 `axis` 从 `from` 到 `to` 的 `'gradient'` 渐变（颜色更深的脚、爬上墙的苔藓）。图案写在顶点颜色里，所以 `frequency` 保持在每单位几个以内。网格选项 `edges: { amount, color }` 让外侧边缘变亮，像磨旧的木头、掉漆的边；不给 `color` 时，每个零件的边缘取它自己颜色的浅色。减面时会考虑顶点颜色，所以减掉三角形后画出的色块边界依然整齐。
+
+`exportGlb3D(geometryOrObject)` 把模型写成 .glb 的字节：几何、顶点颜色、纹理坐标、材质分组、节点树和每个节点的位置、旋转、缩放，以及每个材质的颜色、不透明度、金属度和粗糙度（不包括贴图、蒙皮、变形目标和动画）。用代码做的模型可以存一次，之后用 `loadGltf3D` 加载，也可以在 Blender 里打开。
+
+在代码仓库里，`node tools/model-preview.mjs <Playwright index.mjs 的绝对路径> <model.mjs> <picture.png> [--glb <model.glb>]` 在无头浏览器里从四个方向画出模型，写成一张图，并给出三角形数、顶点数、尺寸和生成用时。模块的默认导出接收 `@egret/engine/world3d` 的导出，返回形状、几何体或对象；`export const meshOptions` 给出形状的网格选项。每次改完模型都看一下这张图：比例不对、某个零件颜色画错、细节融掉了，这些在图上一眼可见，在代码里看不出来。
+
 ## 画面上的标签和标记
 
 3D 游戏的界面通常是叠在画布上的网页元素。`createScreenMarkers3D({ container, camera })` 让这些元素跟着场景中的点。
