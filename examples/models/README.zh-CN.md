@@ -53,6 +53,8 @@ const mesh = new W.Mesh3D(W.createSdfGeometry3D(fox(W), meshOptions), W.createSt
 - 每个零件都要碰到下一个：离背一厘米悬空的尾巴、门洞里松脱的门板、切口没切到盖子的水井，都会多出一块。模型预览会在 `notes` 里列出这些块，范例库的测试要求每个模型都是一整块。
 - 真正硬的东西（木箱、宝箱、小屋、路牌）用 `sharp: true`：角保持是角，面保持是平的。
 
+导出了 `surface` 的模型（例如 `{ surface: 'wood', strength: 0.4 }`）会用 `createSurfaceMaterial3D(surface)` 绘制：在顶点之间画出木纹、灰泥或石头。烘焙出的 .glb 保留网格和颜色，不保留表面：给加载后的网格配上同样的材质。
+
 `node tools/bake-models.mjs examples/models <新文件夹>` 把每个模型写成 .glb，加载只要几毫秒。
 
 每个模型生成要几百毫秒：在加载关卡时生成，或者用 `exportGlb3D` 存下来。检查用的图片是在无头浏览器里用软件渲染画的，不是在设备上。

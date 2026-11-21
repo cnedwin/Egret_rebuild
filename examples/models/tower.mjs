@@ -11,6 +11,7 @@ export const meshOptions = {
   edges: { amount: 0.35 },
   variation: { amount: 0.08, frequency: 1.5 }
 };
+export const surface = { surface: 'stone', strength: 0.35, scale: 1.5 };
 
 export default function tower(W) {
   const stone = 0xb9b2a4,

@@ -4,6 +4,7 @@
 // edges from the mesh option `edges` catch the light on the hoops and the rim.
 export const about = { name: 'Barrel', zh: '木桶', kind: 'prop' };
 export const meshOptions = { triangles: 4000, edges: { amount: 0.4 } };
+export const surface = { surface: 'wood', strength: 0.4 };
 
 export default function barrel(W) {
   const wood = 0x9b6b3e;

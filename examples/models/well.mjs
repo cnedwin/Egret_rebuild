@@ -13,6 +13,7 @@ export const meshOptions = {
   edges: { amount: 0.3 },
   variation: { amount: 0.08, frequency: 3 }
 };
+export const surface = { surface: 'stone', strength: 0.4, scale: 3 };
 
 export default function well(W) {
   const stone = 0x9a958a,

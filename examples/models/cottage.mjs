@@ -10,6 +10,7 @@ export const meshOptions = {
   edges: { amount: 0.35 },
   variation: { amount: 0.06, frequency: 2 }
 };
+export const surface = { surface: 'plaster', strength: 0.4 };
 
 export default function cottage(W) {
   const plaster = 0xefe3c8,

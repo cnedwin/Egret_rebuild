@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1386 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1390 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -410,6 +410,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createSprite3D` | function | Makes a sprite: a picture that always faces the camera. |
 | `createSpriteMaterial3D` | function | Camera-facing unlit quad material for Sprite3D. |
 | `createStandardMaterial3D` | function | Physically based metallic-roughness model, matching glTF 2.0 materials. |
+| `createSurfaceMaterial3D` | function | A standard material with a surface drawn by the shader, over its colour or its vertex colours (on unless `vertexColors: false`): `createSurfaceMaterial3D({ surface: 'wood' })` for a crate made in code. |
 | `createTerrain3D` | function | Makes terrain from a height field, drawn in chunks at levels of detail. |
 | `createTerrainMaterial3D` | function | A standard material whose color is a blend of ground textures, such as sand, grass, rock and snow, painted by a weight map. |
 | `createTerrainStream3D` | function | Makes terrain that loads and unloads tiles around a point. |
@@ -686,6 +687,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `StateOptions3D` | interface | A state to add: its clip or blend, whether it loops, its speed, and what it calls on entering and leaving. |
 | `StateParameter3D` | type | The value of a state machine parameter. |
 | `StrandOptions3D` | interface | How a strand of points behaves: its gravity, damping, iterations, thickness, and what it collides with. |
+| `SurfaceKind3D` | type | The surfaces the shader can draw. |
+| `SurfaceMaterialOptions3D` | interface | A material with a surface: the standard material's options and how the surface looks. |
+| `surfaceShaderSources3D` | function | The shader sources of a surface: its height, the colour it gives and the relief it gives, in GLSL and WGSL. |
 | `Terrain3D` | class | A height field drawn as a grid of chunk meshes. |
 | `TERRAIN3D_LIMITS` | value | The largest height field, chunk and number of levels and chunks terrain has, and the most streamed tiles. |
 | `TerrainMaterialOptions3D` | interface | A terrain material's layers, their weights, and how often they repeat. |

@@ -19,7 +19,7 @@ Start from the nearest of the 24 models in `examples/models` (animals, people, b
 2. **Limbs, ears, tails, branches** as `sdfCapsule(from, to, radius, { radiusEnd })`, tapered; one side wrapped in `sdfMirror`. Vases and posts: `sdfLathe`; signs and blades: `sdfExtrude`.
 3. **Carve** mouths, windows, doorways and hollows with `sdfSubtract`; give the cut a dark `color` so the hollow reads.
 4. **Small details last, in their own group** with a small `smooth` (0.01): eyes, buttons, studs. In the big group they melt away.
-5. **Surface**: `sdfDisplace` for rocks and bark; `sdfPattern` for spots, stripes, moss patches and gradients; mesh options `variation: { amount: 0.08 }` and `edges: { amount: 0.4 }`. Three to five colours with one accent. Crates, walls, machines: `sharp: true`.
+5. **Surface**: `sdfDisplace` for rocks and bark; `sdfPattern` for spots, stripes, moss patches and gradients; mesh options `variation: { amount: 0.08 }` and `edges: { amount: 0.4 }`. Three to five colours with one accent. Crates, walls: `sharp: true`; wood or stone grain: `createSurfaceMaterial3D`.
 
 ```js
 import { createSdfGeometry3D, createStandardMaterial3D, Mesh3D, sdfCapsule, sdfEllipsoid, sdfMirror, sdfSphere, sdfUnion } from '@egret/engine/world3d';
@@ -37,6 +37,6 @@ const critter = new Mesh3D(
 );
 ```
 
-The material needs `vertexColors: true`; the colours and the baked shade are in the vertices. A mesh is capped at 8000 triangles unless `triangles` says otherwise: 1500 to 4000 suits a prop seen small or many times, 8000 to 15000 a hero seen close. A part thinner than two cells of `resolution` (64 along the longest side) disappears: raise it, or split the model. Make every model once while the level loads, never in a frame, or save it with `exportGlb3D`. To make it move: `createSdfRig3D`, as the villager and fox do.
+The material needs `vertexColors: true`; the colours and the baked shade are in the vertices. A mesh is capped at 8000 triangles unless `triangles` says otherwise: 1500 to 4000 for a prop, 8000 to 15000 for a hero. A part thinner than two cells of `resolution` (64 along the longest side) disappears: raise it, or split the model. Make models while the level loads, or bake them with `tools/bake-models.mjs`. To make it move: `createSdfRig3D`, as the villager and fox do.
 
 For a model generated elsewhere or bought, `simplifyGeometry3D(geometry, { triangles })` brings it down to the same budget and keeps its texture seams and materials.

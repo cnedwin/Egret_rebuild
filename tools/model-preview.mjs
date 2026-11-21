@@ -8,6 +8,7 @@
 // The model is a module whose default export makes it, given the exports of @egret/engine/world3d:
 //
 //   export const meshOptions = { triangles: 4000 };   // for a distance field: options of createSdfGeometry3D
+//   export const surface = { surface: 'wood' };       // optional: drawn with createSurfaceMaterial3D(surface)
 //   export default function (W) {
 //     const head = W.sdfSphere(0.3, { at: [0, 0.6, 0.3] });
 //     return W.sdfUnion([W.sdfSphere(0.5, { color: 0xf0a040 }), head], { smooth: 0.1 });
@@ -63,7 +64,7 @@ try {
   if (made instanceof W.SdfShape3D) made = W.createSdfGeometry3D(made, module.meshOptions ?? {});
   let model;
   if (made instanceof W.Geometry3D)
-    model = new W.Mesh3D(made, W.createStandardMaterial3D({ vertexColors: !!made.getAttribute('color'), roughness: 0.75 }));
+    model = new W.Mesh3D(made, module.surface ? W.createSurfaceMaterial3D(module.surface) : W.createStandardMaterial3D({ vertexColors: !!made.getAttribute('color'), roughness: 0.75 }));
   else if (made instanceof W.Object3D) model = made;
   else throw new Error('the model module made neither a distance field, a geometry nor an object');
   const buildMs = performance.now() - started;
