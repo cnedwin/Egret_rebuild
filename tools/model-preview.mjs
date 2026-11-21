@@ -7,15 +7,18 @@
 //
 // The model is a module whose default export makes it, given the exports of @egret/engine/world3d:
 //
-//   export const meshOptions = { triangles: 4000 };          // for a distance field: the options of createSdfGeometry3D
+//   export const meshOptions = { triangles: 4000 };   // for a distance field: options of createSdfGeometry3D
 //   export default function (W) {
-//     return W.sdfUnion([W.sdfSphere(0.5, { color: 0xf0a040 }), W.sdfSphere(0.3, { at: [0, 0.6, 0.3] })], { smooth: 0.1 });
+//     const head = W.sdfSphere(0.3, { at: [0, 0.6, 0.3] });
+//     return W.sdfUnion([W.sdfSphere(0.5, { color: 0xf0a040 }), head], { smooth: 0.1 });
 //   }
 //
 // It may return a distance-field shape, a geometry (drawn with its vertex colours) or an object with meshes under it,
-// and may be async. The module is served from its own folder, so it can import its neighbours, and @egret/engine/world3d
-// resolves to this checkout's build. `--glb` also writes the model as a .glb, as exportGlb3D gives it. Pictures are
-// made with software rendering: they show shape, colour and proportion, not a device's speed.
+// and may be async. The module is served from its own folder, so it can import its neighbours, and
+// @egret/engine/world3d resolves to this checkout's build. `--glb` also writes the model as a .glb, as exportGlb3D
+// gives it. Pictures are made with software rendering: they show shape, colour and proportion, not a device's speed.
+// `notes` lists what the numbers show is likely wrong: a mesh in several pieces (a part floating loose or too thin to
+// join), a model sunk below y = 0 or floating above it, or one slow to make.
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
@@ -83,6 +86,22 @@ try {
     }
   });
   if (meshes === 0 || triangles === 0) throw new Error('the model has no triangles to draw');
+  // Pieces: groups of triangles that share no vertex position with the rest of their mesh. A model made as one shape
+  // that comes out in several has a part floating loose, too thin to join, or dust where a cut left a sliver.
+  const loose = [];
+  model.traverse(o => {
+    if (!(o instanceof W.Mesh3D) || o.geometry.topology !== 'triangles' || !o.geometry.index) return;
+    const p = o.geometry.getAttribute('position').data, ix = o.geometry.index.data;
+    const key = new Map(), up = [];
+    const id = v => { const k = p[v * 3].toFixed(5) + ',' + p[v * 3 + 1].toFixed(5) + ',' + p[v * 3 + 2].toFixed(5); let n = key.get(k); if (n === undefined) { n = up.length; key.set(k, n); up.push(n); } return n; };
+    const find = a => { while (up[a] !== a) a = up[a] = up[up[a]]; return a; };
+    const ids = Array.from(ix, id);
+    for (let f = 0; f < ids.length; f += 3) { const a = find(ids[f]); up[find(ids[f + 1])] = a; up[find(ids[f + 2])] = a; }
+    const sizes = new Map();
+    for (let f = 0; f < ids.length; f += 3) { const r = find(ids[f]); sizes.set(r, (sizes.get(r) ?? 0) + 1); }
+    const counts = [...sizes.values()].sort((a, b) => b - a);
+    if (counts.length > 1) loose.push({ mesh: o.name || 'mesh', pieces: counts.length, smallest: counts[counts.length - 1], largest: counts[0] });
+  });
   const app = await createWorld3DApp(document.getElementById('c'), { dynamicResolution: false, quality: 'high' });
   const scene = new W.Scene3D();
   scene.background = [0.55, 0.62, 0.7];
@@ -112,8 +131,13 @@ try {
     await settle();
   };
   globalThis.__glb = () => Array.from(W.exportGlb3D(model));
+  const height = max[1] - min[1], notes = [];
+  for (const l of loose) notes.push(l.mesh + ' is in ' + l.pieces + ' pieces (the smallest ' + l.smallest + ' triangles): a part floats loose, is too thin to join, or a cut left a sliver');
+  if (min[1] < -0.02 * height) notes.push('it reaches ' + (-min[1]).toFixed(3) + ' below y = 0: it sinks into the ground');
+  if (min[1] > 0.02 * height) notes.push('its lowest point is ' + min[1].toFixed(3) + ' above y = 0: it floats');
+  if (buildMs > 2000) notes.push('it took ' + Math.round(buildMs) + ' ms to make: bake it with tools/bake-models.mjs');
   report({ ok: true, buildMs: Math.round(buildMs), triangles, vertices, meshes, materials: materials.size,
-    size: [max[0] - min[0], max[1] - min[1], max[2] - min[2]].map(v => Math.round(v * 1000) / 1000) });
+    size: [max[0] - min[0], max[1] - min[1], max[2] - min[2]].map(v => Math.round(v * 1000) / 1000), notes });
 } catch (error) {
   report({ ok: false, error: String(error && error.stack || error) });
 }

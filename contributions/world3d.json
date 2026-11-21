@@ -548,6 +548,21 @@
       "path": "tests/world3d-rig.test.mjs",
       "originRole": "First-party behaviour tests of rigs of distance-field models: bones, weights, skinning by bone and clips; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/SdfLod3D.ts",
+      "originRole": "First-party levels of detail for distance-field models, each simplified from the one before; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/bake-models.mjs",
+      "originRole": "First-party tool that makes models written in code ahead of time and writes each as a .glb; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-sdf-hard.test.mjs",
+      "originRole": "First-party behaviour tests of sharp hard surfaces, levels of detail, baked models and the notes of the model preview; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [

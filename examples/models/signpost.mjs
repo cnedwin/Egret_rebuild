@@ -3,7 +3,7 @@
 // outlines drawn with `sdfExtrude`, one pointing each way at different heights and turned a little. Boards are planked
 // with stripes and lighter at their worn edges.
 export const about = { name: 'Signpost', zh: '路牌', kind: 'prop' };
-export const meshOptions = { triangles: 3500, edges: { amount: 0.5 } };
+export const meshOptions = { sharp: true, triangles: 3500, edges: { amount: 0.5 } };
 
 export default function signpost(W) {
   const arrow = [

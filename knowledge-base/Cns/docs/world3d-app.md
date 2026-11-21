@@ -93,7 +93,7 @@ const critter = new Mesh3D(createSdfGeometry3D(face, { variation: { amount: 0.06
 
 零件：`sdfSphere(radius)`、`sdfBox([w, h, d], { round })`、`sdfEllipsoid([rx, ry, rz])`、用于四肢、树枝和角的 `sdfCapsule(from, to, radius, { radiusEnd })`、`sdfCylinder(radius, height, { round })`、`sdfCone(bottom, top, height)` 和 `sdfTorus(radius, tube)`。每个零件都接受 `at`、`rotation`（欧拉角，弧度）、单一的 `scale` 和 `color`；没给颜色的零件取所在组的颜色。组合：`sdfUnion(parts, { smooth })` 在 `smooth` 的范围内把零件融成一体；`sdfSubtract(base, cuts, { smooth })` 挖掉一部分（带颜色的挖切会给挖出的面上色，比如嘴里）；`sdfIntersect(parts)` 只留共有部分（有颜色的零件给它上色，切出的面也一样；没有颜色的零件只负责切）；`sdfMirror(part, { axis })` 生成成对的眼睛、耳朵、腿。`sdfRound(shape, r)` 加厚并倒圆，`sdfShell(shape, t)` 掏空，`sdfDisplace(shape, { amount, frequency, seed })` 让石头、树皮、泥土表面起伏。组也接受同样的 `at`、`rotation`、`scale` 和 `color`，所以由几个零件组成的一条腿可以整体摆放。游戏运行时 `shape.distance(x, y, z)` 也有用，可以拿来对模型做命中判断。
 
-网格选项：`resolution`（最长边上的格数，默认 64，范围 8 到 192）、`triangles`（三角形上限，默认 8000；0 表示全部保留）、`occlusion`（褶皱变暗的程度，默认 0.7）、`occlusionRadius`、`variation`（{ `amount`, `frequency`, `seed` }，亮度的起伏，让大块零件不是一整片纯色），以及给没有颜色的零件用的 `color`。模型在初始化时生成一次：默认设置下一个模型要几百毫秒。眼睛、纽扣这类不能融进底下的细节，单独放进一个 `smooth` 很小的组。
+网格选项：`resolution`（最长边上的格数，默认 64，范围 8 到 192）、`triangles`（三角形上限，默认 8000；0 表示全部保留）、`occlusion`（褶皱变暗的程度，默认 0.7）、`occlusionRadius`、`variation`（{ `amount`, `frequency`, `seed` }，亮度的起伏，让大块零件不是一整片纯色），以及给没有颜色的零件用的 `color`。`sharp: true` 让硬表面保持硬朗：每个顶点放在周围表面的平面交汇处（对偶轮廓法），面与面夹角超过 40 度（或给定角度）处拆分法线，所以木箱、墙、屋顶、武器和机械保留棱角，边缘的明暗也像边；动物和植物不要打开。模型在初始化时生成一次：默认设置下一个模型要几百毫秒。眼睛、纽扣这类不能融进底下的细节，单独放进一个 `smooth` 很小的组。
 
 `simplifyGeometry3D(geometry, { triangles | ratio, maxError })` 把任何带索引的三角形几何体减到给定的面数，适用于生成或扫描的模型，以及远处的细节层级。它按二次误差度量先折叠代价最小的边，拒绝会让三角形翻面或让表面捏合的折叠，开放边和纹理接缝上的顶点保持原位，每个顶点保留自己的属性，几何体的材质分组也保留，返回 `{ geometry, before, after, error }`。带变形目标的几何体会被拒绝。
 
@@ -106,6 +106,12 @@ const critter = new Mesh3D(createSdfGeometry3D(face, { variation: { amount: 0.06
 在代码仓库里，`node tools/model-preview.mjs <Playwright index.mjs 的绝对路径> <model.mjs> <picture.png> [--glb <model.glb>]` 在无头浏览器里从四个方向画出模型，写成一张图，并给出三角形数、顶点数、尺寸和生成用时。模块的默认导出接收 `@egret/engine/world3d` 的导出，返回形状、几何体或对象；`export const meshOptions` 给出形状的网格选项。每次改完模型都看一下这张图：比例不对、某个零件颜色画错、细节融掉了，这些在图上一眼可见，在代码里看不出来。
 
 `examples/models` 里的模型范例库有二十四个这样的模型：动物、人物、建筑、植物和道具，每个都从四个方向检查过，并附有做它们时学到的经验。新模型从最接近的那个开始改。
+
+`createSdfLod3D(shape, options)` 生成多级细节的模型：一个 `Lod3D`，镜头近时显示完整网格，远处显示更简单的网格，每一级由上一级减面而来。除非用 `levels`（[三角形数, 距离] 对）指定，否则超过模型尺寸 12 倍距离时用四分之一的三角形，超过 30 倍时用十六分之一。场景里有很多树或石头时，绘制的三角形会少得多。
+
+生成一个模型要几百毫秒。`node tools/bake-models.mjs <模型文件夹或 model.mjs ...> <新的输出文件夹>` 在 Node 里提前生成（不需要浏览器），每个模型写成一个 .glb：范例库的 24 个模型约 16 秒烘焙完，之后用 `loadGltf3D` 一共约 50 毫秒就能全部加载。带骨骼的模型在运行时生成。
+
+模型预览还会列出 `notes`：网格分成了几块（某个零件悬空、太细连不上，或里面封住了一个空腔）、模型陷到 y = 0 以下或浮在上面，以及生成太慢。范例库的每个模型都是一整块；这项检查发现过悬空的狗尾巴、门洞里松脱的门板，以及被一层盖子封住的水井。
 
 ## 会动的模型
 
