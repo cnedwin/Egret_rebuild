@@ -103,7 +103,9 @@ export function parseSpineSetup(
       animations = data.animations.map(a => ({ name: a.name, duration: a.duration }));
     if (
       skins.some(n => !validSpineLabel(n)) ||
-      animations.some(a => !validSpineLabel(a.name) || !Number.isFinite(a.duration) || a.duration < 0 || a.duration > 86400)
+      animations.some(
+        a => !validSpineLabel(a.name) || !Number.isFinite(a.duration) || a.duration < 0 || a.duration > 86400
+      )
     )
       throw spineFault('SETUP', id);
     const info: SpineAssetInfo = Object.freeze({

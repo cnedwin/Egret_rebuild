@@ -25,8 +25,12 @@ export function spineFault(stage: string, id: string, cause?: unknown): EgretErr
 // A Unicode-mode range matches isolated surrogate code units but preserves valid
 // supplementary characters without needing ICU property tables in the VM.
 export function validSpineLabel(value: unknown): value is string {
-  return typeof value === 'string' && value.length > 0 && value.length <= 255 &&
-    !/[\u0000-\u001f\u007f\ud800-\udfff]/u.test(value);
+  return (
+    typeof value === 'string' &&
+    value.length > 0 &&
+    value.length <= 255 &&
+    !/[\u0000-\u001f\u007f\ud800-\udfff]/u.test(value)
+  );
 }
 function exact(value: unknown, names: readonly string[]): value is Record<string, unknown> {
   return (
