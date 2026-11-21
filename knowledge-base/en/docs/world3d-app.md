@@ -107,6 +107,29 @@ In a checkout, `node tools/model-preview.mjs <absolute Playwright index.mjs> <mo
 
 The model library in `examples/models` has twenty-four such models, animals, people, buildings, plants and props, each checked from four sides, with the lessons making them taught. Start a new model from the nearest one.
 
+## Models that move
+
+`createSdfRig3D(shape, bones, options)` makes a model from distance fields move. Each bone names the joint it turns at (`at`), the bone it hangs from (`parent`), and the parts it moves; every vertex of the mesh follows the bones whose parts are nearest, up to four, so the skin bends at a joint instead of tearing. `mirror: 'x'` makes a pair from one side, `name.L` on +x and `name.R`. The parts only guide the weights: they can be the shapes the model was built from or simpler shapes near them. The options are those of `createSdfGeometry3D`, with `material` and `blend` (how far a joint's skin is shared between its bones, a fiftieth of the model's size unless given).
+
+```js
+const leg = sdfCapsule([0.08, 0.3, 0], [0.09, 0.08, 0.01], 0.06);
+const rig = createSdfRig3D(villagerShape, [
+  { name: 'body', at: [0, 0.34, 0], parts: torso },
+  { name: 'head', parent: 'body', at: [0, 0.74, 0], parts: head },
+  { name: 'leg', parent: 'body', at: [0.08, 0.3, 0], parts: leg, mirror: 'x' }
+]);
+const walk = rig.clip('walk', 0.8, {
+  'leg.L': [[0, [0.5, 0, 0]], [0.4, [-0.5, 0, 0]], [0.8, [0.5, 0, 0]]],
+  'leg.R': [[0, [-0.5, 0, 0]], [0.4, [0.5, 0, 0]], [0.8, [-0.5, 0, 0]]],
+  body: [[0, [0, 0, 0]], [0.2, [0, 0, 0], [0, 0.025, 0]], [0.4, [0, 0, 0]]]
+});
+scene.addChild(rig.root);
+rig.play(walk);
+// each frame: rig.update(seconds)
+```
+
+`rig.clip(name, duration, poses)` turns poses of named bones into a clip: each key is a time, Euler angles in radians from the bone's rest pose, and optionally an offset from where it rests. A clip loops cleanly when each bone's last key equals its first. `rig.play(clip, fade)` fades from what was playing (0.2 seconds unless given); `rig.update(seconds)` moves it on. `rig.root` holds the bones and the skinned `rig.mesh`; move it to move the model. `rig.bones` gives each bone by name, for a hand to hold a sword or a head to turn toward the player. In the model library, the villager and the fox have rigs: `rig(W)` returns one with `clips`.
+
 ## Labels and markers over the picture
 
 The interface of a 3D game is usually page elements over the canvas. `createScreenMarkers3D({ container, camera })` keeps such elements on scene points.

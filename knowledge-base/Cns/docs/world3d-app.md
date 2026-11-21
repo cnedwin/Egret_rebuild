@@ -107,6 +107,29 @@ const critter = new Mesh3D(createSdfGeometry3D(face, { variation: { amount: 0.06
 
 `examples/models` 里的模型范例库有二十四个这样的模型：动物、人物、建筑、植物和道具，每个都从四个方向检查过，并附有做它们时学到的经验。新模型从最接近的那个开始改。
 
+## 会动的模型
+
+`createSdfRig3D(shape, bones, options)` 让距离场模型动起来。每根骨骼写明它转动的关节（`at`）、它挂在哪根骨骼下（`parent`），以及它带动的零件；网格的每个顶点跟随零件离它最近的骨骼（最多四根），所以关节处的皮肤是弯曲而不是撕开。`mirror: 'x'` 由一侧生成一对骨骼：+x 一侧的 `name.L` 和另一侧的 `name.R`。零件只用来引导权重：可以是搭模型用的形状，也可以是位置相近的更简单的形状。选项与 `createSdfGeometry3D` 相同，另有 `material` 和 `blend`（关节处的皮肤在相邻骨骼间分担的范围，默认是模型尺寸的五十分之一）。
+
+```js
+const leg = sdfCapsule([0.08, 0.3, 0], [0.09, 0.08, 0.01], 0.06);
+const rig = createSdfRig3D(villagerShape, [
+  { name: 'body', at: [0, 0.34, 0], parts: torso },
+  { name: 'head', parent: 'body', at: [0, 0.74, 0], parts: head },
+  { name: 'leg', parent: 'body', at: [0.08, 0.3, 0], parts: leg, mirror: 'x' }
+]);
+const walk = rig.clip('walk', 0.8, {
+  'leg.L': [[0, [0.5, 0, 0]], [0.4, [-0.5, 0, 0]], [0.8, [0.5, 0, 0]]],
+  'leg.R': [[0, [-0.5, 0, 0]], [0.4, [0.5, 0, 0]], [0.8, [-0.5, 0, 0]]],
+  body: [[0, [0, 0, 0]], [0.2, [0, 0, 0], [0, 0.025, 0]], [0.4, [0, 0, 0]]]
+});
+scene.addChild(rig.root);
+rig.play(walk);
+// 每帧：rig.update(seconds)
+```
+
+`rig.clip(name, duration, poses)` 把命名骨骼的姿势变成动画片段：每个关键帧是一个时间、相对骨骼静止姿势的欧拉角（弧度），以及可选的相对静止位置的偏移。每根骨骼的最后一个关键帧与第一个相同时，片段可以无缝循环。`rig.play(clip, fade)` 从正在播放的片段淡入（默认 0.2 秒）；`rig.update(seconds)` 推进动画。`rig.root` 包含骨骼和蒙皮网格 `rig.mesh`；移动它就是移动模型。`rig.bones` 按名字给出每根骨骼，可以让手握剑、让头转向玩家。模型范例库里的村民和狐狸带有骨骼：`rig(W)` 返回一个带 `clips` 的骨骼动画模型。
+
 ## 画面上的标签和标记
 
 3D 游戏的界面通常是叠在画布上的网页元素。`createScreenMarkers3D({ container, camera })` 让这些元素跟着场景中的点。

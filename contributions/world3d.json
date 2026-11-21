@@ -538,6 +538,16 @@
       "path": "tests/world3d-sdf-surface.test.mjs",
       "originRole": "First-party behaviour tests of turned and extruded shapes, patterns, worn edges, colour-aware simplification, .glb export and the World3D import map; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Rig3D.ts",
+      "originRole": "First-party rigging of distance-field models: bones at joints, skin weights from the distance to the parts each bone moves, and clips from poses of named bones; independently authored with AI assistance; Apache-2.0. No third-party source.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-rig.test.mjs",
+      "originRole": "First-party behaviour tests of rigs of distance-field models: bones, weights, skinning by bone and clips; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [

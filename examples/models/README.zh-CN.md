@@ -34,6 +34,8 @@ const mesh = new W.Mesh3D(W.createSdfGeometry3D(fox(W), meshOptions), W.createSt
 
 在 `play3d` 游戏里，把 `Egret` 作为 `W` 传入。
 
+村民和狐狸还导出 `rig(W)`：用 `createSdfRig3D` 蒙皮到骨骼上的模型，动画片段在 `rig.clips` 里（村民有行走和待机，狐狸有小跑和待机）。画廊会播放第一个。调用 `rig.play(rig.clips.walk)`，并在每帧调用 `rig.update(seconds)`。
+
 ## 改一个，看一眼
 
     node tools/model-preview.mjs <Playwright index.mjs 的绝对路径> examples/models/fox.mjs fox.png

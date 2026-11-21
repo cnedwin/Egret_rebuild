@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1379 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1384 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -399,6 +399,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createRope3D` | function | Makes a rope of points that hangs and swings. |
 | `createScreenLayer3D` | function | Makes a picture drawn over the whole screen, above or below the scene. |
 | `createSdfGeometry3D` | function | The mesh of the field's surface, with smooth normals and linear vertex colours (draw it with a material that has `vertexColors: true`). |
+| `createSdfRig3D` | function | A rig of `shape`: its mesh, made as `createSdfGeometry3D` makes it, skinned to bones at the joints of the model. |
 | `createShapeGeometry3D` | function | Fill one or more outlines in the XY plane, facing +Z. |
 | `createSkeletonHelper3D` | function | Makes lines that show the bones of a skeleton. |
 | `createSkinnedInstancedMesh3D` | function | Makes many skinned instances of one mesh, each playing baked clips from an animation texture. |
@@ -625,6 +626,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SceneDocument3D` | interface | A scene saved as JSON: its nodes, geometries, materials, textures and skeletons, and what was skipped. |
 | `ScreenLayer3D` | class | Full-screen image drawn in the same pass as the 3D scene, typically the canvas of a 2D stage. |
 | `ScreenLayerOptions3D` | interface | A screen layer to make: its order and opacity, whether it updates itself, and which way its rows run. |
+| `SdfBone3D` | interface | A bone of a rig: where it turns, what it moves, and the bone it hangs from. |
 | `sdfBox` | function | A box of `size` [width, height, depth], its edges rounded by `round` (0 for sharp; more than half the smallest side is taken as that). |
 | `sdfCapsule` | function | A rounded limb from `from` to `to`: `radius` thick at the start, `radiusEnd` (the same unless given) at the end. |
 | `sdfCone` | function | An upright cone of `height` along y, `bottom` wide at its foot and `top` (0 for a point) at its head. |
@@ -641,6 +643,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SdfOptions3D` | interface | Where a shape goes and how it looks: moved by `at`, turned by `rotation`, scaled by `scale`, painted `color`. |
 | `sdfPattern` | function | `shape` with a pattern painted over its colours, in the coordinates of the model; the surface does not move. |
 | `SdfPatternOptions3D` | interface | A pattern painted over a shape's colours. |
+| `SdfPoseKey3D` | type | A pose key: a time in seconds, the bone's turn as Euler angles in radians, and optionally how far it moves. |
+| `SdfRig3D` | interface | A model that moves: its root to add to a scene, its skinned mesh, its bones by name, and its animation. |
+| `SdfRigOptions3D` | interface | How a rig is made: the options of its mesh, its material, and how wide a joint bends. |
 | `sdfRound` | function | The shape grown by `radius` all round, its edges rounded by as much. |
 | `SdfShape3D` | class | A shape as a signed distance field: negative inside, positive outside, zero on the surface. |
 | `sdfShell` | function | A hollow skin of the shape, `thickness` thick: bowls, pots, helmets, when cut open. |

@@ -34,6 +34,8 @@ const mesh = new W.Mesh3D(W.createSdfGeometry3D(fox(W), meshOptions), W.createSt
 
 In a `play3d` game, pass `Egret` for `W`.
 
+The villager and the fox also export `rig(W)`: the model skinned to bones with `createSdfRig3D`, with clips in `rig.clips` (a walk and an idle; a trot and an idle). The gallery plays the first. Call `rig.play(rig.clips.walk)` and `rig.update(seconds)` each frame.
+
 ## Change one and look at it
 
     node tools/model-preview.mjs <absolute Playwright index.mjs> examples/models/fox.mjs fox.png

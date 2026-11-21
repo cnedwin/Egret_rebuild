@@ -66,6 +66,18 @@ const shape = sdfUnion([sdfEllipsoid([0.5, 0.4, 0.6], { color: 0xf0a040 }), sdfS
 const critter = game.add(new Mesh3D(createSdfGeometry3D(shape), createStandardMaterial3D({ vertexColors: true })), { x: 0, y: 0.5, z: 0 });
 ```
 
+带骨骼的模型会动：在 `setup` 里加入它的根节点并播放一个片段，在 `update` 里推进。以载入为 `villager` 的范例库村民模块为例：
+
+```js
+let rig;
+// 在 setup(game) 里：
+rig = villager.rig(Egret);
+game.add(rig.root, { x: 2, z: -3 });
+rig.play(rig.clips.walk);
+// 在 update(dt, game) 里：
+rig.update(dt);
+```
+
 每个调用都返回一个物体。可以随时设置它的 `x`、`y`、`z`、`rotationX`、`rotationY`、`rotationZ`（角度）、`scale` 或 `scaleX`、`scaleY`、`scaleZ`、`visible` 和 `color`；它们都可以补间，例如 `game.tween(door).to({ y: 4 }, 0.5)`。也可以加上自己的属性（`enemy.hp = 3`）。`thing.removed` 表示它是否已被移除；设置已移除的物体不起作用，也不会出错。`thing.node` 是它的 [Mesh3D](world3d.md)。 `thing.glow` 让物体以自己的颜色发光，无论是否被照亮：默认 0，1 与它的颜色一样亮，灯笼或屏幕可以更大；它跟随新的 `color`，模型保留自己的材质。发光的物体不会被雾遮住。`thing.opacity` 表示物体可见的程度，默认 1：小于 1 时能透过它看到后面，例如玻璃或幽灵，半透明物体不投影；同时有 `glow` 时它的光会叠加到后面，就像光束。每种形状都以中心定位。`rotationY` 让物体向左转，从上往下看是逆时针；为 0 时物体背对相机、朝向 -z，所以向前移动是 `x -= Math.sin(r) * d`、`z -= Math.cos(r) * d`，其中 `r = thing.rotationY * Math.PI / 180`。
 
 导入模型保留自身已有的根旋转，修改 `rotationY` 会保留其他两个轴。碰撞推出方向使用判定重叠时的同一组缩放后包围盒中心，也适用于原点在脚底的模型。
