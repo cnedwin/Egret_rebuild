@@ -114,3 +114,4 @@ node tools/serve-canvas.mjs
 | 示例 | 文件夹 | 已核对 |
 | --- | --- | --- |
 | [World3D 示例](world3d/README.zh-CN.md) | `world3d` | — |
+| [模型范例库](models/README.zh-CN.md) | `models` | — |
