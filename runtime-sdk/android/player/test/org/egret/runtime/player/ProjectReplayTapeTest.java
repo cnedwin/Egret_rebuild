@@ -219,6 +219,47 @@ public final class ProjectReplayTapeTest {
         reject(() -> WorldProjectPacket.validate(data, pages));
     }
 
+    private static void residentWorldOverlay() throws Exception {
+        Map<Integer, PlayerGraphics.Page> pages = Collections.singletonMap(9, page(120));
+        for (boolean textured : new boolean[]{false, true}) {
+            int stride = textured ? 32 : 24, drawBytes = textured ? 96 : 88;
+            int draw = 160 + 12 + 3 * stride + 3 * 4, hud = draw + drawBytes;
+            ByteBuffer full = ByteBuffer.allocate(hud + 24).order(ByteOrder.LITTLE_ENDIAN);
+            full.putInt(0, textured ? WorldProjectPacket.TEXTURED_MAGIC : WorldProjectPacket.MAGIC);
+            full.putInt(8, 24).putInt(12, 1).putInt(16, 1).putInt(20, 255);
+            full.putInt(160, 19).putInt(164, 3).putInt(168, 3);
+            full.putInt(draw - 8, 1).putInt(draw - 4, 2).putInt(draw, 19);
+            if (textured) full.putInt(draw + 88, 9);
+            full.putInt(hud, 0x32524745).putInt(hud + 8, W).putInt(hud + 12, H);
+            ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
+            recorder.add(new PlayerGraphics.Frame(1, full.array(), pages));
+
+            // The next packet borrows the previous mesh but carries its own draw and texture slot.
+            ByteBuffer delta = ByteBuffer.allocate(164 + drawBytes + 24).order(ByteOrder.LITTLE_ENDIAN);
+            delta.put(full.array(), 0, 160).putInt(0).put(full.array(), draw, drawBytes + 24);
+            delta.putInt(0, textured ? WorldProjectPacket.TEXTURED_DELTA_MAGIC : WorldProjectPacket.DELTA_MAGIC);
+            delta.putInt(4, 1).putInt(12, 0).putInt(164 + drawBytes + 4, 1);
+            require(WorldProjectPacket.stageOffset(delta) == 164 + drawBytes);
+            int[] visits = {0, 0};
+            WorldProjectPacket.visitTexturePages(delta, id -> { visits[0]++; visits[1] = id; });
+            require(visits[0] == (textured ? 1 : 0) && visits[1] == (textured ? 9 : 0));
+            reject(() -> recorder.add(new PlayerGraphics.Frame(1, delta.array(), pages)));
+            require(recorder.size() == 1);
+
+            // Keep a complete HUD but truncate the predecessor field. A full-frame header would accept this.
+            ByteBuffer truncated = ByteBuffer.allocate(160 + 24).order(ByteOrder.LITTLE_ENDIAN);
+            truncated.put(delta.array(), 0, 160).put(delta.array(), 164 + drawBytes, 24);
+            require(WorldProjectPacket.stageOffset(truncated) == -1);
+            if (textured) {
+                delta.putInt(16, 2); // Only one draw record fits before the HUD.
+                try {
+                    WorldProjectPacket.visitTexturePages(delta, id -> { throw new AssertionError("Partial draw visited"); });
+                    throw new AssertionError("Truncated resident draw table accepted");
+                } catch (IllegalArgumentException expected) { }
+            }
+        }
+    }
+
     private static void worldOverlay() throws Exception {
         byte[] hud = packet(0,0);
         hud[16] = 0;
@@ -242,6 +283,7 @@ public final class ProjectReplayTapeTest {
     public static void main(String[] args) throws Exception {
         worldOverlay();
         texturedWorldOverlay();
+        residentWorldOverlay();
         File dir = Files.createTempDirectory("egret-project-tape-test").toFile();
         File file = new File(dir, "scene.bin");
         try {

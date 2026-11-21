@@ -31,6 +31,8 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
     private final Page[] worldViews = new Page[256];
     private final java.util.function.IntConsumer prepareWorldView = this::prepareWorldView;
     private int width, height;
+    // Last explicitly sampled vertex/index payload, excluding driver and texture allocations.
+    volatile long sampledWorldGeometryBytes = -1;
     volatile int contexts, uploads, releases, abandoned;
 
     PlayerGraphics(EgretPlayerView owner) { this.owner = owner; }
@@ -156,7 +158,13 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
             commands.put(frame.bytes);
             commands.flip();
             WorldProjectPacket.visitTexturePages(commands, prepareWorldView);
-            check(PlayerGpu.draw(handle, commands, 0, frame.bytes.length, width, height), "draw", frame.id());
+            int status = PlayerGpu.draw(handle, commands, 0, frame.bytes.length, width, height);
+            if (status == PlayerGpu.MISSING_WORLD_BASE && WorldProjectPacket.isDelta(commands.getInt(0))) {
+                owner.ui.post(() -> owner.missingWorldBase(frame));
+                return;
+            }
+            check(status, "draw", frame.id());
+            if (owner.timing.isEnabled()) sampledWorldGeometryBytes = PlayerGpu.worldGeometryBytes(handle);
             owner.ui.post(() -> owner.drawn(frame.epoch, frame.id()));
         } catch (RuntimeException | LinkageError e) { owner.reportFailure(e.toString()); }
     }
@@ -177,6 +185,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
         PlayerGpu.destroy(handle, false);
         handle = 0;
         abandoned++;
+        sampledWorldGeometryBytes = 0;
         Arrays.fill(worldViews, null);
         uploaded = Collections.emptyMap();
     }
@@ -184,6 +193,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
     void closeCurrent() {
         pending.set(null);
         commands = null;
+        sampledWorldGeometryBytes = 0;
         if (handle == 0) return;
         if (context == null || EGL14.EGL_NO_CONTEXT.equals(context) || !context.equals(EGL14.eglGetCurrentContext())) {
             abandon();

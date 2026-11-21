@@ -55,6 +55,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     private boolean wanted, foreground, gpuReady, scriptReady, ready, scheduled, busy, closed, surfacePaused;
     private boolean renderThreadStarted;
     private int contextAtLastReady, lastFrameId;
+    private long acknowledgedFrame = -1;
+    private PlayerGraphics.Frame rejectedWorldFrame;
     private long foregroundStartNs, elapsedNs, frames;
     private Object projectClose = JSONObject.NULL;
     volatile int epoch;
@@ -177,6 +179,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     private void cancelFrame() {
         timing.discontinuity();
         epoch++;
+        acknowledgedFrame = -1;
+        rejectedWorldFrame = null;
         Choreographer.getInstance().removeFrameCallback(tick);
         scheduled = false;
         busy = false;
@@ -209,6 +213,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
             // replaced outside Activity lifecycle (e.g. the window loses EGL).
             if (contextAtLastReady != 0) {
                 epoch++;
+                acknowledgedFrame = -1;
+                rejectedWorldFrame = null;
                 busy = false;
                 if (benchmark != null) {
                     try { benchmark.newContext(); }
@@ -235,11 +241,22 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         double elapsedMs = benchmark != null ? benchmark.elapsedMs() :
             (elapsedNs + SystemClock.elapsedRealtimeNanos() - foregroundStartNs) / 1000000.0;
         timing.begin();
-        scripts.frame(epoch, elapsedMs);
+        long base = benchmark != null && benchmark.needsFullFrame() ? -1 : acknowledgedFrame;
+        scripts.frame(epoch, elapsedMs, base, -1);
     }
 
     void enqueue(PlayerGraphics.Frame frame, long generationNs, long transferNs) {
         if (!isPlaying() || !gpuReady || !busy || frame.epoch != epoch) return;
+        if (rejectedWorldFrame != null) {
+            int magic = java.nio.ByteBuffer.wrap(frame.bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt(0);
+            if (frame.id() != rejectedWorldFrame.id() || !WorldProjectPacket.isWorld(magic) || WorldProjectPacket.isDelta(magic)) {
+                fail("World3D retry must supply the same complete frame");
+                return;
+            }
+            // Preserve the texture snapshot paired with the rejected draw, even if input changed a page meanwhile.
+            frame = new PlayerGraphics.Frame(epoch, frame.bytes, rejectedWorldFrame.pages);
+            rejectedWorldFrame = null;
+        }
         if (benchmark != null) {
             try { benchmark.enqueued(frame); }
             catch (IOException error) { fail(error.getMessage()); return; }
@@ -250,6 +267,15 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         surface.requestRender();
     }
 
+    void missingWorldBase(PlayerGraphics.Frame rejected) {
+        if (rejected.epoch != epoch || !isPlaying() || !busy) return;
+        if (acknowledgedFrame < 0) { fail("World3D recovery requires a complete frame"); return; }
+        acknowledgedFrame = -1;
+        rejectedWorldFrame = rejected;
+        // Reissue this logical frame without advancing simulation or sampling the scene twice.
+        scripts.frame(epoch, 0, -1, Integer.toUnsignedLong(rejected.id()));
+    }
+
     void drawn(int token, int frameId) {
         if (token != epoch || !isPlaying() || !busy) return;
         busy = false;
@@ -258,6 +284,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
             try { benchmark.drawn(this); }
             catch (IOException | RuntimeException error) { fail(error.toString()); return; }
         }
+        // At most one frame is in flight. Only a successful draw in this epoch can be a delta base.
+        acknowledgedFrame = Integer.toUnsignedLong(frameId);
         lastFrameId = frameId;
         frames++;
         if (!ready) {
@@ -362,6 +390,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
                 .put("lastError", lastError).put("scriptHost", benchmark != null && benchmark.replays() ? "native-replay" : BundledScripts.PROFILE).put("vmVersion", vmVersion).put("intl", vmIntl)
                 .put("timing", timing.snapshot()).put("frames", frames).put("lastFrameId", lastFrameId).put("contexts", graphics == null ? 0 : graphics.contexts)
                 .put("uploads", graphics == null ? 0 : graphics.uploads).put("releases", graphics == null ? 0 : graphics.releases)
+                .put("sampledWorldGeometryBytes", graphics == null ? 0 : graphics.sampledWorldGeometryBytes)
                 .put("abandoned", graphics == null ? 0 : graphics.abandoned).put("audioStarts", audio.starts)
                 .put("audioReleases", audio.releases).put("activeSounds", audio.active())
                 .put("inputEvents", controls == null ? 0 : controls.events).put("editorOpens", controls == null ? 0 : controls.edits)

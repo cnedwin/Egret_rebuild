@@ -2,7 +2,7 @@
 //! Composite into a linear-light sRGB attachment and resolve to the window's
 //! premultiplied display bytes. The EGR1 benchmark retains its direct path.
 use crate::{frame::{Batch, Header, PAGE_SLOTS, MULTIPLY, ADD, LINEAR}, gl::*, gles::{link_program, VERTEX}, project_color::decode_srgb};
-use crate::{world_frame::WorldFrame, world_gles::WorldPipeline};
+use crate::{world_frame::WorldFrame, world_gles::{WorldPipeline, PendingMeshes}};
 use std::ptr;
 
 const DRAW: &[u8] = concat!("#version 300 es\n", include_str!("project_draw.frag"), "\0").as_bytes();
@@ -55,7 +55,7 @@ pub(crate) struct ProjectPipeline {
     target: u32,
     target_texture: u32,
     depth: u32,
-    world: Option<WorldPipeline>,
+    pub(super) world: Option<WorldPipeline>,
     physical: [u32; 2],
 }
 
@@ -140,9 +140,7 @@ impl ProjectPipeline {
                                 pages: &[u32; PAGE_SLOTS], world_pages: &[u32; PAGE_SLOTS], batches: &[Batch], world: Option<&WorldFrame<'_>>) -> bool {
         if !self.resize(physical, world.is_some()) { return false; }
         if world.is_some() && self.world.is_none() { self.world = WorldPipeline::create(); }
-        if world.is_none() {
-            if let Some(retired) = self.world.take() { retired.destroy(); }
-        }
+        let mut pending = PendingMeshes::default();
         // Compile the mapped shader only when a quad or mesh first needs atlas mapping.
         let draw = if header.mapped {
             if self.mapped_draw.is_none() { self.mapped_draw = DrawProgram::create(true); }
@@ -157,7 +155,7 @@ impl ProjectPipeline {
         if let Some(scene) = world {
             let Some(pipeline) = &mut self.world else { return false; };
             glClear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
-            if !pipeline.draw(scene, pages[0], world_pages) { return false; }
+            if !pipeline.draw(scene, pages[0], world_pages, &mut pending) { return false; }
         } else {
             glClear(COLOR_BUFFER_BIT);
         }
@@ -206,6 +204,10 @@ impl ProjectPipeline {
         glBindVertexArray(self.resolve_vao);
         glBindTexture(TEXTURE_2D, self.target_texture);
         glDrawArrays(TRIANGLES, 0, 3);
-        glGetError() == 0
+        if glGetError() != 0 { return false; }
+        if let (Some(scene), Some(pipeline)) = (world, self.world.as_mut()) {
+            pipeline.commit(scene, &mut pending);
+        }
+        true
     }
 }

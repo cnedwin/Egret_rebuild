@@ -92,12 +92,13 @@ public final class JavetProjectScripts extends ScriptSession {
         worker.post(() -> run(() -> { if (game != null && !owner.ending) runtime.getExecutor(expression).executeVoid(); }));
     }
 
-    @Override void frame(int epoch, double elapsedMs) {
+    @Override void frame(int epoch, double elapsedMs, long previousFrame, long retryId) {
         worker.post(() -> run(() -> {
             if (owner.ending || owner.epoch != epoch || game == null) return;
             boolean timed = owner.timing.isEnabled();
             long start = timed ? System.nanoTime() : 0;
-            try (V8Value frame = game.invoke("frame", elapsedMs)) {
+            try (V8Value frame = retryId < 0 ? game.invoke("frame", elapsedMs, epoch, (double) previousFrame)
+                    : game.invoke("recoverWorldFrame", epoch, (double) retryId)) {
                 long produced = timed ? System.nanoTime() : 0;
                 byte[] bytes = copyFrame(frame);
                 long copied = timed ? System.nanoTime() : 0;

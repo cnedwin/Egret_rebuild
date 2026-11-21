@@ -137,6 +137,12 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
 
   return Object.freeze({
     textResult,
+    ...(composeWorld && {
+      recoverWorldFrame(epoch, frameId) {
+        if (stopped || !game) throw new Error('Project unavailable');
+        return composeWorld.recover(epoch, frameId);
+      }
+    }),
     start() {
       if (stopped) return Promise.reject(new Error('Project closed'));
       opening ??= (async () => {
@@ -169,7 +175,7 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
       })();
       return opening;
     },
-    frame(elapsedMs) {
+    frame(elapsedMs, epoch, previousFrameId) {
       if (stopped || !game) throw new Error('Project unavailable');
       if (!Number.isFinite(elapsedMs) || elapsedMs < 0) throw new RangeError('Frame clock');
       if (!paused && elapsedMs >= lastTime) {
@@ -181,7 +187,7 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
         game.update?.(elapsedMs);
       }
       const frame = encoder.encode(engine.captureSharedFrame(frameOptions), frameId, pageIds);
-      const output = composeWorld ? composeWorld(game, frame, pageIds) : frame;
+      const output = composeWorld ? composeWorld(game.world3D(), frame, pageIds, epoch, previousFrameId) : frame;
       frameId = (frameId + 1) >>> 0;
       return output;
     },

@@ -5,11 +5,10 @@ import { createWorldProjectEncoder } from './world3d-frame.mjs';
 
 /** Install the optional World3D project path without pulling its capture code into 2D games. */
 export function installWorld3DPlayerProject(definition) {
-  const encode = createWorldProjectEncoder();
   const player = createPlayerProject(
     definition,
     globalThis.EgretNativePlayer,
-    (game, hud, pages) => encode(game.world3D(), hud, pages),
+    createWorldProjectEncoder(),
     (services, pageInUse) => ({
       ...services,
       loadGlb: createProjectGlbLoader(services, pageInUse)

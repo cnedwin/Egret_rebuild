@@ -295,6 +295,27 @@ Both runs used an 873 × 325 render buffer with a 60 Hz presentation cadence. Th
 
 With both karts stationary at the starting grid, the panda markings, green bamboo and yellow chassis were visible in both captures. In four predefined color regions the largest difference in coverage was 1.17 percentage points. The browser also draws a separate badge on the rear of the kart. In a separate Android Activity close and reopen on the same APK, the player recorded 23 page publications and 23 releases and returned to the ready screen.
 
+### Resident geometry in live Android frames
+
+The trimmed V8 and WebView project hosts can use the same incremental World3D protocol when the game bundle and player are built from this revision. An older host or bundle continues to send full frames. A full E3D1 or E3D2 packet defines every visible mesh. After the GL thread confirms a successful submission in the same EGL generation, E3D3 or E3D4 can refer to those meshes by ID. Each packet still carries the current camera, lights, ordered draw records, material and texture references, and the complete 2D HUD. Only new or changed mesh definitions cross the bridge. On a camera-only frame with an unchanged visible set, geometry uses zero bridge bytes.
+
+A successful frame retires geometry that has left the visible set. Re-entry sends its definition again. Geometry or vertex-layout changes use the normal engine attribute and layout revisions. Replacing meshes becomes permanent after the world, HUD and final color resolve succeed. The limit of 64 geometries and the byte limit for a fully expanded frame also apply to incremental frames.
+
+On a new EGL context the player starts from a full frame and rebuilds the texture pages. If the receiver loses its predecessor within the same generation, the host reconstructs the rejected frame with its original draw list, HUD and texture snapshot, then retries the same ID without advancing the game. Capture requests full packets for every recorded frame. The live benchmark retains its last frame in full for replay on a fresh context.
+
+Four paired runs on a Galaxy Z Fold7 used the existing two textured Rally GLBs at the eight-car starting grid. Only the camera moved. The visible list held 1,332 draws in all 1,440 measured frames. Each arm used a signed trimmed-V8 Release APK with the same measurement probes and an 873 × 325 GLES3 render buffer. The table gives the median of four run p95s for each timing metric.
+
+| Metric | Full frames | Incremental frames |
+| --- | ---: | ---: |
+| Geometry bytes per steady frame, including definition headers | 918,648 | 0 |
+| Total bridge bytes per steady frame | 1,047,640 | 128,996 |
+| V8-to-Java copy p95 | 1.800 ms | 0.397 ms |
+| Dispatch to render enqueue p95 | 8.048 ms | 6.584 ms |
+| Native draw submission on CPU p95 | 4.921 ms | 3.478 ms |
+| Game-layer presentation interval p95 | 16.58 ms | 16.58 ms |
+
+All four pairs improved copy and submission time. Presentation cadence held steady. Both configurations held 918,168 bytes of vertex/index payload across 40 meshes in each of the CPU and GLES copies. Process PSS varied in both directions. After EGL recreation the first packet contained all 40 definitions. The game-area pixels matched across builds and before and after recovery. The recovery and close run for each build counted 80 mesh creations and 80 deletions, with 10 texture-page uploads and 10 releases. The existing 64 MiB limit precludes a full 210-frame Rally recording of this size. This device check covers EGL reconstruction. Separate protocol tests cover exact full-frame reconstruction and standalone tape records. [Paired measurements and method](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-rally-geometry-residency.json)
+
 ### Roll3D on the Android player
 
 Roll the ball to collect all four stars, including the one on the raised platform. The flat score updates after each pickup. Touch **Play again** on the result screen to start a fresh round. The Android export reads the existing level file and binds it to the native host. The two versions use the same movement, collisions, follow camera, spinning stars, particle bursts and restart logic. [Original browser game](https://github.com/cnedwin/Egret_rebuild/blob/dfc3a00010e9e9e9d4fa26c4a3f5a42a82d92b82/examples/play/roll3d.mjs)
@@ -307,7 +328,7 @@ node runtime-sdk/android/player/create-app.mjs --project out/roll3d-game --aar o
 gradle -p out/roll3d-app assembleRelease
 ```
 
-A game can opt in with `installWorld3DPlayerProject` from `@egret/android-player-world3d`. Implement `world3D()` on the returned game object to supply its live `{scene, camera}` after each update. Add normal 2D display objects to the player stage for the HUD. World3D builds the camera-visible draw list. The E3D1 packet carries indexed positions and normals, transforms, Standard material parameters, the camera and lights, followed by the existing transparent 2D frame. GLES3 draws the scene with depth testing before it composites the HUD. Geometry shared between draws is uploaded once per context while its contents remain resident and unchanged. Each packet contains the geometry required to replay it on a fresh context.
+A game can opt in with `installWorld3DPlayerProject` from `@egret/android-player-world3d`. Implement `world3D()` on the returned game object to supply its live `{scene, camera}` after each update. Add normal 2D display objects to the player stage for the HUD. World3D builds the camera-visible draw list. The E3D1 packet carries indexed positions and normals, transforms, Standard material parameters, the camera and lights, followed by the existing transparent 2D frame. GLES3 draws the scene with depth testing before it composites the HUD. Geometry shared between draws is uploaded once per context while its contents remain resident and unchanged. A full E3D1 packet contains the geometry required to replay it on a fresh context.
 
 The profile matches this game's low quality setting: opaque, front-sided, untextured Standard materials, indexed triangles, ambient and hemisphere lighting, one directional light, and ACES at unit exposure. This comparison omits shadows, multisampling and post-processing. The existing 2D entry continues to emit EGR frames. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-roll3d.json)
 
