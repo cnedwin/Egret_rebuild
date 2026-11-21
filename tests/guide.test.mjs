@@ -324,6 +324,8 @@ const QUERIES = [
   ['too many lights', 'world3d-lights-shadows'],
   ['shadows missing', 'world3d-lights-shadows'],
   ['load glb models', 'asset-loading'],
+  ['3d model looks bad, like boxes', 'model-in-code'],
+  ['模型质量差', 'model-in-code'],
   ['how to test my game', 'verify-end-to-end'],
   ['vendor the engine', 'vendor-engine'],
   ['safe area notch', 'mobile-viewport'],

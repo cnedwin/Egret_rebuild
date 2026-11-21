@@ -1,0 +1,42 @@
+---
+id: model-in-code
+title: Model 3D creatures, props and buildings as smooth fields, not stacked boxes
+applies: [world3d, play3d]
+triggers: [createSdfGeometry3D, sdfUnion, sdfSubtract, sdfMirror, sdfCapsule, simplifyGeometry3D, createGeometryBuilder3D, "model looks bad", "models look like boxes", "low quality 3d model", "procedural model", "make a character in code", "too many triangles", "模型很丑", "模型质量差", "代码建模", "像积木", "程序化模型", "面数太多"]
+local: [fur, body, head, face, eyes, critter, material, scene, shape, mesh]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/models/buildings.mjs, line: 80, commit: a669d38516e2cc862c06f35601e0660066def905, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+engine: 619422c801e3f1aedb836425efd2b0644f4d9390
+---
+
+# Model 3D creatures, props and buildings as smooth fields, not stacked boxes
+
+A model put together from boxes and cylinders with `createGeometryBuilder3D` shows every seam: parts push through each other at hard angles, every edge is sharp, every part is one flat colour, and nothing is darker where parts meet. Build what the player looks at as a distance field instead, and let `createSdfGeometry3D` make the mesh: parts join smoothly, edges round, colours blend at the joins, creases are shaded.
+
+Work in this order, and look at the model after each step:
+
+1. **Silhouette and proportion first.** Two to five large rounded parts (`sdfEllipsoid`, `sdfSphere`, `sdfBox` with `round`) in one `sdfUnion` with a `smooth` of about a tenth of the main part's size. Exaggerate: a big head reads better at game distance.
+2. **Limbs, ears, tails, branches** as `sdfCapsule(from, to, radius, { radiusEnd })`, tapered. Make one side and wrap it in `sdfMirror`.
+3. **Carve** mouths, windows, doorways and hollows with `sdfSubtract`; give the cut a dark `color` so the hollow reads.
+4. **Small details last, in their own group** with a small `smooth` (0.01): eyes, buttons, studs. In the big group they melt away.
+5. **Surface**: `sdfDisplace` for rocks, bark and earth; `variation: { amount: 0.05 to 0.15 }` on the mesh so large parts are not one flat tone. Pick a palette of three to five colours with one accent.
+
+```js
+import { createSdfGeometry3D, createStandardMaterial3D, Mesh3D, sdfCapsule, sdfEllipsoid, sdfMirror, sdfSphere, sdfUnion } from '@egret/engine/world3d';
+
+const fur = 0xf0a040;
+const body = sdfUnion([
+  sdfEllipsoid([0.6, 0.5, 0.72], { color: fur }),
+  sdfSphere(0.42, { at: [0, 0.55, 0.55], color: fur }),
+  sdfMirror(sdfCapsule([0.3, -0.2, 0.3], [0.33, -0.62, 0.36], 0.14, { radiusEnd: 0.11, color: fur }))
+], { smooth: 0.1 });
+const eyes = sdfMirror(sdfSphere(0.07, { at: [0.17, 0.68, 0.9], color: 0x111111 }));
+const critter = new Mesh3D(
+  createSdfGeometry3D(sdfUnion([body, eyes], { smooth: 0.01 }), { variation: { amount: 0.06 } }),
+  createStandardMaterial3D({ vertexColors: true, roughness: 0.75 })
+);
+```
+
+The material needs `vertexColors: true`; the colours and the baked shade are in the vertices. A mesh is capped at 8000 triangles unless `triangles` says otherwise: 1500 to 4000 suits a prop seen small or many times, 8000 to 15000 a hero seen close. `resolution` (64 unless given) sets how fine a detail can be: a part thinner than two cells of the model's longest side disappears, so raise it for a long, thin model or cut the model into parts. Make every model once while the level loads, never in a frame: a model takes a few hundred milliseconds.
+
+Crates and walls can stay boxes, but make them `sdfBox(size, { round: 0.03 })` so light catches an edge. For a model generated elsewhere or bought, `simplifyGeometry3D(geometry, { triangles })` brings it down to the same budget and keeps its texture seams and materials.

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-21",
+  "en": {
+    "title": "3D: models shaped from distance fields, and a simplifier",
+    "body": "Models made in code no longer have to be boxes pushed through each other. `createSdfGeometry3D` turns a shape built from `sdfSphere`, `sdfBox` (with rounded edges), `sdfEllipsoid`, `sdfCapsule` (tapered limbs), `sdfCylinder`, `sdfCone` and `sdfTorus`, joined by `sdfUnion`, `sdfSubtract` and `sdfIntersect` with a `smooth` blend, and shaped by `sdfMirror`, `sdfRound`, `sdfShell` and `sdfDisplace`, into one coloured mesh: smooth normals, colours blended where parts meet, creases and hollows shaded in the vertex colours, at most 8000 triangles unless asked. `simplifyGeometry3D` brings any indexed mesh to a triangle budget and keeps texture seams and material groups. A guide card, model-in-code, shows an agent how to model with them. The World3D example pages load again in a browser: their import maps lacked entries the 3D entry now reaches."
+  },
+  "zh": {
+    "title": "3D：用距离场塑形的模型，以及网格减面",
+    "body": "用代码做的模型不必再是互相穿插的方块。`createSdfGeometry3D` 把用 `sdfSphere`、`sdfBox`（可倒圆角）、`sdfEllipsoid`、`sdfCapsule`（可渐细的四肢）、`sdfCylinder`、`sdfCone`、`sdfTorus` 搭成、用 `sdfUnion`、`sdfSubtract`、`sdfIntersect` 平滑组合、再经 `sdfMirror`、`sdfRound`、`sdfShell`、`sdfDisplace` 修饰的形状，变成一个带颜色的网格：法线平滑，零件相接处颜色过渡，褶皱和凹处的阴影写进顶点颜色，默认最多 8000 个三角形。`simplifyGeometry3D` 把任何带索引的网格减到给定面数，保留纹理接缝和材质分组。新增 guide 卡片 model-in-code，教 AI 怎样用它们建模。World3D 示例页面在浏览器里重新能打开：它们的 import map 缺了 3D 入口现在会用到的条目。"
+  }
+}

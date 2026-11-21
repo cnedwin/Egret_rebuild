@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1350 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1373 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -398,6 +398,7 @@
 | `createRingGeometry3D` | 函数 | Flat ring in the XY plane, facing +Z. |
 | `createRope3D` | 函数 | Makes a rope of points that hangs and swings. |
 | `createScreenLayer3D` | 函数 | Makes a picture drawn over the whole screen, above or below the scene. |
+| `createSdfGeometry3D` | 函数 | The mesh of the field's surface, with smooth normals and linear vertex colours (draw it with a material that has `vertexColors: true`). |
 | `createShapeGeometry3D` | 函数 | Fill one or more outlines in the XY plane, facing +Z. |
 | `createSkeletonHelper3D` | 函数 | Makes lines that show the bones of a skeleton. |
 | `createSkinnedInstancedMesh3D` | 函数 | Makes many skinned instances of one mesh, each playing baked clips from an animation texture. |
@@ -622,6 +623,25 @@
 | `SceneDocument3D` | 接口 | A scene saved as JSON: its nodes, geometries, materials, textures and skeletons, and what was skipped. |
 | `ScreenLayer3D` | 类 | Full-screen image drawn in the same pass as the 3D scene, typically the canvas of a 2D stage. |
 | `ScreenLayerOptions3D` | 接口 | A screen layer to make: its order and opacity, whether it updates itself, and which way its rows run. |
+| `sdfBox` | 函数 | A box of `size` [width, height, depth], its edges rounded by `round` (0 for sharp; more than half the smallest side is taken as that). |
+| `sdfCapsule` | 函数 | A rounded limb from `from` to `to`: `radius` thick at the start, `radiusEnd` (the same unless given) at the end. |
+| `sdfCone` | 函数 | An upright cone of `height` along y, `bottom` wide at its foot and `top` (0 for a point) at its head. |
+| `sdfCylinder` | 函数 | An upright cylinder of `radius` and `height` along y, its rims rounded by `round` (at most the radius or half the height). |
+| `sdfDisplace` | 函数 | The surface pushed in and out by smooth noise: rocks, bark, rough earth, a lumpy creature. |
+| `SdfDisplaceOptions3D` | 接口 | What `sdfDisplace` does: how far, how fine and which noise. |
+| `sdfEllipsoid` | 函数 | A stretched ball with `radii` [x, y, z]: heads, bodies, eggs and stones. |
+| `SdfGroupOptions3D` | 接口 | A group of shapes: `smooth` is how far, in the model's units, the blend between them reaches. |
+| `sdfIntersect` | 函数 | What the shapes have in common; with `smooth`, its edges rounded. |
+| `SdfMeshOptions3D` | 接口 | How a field becomes a mesh. |
+| `sdfMirror` | 函数 | The shape and its mirror image across the plane through the origin square to `axis` ('x' unless given): make one eye, ear, arm or leg on the positive side and get the pair. |
+| `SdfOptions3D` | 接口 | Where a shape goes and how it looks: moved by `at`, turned by `rotation`, scaled by `scale`, painted `color`. |
+| `sdfRound` | 函数 | The shape grown by `radius` all round, its edges rounded by as much. |
+| `SdfShape3D` | 类 | A shape as a signed distance field: negative inside, positive outside, zero on the surface. |
+| `sdfShell` | 函数 | A hollow skin of the shape, `thickness` thick: bowls, pots, helmets, when cut open. |
+| `sdfSphere` | 函数 | A ball of `radius`. |
+| `sdfSubtract` | 函数 | `base` with `cut` taken away; with `smooth`, the edges of the hollow rounded. |
+| `sdfTorus` | 函数 | A ring lying flat: `radius` to the middle of the tube, `tube` the tube's radius. |
+| `sdfUnion` | 函数 | The shapes joined into one; with `smooth`, blended where they meet. |
 | `SERIALIZE3D_LIMITS` | 值 | The most nodes, embedded texture bytes and document bytes a scene document has. |
 | `SerializeOptions3D` | 接口 | How a scene is saved: the key each texture is saved by. |
 | `serializeScene3D` | 函数 | Write the subtree under `root` as JSON-safe data. |
@@ -632,6 +652,9 @@
 | `ShapeDefinition3D` | 类型 | The shape of a body: a sphere, box, capsule, plane, convex hull, triangle mesh, or several moving as one. |
 | `Side3D` | 类型 | Which sides of a material's triangles are drawn. |
 | `signedArea2D` | 函数 | The signed area of a 2D polygon: positive when its points run counterclockwise. |
+| `simplifyGeometry3D` | 函数 | A copy of an indexed triangle geometry with fewer triangles; the geometry given is not changed. |
+| `SimplifyOptions3D` | 接口 | How far to simplify. |
+| `SimplifyResult3D` | 接口 | How a simplification went. |
 | `Skeleton3D` | 类 | Ordered bones with their inverse bind matrices; one instance may drive many meshes. |
 | `SkeletonHelper3D` | 类 | A line from every bone to its parent bone. |
 | `SkinnedInstancedMesh3D` | 类 | Many copies of one skinned mesh in a single draw call, each at its own place in its own clip. |

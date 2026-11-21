@@ -153,6 +153,10 @@
       "path": "tests/entry-map.test.mjs",
       "originRole": "First-party test that the entry map is current and complete; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "guide/cards/world3d/model-in-code.txt",
+      "originRole": "First-party guide card on modelling in code with distance fields, written from the box-built models of Tea Horse Road in PortedGamesEgret; AI-assisted; Apache-2.0."
     }
   ],
   "documents": [
