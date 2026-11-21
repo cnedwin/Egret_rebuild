@@ -60,6 +60,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `width`, `height` | The size of the stage in the game's own units: whole numbers above 0. The canvas is scaled to fit and keeps this shape | Required |
 | `background` | The colour a frame is cleared to | Black |
 | `transparent` | `true` clears a frame to nothing, so what the page has under the canvas shows through | The background is drawn |
+| `audio` | Enable the built-in effects and music. Set `false` for a silent game or a game with its own mixer | `true` |
 | `setup(game)` | Builds the game; may be `async` | Nothing is built |
 | `update(seconds, game)` | One step of the game | No step |
 | `parent` | An element to put the canvas in. It fills the element's width; an element with no height of its own takes the stage's shape | The game fills the window |
@@ -116,6 +117,10 @@ The first pointer pressed on the Play canvas owns `game.pointer` until it lifts 
 
 ## Sound
 
+If your game owns its audio, pass `audio: false` to `play` or `play3d`. For the lifetime of the game, Play creates no audio context or audio-unlock listeners and skips synthesis and decoding of all 14 presets. Calling `sfx.define`, `sfx.play`, `sfx.loop` or `music.play` later keeps built-in audio off. A loop handle is already stopped and can be safely stopped again. The game owns pause, resume and cleanup for its own mixer. If `setup` also runs on restart, reuse that mixer across calls.
+
+With `audio: true` or the option omitted, Play prepares the presets before `setup`. Use `game.sfx.muted` to mute this mixer temporarily.
+
 `game.sfx.play('coin')` plays an effect made in code. The names are `jump`, `coin`, `hit`, `hurt`, `explosion`, `shoot`, `powerup`, `bounce`, `pop`, `click`, `hum`, `wind`, `win` and `lose`. `game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` changes one play. A name that is not there is refused with `PLAY_SFX_UNKNOWN`, and the message lists the names.
 
 **Sounds that go on.** `const engine = game.sfx.loop('hum', { volume: 0.5 })` plays an effect again and again until `engine.stop()`, which fades it over a tenth of a second, or over the seconds given. Set `engine.pitch = 1 + speed / 20` as a car speeds up, and `volume` and `pan` likewise while it plays. `hum` and `wind` are made to be looped; a tune defined with `define` loops as music, and a tone with `seamless: true` joins itself without a click when it is whole waves long. A pause holds every loop, and `restart` and `dispose` stop them.
@@ -123,6 +128,12 @@ The first pointer pressed on the Play canvas owns `game.pointer` until it lifts 
 A browser plays no sound until the player has pressed a key or clicked; effects asked for before that are not heard, and the game goes on.
 
 `game.sfx.define('zap', { wave: 'saw', from: 1200, to: 200, seconds: 0.15 })` adds an effect. A tone has a `wave` (`'sine'`, `'square'`, `'saw'`, `'triangle'` or `'noise'`), a pitch `from` and optionally `to` in hertz, `seconds`, and optionally `volume` (0 to 1), `decay` (0 holds, 4 is a pluck, 10 a tick) and `noise` (0 to 1 mixed in). A list of tones plays one after another, which makes a jingle. `game.sfx.volume` and `game.sfx.muted` act on every effect.
+
+### Windows startup measurements
+
+On Windows with Chrome 157 and an RTX 5090 Laptop GPU, a WebGL2 page started Play on a click and created its own mixer in `setup`. Each run used a fresh browser process and profile. Five of six alternating pairs stayed in the foreground throughout. With built-in audio enabled, the page created two contexts and decoded 14 presets. With `audio: false`, it created one context and decoded zero presets. Median time from the launch click to the first coloured pixel in a browser-composited frame was 2726.4 ms and 2602.7 ms respectively. The first in-game click changed that pixel in 9.4 ms and 9.3 ms. The first in-game click triggered no context construction or preset decoding in either configuration.
+
+Three further pairs ran the first wave of *Nezha Stirs the Sea* locally on WebGPU. Median navigation-to-actionable-title time fell from 830.8 ms to 717.7 ms. The median from clicking Start to the return of the first GPU submission for an advancing simulation step was 72.6 ms and 72.2 ms respectively. The game decoded its own 23 sounds in both configurations. Its mixer still does some of that work after Start.
 
 ## Overlap
 

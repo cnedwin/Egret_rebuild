@@ -21,7 +21,7 @@ import { createPlayWidgets } from './playWidgets.js';
 import { prefersReducedMotion, watchReducedMotion } from './BrowserPreferences.js';
 import { createPlayTouch } from './playTouch.js';
 import type { PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
-import { MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
+import { MUSIC_MOODS, MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
 import type { MusicOptions, MusicMood } from './playMusic.js';
 import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 
@@ -38,6 +38,8 @@ export interface PlayOptions {
   readonly parent?: HTMLElement;
   /** A canvas of the page to draw on, as it is placed there. Without it one is made and fitted. */
   readonly canvas?: HTMLCanvasElement;
+  /** Set false for a silent game or an application-owned mixer. Skips the built-in context and sound preparation. */
+  readonly audio?: boolean;
   /** Builds the game. Updates begin when it has returned, or when the promise it returns has resolved. */
   readonly setup?: (game: PlayGame) => void | Promise<void>;
   /** One step of the game, with the seconds since the step before. */
@@ -511,8 +513,8 @@ class PlayingLoop implements PlayLoop {
   #master = 1;
   #stopped = false;
   public constructor(
-    sound: () => Parameters<MixerLike['play']>[0] | undefined,
-    mixer: MixerLike,
+    sound: Parameters<MixerLike['play']>[0] | undefined,
+    mixer: MixerLike | undefined,
     volume: number,
     pitch: number,
     pan: number,
@@ -521,10 +523,13 @@ class PlayingLoop implements PlayLoop {
     this.#volume = Math.max(0, Math.min(1, volume));
     this.#pitch = Math.max(0.25, Math.min(4, pitch));
     this.#pan = Math.max(-1, Math.min(1, pan));
-    const made = sound();
-    if (made === undefined) return;
+    if (mixer === undefined) {
+      this.#stopped = true;
+      return;
+    }
+    if (sound === undefined) return;
     try {
-      this.#voice = mixer.play(made, {
+      this.#voice = mixer.play(sound, {
         loop: true,
         volume: 0,
         rate: this.#pitch,
@@ -613,6 +618,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   if (setup !== undefined && typeof setup !== 'function') throw invalid('setup is a function');
   if (update !== undefined && typeof update !== 'function') throw invalid('update is a function');
   if (onError !== undefined && typeof onError !== 'function') throw invalid('onError is a function');
+  if (options.audio !== undefined && typeof options.audio !== 'boolean') throw invalid('audio is true or false');
   if (options.reducedMotion !== undefined && typeof options.reducedMotion !== 'boolean')
     throw invalid('reducedMotion is true or false');
   // Given, it is the game's; not given, it follows the system's setting.
@@ -969,14 +975,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   ];
   for (const [target, type, listener] of listening) target.addEventListener(type, listener, { passive: false });
 
-  // Sound: every effect is made and decoded before the game is set up, so the first one plays at once.
-  const audio = scope.use(createBrowserAudio({ limiter: true }));
-  type Sound = Awaited<ReturnType<typeof audio.mixer.decode>>;
+  // Only the built-in mixer belongs to this game. Opting out also skips its browser gesture listeners.
+  const mixer = options.audio === false ? undefined : scope.use(createBrowserAudio({ limiter: true })).mixer;
+  type Sound = Awaited<ReturnType<MixerLike['decode']>>;
   const sounds = new Map<string, Sound>();
   const RATE = 22050;
   const make = async (name: string, recipe: SfxRecipe): Promise<void> => {
+    if (mixer === undefined) return;
     try {
-      sounds.set(name, await audio.mixer.decode(encodeWav([synthesizeSfx(recipe, RATE)], RATE)));
+      sounds.set(name, await mixer.decode(encodeWav([synthesizeSfx(recipe, RATE)], RATE)));
     } catch {
       // A page without sound still plays the game.
     }
@@ -996,12 +1003,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           cause: new Error(`"${String(name)}" is not one of: ${[...names].join(', ')}`)
         });
       const sound = sounds.get(name);
-      if (sound === undefined || muted) return;
+      if (mixer === undefined || sound === undefined || muted) return;
       const loud = Math.max(0, Math.min(1, (finite(given.volume) ? given.volume : 1) * volume)),
         rate = Math.max(0.25, Math.min(4, finite(given.pitch) ? given.pitch : 1)),
         pan = Math.max(-1, Math.min(1, finite(given.pan) ? given.pan : 0));
       try {
-        audio.mixer.play(sound, { volume: loud, rate, pan, maxInstances: 6 });
+        mixer.play(sound, { volume: loud, rate, pan, maxInstances: 6 });
       } catch {
         // Sound never stops a game.
       }
@@ -1012,13 +1019,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           cause: new Error(`"${String(name)}" is not one of: ${[...names].join(', ')}`)
         });
       const made = new PlayingLoop(
-        () => sounds.get(name),
-        audio.mixer,
+        sounds.get(name),
+        mixer,
         finite(given.volume) ? given.volume : 1,
         finite(given.pitch) ? given.pitch : 1,
         finite(given.pan) ? given.pan : 0,
         finite(given.fadeIn) ? given.fadeIn : 0
       );
+      if (mixer === undefined) return made;
       loops.add(made);
       made.heard(muted ? 0 : volume);
       return made;
@@ -1076,6 +1084,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const chosen: MusicOptions = typeof given === 'string' ? { mood: given } : (given ?? {});
       if (chosen === null || typeof chosen !== 'object')
         throw invalid('music.play takes a mood or { mood, seed, tempo, bars }');
+      if (mixer === undefined) {
+        if (!MUSIC_MOODS.includes(chosen.mood ?? 'calm'))
+          throw invalid('the mood of music is one of: ' + MUSIC_MOODS.join(', '));
+        return;
+      }
       let piece: ReturnType<typeof composeMusic>;
       try {
         piece = composeMusic(chosen, RATE);
@@ -1084,7 +1097,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       }
       const ticket = ++musicTicket;
       const made = await Promise.all(
-        MUSIC_PARTS.map(part => audio.mixer.decode(encodeWav([piece.parts[part]], piece.rate)).catch(() => undefined))
+        MUSIC_PARTS.map(part => mixer.decode(encodeWav([piece.parts[part]], piece.rate)).catch(() => undefined))
       );
       // A newer piece, a stop or the end of the game came while this one was being made.
       if (ticket !== musicTicket || disposed) return;
@@ -1092,7 +1105,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const mix = musicMix(musicIntensity);
       musicParts = MUSIC_PARTS.map((part, index) => {
         const level = musicVolume * mix[part],
-          loop = new PlayingLoop(() => made[index], audio.mixer, level, 1, 0, 1.2);
+          loop = new PlayingLoop(made[index], mixer, level, 1, 0, 1.2);
         loops.add(loop);
         loop.heard(muted ? 0 : volume);
         if (paused) loop.hold(true);
@@ -1996,7 +2009,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   });
 
   try {
-    await Promise.all(Object.entries(SFX_PRESETS).map(([name, recipe]) => make(name, recipe)));
+    if (mixer !== undefined) await Promise.all(Object.entries(SFX_PRESETS).map(([name, recipe]) => make(name, recipe)));
     await runSetup(false);
     if (disposed) throw new EgretError('SCOPE_CLOSED');
     if (browser.loop.state === 'idle') browser.loop.start();
