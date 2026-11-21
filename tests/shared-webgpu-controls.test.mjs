@@ -249,6 +249,139 @@ test('GPU G04 two regions share one exact canonical page and READY replay upload
   });
 });
 
+// Frames queued before either fence settles can sample the same fully submitted immutable page.
+test('GPU pending atlas page shares one upload across both frame retirement orders', async () => {
+  for (const producerFirst of [true, false]) {
+    await using(async (f, a) => {
+      const page = source();
+      const sprite = a.bitmap(await a.resource(page));
+      const h = f.sharedHost();
+      await f.ready(h);
+      const first = capture(f, () => h.renderSharedFrame(a.capture()));
+      admitted(first);
+      sprite.x = 1;
+      const second = capture(f, () => h.renderSharedFrame(a.capture()));
+      admitted(second);
+
+      const [texture] = pageTextures(first.textures);
+      assert.ok(texture);
+      assert.equal(h.getStatus().pendingFrames, 2);
+      assert.equal(uploads(first.events).length, 1);
+      assert.deepEqual([...uploads(first.events)[0][2]], [187, 0, 0, 128, 0, 255, 0, 255]);
+      assert.equal(uploads(second.events).length, 0, 'the queued sibling uploaded the same atlas again');
+      assert.equal(pageTextures(second.textures).length, 0);
+      for (const record of [first, second]) {
+        const draws = uiPass(record).draws;
+        assert.equal(draws.length, 1);
+        assert.equal(draws[0].binding.descriptor.entries.find(slot => slot.binding === 1).resource.texture, texture);
+      }
+      const pending = status(h).resources;
+      assert.equal(pending.current.images.readyEntries, 0, 'an unsettled page was reported as READY');
+      assert.equal(pending.current.images.allocatedLogicalBytes, 8);
+      assert.equal(pending.totals.pageWriteCalls, 1);
+      assert.equal(pending.totals.pageWriteBytes, 8);
+      const [early, late] = producerFirst ? [first, second] : [second, first];
+      if (!producerFirst) first.scopes.forEach(scope => scope.resolve(null));
+      await early.finish();
+      assert.equal(h.getStatus().pendingFrames, 1);
+      assert.equal(texture.destroyed, 0, 'the remaining frame still samples the page');
+      await late.finish();
+      await h.whenIdle();
+      const settled = status(h).resources.current.images;
+      assert.equal(settled.readyEntries, 1);
+      assert.equal(settled.pinnedReadyEntries, 0);
+      const warm = await submit(f, h, a.capture());
+      assert.equal(uploads(warm.events).length, 0);
+      await f.close(h);
+      assert.equal(texture.destroyed, 1);
+    });
+  }
+});
+
+test('GPU pending atlas page above the READY budget lives until its last frame retires', async () => {
+  await using(async (f, a) => {
+    a.bitmap(await a.resource(source()));
+    const frame = a.capture();
+    const h = f.sharedHost({ maxReadyPageBytes: 4 });
+    await f.ready(h);
+    const producer = capture(f, () => h.renderSharedFrame(frame));
+    admitted(producer);
+    const consumer = capture(f, () => h.renderSharedFrame(frame));
+    admitted(consumer);
+    const [texture] = pageTextures(producer.textures);
+    assert.equal(uploads(consumer.events).length, 0);
+    await producer.finish();
+    assert.equal(status(h).resources.current.images.readyBytes, 0);
+    assert.equal(texture.destroyed, 0);
+    await consumer.finish();
+    assert.equal(texture.destroyed, 1);
+    assert.equal(status(h).resources.current.images.allocatedLogicalBytes, 0);
+    const retry = await submit(f, h, frame);
+    assert.equal(uploads(retry.events).length, 1);
+  });
+});
+
+test('GPU pending atlas page remains owned through close, failures and fresh-host retry', async () => {
+  await withAuthor(async a => {
+    a.bitmap(await a.resource(source()));
+    const frame = a.capture();
+    for (const fault of ['submit', 'loss', 'validation', 'close']) {
+      let oldTexture;
+      await withPorts(async f => {
+        const h = f.sharedHost();
+        await f.ready(h);
+        const first = capture(f, () => h.renderSharedFrame(frame));
+        admitted(first);
+        [oldTexture] = pageTextures(first.textures);
+        const cause = new Error(fault);
+        if (fault === 'submit') f.hooks.submit = () => { throw cause; };
+        const next = capture(f, () => h.renderSharedFrame(frame));
+        delete f.hooks.submit;
+        let closing;
+        if (fault === 'submit') {
+          assert.equal(next.error?.cause, cause);
+        } else {
+          admitted(next);
+          if (fault === 'loss') {
+            f.lost.resolve(cause);
+            await tick();
+          } else if (fault === 'validation') {
+            first.fences.forEach(fence => fence.resolve());
+            first.scopes.slice(1).forEach(scope => scope.resolve(null));
+            await next.finish();
+            assert.equal(h.getStatus().pendingFrames, 2, 'the consumer waits for the producer validation scope');
+            assert.equal(oldTexture.destroyed, 0);
+            first.scopes[0].resolve(cause);
+            await first.finish();
+            assert.equal(status(h).resources.current.images.readyEntries, 0);
+          } else {
+            closing = h.close();
+            await first.finish();
+            assert.equal(oldTexture.destroyed, 0, 'the other frame has not completed');
+            assert.equal(status(h).resources.current.images.readyEntries, 0);
+            await next.finish();
+          }
+        }
+        if (fault !== 'close') assert.equal(h.getStatus().firstFailure.cause, cause);
+        if (fault === 'loss') await f.close(h, true, cause);
+        else await f.close(h);
+        if (closing) await closing;
+        assert.equal(oldTexture.destroyed, 1);
+      });
+      await withPorts(async replacement => {
+        const h = replacement.sharedHost();
+        await replacement.ready(h);
+        const retry = await submit(replacement, h, frame);
+        const written = uploads(retry.events);
+        assert.equal(written.length, 1);
+        assert.notEqual(written[0][1].texture, oldTexture);
+        assert.deepEqual([...written[0][2]], [187, 0, 0, 128, 0, 255, 0, 255]);
+        assert.equal(status(h).resources.current.images.readyEntries, 1);
+      });
+    }
+  });
+});
+
 // Break caught: canonical bytes are used as resource ownership identity.
 test('GPU G05 equal pixel bytes from different genuine sources remain separate page owners', async () => {
   await using(async (f, a) => {
