@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-22",
+  "en": {
+    "title": "Verify Android replay during an eight-car Rally start",
+    "body": "The Android player guide records the measured bridge traffic, recording size and native replay cadence during a 210-frame driving sequence on a Galaxy Z Fold7, including steering, draw order and EGL recovery."
+  },
+  "zh": {
+    "title": "验证 Android 上八车起步时的驾驶录像",
+    "body": "Android 播放器指南记录了 Galaxy Z Fold7 上 210 帧驾驶中的桥接字节、录像大小和原生回放帧时，覆盖车辆转向、绘制顺序和 EGL 恢复。"
+  }
+}

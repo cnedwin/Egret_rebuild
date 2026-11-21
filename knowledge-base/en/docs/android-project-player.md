@@ -324,6 +324,19 @@ For every tick, native replay matched the capture's 873 × 325 RGBA output, the 
 
 Three cold replays with pixel readback and order hashing disabled recorded game-layer presentation p95s of **16.581, 16.582 and 16.579 ms**. The corresponding submission-callback interval p95s were **19.456, 20.107 and 20.176 ms**. These measurements cover the starting-grid sequence on one phone. [Fold7 recording, frame order, recovery and timings](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-rally-resident-tape.json)
 
+### Recording a Rally standing start
+
+Trimmed V8 recorded 210 ticks on a Galaxy Z Fold7 with the original eight-car race simulation, chase camera and both textured panda models. Recording began with all cars stationary. The seven AI drivers moved at the green light on frame 14. On frame 16 an automated right-steering contact enabled the game's automatic throttle. Left and right turns followed. The player's start-to-end ground displacement was 15.14 m. The frame numbers start at zero, and the simulation advances at 120 ticks per second.
+
+| Measure | Fold7 result |
+|---|---|
+| V8 frame commands received by the Android player | 29,984,264 bytes, including 17,923,648 bytes of draw matrices. The file also stores 4,911,392 bytes of RGBA texture pages. |
+| Geometry reuse | The full first and last commands contained 918,648 and 910,756 bytes of geometry definitions. Of the 208 incremental frames, 202 sent no definitions. Six sent 64,836 bytes for four newly visible geometries and three that returned to view. No incremental frame resent continuously resident geometry. |
+| Recording size | 34,899,699 bytes (33.28 MiB) including 37 texture-page versions, within the 64 MiB limit. |
+| Native replay p95, three cold launches | Game-layer presentation intervals were 16.580, 16.581 and 16.582 ms. Submission-callback intervals were 20.400, 20.624 and 19.656 ms. The signed debuggable APK requested 60 Hz. Pixel readback and draw-order hashing were disabled during timing. |
+
+Each of the eight chassis parts could be matched to its submitted world matrix in all 210 frames. The seven opponents shared one chassis geometry. As the cars steered and moved, the geometry and material of each sampled part stayed the same. Native replay matched all 210 distinct RGBA frames, the HUD and the order of 280,057 indexed World3D draws. On EGL recreation during replay, frame 101 was rebuilt in full and playback continued to frame 209. The held terminal image was also restored. All six runs closed with balanced mesh and texture-page counts and zero resident geometry payload. These measurements cover this driving start on one phone. [Fold7 capture, bridge and playback measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-rally-driving-replay.json)
+
 ### Roll3D on the Android player
 
 Roll the ball to collect all four stars, including the one on the raised platform. The flat score updates after each pickup. Touch **Play again** on the result screen to start a fresh round. The Android export reads the existing level file and binds it to the native host. The two versions use the same movement, collisions, follow camera, spinning stars, particle bursts and restart logic. [Original browser game](https://github.com/cnedwin/Egret_rebuild/blob/dfc3a00010e9e9e9d4fa26c4a3f5a42a82d92b82/examples/play/roll3d.mjs)
