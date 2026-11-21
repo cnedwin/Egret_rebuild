@@ -63,7 +63,7 @@ function createPlayerStorage(native, lifetime) {
   });
 }
 
-export function createPlayerProject(definition, native, composeWorld) {
+export function createPlayerProject(definition, native, composeWorld, extendServices) {
   const encoder = createCapturedProjectEncoder();
   const pageIds = new Map();
   const resident = new Map();
@@ -126,7 +126,7 @@ export function createPlayerProject(definition, native, composeWorld) {
         pageIds.clear();
         resident.clear();
         // The optional World3D capture owns a pooled draw list of the last scene.
-        composeWorld = undefined;
+        composeWorld = extendServices = undefined;
         engine = scope = game = undefined;
       }
       if (failures.length) throw new AggregateError(failures, 'Project disposal failed');
@@ -150,13 +150,14 @@ export function createPlayerProject(definition, native, composeWorld) {
           } });
           if (stopped) return;
           scope = engine.createScope();
-          game = await definition.create({
+          const services = {
             engine, scope, assets, publishPage, signal: lifetime.signal, raster: createPlayerRaster(native, lifetime.signal),
             storage: createPlayerStorage(native, lifetime.signal),
             edit: text => native.edit(text),
             state: value => native.state(JSON.stringify(value)),
             playSound: path => native.playSound(path)
-          });
+          };
+          game = await definition.create(extendServices ? extendServices(services, id => resident.has(id)) : services);
           if (paused && !stopped) game.pause?.();
         } catch (error) {
           stopped = true;
@@ -180,7 +181,7 @@ export function createPlayerProject(definition, native, composeWorld) {
         game.update?.(elapsedMs);
       }
       const frame = encoder.encode(engine.captureSharedFrame(frameOptions), frameId, pageIds);
-      const output = composeWorld ? composeWorld(game, frame) : frame;
+      const output = composeWorld ? composeWorld(game, frame, pageIds) : frame;
       frameId = (frameId + 1) >>> 0;
       return output;
     },

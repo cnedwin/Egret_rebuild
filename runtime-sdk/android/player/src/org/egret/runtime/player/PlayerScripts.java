@@ -70,7 +70,9 @@ final class PlayerScripts extends ScriptSession {
             + "let bytes;if(v instanceof ArrayBuffer)bytes=new Int8Array(v);"
             + "else if(ArrayBuffer.isView(v))bytes=new Int8Array(v.buffer,v.byteOffset,v.byteLength);"
             + "else throw Error('frame() must return a binary command buffer');"
-            + "if(bytes.byteLength<24||bytes.byteLength>" + PlayerGraphics.MAX_FRAME_BYTES + ")throw Error('Invalid command length');"
+            + "if(bytes.byteLength<24||bytes.byteLength>" + WorldProjectPacket.TEXTURED_LIMIT
+            + "||(bytes.byteLength>" + PlayerGraphics.MAX_FRAME_BYTES + "&&new DataView(bytes.buffer,bytes.byteOffset,4).getUint32(0,true)!=="
+            + WorldProjectPacket.TEXTURED_MAGIC + "))throw Error('Invalid command length');"
             // Android WebView marshals typed arrays element by element. A native-order word
             // view carries the same bits with one quarter as many array elements.
             + "if((bytes.byteOffset%4)===0&&(bytes.byteLength%4)===0){"
@@ -83,7 +85,7 @@ final class PlayerScripts extends ScriptSession {
     // ordinary command handler validates the stage and captures its texture pages.
     static byte[] unpackCommandWords(int[] words) {
         if (words == null || words.length < 24 / Integer.BYTES
-                || words.length > PlayerGraphics.MAX_FRAME_BYTES / Integer.BYTES) return null;
+                || words.length > WorldProjectPacket.byteLimit(ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN ? words[0] : Integer.reverseBytes(words[0])) / Integer.BYTES) return null;
         byte[] frame = new byte[words.length * Integer.BYTES];
         ByteBuffer.wrap(frame).order(ByteOrder.nativeOrder()).asIntBuffer().put(words);
         return frame;

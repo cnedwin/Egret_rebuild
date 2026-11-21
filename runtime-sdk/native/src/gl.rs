@@ -25,6 +25,9 @@ pub const TEXTURE_WRAP_T: u32 = 0x2803;
 pub const NEAREST: i32 = 0x2600;
 pub const CLAMP_TO_EDGE: i32 = 0x812f;
 pub const RGBA: u32 = 0x1908;
+pub const LINEAR_FILTER: i32 = 0x2601;
+pub const LINEAR_MIPMAP_LINEAR: i32 = 0x2703;
+pub const REPEAT: i32 = 0x2901;
 pub const RGBA8: i32 = 0x8058;
 pub const COLOR_BUFFER_BIT: u32 = 0x4000;
 pub const TRIANGLES: u32 = 0x0004;
@@ -92,6 +95,7 @@ extern "C" {
     pub fn glTexParameteri(target: u32, pname: u32, param: i32);
     pub fn glTexImage2D(target: u32, level: i32, format: i32, width: i32, height: i32,
                         border: i32, source_format: u32, ty: u32, data: *const c_void);
+    pub fn glGenerateMipmap(target: u32);
     pub fn glDeleteTextures(count: i32, textures: *const u32);
     pub fn glGenFramebuffers(count: i32, names: *mut u32);
     pub fn glDeleteFramebuffers(count: i32, names: *const u32);

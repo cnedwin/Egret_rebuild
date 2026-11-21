@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-21",
+  "en": {
+    "title": "Race a textured GLB kart on Android",
+    "body": "The trimmed-V8 project player can read packaged GLBs with embedded base-color JPEGs, share their texture pages with the existing resource lifecycle and render indexed UV meshes with GLES3. A local export of Jinxiu Rally uses the original panda kart, driver and one-lap race."
+  },
+  "zh": {
+    "title": "在 Android 原生播放器驾驶带贴图的 GLB 赛车",
+    "body": "裁剪 V8 的播放器可从 APK 读取内嵌基础颜色 JPEG 的 GLB，沿用原有纹理页的加载和回收机制，以 GLES3 绘制带 UV 的索引网格。《锦绣飞车》本地导出使用原作熊猫车身、车手与单圈赛规则。"
+  }
+}

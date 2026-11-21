@@ -3,18 +3,24 @@
 //! overlay. A dropped frame or an EGL context loss cannot orphan a mesh definition.
 
 pub(crate) const MAGIC: u32 = u32::from_le_bytes(*b"E3D1");
+pub(crate) const TEXTURED_MAGIC: u32 = u32::from_le_bytes(*b"E3D2");
+pub(crate) const TEXTURED_LIMIT: usize = 2 * 1024 * 1024;
 const FRAME_HEADER: usize = 160;
 const DRAW_BYTES: usize = 88;
+const TEXTURED_DRAW_BYTES: usize = 96;
 const MAX_GEOMETRIES: usize = 64;
 
 pub(crate) struct Geometry<'a> {
     pub id: u32,
+    pub stride: usize,
     pub vertices: &'a [u8],
     pub indices: &'a [u8],
 }
 
 pub(crate) struct Draw {
     pub geometry: u32,
+    pub page: usize,
+    pub double_sided: bool,
     pub world: [f32; 16],
     pub albedo: [f32; 3],
     pub roughness: f32,
@@ -44,6 +50,17 @@ fn floats<const N: usize>(bytes: &[u8], offset: usize) -> Option<[f32; N]> {
     values.iter().all(|f| f.is_finite()).then_some(values)
 }
 
+// Uploaded pages already passed the common dimensions and 64 MiB source cap.
+pub(crate) fn mip_bytes([mut w, mut h]: [u32; 2]) -> usize {
+    let mut bytes = 0;
+    loop {
+        bytes += w as usize * h as usize * 4;
+        if w == 1 && h == 1 { return bytes; }
+        w = (w / 2).max(1);
+        h = (h / 2).max(1);
+    }
+}
+
 fn radiance(bytes: &[u8], offset: usize) -> Option<[f32; 3]> {
     let rgb = floats(bytes, offset)?;
     rgb.iter().all(|&v| v >= 0.).then_some(rgb)
@@ -51,9 +68,14 @@ fn radiance(bytes: &[u8], offset: usize) -> Option<[f32; 3]> {
 
 impl<'a> WorldFrame<'a> {
     pub fn parse(bytes: &'a [u8]) -> Option<Self> {
-        if bytes.len() < FRAME_HEADER || bytes.len() > crate::frame::MAX_FRAME_BYTES || word(bytes, 0) != MAGIC {
+        if bytes.len() < FRAME_HEADER || bytes.len() > TEXTURED_LIMIT {
             return None;
         }
+        let (stride, draw_bytes) = match word(bytes, 0) {
+            MAGIC if bytes.len() <= crate::frame::MAX_FRAME_BYTES => (24, DRAW_BYTES),
+            TEXTURED_MAGIC => (32, TEXTURED_DRAW_BYTES),
+            _ => return None,
+        };
         let geometry_count = word(bytes, 12) as usize;
         let draw_count = word(bytes, 16) as usize;
         let clear = word(bytes, 20).to_be_bytes();
@@ -62,12 +84,12 @@ impl<'a> WorldFrame<'a> {
         }
         let hud_offset = bytes.len().checked_sub(word(bytes, 8) as usize)?;
         let overlay = &bytes[hud_offset..];
-        if overlay.len() < crate::frame::HEADER_BYTES
+        if !(crate::frame::HEADER_BYTES..=crate::frame::MAX_FRAME_BYTES).contains(&overlay.len())
             || !matches!(word(overlay, 0), 0x32524745 | 0x33524745 | 0x34524745 | 0x35524745)
             || word(overlay, 4) != word(bytes, 4) || word(overlay, 16) & 255 != 0 {
             return None;
         }
-        let draw_offset = hud_offset.checked_sub(draw_count * DRAW_BYTES)?;
+        let draw_offset = hud_offset.checked_sub(draw_count * draw_bytes)?;
         let mut rest = bytes.get(FRAME_HEADER..draw_offset)?;
         let mut geometry = Vec::with_capacity(geometry_count);
         for _ in 0..geometry_count {
@@ -79,18 +101,18 @@ impl<'a> WorldFrame<'a> {
                 vertices < 3 || indices < 3 || indices % 3 != 0 {
                 return None;
             }
-            let (data, tail) = rest[12..].split_at_checked(vertices.checked_mul(24)?)?;
+            let (data, tail) = rest[12..].split_at_checked(vertices.checked_mul(stride)?)?;
             let (elements, tail) = tail.split_at_checked(indices.checked_mul(4)?)?;
             if data.chunks_exact(4).any(|v| !f32::from_bits(word(v, 0)).is_finite())
                 || elements.chunks_exact(4).any(|i| word(i, 0) as usize >= vertices) {
                 return None;
             }
-            geometry.push(Geometry { id, vertices: data, indices: elements });
+            geometry.push(Geometry { id, stride, vertices: data, indices: elements });
             rest = tail;
         }
         if !rest.is_empty() { return None; }
         let mut draws = Vec::with_capacity(draw_count);
-        for d in bytes[draw_offset..hud_offset].chunks_exact(DRAW_BYTES) {
+        for d in bytes[draw_offset..hud_offset].chunks_exact(draw_bytes) {
             let geometry_id = word(d, 0);
             let albedo = radiance(d, 68)?;
             let [roughness, metallic] = floats(d, 80)?;
@@ -98,7 +120,9 @@ impl<'a> WorldFrame<'a> {
                 !albedo.iter().chain([&roughness, &metallic]).all(|v| (0. ..=1.).contains(v)) {
                 return None;
             }
-            draws.push(Draw { geometry: geometry_id, world: floats(d, 4)?, albedo, roughness, metallic });
+            let (page, flags) = if draw_bytes == TEXTURED_DRAW_BYTES { (word(d, 88) as usize, word(d, 92)) } else { (0, 0) };
+            if page >= crate::frame::PAGE_SLOTS || flags > 1 { return None; }
+            draws.push(Draw { geometry: geometry_id, page, double_sided: flags == 1, world: floats(d, 4)?, albedo, roughness, metallic });
         }
         Some(Self {
             clear, view_projection: floats(bytes, 24)?, eye: floats(bytes, 88)?, to_sun: floats(bytes, 100)?,
@@ -134,6 +158,44 @@ mod tests {
         for i in [0x32524745u32, 38, 960, 540, 0, 0] { bytes.extend(i.to_le_bytes()); }
         bytes
     }
+    #[test]
+    fn textured_packet_preserves_uv_page_and_face_mode_and_rejects_corrupt_records() {
+        let source = fixture();
+        let mut packet = source[..FRAME_HEADER + 12].to_vec();
+        set(&mut packet, 0, TEXTURED_MAGIC);
+        let source_index = FRAME_HEADER + 12 + 3 * 24;
+        for vertex in source[FRAME_HEADER + 12..source_index].chunks_exact(24) {
+            packet.extend(vertex);
+            packet.extend(0.25f32.to_le_bytes());
+            packet.extend(1.25f32.to_le_bytes());
+        }
+        packet.extend(&source[source_index..source_index + 12]);
+        let start = packet.len();
+        for draw in source[source_index + 12..source.len() - 24].chunks_exact(DRAW_BYTES) {
+            packet.extend(draw);
+            packet.extend(255u32.to_le_bytes());
+            packet.extend(1u32.to_le_bytes());
+        }
+        packet.extend(&source[source.len() - 24..]);
+        let world = WorldFrame::parse(&packet).unwrap();
+        assert_eq!(world.geometry[0].stride, 32);
+        assert_eq!(world.geometry[0].vertices.len(), 96);
+        assert_eq!(world.draws[0].page, 255);
+        assert!(world.draws[1].double_sided);
+        for (offset, bad) in [(FRAME_HEADER + 12 + 24, f32::NAN.to_bits()), (start + 88, 256), (start + 92, 2)] {
+            let mut invalid = packet.clone();
+            set(&mut invalid, offset, bad);
+            assert!(WorldFrame::parse(&invalid).is_none());
+        }
+    }
+
+    #[test]
+    fn budgets_every_mip_level_including_non_square_tails() {
+        assert_eq!(mip_bytes([1, 1]), 4);
+        assert_eq!(mip_bytes([5, 2]), (10 + 2 + 1) * 4);
+        assert_eq!(mip_bytes([1, 7]), (7 + 3 + 1) * 4);
+    }
+
     fn set(bytes: &mut [u8], offset: usize, value: u32) { bytes[offset..offset+4].copy_from_slice(&value.to_le_bytes()); }
     #[test]
     fn self_contained_packet_shares_geometry_and_preserves_overlay() {

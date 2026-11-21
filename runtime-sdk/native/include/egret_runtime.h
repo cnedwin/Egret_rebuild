@@ -26,6 +26,10 @@ void egret_renderer_abandon(EgretRenderer *renderer);
 int32_t egret_renderer_upload(EgretRenderer *renderer, uint32_t page,
                               uint32_t width, uint32_t height,
                               const uint8_t *rgba, size_t length);
+/* Prepare the repeat/trilinear glTF base-color view for this exact published page
+ * generation. Supply the same source bytes as upload. Release/replacement retires both views. */
+int32_t egret_renderer_prepare_world_page(EgretRenderer *renderer, uint32_t page,
+                                          const uint8_t *rgba, size_t length);
 int32_t egret_renderer_release(EgretRenderer *renderer, uint32_t page);
 int32_t egret_renderer_draw(EgretRenderer *renderer, const uint8_t *frame,
                             size_t length, uint32_t physical_width,

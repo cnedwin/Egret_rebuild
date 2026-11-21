@@ -33,13 +33,13 @@ abstract class ScriptSession {
 
     final void commands(int epoch, byte[] bytes, long generationNs, long transferNs) {
         if (owner.ending || epoch != owner.epoch) return;
-        if (bytes == null || bytes.length < 24 || bytes.length > PlayerGraphics.MAX_FRAME_BYTES) {
+        if (bytes == null || bytes.length < 24 || bytes.length > WorldProjectPacket.TEXTURED_LIMIT) {
             owner.reportFailure("Invalid command length on Android bridge");
             return;
         }
         ByteBuffer header = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
         int stage = WorldProjectPacket.stageOffset(header);
-        if (stage < 0 || header.getInt(stage + 8) != project.width || header.getInt(stage + 12) != project.height) {
+        if (bytes.length > WorldProjectPacket.byteLimit(header.getInt(0)) || stage < 0 || header.getInt(stage + 8) != project.width || header.getInt(stage + 12) != project.height) {
             owner.reportFailure("Frame dimensions differ from the project stage");
             return;
         }

@@ -4,15 +4,21 @@ in highp vec3 worldPosition;
 in highp vec3 worldNormal;
 uniform vec3 eye, toSun, sun, sky, ground, ambient;
 uniform vec3 albedo;
+in highp vec2 uv;
+uniform highp sampler2D baseMap;
+uniform bool hasMap;
 uniform vec2 surface; // roughness, metallic
 out vec4 pixel;
 
 void main() {
-    vec3 n = normalize(worldNormal);
+    // A glTF base-color texture supplies linear albedo after the GPU sRGB lookup.
+    vec3 base = albedo;
+    if (hasMap) base *= texture(baseMap, uv).rgb;
+    vec3 n = normalize(worldNormal) * (gl_FrontFacing ? 1.0 : -1.0);
     vec3 v = normalize(eye - worldPosition);
     float roughness = clamp(surface.x, 0.045, 1.0);
     float metallic = surface.y;
-    vec3 diffuse = albedo * (1.0 - metallic);
+    vec3 diffuse = base * (1.0 - metallic);
     vec3 result = diffuse * (ambient + mix(ground, sky, n.y * 0.5 + 0.5));
     float nl = max(dot(n, toSun), 0.0);
     if (nl > 0.0) {
@@ -28,7 +34,7 @@ void main() {
         float distribution = a2 / (pi * term * term);
         float visibility = 0.5 / max(nl * sqrt(nv * nv * (1.0-a2) + a2)
                                    + nv * sqrt(nl * nl * (1.0-a2) + a2), 0.0001);
-        vec3 f0 = mix(vec3(0.04), albedo, metallic);
+        vec3 f0 = mix(vec3(0.04), base, metallic);
         vec3 fresnel = f0 + (1.0 - f0) * pow(1.0 - vh, 5.0);
         result += (diffuse * (1.0 - fresnel) + distribution * visibility * fresnel * pi) * sun * nl;
     }

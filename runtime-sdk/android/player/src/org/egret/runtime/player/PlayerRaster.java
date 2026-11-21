@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Base64;
 import java.io.IOException;
+import java.io.DataInputStream;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +30,7 @@ final class PlayerRaster {
             JSONObject job = new JSONObject(encoded);
             String operation = job.getString("op");
             if (operation.equals("measure")) return measure(runs(job));
+            if (operation.equals("glbJpeg")) return embeddedJpeg(job);
             int width = dimension(job, "width"), height = dimension(job, "height");
             if ((long) width * height > MAX_PIXELS) throw new IOException("Raster exceeds pixel budget");
             if (operation.equals("png")) return png(job.getString("path"), width, height);
@@ -45,6 +47,32 @@ final class PlayerRaster {
         return (int)n;
     }
 
+    // The World3D reader has already validated this bufferView. Reopen just the
+    // declared APK member so compressed artwork never crosses the VM as Base64.
+    private String embeddedJpeg(JSONObject job) throws IOException, JSONException {
+        String path = job.getString("path");
+        double start = job.getDouble("offset"), size = job.getDouble("length");
+        if (start < 0 || size < 1 || start + size > (8 << 20) || start != Math.floor(start) || size != Math.floor(size))
+            throw new IOException("Invalid GLB image range");
+        byte[] bytes = new byte[(int)size];
+        try (DataInputStream input = new DataInputStream(assets.openDeclared(path))) {
+            for (int remaining = (int)start; remaining > 0;) {
+                int skipped = input.skipBytes(remaining);
+                if (skipped == 0) { input.readByte(); skipped = 1; }
+                remaining -= skipped;
+            }
+            input.readFully(bytes);
+        }
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+        int width = options.outWidth, height = options.outHeight;
+        if (!"image/jpeg".equals(options.outMimeType) || width < 1 || height < 1 ||
+                width > 4096 || height > 4096 || (long)width * height > MAX_PIXELS)
+            throw new IOException("Unsupported embedded JPEG size or format");
+        return decode(bytes, options, path);
+    }
+
     private String png(String path, int width, int height) throws IOException {
         byte[] bytes = assets.read(path, 8 << 20);
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -52,6 +80,10 @@ final class PlayerRaster {
         BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
         if (!"image/png".equals(options.outMimeType) || options.outWidth != width || options.outHeight != height)
             throw new IOException("PNG dimensions or format differ from the request: " + path);
+        return decode(bytes, options, path);
+    }
+
+    private static String decode(byte[] bytes, BitmapFactory.Options options, String path) throws IOException {
         options.inJustDecodeBounds = false;
         options.inScaled = false;
         // Unassociated channels survive decode of translucent PNG texels.
@@ -59,7 +91,7 @@ final class PlayerRaster {
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         options.inPreferredColorSpace = ColorSpace.get(ColorSpace.Named.SRGB);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-        if (bitmap == null) throw new IOException("PNG decode failed: " + path);
+        if (bitmap == null) throw new IOException("Image decode failed: " + path);
         try { return pixels(bitmap); }
         finally { bitmap.recycle(); }
     }
@@ -139,6 +171,6 @@ final class PlayerRaster {
                 rgba[offset++] = (byte)(c >>> 24);
             }
         }
-        return "{\"pixels\":\"" + Base64.encodeToString(rgba, Base64.NO_WRAP) + "\"}";
+        return "{\"width\":" + w + ",\"height\":" + h + ",\"pixels\":\"" + Base64.encodeToString(rgba, Base64.NO_WRAP) + "\"}";
     }
 }

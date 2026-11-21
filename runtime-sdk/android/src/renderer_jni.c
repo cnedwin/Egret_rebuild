@@ -29,6 +29,16 @@ JNIEXPORT jint JNICALL METHOD(upload)(JNIEnv *env, jclass cls, jlong handle, jin
     return egret_renderer_upload((EgretRenderer *)(intptr_t)handle, page, width, height, data, (size_t)length);
 }
 
+#ifdef EGRET_ANDROID_PLAYER
+JNIEXPORT jint JNICALL METHOD(prepareWorldPage)(JNIEnv *env, jclass cls, jlong handle, jint page, jobject bytes) {
+    if (!bytes || page <= 0) return -1;
+    void *data = (*env)->GetDirectBufferAddress(env, bytes);
+    jlong length = (*env)->GetDirectBufferCapacity(env, bytes);
+    if (!data || length < 0 || (uint64_t)length > SIZE_MAX) return -1;
+    return egret_renderer_prepare_world_page((EgretRenderer *)(intptr_t)handle, page, data, (size_t)length);
+}
+#endif
+
 JNIEXPORT jint JNICALL METHOD(release)(JNIEnv *env, jclass cls, jlong handle, jint page) {
     return egret_renderer_release((EgretRenderer *)(intptr_t)handle, page);
 }

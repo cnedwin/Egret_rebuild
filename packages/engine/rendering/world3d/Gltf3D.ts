@@ -1046,6 +1046,22 @@ async function unpack(
   return { json, buffers };
 }
 
+/** A resource listener can fail after its own retirement. Retire the rest of the asset before reporting it. */
+function retireGltfResources(reader: GltfReader): void {
+  const failures: unknown[] = [];
+  for (const resources of [reader.geometries, reader.materials, reader.textures]) {
+    for (const resource of resources) {
+      try {
+        resource.dispose();
+      } catch (cause) {
+        failures.push(cause);
+      }
+    }
+  }
+  if (failures.length === 1) throw failures[0];
+  if (failures.length > 1) throw new AggregateError(failures, 'glTF resource cleanup failed');
+}
+
 /** Parse a glTF 2.0 asset from .glb bytes, .gltf JSON bytes or an already parsed JSON object. */
 export async function loadGltf3D(data: Uint8Array | object, options: GltfLoadOptions3D = {}): Promise<GltfAsset3D> {
   const { json, buffers } = await unpack(data, options);
@@ -1054,8 +1070,11 @@ export async function loadGltf3D(data: Uint8Array | object, options: GltfLoadOpt
   try {
     built = await reader.build();
   } catch (cause) {
-    // Never leak partially created resources when loading fails midway.
-    for (const resource of [...reader.geometries, ...reader.materials, ...reader.textures]) resource.dispose();
+    try {
+      retireGltfResources(reader);
+    } catch (cleanup) {
+      throw new AggregateError([cause, cleanup], 'glTF load and cleanup failed', { cause });
+    }
     if (cause instanceof World3DError) throw cause;
     throw new World3DError('WORLD3D_GLTF_INVALID', 'malformed asset', cause);
   }
@@ -1072,7 +1091,7 @@ export async function loadGltf3D(data: Uint8Array | object, options: GltfLoadOpt
     dispose(): void {
       if (disposed) return;
       disposed = true;
-      for (const resource of [...reader.geometries, ...reader.materials, ...reader.textures]) resource.dispose();
+      retireGltfResources(reader);
     }
   });
 }

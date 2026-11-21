@@ -1,0 +1,20 @@
+{
+  "repository": "https://github.com/cnedwin/PortedGamesEgret",
+  "commit": "ce6144533b890be992bea9eb09cb344457f8364c",
+  "files": {
+    "src/sim.mjs": "ca4da957dcfc779fe8a19163ec85a3c65b0cb5ad84e2e88d2ddd25e0e152eb24",
+    "src/track.mjs": "4eda921c5b7d3cffe158000d1f72fcb922cb4a8ed5f9f84dda7749c13627a6bf",
+    "src/data.mjs": "842a9180e9d899777574a64f5326aee507119dd09e37f99b098a25ba6bbcc8aa",
+    "src/shapes.mjs": "957ff4e71dd0dd3a20e8805d1455b469db6fd2469dcb17c6b76b21684fdf8fbd",
+    "src/racers.mjs": "0ccf04dd81a0d0d32ef4fff2844038142f6e49cf31047b9c82b89dd4b99f9f49",
+    "src/start-gate.mjs": "e80fa4f09d33ef38f43f357ee5a7d0cfda9a98d9c56d6ff4a00409ba4e67ba88",
+    "src/view.mjs": "efd8c7270e805ef80ceb2d657687606e374eb4280d498e7f7b1642cf0dff3104",
+    "src/track-models.mjs": "9d5289087b6de2d980e3129cd4e5682fb749af75a24b0111546068ddaf9e537f",
+    "assets/track-models/panda-kart.glb": "7a5bd9e963a692a39ffe4e5c2c2643c07f9867b67bce63ba76a3963880005f19",
+    "assets/track-models/panda-driver.glb": "58b83a3557f2714c7db1ae4db23aedda379800d458cdd600f94fad8a50d2dc70",
+    "assets/track-models/README.md": "2e5617e5cc6276e960a6b06cd90a4231c8883aa8cc96c0ea4e2e66c415845726",
+    "README.md": "0193383007cff9fa35de80f39e07ff62001815b8ccf3d096b5203438c8f1661d",
+    "vendor/LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "src/scenery.mjs": "5b574e3ee5a24dd740c204f0cfb0cdcc72b77d1bbbf0fbc3bbc78f9132283235"
+  }
+}

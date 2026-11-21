@@ -264,6 +264,37 @@ The packet consumed by GLES3 was 948 bytes in every lane. The bridge figures cou
 
 All four paths produced identical 1080 × 1920 surfaces at the final pose, both before and after EGL context recreation. Against an independent CPU rasterization, all 2,030,094 pixels away from color boundaries matched. Of the remaining pixels, 22 matched the color of a neighboring texel within the same mesh and 21 matched a neighboring layer at a silhouette. Every differing color appeared in the expected 3 × 3 neighborhood. Each execution uploaded both atlas pages once per context and recorded four page releases by close. The three game sessions released both logical textures, and replay released its tape. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-indexed-mesh.json)
 
+### Race a textured GLB kart on Android
+
+The local Android export of *Jinxiu Rally* uses the original one-lap race, eight-driver simulation and course. Tuan's chassis and seated driver come from the game's original GLBs. Each contains an embedded 768 × 768 JPEG. The original race rules, fitted models and track data come from the specified game checkout. [Browser game](https://cnedwin.github.io/PortedGamesEgret/Rally/) · [Game source and artwork](https://github.com/cnedwin/PortedGamesEgret/tree/ce6144533b890be992bea9eb09cb344457f8364c/Rally)
+
+Build the workspace and the trimmed-V8 AAR as described above. Use a checkout of PortedGamesEgret at `ce6144533b890be992bea9eb09cb344457f8364c` and two fresh output directories. The exporter checks its inputs before copying game files into the local project. The engine repository includes the adapter. The game checkout supplies the game code, assets and their notices.
+
+```sh
+node runtime-sdk/examples/rally/prepare.mjs /path/to/PortedGamesEgret/Rally out/rally-game
+node runtime-sdk/android/player/create-app.mjs --project out/rally-game --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.rally --name Rally --out out/rally-app
+gradle -p out/rally-app assembleRelease
+```
+
+In a World3D project, call `await services.loadGlb('panda-kart.glb', { firstPage: 1 })` for a GLB listed in `project.json` assets. Add the returned `scene` to the game world. Reserve one free texture page per distinct image, starting at the specified ID. The loader reads through the existing cancellable chunk reader. Android decodes the embedded JPEG directly from the declared APK asset, and the shared texture-page registry owns its pixels. The 3D material uses UV0 and a repeating sRGB sampler with linear filtering and mipmaps. Its GPU texture can be rebuilt from the same page after an EGL context change. Call `asset.dispose()` for early retirement, or leave cleanup to the project scope. A failed read or a page conflict does not replace a previously published asset.
+
+The panda chassis and driver alone use 531,520 bytes of indexed geometry in a textured frame. E3D2 therefore allows up to 2 MiB per packet. It includes visible mesh data and references texture pages by ID. The 2D and Roll3D packet limits remain 360,472 bytes.
+
+The browser loads all twelve track GLBs. This export reads the two player GLBs without changing their mesh, UVs or embedded image bytes, and fits them with the original game's placement functions. The low-detail view keeps the drivable circuit and grades, start grid, bridge, hazards, pickups and other competitors. Road surface, distant terrain, vegetation, spectator areas, effects and HUD use a simpler presentation. Audio, water reflections and the full browser art set are outside this qualification.
+
+The first phone build accelerated before the first driving contact. It also stopped drawing during the opening section. The input adapter now waits for that contact as the browser does. The encoder reports the byte and geometry limits separately. An offline sweep reproduced the 64-geometry limit on the old winding-road layout. Grouping static road and terrain tiles more coarsely keeps both limits intact. A 3,030-view sweep of the updated route peaked at 50 distinct geometries. These figures describe a diagnostic sweep. The physical presentation measurements below come from separate runs.
+
+On the same Galaxy Z Fold7, Tuan completed the 1,817.51 m Stroll circuit from the same grid with seed 7. Both runs reached the eight-racer results screen in eighth place with ten coins. The browser recorded 1:49.18 and the signed APK recorded 1:46.25. Touch input was injected through each game's normal controls. The separately driven laps did not receive an identical sequence of steering inputs.
+
+| Moving window | Chrome WebGL2, intervals / p95 | Trimmed V8 and GLES3, intervals / p95 |
+| --- | ---: | ---: |
+| A | 380 / 16.581 ms | 369 / 16.582 ms |
+| B | 373 / 16.581 ms | 368 / 16.581 ms |
+
+Both runs used an 873 × 325 render buffer with a 60 Hz presentation cadence. The measurements are intervals between presentations of the game layer. The longest observed intervals were 16.583 ms in Chrome and 33.159 ms in the APK. The four timed windows contained no interval of 34 ms or more. The two scenes draw different amounts of scenery. GPU execution time, power and long-run thermal behavior were not measured. [Fold7 race, pixels and frame timings](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-rally-glb.json)
+
+With both karts stationary at the starting grid, the panda markings, green bamboo and yellow chassis were visible in both captures. In four predefined color regions the largest difference in coverage was 1.17 percentage points. The browser also draws a separate badge on the rear of the kart. In a separate Android Activity close and reopen on the same APK, the player recorded 23 page publications and 23 releases and returned to the ready screen.
+
 ### Roll3D on the Android player
 
 Roll the ball to collect all four stars, including the one on the raised platform. The flat score updates after each pickup. Touch **Play again** on the result screen to start a fresh round. The Android export reads the existing level file and binds it to the native host. The two versions use the same movement, collisions, follow camera, spinning stars, particle bursts and restart logic. [Original browser game](https://github.com/cnedwin/Egret_rebuild/blob/dfc3a00010e9e9e9d4fa26c4a3f5a42a82d92b82/examples/play/roll3d.mjs)

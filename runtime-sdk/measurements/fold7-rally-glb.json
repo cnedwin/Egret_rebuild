@@ -1,0 +1,499 @@
+{
+  "date": "2026-11-21",
+  "device": {
+    "model": "Galaxy Z Fold7 (SM-F966U1)",
+    "os": "Android 17",
+    "browser": "Chrome/157.0.8103.78",
+    "renderer": "ANGLE (Qualcomm, Adreno (TM) 830, OpenGL ES 3.2)",
+    "power": "USB connected, awake and unlocked during sampling"
+  },
+  "source": {
+    "repository": "https://github.com/cnedwin/PortedGamesEgret",
+    "commit": "ce6144533b890be992bea9eb09cb344457f8364c",
+    "gameDirectory": "Rally",
+    "reference": "Unmodified browser game and its vendored engine at the pinned external commit served locally. Native uses the same simulation, circuit data and the original panda chassis and driver GLBs."
+  },
+  "race": {
+    "trackLengthMetres": 1817.511351466429,
+    "oneLap": true,
+    "quality": "low",
+    "seed": 7,
+    "klass": "stroll",
+    "player": 1,
+    "grid": [
+      3,
+      0,
+      6,
+      4,
+      5,
+      2,
+      7,
+      1
+    ],
+    "gridNote": "The browser shuffles the other seven slots with Math.random. The native sample uses the empirically observed starting order from this browser run."
+  },
+  "originalAssets": {
+    "panda-kart": {
+      "bytes": 390292,
+      "sha256": "7a5bd9e963a692a39ffe4e5c2c2643c07f9867b67bce63ba76a3963880005f19"
+    },
+    "panda-driver": {
+      "bytes": 514744,
+      "sha256": "58b83a3557f2714c7db1ae4db23aedda379800d458cdd600f94fad8a50d2dc70"
+    }
+  },
+  "release": {
+    "targetApi": 36,
+    "abi": "arm64-v8a",
+    "script": "trimmed V8",
+    "version": "15.7.112.19",
+    "internationalization": false,
+    "gpu": "Rust OpenGL ES 3",
+    "apkBytes": 65086516,
+    "apkSha256": "fe9c4da08ee96e76d676cc20478de3ee203489ccd4a9f1001b6b3dd8d5dc6364",
+    "jsSha256": "b8a904a32d931bab65cacd1c1d5c137b3962724959534263416fc18b13b91797",
+    "aarSha256": "aee98e16ed060f45c48546d7b92c9f48ac0aa94f9682a16b829d40cbc3ac105f",
+    "scopedDiagnostics": "Read-only QA activity observation of normal player state, optional per-window surface dimensions and 60 Hz preference. Default launch leaves those system choices to Android."
+  },
+  "browser": {
+    "actualStageRect": [
+      0,
+      0,
+      873.1428833007812,
+      325.3333435058594
+    ],
+    "dpr": 2.625,
+    "drawBuffer": [
+      873,
+      325
+    ],
+    "selectedModels": [
+      "panda-kart",
+      "lion-kart",
+      "lion-head",
+      "panda-driver",
+      "monkey-head",
+      "paper-lantern",
+      "monkey-kart",
+      "guardian-lion",
+      "cloud-gate",
+      "drum",
+      "pagoda",
+      "start-gate"
+    ],
+    "mode": "Chrome physical device, CDP-injected touch",
+    "finish": {
+      "place": 8,
+      "coins": 10,
+      "time": 109.17800000000207,
+      "table": "\t\tTime\tBest lap\n1\t兔 Yue the Jade Rabbit\t1:05.37\t1:04.61\n2\t虎 Niu in the Tiger Hat\t1:06.39\t1:04.27\n3\t狮 Fu the Lion Dancer\t1:06.56\t1:05.95\n4\t龙 Yun the Azure Dragon\t1:06.58\t1:05.73\n5\t猴 Sheng the Monkey King\t1:06.88\t1:05.76\n6\t戏 Tie the Opera Mask\t1:10.66\t1:09.91\n7\t俑 Qin the Terracotta Warrior\t1:13.42\t1:11.57\n8\t熊 Tuan the Panda (You)\t1:49.18\t1:44.77"
+    },
+    "steeringSamples": {
+      "left": 457,
+      "right": 539,
+      "brake": 141
+    },
+    "restored": {
+      "stayOn": true,
+      "priorIdsPreserved": true,
+      "ownedAbsent": true,
+      "leaseReleased": true,
+      "ephemeralContextDisposed": true,
+      "forwardRemoved": true,
+      "reverseRemoved": true
+    },
+    "reportSha256": "0859af60be1972e4b1545f6322253280ba83ec3749c4598752b5d5a648dc00d6",
+    "presentation": [
+      {
+        "window": "race-a",
+        "seconds": 6.320000000065193,
+        "submittedRaf": {
+          "samples": 377,
+          "medianMs": 16.599999999998545,
+          "p95Ms": 16.700000000000728,
+          "p99Ms": 16.700000000000728,
+          "maxMs": 16.700000000000728,
+          "longOver34": 0
+        },
+        "actualPresented": {
+          "samples": 380,
+          "medianMs": 16.576302,
+          "p95Ms": 16.580677,
+          "p99Ms": 16.582396,
+          "maxMs": 16.583437,
+          "longOver34": 0
+        },
+        "source": "SurfaceFlinger actual display frame end joined to non-dropped frames of the most frequent app layer by display_frame_token; intervals between successive two presentation timestamps",
+        "layer": "ChromeChildSurface",
+        "intervalsSha256": "068572b61c98d522d9fc5434f7a406725dc6c9057236b26f45e61fe524d65541",
+        "perfettoSha256": "95dc05761d4491d0323bc945722c58ac56d3efc7418e7e4e600da9b059978b8f"
+      },
+      {
+        "window": "race-b",
+        "seconds": 6.209999999962747,
+        "submittedRaf": {
+          "samples": 370,
+          "medianMs": 16.599999999998545,
+          "p95Ms": 16.69999999999709,
+          "p99Ms": 16.700000000004366,
+          "maxMs": 16.700000000004366,
+          "longOver34": 0
+        },
+        "actualPresented": {
+          "samples": 373,
+          "medianMs": 16.576508,
+          "p95Ms": 16.580937,
+          "p99Ms": 16.581876,
+          "maxMs": 16.583437,
+          "longOver34": 0
+        },
+        "source": "SurfaceFlinger actual display frame end joined to non-dropped frames of the most frequent app layer by display_frame_token; intervals between successive two presentation timestamps",
+        "layer": "ChromeChildSurface",
+        "intervalsSha256": "e6d391ec71a81eac5d69b1284a3f60b0d1aae4e0cee0c216bb3262c467c755e6",
+        "perfettoSha256": "f2aa5f2f918f878fb4ed177113d43423c4607f4dcac8a35ebfd0e4e84deedeac"
+      }
+    ]
+  },
+  "android": {
+    "surface": [
+      2292,
+      853
+    ],
+    "drawBuffer": [
+      873,
+      325
+    ],
+    "mode": "Android UiAutomation primary and multitouch events on real device; input goes to the ordinary signed application",
+    "finish": {
+      "mode": "results",
+      "frames": 7071,
+      "round": 1,
+      "grid": [
+        3,
+        0,
+        6,
+        4,
+        5,
+        2,
+        7,
+        1
+      ],
+      "controls": {
+        "start": [
+          436,
+          202
+        ],
+        "pause": [
+          814,
+          33
+        ],
+        "left": [
+          50,
+          282
+        ],
+        "right": [
+          136,
+          282
+        ],
+        "brake": [
+          636,
+          282
+        ],
+        "drift": [
+          728,
+          282
+        ],
+        "item": [
+          817,
+          282
+        ]
+      },
+      "touchDriving": true,
+      "stage": [
+        873,
+        325
+      ],
+      "race": {
+        "state": "done",
+        "time": 106.24692386599935,
+        "lapLength": 1817.511351466429,
+        "seed": 7,
+        "laps": 1,
+        "finishedCount": 8
+      },
+      "car": {
+        "index": 7,
+        "racer": 1,
+        "x": 69.59808041949486,
+        "y": -0.10218908036445346,
+        "z": -202.34844607840083,
+        "s": 56.74502107890023,
+        "station": 18,
+        "heading": 1.7191494518318888,
+        "speed": 11.5695465496838,
+        "lateral": -6.2598779907257365,
+        "total": 1874.2563725453283,
+        "lap": 1,
+        "place": 8,
+        "coins": 10,
+        "finished": true,
+        "finishTime": 106.24692386599935,
+        "item": "bell",
+        "drifting": false,
+        "grass": false,
+        "vx": 11.442464832493238,
+        "vz": -1.7100894486709652
+      },
+      "models": {
+        "loaded": [
+          "panda-kart.glb",
+          "panda-driver.glb"
+        ],
+        "bodyMeshes": 1,
+        "driverMeshes": 1
+      },
+      "results": [
+        {
+          "racer": 3,
+          "place": 1,
+          "time": 64.35925533999993
+        },
+        {
+          "racer": 2,
+          "place": 2,
+          "time": 64.54977731899996
+        },
+        {
+          "racer": 6,
+          "place": 3,
+          "time": 65.71013507900005
+        },
+        {
+          "racer": 0,
+          "place": 4,
+          "time": 69.27376789000016
+        },
+        {
+          "racer": 4,
+          "place": 5,
+          "time": 69.65515882800028
+        },
+        {
+          "racer": 7,
+          "place": 6,
+          "time": 71.76001231600017
+        },
+        {
+          "racer": 5,
+          "place": 7,
+          "time": 75.63058023200026
+        },
+        {
+          "racer": 1,
+          "place": 8,
+          "time": 106.24692386599935
+        }
+      ]
+    },
+    "steeringSamples": {
+      "left": 238,
+      "right": 266,
+      "brake": 88
+    },
+    "resting": {
+      "index": 7,
+      "racer": 1,
+      "x": -32.479523055144995,
+      "y": 0,
+      "z": -192.81839227064998,
+      "s": 1772.107890998024,
+      "station": 590,
+      "heading": 1.5418312008117507,
+      "speed": 0,
+      "lateral": 3.1999984822201557,
+      "total": -45.403460468405,
+      "lap": 0,
+      "place": 8,
+      "coins": 1,
+      "finished": false,
+      "finishTime": 0,
+      "item": null,
+      "drifting": false,
+      "grass": false,
+      "vx": 0,
+      "vz": 0
+    },
+    "restored": {
+      "stayOn": true,
+      "priorIdsPreserved": true,
+      "ownedAbsent": true,
+      "leaseReleased": true,
+      "originalForeground": true,
+      "appsRemoved": true
+    },
+    "reportSha256": "099c38cedab4a8f3fbedb82329340e2a0743123d95ed845345ebcb600cba090f",
+    "presentation": [
+      {
+        "window": "race-a",
+        "seconds": 6.233280882,
+        "applicationSubmit": {
+          "samples": 180,
+          "medianMs": 17.011,
+          "p95Ms": 24.253,
+          "p99Ms": 29.326,
+          "maxMs": 34.426,
+          "longOver34": 1
+        },
+        "actualPresented": {
+          "samples": 369,
+          "medianMs": 16.577552,
+          "p95Ms": 16.58198,
+          "p99Ms": 33.154218,
+          "maxMs": 33.158593,
+          "longOver34": 0
+        },
+        "panelPeriodMs": 16.666666,
+        "source": "Android SurfaceFlinger --latency on the exact game buffer layer. Column 2 is actual presentation time. Poll existing 128-frame ring; no global reset. Discard initial history and duplicate timestamps.",
+        "layer": "application GLSurfaceView",
+        "intervalsSha256": "392c1e6bd77ac012cc145169a1f09a53076a9fb5b7adf96f6c9d08e5f5ae2935"
+      },
+      {
+        "window": "race-b",
+        "seconds": 6.116543905,
+        "applicationSubmit": {
+          "samples": 180,
+          "medianMs": 16.272,
+          "p95Ms": 22.914,
+          "p99Ms": 25.843,
+          "maxMs": 26.095,
+          "longOver34": 0
+        },
+        "actualPresented": {
+          "samples": 368,
+          "medianMs": 16.575781,
+          "p95Ms": 16.580625,
+          "p99Ms": 16.582864,
+          "maxMs": 33.152188,
+          "longOver34": 0
+        },
+        "panelPeriodMs": 16.666666,
+        "source": "Android SurfaceFlinger --latency on the exact game buffer layer. Column 2 is actual presentation time. Poll existing 128-frame ring; no global reset. Discard initial history and duplicate timestamps.",
+        "layer": "application GLSurfaceView",
+        "intervalsSha256": "5ba1976f0c03c76c9c0ba8b316b02e25944eed09db5646019d38ecff84f36534"
+      }
+    ],
+    "gameplayReceiptBoundary": "This run reached the complete results screen. A subsequent diagnostic activity switch used an unsupported shell flag; lifecycle was measured in a separate run of the same APK.",
+    "lifecycleReportSha256": "188537d5a714d21eb7121efe13f33127a0c4b954fa797b2f06486b11ca20854c",
+    "lifecycleRestored": {
+      "stayOn": true,
+      "priorIdsPreserved": true,
+      "ownedAbsent": true,
+      "leaseReleased": true,
+      "originalForeground": true,
+      "appsRemoved": true
+    },
+    "close": {
+      "appClosed": true,
+      "graphicsUploads": 23,
+      "graphicsReleases": 23,
+      "abandonedContexts": 0,
+      "projectReceipt": {
+        "pagesReleased": 23
+      },
+      "reopenedMode": "ready"
+    }
+  },
+  "screen": {
+    "browserImageSha256": "28c7227f92a0752f6e14bedd5a991328fb2114d995ee23772f8cd86956cf8da7",
+    "androidImageSha256": "47180c14a8438c2d5366af3564a087733e3588617c36ed9bf3fbb6b9901cdcd5",
+    "featureCount": [
+      {
+        "part": "dark neutral on panda",
+        "logicalRect": [
+          415,
+          187,
+          454,
+          221
+        ],
+        "browser": {
+          "samples": 1400,
+          "matching": 579,
+          "fraction": 0.4135714285714286
+        },
+        "android": {
+          "samples": 1400,
+          "matching": 593,
+          "fraction": 0.4235714285714286
+        }
+      },
+      {
+        "part": "light neutral on panda",
+        "logicalRect": [
+          415,
+          187,
+          454,
+          216
+        ],
+        "browser": {
+          "samples": 1200,
+          "matching": 240,
+          "fraction": 0.2
+        },
+        "android": {
+          "samples": 1200,
+          "matching": 226,
+          "fraction": 0.18833333333333332
+        }
+      },
+      {
+        "part": "green bamboo on rear body",
+        "logicalRect": [
+          392,
+          161,
+          473,
+          250
+        ],
+        "browser": {
+          "samples": 7380,
+          "matching": 1745,
+          "fraction": 0.236449864498645
+        },
+        "android": {
+          "samples": 7380,
+          "matching": 1728,
+          "fraction": 0.23414634146341465
+        }
+      },
+      {
+        "part": "gold rear fittings",
+        "logicalRect": [
+          396,
+          215,
+          475,
+          268
+        ],
+        "browser": {
+          "samples": 4320,
+          "matching": 717,
+          "fraction": 0.16597222222222222
+        },
+        "android": {
+          "samples": 4320,
+          "matching": 755,
+          "fraction": 0.17476851851851852
+        }
+      }
+    ],
+    "comparison": "Measured in the same 873 by 325 viewport, using a foreground chase view before the first race input. Feature rectangles and color intervals were chosen on the unmodified browser image. Counts describe visible color landmarks and do not establish whole-frame equivalence.",
+    "observed": "The player, green bamboo body details and dark and pale markings on the seated panda are visible. The chrome page includes additional track art, DOM controls and HUD; the Android sample uses its own 2D controls and circuit presentation."
+  },
+  "limits": [
+    "The two race windows are driven by real input and the same read-only steering policy. Frame intervals describe actual presentation on this phone, not CPU/GPU execution or thermal endurance. The scenes differ in art density; no engine speedup or whole-screen pixel-equivalence claim.",
+    "The browser asset loader completed 12 distinct named GLBs; the native qualification requires the two pinned panda GLBs. Audio, human fingers and other devices were outside the comparison."
+  ],
+  "initialDeviceRegression": {
+    "rejectedApkSha256": "fe56659ac0fae137c7303a6b8b8ad99d218c9bf94f31ab25992f0a19eedc97ab",
+    "recordSha256": "3fce917d9ab9185445137baa67f69294b1d690713ce4c4bf27b68dbb2d1977d8",
+    "observed": "The first build auto-accelerated before any driving contact. The first real driving run also exceeded the bounded frame profile after the first bend. Its incomplete run is excluded from the final figures."
+  }
+}

@@ -127,12 +127,13 @@ public final class JavetProjectScripts extends ScriptSession {
     }
 
     private static byte[] copyRange(V8ValueArrayBuffer buffer, int offset, int length) throws IOException {
-        ByteBuffer source = buffer.getByteBuffer().duplicate();
-        if (length < 24 || length > PlayerGraphics.MAX_FRAME_BYTES || offset < 0 || offset > source.capacity() - length)
+        ByteBuffer source = buffer.getByteBuffer().duplicate().order(java.nio.ByteOrder.LITTLE_ENDIAN);
+        source.clear();
+        if (length < 24 || length > WorldProjectPacket.TEXTURED_LIMIT || offset < 0 || offset > source.capacity() - length
+                || length > WorldProjectPacket.byteLimit(source.getInt(offset)))
             throw new IOException("Invalid frame buffer range");
         // The GL queue outlives this VM handle; only the visible slice belongs to the frame.
         byte[] result = new byte[length];
-        source.clear();
         source.position(offset);
         source.get(result);
         return result;

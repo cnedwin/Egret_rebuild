@@ -6,6 +6,8 @@ import android.opengl.EGLContext;
 import android.opengl.GLSurfaceView;
 import android.util.Base64;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,9 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
     private EGLContext context;
     private ByteBuffer commands;
     private Map<Integer, Page> uploaded = Collections.emptyMap();
+    // sRGB mip chains are derived GPU views of the same immutable Page as the 2D slot.
+    private final Page[] worldViews = new Page[256];
+    private final java.util.function.IntConsumer prepareWorldView = this::prepareWorldView;
     private int width, height;
     volatile int contexts, uploads, releases, abandoned;
 
@@ -131,6 +136,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
                 for (int id : uploaded.keySet()) {
                     if (!frame.pages.containsKey(id)) {
                         check(PlayerGpu.release(handle, id), "release", id);
+                        worldViews[id] = null;
                         releases++;
                     }
                 }
@@ -139,17 +145,28 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
                     Page page = entry.getValue();
                     if (page == uploaded.get(id)) continue;
                     check(PlayerGpu.upload(handle, id, page.width, page.height, page.data), "upload", id);
+                    worldViews[id] = null;
                     uploads++;
                 }
                 uploaded = frame.pages;
             }
             if (commands == null || commands.capacity() < frame.bytes.length)
-                commands = ByteBuffer.allocateDirect(frame.bytes.length);
+                commands = ByteBuffer.allocateDirect(frame.bytes.length).order(ByteOrder.LITTLE_ENDIAN);
             commands.clear();
             commands.put(frame.bytes);
+            commands.flip();
+            WorldProjectPacket.visitTexturePages(commands, prepareWorldView);
             check(PlayerGpu.draw(handle, commands, 0, frame.bytes.length, width, height), "draw", frame.id());
             owner.ui.post(() -> owner.drawn(frame.epoch, frame.id()));
         } catch (RuntimeException | LinkageError e) { owner.reportFailure(e.toString()); }
+    }
+
+    private void prepareWorldView(int id) {
+        Page page = uploaded.get(id);
+        if (page == null) throw new IllegalStateException("Missing World3D texture page " + id);
+        if (worldViews[id] == page) return;
+        check(PlayerGpu.prepareWorldPage(handle, id, page.data), "prepare World3D texture", id);
+        worldViews[id] = page;
     }
 
     private static void check(int status, String operation, int id) {
@@ -160,6 +177,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
         PlayerGpu.destroy(handle, false);
         handle = 0;
         abandoned++;
+        Arrays.fill(worldViews, null);
         uploaded = Collections.emptyMap();
     }
 
@@ -175,6 +193,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
             handle = 0;
             uploaded = Collections.emptyMap();
         }
+        Arrays.fill(worldViews, null);
         context = null;
     }
 }

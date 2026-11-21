@@ -183,10 +183,7 @@ final class ProjectReplayTape {
                     }
                     snapshot = Collections.unmodifiableMap(current);
                 }
-                int length = in.integer();
-                if (length < 24 || length > PlayerGraphics.MAX_FRAME_BYTES)
-                    throw new IOException("Invalid replay command size");
-                byte[] bytes = in.bytes(length);
+                byte[] bytes = in.command(in.integer());
                 validatePacket(bytes, index, width, height, snapshot);
                 frames[index] = new PlayerGraphics.Frame(0, bytes, snapshot);
             }
@@ -214,6 +211,17 @@ final class ProjectReplayTape {
         }
         int integer() throws IOException { take(4); return stream.readInt(); }
         int slot() throws IOException { take(1); return stream.readUnsignedByte(); }
+        // Inspect magic before allocating. Only textured World3D commands can use the larger budget.
+        byte[] command(int n) throws IOException {
+            take(n);
+            if (n < 24 || n > WorldProjectPacket.TEXTURED_LIMIT) throw new IOException("Invalid replay command size");
+            int magic = Integer.reverseBytes(stream.readInt());
+            if (n > WorldProjectPacket.byteLimit(magic)) throw new IOException("Invalid replay command size");
+            byte[] bytes = new byte[n];
+            ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).putInt(magic);
+            stream.readFully(bytes, 4, n - 4);
+            return bytes;
+        }
         byte[] bytes(int n) throws IOException {
             take(n);
             byte[] bytes = new byte[n];
@@ -230,11 +238,12 @@ final class ProjectReplayTape {
     }
     private static void validatePacket(byte[] bytes, int id, int width, int height, Map<Integer, PlayerGraphics.Page> pages)
         throws IOException {
-        if (bytes == null || bytes.length < 24 || bytes.length > PlayerGraphics.MAX_FRAME_BYTES)
+        if (bytes == null || bytes.length < 24 || bytes.length > WorldProjectPacket.TEXTURED_LIMIT)
             throw new IOException("Invalid project packet length");
         ByteBuffer data = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-        if (data.getInt(0) == WorldProjectPacket.MAGIC) {
-            int hud = WorldProjectPacket.validate(data);
+        if (bytes.length > WorldProjectPacket.byteLimit(data.getInt(0))) throw new IOException("Invalid project packet length");
+        if (WorldProjectPacket.isWorld(data.getInt(0))) {
+            int hud = WorldProjectPacket.validate(data, pages);
             validatePacket(java.util.Arrays.copyOfRange(bytes, hud, bytes.length), id, width, height, pages);
             return;
         }

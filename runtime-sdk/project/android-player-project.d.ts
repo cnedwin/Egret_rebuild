@@ -122,7 +122,7 @@ declare module '@egret/android-player-project' {
 }
 
 declare module '@egret/android-player-world3d' {
-  import type {Camera3D, Scene3D} from '@egret/engine/world3d';
+  import type {Camera3D, Scene3D, GltfAsset3D} from '@egret/engine/world3d';
   import type {NativePlayerSession, PlayerDefinition, PlayerGame, PlayerServices} from '@egret/android-player-project';
 
   export interface World3DPlayerGame extends PlayerGame {
@@ -130,8 +130,13 @@ declare module '@egret/android-player-world3d' {
     world3D(): {readonly scene: Scene3D; readonly camera: Camera3D};
   }
 
+  export interface World3DPlayerServices extends PlayerServices {
+    /** Load a declared binary glTF with embedded base-color JPEGs. The scope retires its pages and meshes. */
+    loadGlb(path: string, options: { readonly firstPage: number; readonly signal?: AbortSignal }): Promise<GltfAsset3D>;
+  }
+
   export interface World3DPlayerDefinition extends Omit<PlayerDefinition, 'create'> {
-    create(services: PlayerServices): World3DPlayerGame | Promise<World3DPlayerGame>;
+    create(services: World3DPlayerServices): World3DPlayerGame | Promise<World3DPlayerGame>;
   }
 
   /** Install a trusted game using the opaque Standard-material GLES3 profile. */
