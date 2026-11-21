@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-21",
+  "en": {
+    "title": "Build signed local Android releases",
+    "body": "The Android project player defaults to arm64 trimmed V8 and exports an application targeting API 36. Set an application ID, launcher name and PNG icon, version code and version name when generating the Gradle project. Supply an external signing key at build time to produce a release AAB and APK. The player guide covers installing device-specific APKs with bundletool and upgrading them while keeping local game saves."
+  },
+  "zh": {
+    "title": "本地构建 Android 签名发行包",
+    "body": "Android 项目播放器默认使用 arm64 裁剪 V8，导出的应用以 API 36 为目标。生成 Gradle 工程时可设置应用 ID、桌面名称与 PNG 图标、版本号和版本名。构建时使用外部密钥签署 Release AAB 和 APK。播放器指南说明了如何用 bundletool 安装设备专用分包，以及如何覆盖升级并保留游戏存档。"
+  }
+}

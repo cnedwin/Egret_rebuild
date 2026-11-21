@@ -36,13 +36,13 @@ jobs:
         run: |
           rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target aarch64-linux-android
           cargo test --locked --offline --manifest-path runtime-sdk/native/Cargo.toml
-          if [[ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" || ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" || ! -f "$ANDROID_HOME/ndk/27.2.12479018/source.properties" ]]; then
+          if [[ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" || ! -f "$ANDROID_HOME/platforms/android-36/android.jar" || ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" || ! -f "$ANDROID_HOME/ndk/27.2.12479018/source.properties" ]]; then
             sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
             if [[ ! -x "$sdkmanager" ]]; then
               sdkmanager=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | sort -V | tail -1)
             fi
             test -x "$sdkmanager"
-            "$sdkmanager" --sdk_root="$ANDROID_HOME" "platforms;android-35" "build-tools;35.0.0" "ndk;27.2.12479018"
+            "$sdkmanager" --sdk_root="$ANDROID_HOME" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "ndk;27.2.12479018"
           fi
           cargo build --locked --offline --release --manifest-path runtime-sdk/native/Cargo.toml --target aarch64-linux-android --target-dir "$RUNNER_TEMP/native"
           host=(--scene "$RUNNER_TEMP/scene" --jdk "$JAVA_HOME_17_X64" --ndk "$ANDROID_HOME/ndk/27.2.12479018" --rust-lib "$RUNNER_TEMP/native/aarch64-linux-android/release/libegret_runtime_native.a")
@@ -56,16 +56,18 @@ jobs:
           GRADLE_USER_HOME: ${{ runner.temp }}/egret-gradle
         run: |
           export JAVA_HOME="$JAVA_HOME_17_X64"
-          curl --fail --location --retry 2 https://services.gradle.org/distributions/gradle-8.9-bin.zip -o "$RUNNER_TEMP/gradle.zip"
-          echo "d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab  $RUNNER_TEMP/gradle.zip" | sha256sum -c -
+          curl --fail --location --retry 2 https://services.gradle.org/distributions/gradle-8.11.1-bin.zip -o "$RUNNER_TEMP/gradle.zip"
+          echo "f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6  $RUNNER_TEMP/gradle.zip" | sha256sum -c -
           unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP/player-tools"
-          node runtime-sdk/android/player/build-aar.mjs --jdk "$JAVA_HOME" --ndk "$ANDROID_HOME/ndk/27.2.12479018" \
-            --rust-lib "$RUNNER_TEMP/native/aarch64-linux-android/release/libegret_runtime_native.a" --out "$RUNNER_TEMP/apk/egret-player.aar"
+          curl --fail --location --retry 2 https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar -o "$RUNNER_TEMP/bundletool.jar"
+          echo "a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29  $RUNNER_TEMP/bundletool.jar" | sha256sum -c -
+          node runtime-sdk/android/player/build-aar.mjs --v8-profile webview --jdk "$JAVA_HOME" --ndk "$ANDROID_HOME/ndk/27.2.12479018" \
+            --rust-lib "$RUNNER_TEMP/native/aarch64-linux-android/release/libegret_runtime_native.a" --out "$RUNNER_TEMP/apk/egret-player-webview.aar"
           # Exercise replay, WebView transport, packaged assets and project saves against the shipped classes.
           replay_test="$RUNNER_TEMP/player-replay-test"
           mkdir -p "$replay_test"
-          (cd "$replay_test" && "$JAVA_HOME/bin/jar" xf "$RUNNER_TEMP/apk/egret-player.aar" classes.jar)
-          player_cp="$replay_test/classes.jar:$ANDROID_HOME/platforms/android-35/android.jar"
+          (cd "$replay_test" && "$JAVA_HOME/bin/jar" xf "$RUNNER_TEMP/apk/egret-player-webview.aar" classes.jar)
+          player_cp="$replay_test/classes.jar:$ANDROID_HOME/platforms/android-36/android.jar"
           "$JAVA_HOME/bin/javac" --release 8 -encoding UTF-8 -cp "$player_cp" -d "$replay_test" \
             runtime-sdk/android/player/test/org/egret/runtime/player/{ProjectReplayTapeTest,WebViewFrameTransportTest,ProjectAssetReadsTest,ProjectSaveStorageTest}.java
           "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectReplayTapeTest
@@ -85,34 +87,57 @@ jobs:
           }
           GRADLE
           for variant in standalone embedded standard trimmed; do
-            aar="$RUNNER_TEMP/apk/egret-player.aar"
+            app_args=()
+            aar="$RUNNER_TEMP/apk/egret-player-webview.aar"
             layout="$variant"
             if [[ "$variant" == standard || "$variant" == trimmed ]]; then
               layout=embedded
               aar="$RUNNER_TEMP/apk/egret-player-$variant.aar"
+              host_args=()
+              if [[ "$variant" == standard ]]; then host_args=(--v8-profile standard); fi
               node runtime-sdk/android/player/build-aar.mjs --jdk "$JAVA_HOME" --ndk "$ANDROID_HOME/ndk/27.2.12479018" \
                 --rust-lib "$RUNNER_TEMP/native/aarch64-linux-android/release/libegret_runtime_native.a" \
-                --v8-profile "$variant" --v8-cache "$RUNNER_TEMP/apk/v8-cache" --out "$aar"
+                "${host_args[@]}" --v8-cache "$RUNNER_TEMP/apk/v8-cache" --out "$aar"
+            fi
+            if [[ "$variant" == trimmed ]]; then
+              app_args=(--name "Egret CI Game" --version-code 17 --version-name "1.7-ci")
             fi
             app="$RUNNER_TEMP/game-$variant"
-            node runtime-sdk/android/player/create-app.mjs --layout "$layout" --id "org.egret.example.$variant" \
+            node runtime-sdk/android/player/create-app.mjs "${app_args[@]}" --layout "$layout" --id "org.egret.example.$variant" \
               --aar "$aar" --project runtime-sdk/examples/moon-herbarium \
               --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --out "$app"
-            "$RUNNER_TEMP/player-tools/gradle-8.9/bin/gradle" --init-script "$RUNNER_TEMP/central-mirror.gradle" -p "$app" assembleDebug
+            "$RUNNER_TEMP/player-tools/gradle-8.11.1/bin/gradle" --init-script "$RUNNER_TEMP/central-mirror.gradle" -p "$app" assembleDebug
             cp "$app/build/outputs/apk/debug/EgretGame-debug.apk" "$RUNNER_TEMP/apk/game-$variant.apk"
             if [[ "$variant" == trimmed ]]; then
-              # Exercise the distributed AAR's Java/JNI retention rules in a consuming app.
-              cat >> "$app/build.gradle" <<'R8'
-          android {
-            buildTypes {
-              release {
-                minifyEnabled true
-                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
-              }
-            }
-          }
-          R8
-              "$RUNNER_TEMP/player-tools/gradle-8.9/bin/gradle" --init-script "$RUNNER_TEMP/central-mirror.gradle" -p "$app" minifyReleaseWithR8
+              # Use an ephemeral CI upload key and verify the same signer on the two delivery formats.
+              export EGRET_ANDROID_KEYSTORE="$RUNNER_TEMP/qa-release.p12"
+              export EGRET_ANDROID_KEY_ALIAS=egret-ci-release
+              export EGRET_ANDROID_STORE_PASSWORD="$(openssl rand -hex 24)"
+              export EGRET_ANDROID_KEY_PASSWORD="$EGRET_ANDROID_STORE_PASSWORD"
+              "$JAVA_HOME/bin/keytool" -genkeypair -storetype PKCS12 -keystore "$EGRET_ANDROID_KEYSTORE" \
+                -alias "$EGRET_ANDROID_KEY_ALIAS" -storepass:env EGRET_ANDROID_STORE_PASSWORD -keypass:env EGRET_ANDROID_KEY_PASSWORD \
+                -keyalg RSA -keysize 2048 -validity 7 -dname "CN=Egret Local Release CI"
+              "$RUNNER_TEMP/player-tools/gradle-8.11.1/bin/gradle" --init-script "$RUNNER_TEMP/central-mirror.gradle" -p "$app" assembleRelease bundleRelease
+              apk="$app/build/outputs/apk/release/EgretGame-release.apk"
+              aab="$app/build/outputs/bundle/release/EgretGame-release.aab"
+              test -s "$app/build/outputs/mapping/release/mapping.txt"
+              bundletool=("$JAVA_HOME/bin/java" -jar "$RUNNER_TEMP/bundletool.jar")
+              "${bundletool[@]}" validate --bundle="$aab"
+              "${bundletool[@]}" dump config --bundle="$aab" | jq -e '.optimizations.uncompressNativeLibraries.alignment == "PAGE_ALIGNMENT_16K"'
+              test "$(unzip -Z1 "$aab" | awk -F/ '$1 == "base" && $2 == "lib" {print $3}' | sort -u)" = arm64-v8a
+              test "$("${bundletool[@]}" dump manifest --bundle="$aab" --xpath='/manifest/@android:versionCode')" = 17
+              test "$("${bundletool[@]}" dump manifest --bundle="$aab" --xpath='/manifest/uses-sdk/@android:targetSdkVersion')" = 36
+              "$JAVA_HOME/bin/keytool" -exportcert -alias "$EGRET_ANDROID_KEY_ALIAS" -keystore "$EGRET_ANDROID_KEYSTORE" \
+                -storepass:env EGRET_ANDROID_STORE_PASSWORD -file "$RUNNER_TEMP/ci-cert.der"
+              digest=$(sha256sum "$RUNNER_TEMP/ci-cert.der" | cut -d' ' -f1)
+              bt="$ANDROID_HOME/build-tools/35.0.0"
+              "$bt/apksigner" verify --print-certs "$apk" | grep -Fx "Signer #1 certificate SHA-256 digest: $digest"
+              "$bt/zipalign" -c -P 16 4 "$apk"
+              "$JAVA_HOME/bin/jarsigner" -verify -strict -keystore "$EGRET_ANDROID_KEYSTORE" \
+                -storepass:env EGRET_ANDROID_STORE_PASSWORD "$aab" "$EGRET_ANDROID_KEY_ALIAS"
+              mkdir "$RUNNER_TEMP/local-release"
+              cp "$apk" "$RUNNER_TEMP/local-release/game-trimmed-release.apk"
+              cp "$aab" "$RUNNER_TEMP/local-release/game-trimmed-release.aab"
             fi
           done
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -121,4 +146,9 @@ jobs:
           path: |
             ${{ runner.temp }}/apk/*.apk
             ${{ runner.temp }}/apk/*.aar
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: egret-runtime-android-arm64-test-signed-release
+          path: ${{ runner.temp }}/local-release/
           if-no-files-found: error

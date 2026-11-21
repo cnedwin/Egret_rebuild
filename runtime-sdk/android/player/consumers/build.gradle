@@ -1,0 +1,66 @@
+// SPDX-License-Identifier: Apache-2.0
+plugins { id 'com.android.application' version '8.9.1' }
+
+def game = new groovy.json.JsonSlurper().parse(file('egret-app.json'), 'UTF-8')
+def playerMinSdk = new java.util.zip.ZipFile(file('libs/egret-player.aar')).withCloseable { aar ->
+    aar.getEntry('assets/egret-player-host.txt') == null ? 26 : 29
+}
+
+// Only configure a release signer from the submitting application's environment.
+// Running the exporter never reads the keystore or serializes its credentials.
+def releasePath = System.getenv('EGRET_ANDROID_KEYSTORE')
+def releaseAlias = System.getenv('EGRET_ANDROID_KEY_ALIAS')
+def releaseStorePassword = System.getenv('EGRET_ANDROID_STORE_PASSWORD')
+def releaseKeyPassword = System.getenv('EGRET_ANDROID_KEY_PASSWORD')
+def releaseStore = releasePath ? new File(releasePath) : null
+def signingReady = releaseStore?.isAbsolute() && releaseStore.isFile() &&
+        releaseAlias && releaseStorePassword && releaseKeyPassword
+
+android {
+    namespace 'org.egret.example'
+    compileSdk 36
+    buildToolsVersion '35.0.0'
+    defaultConfig {
+        applicationId game.applicationId
+        versionCode game.versionCode
+        versionName game.versionName
+        minSdk playerMinSdk
+        targetSdk 36
+        ndk { abiFilters 'arm64-v8a' }
+    }
+
+    signingConfigs {
+        if (signingReady) {
+            release {
+                storeFile releaseStore
+                storePassword releaseStorePassword
+                keyAlias releaseAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            if (signingReady) signingConfig signingConfigs.release
+        }
+    }
+}
+
+dependencies { implementation files('libs/egret-player.aar') }
+
+// Applying the guard to packaging tasks also covers aggregate builds and Gradle
+// task abbreviations, while permitting unsigned compilation, lint and R8 checks.
+def verifySigning = tasks.register('verifyEgretReleaseSigning') {
+    doLast {
+        if (!signingReady) throw new GradleException(
+                'For release artifacts, set EGRET_ANDROID_KEYSTORE to an existing absolute keystore path and ' +
+                'set EGRET_ANDROID_KEY_ALIAS, EGRET_ANDROID_STORE_PASSWORD and EGRET_ANDROID_KEY_PASSWORD.')
+    }
+}
+tasks.configureEach {
+    if (name in ['packageRelease', 'packageReleaseBundle', 'signReleaseBundle', 'assembleRelease', 'bundleRelease']) {
+        dependsOn verifySigning
+    }
+}

@@ -2,10 +2,11 @@
 import { copyFile, lstat, mkdir, mkdtemp, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
+import { writeAppResources } from './app-resources.mjs';
 import { exportProject } from './export-project.mjs';
 
 const {values} = parseArgs({options: Object.fromEntries(
-  ['project','aar','esbuild','id','layout','out'].map(name => [name,{type:'string'}]))});
+  ['project','aar','esbuild','id','name','icon','version-code','version-name','layout','out'].map(name => [name,{type:'string'}]))});
 const {id, project, aar, esbuild, out, layout = 'standalone'} = values;
 if (!out || !project || !aar || !esbuild || !/^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)+$/.test(id ?? '')) {
   throw new Error('Supply --project, --aar, --esbuild, --id (Android application ID) and --out');
@@ -25,22 +26,15 @@ try {
   await copyFile(aar, path.join(work, 'libs/egret-player.aar'));
   await copyFile(new URL('./consumers/GameInsets.java', import.meta.url), path.join(java, 'GameInsets.java'));
   await copyFile(new URL('./consumers/' + activity + '.java', import.meta.url), path.join(java, activity + '.java'));
+  await writeAppResources(work, values);
   await exportProject(project, path.join(source, 'assets/game'), esbuild);
   await writeFile(path.join(work, 'settings.gradle'), "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }\ndependencyResolutionManagement { repositories { google(); mavenCentral() } }\nrootProject.name = 'EgretGame'\n");
-  await writeFile(path.join(work, 'build.gradle'), [
-    "plugins { id 'com.android.application' version '8.7.3' }",
-    "// The embedded Javet arm64 binaries require API 29. The System WebView AAR uses API 26.",
-    "def playerMinSdk = new java.util.zip.ZipFile(file('libs/egret-player.aar')).withCloseable { aar ->",
-    "    aar.getEntry('assets/egret-player-host.txt') == null ? 26 : 29", "}",
-    "android {", "    namespace 'org.egret.example'", "    compileSdk 35", "    buildToolsVersion '35.0.0'",
-    "    defaultConfig {", "        applicationId '" + id + "'", "        minSdk playerMinSdk",
-    "        targetSdk 35", "        versionCode 1", "        versionName '1.0'", "    }", "}",
-    "dependencies { implementation files('libs/egret-player.aar') }", ""
-  ].join('\n'));
+  await copyFile(new URL('./consumers/build.gradle', import.meta.url), path.join(work, 'build.gradle'));
   await writeFile(path.join(source, 'AndroidManifest.xml'), [
     '<?xml version="1.0" encoding="utf-8"?>',
     '<manifest xmlns:android="http://schemas.android.com/apk/res/android">',
-    '    <application android:label="' + (layout === 'standalone' ? 'Egret Game' : 'Egret Game Library') + '"',
+    '    <application android:label="@string/egret_app_name"',
+    ...(values.icon === undefined ? [] : ['        android:icon="@mipmap/egret_launcher"']),
     '        android:allowBackup="false" android:theme="@android:style/Theme.Material.NoActionBar">',
     '        <activity android:name="org.egret.example.' + activity + '" android:exported="true" android:windowSoftInputMode="adjustResize">',
     '            <intent-filter>', '                <action android:name="android.intent.action.MAIN"/>',

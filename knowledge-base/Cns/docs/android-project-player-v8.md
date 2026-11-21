@@ -6,9 +6,9 @@
 
 | 构建参数 | 脚本环境 | 最低 Android API |
 | --- | --- | ---: |
-| `webview`（默认） | 已安装的系统 WebView、本地 HTML 入口及浏览器 API | 26 |
+| `webview` | 已安装的系统 WebView、本地 HTML 入口及浏览器 API | 26 |
 | `standard` | V8 15.7.112.19，带 JavaScript `Intl` 和 ICU 语言数据 | 29 |
-| `trimmed` | 相同版本的 V8，构建时去掉 `Intl` 及其 ICU 数据 | 29 |
+| `trimmed`（默认） | 相同版本的 V8，构建时去掉 `Intl` 及其 ICU 数据 | 29 |
 
 游戏依赖 DOM 或优先控制下载体积时，可用系统 WebView。需要自带虚拟机，且使用 `Intl` 进行本地化格式化或排序时，选标准 V8。三种宿主均可调用 Android 字体显示中文。两种内置 V8 使用 Javet 6.0.3 的 arm64 构建。依赖版本、哈希及许可见[来源清单](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/v8-provenance.json)。
 

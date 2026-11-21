@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/android/player/app-resources.mjs",
+      "originRole": "Android application identity and launcher resource export using the existing PNG library. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/app-resources.test.mjs",
+      "originRole": "Application identity, resource preservation and invalid input regressions for the Android exporter. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/build.gradle",
+      "originRole": "Android application template for signed local bundles and APKs. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-local-release.json",
+      "originRole": "Physical Galaxy Z Fold7 evidence for locally signed release APK sets and an in-place saved-game upgrade. Independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

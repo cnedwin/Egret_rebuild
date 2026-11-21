@@ -2,11 +2,11 @@
 
 English | [简体中文](../../Cns/docs/android-project-player.md)
 
-Package a trusted JavaScript or TypeScript game as an Android app, or attach the game to a view inside an existing Activity. Both paths use the same arm64 Android library. By default, Android System WebView executes the bundled scripts. Projects that use the player services can also choose [embedded V8](android-project-player-v8.md). The visible game surface is a `GLSurfaceView` rendered by Rust using OpenGL ES 3. The library declares Android API 26 as its minimum and ships arm64 code for GLES3. The script runtime separately requires a recent Android System WebView with ES2022 and AbortController. Device evidence below applies to the configurations actually exercised.
+Package a trusted JavaScript or TypeScript game as an arm64 Android app, or embed its view in an existing Activity. The project player defaults to trimmed V8 and draws through Rust and OpenGL ES 3 on a `GLSurfaceView`. Embedded V8 requires Android API 29. Games that use JavaScript `Intl` can select standard V8. The explicit System WebView build supports API 26 with a recent WebView that provides ES2022 and AbortController. [Choosing a script host](android-project-player-v8.md)
 
 ## Build the library and a game
 
-Run these commands from the engine checkout. Use Node 26.7.0, pnpm 11.25.0, JDK 17, Android SDK Platform 35, Build Tools 35.0.0, NDK r27c and Rust with the `aarch64-linux-android` target. Set `JAVA_HOME`, `ANDROID_HOME` and `ANDROID_NDK_HOME`. Keep the matching Rust installation's `share/doc/rust/COPYRIGHT-library.html` available. Provide the path to an installed esbuild **0.28.2** module for the game export.
+Run these commands from the engine checkout. Use Node 26.7.0, pnpm 11.25.0, JDK 17, Android SDK Platform 36, Build Tools 35.0.0, NDK r27c and Rust with the `aarch64-linux-android` target. Set `JAVA_HOME`, `ANDROID_HOME` and `ANDROID_NDK_HOME`. Keep the matching Rust installation's `share/doc/rust/COPYRIGHT-library.html` available. Provide the path to an installed esbuild **0.28.2** module for the game export.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -16,7 +16,30 @@ node runtime-sdk/android/player/create-app.mjs --project runtime-sdk/examples/mo
 gradle -p out/herbarium assembleDebug
 ```
 
-The generated Gradle application uses Android Gradle Plugin 8.7.3. Run it with a compatible Gradle installation, or open the generated directory in Android Studio. Find the debug APK under `out/herbarium/build/outputs/apk/debug/`. Use `--layout embedded` and a new output directory for an Activity with native controls that opens, closes and reopens a child game view. The consumer owns its application ID, manifest, signing configuration and release build. A prebuilt Rust archive from this source can be supplied to the AAR builder with `--rust-lib` and `--rust-notice`.
+The generated application targets Android API 36. Build it with Android Gradle Plugin 8.9.1, Gradle 8.11.1 and JDK 17. Find the debug APK under `out/herbarium/build/outputs/apk/debug/`. Use `--layout embedded` and a new output directory for an Activity with native controls that opens, closes and reopens a child game view. The consumer owns its application ID, manifest, signing configuration and release build. A prebuilt Rust archive from this source can be supplied to the AAR builder with `--rust-lib` and `--rust-notice`.
+
+## Build a signed local release
+
+Use the same application ID, signing certificate and game asset root for successive releases. Increase the version code each time. The name appears in the launcher and the version name is the player-facing version. The launcher icon accepts square PNGs from 1 to 2,048 pixels per edge and up to 8 MiB. Version codes are positive 32-bit integers. Generate each project in a fresh directory.
+
+Before running Gradle, provide these four environment variables from your local credential store or CI secrets. `EGRET_ANDROID_KEYSTORE` is the absolute path of an external keystore and `EGRET_ANDROID_KEY_ALIAS` identifies its key. `EGRET_ANDROID_STORE_PASSWORD` and `EGRET_ANDROID_KEY_PASSWORD` unlock them. Keep the keystore and credentials outside the generated project. Release builds enable R8 optimization and require all four settings. The debug build uses its usual Android debug key.
+
+```sh
+node runtime-sdk/android/player/create-app.mjs --project runtime-sdk/examples/moon-herbarium --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.herbarium --name "Moon Herbarium" --icon /path/to/icon.png --version-code 1 --version-name 1.0 --out out/herbarium-v1
+gradle -p out/herbarium-v1 assembleRelease bundleRelease
+```
+
+The signed AAB and APK are under `build/outputs/bundle/release/` and `build/outputs/apk/release/`. Verify the AAB signature with JDK `jarsigner` and the APK with Android Build Tools `apksigner`. Compare both signer certificates with the external key. The APK can be installed directly. For an AAB upgrade test, run the following commands on each version with its own output filename. Here `bundletool` stands for `java -jar /path/to/bundletool-all-1.18.3.jar`. Each password file contains the corresponding keystore or key password and stays on your machine.
+
+```sh
+bundletool validate --bundle=out/herbarium-v1/build/outputs/bundle/release/EgretGame-release.aab
+bundletool build-apks --bundle=out/herbarium-v1/build/outputs/bundle/release/EgretGame-release.aab --output=out/herbarium-v1/game-v1.apks --connected-device --ks=/private/game.jks --ks-key-alias=game --ks-pass=file:/private/store-password --key-pass=file:/private/key-password
+bundletool install-apks --apks=out/herbarium-v1/game-v1.apks
+```
+
+For the upgrade check, use a game that saves through `services.storage` (see “Save and resume a game” below). Install the first APK set, open the game and save a checkpoint. Export a second project using the same game root and application ID, `--version-code 2` and `--version-name 1.1`. Build and sign it with the same key, then install its APK set over the first installation. Force-stop and reopen the game, check the installed version and read the checkpoint in the game. Keep the app installed and its data intact between versions. [Local bundletool commands](https://developer.android.com/tools/bundletool)
+
+On a Galaxy Z Fold7, bundletool installed version 101 (1.0.1) and upgraded it in place to 102 (1.0.2). Both builds used the same external test certificate. After a cold launch, version 102 read the four moves and the score of 147 saved by version 101. The saved record had the same checksum. One more move raised the score to 168. Android retained the application UID and original installation time across the update. [Fold7 upgrade record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-local-release.json)
 
 ## Export an external game
 
@@ -253,6 +276,6 @@ The Rust unit checks cover packet validity, resource IDs, alpha conversion, clip
 
 On 19 November 2026 both Gradle apps ran on a Galaxy Z Fold7 with Android 17, System WebView 157 and Adreno 830. The six game files and the native renderer matched byte for byte across the two APKs. In both apps, injected taps filled a prescription, a drag scrolled the list, the Android keyboard opened, and the sound player started and released one effect. After background and resume, the second EGL context restored four pages. Comparing the static inventory region against its pre-background screenshot gave zero changed pixels out of 152,106 in the standalone game and 103,500 in the host. The host closed the game with all 14 logical textures released, kept its native controls and opened a fresh game. The local debug builds measured 701,200 bytes for the AAR, 1,767,567 for the standalone APK and 1,767,575 for the host APK. These profiles share the installed System WebView. Frame speed, audible output and human IME composition were outside this run. [Device and artifact record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-player.json)
 
-The earlier EGR1 specimen has separate optional Javet/V8 builds with and without Intl, along with its frozen replay and Galaxy Z Fold7 timing/PSS measurements. Those results describe the original specimen and its script hosts. The measurements above used the default System WebView AAR. [Earlier specimen and measurements](runtime-sdk-v8-fold7.md)
+The earlier EGR1 specimen has separate optional Javet/V8 builds with and without Intl, along with its frozen replay and Galaxy Z Fold7 timing/PSS measurements. Those results describe the original specimen and its script hosts. The measurements above used the System WebView AAR selected for that run. [Earlier specimen and measurements](runtime-sdk-v8-fold7.md)
 
 The project adapter, Android view, Rust renderer and sample are first-party contributions. The AAR includes project LICENSE/NOTICE and the Rust library, NDK/toolchain and robust-predicates notices under `assets/egret-player-licenses/`. Keep these packaged notices and the applicable licenses for each game's assets when distributing an app.

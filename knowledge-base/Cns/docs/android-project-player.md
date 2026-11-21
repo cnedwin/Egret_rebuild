@@ -2,11 +2,11 @@
 
 [English](../../en/docs/android-project-player.md) | 简体中文
 
-同一份 arm64 Android 库可以把可信的 JavaScript 或 TypeScript 游戏打成独立应用，也可以把游戏作为子视图放入已有 Activity。默认由 Android System WebView 运行随包脚本。使用播放器服务的游戏也可以选择[内置 V8](android-project-player-v8.md)。Rust 通过 OpenGL ES 3 在可见的 `GLSurfaceView` 上绘制游戏。库声明的最低系统版本为 Android API 26，随包提供支持 GLES3 的 arm64 原生代码。脚本环境另需支持 ES2022 和 AbortController 的较新 Android System WebView。下文验证结论以实际跑过的配置为限。
+同一份 arm64 Android 库既能把可信的 JavaScript 或 TypeScript 游戏打成独立应用，也可将游戏视图嵌入已有 Activity。项目播放器默认使用裁剪 V8，Rust 通过 OpenGL ES 3 在 `GLSurfaceView` 上绘制游戏。内置 V8 最低支持 Android API 29。使用 JavaScript `Intl` 的游戏可选标准 V8；显式选择系统 WebView 时最低支持 API 26，并需安装支持 ES2022 和 AbortController 的较新 WebView。[选择脚本宿主](android-project-player-v8.md)
 
 ## 构建 AAR 和游戏应用
 
-在引擎仓库根目录执行以下命令。准备 Node 26.7.0、pnpm 11.25.0、JDK 17、Android SDK Platform 35、Build Tools 35.0.0、NDK r27c，以及已安装 `aarch64-linux-android` 目标的 Rust。配置 `JAVA_HOME`、`ANDROID_HOME` 和 `ANDROID_NDK_HOME`。构建时需要对应 Rust 安装中的 `share/doc/rust/COPYRIGHT-library.html`。游戏导出器需要已安装的 **esbuild 0.28.2** 模块路径。
+在引擎仓库根目录执行以下命令。准备 Node 26.7.0、pnpm 11.25.0、JDK 17、Android SDK Platform 36、Build Tools 35.0.0、NDK r27c，以及已安装 `aarch64-linux-android` 目标的 Rust。配置 `JAVA_HOME`、`ANDROID_HOME` 和 `ANDROID_NDK_HOME`。构建时需要对应 Rust 安装中的 `share/doc/rust/COPYRIGHT-library.html`。游戏导出器需要已安装的 **esbuild 0.28.2** 模块路径。
 
 ```sh
 pnpm install --frozen-lockfile
@@ -16,7 +16,30 @@ node runtime-sdk/android/player/create-app.mjs --project runtime-sdk/examples/mo
 gradle -p out/herbarium assembleDebug
 ```
 
-生成的 Gradle 应用使用 Android Gradle Plugin 8.7.3。可用兼容的 Gradle 构建，也可以用 Android Studio 打开生成目录。调试 APK 位于 `out/herbarium/build/outputs/apk/debug/`。改用 `--layout embedded` 并指定新输出目录，即可生成带原生控件的 Activity，在其中打开、关闭和重新打开游戏子视图。接入方管理应用 ID、清单、签名和发行构建。如果已有同一源码编出的 Rust 静态库，可用 `--rust-lib` 和 `--rust-notice` 向 AAR 构建器提供静态库和对应许可文件。
+生成的应用以 Android API 36 为目标，使用 Android Gradle Plugin 8.9.1、Gradle 8.11.1 和 JDK 17 构建。调试 APK 位于 `out/herbarium/build/outputs/apk/debug/`。改用 `--layout embedded` 并指定新输出目录，即可生成带原生控件的 Activity，在其中打开、关闭和重新打开游戏子视图。接入方管理应用 ID、清单、签名和发行构建。如果已有同一源码编出的 Rust 静态库，可用 `--rust-lib` 和 `--rust-notice` 向 AAR 构建器提供静态库和对应许可文件。
+
+## 构建本地签名发行包
+
+连续发布的版本使用同一个应用 ID、签名证书和游戏资源根目录，每次升级递增版本号。应用名显示在桌面，版本名供玩家识别。桌面图标使用边长 1 至 2,048 像素、文件大小不超过 8 MiB 的正方形 PNG。版本号为 32 位有符号正整数。每个版本导出到新的目录。
+
+运行 Gradle 前，通过本机凭据管理器或 CI 密钥配置四个环境变量。`EGRET_ANDROID_KEYSTORE` 是外部密钥库的绝对路径，`EGRET_ANDROID_KEY_ALIAS` 指定密钥别名，`EGRET_ANDROID_STORE_PASSWORD` 和 `EGRET_ANDROID_KEY_PASSWORD` 分别用于解锁密钥库和密钥。密钥库及凭据放在生成的工程之外。发行构建启用 R8 优化，并要求提供上述四项配置。调试构建沿用 Android 调试签名。
+
+```sh
+node runtime-sdk/android/player/create-app.mjs --project runtime-sdk/examples/moon-herbarium --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.herbarium --name "Moon Herbarium" --icon /path/to/icon.png --version-code 1 --version-name 1.0 --out out/herbarium-v1
+gradle -p out/herbarium-v1 assembleRelease bundleRelease
+```
+
+签名 AAB 位于 `build/outputs/bundle/release/`，APK 位于 `build/outputs/apk/release/`。使用 JDK 的 `jarsigner` 验证 AAB，用 Android Build Tools 的 `apksigner` 验证 APK，并将两份证书与外部密钥的证书比对。APK 可以直接安装。测试 AAB 分包升级时，对每个版本分别运行下面的命令，使用不同的输出文件名。其中 `bundletool` 表示 `java -jar /path/to/bundletool-all-1.18.3.jar`。两个口令文件分别存放密钥库和密钥的密码，只保存在本机。
+
+```sh
+bundletool validate --bundle=out/herbarium-v1/build/outputs/bundle/release/EgretGame-release.aab
+bundletool build-apks --bundle=out/herbarium-v1/build/outputs/bundle/release/EgretGame-release.aab --output=out/herbarium-v1/game-v1.apks --connected-device --ks=/private/game.jks --ks-key-alias=game --ks-pass=file:/private/store-password --key-pass=file:/private/key-password
+bundletool install-apks --apks=out/herbarium-v1/game-v1.apks
+```
+
+验证保档升级时，使用通过 `services.storage` 保存进度的游戏（见下文“保存和恢复游戏进度”）。先安装第一版分包，打开游戏并保存进度。沿用游戏资源根目录和应用 ID，指定 `--version-code 2` 和 `--version-name 1.1` 导出第二版。用同一把密钥构建并签名，再把第二版分包覆盖安装到第一版。两次安装之间保留应用及数据，强停并重开后核对已安装版号，再从游戏内读回原进度。[bundletool 本地操作指南](https://developer.android.com/tools/bundletool)
+
+在 Galaxy Z Fold7 上，使用 bundletool 安装 101 版（1.0.1），再覆盖升级到 102 版（1.0.2）。两个版本使用同一张外部测试证书。102 版冷启动后读回了 101 版保存的四步路线和 147 分，存档校验值一致；再走一步，分数增至 168。Android 在升级前后保留了应用 UID 和首次安装时间。[Fold7 覆盖升级记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-local-release.json)
 
 ## 导出自己的游戏项目
 
@@ -253,6 +276,6 @@ Rust 单元测试覆盖帧长度与取值检查、纹理标识、透明度转换
 
 2026 年 11 月 19 日，两款 Gradle 应用均在 Galaxy Z Fold7（Android 17、系统 WebView 157、Adreno 830）上运行。两份 APK 中的六个游戏文件和原生渲染库逐字节相同。两种模式下，通过 Android 注入点击完成药方，拖动列表滚动，系统键盘成功弹出，音效播放器启动并释放了一次音效。切到后台再返回，第二个 EGL 上下文恢复了四张纹理页。对照切后台前后的药材列表静态区域，独立版的 152,106 个像素和嵌入版的 103,500 个像素均无变化。宿主关闭游戏时归还了全部 14 份逻辑纹理，保留原生控件，随后成功重新打开游戏。本地调试构建中，AAR 为 701,200 字节，独立 APK 为 1,767,567 字节，宿主 APK 为 1,767,575 字节，均使用设备已有的系统 WebView。本轮覆盖功能及生命周期，未测帧速、实际听感和真人输入法组词。[真机与构建产物记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-player.json)
 
-此前的 EGR1 样板另有带 Intl 和不带 Intl 的 Javet/V8 两种可选构建、冻结命令回放及 Galaxy Z Fold7 的耗时和 PSS 记录。该数据对应原样板及其脚本宿主。上面的实机记录使用默认的系统 WebView 版 AAR。[原样板与实机记录](runtime-sdk-v8-fold7.md)
+此前的 EGR1 样板另有带 Intl 和不带 Intl 的 Javet/V8 两种可选构建、冻结命令回放及 Galaxy Z Fold7 的耗时和 PSS 记录。该数据对应原样板及其脚本宿主。上面的实机记录使用当时选定的系统 WebView 版 AAR。[原样板与实机记录](runtime-sdk-v8-fold7.md)
 
 项目适配器、Android 视图、Rust 渲染器和示例游戏均为本项目贡献。AAR 的 `assets/egret-player-licenses/` 包含项目 LICENSE/NOTICE，以及 Rust 标准库、NDK/工具链和 robust-predicates 的许可文件。发布应用时请保留这些文件及游戏自带资源适用的许可声明。
