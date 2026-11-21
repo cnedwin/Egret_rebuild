@@ -58,6 +58,14 @@ Those of [`play`](play.md#options), without `canvas`: `play3d` makes its two can
 | `game.lamp(color, { x, y, z }, { intensity: 4, range: 8 })` | A lamp: light from a point that fades out by its range. Its `x`, `y`, `z`, `color`, `intensity`, `range` and `visible` can be set and tweened; `game.remove(lamp)` puts it out. Eight are lit fully, more by a coarser way |
 | `game.onTap(thing, () => …)` | Calls the function when the thing is tapped or clicked: a ray from the camera through the pointer, and the nearest thing it meets with a tap gets it. A press on a thing is still `game.pointer.pressed`. A sprite of the interface is given to `onTap` as in `play` |
 
+A model of your own can be shaped in code, from rounded parts joined smoothly, and added as a thing; see [models shaped from distance fields](world3d-app.md#models-shaped-from-distance-fields):
+
+```js
+const { createSdfGeometry3D, createStandardMaterial3D, Mesh3D, sdfEllipsoid, sdfSphere, sdfUnion } = Egret;
+const shape = sdfUnion([sdfEllipsoid([0.5, 0.4, 0.6], { color: 0xf0a040 }), sdfSphere(0.35, { at: [0, 0.45, 0.45], color: 0xf0a040 })], { smooth: 0.1 });
+const critter = game.add(new Mesh3D(createSdfGeometry3D(shape), createStandardMaterial3D({ vertexColors: true })), { x: 0, y: 0.5, z: 0 });
+```
+
 Each gives a thing. Set `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `scale` or `scaleX`, `scaleY`, `scaleZ`, `visible` and `color` on it at any time; they can be tweened, as in `game.tween(door).to({ y: 4 }, 0.5)`. Add properties of your own (`enemy.hp = 3`). `thing.removed` says whether it has been removed; setting a removed thing does nothing and does not fail. `thing.node` is its [Mesh3D](world3d.md). `thing.glow` makes it shine with its own colour, lit or not: 0 unless set, 1 as bright as its colour, more for a lantern or a screen; it follows a new `color`, and a model keeps the materials it has. A thing that glows is not hidden by fog. `thing.opacity` is how much of it is seen, 1 unless set: less lets what is behind it show through, as glass or a ghost, and a see-through thing casts no shadow; with `glow` its light is added to what is behind it, as a beam's is. Every shape is placed by its middle. `rotationY` turns a thing to its left, counterclockwise seen from above; at 0 a thing faces away from the camera, towards -z, so it moves forward by `x -= Math.sin(r) * d` and `z -= Math.cos(r) * d` with `r = thing.rotationY * Math.PI / 180`.
 
 An imported model keeps its existing root rotation. Editing `rotationY` preserves the other two axes. Collision direction uses the centre of the same scaled bounds that establish overlap, including a model whose origin is at its feet.

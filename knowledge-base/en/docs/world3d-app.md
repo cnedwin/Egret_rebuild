@@ -97,6 +97,14 @@ Mesh options: `resolution` (cells along the longest side, 64 unless given, 8 to 
 
 `simplifyGeometry3D(geometry, { triangles | ratio, maxError })` brings any indexed triangle geometry down to a budget, a generated or scanned model or a far level of detail. It collapses the cheapest edges first by the quadric error metric, refuses collapses that would turn a triangle over or pinch the surface, keeps vertices on open edges and texture seams where they are, keeps each vertex's own attributes and the geometry's material groups, and returns `{ geometry, before, after, error }`. Geometries with morph targets are refused.
 
+Two more parts come from outlines. `sdfLathe(profile, { round })` turns a closed outline of [radius, height] points about the y axis: vases, bottles, pillars, bells, lamp posts. `sdfExtrude(outline, depth, { round })` pushes a closed outline of [x, y] points `depth` deep along z: signs, gables, blades, stars, cut-out shapes.
+
+`sdfPattern(shape, { kind, color, frequency, amount, axis, size, from, to, seed })` paints over a shape's colours without moving its surface: `'spots'` (a coat, a toadstool), `'stripes'` across `axis` (a tiger, planks, layers of rock), `'noise'` patches (moss, dirt, a mottled skin) and `'gradient'` along `axis` from `from` to `to` (darker feet, moss creeping up a wall). Patterns live in the vertex colours, so keep `frequency` to a few per unit. The mesh option `edges: { amount, color }` lights the outer edges, as on worn wood or chipped paint; without `color` each part's edges take a lighter shade of it. The simplifier weighs vertex colours, so a painted edge keeps its line when triangles are taken away.
+
+`exportGlb3D(geometryOrObject)` writes a model as the bytes of a .glb: geometry, vertex colours, texture coordinates, material groups, the node tree with each node's position, rotation and scale, and each material's colour, opacity, metalness and roughness (not textures, skins, morph targets or animations). Save a model made in code once and load it with `loadGltf3D` after, or open it in Blender.
+
+In a checkout, `node tools/model-preview.mjs <absolute Playwright index.mjs> <model.mjs> <picture.png> [--glb <model.glb>]` draws a model from four sides in a headless browser and writes one picture of the four, with its triangles, vertices, size and the time it took to make. The module's default export makes the model from the exports of `@egret/engine/world3d` and returns a shape, a geometry or an object; `export const meshOptions` gives the mesh options of a shape. Look at the picture after each change to a model: proportions, a part painted the wrong colour or a detail that melted show there and not in the code.
+
 ## Labels and markers over the picture
 
 The interface of a 3D game is usually page elements over the canvas. `createScreenMarkers3D({ container, camera })` keeps such elements on scene points.

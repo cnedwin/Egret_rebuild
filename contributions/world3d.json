@@ -516,12 +516,27 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Simplify3D.ts",
-      "originRole": "First-party mesh simplification by edge collapse under the quadric error metric (Garland and Heckbert, 1997), keeping open edges, attributes and material groups; independently authored with AI assistance; Apache-2.0. No third-party source.",
+      "originRole": "First-party mesh simplification by edge collapse under the quadric error metric (Garland and Heckbert, 1997), extended to vertex colours (Garland and Heckbert, 1998), keeping open edges, attributes and material groups; independently authored with AI assistance; Apache-2.0. No third-party source.",
       "criticalComment": true
     },
     {
       "path": "tests/world3d-sdf.test.mjs",
       "originRole": "First-party behaviour tests of distance-field shapes, the meshes made from them and the simplifier; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/rendering/world3d/Export3D.ts",
+      "originRole": "First-party binary glTF 2.0 writer for geometry, vertex colours, material groups, node transforms and material factors, written from the public glTF 2.0 specification; independently authored with AI assistance; Apache-2.0. No third-party source.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/model-preview.mjs",
+      "originRole": "First-party tool that draws a model made in code from four sides in a headless browser and reports its numbers, so the person or agent who made it can look at it; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-sdf-surface.test.mjs",
+      "originRole": "First-party behaviour tests of turned and extruded shapes, patterns, worn edges, colour-aware simplification, .glb export and the World3D import map; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
     }
   ],

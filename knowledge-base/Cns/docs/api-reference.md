@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1373 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1379 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -445,6 +445,7 @@
 | `DracoModule3D` | 接口 | The parts of an initialized Draco decoder module (`await DracoDecoderModule()`) this adapter calls. |
 | `EPSILON_3D` | 值 | How close two numbers must be to count as equal. |
 | `EquirectOptions3D` | 接口 | How an equirectangular image is turned into a cube: its size, exposure and brightest value. |
+| `exportGlb3D` | 函数 | The model as the bytes of a .glb file: a geometry alone (with a plain material that shows its vertex colours), or an object and everything under it. |
 | `ExtrudeGeometryOptions3D` | 接口 | An extrusion to make: how deep, in how many steps, and along which path. |
 | `FatLine3D` | 类 | A polyline drawn as a ribbon of triangles that turns to face the camera, so it can be wider than the one pixel that plain lines allow. |
 | `FatLineOptions3D` | 接口 | A thick line to make: its width, whether that width is in screen pixels, its color and whether it closes. |
@@ -466,6 +467,7 @@
 | `GizmoHandle3D` | 类型 | A single axis, a plane spanned by two axes, or 'xyz' for the center handle of the scale mode. |
 | `GizmoMode3D` | 类型 | Whether a gizmo moves, turns or scales what it is attached to. |
 | `GizmoSpace3D` | 类型 | Whether a gizmo's axes are the world's or the object's own. |
+| `GlbExportOptions3D` | 接口 | How a model is written. |
 | `GltfAsset3D` | 接口 | A loaded glTF file: its scenes, animations, cameras, materials, textures and geometries. |
 | `GltfDracoRequest3D` | 接口 | Draco data a glTF file needs decoded: its bytes and the attributes and component types it holds. |
 | `GltfDracoResult3D` | 接口 | Decoded Draco data: its attributes by name and its indices. |
@@ -630,11 +632,15 @@
 | `sdfDisplace` | 函数 | The surface pushed in and out by smooth noise: rocks, bark, rough earth, a lumpy creature. |
 | `SdfDisplaceOptions3D` | 接口 | What `sdfDisplace` does: how far, how fine and which noise. |
 | `sdfEllipsoid` | 函数 | A stretched ball with `radii` [x, y, z]: heads, bodies, eggs and stones. |
+| `sdfExtrude` | 函数 | A flat `outline` of points [x, y] in the xy plane, closed, pushed `depth` deep along z about its middle, its edges rounded by `round`: signs, gables, blades, stars, letters, tiles, cut-out shapes. |
 | `SdfGroupOptions3D` | 接口 | A group of shapes: `smooth` is how far, in the model's units, the blend between them reaches. |
 | `sdfIntersect` | 函数 | What the shapes have in common; with `smooth`, its edges rounded. |
+| `sdfLathe` | 函数 | A shape turned about the y axis from its `profile`: points [radius, height] going round a closed outline, as a potter draws half a vase. |
 | `SdfMeshOptions3D` | 接口 | How a field becomes a mesh. |
 | `sdfMirror` | 函数 | The shape and its mirror image across the plane through the origin square to `axis` ('x' unless given): make one eye, ear, arm or leg on the positive side and get the pair. |
 | `SdfOptions3D` | 接口 | Where a shape goes and how it looks: moved by `at`, turned by `rotation`, scaled by `scale`, painted `color`. |
+| `sdfPattern` | 函数 | `shape` with a pattern painted over its colours, in the coordinates of the model; the surface does not move. |
+| `SdfPatternOptions3D` | 接口 | A pattern painted over a shape's colours. |
 | `sdfRound` | 函数 | The shape grown by `radius` all round, its edges rounded by as much. |
 | `SdfShape3D` | 类 | A shape as a signed distance field: negative inside, positive outside, zero on the surface. |
 | `sdfShell` | 函数 | A hollow skin of the shape, `thickness` thick: bowls, pots, helmets, when cut open. |

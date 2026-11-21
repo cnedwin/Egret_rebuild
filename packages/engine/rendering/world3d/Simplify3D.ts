@@ -2,8 +2,9 @@
 // Fewer triangles for the same shape: a model made in code, a scanned or generated asset, a far version for a level
 // of detail. Edges are collapsed one by one, cheapest first, where the cost of a collapse is how far the kept vertex
 // lies from the planes of the triangles around both ends (the quadric error metric of Garland and Heckbert, 1997).
-// A collapse that would turn a triangle over, pinch the surface or move an open edge is refused. Each kept vertex
-// keeps its own normal, colour and texture coordinates, so seams and painted parts stay where they were.
+// A collapse that would turn a triangle over, pinch the surface or move an open edge is refused. With vertex colours
+// the quadrics take in colour as well (Garland and Heckbert, 1998), so painted edges stay. Each kept vertex keeps its own normal, colour and texture
+// coordinates, so seams and painted parts stay where they were.
 import { World3DError } from './core3D.js';
 import { Attribute3D, Geometry3D } from './Geometry3D.js';
 
@@ -217,8 +218,102 @@ export function simplifyGeometry3D(geometry: Geometry3D, options: SimplifyOption
 
   const stamp = new Int32Array(n);
   const heap = new Heap();
+  let colorCostOf: ((u: number, v: number) => number) | undefined;
   // The cost of moving u onto v, Infinity when u may not move.
-  const costOf = (u: number, v: number): number => (locked[u] ? Infinity : errorAt(u, v, v));
+  // Vertex colours count too, through a quadric over position and colour together (Garland and Heckbert, 1998): each
+  // triangle is a plane in six dimensions, and a collapse that drags a vertex of one colour across a stripe of
+  // another costs as much as moving the surface by a tenth of the model's size for a full change of colour. Painted
+  // edges then keep their line, and the triangles around them do not stretch across.
+  const colors = geometry.getAttribute('color');
+  const C = colors !== undefined && colors.itemSize >= 3 ? colors.data : undefined,
+    cs = colors?.itemSize ?? 0;
+  const D = 6,
+    W6 = D * D + D + 1;
+  const Q6 = C === undefined ? undefined : new Float64Array(n * W6);
+  if (C !== undefined && Q6 !== undefined) {
+    let x0 = Infinity,
+      x1 = -Infinity,
+      y0 = Infinity,
+      y1 = -Infinity,
+      z0 = Infinity,
+      z1 = -Infinity;
+    for (let i = 0; i < n; i++) {
+      x0 = Math.min(x0, P[i * 3]!);
+      x1 = Math.max(x1, P[i * 3]!);
+      y0 = Math.min(y0, P[i * 3 + 1]!);
+      y1 = Math.max(y1, P[i * 3 + 1]!);
+      z0 = Math.min(z0, P[i * 3 + 2]!);
+      z1 = Math.max(z1, P[i * 3 + 2]!);
+    }
+    const scale = Math.hypot(x1 - x0, y1 - y0, z1 - z0) / 10;
+    const point = (v: number, out: Float64Array): void => {
+      out[0] = P[v * 3]!;
+      out[1] = P[v * 3 + 1]!;
+      out[2] = P[v * 3 + 2]!;
+      for (let c = 0; c < 3; c++) out[3 + c] = C[v * cs + c]! * scale;
+    };
+    const p = new Float64Array(D),
+      q = new Float64Array(D),
+      r = new Float64Array(D),
+      e1 = new Float64Array(D),
+      e2 = new Float64Array(D);
+    const dot = (a: Float64Array, b: Float64Array): number => {
+      let sum = 0;
+      for (let i = 0; i < D; i++) sum += a[i]! * b[i]!;
+      return sum;
+    };
+    for (let f = 0; f < faces; f++) {
+      const i0 = F[f * 3]!,
+        i1 = F[f * 3 + 1]!,
+        i2 = F[f * 3 + 2]!;
+      const area = faceNormal(i0, i1, i2)[3];
+      if (area === 0) continue;
+      point(i0, p);
+      point(i1, q);
+      point(i2, r);
+      for (let i = 0; i < D; i++) e1[i] = q[i]! - p[i]!;
+      const l1 = Math.sqrt(dot(e1, e1));
+      if (l1 === 0) continue;
+      for (let i = 0; i < D; i++) e1[i] = e1[i]! / l1;
+      for (let i = 0; i < D; i++) e2[i] = r[i]! - p[i]!;
+      const along = dot(e1, e2);
+      for (let i = 0; i < D; i++) e2[i] = e2[i]! - along * e1[i]!;
+      const l2 = Math.sqrt(dot(e2, e2));
+      if (l2 === 0) continue;
+      for (let i = 0; i < D; i++) e2[i] = e2[i]! / l2;
+      const p1 = dot(p, e1),
+        p2 = dot(p, e2);
+      for (const v of [i0, i1, i2]) {
+        const o = v * W6;
+        for (let i = 0; i < D; i++)
+          for (let j = 0; j < D; j++)
+            Q6[o + i * D + j] = Q6[o + i * D + j]! + area * ((i === j ? 1 : 0) - e1[i]! * e1[j]! - e2[i]! * e2[j]!);
+        for (let i = 0; i < D; i++) Q6[o + D * D + i] = Q6[o + D * D + i]! + area * (p1 * e1[i]! + p2 * e2[i]! - p[i]!);
+        Q6[o + D * D + D] = Q6[o + D * D + D]! + area * (dot(p, p) - p1 * p1 - p2 * p2);
+      }
+    }
+    // The point of a vertex is fixed now: keep it to price a collapse onto it.
+    const points6 = new Float64Array(n * D);
+    for (let v = 0; v < n; v++) {
+      point(v, p);
+      points6.set(p, v * D);
+    }
+    colorCostOf = (u: number, v: number): number => {
+      let sum = 0;
+      const a = u * W6,
+        b = v * W6,
+        x = v * D;
+      for (let i = 0; i < D; i++) {
+        const xi = points6[x + i]!;
+        let row = 0;
+        for (let j = 0; j < D; j++) row += (Q6[a + i * D + j]! + Q6[b + i * D + j]!) * points6[x + j]!;
+        sum += xi * row + 2 * (Q6[a + D * D + i]! + Q6[b + D * D + i]!) * xi;
+      }
+      return Math.max(0, sum + Q6[a + D * D + D]! + Q6[b + D * D + D]!);
+    };
+  }
+  const costOf = (u: number, v: number): number =>
+    locked[u] ? Infinity : colorCostOf === undefined ? errorAt(u, v, v) : colorCostOf(u, v);
   const offer = (a: number, b: number): void => {
     const ab = costOf(a, b),
       ba = costOf(b, a);
@@ -248,7 +343,8 @@ export function simplifyGeometry3D(geometry: Geometry3D, options: SimplifyOption
       b = Math.max(u, v);
     if (s !== stamp[a]! + stamp[b]! * 65536) continue;
     if (cost === Infinity) break;
-    const moved = distanceOf(cost, u, v);
+    // The heap orders by shape and colour together; the distance the surface moves is the shape's part alone.
+    const moved = distanceOf(errorAt(u, v, v), u, v);
     if (moved > maxError) break;
     // The edge must still be there, and the two ends must share exactly the two vertices across the edge.
     const nu = neighbours(u);
@@ -287,6 +383,7 @@ export function simplifyGeometry3D(geometry: Geometry3D, options: SimplifyOption
     }
     vertexFaces[u] = [];
     for (let i = 0; i < 10; i++) Q[v * 10 + i] = Q[v * 10 + i]! + Q[u * 10 + i]!;
+    if (Q6 !== undefined) for (let i = 0; i < W6; i++) Q6[v * W6 + i] = Q6[v * W6 + i]! + Q6[u * W6 + i]!;
     areaOf[v] = areaOf[v]! + areaOf[u]!;
     if (moved > worst) worst = moved;
     stamp[v] = stamp[v]! + 1;

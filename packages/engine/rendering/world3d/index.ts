@@ -328,8 +328,11 @@ export {
   sdfCylinder,
   sdfDisplace,
   sdfEllipsoid,
+  sdfExtrude,
   sdfIntersect,
+  sdfLathe,
   sdfMirror,
+  sdfPattern,
   sdfRound,
   sdfShell,
   sdfSphere,
@@ -337,8 +340,16 @@ export {
   sdfTorus,
   sdfUnion
 } from './Sdf3D.js';
-export type { SdfDisplaceOptions3D, SdfGroupOptions3D, SdfMeshOptions3D, SdfOptions3D } from './Sdf3D.js';
+export type {
+  SdfDisplaceOptions3D,
+  SdfGroupOptions3D,
+  SdfMeshOptions3D,
+  SdfOptions3D,
+  SdfPatternOptions3D
+} from './Sdf3D.js';
 export { simplifyGeometry3D } from './Simplify3D.js';
+export { exportGlb3D } from './Export3D.js';
+export type { GlbExportOptions3D } from './Export3D.js';
 export type { SimplifyOptions3D, SimplifyResult3D } from './Simplify3D.js';
 export { retargetAnimationClip3D } from './Retarget3D.js';
 export type { RetargetOptions3D } from './Retarget3D.js';
