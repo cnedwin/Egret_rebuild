@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/models/barrel.mjs",
+      "originRole": "First-party example model, barrel, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/bush.mjs",
+      "originRole": "First-party example model, bush, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/cactus.mjs",
+      "originRole": "First-party example model, cactus, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/cat.mjs",
+      "originRole": "First-party example model, cat, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/chest.mjs",
+      "originRole": "First-party example model, chest, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/chick.mjs",
+      "originRole": "First-party example model, chick, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/cottage.mjs",
+      "originRole": "First-party example model, cottage, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/crate.mjs",
+      "originRole": "First-party example model, crate, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/dog.mjs",
+      "originRole": "First-party example model, dog, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/fish.mjs",
+      "originRole": "First-party example model, fish, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/flower.mjs",
+      "originRole": "First-party example model, flower, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/fox.mjs",
+      "originRole": "First-party example model, fox, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/gallery.mjs",
+      "originRole": "First-party page script that makes every model of the library and lays them out by kind; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/index.mjs",
+      "originRole": "First-party list of the models of the model library; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/models/knight.mjs",
+      "originRole": "First-party example model, knight, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/lantern.mjs",
+      "originRole": "First-party example model, lantern, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/mushroom.mjs",
+      "originRole": "First-party example model, mushroom, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/pagoda.mjs",
+      "originRole": "First-party example model, pagoda, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/pine.mjs",
+      "originRole": "First-party example model, pine, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/rabbit.mjs",
+      "originRole": "First-party example model, rabbit, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/rock.mjs",
+      "originRole": "First-party example model, rock, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/signpost.mjs",
+      "originRole": "First-party example model, signpost, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/tower.mjs",
+      "originRole": "First-party example model, tower, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/tree.mjs",
+      "originRole": "First-party example model, tree, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/villager.mjs",
+      "originRole": "First-party example model, villager, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/well.mjs",
+      "originRole": "First-party example model, well, made in code from distance fields; original design, independently authored with AI assistance; Apache-2.0. No third-party asset.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/models/index.html",
+      "originRole": "First-party gallery page of the model library; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/models/README.md",
+      "originRole": "First-party instructions and lessons of the model library; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/models/README.zh-CN.md",
+      "originRole": "First-party Simplified Chinese instructions and lessons of the model library; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/model-library.test.mjs",
+      "originRole": "First-party tests that every model of the library is listed, builds within budget, stands on the ground and is sized for its kind; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "examples/models/README.md",
+      "zh": "examples/models/README.zh-CN.md"
+    }
+  ]
+}

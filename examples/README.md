@@ -114,3 +114,4 @@ Then open `/examples/<name>/index.html` on the host and port the server prints.
 | Example | Folder | Checked |
 | --- | --- | --- |
 | [World3D example](world3d/README.md) | `world3d` | — |
+| [Model library](models/README.md) | `models` | — |

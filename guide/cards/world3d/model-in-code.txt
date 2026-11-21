@@ -11,9 +11,9 @@ engine: 619422c801e3f1aedb836425efd2b0644f4d9390
 
 # Model 3D creatures, props and buildings as smooth fields, not stacked boxes
 
-Boxes merged with `createGeometryBuilder3D` show every seam: hard intersections, sharp edges, flat colours, no shade where parts meet. Build what the player looks at as a distance field instead, and let `createSdfGeometry3D` make the mesh: parts join smoothly, edges round, colours blend at the joins, creases are shaded.
+Boxes merged with `createGeometryBuilder3D` show every seam. Build what the player looks at as a distance field instead, and let `createSdfGeometry3D` make the mesh: parts join smoothly, edges round, colours blend at the joins, creases are shaded.
 
-Work in this order, and look at the model after each step with `node tools/model-preview.mjs <Playwright index.mjs> model.mjs model.png`, which draws it from four sides:
+Start from the nearest of the 24 models in `examples/models` (animals, people, buildings, plants, props) and change it. Work in this order, and look at the model after each step with `node tools/model-preview.mjs <Playwright index.mjs> model.mjs model.png`, which draws it from four sides:
 
 1. **Silhouette and proportion first.** Two to five large rounded parts (`sdfEllipsoid`, `sdfSphere`, `sdfBox` with `round`) in one `sdfUnion` with a `smooth` of about a tenth of the main part's size. Exaggerate: a big head reads better at game distance.
 2. **Limbs, ears, tails, branches** as `sdfCapsule(from, to, radius, { radiusEnd })`, tapered; one side wrapped in `sdfMirror`. Vases and posts: `sdfLathe`; signs and blades: `sdfExtrude`.
