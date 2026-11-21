@@ -264,6 +264,33 @@ The packet consumed by GLES3 was 948 bytes in every lane. The bridge figures cou
 
 All four paths produced identical 1080 × 1920 surfaces at the final pose, both before and after EGL context recreation. Against an independent CPU rasterization, all 2,030,094 pixels away from color boundaries matched. Of the remaining pixels, 22 matched the color of a neighboring texel within the same mesh and 21 matched a neighboring layer at a silhouette. Every differing color appeared in the expected 3 × 3 neighborhood. Each execution uploaded both atlas pages once per context and recorded four page releases by close. The three game sessions released both logical textures, and replay released its tape. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-indexed-mesh.json)
 
+### Roll3D on the Android player
+
+Roll the ball to collect all four stars, including the one on the raised platform. The flat score updates after each pickup. Touch **Play again** on the result screen to start a fresh round. The Android export reads the existing level file and binds it to the native host. The two versions use the same movement, collisions, follow camera, spinning stars, particle bursts and restart logic. [Original browser game](https://github.com/cnedwin/Egret_rebuild/blob/dfc3a00010e9e9e9d4fa26c4a3f5a42a82d92b82/examples/play/roll3d.mjs)
+
+From a built checkout, use a fresh directory for the prepared game and the Android project. Supply the trimmed-V8 AAR and external signing settings from the local release instructions above.
+
+```sh
+node runtime-sdk/examples/roll3d/prepare.mjs out/roll3d-game
+node runtime-sdk/android/player/create-app.mjs --project out/roll3d-game --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.roll3d --name Roll3D --out out/roll3d-app
+gradle -p out/roll3d-app assembleRelease
+```
+
+A game can opt in with `installWorld3DPlayerProject` from `@egret/android-player-world3d`. Implement `world3D()` on the returned game object to supply its live `{scene, camera}` after each update. Add normal 2D display objects to the player stage for the HUD. World3D builds the camera-visible draw list. The E3D1 packet carries indexed positions and normals, transforms, Standard material parameters, the camera and lights, followed by the existing transparent 2D frame. GLES3 draws the scene with depth testing before it composites the HUD. Geometry shared between draws is uploaded once per context while its contents remain resident and unchanged. Each packet contains the geometry required to replay it on a fresh context.
+
+The profile matches this game's low quality setting: opaque, front-sided, untextured Standard materials, indexed triangles, ambient and hemisphere lighting, one directional light, and ACES at unit exposure. This comparison omits shadows, multisampling and post-processing. The existing 2D entry continues to emit EGR frames. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-roll3d.json)
+
+The first APK left the camera at its default aspect ratio of 1 on a 16:9 stage. The ball appeared wide and the raised platform shifted to the right. The player now sets the camera aspect from the stage dimensions before frustum culling and draw capture. On the same Fold7, all 12 opening-scene landmarks were within 1/255 per RGB channel after the correction. In the sampled windows around the ball, platform and front star, the color silhouettes overlapped by 95.3%, 98.5% and 97.0%. Text layout and rotating edges are evaluated separately from those scene landmarks.
+
+On the Fold7, both versions registered all four stars, including the jump to the raised platform, showed the victory screen and reset the score to 0/4 when the replay button was tapped. Touch events were injected on the phone. The Android test used the locally signed arm64 Release APK. A separate timing run recorded the intervals between frames presented by Android's compositor. Each active window alternated short left and right holds.
+
+| Presented-frame p95 (ms) | Idle | Movement A | Movement B |
+| --- | ---: | ---: | ---: |
+| Chrome, WebGL2 | 16.581 | 16.579 | 16.582 |
+| Android, trimmed V8 and GLES3 | 16.578 | 16.580 | 16.582 |
+
+Both versions drew the 3D scene at 578 × 325 with a display cadence near 60 Hz. Chrome used a separate 1920 × 1080 overlay. For this timing run the APK drew its HUD into the same 578 × 325 buffer. All six short windows had zero intervals of 34 ms or more. At its default 1780 × 1001 surface and 120 Hz mode, the APK separately recorded an idle p95 of 8.289 ms over 802 intervals. The measurements describe display cadence on this phone. GPU execution time, power and sustained thermal performance remain unmeasured.
+
 ### Play the first act of Lantern Shadows on Android
 
 The reference is the existing browser game at commit `7b774670`. Its playbill scrolls, the notched South Gate banner reveals the scenery, and the player can attack, jump and summon up to 100 shadow doubles. Defeating ten soldiers and Nezha opens the result screen and saves the first-act record. The Android project uses the original rules, Tiled level, Spine poses and record format. The native display tree lays out the playbill and controls. It clips the scrolling list to a rectangle and draws the fixed banner silhouette as triangles. The Android benchmark covers the first act in silence. Audio was outside the browser comparison. [Pinned game source](https://github.com/cnedwin/PortedGamesEgret/tree/7b774670237666d73247cc793c55530f7f7c1e5f/LanternShadows)

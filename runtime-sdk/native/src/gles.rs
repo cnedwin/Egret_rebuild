@@ -208,7 +208,12 @@ impl EgretRenderer {
     }
 
     unsafe fn draw(&mut self, bytes: &[u8], width: u32, height: u32) -> i32 {
-        let header = match frame::prepare_lit_frame(bytes, &self.page_sizes, &mut self.vertices, &mut self.batches, &mut self.indices, &mut self.lights) {
+        let world = if bytes.starts_with(b"E3D1") {
+            let Some(scene) = crate::world_frame::WorldFrame::parse(bytes) else { return INVALID; };
+            Some(scene)
+        } else { None };
+        let hud = world.as_ref().map_or(bytes, |frame| frame.overlay);
+        let header = match frame::prepare_lit_frame(hud, &self.page_sizes, &mut self.vertices, &mut self.batches, &mut self.indices, &mut self.lights) {
             Ok(header) => header,
             Err(error) => return error as i32,
         };
@@ -228,7 +233,7 @@ impl EgretRenderer {
             if self.project.is_none() { self.project = ProjectPipeline::create(); }
             let Some(pipeline) = &mut self.project else { return GPU_FAILURE; };
             if size != 0 { glBufferSubData(ARRAY_BUFFER, 0, size as isize, self.vertices.as_ptr().cast()); }
-            return if pipeline.render(&header, [width, height], self.vao, &self.textures, &self.batches) {
+            return if pipeline.render(&header, [width, height], self.vao, &self.textures, &self.batches, world.as_ref()) {
                 0
             } else { GPU_FAILURE };
         }

@@ -202,7 +202,28 @@ public final class ProjectReplayTapeTest {
         require(empty.size() == 0);
     }
 
+    private static void worldOverlay() throws Exception {
+        byte[] hud = packet(0,0);
+        hud[16] = 0;
+        ByteBuffer world = ByteBuffer.allocate(160 + hud.length).order(ByteOrder.LITTLE_ENDIAN);
+        world.putInt(0, WorldProjectPacket.MAGIC).putInt(8, hud.length).putInt(20, 255);
+        world.position(160);
+        world.put(hud);
+        require(WorldProjectPacket.stageOffset(world) == 160);
+        ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W,H);
+        require(!recorder.add(new PlayerGraphics.Frame(1, world.array(), Collections.emptyMap())));
+        world.putInt(4, 1);
+        require(WorldProjectPacket.stageOffset(world) == -1);
+        world.putInt(4, 0).putInt(8, Integer.MAX_VALUE);
+        require(WorldProjectPacket.stageOffset(world) == -1);
+        world.putInt(8, hud.length).putInt(12, 1);
+        reject(() -> WorldProjectPacket.validate(world));
+        world.putInt(12, 0).putInt(160, WorldProjectPacket.MAGIC);
+        require(WorldProjectPacket.stageOffset(world) == -1);
+    }
+
     public static void main(String[] args) throws Exception {
+        worldOverlay();
         File dir = Files.createTempDirectory("egret-project-tape-test").toFile();
         File file = new File(dir, "scene.bin");
         try {

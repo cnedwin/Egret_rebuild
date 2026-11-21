@@ -11,3 +11,7 @@ mod gles;
 mod project_color;
 #[cfg(target_os = "android")]
 mod project_gles;
+#[cfg(any(test, target_os = "android"))]
+mod world_frame;
+#[cfg(target_os = "android")]
+mod world_gles;

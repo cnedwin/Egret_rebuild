@@ -1,0 +1,786 @@
+{
+  "date": "2026-11-21",
+  "scope": "Roll3D single-level browser game and locally signed arm64 release APK on one physical Galaxy Z Fold7. Target API 36. No WebView in the native path.",
+  "original": {
+    "base": "dfc3a00010e9e9e9d4fa26c4a3f5a42a82d92b82",
+    "source": "examples/play/roll3d.mjs",
+    "sha256": "cdc16b58ce7a17eca4cfad2d55cb664c786598508ff5b4d4da40cd4054d718b5",
+    "resolution": "960 × 540 logical units",
+    "quality": "low, no shadow atlas, post-processing, FXAA or MSAA; hemisphere and directional lights on standard materials; browser WebGL2 and native GLES3.",
+    "url": "https://github.com/cnedwin/Egret_rebuild/blob/dfc3a00010e9e9e9d4fa26c4a3f5a42a82d92b82/examples/play/roll3d.mjs"
+  },
+  "device": {
+    "model": "Samsung Galaxy Z Fold7 (SM-F966U1)",
+    "android": 17,
+    "chrome": "Chrome/157.0.8103.78",
+    "connection": "USB",
+    "qualification": "injected primary touch events on a physical device"
+  },
+  "artifact": {
+    "app": "org.egret.qa.roll3d",
+    "sha256": "6523c6dca3902cafc4768b6f067021b9472d8a9e8ca7db21d1ef24da883d0ab9",
+    "bytes": 64431483,
+    "gameJsSha256": "0cb23ef60a7d131eb8db3d68c1b635caa5f28eb8128d122192b5562c9283903a",
+    "aarSha256": "5d05a03fe5e7af32ca2b081cfde090a1410781ffbbce65cc7c233567f935a6ab",
+    "host": "trimmed V8 15.7.112.19 without Intl, arm64 Android GLES3",
+    "diagnosticActivity": "The Release APK includes a read-only game-state observer that is enabled with an explicit launch extra. A second optional launch mode fixes the Android surface at 578 × 325 and requests 60 Hz for this window. Default launches retain their natural rendering size and system rate."
+  },
+  "browser": {
+    "logical": [
+      960,
+      540
+    ],
+    "cssViewport": [
+      873,
+      325
+    ],
+    "dpr": 2.625,
+    "glLayers": [
+      [
+        578,
+        325
+      ],
+      [
+        1920,
+        1080
+      ]
+    ],
+    "backend": "WebGL2 World3D and transparent 2D overlay",
+    "controls": "Chrome DevTools injected real touchscreen events in the unmodified page. A one-time debugger pause before gameplay obtains read-only observations of existing game objects; it is removed before inputs and performance sampling.",
+    "checkpoints": [
+      {
+        "event": "star-1",
+        "starsRemaining": 3,
+        "hud": "Stars 1/4",
+        "result": "",
+        "ball": {
+          "x": 2.9844000339508057,
+          "y": 1.6787035465240479,
+          "z": 0
+        }
+      },
+      {
+        "event": "star-2",
+        "starsRemaining": 2,
+        "hud": "Stars 2/4",
+        "result": "",
+        "ball": {
+          "x": -3.579000234603882,
+          "y": 0.5,
+          "z": -2.9832000732421875
+        }
+      },
+      {
+        "event": "star-3",
+        "starsRemaining": 1,
+        "hud": "Stars 3/4",
+        "result": "",
+        "ball": {
+          "x": -0.09900042414665222,
+          "y": 0.5,
+          "z": 4.375200271606445
+        }
+      },
+      {
+        "event": "jump",
+        "starsRemaining": 1,
+        "hud": "Stars 3/4",
+        "result": "",
+        "ball": {
+          "x": 3.3815999031066895,
+          "y": 1.523578405380249,
+          "z": -4.079999923706055
+        }
+      },
+      {
+        "event": "win",
+        "starsRemaining": 0,
+        "hud": "Stars 4/4",
+        "result": "All four!",
+        "ball": {
+          "x": 5.171998977661133,
+          "y": 1.98198664188385,
+          "z": -4.079999923706055
+        }
+      },
+      {
+        "event": "restart",
+        "starsRemaining": 4,
+        "hud": "Stars 0/4",
+        "result": "",
+        "ball": {
+          "x": 0,
+          "y": 0.5,
+          "z": 0
+        }
+      }
+    ],
+    "outcomes": "Won all four stars including the elevated one; pressed Play again, recovered 0/4 at spawn.",
+    "routeReportSha256": "cc0d3557fff8cb7920a36aa4b86ecd68fc93c8d8b1c50326da8fc55ee90e413c",
+    "scopeOfFirstRoute": "The route and restart completed. Its subsequent first trace extraction failed to identify the browser process; the three timing windows below were reacquired with the exact ChromeChildSurface token join.",
+    "checks": [
+      {
+        "name": "idle",
+        "presentation": {
+          "samples": 396,
+          "medianMs": 16.577396,
+          "p95Ms": 16.581304,
+          "p99Ms": 16.583908,
+          "maxMs": 33.153074,
+          "longOver34": 0
+        },
+        "applicationRAF": {
+          "samples": 392,
+          "medianMs": 16.600000000000364,
+          "p95Ms": 16.69999999999891,
+          "p99Ms": 16.700000000000728,
+          "maxMs": 16.700000000000728,
+          "longOver34": 0
+        },
+        "seconds": 6.599999999976717,
+        "exactSurface": "ChromeChildSurface",
+        "intervalsArtifactSha256": "9b384ef0c1ff70d33cb255af7dfc1f2d2b605a1ba2ebee92949819cf6459cdd0",
+        "traceSha256": "a4bf2d3971c34ea4d576842f06265d0ac128ef33dc293284cc6f8cef6390f065"
+      },
+      {
+        "name": "active-a",
+        "presentation": {
+          "samples": 438,
+          "medianMs": 16.574063,
+          "p95Ms": 16.579479,
+          "p99Ms": 16.581096,
+          "maxMs": 16.581667,
+          "longOver34": 0
+        },
+        "applicationRAF": {
+          "samples": 434,
+          "medianMs": 16.599999999998545,
+          "p95Ms": 16.700000000000728,
+          "p99Ms": 16.700000000000728,
+          "maxMs": 16.700000000000728,
+          "longOver34": 0
+        },
+        "seconds": 7.289999999920838,
+        "exactSurface": "ChromeChildSurface",
+        "intervalsArtifactSha256": "62ef31b997571888b1d00b062ee77ab7cc8bca22c7434efce3c243bbc3f30261",
+        "traceSha256": "025381384b0a249c2f4cbd75e53482317e0bb4075c0806903e6a6af072ec95b5"
+      },
+      {
+        "name": "active-b",
+        "presentation": {
+          "samples": 433,
+          "medianMs": 16.57573,
+          "p95Ms": 16.581771,
+          "p99Ms": 16.582709,
+          "maxMs": 16.586824,
+          "longOver34": 0
+        },
+        "applicationRAF": {
+          "samples": 428,
+          "medianMs": 16.599999999998545,
+          "p95Ms": 16.700000000000728,
+          "p99Ms": 16.700000000004366,
+          "maxMs": 16.700000000004366,
+          "longOver34": 0
+        },
+        "seconds": 7.199999999953434,
+        "exactSurface": "ChromeChildSurface",
+        "intervalsArtifactSha256": "92b57158c6df7d6b21cdc736dd15cf773f14a77f9666947c2aa3e7ced7c0c3d6",
+        "traceSha256": "1177c6c1a884524a61697149d385ff0bdbde02e7d630f3b2e793d6d8a6b8a787"
+      }
+    ],
+    "method": "SurfaceFlinger actual display present time joined via a display frame token to a non-dropped ChromeChildSurface app frame. rAF intervals from an independent idle callback. Sample distribution uses nearest-rank p50/p95/p99; long intervals are >=34 ms.",
+    "evidenceSources": {
+      "gameplayAndPixels": "Touch checkpoints and opening page pixels were collected in a dedicated playthrough. The page capture used for the pixel comparison is identified under visual.browserOpeningSha256.",
+      "timing": "Presentation and requestAnimationFrame windows were collected in a separate run of the same game on the same phone. Only the successful timing run is represented here."
+    }
+  },
+  "native": {
+    "checks": [
+      {
+        "checkpoint": "first-star",
+        "round": 1,
+        "frames": 388,
+        "hud": [
+          "Stars 1/4"
+        ],
+        "starsRemaining": 3,
+        "result": "",
+        "ball": {
+          "x": 2.9852473735809326,
+          "y": 0.5,
+          "z": 0
+        }
+      },
+      {
+        "checkpoint": "second-star",
+        "round": 1,
+        "frames": 911,
+        "hud": [
+          "Stars 2/4"
+        ],
+        "starsRemaining": 2,
+        "result": "",
+        "ball": {
+          "x": -3.928426504135132,
+          "y": 0.5,
+          "z": -2.9853179454803467
+        }
+      },
+      {
+        "checkpoint": "third-star",
+        "round": 1,
+        "frames": 1396,
+        "hud": [
+          "Stars 3/4"
+        ],
+        "starsRemaining": 1,
+        "result": "",
+        "ball": {
+          "x": -0.04970581829547882,
+          "y": 0.5,
+          "z": 4.922978401184082
+        }
+      },
+      {
+        "checkpoint": "before-raised-platform",
+        "round": 1,
+        "frames": 2015,
+        "hud": [
+          "Stars 3/4"
+        ],
+        "starsRemaining": 1,
+        "result": "",
+        "ball": {
+          "x": 2.091517686843872,
+          "y": 0.5,
+          "z": -3.9327874183654785
+        }
+      },
+      {
+        "checkpoint": "win",
+        "round": 1,
+        "frames": 2098,
+        "hud": [
+          "Stars 4/4",
+          "All four!",
+          "Play again"
+        ],
+        "starsRemaining": 0,
+        "result": "All four!",
+        "ball": {
+          "x": 5.126185417175293,
+          "y": 1.9620985984802246,
+          "z": -3.9327874183654785
+        }
+      },
+      {
+        "checkpoint": "restart",
+        "round": 2,
+        "frames": 2306,
+        "hud": [
+          "Stars 0/4"
+        ],
+        "starsRemaining": 4,
+        "result": "",
+        "ball": {
+          "x": 0,
+          "y": 0.9985335469245911,
+          "z": 0
+        }
+      }
+    ],
+    "deviceSurface": [
+      1780,
+      1001
+    ],
+    "renderBuffer": [
+      1780,
+      1001
+    ],
+    "deviceReportedRefreshHz": 120.00001,
+    "host": "trimmed",
+    "intl": false,
+    "controls": "Target-checked Android UiAutomation injectInputEvent on the real touchscreen surface, no game-state injection. The four stars and their score were read from the original level after each action. Win and restart were also captured as device pixels.",
+    "sourceReportSha256": "f5d952d5045834af619cae790aade932ba4f9b59fb39ad8506fa946a56ba1ba2",
+    "restored": {
+      "stayOn": true,
+      "priorIdsPreserved": true,
+      "ownedAbsent": true,
+      "leaseReleased": true,
+      "originalForeground": true,
+      "appsRemoved": true
+    },
+    "naturalTiming": [
+      {
+        "name": "idle",
+        "presentation": {
+          "samples": 802,
+          "medianMs": 8.287552,
+          "p95Ms": 8.289219,
+          "p99Ms": 8.290208,
+          "maxMs": 16.573125,
+          "longOver34": 0
+        },
+        "applicationSubmittedInterval": {
+          "samples": 180,
+          "medianMs": 8.308,
+          "p95Ms": 9.11,
+          "p99Ms": 9.72,
+          "maxMs": 10.206,
+          "longOver34": 0
+        },
+        "seconds": 6.654955257,
+        "polls": 17,
+        "maxPollGapMs": 458.7146999999968,
+        "method": "Android SurfaceFlinger --latency on the exact game buffer layer. Column 2 is actual presentation time. Poll existing 128-frame ring; no global reset. Discard initial history and duplicate timestamps.",
+        "panelPeriodMs": 8.333333,
+        "exactSurface": "GameActivity GLSurfaceView (BLAST) exact layer generation",
+        "intervalsArtifactSha256": "86d3a052afe9ecae53de741ebea76e8971c35dba1b6394ba66a0b8635f97ebce",
+        "gameSubmitArtifactSha256": "c1090c18d4e0bae2704f392a335b1c42272f3fc0c4845b054e9d0b7b9e4544d4"
+      }
+    ],
+    "matchedTiming": {
+      "surface": [
+        1780,
+        1001
+      ],
+      "renderBuffer": [
+        578,
+        325
+      ],
+      "deviceReportedRefreshHz": 120.00001,
+      "sourceReportSha256": "b9565e6a8951779c85b287cd9eb51aefecffdc715a4e2296de772d7196c2c000",
+      "restored": {
+        "stayOn": true,
+        "priorIdsPreserved": true,
+        "ownedAbsent": true,
+        "leaseReleased": true,
+        "originalForeground": true,
+        "appsRemoved": true
+      },
+      "samples": [
+        {
+          "name": "idle",
+          "presentation": {
+            "samples": 399,
+            "medianMs": 16.575416,
+            "p95Ms": 16.578386,
+            "p99Ms": 16.581928,
+            "maxMs": 16.582968,
+            "longOver34": 0
+          },
+          "applicationSubmittedInterval": {
+            "samples": 180,
+            "medianMs": 16.538,
+            "p95Ms": 17.785,
+            "p99Ms": 18.547,
+            "maxMs": 18.739,
+            "longOver34": 0
+          },
+          "seconds": 6.613636924,
+          "polls": 16,
+          "maxPollGapMs": 735.2808000000005,
+          "method": "Android SurfaceFlinger --latency on the exact game buffer layer. Column 2 is actual presentation time. Poll existing 128-frame ring; no global reset. Discard initial history and duplicate timestamps.",
+          "panelPeriodMs": 16.666666,
+          "exactSurface": "GameActivity GLSurfaceView (BLAST) exact layer generation",
+          "intervalsArtifactSha256": "d63cc69bb4e1065ef8de38f0d97c06d1c71b6dccbdc37c2d21721dd78c9e9120",
+          "gameSubmitArtifactSha256": "2b5d83a1d1b3555045d98f4463d5c9e5a36192404761c8b13ebb911827f50c3e"
+        },
+        {
+          "name": "active-a",
+          "presentation": {
+            "samples": 429,
+            "medianMs": 16.576198,
+            "p95Ms": 16.58,
+            "p99Ms": 16.581249,
+            "maxMs": 33.154844,
+            "longOver34": 0
+          },
+          "applicationSubmittedInterval": {
+            "samples": 180,
+            "medianMs": 16.572,
+            "p95Ms": 17.534,
+            "p99Ms": 23.271,
+            "maxMs": 25.941,
+            "longOver34": 0
+          },
+          "seconds": 7.127686665,
+          "polls": 19,
+          "maxPollGapMs": 488.48349999999846,
+          "method": "Android SurfaceFlinger --latency on the exact game buffer layer. Column 2 is actual presentation time. Poll existing 128-frame ring; no global reset. Discard initial history and duplicate timestamps.",
+          "panelPeriodMs": 16.666666,
+          "exactSurface": "GameActivity GLSurfaceView (BLAST) exact layer generation",
+          "intervalsArtifactSha256": "f786d9f08ba756470a7bb295d5bf094a161ed2b5d56c9d06578566c5fa9b01fa",
+          "gameSubmitArtifactSha256": "b84237d2dc10e7c278ee9054f310f7e9618a96e97a38b25bc0b4a780ff7fd407"
+        },
+        {
+          "name": "active-b",
+          "presentation": {
+            "samples": 443,
+            "medianMs": 16.577395,
+            "p95Ms": 16.581719,
+            "p99Ms": 16.583437,
+            "maxMs": 16.584219,
+            "longOver34": 0
+          },
+          "applicationSubmittedInterval": {
+            "samples": 180,
+            "medianMs": 16.53,
+            "p95Ms": 17.998,
+            "p99Ms": 27.089,
+            "maxMs": 27.732,
+            "longOver34": 0
+          },
+          "seconds": 7.343582341,
+          "polls": 18,
+          "maxPollGapMs": 917.2926000000007,
+          "method": "Android SurfaceFlinger --latency on the exact game buffer layer. Column 2 is actual presentation time. Poll existing 128-frame ring; no global reset. Discard initial history and duplicate timestamps.",
+          "panelPeriodMs": 16.666666,
+          "exactSurface": "GameActivity GLSurfaceView (BLAST) exact layer generation",
+          "intervalsArtifactSha256": "46d30cd498025292a5ee9736afa1d0730632f02ec1e11514390439649ddbff25",
+          "gameSubmitArtifactSha256": "2d7702b4be6337fd2062af0735568081101d19aaaf572abac774378cd9286233"
+        }
+      ]
+    }
+  },
+  "visual": {
+    "method": "Opening pose before any touch, logical 960x540. Browser page pixels mapped using canvas rect times devicePixelRatio; Android pixels mapped using Surface bounds. Reference-defined landmarks are 3x3 logical-point RGB medians. Segmented color regions use direct samples on the logical grid from independent browser and native captures.",
+    "browserOpeningSha256": "3b233c74c382e77b23956bf9af8fd3e956bf59dd736327ebadc826cd4a4e0ba9",
+    "androidOpeningSha256": "78b61ccf4eeaba10d70ef4420fb55a15c6ce4e1bcb6d44ba2bc5d4b7556bcf5d",
+    "landmarks": [
+      {
+        "part": "sky",
+        "x": 220,
+        "y": 42,
+        "browser": [
+          11,
+          16,
+          32
+        ],
+        "native": [
+          11,
+          16,
+          32
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "sky",
+        "x": 870,
+        "y": 76,
+        "browser": [
+          11,
+          16,
+          32
+        ],
+        "native": [
+          11,
+          16,
+          32
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "ground",
+        "x": 300,
+        "y": 430,
+        "browser": [
+          91,
+          188,
+          147
+        ],
+        "native": [
+          91,
+          188,
+          147
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "ground",
+        "x": 510,
+        "y": 415,
+        "browser": [
+          92,
+          188,
+          147
+        ],
+        "native": [
+          92,
+          188,
+          147
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "ground",
+        "x": 110,
+        "y": 360,
+        "browser": [
+          90,
+          187,
+          146
+        ],
+        "native": [
+          90,
+          187,
+          146
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "platform-top",
+        "x": 740,
+        "y": 177,
+        "browser": [
+          150,
+          194,
+          229
+        ],
+        "native": [
+          150,
+          194,
+          229
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "platform-face",
+        "x": 739,
+        "y": 225,
+        "browser": [
+          114,
+          161,
+          209
+        ],
+        "native": [
+          114,
+          161,
+          209
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "ball",
+        "x": 480,
+        "y": 267,
+        "browser": [
+          246,
+          148,
+          127
+        ],
+        "native": [
+          246,
+          148,
+          127
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "ball",
+        "x": 474,
+        "y": 269,
+        "browser": [
+          243,
+          130,
+          109
+        ],
+        "native": [
+          243,
+          131,
+          109
+        ],
+        "maxChannelDelta": 1
+      },
+      {
+        "part": "ball",
+        "x": 485,
+        "y": 271,
+        "browser": [
+          245,
+          146,
+          124
+        ],
+        "native": [
+          246,
+          147,
+          125
+        ],
+        "maxChannelDelta": 1
+      },
+      {
+        "part": "front-cone",
+        "x": 479,
+        "y": 485,
+        "browser": [
+          247,
+          240,
+          115
+        ],
+        "native": [
+          247,
+          240,
+          115
+        ],
+        "maxChannelDelta": 0
+      },
+      {
+        "part": "rear-cone",
+        "x": 321,
+        "y": 197,
+        "browser": [
+          248,
+          241,
+          128
+        ],
+        "native": [
+          248,
+          241,
+          127
+        ],
+        "maxChannelDelta": 1
+      }
+    ],
+    "silhouetteAndHud": [
+      {
+        "name": "ball",
+        "scope": [
+          425,
+          226,
+          537,
+          314
+        ],
+        "browserPixels": 1622,
+        "nativePixels": 1688,
+        "centroids": [
+          [
+            479.37053020961775,
+            269.80702836004934
+          ],
+          [
+            479.50414691943126,
+            269.55035545023696
+          ]
+        ],
+        "maskIoU": 0.9528023598820059,
+        "p95MaxChannel": 2
+      },
+      {
+        "name": "platform",
+        "scope": [
+          585,
+          111,
+          883,
+          249
+        ],
+        "browserPixels": 16478,
+        "nativePixels": 16434,
+        "centroids": [
+          [
+            708.4665007889307,
+            195.98683092608326
+          ],
+          [
+            708.5520871364245,
+            195.5749056833394
+          ]
+        ],
+        "maskIoU": 0.9851619518668194,
+        "p95MaxChannel": 6
+      },
+      {
+        "name": "front-cone",
+        "scope": [
+          412,
+          412,
+          553,
+          536
+        ],
+        "browserPixels": 3010,
+        "nativePixels": 2957,
+        "centroids": [
+          [
+            479.6176079734219,
+            484.8126245847176
+          ],
+          [
+            479.735204599256,
+            484.7345282380791
+          ]
+        ],
+        "maskIoU": 0.9699570815450643,
+        "p95MaxChannel": 1
+      },
+      {
+        "name": "score label",
+        "scope": [
+          12,
+          7,
+          181,
+          60
+        ],
+        "browserPixels": 679,
+        "nativePixels": 845,
+        "centroids": [
+          [
+            71.74079528718704,
+            30.823269513991164
+          ],
+          [
+            71.98461538461538,
+            28.64378698224852
+          ]
+        ],
+        "maskIoU": 0.3137931034482759,
+        "p95MaxChannel": 213
+      }
+    ],
+    "preFix": {
+      "surface": [
+        1780,
+        1001
+      ],
+      "wrongAspect": 1,
+      "sourceReportSha256": "fdca18290e4f011c18d11fb40fe88e4a61968a9dcc29fd6581e6b90f8beb8ac7",
+      "maxChannelDeltas": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        127,
+        62,
+        0,
+        7,
+        1,
+        1,
+        158
+      ],
+      "coverage": [
+        {
+          "region": "ball",
+          "iou": 0.5047185161080378
+        },
+        {
+          "region": "platform",
+          "iou": 0.2401361906669337
+        },
+        {
+          "region": "front-cone",
+          "iou": 0.5699088145896657
+        },
+        {
+          "region": "score label",
+          "iou": 0.3137931034482759
+        }
+      ]
+    }
+  },
+  "timingConditions": "Same foreground phone, low quality and original game rules. Idle windows are approximately 6.5 seconds at spawn with four rotating cones. Each active window uses six alternating pairs of 180ms left/right primary holds and 330ms releases while ball motion and automatic jumps remain enabled. No game-state writes. Browser HUD and Android HUD use different rendering resolutions. Timing covers app-frame to app-frame and/or display presentation as identified per series. No GPU timer or power measurement.",
+  "limits": [
+    "One device, one short level; no median across devices or long-run thermal claim.",
+    "The native HUD uses a local bitmap font instead of the browser text rasterizer. Its contrast, score progression, victory and replay behavior are checked. Pixel-identical character outlines are outside this measurement.",
+    "The native game includes three-dimensional primitives, its original collisions and camera tracking, and shared 2D HUD. Arbitrary World3D materials, effects or models are not covered."
+  ]
+}

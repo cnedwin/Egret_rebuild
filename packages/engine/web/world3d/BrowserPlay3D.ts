@@ -637,8 +637,77 @@ export function pushOut3D(a: PlayThing3D, b: PlayThing3D): { x: number; y: numbe
   return { x: 0, y: 0, z: p[2] >= q[2] ? z : -z };
 }
 
+// The browser owns its canvas and renderer. Other presenters can render the same
+// scene and camera on their own surface while keeping the original gameplay.
+interface Play3DSurface {
+  readonly ready?: Promise<World3DApp>;
+  show?(scene: Scene3D, camera: Camera3D): void;
+  unplace?(): void;
+  remove?(): void;
+}
+
+function browserSurface(given: PlayGame, options: Play3DOptions): Play3DSurface {
+  // The picture goes on a canvas of its own, under the game's, in the same place whatever the page does.
+  const over = given.canvas,
+    holder = over.parentElement;
+  if (holder === null) throw invalid('play3d needs its canvas in the page');
+  const page = over.ownerDocument,
+    win = page.defaultView ?? (globalThis as unknown as Window);
+  const under = page.createElement('canvas');
+  under.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0;display:block';
+  const initialPosition = over.style.position;
+  let observer: ResizeObserver | undefined;
+  const place = (): void => {
+    const outer = holder.getBoundingClientRect(),
+      box = over.getBoundingClientRect();
+    under.style.left = box.left - outer.left + holder.scrollLeft + 'px';
+    under.style.top = box.top - outer.top + holder.scrollTop + 'px';
+    under.style.width = box.width + 'px';
+    under.style.height = box.height + 'px';
+  };
+  const unplace = (): void => cleanUp([() => win.removeEventListener('resize', place), () => observer?.disconnect()]);
+  try {
+    over.style.position = 'relative';
+    holder.insertBefore(under, over);
+    place();
+    const Resize = (globalThis as { ResizeObserver?: typeof ResizeObserver }).ResizeObserver;
+    observer = Resize ? new Resize(place) : undefined;
+    observer?.observe(over);
+    win.addEventListener('resize', place);
+    const ready = createWorld3DApp(under, {
+      backend: options.backend === 'webgpu' ? 'webgpu' : 'webgl2',
+      ...(options.onError === undefined ? {} : { onError: options.onError })
+    });
+    return { ready, unplace, remove: () => under.remove() };
+  } catch (cause) {
+    // The caller can only retire a surface after we return it. Restore the DOM
+    // here even if a host listener or observer throws during registration.
+    try {
+      cleanUp([
+        unplace,
+        () => under.remove(),
+        () => {
+          over.style.position = initialPosition;
+        }
+      ]);
+    } catch (cleanup) {
+      throw new AggregateError([cause, cleanup], 'Play3D surface mount and rollback failed', { cause });
+    }
+    throw cause;
+  }
+}
+
 /** Starts a 3D game in the page. See the guide `play3d.md`. */
-export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
+export function play3d(options: Play3DOptions): Promise<Play3DGame> {
+  return createPlay3DSession(options, play, browserSurface);
+}
+
+/** Internal host entry. The flat session owns input and UI; the surface presents the original scene. */
+export async function createPlay3DSession(
+  options: Play3DOptions,
+  startFlat: typeof play,
+  attach: (given: PlayGame, options: Play3DOptions) => Play3DSurface
+): Promise<Play3DGame> {
   if (options === null || typeof options !== 'object') throw invalid('play3d takes an object of options');
   const { setup, update, background = 0x0b1020 } = options;
   if (!colour(background)) throw invalid('background is a colour from 0 to 0xffffff');
@@ -649,8 +718,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
   let game: Play3DGame | undefined,
     app: World3DApp | undefined,
     creatingApp: Promise<World3DApp> | undefined,
-    deep: HTMLCanvasElement | undefined,
-    unplace: (() => void) | undefined;
+    surface: Play3DSurface | undefined;
   let clearing = false,
     closing = false,
     generation = 0;
@@ -943,9 +1011,9 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         () => fall('none', 0),
         () => dot?.dispose(),
         () => streak?.dispose(),
-        () => unplace?.(),
+        () => surface?.unplace?.(),
         () => app?.dispose(),
-        () => deep?.remove()
+        () => surface?.remove?.()
       ]);
     } catch (cause) {
       failures.push(cause);
@@ -1292,7 +1360,7 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     return whole;
   };
 
-  const flat = await play({
+  const flat = await startFlat({
     ...options,
     // The interface is drawn by WebGL2 unless WebGPU is asked for, as the overlay of a World3D app is.
     backend: options.backend ?? 'webgl2',
@@ -1300,37 +1368,8 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
     async setup(given) {
       admit();
       if (game === undefined) {
-        // The picture goes on a canvas of its own, under the game's, in the same place whatever the page does.
-        const over = given.canvas,
-          holder = over.parentElement;
-        if (holder === null) throw invalid('play3d needs its canvas in the page');
-        const page = over.ownerDocument,
-          win = page.defaultView ?? (globalThis as unknown as Window);
-        const under = (deep = page.createElement('canvas'));
-        under.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0;display:block';
-        over.style.position = 'relative';
-        holder.insertBefore(under, over);
-        const place = (): void => {
-          const outer = holder.getBoundingClientRect(),
-            box = over.getBoundingClientRect();
-          under.style.left = box.left - outer.left + holder.scrollLeft + 'px';
-          under.style.top = box.top - outer.top + holder.scrollTop + 'px';
-          under.style.width = box.width + 'px';
-          under.style.height = box.height + 'px';
-        };
-        place();
-        const Resize = (globalThis as { ResizeObserver?: typeof ResizeObserver }).ResizeObserver,
-          observer = Resize ? new Resize(place) : undefined;
-        observer?.observe(over);
-        win.addEventListener('resize', place);
-        unplace = () => {
-          observer?.disconnect();
-          win.removeEventListener('resize', place);
-        };
-        creatingApp = createWorld3DApp(under, {
-          backend: options.backend === 'webgpu' ? 'webgpu' : 'webgl2',
-          ...(options.onError === undefined ? {} : { onError: options.onError })
-        });
+        surface = attach(given, options);
+        creatingApp = surface.ready;
         try {
           app = await creatingApp;
         } finally {
@@ -1341,7 +1380,8 @@ export async function play3d(options: Play3DOptions): Promise<Play3DGame> {
         scene.addChild(sky);
         scene.addChild(sun);
         settle();
-        app.show(scene, eye);
+        app?.show(scene, eye);
+        surface.show?.(scene, eye);
         game = extend(given);
       } else clear();
       try {

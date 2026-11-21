@@ -41,6 +41,16 @@ pub const ONE: u32 = 1;
 pub const DST_COLOR: u32 = 0x0306;
 pub const ONE_MINUS_SRC_ALPHA: u32 = 0x0303;
 pub const DITHER: u32 = 0x0bd0;
+pub const STATIC_DRAW: u32 = 0x88e4;
+pub const DEPTH_BUFFER_BIT: u32 = 0x0100;
+pub const DEPTH_ATTACHMENT: u32 = 0x8d00;
+pub const RENDERBUFFER: u32 = 0x8d41;
+pub const DEPTH_COMPONENT24: u32 = 0x81a6;
+pub const DEPTH_TEST: u32 = 0x0b71;
+pub const LEQUAL: u32 = 0x0203;
+pub const CULL_FACE: u32 = 0x0b44;
+pub const CW: u32 = 0x0900;
+pub const CCW: u32 = 0x0901;
 
 #[link(name = "GLESv3")]
 extern "C" {
@@ -61,6 +71,8 @@ extern "C" {
     pub fn glUniform1f(location: i32, x: f32);
     pub fn glUniform1i(location: i32, value: i32);
     pub fn glUniform4i(location: i32, x: i32, y: i32, z: i32, w: i32);
+    pub fn glUniform3f(location: i32, x: f32, y: f32, z: f32);
+    pub fn glUniformMatrix4fv(location: i32, count: i32, transpose: u8, values: *const f32);
     pub fn glUniform4f(location: i32, x: f32, y: f32, z: f32, w: f32);
     pub fn glUniform2f(location: i32, x: f32, y: f32);
     pub fn glGenBuffers(count: i32, buffers: *mut u32);
@@ -86,12 +98,20 @@ extern "C" {
     pub fn glBindFramebuffer(target: u32, name: u32);
     pub fn glFramebufferTexture2D(target: u32, attachment: u32, tex_target: u32, texture: u32, level: i32);
     pub fn glGetFramebufferAttachmentParameteriv(target: u32, attachment: u32, pname: u32, value: *mut i32);
+    pub fn glGenRenderbuffers(count: i32, objects: *mut u32);
+    pub fn glBindRenderbuffer(target: u32, object: u32);
+    pub fn glRenderbufferStorage(target: u32, format: u32, width: i32, height: i32);
+    pub fn glFramebufferRenderbuffer(target: u32, attachment: u32, rb_target: u32, object: u32);
+    pub fn glDeleteRenderbuffers(count: i32, objects: *const u32);
     pub fn glCheckFramebufferStatus(target: u32) -> u32;
     pub fn glScissor(x: i32, y: i32, width: i32, height: i32);
     pub fn glBlendFunc(src: u32, dst: u32);
     pub fn glBlendFuncSeparate(src_rgb: u32, dst_rgb: u32, src_alpha: u32, dst_alpha: u32);
     pub fn glDisableVertexAttribArray(index: u32);
     pub fn glVertexAttrib4f(index: u32, x: f32, y: f32, z: f32, w: f32);
+    pub fn glDepthFunc(func: u32);
+    pub fn glFrontFace(winding: u32);
+    pub fn glCullFace(face: u32);
     pub fn glEnable(capability: u32);
     pub fn glDisable(capability: u32);
     pub fn glViewport(x: i32, y: i32, width: i32, height: i32);
