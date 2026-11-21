@@ -468,6 +468,58 @@ test('GPU U13 partial upload abort publishes refusal while original proof still 
   );
 });
 
+test('GPU pending atlas page from an aborted stage cannot supply the next ordinary submission', async () => {
+  await usingGpu(async ({ f, a, h }) => {
+    await a.bitmap(2, 1, 80);
+    await a.bitmap(2, 1, 160);
+    const frame = a.capture();
+    const signal = ownSignal();
+    const reason = new Error('abort before all atlas pages are ready');
+    const stagedPages = [];
+    f.hooks.writeTexture = destination => {
+      stagedPages.push(destination.texture);
+      signal.abort(reason);
+    };
+    const ticket = h.stageSharedFrame(frame, { signal: signal.signal });
+    const ready = observe(ticket.ready);
+    await until(f, () => ready.settled, { settle: false });
+    delete f.hooks.writeTexture;
+    assert.equal(ready.error?.cause, reason);
+    assert.equal(stagedPages.length, 1);
+    assert.equal(h.getStatus().pendingFrames, 1);
+
+    const retry = capture(f, () => h.renderSharedFrame(frame));
+    admitted(retry);
+    const writes = retry.events.filter(event => event[0] === 'writeTexture');
+    assert.equal(writes.length, 2, 'both immutable pages need complete uploads');
+    assert.ok(writes.every(event => event[1].texture !== stagedPages[0]));
+    await retry.finish();
+    await until(f, () => h.getStatus().pendingFrames === 0);
+    assert.equal(stagedPages[0].destroyed, 1);
+    assert.equal(h.getSharedStatus().resources.current.images.readyEntries, 2);
+  });
+});
+
+test('GPU pending atlas page is not a READY hit for a staged consumer', async () => {
+  await usingGpu(async ({ f, a, h }) => {
+    await a.bitmap();
+    const frame = a.capture();
+    const ordinary = capture(f, () => h.renderSharedFrame(frame));
+    admitted(ordinary);
+    const first = ordinary.events.find(event => event[0] === 'writeTexture');
+    const from = f.calls.length;
+    const stage = h.stageSharedFrame(frame);
+    await until(f, () => f.calls.slice(from).some(event => event[0] === 'writeTexture'), { settle: false });
+    const staged = f.calls.slice(from).find(event => event[0] === 'writeTexture');
+    assert.notEqual(staged[1].texture, first[1].texture);
+    stage.dispose();
+    await ordinary.finish();
+    await until(f, () => h.getStatus().pendingFrames === 0);
+    assert.equal(staged[1].texture.destroyed, 1);
+    assert.equal(first[1].texture.destroyed, 0);
+  });
+});
+
 test('GPU U14 already-aborted signal preserves exact reason without admission', async () => {
   await usingGpu(async ({ f, h, frame }) => {
     requireUpload(h);

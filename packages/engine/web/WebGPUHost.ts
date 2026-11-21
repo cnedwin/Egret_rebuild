@@ -1721,7 +1721,7 @@ class WebGPUHostImplementation {
   private planImageResidency(
     projectionPlan: ProjectionPlan2D,
     draws: readonly ImageResidencyDraw[],
-    shared = false
+    borrowSubmitted: boolean
   ): ImageResidencyPlan {
     this.active();
     const hits = new Map<number, ImageResidencyEntry>(),
@@ -1729,12 +1729,13 @@ class WebGPUHostImplementation {
     const bytes = collectWebGPUImageDemand(
       projectionPlan,
       draws,
-      shared,
+      true,
       this.imageDirectory,
       this.imageEnabled,
       this.imageEpoch,
       hits,
-      candidates
+      candidates,
+      borrowSubmitted
     );
     // Every profile of this Host shares one ready residence; a shared Host may lower its bytes.
     const victims = selectWebGPUImageVictims(
@@ -1824,7 +1825,8 @@ class WebGPUHostImplementation {
     for (const candidate of use.candidates.values()) this.imageDirectory.set(candidate.image, candidate.entry.bucket);
     // Pin the complete hit set before touching order or entering any native call.
     for (const entry of use.hits.values()) {
-      if (entry.pinCount === 0) {
+      if (entry.validation) (use.producerValidations ??= new Set()).add(entry.validation);
+      if (entry.state === 'ready' && entry.pinCount === 0) {
         this.resourcePinnedBytes += entry.bytes;
         this.resourcePinnedEntries++;
       }
@@ -1833,6 +1835,7 @@ class WebGPUHostImplementation {
     this.sampleResourceImages();
     use.pinned = true;
     for (const entry of use.hits.values()) {
+      if (entry.state !== 'ready') continue;
       this.unlinkImageResidency(entry);
       this.appendImageResidency(entry);
     }
@@ -1925,6 +1928,11 @@ class WebGPUHostImplementation {
     const use = record.imageUse;
     if (!use || use.finished) return;
     use.finished = true;
+    const failed = (cause: unknown): void => {
+      const failure = this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', record.serial, true);
+      record.unsafe = true;
+      record.failure ??= failure;
+    };
     if (use.pinned) {
       use.pinned = false;
       for (const entry of use.hits.values()) {
@@ -1933,25 +1941,33 @@ class WebGPUHostImplementation {
           this.resourcePinnedEntries--;
         }
         entry.pinCount--;
+        if (entry.state === 'detached' && entry.pinCount === 0) {
+          try {
+            this.destroyReadyImage(entry);
+          } catch (cause) {
+            failed(cause);
+          }
+        }
       }
       this.sampleResourceImages();
     }
-    const failed = (cause: unknown): void => {
-      const failure = this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', record.serial, true);
-      record.unsafe = true;
-      record.failure ??= failure;
-    };
     for (const candidate of use.candidates.values()) {
       const entry = candidate.entry,
         resource = entry.resource;
       if (!resource || candidate.transferred) continue;
+      if (entry.state === 'submitted') {
+        entry.bucket.delete(entry.cropKey);
+        delete entry.validation;
+        entry.state = 'cold';
+      }
       // Re-read qualification, winner and slot after every earlier cleanup callback.
       if (
         allowPromotion &&
         this.isImagePromotionEligible(record) &&
         entry.epoch === this.imageEpoch &&
         !entry.bucket.has(entry.cropKey) &&
-        this.readyCount < 256
+        this.readyCount < 256 &&
+        this.resourceReadyBytes + entry.bytes <= (SHARED_OPTIONS.get(this)?.maxReadyPageBytes ?? 33554432)
       ) {
         try {
           const revision = {};
@@ -1960,6 +1976,10 @@ class WebGPUHostImplementation {
           entry.state = 'ready';
           this.readyCount++;
           this.resourceReadyBytes += entry.bytes;
+          if (entry.pinCount > 0) {
+            this.resourcePinnedBytes += entry.bytes;
+            this.resourcePinnedEntries++;
+          }
           this.sampleResourceImages();
           candidate.transferred = true;
           record.textures.splice(record.textures.indexOf(resource), 1);
@@ -1971,12 +1991,24 @@ class WebGPUHostImplementation {
             this.unlinkImageResidency(entry);
             this.readyCount--;
             this.resourceReadyBytes -= entry.bytes;
+            if (entry.pinCount > 0) {
+              this.resourcePinnedBytes -= entry.bytes;
+              this.resourcePinnedEntries--;
+            }
             entry.state = 'cold';
             this.sampleResourceImages();
           }
           candidate.transferred = false;
           failed(cause);
         }
+      }
+      // A later draw can still be using a page whose producer cannot enter READY (close, loss or capacity).
+      // Transfer cleanup to the Host until that last borrower retires.
+      if (!candidate.transferred && entry.pinCount > 0) {
+        this.imageCleanup.add(entry);
+        entry.state = 'detached';
+        candidate.transferred = true;
+        record.textures.splice(record.textures.indexOf(resource), 1);
       }
       if (!candidate.transferred && !resource.cleaned) {
         const failures = cleanupWebGPUTexture(resource);
@@ -2187,7 +2219,7 @@ class WebGPUHostImplementation {
             for (const group of prepared.effects.groups)
               if (group.maskPageIndex !== undefined)
                 demands.push({ kind: 'image', packed: { vertexCount: 3 }, viewIndex: group.maskPageIndex });
-            const imagePlan = this.planImageResidency(storage.projectionPlan, demands, true);
+            const imagePlan = this.planImageResidency(storage.projectionPlan, demands, !staging);
             const pages = materializeSharedPages2D(
               storage,
               new Set(imagePlan.use.candidates.keys()),
@@ -3358,6 +3390,14 @@ class WebGPUHostImplementation {
   ): undefined {
     const serial = record.serial;
     let result: WebGPUReadback | SharedWebGPUReadback | undefined;
+    const use = record.imageUse;
+    if (use?.producerValidations) outcomes.push(...use.producerValidations);
+    // Queue order makes the completed writes visible to the next direct draw. Its own completion must
+    // also observe producer validation errors, even when the consumer's fence is reported first.
+    const pageValidation =
+      !record.stage && submitted && !synchronous && use?.candidates.size
+        ? observed(Promise.all(outcomes).then(() => undefined))
+        : undefined;
     const nativeOutcomes = [...outcomes],
       nativeFailure = synchronous;
     if (submitted && staging && !synchronous) {
@@ -3435,6 +3475,15 @@ class WebGPUHostImplementation {
           throw error(this.firstFailure.code, this.firstFailure.cause);
       })
     );
+    if (pageValidation && use && this.isImagePromotionEligible(record)) {
+      for (const { entry } of use.candidates.values()) {
+        if (!entry.resource || !entry.view || entry.bucket.has(entry.cropKey)) continue;
+        entry.state = 'submitted';
+        entry.validation = pageValidation;
+        entry.bucket.set(entry.cropKey, entry);
+      }
+      this.imageRevision = {};
+    }
     if (synchronous) throw synchronous;
     return undefined;
   }

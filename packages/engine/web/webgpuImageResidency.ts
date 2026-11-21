@@ -16,7 +16,9 @@ export interface ImageResidencyEntry {
   pinCount: number;
   previous: ImageResidencyEntry | undefined;
   next: ImageResidencyEntry | undefined;
-  state: 'cold' | 'ready' | 'detached';
+  state: 'cold' | 'submitted' | 'ready' | 'detached';
+  /** Producer error scopes, held only while an immutable page is lent before its fence. */
+  validation?: Promise<void>;
 }
 export interface ImageResidencyCandidate {
   image: ImageData2D;
@@ -47,6 +49,7 @@ export interface ImageResidencyUse {
   pinned: boolean;
   finished: boolean;
   touchedQueue: boolean;
+  producerValidations?: Set<Promise<void>>;
 }
 
 /** Accumulates demand into the submission's existing maps without taking ownership of any native resources. */
@@ -58,7 +61,8 @@ export function collectWebGPUImageDemand(
   enabled: boolean,
   epoch: object,
   hits: Map<number, ImageResidencyEntry>,
-  candidates: Map<number, ImageResidencyCandidate>
+  candidates: Map<number, ImageResidencyCandidate>,
+  borrowSubmitted: boolean
 ): number {
   const buckets = new Map<ImageData2D, Map<string, ImageResidencyEntry>>();
   let bytes = 0;
@@ -83,7 +87,12 @@ export function collectWebGPUImageDemand(
       buckets.set(view.image, bucket);
     }
     const entry = bucket.get(cropKey);
-    if (enabled && entry?.epoch === epoch && entry.state === 'ready') hits.set(draw.viewIndex, entry);
+    if (
+      enabled &&
+      entry?.epoch === epoch &&
+      (entry.state === 'ready' || (borrowSubmitted && entry.state === 'submitted'))
+    )
+      hits.set(draw.viewIndex, entry);
     else {
       candidates.set(draw.viewIndex, {
         image: view.image,
