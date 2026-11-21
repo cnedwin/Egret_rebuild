@@ -27,14 +27,16 @@ import java.util.TreeMap;
 /** A bounded, local recording of the exact project submissions and immutable RGBA page versions. */
 final class ProjectReplayTape {
     static final int FRAMES = 210;
-    private static final int MAGIC = 0x45475250, VERSION = 1, EGR2 = 0x32524745, EGR3 = 0x33524745, EGR4 = 0x34524745, EGR5 = 0x35524745;
+    private static final int MAGIC = 0x45475250, FULL_VERSION = 1, RESIDENT_VERSION = 2, EGR2 = 0x32524745, EGR3 = 0x33524745, EGR4 = 0x34524745, EGR5 = 0x35524745;
     private static final int MAX_BYTES = 64 << 20, MAX_GENERATIONS = 4096, CHECKSUM = 32;
     private static final int HEADER = 5 * Integer.BYTES, REUSE = -1;
     private final PlayerGraphics.Frame[] frames;
+    private final WorldProjectPacket.GeometryState[] geometry;
     private final String digest;
 
-    private ProjectReplayTape(PlayerGraphics.Frame[] frames, byte[] checksum) {
+    private ProjectReplayTape(PlayerGraphics.Frame[] frames, WorldProjectPacket.GeometryState[] geometry, byte[] checksum) {
         this.frames = frames;
+        this.geometry = geometry;
         digest = hex(checksum);
     }
     String sha256() { return digest; }
@@ -43,11 +45,19 @@ final class ProjectReplayTape {
         return new PlayerGraphics.Frame(epoch, stored.bytes, stored.pages);
     }
 
+    PlayerGraphics.Frame fullFrame(int index, int epoch) {
+        PlayerGraphics.Frame stored = frames[index];
+        WorldProjectPacket.GeometryState world = geometry[index];
+        return new PlayerGraphics.Frame(epoch, world == null ? stored.bytes : world.complete(stored.bytes), stored.pages);
+    }
+
     static final class Recorder {
         private final int width, height;
         private final ArrayList<PlayerGraphics.Frame> frames = new ArrayList<>(FRAMES);
         private final IdentityHashMap<PlayerGraphics.Page, Boolean> pages = new IdentityHashMap<>();
         private long fileBytes = HEADER + CHECKSUM;
+        private int version = FULL_VERSION;
+        private WorldProjectPacket.GeometryState previousWorld;
 
         Recorder(int width, int height) {
             if (!dimension(width) || !dimension(height)) throw new IllegalArgumentException("Invalid replay stage");
@@ -62,8 +72,12 @@ final class ProjectReplayTape {
             int index = frames.size();
             if (index == FRAMES || (index != 0 && frame.epoch != frames.get(0).epoch))
                 throw new IOException("Replay collection crossed its session boundary");
-            validatePacket(frame.bytes, index, width, height, frame.pages);
-            long next = fileBytes + 8 + frame.bytes.length;
+            if (frame.bytes == null || frame.bytes.length < 24) throw new IOException("Missing or truncated project packet");
+            long next = fileBytes + 8L + frame.bytes.length;
+            if (next > MAX_BYTES || frame.bytes.length > WorldProjectPacket.TEXTURED_LIMIT)
+                throw new IOException("Replay capture exceeds its storage budget");
+            byte[] owned = frame.bytes.clone();
+            WorldProjectPacket.GeometryState world = validatePacket(owned, index, width, height, frame.pages, previousWorld);
             Map<Integer, PlayerGraphics.Page> previous = index == 0 ? null : frames.get(index - 1).pages;
             if (!frame.pages.equals(previous)) {
                 if (frame.pages.size() > 255) throw new IOException("Too many replay slots");
@@ -84,8 +98,9 @@ final class ProjectReplayTape {
                     throw new IOException("Replay capture exceeds its storage budget");
                 pages.putAll(added);
             }
-            if (next > MAX_BYTES) throw new IOException("Replay capture exceeds its storage budget");
-            frames.add(new PlayerGraphics.Frame(frame.epoch, frame.bytes.clone(), frame.pages));
+            if (world != null && world.incremental()) version = RESIDENT_VERSION;
+            frames.add(new PlayerGraphics.Frame(frame.epoch, owned, frame.pages));
+            previousWorld = world;
             fileBytes = next;
             return frames.size() == FRAMES;
         }
@@ -101,7 +116,7 @@ final class ProjectReplayTape {
                 try (FileOutputStream file = new FileOutputStream(temp);
                      DigestOutputStream hash = new DigestOutputStream(new BufferedOutputStream(file), sha);
                      DataOutputStream out = new DataOutputStream(hash)) {
-                    out.writeInt(MAGIC); out.writeInt(VERSION);
+                    out.writeInt(MAGIC); out.writeInt(version);
                     out.writeInt(width); out.writeInt(height); out.writeInt(FRAMES);
                     IdentityHashMap<PlayerGraphics.Page, Integer> ids = new IdentityHashMap<>();
                     Map<Integer, PlayerGraphics.Page> previous = null;
@@ -157,10 +172,12 @@ final class ProjectReplayTape {
                 throw new IOException("Invalid replay size or stage");
             MessageDigest sha = sha256Digest();
             Input in = new Input(raw, sha, size - CHECKSUM);
-            if (in.integer() != MAGIC || in.integer() != VERSION || in.integer() != width
+            int magic = in.integer(), version = in.integer();
+            if (magic != MAGIC || (version != FULL_VERSION && version != RESIDENT_VERSION) || in.integer() != width
                 || in.integer() != height || in.integer() != FRAMES) throw new IOException("Replay header mismatch");
             ArrayList<PlayerGraphics.Page> generations = new ArrayList<>();
             PlayerGraphics.Frame[] frames = new PlayerGraphics.Frame[FRAMES];
+            WorldProjectPacket.GeometryState[] geometry = new WorldProjectPacket.GeometryState[FRAMES];
             Map<Integer, PlayerGraphics.Page> snapshot = null;
             for (int index = 0; index < FRAMES; index++) {
                 int count = in.integer();
@@ -184,7 +201,8 @@ final class ProjectReplayTape {
                     snapshot = Collections.unmodifiableMap(current);
                 }
                 byte[] bytes = in.command(in.integer());
-                validatePacket(bytes, index, width, height, snapshot);
+                WorldProjectPacket.GeometryState predecessor = version == RESIDENT_VERSION && index > 0 ? geometry[index - 1] : null;
+                geometry[index] = validatePacket(bytes, index, width, height, snapshot, predecessor);
                 frames[index] = new PlayerGraphics.Frame(0, bytes, snapshot);
             }
             if (in.remaining != 0) throw new IOException("Trailing replay payload");
@@ -192,7 +210,7 @@ final class ProjectReplayTape {
             raw.readFully(expected);
             if (!MessageDigest.isEqual(actual, expected) || raw.read() != -1)
                 throw new IOException("Replay checksum or length mismatch");
-            return new ProjectReplayTape(frames, actual);
+            return new ProjectReplayTape(frames, geometry, actual);
         }
     }
 
@@ -236,17 +254,24 @@ final class ProjectReplayTape {
         if (!dimension(w) || !dimension(h) || bytes > MAX_BYTES) throw new IOException("Invalid replay page size");
         return (int)bytes;
     }
-    private static void validatePacket(byte[] bytes, int id, int width, int height, Map<Integer, PlayerGraphics.Page> pages)
-        throws IOException {
+    private static WorldProjectPacket.GeometryState validatePacket(byte[] bytes, int id, int width, int height,
+            Map<Integer, PlayerGraphics.Page> pages, WorldProjectPacket.GeometryState previous) throws IOException {
         if (bytes == null || bytes.length < 24 || bytes.length > WorldProjectPacket.TEXTURED_LIMIT)
             throw new IOException("Invalid project packet length");
         ByteBuffer data = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
         if (bytes.length > WorldProjectPacket.byteLimit(data.getInt(0))) throw new IOException("Invalid project packet length");
+        WorldProjectPacket.GeometryState world = null;
         if (WorldProjectPacket.isWorld(data.getInt(0))) {
-            int hud = WorldProjectPacket.validate(data, pages);
-            validatePacket(java.util.Arrays.copyOfRange(bytes, hud, bytes.length), id, width, height, pages);
-            return;
+            world = WorldProjectPacket.validate(bytes, pages, previous);
+            data.position(world.hudOffset);
+            data = data.slice().order(ByteOrder.LITTLE_ENDIAN);
         }
+        validateHud(data, id, width, height, pages);
+        return world;
+    }
+
+    private static void validateHud(ByteBuffer data, int id, int width, int height,
+                                    Map<Integer, PlayerGraphics.Page> pages) throws IOException {
         int format = data.getInt(0), quads = data.getInt(20);
         if ((format != EGR2 && format != EGR3 && format != EGR4 && format != EGR5) || data.getInt(4) != id || data.getInt(8) != width
             || data.getInt(12) != height || quads < 0 || quads > PlayerGraphics.MAX_QUADS)
@@ -256,21 +281,21 @@ final class ProjectReplayTape {
             return;
         }
         int recordsEnd = 24 + quads * PlayerGraphics.QUAD_BYTES;
-        int tail = bytes.length - recordsEnd;
+        int tail = data.limit() - recordsEnd;
         if (format == EGR2 ? tail != 0 :
                 tail <= 0 || tail % PlayerGraphics.ATLAS_BYTES != 0 || tail / PlayerGraphics.ATLAS_BYTES > quads)
             throw new IOException("Invalid project atlas table length");
         for (int i = 24; i < recordsEnd; i += PlayerGraphics.QUAD_BYTES) {
-            int slot = bytes[i] & 255;
+            int slot = data.get(i) & 255;
             if (slot != 0 && !pages.containsKey(slot)) throw new IOException("Missing project page " + slot);
         }
         // Saved frames may mix packet versions. The sparse suffix always indexes draw records.
         int previous = -1;
-        for (int i = recordsEnd; i < bytes.length; i += PlayerGraphics.ATLAS_BYTES) {
+        for (int i = recordsEnd; i < data.limit(); i += PlayerGraphics.ATLAS_BYTES) {
             int ordinal = data.getInt(i);
             if (ordinal <= previous || ordinal >= quads) throw new IOException("Invalid project atlas descriptor");
             int record = 24 + ordinal * PlayerGraphics.QUAD_BYTES;
-            validateMapping(data, i + 4, pages.get(bytes[record] & 255), record + 32);
+            validateMapping(data, i + 4, pages.get(data.get(record) & 255), record + 32);
             previous = ordinal;
         }
     }

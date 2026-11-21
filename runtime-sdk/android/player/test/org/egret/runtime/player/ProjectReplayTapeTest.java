@@ -212,11 +212,11 @@ public final class ProjectReplayTapeTest {
         int[] visited = {0};
         WorldProjectPacket.visitTexturePages(data, id -> visited[0] += id);
         require(visited[0] == 1);
-        reject(() -> WorldProjectPacket.validate(data, Collections.emptyMap()));
+        reject(() -> WorldProjectPacket.validate(data.array(), Collections.emptyMap(), null));
         Map<Integer, PlayerGraphics.Page> pages = Collections.singletonMap(1, new PlayerGraphics.Page(1, 1, new byte[4]));
-        require(WorldProjectPacket.validate(data, pages) == hud);
+        require(WorldProjectPacket.validate(data.array(), pages, null).hudOffset == hud);
         data.putInt(draw + 92, 2);
-        reject(() -> WorldProjectPacket.validate(data, pages));
+        reject(() -> WorldProjectPacket.validate(data.array(), pages, null));
     }
 
     private static void residentWorldOverlay() throws Exception {
@@ -243,8 +243,12 @@ public final class ProjectReplayTapeTest {
             int[] visits = {0, 0};
             WorldProjectPacket.visitTexturePages(delta, id -> { visits[0]++; visits[1] = id; });
             require(visits[0] == (textured ? 1 : 0) && visits[1] == (textured ? 9 : 0));
-            reject(() -> recorder.add(new PlayerGraphics.Frame(1, delta.array(), pages)));
+            reject(() -> new ProjectReplayTape.Recorder(W, H).add(new PlayerGraphics.Frame(1, delta.array(), pages)));
+            reject(() -> recorder.add(new PlayerGraphics.Frame(1, null, pages)));
+            reject(() -> recorder.add(new PlayerGraphics.Frame(1, new byte[20], pages)));
             require(recorder.size() == 1);
+            recorder.add(new PlayerGraphics.Frame(1, delta.array(), pages));
+            require(recorder.size() == 2);
 
             // Keep a complete HUD but truncate the predecessor field. A full-frame header would accept this.
             ByteBuffer truncated = ByteBuffer.allocate(160 + 24).order(ByteOrder.LITTLE_ENDIAN);
@@ -258,6 +262,95 @@ public final class ProjectReplayTapeTest {
                 } catch (IllegalArgumentException expected) { }
             }
         }
+    }
+
+    // Negative definition keys describe a new byte version of the same positive wire ID.
+    private static byte[] world(int id, boolean textured, boolean delta, int[] definitions, int[] draws, int vertices) {
+        int stride = textured ? 32 : 24, drawBytes = textured ? 96 : 88;
+        int header = delta ? 164 : 160;
+        ByteBuffer b = ByteBuffer.allocate(header + definitions.length * (24 + vertices * stride)
+            + draws.length * drawBytes + 24).order(ByteOrder.LITTLE_ENDIAN);
+        b.putInt(0, textured ? (delta ? WorldProjectPacket.TEXTURED_DELTA_MAGIC : WorldProjectPacket.TEXTURED_MAGIC)
+            : (delta ? WorldProjectPacket.DELTA_MAGIC : WorldProjectPacket.MAGIC));
+        b.putInt(4, id).putInt(8, 24).putInt(12, definitions.length).putInt(16, draws.length).putInt(20, 255);
+        b.putFloat(88, id); // Changing camera.
+        if (delta) b.putInt(160, id - 1);
+        b.position(header);
+        for (int key : definitions) {
+            b.putInt(Math.abs(key)).putInt(vertices).putInt(3);
+            int start = b.position();
+            b.putFloat(key);
+            b.position(start + vertices * stride);
+            b.putInt(0).putInt(1).putInt(2);
+        }
+        for (int i = 0; i < draws.length; i++) {
+            int start = b.position();
+            b.putInt(start, draws[i]).putFloat(start + 4, id + i);
+            if (textured) b.putInt(start + 88, 9);
+            b.position(start + drawBytes);
+        }
+        b.putInt(0x32524745).putInt(id).putInt(W).putInt(H).putInt(0).putInt(0);
+        return b.array();
+    }
+
+    private static void residentReplay(File file) throws Exception {
+        int[] empty = {}, a = {19}, b = {27}, both = {19, 27}, reordered = {27, 19};
+        Map<Integer, PlayerGraphics.Page> firstPage = Collections.singletonMap(9, page(45));
+        Map<Integer, PlayerGraphics.Page> secondPage = Collections.singletonMap(9, page(67));
+        ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
+        long expectedSize = 20 + 32;
+        for (int i = 0; i < ProjectReplayTape.FRAMES; i++) {
+            Map<Integer, PlayerGraphics.Page> pages = i < 77 ? firstPage : secondPage;
+            int[] defs = i == 0 ? both : i == 50 ? new int[]{-19} : i == 60 ? b : empty;
+            int[] draws = i < 50 ? ordered(i, both, reordered) : i < 60 ? a : reordered;
+            byte[] bytes = world(i, true, i != 0, defs, draws, 3);
+            expectedSize += 8L + bytes.length + (i == 0 || i == 77 ? 17 : 0);
+            if (i == 51) {
+                // Culling retired #27. Refusing its stale reference must leave #19 available for the retry.
+                final int index = i;
+                reject(() -> recorder.add(new PlayerGraphics.Frame(4, world(index, true, true, empty, b, 3), pages)));
+                reject(() -> recorder.add(new PlayerGraphics.Frame(4, world(index, true, true, b, a, 3), pages)));
+                reject(() -> recorder.add(new PlayerGraphics.Frame(4, world(index, false, true, empty, a, 3), pages)));
+                reject(() -> recorder.add(new PlayerGraphics.Frame(4, bytes, Collections.emptyMap())));
+                byte[] wrongBase = bytes.clone(); ByteBuffer.wrap(wrongBase).order(ByteOrder.LITTLE_ENDIAN).putInt(160, 0);
+                reject(() -> recorder.add(new PlayerGraphics.Frame(4, wrongBase, pages)));
+                require(recorder.size() == i);
+            }
+            recorder.add(new PlayerGraphics.Frame(4, bytes, pages));
+            Arrays.fill(bytes, (byte)0); // The source bridge may release its buffer after capture.
+        }
+        String digest = recorder.write(file);
+        byte[] contents = Files.readAllBytes(file.toPath());
+        require(contents.length == expectedSize && ByteBuffer.wrap(contents).getInt(4) == 2);
+        ProjectReplayTape tape = ProjectReplayTape.read(file, W, H);
+        require(tape.sha256().equals(digest));
+        for (int i = 0; i < ProjectReplayTape.FRAMES; i++) {
+            int[] draws = i < 50 ? ordered(i, both, reordered) : i < 60 ? a : reordered;
+            int[] expectedDefinitions = i < 50 ? draws : i < 60 ? new int[]{-19} : new int[]{27, -19};
+            PlayerGraphics.Frame full = tape.fullFrame(i, 11);
+            require(full.epoch == 11 && full.pages == tape.frame(i, 40).pages);
+            require(full.pages.get(9).data.get(0) == (i < 77 ? 45 : 67));
+            require(Arrays.equals(full.bytes, world(i, true, false, expectedDefinitions, draws, 3)));
+        }
+        // A valid checksum must not hide a v2 stream masquerading as v1, or a false predecessor.
+        malformed(file, contents, 4, 1, true);
+        int secondCommand = 20 + 4 + 17 + 4 + world(0, true, false, both, both, 3).length + 8;
+        malformed(file, contents, secondCommand + 160, Integer.reverseBytes(17), true);
+    }
+
+    private static int[] ordered(int id, int[] first, int[] reversed) { return id % 2 == 0 ? first : reversed; }
+
+    private static void expandedBudget() throws Exception {
+        int[] a = {19}, b = {27}, both = {19, 27}, empty = {};
+        Map<Integer, PlayerGraphics.Page> pages = Collections.emptyMap();
+        ProjectReplayTape.Recorder r = new ProjectReplayTape.Recorder(W, H);
+        r.add(new PlayerGraphics.Frame(2, world(0, false, false, a, a, 8000), pages));
+        // Both wire packets individually fit. Their two distinct resident definitions would exceed 360,472 bytes.
+        reject(() -> r.add(new PlayerGraphics.Frame(2, world(1, false, true, b, both, 8000), pages)));
+        require(r.size() == 1);
+        r.add(new PlayerGraphics.Frame(2, world(1, false, true, empty, a, 3), pages));
+        r.add(new PlayerGraphics.Frame(2, packet(2, 0), pages)); // 2D clears the world predecessor.
+        reject(() -> r.add(new PlayerGraphics.Frame(2, world(3, false, true, empty, a, 3), pages)));
     }
 
     private static void worldOverlay() throws Exception {
@@ -275,7 +368,7 @@ public final class ProjectReplayTapeTest {
         world.putInt(4, 0).putInt(8, Integer.MAX_VALUE);
         require(WorldProjectPacket.stageOffset(world) == -1);
         world.putInt(8, hud.length).putInt(12, 1);
-        reject(() -> WorldProjectPacket.validate(world, Collections.emptyMap()));
+        reject(() -> WorldProjectPacket.validate(world.array(), Collections.emptyMap(), null));
         world.putInt(12, 0).putInt(160, WorldProjectPacket.MAGIC);
         require(WorldProjectPacket.stageOffset(world) == -1);
     }
@@ -291,7 +384,7 @@ public final class ProjectReplayTapeTest {
             require(recorder.size() == 210);
             String digest = recorder.write(file);
             byte[] original = Files.readAllBytes(file.toPath());
-            require(original.length < 210 * 100 + 100);
+            require(original.length < 210 * 100 + 100 && ByteBuffer.wrap(original).getInt(4) == 1);
             require(digest.equals(fixture(true).write(file)));
             require(Arrays.equals(original, Files.readAllBytes(file.toPath())));
             ProjectReplayTape tape = ProjectReplayTape.read(file, W, H);
@@ -330,7 +423,9 @@ public final class ProjectReplayTapeTest {
             atlasReplay(file);
             indexedReplay(file);
             materialReplay();
-            System.out.println("Project replay: EGR2/EGR3/EGR4 round-trip, page generations, identity and rejection passed.");
+            expandedBudget();
+            residentReplay(file);
+            System.out.println("Project replay: legacy and resident tapes, full-frame recovery, page generations, identity and rejection passed.");
         } finally {
             Files.deleteIfExists(file.toPath());
             Files.deleteIfExists(dir.toPath());

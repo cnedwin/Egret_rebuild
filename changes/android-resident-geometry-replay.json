@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-21",
+  "en": {
+    "title": "Record resident World3D geometry on Android",
+    "body": "The Android recorder shares mesh definitions between acknowledged frames. Native playback can reconstruct a full frame on EGL recovery while keeping the existing 64 MiB recording limit and compatibility with earlier captures."
+  },
+  "zh": {
+    "title": "Android 原生录像复用 World3D 驻留几何",
+    "body": "Android 录制器允许连续成功提交的帧共用网格定义。原生回放可在 EGL 恢复时重建完整帧，继续遵守 64 MiB 文件上限，并兼容已有录像。"
+  }
+}

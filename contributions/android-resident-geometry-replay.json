@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/measurements/fold7-rally-resident-tape.json",
+      "originRole": "Sanitized physical Galaxy Z Fold7 measurements of World3D command capture, native replay and EGL restoration for the existing Rally export. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
