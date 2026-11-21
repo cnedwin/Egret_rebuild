@@ -202,6 +202,23 @@ public final class ProjectReplayTapeTest {
         require(empty.size() == 0);
     }
 
+    private static void texturedWorldOverlay() throws Exception {
+        int draw = 160 + 12 + 3 * 32 + 3 * 4, hud = draw + 96;
+        ByteBuffer data = ByteBuffer.allocate(hud + 24).order(ByteOrder.LITTLE_ENDIAN);
+        data.putInt(0, WorldProjectPacket.TEXTURED_MAGIC).putInt(8, 24).putInt(12, 1).putInt(16, 1).putInt(20, 255);
+        data.putInt(160, 19).putInt(164, 3).putInt(168, 3);
+        data.putInt(draw - 8, 1).putInt(draw - 4, 2).putInt(draw, 19).putInt(draw + 88, 1).putInt(draw + 92, 1);
+        data.putInt(hud, 0x32524745).putInt(hud + 8, 960).putInt(hud + 12, 540);
+        int[] visited = {0};
+        WorldProjectPacket.visitTexturePages(data, id -> visited[0] += id);
+        require(visited[0] == 1);
+        reject(() -> WorldProjectPacket.validate(data, Collections.emptyMap()));
+        Map<Integer, PlayerGraphics.Page> pages = Collections.singletonMap(1, new PlayerGraphics.Page(1, 1, new byte[4]));
+        require(WorldProjectPacket.validate(data, pages) == hud);
+        data.putInt(draw + 92, 2);
+        reject(() -> WorldProjectPacket.validate(data, pages));
+    }
+
     private static void worldOverlay() throws Exception {
         byte[] hud = packet(0,0);
         hud[16] = 0;
@@ -217,13 +234,14 @@ public final class ProjectReplayTapeTest {
         world.putInt(4, 0).putInt(8, Integer.MAX_VALUE);
         require(WorldProjectPacket.stageOffset(world) == -1);
         world.putInt(8, hud.length).putInt(12, 1);
-        reject(() -> WorldProjectPacket.validate(world));
+        reject(() -> WorldProjectPacket.validate(world, Collections.emptyMap()));
         world.putInt(12, 0).putInt(160, WorldProjectPacket.MAGIC);
         require(WorldProjectPacket.stageOffset(world) == -1);
     }
 
     public static void main(String[] args) throws Exception {
         worldOverlay();
+        texturedWorldOverlay();
         File dir = Files.createTempDirectory("egret-project-tape-test").toFile();
         File file = new File(dir, "scene.bin");
         try {

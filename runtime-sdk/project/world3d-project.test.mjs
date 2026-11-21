@@ -5,6 +5,7 @@ import {
   Scene3D,
   Mesh3D,
   InstancedMesh3D,
+  Texture3D,
   createPerspectiveCamera3D,
   createBoxGeometry3D,
   createStandardMaterial3D,
@@ -78,4 +79,28 @@ test('the Android player fits the camera to a landscape stage before World3D fru
   const matrix = new DataView(frame.buffer);
   assert.equal(data.camera.aspect, 960 / 540);
   assert.ok(Math.abs(matrix.getFloat32(24, true) * (960 / 540) - matrix.getFloat32(44, true)) < 1e-6);
+});
+
+test('textured draws name a live page and keep UV versions independent of positions', () => {
+  const data = fixture(),
+    map = new Texture3D({ width: 1, height: 1, data: new Uint8Array(4) }, { flipY: false });
+  data.material.map = map;
+  data.material.side = 'double';
+  const pages = new Map([[map.source, 7]]),
+    encode = createWorldProjectEncoder();
+  const packet = () => new DataView(encode(data, data.hud, pages).buffer);
+  const v = packet();
+  assert.equal(v.getUint32(0, true), 0x32443345);
+  const draw = 172 + 32 * v.getUint32(164, true) + 4 * v.getUint32(168, true);
+  assert.equal(v.getUint32(draw + 88, true), 7);
+  assert.equal(v.getUint32(draw + 92, true), 1);
+  const uv = data.geometry.getAttribute('uv');
+  uv.data[0] = 0.3125;
+  uv.touch();
+  assert.equal(packet().getFloat32(172 + 24, true), 0.3125);
+  pages.clear();
+  assert.throws(packet, /page/i);
+  pages.set(map.source, 7);
+  map.wrapS = 'mirror';
+  assert.throws(packet, /sampl/i);
 });

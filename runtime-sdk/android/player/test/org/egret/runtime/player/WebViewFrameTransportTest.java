@@ -19,6 +19,12 @@ public final class WebViewFrameTransportTest {
                 throw new AssertionError("Command slice or ownership changed at " + length + " bytes");
             }
         }
+        int[] textured = new int[WorldProjectPacket.TEXTURED_LIMIT / Integer.BYTES];
+        int magic = WorldProjectPacket.TEXTURED_MAGIC;
+        textured[0] = ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN ? magic : Integer.reverseBytes(magic);
+        if (PlayerScripts.unpackCommandWords(textured).length != WorldProjectPacket.TEXTURED_LIMIT
+                || PlayerScripts.unpackCommandWords(Arrays.copyOf(textured, textured.length + 1)) != null)
+            throw new AssertionError("Textured frame budget differs from the renderer");
         if (PlayerScripts.unpackCommandWords(null) != null
                 || PlayerScripts.unpackCommandWords(new int[5]) != null
                 || PlayerScripts.unpackCommandWords(new int[PlayerGraphics.MAX_FRAME_BYTES / Integer.BYTES + 1]) != null) {

@@ -12,10 +12,13 @@ export function createPlayerRaster(native, lifetime) {
     return response;
   }
   function image(job) {
-    const { width, height } = job;
+    // Legacy operations know the expected size. An embedded image is sized by
+    // Android's bounded header probe before allocating or decoding its bitmap.
+    const decoded = job.op === 'glbJpeg' ? request(job) : undefined;
+    const {width, height} = decoded ?? job;
     if (![width, height].every(n => Number.isInteger(n) && n > 0 && n <= 4096) || width * height > 1048576)
       throw new RangeError('Invalid raster dimensions');
-    const {pixels} = request(job);
+    const {pixels} = decoded ?? request(job);
     const length = width * height * 4;
     if (typeof pixels !== 'string' || pixels.length !== Math.ceil(length / 3) * 4)
       throw new Error('Incomplete Android raster response');
@@ -30,6 +33,11 @@ export function createPlayerRaster(native, lifetime) {
       await Promise.resolve();
       if (signal?.aborted) throw signal.reason;
       return image({op: 'png', path, width, height});
+    },
+    decodeEmbeddedJpeg(path, offset, length) {
+      if (!Number.isSafeInteger(offset) || !Number.isSafeInteger(length) || offset < 0 || length < 1 || offset + length > 8 * 1024 * 1024)
+        throw new RangeError('Invalid embedded JPEG range');
+      return image({op: 'glbJpeg', path, offset, length});
     },
     measureText(runs) {
       const {widths} = request({op: 'measure', runs});

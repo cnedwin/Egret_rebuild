@@ -264,6 +264,37 @@ node runtime-sdk/android/player/export-project.mjs --project /projects/my-game -
 
 在末姿势，四路在 EGL 上下文重建前后的 1080 × 1920 全幅画面逐像素相同。与独立 CPU 光栅参考比较，远离颜色分界的 2,030,094 个像素全部吻合。剩余区域有 22 个像素与同一网格内的相邻纹素同色，21 个像素与轮廓处的相邻图层同色。这 43 个像素均能在各自的期望 3 × 3 邻域找到相同颜色。每路在两代上下文中各上传两页，关闭时累计释放四次。三个游戏会话各释放两份逻辑纹理，回放释放命令带。[Fold7 测量记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-indexed-mesh.json)
 
+### 在 Android 上驾驶带贴图的 GLB 赛车
+
+《锦绣飞车》的 Android 本地导出沿用原作单圈赛、八车模拟和赛道。熊猫团团的车身及坐姿车手来自游戏原有的两个 GLB，各自内嵌一张 768 × 768 的 JPEG。比赛规则、模型装配和赛道数据取自固定的游戏版本。[浏览器试玩](https://cnedwin.github.io/PortedGamesEgret/Rally/) · [游戏源码与美术说明](https://github.com/cnedwin/PortedGamesEgret/tree/ce6144533b890be992bea9eb09cb344457f8364c/Rally)
+
+先按本文步骤构建引擎和裁剪 V8 的 AAR，再准备 PortedGamesEgret 的 `ce6144533b890be992bea9eb09cb344457f8364c` 版本及两个新的输出目录。导出工具先核对输入文件，再将游戏文件复制到本地工程。引擎仓库提供适配代码，游戏源码、素材和随附说明均取自游戏仓库。
+
+```sh
+node runtime-sdk/examples/rally/prepare.mjs /path/to/PortedGamesEgret/Rally out/rally-game
+node runtime-sdk/android/player/create-app.mjs --project out/rally-game --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.rally --name Rally --out out/rally-app
+gradle -p out/rally-app assembleRelease
+```
+
+在 World3D 工程中，将 GLB 加入 `project.json` 的 assets，再调用 `await services.loadGlb('panda-kart.glb', { firstPage: 1 })`，把返回的 `scene` 加入游戏场景。从指定编号起，为每张不同的图片预留一个空闲纹理页。加载器沿用可取消的分块读取，Android 直接从清单声明的 APK 资源解码内嵌 JPEG，再交给现有纹理页管理。3D 材质按第一套 UV 坐标取样，支持 sRGB、重复平铺、线性过滤和多级纹理。EGL 上下文变化后可从原页重新上传。可调用 `asset.dispose()` 提前回收，或交由项目作用域统一释放。读取失败或纹理页编号冲突时，原有资源仍然有效。
+
+仅熊猫车身和车手的索引几何数据合计就有 531,520 字节，因此 E3D2 纹理帧设有 2 MiB 上限，随帧携带可见网格，并按编号引用纹理页。原有 2D 和 Roll3D 的命令包上限仍为 360,472 字节。
+
+浏览器加载十二个赛道 GLB。Android 版本直接读取其中用于玩家的两个，保留其网格、UV 和内嵌图片原始字节，按原作函数装配。低细节视图保留可驾驶的赛道及高差、发车位、桥梁、障碍、拾取物和对手。路面、远景、植被、看台、特效及 HUD 的表现有所简化。音频、水面反射和浏览器完整美术资源未纳入本次验收。
+
+首个真机包在第一次触及驾驶控件之前就开始加速，进入开场赛段后还出现过绘制中断。输入适配现已与浏览器一致，等待首次驾驶触控后才开启自动油门。编码器现分别报告字节上限与几何数量上限。离线扫描在原有弯道分块上复现了 64 个几何对象的限制，随后合并了静态道路和地形分块。保留两项上限后，新布局在 3,030 个视角中最多使用 50 个不同几何对象。这里的数据来自离线诊断，以下呈现帧间隔取自单独的真机采集。
+
+在同一台 Galaxy Z Fold7 上，熊猫团团以相同发车顺序、种子 7 参加「闲庭信步」单圈赛。两端均通过游戏本身的触控操作驶完 1,817.51 米，到达八车成绩界面，获得第八名、十枚金币。浏览器用时 1:49.18，签名 APK 用时 1:46.25。两圈由工具分别操控，转向输入的时机有所不同。
+
+| 行驶窗口 | Chrome WebGL2，间隔数 / p95 | 裁剪 V8 与 GLES3，间隔数 / p95 |
+| --- | ---: | ---: |
+| A | 380 / 16.581 毫秒 | 369 / 16.582 毫秒 |
+| B | 373 / 16.581 毫秒 | 368 / 16.581 毫秒 |
+
+两端渲染缓冲均为 873 × 325，实际呈现节奏为 60 Hz。测量的是游戏图层相邻两次呈现的时间间隔。浏览器最长间隔为 16.583 毫秒，APK 最长为 33.159 毫秒，四个计时窗口均未出现达到 34 毫秒的间隔。两端场景的装饰绘制量不同，本轮没有测量 GPU 执行时间、功耗或长时温控。[Fold7 赛果、画面对照与帧时数据](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-rally-glb.json)
+
+在双方发车位静止画面上，都可以辨认熊猫的黑白花色、绿竹和黄色车身。四个预先选定的局部色区中，颜色覆盖率差值最大为 1.17 个百分点。浏览器另外绘制了独立的车尾徽章。在同一 APK 的另一轮测试中，关闭 Android 游戏界面后读回 23 次纹理页发布、23 次释放。重新打开后回到准备界面。
+
 ### 在 Android 原生播放器游玩 Roll3D
 
 滚动红球收齐四颗星，其中一颗需要跳上高台。每收一颗，2D 计分都会更新；结算后点击 **Play again** 即可重开。Android 导出工具读取原有关卡并绑定原生宿主，两端共用移动、碰撞、跟随镜头、星星旋转、拾取粒子和重开逻辑。[浏览器原版关卡](https://github.com/cnedwin/Egret_rebuild/blob/dfc3a00010e9e9e9d4fa26c4a3f5a42a82d92b82/examples/play/roll3d.mjs)

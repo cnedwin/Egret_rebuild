@@ -31,6 +31,7 @@ pub struct EgretRenderer {
     index_bytes: usize,
     textures: [u32; PAGE_SLOTS],
     opaque_pages: [bool; PAGE_SLOTS],
+    world_textures: [u32; PAGE_SLOTS],
     project: Option<ProjectPipeline>,
     page_sizes: [[u32; 2]; PAGE_SLOTS],
     resident_bytes: usize,
@@ -106,7 +107,7 @@ impl EgretRenderer {
             program, buffer: 0, vao: 0, logical_size: -1, texture_limit: 0, buffer_bytes: 0,
             index_buffer: 0, index_bytes: 0,
             lights: Vec::new(), light_buffer: 0, light_bytes: 0, light_enabled: false,
-            opaque_pages: [true; PAGE_SLOTS], project: None,
+            opaque_pages: [true; PAGE_SLOTS], world_textures: [0; PAGE_SLOTS], project: None,
             textures: [0; PAGE_SLOTS], page_sizes: [[0; 2]; PAGE_SLOTS], resident_bytes: 0,
             vertices: Vec::new(), indices: Vec::new(), batches: Vec::new(),
         };
@@ -146,6 +147,7 @@ impl EgretRenderer {
     unsafe fn delete_gl(&self) {
         if let Some(project) = &self.project { project.destroy(); }
         glDeleteTextures(PAGE_SLOTS as i32, self.textures.as_ptr());
+        glDeleteTextures(PAGE_SLOTS as i32, self.world_textures.as_ptr());
         glDeleteBuffers(1, &self.buffer);
         if self.index_buffer != 0 { glDeleteBuffers(1, &self.index_buffer); }
         if self.light_buffer != 0 { glDeleteBuffers(1, &self.light_buffer); }
@@ -207,9 +209,20 @@ impl EgretRenderer {
         true
     }
 
+    // Invalidating one immutable page version invalidates all derived GPU storage.
+    unsafe fn release_world_view(&mut self, id: usize) {
+        let name = self.world_textures[id];
+        if name != 0 {
+            glDeleteTextures(1, &name);
+            self.world_textures[id] = 0;
+            self.resident_bytes -= crate::world_frame::mip_bytes(self.page_sizes[id]);
+        }
+    }
+
     unsafe fn draw(&mut self, bytes: &[u8], width: u32, height: u32) -> i32 {
-        let world = if bytes.starts_with(b"E3D1") {
+        let world = if bytes.starts_with(b"E3D1") || bytes.starts_with(b"E3D2") {
             let Some(scene) = crate::world_frame::WorldFrame::parse(bytes) else { return INVALID; };
+            if scene.draws.iter().any(|d| d.page != 0 && self.world_textures[d.page] == 0) { return MISSING_PAGE; }
             Some(scene)
         } else { None };
         let hud = world.as_ref().map_or(bytes, |frame| frame.overlay);
@@ -233,7 +246,7 @@ impl EgretRenderer {
             if self.project.is_none() { self.project = ProjectPipeline::create(); }
             let Some(pipeline) = &mut self.project else { return GPU_FAILURE; };
             if size != 0 { glBufferSubData(ARRAY_BUFFER, 0, size as isize, self.vertices.as_ptr().cast()); }
-            return if pipeline.render(&header, [width, height], self.vao, &self.textures, &self.batches, world.as_ref()) {
+            return if pipeline.render(&header, [width, height], self.vao, &self.textures, &self.world_textures, &self.batches, world.as_ref()) {
                 0
             } else { GPU_FAILURE };
         }
@@ -294,6 +307,7 @@ pub unsafe extern "C" fn egret_renderer_upload(
     // Replace atomically. On a failed allocation the prior page remains drawable.
     let Some(name) = texture(width, height, canonical.as_deref().unwrap_or(rgba)) else { return GPU_FAILURE; };
     renderer.opaque_pages[index] = canonical.is_none();
+    renderer.release_world_view(index);
     let old = renderer.textures[index];
     renderer.textures[index] = name;
     glDeleteTextures(1, &old);
@@ -301,6 +315,41 @@ pub unsafe extern "C" fn egret_renderer_upload(
     let [old_w, old_h] = renderer.page_sizes[index];
     renderer.resident_bytes -= old_w as usize * old_h as usize * 4;
     renderer.page_sizes[index] = [width, height];
+    0
+}
+
+/// Prepare the native sRGB view from the original immutable bytes of a published page.
+#[no_mangle]
+pub unsafe extern "C" fn egret_renderer_prepare_world_page(
+    ptr: *mut EgretRenderer, page: u32, rgba: *const u8, length: usize,
+) -> i32 {
+    let Some(renderer) = ptr.as_mut() else { return INVALID; };
+    let id = page as usize;
+    if id == 0 || id >= PAGE_SLOTS || rgba.is_null() { return INVALID; }
+    if renderer.textures[id] == 0 { return MISSING_PAGE; }
+    let [w, h] = renderer.page_sizes[id];
+    if length != w as usize * h as usize * 4 { return INVALID; }
+    if renderer.world_textures[id] != 0 { return 0; }
+    let mip_bytes = crate::world_frame::mip_bytes([w, h]);
+    if renderer.resident_bytes + mip_bytes > MAX_RESIDENT_BYTES { return INVALID; }
+    let mut name = 0;
+    glGenTextures(1, &mut name);
+    if name == 0 { return GPU_FAILURE; }
+    glBindTexture(TEXTURE_2D, name);
+    glTexParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, LINEAR_FILTER);
+    glTexParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(TEXTURE_2D, TEXTURE_WRAP_S, REPEAT);
+    glTexParameteri(TEXTURE_2D, TEXTURE_WRAP_T, REPEAT);
+    // glTF UVs address the first decoded row at v=0. SRGB8 decodes before filtering;
+    // the shared 2D page retains its own premultiplication and atlas sampler.
+    glTexImage2D(TEXTURE_2D, 0, SRGB8_ALPHA8, w as i32, h as i32, 0, RGBA, UNSIGNED_BYTE, rgba.cast());
+    glGenerateMipmap(TEXTURE_2D);
+    if glGetError() != 0 {
+        glDeleteTextures(1, &name);
+        return GPU_FAILURE;
+    }
+    renderer.world_textures[id] = name;
+    renderer.resident_bytes += mip_bytes;
     0
 }
 
@@ -312,6 +361,7 @@ pub unsafe extern "C" fn egret_renderer_release(ptr: *mut EgretRenderer, page: u
     let name = renderer.textures[index];
     if name == 0 { return MISSING_PAGE; }
     glDeleteTextures(1, &name);
+    renderer.release_world_view(index);
     renderer.textures[index] = 0;
     let [w, h] = renderer.page_sizes[index];
     renderer.resident_bytes -= w as usize * h as usize * 4;
@@ -324,10 +374,12 @@ pub unsafe extern "C" fn egret_renderer_draw(
     ptr: *mut EgretRenderer, bytes: *const u8, length: usize, width: u32, height: u32,
 ) -> i32 {
     let Some(renderer) = ptr.as_mut() else { return INVALID; };
-    if bytes.is_null() || !(frame::HEADER_BYTES..=MAX_FRAME_BYTES).contains(&length)
+    if bytes.is_null() || !(frame::HEADER_BYTES..=crate::world_frame::TEXTURED_LIMIT).contains(&length)
         || !(1..=MAX_DIMENSION).contains(&width) || !(1..=MAX_DIMENSION).contains(&height)
     {
         return INVALID;
     }
-    renderer.draw(slice::from_raw_parts(bytes, length), width, height)
+    let frame = slice::from_raw_parts(bytes, length);
+    if length > MAX_FRAME_BYTES && !frame.starts_with(b"E3D2") { return INVALID; }
+    renderer.draw(frame, width, height)
 }

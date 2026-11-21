@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/rally/cars.mjs",
+      "originRole": "Native vehicle assembly and integration of the locally supplied panda GLBs. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/rally/circuit.mjs",
+      "originRole": "Native circuit geometry and gameplay landmarks for the local one-lap adapter. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/rally/landmarks.mjs",
+      "originRole": "Native low-detail forest, start grandstand and track landmark assembly from the pinned course placements. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/rally/main.mjs",
+      "originRole": "Race session, original simulation integration, local HUD and native input. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/rally/prepare.mjs",
+      "originRole": "Local exporter for a pinned external game checkout. Source and artwork remain in the game repository. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/rally/source.json",
+      "originRole": "Content digests identifying the user-supplied game files for the local export. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/world3d-assets.mjs",
+      "originRole": "Scope-owned GLB loading and registration of embedded base-color images in the shared page registry. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/world3d-assets.test.mjs",
+      "originRole": "Regression coverage for GLB bounds, cancellation, page ownership and disposal. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-rally-glb.json",
+      "originRole": "Sanitized local device observations of the browser game and the trimmed V8 Android export. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
