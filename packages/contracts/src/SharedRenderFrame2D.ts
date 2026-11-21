@@ -32,6 +32,8 @@ export interface SharedFrameOptions2D {
 
 /** One image that a frame's commands sample from, with how its pixels are represented. */
 export interface SharedPage2D {
+  /** Present only for the capture-owned opaque white texel used to fill vector paths. */
+  readonly builtin?: 'solid-white';
   readonly source: ImageData2D;
   readonly sourceRepresentation: 'egret.srgb-straight-rgba8/1';
   readonly canonicalRepresentation: 'egret.alpha8-capped-srgb-pma8/1';

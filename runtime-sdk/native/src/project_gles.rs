@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 //! Composite into a linear-light sRGB attachment and resolve to the window's
 //! premultiplied display bytes. The EGR1 benchmark retains its direct path.
-use crate::{frame::{Batch, Header, PAGE_SLOTS}, gl::*, gles::{link_program, VERTEX}, project_color::decode_srgb};
+use crate::{frame::{Batch, Header, PAGE_SLOTS, MULTIPLY, ADD, LINEAR}, gl::*, gles::{link_program, VERTEX}, project_color::decode_srgb};
 use std::ptr;
 
 const DRAW: &[u8] = concat!("#version 300 es\n", include_str!("project_draw.frag"), "\0").as_bytes();
@@ -21,6 +21,7 @@ struct DrawProgram {
     name: u32,
     size: i32,
     opacity: i32,
+    linear_filter: i32,
     region: i32,
     logical_trim: i32,
     turn: i32,
@@ -31,11 +32,12 @@ impl DrawProgram {
         let name = link_program(VERTEX, if mapped { ATLAS_DRAW } else { DRAW })?;
         let location = |uniform: &[u8]| glGetUniformLocation(name, uniform.as_ptr().cast());
         let program = Self {
+            linear_filter: location(b"linearFilter\0"),
             name, size: location(b"size\0"), opacity: location(b"opacity\0"), region: location(b"region\0"),
             logical_trim: if mapped { location(b"logicalTrim\0") } else { -1 },
             turn: if mapped { location(b"quarterTurn\0") } else { -1 },
         };
-        if program.size < 0 || program.opacity < 0 || program.region < 0
+        if program.linear_filter < 0 || program.size < 0 || program.opacity < 0 || program.region < 0
             || (mapped && (program.logical_trim < 0 || program.turn < 0)) {
             glDeleteProgram(name);
             return None;
@@ -137,11 +139,20 @@ impl ProjectPipeline {
         glBindVertexArray(vao);
         glUniform2f(draw.size, header.size[0], header.size[1]);
         glEnable(BLEND);
-        glBlendFunc(ONE, ONE_MINUS_SRC_ALPHA);
+        let mut last_policy = None;
         glEnable(SCISSOR_TEST);
         for batch in batches {
             let [x, y, w, h] = batch.scissor(header.size, physical);
             if w == 0 || h == 0 { continue; }
+            if last_policy != Some(batch.policy) {
+                match batch.policy & (MULTIPLY | ADD) {
+                    MULTIPLY => glBlendFuncSeparate(DST_COLOR, ONE_MINUS_SRC_ALPHA, ONE, ONE_MINUS_SRC_ALPHA),
+                    ADD => glBlendFunc(ONE, ONE),
+                    _ => glBlendFunc(ONE, ONE_MINUS_SRC_ALPHA),
+                }
+                glUniform1i(draw.linear_filter, i32::from(batch.policy & LINEAR != 0));
+                last_policy = Some(batch.policy);
+            }
             glScissor(x, y, w, h);
             glUniform1f(draw.opacity, batch.opacity);
             let [u0, v0, u1, v1] = batch.region;

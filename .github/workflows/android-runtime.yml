@@ -28,9 +28,9 @@ jobs:
           pnpm install --frozen-lockfile --ignore-scripts
           node tools/build.mjs
           node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --strict --target ES2022 --module esnext --moduleResolution bundler runtime-sdk/project/android-player-project.d.ts
-          node --test runtime-sdk/scene/*.test.mjs runtime-sdk/project/*.test.mjs runtime-sdk/android/player/*.test.mjs
           esbuild=$(node -p "require('./examples/starter/release/package.json').devDependencies.esbuild")
           npm install --prefix "$RUNNER_TEMP/bundler" --no-save --ignore-scripts --no-audit --no-fund "esbuild@$esbuild"
+          EGRET_PLAYER_ESBUILD="$RUNNER_TEMP/bundler/node_modules/esbuild" node --test runtime-sdk/scene/*.test.mjs runtime-sdk/project/*.test.mjs runtime-sdk/android/player/*.test.mjs
           node runtime-sdk/scene/build.mjs --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --out "$RUNNER_TEMP/scene"
       - name: Test the command decoder and build the native host
         run: |

@@ -146,6 +146,26 @@ public final class ProjectReplayTapeTest {
         return b.array();
     }
 
+    private static void materialReplay() throws Exception {
+        byte[] mesh = indexedPacket(0, false);
+        ByteBuffer colored = ByteBuffer.allocate(mesh.length + 3 * 16).order(ByteOrder.LITTLE_ENDIAN);
+        colored.put(mesh, 0, 76).putInt(0, 0x35524745).putInt(24, 2 | 8 | 32);
+        for (int i = 0; i < 3; i++) {
+            colored.put(mesh, 76 + 16*i, 16);
+            for (float c : new float[]{0.25f, 0.5f, 0.7f, 1f}) colored.putFloat(c);
+        }
+        colored.put(mesh, mesh.length - 12, 12);
+        Map<Integer, PlayerGraphics.Page> pages = Collections.singletonMap(9, page(100));
+        ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
+        for (int[] edit : new int[][]{{24, 64}, {24, 2 | 4 | 8}, {92, 0x7fc00000}, {92, 0xbf800000}}) {
+            byte[] bad = colored.array().clone();
+            ByteBuffer.wrap(bad).order(ByteOrder.LITTLE_ENDIAN).putInt(edit[0], edit[1]);
+            reject(() -> recorder.add(new PlayerGraphics.Frame(1, bad, pages)));
+        }
+        recorder.add(new PlayerGraphics.Frame(1, colored.array(), pages));
+        require(recorder.size() == 1);
+    }
+
     private static void indexedReplay(File file) throws Exception {
         Map<Integer, PlayerGraphics.Page> pages = Collections.singletonMap(9, page(100));
         ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
@@ -228,6 +248,7 @@ public final class ProjectReplayTapeTest {
             reject(() -> ProjectReplayTape.read(file, W, H));
             atlasReplay(file);
             indexedReplay(file);
+            materialReplay();
             System.out.println("Project replay: EGR2/EGR3/EGR4 round-trip, page generations, identity and rejection passed.");
         } finally {
             Files.deleteIfExists(file.toPath());

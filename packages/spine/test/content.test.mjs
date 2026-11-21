@@ -33,3 +33,9 @@ test('cancelling a staged sibling preserves an already-ready shared setup',async
 
 test('linkedmesh aliases receive the same pre-Core count budget as mesh attachments',async t=>{const value=source();value.skins[0].attachments.first.red={type:'linkedmesh',source:'other',sequence:{count:4097}};const s=await setup(t,{control:{replace:{e_json:JSON.stringify(value)}}}),group=s.load();await assert.rejects(group.ready,e=>codes(e).includes('SPINE_JSON_LIMIT_FAILED'));await s.loader.close();drained(s);});
 test('a genuine cross-slot linkedmesh source uses the existing shared page setup',async t=>{const value=source();value.skins[0].attachments.first.red={type:'mesh',path:'red',uvs:[0,0,1,0,0,1],triangles:[0,1,2],vertices:[0,0,2,0,0,2]};value.skins[0].attachments.second.blue={type:'linkedmesh',source:'red',slot:'first',path:'blue'};const s=await setup(t,{control:{replace:{e_json:JSON.stringify(value)}}}),group=s.load();await group.ready;assert.equal(group.getSpine('e_json').info.slotCount,2);});
+
+test('Spine label admission preserves paired UTF-16 and rejects malformed names', async () => {
+  const { validSpineLabel } = await import('../dist/catalog.js');
+  for (const name of ['🧭皮影', 'A\ud834\udd1eB', 'x'.repeat(255)]) assert.equal(validSpineLabel(name), true);
+  for (const name of ['A\ud834B', 'A\udd1eB', '\u0000', '\u001f', '\u007f', '', 'x'.repeat(256)]) assert.equal(validSpineLabel(name), false);
+});

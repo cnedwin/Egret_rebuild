@@ -22,6 +22,12 @@ export function selectSpineDependencies(catalog: SpineCatalog, roots: readonly s
 export function spineFault(stage: string, id: string, cause?: unknown): EgretError {
   return new EgretError('SPINE_' + stage + '_FAILED', { cause: Object.freeze({ assetId: id, stage, cause }) });
 }
+// A Unicode-mode range matches isolated surrogate code units but preserves valid
+// supplementary characters without needing ICU property tables in the VM.
+export function validSpineLabel(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0 && value.length <= 255 &&
+    !/[\u0000-\u001f\u007f\ud800-\udfff]/u.test(value);
+}
 function exact(value: unknown, names: readonly string[]): value is Record<string, unknown> {
   return (
     value !== null &&
@@ -93,9 +99,7 @@ export function admitSpineCatalog(manifest: AdmittedResourceManifest): SpineCata
       !Array.isArray(names) ||
       names.length !== atlas.dependencies.length ||
       new Set(names).size !== names.length ||
-      names.some(
-        n => typeof n !== 'string' || !n.length || n.length > 255 || /[\p{Surrogate}\u0000-\u001f\u007f]/u.test(n)
-      )
+      names.some(n => !validSpineLabel(n))
     )
       throw spineFault('PAGE_BINDING', e.id);
     for (const id of atlas.dependencies) {

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/lantern-shadows/assets-jpeg.java",
+      "originRole": "JDK image decode for original scene artwork. First-party Android integration, prepared with AI assistance; Apache-2.0. Game content is supplied separately from cnedwin/PortedGamesEgret."
+    },
+    {
+      "path": "runtime-sdk/examples/lantern-shadows/assets-lettering.mjs",
+      "originRole": "Bitmap lettering for the native playbill and game HUD. First-party Android integration, prepared with AI assistance; Apache-2.0. Game content is supplied separately from cnedwin/PortedGamesEgret."
+    },
+    {
+      "path": "runtime-sdk/examples/lantern-shadows/assets-prepare.mjs",
+      "originRole": "Preparation of pinned artwork, maps and character assets. First-party Android integration, prepared with AI assistance; Apache-2.0. Game content is supplied separately from cnedwin/PortedGamesEgret."
+    },
+    {
+      "path": "runtime-sdk/examples/lantern-shadows/assets.mjs",
+      "originRole": "Spine, map, texture ownership and game asset loading through the player. First-party Android integration, prepared with AI assistance; Apache-2.0. Game content is supplied separately from cnedwin/PortedGamesEgret."
+    },
+    {
+      "path": "runtime-sdk/examples/lantern-shadows/main.mjs",
+      "originRole": "Native game entry and input routing. First-party Android integration, prepared with AI assistance; Apache-2.0. Game content is supplied separately from cnedwin/PortedGamesEgret."
+    },
+    {
+      "path": "runtime-sdk/examples/lantern-shadows/model.mjs",
+      "originRole": "Bindings for the original playbill, input and progress records. First-party Android integration, prepared with AI assistance; Apache-2.0. Game content is supplied separately from cnedwin/PortedGamesEgret."
+    },
+    {
+      "path": "runtime-sdk/examples/lantern-shadows/overlay.mjs",
+      "originRole": "Native playbill layout, rectangular clip, banner mesh and controls. First-party Android integration, prepared with AI assistance; Apache-2.0. Game content is supplied separately from cnedwin/PortedGamesEgret."
+    },
+    {
+      "path": "runtime-sdk/examples/lantern-shadows/prepare.mjs",
+      "originRole": "Local assembly of game rules and project attribution from pinned upstream source. First-party Android integration, prepared with AI assistance; Apache-2.0. Game content is supplied separately from cnedwin/PortedGamesEgret."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-lantern-shadows.json",
+      "originRole": "Physical comparison of the original browser game and the native Release APK, prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

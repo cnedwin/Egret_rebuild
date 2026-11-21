@@ -683,6 +683,7 @@ function captureSharedContent(
       pages.push(
         freeze({
           source: image,
+          ...(image === SHAPE_PAGE ? { builtin: 'solid-white' as const } : {}),
           sourceRepresentation: 'egret.srgb-straight-rgba8/1',
           canonicalRepresentation: 'egret.alpha8-capped-srgb-pma8/1'
         })
