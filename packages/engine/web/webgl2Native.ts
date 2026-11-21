@@ -208,6 +208,7 @@ export class GLNativeSession {
       TEXTURE_BASE_LEVEL: 33084,
       TEXTURE_MAX_LEVEL: 33085,
       NEAREST: 9728,
+      NEAREST_MIPMAP_NEAREST: 9984,
       LINEAR: 9729,
       CLAMP_TO_EDGE: 33071,
       RGBA: 6408,
@@ -585,7 +586,8 @@ export class GLNativeSession {
     gl.bindTexture(gl.TEXTURE_2D, owner.value as WebGLTexture);
     gl.texStorage2D(gl.TEXTURE_2D, levels, working && !this.codedTargets ? gl.SRGB8_ALPHA8 : gl.RGBA8, width, height);
     for (const [name, value] of [
-      [gl.TEXTURE_MIN_FILTER, gl.NEAREST],
+      // Keep every uploaded level accessible to explicit texelFetch on ANGLE D3D11.
+      [gl.TEXTURE_MIN_FILTER, levels > 1 ? gl.NEAREST_MIPMAP_NEAREST : gl.NEAREST],
       [gl.TEXTURE_MAG_FILTER, gl.NEAREST],
       [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE],
       [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE],

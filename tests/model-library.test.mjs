@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createExampleServer } from '../tools/serve-example.mjs';
 import * as W from '@egret/engine/world3d';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -99,4 +100,18 @@ test('ML03 the gallery page uses the World3D import map and every model kind is 
   assert.deepEqual(map('examples/models/index.html'), map('examples/world3d/index.html'));
   const gallery = read('examples/models/gallery.mjs');
   for (const kind of Object.keys(KINDS)) assert.ok(gallery.includes("'" + kind + "'"), kind);
+});
+
+test('the documented server serves the gallery and all registered models', async () => {
+  const server = createExampleServer(ROOT);
+  try {
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    const url = 'http://127.0.0.1:' + server.address().port + '/examples/models/';
+    for (const file of ['index.html', 'gallery.mjs', 'index.mjs', ...models.map(name => name + '.mjs')]) {
+      assert.equal((await fetch(url + file, {method: 'HEAD'})).status, 200, file);
+    }
+    assert.equal((await fetch(url + 'README.md')).status, 404);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
 });

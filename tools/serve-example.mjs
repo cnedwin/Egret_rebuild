@@ -7,6 +7,8 @@ import {fileURLToPath} from 'node:url';
 import {localPackage} from './lib/local-package.mjs';
 import {logicalPath,samePhysicalPath,fingerprintFile,ownerRelativePath} from './lib/file-identity.mjs';
 const root=fileURLToPath(new URL('..',import.meta.url));
+import {models} from '../examples/models/index.mjs';
+const galleryFiles=new Set(['index.html','index.mjs','gallery.mjs',...models.map(name=>name+'.mjs')]);
 const types={'.css':'text/css; charset=utf-8','.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.json':'application/json; charset=utf-8','.ttf':'font/ttf','.woff2':'font/woff2','.otf':'font/otf','.md':'text/plain; charset=utf-8','.wasm':'application/wasm'};
 export function createExampleServer(repository=root){
  return http.createServer((request,response)=>{
@@ -46,6 +48,7 @@ export function createExampleServer(repository=root){
    ||/^examples\/multi-pointer\/(?:index\.html|main\.mjs)$/.test(relative)
    ||/^examples\/resource-scene\/(?:[\w-]+\.(?:html|mjs)|assets\/[\w.-]+\.(?:png|woff2))$/.test(relative)
    ||/^packages\/(?:engine|runtime|contracts|spine)\/dist\/[\w/.-]+\.js$/.test(relative)
+   ||relative.startsWith('examples/models/')&&galleryFiles.has(relative.slice('examples/models/'.length))
    ||relative==='examples/host.mjs'
    ||relative==='examples/canvas-text/assets/ahem.ttf'||relative==='tools/browser-png/assets/rgb-red-green.png'
    ||relative.startsWith(dependency)&&/^[\w/-]+\.js$/.test(relative.slice(dependency.length));

@@ -45,6 +45,7 @@ These guides cover the APIs used to make games. The later sections link engine c
 The [full documentation catalog](https://github.com/cnedwin/Egret_rebuild/blob/main/DOCUMENTATION.md) links lower-level contracts. Runtime entries, sources/licenses and exact verification remain in each subsystem record.
 
 - [Shared 2D hardware results](docs/shared-2d-hardware-results.md) records native pixel, stress and paired SharedFrame2D evidence.
+- [November desktop and Android GPU verification](docs/november-browser-hardware.md)
 
 ## Reading status and evidence
 
