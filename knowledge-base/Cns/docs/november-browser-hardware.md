@@ -4,7 +4,7 @@
 
 在 Windows 的 RTX 5090 Laptop 上，WebGL2 缩小带 mipmap 的图片时可能将整张图画成背景色。仓库自带的 mipmap 示例就能复现。另一个问题在 Windows 和 Android 上都有：按文档启动示例服务器，新的 3D 模型画廊返回 HTTP 404。两处修复均已在最初复现问题的设备上验证。
 
-本次梳理了东八区 11 月 17 日起至 [84a56177，即 PR #442](https://github.com/cnedwin/Egret_rebuild/pull/442) 的 98 次主干合并。[采集记录](../../../docs/evidence/november-browser-hardware.json) 按主要验证方式列出全部 PR 和本轮实际抽测的负载。Android 原生改动复用已有的 [Fold7 安装、玩法、资源、桥接和录像回放记录](https://github.com/cnedwin/Egret_rebuild/tree/84a56177/runtime-sdk/measurements)。仅涉及构建、文档、发行和 CI 的改动沿用各自的检查。
+本次梳理了东八区 11 月 17 日起至 [84a56177，即 PR #442](https://github.com/cnedwin/Egret_rebuild/pull/442) 的 98 次主干合并。[采集记录](https://github.com/cnedwin/Egret_rebuild/blob/main/docs/evidence/november-browser-hardware.json) 按主要验证方式列出全部 PR 和本轮实际抽测的负载。Android 原生改动复用已有的 [Fold7 安装、玩法、资源、桥接和录像回放记录](https://github.com/cnedwin/Egret_rebuild/tree/84a56177/runtime-sdk/measurements)。仅涉及构建、文档、发行和 CI 的改动沿用各自的检查。
 
 ## 修复及对照
 

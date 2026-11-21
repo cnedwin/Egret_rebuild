@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/november-browser-hardware.md)
 
 On the Windows RTX 5090 Laptop, shrinking a mipmapped image in WebGL2 could make the image disappear. The public mipmap example reproduced this with no game assets. On both Windows and Android, the documented example server returned HTTP 404 for the new 3D model gallery. Both fixes were tested on the devices that reproduced them.
 
-The inventory covers the 98 first-parent merges from November 17 (UTC+8) through [84a56177, PR #442](https://github.com/cnedwin/Egret_rebuild/pull/442). The [measurement record](../../../docs/evidence/november-browser-hardware.json) groups every PR by its main verification route and names the workloads sampled. Native Android changes use the existing [Fold7 installation, gameplay, resource, bridge and replay measurements](https://github.com/cnedwin/Egret_rebuild/tree/84a56177/runtime-sdk/measurements). Changes confined to build tools, documentation, packaging and CI retain their own checks.
+The inventory covers the 98 first-parent merges from November 17 (UTC+8) through [84a56177, PR #442](https://github.com/cnedwin/Egret_rebuild/pull/442). The [measurement record](https://github.com/cnedwin/Egret_rebuild/blob/main/docs/evidence/november-browser-hardware.json) groups every PR by its main verification route and names the workloads sampled. Native Android changes use the existing [Fold7 installation, gameplay, resource, bridge and replay measurements](https://github.com/cnedwin/Egret_rebuild/tree/84a56177/runtime-sdk/measurements). Changes confined to build tools, documentation, packaging and CI retain their own checks.
 
 ## Fixes and controls
 
