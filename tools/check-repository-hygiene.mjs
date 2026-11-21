@@ -31,6 +31,7 @@ const sealedVendor = new Set([
 const binary = new Set([
   '.png',
   '.rgba',
+  '.glb',
   '.wav',
   '.ttf',
   '.woff',

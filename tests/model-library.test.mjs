@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import test from 'node:test';
+import test, { after, before } from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createExampleServer } from '../tools/serve-example.mjs';
 import * as W from '@egret/engine/world3d';
@@ -12,6 +12,19 @@ import * as W from '@egret/engine/world3d';
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DIR = path.join(ROOT, 'examples', 'models');
 const { models } = await import(pathToFileURL(path.join(DIR, 'index.mjs')).href);
+let bakedAsset;
+const bakedGeometry = new Map();
+before(async () => {
+  bakedAsset = await W.loadGltf3D(fs.readFileSync(path.join(DIR, 'static-models.glb')));
+  bakedAsset.scene.traverse(node => {
+    if (!(node instanceof W.Mesh3D)) return;
+    assert.ok(models.includes(node.name), 'unknown baked mesh: ' + node.name);
+    assert.ok(!bakedGeometry.has(node.name), 'duplicate baked mesh: ' + node.name);
+    bakedGeometry.set(node.name, node.geometry);
+  });
+});
+after(() => bakedAsset?.dispose());
+
 /** How many groups of triangles share no vertex position with the rest. */
 function pieces(geometry) {
   const p = geometry.getAttribute('position').data,
@@ -79,6 +92,21 @@ for (const name of models)
     if (module.surface !== undefined) assert.ok(W.createSurfaceMaterial3D(module.surface).shader, 'surface');
     // One piece: a part that floats loose, or is too thin to join, comes out as a second piece of the mesh.
     assert.equal(pieces(geometry), 1, 'one piece');
+    if (typeof module.rig === 'function') {
+      assert.ok(!bakedGeometry.has(name), 'an animated model must use its live rig');
+    } else {
+      // Compare the shipped mesh to the geometry already built for the budget and topology checks.
+      const baked = bakedGeometry.get(name);
+      assert.ok(baked, 'missing baked mesh: ' + name);
+      assert.deepEqual([...baked.attributes.keys()].sort(), [...geometry.attributes.keys()].sort());
+      for (const [attrName, expected] of geometry.attributes) {
+        const actual = baked.getAttribute(attrName);
+        assert.equal(actual.itemSize, expected.itemSize, attrName);
+        assert.deepEqual(actual.data, expected.data, attrName);
+      }
+      assert.deepEqual(Array.from(baked.index.data), Array.from(geometry.index.data));
+      assert.deepEqual(baked.boundingBox, geometry.boundingBox);
+    }
     geometry.dispose();
     // A model with a rig makes it, with at least one clip that names only its bones.
     if (typeof module.rig === 'function') {
@@ -110,6 +138,9 @@ test('the documented server serves the gallery and all registered models', async
     for (const file of ['index.html', 'gallery.mjs', 'index.mjs', ...models.map(name => name + '.mjs')]) {
       assert.equal((await fetch(url + file, { method: 'HEAD' })).status, 200, file);
     }
+    const packed = await fetch(url + 'static-models.glb');
+    assert.equal(packed.status, 200);
+    assert.deepEqual(Buffer.from(await packed.arrayBuffer()), fs.readFileSync(path.join(DIR, 'static-models.glb')));
     assert.equal((await fetch(url + 'README.md')).status, 404);
   } finally {
     await new Promise(resolve => server.close(resolve));

@@ -1,0 +1,1010 @@
+{
+  "scope": "Fold7 first interactive view of the 24-model examples/models gallery",
+  "dateUtc": "2026-11-21",
+  "source": {
+    "mainBaseline": "814fcbf8c56ab073dba7478f13bd7f22e4808fff",
+    "baselineRunCheckout": "eacede76364128bfa917368da6a8fbf32a1b684f",
+    "baselineGitTree": "3364e285ad709cf3438137002df15bed45258663",
+    "A": "Build 22 static meshes from SDF definitions at startup and instantiate both live rigs.",
+    "B": "Read the 22 static geometries from one local GLB and instantiate both live rigs. Both paths apply the model-defined materials.",
+    "galleryModuleSha256": {
+      "A": "e8ac6b9e49e9f0d15264f571740e46bd3412db915001b70208125a4b98b2581f",
+      "B": "0505fa466ca23d70d0af2e578ff254682a21762e4095300e8cd201bc186eebad"
+    },
+    "compiledJs": {
+      "packages": [
+        "contracts",
+        "runtime",
+        "engine"
+      ],
+      "files": 393,
+      "sha256": "9635cdceac2cf20d703f17a3810db1457216cd86eea07e7419ec36c2fef501e1"
+    },
+    "galleryInputs": {
+      "files": 26,
+      "sha256": "43f5e3c97cc670610b2ce0dfa15e5664674f83829aa0b5c28315f4d67c61d0d4",
+      "contents": "index.html, index.mjs and the 24 model modules listed below"
+    },
+    "digestRecipe": "For input sets, sort repository-relative paths by code unit. Hash concatenated UTF-8 lines in the form PATH SPACE lowercase-SHA256 LF.",
+    "staticPack": {
+      "path": "examples/models/static-models.glb",
+      "bytes": 2727868,
+      "sha256": "a4d28599f34fa41a850e4a06eb2013f1b9ad3e93f1b5c18d6beeebf59c374b65",
+      "staticMeshes": 22,
+      "liveRigs": [
+        "fox",
+        "villager"
+      ]
+    },
+    "models": [
+      "fox",
+      "cat",
+      "dog",
+      "rabbit",
+      "chick",
+      "fish",
+      "villager",
+      "knight",
+      "cottage",
+      "well",
+      "tower",
+      "pagoda",
+      "tree",
+      "pine",
+      "bush",
+      "flower",
+      "mushroom",
+      "cactus",
+      "barrel",
+      "crate",
+      "chest",
+      "lantern",
+      "rock",
+      "signpost"
+    ]
+  },
+  "environment": {
+    "device": "Samsung Galaxy Z Fold7",
+    "model": "SM-F966U1",
+    "android": "17",
+    "chrome": "157.0.8103.78",
+    "webgl2Renderer": "ANGLE (Qualcomm, Adreno (TM) 830, OpenGL ES 3.2)",
+    "webgpuAdapter": {
+      "vendor": "qualcomm",
+      "architecture": "adreno-8xx",
+      "isFallbackAdapter": false
+    },
+    "pageViewportCss": [
+      411,
+      813
+    ],
+    "canvasClientSize": [
+      411,
+      745
+    ],
+    "renderBuffer": [
+      411,
+      745
+    ],
+    "devicePixelRatio": 2.625,
+    "quality": "low",
+    "resolutionScale": 1,
+    "dynamicResolution": false,
+    "transport": "Loopback development server via USB reverse port forwarding.",
+    "deviceState": {
+      "screenAwakeAndUnlockedObservations": {
+        "baselineDiagnosticSession": 10,
+        "pairedAndVisualSession": 67
+      },
+      "priorScreenSettingAndForegroundRestored": true
+    },
+    "coldStart": "Fresh page, scene, render context and JavaScript module instances. Browser HTTP cache disabled and service worker bypassed. Browser process and system/driver caches persisted.",
+    "workload": {
+      "models": 24,
+      "sceneTriangles": 119000,
+      "firstViewDraws": 22,
+      "firstViewDrawnTriangles": 105502
+    }
+  },
+  "protocol": {
+    "order": "Six adjacent A/B pairs per backend. A first in pairs 1, 4 and 5. B first in pairs 2, 3 and 6. The leading backend alternated between rounds.",
+    "exclusions": "One timing pilot per backend on A and separate diagnostic and visual runs are excluded from the 24 formal runs.",
+    "interactive": "Milliseconds from navigation time origin to the later of orbit and size control readiness and the first Chrome screencast frame containing model pixels. The owned page was foreground and focused.",
+    "firstVisibleWitness": "The compositor supplied PNG frames at a maximum of 220 by 440. Sample every other row and column below the top 27%. Accept a frame when at least 22% of samples are lit, at least eight are model-colored and at least 15 quantized RGB colors are present. This observes browser composition; physical display scanout was not timed.",
+    "completion": "After the first successful draw, poll a WebGL2 fence with zero timeout or await WebGPU queue completion. The next foreground requestAnimationFrame is recorded independently.",
+    "frames": "90 consecutive foreground requestAnimationFrame intervals after first-frame GPU completion and the following callback. Per-run p95 uses nearest rank (86th interval in ascending order). Histograms retain counts in 0.1 ms bins.",
+    "diagnostics": "Separate first-frame instrumentation measured JavaScript model construction, CPU time in graphics API calls and submission. GPU execution-only time was unavailable. Queue or fence completion includes scheduling.",
+    "pixels": "Separate parity runs freeze rig time. Capture the canvas with normalized sizes, after checking true sizes, and after an injected touch drag with orbit damping. An additional visual control fixes the camera to a common rotated pose after gesture input. During formal runs the two rigs animate normally.",
+    "limits": "One device and quality level on a local connection. Remote asset downloads, first launch after driver-cache eviction, physical touch latency and long-run thermals were not measured."
+  },
+  "results": {
+    "webgl2": {
+      "diagnostic": {
+        "A": {
+          "modelsImportMs": 233.8,
+          "staticMeshesMakeOrWrapMs": 9240.6,
+          "liveRigsMakeMs": 587.7,
+          "firstDrawCpuMs": 143.9,
+          "uploadApiCpuMs": 1.2,
+          "uploadBytes": 2759396,
+          "vertexBytes": 2124944,
+          "indexBytes": 633012,
+          "linkStatusCpuMs": 133.8,
+          "firstFrameCompletionDelayMs": 55.4,
+          "gpuExecutionOnlyMs": null
+        },
+        "B": {
+          "modelsImportMs": 179.1,
+          "staticMeshesMakeOrWrapMs": 5.3,
+          "liveRigsMakeMs": 683.5,
+          "packFetchToBodyMs": 102.2,
+          "packParseMs": 26.2,
+          "firstDrawCpuMs": 64.4,
+          "uploadApiCpuMs": 2.8,
+          "uploadBytes": 2759396,
+          "vertexBytes": 2124944,
+          "indexBytes": 633012,
+          "linkStatusCpuMs": 33.6,
+          "firstFrameCompletionDelayMs": 66.4,
+          "gpuExecutionOnlyMs": null
+        }
+      },
+      "pairs": [
+        {
+          "pair": 1,
+          "order": "AB",
+          "A": {
+            "run": "10-p1-A-webgl2",
+            "interactiveMs": 13322.906,
+            "controlsReadyMs": 13218.8,
+            "compositedMs": 13322.906,
+            "completedThenRafMs": 13366.2,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 30.9,
+            "pageEncodedBytes": 2707565,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1824,
+              "rgbBins": 502,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.0": 1,
+              "16.5": 21,
+              "16.6": 58,
+              "16.7": 7,
+              "40.8": 1,
+              "41.6": 1,
+              "41.7": 1
+            }
+          },
+          "B": {
+            "run": "11-p1-B-webgl2",
+            "interactiveMs": 1679.86,
+            "controlsReadyMs": 1607.1,
+            "compositedMs": 1679.86,
+            "completedThenRafMs": 1740.3,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 30.9,
+            "pageEncodedBytes": 5436543,
+            "firstComposite": {
+              "lit": 14699,
+              "modelColored": 1820,
+              "rgbBins": 500,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.4": 1,
+              "16.5": 28,
+              "16.6": 52,
+              "16.7": 9
+            }
+          },
+          "savedMs": 11643.046
+        },
+        {
+          "pair": 2,
+          "order": "BA",
+          "B": {
+            "run": "16-p2-B-webgl2",
+            "interactiveMs": 1622.783,
+            "controlsReadyMs": 1536.5,
+            "compositedMs": 1622.783,
+            "completedThenRafMs": 1717.3,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 31.5,
+            "pageEncodedBytes": 5436543,
+            "firstComposite": {
+              "lit": 14699,
+              "modelColored": 1820,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "15.7": 1,
+              "15.9": 1,
+              "16.5": 28,
+              "16.6": 48,
+              "16.7": 11,
+              "18.0": 1
+            }
+          },
+          "A": {
+            "run": "17-p2-A-webgl2",
+            "interactiveMs": 14254.943,
+            "controlsReadyMs": 14148.8,
+            "compositedMs": 14254.943,
+            "completedThenRafMs": 14341.1,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 31.5,
+            "pageEncodedBytes": 2707565,
+            "firstComposite": {
+              "lit": 14702,
+              "modelColored": 1824,
+              "rgbBins": 501,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.1": 1,
+              "16.5": 24,
+              "16.6": 56,
+              "16.7": 8,
+              "41.2": 1
+            }
+          },
+          "savedMs": 12632.16
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "B": {
+            "run": "18-p3-B-webgl2",
+            "interactiveMs": 1589.393,
+            "controlsReadyMs": 1515.6,
+            "compositedMs": 1589.393,
+            "completedThenRafMs": 1648.7,
+            "frameP95Ms": 16.6,
+            "batteryTempC": 31.8,
+            "pageEncodedBytes": 5436543,
+            "firstComposite": {
+              "lit": 14699,
+              "modelColored": 1820,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 24,
+              "16.6": 62,
+              "16.7": 4
+            }
+          },
+          "A": {
+            "run": "19-p3-A-webgl2",
+            "interactiveMs": 14426.04,
+            "controlsReadyMs": 14309.6,
+            "compositedMs": 14426.04,
+            "completedThenRafMs": 14527.8,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 31.8,
+            "pageEncodedBytes": 2707565,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1824,
+              "rgbBins": 502,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "15.9": 1,
+              "16.5": 21,
+              "16.6": 60,
+              "16.7": 5,
+              "16.8": 1,
+              "41.1": 1,
+              "41.9": 1
+            }
+          },
+          "savedMs": 12836.647
+        },
+        {
+          "pair": 4,
+          "order": "AB",
+          "A": {
+            "run": "24-p4-A-webgl2",
+            "interactiveMs": 14618.104,
+            "controlsReadyMs": 14502.4,
+            "compositedMs": 14618.104,
+            "completedThenRafMs": 14718.5,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.4,
+            "pageEncodedBytes": 2707565,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1824,
+              "rgbBins": 502,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.0": 1,
+              "16.5": 28,
+              "16.6": 46,
+              "16.7": 13,
+              "41.1": 1,
+              "42.0": 1
+            }
+          },
+          "B": {
+            "run": "25-p4-B-webgl2",
+            "interactiveMs": 1709.397,
+            "controlsReadyMs": 1621.8,
+            "compositedMs": 1709.397,
+            "completedThenRafMs": 1771,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.4,
+            "pageEncodedBytes": 5436543,
+            "firstComposite": {
+              "lit": 14699,
+              "modelColored": 1820,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 29,
+              "16.6": 51,
+              "16.7": 10
+            }
+          },
+          "savedMs": 12908.707
+        },
+        {
+          "pair": 5,
+          "order": "AB",
+          "A": {
+            "run": "26-p5-A-webgl2",
+            "interactiveMs": 15074.698,
+            "controlsReadyMs": 14969.9,
+            "compositedMs": 15074.698,
+            "completedThenRafMs": 15176.7,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.4,
+            "pageEncodedBytes": 2707565,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1824,
+              "rgbBins": 502,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.0": 1,
+              "16.4": 1,
+              "16.5": 23,
+              "16.6": 55,
+              "16.7": 7,
+              "16.8": 1,
+              "41.2": 1,
+              "41.9": 1
+            }
+          },
+          "B": {
+            "run": "27-p5-B-webgl2",
+            "interactiveMs": 1696.42,
+            "controlsReadyMs": 1631.4,
+            "compositedMs": 1696.42,
+            "completedThenRafMs": 1756.1,
+            "frameP95Ms": 16.6,
+            "batteryTempC": 32.6,
+            "pageEncodedBytes": 5436543,
+            "firstComposite": {
+              "lit": 14699,
+              "modelColored": 1820,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 25,
+              "16.6": 61,
+              "16.7": 4
+            }
+          },
+          "savedMs": 13378.278
+        },
+        {
+          "pair": 6,
+          "order": "BA",
+          "B": {
+            "run": "32-p6-B-webgl2",
+            "interactiveMs": 1679.098,
+            "controlsReadyMs": 1591.5,
+            "compositedMs": 1679.098,
+            "completedThenRafMs": 1738.2,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.9,
+            "pageEncodedBytes": 5436543,
+            "firstComposite": {
+              "lit": 14699,
+              "modelColored": 1820,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 25,
+              "16.6": 60,
+              "16.7": 5
+            }
+          },
+          "A": {
+            "run": "33-p6-A-webgl2",
+            "interactiveMs": 16183.837,
+            "controlsReadyMs": 16072,
+            "compositedMs": 16183.837,
+            "completedThenRafMs": 16228.1,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.9,
+            "pageEncodedBytes": 2707565,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1824,
+              "rgbBins": 502,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.0": 1,
+              "16.5": 25,
+              "16.6": 51,
+              "16.7": 11,
+              "41.2": 1,
+              "41.9": 1
+            }
+          },
+          "savedMs": 14504.739
+        }
+      ],
+      "summary": {
+        "A": {
+          "interactiveMs": {
+            "median": 14522.072,
+            "min": 13322.906,
+            "max": 16183.837
+          },
+          "frameP95Ms": {
+            "median": 16.7,
+            "min": 16.7,
+            "max": 16.7
+          }
+        },
+        "B": {
+          "interactiveMs": {
+            "median": 1679.479,
+            "min": 1589.393,
+            "max": 1709.397
+          },
+          "frameP95Ms": {
+            "median": 16.7,
+            "min": 16.6,
+            "max": 16.7
+          }
+        },
+        "medianPairedSavingMs": 12872.677,
+        "medianPairedSavingPercent": 88.681,
+        "fasterPairs": 6,
+        "medianStartupReductionPercent": 88.435,
+        "focusedOrbitChecksPassed": 12
+      },
+      "visualParity": {
+        "normal": {
+          "captureSize": [
+            412,
+            745
+          ],
+          "pixels": 306940,
+          "differentPixels": 0,
+          "pixelsWithAnyRgbDeltaOver16": 0,
+          "meanAbsoluteRgbDelta": 0,
+          "maxRgbDelta": 0,
+          "baselinePngSha256": "d1c177f8570ef64508dfcd13ffc7160d5d4e6ce26b4bd5228e58f7e8f5c4b9f7",
+          "candidatePngSha256": "d1c177f8570ef64508dfcd13ffc7160d5d4e6ce26b4bd5228e58f7e8f5c4b9f7"
+        },
+        "sizes": {
+          "captureSize": [
+            412,
+            746
+          ],
+          "pixels": 307352,
+          "differentPixels": 0,
+          "pixelsWithAnyRgbDeltaOver16": 0,
+          "meanAbsoluteRgbDelta": 0,
+          "maxRgbDelta": 0,
+          "baselinePngSha256": "4c5ab9765196ac1a88bcac49d0f03888909e46a3541b61ddde5f30d710d04411",
+          "candidatePngSha256": "4c5ab9765196ac1a88bcac49d0f03888909e46a3541b61ddde5f30d710d04411"
+        },
+        "orbit": {
+          "captureSize": [
+            412,
+            746
+          ],
+          "pixels": 307352,
+          "differentPixels": 53868,
+          "pixelsWithAnyRgbDeltaOver16": 923,
+          "meanAbsoluteRgbDelta": 0.318,
+          "maxRgbDelta": 185,
+          "baselinePngSha256": "14f6a0d75a7199eacdafd2ade159d80fa66f96b332a55be7ca4dee7c2820c3ba",
+          "candidatePngSha256": "963607664a6b1b36144d76530ebcd21b56adbd95b10a9d55c006c988bbbaa728"
+        },
+        "rotatedAtCommonPose": {
+          "captureSize": [
+            412,
+            746
+          ],
+          "pixels": 307352,
+          "differentPixels": 0,
+          "pixelsWithAnyRgbDeltaOver16": 0,
+          "meanAbsoluteRgbDelta": 0,
+          "maxRgbDelta": 0,
+          "position": [
+            6.400000095367432,
+            6.800000190734863,
+            4.699999809265137
+          ],
+          "quaternion": [
+            -0.2312002182006836,
+            0.26637211441993713,
+            0.06597939878702164,
+            0.933401882648468
+          ],
+          "baselinePngSha256": "b272385be81a89a170090ecbe1e92f67cdb568090389ca8623d87837746a6943",
+          "candidatePngSha256": "b272385be81a89a170090ecbe1e92f67cdb568090389ca8623d87837746a6943"
+        }
+      }
+    },
+    "webgpu": {
+      "diagnostic": {
+        "A": {
+          "modelsImportMs": 253.9,
+          "staticMeshesMakeOrWrapMs": 11572.1,
+          "liveRigsMakeMs": 643.9,
+          "firstDrawCpuMs": 13.6,
+          "uploadApiCpuMs": 4.9,
+          "uploadBytes": 2795988,
+          "vertexBytes": 2152960,
+          "indexBytes": 633012,
+          "firstFrameCompletionDelayMs": 558.3,
+          "gpuExecutionOnlyMs": null
+        },
+        "B": {
+          "modelsImportMs": 152.1,
+          "staticMeshesMakeOrWrapMs": 3.9,
+          "liveRigsMakeMs": 692.7,
+          "packFetchToBodyMs": 102.2,
+          "packParseMs": 27.3,
+          "firstDrawCpuMs": 22.5,
+          "uploadApiCpuMs": 6.9,
+          "uploadBytes": 2795988,
+          "vertexBytes": 2152960,
+          "indexBytes": 633012,
+          "firstFrameCompletionDelayMs": 32.2,
+          "gpuExecutionOnlyMs": null
+        }
+      },
+      "pairs": [
+        {
+          "pair": 1,
+          "order": "AB",
+          "A": {
+            "run": "12-p1-A-webgpu",
+            "interactiveMs": 14505.731,
+            "controlsReadyMs": 14379.4,
+            "compositedMs": 14505.731,
+            "completedThenRafMs": 14479.3,
+            "frameP95Ms": 16.8,
+            "batteryTempC": 31.2,
+            "pageEncodedBytes": 2856688,
+            "firstComposite": {
+              "lit": 14706,
+              "modelColored": 1823,
+              "rgbBins": 501,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.0": 1,
+              "16.5": 23,
+              "16.6": 53,
+              "16.7": 8,
+              "16.8": 1,
+              "40.4": 1,
+              "41.1": 1,
+              "41.7": 1,
+              "42.0": 1
+            }
+          },
+          "B": {
+            "run": "13-p1-B-webgpu",
+            "interactiveMs": 1668.42,
+            "controlsReadyMs": 1619.6,
+            "compositedMs": 1668.42,
+            "completedThenRafMs": 1729.4,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 31.2,
+            "pageEncodedBytes": 5585666,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1819,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 27,
+              "16.6": 55,
+              "16.7": 8
+            }
+          },
+          "savedMs": 12837.311
+        },
+        {
+          "pair": 2,
+          "order": "BA",
+          "B": {
+            "run": "14-p2-B-webgpu",
+            "interactiveMs": 1640.711,
+            "controlsReadyMs": 1593.8,
+            "compositedMs": 1640.711,
+            "completedThenRafMs": 1718.2,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 31.2,
+            "pageEncodedBytes": 5585666,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1819,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.4": 1,
+              "16.5": 24,
+              "16.6": 60,
+              "16.7": 5
+            }
+          },
+          "A": {
+            "run": "15-p2-A-webgpu",
+            "interactiveMs": 14302.358,
+            "controlsReadyMs": 14187.3,
+            "compositedMs": 14302.358,
+            "completedThenRafMs": 14304.3,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 31.5,
+            "pageEncodedBytes": 2856688,
+            "firstComposite": {
+              "lit": 14706,
+              "modelColored": 1823,
+              "rgbBins": 501,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.1": 1,
+              "16.4": 1,
+              "16.5": 24,
+              "16.6": 51,
+              "16.7": 10,
+              "41.1": 2,
+              "41.7": 1
+            }
+          },
+          "savedMs": 12661.647
+        },
+        {
+          "pair": 3,
+          "order": "BA",
+          "B": {
+            "run": "20-p3-B-webgpu",
+            "interactiveMs": 1582.033,
+            "controlsReadyMs": 1539.4,
+            "compositedMs": 1582.033,
+            "completedThenRafMs": 1659.1,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 31.8,
+            "pageEncodedBytes": 5585666,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1819,
+              "rgbBins": 498,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 31,
+              "16.6": 46,
+              "16.7": 13
+            }
+          },
+          "A": {
+            "run": "21-p3-A-webgpu",
+            "interactiveMs": 14827.552,
+            "controlsReadyMs": 14724.7,
+            "compositedMs": 14827.552,
+            "completedThenRafMs": 14830.2,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32,
+            "pageEncodedBytes": 2856688,
+            "firstComposite": {
+              "lit": 14706,
+              "modelColored": 1823,
+              "rgbBins": 501,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.0": 1,
+              "16.4": 1,
+              "16.5": 25,
+              "16.6": 48,
+              "16.7": 11,
+              "16.8": 1,
+              "41.0": 1,
+              "41.2": 1,
+              "41.6": 1
+            }
+          },
+          "savedMs": 13245.519
+        },
+        {
+          "pair": 4,
+          "order": "AB",
+          "A": {
+            "run": "22-p4-A-webgpu",
+            "interactiveMs": 15167.913,
+            "controlsReadyMs": 15071.8,
+            "compositedMs": 15167.913,
+            "completedThenRafMs": 15169.5,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.2,
+            "pageEncodedBytes": 2856688,
+            "firstComposite": {
+              "lit": 14706,
+              "modelColored": 1823,
+              "rgbBins": 501,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.0": 1,
+              "16.5": 26,
+              "16.6": 49,
+              "16.7": 11,
+              "40.9": 1,
+              "41.2": 1,
+              "41.8": 1
+            }
+          },
+          "B": {
+            "run": "23-p4-B-webgpu",
+            "interactiveMs": 1695.371,
+            "controlsReadyMs": 1648.7,
+            "compositedMs": 1695.371,
+            "completedThenRafMs": 1757.1,
+            "frameP95Ms": 16.6,
+            "batteryTempC": 32.2,
+            "pageEncodedBytes": 5585666,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1819,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 23,
+              "16.6": 63,
+              "16.7": 4
+            }
+          },
+          "savedMs": 13472.542
+        },
+        {
+          "pair": 5,
+          "order": "AB",
+          "A": {
+            "run": "28-p5-A-webgpu",
+            "interactiveMs": 15158.332,
+            "controlsReadyMs": 15044.5,
+            "compositedMs": 15158.332,
+            "completedThenRafMs": 15161,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.6,
+            "pageEncodedBytes": 2856688,
+            "firstComposite": {
+              "lit": 14707,
+              "modelColored": 1823,
+              "rgbBins": 501,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.0": 1,
+              "16.5": 26,
+              "16.6": 48,
+              "16.7": 12,
+              "40.5": 1,
+              "41.2": 1,
+              "41.9": 1
+            }
+          },
+          "B": {
+            "run": "29-p5-B-webgpu",
+            "interactiveMs": 1753.836,
+            "controlsReadyMs": 1703.8,
+            "compositedMs": 1753.836,
+            "completedThenRafMs": 1814.3,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.6,
+            "pageEncodedBytes": 5585666,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1819,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 28,
+              "16.6": 51,
+              "16.7": 11
+            }
+          },
+          "savedMs": 13404.496
+        },
+        {
+          "pair": 6,
+          "order": "BA",
+          "B": {
+            "run": "30-p6-B-webgpu",
+            "interactiveMs": 1782.563,
+            "controlsReadyMs": 1718.4,
+            "compositedMs": 1782.563,
+            "completedThenRafMs": 1844.8,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.8,
+            "pageEncodedBytes": 5585666,
+            "firstComposite": {
+              "lit": 14703,
+              "modelColored": 1819,
+              "rgbBins": 499,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.5": 27,
+              "16.6": 56,
+              "16.7": 7
+            }
+          },
+          "A": {
+            "run": "31-p6-A-webgpu",
+            "interactiveMs": 15444.34,
+            "controlsReadyMs": 15343.6,
+            "compositedMs": 15444.34,
+            "completedThenRafMs": 15445.9,
+            "frameP95Ms": 16.7,
+            "batteryTempC": 32.8,
+            "pageEncodedBytes": 2856688,
+            "firstComposite": {
+              "lit": 14706,
+              "modelColored": 1823,
+              "rgbBins": 501,
+              "samples": 15096
+            },
+            "intervalsByMs": {
+              "16.1": 1,
+              "16.5": 25,
+              "16.6": 51,
+              "16.7": 10,
+              "41.0": 1,
+              "41.1": 1,
+              "41.6": 1
+            }
+          },
+          "savedMs": 13661.777
+        }
+      ],
+      "summary": {
+        "A": {
+          "interactiveMs": {
+            "median": 14992.942,
+            "min": 14302.358,
+            "max": 15444.34
+          },
+          "frameP95Ms": {
+            "median": 16.7,
+            "min": 16.7,
+            "max": 16.8
+          }
+        },
+        "B": {
+          "interactiveMs": {
+            "median": 1681.895,
+            "min": 1582.033,
+            "max": 1782.563
+          },
+          "frameP95Ms": {
+            "median": 16.7,
+            "min": 16.6,
+            "max": 16.7
+          }
+        },
+        "medianPairedSavingMs": 13325.007,
+        "medianPairedSavingPercent": 88.513,
+        "fasterPairs": 6,
+        "medianStartupReductionPercent": 88.782,
+        "focusedOrbitChecksPassed": 12
+      },
+      "visualParity": {
+        "normal": {
+          "captureSize": [
+            412,
+            745
+          ],
+          "pixels": 306940,
+          "differentPixels": 0,
+          "pixelsWithAnyRgbDeltaOver16": 0,
+          "meanAbsoluteRgbDelta": 0,
+          "maxRgbDelta": 0,
+          "baselinePngSha256": "00eb03a9887023fe9b91971d470c38a3b0f0d2924c2b5aa3bcf076543d304e72",
+          "candidatePngSha256": "00eb03a9887023fe9b91971d470c38a3b0f0d2924c2b5aa3bcf076543d304e72"
+        },
+        "sizes": {
+          "captureSize": [
+            412,
+            746
+          ],
+          "pixels": 307352,
+          "differentPixels": 0,
+          "pixelsWithAnyRgbDeltaOver16": 0,
+          "meanAbsoluteRgbDelta": 0,
+          "maxRgbDelta": 0,
+          "baselinePngSha256": "2f85db61fdeb322add5e828ec02468ce90f9823e933ceeaab2b0b496efdb5423",
+          "candidatePngSha256": "2f85db61fdeb322add5e828ec02468ce90f9823e933ceeaab2b0b496efdb5423"
+        },
+        "orbit": {
+          "captureSize": [
+            412,
+            746
+          ],
+          "pixels": 307352,
+          "differentPixels": 73253,
+          "pixelsWithAnyRgbDeltaOver16": 2437,
+          "meanAbsoluteRgbDelta": 0.692,
+          "maxRgbDelta": 190,
+          "baselinePngSha256": "0af569f221c795baac29e1675fabbddb0b4ce2138315d53d560bae9dc22c90ac",
+          "candidatePngSha256": "a702207a012abb3205e4b086027b7a07f187787e745909cc03107865980d3942"
+        },
+        "rotatedAtCommonPose": {
+          "captureSize": [
+            412,
+            746
+          ],
+          "pixels": 307352,
+          "differentPixels": 0,
+          "pixelsWithAnyRgbDeltaOver16": 0,
+          "meanAbsoluteRgbDelta": 0,
+          "maxRgbDelta": 0,
+          "position": [
+            6.400000095367432,
+            6.800000190734863,
+            4.699999809265137
+          ],
+          "quaternion": [
+            -0.2312002182006836,
+            0.26637211441993713,
+            0.06597939878702164,
+            0.933401882648468
+          ],
+          "baselinePngSha256": "521bf425944d504e58bad21d96708435b5ac4a14ba4d11b7a9eb4ec7de435789",
+          "candidatePngSha256": "521bf425944d504e58bad21d96708435b5ac4a14ba4d11b7a9eb4ec7de435789"
+        }
+      }
+    }
+  },
+  "visualInterpretation": "The true-size checkbox and touch-driven orbit operated in both variants. The unpinned orbit screenshots had slightly different final camera poses after the same gesture and damping delay. The additional fixed rotation capture holds the pose constant for pixel comparison.",
+  "optionalPackFallback": {
+    "platform": "Windows, headless Chrome 157.0.8103.6, WebGL2 SwiftShader",
+    "test": "Only the static GLB request returned HTTP 404. The unmodified candidate loaded its procedural models.",
+    "models": 24,
+    "triangles": 119000,
+    "foxBones": 7,
+    "villagerBones": 6,
+    "bothRigsUpdated": true,
+    "sampledCanvasColors": 9341,
+    "scriptErrors": 0
+  }
+}

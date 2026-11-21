@@ -26,6 +26,24 @@ scene.addChild(floor);
 const material = W.createStandardMaterial3D({ vertexColors: true, roughness: 0.75 });
 const made = [];
 const started = performance.now();
+// The pack contains geometry only. Live modules still own materials, layout metadata and rig animation.
+async function loadStaticMeshes() {
+  const response = await fetch(new URL('./static-models.glb', import.meta.url));
+  if (!response.ok) throw new Error('Gallery mesh pack: HTTP ' + response.status);
+  const pack = await W.loadGltf3D(new Uint8Array(await response.arrayBuffer()));
+  app.scope.use(pack);
+  const geometries = new Map();
+  pack.scene.traverse(node => {
+    if (node instanceof W.Mesh3D) geometries.set(node.name, node.geometry);
+  });
+  return geometries;
+}
+
+// A standalone copy without the optional pack can still draw the original model definitions.
+const staticMeshes = await loadStaticMeshes().catch(error => {
+  console.warn('Building gallery meshes from source:', error);
+  return new Map();
+});
 for (const name of models) {
   const module = await import(`./${name}.mjs`);
   // A model with a rig is made as its rig and plays its first clip; the others as a plain mesh.
@@ -34,8 +52,11 @@ for (const name of models) {
     rig.play(Object.values(rig.clips)[0], 0);
     made.push({ name, about: module.about, mesh: rig.root, box: rig.mesh.geometry.boundingBox, rig });
   } else {
-    const shape = module.default(W);
-    const geometry = shape instanceof W.SdfShape3D ? W.createSdfGeometry3D(shape, module.meshOptions ?? {}) : shape;
+    let geometry = staticMeshes.get(name);
+    if (!geometry) {
+      const shape = module.default(W);
+      geometry = shape instanceof W.SdfShape3D ? W.createSdfGeometry3D(shape, module.meshOptions ?? {}) : shape;
+    }
     // A model that names a surface is drawn with it: wood grain, brick courses or plaster between its vertices.
     const own = module.surface ? W.createSurfaceMaterial3D(module.surface) : material;
     made.push({ name, about: module.about, mesh: new W.Mesh3D(geometry, own), box: geometry.boundingBox });

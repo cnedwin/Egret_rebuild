@@ -63,7 +63,7 @@
     },
     {
       "path": "examples/models/gallery.mjs",
-      "originRole": "First-party page script that makes every model of the library and lays them out by kind; independently authored with AI assistance; Apache-2.0.",
+      "originRole": "First-party gallery scene, material binding, live rigs and layout; Apache-2.0.",
       "criticalComment": true
     },
     {
@@ -146,6 +146,10 @@
       "path": "tests/model-library.test.mjs",
       "originRole": "First-party tests that every model of the library is listed, builds within budget, stands on the ground and is sized for its kind; independently authored with AI assistance; Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "examples/models/static-models.glb",
+      "originRole": "First-party geometry generated from the 22 static Apache-2.0 gallery model modules by tools/bake-models.mjs --gallery."
     }
   ],
   "documents": [
