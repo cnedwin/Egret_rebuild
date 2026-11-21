@@ -1,0 +1,213 @@
+{
+  "formatVersion": 1,
+  "measuredOn": "2026-11-21",
+  "scope": "Local Android release export, signed packaging and in-place split upgrade on a physical Galaxy Z Fold7.",
+  "build": {
+    "sourceBaseCommit": "b5628eb9997b67cf6163a388f5aa06f321f3833a",
+    "generatedGradleSha256": "e320f9ba26e169e213ed865b764befb9d25c3d714e44f10264569a6cdd92954e",
+    "generatedManifestSha256": "810c7b34e171940d625bca6486d2a9403796a84593bdb2c558b812314bc32668",
+    "aarSha256": "2740142c1489a6dab2cd86923a7278ce331e86bda21073f234601f696728013b",
+    "gradle": "8.11.1",
+    "androidGradlePlugin": "8.9.1",
+    "buildTools": "35.0.0",
+    "jdk": "17.0.21+9",
+    "bundletool": "1.18.3",
+    "bundletoolJarSha256": "a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29",
+    "compileSdk": 36,
+    "targetSdk": 36,
+    "minSdk": 29,
+    "defaultAarHost": "trimmed",
+    "nativeAbis": [
+      "arm64-v8a"
+    ],
+    "consumerLayout": "embedded",
+    "releaseDebuggable": false,
+    "signing": "One externally supplied local test key signed both versions, both standalone APKs, both bundles and every installed split.",
+    "signerCertificateSha256": "233c62b84cb20196803991688d0c04b002c64e193a831c71d36af8363f8eca09"
+  },
+  "fixture": {
+    "applicationId": "org.egret.qa.lanternpost",
+    "applicationLabel": "白鹭灯塔 · 本地发行",
+    "source": "First-party Egret game using installPlayerProject, Sprite.graphics and createSaveStore; three touch targets record route, score and a Chinese checkpoint.",
+    "fixtureEntrySha256": "6e284f806f1267a347241f939daa8530d5284ddf7c3cb3b86ec6adb7ad611415",
+    "bundledGameSha256": "0a645fed5bdd145000403a2cb6adabd5e43ae457ce96ac38a42aa58a2c16cc76",
+    "launcherIcon": {
+      "size": [
+        96,
+        96
+      ],
+      "sourcePngSha256": "41699fec565c71840eb2268031855f0dca56c62dfb88cb0d3e02c506df6dfad1",
+      "decodedPackagedPixelsMatch": true
+    },
+    "nativeLibraries": {
+      "libegret_player.so": {
+        "sha256": "179a6e243dd46c1504597e2bd10713c70a310dc60e269845ccc86628e2c34880",
+        "loadAlignments": [
+          16384,
+          16384,
+          16384,
+          16384
+        ]
+      },
+      "libjavet-v8-android.v.6.0.3.so": {
+        "sha256": "13c79bcfda0cfa33045c3dff40456ece42e05e898a0694a924fc7a221fe1c22d",
+        "loadAlignments": [
+          16384,
+          16384,
+          16384
+        ]
+      }
+    }
+  },
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "api": 37,
+    "pageSizeBytes": 4096,
+    "systemGles": "GLES: Qualcomm, Adreno (TM) 830, OpenGL ES 3.2 V@0800.64.8",
+    "scriptHost": "trimmed",
+    "v8": "15.7.112.19",
+    "physicalTest": "Both versions installed from device-specific APK sets built using the same test key and installed with bundletool install-apks."
+  },
+  "artifacts": [
+    {
+      "versionCode": 101,
+      "versionName": "1.0.1",
+      "apk": {
+        "name": "lantern-1.0.1.apk",
+        "bytes": 64261980,
+        "sha256": "0d23c5428b8e259b97f64e1a56db22dc921616b42e036db14390a2b4dd1cd54a",
+        "zipalign16KiB": true
+      },
+      "aab": {
+        "name": "lantern-1.0.1.aab",
+        "bytes": 17401845,
+        "sha256": "244b787f51d38532da5a355fc56f89b4cf055e92574719fcbdf091f4ebf93995",
+        "signedPayloadEntriesVerified": 30,
+        "bundletoolValidated": true
+      },
+      "installedSplits": [
+        {
+          "bundletoolName": "base-arm64_v8a.apk",
+          "installedName": "split_config.arm64_v8a.apk",
+          "sha256": "6293a768981c891ad5cc47522cd1381317f106b85d2cb0ba8cfafbc78a672937",
+          "zipalign16KiB": true
+        },
+        {
+          "bundletoolName": "base-master.apk",
+          "installedName": "base.apk",
+          "sha256": "b232dd8cf5d9a7a3a459e2a3bbd2a1f300d34969e34a5fba2be70cfc13b0087a",
+          "zipalign16KiB": true
+        }
+      ]
+    },
+    {
+      "versionCode": 102,
+      "versionName": "1.0.2",
+      "apk": {
+        "name": "lantern-1.0.2.apk",
+        "bytes": 64261980,
+        "sha256": "454c5ddfb5de11696ae0a5e9c05ff875d8ae5accf11b2368991a98f5240a0340",
+        "zipalign16KiB": true
+      },
+      "aab": {
+        "name": "lantern-1.0.2.aab",
+        "bytes": 17401854,
+        "sha256": "75e1372974a623988ba5f8a4804b1143e491d425d82899e5c0aea9dd82edef09",
+        "signedPayloadEntriesVerified": 30,
+        "bundletoolValidated": true
+      },
+      "installedSplits": [
+        {
+          "bundletoolName": "base-arm64_v8a.apk",
+          "installedName": "split_config.arm64_v8a.apk",
+          "sha256": "b18b6ec043dc7d81c2dcb32d57149348b090f227dd1df32267110a81dad38693",
+          "zipalign16KiB": true
+        },
+        {
+          "bundletoolName": "base-master.apk",
+          "installedName": "base.apk",
+          "sha256": "1e3f7c031c865b6d8a8860a95bd8e2338a4253bc3f5a7acfeafbece546f2fba3",
+          "zipalign16KiB": true
+        }
+      ]
+    }
+  ],
+  "upgrade": {
+    "gameSaveVersion": 1,
+    "firstInstallStartedEmpty": true,
+    "forceStopAndColdReadOnFirstVersion": true,
+    "installationUidPreserved": true,
+    "firstInstallTimePreserved": true,
+    "updateTimeChanged": true,
+    "oldProcessReplaced": true,
+    "secondVersionColdStart": true,
+    "installWithoutClearingDataOrUninstalling": true,
+    "readback": "Game validates the save envelope and Chinese fields. Its GLES surface encodes the route, score and FNV-1a fingerprint of the complete persisted UTF-16 JSON string. A separate screenshot decoder read the result after each tap, force-stop and upgrade.",
+    "firstVersionCheckpoint": {
+      "route": [
+        2,
+        3,
+        1,
+        2
+      ],
+      "score": 147,
+      "envelopeFnv1a32": "b8679675",
+      "gameChecksPassed": true,
+      "fiducialPixels": true,
+      "screenshotSha256": "8162b0d70dea3041a9b99cad785aedddc48f604f0172f4f872d72c8de53873ca"
+    },
+    "firstVersionAfterColdStart": {
+      "route": [
+        2,
+        3,
+        1,
+        2
+      ],
+      "score": 147,
+      "envelopeFnv1a32": "b8679675",
+      "gameChecksPassed": true,
+      "fiducialPixels": true,
+      "screenshotSha256": "8162b0d70dea3041a9b99cad785aedddc48f604f0172f4f872d72c8de53873ca"
+    },
+    "secondVersionAfterColdStart": {
+      "route": [
+        2,
+        3,
+        1,
+        2
+      ],
+      "score": 147,
+      "envelopeFnv1a32": "b8679675",
+      "gameChecksPassed": true,
+      "fiducialPixels": true,
+      "screenshotSha256": "8162b0d70dea3041a9b99cad785aedddc48f604f0172f4f872d72c8de53873ca"
+    },
+    "secondVersionAfterAdditionalTap": {
+      "route": [
+        2,
+        3,
+        1,
+        2,
+        1
+      ],
+      "score": 168,
+      "envelopeFnv1a32": "824812ea",
+      "gameChecksPassed": true,
+      "fiducialPixels": true,
+      "screenshotSha256": "5b91b9b4e79f03f43386f8a458967cf0b00d7e90ed0c9a816510b0d590d80a28"
+    }
+  },
+  "deviceReturned": {
+    "testAppRemoved": true,
+    "foregroundRestored": true,
+    "screenAndLockStateRestored": true,
+    "usbStayAwakeRestored": true,
+    "leaseReleased": true
+  },
+  "coverageLimits": [
+    "The standalone APKs were inspected and signature-verified. The on-device upgrade used the bundle-derived splits.",
+    "The Fold7 used 4 KiB memory pages. ZIP and ELF 16 KiB alignment were checked structurally.",
+    "Only this local test signer, sample, trimmed arm64 runtime and phone were exercised. Store distribution, signing by a store and review are outside this run."
+  ]
+}

@@ -17,7 +17,7 @@ function dir(value, label) {
   return path.resolve(value);
 }
 const output = dir(values.out, '--out');
-const profile = values['v8-profile'] ?? 'webview';
+const profile = values['v8-profile'] ?? 'trimmed';
 if (!['webview','standard','trimmed'].includes(profile)) throw new Error('Unknown Android script host: ' + profile);
 const sdk = dir(values.sdk ?? process.env.ANDROID_HOME, 'Android SDK');
 const ndk = dir(values.ndk ?? process.env.ANDROID_NDK_HOME, 'Android NDK');
@@ -50,7 +50,7 @@ try {
   const source = path.join(here,'src/org/egret/runtime/player');
   const sources = dir => readdirSync(dir).filter(file => file.endsWith('.java')).sort().map(file => path.join(dir,file));
   const javaFiles = [...sources(source), writeHostFactory(work,profile)];
-  const classpath = [path.join(sdk,'platforms/android-35/android.jar')];
+  const classpath = [path.join(sdk,'platforms/android-36/android.jar')];
   copyFileSync(path.join(here,'proguard.txt'),path.join(archive,'proguard.txt'));
   if (profile !== 'webview') {
     classpath.push(await bundleV8({profile, work, archive, jar:java('jar'), run,

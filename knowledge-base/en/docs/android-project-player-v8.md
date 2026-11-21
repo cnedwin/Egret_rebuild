@@ -6,9 +6,9 @@ A game exported with the [Android project player](android-project-player.md) can
 
 | Build | Script environment | Minimum Android API |
 | --- | --- | ---: |
-| `webview` (default) | Installed System WebView, local HTML entry and browser APIs | 26 |
+| `webview` | Installed System WebView, local HTML entry and browser APIs | 26 |
 | `standard` | V8 15.7.112.19 with JavaScript `Intl` and packaged ICU locale data | 29 |
-| `trimmed` | The same V8 version built without `Intl` or its ICU data | 29 |
+| `trimmed` (default) | The same V8 version built without `Intl` or its ICU data | 29 |
 
 Use the WebView build for games that rely on the DOM or need the smallest download. For a self-contained VM, choose standard when the game calls `Intl` for locale-aware formats or sorting. A game can display Chinese with all three hosts through Android's fonts. The two embedded profiles select Javet 6.0.3 arm64 artifacts. Build inputs, versions, hashes and licenses are pinned in the [source manifest](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/v8-provenance.json).
 
