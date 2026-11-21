@@ -92,6 +92,8 @@ declare module '@egret/android-player-project' {
 
   /** Native completion channel returned by both project factories. */
   export interface NativePlayerSession extends PlayerSession {
+    /** The host may acknowledge its last completed draw. Omitting the epoch produces a replayable full frame. */
+    frame(elapsedMs: number, epoch?: number, previousFrameId?: number): Uint8Array;
     textResult(id: number, errorName: string): void;
   }
 
@@ -139,6 +141,11 @@ declare module '@egret/android-player-world3d' {
     create(services: World3DPlayerServices): World3DPlayerGame | Promise<World3DPlayerGame>;
   }
 
+  export interface NativeWorld3DPlayerSession extends NativePlayerSession {
+    /** Reissue the last rejected delta as a complete packet for the same device epoch and game tick. */
+    recoverWorldFrame(epoch: number, frameId: number): Uint8Array;
+  }
+
   /** Install a trusted game using the opaque Standard-material GLES3 profile. */
-  export function installWorld3DPlayerProject(definition: World3DPlayerDefinition): NativePlayerSession;
+  export function installWorld3DPlayerProject(definition: World3DPlayerDefinition): NativeWorld3DPlayerSession;
 }

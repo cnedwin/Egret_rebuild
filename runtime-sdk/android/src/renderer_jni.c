@@ -30,6 +30,10 @@ JNIEXPORT jint JNICALL METHOD(upload)(JNIEnv *env, jclass cls, jlong handle, jin
 }
 
 #ifdef EGRET_ANDROID_PLAYER
+JNIEXPORT jlong JNICALL METHOD(worldGeometryBytes)(JNIEnv *env, jclass cls, jlong handle) {
+    return (jlong)egret_renderer_world_geometry_bytes((EgretRenderer *)(intptr_t)handle);
+}
+
 JNIEXPORT jint JNICALL METHOD(prepareWorldPage)(JNIEnv *env, jclass cls, jlong handle, jint page, jobject bytes) {
     if (!bytes || page <= 0) return -1;
     void *data = (*env)->GetDirectBufferAddress(env, bytes);

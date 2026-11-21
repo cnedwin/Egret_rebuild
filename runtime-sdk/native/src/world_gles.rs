@@ -18,6 +18,14 @@ struct Mesh {
     indices: Vec<u8>,
 }
 
+// Temporary names are used only on the current EGL thread. Failed uploads or a
+// failed final resolve drop these replacements without disturbing resident names.
+#[derive(Default)]
+pub(super) struct PendingMeshes(BTreeMap<u32, Mesh>);
+impl Drop for PendingMeshes {
+    fn drop(&mut self) { for mesh in self.0.values() { unsafe { mesh.destroy(); } } }
+}
+
 impl Mesh {
     unsafe fn upload(data: &Geometry<'_>) -> Option<Self> {
         let mut mesh = Self {
@@ -68,6 +76,7 @@ pub(crate) struct WorldPipeline {
     surface: i32,
     has_map: i32,
     meshes: BTreeMap<u32, Mesh>,
+    pub(super) confirmed: Option<(u32, bool)>,
 }
 
 impl WorldPipeline {
@@ -78,7 +87,7 @@ impl WorldPipeline {
             program, view_projection: loc(b"viewProjection\0"), model: loc(b"model\0"), eye: loc(b"eye\0"),
             to_sun: loc(b"toSun\0"), sun: loc(b"sun\0"), sky: loc(b"sky\0"), ground: loc(b"ground\0"),
             ambient: loc(b"ambient\0"), albedo: loc(b"albedo\0"), surface: loc(b"surface\0"), has_map: loc(b"hasMap\0"),
-            meshes: BTreeMap::new(),
+            meshes: BTreeMap::new(), confirmed: None,
         };
         if [pipeline.view_projection, pipeline.model, pipeline.eye, pipeline.to_sun,
             pipeline.sun, pipeline.sky, pipeline.ground, pipeline.ambient, pipeline.albedo,
@@ -94,18 +103,32 @@ impl WorldPipeline {
         glDeleteProgram(self.program);
     }
 
-    pub unsafe fn draw(&mut self, frame: &WorldFrame<'_>, white: u32, pages: &[u32; crate::frame::PAGE_SLOTS]) -> bool {
-        // The complete table for this frame defines residency. Check both
-        // streams so replacing geometry under a stable id updates it atomically.
+    pub(super) fn mesh_bytes(&self, id: u32) -> Option<usize> {
+        self.meshes.get(&id).map(|m| m.vertices.len() + m.indices.len())
+    }
+
+    pub(super) fn resident_bytes(&self) -> usize {
+        self.meshes.values().map(|m| m.vertices.len() + m.indices.len()).sum()
+    }
+
+    pub(super) unsafe fn commit(&mut self, frame: &WorldFrame<'_>, pending: &mut PendingMeshes) {
+        for (id, mesh) in std::mem::take(&mut pending.0) {
+            if let Some(retired) = self.meshes.insert(id, mesh) { retired.destroy(); }
+        }
         self.meshes.retain(|id, mesh| {
-            let live = frame.geometry.iter().any(|g| g.id == *id);
+            let live = frame.live_ids.contains(id);
             if !live { mesh.destroy(); }
             live
         });
+        self.confirmed = Some((frame.id, frame.textured));
+    }
+
+    pub(super) unsafe fn draw(&self, frame: &WorldFrame<'_>, white: u32, pages: &[u32; crate::frame::PAGE_SLOTS],
+                              pending: &mut PendingMeshes) -> bool {
         for g in &frame.geometry {
             if self.meshes.get(&g.id).is_some_and(|m| m.stride == g.stride && m.vertices == g.vertices && m.indices == g.indices) { continue; }
             let Some(uploaded) = Mesh::upload(g) else { return false; };
-            if let Some(previous) = self.meshes.insert(g.id, uploaded) { previous.destroy(); }
+            pending.0.insert(g.id, uploaded);
         }
         glUseProgram(self.program);
         glUniformMatrix4fv(self.view_projection, 1, FALSE, frame.view_projection.as_ptr());
@@ -129,7 +152,7 @@ impl WorldPipeline {
             glUniformMatrix4fv(self.model, 1, FALSE, m.as_ptr());
             glUniform3f(self.albedo, draw.albedo[0], draw.albedo[1], draw.albedo[2]);
             glUniform2f(self.surface, draw.roughness, draw.metallic);
-            let mesh = &self.meshes[&draw.geometry];
+            let Some(mesh) = pending.0.get(&draw.geometry).or_else(|| self.meshes.get(&draw.geometry)) else { return false; };
             glBindVertexArray(mesh.vao);
             glDrawElements(TRIANGLES, (mesh.indices.len() / 4) as i32, UNSIGNED_INT, ptr::null());
         }

@@ -35,6 +35,8 @@ final class ProjectBenchmark {
 
     boolean captures() { return "capture".equals(mode); }
     boolean replays() { return "replay".equals(mode); }
+    // A capture and the retained terminal image must render on a fresh EGL context.
+    boolean needsFullFrame() { return captures() || frames >= ProjectReplayTape.FRAMES - 1; }
     boolean active() { return frames < ProjectReplayTape.FRAMES || restoreTerminal; }
     double elapsedMs() { return frames * 1000.0 / 120.0; }
 
@@ -142,7 +144,7 @@ final class ProjectBenchmark {
             });
         }
 
-        @Override void frame(int epoch, double elapsedMs) { owner.enqueue(tape.frame(frames, epoch), -1, -1); }
+        @Override void frame(int epoch, double elapsedMs, long previousFrame, long retryId) { owner.enqueue(tape.frame(frames, epoch), -1, -1); }
         @Override void invoke(String expression) {}
         @Override void resumeVm() {}
         @Override void pauseVm() {}

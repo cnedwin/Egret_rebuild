@@ -6,7 +6,9 @@ import java.nio.ByteBuffer;
 final class PlayerGpu {
     static { System.loadLibrary("egret_player"); }
 
+    static final int MISSING_WORLD_BASE = 4;
     static native long create();
+    static native long worldGeometryBytes(long handle);
     static native void destroy(long handle, boolean current);
     static native int upload(long handle, int page, int width, int height, ByteBuffer pixels);
     static native int prepareWorldPage(long handle, int page, ByteBuffer pixels);

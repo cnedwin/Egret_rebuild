@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/measurements/fold7-rally-geometry-residency.json",
+      "originRole": "Sanitized paired measurements of the full and incremental Android World3D paths on one Galaxy Z Fold7 with the existing locally exported Rally game. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

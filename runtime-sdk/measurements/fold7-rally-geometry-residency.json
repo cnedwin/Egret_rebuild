@@ -1,0 +1,307 @@
+{
+  "date": "2026-11-21",
+  "baseline": "619422c801e3f1aedb836425efd2b0644f4d9390",
+  "game": {
+    "source": "https://github.com/cnedwin/PortedGamesEgret/tree/ce6144533b890be992bea9eb09cb344457f8364c/Rally",
+    "modelsSha256": {
+      "panda-kart.glb": "7a5bd9e963a692a39ffe4e5c2c2643c07f9867b67bce63ba76a3963880005f19",
+      "panda-driver.glb": "58b83a3557f2714c7db1ae4db23aedda379800d458cdd600f94fad8a50d2dc70"
+    },
+    "fixture": "Existing Android export of the eight-car starting grid before race input. The camera and its look target move in X by 0.025 * sin(frame * pi / 24) each tick. A separate pixel check holds that offset at zero. Both arms use the same game sources and packed assets."
+  },
+  "device": {
+    "model": "Samsung Galaxy Z Fold7 SM-F966U1",
+    "android": "17 (API 37)",
+    "gpu": "Adreno 830",
+    "renderer": "GLES3",
+    "scriptHost": "trimmed V8",
+    "abi": "arm64-v8a",
+    "requestedHz": 60,
+    "renderBuffer": [
+      873,
+      325
+    ],
+    "screenCrop": [
+      2292,
+      853
+    ],
+    "power": "USB connected, awake and unlocked"
+  },
+  "method": {
+    "order": [
+      "full",
+      "resident",
+      "resident",
+      "full",
+      "full",
+      "resident",
+      "resident",
+      "full"
+    ],
+    "samples": "Each run warms up 30 frames then records 180 consecutive successful frames. Each physical presentation window has its own sample count. Four paired process restarts per arm. Time summaries use the median of the four run p95s.",
+    "bridge": "The probe reads the byte length submitted to native. Geometry bytes include vertex/index payload plus the 12-byte definition header for each mesh. Every frame still carries all draw, material, camera and HUD data.",
+    "timing": "copyUs is V8-to-Java buffer copying. dispatchToEnqueueUs ends at the UI thread enqueue. nativeDrawUs brackets the JNI draw call through its return and includes GLES submission CPU time. submittedIntervalUs is time between UI callbacks on successful submissions. presentUs uses actual presentation timestamps on the SurfaceFlinger game buffer layer.",
+    "memory": "residentPayloadBytes is the sum of live vertex/index payloads in one native CPU copy. The GLES buffers have the same logical payload. This excludes textures, driver allocation overhead and VM memory. processPssKiB is one process-wide reading per run after timing.",
+    "refresh": "The app requested 60 Hz. At the start of the first baseline window the compositor reported an 8.33 ms refresh period, and 16.67 ms in the remaining seven. The game layer presented close to 60 Hz throughout."
+  },
+  "apkSha256": {
+    "full": "76060820c094517e2eec4f8427da031061362e027c79ec008fd65e1ecd93481e",
+    "resident": "3d53354b08deba75f8da4335cee8d5ec49648b951971f40eaf984a424db88df4"
+  },
+  "steady": {
+    "drawRecordsPerFrame": 1332,
+    "geometries": 40,
+    "cameraXValuesPerWindow": 25,
+    "geometryIdSequenceHash": 138827966,
+    "full": {
+      "format": "E3D2",
+      "definitions": 40,
+      "geometryBridgeBytes": 918648,
+      "wholePacketBytes": 1047640,
+      "residentPayloadBytes": 918168
+    },
+    "incremental": {
+      "format": "E3D4",
+      "definitions": 0,
+      "geometryBridgeBytes": 0,
+      "wholePacketBytes": 128996,
+      "residentPayloadBytes": 918168
+    }
+  },
+  "runMeasurements": [
+    {
+      "arm": "full",
+      "frameSamples": 180,
+      "presentationIntervals": 241,
+      "commandFrameIdRange": [
+        220,
+        399
+      ],
+      "frameSampleSha256": "f55fa01dfdd7be686f792670bbeb60b0597a70e80dbfba00ce6f4dd6ca1e36c9",
+      "p95Us": {
+        "copy": 1806,
+        "dispatchToEnqueue": 8013,
+        "nativeDraw": 4831,
+        "enqueueToCallback": 5526,
+        "submittedInterval": 20195,
+        "present": 16580.729
+      },
+      "processPssKiB": 211874,
+      "meshCreates": 80,
+      "meshDeletes": 80,
+      "pageUploads": 10,
+      "pageReleases": 10
+    },
+    {
+      "arm": "resident",
+      "frameSamples": 180,
+      "presentationIntervals": 243,
+      "commandFrameIdRange": [
+        222,
+        401
+      ],
+      "frameSampleSha256": "fffc9e30676533b6a4769310530070cccbb7ea9f738e165609bbf61b3352ebd3",
+      "p95Us": {
+        "copy": 400,
+        "dispatchToEnqueue": 6616,
+        "nativeDraw": 3468,
+        "enqueueToCallback": 4054,
+        "submittedInterval": 20411,
+        "present": 16579.427
+      },
+      "processPssKiB": 214102,
+      "meshCreates": 80,
+      "meshDeletes": 80,
+      "pageUploads": 10,
+      "pageReleases": 10
+    },
+    {
+      "arm": "resident",
+      "frameSamples": 180,
+      "presentationIntervals": 243,
+      "commandFrameIdRange": [
+        197,
+        376
+      ],
+      "frameSampleSha256": "7c0baafb39220a7d71e9b57398d569902e638a5c576d5076a214f732004fbe23",
+      "p95Us": {
+        "copy": 379,
+        "dispatchToEnqueue": 6510,
+        "nativeDraw": 3323,
+        "enqueueToCallback": 4021,
+        "submittedInterval": 20473,
+        "present": 16577.604
+      },
+      "processPssKiB": 224869,
+      "meshCreates": 40,
+      "meshDeletes": 40,
+      "pageUploads": 5,
+      "pageReleases": 5
+    },
+    {
+      "arm": "full",
+      "frameSamples": 180,
+      "presentationIntervals": 241,
+      "commandFrameIdRange": [
+        219,
+        398
+      ],
+      "frameSampleSha256": "289764dc388ae9f8e6e3e83822b00ed8a55d6f1eb9e64ec7e33ceccdfe593bd9",
+      "p95Us": {
+        "copy": 1807,
+        "dispatchToEnqueue": 8233,
+        "nativeDraw": 4977,
+        "enqueueToCallback": 5691,
+        "submittedInterval": 21137,
+        "present": 16579.896
+      },
+      "processPssKiB": 217611,
+      "meshCreates": 40,
+      "meshDeletes": 40,
+      "pageUploads": 5,
+      "pageReleases": 5
+    },
+    {
+      "arm": "full",
+      "frameSamples": 180,
+      "presentationIntervals": 242,
+      "commandFrameIdRange": [
+        221,
+        400
+      ],
+      "frameSampleSha256": "7925c9d0c99080d0450c8f3ef28c1cd0a52efa8f0c6005900908ace77bf31dda",
+      "p95Us": {
+        "copy": 1781,
+        "dispatchToEnqueue": 8005,
+        "nativeDraw": 5024,
+        "enqueueToCallback": 5721,
+        "submittedInterval": 20658,
+        "present": 16578.803
+      },
+      "processPssKiB": 219839,
+      "meshCreates": 40,
+      "meshDeletes": 40,
+      "pageUploads": 5,
+      "pageReleases": 5
+    },
+    {
+      "arm": "resident",
+      "frameSamples": 180,
+      "presentationIntervals": 244,
+      "commandFrameIdRange": [
+        229,
+        408
+      ],
+      "frameSampleSha256": "3c91b621ee9bb95cd67233e3dfddd6ebf9238c11433df1296655773dae19d5e4",
+      "p95Us": {
+        "copy": 407,
+        "dispatchToEnqueue": 6624,
+        "nativeDraw": 3693,
+        "enqueueToCallback": 4334,
+        "submittedInterval": 21843,
+        "present": 16581.719
+      },
+      "processPssKiB": 203345,
+      "meshCreates": 40,
+      "meshDeletes": 40,
+      "pageUploads": 5,
+      "pageReleases": 5
+    },
+    {
+      "arm": "resident",
+      "frameSamples": 180,
+      "presentationIntervals": 242,
+      "commandFrameIdRange": [
+        224,
+        403
+      ],
+      "frameSampleSha256": "2d6239e5895c9696ee6fddff686732e00f1340e3bba4ee04719571647065a84a",
+      "p95Us": {
+        "copy": 394,
+        "dispatchToEnqueue": 6552,
+        "nativeDraw": 3487,
+        "enqueueToCallback": 4062,
+        "submittedInterval": 20442,
+        "present": 16575.99
+      },
+      "processPssKiB": 217242,
+      "meshCreates": 40,
+      "meshDeletes": 40,
+      "pageUploads": 5,
+      "pageReleases": 5
+    },
+    {
+      "arm": "full",
+      "frameSamples": 180,
+      "presentationIntervals": 242,
+      "commandFrameIdRange": [
+        218,
+        397
+      ],
+      "frameSampleSha256": "c7a4a81cc9dda4e2a47e5f6560b0793884023e35c0a6cded60bde7ccc2e06577",
+      "p95Us": {
+        "copy": 1794,
+        "dispatchToEnqueue": 8083,
+        "nativeDraw": 4864,
+        "enqueueToCallback": 5656,
+        "submittedInterval": 20758,
+        "present": 16578.542
+      },
+      "processPssKiB": 216139,
+      "meshCreates": 40,
+      "meshDeletes": 40,
+      "pageUploads": 5,
+      "pageReleases": 5
+    }
+  ],
+  "medians": {
+    "generationUs": {
+      "full": 5916,
+      "resident": 5807
+    },
+    "copyUs": {
+      "full": 1800,
+      "resident": 397
+    },
+    "dispatchToEnqueueUs": {
+      "full": 8048,
+      "resident": 6584
+    },
+    "nativeDrawUs": {
+      "full": 4920.5,
+      "resident": 3477.5
+    },
+    "enqueueToCallbackUs": {
+      "full": 5673.5,
+      "resident": 4058
+    },
+    "submittedIntervalUs": {
+      "full": 20708,
+      "resident": 20457.5
+    },
+    "presentUs": {
+      "full": 16579.35,
+      "resident": 16578.516
+    },
+    "processPssKiB": {
+      "full": 216875,
+      "resident": 215672
+    }
+  },
+  "lifecycle": {
+    "exercise": "Each arm paused through Activity backgrounding and resumed in the same process with a new EGL context. Screenshots were cropped to the same game rectangle. Both arms then closed the project.",
+    "firstPacketPerContext": {
+      "format": "E3D2",
+      "bytes": 1047640,
+      "definitions": 40
+    },
+    "beforeAndAfterRgbSha256": "5a582ee51a9c3506b9bf5bf649651a6e767f6aafcf146ca94bec316d070c6868",
+    "restoredMeshCreates": 80,
+    "closedMeshDeletes": 80,
+    "closedPageUploads": 10,
+    "closedPageReleases": 10,
+    "closedResidentPayloadBytes": 0,
+    "abandonedContexts": 0
+  },
+  "limits": "This measures the fixed camera-only workload on one phone. GPU execution, physical driver memory, sustained thermal performance and power were not sampled. The 210-frame on-disk replay of this specific scene exceeds the existing 64 MiB tape limit. Full-frame recovery was exercised on-device. Exact full reconstruction and tape admission were also checked separately in the protocol tests."
+}

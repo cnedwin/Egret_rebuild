@@ -23,7 +23,7 @@ abstract class ScriptSession {
     }
 
     abstract void invoke(String expression);
-    abstract void frame(int epoch, double elapsedMs);
+    abstract void frame(int epoch, double elapsedMs, long previousFrame, long retryId);
     abstract void pauseVm();
     abstract void resumeVm();
     abstract boolean requestClose();

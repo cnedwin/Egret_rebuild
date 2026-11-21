@@ -63,16 +63,21 @@ final class PlayerScripts extends ScriptSession {
         evaluate("try{" + expression + "}catch(e){EgretNativePlayer.failure(String(e))}");
     }
 
-    void frame(int epoch, double elapsedMs) {
+    void frame(int epoch, double elapsedMs, long previousFrame, long retryId) {
         boolean timed = owner.timing.isEnabled();
-        invoke((timed ? "const begin=performance.now();" : "") + "const v=EgretPlayerProject.frame(" + elapsedMs + ");"
+        String call = retryId < 0 ? "frame(" + elapsedMs + "," + epoch + "," + previousFrame + ")"
+            : "recoverWorldFrame(" + epoch + "," + retryId + ")";
+        invoke((timed ? "const begin=performance.now();" : "") + "const v=EgretPlayerProject." + call + ";"
             + (timed ? "const generation=performance.now()-begin;" : "const generation=-1;")
             + "let bytes;if(v instanceof ArrayBuffer)bytes=new Int8Array(v);"
             + "else if(ArrayBuffer.isView(v))bytes=new Int8Array(v.buffer,v.byteOffset,v.byteLength);"
             + "else throw Error('frame() must return a binary command buffer');"
             + "if(bytes.byteLength<24||bytes.byteLength>" + WorldProjectPacket.TEXTURED_LIMIT
-            + "||(bytes.byteLength>" + PlayerGraphics.MAX_FRAME_BYTES + "&&new DataView(bytes.buffer,bytes.byteOffset,4).getUint32(0,true)!=="
-            + WorldProjectPacket.TEXTURED_MAGIC + "))throw Error('Invalid command length');"
+            + ")throw Error('Invalid command length');"
+            + "if(bytes.byteLength>" + PlayerGraphics.MAX_FRAME_BYTES + "){"
+            + "const m=new DataView(bytes.buffer,bytes.byteOffset,4).getUint32(0,true);"
+            + "if(m!==" + WorldProjectPacket.TEXTURED_MAGIC + "&&m!==" + WorldProjectPacket.TEXTURED_DELTA_MAGIC
+            + ")throw Error('Invalid command length');}"
             // Android WebView marshals typed arrays element by element. A native-order word
             // view carries the same bits with one quarter as many array elements.
             + "if((bytes.byteOffset%4)===0&&(bytes.byteLength%4)===0){"

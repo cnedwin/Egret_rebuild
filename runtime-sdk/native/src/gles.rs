@@ -9,6 +9,7 @@ use std::{ffi::c_void, mem::{offset_of, size_of}, ptr, slice};
 const INVALID: i32 = 1;
 const MISSING_PAGE: i32 = 2;
 const GPU_FAILURE: i32 = 3;
+const MISSING_WORLD_BASE: i32 = 4;
 const MAX_PAGE_BYTES: usize = 64 * 1024 * 1024;
 const MAX_RESIDENT_BYTES: usize = 256 * 1024 * 1024;
 pub(crate) const VERTEX: &[u8] = b"#version 300 es\n\
@@ -220,8 +221,15 @@ impl EgretRenderer {
     }
 
     unsafe fn draw(&mut self, bytes: &[u8], width: u32, height: u32) -> i32 {
-        let world = if bytes.starts_with(b"E3D1") || bytes.starts_with(b"E3D2") {
+        let world = if matches!(bytes.get(..4), Some(b"E3D1" | b"E3D2" | b"E3D3" | b"E3D4")) {
             let Some(scene) = crate::world_frame::WorldFrame::parse(bytes) else { return INVALID; };
+            let world = self.project.as_ref().and_then(|p| p.world.as_ref());
+            if let Err(error) = scene.validate_delta(world.and_then(|w| w.confirmed), |id| world.and_then(|w| w.mesh_bytes(id))) {
+                return match error {
+                    crate::world_frame::DeltaError::MissingBase => MISSING_WORLD_BASE,
+                    crate::world_frame::DeltaError::OverBudget => INVALID,
+                };
+            }
             if scene.draws.iter().any(|d| d.page != 0 && self.world_textures[d.page] == 0) { return MISSING_PAGE; }
             Some(scene)
         } else { None };
@@ -369,6 +377,12 @@ pub unsafe extern "C" fn egret_renderer_release(ptr: *mut EgretRenderer, page: u
     0
 }
 
+/// Committed vertex and index payload; both the host copy and the GL stores contain this many bytes.
+#[no_mangle]
+pub unsafe extern "C" fn egret_renderer_world_geometry_bytes(ptr: *const EgretRenderer) -> usize {
+    ptr.as_ref().and_then(|r| r.project.as_ref()).and_then(|p| p.world.as_ref()).map_or(0, |w| w.resident_bytes())
+}
+
 #[no_mangle]
 pub unsafe extern "C" fn egret_renderer_draw(
     ptr: *mut EgretRenderer, bytes: *const u8, length: usize, width: u32, height: u32,
@@ -380,6 +394,14 @@ pub unsafe extern "C" fn egret_renderer_draw(
         return INVALID;
     }
     let frame = slice::from_raw_parts(bytes, length);
-    if length > MAX_FRAME_BYTES && !frame.starts_with(b"E3D2") { return INVALID; }
-    renderer.draw(frame, width, height)
+    if length > MAX_FRAME_BYTES && !matches!(frame.get(..4), Some(b"E3D2" | b"E3D4")) { return INVALID; }
+    let result = renderer.draw(frame, width, height);
+    if let Some(project) = &mut renderer.project {
+        if result != 0 {
+            if let Some(world) = &mut project.world { world.confirmed = None; }
+        } else if !matches!(frame.get(..4), Some(b"E3D1" | b"E3D2" | b"E3D3" | b"E3D4")) {
+            if let Some(retired) = project.world.take() { retired.destroy(); }
+        }
+    }
+    result
 }

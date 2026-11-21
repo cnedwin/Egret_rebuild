@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 import { InstancedMesh3D, RenderList3D } from '@egret/engine/world3d';
 
-// Each little-endian E3D1 packet is independently executable after context loss.
-// Geometry appears once per frame and keeps its stable resource ID across frames.
+// Full packets are self-contained checkpoints. Deltas carry the complete draw list
+// and only reference geometry retained by the acknowledged draw in the same device epoch.
 const MAGIC = 0x31443345,
-  TEXTURED_MAGIC = 0x32443345;
+  TEXTURED_MAGIC = 0x32443345,
+  DELTA_MAGIC = 0x33443345,
+  TEXTURED_DELTA_MAGIC = 0x34443345;
 const HEADER = 160,
   DRAW = 88,
   TEXTURED_DRAW = 96,
@@ -163,7 +165,8 @@ export function createWorldProjectEncoder() {
     list = new RenderList3D();
   // This profile draws individual objects and only shares the underlying GPU geometry.
   list.autoInstanceThreshold = 0;
-  return function encode({ scene, camera }, hud, pages) {
+  let previous;
+  function encode({ scene, camera }, hud, pages, epoch, previousFrameId) {
     if (!(hud instanceof Uint8Array) || hud.byteLength < 24 || hud.byteLength > BYTE_LIMIT) reject('HUD length');
     const h = new DataView(hud.buffer, hud.byteOffset, hud.byteLength);
     if (!hudFormats.has(h.getUint32(0, true)) || h.getUint8(16) !== 0) reject('transparent HUD required');
@@ -190,10 +193,16 @@ export function createWorldProjectEncoder() {
     )
       reject('unsupported lights or draws');
     const extended = list.opaque.some(({ material }) => material.map || material.side === 'double');
+    const frameId = h.getUint32(4, true);
+    const tracked = Number.isSafeInteger(epoch) && epoch >= 0;
+    // The Java player permits one frame in flight. Encoding or enqueueing alone does not establish residency.
+    const base = tracked && previous?.epoch === epoch && previous.id === previousFrameId &&
+      previous.extended === extended && frameId === ((previousFrameId + 1) >>> 0) ? previous.geometry : undefined;
     const drawBytes = extended ? TEXTURED_DRAW : DRAW;
     const limit = extended ? TEXTURED_BYTE_LIMIT : BYTE_LIMIT;
     const geometryBytes = new Map();
     let size = HEADER + drawBytes * list.opaque.length + hud.byteLength;
+    let reusedCount = 0, reusedBytes = 0;
     for (const item of list.opaque) {
       supportedDraw(item);
       if (!geometryBytes.has(item.geometry)) {
@@ -202,18 +211,24 @@ export function createWorldProjectEncoder() {
         if (size > limit) reject('visible geometry and draws exceed ' + limit + ' frame bytes (' + size + ')');
         if (geometryBytes.size >= 64) reject('more than 64 distinct visible geometries in the frame');
         geometryBytes.set(item.geometry, bytes);
+        if (base?.get(item.geometry) === bytes) {
+          reusedCount++;
+          reusedBytes += bytes.length;
+        }
       }
     }
     if (size > limit) reject('HUD and draws exceed ' + limit + ' frame bytes (' + size + ')');
-    const bytes = new Uint8Array(size),
+    // Enforce the full-frame budget first so every admitted scene can still recover and replay.
+    const delta = reusedCount > 0;
+    const bytes = new Uint8Array(delta ? size - reusedBytes + 4 : size),
       v = new DataView(bytes.buffer);
     const bg = scene.background ?? [0, 0, 0];
     const rgba = ((colorByte(bg[0]) * 256 + colorByte(bg[1])) * 256 + colorByte(bg[2])) * 256 + 255;
     [
-      extended ? TEXTURED_MAGIC : MAGIC,
-      h.getUint32(4, true),
+      delta ? (extended ? TEXTURED_DELTA_MAGIC : DELTA_MAGIC) : (extended ? TEXTURED_MAGIC : MAGIC),
+      frameId,
       hud.byteLength,
-      geometryBytes.size,
+      geometryBytes.size - reusedCount,
       list.opaque.length,
       rgba
     ].forEach((n, i) => v.setUint32(i * 4, n, true));
@@ -237,10 +252,16 @@ export function createWorldProjectEncoder() {
     vector(v, 136, list.hemisphereGround, 3);
     vector(v, 148, list.ambient, 3);
     let offset = HEADER;
-    for (const geometry of geometryBytes.values()) {
-      bytes.set(geometry, offset);
-      offset += geometry.length;
+    if (delta) {
+      v.setUint32(offset, previousFrameId, true);
+      offset += 4;
     }
+    for (const [geometry, packed] of geometryBytes) {
+      if (base?.get(geometry) === packed) continue;
+      bytes.set(packed, offset);
+      offset += packed.length;
+    }
+    const drawOffset = offset;
     for (const item of list.opaque) {
       v.setUint32(offset, item.geometry.id, true);
       vector(v, offset + 4, item.mesh.matrixWorld, 16);
@@ -254,6 +275,29 @@ export function createWorldProjectEncoder() {
       offset += drawBytes;
     }
     bytes.set(hud, offset);
+    previous = tracked ? {epoch, id: frameId, extended, geometry: geometryBytes,
+      delta: delta ? bytes : undefined, drawOffset, fullSize: size} : undefined;
     return bytes;
+  }
+
+  // A rejected delta still describes one precise game tick. Reconstruct its full wire
+  // image from the original draw/HUD and immutable definitions, without advancing the game.
+  encode.recover = (epoch, frameId) => {
+    if (!previous?.delta || previous.epoch !== epoch || previous.id !== frameId)
+      reject('recovery frame unavailable');
+    const {delta, drawOffset, extended, geometry, fullSize} = previous;
+    const full = new Uint8Array(fullSize);
+    full.set(delta.subarray(0, HEADER));
+    const view = new DataView(full.buffer);
+    view.setUint32(0, extended ? TEXTURED_MAGIC : MAGIC, true);
+    view.setUint32(12, geometry.size, true);
+    let offset = HEADER;
+    for (const definition of geometry.values()) {
+      full.set(definition, offset);
+      offset += definition.length;
+    }
+    full.set(delta.subarray(drawOffset), offset);
+    return full;
   };
+  return encode;
 }

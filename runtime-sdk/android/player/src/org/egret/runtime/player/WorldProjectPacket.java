@@ -10,22 +10,26 @@ import java.util.function.IntConsumer;
 /** The inner EGR overlay supplies the stage dimensions for both live and recorded E3D1 frames. */
 final class WorldProjectPacket {
     static final int MAGIC = 0x31443345, TEXTURED_MAGIC = 0x32443345;
+    static final int DELTA_MAGIC = 0x33443345, TEXTURED_DELTA_MAGIC = 0x34443345;
     private static final int HEADER = 160, DRAW = 88, TEXTURED_DRAW = 96;
     private WorldProjectPacket() {}
 
     static final int TEXTURED_LIMIT = 2 * 1024 * 1024;
     static int byteLimit(int magic) {
-        return magic == TEXTURED_MAGIC ? TEXTURED_LIMIT : PlayerGraphics.MAX_FRAME_BYTES;
+        return isTextured(magic) ? TEXTURED_LIMIT : PlayerGraphics.MAX_FRAME_BYTES;
     }
 
-    static boolean isWorld(int format) { return format == MAGIC || format == TEXTURED_MAGIC; }
+    static boolean isDelta(int format) { return format == DELTA_MAGIC || format == TEXTURED_DELTA_MAGIC; }
+    static boolean isTextured(int format) { return format == TEXTURED_MAGIC || format == TEXTURED_DELTA_MAGIC; }
+    static boolean isWorld(int format) { return format == MAGIC || format == TEXTURED_MAGIC || isDelta(format); }
+    private static int headerSize(int format) { return isDelta(format) ? HEADER + Integer.BYTES : HEADER; }
 
     // The live bridge only inspects the envelope. Native decoding checks the full packet before drawing.
     static int stageOffset(ByteBuffer data) {
         if (data.limit() < 24) return -1;
         if (!isWorld(data.getInt(0))) return 0;
         int length = data.getInt(8);
-        if (length < 24 || length > PlayerGraphics.MAX_FRAME_BYTES || length > data.limit() - HEADER) return -1;
+        if (length < 24 || length > PlayerGraphics.MAX_FRAME_BYTES || length > data.limit() - headerSize(data.getInt(0))) return -1;
         int offset = data.limit() - length;
         int format = data.getInt(offset);
         if ((offset & 3) != 0 ||
@@ -36,9 +40,10 @@ final class WorldProjectPacket {
 
     // The GL thread needs only the draw table to prepare sRGB mip chains from this frame's immutable pages.
     static void visitTexturePages(ByteBuffer data, IntConsumer visit) {
-        if (data.limit() < 24 || data.getInt(0) != TEXTURED_MAGIC) return;
+        if (data.limit() < 24 || !isTextured(data.getInt(0))) return;
         int end = stageOffset(data), draws = data.getInt(16);
-        if (end < HEADER || draws < 0 || draws > PlayerGraphics.MAX_QUADS || (long) draws * TEXTURED_DRAW > end - HEADER)
+        int header = headerSize(data.getInt(0));
+        if (end < header || draws < 0 || draws > PlayerGraphics.MAX_QUADS || (long) draws * TEXTURED_DRAW > end - header)
             throw new IllegalArgumentException("Invalid World3D draw table");
         for (int draw = end - draws * TEXTURED_DRAW; draw < end; draw += TEXTURED_DRAW) {
             int page = data.getInt(draw + DRAW);
@@ -50,7 +55,7 @@ final class WorldProjectPacket {
     // A replay can arrive from disk. Verify all world records before returning the packet to the renderer.
     static int validate(ByteBuffer data, Map<Integer, PlayerGraphics.Page> pages) throws IOException {
         int end = stageOffset(data);
-        if (end < HEADER) throw invalid();
+        if (end < HEADER || isDelta(data.getInt(0))) throw invalid(); // Recorded frames must stand alone.
         boolean textured = data.getInt(0) == TEXTURED_MAGIC;
         int stride = textured ? 32 : 24, drawBytes = textured ? TEXTURED_DRAW : DRAW;
         int geometries = data.getInt(12), draws = data.getInt(16);
