@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/wechat/adapter.js",
+      "originRole": "First-party WeChat mini game adapter: a document, page classes, canvases, input events, files, storage, sound and the scenery under the canvas made from the wx API; independently authored from WeChat's public mini game documentation with AI assistance; no third-party adapter code; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/wechat/export-wechat.mjs",
+      "originRole": "First-party export of a browser game made with the engine as a WeChat mini game project; independently authored with AI assistance; uses the caller's installed esbuild and, optionally, Playwright; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/wechat/check-minigame.mjs",
+      "originRole": "First-party check of a mini game folder in a headless browser with a stand-in for wx; independently authored with AI assistance; uses the caller's installed Playwright; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/wechat-minigame.test.mjs",
+      "originRole": "First-party focused validation of the WeChat mini game adapter and export in a Node context that holds only what a mini game's global holds; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/wechat-minigame.md",
+      "originRole": "First-party bilingual guide to exporting, checking and uploading a WeChat mini game; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/wechat-minigame.md",
+      "originRole": "First-party bilingual guide to exporting, checking and uploading a WeChat mini game; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/wechat-minigame.md",
+      "zh": "knowledge-base/Cns/docs/wechat-minigame.md"
+    }
+  ]
+}
