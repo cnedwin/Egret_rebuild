@@ -10,10 +10,10 @@ Android AAR、游戏导出与 Activity 接入方法见[Android 游戏项目播�
 
 | 目标 | 构建产物 | 宿主与首轮验收 |
 | --- | --- | --- |
-| Android | 可嵌入库和用于构建 APK/AAB 的 Gradle 工程。首个产物为 arm64 调试 APK。 | 用 GLES3 跑通不透明 2D 场景，单独测量桥接，再用相同负载验证 Vulkan。检查表面丢失后的 GPU 资源重建。 |
+| Android | AAR 及生成的 Gradle 工程，可外部签名构建面向 API 36 的 arm64 APK／AAB。 | Fold7 已验证分包安装与覆盖升级恢复存档，GLES3 播放器已运行选定的 2D 和含 2D HUD 的 World3D 游戏，并从驻留几何恢复回放。更多图形档位及 Vulkan 待验证。[播放器与测量](android-project-player.md) |
 | iOS | XCFramework 和可签名归档的 Xcode 工程 | 使用 Metal 和随包脚本，可替换脚本宿主。在 iPhone 上验证首次输入、内存告警、前后台、缩放和旋转。 |
 | 原生鸿蒙 | 原生库和可构建签名应用包的 DevEco Studio 工程 | ArkTS 通过 C ABI 对接 XComponent 原生窗口。实机验证窗口替换和图形后端后再设为默认。 |
-| 微信小游戏 | 含 JS 入口、平台配置和资源分包的小游戏工程 | 接入宿主画布、存储和生命周期。有收益的 CPU 模块按能力使用 WXWebAssembly。用真机检查首屏、包体边界及兼容路径。 |
+| 微信小游戏 | 仓库工具导出 WebGL2 所需的 JS 入口、适配层、包内资产和工程配置。 | 2D 游戏已在模拟 wx 宿主进入玩法。微信开发者工具、客户端真机及平台提交待验证。[导出方法与限制](wechat-minigame.md) |
 | 抖音小游戏 | 含 JS 入口、平台配置和资源分包的抖音工程 | 使用宿主图形接口和一个上屏画布。各支持宿主分别验证画面合成和可选的 TTWebAssembly。 |
 
 普通小游戏采用公开平台接口。手机厂商或应用运营方内置原生 SDK 属于单独合作，需约定设备和分发条件。原生后端候选包括 wgpu，选择依据为所需能力、包体和设备实测成本。[Android 游戏宿主](https://developer.android.com/games/agdk/game-activity/get-started) · [Apple Metal](https://developer.apple.com/metal/) · [华为 XComponent](https://developer.huawei.com/consumer/cn/doc/HarmonyOS-Guides/napi-xcomponent-guidelines/) · [微信接口](https://github.com/wechat-miniprogram/minigame-api-typings) · [抖音运行环境](https://developer.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/dev-guide/bytedance-mini-game) · [抖音 Wasm](https://developer.open-douyin.com/docs/resource/zh-CN/mini-game/guide/minigame/optimization)
@@ -26,7 +26,7 @@ TypeScript 负责输入、游戏逻辑、显示顺序、时钟和资源租约。
 
 AssetManager 和所属 Scope 继续管理逻辑资源、版本替换和取消。原生表面管理本代设备的物理分配。游戏持有租约期间，保留可重建的 CPU 来源；设备上下文丢失时，旧代句柄失效。关闭时停止接收新工作，安全处理在途命令并报告清理错误。原生接口明确边界、所有权和字节序，调用方不得在调用结束后继续借用 JS 或 Rust 对象。
 
-## 分期交付
+## 初始实施顺序
 
 1. 让 Android 2D 样板可安装。在手机 Chrome、实时 Rust 宿主和原生命令回放中运行同一场景。先确认像素和纹理生命周期，再解释性能数据。记录脚本 VM、传输方式、图形后端和支持的场景范围。
 2. 接入 iOS Metal 和第二个脚本宿主。用相同契约验证启动、前后台、关闭和纹理重建。两端跑通后固定可供第三方嵌入的 ABI。

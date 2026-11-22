@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/交付计划.md)
 
-2026-11-14 · Current-source review: main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39).
+Implementation reviewed for 7.0.2 against main [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d) on November 22, 2026.
 
 Egret has two delivery levels: a usable, honestly scoped engine core, then the complete game-creation and publication product. M0–M4 organize the current core program; V001–V008/V020 retain the larger product obligations. Completing a core milestone cannot silently close the creator platform, general 3D, native hosts or one-click migration.
 
@@ -14,11 +14,11 @@ Egret has two delivery levels: a usable, honestly scoped engine core, then the c
 | --- | --- | --- |
 | M0 Architecture/community foundations | Pinned environment, setup/examples, public collaboration, current metadata, scoped feedback and full CI | Independent human newcomer/fork rehearsal #52; remaining source/fixture/device/profile qualification #54 |
 | M1 Rendering/resource foundation | Incremental ordered rendering, reuse, shared WebGPU/WebGL2, manifests and selected device recovery. E20 meets fixed desktop CPU and preparation targets | Sparse and full-dirty pacing, unmeasured GPU timing and complete D60 qualification. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) remains open |
-| M2 Spine/content | Selected reproducible build/runtime groups, optional JSON assets, independent players/shared display, sequence controls, RESET and selected recovery | Remaining content/binary/variants, complete selected-version references/semantics, seek and compatible preservation; #83–#86 |
+| M2 Spine/content | Reproducible Spine atlas, JSON and binary builds, multipage groups, independent players/shared display, bounded seek/replay and selected playback-preserving replacement. | Target variants, licensed export corpus, independent references and integrated recovery. #83–#86 |
 | M3 UI/text/input | Managed layout/virtualization/focus, styled paragraphs and geometry, fonts/themes, masks/blur, touch and keyboard, native editing and owned layers | IME, remaining controls and semantics, and required text, device and accessibility qualification. #87–#90 |
-| M4 Mixed core acceptance | Editable Outfit Studio, fixed mixed profiles, dual-backend and scoped physical Android results | In-browser project open, full X/L/phone/performance qualification and clean-consumer handoff. #91–#93 |
+| M4 Mixed core acceptance | Project Open in editable Outfit Studio, dual-canvas X profiles and focused Windows/Fold7 checks on WebGPU and WebGL2. | Complete selected scenario, X/L device and performance qualification, and clean-consumer handoff. #91–#93 |
 
-Start with [#91](https://github.com/cnedwin/Egret_rebuild/issues/91), browser opening of an exported Outfit Studio project through the existing project transaction. A canceled or rejected import must preserve the live scene and its resource leases. After selected content and input behavior is ready, use the fixed profiles for [#92](https://github.com/cnedwin/Egret_rebuild/issues/92). Clean-consumer handoff preparation in [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) can proceed in parallel. The [engineering plan](engineering-plan.md) sets dependencies and exit criteria.
+Outfit Studio opens an exported project and handles cancellation and retry. Its X-D60/2 and X-MTouch/2 profiles combine a World3D background with a shared 2D foreground. [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) retains remaining scene and editing acceptance. [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) owns fixed performance and lifecycle measurement. [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) owns the release consumer and human contributor walkthrough.
 
 ## Full product delivery
 

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/产品组成.md)
 
-Egret connects creation, execution and publication through a shared project model. Rendering and Runtime provide the runnable foundation; project services, asset processing and creator tools make that foundation editable and deliverable. The following responsibility map describes the full product direction. Current bounded core packages are tracked in [core progress](core-progress.md); the [requirements](../../Cns/registry/需求.json) and [deliverables](../../Cns/registry/交付.json) distinguish formal scope from completed work. A private SDK preview is not a complete installable creator product.
+Egret connects creation, execution and publication through a shared project model. The table defines product responsibilities. Compare it with the [implemented core](core-progress.md) and [deliverables](../../Cns/registry/交付.json) when choosing a capability for a game.
 
 | Component | Responsibilities and main outputs | Key boundary | Related deliverable |
 | --- | --- | --- | --- |
@@ -18,9 +18,9 @@ Egret connects creation, execution and publication through a shared project mode
 
 ## Current component delivery
 
-The engineering preview delivers four foundation packages and optional Spine. The public examples cover SharedFrame2D rendering and resources, animation, managed UI and native editing, opt-in canvas text entry and standalone World3D. [Current capabilities](core-progress.md) Byte readers/writers, events, Scope, coordinates and explicit time are reusable core tools; they do not imply complete production coverage.
+Four foundation packages and an optional Spine adapter serve browser games. SharedFrame2D, resources, animation, text, UI and World3D are available through explicit imports. Play/Play3D also ship as standalone browser files. [Core capabilities](core-progress.md)
 
-No integrated editor application, Agent/MCP service, plugin marketplace, native Runtime SDK or complete migrator is delivered. The current native-looking @egret/runtime name denotes the host-free TypeScript core. The [capability overview](core-progress.md) and [engineering plan](engineering-plan.md) separate current interfaces from future tool products.
+The [native Android SDK](android-project-player.md) packages supported games with its own Android player. The npm module `@egret/runtime` supplies host-free TypeScript services. The [WeChat exporter](wechat-minigame.md) prepares a local project for host qualification. The integrated visual editor, Agent/Skill/MCP workbench, plugin marketplace and general-purpose legacy migrator remain planned.
 
 ## One integrated tool platform
 

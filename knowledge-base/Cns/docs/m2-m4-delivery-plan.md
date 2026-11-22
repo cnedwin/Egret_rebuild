@@ -2,11 +2,11 @@
 
 [English](../../en/docs/m2-m4-delivery-plan.md) | 简体中文
 
-2026-11-12 · 当前实现与下一阶段对齐
+2026-11-22 按主干 [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d) 复核 7.0.2 的工程进度。
 
 ## 目标与当前基线
 
-复盘 main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39)。
+换装工作室已能打开导出工程，处理取消和重试。X-D60/2 和 X-MTouch/2 两个档位组合 World3D 背景与共享 2D 前景。剩余场景与编辑行为归 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，固定负载的性能与生命周期测量归 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)，发行物消费者及真人贡献者交接归 [#93](https://github.com/cnedwin/Egret_rebuild/issues/93)。
 
 让当前共享核心支撑动画丰富、界面复杂的游戏，再完成声明范围的完整资格。保留原十一个工作包。[当前能力](core-progress.md)给出实际实现，[工程计划](工程规划.md)说明下一批完整增量，[M2](m2-spine-content-plan.md)、[M3](m3-ui-text-input-plan.md)、[M4](m4-core-acceptance-plan.md)负责详细契约。
 
@@ -19,8 +19,8 @@ M2 已有 PNG／多页图集／序列／字体的构建与运行时路径、可�
 | 入口 | 首个结果 | 剩余依赖 |
 | --- | --- | --- |
 | M3.3 #89 与 #87／#88 | 在已交付的原生编辑、段落和焦点基础上补齐声明范围的编辑行为 | 真人 IME、设备、文字参考和无障碍仍待对应验收 |
-| M4.1 #91 | 在浏览器内通过既有事务打开换装工程，覆盖取消、失败与重试 | 选定内容和控件就绪后进入 #92 固定档位验收 |
-| M2.1–M2.4 #83–#86 | 剩余内容／二进制／变体、跳转／重放及兼容状态保留 | 版本／权利／参考记录分别验收相应声明 |
+| M4.1 #91 | 复用已交付的打开／取消／重试与双画布合成，在固定档位补足编辑与混合交互验收。 | #92 负责正式计时与组合生命周期。 |
+| M2.1–M2.4 #83–#86 | 在已有 Spine 图集／JSON／二进制构建、有界跳转及选定保留播放的替换基础上，验证纹理变体及剩余动画语义。 | 各档位的授权导出物与独立参考数据。 |
 
 完整 M4 收口需要必需功能、原性能目标及真实设备和素材证据。可选 [World3D](world3d.md) 有独立的功能和验证范围。
 

@@ -2,7 +2,7 @@
 
 [English](../../en/docs/single-file.md) | 简体中文
 
-从白鹭引擎 7.0 的[浏览器归档](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip)解压引擎文件、使用指南和许可证。把 `egret2d.js` 放在 HTML 页面旁即可调用 [`play`](play.md)；需要 World3D 时选用 `egret3d.js` 和 [`play3d`](play3d.md)。这两种脚本都可以从本地文件夹打开。使用 ES Module 时，从 HTTP 服务器提供对应的 `.mjs` 文件。[发行说明与 SHA-256](release-archives.md)
+从白鹭引擎 7.0 的[浏览器归档](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-browser.zip)解压引擎文件、使用指南和许可证。把 `egret2d.js` 放在 HTML 页面旁即可调用 [`play`](play.md)；需要 World3D 时选用 `egret3d.js` 和 [`play3d`](play3d.md)。这两种脚本都可以从本地文件夹打开。使用 ES Module 时，从 HTTP 服务器提供对应的 `.mjs` 文件。[发行说明与 SHA-256](release-archives.md)
 
 打包工具会加载四个浏览器文件，按各入口核对导出名称、`play` 或 `play3d`，并生成一段音效采样。早期单文件验证中，[Play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)的三个游戏在无头 Chromium 的软件 WebGL2 上完成了启动、绘制、按键、指针和音源启动检查，覆盖本地文件和 HTTP 两种打开方式。
 
@@ -59,34 +59,17 @@ node tools/pack-single-file.mjs --esbuild <已安装的 esbuild 模块> --out <�
 
 文件里的每个名称与它所在入口里的是同一个东西；两个不同的东西使用同一个名称时，打包工具会拒绝。文本、图像、音频、补间以及中英文的错误说明都在里面，因为这些入口会加载它们。
 
-`egret3d.js` 包含以上全部，以及两个 World3D 入口 `@egret/engine/world3d` 和 `@egret/engine/webgl2/world3d`，其中有 `play3d`：一共 394 个名称。
+7.0.2 的 `egret2d.js` 导出 86 个名称。`egret3d.js` 增加 `@egret/engine/world3d` 和 `@egret/engine/webgl2/world3d` 的接口（含 `play3d`），共导出 436 个名称。解压浏览器归档中的 `report.json` 可查到各自的入口、导出名称与校验值。需要额外功能时，可以直接导入对应的模块。[公共导入入口](entry-points.md)
 
-两个文件都不包含的仍然是各自的入口，以模块方式加载：界面控件、瓦片地图、2D 相机、带纹理的粒子、2D 物理、段落、文本输入、Spine。需要其中之一的游戏使用各个包，见[在干净的项目中使用预览版](clean-consumer.md)。
+## 7.0.2 单文件大小
 
-## 有多大
+使用 esbuild 0.28.2 压缩构建。表中单位为 KiB（1,024 字节）。实际下载量取决于服务器发送时采用的压缩方式。
 
-在包含本次改动的 main 上测得，用 esbuild 0.28.2 打包并压缩代码。
-
-| 文件 | KiB | gzip 后 KiB | Brotli 后 KiB |
+| 文件 | 原始 KiB | gzip KiB | Brotli KiB |
 | --- | ---: | ---: | ---: |
-| `egret2d.js` | 628.4 | 197.7 | 161.2 |
-| `egret2d.mjs` | 628.0 | 197.5 | 161.1 |
-| `egret3d.js` | 1236.0 | 401.7 | 321.8 |
-| `egret3d.mjs` | 1235.3 | 401.6 | 321.7 |
+| `egret2d.js` | 701.7 | 222.6 | 181.8 |
+| `egret2d.mjs` | 701.3 | 222.6 | 181.5 |
+| `egret3d.js` | 1371.9 | 448.5 | 359.4 |
+| `egret3d.mjs` | 1371.1 | 448.4 | 359.1 |
 
-`egret2d.js` 压缩前的字节来自：
-
-| 部分 | KiB |
-| --- | ---: |
-| 引擎 | 145.6 |
-| 运行时 | 117.7 |
-| WebGPU 宿主 | 81.2 |
-| WebGL2 宿主 | 68.4 |
-| 中英文错误说明 | 64.2 |
-| 帧的准备 | 55.6 |
-| 文本 | 55.1 |
-| 声音 | 19.9 |
-| Play | 15.4 |
-| 第三方（`robust-predicates`） | 3.9 |
-
-去掉 WebGPU 宿主可以让 gzip 后的大小减少约 24 KiB，去掉中文错误说明可以再减少约 8 KiB；文件保留了这两者，这样它在每个浏览器里的行为都与模块一致，并且能用两种语言说明出了什么问题。
+`report.json` 还按来源列出每个单文件的代码字节数，便于和自己的构建对照。

@@ -2,11 +2,11 @@
 
 English | [简体中文](../../Cns/docs/m2-m4-delivery-plan.md)
 
-2026-11-12 · Current implementation and next-phase alignment
+Implementation reviewed for 7.0.2 against main [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d) on November 22, 2026.
 
 ## Purpose and current baseline
 
-Reviewed main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39).
+Outfit Studio opens an exported project and handles cancellation and retry. Its X-D60/2 and X-MTouch/2 profiles combine a World3D background with a shared 2D foreground. [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) retains remaining scene and editing acceptance. [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) owns fixed performance and lifecycle measurement. [#93](https://github.com/cnedwin/Egret_rebuild/issues/93) owns the release consumer and human contributor walkthrough.
 
 Make the current shared core usable for animation-rich, complex-interface games, then qualify its complete declared scope. The eleven existing packages remain unchanged. [Current capabilities](core-progress.md) provides the as-built map; [engineering](engineering-plan.md) gives the next complete increments; [M2](m2-spine-content-plan.md), [M3](m3-ui-text-input-plan.md) and [M4](m4-core-acceptance-plan.md) own their detailed contracts.
 
@@ -19,8 +19,8 @@ M2 has PNG, multipage atlas, sequence and font build/runtime paths, optional Spi
 | Entry | First outcome | Remaining dependency |
 | --- | --- | --- |
 | M3.3 #89 with #87/#88 | Complete the declared editing behavior on the delivered native editor, paragraph and focus foundations | Human IME, devices, text references and accessibility still need their respective acceptance |
-| M4.1 #91 | Open an exported Outfit Studio project in the browser through the existing transaction, covering cancel, failure and retry | Selected content and controls precede #92 fixed-profile qualification |
-| M2.1–M2.4 #83–#86 | Remaining content/binary/variants, seek/replay and compatible state preservation | Version/rights/reference rows qualify their advertised scope |
+| M4.1 #91 | Preserve the shipped Open/cancel/retry route and dual-canvas composition. Qualify the remaining editing and mixed-scene interactions on the fixed profiles. | #92 owns formal timing and integrated lifecycle. |
+| M2.1–M2.4 #83–#86 | Qualify texture variants and remaining animation semantics on top of the existing Spine atlas, JSON and binary producers, bounded seek and selected playback-preserving replacement. | Authorized exports and independent reference data for each claimed profile. |
 
 Full M4 closure requires the declared functionality, unchanged performance targets and actual device and asset evidence. Optional [World3D](world3d.md) has its own feature and verification scope.
 

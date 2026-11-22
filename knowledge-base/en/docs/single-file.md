@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/single-file.md)
 
-Extract the engine files, usage guide and licences from the Egret Engine 7.0 [browser archive](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip). Put `egret2d.js` next to your HTML page to use [`play`](play.md). For World3D, use `egret3d.js` and [`play3d`](play3d.md). Either classic script works from a local folder. For ES modules, serve the corresponding `.mjs` file over HTTP. [Release notes and SHA-256](release-archives.md)
+Extract the engine files, usage guide and licences from the Egret Engine 7.0 [browser archive](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-browser.zip). Put `egret2d.js` next to your HTML page to use [`play`](play.md). For World3D, use `egret3d.js` and [`play3d`](play3d.md). Either classic script works from a local folder. For ES modules, serve the corresponding `.mjs` file over HTTP. [Release notes and SHA-256](release-archives.md)
 
 The packer loads all four files, checks their named exports and the `play` or `play3d` entry point, and synthesizes a sound sample. In the earlier single-file test, all three [Play example games](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) started, drew, handled keys and pointer input, and started audio sources in headless Chromium with software WebGL2 over both local files and HTTP.
 
@@ -59,34 +59,17 @@ Four entries and everything they load, the WebGL2 host and the WebGPU host inclu
 
 A name is the same thing in the file as in its entry, and the packer refuses two different things under one name. Text, images, audio, tweens and the errors' sentences in English and Chinese are in it because those entries load them.
 
-`egret3d.js` holds all of that and the two World3D entries, `@egret/engine/world3d` and `@egret/engine/webgl2/world3d`, with `play3d`: 394 names in all.
+In 7.0.2, `egret2d.js` exports 86 names. The 3D file adds the World3D and WebGL2 World3D entries, including `play3d`, for a total of 436. The browser archive’s `report.json` lists each entry point, export and checksum. Games that need an additional feature can use its package entry directly. [Public imports](entry-points.md)
 
-What is in neither stays an entry of its own, loaded as modules: the interface controls, tile maps, the 2D camera, particles with textures, 2D physics, paragraphs, text input, Spine. A game that needs one of them uses the packages, as in [using the preview from a clean project](clean-consumer.md).
+## 7.0.2 file sizes
 
-## How large it is
+The 7.0.2 files were minified with esbuild 0.28.2. The units below are KiB (1,024 bytes). Network transfer depends on the compression selected by the server.
 
-Measured from main with this change, packed with esbuild 0.28.2, minified.
-
-| File | KiB | KiB gzip | KiB Brotli |
+| File | Raw KiB | gzip KiB | Brotli KiB |
 | --- | ---: | ---: | ---: |
-| `egret2d.js` | 628.4 | 197.7 | 161.2 |
-| `egret2d.mjs` | 628.0 | 197.5 | 161.1 |
-| `egret3d.js` | 1236.0 | 401.7 | 321.8 |
-| `egret3d.mjs` | 1235.3 | 401.6 | 321.7 |
+| `egret2d.js` | 701.7 | 222.6 | 181.8 |
+| `egret2d.mjs` | 701.3 | 222.6 | 181.5 |
+| `egret3d.js` | 1371.9 | 448.5 | 359.4 |
+| `egret3d.mjs` | 1371.1 | 448.4 | 359.1 |
 
-Where the bytes of `egret2d.js` come from, before compression:
-
-| Part | KiB |
-| --- | ---: |
-| Engine | 145.6 |
-| Runtime | 117.7 |
-| WebGPU host | 81.2 |
-| WebGL2 host | 68.4 |
-| Sentences of errors, English and Chinese | 64.2 |
-| Preparing a frame | 55.6 |
-| Text | 55.1 |
-| Sound | 19.9 |
-| Play | 15.4 |
-| Third party (`robust-predicates`) | 3.9 |
-
-Leaving the WebGPU host out would take about 24 KiB off the gzip size and the Chinese sentences of errors about 8; the file keeps both, so that it behaves as the modules do in every browser and says what went wrong in either language.
+For a comparison with a custom build, the release’s `report.json` also lists the contribution of each source group to every bundle.

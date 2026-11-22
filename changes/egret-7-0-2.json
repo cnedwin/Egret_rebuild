@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-22",
+  "en": {
+    "title": "Egret Engine 7.0.2",
+    "body": "The stable 7.0.2 distribution includes a 2D and 3D browser build, five JavaScript packages and an editable starter. The release guide lists the source and verification scope for the Android player and the WeChat export path."
+  },
+  "zh": {
+    "title": "白鹭引擎 7.0.2",
+    "body": "7.0.2 稳定版提供浏览器 2D 和 3D 构建、五个 JavaScript 包和可编辑的入门示例。发行说明列出了 Android 播放器和微信小游戏导出的源代码入口与验收范围。"
+  }
+}
