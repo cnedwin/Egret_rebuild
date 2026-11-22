@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/snowtemple/duel.mjs",
+      "originRole": "Continuous two-character encounter adapter for the pinned, locally supplied Snow Temple rules. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/check-duel.mjs",
+      "originRole": "Regression checks for the locally prepared duel and its original combat rules. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-snowtemple-duel.json",
+      "originRole": "Physical Fold7 observations of the browser and signed trimmed-V8 APK, including input, per-hit health, outcomes and restart. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

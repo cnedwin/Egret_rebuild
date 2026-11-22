@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-23",
+  "en": {
+    "title": "Play the Snow Temple yard duel through to the result",
+    "body": "The Android example and its browser reference can play the entire encounter with one swordsman, including retaliation, damage to Lin Chong, victory, defeat and restart."
+  },
+  "zh": {
+    "title": "草料场首战支持连续交战、胜负与重开",
+    "body": "Android 示例与浏览器对照页可以和同一名刀手打完整场交战，支持刀手还击、林冲受伤、胜负结算和场内重开。"
+  }
+}

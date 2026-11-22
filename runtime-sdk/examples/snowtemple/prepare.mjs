@@ -8,9 +8,10 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const [input, output, mode] = process.argv.slice(2);
-const yard = mode === '--yard';
+const duel = mode === '--duel';
+const yard = mode === '--yard' || duel;
 if (!input || !output || process.argv.length !== (yard ? 5 : 4))
-  throw new Error('Usage: node prepare.mjs <PortedGamesEgret/SnowTemple> <new-directory> [--yard]');
+  throw new Error('Usage: node prepare.mjs <PortedGamesEgret/SnowTemple> <new-directory> [--yard | --duel]');
 const source = path.resolve(input), destination = path.resolve(output);
 try {
   await lstat(destination);
@@ -90,7 +91,12 @@ try {
     '\nconst index = ' + JSON.stringify(infos) + ';\n' +
     'export function equipment(name, bytes) {\n  const info = index[name];\n  const bin = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);\n  if (bin.byteLength !== info.bytes) throw new Error("Incomplete equipment");\n  const offset = 0;\n' +
     section(models, '    const n = info.count;', '    models[name] = geometry;') + '  return geometry;\n}\n');
-  await cp(path.join(here, yard ? 'yard.mjs' : 'solo.mjs'), path.join(tmp, 'profile.mjs'));
+  if (yard) await cp(path.join(here, 'duel.mjs'), path.join(tmp, 'duel.mjs'));
+  if (duel) {
+    await cp(path.join(here, 'yard.mjs'), path.join(tmp, 'yard.mjs'));
+    await cp(path.join(here, 'check-duel.mjs'), path.join(tmp, 'check-duel.mjs'));
+    await writeFile(path.join(tmp, 'profile.mjs'), "export { duelControls as controls, openDuel as openScene } from './yard.mjs';\n");
+  } else await cp(path.join(here, yard ? 'yard.mjs' : 'solo.mjs'), path.join(tmp, 'profile.mjs'));
   for (const file of ['main.mjs', 'actors.mjs', 'hero.mjs', 'browser.mjs', 'browser.html']) await cp(path.join(here, file), path.join(tmp, file));
   await cp(path.resolve(here, '../roll3d/hud.mjs'), path.join(tmp, 'hud.mjs'));
   for (const [from, to] of [
@@ -106,7 +112,7 @@ try {
   assets.push('notices/source.txt');
   await writeFile(path.join(tmp, 'index.html'), '<!doctype html><meta charset="utf-8"><title>Lin Chong</title><script src="./game.js"></script>\n');
   await writeFile(path.join(tmp, 'project.json'), JSON.stringify({
-    name: yard ? 'Fodder Yard Encounter' : 'Lin Chong', width: 768, height: 432, entry: 'index.html', script: 'main.mjs', pages: [], assets
+    name: duel ? 'Fodder Yard Duel' : yard ? 'Fodder Yard Encounter' : 'Lin Chong', width: 768, height: 432, entry: 'index.html', script: 'main.mjs', pages: [], assets
   }, null, 2) + '\n');
   // The comparison page uses the browser game's shipped World3D. These
   // modules are outside the Android project's asset manifest.
