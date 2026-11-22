@@ -264,6 +264,25 @@ An instrumented baseline separated synchronous World3D submission from the Share
 
 A separate structural check loaded the same eight actors and original project assets in Node. At the authored 1/60 s step, 84 transitions covered two full trim cycles. Comparing adjacent draws of each actor in order yielded 0 equivalent geometries across 1,428 draws (559,104 triangles). None of the 1,428 draws had an identical position array in the corresponding slot of the preceding frame. The comparison also covered UVs, light and dark colors and indices. Reusing the preceding complete geometry by content would produce no hits here. The full five-window device matrix, 16.7/33.4 ms frame targets and sustained lifecycle remain open in [#92](https://github.com/cnedwin/Egret_rebuild/issues/92).
 
+#### Fold7 scene lifecycle and restored images, 22 November 2026
+
+Chrome 157 on a Galaxy Z Fold7 (Adreno 830) exercised the static portrait X-MTouch/2 scene on the original build. Each fresh document loaded 6,000 authored nodes, 600 visible nodes, eight Spine actors and 80 animation sequences. Both canvas layers used the selected hardware backend. [Frozen scene and source](https://github.com/cnedwin/Egret_rebuild/tree/c1570b0878d1be8716d06320206f51a62f9e3f32/examples/outfit-studio)
+
+| Fresh scene and operation | WebGPU | WebGL2 |
+| --- | ---: | ---: |
+| Change the selected actor’s palette and restore it | 25 | 25 |
+| Cancel the project import while its manifest request is held, retry and restore the original | 25 | 25 |
+| Return a real local HTTP 503, retry and restore the original project | 25 | 25 |
+| Go to Android Home and return to the same Chrome document | 25 | 25 |
+
+Each of the 200 documents received one explicit close. Two reads confirmed that all eight actors, both render owners and the UI scope had closed. The font and paragraph caches reported zero charged bytes, pending work and leases. Canceled and failed imports preserved the current project until a retry committed. Every Home round trip recorded the Android launcher and trusted hidden and visible events in the returning page. The file selections were automated and the HTTP refusal came from the local server.
+
+An initial WebGPU Home attempt recorded a hidden document, but the observer could not identify the active launcher. After resolving the actual Home component on the active display, the case was repeated. Only the fully observed round trip counts in the table.
+
+The #255 build already completed ten real losses per backend, five on each canvas. The current build adds the missing visual comparison: one background loss and one overlay loss per backend with the authored pose paused. WebGPU destroyed the owned device, and WebGL2 used the context-loss extension. After each recovery a frame completed in the new generation. The full composed crop and the isolated background matched their own pre-loss RGBA images exactly, and all 589 sampled foreground RGBA values matched. These checks measure the recovered image; recovery latency has its own budget.
+
+The previous WebGL2 foreground run covered 1,800.06 seconds and 30,313 completed frames, with confirmed cleanup. The historical WebGPU foreground interval of 1,800.6 seconds retains its outer cleanup exception. Frame budgets, human input, other devices and #55 keep their separate acceptance records. [Fold7 sustained-run receipt](https://github.com/cnedwin/Egret_rebuild/issues/92#issuecomment-7080168183)
+
 ## 7. Connection to the all-in-one creation platform
 
 The longer-term platform combines coding, debugging, main canvas, UI/animation editing, 3D scenes/VFX, worlds/characters and target publication. Visual, code and natural-language editing should share project identity, versioned changes, diagnostics, preview and undo. Compatible editor surfaces may be combined after their workflows are evaluated.

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-22",
+  "en": {
+    "title": "Fold7 mixed-scene lifecycle and restored images",
+    "body": "The X-MTouch/2 qualification record now covers 100 scene lifecycles per mobile backend and compares the background, foreground and composed scene after actual graphics loss."
+  },
+  "zh": {
+    "title": "Fold7 混合场景生命周期与恢复画面",
+    "body": "X-MTouch/2 验收补齐了手机双后端各 100 次场景生命周期，并分别核对实际图形丢失后的背景、前景与合成画面。"
+  }
+}
