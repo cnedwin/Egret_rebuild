@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": ".github/workflows/publish-github-browser.yml",
+      "originRole": "First-party GitHub Packages workflow for the combined browser distribution; Apache-2.0."
+    },
+    {
+      "path": "tools/github-browser-distribution/README.md",
+      "originRole": "First-party installation and usage guide for the GitHub Packages browser collection; Apache-2.0."
+    },
+    {
+      "path": "tools/github-browser-distribution/README.zh-CN.md",
+      "originRole": "First-party installation and usage guide for the GitHub Packages browser collection; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "tools/github-browser-distribution/README.md",
+      "zh": "tools/github-browser-distribution/README.zh-CN.md"
+    }
+  ]
+}

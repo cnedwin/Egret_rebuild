@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Package the two browser distributions from a verified, published GitHub release without rebuilding them.
+// Package a verified browser release as two modules for npm or one collection for GitHub Packages.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -44,23 +44,17 @@ function releaseMembers(dir) {
   return members;
 }
 
-function packBundle(bundle, members, record, work, product) {
+function bundleManifest(bundle, version) {
   const name = '@egret/' + bundle.slice('egret'.length);
   const classic = bundle + '.js';
   const module = bundle + '.mjs';
-  const stage = path.join(work, bundle);
-  fs.mkdirSync(stage);
-  for (const file of [classic, module, ...notices]) fs.writeFileSync(path.join(stage, file), members.get(file));
-  for (const file of ['README.md', 'README.zh-CN.md']) {
-    fs.copyFileSync(path.join(repo, 'tools', 'browser-distribution', file), path.join(stage, file));
-  }
-  const manifest = {
+  return {
     name,
-    version: record.version,
+    version,
     description: 'Standalone Egret Engine ' + (bundle === 'egret2d' ? '2D' : '2D and World3D') + ' browser bundle',
     license: 'Apache-2.0',
     repository: { type: 'git', url: 'git+https://github.com/cnedwin/Egret_rebuild.git' },
-    homepage: 'https://github.com/cnedwin/Egret_rebuild/releases/tag/v' + record.version,
+    homepage: 'https://github.com/cnedwin/Egret_rebuild/releases/tag/v' + version,
     type: 'module',
     main: './' + module,
     exports: {
@@ -73,14 +67,47 @@ function packBundle(bundle, members, record, work, product) {
     jsdelivr: './' + classic,
     files: [classic, module, ...notices, 'README.md', 'README.zh-CN.md']
   };
+}
+
+/** Both 2D entry points resolve to the same ESM file, so they share constructors and resource ownership. */
+function collectionManifest(version) {
+  const base = bundleManifest('egret2d', version);
+  // These CDNs discover packages in the public npm registry. The collection lives on GitHub Packages.
+  delete base.unpkg;
+  delete base.jsdelivr;
+  return {
+    ...base,
+    name: '@cnedwin/egret-browser',
+    description: 'Egret Engine 2D and World3D standalone browser bundles',
+    exports: {
+      '.': base.exports['.'],
+      './2d': base.exports['.'],
+      './3d': { import: './egret3d.mjs' },
+      ...Object.fromEntries(scripts.map(file => ['./' + file, './' + file])),
+      './package.json': './package.json'
+    },
+    publishConfig: { registry: 'https://npm.pkg.github.com' },
+    files: [...scripts, ...notices, 'README.md', 'README.zh-CN.md']
+  };
+}
+
+function packBundle(manifest, members, guides, work, product) {
+  const stage = fs.mkdtempSync(path.join(work, 'package-'));
+  for (const file of manifest.files) {
+    if (file === 'README.md' || file === 'README.zh-CN.md') {
+      fs.copyFileSync(path.join(repo, 'tools', guides, file), path.join(stage, file));
+    } else {
+      fs.writeFileSync(path.join(stage, file), members.get(file));
+    }
+  }
   fs.writeFileSync(path.join(stage, 'package.json'), JSON.stringify(manifest, null, 2) + '\n');
   // Only constant arguments go through npm.cmd on Windows. Source and output paths stay in filesystem calls.
   run('npm', ['pack', '--ignore-scripts', '--json'], stage, process.platform === 'win32');
-  const file = archiveName(name, record.version);
+  const file = archiveName(manifest.name, manifest.version);
   fs.renameSync(path.join(stage, file), path.join(product, file));
   const bytes = read(product, file);
   return {
-    name,
+    name: manifest.name,
     file,
     bytes: bytes.length,
     sha256: hash(bytes),
@@ -89,7 +116,8 @@ function packBundle(bundle, members, record, work, product) {
 }
 
 /** The trusted digest comes from GitHub's release.json asset metadata, independently of the downloaded files. */
-export function packBrowserNpm({ release, manifestSha256, out }) {
+export function packBrowserNpm({ release, manifestSha256, out, target = 'npm' }) {
+  assert(target === 'npm' || target === 'github', 'Unknown package target');
   assert.match(manifestSha256, /^(sha256:)?[a-f0-9]{64}$/, 'GitHub release.json SHA-256');
   const manifest = read(release, 'release.json');
   const digest = hash(manifest);
@@ -125,7 +153,12 @@ export function packBrowserNpm({ release, manifestSha256, out }) {
     }
     const product = path.join(work, 'packages');
     fs.mkdirSync(product);
-    const packages = bundles.map(bundle => packBundle(bundle, members, record, work, product));
+    const manifests =
+      target === 'github'
+        ? [collectionManifest(record.version)]
+        : bundles.map(bundle => bundleManifest(bundle, record.version));
+    const guides = target === 'github' ? 'github-browser-distribution' : 'browser-distribution';
+    const packages = manifests.map(manifest => packBundle(manifest, members, guides, work, product));
     const result = {
       version: record.version,
       sourceCommit: record.sourceCommit,
@@ -145,13 +178,15 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const options = {};
   const args = process.argv.slice(2);
   for (let i = 0; i < args.length; i += 2) {
-    const key = { '--release': 'release', '--manifest-sha256': 'manifestSha256', '--out': 'out' }[args[i]];
+    const key = { '--release': 'release', '--manifest-sha256': 'manifestSha256', '--out': 'out', '--target': 'target' }[
+      args[i]
+    ];
     if (!key || key in options || !args[i + 1]) throw new Error('Unknown or incomplete option: ' + args[i]);
     options[key] = args[i + 1];
   }
-  if (Object.keys(options).length !== 3)
+  if (!options.release || !options.out || !options.manifestSha256)
     throw new Error(
-      'Usage: node tools/pack-browser-npm.mjs --release <directory> --manifest-sha256 <digest> --out <new directory>'
+      'Usage: node tools/pack-browser-npm.mjs --release <directory> --manifest-sha256 <digest> --out <new directory> [--target npm|github]'
     );
   console.log(JSON.stringify(packBrowserNpm(options), null, 2));
 }

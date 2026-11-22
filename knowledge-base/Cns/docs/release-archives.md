@@ -58,6 +58,17 @@ npm 会从同一发行版取得 `@egret/contracts` 和 `@egret/runtime`。需要
 
 3D 包已包含 2D 游戏入口，每个游戏使用一个包。引擎对象及其资源在同一入口内创建和释放。[HTML 与 ES 模块用法](single-file.md)
 
+## 通过 GitHub Packages 安装浏览器合集
+
+使用 GitHub Packages 的项目可以通过 `@cnedwin/egret-browser` 管理同一版的四个浏览器脚本。在项目的 `.npmrc` 中添加 `@cnedwin:registry=https://npm.pkg.github.com`。这项配置只将 `@cnedwin` 指向 GitHub，`@egret` 模块包和两个独立浏览器包继续使用原有 npm 配置。
+
+```sh
+npm login --scope=@cnedwin --registry=https://npm.pkg.github.com --auth-type=legacy
+npm install --save-exact @cnedwin/egret-browser@7.0.2
+```
+
+从 GitHub 下载公开 npm 包也需要登录。请在密码提示处输入具有 `read:packages` 权限的个人访问令牌（classic），账号须有该包的访问权限。从 `@cnedwin/egret-browser` 或其 `/2d` 入口导入 `play`，从 `@cnedwin/egret-browser/3d` 导入 `play3d`。直接编写 HTML 时，从包中复制一个传统脚本即可。[GitHub Packages 安装与浏览器示例](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/github-browser-distribution/README.zh-CN.md)
+
 ## 归档里有什么
 
 五个模块包的 npm 归档包含构建后的 `dist`、包的两份 README、`LICENSE` 和 `NOTICE`。仓库内的工作区包使用私有占位版本 `0.0.0`。归档的 `package.json` 写入发行版本号、可分发的文件列表和许可证；源码清单没有写许可证的包使用 Apache-2.0。公共入口和第三方依赖沿用源码中的声明。
@@ -88,6 +99,8 @@ node tools/publish-registry.mjs --release ../release --dry-run
 维护者从对应 GitHub Release 下载发行资产到一个目录，并从 GitHub 资产记录取得 `release.json` 的 SHA-256。下面的命令核对已发行的脚本与许可文件后写出两个 npm 归档。输出目录应为新目录。
 
     node tools/pack-browser-npm.mjs --release <已下载的发行目录> --manifest-sha256 <GitHub记录的SHA-256> --out <新目录>
+
+维护者从 `main` 手动运行 [GitHub Packages 工作流](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml) 来分发 7.0.2。工作流核对原发行清单，用 `--target github` 制作合集，再在空工程里安装已发布的包。运行摘要会列出实际可见性。如果结果为 `private`，需要在包设置中调整访问权限，社区开发者才能安装。[包的访问权限与可见性](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
 
 ## 早期工程预览的验证记录
 

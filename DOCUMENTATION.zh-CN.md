@@ -8,7 +8,7 @@
 
 - **开始做游戏。** [上手指南](knowledge-base/Cns/docs/getting-started.md) · [公共导入入口](knowledge-base/Cns/docs/entry-points.md)
 - **一个文件写游戏，或交给 AI 智能体。** [Play](knowledge-base/Cns/docs/play.md) · [Play3D](knowledge-base/Cns/docs/play3d.md) · [单文件](knowledge-base/Cns/docs/single-file.md) · [llms.txt](llms.txt)
-- **选择宿主与发行格式。** [Android Runtime SDK](knowledge-base/Cns/docs/runtime-sdk.md) · [本地 APK/AAB](knowledge-base/Cns/docs/android-project-player.md) · [微信小游戏工程](knowledge-base/Cns/docs/wechat-minigame.md) · [浏览器发行归档与 npm](knowledge-base/Cns/docs/release-archives.md)
+- **选择宿主与发行格式。** [Android Runtime SDK](knowledge-base/Cns/docs/runtime-sdk.md) · [本地 APK/AAB](knowledge-base/Cns/docs/android-project-player.md) · [微信小游戏工程](knowledge-base/Cns/docs/wechat-minigame.md) · [浏览器发行归档与 npm](knowledge-base/Cns/docs/release-archives.md) · [GitHub Packages 浏览器合集](tools/github-browser-distribution/README.zh-CN.md)
 - **查已有能力。** [需求与实现](knowledge-base/Cns/docs/core-progress.md) · [Windows 和 Fold7 浏览器实测](knowledge-base/Cns/docs/november-browser-hardware.md) · [Android 原生设备数据](https://github.com/cnedwin/Egret_rebuild/tree/main/runtime-sdk/measurements) · [更新日志](knowledge-base/Cns/CHANGELOG.md)
 - **参与贡献。** [贡献指南](CONTRIBUTING.zh-CN.md) · [工程规划](knowledge-base/Cns/docs/工程规划.md) · [项目看板](https://github.com/users/cnedwin/projects/2)
 
