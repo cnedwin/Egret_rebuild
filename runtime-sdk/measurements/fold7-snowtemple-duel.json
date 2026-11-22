@@ -1,0 +1,329 @@
+{
+  "issue": 393,
+  "engineBase": "6610886e6409092f50b96d9d0860544c7d976a6a",
+  "game": "https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple",
+  "profile": "--duel",
+  "environment": {
+    "device": "Samsung Galaxy Z Fold7",
+    "android": "17",
+    "model": "SM-F966U1",
+    "browser": "Chrome/157.0.8103.78",
+    "webglRenderer": "ANGLE (Qualcomm, Adreno (TM) 830, OpenGL ES 3.2)",
+    "logicalStage": [
+      768,
+      432
+    ],
+    "native": "Signed arm64-v8a Release, GLES3",
+    "vm": "15.7.112.19",
+    "intl": false,
+    "apkBytes": 65852239,
+    "qaApkSha256": "6c1023af48808de892f214b5306e3afddeee319a9f8cb48f20b23b687bcbd945",
+    "playerAarSha256": "4b227b94775e9ba6a5145d421c5cfa2437c44b3a7598288373ca545be050ef9c"
+  },
+  "method": "Both hosts run the original pinned combat rules, character and weapon assets at a fixed simulation step of 1/60 s. Touch is injected on the physical phone via Chrome DevTools in the browser and Android system input in the APK. Polling reads state only. Simulation ticks identify events, not device frame-time samples.",
+  "damageEventColumns": [
+    "simulationTick",
+    "originalEvent",
+    "attacker",
+    "target",
+    "originalAmount",
+    "hpBefore",
+    "hpAfter"
+  ],
+  "hpOrder": [
+    "Lin Chong",
+    "swordsman"
+  ],
+  "routes": {
+    "victory": {
+      "touch": "Hold thrust until the fight finishes, release, then tap Restart.",
+      "start": {
+        "round": 1,
+        "tick": 0,
+        "phase": "ready",
+        "hp": [
+          120,
+          84
+        ],
+        "poseHashes": [
+          "af8a8847",
+          "e9af285c"
+        ],
+        "events": 0
+      },
+      "damageEvents": [
+        [
+          101,
+          "hit",
+          "lin",
+          "blade",
+          13,
+          84,
+          71
+        ],
+        [
+          128,
+          "hit",
+          "lin",
+          "blade",
+          15,
+          71,
+          56
+        ],
+        [
+          162,
+          "hit",
+          "lin",
+          "blade",
+          26,
+          56,
+          30
+        ],
+        [
+          197,
+          "hit",
+          "lin",
+          "blade",
+          13,
+          30,
+          17
+        ],
+        [
+          224,
+          "hit",
+          "lin",
+          "blade",
+          15,
+          17,
+          2
+        ],
+        [
+          258,
+          "hit",
+          "lin",
+          "blade",
+          26,
+          2,
+          0
+        ]
+      ],
+      "outcome": {
+        "tick": 258,
+        "event": "death",
+        "winner": "lin"
+      },
+      "settled": {
+        "round": 1,
+        "tick": 303,
+        "phase": "victory",
+        "hp": [
+          120,
+          0
+        ],
+        "poseHashes": [
+          "2d046d61",
+          "d70e3c18"
+        ],
+        "events": 6
+      },
+      "settledFall": {
+        "actor": "blade",
+        "posedHipPitchRadians": -1.649949256017746
+      },
+      "restart": {
+        "round": 2,
+        "tick": 0,
+        "phase": "ready",
+        "hp": [
+          120,
+          84
+        ],
+        "poseHashes": [
+          "af8a8847",
+          "e9af285c"
+        ],
+        "events": 0
+      }
+    },
+    "defeat": {
+      "touch": "Tap thrust once, release and allow the swordsman to continue. Tap Restart after defeat.",
+      "start": {
+        "round": 2,
+        "tick": 0,
+        "phase": "ready",
+        "hp": [
+          120,
+          84
+        ],
+        "poseHashes": [
+          "af8a8847",
+          "e9af285c"
+        ],
+        "events": 0
+      },
+      "damageEvents": [
+        [
+          101,
+          "hit",
+          "lin",
+          "blade",
+          13,
+          84,
+          71
+        ],
+        [
+          177,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          120,
+          109
+        ],
+        [
+          413,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          109,
+          98
+        ],
+        [
+          651,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          98,
+          87
+        ],
+        [
+          865,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          87,
+          76
+        ],
+        [
+          1074,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          76,
+          65
+        ],
+        [
+          1318,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          65,
+          54
+        ],
+        [
+          1517,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          54,
+          43
+        ],
+        [
+          1755,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          43,
+          32
+        ],
+        [
+          1800,
+          "hurt",
+          "blade",
+          "lin",
+          13,
+          32,
+          19
+        ],
+        [
+          1991,
+          "hurt",
+          "blade",
+          "lin",
+          11,
+          19,
+          8
+        ],
+        [
+          2036,
+          "hurt",
+          "blade",
+          "lin",
+          13,
+          8,
+          0
+        ]
+      ],
+      "outcome": {
+        "tick": 2036,
+        "event": "fall",
+        "winner": "blade"
+      },
+      "settled": {
+        "round": 2,
+        "tick": 2081,
+        "phase": "defeat",
+        "hp": [
+          0,
+          71
+        ],
+        "poseHashes": [
+          "a23060a1",
+          "1ca1010f"
+        ],
+        "events": 12
+      },
+      "settledFall": {
+        "actor": "lin",
+        "posedHipPitchRadians": -1.5778604620144328
+      },
+      "restart": {
+        "round": 3,
+        "tick": 0,
+        "phase": "ready",
+        "hp": [
+          120,
+          84
+        ],
+        "poseHashes": [
+          "af8a8847",
+          "e9af285c"
+        ],
+        "events": 0
+      }
+    }
+  },
+  "crossHost": "The two hosts reported identical ordered damage events, original death/fall events, participant states, positions and quantized pose hashes at both outcomes and restarts. The encounter keeps the terminal pose after a 45-step settle. Each restart clears input, result and damage history.",
+  "priorResidencyAndContextRecovery": "https://github.com/cnedwin/Egret_rebuild/blob/6610886e6409092f50b96d9d0860544c7d976a6a/runtime-sdk/measurements/fold7-snowtemple-yard-encounter.json",
+  "scope": "The first one-on-one with a swordsman. The outcome applies to this encounter; subsequent enemies and campaign progression are outside the slice. No new GPU, timing or device-loss acceptance is inferred.",
+  "fallFix": "The first device run showed a standing swordsman at zero health. The original rules retain hit-freeze at death, which had stopped skeletal interpolation. In continuous duels, dead actors now follow the authored fall while living actors keep the normal hit pause. The terminal hip pitch is read from the posed rig on both hosts.",
+  "firstThrustAfterSecondRestart": {
+    "round": 3,
+    "event": {
+      "tick": 101,
+      "type": "hit",
+      "attacker": "lin",
+      "target": "blade",
+      "amount": 13,
+      "before": 84,
+      "after": 71
+    }
+  }
+}

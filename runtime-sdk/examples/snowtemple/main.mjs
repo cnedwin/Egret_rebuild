@@ -26,6 +26,11 @@ installWorld3DPlayerProject({
       // changes display references without adding a texture in mid-combat.
       for (const digit of '0123456789') counters[0][0].text = digit;
     }
+    let message;
+    if (game.messages) {
+      message = hud.text('Ready', { x: WIDTH / 2, y: 55, size: 18, color: 0xffffff, align: 'center' });
+      for (const words of game.messages) message.text = words;
+    }
     let elapsed = 0, lastState = -Infinity;
     function report() {
       const state = game.state();
@@ -35,6 +40,7 @@ installWorld3DPlayerProject({
           counters[index].forEach((field, i) => { field.text = digits[i]; });
         });
       }
+      if (message) message.text = state.encounter.message;
       services.state(state);
     }
     report();

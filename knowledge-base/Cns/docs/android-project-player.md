@@ -325,6 +325,19 @@ node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowT
 
 在同一台 Galaxy Z Fold7 上注入触控后，浏览器版和裁剪 V8 签名 APK 均在模拟第 101 步和第 128 步出枪命中，刀手血量依次从 84 降到 71、56。首次加载时，八份网格定义分两包传输，分别为 2,001,236 和 1,540,608 字节。每次 GLES 上下文重建后各重传一次，两段连续交战期间的几何传输均为零。切后台后两端均保留姿态与血量，在命中前和受击时各自恢复的 3D 画面都与切出前逐像素一致。最终 APK 两次恢复场景，两段交战分别收到 298 和 335 个绘制包。关闭时三个 GLES 上下文累计 66 次纹理上传均有对应释放，22 个项目纹理页全部归还。[Fold7 实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-yard-encounter.json)
 
+### 打完草料场首战
+
+下面的命令会生成浏览器和 Android 共用的双角色工程。用 HTTP 提供输出目录并打开 `browser.html` 可运行 WebGL2 对照页，也可以按上文用同一目录构建 Release APK。
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple-duel --duel
+node out/snowtemple-duel/check-duel.mjs
+```
+
+按住左侧按钮走近。轻点右侧按钮会靠近枪距并尝试刺一枪，按住则连续出枪。开战后松开双手，刀手仍会继续进攻。每次命中都会更新界面，战斗继续进行。刀手触发原作的 `death` 事件时林冲获胜，林冲触发 `fall` 时刀手获胜。最后一击结算胜负后，场景继续推进 45 个模拟步，让败者倒地，然后定格。点击「Restart」可恢复双方初始位置和血量，清空上一场的输入与命中记录。逐击查看姿态仍可使用 `--yard`。[原作规则与素材](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+在同一台 Galaxy Z Fold7 上注入触控，Chrome WebGL2 和裁剪 V8 + GLES3 签名 APK 的两条路线逐次扣血一致。按住出枪，林冲以六枪取胜。重开后轻点一次，刀手中枪剩 71 点血，随即反击。第一刀将林冲从 120 点血打到 109，第十一刀使他倒地。两种结局都显示败者的倒地姿态。败北后再次重开，第三局轻点出枪仍能将刀手从 84 血打到 71。本次沿用 #453 记录的同场景几何驻留与上下文恢复证据。[Fold7 实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-duel.json)
+
 ### Android 实时帧的几何驻留
 
 游戏包和播放器均采用此版本构建时，裁剪 V8 和 WebView 工程宿主都可使用同一套 World3D 增量协议。搭配旧版宿主或游戏包时仍发送完整帧。完整帧 E3D1 或 E3D2 包含全部可见网格的定义。GL 线程确认上一帧在同一代 EGL 上下文中成功提交后，E3D3 或 E3D4 即可按编号引用这些网格。每帧仍传送当前相机、光照、有序绘制记录、材质和纹理引用，以及完整的 2D HUD。只有新增或改变的网格需要传输定义。仅移动镜头且可见网格集合不变时，几何部分的每帧桥接字节为零。

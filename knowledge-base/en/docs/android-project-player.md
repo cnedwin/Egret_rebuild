@@ -325,6 +325,19 @@ This path admits up to 64 visible geometries and 16 MiB of encoded geometry defi
 
 With injected touch on a physical Galaxy Z Fold7, the browser and signed trimmed-V8 APK registered both spear hits at simulation ticks 101 and 128, reducing the swordsman’s health from 84 to 71 and then 56. The eight mesh definitions crossed the bridge in packets of 2,001,236 and 1,540,608 bytes on initial load and once per GLES context recreation. Across both observed combat intervals the geometry traffic was zero. Both hosts retained poses and health across backgrounding. Each reproduced its own 3D pixels exactly when restored, both before contact and during the hit. The final APK restored the scene twice. Its two combat intervals contained 298 and 335 draw packets. At close, all 66 texture uploads across the three GLES contexts had matching releases and all 22 project pages were returned. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-yard-encounter.json)
 
+### Play the complete yard duel
+
+Prepare the same two-character project for the browser and Android. Serve the output directory and open `browser.html` for the WebGL2 version, or use the Release APK instructions above with the same directory.
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple-duel --duel
+node out/snowtemple-duel/check-duel.mjs
+```
+
+Hold the left control to approach. Tap the right control to close to spear range and attempt one thrust, or keep it pressed to attack repeatedly. Once the fight starts, releasing both controls lets the swordsman continue attacking. A hit updates the HUD while the fight continues. The original game’s `death` event for the swordsman awards this duel to Lin Chong. Its `fall` event awards the duel to the swordsman. The result appears on the deciding hit. The scene advances another 45 simulation steps to show the defeated character falling, then holds the final pose. Restart returns both characters to their starting positions and health and clears the previous round’s inputs and hits. The `--yard` option remains available for inspecting individual strikes. [Game rules and assets](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+On one Galaxy Z Fold7, Chrome WebGL2 and the signed trimmed-V8 GLES3 APK produced the same ordered damage events through both endings using injected touch. Holding the thrust control won in six spear hits. After restart, tapping it once struck the swordsman and left him on 71 HP. His first counter reduced Lin Chong from 120 to 109 HP, and the eleventh counter felled him. Both defeated characters completed their authored fall on screen. After restarting from defeat, the next tap landed the opening thrust again (84 → 71 HP). The scene reuses the resident geometry and context recovery verified in #453. [Fold7 results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-duel.json)
+
 ### Resident geometry in live Android frames
 
 The trimmed V8 and WebView project hosts can use the same incremental World3D protocol when the game bundle and player are built from this revision. An older host or bundle continues to send full frames. A full E3D1 or E3D2 packet defines every visible mesh. After the GL thread confirms a successful submission in the same EGL generation, E3D3 or E3D4 can refer to those meshes by ID. Each packet still carries the current camera, lights, ordered draw records, material and texture references, and the complete 2D HUD. Only new or changed mesh definitions cross the bridge. On a camera-only frame with an unchanged visible set, geometry uses zero bridge bytes.

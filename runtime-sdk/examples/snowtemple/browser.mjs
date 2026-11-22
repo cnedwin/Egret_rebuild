@@ -48,6 +48,7 @@ async function start() {
   }
   for (const [text, x, y] of controls) label(text, x, y);
   const health = hero.state().encounter ? [label('', 86, 26), label('', 646, 26)] : null;
+  const message = hero.messages ? label('Ready', WIDTH / 2, 66) : null;
   let reported = -Infinity;
   renderer = createWebGL2Renderer3D({ canvas, shadows: false, antialias: false, toneMapping: 'aces' });
   renderer.setSize(WIDTH, HEIGHT);
@@ -80,6 +81,7 @@ async function start() {
         const state = hero.state();
         health[0].textContent = 'Lin HP ' + Math.ceil(state.hero.hp);
         health[1].textContent = 'Blade HP ' + Math.ceil(state.enemy.hp);
+        if (message) message.textContent = state.encounter.message;
         reported = now;
       }
     }

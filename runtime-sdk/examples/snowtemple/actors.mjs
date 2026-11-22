@@ -17,12 +17,18 @@ export function createActorStage() {
   return { scene, camera };
 }
 
-export function poseLinChong(figure, game, travel) {
+// The rules do not decrement hit freeze after death. A continuous duel
+// still advances the authored fall with the speed from heroPose or foePose.
+export function poseRate(actor, rate, showFall) {
+  return actor.freeze > 0 && !(showFall && actor.state === 'dead') ? 0 : rate;
+}
+
+export function poseLinChong(figure, game, travel, showFall = false) {
   const h = game.hero;
   const [target, rate] = heroPose(h, HERO, game.time, travel, game.deadFor, figure.gait, DT);
   figure.root.setPosition(h.x, 0, h.z);
   figure.root.setRotation(0, h.face, 0);
-  pose(figure, target, h.freeze > 0 ? 0 : rate, DT);
+  pose(figure, target, poseRate(h, rate, showFall), DT);
   figure.glow += ((h.state === 'cut' ? 3.2 : 0.25) - figure.glow) * Math.min(1, DT * 14);
   figure.metal.emissiveIntensity = figure.glow;
   figure.tintBody(...figure.look.fill);
