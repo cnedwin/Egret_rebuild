@@ -91,7 +91,12 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
         final int epoch;
         final byte[] bytes;
         final Map<Integer, Page> pages;
+        final byte[][] geometryBatches;
         Frame(int epoch, byte[] bytes, Map<Integer, Page> pages) {
+            this(epoch, bytes, pages, WorldProjectPacket.Batches.EMPTY);
+        }
+        Frame(int epoch, byte[] bytes, Map<Integer, Page> pages, byte[][] geometryBatches) {
+            this.geometryBatches = geometryBatches;
             this.epoch = epoch;
             this.bytes = bytes;
             this.pages = pages;
@@ -154,14 +159,15 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
                 }
                 uploaded = frame.pages;
             }
-            if (commands == null || commands.capacity() < frame.bytes.length)
-                commands = ByteBuffer.allocateDirect(frame.bytes.length).order(ByteOrder.LITTLE_ENDIAN);
-            commands.clear();
-            commands.put(frame.bytes);
-            commands.flip();
+            // Stage bounded packets on this GL thread before the single visible draw.
+            for (byte[] batch : frame.geometryBatches) {
+                copyCommands(batch);
+                check(PlayerGpu.draw(handle, commands, 0, batch.length, width, height), "stage World3D geometry", frame.id());
+            }
+            copyCommands(frame.bytes);
             WorldProjectPacket.visitTexturePages(commands, prepareWorldView, prepareDataView);
             int status = PlayerGpu.draw(handle, commands, 0, frame.bytes.length, width, height);
-            if (status == PlayerGpu.MISSING_WORLD_BASE && WorldProjectPacket.isDelta(commands.getInt(0))) {
+            if (status == PlayerGpu.MISSING_WORLD_BASE && WorldProjectPacket.incremental(commands)) {
                 owner.ui.post(() -> owner.missingWorldBase(frame));
                 return;
             }
@@ -169,6 +175,13 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
             if (owner.timing.isEnabled()) sampledWorldGeometryBytes = PlayerGpu.worldGeometryBytes(handle);
             owner.ui.post(() -> owner.drawn(frame.epoch, frame.id()));
         } catch (RuntimeException | LinkageError e) { owner.reportFailure(e.toString()); }
+    }
+
+    private void copyCommands(byte[] bytes) {
+        if (commands == null || commands.capacity() < bytes.length)
+            commands = ByteBuffer.allocateDirect(bytes.length).order(ByteOrder.LITTLE_ENDIAN);
+        commands.clear();
+        commands.put(bytes).flip();
     }
 
     private void prepareWorldView(int id, boolean linearData) {

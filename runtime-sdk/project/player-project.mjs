@@ -138,6 +138,10 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
   return Object.freeze({
     textResult,
     ...(composeWorld && {
+      worldGeometryBatch(epoch, frameId, ordinal) {
+        if (stopped || !game) throw new Error('Project unavailable');
+        return composeWorld.geometryBatch(epoch, frameId, ordinal);
+      },
       recoverWorldFrame(epoch, frameId) {
         if (stopped || !game) throw new Error('Project unavailable');
         return composeWorld.recover(epoch, frameId);

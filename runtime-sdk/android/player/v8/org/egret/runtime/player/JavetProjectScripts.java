@@ -101,6 +101,13 @@ public final class JavetProjectScripts extends ScriptSession {
                     : game.invoke("recoverWorldFrame", epoch, (double) retryId)) {
                 long produced = timed ? System.nanoTime() : 0;
                 byte[] bytes = copyFrame(frame);
+                ByteBuffer header = ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN);
+                int batchCount = WorldProjectPacket.batchCount(header);
+                for (int i = 0; i < batchCount; i++) {
+                    try (V8Value batch = game.invoke("worldGeometryBatch", epoch, (double)Integer.toUnsignedLong(header.getInt(4)), i)) {
+                        commands(epoch, copyFrame(batch), -1, -1);
+                    }
+                }
                 long copied = timed ? System.nanoTime() : 0;
                 commands(epoch, bytes, timed ? produced - start : -1, timed ? copied - produced : -1);
             }

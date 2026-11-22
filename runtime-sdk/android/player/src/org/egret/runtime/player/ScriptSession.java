@@ -13,6 +13,12 @@ abstract class ScriptSession {
     final ProjectAssetReads assetReads;
     final PlayerGraphics.Pages pages = new PlayerGraphics.Pages();
 
+    private final WorldProjectPacket.Batches geometry = new WorldProjectPacket.Batches();
+    volatile long geometryBatchPackets, geometryBatchBridgeBytes, streamedDraws, streamedDrawBridgeBytes;
+    volatile int largestGeometryBatchBytes, largestStreamedDrawBytes;
+
+    synchronized void discardGeometryBatches() { geometry.clear(); }
+
     ScriptSession(EgretPlayerView owner, ProjectAssets project) {
         this.owner = owner;
         this.project = project;
@@ -31,19 +37,39 @@ abstract class ScriptSession {
 
     void timeoutClose() { owner.finishClose(null, "Project close did not complete within 10 seconds"); }
 
-    final void commands(int epoch, byte[] bytes, long generationNs, long transferNs) {
+    final synchronized void commands(int epoch, byte[] bytes, long generationNs, long transferNs) {
         if (owner.ending || epoch != owner.epoch) return;
         if (bytes == null || bytes.length < 24 || bytes.length > WorldProjectPacket.TEXTURED_LIMIT) {
             owner.reportFailure("Invalid command length on Android bridge");
             return;
         }
         ByteBuffer header = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
+        byte[][] batches;
+        try {
+            if (header.getInt(0) == WorldProjectPacket.BATCH_MAGIC) {
+                geometry.add(epoch, header, bytes);
+                geometryBatchPackets++;
+                geometryBatchBridgeBytes += bytes.length;
+                largestGeometryBatchBytes = Math.max(largestGeometryBatchBytes, bytes.length);
+                return;
+            }
+            batches = geometry.finish(epoch, header);
+        } catch (IllegalArgumentException error) {
+            geometry.clear();
+            owner.reportFailure(error.getMessage());
+            return;
+        }
         int stage = WorldProjectPacket.stageOffset(header);
         if (bytes.length > WorldProjectPacket.byteLimit(header.getInt(0)) || stage < 0 || header.getInt(stage + 8) != project.width || header.getInt(stage + 12) != project.height) {
             owner.reportFailure("Frame dimensions differ from the project stage");
             return;
         }
-        PlayerGraphics.Frame frame = new PlayerGraphics.Frame(epoch, bytes, pages.snapshot());
+        if (header.getInt(0) == WorldProjectPacket.STREAM_MAGIC) {
+            streamedDraws++;
+            streamedDrawBridgeBytes += bytes.length;
+            largestStreamedDrawBytes = Math.max(largestStreamedDrawBytes, bytes.length);
+        }
+        PlayerGraphics.Frame frame = new PlayerGraphics.Frame(epoch, bytes, pages.snapshot(), batches);
         owner.ui.post(() -> owner.enqueue(frame, generationNs, transferNs));
     }
 

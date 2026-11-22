@@ -3,6 +3,7 @@
   "commit": "4172514ea4369fd9aaf433403423340e8db072ee",
   "directory": "SnowTemple",
   "files": {
+    "assets/characters/blade-low.glb": "132589fac9c73ad733c33059dbcaefbdcd552b530e02852f669022484fdb7428",
     "assets/characters/hero-low.glb": "d495208467c2597798625c0eda3ecb59175cc45e70316d3aeeb48f94c1583aea",
     "assets/models-low.bin": "affbe1eeedd01375da582ecbbc8547583089acdbcb39c64698dfea8b12cdef50",
     "assets/models-low.json": "c1f60e3856efd54dbc30bb344db5ad0fdd78e34cb68f274d66c9d585b1a22524",

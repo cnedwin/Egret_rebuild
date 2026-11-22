@@ -394,6 +394,52 @@ public final class ProjectReplayTapeTest {
         }
     }
 
+    private static void invalidBatch(Runnable call) {
+        try { call.run(); } catch (IllegalArgumentException expected) { return; }
+        throw new AssertionError("Expected invalid World3D batch sequence");
+    }
+
+    private static ByteBuffer batchHeader(int id, int index, int count) {
+        ByteBuffer b = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN);
+        b.putInt(WorldProjectPacket.BATCH_MAGIC).putInt(id).putInt(index).putInt(count).putInt(1)
+            .putInt(WorldProjectPacket.SKINNED_MAGIC);
+        return b;
+    }
+
+    private static void streamedTransport(File directory) throws Exception {
+        WorldProjectPacket.Batches batches = new WorldProjectPacket.Batches();
+        ByteBuffer first = batchHeader(0, 0, 2), second = batchHeader(0, 1, 2);
+        ByteBuffer draw = ByteBuffer.allocate(200).order(ByteOrder.LITTLE_ENDIAN);
+        draw.putInt(0, WorldProjectPacket.STREAM_MAGIC).putInt(8, 24).putInt(160, 1).putInt(168, 2);
+        draw.putInt(176, 0x32524745).putInt(184, W).putInt(188, H);
+        require(WorldProjectPacket.stageOffset(draw) == 176 && !WorldProjectPacket.incremental(draw));
+        require(WorldProjectPacket.byteLimit(WorldProjectPacket.BATCH_MAGIC) == 2 * 1024 * 1024);
+        invalidBatch(() -> batches.add(4, second, second.array()));
+        batches.add(4, first, first.array());
+        invalidBatch(() -> batches.finish(4, draw));
+        batches.add(4, first, first.array());
+        invalidBatch(() -> batches.add(5, second, second.array()));
+        batches.add(5, first, first.array());
+        batches.add(5, second, second.array());
+        invalidBatch(() -> batches.finish(6, draw));
+        batches.add(6, first, first.array());
+        batches.add(6, second, second.array());
+        byte[][] packets = batches.finish(6, draw);
+        require(packets.length == 2 && packets[0] == first.array() && packets[1] == second.array());
+        batches.add(6, first, first.array());
+        batches.clear();
+        invalidBatch(() -> batches.add(6, second, second.array()));
+        draw.putInt(168, 0).putInt(160, 0);
+        require(WorldProjectPacket.incremental(draw) && batches.finish(6, draw).length == 0);
+        ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
+        PlayerGraphics.Frame streamed = new PlayerGraphics.Frame(6, draw.array(), Collections.emptyMap(), packets);
+        reject(() -> recorder.add(streamed));
+        require(recorder.size() == 0);
+        ProjectBenchmark capture = new ProjectBenchmark("capture", null, directory, W, H);
+        reject(() -> capture.enqueued(streamed));
+        require(!new File(directory, "egret-project-replay.egrp").exists());
+    }
+
     private static int[] ordered(int id, int[] first, int[] reversed) { return id % 2 == 0 ? first : reversed; }
 
     private static void expandedBudget() throws Exception {
@@ -482,6 +528,7 @@ public final class ProjectReplayTapeTest {
             expandedBudget();
             residentReplay(file);
             skinnedReplay(file);
+            streamedTransport(dir);
             System.out.println("Project replay: legacy and resident tapes, full-frame recovery, page generations, identity and rejection passed.");
         } finally {
             Files.deleteIfExists(file.toPath());

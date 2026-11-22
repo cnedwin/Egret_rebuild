@@ -3,7 +3,7 @@
 //! names belong to this EGL generation, and geometry is shared by its draws.
 use crate::gl::*;
 use crate::gles::link_program;
-use crate::world_frame::{Geometry, WorldFrame, SKIN_MAGIC, SKIN_STRIDE};
+use crate::world_frame::{Geometry, StagedMeshes, WorldFrame, SKIN_MAGIC, SKIN_STRIDE};
 use std::{collections::BTreeMap, ptr};
 
 const VERTEX: &[u8] = concat!("#version 300 es\n", include_str!("world_standard.vert"), "\0").as_bytes();
@@ -12,7 +12,7 @@ const FRAGMENT: &[u8] = concat!("#version 300 es\n", include_str!("world_standar
 const SKIN_VERTEX: &[u8] = concat!("#version 300 es\n#define EGRET_SKIN_FRAME\n", include_str!("world_standard.vert"), "\0").as_bytes();
 const SKIN_FRAGMENT: &[u8] = concat!("#version 300 es\n#define EGRET_SKIN_FRAME\n", include_str!("world_standard.frag"), "\0").as_bytes();
 
-struct Mesh {
+pub(super) struct Mesh {
     vao: u32,
     vertex_buffer: u32,
     index_buffer: u32,
@@ -30,8 +30,29 @@ impl Drop for PendingMeshes {
     fn drop(&mut self) { for mesh in self.0.values() { unsafe { mesh.destroy(); } } }
 }
 
+// Staging spans GL calls but never EGL generations. Ordinary drop releases only
+// CPU memory: on context loss its GL names are already invalid. While current,
+// clear explicitly, or transfer ownership into the final draw's rollback guard.
+pub(super) type WorldUploads = StagedMeshes<Mesh>;
+
+impl WorldUploads {
+    pub unsafe fn clear(&mut self) { self.clear_with(|mesh| mesh.destroy()); }
+
+    pub fn mesh_bytes(&self, id: u32) -> Option<usize> {
+        self.meshes.get(&id).map(|m| m.vertices.len() + m.indices.len())
+    }
+
+    pub fn mesh_joints(&self, id: u32) -> Option<usize> {
+        self.meshes.get(&id).map(|m| m.required_joints)
+    }
+
+    pub fn take(&mut self) -> PendingMeshes {
+        PendingMeshes(std::mem::take(self).meshes)
+    }
+}
+
 impl Mesh {
-    unsafe fn upload(data: &Geometry<'_>) -> Option<Self> {
+    pub(super) unsafe fn upload(data: &Geometry<'_>) -> Option<Self> {
         let mut mesh = Self {
             vao: 0, vertex_buffer: 0, index_buffer: 0,
             stride: data.stride, required_joints: data.required_joints, vertices: data.vertices.to_vec(), indices: data.indices.to_vec(),
@@ -65,7 +86,7 @@ impl Mesh {
         None
     }
 
-    unsafe fn destroy(&self) {
+    pub(super) unsafe fn destroy(&self) {
         glDeleteVertexArrays(1, &self.vao);
         glDeleteBuffers(1, &self.vertex_buffer);
         glDeleteBuffers(1, &self.index_buffer);
@@ -173,7 +194,7 @@ impl WorldPipeline {
     pub(super) unsafe fn draw(&mut self, frame: &WorldFrame<'_>, white: u32,
                               pages: &[u32; crate::frame::PAGE_SLOTS], data_pages: &[u32; crate::frame::PAGE_SLOTS],
                               pending: &mut PendingMeshes) -> bool {
-        let skin = frame.format == SKIN_MAGIC;
+        let skin = frame.format == SKIN_MAGIC || frame.batches.is_some();
         let slot = if skin { &mut self.skin_program } else { &mut self.rigid_program };
         if slot.is_none() { *slot = WorldProgram::create(skin); }
         let Some(program) = slot.as_ref() else { return false; };

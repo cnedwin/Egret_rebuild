@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/snowtemple/actors.mjs",
+      "originRole": "Shared character pose and camera helpers for the optional Snow Temple examples. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/solo.mjs",
+      "originRole": "Single-character scene adapter preserving the earlier examples and checkpoints. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/yard.mjs",
+      "originRole": "Two-character encounter using the locally supplied models, AI, hit rules and controls. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-snowtemple-yard-encounter.json",
+      "originRole": "Sanitized Fold7 measurements for the browser and signed Android Release encounter, including per-packet bridge observations and device recovery. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

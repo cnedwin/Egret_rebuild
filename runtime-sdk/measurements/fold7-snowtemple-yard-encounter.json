@@ -1,0 +1,229 @@
+{
+  "issue": 393,
+  "engineBase": "b243e31da354dce032663d41ac2b9bfe3da282e4",
+  "game": "cnedwin/PortedGamesEgret@4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple",
+  "environment": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "browser": "Chrome/157.0.8103.78",
+    "renderer": "ANGLE (Qualcomm, Adreno (TM) 830, OpenGL ES 3.2)",
+    "viewport": [
+      768,
+      432
+    ],
+    "native": "Signed arm64-v8a Release APK, trimmed V8 + GLES3",
+    "v8": "15.7.112.19",
+    "intl": false
+  },
+  "procedure": "One physical phone, injected touch on a fixed-camera two-character encounter. Both hosts use the original movement, AI and damage rules. After the first spear hit the sample holds the pose; background, restore and tap again to advance to the second hit. A second route backgrounds before the first hit so normal clothes and weapons can be compared outside the hit flash.",
+  "checkpoints": {
+    "start": {
+      "tick": 0,
+      "phase": "ready",
+      "heroHealth": 120,
+      "enemyHealth": 84,
+      "heroPalette": "af8a8847",
+      "enemyPalette": "e9af285c",
+      "hit": null
+    },
+    "range": {
+      "tick": 93,
+      "phase": "in-range",
+      "heroHealth": 120,
+      "enemyHealth": 84,
+      "heroPalette": "40539528",
+      "enemyPalette": "99b2001e",
+      "hit": null
+    },
+    "hit": {
+      "tick": 101,
+      "phase": "hit",
+      "heroHealth": 120,
+      "enemyHealth": 71,
+      "heroPalette": "0133f923",
+      "enemyPalette": "ea4a025e",
+      "hit": {
+        "tick": 101,
+        "target": 2,
+        "source": "cut",
+        "amount": 13,
+        "before": 84,
+        "after": 71,
+        "cut": 0
+      }
+    },
+    "resumed": {
+      "tick": 101,
+      "phase": "hit",
+      "heroHealth": 120,
+      "enemyHealth": 71,
+      "heroPalette": "0133f923",
+      "enemyPalette": "ea4a025e",
+      "hit": {
+        "tick": 101,
+        "target": 2,
+        "source": "cut",
+        "amount": 13,
+        "before": 84,
+        "after": 71,
+        "cut": 0
+      }
+    },
+    "followup": {
+      "tick": 128,
+      "phase": "hit",
+      "heroHealth": 120,
+      "enemyHealth": 56,
+      "heroPalette": "49b66a4d",
+      "enemyPalette": "e662f2be",
+      "hit": {
+        "tick": 128,
+        "target": 2,
+        "source": "cut",
+        "amount": 15,
+        "before": 71,
+        "after": 56,
+        "cut": 1
+      }
+    }
+  },
+  "paletteJointCounts": [
+    47,
+    19
+  ],
+  "bridge": {
+    "accounting": "Geometry and draw bytes count separate accepted bridge messages. Pose, HUD and draw packets continue while the geometry remains resident. The two geometry packets recur once on device recreation.",
+    "hardwareComparison": {
+      "apkSha256": "6c9d068d338252f59d18efa9d4e8c27c11490bad1226d69350622b0099804f39",
+      "bytesPerPreparation": [
+        2001236,
+        1540608
+      ],
+      "meshDefinitionsPerBatch": [
+        5,
+        3
+      ],
+      "drawPacketBytes": 8400,
+      "bonePaletteSectionBytes": 4232,
+      "hudBytes": 2968,
+      "drawItems": 8,
+      "combatBeforeBackground": {
+        "acceptedDraws": 298,
+        "geometryPackets": 0,
+        "geometryBytes": 0
+      },
+      "combatAfterResume": {
+        "acceptedDraws": 329,
+        "geometryPackets": 0,
+        "geometryBytes": 0
+      },
+      "allAcceptedGeometryPackets": 4,
+      "allAcceptedGeometryPacketBytes": 7083688,
+      "allAcceptedDrawsAtPrecloseSample": 1276,
+      "allAcceptedDrawPacketBytesAtPrecloseSample": 10718400,
+      "contexts": [
+        1,
+        2
+      ],
+      "textureUploads": [
+        22,
+        44
+      ],
+      "atClose": {
+        "uploads": 44,
+        "releases": 44,
+        "pagesReturned": 22,
+        "abandoned": 0
+      }
+    },
+    "reviewedRelease": {
+      "apkSha256": "e7bb6b1cc81760f1c84e3e6a7dcd5d0ecce7dc984c3f1196c22da7456eece210",
+      "bytesPerPreparation": [
+        2001236,
+        1540608
+      ],
+      "meshDefinitionsPerBatch": [
+        5,
+        3
+      ],
+      "drawPacketBytes": 8400,
+      "bonePaletteSectionBytes": 4232,
+      "hudBytes": 2968,
+      "drawItems": 8,
+      "combatBeforeBackground": {
+        "acceptedDraws": 298,
+        "geometryPackets": 0,
+        "geometryBytes": 0
+      },
+      "combatAfterResume": {
+        "acceptedDraws": 335,
+        "geometryPackets": 0,
+        "geometryBytes": 0
+      },
+      "allAcceptedGeometryPackets": 6,
+      "allAcceptedGeometryPacketBytes": 10625532,
+      "allAcceptedDrawsAtPrecloseSample": 1574,
+      "allAcceptedDrawPacketBytesAtPrecloseSample": 13221600,
+      "contexts": [
+        1,
+        2,
+        3
+      ],
+      "textureUploads": [
+        22,
+        44,
+        66
+      ],
+      "atClose": {
+        "uploads": 66,
+        "releases": 66,
+        "pagesReturned": 22,
+        "abandoned": 0
+      }
+    }
+  },
+  "pixels": {
+    "method": "Logical y=55..366 excludes both HUD implementations. Resampled displayed images on the same Fold7. Foreground differs from the sampled background by >18 in any RGB channel. No per-image alignment or color correction.",
+    "units": "Silhouette intersection-over-union and mean absolute RGB error (0..255) over the intersection. Compare browser and native on the same phone. Background restoration compares each host with itself over the 3D region.",
+    "checkpoints": {
+      "start": {
+        "tick": 0,
+        "silhouetteIoU": 0.91536,
+        "intersectionMeanRgbError": 8.236
+      },
+      "hit": {
+        "tick": 101,
+        "silhouetteIoU": 0.92671,
+        "intersectionMeanRgbError": 4.6411
+      },
+      "restored": {
+        "tick": 101,
+        "silhouetteIoU": 0.92671,
+        "intersectionMeanRgbError": 4.6411
+      },
+      "followup": {
+        "tick": 128,
+        "silhouetteIoU": 0.91827,
+        "intersectionMeanRgbError": 5.0139
+      },
+      "range": {
+        "tick": 93,
+        "silhouetteIoU": 0.92343,
+        "intersectionMeanRgbError": 5.7743
+      },
+      "range-restored": {
+        "tick": 93,
+        "silhouetteIoU": 0.92343,
+        "intersectionMeanRgbError": 5.7743
+      }
+    },
+    "sameHostRegionPixelIdenticalAfterRestore": {
+      "nativeHit": true,
+      "browserHit": true,
+      "nativeBeforeHit": true,
+      "browserBeforeHit": true
+    },
+    "reviewedRelease": "Final Release used the same Chrome captures. All six cross-host rows reproduced the first comparison, including silhouettes and color differences. The Release APK recreated its GLES context twice, at approach and at the first hit. Both restored 3D regions matched their pre-background captures pixel for pixel."
+  },
+  "scope": "Two combatants and their weapons. Combat and residency observations are from this slice on one phone. Frame timing, full campaign and scene-wide lighting remain outside this measurement."
+}

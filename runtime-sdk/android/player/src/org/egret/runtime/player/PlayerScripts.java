@@ -69,22 +69,22 @@ final class PlayerScripts extends ScriptSession {
             : "recoverWorldFrame(" + epoch + "," + retryId + ")";
         invoke((timed ? "const begin=performance.now();" : "") + "const v=EgretPlayerProject." + call + ";"
             + (timed ? "const generation=performance.now()-begin;" : "const generation=-1;")
-            + "let bytes;if(v instanceof ArrayBuffer)bytes=new Int8Array(v);"
+            + "function send(v){let bytes;if(v instanceof ArrayBuffer)bytes=new Int8Array(v);"
             + "else if(ArrayBuffer.isView(v))bytes=new Int8Array(v.buffer,v.byteOffset,v.byteLength);"
-            + "else throw Error('frame() must return a binary command buffer');"
+            + "else throw Error('Expected a binary command buffer');"
             + "if(bytes.byteLength<24||bytes.byteLength>" + WorldProjectPacket.TEXTURED_LIMIT
             + ")throw Error('Invalid command length');"
-            + "if(bytes.byteLength>" + PlayerGraphics.MAX_FRAME_BYTES + "){"
-            + "const m=new DataView(bytes.buffer,bytes.byteOffset,4).getUint32(0,true);"
-            + "if(m!==" + WorldProjectPacket.TEXTURED_MAGIC + "&&m!==" + WorldProjectPacket.TEXTURED_DELTA_MAGIC
-            + "&&m!==" + WorldProjectPacket.SKINNED_MAGIC + "&&m!==" + WorldProjectPacket.SKINNED_DELTA_MAGIC
-            + ")throw Error('Invalid command length');}"
             // Android WebView marshals typed arrays element by element. A native-order word
             // view carries the same bits with one quarter as many array elements.
             + "if((bytes.byteOffset%4)===0&&(bytes.byteLength%4)===0){"
             + "const words=new Int32Array(bytes.buffer,bytes.byteOffset,bytes.byteLength/4);"
             + "EgretNativePlayer.commandWords(" + epoch + ",words,generation)"
-            + "}else{EgretNativePlayer.commands(" + epoch + ",bytes,generation)}");
+            + "}else{EgretNativePlayer.commands(" + epoch + ",bytes,generation)}}"
+            + "const hdr=ArrayBuffer.isView(v)?new DataView(v.buffer,v.byteOffset,v.byteLength):new DataView(v);"
+            + "if(hdr.getUint32(0,true)===" + WorldProjectPacket.STREAM_MAGIC + "){"
+            + "const count=hdr.getUint32(168,true),id=hdr.getUint32(4,true);"
+            + "if(count>" + WorldProjectPacket.MAX_BATCHES + ")throw Error('Invalid batch count');"
+            + "for(let i=0;i<count;i++)send(EgretPlayerProject.worldGeometryBatch(" + epoch + ",id,i));}send(v)");
     }
 
     // Typed arrays use the device byte order. Rebuild the exact byte slice before the
