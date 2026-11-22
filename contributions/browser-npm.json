@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/browser-distribution/README.md",
+      "originRole": "First-party standalone browser distribution packaging and documentation; Apache-2.0."
+    },
+    {
+      "path": "tools/browser-distribution/README.zh-CN.md",
+      "originRole": "First-party standalone browser distribution packaging and documentation; Apache-2.0."
+    },
+    {
+      "path": "tools/pack-browser-npm.mjs",
+      "originRole": "First-party standalone browser distribution packaging and documentation; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/pack-browser-npm.test.mjs",
+      "originRole": "First-party standalone browser distribution packaging and documentation; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "tools/browser-distribution/README.md",
+      "zh": "tools/browser-distribution/README.zh-CN.md"
+    }
+  ]
+}

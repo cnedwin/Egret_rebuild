@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-22",
+  "en": {
+    "title": "Distribute the standalone 2D and World3D browser files on npm",
+    "body": "@egret/2d and @egret/3d package the matching 7.0.2 ES module and classic browser script. Each carries a bilingual guide and licence notices."
+  },
+  "zh": {
+    "title": "通过 npm 分发 2D 和 World3D 浏览器单文件",
+    "body": "@egret/2d 和 @egret/3d 分别封装 7.0.2 对应的 ES 模块与传统浏览器脚本，随包附有中英文用法和许可声明。"
+  }
+}

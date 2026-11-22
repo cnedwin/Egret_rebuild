@@ -6,6 +6,17 @@ Extract the engine files, usage guide and licences from the Egret Engine 7.0 [br
 
 The packer loads all four files, checks their named exports and the `play` or `play3d` entry point, and synthesizes a sound sample. In the earlier single-file test, all three [Play example games](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.md) started, drew, handled keys and pointer input, and started audio sources in headless Chromium with software WebGL2 over both local files and HTTP.
 
+## Choose a browser bundle on npm
+
+| Game | Install | Module entry | Script to copy |
+| --- | --- | --- | --- |
+| 2D game | `npm install @egret/2d@7.0.2` | `import { play } from '@egret/2d'` | `egret2d.js` |
+| World3D scene and 2D UI | `npm install @egret/3d@7.0.2` | `import { play3d } from '@egret/3d'` | `egret3d.js` |
+
+The package-name imports above are for bundlers. For a page without a bundler, copy the matching `.js` file beside your HTML and use the script tag below. For native ES modules, serve the matching `.mjs` over HTTP and import it by relative URL.
+
+One project can install both packages and `@egret/engine` for separate pages or entry points. Choose one engine entry for each running game. The 3D bundle also includes the 2D `play` API. Create, use and dispose of sprites, scenes, textures and resource leases within the engine that owns them. Exchange plain data such as level JSON, coordinates or identifiers across independent games. Both classic scripts define the global `Egret`, so load only one of them on a page.
+
 ## The page
 
 ```html

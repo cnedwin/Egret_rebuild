@@ -47,11 +47,22 @@ npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/eg
 
 npm 会从同一发行版取得 `@egret/contracts` 和 `@egret/runtime`。需要工程格式或 Spine 时，用上表相应的 `.tgz` 地址运行 `npm install`。
 
+## 通过 npm 使用已构建的浏览器脚本
+
+五个模块包按功能提供导入入口。另外两个独立分发包提供与 7.0.2 GitHub 发行相同的浏览器脚本，适合需要单文件部署的游戏。
+
+| 游戏需要 | 安装 | 模块入口 | 可直接部署的脚本 |
+| --- | --- | --- | --- |
+| 2D 游戏 | `npm install @egret/2d@7.0.2` | `import { play } from '@egret/2d'` | `egret2d.js` |
+| World3D 场景与 2D 界面 | `npm install @egret/3d@7.0.2` | `import { play3d } from '@egret/3d'` | `egret3d.js` |
+
+3D 包已包含 2D 游戏入口，每个游戏使用一个包。引擎对象及其资源在同一入口内创建和释放。[HTML 与 ES 模块用法](single-file.md)
+
 ## 归档里有什么
 
-npm 归档包含构建后的 `dist`、包的两份 README、`LICENSE` 和 `NOTICE`。仓库内的工作区包使用私有占位版本 `0.0.0`。归档的 `package.json` 写入发行版本号、可分发的文件列表和许可证；源码清单没有写许可证的包使用 Apache-2.0。公共入口和第三方依赖沿用源码中的声明。
+五个模块包的 npm 归档包含构建后的 `dist`、包的两份 README、`LICENSE` 和 `NOTICE`。仓库内的工作区包使用私有占位版本 `0.0.0`。归档的 `package.json` 写入发行版本号、可分发的文件列表和许可证；源码清单没有写许可证的包使用 Apache-2.0。公共入口和第三方依赖沿用源码中的声明。
 
-每个包打包两次。`egret-<名称>-<版本>.tgz` 将白鹭包之间的依赖固定为同一发行版的地址；发布到注册表的 `npm-egret-<名称>-<版本>.tgz` 则按同一版本号互相依赖。两者包含的文件相同，只有 `package.json` 不同。`release.json` 记录两者的大小和 SHA-256，以及归档首次发布到注册表时使用的标签。
+每个模块包打包两次。`egret-<名称>-<版本>.tgz` 将白鹭包之间的依赖固定为同一发行版的地址；发布到注册表的 `npm-egret-<名称>-<版本>.tgz` 则按同一版本号互相依赖。两者包含的文件相同，只有 `package.json` 不同。`release.json` 记录两者的大小和 SHA-256，以及归档首次发布到注册表时使用的标签。
 
 ## 制作一个发行版
 
@@ -71,6 +82,12 @@ node tools/publish-registry.mjs --release ../release --dry-run
 ```
 
 安装检查另打一套使用本地文件地址的归档，以便在发布前运行。它还会把五个注册表归档一起装进第二个工程，确认各包能按版本号找到彼此。npm 会下载第三方依赖，检查脚本会将安装包内容与发行归档逐一比较。
+
+## 从发行资产打包浏览器 npm 包
+
+维护者从对应 GitHub Release 下载发行资产到一个目录，并从 GitHub 资产记录取得 `release.json` 的 SHA-256。下面的命令核对已发行的脚本与许可文件后写出两个 npm 归档。输出目录应为新目录。
+
+    node tools/pack-browser-npm.mjs --release <已下载的发行目录> --manifest-sha256 <GitHub记录的SHA-256> --out <新目录>
 
 ## 早期工程预览的验证记录
 
