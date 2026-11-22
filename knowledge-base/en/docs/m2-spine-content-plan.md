@@ -2,14 +2,14 @@
 
 English | [简体中文](../../Cns/docs/m2-spine-content-plan.md)
 
-Plan and current status · 2026-11-14 · Reviewed main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39). Complete M2 remains open.
+Implementation reviewed for 7.0.2 against main [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d) on November 22, 2026.
 
 | Package | Implemented | Remaining |
 | --- | --- | --- |
-| M2.1 #83 | PNG/atlas/sequence build/runtime groups, multipage and font artifacts/sets; optional Spine JSON assets | Binary/variant products and selected-version rights/export/reference qualification |
+| M2.1 #83 | PNG, atlas, sequence, font and Spine atlas/JSON/binary producers, runtime admission and cache invalidation. [Spine content](spine-content-ingress.md) | Selected target texture variants, authorized Editor exports, independent references and complete qualification. |
 | M2.2 #84 | Independent Spine players, tracks/queues, combined skins and finite plays; sequence controls; [staged seek with bounded history and forward event replay](spine-seek.md) | Complete selected-version semantics, physics-bearing seek references and checkpoints |
 | M2.3 #85 | Copied ordered shared display under egret-shared-linear/1 on WebGPU/WebGL2 | Complete attachment/clip/tint/blend/sampling references |
-| M2.4 #86 | Editable 20-Spine/200-sequence example, Spine and sequence RESET, compatible sequence state preservation, and selected desktop/Android recovery | Compatible Spine state preservation and final lifecycle and performance qualification |
+| M2.4 #86 | Editable 20-Spine/200-sequence scene, RESET, compatible sequence preservation and selected playback-preserving Spine replacement verified on Windows/Fold7. | Integrated lifecycle and budgets across the full declared state, content and host matrix. |
 
 Reuse [current assets/players/display](spine-content-ingress.md), [content builds](content-build-pipeline.md), [font generations](font-resource-generations.md), [Spine RESET](spine-reset-slot.md), [sequence RESET](sequence-reset.md) and the [Android record](android-device-validation.md). These slices do not close complete Spine or M4.
 
@@ -29,7 +29,7 @@ These are current source observations, not new test executions.
 
 | Source / existing contract | Retain | Extend or qualify |
 | --- | --- | --- |
-| packages/project/src/resources/, atlas/ and spine/ | Actual immutable builds/cache/project adoption and strict legacy planners | Binary Spine artifacts, selected target variants and exporter/reference qualification |
+| packages/project/src/resources/, atlas/ and spine/ | Immutable builds/cache/project adoption, Spine producers and legacy planners | Selected target variants and exporter/reference qualification |
 | packages/spine/src/loader.ts, instance.ts, display.ts, resetSlot.ts | Optional licensed Core integration, genuine groups/leases, independent copied state and shared display | Complete feature semantics, seek/replay, compatible preserve-mode and references |
 | AssetManager, AssetLease, Scope and manifestAssetGroup | Shared acquisition, dependency expansion, cancellation and scheduling | New admitted providers/artifacts; no second asset manager |
 | SharedMaterial2D/SharedRenderFrame2D, sharedFrameCapture and backend Hosts | Owned ordered geometry, complete color/page/clip identity and completion authority | Demonstrated graphics gaps only; no silent legacy color reinterpretation |
@@ -107,7 +107,7 @@ Device recovery reconstructs only device-owned state. Preserve instance clocks, 
 | @egret/spine: createSpineResetSlot | Reset-policy candidate preparation and CPU publication; Host staging/submission remain separate |
 | @egret/engine/animation | Existing sequence controller and RESET slot; old sampling APIs retained |
 
-See their contracts for exact signatures and limits. Seek and replay are exported as described in [seeking a Spine instance](spine-seek.md), and preserve mode in the [reset slot](spine-reset-slot.md#keeping-the-playback); future binary/variant interfaces are not exported by this plan. M2.1 owns artifact/diagnostic admission; M2.2 owns replay/history/failure; M2.3 owns draw/color publication; M2.4 owns compatible replacement. Freeze only a changed boundary in its existing Issue/PR before a dependent consumer merges; no second registry or whole-core freeze.
+See their contracts for exact signatures and limits. Seek and replay are exported as described in [seeking a Spine instance](spine-seek.md), and preserve mode in the [reset slot](spine-reset-slot.md#keeping-the-playback). The content loader accepts the bounded binary format documented in [Spine ingress](spine-content-ingress.md). M2.1 owns artifact/diagnostic admission; M2.2 owns replay/history/failure; M2.3 owns draw/color publication; M2.4 owns compatible replacement. Freeze only a changed boundary in its existing Issue/PR before a dependent consumer merges; no second registry or whole-core freeze.
 
 M3 consumes asset identities, bounds, explicit hit shapes, clocks/events and replacement notifications. M4 reuses real consumers and the support matrix, not a separate demo implementation.
 

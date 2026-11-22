@@ -2,27 +2,27 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-2026-11-19 核对主干 [47efbb5b](https://github.com/cnedwin/Egret_rebuild/commit/47efbb5b)。当前候选版为 [`v7.0.1-rc.3`](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3)，五个包已以 `next` 标签发布到 npm（`npm install @egret/engine@next`）。外部项目使用的归档、浏览器单文件和入门工程见[发行指南](release-archives.md)。
+2026-11-22 对照主干 [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d) 核对 7.0.2 的功能与验收范围。浏览器单文件、可编辑入门工程和五个 npm 格式包使用统一的 7.0.2 版本号。[安装与发行归档](release-archives.md)
 
 本页说明当前能力，[工程计划](工程规划.md)说明接下来的工作，子系统契约给出准确 API 和证据范围。历史预览记录不再作为并行的“当前版本”。
 
 ## 产品目标与当前实现
 
-白鹭的产品目标包括动画丰富的 2D 游戏、复杂界面、轻量 3D、一体化 AI 创作平台、目标平台发布和旧工程迁移。当前实现提供运行时基础，尚未交付完整的创作、原生／小游戏或迁移产品。
+开发者可以用共享 2D、UI 和 World3D 制作浏览器游戏。Android Runtime SDK 可打包选定的 2D 和 3D 游戏，微信导出工具可生成本地小游戏工程。一体化 AI 创作工作台和旧工程一键迁移属于后续产品需求。
 
 | 领域 | 已有实现 | 仍缺失的能力或验收 |
 | --- | --- | --- |
 | 显示与渲染 | 熟悉的显示对象、坐标、显式命中几何和不可变捕获；有序 WebGPU／WebGL2 共享路径、相邻准备／合批、纹理页、有界缓冲／目标复用、Alpha 遮罩、可分离模糊、沿用 Egret 名称的[混合模式](blend-modes.md)、颜色矩阵、发光、投影和描边[滤镜](filters.md)、作为显示对象的[视频](video.md)及[可选 WebGL2 图层缓存](webgl2-executor-contract.md#可缓存的-2d-图层) | 固定桌面帧节奏与未测 GPU 时间、更广泛设备与宿主、完整功能参考；Canvas 文字和图像提供者继续使用 |
-| 资源与构建 | 清单准入、共享获取／租约、Scope 清理、取消及迟到结果处理，选定 PNG／图集／序列／字体的可复现构建、缓存与工程采用、类型化运行时组，以及对调用方提供的 Spine 4.3 JSON 和二进制数据的有界接入 | Spine 自动构建、选定纹理与压缩变体（共享 2D 绘制已可按需读取页面的[多级缩小副本](shared-render-profile-contract.md)，WebGPU 像素待真机验证）、更广格式与导出器范围和完整场景验收。 [Spine 接入](spine-content-ingress.md) |
+| 资源与构建 | 清单接入、资源租约、取消和 PNG／图集／序列帧／字体的构建与缓存复用。三种 Spine 构建器分别接收图集、JSON 骨骼和有大小限制的二进制骨骼导出物。[Spine 内容管线](spine-content-ingress.md) | 更多纹理与压缩变体、授权的编辑器导出物和独立参考图。11 月真机报告覆盖指定 mipmap 与双页 Spine 用例。[设备记录](november-browser-hardware.md) |
 | 动画 | 显式 Engine 时间、Tween、兼容序列替换和共享渲染器上的可选 Spine 播放。独立播放器支持轨道、队列、组合皮肤和有限播放次数。已支持 RESET 和有界跳转／重放，播放保留替换覆盖选定的进行中混合。 | 独立的选定版本参考、导出器变体及组合动画真机生命周期验收。 [#213](https://github.com/cnedwin/Egret_rebuild/pull/213) · [#218](https://github.com/cnedwin/Egret_rebuild/pull/218) · [#219](https://github.com/cnedwin/Egret_rebuild/pull/219) |
 | UI | 托管布局、变高列表与行焦点、主题／皮肤代次、特效和弹出层／模态层。示例已结合语义投影接入开关、选项组、滑条、标签页、进度条、下拉和多选。 | 最新控件的硬件／WebGPU、实体手机和辅助技术验证，以及完整大场景验收。[UI 语义](ui-semantics.md) |
 | 文字与字体 | 只读 CanvasKit／SkParagraph 段落、最终行双向排版、换行、对齐／行数限制、多样式、已提交命中／选区／插入点几何及受管字体集合切换、可选原生单／多行编辑及配对浏览器字体 | 真实 IME 资格、必需文字／字体／墨迹的独立参考、传输／启动及 CPU／Wasm／内存资格 |
 | 输入 | 兼容旧鼠标 API、可选多触点路由、键盘／逻辑焦点、响应式示例、移动／动作状态、悬停／滚轮、成组键盘焦点，以及驱动同样按键的[手柄](gamepad.md) | 更广手势仲裁、真人操作、实体手机、输入法和无障碍验证 |
-| 2D 世界 | 带跟随、边界、缩放、震动和视差图层的[可选相机](camera-2d.md)，从 Tiled 读取、按区块裁剪绘制的[瓦片地图](tilemap.md)、[粒子](particles.md)，以及带传感器、查询、射线和沿墙滑动角色的[碰撞与简单物理](physics-2d.md)，以及读取 BMFont 和 Egret 格式的[位图字体](bitmap-font.md) | 会旋转的刚体、关节和连续碰撞；等距地图和图块动画播放 |
+| 2D 世界 | [相机和视差](camera-2d.md)、按区块绘制的[正交 Tiled 地图](tilemap.md)、[粒子](particles.md)、[位图字体](bitmap-font.md)，以及带传感器、沿墙滑动、距离关节和绳索的[物理系统](physics-2d.md)。 | 角动力学、连续碰撞、等距地图导入和图块动画播放仍待实现。 |
 | 声音 | [可选的 2D 混音器](audio.md)：计入预算的已解码声音、以流播放的长音乐、发声位、带渐变的单首音乐、有名字的音量，以及等待第一次点击、页面隐藏时静音的 Web Audio 后端 | 资源清单中的声音、其他宿主，以及扬声器、手机、Safari 和 Firefox 的验证 |
 | 3D | [可选 World3D](world3d.md)提供独立 WebGL2／WebGPU 渲染器，以及 glTF 实例、光照阴影、后处理、蒙皮、变形和文字。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。 | 后端功能与验收范围见契约。更广资产、设备与性能资格及统一 2D／3D 创作流程仍待交付。 |
-| Play 与 AI 智能体 | [`play`](play.md) 与 [`play3d`](play3d.md) 一次调用运行 2D 或 3D 小游戏，提供键盘、指针、手柄、指针锁定、代码合成音效与循环音、缓动、重叠与推出检测，以及 3D 模型和点选。[单文件](single-file.md) `egret2d.js`、`egret3d.js` 无需构建，[`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) 供智能体阅读，`tools/verify-game.mjs` 在无头浏览器中试玩并检查游戏。 | Play 在实体手柄、指针锁定和手机上的验证；示例的真实 GPU 计时。Play 面向小游戏，大型游戏使用完整引擎。[#360](https://github.com/cnedwin/Egret_rebuild/pull/360) – [#373](https://github.com/cnedwin/Egret_rebuild/pull/373) |
-| 原生运行时（Android） | [Runtime SDK](runtime-sdk.md) 导出以 API 36 为目标的 arm64 游戏工程，默认裁剪 V8，也可显式选择标准 V8 或系统 WebView。Rust GLES3 播放器可绘制精灵、图集帧和带索引纹理的 Mesh2D，支持包内资源分块读取、本地存档，以及使用外部密钥签名的 APK 和 AAB。[Android 播放器指南](android-project-player.md) | 原生播放器的离屏特效与 World3D、Vulkan，以及 iOS、鸿蒙与小游戏宿主。 |
+| Play 与 AI 智能体 | 单次调用的 [Play](play.md) 与 [Play3D](play3d.md)、[单文件](single-file.md)、[智能体接口索引](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt)和无头浏览器玩法检查器。选定示例在 Fold7 的两个浏览器后端均已通关和重开。[真机记录](november-browser-hardware.md) | 实体手柄、真人输入与听音、更多设备以及持续性能仍待验证。 |
+| Android 原生与小游戏导出 | [Android SDK](android-project-player.md) 生成面向 API 36 的 arm64 工程，可本地签名构建 APK 和 AAB。GLES3 播放器默认使用裁剪 V8。Fold7 已跑通带 Spine 和滚动 UI 的 2D 关卡、带纹理 GLB 的赛道，以及复用驻留几何的 210 帧驾驶回放。[微信工具](wechat-minigame.md)可生成 WebGL2 小游戏工程。 | 更广的原生着色器、特效与设备覆盖，以及 Vulkan。微信开发者工具、微信客户端真机和平台审核仍待验证。iOS、鸿蒙和抖音发行仍属路线图。 |
 | 工程与工具 | 版本化工程快照／事务、换装工作室内打开工程、干净工程包和浏览器冒烟检查、结构化诊断与有界旧 RES／MovieClip 分析 | 工程到运行游戏的创作闭环、集成可视化工具、Agent／Skill／MCP 应用、发布／更新适配和完整迁移 |
 
 ## 游戏内容兼容范围
@@ -41,6 +41,8 @@
 - **剩余验收。** 换装工作室已有工程打开及 X-D60/2、X-MTouch/2 混合路线，并已取得限定的 Windows 与 Fold7 证据。场景剩余工作见 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，独立性能验收见 [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 和 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)，更广设备复验见 [#289](https://github.com/cnedwin/Egret_rebuild/issues/289)。
 
 ## 当前图形与设备验证 — 2026-11-14
+
+此节保留 11 月 14 日机位与负载的原始结果。较新的浏览器实测覆盖 Windows 和 Fold7 的选定 2D／3D 场景，包括画廊首开。[11 月真机验收与 7.0.2 画廊结果](november-browser-hardware.md)
 
 SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame` 使用共享 WebGPU 或 WebGL2 Host。原 Canvas Host、早期 WebGPU Host 及 scene3d 原型宿主均已退役，Canvas 文字和图像提供者继续使用。World3D 提供独立的可选渲染器，支持的画布分层与屏幕层合成见其契约。换装工作室的 `/1` 组件路径通过 SharedFrame2D 绘制两块平面背景。`/2` 混合路径将不透明 World3D 画布置于透明 SharedFrame2D 覆盖层下方。早期含 3D 背景的记录对应已退役宿主。 [#180](https://github.com/cnedwin/Egret_rebuild/pull/180) · [#182](https://github.com/cnedwin/Egret_rebuild/pull/182) · [#187](https://github.com/cnedwin/Egret_rebuild/pull/187)
 
@@ -145,7 +147,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 
 | 工作包／Issue | 已交付基础 | 剩余结果／协调责任 |
 | --- | --- | --- |
-| M2.1／[#83](https://github.com/cnedwin/Egret_rebuild/issues/83) | PNG、图集、多页、序列和字体构建及运行时接入，以及可选 Spine JSON 和有界二进制接入 | Spine 自动构建、纹理变体和授权选定版本参考／内容维护者 |
+| M2.1／[#83](https://github.com/cnedwin/Egret_rebuild/issues/83) | PNG、多页图集、序列、字体与 Spine 图集／JSON／二进制骨骼构建已接入运行时资源组。 | 纹理变体、授权编辑器导出物与更广的生产素材资格／内容维护者 |
 | M2.2／[#84](https://github.com/cnedwin/Egret_rebuild/issues/84) | 独立 Spine 实例、轨道／队列、皮肤、有限播放及序列控制；基于有界历史的[分阶段跳转](spine-seek.md)，在原创夹具上带物理时与直接运行相等 | 完整合格语义、独立的物理参考和检查点／动画维护者 |
 | M2.3／[#85](https://github.com/cnedwin/Egret_rebuild/issues/85) | 显式 egret-shared-linear/1 下的共享 Spine 几何 | 完整附件／裁剪／双色／混合／采样参考／渲染维护者 |
 | M2.4／[#86](https://github.com/cnedwin/Egret_rebuild/issues/86) | 可编辑 20-Spine／200-序列示例、RESET、兼容序列状态保留、选定恢复，以及保留播放的 Spine 替换在 Windows 和 Fold7 上的限定验证 | 组合动画生命周期与预算验收／资源动画维护者 |
@@ -155,7 +157,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 | M3.4／[#90](https://github.com/cnedwin/Egret_rebuild/issues/90) | 遮罩／模糊、主题、社区移动／动作状态，[悬停、开关、多选一、范围、滚动和文本框状态](ui-controls.md)及[它们的常用按键](ui-controls.md#按键)，以及[语义树及其浏览器投射](ui-semantics.md)，它跟随[托管列表的行](ui-semantics.md#托管虚拟列表)，并描述[它的盒与层](ui-semantics.md#托管-ui-的盒与层)。一个[设置界面](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-settings/README.zh-CN.md)把这些与主题、文本框、托管列表和模态层放在一起，另有一个[下拉选择](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-dropdown/README.zh-CN.md)把弹出层锚定在滚动列表的一行上，[带进度条的标签页](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/ui-tabs/README.zh-CN.md)也有了相应的角色。此后又有行菜单、多行选择、带朗读消息的按步数量、作为网格的行囊、可排序的表格和树；[全部界面见索引](ui-examples.md) | 整合场景中的遮罩与模糊组及设备恢复、U 夹具、手势，以及真实辅助技术会话／UI 维护者与现有触摸贡献者 |
 | M4.1／[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) | 可编辑精简与固定 X 换装场景、浏览器内打开已导出工程、双后端计时和有界 Android 证据 | 选定能力覆盖、混合合成评审与正式 X 验收／集成与验收维护者 |
 | M4.2／[#92](https://github.com/cnedwin/Egret_rebuild/issues/92) | 固定桌面恢复、Android 组件证据及共享裁剪／几何构造的短时对照 | 完整混合生命周期、性能和必需设备验收／性能平台维护者 |
-| M4.3／[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | 可观察预览失败／取消／重载、公开贡献入口、自动[干净消费者检查](clean-consumer.md)、早期归档在 Windows 和 Fold7 的限定双后端证据，以及本地预览归档的 Node 干净安装 | 正式发布、选定发行归档的真机和浏览器验证、实测首次可交互、真人演练与合格交接／发布维护者 |
+| M4.3／[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) | 浏览器单文件、npm 格式模块、可编辑入门工程和[干净工程检查](clean-consumer.md)。早期归档已有 Windows 和 Fold7 的限定消费者验证。 | 当前发行归档的浏览器与硬件验证、首次可交互耗时、独立真人演练及完整交接／发布维护者 |
 
 角色表示责任，不代表人员配置或自动分派志愿者。保留既有触摸／控件贡献边界，其余工作消费对应接口。
 

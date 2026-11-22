@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/产品需求说明书.md)
 
 Egret is an open-source game-engine project for creating, running and maintaining complex 2D games and lightweight 3D experiences. Its product direction joins a dependable rendering/runtime core with editable projects, resource tools, AI-assisted creation and complete legacy-project migration. A playable result must remain understandable, editable, recoverable and publishable throughout later changes.
 
-This document defines product obligations and acceptance scenarios. The [current core preview](core-progress.md) provides runnable prerequisites; complete creator tools, host coverage, performance, market validation and migration remain open.
+This document defines product obligations and acceptance scenarios. The [current engine core](core-progress.md) provides runnable prerequisites; complete creator tools, host coverage, performance, market validation and migration remain open.
 
 The current source-to-runtime pipeline, optional Spine, UI and text capabilities are summarized in [core progress](core-progress.md). The [M2–M4 plans](m2-m4-delivery-plan.md) define the next core acceptance; they do not replace the complete product requirements below.
 
@@ -30,19 +30,19 @@ R008/V006 is a complete migration obligation. Compilation or an isolated example
 
 ## Requirement-to-delivery map
 
-Current-source review on 2026-11-14 at main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39). Requirement IDs and their confirmed scope are retained; this table does not upgrade historical registry acceptance.
+Reviewed for 7.0.2 on November 22, 2026, against main [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d). The table ties each requirement to an implementation or a remaining acceptance task. Historical registry entries retain their original evidence.
 
 | Requirements | Implemented basis | Remaining product outcome / existing owner |
 | --- | --- | --- |
-| R001, R006 | Project transactions, diagnostics and editable runtime examples | Actual AI-new-creator creation/change/undo/publication journey; later creator platform, consuming V003/V005 |
+| R001, R006 | Editable starters, `play` / `play3d`, agent-readable API guides, project transactions and diagnostics | Independent new creators complete creation, editing, undo and publication in the integrated workbench (V003/V005). |
 | R002, R004, R020 | SharedFrame2D, managed UI, sequences, optional Spine and standalone World3D. Managed native editing and opt-in canvas text entry have separate contracts. | Qualify the mixed scene, its controls, real IMEs and selected-version Spine. Authoring, equivalent composition and wider device coverage remain open. |
 | R003, R005 | M1 rendering, resources and scoped recovery. E20 recorded 5.3 ms full-dirty Engine median-p95 against 8 ms and met the preparation bound. | Sparse/full-dirty wall-gap p95 was 17.2/17.3 ms against 16.7 ms. GPU time was unmeasured for E20. Mixed performance, devices, loading, memory and energy require their own measurements. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) |
-| R007 | Reproducible selected content builds and public browser examples | Complete resource/3D variants and real host packaging/publication/update loops; M2, M4 and later host work |
+| R007 | Reproducible content builds, browser distribution, [signed local Android builds](android-project-player.md) with save-preserving upgrade and [WeChat project export](wechat-minigame.md) | Qualify each promised host on devices. Publishing, store approval and end-user update are separate platform steps. |
 | R008 | Bounded legacy RES/MovieClip analysis and preserved familiar semantics | Complete old/new equivalence, Agent repair, continued editing and actual publication under V006 |
 | R009, R018, R019, R021 | Open repository/knowledge base, English/Cns, canonical text/identity, contribution and CI flows | Ongoing maintenance and independent human newcomer rehearsal #52; no inferred community/adoption outcome |
 | R010, R011, R012, R015 | Versioned sources, independent implementation/dependency policy, review and retained evidence | Apply these obligations to every new feature, reference corpus and product comparison |
 | R013, R016, R017 | Fixed Node 26.7.0/pnpm 11.25.0/TS 7.0.2/PowerShell 7.6.5, typed optional SDKs, focused feedback and delivered core | Complete user-facing compile/debug/project tooling; record actual latency rather than importing historical speed claims |
-| R014 | Explicit host/device/ownership extension boundaries | Selected native App/embedded SDK and later desktop/platform qualification; Rust/VM/graphics choices remain separate |
+| R014 | Android AAR and GLES3 player with trimmed V8, standard V8 and WebView host options. Selected 2D/3D workloads ran on Fold7. | Extend native graphics and service profiles where game evidence calls for it. Other mobile and desktop hosts need their own device and integration results. |
 
 The [current capability overview](core-progress.md), [engineering sequence](engineering-plan.md) and existing eleven M2–M4 Issues carry implementation gaps. No completion percentage or release date is inferred from merged increments.
 

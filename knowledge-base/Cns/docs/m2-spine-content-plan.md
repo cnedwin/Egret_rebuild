@@ -2,14 +2,14 @@
 
 简体中文 | [English](../../en/docs/m2-spine-content-plan.md)
 
-计划与当前状态 · 2026-11-14 · 复盘 main [06182ab](https://github.com/cnedwin/Egret_rebuild/commit/06182ab8e6dadbb7a670e10a2d798bea72f5ee39)。完整 M2 仍开放。
+2026-11-22 按主干 [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d) 复核 7.0.2 的工程进度。
 
 | 工作包 | 已实现 | 剩余 |
 | --- | --- | --- |
-| M2.1 #83 | PNG／图集／序列构建与运行时组、多页及字体产物／集合、可选 Spine JSON 资产 | 二进制／变体产物及选定版本权利／导出／参考资格 |
+| M2.1 #83 | PNG、图集、序列、字体和 Spine 图集／JSON／二进制骨骼构建器，运行时准入与缓存失效处理。[Spine 内容](spine-content-ingress.md) | 选定的目标纹理变体、授权编辑器导出物、独立参考与完整资格。 |
 | M2.2 #84 | 独立 Spine 播放器、轨道／队列、组合皮肤、有限播放及序列控制；[有界历史的分阶段跳转与向前事件重放](spine-seek.md) | 完整选定版本语义、带物理的跳转参考和检查点 |
 | M2.3 #85 | WebGPU／WebGL2 下 egret-shared-linear/1 的复制有序共享显示 | 完整附件／裁剪／双色／混合／采样参考 |
-| M2.4 #86 | 可编辑 20-Spine／200-序列示例、Spine／序列 RESET、兼容序列替换保留状态及选定桌面／Android 恢复 | 兼容 Spine 替换保留状态及最终生命周期和性能资格 |
+| M2.4 #86 | 可编辑的 20 个 Spine 和 200 个序列动画场景、RESET、兼容序列状态保留，以及在 Windows／Fold7 验证的选定 Spine 播放保留替换。 | 声明状态、内容及宿主范围内的组合生命周期和预算。 |
 
 复用[现有资产／播放器／显示](spine-content-ingress.md)、[内容构建](content-build-pipeline.md)、[字体代次](font-resource-generations.md)、[Spine RESET](spine-reset-slot.md)、[序列 RESET](序列动画RESET替换.md)及[Android 记录](android-device-validation.md)，这些切片不关闭完整 Spine 或 M4。
 
@@ -29,7 +29,7 @@ M2 不实现完整可视化工作台、AI Agent 平台、旧工程迁移、原�
 
 | 源码／既有契约 | 保留 | 扩展或验收 |
 | --- | --- | --- |
-| packages/project/src/resources/、atlas/、spine/ | 真实不可变构建／缓存／工程采用和严格历史规划器 | Spine 二进制产物、选定目标变体及导出／参考资格 |
+| packages/project/src/resources/、atlas/、spine/ | 不可变构建、缓存、工程采用、Spine 构建器和旧资产规划器 | 选定的目标变体及导出物／参考资格 |
 | packages/spine/src/loader.ts、instance.ts、display.ts、resetSlot.ts | 可选合规 Core 整合、真实组／租约、独立复制状态及共享显示 | 完整语义、跳转／重放、兼容保留模式及参考 |
 | AssetManager、AssetLease、Scope 与 manifestAssetGroup | 共享获取、依赖扩展、取消与调度 | 新准入 provider／产物，不另建资源管理器 |
 | SharedMaterial2D／SharedRenderFrame2D、sharedFrameCapture 与后端 Host | 自有有序几何、完整颜色／页／裁剪身份及完成权威 | 仅补已证实图形缺口，不静默重解释旧颜色 |
@@ -107,7 +107,7 @@ WebGPU 与 WebGL2 使用同一准入绘制数据并保持相同参考结果。Ca
 | @egret/spine：createSpineResetSlot | reset 候选准备及 CPU 发布，Host 暂存／提交独立 |
 | @egret/engine/animation | 已有序列控制器与 RESET 槽，旧采样 API 保留 |
 
-准确签名与限制见各自契约。跳转与重放按 [Spine 实例的跳转](spine-seek.md)导出，保留模式见[重置槽](spine-reset-slot.md#保留播放)；本计划不导出未来的二进制／变体接口。M2.1 负责产物／诊断准入，M2.2 负责重放／历史／失败，M2.3 负责绘制／颜色发布，M2.4 负责兼容替换。依赖消费者合并前，仅在所属 Issue／PR 确定发生变化的边界，不新增登记册或全局核心冻结。
+准确签名与限制见各自契约。跳转与重放按 [Spine 实例的跳转](spine-seek.md)导出，保留模式见[重置槽](spine-reset-slot.md#保留播放)。二进制格式及运行时限制见 [Spine 内容接入](spine-content-ingress.md)。M2.1 负责产物／诊断准入，M2.2 负责重放／历史／失败，M2.3 负责绘制／颜色发布，M2.4 负责兼容替换。依赖消费者合并前，仅在所属 Issue／PR 确定发生变化的边界，不新增登记册或全局核心冻结。
 
 M3 消费资产身份、边界、显式命中形状、时钟／事件及替换通知；M4 复用真实消费者和支持矩阵，不另做演示实现。
 

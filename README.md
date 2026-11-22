@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-**Egret Engine 7.0 is an open-source TypeScript game engine for the web.** The [`v7.0.1-rc.3` release candidate](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3) supports 2D animation and UI on WebGPU and WebGL2, with optional World3D for 3D games.
+**Egret Engine 7.0 is an open-source TypeScript game engine.** Build browser games with animated characters, layered UI and lightweight 3D scenes on WebGPU or WebGL2. The 7.0.2 distribution includes standalone browser files, five npm-format modules and an editable starter. [7.0.2 downloads and installation](knowledge-base/en/docs/release-archives.md)
 
 [Play games built with Egret](https://github.com/cnedwin/PortedGamesEgret) · [Build a game](#run-an-example) · [Documentation](DOCUMENTATION.md) · [Contribute](CONTRIBUTING.md) · [Project board](https://github.com/users/cnedwin/projects/2)
 
@@ -18,9 +18,9 @@ Years later, as times change and technology advances, many developers continue t
 
 ## Run an example
 
-With Node.js 26.7.0, extract the [editable starter](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-first-game.zip) and run `npm install`, then `npm start` in that folder. Open `http://127.0.0.1:8000` and click the square. Change `STEP` from 32 to 64 in `main.mjs` and reload to double the distance it moves.
+With Node.js 26.7.0, extract the [editable starter](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-first-game.zip) and run `npm install`, then `npm start` in that folder. Open `http://127.0.0.1:8000` and click the square. Change `STEP` from 32 to 64 in `main.mjs` and reload to double the distance it moves.
 
-For an existing web page, [download the browser files and licences](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.1-rc.3/egret-browser.zip) and choose the 2D or 3D engine. In an npm project, run `npm install @egret/engine` to get `7.0.1-rc.3`, or install the modules by archive URL. [7.0 release notes and checksums](knowledge-base/en/docs/release-archives.md) · [Early engineering preview](https://github.com/cnedwin/Egret_rebuild/releases/tag/v0.1.0-preview.1) · [Original starter ZIP](https://github.com/cnedwin/Egret_rebuild/releases/download/v0.1.0-preview.1/egret-first-game.zip)
+For an existing web page, [download the browser files and licences](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-browser.zip) and choose the 2D or 3D engine. In an npm project, run `npm install @egret/engine` to install the public default version, or install the modules by archive URL. [7.0 release notes and checksums](knowledge-base/en/docs/release-archives.md) · [Previous RC3 release](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3)
 
 To work on the engine itself:
 
@@ -32,14 +32,15 @@ Use **Node.js 26.7.0** and **pnpm 11.25.0**. Run these commands from the reposit
 
 The [starter](examples/starter/README.md) is a small game entry point you can copy. The [setup guide](knowledge-base/en/docs/getting-started.md), [examples](examples/README.md), [public imports](knowledge-base/en/docs/entry-points.md), and [Egret 5 API migration guide](knowledge-base/en/docs/egret-api-migration.md) cover the next steps.
 
-## Egret today
+## Choose a development path
 
-The release candidate includes a shared 2D renderer, asset loading and lifetimes, sprite sequences and optional Spine animation, managed UI, multilingual text, and browser input. [World3D](knowledge-base/en/docs/world3d.md) adds standalone 3D rendering and physics.
+- **Browser.** Start a game with `play` or `play3d` in one file. Import the shared 2D renderer, sprite sequences, optional Spine, managed UI, native text editing or World3D directly when your game needs finer control. [Play](knowledge-base/en/docs/play.md) · [Play3D](knowledge-base/en/docs/play3d.md) · [API index for AI tools](llms.txt)
 
-- **A whole game in one file.** [`play`](knowledge-base/en/docs/play.md) and [`play3d`](knowledge-base/en/docs/play3d.md) start a small 2D or 3D game from one call, with input, sound made in code, tweens and overlap tests. The [single files](knowledge-base/en/docs/single-file.md) `egret2d.js` and `egret3d.js` need no build step, and [`llms.txt`](llms.txt) is the page an AI agent reads to write one.
-- **Android.** The [Runtime SDK](knowledge-base/en/docs/runtime-sdk.md) preview runs an exported 2D game in an Android app through a Rust GLES3 player, with a WebView or optional embedded V8 script host. The [Android project player](knowledge-base/en/docs/android-project-player.md) guide covers the AAR and export. World3D on the native host is not available yet ([#393](https://github.com/cnedwin/Egret_rebuild/issues/393)).
+- **Native Android.** The Runtime SDK exports an arm64 project for locally signed APKs and AABs. Trimmed V8 runs game scripts and a Rust GLES3 player renders the scene. A playable 2D act with Spine and scrolling UI and selected 3D levels with textured models and a 2D HUD have run on Galaxy Z Fold7. [Player guide and supported profiles](knowledge-base/en/docs/android-project-player.md)
 
-The [capability map](knowledge-base/en/docs/core-progress.md) records supported paths and device evidence. The [engineering plan](knowledge-base/en/docs/engineering-plan.md) tracks remaining acceptance. An integrated AI-assisted creator, publishing to more hosts, and legacy project migration are product goals on the [roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md).
+- **WeChat Mini Games.** The repository includes a WebGL2 mini-game project exporter. The current check uses a simulated wx host. WeChat DevTools, the on-device WeChat client and platform review remain open. [Export guide](knowledge-base/en/docs/wechat-minigame.md)
+
+The integrated visual creator, additional native hosts and one-click migration of older Egret projects are longer-term product goals. [Capabilities and device evidence](knowledge-base/en/docs/core-progress.md) · [Product requirements](knowledge-base/en/docs/product-requirements.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md)
 
 ## Development and community
 
@@ -49,11 +50,11 @@ Find scoped work in the [project board](https://github.com/users/cnedwin/project
 
 | PR | Main change | 主要变化 |
 | --- | --- | --- |
-| [#384](https://github.com/cnedwin/Egret_rebuild/pull/384) – [#392](https://github.com/cnedwin/Egret_rebuild/pull/392) | Android project player: embedded V8, native command replay, atlas regions, packaged text and binary assets | Android 项目播放器：内嵌 V8、原生命令重放、图集区域、包内文本与二进制资源 |
-| [#381](https://github.com/cnedwin/Egret_rebuild/pull/381) · [#383](https://github.com/cnedwin/Egret_rebuild/pull/383) | Android Rust Runtime SDK with WebView and V8 hosts, measured on a Galaxy Z Fold7 | Android Rust Runtime SDK，含 WebView 与 V8 宿主，已在 Galaxy Z Fold7 实测 |
-| [#379](https://github.com/cnedwin/Egret_rebuild/pull/379) · [#382](https://github.com/cnedwin/Egret_rebuild/pull/382) | One tag releases browser files, packages and the starter; `7.0.1-rc.3` on npm under `next` | 一个标签发布浏览器文件、包和入门工程；`7.0.1-rc.3` 以 `next` 发布到 npm |
-| [#369](https://github.com/cnedwin/Egret_rebuild/pull/369) – [#373](https://github.com/cnedwin/Egret_rebuild/pull/373) | Play and Play3D clocks, restart and cleanup; agent guide cards; mouse chords and drag pointers | Play 与 Play3D 时钟、重开和清理；智能体指南卡片；鼠标组合键与拖动指针 |
-| [#360](https://github.com/cnedwin/Egret_rebuild/pull/360) – [#368](https://github.com/cnedwin/Egret_rebuild/pull/368) | Play and Play3D, `llms.txt` and the `egret2d.js` / `egret3d.js` single files | Play 与 Play3D、`llms.txt` 以及 `egret2d.js`／`egret3d.js` 单文件 |
+| [#447](https://github.com/cnedwin/Egret_rebuild/pull/447) | Export a browser game as a WeChat Mini Game project and check it against a simulated wx host | 将浏览器游戏导出为微信小游戏工程，可在模拟 wx 环境中检查 |
+| [#445](https://github.com/cnedwin/Egret_rebuild/pull/445) · [#446](https://github.com/cnedwin/Egret_rebuild/pull/446) | Verify selected browser paths on Windows and Fold7. Prebuild 22 static meshes for the 24-model gallery | Windows 和 Fold7 浏览器实测。含 24 个模型的画廊改为预生成 22 个静态网格 |
+| [#436](https://github.com/cnedwin/Egret_rebuild/pull/436) · [#438](https://github.com/cnedwin/Egret_rebuild/pull/438) · [#441](https://github.com/cnedwin/Egret_rebuild/pull/441) | Keep native Android geometry resident and replay 210 frames of Rally driving | Android 原生播放器复用驻留几何，实机回放 210 帧赛车驾驶 |
+| [#429](https://github.com/cnedwin/Egret_rebuild/pull/429) – [#432](https://github.com/cnedwin/Egret_rebuild/pull/432) | Signed local Android builds, a playable 2D act and selected World3D levels with textured GLBs | Android 本地签名构建，跑通 2D 关卡与包含贴图 GLB 的选定 3D 关卡 |
+| [#411](https://github.com/cnedwin/Egret_rebuild/pull/411) | Build Spine 4.3 atlas, JSON and binary skeleton artifacts from exported inputs | 从 Spine 4.3 导出文件构建图集、JSON 及二进制骨骼产物 |
 
 [Full changelog](knowledge-base/en/CHANGELOG.md) · [中文更新日志](knowledge-base/Cns/CHANGELOG.md) · [Earlier preview milestones](https://github.com/cnedwin/Egret_rebuild/blob/ab2527359e475f2f24f6758538d925abcce53846/README.md)
 

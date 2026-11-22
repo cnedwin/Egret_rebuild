@@ -10,10 +10,10 @@ For the Android AAR, game export and Activity integration, see the [Android proj
 
 | Target | Build product | Host and first acceptance |
 | --- | --- | --- |
-| Android | Embeddable library and Gradle project for APK/AAB distribution. The first artifact is an arm64 debug APK. | Start with an opaque 2D surface on GLES3, measure the bridge separately, then qualify Vulkan on the same workload. Recreate GPU resources after surface loss. |
+| Android | AAR and generated Gradle project for externally signed arm64 APK/AAB builds targeting API 36. | On Fold7, a split install and upgrade restored the save. The GLES3 player ran selected 2D and World3D games with a 2D HUD and recovered resident geometry for replay. Broader graphics profiles and Vulkan remain open. [Player and measurements](android-project-player.md) |
 | iOS | XCFramework and Xcode project for signed archives | Metal surface, bundled game scripts and a replaceable script host. Verify first input, memory warnings, background/foreground, scale and orientation on an iPhone. |
 | HarmonyOS | Native library and DevEco Studio project for signed application packages | Bind ArkTS to a C ABI and an XComponent native window. Qualify surface replacement and the graphics backend on hardware before enabling it by default. |
-| WeChat Mini Games | Mini Game project with JS entry, app configuration and resource subpackages | Use the host canvas and storage/lifecycle APIs. Load optional CPU kernels through WXWebAssembly when supported. Check real-device first screen, package limits and fallback. |
+| WeChat Mini Games | A repository tool exports a JS entry, adapter, packaged assets and project configuration for WebGL2. | A 2D game reached gameplay on the simulated wx host. DevTools, on-device WeChat and platform submission remain open. [Export and limitations](wechat-minigame.md) |
 | Douyin Mini Games | Douyin project with JS entry, platform configuration and resource subpackages | Use the host graphics interface and a single on-screen canvas. Qualify compositing and optional TTWebAssembly on each supported host. |
 
 Ordinary mini-game export uses the public platform interfaces. An OEM or app operator embedding the native SDK is a separate integration with its own device and distribution agreement. Evaluate native backends, including wgpu, against required features, package size and measured device costs. [Android game host](https://developer.android.com/games/agdk/game-activity/get-started) · [Apple Metal](https://developer.apple.com/metal/) · [Huawei XComponent](https://developer.huawei.com/consumer/en/doc/harmonyos-guides/napi-xcomponent-guidelines/) · [WeChat interfaces](https://github.com/wechat-miniprogram/minigame-api-typings) · [Douyin runtime](https://developer.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/dev-guide/bytedance-mini-game) · [Douyin Wasm](https://developer.open-douyin.com/docs/resource/zh-CN/mini-game/guide/minigame/optimization)
@@ -26,7 +26,7 @@ TypeScript retains input, gameplay, display order, clocks and resource leases. A
 
 AssetManager and the owning Scope remain the authority for logical assets, version replacement and cancellation. A native surface owns physical allocations for its device generation. Retain a rebuildable CPU source while the game holds a lease. A lost context invalidates handles from its generation. Stop accepting new work before shutdown, release outstanding work safely and report cleanup failures. Bounds, ownership and byte order belong to the versioned native interface; callers cannot borrow a JS or Rust object past the call.
 
-## Delivery sequence
+## Original delivery sequence
 
 1. Install the Android 2D specimen. Run the same scene in Android Chrome, in the live Rust renderer, and as a native replay of the captured commands. Check pixels and image lifetime before interpreting timing. State the script VM, bridge transport, GPU backend and supported scene profile.
 2. Add an iOS Metal host and a second script embedding. Use shared capability tests for startup, pause/resume, close and texture rebuilding. Freeze the distributable embedding ABI after both hosts can exercise it.
