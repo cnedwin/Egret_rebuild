@@ -4,6 +4,130 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Earlier version labels identify engineering checkpoints. The workspace packages use the private version `0.0.0`, and the host protocol remains 1.0. Subsystem contracts and evidence describe each checkpoint.
 
+## Verify Android replay during an eight-car Rally start — 2026-11-22
+
+The Android player guide records the measured bridge traffic, recording size and native replay cadence during a 210-frame driving sequence on a Galaxy Z Fold7, including steering, draw order and EGL recovery.
+
+## Load prebuilt static meshes in the model gallery — 2026-11-22
+
+The gallery loads 22 meshes from one generated GLB. The fox and villager retain their live rigs. Model authors can regenerate the pack with node tools/bake-models.mjs --gallery.
+
+## 3D: a library of 24 models made in code — 2026-11-22
+
+`examples/models` holds twenty-four models made from distance fields, each checked from four sides: a fox, cat, dog, rabbit, chick and fish; a villager and a knight; a cottage, well, watchtower and pagoda; a tree, pine, bush, flower, mushroom and cactus; a barrel, crate, chest, lantern, rock and signpost. Each file says in a comment which parts it is made of; the README lists the lessons making them taught; a gallery page makes and shows them all; a test keeps every model within its triangle budget, on the ground and at the size of its kind. The model-in-code guide card now starts from them. `sdfIntersect` takes its colour from the parts that have one, so a part used only to cut no longer paints the cut white.
+
+## Fix WebGL2 mip sampling, nested hit targets and the model gallery — 2026-11-22
+
+Multi-level pages use mipmap-capable minification. CSS hit targets account for transformed parents. The example server serves the registered gallery models. The Lanterns check measures the additional light cast when the shrine is reached.
+
+## 3D: sharp hard surfaces, levels of detail, baked models and preview notes — 2026-11-22
+
+The mesh option `sharp` keeps hard surfaces hard: vertices placed where the surface's planes meet (dual contouring) and normals split at creases, so crates, walls and machines keep their corners and flat faces. `createSdfLod3D` makes a model in levels of detail, each simplified from the one before. `node tools/bake-models.mjs` makes models ahead of time in Node and writes each as a .glb: the library's 24 models bake in about 16 seconds and then load in about 50 milliseconds. The model preview lists notes: a mesh in several pieces, a model below or above the ground, a slow one. The check found three loose parts in the library (a dog's tail, a door slab, a well's lid), now fixed, and its test holds every model to one piece.
+
+## 3D: models made in code that move — 2026-11-22
+
+`createSdfRig3D(shape, bones, options)` skins a distance-field model to bones at its joints. Each bone names where it turns, its parent and the parts it moves, and pairs come from one side with `mirror: 'x'`; every vertex follows the up to four bones whose parts are nearest, so joints bend instead of tearing. `rig.clip(name, duration, poses)` turns poses of named bones (Euler angles and offsets at times) into a clip, `rig.play` fades between clips and `rig.update` moves them on. The library's villager walks and the fox trots, and the gallery shows them moving.
+
+## 3D: wood, stone, brick, plaster, metal, cloth and bark drawn by the shader — 2026-11-22
+
+`createSurfaceMaterial3D({ surface, scale, strength, bump })` is a standard material whose fragment and normal hooks draw a surface from the world position, projected from the three axes: wood grain, stone with cracks, brick courses, plaster, brushed metal, woven cloth or bark, in colour and in relief, with no texture and no texture coordinates. It adds the detail vertex colours cannot hold, at the size of the pixels. Both WebGL2 and WebGPU draw it, and the same picture comes back from each. The library's wooden props, the cottage and the stone buildings name their surface, and the gallery and the model preview draw them with it.
+
+## A browser game as a WeChat mini game — 2026-11-22
+
+tools/wechat/export-wechat.mjs packages a browser game made with the engine as a WeChat mini game project, unchanged: one game.js with an adapter that makes a document, page classes, the screen canvas, touches as pointer events, files, storage, sound and the scenery under the canvas out of wx, plus game.json and project.config.json. With --playwright, WebP pictures are written again as JPEG or PNG. tools/wechat/check-minigame.mjs runs the folder in a headless browser with a stand-in for wx. A ported 2D game was played this way to its first night; WeChat itself, DevTools and phones were not run, and uploading stays with the game's owner, who holds the AppID and upload key.
+
+## Play the South Gate act of Lantern Shadows on Android — 2026-11-21
+
+A local project adapter brings the original first act, Spine characters, scrolling playbill and score records to the trimmed-V8 player. Its native GLES3 draws now support the shadow blend, linear filtering and vertex colors used in this game.
+
+## Build signed local Android releases — 2026-11-21
+
+The Android project player defaults to arm64 trimmed V8 and exports an application targeting API 36. Set an application ID, launcher name and PNG icon, version code and version name when generating the Gradle project. Supply an external signing key at build time to produce a release AAB and APK. The player guide covers installing device-specific APKs with bundletool and upgrading them while keeping local game saves.
+
+## Race a textured GLB kart on Android — 2026-11-21
+
+The trimmed-V8 project player can read packaged GLBs with embedded base-color JPEGs, share their texture pages with the existing resource lifecycle and render indexed UV meshes with GLES3. A local export of Jinxiu Rally uses the original panda kart, driver and one-lap race.
+
+## Record resident World3D geometry on Android — 2026-11-21
+
+The Android recorder shares mesh definitions between acknowledged frames. Native playback can reconstruct a full frame on EGL recovery while keeping the existing 64 MiB recording limit and compatibility with earlier captures.
+
+## Play Roll3D on the native Android player — 2026-11-21
+
+The optional World3D player draws an indexed 3D scene with depth, Standard lighting and a 2D HUD using trimmed V8 and GLES3. Roll3D uses the existing browser level, touch controls, camera and replay rules.
+
+## Reuse static World3D geometry across Android frame submissions — 2026-11-21
+
+The Android project player sends only changed mesh definitions after an acknowledged draw. Camera and HUD changes still arrive every frame. Full packets remain available for recording, retry and EGL recovery.
+
+## Optional built-in audio for Play games — 2026-11-21
+
+Pass audio: false to play or play3d to use a game-owned mixer or run silently. Play skips its AudioContext and all preset preparation, including on the first input. Built-in audio remains enabled by default.
+
+## 3D: models shaped from distance fields, and a simplifier — 2026-11-21
+
+Models made in code no longer have to be boxes pushed through each other. `createSdfGeometry3D` turns a shape built from `sdfSphere`, `sdfBox` (with rounded edges), `sdfEllipsoid`, `sdfCapsule` (tapered limbs), `sdfCylinder`, `sdfCone` and `sdfTorus`, joined by `sdfUnion`, `sdfSubtract` and `sdfIntersect` with a `smooth` blend, and shaped by `sdfMirror`, `sdfRound`, `sdfShell` and `sdfDisplace`, into one coloured mesh: smooth normals, colours blended where parts meet, creases and hollows shaded in the vertex colours, at most 8000 triangles unless asked. `simplifyGeometry3D` brings any indexed mesh to a triangle budget and keeps texture seams and material groups. A guide card, model-in-code, shows an agent how to model with them. The World3D example pages load again in a browser: their import maps lacked entries the 3D entry now reaches.
+
+## 3D: turned and extruded shapes, painted patterns, worn edges, .glb export and a model preview — 2026-11-21
+
+Models made from distance fields get `sdfLathe` (a profile turned about y: vases, pillars, posts) and `sdfExtrude` (an outline pushed along z: signs, stars, blades), `sdfPattern` (spots, stripes, noise patches and gradients painted into the vertex colours) and the mesh option `edges`, which lights outer edges as on worn wood. `simplifyGeometry3D` now weighs vertex colours with position-and-colour quadrics, so stripes and painted trims keep their line at a few thousand triangles. `exportGlb3D` writes a geometry or an object tree as a .glb that `loadGltf3D` and Blender read. `node tools/model-preview.mjs` draws a model module from four sides in a headless browser and reports its triangles, size and build time, so an agent can look at what it made.
+
+## Reduce CPU work on first atlas upload — 2026-11-21
+
+The shared 2D renderer recognizes blocks with runs of transparent or opaque pixels and avoids color-table lookups there for those pixels. Intermediate alpha, mip generation and resource ownership keep their existing behavior.
+
+## Reuse a cold atlas across overlapping WebGPU draws — 2026-11-21
+
+Two consecutive direct frames can sample the same immutable page as soon as its upload and first draw have been submitted. The Host retains the page until the borrowing draw retires and starts with a fresh upload after device loss.
+
+## The panel counts the Host's draw calls — 2026-11-20
+
+Both shared Hosts count the draw calls they make for a frame (its batches, a pass for each effect, layers, and the copy to the canvas) and give the last frame's count as `getFrameDrawCalls()`. The browser game's stats panel shows it as `draws` beside `commands`, so batching can be seen: a frame of many commands on one image and material is one draw. The number is counted, not timed; how long the draws take on a GPU is still measured on hardware.
+
+## Saves change a copy; UI roots from button callbacks; sideways lists read the ordinary wheel — 2026-11-20
+
+Follow-ups from Mechanism City after 687037a. `save.update` now gives its change a copy and takes it only once it passes `validate`: a refused change, or one that throws halfway, no longer alters the save in memory, which the documentation already promised; `save.data` is a new object after an update. `createUiRoot` may be called from a button's callback while input is delivered, as `prepare()` already could, so a panel made on each open needs no wait. A scroll control's `wheel` takes `crossAxis: true`, so a sideways list scrolls by an ordinary mouse wheel.
+
+## 2D physics: joints, ropes, and bodies that change kind — 2026-11-20
+
+From the notes of Mechanism City, a physics puzzle game. The 2D physics world has joints: `world.addJoint({ kind: 'distance' | 'rope', a, b })` holds two bodies at a length, as a rod, or no further apart than it, as a rope; with `point` it holds a body to a place in the world, and a distance of 0 is a pin, for pendulums and hanging weights. A rope's `length` can be wound in, `removeJoint` cuts it, and anchors can sit away from a body's centre. `body.setKind('dynamic')` lets a held body fall where it is, keeping its contacts, joints and data, instead of being removed and made again. The documentation now says what a contact listener may do: change the world for the next step, but not call `step`, which is refused with `PHYSICS_STEP_REENTRANT`. Bodies still do not turn by themselves, so there is no hinge that tips a plank.
+
+## Shape masks that move or grow keep their image; the limits of effects said — 2026-11-20
+
+From the notes of Mechanism City. A shape mask (`node.mask = sprite`) was drawn again on the CPU whenever it moved or was scaled, which made a circle growing to the whole screen cost seconds a frame under software rendering. Now a mask that only moves keeps its image, placed where it is, and one that grows or shrinks evenly keeps it, stretched, until it has changed by an eighth of an octave; a growing mask is drawn again some 8 times for each doubling instead of every frame. The page on effects says what a mask costs, and that a ninth effect group in one frame makes the Host refuse that frame, whose error now says "more than 8 effect groups in one frame" (or that effects are off, or nested more than 4 deep).
+
+## What Mechanism City found: saves, particle blending, painted textures, hover, sound and video — 2026-11-20
+
+Fixes from the notes of Mechanism City, a 2D physics puzzle game. What `save.update` returns, and the data after an edit in place, must now pass `validate`: an arrow such as `data => (data.x = 1)` used to replace the whole save with `1`; it is now refused, nothing is written and `onProblem` hears `invalid`. A particle emitter takes `blendMode`, so sparks and fire can add up with `'add'`. A browser game gives `textureFromCanvas(canvas)` and `textureFromPixels(width, height, pixels)`, the lease of a texture painted in code in one step, and `createBrowserGame({ hover: true })` makes `game.hover` for a scroll control's wheel. `createWebAudioBackend` is exported, for a page that makes its mixer with `createAudioMixer`. `createBrowserVideo` takes a list in `src`, the first file the browser can play being played. The page on the browser game says the "No available adapters." line of `backend: 'auto'` comes from the browser itself.
+
+## What Mechanism City found in the UI: labels in leaves, clearer refusals, prepare from a button, keys a control took — 2026-11-20
+
+Fixes from the UI notes of Mechanism City. `game.createLabel({ scope })` makes a label owned by another scope, such as the `context.scope` of a UI leaf, so a label can be the leaf's content. `UI_CONTENT_INVALID` now says in its cause which leaf or row gave the content and why it was refused, such as a display object that belongs to another scope. `root.prepare()` asked for from a button's callback, while input is delivered or a frame drawn, starts once that is over instead of failing with `UI_BUSY`; every `UI_BUSY` names its reason in cause. `bindBrowserInputActions` takes `skipPrevented`, so a key a focused control took presses no action as well. The UI pages say how to show and hide a root with the layer manager, and what shape a semantic `range` has.
+
+## Less motion, touch targets a finger can hit, and words in each language — 2026-11-20
+
+For the quality checklist of the games repository, where every game failed the same three items. `@egret/engine/web/kit` gives `prefersReducedMotion()`, `watchReducedMotion()` and `browserLanguages()`. A 2D camera has `shakeScale`, 0 for a still view. `play` follows the system's reduced-motion setting by default: no shakes and faint flashes, and `game.reducedMotion` can change it. A browser game gives `unitsPerCssPixel` and `padHitArea(node, 44)`, a hit area a finger can hit whatever the canvas's scale. `@egret/engine/kit` has `createTextTable`, a game's words in each language with a fallback, listeners for a change of language and a list of what each language is missing, and `pickLanguage` to start in the browser's language. `guide/entries.json`, written by `tools/entry-map.mjs`, lists the engine entries each entry brings with it, so the capability matrix can credit `web/pointer` to a game that imports `web/game`.
+
+## Tiles, colour mixing, see-through 3D things and drags in the checker — 2026-11-20
+
+What the round-6 games still wrote by hand. `game.tiles(rows, { size, x, y, colors, solid })` makes a level of tiles from rows of characters, as one sprite, with `pushOut` out of its solid tiles, `solidAt`, `at` and `set`. `game.mix(a, b, t)` mixes two colours. A `play3d` thing takes `opacity`: see-through things cast no shadow, and one that also glows adds its light to what is behind it, as a beam. A menu title of several lines gets as many lines of room. `tools/verify-game.mjs` drags twice in its blind play, and a play script has `player.drag`. `llms.txt` and the play guides say how a 3D thing turns and which way it faces, that every shape is placed by its middle, that `.loop()` repeats for ever and that defining a sound again replaces it.
+
+## What a seventh round of games still had to guess — 2026-11-20
+
+Four games written from `llms.txt` alone all ran at their first try; what they still guessed is now there. `game.follow` takes `lookY`, to look above the thing it follows and frame a tower or a sky, and the page gives `game.camera.fov` and how to lay a cylinder or a cone on its side. Rain falls as streaks, not dots. A play script for `tools/verify-game.mjs` starts a new game, with what blind play saved forgotten, and `player.read(fn)` reads what a game keeps on `window`; the page says how `player.until` waits. It also gives the arguments of gradient lines and that `game.tiles` takes a `layer` and what its `pushOut` returns.
+
+## 3D interface: an overlay that keeps its shape, focus behind a dialog, handles before the camera, scenes by key, text from page fonts — 2026-11-20
+
+From the notes of Tea Horse Road. `createWorld3DOverlay` takes `fit: 'contain' | 'cover'`, so the interface keeps its shape when a phone turns, and `overlay.box` says where it is. A node that held the focus when a modal dialog opened over it is published without the focus instead of making `publish()` throw. Transform handles take a press before orbit, fly and follow controls on the same canvas whichever was made first. `serializeScene3D` takes `geometryKey` and `deserializeScene3D` `resolveGeometry`, so a camp of geometry built in code is saved by name, not by every vertex. `createCanvasFont3D` traces 3D text from the page's own fonts, Chinese included, without a font file. The docs say that control callbacks must return at once.
+
+## 3D: moving cloth stays visible, distance culling, a clearer sky, and which entry has what — 2026-11-20
+
+From the notes of Tea Horse Road, a 3D off-road game. Cloth, ropes and trails whose points move in place now have bounds where their points are: a tarp on a truck that had driven off used to be culled where it was made (`Geometry3D.boundsVersion`, counted by `invalidateBounds`). Meshes take `cullDistance`, beyond which they are neither drawn nor cast a shadow, for grass and props; the docs show `Lod3D` with instanced meshes for near and far versions. `createAtmosphere3D` takes `skyFog`, so the fog can leave the sky clear. `createGradientCubeTexture3D` reads colours given as fractions (0 to 1) as well as bytes: given fractions, a sky used to be nearly black, which was the black skybox reported under software rendering. The world3d page lists which functions are only in the backend entries, and says what a cloth's `right` and `down`, a rope's `slack`, a one-way pin, a wheel's `node`, a stream tile's centre and `createDecal3D`'s material change mean.
+
+## 3D: navigation over height fields, agents that face their way, tile centres, and a pitch that follows — 2026-11-20
+
+From the notes of Tea Horse Road. `createNavMesh3D` takes a `HeightField3D` and lays a grid of triangles over the ground, within a `region`, at a `cellSize`, less `holes` and ground below `minHeight`, where a game used to triangulate each ambush by hand. A crowd agent with `turnSpeed` turns its node to face the way it walks. A streamed terrain tile has its `center`, and `stream.distanceOf(tile)` says how far the viewer is from it, for scattered plants in more or less detail. A positional sound's `playbackRate`, and `setPlaybackRate(rate, rampSeconds)`, change the voices playing now, so an engine note follows the speed; `listener.bufferFrom(samples)` makes a buffer from synthesized samples.
+
 ## Android games can resume across script hosts — 2026-11-20
 
 Pass `services.storage` to `createSaveStore` to keep local checkpoints when switching between System WebView, standard V8 and trimmed V8. Games in the same app use separate asset roots to keep their saves independent. On a Galaxy Z Fold7, all three hosts restored progress after force-stop, migrated an older save once, and finished an admitted write before the game view reported closure.
