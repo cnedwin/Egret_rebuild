@@ -309,7 +309,7 @@ gradle -p out/snowtemple-app assembleRelease
 
 通过 `services.loadGlb` 加载模型，纹理页随游戏的资源作用域回收。GLES3 播放器保留顶点位置、索引、关节编号和权重。上一帧绘制成功后，使用同一副骨架的网格每帧共享一份骨骼矩阵。恢复用的完整帧同时携带网格定义。底色按 sRGB 采样，法线、绿色通道的粗糙度与蓝色通道的金属度按线性数据采样。这条路径支持不透明的带索引标准材质网格、每顶点四个骨骼权重，以及每副骨架最多 56 个关节。 法线贴图使用从 UV 坐标求出的切线；网格若自带切线并使用法线贴图，编码器会明确报错。
 
-在一台 Galaxy Z Fold7 上，浏览器和 APK 三个动作检查点的骨骼矩阵摘要均相同。首次完整帧为 1,856,976 字节。实测 1,483 个增量帧，每帧 7,716 字节，其中骨骼矩阵占 3,008 字节，几何定义为零。从后台返回时 GLES 上下文完成重建，待机舞台与切后台前逐像素一致。关闭后，项目归还了全部八个纹理页。[真机数据与画面对照方法](../../../runtime-sdk/measurements/fold7-snowtemple-skinned-character.json)
+在一台 Galaxy Z Fold7 上，浏览器和 APK 三个动作检查点的骨骼矩阵摘要均相同。首次完整帧为 1,856,976 字节。实测 1,483 个增量帧，每帧 7,716 字节，其中骨骼矩阵占 3,008 字节，几何定义为零。从后台返回时 GLES 上下文完成重建，待机舞台与切后台前逐像素一致。关闭后，项目归还了全部八个纹理页。[真机数据与画面对照方法](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-skinned-character.json)
 
 ### Android 实时帧的几何驻留
 
