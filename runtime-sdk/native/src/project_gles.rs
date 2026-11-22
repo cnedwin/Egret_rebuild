@@ -137,9 +137,9 @@ impl ProjectPipeline {
     }
 
     pub(crate) unsafe fn render(&mut self, header: &Header, physical: [u32; 2], vao: u32,
-                                pages: &[u32; PAGE_SLOTS], world_pages: &[u32; PAGE_SLOTS], batches: &[Batch], world: Option<&WorldFrame<'_>>) -> bool {
+                                pages: &[u32; PAGE_SLOTS], world_pages: &[u32; PAGE_SLOTS], data_pages: &[u32; PAGE_SLOTS], batches: &[Batch], world: Option<&WorldFrame<'_>>) -> bool {
         if !self.resize(physical, world.is_some()) { return false; }
-        if world.is_some() && self.world.is_none() { self.world = WorldPipeline::create(); }
+        if world.is_some() && self.world.is_none() { self.world = Some(WorldPipeline::create()); }
         let mut pending = PendingMeshes::default();
         // Compile the mapped shader only when a quad or mesh first needs atlas mapping.
         let draw = if header.mapped {
@@ -155,7 +155,7 @@ impl ProjectPipeline {
         if let Some(scene) = world {
             let Some(pipeline) = &mut self.world else { return false; };
             glClear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
-            if !pipeline.draw(scene, pages[0], world_pages, &mut pending) { return false; }
+            if !pipeline.draw(scene, pages[0], world_pages, data_pages, &mut pending) { return false; }
         } else {
             glClear(COLOR_BUFFER_BIT);
         }

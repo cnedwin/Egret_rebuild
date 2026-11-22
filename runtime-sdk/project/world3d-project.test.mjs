@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   Scene3D,
+  Attribute3D,
+  Bone3D,
+  Skeleton3D,
   Mesh3D,
   InstancedMesh3D,
   Texture3D,
@@ -223,4 +226,63 @@ test('the World3D player retries a rejected frame without ticking or consuming t
   assert.throws(() => player.recoverWorldFrame(1, 2), /unavailable/);
   await closing;
   assert.throws(() => player.recoverWorldFrame(1, 2), /unavailable/);
+});
+
+test('a shared animated skeleton crosses once per frame with resident vertices and exact recovery', () => {
+  const data = fixture(), encode = createWorldProjectEncoder();
+  const count = data.geometry.getAttribute('position').count;
+  const joints = new Attribute3D(new Uint16Array(count * 4), 4);
+  const weights = new Attribute3D(new Float32Array(count * 4), 4);
+  const colors = new Attribute3D(new Float32Array(count * 3).fill(0.75), 3);
+  for (let i = 0; i < count; i++) weights.data[4 * i] = 1;
+  data.geometry.setAttribute('joints', joints).setAttribute('weights', weights).setAttribute('color', colors);
+  const bone = new Bone3D();
+  data.scene.addChild(bone);
+  const skeleton = new Skeleton3D([bone]);
+  data.mesh.bind(skeleton);
+  const second = new Mesh3D(data.geometry, data.material);
+  second.bind(skeleton);
+  data.scene.addChild(second);
+  const pages = new Map();
+  for (const [property, id, colorSpace] of [
+    ['map', 7, 'srgb'], ['metallicRoughnessMap', 11, 'linear'], ['normalMap', 13, 'linear']
+  ]) {
+    const image = { width: 1, height: 1, data: new Uint8Array(4) };
+    data.material[property] = new Texture3D(image, { flipY: false, colorSpace });
+    pages.set(image, id);
+  }
+  data.material.vertexColors = true;
+  data.material.normalScale = 0.5;
+  data.material.emissive.set([0, 0.5, 1]);
+  data.material.emissiveIntensity = 3;
+  const full = capture(data, encode, 0, 8, -1, pages);
+  assert.equal(full.getUint32(0, true), 0x35443345);
+  assert.equal(full.getUint32(160, true), 68);
+  assert.equal(full.getFloat32(164 + 12 + 52, true), 0.75);
+  assert.equal(full.getFloat32(164 + 12 + 64, true), 1); // RGB attribute has implicit alpha one.
+  bone.setPosition(1, 0, 0);
+  data.mesh.setPosition(0.25, 0, 0); // Already bound: this is not the skin's world-space transform.
+  const pose = capture(data, encode, 1, 8, 0, pages);
+  assert.equal(pose.getUint32(0, true), 0x36443345);
+  assert.equal(pose.getUint32(12, true), 0);
+  assert.equal(pose.getUint32(164, true), 68);
+  assert.equal(pose.getUint32(168, true), 1);
+  assert.equal(pose.getFloat32(172 + 48, true), 1);
+  assert.equal(pose.byteLength, 168 + 68 + 2 * 128 + 24);
+  for (const draw of [236, 364]) {
+    assert.equal(pose.getFloat32(draw + 4 + 48, true), 0);
+    assert.deepEqual([88, 92, 96, 100, 104].map(p => pose.getUint32(draw + p, true)), [7, 2, 11, 13, 1]);
+    assert.deepEqual([108, 112, 116, 120, 124].map(p => pose.getFloat32(draw + p, true)), [0.5, 0.5, 0, 1.5, 3]);
+  }
+  assert.deepEqual(encode.recover(8, 1), createWorldProjectEncoder()(data, data.hud, pages));
+  colors.data[0] = 0.25;
+  colors.touch();
+  assert.equal(capture(data, encode, 2, 8, 1, pages).getUint32(12, true), 1);
+  assert.equal(capture(data, encode, 3, 9, 2, pages).getUint32(0, true), 0x35443345);
+  data.geometry.setAttribute('tangent', new Attribute3D(new Float32Array(count * 4), 4));
+  assert.throws(() => capture(data, encode, 4, 9, 3, pages), /authored tangents/);
+  data.material.normalMap = undefined;
+  joints.data[0] = 1;
+  joints.touch();
+  assert.throws(() => capture(data, encode, 4, 9, 3, pages), /joint outside skin palette/);
 });

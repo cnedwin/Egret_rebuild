@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/snowtemple/browser.html",
+      "originRole": "Pose comparison page and controls. First-party contribution prepared with AI assistance; Apache-2.0. Game code and character artwork are supplied separately."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/browser.mjs",
+      "originRole": "WebGL2 game-reference renderer and lifecycle. First-party contribution prepared with AI assistance; Apache-2.0. Game code and character artwork are supplied separately."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/hero.mjs",
+      "originRole": "Original pose and equipment integration, fixed checkpoints and touch actions. First-party contribution prepared with AI assistance; Apache-2.0. Game code and character artwork are supplied separately."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/main.mjs",
+      "originRole": "Native game scene, resource ownership and HUD. First-party contribution prepared with AI assistance; Apache-2.0. Game code and character artwork are supplied separately."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/prepare.mjs",
+      "originRole": "Local preparer for independently supplied game source and assets. First-party contribution prepared with AI assistance; Apache-2.0. Game code and character artwork are supplied separately."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/source.json",
+      "originRole": "Digests and provenance of the game inputs. First-party contribution prepared with AI assistance; Apache-2.0. Game code and character artwork are supplied separately."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-snowtemple-skinned-character.json",
+      "originRole": "Sanitized Fold7 browser and Release APK evidence for Lin Chong, including measured command bytes, screen comparisons and graphics recovery. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

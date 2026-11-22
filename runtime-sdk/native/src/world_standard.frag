@@ -7,6 +7,26 @@ uniform vec3 albedo;
 in highp vec2 uv;
 uniform highp sampler2D baseMap;
 uniform bool hasMap;
+#ifdef EGRET_SKIN_FRAME
+in highp vec3 tint;
+uniform highp sampler2D metalRoughMap, normalMap;
+uniform bool hasMetalRough, hasNormal;
+uniform vec2 normalScale;
+uniform vec3 emissive;
+
+// The source GLB has no tangents. Derive the same cotangent frame as the
+// browser material, with a finite fallback for a degenerate UV chart.
+vec3 mappedNormal(vec3 n) {
+    vec2 a = dFdx(uv), b = dFdy(uv);
+    vec3 x = cross(dFdy(worldPosition), n), y = cross(n, dFdx(worldPosition));
+    vec3 t = x * a.x + y * b.x, bitangent = x * a.y + y * b.y;
+    float length2 = max(dot(t,t), dot(bitangent,bitangent));
+    if (length2 == 0.0) return n;
+    vec3 sampleNormal = texture(normalMap, uv).xyz * 2.0 - 1.0;
+    vec2 xy = sampleNormal.xy * normalScale * inversesqrt(length2);
+    return normalize(t * xy.x + bitangent * xy.y + n * sampleNormal.z);
+}
+#endif
 uniform vec2 surface; // roughness, metallic
 out vec4 pixel;
 
@@ -15,9 +35,15 @@ void main() {
     vec3 base = albedo;
     if (hasMap) base *= texture(baseMap, uv).rgb;
     vec3 n = normalize(worldNormal) * (gl_FrontFacing ? 1.0 : -1.0);
+    vec2 factors = surface;
+#ifdef EGRET_SKIN_FRAME
+    base *= tint;
+    if (hasMetalRough) factors *= texture(metalRoughMap, uv).gb;
+    if (hasNormal) n = mappedNormal(n);
+#endif
     vec3 v = normalize(eye - worldPosition);
-    float roughness = clamp(surface.x, 0.045, 1.0);
-    float metallic = surface.y;
+    float roughness = clamp(factors.x, 0.045, 1.0);
+    float metallic = factors.y;
     vec3 diffuse = base * (1.0 - metallic);
     vec3 result = diffuse * (ambient + mix(ground, sky, n.y * 0.5 + 0.5));
     float nl = max(dot(n, toSun), 0.0);
@@ -38,6 +64,9 @@ void main() {
         vec3 fresnel = f0 + (1.0 - f0) * pow(1.0 - vh, 5.0);
         result += (diffuse * (1.0 - fresnel) + distribution * visibility * fresnel * pi) * sun * nl;
     }
+#ifdef EGRET_SKIN_FRAME
+    result += emissive;
+#endif
     // Mobile low uses ACES at unit exposure. The shared sRGB attachment encodes
     // this linear result exactly once before compositing the existing 2D HUD.
     vec3 mapped = (result * (2.51 * result + 0.03)) / (result * (2.43 * result + 0.59) + 0.14);

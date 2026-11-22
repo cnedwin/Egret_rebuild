@@ -77,6 +77,7 @@ final class PlayerScripts extends ScriptSession {
             + "if(bytes.byteLength>" + PlayerGraphics.MAX_FRAME_BYTES + "){"
             + "const m=new DataView(bytes.buffer,bytes.byteOffset,4).getUint32(0,true);"
             + "if(m!==" + WorldProjectPacket.TEXTURED_MAGIC + "&&m!==" + WorldProjectPacket.TEXTURED_DELTA_MAGIC
+            + "&&m!==" + WorldProjectPacket.SKINNED_MAGIC + "&&m!==" + WorldProjectPacket.SKINNED_DELTA_MAGIC
             + ")throw Error('Invalid command length');}"
             // Android WebView marshals typed arrays element by element. A native-order word
             // view carries the same bits with one quarter as many array elements.

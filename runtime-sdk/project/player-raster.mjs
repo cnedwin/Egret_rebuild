@@ -14,7 +14,8 @@ export function createPlayerRaster(native, lifetime) {
   function image(job) {
     // Legacy operations know the expected size. An embedded image is sized by
     // Android's bounded header probe before allocating or decoding its bitmap.
-    const decoded = job.op === 'glbJpeg' ? request(job) : undefined;
+    const embedded = job.op === 'glbJpeg' || job.op === 'glbPng';
+    const decoded = embedded ? request(job) : undefined;
     const {width, height} = decoded ?? job;
     if (![width, height].every(n => Number.isInteger(n) && n > 0 && n <= 4096) || width * height > 1048576)
       throw new RangeError('Invalid raster dimensions');
@@ -27,6 +28,11 @@ export function createPlayerRaster(native, lifetime) {
     if (bytes.length !== length) throw new Error('Incomplete Android raster pixels');
     return createImageData2D({width, height, pixels: bytes});
   }
+  function embeddedImage(op, path, offset, length) {
+    if (!Number.isSafeInteger(offset) || !Number.isSafeInteger(length) || offset < 0 || length < 1 || offset + length > 8 * 1024 * 1024)
+      throw new RangeError('Invalid embedded image range');
+    return image({op, path, offset, length});
+  }
   return Object.freeze({
     async loadPng(path, width, height, signal) {
       // Yield once so an already-queued cancellation wins before synchronous local decoding.
@@ -35,9 +41,10 @@ export function createPlayerRaster(native, lifetime) {
       return image({op: 'png', path, width, height});
     },
     decodeEmbeddedJpeg(path, offset, length) {
-      if (!Number.isSafeInteger(offset) || !Number.isSafeInteger(length) || offset < 0 || length < 1 || offset + length > 8 * 1024 * 1024)
-        throw new RangeError('Invalid embedded JPEG range');
-      return image({op: 'glbJpeg', path, offset, length});
+      return embeddedImage('glbJpeg', path, offset, length);
+    },
+    decodeEmbeddedPng(path, offset, length) {
+      return embeddedImage('glbPng', path, offset, length);
     },
     measureText(runs) {
       const {widths} = request({op: 'measure', runs});

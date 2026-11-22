@@ -276,7 +276,7 @@ node runtime-sdk/android/player/create-app.mjs --project out/rally-game --aar ou
 gradle -p out/rally-app assembleRelease
 ```
 
-In a World3D project, call `await services.loadGlb('panda-kart.glb', { firstPage: 1 })` for a GLB listed in `project.json` assets. Add the returned `scene` to the game world. Reserve one free texture page per distinct image, starting at the specified ID. The loader reads through the existing cancellable chunk reader. Android decodes the embedded JPEG directly from the declared APK asset, and the shared texture-page registry owns its pixels. The 3D material uses UV0 and a repeating sRGB sampler with linear filtering and mipmaps. Its GPU texture can be rebuilt from the same page after an EGL context change. Call `asset.dispose()` for early retirement, or leave cleanup to the project scope. A failed read or a page conflict does not replace a previously published asset.
+In a World3D project, call `await services.loadGlb('panda-kart.glb', { firstPage: 1 })` for a GLB listed in `project.json` assets. Add the returned `scene` to the game world. Reserve one free texture page per distinct image, starting at the specified ID. The loader reads through the existing cancellable chunk reader. Android decodes embedded JPEG and PNG images directly from the declared APK asset, and the shared texture-page registry owns its pixels. The 3D material uses UV0 and a repeating sRGB sampler with linear filtering and mipmaps. Its GPU texture can be rebuilt from the same page after an EGL context change. Call `asset.dispose()` for early retirement, or leave cleanup to the project scope. A failed read or a page conflict does not replace a previously published asset.
 
 The panda chassis and driver alone use 531,520 bytes of indexed geometry in a textured frame. E3D2 therefore allows up to 2 MiB per packet. It includes visible mesh data and references texture pages by ID. The 2D and Roll3D packet limits remain 360,472 bytes.
 
@@ -294,6 +294,22 @@ On the same Galaxy Z Fold7, Tuan completed the 1,817.51 m Stroll circuit from th
 Both runs used an 873 × 325 render buffer with a 60 Hz presentation cadence. The measurements are intervals between presentations of the game layer. The longest observed intervals were 16.583 ms in Chrome and 33.159 ms in the APK. The four timed windows contained no interval of 34 ms or more. The two scenes draw different amounts of scenery. GPU execution time, power and long-run thermal behavior were not measured. [Fold7 race, pixels and frame timings](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-rally-glb.json)
 
 With both karts stationary at the starting grid, the panda markings, green bamboo and yellow chassis were visible in both captures. In four predefined color regions the largest difference in coverage was 1.17 percentage points. The browser also draws a separate badge on the rear of the kart. In a separate Android Activity close and reopen on the same APK, the player recorded 23 page publications and 23 releases and returned to the ready screen.
+
+### Animate Lin Chong on Android
+
+The Snow Temple character example uses the original game rules and pose code to drive Lin Chong’s 47 joints. The GLB contains two skinned primitives and no animation clips. The outfit uses three images for base color, metallic/roughness and normals. The hands use vertex color. The original spear follows the pose and its tip brightens during the strike. The local preparer verifies the game inputs and packages the required attribution. Supply the game checkout separately. [Game source and asset notes](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+Build the trimmed-V8 AAR and configure a local release signer as described above. The preparer writes to a fresh directory. Serve that directory over HTTP and open `browser.html` for the browser reference. The top three controls hold the same idle, walking and spear-strike poses in both builds. Hold the lower-left control to walk or press the lower-right control to strike.
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple
+node runtime-sdk/android/player/create-app.mjs --project out/snowtemple --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.snowtemple --name SnowTemple --out out/snowtemple-app
+gradle -p out/snowtemple-app assembleRelease
+```
+
+Use `services.loadGlb` to acquire the model and texture pages in the game’s resource scope. The GLES3 player retains positions, indices, joint indices and weights. Acknowledged frames share one matrix palette per visible skeleton across its primitives. Full frames also carry the mesh definitions for recovery. Color textures use sRGB sampling. Normals and the green roughness and blue metallic channels use linear sampling. The skinning path accepts opaque indexed Standard meshes with four influences per vertex and up to 56 joints per palette. Normal maps use tangents derived from UV coordinates. The encoder rejects a normal-mapped mesh with an authored tangent attribute.
+
+On one Galaxy Z Fold7, the three browser and APK checkpoints produced matching bone-palette hashes. The first complete frame carried 1,856,976 bytes. All 1,483 measured incremental frames carried 7,716 bytes each, including 3,008 bytes of bone matrices and zero geometry definitions. Returning from the background recreated the GLES context and reproduced the idle stage pixel for pixel. Close released all eight project pages. [Device results and comparison method](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-skinned-character.json)
 
 ### Resident geometry in live Android frames
 

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-22",
+  "en": {
+    "title": "Skinned characters in the Android World3D player",
+    "body": "The GLES3 player animates opaque skinned meshes using resident geometry and shared bone palettes. The Snow Temple example uses the original Lin Chong model, material textures and spear moves."
+  },
+  "zh": {
+    "title": "Android World3D 播放器支持蒙皮角色",
+    "body": "GLES3 播放器可复用驻留几何和共享骨骼矩阵，绘制不透明蒙皮角色。《风雪山神庙》示例接入了林冲原模型、材质贴图与长枪动作。"
+  }
+}

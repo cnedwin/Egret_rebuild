@@ -338,6 +338,62 @@ public final class ProjectReplayTapeTest {
         malformed(file, contents, secondCommand + 160, Integer.reverseBytes(17), true);
     }
 
+    private static byte[] posePacket(int id, boolean delta) {
+        int definitionBytes = delta ? 0 : 12 + 3 * 68 + 12;
+        int palette = (delta ? 168 : 164) + definitionBytes;
+        int draw = palette + 68, hud = draw + 128;
+        ByteBuffer data = ByteBuffer.allocate(hud + 24).order(ByteOrder.LITTLE_ENDIAN);
+        data.putInt(0, delta ? WorldProjectPacket.SKINNED_DELTA_MAGIC : WorldProjectPacket.SKINNED_MAGIC);
+        data.putInt(4, id).putInt(8, 24).putInt(12, delta ? 0 : 1).putInt(16, 1).putInt(20, 255);
+        if (delta) data.putInt(160, id - 1);
+        data.putInt(delta ? 164 : 160, 68);
+        if (!delta) {
+            data.putInt(164, 19).putInt(168, 3).putInt(172, 3);
+            for (int i = 0; i < 3; i++) data.putFloat(176 + 68*i + 36, 1);
+            data.putInt(palette - 8, 1).putInt(palette - 4, 2);
+        }
+        data.putInt(palette, 1).putFloat(palette + 4 + 48, id * 0.125f);
+        data.putInt(draw, 19).putInt(draw + 88, 1).putInt(draw + 92, 3);
+        data.putInt(draw + 96, 2).putInt(draw + 100, 2).putInt(draw + 104, 1);
+        data.putFloat(draw + 108, 1).putFloat(draw + 112, 1).putFloat(draw + 124, 3.2f);
+        data.putInt(hud, 0x32524745).putInt(hud + 4, id).putInt(hud + 8, W).putInt(hud + 12, H);
+        return data.array();
+    }
+
+    private static void skinnedReplay(File file) throws Exception {
+        Map<Integer, PlayerGraphics.Page> pages = new java.util.HashMap<>();
+        pages.put(1, page(93)); pages.put(2, page(120));
+        ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
+        for (int id = 0; id < ProjectReplayTape.FRAMES; id++) {
+            byte[] pose = posePacket(id, id != 0);
+            if (id == 0) {
+                byte[] invalidJoint = pose.clone();
+                invalidJoint[176 + 32] = 1;
+                reject(() -> recorder.add(new PlayerGraphics.Frame(3, invalidJoint, pages)));
+            }
+            if (id == 1) {
+                int draw = 168 + 68;
+                for (int[] edit : new int[][]{{164, -4}, {168, 0}, {168, 57}, {172, 0x7fc00000},
+                        {draw + 96, 3}, {draw + 104, 2}, {draw + 112, 0x7f800000}, {draw + 124, 0xbf800000}}) {
+                    byte[] bad = pose.clone();
+                    ByteBuffer.wrap(bad).order(ByteOrder.LITTLE_ENDIAN).putInt(edit[0], edit[1]);
+                    reject(() -> recorder.add(new PlayerGraphics.Frame(3, bad, pages)));
+                }
+                int[] visits = {0, 0};
+                WorldProjectPacket.visitTexturePages(ByteBuffer.wrap(pose).order(ByteOrder.LITTLE_ENDIAN),
+                    page -> visits[0] += page, page -> visits[1] += page);
+                require(visits[0] == 1 && visits[1] == 4);
+            }
+            recorder.add(new PlayerGraphics.Frame(3, pose, pages));
+        }
+        recorder.write(file);
+        ProjectReplayTape replay = ProjectReplayTape.read(file, W, H);
+        for (int i = 0; i < ProjectReplayTape.FRAMES; i++) {
+            require(Arrays.equals(posePacket(i, i != 0), replay.frame(i, 9).bytes));
+            require(Arrays.equals(posePacket(i, false), replay.fullFrame(i, 10).bytes));
+        }
+    }
+
     private static int[] ordered(int id, int[] first, int[] reversed) { return id % 2 == 0 ? first : reversed; }
 
     private static void expandedBudget() throws Exception {
@@ -425,6 +481,7 @@ public final class ProjectReplayTapeTest {
             materialReplay();
             expandedBudget();
             residentReplay(file);
+            skinnedReplay(file);
             System.out.println("Project replay: legacy and resident tapes, full-frame recovery, page generations, identity and rejection passed.");
         } finally {
             Files.deleteIfExists(file.toPath());

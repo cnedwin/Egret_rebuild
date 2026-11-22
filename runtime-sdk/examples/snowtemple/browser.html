@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lin Chong · World3D browser comparison</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#182028;color:white;font:16px system-ui}
+body{display:grid;place-items:center}main{position:relative;width:min(100vw,177.77778vh);aspect-ratio:16/9;touch-action:none}
+@supports (height:100dvh){html,body{height:100dvh}main{width:min(100vw,177.77778dvh)}}
+canvas{width:100%;height:100%;display:block}nav{position:absolute;inset:0;pointer-events:none}
+span{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);padding:.32em 1em;border-radius:.35em;background:#223342;white-space:nowrap}
+output{position:absolute;inset:auto 10% 46%;text-align:center;pointer-events:none}
+</style>
+<!-- GAME_IMPORT_MAP -->
+<main id="stage"><canvas id="scene" width="768" height="432" aria-label="Lin Chong with spear"></canvas>
+<nav aria-label="Pose controls">
+<span style="--x:16.667%;--y:6%">Idle pose</span><span style="--x:50%;--y:6%">Walk pose</span><span style="--x:83.333%;--y:6%">Thrust pose</span>
+<span style="--x:25%;--y:92%">Hold to walk</span><span style="--x:75%;--y:92%">Thrust</span>
+</nav><output id="loading">Loading Lin Chong…</output></main>
+<script type="module" src="./browser.mjs"></script>
+</html>

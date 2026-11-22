@@ -30,6 +30,9 @@ int32_t egret_renderer_upload(EgretRenderer *renderer, uint32_t page,
  * generation. Supply the same source bytes as upload. Release/replacement retires both views. */
 int32_t egret_renderer_prepare_world_page(EgretRenderer *renderer, uint32_t page,
                                           const uint8_t *rgba, size_t length);
+/* Prepare a linear RGBA8 mip chain of the same page for material data maps. */
+int32_t egret_renderer_prepare_world_data_page(EgretRenderer *renderer, uint32_t page,
+                                               const uint8_t *rgba, size_t length);
 int32_t egret_renderer_release(EgretRenderer *renderer, uint32_t page);
 /* Current committed mesh vertex + index payload, in bytes (zero without a World3D scene).
  * This describes each logical CPU/GPU copy; it does not estimate driver allocation overhead. */

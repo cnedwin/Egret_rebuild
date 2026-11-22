@@ -1,0 +1,117 @@
+{
+  "date": "2026-11-22",
+  "issue": 393,
+  "engineBase": "290359ec39d95e271da65c54650a75784f3f0d5e",
+  "game": "cnedwin/PortedGamesEgret@4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple",
+  "model": {
+    "file": "hero-low.glb",
+    "bytes": 920296,
+    "sha256": "d495208467c2597798625c0eda3ecb59175cc45e70316d3aeeb48f94c1583aea",
+    "joints": 47,
+    "primitives": 2,
+    "embeddedAnimations": 0,
+    "embeddedTextures": "two JPEG, one PNG",
+    "motion": "Original game rules and pose code. Original spear and tip use separate resident rigid meshes."
+  },
+  "environment": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "browser": "Chrome/157.0.8103.78",
+    "renderer": "ANGLE (Qualcomm, Adreno (TM) 830, OpenGL ES 3.2)",
+    "stage": [
+      768,
+      432
+    ],
+    "native": "Android arm64-v8a signed Release, GLES3",
+    "scriptHost": "trimmed",
+    "v8": "15.7.112.19",
+    "intl": false,
+    "apkBytes": 65241066,
+    "qaApkSha256": "3b37f7839da17d46fa96e567b239c7a4d900273d1beb152d215fccdeeb0d9c54"
+  },
+  "comparison": {
+    "browser": "Character slice using the original browser game engine, rules, mesh and pose code. Same fixed camera and lights on both hosts.",
+    "poseHash": "Integer-wise XOR/multiply accumulator (FNV constants), with each matrix element rounded after multiplying by 10,000.",
+    "pixelMethod": "Android Chrome WebGL2 composited stage versus Android GLES3 display, normalized to 768x432. Logical rows 54..364 exclude the two independent HUD implementations. Per-pixel maximum-channel difference >18 from each screenshot's sampled scene background. Silhouette IoU is intersection over union. Mean channel error is on the overlapping foreground, on a 0–255 scale.",
+    "poses": {
+      "idle": {
+        "tick": 30,
+        "quantizedPaletteHash": "774f9c6c",
+        "silhouetteIoU": 0.90479,
+        "meanAbsoluteRgbChannelError": 8.19
+      },
+      "walk": {
+        "tick": 54,
+        "quantizedPaletteHash": "938f0535",
+        "silhouetteIoU": 0.90551,
+        "meanAbsoluteRgbChannelError": 8.21
+      },
+      "thrust": {
+        "tick": 64,
+        "quantizedPaletteHash": "ae42ca9e",
+        "silhouetteIoU": 0.92147,
+        "meanAbsoluteRgbChannelError": 6.43
+      }
+    },
+    "liveTouch": {
+      "browser": "Touch events injected into Chrome on the Fold7",
+      "native": "Android input injected into the installed APK",
+      "browserWalk": "walk",
+      "nativeWalk": "walk",
+      "browserStrike": "thrust",
+      "nativeStrike": "thrust"
+    }
+  },
+  "bridge": {
+    "method": "Read the bytes returned to trimmed V8 before its ordinary transfer to the player. The consumer probe passes the identical buffer and publishes sampled cumulative counters. Geometry byte counts include wire definitions; texture pages are published separately.",
+    "observed": 1485,
+    "fullPackets": 2,
+    "deltaPackets": 1483,
+    "firstFullBytes": 1856976,
+    "firstFullGeometryDefinitions": 4,
+    "firstFullGeometryBytes": 1849264,
+    "allDeltaGeometryDefinitions": 0,
+    "allDeltaGeometryBytes": 0,
+    "deltaBytesMin": 7716,
+    "deltaBytesMax": 7716,
+    "deltaBreakdown": {
+      "header": 168,
+      "boneMatrixBytes": 3008,
+      "paletteJointCountBytes": 4,
+      "drawTable": 512,
+      "hud": 4024
+    },
+    "nativeSampledResidentGeometryBytes": 1849216
+  },
+  "lifecycle": {
+    "browserPaused": true,
+    "browserResumePalette": "938f0535",
+    "nativeInitialContexts": 1,
+    "nativeResumedContexts": 2,
+    "restoredNativeStageComparedPixels": 331776,
+    "restoredNativeStageChangedPixels": 0,
+    "pageUploads": 16,
+    "pageReleases": 16,
+    "projectPagesReleased": 8,
+    "abandoned": 0,
+    "reopened": true
+  },
+  "timing": {
+    "method": "One observed window per host. Chrome measures requestAnimationFrame; native timing uses the Android UI submission callback after 30 warm-up samples. No GPU duration or presentation timestamp was measured.",
+    "browserRafSamples": 90,
+    "browserRafP95Ms": 16.7,
+    "nativeSamples": 180,
+    "nativeSubmitIntervalP95Us": 9149,
+    "nativeCommandGenerationP95Us": 1557,
+    "nativeFrameCopyP95Us": 464,
+    "browserCheckpoint": "walk",
+    "nativeCheckpoint": "idle",
+    "nativeSampledResidentGeometryAfterCloseBytes": 0,
+    "nativeViewToFirstDrawMs": 248.52,
+    "nativeProcessToFirstDrawMs": 270.24
+  },
+  "corrections": [
+    "First browser run with the address bar visible: the layout placed the bottom controls outside the visible viewport. The revised page uses dynamic viewport height. Both live controls and background/resume passed on the final paired run."
+  ],
+  "scope": "One character slice on one Fold7. Scene-wide shadows and effects, the full game campaign and distribution of external game assets are outside this measurement."
+}
