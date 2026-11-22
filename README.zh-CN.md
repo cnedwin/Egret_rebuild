@@ -18,6 +18,8 @@
 
 要在已有网页里使用白鹭，可以[下载浏览器引擎和许可证](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-browser.zip)并选用 2D 或 3D 单文件。使用 npm 的工程可运行 `npm install @egret/engine` 安装公共默认版本，也可按归档地址安装模块。[7.0 发行说明与校验清单](knowledge-base/Cns/docs/release-archives.md) · [历史版本 RC3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3)
 
+如果希望从 npm 安装现成的浏览器单文件包，2D 游戏选 `npm install @egret/2d@7.0.2`，带 World3D 的游戏选 `npm install @egret/3d@7.0.2`。[浏览器包用法](knowledge-base/Cns/docs/single-file.md)
+
 参与引擎本身的开发时，可以直接运行仓库里的示例。
 
 使用 **Node.js 26.7.0** 和 **pnpm 11.25.0**，在仓库根目录运行以下命令。

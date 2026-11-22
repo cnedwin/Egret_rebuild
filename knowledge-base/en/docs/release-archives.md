@@ -47,11 +47,22 @@ npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/eg
 
 npm then fetches `@egret/contracts` and `@egret/runtime` from the same release. To add project format or Spine support, run `npm install` with the corresponding `.tgz` URL in the table.
 
+## Install the prebuilt browser scripts from npm
+
+The five modular packages provide feature-specific imports. Two additional npm packages distribute the same prebuilt browser scripts as the 7.0.2 GitHub release for games that deploy a single file.
+
+| Game | Install | Module entry | Script to copy |
+| --- | --- | --- | --- |
+| 2D game | `npm install @egret/2d@7.0.2` | `import { play } from '@egret/2d'` | `egret2d.js` |
+| World3D scene and 2D UI | `npm install @egret/3d@7.0.2` | `import { play3d } from '@egret/3d'` | `egret3d.js` |
+
+The 3D bundle includes the 2D game entry. Choose one bundle per game and keep engine objects and resource lifetimes within that instance. [HTML and ES module examples](single-file.md)
+
 ## What an archive holds
 
-Each npm archive contains the built `dist` directory, both package READMEs, `LICENSE` and `NOTICE`. The private workspace uses version `0.0.0`. Each packed manifest carries the release version, lists its distributable files and names a licence; a package whose source manifest names none is Apache-2.0. Public entries and third-party dependencies come from the source manifest.
+Each of the five modular npm archives contains the built `dist` directory, both package READMEs, `LICENSE` and `NOTICE`. The private workspace uses version `0.0.0`. Each packed manifest carries the release version, lists its distributable files and names a licence; a package whose source manifest names none is Apache-2.0. Public entries and third-party dependencies come from the source manifest.
 
-Each package is packed twice. `egret-<name>-<version>.tgz` pins its dependencies on other Egret packages to URLs in the same release. `npm-egret-<name>-<version>.tgz`, the archive published to the registry, names them by the same version. The two hold the same files; only `package.json` differs. `release.json` records the size and SHA-256 of both, and the tag used when first publishing the registry archives.
+Each modular package is packed twice. `egret-<name>-<version>.tgz` pins its dependencies on other Egret packages to URLs in the same release. `npm-egret-<name>-<version>.tgz`, the archive published to the registry, names them by the same version. The two hold the same files; only `package.json` differs. `release.json` records the size and SHA-256 of both, and the tag used when first publishing the registry archives.
 
 ## Make a release
 
@@ -71,6 +82,12 @@ node tools/publish-registry.mjs --release ../release --dry-run
 ```
 
 The install check uses a second set of archives with local file URLs so it can run before publication. It also installs the five registry archives together into a second project, where each finds the others by version. npm downloads third-party dependencies, and the check compares the package payloads against the release archives.
+
+## Package the browser distributions from release assets
+
+Maintainers download the assets from the matching GitHub release into one directory and read the SHA-256 of `release.json` from its GitHub asset record. The following command verifies the released scripts and notices and writes two npm archives. Supply a new output directory.
+
+    node tools/pack-browser-npm.mjs --release <downloaded-release-directory> --manifest-sha256 <sha256-from-github> --out <new-directory>
 
 ## Earlier engineering preview evidence
 

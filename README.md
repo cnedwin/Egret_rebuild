@@ -22,6 +22,8 @@ With Node.js 26.7.0, extract the [editable starter](https://github.com/cnedwin/E
 
 For an existing web page, [download the browser files and licences](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-browser.zip) and choose the 2D or 3D engine. In an npm project, run `npm install @egret/engine` to install the public default version, or install the modules by archive URL. [7.0 release notes and checksums](knowledge-base/en/docs/release-archives.md) · [Previous RC3 release](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3)
 
+For a prebuilt browser bundle from npm, choose `npm install @egret/2d@7.0.2` for 2D or `npm install @egret/3d@7.0.2` for World3D. [Browser bundle guide](knowledge-base/en/docs/single-file.md)
+
 To work on the engine itself:
 
 Use **Node.js 26.7.0** and **pnpm 11.25.0**. Run these commands from the repository root.

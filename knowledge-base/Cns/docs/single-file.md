@@ -6,6 +6,17 @@
 
 打包工具会加载四个浏览器文件，按各入口核对导出名称、`play` 或 `play3d`，并生成一段音效采样。早期单文件验证中，[Play 示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/README.zh-CN.md)的三个游戏在无头 Chromium 的软件 WebGL2 上完成了启动、绘制、按键、指针和音源启动检查，覆盖本地文件和 HTTP 两种打开方式。
 
+## 从 npm 选择浏览器包
+
+| 游戏需要 | 安装 | 模块入口 | 可直接部署的脚本 |
+| --- | --- | --- | --- |
+| 2D 游戏 | `npm install @egret/2d@7.0.2` | `import { play } from '@egret/2d'` | `egret2d.js` |
+| World3D 场景与 2D 界面 | `npm install @egret/3d@7.0.2` | `import { play3d } from '@egret/3d'` | `egret3d.js` |
+
+上面的包名导入适用于构建工具。没有构建工具时，将对应的 `.js` 复制到页面旁，用下面的 `<script>` 加载。需要原生 ES 模块时，通过 HTTP 提供对应的 `.mjs` 并按相对路径导入。
+
+一个项目可以为不同页面或独立入口同时安装这两个包及 `@egret/engine`。每个正在运行的游戏只选择一套入口创建对象。3D 包也包含 2D 的 `play`。把精灵、场景、纹理、资源租约和销毁操作都留在创建它们的同一套引擎中。不同入口间交换关卡 JSON、坐标、标识等普通数据。两种传统脚本都会定义全局 `Egret`，同一页面只加载其中一个。
+
 ## 页面
 
 ```html
