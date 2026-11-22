@@ -67,7 +67,7 @@ npm login --scope=@cnedwin --registry=https://npm.pkg.github.com --auth-type=leg
 npm install --save-exact @cnedwin/egret-browser@7.0.2
 ```
 
-GitHub requires authentication for npm downloads even when the package is public. At the password prompt, use a classic personal access token with `read:packages` from an account with access to the package. Import `play` from `@cnedwin/egret-browser` or its `/2d` entry, or import `play3d` from `@cnedwin/egret-browser/3d`. For a plain HTML page, copy one classic script from the package. [GitHub Packages installation and browser examples](../../../tools/github-browser-distribution/README.md)
+GitHub requires authentication for npm downloads even when the package is public. At the password prompt, use a classic personal access token with `read:packages` from an account with access to the package. Import `play` from `@cnedwin/egret-browser` or its `/2d` entry, or import `play3d` from `@cnedwin/egret-browser/3d`. For a plain HTML page, copy one classic script from the package. [GitHub Packages installation and browser examples](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/github-browser-distribution/README.md)
 
 ## What an archive holds
 
@@ -100,7 +100,7 @@ Maintainers download the assets from the matching GitHub release into one direct
 
     node tools/pack-browser-npm.mjs --release <downloaded-release-directory> --manifest-sha256 <sha256-from-github> --out <new-directory>
 
-The [GitHub Packages workflow](../../../.github/workflows/publish-github-browser.yml) is dispatched manually from `main` for 7.0.2. It checks the release manifest and builds the combined archive with `--target github`, then installs the published package in an empty project. The run summary reports package visibility. Use the package settings to grant community access if the result is `private`. [Package access and visibility](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
+The [GitHub Packages workflow](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml) is dispatched manually from `main` for 7.0.2. It checks the release manifest and builds the combined archive with `--target github`, then installs the published package in an empty project. The run summary reports package visibility. Use the package settings to grant community access if the result is `private`. [Package access and visibility](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
 
 ## Earlier engineering preview evidence
 

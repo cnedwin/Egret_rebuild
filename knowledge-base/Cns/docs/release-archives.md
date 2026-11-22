@@ -67,7 +67,7 @@ npm login --scope=@cnedwin --registry=https://npm.pkg.github.com --auth-type=leg
 npm install --save-exact @cnedwin/egret-browser@7.0.2
 ```
 
-从 GitHub 下载公开 npm 包也需要登录。请在密码提示处输入具有 `read:packages` 权限的个人访问令牌（classic），账号须有该包的访问权限。从 `@cnedwin/egret-browser` 或其 `/2d` 入口导入 `play`，从 `@cnedwin/egret-browser/3d` 导入 `play3d`。直接编写 HTML 时，从包中复制一个传统脚本即可。[GitHub Packages 安装与浏览器示例](../../../tools/github-browser-distribution/README.zh-CN.md)
+从 GitHub 下载公开 npm 包也需要登录。请在密码提示处输入具有 `read:packages` 权限的个人访问令牌（classic），账号须有该包的访问权限。从 `@cnedwin/egret-browser` 或其 `/2d` 入口导入 `play`，从 `@cnedwin/egret-browser/3d` 导入 `play3d`。直接编写 HTML 时，从包中复制一个传统脚本即可。[GitHub Packages 安装与浏览器示例](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/github-browser-distribution/README.zh-CN.md)
 
 ## 归档里有什么
 
@@ -100,7 +100,7 @@ node tools/publish-registry.mjs --release ../release --dry-run
 
     node tools/pack-browser-npm.mjs --release <已下载的发行目录> --manifest-sha256 <GitHub记录的SHA-256> --out <新目录>
 
-维护者从 `main` 手动运行 [GitHub Packages 工作流](../../../.github/workflows/publish-github-browser.yml) 来分发 7.0.2。工作流核对原发行清单，用 `--target github` 制作合集，再在空工程里安装已发布的包。运行摘要会列出实际可见性。如果结果为 `private`，需要在包设置中调整访问权限，社区开发者才能安装。[包的访问权限与可见性](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
+维护者从 `main` 手动运行 [GitHub Packages 工作流](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml) 来分发 7.0.2。工作流核对原发行清单，用 `--target github` 制作合集，再在空工程里安装已发布的包。运行摘要会列出实际可见性。如果结果为 `private`，需要在包设置中调整访问权限，社区开发者才能安装。[包的访问权限与可见性](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
 
 ## 早期工程预览的验证记录
 
