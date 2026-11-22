@@ -1,0 +1,38 @@
+{
+  "repository": "https://github.com/cnedwin/PortedGamesEgret",
+  "commit": "4172514ea4369fd9aaf433403423340e8db072ee",
+  "directory": "SnowTemple",
+  "files": {
+    "assets/characters/hero-low.glb": "d495208467c2597798625c0eda3ecb59175cc45e70316d3aeeb48f94c1583aea",
+    "assets/models-low.bin": "affbe1eeedd01375da582ecbbc8547583089acdbcb39c64698dfea8b12cdef50",
+    "assets/models-low.json": "c1f60e3856efd54dbc30bb344db5ad0fdd78e34cb68f274d66c9d585b1a22524",
+    "README.md": "7bbc0e11b6ad9efa0291283e2878b5a7153914f4531e678184075082e350e1ae",
+    "assets/characters/README.md": "e01d14d558667e990a25e98e6a6783b97c2d2eefeaf71453d598fc07f675f7bd",
+    "docs/combat-motion-source.md": "aebc982e5569866f94238ccbf241148747f8210c700dc8efa99e4612543dfbe5",
+    "docs/locomotion-source.md": "ecc6698e060a08449e373173579f3f85b49d11eb1d9e08097c430ca1cce3ebf3",
+    "vendor/LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "vendor/NOTICE": "45ca1fe45273afe691d3bf0d34d22c7541dac7da389a85665a8df9d8b992f070",
+    "vendor/SOURCE.md": "a9a02519cdb559e38e2c2e7786be40a794c8d1ab39ba8dec748fdae27fbe10a1",
+    "vendor/importmap.json": "eee95298c7074ab2f661bb04e8240bdc04fca45b815875d607a07613c442d54d",
+    "src/rules/game.mjs": "ed489d4c20aa4765f53d1802db695aeaf160526bf73ef7c69c866c970d792423",
+    "src/rules/arena.mjs": "b2a947a861ce43d45f698d131211460160f42883f7512c38431f24c16457e2d4",
+    "src/rules/boons.mjs": "c25f74120b0e51c6989a39264e86976f760e4345095dc23e68b693a29c6cb263",
+    "src/rules/tiers.mjs": "2fb1dd089d26565b3ba2469e254d47a71187e012fade0ec70e2029024234badd",
+    "src/rules/tune.mjs": "3e627ec0f43f4ed6f12cc0673abcf6101f04dd2372d931cc9f770fb1a66b3681",
+    "src/rules/yard.mjs": "efcf6976b17cf86ade1cc81abb7d64da93087c85328b04ffc70eaa5e3817a49f",
+    "src/view/figures.mjs": "055e97402072ccade0f44bf3d1029b1776b8e95e724b31993c43d78853dc6f35",
+    "src/view/rig.mjs": "d9aa5645ce4ba3dceb0ba05ca2401295440bcbb40f37f469032954ac1bcda2dc",
+    "src/view/characters.mjs": "7c54d62f60d0b889ca3bd80005a5adc03096798dedb358135fd1bf59f10079cc",
+    "src/view/models.mjs": "bb76fec2f4f395759d0b1d9352652c702d5c01ac7ec22056dbb304adfe58c71d",
+    "src/view/prop-surface.mjs": "fb869c5067dae48131829a56a8a09e723e4d2c78b2cf0c2d1c86a6bfbc211ae0",
+    "src/view/boot-contact.mjs": "fe2b9b58590e517138906e1122043997d5da2f57d409a20029a20a0a4731f742",
+    "src/view/locomotion.mjs": "af7311ad86a62dd3f95150b34ec30df2146372e2d05d110afedfc3dd7dce8a24",
+    "src/view/locomotion-data.mjs": "9699de9ece5763f5272ea3d785248206cda478d87da3c67351d166c7a7608813",
+    "src/view/combat-motion.mjs": "c682f03eb044399262b80732a7d2bd91ed001c4b552ede81cf3f90c67f0ccf91",
+    "src/view/combat-motion-data.mjs": "a346f79526c933d2b56954d35d40658de65742f29eb77b00956fb269a871c5f3"
+  },
+  "browserVendor": {
+    "files": 273,
+    "sha256": "990822efe87e32f445e6930cf4d27e7ac6acac4bf125b76e98079ed621e505ff"
+  }
+}

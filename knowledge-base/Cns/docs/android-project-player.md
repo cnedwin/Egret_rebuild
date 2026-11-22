@@ -276,7 +276,7 @@ node runtime-sdk/android/player/create-app.mjs --project out/rally-game --aar ou
 gradle -p out/rally-app assembleRelease
 ```
 
-在 World3D 工程中，将 GLB 加入 `project.json` 的 assets，再调用 `await services.loadGlb('panda-kart.glb', { firstPage: 1 })`，把返回的 `scene` 加入游戏场景。从指定编号起，为每张不同的图片预留一个空闲纹理页。加载器沿用可取消的分块读取，Android 直接从清单声明的 APK 资源解码内嵌 JPEG，再交给现有纹理页管理。3D 材质按第一套 UV 坐标取样，支持 sRGB、重复平铺、线性过滤和多级纹理。EGL 上下文变化后可从原页重新上传。可调用 `asset.dispose()` 提前回收，或交由项目作用域统一释放。读取失败或纹理页编号冲突时，原有资源仍然有效。
+在 World3D 工程中，将 GLB 加入 `project.json` 的 assets，再调用 `await services.loadGlb('panda-kart.glb', { firstPage: 1 })`，把返回的 `scene` 加入游戏场景。从指定编号起，为每张不同的图片预留一个空闲纹理页。加载器沿用可取消的分块读取，Android 直接从清单声明的 APK 资源解码内嵌 JPEG 和 PNG，再交给现有纹理页管理。3D 材质按第一套 UV 坐标取样，支持 sRGB、重复平铺、线性过滤和多级纹理。EGL 上下文变化后可从原页重新上传。可调用 `asset.dispose()` 提前回收，或交由项目作用域统一释放。读取失败或纹理页编号冲突时，原有资源仍然有效。
 
 仅熊猫车身和车手的索引几何数据合计就有 531,520 字节，因此 E3D2 纹理帧设有 2 MiB 上限，随帧携带可见网格，并按编号引用纹理页。原有 2D 和 Roll3D 的命令包上限仍为 360,472 字节。
 
@@ -294,6 +294,22 @@ gradle -p out/rally-app assembleRelease
 两端渲染缓冲均为 873 × 325，实际呈现节奏为 60 Hz。测量的是游戏图层相邻两次呈现的时间间隔。浏览器最长间隔为 16.583 毫秒，APK 最长为 33.159 毫秒，四个计时窗口均未出现达到 34 毫秒的间隔。两端场景的装饰绘制量不同，本轮没有测量 GPU 执行时间、功耗或长时温控。[Fold7 赛果、画面对照与帧时数据](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-rally-glb.json)
 
 在双方发车位静止画面上，都可以辨认熊猫的黑白花色、绿竹和黄色车身。四个预先选定的局部色区中，颜色覆盖率差值最大为 1.17 个百分点。浏览器另外绘制了独立的车尾徽章。在同一 APK 的另一轮测试中，关闭 Android 游戏界面后读回 23 次纹理页发布、23 次释放。重新打开后回到准备界面。
+
+### 在 Android 上驱动林冲的原模型
+
+《风雪山神庙》角色示例沿用原游戏的规则和姿态代码，驱动林冲的 47 个关节。GLB 含两个蒙皮网格，没有内嵌动画片段。衣甲使用底色、金属度与粗糙度、法线三张贴图，手部使用顶点色。原作长枪随动作移动，枪尖在出枪时发亮。准备工具核对游戏输入并打包所需的来源说明，游戏文件从单独提供的游戏仓库读取。[游戏源码与素材说明](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+按上文构建裁剪 V8 的 AAR 并配置本地发行签名。准备工具会生成一个新目录，用 HTTP 提供该目录后，打开 `browser.html` 即可对照浏览器画面。两端顶部的三个按钮可将动作分别停在同一待机、迈步和出枪时刻。按住左下方可行走，按右下方可出枪。
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple
+node runtime-sdk/android/player/create-app.mjs --project out/snowtemple --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.snowtemple --name SnowTemple --out out/snowtemple-app
+gradle -p out/snowtemple-app assembleRelease
+```
+
+通过 `services.loadGlb` 加载模型，纹理页随游戏的资源作用域回收。GLES3 播放器保留顶点位置、索引、关节编号和权重。上一帧绘制成功后，使用同一副骨架的网格每帧共享一份骨骼矩阵。恢复用的完整帧同时携带网格定义。底色按 sRGB 采样，法线、绿色通道的粗糙度与蓝色通道的金属度按线性数据采样。这条路径支持不透明的带索引标准材质网格、每顶点四个骨骼权重，以及每副骨架最多 56 个关节。 法线贴图使用从 UV 坐标求出的切线；网格若自带切线并使用法线贴图，编码器会明确报错。
+
+在一台 Galaxy Z Fold7 上，浏览器和 APK 三个动作检查点的骨骼矩阵摘要均相同。首次完整帧为 1,856,976 字节。实测 1,483 个增量帧，每帧 7,716 字节，其中骨骼矩阵占 3,008 字节，几何定义为零。从后台返回时 GLES 上下文完成重建，待机舞台与切后台前逐像素一致。关闭后，项目归还了全部八个纹理页。[真机数据与画面对照方法](../../../runtime-sdk/measurements/fold7-snowtemple-skinned-character.json)
 
 ### Android 实时帧的几何驻留
 

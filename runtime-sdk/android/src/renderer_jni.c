@@ -34,11 +34,13 @@ JNIEXPORT jlong JNICALL METHOD(worldGeometryBytes)(JNIEnv *env, jclass cls, jlon
     return (jlong)egret_renderer_world_geometry_bytes((EgretRenderer *)(intptr_t)handle);
 }
 
-JNIEXPORT jint JNICALL METHOD(prepareWorldPage)(JNIEnv *env, jclass cls, jlong handle, jint page, jobject bytes) {
+JNIEXPORT jint JNICALL METHOD(prepareWorldPage)(JNIEnv *env, jclass cls, jlong handle, jint page, jobject bytes, jboolean linear_data) {
     if (!bytes || page <= 0) return -1;
     void *data = (*env)->GetDirectBufferAddress(env, bytes);
     jlong length = (*env)->GetDirectBufferCapacity(env, bytes);
     if (!data || length < 0 || (uint64_t)length > SIZE_MAX) return -1;
+    if (linear_data)
+        return egret_renderer_prepare_world_data_page((EgretRenderer *)(intptr_t)handle, page, data, (size_t)length);
     return egret_renderer_prepare_world_page((EgretRenderer *)(intptr_t)handle, page, data, (size_t)length);
 }
 #endif

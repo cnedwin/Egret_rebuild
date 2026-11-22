@@ -30,6 +30,8 @@ public final class WebViewFrameTransportTest {
         }
         worldBudget(WorldProjectPacket.TEXTURED_MAGIC, WorldProjectPacket.TEXTURED_LIMIT);
         worldBudget(WorldProjectPacket.TEXTURED_DELTA_MAGIC, WorldProjectPacket.TEXTURED_LIMIT);
+        worldBudget(WorldProjectPacket.SKINNED_MAGIC, WorldProjectPacket.TEXTURED_LIMIT);
+        worldBudget(WorldProjectPacket.SKINNED_DELTA_MAGIC, WorldProjectPacket.TEXTURED_LIMIT);
         worldBudget(WorldProjectPacket.DELTA_MAGIC, PlayerGraphics.MAX_FRAME_BYTES);
         if (PlayerScripts.unpackCommandWords(null) != null
                 || PlayerScripts.unpackCommandWords(new int[5]) != null

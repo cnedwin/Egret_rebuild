@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createProjectGlbLoader } from './world3d-assets.mjs';
 
-function triangleGlb() {
+function triangleGlb(mimeType = 'image/jpeg', signature = [255, 216, 255]) {
   const json = {
     asset: { version: '2.0' },
     buffers: [{ byteLength: 107 }],
@@ -20,7 +20,7 @@ function triangleGlb() {
       [2, 5126, 3, 'VEC2'],
       [3, 5123, 3, 'SCALAR']
     ].map(([bufferView, componentType, count, type]) => ({ bufferView, componentType, count, type })),
-    images: [{ bufferView: 4, mimeType: 'image/jpeg' }],
+    images: [{ bufferView: 4, mimeType }],
     textures: [{ source: 0 }],
     materials: [{ pbrMetallicRoughness: { baseColorTexture: { index: 0 } } }],
     meshes: [{ primitives: [{ attributes: { POSITION: 0, NORMAL: 1, TEXCOORD_0: 2 }, indices: 3, material: 0 }] }],
@@ -48,7 +48,7 @@ function triangleGlb() {
   [0, 0, 0, 1, 0, 0, 0, 1, 0].forEach((n, i) => v.setFloat32(bin + 4 * i, n, true));
   v.setUint16(bin + 98, 1, true);
   v.setUint16(bin + 100, 2, true);
-  out.set([255, 216, 255], bin + 104);
+  out.set(signature, bin + 104);
   return out;
 }
 
@@ -109,6 +109,29 @@ test('packaged GLB routes its original image range to the shared pages and retir
   assert.deepEqual(released, [7, 7]);
   await assert.rejects(load('kart.glb', { firstPage: 8 }), /scope closed/);
   assert.equal(pages.size, 0);
+});
+
+test('embedded PNG uses its own package range decoder and retires the shared page', async () => {
+  const signature = [137, 80, 78];
+  const bytes = triangleGlb('image/png', signature);
+  const releases = [];
+  const loader = createProjectGlbLoader({
+    assets: { async *readChunks() { yield bytes; } },
+    signal: new AbortController().signal,
+    scope: { use() {} },
+    raster: {
+      decodeEmbeddedPng(path, offset, length) {
+        assert.equal(path, 'hero.glb');
+        assert.deepEqual([...bytes.subarray(offset, offset + length)], signature);
+        return { width: 1, height: 1, data: new Uint8Array([128, 128, 255, 255]) };
+      }
+    },
+    publishPage(id) { return { release() { releases.push(id); } }; }
+  }, () => false);
+  const model = await loader('hero.glb', { firstPage: 11 });
+  assert.equal(model.textures.length, 1);
+  model.dispose();
+  assert.deepEqual(releases, [11]);
 });
 
 test('closing the owning scope aborts an in-flight native reader before page publication', async () => {

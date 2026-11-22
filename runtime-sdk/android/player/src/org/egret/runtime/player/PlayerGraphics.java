@@ -27,9 +27,11 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
     private EGLContext context;
     private ByteBuffer commands;
     private Map<Integer, Page> uploaded = Collections.emptyMap();
-    // sRGB mip chains are derived GPU views of the same immutable Page as the 2D slot.
+    // A published page can have both sRGB color and linear material mip chains.
     private final Page[] worldViews = new Page[256];
-    private final java.util.function.IntConsumer prepareWorldView = this::prepareWorldView;
+    private final Page[] dataViews = new Page[256];
+    private final java.util.function.IntConsumer prepareWorldView = id -> prepareWorldView(id, false);
+    private final java.util.function.IntConsumer prepareDataView = id -> prepareWorldView(id, true);
     private int width, height;
     // Last explicitly sampled vertex/index payload, excluding driver and texture allocations.
     volatile long sampledWorldGeometryBytes = -1;
@@ -138,7 +140,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
                 for (int id : uploaded.keySet()) {
                     if (!frame.pages.containsKey(id)) {
                         check(PlayerGpu.release(handle, id), "release", id);
-                        worldViews[id] = null;
+                        worldViews[id] = dataViews[id] = null;
                         releases++;
                     }
                 }
@@ -147,7 +149,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
                     Page page = entry.getValue();
                     if (page == uploaded.get(id)) continue;
                     check(PlayerGpu.upload(handle, id, page.width, page.height, page.data), "upload", id);
-                    worldViews[id] = null;
+                    worldViews[id] = dataViews[id] = null;
                     uploads++;
                 }
                 uploaded = frame.pages;
@@ -157,7 +159,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
             commands.clear();
             commands.put(frame.bytes);
             commands.flip();
-            WorldProjectPacket.visitTexturePages(commands, prepareWorldView);
+            WorldProjectPacket.visitTexturePages(commands, prepareWorldView, prepareDataView);
             int status = PlayerGpu.draw(handle, commands, 0, frame.bytes.length, width, height);
             if (status == PlayerGpu.MISSING_WORLD_BASE && WorldProjectPacket.isDelta(commands.getInt(0))) {
                 owner.ui.post(() -> owner.missingWorldBase(frame));
@@ -169,12 +171,13 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
         } catch (RuntimeException | LinkageError e) { owner.reportFailure(e.toString()); }
     }
 
-    private void prepareWorldView(int id) {
+    private void prepareWorldView(int id, boolean linearData) {
+        Page[] views = linearData ? dataViews : worldViews;
         Page page = uploaded.get(id);
         if (page == null) throw new IllegalStateException("Missing World3D texture page " + id);
-        if (worldViews[id] == page) return;
-        check(PlayerGpu.prepareWorldPage(handle, id, page.data), "prepare World3D texture", id);
-        worldViews[id] = page;
+        if (views[id] == page) return;
+        check(PlayerGpu.prepareWorldPage(handle, id, page.data, linearData), "prepare World3D texture", id);
+        views[id] = page;
     }
 
     private static void check(int status, String operation, int id) {
@@ -187,6 +190,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
         abandoned++;
         sampledWorldGeometryBytes = 0;
         Arrays.fill(worldViews, null);
+        Arrays.fill(dataViews, null);
         uploaded = Collections.emptyMap();
     }
 
@@ -204,6 +208,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
             uploaded = Collections.emptyMap();
         }
         Arrays.fill(worldViews, null);
+        Arrays.fill(dataViews, null);
         context = null;
     }
 }

@@ -13,7 +13,9 @@ import java.util.function.IntConsumer;
 final class WorldProjectPacket {
     static final int MAGIC = 0x31443345, TEXTURED_MAGIC = 0x32443345;
     static final int DELTA_MAGIC = 0x33443345, TEXTURED_DELTA_MAGIC = 0x34443345;
-    private static final int HEADER = 160, DRAW = 88, TEXTURED_DRAW = 96;
+    static final int SKINNED_MAGIC = 0x35443345, SKINNED_DELTA_MAGIC = 0x36443345;
+    private static final int HEADER = 160, DRAW = 88, TEXTURED_DRAW = 96, SKINNED_DRAW = 128;
+    private static final int MAX_JOINTS = 56;
     private WorldProjectPacket() {}
 
     static final int TEXTURED_LIMIT = 2 * 1024 * 1024;
@@ -21,10 +23,17 @@ final class WorldProjectPacket {
         return isTextured(magic) ? TEXTURED_LIMIT : PlayerGraphics.MAX_FRAME_BYTES;
     }
 
-    static boolean isDelta(int format) { return format == DELTA_MAGIC || format == TEXTURED_DELTA_MAGIC; }
-    static boolean isTextured(int format) { return format == TEXTURED_MAGIC || format == TEXTURED_DELTA_MAGIC; }
-    static boolean isWorld(int format) { return format == MAGIC || format == TEXTURED_MAGIC || isDelta(format); }
-    private static int headerSize(int format) { return isDelta(format) ? HEADER + Integer.BYTES : HEADER; }
+    static boolean isDelta(int format) { return format == DELTA_MAGIC || format == TEXTURED_DELTA_MAGIC || format == SKINNED_DELTA_MAGIC; }
+    static boolean isSkinned(int format) { return format == SKINNED_MAGIC || format == SKINNED_DELTA_MAGIC; }
+    static boolean isTextured(int format) { return format == TEXTURED_MAGIC || format == TEXTURED_DELTA_MAGIC || isSkinned(format); }
+    private static int fullFormat(int format) {
+        return isSkinned(format) ? SKINNED_MAGIC : isTextured(format) ? TEXTURED_MAGIC : MAGIC;
+    }
+    private static int drawSize(int format) {
+        return isSkinned(format) ? SKINNED_DRAW : isTextured(format) ? TEXTURED_DRAW : DRAW;
+    }
+    static boolean isWorld(int format) { return format == MAGIC || isTextured(format) || format == DELTA_MAGIC; }
+    private static int headerSize(int format) { return HEADER + (isDelta(format) ? 4 : 0) + (isSkinned(format) ? 4 : 0); }
 
     // The live bridge only inspects the envelope. Native decoding checks the full packet before drawing.
     static int stageOffset(ByteBuffer data) {
@@ -40,37 +49,48 @@ final class WorldProjectPacket {
         return offset;
     }
 
-    // The GL thread needs only the draw table to prepare sRGB mip chains from this frame's immutable pages.
+    // A single asset may provide both color and data views with different transfer functions.
     static void visitTexturePages(ByteBuffer data, IntConsumer visit) {
+        visitTexturePages(data, visit, page -> {});
+    }
+
+    private static void visitPage(int page, IntConsumer sink) {
+        if (page < 0 || page > 255) throw new IllegalArgumentException("Invalid World3D texture page");
+        if (page != 0) sink.accept(page);
+    }
+
+    static void visitTexturePages(ByteBuffer data, IntConsumer color, IntConsumer linear) {
         if (data.limit() < 24 || !isTextured(data.getInt(0))) return;
         int end = stageOffset(data), draws = data.getInt(16);
-        int header = headerSize(data.getInt(0));
-        if (end < header || draws < 0 || draws > PlayerGraphics.MAX_QUADS || (long) draws * TEXTURED_DRAW > end - header)
+        int header = headerSize(data.getInt(0)), width = drawSize(data.getInt(0));
+        if (end < header || draws < 0 || draws > PlayerGraphics.MAX_QUADS || (long) draws * width > end - header)
             throw new IllegalArgumentException("Invalid World3D draw table");
-        for (int draw = end - draws * TEXTURED_DRAW; draw < end; draw += TEXTURED_DRAW) {
-            int page = data.getInt(draw + DRAW);
-            if (page < 0 || page > 255) throw new IllegalArgumentException("Invalid World3D texture page");
-            if (page != 0) visit.accept(page);
+        for (int draw = end - draws * width; draw < end; draw += width) {
+            visitPage(data.getInt(draw + DRAW), color);
+            if (width == SKINNED_DRAW) {
+                visitPage(data.getInt(draw + 96), linear);
+                visitPage(data.getInt(draw + 100), linear);
+            }
         }
     }
 
     // A definition refers to a slice of an immutable command already owned by the tape.
     private static final class Definition {
         final byte[] bytes;
-        final int start, length;
-        Definition(byte[] bytes, int start, int length) {
-            this.bytes = bytes; this.start = start; this.length = length;
+        final int start, length, maxJoint;
+        Definition(byte[] bytes, int start, int length, int maxJoint) {
+            this.bytes = bytes; this.start = start; this.length = length; this.maxJoint = maxJoint;
         }
     }
 
     static final class GeometryState {
         final int hudOffset;
-        private final int id, format, drawOffset, fullLength;
+        private final int id, format, tailOffset, fullLength;
         private final Map<Integer, Definition> visible;
 
-        GeometryState(int id, int format, int drawOffset, int hudOffset, int fullLength,
+        GeometryState(int id, int format, int tailOffset, int hudOffset, int fullLength,
                       Map<Integer, Definition> visible) {
-            this.id = id; this.format = format; this.drawOffset = drawOffset;
+            this.id = id; this.format = format; this.tailOffset = tailOffset;
             this.hudOffset = hudOffset; this.fullLength = fullLength; this.visible = visible;
         }
 
@@ -82,12 +102,17 @@ final class WorldProjectPacket {
             if (!incremental()) return original;
             ByteBuffer out = ByteBuffer.allocate(fullLength).order(ByteOrder.LITTLE_ENDIAN);
             out.put(original, 0, HEADER);
-            out.putInt(0, isTextured(format) ? TEXTURED_MAGIC : MAGIC);
+            out.putInt(0, fullFormat(format));
             out.putInt(12, visible.size());
+            if (isSkinned(format)) out.put(original, HEADER + 4, 4);
             for (Definition geometry : visible.values()) out.put(geometry.bytes, geometry.start, geometry.length);
-            out.put(original, drawOffset, original.length - drawOffset);
+            out.put(original, tailOffset, original.length - tailOffset);
             return out.array();
         }
+    }
+
+    private static boolean hasPage(int id, Map<Integer, PlayerGraphics.Page> pages) {
+        return id == 0 || (id > 0 && id <= 255 && pages.containsKey(id));
     }
 
     // Validate both the compact stream and the equivalent full packet before accepting a frame.
@@ -99,8 +124,9 @@ final class WorldProjectPacket {
         int format = data.getInt(0), header = headerSize(format);
         boolean delta = isDelta(format), textured = isTextured(format);
         if (delta && (previous == null || previous.id != data.getInt(HEADER) ||
-                isTextured(previous.format) != textured)) throw invalid();
-        int stride = textured ? 32 : 24, drawBytes = textured ? TEXTURED_DRAW : DRAW;
+                fullFormat(previous.format) != fullFormat(format))) throw invalid();
+        boolean skinned = isSkinned(format);
+        int stride = skinned ? 68 : textured ? 32 : 24, drawBytes = drawSize(format);
         int geometries = data.getInt(12), draws = data.getInt(16);
         if ((data.getInt(20) & 255) != 255 || geometries < 0 || geometries > 64 ||
             draws < 0 || draws > PlayerGraphics.MAX_QUADS || (long) draws * drawBytes > end - header) throw invalid();
@@ -109,27 +135,51 @@ final class WorldProjectPacket {
             if (!Float.isFinite(value) || (offset >= 112 && value < 0)) throw invalid();
         }
         int drawOffset = end - draws * drawBytes, cursor = header;
+        int paletteBytes = skinned ? data.getInt(header - 4) : 0;
+        if (paletteBytes < 0 || paletteBytes > drawOffset - header || (paletteBytes & 3) != 0) throw invalid();
+        int tailOffset = drawOffset - paletteBytes;
         Map<Integer, Definition> defined = new LinkedHashMap<>();
         for (int i = 0; i < geometries; i++) {
-            if (cursor > drawOffset - 12) throw invalid();
+            if (cursor > tailOffset - 12) throw invalid();
             int id = data.getInt(cursor), vertices = data.getInt(cursor + 4), indices = data.getInt(cursor + 8);
             int start = cursor;
             cursor += 12;
             if (id == 0 || defined.containsKey(id) || vertices < 3 || indices < 3 || indices % 3 != 0 ||
-                (long) vertices * stride + (long) indices * 4 > drawOffset - cursor) throw invalid();
-            for (int stop = cursor + vertices * stride; cursor < stop; cursor += 4)
-                if (!Float.isFinite(data.getFloat(cursor))) throw invalid();
+                (long) vertices * stride + (long) indices * 4 > tailOffset - cursor) throw invalid();
+            int maxJoint = 0;
+            for (int vertex = 0; vertex < vertices; vertex++, cursor += stride) {
+                for (int p = 0; p < stride; p += 4) {
+                    if (skinned && p == 32) {
+                        for (int lane = 0; lane < 4; lane++) maxJoint = Math.max(maxJoint, data.get(cursor + p + lane) & 255);
+                    } else {
+                        float value = data.getFloat(cursor + p);
+                        if (!Float.isFinite(value) || (skinned && p >= 36 && (value < 0 || value > 1))) throw invalid();
+                    }
+                }
+            }
+            if (maxJoint >= MAX_JOINTS) throw invalid();
             for (int stop = cursor + indices * 4; cursor < stop; cursor += 4) {
                 int index = data.getInt(cursor);
                 if (index < 0 || index >= vertices) throw invalid();
             }
-            defined.put(id, new Definition(owned, start, cursor - start));
+            defined.put(id, new Definition(owned, start, cursor - start, maxJoint));
         }
-        if (cursor != drawOffset) throw invalid();
+        if (cursor != tailOffset) throw invalid();
+        int[] palettes = skinned ? new int[Math.min(draws, paletteBytes / 68) + 1] : null;
+        int paletteCount = 0;
+        while (cursor < drawOffset) {
+            int joints = data.getInt(cursor);
+            cursor += 4;
+            if (joints < 1 || joints > MAX_JOINTS || joints * 64 > drawOffset - cursor ||
+                    ++paletteCount >= palettes.length) throw invalid();
+            palettes[paletteCount] = joints;
+            for (int stop = cursor + joints * 64; cursor < stop; cursor += 4)
+                if (!Float.isFinite(data.getFloat(cursor))) throw invalid();
+        }
         // Legacy full frames may define an undrawn mesh. Delta residency matches
         // the native receiver: retire every ID absent from this complete draw list.
         Map<Integer, Definition> visible = delta ? new LinkedHashMap<>() : defined;
-        int fullLength = delta ? HEADER + owned.length - drawOffset : owned.length;
+        int fullLength = delta ? headerSize(fullFormat(format)) + owned.length - tailOffset : owned.length;
         for (; cursor < end; cursor += drawBytes) {
             int id = data.getInt(cursor);
             if (!visible.containsKey(id)) {
@@ -142,7 +192,18 @@ final class WorldProjectPacket {
             }
             if (textured) {
                 int page = data.getInt(cursor + DRAW), flags = data.getInt(cursor + DRAW + 4);
-                if (page < 0 || page > 255 || (page != 0 && !pages.containsKey(page)) || (flags & ~1) != 0) throw invalid();
+                if (!hasPage(page, pages) || (flags & ~(skinned ? 3 : 1)) != 0) throw invalid();
+            }
+            if (skinned) {
+                int palette = data.getInt(cursor + 104);
+                if (!hasPage(data.getInt(cursor + 96), pages) || !hasPage(data.getInt(cursor + 100), pages) ||
+                        palette < 0 || palette > paletteCount ||
+                        (palette != 0 && visible.get(id).maxJoint >= palettes[palette]) ||
+                        !Float.isFinite(data.getFloat(cursor + 108)) || !Float.isFinite(data.getFloat(cursor + 112))) throw invalid();
+                for (int p = 116; p < SKINNED_DRAW; p += 4) {
+                    float value = data.getFloat(cursor + p);
+                    if (!Float.isFinite(value) || value < 0) throw invalid();
+                }
             }
             for (int p = 4; p < DRAW; p += 4) {
                 float value = data.getFloat(cursor + p);
@@ -152,7 +213,7 @@ final class WorldProjectPacket {
         if (delta && !visible.keySet().containsAll(defined.keySet())) throw invalid();
         if (delta && defined.isEmpty() && sameDefinitionOrder(visible, previous.visible))
             visible = previous.visible;
-        return new GeometryState(data.getInt(4), format, drawOffset, end, fullLength, visible);
+        return new GeometryState(data.getInt(4), format, tailOffset, end, fullLength, visible);
     }
 
     // Preserve first-draw order for recovery even when a camera reorders unchanged meshes.

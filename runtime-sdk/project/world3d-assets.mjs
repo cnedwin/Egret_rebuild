@@ -88,10 +88,12 @@ export function createProjectGlbLoader(services, pageInUse) {
     const asset = await loadGltf3D(bytes, {
       async decodeImage({ bytes: image, mimeType }) {
         checkOpen();
-        if (!image || image.buffer !== bytes.buffer || mimeType !== 'image/jpeg')
-          throw new Error('Expected an embedded JPEG in the packaged GLB');
-        if (!services.raster?.decodeEmbeddedJpeg) throw new Error('Android GLB image decoding is unavailable');
-        return services.raster.decodeEmbeddedJpeg(path, image.byteOffset - bytes.byteOffset, image.byteLength);
+        if (!image || image.buffer !== bytes.buffer || (mimeType !== 'image/jpeg' && mimeType !== 'image/png'))
+          throw new Error('Expected an embedded JPEG or PNG in the packaged GLB');
+        const raster = services.raster;
+        const decode = mimeType === 'image/jpeg' ? raster?.decodeEmbeddedJpeg : raster?.decodeEmbeddedPng;
+        if (!decode) throw new Error('Android GLB image decoding is unavailable');
+        return decode.call(raster, path, image.byteOffset - bytes.byteOffset, image.byteLength);
       }
     });
     const handles = [];

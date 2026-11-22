@@ -6,10 +6,14 @@ import { InstancedMesh3D, RenderList3D } from '@egret/engine/world3d';
 const MAGIC = 0x31443345,
   TEXTURED_MAGIC = 0x32443345,
   DELTA_MAGIC = 0x33443345,
-  TEXTURED_DELTA_MAGIC = 0x34443345;
+  TEXTURED_DELTA_MAGIC = 0x34443345,
+  SKINNED_MAGIC = 0x35443345,
+  SKINNED_DELTA_MAGIC = 0x36443345;
 const HEADER = 160,
   DRAW = 88,
   TEXTURED_DRAW = 96,
+  SKINNED_DRAW = 128,
+  MAX_JOINTS = 56,
   BYTE_LIMIT = 360472,
   TEXTURED_BYTE_LIMIT = 2 * 1024 * 1024;
 const hudFormats = new Set([0x32524745, 0x33524745, 0x34524745, 0x35524745]);
@@ -28,8 +32,11 @@ function colorByte(linear) {
   if (!Number.isFinite(linear) || linear < 0 || linear > 1) reject('background component');
   return Math.round(255 * (linear <= 0.0031308 ? 12.92 * linear : 1.055 * linear ** (1 / 2.4) - 0.055));
 }
-function packGeometry(cache, geometry, texturedFormat) {
-  const stride = texturedFormat ? 32 : 24;
+function packGeometry(cache, geometry, texturedFormat, skinFormat) {
+  const stride = skinFormat ? 68 : texturedFormat ? 32 : 24;
+  const joints = skinFormat ? geometry.getAttribute('joints') : undefined;
+  const weights = skinFormat ? geometry.getAttribute('weights') : undefined;
+  const colors = skinFormat ? geometry.getAttribute('color') : undefined;
   const uv = texturedFormat ? geometry.getAttribute('uv') : undefined;
   const positions = geometry.getAttribute('position'),
     normals = geometry.getAttribute('normal'),
@@ -54,17 +61,25 @@ function packGeometry(cache, geometry, texturedFormat) {
     reject('indexed position/normal triangles required');
   if (uv && (uv.itemSize !== 2 || !(uv.data instanceof Float32Array) || uv.count !== positions.count))
     reject('invalid texture coordinates');
+  if (Boolean(joints) !== Boolean(weights) || (joints && (joints.itemSize !== 4 || weights.itemSize !== 4 ||
+      joints.count !== positions.count || weights.count !== positions.count)))
+    reject('expected four joints and weights per vertex');
+  if (colors && ((colors.itemSize !== 3 && colors.itemSize !== 4) || colors.count !== positions.count))
+    reject('invalid vertex colors');
   const old = cache.get(geometry);
   if (
     old &&
     old.stride === stride &&
     old.uv === uv?.version &&
+    old.joints === joints?.version &&
+    old.weights === weights?.version &&
+    old.colors === colors?.version &&
     old.layout === geometry.layoutVersion &&
     old.vertices === positions.version &&
     old.normals === normals.version &&
     old.indices === index.version
   )
-    return old.bytes;
+    return old;
   const length = 12 + positions.count * stride + index.count * 4;
   if (
     length >
@@ -76,32 +91,55 @@ function packGeometry(cache, geometry, texturedFormat) {
   view.setUint32(0, geometry.id, true);
   view.setUint32(4, positions.count, true);
   view.setUint32(8, index.count, true);
-  let offset = 12;
+  let offset = 12, maxJoint = 0;
   for (let i = 0; i < positions.count; i++, offset += stride) {
     vector(view, offset, positions.data.subarray(3 * i, 3 * i + 3), 3);
     vector(view, offset + 12, normals.data.subarray(3 * i, 3 * i + 3), 3);
     if (uv) vector(view, offset + 24, uv.data.subarray(2 * i, 2 * i + 2), 2);
+    if (skinFormat) {
+      for (let channel = 0; channel < 4; channel++) {
+        const joint = joints ? joints.data[i * 4 + channel] : 0;
+        const weight = weights ? weights.data[i * 4 + channel] : Number(channel === 0);
+        const color = colors && channel < colors.itemSize ? colors.data[i * colors.itemSize + channel] : 1;
+        if (!Number.isInteger(joint) || joint < 0 || joint >= MAX_JOINTS ||
+            !Number.isFinite(weight) || weight < 0 || weight > 1 ||
+            !Number.isFinite(color) || color < 0 || color > 1) reject('invalid skin or color attribute');
+        maxJoint = Math.max(maxJoint, joint);
+        view.setUint8(offset + 32 + channel, joint);
+        view.setFloat32(offset + 36 + channel * 4, weight, true);
+        view.setFloat32(offset + 52 + channel * 4, color, true);
+      }
+    }
   }
   for (const value of index.data) {
     if (!Number.isInteger(value) || value < 0 || value >= positions.count) reject('index outside geometry');
     view.setUint32(offset, value, true);
     offset += 4;
   }
-  cache.set(geometry, {
-    stride,
+  const packed = {
+    stride, maxJoint,
+    joints: joints?.version,
+    weights: weights?.version,
+    colors: colors?.version,
     uv: uv?.version,
     layout: geometry.layoutVersion,
     vertices: positions.version,
     normals: normals.version,
     indices: index.version,
     bytes
-  });
-  return bytes;
+  };
+  cache.set(geometry, packed);
+  return packed;
 }
 
 function supportedDraw({ mesh, material: m, geometry, start, count }) {
-  if (mesh instanceof InstancedMesh3D || mesh.skeleton || start !== 0 || count !== geometry.index?.count)
-    reject('expected whole unskinned indexed mesh');
+  if (mesh instanceof InstancedMesh3D || start !== 0 || count !== geometry.index?.count)
+    reject('expected whole indexed mesh');
+  if (mesh.skeleton && (!geometry.getAttribute('joints') || !geometry.getAttribute('weights')))
+    reject('skinned mesh missing joint or weight attributes');
+  // Normal-mapped meshes without authored tangents use the browser's UV derivative basis.
+  if (m.normalMap && geometry.getAttribute('tangent')) reject('authored tangents with a normal map');
+  if (m.vertexColors && !geometry.getAttribute('color')) reject('missing vertex color attribute');
   if (
     m.shading !== 'standard' ||
     (m.side !== 'front' && m.side !== 'double') ||
@@ -113,13 +151,9 @@ function supportedDraw({ mesh, material: m, geometry, start, count }) {
     !m.toneMapped ||
     m.flatShading ||
     m.wireframe ||
-    m.normalMap ||
-    m.metallicRoughnessMap ||
     m.occlusionMap ||
     m.emissiveMap ||
-    m.emissive.some((x) => x !== 0) ||
     m.lightMap ||
-    m.vertexColors ||
     m.splat ||
     m.shader ||
     m.reflectionMap ||
@@ -137,12 +171,11 @@ function supportedDraw({ mesh, material: m, geometry, start, count }) {
 
 // Image identity is shared with the 2D page registry. A replacement invalidates the
 // old binding even when the numerical page ID is immediately reused.
-function texturePage(material, geometry, pages) {
-  const map = material.map;
+function texturePage(map, geometry, pages, colorSpace) {
   if (!map) return 0;
   if (
     map.isDisposed ||
-    map.colorSpace !== 'srgb' ||
+    map.colorSpace !== colorSpace ||
     map.flipY ||
     map.channel !== 0 ||
     map.hasTransform ||
@@ -153,8 +186,8 @@ function texturePage(material, geometry, pages) {
     !map.mipmaps ||
     map.anisotropy !== 1
   )
-    reject('unsupported base-color sampler');
-  if (!geometry.getAttribute('uv')) reject('base-color texture requires UVs');
+    reject('unsupported texture sampler');
+  if (!geometry.getAttribute('uv')) reject('texture requires UVs');
   const page = pages?.get(map.source);
   if (!Number.isInteger(page) || page < 1 || page > 255) reject('texture has no live page');
   return page;
@@ -192,21 +225,37 @@ export function createWorldProjectEncoder() {
       list.opaque.length > 4096
     )
       reject('unsupported lights or draws');
-    const extended = list.opaque.some(({ material }) => material.map || material.side === 'double');
+    const skinFormat = list.opaque.some(({ mesh, material }) =>
+      mesh.skeleton || material.vertexColors || material.normalMap || material.metallicRoughnessMap ||
+      material.emissive.some((component) => component !== 0));
+    const extended = skinFormat || list.opaque.some(({ material }) => material.map || material.side === 'double');
+    const format = skinFormat ? SKINNED_MAGIC : extended ? TEXTURED_MAGIC : MAGIC;
     const frameId = h.getUint32(4, true);
     const tracked = Number.isSafeInteger(epoch) && epoch >= 0;
     // The Java player permits one frame in flight. Encoding or enqueueing alone does not establish residency.
     const base = tracked && previous?.epoch === epoch && previous.id === previousFrameId &&
-      previous.extended === extended && frameId === ((previousFrameId + 1) >>> 0) ? previous.geometry : undefined;
-    const drawBytes = extended ? TEXTURED_DRAW : DRAW;
+      previous.format === format && frameId === ((previousFrameId + 1) >>> 0) ? previous.geometry : undefined;
+    const drawBytes = skinFormat ? SKINNED_DRAW : extended ? TEXTURED_DRAW : DRAW;
+    const palettes = new Map();
+    let paletteBytes = 0;
     const limit = extended ? TEXTURED_BYTE_LIMIT : BYTE_LIMIT;
     const geometryBytes = new Map();
-    let size = HEADER + drawBytes * list.opaque.length + hud.byteLength;
+    let size = HEADER + (skinFormat ? 4 : 0) + drawBytes * list.opaque.length + hud.byteLength;
     let reusedCount = 0, reusedBytes = 0;
     for (const item of list.opaque) {
       supportedDraw(item);
+      const packed = packGeometry(cache, item.geometry, extended, skinFormat);
+      const skeleton = item.mesh.skeleton;
+      if (skeleton) {
+        const count = skeleton.bones.length;
+        if (!count || count > MAX_JOINTS || packed.maxJoint >= count) reject('joint outside skin palette');
+        if (!palettes.has(skeleton)) {
+          palettes.set(skeleton, palettes.size + 1);
+          paletteBytes += 4 + 64 * count;
+        }
+      }
       if (!geometryBytes.has(item.geometry)) {
-        const bytes = packGeometry(cache, item.geometry, extended);
+        const bytes = packed.bytes;
         size += bytes.length;
         if (size > limit) reject('visible geometry and draws exceed ' + limit + ' frame bytes (' + size + ')');
         if (geometryBytes.size >= 64) reject('more than 64 distinct visible geometries in the frame');
@@ -217,6 +266,7 @@ export function createWorldProjectEncoder() {
         }
       }
     }
+    size += paletteBytes;
     if (size > limit) reject('HUD and draws exceed ' + limit + ' frame bytes (' + size + ')');
     // Enforce the full-frame budget first so every admitted scene can still recover and replay.
     const delta = reusedCount > 0;
@@ -225,7 +275,7 @@ export function createWorldProjectEncoder() {
     const bg = scene.background ?? [0, 0, 0];
     const rgba = ((colorByte(bg[0]) * 256 + colorByte(bg[1])) * 256 + colorByte(bg[2])) * 256 + 255;
     [
-      delta ? (extended ? TEXTURED_DELTA_MAGIC : DELTA_MAGIC) : (extended ? TEXTURED_MAGIC : MAGIC),
+      delta ? (skinFormat ? SKINNED_DELTA_MAGIC : extended ? TEXTURED_DELTA_MAGIC : DELTA_MAGIC) : format,
       frameId,
       hud.byteLength,
       geometryBytes.size - reusedCount,
@@ -256,27 +306,49 @@ export function createWorldProjectEncoder() {
       v.setUint32(offset, previousFrameId, true);
       offset += 4;
     }
+    if (skinFormat) {
+      v.setUint32(offset, paletteBytes, true);
+      offset += 4;
+    }
     for (const [geometry, packed] of geometryBytes) {
       if (base?.get(geometry) === packed) continue;
       bytes.set(packed, offset);
       offset += packed.length;
     }
-    const drawOffset = offset;
+    // All primitives sharing a skeleton reference the same pose. Definitions stay resident.
+    const tailOffset = offset;
+    for (const skeleton of palettes.keys()) {
+      v.setUint32(offset, skeleton.bones.length, true);
+      vector(v, offset + 4, skeleton.boneMatrices, skeleton.boneMatrices.length);
+      offset += 4 + skeleton.boneMatrices.byteLength;
+    }
     for (const item of list.opaque) {
       v.setUint32(offset, item.geometry.id, true);
-      vector(v, offset + 4, item.mesh.matrixWorld, 16);
+      // The palette already contains world transforms. Apply only the original mesh bind matrix.
+      vector(v, offset + 4, item.mesh.skeleton ? item.mesh.bindMatrix : item.mesh.matrixWorld, 16);
       vector(v, offset + 68, item.material.color, 3);
       v.setFloat32(offset + 80, item.material.roughness, true);
       v.setFloat32(offset + 84, item.material.metallic, true);
       if (extended) {
-        v.setUint32(offset + 88, texturePage(item.material, item.geometry, pages), true);
-        v.setUint32(offset + 92, item.material.side === 'double' ? 1 : 0, true);
+        v.setUint32(offset + 88, texturePage(item.material.map, item.geometry, pages, 'srgb'), true);
+        v.setUint32(offset + 92, (item.material.side === 'double' ? 1 : 0) | (item.material.vertexColors ? 2 : 0), true);
+      }
+      if (skinFormat) {
+        v.setUint32(offset + 96, texturePage(item.material.metallicRoughnessMap, item.geometry, pages, 'linear'), true);
+        v.setUint32(offset + 100, texturePage(item.material.normalMap, item.geometry, pages, 'linear'), true);
+        v.setUint32(offset + 104, palettes.get(item.mesh.skeleton) ?? 0, true);
+        vector(v, offset + 108, [item.material.normalScale, item.material.normalScale], 2);
+        for (let lane = 0; lane < 3; lane++) {
+          const emission = Math.fround(item.material.emissive[lane] * item.material.emissiveIntensity);
+          if (!Number.isFinite(emission) || emission < 0) reject('invalid emissive color');
+          v.setFloat32(offset + 116 + 4 * lane, emission, true);
+        }
       }
       offset += drawBytes;
     }
     bytes.set(hud, offset);
-    previous = tracked ? {epoch, id: frameId, extended, geometry: geometryBytes,
-      delta: delta ? bytes : undefined, drawOffset, fullSize: size} : undefined;
+    previous = tracked ? {epoch, id: frameId, format, geometry: geometryBytes,
+      delta: delta ? bytes : undefined, tailOffset, paletteBytes, fullSize: size} : undefined;
     return bytes;
   }
 
@@ -285,18 +357,22 @@ export function createWorldProjectEncoder() {
   encode.recover = (epoch, frameId) => {
     if (!previous?.delta || previous.epoch !== epoch || previous.id !== frameId)
       reject('recovery frame unavailable');
-    const {delta, drawOffset, extended, geometry, fullSize} = previous;
+    const {delta, tailOffset, format, geometry, fullSize, paletteBytes} = previous;
     const full = new Uint8Array(fullSize);
     full.set(delta.subarray(0, HEADER));
     const view = new DataView(full.buffer);
-    view.setUint32(0, extended ? TEXTURED_MAGIC : MAGIC, true);
+    view.setUint32(0, format, true);
     view.setUint32(12, geometry.size, true);
     let offset = HEADER;
+    if (format === SKINNED_MAGIC) {
+      view.setUint32(offset, paletteBytes, true);
+      offset += 4;
+    }
     for (const definition of geometry.values()) {
       full.set(definition, offset);
       offset += definition.length;
     }
-    full.set(delta.subarray(drawOffset), offset);
+    full.set(delta.subarray(tailOffset), offset);
     return full;
   };
   return encode;

@@ -30,7 +30,8 @@ final class PlayerRaster {
             JSONObject job = new JSONObject(encoded);
             String operation = job.getString("op");
             if (operation.equals("measure")) return measure(runs(job));
-            if (operation.equals("glbJpeg")) return embeddedJpeg(job);
+            if (operation.equals("glbJpeg")) return embeddedImage(job, "image/jpeg");
+            if (operation.equals("glbPng")) return embeddedImage(job, "image/png");
             int width = dimension(job, "width"), height = dimension(job, "height");
             if ((long) width * height > MAX_PIXELS) throw new IOException("Raster exceeds pixel budget");
             if (operation.equals("png")) return png(job.getString("path"), width, height);
@@ -49,7 +50,7 @@ final class PlayerRaster {
 
     // The World3D reader has already validated this bufferView. Reopen just the
     // declared APK member so compressed artwork never crosses the VM as Base64.
-    private String embeddedJpeg(JSONObject job) throws IOException, JSONException {
+    private String embeddedImage(JSONObject job, String expectedMimeType) throws IOException, JSONException {
         String path = job.getString("path");
         double start = job.getDouble("offset"), size = job.getDouble("length");
         if (start < 0 || size < 1 || start + size > (8 << 20) || start != Math.floor(start) || size != Math.floor(size))
@@ -67,9 +68,9 @@ final class PlayerRaster {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
         int width = options.outWidth, height = options.outHeight;
-        if (!"image/jpeg".equals(options.outMimeType) || width < 1 || height < 1 ||
+        if (!expectedMimeType.equals(options.outMimeType) || width < 1 || height < 1 ||
                 width > 4096 || height > 4096 || (long)width * height > MAX_PIXELS)
-            throw new IOException("Unsupported embedded JPEG size or format");
+            throw new IOException("Unsupported embedded image size or format");
         return decode(bytes, options, path);
     }
 
