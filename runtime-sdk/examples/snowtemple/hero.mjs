@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { Scene3D, createAmbientLight3D, createDirectionalLight3D, createPerspectiveCamera3D } from '@egret/engine/world3d';
+import { WIDTH, HEIGHT, DT, createActorStage, paletteHash, poseLinChong } from './actors.mjs';
 import { createGame, quiet, step } from './original/rules/game.mjs';
 import { HERO } from './original/rules/tune.mjs';
 import { createFigure, heroPose, pose } from './original/figures.mjs';
@@ -7,19 +7,11 @@ import { BONES } from './original/rig.mjs';
 import { bodyParts } from './original/body.mjs';
 import { equipment } from './original/equipment.mjs';
 
-export const WIDTH = 768, HEIGHT = 432;
+export { WIDTH, HEIGHT };
 export const CHECKPOINTS = ['idle', 'walk', 'thrust'];
-const DT = 1 / 60;
 
 export function createHeroScene(asset, gearBytes) {
-  const scene = new Scene3D();
-  scene.background = [0.043, 0.062, 0.082];
-  const camera = createPerspectiveCamera3D({ fov: 32, near: 0.1, far: 24 });
-  camera.aspect = WIDTH / HEIGHT;
-  scene.addChild(camera);
-  scene.addChild(createAmbientLight3D({ intensity: 0.45 }));
-  const sun = scene.addChild(createDirectionalLight3D({ color: 0xffe8cd, intensity: 2.1 }));
-  sun.setPosition(3, 5, -4).lookAt(0, 0, 0);
+  const { scene, camera } = createActorStage();
   const parts = bodyParts(asset.scene, BONES), gear = {}, contacts = new Set();
   let figure, game, tick, travel, pending, checkpoint, attack, paused = false;
   let diagnosticsTick = -1, diagnosticsHash, poseSequence = 0;
@@ -57,13 +49,7 @@ export function createHeroScene(asset, gearBytes) {
     step(game, command, DT);
     tick++;
     travel += Math.hypot(h.x - x, h.z - z);
-    const [target, rate] = heroPose(h, HERO, game.time, travel, game.deadFor, figure.gait, DT);
-    figure.root.setPosition(h.x, 0, h.z);
-    figure.root.setRotation(0, h.face, 0);
-    pose(figure, target, h.freeze > 0 ? 0 : rate, DT);
-    figure.glow += ((h.state === 'cut' ? 3.2 : 0.25) - figure.glow) * Math.min(1, DT * 14);
-    figure.metal.emissiveIntensity = figure.glow;
-    figure.tintBody(...figure.look.fill);
+    poseLinChong(figure, game, travel);
     frameHero();
   }
   function hold(name) {
@@ -102,13 +88,7 @@ export function createHeroScene(asset, gearBytes) {
     const h = game.hero;
     const skeleton = figure.root.children.find(node => node.skeleton).skeleton;
     if (diagnosticsTick !== tick) {
-      // Rendering has its own nonnegative frame ID. Observe a completed pose
-      // under a distinct diagnostic ID without invalidating future render IDs.
-      figure.root.updateWorldMatrices(true);
-      skeleton.update(-2 - poseSequence++);
-      let hash = 2166136261;
-      for (const value of skeleton.boneMatrices) hash = Math.imul(hash ^ Math.round(value * 10000), 16777619);
-      diagnosticsHash = (hash >>> 0).toString(16).padStart(8, '0');
+      diagnosticsHash = paletteHash(figure, poseSequence++);
       diagnosticsTick = tick;
     }
     return { mode: checkpoint ? 'checkpoint' : 'live', checkpoint, tick, paused,

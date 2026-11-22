@@ -37,6 +37,9 @@ int32_t egret_renderer_release(EgretRenderer *renderer, uint32_t page);
 /* Current committed mesh vertex + index payload, in bytes (zero without a World3D scene).
  * This describes each logical CPU/GPU copy; it does not estimate driver allocation overhead. */
 size_t egret_renderer_world_geometry_bytes(const EgretRenderer *renderer);
+/* E3G1 stages indexed World3D geometry without drawing or changing the confirmed scene.
+ * Call all batches and the matching E3D7 once on the same GL thread before swapping.
+ * Each packet is at most 2 MiB. A lost generation needs all definitions again. */
 int32_t egret_renderer_draw(EgretRenderer *renderer, const uint8_t *frame,
                             size_t length, uint32_t physical_width,
                             uint32_t physical_height);

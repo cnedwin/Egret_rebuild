@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-23",
+  "en": {
+    "title": "Resident geometry batches for Android World3D characters",
+    "body": "The GLES3 player can prepare a skinned encounter across multiple geometry packets while retaining the 2 MiB per-packet limit. The Snow Temple yard example brings Lin Chong and a swordsman into the same fight."
+  },
+  "zh": {
+    "title": "Android World3D 分批上传角色几何",
+    "body": "GLES3 播放器支持用多个几何包准备蒙皮角色，每包上限保持为 2 MiB。《风雪山神庙》草料场示例接通林冲和刀手的同场交战。"
+  }
+}

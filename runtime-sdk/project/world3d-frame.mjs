@@ -8,14 +8,18 @@ const MAGIC = 0x31443345,
   DELTA_MAGIC = 0x33443345,
   TEXTURED_DELTA_MAGIC = 0x34443345,
   SKINNED_MAGIC = 0x35443345,
-  SKINNED_DELTA_MAGIC = 0x36443345;
+  SKINNED_DELTA_MAGIC = 0x36443345,
+  STREAM_MAGIC = 0x37443345,
+  BATCH_MAGIC = 0x31473345;
 const HEADER = 160,
   DRAW = 88,
   TEXTURED_DRAW = 96,
   SKINNED_DRAW = 128,
   MAX_JOINTS = 56,
   BYTE_LIMIT = 360472,
-  TEXTURED_BYTE_LIMIT = 2 * 1024 * 1024;
+  TEXTURED_BYTE_LIMIT = 2 * 1024 * 1024,
+  RESIDENT_LIMIT = 16 * 1024 * 1024,
+  BATCH_HEADER = 24;
 const hudFormats = new Set([0x32524745, 0x33524745, 0x34524745, 0x35524745]);
 
 function reject(reason) {
@@ -83,7 +87,8 @@ function packGeometry(cache, geometry, texturedFormat, skinFormat) {
   const length = 12 + positions.count * stride + index.count * 4;
   if (
     length >
-    (texturedFormat ? TEXTURED_BYTE_LIMIT : BYTE_LIMIT) - HEADER - (texturedFormat ? TEXTURED_DRAW : DRAW) - 24
+    (skinFormat ? TEXTURED_BYTE_LIMIT - BATCH_HEADER :
+      (texturedFormat ? TEXTURED_BYTE_LIMIT : BYTE_LIMIT) - HEADER - (texturedFormat ? TEXTURED_DRAW : DRAW) - 24)
   )
     reject('geometry exceeds frame budget');
   const bytes = new Uint8Array(length),
@@ -193,6 +198,22 @@ function texturePage(map, geometry, pages, colorSpace) {
   return page;
 }
 
+// Batches reference immutable definitions until requested by a host; no combined checkpoint is allocated.
+function planBatches(geometries, acknowledged) {
+  const batches = [];
+  let batch;
+  for (const [geometry, bytes] of geometries) {
+    if (acknowledged?.get(geometry) === bytes) continue;
+    if (!batch || batch.length + bytes.length > TEXTURED_BYTE_LIMIT) {
+      batch = { length: BATCH_HEADER, definitions: [] };
+      batches.push(batch);
+    }
+    batch.definitions.push(bytes);
+    batch.length += bytes.length;
+  }
+  return batches;
+}
+
 export function createWorldProjectEncoder() {
   const cache = new WeakMap(),
     list = new RenderList3D();
@@ -233,15 +254,17 @@ export function createWorldProjectEncoder() {
     const frameId = h.getUint32(4, true);
     const tracked = Number.isSafeInteger(epoch) && epoch >= 0;
     // The Java player permits one frame in flight. Encoding or enqueueing alone does not establish residency.
-    const base = tracked && previous?.epoch === epoch && previous.id === previousFrameId &&
-      previous.format === format && frameId === ((previousFrameId + 1) >>> 0) ? previous.geometry : undefined;
+    const acknowledged = tracked && previous?.epoch === epoch && previous.id === previousFrameId &&
+      frameId === ((previousFrameId + 1) >>> 0) ? previous.geometry : undefined;
     const drawBytes = skinFormat ? SKINNED_DRAW : extended ? TEXTURED_DRAW : DRAW;
     const palettes = new Map();
     let paletteBytes = 0;
     const limit = extended ? TEXTURED_BYTE_LIMIT : BYTE_LIMIT;
     const geometryBytes = new Map();
     let size = HEADER + (skinFormat ? 4 : 0) + drawBytes * list.opaque.length + hud.byteLength;
+    let totalGeometry = 0;
     let reusedCount = 0, reusedBytes = 0;
+    const base = previous?.format === format ? acknowledged : undefined;
     for (const item of list.opaque) {
       supportedDraw(item);
       const packed = packGeometry(cache, item.geometry, extended, skinFormat);
@@ -257,7 +280,8 @@ export function createWorldProjectEncoder() {
       if (!geometryBytes.has(item.geometry)) {
         const bytes = packed.bytes;
         size += bytes.length;
-        if (size > limit) reject('visible geometry and draws exceed ' + limit + ' frame bytes (' + size + ')');
+        totalGeometry += bytes.length;
+        if (totalGeometry > RESIDENT_LIMIT) reject('visible geometry exceeds residency budget');
         if (geometryBytes.size >= 64) reject('more than 64 distinct visible geometries in the frame');
         geometryBytes.set(item.geometry, bytes);
         if (base?.get(item.geometry) === bytes) {
@@ -267,18 +291,24 @@ export function createWorldProjectEncoder() {
       }
     }
     size += paletteBytes;
-    if (size > limit) reject('HUD and draws exceed ' + limit + ' frame bytes (' + size + ')');
-    // Enforce the full-frame budget first so every admitted scene can still recover and replay.
-    const delta = reusedCount > 0;
-    const bytes = new Uint8Array(delta ? size - reusedBytes + 4 : size),
+    // Keep a streamed scene in its resident profile when culling briefly shrinks the visible set.
+    const stream = skinFormat && (size > limit || (tracked && previous?.epoch === epoch && previous.format === STREAM_MAGIC));
+    if (!stream && size > limit) reject('HUD and draws exceed ' + limit + ' frame bytes (' + size + ')');
+    if (stream && !tracked) reject('streamed geometry requires a device epoch');
+    const streamBase = previous?.format === STREAM_MAGIC ? acknowledged : undefined;
+    const batches = stream ? planBatches(geometryBytes, streamBase) : undefined;
+    const delta = !stream && reusedCount > 0;
+    const packetSize = stream ? size - totalGeometry + 12 : delta ? size - reusedBytes + 4 : size;
+    if (packetSize > limit) reject('draw packet exceeds frame budget');
+    const bytes = new Uint8Array(packetSize),
       v = new DataView(bytes.buffer);
     const bg = scene.background ?? [0, 0, 0];
     const rgba = ((colorByte(bg[0]) * 256 + colorByte(bg[1])) * 256 + colorByte(bg[2])) * 256 + 255;
     [
-      delta ? (skinFormat ? SKINNED_DELTA_MAGIC : extended ? TEXTURED_DELTA_MAGIC : DELTA_MAGIC) : format,
+      stream ? STREAM_MAGIC : delta ? (skinFormat ? SKINNED_DELTA_MAGIC : extended ? TEXTURED_DELTA_MAGIC : DELTA_MAGIC) : format,
       frameId,
       hud.byteLength,
-      geometryBytes.size - reusedCount,
+      stream ? 0 : geometryBytes.size - reusedCount,
       list.opaque.length,
       rgba
     ].forEach((n, i) => v.setUint32(i * 4, n, true));
@@ -302,7 +332,12 @@ export function createWorldProjectEncoder() {
     vector(v, 136, list.hemisphereGround, 3);
     vector(v, 148, list.ambient, 3);
     let offset = HEADER;
-    if (delta) {
+    if (stream) {
+      v.setUint32(offset, streamBase ? 0 : 1, true);
+      v.setUint32(offset + 4, streamBase ? previousFrameId : 0, true);
+      v.setUint32(offset + 8, batches.length, true);
+      offset += 12;
+    } else if (delta) {
       v.setUint32(offset, previousFrameId, true);
       offset += 4;
     }
@@ -311,7 +346,7 @@ export function createWorldProjectEncoder() {
       offset += 4;
     }
     for (const [geometry, packed] of geometryBytes) {
-      if (base?.get(geometry) === packed) continue;
+      if (stream || base?.get(geometry) === packed) continue;
       bytes.set(packed, offset);
       offset += packed.length;
     }
@@ -347,14 +382,40 @@ export function createWorldProjectEncoder() {
       offset += drawBytes;
     }
     bytes.set(hud, offset);
-    previous = tracked ? {epoch, id: frameId, format, geometry: geometryBytes,
+    previous = tracked ? {epoch, id: frameId, format: stream ? STREAM_MAGIC : format, geometry: geometryBytes,
+      streamDraw: stream ? bytes : undefined, batches,
       delta: delta ? bytes : undefined, tailOffset, paletteBytes, fullSize: size} : undefined;
     return bytes;
   }
 
   // A rejected delta still describes one precise game tick. Reconstruct its full wire
   // image from the original draw/HUD and immutable definitions, without advancing the game.
+  encode.geometryBatch = (epoch, frameId, ordinal) => {
+    if (previous?.epoch !== epoch || previous?.id !== frameId || !Number.isInteger(ordinal) ||
+        !previous?.batches?.[ordinal]) reject('geometry batch unavailable');
+    const batch = previous.batches[ordinal];
+    const bytes = new Uint8Array(batch.length);
+    const view = new DataView(bytes.buffer);
+    [BATCH_MAGIC, frameId, ordinal, previous.batches.length, batch.definitions.length, SKINNED_MAGIC]
+      .forEach((value, index) => view.setUint32(index * 4, value, true));
+    let offset = BATCH_HEADER;
+    for (const definition of batch.definitions) {
+      bytes.set(definition, offset);
+      offset += definition.length;
+    }
+    return bytes;
+  };
+
   encode.recover = (epoch, frameId) => {
+    if (previous?.streamDraw && previous.epoch === epoch && previous.id === frameId) {
+      previous.batches = planBatches(previous.geometry);
+      const bytes = previous.streamDraw.slice();
+      const view = new DataView(bytes.buffer);
+      view.setUint32(160, 1, true);
+      view.setUint32(164, 0, true);
+      view.setUint32(168, previous.batches.length, true);
+      return bytes;
+    }
     if (!previous?.delta || previous.epoch !== epoch || previous.id !== frameId)
       reject('recovery frame unavailable');
     const {delta, tailOffset, format, geometry, fullSize, paletteBytes} = previous;

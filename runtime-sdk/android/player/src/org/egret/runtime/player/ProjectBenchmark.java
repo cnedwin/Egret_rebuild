@@ -43,11 +43,14 @@ final class ProjectBenchmark {
     double elapsedMs() { return frames * 1000.0 / 120.0; }
 
     void enqueued(PlayerGraphics.Frame frame) throws IOException {
+        ByteBuffer header = ByteBuffer.wrap(frame.bytes).order(ByteOrder.LITTLE_ENDIAN);
+        if (captures() && header.getInt(0) == WorldProjectPacket.STREAM_MAGIC)
+            throw new IOException("Recording streamed World3D geometry is not supported");
         int expected = Math.min(frames, ProjectReplayTape.FRAMES - 1);
         if (frame.id() != expected) throw new IOException("Benchmark expected frame " + expected + ", got " + frame.id());
         // A custom producer must honor the full terminal checkpoint requested by the host.
         if (expected == ProjectReplayTape.FRAMES - 1 &&
-                WorldProjectPacket.isDelta(ByteBuffer.wrap(frame.bytes).order(ByteOrder.LITTLE_ENDIAN).getInt(0)))
+                WorldProjectPacket.incremental(header))
             throw new IOException("Benchmark terminal checkpoint requires a complete frame");
         // Warm and timed live frames retain only the terminal packet. The capture pass owns its own snapshots.
         if (captures() || expected == ProjectReplayTape.FRAMES - 1) pending = frame;
@@ -78,7 +81,7 @@ final class ProjectBenchmark {
     boolean redrawTerminal(EgretPlayerView owner) {
         if (!restoreTerminal) return false;
         restoreTerminal = false;
-        owner.enqueue(new PlayerGraphics.Frame(owner.epoch, terminal.bytes, terminal.pages), -1, -1);
+        owner.enqueue(new PlayerGraphics.Frame(owner.epoch, terminal.bytes, terminal.pages, terminal.geometryBatches), -1, -1);
         return true;
     }
 

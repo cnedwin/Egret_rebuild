@@ -311,6 +311,20 @@ Use `services.loadGlb` to acquire the model and texture pages in the game’s re
 
 On one Galaxy Z Fold7, the three browser and APK checkpoints produced matching bone-palette hashes. The first complete frame carried 1,856,976 bytes. All 1,483 measured incremental frames carried 7,716 bytes each, including 3,008 bytes of bone matrices and zero geometry definitions. Returning from the background recreated the GLES context and reproduced the idle stage pixel for pixel. Close released all eight project pages. [Device results and comparison method](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-skinned-character.json)
 
+### Fight a swordsman in the fodder yard
+
+Prepare a local copy of the encounter, then use the signed Release build instructions above or serve the output folder and open `browser.html`. Omitting `--yard` selects the single-character example. Both hosts run the original movement, enemy AI and hit rules against the same character and weapon assets. The encounter starts Lin Chong six metres from one swordsman. Hold the lower-left control to approach, then tap the lower-right control to strike. A landed hit holds the current pose for inspection. Tap the attack control again to continue.
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple-yard --yard
+```
+
+When visible skinned geometry would overflow a complete 2 MiB frame, the player sends complete mesh definitions in ordered batches. Each geometry packet and each draw packet stays within 2 MiB. The batches belong to one device epoch and logical frame. GLES prepares them before drawing either character. Later draws reference the resident meshes and update the pose, transforms, materials and HUD. On context recreation the player resends the required geometry before presenting the restored fight.
+
+This path admits up to 64 visible geometries and 16 MiB of encoded geometry definitions. During replacement, staged definitions and the active generation can coexist in CPU and GPU memory. Existing E3D1–6 frames remain compatible. Both hosts of the new multipart protocol must understand its E3G1 geometry and E3D7 draw packets. A single definition plus its packet header must fit within 2 MiB. Games using larger individual meshes must split those meshes when preparing the content. The recorder accepts its existing frame formats and reports an unsupported format when it encounters a multibatch scene.
+
+With injected touch on a physical Galaxy Z Fold7, the browser and signed trimmed-V8 APK registered both spear hits at simulation ticks 101 and 128, reducing the swordsman’s health from 84 to 71 and then 56. The eight mesh definitions crossed the bridge in packets of 2,001,236 and 1,540,608 bytes on initial load and once per GLES context recreation. Across both observed combat intervals the geometry traffic was zero. Both hosts retained poses and health across backgrounding. Each reproduced its own 3D pixels exactly when restored, both before contact and during the hit. The final APK restored the scene twice. Its two combat intervals contained 298 and 335 draw packets. At close, all 66 texture uploads across the three GLES contexts had matching releases and all 22 project pages were returned. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-yard-encounter.json)
+
 ### Resident geometry in live Android frames
 
 The trimmed V8 and WebView project hosts can use the same incremental World3D protocol when the game bundle and player are built from this revision. An older host or bundle continues to send full frames. A full E3D1 or E3D2 packet defines every visible mesh. After the GL thread confirms a successful submission in the same EGL generation, E3D3 or E3D4 can refer to those meshes by ID. Each packet still carries the current camera, lights, ordered draw records, material and texture references, and the complete 2D HUD. Only new or changed mesh definitions cross the bridge. On a camera-only frame with an unchanged visible set, geometry uses zero bridge bytes.

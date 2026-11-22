@@ -14,17 +14,19 @@ final class WorldProjectPacket {
     static final int MAGIC = 0x31443345, TEXTURED_MAGIC = 0x32443345;
     static final int DELTA_MAGIC = 0x33443345, TEXTURED_DELTA_MAGIC = 0x34443345;
     static final int SKINNED_MAGIC = 0x35443345, SKINNED_DELTA_MAGIC = 0x36443345;
+    static final int STREAM_MAGIC = 0x37443345, BATCH_MAGIC = 0x31473345;
+    static final int RESIDENT_LIMIT = 16 * 1024 * 1024, MAX_BATCHES = 64;
     private static final int HEADER = 160, DRAW = 88, TEXTURED_DRAW = 96, SKINNED_DRAW = 128;
     private static final int MAX_JOINTS = 56;
     private WorldProjectPacket() {}
 
     static final int TEXTURED_LIMIT = 2 * 1024 * 1024;
     static int byteLimit(int magic) {
-        return isTextured(magic) ? TEXTURED_LIMIT : PlayerGraphics.MAX_FRAME_BYTES;
+        return (isTextured(magic) || magic == BATCH_MAGIC) ? TEXTURED_LIMIT : PlayerGraphics.MAX_FRAME_BYTES;
     }
 
     static boolean isDelta(int format) { return format == DELTA_MAGIC || format == TEXTURED_DELTA_MAGIC || format == SKINNED_DELTA_MAGIC; }
-    static boolean isSkinned(int format) { return format == SKINNED_MAGIC || format == SKINNED_DELTA_MAGIC; }
+    static boolean isSkinned(int format) { return format == SKINNED_MAGIC || format == SKINNED_DELTA_MAGIC || format == STREAM_MAGIC; }
     static boolean isTextured(int format) { return format == TEXTURED_MAGIC || format == TEXTURED_DELTA_MAGIC || isSkinned(format); }
     private static int fullFormat(int format) {
         return isSkinned(format) ? SKINNED_MAGIC : isTextured(format) ? TEXTURED_MAGIC : MAGIC;
@@ -33,7 +35,65 @@ final class WorldProjectPacket {
         return isSkinned(format) ? SKINNED_DRAW : isTextured(format) ? TEXTURED_DRAW : DRAW;
     }
     static boolean isWorld(int format) { return format == MAGIC || isTextured(format) || format == DELTA_MAGIC; }
-    private static int headerSize(int format) { return HEADER + (isDelta(format) ? 4 : 0) + (isSkinned(format) ? 4 : 0); }
+    private static int headerSize(int format) { return format == STREAM_MAGIC ? 176 : HEADER + (isDelta(format) ? 4 : 0) + (isSkinned(format) ? 4 : 0); }
+
+    static boolean incremental(ByteBuffer data) {
+        int format = data.getInt(0);
+        return isDelta(format) || (format == STREAM_MAGIC && data.limit() >= 176 && data.getInt(160) == 0);
+    }
+
+    static int batchCount(ByteBuffer data) {
+        if (data.getInt(0) != STREAM_MAGIC) return 0;
+        if (data.limit() < 176 || data.getInt(12) != 0) throw new IllegalArgumentException("Invalid World3D streamed frame");
+        int flags = data.getInt(160), count = data.getInt(168);
+        if ((flags & ~1) != 0 || (flags == 1 && data.getInt(164) != 0) || count < 0 || count > MAX_BATCHES)
+            throw new IllegalArgumentException("Invalid World3D streamed header");
+        return count;
+    }
+
+    // The bridge owns the individual buffers until the final frame has arrived. No joined
+    // byte array is ever made. Device loss or a cancelled request releases partial batches.
+    static final class Batches {
+        static final byte[][] EMPTY = new byte[0][];
+        private byte[][] packets = EMPTY;
+        private int target, epoch, received, definitions, bytes;
+
+        void clear() {
+            packets = EMPTY;
+            received = definitions = bytes = 0;
+        }
+
+        void add(int token, ByteBuffer header, byte[] data) {
+            int id = header.getInt(4), index = header.getInt(8), count = header.getInt(12), n = header.getInt(16);
+            if (index == 0 && packets.length == 0 && count > 0 && count <= MAX_BATCHES) {
+                packets = new byte[count][];
+                target = id;
+                epoch = token;
+            }
+            if (header.getInt(0) != BATCH_MAGIC || header.getInt(20) != SKINNED_MAGIC ||
+                    data.length <= 24 || data.length > TEXTURED_LIMIT || packets.length == 0 ||
+                    token != epoch || id != target || count != packets.length || index != received || index >= count ||
+                    n < 1 || n > MAX_BATCHES - definitions || data.length - 24 > RESIDENT_LIMIT - bytes) {
+                clear();
+                throw new IllegalArgumentException("Invalid World3D geometry batch sequence");
+            }
+            packets[received++] = data;
+            definitions += n;
+            bytes += data.length - 24;
+        }
+
+        byte[][] finish(int token, ByteBuffer draw) {
+            int expected = batchCount(draw);
+            if (packets.length != expected || received != expected ||
+                    (expected != 0 && (epoch != token || target != draw.getInt(4)))) {
+                clear();
+                throw new IllegalArgumentException("Incomplete World3D geometry batches");
+            }
+            byte[][] result = packets;
+            clear();
+            return result;
+        }
+    }
 
     // The live bridge only inspects the envelope. Native decoding checks the full packet before drawing.
     static int stageOffset(ByteBuffer data) {
@@ -119,6 +179,8 @@ final class WorldProjectPacket {
     static GeometryState validate(byte[] owned, Map<Integer, PlayerGraphics.Page> pages,
                                   GeometryState previous) throws IOException {
         ByteBuffer data = ByteBuffer.wrap(owned).order(ByteOrder.LITTLE_ENDIAN);
+        if (data.limit() >= 4 && data.getInt(0) == STREAM_MAGIC)
+            throw new IOException("Recording streamed World3D geometry is not supported");
         int end = stageOffset(data);
         if (end < HEADER) throw invalid();
         int format = data.getInt(0), header = headerSize(format);

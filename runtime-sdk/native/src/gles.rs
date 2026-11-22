@@ -35,6 +35,7 @@ pub struct EgretRenderer {
     world_textures: [u32; PAGE_SLOTS],
     world_data_textures: [u32; PAGE_SLOTS],
     project: Option<ProjectPipeline>,
+    world_uploads: crate::world_gles::WorldUploads,
     page_sizes: [[u32; 2]; PAGE_SLOTS],
     resident_bytes: usize,
     vertices: Vec<Vertex>,
@@ -110,6 +111,7 @@ impl EgretRenderer {
             index_buffer: 0, index_bytes: 0,
             lights: Vec::new(), light_buffer: 0, light_bytes: 0, light_enabled: false,
             opaque_pages: [true; PAGE_SLOTS], world_textures: [0; PAGE_SLOTS], world_data_textures: [0; PAGE_SLOTS], project: None,
+            world_uploads: Default::default(),
             textures: [0; PAGE_SLOTS], page_sizes: [[0; 2]; PAGE_SLOTS], resident_bytes: 0,
             vertices: Vec::new(), indices: Vec::new(), batches: Vec::new(),
         };
@@ -146,7 +148,8 @@ impl EgretRenderer {
         Some(renderer)
     }
 
-    unsafe fn delete_gl(&self) {
+    unsafe fn delete_gl(&mut self) {
+        self.world_uploads.clear();
         if let Some(project) = &self.project { project.destroy(); }
         glDeleteTextures(PAGE_SLOTS as i32, self.textures.as_ptr());
         glDeleteTextures(PAGE_SLOTS as i32, self.world_textures.as_ptr());
@@ -224,16 +227,21 @@ impl EgretRenderer {
     }
 
     unsafe fn draw(&mut self, bytes: &[u8], width: u32, height: u32) -> i32 {
-        let world = if matches!(bytes.get(..4), Some(b"E3D1" | b"E3D2" | b"E3D3" | b"E3D4" | b"E3D5" | b"E3D6")) {
+        let world = if matches!(bytes.get(..4), Some(b"E3D1" | b"E3D2" | b"E3D3" | b"E3D4" | b"E3D5" | b"E3D6" | b"E3D7")) {
             let Some(scene) = crate::world_frame::WorldFrame::parse(bytes) else { return INVALID; };
             let world = self.project.as_ref().and_then(|p| p.world.as_ref());
-            if let Err(error) = scene.validate_delta(world.and_then(|w| w.confirmed), |id| world.and_then(|w| w.mesh_bytes(id))) {
+            let inherit = scene.batches.is_none() || scene.base.is_some();
+            if scene.batches.is_some() && !self.world_uploads.complete(&scene) { return INVALID; }
+            let preceding = world.filter(|_| inherit);
+            if let Err(error) = scene.validate_delta(world.and_then(|w| w.confirmed), |id|
+                    self.world_uploads.mesh_bytes(id).or_else(|| preceding.and_then(|w| w.mesh_bytes(id)))) {
                 return match error {
                     crate::world_frame::DeltaError::MissingBase => MISSING_WORLD_BASE,
                     crate::world_frame::DeltaError::OverBudget => INVALID,
                 };
             }
-            if scene.format == crate::world_frame::SKIN_MAGIC && !scene.valid_palettes(|id| world.and_then(|w| w.mesh_joints(id))) {
+            if (scene.format == crate::world_frame::SKIN_MAGIC || scene.batches.is_some()) &&
+                !scene.valid_palettes(|id| self.world_uploads.mesh_joints(id).or_else(|| preceding.and_then(|w| w.mesh_joints(id)))) {
                 return INVALID;
             }
             if scene.draws.iter().any(|d| (d.page != 0 && self.world_textures[d.page] == 0)
@@ -263,7 +271,7 @@ impl EgretRenderer {
             if self.project.is_none() { self.project = ProjectPipeline::create(); }
             let Some(pipeline) = &mut self.project else { return GPU_FAILURE; };
             if size != 0 { glBufferSubData(ARRAY_BUFFER, 0, size as isize, self.vertices.as_ptr().cast()); }
-            return if pipeline.render(&header, [width, height], self.vao, &self.textures, &self.world_textures, &self.world_data_textures, &self.batches, world.as_ref()) {
+            return if pipeline.render(&header, [width, height], self.vao, &self.textures, &self.world_textures, &self.world_data_textures, &self.batches, world.as_ref(), self.world_uploads.take()) {
                 0
             } else { GPU_FAILURE };
         }
@@ -292,7 +300,7 @@ pub unsafe extern "C" fn egret_renderer_create() -> *mut EgretRenderer {
 #[no_mangle]
 pub unsafe extern "C" fn egret_renderer_destroy(ptr: *mut EgretRenderer) {
     if !ptr.is_null() {
-        let renderer = Box::from_raw(ptr);
+        let mut renderer = Box::from_raw(ptr);
         renderer.delete_gl();
     }
 }
@@ -415,15 +423,31 @@ pub unsafe extern "C" fn egret_renderer_draw(
     if bytes.is_null() || !(frame::HEADER_BYTES..=crate::world_frame::TEXTURED_LIMIT).contains(&length)
         || !(1..=MAX_DIMENSION).contains(&width) || !(1..=MAX_DIMENSION).contains(&height)
     {
+        renderer.world_uploads.clear();
         return INVALID;
     }
     let frame = slice::from_raw_parts(bytes, length);
-    if length > MAX_FRAME_BYTES && !matches!(frame.get(..4), Some(b"E3D2" | b"E3D4" | b"E3D5" | b"E3D6")) { return INVALID; }
+    if frame.starts_with(b"E3G1") {
+        use crate::world_frame::StageError;
+        let result = renderer.world_uploads.stage(frame, |g| crate::world_gles::Mesh::upload(g), |m| m.destroy());
+        if let Err(error) = result {
+            return match error { StageError::Invalid => INVALID, StageError::Upload => GPU_FAILURE };
+        }
+        // No framebuffer clear, draw, resolve or predecessor publication for a batch.
+        return 0;
+    }
+    let resident = frame.starts_with(b"E3D7");
+    if !resident { renderer.world_uploads.clear(); }
+    if length > MAX_FRAME_BYTES && !matches!(frame.get(..4), Some(b"E3D2" | b"E3D4" | b"E3D5" | b"E3D6" | b"E3D7")) { return INVALID; }
     let result = renderer.draw(frame, width, height);
+    if resident && result != 0 {
+        renderer.world_uploads.clear();
+        return result; // Previously presented declared geometry is still the valid predecessor.
+    }
     if let Some(project) = &mut renderer.project {
         if result != 0 {
             if let Some(world) = &mut project.world { world.confirmed = None; }
-        } else if !matches!(frame.get(..4), Some(b"E3D1" | b"E3D2" | b"E3D3" | b"E3D4" | b"E3D5" | b"E3D6")) {
+        } else if !matches!(frame.get(..4), Some(b"E3D1" | b"E3D2" | b"E3D3" | b"E3D4" | b"E3D5" | b"E3D6" | b"E3D7")) {
             if let Some(retired) = project.world.take() { retired.destroy(); }
         }
     }

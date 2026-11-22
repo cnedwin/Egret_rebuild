@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import {
   Scene3D,
   Attribute3D,
+  Geometry3D,
   Bone3D,
   Skeleton3D,
   Mesh3D,
@@ -285,4 +286,60 @@ test('a shared animated skeleton crosses once per frame with resident vertices a
   joints.data[0] = 1;
   joints.touch();
   assert.throws(() => capture(data, encode, 4, 9, 3, pages), /joint outside skin palette/);
+});
+
+test('a multi-actor checkpoint and recovery stage bounded geometry before one pose without advancing the game', () => {
+  const data = fixture(), encode = createWorldProjectEncoder(), geometries = [];
+  data.scene.removeChild(data.mesh);
+  data.material.emissive[0] = 0.1;
+  for (let i = 0; i < 3; i++) {
+    const geometry = new Geometry3D();
+    geometry.setAttribute('position', new Attribute3D(new Float32Array(36000), 3));
+    geometry.setAttribute('normal', new Attribute3D(new Float32Array(36000), 3));
+    geometry.setIndex(new Uint16Array([0, 1, 2]));
+    const actor = new Mesh3D(geometry, data.material);
+    actor.frustumCulled = false;
+    data.scene.addChild(actor);
+    geometries.push(geometry);
+  }
+  const batches = (draw, epoch) => Array.from({length: draw.getUint32(168, true)}, (_, ordinal) => {
+    const batch = encode.geometryBatch(epoch, draw.getUint32(4, true), ordinal);
+    const view = new DataView(batch.buffer);
+    assert.ok(batch.byteLength <= 2 * 1024 * 1024);
+    assert.deepEqual([0, 4, 8, 12, 20].map(p => view.getUint32(p, true)),
+      [0x31473345, draw.getUint32(4, true), ordinal, draw.getUint32(168, true), 0x35443345]);
+    return batch;
+  });
+  const first = capture(data, encode, 0, 1, -1);
+  assert.equal(first.getUint32(0, true), 0x37443345);
+  assert.equal(first.getUint32(160, true), 1);
+  assert.equal(first.byteLength, 176 + 3 * 128 + 24);
+  const initial = batches(first, 1);
+  assert.deepEqual(initial.map(packet => new DataView(packet.buffer).getUint32(16, true)), [2, 1]);
+  assert.ok(initial.reduce((total, batch) => total + batch.length, 0) > 2 * 1024 * 1024);
+  const next = capture(data, encode, 1, 1, 0);
+  assert.equal(next.getUint32(160, true), 0);
+  assert.deepEqual(batches(next, 1), []);
+  const reset = new DataView(encode.recover(1, 1).buffer);
+  assert.equal(reset.getUint32(160, true), 1);
+  assert.deepEqual(new Uint8Array(reset.buffer, 172), new Uint8Array(next.buffer, 172));
+  assert.deepEqual(batches(reset, 1).map(packet => packet.subarray(24)), initial.map(packet => packet.subarray(24)));
+  const changed = geometries[1].getAttribute('position');
+  changed.data[0] = 0.125; changed.touch();
+  const edit = capture(data, encode, 2, 1, 1);
+  assert.equal(edit.getUint32(160, true), 0);
+  const replacement = batches(edit, 1);
+  assert.equal(replacement.length, 1);
+  assert.equal(new DataView(replacement[0].buffer).getUint32(24, true), geometries[1].id);
+  const restored = capture(data, encode, 3, 2, -1);
+  assert.equal(restored.getUint32(160, true), 1);
+  assert.equal(batches(restored, 2).length, 2);
+  assert.throws(() => encode.geometryBatch(1, 3, 0), /unavailable/);
+  const last = data.scene.children.find(mesh => mesh.geometry === geometries[2]);
+  last.visible = false;
+  const culled = capture(data, encode, 4, 2, 3);
+  assert.equal(culled.getUint32(0, true), 0x37443345);
+  assert.equal(culled.getUint32(168, true), 0);
+  last.visible = true;
+  assert.equal(batches(capture(data, encode, 5, 2, 4), 2).length, 1);
 });

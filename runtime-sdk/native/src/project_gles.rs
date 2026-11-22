@@ -137,10 +137,10 @@ impl ProjectPipeline {
     }
 
     pub(crate) unsafe fn render(&mut self, header: &Header, physical: [u32; 2], vao: u32,
-                                pages: &[u32; PAGE_SLOTS], world_pages: &[u32; PAGE_SLOTS], data_pages: &[u32; PAGE_SLOTS], batches: &[Batch], world: Option<&WorldFrame<'_>>) -> bool {
+                                pages: &[u32; PAGE_SLOTS], world_pages: &[u32; PAGE_SLOTS], data_pages: &[u32; PAGE_SLOTS], batches: &[Batch], world: Option<&WorldFrame<'_>>,
+                                mut pending: PendingMeshes) -> bool {
         if !self.resize(physical, world.is_some()) { return false; }
         if world.is_some() && self.world.is_none() { self.world = Some(WorldPipeline::create()); }
-        let mut pending = PendingMeshes::default();
         // Compile the mapped shader only when a quad or mesh first needs atlas mapping.
         let draw = if header.mapped {
             if self.mapped_draw.is_none() { self.mapped_draw = DrawProgram::create(true); }
