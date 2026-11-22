@@ -94,6 +94,43 @@ test('browser npm packages contain their own scripts and the notices from the ve
         assert.equal(files.get('package/' + member), sha(members[member]));
     }
     assert.throws(() => packBrowserNpm({ release, out, manifestSha256: digest }), /already exists/);
+    const collectionDir = path.join(root, 'github');
+    const collection = packBrowserNpm({ release, out: collectionDir, manifestSha256: digest, target: 'github' });
+    assert.deepEqual(
+      collection.packages.map(p => p.name),
+      ['@cnedwin/egret-browser']
+    );
+    assert.equal(collection.sourceCommit, result.sourceCommit);
+    assert.equal(collection.browserZipSha256, result.browserZipSha256);
+    const item = collection.packages[0];
+    assert.equal(item.file, 'cnedwin-egret-browser-' + version + '.tgz');
+    const tgz = path.join(collectionDir, item.file);
+    const all = archiveManifest(tgz);
+    assert.equal(all.version, version);
+    assert.equal(all.name, '@cnedwin/egret-browser');
+    assert.equal(all.publishConfig.registry, 'https://npm.pkg.github.com');
+    assert.equal(all.repository.url, 'git+https://github.com/cnedwin/Egret_rebuild.git');
+    assert.equal(all.dependencies, undefined);
+    assert.deepEqual(all.exports['.'], { import: './egret2d.mjs' });
+    assert.deepEqual(all.exports['./2d'], all.exports['.']);
+    assert.deepEqual(all.exports['./3d'], { import: './egret3d.mjs' });
+    for (const f of scripts) assert.equal(all.exports['./' + f], './' + f);
+    assert.equal(all.unpkg, undefined);
+    assert.equal(all.jsdelivr, undefined);
+    const collectionFiles = archiveFiles(tgz);
+    const expectedCollection = [...scripts, ...extras, 'README.md', 'README.zh-CN.md', 'package.json'];
+    assert.deepEqual([...collectionFiles.keys()].sort(), expectedCollection.map(n => 'package/' + n).sort());
+    for (const f of [...scripts, ...extras]) assert.equal(collectionFiles.get('package/' + f), sha(members[f]));
+    for (const doc of ['README.md', 'README.zh-CN.md']) {
+      assert.equal(
+        collectionFiles.get('package/' + doc),
+        sha(fs.readFileSync(new URL('../tools/github-browser-distribution/' + doc, import.meta.url)))
+      );
+    }
+    assert.throws(
+      () => packBrowserNpm({ release, out: collectionDir, manifestSha256: digest, target: 'wrong' }),
+      /Unknown package target/
+    );
     // A malformed release whose manifest and ZIP match must still agree with the browser packer's report.
     report.files['egret3d.js'].sha256 = '0'.repeat(64);
     const badOut = path.join(root, 'failed');

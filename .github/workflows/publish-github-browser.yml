@@ -1,0 +1,167 @@
+name: Publish the GitHub browser package
+on:
+  workflow_dispatch:
+
+permissions: {}
+concurrency:
+  group: publish-egret-browser-7-0-2
+  cancel-in-progress: false
+
+env:
+  PACKAGE: '@cnedwin/egret-browser'
+  VERSION: '7.0.2'
+  TAG: v7.0.2
+  REGISTRY: https://npm.pkg.github.com
+  SOURCE_COMMIT: 60991a46eb2252e5c0e7790b90b51517e3cbd14c
+  MANIFEST_SHA256: 5687ce4e23eceadaa6ad23a21a8f032b5d6618215c516bf609996a0e5bb614f8
+
+jobs:
+  pack:
+    if: github.repository == 'cnedwin/Egret_rebuild' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      integrity: ${{ steps.pack.outputs.integrity }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Read the immutable browser release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          source="$RUNNER_TEMP/source"
+          mkdir "$source"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$TAG" --jq .sha)" = "$SOURCE_COMMIT"
+          digest=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[] | select(.name == "release.json") | .digest')
+          test "$digest" = "sha256:$MANIFEST_SHA256"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir "$source" --pattern release.json --pattern egret-browser.zip
+          (cd "$source" && echo "$MANIFEST_SHA256  release.json" | sha256sum -c -)
+          jq -e --arg v "$VERSION" --arg c "$SOURCE_COMMIT" '.version == $v and .sourceCommit == $c' "$source/release.json"
+      - name: Package the verified classic and module files
+        id: pack
+        run: |
+          set -euo pipefail
+          dest="$RUNNER_TEMP/package"
+          node tools/pack-browser-npm.mjs --target github --release "$RUNNER_TEMP/source" --manifest-sha256 "$MANIFEST_SHA256" --out "$dest"
+          integrity=$(jq -er --arg n "$PACKAGE" '.packages | select(length == 1 and .[0].name == $n) | .[0].integrity' "$dest/browser-npm.json")
+          printf 'integrity=%s\n' "$integrity" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: github-browser-package
+          path: ${{ runner.temp }}/package/*.tgz
+          if-no-files-found: error
+          retention-days: 3
+
+  publish:
+    needs: pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: github-browser-package
+          path: ${{ runner.temp }}/package
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '26.7.0'
+          registry-url: https://npm.pkg.github.com
+          scope: '@cnedwin'
+      - name: Publish the exact archive or verify the existing version
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+          INTEGRITY: ${{ needs.pack.outputs.integrity }}
+        run: |
+          set -euo pipefail
+          tgz="$RUNNER_TEMP/package/cnedwin-egret-browser-$VERSION.tgz"
+          test "sha512-$(openssl dgst -sha512 -binary "$tgz" | openssl base64 -A)" = "$INTEGRITY"
+          tar -xOzf "$tgz" package/package.json | jq -e --arg n "$PACKAGE" --arg v "$VERSION" --arg r "$REGISTRY" '.name == $n and .version == $v and .publishConfig.registry == $r'
+          meta="$RUNNER_TEMP/registry.json"
+          lookup() { curl -sS -o "$meta" -w '%{http_code}' -H "Authorization: Bearer $NODE_AUTH_TOKEN" "$REGISTRY/@cnedwin%2fegret-browser"; }
+          status=$(lookup)
+          if [[ "$status" == 200 ]]; then
+            # Never replace an existing namespace or a release built from different bytes.
+            jq -e --arg v "$VERSION" --arg h "$INTEGRITY" '.versions[$v].dist.integrity == $h' "$meta"
+          elif [[ "$status" == 404 ]]; then
+            npm publish "$tgz" --registry="$REGISTRY" --tag latest --ignore-scripts
+          else
+            echo "GitHub npm metadata returned HTTP $status" >&2
+            exit 1
+          fi
+
+  verify:
+    needs: [pack, publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '26.7.0'
+          registry-url: https://npm.pkg.github.com
+          scope: '@cnedwin'
+      - name: Install in an empty consumer and identify the associated package
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          INTEGRITY: ${{ needs.pack.outputs.integrity }}
+        run: |
+          set -euo pipefail
+          consumer=$(mktemp -d)
+          cd "$consumer"
+          printf '%s\n' '{"name":"egret-browser-consumer","private":true,"type":"module"}' > package.json
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir "$consumer" --pattern release.json
+          echo "$MANIFEST_SHA256  release.json" | sha256sum -c -
+          # Registry metadata and tarballs can become visible at different times after first publication.
+          for attempt in {1..8}; do
+            if npm install --registry="$REGISTRY" --cache="$consumer/cache" --save-exact --ignore-scripts --no-audit --no-fund "$PACKAGE@$VERSION"; then break; fi
+            if [[ "$attempt" == 8 ]]; then exit 1; fi
+            sleep 4
+          done
+          env -u GH_TOKEN -u NODE_AUTH_TOKEN -u GITHUB_TOKEN node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          import { createHash } from 'node:crypto';
+          const { PACKAGE, VERSION, INTEGRITY, REGISTRY, SOURCE_COMMIT } = process.env;
+          const read = f => JSON.parse(fs.readFileSync(f));
+          const location = 'node_modules/' + PACKAGE;
+          const lock = read('package-lock.json').packages;
+          assert.deepEqual(Object.keys(lock).sort(), ['', location]);
+          assert.equal(lock[location].version, VERSION);
+          assert.equal(lock[location].integrity, INTEGRITY);
+          assert.equal(new URL(lock[location].resolved).origin, REGISTRY);
+          const manifest = read('release.json');
+          assert.equal(manifest.sourceCommit, SOURCE_COMMIT);
+          for (const file of ['egret2d.js', 'egret2d.mjs', 'egret3d.js', 'egret3d.mjs']) {
+            const asset = manifest.assets.find(a => a.file === file);
+            const bytes = fs.readFileSync(new URL(import.meta.resolve(PACKAGE + '/' + file)));
+            assert.equal(bytes.length, asset.bytes);
+            assert.equal(createHash('sha256').update(bytes).digest('hex'), asset.sha256);
+          }
+          const flat = await import('@cnedwin/egret-browser/2d');
+          const world = await import('@cnedwin/egret-browser/3d');
+          assert.equal(typeof flat.play, 'function');
+          assert.equal(flat.play3d, undefined);
+          assert.equal(typeof world.play3d, 'function');
+          assert.equal(typeof world.play, 'function');
+          JS
+          test "$(npm view "$PACKAGE@$VERSION" dist.integrity --registry="$REGISTRY")" = "$INTEGRITY"
+          for attempt in {1..8}; do
+            if gh api users/cnedwin/packages/npm/egret-browser > "$consumer/metadata.json" &&
+              jq -e --arg r "$GITHUB_REPOSITORY" '.repository.full_name == $r' "$consumer/metadata.json" > /dev/null; then break; fi
+            if [[ "$attempt" == 8 ]]; then exit 1; fi
+            sleep 4
+          done
+          visibility=$(jq -er '.visibility | select(. == "public" or . == "private" or . == "internal")' "$consumer/metadata.json")
+          printf 'Verified %s@%s from %s. Repository: %s. GitHub package visibility: %s. SHA-512: %s\n' "$PACKAGE" "$VERSION" "$REGISTRY" "$GITHUB_REPOSITORY" "$visibility" "$INTEGRITY" | tee -a "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-22",
+  "en": {
+    "title": "Package 2D and World3D together for GitHub Packages",
+    "body": "The @cnedwin/egret-browser collection packages the four browser scripts from one release. The default and /2d entries load 2D, and /3d includes World3D. The installation guide covers scope-specific GitHub authentication."
+  },
+  "zh": {
+    "title": "为 GitHub Packages 制作 2D 与 World3D 合集",
+    "body": "@cnedwin/egret-browser 将同一次发行的四个浏览器脚本放入一个包。默认入口与 /2d 提供 2D，/3d 包含 World3D。安装指南说明如何只为该命名空间配置 GitHub 身份验证。"
+  }
+}

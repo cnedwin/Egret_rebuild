@@ -58,6 +58,17 @@ The five modular packages provide feature-specific imports. Two additional npm p
 
 The 3D bundle includes the 2D game entry. Choose one bundle per game and keep engine objects and resource lifetimes within that instance. [HTML and ES module examples](single-file.md)
 
+## Use one browser collection from GitHub Packages
+
+For projects that consume GitHub Packages, `@cnedwin/egret-browser` combines the four released browser scripts in one dependency. Add `@cnedwin:registry=https://npm.pkg.github.com` to the project's `.npmrc`. This routes only the `@cnedwin` scope to GitHub. The `@egret` modules and separate browser packages keep their normal npm configuration.
+
+```sh
+npm login --scope=@cnedwin --registry=https://npm.pkg.github.com --auth-type=legacy
+npm install --save-exact @cnedwin/egret-browser@7.0.2
+```
+
+GitHub requires authentication for npm downloads even when the package is public. At the password prompt, use a classic personal access token with `read:packages` from an account with access to the package. Import `play` from `@cnedwin/egret-browser` or its `/2d` entry, or import `play3d` from `@cnedwin/egret-browser/3d`. For a plain HTML page, copy one classic script from the package. [GitHub Packages installation and browser examples](../../../tools/github-browser-distribution/README.md)
+
 ## What an archive holds
 
 Each of the five modular npm archives contains the built `dist` directory, both package READMEs, `LICENSE` and `NOTICE`. The private workspace uses version `0.0.0`. Each packed manifest carries the release version, lists its distributable files and names a licence; a package whose source manifest names none is Apache-2.0. Public entries and third-party dependencies come from the source manifest.
@@ -88,6 +99,8 @@ The install check uses a second set of archives with local file URLs so it can r
 Maintainers download the assets from the matching GitHub release into one directory and read the SHA-256 of `release.json` from its GitHub asset record. The following command verifies the released scripts and notices and writes two npm archives. Supply a new output directory.
 
     node tools/pack-browser-npm.mjs --release <downloaded-release-directory> --manifest-sha256 <sha256-from-github> --out <new-directory>
+
+The [GitHub Packages workflow](../../../.github/workflows/publish-github-browser.yml) is dispatched manually from `main` for 7.0.2. It checks the release manifest and builds the combined archive with `--target github`, then installs the published package in an empty project. The run summary reports package visibility. Use the package settings to grant community access if the result is `private`. [Package access and visibility](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
 
 ## Earlier engineering preview evidence
 
