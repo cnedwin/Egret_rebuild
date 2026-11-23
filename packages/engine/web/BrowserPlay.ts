@@ -634,6 +634,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const win = page.defaultView ?? (globalThis as unknown as Window);
 
   // The canvas: the caller's as it stands, or one of our own in a holder it is fitted into.
+  const embedded = options.parent !== undefined || options.canvas !== undefined;
   let holder: HTMLElement | undefined,
     canvas = options.canvas;
   if (canvas === undefined) {
@@ -641,12 +642,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     const parent = options.parent;
     holder.style.cssText =
       parent === undefined
-        ? 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;background:#000'
-        : 'position:relative;width:100%;overflow:hidden;background:#000;' +
+        ? 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden'
+        : 'position:relative;width:100%;overflow:hidden;' +
           // A parent with no height of its own is given the stage's shape.
           (parent.clientHeight > 0 ? 'height:100%' : `aspect-ratio:${width}/${height}`);
+    holder.style.background = options.transparent === true ? 'transparent' : '#000';
     canvas = page.createElement('canvas');
-    canvas.style.cssText = 'display:block;touch-action:none;outline:none';
+    canvas.style.cssText = 'display:block;touch-action:none';
+    if (!embedded) canvas.style.outline = 'none';
     holder.appendChild(canvas);
     (parent ?? page.body).appendChild(holder);
   }
@@ -740,7 +743,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const random = createRandom(options.seed ?? Date.now() + ':' + Math.random());
 
   // Keys: a set of what is held, and what changed since the last update.
-  const held = new Set<string>(),
+  const physicalKeys = new Set<string>(),
+    held = new Set<string>(),
     wentDown = new Set<string>(),
     cameUp = new Set<string>();
   const typing = (target: EventTarget | null): boolean => {
@@ -753,18 +757,33 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     );
   };
   const keyDown = (event: KeyboardEvent): void => {
-    if (typing(event.target)) return;
+    // Embedded games leave Tab to the page, including the step that leaves the canvas.
+    if (typing(event.target) || (embedded && (event.target !== surface || event.code === 'Tab'))) return;
     if (KEPT_FROM_PAGE.has(event.code)) event.preventDefault();
-    if (event.repeat || held.has(event.code)) return;
+    if (event.repeat) return;
+    physicalKeys.add(event.code);
+    if (held.has(event.code)) return;
     held.add(event.code);
     wentDown.add(event.code);
   };
-  const keyUp = (event: KeyboardEvent): void => {
-    if (held.delete(event.code)) cameUp.add(event.code);
+  const releasePhysicalKey = (code: string): void => {
+    if (physicalKeys.delete(code) && !touchHeld.has(code) && held.delete(code)) cameUp.add(code);
+  };
+  const keyUp = (event: KeyboardEvent): void => releasePhysicalKey(event.code);
+  const leaveCanvas = (): void => {
+    // A keyup can go to a page control after focus moves. Retire only this keyboard's presses.
+    for (const code of physicalKeys) {
+      releasePhysicalKey(code);
+      if (!held.has(code)) wentDown.delete(code);
+    }
   };
   const letGo = (): void => {
+    touch.cancel();
+    touchHeld.clear();
+    touchStick.x = touchStick.y = 0;
     for (const code of held) cameUp.add(code);
     held.clear();
+    physicalKeys.clear();
     pointerOwner = undefined;
   };
   const any = (set: Set<string>, keys: readonly string[]): boolean => keys.some(key => set.has(codeOf(String(key))));
@@ -877,6 +896,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // that places something wherever the stage is pressed would place it under its own buttons.
   let tappable: DisplayObject[] = [];
   const pointerDown = (event: PointerEvent): void => {
+    if (embedded) surface.focus({ preventScroll: true });
     // A finger on a stick or a button on the glass is that control's, and not the game's pointer.
     if (touch.claim(event)) {
       event.preventDefault();
@@ -890,7 +910,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     point.fromX = point.x;
     point.fromY = point.y;
     // Keys reach the page only once it has been clicked, where the game sits in a frame.
-    win.focus?.();
+    if (!embedded) win.focus?.();
   };
   const pointerUp = (event: PointerEvent): void => {
     if (touch.end(event)) return;
@@ -963,9 +983,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       );
     }
   };
+  const keyboardTarget = embedded ? surface : win;
+  const addedTabIndex = embedded && !surface.hasAttribute('tabindex');
+  if (addedTabIndex) surface.tabIndex = 0;
   const listening: [EventTarget, string, EventListener][] = [
-    [win, 'keydown', keyDown as EventListener],
-    [win, 'keyup', keyUp as EventListener],
+    [keyboardTarget, 'keydown', keyDown as EventListener],
+    [keyboardTarget, 'keyup', keyUp as EventListener],
     [win, 'blur', letGo],
     [surface, 'pointerdown', pointerDown as EventListener],
     [win, 'pointermove', moved as EventListener],
@@ -973,6 +996,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     [win, 'pointerup', pointerUp as EventListener],
     [win, 'pointercancel', pointerCancel as EventListener]
   ];
+  if (embedded) listening.push([surface, 'blur', leaveCanvas]);
   for (const [target, type, listener] of listening) target.addEventListener(type, listener, { passive: false });
 
   // Only the built-in mixer belongs to this game. Opting out also skips its browser gesture listeners.
@@ -1972,6 +1996,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         try {
           stopLoops();
           for (const [target, type, listener] of listening) target.removeEventListener(type, listener);
+          if (addedTabIndex && surface.getAttribute('tabindex') === '0') surface.removeAttribute('tabindex');
           await browser.dispose();
         } finally {
           holder?.remove();
@@ -1998,7 +2023,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     letGo(key) {
       const code = codeOf(key);
       touchHeld.delete(code);
-      if (held.delete(code)) cameUp.add(code);
+      if (!physicalKeys.has(code) && held.delete(code)) cameUp.add(code);
     },
     stick(x, y) {
       touchStick.x = x;

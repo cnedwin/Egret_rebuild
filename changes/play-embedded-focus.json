@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-23",
+  "en": {
+    "title": "Embedded games share keyboard focus with the page",
+    "body": "Games started with a parent or canvas now receive keyboard input on their focused canvas. Page buttons keep native keyboard activation, and transparent games show the page through the engine-owned holder."
+  },
+  "zh": {
+    "title": "嵌入游戏与页面控件可以顺畅切换焦点",
+    "body": "传入 parent 或 canvas 时，画布获得焦点后接收游戏按键。网页按钮保留原生键盘激活，透明游戏可透过引擎创建的容器显示页面背景。"
+  }
+}

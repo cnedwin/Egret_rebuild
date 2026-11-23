@@ -57,6 +57,7 @@ export function createPlayTouch(
   claim(event: PointerEvent): boolean;
   move(event: PointerEvent): void;
   end(event: PointerEvent): boolean;
+  cancel(): void;
   reset(): void;
 } {
   let controls: Control[] = [];
@@ -188,8 +189,16 @@ export function createPlayTouch(
         }
       return owned;
     },
+    cancel(): void {
+      // A window can lose focus before the browser sends the last pointer event.
+      for (const control of controls) {
+        if (control.owner === undefined) continue;
+        control.owner = undefined;
+        if (!control.node.isDisposed) control.release();
+      }
+    },
     reset(): void {
-      for (const control of controls) if (control.owner !== undefined && !control.node.isDisposed) control.release();
+      touch.cancel();
       controls = [];
     }
   };

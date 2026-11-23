@@ -139,6 +139,100 @@ async function until(page, stage, test, label, seconds = 20) {
 }
 const sounds = page => page.evaluate(() => globalThis.__soundsStarted);
 
+/** Run host controls in their own document so the fullscreen example cannot handle their keys. */
+async function verifyEmbeddedPage(page) {
+  const iframe = await page.evaluateHandle(async () => {
+    const frame = document.createElement('iframe');
+    frame.style.cssText = 'position:fixed;inset:0;width:320px;height:220px;z-index:1';
+    const imports = document.querySelector('script[type="importmap"]').outerHTML;
+    frame.srcdoc =
+      imports +
+      '<body style="background:#f43"><button>A</button><button>B</button>' +
+      '<main style="width:160px;height:100px"></main><button>After the game</button></body>';
+    const ready = new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));
+    document.body.append(frame);
+    await ready;
+    return frame;
+  });
+  const frame = await iframe.asElement().contentFrame();
+  const [first, second, after] = await frame.getByRole('button').all();
+  const game = await frame.evaluateHandle(async () => {
+    for (const button of document.querySelectorAll('button')) {
+      button.addEventListener('click', () => (button.dataset.clicks = String(Number(button.dataset.clicks ?? 0) + 1)));
+    }
+    const { play } = await import('@egret/engine/play');
+    return play({
+      width: 160,
+      height: 100,
+      parent: document.querySelector('main'),
+      transparent: true,
+      audio: false,
+      backend: 'webgl2'
+    });
+  });
+  const canvas = frame.locator('canvas');
+  const isFocused = locator => locator.evaluate(node => node === document.activeElement);
+  const rightHeld = () => game.evaluate(g => g.keys.down('right'));
+  try {
+    await first.focus();
+    await page.keyboard.press('Tab');
+    assert.ok(await isFocused(second), 'Tab reaches the second page button');
+    await page.keyboard.press('Shift+Tab');
+    assert.ok(await isFocused(first), 'Shift+Tab returns to the first page button');
+    await page.keyboard.press('Space');
+    await second.focus();
+    await page.keyboard.press('Enter');
+    assert.deepEqual(
+      await frame.locator('button').evaluateAll(buttons => buttons.slice(0, 2).map(b => b.dataset.clicks)),
+      ['1', '1']
+    );
+    await canvas.click();
+    assert.ok(await isFocused(canvas), 'pointer focus reaches the game');
+    await page.keyboard.down('ArrowRight');
+    assert.ok(await rightHeld(), 'the focused game holds the key');
+    await page.keyboard.press('Tab');
+    assert.ok(await isFocused(after), 'Tab leaves the game for the following control');
+    assert.equal(await rightHeld(), false, 'focus loss releases the key before keyup');
+    await page.keyboard.up('ArrowRight');
+    await canvas.click();
+    assert.equal(await rightHeld(), false, 'returning to the game does not revive a held key');
+    const png = PNG.sync.read(await canvas.screenshot());
+    const offset = 4 * (Math.floor(png.height / 2) * png.width + Math.floor(png.width / 2));
+    const center = [...png.data.subarray(offset, offset + 4)];
+    assert.deepEqual(center, [255, 68, 51, 255], 'the host background shows through the canvas');
+    // The browser owns the contact ids, even when a window loses focus before delivering pointerup.
+    await game.evaluate(g => {
+      g.touchButton('Jump', { x: 24, y: 24, radius: 16, key: 'space', always: true });
+    });
+    const cdp = await page.context().newCDPSession(page);
+    const box = await canvas.boundingBox();
+    const point = { x: box.x + (24 * box.width) / 160, y: box.y + (24 * box.height) / 100, id: 1 };
+    const touch = (type, touchPoints) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints });
+    const spaceHeld = () => game.evaluate(g => g.keys.down('space'));
+    try {
+      await touch('touchStart', [point]);
+      assert.ok(await spaceHeld(), 'the on-screen button holds Space');
+      await frame.evaluate(() => window.dispatchEvent(new FocusEvent('blur')));
+      assert.equal(await spaceHeld(), false, 'window blur releases a lost contact');
+      await canvas.focus();
+      await page.keyboard.down('Space');
+      assert.ok(await spaceHeld(), 'the physical key works without the original pointerup');
+      await page.keyboard.up('Space');
+      assert.equal(await spaceHeld(), false, 'physical release cannot reactivate the lost contact');
+      await touch('touchStart', [point, { ...point, x: point.x + 1, id: 2 }]);
+      assert.ok(await spaceHeld(), 'a fresh contact can use the same button');
+      await touch('touchEnd', []);
+      assert.equal(await spaceHeld(), false);
+    } finally {
+      await cdp.detach();
+    }
+    return { buttonActivations: [1, 1], center };
+  } finally {
+    await game.evaluate(g => g.dispose());
+    await iframe.evaluate(node => node.remove());
+  }
+}
+
 async function scenario(name, game, width, height, body, context = {}) {
   const owned = await browser.newContext({ viewport: { width: 960, height: 640 }, ...context }),
     page = await owned.newPage(),
@@ -197,6 +291,7 @@ await scenario(
         return readInput();
       });
     }
+    row.embeddedPage = await verifyEmbeddedPage(page);
     row.primaryPointer = await verifyPrimaryPointer(page);
     row.clock = await page.evaluate(async () => {
       const { play } = await import('@egret/engine/play');
