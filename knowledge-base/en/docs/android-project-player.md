@@ -351,6 +351,19 @@ Select **Fight party** to pursue and attack opponents in the current group, **Si
 
 On a Galaxy Z Fold7, Chrome WebGL2 and the signed trimmed-V8 GLES3 APK ran the same touch sequence. Lin Chong entered the second fight with 104 HP and the selected lesson. A queued thrust hit an archer (58 → 45 HP). Both versions recorded the same damage through Lin Chong’s defeat and the same opening hit after restart. The 440,900-byte rattan shield uses the packaged chunk reader. Geometry residency and context restoration use the earlier device results linked in the measurement. [Fold7 comparison](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-yard-parties.json)
 
+### From the fodder yard to Lu Qian
+
+Use the same prepared directory for the browser comparison page (`browser.html`) and the Android project player. The preparer checks the original game assets and stages Lu Qian’s skinned model, glaive and dialogue locally. The scene uses a simplified yard, doorway and forecourt. The meeting is subtitled. [Game source and credits](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple-gate --temple-gate
+node out/snowtemple-gate/check-temple-gate.mjs
+```
+
+Tap **Advance & fight** to approach and engage the enemies. Each manual page pauses the fight until you choose a technique. Defeating every member of the second party opens the yard gate. Lin Chong then walks through the doorway. When he crosses into the forecourt alive, the barrier closes behind him and Lu Qian speaks. The two parties and the meeting share one game instance, including health, techniques, inventory and drops. The earlier `--encounters` profile remains available to play the yard on its own.
+
+On one Galaxy Z Fold7, Chrome WebGL2 and the signed trimmed-V8 GLES3 APK received the same touch sequence. After both yard parties fell, Lin Chong had 120 HP, 99 coins and the chosen technique. The gate opened at simulation tick 2328. On the walk he collected a coin drop. He crossed into the forecourt with 120 HP and 103 coins. The barrier closed behind him, the active brazier checkpoint carried over and Lu Qian’s 5.2-second meeting began. After combat resumed, the first spear hit reduced Lu Qian from 980 to 967 HP. Both hosts matched all 41 damage events through that hit. The second manual page stayed on the ground on the Fold7 route. In the Windows Node rule check Lin Chong picked it up. The check follows the choices actually offered. [Fold7 record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-temple-gate.json)
+
 ### Resident geometry in live Android frames
 
 The trimmed V8 and WebView project hosts can use the same incremental World3D protocol when the game bundle and player are built from this revision. An older host or bundle continues to send full frames. A full E3D1 or E3D2 packet defines every visible mesh. After the GL thread confirms a successful submission in the same EGL generation, E3D3 or E3D4 can refer to those meshes by ID. Each packet still carries the current camera, lights, ordered draw records, material and texture references, and the complete 2D HUD. Only new or changed mesh definitions cross the bridge. On a camera-only frame with an unchanged visible set, geometry uses zero bridge bytes.

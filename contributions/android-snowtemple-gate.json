@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/snowtemple/temple.mjs",
+      "originRole": "Chapter forecourt presentation and input profile for the pinned game, with locally staged dialogue and assets. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/check-temple-gate.mjs",
+      "originRole": "Prepared-project behavior check for the yard clear, gate crossing and boss meeting. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-snowtemple-temple-gate.json",
+      "originRole": "Sanitized physical-device comparison of the yard outcome, gate passage and next encounter. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

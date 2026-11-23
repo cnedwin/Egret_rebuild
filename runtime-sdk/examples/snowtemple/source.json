@@ -32,7 +32,9 @@
     "src/view/combat-motion.mjs": "c682f03eb044399262b80732a7d2bd91ed001c4b552ede81cf3f90c67f0ccf91",
     "src/view/combat-motion-data.mjs": "a346f79526c933d2b56954d35d40658de65742f29eb77b00956fb269a871c5f3",
     "assets/characters/shield-low.glb": "ca2d40cf4f6247b70a510a75ef3baddeb16820426ecf9174c775a204009407eb",
-    "assets/characters/bow-low.glb": "176173294c0f010badec446c90184c7604b5cf2ec3989db1b08f2309083c3dcc"
+    "assets/characters/bow-low.glb": "176173294c0f010badec446c90184c7604b5cf2ec3989db1b08f2309083c3dcc",
+    "assets/characters/lu-low.glb": "4b731c74977b8633a3f99c4b1042b1a855a2b484f5dac3c870cdb5268c2f570c",
+    "src/dialogue.mjs": "1990e021ac0f0f35d4f9bd8eac16693f44f859b898015512f13826dcf5a3cf4c"
   },
   "browserVendor": {
     "files": 273,

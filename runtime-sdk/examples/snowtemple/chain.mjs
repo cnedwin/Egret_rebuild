@@ -17,14 +17,16 @@ const kinds = ['hero', 'blade', 'bow', 'shield'];
 const weapons = ['spear', 'spearEdge', 'sabre', 'sabreEdge', 'short', 'shortEdge', 'rattan', 'longbow'];
 const troop = (game, foe) => foe !== game.boss;
 
-export async function openScene({ glb, bytes }) {
+export async function openScene({ glb, bytes }, temple) {
   const parts = {}, gear = {}, figures = new Map(), arrows = new Map();
-  const run = createEncounters(), { scene, camera } = createActorStage();
+  const run = createEncounters({ throughGate: Boolean(temple) }), { scene, camera } = createActorStage();
   const arrow = createBoxGeometry3D({ width: 0.045, height: 0.045, depth: 0.85 });
   const arrowMaterial = createStandardMaterial3D({ color: 0xf1d7a5 });
-  const floor = createBoxGeometry3D({ width: 38, height: 0.06, depth: 62 });
+  const floor = createBoxGeometry3D({ width: 38, height: 0.06, depth: temple ? 92 : 62 });
   const floorMaterial = createStandardMaterial3D({ color: 0x647480, roughness: 1 });
-  scene.addChild(new Mesh3D(floor, floorMaterial)).setPosition(0, -0.045, 13);
+  scene.addChild(new Mesh3D(floor, floorMaterial)).setPosition(0, -0.045, temple ? 0 : 13);
+  const gateway = temple?.createGateway(scene);
+  const visibleFoe = (game, foe) => troop(game, foe) || (temple && ['gate', 'boss', 'done'].includes(game.stage));
   const travels = new Map();
   let pending = 0, paused = false, poseSequence = 0, sampledTick = -1, heroHash;
   const heroKey = 'lin';
@@ -54,13 +56,15 @@ export async function openScene({ glb, bytes }) {
   function close() {
     clearRound(); scene.removeChildren();
     for (const geometry of Object.values(gear)) geometry.dispose();
+    gateway?.close();
     floor.dispose(); floorMaterial.dispose(); arrow.dispose(); arrowMaterial.dispose();
   }
   function updateView(events = []) {
     const g = run.game, h = g.hero;
     poseLinChong(bind(heroKey, h, 'hero'), g, travel(heroKey, h), true);
+    gateway?.update(g.bars);
     for (const f of g.foes) {
-      if (!troop(g, f)) continue;
+      if (!visibleFoe(g, f)) continue;
       const figure = bind(f.id, f, f.kind);
       const [target, rate] = foePose(f, g.time, travel(f.id, f), figure.gait, DT);
       figure.root.setPosition(f.x, 0, f.z).setRotation(0, f.face, 0);
@@ -79,7 +83,8 @@ export async function openScene({ glb, bytes }) {
     }
     // Keep an opponent entering from either side visible. On the long approach
     // the camera follows Lin Chong instead of making both parties tiny.
-    const active = g.foes.filter(f => troop(g, f) && f.state !== 'dead' && Math.hypot(f.x - h.x, f.z - h.z) <= 20);
+    if (temple?.frameMeet(camera, g)) return;
+    const active = g.foes.filter(f => visibleFoe(g, f) && f.state !== 'dead' && Math.hypot(f.x - h.x, f.z - h.z) <= 20);
     let minX=h.x,maxX=h.x,minZ=h.z,maxZ=h.z;
     for(const f of active){minX=Math.min(minX,f.x);maxX=Math.max(maxX,f.x);minZ=Math.min(minZ,f.z);maxZ=Math.max(maxZ,f.z);}
     const x=(minX+maxX)/2,z=(minZ+maxZ)/2,span=Math.max(6,(maxX-minX)*1.05,(maxZ-minZ)*1.7);
@@ -101,23 +106,26 @@ export async function openScene({ glb, bytes }) {
   }
   function state() {
     const g = run.game, h = g.hero, foes = g.foes.filter(f => troop(g, f));
-    const foe = run.target() ?? foes[foes.length - 1];
+    const foe = (temple && g.stage === 'boss' ? g.boss : run.target()) ?? foes[foes.length - 1];
+    const encounter = run.state();
+    const caption = temple?.caption(g, encounter);
+    if (caption) encounter.message = caption;
     if (sampledTick !== run.tick) { heroHash=paletteHash(figures.get(heroKey),poseSequence++);sampledTick=run.tick; }
-    return { mode:'encounters', tick:run.tick, paused,
+    return { mode:temple ? 'temple-gate' : 'encounters', tick:run.tick, paused,
       hero:{x:h.x,z:h.z,hp:h.hp,state:h.state,paletteHash:heroHash,stamina:h.stamina,will:h.will,gourd:h.gourd},
       enemy:{id:foe.id,kind:foe.kind,x:foe.x,z:foe.z,hp:foe.hp,state:foe.state},
-      encounter:run.state() };
+      encounter };
   }
   try {
-    for (const [i,kind] of kinds.entries()) {
+    for (const [i,kind] of (temple ? [...kinds, 'lu'] : kinds).entries()) {
       const model = await glb(kind + '-low.glb',200+i*8);
-      parts[kind] = bodyParts(model.scene, kind === 'hero' ? BONES : YARD_BONES);
+      parts[kind] = bodyParts(model.scene, kind === 'hero' || kind === 'lu' ? BONES : YARD_BONES);
     }
-    for (const name of weapons) gear[name] = equipment(name,await bytes(name+'.bin'));
+    for (const name of (temple ? [...weapons, 'glaive', 'glaiveEdge'] : weapons)) gear[name] = equipment(name,await bytes(name+'.bin'));
     camera.far = 100;
     camera.updateProjectionMatrix();
     updateView();
-    return { scene, camera, input, update, state, close, messages, choiceLabels:Object.values(BOONS).map(b=>b.name),
+    return { scene, camera, input, update, state, close, messages:temple ? [...messages, ...temple.messages] : messages, choiceLabels:Object.values(BOONS).map(b=>b.name),
       pause(){paused=true;pending=0;}, resume(){paused=false;pending=0;} };
   } catch(error) { close(); throw error; }
 }
