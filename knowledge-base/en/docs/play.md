@@ -73,6 +73,12 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 
 Options that cannot make a game are refused with `PLAY_OPTIONS_INVALID`; the message ends with which one.
 
+## Embedding a game alongside page controls
+
+Pass `parent` or a page-owned `canvas` to give the game its own keyboard focus. Click the canvas or Tab to it to play. Tab and Shift+Tab continue through the page, and a focused HTML button gets its normal Space or Enter activation. Leaving the canvas releases held keyboard keys, even if the key is released later over another element. When neither option is supplied, the game keeps its window-wide keyboard shortcuts, including Tab.
+
+An embedded canvas with no `tabindex` gets `0` while the game is open. An explicit value such as `-1` is respected. For a decorative stage whose interaction is entirely in HTML, mark its container `inert`. With `transparent: true`, both the rendered surface and the engine-created holder let the page show through. A caller-provided canvas keeps its own styles.
+
 ## Drawing
 
 | Call | Gives |
