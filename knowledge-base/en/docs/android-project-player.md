@@ -338,6 +338,19 @@ Hold the left control to approach. Tap the right control to close to spear range
 
 On one Galaxy Z Fold7, Chrome WebGL2 and the signed trimmed-V8 GLES3 APK produced the same ordered damage events through both endings using injected touch. Holding the thrust control won in six spear hits. After restart, tapping it once struck the swordsman and left him on 71 HP. His first counter reduced Lin Chong from 120 to 109 HP, and the eleventh counter felled him. Both defeated characters completed their authored fall on screen. After restarting from defeat, the next tap landed the opening thrust again (84 → 71 HP). The scene reuses the resident geometry and context recovery verified in #453. [Fold7 results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-duel.json)
 
+### Fight both chapter parties in the fodder yard
+
+Use the chapter profile to play the two encounters in order. Serve the generated directory and open `browser.html`, or pass the same directory to the Android project player for a trimmed-V8 Release APK.
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple-parties --encounters
+node out/snowtemple-parties/check-encounters.mjs
+```
+
+Select **Fight party** to pursue and attack opponents in the current group, **Single thrust** to approach and strike once, or **Stand** to stop attacking. The first party consists of two swordsmen and an archer. When a dropped manual page opens, pick one of its three lessons to resume. The original chapter rules bring in a shield bearer, a swordsman and two archers after the first party falls. Both groups share one game instance. Lin Chong keeps his health, position and inventory. Choose how to fight the new group using the same controls. **Restart** begins a new run with the original first party. [Original game](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+On a Galaxy Z Fold7, Chrome WebGL2 and the signed trimmed-V8 GLES3 APK ran the same touch sequence. Lin Chong entered the second fight with 104 HP and the selected lesson. A queued thrust hit an archer (58 → 45 HP). Both versions recorded the same damage through Lin Chong’s defeat and the same opening hit after restart. The 440,900-byte rattan shield uses the packaged chunk reader. Geometry residency and context restoration use the earlier device results linked in the measurement. [Fold7 comparison](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-yard-parties.json)
+
 ### Resident geometry in live Android frames
 
 The trimmed V8 and WebView project hosts can use the same incremental World3D protocol when the game bundle and player are built from this revision. An older host or bundle continues to send full frames. A full E3D1 or E3D2 packet defines every visible mesh. After the GL thread confirms a successful submission in the same EGL generation, E3D3 or E3D4 can refer to those meshes by ID. Each packet still carries the current camera, lights, ordered draw records, material and texture references, and the complete 2D HUD. Only new or changed mesh definitions cross the bridge. On a camera-only frame with an unchanged visible set, geometry uses zero bridge bytes.

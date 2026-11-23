@@ -3,22 +3,41 @@ import { installWorld3DPlayerProject } from '@egret/android-player-world3d';
 import { createRollHud } from './hud.mjs';
 import { WIDTH, HEIGHT } from './actors.mjs';
 import { controls, openScene } from './profile.mjs';
+import equipmentSizes from './equipment-sizes.mjs';
+
+async function readEquipment({ assets, signal }, file) {
+  const size = equipmentSizes[file];
+  if (!Number.isSafeInteger(size) || size < 0) throw new Error('Unknown equipment: ' + file);
+  if (size <= 256 * 1024) return assets.readBytes(file, signal);
+  // Large equipment uses the same cancellable chunk reader as packaged GLBs.
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for await (const chunk of assets.readChunks(file, signal)) {
+    if (chunk.length > size - offset) throw new Error('Oversized equipment: ' + file);
+    bytes.set(chunk, offset);
+    offset += chunk.length;
+  }
+  if (offset !== size) throw new Error('Incomplete equipment: ' + file);
+  return bytes;
+}
 
 installWorld3DPlayerProject({
   width: WIDTH, height: HEIGHT,
   async create(services) {
     const game = await openScene({
       glb: (file, firstPage) => services.loadGlb(file, { firstPage }),
-      bytes: file => services.assets.readBytes(file, services.signal)
+      bytes: file => readEquipment(services, file)
     });
     services.scope.use({ dispose: game.close });
     const hud = createRollHud(services);
     hud.reset();
-    for (const [label, x, y, width] of controls)
-      hud.button(label, { x, y, width, height: 36, size: 18, color: 0x223342 }, () => {});
+    const buttons = controls.map(([label, x, y, width]) =>
+      hud.button(label, { x, y, width, height: 36, size: 18, color: 0x223342 }, () => {}).label);
+    // All three choice buttons use the same font and share the HUD's text pages.
+    if (game.choiceLabels) for (const name of game.choiceLabels) buttons[1].text = name;
     const counters = [];
     if (game.state().encounter) {
-      for (const [name, x] of [['Lin', 30], ['Blade', 580]]) {
+      for (const [name, x] of [['Lin', 30], [game.choiceLabels ? 'Foe' : 'Blade', 580]]) {
         hud.text(name + ' HP', { x, y: 16, size: 17, color: 0xffffff });
         counters.push([0, 1, 2].map(i => hud.text(' ', { x: x + 85 + 12*i, y: 16, size: 17, color: 0xffffff })));
       }
@@ -39,6 +58,9 @@ installWorld3DPlayerProject({
           const digits = String(Math.ceil(hp)).padStart(3);
           counters[index].forEach((field, i) => { field.text = digits[i]; });
         });
+      }
+      if (game.choiceLabels) {
+        for (let i = 1; i < buttons.length; i++) buttons[i].text = state.encounter.choice[i - 1]?.name ?? controls[i][0];
       }
       if (message) message.text = state.encounter.message;
       services.state(state);
