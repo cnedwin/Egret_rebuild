@@ -200,34 +200,32 @@ async function verifyEmbeddedPage(page) {
     const offset = 4 * (Math.floor(png.height / 2) * png.width + Math.floor(png.width / 2));
     const center = [...png.data.subarray(offset, offset + 4)];
     assert.deepEqual(center, [255, 68, 51, 255], 'the host background shows through the canvas');
-    // Browsers may stop delivering a contact when the window loses focus. Model that lifecycle explicitly.
-    const contact = await game.evaluateHandle(g => {
+    // The browser owns the contact ids, even when a window loses focus before delivering pointerup.
+    await game.evaluate(g => {
       g.touchButton('Jump', { x: 24, y: 24, radius: 16, key: 'space', always: true });
-      const box = g.canvas.getBoundingClientRect();
-      return (type, pointerId) =>
-        g.canvas.dispatchEvent(
-          new PointerEvent(type, {
-            pointerType: 'touch',
-            pointerId,
-            bubbles: true,
-            clientX: box.left + (24 * box.width) / 160,
-            clientY: box.top + (24 * box.height) / 100
-          })
-        );
     });
+    const cdp = await page.context().newCDPSession(page);
+    const box = await canvas.boundingBox();
+    const point = { x: box.x + (24 * box.width) / 160, y: box.y + (24 * box.height) / 100, id: 1 };
+    const touch = (type, touchPoints) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints });
     const spaceHeld = () => game.evaluate(g => g.keys.down('space'));
-    await contact.evaluate(send => send('pointerdown', 11));
-    assert.ok(await spaceHeld(), 'the on-screen button holds Space');
-    await frame.evaluate(() => window.dispatchEvent(new FocusEvent('blur')));
-    assert.equal(await spaceHeld(), false, 'window blur releases a lost contact');
-    await page.keyboard.down('Space');
-    assert.ok(await spaceHeld(), 'the physical key works without the original pointerup');
-    await page.keyboard.up('Space');
-    assert.equal(await spaceHeld(), false, 'physical release cannot reactivate the lost contact');
-    await contact.evaluate(send => send('pointerdown', 12));
-    assert.ok(await spaceHeld(), 'a fresh contact can use the same button');
-    await contact.evaluate(send => send('pointerup', 12));
-    assert.equal(await spaceHeld(), false);
+    try {
+      await touch('touchStart', [point]);
+      assert.ok(await spaceHeld(), 'the on-screen button holds Space');
+      await frame.evaluate(() => window.dispatchEvent(new FocusEvent('blur')));
+      assert.equal(await spaceHeld(), false, 'window blur releases a lost contact');
+      await canvas.focus();
+      await page.keyboard.down('Space');
+      assert.ok(await spaceHeld(), 'the physical key works without the original pointerup');
+      await page.keyboard.up('Space');
+      assert.equal(await spaceHeld(), false, 'physical release cannot reactivate the lost contact');
+      await touch('touchStart', [point, { ...point, x: point.x + 1, id: 2 }]);
+      assert.ok(await spaceHeld(), 'a fresh contact can use the same button');
+      await touch('touchEnd', []);
+      assert.equal(await spaceHeld(), false);
+    } finally {
+      await cdp.detach();
+    }
     return { buttonActivations: [1, 1], center };
   } finally {
     await game.evaluate(g => g.dispose());
