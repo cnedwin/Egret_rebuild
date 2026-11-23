@@ -46,7 +46,7 @@ async function start() {
     nav.append(item);
     return item;
   }
-  for (const [text, x, y] of controls) label(text, x, y);
+  const buttons = controls.map(([text, x, y]) => label(text, x, y));
   const health = hero.state().encounter ? [label('', 86, 26), label('', 646, 26)] : null;
   const message = hero.messages ? label('Ready', WIDTH / 2, 66) : null;
   let reported = -Infinity;
@@ -80,7 +80,13 @@ async function start() {
       if (health && now - reported >= 200) {
         const state = hero.state();
         health[0].textContent = 'Lin HP ' + Math.ceil(state.hero.hp);
-        health[1].textContent = 'Blade HP ' + Math.ceil(state.enemy.hp);
+        health[1].textContent = (hero.choiceLabels ? 'Foe HP ' : 'Blade HP ') + Math.ceil(state.enemy.hp);
+        if (hero.choiceLabels) {
+          for (let i = 1; i < buttons.length; i++) {
+            const caption = state.encounter.choice[i - 1]?.name ?? controls[i][0];
+            if (buttons[i].textContent !== caption) buttons[i].textContent = caption;
+          }
+        }
         if (message) message.textContent = state.encounter.message;
         reported = now;
       }

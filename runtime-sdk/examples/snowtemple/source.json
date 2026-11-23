@@ -30,7 +30,9 @@
     "src/view/locomotion.mjs": "af7311ad86a62dd3f95150b34ec30df2146372e2d05d110afedfc3dd7dce8a24",
     "src/view/locomotion-data.mjs": "9699de9ece5763f5272ea3d785248206cda478d87da3c67351d166c7a7608813",
     "src/view/combat-motion.mjs": "c682f03eb044399262b80732a7d2bd91ed001c4b552ede81cf3f90c67f0ccf91",
-    "src/view/combat-motion-data.mjs": "a346f79526c933d2b56954d35d40658de65742f29eb77b00956fb269a871c5f3"
+    "src/view/combat-motion-data.mjs": "a346f79526c933d2b56954d35d40658de65742f29eb77b00956fb269a871c5f3",
+    "assets/characters/shield-low.glb": "ca2d40cf4f6247b70a510a75ef3baddeb16820426ecf9174c775a204009407eb",
+    "assets/characters/bow-low.glb": "176173294c0f010badec446c90184c7604b5cf2ec3989db1b08f2309083c3dcc"
   },
   "browserVendor": {
     "files": 273,

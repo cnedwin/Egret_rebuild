@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/snowtemple/chain.mjs",
+      "originRole": "Browser and native rendering and input adapter for the original chapter parties and their shared game state. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/encounters.mjs",
+      "originRole": "Chapter encounter controls and observations around the locally supplied game rules. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/check-encounters.mjs",
+      "originRole": "Locally prepared chapter regression for party order, state continuity, damage and restart. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-snowtemple-yard-parties.json",
+      "originRole": "Sanitized Fold7 comparison of chapter party entry, combat and restart on the browser and Android Release APK. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

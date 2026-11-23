@@ -9,9 +9,10 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const [input, output, mode] = process.argv.slice(2);
 const duel = mode === '--duel';
-const yard = mode === '--yard' || duel;
+const encounters = mode === '--encounters';
+const yard = mode === '--yard' || duel || encounters;
 if (!input || !output || process.argv.length !== (yard ? 5 : 4))
-  throw new Error('Usage: node prepare.mjs <PortedGamesEgret/SnowTemple> <new-directory> [--yard | --duel]');
+  throw new Error('Usage: node prepare.mjs <PortedGamesEgret/SnowTemple> <new-directory> [--yard | --duel | --encounters]');
 const source = path.resolve(input), destination = path.resolve(output);
 try {
   await lstat(destination);
@@ -76,6 +77,10 @@ try {
   const packed = await checked('assets/models-low.bin');
   const equipment = yard ? ['spear', 'spearEdge', 'sabre', 'sabreEdge'] : ['spear', 'spearEdge'];
   const assets = yard ? ['hero-low.glb', 'blade-low.glb'] : ['hero-low.glb'];
+  if (encounters) {
+    assets.push('shield-low.glb', 'bow-low.glb');
+    equipment.push('short', 'shortEdge', 'rattan', 'longbow');
+  }
   for (const model of assets) await writeFile(path.join(tmp, model), await checked('assets/characters/' + model));
   const infos = {};
   for (const name of equipment) {
@@ -86,13 +91,19 @@ try {
     await writeFile(path.join(tmp, file), packed.subarray(info.offset, info.offset + info.bytes));
     assets.push(file);
   }
+  // The native reader uses the pinned archive lengths to fill one destination per weapon.
+  const lengths = Object.fromEntries(equipment.map(name => [name + '.bin', infos[name].bytes]));
+  await writeFile(path.join(tmp, 'equipment-sizes.mjs'), 'export default ' + JSON.stringify(lengths) + ';\n');
   await writeFile(path.join(original, 'equipment.mjs'),
     section(models, 'import { Attribute3D', 'import { loadModelPack') +
     '\nconst index = ' + JSON.stringify(infos) + ';\n' +
     'export function equipment(name, bytes) {\n  const info = index[name];\n  const bin = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);\n  if (bin.byteLength !== info.bytes) throw new Error("Incomplete equipment");\n  const offset = 0;\n' +
     section(models, '    const n = info.count;', '    models[name] = geometry;') + '  return geometry;\n}\n');
-  if (yard) await cp(path.join(here, 'duel.mjs'), path.join(tmp, 'duel.mjs'));
-  if (duel) {
+  if (yard && !encounters) await cp(path.join(here, 'duel.mjs'), path.join(tmp, 'duel.mjs'));
+  if (encounters) {
+    await cp(path.join(here, 'chain.mjs'), path.join(tmp, 'profile.mjs'));
+    for (const file of ['encounters.mjs', 'check-encounters.mjs']) await cp(path.join(here, file), path.join(tmp, file));
+  } else if (duel) {
     await cp(path.join(here, 'yard.mjs'), path.join(tmp, 'yard.mjs'));
     await cp(path.join(here, 'check-duel.mjs'), path.join(tmp, 'check-duel.mjs'));
     await writeFile(path.join(tmp, 'profile.mjs'), "export { duelControls as controls, openDuel as openScene } from './yard.mjs';\n");
@@ -112,7 +123,7 @@ try {
   assets.push('notices/source.txt');
   await writeFile(path.join(tmp, 'index.html'), '<!doctype html><meta charset="utf-8"><title>Lin Chong</title><script src="./game.js"></script>\n');
   await writeFile(path.join(tmp, 'project.json'), JSON.stringify({
-    name: duel ? 'Fodder Yard Duel' : yard ? 'Fodder Yard Encounter' : 'Lin Chong', width: 768, height: 432, entry: 'index.html', script: 'main.mjs', pages: [], assets
+    name: encounters ? 'Fodder Yard Parties' : duel ? 'Fodder Yard Duel' : yard ? 'Fodder Yard Encounter' : 'Lin Chong', width: 768, height: 432, entry: 'index.html', script: 'main.mjs', pages: [], assets
   }, null, 2) + '\n');
   // The comparison page uses the browser game's shipped World3D. These
   // modules are outside the Android project's asset manifest.

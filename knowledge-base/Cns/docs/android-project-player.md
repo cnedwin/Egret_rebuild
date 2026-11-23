@@ -338,6 +338,19 @@ node out/snowtemple-duel/check-duel.mjs
 
 在同一台 Galaxy Z Fold7 上注入触控，Chrome WebGL2 和裁剪 V8 + GLES3 签名 APK 的两条路线逐次扣血一致。按住出枪，林冲以六枪取胜。重开后轻点一次，刀手中枪剩 71 点血，随即反击。第一刀将林冲从 120 点血打到 109，第十一刀使他倒地。两种结局都显示败者的倒地姿态。败北后再次重开，第三局轻点出枪仍能将刀手从 84 血打到 71。本次沿用 #453 记录的同场景几何驻留与上下文恢复证据。[Fold7 实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-duel.json)
 
+### 按章节顺序迎战草料场两队敌人
+
+使用章节模式可连续打两场。用 HTTP 提供生成的目录并打开 `browser.html` 即可运行浏览器版，也可以将同一目录交给 Android 项目播放器构建裁剪 V8 的 Release APK。
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple-parties --encounters
+node out/snowtemple-parties/check-encounters.mjs
+```
+
+点击 **Fight party** 会追击并连续攻击当前一队，**Single thrust** 会靠近后出一枪，**Stand** 停止主动攻击。首队由两名刀手和一名弓手组成。拾取的残页展开时，从画面上的三个选项中选一项即可继续。首队倒下后，原作章节规则会派出一名盾手、一名刀手和两名弓手。两场共用同一局游戏，保留林冲的血量、位置和背包，可继续用相同按钮迎敌。点击 **Restart** 会从首队重新开局。[原作](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+在同一台 Galaxy Z Fold7 上，Chrome WebGL2 和裁剪 V8 + GLES3 签名 APK 使用相同的触控操作。林冲保留 104 点血和已选能力进入第二场，预先点下的一枪命中弓手（58 → 45 血）。两端直到林冲落败的逐次扣血相同，重开后的第一枪也一致。440,900 字节的藤牌通过包内分块接口读取。几何驻留和上下文恢复沿用此前同机记录。[Fold7 实测](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-yard-parties.json)
+
 ### Android 实时帧的几何驻留
 
 游戏包和播放器均采用此版本构建时，裁剪 V8 和 WebView 工程宿主都可使用同一套 World3D 增量协议。搭配旧版宿主或游戏包时仍发送完整帧。完整帧 E3D1 或 E3D2 包含全部可见网格的定义。GL 线程确认上一帧在同一代 EGL 上下文中成功提交后，E3D3 或 E3D4 即可按编号引用这些网格。每帧仍传送当前相机、光照、有序绘制记录、材质和纹理引用，以及完整的 2D HUD。只有新增或改变的网格需要传输定义。仅移动镜头且可见网格集合不变时，几何部分的每帧桥接字节为零。

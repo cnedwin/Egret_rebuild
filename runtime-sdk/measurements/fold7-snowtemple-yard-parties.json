@@ -1,0 +1,661 @@
+{
+  "issue": 393,
+  "engineBase": "9d801beb0667dac833a57ae20a09b552e862b275",
+  "game": "cnedwin/PortedGamesEgret@4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple",
+  "profile": "--encounters",
+  "method": "One physical Fold7, Chrome WebGL2 and signed arm64-v8a trimmed-V8 GLES3 APK. CDP touch in Chrome and Android system touch in the installed APK follow the same sequence. All state reads are observational. Ticks are original game simulation steps, not display timing.",
+  "environment": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "browser": "Chrome/157.0.8103.78",
+    "renderer": "ANGLE (Qualcomm, Adreno (TM) 830, OpenGL ES 3.2)",
+    "stage": [
+      768,
+      432
+    ],
+    "vm": "15.7.112.19",
+    "intl": false,
+    "apkBytes": 67198067,
+    "qaApkSha256": "2e4a426098f032937d88c82f2a3ef196fa00b10e6f79baae0a8d8bf8cd206b3b"
+  },
+  "touchSequence": [
+    {
+      "control": "fight-party",
+      "round": 1
+    },
+    {
+      "control": "first-page-option",
+      "round": 1
+    },
+    {
+      "control": "single-thrust-queued",
+      "round": 1
+    },
+    {
+      "control": "restart",
+      "round": 1
+    },
+    {
+      "control": "fight-party",
+      "round": 2
+    }
+  ],
+  "firstParty": [
+    {
+      "id": 2,
+      "kind": "blade",
+      "party": 0,
+      "x": -3.5,
+      "z": 7,
+      "hp": 84,
+      "state": "wait"
+    },
+    {
+      "id": 3,
+      "kind": "blade",
+      "party": 0,
+      "x": 3.2,
+      "z": 5.6,
+      "hp": 84,
+      "state": "wait"
+    },
+    {
+      "id": 4,
+      "kind": "bow",
+      "party": 0,
+      "x": 0.6,
+      "z": -1.5,
+      "hp": 58,
+      "state": "wait"
+    }
+  ],
+  "firstPartyDeaths": [
+    {
+      "tick": 580,
+      "id": 3,
+      "kind": "blade",
+      "party": 0
+    },
+    {
+      "tick": 772,
+      "id": 2,
+      "kind": "blade",
+      "party": 0
+    },
+    {
+      "tick": 1027,
+      "id": 4,
+      "kind": "bow",
+      "party": 0
+    }
+  ],
+  "lesson": {
+    "tick": 1061,
+    "id": "parryBreath",
+    "name": "借力"
+  },
+  "reinforcements": {
+    "tick": 1124,
+    "from": 0,
+    "to": 1,
+    "before": {
+      "hero": {
+        "x": 5.454850342978643,
+        "z": 3.818889366486691,
+        "hp": 104,
+        "stamina": 100,
+        "will": 100,
+        "gourd": 3
+      },
+      "stage": "yard",
+      "checkpoint": "camp",
+      "bars": {
+        "gate": true,
+        "court": false
+      },
+      "coins": 40,
+      "boons": [
+        "parryBreath"
+      ],
+      "bag": {
+        "coin": 4,
+        "silver": 0,
+        "salve": 0,
+        "tonic": 1,
+        "page": 1
+      },
+      "pages": {
+        "first": true
+      },
+      "drops": [
+        {
+          "id": 8,
+          "kind": "silver"
+        },
+        {
+          "id": 12,
+          "kind": "salve"
+        },
+        {
+          "id": 13,
+          "kind": "coin"
+        }
+      ]
+    },
+    "after": {
+      "hero": {
+        "x": 5.454850342978643,
+        "z": 3.818889366486691,
+        "hp": 104,
+        "stamina": 100,
+        "will": 100,
+        "gourd": 3
+      },
+      "stage": "yard",
+      "checkpoint": "camp",
+      "bars": {
+        "gate": true,
+        "court": false
+      },
+      "coins": 40,
+      "boons": [
+        "parryBreath"
+      ],
+      "bag": {
+        "coin": 4,
+        "silver": 0,
+        "salve": 0,
+        "tonic": 1,
+        "page": 1
+      },
+      "pages": {
+        "first": true
+      },
+      "drops": [
+        {
+          "id": 8,
+          "kind": "silver"
+        },
+        {
+          "id": 12,
+          "kind": "salve"
+        },
+        {
+          "id": 13,
+          "kind": "coin"
+        }
+      ]
+    },
+    "priorPartyOnEntry": [
+      {
+        "id": 2,
+        "kind": "blade",
+        "party": 0,
+        "x": -6.657150567071889,
+        "z": 7.5072405357194905,
+        "hp": 0,
+        "state": "dead"
+      },
+      {
+        "id": 3,
+        "kind": "blade",
+        "party": 0,
+        "x": 2.240385183141446,
+        "z": 10.578080012482433,
+        "hp": 0,
+        "state": "dead"
+      },
+      {
+        "id": 4,
+        "kind": "bow",
+        "party": 0,
+        "x": 5.648330549075637,
+        "z": 3.520426803328014,
+        "hp": 0,
+        "state": "dead"
+      }
+    ],
+    "newParty": [
+      {
+        "id": 16,
+        "kind": "shield",
+        "party": 1,
+        "x": -1.5,
+        "z": -3.5,
+        "hp": 132,
+        "state": "roam"
+      },
+      {
+        "id": 17,
+        "kind": "blade",
+        "party": 1,
+        "x": 2.4,
+        "z": -4.2,
+        "hp": 84,
+        "state": "roam"
+      },
+      {
+        "id": 18,
+        "kind": "bow",
+        "party": 1,
+        "x": -6.8,
+        "z": 1.2,
+        "hp": 58,
+        "state": "roam"
+      },
+      {
+        "id": 19,
+        "kind": "bow",
+        "party": 1,
+        "x": 7,
+        "z": 2.6,
+        "hp": 58,
+        "state": "roam"
+      }
+    ]
+  },
+  "firstPlayerHitOnSecondParty": {
+    "tick": 1132,
+    "party": 1,
+    "type": "hit",
+    "target": 19,
+    "amount": 13,
+    "before": 58,
+    "after": 45,
+    "observedEndOfStepHp": 45,
+    "source": "cut"
+  },
+  "damageEventColumns": [
+    "tick",
+    "party",
+    "type",
+    "target",
+    "amount",
+    "before",
+    "after",
+    "observedEndOfStepHp",
+    "source"
+  ],
+  "damageEvents": [
+    [
+      423,
+      0,
+      "hit",
+      3,
+      13,
+      84,
+      71,
+      71,
+      "cut"
+    ],
+    [
+      450,
+      0,
+      "hit",
+      3,
+      15,
+      71,
+      56,
+      56,
+      "cut"
+    ],
+    [
+      484,
+      0,
+      "hit",
+      3,
+      26,
+      56,
+      30,
+      30,
+      "cut"
+    ],
+    [
+      519,
+      0,
+      "hit",
+      3,
+      13,
+      30,
+      17,
+      17,
+      "cut"
+    ],
+    [
+      546,
+      0,
+      "hit",
+      3,
+      15,
+      17,
+      2,
+      2,
+      "cut"
+    ],
+    [
+      580,
+      0,
+      "hit",
+      3,
+      26,
+      2,
+      0,
+      0,
+      "cut"
+    ],
+    [
+      615,
+      0,
+      "hit",
+      2,
+      13,
+      84,
+      71,
+      71,
+      "cut"
+    ],
+    [
+      642,
+      0,
+      "hit",
+      2,
+      15,
+      71,
+      56,
+      56,
+      "cut"
+    ],
+    [
+      676,
+      0,
+      "hit",
+      2,
+      26,
+      56,
+      30,
+      30,
+      "cut"
+    ],
+    [
+      711,
+      0,
+      "hit",
+      2,
+      13,
+      30,
+      17,
+      17,
+      "cut"
+    ],
+    [
+      738,
+      0,
+      "hit",
+      2,
+      15,
+      17,
+      2,
+      2,
+      "cut"
+    ],
+    [
+      772,
+      0,
+      "hit",
+      2,
+      26,
+      2,
+      0,
+      0,
+      "cut"
+    ],
+    [
+      867,
+      0,
+      "hurt",
+      "lin",
+      16,
+      120,
+      104,
+      104,
+      null
+    ],
+    [
+      931,
+      0,
+      "hit",
+      4,
+      13,
+      58,
+      45,
+      45,
+      "cut"
+    ],
+    [
+      958,
+      0,
+      "hit",
+      4,
+      15,
+      45,
+      30,
+      30,
+      "cut"
+    ],
+    [
+      992,
+      0,
+      "hit",
+      4,
+      26,
+      30,
+      4,
+      4,
+      "cut"
+    ],
+    [
+      1027,
+      0,
+      "hit",
+      4,
+      13,
+      4,
+      0,
+      0,
+      "cut"
+    ],
+    [
+      1132,
+      1,
+      "hit",
+      19,
+      13,
+      58,
+      45,
+      45,
+      "cut"
+    ],
+    [
+      1272,
+      1,
+      "hurt",
+      "lin",
+      12,
+      104,
+      92,
+      92,
+      null
+    ],
+    [
+      1334,
+      1,
+      "hurt",
+      "lin",
+      11,
+      92,
+      81,
+      81,
+      null
+    ],
+    [
+      1490,
+      1,
+      "hurt",
+      "lin",
+      12,
+      81,
+      69,
+      69,
+      null
+    ],
+    [
+      1553,
+      1,
+      "hurt",
+      "lin",
+      13,
+      69,
+      56,
+      56,
+      null
+    ],
+    [
+      1706,
+      1,
+      "hurt",
+      "lin",
+      16,
+      56,
+      40,
+      40,
+      null
+    ],
+    [
+      1781,
+      1,
+      "hurt",
+      "lin",
+      13,
+      40,
+      27,
+      27,
+      null
+    ],
+    [
+      1987,
+      1,
+      "hurt",
+      "lin",
+      13,
+      27,
+      14,
+      14,
+      null
+    ],
+    [
+      2174,
+      1,
+      "hurt",
+      "lin",
+      11,
+      14,
+      3,
+      3,
+      null
+    ],
+    [
+      2408,
+      1,
+      "hurt",
+      "lin",
+      13,
+      3,
+      0,
+      0,
+      null
+    ]
+  ],
+  "defeat": {
+    "tick": 2408,
+    "event": "fall",
+    "winner": "opponents",
+    "settledTick": 2453,
+    "heroHp": 0
+  },
+  "restart": {
+    "round": 2,
+    "tick": 0,
+    "hero": {
+      "x": 0,
+      "z": 34,
+      "hp": 120,
+      "state": "free",
+      "paletteHash": "66bad942",
+      "stamina": 100,
+      "will": 0,
+      "gourd": 3
+    },
+    "opponents": [
+      {
+        "id": 2,
+        "kind": "blade",
+        "party": 0,
+        "x": -3.5,
+        "z": 7,
+        "hp": 84,
+        "state": "wait"
+      },
+      {
+        "id": 3,
+        "kind": "blade",
+        "party": 0,
+        "x": 3.2,
+        "z": 5.6,
+        "hp": 84,
+        "state": "wait"
+      },
+      {
+        "id": 4,
+        "kind": "bow",
+        "party": 0,
+        "x": 0.6,
+        "z": -1.5,
+        "hp": 58,
+        "state": "wait"
+      }
+    ],
+    "boons": [],
+    "damageEvents": 0,
+    "firstDamage": {
+      "round": 2,
+      "event": {
+        "tick": 423,
+        "party": 0,
+        "type": "hit",
+        "target": 3,
+        "amount": 13,
+        "before": 84,
+        "after": 71,
+        "observedEndOfStepHp": 71,
+        "source": "cut"
+      }
+    },
+    "initialAndRestart3dRegionIdentical": {
+      "Chrome WebGL2": true,
+      "Native GLES3": true
+    }
+  },
+  "previousEvidence": {
+    "residentGeometryAndEglRestoration": "https://github.com/cnedwin/Egret_rebuild/blob/6610886e6409092f50b96d9d0860544c7d976a6a/runtime-sdk/measurements/fold7-snowtemple-yard-encounter.json",
+    "singleDuel": "https://github.com/cnedwin/Egret_rebuild/blob/9d801beb0667dac833a57ae20a09b552e862b275/runtime-sdk/measurements/fold7-snowtemple-duel.json"
+  },
+  "scope": "Two original tier-one campaign parties. The reference uses the game’s pinned rules, original character models and weapons with a simplified stage. This run measured combat and progression; it reuses the earlier evidence for residency and device restoration.",
+  "packagedEquipment": {
+    "initialNativeRun": "The original small-file read rejected rattan.bin before the scene opened.",
+    "shieldBytes": 440900,
+    "smallReadLimitBytes": 262144,
+    "repair": "The example reads large weapon data through the existing cancellable chunk reader into a buffer sized from the pinned pack. Smaller weapons keep the original read path.",
+    "verified": "The fully reassembled shield matched its source SHA-256. Truncation, excess and interruption were checked. All browser inputs were byte-identical across the APK-only fix; the successful Chrome capture was reused.",
+    "shieldSha256": "5e44a676ccc24353206edf5832847c0d9f3b3f06ae04e27ab88525dbda7dab30"
+  }
+}
