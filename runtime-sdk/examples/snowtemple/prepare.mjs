@@ -9,10 +9,11 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const [input, output, mode] = process.argv.slice(2);
 const duel = mode === '--duel';
-const encounters = mode === '--encounters';
+const temple = mode === '--temple-gate';
+const encounters = mode === '--encounters' || temple;
 const yard = mode === '--yard' || duel || encounters;
 if (!input || !output || process.argv.length !== (yard ? 5 : 4))
-  throw new Error('Usage: node prepare.mjs <PortedGamesEgret/SnowTemple> <new-directory> [--yard | --duel | --encounters]');
+  throw new Error('Usage: node prepare.mjs <PortedGamesEgret/SnowTemple> <new-directory> [--yard | --duel | --encounters | --temple-gate]');
 const source = path.resolve(input), destination = path.resolve(output);
 try {
   await lstat(destination);
@@ -81,6 +82,11 @@ try {
     assets.push('shield-low.glb', 'bow-low.glb');
     equipment.push('short', 'shortEdge', 'rattan', 'longbow');
   }
+  if (temple) {
+    assets.push('lu-low.glb');
+    equipment.push('glaive', 'glaiveEdge');
+    await writeFile(path.join(original, 'dialogue.mjs'), await checked('src/dialogue.mjs'));
+  }
   for (const model of assets) await writeFile(path.join(tmp, model), await checked('assets/characters/' + model));
   const infos = {};
   for (const name of equipment) {
@@ -101,7 +107,10 @@ try {
     section(models, '    const n = info.count;', '    models[name] = geometry;') + '  return geometry;\n}\n');
   if (yard && !encounters) await cp(path.join(here, 'duel.mjs'), path.join(tmp, 'duel.mjs'));
   if (encounters) {
-    await cp(path.join(here, 'chain.mjs'), path.join(tmp, 'profile.mjs'));
+    if (temple) {
+      await cp(path.join(here, 'temple.mjs'), path.join(tmp, 'profile.mjs'));
+      for (const file of ['chain.mjs', 'check-temple-gate.mjs']) await cp(path.join(here, file), path.join(tmp, file));
+    } else await cp(path.join(here, 'chain.mjs'), path.join(tmp, 'profile.mjs'));
     for (const file of ['encounters.mjs', 'check-encounters.mjs']) await cp(path.join(here, file), path.join(tmp, file));
   } else if (duel) {
     await cp(path.join(here, 'yard.mjs'), path.join(tmp, 'yard.mjs'));
@@ -123,7 +132,7 @@ try {
   assets.push('notices/source.txt');
   await writeFile(path.join(tmp, 'index.html'), '<!doctype html><meta charset="utf-8"><title>Lin Chong</title><script src="./game.js"></script>\n');
   await writeFile(path.join(tmp, 'project.json'), JSON.stringify({
-    name: encounters ? 'Fodder Yard Parties' : duel ? 'Fodder Yard Duel' : yard ? 'Fodder Yard Encounter' : 'Lin Chong', width: 768, height: 432, entry: 'index.html', script: 'main.mjs', pages: [], assets
+    name: temple ? 'Fodder Yard to the Temple' : encounters ? 'Fodder Yard Parties' : duel ? 'Fodder Yard Duel' : yard ? 'Fodder Yard Encounter' : 'Lin Chong', width: 768, height: 432, entry: 'index.html', script: 'main.mjs', pages: [], assets
   }, null, 2) + '\n');
   // The comparison page uses the browser game's shipped World3D. These
   // modules are outside the Android project's asset manifest.

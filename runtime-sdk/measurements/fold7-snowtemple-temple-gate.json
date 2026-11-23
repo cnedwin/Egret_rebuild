@@ -1,0 +1,558 @@
+{
+  "issue": 393,
+  "engineBase": "171ebe8f4f2824fe5a7899666d6376949a58aaff",
+  "gameSource": "https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple",
+  "profile": "--temple-gate",
+  "method": "Same prepared chapter, original tier-one rules and seed 7 on a single physical Fold7. Touch was injected through Chrome DevTools in the browser and through Android system input in the installed APK. Device state was observed without writing to game state. Ticks are 60 Hz simulation steps.",
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "browser": "Chrome/157.0.8103.78",
+    "browserRenderer": "ANGLE (Qualcomm, Adreno (TM) 830, OpenGL ES 3.2)",
+    "browserBuffer": [
+      768,
+      432
+    ],
+    "nativeVm": "15.7.112.19",
+    "nativeBackend": "GLES3",
+    "packageType": "arm64-v8a signed trimmed-V8 Release APK",
+    "packageBytes": 67986175,
+    "qaApkSha256": "c997ac9ac6dd9cffbb5d243cc9bee4b22a7260a23ffebaad4c31ff5f1bc384af"
+  },
+  "input": [
+    "advance-and-fight",
+    "take-first-option"
+  ],
+  "selectedLessons": [
+    {
+      "tick": 1061,
+      "id": "parryBreath",
+      "name": "借力"
+    }
+  ],
+  "partyDeaths": [
+    {
+      "tick": 580,
+      "id": 3,
+      "kind": "blade",
+      "party": 0
+    },
+    {
+      "tick": 772,
+      "id": 2,
+      "kind": "blade",
+      "party": 0
+    },
+    {
+      "tick": 1027,
+      "id": 4,
+      "kind": "bow",
+      "party": 0
+    },
+    {
+      "tick": 1228,
+      "id": 19,
+      "kind": "bow",
+      "party": 1
+    },
+    {
+      "tick": 1385,
+      "id": 17,
+      "kind": "blade",
+      "party": 1
+    },
+    {
+      "tick": 1960,
+      "id": 16,
+      "kind": "shield",
+      "party": 1
+    },
+    {
+      "tick": 2328,
+      "id": 18,
+      "kind": "bow",
+      "party": 1
+    }
+  ],
+  "yardGate": {
+    "tick": 2328,
+    "stage": "gate",
+    "checkpoint": "rest",
+    "bars": {
+      "gate": false,
+      "court": false
+    },
+    "hero": {
+      "x": -1.5961462473790335,
+      "z": -8.72932178159145,
+      "hp": 120,
+      "stamina": 100,
+      "will": 100,
+      "gourd": 3
+    },
+    "coins": 99,
+    "boons": [
+      "parryBreath"
+    ],
+    "bag": {
+      "coin": 5,
+      "silver": 1,
+      "salve": 0,
+      "tonic": 1,
+      "page": 1
+    },
+    "pages": {
+      "first": true
+    },
+    "drops": [
+      {
+        "id": 8,
+        "kind": "silver"
+      },
+      {
+        "id": 12,
+        "kind": "salve"
+      },
+      {
+        "id": 20,
+        "kind": "coin"
+      },
+      {
+        "id": 23,
+        "kind": "coin"
+      },
+      {
+        "id": 24,
+        "kind": "coin"
+      },
+      {
+        "id": 26,
+        "kind": "coin"
+      },
+      {
+        "id": 27,
+        "kind": "page"
+      },
+      {
+        "id": 28,
+        "kind": "silver"
+      },
+      {
+        "id": 30,
+        "kind": "coin"
+      }
+    ],
+    "boss": {
+      "id": 1,
+      "kind": "lu",
+      "x": 0,
+      "z": -32,
+      "hp": 980,
+      "state": "wait",
+      "phase": 1,
+      "pause": 0.6093638025224208
+    },
+    "cinematicSecondsRemaining": 0,
+    "rosterAtClear": [
+      {
+        "id": 2,
+        "kind": "blade",
+        "party": 0,
+        "x": -6.657150567071889,
+        "z": 7.5072405357194905,
+        "hp": 0,
+        "state": "dead"
+      },
+      {
+        "id": 3,
+        "kind": "blade",
+        "party": 0,
+        "x": 2.240385183141446,
+        "z": 10.578080012482433,
+        "hp": 0,
+        "state": "dead"
+      },
+      {
+        "id": 4,
+        "kind": "bow",
+        "party": 0,
+        "x": 5.648365862521766,
+        "z": 3.5204139908597045,
+        "hp": 0,
+        "state": "dead"
+      },
+      {
+        "id": 16,
+        "kind": "shield",
+        "party": 1,
+        "x": 3.891923406022823,
+        "z": 7.08728734933414,
+        "hp": 0,
+        "state": "dead"
+      },
+      {
+        "id": 17,
+        "kind": "blade",
+        "party": 1,
+        "x": 3.9960338920122034,
+        "z": -2.175183859643291,
+        "hp": 0,
+        "state": "dead"
+      },
+      {
+        "id": 18,
+        "kind": "bow",
+        "party": 1,
+        "x": -2.291606424671404,
+        "z": -10.961840072575477,
+        "hp": 0,
+        "state": "dead"
+      },
+      {
+        "id": 19,
+        "kind": "bow",
+        "party": 1,
+        "x": 9.386496185872739,
+        "z": 0.7174154808221869,
+        "hp": 0,
+        "state": "dead"
+      }
+    ]
+  },
+  "onTheWalk": [
+    {
+      "tick": 2361,
+      "kind": "coin",
+      "note": "铜钱 ×4",
+      "beforeHp": 120,
+      "endOfStepHp": 120
+    }
+  ],
+  "forecourt": {
+    "tick": 2526,
+    "stage": "boss",
+    "checkpoint": "rest",
+    "bars": {
+      "gate": false,
+      "court": true
+    },
+    "hero": {
+      "x": 0.0008417560801142967,
+      "z": -21.649114908334248,
+      "hp": 120,
+      "stamina": 100,
+      "will": 100,
+      "gourd": 3
+    },
+    "coins": 103,
+    "boons": [
+      "parryBreath"
+    ],
+    "bag": {
+      "coin": 6,
+      "silver": 1,
+      "salve": 0,
+      "tonic": 1,
+      "page": 1
+    },
+    "pages": {
+      "first": true
+    },
+    "drops": [
+      {
+        "id": 8,
+        "kind": "silver"
+      },
+      {
+        "id": 12,
+        "kind": "salve"
+      },
+      {
+        "id": 20,
+        "kind": "coin"
+      },
+      {
+        "id": 23,
+        "kind": "coin"
+      },
+      {
+        "id": 24,
+        "kind": "coin"
+      },
+      {
+        "id": 26,
+        "kind": "coin"
+      },
+      {
+        "id": 27,
+        "kind": "page"
+      },
+      {
+        "id": 28,
+        "kind": "silver"
+      }
+    ],
+    "boss": {
+      "id": 1,
+      "kind": "lu",
+      "x": 0,
+      "z": -32,
+      "hp": 980,
+      "state": "roam",
+      "phase": 1,
+      "pause": 1.2
+    },
+    "cinematicSecondsRemaining": 5.2,
+    "heroZOnPreviousStep": -21.559114914103535,
+    "meetingSeconds": 5.2
+  },
+  "combatResumed": {
+    "tick": 2839,
+    "stage": "boss",
+    "checkpoint": "rest",
+    "bars": {
+      "gate": false,
+      "court": true
+    },
+    "hero": {
+      "x": 0.0008417560801142967,
+      "z": -21.649114908334248,
+      "hp": 120,
+      "stamina": 100,
+      "will": 100,
+      "gourd": 3
+    },
+    "coins": 103,
+    "boons": [
+      "parryBreath"
+    ],
+    "bag": {
+      "coin": 6,
+      "silver": 1,
+      "salve": 0,
+      "tonic": 1,
+      "page": 1
+    },
+    "pages": {
+      "first": true
+    },
+    "drops": [
+      {
+        "id": 8,
+        "kind": "silver"
+      },
+      {
+        "id": 12,
+        "kind": "salve"
+      },
+      {
+        "id": 20,
+        "kind": "coin"
+      },
+      {
+        "id": 23,
+        "kind": "coin"
+      },
+      {
+        "id": 24,
+        "kind": "coin"
+      },
+      {
+        "id": 26,
+        "kind": "coin"
+      },
+      {
+        "id": 27,
+        "kind": "page"
+      },
+      {
+        "id": 28,
+        "kind": "silver"
+      }
+    ],
+    "boss": {
+      "id": 1,
+      "kind": "lu",
+      "x": 0.000608289571633338,
+      "z": -24.520000024733562,
+      "hp": 980,
+      "state": "windup",
+      "phase": 1,
+      "pause": -4.016666666666659
+    },
+    "cinematicSecondsRemaining": 0
+  },
+  "firstSpearOnLuQian": {
+    "tick": 2853,
+    "stage": "boss",
+    "checkpoint": "rest",
+    "bars": {
+      "gate": false,
+      "court": true
+    },
+    "hero": {
+      "x": 0.0008083420243362809,
+      "z": -22.060000032867908,
+      "hp": 120,
+      "stamina": 100,
+      "will": 100,
+      "gourd": 3
+    },
+    "coins": 103,
+    "boons": [
+      "parryBreath"
+    ],
+    "bag": {
+      "coin": 6,
+      "silver": 1,
+      "salve": 0,
+      "tonic": 1,
+      "page": 1
+    },
+    "pages": {
+      "first": true
+    },
+    "drops": [
+      {
+        "id": 8,
+        "kind": "silver"
+      },
+      {
+        "id": 12,
+        "kind": "salve"
+      },
+      {
+        "id": 20,
+        "kind": "coin"
+      },
+      {
+        "id": 23,
+        "kind": "coin"
+      },
+      {
+        "id": 24,
+        "kind": "coin"
+      },
+      {
+        "id": 26,
+        "kind": "coin"
+      },
+      {
+        "id": 27,
+        "kind": "page"
+      },
+      {
+        "id": 28,
+        "kind": "silver"
+      }
+    ],
+    "boss": {
+      "id": 1,
+      "kind": "lu",
+      "x": 0.0006004623161159973,
+      "z": -24.616250024415297,
+      "hp": 967,
+      "state": "windup",
+      "phase": 1,
+      "pause": -4.016666666666659
+    },
+    "cinematicSecondsRemaining": 0,
+    "damage": {
+      "tick": 2853,
+      "party": 1,
+      "type": "hit",
+      "target": 1,
+      "amount": 13,
+      "before": 980,
+      "after": 967,
+      "observedEndOfStepHp": 967,
+      "source": "cut"
+    }
+  },
+  "comparison": {
+    "milestonesMatch": true,
+    "defeatedRosterStillPresentAtMeeting": true,
+    "matchingDamageEventsThroughFirstBossHit": 41,
+    "orderedDamageSha256": "a3490d38c43de945fc445994a736038e4d68cb5537e57a877b84ea2b8d3e9f51",
+    "damageEncoding": "SHA-256 of UTF-8 JSON.stringify(damage entries up to and including firstBossHit), without whitespace.",
+    "droppedSecondPage": {
+      "id": 27,
+      "stillOnGroundAtFirstStrike": true
+    },
+    "chromeRuleOnlyRun": "A separate run in the same physical Chrome used the chapter rules and controls without rendering or device input. All four milestones and the damage ledger through the first boss hit matched both playable hosts.",
+    "firstCapture": "The first capture waited for the second page choice seen on Windows Node. On the Fold7 route the second page dropped but was not collected. Both runs advanced beyond the intended observation point; the capture failed. A second capture observed the choices and events that actually occurred, on the identical APK and browser project.",
+    "desktopRuleCheck": "The Windows Node rule run chose two lessons and reached the gate with 24 HP. The Fold7 run chose one and reached it with 120 HP. Neither route is a cross-platform frame or loot requirement.",
+    "visualCheck": {
+      "view": "Captured from both playable hosts: open gate, first and second subtitles during the authored meeting, textured Lu Qian and glaive, and hit feedback after combat resumed.",
+      "captureWindowsInSimulationSteps": {
+        "browser": {
+          "initial": [
+            0,
+            0
+          ],
+          "first-page": [
+            1060,
+            1060
+          ],
+          "second-party": [
+            1231,
+            1266
+          ],
+          "gate-open": [
+            2329,
+            2367
+          ],
+          "boss-intro": [
+            2532,
+            2570
+          ],
+          "boss-demand": [
+            2714,
+            2754
+          ],
+          "final": [
+            2872,
+            2909
+          ]
+        },
+        "native": {
+          "initial": [
+            0,
+            0
+          ],
+          "first-page": [
+            1060,
+            1060
+          ],
+          "second-party": [
+            1234,
+            1284
+          ],
+          "gate-open": [
+            2341,
+            2391
+          ],
+          "boss-intro": [
+            2540,
+            2590
+          ],
+          "boss-demand": [
+            2714,
+            2776
+          ],
+          "final": [
+            2876,
+            2925
+          ]
+        }
+      },
+      "limit": "Moving captures were taken in the listed windows. HP at the first boss hit comes from the event ledger."
+    },
+    "deviceCleanup": "The successful run removed the temporary APK and restored its saved foreground, browser targets, USB mappings and display settings. During the earlier failed capture, Android denied relaunching a transient Play Protect dialog; the other cleanup steps completed."
+  },
+  "priorEvidence": {
+    "residencyAndGlesRestore": "https://github.com/cnedwin/Egret_rebuild/blob/6610886e6409092f50b96d9d0860544c7d976a6a/runtime-sdk/measurements/fold7-snowtemple-yard-encounter.json",
+    "previousPartyArrivalAndRestart": "https://github.com/cnedwin/Egret_rebuild/blob/171ebe8f4f2824fe5a7899666d6376949a58aaff/runtime-sdk/measurements/fold7-snowtemple-yard-parties.json"
+  },
+  "coverage": "Chapter slice with original rules, actors and subtitled meeting on a simplified stage. Device comparison ends at the first damaging strike on Lu Qian. This run covers progression and inventory continuity; resource residency and recovery use the linked measurements."
+}

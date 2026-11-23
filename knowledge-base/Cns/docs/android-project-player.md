@@ -351,6 +351,19 @@ node out/snowtemple-parties/check-encounters.mjs
 
 在同一台 Galaxy Z Fold7 上，Chrome WebGL2 和裁剪 V8 + GLES3 签名 APK 使用相同的触控操作。林冲保留 104 点血和已选能力进入第二场，预先点下的一枪命中弓手（58 → 45 血）。两端直到林冲落败的逐次扣血相同，重开后的第一枪也一致。440,900 字节的藤牌通过包内分块接口读取。几何驻留和上下文恢复沿用此前同机记录。[Fold7 实测](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-yard-parties.json)
 
+### 从草料场走到陆谦面前
+
+同一份准备好的工程可以在浏览器中打开 `browser.html`，也可以交给 Android 项目播放器打包。准备工具校验原作资源，从本地工程读入陆谦的蒙皮模型、长刀和对白。示例以简化的草料场、院门和前庭呈现场景，会面以字幕呈现。[原作与素材说明](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+```sh
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snowtemple-gate --temple-gate
+node out/snowtemple-gate/check-temple-gate.mjs
+```
+
+点击 **Advance & fight** 后，林冲会靠近敌人并出枪。残页出现时，选一项招式即可继续。第二队全灭后院门才会打开。林冲还要走过门廊，活着进入前庭，身后的屏障才会关闭，陆谦才会开口。两场战斗和会面沿用同一局游戏，保留血量、招式、背包和场内掉落。也可以用原有的 `--encounters` 入口单独玩草料场。
+
+同一台 Galaxy Z Fold7 上，Chrome WebGL2 和裁剪 V8 + GLES3 签名 APK 使用相同的触控操作。两队清场时林冲剩 120 血、99 枚铜钱，保留「借力」。第 2328 个模拟步开启院门。途中拾取铜钱，入院时为 120 血、103 枚铜钱。越过门槛后，身后的屏障关闭，炉边检查点继续生效，触发陆谦的 5.2 秒会面。恢复交战后的首枪使陆谦从 980 血降至 967 血，两端截至这一枪的 41 条伤害记录逐条一致。 Fold7 这条路线没有拾取第二本残页，而 Windows Node 规则回放拾取了它。验收按每局实际出现的选项核对。 [Fold7 真机记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-temple-gate.json)
+
 ### Android 实时帧的几何驻留
 
 游戏包和播放器均采用此版本构建时，裁剪 V8 和 WebView 工程宿主都可使用同一套 World3D 增量协议。搭配旧版宿主或游戏包时仍发送完整帧。完整帧 E3D1 或 E3D2 包含全部可见网格的定义。GL 线程确认上一帧在同一代 EGL 上下文中成功提交后，E3D3 或 E3D4 即可按编号引用这些网格。每帧仍传送当前相机、光照、有序绘制记录、材质和纹理引用，以及完整的 2D HUD。只有新增或改变的网格需要传输定义。仅移动镜头且可见网格集合不变时，几何部分的每帧桥接字节为零。
