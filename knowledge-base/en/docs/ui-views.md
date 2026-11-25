@@ -126,11 +126,45 @@ node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new output dir
 
 Windows Chromium 157 with SwiftShader WebGL2 reproduced the original button at (620, 430, 120, 42). It now moves to (545, 430, 120, 42), publishes and projects the clipped region (555, 415, 97.5, 12), and disappears when fully clipped. The building fixture observed offsets 62 by wheel, 54 by touch drag, 48 on keyboard reveal, and 0 after the list shrank. The input was injected through the browser, and the projected DOM is available to assistive technology. Actual screen-reader speech and real-finger interaction require device acceptance.
 
+## Dense menus and controller focus
+
+Keep each control's visible words and accessible name in its `text` binding. Play suspends the label's raster work when the view or one of its display ancestors is hidden. Showing the view prepares its current words again. A hidden page can retain its game state while releasing its borrowed rasters.
+
+`game.browser.getLabelStatus()` reports work in progress, queued requests, budget refusals, released rasters and logical cache accounting. The cache accounts for reusable slots separately from live generations that are still borrowed. A direct label created with `game.browser.createLabel()` can use `setRasterActive(false)` while its owner is hidden. Its `ready` promise reports preparation errors when active.
+
+The default cache retains 32 reusable slots and admits up to 64 current and retired generations within its byte budget. For a market with several pages, hide the previous page before showing the next. A direct active label reports `TEXT_CACHE_BUDGET` on `ready` if the limit persists after pending work settles. Release or suspend unused labels, then retry with `label.set({})`. Closing a page releases the labels' borrows. The cache can keep reusable entries until the game closes.
+
+Tab and Shift+Tab move visual focus on the canvas. Enter and Space activate the focused control. A modal owns focus until it closes, and a disabled control is skipped. The foremost modal can also use the standard gamepad D-pad and A. Add `gamepad: true` for a nonmodal menu that should own those controls. Other nonmodal views leave these buttons available to gameplay.
+
+```js
+function openPauseMenu(game, pauseView) {
+  game.pause();
+  const resume = view => {
+    view.close();
+    game.resume();
+  };
+  const menu = game.show(pauseView, {
+    dismiss: resume, // Escape or gamepad B
+    resume,          // A fresh Start press while paused
+    bind: { continue: { tap: () => resume(menu) } }
+  });
+  return menu;
+}
+```
+
+Use a modal view description with a `continue` button. The D-pad goes forward or back in the view's authored order and can scroll a newly focused row into view. Pausing gameplay leaves menu input available. A held Start produces one edge, including when the callback resumes gameplay.
+
+Run `node tools/build.mjs`, followed by `node examples/play/verify-market-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable>`. The same run exercises the 390 × 844 market label fixture and a keyboard plus simulated standard gamepad modal. Physical gamepads are a separate test surface.
+
+On Windows Chromium 157 with SwiftShader WebGL2, the previous engine drew 48 opening labels but only 16 of the next 48 after an immediate page switch. The new fixture detects the same capacity pressure and checks pixels in every cell. All 48 labels and matching names were present on both pages and after three rapid price updates. Switching released 48 borrows and closing returned active caller leases to zero. A separate saturation control admitted 64 labels, reported one refusal, and retried successfully after a release.
+
+On Galaxy Z Fold7 with Android 17, Chrome 157 and the Adreno 830 GPU, the functional fixture passed with WebGL2 and WebGPU. Both rendered all 48 labels and activated the next-wave action once. The test page used a 390 × 844 CSS viewport and injected touch through Chrome DevTools Protocol. Physical controller input, human touch and frame performance have separate acceptance.
+
 ## Parts most screens need
 
 | Call | What it is |
 | --- | --- |
-| `await game.confirm(question, { yes, no, title })` | A question over everything, answered by its buttons, by Enter, Space or a pad's A (yes) and by Escape or B (no). Questions asked while one is open wait their turn. `game.asking` is true while one is open, so `update` can leave the game alone |
+| `await game.confirm(question, { yes, no, title })` | A modal question. Enter, Space and gamepad A activate the focused button. Escape and B cancel. Questions asked while one is open wait their turn. `game.asking` is true while one is open, so `update` can leave the game alone |
 | `game.hints(list)` | A bar at the bottom of the safe part. Each hint is `{ action, key, pad, touch }`, and the bar names it in the words of what the player last used, `game.device`. A keyboard or a mouse shows `Space Jump`, a pad `A Jump`, and a finger the `touch` words; a hint without them is left out on a touch screen. `shown` is what it says now; `set(list)` and `dispose()` |
 | `await game.loading(tasks, { label, atOnce })` | `Loading 2 / 5` and a bar over everything while promises, or functions that return them, finish; functions run `atOnce` at a time (4). Gives their results in order; a failure closes it and is thrown |
 | `game.badges` | Red dots that add up along paths: `set('mail/system', 3)` makes `count('mail')` 3 as well. `has`, `clear(path)`, `paths()`, `onChange`. A restart clears them. The `badge` binding draws one at a part's top right corner, and `view.badge(name)` reads it |

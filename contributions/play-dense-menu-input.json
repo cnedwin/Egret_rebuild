@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-market-ui.mjs",
+      "originRole": "First-party consolidated Chromium verification for original, synthetic dense menu and controller scenarios; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-dense-labels.mjs",
+      "originRole": "First-party synthetic market text pressure and visibility scenario; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-pad-navigation.mjs",
+      "originRole": "First-party browser keyboard and simulated controller scenario; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
