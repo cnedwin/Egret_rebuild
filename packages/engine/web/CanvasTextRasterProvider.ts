@@ -177,8 +177,9 @@ export function createCanvasTextRasterProvider(): TextRasterProvider {
       typeof document.createElement === 'function' &&
       typeof document.fonts?.check === 'function' &&
       typeof HTMLCanvasElement === 'function' &&
-      typeof HTMLCanvasElement.prototype.getContext === 'function' &&
-      typeof CanvasRenderingContext2D === 'function'
+      // No CanvasRenderingContext2D is asked for: a WeChat mini game gives 2D contexts from wx.createCanvas() with no
+      // such name on its global. The context each surface gets is checked where it is made, and the factory makes none.
+      typeof HTMLCanvasElement.prototype.getContext === 'function'
     )
       owner = document;
   } catch (cause) {

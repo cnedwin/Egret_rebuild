@@ -24,6 +24,12 @@
 
 网页有、小游戏没有的其他名字（`XMLHttpRequest`、`Worker`、`OffscreenCanvas`、`indexedDB` 等）在游戏里都绑定为空。游戏要用其中一个，在替身里就会失败，和在手机上一样，不会只在手机上才出错。
 
+这些名字包括画布 2D 绘制的类（`CanvasRenderingContext2D`、`TextMetrics`、`CanvasGradient`）、`WebAssembly`、`FontFace`、`CSS` 和网页的文本框。小游戏用 `wx.createCanvas()` 给出 2D 上下文，但没有可以引用的类名，并用 `WXWebAssembly` 代替 `WebAssembly`。所以引擎的标签向画布要 2D 上下文，检查它能否测量和填充文字，而不是查找这个类。
+
+## 文字
+
+标签（`game.text`、`createLabel`）画在 2D 画布上。段落使用不需要 WebAssembly 的画布提供者：在小游戏里，`chooseParagraphProvider` 会选它。CanvasKit 需要 WebAssembly，体积也超过 4 MB 主包，因此不会加载。见[不需要 WebAssembly 的提供者](readonly-paragraph-sdk.md#不需要-webassembly-的提供者)。游戏自带的字体用 `wx.loadFont` 注册，使用它返回的字体族名。不注册时用手机自带的字体。
+
 ## 导出
 
 ```sh
@@ -82,6 +88,8 @@ node tools/wechat/check-minigame.mjs <已安装的 Playwright index.mjs> <小游
 - 存储、包内文件、改名的图片和从字节解码；
 - 帧下面画出的背景，以及绑回去的游戏 WebGL 状态；
 - 一个小游戏目录的导出，并在这个上下文里运行。
+
+`examples/minigame/verify.mjs` 导出一个探测游戏，并在替身里运行。游戏里上面这些名字都不存在。2026 年 11 月 26 日，探测游戏的标签画出了三行字。段落因为没有 `WebAssembly` 而得到画布提供者，换成三行并画到了屏幕上；在单词 “lantern” 里点一下，找到了对应的字母。
 
 2026 年 11 月 22 日，一个按这种方式导出的移植 2D 游戏在替身里试玩过，环境是无头 Chromium 加软件 WebGL2。游戏的图片共 0.54 MB，场景是 CSS 背景。WebP 改写成 JPEG 后，整个包 1.75 MB。标题画面在画布下显示出了场景；点一下进入选夜界面，再点一下开始第一夜。没有报错，也没有元素泄漏。
 

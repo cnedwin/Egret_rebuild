@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1447 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1458 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1197,9 +1197,20 @@
 | `CanvasKitParagraphModule` | 接口 | Minimal host-injected CanvasKit port. |
 | `CanvasKitParagraphProvider` | 接口 | Lays out and draws paragraphs with CanvasKit; dispose of it when done. |
 | `CanvasKitParagraphProviderOptions` | 接口 | A CanvasKit paragraph provider to make: its CanvasKit, build identity and fonts. |
+| `CanvasParagraphCanvas` | 接口 | What the provider draws with: a canvas whose 2D context measures and fills words. |
+| `CanvasParagraphContext` | 接口 | The part of a 2D context the provider uses. |
+| `CanvasParagraphProvider` | 接口 | Lays out and draws paragraphs with a canvas's 2D context; dispose of it when done. |
+| `CanvasParagraphProviderOptions` | 接口 | A canvas paragraph provider to make. |
+| `chooseParagraphProvider` | 函数 | Creates the paragraph provider the device can afford. |
 | `createCanvasKitFontSetProvider` | 函数 | A stable cache provider routes immutable generations; it never mutates a live native font table. |
 | `createCanvasKitParagraphProvider` | 函数 | Lays out and draws paragraphs with CanvasKit and the fonts it is given. |
+| `createCanvasParagraphProvider` | 函数 | Lays out and draws paragraphs with a canvas's 2D context, with no WebAssembly. |
+| `ParagraphBackend` | 类型 | The two paragraph providers of `@egret/engine/web/paragraph`. |
+| `ParagraphBackendReason` | 类型 | Why a provider was chosen. |
+| `ParagraphDevice` | 接口 | What the choice reads of the device. |
 | `ParagraphFontSet` | 接口 | A set of fonts loaded for paragraphs: its key and families; dispose of it when done. |
+| `ParagraphProviderChoice` | 接口 | The provider chosen, which of the two it is, and why. |
+| `ParagraphProviderChoiceOptions` | 接口 | How to choose: which provider is wanted, how to load CanvasKit, and the canvas provider's options. |
 
 ## `@egret/engine/web/keyboard`
 

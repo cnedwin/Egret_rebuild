@@ -13,3 +13,20 @@ export type {
   CanvasKitFontSetProviderOptions,
   ParagraphFontSet
 } from './CanvasKitFontSetProvider.js';
+
+export { createCanvasParagraphProvider } from './CanvasParagraphProvider.js';
+export type {
+  CanvasParagraphCanvas,
+  CanvasParagraphContext,
+  CanvasParagraphProvider,
+  CanvasParagraphProviderOptions
+} from './CanvasParagraphProvider.js';
+
+export { chooseParagraphProvider } from './ParagraphProviderChoice.js';
+export type {
+  ParagraphBackend,
+  ParagraphBackendReason,
+  ParagraphDevice,
+  ParagraphProviderChoice,
+  ParagraphProviderChoiceOptions
+} from './ParagraphProviderChoice.js';
