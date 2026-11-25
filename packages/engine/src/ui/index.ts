@@ -99,3 +99,13 @@ export type {
   UiLayerSnapshot,
   UiLayerManager
 } from './layerTypes.js';
+export { createUiScreenStack } from './screenStack.js';
+export type {
+  UiScreenContext,
+  UiScreenDefinition,
+  UiScreenHandle,
+  UiScreenLayer,
+  UiScreenStack,
+  UiScreenStackOptions,
+  UiScreenStackSnapshot
+} from './screenStack.js';

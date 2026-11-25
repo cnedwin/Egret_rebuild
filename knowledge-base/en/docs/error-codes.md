@@ -1219,6 +1219,16 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | --- | --- |
 | `UI_SCREEN_OPTIONS_INVALID` | The options given to the screen fit are not valid: one is missing, of the wrong type or out of range. |
 
+### UI_SCREENS
+
+| Code | Meaning |
+| --- | --- |
+| `UI_SCREENS_ALREADY_OPEN` | This screen is open, or opening, with other parameters. Close it first, or open it with the same parameters. |
+| `UI_SCREENS_CLOSED` | The screen stack was closed and takes nothing more. |
+| `UI_SCREENS_DEFINITION_INVALID` | The definition given to the screen stack is not valid. |
+| `UI_SCREENS_FULL` | The screen stack holds as many screens as it was made for. Close one first, or give maxScreens. |
+| `UI_SCREENS_OPTIONS_INVALID` | The options given to the screen stack are not valid: one is missing, of the wrong type or out of range. |
+
 ### UI_SEMANTICS
 
 | Code | Meaning |

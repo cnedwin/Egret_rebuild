@@ -97,6 +97,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['UI_KEYBOARD', 'UI keyboard navigation'],
   ['UI_LAYER', 'a UI layer'],
   ['UI_SCREEN', 'the screen fit'],
+  ['UI_SCREENS', 'the screen stack'],
   ['UI_SEMANTICS', 'UI semantics'],
   ['UI_TEXT_EDITOR', 'the UI text editor'],
   ['UI_THEME', 'a UI theme'],
@@ -278,6 +279,9 @@ const WRITTEN: Readonly<Record<string, string>> = {
     'What a UI leaf or row gave as its content cannot be shown there. The leaf or row, and the reason, are in cause.',
   UI_ROW_NOT_REALIZED: 'The row is not on screen now, so there is nothing of it to act on. Scroll it into view first.',
   UI_ROW_RETAINED: 'A row that is in use was removed from its list or changed under it.',
+  UI_SCREENS_ALREADY_OPEN:
+    'This screen is open, or opening, with other parameters. Close it first, or open it with the same parameters.',
+  UI_SCREENS_FULL: 'The screen stack holds as many screens as it was made for. Close one first, or give maxScreens.',
   UI_SEMANTICS_DESCRIPTION: 'A field of a UI semantics entry is not valid. The entry and the field are in cause.',
   UI_SEMANTICS_FOCUS:
     'More than one entry of UI semantics is focused, or the focused one is inert. The entry is in cause.',
