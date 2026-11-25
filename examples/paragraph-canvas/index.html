@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Egret paragraphs without WebAssembly / 无需 WebAssembly 的段落</title>
+<link rel="icon" href="data:,">
+<script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/ui":"/packages/engine/dist/ui/index.js","@egret/engine/paragraph":"/packages/engine/dist/paragraph.js","@egret/engine/web/paragraph":"/packages/engine/dist/web/paragraph.js","@egret/engine/web/pointer":"/packages/engine/dist/web/pointer.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/engine/webgl2":"/packages/engine/dist/web/webgl2.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/runtime/ui":"/packages/runtime/dist/ui/index.js","@egret/runtime/text":"/packages/runtime/dist/text/index.js","@egret/runtime/paragraph":"/packages/runtime/dist/paragraph/index.js","@egret/runtime/input":"/packages/runtime/dist/input/index.js","@egret/contracts":"/packages/contracts/dist/index.js","@egret/contracts/resources":"/packages/contracts/dist/resources/index.js","#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-pointer-input":"/packages/engine/dist/pointerInput.js","robust-predicates":"/vendor/robust-predicates/index.js"}}</script>
+<script src="../paragraph-panel/vendor/runtime/layout-r1/canvaskit.js"></script>
+<style>body{margin:0;background:#142033;color:#e8eefc;font:14px system-ui}canvas{display:block}main{display:flex;gap:16px;padding:16px}</style>
+</head>
+<body>
+<main><canvas id="canvaskit" width="480" height="480"></canvas><canvas id="canvas2d" width="480" height="480"></canvas></main>
+<p id="status">Loading</p>
+<script type="module" src="./main.mjs"></script>
+</body>
+</html>

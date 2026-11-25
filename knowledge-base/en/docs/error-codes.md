@@ -694,6 +694,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | --- | --- |
 | `PARAGRAPH_BACKEND_CLEANUP_FAILED` | Cleaning up a paragraph failed. Each cause is in cleanupErrors. |
 | `PARAGRAPH_BACKEND_TERMINAL` | The backend of a paragraph has ended and cannot be used again. |
+| `PARAGRAPH_BACKEND_UNAVAILABLE` | The backend of a paragraph is not available here. |
 | `PARAGRAPH_BUILD_REFUSED` | The build of a paragraph was refused. |
 | `PARAGRAPH_CANCELLED` | A paragraph was cancelled. |
 | `PARAGRAPH_DISPOSED` | A paragraph was disposed and takes nothing more. |

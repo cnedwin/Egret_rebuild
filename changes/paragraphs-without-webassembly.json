@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Paragraphs without WebAssembly, and labels in a WeChat mini game",
+    "body": "createCanvasParagraphProvider in @egret/engine/web/paragraph lays paragraphs out and draws them with a canvas's 2D context, with no WebAssembly and no font bytes. It takes the same requests as the CanvasKit provider: width, lineHeight, textAlign, maxLines, styled runs and text geometry. In headless Chromium with the same Noto fonts, its lines, character boxes, selections and hits matched CanvasKit's. chooseParagraphProvider gives it where WebAssembly is missing, in a mini game or on a device with little memory, and loads CanvasKit only when it is chosen. Labels no longer look for a CanvasRenderingContext2D global, which a mini game lacks: they ask the canvas for a context that measures and fills text. The mini game export now hides the 2D context classes, WebAssembly, CSS and text fields from the game, as a phone does."
+  },
+  "zh": {
+    "title": "不需要 WebAssembly 的段落，以及微信小游戏里的标签",
+    "body": "@egret/engine/web/paragraph 新增 createCanvasParagraphProvider：用画布 2D 上下文排版和绘制段落，不需要 WebAssembly，也不需要字体字节。它接收与 CanvasKit 提供者相同的请求：宽度、lineHeight、textAlign、maxLines、样式范围和文字几何。在无头 Chromium 里用同样的 Noto 字体对比，行、字符框、选区和点中结果都与 CanvasKit 一致。chooseParagraphProvider 在没有 WebAssembly、小游戏或内存少的设备上选它，只有选中 CanvasKit 时才加载 CanvasKit。标签不再查找小游戏里没有的 CanvasRenderingContext2D 全局，而是向画布要一个能测量和填充文字的上下文。小游戏导出现在也向游戏隐藏 2D 上下文的类、WebAssembly、CSS 和文本框，与手机上一致。"
+  }
+}

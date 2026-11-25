@@ -24,6 +24,12 @@ A mini game runs one script, `game.js`, in a global that holds `wx`, the console
 
 Every other name a page has (`XMLHttpRequest`, `Worker`, `OffscreenCanvas`, `indexedDB` and so on) is bound to nothing inside the game. A game that reaches for one fails in the stand-in as it would on a phone, rather than on a phone alone.
 
+Among those names are the classes of a canvas's 2D drawing (`CanvasRenderingContext2D`, `TextMetrics`, `CanvasGradient`), `WebAssembly`, `FontFace`, `CSS` and the page's text fields. A mini game gives a 2D context from `wx.createCanvas()` with no class to name, and `WXWebAssembly` in place of `WebAssembly`. The engine's labels therefore ask a canvas for its 2D context and check that it measures and fills text; they do not look for the class.
+
+## Text
+
+Labels (`game.text`, `createLabel`) draw on 2D canvases. Paragraphs use the canvas provider, which needs no WebAssembly: `chooseParagraphProvider` gives it in a mini game. CanvasKit needs WebAssembly and is larger than the 4 MB main package, and it is not loaded. See [a provider without WebAssembly](readonly-paragraph-sdk.md#a-provider-without-webassembly). A font the game ships is registered with `wx.loadFont`, whose returned family name is the one to use. Otherwise the phone's own fonts draw.
+
 ## Export
 
 ```sh
@@ -82,6 +88,8 @@ The tests in `tests/wechat-minigame.test.mjs` run the adapter in a Node context.
 - storage, package files, renamed pictures and decoded bytes;
 - the backdrop drawn under a frame, with the game's WebGL state bound again;
 - the export of a small game folder, run in that context.
+
+`examples/minigame/verify.mjs` exports a probe game and runs it in the stand-in. Inside the game, none of the names above exist. On November 26, 2026 the probe's labels drew three lines of words. A paragraph was given the canvas provider, for want of `WebAssembly`. It wrapped into three lines, which were drawn on the screen, and a hit in the word "lantern" found its letter.
 
 On November 22, 2026, a ported 2D game exported this way was played in the stand-in, in headless Chromium on software WebGL2. The game was 0.54 MB of pictures, and its scenery is CSS backgrounds. The package came to 1.75 MB with its WebP written as JPEG. The title showed its scenery under the canvas; a tap went to the choice of night, and a second tap started the first night. No error was reported and no element leaked.
 

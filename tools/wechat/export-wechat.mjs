@@ -144,7 +144,24 @@ export const PAGE_NAMES = [
   'ServiceWorker',
   'EventSource',
   'Gamepad',
-  'GamepadEvent'
+  'GamepadEvent',
+  // A canvas's 2D drawing and WebAssembly are not names of a mini game's global: WeChat gives a 2D context from
+  // wx.createCanvas() with no class to name, and WXWebAssembly in place of WebAssembly. Code that needs them asks the
+  // canvas, as the engine's text does.
+  'CanvasRenderingContext2D',
+  'OffscreenCanvasRenderingContext2D',
+  'ImageBitmapRenderingContext',
+  'CanvasGradient',
+  'CanvasPattern',
+  'TextMetrics',
+  'WebAssembly',
+  'CSS',
+  'FontFaceSet',
+  'HTMLInputElement',
+  'HTMLTextAreaElement',
+  'getSelection',
+  'requestIdleCallback',
+  'cancelIdleCallback'
 ];
 
 function refuse(message) {

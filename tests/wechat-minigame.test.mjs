@@ -540,3 +540,27 @@ test("WX08 the page's safe-area insets are WeChat's safe area", async () => {
   );
   assert.deepEqual([...result], ['fixed', '47px', '0px', '34px', '0px', '0px']);
 });
+
+// Break caught: a game that finds the 2D context class or WebAssembly in the stand-in, a real browser that has both,
+// and so works there and fails on a phone, whose global has neither.
+test('WX09 names a phone lacks are bound to nothing inside the game, even where the page has them', async () => {
+  const world = miniGame();
+  // As in the stand-in: the page under the game has the names.
+  world.G.CanvasRenderingContext2D = function CanvasRenderingContext2D() {};
+  world.G.FontFace = function FontFace() {};
+  const lacking = ['CanvasRenderingContext2D', 'TextMetrics', 'WebAssembly', 'FontFace', 'CSS', 'HTMLInputElement'];
+  assert.equal(typeof vm.runInContext('WebAssembly', world.G), 'object', 'the context itself has WebAssembly');
+  const result = await run(world, finish(`return [${lacking.map(name => `typeof ${name}`).join(', ')}];`));
+  assert.deepEqual(
+    [...result],
+    lacking.map(() => 'undefined')
+  );
+  for (const name of lacking) assert.ok(PAGE_NAMES.includes(name), name);
+  // A canvas still gives a 2D context that draws text.
+  const drawn = await run(
+    miniGame(),
+    finish(`const context = document.createElement('canvas').getContext('2d');
+      return [typeof context.measureText, typeof context.fillText];`)
+  );
+  assert.deepEqual([...drawn], ['function', 'function']);
+});

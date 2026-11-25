@@ -694,6 +694,7 @@
 | --- | --- |
 | `PARAGRAPH_BACKEND_CLEANUP_FAILED` | 清理段落时失败。各个原因在 cleanupErrors 中。 |
 | `PARAGRAPH_BACKEND_TERMINAL` | 段落的 `backend` 已经结束，不能再使用。 |
+| `PARAGRAPH_BACKEND_UNAVAILABLE` | 段落的 `backend` 在这里不可用。 |
 | `PARAGRAPH_BUILD_REFUSED` | 段落的 `build` 被拒绝了。 |
 | `PARAGRAPH_CANCELLED` | 段落被取消了。 |
 | `PARAGRAPH_DISPOSED` | 段落已销毁，不再接受任何操作。 |

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 47 entries, 1447 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 47 entries, 1458 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1197,9 +1197,20 @@ For which entry to import from, see [What to import](entry-points.md).
 | `CanvasKitParagraphModule` | interface | Minimal host-injected CanvasKit port. |
 | `CanvasKitParagraphProvider` | interface | Lays out and draws paragraphs with CanvasKit; dispose of it when done. |
 | `CanvasKitParagraphProviderOptions` | interface | A CanvasKit paragraph provider to make: its CanvasKit, build identity and fonts. |
+| `CanvasParagraphCanvas` | interface | What the provider draws with: a canvas whose 2D context measures and fills words. |
+| `CanvasParagraphContext` | interface | The part of a 2D context the provider uses. |
+| `CanvasParagraphProvider` | interface | Lays out and draws paragraphs with a canvas's 2D context; dispose of it when done. |
+| `CanvasParagraphProviderOptions` | interface | A canvas paragraph provider to make. |
+| `chooseParagraphProvider` | function | Creates the paragraph provider the device can afford. |
 | `createCanvasKitFontSetProvider` | function | A stable cache provider routes immutable generations; it never mutates a live native font table. |
 | `createCanvasKitParagraphProvider` | function | Lays out and draws paragraphs with CanvasKit and the fonts it is given. |
+| `createCanvasParagraphProvider` | function | Lays out and draws paragraphs with a canvas's 2D context, with no WebAssembly. |
+| `ParagraphBackend` | type | The two paragraph providers of `@egret/engine/web/paragraph`. |
+| `ParagraphBackendReason` | type | Why a provider was chosen. |
+| `ParagraphDevice` | interface | What the choice reads of the device. |
 | `ParagraphFontSet` | interface | A set of fonts loaded for paragraphs: its key and families; dispose of it when done. |
+| `ParagraphProviderChoice` | interface | The provider chosen, which of the two it is, and why. |
+| `ParagraphProviderChoiceOptions` | interface | How to choose: which provider is wanted, how to load CanvasKit, and the canvas provider's options. |
 
 ## `@egret/engine/web/keyboard`
 
