@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1447 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1448 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1581,6 +1581,7 @@
 | `PlayBurstOptions` | 接口 | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
 | `PlayButton` | 类型 | A button: a sprite whose middle is at (x, y), with its words in `label`. |
 | `PlayButtonOptions` | 接口 | A button to show: where, how large, its colors, text size and layer. |
+| `PlayFloatingStickOptions` | 接口 | A floating stick starts under a fresh touch in this part of the Play design. |
 | `PlayGame` | 接口 | Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. |
 | `PlayImageOptions` | 接口 | An image to show: where, how large, whether smoothed, and its layer. |
 | `PlayKeys` | 接口 | The keyboard of a play game: what is held, pressed and released, and axes from the arrow and WASD keys. |

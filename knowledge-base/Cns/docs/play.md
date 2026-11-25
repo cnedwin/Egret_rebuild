@@ -304,6 +304,28 @@ game.music.intensity = lanterns / 3;                          // 强度越高，
 
 第一次 `setup` 等待的菜单或对白框一打开就会开始绘制画面，所以能被看到并操作；否则画面仍在 `setup` 结束后才开始，与以前相同。
 
+### 浮动触屏摇杆
+
+传入 `floating` 后，玩家在战场区域内按下的位置就是摇杆中心。示例给右上角的暂停按钮保留了正常输入。
+
+```js
+game.button('暂停', { x: 444, y: 28, width: 64, height: 48 }, () => game.pause());
+game.touchStick({
+  radius: 48,
+  floating: {
+    area: { x: 0, y: 0, width: 480, height: 270 },
+    deadZonePx: 8,
+    exclude: (x, y) => x >= 412 && y <= 52,
+  },
+});
+```
+
+`area` 和 `exclude(x, y)` 使用与 `game.button()` 相同的游戏坐标。布局会变化时，可以让 `area` 接收一个返回区域的函数。`radius` 以游戏单位指定摇杆行程。`deadZonePx` 默认是 8，以 CSS 像素测量触点距起点的距离。画布缩放和设备像素比变化时，页面上死区的大小保持一致。通过 `game.keys.axis()` 读取方向。
+
+摇杆圆环在有触点控制时显示。第一个符合条件的触点拖出画布后仍可操控，第二个触点可以操作其他控件。抬起控制手指、取消触点或暂停时，摇杆方向立即归零。恢复游戏后需要重新按下才能操控。省略 `floating` 即可继续用 `x`、`y` 和 `always` 设置固定摇杆。
+
+构建工作区后，运行 `node examples/play/verify-floating-stick.mjs <Playwright index.mjs 的绝对路径> <新输出目录的绝对路径> <Chromium 可执行文件的绝对路径> [webgl2|webgpu]`。夹具通过 Chromium 的触摸输入协议验证画布缩放后的 CSS 像素死区、触点归属、画布外捕获和暂停恢复。
+
 ## 随机与存档
 
 `game.random` 给出的数字在 `seed` 相同时可以重复：`int(1, 6)`、`range(0, 1)`、`chance(0.25)`、`pick(list)`，以及 `shuffle(list)`，它返回一个新列表，不改动传入的列表。

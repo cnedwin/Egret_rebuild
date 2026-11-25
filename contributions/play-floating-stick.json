@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-floating-stick.mjs",
+      "originRole": "First-party browser verification of the floating touch stick using an original synthetic battlefield; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
