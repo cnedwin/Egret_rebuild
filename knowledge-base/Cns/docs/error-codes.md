@@ -1219,6 +1219,16 @@
 | --- | --- |
 | `UI_SCREEN_OPTIONS_INVALID` | 交给屏幕适配的选项无效：缺少某一项、类型不对或超出范围。 |
 
+### UI_SCREENS
+
+| 错误码 | 含义 |
+| --- | --- |
+| `UI_SCREENS_ALREADY_OPEN` | 这个界面已经打开或正在打开，参数不同。先关闭它，或用相同的参数打开。 |
+| `UI_SCREENS_CLOSED` | 界面栈已关闭，不再接受任何操作。 |
+| `UI_SCREENS_DEFINITION_INVALID` | 交给界面栈的 `definition` 无效。 |
+| `UI_SCREENS_FULL` | 界面栈里的界面已经达到上限。先关掉一个，或在创建时给出 maxScreens。 |
+| `UI_SCREENS_OPTIONS_INVALID` | 交给界面栈的选项无效：缺少某一项、类型不对或超出范围。 |
+
 ### UI_SEMANTICS
 
 | 错误码 | 含义 |

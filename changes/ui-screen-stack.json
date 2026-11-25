@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "A screen stack for pages, popups and dialogs",
+    "body": "createUiScreenStack of @egret/engine/ui keeps the rules a game with several screens needs: pages that cover the pages under them, popups over them and one modal shown at a time while the others wait, a result given back to whoever opened a screen, a back key that closes what is in front but not the first page, the same promise for a screen opened twice with equal parameters and a refusal with others. It draws nothing: each screen is told through its handle when it is shown, covered, revealed, put in front or closed, so a play game, a managed UI root or data-described screens can each use it."
+  },
+  "zh": {
+    "title": "界面栈：页面、弹窗和对话框",
+    "body": "@egret/engine/ui 的 createUiScreenStack 负责多界面游戏需要的规则：页面盖住下面的页面，popup 在页面上方，modal 一次只显示一个、其余排队，关闭时把结果交给打开它的一方，返回键关闭最前面的界面但不关第一个页面，用相同参数重复打开得到同一个 Promise、参数不同则拒绝。它不画任何东西：每个界面通过句柄得知自己何时显示、被盖住、露出、到最前面或关闭，所以 play 游戏、托管的 UI root 和用数据描述的界面都能使用它。"
+  }
+}

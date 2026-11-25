@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 44 entries, 1396 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 44 entries, 1404 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1030,6 +1030,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createToggleControl` | function | A checkbox or switch on a target: a press and release inside it toggles it. |
 | `createUiLayerManager` | function | Optional Root composition. |
 | `createUiRoot` | function | One owned transaction domain over the genuine display and input authorities. |
+| `createUiScreenStack` | function | Makes a screen stack. |
 | `createUiTheme` | function | Checks and freezes a theme from its description. |
 | `HoverControl` | interface | Whether a pointer hovers over a target; dispose of it to stop. |
 | `HoverControlOptions` | interface | Hover, toggle and single-selection state for controls an application draws itself. |
@@ -1088,6 +1089,13 @@ For which entry to import from, see [What to import](entry-points.md).
 | `UiRootOptions` | interface | A UI root to make: its theme, engine and scope, its viewport, density and tree, its input, and its limits. |
 | `UiRowPointerNotification` | type | A pointer that began, moved, ended or was cancelled on a row of a list. |
 | `UiRowSnapshot` | interface | One row as committed: its key and place, its versions, its box and whether it shows. |
+| `UiScreenContext` | interface | What a screen is given when it is made: its parameters, how it closes itself, and whether it is covered. |
+| `UiScreenDefinition` | interface | A kind of screen: its name, its layer, what the back key does on it, and how it is made. |
+| `UiScreenHandle` | interface | What a screen is told. |
+| `UiScreenLayer` | type | Where a screen goes: a page of the stack, a popup over the pages, or a modal, of which one is shown at a time. |
+| `UiScreenStack` | interface | Pages, popups and modals, opened and closed in turn. |
+| `UiScreenStackOptions` | interface | A screen stack to make: how many screens it holds, and who is told of failures nothing else is told of. |
+| `UiScreenStackSnapshot` | interface | The stack as it is now, by the screens' ids. |
 | `UiSkinState` | type | Which named states of a control are on, to choose its skin. |
 | `UiSkinStateName` | type | The states of a control that a skin may have a name for. |
 | `UiSnapshot` | interface | A UI root as committed: its theme, revisions, origin, viewport, density and boxes. |

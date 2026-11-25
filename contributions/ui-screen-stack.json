@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/screenStack.ts",
+      "originRole": "First-party DOM-free screen stack of @egret/engine/ui: pages, popups and a modal queue, results on close, the back key and cover/reveal/activate notifications; independently authored with AI assistance; the layer and stack rules of LumioGames LGUI were studied as a reference and none of its code is used; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-screen-stack.test.mjs",
+      "originRole": "First-party focused validation of the screen stack in Node; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/ui-screen-stack.md",
+      "originRole": "First-party bilingual guide to the screen stack; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-screen-stack.md",
+      "originRole": "First-party bilingual guide to the screen stack; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-screen-stack.md",
+      "zh": "knowledge-base/Cns/docs/ui-screen-stack.md"
+    }
+  ]
+}

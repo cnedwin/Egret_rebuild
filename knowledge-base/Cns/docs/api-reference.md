@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 44 个入口、1396 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 44 个入口、1404 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1030,6 +1030,7 @@
 | `createToggleControl` | 函数 | A checkbox or switch on a target: a press and release inside it toggles it. |
 | `createUiLayerManager` | 函数 | Optional Root composition. |
 | `createUiRoot` | 函数 | One owned transaction domain over the genuine display and input authorities. |
+| `createUiScreenStack` | 函数 | Makes a screen stack. |
 | `createUiTheme` | 函数 | Checks and freezes a theme from its description. |
 | `HoverControl` | 接口 | Whether a pointer hovers over a target; dispose of it to stop. |
 | `HoverControlOptions` | 接口 | Hover, toggle and single-selection state for controls an application draws itself. |
@@ -1088,6 +1089,13 @@
 | `UiRootOptions` | 接口 | A UI root to make: its theme, engine and scope, its viewport, density and tree, its input, and its limits. |
 | `UiRowPointerNotification` | 类型 | A pointer that began, moved, ended or was cancelled on a row of a list. |
 | `UiRowSnapshot` | 接口 | One row as committed: its key and place, its versions, its box and whether it shows. |
+| `UiScreenContext` | 接口 | What a screen is given when it is made: its parameters, how it closes itself, and whether it is covered. |
+| `UiScreenDefinition` | 接口 | A kind of screen: its name, its layer, what the back key does on it, and how it is made. |
+| `UiScreenHandle` | 接口 | What a screen is told. |
+| `UiScreenLayer` | 类型 | Where a screen goes: a page of the stack, a popup over the pages, or a modal, of which one is shown at a time. |
+| `UiScreenStack` | 接口 | Pages, popups and modals, opened and closed in turn. |
+| `UiScreenStackOptions` | 接口 | A screen stack to make: how many screens it holds, and who is told of failures nothing else is told of. |
+| `UiScreenStackSnapshot` | 接口 | The stack as it is now, by the screens' ids. |
 | `UiSkinState` | 类型 | Which named states of a control are on, to choose its skin. |
 | `UiSkinStateName` | 类型 | The states of a control that a skin may have a name for. |
 | `UiSnapshot` | 接口 | A UI root as committed: its theme, revisions, origin, viewport, density and boxes. |
