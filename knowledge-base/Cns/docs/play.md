@@ -124,7 +124,7 @@ const game = await play({
 
 固定比例的游戏可以使用 `fit: 'contain'` 留边，再用 `@egret/engine/web/semantics` 的 `createBrowserSemantics({ semantics, canvas: game.canvas, width, height })` 传入舞台逻辑宽高。语义投影按留边区域内的画布实测位置和尺寸换算。祖先支持沿坐标轴的正向 CSS 缩放和平移。如果只改了祖先的 CSS 变换，尺寸未发生变化，请调用 `projection.sync()`。旋转、倾斜、镜像和透视会被拒绝。
 
-运行 `pnpm example:browser --port 4173`，在本地打开 `/examples/play/index.html?game=semantic-letterbox`，可查看[固定比例的工坊示例](../../../examples/play/index.html?game=semantic-letterbox)。舞台为 640 × 360，绘制缓冲为 480 × 270。`play3d` 的 `pixelRatio` 控制前景 UI，3D 背景由独立的画质设置控制。
+运行 `pnpm example:browser --port 4173`，在本地打开 `/examples/play/index.html?game=semantic-letterbox`，可查看[固定比例的工坊示例](../../../examples/play/semantic-letterbox.mjs)。舞台为 640 × 360，绘制缓冲为 480 × 270。`play3d` 的 `pixelRatio` 控制前景 UI，3D 背景由独立的画质设置控制。
 
 ## 绘制
 
