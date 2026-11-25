@@ -1,0 +1,25 @@
+---
+id: ship-steam-desktop
+title: A game shipped on Steam for a computer and the Steam Deck
+applies: [engine, web, world3d, play, play3d]
+triggers: ["steam", "steam deck", "steamworks", "desktop game", "pc game", "windows game", "electron", "tauri", "fullscreen", "controller support", "gamepad only", "achievements", "steam cloud", "key rebinding", "steam 游戏", "电脑游戏", "桌面游戏", "上架 steam", "手柄支持", "全屏", "成就", "云存档"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/graphics-backends-and-native-runtime-selection.md, line: 77, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/product-requirements.md, line: 45, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserGamepadInput.ts, line: 111, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+engine: 235adee022a90308ee10d50081b8b49aa7313467
+---
+
+# A game shipped on Steam for a computer and the Steam Deck
+
+A Steam player has paid, sits at a large screen or holds a Steam Deck, and expects a full game that behaves like one. The engine has no desktop host or Steamworks bridge yet: a Steam build is the browser build inside a desktop shell (Electron, Tauri or similar), which has not been measured with the engine. Plan for that shell and check it early.
+
+- **Keyboard, mouse and a controller, each complete.** Every screen, menus included, must work with a controller alone; prompts show the buttons of the device in use. With `play`, `game.keys` reads gamepads as `pad:` keys and `game.keys.axis`; `game.pointer.lock` serves mouse look. Let players change their keys.
+- **Screens.** Windowed and fullscreen, 16:9 and 16:10, 1280 × 800 on the Deck to 4K on a desk. On the Deck no text may be below 9 pixels high at 1280 × 800; Valve recommends 12. Pick a quality that holds 30 frames a second on the Deck.
+- **Text without a keyboard.** A name or a code typed on the Deck needs an entry that works with a controller, or the Steam on-screen keyboard through the shell.
+- **A desktop game's habits.** A main menu with settings (volume, music, quality, keys, language), pausing when the window loses focus, a way to quit, saves as files in the user's folder so Steam Cloud can carry them, and no network needed to play.
+- **Steam itself.** Achievements, the overlay, cloud saves and controller configuration come from Steamworks through the shell's native side. The store page needs capsule art, screenshots, a trailer and a release review by Valve.
+- **What is expected.** More hours, a beginning and an end, difficulty that can be chosen.
+
+Before shipping: run the packaged build on Windows and on a Steam Deck (through Proton if there is no Linux build), play it with a controller alone from start to the end, and check text at 1280 × 800.

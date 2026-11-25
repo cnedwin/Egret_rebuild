@@ -1,0 +1,27 @@
+---
+id: ship-web-page
+title: A game shipped as a web page or a link shared on a phone
+applies: [play, play3d, engine, web]
+triggers: ["web game", "browser game", "h5 game", "html5 game", "game in a link", "share link", "itch.io", "game portal", "embed in a page", "iframe", "host the game", "publish the game", "where to ship", "release target", "网页游戏", "h5 游戏", "分享链接", "嵌入网页", "发布平台", "发布到哪里", "上线"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserPlay.ts, line: 637, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+  - { repo: cnedwin/Egret_rebuild, path: guide/cards/assets/fast-startup.txt, line: 18, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+  - { repo: cnedwin/Egret_rebuild, path: guide/cards/input/mobile-viewport.txt, line: 15, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+engine: 235adee022a90308ee10d50081b8b49aa7313467
+---
+
+# A game shipped as a web page or a link shared on a phone
+
+Decide where a game ships before its first screen: a web page, a phone app, a WeChat mini game and a Steam game ask different things of the same code. This card is the web page; `ship-mobile-app`, `ship-wechat-minigame` and `ship-steam-desktop` are the others.
+
+A link is opened once, by someone who has not chosen to wait, on whatever device sent it. The game is judged in its first seconds and must play wherever it lands.
+
+- **The first seconds.** Something to act on within a few seconds of the link opening, on a phone's network. Bundle the code, load the first screen first and the rest after (`fast-startup`). Measure the bytes before the first input.
+- **Every input.** The same game must play with a mouse, keys and one thumb. With `play`, give every key action a pointer or `game.touchButton` equivalent; test with the window held upright and sideways (`mobile-viewport`, `short-screen-hud`).
+- **No sound until a tap.** Browsers allow sound after the first key or click. Make the first screen ask for that tap rather than leave the game silent.
+- **Saves are the browser's.** `game.save` keeps values in that browser only; a private window, a cleared site or another device starts again. Say so if progress matters, or keep the game short enough not to need it (`save-data`).
+- **Hosted as files.** Relative paths, HTTPS, no server code. A portal or blog may put the game in an iframe or another page: give `play` a `parent` element there, and check that keys reach the game after a click on it.
+- **Pausing.** A phone switches away mid-game; pause on the page being hidden and resume cleanly (`pause-and-overlays`).
+
+Before shipping: open the link cold on a real phone and a desktop browser, play to the first result with each input, and run `tools/verify-game.mjs`.

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "guide/cards/ship/ship-web-page.txt",
+      "originRole": "First-party guide card on shipping a game as a web page or shared link, from the engine's play host and existing startup and phone cards; independently authored with AI assistance."
+    },
+    {
+      "path": "guide/cards/ship/ship-mobile-app.txt",
+      "originRole": "First-party guide card on shipping a phone game as a store app, from the Android project player documents and product requirements; independently authored with AI assistance."
+    },
+    {
+      "path": "guide/cards/ship/ship-wechat-minigame.txt",
+      "originRole": "First-party guide card on shipping a WeChat mini game, from the engine's WeChat export guide and adapter; independently authored with AI assistance."
+    },
+    {
+      "path": "guide/cards/ship/ship-steam-desktop.txt",
+      "originRole": "First-party guide card on shipping a game on Steam and the Steam Deck, from the engine's native runtime selection and gamepad input, with Valve's public Steam Deck compatibility criteria summarised; independently authored with AI assistance."
+    }
+  ],
+  "documents": []
+}
