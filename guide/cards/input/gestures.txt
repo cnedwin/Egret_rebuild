@@ -1,0 +1,39 @@
+---
+id: gestures
+title: Long press, swipe, pinch and drag and drop on a sprite
+applies: [play, engine, web]
+triggers: ["game.gestures", "game.dragAndDrop", createGestures, createDragAndDrop, "long press", "hold to", "double tap", "swipe", "pinch", "pinch zoom", "two fingers", "drag and drop", "drag item", "drop on slot", "inventory drag", "drag card", "ghost image", GESTURE_OPTIONS_INVALID, "长按", "双击", "滑动", "双指缩放", "拖拽", "拖放", "拖到格子", "背包拖动", "拖动卡牌"]
+local: [showDetails, nextPage, equip, put]
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/gestures.md, line: 1, commit: 49e1c88aeca7aa28f34f46cc5eb103a1cc159ce5, pin: 49e1c88aeca7aa28f34f46cc5eb103a1cc159ce5 }
+  - { repo: cnedwin/Egret_rebuild, path: examples/play/verify-gestures.mjs, line: 1, commit: 49e1c88aeca7aa28f34f46cc5eb103a1cc159ce5, pin: 49e1c88aeca7aa28f34f46cc5eb103a1cc159ce5 }
+engine: 49e1c88aeca7aa28f34f46cc5eb103a1cc159ce5
+---
+
+# Long press, swipe, pinch and drag and drop on a sprite
+
+Pointer events say where a contact is; a game wants to know that a card was held, swiped or dropped on a slot. Recognising that by hand goes wrong in the same places each time: a drag that also fires a tap, a long press that fires while the finger moves, a second finger read as a second drag, an item dropped on the bag behind the slot.
+
+```js
+game.gestures(card, {
+  hold: () => showDetails(card),
+  doubleTap: () => equip(card),
+  drag: d => { card.x += d.dx; card.y += d.dy; },
+  swipe: s => s.direction === 'left' && nextPage(),
+  pinch: p => { map.scaleX = map.scaleY = start * p.scale; },
+});
+const bag = game.dragAndDrop();
+bag.source(gem, { data: () => gem.item, ghost: item => game.circle(0, 0, 16, item.color) });
+bag.target(slot, { drop: item => put(slot, item), accepts: item => item.kind === 'rune' });
+```
+
+Rules:
+
+- One recogniser per sprite: a press that became a drag or a long press is no tap, so do not add `onTap` for the same action.
+- Places are in game units under any screen fit; `localX` and `localY` are the sprite's own.
+- The dragged sprite stays where it is and a ghost follows the finger over everything; change the data in `drop`, not on release.
+- The innermost target that accepts the data takes it; give `accepts` rather than checking in `drop`.
+- A long press waits on the game's clock, so it does not fire while the game is paused.
+- Outside `play`, `createGestures` and `createDragAndDrop` of `@egret/engine/web/gestures` take a pointer input and a scope; they add no page listener, so a mini game host can feed them.
+
+`knowledge-base/en/docs/gestures.md` has the thresholds.

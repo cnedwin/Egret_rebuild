@@ -87,6 +87,19 @@ A view is also a handle of the [screen stack](ui-screen-stack.md). `open: () => 
 
 `modal: true` puts a dim over everything behind the view and takes every press that misses it.
 
+## Parts most screens need
+
+| Call | What it is |
+| --- | --- |
+| `await game.confirm(question, { yes, no, title })` | A question over everything, answered by its buttons, by Enter, Space or a pad's A (yes) and by Escape or B (no). Questions asked while one is open wait their turn. `game.asking` is true while one is open, so `update` can leave the game alone |
+| `game.hints(list)` | A bar at the bottom of the safe part. Each hint is `{ action, key, pad, touch }`, and the bar names it in the words of what the player last used, `game.device`. A keyboard or a mouse shows `Space Jump`, a pad `A Jump`, and a finger the `touch` words; a hint without them is left out on a touch screen. `shown` is what it says now; `set(list)` and `dispose()` |
+| `await game.loading(tasks, { label, atOnce })` | `Loading 2 / 5` and a bar over everything while promises, or functions that return them, finish; functions run `atOnce` at a time (4). Gives their results in order; a failure closes it and is thrown |
+| `game.badges` | Red dots that add up along paths: `set('mail/system', 3)` makes `count('mail')` 3 as well. `has`, `clear(path)`, `paths()`, `onChange`. A restart clears them. The `badge` binding draws one at a part's top right corner, and `view.badge(name)` reads it |
+| `game.compact(n, { locale, digits })` | `999`, `12.3K`, `4.5M`; with `locale: 'zh'`, `9999`, `1.2万`, `3.4亿`. Cut rather than rounded, so 9999 is `9.9K` and not `10K`. The page's language unless given |
+| `game.request(send)` | What a button sends, sent once at a time. A second `run()` while one is out gets the same promise. `busy`, `result` and `error` are there to bind the button's `disabled` and words to; a failure is kept in `error`, not thrown |
+
+`createBadges`, `formatCompact`, `createRequest` and `keyCap` are exported from `@egret/engine/web/view` too, for code that does not use play.
+
 ## Tests and assistive technology
 
 Give `play` a tree, `semantics: createUiSemantics()` from `@egret/engine/ui/semantics`. Every view then adds itself to it. Its `label` is a group, or a dialog when modal. Each named part becomes what it is: a group, a text, a button, a progress bar or a switch. The tree is published at the end of every frame. A [UI tester](ui-testing.md) then presses `'Shop / Buy 60'` and reads `state('Sound').checked`. It is refused, as a player is, when the button is disabled or a modal is over it. `@egret/engine/web/semantics` shows the same tree to a screen reader.
@@ -109,7 +122,22 @@ Give `play` a tree, `semantics: createUiSemantics()` from `@egret/engine/ui/sema
 - a modal that takes the click meant for the shop and refuses a press by name behind it;
 - after the window turns, the portrait parts with the same bindings, and a click at the button's new place.
 
-It was not run on a phone, with a screen reader, or in another browser.
+`tests/ui-view-parts.test.mjs` checks the parts that draw nothing:
+
+- red dots that add up and are told when they change;
+- short numbers in both languages;
+- a request a second press does not send;
+- key caps.
+
+`examples/play/verify-view-parts.mjs` checks the rest in the browser:
+
+- a red dot read red at its corner;
+- a double click that buys once while the button is busy;
+- two questions answered by Escape and by a click;
+- the hint bar after a key, a mouse click and a tap;
+- loading that counts to three.
+
+It was not run on a phone, with a screen reader, with a gamepad, or in another browser.
 
 ## Design notes
 

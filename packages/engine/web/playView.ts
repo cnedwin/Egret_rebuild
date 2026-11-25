@@ -8,6 +8,7 @@ import type { Sprite } from '@egret/engine';
 import type { UiSemantics } from '@egret/engine/ui/semantics';
 import type { PlayGame, PlayText } from './BrowserPlay.js';
 import { checkView, planView } from './view.js';
+import { keyCap } from './viewParts.js';
 import type { ViewDescription, ViewPart, ViewPlan, ViewRect } from './view.js';
 
 /** How one named part follows the game's state. Each function is given the state and read every frame. */
@@ -32,6 +33,8 @@ export interface PlayViewBinding<S = unknown> {
   readonly color?: (state: S) => number;
   /** What a press of a button, a toggle or a panel does. */
   readonly tap?: (state: S) => void;
+  /** A red dot at the top right corner of a button, a toggle, a text or a panel: a count, or true for a dot alone. */
+  readonly badge?: (state: S) => number | boolean;
 }
 /** A view to make: where its state comes from, its bindings, and who is told when its parts are made. */
 export interface PlayViewOptions<S = unknown> {
@@ -50,6 +53,8 @@ export interface PlayView {
   rect(name: string): ViewRect;
   /** Whether a named part, and every panel it is in, shows. */
   shows(name: string): boolean;
+  /** The red dot a named part shows now: its count, true for a dot alone, or false for none. */
+  badge(name: string): number | boolean;
   /** Which parts are used: `'portrait'` while the screen is taller than wide and the view has portrait parts. */
   readonly variant: 'landscape' | 'portrait';
   readonly visible: boolean;
@@ -77,6 +82,8 @@ interface Made {
   value: number;
   color: number | undefined;
   text: string;
+  badge: number | boolean;
+  dot: { readonly node: Sprite; readonly words: PlayText } | undefined;
 }
 interface Roll {
   from: number;
@@ -86,13 +93,49 @@ interface Roll {
 }
 
 const KEYS_OF: Record<ViewPart['type'], readonly (keyof PlayViewBinding)[]> = {
-  panel: ['visible', 'color', 'tap'],
-  text: ['text', 'pick', 'format', 'roll', 'visible', 'color'],
-  button: ['text', 'pick', 'format', 'roll', 'disabled', 'visible', 'color', 'tap'],
+  panel: ['visible', 'color', 'tap', 'badge'],
+  text: ['text', 'pick', 'format', 'roll', 'visible', 'color', 'badge'],
+  button: ['text', 'pick', 'format', 'roll', 'disabled', 'visible', 'color', 'tap', 'badge'],
   bar: ['value', 'visible', 'color'],
-  toggle: ['text', 'checked', 'disabled', 'visible', 'tap'],
+  toggle: ['text', 'checked', 'disabled', 'visible', 'tap', 'badge'],
   space: ['visible']
 };
+
+/** A question to answer yes or no: the words of its two buttons, and a title over the question. */
+export interface PlayConfirmOptions {
+  /** `'OK'` unless given. */
+  readonly yes?: string;
+  /** `'Cancel'` unless given. */
+  readonly no?: string;
+  readonly title?: string;
+}
+/** One action a hint bar names: the key, the pad button and what a finger does for it. */
+export interface PlayHint {
+  /** What it does, as the player reads it: `'Jump'`. */
+  readonly action: string;
+  /** The key, as `game.keys` names it: `'space'`, `'escape'`, `'z'`. */
+  readonly key?: string;
+  /** The pad button, as `game.keys` names it without `pad:`: `'a'`, `'start'`. */
+  readonly pad?: string;
+  /** What a finger does, such as `'Tap'`; without it the hint is not shown on a touch screen. */
+  readonly touch?: string;
+}
+/** A hint bar on the screen. */
+export interface PlayHints {
+  /** Names other actions. */
+  set(list: readonly PlayHint[]): void;
+  readonly visible: boolean;
+  /** What it says now, one string a hint, such as `'Space Jump'`. */
+  readonly shown: readonly string[];
+  dispose(): void;
+}
+/** Loading to show: its words, and how many functions run at once. */
+export interface PlayLoadingOptions {
+  /** `'Loading'` unless given. */
+  readonly label?: string;
+  /** How many of the functions given run at once: 4 unless given. Promises given are already running. */
+  readonly atOnce?: number;
+}
 
 /** Views of one play game: made by `game.view`, read every frame, placed again when the screen changes. */
 export function createPlayViews(
@@ -100,6 +143,10 @@ export function createPlayViews(
   hooks: { readonly failed: (cause: unknown) => void; readonly semantics: () => UiSemantics | undefined }
 ): {
   view<S>(description: ViewDescription, options?: PlayViewOptions<S>): PlayView;
+  confirm(message: string, options?: PlayConfirmOptions): Promise<boolean>;
+  hints(list: readonly PlayHint[]): PlayHints;
+  loading<T>(tasks: readonly (Promise<T> | (() => T | Promise<T>))[], options?: PlayLoadingOptions): Promise<T[]>;
+  readonly asking: boolean;
   tick(seconds: number): void;
   arrange(): void;
   reset(): void;
@@ -218,6 +265,25 @@ export function createPlayViews(
         if (part.type === 'toggle') words.alpha = item.disabled ? 0.5 : 1;
       }
       node.visible = item.visible;
+      if (item.dot !== undefined) {
+        const { node: dot, words: count } = item.dot;
+        dot.visible = item.badge !== false;
+        if (item.badge !== false) {
+          const label = item.badge === true ? '' : item.badge > 99 ? '99+' : String(item.badge),
+            h = label === '' ? 12 : 20,
+            w = label === '' ? 12 : Math.max(20, label.length * 8 + 10);
+          dot.x = rect.width - w / 2 - 2;
+          dot.y = 2 - h / 4;
+          dot.graphics
+            .clear()
+            .beginFill(0xef4444)
+            .drawRoundRect(-w / 2, -h / 2, w, h, h)
+            .endFill();
+          count.text = label;
+          count.x = 0;
+          count.y = 0;
+        }
+      }
     };
     const nameOf = (item: Made): string | undefined => item.part.name;
     const bindingOf = (item: Made): PlayViewBinding<S> | undefined => {
@@ -271,8 +337,24 @@ export function createPlayViews(
           checked: part.type === 'toggle' ? (part.checked ?? false) : false,
           value: part.type === 'bar' ? (part.value ?? 1) : 0,
           color: undefined,
-          text: previous !== undefined ? String(previous.shown) : start
+          text: previous !== undefined ? String(previous.shown) : start,
+          badge: false,
+          dot: undefined
         };
+        if (part.name !== undefined && bind[part.name]?.badge !== undefined) {
+          const dot = game.sprite(undefined, node);
+          item.dot = {
+            node: dot,
+            words: game.text('', {
+              layer: dot,
+              size: 13,
+              align: 'center',
+              baseline: 'middle',
+              bold: true,
+              color: 0xffffff
+            })
+          };
+        }
         node.x = item.rect.x;
         node.y = item.rect.y;
         made.push(item);
@@ -315,7 +397,11 @@ export function createPlayViews(
       for (const item of made) {
         const binding = bindingOf(item);
         if (binding === undefined) continue;
-        const before = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}`;
+        const before = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
+        if (binding.badge !== undefined) {
+          const value = binding.badge(now);
+          item.badge = value === true ? true : typeof value === 'number' && value >= 1 ? Math.floor(value) : false;
+        }
         if (binding.visible !== undefined) item.visible = binding.visible(now) === true;
         if (binding.disabled !== undefined) item.disabled = binding.disabled(now) === true;
         if (binding.checked !== undefined) item.checked = binding.checked(now) === true;
@@ -333,8 +419,10 @@ export function createPlayViews(
           const name = item.part.name!;
           let roll = rolls.get(name);
           if (typeof target === 'number' && Number.isFinite(target)) {
-            if (roll === undefined) rolls.set(name, (roll = { from: target, to: target, shown: target, left: 0 }));
-            else if (roll.to !== target) {
+            if (roll === undefined) {
+              roll = { from: target, to: target, shown: target, left: 0 };
+              rolls.set(name, roll);
+            } else if (roll.to !== target) {
               roll.from = roll.shown;
               roll.to = target;
               roll.left = binding.roll ?? 0;
@@ -349,7 +437,7 @@ export function createPlayViews(
             item.text = binding.format !== undefined ? String(binding.format(whole)) : String(Math.round(whole));
           }
         }
-        const after = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}`;
+        const after = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
         if (after !== before) {
           paint(item);
           any = true;
@@ -452,6 +540,7 @@ export function createPlayViews(
         return Object.freeze({ ...plan.parts[made.indexOf(item)]!.rect });
       },
       shows: name => shown && !ended && visibleUp(find(name)),
+      badge: name => find(name).badge,
       get variant() {
         return plan.variant;
       },
@@ -499,7 +588,8 @@ export function createPlayViews(
       arrange() {
         const next = planView(description, frame());
         if (next.variant !== plan.variant) {
-          for (const item of made) if (item.words !== undefined) game.remove(item.words);
+          for (const item of made)
+            for (const words of [item.words, item.dot?.words]) if (words !== undefined) game.remove(words);
           for (const item of made) game.remove(item.node);
           build();
           return;
@@ -517,7 +607,8 @@ export function createPlayViews(
       end() {
         live.delete(record);
         for (const remove of removals.splice(0)) remove();
-        for (const item of made) if (item.words !== undefined) game.remove(item.words);
+        for (const item of made)
+          for (const words of [item.words, item.dot?.words]) if (words !== undefined) game.remove(words);
         game.remove(root);
       }
     };
@@ -527,9 +618,260 @@ export function createPlayViews(
     return api;
   }
 
+  // Questions asked one at a time; each waits for the one before it to be answered.
+  let asked: Promise<unknown> = Promise.resolve(),
+    open: { readonly answer: (yes: boolean) => void } | undefined,
+    // A question opened this frame does not take the key that opened it.
+    openedAt = -1,
+    frame = 0;
+  const confirm = (message: string, options: PlayConfirmOptions = {}): Promise<boolean> => {
+    if (typeof message !== 'string' || options === null || typeof options !== 'object')
+      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'confirm takes words and { yes, no, title }' });
+    for (const key of ['yes', 'no', 'title'] as const)
+      if (options[key] !== undefined && typeof options[key] !== 'string')
+        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'confirm: ' + key + ' is words' });
+    const turn = asked.then(
+      () =>
+        new Promise<boolean>(resolve => {
+          const width = Math.min(440, Math.max(240, game.safe.width - 32));
+          let view: PlayView | undefined;
+          const answer = (yes: boolean): void => {
+            if (open?.answer !== answer) return;
+            open = undefined;
+            view?.close();
+            resolve(yes);
+          };
+          view = api(
+            {
+              label: options.title ?? message,
+              modal: true,
+              root: {
+                type: 'panel',
+                card: true,
+                alpha: 1,
+                anchor: 'center',
+                width,
+                height: options.title === undefined ? 168 : 212,
+                padding: 20,
+                layout: 'column',
+                gap: 14,
+                children: [
+                  ...(options.title === undefined
+                    ? []
+                    : [{ type: 'text' as const, text: options.title, align: 'center' as const, bold: true, size: 26 }]),
+                  { type: 'text', name: 'question', text: message, align: 'center' },
+                  { type: 'space', height: 'fill' },
+                  {
+                    type: 'panel',
+                    layout: 'row',
+                    gap: 12,
+                    height: 48,
+                    children: [
+                      { type: 'button', name: 'no', text: options.no ?? 'Cancel', width: 'fill', color: 0x475569 },
+                      { type: 'button', name: 'yes', text: options.yes ?? 'OK', width: 'fill' }
+                    ]
+                  }
+                ]
+              }
+            },
+            { bind: { no: { tap: () => answer(false) }, yes: { tap: () => answer(true) } } }
+          );
+          open = { answer };
+          openedAt = frame;
+        })
+    );
+    asked = turn;
+    return turn;
+  };
+  const hints = (list: readonly PlayHint[]): PlayHints => {
+    let current: readonly PlayHint[] = [],
+      view: PlayView | undefined,
+      device = '',
+      shown: readonly string[] = [],
+      ended = false;
+    const check = (next: readonly PlayHint[]): readonly PlayHint[] => {
+      if (!Array.isArray(next)) throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'hints take a list' });
+      for (const hint of next)
+        if (
+          hint === null ||
+          typeof hint !== 'object' ||
+          typeof hint.action !== 'string' ||
+          (['key', 'pad', 'touch'] as const).some(key => hint[key] !== undefined && typeof hint[key] !== 'string')
+        )
+          throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'a hint is { action, key, pad, touch }' });
+      return Object.freeze([...next]);
+    };
+    const capOf = (hint: PlayHint, on: string): string | undefined =>
+      on === 'gamepad'
+        ? hint.pad === undefined
+          ? undefined
+          : keyCap(hint.pad, 'gamepad')
+        : on === 'touch'
+          ? hint.touch
+          : hint.key === undefined
+            ? undefined
+            : keyCap(hint.key, 'keyboard');
+    // A rough width of words, for the bar is laid out before they are drawn: wide characters take a whole size.
+    const across = (words: string, size: number): number =>
+      [...words].reduce((sum, character) => sum + ((character.codePointAt(0) ?? 0) >= 0x2e80 ? size : size * 0.56), 0);
+    const draw = (): void => {
+      view?.close();
+      view = undefined;
+      device = game.device;
+      const shownHints = current.flatMap(hint => {
+        const cap = capOf(hint, device);
+        return cap === undefined || cap === '' ? [] : [{ hint, cap }];
+      });
+      shown = Object.freeze(shownHints.map(({ hint, cap }) => cap + ' ' + hint.action));
+      if (ended || shownHints.length === 0) return;
+      view = api({
+        area: 'safe',
+        root: {
+          type: 'panel',
+          anchor: 'bottom',
+          y: 8,
+          height: 36,
+          layout: 'row',
+          gap: 20,
+          justify: 'center',
+          children: shownHints.map(({ hint, cap }) => ({
+            type: 'panel' as const,
+            layout: 'row' as const,
+            gap: 8,
+            align: 'center' as const,
+            width: Math.ceil(Math.max(30, across(cap, 16) + 18) + 8 + across(hint.action, 18)),
+            children: [
+              {
+                type: 'panel' as const,
+                color: 0x334155,
+                alpha: 0.95,
+                width: Math.ceil(Math.max(30, across(cap, 16) + 18)),
+                height: 30,
+                children: [
+                  {
+                    type: 'text' as const,
+                    text: cap,
+                    size: 16,
+                    bold: true,
+                    align: 'center' as const,
+                    width: 'fill' as const,
+                    height: 'fill' as const
+                  }
+                ]
+              },
+              { type: 'text' as const, text: hint.action, size: 18, width: 'fill' as const }
+            ]
+          }))
+        }
+      });
+    };
+    current = check(list);
+    const record: ViewRecord = {
+      view: undefined as unknown as PlayView,
+      tick() {
+        if (!ended && game.device !== device) draw();
+      },
+      arrange() {},
+      end() {
+        ended = true;
+        hintBars.delete(record);
+        view?.close();
+        view = undefined;
+      }
+    };
+    hintBars.add(record);
+    draw();
+    return {
+      set(next) {
+        current = check(next);
+        draw();
+      },
+      get visible() {
+        return view?.visible === true;
+      },
+      get shown() {
+        return shown;
+      },
+      dispose: () => record.end()
+    };
+  };
+  const hintBars = new Set<ViewRecord>();
+  const loading = async <T>(
+    tasks: readonly (Promise<T> | (() => T | Promise<T>))[],
+    options: PlayLoadingOptions = {}
+  ): Promise<T[]> => {
+    if (!Array.isArray(tasks) || options === null || typeof options !== 'object')
+      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'loading takes a list of promises or functions' });
+    const atOnce = options.atOnce ?? 4;
+    if (!Number.isInteger(atOnce) || atOnce < 1)
+      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'loading: atOnce is a whole number above 0' });
+    const total = tasks.length,
+      label = options.label ?? 'Loading';
+    const state = { done: 0 };
+    const view = api(
+      {
+        label,
+        modal: true,
+        root: {
+          type: 'panel',
+          card: true,
+          alpha: 1,
+          anchor: 'center',
+          width: 320,
+          height: 96,
+          padding: 18,
+          layout: 'column',
+          gap: 12,
+          children: [
+            { type: 'text', name: 'count', align: 'center' },
+            { type: 'bar', name: 'progress', label, height: 12 }
+          ]
+        }
+      },
+      {
+        state,
+        bind: {
+          count: { text: s => label + ' ' + s.done + ' / ' + total },
+          progress: { value: s => (total === 0 ? 1 : s.done / total) }
+        }
+      }
+    );
+    const results: T[] = new Array(total);
+    let next = 0;
+    const worker = async (): Promise<void> => {
+      while (next < total) {
+        const index = next++,
+          task = tasks[index]!;
+        results[index] = await (typeof task === 'function' ? task() : task);
+        state.done++;
+      }
+    };
+    try {
+      await Promise.all(Array.from({ length: Math.min(atOnce, Math.max(1, total)) }, worker));
+      view.refresh();
+      return results;
+    } finally {
+      view.close();
+    }
+  };
+  const api = view;
+
   return {
     view,
+    confirm,
+    hints,
+    loading,
+    get asking() {
+      return open !== undefined;
+    },
     tick(seconds) {
+      frame++;
+      if (open !== undefined && frame > openedAt + 1) {
+        const keys = game.keys;
+        if (keys.pressed('enter', 'space', 'pad:a')) open.answer(true);
+        else if (keys.pressed('escape', 'pad:b')) open.answer(false);
+      }
+      for (const record of [...hintBars]) record.tick(seconds);
       for (const record of [...live]) {
         try {
           record.tick(seconds);
@@ -548,7 +890,10 @@ export function createPlayViews(
       }
     },
     reset() {
-      // A restart has taken the sprites away; what is left is to forget the views and their semantics.
+      // A restart has taken the sprites away; what is left is to forget the views and their semantics. A question
+      // still open is answered no, so what awaits it goes on.
+      open?.answer(false);
+      for (const record of [...hintBars]) record.end();
       for (const record of [...live]) record.end();
       live.clear();
     }

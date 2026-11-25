@@ -12,6 +12,7 @@ import { verifyPrimaryPointer } from './verify-primary-pointer.mjs';
 import { verifyScreenFit } from './verify-screen-fit.mjs';
 import { verifyGestures } from './verify-gestures.mjs';
 import { verifyViews } from './verify-views.mjs';
+import { verifyViewParts } from './verify-view-parts.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -778,6 +779,23 @@ await scenario(
     };
     row.views = await verifyViews(page, colourAt);
   }
+);
+
+await scenario(
+  'view parts: a red dot that adds up, a purchase sent once, questions one at a time, hints in the words of keys and of a finger, and loading that counts',
+  'breakout',
+  480,
+  320,
+  async (page, stage, row) => {
+    const colourAt = async (x, y) => {
+      const png = PNG.sync.read(
+        await page.screenshot({ clip: { x: Math.round(x), y: Math.round(y), width: 1, height: 1 } })
+      );
+      return (png.data[0] << 16) | (png.data[1] << 8) | png.data[2];
+    };
+    row.viewParts = await verifyViewParts(page, colourAt);
+  },
+  { hasTouch: true }
 );
 
 fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');

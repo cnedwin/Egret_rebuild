@@ -386,7 +386,15 @@ const QUERIES = [
   ['做一个网页游戏，分享链接给朋友玩', 'ship-web-page'],
   ['点灯一瞬间画面停住，提示三角形超限', 'geometry-budget-2d'],
   ['给界面加了径向渐变，动画刚开始画布就停住', 'geometry-budget-2d'],
-  ['动作发飘，落地没重量', 'action-body-feedback']
+  ['动作发飘，落地没重量', 'action-body-feedback'],
+  ['a shop screen with a buy button and a red dot on mail', 'game-screens'],
+  ['are you sure dialog before selling', 'game-screens'],
+  ['做一个商店界面，邮件按钮上有红点', 'game-screens'],
+  ['加载界面显示进度', 'game-screens'],
+  ['drag an item from the bag into a slot', 'gestures'],
+  ['long press a card to see details', 'gestures'],
+  ['背包里长按物品拖到格子', 'gestures'],
+  ['双指缩放地图', 'gestures']
 ];
 
 // Break caught: a change to the ranking or to a card that sends a known question to the wrong card.

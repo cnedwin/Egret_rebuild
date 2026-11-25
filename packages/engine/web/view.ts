@@ -4,6 +4,8 @@
 // changes named. Pure: it checks a description and plans where each part of it goes on a screen of a given size, in
 // the game's units. What draws it, `game.show` of play for one, paints the plan with a skin and binds the names.
 import { EgretError } from '@egret/runtime';
+export { createBadges, createRequest, formatCompact, keyCap } from './viewParts.js';
+export type { Badges, CompactOptions, Request } from './viewParts.js';
 
 /** Where in its panel a part is placed when the panel lays its parts out freely: an edge, a corner or the middle. */
 export type ViewAnchor =
@@ -279,7 +281,9 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
     const children = part['children'];
     if (children !== undefined) {
       if (!Array.isArray(children)) throw invalid(label, 'children is a list');
-      children.forEach((child, index) => visit(child, at + '/' + index, depth + 1));
+      children.forEach((child, index) => {
+        visit(child, at + '/' + index, depth + 1);
+      });
     }
   };
   visit(root, where, 1);

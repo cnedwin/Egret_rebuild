@@ -26,7 +26,16 @@ import type { MusicOptions, MusicMood } from './playMusic.js';
 import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 import { createDragAndDrop, createGestures } from './gestures.js';
 import { createPlayViews } from './playView.js';
-import type { PlayView, PlayViewOptions } from './playView.js';
+import type {
+  PlayConfirmOptions,
+  PlayHint,
+  PlayHints,
+  PlayLoadingOptions,
+  PlayView,
+  PlayViewOptions
+} from './playView.js';
+import { createBadges, createRequest, formatCompact } from './viewParts.js';
+import type { Badges, CompactOptions, Request } from './viewParts.js';
 import type { ViewDescription } from './view.js';
 import type { UiSemantics } from '@egret/engine/ui/semantics';
 import type { GestureDrag, GesturePinch, GesturePoint, GestureSwipe } from './gestures.js';
@@ -527,8 +536,34 @@ export interface PlayGame {
   say(words: string, options?: PlaySayOptions): Promise<number | undefined>;
   /** A list to choose from in the middle of the stage, with a title when given; it gives the index chosen. */
   menu(items: readonly string[], options?: PlayMenuOptions): Promise<number>;
-  /** Whether a box of words or a menu is open: an update can then leave the game alone. */
+  /** Whether a box of words, a menu or a question of `confirm` is open: an update can then leave the game alone. */
   readonly asking: boolean;
+  /**
+   * What the player used last: `'keyboard'`, `'gamepad'`, `'touch'` or `'mouse'`. Before any input, `'touch'` on a
+   * screen whose main pointer is a finger and `'keyboard'` elsewhere.
+   */
+  readonly device: 'keyboard' | 'gamepad' | 'touch' | 'mouse';
+  /**
+   * Asks a question with two buttons over everything else, one at a time: true for `yes`, false for `no`. Enter,
+   * Space and a pad's A answer yes; Escape and a pad's B answer no.
+   */
+  confirm(question: string, options?: PlayConfirmOptions): Promise<boolean>;
+  /**
+   * A bar at the bottom of the safe part naming what keys do, in the words of what the player uses: `Space Jump` on a
+   * keyboard, `A Jump` on a pad, and `touch` words on a touch screen. It changes when the player changes.
+   */
+  hints(list: readonly PlayHint[]): PlayHints;
+  /**
+   * Shows `Loading 3 / 10` and a bar over everything while promises, or functions that return them, finish; gives
+   * what they gave, in order. Functions run `atOnce` at a time. A failure closes it and is thrown.
+   */
+  loading<T>(tasks: readonly (Promise<T> | (() => T | Promise<T>))[], options?: PlayLoadingOptions): Promise<T[]>;
+  /** Red dots that add up: `badges.set('mail/system', 3)` shows 3 on `mail` too. Bind them to parts with `badge`. A restart clears them. */
+  readonly badges: Badges;
+  /** A number written short: 12.3K, 4.5M; with `{ locale: 'zh' }` 1.2万, 3.4亿. The page's language unless given. */
+  compact(value: number, options?: CompactOptions): string;
+  /** Wraps what a button sends so it is sent once at a time: `run()`, and `busy`, `result` and `error` to show. */
+  request<A extends unknown[], R>(send: (...args: A) => R | Promise<R>): Request<A, R>;
   /**
    * A stick on the glass, near the bottom left unless placed, that counts in `keys.axis()`. It is shown once a finger
    * has touched the stage, or at once with `always`.
@@ -883,6 +918,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const view = { x: 0, y: 0 };
   const random = createRandom(options.seed ?? Date.now() + ':' + Math.random());
 
+  // What the player used last, for hints in the player's own words.
+  let device: PlayGame['device'] = (() => {
+    try {
+      return win.matchMedia?.('(pointer: coarse)').matches === true ? 'touch' : 'keyboard';
+    } catch {
+      return 'keyboard';
+    }
+  })();
+  const badges = createBadges();
   // Keys: a set of what is held, and what changed since the last update.
   const physicalKeys = new Set<string>(),
     held = new Set<string>(),
@@ -902,6 +946,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     if (typing(event.target) || (embedded && (event.target !== surface || event.code === 'Tab'))) return;
     if (KEPT_FROM_PAGE.has(event.code)) event.preventDefault();
     if (event.repeat) return;
+    device = 'keyboard';
     physicalKeys.add(event.code);
     if (held.has(event.code)) return;
     held.add(event.code);
@@ -957,6 +1002,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       }
       const code = 'Pad:' + name;
       if (down && !held.has(code)) {
+        device = 'gamepad';
         held.add(code);
         wentDown.add(code);
       } else if (!down && held.has(code) && !touchHeld.has(code)) {
@@ -1037,6 +1083,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // that places something wherever the stage is pressed would place it under its own buttons.
   let tappable: DisplayObject[] = [];
   const pointerDown = (event: PointerEvent): void => {
+    device = event.pointerType === 'touch' ? 'touch' : 'mouse';
     if (embedded) surface.focus({ preventScroll: true });
     // A finger on a stick or a button on the glass is that control's, and not the game's pointer.
     if (touch.claim(event)) {
@@ -1647,6 +1694,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     endMusic(0.3);
     widgets.reset();
     views.reset();
+    badges.clear();
     touch.reset();
     touchHeld.clear();
     touchStick.x = touchStick.y = 0;
@@ -2231,8 +2279,18 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     say: (words, options) => widgets.say(words, options),
     menu: (items, options) => widgets.menu(items, options),
     get asking() {
-      return widgets.asking;
+      return widgets.asking || views.asking;
     },
+    get device() {
+      return device;
+    },
+    confirm: (question, confirmOptions) => views.confirm(question, confirmOptions),
+    hints: list => views.hints(list),
+    loading: (tasks, loadingOptions) => views.loading(tasks, loadingOptions),
+    badges,
+    compact: (value, compactOptions) =>
+      formatCompact(value, { locale: /^zh\b/i.test(win.navigator?.language ?? '') ? 'zh' : 'en', ...compactOptions }),
+    request: send => createRequest(send),
     touchStick: options => touch.stick(options),
     touchButton: (words, options) => touch.button(words, options),
     music,

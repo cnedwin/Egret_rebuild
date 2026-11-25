@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Parts most game screens need",
+    "body": "Play gains `game.confirm` (questions one at a time, answered by buttons, keys or a pad), `game.hints` (a bar naming keys in the words of the player's device, `game.device`), `game.loading` (counted loading over everything), `game.badges` (red dots that add up along paths, bound to parts with `badge`), `game.compact` (12.3K, 1.2万, without Intl) and `game.request` (what a button sends, once at a time, with `busy` and `error` to show). The logic is also exported by `@egret/engine/web/view`."
+  },
+  "zh": {
+    "title": "大多数游戏界面都需要的部件",
+    "body": "play 新增 `game.confirm`（排队提问，可用按钮、按键或手柄回答）、`game.hints`（按玩家设备 `game.device` 显示按键的提示栏）、`game.loading`（显示在最上层的计数加载）、`game.badges`（沿路径累加的红点，用 `badge` 绑定到部件）、`game.compact`（12.3K、1.2万，不依赖 Intl）和 `game.request`（按钮发出的请求同一时间只发一个，带 `busy` 和 `error` 用于显示）。这些逻辑也从 `@egret/engine/web/view` 导出。"
+  }
+}

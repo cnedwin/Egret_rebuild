@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "guide/cards/input/game-screens.txt",
+      "originRole": "First-party guide card on game screens described as data in play, with red dots, questions, key hints, loading, requests, the screen stack and the UI tester, from the engine's screens-as-data guide and its browser checks; independently authored with AI assistance; the screens of LumioGames LGUI were studied as a reference and none of its code is used."
+    },
+    {
+      "path": "guide/cards/input/gestures.txt",
+      "originRole": "First-party guide card on long presses, swipes, pinches and drag and drop on a sprite, from the engine's gestures guide and its browser check; independently authored with AI assistance."
+    }
+  ],
+  "documents": []
+}

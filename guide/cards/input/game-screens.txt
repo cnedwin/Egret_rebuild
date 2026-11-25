@@ -1,0 +1,41 @@
+---
+id: game-screens
+title: Shops, settings, dialogs and red dots as screens described as data
+applies: [play]
+triggers: ["game.show", "shop screen", "settings screen", "result screen", "inventory screen", "menu screen", "screen layout", "ui layout", "red dot", "badge", "notification dot", "confirm dialog", "are you sure", "loading screen", "loading progress", "button hint", "key hint", "prompt bar", "double purchase", "button pressed twice", "number roll", "12.3k", "screen stack", "back button", "test ui by name", createUiScreenStack, createUiTester, UI_VIEW_INVALID, UI_VIEW_BINDING_UNKNOWN, "界面", "商店界面", "设置界面", "结算界面", "红点", "确认框", "二次确认", "加载界面", "按键提示", "重复购买", "数字滚动", "1.2万", "界面栈", "返回键", "UI 测试"]
+local: [sellAll]
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/ui-views.md, line: 1, commit: 9f42041aa4f0c9b686b463215bd6dc572097af87, pin: 9f42041aa4f0c9b686b463215bd6dc572097af87 }
+  - { repo: cnedwin/Egret_rebuild, path: examples/play/verify-views.mjs, line: 1, commit: 9f42041aa4f0c9b686b463215bd6dc572097af87, pin: 9f42041aa4f0c9b686b463215bd6dc572097af87 }
+engine: 9f42041aa4f0c9b686b463215bd6dc572097af87
+---
+
+# Shops, settings, dialogs and red dots as screens described as data
+
+A screen drawn sprite by sprite hides its shape in arithmetic, breaks when the phone turns, and is tested by pixels. In `play`, describe it instead, name what code reads, and bind the names to the state:
+
+```js
+const shop = game.show({ label: 'Shop', root: { type: 'panel', card: true, anchor: 'center', width: 420, height: 260,
+  padding: 16, layout: 'column', gap: 12, children: [
+    { type: 'text', name: 'gold' }, { type: 'button', name: 'buy', text: 'Buy 60' }, { type: 'button', name: 'mail', text: 'Mail' } ] } },
+  { state, bind: {
+    gold: { pick: s => s.gold, roll: 0.5, format: n => 'Gold ' + game.compact(n) },
+    buy: { disabled: s => s.gold < 60 || buying.busy, tap: () => buying.run() },
+    mail: { badge: () => game.badges.count('mail') } } });
+const buying = game.request(() => api.buy('sword'));
+if (await game.confirm('Sell everything?')) sellAll();
+game.hints([{ action: 'Jump', key: 'space', pad: 'a', touch: 'Tap' }]);
+```
+
+Rules:
+
+- Change the state, never the screen: bindings are read every frame and only what changed is drawn again.
+- Place against `anchor`s in the safe part, not at numbers; give `portrait` parts with the same names for a phone held upright.
+- A button that sends something goes through `game.request`, so a second press sends nothing; bind `disabled` to `busy`.
+- Ask one question at a time with `game.confirm`; while it is open `game.asking` is true, so `update` leaves the game alone.
+- Hints name the keys of what the player is using (`game.device`); give `touch` words or the hint is left out on a phone.
+- Give `play` a `semantics` tree and test with `createUiTester`: `press('Shop / Buy 60')` is refused, as a player is, when the button is disabled or a dialog is over it.
+- A misspelt field or an unknown name throws `UI_VIEW_INVALID` or `UI_VIEW_BINDING_UNKNOWN` with the place: fix the description, do not wrap it in `try`.
+- Pages and popups that stack go through `createUiScreenStack` of `@egret/engine/ui`; return `game.show(...)` from a screen's `open`.
+
+`knowledge-base/en/docs/ui-views.md` has every part and binding.

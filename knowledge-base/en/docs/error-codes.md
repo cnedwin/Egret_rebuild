@@ -1183,6 +1183,18 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `UI_UNKNOWN_LIST` | No list of the UI has this id. |
 | `UI_VALUE_INVALID` | The value given to the UI is not valid. |
 
+### UI_BADGE
+
+| Code | Meaning |
+| --- | --- |
+| `UI_BADGE_PATH_INVALID` | A red dot was given a path that is not names joined by /, or a count that is not a number or true or false. |
+
+### UI_COMPACT
+
+| Code | Meaning |
+| --- | --- |
+| `UI_COMPACT_INVALID` | A short number was asked of what is not a number, or with a locale other than 'en' or 'zh' or digits outside 0 to 3. |
+
 ### UI_CONTROL
 
 | Code | Meaning |
@@ -1219,6 +1231,12 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `UI_LAYER_ROOT_OWNED` | This UI root already belongs to a layer. |
 | `UI_LAYER_UNKNOWN` | What was named is not known to a UI layer. |
 | `UI_LAYER_VIEWPORT_TOO_SMALL` | The viewport given to a UI layer is too small. |
+
+### UI_REQUEST
+
+| Code | Meaning |
+| --- | --- |
+| `UI_REQUEST_INVALID` | A request sends with a function. The reason is in cause. |
 
 ### UI_SCREEN
 

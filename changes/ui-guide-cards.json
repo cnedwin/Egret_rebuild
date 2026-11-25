@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Guide cards for game screens and gestures",
+    "body": "Two guide cards route an agent to the new UI layer: `game-screens` (shops, settings, dialogs, red dots, key hints, loading and requests as screens described as data, tested by name) and `gestures` (long press, swipe, pinch and drag and drop). llms.txt points to them and to the screen-fit, screen-stack, gestures, screens-as-data and UI-testing guides."
+  },
+  "zh": {
+    "title": "界面与手势的指南卡片",
+    "body": "两张指南卡片把智能体引导到新的 UI 层：`game-screens`（用数据描述的商店、设置、对话框、红点、按键提示、加载和请求，并按名字测试）和 `gestures`（长按、滑动、双指缩放和拖放）。llms.txt 指向它们，以及屏幕适配、界面栈、手势、用数据描述界面和 UI 测试的指南。"
+  }
+}

@@ -94,9 +94,12 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['TILEMAP', 'a tile map'],
   ['TIMER', 'a timer'],
   ['TWEEN', 'a tween'],
+  ['UI_BADGE', 'red dots'],
+  ['UI_COMPACT', 'a short number'],
   ['UI_CONTROL', 'a UI control'],
   ['UI_KEYBOARD', 'UI keyboard navigation'],
   ['UI_LAYER', 'a UI layer'],
+  ['UI_REQUEST', 'a request'],
   ['UI_SCREEN', 'the screen fit'],
   ['UI_SCREENS', 'the screen stack'],
   ['UI_SEMANTICS', 'UI semantics'],
@@ -290,6 +293,11 @@ const WRITTEN: Readonly<Record<string, string>> = {
     'More than one thing on the screen has that name. Add a role, what it is in, or #n. What the screen holds is in cause.',
   UI_TESTER_REFUSED:
     'The control was found but the action was refused: it is disabled, behind a dialog or has no such action.',
+  UI_BADGE_PATH_INVALID:
+    'A red dot was given a path that is not names joined by /, or a count that is not a number or true or false.',
+  UI_COMPACT_INVALID:
+    "A short number was asked of what is not a number, or with a locale other than 'en' or 'zh' or digits outside 0 to 3.",
+  UI_REQUEST_INVALID: 'A request sends with a function. The reason is in cause.',
   UI_VIEW_INVALID: 'A view description is not valid. Which part, and what is wrong with it, are in cause.',
   UI_VIEW_VARIANT_MISMATCH:
     'The portrait parts of a view do not have the same names, of the same kinds, as the others. The names are in cause.',
