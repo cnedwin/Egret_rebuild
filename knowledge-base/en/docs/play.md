@@ -124,7 +124,7 @@ An embedded canvas with no `tabindex` gets `0` while the game is open. An explic
 
 For a fixed-ratio game, use `fit: 'contain'` and pass the logical stage width and height to `createBrowserSemantics({ semantics, canvas: game.canvas, width, height })` from `@egret/engine/web/semantics`. The projection measures the fitted canvas inside the letterbox. Positive axis-aligned CSS scaling and translation on its ancestors are supported. Call `projection.sync()` after changing an ancestor’s CSS transform without resizing it. Rotated, skewed, reflected and perspective surfaces are refused.
 
-Run `pnpm example:browser --port 4173` and open `/examples/play/index.html?game=semantic-letterbox` on the local server for [the fixed-ratio workshop example](../../../examples/play/semantic-letterbox.mjs). The sample uses a 640 × 360 stage and a 480 × 270 drawing buffer. In `play3d`, `pixelRatio` controls the foreground UI. The 3D background uses its own quality settings.
+Run `pnpm example:browser --port 4173` and open `/examples/play/index.html?game=semantic-letterbox` on the local server for the fixed-ratio workshop example in `examples/play/semantic-letterbox.mjs`. The sample uses a 640 × 360 stage and a 480 × 270 drawing buffer. In `play3d`, `pixelRatio` controls the foreground UI. The 3D background uses its own quality settings.
 
 ## Drawing
 

@@ -83,7 +83,7 @@ const workshop = game.show({
 
 每个部件都支持 `border: { color, width }`，边框沿部件内侧绘制。`image` 保持原始宽高比，在部件范围内居中。给图片同时填写 `name` 和 `label`，可以发布图片角色和可访问名称。关闭视图会释放它持有的段落和图片资源引用。共享的缓存和提供器由游戏管理，等使用它们的视图全部关闭后再释放。
 
-游戏可以自行选择段落提供器和字体。浏览器配置见[段落面板示例](../../../examples/paragraph-panel/README.zh-CN.md)，其中可选的 CanvasKit 和 Noto 字体附有[来源和许可记录](../../../examples/paragraph-panel/vendor/manifest.json)。普通的单行视图启动时无需加载这些文件。如果页面原生使用 import map，启用段落时应映射 `@egret/engine/paragraph` 和 `@egret/runtime/paragraph`，使用 CanvasKit 提供器时再映射 `@egret/engine/web/paragraph`。
+游戏可以自行选择段落提供器和字体。浏览器配置见[段落面板示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/README.zh-CN.md)，其中可选的 CanvasKit 和 Noto 字体附有[来源和许可记录](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/manifest.json)。普通的单行视图启动时无需加载这些文件。如果页面原生使用 import map，启用段落时应映射 `@egret/engine/paragraph` 和 `@egret/runtime/paragraph`，使用 CanvasKit 提供器时再映射 `@egret/engine/web/paragraph`。
 
 ```text
 node tools/build.mjs

@@ -83,7 +83,7 @@ const workshop = game.show({
 
 Any part accepts `border: { color, width }` and draws it inside the layout box. An `image` keeps its aspect ratio and is centred in the box. Give the image a `name` and `label` to expose its role and accessible name. `game.show` releases its own paragraph and image borrows when the view closes. Keep the shared cache and provider alive until the views that use them close, then dispose of them in your game.
 
-The paragraph provider and its fonts are selected by the game. For a browser setup, see the [paragraph panel example](../../../examples/paragraph-panel/README.md). Its opt-in CanvasKit build and Noto fonts carry the [source and license records](../../../examples/paragraph-panel/vendor/manifest.json). Normal single-line views can start without loading those files. A page that uses paragraphs through a native import map also maps `@egret/engine/paragraph` and `@egret/runtime/paragraph`, plus `@egret/engine/web/paragraph` for the CanvasKit provider.
+The paragraph provider and its fonts are selected by the game. For a browser setup, see the [paragraph panel example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/README.md). Its opt-in CanvasKit build and Noto fonts carry the [source and license records](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/manifest.json). Normal single-line views can start without loading those files. A page that uses paragraphs through a native import map also maps `@egret/engine/paragraph` and `@egret/runtime/paragraph`, plus `@egret/engine/web/paragraph` for the CanvasKit provider.
 
 ```text
 node tools/build.mjs
