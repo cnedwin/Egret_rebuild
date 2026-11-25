@@ -55,6 +55,9 @@ function compareTransparent(a: RenderItem3D, b: RenderItem3D): number {
   return a.mesh.renderOrder - b.mesh.renderOrder || b.depth - a.depth || a.mesh.id - b.mesh.id;
 }
 
+/** Internal stand-in for ordinary draws. Its instance matrices are the original world transforms. */
+export class AutoBatchMesh3D extends InstancedMesh3D {}
+
 interface Batch {
   mesh: InstancedMesh3D;
   geometry: Geometry3D;
@@ -63,8 +66,20 @@ interface Batch {
   frame: number;
   stamp: number;
 }
+function opaqueMaterial(material: Material3D): boolean {
+  return !(material.isTransparent || material.transmission > 0);
+}
 function foldable(material: Material3D): boolean {
   return !material.billboard && !material.screenSpace && !material.wireframe;
+}
+
+/** Whether a representative draw can acquire a matrix-only batch when enough meshes enter view. */
+export function canAutoInstance3D(mesh: Mesh3D, material: Material3D, shadow: boolean): boolean {
+  return (
+    mesh.canInstance &&
+    foldable(material) &&
+    (shadow ? !Array.isArray(mesh.material) && material.id < 4194304 : opaqueMaterial(material))
+  );
 }
 
 /** What a camera sees, sorted for drawing: opaque and transparent items, shadow casters and lights. */
@@ -283,7 +298,7 @@ export class RenderList3D {
     for (let i = 0; i < casters.length; i++) {
       const mesh = casters[i]!,
         material = mesh.material;
-      if (Array.isArray(material) || !mesh.canInstance || !foldable(material) || material.id >= 4194304) {
+      if (Array.isArray(material) || !canAutoInstance3D(mesh, material, true)) {
         out.push(mesh);
         continue;
       }
@@ -328,7 +343,7 @@ export class RenderList3D {
       }
     if (!found || found.mesh.capacity < count) {
       const capacity = Math.max(16, 2 ** Math.ceil(Math.log2(count)));
-      const mesh = new InstancedMesh3D(geometry, material, capacity);
+      const mesh = new AutoBatchMesh3D(geometry, material, capacity);
       mesh.name = 'auto-instances';
       mesh.pickable = false;
       mesh.frustumCulled = false;
@@ -505,7 +520,7 @@ export class RenderList3D {
     const material = this.#override ?? own;
     if (!material.visible || material.isDisposed || count <= 0) return;
     // A transmitting surface shows what was drawn before it, so it waits for the opaque pass like blended ones.
-    const opaque = !(material.isTransparent || material.transmission > 0),
+    const opaque = opaqueMaterial(material),
       order = mesh.renderOrder;
     // Layers are a 32-bit mask; the two flags ride above it.
     const group =
