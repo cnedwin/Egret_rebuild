@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Gestures and drag and drop",
+    "body": "The optional entry `@egret/engine/web/gestures` makes taps, double taps, long presses, drags, swipes and two-finger pinches from the contacts pointer input routes to a display object, and `createDragAndDrop` drags a picture of a source onto the innermost accepting target. In play they are `game.gestures(sprite, handlers)` and `game.dragAndDrop()`, in game units."
+  },
+  "zh": {
+    "title": "手势与拖放",
+    "body": "可选入口 `@egret/engine/web/gestures` 从指针输入分派给显示对象的触点识别点击、双击、长按、拖动、滑动和双指缩放；`createDragAndDrop` 让源的图跟着手指，放到最里层且接受数据的目标上。在 play 里是 `game.gestures(sprite, handlers)` 和 `game.dragAndDrop()`，位置用游戏单位。"
+  }
+}

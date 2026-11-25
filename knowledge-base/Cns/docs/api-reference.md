@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 45 个入口、1408 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 46 个入口、1420 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1000,6 +1000,23 @@
 | `PointerSession` | 接口 | Only the creating router admits this frozen identity; host IDs may be reused. |
 | `PointerType` | 类型 | What made a pointer: a mouse, a finger or a pen. |
 | `PointerUpdate` | 接口 | Where a pointer is on the stage, which buttons it holds, and when, with its pressure and size where the device gives them. |
+
+## `@egret/engine/web/gestures`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `createDragAndDrop` | 函数 | Drag and drop as games do it: the dragged object stays where it is, a picture of it follows the finger in `layer`, and letting go over a target that accepts what is carried calls its `drop`. |
+| `createGestures` | 函数 | Recognizes gestures on an object. |
+| `DragAndDrop` | 接口 | Sources and targets of drag and drop. |
+| `DragAndDropOptions` | 接口 | Drag and drop to make: its engine, scope and input, and the layer the picture that follows the finger is drawn in. |
+| `DragSource` | 接口 | Something that can be dragged: what it carries, and the picture that follows the finger. |
+| `DropTarget` | 接口 | A place something can be dropped, and what it does with what is dropped on it. |
+| `GestureDrag` | 接口 | A drag: where it is, how far it moved since the last, and since it started. |
+| `GestureOptions` | 接口 | What to recognize on an object, and what is called. |
+| `GesturePinch` | 接口 | Two fingers: how far apart against how they started, how far they turned, in degrees, and their middle. |
+| `GesturePoint` | 接口 | Where a gesture is: on the stage, and in the object's own units. |
+| `Gestures` | 接口 | Recognized gestures of an object; ended with `dispose` or with its scope. |
+| `GestureSwipe` | 接口 | A swipe: its main direction, its speed in stage units a second, and how far it went. |
 
 ## `@egret/engine/web/pointer`
 

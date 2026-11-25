@@ -24,6 +24,8 @@ import type { PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
 import { MUSIC_MOODS, MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
 import type { MusicOptions, MusicMood } from './playMusic.js';
 import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
+import { createDragAndDrop, createGestures } from './gestures.js';
+import type { GestureDrag, GesturePinch, GesturePoint, GestureSwipe } from './gestures.js';
 
 /** A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. */
 export interface PlayOptions {
@@ -353,6 +355,38 @@ export function tapListener(callback: () => unknown, fail: (cause: unknown) => v
   };
 }
 
+/** What a sprite does with gestures. Places are in the game's units; `localX` and `localY` are the sprite's own. */
+export interface PlayGestures {
+  readonly doubleTap?: (at: GesturePoint) => void;
+  /** A still press of half a second. */
+  readonly hold?: (at: GesturePoint) => void;
+  /** A press that moved: `phase` is `'start'`, `'move'`, `'end'` or `'cancel'`; `dx`, `dy` the step and `totalX`, `totalY` all of it. */
+  readonly drag?: (drag: GestureDrag) => void;
+  /** A drag that ended fast: its `direction`, `speed` and how far it went. */
+  readonly swipe?: (swipe: GestureSwipe) => void;
+  /** Two fingers: `scale` against how far apart they started, `rotation` in degrees, and their middle. */
+  readonly pinch?: (pinch: GesturePinch) => void;
+}
+/** Drag and drop: what can be dragged, and where it can be let go. Each registration returns its removal. */
+export interface PlayDragAndDrop<T> {
+  /** A sprite whose `data()` is carried, and a picture of it, made by `ghost(data)`, that follows the finger. */
+  source(
+    node: DisplayObject,
+    options: { readonly data: () => T | undefined; readonly ghost?: (data: T) => DisplayObject }
+  ): () => void;
+  /** A sprite that takes what is let go over it; the innermost of several does. */
+  target(
+    node: DisplayObject,
+    options: {
+      readonly drop: (data: T) => void;
+      readonly accepts?: (data: T) => boolean;
+      readonly hover?: (data: T, over: boolean) => void;
+    }
+  ): () => void;
+  /** What is being dragged now, if anything. */
+  readonly dragging: T | undefined;
+}
+
 /** Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. */
 export interface PlayGame {
   /** The size of the design: `width` × `height` as given, or the portrait size while the window is taller than wide. */
@@ -401,6 +435,13 @@ export interface PlayGame {
   remove(node: DisplayObject): void;
   /** Calls a function when the sprite is tapped or clicked. */
   onTap(node: DisplayObject, callback: () => void): void;
+  /**
+   * Long presses, double taps, drags, swipes and two-finger pinches on a sprite, each told once. A press that is
+   * a drag or a long press is no tap. Returns a function that stops them.
+   */
+  gestures(node: DisplayObject, handlers: PlayGestures): () => void;
+  /** Drag and drop: the dragged sprite stays put while a picture of it follows the finger, over everything. */
+  dragAndDrop<T>(): PlayDragAndDrop<T>;
   /** Whether what two sprites draw overlaps, taken as upright boxes. `shrink` takes that much off every side of both. */
   overlaps(a: DisplayObject, b: DisplayObject, shrink?: number): boolean;
   /** The first of the sprites that overlaps `a`, or undefined. */
@@ -1751,6 +1792,80 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         })();
       });
       if (!tappable.includes(node)) tappable.push(node);
+    },
+    gestures(node, handlers) {
+      if (handlers === null || typeof handlers !== 'object')
+        throw invalid('gestures takes a sprite and { hold, doubleTap, drag, swipe, pinch }');
+      for (const name of ['doubleTap', 'hold', 'drag', 'swipe', 'pinch'] as const)
+        if (handlers[name] !== undefined && typeof handlers[name] !== 'function')
+          throw invalid('gestures: ' + name + ' is a function');
+      const input = browser.pointer;
+      if (input === undefined) return () => {};
+      node.touchEnabled = true;
+      if (!tappable.includes(node)) tappable.push(node);
+      const round = generation;
+      // Places in the game's units; what a handler throws stops the game, as a tap's does.
+      const told = <A>(handler: ((value: A) => void) | undefined, place: (value: A) => A) =>
+        handler === undefined
+          ? undefined
+          : (value: A): void => {
+              if (disposed || generation !== round) return;
+              try {
+                handler(place(value));
+              } catch (cause) {
+                failure ??= { cause };
+              }
+            };
+      const inGame = <A extends { readonly x: number; readonly y: number }>(value: A): A =>
+        Object.freeze({ ...value, x: value.x - shown.designRect.x, y: value.y - shown.designRect.y });
+      const made = createGestures({
+        engine,
+        scope,
+        input,
+        target: node,
+        ...(handlers.doubleTap === undefined ? {} : { onDoubleTap: told(handlers.doubleTap, inGame)! }),
+        ...(handlers.hold === undefined ? {} : { onHold: told(handlers.hold, inGame)! }),
+        ...(handlers.drag === undefined ? {} : { onDrag: told(handlers.drag, inGame)! }),
+        ...(handlers.swipe === undefined ? {} : { onSwipe: told(handlers.swipe, swipe => swipe)! }),
+        ...(handlers.pinch === undefined ? {} : { onPinch: told(handlers.pinch, inGame)! })
+      });
+      return () => made.dispose();
+    },
+    dragAndDrop<T>(): PlayDragAndDrop<T> {
+      const input = browser.pointer;
+      if (input === undefined) throw invalid('drag and drop needs pointer input');
+      const made = createDragAndDrop<T>({ engine, scope, input, layer: glass });
+      const guarded =
+        <A extends unknown[]>(fn: (...args: A) => void) =>
+        (...args: A): void => {
+          try {
+            fn(...args);
+          } catch (cause) {
+            failure ??= { cause };
+          }
+        };
+      return {
+        source(node: DisplayObject, o: Parameters<PlayDragAndDrop<T>['source']>[1]) {
+          if (o === null || typeof o !== 'object' || typeof o.data !== 'function')
+            throw invalid('source takes a sprite and { data, ghost }');
+          node.touchEnabled = true;
+          if (!tappable.includes(node)) tappable.push(node);
+          return made.source({ node, data: o.data, ...(o.ghost === undefined ? {} : { ghost: o.ghost }) });
+        },
+        target(node: DisplayObject, o: Parameters<PlayDragAndDrop<T>['target']>[1]) {
+          if (o === null || typeof o !== 'object' || typeof o.drop !== 'function')
+            throw invalid('target takes a sprite and { drop, accepts, hover }');
+          return made.target({
+            node,
+            drop: guarded((data: T) => o.drop(data)),
+            ...(o.accepts === undefined ? {} : { accepts: o.accepts }),
+            ...(o.hover === undefined ? {} : { hover: guarded(o.hover) })
+          });
+        },
+        get dragging() {
+          return made.dragging;
+        }
+      };
     },
     overlaps(a, b, shrink = 0) {
       if (!seen(a) || !seen(b)) return false;

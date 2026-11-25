@@ -104,6 +104,8 @@ Text: `label.text = 'Score ' + n` changes it, and `label.color` and `label.size`
 | `game.pointer.dx`, `.dy`, `.wheel` | How far the mouse moved and the wheel turned since the last update: for looking about |
 | `game.pointer.lock()`, `game.pointer.unlock()`, `game.pointer.locked` | Hides the cursor and keeps the mouse to the game, for a first-person view. Call `lock` after a click; Escape gives the mouse back |
 | `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked; the one in front gets it |
+| `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | Long press, double tap, drag (`d.dx`, `d.dy`, `d.phase`), swipe and two-finger pinch (`scale`, `rotation`) on a sprite, in game units; returns its stop. A drag or long press is no tap |
+| `game.dragAndDrop()` | `.source(sprite, { data, ghost })`, `.target(sprite, { drop, accepts, hover })` and `.dragging`: a picture made by `ghost` follows the finger, and the innermost accepting target takes `data()` |
 
 A key is `'left'`, `'right'`, `'up'`, `'down'`, `'space'`, `'enter'`, `'escape'`, `'shift'`, a letter or a digit. Make every game playable with the pointer as well as keys, so it works on a phone.
 

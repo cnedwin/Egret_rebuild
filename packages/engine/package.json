@@ -60,6 +60,10 @@
       "types": "./dist/input.d.ts",
       "import": "./dist/input.js"
     },
+    "./web/gestures": {
+      "types": "./dist/web/gestures.d.ts",
+      "import": "./dist/web/gestures.js"
+    },
     "./web/pointer": {
       "types": "./dist/web/pointer.d.ts",
       "import": "./dist/web/pointer.js"
