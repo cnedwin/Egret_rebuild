@@ -59,6 +59,7 @@ const ENTRY_POINTS = {
     "./video": "video",
     "./web/video": "web/video",
     "./web/loop": "web/loop",
+    "./web/screen": "web/screen",
     "./kit": "kit",
     "./web/kit": "web/kit",
     "./web/game": "web/game",
@@ -5398,9 +5399,9 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./text.js','./BrowserStatsPanel.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
+const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],
- 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','@egret/engine','@egret/engine/text'],
+ 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','@egret/engine','@egret/engine/text'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};
 for(const [file,expected] of Object.entries(gameImports)){
  const body=uiRead('packages/engine/'+file),observed=[...new Set(uiGraphEdges(body).map(([,target])=>target))];

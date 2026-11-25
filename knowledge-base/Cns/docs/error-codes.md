@@ -1213,6 +1213,12 @@
 | `UI_LAYER_UNKNOWN` | UI 层不认识所指的内容。 |
 | `UI_LAYER_VIEWPORT_TOO_SMALL` | 交给UI 层的 `viewport` 太小。 |
 
+### UI_SCREEN
+
+| 错误码 | 含义 |
+| --- | --- |
+| `UI_SCREEN_OPTIONS_INVALID` | 交给屏幕适配的选项无效：缺少某一项、类型不对或超出范围。 |
+
 ### UI_SEMANTICS
 
 | 错误码 | 含义 |

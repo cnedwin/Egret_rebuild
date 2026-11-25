@@ -9,6 +9,7 @@
 // person pressed a key, and no sound was heard: the check counts the sounds the page starts.
 import http from 'node:http';
 import { verifyPrimaryPointer } from './verify-primary-pointer.mjs';
+import { verifyScreenFit } from './verify-screen-fit.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -737,6 +738,16 @@ await scenario(
     await until(page, stage, look => alike(look(410, 300), BUTTON), 'the night ending with its button', 10);
     await stage.tap(480, 300);
     await until(page, stage, look => !alike(look(410, 300), BUTTON) && lantern(look), 'the night starting again', 15);
+  }
+);
+
+await scenario(
+  "screen fit: 'expand' shows more of the stage on a wider window, the portrait size when it turns, and a tap reaches a button arranged in the safe part",
+  'breakout',
+  480,
+  320,
+  async (page, stage, row) => {
+    row.screenFit = await verifyScreenFit(page);
   }
 );
 

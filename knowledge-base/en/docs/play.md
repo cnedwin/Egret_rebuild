@@ -70,8 +70,36 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `saveKey` | The name `game.save` keeps its values under | The page's path |
 | `backend` | `'auto'`, `'webgpu'` or `'webgl2'` | `'auto'` |
 | `blendSpace` | How translucent things mix: `'srgb'` as a 2D canvas and Egret 5 do, so white at 10% over a dark ground is a faint white; `'linear'` mixes light, and the same white looks stronger | `'srgb'` |
+| `fit` | `'expand'` fills the window: the same scale, and the stage reaches past `width` × `height` to the edges. See [Screens of any shape](#screens-of-any-shape) | `'contain'`: bars where the window has another shape |
+| `portrait` | `{ width, height }`: the stage while the window is taller than wide | `width` × `height` either way |
+| `insets` | `{ top, right, bottom, left }` in CSS pixels: what a notch, rounded corners or a home bar cover | The page's `safe-area-inset` values |
+| `arrange(game)` | Places what depends on the screen: called after `setup` and whenever the window changes size or turns | Nothing moves |
 
 Options that cannot make a game are refused with `PLAY_OPTIONS_INVALID`; the message ends with which one.
+
+## Screens of any shape
+
+A phone is held either way, a window is any shape, and a notch or a home bar covers part of the screen. Three rules cover these, the same for every game:
+
+1. **The design is always whole.** `width` × `height` is shown at the scale that fits it, whatever the window's shape. With `fit: 'expand'` the stage then reaches to the window's edges, so a wider phone shows more of the stage at the sides rather than bars; `(0, 0)` stays the design's corner, so a game laid out for its size stays in the middle.
+2. **A portrait size for a tall window.** With `portrait: { width: 1080, height: 1920 }` beside `width: 1920, height: 1080`, the stage takes the portrait size while the window is taller than wide. The two share their short side, so a button is as large on the screen held either way.
+3. **Edges come from the safe part.** `game.screen` is what the window shows and `game.safe` the part of it nothing covers, both in the game's units. What belongs at an edge (a score, a pause button, a stick) is placed from `game.safe` in `arrange`, which is called after `setup` and again whenever the window changes size, the phone turns or the safe part moves.
+
+```js
+const game = await play({
+  width: 1920, height: 1080, portrait: { width: 1080, height: 1920 }, fit: 'expand',
+  setup(g) {
+    score = g.text('0', { size: 48 });
+    pause = g.button('II', { x: 0, y: 0, width: 96, height: 96 }, () => g.pause());
+  },
+  arrange(g) {
+    score.x = g.safe.x + 32; score.y = g.safe.y + 24;
+    pause.x = g.safe.x + g.safe.width - 64; pause.y = g.safe.y + 64;
+  }
+});
+```
+
+`game.orientation` is `'portrait'` or `'landscape'`, and `game.width` and `game.height` are the design that applies now. Boxes of words, menus, notices and the touch stick are placed in `game.safe` on their own. A page gives `safe-area-inset` values only when its viewport meta tag says `viewport-fit=cover`; `insets` gives them where a page or a host knows better. [Fitting a stage to a screen](screen-fit.md) has the arithmetic, for a game that fits its own stage.
 
 ## Embedding a game alongside page controls
 

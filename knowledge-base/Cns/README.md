@@ -14,7 +14,7 @@
 | 绘制与运动 | [绘图](docs/graphics.md) · [帧循环](docs/frame-loop.md) · [图片变纹理](docs/browser-images.md) · [相机](docs/camera-2d.md) · [瓦片地图](docs/tilemap.md) · [粒子](docs/particles.md) · [位图字体](docs/bitmap-font.md) · [混合模式](docs/blend-modes.md) · [滤镜](docs/filters.md) |
 | 碰撞、声音与操控 | [动作、存档与触屏控件](docs/game-kit.md) · [碰撞与物理](docs/physics-2d.md) · [2D 游戏的声音](docs/audio.md) · [视频](docs/video.md) · [手柄](docs/gamepad.md) |
 | 制作 3D 游戏 | [World3D](docs/world3d.md) · [一次调用启动 3D 游戏](docs/world3d-app.md) |
-| 发布到平台 | [把浏览器游戏做成微信小游戏](docs/wechat-minigame.md) |
+| 发布到平台 | [把浏览器游戏做成微信小游戏](docs/wechat-minigame.md) · [把舞台适配到屏幕](docs/screen-fit.md) |
 | 看懂报错、查一个名字 | [错误码](docs/error-codes.md) · [API 参考](docs/api-reference.md) |
 
 ## 从当前项目开始

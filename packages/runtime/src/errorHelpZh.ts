@@ -95,6 +95,7 @@ export const ZH_AREAS: readonly (readonly [string, string])[] = [
   ['UI_CONTROL', 'UI 控件'],
   ['UI_KEYBOARD', 'UI 键盘导航'],
   ['UI_LAYER', 'UI 层'],
+  ['UI_SCREEN', '屏幕适配'],
   ['UI_SEMANTICS', 'UI 语义'],
   ['UI_TEXT_EDITOR', 'UI 文本编辑器'],
   ['UI_THEME', 'UI 主题'],

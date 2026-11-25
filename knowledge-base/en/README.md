@@ -14,7 +14,7 @@ These guides cover the APIs used to make games. The later sections link engine c
 | Draw and move | [Graphics](docs/graphics.md) · [The frame loop](docs/frame-loop.md) · [Pictures as textures](docs/browser-images.md) · [Camera](docs/camera-2d.md) · [Tile maps](docs/tilemap.md) · [Particles](docs/particles.md) · [Bitmap fonts](docs/bitmap-font.md) · [Blend modes](docs/blend-modes.md) · [Filters](docs/filters.md) |
 | Collide, sound and control | [Actions, saves and touch controls](docs/game-kit.md) · [Collision and physics](docs/physics-2d.md) · [Sound for a 2D game](docs/audio.md) · [Video](docs/video.md) · [Gamepads](docs/gamepad.md) |
 | Build in 3D | [World3D](docs/world3d.md) · [A 3D game in one call](docs/world3d-app.md) |
-| Publish to a platform | [A browser game as a WeChat mini game](docs/wechat-minigame.md) |
+| Publish to a platform | [A browser game as a WeChat mini game](docs/wechat-minigame.md) · [Fitting a stage to a screen](docs/screen-fit.md) |
 | Read an error, look up a name | [Error codes](docs/error-codes.md) · [API reference](docs/api-reference.md) |
 
 ## Start with the current project

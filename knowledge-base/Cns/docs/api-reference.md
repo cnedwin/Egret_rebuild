@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 43 个入口、1390 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 44 个入口、1396 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1384,6 +1384,17 @@
 | `FrameLoopEngine` | 接口 | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | 接口 | What the loop asks of a Host: how many frames it holds that it has not finished. |
 
+## `@egret/engine/web/screen`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `planScreen` | 函数 | Fits a stage to a space on a screen. |
+| `ScreenInsets` | 接口 | How far in from each edge a notch, rounded corners or a home bar reach, in the pixels of the space given. |
+| `ScreenPlan` | 接口 | Where the stage goes, and what of it is shown and safe to touch. |
+| `ScreenPlanOptions` | 接口 | What to fit: the space on the screen, the designs, how they fit and what covers the edges. |
+| `ScreenRect` | 接口 | A rectangle in stage units. |
+| `ScreenSize` | 接口 | A width and a height above 0. |
+
 ## `@egret/engine/kit`
 
 | 名字 | 种类 | 说明 |
@@ -1482,7 +1493,7 @@
 | --- | --- | --- |
 | `BrowserGame` | 接口 | A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. |
 | `BrowserGameBackend` | 类型 | Which GPU interface a browser game draws with. |
-| `BrowserGameFit` | 类型 | How the canvas fills the element it is in: not at all, whole inside it, covering it, or stretched to it. |
+| `BrowserGameFit` | 类型 | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, or filling it with a stage that grows around the design (`'expand'`). |
 | `BrowserGameLabel` | 接口 | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | 接口 | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | 接口 | A text label to make: its text, font, size and weight, line height, color, locale and direction. |

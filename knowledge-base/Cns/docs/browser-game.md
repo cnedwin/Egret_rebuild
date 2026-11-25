@@ -61,7 +61,7 @@ game.loop.start();
 
 **文本。** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` 创建一行文本；把 `label.display` 加到舞台上并定位，之后文字变化时设置 `label.text`。新文字准备好后才画出来，在此之前保留旧文字；`await label.ready` 可以等它完成。可以同时创建或修改任意多个 label：它们每次画两个，其余排队；正在绘制时文字又变了的 label，接着画最新的文字。`ready` 之后，`label.display.width` 和 `.height` 就是文字的大小，所以 `label.display.x = centre - label.display.width / 2` 可以让它居中。字体用页面自己的：系统字体族，或页面已加载的字体。label 默认属于 `game.scope`，`scope` 可以指定别的：在 UI 叶子内容的 `prepare` 里写 `game.createLabel({ text: '声音', scope: context.scope })`，得到的 label 就能放进这个叶子，并随那个 scope 一起结束。第一个 label 会加载页面的文本光栅化器，所以 import map 需要 `@egret/engine/text`、`@egret/engine/web/text` 和 `@egret/runtime/text`。
 
-**画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。任何模式下舞台都保持自己单位的宽高，指针位置跟随画布。
+**画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。`'cover'` 和 `'stretch'` 时舞台保持自己单位的宽高。`'contain'` 和 `'expand'` 时舞台跟随[屏幕适配的结果](screen-fit.md)：`game.screen` 是当前结果，`game.onScreenChange(listener)` 在结果变化时通知，舞台在高窗口时换成竖版尺寸，`'expand'` 时一直延伸到元素边缘。任何模式下指针位置都跟随画布。
 `game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。
 
 **触控区。** 手指大约需要 44 个 CSS 像素。`game.unitsPerCssPixel` 是按画布当前显示大小，一个 CSS 像素等于多少舞台单位；`game.padHitArea(node, cssPixels = 44)` 给节点一个至少这么大的点击区域，以它画出的内容为中心，且不小于画出的内容，所以手机上缩小显示的画布里，一个 20 单位的图标也容易按到。祖先节点缩放、镜像或旋转时，点击区域仍覆盖所需的 CSS 正方形。修改节点或祖先的变换、绘制边界或画布尺寸后，请重新调用。如果变换把图标压成一条线或一个点，屏幕上就没有二维点击区域。
@@ -80,7 +80,8 @@ game.loop.start();
 | `pointer`、`keyboard` | 给 `false` 则不创建该输入 | 两者都创建 |
 | `hover` | 给 `true` 则创建悬停和滚轮输入，即 `game.hover`；只有这时才加载它的模块 | 不创建悬停输入 |
 | `stats` | 给 `true` 则显示面板 | 没有面板 |
-| `fit`、`fitTo` | 画布怎样填充一个元素：`'contain'` 完整放入，`'cover'` 盖满，`'stretch'` 拉伸成它的形状。`fitTo` 就是那个元素 | `'none'`，以及画布的父元素 |
+| `fit`、`fitTo` | 画布怎样填充一个元素：`'contain'` 完整放入，`'cover'` 盖满，`'stretch'` 拉伸成它的形状，`'expand'` 用围绕设计区域延伸的舞台铺满它。`fitTo` 就是那个元素 | `'none'`，以及画布的父元素 |
+| `portrait`、`insets` | 在 `'contain'` 或 `'expand'` 下：元素高大于宽时的舞台大小，以及挡住边缘的部分（CSS 像素）。见[把舞台适配到屏幕](screen-fit.md) | `width` × `height`，以及页面的 `safe-area-inset` 值 |
 | `autoStart` | 给 `false` 则由 `game.loop.start()` 启动循环 | 循环立即启动 |
 
 无效的选项在创建任何东西之前就以 `BROWSER_GAME_OPTIONS_INVALID` 被拒绝。

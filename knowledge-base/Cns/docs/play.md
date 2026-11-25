@@ -70,8 +70,36 @@ await play({
 | `saveKey` | `game.save` 保存数据时用的名字 | 页面的路径 |
 | `backend` | `'auto'`、`'webgpu'` 或 `'webgl2'` | `'auto'` |
 | `blendSpace` | 半透明颜色的混合方式：`'srgb'` 与 2D canvas 和白鹭 5 一致，深色底上 10% 的白仍是淡淡的白；`'linear'` 按光线混合，同样的白看起来更强 | `'srgb'` |
+| `fit` | `'expand'` 铺满窗口：缩放比不变，舞台越过 `width` × `height` 一直延伸到窗口边缘。见[任意形状的屏幕](#任意形状的屏幕) | `'contain'`：窗口形状不同时留黑边 |
+| `portrait` | `{ width, height }`：窗口高大于宽时的舞台大小 | 两种方向都用 `width` × `height` |
+| `insets` | `{ top, right, bottom, left }`，单位是 CSS 像素：刘海、圆角或底部横条挡住的部分 | 页面的 `safe-area-inset` 值 |
+| `arrange(game)` | 摆放跟屏幕有关的东西：在 `setup` 之后调用，窗口尺寸变化或旋转时再调用 | 什么都不移动 |
 
 无法做出游戏的选项会以 `PLAY_OPTIONS_INVALID` 被拒绝；错误信息的末尾说明是哪一项。
+
+## 任意形状的屏幕
+
+手机可以横着拿也可以竖着拿，窗口可以是任何形状，刘海和底部横条还会挡住屏幕的一部分。下面三条规则应对这些情况，所有游戏都一样：
+
+1. **设计区域始终完整显示。** 不管窗口是什么形状，`width` × `height` 都按能完整放下的缩放比显示。加上 `fit: 'expand'`，舞台再一直延伸到窗口边缘：更宽的手机在两侧多显示一些舞台，而不是黑边；`(0, 0)` 仍是设计区域的左上角，所以按设计尺寸摆好的游戏仍在中间。
+2. **高窗口用竖版尺寸。** 在 `width: 1920, height: 1080` 旁边写上 `portrait: { width: 1080, height: 1920 }`，窗口高大于宽时舞台就换成竖版尺寸。两者短边相同，所以无论怎么拿手机，按钮在屏幕上一样大。
+3. **贴边的东西按安全区摆。** `game.screen` 是窗口显示的区域，`game.safe` 是其中没有被挡住的部分，单位都是游戏自己的单位。要贴边的东西（分数、暂停按钮、摇杆）在 `arrange` 里按 `game.safe` 摆放。`arrange` 在 `setup` 之后调用一次，之后窗口尺寸变化、手机旋转或安全区移动时都会再调用。
+
+```js
+const game = await play({
+  width: 1920, height: 1080, portrait: { width: 1080, height: 1920 }, fit: 'expand',
+  setup(g) {
+    score = g.text('0', { size: 48 });
+    pause = g.button('II', { x: 0, y: 0, width: 96, height: 96 }, () => g.pause());
+  },
+  arrange(g) {
+    score.x = g.safe.x + 32; score.y = g.safe.y + 24;
+    pause.x = g.safe.x + g.safe.width - 64; pause.y = g.safe.y + 64;
+  }
+});
+```
+
+`game.orientation` 是 `'portrait'` 或 `'landscape'`，`game.width` 和 `game.height` 是当前所用的设计尺寸。对话框、菜单、提示和触屏摇杆会自动放在 `game.safe` 里。只有视口 meta 标签写了 `viewport-fit=cover`，页面才会给出 `safe-area-inset` 值；页面或宿主更清楚安全区时，用 `insets` 直接给出。[把舞台适配到屏幕](screen-fit.md)讲了其中的计算，供自己适配舞台的游戏使用。
 
 ## 在页面控件旁嵌入游戏
 
