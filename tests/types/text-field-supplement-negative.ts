@@ -2,7 +2,7 @@ import { createTextField } from '@egret/engine/text';
 import type { TextField, TextRasterCache } from '@egret/engine/text';
 import type { DisplayObject, Engine, Scope } from '@egret/engine';
 declare const engine: Engine, scope: Scope, cache: TextRasterCache;
-declare const unbranded: DisplayObject & Pick<TextField, 'setRequest' | 'prepare' | 'getStatus'>;
+declare const unbranded: DisplayObject & Pick<TextField, 'setRequest' | 'prepare' | 'getStatus' | 'releaseRaster'>;
 declare const wrongEngine: {}, wrongScope: {}, wrongCache: {};
 
 // TEXT_FIELD_SUPPLEMENT_CASE complete-shape-without-brand TS2741

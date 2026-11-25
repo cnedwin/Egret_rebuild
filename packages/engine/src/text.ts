@@ -19,6 +19,8 @@ export interface TextField extends DisplayObject {
   readonly [textFieldBrand]: true;
   setRequest(input: TextRasterRequestInput): void;
   prepare(): Promise<TextRasterMetrics>;
+  /** Drop the raster and cancel pending preparation. The latest request can be prepared again. */
+  releaseRaster(): void;
   getStatus(): TextFieldStatus;
   dispose(): void;
 }

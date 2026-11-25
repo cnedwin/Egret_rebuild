@@ -558,3 +558,40 @@ test('TF08: hidden leaf node admission and field output/clip units retain exact 
     } finally { for (let index = nodes.length - 1; index >= 0; index--) nodes[index].dispose(); }
   });
 });
+
+test('TF09: relinquishing a raster frees the current borrow and keeps the latest request reusable', async (t) => {
+  const gate = deferred(), entering = deferred();
+  const base = await fixture(t, { async rasterize(plan) {
+    if (plan.request.text === 'New' && !entering.entered) {
+      entering.entered = true;
+      entering.resolve();
+      await gate.promise;
+    }
+    return image();
+  } }, { maxResidentEntries: 0 });
+  t.after(() => gate.resolve());
+  const { field } = await createField(base); base.engine.stage.addChild(field);
+  field.setRequest(request()); await field.prepare(); await base.cache.whenIdle();
+  assert.equal(base.cache.getStatus().activeCallerLeases, 1);
+  field.setRequest(request({ text: 'New' }));
+  const pending = keep(field.prepare());
+  await entering.promise;
+  try {
+    field.releaseRaster();
+    await rejectedKept(pending, 'TEXT_FIELD_SUPERSEDED');
+    assert.equal(field.isDisposed, false);
+    assert.equal(field.parent, base.engine.stage);
+    assert.equal(snapshot(field).state, 'unprepared');
+    assert.equal(snapshot(field).desiredRevision, 2);
+    assert.equal(base.cache.getStatus().activeCallerLeases, 0);
+    assert.equal(capture(base).commands.length, 0);
+  } finally {
+    gate.resolve();
+  }
+  await base.cache.whenIdle();
+  assert.equal(capture(base).commands.length, 0);
+  await field.prepare();
+  assert.equal(snapshot(field).committedRevision, 2);
+  assert.equal(base.state.requests.at(-1).text, 'New');
+  assert.equal(capture(base).commands.length, 1);
+});
