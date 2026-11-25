@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Opt-in on-demand drawing for static Play screens",
+    "body": "Set renderMode to on-demand to retain clean 2D frames while input, resize, asset or text changes and animations continue to draw."
+  },
+  "zh": {
+    "title": "Play 支持静态界面的按需绘制",
+    "body": "把 renderMode 设为 on-demand 可以保留静止的 2D 画面。输入、尺寸、资源、文字和动画变化仍会触发绘制。"
+  }
+}

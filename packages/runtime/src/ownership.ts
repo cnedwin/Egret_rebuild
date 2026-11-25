@@ -5,7 +5,7 @@ import type { Stage } from './Stage.js';
 import type { CapturedSharedContent2D } from './sharedFrameCapture.js';
 import type { Diagnostic } from '@egret/contracts';
 import { EgretError } from './EgretError.js';
-import { recordVisualChange, VISUAL_BINDING } from './displayVisualState.js';
+import { recordVisualChange, watchDisplayRevision, VISUAL_BINDING } from './displayVisualState.js';
 import {
   assertLive,
   captureChildInsertion,
@@ -25,6 +25,8 @@ import type { AssetGroupOperations } from './assetManagerOwnerState.js';
 
 /** Internal instance port; runtime never imports the Engine implementation. */
 export interface EngineContext {
+  /** @internal Optional stage-owned visual observation for a host that skips clean frames. */
+  readonly registerDisplayRevision?: (watch: () => { readonly revision: number; dispose(): void }) => void;
   /** @internal Registered once by the genuine Stage; never a caller scene callback. */
   readonly registerPreparedDisplayOperations?: (
     operations: Readonly<{
@@ -72,12 +74,13 @@ export const ASSERT_ATTACHABLE: unique symbol = Symbol('egret.assertAttachable')
 // Cleanup ownership and engine affinity are separate lifetime identities.
 const owners = new WeakMap<object, object>();
 const engines = new WeakMap<object, EngineContext>();
+const readInsertionEngine = engines.get.bind(engines);
 
 export function ownerOf(value: object): object | undefined {
   return owners.get(value);
 }
 export function engineOf(value: object): EngineContext | undefined {
-  return engines.get(value);
+  return readInsertionEngine(value);
 }
 export function claimOwner(value: object, owner: object): void {
   owners.set(value, owner);
@@ -147,8 +150,12 @@ export function bind(value: object, engine: EngineContext): void {
   commitBinding(validateBinding(value, engine), engine);
 }
 
+/** Enrol every Stage's engine in visual observation only when that engine asks for a watch. */
+export function registerStageDisplayRevision(engine: EngineContext): void {
+  engine.registerDisplayRevision?.(() => watchDisplayRevision(engine));
+}
+
 // The new finite coordinator owns captured affinity reads/writes, separate from legacy bind.
-const readInsertionEngine = engines.get.bind(engines);
 const writeInsertionEngine = engines.set.bind(engines);
 const InsertionBindingSet = Set;
 const insertionBindingHas = Set.prototype.has.call.bind(Set.prototype.has) as (

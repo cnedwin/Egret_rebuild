@@ -56,6 +56,30 @@ const states = new WeakMap<DisplayObject, VisualState>();
 const readRevisionState = states.get.bind(states);
 const sameValue = Object.is;
 
+// An engine may opt in to reading its visual revision without walking the stage.
+const observedEngines = new WeakMap<object, { revision: number; watches: number }>();
+const readObserved = observedEngines.get.bind(observedEngines);
+let observations = 0;
+
+export function watchDisplayRevision(context: object): { readonly revision: number; dispose(): void } {
+  const state = readObserved(context) ?? { revision: 0, watches: 0 };
+  observedEngines.set(context, state);
+  observations++;
+  state.watches++;
+  let live = true;
+  return Object.freeze({
+    get revision() {
+      return state.revision;
+    },
+    dispose() {
+      if (!live) return;
+      live = false;
+      observations--;
+      if (--state.watches === 0) observedEngines.delete(context);
+    }
+  });
+}
+
 export const VISUAL_STRUCTURE = 1;
 export const VISUAL_TRANSFORM = 2;
 export const VISUAL_APPEARANCE = 4;
@@ -72,6 +96,12 @@ const REVISION_RESTART = 9007199254740990;
 export function recordVisualChange(node: object, changes: number): void {
   const state = readRevisionState(node as DisplayObject);
   if (state === undefined) return;
+  if (observations !== 0) {
+    const context = engineOf(node);
+    const observed = context === undefined ? undefined : readObserved(context);
+    // A synchronous counter is safe in a commit. Never run an observer callback here.
+    if (observed !== undefined) observed.revision = observed.revision >= REVISION_RESTART ? 0 : observed.revision + 1;
+  }
   state.changes++;
   if (
     ((changes & VISUAL_STRUCTURE) !== 0 && state.structureRevision >= REVISION_RESTART) ||

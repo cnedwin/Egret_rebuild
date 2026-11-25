@@ -78,6 +78,19 @@ await play({
 
 无法做出游戏的选项会以 `PLAY_OPTIONS_INVALID` 被拒绝；错误信息的末尾说明是哪一项。
 
+## 保留静止的 2D 画面
+
+```js
+const game = await play({ width: 1280, height: 800, renderMode: 'on-demand', setup });
+game.invalidate();
+```
+
+按需绘制会在显示树和画布没有变化时保留上一次提交的画面。鼠标、触摸、键盘输入和画布尺寸变化都会请求重绘。异步图片和文字准备好后会随显示内容的变化重新绘制。显示树之外的数据源有变化时，调用 `game.invalidate()` 请求一帧。时钟、输入和应用的 `update` 保持原有节奏，移动的精灵和补间会随变化继续绘制。`play` 默认连续绘制，`play3d` 继续使用原有帧循环。
+
+本地复跑先构建工作区，再运行 `node examples/play/verify-demand-render.mjs <Playwright index.mjs> <新的 output.json> [webgl2|webgpu] [Chromium 可执行文件] [software|hardware]`。夹具记录帧提交量，并检查输入、尺寸、异步资源、文字和补间的暂停及恢复。
+
+在 Windows Chrome for Testing 157.0.8103.6 上，在 1280 × 800 浏览器视口和 640 × 400 设计尺寸下，夹具测了 30 个闲置帧间隔。连续绘制提交 31 次，按需模式提交 0 次，两组引擎都更新了 31 步。SwiftShader WebGL2 与 NVIDIA Blackwell WebGPU 两条路径都得到这一结果。鼠标、触摸、空格键、尺寸变化、显式重绘、贴图及文字就绪都恢复了绘制。补间暂停时提交为零，恢复后到达目标。自制场景的软件 WebGL2 闲置帧间隔 P95 两组均为 4.2 ms。外部游戏标题场景、手机浏览器及软件 WebGPU 性能仍需单独测量。
+
 ## 任意形状的屏幕
 
 手机可以横着拿也可以竖着拿，窗口可以是任何形状，刘海和底部横条还会挡住屏幕的一部分。下面三条规则应对这些情况，所有游戏都一样：

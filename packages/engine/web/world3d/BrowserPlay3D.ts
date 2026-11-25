@@ -546,7 +546,7 @@ export interface Play3DGame
   weather(kind: PlayWeather3D, options?: PlayWeatherOptions3D): void;
 }
 /** A small 3D game to start: its setup and update, and the options of a 2D play game. */
-export interface Play3DOptions extends Omit<PlayOptions, 'setup' | 'update' | 'canvas'> {
+export interface Play3DOptions extends Omit<PlayOptions, 'setup' | 'update' | 'canvas' | 'renderMode'> {
   readonly setup?: (game: Play3DGame) => void | Promise<void>;
   readonly update?: (seconds: number, game: Play3DGame) => void;
 }

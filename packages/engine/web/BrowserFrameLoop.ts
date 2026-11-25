@@ -22,6 +22,8 @@ export interface BrowserFrameLoopOptions<F> {
   readonly maxPendingFrames?: number;
   /** One step of the game, called before each frame with the seconds since the step before: 0 at first, never more than `maxStepSeconds`. */
   readonly update?: (deltaSeconds: number) => void;
+  /** After the update, return false to retain the frame already displayed. Time and input still advance. */
+  readonly shouldRender?: () => boolean;
   /** The longest step, in seconds. A tab that was hidden comes back with one step of this length. Defaults to 0.1, and is never more than the Engine's clock takes. */
   readonly maxStepSeconds?: number;
   /**
@@ -73,7 +75,7 @@ const backpressure = (error: unknown): boolean => {
  */
 export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): BrowserFrameLoop {
   if (options === null || typeof options !== 'object') throw invalid();
-  const { engine, frame, host, update, onError } = options,
+  const { engine, frame, host, update, shouldRender, onError } = options,
     limit = options.maxPendingFrames ?? 2;
   const request =
     options.requestFrame ?? ((callback: (milliseconds: number) => void): number => requestAnimationFrame(callback));
@@ -89,6 +91,7 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
     !Number.isSafeInteger(limit) ||
     limit < 1 ||
     (update !== undefined && typeof update !== 'function') ||
+    (shouldRender !== undefined && typeof shouldRender !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
     typeof request !== 'function' ||
     typeof cancel !== 'function'
@@ -139,14 +142,18 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
         if (state !== 'running') return;
         if (!(owed > 1e-9)) break;
       }
-      if (host !== undefined && host.getStatus().pendingFrames >= limit) skipped++;
-      else {
-        try {
-          engine.renderSharedFrame(typeof frame === 'function' ? (frame as () => F)() : frame);
-          frames++;
-        } catch (error) {
-          if (host !== undefined || !backpressure(error)) throw error;
-          skipped++;
+      const wantsFrame = shouldRender?.() ?? true;
+      if (state !== 'running') return;
+      if (wantsFrame) {
+        if (host !== undefined && host.getStatus().pendingFrames >= limit) skipped++;
+        else {
+          try {
+            engine.renderSharedFrame(typeof frame === 'function' ? (frame as () => F)() : frame);
+            frames++;
+          } catch (error) {
+            if (host !== undefined || !backpressure(error)) throw error;
+            skipped++;
+          }
         }
       }
       handle = request(tick);
