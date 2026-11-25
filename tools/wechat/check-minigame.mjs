@@ -38,6 +38,9 @@ export function standInScript({ width, height, ratio }) {
   var screen = document.getElementById('screen');
   var made = 0, storage = new Map(), handlers = {}, written = new Map(), USER = 'wxfile://usr';
   var on = function (name) { return function (fn) { (handlers[name] = handlers[name] || []).push(fn); }; };
+  var off = function (name) { return function (fn) { handlers[name] = (handlers[name] || []).filter(function (f) { return f !== fn; }); }; };
+  // The keyboard WeChat shows with its own field, while it is up.
+  var keyboard;
   var emit = function (name, value) { (handlers[name] || []).forEach(function (fn) { fn(value); }); };
   var pkg = function (p) { return '/pkg/' + String(p).replace(/^\\/+/, ''); };
   var calls = {};
@@ -82,6 +85,25 @@ export function standInScript({ width, height, ratio }) {
     createWebAudioContext: function () { count('createWebAudioContext'); return new real.AudioContext(); },
     onTouchStart: on('touchstart'), onTouchMove: on('touchmove'), onTouchEnd: on('touchend'), onTouchCancel: on('touchcancel'),
     onKeyDown: on('keydown'), onKeyUp: on('keyup'), onWindowResize: on('resize'), onShow: on('show'), onHide: on('hide'), onError: on('error'),
+    // The keyboard: shown with a value, a limit and a kind of confirm key; it tells of input, of its confirm key and of
+    // being closed. window.__keyboard types, confirms and closes it, as a player would.
+    showKeyboard: function (o) {
+      count('showKeyboard');
+      keyboard = { value: String(o.defaultValue || ''), maxLength: o.maxLength === undefined ? 100 : o.maxLength, multiple: !!o.multiple, confirmHold: !!o.confirmHold, confirmType: o.confirmType || 'done' };
+      setTimeout(function () { o.success && o.success({}); }, 0);
+    },
+    hideKeyboard: function (o) {
+      count('hideKeyboard');
+      var was = keyboard;
+      keyboard = undefined;
+      // A keyboard closed by the game is told as closed after the call returns.
+      if (was) setTimeout(function () { emit('keyboardcomplete', { value: was.value }); }, 0);
+      setTimeout(function () { o && o.success && o.success({}); }, 0);
+    },
+    updateKeyboard: function (o) { count('updateKeyboard'); if (keyboard) keyboard.value = String(o.value); },
+    onKeyboardInput: on('keyboardinput'), offKeyboardInput: off('keyboardinput'),
+    onKeyboardConfirm: on('keyboardconfirm'), offKeyboardConfirm: off('keyboardconfirm'),
+    onKeyboardComplete: on('keyboardcomplete'), offKeyboardComplete: off('keyboardcomplete'),
     vibrateShort: function () {}, showModal: function (o) { console.log('[wx.showModal] ' + o.content); },
     restartMiniProgram: function () {}
   };
@@ -105,6 +127,27 @@ export function standInScript({ width, height, ratio }) {
   G.__egretFailed = function (e) { window.__failed = String(e && e.stack || e); };
   window.GameGlobal = G;
   window.__wxCalls = calls;
+  window.__keyboard = {
+    state: function () { return keyboard ? JSON.parse(JSON.stringify(keyboard)) : null; },
+    type: function (text) {
+      if (!keyboard) throw new Error('no keyboard is shown');
+      var points = Array.from(keyboard.value + text);
+      keyboard.value = points.slice(0, keyboard.maxLength).join('');
+      emit('keyboardinput', { value: keyboard.value });
+    },
+    confirm: function () {
+      if (!keyboard) throw new Error('no keyboard is shown');
+      var was = keyboard;
+      emit('keyboardconfirm', { value: was.value });
+      if (!was.confirmHold && keyboard === was) { keyboard = undefined; emit('keyboardcomplete', { value: was.value }); }
+    },
+    close: function () {
+      if (!keyboard) throw new Error('no keyboard is shown');
+      var was = keyboard;
+      keyboard = undefined;
+      emit('keyboardcomplete', { value: was.value });
+    }
+  };
   window.__storage = storage;
 })();
 `;

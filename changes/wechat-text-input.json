@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Text input through WeChat's keyboard",
+    "body": "@egret/engine/web/wechat-text-input exports createWechatTextInput. It gives a mini game the object of createBrowserTextInput (open, commit, cancel, setValue, getSnapshot, dispose, with onChange, onCommit and onCancel, multiline and maxLength) and types into the keyboard WeChat shows with wx.showKeyboard. The confirm key commits; a keyboard closed another way ends the session as blur says. A field opened from onCommit keeps its keyboard. The stand-in of check-minigame.mjs now has the keyboard, and window.__keyboard types into it. Pages are unchanged."
+  },
+  "zh": {
+    "title": "通过微信键盘输入文字",
+    "body": "新增 @egret/engine/web/wechat-text-input，导出 createWechatTextInput。它在小游戏里给出与 createBrowserTextInput 相同的对象（open、commit、cancel、setValue、getSnapshot、dispose，以及 onChange、onCommit、onCancel、multiline 和 maxLength），文字输入到 wx.showKeyboard 显示的微信键盘里。确认键提交；用别的方式收起键盘时按 blur 结束会话。在 onCommit 里打开的下一个输入框能保住自己的键盘。check-minigame.mjs 的替身现在也有键盘，window.__keyboard 可以往里输入。网页行为不变。"
+  }
+}

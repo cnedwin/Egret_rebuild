@@ -30,6 +30,8 @@ Among those names are the classes of a canvas's 2D drawing (`CanvasRenderingCont
 
 Labels (`game.text`, `createLabel`) draw on 2D canvases. Paragraphs use the canvas provider, which needs no WebAssembly: `chooseParagraphProvider` gives it in a mini game. CanvasKit needs WebAssembly and is larger than the 4 MB main package, and it is not loaded. See [a provider without WebAssembly](readonly-paragraph-sdk.md#a-provider-without-webassembly). A font the game ships is registered with `wx.loadFont`, whose returned family name is the one to use. Otherwise the phone's own fonts draw.
 
+A page's text field cannot be shown in a mini game. `createWechatTextInput` of `@egret/engine/web/wechat-text-input` gives the object of `createBrowserTextInput` and types into WeChat's keyboard. See [text input in a WeChat mini game](text-input.md#in-a-wechat-mini-game).
+
 ## Export
 
 ```sh
@@ -58,6 +60,8 @@ The stand-in gives the game what a mini game gives and nothing more. `GameGlobal
 - the `wx` calls made and the storage keys written;
 - how many colours the picture has;
 - whether any element reached the real page past the adapter.
+
+`wx.showKeyboard`, `hideKeyboard`, `updateKeyboard` and the keyboard's events are there too. `window.__keyboard` of the page types into the keyboard, presses its confirm key and closes it, as a player would.
 
 `ok` requires no failure, no error, more than eight colours and no element leaked.
 
@@ -89,7 +93,7 @@ The tests in `tests/wechat-minigame.test.mjs` run the adapter in a Node context.
 - the backdrop drawn under a frame, with the game's WebGL state bound again;
 - the export of a small game folder, run in that context.
 
-`examples/minigame/verify.mjs` exports a probe game and runs it in the stand-in. Inside the game, none of the names above exist. On November 26, 2026 the probe's labels drew three lines of words. A paragraph was given the canvas provider, for want of `WebAssembly`. It wrapped into three lines, which were drawn on the screen, and a hit in the word "lantern" found its letter.
+`examples/minigame/verify.mjs` exports a probe game and runs it in the stand-in. Inside the game, none of the names above exist. On November 26, 2026 the probe's labels drew three lines of words. A paragraph was given the canvas provider, for want of `WebAssembly`. It wrapped into three lines, which were drawn on the screen, and a hit in the word "lantern" found its letter. The page's text field failed there (`setSelectionRange` is not a function); the WeChat keyboard input took typed words, committed them on the confirm key and when the keyboard was closed, and cancelled.
 
 On November 22, 2026, a ported 2D game exported this way was played in the stand-in, in headless Chromium on software WebGL2. The game was 0.54 MB of pictures, and its scenery is CSS backgrounds. The package came to 1.75 MB with its WebP written as JPEG. The title showed its scenery under the canvas; a tap went to the choice of night, and a second tap started the first night. No error was reported and no element leaked.
 

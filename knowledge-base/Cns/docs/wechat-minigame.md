@@ -30,6 +30,8 @@
 
 标签（`game.text`、`createLabel`）画在 2D 画布上。段落使用不需要 WebAssembly 的画布提供者：在小游戏里，`chooseParagraphProvider` 会选它。CanvasKit 需要 WebAssembly，体积也超过 4 MB 主包，因此不会加载。见[不需要 WebAssembly 的提供者](readonly-paragraph-sdk.md#不需要-webassembly-的提供者)。游戏自带的字体用 `wx.loadFont` 注册，使用它返回的字体族名。不注册时用手机自带的字体。
 
+网页的文本框在小游戏里显示不出来。`@egret/engine/web/wechat-text-input` 的 `createWechatTextInput` 给出与 `createBrowserTextInput` 相同的对象，文字输入到微信的键盘里。见[在微信小游戏里输入文字](text-input.md#在微信小游戏里)。
+
 ## 导出
 
 ```sh
@@ -58,6 +60,8 @@ node tools/wechat/check-minigame.mjs <已安装的 Playwright index.mjs> <小游
 - 调用过的 `wx` 接口和写入的存储键；
 - 截图有多少种颜色；
 - 有没有元素绕过适配器进入真正的网页。
+
+`wx.showKeyboard`、`hideKeyboard`、`updateKeyboard` 和键盘的事件也都有。页面的 `window.__keyboard` 像玩家一样往键盘里输入、按确认键和收起键盘。
 
 `ok` 要求没有失败、没有错误、颜色多于八种，并且没有元素泄漏。
 
@@ -89,7 +93,7 @@ node tools/wechat/check-minigame.mjs <已安装的 Playwright index.mjs> <小游
 - 帧下面画出的背景，以及绑回去的游戏 WebGL 状态；
 - 一个小游戏目录的导出，并在这个上下文里运行。
 
-`examples/minigame/verify.mjs` 导出一个探测游戏，并在替身里运行。游戏里上面这些名字都不存在。2026 年 11 月 26 日，探测游戏的标签画出了三行字。段落因为没有 `WebAssembly` 而得到画布提供者，换成三行并画到了屏幕上；在单词 “lantern” 里点一下，找到了对应的字母。
+`examples/minigame/verify.mjs` 导出一个探测游戏，并在替身里运行。游戏里上面这些名字都不存在。2026 年 11 月 26 日，探测游戏的标签画出了三行字。段落因为没有 `WebAssembly` 而得到画布提供者，换成三行并画到了屏幕上；在单词 “lantern” 里点一下，找到了对应的字母。网页的文本框在那里失败（`setSelectionRange` 不是函数）；微信键盘输入接收了输入的文字，在按确认键和收起键盘时提交，也能取消。
 
 2026 年 11 月 22 日，一个按这种方式导出的移植 2D 游戏在替身里试玩过，环境是无头 Chromium 加软件 WebGL2。游戏的图片共 0.54 MB，场景是 CSS 背景。WebP 改写成 JPEG 后，整个包 1.75 MB。标题画面在画布下显示出了场景；点一下进入选夜界面，再点一下开始第一夜。没有报错，也没有元素泄漏。
 

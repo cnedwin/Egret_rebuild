@@ -47,6 +47,7 @@ const ENTRY_POINTS = {
     "./web/paragraph": "web/paragraph",
     "./web/keyboard": "web/keyboard",
     "./web/text-input": "web/textInput",
+    "./web/wechat-text-input": "web/wechatTextInput",
     "./ui/editing": "ui/editing",
     "./web/editing": "web/editing",
     "./input/hover": "hover",
@@ -286,6 +287,11 @@ const m32ParagraphDeepClauses = {
 // M3.3: exact optional native-edit clauses; no new package or private wildcard.
 const nativeEditingDeepClauses = {"packages/engine/src/ui/textEditor.ts":[{"operation":"import","kind":"value","members":["createTextEditState"],"target":"@egret/runtime/ui/editing"},{"operation":"import","kind":"type","members":["TextEditState","TextEditSession","TextEditSample","TextEditSelection","TextEditResult"],"target":"@egret/runtime/ui/editing"}],"packages/engine/dist/ui/textEditor.js":[{"operation":"import","kind":"value","members":["createTextEditState"],"target":"@egret/runtime/ui/editing"}],"packages/engine/dist/ui/textEditor.d.ts":[{"operation":"import","kind":"type","members":["TextEditState","TextEditSession","TextEditSample","TextEditResult"],"target":"@egret/runtime/ui/editing"}],"packages/engine/src/ui/textEditorTypes.ts":[{"operation":"import","kind":"type","members":["TextEditSelection","TextEditSnapshot"],"target":"@egret/runtime/ui/editing"},{"operation":"export","kind":"type","members":["TextEditSelection"],"target":"@egret/runtime/ui/editing"}],"packages/engine/dist/ui/textEditorTypes.d.ts":[{"operation":"import","kind":"type","members":["TextEditSelection","TextEditSnapshot"],"target":"@egret/runtime/ui/editing"},{"operation":"export","kind":"type","members":["TextEditSelection"],"target":"@egret/runtime/ui/editing"}],"packages/engine/web/BrowserTextEditor.ts":[{"operation":"import","kind":"type","members":["KeyboardInput"],"target":"@egret/engine/web/keyboard"},{"operation":"import","kind":"type","members":["UiRoot"],"target":"@egret/engine/ui"},{"operation":"import","kind":"type","members":["UiTextEditor","UiTextEditorTarget","TextEditSelection"],"target":"@egret/engine/ui/editing"},{"operation":"import","kind":"value","members":["bindTextEditorHost","requireEditorEngine"],"target":"#egret-text-editor"},{"operation":"import","kind":"type","members":["TextEditorHostPort","EditorPresentation"],"target":"#egret-text-editor"}],"packages/engine/dist/web/BrowserTextEditor.js":[{"operation":"import","kind":"value","members":["bindTextEditorHost","requireEditorEngine"],"target":"#egret-text-editor"}],"packages/engine/dist/web/BrowserTextEditor.d.ts":[{"operation":"import","kind":"type","members":["KeyboardInput"],"target":"@egret/engine/web/keyboard"},{"operation":"import","kind":"type","members":["UiRoot"],"target":"@egret/engine/ui"},{"operation":"import","kind":"type","members":["UiTextEditor","UiTextEditorTarget"],"target":"@egret/engine/ui/editing"}],"packages/engine/web/editorFonts.ts":[{"operation":"import","kind":"type","members":["FontContentLoader","FontContentGroup"],"target":"@egret/engine/resources"},{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"},{"operation":"import","kind":"value","members":["requireEditorEngine"],"target":"#egret-text-editor"}],"packages/engine/dist/web/editorFonts.js":[{"operation":"import","kind":"value","members":["requireEditorEngine"],"target":"#egret-text-editor"}],"packages/engine/dist/web/editorFonts.d.ts":[{"operation":"import","kind":"type","members":["FontContentLoader"],"target":"@egret/engine/resources"},{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}]};
 for (const [file, clauses] of Object.entries(nativeEditingDeepClauses)) m15DeepClauses[file] = [...(m15DeepClauses[file] ?? []), ...clauses];
+// Text input through WeChat's keyboard gives the object of the browser text input: its types alone.
+Object.assign(m15DeepClauses, {
+  "packages/engine/web/WechatKeyboardTextInput.ts": [{"operation":"import","kind":"type","members":["BrowserTextInput","BrowserTextInputEnterHint","BrowserTextInputRectangle","BrowserTextInputRequest","BrowserTextInputSnapshot"],"target":"@egret/engine/web/text-input"}],
+  "packages/engine/dist/web/WechatKeyboardTextInput.d.ts": [{"operation":"import","kind":"type","members":["BrowserTextInput"],"target":"@egret/engine/web/text-input"}]
+});
 // Gestures are made of the engine's root entry: its timer and its types.
 Object.assign(m15DeepClauses, {
   "packages/engine/web/gestures.ts": [{"operation":"import","kind":"value","members":["after"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["Delayed","Engine"],"target":"@egret/engine"}],
@@ -381,7 +387,7 @@ for (const [name, allowed] of Object.entries(expected)) {
           // The provider choice creates either provider, and is itself forwarded by the barrel alone.
           if (paragraphProviderTarget && !['web/paragraph.ts','dist/web/paragraph.js','dist/web/paragraph.d.ts','web/CanvasKitFontSetProvider.ts','dist/web/CanvasKitFontSetProvider.js','dist/web/CanvasKitFontSetProvider.d.ts','web/ParagraphProviderChoice.ts','dist/web/ParagraphProviderChoice.js','dist/web/ParagraphProviderChoice.d.ts'].includes(relative)) throw new Error(`${file}: paragraph provider imported outside its optional barrel`);
         }
-      } else if (['@egret/contracts/resources','#egret-manifest-resources','@egret/runtime/ui','@egret/engine/resources','@egret/engine','@egret/runtime/ui/editing','@egret/engine/ui/editing','@egret/engine/ui','@egret/engine/web/keyboard'].includes(imported)) {
+      } else if (['@egret/contracts/resources','#egret-manifest-resources','@egret/runtime/ui','@egret/engine/resources','@egret/engine','@egret/runtime/ui/editing','@egret/engine/ui/editing','@egret/engine/ui','@egret/engine/web/keyboard','@egret/engine/web/text-input'].includes(imported)) {
         const relative=path.relative(root,file).split(path.sep).join('/');
         const clause=code.slice(0,match.index).match(/\b(import|export)(\s+type)?\s*\{([^{}]+)\}\s*$/);
         const row=clause && {operation:clause[1],kind:clause[2]?'type':'value',members:clause[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:imported};
@@ -4994,7 +5000,7 @@ for (const [entry,source,stem,values,types,rules] of m15ResourceSurfaces) {
 // Whole-clause multiplicity is independent of the generic per-edge admission.
 for (const [file,expectedClauses] of Object.entries(m15DeepClauses)) {
   const code=sceneRead(file);
-  const actual=[...code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"](@egret\/contracts\/resources|#egret-manifest-resources|#egret-text-editor|@egret\/runtime\/ui|@egret\/runtime\/ui\/editing|@egret\/engine\/resources|@egret\/engine\/ui\/editing|@egret\/engine\/ui|@egret\/engine\/web\/keyboard|@egret\/engine)['"]/g)]
+  const actual=[...code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"](@egret\/contracts\/resources|#egret-manifest-resources|#egret-text-editor|@egret\/runtime\/ui|@egret\/runtime\/ui\/editing|@egret\/engine\/resources|@egret\/engine\/ui\/editing|@egret\/engine\/ui|@egret\/engine\/web\/keyboard|@egret\/engine\/web\/text-input|@egret\/engine)['"]/g)]
     .map(match=>({operation:match[1],kind:match[2]?'type':'value',members:match[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:match[4]}));
   if (!sceneEqual(actual.map(m15ClauseKey),expectedClauses.map(m15ClauseKey)))
     throw new Error('M15: exact named resource clause mismatch: '+file);

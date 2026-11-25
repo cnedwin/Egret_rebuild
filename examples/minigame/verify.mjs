@@ -124,6 +124,56 @@ try {
     assert.equal(band.length, seen.lines.length, 'a band of white for each line: ' + JSON.stringify(band));
     return { backend: seen.backend, reason: seen.reason, lines: seen.lines, bands: band.map(b => [b.top, b.bottom]) };
   });
+  // The page's text field shows no keyboard in a mini game: it is refused or opens with nothing to type into.
+  await step('browserTextInput', async seen => {
+    const calls = await page.evaluate(() => window.__wxCalls);
+    assert.equal(calls.showKeyboard ?? 0, 0, 'no keyboard was asked for');
+    return seen;
+  });
+  // Text input through the keyboard of the stand-in's wx: open, type, confirm; close; cancel. The words committed are
+  // drawn by a label below the paragraph.
+  const keyboard = (action, ...args) => page.evaluate(([a, rest]) => window.__keyboard[a](...rest), [action, args]);
+  const typedSoFar = () => page.evaluate(() => GameGlobal.__probe.typed.slice());
+  await step('textInput', async seen => {
+    assert.equal(seen.state, 'open');
+    const shown = await keyboard('state');
+    assert.deepEqual(shown, { value: '', maxLength: 65536, multiple: false, confirmHold: true, confirmType: 'done' });
+    await keyboard('type', '仵作');
+    await keyboard('type', '验尸');
+    await keyboard('confirm');
+    await page.waitForTimeout(400);
+    assert.deepEqual(await typedSoFar(), [
+      ['change', '仵作'],
+      ['change', '仵作验尸'],
+      ['commit', '仵作验尸']
+    ]);
+    assert.equal(await keyboard('state'), null, 'the keyboard is closed after the confirm key');
+    assert.equal((await page.evaluate(() => GameGlobal.__probe.textInputSnapshot())).state, 'idle');
+    const png = await picture();
+    const expected = 3 + report.steps.paragraph.lines.length + 1;
+    assert.equal(lines(png).length, expected, 'the committed words drawn below the paragraph');
+    return { typed: await typedSoFar() };
+  });
+  // A keyboard the player closes commits what was typed; a session the game cancels tells onCancel and closes it; the
+  // limit is kept in characters.
+  report.steps.textInputEnds = await (async () => {
+    const before = (await typedSoFar()).length;
+    await page.evaluate(() => GameGlobal.__probe.textInput({ maxLength: 3 }));
+    await keyboard('type', '河边发现');
+    await keyboard('close');
+    await page.evaluate(() => GameGlobal.__probe.textInput({ value: '袖口', blur: 'cancel' }));
+    assert.equal((await keyboard('state')).value, '袖口');
+    const cancelled = await page.evaluate(() => GameGlobal.__probe.cancelTextInput());
+    await page.waitForTimeout(300);
+    const told = (await typedSoFar()).slice(before);
+    assert.deepEqual(told, [['change', '河边发'], ['commit', '河边发'], ['cancel']]);
+    assert.equal(cancelled.state, 'idle');
+    assert.equal(await keyboard('state'), null);
+    const calls = await page.evaluate(() => window.__wxCalls);
+    assert.ok(calls.showKeyboard === 3 && calls.hideKeyboard === 2, JSON.stringify(calls));
+    assert.deepEqual(problems, []);
+    return { told, calls: { showKeyboard: calls.showKeyboard, hideKeyboard: calls.hideKeyboard } };
+  })();
   report.ok = true;
 } finally {
   await browser.close();

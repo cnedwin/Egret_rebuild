@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/WechatKeyboardTextInput.ts",
+      "originRole": "First-party text input through WeChat's keyboard, giving the object of the browser text input in a WeChat mini game; independently authored from WeChat's public mini game keyboard documentation with AI assistance; no third-party code; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/wechatTextInput.ts",
+      "originRole": "First-party text input through WeChat's keyboard, giving the object of the browser text input in a WeChat mini game; independently authored from WeChat's public mini game keyboard documentation with AI assistance; no third-party code; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/wechat-text-input.test.mjs",
+      "originRole": "First-party focused validation of the WeChat keyboard text input against a keyboard owned by the test that behaves as WeChat documents it; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

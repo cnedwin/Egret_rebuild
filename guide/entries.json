@@ -97,6 +97,7 @@
       "@egret/engine/video"
     ],
     "@egret/engine/web/view": [],
+    "@egret/engine/web/wechat-text-input": [],
     "@egret/engine/webgl2": [],
     "@egret/engine/webgl2/world3d": [
       "@egret/engine",
