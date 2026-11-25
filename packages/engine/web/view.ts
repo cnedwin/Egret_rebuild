@@ -34,6 +34,17 @@ interface ViewPartBase {
   readonly height?: ViewSize;
   /** False to begin hidden. */
   readonly visible?: boolean;
+  /** A stroke drawn inside the part's layout box. */
+  readonly border?: { readonly color: number; readonly width: number };
+}
+
+/** Width-wrapped text in an explicitly sized view part. Uses the view's paragraph cache. */
+export interface ViewParagraphStyle {
+  readonly fontFamilies: readonly string[];
+  readonly lineHeight?: number;
+  readonly locale?: string;
+  readonly direction?: 'ltr' | 'rtl';
+  readonly maxLines?: number;
 }
 /** A panel: a card that is drawn, or only a place that holds parts. */
 export interface ViewPanel extends ViewPartBase {
@@ -68,6 +79,7 @@ export interface ViewText extends ViewPartBase {
   /** Across its place: `'left'` unless given. The words are in the middle of it up and down. */
   readonly align?: 'left' | 'center' | 'right';
   readonly bold?: boolean;
+  readonly paragraph?: ViewParagraphStyle;
 }
 /** A button with words on it. */
 export interface ViewButton extends ViewPartBase {
@@ -76,6 +88,10 @@ export interface ViewButton extends ViewPartBase {
   readonly size?: number;
   readonly color?: number;
   readonly textColor?: number;
+  /** Optional detail below the title. Give the button an explicit height. */
+  readonly description?: string;
+  /** Style of the width-wrapped description. Omit both detail fields for a single-line button. */
+  readonly paragraph?: ViewParagraphStyle;
 }
 /** How full something is: a value from 0 to 1. */
 export interface ViewBar extends ViewPartBase {
@@ -96,8 +112,15 @@ export interface ViewToggle extends ViewPartBase {
 export interface ViewSpace extends ViewPartBase {
   readonly type: 'space';
 }
-/** Any part of a view: a panel, a text, a button, a bar, a toggle or a space. */
-export type ViewPart = ViewPanel | ViewText | ViewButton | ViewBar | ViewToggle | ViewSpace;
+/** A picture contained in its layout box and centred with its original aspect ratio. */
+export interface ViewImage extends ViewPartBase {
+  readonly type: 'image';
+  readonly src: string;
+  /** Accessible image description. Without one, the picture is decorative. */
+  readonly label?: string;
+}
+/** Any part of a view. */
+export type ViewPart = ViewPanel | ViewText | ViewButton | ViewBar | ViewToggle | ViewSpace | ViewImage;
 
 /** The colours and sizes a view is drawn with, where its parts do not give their own. */
 export interface ViewSkin {
@@ -200,7 +223,7 @@ const ANCHORS = new Set([
   'bottom',
   'bottom-right'
 ]);
-const BASE_KEYS = ['type', 'name', 'anchor', 'x', 'y', 'width', 'height', 'visible'];
+const BASE_KEYS = ['type', 'name', 'anchor', 'x', 'y', 'width', 'height', 'visible', 'border'];
 const KEYS: Record<ViewPart['type'], ReadonlySet<string>> = {
   panel: new Set([
     ...BASE_KEYS,
@@ -216,11 +239,12 @@ const KEYS: Record<ViewPart['type'], ReadonlySet<string>> = {
     'scroll',
     'children'
   ]),
-  text: new Set([...BASE_KEYS, 'text', 'size', 'color', 'align', 'bold']),
-  button: new Set([...BASE_KEYS, 'text', 'size', 'color', 'textColor']),
+  text: new Set([...BASE_KEYS, 'text', 'size', 'color', 'align', 'bold', 'paragraph']),
+  button: new Set([...BASE_KEYS, 'text', 'size', 'color', 'textColor', 'description', 'paragraph']),
   bar: new Set([...BASE_KEYS, 'value', 'color', 'label']),
   toggle: new Set([...BASE_KEYS, 'text', 'checked', 'size']),
-  space: new Set(BASE_KEYS)
+  space: new Set(BASE_KEYS),
+  image: new Set([...BASE_KEYS, 'src', 'label'])
 };
 const SKIN_KEYS = Object.keys(DEFAULT_VIEW_SKIN) as (keyof ViewSkin)[];
 
@@ -234,6 +258,39 @@ const size = (value: unknown): boolean =>
   (finite(value) && value >= 0) ||
   (typeof value === 'string' && /^\d+(?:\.\d+)?%$/.test(value) && Number.parseFloat(value) <= 100);
 
+function partOptions(value: unknown, keys: readonly string[], label: string, field: string): Record<string, unknown> {
+  if (
+    value === null ||
+    typeof value !== 'object' ||
+    Array.isArray(value) ||
+    Object.keys(value).some(key => !keys.includes(key))
+  )
+    throw invalid(label, field);
+  return value as Record<string, unknown>;
+}
+
+function checkParagraph(value: unknown, label: string): void {
+  const row = partOptions(value, ['fontFamilies', 'lineHeight', 'locale', 'direction', 'maxLines'], label, 'paragraph');
+  const families = row['fontFamilies'],
+    lineHeight = row['lineHeight'],
+    maxLines = row['maxLines'];
+  if (
+    !Array.isArray(families) ||
+    families.length === 0 ||
+    families.length > 16 ||
+    families.some(family => typeof family !== 'string' || !family.trim() || family.length > 256)
+  )
+    throw invalid(label, 'paragraph fontFamilies');
+  if (lineHeight !== undefined && (!finite(lineHeight) || lineHeight < 1 || lineHeight > 1024))
+    throw invalid(label, 'paragraph lineHeight');
+  if (row['locale'] !== undefined && (typeof row['locale'] !== 'string' || !row['locale'].trim()))
+    throw invalid(label, 'paragraph locale');
+  if (row['direction'] !== undefined && row['direction'] !== 'ltr' && row['direction'] !== 'rtl')
+    throw invalid(label, 'paragraph direction');
+  if (maxLines !== undefined && (!finite(maxLines) || !Number.isInteger(maxLines) || maxLines < 1 || maxLines > 256))
+    throw invalid(label, 'paragraph maxLines');
+}
+
 /** Checks the parts of one tree and returns its named parts with their kinds. */
 function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> {
   const names = new Map<string, ViewPart['type']>();
@@ -245,7 +302,7 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
     const part = value as Record<string, unknown>;
     const type = part['type'];
     if (typeof type !== 'string' || !Object.hasOwn(KEYS, type))
-      throw invalid(at, 'type is panel, text, button, bar, toggle or space');
+      throw invalid(at, 'type is panel, text, button, bar, toggle, space or image');
     const keys = KEYS[type as ViewPart['type']];
     for (const key of Object.keys(part)) if (!keys.has(key)) throw invalid(at, 'a ' + type + ' has no ' + key);
     const name = part['name'];
@@ -258,6 +315,25 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
     if (part['anchor'] !== undefined && !ANCHORS.has(part['anchor'] as string)) throw invalid(label, 'anchor');
     for (const key of ['x', 'y']) if (part[key] !== undefined && !finite(part[key])) throw invalid(label, key);
     for (const key of ['width', 'height']) if (part[key] !== undefined && !size(part[key])) throw invalid(label, key);
+    if (part['border'] !== undefined) {
+      const border = partOptions(part['border'], ['color', 'width'], label, 'border');
+      if (!colour(border['color']) || !finite(border['width']) || border['width'] <= 0) throw invalid(label, 'border');
+    }
+    if (part['paragraph'] !== undefined) {
+      checkParagraph(part['paragraph'], label);
+      if (part['height'] === undefined || part['height'] === 0) throw invalid(label, 'paragraph needs a height');
+    }
+    if (
+      type === 'button' &&
+      ((part['description'] !== undefined && typeof part['description'] !== 'string') ||
+        (part['description'] === undefined) !== (part['paragraph'] === undefined))
+    )
+      throw invalid(label, 'button description and paragraph are used together');
+    if (
+      type === 'image' &&
+      (typeof part['src'] !== 'string' || !part['src'].trim() || part['width'] === 0 || part['height'] === 0)
+    )
+      throw invalid(label, 'image source and size');
     for (const key of ['size', 'gap', 'padding'])
       if (part[key] !== undefined && (!finite(part[key]) || (part[key] as number) < 0)) throw invalid(label, key);
     if (part['size'] !== undefined && (part['size'] as number) === 0) throw invalid(label, 'size');
@@ -358,6 +434,8 @@ function natural(part: ViewPart, axis: 'width' | 'height', skin: ViewSkin): View
       return axis === 'width' ? 220 : Math.ceil(Math.max(44, (part.size ?? skin.size) * 1.8));
     case 'space':
       return 0;
+    case 'image':
+      return 64;
   }
 }
 /** A size against the room it is in; `'fill'` is all of the room. */

@@ -101,6 +101,8 @@ export interface PlayOptions {
   readonly seed?: number | string;
   /** `'auto'` unless given. */
   readonly backend?: 'auto' | BrowserGameBackend;
+  /** Render pixels per stage unit. Layout, input and semantic bounds stay in stage units. */
+  readonly pixelRatio?: number;
   /**
    * How translucent things mix with what is under them. `'srgb'` unless given: as a 2D canvas and Egret 5 mix
    * them, so a white at 10% over a dark ground is a faint white. `'linear'` mixes light as it is, as the engine
@@ -840,6 +842,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     ...(options.portrait === undefined ? {} : { portrait: options.portrait }),
     ...(options.insets === undefined ? {} : { insets: options.insets }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),
+    ...(options.pixelRatio === undefined ? {} : { pixelRatio: options.pixelRatio }),
     ...(onError === undefined ? {} : { onError })
   }).catch((cause: unknown) => {
     holder?.remove();
@@ -2411,9 +2414,21 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       if (o === null || typeof o !== 'object') throw invalid('the options of an image are an object');
       const into = o.layer === undefined || o.layer === 'world' ? world : o.layer === 'ui' ? ui : o.layer;
       if (!(into instanceof Sprite) || into.isDisposed) throw invalid("layer is 'ui', 'world' or a sprite");
+      const round = generation;
       const lease = await browser.loadTexture(url);
-      const holder = scope.use(new Sprite()),
+      if (disposed || generation !== round || into.isDisposed || left.has(into)) {
+        lease.release();
+        throw invalid('the layer stopped accepting this image while it loaded');
+      }
+      const holder = scope.use(new Sprite());
+      let picture: Bitmap;
+      try {
         picture = scope.use(new Bitmap(lease));
+      } catch (cause) {
+        holder.dispose();
+        lease.release();
+        throw cause;
+      }
       picture.sharedMaterial = o.smooth === false ? SHARP : SMOOTH;
       const own = { width: picture.width, height: picture.height },
         w = finite(o.width) && o.width > 0 ? o.width : undefined,
@@ -2428,6 +2443,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       holder.x = finite(o.x) ? o.x : 0;
       holder.y = finite(o.y) ? o.y : 0;
       into.addChild(holder);
+      removers.set(holder, () => {
+        // Detach the bitmap before revoking its texture lease. Its disposal still follows the normal frame boundary.
+        game.remove(picture);
+        lease.release();
+      });
       return holder;
     },
     bar: options => widgets.bar(options),

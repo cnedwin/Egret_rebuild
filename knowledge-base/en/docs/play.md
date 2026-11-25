@@ -70,6 +70,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `saveKey` | The name `game.save` keeps its values under | The page's path |
 | `semantics` | A tree from `createUiSemantics` of `@egret/engine/ui/semantics`: views of `game.show` add their named parts to it, and it is published at the end of every frame, for a [UI tester](ui-testing.md) and for assistive technology | No tree |
 | `backend` | `'auto'`, `'webgpu'` or `'webgl2'` | `'auto'` |
+| `pixelRatio` | Positive multiplier for the 2D drawing buffer. The stage, layout, input and semantic bounds use the same logical units at every density | Browser device pixel ratio, capped at 2 |
 | `blendSpace` | How translucent things mix: `'srgb'` as a 2D canvas and Egret 5 do, so white at 10% over a dark ground is a faint white; `'linear'` mixes light, and the same white looks stronger | `'srgb'` |
 | `fit` | `'expand'` fills the window: the same scale, and the stage reaches past `width` × `height` to the edges. See [Screens of any shape](#screens-of-any-shape) | `'contain'`: bars where the window has another shape |
 | `portrait` | `{ width, height }`: the stage while the window is taller than wide | `width` × `height` either way |
@@ -120,6 +121,10 @@ const game = await play({
 Pass `parent` or a page-owned `canvas` to give the game its own keyboard focus. Click the canvas or Tab to it to play. Tab and Shift+Tab continue through the page, and a focused HTML button gets its normal Space or Enter activation. Leaving the canvas releases held keyboard keys, even if the key is released later over another element. When neither option is supplied, the game keeps its window-wide keyboard shortcuts, including Tab.
 
 An embedded canvas with no `tabindex` gets `0` while the game is open. An explicit value such as `-1` is respected. For a decorative stage whose interaction is entirely in HTML, mark its container `inert`. With `transparent: true`, both the rendered surface and the engine-created holder let the page show through. A caller-provided canvas keeps its own styles.
+
+For a fixed-ratio game, use `fit: 'contain'` and pass the logical stage width and height to `createBrowserSemantics({ semantics, canvas: game.canvas, width, height })` from `@egret/engine/web/semantics`. The projection measures the fitted canvas inside the letterbox. Positive axis-aligned CSS scaling and translation on its ancestors are supported. Call `projection.sync()` after changing an ancestor’s CSS transform without resizing it. Rotated, skewed, reflected and perspective surfaces are refused.
+
+Run `pnpm example:browser --port 4173` and open `/examples/play/index.html?game=semantic-letterbox` on the local server for the fixed-ratio workshop example in `examples/play/semantic-letterbox.mjs`. The sample uses a 640 × 360 stage and a 480 × 270 drawing buffer. In `play3d`, `pixelRatio` controls the foreground UI. The 3D background uses its own quality settings.
 
 ## Drawing
 
@@ -249,7 +254,11 @@ During initial setup or restart, `game.dispose()` closes the game even if an app
 
 ## Pictures
 
-`await game.image(url, { x, y, width, height, smooth, layer })` loads a PNG from an address and places it with its middle at `x`, `y`, on the world layer unless given another. Given one of `width` and `height` it keeps its shape; given neither, its own size. It is a sprite like the others. It is smooth and is read from its [smaller copies](shared-render-profile-contract.md) when drawn smaller than it is, so a big picture drawn small does not shimmer; `smooth: false` keeps every texel sharp, for pixel art. The same address loaded twice is one texture.
+`await game.image(url, { x, y, width, height, smooth, layer })` reads a picture and places its middle at `x`, `y` on the world layer by default. PNG retains strict validation. JPEG, WebP, GIF and AVIF use the browser decoder when the browser supports them. The encoded bytes select the decoder. Each game admits up to four simultaneous image loads, with an 8 MiB encoded limit per image. Disposing the game aborts pending fetches and releases any decoded result returned after cancellation.
+
+Give only `width` or `height` to preserve the picture's shape, or omit both to use its original size. The default uses [smaller copies](shared-render-profile-contract.md) when scaling down. Set `smooth: false` for sharp pixel art. Repeated loads of the same address share a texture while it is leased.
+
+An unsuccessful HTTP status keeps the error chain `ASSET_LOAD_FAILED` → `WEB_PNG_READ_FAILED` → `BROWSER_GAME_IMAGE_FAILED`. The URL can be retried. In the Chromium 157 software WebGL2 check, the first request to a `.png` URL returned 404. The second request to the same URL returned WebP bytes with a PNG media type and produced a 48 × 32 image.
 
 ## Words, menus and bars
 

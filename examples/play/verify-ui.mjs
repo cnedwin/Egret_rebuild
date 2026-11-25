@@ -13,11 +13,11 @@ if (
   !output ||
   !executablePath ||
   ![playwrightFile, output, executablePath].every(file => path.isAbsolute(file)) ||
-  !['all', 'visibility', 'scroll'].includes(selection) ||
+  !['all', 'visibility', 'scroll', 'host', 'rich'].includes(selection) ||
   process.argv.length > 6
 ) {
   throw new Error(
-    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll]'
+    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich]'
   );
 }
 
@@ -26,10 +26,9 @@ const html = fs.readFileSync(new URL('index.html', import.meta.url), 'utf8');
 const importMap = html.match(/<script type="importmap">([\s\S]*?)<\/script>/u);
 assert.ok(importMap, 'Play example import map');
 const imports = JSON.parse(importMap[1]).imports;
-imports['@egret/engine/web/semantics'] = '/packages/engine/dist/web/semantics.js';
-imports['@egret/engine/ui'] = '/packages/engine/dist/ui/index.js';
 imports['@egret/engine/input/hover'] = '/packages/engine/dist/hover.js';
-imports['@egret/runtime/ui'] = '/packages/runtime/dist/ui/index.js';
+imports['@egret/engine/web/image'] = '/packages/engine/dist/web/image.js';
+imports['@egret/engine/web/paragraph'] = '/packages/engine/dist/web/paragraph.js';
 const fixture =
   '<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,">' +
   '<script type="importmap">' +
@@ -51,8 +50,12 @@ try {
   report.browser = browser.version();
   const cases = [
     { id: 'visibility', file: './verify-view-visibility.mjs', method: 'verifyViewVisibility', touch: false },
-    { id: 'scroll', file: './verify-view-scroll.mjs', method: 'verifyViewScroll', touch: true }
+    { id: 'scroll', file: './verify-view-scroll.mjs', method: 'verifyViewScroll', touch: true },
+    { id: 'host', file: './verify-play-ui-host.mjs', method: 'verifyPlayUiHost', touch: false }
   ];
+  // The separately provisioned rich-text fonts and WASM are only required for this case.
+  if (selection === 'rich')
+    cases.push({ id: 'rich', file: './verify-view-rich.mjs', method: 'verifyViewRich', touch: false });
   for (const entry of cases.filter(candidate => selection === 'all' || selection === candidate.id)) {
     const context = await browser.newContext({ viewport: { width: 960, height: 540 }, hasTouch: entry.touch });
     const page = await context.newPage();

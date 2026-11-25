@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/playViewParagraph.ts",
+      "originRole": "First-party lazy paragraph entry for declarative Play views, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/semantic-letterbox.mjs",
+      "originRole": "First-party fixed-ratio semantic projection example, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-play-ui-host.mjs",
+      "originRole": "First-party Chromium regression for browser image formats and fitted semantic projection; no game assets; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-view-rich.mjs",
+      "originRole": "First-party synthetic rich Play view browser fixture, reusing the existing optional paragraph runtime and registered Noto qualification font inputs; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

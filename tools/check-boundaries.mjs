@@ -300,6 +300,14 @@ Object.assign(m15DeepClauses, {
   "packages/engine/dist/web/playViewScroll.js": [{"operation":"import","kind":"value","members":["createScrollControl"],"target":"@egret/engine/ui"}]
 });
 for (const [file, clauses] of Object.entries({"packages/engine/src/ui/textEditor.ts":[{"operation":"import","kind":"type","members":["Paragraph","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/dist/ui/textEditor.d.ts":[{"operation":"import","kind":"type","members":["ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/src/ui/textEditorTypes.ts":[{"operation":"import","kind":"type","members":["ParagraphCache","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/dist/ui/textEditorTypes.d.ts":[{"operation":"import","kind":"type","members":["ParagraphCache","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}]})) m32ParagraphDeepClauses[file] = [...(m32ParagraphDeepClauses[file] ?? []), ...clauses];
+// Rich Play views opt into paragraph layout. The plain view remains a cold import.
+Object.assign(m32ParagraphDeepClauses, {
+  "packages/engine/web/playView.ts": [{operation:"import",kind:"type",members:["Paragraph","ParagraphCache"],target:"@egret/engine/paragraph"}],
+  "packages/engine/dist/web/playView.d.ts": [{operation:"import",kind:"type",members:["ParagraphCache"],target:"@egret/engine/paragraph"}],
+  ...Object.fromEntries(["web/playViewParagraph.ts","dist/web/playViewParagraph.js","dist/web/playViewParagraph.d.ts"].map(file => [
+    "packages/engine/"+file, [{operation:"export",kind:"value",members:["createParagraph"],target:"@egret/engine/paragraph"}]
+  ]))
+});
 let inspected = 0;
 const forbidden = /\b(?:document|window|HTMLCanvasElement|GPUDevice|process|Buffer|require)\b|["']node:/;
 for (const [name, allowed] of Object.entries(expected)) {
@@ -5407,8 +5415,8 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
   if(Object.hasOwn(loopAllowed,resolved)&&!loopAllowed[resolved].includes(relative))throw new Error('Frame loop: implementation module imported outside its entry: '+relative);
  }
 }
-// Browser game: one optional browser entry. It is made of other entries, never of their implementation modules, and
-// loads a Host's entry only when that backend is chosen. No other entry has it.
+// Browser game: one optional browser entry. It uses the shared browser image decoder and loads a Host's entry
+// only when that backend is chosen. No other entry has it.
 const gameTypes=['BrowserGame','BrowserGameBackend','BrowserGameFit','BrowserGameLabel','BrowserGameLabelCreateOptions','BrowserGameLabelOptions','BrowserGameOptions','BrowserStatsPanel','BrowserStatsPanelOptions','BrowserStatsSample','BrowserStatsSnapshot'],gameValues=['createBrowserGame','createBrowserStatsPanel'];
 for(const [file,types] of [['packages/engine/web/game.ts',gameTypes],['packages/engine/dist/web/game.js',[]],['packages/engine/dist/web/game.d.ts',gameTypes]]){
  const surface=mouseExports(uiRead(file),file);
@@ -5419,7 +5427,7 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
+const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],
  'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','@egret/engine','@egret/engine/text'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};

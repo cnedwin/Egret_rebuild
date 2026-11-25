@@ -56,6 +56,43 @@ The root is placed in `game.safe`, the part of the screen no notch covers, or in
 
 A field a part does not have, a name used twice, or a portrait that lacks a name is refused with `UI_VIEW_INVALID` or `UI_VIEW_VARIANT_MISMATCH`. The error says which part, such as `root/3/0 (buy)`. A binding for a name the view does not have is refused with `UI_VIEW_BINDING_UNKNOWN`, and one a part cannot take with `UI_VIEW_BINDING_INVALID`. A misspelt field is never drawn as nothing.
 
+## Wrapped labels, button details, images and borders
+
+Pass a `paragraphCache` to `game.show` to use the [paragraph SDK](paragraph-layout-controls.md) inside a text part or a button description. Give each paragraph part a height in the view description. Text wraps to the planned width and clips at the bottom of the box. Button details sit below the title and wrap within the button's inner width. Use `lineHeight` for minimum line spacing, `fontFamilies` in fallback order, and `maxLines` to cap the number of lines. A button with only `text` continues to use its single-line title.
+
+```js
+import { createParagraphCache } from '@egret/engine/paragraph';
+
+// In play's setup, reuse the cache and provider owned by the game.
+const paragraphCache = createParagraphCache(game.engine.assets, { provider });
+const paragraph = { fontFamilies: ['Noto Sans', 'Noto Sans CJK SC'], locale: 'zh-CN', lineHeight: 24 };
+const workshop = game.show({
+  label: 'Workshop',
+  root: {
+    type: 'panel', width: 340, height: 300, padding: 14, layout: 'column', gap: 10,
+    border: { color: 0x8ba87a, width: 2 },
+    children: [
+      { type: 'image', name: 'cover', src: '/art/workshop.webp', label: 'Workshop', height: 64 },
+      { type: 'text', name: 'notes', text: '筹备 Wood workshop', paragraph, height: 72 },
+      { type: 'button', name: 'build', text: 'Build workshop', description: '备齐两箱木材。\nPlace two crates.',
+        paragraph: { ...paragraph, maxLines: 3 }, height: 108, border: { color: 0x56caff, width: 2 } }
+    ]
+  }
+}, { paragraphCache, bind: { build: { tap: () => buildWorkshop() } } });
+```
+
+Any part accepts `border: { color, width }` and draws it inside the layout box. An `image` keeps its aspect ratio and is centred in the box. Give the image a `name` and `label` to expose its role and accessible name. `game.show` releases its own paragraph and image borrows when the view closes. Keep the shared cache and provider alive until the views that use them close, then dispose of them in your game.
+
+The paragraph provider and its fonts are selected by the game. For a browser setup, see the [paragraph panel example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/README.md). Its opt-in CanvasKit build and Noto fonts carry the [source and license records](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/manifest.json). Normal single-line views can start without loading those files. A page that uses paragraphs through a native import map also maps `@egret/engine/paragraph` and `@egret/runtime/paragraph`, plus `@egret/engine/web/paragraph` for the CanvasKit provider.
+
+```text
+node tools/build.mjs
+node --test tests/ui-view.test.mjs
+node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> rich
+```
+
+In Chromium 157 with software WebGL2, both parts wrapped to three lines with 24-unit baseline spacing. Pixel samples confirmed the border and the WebP cover, the button fired once per click, and closing the view returned the cache's caller lease count to zero. Hardware WebGPU, Safari, Firefox and physical phone rendering for this fixture remain to be checked.
+
 ## Bindings
 
 | Key | For | Read as |

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Rich Play views and browser host options",
+    "body": "Play views can use the paragraph cache for multilingual wrapping and button descriptions, and show bordered image parts. Browser game images recognize WebP and other browser-supported formats alongside strict PNG. Play can set the 2D drawing buffer density separately from its stage, and semantic projection can follow a letterboxed canvas in a positively scaled page container."
+  },
+  "zh": {
+    "title": "Play 富文本视图与浏览器宿主选项",
+    "body": "Play 视图可用段落缓存实现多语言换行和按钮说明，也可显示带边框的图片部件。浏览器游戏支持 WebP 等浏览器可解码的图片格式，并延续 PNG 严格校验。Play 可独立设置 2D 绘制缓冲密度，语义投影可跟随正向缩放容器中保持比例留边的画布。"
+  }
+}

@@ -46,6 +46,51 @@ test('a vertical scroll panel plans fixed two-column rows beyond its viewport', 
   });
 });
 
+// Break caught: rich labels and image leaves must use the same named layout path as the existing parts.
+test('VW05 rich text, button details, borders and image leaves share the fixed boxes and narrow validation', () => {
+  const paragraph = { fontFamilies: ['Noto Sans', 'Noto Sans CJK SC'], lineHeight: 22, locale: 'zh-CN' };
+  const description = {
+    root: {
+      type: 'panel',
+      name: 'sheet',
+      layout: 'column',
+      width: 232,
+      height: 224,
+      gap: 4,
+      border: { color: 0x224466, width: 2 },
+      children: [
+        { type: 'text', name: 'detail', text: '营建清单 Construction requirements', width: 136, height: 72, paragraph },
+        {
+          type: 'button',
+          name: 'build',
+          text: '营建 Build',
+          description: '工坊：木材及石料\nRequires two workers',
+          width: 160,
+          height: 96,
+          paragraph
+        },
+        { type: 'image', name: 'cover', src: 'cover.webp', label: '工坊图标', width: 48, height: 36 }
+      ]
+    }
+  };
+  const plan = planView(description, landscape);
+  assert.deepEqual([at(plan, 'detail').width, at(plan, 'detail').height], [136, 72]);
+  assert.deepEqual([at(plan, 'cover').width, at(plan, 'cover').height], [48, 36]);
+  assert.equal(checkView(description).get('build'), 'button');
+  for (const bad of [
+    { type: 'text', text: 'a', height: 44, paragraph: { fontFamilies: [] } },
+    { type: 'text', text: 'a', height: 44, paragraph: { fontFamilies: ['Ahem'], lineHeight: 0 } },
+    { type: 'button', text: 'b', description: 'c', paragraph },
+    { type: 'panel', border: { color: -1, width: 2 } },
+    { type: 'image', src: '', height: 32 },
+    { type: 'image', src: 'foo', height: 0 }
+  ])
+    assert.throws(
+      () => checkView({ root: bad }),
+      error => error.code === 'UI_VIEW_INVALID'
+    );
+});
+
 // Break caught: an anchor measured from the wrong edge, an offset that goes outward, or a share of the wrong room.
 test('VW01 a free panel places each part from its anchor, inward, at its size or a share of the panel', () => {
   const plan = planView(
