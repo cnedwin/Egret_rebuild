@@ -18,7 +18,7 @@ The 19-second frames show the state each run reached.
 | --- | --- |
 | ![Black game surface at 19 seconds](https://raw.githubusercontent.com/cnedwin/Egret_rebuild/main/guide/studies/windlamp-post/old-entry.png) | ![Courier beside the lantern, interrupted lighting attempt, counter still at zero](https://raw.githubusercontent.com/cnedwin/Egret_rebuild/main/guide/studies/windlamp-post/new-entry.png) |
 
-Both exception stacks point to the same call in the shared bundle. It charges geometry against the cumulative 65,536-triangle capture limit for one frame. The logs do not give the actual triangle count or identify the object that exhausted the budget. [Frame capture at the study revision](https://github.com/cnedwin/Egret_rebuild/blob/5792d800a4932da81ddf6af9314a430c41cb0f30/packages/runtime/src/sharedFrameCapture.ts#L313)
+Both exception stacks point to the same call in the shared bundle. It charges geometry against the cumulative 65,536-triangle capture limit for one frame. Those original logs identify the budget check. The instrumented follow-up below measures the individual drawing costs. [Frame capture at the study revision](https://github.com/cnedwin/Egret_rebuild/blob/5792d800a4932da81ddf6af9314a430c41cb0f30/packages/runtime/src/sharedFrameCapture.ts#L313)
 
 ## How the drafts were made
 
@@ -45,3 +45,29 @@ The signed-off input rule allowed at most one visible action at 4, 8, 12 and 16 
 For the next opening, a practical acceptance check is to reach the first lantern, finish lighting it, and see that the player can continue. This pair shows why a visible first action and a complete, runnable interaction deserve separate observations. It cannot establish a repeatable quality improvement or a winner within budget.
 
 Extract the [study archive](https://raw.githubusercontent.com/cnedwin/Egret_rebuild/main/guide/studies/windlamp-post/study.zip). In `old-entry/` and `new-entry/`, watch `first-20s.mp4` or extract `draft.zip` and serve the extracted directory over local HTTP. The archive includes the original author prompts and outputs, budgets, action logs, blinded observations, source and recording checksums, and engine notices in both drafts.
+
+## Follow-up: what spent the triangle budget
+
+Two diagnostic replays per original draft used its archived game bytes and a copy of its engine with counters at the existing geometry check. The second replay also counted the triangles produced by each radial fill. Both kept the 65,536-triangle limit and the original submission order. These counts describe the geometry examined by frame capture. They are not GPU draw or timing measurements.
+
+| Draft | Geometry that accounted for the cost | First geometry refused |
+| --- | --- | --- |
+| A · first capture | The sky contributed 24,626 triangles and the starting cabin 16,964. The destination inn at world x = 2,411 was already attached, outside the initial 960-unit view. Its three radial glows accounted for 27,556 of its 27,716 triangles. | The inn brought the attempted subtotal from 49,664 to 77,380 in both replays. Capture stopped there. |
+| B · activating the first lantern | The distant station alone held 33,593 triangles, including 33,124 from three radial fills. The first lantern went from 39 triangles to 16,421. Its newly lit radial fill generated 16,384. | An unchanged, hidden route marker cost 61. The attempted subtotal reached 65,586 and 65,590 in the two replays. The walk stopped before later effects, so their geometry is excluded from these subtotals. |
+
+B’s game logic reached the lit state, but capture refused the frame that would have shown it. In the original recording the light counter stayed at 0/4. Looking only at the last 61 triangles would have blamed a small marker for a much larger change. The [capture code at the study revision](https://github.com/cnedwin/Egret_rebuild/blob/5792d800a4932da81ddf6af9314a430c41cb0f30/packages/runtime/src/sharedFrameCapture.ts#L1257) admits attached geometry independently of its eventual visibility.
+
+The authoring entry now recommends simple flat layers for decorative glows, adding distant scenery as the player approaches, and reserving enough geometry for a successful action and its feedback to coexist. The third author received this general guidance. It received no case-specific counts, source from the two earlier Windlamp drafts or prescribed controls.
+
+### Third unedited draft
+
+The author received the original Chinese request, model (`gpt-6.2-sol`, medium), starter, engine, one-response allowance, 480-second limit and 24,000-byte UTF-8 source budget. The input was 38,135 bytes including the entry and both rendered cards. The model returned **24,387 bytes** in 257.897 seconds, **387 bytes over budget**. The entire first response went into the game unchanged.
+
+| From a fresh launch | Reached the first lamp | Lit it | Continued after lighting |
+| --- | --- | --- | --- |
+| Original observation rules, four input slots | Yes. At 4.85 s the courier was beside the lamp and its E prompt was visible. The 1.5 s rightward hold carried the courier past the lamp and over the edge. | No. The courier returned to the start, where E was out of range. The counter ended at 0/3. | No. |
+| Separate playable check, same game, shorter movement holds | Yes. A 0.81 s rightward hold left the courier beside the lamp. The E prompt was still visible at 7 s. | Yes. After E at 8 s, the lamp glowed, a wooden bridge appeared across the gap and the counter read 1/3 at 11 s. | Yes. After a 0.32 s rightward hold at 12 s, the courier was past the lamp at the bridge entrance. Light, bridge and count persisted at 19 s. |
+
+Both silent videos run continuously from navigation for 20.000 seconds (400 frames at 20 fps). Both used Windows Chrome for Testing 157 with software WebGL2 and the unchanged engine, and neither reported a page exception. The second recording shows that the opening interaction works when the player stops within reach. The first records how readily the player can overshoot it. This was one generated draft and controlled browser input, with no first-time player study.
+
+[Both videos, runnable third draft, exact prompt and response, action logs, geometry traces and replay probe](https://raw.githubusercontent.com/cnedwin/Egret_rebuild/main/guide/studies/windlamp-post/draw-budget.zip)

@@ -4,7 +4,7 @@
 
 ## Start a game
 
-Choose an object or character the player can act on and decide what will visibly change. Use [the first playable action](guide/cards/game/first-playable-world.txt) to design the opening. For movement, landing or impact, read [feedback in the character or vehicle](guide/cards/game/action-body-feedback.txt). For an existing game, look up the symptom or API in the [technical guide](guide/index.txt). In the standalone download, open this page online to follow the guide links: <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
+Choose an object or character the player can act on and decide what will visibly change. Use [the first playable action](guide/cards/game/first-playable-world.txt) to design the opening. For movement, landing or impact, read [feedback in the character or vehicle](guide/cards/game/action-body-feedback.txt). For procedural 2D art, budget the busiest action frame as well as the idle scene. A large radial gradient can consume thousands of the 65,536 mesh triangles in a capture. Try a few flat shapes for glows and attach distant scenery only as the camera approaches. For an existing game, look up the symptom or API in the [technical guide](guide/index.txt). In the standalone download, open this page online to follow the guide links: <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
 
 ```html
 <!doctype html>

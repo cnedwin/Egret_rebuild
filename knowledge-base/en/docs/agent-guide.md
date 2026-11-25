@@ -8,6 +8,8 @@ Coding agents write most of the games built on this engine. They need to know th
 
 Before choosing an API, describe what the player will act on, the change they should see and the next action that change makes possible. Start a building or story game with [the first playable action](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/game/first-playable-world.txt). When movement, landing or impact drives the opening, use [feedback in the character or vehicle](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/game/action-body-feedback.txt). For example, a first jump can show the character stretching at takeoff and compressing on contact with the ground. For a bug in an existing game, use its API name, error code or symptom in the technical guide below.
 
+Budget a procedural 2D scene for the action that changes it. The frame capture admits at most 65,536 mesh triangles. A single large radial glow can add thousands when the player activates it, on top of geometry already attached beyond the camera. For an inexpensive glow, layer a bright core over a couple of flat translucent shapes. Attach scenery in sections and remove sections that have left play. Check the frame before the action, the moment its effects overlap, and whether the next input still moves the player.
+
 See the [paired first-draft study](first-playable-entry-study.md) for the recorded openings and the limits of the comparison.
 
 ## What a developer's agent reads
