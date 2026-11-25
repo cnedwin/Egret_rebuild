@@ -49,6 +49,42 @@ function recorder(maxDeltaSeconds = 0.5) {
 }
 const FRAME = Object.freeze({ width: 320, height: 180 });
 
+test('FL10 a clean frame skips submission without skipping time, and backpressure keeps a requested frame pending', () => {
+  const screen = display(),
+    engine = recorder();
+  let dirty = false,
+    pendingFrames = 0,
+    updates = 0;
+  const draw = engine.renderSharedFrame;
+  engine.renderSharedFrame = frame => {
+    draw(frame);
+    dirty = false;
+  };
+  const loop = createBrowserFrameLoop({
+    engine,
+    frame: FRAME,
+    host: { getStatus: () => ({ pendingFrames }) },
+    update() {
+      if (++updates === 2) dirty = true;
+    },
+    shouldRender: () => dirty,
+    ...screen
+  });
+  loop.start();
+  screen.present(0);
+  assert.deepEqual(engine.calls, ['time 0.000']);
+  pendingFrames = 2;
+  screen.present(16);
+  assert.equal(loop.snapshot().skipped, 1);
+  pendingFrames = 0;
+  screen.present(32);
+  screen.present(48);
+  assert.deepEqual(engine.calls, ['time 0.000', 'time 0.016', 'time 0.032', 'draw 320', 'time 0.048']);
+  assert.equal(loop.snapshot().frames, 1);
+  assert.equal(updates, 4);
+  loop.dispose();
+});
+
 test('FL01 each frame advances the clock, steps the game and draws, in that order', () => {
   const screen = display(),
     engine = recorder(),

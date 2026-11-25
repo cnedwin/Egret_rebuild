@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-demand-render.mjs",
+      "originRole": "First-party real-browser fixture for opt-in Play frame submission, input, size, resource readiness and tween cadence; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

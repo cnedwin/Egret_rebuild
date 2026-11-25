@@ -9249,9 +9249,49 @@ function restoreScene3dEntries(raw) {
   return prior;
 }
 
-// Historical metadata fixtures use the exact engine package that accompanied their tools.
+const m15DeclarationPin = {
+  path: 'packages/engine/dist/Engine.d.ts',
+  bytes: 4765,
+  sha256: '690f44e9d1d77344a26a175595b3b19ffd8ef80f056b0d527e2ae0935f9946d2'
+};
+
+function m15DeclarationFixtureInput(raw) {
+  const identify = body => ({
+    path: m15DeclarationPin.path,
+    bytes: body.length,
+    sha256: createHash('sha256').update(body).digest('hex')
+  });
+  const received = identify(raw);
+  if (received.bytes === m15DeclarationPin.bytes && received.sha256 === m15DeclarationPin.sha256) return raw;
+  assert.deepEqual(
+    received,
+    {
+      path: m15DeclarationPin.path,
+      bytes: 5025,
+      sha256: '5acc6ec70b019e17b1f4588beee8861c3c1fb56fb80a1f622726a69083ae9485'
+    },
+    'Exact on-demand Engine declaration differs'
+  );
+  // In this historical observation only, reverse the watcher type, method and emitted export marker.
+  let text = raw.toString('utf8');
+  for (const block of [
+    'type DisplayRevisionWatch = {\n    readonly revision: number;\n    dispose(): void;\n};\n',
+    '    /** @internal Browser scheduling reads this scope-owned observation before submitting a frame. */\n' +
+      '    watchDisplayRevision(scope: Scope): DisplayRevisionWatch;\n',
+    'export {};\n'
+  ]) {
+    assert.equal(text.split(block).length, 2, 'Exact on-demand declaration inverse differs');
+    text = text.replace(block, '');
+  }
+  const previous = Buffer.from(text);
+  assert.deepEqual(identify(previous), m15DeclarationPin, 'Exact historical Engine declaration differs');
+  return previous;
+}
+
+// Historical metadata fixtures use the exact Engine inputs that accompanied their tools.
 function m33BoundaryFixtureInput(file) {
   let raw = m24SpinePrevious(fs.readFileSync(new URL('../../' + file, import.meta.url)), file);
+  if (file === m15DeclarationPin.path) return m15DeclarationFixtureInput(raw);
   if (file !== 'packages/engine/package.json') return raw;
   raw = projectWorld3dPackage(restoreScene3dEntries(raw));
   const editing = {
@@ -9492,8 +9532,11 @@ test('M1.5 maintenance reads six exact source owners and refuses unreviewed post
     for (const row of newPairs.filter(row => row.binding === 'm15InterfaceProjectedSuccessor')) {
       assert.equal(row.comparison, 'transformed-pair-raw-observation-only');
       assert.equal(row.rows[0].identity, 'neither');
-      assert.equal(row.rows[0].current.bytes, 4765);
+      assert.deepEqual(row.rows[0].current, m15DeclarationPin);
     }
+    const unknownDeclaration = Buffer.from(fs.readFileSync(path.join(f.root, m15DeclarationPin.path)));
+    unknownDeclaration[0] ^= 1;
+    assert.throws(() => m15DeclarationFixtureInput(unknownDeclaration), /Exact on-demand Engine declaration differs/);
     assert.equal(m.verifyMaintenanceProposal(f.root, baseline), true);
     for (const pin of expected) {
       const raw = fs.readFileSync(path.join(f.root, pin.path), 'utf8');

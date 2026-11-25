@@ -63,6 +63,8 @@ await play({
 
 For a phone held either way, give `fit: 'expand'` and a `portrait` size: the stage keeps its scale and reaches to the window's edges, `(0, 0)` stays the design's corner, and `width` × `height` follow the window's shape. `arrange(game)` runs after `setup` and whenever the window changes size or turns; place what belongs at an edge there, from `game.safe` (what no notch covers) or `game.screen` (all the window shows), and read `game.orientation`. Boxes of words, menus and the touch stick go in `game.safe` by themselves.
 
+For a static 2D screen, use `renderMode: 'on-demand'` in `play`. The clock and update keep running, while a clean frame keeps its last picture. Call `game.invalidate()` to request another draw for changes outside the display tree.
+
 ## Drawing
 
 | Call | Gives |

@@ -78,6 +78,19 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 
 Options that cannot make a game are refused with `PLAY_OPTIONS_INVALID`; the message ends with which one.
 
+## Retaining a static 2D frame
+
+```js
+const game = await play({ width: 1280, height: 800, renderMode: 'on-demand', setup });
+game.invalidate();
+```
+
+On-demand drawing retains the last submitted frame when the display tree and canvas are unchanged. Mouse, touch and keyboard input and canvas resizing request a fresh draw. Asynchronous images and prepared text appear when ready. Call `game.invalidate()` when a source outside the display tree changes. The clock, input and the application's `update` run at the normal cadence. A moving sprite or a tween draws as it changes. Continuous drawing is the default for `play` and remains the drawing mode for `play3d`.
+
+Build the workspace and run `node examples/play/verify-demand-render.mjs <Playwright index.mjs> <new output.json> [webgl2|webgpu] [Chromium executable] [software|hardware]`. The fixture measures submitted frames and checks input, resize, asynchronous resources, text and tween pause and resume.
+
+On Windows Chrome for Testing 157.0.8103.6, with a 1280 × 800 browser viewport and a 640 × 400 design, the fixture recorded 31 submissions in a 30-interval idle window with continuous drawing and zero in on-demand mode. Both windows had 31 engine steps. This held on SwiftShader WebGL2 and the NVIDIA Blackwell WebGPU adapter. Mouse, touch, Space, resize, explicit redraw, texture readiness and text readiness each brought back drawing. A paused tween produced zero submissions and resumed to its target. The synthetic software WebGL2 idle P95 was 4.2 ms in both modes. The title-screen workload of an external game, phone browsers and software WebGPU performance require separate measurements.
+
 ## Screens of any shape
 
 A phone is held either way, a window is any shape, and a notch or a home bar covers part of the screen. Three rules cover these, the same for every game:

@@ -90,6 +90,11 @@ export interface PlayOptions {
   readonly setup?: (game: PlayGame) => void | Promise<void>;
   /** One step of the game, with the seconds since the step before. */
   readonly update?: (seconds: number, game: PlayGame) => void;
+  /**
+   * Continuous draws each display frame (the default). On-demand retains a static 2D frame until the scene, input
+   * or canvas size changes. The clock and update still run on each display frame.
+   */
+  readonly renderMode?: 'continuous' | 'on-demand';
   /** Told of what stopped the game. Without it the failure is thrown where the console shows it. */
   readonly onError?: (error: unknown) => void;
   /** The seed of `game.random`. A different one each time unless given. */
@@ -408,6 +413,8 @@ export interface PlayDragAndDrop<T> {
 
 /** Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. */
 export interface PlayGame {
+  /** Requests a draw on the next display frame in on-demand mode. Use it for data outside the display tree. */
+  invalidate(): void;
   /** The size of the design: `width` × `height` as given, or the portrait size while the window is taller than wide. */
   readonly width: number;
   readonly height: number;
@@ -746,6 +753,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   if (!colour(background)) throw invalid('background is a colour from 0 to 0xffffff');
   if (setup !== undefined && typeof setup !== 'function') throw invalid('setup is a function');
   if (update !== undefined && typeof update !== 'function') throw invalid('update is a function');
+  const renderMode = options.renderMode ?? 'continuous';
+  if (renderMode !== 'continuous' && renderMode !== 'on-demand')
+    throw invalid("renderMode is 'continuous' or 'on-demand'");
   if (onError !== undefined && typeof onError !== 'function') throw invalid('onError is a function');
   const fitAsked = options.fit ?? 'contain';
   if (fitAsked !== 'contain' && fitAsked !== 'expand') throw invalid("fit is 'contain' or 'expand'");
@@ -836,6 +846,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     throw cause;
   });
   const { engine, scope, stage } = baseBrowser;
+  const revision = renderMode === 'on-demand' ? engine.watchDisplayRevision(scope) : undefined;
+  let lastFrame: BrowserGame['frame'] | undefined,
+    lastRevision = -1,
+    redraw = 0,
+    shownRedraw = 0;
+  const invalidate = (): void => {
+    if (revision !== undefined) redraw++;
+  };
   let sourceSeconds = 0,
     clockSeconds = 0,
     realStep = 0,
@@ -876,10 +894,27 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           if (!valid()) return;
         } while (clockSeconds < end);
       },
-      renderSharedFrame: frame => engine.renderSharedFrame(frame)
+      renderSharedFrame(frame) {
+        // A refusal or a late mutation must leave the request pending.
+        const pending = redraw,
+          next = revision?.revision;
+        const submitted = engine.renderSharedFrame(frame);
+        if (next !== undefined) {
+          lastFrame = frame;
+          lastRevision = next;
+          shownRedraw = pending;
+        }
+        return submitted;
+      }
     },
     host: baseBrowser.host,
     frame: () => baseBrowser.frame,
+    ...(revision === undefined
+      ? {}
+      : {
+          shouldRender: () =>
+            lastRevision !== revision.revision || shownRedraw !== redraw || lastFrame !== baseBrowser.frame
+        }),
     update: () => {
       if (!disposed && playLoop.state === 'running') step(realStep, playStep);
     },
@@ -1238,6 +1273,20 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     [win, 'pointercancel', pointerCancel as EventListener]
   ];
   if (embedded) listening.push([surface, 'blur', leaveCanvas]);
+  let resizeObserver: ResizeObserver | undefined;
+  if (revision !== undefined) {
+    // Input is observed after its ordinary dispatch. A burst of events requests only the next submitted frame.
+    for (const [target, type] of [...listening]) listening.push([target, type, invalidate]);
+    listening.push(
+      [win, 'resize', invalidate],
+      [page, 'visibilitychange', invalidate],
+      [surface, 'webglcontextrestored', invalidate]
+    );
+    if (typeof ResizeObserver === 'function') {
+      resizeObserver = new ResizeObserver(invalidate);
+      resizeObserver.observe(surface);
+    }
+  }
   for (const [target, type, listener] of listening) target.addEventListener(type, listener, { passive: false });
 
   // Only the built-in mixer belongs to this game. Opting out also skips its browser gesture listeners.
@@ -1863,6 +1912,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   }
 
   const game: PlayGame = {
+    invalidate,
     get width() {
       return shown.design.width;
     },
@@ -2418,6 +2468,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       void (async () => {
         try {
           stopLoops();
+          resizeObserver?.disconnect();
           for (const [target, type, listener] of listening) target.removeEventListener(type, listener);
           if (addedTabIndex && surface.getAttribute('tabindex') === '0') surface.removeAttribute('tabindex');
           await browser.dispose();

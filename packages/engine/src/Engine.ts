@@ -69,6 +69,7 @@ export let constructEngine: (
 ) => Engine;
 const freezeSharedFrame = Object.freeze;
 const CREATION_TOKEN: unique symbol = Symbol('egret.engineFactory');
+type DisplayRevisionWatch = { readonly revision: number; dispose(): void };
 
 /** Observation does not accept asynchronous submission or prove host completion. */
 function observeRejectedRenderResult(result: unknown): void {
@@ -122,6 +123,7 @@ export class Engine {
   private readonly onDiagnostic: DiagnosticHandler | undefined;
   private readonly releaseSurface: () => void;
   readonly #context: EngineContext;
+  readonly #displayRevisionWatch: () => DisplayRevisionWatch;
   public readonly stage: Stage;
   public readonly assets: AssetManager;
   public readonly sharedFrameProfile: SharedFrameProfile2D | undefined;
@@ -158,6 +160,7 @@ export class Engine {
       | Parameters<NonNullable<EngineContext['registerPreparedDisplayOperations']>>[0]
       | undefined;
     let assetGroupOperations: AssetGroupOperations | undefined;
+    let displayRevisionWatch!: () => DisplayRevisionWatch;
     // The context is never retained in a named public property by its consumers.
     this.#context = Object.freeze({
       assertOpen: (): void => {
@@ -168,6 +171,9 @@ export class Engine {
         if (this.#currentState === 'closing') this.cleanupErrors.push(cause);
       },
       registerTextFieldCache: textFields.registerCache,
+      registerDisplayRevision: (watch: () => DisplayRevisionWatch): void => {
+        displayRevisionWatch = watch;
+      },
       registerPreparedDisplayOperations: (
         operations: Parameters<NonNullable<EngineContext['registerPreparedDisplayOperations']>>[0]
       ) => {
@@ -222,6 +228,7 @@ export class Engine {
     });
     this.clock = this.#gameClockOwner.clock;
     const stage = createStage(this.#context);
+    this.#displayRevisionWatch = displayRevisionWatch;
     this.#uiOwner = registerUiEngine(this, {
       stage,
       assertOpen: this.#context.assertOpen,
@@ -488,6 +495,20 @@ export class Engine {
 
   public createTween(scope: Scope, options: TweenOptions): Tween {
     return this.#tweenOwner.create(scope, options);
+  }
+
+  /** @internal Browser scheduling reads this scope-owned observation before submitting a frame. */
+  public watchDisplayRevision(scope: Scope): DisplayRevisionWatch {
+    this.#context.assertOpen();
+    if (!this.#engineScopes.has(scope)) throw new EgretError('ENGINE_MISMATCH');
+    if (scope.state !== 'open') throw new EgretError('SCOPE_CLOSED');
+    const watch = this.#displayRevisionWatch();
+    try {
+      return scope.use(watch);
+    } catch (cause) {
+      watch.dispose();
+      throw cause;
+    }
   }
 
   /** Create an idle, Scope-owned sequence controller without rendering or ticking. */
