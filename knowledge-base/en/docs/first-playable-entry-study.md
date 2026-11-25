@@ -28,6 +28,8 @@ Both sessions received the same new request: make a side-view game where a storm
 
 A received the old `llms.txt`. B received the updated `llms.txt` and the rendered text of its two linked cards. The study tests that combined context. It did not test whether an agent would discover and open the links on its own.
 
+The archive preserves the exact prompts. For publication, the entry uses repository-relative links, points standalone download users to the online guide and omits two headings to fit the 540-line limit. The opening advice and both cards have the same wording as in B.
+
 | Generation | A | B | Limit per arm |
 | --- | ---: | ---: | ---: |
 | Author prompt, UTF-8 bytes | 33,874 | 37,294 | 96,000 |

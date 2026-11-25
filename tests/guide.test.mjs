@@ -428,8 +428,9 @@ test('GD11 llms.txt offers both creation cards before the first example and keep
   for (const id of ['first-playable-world', 'action-body-feedback']) {
     const card = cards.find(item => item.id === id);
     assert.ok(card, id);
-    assert.ok(opening.includes('](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/' + card.file + ')'), id);
+    assert.ok(opening.includes('](guide/' + card.file + ')'), id);
   }
+  assert.ok(opening.includes('<https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>'));
   assert.ok(page.includes('](guide/index.txt)'));
   assert.ok(page.includes('node tools/egret-guide.mjs'));
 });
