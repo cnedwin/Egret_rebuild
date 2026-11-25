@@ -5,6 +5,8 @@
 import { play } from '@egret/engine/play';
 import { createParagraph, createParagraphCache } from '@egret/engine/paragraph';
 import { chooseParagraphProvider } from '@egret/engine/web/paragraph';
+import { createBrowserTextInput } from '@egret/engine/web/text-input';
+import { createWechatTextInput } from '@egret/engine/web/wechat-text-input';
 import { Sprite } from '@egret/engine';
 
 const probe = (GameGlobal.__probe = { ready: false, steps: {} });
@@ -79,6 +81,48 @@ probe.paragraph = async () => {
       rects: rects.map(r => [r.left, r.top, r.right, r.bottom])
     }
   };
+};
+
+// The page's text field, which a mini game cannot show: what opening one does here.
+probe.browserTextInput = () => {
+  try {
+    const field = createBrowserTextInput({ canvas: game.canvas, logicalWidth: 720, logicalHeight: 1280 });
+    field.open({ x: 60, y: 1000, width: 600, height: 60 });
+    const state = field.getSnapshot().state;
+    field.dispose();
+    return { state };
+  } catch (error) {
+    return { refused: error.code ?? String(error) };
+  }
+};
+
+// Text input through WeChat's keyboard: sessions the verification types into, confirms, closes and cancels, with what
+// each told the game kept here, and the words committed drawn in a label.
+const typed = (probe.typed = []);
+const input = createWechatTextInput({ onError: error => typed.push(['error', String(error)]) });
+const shownWords = game.text('', { x: 360, y: 1100, size: 40, color: 0xffffff, align: 'center' });
+probe.textInput = (options = {}) => {
+  input.open({
+    x: 60,
+    y: 1000,
+    width: 600,
+    height: 60,
+    value: options.value ?? '',
+    ...(options.maxLength === undefined ? {} : { maxLength: options.maxLength }),
+    ...(options.blur === undefined ? {} : { blur: options.blur }),
+    onChange: change => typed.push(['change', change.value]),
+    onCommit: value => {
+      typed.push(['commit', value]);
+      shownWords.text = value;
+    },
+    onCancel: () => typed.push(['cancel'])
+  });
+  return input.getSnapshot();
+};
+probe.textInputSnapshot = () => input.getSnapshot();
+probe.cancelTextInput = () => {
+  input.cancel();
+  return input.getSnapshot();
 };
 
 probe.ready = true;

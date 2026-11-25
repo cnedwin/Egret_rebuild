@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 47 entries, 1458 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1463 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1244,6 +1244,16 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserTextInputRequest` | interface | One editing session. |
 | `BrowserTextInputSnapshot` | interface | Browser text input as it is now: its state, value and composition. |
 | `createBrowserTextInput` | function | Platform text entry over a canvas: a native field placed on a rectangle of the stage, so that input methods (Chinese, Japanese, Korean), on-screen keyboards, paste and accessibility work as the platform provides them. |
+
+## `@egret/engine/web/wechat-text-input`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `createWechatTextInput` | function | Text input through WeChat's keyboard, with the object of `createBrowserTextInput`. |
+| `WechatKeyboard` | interface | The part of `wx` the text input uses. |
+| `WechatKeyboardEvent` | interface | What a keyboard event of WeChat carries: the text in the keyboard's field. |
+| `WechatKeyboardListener` | type | A listener of WeChat's keyboard events. |
+| `WechatTextInputOptions` | interface | WeChat text input to make: the keyboard to use, and where errors of the game's callbacks go. |
 
 ## `@egret/engine/ui/editing`
 

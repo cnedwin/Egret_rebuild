@@ -96,6 +96,10 @@
       "types": "./dist/web/textInput.d.ts",
       "import": "./dist/web/textInput.js"
     },
+    "./web/wechat-text-input": {
+      "types": "./dist/web/wechatTextInput.d.ts",
+      "import": "./dist/web/wechatTextInput.js"
+    },
     "./ui/editing": {
       "types": "./dist/ui/editing.d.ts",
       "import": "./dist/ui/editing.js"

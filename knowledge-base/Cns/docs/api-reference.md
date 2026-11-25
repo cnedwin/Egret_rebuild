@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1458 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1463 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1244,6 +1244,16 @@
 | `BrowserTextInputRequest` | 接口 | One editing session. |
 | `BrowserTextInputSnapshot` | 接口 | Browser text input as it is now: its state, value and composition. |
 | `createBrowserTextInput` | 函数 | Platform text entry over a canvas: a native field placed on a rectangle of the stage, so that input methods (Chinese, Japanese, Korean), on-screen keyboards, paste and accessibility work as the platform provides them. |
+
+## `@egret/engine/web/wechat-text-input`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `createWechatTextInput` | 函数 | Text input through WeChat's keyboard, with the object of `createBrowserTextInput`. |
+| `WechatKeyboard` | 接口 | The part of `wx` the text input uses. |
+| `WechatKeyboardEvent` | 接口 | What a keyboard event of WeChat carries: the text in the keyboard's field. |
+| `WechatKeyboardListener` | 类型 | A listener of WeChat's keyboard events. |
+| `WechatTextInputOptions` | 接口 | WeChat text input to make: the keyboard to use, and where errors of the game's callbacks go. |
 
 ## `@egret/engine/ui/editing`
 

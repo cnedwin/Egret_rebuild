@@ -119,6 +119,29 @@ Invalid arguments throw an `EgretError` and change nothing.
 
 An error thrown by `onChange`, `onCommit` or `onCancel` goes to `options.onError`, or to the page's error reporting when none is given. The session ends as it would have.
 
+## In a WeChat mini game
+
+A mini game has no page to put a field on. `createWechatTextInput(options)` of `@egret/engine/web/wechat-text-input` gives the same object as `createBrowserTextInput`, with `open`, `commit`, `cancel`, `setValue`, `move`, `resize`, `sync`, `getSnapshot` and `dispose`. It types into the keyboard WeChat shows with its own field above it: `wx.showKeyboard`, and the keyboard's input, confirm and complete events. `options.keyboard` is `wx` unless given, and `options.onError` is as above.
+
+```js
+import { createBrowserTextInput } from '@egret/engine/web/text-input';
+import { createWechatTextInput } from '@egret/engine/web/wechat-text-input';
+
+const input =
+  typeof wx === 'object' && typeof wx.showKeyboard === 'function'
+    ? createWechatTextInput()
+    : createBrowserTextInput({ canvas, logicalWidth: 720, logicalHeight: 1280 });
+input.open({ x: 60, y: 1000, width: 600, height: 60, maxLength: 12, onCommit: name => (player.name = name) });
+```
+
+- The request is checked as the browser input checks it. Its value, `multiline`, `maxLength` and `enterKeyHint` reach the keyboard. WeChat draws its own field, so the place and the look are not used, and `move`, `resize` and `sync` have nothing to place.
+- `onChange` is told of each change, with `composing` always false: WeChat tells of the field's text, not of a composition.
+- The keyboard's confirm key commits, for a `multiline` session too. A keyboard the player closes another way ends the session as `blur` says: committed unless it is `'cancel'`. `commit()` and `cancel()` close the keyboard.
+- `maxLength` counts characters, as in the browser. With no limit the keyboard is asked for 65,536, as WeChat's own limit is 100.
+- A field opened from `onCommit` keeps its keyboard: the keyboard stays up after the confirm key until the input closes it, and the closing of the keyboard before it, which WeChat tells after the call, is not taken for this one's.
+
+`tests/wechat-text-input.test.mjs` drives a keyboard that behaves as WeChat documents it, passed as `options.keyboard`. `examples/minigame/verify.mjs` types, confirms, closes and cancels through the keyboard of the stand-in of `tools/wechat/check-minigame.mjs`, where the page's field fails. **Not checked: WeChat itself.** No phone and no WeChat DevTools were run, so the order in which WeChat tells of its keyboard and how its input methods behave are as documented, not observed.
+
 ## Relation to native text editing in managed UI
 
 [Native text editing](native-text-editing.md) (`@egret/engine/web/editing`) edits a text node of the managed UI in place, with the engine's paragraph layout, caret and font sets. It needs a UI root and admitted fonts. This entry needs a canvas and a rectangle: it suits a game that draws its own interface, in 2D or 3D, and wants a name, a chat line or a note from the player.
