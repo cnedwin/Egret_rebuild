@@ -1,0 +1,20 @@
+---
+id: action-body-feedback
+title: Let the playable body tell the player what happened
+applies: [play, play3d, engine, world3d]
+triggers: ["impact feedback", "squash and stretch", "landing feels weightless", "drift feedback", "hit anticipation", "动作发飘", "落地没重量", "打击感", "漂移手感", "果冻弹性", "受击反馈"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/panda.mjs, line: 431, commit: 11524576027ae522062a2740a5e4952af46e972f, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/src/view.mjs, line: 606, commit: 11524576027ae522062a2740a5e4952af46e972f, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: FiveRegiments/src/sim/brain.mjs, line: 55, commit: 11524576027ae522062a2740a5e4952af46e972f, pin: 5792d800a4932da81ddf6af9314a430c41cb0f30 }
+engine: 5792d800a4932da81ddf6af9314a430c41cb0f30
+---
+
+# Let the playable body tell the player what happened
+
+Choose one player verb and the event that proves it succeeded. Make its cue survive muting the game. In Jelly Pandas the charge crouches the body, release stretches it, and ground contact compresses and rebounds. Each cue has its own timing; missed landings must not fire a contact effect. The same idea applies to a kart slipping: draw tyre marks under its rear wheels while it is drifting and grounded. Keep essential direction or timing cues when camera shake is reduced.
+
+For a counterable attack, expose the wind-up before impact. In Five Regiments mounted opponents time a guard against the oncoming Bull Charge from facing, separation and time to contact. A counter should be available after the visible cue. Pick an animation that fits the character and its silhouette.
+
+Verify one successful action and its near miss with the real camera. The two states should be distinguishable in a still or short clip. Keep collision, damage and timing in the rules; animation reads the event. Camera shake, text and sound can reinforce it.

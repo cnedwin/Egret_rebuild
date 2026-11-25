@@ -1,0 +1,19 @@
+---
+id: first-playable-world
+title: Give the opening one visible consequence
+applies: [play, play3d, engine, world3d, web]
+triggers: ["first playable", "playable opening", "opening scene", "looks like a website", "world change", "first action", "game feel on first launch", "首个可玩", "可玩开场", "第一栋房子", "像网页", "首次操作", "首稿像网站", "落下第一栋"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: PeachCreek/src/sim/world.mjs, line: 249, commit: 11524576027ae522062a2740a5e4952af46e972f, pin: 91f350b1fc1062a46a4b8e789ed4e01a4cdebbed }
+  - { repo: cnedwin/PortedGamesEgret, path: PeachCreek/src/view.mjs, line: 450, commit: 11524576027ae522062a2740a5e4952af46e972f, pin: 91f350b1fc1062a46a4b8e789ed4e01a4cdebbed }
+engine: 5792d800a4932da81ddf6af9314a430c41cb0f30
+---
+
+# Give the opening one visible consequence
+
+Pick the first decision a player can make and what they should see before and after it. Choose a target in the game world they can recognize at the intended camera size. A builder might show an empty plot beside the river. Players select the site, see what would fit there, then commit. Show the new structure on that site and what it enables. Preview and cancel leave timber and the plot unchanged; confirmation charges once. Peach Creek computes the consequence for the chosen site before construction and plays a completion effect there.
+
+For a driving game the target could be a bend in the road. Preserve the relation between steering, the kart's trajectory and the road. Menus can explain unfamiliar controls. Put the result where the player is looking, and keep touch, keyboard or pad routes appropriate to the brief.
+
+Capture the unedited first 20 seconds from launch. Identify the input and the first frame where its consequence can be seen. Report if the goal or its cause was unclear. Use this observation to improve the next draft; understanding by a first-time player needs a first-time player.

@@ -4,6 +4,12 @@ English | [简体中文](../../Cns/docs/agent-guide.md)
 
 Coding agents write most of the games built on this engine. They need to know the engine's names, and they need the lessons that only come from finishing games: where frames go, what breaks on a phone, what a first-time shader costs. This page describes the guide that gives them both, and the loop that keeps it current with little human review.
 
+## Start a game
+
+Before choosing an API, describe what the player will act on, the change they should see and the next action that change makes possible. Start a building or story game with [the first playable action](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/game/first-playable-world.txt). When movement, landing or impact drives the opening, use [feedback in the character or vehicle](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/game/action-body-feedback.txt). For example, a first jump can show the character stretching at takeoff and compressing on contact with the ground. For a bug in an existing game, use its API name, error code or symptom in the technical guide below.
+
+See the [paired first-draft study](first-playable-entry-study.md) for the recorded openings and the limits of the comparison.
+
 ## What a developer's agent reads
 
 [`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) is the one page an agent reads to write a small game. Everything beyond it is in the guide, delivered on demand:
@@ -57,14 +63,14 @@ An agent turns proposals into cards, using its general experience of game develo
 | Size | every card within 800 tokens as printed and 1,000 as a file; the index within 150 lines and 1,500 tokens |
 | Index | every card reached from the index once, with the same `applies`; every link resolves |
 | Evidence | every card has evidence with repository, path, line, commit and engine pin; evidence in this repository points to an existing line |
-| Retrieval | a fixed set of 56 questions, 19 of them in Chinese, returns the expected card first; answers keep to their budget and are the same on every run |
+| Retrieval | a fixed set of 62 questions, 22 of them in Chinese, returns the expected card first; answers keep to their budget and are the same on every run |
 | Harvest | on a small repository made in the test, the harvest reads the pin, imports, tests, claims and fixes and marks a stale card |
 
 The names check reads only generated or source files, so it follows the engine without a ledger of its own. It does not compare bytes and is not part of the evidence lane.
 
 ### 4. Agent self-evaluation on fixed briefs
 
-Planned for phase 2. A fixed set of game briefs (a small 2D arcade game, a 3D game with touch controls, a game with many lights and loading) is given to agents with and without the guide. Each attempt is judged by what can be measured: whether `node tools/verify-game.mjs` or the game's own Node checks pass, which engine errors were thrown, how many tokens of guide were read, and how many attempts it took. The results are evidence, kept with the commit of the engine and of the guide they ran against. They run in the [evidence lane](evidence-lane.md): they report and never decide a merge, because an agent's run varies between attempts.
+The [Windlamp Post study](first-playable-entry-study.md) compares two raw drafts for one brief. A broader evaluation across briefs is planned for phase 2. A fixed set of game briefs (a small 2D arcade game, a 3D game with touch controls, a game with many lights and loading) is given to agents with and without the guide. Each attempt is judged by what can be measured: whether `node tools/verify-game.mjs` or the game's own Node checks pass, which engine errors were thrown, how many tokens of guide were read, and how many attempts it took. The results are evidence, kept with the commit of the engine and of the guide they ran against. They run in the [evidence lane](evidence-lane.md): they report and never decide a merge, because an agent's run varies between attempts.
 
 ### 5. Pruning
 
