@@ -100,13 +100,14 @@ Text: `label.text = 'Score ' + n` changes it, and `label.color` and `label.size`
 | `game.keys.down('space', 'pad:a')` | A gamepad's buttons are keys named `pad:a`, `pad:b`, `pad:x`, `pad:y`, `pad:l1`, `pad:r1`, `pad:l2`, `pad:r2`, `pad:select`, `pad:start` and `pad:up` … `pad:right` |
 | `game.touchStick()` | A stick on the glass, bottom left unless `{ x, y, radius }`; it counts in `keys.axis()`. It and the buttons below appear once a finger touches the stage, or at once with `always: true`; a mouse does not use them. Make them in `setup`: a restart takes them away |
 | `game.touchButton('A', { x, y, key: 'space' })` | A round button on the glass that holds that key while a finger is on it |
-| `game.pointer.x`, `game.pointer.y` | Where the mouse or finger is, on the stage; it follows the mouse with no button held |
+| `game.pointer.x`, `game.pointer.y` | Where the mouse or finger is, in the game's units; it follows the mouse with no button held |
+| `game.toStage(x, y)`, `game.fromStage(x, y)` | A place in the game's units as a place on the stage (as `localToGlobal` gives it), and back; they differ with `fit: 'expand'` |
 | `game.pointer.down`, `.pressed`, `.released` | Whether it is down, went down, or came up. A press on a button or on a sprite with `onTap` is theirs and is not `pressed` |
 | `game.pointer.swipe` | `'left'`, `'right'`, `'up'` or `'down'` in the update after a swipe, else `undefined` |
 | `game.pointer.over(sprite)` | Whether the pointer is over the sprite |
 | `game.pointer.dx`, `.dy`, `.wheel` | How far the mouse moved and the wheel turned since the last update: for looking about |
 | `game.pointer.lock()`, `game.pointer.unlock()`, `game.pointer.locked` | Hides the cursor and keeps the mouse to the game, for a first-person view. Call `lock` after a click; Escape gives the mouse back |
-| `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked; the one in front gets it |
+| `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked; the one in front gets it. A sprite drawn only by its children is hit by their bounds; `{ name: 'Start' }` also makes it a button a screen reader names |
 | `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | Long press, double tap, drag (`d.dx`, `d.dy`, `d.phase`), swipe and two-finger pinch (`scale`, `rotation`) on a sprite, in game units; returns its stop. A drag or long press is no tap |
 | `game.dragAndDrop()` | `.source(sprite, { data, ghost })`, `.target(sprite, { drop, accepts, hover })` and `.dragging`: a picture made by `ghost` follows the finger, and the innermost accepting target takes `data()` |
 

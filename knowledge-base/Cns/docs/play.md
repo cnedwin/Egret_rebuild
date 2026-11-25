@@ -156,15 +156,16 @@ const game = await play({
 | `game.keys.released('space')` | 自上次 update 以来是否松开 |
 | `game.keys.axis()` | 方向键和 WASD 合成的 `{ x, y }`，各自在 -1 到 1 之间，y 向下，长度最多为 1；手柄的左摇杆也算在内 |
 | `game.keys.look()` | 手柄右摇杆的 `{ x, y }`，用于转视角或瞄准；没有手柄时为 0 和 0 |
-| `game.pointer.x`、`.y` | 鼠标或手指在舞台上的位置；不按键时也跟随鼠标 |
+| `game.pointer.x`、`.y` | 鼠标或手指的位置，用游戏单位（`ui` 层的单位）；不按键时也跟随鼠标 |
+| `game.toStage(x, y)`、`game.fromStage(x, y)` | 把游戏单位的位置换成舞台上的位置（与 `localToGlobal`、`globalToLocal` 和悬停事件给出的一致），以及反过来。用 `fit: 'expand'` 时两者相差设计区域在舞台上的位置：在 390 × 844 的手机上，720 × 1280 的设计区域从第 139 个单位开始 |
 | `game.pointer.down`、`.pressed`、`.released` | 是否按着、刚按下、刚松开 |
 | `game.pointer.swipe` | 一次滑动结束后的那次 update 里为 `'left'`、`'right'`、`'up'` 或 `'down'` |
 | `game.pointer.over(sprite)` | 指针是否在精灵画出的内容上 |
 | `game.pointer.dx`、`.dy` | 自上次更新以来鼠标移动了多少屏幕像素，指针锁定时也照常计数 |
 | `game.pointer.wheel` | 自上次更新以来鼠标滚轮转了几格，朝向玩家为正。游戏下面的页面不会跟着滚动 |
 | `game.pointer.lock()`、`.unlock()`、`.locked` | 隐藏光标并把鼠标留在游戏里，用于第一人称视角。浏览器只允许在一次点击之后锁定，所以要在点击回调里或 `pressed` 为真时调用；按 Escape 会交还鼠标 |
-| `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
-| `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | 精灵上的长按、双击、带每一步位移的拖动、滑动和双指缩放，每个只报告一次，位置用游戏单位；返回停止识别的函数。变成拖动或长按的那一下不算点击。阈值见[手势](gestures.md) |
+| `game.onTap(sprite, () => …, { name })` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。有子节点、自己没有 `hitArea` 的精灵，在它的包围盒（含子节点的绘制）内都能点中，并随子节点移动；自己有绘制、没有子节点的精灵，仍按它画出的内容点中。给了 `name` 时，这个精灵同时是 `semantics` 里同名的按钮：位置与它画出的地方一致，它隐藏时从语义树里略去，它结束时随之消失；在语义树里激活它就等于点击它。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
+| `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | 精灵上的长按、双击、带每一步位移的拖动、滑动和双指缩放，每个只报告一次，位置用游戏单位；返回停止识别的函数。变成拖动或长按的那一下不算点击。有子节点、没有 `hitArea` 的精灵按包围盒点中，与 `onTap` 相同。阈值见[手势](gestures.md) |
 | `game.show(description, { state, bind })` | 用数据描述的界面：由面板、行和列组成，包含文字、按钮、进度条和开关，放在 `game.safe` 里，屏幕变化时重新摆放，竖握手机时可以换用竖屏部件。`bind` 让有名字的部件跟随 `state`（每帧读取），并响应按下。返回视图：`get(name)`、`rect(name)`、`show()`、`hide()`、`close()`。部件和绑定见[用数据描述界面](ui-views.md) |
 | `game.confirm(question, { yes, no })`、`game.hints(list)`、`game.loading(tasks)`、`game.badges`、`game.compact(n)`、`game.request(send)`、`game.device` | 用是或否回答的提问、按玩家设备显示按键的提示栏、计数的加载、累加的红点、数字缩写（12.3K、1.2万），以及按钮不能重复发出的请求。见[大多数界面都需要的部件](ui-views.md#大多数界面都需要的部件) |
 | `game.dragAndDrop()` | `.source(sprite, { data, ghost })` 和 `.target(sprite, { drop, accepts, hover })`，各自返回移除函数，以及 `.dragging`。被拖的精灵留在原处，`ghost` 画出的图跟着手指显示在最上层；最里层且接受这份数据的目标接收它 |
