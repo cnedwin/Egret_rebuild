@@ -311,6 +311,7 @@ const QUERIES = [
   ['cpu-bound', 'frame-budget'],
   ['recent-hitch', 'prepare-programs'],
   ['OBJECT_DISPOSED', 'read-engine-errors'],
+  ['FRAME_BUDGET_EXCEEDED', 'read-engine-errors'],
   ['ASSET_LOAD_FAILED', 'asset-loading'],
   ['createTouchStick', 'touch-controls'],
   ['encodeWav', 'synthesized-audio'],
@@ -346,6 +347,9 @@ const QUERIES = [
   ['trees floating', 'terrain-stream-tiles'],
   ['UI_BUSY', 'ui-callbacks'],
   ['My opening looks like a website', 'first-playable-world'],
+  ['I missed the prompt and do not know my next move in the opening', 'first-playable-world'],
+  ['My canvas freezes after I add several radial gradients to a glow', 'geometry-budget-2d'],
+  ['2D effects push the scene over the triangle limit', 'geometry-budget-2d'],
   ['My landing feels weightless', 'action-body-feedback'],
   // Chinese questions: no spaces between words, so the Chinese triggers are found inside the question.
   ['手机横屏 按钮 点不到', 'short-screen-hud'],
@@ -368,6 +372,11 @@ const QUERIES = [
   ['树悬空', 'terrain-stream-tiles'],
   ['按钮里打开设置', 'ui-callbacks'],
   ['开场像网页，第一次能做什么', 'first-playable-world'],
+  ['开场不知道要做什么', 'first-playable-world'],
+  ['玩家到灯旁提示一闪就没了，应当怎么让他继续', 'first-playable-world'],
+  ['画了几个渐变光圈后就黑屏了', 'geometry-budget-2d'],
+  ['点灯一瞬间画面停住，提示三角形超限', 'geometry-budget-2d'],
+  ['给界面加了径向渐变，动画刚开始画布就停住', 'geometry-budget-2d'],
   ['动作发飘，落地没重量', 'action-body-feedback']
 ];
 
@@ -422,17 +431,26 @@ test('GD10 the full file holds the index and every card, and is a build output',
 });
 
 // Break caught: llms.txt losing its way to the guide.
-test('GD11 llms.txt offers both creation cards before the first example and keeps the technical lookup', () => {
+test('GD11 llms.txt routes new 2D and 3D work, existing games and errors before the first example', () => {
   const page = read('llms.txt');
-  const opening = page.slice(0, page.indexOf('```html'));
-  for (const id of ['first-playable-world', 'action-body-feedback']) {
+  const firstExample = page.indexOf('```html');
+  assert.ok(firstExample > 0, 'first runnable HTML example');
+  const opening = page.slice(0, firstExample);
+  for (const id of [
+    'first-playable-world',
+    'action-body-feedback',
+    'choose-entry',
+    'read-engine-errors',
+    'geometry-budget-2d'
+  ]) {
     const card = cards.find(item => item.id === id);
     assert.ok(card, id);
     assert.ok(opening.includes('](guide/' + card.file + ')'), id);
   }
+  for (const link of ['knowledge-base/en/docs/play3d.md', 'knowledge-base/en/docs/entry-points.md', 'guide/index.txt'])
+    assert.ok(opening.includes('](' + link + ')'), link);
   assert.ok(opening.includes('<https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>'));
-  assert.ok(page.includes('](guide/index.txt)'));
-  assert.ok(page.includes('node tools/egret-guide.mjs'));
+  assert.ok(opening.includes('node tools/egret-guide.mjs'));
 });
 
 // Break caught: the harvest misreading a game's pin, imports, tests or claims, missing a fix, or not marking a card

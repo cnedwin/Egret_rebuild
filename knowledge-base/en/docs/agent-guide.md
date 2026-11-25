@@ -12,9 +12,11 @@ Budget a procedural 2D scene for the action that changes it. The frame capture a
 
 See the [paired first-draft study](first-playable-entry-study.md) for the recorded openings and the limits of the comparison.
 
+The [Rainstorm Ferry comparison](agent-guide-routing-study.md) records which pages each agent opened on its own and what each unedited opening let the player do.
+
 ## What a developer's agent reads
 
-[`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) is the one page an agent reads to write a small game. Everything beyond it is in the guide, delivered on demand:
+[`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) gives an agent four ways in: create a first 2D interaction, start a 3D scene, work on an existing game, or investigate an error. The smallest example responds to Space. The full games link to their runnable checkout sources. With a source-size limit, count the final UTF-8 bytes before delivering the game. Use the [geometry budget card](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/perf/geometry-budget-2d.txt) when procedural 2D effects cause the frame capture to refuse a scene. Read more as you need it:
 
 - [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) lists every card in one line: its id, the ways of using the engine it applies to (`play`, `play3d`, `engine`, `world3d`, `web`) and what it answers. It stays under 150 lines.
 - `guide/cards/<area>/<id>.txt` is one topic in under 800 tokens as printed: short rules, a minimal example, and the measured reason or the game a rule was learnt from.
@@ -65,7 +67,7 @@ An agent turns proposals into cards, using its general experience of game develo
 | Size | every card within 800 tokens as printed and 1,000 as a file; the index within 150 lines and 1,500 tokens |
 | Index | every card reached from the index once, with the same `applies`; every link resolves |
 | Evidence | every card has evidence with repository, path, line, commit and engine pin; evidence in this repository points to an existing line |
-| Retrieval | a fixed set of 62 questions, 22 of them in Chinese, returns the expected card first; answers keep to their budget and are the same on every run |
+| Retrieval | a fixed set of 71 questions, 27 of them in Chinese, returns the expected card first; answers keep to their budget and are the same on every run |
 | Harvest | on a small repository made in the test, the harvest reads the pin, imports, tests, claims and fixes and marks a stale card |
 
 The names check reads only generated or source files, so it follows the engine without a ledger of its own. It does not compare bytes and is not part of the evidence lane.

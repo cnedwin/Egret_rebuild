@@ -7,7 +7,7 @@ local: []
 evidence:
   - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/error-codes.md, line: 9, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
   - { repo: cnedwin/Egret_rebuild, path: packages/runtime/src/errorHelp.ts, line: 1, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
-  - { repo: cnedwin/Egret_rebuild, path: llms.txt, line: 35, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/runtime/src/EgretError.ts, line: 28, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
 engine: ec17a5a22eff057b89a2926f638eb51938344459
 ---
 
@@ -33,4 +33,4 @@ Rules:
 - `describeErrorCode(code, 'en')` gives the sentence to a program; `setErrorLanguage('zh')` puts Chinese sentences in messages for Chinese players and developers.
 - Show failures that stop the game on screen with a reload button and keep the stack for automated checks, as FPS does. A frozen canvas with an error only in the console is reported by players as "the game hangs".
 - An error thrown by your own callback comes back wrapped, with your error in `cause`. Fix your callback, not the engine call around it.
-- Common first errors: `OBJECT_DISPOSED` (a sprite kept in a list after removal), `GRAPHICS_FILL_REQUIRED` (draw without `beginFill` or `lineStyle`), `ASYNC_EVENT_HANDLER` (a listener returned a promise), `FRAME_BUDGET_EXCEEDED` (too many nodes or triangles in one frame).
+- Common first errors: `OBJECT_DISPOSED` (a sprite kept in a list after removal), `GRAPHICS_FILL_REQUIRED` (draw without `beginFill` or `lineStyle`), `ASYNC_EVENT_HANDLER` (a listener returned a promise), `FRAME_BUDGET_EXCEEDED` (several 2D frame capture limits). For black screens or freezes caused by procedural geometry, see [the 2D geometry budget](../perf/geometry-budget-2d.txt).

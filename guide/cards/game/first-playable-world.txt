@@ -2,7 +2,7 @@
 id: first-playable-world
 title: Give the opening one visible consequence
 applies: [play, play3d, engine, world3d, web]
-triggers: ["first playable", "playable opening", "opening scene", "looks like a website", "world change", "first action", "game feel on first launch", "首个可玩", "可玩开场", "第一栋房子", "像网页", "首次操作", "首稿像网站", "落下第一栋"]
+triggers: ["first playable", "playable opening", "opening scene", "looks like a website", "world change", "first action", "game feel on first launch", "首个可玩", "可玩开场", "第一栋房子", "像网页", "首次操作", "首稿像网站", "落下第一栋", "opening goal unclear", "what should the player do first", "missed the prompt", "开场不知道要做什么", "接下来做什么", "提示一闪就没了"]
 local: []
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: PeachCreek/src/sim/world.mjs, line: 249, commit: 11524576027ae522062a2740a5e4952af46e972f, pin: 91f350b1fc1062a46a4b8e789ed4e01a4cdebbed }
@@ -17,5 +17,7 @@ Pick the first decision a player can make and what they should see before and af
 For a driving game the target could be a bend in the road. Preserve the relation between steering, the kart's trajectory and the road. Menus can explain unfamiliar controls. Put the result where the player is looking, and keep touch, keyboard or pad routes appropriate to the brief.
 
 In a procedural 2D opening, spend the drawing budget on the player and the first interaction. The stage admits at most 65,536 mesh triangles per capture. A radial gradient can turn one disc into thousands of triangles. For a glow, try a bright core inside two flat, low-sided translucent shapes. Build distant scenery when it comes into range and remove the old section when it leaves. Attached geometry can still count off camera or with visibility turned off. Leave room for the frame where the action succeeds and its effects overlap. Check that the result stays visible after release and that the next input works.
+
+Play once at ordinary input speed. See if the target and next action are clear before moving, then verify the scene visibly changes, the change holds after release and the player can take a next step. Let the player stop and correct an overshoot. Keep a prompt readable until the action succeeds or the target is out of reach.
 
 Capture the unedited first 20 seconds from launch. Identify the input and the first frame where its consequence can be seen. Report if the goal or its cause was unclear. Use this observation to improve the next draft; understanding by a first-time player needs a first-time player.

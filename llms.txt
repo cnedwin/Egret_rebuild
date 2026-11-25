@@ -1,23 +1,41 @@
 # Egret
 
-> Egret is a 2D and 3D game engine for the browser. A whole small 2D game is one call, `play({ width, height, setup, update })`, and one file, `egret2d.js`. This page is everything needed to write one. It needs no image, sound or font file and no build step.
+> Egret is a browser game engine. Start a 2D game with `play` and `egret2d.js`. Start a 3D game with `play3d` and `egret3d.js`. Both also have module entry points.
 
-## Start a game
+## Choose what you need
 
-Choose an object or character the player can act on and decide what will visibly change. Use [the first playable action](guide/cards/game/first-playable-world.txt) to design the opening. For movement, landing or impact, read [feedback in the character or vehicle](guide/cards/game/action-body-feedback.txt). For procedural 2D art, budget the busiest action frame as well as the idle scene. A large radial gradient can consume thousands of the 65,536 mesh triangles in a capture. Try a few flat shapes for glows and attach distant scenery only as the camera approaches. For an existing game, look up the symptom or API in the [technical guide](guide/index.txt). In the standalone download, open this page online to follow the guide links: <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
+- [Create the first 2D interaction](guide/cards/game/first-playable-world.txt) to give the player a visible target, a change in the scene and a next action. Read [action feedback](guide/cards/game/action-body-feedback.txt) for movement, landing or impact.
+- [Start a 3D scene](knowledge-base/en/docs/play3d.md) with a controllable object, a camera and a goal. Load the [rolling-ball game](examples/play/roll3d.mjs) when you need a complete example.
+- [Work on an existing game](guide/cards/entries/choose-entry.txt) by checking its engine version and imports. Use the [public entry points](knowledge-base/en/docs/entry-points.md) to find the features available in that build.
+- [Investigate an error](guide/cards/errors/read-engine-errors.txt) using the exact error code, cause and what the player did. For [2D geometry limits and a black screen after a glow](guide/cards/perf/geometry-budget-2d.txt), check the action frame and the scenery already attached to the stage.
+
+Browse the [guide index](guide/index.txt) or, in a checkout, run `node tools/egret-guide.mjs <symptom, API name or error code>`. Use `--card <id>` to read one card. Use the online entry to follow links from a standalone download <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
+
+If the brief sets a source-size limit and you have file tools, count the final UTF-8 bytes. In a checkout, `node -p "require('node:fs').statSync('main.mjs').size"` reports the bytes for that file. Include each file covered by the limit. If over, trim secondary decoration and verify the first action again.
+
+## Run a minimal game
 
 ```html
 <!doctype html>
 <meta charset="utf-8">
-<title>Game</title>
+<title>Light the signal</title>
 <script src="egret2d.js"></script>
 <script type="module">
 const { play } = Egret;
+let signal, label;
 
 await play({
   width: 480, height: 270, background: 0x101828,
-  setup(game) { /* make the sprites; called again by game.restart() */ },
-  update(dt, game) { /* one step; dt is the seconds since the last one */ },
+  setup(game) {
+    signal = game.circle(240, 115, 24, 0x466074);
+    label = game.text('Press Space to light the signal', { x: 240, y: 168, align: 'center' });
+  },
+  update(dt, game) {
+    if (game.keys.pressed('space')) {
+      signal.graphics.clear().beginFill(0xffce73).drawCircle(0, 0, 24).endFill();
+      label.text = 'Signal lit';
+    }
+  }
 });
 </script>
 ```
@@ -148,256 +166,13 @@ Use them: a hit wants a sound, a burst and a small shake; a death wants a flash.
 
 `game.random.int(1, 6)`, `.range(0, 1)`, `.chance(0.25)`, `.pick(list)` and `.shuffle(list)`, which gives a new list. `game.save('best', score)` keeps a value between visits and `game.load('best', 0)` reads it, or gives the second argument.
 
-## Three whole games
+## Complete games
 
-Each is the whole script of the page above.
-
-### Breakout: an arcade game with a ball, lives, a win and a loss
-
-```js
-const { play } = Egret;
-
-const W = 480,
-  H = 320;
-let paddle, ball, bricks, score, lives, label, vx, vy, over;
-
-await play({
-  width: W,
-  height: H,
-  background: 0x101828,
-  setup(game) {
-    bricks = [];
-    score = 0;
-    lives = 3;
-    vx = 150;
-    vy = -180;
-    over = false;
-    paddle = game.rect(W / 2, H - 20, 70, 10, 0x8fa8ff);
-    ball = game.circle(W / 2, H - 60, 6, 0xffffff);
-    for (let r = 0; r < 4; r++)
-      for (let c = 0; c < 8; c++)
-        bricks.push(game.rect(40 + c * 57, 40 + r * 20, 50, 14, [0xff4d6d, 0xffa64d, 0xffe14d, 0x7be069][r]));
-    label = game.text('Score 0   Lives 3', { x: W / 2, y: 6, size: 18, align: 'center' });
-  },
-  update(dt, game) {
-    if (over) return;
-    paddle.x += game.keys.axis().x * 300 * dt;
-    if (game.pointer.down) paddle.x = game.pointer.x;
-    paddle.x = Math.max(35, Math.min(W - 35, paddle.x));
-    ball.x += vx * dt;
-    ball.y += vy * dt;
-    if ((ball.x < 6 && vx < 0) || (ball.x > W - 6 && vx > 0)) {
-      vx = -vx;
-      game.sfx.play('bounce');
-    }
-    if (ball.y < 6 && vy < 0) {
-      vy = -vy;
-      game.sfx.play('bounce');
-    }
-    if (vy > 0 && game.overlaps(ball, paddle)) {
-      // Where it lands on the paddle steers it.
-      vy = -vy;
-      vx = (ball.x - paddle.x) * 6;
-      game.sfx.play('jump');
-    }
-    const hit = game.hits(ball, bricks);
-    if (hit) {
-      bricks = bricks.filter(brick => brick !== hit);
-      game.burst(hit.x, hit.y, { color: 0xffe14d });
-      game.remove(hit);
-      vy = -vy;
-      score += 10;
-      game.sfx.play('coin');
-      game.shake(4, 0.15);
-      if (bricks.length === 0) end(game, 'You win!', 'win');
-    }
-    if (ball.y > H + 10) {
-      lives--;
-      game.flash(0xff2040);
-      game.sfx.play('hurt');
-      if (lives === 0) end(game, 'Game over', 'lose');
-      else {
-        ball.x = paddle.x;
-        ball.y = H - 60;
-        vx = 150;
-        vy = -180;
-      }
-    }
-    label.text = 'Score ' + score + '   Lives ' + lives;
-  }
-});
-
-function end(game, words, sound) {
-  over = true;
-  game.sfx.play(sound);
-  game.text(words, { x: W / 2, y: 120, size: 32, align: 'center' });
-  game.button('Play again', { x: W / 2, y: 200 }, () => game.restart());
-}
-```
-
-### Platformer: gravity, platforms, a level wider than the stage
-
-```js
-const { play } = Egret;
-
-const W = 480,
-  H = 270,
-  LEVEL = 1200,
-  GRAVITY = 900;
-let hero, blocks, coins, goal, vy, onGround, got, label, won;
-
-await play({
-  width: W,
-  height: H,
-  background: 0x1b2440,
-  setup(game) {
-    blocks = [];
-    coins = [];
-    vy = 0;
-    onGround = false;
-    got = 0;
-    won = false;
-    // A rect is placed by its middle. The ground, a wall at each end, then four platforms with a coin over each.
-    const block = (x, y, w, h) => blocks.push(game.rect(x, y, w, h, 0x4a6fa5));
-    block(LEVEL / 2, 255, LEVEL, 30);
-    block(-10, H / 2, 20, H);
-    block(LEVEL + 10, H / 2, 20, H);
-    [260, 420, 600, 760].forEach((x, i) => {
-      const y = i % 2 ? 145 : 195;
-      block(x, y, 90, 14);
-      coins.push(game.circle(x, y - 25, 7, 0xffd23f));
-    });
-    coins.push(game.circle(1000, 215, 7, 0xffd23f));
-    goal = game.rect(1150, 215, 16, 50, 0x7be069);
-    hero = game.rect(60, 200, 18, 24, 0xff6b6b);
-    // Text is in the ui layer: it stays put while the world scrolls.
-    label = game.text('Coins 0/5', { x: 8, y: 6, size: 16 });
-  },
-  update(dt, game) {
-    if (won) return;
-    // Keys, or a finger: hold a side of the screen to run, tap the upper half to jump.
-    let run = game.keys.axis().x;
-    if (game.pointer.down) run = game.pointer.x < W / 2 ? -1 : 1;
-    hero.x += run * 170 * dt;
-    const jump = game.keys.pressed('space', 'up', 'w') || (game.pointer.pressed && game.pointer.y < H / 2);
-    if (onGround && jump) {
-      vy = -420;
-      game.sfx.play('jump');
-    }
-    vy += GRAVITY * dt;
-    hero.y += vy * dt;
-    onGround = false;
-    // Pushed up out of a block, it has landed; pushed down, it has hit its head.
-    for (const block of blocks) {
-      const push = game.pushOut(hero, block);
-      if (!push) continue;
-      hero.x += push.x;
-      hero.y += push.y;
-      if (push.y !== 0) vy = 0;
-      if (push.y < 0) onGround = true;
-    }
-    const coin = game.hits(hero, coins);
-    if (coin) {
-      coins = coins.filter(other => other !== coin);
-      game.burst(coin.x, coin.y, { color: 0xffd23f, count: 8 });
-      game.remove(coin);
-      label.text = 'Coins ' + ++got + '/5';
-      game.sfx.play('coin');
-    }
-    if (game.overlaps(hero, goal)) {
-      won = true;
-      game.sfx.play('win');
-      game.text('You made it!', { x: W / 2, y: 80, size: 28, align: 'center' });
-      game.button('Play again', { x: W / 2, y: 150 }, () => game.restart());
-    }
-    // The camera follows the hero.
-    game.view.x = Math.max(0, Math.min(LEVEL - W, hero.x - W / 2));
-  }
-});
-```
-
-### Memory: taps, turns that wait for one another, a best score
-
-```js
-const { play } = Egret;
-
-const W = 360,
-  H = 520,
-  SIZE = 70,
-  GAP = 12,
-  BACK = 0x3a506b;
-const FACES = [0xff6b6b, 0xffd23f, 0x7be069, 0x4dabf7, 0xb197fc, 0xff9f43, 0x63e6be, 0xf783ac];
-let open, busy, pairs, moves, label;
-
-await play({
-  width: W,
-  height: H,
-  background: 0x14213d,
-  setup(game) {
-    open = [];
-    busy = false;
-    pairs = 0;
-    moves = 0;
-    label = game.text('Moves 0', { x: W / 2, y: 20, size: 22, align: 'center' });
-    game.random.shuffle([...FACES, ...FACES]).forEach((face, i) => {
-      const card = game.sprite(g => paint(g, BACK));
-      card.x = 57 + (i % 4) * (SIZE + GAP);
-      card.y = 115 + Math.floor(i / 4) * (SIZE + GAP);
-      // A sprite takes properties of the game's own.
-      card.face = face;
-      card.up = false;
-      game.onTap(card, () => flip(game, card));
-    });
-  }
-});
-
-function paint(g, color) {
-  g.clear()
-    .beginFill(color)
-    .drawRoundRect(-SIZE / 2, -SIZE / 2, SIZE, SIZE, 16)
-    .endFill();
-}
-
-// A card turns about its middle: narrow to nothing, change face, widen again.
-async function turn(game, card, up) {
-  await game.tween(card).to({ scaleX: 0 }, 0.1).done;
-  paint(card.graphics, up ? card.face : BACK);
-  card.up = up;
-  await game.tween(card).to({ scaleX: 1 }, 0.1).done;
-}
-
-async function flip(game, card) {
-  if (busy || card.up) return;
-  busy = true;
-  game.sfx.play('click');
-  await turn(game, card, true);
-  open.push(card);
-  if (open.length === 2) {
-    const [a, b] = open;
-    open = [];
-    label.text = 'Moves ' + ++moves;
-    if (a.face === b.face) {
-      game.sfx.play('coin');
-      game.burst(a.x, a.y, { color: a.face });
-      game.burst(b.x, b.y, { color: b.face });
-      if (++pairs === FACES.length) win(game);
-    } else {
-      await game.wait(0.5);
-      game.sfx.play('hit');
-      await Promise.all([turn(game, a, false), turn(game, b, false)]);
-    }
-  }
-  busy = false;
-}
-
-function win(game) {
-  const best = Math.min(moves, game.load('best', moves));
-  game.save('best', best);
-  game.sfx.play('win');
-  game.text('Done in ' + moves + ' moves\nBest ' + best, { x: W / 2, y: 425, size: 18, align: 'center' });
-  game.button('Again', { x: W / 2, y: 492, height: 36 }, () => game.restart());
-}
-```
+- [Breakout](examples/play/breakout.mjs) for a short arcade loop with lives and restart.
+- [Platformer](examples/play/platformer.mjs) for motion, ground collision and a scrolling level.
+- [Memory](examples/play/memory.mjs) for turns, matching and a saved best score.
+- [Rolling Ball](examples/play/roll3d.mjs) for a 3D camera, movement and collection.
+- [Run the examples](examples/play/README.md) to open these games with the checkout server.
 
 ## 3D
 
@@ -423,89 +198,6 @@ A thing has `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `sca
 
 `game.look('dusk')` sets the light and air of the world: `'day'` (as it starts), `'dusk'`, `'night'`, `'fog'` or `'snow'`, or `{ background, sky, ground, light, sun, sunIntensity, sunFrom, fog }` to change parts of one, the rest staying, as often as every frame. `background`, `sky` (the light from above), `ground` (from below) and `sun` are colours; `light` and `sunIntensity` are strengths, 0 to 16 (night 0.22 and 0.35, day 0.9 and 2.4); `sunFrom` is `[x, y, z]`; `fog` is its thickness, 0 clear, 0.02 a haze, 0.06 a fog. A thing that glows is seen through fog and snow. `game.weather('snow')`, `'rain'` or `'none'`, with `{ amount }` 1 unless given, lets snow or rain fall around what the camera looks at.
 
-```js
-const { play3d } = Egret;
-
-const SPEED = 6,
-  GRAVITY = 20;
-let ball, blocks, stars, vy, got, label, done;
-
-await play3d({
-  width: 960,
-  height: 540,
-  background: 0x0b1020,
-  setup(game) {
-    blocks = [];
-    stars = [];
-    vy = 0;
-    got = 0;
-    done = false;
-    // The ground is 24 across with its top at height 0; a box is placed by its middle.
-    blocks.push(game.ground(24, 0x2d6a4f));
-    blocks.push(game.box(4, 1, 4, 0x4d6fa8, { x: 6, y: 0.5, z: -4 }));
-    ball = game.sphere(0.5, 0xe8453c, { y: 1 });
-    for (const [x, y, z] of [
-      [3, 0.9, 0],
-      [-4, 0.9, -3],
-      [6, 1.9, -4],
-      [0, 0.9, 5]
-    ])
-      stars.push(game.cone(0.4, 0.8, 0xffd23f, { x, y, z }));
-    game.follow(ball, { y: 6, z: 9 });
-    // Text and buttons are the flat interface over the picture, in the units of width and height.
-    label = game.text('Stars 0/4', { x: 16, y: 12, size: 28 });
-  },
-  update(dt, game) {
-    if (done) return;
-    // Keys, or a finger held on a side of the screen. On the ground x is right and z is towards the camera.
-    const move = game.keys.axis();
-    if (game.pointer.down) {
-      move.x = game.pointer.x < 320 ? -1 : game.pointer.x > 640 ? 1 : 0;
-      move.y = game.pointer.y < 180 ? -1 : game.pointer.y > 360 ? 1 : 0;
-    }
-    ball.x += move.x * SPEED * dt;
-    ball.z += move.y * SPEED * dt;
-    ball.rotationZ -= move.x * 300 * dt;
-    ball.rotationX += move.y * 300 * dt;
-    vy -= GRAVITY * dt;
-    ball.y += vy * dt;
-    // Pushed up out of a block, it stands on it.
-    let onGround = false;
-    for (const block of blocks) {
-      const push = game.pushOut(ball, block);
-      if (!push) continue;
-      ball.x += push.x;
-      ball.y += push.y;
-      ball.z += push.z;
-      if (push.y !== 0) vy = 0;
-      if (push.y > 0) onGround = true;
-    }
-    if (onGround && (game.keys.pressed('space') || game.pointer.pressed)) {
-      vy = 8;
-      game.sfx.play('jump');
-    }
-    for (const star of stars) star.rotationY += 120 * dt;
-    const star = game.hits(ball, stars);
-    if (star) {
-      stars = stars.filter(other => other !== star);
-      game.burst(star.x, star.y, star.z, { color: 0xffd23f });
-      game.remove(star);
-      label.text = 'Stars ' + ++got + '/4';
-      game.sfx.play('coin');
-      game.shake(0.2, 0.2);
-      if (got === 4) end(game, 'All four!', 'win');
-    }
-    if (ball.y < -12) end(game, 'Fell off', 'lose');
-  }
-});
-
-function end(game, words, sound) {
-  done = true;
-  game.sfx.play(sound);
-  game.text(words, { x: 480, y: 200, size: 48, align: 'center' });
-  game.button('Play again', { x: 480, y: 300 }, () => game.restart());
-}
-```
 
 ## Check a game
 

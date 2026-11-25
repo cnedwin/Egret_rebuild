@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "guide/cards/perf/geometry-budget-2d.txt",
+      "originRole": "First-party 2D capture diagnostic distilled from the instrumented Windlamp Post experiments and pinned engine source."
+    },
+    {
+      "path": "guide/studies/rainstorm-ferry.zip",
+      "originRole": "First-party Rainstorm Ferry authoring study with original paired sources, shared licensed engine, exact reference records and 20-second videos."
+    },
+    {
+      "path": "knowledge-base/en/docs/agent-guide-routing-study.md",
+      "originRole": "First-party English report on the Rainstorm Ferry paired Agent entry comparison."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/agent-guide-routing-study.md",
+      "originRole": "First-party Chinese report on the Rainstorm Ferry paired Agent entry comparison."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/agent-guide-routing-study.md",
+      "zh": "knowledge-base/Cns/docs/agent-guide-routing-study.md"
+    }
+  ]
+}
