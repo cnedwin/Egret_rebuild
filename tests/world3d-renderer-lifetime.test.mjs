@@ -440,6 +440,64 @@ test('World3D program preparation and an early render share one native program',
   }
 });
 
+test('World3D draws an automatic batch with its warm ordinary programs while KHR links its color and shadow variants', async () => {
+  const f = shaderPreparationFixture();
+  const material = createStandardMaterial3D({});
+  const mesh = new Mesh3D(f.mesh.geometry, material);
+  const scene = new Scene3D();
+  const camera = createPerspectiveCamera3D({ fov: 60, aspect: 1 });
+  camera.setPosition(0, 0, 6).lookAt(0, 0, 0);
+  mesh.receiveShadow = true;
+  scene.addChild(mesh);
+  const light = createDirectionalLight3D({});
+  light.castShadow = true;
+  scene.addChild(light);
+  const explicit = new InstancedMesh3D(mesh.geometry, material, 8);
+  explicit.receiveShadow = true;
+  const instancedCounts = [];
+  const uploadedNormals = [];
+  f.gl.getActiveUniform = () => ({ name: 'uNormalMatrix' });
+  f.gl.uniformMatrix3fv = (_location, _transpose, values) => uploadedNormals.push([...values]);
+  mesh.setScale(1, 2, 3);
+  f.gl.drawElementsInstanced = (_mode, _count, _type, _start, instances) => instancedCounts.push(instances);
+  f.gl.vertexAttribDivisor = () => {};
+  let preparation;
+  try {
+    assert.equal(f.renderer.render(scene, camera), true);
+    assert.equal(f.draws, 2);
+    uploadedNormals.length = 0;
+    const warmChecks = [...f.checked];
+    const request = { mesh: explicit, material, receiveShadows: true };
+    preparation = f.renderer.preparePrograms([request, { ...request, pass: 'shadow' }]);
+    await f.firstPoll;
+    for (let i = 1; i < 8; i++) {
+      const member = new Mesh3D(mesh.geometry, material);
+      member.receiveShadow = true;
+      member.setPosition(i / 8, 0, 0);
+      member.setScale(1, 2, 3);
+      scene.addChild(member);
+    }
+    assert.equal(f.renderer.render(scene, camera), true);
+    assert.deepEqual(f.checked, warmChecks, 'draw did not synchronously finalize either pending program');
+    assert.deepEqual(instancedCounts, []);
+    assert.equal(f.draws, 18, 'all eight instances drew in both passes');
+    assert.equal(uploadedNormals.length, 16);
+    for (const normal of uploadedNormals) assert.deepEqual(normal, [1, 0, 0, 0, 2, 0, 0, 0, 3]);
+    assert.equal(f.renderer.info.drawCalls, 8);
+    f.finish();
+    await preparation;
+    assert.equal(f.renderer.render(scene, camera), true);
+    assert.deepEqual(instancedCounts, [8, 8]);
+    assert.equal(f.renderer.info.drawCalls, 1);
+    assert.deepEqual(f.checked, f.linked);
+  } finally {
+    f.finish();
+    await preparation;
+    material.dispose();
+    f.dispose();
+  }
+});
+
 test('World3D program preparation covers color and shadow variants without KHR', async () => {
   const f = shaderPreparationFixture({ parallel: false });
   const target = new RenderTarget3D(2, 2, { format: 'rgba16f' });
@@ -1176,4 +1234,73 @@ test('world3d WebGPU readbacks respect resource lifetime and release fallbacks o
   );
   assert.equal(deviceDestroys(), 0);
   liveTarget.dispose();
+});
+
+test('World3D prewarms the plain and automatically instanced programs before the camera crosses the threshold', async () => {
+  const f = shaderPreparationFixture({ parallel: false });
+  const material = createStandardMaterial3D({});
+  const scene = new Scene3D();
+  const light = createDirectionalLight3D({ castShadow: true });
+  scene.addChild(light);
+  const camera = createPerspectiveCamera3D({ fov: 60, aspect: 1, near: 0.1, far: 20 });
+  camera.setPosition(0, 0, 5).lookAt(0, 0, 0);
+  const meshes = Array.from({ length: 8 }, () => new Mesh3D(f.mesh.geometry, f.material));
+  for (const mesh of meshes) scene.addChild(mesh);
+  meshes[7].setPosition(100, 0, 0);
+  const instancedDraws = [];
+  f.gl.vertexAttribDivisor = () => {};
+  f.gl.drawElementsInstanced = (_mode, _size, _type, _offset, count) =>
+    instancedDraws.push({ count, defines: f.programDefines(f.gl.getParameter(f.gl.CURRENT_PROGRAM)) });
+  try {
+    const base = { mesh: meshes[0], material, receiveShadows: true };
+    await f.renderer.preparePrograms([base, { ...base, pass: 'shadow' }], { includeAutoInstancing: true });
+    const prepared = [...f.linked];
+    const combinations = prepared.map(program => {
+      const defs = f.programDefines(program);
+      return [defs.has('DEPTH_ONLY') ? 'depth' : 'color', defs.has('USE_INSTANCING') ? 'batch' : 'plain'].join('-');
+    });
+    assert.deepEqual(combinations.sort(), ['color-batch', 'color-plain', 'depth-batch', 'depth-plain']);
+    // Switch only after preparation, as an interactive material change would.
+    for (const mesh of meshes) mesh.material = material;
+    assert.equal(f.buffers, 0);
+    assert.equal(f.draws, 0);
+    assert.equal(f.renderer.render(scene, camera), true);
+    assert.ok(!instancedDraws.some(call => !call.defines.has('DEPTH_ONLY')));
+    meshes[7].setPosition(0, 0, 0);
+    instancedDraws.length = 0;
+    assert.equal(f.renderer.render(scene, camera), true);
+    assert.ok(instancedDraws.some(call => call.count === 8 && call.defines.has('DEPTH_ONLY')));
+    assert.ok(instancedDraws.some(call => call.count === 8 && call.defines.has('RECEIVE_SHADOW')));
+    assert.deepEqual(f.linked, prepared);
+    assert.deepEqual(f.checked, prepared);
+  } finally {
+    f.dispose();
+    material.dispose();
+  }
+});
+
+test('World3D prepares automatic companion programs only for passes that can fold the mesh', async () => {
+  const f = shaderPreparationFixture({ parallel: false });
+  const material = createStandardMaterial3D({});
+  const mesh = new Mesh3D(f.mesh.geometry, material);
+  const options = { includeAutoInstancing: true };
+  try {
+    const base = { mesh, material };
+    await f.renderer.preparePrograms([base]);
+    f.renderer.autoInstancing = false;
+    await f.renderer.preparePrograms([base], options);
+    f.renderer.autoInstancing = true;
+    mesh.setScale(-1, 1, 1);
+    await f.renderer.preparePrograms([base], options);
+    assert.equal(f.linked.length, 1);
+    const blend = { mesh: f.mesh, material: f.material };
+    await f.renderer.preparePrograms([blend, { ...blend, pass: 'depth-prepass' }], options);
+    assert.ok(f.linked.every(program => !f.programDefines(program).has('USE_INSTANCING')));
+    await f.renderer.preparePrograms([{ ...blend, pass: 'shadow' }], options);
+    assert.equal(f.linked.filter(program => f.programDefines(program).has('USE_INSTANCING')).length, 1);
+    assert.ok(f.programDefines(f.linked.at(-1)).has('DEPTH_ONLY'));
+  } finally {
+    f.dispose();
+    material.dispose();
+  }
 });

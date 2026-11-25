@@ -127,6 +127,15 @@ export class GpuResources3D {
   }
 
   // ---- programs ------------------------------------------------------------
+  get hasPendingPrograms(): boolean {
+    return this.#pendingPrograms.size > 0;
+  }
+
+  canUsePreparedAlternative(key: string, alternativeKey: string): boolean {
+    // Preparation owns completion polling and publishes the linked program for the next draw.
+    return this.#pendingPrograms.has(key) && this.#programs.has(alternativeKey);
+  }
+
   program(key: string, sources: () => ShaderSources3D): Program3D {
     const cached = this.#programs.get(key);
     if (cached) return cached;
