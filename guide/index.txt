@@ -1,12 +1,17 @@
 # Egret guide: cards on demand
 
-Small cards for coding agents that write games with Egret. Each card is one topic, under about 800 tokens, with the rule, a short example and the measured reason or the game it was learnt from. Read only the cards a task needs. A question may be in English or Chinese.
+Ask in English or Chinese. Read only the cards your game needs. Each gives a short example and its source.
 
 - Ask: `node tools/egret-guide.mjs <words | API name | ERROR_CODE | hint-id>` prints the best two or three cards within `--budget` tokens (2,500 by default).
 - One card: `node tools/egret-guide.mjs --card <id>`. This list: `--list`.
 - Every card in one file, for tools that want one: `node tools/egret-guide.mjs --full --out <file>`.
 
 `applies` says which way of using the engine a card is for: `play`, `play3d`, `engine` (the core and feature entries), `world3d`, `web` (a page made by hand). A card marked stale was learnt at an older engine pin; its card says what changed.
+
+## Creating a game
+
+- [first-playable-world](cards/game/first-playable-world.txt) · play play3d engine world3d web · Choose the first action and show its result in the scene.
+- [action-body-feedback](cards/game/action-body-feedback.txt) · play play3d engine world3d · Show a landing, drift or impact through the moving body.
 
 ## Structure
 

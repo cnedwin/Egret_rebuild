@@ -2,6 +2,10 @@
 
 > Egret is a 2D and 3D game engine for the browser. A whole small 2D game is one call, `play({ width, height, setup, update })`, and one file, `egret2d.js`. This page is everything needed to write one. It needs no image, sound or font file and no build step.
 
+## Start a game
+
+Choose an object or character the player can act on and decide what will visibly change. Use [the first playable action](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/game/first-playable-world.txt) to design the opening. For movement, landing or impact, read [feedback in the character or vehicle](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/game/action-body-feedback.txt). For an existing game, look up the symptom or API in the [technical guide](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt).
+
 ## The page
 
 ```html

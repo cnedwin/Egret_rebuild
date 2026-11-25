@@ -345,6 +345,8 @@ const QUERIES = [
   ['tarp disappears', 'cloth-and-rope'],
   ['trees floating', 'terrain-stream-tiles'],
   ['UI_BUSY', 'ui-callbacks'],
+  ['My opening looks like a website', 'first-playable-world'],
+  ['My landing feels weightless', 'action-body-feedback'],
   // Chinese questions: no spaces between words, so the Chinese triggers are found inside the question.
   ['手机横屏 按钮 点不到', 'short-screen-hud'],
   ['同时按两个键没反应', 'keyboard-shortcuts'],
@@ -364,7 +366,9 @@ const QUERIES = [
   ['剪断绳子', 'rope-joints-2d'],
   ['篷布不见了', 'cloth-and-rope'],
   ['树悬空', 'terrain-stream-tiles'],
-  ['按钮里打开设置', 'ui-callbacks']
+  ['按钮里打开设置', 'ui-callbacks'],
+  ['开场像网页，第一次能做什么', 'first-playable-world'],
+  ['动作发飘，落地没重量', 'action-body-feedback']
 ];
 
 // Break caught: a change to the ranking or to a card that sends a known question to the wrong card.
@@ -418,8 +422,14 @@ test('GD10 the full file holds the index and every card, and is a build output',
 });
 
 // Break caught: llms.txt losing its way to the guide.
-test('GD11 llms.txt points to the index and the command line', () => {
+test('GD11 llms.txt offers both creation cards before the first example and keeps the technical lookup', () => {
   const page = read('llms.txt');
+  const opening = page.slice(0, page.indexOf('```html'));
+  for (const id of ['first-playable-world', 'action-body-feedback']) {
+    const card = cards.find(item => item.id === id);
+    assert.ok(card, id);
+    assert.ok(opening.includes('](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/' + card.file + ')'), id);
+  }
   assert.ok(page.includes('](guide/index.txt)'));
   assert.ok(page.includes('node tools/egret-guide.mjs'));
 });

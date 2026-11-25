@@ -157,6 +157,14 @@
     {
       "path": "guide/cards/world3d/model-in-code.txt",
       "originRole": "First-party guide card on modelling in code with distance fields, written from the box-built models of Tea Horse Road in PortedGamesEgret; AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/game/first-playable-world.txt",
+      "originRole": "First-party guide card on designing a first playable action, informed by the Peach Creek game sources in PortedGamesEgret. AI-assisted. Apache-2.0."
+    },
+    {
+      "path": "guide/cards/game/action-body-feedback.txt",
+      "originRole": "First-party guide card on character and vehicle feedback, informed by Jelly Pandas, Rally and Five Regiments in PortedGamesEgret. AI-assisted. Apache-2.0."
     }
   ],
   "documents": [
