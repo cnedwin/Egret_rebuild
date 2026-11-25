@@ -445,7 +445,10 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           let bytes: Uint8Array<ArrayBuffer>;
           try {
             const response = await globalThis.fetch(ref.id, { signal: stop.signal });
-            if (!response.ok) throw new Error(response.status + ' ' + ref.id);
+            if (!response.ok)
+              throw new EgretError('WEB_PNG_READ_FAILED', {
+                cause: new EgretError('BROWSER_GAME_IMAGE_FAILED', { cause: new Error(response.status + ' ' + ref.id) })
+              });
             bytes = await boundedGameImageBytes(response);
           } catch (cause) {
             stop.abort();

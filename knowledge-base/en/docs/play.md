@@ -258,6 +258,8 @@ During initial setup or restart, `game.dispose()` closes the game even if an app
 
 Give only `width` or `height` to preserve the picture's shape, or omit both to use its original size. The default uses [smaller copies](shared-render-profile-contract.md) when scaling down. Set `smooth: false` for sharp pixel art. Repeated loads of the same address share a texture while it is leased.
 
+An unsuccessful HTTP status keeps the error chain `ASSET_LOAD_FAILED` → `WEB_PNG_READ_FAILED` → `BROWSER_GAME_IMAGE_FAILED`. The URL can be retried. In the Chromium 157 software WebGL2 check, the first request to a `.png` URL returned 404. The second request to the same URL returned WebP bytes with a PNG media type and produced a 48 × 32 image.
+
 ## Words, menus and bars
 
 A story, a title screen and a health bar are the parts most games draw for themselves. Play has them, made of the game's own sprites and texts on the ui layer, so a restart takes them away and each plays by keyboard, pointer and finger.

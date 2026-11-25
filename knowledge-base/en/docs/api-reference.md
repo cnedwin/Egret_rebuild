@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 47 entries, 1445 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 47 entries, 1447 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1037,8 +1037,10 @@ For which entry to import from, see [What to import](entry-points.md).
 | `ViewButton` | interface | A button with words on it. |
 | `ViewDescription` | interface | A screen as data: its parts, the parts while the screen is taller than wide, and how it sits. |
 | `ViewFrame` | interface | Where a view goes: the screen the game shows and the part of it that is safe, in the game's units. |
+| `ViewImage` | interface | A picture contained in its layout box and centred with its original aspect ratio. |
 | `ViewPanel` | interface | A panel: a card that is drawn, or only a place that holds parts. |
-| `ViewPart` | type | Any part of a view: a panel, a text, a button, a bar, a toggle or a space. |
+| `ViewParagraphStyle` | interface | Width-wrapped text in an explicitly sized view part. |
+| `ViewPart` | type | Any part of a view. |
 | `ViewPlan` | interface | Where every part of a view goes on one screen. |
 | `ViewPlannedPart` | interface | A part where it goes: its place in the tree, what it is, and its rectangle in the game's units. |
 | `ViewRect` | interface | A rectangle in the game's units. |

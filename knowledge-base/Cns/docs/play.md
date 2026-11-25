@@ -258,6 +258,8 @@ for (const block of blocks) {
 
 只给 `width` 或 `height` 之一会保持比例，都省略时使用原尺寸。默认缩小绘制时使用[多级缩小副本](shared-render-profile-contract.md)。像素风可以使用 `smooth: false`。同一地址的图片在纹理租约有效时共享纹理。
 
+HTTP 状态失败时保留错误链 `ASSET_LOAD_FAILED` → `WEB_PNG_READ_FAILED` → `BROWSER_GAME_IMAGE_FAILED`，可以用原地址重试。在 Chromium 157 软件 WebGL2 验证中，同一个 `.png` 地址第一次返回 404，第二次返回标成 PNG 类型的 WebP 字节，成功生成 48 × 32 的图片。
+
 ## 文字、菜单与血条
 
 剧情对白、标题菜单和血条，是大多数游戏都要自己画的部分。Play 现在自带这些，全部由游戏自己 ui 层上的精灵和文字组成，所以重开时会一并清掉，键盘、指针和手指都能操作。

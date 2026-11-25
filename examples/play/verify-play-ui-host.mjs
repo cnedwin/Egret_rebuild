@@ -101,6 +101,26 @@ export async function verifyPlayUiHost(page) {
       observed.imageByteLimit = [error.code, error.cause?.code];
     }
     globalThis.fetch = normalFetch;
+    const retryAddress = '/retry-game-cover.png';
+    const retryBytes = await normalFetch(cover).then(response => response.arrayBuffer());
+    let retryReads = 0;
+    globalThis.fetch = (url, options) => {
+      if (url !== retryAddress) return normalFetch(url, options);
+      return Promise.resolve(
+        ++retryReads === 1
+          ? new Response(null, { status: 404 })
+          : new Response(retryBytes, { headers: { 'content-type': 'image/png' } })
+      );
+    };
+    try {
+      await game.image(retryAddress).catch(error => {
+        observed.httpFailure = [error.code, error.cause?.code, error.cause?.cause?.code];
+      });
+      const retried = await game.image(retryAddress, { width: 48, layer: 'ui' });
+      observed.retry = [retryReads, retried.getBounds().width, retried.getBounds().height];
+    } finally {
+      globalThis.fetch = normalFetch;
+    }
     try {
       const node = await game.image(cover, { x: 320, y: 170, width: 60, layer: 'ui' });
       const { width, height } = node.getBounds();
@@ -179,6 +199,8 @@ export async function verifyPlayUiHost(page) {
       imageJobLimit: ['ASSET_LOAD_FAILED', 'WEB_PNG_JOB_LIMIT'],
       imageByteLimit: ['ASSET_LOAD_FAILED', 'WEB_PNG_INPUT_LIMIT'],
       admittedImageReads: 4,
+      httpFailure: ['ASSET_LOAD_FAILED', 'WEB_PNG_READ_FAILED', 'BROWSER_GAME_IMAGE_FAILED'],
+      retry: [2, 48, 32],
       cover: [60, 40],
       dimensions: [320, 180],
       cssCanvas: [80, 115, 800, 450],
