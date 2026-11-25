@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Test a UI by the names on it",
+    "body": "createUiTester of the new entry @egret/engine/ui/testing finds a control by its name in the semantic tree (a name, a role, what it is in, or the n-th of several) and presses it, focuses it or reads its state through the same actions a tap, a key and assistive technology reach. It moves the game's clock with wait, reads the front of the screen stack and presses its back key. A query that names nothing or several, and a press on a disabled control or one behind a dialog, fail with a message that ends with an outline of what the screen held. Checks written this way run in Node without a browser."
+  },
+  "zh": {
+    "title": "按界面上的名字测试 UI",
+    "body": "新入口 @egret/engine/ui/testing 的 createUiTester 在语义树里按名字查找控件（名字、角色、所在位置或第 n 个），并通过与点击、按键和辅助技术相同的操作按下、聚焦或读取状态。它用 wait 推进游戏时钟，读取界面栈最前面的界面并按下返回键。查询找不到或找到多个，或按下不可用、被对话框挡住的控件时，失败消息的末尾附上界面上实际有什么的大纲。这样写的检查在 Node 里运行，不需要浏览器。"
+  }
+}

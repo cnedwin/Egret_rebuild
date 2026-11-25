@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/ui/testing.ts",
+      "originRole": "First-party optional entry @egret/engine/ui/testing: a tester that finds controls by name in the semantic tree and drives them with its actions; independently authored with AI assistance; the path-driven UI tests of LumioGames LGUI were studied as a reference and none of its code is used; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-tester.test.mjs",
+      "originRole": "First-party focused validation of the UI tester in Node; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/ui-testing.md",
+      "originRole": "First-party bilingual guide to testing a UI by what it says; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-testing.md",
+      "originRole": "First-party bilingual guide to testing a UI by what it says; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-testing.md",
+      "zh": "knowledge-base/Cns/docs/ui-testing.md"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 44 个入口、1404 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 45 个入口、1408 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1621,6 +1621,15 @@
 | `UiListSemanticsOptions` | 接口 | Semantics for a list control: its tree and list, its role and name, and how its rows are described. |
 | `UiSemantics` | 接口 | The semantic tree of a UI the application draws: what each control is, what it is called and what state it is in. |
 | `UiSemanticsOptions` | 接口 | A semantic tree to make: how many nodes it holds. |
+
+## `@egret/engine/ui/testing`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `createUiTester` | 函数 | Makes a tester over a semantic tree. |
+| `UiTester` | 接口 | Finds controls by name and drives them through the semantic tree. |
+| `UiTesterOptions` | 接口 | What a tester reads and drives: a semantic tree, how time moves, and the screen stack if there is one. |
+| `UiTesterState` | 接口 | The state of a found control, as its node says it. |
 
 ## `@egret/engine/web/semantics`
 

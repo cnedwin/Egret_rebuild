@@ -67,6 +67,7 @@ const ENTRY_POINTS = {
     "./audio": "audio",
     "./web/audio": "web/audio",
     "./ui/semantics": "semantics",
+    "./ui/testing": "ui/testing",
     "./web/semantics": "web/semantics"
   }
 };

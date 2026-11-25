@@ -1250,6 +1250,16 @@
 | `UI_SEMANTICS_SURFACE_BUSY` | UI 语义的 `surface` 还在处理之前的请求。 |
 | `UI_SEMANTICS_SURFACE_INVALID` | 交给UI 语义的 `surface` 无效。 |
 
+### UI_TESTER
+
+| 错误码 | 含义 |
+| --- | --- |
+| `UI_TESTER_AMBIGUOUS` | 界面上有不止一个东西叫这个名字。加上角色、所在的位置或 #n。界面上有什么见 cause。 |
+| `UI_TESTER_NOT_FOUND` | 界面上没有叫这个名字的东西。界面上有什么见 cause。 |
+| `UI_TESTER_OPTIONS_INVALID` | 交给UI 测试器的选项无效：缺少某一项、类型不对或超出范围。 |
+| `UI_TESTER_QUERY_INVALID` | 交给UI 测试器的 `query` 无效。 |
+| `UI_TESTER_REFUSED` | 找到了控件，但操作被拒绝：它不可用、被对话框挡住，或没有这个操作。 |
+
 ### UI_TEXT_EDITOR
 
 | 错误码 | 含义 |

@@ -1250,6 +1250,16 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `UI_SEMANTICS_SURFACE_BUSY` | The surface of UI semantics is still busy with an earlier request. |
 | `UI_SEMANTICS_SURFACE_INVALID` | The surface given to UI semantics is not valid. |
 
+### UI_TESTER
+
+| Code | Meaning |
+| --- | --- |
+| `UI_TESTER_AMBIGUOUS` | More than one thing on the screen has that name. Add a role, what it is in, or #n. What the screen holds is in cause. |
+| `UI_TESTER_NOT_FOUND` | Nothing on the screen has that name. What the screen holds is in cause. |
+| `UI_TESTER_OPTIONS_INVALID` | The options given to the UI tester are not valid: one is missing, of the wrong type or out of range. |
+| `UI_TESTER_QUERY_INVALID` | The query given to the UI tester is not valid. |
+| `UI_TESTER_REFUSED` | The control was found but the action was refused: it is disabled, behind a dialog or has no such action. |
+
 ### UI_TEXT_EDITOR
 
 | Code | Meaning |

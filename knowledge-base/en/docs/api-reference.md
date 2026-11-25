@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 44 entries, 1404 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 45 entries, 1408 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1621,6 +1621,15 @@ For which entry to import from, see [What to import](entry-points.md).
 | `UiListSemanticsOptions` | interface | Semantics for a list control: its tree and list, its role and name, and how its rows are described. |
 | `UiSemantics` | interface | The semantic tree of a UI the application draws: what each control is, what it is called and what state it is in. |
 | `UiSemanticsOptions` | interface | A semantic tree to make: how many nodes it holds. |
+
+## `@egret/engine/ui/testing`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `createUiTester` | function | Makes a tester over a semantic tree. |
+| `UiTester` | interface | Finds controls by name and drives them through the semantic tree. |
+| `UiTesterOptions` | interface | What a tester reads and drives: a semantic tree, how time moves, and the screen stack if there is one. |
+| `UiTesterState` | interface | The state of a found control, as its node says it. |
 
 ## `@egret/engine/web/semantics`
 
