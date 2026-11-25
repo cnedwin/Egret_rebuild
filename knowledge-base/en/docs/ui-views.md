@@ -87,6 +87,45 @@ A view is also a handle of the [screen stack](ui-screen-stack.md). `open: () => 
 
 `modal: true` puts a dim over everything behind the view and takes every press that misses it.
 
+## Scrollable views
+
+Add `scroll: 'vertical'` to a panel with an explicit height. A column of row panels works for a two-column building list. The viewport clips its descendants and accepts wheel, touch drag and keyboard navigation.
+
+```js
+const buildings = game.show({
+  label: 'Buildings',
+  root: {
+    type: 'panel', name: 'list', scroll: 'vertical',
+    layout: 'column', gap: 8, width: 330, height: 104,
+    children: [0, 1, 2, 3].map(row => ({
+      type: 'panel', layout: 'row', gap: 12, height: 44,
+      children: [
+        { type: 'button', name: 'house' + row, text: 'House', width: 'fill' },
+        { type: 'button', name: 'workshop' + row, text: 'Workshop', width: 'fill' }
+      ]
+    }))
+  }
+}, { bind });
+const scroll = buildings.scroll('list');
+scroll.scrollTo(48);
+```
+
+The handle exposes `offset`, `maximum`, `scrollTo`, `scrollBy`, and `page(-1 | 1)`. A binding refresh preserves the offset, clamped to the available content. Tab and Shift+Tab can bring the next or previous control into view. A direct tester or accessibility action on a fully clipped control is refused until it has a visible region. A vertical drag scrolls without pressing the row. A wheel that moves this view is consumed by the view before `game.pointer.wheel`. When migrating existing screens, give each panel one scroll controller.
+
+## Interaction bounds
+
+The semantic tree publishes a part's live stage-space bounds after ancestor transforms and clips. A clipped-out control leaves the tree. Partially clipped controls publish the remaining bounds. A modal restores focus to the previous control if it is still actionable, or to another actionable control when the previous one is unavailable. `view.rect(name)` remains the authored layout box.
+
+### Browser check
+
+After building the workspace, run:
+
+```text
+node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new output directory> <absolute Chromium executable>
+```
+
+Windows Chromium 157 with SwiftShader WebGL2 reproduced the original button at (620, 430, 120, 42). It now moves to (545, 430, 120, 42), publishes and projects the clipped region (555, 415, 97.5, 12), and disappears when fully clipped. The building fixture observed offsets 62 by wheel, 54 by touch drag, 48 on keyboard reveal, and 0 after the list shrank. The input was injected through the browser, and the projected DOM is available to assistive technology. Actual screen-reader speech and real-finger interaction require device acceptance.
+
 ## Parts most screens need
 
 | Call | What it is |

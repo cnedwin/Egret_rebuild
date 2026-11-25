@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-ui.mjs",
+      "originRole": "Finite Chromium browser runner for the declarative Play UI interaction regressions; first-party."
+    },
+    {
+      "path": "examples/play/verify-view-visibility.mjs",
+      "originRole": "Original Play fixture for transform and clip admission, keyboard and semantic focus, modal restoration and projection."
+    },
+    {
+      "path": "examples/play/verify-view-scroll.mjs",
+      "originRole": "Original double-column Play building viewport with wheel, touch, keyboard and clipped-action controls."
+    },
+    {
+      "path": "packages/engine/web/playViewScroll.ts",
+      "originRole": "Original Play scroll viewport integration built on the existing scroll control and pointer sessions.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

@@ -21,6 +21,7 @@
       "@egret/engine/input/hover",
       "@egret/engine/kit",
       "@egret/engine/text",
+      "@egret/engine/ui",
       "@egret/engine/web/audio",
       "@egret/engine/web/game",
       "@egret/engine/web/gamepad",
@@ -104,6 +105,7 @@
       "@egret/engine/kit",
       "@egret/engine/play",
       "@egret/engine/text",
+      "@egret/engine/ui",
       "@egret/engine/web/audio",
       "@egret/engine/web/game",
       "@egret/engine/web/gamepad",
@@ -182,6 +184,10 @@
       "@egret/engine/web/game",
       "@egret/engine/webgl2/world3d",
       "@egret/engine/webgpu/world3d"
+    ],
+    "@egret/engine/ui": [
+      "@egret/engine/play",
+      "@egret/engine/webgl2/world3d"
     ],
     "@egret/engine/video": [
       "@egret/engine/web/video"

@@ -55,6 +55,8 @@ export interface ViewPanel extends ViewPartBase {
   readonly alpha?: number;
   /** What the panel is called for assistive technology and tests; its name unless given. */
   readonly label?: string;
+  /** Makes this panel a clipped vertical viewport; its children keep their declared layout inside it. */
+  readonly scroll?: 'vertical';
   readonly children?: readonly ViewPart[];
 }
 /** A line of words. */
@@ -211,6 +213,7 @@ const KEYS: Record<ViewPart['type'], ReadonlySet<string>> = {
     'color',
     'alpha',
     'label',
+    'scroll',
     'children'
   ]),
   text: new Set([...BASE_KEYS, 'text', 'size', 'color', 'align', 'bold']),
@@ -273,7 +276,8 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
     const choices: Record<string, readonly string[]> = {
       layout: ['free', 'row', 'column'],
       align: type === 'text' ? ['left', 'center', 'right'] : ['start', 'center', 'end', 'stretch'],
-      justify: ['start', 'center', 'end', 'between']
+      justify: ['start', 'center', 'end', 'between'],
+      scroll: ['vertical']
     };
     for (const [key, allowed] of Object.entries(choices))
       if (part[key] !== undefined && !allowed.includes(part[key] as string))

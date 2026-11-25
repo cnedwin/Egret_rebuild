@@ -87,6 +87,45 @@ const shop = game.show(
 
 `modal: true` 会在视图后面的所有东西上加一层暗色，并接住所有没点在视图上的按下。
 
+## 可滚动视图
+
+给固定高度的面板设置 `scroll: 'vertical'`。双列建筑单子可以用一个列面板放多行，每行再放两个按钮。视口裁剪子项，并支持滚轮、触屏拖动和键盘导航。
+
+```js
+const buildings = game.show({
+  label: '建筑单子',
+  root: {
+    type: 'panel', name: 'list', scroll: 'vertical',
+    layout: 'column', gap: 8, width: 330, height: 104,
+    children: [0, 1, 2, 3].map(row => ({
+      type: 'panel', layout: 'row', gap: 12, height: 44,
+      children: [
+        { type: 'button', name: 'house' + row, text: '民居', width: 'fill' },
+        { type: 'button', name: 'workshop' + row, text: '工坊', width: 'fill' }
+      ]
+    }))
+  }
+}, { bind });
+const scroll = buildings.scroll('list');
+scroll.scrollTo(48);
+```
+
+滚动句柄提供 `offset`、`maximum`、`scrollTo`、`scrollBy` 和 `page(-1 | 1)`。刷新绑定会保留此前的滚动位置，内容缩短时将位置限制在可用范围内。Tab 和 Shift+Tab 可让下一项或上一项滚入视口。完全被裁掉的控件只有重新露出，才可被测试器或辅助技术直接操作。手指纵向拖动会滚动，避免误按列表项。滚轮推动列表时由视图消费，此时 `game.pointer.wheel` 不会再收到同一事件。迁移旧界面时，每个面板保留一个滚动控制器。
+
+## 可交互区域
+
+语义树按父面板的实际变换和裁剪发布舞台坐标。局部裁剪时发布剩余范围，完全裁剪时移除对应语义节点。关闭模态时，优先将焦点还给仍可操作的原控件，否则选择另一个可操作控件。`view.rect(name)` 仍返回布局计划中的矩形。
+
+### 浏览器复跑
+
+先构建工作区，再运行：
+
+```text
+node examples/play/verify-ui.mjs <Playwright index.mjs 绝对路径> <新建输出目录绝对路径> <Chromium 可执行文件绝对路径>
+```
+
+Windows Chromium 157 软件 WebGL2 复现了初始位置 (620, 430, 120, 42)。修复后，左移得到 (545, 430, 120, 42)，部分裁剪时语义和投影都报告 (555, 415, 97.5, 12)，完全裁剪后不再发布。建筑列表测得滚轮位置 62、触屏拖动位置 54、Tab 自动滚入时位置 48、列表缩短后位置 0。本轮浏览器注入了输入，并检查了供辅助技术读取的投影 DOM。真实读屏播报和真人手指仍需设备验收。
+
 ## 大多数界面都需要的部件
 
 | 调用 | 是什么 |
