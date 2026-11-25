@@ -133,6 +133,69 @@ const measure = (words: string): number => {
   for (const character of words) units += wide(character) ? 1 : 0.55;
   return units;
 };
+// The upright forms of marks in vertical writing, as Unicode gives them for CJK compatibility.
+const VERTICAL_FORMS: Readonly<Record<string, string>> = Object.freeze({
+  '，': '︐',
+  '、': '︑',
+  '。': '︒',
+  '：': '︓',
+  '；': '︔',
+  '！': '︕',
+  '？': '︖',
+  '（': '︵',
+  '）': '︶',
+  '｛': '︷',
+  '｝': '︸',
+  '〔': '︹',
+  '〕': '︺',
+  '【': '︻',
+  '】': '︼',
+  '《': '︽',
+  '》': '︾',
+  '〈': '︿',
+  '〉': '﹀',
+  '「': '﹁',
+  '」': '﹂',
+  '『': '﹃',
+  '』': '﹄',
+  '…': '︙',
+  '—': '︱',
+  '－': '︲',
+  ',': '︐',
+  '.': '︒',
+  ':': '︓',
+  ';': '︔',
+  '!': '︕',
+  '?': '︖',
+  '(': '︵',
+  ')': '︶'
+});
+/**
+ * Words written top to bottom in columns from right to left, as rows a line of text draws: one character under
+ * another, marks turned to their upright forms, a `\n` or `column` characters ending a column, and an ideographic
+ * space where a column is shorter than the longest. For titles and seals in Chinese and Japanese, whose characters
+ * are of one width.
+ */
+export function verticalPlayWords(words: string, column = Infinity): string {
+  if (typeof words !== 'string') throw new TypeError('words are a string');
+  if (!(column >= 1)) throw new RangeError('a column holds at least one character');
+  const columns: string[][] = [];
+  for (const piece of words.split(/\r?\n/)) {
+    const characters = [...piece].map(character => VERTICAL_FORMS[character] ?? character);
+    if (characters.length === 0) columns.push([]);
+    for (let at = 0; at < characters.length; at += column) columns.push(characters.slice(at, at + column));
+  }
+  const tall = Math.max(0, ...columns.map(one => one.length));
+  const rows: string[] = [];
+  for (let row = 0; row < tall; row++)
+    rows.push(
+      columns
+        .map(one => one[row] ?? '\u3000')
+        .reverse()
+        .join('')
+    );
+  return rows.join('\n');
+}
 /** Breaks words into lines no wider than `units`: at a space where there is one, between any two wide characters. */
 export function wrapPlayWords(words: string, units: number): string[] {
   const lines: string[] = [];

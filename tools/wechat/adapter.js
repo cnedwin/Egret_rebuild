@@ -1243,6 +1243,26 @@ var installEgretWechatAdapter = function (G, page) {
     return Promise.resolve(typeof b === 'string' ? b : new TextDecoder().decode(new Uint8Array(b)));
   };
   Response.prototype.json = function () { return this.text().then(JSON.parse); };
+  // The body as a stream of one chunk, for code that reads a response as it comes (the engine's pictures are read so,
+  // to stop at their limit); WeChat has no ReadableStream.
+  Object.defineProperty(Response.prototype, 'body', {
+    configurable: true,
+    get: function () {
+      var self = this, b = this._body, sent = false;
+      if (b === null || b === undefined) return null;
+      var reader = {
+        read: function () {
+          if (sent) return Promise.resolve({ done: true, value: undefined });
+          sent = true;
+          self.bodyUsed = true;
+          return Promise.resolve({ done: false, value: typeof b === 'string' ? new TextEncoder().encode(b) : new Uint8Array(b) });
+        },
+        cancel: function () { sent = true; return Promise.resolve(); },
+        releaseLock: function () {}
+      };
+      return { getReader: function () { return reader; }, cancel: reader.cancel, locked: false };
+    }
+  });
   Response.prototype.clone = function () { return new Response(this._body, this); };
   function fetch(input, init) {
     var url = typeof input === 'string' ? input : input.href || input.url || String(input);

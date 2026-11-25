@@ -14,7 +14,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { exportWechat } from '../../tools/wechat/export-wechat.mjs';
-import { standInPage } from '../../tools/wechat/check-minigame.mjs';
+import { folderSubpackages, standInPage } from '../../tools/wechat/check-minigame.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const [playwrightPath, esbuildPath, outArg] = process.argv.slice(2);
@@ -30,7 +30,29 @@ const { chromium } = await import(pathToFileURL(playwrightPath).href);
 const esbuild = createRequire(path.join(path.resolve(esbuildPath), 'package.json'))(path.resolve(esbuildPath));
 const { PNG } = createRequire(import.meta.url)('pngjs');
 
-const exported = await exportWechat({ esbuild, gameDir: here, out: folder, minify: false });
+// The probe and a folder of pictures, art/, exported as a subpackage the game downloads with wx.loadSubpackage.
+const gameDir = path.join(out, 'game');
+fs.cpSync(here, gameDir, { recursive: true, filter: from => !/verify\.mjs$/.test(from) });
+// The copy's import map names the engine's modules from the repository, as the probe's own does from its folder.
+const repository = path.resolve(here, '../..');
+fs.writeFileSync(
+  path.join(gameDir, 'index.html'),
+  fs
+    .readFileSync(path.join(here, 'index.html'), 'utf8')
+    .replaceAll('"../../', JSON.stringify(repository + '/').slice(0, -1))
+);
+fs.mkdirSync(path.join(gameDir, 'art'), { recursive: true });
+const seal = new PNG({ width: 64, height: 64 });
+for (let i = 0; i < seal.data.length; i += 4) seal.data.set([0xc0, 0x30, 0x30, 0xff], i);
+fs.writeFileSync(path.join(gameDir, 'art', 'seal.png'), PNG.sync.write(seal));
+const exported = await exportWechat({
+  esbuild,
+  gameDir,
+  out: folder,
+  minify: false,
+  subpackages: [{ name: 'art', root: 'art' }]
+});
+const subpackages = folderSubpackages(folder);
 const W = 390,
   H = 844,
   RATIO = 2;
@@ -39,7 +61,7 @@ const server = http.createServer((request, response) => {
   const url = decodeURIComponent(new URL(request.url, 'http://x').pathname);
   if (url === '/') {
     response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-    return response.end(standInPage({ width: W, height: H, ratio: RATIO }));
+    return response.end(standInPage({ width: W, height: H, ratio: RATIO, subpackages }));
   }
   const file = path.resolve(folder, url.replace(/^\/pkg\//, ''));
   if (!url.startsWith('/pkg/') || !file.startsWith(folder) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
@@ -53,7 +75,20 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const browser = await chromium.launch({
   args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist']
 });
-const report = { package: exported.report?.totalBytes ?? null, steps: {} };
+const report = {
+  package: { main: exported.mainPackageBytes, total: exported.totalBytes, subpackages: exported.subpackages },
+  steps: {}
+};
+// game.json names the subpackage, which has an entry of its own; the sizes are counted apart.
+assert.deepEqual(JSON.parse(fs.readFileSync(path.join(folder, 'game.json'), 'utf8')).subpackages, [
+  { name: 'art', root: 'art/' }
+]);
+assert.ok(fs.existsSync(path.join(folder, 'art', 'game.js')));
+assert.equal(exported.subpackages[0].name, 'art');
+assert.ok(
+  exported.subpackages[0].bytes > 0 && exported.mainPackageBytes + exported.subpackages[0].bytes === exported.totalBytes
+);
+assert.ok(exported.withinMainPackage && exported.withinTotal);
 const problems = [];
 try {
   const page = await browser.newPage({ viewport: { width: W, height: H } });
@@ -218,6 +253,23 @@ try {
     assert.ok(Math.abs(round.stage.y - round.game.y - 139) < 1e-9 && Math.abs(round.stage.x - round.game.x) < 1e-9);
     return { ...seen, told };
   });
+  // The subpackage: its picture is not there before wx.loadSubpackage, which tells of its progress, and is after.
+  await step('subpackage', async seen => {
+    assert.match(seen.before, /^refused/, 'not there before the subpackage is loaded: ' + seen.before);
+    assert.deepEqual(seen.progress, [50, 100]);
+    assert.equal(seen.after, 'loaded');
+    const calls = await page.evaluate(() => window.__wxCalls);
+    assert.equal(calls.loadSubpackage, 1);
+    return seen;
+  });
+  // What a phone lacks is not on the page either.
+  report.steps.hidden = await page.evaluate(() =>
+    ['WebAssembly', 'CanvasRenderingContext2D', 'FontFace', 'CSS'].map(name => [name, typeof window[name]])
+  );
+  assert.deepEqual(
+    report.steps.hidden.map(([, kind]) => kind),
+    ['undefined', 'undefined', 'undefined', 'undefined']
+  );
   report.ok = true;
 } finally {
   await browser.close();

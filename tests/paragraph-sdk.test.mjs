@@ -65,6 +65,11 @@ test('SDK paragraph shares authentic manager with explicit text and keeps factor
     () => createParagraphCache(engine.assets, { provider: literal().provider }),
     code('PARAGRAPH_CACHE_ALREADY_CREATED')
   );
+  // The refusal says why, and what to do: one cache for the manager's life, shared.
+  assert.throws(
+    () => createParagraphCache(engine.assets, { provider: literal().provider }),
+    /one paragraph cache for its whole life.*shared by every paragraph, UI leaf and text editor/
+  );
   assert.throws(
     () => createParagraphCache({ ...engine.assets }, { provider: literal().provider }),
     code('TEXT_ASSETS_INVALID')

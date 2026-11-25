@@ -36,7 +36,8 @@ A page's text field cannot be shown in a mini game. `createWechatTextInput` of `
 
 ```sh
 node tools/wechat/export-wechat.mjs --esbuild <installed esbuild> --game <game folder> --out <new folder> \
-  [--appid <AppID>] [--orientation portrait|landscape] [--playwright <installed Playwright index.mjs>]
+  [--appid <AppID>] [--orientation portrait|landscape] [--playwright <installed Playwright index.mjs>] \
+  [--subpackage <name>=<folder of the game> ...]
 ```
 
 - The game's `index.html` gives its import map, which says where each module of the engine is. It also gives the elements the game looks up. The entry is `src/main.mjs` unless `--entry` names another.
@@ -44,7 +45,8 @@ node tools/wechat/export-wechat.mjs --esbuild <installed esbuild> --game <game f
 - `game.json` sets the orientation, hides the status bar and asks for iOS high-performance mode (`iOSHighPerformance`). `project.config.json` makes it a game project, with the AppID given or `touristappid`.
 - The game's other files are copied if WeChat accepts their kind. Files it would refuse are listed and left out.
 - WeChat on some phones does not decode WebP. With `--playwright`, each `.webp` is written again by a headless Chromium. It becomes a JPEG at quality 0.9 when every pixel is opaque, and a PNG otherwise. The adapter finds it under its new name. Without that option, the export lists the WebP files.
-- The report gives the size of `game.js` and of the package against WeChat's limits: 4 MB for the main package and 30 MB in all.
+- `--subpackage art=assets/art` makes a folder of the game a subpackage, downloaded once the game asks for it with `wx.loadSubpackage({ name: 'art' })`. `game.json` names it, with its folder as `root`. A folder with no `game.js` of its own is given one that does nothing, as WeChat runs a subpackage's entry when it has downloaded it. Names are letters, digits, `_` and `-`. A folder holding the game's code (`src`), one outside the game, or one inside another subpackage is refused. Before the subpackage is loaded, its files are not there: a picture asked for then fails, and is remembered as failed, so ask for it after.
+- The report gives the size of `game.js`, of the main package (`mainPackageBytes`), of each subpackage and of all of them, against WeChat's limits: 4 MB for the main package and 30 MB in all. The export fails when either is passed.
 
 ## Check
 
@@ -53,7 +55,7 @@ node tools/wechat/check-minigame.mjs <installed Playwright index.mjs> <mini game
   [--size 390x844] [--ratio 2] [--wait 8] [--tap x,y ...] [--then-wait 3]
 ```
 
-The stand-in gives the game what a mini game gives and nothing more. `GameGlobal` holds `wx`, the console, timers and frames. `wx.createCanvas` gives the screen first, then canvases off the screen. Files are read from the folder and storage is kept in memory. Touches come from the mouse; `--tap` taps the screen. The report has:
+The stand-in gives the game what a mini game gives and nothing more. `GameGlobal` holds `wx`, the console, timers and frames, and `wx` is a global name too, as on a phone. What a phone's mini game lacks is taken off the page before `game.js` runs: `WebAssembly`, the classes of 2D drawing, `FontFace`, `FontFaceSet` and `CSS`. `wx.loadSubpackage` downloads a subpackage named in `game.json`: it tells of its progress, runs the subpackage's `game.js`, and only then are its files there. `wx.createCanvas` gives the screen first, then canvases off the screen. Files are read from the folder and storage is kept in memory. Touches come from the mouse; `--tap` taps the screen. The report has:
 
 - whether the game stopped;
 - the errors on the console;
@@ -93,7 +95,7 @@ The tests in `tests/wechat-minigame.test.mjs` run the adapter in a Node context.
 - the backdrop drawn under a frame, with the game's WebGL state bound again;
 - the export of a small game folder, run in that context.
 
-`examples/minigame/verify.mjs` exports a probe game and runs it in the stand-in. Inside the game, none of the names above exist. On November 26, 2026 the probe's labels drew three lines of words. A paragraph was given the canvas provider, for want of `WebAssembly`. It wrapped into three lines, which were drawn on the screen, and a hit in the word "lantern" found its letter. The page's text field failed there (`setSelectionRange` is not a function); the WeChat keyboard input took typed words, committed them on the confirm key and when the keyboard was closed, and cancelled.
+`examples/minigame/verify.mjs` exports a probe game and runs it in the stand-in. Inside the game, none of the names above exist. On November 26, 2026 the probe's labels drew three lines of words. A paragraph was given the canvas provider, for want of `WebAssembly`. It wrapped into three lines, which were drawn on the screen, and a hit in the word "lantern" found its letter. The page's text field failed there (`setSelectionRange` is not a function); the WeChat keyboard input took typed words, committed them on the confirm key and when the keyboard was closed, and cancelled. A subpackage `art/` was exported with the probe: its picture was not there before `wx.loadSubpackage`, which told of progress at 50 and 100, and loaded after. That check found that no picture of the package could load in a mini game, as the adapter's responses had no `body` for the engine to read; they now have one.
 
 On November 22, 2026, a ported 2D game exported this way was played in the stand-in, in headless Chromium on software WebGL2. The game was 0.54 MB of pictures, and its scenery is CSS backgrounds. The package came to 1.75 MB with its WebP written as JPEG. The title showed its scenery under the canvas; a tap went to the choice of night, and a second tap started the first night. No error was reported and no element leaked.
 

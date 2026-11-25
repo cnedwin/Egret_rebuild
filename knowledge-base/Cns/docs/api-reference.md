@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1466 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1469 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1263,10 +1263,12 @@
 | `TextEditSelection` | 接口 | Source offsets are UTF-16, never glyph indices or guessed advance widths. |
 | `UiTextEditor` | 接口 | A text editor: its content, the calls that set its value, selection and style, and the geometry of its text. |
 | `UiTextEditorChange` | 接口 | A change to a text editor's content or selection, and what made it. |
+| `UiTextEditorFontSet` | 接口 | Fonts for an editor as a font provider gives them, such as a set of `createBrowserEditorFontProvider`. |
 | `UiTextEditorOptions` | 接口 | A text editor to make: its engine, scope and cache, its mode, value and limits, its style and size, and what it calls. |
 | `UiTextEditorSetOptions` | 接口 | How a value is set: the selection after it, the revision it expects, and whether a composition is cancelled. |
 | `UiTextEditorSnapshot` | 接口 | A text editor as it is now: its content revision, style, and whether the native editor shows. |
 | `UiTextEditorStyle` | 接口 | How a text editor's text looks: its fonts and size, line height, locale and direction, colors and alignment. |
+| `UiTextEditorStyleInput` | 接口 | A style to give an editor: as its style, but `fontSet` may be the font set itself, whose key is taken, and whose families are taken unless `fontFamilies` is given. |
 | `UiTextEditorTarget` | 类型 | What a text editor is drawn in: a leaf of the tree, or a row of a list. |
 
 ## `@egret/engine/web/editing`
@@ -1627,6 +1629,7 @@
 | `SfxTone` | 接口 | One tone of an effect. |
 | `SfxWave` | 类型 | The wave of a tone. |
 | `synthesizeSfx` | 函数 | The samples of an effect, one channel, from -1 to 1. |
+| `verticalPlayWords` | 函数 | Words written top to bottom in columns from right to left, as rows a line of text draws: one character under another, marks turned to their upright forms, a `\n` or `column` characters ending a column, and an ideographic space where a column is shorter than the longest. |
 | `wrapPlayWords` | 函数 | Breaks words into lines no wider than `units`: at a space where there is one, between any two wide characters. |
 
 ## `@egret/engine/audio`

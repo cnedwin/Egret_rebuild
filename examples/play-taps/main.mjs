@@ -84,4 +84,12 @@ globalThis.__taps = {
     return { shown, activated: named, hidden, again, gone: find() === undefined };
   }
 };
+// A title written top to bottom: two columns of four characters, the comma upright.
+globalThis.__taps.vertical = async () => {
+  const title = game.text('洗冤笔录，第一案', { x: 640, y: 900, size: 40, vertical: { column: 4 }, align: 'right' });
+  for (let i = 0; i < 60 && !(title.numChildren > 0 && title.getChildAt(0).visible); i++) await frames(1);
+  await frames(3);
+  const box = title.getBounds();
+  return { text: title.text, width: box.width, height: box.height, shown: title.getChildAt(0).visible };
+};
 globalThis.__tapsReady = true;
