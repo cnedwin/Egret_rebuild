@@ -105,13 +105,10 @@ export async function verifyDenseLabels(page, backend = 'webgl2') {
             ready: view
               ? ids.filter((id, index) => {
                   const { label, display } = fieldOf(view, id);
-                  const status = display?.getStatus();
+                  // The words of a text are a picture on a page shared with the other texts' words: drawn once the
+                  // display is shown and holds it.
                   return (
-                    display?.visible &&
-                    status.state === 'ready' &&
-                    !status.pending &&
-                    status.committedRevision === status.desiredRevision &&
-                    label.text === nameOf(title, index, model.price)
+                    display?.visible && display.numChildren === 1 && label.text === nameOf(title, index, model.price)
                   );
                 }).length
               : 0,
@@ -245,8 +242,11 @@ export async function verifyDenseLabels(page, backend = 'webgl2') {
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
     await fixture.evaluate(fixture => fixture.switchSheet(false));
     const latestPrices = await census(false);
-    assert.equal(craft.budget.cache.activeCallerLeases, 48);
-    assert.ok(craft.budget.releasedRasters >= 48);
+    // The 48 texts shown are drawn on shared pages and hold no place in the text cache; the hidden sheet's texts gave
+    // back their places on the pages.
+    assert.equal(craft.budget.cache.activeCallerLeases, 0);
+    assert.equal(craft.budget.atlasLabels, 48);
+    assert.ok(craft.budget.atlasPages <= 4, 'the words share a few pages: ' + craft.budget.atlasPages);
     assert.equal(latestPrices.budget.refusals, 0);
     assert.equal(latestPrices.buttonName, 'Next wave $49');
     await page.mouse.click(

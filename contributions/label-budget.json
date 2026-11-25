@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/label-budget/index.html",
+      "originRole": "First-party browser check of many labels on one screen (shared pages, warnings near a frame's image limit, frames not drawn without stopping the loop) and of labels ended with their parent; independently authored with AI assistance; uses the caller's installed Playwright; Apache-2.0."
+    },
+    {
+      "path": "examples/label-budget/main.mjs",
+      "originRole": "First-party browser check of many labels on one screen (shared pages, warnings near a frame's image limit, frames not drawn without stopping the loop) and of labels ended with their parent; independently authored with AI assistance; uses the caller's installed Playwright; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/label-budget/verify.mjs",
+      "originRole": "First-party browser check of many labels on one screen (shared pages, warnings near a frame's image limit, frames not drawn without stopping the loop) and of labels ended with their parent; independently authored with AI assistance; uses the caller's installed Playwright; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

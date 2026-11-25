@@ -488,6 +488,7 @@
 | --- | --- |
 | `FRAME_BUDGET_EXCEEDED` | 舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、4,096 个不同的几何体或 65,536 个网格三角形。半径 40 的圆是 32 个三角形。 |
 | `FRAME_ID_EXHAUSTED` | 帧的 `id` 计数器用尽了。请新建一个。 |
+| `FRAME_IMAGES_NEAR_LIMIT` | 这是浏览器游戏的告警，不是错误：一帧用到的图片已达上限的五分之四（64 页、4,096 个区域、64 MiB）。createAtlasLabel 的标签共用纹理页。 |
 | `FRAME_IMAGE_BUDGET` | 这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。 |
 | `FRAME_PROFILE_METADATA_UNSUPPORTED` | 帧不支持 `profile metadata`。 |
 | `FRAME_REENTRANT` | 在捕获一帧的过程中又请求了一帧。请在帧循环中绘制，不要在捕获的回调里绘制。 |

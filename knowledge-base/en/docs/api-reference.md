@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1463 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1466 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1570,12 +1570,15 @@ For which entry to import from, see [What to import](entry-points.md).
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `BrowserGame` | interface | A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. |
+| `BrowserGameAtlasLabel` | interface | A line of text drawn on a page of images shared with other such labels. |
 | `BrowserGameBackend` | type | Which GPU interface a browser game draws with. |
 | `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, or filling it with a stage that grows around the design (`'expand'`). |
+| `BrowserGameFrameUsage` | interface | What the last frame drawn held of a frame's images, against what one frame may hold. |
 | `BrowserGameLabel` | interface | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
 | `BrowserGameOptions` | interface | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
+| `BrowserGameWarning` | interface | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache. |
 | `BrowserStatsPanel` | interface | A panel over the canvas showing frame rate and frame times: sample each frame. |
 | `BrowserStatsPanelOptions` | interface | A stats panel to make: the canvas it sits over, its label, and how often it updates. |
 | `BrowserStatsSample` | interface | What a game knows at one frame of the display. |

@@ -4,12 +4,15 @@
 export { createBrowserGame } from './BrowserGame.js';
 export type {
   BrowserGame,
+  BrowserGameAtlasLabel,
   BrowserGameBackend,
   BrowserGameFit,
+  BrowserGameFrameUsage,
   BrowserGameLabel,
   BrowserGameLabelCreateOptions,
   BrowserGameLabelOptions,
-  BrowserGameOptions
+  BrowserGameOptions,
+  BrowserGameWarning
 } from './BrowserGame.js';
 export { createBrowserStatsPanel } from './BrowserStatsPanel.js';
 export type {

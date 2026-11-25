@@ -14,7 +14,7 @@ import { createBrowserGamepadInput } from './gamepad.js';
 import type { BrowserGamepadInput } from './gamepad.js';
 import { createBrowserGame } from './game.js';
 import { createBrowserFrameLoop } from './loop.js';
-import type { BrowserGame, BrowserGameBackend, BrowserGameLabel } from './game.js';
+import type { BrowserGame, BrowserGameAtlasLabel, BrowserGameBackend, BrowserGameWarning } from './game.js';
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 import type { SfxRecipe } from './playSfx.js';
 import { createPlayWidgets } from './playWidgets.js';
@@ -97,6 +97,11 @@ export interface PlayOptions {
   readonly renderMode?: 'continuous' | 'on-demand';
   /** Told of what stopped the game. Without it the failure is thrown where the console shows it. */
   readonly onError?: (error: unknown) => void;
+  /**
+   * Told of what the game should know before it shows: a frame near its limit of images, a frame not drawn for holding
+   * more, words that could not be drawn. Without it they are not told; the engine writes nothing to the console.
+   */
+  readonly onWarning?: (warning: BrowserGameWarning) => void;
   /** The seed of `game.random`. A different one each time unless given. */
   readonly seed?: number | string;
   /** `'auto'` unless given. */
@@ -781,6 +786,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   )
     throw invalid('insets is { top, right, bottom, left } of numbers 0 or more');
   if (options.arrange !== undefined && typeof options.arrange !== 'function') throw invalid('arrange is a function');
+  if (options.onWarning !== undefined && typeof options.onWarning !== 'function')
+    throw invalid('onWarning is a function');
   if (
     options.semantics !== undefined &&
     (options.semantics === null ||
@@ -843,7 +850,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     ...(options.insets === undefined ? {} : { insets: options.insets }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),
     ...(options.pixelRatio === undefined ? {} : { pixelRatio: options.pixelRatio }),
-    ...(onError === undefined ? {} : { onError })
+    ...(onError === undefined ? {} : { onError }),
+    ...(options.onWarning === undefined ? {} : { onWarning: options.onWarning })
   }).catch((cause: unknown) => {
     holder?.remove();
     throw cause;
@@ -901,7 +909,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         // A refusal or a late mutation must leave the request pending.
         const pending = redraw,
           next = revision?.revision;
-        const submitted = engine.renderSharedFrame(frame);
+        // Drawn as the game draws: a frame of too many images is left undrawn with a warning, not the game stopped.
+        const submitted = baseBrowser.drawFrame(frame);
+        if (submitted === undefined) return undefined;
         if (next !== undefined) {
           lastFrame = frame;
           lastRevision = next;
@@ -1518,7 +1528,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     if (!finite(size) || size <= 0 || !colour(color)) throw invalid('a text has a size above 0 and a colour');
     if (align !== 'left' && align !== 'center' && align !== 'right')
       throw invalid("align is 'left', 'center' or 'right'");
-    let label: BrowserGameLabel | undefined,
+    // The words are drawn on pages shared with the game's other texts, so a screen of many short texts takes few of
+    // the images a frame may hold.
+    let label: BrowserGameAtlasLabel | undefined,
       rasterActive = true,
       gone = false;
     const round = generation;
@@ -1532,8 +1544,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       ready.then(
         () => {
           if (gone || !rasterActive || pendingReady !== ready) return;
-          made.display.x = align === 'center' ? -made.display.width / 2 : align === 'right' ? -made.display.width : 0;
-          made.display.y = o.baseline === 'middle' ? -made.display.height / 2 : 0;
+          const box = made.bounds;
+          made.display.x = align === 'center' ? -box.width / 2 : align === 'right' ? -box.width : 0;
+          made.display.y = o.baseline === 'middle' ? -box.height / 2 : 0;
           made.display.visible = true;
         },
         () => {}
@@ -1591,7 +1604,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     const words = node.text;
     prepareLabelVisibility();
     browser
-      .createLabel({
+      .createAtlasLabel({
         text: words,
         fontSize: size,
         color,

@@ -291,6 +291,8 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   FRAME_BUDGET_EXCEEDED:
     '舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、4,096 个不同的几何体或 65,536 个网格三角形。半径 40 的圆是 32 个三角形。',
   FRAME_IMAGE_BUDGET: '这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。',
+  FRAME_IMAGES_NEAR_LIMIT:
+    '这是浏览器游戏的告警，不是错误：一帧用到的图片已达上限的五分之四（64 页、4,096 个区域、64 MiB）。createAtlasLabel 的标签共用纹理页。',
   FRAME_TRANSFORM_INVALID: '某个显示对象被放到了角点不是有限数字的位置。请检查它及其父级的 x、y、缩放和旋转。',
   FRAME_STAGE_INVALID: '帧是从 Engine 的舞台捕获的，而这不是一个舞台。',
   FRAME_REENTRANT: '在捕获一帧的过程中又请求了一帧。请在帧循环中绘制，不要在捕获的回调里绘制。',
