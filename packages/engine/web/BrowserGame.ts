@@ -23,6 +23,7 @@ import type {
   Texture
 } from '@egret/engine';
 import { createBrowserTextureProvider } from './image.js';
+import { decodeBrowserImage, sniffBrowserImageFormat } from './BrowserImageTextures.js';
 import { createTextField, createTextRasterCache } from '@egret/engine/text';
 import type { TextField, TextRasterCache } from '@egret/engine/text';
 import { createBrowserFrameLoop } from './loop.js';
@@ -169,7 +170,7 @@ export interface BrowserGame {
   readonly hover: BrowserGameHoverInput | undefined;
   readonly stats: BrowserStatsPanel | undefined;
   /**
-   * Loads a PNG image from an address and gives the lease of its texture, for `new Bitmap(lease)` or
+   * Loads a PNG, JPEG, WebP, GIF or AVIF image and gives the lease of its texture, for `new Bitmap(lease)` or
    * `graphics.beginBitmapFill(lease)`. The lease belongs to the game's scope. The same address loaded twice is one texture.
    */
   loadTexture(url: string): Promise<AssetLease<Texture>>;
@@ -216,6 +217,41 @@ const invalid = (): EgretError => new EgretError('BROWSER_GAME_OPTIONS_INVALID')
 const whole = (value: unknown): value is number =>
   typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
+const MAX_GAME_IMAGE_JOBS = 4;
+const MAX_GAME_IMAGE_BYTES = 8 * 1024 * 1024;
+
+function gameImageLimit(): EgretError {
+  return new EgretError('WEB_PNG_INPUT_LIMIT', { cause: new RangeError('Game image encoded payload limit') });
+}
+
+async function boundedGameImageBytes(response: Response): Promise<Uint8Array<ArrayBuffer>> {
+  if (Number(response.headers.get('content-length')) > MAX_GAME_IMAGE_BYTES) throw gameImageLimit();
+  if (response.body === null) return new Uint8Array();
+  const reader = response.body.getReader();
+  const chunks: Uint8Array<ArrayBufferLike>[] = [];
+  let length = 0;
+  try {
+    for (;;) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      length += chunk.value.byteLength;
+      if (length > MAX_GAME_IMAGE_BYTES) throw gameImageLimit();
+      chunks.push(chunk.value);
+    }
+  } catch (cause) {
+    void reader.cancel().catch(() => {});
+    throw cause;
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(length);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return bytes;
+}
 
 /** WebGPU where the browser has it and gives an adapter. Asking for an adapter does not touch the canvas, which can hold one kind of context only. */
 async function chooseBackend(asked: 'auto' | BrowserGameBackend): Promise<BrowserGameBackend> {
@@ -381,25 +417,65 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
               update?.(seconds);
             }
           }));
-    // Images by address: one asset type whose key is the address, read with the page's own request and decoded as PNG.
+    // Keep the strict PNG decoder and its ownership contract. Route other known encodings by
+    // bytes so file names, query strings and response content types cannot select a wrong decoder.
     const imageType = createAssetType<Texture>('egret.browser-game.image', isTexture);
+    const pendingPngBytes = new WeakMap<object, Uint8Array<ArrayBuffer>>();
+    const pngTextures = new WeakSet<Texture>();
+    let imageJobs = 0;
     const images = createBrowserTextureProvider({
-      async readBytes(ref, context) {
-        const stop = new AbortController(),
-          abort = (): void => stop.abort();
-        if (context.signal.aborted) abort();
-        else context.signal.addEventListener('abort', abort, { once: true });
-        try {
-          const response = await globalThis.fetch(ref.id, { signal: stop.signal });
-          if (!response.ok)
-            throw new EgretError('BROWSER_GAME_IMAGE_FAILED', { cause: new Error(response.status + ' ' + ref.id) });
-          return new Uint8Array(await response.arrayBuffer());
-        } finally {
-          context.signal.removeEventListener('abort', abort);
-        }
+      async readBytes(_ref, context) {
+        const bytes = pendingPngBytes.get(context);
+        if (bytes === undefined) throw new Error('Missing PNG bytes for the current image load');
+        return bytes;
       }
     });
-    engine.assets.register(imageType, images);
+    engine.assets.register(imageType, {
+      async load(ref, context) {
+        // Hold the original admission budget through fetch and decode for every format.
+        // Even a cancelled native decode retains its slot until the browser settles it.
+        if (imageJobs >= MAX_GAME_IMAGE_JOBS)
+          throw new EgretError('WEB_PNG_JOB_LIMIT', { cause: new RangeError('Game image occupied job limit') });
+        if (context.signal.aborted) throw context.signal.reason;
+        const stop = new AbortController(),
+          abort = (): void => stop.abort();
+        imageJobs++;
+        context.signal.addEventListener('abort', abort, { once: true });
+        try {
+          let bytes: Uint8Array<ArrayBuffer>;
+          try {
+            const response = await globalThis.fetch(ref.id, { signal: stop.signal });
+            if (!response.ok) throw new Error(response.status + ' ' + ref.id);
+            bytes = await boundedGameImageBytes(response);
+          } catch (cause) {
+            stop.abort();
+            if (context.signal.aborted) throw context.signal.reason;
+            if (cause instanceof EgretError) throw cause;
+            throw new EgretError('WEB_PNG_READ_FAILED', { cause });
+          }
+          if (context.signal.aborted) throw context.signal.reason;
+          const format = sniffBrowserImageFormat(bytes);
+          if (format !== undefined && format !== 'png') {
+            const texture = await decodeBrowserImage(bytes);
+            if (!context.signal.aborted) return texture;
+            texture.dispose();
+            throw context.signal.reason;
+          }
+          pendingPngBytes.set(context, bytes);
+          const texture = await images.load(ref, context);
+          pngTextures.add(texture);
+          return texture;
+        } finally {
+          imageJobs--;
+          context.signal.removeEventListener('abort', abort);
+          pendingPngBytes.delete(context);
+        }
+      },
+      dispose(texture) {
+        if (pngTextures.has(texture)) images.dispose(texture);
+        else texture.dispose();
+      }
+    });
     // Textures painted in code: each call puts its texture under a key of its own, and its lease ends it.
     const paintedType = createAssetType<Texture>('egret.browser-game.painted', isTexture),
       painted = new Map<string, Texture>();
@@ -490,7 +566,10 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     };
     if (fit !== 'none' && holder !== null) {
       const place = (): void => {
-        const box = holder.getBoundingClientRect();
+        const projected = holder.getBoundingClientRect();
+        // CSS dimensions are set in the holder's layout space. A transformed bounding box is
+        // measured in page space and would multiply the ancestor scale a second time.
+        const box = { width: holder.clientWidth || projected.width, height: holder.clientHeight || projected.height };
         const style = canvas.style;
         if (fit === 'cover' || fit === 'stretch') {
           const wide = box.width / width,

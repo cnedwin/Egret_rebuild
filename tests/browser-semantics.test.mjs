@@ -1183,7 +1183,7 @@ test('BS11 a page the projection cannot be laid over is refused before anything 
   refuses('UI_SEMANTICS_SURFACE_INVALID', { window: null });
   refuses('UI_SEMANTICS_SURFACE_INVALID', {
     prepare: dom => {
-      dom.body.css.transform = 'matrix(1, 0, 0, 1, 0, 0)';
+      dom.body.css.transform = 'matrix(1, 0, 1, 1, 0, 0)';
     }
   });
   refuses('UI_SEMANTICS_SURFACE_INVALID', {

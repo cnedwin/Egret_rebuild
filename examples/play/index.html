@@ -15,12 +15,15 @@
     "@egret/engine/input/gamepad": "/packages/engine/dist/gamepad.js",
     "@egret/engine/input/hover": "/packages/engine/dist/hover.js",
     "@egret/engine/text": "/packages/engine/dist/text.js",
+    "@egret/engine/paragraph": "/packages/engine/dist/paragraph.js",
     "@egret/engine/ui": "/packages/engine/dist/ui/index.js",
     "@egret/engine/ui/semantics": "/packages/engine/dist/semantics.js",
+    "@egret/engine/web/semantics": "/packages/engine/dist/web/semantics.js",
     "@egret/engine/ui/testing": "/packages/engine/dist/ui/testing.js",
     "@egret/runtime": "/packages/runtime/dist/index.js",
     "@egret/runtime/input": "/packages/runtime/dist/input/index.js",
     "@egret/runtime/text": "/packages/runtime/dist/text/index.js",
+    "@egret/runtime/paragraph": "/packages/runtime/dist/paragraph/index.js",
     "@egret/runtime/ui": "/packages/runtime/dist/ui/index.js",
     "@egret/contracts": "/packages/contracts/dist/index.js",
     "@egret/contracts/resources": "/packages/contracts/dist/resources/index.js",
@@ -35,7 +38,7 @@
   <script type="module">
     // One game fills the window: ?game=breakout, ?game=platformer, ?game=memory, ?game=story or, in 3D, ?game=roll3d or ?game=lanterns3d.
     const game = new URLSearchParams(location.search).get('game');
-    await import(['platformer', 'memory', 'story', 'roll3d', 'lanterns3d'].includes(game) ? `./${game}.mjs` : './breakout.mjs');
+    await import(['platformer', 'memory', 'story', 'roll3d', 'lanterns3d', 'semantic-letterbox'].includes(game) ? `./${game}.mjs` : './breakout.mjs');
   </script>
 </body>
 </html>

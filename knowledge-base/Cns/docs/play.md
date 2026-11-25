@@ -70,6 +70,7 @@ await play({
 | `saveKey` | `game.save` 保存数据时用的名字 | 页面的路径 |
 | `semantics` | 来自 `@egret/engine/ui/semantics` 的 `createUiSemantics` 创建的语义树：`game.show` 的视图会把有名字的部件加进去，每帧结束时发布，供 [UI 测试器](ui-testing.md)和辅助技术使用 | 没有语义树 |
 | `backend` | `'auto'`、`'webgpu'` 或 `'webgl2'` | `'auto'` |
+| `pixelRatio` | 2D 绘制缓冲区的正数倍率。舞台、布局、输入和语义区域始终使用同一套逻辑坐标 | 浏览器设备像素比，上限为 2 |
 | `blendSpace` | 半透明颜色的混合方式：`'srgb'` 与 2D canvas 和白鹭 5 一致，深色底上 10% 的白仍是淡淡的白；`'linear'` 按光线混合，同样的白看起来更强 | `'srgb'` |
 | `fit` | `'expand'` 铺满窗口：缩放比不变，舞台越过 `width` × `height` 一直延伸到窗口边缘。见[任意形状的屏幕](#任意形状的屏幕) | `'contain'`：窗口形状不同时留黑边 |
 | `portrait` | `{ width, height }`：窗口高大于宽时的舞台大小 | 两种方向都用 `width` × `height` |
@@ -120,6 +121,10 @@ const game = await play({
 传入 `parent` 或页面自有的 `canvas` 后，游戏按键由画布焦点决定。点击画布或用 Tab 切到画布即可操作游戏。Tab 和 Shift+Tab 可继续在页面中切焦，获得焦点的 HTML 按钮可用空格或回车正常激活。离开画布时会释放仍按住的键，即使稍后在其他元素上松键，回到游戏也不会继续移动。两个选项都省略时，全屏游戏沿用原有的窗口级快捷键，包括 Tab。
 
 嵌入的画布没有 `tabindex` 时，游戏会在运行期间补上 `0`；已有的值（如 `-1`）会保留。如果舞台只作装饰、交互全部由 HTML 控件负责，可给舞台容器设置 `inert`。`transparent: true` 会让渲染表面和引擎创建的容器都透出页面背景。调用方提供的画布保留自有样式。
+
+固定比例的游戏可以使用 `fit: 'contain'` 留边，再用 `@egret/engine/web/semantics` 的 `createBrowserSemantics({ semantics, canvas: game.canvas, width, height })` 传入舞台逻辑宽高。语义投影按留边区域内的画布实测位置和尺寸换算。祖先支持沿坐标轴的正向 CSS 缩放和平移。如果只改了祖先的 CSS 变换，尺寸未发生变化，请调用 `projection.sync()`。旋转、倾斜、镜像和透视会被拒绝。
+
+运行 `pnpm example:browser --port 4173`，在本地打开 `/examples/play/index.html?game=semantic-letterbox`，可查看[固定比例的工坊示例](../../../examples/play/index.html?game=semantic-letterbox)。舞台为 640 × 360，绘制缓冲为 480 × 270。`play3d` 的 `pixelRatio` 控制前景 UI，3D 背景由独立的画质设置控制。
 
 ## 绘制
 
@@ -249,7 +254,9 @@ for (const block of blocks) {
 
 ## 图片
 
-`await game.image(url, { x, y, width, height, smooth, layer })` 从地址加载 PNG，以中心放在 `x`、`y`，默认放在 world 层。只给 `width` 或 `height` 之一时保持比例；都不给时用原尺寸。它和其他精灵一样可以移动、旋转和移除。默认平滑，缩小绘制时从[多级缩小副本](shared-render-profile-contract.md)采样，大图缩小不会闪烁；`smooth: false` 保留每个纹素的锐利边缘，适合像素风。同一地址加载两次是同一张纹理。
+`await game.image(url, { x, y, width, height, smooth, layer })` 读取图片，以中心放在 `x`、`y`，默认使用 world 层。PNG 沿用严格校验。JPEG、WebP、GIF 和 AVIF 由支持相应格式的浏览器解码。引擎根据文件字节识别格式。每个游戏最多同时读取四张图，每张编码数据上限为 8 MiB。关闭游戏时会取消未完成的网络读取，并释放取消后才返回的解码结果。
+
+只给 `width` 或 `height` 之一会保持比例，都省略时使用原尺寸。默认缩小绘制时使用[多级缩小副本](shared-render-profile-contract.md)。像素风可以使用 `smooth: false`。同一地址的图片在纹理租约有效时共享纹理。
 
 ## 文字、菜单与血条
 

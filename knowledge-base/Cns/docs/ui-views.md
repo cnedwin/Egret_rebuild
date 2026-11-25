@@ -56,6 +56,43 @@ const shop = game.show(
 
 部件没有的字段、重复的名字、竖屏缺少的名字，会以 `UI_VIEW_INVALID` 或 `UI_VIEW_VARIANT_MISMATCH` 拒绝，并指出是哪个部件，例如 `root/3/0 (buy)`。绑定了视图里没有的名字，抛出 `UI_VIEW_BINDING_UNKNOWN`；部件不能接受的绑定，抛出 `UI_VIEW_BINDING_INVALID`。拼错的字段绝不会被当成什么都没有。
 
+## 多行文字、带说明的按钮、图片和边框
+
+给 `game.show` 传入 `paragraphCache`，文字部件和按钮说明便可以使用[段落 SDK](paragraph-layout-controls.md)。在视图描述中给每个段落部件指定高度。文字按规划宽度换行，超出部件高度的内容会被裁掉。按钮说明显示在标题下方，按按钮内部宽度换行。`lineHeight` 设置最小行高，`fontFamilies` 按顺序指定回退字体，`maxLines` 限制行数。只写 `text` 的按钮继续使用原来的单行标题。
+
+```js
+import { createParagraphCache } from '@egret/engine/paragraph';
+
+// 在 play 的 setup 中使用由游戏管理的缓存和段落提供器。
+const paragraphCache = createParagraphCache(game.engine.assets, { provider });
+const paragraph = { fontFamilies: ['Noto Sans', 'Noto Sans CJK SC'], locale: 'zh-CN', lineHeight: 24 };
+const workshop = game.show({
+  label: '工坊',
+  root: {
+    type: 'panel', width: 340, height: 300, padding: 14, layout: 'column', gap: 10,
+    border: { color: 0x8ba87a, width: 2 },
+    children: [
+      { type: 'image', name: 'cover', src: '/art/workshop.webp', label: '工坊外观', height: 64 },
+      { type: 'text', name: 'notes', text: '筹备 Wood workshop', paragraph, height: 72 },
+      { type: 'button', name: 'build', text: '建造工坊', description: '备齐两箱木材。\nPlace two crates.',
+        paragraph: { ...paragraph, maxLines: 3 }, height: 108, border: { color: 0x56caff, width: 2 } }
+    ]
+  }
+}, { paragraphCache, bind: { build: { tap: () => buildWorkshop() } } });
+```
+
+每个部件都支持 `border: { color, width }`，边框沿部件内侧绘制。`image` 保持原始宽高比，在部件范围内居中。给图片同时填写 `name` 和 `label`，可以发布图片角色和可访问名称。关闭视图会释放它持有的段落和图片资源引用。共享的缓存和提供器由游戏管理，等使用它们的视图全部关闭后再释放。
+
+游戏可以自行选择段落提供器和字体。浏览器配置见[段落面板示例](../../../examples/paragraph-panel/README.zh-CN.md)，其中可选的 CanvasKit 和 Noto 字体附有[来源和许可记录](../../../examples/paragraph-panel/vendor/manifest.json)。普通的单行视图启动时无需加载这些文件。如果页面原生使用 import map，启用段落时应映射 `@egret/engine/paragraph` 和 `@egret/runtime/paragraph`，使用 CanvasKit 提供器时再映射 `@egret/engine/web/paragraph`。
+
+```text
+node tools/build.mjs
+node --test tests/ui-view.test.mjs
+node examples/play/verify-ui.mjs <Playwright index.mjs 绝对路径> <新的绝对输出目录> <Chromium 可执行文件绝对路径> rich
+```
+
+Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距为 24 个逻辑单位。取样像素确认了边框和 WebP 封面，按钮点击执行一次操作，关闭视图后段落缓存的借用计数回到零。这个用例的硬件 WebGPU、Safari、Firefox 和实体手机渲染仍待验证。
+
 ## 绑定
 
 | 键 | 用于 | 读作 |

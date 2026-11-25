@@ -6,6 +6,7 @@
 import { EgretError } from '@egret/runtime';
 import type { DisplayObject } from '@egret/runtime';
 import type { Sprite } from '@egret/engine';
+import type { Paragraph, ParagraphCache } from '@egret/engine/paragraph';
 import type { UiSemantics } from '@egret/engine/ui/semantics';
 import type { PlayGame, PlayText } from './BrowserPlay.js';
 import { checkView, planView } from './view.js';
@@ -47,6 +48,8 @@ export interface PlayViewOptions<S = unknown> {
   readonly bind?: { readonly [name: string]: PlayViewBinding<S> };
   /** Called after the parts are made, and again when the screen turns to the other set of parts. */
   readonly built?: (view: PlayView) => void;
+  /** An existing cache for width-wrapped labels and button descriptions. The caller owns the cache. */
+  readonly paragraphCache?: ParagraphCache;
 }
 /** A view on the screen. It is also a screen's handle: open one from a screen stack's `open` and it shows, hides and closes with the screen. */
 export interface PlayView {
@@ -82,6 +85,8 @@ interface Made {
   readonly scroll: PlayScrollViewport | undefined;
   readonly scrollParent: Made | undefined;
   readonly words: PlayText | undefined;
+  paragraph: { readonly box: Sprite; readonly text: Paragraph; key: string | undefined } | undefined;
+  image: Sprite | undefined;
   rect: ViewRect;
   visible: boolean;
   disabled: boolean;
@@ -106,7 +111,8 @@ const KEYS_OF: Record<ViewPart['type'], readonly (keyof PlayViewBinding)[]> = {
   button: ['text', 'pick', 'format', 'roll', 'disabled', 'visible', 'color', 'tap', 'badge'],
   bar: ['value', 'visible', 'color'],
   toggle: ['text', 'checked', 'disabled', 'visible', 'tap', 'badge'],
-  space: ['visible']
+  space: ['visible'],
+  image: ['visible']
 };
 
 /** A question to answer yes or no: the words of its two buttons, and a title over the question. */
@@ -164,6 +170,7 @@ export function createPlayViews(
   const live = new Set<ViewRecord>();
   const scrollInput = createPlayViewScrolls(game);
   const makeScroll = scrollInput.create;
+  let paragraphModule: Promise<typeof import('./playViewParagraph.js')> | undefined;
   let counter = 0;
 
   interface ViewRecord {
@@ -256,11 +263,21 @@ export function createPlayViews(
     }
     if (options.built !== undefined && typeof options.built !== 'function')
       throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'built' });
+    const richStyle = (part: ViewPart) => (part.type === 'text' || part.type === 'button' ? part.paragraph : undefined);
+    const usesParagraph = (part: ViewPart): boolean =>
+      richStyle(part) !== undefined || (part.type === 'panel' && (part.children?.some(usesParagraph) ?? false));
+    const paragraphCache = options.paragraphCache;
+    if (
+      paragraphCache === undefined &&
+      (usesParagraph(description.root) || (description.portrait !== undefined && usesParagraph(description.portrait)))
+    )
+      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'paragraph parts need a paragraphCache' });
     const id = 'view' + ++counter;
     const state = (): S => (typeof options.state === 'function' ? (options.state as () => S)() : (options.state as S));
     const root = game.sprite(undefined, game.ui);
     let dim: Sprite | undefined;
     let plan: ViewPlan;
+    let paragraphScope: ReturnType<PlayGame['engine']['createScope']> | undefined;
     let made: Made[] = [];
     let shown = true,
       active = true,
@@ -279,6 +296,68 @@ export function createPlayViews(
       if (part.type === 'panel') return part.color ?? skin.panel;
       if (part.type === 'text') return part.color ?? skin.text;
       return skin.text;
+    };
+    const borderWidth = ({ part, rect }: Made): number =>
+      Math.min(part.border?.width ?? 0, rect.width / 2, rect.height / 2);
+    const placeImage = (item: Made): void => {
+      if (item.image === undefined) return;
+      const { width, height } = item.rect;
+      const border = borderWidth(item);
+      const source = item.image.getBounds();
+      // The cover fits inside the same edge used by the border paint.
+      const scale =
+        source.width > 0 && source.height > 0
+          ? Math.min((width - border * 2) / source.width, (height - border * 2) / source.height)
+          : 0;
+      item.image.visible = scale > 0;
+      item.image.x = width / 2;
+      item.image.y = height / 2;
+      item.image.scaleX = item.image.scaleY = scale;
+    };
+    const paintParagraph = (item: Made): void => {
+      const { paragraph, part, rect } = item;
+      if (part.type !== 'text' && part.type !== 'button') return;
+      const style = part.paragraph;
+      if (paragraph === undefined || style === undefined) return;
+      const button = part.type === 'button';
+      const at = button ? Math.min(8, rect.width / 2) : 0;
+      const y = button ? Math.min(rect.height, Math.ceil((part.size ?? Math.round(plan.skin.size * 0.9)) + 12)) : 0;
+      const width = rect.width - at * 2;
+      const height = rect.height - y;
+      paragraph.box.x = at;
+      paragraph.box.y = y;
+      paragraph.box.visible = width >= 1 && height > 0;
+      if (!paragraph.box.visible) {
+        paragraph.key = undefined;
+        return;
+      }
+      paragraph.box.clipRect = { x: 0, y: 0, width, height };
+      const text = button ? part.description! : item.text;
+      const size = button ? Math.ceil((part.size ?? plan.skin.size) * 0.72) : (part.size ?? plan.skin.size);
+      const color = button ? (part.textColor ?? plan.skin.buttonText) : colourOf(part, item);
+      const key = JSON.stringify([text, size, color, width]);
+      if (key === paragraph.key) return;
+      paragraph.key = key;
+      paragraph.text.setRequest({
+        ...style,
+        text,
+        width,
+        fontSize: size,
+        direction: style.direction ?? 'ltr',
+        locale: style.locale ?? 'en',
+        textAlign: !button && part.type === 'text' ? (part.align ?? 'left') : 'center',
+        fillColor: color,
+        density: 1
+      });
+      void paragraph.text.prepare().catch(cause => {
+        if (
+          !(cause instanceof EgretError && cause.code === 'PARAGRAPH_STALE') &&
+          !ended &&
+          !paragraph.text.isDisposed &&
+          paragraph.key === key
+        )
+          hooks.failed(cause);
+      });
     };
     // Draws one part at its size; called when it is made, placed again or changed.
     const paint = (item: Made): void => {
@@ -318,6 +397,18 @@ export function createPlayViews(
           .drawCircle(item.checked ? x + w - h / 2 : x + h / 2, y + h / 2, h / 2 - 3)
           .endFill();
       }
+      if (part.border !== undefined) {
+        const { width, height } = rect;
+        const edge = borderWidth(item);
+        if (edge > 0) {
+          g.beginFill(part.border.color)
+            .drawRect(0, 0, width, edge)
+            .drawRect(0, height - edge, width, edge)
+            .drawRect(0, edge, edge, height - edge * 2)
+            .drawRect(width - edge, edge, edge, height - edge * 2)
+            .endFill();
+        }
+      }
       const words = item.words;
       if (words !== undefined) {
         words.text = item.text;
@@ -328,9 +419,14 @@ export function createPlayViews(
           words.x = part.align === 'center' ? rect.width / 2 : part.align === 'right' ? rect.width : 0;
           words.color = colourOf(part, item);
         } else words.x = 0;
-        words.y = rect.height / 2;
+        words.y =
+          part.type === 'button' && part.description !== undefined
+            ? Math.min(rect.height / 2, (part.size ?? Math.round(skin.size * 0.9)) / 2 + 6)
+            : rect.height / 2;
         if (part.type === 'toggle') words.alpha = item.disabled ? 0.5 : 1;
       }
+      paintParagraph(item);
+      placeImage(item);
       node.visible = item.visible;
       if (item.dot !== undefined) {
         const { node: dot, words: count } = item.dot;
@@ -450,7 +546,7 @@ export function createPlayViews(
         const start =
           part.type === 'text' || part.type === 'button' || part.type === 'toggle' ? String(part.text ?? '') : '';
         const words =
-          part.type === 'text' || part.type === 'button' || part.type === 'toggle'
+          (part.type === 'text' && part.paragraph === undefined) || part.type === 'button' || part.type === 'toggle'
             ? game.text(start, {
                 layer: node,
                 size: part.size ?? (part.type === 'text' ? plan.skin.size : Math.round(plan.skin.size * 0.9)),
@@ -467,6 +563,8 @@ export function createPlayViews(
           scroll,
           scrollParent: container?.scroll === undefined ? container?.scrollParent : container,
           words,
+          paragraph: undefined,
+          image: undefined,
           rect: relative(planned.rect, planned.parent < 0 ? undefined : plan.parts[planned.parent]!.rect),
           visible: part.visible ?? true,
           disabled: false,
@@ -478,6 +576,38 @@ export function createPlayViews(
           dot: undefined,
           focusMark: undefined
         };
+        if (richStyle(part) !== undefined) {
+          paragraphScope ??= game.engine.createScope();
+          const box = game.sprite(undefined, node);
+          const owner = paragraphScope;
+          paragraphModule ??= import('./playViewParagraph.js');
+          void paragraphModule
+            .then(({ createParagraph }) => {
+              if (ended || !made.includes(item) || owner.state !== 'open') return;
+              const text = createParagraph(game.engine, owner, paragraphCache!);
+              box.addChild(text);
+              item.paragraph = { box, text, key: undefined };
+              paintParagraph(item);
+            })
+            .catch(cause => {
+              if (!ended && made.includes(item)) hooks.failed(cause);
+            });
+        }
+        if (part.type === 'image') {
+          void game.image(part.src, { layer: node }).then(
+            image => {
+              if (ended || !made.includes(item)) {
+                game.remove(image);
+                return;
+              }
+              item.image = image;
+              placeImage(item);
+            },
+            cause => {
+              if (!ended && made.includes(item)) hooks.failed(cause);
+            }
+          );
+        }
         if (part.name !== undefined && bind[part.name]?.badge !== undefined) {
           const dot = game.sprite(undefined, node);
           item.dot = {
@@ -644,7 +774,9 @@ export function createPlayViews(
                 ? 'button'
                 : type === 'bar'
                   ? 'progressbar'
-                  : 'switch';
+                  : type === 'image'
+                    ? 'image'
+                    : 'switch';
         const label = (planned.part as { readonly label?: string }).label;
         semantics.add({
           id: id + ':' + name,
@@ -664,10 +796,26 @@ export function createPlayViews(
                 focused: enabled && allowsInput() && focused?.owner === record && focused.name === name
               };
             if (role === 'group') return { ...base, name: label ?? name, disabled: hasAction(item) && !enabled };
+            if (role === 'image') {
+              const imageLabel = item.part.type === 'image' ? item.part.label : undefined;
+              return { ...base, name: imageLabel ?? '', hidden: hidden || !imageLabel };
+            }
             if (role === 'progressbar')
               return { ...base, name: label ?? name, range: { now: Math.round(item.value * 100), min: 0, max: 100 } };
             if (role === 'switch') return { ...base, name: item.text, checked: item.checked, disabled: !enabled };
-            if (role === 'button') return { ...base, name: item.text, disabled: !enabled };
+            if (role === 'button') {
+              const detail = item.part.type === 'button' ? item.part.description?.replace(/\s+/gu, ' ').trim() : '';
+              // Preserve the title and keep its optional detail within the semantic name limit.
+              const detailLimit = 1024 - item.text.length - 2;
+              const suffix =
+                detailLimit > 0
+                  ? detail
+                      ?.slice(0, detailLimit)
+                      .replace(/[\uD800-\uDBFF]$/u, '')
+                      .trimEnd()
+                  : '';
+              return { ...base, name: suffix ? item.text + '. ' + suffix : item.text, disabled: !enabled };
+            }
             return { ...base, name: item.text };
           },
           ...(role === 'button' || role === 'switch' || (role === 'group' && bind[name]?.tap !== undefined)
@@ -680,6 +828,12 @@ export function createPlayViews(
             : {})
         });
       }
+    };
+    const releaseContent = (): void => {
+      paragraphScope?.dispose();
+      paragraphScope = undefined;
+      for (const item of made)
+        for (const child of [item.words, item.dot?.words, item.image]) if (child !== undefined) game.remove(child);
     };
 
     const api: PlayView = {
@@ -785,8 +939,7 @@ export function createPlayViews(
           for (const item of scrollItems)
             if (item.part.name !== undefined) offsets.set(item.part.name, item.scroll!.offset);
           disposeScrolls();
-          for (const item of made)
-            for (const words of [item.words, item.dot?.words]) if (words !== undefined) game.remove(words);
+          releaseContent();
           for (const item of made) game.remove(item.node);
           build(offsets);
           if (focused?.owner === record) record.focusMark(focused.name, eligible(focused));
@@ -812,8 +965,7 @@ export function createPlayViews(
         if (focused?.owner === record) focus(undefined);
         for (const remove of removals.splice(0)) remove();
         disposeScrolls();
-        for (const item of made)
-          for (const words of [item.words, item.dot?.words]) if (words !== undefined) game.remove(words);
+        releaseContent();
         game.remove(root);
       }
     };

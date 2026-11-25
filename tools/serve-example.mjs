@@ -46,6 +46,7 @@ export function createExampleServer(repository=root){
    ||/^examples\/atlas-pages\/(?:index\.html|main\.mjs|selection\.mjs|fixture\.mjs|README(?:\.zh-CN)?\.md)$/.test(relative)
    ||/^work\/atlas-pages\/run-[A-Za-z0-9]{6}\/(?:browser-config\.json|candidate\.json|build\/generations\/[a-f0-9]{64}\/manifest\.json|build\/blobs\/sha256\/[a-f0-9]{64})$/.test(relative)
    ||/^examples\/multi-pointer\/(?:index\.html|main\.mjs)$/.test(relative)
+   ||/^examples\/play\/(?:index\.html|breakout\.mjs|platformer\.mjs|memory\.mjs|story\.mjs|roll3d\.mjs|lanterns3d\.mjs|semantic-letterbox\.mjs)$/.test(relative)
    ||/^examples\/resource-scene\/(?:[\w-]+\.(?:html|mjs)|assets\/[\w.-]+\.(?:png|woff2))$/.test(relative)
    ||/^packages\/(?:engine|runtime|contracts|spine)\/dist\/[\w/.-]+\.js$/.test(relative)
    ||relative.startsWith('examples/models/')&&galleryFiles.has(relative.slice('examples/models/'.length))
