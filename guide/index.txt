@@ -1,10 +1,10 @@
 # Egret guide: cards on demand
 
-Read the relevant cards in English or ask in Chinese. Each names its sources.
+Cards are in English and name their sources; ask in either language.
 
-- Ask: `node tools/egret-guide.mjs <words | API name | ERROR_CODE | hint-id>` prints the best two or three cards within `--budget` tokens (2,500 by default).
+- Ask: `node tools/egret-guide.mjs <words | API name | ERROR_CODE | hint-id>` prints the best two or three cards within `--budget` tokens (2,500).
 - One card: `node tools/egret-guide.mjs --card <id>`. This list: `--list`.
-- Every card in one file, for tools that want one: `node tools/egret-guide.mjs --full --out <file>`.
+- All cards in one file: `node tools/egret-guide.mjs --full --out <file>`.
 
 `applies` identifies the engine entry or host. Stale cards explain what changed.
 
@@ -15,7 +15,7 @@ Read the relevant cards in English or ask in Chinese. Each names its sources.
 
 ## Structure
 
-- [sim-view-split](cards/structure/sim-view-split.txt) · engine world3d web · Rules apart from the picture, seeded Node tests and whole runs without a page.
+- [sim-view-split](cards/structure/sim-view-split.txt) · engine world3d web · Rules apart from the picture, tested and run in Node.
 
 ## Entries
 
@@ -26,8 +26,8 @@ Read the relevant cards in English or ask in Chinese. Each names its sources.
 
 - [geometry-budget-2d](cards/perf/geometry-budget-2d.txt) · play engine web · A black or frozen frame after adding shapes or radial glows.
 - [frame-budget](cards/perf/frame-budget.txt) · engine web world3d · Measuring a frame with @egret/devtools and reading its hints.
-- [frame-loop-backpressure](cards/perf/frame-loop-backpressure.txt) · engine web · Let the engine's loop pace drawing; backpressure, skipped frames and lost devices.
-- [world3d-draw-cost](cards/perf/world3d-draw-cost.txt) · world3d play3d · What to cut first when a 3D frame is GPU bound, with measured savings.
+- [frame-loop-backpressure](cards/perf/frame-loop-backpressure.txt) · engine web · The engine's loop pacing drawing; skipped frames, lost devices.
+- [world3d-draw-cost](cards/perf/world3d-draw-cost.txt) · world3d play3d · What to cut first when a 3D frame is GPU bound.
 - [prepare-programs](cards/perf/prepare-programs.txt) · world3d play3d · First-use shader stalls and preparing programs during loading.
 
 ## Input and screen
@@ -36,28 +36,28 @@ Read the relevant cards in English or ask in Chinese. Each names its sources.
 - [mobile-viewport](cards/input/mobile-viewport.txt) · web world3d play play3d · Viewport, safe areas, pixel ratio and quality on phones.
 - [short-screen-hud](cards/input/short-screen-hud.txt) · web world3d play play3d · HUD, dialogue and commands that fit a phone held sideways.
 - [touch-labels](cards/input/touch-labels.txt) · web world3d play play3d · Text, labels and tap targets that read and press on a phone.
-- [keyboard-shortcuts](cards/input/keyboard-shortcuts.txt) · engine web world3d play play3d · Key combinations, mouse chords and shortcuts the browser leaves alone.
-- [pause-and-overlays](cards/input/pause-and-overlays.txt) · engine web world3d play play3d · Pausing from every input, and holds and focus across menus and dialogs.
+- [keyboard-shortcuts](cards/input/keyboard-shortcuts.txt) · engine web world3d play play3d · Key combinations and shortcuts the browser leaves alone.
+- [pause-and-overlays](cards/input/pause-and-overlays.txt) · engine web world3d play play3d · Pausing from every input; holds and focus across menus.
 - [ui-callbacks](cards/input/ui-callbacks.txt) · engine web world3d play play3d · Synchronous control callbacks, and UI roots opened after the press.
 
 ## World3D
 
 - [world3d-lights-shadows](cards/world3d/world3d-lights-shadows.txt) · world3d play3d · Light limits, tiled lights, shadow atlas and cascades. (stale lesson flagged)
 - [cloth-and-rope](cards/world3d/cloth-and-rope.txt) · world3d play3d · Cloth and rope sizes, slack, culling on vehicles and one-way pins.
-- [model-in-code](cards/world3d/model-in-code.txt) · world3d play3d · Creatures, props and buildings shaped as smooth distance fields, with a triangle budget.
-- [terrain-stream-tiles](cards/world3d/terrain-stream-tiles.txt) · world3d play3d · Heights on streamed tiles, per-tile scatter, plant distance and navigation.
+- [model-in-code](cards/world3d/model-in-code.txt) · world3d play3d · Creatures, props and buildings as distance fields, with a triangle budget.
+- [terrain-stream-tiles](cards/world3d/terrain-stream-tiles.txt) · world3d play3d · Heights, scatter, plant distance and navigation on streamed tiles.
 
 ## Physics 2D
 
-- [rope-joints-2d](cards/physics/rope-joints-2d.txt) · engine web · Hanging weights on rope joints, cutting them, and bodies that start held.
+- [rope-joints-2d](cards/physics/rope-joints-2d.txt) · engine web · Weights on rope joints, cutting them, bodies that start held.
 
 ## Audio
 
-- [synthesized-audio](cards/audio/synthesized-audio.txt) · play play3d engine web · Sounds made in code, played through the mixer with cues and a limiter.
+- [synthesized-audio](cards/audio/synthesized-audio.txt) · play play3d engine web · Sounds made in code, through the mixer with cues and a limiter.
 
 ## Game data
 
-- [save-data](cards/game/save-data.txt) · engine web world3d play play3d · Versioned saves and settings that survive new builds, private windows and full storage.
+- [save-data](cards/game/save-data.txt) · engine web world3d play play3d · Versioned saves across new builds, private windows and full storage.
 - [save-update-callbacks](cards/game/save-update-callbacks.txt) · engine web world3d play play3d · Block callbacks for save.update, its boolean, and a refused write.
 - [two-languages](cards/game/two-languages.txt) · engine web world3d play play3d · Chinese and English text tables, the page language, fonts and speech.
 - [balance-from-runs](cards/game/balance-from-runs.txt) · engine world3d play play3d · Setting numbers and pacing from whole runs played in Node.
@@ -65,8 +65,15 @@ Read the relevant cards in English or ask in Chinese. Each names its sources.
 ## Assets
 
 - [asset-loading](cards/assets/asset-loading.txt) · world3d play3d engine web · Loading models with progress, a deadline, retry and quality variants.
-- [fast-startup](cards/assets/fast-startup.txt) · engine web world3d play3d · What to load first, what after the first frame, and how to measure a start.
+- [fast-startup](cards/assets/fast-startup.txt) · engine web world3d play3d · What to load first and after, and measuring a start.
 - [asset-provenance](cards/assets/asset-provenance.txt) · play play3d engine world3d web · Recording the source, licence and changes of every shipped file.
+
+## Where the game ships
+
+- [ship-web-page](cards/ship/ship-web-page.txt) · play play3d engine web · A web page or a shared link.
+- [ship-mobile-app](cards/ship/ship-mobile-app.txt) · engine web world3d play play3d · A phone app in a store.
+- [ship-wechat-minigame](cards/ship/ship-wechat-minigame.txt) · play play3d engine web · Packaged as a WeChat mini game.
+- [ship-steam-desktop](cards/ship/ship-steam-desktop.txt) · engine web world3d play play3d · Steam and the Steam Deck.
 
 ## Verification and errors
 
@@ -75,4 +82,4 @@ Read the relevant cards in English or ask in Chinese. Each names its sources.
 
 ## How cards are made
 
-Cards come from games built on the engine and from its documents. `tools/harvest-games.mjs` reads a games repository and proposes missing or stale cards; `tests/guide.test.mjs` checks every card's names, codes, size, evidence and retrieval. See [the agent guide loop](../knowledge-base/en/docs/agent-guide.md).
+Cards come from games built on the engine; `tools/harvest-games.mjs` proposes them and `tests/guide.test.mjs` checks them ([the loop](../knowledge-base/en/docs/agent-guide.md)).

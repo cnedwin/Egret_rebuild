@@ -1,0 +1,26 @@
+---
+id: ship-wechat-minigame
+title: A game shipped as a WeChat mini game
+applies: [play, play3d, engine, web]
+triggers: ["wechat", "wechat mini game", "mini game", "minigame", "weixin", "wx api", "game.js", "4 mb package", "subpackage", "wechat devtools", "wechat review", "douyin mini game", "微信小游戏", "小游戏", "微信", "微信开发者工具", "主包", "分包", "抖音小游戏", "提审", "版号"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/wechat-minigame.md, line: 9, commit: d1f2047db900a32402fbc990e5ce090d4dde83ad, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/wechat-minigame.md, line: 39, commit: d1f2047db900a32402fbc990e5ce090d4dde83ad, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+  - { repo: cnedwin/Egret_rebuild, path: tools/wechat/adapter.js, line: 1, commit: d1f2047db900a32402fbc990e5ce090d4dde83ad, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+engine: 235adee022a90308ee10d50081b8b49aa7313467
+---
+
+# A game shipped as a WeChat mini game
+
+A browser game becomes a mini game unchanged through `tools/wechat/export-wechat.mjs`, and runs first in the stand-in of `tools/wechat/check-minigame.mjs` (see `knowledge-base/en/docs/wechat-minigame.md`). What the exporter cannot change is what the game must be written for:
+
+- **One canvas, no page.** A mini game has no HTML over the canvas. Menus, dialogue, text and buttons must be drawn by the engine (`game.text`, `game.button`, `game.menu`, `game.say`); HTML overlays are not shown. CSS backgrounds under the stage are painted by the adapter; nothing else of the page is.
+- **Touch only.** No keyboard, no hover, no mouse wheel. Every action needs a tap, a drag or `game.touchStick`.
+- **Size.** 4 MB for the main package and 30 MB in all. Keep the first scene's pictures in the main package; larger art and sound wait for WeChat subpackages or a download after start. Write WebP pictures again with `--playwright`.
+- **Portrait and quick.** Most players open it from a chat and hold the phone upright. Choose the orientation at export; reach the first action in seconds.
+- **WebGL2.** iOS needs high-performance mode enabled for the AppID. WebGPU is not there.
+- **Its own services.** Login, sharing, rankings, payments and ads are `wx` calls the game makes itself, guarded so the browser build still runs. The adapter supplies none of them.
+- **Review.** The owner uploads with the AppID and upload key and submits it on the platform: category, age rating, and for a paid or advertised game in mainland China the licence it requires.
+
+Before shipping: the stand-in check, then WeChat DevTools, then a preview on an Android phone and an iPhone.

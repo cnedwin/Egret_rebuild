@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Guide cards for where a game ships",
+    "body": "llms.txt now asks for the target before the first screen and links four new guide cards: a web page or shared link, a phone app in a store, a WeChat mini game and a Steam game for computers and the Steam Deck. Each states what that target asks of input, screens, size, saves, services and review, what the engine supplies for it and what it does not (no iOS host, no desktop host or Steamworks bridge), and what to check before shipping. egret-guide answers questions about each target in English and Chinese."
+  },
+  "zh": {
+    "title": "按发布平台区分的指南卡片",
+    "body": "llms.txt 现在要求在做第一个画面前先确定发布平台，并链接四张新卡片：网页或分享链接、应用商店里的手机应用、微信小游戏、电脑与 Steam Deck 上的 Steam 游戏。每张卡说明该平台对输入、屏幕、体积、存档、平台服务和审核的要求，引擎为它提供了什么、还缺什么（没有 iOS 宿主，没有桌面宿主或 Steamworks 桥接），以及发布前要检查什么。egret-guide 可以用中英文回答各平台的问题。"
+  }
+}

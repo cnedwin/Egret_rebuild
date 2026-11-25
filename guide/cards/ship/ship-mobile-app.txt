@@ -1,0 +1,25 @@
+---
+id: ship-mobile-app
+title: A complete phone game shipped as an app in a store
+applies: [engine, web, world3d, play, play3d]
+triggers: ["mobile game", "phone app", "android app", "ios app", "app store", "google play", "apk", "aab", "native app", "install the game", "full mobile game", "back button", "app lifecycle", "手游", "完整手游", "安卓应用", "苹果应用", "应用商店", "上架", "原生应用", "返回键"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/android-project-player.md, line: 5, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/android-project-player.md, line: 76, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/product-requirements.md, line: 45, commit: 235adee022a90308ee10d50081b8b49aa7313467, pin: 235adee022a90308ee10d50081b8b49aa7313467 }
+engine: 235adee022a90308ee10d50081b8b49aa7313467
+---
+
+# A complete phone game shipped as an app in a store
+
+An app is installed on purpose and played for weeks, many minutes at a time. It is judged on depth, polish and how it behaves as an app, not on its first seconds alone.
+
+- **Hosts.** Android has the project player: an arm64 app or a view in an existing Activity, drawing through OpenGL ES 3, with the installed System WebView (Android 8 and later) or V8 in the app (Android 10 and later). Its game is written to `installPlayerProject` with the engine and a scope, not to `play`: keep the rules apart from the picture (`sim-view-split`) so both builds share them. There is no iOS host yet; an iPhone release needs its own host and device results.
+- **A phone in the hand.** Touch is the only input: thumbs on both sides, nothing under a finger that hides what it does, targets large enough to press (`touch-controls`, `touch-labels`). Lay out for notches and safe areas, held upright or sideways (`mobile-viewport`).
+- **An app's life.** The game pauses when sent to the background and resumes from where it was; Android's back button opens a pause or leaves a menu, it does not quit mid-level. Forward the Activity's pause and resume to the player view.
+- **Saves that last.** Progress goes to the app's own files through `services.storage` and `createSaveStore`, versioned so an update keeps it (`save-data`). Plan for a new phone: an account or a cloud copy.
+- **Hours, not minutes.** Settings for sound, music and quality; a battery and heat budget, measured over a long session on a mid-range phone; content and progression for return visits (`balance-from-runs`).
+- **The store.** Signing, a privacy policy and data declaration, an age rating, screenshots in each required size. Payments and ads come from the store's own SDKs, which the engine does not supply.
+
+Before shipping: install the release build cold on several real phones, play a long session, kill and reopen it mid-level, and update over an old save.
