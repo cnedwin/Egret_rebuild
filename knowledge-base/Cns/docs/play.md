@@ -147,6 +147,7 @@ const game = await play({
 | `game.onTap(sprite, () => …)` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
 | `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | 精灵上的长按、双击、带每一步位移的拖动、滑动和双指缩放，每个只报告一次，位置用游戏单位；返回停止识别的函数。变成拖动或长按的那一下不算点击。阈值见[手势](gestures.md) |
 | `game.show(description, { state, bind })` | 用数据描述的界面：由面板、行和列组成，包含文字、按钮、进度条和开关，放在 `game.safe` 里，屏幕变化时重新摆放，竖握手机时可以换用竖屏部件。`bind` 让有名字的部件跟随 `state`（每帧读取），并响应按下。返回视图：`get(name)`、`rect(name)`、`show()`、`hide()`、`close()`。部件和绑定见[用数据描述界面](ui-views.md) |
+| `game.confirm(question, { yes, no })`、`game.hints(list)`、`game.loading(tasks)`、`game.badges`、`game.compact(n)`、`game.request(send)`、`game.device` | 用是或否回答的提问、按玩家设备显示按键的提示栏、计数的加载、累加的红点、数字缩写（12.3K、1.2万），以及按钮不能重复发出的请求。见[大多数界面都需要的部件](ui-views.md#大多数界面都需要的部件) |
 | `game.dragAndDrop()` | `.source(sprite, { data, ghost })` 和 `.target(sprite, { drop, accepts, hover })`，各自返回移除函数，以及 `.dragging`。被拖的精灵留在原处，`ghost` 画出的图跟着手指显示在最上层；最里层且接受这份数据的目标接收它 |
 
 键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。按在舞台上、且下面没有按钮和带 `onTap` 的精灵时，`game.pointer.pressed` 为真：按在它们上面的那一下只属于它们，所以“按哪里就在哪里放东西”的游戏不会把东西放到自己的按钮下面。主指针按住期间，`game.pointer.down` 保持为真，包括按在按钮上的情况。

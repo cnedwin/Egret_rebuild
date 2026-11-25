@@ -8,6 +8,7 @@
 - [Start a 3D scene](knowledge-base/en/docs/play3d.md) with a controllable object, a camera and a goal. Load the [rolling-ball game](examples/play/roll3d.mjs) when you need a complete example.
 - [Work on an existing game](guide/cards/entries/choose-entry.txt) by checking its engine version and imports. Use the [public entry points](knowledge-base/en/docs/entry-points.md) to find the features available in that build.
 - Decide where the game ships before its first screen. A [web page or shared link](guide/cards/ship/ship-web-page.txt), a [phone app in a store](guide/cards/ship/ship-mobile-app.txt), a [WeChat mini game](guide/cards/ship/ship-wechat-minigame.txt) and a [Steam game](guide/cards/ship/ship-steam-desktop.txt) ask different things of input, screens, size, saves and services. A finished browser game becomes a mini game through the [WeChat export](knowledge-base/en/docs/wechat-minigame.md).
+- Build menus, shops, settings and results as [screens described as data](guide/cards/input/game-screens.txt): named parts bound to the state, red dots, questions, key hints and loading, placed in the safe part of any screen and tested by name. Holds, swipes, pinches and dragging into slots are [gestures](guide/cards/input/gestures.txt).
 - [Investigate an error](guide/cards/errors/read-engine-errors.txt) using the exact error code, cause and what the player did. For [2D geometry limits and a black screen after a glow](guide/cards/perf/geometry-budget-2d.txt), check the action frame and the scenery already attached to the stage.
 
 Browse the [guide index](guide/index.txt) or, in a checkout, run `node tools/egret-guide.mjs <symptom, API name or error code>`. Use `--card <id>` to read one card. Use the online entry to follow links from a standalone download <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
@@ -189,6 +190,15 @@ const shop = game.show({
 
 Parts are `panel` (`layout` `'free'`, `'row'` or `'column'`, `gap`, `padding`, `align`, `justify`, `card`, `color`), `text`, `button`, `bar` (0 to 1), `toggle` and `space`. In a free panel a part is placed by `anchor` (`'top-left'` … `'bottom-right'`, `'center'`) and `x`, `y` inward; `width` and `height` are units, `'50%'` or `'fill'`. The view sits in `game.safe` (`area: 'screen'` for all of it) and is placed again when the screen changes; `portrait` parts, with the same names, are used while it is taller than wide. Bindings are read every frame: `text`, `pick` with `format` and `roll`, `value`, `checked`, `disabled`, `visible`, `color`, `tap`. `modal: true` dims what is behind and closes it to the pointer. `shop.get('buy')` is a part's sprite, `shop.rect('buy')` its place; `shop.hide()`, `.show()` and `.close()`. A wrong field or name is refused, saying where. With `semantics: createUiSemantics()` (from `@egret/engine/ui/semantics`) given to `play`, every named part is in that tree, so `createUiTester` of `@egret/engine/ui/testing` presses `'Shop / Buy 60'` by name. See [Screens as data](knowledge-base/en/docs/ui-views.md).
 
+| Call | Does |
+| --- | --- |
+| `await game.confirm('Quit?', { yes, no, title })` | A question over everything, one at a time: true or false. Enter, Space or a pad's A is yes; Escape or B is no |
+| `game.hints([{ action: 'Jump', key: 'space', pad: 'a', touch: 'Tap' }])` | A bar at the bottom naming what keys do, in the words of what the player uses (`game.device`: `'keyboard'`, `'gamepad'`, `'touch'`, `'mouse'`); `.set(list)`, `.dispose()` |
+| `await game.loading([load1, load2], { label, atOnce })` | `Loading 1 / 2` and a bar while promises, or functions that give them, finish; gives their results in order |
+| `game.badges.set('mail/system', 3)` | Red dots that add up: `game.badges.count('mail')` is 3 too. Bind one to a part: `mail: { badge: () => game.badges.count('mail') }` |
+| `game.compact(12345)` | `'12.3K'`; `{ locale: 'zh' }` gives `'1.2万'`, and 亿 past 10⁸ |
+| `const buy = game.request(() => api.buy())` | Sent once at a time: `buy.run()`, and `buy.busy`, `buy.result`, `buy.error` to bind a button's `disabled` and words to |
+
 ## Chance and saves
 
 `game.random.int(1, 6)`, `.range(0, 1)`, `.chance(0.25)`, `.pick(list)` and `.shuffle(list)`, which gives a new list. `game.save('best', score)` keeps a value between visits and `game.load('best', 0)` reads it, or gives the second argument.
@@ -252,6 +262,7 @@ export default async function (player) {
 - [Audio](knowledge-base/en/docs/audio.md): music and sound files
 - [The game kit](knowledge-base/en/docs/game-kit.md): input by action, gamepads, touch controls, larger saves
 - [2D camera](knowledge-base/en/docs/camera-2d.md), [tile maps](knowledge-base/en/docs/tilemap.md), [particles](knowledge-base/en/docs/particles.md), [2D physics](knowledge-base/en/docs/physics-2d.md), [interface controls](knowledge-base/en/docs/ui-controls.md)
+- [Screens as data](knowledge-base/en/docs/ui-views.md), [fitting any screen](knowledge-base/en/docs/screen-fit.md), [the screen stack](knowledge-base/en/docs/ui-screen-stack.md), [gestures](knowledge-base/en/docs/gestures.md), [testing a UI by name](knowledge-base/en/docs/ui-testing.md)
 - [Play3D, in full](knowledge-base/en/docs/play3d.md), and [World3D](knowledge-base/en/docs/world3d-app.md) under it: models, materials, lights, physics
 - [Error codes](knowledge-base/en/docs/error-codes.md) and [every entry](knowledge-base/en/docs/entry-points.md)
 

@@ -1183,6 +1183,18 @@
 | `UI_UNKNOWN_LIST` | UI 中没有这个 id 的列表。 |
 | `UI_VALUE_INVALID` | 交给UI的 `value` 无效。 |
 
+### UI_BADGE
+
+| 错误码 | 含义 |
+| --- | --- |
+| `UI_BADGE_PATH_INVALID` | 红点的路径不是用 / 连接的名字，或者数量不是数字、true 或 false。 |
+
+### UI_COMPACT
+
+| 错误码 | 含义 |
+| --- | --- |
+| `UI_COMPACT_INVALID` | 缩写的不是数字，或者 locale 不是 'en' 或 'zh'，或者 digits 不在 0 到 3 之间。 |
+
 ### UI_CONTROL
 
 | 错误码 | 含义 |
@@ -1219,6 +1231,12 @@
 | `UI_LAYER_ROOT_OWNED` | 这个 UI 根已经属于某个层。 |
 | `UI_LAYER_UNKNOWN` | UI 层不认识所指的内容。 |
 | `UI_LAYER_VIEWPORT_TOO_SMALL` | 交给UI 层的 `viewport` 太小。 |
+
+### UI_REQUEST
+
+| 错误码 | 含义 |
+| --- | --- |
+| `UI_REQUEST_INVALID` | 请求要用一个函数发送。原因见 cause。 |
 
 ### UI_SCREEN
 

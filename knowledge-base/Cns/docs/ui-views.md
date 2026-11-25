@@ -87,6 +87,19 @@ const shop = game.show(
 
 `modal: true` 会在视图后面的所有东西上加一层暗色，并接住所有没点在视图上的按下。
 
+## 大多数界面都需要的部件
+
+| 调用 | 是什么 |
+| --- | --- |
+| `await game.confirm(question, { yes, no, title })` | 显示在所有东西之上的提问，用它的按钮回答，也可以用 Enter、空格或手柄 A 回答“是”，用 Escape 或 B 回答“否”。一个问题打开时提出的其他问题会排队等待。打开期间 `game.asking` 为真，`update` 可以借此暂停游戏逻辑 |
+| `game.hints(list)` | 安全区底部的一条提示栏。每条提示是 `{ action, key, pad, touch }`，按玩家最近使用的设备 `game.device` 显示：键盘或鼠标显示 `Space Jump`，手柄显示 `A Jump`，手指显示 `touch` 的文字；在触屏上，没有 `touch` 的提示不显示。`shown` 是当前显示的内容；另有 `set(list)` 和 `dispose()` |
+| `await game.loading(tasks, { label, atOnce })` | 在所有东西之上显示 `Loading 2 / 5` 和进度条，直到所有 promise（或返回 promise 的函数）完成；函数每次最多运行 `atOnce` 个（默认 4 个）。按顺序返回结果；有一个失败就关闭并抛出 |
+| `game.badges` | 沿路径累加的红点：`set('mail/system', 3)` 之后 `count('mail')` 也是 3。另有 `has`、`clear(path)`、`paths()`、`onChange`。重新开始时清空。`badge` 绑定会在部件右上角画出红点，`view.badge(name)` 可以读取它 |
+| `game.compact(n, { locale, digits })` | `999`、`12.3K`、`4.5M`；`locale: 'zh'` 时为 `9999`、`1.2万`、`3.4亿`。截断而不是四舍五入，所以 9999 是 `9.9K` 而不是 `10K`。不给时按页面的语言 |
+| `game.request(send)` | 按钮发出的请求，同一时间只发一个。请求未返回时再次 `run()` 得到的是同一个 promise。`busy`、`result` 和 `error` 可以绑定到按钮的 `disabled` 和文字上；失败保存在 `error` 里，不会抛出 |
+
+`createBadges`、`formatCompact`、`createRequest` 和 `keyCap` 也从 `@egret/engine/web/view` 导出，供不用 play 的代码使用。
+
 ## 测试与辅助技术
 
 给 `play` 一棵语义树，即来自 `@egret/engine/ui/semantics` 的 `semantics: createUiSemantics()`，每个视图都会把自己加进去。视图的 `label` 成为一个组，模态时成为对话框。每个有名字的部件成为对应的角色：组、文字、按钮、进度条或开关。语义树在每帧结束时发布。这样 [UI 测试器](ui-testing.md)就能按名字按下 `'Shop / Buy 60'`、读取 `state('Sound').checked`。按钮不可用或有模态对话框挡住时，测试器会像玩家一样被拒绝。`@egret/engine/web/semantics` 把同一棵树提供给读屏软件。
@@ -109,7 +122,22 @@ const shop = game.show(
 - 模态对话框接住本该点到商店上的点击，并拒绝按名字按它后面的控件；
 - 窗口转成竖屏后，用同样的绑定换成竖屏部件，并能点击按钮的新位置。
 
-没有在手机上运行，没有用读屏软件，也没有在其他浏览器里运行。
+`tests/ui-view-parts.test.mjs` 检查不需要绘制的部件：
+
+- 累加的红点，以及变化时的通知；
+- 两种语言的数字缩写；
+- 第二次按下不会重复发出的请求；
+- 按键的显示名称。
+
+`examples/play/verify-view-parts.mjs` 在浏览器里检查其余部分：
+
+- 在按钮右上角读到红点的红色；
+- 双击只购买一次，期间按钮不可用；
+- 两个问题分别用 Escape 和点击回答；
+- 按键、鼠标点击和触摸之后提示栏的变化；
+- 加载过程数到三。
+
+没有在手机上运行，没有用读屏软件，没有接手柄，也没有在其他浏览器里运行。
 
 ## 设计说明
 

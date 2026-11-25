@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/viewParts.ts",
+      "originRole": "First-party logic of the parts most game screens need, exported by @egret/engine/web/view: red dots that add up along paths, numbers written short in English and Chinese without Intl, a request sent once at a time, and key cap words; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-view-parts.test.mjs",
+      "originRole": "First-party focused validation of red dots, short numbers, requests and key caps in Node; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-view-parts.mjs",
+      "originRole": "First-party browser verification of play's red dots, requests, questions, hint bar and counted loading; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1438 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1445 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1022,9 +1022,16 @@
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
+| `Badges` | 接口 | Red dots that add up: a dot on `mail/system` shows on `mail` too. |
 | `checkView` | 函数 | Checks a description: every part of a known kind with only the fields of its kind, names that are names and are used once, and portrait parts with the same names, of the same kinds, as the others. |
+| `CompactOptions` | 接口 | How a number is written short: in Chinese with 万 and 亿, or in English with K, M, B and T. |
+| `createBadges` | 函数 | Makes a tree of red dots. |
+| `createRequest` | 函数 | Wraps what a button sends, such as a purchase, so that it is sent once at a time and its state can be shown. |
 | `DEFAULT_VIEW_SKIN` | 值 | A dark skin that reads on any game: words in white on slate cards, blue buttons and a green accent. |
+| `formatCompact` | 函数 | A number written short for a screen: 999, 12.3K and 4.5M in English; 9999, 1.2万 and 3.4亿 in Chinese. |
+| `keyCap` | 函数 | The words of a key or a button, as a player reads them on a key cap. |
 | `planView` | 函数 | Plans where each part of a view goes on a screen: the parts for its shape, each rectangle in the game's units. |
+| `Request` | 接口 | A request a button sends: whether it is out, what it came back with, and the failure if it failed. |
 | `ViewAnchor` | 类型 | Where in its panel a part is placed when the panel lays its parts out freely: an edge, a corner or the middle. |
 | `ViewBar` | 接口 | How full something is: a value from 0 to 1. |
 | `ViewButton` | 接口 | A button with words on it. |
