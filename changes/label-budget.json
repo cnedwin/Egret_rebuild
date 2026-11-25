@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Many labels on one screen, and labels that end with their display",
+    "body": "createAtlasLabel of the browser game draws a label's words on a page shared with the words drawn with it, and gives the text cache's place back at once, so a hundred short labels on one screen take a page or two of the 64 images a frame may hold; game.text of play draws this way. A frame that holds more images than a frame may is no longer an error that stops the loop: it is not drawn, and the game goes on. getFrameUsage tells what the last frame held, and onWarning (of the browser game and of play) tells when a frame comes near the limit, when one is not drawn, when labels near the limit of the text cache and when words could not be drawn. A label whose display is disposed, or taken off a parent that is then disposed, now ends and gives back its place in the cache."
+  },
+  "zh": {
+    "title": "一屏很多标签，以及随显示对象结束的标签",
+    "body": "浏览器游戏新增 createAtlasLabel：把 label 的文字画在一张与同时画出的文字共用的页上，并当即归还文本缓存里的位置，所以一屏一百个短标签只占一帧 64 张图片中的一两张；play 的 game.text 改用这种方式画字。一帧的图片超出上限不再是让循环停下的错误：这一帧不画，游戏继续运行。getFrameUsage 告知上一帧用了多少；onWarning（浏览器游戏和 play 都有）在一帧接近上限、某帧没画、label 接近文本缓存上限以及文字画不出来时告知。label 的显示对象被销毁，或从父节点上取下后父节点被销毁时，label 现在会结束并归还它在缓存里的位置。"
+  }
+}

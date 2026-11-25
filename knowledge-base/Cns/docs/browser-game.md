@@ -61,6 +61,18 @@ game.loop.start();
 
 **文本。** `const label = await game.createLabel({ text: '金币 0', fontSize: 14, color: 0xf0c030, locale: 'zh' })` 创建一行文本；把 `label.display` 加到舞台上并定位，之后文字变化时设置 `label.text`。新文字准备好后才画出来，在此之前保留旧文字；`await label.ready` 可以等它完成。可以同时创建或修改任意多个 label：它们每次画两个，其余排队；正在绘制时文字又变了的 label，接着画最新的文字。`ready` 之后，`label.display.width` 和 `.height` 就是文字的大小，所以 `label.display.x = centre - label.display.width / 2` 可以让它居中。字体用页面自己的：系统字体族，或页面已加载的字体。label 默认属于 `game.scope`，`scope` 可以指定别的：在 UI 叶子内容的 `prepare` 里写 `game.createLabel({ text: '声音', scope: context.scope })`，得到的 label 就能放进这个叶子，并随那个 scope 一起结束。第一个 label 会加载页面的文本光栅化器，所以 import map 需要 `@egret/engine/text`、`@egret/engine/web/text` 和 `@egret/runtime/text`。
 
+**很多短标签。** `createLabel` 的每个 label 都是一张独立纹理，显示期间还占着文本缓存里的一个位置。缓存最多容纳 64 段不同的文字、128 个 label，而一帧最多从 64 张不同的图片里取图。五十个字签再加一个场景，就会超出这些上限。`await game.createAtlasLabel({ text: '仵作' })` 接受同样的选项，摆放方式也一样：`label.display` 是一个精灵，`label.bounds` 是文字的框（`label.display.x = centre - label.bounds.width / 2`），`text`、`set`、`ready`、`setRasterActive` 和 `dispose` 与上面相同。它的文字由同一个缓存画出，再复制到一张页上，与同时画出的文字共用这张页，缓存里的位置当即归还。2026 年 11 月 26 日在无头 Chromium 里，100 段不同的两字文字全部画出，只用到一张页；换成 `createLabel` 的 label，有 13 段没有画出来，而且没有任何提示。[play](play.md) 的 `game.text` 就用这种方式画字。共用的页达到 16 张时，所有 label 的文字会重新打包到尽量少的页上。等同时画的 label 都交出文字后才做成一张页，最多等四分之一秒。
+
+**label 随它的显示对象一起结束。** label 的 `display` 被销毁，或者从某个父节点上取下后那个父节点被销毁，这个 label 会在下一帧结束，归还它在文本缓存里的位置。显示对象与父节点属于不同的 scope 时，父节点销毁只会把它取下，不会销毁它；这里处理的就是这种情况。`game.getLabelStatus()` 会先结束这样的 label 再计数。一个父节点下的 500 个 label 被移除后，缓存里不再有任何 label 的位置，只剩它为复用保留的 31 个光栅。
+
+**一帧的图片。** 一帧最多从 64 张不同的图片里取图，最多 4,096 个矩形，共 64 MiB。`game.getFrameUsage()` 给出上一帧用到的量：`pages`、`regions`、`imageBytes`、`limits`，以及 `refusedFrames`。超出上限的帧不画，循环照常继续：屏幕上保留上一帧，直到有一帧放得下。给了 `onWarning` 时：
+- 一帧用到某项上限的五分之四时，告知 `FRAME_IMAGES_NEAR_LIMIT`；
+- 有帧没画时，告知 `FRAME_IMAGE_BUDGET`；
+- label 占用文本缓存的五分之四时，告知 `LABEL_CACHE_NEAR_LIMIT`；
+- 有 label 的文字画不出来时，告知 `LABEL_NOT_DRAWN`。
+
+每种告警只在开始时告知一次，不会每帧都告知，引擎也不往控制台写任何东西。游戏自己写循环时，可以用 `game.drawFrame(frame)` 按同样的方式画一帧。
+
 **画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。`'cover'` 和 `'stretch'` 时舞台保持自己单位的宽高。`'contain'` 和 `'expand'` 时舞台跟随[屏幕适配的结果](screen-fit.md)：`game.screen` 是当前结果，`game.onScreenChange(listener)` 在结果变化时通知，舞台在高窗口时换成竖版尺寸，`'expand'` 时一直延伸到元素边缘。任何模式下指针位置都跟随画布。
 `game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。
 
@@ -76,6 +88,7 @@ game.loop.start();
 | `pixelRatio` | 画布自身宽度的每个单位对应多少画布像素 | 设备的像素比，最多 2 |
 | `clearColor`、`clearAlpha` | 每帧先清成什么颜色 | `0x000000` 和 1 |
 | `update(seconds)` | 游戏的一步，在每帧之前调用 | 没有这一步 |
+| `onWarning(warning)` | 告知接近图片上限的帧、因超限没画的帧、接近文本缓存上限的 label，以及没画出来的文字：`{ code, message, usage?, cause? }` | 不告知 |
 | `onError(error)` | 循环被什么停下时收到通知；Engine 只能上报的错误也会通知，例如点击的监听函数抛错并因此结束了指针输入 | 失败会抛出或上报给页面，在控制台能看到 |
 | `pointer`、`keyboard` | 给 `false` 则不创建该输入 | 两者都创建 |
 | `hover` | 给 `true` 则创建悬停和滚轮输入，即 `game.hover`；只有这时才加载它的模块 | 不创建悬停输入 |

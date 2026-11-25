@@ -488,6 +488,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | --- | --- |
 | `FRAME_BUDGET_EXCEEDED` | The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 4,096 different geometries or 65,536 mesh triangles. A circle of radius 40 is 32 triangles. |
 | `FRAME_ID_EXHAUSTED` | The id counter of a frame ran out. Make a new one. |
+| `FRAME_IMAGES_NEAR_LIMIT` | A warning of the browser game, not an error: a frame holds four fifths of the images a frame takes (64 pages, 4,096 regions, 64 MiB). Labels of createAtlasLabel share pages. |
 | `FRAME_IMAGE_BUDGET` | The frame uses more images than it takes: 64 pages, 4,096 regions or 64 MiB of distinct pixels. Pack images into fewer atlases. |
 | `FRAME_PROFILE_METADATA_UNSUPPORTED` | The profile metadata is not supported by a frame. |
 | `FRAME_REENTRANT` | A frame was asked for while another was being captured. Draw from the frame loop, not from inside a callback of the capture. |

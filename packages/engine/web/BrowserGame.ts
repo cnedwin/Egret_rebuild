@@ -3,13 +3,16 @@
 // a frame loop, each made the way its own entry makes it, and all of them ended by one dispose.
 import { EgretError } from '@egret/runtime';
 import {
+  Bitmap,
+  copyImageData2DPixels,
   createAssetRef,
   createAssetType,
   createEngineForProfile,
   createImageData2D,
   createTexture,
   isTexture,
-  SHARED_FRAME_PROFILE_2D
+  SHARED_FRAME_PROFILE_2D,
+  Sprite
 } from '@egret/engine';
 import type {
   AssetLease,
@@ -87,6 +90,48 @@ export interface BrowserGameLabel {
   setRasterActive(active: boolean): void;
   dispose(): void;
 }
+/** A line of text drawn on a page of images shared with other such labels. */
+export interface BrowserGameAtlasLabel {
+  /**
+   * A sprite holding the words: place it with `x` and `y` and add it where it belongs, as a label's display. Its origin
+   * is where a label's is, and the words are drawn where a label draws them.
+   */
+  readonly display: Sprite;
+  /** Setting it draws the new words when they are ready; until then the old ones stay. */
+  text: string;
+  /** Settles when the words last set are on the stage, and rejects if they could not be drawn. */
+  readonly ready: Promise<void>;
+  /** The box of the words in the display's units, as a label's display measures it: its width and height place it. */
+  readonly bounds: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
+  /** Changes any of the options; what is left out stays. */
+  set(options: BrowserGameLabelOptions): void;
+  /** Hidden pages can give back their place on the shared page while keeping the words and style. */
+  setRasterActive(active: boolean): void;
+  dispose(): void;
+}
+/** What the last frame drawn held of a frame's images, against what one frame may hold. */
+export interface BrowserGameFrameUsage {
+  /** Different images (pages) the frame drew from. A frame holds at most 64. */
+  readonly pages: number;
+  /** Different rectangles of those images. A frame holds at most 4,096. */
+  readonly regions: number;
+  /** Bytes of those images. A frame holds at most 64 MiB. */
+  readonly imageBytes: number;
+  readonly limits: { readonly pages: number; readonly regions: number; readonly imageBytes: number };
+  /** Frames not drawn because they held more images than that, since the game began. The loop went on after each. */
+  readonly refusedFrames: number;
+}
+/**
+ * Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold
+ * of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a
+ * label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache.
+ */
+export interface BrowserGameWarning {
+  readonly code: 'FRAME_IMAGES_NEAR_LIMIT' | 'FRAME_IMAGE_BUDGET' | 'LABEL_NOT_DRAWN' | 'LABEL_CACHE_NEAR_LIMIT';
+  readonly message: string;
+  readonly usage?: BrowserGameFrameUsage;
+  readonly cause?: unknown;
+}
 /** A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. */
 export interface BrowserGameOptions {
   /** The canvas the game is drawn on. The page gives it its size on the screen. */
@@ -115,6 +160,12 @@ export interface BrowserGameOptions {
   readonly update?: (deltaSeconds: number) => void;
   /** Told once of what stopped the game's loop. Without it the failure is thrown where the console shows it. */
   readonly onError?: (error: unknown) => void;
+  /**
+   * Told of what a game should know before it shows: a frame near its limit of images, a frame not drawn for holding
+   * more, a label whose words could not be drawn. Each is told when it begins, not on every frame. Without it they are
+   * not told: the engine writes nothing to the console.
+   */
+  readonly onWarning?: (warning: BrowserGameWarning) => void;
   /** Touch, mouse and pen on display objects, and the keyboard. Both are made unless false is given. */
   readonly pointer?: boolean;
   readonly keyboard?: boolean;
@@ -195,13 +246,35 @@ export interface BrowserGame {
   textureFromCanvas(canvas: HTMLCanvasElement | OffscreenCanvas): Promise<AssetLease<Texture>>;
   /** A line of text for the stage. The first call loads the page's text rasterizer. */
   createLabel(options?: BrowserGameLabelCreateOptions): Promise<BrowserGameLabel>;
-  /** Text scheduler and logical cache accounting. Available before the first label is prepared. */
+  /**
+   * A line of text drawn on a page of images it shares with other such labels, so that many short labels on one screen
+   * take a few of the 64 images a frame may hold, and give back their place in the text cache once drawn. The words
+   * are drawn as `createLabel` draws them. A label's display, its parent or an ancestor disposed ends it.
+   */
+  createAtlasLabel(options?: BrowserGameLabelCreateOptions): Promise<BrowserGameAtlasLabel>;
+  /** What the last frame drawn held of a frame's images. */
+  getFrameUsage(): BrowserGameFrameUsage;
+  /**
+   * Draws one frame as the game's loop draws it, for a loop of the game's own: it ends labels whose display is gone,
+   * measures what the frame holds, and leaves a frame of more images than a frame may hold undrawn, with a warning, and
+   * gives undefined for it. Other failures are thrown.
+   */
+  drawFrame(frame: SharedFrameOptions2D): SharedRenderFrame2D | undefined;
+  /**
+   * Text scheduler and logical cache accounting. Available before the first label is prepared. A label whose display
+   * was disposed, or taken off a parent that was then disposed, is ended first, so its place in the cache is counted
+   * as given back.
+   */
   getLabelStatus(): Readonly<{
     drawing: number;
     queued: number;
     refusals: number;
     releasedRasters: number;
     cache: ReturnType<TextRasterCache['getStatus']> | undefined;
+    /** Labels of `createAtlasLabel` that are drawn, the shared pages that hold them, and those still being drawn. */
+    atlasLabels: number;
+    atlasPages: number;
+    atlasPending: number;
   }>;
   /**
    * Stage units in one CSS pixel as the canvas is shown now, the larger of across and down: `44 * game.unitsPerCssPixel`
@@ -301,7 +374,7 @@ export function gameDiagnostics(onError: ((error: unknown) => void) | undefined)
  */
 export async function createBrowserGame(options: BrowserGameOptions): Promise<BrowserGame> {
   if (options === null || typeof options !== 'object') throw invalid();
-  const { canvas, width, height, update, onError } = options;
+  const { canvas, width, height, update, onError, onWarning } = options;
   const asked = options.backend ?? 'auto',
     clearColor = options.clearColor ?? 0,
     clearAlpha = options.clearAlpha ?? 1,
@@ -328,6 +401,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     typeof enableEffects !== 'boolean' ||
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
+    (onWarning !== undefined && typeof onWarning !== 'function') ||
     [options.pointer, options.keyboard, options.hover, options.autoStart, options.stats].some(
       flag => flag !== undefined && typeof flag !== 'boolean'
     ) ||
@@ -395,38 +469,126 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         : undefined;
     const panel = (stats = options.stats === true ? createBrowserStatsPanel({ canvas, label: backend }) : undefined);
     let drawn: SharedRenderFrame2D | undefined;
-    // With a panel, the loop draws through a step that keeps the frame, and each step tells the panel what the last one did.
-    const made: BrowserFrameLoop = (loop =
-      panel === undefined
-        ? createBrowserFrameLoop({
-            engine,
-            host,
-            frame: frameNow,
-            ...(update === undefined ? {} : { update }),
-            ...(onError === undefined ? {} : { onError })
-          })
-        : createBrowserFrameLoop({
-            engine: {
-              clock: engine.clock,
-              advanceTime: (seconds: number) => engine.advanceTime(seconds),
-              renderSharedFrame: (given: SharedFrameOptions2D) => (drawn = engine.renderSharedFrame(given))
-            },
-            host,
-            frame: frameNow,
-            ...(onError === undefined ? {} : { onError }),
-            update(seconds: number): void {
-              const now = made.snapshot();
-              panel.sample({
-                ...(drawn === undefined ? {} : { frame: drawn }),
-                pendingFrames: host.getStatus().pendingFrames,
-                drawCalls: host.getFrameDrawCalls(),
-                frames: now.frames,
-                skipped: now.skipped
-              });
-              drawn = undefined;
-              update?.(seconds);
-            }
-          }));
+    // What the last frame drawn held of a frame's images, and the frames not drawn for holding more.
+    const FRAME_PAGES = 64,
+      FRAME_REGIONS = 4096,
+      FRAME_IMAGE_BYTES = 67108864;
+    let usage: BrowserGameFrameUsage = Object.freeze({
+      pages: 0,
+      regions: 0,
+      imageBytes: 0,
+      limits: Object.freeze({ pages: FRAME_PAGES, regions: FRAME_REGIONS, imageBytes: FRAME_IMAGE_BYTES }),
+      refusedFrames: 0
+    });
+    let nearLimit = false,
+      refusing = false;
+    const warn = (warning: BrowserGameWarning): void => {
+      if (onWarning === undefined) return;
+      try {
+        onWarning(Object.freeze(warning));
+      } catch (cause) {
+        // A warning handler that throws stops the game, as an update that throws does.
+        made.stop();
+        if (onError === undefined) throw cause;
+        onError(cause);
+      }
+    };
+    const measureFrame = (frame: SharedRenderFrame2D): void => {
+      let bytes = 0;
+      for (const page of frame.pages) if (page.builtin === undefined) bytes += page.source.byteLength;
+      usage = Object.freeze({
+        pages: frame.pages.length,
+        regions: frame.regions.length,
+        imageBytes: bytes,
+        limits: usage.limits,
+        refusedFrames: usage.refusedFrames
+      });
+      refusing = false;
+      // Told when a frame first comes within a fifth of a limit, and again only after it has gone back below seven
+      // tenths of every one.
+      const share = Math.max(
+        usage.pages / FRAME_PAGES,
+        usage.regions / FRAME_REGIONS,
+        usage.imageBytes / FRAME_IMAGE_BYTES
+      );
+      if (!nearLimit && share >= 0.8) {
+        nearLimit = true;
+        warn({
+          code: 'FRAME_IMAGES_NEAR_LIMIT',
+          message:
+            'A frame holds ' +
+            usage.pages +
+            ' of ' +
+            FRAME_PAGES +
+            ' images and ' +
+            usage.regions +
+            ' of ' +
+            FRAME_REGIONS +
+            ' regions. Labels of createAtlasLabel share images.',
+          usage
+        });
+      } else if (nearLimit && share < 0.7) nearLimit = false;
+    };
+    // Each frame is drawn through this, which ends the labels whose display is gone, keeps the frame for the usage and
+    // the panel, and lets a frame that holds more images than a frame may go undrawn, with a warning, rather than stop
+    // the game.
+    const drawFrame = (given: SharedFrameOptions2D): SharedRenderFrame2D | undefined => {
+      sweepLabels();
+      waitAtlas();
+      {
+        let frame: SharedRenderFrame2D;
+        try {
+          frame = engine.renderSharedFrame(given);
+        } catch (cause) {
+          if (!(cause instanceof EgretError) || cause.code !== 'FRAME_IMAGE_BUDGET') throw cause;
+          usage = Object.freeze({ ...usage, refusedFrames: usage.refusedFrames + 1 });
+          if (!refusing) {
+            refusing = true;
+            warn({
+              code: 'FRAME_IMAGE_BUDGET',
+              message:
+                'A frame held more images than a frame may (' +
+                FRAME_PAGES +
+                ' images, ' +
+                FRAME_REGIONS +
+                ' regions, 64 MiB), and was not drawn; the last frame stays on the screen until one fits.',
+              usage,
+              cause
+            });
+          }
+          return undefined;
+        }
+        drawn = frame;
+        measureFrame(frame);
+        return frame;
+      }
+    };
+    const drawing = {
+      clock: engine.clock,
+      advanceTime: (seconds: number) => engine.advanceTime(seconds),
+      renderSharedFrame: drawFrame
+    };
+    // With a panel, each step tells it what the last one did.
+    const made: BrowserFrameLoop = (loop = createBrowserFrameLoop({
+      engine: drawing,
+      host,
+      frame: frameNow,
+      ...(onError === undefined ? {} : { onError }),
+      update(seconds: number): void {
+        if (panel !== undefined) {
+          const now = made.snapshot();
+          panel.sample({
+            ...(drawn === undefined ? {} : { frame: drawn }),
+            pendingFrames: host.getStatus().pendingFrames,
+            drawCalls: host.getFrameDrawCalls(),
+            frames: now.frames,
+            skipped: now.skipped
+          });
+        }
+        drawn = undefined;
+        update?.(seconds);
+      }
+    }));
     // Keep the strict PNG decoder and its ownership contract. Route other known encodings by
     // bytes so file names, query strings and response content types cannot select a wrong decoder.
     const imageType = createAssetType<Texture>('egret.browser-game.image', isTexture);
@@ -627,11 +789,90 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       labelRefusals = 0,
       releasedRasters = 0;
     const labelsWaiting: ((entered: boolean) => void)[] = [];
+    // Labels alive, each with its display and the parent it was last seen under. A label whose display was disposed,
+    // or taken off a parent that was then disposed (a display of another scope is taken off, not disposed, with its
+    // parent), is ended at the next step, so that its place in the text cache is given back.
+    interface LiveLabel {
+      readonly display: DisplayObject;
+      readonly end: () => void;
+      parent: DisplayObject | undefined;
+    }
+    const liveLabels = new Set<LiveLabel>();
+    const sweepLabels = (): void => {
+      for (const live of [...liveLabels]) {
+        const display = live.display;
+        if (display.isDisposed) live.end();
+        else if (display.parent !== undefined) live.parent = display.parent;
+        else if (live.parent !== undefined && live.parent.isDisposed) live.end();
+      }
+      watchCache();
+      tellNotDrawn();
+    };
+    // Told once while the labels hold four fifths of what the text cache may hold, and again after they fall below.
+    let cacheNearLimit = false;
+    const watchCache = (): void => {
+      const status = currentTextCache?.getStatus();
+      if (status === undefined) return;
+      const share = Math.max(
+        status.callerLeaseSlots / 128,
+        (status.currentGenerations + status.retiredGenerations) / 64
+      );
+      if (!cacheNearLimit && share >= 0.8) {
+        cacheNearLimit = true;
+        warn({
+          code: 'LABEL_CACHE_NEAR_LIMIT',
+          message:
+            'Labels hold ' +
+            status.callerLeaseSlots +
+            ' of 128 places and ' +
+            (status.currentGenerations + status.retiredGenerations) +
+            ' of 64 texts in the text cache. ' +
+            'Labels of createAtlasLabel give theirs back once drawn.'
+        });
+      } else if (cacheNearLimit && share < 0.6) cacheNearLimit = false;
+    };
+    // Labels not drawn since the last step: told once a step, with the first cause.
+    let notDrawnCount = 0,
+      notDrawnCause: unknown;
+    const notDrawn = (cause: unknown): void => {
+      if (notDrawnCount++ === 0) notDrawnCause = cause;
+    };
+    const tellNotDrawn = (): void => {
+      if (notDrawnCount === 0) return;
+      const count = notDrawnCount,
+        cause = notDrawnCause;
+      notDrawnCount = 0;
+      notDrawnCause = undefined;
+      warn({
+        code: 'LABEL_NOT_DRAWN',
+        message:
+          (count === 1 ? "A label's words" : 'The words of ' + count + ' labels') +
+          ' could not be drawn' +
+          (cause instanceof EgretError ? ': ' + cause.code : '') +
+          '.',
+        cause
+      });
+    };
+    // Labels of createAtlasLabel wait for the same lanes in a longer line: once drawn they hold nothing in the cache.
+    const MAX_QUEUED_ATLAS_LABELS = 4096;
+    const atlasLaneWaiting: ((entered: boolean) => void)[] = [];
     const leaveLabelLane = (): void => {
-      const next = labelsWaiting.shift();
+      const next = labelsWaiting.shift() ?? atlasLaneWaiting.shift();
       if (next) next(true);
       else labelsDrawing--;
     };
+    const enterAtlasLane = (): boolean | Promise<boolean> => {
+      if (labelsDrawing < LABEL_LANES) {
+        labelsDrawing++;
+        return true;
+      }
+      if (atlasLaneWaiting.length >= MAX_QUEUED_ATLAS_LABELS) {
+        labelRefusals++;
+        throw new EgretError('TEXT_CACHE_BUDGET');
+      }
+      return new Promise(resolve => atlasLaneWaiting.push(resolve));
+    };
+    const leaveAtlasLane = leaveLabelLane;
     async function createLabel(options: BrowserGameLabelCreateOptions = {}): Promise<BrowserGameLabel> {
       if (options === null || typeof options !== 'object') throw invalid();
       const { scope: owner = scope, ...given } = options;
@@ -739,8 +980,10 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         const epoch = generation;
         const job = Promise.resolve().then(() => draw(epoch));
         running = ready = job;
-        // Observe rejection while keeping it available on ready.
-        void job.catch(() => {});
+        // Observe rejection while keeping it available on ready; a label still wanted is told of as not drawn.
+        void job.catch(cause => {
+          if (!disposed) notDrawn(cause);
+        });
       };
       const apply = (next: BrowserGameLabelOptions): void => {
         if (next === null || typeof next !== 'object') throw invalid();
@@ -762,17 +1005,20 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       const countRelease = (): void => {
         if (field.getStatus().metrics?.raster !== undefined) releasedRasters++;
       };
+      const live: LiveLabel = { display: field, end: () => close(), parent: undefined };
       const close = (): void => {
         if (disposed) return;
         disposed = true;
+        liveLabels.delete(live);
         supersede();
         owner.signal.removeEventListener('abort', close);
         countRelease();
-        field.dispose();
+        if (!field.isDisposed) field.dispose();
       };
       try {
         apply(given);
         owner.signal.addEventListener('abort', close, { once: true });
+        liveLabels.add(live);
       } catch (cause) {
         close();
         throw cause;
@@ -798,6 +1044,390 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           else {
             countRelease();
             field.releaseRaster();
+            ready = Promise.resolve();
+          }
+        },
+        dispose: close
+      });
+    }
+    // Labels on shared pages. The text cache draws their words as a label's; the pixels are copied onto a page with
+    // the words of the other labels drawn with them, and the cache's raster is given back at once, so a label holds no
+    // place in the cache once its words are drawn.
+    const ATLAS_EDGE = 1024,
+      ATLAS_GAP = 2,
+      // Words wait for those drawn with them at most this many frames before their page is made.
+      ATLAS_WAIT_FRAMES = 15,
+      // With this many pages, every label's words are packed again onto as few as they fit.
+      ATLAS_COMPACT_PAGES = 16;
+    interface AtlasPage {
+      textures: number;
+    }
+    interface AtlasItem {
+      readonly width: number;
+      readonly height: number;
+      readonly pixels: Uint8Array;
+      readonly resolve: (key: string) => void;
+    }
+    /** A label's words on a page: packed again with all the others when the pages are many. */
+    interface AtlasHolder {
+      readonly width: number;
+      readonly height: number;
+      readonly pixels: Uint8Array;
+      adopt(key: string): void;
+    }
+    const atlasType = createAssetType<Texture>('egret.browser-game.atlas-label', isTexture),
+      atlasWaiting = new Map<string, { readonly texture: Texture; readonly page: AtlasPage }>(),
+      atlasPageOf = new WeakMap<Texture, AtlasPage>(),
+      atlasHolders = new Set<AtlasHolder>();
+    let atlasCount = 0,
+      atlasPages = 0,
+      atlasLabels = 0,
+      atlasInFlight = 0,
+      atlasQueue: AtlasItem[] = [],
+      atlasWaited = 0,
+      atlasSoon = false;
+    const releaseAtlas = (texture: Texture): void => {
+      const page = atlasPageOf.get(texture);
+      atlasPageOf.delete(texture);
+      texture.dispose();
+      if (page !== undefined && --page.textures === 0) atlasPages--;
+    };
+    engine.assets.register(atlasType, {
+      async load(ref) {
+        const waiting = atlasWaiting.get(ref.id);
+        atlasWaiting.delete(ref.id);
+        if (waiting === undefined) throw invalid();
+        atlasPageOf.set(waiting.texture, waiting.page);
+        return waiting.texture;
+      },
+      dispose: releaseAtlas
+    });
+    /** A texture placed but never leased: its place on the page is given back. */
+    const dropAtlasKey = (key: string): void => {
+      const waiting = atlasWaiting.get(key);
+      if (waiting === undefined) return;
+      atlasWaiting.delete(key);
+      waiting.texture.dispose();
+      if (--waiting.page.textures === 0) atlasPages--;
+    };
+    // Rows of words, tallest first, on pages as wide as ATLAS_EDGE and no taller than they need, with a gap of clear
+    // pixels around each so that no word bleeds into the next when it is drawn scaled. Words wider or taller than a
+    // page have a page of their own.
+    const packAtlas = (): void => {
+      atlasWaited = 0;
+      atlasSoon = false;
+      if (scope.signal.aborted || atlasQueue.length === 0) return;
+      const items = atlasQueue;
+      atlasQueue = [];
+      if (atlasPages >= ATLAS_COMPACT_PAGES)
+        for (const holder of atlasHolders)
+          items.push({
+            width: holder.width,
+            height: holder.height,
+            pixels: holder.pixels,
+            resolve: key => holder.adopt(key)
+          });
+      items.sort((a, b) => b.height - a.height);
+      while (items.length !== 0) {
+        const placed: { readonly item: AtlasItem; readonly x: number; readonly y: number }[] = [];
+        const first = items[0]!;
+        let pageWidth: number, pageHeight: number;
+        if (first.width + ATLAS_GAP > ATLAS_EDGE || first.height + ATLAS_GAP > ATLAS_EDGE) {
+          placed.push({ item: first, x: 0, y: 0 });
+          items.shift();
+          pageWidth = first.width;
+          pageHeight = first.height;
+        } else {
+          let x = 0,
+            y = 0,
+            row = 0;
+          pageWidth = 0;
+          for (let index = 0; index < items.length; ) {
+            const item = items[index]!,
+              w = item.width + ATLAS_GAP,
+              h = item.height + ATLAS_GAP;
+            if (w > ATLAS_EDGE || h > ATLAS_EDGE) {
+              index++;
+              continue;
+            }
+            if (x + w > ATLAS_EDGE) {
+              x = 0;
+              y += row;
+              row = 0;
+            }
+            if (y + h > ATLAS_EDGE) break;
+            placed.push({ item, x, y });
+            items.splice(index, 1);
+            x += w;
+            row = Math.max(row, h);
+            pageWidth = Math.max(pageWidth, x);
+          }
+          pageHeight = y + row;
+        }
+        const pixels = new Uint8Array(pageWidth * pageHeight * 4);
+        for (const { item, x: left, y: top } of placed)
+          for (let line = 0; line < item.height; line++)
+            pixels.set(
+              item.pixels.subarray(line * item.width * 4, (line + 1) * item.width * 4),
+              ((top + line) * pageWidth + left) * 4
+            );
+        const image = createImageData2D({
+          width: pageWidth,
+          height: pageHeight,
+          pixels: pixels as Uint8Array<ArrayBuffer>
+        });
+        const page: AtlasPage = { textures: 0 };
+        atlasPages++;
+        for (const { item, x: left, y: top } of placed) {
+          const key = 'atlas-' + ++atlasCount;
+          page.textures++;
+          atlasWaiting.set(key, {
+            texture: createTexture(image, { x: left, y: top, width: item.width, height: item.height }),
+            page
+          });
+          item.resolve(key);
+        }
+      }
+    };
+    // A page is made once no label in flight has yet to give its words, or after ATLAS_WAIT_FRAMES frames, whichever
+    // is first (the frames are counted by waitAtlas, as each frame is drawn).
+    const scheduleAtlas = (): void => {
+      if (atlasQueue.length === 0 || atlasInFlight !== 0 || atlasSoon) return;
+      atlasSoon = true;
+      queueMicrotask(packAtlas);
+    };
+    const waitAtlas = (): void => {
+      if (atlasQueue.length !== 0 && ++atlasWaited >= ATLAS_WAIT_FRAMES) packAtlas();
+    };
+    /** The key of a texture of these pixels on a shared page, once the words drawn with them are packed. */
+    const placeOnAtlas = (width: number, height: number, pixels: Uint8Array): Promise<string> =>
+      new Promise(resolve => {
+        atlasQueue.push({ width, height, pixels, resolve });
+        scheduleAtlas();
+      });
+    async function createAtlasLabel(options: BrowserGameLabelCreateOptions = {}): Promise<BrowserGameAtlasLabel> {
+      if (options === null || typeof options !== 'object') throw invalid();
+      const { scope: owner = scope, ...given } = options;
+      if (owner === null || typeof owner !== 'object') throw invalid();
+      textCache ??= import('./text.js').then(
+        text =>
+          (currentTextCache = createTextRasterCache(engine.assets, { provider: text.createCanvasTextRasterProvider() }))
+      );
+      const cache = await textCache;
+      const display = owner.use(new Sprite());
+      let now: Required<BrowserGameLabelOptions> = {
+        text: '',
+        fontFamily: 'sans-serif',
+        fontSize: 24,
+        fontWeight: 400,
+        italic: false,
+        lineHeight: 0,
+        color: 0xffffff,
+        locale: 'en',
+        direction: 'ltr'
+      };
+      let bounds: BrowserGameAtlasLabel['bounds'] = Object.freeze({ x: 0, y: 0, width: 0, height: 0 }),
+        picture: Bitmap | undefined,
+        held: AssetLease<Texture> | undefined,
+        holder: AtlasHolder | undefined,
+        ready: Promise<void> = Promise.resolve(),
+        active = true,
+        disposed = false,
+        generation = 0,
+        running: Promise<void> | undefined,
+        asked = 0;
+      const current = (epoch: number): boolean => active && !disposed && !display.isDisposed && generation === epoch;
+      const forget = (): void => {
+        const lease = held;
+        held = undefined;
+        if (holder !== undefined) atlasHolders.delete(holder);
+        holder = undefined;
+        if (picture !== undefined && !picture.isDisposed) picture.dispose();
+        picture = undefined;
+        if (lease !== undefined) {
+          atlasLabels--;
+          lease.release();
+        }
+      };
+      /** The lease of a placed texture, for the label's scope; the key is given back whatever happens. */
+      const lease = async (key: string): Promise<AssetLease<Texture>> => {
+        try {
+          return owner.use(await engine.assets.acquire(createAssetRef(atlasType, key), { signal: owner.signal }));
+        } finally {
+          dropAtlasKey(key);
+        }
+      };
+      const draw = async (epoch: number): Promise<void> => {
+        let entered = false,
+          flying = true;
+        const land = (): void => {
+          if (!flying) return;
+          flying = false;
+          atlasInFlight--;
+          scheduleAtlas();
+        };
+        atlasInFlight++;
+        try {
+          if (!current(epoch)) return;
+          entered = await enterAtlasLane();
+          if (!entered || !current(epoch)) return;
+          for (let shown = -1; current(epoch) && shown !== asked; ) {
+            shown = asked;
+            if (!entered) {
+              entered = await enterAtlasLane();
+              if (!entered || !current(epoch)) return;
+            }
+            const words = {
+              text: now.text,
+              fontFamily: now.fontFamily,
+              fontSize: now.fontSize,
+              fontWeight: now.fontWeight,
+              fontStyle: now.italic ? 'italic' : 'normal',
+              lineHeight: now.lineHeight > 0 ? now.lineHeight : now.fontSize * 1.25,
+              locale: now.locale,
+              direction: now.direction,
+              density: pixelRatio,
+              fillColor: now.color
+            } as const;
+            let prepared: Awaited<ReturnType<TextRasterCache['acquire']>>;
+            try {
+              prepared = await cache.acquire(words, { signal: owner.signal });
+            } catch (cause) {
+              if (!current(epoch)) return;
+              if (!(cause instanceof EgretError) || cause.code !== 'TEXT_CACHE_BUDGET') throw cause;
+              // Delivery can precede actor retirement. Retry once after actual settlement, as labels do.
+              await cache.whenIdle();
+              if (!current(epoch)) return;
+              prepared = await cache.acquire(words, { signal: owner.signal });
+            }
+            let copied: { readonly width: number; readonly height: number; readonly pixels: Uint8Array } | undefined;
+            try {
+              if (prepared.kind === 'image') {
+                const image = prepared.lease.value.imageData;
+                copied = { width: image.width, height: image.height, pixels: copyImageData2DPixels(image) };
+              }
+            } finally {
+              if (prepared.kind === 'image') prepared.lease.release();
+            }
+            const metrics = prepared.metrics,
+              raster = metrics.raster;
+            let given: AssetLease<Texture> | undefined;
+            if (copied !== undefined && raster !== undefined) {
+              const placing = placeOnAtlas(copied.width, copied.height, copied.pixels);
+              land();
+              // The lane is for the cache's drawing: the page is waited for without it.
+              if (entered) {
+                entered = false;
+                leaveAtlasLane();
+              }
+              const key = await placing;
+              if (!current(epoch) || shown !== asked) {
+                dropAtlasKey(key);
+                continue;
+              }
+              given = await lease(key);
+            }
+            if (!current(epoch) || shown !== asked) {
+              given?.release();
+              continue;
+            }
+            forget();
+            if (given !== undefined && raster !== undefined && copied !== undefined) {
+              held = given;
+              atlasLabels++;
+              const made = owner.use(new Bitmap(given));
+              made.x = raster.x;
+              made.y = raster.y;
+              made.scaleX = raster.logicalWidth / raster.width;
+              made.scaleY = raster.logicalHeight / raster.height;
+              display.addChild(made);
+              picture = made;
+              // Packed again with the others when the pages are many: the picture takes the new place.
+              const mine: AtlasHolder = {
+                ...copied,
+                adopt(key) {
+                  if (holder !== mine || picture === undefined) return dropAtlasKey(key);
+                  void lease(key).then(
+                    next => {
+                      if (holder !== mine || picture === undefined || picture.isDisposed) return next.release();
+                      const before = held;
+                      held = next;
+                      picture.textureLease = next;
+                      before?.release();
+                    },
+                    () => {}
+                  );
+                }
+              };
+              holder = mine;
+              atlasHolders.add(mine);
+            }
+            const box = metrics.contentBounds;
+            bounds = Object.freeze({ x: box.x, y: box.y, width: box.width, height: box.height });
+          }
+        } finally {
+          land();
+          if (generation === epoch) running = undefined;
+          if (entered) leaveAtlasLane();
+        }
+      };
+      const schedule = (): void => {
+        if (!active || disposed || running !== undefined) return;
+        const epoch = generation;
+        const job = Promise.resolve().then(() => draw(epoch));
+        running = ready = job;
+        void job.catch(cause => {
+          if (!disposed) notDrawn(cause);
+        });
+      };
+      const apply = (next: BrowserGameLabelOptions): void => {
+        if (next === null || typeof next !== 'object') throw invalid();
+        now = { ...now, ...next };
+        asked++;
+        schedule();
+      };
+      const live: LiveLabel = { display, end: () => close(), parent: undefined };
+      const close = (): void => {
+        if (disposed) return;
+        disposed = true;
+        generation++;
+        liveLabels.delete(live);
+        owner.signal.removeEventListener('abort', close);
+        forget();
+        if (!display.isDisposed) display.dispose();
+      };
+      try {
+        apply(given);
+        owner.signal.addEventListener('abort', close, { once: true });
+        liveLabels.add(live);
+      } catch (cause) {
+        close();
+        throw cause;
+      }
+      return Object.freeze({
+        display,
+        get text() {
+          return now.text;
+        },
+        set text(value: string) {
+          if (value !== now.text) apply({ text: value });
+        },
+        get ready() {
+          return ready;
+        },
+        get bounds() {
+          return bounds;
+        },
+        set: apply,
+        setRasterActive(next: boolean) {
+          if (typeof next !== 'boolean') throw invalid();
+          if (active === next || disposed || display.isDisposed) return;
+          active = next;
+          generation++;
+          running = undefined;
+          if (active) schedule();
+          else {
+            forget();
             ready = Promise.resolve();
           }
         },
@@ -830,14 +1460,21 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       stats: panel,
       createLabel,
       getLabelStatus() {
+        sweepLabels();
         return Object.freeze({
           drawing: labelsDrawing,
-          queued: labelsWaiting.length,
+          queued: labelsWaiting.length + atlasLaneWaiting.length,
           refusals: labelRefusals,
           releasedRasters,
-          cache: currentTextCache?.getStatus()
+          cache: currentTextCache?.getStatus(),
+          atlasLabels,
+          atlasPages,
+          atlasPending: atlasInFlight + atlasQueue.length
         });
       },
+      createAtlasLabel,
+      getFrameUsage: () => usage,
+      drawFrame,
       async loadTexture(url: string) {
         if (typeof url !== 'string' || url === '') throw invalid();
         return scope.use(await engine.assets.acquire(createAssetRef(imageType, url), { signal: scope.signal }));
