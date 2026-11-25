@@ -38,7 +38,11 @@ const cases = [
 
 fs.mkdirSync(output);
 const server = createExampleServer();
-const report = { renderer: 'SwiftShader WebGL2', input: 'Playwright keyboard and injected standard gamepad', cases: [] };
+const report = {
+  renderer: 'SwiftShader WebGL2',
+  input: 'Playwright keyboard and injected standard gamepad',
+  cases: []
+};
 let browser;
 try {
   server.listen(0, '127.0.0.1');

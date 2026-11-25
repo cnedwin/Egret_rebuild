@@ -153,7 +153,8 @@ export async function verifyPadNavigation(page) {
   });
   const frames = () =>
     page.evaluate(
-      () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+      () =>
+        new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(resolve))))
     );
   const set = async (...keys) => {
     await fixture.evaluate((state, names) => state.set(names), keys);
@@ -169,8 +170,7 @@ export async function verifyPadNavigation(page) {
     for (let row = y - 1; row <= y + 1; row++)
       for (let column = x - 1; column <= x + 1; column++) {
         const at = (row * image.width + column) * 4;
-        if ([34, 197, 94].every((value, channel) => Math.abs(image.data[at + channel] - value) <= 3))
-          return true;
+        if ([34, 197, 94].every((value, channel) => Math.abs(image.data[at + channel] - value) <= 3)) return true;
       }
     return false;
   };
@@ -200,9 +200,17 @@ export async function verifyPadNavigation(page) {
     assert.equal(await focused(), 'Options button', 'D-pad down moves focus inside the paused top view');
     await fixture.evaluate(f => f.wake(['start', 'a']));
     await frames();
-    assert.deepEqual((await get()).actions, ['shell', 'shell', 'options'], 'the first sample after waking can activate a paused view');
+    assert.deepEqual(
+      (await get()).actions,
+      ['shell', 'shell', 'options'],
+      'the first sample after waking can activate a paused view'
+    );
     await frames();
-    assert.deepEqual((await get()).actions, ['shell', 'shell', 'options'], 'held A does not reactivate and held Start does not resume');
+    assert.deepEqual(
+      (await get()).actions,
+      ['shell', 'shell', 'options'],
+      'held A does not reactivate and held Start does not resume'
+    );
     await set();
     await set('start');
     assert.equal((await get()).paused, false, 'the next Start resumes');
@@ -251,7 +259,11 @@ export async function verifyPadNavigation(page) {
     await frames();
     await set('down');
     await set('a');
-    assert.equal((await get()).actions.at(-1), 'legacy:1', 'the existing menu still reads its paused gamepad navigation');
+    assert.equal(
+      (await get()).actions.at(-1),
+      'legacy:1',
+      'the existing menu still reads its paused gamepad navigation'
+    );
     await set();
 
     await fixture.evaluate(f => f.optIn());
@@ -259,7 +271,11 @@ export async function verifyPadNavigation(page) {
     assert.equal((await get()).actions.at(-1), 'opt-in', 'an opted-in nonmodal view accepts the first A');
     await fixture.evaluate(f => f.restart());
     await frames();
-    assert.deepEqual((await get()).gameEdges, ['a', 'start'], 'restart does not turn an already held UI key into a game edge');
+    assert.deepEqual(
+      (await get()).gameEdges,
+      ['a', 'start'],
+      'restart does not turn an already held UI key into a game edge'
+    );
     assert.equal((await get()).round, 2);
     await set();
     await set('a');

@@ -1151,8 +1151,7 @@ export function createPlayViews(
       syncModalFocus();
       const modal = modalOwner;
       let owner = modal;
-      if (owner === undefined && !legacyAsking)
-        for (const record of live) if (record.padNavigation()) owner = record;
+      if (owner === undefined && !legacyAsking) for (const record of live) if (record.padNavigation()) owner = record;
       if (owner === undefined) return noPadButtons;
       const claimed =
         modal === undefined ? navigationPadButtons : game.paused ? pausedModalPadButtons : modalPadButtons;
