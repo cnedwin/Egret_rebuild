@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Declarative view clipping and scroll",
+    "body": "Play view controls now share transformed and clipped bounds across pointer picking, keyboard navigation, accessibility and UI tests. Vertically scrollable panels support wheel and touch movement, reveal the newly focused item and preserve a clamped scroll position after a refresh."
+  },
+  "zh": {
+    "title": "声明式视图裁剪与滚动",
+    "body": "Play 视图控件的指针命中、键盘导航、辅助技术和 UI 测试共用变换与裁剪后的区域。纵向滚动面板支持滚轮和触摸，自动滚入新获得焦点的条目，并在刷新后保留有效范围内的滚动位置。"
+  }
+}
