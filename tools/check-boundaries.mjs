@@ -39,6 +39,7 @@ const ENTRY_POINTS = {
     "./web/resources": "web/resources",
     "./input": "input",
     "./web/gestures": "web/gestures",
+    "./web/view": "web/view",
     "./web/pointer": "web/pointer",
     "./ui": "ui/index",
     "./animation": "animation/index",
@@ -291,6 +292,11 @@ Object.assign(m15DeepClauses, {
   "packages/engine/dist/web/gestures.js": [{"operation":"import","kind":"value","members":["after"],"target":"@egret/engine"}],
   "packages/engine/dist/web/gestures.d.ts": [{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}]
 });
+// Views of play draw with the game's own sprites: the type of one is all they take from the root entry.
+Object.assign(m15DeepClauses, {
+  "packages/engine/web/playView.ts": [{"operation":"import","kind":"type","members":["Sprite"],"target":"@egret/engine"}],
+  "packages/engine/dist/web/playView.d.ts": [{"operation":"import","kind":"type","members":["Sprite"],"target":"@egret/engine"}]
+});
 for (const [file, clauses] of Object.entries({"packages/engine/src/ui/textEditor.ts":[{"operation":"import","kind":"type","members":["Paragraph","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/dist/ui/textEditor.d.ts":[{"operation":"import","kind":"type","members":["ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/src/ui/textEditorTypes.ts":[{"operation":"import","kind":"type","members":["ParagraphCache","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/dist/ui/textEditorTypes.d.ts":[{"operation":"import","kind":"type","members":["ParagraphCache","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}]})) m32ParagraphDeepClauses[file] = [...(m32ParagraphDeepClauses[file] ?? []), ...clauses];
 let inspected = 0;
 const forbidden = /\b(?:document|window|HTMLCanvasElement|GPUDevice|process|Buffer|require)\b|["']node:/;
@@ -400,9 +406,10 @@ for (const [name, allowed] of Object.entries(expected)) {
         if(name!=='engine'||!['web/BrowserAudio.ts','dist/web/BrowserAudio.js','dist/web/BrowserAudio.d.ts'].includes(relative))
           throw new Error('Audio: mixer entry imported outside the named browser module: '+relative);
       } else if (imported === '@egret/engine/ui/semantics') {
-        // The browser projection reads the public tree entry for its types and holds nothing private.
+        // The browser projection, and play with its views, read the public tree entry for its types only: a game
+        // gives play its own tree, so no page of play needs the entry mapped.
         const relative=path.relative(dir,file).split(path.sep).join('/');
-        if(name!=='engine'||!['web/BrowserSemantics.ts','dist/web/BrowserSemantics.d.ts'].includes(relative))
+        if(name!=='engine'||!['web/BrowserSemantics.ts','dist/web/BrowserSemantics.d.ts','web/BrowserPlay.ts','dist/web/BrowserPlay.d.ts','web/playView.ts','dist/web/playView.d.ts'].includes(relative))
           throw new Error('Semantics: tree entry imported outside the named browser module: '+relative);
       } else if (imported === '#egret-keyboard-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');

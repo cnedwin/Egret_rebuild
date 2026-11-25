@@ -25,6 +25,10 @@ import { MUSIC_MOODS, MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js
 import type { MusicOptions, MusicMood } from './playMusic.js';
 import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 import { createDragAndDrop, createGestures } from './gestures.js';
+import { createPlayViews } from './playView.js';
+import type { PlayView, PlayViewOptions } from './playView.js';
+import type { ViewDescription } from './view.js';
+import type { UiSemantics } from '@egret/engine/ui/semantics';
 import type { GestureDrag, GesturePinch, GesturePoint, GestureSwipe } from './gestures.js';
 
 /** A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. */
@@ -57,6 +61,12 @@ export interface PlayOptions {
    * changes size, the phone turns or the safe part moves. Move things here; make them in `setup`.
    */
   readonly arrange?: (game: PlayGame) => void;
+  /**
+   * A semantic tree from `createUiSemantics` of `@egret/engine/ui/semantics`. Views of the game add what they hold
+   * to it, and it is published at the end of every frame: a tester of `@egret/engine/ui/testing` then finds their
+   * parts by name, and `@egret/engine/web/semantics` shows them to assistive technology.
+   */
+  readonly semantics?: UiSemantics;
   /** What a frame is cleared to. Black unless given. */
   readonly background?: number;
   /** Clears a frame to nothing, so that what the page has under the canvas shows through. `background` is then not drawn. */
@@ -442,6 +452,11 @@ export interface PlayGame {
   gestures(node: DisplayObject, handlers: PlayGestures): () => void;
   /** Drag and drop: the dragged sprite stays put while a picture of it follows the finger, over everything. */
   dragAndDrop<T>(): PlayDragAndDrop<T>;
+  /**
+   * Shows a screen described as data, drawn on the ui layer in a skin and placed in the safe part of the screen
+   * again whenever it changes. `bind` names the parts that follow `state`, read every frame, or answer a press.
+   */
+  show<S>(description: ViewDescription, options?: PlayViewOptions<S>): PlayView;
   /** Whether what two sprites draw overlaps, taken as upright boxes. `shrink` takes that much off every side of both. */
   overlaps(a: DisplayObject, b: DisplayObject, shrink?: number): boolean;
   /** The first of the sprites that overlaps `a`, or undefined. */
@@ -719,6 +734,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   )
     throw invalid('insets is { top, right, bottom, left } of numbers 0 or more');
   if (options.arrange !== undefined && typeof options.arrange !== 'function') throw invalid('arrange is a function');
+  if (
+    options.semantics !== undefined &&
+    (options.semantics === null ||
+      typeof options.semantics !== 'object' ||
+      typeof options.semantics.add !== 'function' ||
+      typeof options.semantics.publish !== 'function')
+  )
+    throw invalid('semantics is a tree made by createUiSemantics');
   if (options.audio !== undefined && typeof options.audio !== 'boolean') throw invalid('audio is true or false');
   if (options.reducedMotion !== undefined && typeof options.reducedMotion !== 'boolean')
     throw invalid('reducedMotion is true or false');
@@ -1459,7 +1482,20 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     leaving = [];
     for (const node of ending) if (!node.isDisposed) node.dispose();
   };
+  // The seconds of the wall this frame, for what follows the state at its end: the views and their semantics.
+  let frameSeconds = 0;
   const endFrame = (): void => {
+    const seconds = frameSeconds;
+    frameSeconds = 0;
+    if (!disposed) {
+      views.tick(seconds);
+      if (options.semantics !== undefined)
+        try {
+          options.semantics.publish();
+        } catch (cause) {
+          failure ??= { cause };
+        }
+    }
     endRemoved();
     wentDown.clear();
     cameUp.clear();
@@ -1483,6 +1519,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     return { promise, resolve, reject };
   }
   function step(real: number, seconds: number): void {
+    frameSeconds = real;
     if (failure !== undefined) {
       const { cause } = failure;
       failure = undefined;
@@ -1609,6 +1646,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   function resetRound(): void {
     endMusic(0.3);
     widgets.reset();
+    views.reset();
     touch.reset();
     touchHeld.clear();
     touchStick.x = touchStick.y = 0;
@@ -1830,6 +1868,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         ...(handlers.pinch === undefined ? {} : { onPinch: told(handlers.pinch, inGame)! })
       });
       return () => made.dispose();
+    },
+    show(description, viewOptions) {
+      return views.view(description, viewOptions);
     },
     dragAndDrop<T>(): PlayDragAndDrop<T> {
       const input = browser.pointer;
@@ -2229,6 +2270,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const widgets = createPlayWidgets(game, () => {
     if (!disposed && browser.loop.state === 'idle') browser.loop.start();
   });
+  const views = createPlayViews(game, {
+    failed: cause => {
+      failure ??= { cause };
+    },
+    semantics: () => options.semantics
+  });
   const touch = createPlayTouch(game, {
     hold(key) {
       const code = codeOf(key);
@@ -2260,6 +2307,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     placeLayers();
     point.x = Math.min(point.x, game.width);
     point.y = Math.min(point.y, game.height);
+    if (!disposed) views.arrange();
     if (api === undefined || disposed || options.arrange === undefined) return;
     try {
       options.arrange(game);

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/view.ts",
+      "originRole": "First-party optional entry @egret/engine/web/view: a screen described as data, checked strictly and planned on screens of any shape with portrait parts; independently authored with AI assistance; the data-built, name-bound screens of LumioGames LGUI were studied as a reference and none of its code is used; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/playView.ts",
+      "originRole": "First-party play module behind game.show: draws a planned view in a skin with the game's sprites and texts, keeps it to the game's state by a binding table, adds it to a semantic tree and serves as a screen handle; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-view.test.mjs",
+      "originRole": "First-party focused validation of view checking and planning in Node; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-views.mjs",
+      "originRole": "First-party browser verification of game.show: skin colours, bindings, a counting number, a disabled button, a modal and portrait parts, by mouse and by name; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/ui-views.md",
+      "originRole": "First-party bilingual guide to screens described as data; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/ui-views.md",
+      "originRole": "First-party bilingual guide to screens described as data; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/ui-views.md",
+      "zh": "knowledge-base/Cns/docs/ui-views.md"
+    }
+  ]
+}

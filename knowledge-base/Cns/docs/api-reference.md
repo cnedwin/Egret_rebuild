@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 46 个入口、1420 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1438 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1017,6 +1017,29 @@
 | `GesturePoint` | 接口 | Where a gesture is: on the stage, and in the object's own units. |
 | `Gestures` | 接口 | Recognized gestures of an object; ended with `dispose` or with its scope. |
 | `GestureSwipe` | 接口 | A swipe: its main direction, its speed in stage units a second, and how far it went. |
+
+## `@egret/engine/web/view`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `checkView` | 函数 | Checks a description: every part of a known kind with only the fields of its kind, names that are names and are used once, and portrait parts with the same names, of the same kinds, as the others. |
+| `DEFAULT_VIEW_SKIN` | 值 | A dark skin that reads on any game: words in white on slate cards, blue buttons and a green accent. |
+| `planView` | 函数 | Plans where each part of a view goes on a screen: the parts for its shape, each rectangle in the game's units. |
+| `ViewAnchor` | 类型 | Where in its panel a part is placed when the panel lays its parts out freely: an edge, a corner or the middle. |
+| `ViewBar` | 接口 | How full something is: a value from 0 to 1. |
+| `ViewButton` | 接口 | A button with words on it. |
+| `ViewDescription` | 接口 | A screen as data: its parts, the parts while the screen is taller than wide, and how it sits. |
+| `ViewFrame` | 接口 | Where a view goes: the screen the game shows and the part of it that is safe, in the game's units. |
+| `ViewPanel` | 接口 | A panel: a card that is drawn, or only a place that holds parts. |
+| `ViewPart` | 类型 | Any part of a view: a panel, a text, a button, a bar, a toggle or a space. |
+| `ViewPlan` | 接口 | Where every part of a view goes on one screen. |
+| `ViewPlannedPart` | 接口 | A part where it goes: its place in the tree, what it is, and its rectangle in the game's units. |
+| `ViewRect` | 接口 | A rectangle in the game's units. |
+| `ViewSize` | 类型 | A width or height: units of the game, a share of the panel such as `'50%'`, or all that is left (`'fill'`). |
+| `ViewSkin` | 接口 | The colours and sizes a view is drawn with, where its parts do not give their own. |
+| `ViewSpace` | 接口 | Empty space: in a row or a column, `'fill'` pushes what follows to the end. |
+| `ViewText` | 接口 | A line of words. |
+| `ViewToggle` | 接口 | A switch that is on or off, with words before it. |
 
 ## `@egret/engine/web/pointer`
 

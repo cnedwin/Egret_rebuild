@@ -1293,6 +1293,17 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `UI_THEME_METRICS_CHANGED` | The metrics of a UI theme changed while a request was on its way. |
 | `UI_THEME_TOKEN_MISSING` | A token that a UI theme needs is missing. |
 
+### UI_VIEW
+
+| Code | Meaning |
+| --- | --- |
+| `UI_VIEW_BINDING_INVALID` | A binding gives what its part cannot take, or is not a function. Which, and why, are in cause. |
+| `UI_VIEW_BINDING_UNKNOWN` | A binding names a part the view does not have. The names it has are in cause. |
+| `UI_VIEW_FRAME_INVALID` | The frame given to a UI view is not valid. |
+| `UI_VIEW_INVALID` | A view description is not valid. Which part, and what is wrong with it, are in cause. |
+| `UI_VIEW_NAME_UNKNOWN` | The view has no part of that name. The names it has are in cause. |
+| `UI_VIEW_VARIANT_MISMATCH` | The portrait parts of a view do not have the same names, of the same kinds, as the others. The names are in cause. |
+
 ### VIDEO
 
 | Code | Meaning |

@@ -1293,6 +1293,17 @@
 | `UI_THEME_METRICS_CHANGED` | 请求进行期间UI 主题的 `metrics` 发生了变化。 |
 | `UI_THEME_TOKEN_MISSING` | 缺少UI 主题需要的 `token`。 |
 
+### UI_VIEW
+
+| 错误码 | 含义 |
+| --- | --- |
+| `UI_VIEW_BINDING_INVALID` | 绑定给出了部件不能接受的内容，或者不是函数。是哪个、为什么，见 cause。 |
+| `UI_VIEW_BINDING_UNKNOWN` | 绑定指向了视图里没有的部件。视图有哪些名字，见 cause。 |
+| `UI_VIEW_FRAME_INVALID` | 交给UI 视图的 `frame` 无效。 |
+| `UI_VIEW_INVALID` | 视图描述无效。是哪个部件、错在哪里，见 cause。 |
+| `UI_VIEW_NAME_UNKNOWN` | 视图里没有这个名字的部件。视图有哪些名字，见 cause。 |
+| `UI_VIEW_VARIANT_MISMATCH` | 视图的竖屏部件与横屏部件的名字或种类不一致。是哪些名字，见 cause。 |
+
 ### VIDEO
 
 | 错误码 | 含义 |
