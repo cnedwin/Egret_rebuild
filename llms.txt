@@ -167,6 +167,28 @@ Use them: a hit wants a sound, a burst and a small shake; a death wants a flash.
 
 `setup` may await them: frames are drawn while it waits, so a title menu or a first line of a story is `await game.menu(...)` in `setup`. They answer while the game is paused. Boxes asked for while one is open wait their turn. A restart takes them away.
 
+## Screens as data
+
+A shop, a settings page, a result screen: describe it, name the parts code reads, and bind the names to the state.
+
+```js
+const shop = game.show({
+  label: 'Shop',
+  root: { type: 'panel', card: true, anchor: 'center', width: 420, height: 260, padding: 16, layout: 'column', gap: 12, children: [
+    { type: 'text', name: 'gold' },
+    { type: 'bar', name: 'hp', label: 'Health' },
+    { type: 'toggle', name: 'sound', text: 'Sound' },
+    { type: 'button', name: 'buy', text: 'Buy 60' } ] },
+  portrait: { /* the same names, laid out for a phone held upright */ }
+}, { state, bind: {
+  gold: { pick: s => s.gold, roll: 0.5, format: n => 'Gold ' + n },
+  hp: { value: s => s.hp / s.maxHp },
+  sound: { checked: s => s.sound, tap: s => (s.sound = !s.sound) },
+  buy: { disabled: s => s.gold < 60, tap: s => (s.gold -= 60) } } });
+```
+
+Parts are `panel` (`layout` `'free'`, `'row'` or `'column'`, `gap`, `padding`, `align`, `justify`, `card`, `color`), `text`, `button`, `bar` (0 to 1), `toggle` and `space`. In a free panel a part is placed by `anchor` (`'top-left'` … `'bottom-right'`, `'center'`) and `x`, `y` inward; `width` and `height` are units, `'50%'` or `'fill'`. The view sits in `game.safe` (`area: 'screen'` for all of it) and is placed again when the screen changes; `portrait` parts, with the same names, are used while it is taller than wide. Bindings are read every frame: `text`, `pick` with `format` and `roll`, `value`, `checked`, `disabled`, `visible`, `color`, `tap`. `modal: true` dims what is behind and closes it to the pointer. `shop.get('buy')` is a part's sprite, `shop.rect('buy')` its place; `shop.hide()`, `.show()` and `.close()`. A wrong field or name is refused, saying where. With `semantics: createUiSemantics()` (from `@egret/engine/ui/semantics`) given to `play`, every named part is in that tree, so `createUiTester` of `@egret/engine/ui/testing` presses `'Shop / Buy 60'` by name. See [Screens as data](knowledge-base/en/docs/ui-views.md).
+
 ## Chance and saves
 
 `game.random.int(1, 6)`, `.range(0, 1)`, `.chance(0.25)`, `.pick(list)` and `.shuffle(list)`, which gives a new list. `game.save('best', score)` keeps a value between visits and `game.load('best', 0)` reads it, or gives the second argument.

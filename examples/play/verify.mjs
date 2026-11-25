@@ -11,6 +11,7 @@ import http from 'node:http';
 import { verifyPrimaryPointer } from './verify-primary-pointer.mjs';
 import { verifyScreenFit } from './verify-screen-fit.mjs';
 import { verifyGestures } from './verify-gestures.mjs';
+import { verifyViews } from './verify-views.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -759,6 +760,23 @@ await scenario(
   320,
   async (page, stage, row) => {
     row.gestures = await verifyGestures(page);
+  }
+);
+
+await scenario(
+  'views: a shop described as data, bound to the state, pressed by mouse and by name, a modal over it, and its portrait parts after a turn',
+  'breakout',
+  480,
+  320,
+  async (page, stage, row) => {
+    // The colour of the page at a point, as 0xRRGGBB.
+    const colourAt = async (x, y) => {
+      const png = PNG.sync.read(
+        await page.screenshot({ clip: { x: Math.round(x), y: Math.round(y), width: 1, height: 1 } })
+      );
+      return (png.data[0] << 16) | (png.data[1] << 8) | png.data[2];
+    };
+    row.views = await verifyViews(page, colourAt);
   }
 );
 

@@ -103,6 +103,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['UI_TESTER', 'the UI tester'],
   ['UI_TEXT_EDITOR', 'the UI text editor'],
   ['UI_THEME', 'a UI theme'],
+  ['UI_VIEW', 'a UI view'],
   ['UI', 'the UI'],
   ['VIDEO', 'a video'],
   ['WEBGL2_LAYER', 'a WebGL2 layer'],
@@ -289,6 +290,13 @@ const WRITTEN: Readonly<Record<string, string>> = {
     'More than one thing on the screen has that name. Add a role, what it is in, or #n. What the screen holds is in cause.',
   UI_TESTER_REFUSED:
     'The control was found but the action was refused: it is disabled, behind a dialog or has no such action.',
+  UI_VIEW_INVALID: 'A view description is not valid. Which part, and what is wrong with it, are in cause.',
+  UI_VIEW_VARIANT_MISMATCH:
+    'The portrait parts of a view do not have the same names, of the same kinds, as the others. The names are in cause.',
+  UI_VIEW_BINDING_UNKNOWN: 'A binding names a part the view does not have. The names it has are in cause.',
+  UI_VIEW_BINDING_INVALID:
+    'A binding gives what its part cannot take, or is not a function. Which, and why, are in cause.',
+  UI_VIEW_NAME_UNKNOWN: 'The view has no part of that name. The names it has are in cause.',
   UI_SEMANTICS_DESCRIPTION: 'A field of a UI semantics entry is not valid. The entry and the field are in cause.',
   UI_SEMANTICS_FOCUS:
     'More than one entry of UI semantics is focused, or the focused one is inert. The entry is in cause.',

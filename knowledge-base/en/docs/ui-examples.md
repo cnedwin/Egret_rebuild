@@ -45,6 +45,6 @@ Each of these was a defect in one of the examples, found by looking or by walkin
 
 ## What none of them does
 
-- A finger does not pan a list; it drags the scroll bar. A long press does nothing. Nothing is dragged from one place to another. Gestures are open under #90.
+- A finger does not pan a list; it drags the scroll bar. Long presses, swipes, pinches and drag and drop are made by [gestures](gestures.md), which these examples do not use yet.
 - No example was run on a real phone, on a hardware GPU, in Firefox or Safari, or with a screen reader. Those runs are open under #89 and #90.
 - A mask or a blur over a whole root or layer is not part of these screens.

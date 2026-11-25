@@ -64,6 +64,10 @@
       "types": "./dist/web/gestures.d.ts",
       "import": "./dist/web/gestures.js"
     },
+    "./web/view": {
+      "types": "./dist/web/view.d.ts",
+      "import": "./dist/web/view.js"
+    },
     "./web/pointer": {
       "types": "./dist/web/pointer.d.ts",
       "import": "./dist/web/pointer.js"

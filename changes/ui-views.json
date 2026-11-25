@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Screens described as data",
+    "body": "`game.show(description, { state, bind })` of play shows a screen described as data: panels, rows and columns of texts, buttons, bars and toggles, placed in the safe part of the screen, with portrait parts for a phone held upright, drawn in a default skin and kept to the game's state by a table of bindings. Descriptions are checked strictly, and `@egret/engine/web/view` plans them in Node. With `semantics` given to play, each named part is in the semantic tree, so the UI tester presses it by name."
+  },
+  "zh": {
+    "title": "用数据描述界面",
+    "body": "play 的 `game.show(description, { state, bind })` 显示用数据描述的界面：由面板、行和列组成，包含文字、按钮、进度条和开关，放在屏幕的安全区里，竖握手机时可以换用竖屏部件；按默认皮肤绘制，并通过绑定表跟随游戏状态。描述会做严格检查，`@egret/engine/web/view` 可以在 Node 里规划布局。给 play 传入 `semantics` 后，每个有名字的部件都在语义树里，UI 测试器可以按名字按下它。"
+  }
+}

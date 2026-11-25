@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 46 entries, 1420 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 47 entries, 1438 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1017,6 +1017,29 @@ For which entry to import from, see [What to import](entry-points.md).
 | `GesturePoint` | interface | Where a gesture is: on the stage, and in the object's own units. |
 | `Gestures` | interface | Recognized gestures of an object; ended with `dispose` or with its scope. |
 | `GestureSwipe` | interface | A swipe: its main direction, its speed in stage units a second, and how far it went. |
+
+## `@egret/engine/web/view`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `checkView` | function | Checks a description: every part of a known kind with only the fields of its kind, names that are names and are used once, and portrait parts with the same names, of the same kinds, as the others. |
+| `DEFAULT_VIEW_SKIN` | value | A dark skin that reads on any game: words in white on slate cards, blue buttons and a green accent. |
+| `planView` | function | Plans where each part of a view goes on a screen: the parts for its shape, each rectangle in the game's units. |
+| `ViewAnchor` | type | Where in its panel a part is placed when the panel lays its parts out freely: an edge, a corner or the middle. |
+| `ViewBar` | interface | How full something is: a value from 0 to 1. |
+| `ViewButton` | interface | A button with words on it. |
+| `ViewDescription` | interface | A screen as data: its parts, the parts while the screen is taller than wide, and how it sits. |
+| `ViewFrame` | interface | Where a view goes: the screen the game shows and the part of it that is safe, in the game's units. |
+| `ViewPanel` | interface | A panel: a card that is drawn, or only a place that holds parts. |
+| `ViewPart` | type | Any part of a view: a panel, a text, a button, a bar, a toggle or a space. |
+| `ViewPlan` | interface | Where every part of a view goes on one screen. |
+| `ViewPlannedPart` | interface | A part where it goes: its place in the tree, what it is, and its rectangle in the game's units. |
+| `ViewRect` | interface | A rectangle in the game's units. |
+| `ViewSize` | type | A width or height: units of the game, a share of the panel such as `'50%'`, or all that is left (`'fill'`). |
+| `ViewSkin` | interface | The colours and sizes a view is drawn with, where its parts do not give their own. |
+| `ViewSpace` | interface | Empty space: in a row or a column, `'fill'` pushes what follows to the end. |
+| `ViewText` | interface | A line of words. |
+| `ViewToggle` | interface | A switch that is on or off, with words before it. |
 
 ## `@egret/engine/web/pointer`
 
