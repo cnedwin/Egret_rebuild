@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-// llms.txt is the one page an agent reads to write a game. A page that names a call the engine does not have costs
-// its reader a failed game, so every name in it is held to the sources, and each of its games to the example that
-// is played to its end in a browser.
+// The entry points to the canonical games that the existing browser verifier plays.
+// Validate the small reference in the entry against the engine exports and source.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -23,8 +22,10 @@ const members = (name, source = flat) => {
 const GAME = [...new Set([...members('PlayGame'), ...members('Play3DGame', deep)])],
   PARTS = { keys: members('PlayKeys'), pointer: members('PlayPointer'), sfx: members('PlaySfx') };
 
-// Break caught: change a game of the example without changing the page, or the page without the example.
-test('LL01 each game of the page is a game of the play example, which is played to its end in a browser', () => {
+test('LL01 complete game links point to the canonical, runnable play examples', () => {
+  const launcher = read('examples/play/index.html');
+  const choices = launcher.match(/await import\(\[([^\]]+)\]\.includes\(game\)/)?.[1];
+  assert.ok(choices, 'example launcher choices');
   for (const [game, call, from] of [
     ['breakout', 'play', '@egret/engine/play'],
     ['platformer', 'play', '@egret/engine/play'],
@@ -34,13 +35,17 @@ test('LL01 each game of the page is a game of the play example, which is played 
     const lines = read('examples/play/' + game + '.mjs').split('\n');
     const first = lines.indexOf('import { ' + call + " } from '" + from + "';");
     assert.ok(first > 0 && lines.slice(0, first).every(line => line.startsWith('//')), game);
-    const body = lines
-      .slice(first + 1)
-      .join('\n')
-      .trimEnd();
+    assert.ok(page.includes('](examples/play/' + game + '.mjs)'), game + ' is missing from the entry');
+    const selectable = choices.includes("'" + game + "'") || launcher.includes("'./" + game + ".mjs'");
+    assert.ok(selectable, game + ' is missing from the example launcher');
     assert.ok(
-      page.includes('```js\nconst { ' + call + ' } = Egret;\n' + body + '\n```'),
-      game + ' is not in llms.txt as it is in the example'
+      !page.includes(
+        lines
+          .slice(first + 1)
+          .join('\n')
+          .trimEnd()
+      ),
+      game + ' is duplicated in the entry'
     );
   }
 });

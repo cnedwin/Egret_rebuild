@@ -1,12 +1,12 @@
 # Egret guide: cards on demand
 
-Ask in English or Chinese. Read only the cards your game needs. Each gives a short example and its source.
+Read the relevant cards in English or ask in Chinese. Each names its sources.
 
 - Ask: `node tools/egret-guide.mjs <words | API name | ERROR_CODE | hint-id>` prints the best two or three cards within `--budget` tokens (2,500 by default).
 - One card: `node tools/egret-guide.mjs --card <id>`. This list: `--list`.
 - Every card in one file, for tools that want one: `node tools/egret-guide.mjs --full --out <file>`.
 
-`applies` says which way of using the engine a card is for: `play`, `play3d`, `engine` (the core and feature entries), `world3d`, `web` (a page made by hand). A card marked stale was learnt at an older engine pin; its card says what changed.
+`applies` identifies the engine entry or host. Stale cards explain what changed.
 
 ## Creating a game
 
@@ -24,6 +24,7 @@ Ask in English or Chinese. Read only the cards your game needs. Each gives a sho
 
 ## Performance
 
+- [geometry-budget-2d](cards/perf/geometry-budget-2d.txt) · play engine web · A black or frozen frame after adding shapes or radial glows.
 - [frame-budget](cards/perf/frame-budget.txt) · engine web world3d · Measuring a frame with @egret/devtools and reading its hints.
 - [frame-loop-backpressure](cards/perf/frame-loop-backpressure.txt) · engine web · Let the engine's loop pace drawing; backpressure, skipped frames and lost devices.
 - [world3d-draw-cost](cards/perf/world3d-draw-cost.txt) · world3d play3d · What to cut first when a 3D frame is GPU bound, with measured savings.

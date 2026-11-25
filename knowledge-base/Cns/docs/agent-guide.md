@@ -12,9 +12,11 @@
 
 参见[首稿对照记录](first-playable-entry-study.md)，了解两份开场的实录和这次对照能回答的问题。
 
+[《暴雨渡口》对照](agent-guide-routing-study.md)记录了两组智能体自行读取的资料，以及玩家在未经精修的游戏开场里实际能做的事。
+
 ## 开发者的智能体读什么
 
-[`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) 是智能体写一个小游戏时要读的唯一页面。超出它的内容都在指南里，按需提供：
+[`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) 为智能体提供四条入口：做第一个 2D 交互、建立 3D 场景、接手已有游戏、排查报错。最小示例能响应空格键，完整游戏则直达仓库里的可运行源码。如果需求限定了源码大小，交付前请计算最终文件的 UTF-8 字节数。程序化 2D 特效触发帧捕获拒绝时，可以查阅[几何预算卡](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/perf/geometry-budget-2d.txt)。更多内容按需读取：
 
 - [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) 每张卡片占一行：卡片 id、它适用的引擎用法（`play`、`play3d`、`engine`、`world3d`、`web`），以及它回答什么问题。索引保持在 150 行以内。
 - `guide/cards/<area>/<id>.txt` 是一个主题，打印出来不超过 800 个 token：简短的规则、一个最小示例，以及规则所依据的测量结果或总结出它的游戏。
@@ -65,7 +67,7 @@
 | 大小 | 每张卡片打印后不超过 800 个 token，文件不超过 1,000 个 token；索引不超过 150 行和 1,500 个 token |
 | 索引 | 每张卡片在索引中恰好出现一次，`applies` 一致；每个链接都能解析 |
 | 证据 | 每张卡片都有包含仓库、路径、行号、提交和引擎版本的证据；指向本仓库的证据必须指向存在的行 |
-| 检索 | 一组固定的 62 个问题（其中 22 个是中文）都把预期的卡片排在第一；回答不超出预算，并且每次运行结果相同 |
+| 检索 | 一组固定的 71 个问题（其中 27 个是中文）都把预期的卡片排在第一；回答不超出预算，并且每次运行结果相同 |
 | 采集 | 在测试中临时建立的小仓库上，采集能读出引擎版本、导入、测试、说明和修复，并标出过时的卡片 |
 
 名字检查只读取生成文件或源文件，因此会跟随引擎变化，自己不需要另外的台账。它不比较字节，不属于证据通道。

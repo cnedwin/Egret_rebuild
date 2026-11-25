@@ -1,0 +1,23 @@
+---
+id: geometry-budget-2d
+title: A 2D frame goes black or freezes when shapes exhaust the geometry budget
+applies: [play, engine, web]
+triggers: ["2d geometry budget", "triangle limit", "too many triangles", "radial gradients", "gradient glow", "2d shapes go black", "三角形超限", "三角形上限", "三角形", "渐变光圈", "径向渐变", "画面黑屏", "几何预算"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: packages/runtime/src/sharedFrameCapture.ts, line: 313, commit: ff93e89eebf1f832cdf114ccdbd46562e7659f77, pin: ff93e89eebf1f832cdf114ccdbd46562e7659f77 }
+  - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/first-playable-entry-study.md, line: 55, commit: ff93e89eebf1f832cdf114ccdbd46562e7659f77, pin: 5792d800a4932da81ddf6af9314a430c41cb0f30 }
+engine: ff93e89eebf1f832cdf114ccdbd46562e7659f77
+---
+
+# A 2D frame goes black or freezes when shapes exhaust the geometry budget
+
+A 2D frame capture allows 65,536 mesh triangles. `FRAME_BUDGET_EXCEEDED` also covers other limits. Read the full error and stack. If the failing budget is triangles, compare the geometry attached before the action with the geometry attached when it succeeds. Check both startup and the first frame with the effect active.
+
+In Windlamp Post, three radial fills made up 33,124 of the distant station's 33,593 triangles. The first lantern's new glow alone added 16,384 triangles. The last object refused was an unchanged hidden marker worth 61 triangles. The rejected subtotal describes how far the capture got; it does not include later objects and is not a GPU timing measurement.
+
+- Replace large decorative radial fills with a bright core and a few flat translucent shapes. Build the effect once and switch it on for the action.
+- Attach distant sections as they are needed, and remove them when they leave play. Moving an attached object off camera or hiding it can still leave its geometry in the count.
+- Replay the same action from the same start. Check that the new frame renders, the result stays visible, and the next input still works.
+
+[Draw-by-draw Windlamp Post evidence](../../../knowledge-base/en/docs/first-playable-entry-study.md#follow-up-what-spent-the-triangle-budget)
