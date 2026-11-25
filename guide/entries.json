@@ -42,6 +42,7 @@
       "@egret/engine/paragraph"
     ],
     "@egret/engine/ui/semantics": [],
+    "@egret/engine/ui/testing": [],
     "@egret/engine/video": [],
     "@egret/engine/web/audio": [
       "@egret/engine/audio"

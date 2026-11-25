@@ -99,6 +99,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['UI_SCREEN', 'the screen fit'],
   ['UI_SCREENS', 'the screen stack'],
   ['UI_SEMANTICS', 'UI semantics'],
+  ['UI_TESTER', 'the UI tester'],
   ['UI_TEXT_EDITOR', 'the UI text editor'],
   ['UI_THEME', 'a UI theme'],
   ['UI', 'the UI'],
@@ -282,6 +283,11 @@ const WRITTEN: Readonly<Record<string, string>> = {
   UI_SCREENS_ALREADY_OPEN:
     'This screen is open, or opening, with other parameters. Close it first, or open it with the same parameters.',
   UI_SCREENS_FULL: 'The screen stack holds as many screens as it was made for. Close one first, or give maxScreens.',
+  UI_TESTER_NOT_FOUND: 'Nothing on the screen has that name. What the screen holds is in cause.',
+  UI_TESTER_AMBIGUOUS:
+    'More than one thing on the screen has that name. Add a role, what it is in, or #n. What the screen holds is in cause.',
+  UI_TESTER_REFUSED:
+    'The control was found but the action was refused: it is disabled, behind a dialog or has no such action.',
   UI_SEMANTICS_DESCRIPTION: 'A field of a UI semantics entry is not valid. The entry and the field are in cause.',
   UI_SEMANTICS_FOCUS:
     'More than one entry of UI semantics is focused, or the focused one is inert. The entry is in cause.',

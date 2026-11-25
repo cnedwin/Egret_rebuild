@@ -176,6 +176,10 @@
       "types": "./dist/semantics.d.ts",
       "import": "./dist/semantics.js"
     },
+    "./ui/testing": {
+      "types": "./dist/ui/testing.d.ts",
+      "import": "./dist/ui/testing.js"
+    },
     "./web/semantics": {
       "types": "./dist/web/semantics.d.ts",
       "import": "./dist/web/semantics.js"
