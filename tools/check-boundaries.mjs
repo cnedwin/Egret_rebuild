@@ -295,7 +295,9 @@ Object.assign(m15DeepClauses, {
 // Views of play draw with the game's own sprites: the type of one is all they take from the root entry.
 Object.assign(m15DeepClauses, {
   "packages/engine/web/playView.ts": [{"operation":"import","kind":"type","members":["Sprite"],"target":"@egret/engine"}],
-  "packages/engine/dist/web/playView.d.ts": [{"operation":"import","kind":"type","members":["Sprite"],"target":"@egret/engine"}]
+  "packages/engine/dist/web/playView.d.ts": [{"operation":"import","kind":"type","members":["Sprite"],"target":"@egret/engine"}],
+  "packages/engine/web/playViewScroll.ts": [{"operation":"import","kind":"value","members":["createScrollControl"],"target":"@egret/engine/ui"}],
+  "packages/engine/dist/web/playViewScroll.js": [{"operation":"import","kind":"value","members":["createScrollControl"],"target":"@egret/engine/ui"}]
 });
 for (const [file, clauses] of Object.entries({"packages/engine/src/ui/textEditor.ts":[{"operation":"import","kind":"type","members":["Paragraph","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/dist/ui/textEditor.d.ts":[{"operation":"import","kind":"type","members":["ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/src/ui/textEditorTypes.ts":[{"operation":"import","kind":"type","members":["ParagraphCache","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}],"packages/engine/dist/ui/textEditorTypes.d.ts":[{"operation":"import","kind":"type","members":["ParagraphCache","ParagraphTextGeometry"],"target":"@egret/runtime/paragraph"}]})) m32ParagraphDeepClauses[file] = [...(m32ParagraphDeepClauses[file] ?? []), ...clauses];
 let inspected = 0;

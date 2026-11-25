@@ -4,12 +4,15 @@
 // `get`, tests and assistive technology through the semantic tree when the game gives one, and a screen stack through
 // the handle a view is.
 import { EgretError } from '@egret/runtime';
+import type { DisplayObject } from '@egret/runtime';
 import type { Sprite } from '@egret/engine';
 import type { UiSemantics } from '@egret/engine/ui/semantics';
 import type { PlayGame, PlayText } from './BrowserPlay.js';
 import { checkView, planView } from './view.js';
 import { keyCap } from './viewParts.js';
 import type { ViewDescription, ViewPart, ViewPlan, ViewRect } from './view.js';
+import { createPlayViewScrolls } from './playViewScroll.js';
+import type { PlayScrollViewport, PlayViewScroll } from './playViewScroll.js';
 
 /** How one named part follows the game's state. Each function is given the state and read every frame. */
 export interface PlayViewBinding<S = unknown> {
@@ -55,6 +58,8 @@ export interface PlayView {
   shows(name: string): boolean;
   /** The red dot a named part shows now: its count, true for a dot alone, or false for none. */
   badge(name: string): number | boolean;
+  /** The position of a named scroll panel. The handle follows the name through a layout change. */
+  scroll(name: string): PlayViewScroll;
   /** Which parts are used: `'portrait'` while the screen is taller than wide and the view has portrait parts. */
   readonly variant: 'landscape' | 'portrait';
   readonly visible: boolean;
@@ -74,6 +79,8 @@ export interface PlayView {
 interface Made {
   readonly part: ViewPart;
   readonly node: Sprite;
+  readonly scroll: PlayScrollViewport | undefined;
+  readonly scrollParent: Made | undefined;
   readonly words: PlayText | undefined;
   rect: ViewRect;
   visible: boolean;
@@ -84,6 +91,7 @@ interface Made {
   text: string;
   badge: number | boolean;
   dot: { readonly node: Sprite; readonly words: PlayText } | undefined;
+  focusMark: Sprite | undefined;
 }
 interface Roll {
   from: number;
@@ -147,19 +155,76 @@ export function createPlayViews(
   hints(list: readonly PlayHint[]): PlayHints;
   loading<T>(tasks: readonly (Promise<T> | (() => T | Promise<T>))[], options?: PlayLoadingOptions): Promise<T[]>;
   readonly asking: boolean;
+  keyDown(event: KeyboardEvent, embedded: boolean): boolean;
+  wheel(x: number, y: number, delta: number, mode: number): boolean;
   tick(seconds: number): void;
   arrange(): void;
   reset(): void;
 } {
   const live = new Set<ViewRecord>();
+  const scrollInput = createPlayViewScrolls(game);
+  const makeScroll = scrollInput.create;
   let counter = 0;
 
   interface ViewRecord {
     readonly view: PlayView;
+    modal(): boolean;
+    targets(): readonly string[];
+    keeps(name: string): boolean;
+    eligible(name: string): boolean;
+    reveal(name: string): boolean;
+    focusMark(name: string, visible: boolean): void;
+    press(name: string): void;
     tick(seconds: number): void;
     arrange(): void;
     end(): void;
   }
+  interface Focus {
+    readonly owner: ViewRecord;
+    readonly name: string;
+  }
+  let focused: Focus | undefined, modalOwner: ViewRecord | undefined;
+  const beforeModal = new WeakMap<ViewRecord, Focus | undefined>();
+  const topModal = (): ViewRecord | undefined => {
+    let modal: ViewRecord | undefined;
+    for (const view of live) if (view.modal()) modal = view;
+    return modal;
+  };
+  const inView = (owner: ViewRecord, modal = topModal()): boolean => modal === undefined || modal === owner;
+  const targets = (): Focus[] => {
+    const modal = topModal();
+    return [...live]
+      .filter(owner => inView(owner, modal))
+      .flatMap(owner => owner.targets().map(name => ({ owner, name })));
+  };
+  const eligible = (target: Focus | undefined): target is Focus =>
+    target !== undefined && live.has(target.owner) && inView(target.owner) && target.owner.eligible(target.name);
+  const focus = (next: Focus | undefined): void => {
+    if (next?.owner === focused?.owner && next?.name === focused?.name) return;
+    focused?.owner.focusMark(focused.name, false);
+    focused = next;
+    focused?.owner.focusMark(focused.name, true);
+  };
+  const syncModalFocus = (): void => {
+    const modal = topModal();
+    if (modal === modalOwner) return;
+    const previous = modalOwner;
+    modalOwner = modal;
+    if (modal !== undefined && !beforeModal.has(modal)) {
+      beforeModal.set(modal, focused);
+      focus(targets().find(eligible));
+      return;
+    }
+    let restore = previous === undefined ? undefined : beforeModal.get(previous);
+    if (previous !== undefined) beforeModal.delete(previous);
+    // A covered dialog can be dismissed before the one covering it.
+    while (restore !== undefined && !live.has(restore.owner)) {
+      const saved = beforeModal.get(restore.owner);
+      beforeModal.delete(restore.owner);
+      restore = saved;
+    }
+    focus(eligible(restore) ? restore : targets().find(eligible));
+  };
 
   function view<S>(description: ViewDescription, options: PlayViewOptions<S> = {}): PlayView {
     const names = checkView(description);
@@ -202,6 +267,8 @@ export function createPlayViews(
       ended = false;
     const rolls = new Map<string, Roll>();
     const removals: (() => void)[] = [];
+    const scrollHandles = new Map<string, PlayViewScroll>();
+    let scrollItems: Made[] = [];
 
     const frame = () => ({ screen: game.screen, safe: game.safe, orientation: game.orientation });
     const colourOf = (part: ViewPart, item: Made): number => {
@@ -290,8 +357,44 @@ export function createPlayViews(
       const name = nameOf(item);
       return name === undefined ? undefined : (bind[name] as PlayViewBinding<S> | undefined);
     };
+    const hasAction = (item: Made): boolean =>
+      item.part.type === 'button' ||
+      item.part.type === 'toggle' ||
+      (item.part.type === 'panel' && bindingOf(item)?.tap !== undefined);
+    const isShown = (): boolean => !ended && shown && visibleOnStage(root, game.browser.stage);
+    const allowsInput = (): boolean => active && isShown() && inView(record);
+    const hasInput = (item: Made): boolean =>
+      active &&
+      item.visible &&
+      !item.disabled &&
+      hasAction(item) &&
+      visibleOnStage(item.node, game.browser.stage, true);
+    const followsInput = (item: Made): boolean => allowsInput() && hasInput(item);
+    const stageRect = (item: Made): ViewRect | undefined =>
+      visibleRect(
+        item.node,
+        item.node.hitArea ?? { x: 0, y: 0, width: item.rect.width, height: item.rect.height },
+        game.screen
+      );
+    const actionable = (item: Made): boolean => followsInput(item) && stageRect(item) !== undefined;
+    const revealForTab = (item: Made): boolean => {
+      if (!followsInput(item)) return false;
+      const offsets: { viewport: PlayScrollViewport; offset: number }[] = [];
+      const box = item.node.hitArea ?? { x: 0, y: 0, width: item.rect.width, height: item.rect.height };
+      for (let above = item.scrollParent; above !== undefined; above = above.scrollParent) {
+        const viewport = above.scroll!;
+        offsets.push({ viewport, offset: viewport.offset });
+        viewport.reveal(item.node, box);
+      }
+      if (actionable(item)) return true;
+      // A candidate hidden by an unrelated clip cannot move the list during keyboard traversal.
+      for (const { viewport, offset } of offsets) viewport.scrollTo(offset);
+      return false;
+    };
     const press = (item: Made): void => {
-      if (ended || !shown || !active || !item.visible || item.disabled || !visibleUp(item)) return;
+      if (!actionable(item)) return;
+      const name = nameOf(item);
+      if (name !== undefined) focus({ owner: record, name });
       const binding = bindingOf(item);
       try {
         binding?.tap?.(state());
@@ -305,14 +408,45 @@ export function createPlayViews(
         if (!made[at]!.visible) return false;
       return true;
     };
-    // Makes the sprites of a plan: one for each part, inside the sprite of its panel.
-    const build = (): void => {
+    const syncScrollLayout = (): void => {
+      if (scrollItems.length === 0) return;
+      const sizes = new Map<Made, { y: number; padding: number; contentLength: number }>();
+      const visible: boolean[] = [];
+      for (const [index, item] of made.entries()) {
+        const { parent, rect } = plan.parts[index]!;
+        if (item.scroll !== undefined && item.part.type === 'panel')
+          sizes.set(item, { y: rect.y, padding: item.part.padding ?? 0, contentLength: 0 });
+        visible[index] = item.visible && (parent < 0 || visible[parent] === true);
+        if (!visible[index] || item.scrollParent === undefined) continue;
+        const viewport = sizes.get(item.scrollParent)!;
+        // A nested viewport contributes its own bounds. Its children belong only to that viewport.
+        const end = rect.y - viewport.y + rect.height + viewport.padding;
+        viewport.contentLength = Math.max(viewport.contentLength, end);
+      }
+      for (const item of scrollItems)
+        item.scroll!.layout(item.rect.width, item.rect.height, sizes.get(item)!.contentLength);
+    };
+    const disposeScrolls = (): void => {
+      for (const item of scrollItems) item.scroll!.dispose();
+      scrollItems = [];
+    };
+    // Each part is inside its panel; a scroll panel holds the parts in its moving content.
+    const build = (offsets: ReadonlyMap<string, number> = new Map()): void => {
       plan = planView(description, frame());
       made = [];
       for (const planned of plan.parts) {
         const { part } = planned;
-        const parent = planned.parent < 0 ? root : made[planned.parent]!.node;
+        const container = planned.parent < 0 ? undefined : made[planned.parent]!;
+        const parent = container?.scroll?.content ?? container?.node ?? root;
         const node = game.sprite(undefined, parent);
+        const scroll =
+          part.type === 'panel' && part.scroll === 'vertical'
+            ? makeScroll(
+                node,
+                offsets.get(part.name ?? '') ?? 0,
+                () => allowsInput() && visibleOnStage(node, game.browser.stage, true)
+              )
+            : undefined;
         const start =
           part.type === 'text' || part.type === 'button' || part.type === 'toggle' ? String(part.text ?? '') : '';
         const words =
@@ -330,6 +464,8 @@ export function createPlayViews(
         const item: Made = {
           part,
           node,
+          scroll,
+          scrollParent: container?.scroll === undefined ? container?.scrollParent : container,
           words,
           rect: relative(planned.rect, planned.parent < 0 ? undefined : plan.parts[planned.parent]!.rect),
           visible: part.visible ?? true,
@@ -339,7 +475,8 @@ export function createPlayViews(
           color: undefined,
           text: previous !== undefined ? String(previous.shown) : start,
           badge: false,
-          dot: undefined
+          dot: undefined,
+          focusMark: undefined
         };
         if (part.name !== undefined && bind[part.name]?.badge !== undefined) {
           const dot = game.sprite(undefined, node);
@@ -358,6 +495,7 @@ export function createPlayViews(
         node.x = item.rect.x;
         node.y = item.rect.y;
         made.push(item);
+        if (scroll !== undefined) scrollItems.push(item);
         const binding = part.name === undefined ? undefined : bind[part.name];
         if (part.type === 'button' || part.type === 'toggle' || (part.type === 'panel' && binding?.tap !== undefined))
           game.onTap(node, () => press(item));
@@ -371,6 +509,7 @@ export function createPlayViews(
       placeDim();
       read(0);
       for (const item of made) paint(item);
+      syncScrollLayout();
       if (options.built !== undefined) {
         try {
           options.built(api);
@@ -393,6 +532,7 @@ export function createPlayViews(
     const read = (seconds: number): boolean => {
       if (ended) return false;
       let any = false;
+      let scrollLayoutChanged = false;
       const now = state();
       for (const item of made) {
         const binding = bindingOf(item);
@@ -402,7 +542,11 @@ export function createPlayViews(
           const value = binding.badge(now);
           item.badge = value === true ? true : typeof value === 'number' && value >= 1 ? Math.floor(value) : false;
         }
-        if (binding.visible !== undefined) item.visible = binding.visible(now) === true;
+        if (binding.visible !== undefined) {
+          const visible = binding.visible(now) === true;
+          if (item.visible !== visible) scrollLayoutChanged = true;
+          item.visible = visible;
+        }
         if (binding.disabled !== undefined) item.disabled = binding.disabled(now) === true;
         if (binding.checked !== undefined) item.checked = binding.checked(now) === true;
         if (binding.value !== undefined) {
@@ -443,6 +587,7 @@ export function createPlayViews(
           any = true;
         }
       }
+      if (scrollLayoutChanged) syncScrollLayout();
       return any;
     };
     const refresh = (): void => {
@@ -463,16 +608,6 @@ export function createPlayViews(
     };
     // Semantics: the view as a group, or a dialog when modal, and each named part as what it is.
     const semantics = hooks.semantics();
-    const stageRect = (item: Made): ViewRect => {
-      let x = 0,
-        y = 0;
-      for (let at = made.indexOf(item); at >= 0; at = plan.parts[at]!.parent) {
-        x += made[at]!.rect.x;
-        y += made[at]!.rect.y;
-      }
-      const screen = game.screen;
-      return { x: x - screen.x, y: y - screen.y, width: item.rect.width, height: item.rect.height };
-    };
     const registerSemantics = (): void => {
       if (semantics === undefined) return;
       const top = semantics.add({
@@ -480,9 +615,9 @@ export function createPlayViews(
         role: description.modal === true ? 'dialog' : 'group',
         describe: () => ({
           ...(description.label !== undefined ? { name: description.label } : {}),
-          bounds: stageRect(made[0]!),
-          hidden: !shown || ended,
-          ...(description.modal === true ? { modal: true } : {})
+          bounds: stageRect(made[0]!) ?? EMPTY,
+          hidden: !isShown(),
+          ...(description.modal === true ? { modal: active } : {})
         })
       });
       removals.push(() => top.remove());
@@ -517,17 +652,31 @@ export function createPlayViews(
           parent,
           describe: () => {
             const item = find(name);
-            const hidden = !shown || ended || !visibleUp(item);
-            const base = { bounds: stageRect(item), hidden };
-            if (role === 'group') return { ...base, name: label ?? name };
+            const rect = stageRect(item),
+              hidden =
+                !isShown() ||
+                !visibleOnStage(item.node, game.browser.stage) ||
+                (role !== 'group' && rect === undefined),
+              enabled = rect !== undefined && hasInput(item),
+              base = {
+                bounds: rect ?? EMPTY,
+                hidden,
+                focused: enabled && allowsInput() && focused?.owner === record && focused.name === name
+              };
+            if (role === 'group') return { ...base, name: label ?? name, disabled: hasAction(item) && !enabled };
             if (role === 'progressbar')
               return { ...base, name: label ?? name, range: { now: Math.round(item.value * 100), min: 0, max: 100 } };
-            if (role === 'switch') return { ...base, name: item.text, checked: item.checked, disabled: item.disabled };
-            if (role === 'button') return { ...base, name: item.text, disabled: item.disabled };
+            if (role === 'switch') return { ...base, name: item.text, checked: item.checked, disabled: !enabled };
+            if (role === 'button') return { ...base, name: item.text, disabled: !enabled };
             return { ...base, name: item.text };
           },
           ...(role === 'button' || role === 'switch' || (role === 'group' && bind[name]?.tap !== undefined)
-            ? { onActivate: () => press(find(name)) }
+            ? {
+                onActivate: () => press(find(name)),
+                onFocus() {
+                  if (actionable(find(name))) focus({ owner: record, name });
+                }
+              }
             : {})
         });
       }
@@ -541,6 +690,31 @@ export function createPlayViews(
       },
       shows: name => shown && !ended && visibleUp(find(name)),
       badge: name => find(name).badge,
+      scroll(name) {
+        const current = (): PlayScrollViewport => {
+          const viewport = find(name).scroll;
+          if (viewport === undefined)
+            throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': expected a scroll panel' });
+          return viewport;
+        };
+        current();
+        let handle = scrollHandles.get(name);
+        if (handle === undefined) {
+          handle = Object.freeze({
+            get offset() {
+              return current().offset;
+            },
+            get maximum() {
+              return current().maximum;
+            },
+            scrollTo: (position: number) => current().scrollTo(position),
+            scrollBy: (delta: number) => current().scrollBy(delta),
+            page: (direction: -1 | 1) => current().page(direction)
+          });
+          scrollHandles.set(name, handle);
+        }
+        return handle;
+      },
       get variant() {
         return plan.variant;
       },
@@ -552,10 +726,12 @@ export function createPlayViews(
         if (ended) return;
         shown = true;
         root.visible = true;
+        syncModalFocus();
       },
       hide() {
         shown = false;
         root.visible = false;
+        syncModalFocus();
       },
       cover() {
         api.hide();
@@ -566,32 +742,54 @@ export function createPlayViews(
       activate() {
         active = true;
         root.touchChildren = true;
+        syncModalFocus();
       },
       deactivate() {
         active = false;
         root.touchChildren = false;
+        syncModalFocus();
       },
       close() {
         api.dispose();
       },
       dispose() {
         if (ended) return;
-        ended = true;
         record.end();
       }
     };
     const record: ViewRecord = {
       view: api,
+      modal: () => description.modal === true && active && isShown(),
+      targets: () => made.flatMap(item => (item.part.name !== undefined && followsInput(item) ? [item.part.name] : [])),
+      keeps: name => followsInput(find(name)),
+      eligible: name => actionable(find(name)),
+      reveal: name => revealForTab(find(name)),
+      focusMark(name, visible) {
+        const item = find(name);
+        if (item.node.isDisposed) return;
+        if (item.focusMark === undefined) {
+          if (!visible) return;
+          item.focusMark = game.sprite(undefined, item.node);
+          setFocusOutline(item, plan.skin.accent);
+        }
+        item.focusMark.visible = visible;
+      },
+      press: name => press(find(name)),
       tick(seconds) {
         read(seconds);
       },
       arrange() {
         const next = planView(description, frame());
         if (next.variant !== plan.variant) {
+          const offsets = new Map<string, number>();
+          for (const item of scrollItems)
+            if (item.part.name !== undefined) offsets.set(item.part.name, item.scroll!.offset);
+          disposeScrolls();
           for (const item of made)
             for (const words of [item.words, item.dot?.words]) if (words !== undefined) game.remove(words);
           for (const item of made) game.remove(item.node);
-          build();
+          build(offsets);
+          if (focused?.owner === record) record.focusMark(focused.name, eligible(focused));
           return;
         }
         plan = next;
@@ -602,19 +800,29 @@ export function createPlayViews(
           item.node.x = item.rect.x;
           item.node.y = item.rect.y;
           paint(item);
+          if (item.focusMark?.visible === true) setFocusOutline(item, plan.skin.accent);
         });
+        syncScrollLayout();
       },
       end() {
+        if (ended) return;
+        ended = true;
         live.delete(record);
+        syncModalFocus();
+        if (focused?.owner === record) focus(undefined);
         for (const remove of removals.splice(0)) remove();
+        disposeScrolls();
         for (const item of made)
           for (const words of [item.words, item.dot?.words]) if (words !== undefined) game.remove(words);
         game.remove(root);
       }
     };
     build();
-    registerSemantics();
-    live.add(record);
+    if (!ended) {
+      registerSemantics();
+      live.add(record);
+      syncModalFocus();
+    }
     return api;
   }
 
@@ -677,6 +885,8 @@ export function createPlayViews(
             { bind: { no: { tap: () => answer(false) }, yes: { tap: () => answer(true) } } }
           );
           open = { answer };
+          const owner = [...live].find(record => record.view === view);
+          if (owner !== undefined && owner.eligible('yes')) focus({ owner, name: 'yes' });
           openedAt = frame;
         })
     );
@@ -766,12 +976,10 @@ export function createPlayViews(
       });
     };
     current = check(list);
-    const record: ViewRecord = {
-      view: undefined as unknown as PlayView,
+    const record = {
       tick() {
         if (!ended && game.device !== device) draw();
       },
-      arrange() {},
       end() {
         ended = true;
         hintBars.delete(record);
@@ -795,7 +1003,7 @@ export function createPlayViews(
       dispose: () => record.end()
     };
   };
-  const hintBars = new Set<ViewRecord>();
+  const hintBars = new Set<Pick<ViewRecord, 'tick' | 'end'>>();
   const loading = async <T>(
     tasks: readonly (Promise<T> | (() => T | Promise<T>))[],
     options: PlayLoadingOptions = {}
@@ -864,6 +1072,36 @@ export function createPlayViews(
     get asking() {
       return open !== undefined;
     },
+    wheel: scrollInput.wheel,
+    keyDown(event, embedded) {
+      if (event.altKey || event.ctrlKey || event.metaKey) return false;
+      if (event.code !== 'Tab' && event.code !== 'Enter' && event.code !== 'Space') return false;
+      syncModalFocus();
+      if (event.code !== 'Tab') {
+        if (!eligible(focused)) return false;
+        if (!event.repeat) focused.owner.press(focused.name);
+        return true;
+      }
+      const choices = targets(),
+        step = event.shiftKey ? -1 : 1,
+        current = choices.findIndex(next => next.owner === focused?.owner && next.name === focused.name),
+        start = current < 0 ? (step > 0 ? 0 : choices.length - 1) : current + step;
+      for (let offset = 0; offset < choices.length; offset++) {
+        let index = start + offset * step;
+        if (index < 0 || index >= choices.length) {
+          if (embedded && modalOwner === undefined) break;
+          index = (index + choices.length) % choices.length;
+        }
+        const next = choices[index]!;
+        if (next.owner.reveal(next.name)) {
+          focus(next);
+          return true;
+        }
+      }
+      if (modalOwner !== undefined) return true;
+      focus(undefined);
+      return false;
+    },
     tick(seconds) {
       frame++;
       if (open !== undefined && frame > openedAt + 1) {
@@ -878,6 +1116,11 @@ export function createPlayViews(
         } catch (cause) {
           hooks.failed(cause);
         }
+      }
+      syncModalFocus();
+      if (focused !== undefined) {
+        if (!focused.owner.keeps(focused.name)) focus(undefined);
+        else focused.owner.focusMark(focused.name, eligible(focused));
       }
     },
     arrange() {
@@ -898,6 +1141,94 @@ export function createPlayViews(
       live.clear();
     }
   };
+}
+
+const EMPTY: ViewRect = Object.freeze({ x: 0, y: 0, width: 0, height: 0 });
+
+function setFocusOutline(item: Made, colour: number): void {
+  const g = item.focusMark!.graphics,
+    { x, y, width, height } = item.node.hitArea ?? EMPTY;
+  g.clear();
+  if (width > 4 && height > 4)
+    g.lineStyle(2, colour)
+      .drawRect(x + 1, y + 1, width - 2, height - 2)
+      .lineStyle();
+}
+
+function visibleOnStage(node: DisplayObject, stage: DisplayObject, input = false): boolean {
+  if (input && !node.touchEnabled) return false;
+  for (let at: DisplayObject | undefined = node; at !== undefined; at = at.parent) {
+    if (at.isDisposed || !at.visible) return false;
+    if (at === stage) return true;
+    if (input && at.parent?.touchChildren === false) return false;
+  }
+  return false;
+}
+
+interface Point {
+  readonly x: number;
+  readonly y: number;
+}
+
+const edge = (a: Point, b: Point, c: Point): number => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+
+function corners({ x, y, width, height }: ViewRect, node?: DisplayObject): Point[] {
+  if (width <= 0 || height <= 0) return [];
+  const points = [
+    { x, y },
+    { x: x + width, y },
+    { x: x + width, y: y + height },
+    { x, y: y + height }
+  ];
+  return node === undefined ? points : points.map(at => node.localToGlobal(at.x, at.y));
+}
+
+/** Clip the two actual shapes before enclosing them for the rectangular accessibility projection. */
+function intersect(points: Point[], clip: Point[]): Point[] {
+  if (clip.length === 0 || points.length === 0) return [];
+  const winding = Math.sign(edge(clip[0]!, clip[1]!, clip[2]!));
+  if (!winding) return [];
+  for (let index = 0; index < clip.length && points.length > 0; index++) {
+    const from = clip[index]!,
+      to = clip[(index + 1) % clip.length]!,
+      distances = points.map(point => winding * edge(from, to, point)),
+      out: Point[] = [];
+    for (let at = 0; at < points.length; at++) {
+      const prior = (at + points.length - 1) % points.length,
+        start = points[prior]!,
+        end = points[at]!,
+        a = distances[prior]!,
+        b = distances[at]!;
+      if (a < 0 !== b < 0) {
+        const fraction = a / (a - b);
+        out.push({ x: start.x + (end.x - start.x) * fraction, y: start.y + (end.y - start.y) * fraction });
+      }
+      if (b >= 0) out.push(end);
+    }
+    points = out;
+  }
+  return points;
+}
+
+function visibleRect(node: DisplayObject, area: ViewRect, screen: ViewRect): ViewRect | undefined {
+  if (node.isDisposed) return undefined;
+  let points = corners(area, node);
+  if (points.length === 0 || !edge(points[0]!, points[1]!, points[2]!)) return undefined;
+  for (let at: DisplayObject | undefined = node; at !== undefined && points.length !== 0; at = at.parent) {
+    const clip = at.clipRect;
+    if (clip !== undefined) points = intersect(points, corners(clip, at));
+  }
+  points = intersect(points, corners({ x: 0, y: 0, width: screen.width, height: screen.height }));
+  if (points.length < 3) return undefined;
+  let areaTwice = 0;
+  for (let index = 1; index + 1 < points.length; index++)
+    areaTwice += edge(points[0]!, points[index]!, points[index + 1]!);
+  if (!Number.isFinite(areaTwice) || areaTwice === 0) return undefined;
+  const xs = points.map(point => point.x),
+    ys = points.map(point => point.y),
+    x = Math.min(...xs),
+    y = Math.min(...ys);
+  return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
 }
 
 /** A rectangle measured from the corner of the one it is in. */

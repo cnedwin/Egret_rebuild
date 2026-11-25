@@ -942,8 +942,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     );
   };
   const keyDown = (event: KeyboardEvent): void => {
-    // Embedded games leave Tab to the page, including the step that leaves the canvas.
-    if (typing(event.target) || (embedded && (event.target !== surface || event.code === 'Tab'))) return;
+    if (typing(event.target) || (embedded && event.target !== surface) || event.defaultPrevented) return;
+    if (!widgets.asking && views.keyDown(event, embedded)) {
+      device = 'keyboard';
+      event.preventDefault();
+      return;
+    }
+    // An embedded view's final control leaves Tab to the page.
+    if (embedded && event.code === 'Tab') return;
     if (KEPT_FROM_PAGE.has(event.code)) event.preventDefault();
     if (event.repeat) return;
     device = 'keyboard';
@@ -1068,6 +1074,13 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     place(event);
   };
   const turned = (event: WheelEvent): void => {
+    if (!event.ctrlKey && !widgets.asking && finite(event.deltaY) && event.deltaY !== 0) {
+      const at = browser.toStage(event.clientX, event.clientY);
+      if (finite(at.x) && finite(at.y) && views.wheel(at.x, at.y, event.deltaY, event.deltaMode)) {
+        event.preventDefault();
+        return;
+      }
+    }
     if (finite(event.deltaY)) point.wheel += event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0;
     // The wheel turns the game, not the page under it.
     event.preventDefault();

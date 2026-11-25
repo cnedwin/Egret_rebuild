@@ -12,6 +12,40 @@ const landscape = {
 };
 const at = (plan, name) => ({ ...plan.parts[plan.names.get(name)].rect });
 
+test('a vertical scroll panel plans fixed two-column rows beyond its viewport', () => {
+  const market = {
+    root: {
+      type: 'panel',
+      name: 'buildings',
+      scroll: 'vertical',
+      width: 340,
+      height: 110,
+      layout: 'column',
+      gap: 8,
+      padding: 10,
+      children: Array.from({ length: 5 }, (_, row) => ({
+        type: 'panel',
+        height: 50,
+        layout: 'row',
+        gap: 6,
+        children: [
+          { type: 'button', name: 'left' + row, text: 'House', width: 'fill' },
+          { type: 'button', name: 'right' + row, text: 'Workshop', width: 'fill' }
+        ]
+      }))
+    }
+  };
+  const plan = planView(market, landscape);
+  assert.deepEqual(at(plan, 'buildings'), { x: -50, y: 0, width: 340, height: 110 });
+  assert.equal(at(plan, 'left0').y, 10);
+  assert.equal(at(plan, 'right4').y, 242);
+  assert.equal(at(plan, 'right4').width, 157);
+  assert.throws(() => checkView({ root: { ...market.root, scroll: 'horizontal' } }), { code: 'UI_VIEW_INVALID' });
+  assert.throws(() => checkView({ root: { type: 'button', text: 'Confirm', scroll: 'vertical' } }), {
+    code: 'UI_VIEW_INVALID'
+  });
+});
+
 // Break caught: an anchor measured from the wrong edge, an offset that goes outward, or a share of the wrong room.
 test('VW01 a free panel places each part from its anchor, inward, at its size or a share of the panel', () => {
   const plan = planView(
