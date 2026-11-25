@@ -937,7 +937,13 @@ export async function createPlay3DSession(
     for (const thing of taps.keys()) if (thing.removed) taps.delete(thing);
     eye.updateWorldMatrices();
     scene.updateWorldMatrices();
-    ray.setFromCamera((flat.pointer.x / flat.width) * 2 - 1, 1 - (flat.pointer.y / flat.height) * 2, eye);
+    // The picture covers what the window shows, which reaches past the design with fit 'expand'.
+    const shown = flat.screen;
+    ray.setFromCamera(
+      ((flat.pointer.x - shown.x) / shown.width) * 2 - 1,
+      1 - ((flat.pointer.y - shown.y) / shown.height) * 2,
+      eye
+    );
     let hits;
     try {
       hits = ray.intersect(scene);

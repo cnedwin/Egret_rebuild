@@ -27,9 +27,34 @@ import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToas
 
 /** A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. */
 export interface PlayOptions {
-  /** The size of the stage, in the game's own units: whole numbers above 0. The canvas is scaled to fit. */
+  /**
+   * The size of the stage, in the game's own units: whole numbers above 0. The canvas is scaled to fit, and this much
+   * of the stage is always shown whole.
+   */
   readonly width: number;
   readonly height: number;
+  /**
+   * `'contain'` unless given: the stage is `width` × `height`, with bars where the window is of another shape.
+   * `'expand'`: the same scale, and the stage reaches to the edges of the window, so `game.screen` is larger than
+   * `width` × `height` on two sides. `(0, 0)` stays the corner of the design, so a game laid out for its size stays in
+   * the middle; place what belongs at an edge from `game.screen` or `game.safe`, in `arrange`.
+   */
+  readonly fit?: 'contain' | 'expand';
+  /**
+   * The stage while the window is taller than it is wide: whole numbers above 0. `width` and `height` then follow the
+   * window's shape, and `arrange` is called when it turns.
+   */
+  readonly portrait?: { readonly width: number; readonly height: number };
+  /**
+   * What covers the edges of the window, in CSS pixels: a notch, rounded corners, a home bar. The page's own
+   * `safe-area-inset` values unless given, which a page has when its viewport meta tag says `viewport-fit=cover`.
+   */
+  readonly insets?: { readonly top: number; readonly right: number; readonly bottom: number; readonly left: number };
+  /**
+   * Places what depends on the size and shape of the screen: called after `setup`, and again whenever the window
+   * changes size, the phone turns or the safe part moves. Move things here; make them in `setup`.
+   */
+  readonly arrange?: (game: PlayGame) => void;
   /** What a frame is cleared to. Black unless given. */
   readonly background?: number;
   /** Clears a frame to nothing, so that what the page has under the canvas shows through. `background` is then not drawn. */
@@ -330,8 +355,21 @@ export function tapListener(callback: () => unknown, fail: (cause: unknown) => v
 
 /** Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. */
 export interface PlayGame {
+  /** The size of the design: `width` × `height` as given, or the portrait size while the window is taller than wide. */
   readonly width: number;
   readonly height: number;
+  /** `'portrait'` while the window is taller than it is wide, `'landscape'` otherwise. */
+  readonly orientation: 'landscape' | 'portrait';
+  /**
+   * What the window shows, in the game's units: `(0, 0, width, height)` with `fit: 'contain'`; with `'expand'` it
+   * reaches past the design to the edges, so `screen.x` is below 0 on a wider window. The `ui` layer's units.
+   */
+  readonly screen: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
+  /**
+   * The part of `screen` that no notch, rounded corner or home bar covers: where buttons, scores and messages go.
+   * Boxes of words, menus, notices and touch controls are placed in it.
+   */
+  readonly safe: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
   /** Seconds of play so far: it stands still while the game is paused or stopped by `hitStop`. */
   readonly time: number;
   /** The layer the game is drawn in. It moves with `view` and shakes. */
@@ -618,6 +656,28 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   if (setup !== undefined && typeof setup !== 'function') throw invalid('setup is a function');
   if (update !== undefined && typeof update !== 'function') throw invalid('update is a function');
   if (onError !== undefined && typeof onError !== 'function') throw invalid('onError is a function');
+  const fitAsked = options.fit ?? 'contain';
+  if (fitAsked !== 'contain' && fitAsked !== 'expand') throw invalid("fit is 'contain' or 'expand'");
+  if (
+    options.portrait !== undefined &&
+    (options.portrait === null ||
+      typeof options.portrait !== 'object' ||
+      !Number.isSafeInteger(options.portrait.width) ||
+      !Number.isSafeInteger(options.portrait.height) ||
+      options.portrait.width <= 0 ||
+      options.portrait.height <= 0)
+  )
+    throw invalid('portrait is { width, height } of whole numbers above 0');
+  if (
+    options.insets !== undefined &&
+    (options.insets === null ||
+      typeof options.insets !== 'object' ||
+      [options.insets.top, options.insets.right, options.insets.bottom, options.insets.left].some(
+        edge => !finite(edge) || edge < 0
+      ))
+  )
+    throw invalid('insets is { top, right, bottom, left } of numbers 0 or more');
+  if (options.arrange !== undefined && typeof options.arrange !== 'function') throw invalid('arrange is a function');
   if (options.audio !== undefined && typeof options.audio !== 'boolean') throw invalid('audio is true or false');
   if (options.reducedMotion !== undefined && typeof options.reducedMotion !== 'boolean')
     throw invalid('reducedMotion is true or false');
@@ -667,7 +727,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     effects: true,
     autoStart: false,
     keyboard: false,
-    ...(holder === undefined ? {} : { fit: 'contain' as const, fitTo: holder }),
+    ...(holder === undefined ? {} : { fit: fitAsked, fitTo: holder }),
+    ...(options.portrait === undefined ? {} : { portrait: options.portrait }),
+    ...(options.insets === undefined ? {} : { insets: options.insets }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),
     ...(onError === undefined ? {} : { onError })
   }).catch((cause: unknown) => {
@@ -718,7 +780,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       renderSharedFrame: frame => engine.renderSharedFrame(frame)
     },
     host: baseBrowser.host,
-    frame: baseBrowser.frame,
+    frame: () => baseBrowser.frame,
     update: () => {
       if (!disposed && playLoop.state === 'running') step(realStep, playStep);
     },
@@ -726,6 +788,13 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   });
   const browser: BrowserGame = Object.freeze({
     ...baseBrowser,
+    // The frame and the screen change with the window; these read the game's own.
+    get frame() {
+      return baseBrowser.frame;
+    },
+    get screen() {
+      return baseBrowser.screen;
+    },
     loop: playLoop,
     dispose() {
       playLoop.dispose();
@@ -739,6 +808,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     ui = layer(),
     glass = layer(),
     cover = layer();
+  // Where the design is on the stage: the layers are moved there, so (0, 0) is the design's corner however much of
+  // the stage the window shows around it. The cover is the stage's own, over all of it.
+  let shown = baseBrowser.screen;
+  const placeLayers = (): void => {
+    ui.x = glass.x = shown.designRect.x;
+    ui.y = glass.y = shown.designRect.y;
+  };
+  placeLayers();
   const view = { x: 0, y: 0 };
   const random = createRandom(options.seed ?? Date.now() + ':' + Math.random());
 
@@ -888,8 +965,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const place = (event: PointerEvent): void => {
     const at = browser.toStage(event.clientX, event.clientY);
     if (finite(at.x) && finite(at.y)) {
-      point.x = at.x;
-      point.y = at.y;
+      point.x = at.x - shown.designRect.x;
+      point.y = at.y - shown.designRect.y;
     }
   };
   // The sprites a tap is given to. A press on one of them is the sprite's, and is not also told as `pressed`: a game
@@ -1467,8 +1544,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       dx = (Math.random() * 2 - 1) * strength;
       dy = (Math.random() * 2 - 1) * strength;
     }
-    world.x = effects.x = dx - view.x;
-    world.y = effects.y = dy - view.y;
+    world.x = effects.x = shown.designRect.x + dx - view.x;
+    world.y = effects.y = shown.designRect.y + dy - view.y;
     if (flashLeft > 0) {
       flashLeft -= real;
       cover.alpha = Math.max(0, flashLeft / flashSpan) * (reduced ? 0.3 : 0.85);
@@ -1526,6 +1603,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         if (disposed) return;
         await setup?.(game);
         if (disposed) return;
+        options.arrange?.(game);
+        if (disposed) return;
         // A tap that returned an unsuccessful restart may have failed the loop.
         // An explicit retry resumes it, while a deliberately stopped loop stays idle.
         if (restarting && playLoop.state === 'failed') playLoop.start();
@@ -1551,8 +1630,32 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   }
 
   const game: PlayGame = {
-    width,
-    height,
+    get width() {
+      return shown.design.width;
+    },
+    get height() {
+      return shown.design.height;
+    },
+    get orientation() {
+      return shown.orientation;
+    },
+    get screen() {
+      return Object.freeze({
+        // Never -0, which a test of equality tells from 0.
+        x: -shown.designRect.x || 0,
+        y: -shown.designRect.y || 0,
+        width: shown.width,
+        height: shown.height
+      });
+    },
+    get safe() {
+      return Object.freeze({
+        x: shown.safe.x - shown.designRect.x || 0,
+        y: shown.safe.y - shown.designRect.y || 0,
+        width: shown.safe.width,
+        height: shown.safe.height
+      });
+    },
     get time() {
       return time;
     },
@@ -1844,12 +1947,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     shake(amount = 6, seconds = 0.25) {
       if (reduced || !finite(amount) || !finite(seconds) || amount <= 0 || seconds <= 0) return;
-      shakeAmount = Math.max(shakeLeft > 0 ? shakeAmount : 0, Math.min(amount, Math.max(width, height)));
+      shakeAmount = Math.max(shakeLeft > 0 ? shakeAmount : 0, Math.min(amount, Math.max(game.width, game.height)));
       shakeLeft = shakeSpan = Math.min(seconds, 5);
     },
     flash(color = 0xffffff, seconds = 0.15) {
       if (!colour(color) || !finite(seconds) || seconds <= 0) return;
-      cover.graphics.clear().beginFill(color).drawRect(0, 0, width, height).endFill();
+      cover.graphics.clear().beginFill(color).drawRect(0, 0, shown.width, shown.height).endFill();
       cover.visible = true;
       cover.alpha = reduced ? 0.3 : 0.85;
       flashLeft = flashSpan = Math.min(seconds, 5);
@@ -2029,10 +2132,27 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       touchStick.x = x;
       touchStick.y = y;
     },
-    toStage: (x, y) => browser.toStage(x, y),
+    toStage: (x, y) => {
+      const at = browser.toStage(x, y);
+      return { x: at.x - shown.designRect.x, y: at.y - shown.designRect.y };
+    },
     layer: glass
   });
 
+  // The window changed size or turned: the layers move to the design's new place and the game arranges itself.
+  baseBrowser.onScreenChange(next => {
+    shown = next;
+    placeLayers();
+    point.x = Math.min(point.x, game.width);
+    point.y = Math.min(point.y, game.height);
+    if (api === undefined || disposed || options.arrange === undefined) return;
+    try {
+      options.arrange(game);
+    } catch (cause) {
+      // As what `update` throws: the game stops at its next step and is told.
+      failure ??= { cause };
+    }
+  });
   try {
     if (mixer !== undefined) await Promise.all(Object.entries(SFX_PRESETS).map(([name, recipe]) => make(name, recipe)));
     await runSetup(false);

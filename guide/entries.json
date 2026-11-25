@@ -29,6 +29,7 @@
       "@egret/engine/web/keyboard",
       "@egret/engine/web/loop",
       "@egret/engine/web/pointer",
+      "@egret/engine/web/screen",
       "@egret/engine/web/text",
       "@egret/engine/webgl2",
       "@egret/engine/webgpu"
@@ -57,6 +58,7 @@
       "@egret/engine/web/keyboard",
       "@egret/engine/web/loop",
       "@egret/engine/web/pointer",
+      "@egret/engine/web/screen",
       "@egret/engine/web/text",
       "@egret/engine/webgl2",
       "@egret/engine/webgpu"
@@ -79,6 +81,7 @@
     "@egret/engine/web/resources": [
       "@egret/engine/resources"
     ],
+    "@egret/engine/web/screen": [],
     "@egret/engine/web/semantics": [],
     "@egret/engine/web/text": [],
     "@egret/engine/web/text-input": [],
@@ -102,6 +105,7 @@
       "@egret/engine/web/keyboard",
       "@egret/engine/web/loop",
       "@egret/engine/web/pointer",
+      "@egret/engine/web/screen",
       "@egret/engine/web/text",
       "@egret/engine/webgl2",
       "@egret/engine/webgpu"
@@ -117,6 +121,7 @@
       "@egret/engine/web/keyboard",
       "@egret/engine/web/loop",
       "@egret/engine/web/pointer",
+      "@egret/engine/web/screen",
       "@egret/engine/web/text",
       "@egret/engine/webgl2",
       "@egret/engine/webgpu"
@@ -209,6 +214,12 @@
       "@egret/engine/webgpu/world3d"
     ],
     "@egret/engine/web/pointer": [
+      "@egret/engine/play",
+      "@egret/engine/web/game",
+      "@egret/engine/webgl2/world3d",
+      "@egret/engine/webgpu/world3d"
+    ],
+    "@egret/engine/web/screen": [
       "@egret/engine/play",
       "@egret/engine/web/game",
       "@egret/engine/webgl2/world3d",

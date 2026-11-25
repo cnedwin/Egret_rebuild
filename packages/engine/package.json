@@ -144,6 +144,10 @@
       "types": "./dist/web/loop.d.ts",
       "import": "./dist/web/loop.js"
     },
+    "./web/screen": {
+      "types": "./dist/web/screen.d.ts",
+      "import": "./dist/web/screen.js"
+    },
     "./kit": {
       "types": "./dist/kit.d.ts",
       "import": "./dist/kit.js"

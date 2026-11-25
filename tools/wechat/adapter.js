@@ -301,7 +301,14 @@ var installEgretWechatAdapter = function (G, page) {
     setProperty(name, value) { this[camel(name)] = value === null ? '' : String(value); }
     removeProperty(name) { var key = camel(name), v = this.getPropertyValue(name); delete this[key]; return v; }
     get cssText() { return ''; }
-    set cssText(v) {}
+    // Each declaration of the text is set as its property, so a game that styles an element in one line reads the
+    // values back.
+    set cssText(v) {
+      for (var part of String(v).split(';')) {
+        var at = part.indexOf(':');
+        if (at > 0) this.setProperty(part.slice(0, at).trim(), part.slice(at + 1).trim());
+      }
+    }
   }
   // What a mini game's screen computes to: no transform, no zoom, no padding or border; the canvas fills the screen.
   var COMPUTED = {
@@ -1119,6 +1126,19 @@ var installEgretWechatAdapter = function (G, page) {
     style.width = size.width + 'px';
     style.height = size.height + 'px';
     style.display = element.hidden ? 'none' : style.display || 'block';
+    // Padding of the page's safe-area insets is what WeChat says of the screen's safe area.
+    var padding = element && element.style ? String(element.style.padding || '') : '';
+    if (padding.indexOf('safe-area-inset') >= 0) {
+      var now = wx.getSystemInfoSync(),
+        safe = now.safeArea,
+        across = now.windowWidth,
+        down = now.windowHeight;
+      var inset = function (value) { return Math.max(0, Number.isFinite(value) ? value : 0) + 'px'; };
+      style.paddingTop = safe ? inset(safe.top) : '0px';
+      style.paddingLeft = safe ? inset(safe.left) : '0px';
+      style.paddingRight = safe ? inset(across - safe.right) : '0px';
+      style.paddingBottom = safe ? inset(down - safe.bottom) : '0px';
+    }
     return style;
   };
   var mediaMatches = {

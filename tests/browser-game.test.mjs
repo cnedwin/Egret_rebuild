@@ -68,7 +68,11 @@ test('BG01 what is not a game is refused before a Host is made', async () => {
     { ...good, stats: 1 },
     { ...good, autoStart: 0 },
     { ...good, fit: 'fill' },
-    { ...good, fitTo: 'body' }
+    { ...good, fitTo: 'body' },
+    { ...good, fit: 'expand', portrait: { width: 0, height: 10 } },
+    { ...good, fit: 'expand', portrait: { width: 10.5, height: 10 } },
+    { ...good, insets: { top: -1, right: 0, bottom: 0, left: 0 } },
+    { ...good, insets: { top: 0, right: 0, bottom: 0 } }
   ])
     await assert.rejects(createBrowserGame(bad), coded('BROWSER_GAME_OPTIONS_INVALID'));
   // The message says what the code means.

@@ -112,7 +112,7 @@ function fake2d() {
  * GameGlobal as WeChat makes it, with a wx that keeps what the adapter asked of it. Frames run when the test says.
  * `files` are the package's files by path.
  */
-function miniGame({ files = {}, width = 390, height = 844 } = {}) {
+function miniGame({ files = {}, width = 390, height = 844, safeArea } = {}) {
   const handlers = {},
     storage = new Map(),
     written = new Map(),
@@ -130,7 +130,8 @@ function miniGame({ files = {}, width = 390, height = 844 } = {}) {
       pixelRatio: 2,
       language: 'zh_CN',
       platform: 'ios',
-      SDKVersion: '3.6.0'
+      SDKVersion: '3.6.0',
+      ...(safeArea === undefined ? {} : { safeArea })
     }),
     getLaunchOptionsSync: () => ({ query: { level: '2' } }),
     createCanvas() {
@@ -516,4 +517,26 @@ test('WX07 the export writes a mini game project and says what it could not carr
     fs.rmSync(dir, { recursive: true, force: true });
     fs.rmSync(path.dirname(out), { recursive: true, force: true });
   }
+});
+
+// Break caught: a game fitted with the page's safe-area insets reading none in a mini game, and so placing buttons
+// under the notch and the home bar.
+test("WX08 the page's safe-area insets are WeChat's safe area", async () => {
+  const world = miniGame({
+    width: 390,
+    height: 844,
+    safeArea: { top: 47, left: 0, right: 390, bottom: 810, width: 390, height: 763 }
+  });
+  const result = await run(
+    world,
+    finish(`
+      const probe = document.createElement('div');
+      probe.style.cssText = 'position:fixed;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)';
+      document.body.appendChild(probe);
+      const style = getComputedStyle(probe);
+      const plain = getComputedStyle(document.createElement('div'));
+      return [style.position, style.paddingTop, style.paddingRight, style.paddingBottom, style.paddingLeft, plain.paddingTop];
+    `)
+  );
+  assert.deepEqual([...result], ['fixed', '47px', '0px', '34px', '0px', '0px']);
 });

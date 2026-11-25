@@ -47,8 +47,16 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
   if (options === null || typeof options !== 'object' || Array.isArray(options))
     throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');
   const configuration = { ...options };
-  const { width, height, onContact } = configuration;
+  const { width, height, onContact, size } = configuration;
   if (onContact !== undefined && typeof onContact !== 'function') throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');
+  if (size !== undefined && typeof size !== 'function') throw new EgretError('POINTER_INPUT_OPTIONS_INVALID');
+  // The stage's size now: what `size` says while it says a size above 0, the size given otherwise.
+  const stageSize = (): { readonly width: number; readonly height: number } => {
+    const now = size?.();
+    return now !== undefined && finite(now.width) && finite(now.height) && now.width > 0 && now.height > 0
+      ? now
+      : { width, height };
+  };
   const sessions = new Map<number, PointerSession>();
   let ownedSurface: object | undefined;
   const pairs: Pair[] = [];
@@ -365,9 +373,10 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
       if (!finite(x) || !finite(y) || !finite(heldButtons) || !finite(time) || !finite(p) || !finite(w) || !finite(h))
         throw new EgretError('POINTER_INPUT_EVENT_INVALID');
       // Map CSS coordinates once. Device pixel ratio belongs to rendering only.
+      const stage = stageSize();
       return {
-        globalX: ((x - rect.left) * width) / rect.width,
-        globalY: ((y - rect.top) * height) / rect.height,
+        globalX: ((x - rect.left) * stage.width) / rect.width,
+        globalY: ((y - rect.top) * stage.height) / rect.height,
         buttons: heldButtons,
         timestamp: time,
         pressure: p,

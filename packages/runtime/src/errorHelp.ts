@@ -96,6 +96,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['UI_CONTROL', 'a UI control'],
   ['UI_KEYBOARD', 'UI keyboard navigation'],
   ['UI_LAYER', 'a UI layer'],
+  ['UI_SCREEN', 'the screen fit'],
   ['UI_SEMANTICS', 'UI semantics'],
   ['UI_TEXT_EDITOR', 'the UI text editor'],
   ['UI_THEME', 'a UI theme'],

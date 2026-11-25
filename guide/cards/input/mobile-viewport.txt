@@ -2,7 +2,7 @@
 id: mobile-viewport
 title: Fit the page to a phone screen and its safe areas
 applies: [web, world3d, play, play3d]
-triggers: [createWorld3DView, createWorld3DApp, pickWorld3DQuality, "viewport", "mobile layout", "phone screen", "safe area", "notch", "landscape", "address bar", "page scrolls on phone", "blurry on phone", "device pixel ratio", "hud cut off", "resize", "手机适配", "屏幕适配", "安全区", "刘海", "地址栏", "画面模糊", "像素比"]
+triggers: [createWorld3DView, createWorld3DApp, pickWorld3DQuality, "viewport", "mobile layout", "phone screen", "safe area", "notch", "landscape", "address bar", "page scrolls on phone", "blurry on phone", "device pixel ratio", "hud cut off", "resize", "portrait", "orientation", "rotate the phone", "fit expand", "arrange", "black bars", "横竖屏", "竖屏", "黑边", "手机适配", "屏幕适配", "安全区", "刘海", "地址栏", "画面模糊", "像素比"]
 local: []
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/index.html, line: 5, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }
@@ -14,10 +14,10 @@ engine: ec17a5a22eff057b89a2926f638eb51938344459
 
 # Fit the page to a phone screen and its safe areas
 
-`play` and `play3d` fill the window and keep the stage's shape by themselves. A game that lays out its own page needs the following, all taken from the large games.
+`play` and `play3d` fill the window by themselves. For a phone held either way, give them `fit: 'expand'` (no black bars) and a `portrait` size, and place edge controls from `game.safe` in `arrange(game)`, which runs after `setup` and on every turn; see `knowledge-base/en/docs/screen-fit.md`. A game that lays out its own page needs the following, all taken from the large games.
 
 ```html
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 ```
 
 ```css
@@ -32,7 +32,7 @@ Rules:
 
 - Size the canvas with CSS and let the view follow it. `createWorld3DView` resizes the drawing buffer when the canvas's displayed size changes; its `maxPixelRatio` defaults to 2. All three games pass 1.5, so a 3x phone does not draw nine times the CSS pixels.
 - Use `100dvh`, not `100vh`: mobile address bars change the visible height.
-- Pad every edge control by `env(safe-area-inset-*)`. Phones in landscape put a notch or a rounded corner under the left or right HUD.
+- Pad every edge control by `env(safe-area-inset-*)`, which a page has only with `viewport-fit=cover`. Phones in landscape put a notch or a rounded corner under the left or right HUD.
 - `touch-action: none` on the play area during play only. Menus and long lists (upgrade cards, settings) keep `touch-action: pan-y` so they still scroll.
 - Plan for a short landscape screen. The measured Samsung run in FPS used an 873 × 325 CSS viewport; HUD text, cards and buttons must fit that.
 - Start low on weak devices. `createWorld3DApp` with quality `auto` picks `low` for software rendering, a touch screen or a window under 600 px tall, and `medium` for 4 GB of memory or less; `pickWorld3DQuality` gives the same choice to a game with its own renderer.

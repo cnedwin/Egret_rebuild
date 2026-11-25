@@ -28,6 +28,11 @@ export interface PointerInputOptions {
   readonly scope: Scope;
   readonly width: number;
   readonly height: number;
+  /**
+   * For a stage whose size changes, as one fitted with `planScreen` does when the screen turns: its size now. A host
+   * that maps the page to the stage reads it for each event; `width` and `height` unless given.
+   */
+  readonly size?: () => { readonly width: number; readonly height: number };
   readonly maxNodes?: number;
   readonly capacity?: number;
   readonly onContact?: (notification: PointerNotification) => void;

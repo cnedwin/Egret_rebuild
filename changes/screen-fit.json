@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-25",
+  "en": {
+    "title": "Games fill a screen of any shape",
+    "body": "play and createBrowserGame take fit: 'expand', which keeps the scale at which the design fits and lets the stage reach to the window's edges instead of leaving bars, and a portrait size used while the window is taller than wide. game.screen and game.safe give what the window shows and the part no notch or home bar covers, from the page's safe-area insets or from insets given; arrange(game) runs after setup and whenever the window changes size or turns. Boxes of words, menus, notices and the touch stick are placed in the safe part. planScreen of the new entry @egret/engine/web/screen holds the arithmetic, pointer and hover input map to a stage that changes size, and the WeChat adapter reports WeChat's safe area as the page's insets."
+  },
+  "zh": {
+    "title": "游戏适配任意形状的屏幕",
+    "body": "play 和 createBrowserGame 新增 fit: 'expand'：保持能完整显示设计区域的缩放比，舞台一直延伸到窗口边缘，不留黑边；新增 portrait 尺寸，窗口高大于宽时使用。game.screen 和 game.safe 给出窗口显示的区域和不被刘海、底部横条挡住的部分，来自页面的 safe-area insets 或直接给出的 insets；arrange(game) 在 setup 之后以及窗口尺寸变化或旋转时调用。对话框、菜单、提示和触屏摇杆放在安全区里。新入口 @egret/engine/web/screen 的 planScreen 负责计算，指针和悬停输入能映射到会变尺寸的舞台，微信适配器把微信的安全区作为页面的 insets 报告。"
+  }
+}

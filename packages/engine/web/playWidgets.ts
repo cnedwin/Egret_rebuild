@@ -259,13 +259,16 @@ export function createPlayWidgets(
       label.color = on ? 0x111827 : 0xffffff;
     });
   };
+  /** The part of the screen nothing covers, in the game's units: where boxes, menus and notices go. */
+  const area = (): { readonly x: number; readonly y: number; readonly width: number; readonly height: number } =>
+    game.safe;
   /** The size of the words of a box, and how many lines fit under its name. */
   const boxOf = (named: boolean): { size: number; width: number; lines: number } => {
     const size = Math.max(14, Math.round(game.height / 22)),
       h = Math.max(size * 4.6, Math.round(game.height * 0.28)),
       top = 14 + (named ? Math.round(size * 1.3) : 0),
       step = Math.round(size * 1.35);
-    return { size, width: game.width - 32 - 36, lines: Math.max(1, Math.floor((h - top - 6) / step)) };
+    return { size, width: area().width - 32 - 36, lines: Math.max(1, Math.floor((h - top - 6) / step)) };
   };
   const pagesOf = (words: string, named: boolean): string[] => {
     const { size, width, lines } = boxOf(named),
@@ -324,7 +327,7 @@ export function createPlayWidgets(
     toast(words: string, o: PlayToastOptions = {}): void {
       const size = Math.max(14, Math.round(game.height / 24)),
         seconds = finite(o?.seconds) && o.seconds > 0 ? o.seconds : 2,
-        w = Math.min(game.width - 32, measure(String(words)) * size + 40),
+        w = Math.min(area().width - 32, measure(String(words)) * size + 40),
         h = Math.round(size * 2);
       toasts = toasts.filter(node => !node.isDisposed && node.parent !== null);
       const node = game.sprite(g => {
@@ -332,8 +335,8 @@ export function createPlayWidgets(
           .drawRoundRect(-w / 2, 0, w, h, h / 2)
           .endFill();
       }, game.ui);
-      node.x = game.width / 2;
-      node.y = 12 + toasts.length * (h + 6);
+      node.x = area().x + area().width / 2;
+      node.y = area().y + 12 + toasts.length * (h + 6);
       game.text(String(words), {
         y: h / 2,
         size,
@@ -363,11 +366,12 @@ export function createPlayWidgets(
       return new Promise(resolve => {
         const open = (): void => {
           const margin = 16,
-            w = game.width - 2 * margin,
+            safe = area(),
+            w = safe.width - 2 * margin,
             size = Math.max(14, Math.round(game.height / 22)),
             h = Math.max(size * 4.6, Math.round(game.height * 0.28)),
             // Opaque, so the covers that hide words not yet shown are the panel's own colour.
-            panel = panelOf(margin, game.height - h - margin, w, h, 1),
+            panel = panelOf(safe.x + margin, safe.y + safe.height - h - margin, w, h, 1),
             color = colour(o?.color, 0xfacc15);
           let top = 14;
           if (typeof o?.who === 'string' && o.who !== '') {
@@ -438,13 +442,13 @@ export function createPlayWidgets(
           row = Math.round(size * 1.9) + 6,
           titleLines = typeof o?.title === 'string' ? o.title.split('\n') : [],
           longest = Math.max(...list.map(measure), ...titleLines.map(line => measure(line) * 1.2)),
-          w = finite(o?.width) && o.width > 0 ? o.width : Math.min(game.width - 32, longest * size + 64),
+          w = finite(o?.width) && o.width > 0 ? o.width : Math.min(area().width - 32, longest * size + 64),
           titled = typeof o?.title === 'string' && o.title !== '',
           // A title of several lines takes as many lines of room, so the first item is never under it.
           titleHeight = titled ? Math.round(size * (0.35 + 1.45 * titleLines.length)) : 0,
           h = list.length * row + 24 + titleHeight,
-          x = (finite(o?.x) ? o.x : game.width / 2) - w / 2,
-          y = (finite(o?.y) ? o.y : game.height / 2) - h / 2;
+          x = (finite(o?.x) ? o.x : area().x + area().width / 2) - w / 2,
+          y = (finite(o?.y) ? o.y : area().y + area().height / 2) - h / 2;
         const panel = panelOf(x, y, w, h);
         if (titled)
           game.text(o.title!, {
@@ -534,15 +538,15 @@ export function createPlayWidgets(
       const from = 18 + measure(characters.slice(0, shown).join('')) * open.words[index]!.size;
       cover.visible = shown < characters.length;
       cover.x = from;
-      cover.scaleX = Math.max(1, game.width - 48 - from);
+      cover.scaleX = Math.max(1, area().width - 48 - from);
     });
     const done = open.shown >= open.total;
     open.hint.visible = done && open.choices === undefined;
     if (done && open.choices !== undefined && open.choice === undefined) {
       const size = open.words[0]!.size,
         row = Math.round(size * 1.9) + 6,
-        w = Math.min(game.width - 32, Math.max(...open.choices.map(measure)) * size + 64),
-        x = game.width - 16 - w,
+        w = Math.min(area().width - 32, Math.max(...open.choices.map(measure)) * size + 64),
+        x = area().x + area().width - 16 - w,
         y = open.panel.y - open.choices.length * row - 20;
       const holder = panelOf(x, y, w, open.choices.length * row + 14);
       const close = open.finish;

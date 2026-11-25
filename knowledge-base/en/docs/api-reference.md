@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 43 entries, 1390 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 44 entries, 1396 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1384,6 +1384,17 @@ For which entry to import from, see [What to import](entry-points.md).
 | `FrameLoopEngine` | interface | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | interface | What the loop asks of a Host: how many frames it holds that it has not finished. |
 
+## `@egret/engine/web/screen`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `planScreen` | function | Fits a stage to a space on a screen. |
+| `ScreenInsets` | interface | How far in from each edge a notch, rounded corners or a home bar reach, in the pixels of the space given. |
+| `ScreenPlan` | interface | Where the stage goes, and what of it is shown and safe to touch. |
+| `ScreenPlanOptions` | interface | What to fit: the space on the screen, the designs, how they fit and what covers the edges. |
+| `ScreenRect` | interface | A rectangle in stage units. |
+| `ScreenSize` | interface | A width and a height above 0. |
+
 ## `@egret/engine/kit`
 
 | Name | Kind | What the sources say |
@@ -1482,7 +1493,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | --- | --- | --- |
 | `BrowserGame` | interface | A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. |
 | `BrowserGameBackend` | type | Which GPU interface a browser game draws with. |
-| `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, or stretched to it. |
+| `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, or filling it with a stage that grows around the design (`'expand'`). |
 | `BrowserGameLabel` | interface | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |

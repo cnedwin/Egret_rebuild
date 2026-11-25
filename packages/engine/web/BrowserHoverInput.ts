@@ -15,6 +15,11 @@ export interface BrowserHoverInputOptions extends HoverInputOptions {
   /** Defaults to 'unconsumed'. */
   readonly wheelPage?: WheelPagePolicy;
   /**
+   * For a stage whose size changes, as one fitted with `planScreen` does when the screen turns: its size now, read for
+   * each event. `width` and `height` unless given.
+   */
+  readonly size?: () => { readonly width: number; readonly height: number };
+  /**
    * Told when the adapter has stopped because a callback or an event failed. The input is closed
    * by then. Without it the failure is reported to the page as an uncaught error.
    */
@@ -47,10 +52,11 @@ const same = (a: Rectangle, b: Rectangle): boolean =>
 export function createBrowserHoverInput(options: BrowserHoverInputOptions): HoverInput {
   if (options === null || typeof options !== 'object' || Array.isArray(options))
     throw new EgretError('HOVER_INPUT_OPTIONS_INVALID');
-  const { canvas: surface, wheelPage = 'unconsumed', onError, ...configuration } = options;
+  const { canvas: surface, wheelPage = 'unconsumed', onError, size, ...configuration } = options;
   if (
     (wheelPage !== 'unconsumed' && wheelPage !== 'never' && wheelPage !== 'always') ||
     (onError !== undefined && typeof onError !== 'function') ||
+    (size !== undefined && typeof size !== 'function') ||
     surface === null ||
     typeof surface !== 'object'
   )
@@ -86,7 +92,7 @@ export function createBrowserHoverInput(options: BrowserHoverInputOptions): Hove
       page = globalThis.document;
     if (win === undefined || page === undefined || typeof win.getComputedStyle !== 'function')
       throw new EgretError('HOVER_INPUT_SURFACE_INVALID');
-    const { width, height } = input;
+    const { width: givenWidth, height: givenHeight } = input;
     /** The rectangle of the canvas on the page, refused unless one scale and one offset map it. */
     function profile(): Rectangle {
       if (
@@ -198,6 +204,10 @@ export function createBrowserHoverInput(options: BrowserHoverInputOptions): Hove
     function place(event: MouseEvent): { readonly globalX: number; readonly globalY: number } | undefined {
       const rect = current();
       if (!finite(event.clientX) || !finite(event.clientY)) throw new EgretError('HOVER_INPUT_EVENT_INVALID');
+      const now = size?.(),
+        sized = now !== undefined && finite(now.width) && finite(now.height) && now.width > 0 && now.height > 0;
+      const width = sized ? now.width : givenWidth,
+        height = sized ? now.height : givenHeight;
       const globalX = ((event.clientX - rect.left) * width) / rect.width,
         globalY = ((event.clientY - rect.top) * height) / rect.height;
       return globalX >= 0 && globalY >= 0 && globalX < width && globalY < height ? { globalX, globalY } : undefined;

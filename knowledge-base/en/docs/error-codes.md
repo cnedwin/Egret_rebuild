@@ -1213,6 +1213,12 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `UI_LAYER_UNKNOWN` | What was named is not known to a UI layer. |
 | `UI_LAYER_VIEWPORT_TOO_SMALL` | The viewport given to a UI layer is too small. |
 
+### UI_SCREEN
+
+| Code | Meaning |
+| --- | --- |
+| `UI_SCREEN_OPTIONS_INVALID` | The options given to the screen fit are not valid: one is missing, of the wrong type or out of range. |
+
 ### UI_SEMANTICS
 
 | Code | Meaning |
