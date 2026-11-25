@@ -163,11 +163,45 @@ node examples/play/verify-ui.mjs <Playwright index.mjs 绝对路径> <新建输�
 
 Windows Chromium 157 软件 WebGL2 复现了初始位置 (620, 430, 120, 42)。修复后，左移得到 (545, 430, 120, 42)，部分裁剪时语义和投影都报告 (555, 415, 97.5, 12)，完全裁剪后不再发布。建筑列表测得滚轮位置 62、触屏拖动位置 54、Tab 自动滚入时位置 48、列表缩短后位置 0。本轮浏览器注入了输入，并检查了供辅助技术读取的投影 DOM。真实读屏播报和真人手指仍需设备验收。
 
+## 密集菜单和手柄焦点
+
+用同一个 `text` 绑定提供控件画面上的文字和可访问名称。视图或其显示祖先隐藏时，Play 会暂停标签的光栅准备。视图重新显示时会准备最新文案。隐藏页可以保留业务状态，同时释放借用的文字纹理。
+
+`game.browser.getLabelStatus()` 提供正在准备、排队、被预算拒绝、释放的光栅数量和缓存的逻辑占用。可复用入口与仍被借用的纹理代分开计数。直接用 `game.browser.createLabel()` 创建的标签可在隐藏时调用 `setRasterActive(false)`。标签处于活动状态时，`ready` 会报告准备失败。
+
+默认缓存保留 32 个可复用入口，已退役和当前的纹理代合计最多 64 个，且受字节预算限制。多页集市可先隐藏旧页再显示新页。直接创建的活动标签如果在待处理任务结束后仍超预算，`ready` 会拒绝并报告 `TEXT_CACHE_BUDGET`。释放或暂停闲置标签后，可用 `label.set({})` 重试。关闭页面会归还标签借用的资源，缓存中的可复用项可保留到游戏关闭。
+
+Tab 和 Shift+Tab 在画布中移动可见焦点，Enter 和空格激活当前控件。模态关闭前独占焦点，禁用控件会被跳过。最前面的模态也接收标准手柄的方向键和 A。非模态菜单可设置 `gamepad: true` 接管这些按键，普通非模态视图会把按键留给玩法。
+
+```js
+function openPauseMenu(game, pauseView) {
+  game.pause();
+  const resume = view => {
+    view.close();
+    game.resume();
+  };
+  const menu = game.show(pauseView, {
+    dismiss: resume, // Escape 或手柄 B
+    resume,          // 暂停后新按下 Start
+    bind: { continue: { tap: () => resume(menu) } }
+  });
+  return menu;
+}
+```
+
+视图描述需要设为模态，并有一个名为 `continue` 的按钮。手柄按声明顺序向前或向后移动焦点，新焦点在滚动区外时会进入视口。玩法暂停期间，菜单仍接收输入。按住 Start 只产生一次按下边沿，回调恢复玩法后也一样。
+
+先运行 `node tools/build.mjs`，再运行 `node examples/play/verify-market-ui.mjs <Playwright index.mjs 绝对路径> <新建绝对输出目录> <Chromium 可执行文件绝对路径>`。同次运行覆盖 390 × 844 集市密集标签，以及键盘加模拟标准手柄的模态菜单。物理手柄单独验收。
+
+Windows Chromium 157 软件 WebGL2 上，原引擎的首页绘出了 48 个标签，立即切到下一页后只绘出 16 个。新的复现覆盖同样的容量压力，并逐格取样画面。两个页面和三次快速改价后都绘出了 48 个标签，也发布了 48 个对应名称。切页释放了旧页的 48 个借用，关闭视图后活跃借用归零。单独的饱和对照接纳了 64 个标签，报告一次拒绝，释放后重试成功。
+
+Galaxy Z Fold7（Android 17、Chrome 157、Adreno 830）分别通过 WebGL2 和 WebGPU 的功能验收。两端均绘出 48 个标签，「下一波」各触发一次。测试页限定在 390 × 844 的 CSS 视口，通过 Chrome DevTools Protocol 注入触摸。实体手柄、真人触摸和帧性能单独验收。
+
 ## 大多数界面都需要的部件
 
 | 调用 | 是什么 |
 | --- | --- |
-| `await game.confirm(question, { yes, no, title })` | 显示在所有东西之上的提问，用它的按钮回答，也可以用 Enter、空格或手柄 A 回答“是”，用 Escape 或 B 回答“否”。一个问题打开时提出的其他问题会排队等待。打开期间 `game.asking` 为真，`update` 可以借此暂停游戏逻辑 |
+| `await game.confirm(question, { yes, no, title })` | 模态提问。Enter、空格和手柄 A 激活当前焦点按钮，Escape 和 B 取消。打开期间提出的其他问题会排队等待。`game.asking` 此时为真，`update` 可以借此暂停游戏逻辑 |
 | `game.hints(list)` | 安全区底部的一条提示栏。每条提示是 `{ action, key, pad, touch }`，按玩家最近使用的设备 `game.device` 显示：键盘或鼠标显示 `Space Jump`，手柄显示 `A Jump`，手指显示 `touch` 的文字；在触屏上，没有 `touch` 的提示不显示。`shown` 是当前显示的内容；另有 `set(list)` 和 `dispose()` |
 | `await game.loading(tasks, { label, atOnce })` | 在所有东西之上显示 `Loading 2 / 5` 和进度条，直到所有 promise（或返回 promise 的函数）完成；函数每次最多运行 `atOnce` 个（默认 4 个）。按顺序返回结果；有一个失败就关闭并抛出 |
 | `game.badges` | 沿路径累加的红点：`set('mail/system', 3)` 之后 `count('mail')` 也是 3。另有 `has`、`clear(path)`、`paths()`、`onChange`。重新开始时清空。`badge` 绑定会在部件右上角画出红点，`view.badge(name)` 可以读取它 |

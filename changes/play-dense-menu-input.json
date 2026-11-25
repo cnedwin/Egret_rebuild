@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Dense Play menus and controller navigation",
+    "body": "Hidden Play labels release their borrowed raster and prepare their current words on reveal. BrowserGame exposes label queue, cache and release counts. Declarative modals can use a standard controller to navigate, confirm, dismiss or resume while gameplay is paused."
+  },
+  "zh": {
+    "title": "Play 密集菜单与手柄导航",
+    "body": "Play 标签隐藏后释放借用的文字纹理，重新显示时准备最新文案。BrowserGame 提供排队、缓存和释放计数。声明式模态可在玩法暂停时用标准手柄导航、确认、关闭和继续。"
+  }
+}

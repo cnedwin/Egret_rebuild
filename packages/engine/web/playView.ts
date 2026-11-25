@@ -50,6 +50,12 @@ export interface PlayViewOptions<S = unknown> {
   readonly built?: (view: PlayView) => void;
   /** An existing cache for width-wrapped labels and button descriptions. The caller owns the cache. */
   readonly paragraphCache?: ParagraphCache;
+  /** Give this nonmodal view standard D-pad navigation and A activation. The top modal gets these automatically. */
+  readonly gamepad?: boolean;
+  /** Handle Escape or the pad's B on the top modal. Close the view here to restore its previous focus. */
+  readonly dismiss?: (view: PlayView) => void;
+  /** Handle a fresh pad Start press on the top modal while the game is paused. */
+  readonly resume?: (view: PlayView) => void;
 }
 /** A view on the screen. It is also a screen's handle: open one from a screen stack's `open` and it shows, hides and closes with the screen. */
 export interface PlayView {
@@ -161,7 +167,9 @@ export function createPlayViews(
   hints(list: readonly PlayHint[]): PlayHints;
   loading<T>(tasks: readonly (Promise<T> | (() => T | Promise<T>))[], options?: PlayLoadingOptions): Promise<T[]>;
   readonly asking: boolean;
+  readonly modalActive: boolean;
   keyDown(event: KeyboardEvent, embedded: boolean): boolean;
+  padButtons(pressed: ReadonlySet<string>, legacyAsking: boolean): ReadonlySet<string>;
   wheel(x: number, y: number, delta: number, mode: number): boolean;
   tick(seconds: number): void;
   arrange(): void;
@@ -176,12 +184,15 @@ export function createPlayViews(
   interface ViewRecord {
     readonly view: PlayView;
     modal(): boolean;
+    padNavigation(): boolean;
     targets(): readonly string[];
     keeps(name: string): boolean;
     eligible(name: string): boolean;
     reveal(name: string): boolean;
     focusMark(name: string, visible: boolean): void;
     press(name: string): void;
+    readonly dismiss: (() => void) | undefined;
+    start(): void;
     tick(seconds: number): void;
     arrange(): void;
     end(): void;
@@ -198,10 +209,10 @@ export function createPlayViews(
     return modal;
   };
   const inView = (owner: ViewRecord, modal = topModal()): boolean => modal === undefined || modal === owner;
-  const targets = (): Focus[] => {
+  const targets = (only?: ViewRecord): Focus[] => {
     const modal = topModal();
     return [...live]
-      .filter(owner => inView(owner, modal))
+      .filter(owner => inView(owner, modal) && (only === undefined || owner === only))
       .flatMap(owner => owner.targets().map(name => ({ owner, name })));
   };
   const eligible = (target: Focus | undefined): target is Focus =>
@@ -231,6 +242,24 @@ export function createPlayViews(
       restore = saved;
     }
     focus(eligible(restore) ? restore : targets().find(eligible));
+  };
+  const moveFocus = (step: number, wrap: boolean, only?: ViewRecord): boolean => {
+    const choices = targets(only);
+    const current = choices.findIndex(next => next.owner === focused?.owner && next.name === focused.name);
+    const start = current < 0 ? (step > 0 ? 0 : choices.length - 1) : current + step;
+    for (let offset = 0; offset < choices.length; offset++) {
+      let index = start + offset * step;
+      if (index < 0 || index >= choices.length) {
+        if (!wrap) break;
+        index = (index + choices.length) % choices.length;
+      }
+      const next = choices[index]!;
+      if (next.owner.reveal(next.name)) {
+        focus(next);
+        return true;
+      }
+    }
+    return false;
   };
 
   function view<S>(description: ViewDescription, options: PlayViewOptions<S> = {}): PlayView {
@@ -272,6 +301,18 @@ export function createPlayViews(
       (usesParagraph(description.root) || (description.portrait !== undefined && usesParagraph(description.portrait)))
     )
       throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'paragraph parts need a paragraphCache' });
+    if (options.gamepad !== undefined && typeof options.gamepad !== 'boolean')
+      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'gamepad takes a boolean' });
+    for (const key of ['dismiss', 'resume'] as const)
+      if (options[key] !== undefined && (description.modal !== true || typeof options[key] !== 'function'))
+        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: key + ' takes a callback on a modal view' });
+    const invoke = (callback: ((view: PlayView) => void) | undefined): void => {
+      try {
+        callback?.(api);
+      } catch (cause) {
+        hooks.failed(cause);
+      }
+    };
     const id = 'view' + ++counter;
     const state = (): S => (typeof options.state === 'function' ? (options.state as () => S)() : (options.state as S));
     const root = game.sprite(undefined, game.ui);
@@ -914,6 +955,7 @@ export function createPlayViews(
     const record: ViewRecord = {
       view: api,
       modal: () => description.modal === true && active && isShown(),
+      padNavigation: () => options.gamepad === true && active && isShown(),
       targets: () => made.flatMap(item => (item.part.name !== undefined && followsInput(item) ? [item.part.name] : [])),
       keeps: name => followsInput(find(name)),
       eligible: name => actionable(find(name)),
@@ -929,6 +971,8 @@ export function createPlayViews(
         item.focusMark.visible = visible;
       },
       press: name => press(find(name)),
+      dismiss: options.dismiss === undefined ? undefined : () => invoke(options.dismiss),
+      start: () => invoke(options.resume),
       tick(seconds) {
         read(seconds);
       },
@@ -980,7 +1024,7 @@ export function createPlayViews(
 
   // Questions asked one at a time; each waits for the one before it to be answered.
   let asked: Promise<unknown> = Promise.resolve(),
-    open: { readonly answer: (yes: boolean) => void } | undefined,
+    open: { readonly answer: (yes: boolean) => void; readonly view: PlayView } | undefined,
     // A question opened this frame does not take the key that opened it.
     openedAt = -1,
     frame = 0;
@@ -1034,9 +1078,12 @@ export function createPlayViews(
                 ]
               }
             },
-            { bind: { no: { tap: () => answer(false) }, yes: { tap: () => answer(true) } } }
+            {
+              dismiss: () => answer(false),
+              bind: { no: { tap: () => answer(false) }, yes: { tap: () => answer(true) } }
+            }
           );
-          open = { answer };
+          open = { answer, view };
           const owner = [...live].find(record => record.view === view);
           if (owner !== undefined && owner.eligible('yes')) focus({ owner, name: 'yes' });
           openedAt = frame;
@@ -1215,6 +1262,10 @@ export function createPlayViews(
     }
   };
   const api = view;
+  const noPadButtons: ReadonlySet<string> = new Set();
+  const navigationPadButtons: ReadonlySet<string> = new Set(['up', 'down', 'left', 'right', 'a']);
+  const modalPadButtons: ReadonlySet<string> = new Set([...navigationPadButtons, 'b']);
+  const pausedModalPadButtons: ReadonlySet<string> = new Set([...modalPadButtons, 'start']);
 
   return {
     view,
@@ -1224,40 +1275,58 @@ export function createPlayViews(
     get asking() {
       return open !== undefined;
     },
+    get modalActive() {
+      return topModal() !== undefined;
+    },
     wheel: scrollInput.wheel,
     keyDown(event, embedded) {
       if (event.altKey || event.ctrlKey || event.metaKey) return false;
-      if (event.code !== 'Tab' && event.code !== 'Enter' && event.code !== 'Space') return false;
+      if (event.code !== 'Escape' && event.code !== 'Tab' && event.code !== 'Enter' && event.code !== 'Space')
+        return false;
       syncModalFocus();
+      if (event.code === 'Escape') {
+        if (modalOwner?.dismiss === undefined) return false;
+        if (!event.repeat) modalOwner.dismiss();
+        return true;
+      }
       if (event.code !== 'Tab') {
-        if (!eligible(focused)) return false;
+        if (!eligible(focused)) return modalOwner !== undefined;
         if (!event.repeat) focused.owner.press(focused.name);
         return true;
       }
-      const choices = targets(),
-        step = event.shiftKey ? -1 : 1,
-        current = choices.findIndex(next => next.owner === focused?.owner && next.name === focused.name),
-        start = current < 0 ? (step > 0 ? 0 : choices.length - 1) : current + step;
-      for (let offset = 0; offset < choices.length; offset++) {
-        let index = start + offset * step;
-        if (index < 0 || index >= choices.length) {
-          if (embedded && modalOwner === undefined) break;
-          index = (index + choices.length) % choices.length;
-        }
-        const next = choices[index]!;
-        if (next.owner.reveal(next.name)) {
-          focus(next);
-          return true;
-        }
-      }
+      if (moveFocus(event.shiftKey ? -1 : 1, !embedded || modalOwner !== undefined)) return true;
       if (modalOwner !== undefined) return true;
       focus(undefined);
       return false;
     },
+    padButtons(pressed, legacyAsking) {
+      syncModalFocus();
+      const modal = modalOwner;
+      let owner = modal;
+      if (owner === undefined && !legacyAsking) for (const record of live) if (record.padNavigation()) owner = record;
+      if (owner === undefined) return noPadButtons;
+      const claimed =
+        modal === undefined ? navigationPadButtons : game.paused ? pausedModalPadButtons : modalPadButtons;
+      // Keep this sample with its original owner even when a callback closes or replaces the view.
+      if (modal !== undefined && pressed.has('b')) {
+        modal.dismiss?.();
+      } else if (claimed.has('start') && pressed.has('start')) {
+        owner.start();
+      } else {
+        if (pressed.has('up') || pressed.has('left')) moveFocus(-1, true, owner);
+        else if (pressed.has('down') || pressed.has('right')) moveFocus(1, true, owner);
+        if (pressed.has('a')) {
+          if (focused?.owner !== owner || !eligible(focused)) moveFocus(1, true, owner);
+          if (focused?.owner === owner && eligible(focused)) owner.press(focused.name);
+        }
+      }
+      return claimed;
+    },
     tick(seconds) {
       frame++;
-      if (open !== undefined && frame > openedAt + 1) {
+      if (open !== undefined && topModal()?.view === open.view && frame > openedAt + 1) {
         const keys = game.keys;
+        // Virtual touch buttons can also send these key names. Hardware decisions go through the active view above.
         if (keys.pressed('enter', 'space', 'pad:a')) open.answer(true);
         else if (keys.pressed('escape', 'pad:b')) open.answer(false);
       }

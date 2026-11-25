@@ -83,6 +83,8 @@ export interface BrowserGameLabel {
   readonly ready: Promise<void>;
   /** Changes any of the options; what is left out stays. */
   set(options: BrowserGameLabelOptions): void;
+  /** Hidden pages can release their label raster while keeping the label's text and style. */
+  setRasterActive(active: boolean): void;
   dispose(): void;
 }
 /** A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. */
@@ -193,6 +195,14 @@ export interface BrowserGame {
   textureFromCanvas(canvas: HTMLCanvasElement | OffscreenCanvas): Promise<AssetLease<Texture>>;
   /** A line of text for the stage. The first call loads the page's text rasterizer. */
   createLabel(options?: BrowserGameLabelCreateOptions): Promise<BrowserGameLabel>;
+  /** Text scheduler and logical cache accounting. Available before the first label is prepared. */
+  getLabelStatus(): Readonly<{
+    drawing: number;
+    queued: number;
+    refusals: number;
+    releasedRasters: number;
+    cache: ReturnType<TextRasterCache['getStatus']> | undefined;
+  }>;
   /**
    * Stage units in one CSS pixel as the canvas is shown now, the larger of across and down: `44 * game.unitsPerCssPixel`
    * is a touch target a finger can hit. 1 before the canvas is laid out.
@@ -609,32 +619,29 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     }
     // Text: one cache for the Engine, made with the page's rasterizer when the first label is asked for.
     let textCache: Promise<TextRasterCache> | undefined;
-    // The text cache takes four drawings at a time and refuses more. Labels wait their turn here instead, two at a
-    // time, so a game may make or change any number of them together.
-    const LABEL_LANES = 2;
-    let labelsDrawing = 0;
-    const labelsWaiting: (() => void)[] = [];
-    const enterLabelLane = (): Promise<void> | void => {
-      if (labelsDrawing < LABEL_LANES) {
-        labelsDrawing++;
-        return;
-      }
-      // The lane is handed over by the label that leaves it, so no newcomer takes it first.
-      return new Promise<void>(resolve => labelsWaiting.push(resolve));
-    };
+    let currentTextCache: TextRasterCache | undefined;
+    // Leave headroom for cache actors settling after delivery. Queue entries are cancellable and bounded.
+    const LABEL_LANES = 2,
+      MAX_QUEUED_LABELS = 128;
+    let labelsDrawing = 0,
+      labelRefusals = 0,
+      releasedRasters = 0;
+    const labelsWaiting: ((entered: boolean) => void)[] = [];
     const leaveLabelLane = (): void => {
       const next = labelsWaiting.shift();
-      if (next) next();
+      if (next) next(true);
       else labelsDrawing--;
     };
     async function createLabel(options: BrowserGameLabelCreateOptions = {}): Promise<BrowserGameLabel> {
       if (options === null || typeof options !== 'object') throw invalid();
       const { scope: owner = scope, ...given } = options;
       if (owner === null || typeof owner !== 'object') throw invalid();
-      textCache ??= import('./text.js').then(text =>
-        createTextRasterCache(engine.assets, { provider: text.createCanvasTextRasterProvider() })
+      textCache ??= import('./text.js').then(
+        text =>
+          (currentTextCache = createTextRasterCache(engine.assets, { provider: text.createCanvasTextRasterProvider() }))
       );
-      const field = createTextField(engine, owner, await textCache);
+      const cache = await textCache;
+      const field = createTextField(engine, owner, cache);
       let now: Required<BrowserGameLabelOptions> = {
         text: '',
         fontFamily: 'sans-serif',
@@ -648,8 +655,14 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       };
       let ready: Promise<void> = Promise.resolve(),
         asked = 0,
-        drawing = false,
+        adopted = -1,
+        active = true,
+        disposed = false,
+        generation = 0,
+        preparing: number | undefined,
+        cancelQueued: (() => void) | undefined,
         running: Promise<void> | undefined;
+      const current = (epoch: number): boolean => active && !disposed && !field.isDisposed && generation === epoch;
       const request = (): void =>
         field.setRequest({
           text: now.text,
@@ -663,52 +676,107 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           density: pixelRatio,
           fillColor: now.color
         });
-      // Draws the label's newest words. Words changed while it draws are asked for when that drawing is done, never
-      // over it, so a label holds one drawing of the text cache at a time however often its words change.
-      const draw = async (): Promise<void> => {
+      const enterLabelLane = (): boolean | Promise<boolean> => {
+        if (labelsDrawing < LABEL_LANES) {
+          labelsDrawing++;
+          return true;
+        }
+        if (labelsWaiting.length >= MAX_QUEUED_LABELS) {
+          labelRefusals++;
+          throw new EgretError('TEXT_CACHE_BUDGET');
+        }
+        return new Promise(resolve => {
+          labelsWaiting.push(resolve);
+          cancelQueued = () => {
+            const at = labelsWaiting.indexOf(resolve);
+            if (at < 0) return; // The lane has already been handed to this draw.
+            labelsWaiting.splice(at, 1);
+            resolve(false);
+          };
+        });
+      };
+      // A label coalesces changes made while drawing and keeps only its latest request.
+      const draw = async (epoch: number): Promise<void> => {
+        let entered = false;
         try {
-          await enterLabelLane();
-          try {
-            for (let shown = -1; shown !== asked; ) {
-              if (shown !== -1) request();
-              shown = asked;
-              drawing = true;
-              try {
-                // The cache frees a drawing's place a few turns after the drawing is handed over. A refusal for
-                // want of a place is waited out, without a timer; one that lasts is the label's failure.
-                for (let attempt = 0; ; attempt++) {
-                  try {
-                    await field.prepare();
-                    break;
-                  } catch (cause) {
-                    if (!(cause instanceof EgretError) || cause.code !== 'TEXT_CACHE_BUDGET' || attempt >= 400)
-                      throw cause;
-                    await Promise.resolve();
-                  }
-                }
-              } finally {
-                drawing = false;
-              }
+          if (!current(epoch)) return;
+          entered = await enterLabelLane();
+          if (!entered) return;
+          if (generation === epoch) cancelQueued = undefined;
+          for (let shown = -1; current(epoch) && shown !== asked; ) {
+            if (adopted !== asked) {
+              request();
+              adopted = asked;
             }
-          } finally {
-            leaveLabelLane();
+            shown = asked;
+            preparing = epoch;
+            try {
+              await field.prepare();
+            } catch (cause) {
+              if (!current(epoch)) return;
+              if (!(cause instanceof EgretError) || cause.code !== 'TEXT_CACHE_BUDGET') throw cause;
+              // Delivery can precede actor retirement. Retry once after actual settlement, without polling.
+              await cache.whenIdle();
+              if (!current(epoch)) return;
+              try {
+                await field.prepare();
+              } catch (retry) {
+                if (!current(epoch)) return;
+                if (retry instanceof EgretError && retry.code === 'TEXT_CACHE_BUDGET') labelRefusals++;
+                throw retry;
+              }
+            } finally {
+              if (preparing === epoch) preparing = undefined;
+            }
           }
         } finally {
-          running = undefined;
+          if (generation === epoch) running = undefined;
+          if (entered) leaveLabelLane();
         }
+      };
+      const schedule = (): void => {
+        if (!active || running !== undefined) return;
+        const epoch = generation;
+        const job = Promise.resolve().then(() => draw(epoch));
+        running = ready = job;
+        // Observe rejection while keeping it available on ready.
+        void job.catch(() => {});
       };
       const apply = (next: BrowserGameLabelOptions): void => {
         if (next === null || typeof next !== 'object') throw invalid();
         now = { ...now, ...next };
         // Refused at once when nothing is being drawn; otherwise when its turn comes, through `ready`.
-        if (!drawing) request();
+        if (preparing !== generation) {
+          request();
+          adopted = asked + 1;
+        }
         asked++;
-        running ??= draw();
-        // A failure is the label's to tell through `ready`; it is not left unheard.
-        running.catch(() => {});
-        ready = running;
+        schedule();
       };
-      apply(given);
+      const supersede = (): void => {
+        generation++;
+        cancelQueued?.();
+        cancelQueued = undefined;
+        running = undefined;
+      };
+      const countRelease = (): void => {
+        if (field.getStatus().metrics?.raster !== undefined) releasedRasters++;
+      };
+      const close = (): void => {
+        if (disposed) return;
+        disposed = true;
+        supersede();
+        owner.signal.removeEventListener('abort', close);
+        countRelease();
+        field.dispose();
+      };
+      try {
+        apply(given);
+        owner.signal.addEventListener('abort', close, { once: true });
+      } catch (cause) {
+        close();
+        throw cause;
+      }
       return Object.freeze({
         display: field,
         get text() {
@@ -721,9 +789,19 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           return ready;
         },
         set: apply,
-        dispose() {
-          field.dispose();
-        }
+        setRasterActive(next: boolean) {
+          if (typeof next !== 'boolean') throw invalid();
+          if (active === next || disposed || field.isDisposed) return;
+          active = next;
+          supersede();
+          if (active) schedule();
+          else {
+            countRelease();
+            field.releaseRaster();
+            ready = Promise.resolve();
+          }
+        },
+        dispose: close
       });
     }
     const game: BrowserGame = Object.freeze({
@@ -751,6 +829,15 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       hover,
       stats: panel,
       createLabel,
+      getLabelStatus() {
+        return Object.freeze({
+          drawing: labelsDrawing,
+          queued: labelsWaiting.length,
+          refusals: labelRefusals,
+          releasedRasters,
+          cache: currentTextCache?.getStatus()
+        });
+      },
       async loadTexture(url: string) {
         if (typeof url !== 'string' || url === '') throw invalid();
         return scope.use(await engine.assets.acquire(createAssetRef(imageType, url), { signal: scope.signal }));

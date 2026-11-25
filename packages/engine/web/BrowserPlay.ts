@@ -553,8 +553,8 @@ export interface PlayGame {
    */
   readonly device: 'keyboard' | 'gamepad' | 'touch' | 'mouse';
   /**
-   * Asks a question with two buttons over everything else, one at a time: true for `yes`, false for `no`. Enter,
-   * Space and a pad's A answer yes; Escape and a pad's B answer no.
+   * Asks a question with two buttons over everything else, one at a time: true for `yes`, false for `no`.
+   * Enter, Space and a pad's A activate the focused action, initially Yes when available. Escape and B answer no.
    */
   confirm(question: string, options?: PlayConfirmOptions): Promise<boolean>;
   /**
@@ -967,6 +967,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const badges = createBadges();
   // Keys: a set of what is held, and what changed since the last update.
   const physicalKeys = new Set<string>(),
+    gameplayPadCodes = new Set<string>(),
     held = new Set<string>(),
     wentDown = new Set<string>(),
     cameUp = new Set<string>();
@@ -981,7 +982,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   };
   const keyDown = (event: KeyboardEvent): void => {
     if (typing(event.target) || (embedded && event.target !== surface) || event.defaultPrevented) return;
-    if (!widgets.asking && views.keyDown(event, embedded)) {
+    if ((!widgets.asking || views.modalActive) && views.keyDown(event, embedded)) {
       device = 'keyboard';
       event.preventDefault();
       return;
@@ -1014,6 +1015,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     for (const code of held) cameUp.add(code);
     held.clear();
     physicalKeys.clear();
+    gameplayPadCodes.clear();
+    padActive = false;
     pointerOwner = undefined;
   };
   const any = (set: Set<string>, keys: readonly string[]): boolean => keys.some(key => set.has(codeOf(String(key))));
@@ -1034,24 +1037,60 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       return { x: 0, y: 0 };
     }
   };
-  // The buttons of the first pad count as keys named `pad:a` and so on: held, pressed and let go as keys are.
+  const padDown = new Set<string>(),
+    padPressed = new Set<string>();
+  let padActive = true,
+    padIndex: number | undefined,
+    padId: string | undefined;
+  const activatePad = (): void => {
+    padActive = true;
+  };
+  const releasePad = (name: string): void => {
+    const code = 'Pad:' + name;
+    if (gameplayPadCodes.delete(code) && !touchHeld.has(code) && held.delete(code)) {
+      wentDown.delete(code);
+      cameUp.add(code);
+    }
+  };
+  // A consumed hardware press stays consumed until release, even if it resumed or restarted the game.
   const pollPadButtons = (): void => {
+    if (!padActive || page.visibilityState === 'hidden') return;
     const pad = pads?.input.pads[0];
+    if (padIndex !== pad?.index || padId !== pad?.id) {
+      for (const name of padDown) releasePad(name);
+      padDown.clear();
+      padIndex = pad?.index;
+      padId = pad?.id;
+    }
+    if (pad === undefined) return;
+    padPressed.clear();
     for (const name of PAD_BUTTONS) {
       let down = false;
       try {
-        down = pad !== undefined && pad.standard && pad.pressed(name);
+        down = pad.standard && pad.pressed(name);
       } catch {
         down = false;
       }
+      if (down) {
+        if (!padDown.has(name)) padPressed.add(name);
+        padDown.add(name);
+      } else if (padDown.delete(name)) {
+        releasePad(name);
+      }
+    }
+    if (padDown.size === 0) return;
+    if (padPressed.size > 0) device = 'gamepad';
+    const version = generation;
+    const claimed = views.padButtons(padPressed, widgets.asking);
+    if (disposed || version !== generation) return;
+    for (const name of claimed) releasePad(name);
+    for (const name of padPressed) {
+      if (claimed.has(name)) continue;
       const code = 'Pad:' + name;
-      if (down && !held.has(code)) {
-        device = 'gamepad';
+      gameplayPadCodes.add(code);
+      if (!held.has(code)) {
         held.add(code);
         wentDown.add(code);
-      } else if (!down && held.has(code) && !touchHeld.has(code)) {
-        held.delete(code);
-        cameUp.add(code);
       }
     }
   };
@@ -1229,6 +1268,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     [keyboardTarget, 'keydown', keyDown as EventListener],
     [keyboardTarget, 'keyup', keyUp as EventListener],
     [win, 'blur', letGo],
+    [win, 'focus', activatePad],
     [surface, 'pointerdown', pointerDown as EventListener],
     [win, 'pointermove', moved as EventListener],
     [surface, 'wheel', turned as EventListener],
@@ -1458,6 +1498,20 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
 
   // Text.
   const removers = new WeakMap<object, () => void>();
+  const labelVisibility = new Set<() => void>();
+  let labelVisibilityQueued = false;
+  const syncLabelVisibility = (): void => {
+    for (const sync of labelVisibility) sync();
+  };
+  const prepareLabelVisibility = (): void => {
+    if (labelVisibilityQueued) return;
+    labelVisibilityQueued = true;
+    // A page switch can hide a group and create its replacement in one event turn, before the next frame.
+    queueMicrotask(() => {
+      labelVisibilityQueued = false;
+      if (!disposed) syncLabelVisibility();
+    });
+  };
   const text = (given: string | number, o: PlayTextOptions = {}): PlayText => {
     if (o === null || typeof o !== 'object') throw invalid('the options of a text are an object');
     const { size = 24, color = 0xffffff, align = 'left', bold = false } = o;
@@ -1465,13 +1519,19 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     if (align !== 'left' && align !== 'center' && align !== 'right')
       throw invalid("align is 'left', 'center' or 'right'");
     let label: BrowserGameLabel | undefined,
+      rasterActive = true,
       gone = false;
+    const round = generation;
+    let pendingReady: Promise<void> | undefined;
     const settle = (): void => {
-      if (label === undefined || gone) return;
+      if (label === undefined || gone || !rasterActive) return;
       const made = label;
-      made.ready.then(
+      const ready = made.ready;
+      if (ready === pendingReady) return;
+      pendingReady = ready;
+      ready.then(
         () => {
-          if (gone) return;
+          if (gone || !rasterActive || pendingReady !== ready) return;
           made.display.x = align === 'center' ? -made.display.width / 2 : align === 'right' ? -made.display.width : 0;
           made.display.y = o.baseline === 'middle' ? -made.display.height / 2 : 0;
           made.display.visible = true;
@@ -1484,6 +1544,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         String(given),
         next => {
           if (label === undefined) return;
+          // A label's old wording must not describe an action after its semantic name changed.
+          label.display.visible = false;
           label.text = next;
           settle();
         },
@@ -1506,7 +1568,28 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     const into = o.layer === undefined || o.layer === 'ui' ? ui : o.layer === 'world' ? world : o.layer;
     if (!(into instanceof Sprite) || into.isDisposed) throw invalid("layer is 'ui', 'world' or a sprite");
     into.addChild(node);
+    const syncVisibility = (): void => {
+      if (node.isDisposed || generation !== round) {
+        removers.get(node)?.();
+        return;
+      }
+      let next = false;
+      for (let current: DisplayObject | undefined = node; current !== undefined; current = current.parent) {
+        if (!current.visible || current.alpha === 0) break;
+        if (current === stage) {
+          next = true;
+          break;
+        }
+      }
+      if (label !== undefined && rasterActive !== next) {
+        rasterActive = next;
+        label.display.visible = false;
+        label.setRasterActive(next);
+        if (next) settle();
+      }
+    };
     const words = node.text;
+    prepareLabelVisibility();
     browser
       .createLabel({
         text: words,
@@ -1517,7 +1600,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       })
       .then(
         made => {
-          if (gone || node.isDisposed) {
+          if (gone || node.isDisposed || generation !== round) {
             made.dispose();
             return;
           }
@@ -1525,6 +1608,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           // Hidden until it has been measured, so centred words never show at the wrong place first.
           made.display.visible = false;
           node.addChild(made.display);
+          labelVisibility.add(syncVisibility);
+          syncVisibility();
           if (node.text !== words) made.text = node.text;
           // What was set while the words were being made.
           if (node.color !== color || node.size !== size) made.set({ color: node.color, fontSize: node.size });
@@ -1534,6 +1619,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       );
     removers.set(node, () => {
       gone = true;
+      labelVisibility.delete(syncVisibility);
       label?.dispose();
     });
     return node;
@@ -1601,6 +1687,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     frameSeconds = 0;
     if (!disposed) {
       views.tick(seconds);
+      syncLabelVisibility();
       if (options.semantics !== undefined)
         try {
           options.semantics.publish();
@@ -1637,13 +1724,19 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       failure = undefined;
       throw cause;
     }
+    const version = generation;
+    let padSampled = pads !== undefined;
     try {
       pads?.poll();
-      pollPadButtons();
     } catch {
-      // A pad that cannot be read is not there.
+      // A browser read can fail. Do not route a stale sample from the last successful poll.
+      padSampled = false;
     }
-    const version = generation;
+    if (padSampled) pollPadButtons();
+    if (disposed || version !== generation || playLoop.state !== 'running') {
+      endFrame();
+      return;
+    }
     const active = (): boolean =>
       !disposed &&
       api !== undefined &&
@@ -2430,7 +2523,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     letGo(key) {
       const code = codeOf(key);
       touchHeld.delete(code);
-      if (!physicalKeys.has(code) && held.delete(code)) cameUp.add(code);
+      if (!physicalKeys.has(code) && !gameplayPadCodes.has(code) && held.delete(code)) cameUp.add(code);
     },
     stick(x, y) {
       touchStick.x = x;
