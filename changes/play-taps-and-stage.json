@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Taps on sprites drawn by their children, named taps, and the stage's places in play",
+    "body": "In play, a sprite given to onTap, gestures or a drag source that has children and no hit area of its own is now hit anywhere in its bounds, its children included, as they move; before, only its own drawing counted, so a button whose face was a child could be pressed by the keyboard but never by the mouse. onTap takes { name }: the sprite is then a button of that name in the semantic tree, where it is drawn, left out while hidden, gone with it, and activating it taps it. game.toStage and game.fromStage take a place of the game's units to the stage's, as localToGlobal and hover events give it, and back: with fit 'expand' in a mini game they differ by where the design is."
+  },
+  "zh": {
+    "title": "play：点中由子节点绘制的精灵、带名字的点击，以及舞台坐标",
+    "body": "play 里交给 onTap、gestures 或拖拽来源的精灵，有子节点、自己没有命中区时，现在按它的包围盒（含子节点的绘制）点中，并随子节点移动；以前只算它自己的绘制，所以底色画在子节点上的按钮，键盘能触发，鼠标却永远点不中。onTap 接受 { name }：这个精灵同时是语义树里同名的按钮，位置与它画出的地方一致，隐藏时略去，结束时随之消失，在语义树里激活就等于点击。game.toStage 和 game.fromStage 在游戏单位和舞台位置之间换算，与 localToGlobal 和悬停事件一致；小游戏里用 fit 'expand' 时，两者相差设计区域的位置。"
+  }
+}

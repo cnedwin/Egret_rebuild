@@ -174,6 +174,50 @@ try {
     assert.deepEqual(problems, []);
     return { told, calls: { showKeyboard: calls.showKeyboard, hideKeyboard: calls.hideKeyboard } };
   })();
+  // fit: 'expand' on a 390 × 844 phone: the stage grows to 720 × 1558 around the 720 × 1280 design, the game is told
+  // in arrange, and what it draws over game.screen fills the screen to its edges.
+  await step('screen', async seen => {
+    assert.deepEqual([seen.width, seen.height], [720, 1280], 'the design keeps its size');
+    assert.deepEqual(seen.stage, { width: 720, height: 1558 });
+    assert.deepEqual(seen.screen, { x: 0, y: -139, width: 720, height: 1558 });
+    assert.deepEqual(seen.arranged.screen, seen.screen, 'arrange was told of the screen');
+    const png = await picture();
+    const at = (x, y) => {
+      const i = (y * png.width + x) * 4;
+      return [png.data[i], png.data[i + 1], png.data[i + 2]];
+    };
+    // 0x101820 at the top and bottom rows: no black bar.
+    for (const y of [1, png.height - 2])
+      assert.deepEqual(at(Math.floor(png.width / 2), y), [0x10, 0x18, 0x20], 'row ' + y);
+    return {
+      screen: seen.screen,
+      arranged: seen.arranged,
+      edges: [at(Math.floor(png.width / 2), 1), at(Math.floor(png.width / 2), png.height - 2)]
+    };
+  });
+  // A tap told in the game's units, taken to the stage with toStage, is where localToGlobal puts the marker under it.
+  await step('marker', async seen => {
+    assert.deepEqual(seen.stage, { x: 360, y: 439 }, 'toStage moves by the place of the design');
+    // game.rect places the middle of the rectangle at its place: the marker's origin.
+    assert.deepEqual(seen.corner, { x: 360, y: 439 }, 'the marker, by localToGlobal');
+    assert.deepEqual(seen.back, { x: 360, y: 300 });
+    // The stage is 720 wide in 390 CSS pixels; its corner is the screen's.
+    const scale = W / 720;
+    await page.mouse.click(360 * scale, 439 * scale);
+    await page.waitForTimeout(300);
+    const told = await page.evaluate(() => GameGlobal.__probe.pointer());
+    // A mouse event gives whole CSS pixels: a place is known to within one of them, 720 / 390 of the stage's units.
+    const near = (a, b) => Math.abs(a - b) <= 1 / scale + 1e-9;
+    assert.ok(near(told.game.x, 360) && near(told.game.y, 300), JSON.stringify(told));
+    assert.ok(near(told.stage.x, told.marker.x) && near(told.stage.y, told.marker.y), JSON.stringify(told));
+    // And exactly: the place told, taken to the stage and back, is the place told.
+    const round = await page.evaluate(() => {
+      const p = GameGlobal.__probe.pointer();
+      return p;
+    });
+    assert.ok(Math.abs(round.stage.y - round.game.y - 139) < 1e-9 && Math.abs(round.stage.x - round.game.x) < 1e-9);
+    return { ...seen, told };
+  });
   report.ok = true;
 } finally {
   await browser.close();

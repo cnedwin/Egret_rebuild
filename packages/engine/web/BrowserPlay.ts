@@ -466,8 +466,20 @@ export interface PlayGame {
   text(text: string | number, options?: PlayTextOptions): PlayText;
   /** Takes a sprite off the stage and ends it. */
   remove(node: DisplayObject): void;
-  /** Calls a function when the sprite is tapped or clicked. */
-  onTap(node: DisplayObject, callback: () => void): void;
+  /**
+   * Calls a function when the sprite is tapped or clicked. A sprite with children and no hit area of its own is hit
+   * anywhere in its bounds, its children's drawing included, as they move; a sprite with no children is hit on what it
+   * draws, as before. With `name`, the sprite is also a button of that name in the semantic tree of `semantics`: where
+   * it is drawn, hidden while it is not shown, gone with it, and activating it there taps it.
+   */
+  onTap(node: DisplayObject, callback: () => void, options?: { readonly name?: string }): void;
+  /**
+   * A place in the game's units (those of `pointer.x` and `.y` and of the `ui` layer) as a place on the stage, as
+   * `localToGlobal` gives it and hover events tell it. With `fit: 'expand'` the two differ by where the design is.
+   */
+  toStage(x: number, y: number): { x: number; y: number };
+  /** A place on the stage as a place in the game's units: the other way from `toStage`. */
+  fromStage(x: number, y: number): { x: number; y: number };
   /**
    * Long presses, double taps, drags, swipes and two-finger pinches on a sprite, each told once. A press that is
    * a drag or a long press is no tap. Returns a function that stops them.
@@ -1182,6 +1194,40 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // The sprites a tap is given to. A press on one of them is the sprite's, and is not also told as `pressed`: a game
   // that places something wherever the stage is pressed would place it under its own buttons.
   let tappable: DisplayObject[] = [];
+  // Sprites that take taps or gestures and have children but no hit area of their own: each is given its bounds,
+  // children included, as its area, again at each step while they move, and until the game sets an area itself.
+  const boundsAreas = new Map<DisplayObject, { x: number; y: number; width: number; height: number } | undefined>();
+  const sameArea = (
+    a: { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined,
+    b: { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined
+  ): boolean =>
+    a === b ||
+    (a !== undefined && b !== undefined && a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height);
+  const fitBoundsArea = (node: DisplayObject): void => {
+    const given = boundsAreas.get(node);
+    if (node.isDisposed || !sameArea(node.hitArea, given)) {
+      // Ended, or the game gave it an area of its own.
+      boundsAreas.delete(node);
+      return;
+    }
+    const bounds = node.getBounds();
+    const next =
+      bounds.width > 0 && bounds.height > 0
+        ? { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height }
+        : undefined;
+    if (sameArea(next, given)) return;
+    node.hitArea = next;
+    boundsAreas.set(node, next);
+  };
+  const areaFromBounds = (node: DisplayObject): void => {
+    if (boundsAreas.has(node) || node.hitArea !== undefined) return;
+    if (!(node instanceof Sprite) || node.numChildren === 0) return;
+    boundsAreas.set(node, undefined);
+    fitBoundsArea(node);
+  };
+  // Sprites of onTap with a name: their buttons in the semantic tree.
+  const tapButtons = new Map<DisplayObject, { remove(): void }>();
+  let tapButtonCount = 0;
   const pointerDown = (event: PointerEvent): void => {
     device = event.pointerType === 'touch' ? 'touch' : 'mouse';
     if (embedded) surface.focus({ preventScroll: true });
@@ -1732,6 +1778,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   }
   function step(real: number, seconds: number): void {
     frameSeconds = real;
+    for (const node of [...boundsAreas.keys()]) fitBoundsArea(node);
+    for (const [node, button] of [...tapButtons])
+      if (node.isDisposed) {
+        tapButtons.delete(node);
+        button.remove();
+      }
     if (failure !== undefined) {
       const { cause } = failure;
       failure = undefined;
@@ -2038,18 +2090,61 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       node.parent?.removeChild(node);
       leaving.push(node);
     },
-    onTap(node, callback) {
+    onTap(node, callback, tapOptions) {
       if (typeof callback !== 'function') throw invalid('onTap takes a sprite and a function');
-      if (browser.pointer === undefined) return;
-      node.touchEnabled = true;
-      node.on(browser.pointer.events.tap, () => {
+      if (tapOptions !== undefined && (tapOptions === null || typeof tapOptions !== 'object'))
+        throw invalid('the options of onTap are { name }');
+      const name = tapOptions?.name;
+      if (name !== undefined && (typeof name !== 'string' || name.trim() === '' || name.length > 1024))
+        throw invalid('the name of a tap is words');
+      const tap = (): void => {
         const round = generation;
         tapListener(callback, cause => {
           // A delayed input callback belongs to the round that received the press.
           if (!disposed && generation === round) failure ??= { cause };
         })();
-      });
+      };
+      if (name !== undefined && options.semantics !== undefined) {
+        tapButtons.get(node)?.remove();
+        tapButtons.set(
+          node,
+          options.semantics.add({
+            id: 'play-tap-' + ++tapButtonCount,
+            role: 'button',
+            describe: () => {
+              const box = node.isDisposed ? undefined : boxOf(node);
+              let shownNow = box !== undefined;
+              for (let at: DisplayObject | undefined = node; shownNow && at !== undefined; at = at.parent) {
+                if (at.isDisposed || !at.visible || at.alpha === 0) shownNow = false;
+                else if (at === stage) break;
+                else if (at.parent === undefined) shownNow = false;
+              }
+              return {
+                name,
+                bounds:
+                  box === undefined
+                    ? { x: 0, y: 0, width: 0, height: 0 }
+                    : { x: box.left, y: box.top, width: box.right - box.left, height: box.bottom - box.top },
+                hidden: !shownNow
+              };
+            },
+            onActivate: tap
+          })
+        );
+      }
+      if (browser.pointer === undefined) return;
+      node.touchEnabled = true;
+      node.on(browser.pointer.events.tap, tap);
+      areaFromBounds(node);
       if (!tappable.includes(node)) tappable.push(node);
+    },
+    toStage(x, y) {
+      if (!finite(x) || !finite(y)) throw invalid('toStage takes two numbers');
+      return { x: x + shown.designRect.x, y: y + shown.designRect.y };
+    },
+    fromStage(x, y) {
+      if (!finite(x) || !finite(y)) throw invalid('fromStage takes two numbers');
+      return { x: x - shown.designRect.x, y: y - shown.designRect.y };
     },
     gestures(node, handlers) {
       if (handlers === null || typeof handlers !== 'object')
@@ -2060,6 +2155,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const input = browser.pointer;
       if (input === undefined) return () => {};
       node.touchEnabled = true;
+      areaFromBounds(node);
       if (!tappable.includes(node)) tappable.push(node);
       const round = generation;
       // Places in the game's units; what a handler throws stops the game, as a tap's does.
@@ -2110,6 +2206,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           if (o === null || typeof o !== 'object' || typeof o.data !== 'function')
             throw invalid('source takes a sprite and { data, ghost }');
           node.touchEnabled = true;
+          areaFromBounds(node);
           if (!tappable.includes(node)) tappable.push(node);
           return made.source({ node, data: o.data, ...(o.ghost === undefined ? {} : { ghost: o.ghost }) });
         },

@@ -14,9 +14,19 @@ const probe = (GameGlobal.__probe = { ready: false, steps: {} });
 const game = await play({
   width: 720,
   height: 1280,
-  background: 0x101820,
+  // The design is 720 × 1280; a phone of another shape shows more of the stage around it.
+  fit: 'expand',
+  background: 0x000000,
   setup(g) {
+    // The whole screen, as arrange finds it: drawn again whenever the screen changes.
+    probe.backdrop = g.sprite();
     g.rect(360, 640, 720, 1280, 0x182838);
+  },
+  arrange(g) {
+    probe.arranged = { screen: g.screen, width: g.width, height: g.height };
+    const s = g.screen;
+    probe.backdrop.graphics.clear();
+    probe.backdrop.graphics.beginFill(0x101820).drawRect(s.x, s.y, s.width, s.height).endFill();
   }
 });
 
@@ -124,5 +134,33 @@ probe.cancelTextInput = () => {
   input.cancel();
   return input.getSnapshot();
 };
+
+// A marker at a place of the game, and where a tap there is told: in the game's units, on the stage, and where
+// localToGlobal puts the marker.
+probe.marker = () => {
+  const marker = game.rect(360, 300, 40, 40, 0xffd060);
+  probe.markerSprite = marker;
+  const corner = marker.localToGlobal(0, 0);
+  return {
+    stage: game.toStage(360, 300),
+    corner: { x: corner.x, y: corner.y },
+    back: game.fromStage(corner.x, corner.y)
+  };
+};
+probe.pointer = () => {
+  const at = game.toStage(game.pointer.x, game.pointer.y);
+  const marker = probe.markerSprite.localToGlobal(0, 0);
+  return { game: { x: game.pointer.x, y: game.pointer.y }, stage: at, marker: { x: marker.x, y: marker.y } };
+};
+// Where the game is on the stage, and what the screen shows of it.
+probe.screen = () => ({
+  arranged: probe.arranged,
+  width: game.width,
+  height: game.height,
+  screen: game.screen,
+  safe: game.safe,
+  stage: { width: game.browser.frame.width, height: game.browser.frame.height },
+  canvas: { width: game.canvas.width, height: game.canvas.height }
+});
 
 probe.ready = true;

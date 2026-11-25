@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play-taps/index.html",
+      "originRole": "First-party browser check of play taps on sprites drawn by their children, of an area the game sets, and of a named tap in the semantic tree; independently authored with AI assistance; uses the caller's installed Playwright; Apache-2.0."
+    },
+    {
+      "path": "examples/play-taps/main.mjs",
+      "originRole": "First-party browser check of play taps on sprites drawn by their children, of an area the game sets, and of a named tap in the semantic tree; independently authored with AI assistance; uses the caller's installed Playwright; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play-taps/verify.mjs",
+      "originRole": "First-party browser check of play taps on sprites drawn by their children, of an area the game sets, and of a named tap in the semantic tree; independently authored with AI assistance; uses the caller's installed Playwright; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
