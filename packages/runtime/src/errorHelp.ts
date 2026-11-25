@@ -44,6 +44,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['FRAME_LOOP', 'the frame loop'],
   ['FRAME', 'a frame'],
   ['GAMEPAD', 'gamepad input'],
+  ['GESTURE', 'gestures'],
   ['GRAPHICS', 'graphics'],
   ['HEADLESS_RUN', 'a headless run'],
   ['HIT_TEST', 'a hit test'],

@@ -516,6 +516,13 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `GAMEPAD_SAMPLE` | The sample given to gamepad input is not a gamepad sample. |
 | `GAMEPAD_STICK_UNKNOWN` | No such stick is known to gamepad input. |
 
+### GESTURE
+
+| Code | Meaning |
+| --- | --- |
+| `GESTURE_CLOSED` | Gestures was closed and takes nothing more. |
+| `GESTURE_OPTIONS_INVALID` | The options given to gestures are not valid: one is missing, of the wrong type or out of range. |
+
 ### GRAPHICS
 
 | Code | Meaning |

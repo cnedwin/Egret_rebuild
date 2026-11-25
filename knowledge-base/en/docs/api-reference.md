@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 45 entries, 1408 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 46 entries, 1420 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1000,6 +1000,23 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PointerSession` | interface | Only the creating router admits this frozen identity; host IDs may be reused. |
 | `PointerType` | type | What made a pointer: a mouse, a finger or a pen. |
 | `PointerUpdate` | interface | Where a pointer is on the stage, which buttons it holds, and when, with its pressure and size where the device gives them. |
+
+## `@egret/engine/web/gestures`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `createDragAndDrop` | function | Drag and drop as games do it: the dragged object stays where it is, a picture of it follows the finger in `layer`, and letting go over a target that accepts what is carried calls its `drop`. |
+| `createGestures` | function | Recognizes gestures on an object. |
+| `DragAndDrop` | interface | Sources and targets of drag and drop. |
+| `DragAndDropOptions` | interface | Drag and drop to make: its engine, scope and input, and the layer the picture that follows the finger is drawn in. |
+| `DragSource` | interface | Something that can be dragged: what it carries, and the picture that follows the finger. |
+| `DropTarget` | interface | A place something can be dropped, and what it does with what is dropped on it. |
+| `GestureDrag` | interface | A drag: where it is, how far it moved since the last, and since it started. |
+| `GestureOptions` | interface | What to recognize on an object, and what is called. |
+| `GesturePinch` | interface | Two fingers: how far apart against how they started, how far they turned, in degrees, and their middle. |
+| `GesturePoint` | interface | Where a gesture is: on the stage, and in the object's own units. |
+| `Gestures` | interface | Recognized gestures of an object; ended with `dispose` or with its scope. |
+| `GestureSwipe` | interface | A swipe: its main direction, its speed in stage units a second, and how far it went. |
 
 ## `@egret/engine/web/pointer`
 

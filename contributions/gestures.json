@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/gestures.ts",
+      "originRole": "First-party optional entry @egret/engine/web/gestures: taps, double taps, long presses, drags, swipes, pinches and drag and drop made from the contacts pointer input routes; independently authored with AI assistance; the drag, long press and drop handling of LumioGames LGUI was studied as a reference and none of its code is used; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/gestures.test.mjs",
+      "originRole": "First-party focused validation of gestures and drag and drop on a genuine engine; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-gestures.mjs",
+      "originRole": "First-party browser verification of play's gestures and drag and drop with the mouse; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/gestures.md",
+      "originRole": "First-party bilingual guide to gestures and drag and drop; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/gestures.md",
+      "originRole": "First-party bilingual guide to gestures and drag and drop; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/gestures.md",
+      "zh": "knowledge-base/Cns/docs/gestures.md"
+    }
+  ]
+}

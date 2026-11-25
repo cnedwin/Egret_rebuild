@@ -10,6 +10,7 @@
 import http from 'node:http';
 import { verifyPrimaryPointer } from './verify-primary-pointer.mjs';
 import { verifyScreenFit } from './verify-screen-fit.mjs';
+import { verifyGestures } from './verify-gestures.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -748,6 +749,16 @@ await scenario(
   320,
   async (page, stage, row) => {
     row.screenFit = await verifyScreenFit(page);
+  }
+);
+
+await scenario(
+  'gestures: a double click, a long press, a drag that moves a card, a swipe, and a gem dragged onto a slot',
+  'breakout',
+  480,
+  320,
+  async (page, stage, row) => {
+    row.gestures = await verifyGestures(page);
   }
 );
 

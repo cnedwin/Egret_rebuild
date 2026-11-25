@@ -43,6 +43,7 @@ export const ZH_AREAS: readonly (readonly [string, string])[] = [
   ['FRAME_LOOP', '帧循环'],
   ['FRAME', '帧'],
   ['GAMEPAD', '手柄输入'],
+  ['GESTURE', '手势'],
   ['GRAPHICS', 'graphics'],
   ['HEADLESS_RUN', '无界面运行'],
   ['HIT_TEST', '命中测试'],

@@ -516,6 +516,13 @@
 | `GAMEPAD_SAMPLE` | 交给手柄输入的不是手柄采样。 |
 | `GAMEPAD_STICK_UNKNOWN` | 手柄输入中没有这样的 `stick`。 |
 
+### GESTURE
+
+| 错误码 | 含义 |
+| --- | --- |
+| `GESTURE_CLOSED` | 手势已关闭，不再接受任何操作。 |
+| `GESTURE_OPTIONS_INVALID` | 交给手势的选项无效：缺少某一项、类型不对或超出范围。 |
+
 ### GRAPHICS
 
 | 错误码 | 含义 |
