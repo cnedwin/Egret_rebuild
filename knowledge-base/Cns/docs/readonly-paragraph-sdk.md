@@ -18,6 +18,8 @@
 
 默认 Engine 入口不加载段落 provider、Wasm 或字体。runtime 段落代码不依赖 DOM/Node。web adapter 接收已初始化的 CanvasKit 模块和明确的字体字节，不负责模块加载、网络请求或系统字体发现。
 
+**一个资源管理器只有一个段落缓存。** 每个 Engine 只创建一次，把同一个缓存传给所有段落、UI 叶子和文本编辑器。在同一个 `engine.assets` 上第二次调用 `createParagraphCache` 会以 `PARAGRAPH_CACHE_ALREADY_CREATED` 拒绝，错误信息会说明原因。标签用的文本缓存也一样（`TEXT_CACHE_ALREADY_CREATED`）；浏览器游戏会为它的标签创建那个缓存。
+
 真实 Engine 只接纳自己的 Scope 和已注册缓存。同一个真实 `engine.assets` 可同时拥有一个固定显式行缓存和一个固定段落缓存；每种 profile 在每个 manager 上只有一次生命周期。另建 AssetManager 不会取得 Engine 权限，显示父子关系也不转移资源所有权。
 
 应用拥有 provider 及其后端模块。provider 快照注册字体字节，并从声明的 build/module 与字体身份构建自身身份。同步 adapter 不独立验证调用者声明的哈希。provider 的字体集合保持不变；不同注册字体集合需要新的 provider，以及用于段落缓存的新 Engine/AssetManager 生命周期。缓存借用 provider，不负责销毁它。应用持有的准备任务及缓存／显示借用全部退役后，由 host 显式销毁 provider。Engine 关闭负责 Scope 和 AssetManager 清理；原生模块／realm 生命周期仍由 host 负责。

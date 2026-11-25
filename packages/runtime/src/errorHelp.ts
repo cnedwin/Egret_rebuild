@@ -215,6 +215,10 @@ const WRITTEN: Readonly<Record<string, string>> = {
   BROWSER_TEXT_INPUT_SURFACE: 'The surface given to the browser text input is not a canvas it can use.',
   DISPLAY_SUBTREE_OVERLAP: 'Two prepared display subtrees share a node.',
   DISPLAY_SUBTREE_TARGET_DETACHED: 'The target of a prepared display subtree is no longer on the stage.',
+  PARAGRAPH_CACHE_ALREADY_CREATED:
+    'An asset manager has one paragraph cache for its whole life, shared by every paragraph, UI leaf and text editor of its Engine: keep the first one made and pass it wherever a cache is asked for. A second would keep the same rasters under another budget.',
+  TEXT_CACHE_ALREADY_CREATED:
+    'An asset manager has one text cache for its whole life, shared by every text field and label of its Engine: keep the first one made and pass it wherever a cache is asked for. A browser game makes it for its labels.',
   PARAGRAPH_FONT_SET_IDENTITY_COLLISION: 'Two fonts of a paragraph font set have the same identity.',
   PARAGRAPH_FONT_SET_PROVIDER: 'The provider given to a paragraph font set is not valid.',
   SEQUENCE_RESET_NOT_PREPARED: 'The sequence reset slot has not been prepared.',

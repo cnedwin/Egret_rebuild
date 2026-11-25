@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Opens the tap probe in headless Chromium (SwiftShader) and clicks as a person would: on a sprite whose drawing is
 // its child's, on one that draws itself, after the child moves and after the game sets an area; and reads a tap with
-// a name in the semantic tree. No screen reader was run.
+// a name in the semantic tree; and a title written top to bottom. No screen reader was run.
 //
 //   node examples/play-taps/verify.mjs <absolute Playwright index.mjs> [<report.json>]
 import assert from 'node:assert/strict';
@@ -81,6 +81,15 @@ try {
   assert.equal(report.named.hidden, true, 'hidden while the sprite is');
   assert.equal(report.named.again, true, 'back when it is shown again');
   assert.equal(report.named.gone, true, 'gone with the sprite');
+  // A vertical title: taller than wide, two columns of four.
+  report.vertical = await page.evaluate(() => globalThis.__taps.vertical());
+  assert.equal(report.vertical.text, '洗冤笔录，第一案', 'the words stay as given');
+  assert.equal(report.vertical.shown, true);
+  assert.ok(report.vertical.height > report.vertical.width * 1.5, JSON.stringify(report.vertical));
+  assert.ok(
+    report.vertical.width >= 70 && report.vertical.width <= 100,
+    'two columns of a 40 size: ' + report.vertical.width
+  );
   assert.deepEqual(await page.evaluate(() => globalThis.__taps.errors), []);
   assert.deepEqual(problems, []);
   report.taps = await taps();

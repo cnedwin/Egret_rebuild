@@ -24,7 +24,7 @@ cancel() 丢弃临时组合状态，保留普通编辑已经提交的值。finis
 
 ## 托管 UI 与渲染
 
-以 engine、scope、cache、mode 和样式创建控件。样式包括配对字体的 fontSet 键／字体族、fontSize、locale、direction 和 fillColor；lineHeight、textAlign、backgroundColor、padding、minHeight、visibleLines 可选。只读呈现默认单行限制一行、多行限制六行；原生元素编辑完整的已准入文本。普通叶节点使用 content，现有虚拟数据源使用 prepare(context)，自然段落高度在配置的最小高度之上驱动布局。
+以 engine、scope、cache、mode 和样式创建控件。cache 是这个 Engine 唯一的段落缓存，与它的其他段落共用：同一个资源管理器不接受第二个（`PARAGRAPH_CACHE_ALREADY_CREATED`）。样式包括配对字体的 fontSet 键／字体族、fontSize、locale、direction 和 fillColor；lineHeight、textAlign、backgroundColor、padding、minHeight、visibleLines 可选。只读呈现默认单行限制一行、多行限制六行；原生元素编辑完整的已准入文本。普通叶节点使用 content，现有虚拟数据源使用 prepare(context)，自然段落高度在配置的最小高度之上驱动布局。
 
 只有值／样式变化推进 content.revision；选区和临时组合输入不会重新栅格化。onChange 回调暂存现有树／数据源的新修订；按原有路径执行 root.prepare()／commit()、bridge.sync()、共享帧捕获／渲染。onInvalidate 在原生／画布可见性变化时请求同一渲染路径，不启动新循环。回调异常保留已提交模型并关闭原生所有权；应用应显式重试 UI 发布。
 
@@ -33,6 +33,38 @@ cancel() 丢弃临时组合状态，保留普通编辑已经提交的值。finis
 活动虚拟编辑器借用现有行保留计数和额度。其私有令牌保留稳定键身份，同时允许只读内容、字体度量、宽度和密度重新发布；原有公开 focus／composition 保留令牌继续锁定原绑定。两类令牌存续时都不能删除行；删除键之前先结束或销毁编辑器。行被完全裁剪时结束原生编辑并释放令牌。Scope、根或 Engine 关闭会移除原生元素、监听器／观察器、临时状态及行／字体租约；重复清理安全。
 
 ## 字体与定位
+
+**从字体清单到编辑器。** `style.fontSet` 可以直接传 `createBrowserEditorFontProvider` 加载出的字体集：取它的键，`fontFamilies` 没有另外给出时也取它的字体族。只给键时仍然需要 `fontFamilies`，与以前一样。完整步骤如下，根名称用内容构建给出的名字：
+
+```js
+import { admitResourceManifest } from '@egret/contracts/resources';
+import { createParagraphCache } from '@egret/engine/paragraph';
+import { createUiTextEditor } from '@egret/engine/ui/editing';
+import { createBrowserEditorFontProvider, createBrowserTextEditor } from '@egret/engine/web/editing';
+import { createCanvasKitFontSetProvider } from '@egret/engine/web/paragraph';
+import { createManifestFontContentLoader } from '@egret/engine/web/resources';
+
+// 1. 内容构建写出的清单，准入后得到字体的加载器。
+const manifest = admitResourceManifest(await (await fetch('build/manifest.json')).json());
+if (!manifest.ok) throw Error('manifest refused');
+const transport = createManifestFontContentLoader(engine, manifest.value, { baseUrl: new URL('build/', location.href).href });
+// 2. 每个 Engine 一个段落提供者、一个段落缓存。
+const paragraphs = createCanvasKitFontSetProvider({ canvasKit: await CanvasKitInit({ locateFile }), buildIdentity });
+const cache = createParagraphCache(engine.assets, { provider: paragraphs });
+// 3. 编辑器的字体：段落和原生输入框用同一份字节。
+const fonts = createBrowserEditorFontProvider({ engine, scope, paragraphProvider: paragraphs });
+const set = await fonts.load(scope, transport.loader, ['fonts/noto-sans', 'fonts/noto-sans-sc']);
+// 4. 编辑器直接接受字体集：取它的键和字体族。
+const editor = createUiTextEditor({
+  engine, scope, cache, mode: 'single-line', value: '',
+  style: { fontSet: set, fontSize: 20, locale: 'zh', direction: 'ltr', fillColor: 0xffffff }
+});
+// 5. 它在 UI 根里的叶子，以及画布上方的原生输入框。
+const binding = createBrowserTextEditor({ editor, root, target, canvas, fonts: set, logicalWidth: 720, logicalHeight: 1280 });
+```
+
+[`examples/text-editing`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md) 用经过校验的清单和两个编辑器运行了这些步骤。
+
 
 createBrowserEditorFontProvider 将同一不可变 FontContentLoader 根传给现有段落字体集合 provider 和资源组，从已准入字节创建使用生成 CSS 别名的 FontFace，等待真实加载完成，返回与段落集合使用同一键的真实句柄。仅 CanvasKit 就绪不足以代表原生字体就绪。不使用网络字体 URL，也不另建资源缓存。集合退役时先取消活动原生使用者，再移除 CSS 注册。候选失败／取消保留旧句柄；setFontSet 在组合输入之外接受已就绪的配对句柄。调用者协调多个字段，在旧只读呈现交接完成后退役前一集合。
 

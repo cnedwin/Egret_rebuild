@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1466 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1469 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1263,10 +1263,12 @@ For which entry to import from, see [What to import](entry-points.md).
 | `TextEditSelection` | interface | Source offsets are UTF-16, never glyph indices or guessed advance widths. |
 | `UiTextEditor` | interface | A text editor: its content, the calls that set its value, selection and style, and the geometry of its text. |
 | `UiTextEditorChange` | interface | A change to a text editor's content or selection, and what made it. |
+| `UiTextEditorFontSet` | interface | Fonts for an editor as a font provider gives them, such as a set of `createBrowserEditorFontProvider`. |
 | `UiTextEditorOptions` | interface | A text editor to make: its engine, scope and cache, its mode, value and limits, its style and size, and what it calls. |
 | `UiTextEditorSetOptions` | interface | How a value is set: the selection after it, the revision it expects, and whether a composition is cancelled. |
 | `UiTextEditorSnapshot` | interface | A text editor as it is now: its content revision, style, and whether the native editor shows. |
 | `UiTextEditorStyle` | interface | How a text editor's text looks: its fonts and size, line height, locale and direction, colors and alignment. |
+| `UiTextEditorStyleInput` | interface | A style to give an editor: as its style, but `fontSet` may be the font set itself, whose key is taken, and whose families are taken unless `fontFamilies` is given. |
 | `UiTextEditorTarget` | type | What a text editor is drawn in: a leaf of the tree, or a row of a list. |
 
 ## `@egret/engine/web/editing`
@@ -1627,6 +1629,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SfxTone` | interface | One tone of an effect. |
 | `SfxWave` | type | The wave of a tone. |
 | `synthesizeSfx` | function | The samples of an effect, one channel, from -1 to 1. |
+| `verticalPlayWords` | function | Words written top to bottom in columns from right to left, as rows a line of text draws: one character under another, marks turned to their upright forms, a `\n` or `column` characters ending a column, and an ideographic space where a column is shorter than the longest. |
 | `wrapPlayWords` | function | Breaks words into lines no wider than `units`: at a space where there is one, between any two wide characters. |
 
 ## `@egret/engine/audio`

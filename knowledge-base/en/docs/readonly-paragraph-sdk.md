@@ -18,7 +18,9 @@ The optional request fields are `textAlign` and `maxLines`; a clamped result add
 
 The default Engine entry does not load a paragraph provider, Wasm or fonts. The runtime paragraph code is DOM/Node-free. The web adapter accepts an already initialized CanvasKit module and explicit font bytes; it performs no module loading, network access or system-font discovery.
 
-A genuine Engine admits only its own Scope and registered cache. One fixed explicit-line cache and one fixed paragraph cache may coexist on the same authentic `engine.assets`; each profile has one lifetime per manager. Creating another AssetManager does not grant access to an Engine. Display parentage does not transfer resource ownership.
+A genuine Engine admits only its own Scope and registered cache. One fixed explicit-line cache and one fixed paragraph cache may coexist on the same authentic `engine.assets`; each profile has one lifetime per manager.
+
+**One paragraph cache per asset manager.** Make it once for an Engine and pass the same cache to every paragraph, UI leaf and text editor. A second `createParagraphCache` on the same `engine.assets` is refused with `PARAGRAPH_CACHE_ALREADY_CREATED`, whose message says so. The text cache of labels follows the same rule (`TEXT_CACHE_ALREADY_CREATED`); a browser game makes that one for its labels. Creating another AssetManager does not grant access to an Engine. Display parentage does not transfer resource ownership.
 
 The application owns the provider and its backend module. The provider snapshots registered font bytes and derives an identity from the declared build/module and font identities. Caller-declared hashes are not independently verified by this synchronous adapter. Keep the provider's fonts immutable; a different registered font set requires a new provider and a new Engine/AssetManager lifetime for its paragraph cache. The cache borrows the provider and does not dispose it. After application-owned preparation work and cache/display borrowers have retired, the host explicitly disposes the provider. Engine shutdown owns Scope and AssetManager cleanup; native module/realm lifetime remains with the host.
 

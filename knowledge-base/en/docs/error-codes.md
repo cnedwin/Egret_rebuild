@@ -724,7 +724,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
-| `PARAGRAPH_CACHE_ALREADY_CREATED` | The paragraph cache was already created. |
+| `PARAGRAPH_CACHE_ALREADY_CREATED` | An asset manager has one paragraph cache for its whole life, shared by every paragraph, UI leaf and text editor of its Engine: keep the first one made and pass it wherever a cache is asked for. A second would keep the same rasters under another budget. |
 | `PARAGRAPH_CACHE_BUDGET` | A limit of the paragraph cache was passed. |
 | `PARAGRAPH_CACHE_CLOSED` | The paragraph cache was closed and takes nothing more. |
 | `PARAGRAPH_CACHE_INVALID` | What was given to the paragraph cache is not valid. |
@@ -1063,7 +1063,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
-| `TEXT_CACHE_ALREADY_CREATED` | The text cache was already created. |
+| `TEXT_CACHE_ALREADY_CREATED` | An asset manager has one text cache for its whole life, shared by every text field and label of its Engine: keep the first one made and pass it wherever a cache is asked for. A browser game makes it for its labels. |
 | `TEXT_CACHE_BUDGET` | A limit of the text cache was passed. |
 | `TEXT_CACHE_CLEANUP_FAILED` | Cleaning up the text cache failed. Each cause is in cleanupErrors. |
 | `TEXT_CACHE_CLOSED` | The text cache was closed and takes nothing more. |

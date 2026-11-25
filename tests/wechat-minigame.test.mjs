@@ -564,3 +564,76 @@ test('WX09 names a phone lacks are bound to nothing inside the game, even where 
   );
   assert.deepEqual([...drawn], ['function', 'function']);
 });
+
+// Break caught: a folder of pictures packaged with the main package past its 4 MB, a subpackage with no entry for
+// WeChat to run, or sizes counted together so that the limits say nothing.
+test('WX10 subpackages: game.json names them, each has an entry, and the main package is counted apart', async () => {
+  const dir = gameFolder(),
+    out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-wechat-out-')), 'project');
+  fs.mkdirSync(path.join(dir, 'assets', 'art'));
+  fs.writeFileSync(path.join(dir, 'assets', 'art', 'seal.png'), Buffer.alloc(5000, 1));
+  const esbuild = {
+    build: async () => ({ outputFiles: [{ text: 'export {};\n' }], warnings: [] }),
+    transform: async code => ({ code })
+  };
+  try {
+    const report = await exportWechat({
+      esbuild,
+      gameDir: dir,
+      out,
+      subpackages: [{ name: 'art', root: 'assets/art/' }]
+    });
+    assert.deepEqual(JSON.parse(fs.readFileSync(path.join(out, 'game.json'), 'utf8')).subpackages, [
+      { name: 'art', root: 'assets/art/' }
+    ]);
+    assert.match(fs.readFileSync(path.join(out, 'assets', 'art', 'game.js'), 'utf8'), /wx\.loadSubpackage/);
+    assert.equal(report.subpackages.length, 1);
+    assert.equal(report.subpackages[0].root, 'assets/art');
+    assert.ok(report.subpackages[0].bytes >= 5000);
+    assert.equal(report.mainPackageBytes + report.subpackages[0].bytes, report.totalBytes);
+    assert.ok(report.withinMainPackage && report.withinTotal);
+    assert.equal(report.totalLimit, 30 * 1024 * 1024);
+    const again = () => path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-wechat-out-')), 'project');
+    for (const [subpackages, why] of [
+      [[{ name: 'a rt', root: 'assets/art' }], /name/],
+      [[{ name: 'art', root: 'assets/none' }], /not in the game/],
+      [[{ name: 'art', root: '../outside' }], /not a folder of the game/],
+      [[{ name: 'src', root: 'src' }], /bundled/],
+      [
+        [
+          { name: 'art', root: 'assets' },
+          { name: 'more', root: 'assets/art' }
+        ],
+        /hold one another/
+      ],
+      [
+        [
+          { name: 'art', root: 'assets/art' },
+          { name: 'art', root: 'vendor' }
+        ],
+        /Two subpackages/
+      ]
+    ])
+      await assert.rejects(exportWechat({ esbuild, gameDir: dir, out: again(), subpackages }), why);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+    fs.rmSync(path.dirname(out), { recursive: true, force: true });
+  }
+});
+
+// Break caught: a response of a package file with no body, which the engine reads its pictures from, so that no picture
+// of a mini game could load.
+test('WX11 a package file fetched in a mini game can be read as a stream', async () => {
+  const world = miniGame({ files: { 'assets/level.json': '{"level":1}' } });
+  const result = await run(
+    world,
+    finish(`
+      const response = await fetch('assets/level.json');
+      const reader = response.body.getReader();
+      const first = await reader.read(), second = await reader.read();
+      reader.releaseLock();
+      return [response.ok, first.done, new TextDecoder().decode(first.value), second.done];
+    `)
+  );
+  assert.deepEqual([...result], [true, false, '{"level":1}', true]);
+});

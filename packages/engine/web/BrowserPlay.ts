@@ -17,7 +17,7 @@ import { createBrowserFrameLoop } from './loop.js';
 import type { BrowserGame, BrowserGameAtlasLabel, BrowserGameBackend, BrowserGameWarning } from './game.js';
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 import type { SfxRecipe } from './playSfx.js';
-import { createPlayWidgets } from './playWidgets.js';
+import { createPlayWidgets, verticalPlayWords } from './playWidgets.js';
 import { prefersReducedMotion, watchReducedMotion } from './BrowserPreferences.js';
 import { createPlayTouch } from './playTouch.js';
 import type { PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
@@ -144,6 +144,13 @@ export interface PlayTextOptions {
   readonly baseline?: 'top' | 'middle';
   /** The language of the words, as `'zh'` or `'en'`. Chosen from the words unless given. */
   readonly locale?: string;
+  /**
+   * Top to bottom, in columns from right to left, one character under another: for titles and seals. Marks such as
+   * `，。（）《》「」` turn to their upright forms. A `\n` starts a new column, and with `{ column }` that many
+   * characters at most make one. `align` and `baseline` place the whole block. Characters of one width, as Chinese
+   * and Japanese are, stand in straight columns.
+   */
+  readonly vertical?: boolean | { readonly column?: number };
 }
 /** A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. */
 export class PlayText extends Sprite {
@@ -1574,6 +1581,20 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     if (!finite(size) || size <= 0 || !colour(color)) throw invalid('a text has a size above 0 and a colour');
     if (align !== 'left' && align !== 'center' && align !== 'right')
       throw invalid("align is 'left', 'center' or 'right'");
+    const vertical = o.vertical;
+    if (
+      vertical !== undefined &&
+      typeof vertical !== 'boolean' &&
+      (vertical === null ||
+        typeof vertical !== 'object' ||
+        (vertical.column !== undefined && !(Number.isInteger(vertical.column) && vertical.column >= 1)))
+    )
+      throw invalid('vertical is true or { column } with a whole number of characters');
+    // What the label draws: the words, or their rows when written vertically.
+    const drawn = (words: string): string =>
+      vertical === undefined || vertical === false
+        ? words
+        : verticalPlayWords(words, typeof vertical === 'object' ? (vertical.column ?? Infinity) : Infinity);
     // The words are drawn on pages shared with the game's other texts, so a screen of many short texts takes few of
     // the images a frame may hold.
     let label: BrowserGameAtlasLabel | undefined,
@@ -1605,7 +1626,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           if (label === undefined) return;
           // A label's old wording must not describe an action after its semantic name changed.
           label.display.visible = false;
-          label.text = next;
+          label.text = drawn(next);
           settle();
         },
         color,
@@ -1651,8 +1672,10 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     prepareLabelVisibility();
     browser
       .createAtlasLabel({
-        text: words,
+        text: drawn(words),
         fontSize: size,
+        // A column's characters stand one under another, as close as their size.
+        ...(vertical === undefined || vertical === false ? {} : { lineHeight: size * 1.1 }),
         color,
         fontWeight: bold ? 700 : 400,
         locale: o.locale ?? (/[぀-ヿ㐀-鿿가-힯]/.test(words) ? 'zh' : 'en')
@@ -1669,7 +1692,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           node.addChild(made.display);
           labelVisibility.add(syncVisibility);
           syncVisibility();
-          if (node.text !== words) made.text = node.text;
+          if (node.text !== words) made.text = drawn(node.text);
           // What was set while the words were being made.
           if (node.color !== color || node.size !== size) made.set({ color: node.color, fontSize: node.size });
           settle();

@@ -19,7 +19,7 @@ export type {
   PlayTiles,
   PlayTilesOptions
 } from './BrowserPlay.js';
-export { PlayBar, wrapPlayWords } from './playWidgets.js';
+export { PlayBar, verticalPlayWords, wrapPlayWords } from './playWidgets.js';
 export type { PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 export { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 export { MUSIC_MOODS, MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';

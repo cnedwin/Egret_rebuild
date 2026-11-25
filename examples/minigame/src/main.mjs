@@ -163,4 +163,31 @@ probe.screen = () => ({
   canvas: { width: game.canvas.width, height: game.canvas.height }
 });
 
+// The pictures of the subpackage art/: not there until wx.loadSubpackage has downloaded them.
+probe.subpackage = async () => {
+  // The file is asked for before (a picture that failed is remembered as failed, so it is not drawn then).
+  const before = await fetch('art/seal.png').then(
+    response => (response.ok ? 'there' : 'refused: ' + response.status),
+    error => 'refused: ' + String(error.message)
+  );
+  const progress = [];
+  await new Promise((resolve, reject) => {
+    const task = wx.loadSubpackage({
+      name: 'art',
+      success: resolve,
+      fail: failure => reject(new Error(failure.errMsg))
+    });
+    task?.onProgressUpdate?.(update => progress.push(update.progress));
+  });
+  const after = await game.image('art/seal.png', { x: 660, y: 1200, width: 64, height: 64 }).then(
+    () => 'loaded',
+    error => {
+      let text = 'refused:';
+      for (let at = error; at; at = at.cause) text += ' ' + String(at.code ?? at.message);
+      return text;
+    }
+  );
+  return { before, progress, after };
+};
+
 probe.ready = true;

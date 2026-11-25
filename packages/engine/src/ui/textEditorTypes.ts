@@ -17,6 +17,20 @@ export interface UiTextEditorStyle {
   readonly backgroundColor?: number;
   readonly textAlign?: 'left' | 'right' | 'center' | 'start' | 'end';
 }
+/** Fonts for an editor as a font provider gives them, such as a set of `createBrowserEditorFontProvider`. */
+export interface UiTextEditorFontSet {
+  /** The key of the paragraph font set. */
+  readonly key: string;
+  readonly fontFamilies: readonly string[];
+}
+/**
+ * A style to give an editor: as its style, but `fontSet` may be the font set itself, whose key is taken, and whose
+ * families are taken unless `fontFamilies` is given. With a key alone, `fontFamilies` is needed.
+ */
+export interface UiTextEditorStyleInput extends Omit<UiTextEditorStyle, 'fontSet' | 'fontFamilies'> {
+  readonly fontSet: string | UiTextEditorFontSet;
+  readonly fontFamilies?: readonly string[];
+}
 /** A change to a text editor's content or selection, and what made it. */
 export interface UiTextEditorChange {
   readonly kind: 'value' | 'style';
@@ -35,7 +49,7 @@ export interface UiTextEditorOptions {
   readonly value?: string;
   readonly selection?: TextEditSelection;
   readonly maxLength?: number;
-  readonly style: UiTextEditorStyle;
+  readonly style: UiTextEditorStyleInput;
   readonly padding?: number;
   /** Minimum inner content height, independent from natural paragraph metrics. */
   readonly minHeight?: number;
@@ -73,7 +87,7 @@ export interface UiTextEditor {
   snapshot(): UiTextEditorSnapshot;
   setValue(value: string, options?: UiTextEditorSetOptions): void;
   setSelection(selection: TextEditSelection, expectedRevision?: number): void;
-  setStyle(style: UiTextEditorStyle): void;
+  setStyle(style: UiTextEditorStyleInput): void;
   /** This is the actual committed readonly source geometry, possibly preceding pending text. */
   getTextGeometry(root: UiRoot, target: UiTextEditorTarget): ParagraphTextGeometry | undefined;
   dispose(): void;

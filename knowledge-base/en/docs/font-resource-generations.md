@@ -6,6 +6,8 @@ This bounded M2.1/M3.2 increment connects reproducible font artifacts to readonl
 
 ## Build and load
 
+**Node 26.7.0 exactly.** Fonts are built by the same content build as pictures, with Node 26.7.0, the version `package.json` pins, and pngjs 7.0.0. On another Node, `buildContentProject` refuses with `CONTENT_IMPORT_PRODUCER`, whose message names the version it found. This is not for a feature of the newer Node. The producer's versions are part of every artifact's build key and of the project's recipes, and compressed images depend on the zlib of the Node that wrote them. Another version would build artifacts that the recorded keys and recipes do not match. Building is the only step that needs it: a built font set loads in any browser or mini game the engine runs in.
+
 The content recipe importer is egret.font 1.0.0, with artifact format egret.font/1 and settings {family, flavor}. Flavor is truetype or opentype; the source is a standalone TTF or OTF face. The artifact preserves the exact source bytes and SHA-256. Existing build keys, provenance, immutable cache generations and ProjectStore adoption remain authoritative. A family is an explicit runtime alias, not a renamed font file.
 
 The producer checks the bounded SFNT directory, required tables and declared flavor. Native decoding owns glyph semantics. This is not a complete untrusted-font sanitizer, variable-axis API, collection/WOFF decoder, font converter or subsetter. Sources must have actual usage and redistribution rights.

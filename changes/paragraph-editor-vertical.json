@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "One paragraph cache explained, editors that take a font set, vertical titles, and the Node of content builds",
+    "body": "A second paragraph or text cache on one asset manager is refused with a message that says why: one cache for the manager's life, shared by every paragraph, leaf, label and editor. createUiTextEditor and setStyle take the font set of createBrowserEditorFontProvider itself as style.fontSet, with its families. game.text of play takes { vertical: true } or { vertical: { column } } for titles and seals: top to bottom, columns from right to left, marks turned upright. A content build on another Node than 26.7.0 is refused with the version found and why: the producer's versions are part of every build key and recipe."
+  },
+  "zh": {
+    "title": "说明“一个段落缓存”、编辑器接受字体集、竖排标题，以及内容构建所需的 Node",
+    "body": "在同一个资源管理器上再建段落缓存或文本缓存时，拒绝信息会说明原因：一个管理器在整个生命周期里只有一个缓存，所有段落、叶子、标签和编辑器共用。createUiTextEditor 和 setStyle 的 style.fontSet 可以直接传 createBrowserEditorFontProvider 的字体集，连同它的字体族。play 的 game.text 接受 { vertical: true } 或 { vertical: { column } }，用于标题和印文：从上往下写，各列从右往左，标点转成竖排形式。在 26.7.0 以外的 Node 上做内容构建时，拒绝信息会写出看到的版本和原因：生成者的版本是每个构建键和配方的一部分。"
+  }
+}

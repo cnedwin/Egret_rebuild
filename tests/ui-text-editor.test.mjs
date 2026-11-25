@@ -248,3 +248,21 @@ test('virtual UI editor reuses row ownership and real source generations', async
   assert.equal(root.state, 'closed');
   assert.equal(s.cache.getStatus().callerLeases, 0);
 });
+
+// Break caught: a font set that has to be taken apart into its key and its families before an editor takes it, the
+// assembly a game got wrong when a set was replaced.
+test('UI text editor takes a font set itself: its key and families, unless families are given', async t => {
+  const s = await setup(t);
+  const set = Object.freeze({ key: 'unit-fonts', fontFamilies: Object.freeze(['Unit']), identities: ['u1'] });
+  const { fontSet: _key, fontFamilies: _families, ...rest } = style;
+  const editor = createUiTextEditor({ ...s, mode: 'single-line', value: 'AB', style: { ...rest, fontSet: set } });
+  assert.equal(editor.snapshot().style.fontSet, 'unit-fonts');
+  assert.deepEqual([...editor.snapshot().style.fontFamilies], ['Unit']);
+  // Families given beside the set are the ones used.
+  editor.setStyle({ ...rest, fontSet: set, fontFamilies: ['Unit', 'Fallback'] });
+  assert.deepEqual([...editor.snapshot().style.fontFamilies], ['Unit', 'Fallback']);
+  // A key alone still needs its families; a set with no key is refused.
+  assert.throws(() => editor.setStyle({ ...rest, fontSet: 'unit-fonts' }));
+  assert.throws(() => editor.setStyle({ ...rest, fontSet: { fontFamilies: ['Unit'] } }));
+  editor.dispose();
+});

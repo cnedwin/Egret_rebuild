@@ -194,6 +194,10 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   BROWSER_TEXT_INPUT_SURFACE: '交给浏览器文本输入的画布不是它能使用的画布。',
   DISPLAY_SUBTREE_OVERLAP: '两个预备的显示子树共用了同一个节点。',
   DISPLAY_SUBTREE_TARGET_DETACHED: '预备的显示子树的目标已经不在舞台上。',
+  PARAGRAPH_CACHE_ALREADY_CREATED:
+    '一个资源管理器在整个生命周期里只有一个段落缓存，它的引擎里所有段落、UI 叶子和文本编辑器共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。再建一个只会用另一份预算保存同样的光栅。',
+  TEXT_CACHE_ALREADY_CREATED:
+    '一个资源管理器在整个生命周期里只有一个文本缓存，它的引擎里所有文本字段和标签共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。浏览器游戏会为它的标签创建这个缓存。',
   PARAGRAPH_FONT_SET_IDENTITY_COLLISION: '段落字体集中有两个字体的标识相同。',
   PARAGRAPH_FONT_SET_PROVIDER: '交给段落字体集的提供者无效。',
   SEQUENCE_RESET_NOT_PREPARED: '序列重置槽还没有预备。',

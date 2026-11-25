@@ -724,7 +724,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
-| `PARAGRAPH_CACHE_ALREADY_CREATED` | 段落缓存已经创建过了。 |
+| `PARAGRAPH_CACHE_ALREADY_CREATED` | 一个资源管理器在整个生命周期里只有一个段落缓存，它的引擎里所有段落、UI 叶子和文本编辑器共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。再建一个只会用另一份预算保存同样的光栅。 |
 | `PARAGRAPH_CACHE_BUDGET` | 超出了段落缓存的一项上限。 |
 | `PARAGRAPH_CACHE_CLOSED` | 段落缓存已关闭，不再接受任何操作。 |
 | `PARAGRAPH_CACHE_INVALID` | 交给段落缓存的内容无效。 |
@@ -1063,7 +1063,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
-| `TEXT_CACHE_ALREADY_CREATED` | 文本缓存已经创建过了。 |
+| `TEXT_CACHE_ALREADY_CREATED` | 一个资源管理器在整个生命周期里只有一个文本缓存，它的引擎里所有文本字段和标签共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。浏览器游戏会为它的标签创建这个缓存。 |
 | `TEXT_CACHE_BUDGET` | 超出了文本缓存的一项上限。 |
 | `TEXT_CACHE_CLEANUP_FAILED` | 清理文本缓存时失败。各个原因在 cleanupErrors 中。 |
 | `TEXT_CACHE_CLOSED` | 文本缓存已关闭，不再接受任何操作。 |
