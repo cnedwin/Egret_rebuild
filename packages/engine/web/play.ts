@@ -24,5 +24,5 @@ export type { PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions 
 export { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 export { MUSIC_MOODS, MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
 export type { MusicMood, MusicOptions, MusicPart, MusicPiece } from './playMusic.js';
-export type { PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
+export type { PlayFloatingStickOptions, PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
 export type { SfxRecipe, SfxTone, SfxWave } from './playSfx.js';

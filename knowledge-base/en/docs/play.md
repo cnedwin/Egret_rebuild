@@ -306,6 +306,28 @@ game.music.intensity = lanterns / 3;                          // parts come in a
 
 A menu or a box of words that the first `setup` awaits starts the frames as it opens, so it is seen and answered. Otherwise the frames start when `setup` has finished, as before.
 
+### Floating touch stick
+
+Pass `floating` to let the player set the stick's center by touching anywhere in a battlefield region. This example leaves the top-right pause button available to normal input.
+
+```js
+game.button('Pause', { x: 444, y: 28, width: 64, height: 48 }, () => game.pause());
+game.touchStick({
+  radius: 48,
+  floating: {
+    area: { x: 0, y: 0, width: 480, height: 270 },
+    deadZonePx: 8,
+    exclude: (x, y) => x >= 412 && y <= 52,
+  },
+});
+```
+
+`area` and `exclude(x, y)` use the same game coordinates as `game.button()`. Pass a function returning the area when it follows a responsive layout. `radius` controls the stick's reach in game units. `deadZonePx` defaults to 8 and is measured in CSS pixels from the starting point, so canvas scaling and device pixel ratio leave the dead zone the same size on the page. Read the result through `game.keys.axis()`.
+
+The ring appears during an owned touch. The first eligible touch keeps steering outside the canvas, and a second touch can operate a separate control. Lifting the owner, canceling its contact, or pausing clears the stick's contribution immediately. Opening a modal, dialogue or menu clears it before the next input step. After the game resumes or the modal closes, movement requires a fresh touch. Omit `floating` to use the fixed stick with `x`, `y` and `always`.
+
+Build the workspace, then run `node examples/play/verify-floating-stick.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [webgl2|webgpu]`. The fixture uses Chromium's touch input protocol to check the CSS dead zone on a scaled canvas, ownership, capture outside the canvas, pause and resume, and stationary touch retirement when a modal or menu opens.
+
 ## Chance and saves
 
 `game.random` gives numbers that repeat for the same `seed`: `int(1, 6)`, `range(0, 1)`, `chance(0.25)`, `pick(list)`, and `shuffle(list)`, which gives a new list and leaves the one it was given.

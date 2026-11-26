@@ -599,7 +599,7 @@ export interface PlayGame {
   request<A extends unknown[], R>(send: (...args: A) => R | Promise<R>): Request<A, R>;
   /**
    * A stick on the glass, near the bottom left unless placed, that counts in `keys.axis()`. It is shown once a finger
-   * has touched the stage, or at once with `always`.
+   * has touched the stage, or at once with `always`. Set `floating.area` to start at each admitted fresh touch.
    */
   touchStick(options?: PlayStickOptions): Sprite;
   /** A round button on the glass that holds a key while a finger is on it: `keys.down('space')` sees it. */
@@ -1040,6 +1040,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     }
   };
   const letGo = (): void => {
+    touch.cancelFloating('blur');
     touch.cancel();
     touchHeld.clear();
     touchStick.x = touchStick.y = 0;
@@ -1821,6 +1822,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         }
     }
     endRemoved();
+    touch.sync();
     wentDown.clear();
     cameUp.clear();
     point.pressed = false;
@@ -1864,6 +1866,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       padSampled = false;
     }
     if (padSampled) pollPadButtons();
+    // A modal may open between steps while the floating stick's owner stays down.
+    touch.sync();
     if (disposed || version !== generation || playLoop.state !== 'running') {
       endFrame();
       return;
@@ -2600,6 +2604,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     pause() {
       paused = true;
+      touch.cancelFloating();
       for (const each of loops) each.hold(true);
     },
     resume() {
@@ -2689,12 +2694,19 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       setupRequest?.reject(new EgretError('SCOPE_CLOSED'));
       setupRequest = undefined;
       void (async () => {
+        let touchFailure: { cause: unknown } | undefined;
+        try {
+          touch.cancelFloating('dispose');
+        } catch (cause) {
+          touchFailure = { cause };
+        }
         try {
           stopLoops();
           resizeObserver?.disconnect();
           for (const [target, type, listener] of listening) target.removeEventListener(type, listener);
           if (addedTabIndex && surface.getAttribute('tabindex') === '0') surface.removeAttribute('tabindex');
           await browser.dispose();
+          if (touchFailure !== undefined) throw touchFailure.cause;
         } finally {
           holder?.remove();
         }
@@ -2735,6 +2747,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     toStage: (x, y) => {
       const at = browser.toStage(x, y);
       return { x: at.x - shown.designRect.x, y: at.y - shown.designRect.y };
+    },
+    cssScale() {
+      const box = surface.getBoundingClientRect();
+      return { x: box.width / browser.frame.width, y: box.height / browser.frame.height };
+    },
+    allowFloating: () => !disposed && !paused && !widgets.asking && !views.modalActive,
+    failed: cause => {
+      failure ??= { cause };
     },
     layer: glass
   });

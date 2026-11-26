@@ -1,14 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { DisplayObject, DisplayObjectContainer, EgretError, Event, createEventType } from '@egret/runtime';
 import { createPointerRouter } from '@egret/runtime/input';
-import type {
-  PointerRouter,
-  PointerContact,
-  PointerSession,
-  PointerSample,
-  PointerUpdate,
-  PointerCancelReason
-} from '@egret/runtime/input';
+import type { PointerRouter, PointerContact, PointerUpdate, PointerCancelReason } from '@egret/runtime/input';
 import type { MouseInputEnginePort } from './mouseInput.js';
 import type { Diagnostic } from '@egret/contracts';
 import { requireMouseInputEngine } from './internal/mouseInputFactoryState.js';
@@ -17,7 +10,9 @@ import type {
   PointerInput,
   PointerInputOptions,
   PointerInputEvents,
-  PointerNotification
+  PointerNotification,
+  PointerSample,
+  PointerSession
 } from './pointerInputTypes.js';
 export type {
   PointerInput,
@@ -40,24 +35,18 @@ const parent = getter(DisplayObject.prototype, 'parent'),
   visible = getter(DisplayObject.prototype, 'visible');
 const touch = getter(DisplayObject.prototype, 'touchEnabled'),
   children = getter(DisplayObjectContainer.prototype, 'touchChildren');
+type BrowserBeginClaim = (
+  sample: PointerSample,
+  target: PointerNotification['target']
+) => PointerNotification['target'];
 interface SurfaceBinding {
   readonly surface: object;
   report(cause: unknown): void;
   onClose(callback: () => void): () => void;
+  begin(sample: PointerSample, claimed: () => void): PointerSession | undefined;
+  claimBegin(callback: BrowserBeginClaim): () => void;
 }
 const bindings = new WeakMap<object, SurfaceBinding>();
-// Keep browser-only references in a separate closure, released with its binding.
-function surfaceBinding(
-  surface: object,
-  report: (diagnostic: Diagnostic) => void,
-  onClose: SurfaceBinding['onClose']
-): SurfaceBinding {
-  return Object.freeze({
-    surface,
-    onClose,
-    report: (cause: unknown) => report({ code: 'POINTER_INPUT_HOST_FAILED', phase: 'engine', severity: 'error', cause })
-  });
-}
 
 /** Private browser assembly authority; never exported by the optional public entry. */
 export function bindPointerSurface(input: PointerInput): SurfaceBinding {
@@ -112,6 +101,8 @@ export function createPointerInput(options: PointerInputOptions): PointerInput {
     input: PointerInput,
     closed = false;
   let releaseEngine: (() => void) | undefined;
+  let browserClaim: BrowserBeginClaim | undefined;
+  let browserBegin: { readonly sample: PointerSample; readonly claimed: () => void } | undefined;
   let calls = 0;
   const eligible = (target: DisplayObject): boolean => {
     if (owner === undefined || scope === undefined || operations === undefined) return false;
@@ -157,6 +148,8 @@ export function createPointerInput(options: PointerInputOptions): PointerInput {
     scope = undefined;
     operations = undefined;
     observer = undefined;
+    browserClaim = undefined;
+    browserBegin = undefined;
     listeners.clear();
     if (failed) throw new EgretError('POINTER_INPUT_CLEANUP_FAILED', { cause: first, cleanupErrors: cleanup });
   }
@@ -196,7 +189,15 @@ export function createPointerInput(options: PointerInputOptions): PointerInput {
     pick: (x, y) => {
       owner!.assertReady();
       scope!.assertOpen();
-      return operations!.pick(x, y, maxNodes);
+      const native = browserBegin;
+      browserBegin = undefined;
+      const target = operations!.pick(x, y, maxNodes);
+      // Browser overlays can own one native down before any shared gesture sees the original target.
+      if (native === undefined || browserClaim === undefined) return target;
+      const claimed = browserClaim(native.sample, target);
+      if (claimed === undefined) return target;
+      native.claimed();
+      return claimed;
     },
     eligible,
     dispatch: (kind, contact, target, reason) =>
@@ -315,17 +316,40 @@ export function createPointerInput(options: PointerInputOptions): PointerInput {
     releaseEngine = owner.onClose(retire);
     scope.add(retire);
     scope.use(input);
+    const report: (diagnostic: Diagnostic) => void = owner.report;
     bindings.set(
       input,
-      surfaceBinding(owner.surface, owner.report, (callback: () => void): (() => void) => {
-        if (closed) {
-          callback();
-          return () => {};
+      Object.freeze<SurfaceBinding>({
+        surface: owner.surface,
+        report: cause => report({ code: 'POINTER_INPUT_HOST_FAILED', phase: 'engine', severity: 'error', cause }),
+        onClose(callback) {
+          if (closed) {
+            callback();
+            return () => {};
+          }
+          closers.add(callback);
+          return () => {
+            closers.delete(callback);
+          };
+        },
+        begin(sample, claimed) {
+          if (browserClaim === undefined) return input.begin(sample);
+          const previous = browserBegin;
+          browserBegin = { sample, claimed };
+          try {
+            return input.begin(sample);
+          } finally {
+            browserBegin = previous;
+          }
+        },
+        claimBegin(callback) {
+          if (closed) throw new EgretError('POINTER_INPUT_CLOSED');
+          if (browserClaim !== undefined) throw new EgretError('POINTER_INPUT_SURFACE_BUSY');
+          browserClaim = callback;
+          return () => {
+            if (browserClaim === callback) browserClaim = undefined;
+          };
         }
-        closers.add(callback);
-        return () => {
-          closers.delete(callback);
-        };
       })
     );
     owner.assertReady();
