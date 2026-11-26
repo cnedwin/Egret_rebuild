@@ -243,6 +243,8 @@ A thing has `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `sca
 
 In a checkout, `node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs]` runs the page in a headless browser, plays it blind with keys, clicks and drags, and reports whether it started without an error, drew, kept running, changed under input and made a sound. Run it after writing or changing a game, and read the three pictures it saves. For a 3D model made in code, `node tools/model-preview.mjs <absolute Playwright index.mjs> <model.mjs> <picture.png>` draws it from four sides; look at it after each change.
 
+For an editable game, use [`node tools/agent-playtest.mjs`](knowledge-base/en/docs/agent-guide.md#run-a-playtest-and-retry-a-project-edit) to check the first meaningful action and restart. Read the diagnostic before making a scoped project transaction, then retry the same scenario. Preview the passing build by QR on a phone.
+
 Blind play does not reach a win or a loss. The optional `play.mjs` plays the game as a person would, in the stage's own units, and reads the page by the colour at a place. It starts a new game, with what blind play saved forgotten. `player.until(test, label, seconds)` looks about every 0.12 seconds of real time until `test(look)` is true and fails after `seconds`, 20 unless given; `player.wait(seconds)` waits. What a game keeps on `window` (`window.state = state`) is read with `player.read(() => window.state.collected)`, so a script need not time its moves:
 
 ```js
