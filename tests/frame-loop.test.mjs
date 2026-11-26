@@ -639,3 +639,102 @@ test('a throwing retry decision preserves both errors and stops the loop', () =>
   assert.equal(errors[0].code, 'FRAME_LOOP_RENDER_RETRY_FAILED');
   assert.deepEqual(errors[0].cause.errors, [fault, decision]);
 });
+
+test('throwing reentrant presentation callbacks cannot resurrect a disposed loop or leave a queued restart', () => {
+  for (const stage of ['prepare', 'retry'])
+    for (const operation of ['dispose', 'restart']) {
+      const screen = display(),
+        engine = recorder(),
+        fault = new Error(stage),
+        errors = [];
+      let loop;
+      const reentry = () => {
+        if (operation === 'dispose') loop.dispose();
+        else {
+          loop.stop();
+          loop.start();
+        }
+        throw fault;
+      };
+      loop = createBrowserFrameLoop({
+        engine:
+          stage === 'retry'
+            ? {
+                ...engine,
+                renderSharedFrame() {
+                  throw new Error('render');
+                }
+              }
+            : engine,
+        frame: FRAME,
+        ...(stage === 'prepare'
+          ? { beforeRender: reentry }
+          : { renderRetry: { maxConsecutive: 1, shouldRetry: reentry } }),
+        onError: error => errors.push(error),
+        ...screen
+      });
+      loop.start();
+      screen.present(0);
+      assert.equal(loop.state, operation === 'dispose' ? 'closed' : 'failed', stage + ':' + operation);
+      assert.equal(screen.waiting, false);
+      assert.equal(errors.length, 1);
+      if (stage === 'retry') {
+        assert.equal(errors[0].code, 'FRAME_LOOP_RENDER_RETRY_FAILED');
+        assert.equal(errors[0].cause.errors[1], fault);
+      } else assert.equal(errors[0], fault);
+      if (operation === 'dispose') assert.throws(() => loop.start(), coded('FRAME_LOOP_CLOSED'));
+      loop.dispose();
+    }
+});
+
+test('restart during clock, update, wanted-frame or Host admission does not run old presentation work', () => {
+  for (const stage of ['clock', 'update', 'wanted', 'host']) {
+    const screen = display(),
+      engine = recorder();
+    let loop,
+      restarted = false,
+      prepared = 0;
+    const restart = where => {
+      if (stage === where && !restarted) {
+        restarted = true;
+        loop.stop();
+        loop.start();
+      }
+    };
+    const advance = engine.advanceTime;
+    engine.advanceTime = function (t) {
+      advance.call(this, t);
+      restart('clock');
+    };
+    loop = createBrowserFrameLoop({
+      engine,
+      frame: FRAME,
+      update() {
+        restart('update');
+      },
+      shouldRender() {
+        restart('wanted');
+        return true;
+      },
+      host: {
+        getStatus() {
+          restart('host');
+          return { pendingFrames: 0 };
+        }
+      },
+      beforeRender() {
+        prepared++;
+      },
+      ...screen
+    });
+    loop.start();
+    screen.present(0);
+    assert.equal(prepared, 0, stage);
+    assert.equal(loop.snapshot().frames, 0);
+    assert.equal(screen.waiting, true);
+    screen.present(16);
+    assert.equal(prepared, 1);
+    assert.equal(loop.snapshot().frames, 1);
+    loop.dispose();
+  }
+});

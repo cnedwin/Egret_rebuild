@@ -143,6 +143,8 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
     frames = 0,
     skipped = 0,
     failure: unknown;
+  const currentTick = (): boolean => state === 'running' && handle === undefined;
+  const isClosed = (): boolean => state === 'closed';
   const tick = (milliseconds: number): void => {
     handle = undefined;
     if (state !== 'running') return;
@@ -158,20 +160,23 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
         seconds += delta;
         engine.advanceTime(seconds);
         steps++;
+        if (!currentTick()) return;
         update?.(delta);
         // The update may have stopped or disposed the loop.
-        if (state !== 'running') return;
+        if (!currentTick()) return;
         if (!(owed > 1e-9)) break;
       }
       const wantsFrame = shouldRender?.() ?? true;
-      if (state !== 'running') return;
+      if (!currentTick()) return;
       if (wantsFrame) {
-        if (host !== undefined && host.getStatus().pendingFrames >= limit) skipped++;
+        const pending = host?.getStatus().pendingFrames;
+        if (!currentTick()) return;
+        if (pending !== undefined && pending >= limit) skipped++;
         else {
           beforeRender?.();
-          if (state !== 'running' || handle !== undefined) return;
+          if (!currentTick()) return;
           const optionsForFrame = typeof frame === 'function' ? (frame as () => F)() : frame;
-          if (state !== 'running' || handle !== undefined) return;
+          if (!currentTick()) return;
           try {
             engine.renderSharedFrame(optionsForFrame);
             frames++;
@@ -190,7 +195,7 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
                   });
                 }
               }
-              if (state !== 'running' || handle !== undefined) return;
+              if (!currentTick()) return;
               if (!retry) throw error;
               consecutiveRenderFailures = attempt;
               recoveredRenderFailures++;
@@ -200,10 +205,24 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
       }
       if (state === 'running' && handle === undefined) handle = request(tick);
     } catch (error) {
-      state = 'failed';
-      failure = error;
-      if (onError === undefined) throw error;
-      onError(error);
+      // A callback may have disposed the loop or explicitly queued a restart
+      // before throwing. An error must not resurrect disposal or leave that request live.
+      if (!isClosed()) state = 'failed';
+      const queued = handle;
+      handle = undefined;
+      let reported = error;
+      if (queued !== undefined) {
+        try {
+          cancel(queued);
+        } catch (cancelError) {
+          reported = new EgretError('FRAME_LOOP_CANCEL_FAILED', {
+            cause: new AggregateError([error, cancelError], 'Frame failure and queued-request cancellation failed')
+          });
+        }
+      }
+      failure = reported;
+      if (onError === undefined) throw reported;
+      onError(reported);
     }
   };
   const stop = (): void => {
