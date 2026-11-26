@@ -339,7 +339,8 @@ function createBindings(sdk, game, options) {
     REMOVED_FROM_STAGE: removed,
     COMPLETE: 'complete',
     CHANGE: 'change',
-    CHANGING: 'changing'
+    CHANGING: 'changing',
+    RESIZE: 'resize'
   });
   const opening = [];
   const labels = new WeakMap();
@@ -891,19 +892,23 @@ function createBindings(sdk, game, options) {
     }
   }
 
+  // The stage is as large as the screen plan makes it: the design with showAll, noBorder and exactFit, and as Egret 5
+  // sized it with the fixed modes, where it changes with the window and tells of it with Event.RESIZE.
+  const stageWidth = () => game.screen?.width ?? options.width;
+  const stageHeight = () => game.screen?.height ?? options.height;
   class Stage extends Container {
     get stageWidth() {
-      return options.width;
+      return stageWidth();
     }
 
     get stageHeight() {
-      return options.height;
+      return stageHeight();
     }
   }
 
   stage = game.scope.use(new Stage());
   stage.touchEnabled = true;
-  stage.hitArea = { x: 0, y: 0, width: options.width, height: options.height };
+  stage.hitArea = { x: 0, y: 0, width: stageWidth(), height: stageHeight() };
   game.stage.addChild(stage);
   // Egret 5 hit-tests each move/end. Dragging a piece releases on the square or piece under the finger.
   if (game.pointer.events.begin) {
@@ -942,8 +947,30 @@ function createBindings(sdk, game, options) {
       stageOf,
       observe,
       events: { complete, creationComplete, change, changing, itemTap, collectionChange, propertyChange },
-      stageSize: { width: options.width, height: options.height }
+      stageSize: {
+        get width() {
+          return stageWidth();
+        },
+        get height() {
+          return stageHeight();
+        }
+      }
     });
+  // A new stage size: the stage's hit area, the layout of every EUI root against it, then Event.RESIZE, as in Egret 5.
+  let lastSize = stageWidth() + 'x' + stageHeight();
+  const stopScreen = game.onScreenChange?.(() => {
+    const size = stageWidth() + 'x' + stageHeight();
+    if (size === lastSize || stage.isDisposed) return;
+    lastSize = size;
+    stage.hitArea = { x: 0, y: 0, width: stageWidth(), height: stageHeight() };
+    ui?.resize();
+    try {
+      stage.dispatchEventWith(LegacyEvent.RESIZE);
+    } catch (error) {
+      report(error);
+    }
+  });
+  if (stopScreen) game.scope.signal.addEventListener('abort', stopScreen, { once: true });
   const dragonBones = options.nativeBones
     ? createLegacyBones({ sdk, game, Container, getTexture: value => textures.get(value) })
     : undefined;

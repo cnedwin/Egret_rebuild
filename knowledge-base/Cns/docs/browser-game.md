@@ -76,7 +76,7 @@ game.loop.start();
 
 **给工具的告警。** 页面的 `globalThis.__egretAgent` 上有 `warning(warning)` 函数时，无论游戏有没有给 `onWarning`，每条告警也会告诉它。`tools/verify-game.mjs` 在游戏启动前放上这个对象，并在报告的 `engineWarnings` 里列出收到的告警，这样智能体能看到接近上限的帧、每帧新建的文字这类游戏自己没有要求告知的问题。这个函数抛出的错误属于工具自己，不会再告知。
 
-**画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。`'cover'` 和 `'stretch'` 时舞台保持自己单位的宽高。`'contain'` 和 `'expand'` 时舞台跟随[屏幕适配的结果](screen-fit.md)：`game.screen` 是当前结果，`game.onScreenChange(listener)` 在结果变化时通知，舞台在高窗口时换成竖版尺寸，`'expand'` 时一直延伸到元素边缘。任何模式下指针位置都跟随画布。
+**画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。`'cover'` 和 `'stretch'` 时舞台保持自己单位的宽高。`'contain'`、`'expand'` 和白鹭 5 的 fixed 模式下，舞台跟随[屏幕适配的结果](screen-fit.md)：`game.screen` 是当前结果，`game.onScreenChange(listener)` 在结果变化时通知，舞台在高窗口时换成竖版尺寸，`'expand'` 和 fixed 模式下铺满元素。`wholeScale: true` 时每个单位是整数个设备像素，适合像素风。任何模式下指针位置都跟随画布。
 `game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。
 
 **触控区。** 手指大约需要 44 个 CSS 像素。`game.unitsPerCssPixel` 是按画布当前显示大小，一个 CSS 像素等于多少舞台单位；`game.padHitArea(node, cssPixels = 44)` 给节点一个至少这么大的点击区域，以它画出的内容为中心，且不小于画出的内容，所以手机上缩小显示的画布里，一个 20 单位的图标也容易按到。祖先节点缩放、镜像或旋转时，点击区域仍覆盖所需的 CSS 正方形。修改节点或祖先的变换、绘制边界或画布尺寸后，请重新调用。如果变换把图标压成一条线或一个点，屏幕上就没有二维点击区域。
@@ -88,7 +88,7 @@ game.loop.start();
 | `canvas` | 用来绘制的画布。它在屏幕上的大小由页面决定 | 必填 |
 | `width`、`height` | 舞台大小，使用游戏自己的单位：大于 0 的整数 | 必填 |
 | `backend` | `'auto'`、`'webgpu'` 或 `'webgl2'` | `'auto'` |
-| `pixelRatio` | 画布自身宽度的每个单位对应多少画布像素 | 设备的像素比，最多 2 |
+| `pixelRatio` | 画布自身宽度的每个单位对应多少画布像素 | 设备的像素比，最多 2；`wholeScale` 时为 1，且不接受其他值 |
 | `clearColor`、`clearAlpha` | 每帧先清成什么颜色 | `0x000000` 和 1 |
 | `update(seconds)` | 游戏的一步，在每帧之前调用 | 没有这一步 |
 | `onWarning(warning)` | 告知接近图片上限的帧、因超限没画的帧、接近文本缓存上限的 label，以及没画出来的文字：`{ code, message, usage?, cause? }` | 不告知 |
@@ -96,8 +96,9 @@ game.loop.start();
 | `pointer`、`keyboard` | 给 `false` 则不创建该输入 | 两者都创建 |
 | `hover` | 给 `true` 则创建悬停和滚轮输入，即 `game.hover`；只有这时才加载它的模块 | 不创建悬停输入 |
 | `stats` | 给 `true` 则显示面板 | 没有面板 |
-| `fit`、`fitTo` | 画布怎样填充一个元素：`'contain'` 完整放入，`'cover'` 盖满，`'stretch'` 拉伸成它的形状，`'expand'` 用围绕设计区域延伸的舞台铺满它。`fitTo` 就是那个元素 | `'none'`，以及画布的父元素 |
-| `portrait`、`insets` | 在 `'contain'` 或 `'expand'` 下：元素高大于宽时的舞台大小，以及挡住边缘的部分（CSS 像素）。见[把舞台适配到屏幕](screen-fit.md) | `width` × `height`，以及页面的 `safe-area-inset` 值 |
+| `fit`、`fitTo` | 画布怎样填充一个元素：`'contain'` 完整放入，`'cover'` 盖满，`'stretch'` 拉伸成它的形状，`'expand'` 用围绕设计区域延伸的舞台铺满它，或按白鹭 5 的 `'fixedWidth'`、`'fixedHeight'`、`'fixedNarrow'`、`'fixedWide'`。`fitTo` 就是那个元素 | `'none'`，以及画布的父元素 |
+| `portrait`、`insets` | 在 `'none'`、`'cover'`、`'stretch'` 以外的模式下：元素高大于宽时的舞台大小，以及挡住边缘的部分（CSS 像素）。见[把舞台适配到屏幕](screen-fit.md) | `width` × `height`，以及页面的 `safe-area-inset` 值 |
+| `wholeScale` | 同样的模式下：每个单位是整数个设备像素，画布按每单位一个像素绘制并清晰放大，其余部分是黑边 | `false` |
 | `autoStart` | 给 `false` 则由 `game.loop.start()` 启动循环 | 循环立即启动 |
 
 无效的选项在创建任何东西之前就以 `BROWSER_GAME_OPTIONS_INVALID` 被拒绝。

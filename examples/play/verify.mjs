@@ -750,7 +750,7 @@ await scenario(
   480,
   320,
   async (page, stage, row) => {
-    row.screenFit = await verifyScreenFit(page);
+    row.screenFit = await verifyScreenFit(page, PNG);
   }
 );
 

@@ -1912,6 +1912,10 @@ export function createLegacyEui({
     beginMount() {
       mounting++;
     },
+    // The stage changed size: every root is laid out again against it, as a UILayer follows the stage in Egret 5.
+    resize() {
+      for (const node of [...liveNodes]) if (!node.isDisposed && !states.has(node.parent)) requestLayout(node);
+    },
     endMount() {
       if (--mounting === 0) flushLayout();
     },

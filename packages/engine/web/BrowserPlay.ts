@@ -60,9 +60,17 @@ export interface PlayOptions {
    * `'contain'` unless given: the stage is `width` × `height`, with bars where the window is of another shape.
    * `'expand'`: the same scale, and the stage reaches to the edges of the window, so `game.screen` is larger than
    * `width` × `height` on two sides. `(0, 0)` stays the corner of the design, so a game laid out for its size stays in
-   * the middle; place what belongs at an edge from `game.screen` or `game.safe`, in `arrange`.
+   * the middle; place what belongs at an edge from `game.screen` or `game.safe`, in `arrange`. `'fixedWidth'`,
+   * `'fixedHeight'`, `'fixedNarrow'` and `'fixedWide'` fill the window as the stage scale modes of Egret 5 did; with
+   * them `game.screen` may be smaller than the design on one side (see `planScreen` of `@egret/engine/web/screen`).
    */
-  readonly fit?: 'contain' | 'expand';
+  readonly fit?: 'contain' | 'expand' | 'fixedWidth' | 'fixedHeight' | 'fixedNarrow' | 'fixedWide';
+  /**
+   * When true, a game unit covers a whole number of the device's pixels, the canvas is drawn at a pixel a unit and
+   * enlarged without smoothing, and what that leaves of the window is bars: for pixel art. `pixelRatio` is then 1.
+   * Only for a canvas of play's own. False unless given.
+   */
+  readonly wholeScale?: boolean;
   /**
    * The stage while the window is taller than it is wide: whole numbers above 0. `width` and `height` then follow the
    * window's shape, and `arrange` is called when it turns.
@@ -833,7 +841,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     throw invalid("renderMode is 'continuous' or 'on-demand'");
   if (onError !== undefined && typeof onError !== 'function') throw invalid('onError is a function');
   const fitAsked = options.fit ?? 'contain';
-  if (fitAsked !== 'contain' && fitAsked !== 'expand') throw invalid("fit is 'contain' or 'expand'");
+  if (!['contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide'].includes(fitAsked))
+    throw invalid("fit is 'contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow' or 'fixedWide'");
+  const wholeScale = options.wholeScale ?? false;
+  if (typeof wholeScale !== 'boolean') throw invalid('wholeScale is true or false');
+  if (wholeScale && (options.canvas !== undefined || (options.pixelRatio !== undefined && options.pixelRatio !== 1)))
+    throw invalid('wholeScale needs a canvas of play itself, drawn at pixelRatio 1');
   if (
     options.portrait !== undefined &&
     (options.portrait === null ||
@@ -903,7 +916,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
 
   let api: PlayGame | undefined;
   const deviceDensity = Number(globalThis.devicePixelRatio);
-  const playDensity = options.pixelRatio ?? (deviceDensity > 0 ? Math.min(deviceDensity, 2) : 1);
+  const playDensity = options.pixelRatio ?? (wholeScale ? 1 : deviceDensity > 0 ? Math.min(deviceDensity, 2) : 1);
   const baseBrowser = await createBrowserGame({
     canvas: surface,
     width,
@@ -916,7 +929,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     ...(options.staticLayers === undefined ? {} : { staticLayers: options.staticLayers }),
     autoStart: false,
     keyboard: false,
-    ...(holder === undefined ? {} : { fit: fitAsked, fitTo: holder }),
+    ...(holder === undefined ? {} : { fit: fitAsked, fitTo: holder, ...(wholeScale ? { wholeScale } : {}) }),
     ...(options.portrait === undefined ? {} : { portrait: options.portrait }),
     ...(options.insets === undefined ? {} : { insets: options.insets }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),

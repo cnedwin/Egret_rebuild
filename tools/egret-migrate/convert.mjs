@@ -157,7 +157,9 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
     ![repairedData.stage.width, repairedData.stage.height].every(
       size => Number.isInteger(size) && size > 0 && size <= 8192
     ) ||
-    !['contain', 'cover', 'stretch'].includes(repairedData.stage.fit)
+    !['contain', 'cover', 'stretch', 'fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide'].includes(
+      repairedData.stage.fit
+    )
   ) {
     refuse('MIGRATE_REBUILD_REQUIRED', 'Resource layout changes require a new conversion.');
   }
