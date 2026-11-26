@@ -13,11 +13,11 @@ if (
   !output ||
   !executablePath ||
   ![playwrightFile, output, executablePath].every(file => path.isAbsolute(file)) ||
-  !['all', 'visibility', 'scroll', 'host', 'rich'].includes(selection) ||
+  !['all', 'visibility', 'scroll', 'host', 'rich', 'activation', 'semantics-geometry'].includes(selection) ||
   process.argv.length > 6
 ) {
   throw new Error(
-    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich]'
+    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|activation|semantics-geometry]'
   );
 }
 
@@ -51,7 +51,14 @@ try {
   const cases = [
     { id: 'visibility', file: './verify-view-visibility.mjs', method: 'verifyViewVisibility', touch: false },
     { id: 'scroll', file: './verify-view-scroll.mjs', method: 'verifyViewScroll', touch: true },
-    { id: 'host', file: './verify-play-ui-host.mjs', method: 'verifyPlayUiHost', touch: false }
+    { id: 'host', file: './verify-play-ui-host.mjs', method: 'verifyPlayUiHost', touch: false },
+    { id: 'activation', file: './verify-view-activation.mjs', method: 'verifyViewActivation', touch: true },
+    {
+      id: 'semantics-geometry',
+      file: './verify-view-semantics-geometry.mjs',
+      method: 'verifyViewSemanticsGeometry',
+      touch: true
+    }
   ];
   // The separately provisioned rich-text fonts and WASM are only required for this case.
   if (selection === 'rich')

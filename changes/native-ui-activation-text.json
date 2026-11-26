@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Native view text and input",
+    "body": "Align single-line UI text to backing pixels without changing layout. Read a current text revision’s readiness and select its typeface. Pointer activations expose their actual stage and local coordinates and optional propagation control; declarative views can specify accessible names, decorative subtrees, actionable panels and clipped bounds."
+  },
+  "zh": {
+    "title": "原生视图文字与输入",
+    "body": "将单行 UI 文字对齐实际像素而不改变布局；读取当前文字版本的就绪状态并选择字体。指针激活提供真实 Stage 与局部坐标，以及可选的冒泡控制；声明式视图可指定无障碍名称、装饰子树、可操作面板与裁剪后的边界。"
+  }
+}

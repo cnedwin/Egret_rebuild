@@ -147,6 +147,8 @@ const game = await play({
 
 **文字。** `const score = game.text('分数 0', { x: 240, y: 8, align: 'center' })` 画在 `ui` 层，创建后立刻可用；内容变化时设置 `score.text = '分数 ' + n`（直接给数字也可以）。`align` 说明 `x` 是文字的哪一部分：`'left'`、`'center'` 或 `'right'`。不指定时 `size` 为 24，`color` 为白色；之后可以用 `score.color` 和 `score.size` 修改。`y` 是文字的顶部，加上 `baseline: 'middle'` 则是文字的中线。文字里的 `\n` 会换行。`{ layer: 'world' }` 把文字放进世界层，例如命中后向上飘的数字；`{ layer: tile, align: 'center', baseline: 'middle' }` 把文字放在一个精灵上，位于精灵的原点，并跟着它移动。文字就是一个精灵，可以像精灵一样移动、淡出、缓动和移除。字体用页面自己的，设备上有中文、日文、韩文字体时就能显示。所有文字都画在少数几张共用的页上，所以一屏上百段短文字也不会超出一帧能容纳的图片数。`{ vertical: true }` 把文字从上往下写，各列从右往左排，用于标题或印文。`，。（）《》「」` 这类标点会换成竖排的形式，`\n` 开始新的一列，`{ vertical: { column: 4 } }` 让每列最多四个字。`align` 和 `baseline` 摆放整块文字，`text` 仍是原来给的文字。这是简化版：一个字在另一个字下面，中文和日文的字宽一致，所以列是直的。拉丁字母直立排列，不会旋转；段落还不支持竖排排版，也不给出列的几何。`verticalPlayWords(words, column)` 给出这段文字实际画出的各行。
 
+用 `fontFamily`（一个已安装的字体族）、`fontWeight`（1–1000，优先于 `bold`）和 `italic` 设置短文字字形。`await score.ready` 等待当前文字、颜色、字号版本就绪；更新后重新读取该 Promise。未完成的版本若被替换、隐藏或移除，会以 `AbortError` 拒绝。就绪不表示帧已经呈现。轴对齐 UI 文字的栅格原点对齐实际像素；精灵声明位置和世界文字仍可连续移动。
+
 ## 输入
 
 | 询问 | 回答 |
@@ -169,6 +171,8 @@ const game = await play({
 | `game.show(description, { state, bind })` | 用数据描述的界面：由面板、行和列组成，包含文字、按钮、进度条和开关，放在 `game.safe` 里，屏幕变化时重新摆放，竖握手机时可以换用竖屏部件。`bind` 让有名字的部件跟随 `state`（每帧读取），并响应按下。返回视图：`get(name)`、`rect(name)`、`show()`、`hide()`、`close()`。部件和绑定见[用数据描述界面](ui-views.md) |
 | `game.confirm(question, { yes, no })`、`game.hints(list)`、`game.loading(tasks)`、`game.badges`、`game.compact(n)`、`game.request(send)`、`game.device` | 用是或否回答的提问、按玩家设备显示按键的提示栏、计数的加载、累加的红点、数字缩写（12.3K、1.2万），以及按钮不能重复发出的请求。见[大多数界面都需要的部件](ui-views.md#大多数界面都需要的部件) |
 | `game.dragAndDrop()` | `.source(sprite, { data, ghost })` 和 `.target(sprite, { drop, accepts, hover })`，各自返回移除函数，以及 `.dragging`。被拖的精灵留在原处，`ghost` 画出的图跟着手指显示在最上层；最里层且接受这份数据的目标接收它 |
+
+点击回调可接受 `PlayTapActivation`，包含指针 `source`、`pointerId`、真实 Stage 坐标、变换可逆时的局部坐标、命中的显示对象 `target` 及当前监听者 `currentTarget`。语义激活没有指针坐标。点击默认仍冒泡；在回调中同步调用 `stopPropagation()` 可阻止继续到达祖先。对应的视图绑定见[声明式视图激活](ui-views.md#绑定)。
 
 键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。按在舞台上、且下面没有按钮和带 `onTap` 的精灵时，`game.pointer.pressed` 为真：按在它们上面的那一下只属于它们，所以“按哪里就在哪里放东西”的游戏不会把东西放到自己的按钮下面。主指针按住期间，`game.pointer.down` 保持为真，包括按在按钮上的情况。
 
