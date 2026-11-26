@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PLAY_LOOKS_3D, play3d, PlayLamp3D, PlayThing3D } from '@egret/engine/webgl2/world3d';
 import { Mesh3D, Object3D, createBoxGeometry3D, createStandardMaterial3D } from '@egret/engine/world3d';
-import { modelBox3D, overlap3D, pushOut3D } from '../packages/engine/dist/web/world3d/BrowserPlay3D.js';
+import { fovForAspect3D, modelBox3D, overlap3D, pushOut3D } from '../packages/engine/dist/web/world3d/BrowserPlay3D.js';
 
 const refusal = async run => {
   try {
@@ -341,4 +341,24 @@ test('P3D11 a lamp is placed and changed by plain numbers, and put out once', ()
   lamp.leave();
   lamp.leave();
   assert.deepEqual([lamp.removed, lamp.node.parent], [true, undefined]);
+});
+
+// Break caught: a phone held upright that sees a sliver of the sides, a wide screen whose angle changes, or an angle
+// that reaches 180 degrees on a very narrow view.
+test('P3D12 below keepWidthBelow the camera keeps its angle from side to side; at or above it, the angle set', () => {
+  const across = (fov, aspect) => (360 / Math.PI) * Math.atan(Math.tan((fov * Math.PI) / 360) * aspect);
+  // Off, and on a view as wide as the shape or wider: the angle set.
+  assert.equal(fovForAspect3D(55, 393 / 852, 0), 55);
+  assert.equal(fovForAspect3D(55, 1, 1), 55);
+  assert.equal(fovForAspect3D(55, 16 / 9, 1), 55);
+  // Upright, the angle from side to side is the one a square view has, and the angle from top to bottom grows.
+  const upright = fovForAspect3D(55, 393 / 852, 1);
+  assert.ok(Math.abs(across(upright, 393 / 852) - 55) < 1e-9, String(upright));
+  assert.ok(upright > 96 && upright < 97, String(upright));
+  // Kept at the width of 16:9 instead.
+  const wide = fovForAspect3D(55, 1, 16 / 9);
+  assert.ok(Math.abs(across(wide, 1) - across(55, 16 / 9)) < 1e-9, String(wide));
+  // Never 180 degrees or more, and a view of no width keeps the angle set.
+  assert.equal(fovForAspect3D(55, 0.001, 1), 170);
+  assert.equal(fovForAspect3D(55, 0, 1), 55);
 });

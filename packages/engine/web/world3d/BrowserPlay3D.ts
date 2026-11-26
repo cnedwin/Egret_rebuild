@@ -364,8 +364,15 @@ export interface PlayCamera3D {
   x: number;
   y: number;
   z: number;
-  /** The angle it sees from top to bottom, in degrees. */
+  /** The angle it sees from top to bottom, in degrees: 55 unless set. */
   fov: number;
+  /**
+   * 0 unless set. Above 0, a view narrower than this shape (its width over its height) keeps the angle from side to
+   * side that `fov` gives at this shape and sees further up and down instead: with 1, a phone held upright shows as much
+   * of the sides as a square view does. With 0, `fov` is the angle from top to bottom on every shape, as in most
+   * engines, and a phone held upright sees much less of the sides than one held sideways.
+   */
+  keepWidthBelow: number;
   /** Turns it to look at a point. It goes on looking there as it moves. */
   lookAt(x: number, y: number, z: number): void;
   readonly node: Camera3D;
@@ -586,6 +593,17 @@ export function overlap3D(a: PlayThing3D, b: PlayThing3D, shrink = 0): [number, 
     p[5] + q[5] - 2 * shrink - Math.abs(p[2] - q[2])
   ];
 }
+/**
+ * The angle from top to bottom, in degrees, that a camera of `fov` shows on a view of `aspect` (width over height) when
+ * it keeps, on a view narrower than `keepWidthBelow`, the angle from side to side it has at that shape: `fov` itself on
+ * a view as wide or wider, or with `keepWidthBelow` 0. At most 170 degrees.
+ */
+export function fovForAspect3D(fov: number, aspect: number, keepWidthBelow: number): number {
+  if (!(keepWidthBelow > 0) || !(aspect > 0) || aspect >= keepWidthBelow) return fov;
+  const across = Math.tan((fov * Math.PI) / 360) * keepWidthBelow;
+  return Math.min(170, (360 / Math.PI) * Math.atan(across / aspect));
+}
+
 /**
  * The box of a model, in its own units and about its own place: half its size and where its middle is. Every mesh
  * under it counts, placed as it is under it; the model's own place, turn and scale do not.
@@ -813,6 +831,12 @@ export async function createPlay3DSession(
   const base = [0, 6, 12],
     aim = [0, 0, 0],
     shaken = [0, 0, 0];
+  // The angle the game asked for, and the shape below which the camera keeps its width instead of its height.
+  let fov = 55,
+    keepWidthBelow = 0;
+  const fitEye = (): void => {
+    eye.fov = fovForAspect3D(fov, eye.aspect, keepWidthBelow);
+  };
   let followed: PlayThing3D | undefined,
     turning = false,
     lookAbove = 0,
@@ -864,6 +888,7 @@ export async function createPlay3DSession(
     settle();
   };
   const settle = (): void => {
+    fitEye();
     eye.setPosition(base[0]! + shaken[0]!, base[1]! + shaken[1]!, base[2]! + shaken[2]!);
     eye.lookAt(aim[0]!, aim[1]!, aim[2]!);
     // The sun keeps its direction and stays over what is looked at, so its shadows are there.
@@ -890,10 +915,22 @@ export async function createPlay3DSession(
       if (finite(value)) base[2] = value;
     },
     get fov() {
-      return eye.fov;
+      return fov;
     },
     set fov(value) {
-      if (finite(value) && value > 1 && value < 170) eye.fov = value;
+      if (finite(value) && value > 1 && value < 170) {
+        fov = value;
+        fitEye();
+      }
+    },
+    get keepWidthBelow() {
+      return keepWidthBelow;
+    },
+    set keepWidthBelow(value) {
+      if (finite(value) && value >= 0) {
+        keepWidthBelow = value;
+        fitEye();
+      }
     },
     lookAt(x, y, z) {
       if (!finite(x) || !finite(y) || !finite(z)) return;
@@ -1386,7 +1423,8 @@ export async function createPlay3DSession(
         scene.addChild(sky);
         scene.addChild(sun);
         settle();
-        app?.show(scene, eye);
+        // The app sets the camera's shape from the canvas before each frame it draws; the angle follows it there.
+        app?.show(scene, eye, { onUpdate: fitEye });
         surface.show?.(scene, eye);
         game = extend(given);
       } else clear();
