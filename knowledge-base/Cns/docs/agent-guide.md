@@ -51,6 +51,7 @@ node tools/agent-playtest.mjs preview --run <passing-run-folder> --address <priv
   - 副本已经解决的引擎笔记。
 
   每条都给出文件和行号、该怎么做和要读的卡片。有错误时以 1 退出，加 `--strict` 时有警告也以 1 退出。写这个命令时，游戏仓库里能运行的 23 个游戏都没有报出错误。
+- `node vendor/egret.mjs verify [<页面>]` 通过 `tools/verify-game.mjs` 在无头浏览器里运行游戏，引擎副本带着这个工具和 `pngjs`。它需要在游戏目录里装好 Playwright，或用 `--playwright` 指定。报告说明页面是否无错误地启动、画出了内容、持续运行、对输入有反应、发出了声音。报告的 `engineWarnings` 还列出运行期间引擎发出的告警，例如接近图片上限的帧、每帧新建的文字，不管游戏有没有要求告知。
 - [`guide/entries.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/entries.json) 列出引擎每个公开入口经导入带上的其他入口（`includes`），以及哪些入口带上了它（`partOf`）：例如 `@egret/engine/web/game` 带上指针、键盘和帧循环。统计游戏用到哪些能力的工具（游戏仓库的能力覆盖矩阵）读它，把游戏点名的入口背后的那些入口也算上。它由 `node tools/egret-guide.mjs` 之外的 `node tools/entry-map.mjs` 从构建产物生成，`--check` 检查它是否最新。
 
 与 `llms.txt` 一样，索引和卡片是以 `.txt` 文件保存的 Markdown 文本，只有英文。它们是智能体通过命令读取的数据，而不是阅读文档，因此没有中文对应版本；本页是双语的说明。

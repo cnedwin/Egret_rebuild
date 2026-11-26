@@ -66,7 +66,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `parent` | An element to put the canvas in. It fills the element's width; an element with no height of its own takes the stage's shape | The game fills the window |
 | `canvas` | A canvas of the page to draw on, left where it is | One is made |
 | `onError(error)` | Told of what stopped the game | It is thrown where the console shows it |
-| `onWarning(warning)` | Told of a frame near its limit of images, a frame not drawn for holding more, and words not drawn; see [the browser game](browser-game.md) | Not told |
+| `onWarning(warning)` | Told of a frame near its limit of images, a frame not drawn for holding more, words not drawn, and text, shapes or sprites that `update` made in each of the last 60 frames (`PLAY_MADE_EVERY_FRAME`); see [the browser game](browser-game.md) | Not told |
 | `seed` | The seed of `game.random` | A new one each time |
 | `saveKey` | The name `game.save` keeps its values under | The page's path |
 | `semantics` | A tree from `createUiSemantics` of `@egret/engine/ui/semantics`: views of `game.show` add their named parts to it, and it is published at the end of every frame, for a [UI tester](ui-testing.md) and for assistive technology | No tree |

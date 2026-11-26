@@ -343,6 +343,8 @@ const WRITTEN: Readonly<Record<string, string>> = {
     'The frame uses more images than it takes: 64 pages, 4,096 regions or 64 MiB of distinct pixels. Pack images into fewer atlases.',
   FRAME_IMAGES_NEAR_LIMIT:
     'A warning of the browser game, not an error: a frame holds four fifths of the images a frame takes (64 pages, 4,096 regions, 64 MiB). Labels of createAtlasLabel share pages.',
+  PLAY_MADE_EVERY_FRAME:
+    'A warning of play, not an error: update made a text, a shape or a sprite in each of the last 60 frames. Make it once in setup and change its words, place or colour when they change.',
   FRAME_TRANSFORM_INVALID:
     'A display object is placed where its corners are not finite numbers. Check its x, y, scale and rotation, and those of its parents.',
   FRAME_STAGE_INVALID: 'A frame is captured from the stage of an Engine, and this is not one.',
