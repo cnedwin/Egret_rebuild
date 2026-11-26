@@ -96,6 +96,25 @@ game.onScreenChange(plan => {
 
 On each axis the pin takes one of `left`, `right` and `centerX` across, and one of `top`, `bottom` and `centerY` down: a distance in from that edge, or from the middle. An axis without one keeps the box where it is. `isScreenPin(value)` says whether a value is a pin. A pin with two of one axis, an unknown name or a number that is not finite is refused with `UI_SCREEN_OPTIONS_INVALID`. `game.pin` of [play](play.md#screens-of-any-shape) places a node this way, again whenever the screen or its box changes.
 
+## Checking many screens at once
+
+`node tools/egret.mjs verify <page> --screens` (`node vendor/egret.mjs verify --screens` in a game's engine copy) opens one page on eight screens in headless Chromium. It writes a picture of each and `report.json`. The screens are a phone without a notch (375 × 667), a phone with a notch and a home bar (393 × 852), the same phone held sideways (852 × 393), a tall Android phone (360 × 800), a tablet both ways (768 × 1024 and 1024 × 768), an unfolded phone (884 × 1104) and a desktop (1920 × 1080). `--screens=phone-notch,tablet` picks some.
+
+A headless browser has no notch. The tool gives the page `globalThis.__egretAgent.insets`, which the engine takes as the window's safe-area insets, and tints in red what they cover in each picture. Each screen is checked for:
+
+- errors in the page;
+- a blank picture;
+- a page that scrolls;
+- how much of the window the canvas fills, as a warning under three quarters.
+
+A `play` game also tells the tool, about four times a second, where the nodes it takes taps on are and where its safe part is. For those, the report names:
+
+- each control that reaches outside the safe part, an error;
+- each control smaller than 44 CSS pixels either way on a touch screen, a warning;
+- each pair of controls that cover each other without one holding the other, a warning.
+
+A control is named by its `name`, the name `onTap` was given, or the words of its button. The tool exits with 1 when a screen has an error. It is Chromium with stand-in insets at each phone's size and pixel ratio, not a phone: a real notch's shape, the browser's own bars and the way a phone hands its insets to the page are not checked.
+
 ## What is checked
 
 - `tests/ui-screen.test.mjs` checks the arithmetic in Node: `'contain'` and `'expand'`, wider and taller spaces, the portrait design, insets inside and beyond the bars, and refusals.
@@ -116,6 +135,7 @@ On each axis the pin takes one of `left`, `right` and `centerX` across, and one 
 - `tests/egret-migrate.test.mjs` checks that `inspect` keeps each fixed mode and refuses `noScale`.
 - SCR08 checks `pinBox` on each edge and the middle, an axis left alone, and the pins it refuses.
 - The browser screen-fit fixture pins a score to the safe part's top right and a bar to the screen's bottom middle, in a game of `'expand'` with a notch on the right. Each stayed against its edges when the window grew wider and when it turned. When the score's box doubled across, it was placed again 8 units from the edge, and `set` moved it at once.
+- `examples/screen-check/verify.mjs` runs a landscape game of `'expand'` through `verify --screens` on all eight screens, written with three mistakes and then without them. Plain, the pause button pinned to the screen's corner is under the notch exactly on the three phones with an inset at that corner. The 24-unit help button is too small on every touch screen that shows it under 44 CSS pixels, and Jump and Fire cover each other. The safe part the engine took is the window less the stand-in insets, to within the canvas's last pixel, and the picture is red under the notch and not below it. With `?fixed=1`, no screen has a finding or an engine warning. `tests/egret-verify.test.mjs` checks the command's options and the findings for given controls in Node.
 - `tests/egret-migrate-eui.test.mjs` grows the screen of a `fixedWidth` project from 480 × 320 to 480 × 400 units. A bar at `bottom="0"` moves from 280 to 360, a centred part moves with the new middle, and `RESIZE` is told once.
 - In headless Chromium, a migrated `fixedWidth` game of 750 × 1334 was turned from a 375 × 667 window to 393 × 852:
   - `stage.stageHeight` went from 1334 to 1625;
@@ -124,7 +144,7 @@ On each axis the pin takes one of `left`, `right` and `centerX` across, and one 
 
   That run is recorded in the pull request that added the modes.
 
-No phone with a notch, Safari or WeChat itself was run. The page's own insets were never other than 0 in these runs; the notch was given as `insets`. `wholeScale` was checked at one device pixel to a CSS pixel in the browser, and at two only in Node.
+No phone with a notch, Safari or WeChat itself was run. The page's own insets were never other than 0 in these runs; the notch was given as `insets` or through `__egretAgent.insets`. `wholeScale` was checked at one device pixel to a CSS pixel in the browser, and at two only in Node.
 
 ## Design notes
 
