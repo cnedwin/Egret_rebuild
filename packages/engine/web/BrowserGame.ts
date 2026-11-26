@@ -228,7 +228,7 @@ export interface BrowserGame {
    * `width` × `height` and all of it is safe.
    */
   readonly screen: ScreenPlan;
-  /** Calls `listener` with the new plan after the stage changes size or its safe part moves. Returns its removal. */
+  /** Calls `listener` with the new plan after the stage size, CSS scale or safe part changes. Returns its removal. */
   onScreenChange(listener: (screen: ScreenPlan) => void): () => void;
   readonly loop: BrowserFrameLoop;
   readonly pointer: PointerInput | undefined;
@@ -807,6 +807,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         const moved =
           next.width !== before.width ||
           next.height !== before.height ||
+          next.scale !== before.scale ||
           next.orientation !== before.orientation ||
           (['x', 'y', 'width', 'height'] as const).some(key => next.safe[key] !== before.safe[key]);
         if (moved) for (const listener of [...screenListeners]) listener(next);
