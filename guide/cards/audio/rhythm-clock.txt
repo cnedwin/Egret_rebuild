@@ -1,0 +1,46 @@
+---
+id: rhythm-clock
+title: The clock of a rhythm game, from the music voice and event time stamps
+applies: [engine, web, play]
+triggers: [createBrowserAudio, "output timestamp", "output latency", "rhythm game", "music game", "beat sync", "audio sync", "audio latency", "notes out of sync", "song position", "judge timing", "input latency", "calibration", "音游", "节奏游戏", "音画同步", "对拍", "延迟校准", "判定不准", "音频延迟"]
+local: [heardAt, voice, timeStamp, offset, kindOf, judge, getOutputTimestamp, outputLatency]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: OperaDrums/src/audio/sound.mjs, line: 65, commit: 6e7d5bbf96d4dea53c9bcd43b4df269dceab1fc5, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: OperaDrums/src/main.mjs, line: 112, commit: 6e7d5bbf96d4dea53c9bcd43b4df269dceab1fc5, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: OperaDrums/ENGINE-NOTES.md, line: 30, commit: 6e7d5bbf96d4dea53c9bcd43b4df269dceab1fc5, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# The clock of a rhythm game, from the music voice and event time stamps
+
+A rhythm game judges a stroke against the music the player hears. Take the song's time from the music itself, not from frames, and the stroke's time from its event, not from the frame that handles it.
+
+- **The song's time** is the music voice's `position`: it stands still while the mixer is suspended (a pause, a hidden page), so the chart pauses with it.
+- **What is heard** is earlier than `position`, which counts what was given to the output. At engine `b5628eb` the two differed by about 41 ms in headless Chromium. `getOutputTimestamp()` on the context says which context time is sounding at which page time:
+
+```js
+const audio = scope.use(createBrowserAudio({ buses: ['music', 'effects'] }));
+const voice = audio.mixer.play(backing, { bus: 'music', whileSilent: 'start' });
+
+function heardAt(ms = performance.now()) {           // ms: performance.now() or event.timeStamp
+  const { context, mixer } = audio, position = voice.position;
+  if (mixer.state !== 'running') return position;
+  const stamp = context.getOutputTimestamp();
+  if (!(stamp?.performanceTime > 0)) return position - (context.outputLatency || 0);
+  return position - (context.currentTime - stamp.contextTime) + (ms - stamp.performanceTime) / 1000;
+}
+
+window.addEventListener('keydown', (event) => {
+  const time = heardAt(event.timeStamp) - settings.offset / 1000;  // the stroke, on the song's clock
+  judge(kindOf(event.code), time);
+}, true);
+```
+
+Rules:
+
+- Judge with `event.timeStamp`, which is in `performance.now()` time; a frame-polled input (a gamepad) can be up to a frame late, so say so.
+- Let players measure their own delay: play clicks at known times, take the median of (heard time − click time) over eight or more strokes, and subtract it. Real headphones, Bluetooth above all, add far more than a headless test shows.
+- Render the whole backing as one sound and start it once; do not schedule each note as its own voice.
+- Check in a browser that the clock never runs backwards and steps with page time between frames.
+
+Learnt from Opera Drums (ENGINE-NOTES 4).

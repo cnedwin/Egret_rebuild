@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/egret-verify.test.mjs",
+      "originRole": "First-party checks of egret verify: what it runs and from where, the engine copy's verifier and pngjs, and the sentences of PLAY_MADE_EVERY_FRAME; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/made-every-frame/index.html",
+      "originRole": "First-party example page for the every-frame warning of play; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/made-every-frame/main.mjs",
+      "originRole": "First-party example of a score made every frame and made once, for PLAY_MADE_EVERY_FRAME; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/made-every-frame/verify.mjs",
+      "originRole": "First-party browser check that verify-game's report lists PLAY_MADE_EVERY_FRAME for the mistake and nothing for the fix; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

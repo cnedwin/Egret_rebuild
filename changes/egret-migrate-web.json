@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Egret Migrate for classic 5.2 Web 2D clients",
+    "body": "Install a local migration CLI, inspect and convert supported source projects with RES planning and project transactions, compare both builds in verify-game and preview the passing build by QR."
+  },
+  "zh": {
+    "title": "经典白鹭 5.2 Web 2D 客户端迁移工具",
+    "body": "独立安装迁移命令，复用 RES 规划和工程事务转换支持范围内的旧工程，通过 verify-game 对照两版，并扫码试玩通过验收的构建。"
+  }
+}

@@ -1,0 +1,40 @@
+---
+id: label-pages
+title: Many words on screen: atlas labels share pages; glyph sheets for banners
+applies: [engine, web]
+triggers: [createLabel, textureFromCanvas, FRAME_IMAGE_BUDGET, "64 pages", "too many labels", "place names", "map labels", "glyph atlas", "text atlas", sourceRect, "banner text", "地名太多", "文字标签", "每帧图片", "字符图集", createAtlasLabel, getFrameUsage, FRAME_IMAGES_NEAR_LIMIT, "共享图集"]
+local: [label, labels, names, atlas, glyph, banner]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/src/view/mapview.mjs, line: 21, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
+  - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/src/main.mjs, line: 210, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
+  - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/ENGINE-NOTES.md, line: 8, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserGame.ts, line: 1208, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+  - { repo: cnedwin/Egret_rebuild, path: examples/label-budget/verify.mjs, line: 1, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Many words on screen: atlas labels share pages; glyph sheets for banners
+
+A frame takes at most 64 images and 4,096 regions. Each `browser.createLabel` of `createBrowserGame` is an image of its own, so at engine `9d801be` a map with a hundred place names failed its first frame with `FRAME_IMAGE_BUDGET`.
+
+- **Many short labels** (place names, unit counts, a score board): `browser.createAtlasLabel` takes the same options and draws on pages it shares with other such labels. In `examples/label-budget` a hundred labels on one screen take one page, and once drawn they hold nothing in the text cache. `game.text` of `play` is drawn this way.
+- **Words on things that move** from a fixed set of characters (banners, unit flags): draw every character once into one canvas, lease it once with `textureFromCanvas`, and cut each one out with `sourceRect`.
+- **Still words under the action**: paint them on a page canvas under a clear engine canvas (see camera-page-layer).
+
+```js
+const names = await Promise.all(places.map(place => browser.createAtlasLabel({ text: place.name, fontSize: 18, color: 0xf4ead2 })));
+names.forEach((label, i) => Object.assign(map.addChild(label.display), { x: places[i].x, y: places[i].y }));
+
+// A banner from a glyph sheet made once at start: at[ch] is the cell of each character on the sheet.
+const lease = await browser.textureFromCanvas(sheet);
+const flag = banner.addChild(scope.use(new Bitmap(lease)));
+flag.sourceRect = at['曹'];
+```
+
+Rules:
+
+- Count images before choosing: one per `browser.createLabel`, a few shared pages for every `browser.createAtlasLabel`, 64 a frame. `browser.getFrameUsage()` says what the last frame held, and `onWarning` is told `FRAME_IMAGES_NEAR_LIMIT` before a frame is refused.
+- A `textureFromCanvas` lease belongs to the game's scope and ends with the game: make one sheet with every character the game can need and share it, not one per battle.
+- Paint glyphs white and tint by what is behind them, so one sheet serves every colour.
+
+Learnt from Nine Provinces Ablaze (ENGINE-NOTES 1 and 3): 121 place names went to a page canvas and every banner reads from one sheet of about 250 characters. Shared pages came in engine `4de55e8` (#476).

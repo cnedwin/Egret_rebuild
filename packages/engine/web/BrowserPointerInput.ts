@@ -10,6 +10,7 @@ import type {
 
 const APPLY = Reflect.apply;
 const ownedSurfaces = new WeakSet<object>();
+const claimedDowns = new WeakSet<Event>();
 type Operation = (...args: unknown[]) => unknown;
 interface Rectangle {
   readonly left: number;
@@ -41,6 +42,18 @@ function finite(value: unknown): value is number {
 function sameRectangle(a: Rectangle, b: Rectangle): boolean {
   return a.left === b.left && a.top === b.top && a.width === b.width && a.height === b.height;
 }
+
+/** Private Play control arbitration on the existing browser pointer surface. */
+export function claimBrowserPointerBegin(
+  input: PointerInput,
+  callback: Parameters<ReturnType<typeof bindPointerSurface>['claimBegin']>[0]
+): () => void {
+  return bindPointerSurface(input).claimBegin(callback);
+}
+export function wasBrowserPointerDownClaimed(event: PointerEvent): boolean {
+  return claimedDowns.has(event);
+}
+export type { PointerCancelReason, PointerSample, PointerSession } from '#egret-pointer-input';
 
 /** Pointer Events adapter for the explicit connected, untransformed Canvas profile. */
 export function createBrowserPointerInput(options: PointerInputOptions): PointerInput {
@@ -419,7 +432,10 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
       const rect = refresh(false);
       if (kind === 'down') {
         if (sessions.has(identity.id) || input.state !== 'active' || dom(visibility, document) !== 'visible') return;
-        const session = input.begin({ pointerId: identity.id, pointerType: identity.type, ...update(event, rect) });
+        const session = bridge.begin(
+          { pointerId: identity.id, pointerType: identity.type, ...update(event, rect) },
+          () => claimedDowns.add(event)
+        );
         // A begin observer may synchronously cancel, suspend or close the input.
         if (session === undefined || closed || !input.contacts.some(contact => contact.session === session)) return;
         sessions.set(identity.id, session);

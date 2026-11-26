@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/egret-check.mjs",
+      "originRole": "First-party static check of a game's own files for common mistakes with the engine, each with its card, for the egret command; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/egret-check.test.mjs",
+      "originRole": "First-party checks that each rule of egret check finds its mistake and passes its near miss, here and from a game's engine copy; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/agent-guide.md",
+      "zh": "knowledge-base/Cns/docs/agent-guide.md"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+---
+id: tile-board-camera
+title: A tile board seen at 45 degrees: picking tiles, arrow keys that follow the view, labels over pieces
+applies: [world3d, play3d]
+triggers: [Raycaster3D, setFromCamera, projectToViewport3D, "isometric", "tactics", "grid", "tile picking", "screen to tile", "arrow keys rotate", "health badge", "战棋", "斜45度", "点选格子", "方向键随视角", "血条跟随"]
+local: [rig, tile, bounds, quarter, steps]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: StarBanner/src/view/stage.mjs, line: 139, commit: db3de4bf2216225eb7683bb6c0dcfd0fa2303578, pin: b3b594351e8017ce43a7c3cb20c769403806553e }
+  - { repo: cnedwin/PortedGamesEgret, path: StarBanner/src/play.mjs, line: 116, commit: db3de4bf2216225eb7683bb6c0dcfd0fa2303578, pin: b3b594351e8017ce43a7c3cb20c769403806553e }
+  - { repo: cnedwin/PortedGamesEgret, path: StarBanner/ENGINE-NOTES.md, line: 28, commit: db3de4bf2216225eb7683bb6c0dcfd0fa2303578, pin: b3b594351e8017ce43a7c3cb20c769403806553e }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A tile board seen at 45 degrees: picking tiles, arrow keys that follow the view, labels over pieces
+
+Starbanner Tactics looks down on its grid from the south-east with a narrow perspective camera (fov 26°, pitch about 47°), turnable in quarter steps.
+
+```js
+import { Raycaster3D, projectToViewport3D } from '@egret/engine/world3d';
+
+const ray = new Raycaster3D();
+function tileAt(px, py, width, height) {
+  ray.setFromCamera((px / width) * 2 - 1, 1 - (py / height) * 2, camera);
+  const o = ray.origin, d = ray.direction;
+  if (d[1] >= -1e-4) return null;
+  const t = -o[1] / d[1]; // the board's top is y = 0
+  return { x: Math.floor((o[0] + d[0] * t) / TILE + w / 2), y: Math.floor((o[2] + d[2] * t) / TILE + h / 2) };
+}
+// Screen up/right/down/left as grid steps, for the view turned `quarter` times.
+const BASE = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+const steps = BASE.map((_, i) => BASE[(i + 4 - quarter) % 4]);
+// A health badge over a piece: project its head each frame into CSS pixels.
+const p = projectToViewport3D(camera, head, canvas.clientWidth, canvas.clientHeight);
+```
+
+Rules:
+
+- Intersect the pointer ray with the board's plane yourself; it is exact for a flat board and far cheaper than raycasting the meshes.
+- With the camera at 45°, map arrows to grid steps relative to the view (up = north when the camera is to the south-east) and rotate the table when the view turns, or the keys feel crossed.
+- `projectToViewport3D` needs the camera's matrices of this frame: call it after the camera moves, in the same update, and hide labels whose point is not `inFront`.
+- Under software rendering (headless checks) the frame rate is a few per second: snap an eased camera into place before a capture, and drive walks by time, not by frames.

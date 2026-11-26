@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1469 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1470 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1580,7 +1580,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
 | `BrowserGameOptions` | interface | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
-| `BrowserGameWarning` | interface | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache. |
+| `BrowserGameWarning` | interface | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache, and from `play`, `PLAY_MADE_EVERY_FRAME` when `update` made a text, a shape or a sprite in each of the last 60 frames. |
 | `BrowserStatsPanel` | interface | A panel over the canvas showing frame rate and frame times: sample each frame. |
 | `BrowserStatsPanelOptions` | interface | A stats panel to make: the canvas it sits over, its label, and how often it updates. |
 | `BrowserStatsSample` | interface | What a game knows at one frame of the display. |
@@ -1607,6 +1607,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayBurstOptions` | interface | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
 | `PlayButton` | type | A button: a sprite whose middle is at (x, y), with its words in `label`. |
 | `PlayButtonOptions` | interface | A button to show: where, how large, its colors, text size and layer. |
+| `PlayFloatingStickOptions` | interface | A floating stick starts under a fresh touch in this part of the Play design. |
 | `PlayGame` | interface | Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. |
 | `PlayImageOptions` | interface | An image to show: where, how large, whether smoothed, and its layer. |
 | `PlayKeys` | interface | The keyboard of a play game: what is held, pressed and released, and axes from the arrow and WASD keys. |

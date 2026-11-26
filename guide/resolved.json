@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "about": "Engine notes of games built on the engine that this engine has resolved, matched by the note's topic and, where a note was named, by its id. node tools/egret.mjs notes reads a game's ENGINE-NOTES.md against it.",
+  "resolved": [
+    {
+      "topic": "play-page-keys",
+      "status": "resolved",
+      "what": "An embedded play (given a parent or a canvas) takes keys only while its canvas has the focus, so page buttons keep Tab, Space and Enter. A capture-phase listener that stops keys for play is no longer needed, and stops the game hearing keys.",
+      "pr": 457,
+      "commit": "450bb9eb62fec9d3032b35766817844adc6eba33",
+      "card": "play-page-controls",
+      "notes": [
+        "CanalWatch#1",
+        "TaiwanMahjong#1",
+        "NezhaSea#1",
+        "OperaDrums#1"
+      ]
+    },
+    {
+      "topic": "play-clear-holder",
+      "status": "resolved",
+      "what": "With transparent: true the holder play makes for its canvas is clear, so the page shows under the canvas without clearing its background by hand.",
+      "pr": 457,
+      "commit": "450bb9eb62fec9d3032b35766817844adc6eba33",
+      "card": "play-page-controls",
+      "notes": [
+        "CanalWatch#2",
+        "TaiwanMahjong#2",
+        "NezhaSea#2",
+        "OperaDrums#2"
+      ]
+    },
+    {
+      "topic": "play-canvas-docs",
+      "status": "documented",
+      "what": "The play guide says that game.canvas is the canvas play draws on, and that game.browser has no canvas of its own.",
+      "card": "play-page-controls",
+      "notes": [
+        "CanalWatch#4"
+      ]
+    },
+    {
+      "topic": "play-resolution",
+      "status": "resolved",
+      "what": "play takes pixelRatio, the render pixels per stage unit: a 1280 x 720 stage at 0.75 draws 960 x 540 pixels, with layout, input and semantic bounds still in stage units.",
+      "commit": "e7184a82bd065f15775a47731e2fe931e17a3881",
+      "card": "play-resolution",
+      "notes": [
+        "TaiwanMahjong#3"
+      ]
+    },
+    {
+      "topic": "label-pages",
+      "status": "resolved",
+      "what": "createAtlasLabel draws short labels on pages it shares with other such labels, and play's game.text uses it: a hundred labels on one screen take one of the 64 images a frame holds. getFrameUsage and onWarning tell the count before a frame is refused.",
+      "pr": 476,
+      "commit": "4de55e89c574b51d5d1b679b792f535db8605a0b",
+      "card": "label-pages",
+      "notes": [
+        "NineProvinces#1",
+        "InquestScrolls#8"
+      ]
+    },
+    {
+      "topic": "label-lifetime",
+      "status": "resolved",
+      "what": "A label of play or of createAtlasLabel ends when its display, its parent or an ancestor is disposed, and gives back its raster.",
+      "pr": 476,
+      "commit": "4de55e89c574b51d5d1b679b792f535db8605a0b",
+      "notes": [
+        "InquestScrolls#6"
+      ]
+    },
+    {
+      "topic": "paragraph-without-webassembly",
+      "status": "resolved",
+      "what": "chooseParagraphProvider gives CanvasKit where it loads and a canvas paragraph provider where it cannot, as in a WeChat mini game, with the same text geometry.",
+      "pr": 474,
+      "commit": "49cc7307f3348aaea6add4bc0d126525870f8a66",
+      "notes": [
+        "InquestScrolls#3"
+      ]
+    },
+    {
+      "topic": "minigame-text-input",
+      "status": "resolved",
+      "what": "@egret/engine/web/wechat-text-input types into WeChat's own keyboard in a mini game.",
+      "pr": 475,
+      "commit": "b8b77a189e589fa9758f5e6fe6ebd21679fc8c0e",
+      "notes": [
+        "InquestScrolls#4"
+      ]
+    },
+    {
+      "topic": "hit-children-bounds",
+      "status": "resolved",
+      "what": "In play, a sprite given to onTap, gestures or a drag source that has children and no hit area of its own is hit in its bounds, its children included.",
+      "pr": 477,
+      "commit": "5e278ecf2b0adb3bf73f4aeac4a79880780ecfd5",
+      "notes": [
+        "InquestScrolls#5"
+      ]
+    },
+    {
+      "topic": "minigame-stage-offset",
+      "status": "resolved",
+      "what": "game.toStage and game.fromStage convert between play's units and the stage, which differ by where the design is under fit: 'expand', as in a mini game on a tall phone.",
+      "pr": 477,
+      "commit": "5e278ecf2b0adb3bf73f4aeac4a79880780ecfd5",
+      "notes": [
+        "InquestScrolls#9"
+      ]
+    },
+    {
+      "topic": "vertical-text",
+      "status": "partly",
+      "what": "play's game.text takes vertical: true or { column }: top to bottom, columns from right to left, marks in their upright forms. A paragraph does not lay out vertical text yet.",
+      "pr": 478,
+      "commit": "acf57394748ad1e9afaff6447c924f3d04b5d07c",
+      "notes": [
+        "InquestScrolls#1"
+      ]
+    },
+    {
+      "topic": "paragraph-cache-per-manager",
+      "status": "documented",
+      "what": "An asset manager keeps one paragraph cache and one text cache for its life, by design; the refusal of a second now says to keep the first and pass it wherever a cache is asked for.",
+      "pr": 478,
+      "commit": "acf57394748ad1e9afaff6447c924f3d04b5d07c",
+      "notes": [
+        "InquestScrolls#7"
+      ]
+    },
+    {
+      "topic": "content-build-node",
+      "status": "documented",
+      "what": "Content builds keep Node 26.7.0 exactly, since the producer's versions are part of every build key and compressed images depend on Node's zlib; the refusal names the Node found and why.",
+      "pr": 478,
+      "commit": "acf57394748ad1e9afaff6447c924f3d04b5d07c",
+      "notes": [
+        "InquestScrolls#10"
+      ]
+    },
+    {
+      "topic": "world3d-restart-clock",
+      "status": "resolved",
+      "what": "A World3D loop stopped and started again re-anchors its clock, so the first frame after a long stop no longer throws CLOCK_DELTA_LIMIT.",
+      "pr": 479,
+      "commit": "5ef2b034667ccf307cc50d7deab81330e464033b",
+      "notes": [
+        "NineProvinces#7"
+      ]
+    },
+    {
+      "topic": "clipped-image-budget",
+      "status": "resolved",
+      "what": "Images wholly clipped away, such as labels scrolled out of a clipped panel, no longer count against a shared frame's page budget.",
+      "pr": 480,
+      "commit": "a7be833b09ddad1936c79ff148c909cf452bea7f",
+      "notes": [
+        "PeachCreek#9"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+---
+id: play-page-controls
+title: Page buttons beside play, and a clear canvas over the page
+applies: [play]
+triggers: [play, "page buttons", "html hud", "dom hud", "tab does nothing", "space does not press", "keyboard navigation", "focus does not move", "transparent canvas black", "parent element", "game.canvas", "game.browser.canvas", "页面按钮", "Tab 不动", "空格不响应", "键盘导航", "透明画布变黑", "画布在哪", "embedded play", "嵌入页面"]
+local: [stopPropagation, parentElement, openMenu]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/src/main.mjs, line: 463, commit: 13dcd4b46bc1cf9103cc45cd59d00e73e58ab5f9, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/src/main.mjs, line: 69, commit: 13dcd4b46bc1cf9103cc45cd59d00e73e58ab5f9, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/ENGINE-NOTES.md, line: 9, commit: 13dcd4b46bc1cf9103cc45cd59d00e73e58ab5f9, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/ENGINE-NOTES.md, line: 16, commit: 13dcd4b46bc1cf9103cc45cd59d00e73e58ab5f9, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/ENGINE-NOTES.md, line: 30, commit: 13dcd4b46bc1cf9103cc45cd59d00e73e58ab5f9, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: NezhaSea/src/main.mjs, line: 454, commit: 9b3d9263f16bbfda9be05128a7c623408daf947f, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserPlay.ts, line: 1012, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserPlay.ts, line: 846, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Page buttons beside play, and a clear canvas over the page
+
+Keep a `play` game's bar, menus and build buttons as page buttons, which keys, touch and screen readers already understand. Given a `parent` (or a `canvas`), `play` is embedded and shares the keyboard with the page.
+
+- **Keys.** An embedded `play` takes a key only while its canvas has the focus. A focused page button keeps Tab, Space and Enter; `game.keys` hears nothing until the player clicks, taps or tabs to the canvas. Before engine `939dc0b` play took Tab and Space from page buttons and games stopped keys in the capture phase: take that listener out after a refresh, or the game hears no keys.
+- **A clear canvas.** With `transparent: true` the holder is clear, so the page shows under the canvas; before `939dc0b` it was black.
+- **The canvas** is `game.canvas`; the browser game under it, `game.browser`, has no `canvas` of its own.
+
+```js
+const game = await play({ width: 960, height: 540, parent: field, transparent: true, setup, update });
+// A page button over the canvas, in a box of the stage's shape, placed by percent of the stage.
+plot.style.left = (x / 960) * 100 + '%';
+plot.style.top = (y / 540) * 100 + '%';
+plot.setAttribute('aria-label', 'Plot 6: crossbow tower level 1');
+window.addEventListener('keydown', event => { if (event.key === 'p') openMenu(); }); // also while a button has the focus
+```
+
+Rules:
+
+- Read shortcuts that must work from the page buttons as well (pause, menu) in a `keydown` listener of your own; `game.keys` hears only the canvas.
+- Give each button an `aria-label` that says what is there now, and keep it at least 44 CSS pixels.
+- Check it in a browser: Tab from the first button reaches the next, Space presses it, and a click on the canvas gives the arrows back to the game.
+
+Learnt from Canal Watch (ENGINE-NOTES 1, 2 and 4) and Nezha Stirs the Sea (ENGINE-NOTES 1), at engine `b5628eb`; the keys and the holder changed in `939dc0b`.

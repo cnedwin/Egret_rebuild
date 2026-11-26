@@ -1,0 +1,36 @@
+---
+id: two-colour-tints
+title: Hit flashes and status colours from two-colour material tints
+applies: [engine, web]
+triggers: [createSharedMaterial2D, sharedMaterial, "hit flash", "flash white", "damage flash", "tint sprite", "colour tint", "frozen look", "burning look", "status colour", "受击闪白", "闪白", "着色", "染色", "冰冻效果", "灼烧效果"]
+local: [TINTS, entry, haunt]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: NightWardens/src/view/field.mjs, line: 39, commit: 886c81c1c8c0fa2bbc36736c21429aacd07f79ab, pin: a778bed53ecdbf9c65e9abc5624d4b3751a4331d }
+  - { repo: cnedwin/PortedGamesEgret, path: NightWardens/src/view/field.mjs, line: 383, commit: 886c81c1c8c0fa2bbc36736c21429aacd07f79ab, pin: a778bed53ecdbf9c65e9abc5624d4b3751a4331d }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Hit flashes and status colours from two-colour material tints
+
+A hit flash, a frozen blue or a burning red needs no extra frames. A shared material has two colours: `light` multiplies the picture, and `dark` lifts its dark parts towards a colour. Every value is between 0 and 1, so `light` alone can only darken; a white flash comes from `dark` near white.
+
+```js
+import { createSharedMaterial2D } from '@egret/engine';
+
+const TINTS = {
+  flash: createSharedMaterial2D({ light: [1, 1, 1, 1], dark: [0.92, 0.88, 0.8] }),
+  frost: createSharedMaterial2D({ light: [0.62, 0.86, 1, 1], dark: [0.05, 0.12, 0.25] }),
+  burn: createSharedMaterial2D({ light: [1, 0.74, 0.56, 1], dark: [0.28, 0.05, 0] })
+};
+// Each frame, from the rules' state:
+entry.body.sharedMaterial = entry.flash > 0 ? TINTS.flash : haunt.slow > 0 ? TINTS.frost : haunt.burn > 0 ? TINTS.burn : null;
+```
+
+Rules:
+
+- Make each material once and share it; `createSharedMaterial2D` checks and freezes its input, and a value outside 0–1 is refused.
+- Set `sharedMaterial` back to `null` for the plain picture.
+- Keep a flash short (about 0.07 s) and drive its timer from hit events, so it shows even when many bolts land in one frame.
+- `blendMode` changes only the blend of the material and keeps its tints.
+
+Learnt from Night Wardens.

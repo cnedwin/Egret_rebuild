@@ -16,14 +16,16 @@ Start a game with the cards `first-playable-world` and `choose-entry`; start on 
 - [game](areas/game.txt) · 6 cards · The first action, feedback in the moving body, saves, two languages and balance.
 - [structure](areas/structure.txt) · 1 card · Rules apart from the picture.
 - [entries](areas/entries.txt) · 2 cards · Which entry to start from, and the engine copy in a game.
-- [input](areas/input.txt) · 9 cards · Touch, keys, gestures, phone screens, pause and UI callbacks.
-- [perf](areas/perf.txt) · 5 cards · Frame budgets, loop pacing, 3D draw cost and shader stalls.
-- [world3d](areas/world3d.txt) · 4 cards · Lights and shadows, cloth and rope, models in code and terrain.
+- [input](areas/input.txt) · 11 cards · Touch, keys, gestures, phone screens, pause, UI callbacks, page buttons beside play and a turned table.
+- [perf](areas/perf.txt) · 9 cards · Frame budgets, loop pacing, moving shapes, swarms, still backgrounds, resolution, 3D draw cost and shader stalls.
+- [world3d](areas/world3d.txt) · 6 cards · Lights and shadows, cloth and rope, models in code, terrain, tile boards and toon figures.
+- [render](areas/render.txt) · 6 cards · Many labels, wrapping, play's shapes, tints, changing pixels and a map under the camera.
+- [animation](areas/animation.txt) · 1 card · Frame walks from an atlas and markers on a sequence controller.
 - [physics](areas/physics.txt) · 1 card · Weights on rope joints in 2D, cutting them, and bodies that start held.
-- [audio](areas/audio.txt) · 1 card · Sounds made in code, mixed with cues and a limiter.
+- [audio](areas/audio.txt) · 2 cards · Sounds made in code, mixed with cues and a limiter, and the clock of a rhythm game.
 - [assets](areas/assets.txt) · 3 cards · Loading, startup and provenance.
 - [ship](areas/ship.txt) · 4 cards · A web page, a phone app, a WeChat mini game or Steam.
-- [verify](areas/verify.txt) · 1 card · From rule tests to device runs.
+- [verify](areas/verify.txt) · 2 cards · From rule tests to device runs, and the engine notes a game keeps.
 - [errors](areas/errors.txt) · 1 card · An engine error by its code.
 
 ## How cards are made

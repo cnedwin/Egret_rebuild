@@ -66,7 +66,7 @@ await play({
 | `parent` | 放画布的元素。画布占满它的宽度；元素自己没有高度时，按舞台的比例取高度 | 游戏占满窗口 |
 | `canvas` | 页面里已有的画布，位置保持不变 | 自动创建一个 |
 | `onError(error)` | 游戏被什么停下时得到通知 | 抛到控制台 |
-| `onWarning(warning)` | 告知接近图片上限的帧、因超限没画的帧，以及没画出来的文字；见[浏览器游戏](browser-game.md) | 不告知 |
+| `onWarning(warning)` | 告知接近图片上限的帧、因超限没画的帧、没画出来的文字，以及 `update` 在最近 60 帧里每帧都新建的文字、形状或精灵（`PLAY_MADE_EVERY_FRAME`）；见[浏览器游戏](browser-game.md) | 不告知 |
 | `seed` | `game.random` 的种子 | 每次都不同 |
 | `saveKey` | `game.save` 保存数据时用的名字 | 页面的路径 |
 | `semantics` | 来自 `@egret/engine/ui/semantics` 的 `createUiSemantics` 创建的语义树：`game.show` 的视图会把有名字的部件加进去，每帧结束时发布，供 [UI 测试器](ui-testing.md)和辅助技术使用 | 没有语义树 |
@@ -306,6 +306,28 @@ game.music.intensity = lanterns / 3;                          // 强度越高，
 
 第一次 `setup` 等待的菜单或对白框一打开就会开始绘制画面，所以能被看到并操作；否则画面仍在 `setup` 结束后才开始，与以前相同。
 
+### 浮动触屏摇杆
+
+传入 `floating` 后，玩家在战场区域内按下的位置就是摇杆中心。示例给右上角的暂停按钮保留了正常输入。
+
+```js
+game.button('暂停', { x: 444, y: 28, width: 64, height: 48 }, () => game.pause());
+game.touchStick({
+  radius: 48,
+  floating: {
+    area: { x: 0, y: 0, width: 480, height: 270 },
+    deadZonePx: 8,
+    exclude: (x, y) => x >= 412 && y <= 52,
+  },
+});
+```
+
+`area` 和 `exclude(x, y)` 使用与 `game.button()` 相同的游戏坐标。布局会变化时，可以让 `area` 接收一个返回区域的函数。`radius` 以游戏单位指定摇杆行程。`deadZonePx` 默认是 8，以 CSS 像素测量触点距起点的距离。画布缩放和设备像素比变化时，页面上死区的大小保持一致。通过 `game.keys.axis()` 读取方向。
+
+摇杆圆环在有触点控制时显示。第一个符合条件的触点拖出画布后仍可操控，第二个触点可以操作其他控件。抬起控制手指、取消触点或暂停时，摇杆方向立即归零。打开模态界面、对白或菜单时，在下一次输入处理前清除摇杆方向。恢复游戏或关闭模态界面后，需要重新按下才能操控。省略 `floating` 即可继续用 `x`、`y` 和 `always` 设置固定摇杆。
+
+构建工作区后，运行 `node examples/play/verify-floating-stick.mjs <Playwright index.mjs 的绝对路径> <新输出目录的绝对路径> <Chromium 可执行文件的绝对路径> [webgl2|webgpu]`。夹具通过 Chromium 的触摸输入协议验证画布缩放后的 CSS 像素死区、触点归属、画布外捕获、暂停恢复以及打开模态界面或菜单后仍按着的触点退出操控。
+
 ## 随机与存档
 
 `game.random` 给出的数字在 `seed` 相同时可以重复：`int(1, 6)`、`range(0, 1)`、`chance(0.25)`、`pick(list)`，以及 `shuffle(list)`，它返回一个新列表，不改动传入的列表。
@@ -334,4 +356,4 @@ game.music.intensity = lanterns / 3;                          // 强度越高，
 
 ## 游戏变大之后
 
-`game.browser` 是它所基于的[浏览器游戏](browser-game.md)，`game.engine` 和 `game.scope` 是它的 Engine 和 scope。从这里可以使用所有入口：图片和图集、[2D 相机](camera-2d.md)、[瓦片地图](tilemap.md)、带贴图的[粒子](particles.md)、[2D 物理](physics-2d.md)、[界面控件](ui-controls.md)、[带手柄的按动作输入](game-kit.md)和 [World3D](world3d.md)。它们创建的内容可以和 `play` 创建的一起加进 `game.world` 与 `game.ui`。
+`game.canvas` 是 `play` 绘制用的画布：传入的 `canvas`，或它在 `parent` 或页面里创建的那一个。`game.browser` 是它所基于的[浏览器游戏](browser-game.md)，自身没有画布；`game.engine` 和 `game.scope` 是它的 Engine 和 scope。从这里可以使用所有入口：图片和图集、[2D 相机](camera-2d.md)、[瓦片地图](tilemap.md)、带贴图的[粒子](particles.md)、[2D 物理](physics-2d.md)、[界面控件](ui-controls.md)、[带手柄的按动作输入](game-kit.md)和 [World3D](world3d.md)。它们创建的内容可以和 `play` 创建的一起加进 `game.world` 与 `game.ui`。
