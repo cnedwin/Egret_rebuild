@@ -40,6 +40,18 @@ node tools/agent-playtest.mjs preview --run <passing-run-folder> --address <priv
 - `node tools/egret-guide.mjs --full --out <文件>` 把索引、各领域和所有卡片写成一个文件，供只接受单个文件的工具使用。它是构建产物，不提交到仓库。
 - `node tools/egret.mjs` 把同一份指南做成给智能体用的一个命令：`guide <问题>`、`card <id>`、`list [<领域> | all]`，以及 `explain <错误码>`：它先打印运行时为这个错误码写的中英文句子，再打印提到这个错误码的卡片。
 - 在游戏里，引擎副本带着这份指南。`tools/vendor-game.mjs` 把命令和卡片写到 `vendor/egret/` 下，由 `vendor/egret.mjs` 启动，所以在游戏目录里工作的智能体运行 `node vendor/egret.mjs guide <问题>`，得到的回答与在本仓库里相同，取自游戏固定的那个引擎提交。每次刷新副本都会整体替换这部分，指南删掉的卡片也随之消失。`--no-agent-kit` 不带指南。
+- `node vendor/egret.mjs check` 在运行游戏之前读游戏自己的文件（`vendor/` 之外），找智能体用这个引擎时最常犯的错误。它报告：
+  - 入口没有导出的名字，并给出导出它的入口或最接近的名字；
+  - 不是入口的模块名；
+  - 引擎副本或页面 import map 漏掉的入口；
+  - 按路径引用副本里的引擎文件；
+  - 在 `update` 里每帧新建文字或贴图；
+  - 副本已经修好的缺陷的绕过代码；
+  - 不考虑无痕窗口就写 `localStorage`；
+  - 副本已经解决的引擎笔记。
+
+  每条都给出文件和行号、该怎么做和要读的卡片。有错误时以 1 退出，加 `--strict` 时有警告也以 1 退出。写这个命令时，游戏仓库里能运行的 23 个游戏都没有报出错误。
+- `node vendor/egret.mjs verify [<页面>]` 通过 `tools/verify-game.mjs` 在无头浏览器里运行游戏，引擎副本带着这个工具和 `pngjs`。它需要在游戏目录里装好 Playwright，或用 `--playwright` 指定。报告说明页面是否无错误地启动、画出了内容、持续运行、对输入有反应、发出了声音。报告的 `engineWarnings` 还列出运行期间引擎发出的告警，例如接近图片上限的帧、每帧新建的文字，不管游戏有没有要求告知。
 - [`guide/entries.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/entries.json) 列出引擎每个公开入口经导入带上的其他入口（`includes`），以及哪些入口带上了它（`partOf`）：例如 `@egret/engine/web/game` 带上指针、键盘和帧循环。统计游戏用到哪些能力的工具（游戏仓库的能力覆盖矩阵）读它，把游戏点名的入口背后的那些入口也算上。它由 `node tools/egret-guide.mjs` 之外的 `node tools/entry-map.mjs` 从构建产物生成，`--check` 检查它是否最新。
 
 与 `llms.txt` 一样，索引和卡片是以 `.txt` 文件保存的 Markdown 文本，只有英文。它们是智能体通过命令读取的数据，而不是阅读文档，因此没有中文对应版本；本页是双语的说明。
@@ -100,7 +112,21 @@ node tools/agent-playtest.mjs preview --run <passing-run-folder> --address <priv
 
 ### 6. 从错误和提示指向卡片
 
-计划在第二阶段实施。引擎错误带有错误码，`@egret/devtools` 会给出 `frames-skipped` 这样的提示 id。两者现在已经可以直接作为问题交给指南（`node tools/egret-guide.mjs FRAME_BUDGET_EXCEEDED`）。下一步是让每个错误码和提示都指向它的卡片：开发者在看到错误或提示时，同时看到一行写明应查询的卡片 id。这些指向将由卡片的触发词生成，因此卡片与指向不会不一致；合并关卡还将检查每个指向都对应一张存在的卡片。
+计划在第二阶段实施。引擎错误带有错误码，`@egret/devtools` 会给出 `frames-skipped` 这样的提示 id。两者现在已经可以直接作为问题交给指南（`node tools/egret-guide.mjs FRAME_BUDGET_EXCEEDED`）。错误码的指向现在已经有了：`node tools/egret.mjs explain <错误码>`（在游戏里是 `node vendor/egret.mjs explain`）先打印运行时为这个错误码写的中英文句子，再打印触发词里写着这个错误码的卡片，所以卡片和指向不会不一致。提示 id 仍作为问题交给指南。
+
+### 7. 游戏写回的引擎笔记
+
+游戏遇到引擎的缺陷时，用引擎自己的部件绕过去，并把缺陷写进游戏根目录的 `ENGINE-NOTES.md`，每个缺陷一条带编号的笔记（[卡片](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/verify/engine-notes.txt)）。每条笔记的标题下面有一行给程序读的头：
+
+```html
+<!-- engine-note: {"id": "InquestScrolls#3", "status": "open", "topic": "paragraph-without-webassembly", "workaround": ["src/view/plainText.mjs"]} -->
+```
+
+`id` 是游戏目录名、`#` 和笔记编号。`status` 是 `open`、`partly`、`worked-around`、`documented` 或 `resolved`。`topic` 用连字符连接的英文词说明是什么缺陷，遇到同一个缺陷的游戏写同一个 topic。`workaround` 列出存放绕过代码的游戏文件。
+
+引擎解决或用文档说明了一个缺陷时，那次改动在 [`guide/resolved.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/resolved.json) 里加一条：topic、引擎做了什么（`resolved`、`partly` 或 `documented`）、一两句话说明改了什么、提交和 PR、要读的卡片，以及它针对的笔记。引擎副本带着游戏固定的那个提交时的清单。在游戏目录里运行 `node vendor/egret.mjs notes`，会按 topic 和 id 把游戏的笔记与这份清单对照，列出副本之后已经解决或说明、但游戏里仍标为未解决的每条笔记：改了什么、要从哪些文件里去掉绕过代码、要读哪张卡片。只要还有这样的笔记，`--check` 就以 1 退出。在本仓库运行（`node tools/egret.mjs notes <游戏目录>`）时，它对照最新的清单，并提示先刷新游戏的引擎副本。
+
+第一批条目来自《洗冤笔录》的笔记（#474 到 #478），以及四个 play 游戏共有、早已修好但仍标为未解决的缺陷。
 
 ## 归属与审阅
 

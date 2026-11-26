@@ -66,7 +66,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `parent` | An element to put the canvas in. It fills the element's width; an element with no height of its own takes the stage's shape | The game fills the window |
 | `canvas` | A canvas of the page to draw on, left where it is | One is made |
 | `onError(error)` | Told of what stopped the game | It is thrown where the console shows it |
-| `onWarning(warning)` | Told of a frame near its limit of images, a frame not drawn for holding more, and words not drawn; see [the browser game](browser-game.md) | Not told |
+| `onWarning(warning)` | Told of a frame near its limit of images, a frame not drawn for holding more, words not drawn, and text, shapes or sprites that `update` made in each of the last 60 frames (`PLAY_MADE_EVERY_FRAME`); see [the browser game](browser-game.md) | Not told |
 | `seed` | The seed of `game.random` | A new one each time |
 | `saveKey` | The name `game.save` keeps its values under | The page's path |
 | `semantics` | A tree from `createUiSemantics` of `@egret/engine/ui/semantics`: views of `game.show` add their named parts to it, and it is published at the end of every frame, for a [UI tester](ui-testing.md) and for assistive technology | No tree |
@@ -306,6 +306,28 @@ game.music.intensity = lanterns / 3;                          // parts come in a
 
 A menu or a box of words that the first `setup` awaits starts the frames as it opens, so it is seen and answered. Otherwise the frames start when `setup` has finished, as before.
 
+### Floating touch stick
+
+Pass `floating` to let the player set the stick's center by touching anywhere in a battlefield region. This example leaves the top-right pause button available to normal input.
+
+```js
+game.button('Pause', { x: 444, y: 28, width: 64, height: 48 }, () => game.pause());
+game.touchStick({
+  radius: 48,
+  floating: {
+    area: { x: 0, y: 0, width: 480, height: 270 },
+    deadZonePx: 8,
+    exclude: (x, y) => x >= 412 && y <= 52,
+  },
+});
+```
+
+`area` and `exclude(x, y)` use the same game coordinates as `game.button()`. Pass a function returning the area when it follows a responsive layout. `radius` controls the stick's reach in game units. `deadZonePx` defaults to 8 and is measured in CSS pixels from the starting point, so canvas scaling and device pixel ratio leave the dead zone the same size on the page. Read the result through `game.keys.axis()`.
+
+The ring appears during an owned touch. The first eligible touch keeps steering outside the canvas, and a second touch can operate a separate control. Lifting the owner, canceling its contact, or pausing clears the stick's contribution immediately. Opening a modal, dialogue or menu clears it before the next input step. After the game resumes or the modal closes, movement requires a fresh touch. Omit `floating` to use the fixed stick with `x`, `y` and `always`.
+
+Build the workspace, then run `node examples/play/verify-floating-stick.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [webgl2|webgpu]`. The fixture uses Chromium's touch input protocol to check the CSS dead zone on a scaled canvas, ownership, capture outside the canvas, pause and resume, and stationary touch retirement when a modal or menu opens.
+
 ## Chance and saves
 
 `game.random` gives numbers that repeat for the same `seed`: `int(1, 6)`, `range(0, 1)`, `chance(0.25)`, `pick(list)`, and `shuffle(list)`, which gives a new list and leaves the one it was given.
@@ -334,4 +356,4 @@ A page can also take the engine as [one file](single-file.md), with no import ma
 
 ## When a game outgrows it
 
-`game.browser` is the [browser game](browser-game.md) this is built on, and `game.engine` and `game.scope` its Engine and scope. From there every entry is open: images and atlases, [the 2D camera](camera-2d.md), [tilemaps](tilemap.md), [particles](particles.md) with textures, [2D physics](physics-2d.md), [the interface controls](ui-controls.md), [input by action with gamepads](game-kit.md) and [World3D](world3d.md). What they make can be added to `game.world` and `game.ui` beside what `play` made.
+`game.canvas` is the canvas `play` draws on: the one given as `canvas`, or the one it made inside `parent` or the page. `game.browser` is the [browser game](browser-game.md) this is built on, which has no canvas of its own, and `game.engine` and `game.scope` its Engine and scope. From there every entry is open: images and atlases, [the 2D camera](camera-2d.md), [tilemaps](tilemap.md), [particles](particles.md) with textures, [2D physics](physics-2d.md), [the interface controls](ui-controls.md), [input by action with gamepads](game-kit.md) and [World3D](world3d.md). What they make can be added to `game.world` and `game.ui` beside what `play` made.

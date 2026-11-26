@@ -297,6 +297,8 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   FRAME_IMAGE_BUDGET: '这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。',
   FRAME_IMAGES_NEAR_LIMIT:
     '这是浏览器游戏的告警，不是错误：一帧用到的图片已达上限的五分之四（64 页、4,096 个区域、64 MiB）。createAtlasLabel 的标签共用纹理页。',
+  PLAY_MADE_EVERY_FRAME:
+    '这是 play 的告警，不是错误：最近 60 帧里，update 每一帧都新建了文字、形状或精灵。请在 setup 里建一次，内容、位置或颜色变化时再修改它。',
   FRAME_TRANSFORM_INVALID: '某个显示对象被放到了角点不是有限数字的位置。请检查它及其父级的 x、y、缩放和旋转。',
   FRAME_STAGE_INVALID: '帧是从 Engine 的舞台捕获的，而这不是一个舞台。',
   FRAME_REENTRANT: '在捕获一帧的过程中又请求了一帧。请在帧循环中绘制，不要在捕获的回调里绘制。',
