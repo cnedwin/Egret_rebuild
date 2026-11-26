@@ -8,7 +8,7 @@ import type { SpineDisplay, SpineDisplayOptions, SpineDisplayStatus } from './di
 import { requireSpineRender } from './renderAuthority.js';
 import { registerResetDisplay } from './resetAuthority.js';
 import type { SpineDrawCandidate, SpineDrawSink } from './renderAuthority.js';
-import { copySpineDraws, drawFault } from './drawGeometry.js';
+import { copySpineDraws, drawFault, SpineDrawScratch } from './drawGeometry.js';
 import type { SpineDrawRow } from './drawGeometry.js';
 const apply = Reflect.apply,
   add = DisplayObjectContainer.prototype.addChild,
@@ -62,6 +62,7 @@ export function createSpineDisplay(instance: SpineInstance, scope: Scope, option
     bindings: Binding[] = [],
     rows: SpineDrawRow[] = [];
   const materials = new Map<string, SharedMaterial2D>();
+  const scratch = new SpineDrawScratch();
   type Retired = { container: DisplayObjectContainer | undefined; bindings: Binding[]; finish?: (() => void)[] };
   const retired = new Set<Retired>();
   function markRetired(row: Retired): void {
@@ -125,6 +126,7 @@ export function createSpineDisplay(instance: SpineInstance, scope: Scope, option
     unregister?.();
     renderer = undefined;
     materials.clear();
+    scratch.clear();
     const failures: unknown[] = [],
       active = { container: current, bindings };
     current = undefined;
@@ -152,7 +154,13 @@ export function createSpineDisplay(instance: SpineInstance, scope: Scope, option
     dispose,
     prepare(skeleton): SpineDrawCandidate {
       intact();
-      const next = copySpineDraws(renderer!.render(skeleton, false, undefined, 2), port.asset, limits, materials);
+      const next = copySpineDraws(
+        renderer!.render(skeleton, false, undefined, 2),
+        port.asset,
+        limits,
+        materials,
+        scratch
+      );
       const reuse =
         next.length === rows.length &&
         next.every((row, i) => row.lease === rows[i]!.lease && row.material === rows[i]!.material);

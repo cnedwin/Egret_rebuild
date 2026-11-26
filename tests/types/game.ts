@@ -5,7 +5,7 @@ import type {BrowserGame,BrowserGameBackend,BrowserGameFit,BrowserGameLabel,Brow
 import {animate,Bitmap,Sprite} from '@egret/engine';
 import type {Motion} from '@egret/engine';
 declare const canvas:HTMLCanvasElement;
-const options:BrowserGameOptions={canvas,width:480,height:270,backend:'auto',pixelRatio:1.5,clearColor:0x1b1f2a,clearAlpha:1,update(seconds:number){void seconds;},onError(error:unknown){void error;},pointer:true,keyboard:false,stats:true,fit:'contain',fitTo:canvas.parentElement??undefined as never,autoStart:false};
+const options:BrowserGameOptions={canvas,width:480,height:270,backend:'auto',staticLayers:true,pixelRatio:1.5,clearColor:0x1b1f2a,clearAlpha:1,update(seconds:number){void seconds;},onError(error:unknown){void error;},pointer:true,keyboard:false,stats:true,fit:'contain',fitTo:canvas.parentElement??undefined as never,autoStart:false};
 const game:BrowserGame=await createBrowserGame(options);
 const backend:BrowserGameBackend=game.backend,fit:BrowserGameFit='cover';void backend;void fit;
 const hero=game.stage.addChild(game.scope.use(new Sprite()));
@@ -22,6 +22,15 @@ const label:BrowserGameLabel=await game.createLabel(labelOptions);
 label.text='金币 1';await label.ready;game.stage.addChild(label.display);label.set({color:0xffffff});
 const place:{x:number;y:number}=game.toStage(10,20);void place;
 const pending:number=game.host.getStatus().pendingFrames;void pending;
+// Optional retained WebGL2 backgrounds need no backend-private import.
+const cache=game.staticLayers;
+if(cache){
+  const layer=cache.createLayer();
+  await layer.update(game.engine.captureSharedFrame({width:8,height:8,clearAlpha:0}));
+  cache.setPlacements([{layer,x:0,y:0,width:8,height:8}]);
+  const retained:number=cache.getStatus().residentBytes;void retained;
+  cache.setPlacements([]);layer.dispose();
+}
 game.loop.start();
 // The panel, by the game or by hand.
 const panelOptions:BrowserStatsPanelOptions={canvas,label:'mine',intervalMs:250};

@@ -511,7 +511,8 @@ export function createPlayViews(
       const text = button ? part.description! : item.text;
       const size = button ? Math.ceil((part.size ?? plan.skin.size) * 0.72) : (part.size ?? plan.skin.size);
       const color = button ? (part.textColor ?? plan.skin.buttonText) : colourOf(part, item);
-      const key = JSON.stringify([text, size, color, width]);
+      const density = style.density ?? 1;
+      const key = JSON.stringify([text, size, color, width, density]);
       if (key === paragraph.key) return;
       paragraph.key = key;
       paragraph.text.setRequest({
@@ -523,7 +524,7 @@ export function createPlayViews(
         locale: style.locale ?? 'en',
         textAlign: !button && part.type === 'text' ? (part.align ?? 'left') : 'center',
         fillColor: color,
-        density: 1
+        density
       });
       void paragraph.text.prepare().catch(cause => {
         if (

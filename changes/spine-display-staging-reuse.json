@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Reuse bounded Spine display conversion staging",
+    "body": "Each display can reuse exact-size position and tint staging arrays across draws and poses. Retained typed payload is bounded to 18 KiB per display; larger sizes remain one-use. The existing immutable geometry factory still copies every payload, and staging is released at display disposal."
+  },
+  "zh": {
+    "title": "复用有界 Spine 显示转换暂存",
+    "body": "每个显示实例跨绘制和姿势复用长度一致的位置与颜色暂存数组。每实例保留的类型化载荷不超过 18 KiB，较大尺寸仍为一次性分配。已有不可变几何工厂仍复制全部载荷，显示销毁时释放暂存。"
+  }
+}

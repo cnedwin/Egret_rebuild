@@ -24,12 +24,44 @@ const modes = new Map<BlendMode, SharedMaterial2D['blend']>([
   [BlendMode.Multiply, 'multiply-factor'],
   [BlendMode.Screen, 'screen']
 ]);
+type DrawScratchBuffers = {
+  positions: Float32Array<ArrayBuffer>;
+  lightColors: Float32Array<ArrayBuffer>;
+  darkColors: Float32Array<ArrayBuffer>;
+};
+/** Private per-display, exact-size conversion staging. No published geometry borrows it. */
+export class SpineDrawScratch {
+  // 512 retained vertices x 9 f32 components = 18 KiB of typed payload per display.
+  // Larger or unusual sizes remain one-use rather than growing retained memory.
+  #sizes = new Map<number, DrawScratchBuffers>();
+  #retainedVertices = 0;
+  forVertices(n: number): DrawScratchBuffers {
+    const previous = this.#sizes.get(n);
+    if (previous !== undefined) return previous;
+    const buffers = {
+      positions: new Float32Array(n * 2),
+      lightColors: new Float32Array(n * 4),
+      darkColors: new Float32Array(n * 3)
+    };
+    if (n <= 512 - this.#retainedVertices) {
+      this.#sizes.set(n, buffers);
+      this.#retainedVertices += n;
+    }
+    return buffers;
+  }
+  clear(): void {
+    this.#sizes.clear();
+    this.#retainedVertices = 0;
+  }
+}
+
 /** Premultiplied shared-frame output over straight pages; no reinterpretation of shared-frame/1. */
 export function copySpineDraws(
   head: RenderCommand | undefined,
   asset: SpineAssetPort,
   limits: SpineDrawLimits,
-  materials: Map<string, SharedMaterial2D>
+  materials: Map<string, SharedMaterial2D>,
+  scratch: SpineDrawScratch
 ): SpineDrawRow[] {
   const setup = asset.getSetup(),
     leases = asset.getPages(),
@@ -85,9 +117,8 @@ export function copySpineDraws(
       material = createSharedMaterial2D({ blend, filter, samplingDomain: 'page' });
       materials.set(key, material);
     }
-    const positions = new Float32Array(n * 2),
-      lightColors = new Float32Array(n * 4),
-      darkColors = new Float32Array(n * 3);
+    // The factory below finishes copying before the next command can reuse this exact-size scratch.
+    const { positions, lightColors, darkColors } = scratch.forVertices(n);
     for (let i = 0; i < n; i++) {
       positions[i * 2] = command.positions[i * 2]!;
       positions[i * 2 + 1] = -command.positions[i * 2 + 1]!;

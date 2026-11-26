@@ -89,6 +89,17 @@ export async function verifyViewRich(page) {
                     border: { color: 0xf9c950, width: 2 }
                   },
                   {
+                    type: 'text',
+                    name: 'dense-copy',
+                    x: 122,
+                    y: 10,
+                    width: 104,
+                    height: 84,
+                    size: 16,
+                    text: 'Build 工坊\n运入两箱木材。',
+                    paragraph: { ...paragraph, density: 2 }
+                  },
+                  {
                     type: 'button',
                     name: 'build',
                     x: 10,
@@ -134,6 +145,10 @@ export async function verifyViewRich(page) {
               lineWidths: status.metrics.lines.map(line => line.width)
             }
           : undefined;
+      const raster = text => {
+        const image = text?.numChildren > 0 ? text.getChildAt(0) : undefined;
+        return image ? { width: image.naturalWidth, height: image.naturalHeight, scale: image.scaleX } : undefined;
+      };
       return {
         read() {
           const bounds = view.get('cover').numChildren ? view.get('cover').getChildAt(0).getBounds() : undefined;
@@ -141,6 +156,9 @@ export async function verifyViewRich(page) {
           return {
             copy: summarize(part('copy', 0)?.getStatus()),
             body: summarize(part('build', 1)?.getStatus()),
+            denseCopy: summarize(part('dense-copy', 0)?.getStatus()),
+            defaultRaster: raster(part('copy', 0)),
+            denseRaster: raster(part('dense-copy', 0)),
             image: bounds ? [bounds.width, bounds.height, view.get('cover').getChildAt(0).scaleX] : undefined,
             activated,
             buttonName: button?.name,
@@ -177,12 +195,19 @@ export async function verifyViewRich(page) {
   );
   try {
     await page.waitForFunction(handle => {
-      const { copy, body, image, buttonName, errors } = handle.read();
-      return errors.length > 0 || (copy && body && image && buttonName);
+      const { copy, body, denseCopy, defaultRaster, denseRaster, image, buttonName, errors } = handle.read();
+      return errors.length > 0 || (copy && body && denseCopy && defaultRaster && denseRaster && image && buttonName);
     }, fixture);
     const result = await fixture.evaluate(handle => handle.read());
     assert.deepEqual(result.errors, []);
     assert.equal(result.copy.width, 104);
+    assert.deepEqual(result.denseCopy, result.copy, 'density changes raster pixels, not logical text metrics');
+    assert.equal(result.defaultRaster.scale, 1);
+    assert.equal(result.denseRaster.scale, 0.5);
+    assert.ok(
+      result.denseRaster.width > result.defaultRaster.width && result.denseRaster.height > result.defaultRaster.height,
+      '2x density allocates more raster pixels'
+    );
     assert.equal(result.body.width, 168);
     assert.ok(result.copy.ranges.length >= 2 && result.body.ranges.length >= 2, 'both text parts wrap');
     assert.ok(result.copy.ranges[0][1] > 'Build '.length, 'first line includes Chinese and Latin text');

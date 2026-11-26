@@ -45,7 +45,7 @@ The plan is frozen. Plan again whenever the space or the insets change. What is 
 `createBrowserGame({ fit: 'expand', portrait, insets })` plans the stage from the element it fits into and the page's `safe-area-inset` values, and plans again when the element changes size:
 
 - `game.screen` is the plan now, and `game.frame` the frame drawn at its size.
-- `game.onScreenChange(listener)` calls `listener` with the new plan after the stage changes size or its safe part moves, and returns its removal.
+- `game.onScreenChange(listener)` calls `listener` with the new plan after the stage size, CSS scale, orientation or safe part changes, and returns its removal. A contained canvas can change only its CSS scale while the design and safe part stay the same; listeners, including Play's `arrange`, are called for that change too. Identical plans do not cause another notification.
 - Pointer and hover input map the page to the stage at its current size. Each takes a `size` function for a stage that changes size; the game gives it.
 
 A page has `safe-area-inset` values only when its viewport meta tag says `viewport-fit=cover`:
@@ -64,6 +64,7 @@ A page has `safe-area-inset` values only when its viewport meta tag says `viewpo
   - at 1200 × 540 it shows 80 more units on each side;
   - at 540 × 960 it takes the portrait size;
   - a tap in the page reaches a button that `arrange` placed in the safe part.
+- The same browser screen-fit fixture shrinks and enlarges an embedded 200 × 100 design through CSS scales 2 → 0.9 → 3. Its arrange callback keeps a 44 CSS-pixel button, the safe and design rectangles stay the same, the two actual changes notify once each, and the final mouse tap reaches the button.
 - `tests/wechat-minigame.test.mjs` checks that the adapter reports WeChat's safe area as the page's insets.
 
 No phone with a notch, Safari or WeChat itself was run. The page's own insets were never other than 0 in these runs; the notch was given as `insets`.

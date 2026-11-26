@@ -60,6 +60,8 @@ A field a part does not have, a name used twice, or a portrait that lacks a name
 
 Pass a `paragraphCache` to `game.show` to use the [paragraph SDK](paragraph-layout-controls.md) inside a text part or a button description. Give each paragraph part a height in the view description. Text wraps to the planned width and clips at the bottom of the box. Button details sit below the title and wrap within the button's inner width. Use `lineHeight` for minimum line spacing, `fontFamilies` in fallback order, and `maxLines` to cap the number of lines. A button with only `text` continues to use its single-line title. Single-line text, button titles and toggles accept `fontFamily`, `fontWeight` (integer 1–1000; overrides the default bold choice) and `italic`. These options do not change the paragraph provider or its font fallback list.
 
+The optional paragraph `density` is raster pixels per stage unit, from 0.25 to 4 (default `1`). Use `density: 2` for sharper descriptions on a high-density display without changing the view box, wrapping width, font size, line height or pointer/semantic bounds. It is explicit rather than tied to the device pixel ratio: higher densities need more raster memory, and the existing provider raster limits and cache byte budgets still apply.
+
 ```js
 import { createParagraphCache } from '@egret/engine/paragraph';
 
@@ -75,7 +77,7 @@ const workshop = game.show({
       { type: 'image', name: 'cover', src: '/art/workshop.webp', label: 'Workshop', height: 64 },
       { type: 'text', name: 'notes', text: '筹备 Wood workshop', paragraph, height: 72 },
       { type: 'button', name: 'build', text: 'Build workshop', description: '备齐两箱木材。\nPlace two crates.',
-        paragraph: { ...paragraph, maxLines: 3 }, height: 108, border: { color: 0x56caff, width: 2 } }
+        paragraph: { ...paragraph, maxLines: 3, density: 2 }, height: 108, border: { color: 0x56caff, width: 2 } }
     ]
   }
 }, { paragraphCache, bind: { build: { tap: () => buildWorkshop() } } });
@@ -93,7 +95,7 @@ node --test tests/ui-view.test.mjs
 node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> rich
 ```
 
-In Chromium 157 with software WebGL2, both parts wrapped to three lines with 24-unit baseline spacing. Pixel samples confirmed the border and the WebP cover, the button fired once per click, and closing the view returned the cache's caller lease count to zero. Hardware WebGPU, Safari, Firefox and physical phone rendering for this fixture remain to be checked.
+In Chromium 157 with software WebGL2, both parts wrapped to three lines with 24-unit baseline spacing. Pixel samples confirmed the border and the WebP cover, the button fired once per click, and closing the view returned the cache's caller lease count to zero. A separate pair of identical paragraph parts at densities 1 and 2 retains the same logical width, height, line ranges, baselines and widths, while the 2× raster has more pixels and its Bitmap scales by 0.5. Hardware WebGPU, Safari, Firefox and physical phone rendering for this fixture remain to be checked.
 
 ## Bindings
 

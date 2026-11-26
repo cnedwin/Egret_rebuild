@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Admission-aware render preparation and opt-in recovery",
+    "body": "BrowserFrameLoop, BrowserGame and Play accept an optional beforeRender callback after the pending-frame check, plus an explicit bounded renderRetry decision. Logic and time are not replayed; default failures and validation remain strict."
+  },
+  "zh": {
+    "title": "准入后绘制准备及可选的有限错误恢复",
+    "body": "BrowserFrameLoop、BrowserGame 和 Play 支持在待完成帧检查之后的可选 beforeRender 回调，以及显式有限次数的 renderRetry 决策。逻辑和时间不重放，默认错误行为及校验保持严格。"
+  }
+}
