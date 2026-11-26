@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Egret Migrate 0.3 for dynamic EUI and native skeletal animation",
+    "body": "Convert supported EXML bindings, state overrides and project-defined list renderers. Preserve legacy release-target coordinates, event-based resource groups and single-line text bounds. Play supported DragonBones 5.x region rigs with selective scale inheritance, held poses and additive slots on the native display tree."
+  },
+  "zh": {
+    "title": "Egret Migrate 0.3 支持动态 EUI 与原生骨骼动画",
+    "body": "转换受支持的 EXML 属性绑定、状态覆盖和工程自定义列表项，保留旧版松手目标坐标、资源组事件及单行文字布局尺寸。原生显示树播放受支持的 DragonBones 5.x 图片骨骼，并处理选择性缩放继承、保持姿态和加法混合插槽。"
+  }
+}

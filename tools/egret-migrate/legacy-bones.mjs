@@ -79,12 +79,18 @@ function validateDescriptor(source) {
     )
       refuse('Invalid native armature header.');
     for (const [index, bone] of bones.entries()) {
-      if (!whole(bone.parent, -1, index - 1) || !vector(bone.bind, 6) || !finite(bone.alpha, 0, 1))
+      if (
+        !whole(bone.parent, -1, index - 1) ||
+        !vector(bone.bind, 6) ||
+        !finite(bone.alpha, 0, 1) ||
+        (bone.inheritScale !== undefined && typeof bone.inheritScale !== 'boolean')
+      )
         refuse('Invalid native bone hierarchy.');
     }
     for (const slot of slots) {
       if (
         !whole(slot.bone, 0, bones.length - 1) ||
+        ![undefined, 'normal', 'add'].includes(slot.blendMode) ||
         !array(slot.attachments, 128) ||
         !whole(slot.displayIndex, -1, slot.attachments.length - 1) ||
         !finite(slot.alpha, 0, 1) ||
@@ -217,7 +223,24 @@ function pose(armature, clip, frame, wrap) {
   const opacity = [];
   for (const [index, bone] of armature.bones.entries()) {
     const value = bone.bind.map((bind, i) => (i < 4 ? bind + offsets[index][i] : bind * offsets[index][i]));
-    world.push(multiply(bone.parent < 0 ? identity : world[bone.parent], matrix(value)));
+    const parent = bone.parent < 0 ? identity : world[bone.parent];
+    if (bone.parent >= 0 && bone.inheritScale === false) {
+      // Stretch moves the joint origin. Only the parent's facing and handedness affect its axes.
+      const [a, b, c, d, px, py] = parent;
+      const [x, y, rotation, skew, sx, sy] = value;
+      const mirrored = a * d - b * c < 0;
+      const heading = Math.atan2(b, a) / radians;
+      world.push(
+        matrix([
+          a * x + c * y + px,
+          b * x + d * y + py,
+          heading + (mirrored ? -rotation : rotation),
+          skew + (mirrored ? 180 : 0),
+          sx,
+          sy
+        ])
+      );
+    } else world.push(multiply(parent, matrix(value)));
     opacity.push(bone.alpha * (bone.parent < 0 ? 1 : opacity[bone.parent]));
   }
   return armature.slots.map((slot, index) => {
@@ -262,6 +285,7 @@ export function createLegacyBones({ sdk, game, getTexture, Container = sdk.Displ
         for (const slot of armature.slots) {
           const bitmap = new sdk.Bitmap(lease);
           bitmap.name = slot.name;
+          if (slot.blendMode) bitmap.blendMode = slot.blendMode;
           bitmap.touchEnabled = false;
           this.#bitmaps.push({ bitmap, attachment: undefined });
           this.addChild(bitmap);

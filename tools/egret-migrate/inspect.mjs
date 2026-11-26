@@ -102,12 +102,29 @@ export function inspectLegacyProject(folder, options = {}) {
     return result;
   };
   const properties = readJSON(read, 'egretProperties.json');
-  if (!/^5\.2\.\d+$/.test(properties?.engineVersion ?? '') || !/^5\.2\.\d+$/.test(properties?.compilerVersion ?? '')) {
-    refuse('MIGRATE_VERSION_UNSUPPORTED', 'Expected a declared Egret 5.2.x engine and compiler.');
+  // This older Wing project format records one SDK release and no separate compiler version.
+  const wing5015 =
+    properties?.egret_version === '5.0.15' &&
+    properties.engineVersion === undefined &&
+    properties.compilerVersion === undefined;
+  const classic519 = properties?.engineVersion === '5.1.9' && properties?.compilerVersion === '5.1.9';
+  if (
+    !wing5015 &&
+    !classic519 &&
+    (!/^5\.2\.\d+$/.test(properties?.engineVersion ?? '') || !/^5\.2\.\d+$/.test(properties?.compilerVersion ?? ''))
+  ) {
+    refuse(
+      'MIGRATE_VERSION_UNSUPPORTED',
+      'Expected matched Egret 5.1.9 declarations, Egret 5.2.x declarations or the 5.0.15 Wing project format.'
+    );
   }
   const modules = Array.isArray(properties.modules) ? properties.modules : [];
   const unsupported = modules.filter(
-    module => !supportedModules.has(module?.name) || (module.path !== undefined && module.path !== '${EGRET_DEFAULT}')
+    module =>
+      !(supportedModules.has(module?.name) || ((wing5015 || classic519) && module?.name === 'tween')) ||
+      (module.path !== undefined &&
+        module.path !== '${EGRET_DEFAULT}' &&
+        !(wing5015 && module.name === 'promise' && module.path === './promise'))
   );
   if (!modules.some(module => module?.name === 'egret') || unsupported.length) {
     refuse('MIGRATE_MODULE_UNSUPPORTED', 'A module requires an explicit migration rule.', {
@@ -189,9 +206,9 @@ export function inspectLegacyProject(folder, options = {}) {
     .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
   return {
     schemaVersion: 1,
-    profile,
-    engineVersion: properties.engineVersion,
-    compilerVersion: properties.compilerVersion,
+    profile: wing5015 ? 'egret-5.0.15-classic-web-2d' : classic519 ? 'egret-5.1.9-classic-web-2d' : profile,
+    engineVersion: wing5015 ? properties.egret_version : properties.engineVersion,
+    ...(wing5015 ? {} : { compilerVersion: properties.compilerVersion }),
     modules: modules.map(module => module.name),
     stage,
     sources,

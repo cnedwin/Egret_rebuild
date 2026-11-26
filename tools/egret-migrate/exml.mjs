@@ -3,9 +3,21 @@ import { logicalPath } from '../lib/file-identity.mjs';
 
 const euiNamespace = 'http://ns.egret.com/eui';
 const wingNamespace = 'http://ns.egret.com/wing';
-const controls = new Set(['Skin', 'Group', 'Image', 'Label', 'Rect', 'Button', 'Component']);
+const controls = new Set([
+  'Skin',
+  'Group',
+  'Image',
+  'Label',
+  'Rect',
+  'Button',
+  'Component',
+  'List',
+  'DataGroup',
+  'ItemRenderer',
+  'Scroller'
+]);
 const layouts = new Set(['BasicLayout', 'HorizontalLayout', 'VerticalLayout']);
-const containers = new Set(['Skin', 'Group', 'Component']);
+const containers = new Set(['Skin', 'Group', 'Component', 'ItemRenderer', 'List', 'DataGroup', 'Scroller']);
 const fields = source => new Set(source.split(' '));
 const commonNumbers = fields(
   'x y width height minWidth minHeight maxWidth maxHeight left right top bottom horizontalCenter verticalCenter percentWidth percentHeight anchorOffsetX anchorOffsetY scaleX scaleY rotation alpha'
@@ -17,10 +29,14 @@ const nonnegativeNumbers = fields(
   'width height minWidth minHeight maxWidth maxHeight percentWidth percentHeight size strokeWeight ellipseWidth ellipseHeight paddingLeft paddingRight paddingTop paddingBottom'
 );
 const controlNumbers = {
+  List: fields('selectedIndex scrollV'),
+  DataGroup: fields('scrollV'),
   Label: fields('size'),
   Rect: fields('fillAlpha strokeAlpha strokeWeight ellipseWidth ellipseHeight')
 };
 const controlBooleans = {
+  List: fields('requireSelection scrollEnabled useVirtualLayout'),
+  DataGroup: fields('scrollEnabled useVirtualLayout'),
   Label: fields('bold italic'),
   Button: fields('enabled'),
   Component: fields('enabled'),
@@ -28,6 +44,9 @@ const controlBooleans = {
   Rect: fields('enabled')
 };
 const controlStrings = {
+  List: fields('itemRenderer itemRendererSkinName skinName'),
+  DataGroup: fields('itemRenderer itemRendererSkinName skinName'),
+  ItemRenderer: fields('skinName'),
   Image: fields('source'),
   Label: fields('text fontFamily textAlign verticalAlign'),
   Button: fields('label skinName'),
@@ -182,7 +201,12 @@ function readXml(source, path) {
     }
     const [prefix, local] = name.includes(':') ? name.split(':') : ['', name];
     const namespace = namespaces.get(prefix);
-    if (namespace !== euiNamespace && !(namespace === wingNamespace && local === 'Config'))
+    const customNamespace = namespace === '*' || (namespace?.endsWith('.*') && isIdentifier(namespace.slice(0, -2)));
+    if (
+      namespace !== euiNamespace &&
+      !(namespace === wingNamespace && local === 'Config') &&
+      !(customNamespace && isIdentifier(local) && !local.includes('.'))
+    )
       exmlFailure(path, offset, 'Only declared EUI elements and Wing editor metadata are supported.', {
         element: name
       });
@@ -208,6 +232,40 @@ function literalNumber(value, path, offset, key) {
   return Number(value);
 }
 
+// Bindings are a list of literal strings and property paths, interpreted without generating executable code.
+function binding(value, path, node, key) {
+  if (!value.startsWith('{') || !value.endsWith('}'))
+    exmlFailure(path, node.offset, 'Expected one complete binding expression.', { property: key });
+  const expression = value.slice(1, -1).trim();
+  const token = /(?:"((?:[^"\\]|\\["\\])*)"|'((?:[^'\\]|\\['\\])*)'|([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*))/y;
+  const parts = [];
+  let offset = 0;
+  for (;;) {
+    token.lastIndex = offset;
+    const match = token.exec(expression);
+    if (!match || parts.length === 32 || (match[3] && !isIdentifier(match[3])))
+      exmlFailure(path, node.offset, 'Unsupported EXML binding expression.', { property: key });
+    parts.push(match[3] ? { path: match[3].split('.') } : { literal: (match[1] ?? match[2]).replace(/\\(.)/g, '$1') });
+    offset = token.lastIndex;
+    while (/\s/.test(expression[offset] ?? 'x')) offset++;
+    if (offset === expression.length) return { binding: parts };
+    if (expression[offset++] !== '+')
+      exmlFailure(path, node.offset, 'Only string concatenation and property paths are supported.');
+    while (/\s/.test(expression[offset] ?? 'x')) offset++;
+  }
+}
+
+function stateNames(value, path, node) {
+  const list = value.split(',').map(name => name.trim());
+  if (
+    list.length > 64 ||
+    new Set(list).size !== list.length ||
+    list.some(name => !isIdentifier(name) || name.includes('.'))
+  )
+    exmlFailure(path, node.offset, 'Invalid or duplicate EXML state name.');
+  return list;
+}
+
 function readProperties(node, path, ids, layout = false) {
   const properties = new Map();
   for (const [key, value] of node.attributes) {
@@ -217,8 +275,29 @@ function readProperties(node, path, ids, layout = false) {
       exmlFailure(path, node.offset, 'Skin root properties must describe its dimensions.', { property: key });
     if (layout && type === 'BasicLayout')
       exmlFailure(path, node.offset, 'BasicLayout needs no linear layout properties.', { property: key });
-    if (value.includes('{') || value.includes('}'))
-      exmlFailure(path, node.offset, 'EXML expressions require an explicit migration rule.', { property: key });
+    const custom = node.namespace !== euiNamespace && !layout;
+    const customProperty = custom && isIdentifier(key) && !key.includes('.') && !/^on/i.test(key);
+    if (value.includes('{') || value.includes('}')) {
+      if (
+        layout ||
+        ['Skin'].includes(type) ||
+        ['id', 'skinName', 'itemRenderer', 'itemRendererSkinName'].includes(key) ||
+        !(
+          customProperty ||
+          commonNumbers.has(key) ||
+          commonBooleans.has(key) ||
+          key === 'name' ||
+          controlNumbers[type]?.has(key) ||
+          controlBooleans[type]?.has(key) ||
+          controlStrings[type]?.has(key) ||
+          controlColors[type]?.has(key) ||
+          (['List', 'DataGroup'].includes(type) && key === 'dataProvider')
+        )
+      )
+        exmlFailure(path, node.offset, 'Binding target has no migration rule.', { property: key });
+      properties.set(key, binding(value, path, node, key));
+      continue;
+    }
     if (!layout && key === 'id') {
       if (!isIdentifier(value) || value.includes('.') || ids.has(value))
         exmlFailure(path, node.offset, 'Expected a unique safe skin part ID.', { id: value });
@@ -238,14 +317,18 @@ function readProperties(node, path, ids, layout = false) {
         properties.set(key, number);
       }
     } else if (!layout && (commonBooleans.has(key) || controlBooleans[type]?.has(key))) {
-      if (value !== 'true' && value !== 'false')
+      if ((key === 'useVirtualLayout' && value !== 'false') || (value !== 'true' && value !== 'false'))
         exmlFailure(path, node.offset, 'Expected a literal boolean.', { property: key });
       properties.set(key, value === 'true');
     } else if (!layout && controlColors[type]?.has(key)) {
       if (!/^(?:#|0x)[0-9a-fA-F]{6}$/.test(value))
         exmlFailure(path, node.offset, 'Expected a six-digit RGB color.', { property: key });
       properties.set(key, Number.parseInt(value.replace(/^(?:#|0x)/, ''), 16));
-    } else if (layout ? layoutStrings.has(key) : commonStrings.has(key) || controlStrings[type]?.has(key)) {
+    } else if (
+      layout ? layoutStrings.has(key) : commonStrings.has(key) || controlStrings[type]?.has(key) || customProperty
+    ) {
+      if (key === 'itemRenderer' && !isIdentifier(value))
+        exmlFailure(path, node.offset, 'Invalid item renderer class.');
       if (Object.hasOwn(alignments, key) && !alignments[key].has(value))
         exmlFailure(path, node.offset, 'Unsupported layout or label alignment.', { property: key, value });
       properties.set(key, value);
@@ -260,10 +343,48 @@ function readProperties(node, path, ids, layout = false) {
   return Object.fromEntries(properties);
 }
 
-function compileNode(node, path, ids) {
-  if (!controls.has(node.local))
+function compileNode(node, path, ids, knownStates = []) {
+  const custom = node.namespace !== euiNamespace;
+  const metadata = {};
+  const simple = new Map();
+  const special = new Map();
+  if (node.local === 'Skin') {
+    knownStates = node.attributes.has('states') ? stateNames(node.attributes.get('states'), path, node) : [];
+    if (knownStates.length) metadata.states = knownStates;
+  }
+  for (const [key, value] of node.attributes) {
+    if (key === 'states' && node.local === 'Skin') continue;
+    if (key === 'includeIn' || key === 'excludeFrom') {
+      const names = stateNames(value, path, node);
+      if (
+        node.local === 'Skin' ||
+        names.some(name => !knownStates.includes(name)) ||
+        metadata.includeIn ||
+        metadata.excludeFrom
+      )
+        exmlFailure(path, node.offset, 'Unknown or conflicting conditional state.', { property: key });
+      metadata[key] = names;
+    } else if (key.includes('.')) {
+      const [property, name, extra] = key.split('.');
+      if (
+        node.local === 'Skin' ||
+        extra !== undefined ||
+        !knownStates.includes(name) ||
+        !isIdentifier(property) ||
+        ['id', 'skinName', 'itemRenderer', 'itemRendererSkinName'].includes(property)
+      )
+        exmlFailure(path, node.offset, 'Unsupported state override.', { property: key });
+      if (!special.has(name)) special.set(name, new Map());
+      special.get(name).set(property, value);
+    } else simple.set(key, value);
+  }
+  if (special.size)
+    metadata.overrides = Object.fromEntries(
+      [...special].map(([name, attributes]) => [name, readProperties({ ...node, attributes }, path, ids)])
+    );
+  if (!custom && !controls.has(node.local))
     exmlFailure(path, node.offset, 'EXML control requires a migration rule.', { element: node.local });
-  const properties = readProperties(node, path, ids);
+  const properties = readProperties({ ...node, attributes: simple }, path, ids);
   const children = [];
   let layout;
   for (const child of node.children) {
@@ -278,14 +399,41 @@ function compileNode(node, path, ids) {
         exmlFailure(path, child.offset, 'Unsupported Wing metadata.');
       continue;
     }
-    if (!containers.has(node.local))
+    if (!containers.has(node.local) && !custom)
       exmlFailure(path, child.offset, 'The control does not admit declarative children.', { element: node.local });
-    if (child.local === 'layout') {
+    if (node.local === 'Scroller' && !custom) {
+      const wrapped = child.namespace === euiNamespace && child.local === 'viewport';
+      const viewport = wrapped ? child.children[0] : child;
+      if (
+        children.length ||
+        (wrapped && (child.attributes.size || child.children.length !== 1)) ||
+        viewport?.namespace !== euiNamespace ||
+        !['List', 'DataGroup'].includes(viewport.local)
+      )
+        exmlFailure(path, child.offset, 'A vertical Scroller requires exactly one list viewport.');
+      children.push(compileNode(viewport, path, ids, knownStates));
+    } else if (
+      child.namespace === euiNamespace &&
+      child.local === 'itemRendererSkinName' &&
+      ['List', 'DataGroup'].includes(node.local)
+    ) {
+      if (
+        metadata.itemRendererSkin ||
+        properties.itemRendererSkinName ||
+        child.attributes.size ||
+        child.children.length !== 1 ||
+        child.children[0].namespace !== euiNamespace ||
+        child.children[0].local !== 'Skin'
+      )
+        exmlFailure(path, child.offset, 'Expected a single inline renderer skin.');
+      metadata.itemRendererSkin = compileNode(child.children[0], path, new Set());
+    } else if (child.namespace === euiNamespace && child.local === 'layout') {
       const definition = child.children[0];
       if (
         layout !== undefined ||
         child.attributes.size ||
         child.children.length !== 1 ||
+        definition?.namespace !== euiNamespace ||
         !layouts.has(definition?.local) ||
         definition.children.length
       )
@@ -293,10 +441,19 @@ function compileNode(node, path, ids) {
       layout = { type: definition.local, properties: readProperties(definition, path, ids, true) };
     } else {
       if (child.local === 'Skin') exmlFailure(path, child.offset, 'Only the root may declare a Skin.');
-      children.push(compileNode(child, path, ids));
+      if (['List', 'DataGroup'].includes(node.local))
+        exmlFailure(path, child.offset, 'List children require an item renderer skin.');
+      children.push(compileNode(child, path, ids, knownStates));
     }
   }
-  return { type: node.local, properties, children, ...(layout === undefined ? {} : { layout }) };
+  return {
+    type: custom ? 'Custom' : node.local,
+    ...(custom ? { className: node.namespace === '*' ? node.local : node.namespace.slice(0, -1) + node.local } : {}),
+    properties,
+    children,
+    ...metadata,
+    ...(layout === undefined ? {} : { layout })
+  };
 }
 
 /** Compile the admitted static EUI skin grammar to data for the migration bridge. */
@@ -384,5 +541,19 @@ export function discoverLegacySkins(read, themePath = 'resource/default.thm.json
     if (!value.endsWith('.exml') && !classes.has(value))
       themeFailure(themePath, 'Default skin class is not declared in the admitted EXML.', { key, value });
   }
-  return { themePath, skins: Object.fromEntries(skins), exmls };
+  const customComponents = new Set();
+  function collect(node) {
+    if (node.type === 'Custom') customComponents.add(node.className);
+    if (node.properties.itemRenderer && node.properties.itemRenderer !== 'eui.ItemRenderer')
+      customComponents.add(node.properties.itemRenderer);
+    if (node.itemRendererSkin) collect(node.itemRendererSkin);
+    node.children.forEach(collect);
+  }
+  for (const skin of exmls) collect(skin.root);
+  return {
+    themePath,
+    skins: Object.fromEntries(skins),
+    exmls,
+    ...(customComponents.size ? { customComponents: [...customComponents].sort() } : {})
+  };
 }

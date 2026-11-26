@@ -65,13 +65,13 @@ test('EXML accepts a default EUI namespace, declaration, comments, and an omitte
 test('EXML refuses unknown constructs, malformed XML, active syntax, unsupported bindings and unresolved skin parts', () => {
   const invalid = [
     '<!DOCTYPE e:Skin [<!ENTITY value SYSTEM "x">]>' + skin('<e:Label text="&value;"/>'),
-    skin('<e:Label text="{hostComponent.count}"/>'),
+    skin('<e:Label text="{hostComponent.count()}"/>'),
     skin('<e:Label onclick="execute()"/>'),
     skin('<e:Label text="bad &unknown;"/>'),
     skin('<e:Label id="constructor"/>'),
     skin('<e:Label id="same"/><e:Group id="same"/>'),
     skin('<e:Label includeIn="selected"/>'),
-    skin('<e:List/>'),
+    skin('<e:UnsupportedControl/>'),
     skin('<e:Label>unadmitted text</e:Label>'),
     skin('<e:Group unknown="1"/>'),
     skin('<e:Label size="NaN"/>'),
@@ -89,6 +89,29 @@ test('EXML refuses unknown constructs, malformed XML, active syntax, unsupported
       source
     );
   }
+});
+
+test('EXML compiles literal binding chains, named states, a list renderer skin and custom components', () => {
+  const result = compileExml(
+    '<e:Skin xmlns:e="' +
+      namespace +
+      '" xmlns:game="game.*" states="normal,busy">' +
+      '<e:Label id="status" text="{hostComponent.model.name}" text.busy="{\'Wait \' + model.name}" />' +
+      '<e:Group includeIn="busy"><game:Badge id="badge" width="20" caption="{model.name}"/></e:Group>' +
+      '<e:List id="inventory" width="200" height="120" dataProvider="{items}" itemRenderer="game.Row">' +
+      '<e:itemRendererSkinName><e:Skin height="30"><e:Label text="{data.title}"/></e:Skin></e:itemRendererSkinName>' +
+      '</e:List></e:Skin>'
+  );
+  assert.deepEqual(result.root.states, ['normal', 'busy']);
+  assert.deepEqual(result.root.children[1].includeIn, ['busy']);
+  assert.equal(result.root.children[1].children[0].className, 'game.Badge');
+  assert.equal(result.root.children[2].properties.itemRenderer, 'game.Row');
+  assert.equal(result.root.children[2].itemRendererSkin.type, 'Skin');
+  assert.ok(result.root.children[0].properties.text.binding);
+  assert.ok(result.root.children[0].overrides.busy.text.binding);
+  assert.throws(() => compileExml(skin('<e:Label text="{model.__proto__.name}"/>')), {
+    code: 'MIGRATE_EXML_UNSUPPORTED'
+  });
 });
 
 test('theme discovery reads only declared local EXML paths, including default skin paths', () => {

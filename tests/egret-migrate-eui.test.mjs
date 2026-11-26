@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import * as engine from '@egret/engine';
+import { createPointerInput } from '@egret/engine/input';
 import { compileExml } from '../tools/egret-migrate/exml.mjs';
 import { launchLegacyWeb } from '../tools/egret-migrate/legacy-web.mjs';
 
@@ -311,4 +312,304 @@ test('recursive skin references refuse before constructing an unbounded display 
     }),
     { code: 'LEGACY_EUI_UNSUPPORTED' }
   );
+});
+
+test('live bindings, state parts, a custom renderer and an ArrayCollection stay synchronized across detach and re-entry', async () => {
+  const mainSkin = compileExml(
+    '<e:Skin xmlns:e="' +
+      ns +
+      '" xmlns:g="game.*" class="MenuSkin" states="ready,detail" width="200" height="120">' +
+      '<e:Label id="status" text="{model.title}" text.detail="{\'Detail: \' + hostComponent.model.title}"/>' +
+      '<g:Badge id="badge" includeIn="detail" caption="{model.title}"/>' +
+      '<e:List id="inventory" width="180" height="80" itemRenderer="game.Row" dataProvider="{items}">' +
+      '<e:itemRendererSkinName><e:Skin height="24"><e:Label id="title" text="{data.name}"/></e:Skin></e:itemRendererSkinName>' +
+      '</e:List></e:Skin>'
+  );
+  const { sdk, options, tap } = setup(mainSkin);
+  const first = { name: 'Lantern' },
+    second = { name: 'Tea' };
+  let root,
+    menu,
+    api,
+    hits = 0,
+    changes = 0;
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui }) {
+      api = eui;
+      class Badge extends eui.Component {
+        caption = '';
+      }
+      class Row extends eui.ItemRenderer {
+        refreshes = 0;
+        dataChanged() {
+          this.refreshes++;
+        }
+      }
+      class Menu extends eui.Component {
+        model = { title: 'Stall' };
+        items = new eui.ArrayCollection([first, second]);
+      }
+      eui.registerCustomComponent('game.Badge', Badge);
+      eui.registerCustomComponent('game.Row', Row);
+      new eui.Theme('resource/default.thm.json');
+      root = new eui.UILayer();
+      menu = new Menu();
+      root.addChild(menu);
+      return root;
+    }
+  });
+  try {
+    assert.deepEqual([menu.currentState, menu.status.text, menu.badge.parent == null], ['ready', 'Stall', true]);
+    const original = menu.model;
+    menu.currentState = 'detail';
+    assert.deepEqual(
+      [menu.status.text, menu.badge.caption, menu.getChildAt(1)],
+      ['Detail: Stall', 'Stall', menu.badge]
+    );
+    menu.model = { title: 'River' };
+    original.title = 'old';
+    assert.deepEqual([menu.status.text, menu.badge.caption], ['Detail: River', 'River']);
+    menu.currentState = 'ready';
+    menu.model.title = 'Court';
+    assert.deepEqual([menu.status.text, menu.badge.parent == null], ['Court', true]);
+    const row = menu.inventory.getElementAt(1);
+    assert.equal(row.title.text, 'Tea');
+    assert.equal(row.y, 24);
+    assert.ok(row.refreshes > 0);
+    const itemTap = e => {
+      hits++;
+      assert.equal(e.item, second);
+      assert.equal(e.itemRenderer, row);
+    };
+    menu.inventory.addEventListener(api.ItemTapEvent.ITEM_TAP, itemTap, menu);
+    menu.inventory.addEventListener('change', () => changes++, menu);
+    const block = event => event.preventDefault();
+    menu.inventory.addEventListener('changing', block, menu);
+    const click = () =>
+      row.title.dispatchEvent(new engine.Event(tap, { globalX: 1, globalY: 30, session: { pointerId: 1 } }));
+    click();
+    assert.equal(menu.inventory.selectedIndex, -1);
+    menu.inventory.removeEventListener('changing', block, menu);
+    click();
+    assert.deepEqual([menu.inventory.selectedIndex, hits, changes], [1, 2, 1]);
+    menu.items.addItemAt({ name: 'Water' }, 0);
+    assert.equal(menu.inventory.getElementAt(2), row);
+    assert.deepEqual([row.itemIndex, menu.inventory.selectedIndex, row.y], [2, 2, 48]);
+    second.name = 'Teapot';
+    assert.equal(row.title.text, 'Teapot');
+    const refreshes = row.refreshes;
+    menu.items.itemUpdated(second);
+    assert.equal(row.refreshes, refreshes + 1);
+    root.removeChild(menu);
+    assert.equal(Object.getOwnPropertyDescriptor(menu.model, 'title').get, undefined);
+    const count = menu.inventory.numElements;
+    menu.items.removeItemAt(0);
+    assert.equal(menu.inventory.numElements, count);
+    root.addChild(menu);
+    assert.equal(menu.inventory.getElementAt(1), row);
+    assert.equal(menu.inventory.selectedIndex, 1);
+    menu.items.replaceItemAt({ name: 'Rice' }, 1);
+    assert.equal(menu.inventory.getElementAt(1), row);
+    assert.equal(row.title.text, 'Rice');
+    assert.equal(menu.inventory.selectedIndex, 1);
+    menu.inventory.requireSelection = true;
+    assert.equal(menu.inventory.selectedIndex, 1);
+    menu.items.removeAll();
+    assert.equal(menu.inventory.numElements, 0);
+    assert.equal(menu.inventory.selectedIndex, -1);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('closing the host restores model descriptors, including a conditional part detached before shutdown', async () => {
+  const panel = skin(
+    'MenuSkin',
+    '<e:Label id="mainLabel" text="{model.title}"/><e:Label id="more" includeIn="detail" text="{model.title}"/>',
+    'states="ready,detail"'
+  );
+  const { sdk, options } = setup(panel);
+  const model = { title: 'Open' };
+  let menu;
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui }) {
+      new eui.Theme('resource/default.thm.json');
+      class Menu extends eui.Component {}
+      menu = new Menu();
+      menu.model = model;
+      return menu;
+    }
+  });
+  menu.currentState = 'detail';
+  menu.currentState = 'ready';
+  assert.equal(menu.more.parent == null, true);
+  assert.equal(typeof Object.getOwnPropertyDescriptor(model, 'title').get, 'function');
+  await game.dispose();
+  assert.equal(Object.getOwnPropertyDescriptor(model, 'title').get, undefined);
+  assert.equal(menu.more.isDisposed, true);
+  model.title = 'Closed';
+  assert.equal(model.title, 'Closed');
+});
+
+test('list selection follows the same duplicate occurrence across inserts and removals, preserving collection event contracts', async () => {
+  const panel = skin(
+    'MenuSkin',
+    '<e:List id="list" width="80" height="60" dataProvider="{items}"><e:itemRendererSkinName><e:Skin height="20"/></e:itemRendererSkinName></e:List>'
+  );
+  const { sdk, options } = setup(panel);
+  let menu, api;
+  const source = ['duplicate', 'duplicate', 'tail'];
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui }) {
+      api = eui;
+      new eui.Theme('resource/default.thm.json');
+      class Menu extends eui.Component {}
+      menu = new Menu();
+      menu.items = new eui.ArrayCollection(source);
+      return menu;
+    }
+  });
+  try {
+    menu.list.selectedIndex = 1;
+    const selected = menu.list.getElementAt(1);
+    menu.items.addItem('more');
+    assert.equal(menu.list.selectedIndex, 1);
+    menu.items.addItemAt('duplicate', 0);
+    assert.equal(menu.list.selectedIndex, 2);
+    assert.equal(menu.list.getElementAt(2), selected);
+    menu.items.removeItemAt(0);
+    assert.equal(menu.list.selectedIndex, 1);
+    assert.equal(menu.list.getElementAt(1), selected);
+    const seen = [];
+    menu.items.addEventListener('collectionChange', e => seen.push([e.kind, e.items]), menu);
+    menu.items.removeAll();
+    assert.deepEqual(seen[0], [api.CollectionEventKind.REMOVE, source]);
+    assert.equal(source.length, 4);
+    menu.items.source = ['reset'];
+    assert.equal(seen[1][0], api.CollectionEventKind.RESET);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('removing a state constraint restores the basic layout position and root dimension overrides fail during conversion', async () => {
+  assert.throws(() => skin('MenuSkin', '', 'width="100" width.b="200" states="a,b"'), {
+    code: 'MIGRATE_EXML_UNSUPPORTED'
+  });
+  const { sdk, options } = setup(
+    skin('MenuSkin', '<e:Rect id="marker" width="12" height="8" x="8" y="4" left.b="56" top.b="24"/>', 'states="a,b"')
+  );
+  let menu;
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui }) {
+      new eui.Theme('resource/default.thm.json');
+      class Menu extends eui.Component {}
+      menu = new Menu();
+      return menu;
+    }
+  });
+  try {
+    const point = () => [menu.marker.x, menu.marker.y];
+    assert.deepEqual(point(), [8, 4]);
+    menu.currentState = 'b';
+    assert.deepEqual(point(), [56, 24]);
+    menu.currentState = 'a';
+    assert.deepEqual(point(), [8, 4]);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('a Scroller owns its vertical list viewport, follows the initiating contact and cancels the interaction on detach', async () => {
+  const source = skin(
+    'MenuSkin',
+    '<e:Scroller id="scroller" x="10" y="20" width="120" height="50"><e:viewport><e:List id="list" width="77" height="90" x="5" y="8" dataProvider="{items}"><e:layout><e:VerticalLayout/></e:layout><e:itemRendererSkinName><e:Skin width="120" height="20"><e:Rect width="120" height="20"/></e:Skin></e:itemRendererSkinName></e:List></e:viewport></e:Scroller>',
+    'width="240" height="140"'
+  );
+  const { sdk, options } = setup(source);
+  const create = sdk.createBrowserGame;
+  sdk.createBrowserGame = async opts => {
+    const game = await create(opts);
+    game.pointer = createPointerInput({ engine: game.engine, scope: game.scope, width: 480, height: 320 });
+    return game;
+  };
+  let layer, menu;
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui }) {
+      new eui.Theme('resource/default.thm.json');
+      class Menu extends eui.Component {}
+      menu = new Menu();
+      menu.items = new eui.ArrayCollection([1, 2, 3, 4, 5]);
+      layer = new eui.UILayer();
+      layer.addChild(menu);
+      return layer;
+    }
+  });
+  try {
+    const list = menu.list;
+    assert.equal(menu.scroller.viewport, list);
+    assert.deepEqual([list.x, list.y, list.width, list.height, list.contentHeight], [0, 0, 120, 50, 124]);
+    assert.deepEqual(list.clipRect, { x: 0, y: 0, width: 120, height: 50 });
+    const update = (y, t) => ({ globalX: 20, globalY: y, buttons: 1, timestamp: t });
+    const contact = game.pointer.begin({ ...update(50, 0), pointerType: 'touch', pointerId: 1 });
+    const second = game.pointer.begin({ ...update(46, 1), pointerType: 'touch', pointerId: 2 });
+    game.pointer.move(second, update(30, 2));
+    assert.equal(list.scrollV, 0);
+    game.pointer.move(contact, update(30, 3));
+    assert.equal(list.scrollV, 20);
+    game.pointer.end(contact, { ...update(45, 4), buttons: 0 });
+    assert.equal(list.selectedIndex, -1);
+    game.pointer.cancel(second, 'pointercancel');
+    const abandoned = game.pointer.begin({ ...update(50, 5), pointerType: 'touch', pointerId: 3 });
+    layer.removeChild(menu);
+    layer.addChild(menu);
+    game.pointer.move(abandoned, update(24, 6));
+    assert.equal(list.scrollV, 20);
+    menu.scroller.viewport = null;
+    assert.equal(list.scrollEnabled, false);
+    assert.equal(list.clipRect, undefined);
+    layer.addChild(list);
+    assert.equal(list.scrollEnabled, false);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('an admitted skin path completes on its component with parts ready before stage creation completes', async () => {
+  const name = 'PathSkin';
+  const { sdk, options } = setup(skin(name, '<e:List id="rows"/>'));
+  const log = [];
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui }) {
+      class PathMenu extends eui.Component {
+        constructor() {
+          super();
+          this.addEventListener(
+            eui.UIEvent.COMPLETE,
+            event => {
+              assert.equal(event.target, this);
+              assert.ok(this.rows instanceof eui.List);
+              log.push('skin');
+            },
+            this
+          );
+          this.addEventListener(eui.UIEvent.CREATION_COMPLETE, () => log.push('stage'), this);
+          this.skinName = 'resource/' + name + '.exml';
+          assert.deepEqual(log, ['skin']);
+        }
+      }
+      return new PathMenu();
+    }
+  });
+  try {
+    assert.deepEqual(log, ['skin', 'stage']);
+  } finally {
+    await game.dispose();
+  }
 });

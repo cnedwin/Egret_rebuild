@@ -2,9 +2,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as engine from '@egret/engine';
+import { createPointerInput } from '@egret/engine/input';
 import { launchLegacyWeb } from '../tools/egret-migrate/legacy-web.mjs';
 
-function host(storage = new Map()) {
+function host(storage = new Map(), realPointer = false) {
   const trace = [];
   const tap = engine.createEventType('tap', { bubbles: true });
   const canvas = {
@@ -75,7 +76,9 @@ function host(storage = new Map()) {
               dispose: () => display.dispose()
             };
           },
-          pointer: { events: { tap } },
+          pointer: realPointer
+            ? createPointerInput({ engine: game, scope, width: options.width, height: options.height })
+            : { events: { tap } },
           loop: { start: () => trace.push('started') },
           async dispose() {
             trace.push('disposed');
@@ -146,6 +149,48 @@ test('legacy Main starts under a real display tree and input calls an old-style 
   assert.equal(root.isDisposed, true);
 });
 
+test('a drag between old display objects ends on the release target while a click still taps once', async () => {
+  const { sdk, canvas } = host(new Map(), true);
+  const trace = [];
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_cross_target',
+    createMain({ egret }) {
+      const root = new egret.Sprite();
+      for (const x of [0, 50]) {
+        const button = new egret.Sprite();
+        button.x = x;
+        button.touchEnabled = true;
+        button.hitArea = { x: 0, y: 0, width: 30, height: 30 };
+        for (const type of ['touchBegin', 'touchMove', 'touchEnd', 'touchTap'])
+          button.addEventListener(type, e => trace.push([e.type, x, e.localX]), root);
+        root.addChild(button);
+      }
+      return root;
+    }
+  });
+  try {
+    const step = (globalX, timestamp, buttons) => ({ globalX, globalY: 10, timestamp, buttons });
+    const begin = time => game.pointer.begin({ ...step(10, time, 1), pointerId: 1, pointerType: 'touch' });
+    const drag = begin(0);
+    game.pointer.move(drag, step(62, 1, 1));
+    game.pointer.end(drag, step(62, 2, 0));
+    game.pointer.end(begin(3), step(10, 4, 0));
+    assert.deepEqual(trace, [
+      ['touchBegin', 0, 10],
+      ['touchMove', 50, 12],
+      ['touchEnd', 50, 12],
+      ['touchBegin', 0, 10],
+      ['touchEnd', 0, 10],
+      ['touchTap', 0, 10]
+    ]);
+  } finally {
+    await game.dispose();
+  }
+});
+
 test('localStorage is isolated by project ID and startup failures dispose the new host', async () => {
   const { sdk, canvas, trace } = host();
   const start = (projectId, action) =>
@@ -204,6 +249,155 @@ test('a legacy text field delegates updates to a label on the live display tree'
   }
 });
 
+test('a pending legacy text field can set its box before a single-line progress label is ready', async () => {
+  const { sdk, canvas } = host();
+  let label;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 600,
+    height: 600,
+    projectId: 'p_text_box',
+    createMain({ egret }) {
+      label = new egret.TextField();
+      label.width = 480;
+      label.height = 100;
+      label.textAlign = 'center';
+      label.text = 'Loading...3/16';
+      return label;
+    }
+  });
+  try {
+    assert.deepEqual([label.width, label.height, label.scaleX], [480, 100, 1]);
+    assert.equal(label.getChildAt(0).x, 240);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('event-style RES startup waits for group completion and exposes counts', async () => {
+  const { sdk, canvas } = host();
+  const observed = [];
+  let api,
+    listenerCalls = 0;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_event_res',
+    resources,
+    createMain({ egret, RES }) {
+      api = egret;
+      const root = new egret.Sprite();
+      const names = RES.ResourceEvent;
+      RES.addEventListener(
+        names.CONFIG_COMPLETE,
+        () => {
+          RES.addEventListener(
+            names.GROUP_PROGRESS,
+            e => observed.push([e.groupName, e.itemsLoaded, e.itemsTotal]),
+            root
+          );
+          RES.addEventListener(
+            names.GROUP_COMPLETE,
+            e => observed.push([e.groupName, RES.getRes('level').points]),
+            root
+          );
+          RES.loadGroup('preload');
+        },
+        root
+      );
+      RES.loadConfig(resources.configUrl, resources.root);
+      return root;
+    }
+  });
+  try {
+    assert.deepEqual(observed, [
+      ['preload', 1, 1],
+      ['preload', 3]
+    ]);
+    const callback = () => {
+      listenerCalls++;
+    };
+    api.startTick(callback, observed);
+    api.startTick(callback, observed);
+    game.engine.advanceTime(0);
+    game.engine.advanceTime(0.01);
+    assert.ok(listenerCalls >= 1);
+    api.stopTick(callback, observed);
+    const before = listenerCalls;
+    game.engine.advanceTime(0.02);
+    assert.equal(listenerCalls, before);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('a failed RES group identifies its item and retries with the same declaration', async () => {
+  const { sdk, canvas } = host();
+  let available = false;
+  const events = [];
+  canvas.ownerDocument.defaultView.fetch = async () =>
+    available ? new Response('{"points":4}') : new Response('', { status: 503 });
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_event_retry',
+    resources,
+    async createMain({ egret, RES }) {
+      const root = new egret.Sprite();
+      RES.addEventListener(
+        RES.ResourceEvent.ITEM_LOAD_ERROR,
+        event => events.push([event.groupName, event.resItem.name]),
+        root
+      );
+      RES.addEventListener(
+        RES.ResourceEvent.GROUP_LOAD_ERROR,
+        event => events.push([event.groupName, event.itemsLoaded]),
+        root
+      );
+      await RES.loadConfig(resources.configUrl, resources.root);
+      await assert.rejects(RES.loadGroup('preload'), { code: 'LEGACY_WEB_RESOURCE_READ_FAILED' });
+      assert.equal(RES.isGroupLoaded('preload'), false);
+      available = true;
+      await RES.loadGroup('preload');
+      assert.deepEqual(RES.getRes('level'), { points: 4 });
+      return root;
+    }
+  });
+  try {
+    assert.deepEqual(events, [
+      ['preload', 'level'],
+      ['preload', 0]
+    ]);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('a misspelled RES group delivers an error to an event-only application', async () => {
+  const { sdk, canvas } = host();
+  const reports = [];
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_unknown_group',
+    resources,
+    createMain({ egret, RES }) {
+      const root = new egret.Sprite();
+      RES.addEventListener(RES.ResourceEvent.GROUP_LOAD_ERROR, event => reports.push(event.groupName), root);
+      RES.loadGroup('absent');
+      return root;
+    }
+  });
+  try {
+    assert.deepEqual(reports, ['absent']);
+  } finally {
+    await game.dispose();
+  }
+});
+
 test('declared image lookup keeps a real texture lease through bitmap replacement and releases it on close', async () => {
   const { sdk, canvas, trace } = host();
   let bitmap, resource, lease;
@@ -233,6 +427,16 @@ test('declared image lookup keeps a real texture lease through bitmap replacemen
   try {
     assert.equal(bitmap.width, 2);
     assert.equal(game.stage.hitTest(1, 0.5), bitmap);
+    bitmap.width = 120;
+    bitmap.height = 80;
+    assert.deepEqual(
+      [bitmap.scaleX, bitmap.scaleY, bitmap.getChildAt(0).scaleX, bitmap.getChildAt(0).scaleY],
+      [1, 1, 60, 80]
+    );
+    assert.equal(game.stage.hitTest(95, 35), bitmap);
+    assert.equal(bitmap.globalToLocal(95, 35).x, 95);
+    bitmap.width = NaN;
+    bitmap.height = NaN;
     lease = bitmap.getChildAt(0).textureLease;
     bitmap.texture = null;
     assert.equal(bitmap.width, 0);
@@ -357,10 +561,10 @@ test('legacy sheet aliases and qualified names share one page and preserve trimm
   assert.equal(trace.filter(item => item === 'image disposed').length, 1);
 });
 
-test('admitted custom events retain data and refuse unsupported propagation', async () => {
+test('custom events retain payload, cancellation and target across a bubbling dispatch', async () => {
   const { sdk, canvas } = host();
   const calls = [];
-  let child;
+  let child, CustomEvent;
   const game = await launchLegacyWeb(sdk, {
     canvas,
     width: 200,
@@ -370,6 +574,7 @@ test('admitted custom events retain data and refuse unsupported propagation', as
     createMain({ egret }) {
       const root = new egret.Sprite();
       child = new egret.Sprite();
+      CustomEvent = egret.Event;
       child.addEventListener(egret.Event.CHANGE, event => calls.push(event.data), child);
       root.addEventListener(egret.Event.CHANGE, () => calls.push('parent'), root);
       root.addChild(child);
@@ -379,7 +584,23 @@ test('admitted custom events retain data and refuse unsupported propagation', as
   try {
     child.dispatchEventWith('change', false, 17);
     assert.deepEqual(calls, [17]);
-    assert.throws(() => child.dispatchEventWith('change', true, 18), { code: 'LEGACY_WEB_EVENT_UNSUPPORTED' });
+    child.dispatchEventWith('change', true, 18);
+    assert.deepEqual(calls, [17, 18, 'parent']);
+    const custom = new CustomEvent('sceneDecision', true, true, { cost: 6 });
+    child.parent.addEventListener(
+      'sceneDecision',
+      e => {
+        assert.equal(e, custom);
+        assert.equal(e.target, child);
+        assert.equal(e.currentTarget, child.parent);
+        e.preventDefault();
+      },
+      null
+    );
+    assert.equal(child.dispatchEvent(custom), false);
+    assert.equal(custom.isDefaultPrevented(), true);
+    assert.equal(custom.currentTarget, null);
+    assert.equal(custom.target, child);
   } finally {
     await game.dispose();
   }

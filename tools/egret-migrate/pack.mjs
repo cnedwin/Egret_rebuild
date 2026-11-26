@@ -56,8 +56,8 @@ async function pack(options) {
       path.join(stage, 'package.json'),
       json({
         name: '@egret/migrate',
-        version: '0.2.0',
-        description: 'Local migration tool for the admitted Egret 5.2 Web 2D project profile',
+        version: '0.3.0',
+        description: 'Local migration tool for the admitted classic Egret 5 Web 2D project profiles',
         license: 'Apache-2.0',
         type: 'module',
         bin: { 'egret-migrate': './bin.mjs' },

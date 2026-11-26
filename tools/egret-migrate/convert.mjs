@@ -97,7 +97,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
       actorKind: 'legacy-converter',
       intent: 'Import the admitted stage and resource records',
       toolId: 'egret-migrate',
-      toolVersion: '0.2.0'
+      toolVersion: '0.3.0'
     },
     scope: { entityIds: [entity.id], fileIds: assetFiles.map(file => file.id), metadata: false, roots: true },
     operations: [
@@ -142,7 +142,15 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
   return { store, receipt: importResult.receipt, repair: edited.receipt };
 }
 
-function gameSource(sources, entry) {
+function gameSource(sources, entry, theme) {
+  // EXML names are resolved in the imported project's lexical scope, including its TS namespaces.
+  const registrations = (theme?.customComponents ?? [])
+    .map(name => {
+      if (!/^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(name))
+        refuse('MIGRATE_THEME_UNSUPPORTED', 'Expected a qualified component name.', { name });
+      return '    eui.registerCustomComponent(' + JSON.stringify(name) + ', ' + name + ');';
+    })
+    .join('\n');
   return `import * as sdk from './egret2d.mjs';
 import { launchLegacyWeb } from './legacy-web.mjs';
 const response = await fetch('./project.json');
@@ -160,6 +168,7 @@ const host = await launchLegacyWeb(sdk, {
   },
   createMain({egret, RES, eui, dragonBones}) {
 ${sources.map(({ key, bytes }) => '// ' + key + '\n' + bytes.toString('utf8')).join('\n')}
+${registrations}
     return new ${entry}();
   }
 });
@@ -230,7 +239,7 @@ export async function convertProject(options) {
   );
   let bundled;
   try {
-    bundled = await options.esbuild.transform(gameSource(sources, selection.stage.entry), {
+    bundled = await options.esbuild.transform(gameSource(sources, selection.stage.entry, selection.theme), {
       loader: 'ts',
       format: 'esm',
       sourcefile: 'generated-legacy-client.ts',

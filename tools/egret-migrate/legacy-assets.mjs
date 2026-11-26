@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import path from 'node:path';
+import { crc32 } from 'node:zlib';
 import { PNG } from 'pngjs';
 import { planLegacyResourceManifestConversion } from '../../packages/project/dist/legacy-res-plan.js';
 import { logicalPath } from '../lib/file-identity.mjs';
@@ -21,6 +22,7 @@ export function normalizeLegacyPng(bytes, key) {
   const convertible = new Set(['PLTE', 'tRNS', 'tEXt', 'iTXt', 'zTXt', 'pHYs', 'tIME']);
   let native = bytes[24] === 8 && [2, 6].includes(bytes[25]) && bytes[26] === 0 && bytes[27] === 0 && bytes[28] === 0;
   const chunks = new Map();
+  const colorChunks = [];
   for (let at = 8; at < bytes.length; ) {
     if (bytes.length - at < 12) refused('Malformed legacy PNG chunk framing.', { path: key });
     const length = bytes.readUInt32BE(at);
@@ -31,7 +33,12 @@ export function normalizeLegacyPng(bytes, key) {
         refused('Legacy PNG metadata requires an explicit color or asset conversion.', { path: key, type });
       native = false;
     }
-    if (['sRGB', 'gAMA', 'cHRM'].includes(type)) chunks.set(type, bytes.subarray(at + 8, at + 8 + length));
+    if (['sRGB', 'gAMA', 'cHRM'].includes(type)) {
+      if (chunks.has(type) || crc32(bytes.subarray(at + 4, at + length + 8)) !== bytes.readUInt32BE(at + length + 8))
+        refused('Invalid legacy PNG color metadata.', { path: key, type });
+      chunks.set(type, bytes.subarray(at + 8, at + 8 + length));
+      colorChunks.push(bytes.subarray(at, at + 12 + length));
+    }
     at += length + 12;
   }
   const srgb = chunks.get('sRGB'),
@@ -55,7 +62,14 @@ export function normalizeLegacyPng(bytes, key) {
     refused('Legacy PNG exceeds the offline conversion size limit.', { path: key });
   try {
     const source = PNG.sync.read(bytes);
-    const converted = PNG.sync.write(source, { colorType: 6, inputColorType: 6, bitDepth: 8, inputHasAlpha: true });
+    // pngjs reads gamma but cannot write its companion sRGB intent. Keep the admitted color chunks together.
+    const encoded = PNG.sync.write(
+      { width, height, data: source.data },
+      { colorType: 6, inputColorType: 6, bitDepth: 8, inputHasAlpha: true }
+    );
+    const converted = colorChunks.length
+      ? Buffer.concat([encoded.subarray(0, 33), ...colorChunks, encoded.subarray(33)])
+      : encoded;
     const checked = PNG.sync.read(converted);
     if (source.width !== checked.width || source.height !== checked.height || !source.data.equals(checked.data))
       refused('Legacy PNG pixel identity could not be preserved.', { path: key });

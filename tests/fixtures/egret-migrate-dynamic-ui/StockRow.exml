@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<e:Skin xmlns:e="http://ns.egret.com/eui" class="StockRowSkin" width="210" height="32">
+  <e:Rect width="210" height="30" fillColor="0x456c77"/>
+  <e:Label id="titlePart" x="6" y="2" width="180" height="28" size="18" text="{data.name}"/>
+</e:Skin>

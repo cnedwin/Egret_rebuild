@@ -138,9 +138,12 @@ function convertBones(raw, path) {
       'inheritReflection'
     ]);
     if (![undefined, 0, 'bone', 'Bone'].includes(bone.type)) failure(key + '.type', 'expected a rigid bone');
-    for (const field of ['inheritTranslation', 'inheritRotation', 'inheritScale', 'inheritReflection'])
+    for (const field of ['inheritTranslation', 'inheritRotation', 'inheritReflection'])
       if (bone[field] !== undefined && bone[field] !== true) failure(key + '.' + field, 'nonstandard inheritance');
+    if (bone.inheritScale !== undefined && typeof bone.inheritScale !== 'boolean')
+      failure(key + '.inheritScale', 'expected a boolean');
     return {
+      ...(bone.inheritScale === false ? { inheritScale: false } : {}),
       name: name(bone.name, key + '.name'),
       parentName: bone.parent === undefined || bone.parent === '' ? null : name(bone.parent, key + '.parent'),
       bind: transform(bone.transform, key + '.transform'),
@@ -196,7 +199,7 @@ function convertSlots(armature, path, indices, regions) {
     empty(slot.actions, key + '.actions');
     // Older 5.0 exports may repeat the authored slot order as static zero-based z values.
     if (
-      ![undefined, 0, 'normal'].includes(slot.blendMode) ||
+      ![undefined, 0, 'normal', 1, 'add'].includes(slot.blendMode) ||
       (slot.zIndex ?? 0) !== 0 ||
       (slot.z !== undefined && slot.z !== i)
     )
@@ -228,6 +231,7 @@ function convertSlots(armature, path, indices, regions) {
     return {
       name: slotName,
       bone,
+      ...([1, 'add'].includes(slot.blendMode) ? { blendMode: 'add' } : {}),
       alpha: number(slot.alpha ?? 1, key + '.alpha', 0, 1),
       colorAlpha: colorAlpha(slot.color, key + '.color'),
       displayIndex: integer(
@@ -296,7 +300,8 @@ function clipOf(raw, path, indices, slots, budget) {
     failure(path + '.zOrder', 'animated slot order is unsupported');
   if ((clip.scale ?? 1) !== 1 || (clip.fadeInTime ?? 0) !== 0)
     failure(path, 'clip time scaling or automatic fade is unsupported');
-  const duration = integer(clip.duration, path + '.duration', 1, MAX_DURATION);
+  // The 5.x exporter writes a zero duration for a single held pose. It occupies one source frame.
+  const duration = Math.max(1, integer(clip.duration ?? 1, path + '.duration', 0, MAX_DURATION));
   const boneTracks = [];
   const usedBones = new Set();
   for (const raw of list(clip.bone ?? [], path + '.bone', MAX_BONES)) {

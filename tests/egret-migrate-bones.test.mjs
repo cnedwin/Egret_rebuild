@@ -248,8 +248,13 @@ test('native factory plays a parent-composed rig on the real engine clock, retai
 
 test('native region conversion refuses unsupported DragonBones features rather than changing animations', () => {
   const changes = [
-    [rig => (rig.skeleton.armature[0].bone[0].inheritScale = false), /inheritScale/],
+    [rig => (rig.skeleton.armature[0].bone[0].inheritScale = 'false'), /inheritScale/],
     [rig => (rig.skeleton.armature[0].bone[1].parent = 'hand'), /cyclic/],
+    [rig => (rig.skeleton.armature[0].bone[0].inheritRotation = false), /inheritRotation/],
+    [rig => (rig.skeleton.armature[0].slot[0].blendMode = 'multiply'), /blending/],
+    [rig => (rig.skeleton.armature[0].animation[0].fadeInTime = 0.3), /fade/],
+    [rig => (rig.skeleton.armature[0].animation[0].ffd = [{}]), /ffd/],
+    [rig => (rig.skeleton.armature[0].ik = [{}]), /ik/],
     [rig => (rig.skeleton.armature[0].skin[0].slot[0].display[0].type = 'mesh'), /image-region/],
     [rig => (rig.atlas.SubTexture[0].rotated = true), /rotated/],
     [rig => (rig.atlas.SubTexture[0].x = 7), /finite number/],
@@ -277,6 +282,90 @@ test('factory requires a matching converted page and refuses malformed neutral d
     assert.throws(() => factory.parseDragonBonesData(data), /hierarchy/);
     assert.throws(() => factory.parseTextureAtlasData(converted(), {}), /matching admitted page/);
     assert.equal(instance.engine.stage.numChildren, 0);
+  } finally {
+    await instance.engine.dispose();
+  }
+});
+
+test('no-scale children follow the translated attachment point and mirrored facing without inheriting stretch', async () => {
+  const instance = await host();
+  try {
+    const { skeleton, atlas } = fixture();
+    const armature = skeleton.armature[0];
+    armature.bone[0].inheritScale = false;
+    armature.bone[0].transform.rotate = 30;
+    armature.bone[1].transform = { x: 7, y: 9, rotate: 90, scX: 2, scY: -3 };
+    armature.slot[0].blendMode = 'add';
+    armature.animation = [{ name: 'freeze', duration: 0, playTimes: 1 }];
+    const data = convertDragonBones(skeleton, atlas);
+    const factory = instance.dragonBones.EgretFactory.factory;
+    factory.parseDragonBonesData(data);
+    factory.parseTextureAtlasData(data, instance.token);
+    const display = factory.buildArmatureDisplay('actor');
+    instance.engine.stage.addChild(display);
+    display.animation.play('freeze');
+    const blade = display.getChildAt(0);
+    const origin = blade.localToGlobal(2, 1);
+    closeTo(origin.x, 8);
+    closeTo(origin.y, 17 + Math.sqrt(3));
+    const x = blade.localToGlobal(3, 1);
+    const y = blade.localToGlobal(2, 2);
+    closeTo(x.x - origin.x, 0.5);
+    closeTo(x.y - origin.y, Math.sqrt(3) / 2);
+    closeTo(y.x - origin.x, Math.sqrt(3) / 2);
+    closeTo(y.y - origin.y, -0.5);
+    assert.equal(blade.blendMode, 'add');
+    assert.equal(display.animation.totalTime, 1 / 8);
+  } finally {
+    await instance.engine.dispose();
+  }
+});
+
+test('animated parent stretch moves the joint on every tick without stretching its sprite or local offset', async () => {
+  const instance = await host();
+  try {
+    const { skeleton, atlas } = fixture();
+    const armature = skeleton.armature[0];
+    armature.bone[0].inheritScale = false;
+    armature.animation = [
+      {
+        name: 'stretch',
+        duration: 8,
+        playTimes: 0,
+        bone: [
+          {
+            name: 'body',
+            scaleFrame: [
+              { x: 1, y: 1, duration: 4, tweenEasing: 0 },
+              { x: 3, y: 2, duration: 4 }
+            ]
+          }
+        ]
+      }
+    ];
+    const data = convertDragonBones(skeleton, atlas);
+    const factory = instance.dragonBones.EgretFactory.factory;
+    factory.parseDragonBonesData(data);
+    factory.parseTextureAtlasData(data, instance.token);
+    const actor = factory.buildArmatureDisplay('actor');
+    instance.engine.stage.addChild(actor);
+    actor.animation.play('stretch');
+    const blade = actor.getChildAt(0);
+    const cloth = actor.getChildAt(1);
+    for (const [time, parentStretch] of [
+      [0, 1],
+      [0.125, 1.5],
+      [0.25, 2],
+      [0.375, 2.5],
+      [0.5, 3]
+    ]) {
+      instance.engine.advanceTime(time);
+      closeTo(cloth.scaleX, parentStretch);
+      closeTo(blade.x, 10 + 4 * parentStretch + 2);
+      closeTo(blade.y, 20);
+      closeTo(blade.scaleX, 1);
+      closeTo(blade.scaleY, 1);
+    }
   } finally {
     await instance.engine.dispose();
   }
