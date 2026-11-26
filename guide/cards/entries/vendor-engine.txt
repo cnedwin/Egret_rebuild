@@ -2,7 +2,7 @@
 id: vendor-engine
 title: Copy a pinned engine build into a game folder
 applies: [engine, world3d, web]
-triggers: ["vendor", "vendor-game.mjs", "SOURCE.md", "engine pin", "update the engine", "refresh engine", "import map", "node-register.mjs", "game without npm", "static page no build", "复制引擎", "更新引擎", "引擎版本"]
+triggers: ["vendor", "vendor-game.mjs", "SOURCE.md", "engine pin", "update the engine", "refresh engine", "import map", "node-register.mjs", "game without npm", "static page no build", "复制引擎", "更新引擎", "引擎版本", "vendor/egret.mjs", "guide in the game", "leave the guide out"]
 local: []
 evidence:
   - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/game-kit.md, line: 159, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
@@ -29,11 +29,12 @@ It copies only the JavaScript those entries import, the licences, and writes:
 | `vendor/importmap.js` | or load it with a plain script tag first |
 | `vendor/node-register.mjs` | `node --import ./vendor/node-register.mjs --test` runs rules under the page's names |
 | `vendor/SOURCE.md` | commit and entries; keep it, it is the pin |
+| `vendor/egret.mjs` | the guide for an agent in the game: `guide <question>`, `card <id>`, `list`, `explain <CODE>`; the cards are under `vendor/egret/` |
 
 Rules:
 
 - Name every entry the game imports, including ones loaded with `import()` at run time, or the page fails on the first missing file.
 - Refresh the engine as its own commit: re-run the tool, run the game's tests, play it once on each backend it supports, then update the README or STATUS with the new pin. Mixing a refresh with gameplay changes hides which one broke a run.
 - After a refresh, re-read the game's known issues. A limit recorded against an older pin may be gone (FPS records eight point lights a frame; the current engine adds tiled lights, see `world3d-lights-shadows`).
-- Do not edit files under `vendor/`. A fix belongs in the engine, then a new copy.
+- Do not edit files under `vendor/`. A fix belongs in the engine, then a new copy. `--no-agent-kit` leaves the guide out of a copy that must stay small.
 - Record the pin in any public result: a frame time or a device check is evidence for that pin only.

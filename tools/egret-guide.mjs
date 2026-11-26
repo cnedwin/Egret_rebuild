@@ -6,8 +6,12 @@
 //
 //   node tools/egret-guide.mjs <words | API name | ERROR_CODE | hint-id> [--budget <tokens>]
 //   node tools/egret-guide.mjs --card <id>
-//   node tools/egret-guide.mjs --list
+//   node tools/egret-guide.mjs --list [<area> | all]
 //   node tools/egret-guide.mjs --full [--out <file>]
+//
+// The index is in two levels: guide/index.txt names the areas, and guide/areas/<area>.txt lists the cards of the folder
+// guide/cards/<area>, so the index an agent reads first stays small however many cards there are. tools/egret.mjs is
+// the same guide as one command, and tools/vendor-game.mjs puts both, with the guide, in a game's engine copy.
 //
 // Ranking is deterministic and needs nothing outside this repository: a query that equals a card's trigger or id
 // comes first, then cards are ordered by the terms they share with the query, weighted by how rare each term is.
@@ -24,6 +28,11 @@ export const CARD_BUDGET = 800;
 export const CARD_FILE_BUDGET = 1000;
 export const INDEX_BUDGET = 1500;
 export const INDEX_LINES = 150;
+/** Tokens and lines of one area's list of cards. */
+export const AREA_BUDGET = 1500;
+export const AREA_LINES = 150;
+/** How the guide's own messages name the command that prints them. */
+export const COMMAND = 'node tools/egret-guide.mjs';
 const MAX_CARDS = 3;
 
 /** Tokens a text costs a model, estimated as one per four characters: deterministic, and close for English and code. */
@@ -149,8 +158,21 @@ export function loadCards(guide = GUIDE) {
   return cards.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
 }
 
+/** The first level of the index: the areas, each with what its cards answer. */
 export function readIndex(guide = GUIDE) {
   return fs.readFileSync(path.join(guide, 'index.txt'), 'utf8');
+}
+
+/** The areas in the order the index names them. */
+export function listAreas(guide = GUIDE, index = readIndex(guide)) {
+  return [...index.matchAll(/\]\(areas\/([a-z0-9-]+)\.txt\)/g)].map(match => match[1]);
+}
+
+/** The second level: the cards of one area, or undefined when there is no such area. */
+export function readArea(area, guide = GUIDE) {
+  if (!/^[a-z0-9-]+$/.test(String(area))) return undefined;
+  const file = path.join(guide, 'areas', area + '.txt');
+  return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : undefined;
 }
 
 const STOP = new Set(
@@ -252,7 +274,7 @@ export function render(card) {
 }
 
 /** The answer to a query: the best two or three cards that fit the budget, or a short refusal with the ids. */
-export function answer(cards, query, budget = DEFAULT_BUDGET) {
+export function answer(cards, query, budget = DEFAULT_BUDGET, command = COMMAND) {
   const found = search(cards, query);
   if (found.length === 0)
     return {
@@ -274,33 +296,45 @@ export function answer(cards, query, budget = DEFAULT_BUDGET) {
     spent += cost;
   }
   const rest = found.length - chosen.length;
-  const footer =
-    rest > 0 ? `(${rest} more cards matched less well; node tools/egret-guide.mjs --list shows all.)\n` : '';
+  const footer = rest > 0 ? `(${rest} more cards matched less well; ${command} --list shows the areas.)\n` : '';
   return { ok: true, ids: chosen.map(item => item.id), text: chosen.map(item => item.printed).join('\n') + footer };
 }
 
-/** Every card in one text after the index, for tools that want a single file. */
-export function fullText(cards = loadCards(), index = readIndex()) {
-  return [index.trim(), ...cards.map(card => render(card).trim())].join('\n\n') + '\n';
+/** Every area's list after the index. */
+export function allAreas(guide = GUIDE, index = readIndex(guide)) {
+  return [index.trim(), ...listAreas(guide, index).map(area => readArea(area, guide).trim())].join('\n\n') + '\n';
 }
 
-function usage() {
+/** Every card in one text after the index and the areas, for tools that want a single file. */
+export function fullText(cards = loadCards(), index = readIndex(), guide = GUIDE) {
+  return [allAreas(guide, index).trim(), ...cards.map(card => render(card).trim())].join('\n\n') + '\n';
+}
+
+function usage(command) {
   return [
     'Usage:',
-    '  node tools/egret-guide.mjs <words | API name | ERROR_CODE | hint-id> [--budget <tokens>]',
-    '  node tools/egret-guide.mjs --card <id>',
-    '  node tools/egret-guide.mjs --list',
-    '  node tools/egret-guide.mjs --full [--out <file>]',
+    `  ${command} <words | API name | ERROR_CODE | hint-id> [--budget <tokens>]`,
+    `  ${command} --card <id>`,
+    `  ${command} --list [<area> | all]`,
+    `  ${command} --full [--out <file>]`,
     ''
   ].join('\n');
 }
 
-/** Runs the command line and returns what to print and the exit code, so tests need no child process. */
-export function run(args, cards = loadCards()) {
+/**
+ * Runs the command line and returns what to print and the exit code, so tests need no child process. `options` give the
+ * guide folder, the root that a full file may not be written into except under work/, and how messages name the command.
+ */
+export function run(args, cards, options = {}) {
+  const guide = options.guide ?? GUIDE,
+    root = options.root ?? ROOT,
+    command = options.command ?? COMMAND;
+  cards ??= loadCards(guide);
   const words = [];
   let budget = DEFAULT_BUDGET,
     mode = 'search',
     card,
+    area,
     out;
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -311,23 +345,32 @@ export function run(args, cards = loadCards()) {
     } else if (arg === '--card') {
       mode = 'card';
       card = args[++i];
-    } else if (arg === '--list') mode = 'list';
-    else if (arg === '--full') mode = 'full';
+    } else if (arg === '--list') {
+      mode = 'list';
+      if (args[i + 1] !== undefined && !args[i + 1].startsWith('--')) area = args[++i];
+    } else if (arg === '--full') mode = 'full';
     else if (arg === '--out') out = args[++i];
-    else if (arg === '--help' || arg === '-h') return { code: 0, text: usage() };
-    else if (arg.startsWith('--')) return { code: 2, text: 'Unknown option ' + arg + '\n' + usage() };
+    else if (arg === '--help' || arg === '-h') return { code: 0, text: usage(command) };
+    else if (arg.startsWith('--')) return { code: 2, text: 'Unknown option ' + arg + '\n' + usage(command) };
     else words.push(arg);
   }
-  if (mode === 'list') return { code: 0, text: readIndex() };
+  if (mode === 'list') {
+    if (area === undefined) return { code: 0, text: readIndex(guide) };
+    if (area === 'all') return { code: 0, text: allAreas(guide) };
+    const text = readArea(area, guide);
+    return text !== undefined
+      ? { code: 0, text }
+      : { code: 1, text: `No area is called "${area}". Areas: ${listAreas(guide).join(', ')}\n` };
+  }
   if (mode === 'card') {
     const found = cards.find(item => item.id === card);
     return found ? { code: 0, text: render(found) } : { code: 1, text: `No card has the id "${card}".\n` };
   }
   if (mode === 'full') {
-    const text = fullText(cards);
+    const text = fullText(cards, readIndex(guide), guide);
     if (out === undefined) return { code: 0, text };
     const target = path.resolve(out),
-      inside = path.relative(ROOT, target);
+      inside = path.relative(root, target);
     // The full file is a build output. Inside the repository it goes only under the ignored work/ folder.
     if (!inside.startsWith('..') && !path.isAbsolute(inside) && !/^work[\\/]/.test(inside))
       return { code: 2, text: 'Write the full file outside the repository or under work/: ' + target + '\n' };
@@ -338,8 +381,8 @@ export function run(args, cards = loadCards()) {
       text: `Wrote ${cards.length} cards and the index to ${target} (about ${estimateTokens(text)} tokens).\n`
     };
   }
-  if (words.length === 0) return { code: 2, text: usage() };
-  const result = answer(cards, words.join(' '), budget);
+  if (words.length === 0) return { code: 2, text: usage(command) };
+  const result = answer(cards, words.join(' '), budget, command);
   return { code: result.ok ? 0 : 1, text: result.text };
 }
 
