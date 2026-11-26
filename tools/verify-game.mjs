@@ -47,6 +47,13 @@ const TYPES = {
   '.mp3': 'audio/mpeg',
   '.ogg': 'audio/ogg'
 };
+export const browserBuildTypes = Object.freeze({
+  ...TYPES,
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.woff2': 'font/woff2',
+  '.bin': 'application/octet-stream'
+});
 /** The colours of a picture in steps of sixteen, and the share of the commonest one. */
 export function pictureStats(png) {
   const seen = new Map(),
@@ -71,15 +78,13 @@ export function pictureChange(a, b) {
       changed++;
   return changed / (a.data.length / 4);
 }
-/** The checks of a run, from what was seen. Each has `pass` and what it was decided from. */
-export function gameChecks(seen) {
+function observedChecks(seen) {
   const errors = [
     ...(seen.loadError ? ['load: ' + seen.loadError] : []),
     ...seen.pageErrors.map(error => 'pageerror: ' + error),
     ...seen.rejections.map(error => 'unhandled rejection: ' + error),
     ...seen.consoleErrors.map(error => 'console.error: ' + error)
   ];
-  const changed = Math.max(seen.changedAfterFirstInputs, seen.changedAtEnd, seen.changedMostDuringInput);
   return {
     noErrors: {
       pass: errors.length === 0 && seen.failedRequests.length === 0,
@@ -87,7 +92,15 @@ export function gameChecks(seen) {
       failedRequests: seen.failedRequests
     },
     noExternalRequests: { pass: seen.externalRequests.length === 0, externalRequests: seen.externalRequests },
-    hasCanvas: { pass: seen.canvases.some(canvas => canvas.w > 0 && canvas.h > 0), canvases: seen.canvases },
+    hasCanvas: { pass: seen.canvases.some(canvas => canvas.w > 0 && canvas.h > 0), canvases: seen.canvases }
+  };
+}
+
+/** The checks of a run, from what was seen. Each has `pass` and what it was decided from. */
+export function gameChecks(seen) {
+  const changed = Math.max(seen.changedAfterFirstInputs, seen.changedAtEnd, seen.changedMostDuringInput);
+  return {
+    ...observedChecks(seen),
     drawsSomething: {
       pass: seen.start.colors >= 3 && seen.start.dominant < 0.995,
       ...seen.start,
@@ -256,38 +269,91 @@ function driver(tab, PNG, out, size) {
   return game;
 }
 
+function recordScriptFailure(played, error, fallbackCode) {
+  const message = String(error?.message ?? error).slice(0, 1200);
+  const code = typeof error?.code === 'string' && error.code ? error.code : fallbackCode;
+  played.error = String(error?.stack ?? error).slice(0, 1200);
+  played.diagnostic = { code, message };
+  if (error?.details !== undefined) {
+    try {
+      played.diagnostic.details = JSON.parse(JSON.stringify(error.details));
+    } catch {
+      // A script diagnostic must survive writing the report even when details are not JSON data.
+    }
+  }
+}
+
+function playReport(file, checks, warnings = [], pictures = {}) {
+  return {
+    file,
+    pass: Object.values(checks).every(check => check.pass),
+    checks,
+    consoleWarnings: warnings.slice(0, 10),
+    pictures: Object.fromEntries(Object.entries(pictures).map(([name, one]) => [name, one.path]))
+  };
+}
+
 /**
  * Runs the page at `file` and gives the report. `chromium` is Playwright's; `PNG` is pngjs's. `script`, where given,
- * is the module of a script that plays the game: its default export, and the `stage` it names.
+ * is the module of a script that plays the game: its default export, and the `stage` it names. `scriptOnly` serves the
+ * staged build from the page's own directory and plays only the supplied script. Pass `filePaths` in this mode to
+ * serve only those logical paths, relative to that directory and separated by forward slashes. A script may record
+ * completed steps with `player.checkpoint(name)` and attach a string `code` and JSON `details` to errors.
  */
-export async function verifyGame({ chromium, PNG, file, out, script }) {
+export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly = false, filePaths }) {
+  if (scriptOnly && typeof script?.default !== 'function') throw new Error('scriptOnly requires a play script');
   const inside = !path.relative(root, file).startsWith('..'),
-    base = inside ? root : path.dirname(file);
+    base = inside && !scriptOnly ? root : path.dirname(file);
+  const physicalBase = scriptOnly ? fs.realpathSync(base) : base;
+  const allowedFiles = scriptOnly && filePaths !== undefined ? new Set(filePaths) : null;
   const server = http.createServer((request, response) => {
-    const wanted = path.join(base, decodeURIComponent(new URL(request.url, 'http://localhost').pathname));
-    if (path.relative(base, wanted).startsWith('..') || !fs.existsSync(wanted) || fs.statSync(wanted).isDirectory()) {
+    let wanted, content;
+    try {
+      wanted = path.join(base, decodeURIComponent(new URL(request.url, 'http://localhost').pathname));
+      const relative = path.relative(base, wanted);
+      if (
+        relative.startsWith('..') ||
+        path.isAbsolute(relative) ||
+        (allowedFiles && !allowedFiles.has(relative.split(path.sep).join('/'))) ||
+        !fs.statSync(wanted).isFile()
+      )
+        throw new Error('Not a file within the serving directory');
+      if (scriptOnly) {
+        const physical = path.relative(physicalBase, fs.realpathSync(wanted));
+        if (physical.startsWith('..') || path.isAbsolute(physical)) throw new Error('File leaves the staged build');
+      }
+      content = fs.readFileSync(wanted);
+    } catch {
       response.writeHead(404, { connection: 'close' });
       response.end();
       return;
     }
     response.writeHead(200, {
-      'content-type': TYPES[path.extname(wanted)] ?? 'application/octet-stream',
+      'content-type': (scriptOnly ? browserBuildTypes : TYPES)[path.extname(wanted)] ?? 'application/octet-stream',
       'cache-control': 'no-store',
       connection: 'close'
     });
-    response.end(fs.readFileSync(wanted));
+    response.end(content);
   });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const origin = 'http://127.0.0.1:' + server.address().port + '/';
-  const browser = await chromium.launch({
-    args: [
-      '--use-angle=swiftshader',
-      '--enable-unsafe-swiftshader',
-      '--ignore-gpu-blocklist',
-      '--autoplay-policy=no-user-gesture-required'
-    ]
-  });
+  let browser;
   try {
+    // Bind before launching, but release the socket even if Chromium is missing or cannot start.
+    await new Promise((resolve, reject) => {
+      server.once('error', reject);
+      server.listen(0, '127.0.0.1', () => {
+        server.off('error', reject);
+        resolve();
+      });
+    });
+    const origin = 'http://127.0.0.1:' + server.address().port + '/';
+    browser = await chromium.launch({
+      args: [
+        '--use-angle=swiftshader',
+        '--enable-unsafe-swiftshader',
+        '--ignore-gpu-blocklist',
+        '--autoplay-policy=no-user-gesture-required'
+      ]
+    });
     const WIDTH = 960,
       HEIGHT = 640;
     const tab = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } });
@@ -336,6 +402,55 @@ export async function verifyGame({ chromium, PNG, file, out, script }) {
         })
       }));
     const address = origin + path.relative(base, file).split(path.sep).join('/');
+    const runScript = async (prepare, fallbackCode) => {
+      const before = [seen.pageErrors.length, seen.consoleErrors.length];
+      const played = { pass: false, pictures: [] };
+      if (scriptOnly) played.checkpoints = [];
+      try {
+        await prepare();
+        const game = driver(tab, PNG, out, script.stage),
+          keep = game.picture;
+        game.picture = async name => {
+          const target = await keep(name);
+          played.pictures.push(target);
+          return target;
+        };
+        game.checkpoint = name => {
+          if (typeof name !== 'string' || !name.trim()) throw new TypeError('A checkpoint needs a non-empty name');
+          (played.checkpoints ??= []).push(name);
+        };
+        let rejections;
+        try {
+          await script.default(game);
+          rejections = await tab.evaluate(() => window.__verify?.rejections ?? []);
+        } catch (error) {
+          seen.rejections.push(...(await tab.evaluate(() => window.__verify?.rejections ?? []).catch(() => [])));
+          throw error;
+        }
+        seen.rejections.push(...rejections);
+        const errors = [...seen.pageErrors.slice(before[0]), ...seen.consoleErrors.slice(before[1]), ...rejections];
+        if (errors.length > 0) throw new Error('The page failed while it was played: ' + errors[0]);
+        played.pass = true;
+      } catch (error) {
+        recordScriptFailure(played, error, fallbackCode());
+        await tab.screenshot({ path: path.join(out, 'played-failed.png') }).catch(() => {});
+      }
+      return played;
+    };
+    if (scriptOnly) {
+      seen.rejections = [];
+      let navigated = false;
+      const played = await runScript(
+        async () => {
+          await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
+          navigated = true;
+        },
+        () => (navigated ? 'VERIFY_GAME_SCRIPT' : 'VERIFY_GAME_STARTUP')
+      );
+      if (!navigated) seen.loadError = played.diagnostic.message;
+      seen.canvases = (await state().catch(() => null))?.canvases ?? [];
+      return playReport(file, { ...observedChecks(seen), played }, consoleWarnings);
+    }
     try {
       await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
     } catch (error) {
@@ -420,56 +535,41 @@ export async function verifyGame({ chromium, PNG, file, out, script }) {
     let scripted;
     if (script !== undefined) {
       // The game is played from its start: the page is loaded again, and what goes wrong from here is the script's.
-      const before = [seen.pageErrors.length, seen.consoleErrors.length];
-      const played = { pass: false, pictures: [] };
-      try {
-        // What blind play saved (a level reached, a high score) is forgotten, so the script starts a new game.
-        await tab
-          .evaluate(async () => {
-            try {
-              localStorage.clear();
-              sessionStorage.clear();
-              for (const { name } of (await indexedDB.databases?.()) ?? []) if (name) indexedDB.deleteDatabase(name);
-            } catch {
-              /* A page without storage has nothing to forget. */
-            }
-          })
-          .catch(() => {});
-        await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
-        await tab.waitForTimeout(1500);
-        const game = driver(tab, PNG, out, script.stage),
-          keep = game.picture;
-        game.picture = async name => {
-          const target = await keep(name);
-          played.pictures.push(target);
-          return target;
-        };
-        await script.default(game);
-        const errors = [...seen.pageErrors.slice(before[0]), ...seen.consoleErrors.slice(before[1])],
-          rejections = await tab.evaluate(() => window.__verify?.rejections ?? []);
-        seen.rejections.push(...rejections);
-        if (errors.length + rejections.length > 0)
-          throw new Error('The page failed while it was played: ' + [...errors, ...rejections][0]);
-        played.pass = true;
-      } catch (error) {
-        played.error = String(error.stack ?? error).slice(0, 1200);
-        await tab.screenshot({ path: path.join(out, 'played-failed.png') }).catch(() => {});
-      }
-      scripted = played;
+      scripted = await runScript(
+        async () => {
+          // What blind play saved (a level reached, a high score) is forgotten, so the script starts a new game.
+          await tab
+            .evaluate(async () => {
+              try {
+                localStorage.clear();
+                sessionStorage.clear();
+                for (const { name } of (await indexedDB.databases?.()) ?? []) if (name) indexedDB.deleteDatabase(name);
+              } catch {
+                /* A page without storage has nothing to forget. */
+              }
+            })
+            .catch(() => {});
+          await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
+          await tab.waitForTimeout(1500);
+        },
+        () => 'VERIFY_GAME_SCRIPT'
+      );
     }
     // Network and error observers stay active through scripted play; decide every flag from their final values.
     const checks = gameChecks(seen);
     if (scripted !== undefined) checks.played = scripted;
-    return {
-      file,
-      pass: Object.values(checks).every(check => check.pass),
-      checks,
-      consoleWarnings: consoleWarnings.slice(0, 10),
-      pictures: Object.fromEntries(Object.entries(pictures).map(([name, one]) => [name, one.path]))
-    };
+    return playReport(file, checks, consoleWarnings, pictures);
+  } catch (error) {
+    if (!scriptOnly) throw error;
+    const played = { pass: false, pictures: [], checkpoints: [] };
+    recordScriptFailure(played, error, 'VERIFY_GAME_STARTUP');
+    return playReport(file, { played });
   } finally {
-    await browser.close();
-    server.close();
+    try {
+      await browser?.close();
+    } finally {
+      if (server.listening) await new Promise(resolve => server.close(resolve));
+    }
   }
 }
 

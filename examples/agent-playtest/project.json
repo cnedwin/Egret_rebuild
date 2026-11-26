@@ -1,0 +1,27 @@
+{
+  "projectSchemaVersion": "1.0",
+  "projectId": "p_agent_playtest",
+  "revision": 0,
+  "name": "Harbor Beacon",
+  "versions": {
+    "engineVersion": "0.0.0",
+    "resourceFormatVersion": "1.0",
+    "toolProtocolVersion": "1.0"
+  },
+  "roots": ["e_opening"],
+  "entities": [
+    {
+      "id": "e_opening",
+      "kind": "agent-playtest-opening",
+      "dataSchemaVersion": "1.0",
+      "name": "Harbor light",
+      "data": {
+        "signalColor": null
+      },
+      "references": []
+    }
+  ],
+  "files": [],
+  "retiredEntityIds": [],
+  "retiredFileIds": []
+}

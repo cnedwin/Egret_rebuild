@@ -14,6 +14,22 @@ See the [paired first-draft study](first-playable-entry-study.md) for the record
 
 The [Rainstorm Ferry comparison](agent-guide-routing-study.md) records which pages each agent opened on its own and what each unedited opening let the player do.
 
+## Run a playtest and retry a project edit
+
+Give the agent a locally built game and a trusted, self-contained scenario module. Use [`verify-game`'s browser player](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/verify-game.mjs) to operate rendered controls. After checking the game's response, record `first-action`, `restart` and `first-action-after-restart` with `player.checkpoint(name)`, in that order. The checkout includes a [small beacon game and scenario](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/agent-playtest). Use the existing [single-file build](single-file.md) to generate its `egret2d.mjs`. Copy the example HTML and game module beside the bundle in a build folder.
+
+```text
+node tools/agent-playtest.mjs run --project examples/agent-playtest/project.json --web <build-folder> --file game.mjs --file egret2d.mjs --scenario examples/agent-playtest/scenario.mjs --playwright <Playwright-index.mjs> --out <new-run-folder>
+node tools/agent-playtest.mjs run --after <failed-run-folder> --transaction <repair.json> --scenario examples/agent-playtest/scenario.mjs --playwright <Playwright-index.mjs> --out <new-retry-folder>
+node tools/agent-playtest.mjs preview --run <passing-run-folder> --address <private-LAN-IPv4> --qr-module <qrcode.mjs>
+```
+
+The first run stages `index.html`, the listed files and the canonical project snapshot at `project.json`. The example starts with an invalid beacon color. The page starts, and the first tap produces an error code, entity, field, path and revision in `report.json`. The agent can read that report, inspect the snapshot and submit an explicit [project transaction](project-transaction-core-contract.md). Set its base revision to the failed revision and scope the edit to the affected entity. The retry checks the scenario bytes, applies the transaction through the project store and records the receipt alongside browser evidence. Keep the failed run and the retry in separate directories. Changes to source or project files require a new build and a new run.
+
+The preview prints its verified build's SHA-256 and saves `preview-qr.png` in the passing run folder. Scan it from a phone on the same local network and perform the same first action and restart. The preview serves only the selected build files and closes after 15 minutes or Ctrl+C. Select a trusted network and game build. The desktop report and phone playthrough are separate evidence. For the QR encoder, run `npm install --prefix <tool-folder> qrcode-generator@2.0.4` outside the checkout and pass `<tool-folder>/node_modules/qrcode-generator/dist/qrcode.mjs`. [qrcode-generator license and package](https://www.npmjs.com/package/qrcode-generator/v/2.0.4)
+
+On November 26, 2026, Windows Chromium ran the example on WebGL2. Revision 0 returned `PLAYTEST_SIGNAL_COLOR_INVALID` at the first tap. After a transaction changed only the beacon entity, the same scenario checked the lit beacon, an unlit second round and the lit beacon again at revision 1. On a Galaxy Z Fold7, Chrome 157 decoded the saved QR image, loaded the build over USB port forwarding and completed the three steps with automated touch. All four phone build files matched the desktop manifest `32f455a0537a043d40012f9a6658cd7889b8d345f6e815c9ea66e198d6b72c6f`. The Wi-Fi test decoded the QR but Chrome failed to open the page. For USB testing on an Android device authorized for debugging, start the preview on `127.0.0.1`, then use `adb -s <serial> reverse tcp:<port> tcp:<port>` with the printed port. Remove that forwarding rule when the test ends.
+
 ## What a developer's agent reads
 
 [`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) gives an agent four ways in: create a first 2D interaction, start a 3D scene, work on an existing game, or investigate an error. The smallest example responds to Space. The full games link to their runnable checkout sources. With a source-size limit, count the final UTF-8 bytes before delivering the game. Use the [geometry budget card](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/perf/geometry-budget-2d.txt) when procedural 2D effects cause the frame capture to refuse a scene. Read more as you need it:
