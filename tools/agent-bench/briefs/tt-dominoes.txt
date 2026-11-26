@@ -1,0 +1,16 @@
+---
+id: tt-dominoes
+genre: tabletop
+target: web
+title: Four Winds Dominoes
+---
+
+Make a dominoes game against three computer players for a web page. Deal, take turns, play or pass, score the round, and play to 100 points. An auto-play switch. Every action by a key and a button.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个网页多米诺骨牌游戏，玩家对三个电脑对手。发牌、轮流出牌或过、结算一局，打到 100 分。有自动出牌开关。每个操作都能用按键和按钮完成。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

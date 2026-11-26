@@ -1,0 +1,16 @@
+---
+id: a3-duel
+genre: action-3d
+target: steam
+title: Rain Duel
+---
+
+Make a 3D sword duel for Steam. Third person, one arena in the rain, three opponents in turn. Attack, guard and dodge; each opponent shows a tell before a heavy blow. A gamepad and keys. A quality setting.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个上架 Steam 的 3D 剑斗游戏。第三人称，雨中一个竞技场，依次对三个对手。攻击、格挡和闪避；每个对手在重击前有预兆动作。手柄和键盘。有画质设置。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

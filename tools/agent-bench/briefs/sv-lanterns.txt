@@ -1,0 +1,16 @@
+---
+id: sv-lanterns
+genre: survivors
+target: mobile
+title: Lantern Night
+---
+
+Make a survivors-like for a phone held upright. The player only steers a lantern bearer; a lamp, a bell and paper charms strike by themselves. Moths and shades come in growing waves for five minutes. Each level offers three upgrades to choose from. Win by lasting, lose when the light goes out.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个竖屏手机上的幸存者类游戏。玩家只操纵提灯人移动；灯、铃和纸符自动攻击。飞蛾和幽影一波比一波多，持续五分钟。每升一级给出三个强化供选择。撑到时间就赢，灯灭就输。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

@@ -1,0 +1,16 @@
+---
+id: rh-drum
+genre: rhythm
+target: web
+title: Festival Drum
+---
+
+Make a rhythm game for a web page. Notes slide to a line in time with one song; the player strikes the drum or the bell with keys or taps. Each stroke is judged early, on time or late from its event time against the music. A delay setting the player can measure. Three difficulties.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个网页音乐节奏游戏。音符随一首曲子按节拍滑向判定线；玩家用键盘或点击敲鼓或敲铃。每一击按事件时间对照音乐判为早、准或晚。有玩家能自己测的延迟设置。三档难度。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

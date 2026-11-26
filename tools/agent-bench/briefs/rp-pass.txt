@@ -1,0 +1,16 @@
+---
+id: rp-pass
+genre: rpg
+target: web
+title: Mountain Pass
+---
+
+Make a short role-playing game for a web page. Walk a small map of a village and a pass, talk to two people, take one quest, recruit one companion and win three turn-based fights on a grid. Keys, a gamepad and taps. Saves in three slots.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个网页上的短篇角色扮演游戏。在村庄和山口的小地图上行走，和两个人对话，接一个任务，招一个同伴，在格子上打赢三场回合制战斗。键盘、手柄和点击都能玩。三个存档位。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。
