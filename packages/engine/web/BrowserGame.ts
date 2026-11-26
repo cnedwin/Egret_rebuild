@@ -30,7 +30,7 @@ import { decodeBrowserImage, sniffBrowserImageFormat } from './BrowserImageTextu
 import { createTextField, createTextRasterCache } from '@egret/engine/text';
 import type { TextField, TextRasterCache } from '@egret/engine/text';
 import { createBrowserFrameLoop } from './loop.js';
-import type { BrowserFrameLoop } from './loop.js';
+import type { BrowserFrameLoop, BrowserFrameLoopOptions } from './loop.js';
 import { createBrowserPointerInput } from './pointer.js';
 import type { PointerInput } from './pointer.js';
 import { createBrowserKeyboardInput } from './keyboard.js';
@@ -168,6 +168,10 @@ export interface BrowserGameOptions {
   readonly effects?: boolean;
   /** One step of the game, called before each frame with the seconds since the step before. */
   readonly update?: (deltaSeconds: number) => void;
+  /** Presentation-only work after frame admission, before capture. */
+  readonly beforeRender?: BrowserFrameLoopOptions<unknown>['beforeRender'];
+  /** Optional bounded recovery of a render failure. Game logic and preparation errors still stop the loop. */
+  readonly renderRetry?: BrowserFrameLoopOptions<unknown>['renderRetry'];
   /** Told once of what stopped the game's loop. Without it the failure is thrown where the console shows it. */
   readonly onError?: (error: unknown) => void;
   /**
@@ -224,7 +228,7 @@ export interface BrowserGame {
    * `width` × `height` and all of it is safe.
    */
   readonly screen: ScreenPlan;
-  /** Calls `listener` with the new plan after the stage changes size or its safe part moves. Returns its removal. */
+  /** Calls `listener` with the new plan after the stage size, CSS scale or safe part changes. Returns its removal. */
   onScreenChange(listener: (screen: ScreenPlan) => void): () => void;
   readonly loop: BrowserFrameLoop;
   readonly pointer: PointerInput | undefined;
@@ -422,6 +426,14 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     typeof enableEffects !== 'boolean' ||
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
+    (options.beforeRender !== undefined && typeof options.beforeRender !== 'function') ||
+    (options.renderRetry !== undefined &&
+      (options.renderRetry === null ||
+        typeof options.renderRetry !== 'object' ||
+        !Number.isSafeInteger(options.renderRetry.maxConsecutive) ||
+        options.renderRetry.maxConsecutive < 1 ||
+        options.renderRetry.maxConsecutive > 8 ||
+        typeof options.renderRetry.shouldRetry !== 'function')) ||
     (onWarning !== undefined && typeof onWarning !== 'function') ||
     [options.pointer, options.keyboard, options.hover, options.autoStart, options.stats].some(
       flag => flag !== undefined && typeof flag !== 'boolean'
@@ -595,6 +607,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       engine: drawing,
       host,
       frame: frameNow,
+      ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
+      ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),
       ...(onError === undefined ? {} : { onError }),
       update(seconds: number): void {
         if (panel !== undefined) {
@@ -793,6 +807,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         const moved =
           next.width !== before.width ||
           next.height !== before.height ||
+          next.scale !== before.scale ||
           next.orientation !== before.orientation ||
           (['x', 'y', 'width', 'height'] as const).some(key => next.safe[key] !== before.safe[key]);
         if (moved) for (const listener of [...screenListeners]) listener(next);

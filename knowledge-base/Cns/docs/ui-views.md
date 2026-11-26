@@ -60,6 +60,8 @@ const shop = game.show(
 
 给 `game.show` 传入 `paragraphCache`，文字部件和按钮说明便可以使用[段落 SDK](paragraph-layout-controls.md)。在视图描述中给每个段落部件指定高度。文字按规划宽度换行，超出部件高度的内容会被裁掉。按钮说明显示在标题下方，按按钮内部宽度换行。`lineHeight` 设置最小行高，`fontFamilies` 按顺序指定回退字体，`maxLines` 限制行数。只写 `text` 的按钮继续使用原来的单行标题。
 
+段落可选的 `density` 表示每个舞台单位对应的栅格像素数，范围为 0.25–4（默认 `1`）。在高像素密度的屏幕上可设 `density: 2`，使说明文字更清晰，而不改变部件区域、换行宽度、字号、行高、指针范围或语义边界。该参数由应用显式设置，不随设备 DPR 自动变化：较高密度会消耗更多栅格内存，段落提供器原有的栅格限制和缓存字节预算仍然适用。
+
 ```js
 import { createParagraphCache } from '@egret/engine/paragraph';
 
@@ -75,7 +77,7 @@ const workshop = game.show({
       { type: 'image', name: 'cover', src: '/art/workshop.webp', label: '工坊外观', height: 64 },
       { type: 'text', name: 'notes', text: '筹备 Wood workshop', paragraph, height: 72 },
       { type: 'button', name: 'build', text: '建造工坊', description: '备齐两箱木材。\nPlace two crates.',
-        paragraph: { ...paragraph, maxLines: 3 }, height: 108, border: { color: 0x56caff, width: 2 } }
+        paragraph: { ...paragraph, maxLines: 3, density: 2 }, height: 108, border: { color: 0x56caff, width: 2 } }
     ]
   }
 }, { paragraphCache, bind: { build: { tap: () => buildWorkshop() } } });
@@ -93,7 +95,7 @@ node --test tests/ui-view.test.mjs
 node examples/play/verify-ui.mjs <Playwright index.mjs 绝对路径> <新的绝对输出目录> <Chromium 可执行文件绝对路径> rich
 ```
 
-Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距为 24 个逻辑单位。取样像素确认了边框和 WebP 封面，按钮点击执行一次操作，关闭视图后段落缓存的借用计数回到零。这个用例的硬件 WebGPU、Safari、Firefox 和实体手机渲染仍待验证。
+Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距为 24 个逻辑单位。取样像素确认了边框和 WebP 封面，按钮点击执行一次操作，关闭视图后段落缓存的借用计数回到零。另对相同内容的 1× 与 2× 段落进行配对检查，逻辑宽高、行范围、基线及行宽保持一致。2× 栅格具有更多像素，其 Bitmap 显示缩放为 0.5。这个用例的硬件 WebGPU、Safari、Firefox 和实体手机渲染仍待验证。
 
 单行文字、按钮标题及开关支持 `fontFamily`、`fontWeight`（1–1000 的整数，覆盖默认粗体选择）与 `italic`。这几个字段不改变段落提供者和段落的字体回退列表。
 
@@ -230,6 +232,8 @@ Galaxy Z Fold7（Android 17、Chrome 157、Adreno 830）分别通过 WebGL2 和 
 ## 测试与辅助技术
 
 给 `play` 一棵语义树，即来自 `@egret/engine/ui/semantics` 的 `semantics: createUiSemantics()`，每个视图都会把自己加进去。视图的 `label` 成为一个组，模态时成为对话框。每个有名字的部件成为对应的角色：组、文字、按钮、进度条或开关。语义树在每帧结束时发布。这样 [UI 测试器](ui-testing.md)就能按名字按下 `'Shop / Buy 60'`、读取 `state('Sound').checked`。按钮不可用或有模态对话框挡住时，测试器会像玩家一样被拒绝。`@egret/engine/web/semantics` 把同一棵树提供给读屏软件。
+
+命名的非交互文字部件在有效无障碍名称为空或只有空白字符时，不进入发布的语义树。其布局和显示对象不变，文字或显式无障碍名称恢复为非空时，同一节点重新出现。即使绘制文字为空，显式非空名称仍有意义。交互控件仍须具有合法的无障碍名称。
 
 ## 检查了什么
 
