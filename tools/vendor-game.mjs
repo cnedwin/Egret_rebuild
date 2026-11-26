@@ -21,6 +21,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { exportsFromReference } from './egret-check.mjs';
 import { collectErrorCodes } from './error-codes.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -136,6 +137,7 @@ export function agentKitFiles() {
     ['tools/egret.mjs', 'egret/tools/egret.mjs'],
     ['tools/egret-guide.mjs', 'egret/tools/egret-guide.mjs'],
     ['tools/egret-notes.mjs', 'egret/tools/egret-notes.mjs'],
+    ['tools/egret-check.mjs', 'egret/tools/egret-check.mjs'],
     ['guide/index.txt', 'egret/guide/index.txt'],
     ['guide/resolved.json', 'egret/guide/resolved.json']
   ];
@@ -162,6 +164,12 @@ function writeAgentKit(vendor) {
     fs.copyFileSync(path.join(root, ...from.split('/')), target);
   }
   fs.writeFileSync(path.join(kit, 'error-codes.json'), JSON.stringify({ codes: collectErrorCodes() }) + '\n');
+  // What each entry exports, for `egret check`, from the API reference the build writes.
+  const reference = fs.readFileSync(path.join(root, 'knowledge-base', 'en', 'docs', 'api-reference.md'), 'utf8');
+  const entries = Object.fromEntries(
+    [...exportsFromReference(reference)].map(([entry, names]) => [entry, [...names].sort()])
+  );
+  fs.writeFileSync(path.join(kit, 'exports.json'), JSON.stringify({ entries }) + '\n');
   fs.writeFileSync(
     path.join(vendor, 'egret.mjs'),
     '#!/usr/bin/env node\n' +
@@ -170,6 +178,7 @@ function writeAgentKit(vendor) {
       '//   node vendor/egret.mjs card <id>          one card;  list [<area> | all]  the areas or an area\n' +
       '//   node vendor/egret.mjs explain <CODE>     an engine error in English and Chinese, with its cards\n' +
       "//   node vendor/egret.mjs notes [--check]    which of this game's ENGINE-NOTES the engine copy has fixed\n" +
+      "//   node vendor/egret.mjs check [--strict]   this game's files read for common mistakes, with the cards\n" +
       "import { main } from './egret/tools/egret.mjs';\n" +
       'const { code, text } = await main(process.argv.slice(2));\n' +
       'process.stdout.write(text);\n' +

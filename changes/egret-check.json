@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Check a game for common mistakes before running it",
+    "body": "node vendor/egret.mjs check reads a game's own files for the mistakes agents make most with the engine. It reports names an entry does not export (with the entry that does or the nearest name), specifiers that are not entries, entries missing from the engine copy or the page's import map, engine files imported by path, text or textures made every frame, workarounds for faults the copy has fixed, unguarded localStorage writes and engine notes the copy has resolved. Each finding names its card."
+  },
+  "zh": {
+    "title": "运行游戏前先检查常见错误",
+    "body": "node vendor/egret.mjs check 读游戏自己的文件，找智能体用引擎时最常犯的错误。它报告：入口没有导出的名字（并给出导出它的入口或最接近的名字）、不是入口的模块名、引擎副本或页面 import map 漏掉的入口、按路径引用的引擎文件、每帧新建的文字或贴图、副本已修好的缺陷的绕过代码、没有防护的 localStorage 写入，以及副本已解决的引擎笔记。每条都指明要读的卡片。"
+  }
+}
