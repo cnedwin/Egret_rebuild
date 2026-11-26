@@ -404,3 +404,238 @@ test('FL08 with catchUpSeconds a slow frame is played back as several steps befo
       coded('FRAME_LOOP_OPTIONS_INVALID')
     );
 });
+
+test('render preparation runs only for a wanted and provisionally admitted frame', () => {
+  const screen = display(),
+    engine = recorder();
+  let pending = 2,
+    wants = true;
+  const loop = createBrowserFrameLoop({
+    engine,
+    frame: () => {
+      engine.calls.push('frame');
+      return FRAME;
+    },
+    host: { getStatus: () => ({ pendingFrames: pending }) },
+    shouldRender: () => wants,
+    update: () => engine.calls.push('update'),
+    beforeRender: () => engine.calls.push('prepare'),
+    ...screen
+  });
+  loop.start();
+  screen.present(0);
+  pending = 0;
+  wants = false;
+  screen.present(16);
+  wants = true;
+  screen.present(32);
+  assert.deepEqual(engine.calls, [
+    'time 0.000',
+    'update',
+    'time 0.016',
+    'update',
+    'time 0.032',
+    'update',
+    'prepare',
+    'frame',
+    'draw 320'
+  ]);
+  assert.equal(loop.snapshot().skipped, 1);
+  loop.dispose();
+});
+
+test('explicit render retry skips only the failed submission, keeps simulation time, resets after success and stops at the bound', () => {
+  const screen = display(),
+    engine = recorder();
+  const refusal = new egret.EgretError('FRAME_RENDER_FAILED', { cause: new egret.EgretError('WEBGL2_GEOMETRY_RANGE') });
+  let fail = true,
+    pending = 0,
+    updates = 0;
+  const accepted = [],
+    fatal = [];
+  const draw = engine.renderSharedFrame;
+  engine.renderSharedFrame = function (frame) {
+    if (fail) throw refusal;
+    return draw.call(this, frame);
+  };
+  const loop = createBrowserFrameLoop({
+    engine,
+    frame: FRAME,
+    host: { getStatus: () => ({ pendingFrames: pending }) },
+    update: () => updates++,
+    renderRetry: {
+      maxConsecutive: 2,
+      shouldRetry(error, attempt) {
+        assert.equal(error, refusal);
+        accepted.push(attempt);
+        return true;
+      }
+    },
+    onError: error => fatal.push(error),
+    ...screen
+  });
+  loop.start();
+  screen.present(0);
+  pending = 2;
+  screen.present(16);
+  pending = 0;
+  screen.present(32);
+  fail = false;
+  screen.present(48);
+  fail = true;
+  screen.present(64);
+  screen.present(80);
+  screen.present(96);
+  assert.deepEqual(accepted, [1, 2, 1, 2]);
+  assert.deepEqual(fatal, [refusal]);
+  assert.equal(updates, 7);
+  assert.equal(loop.snapshot().frames, 1);
+  assert.equal(loop.snapshot().skipped, 1);
+  assert.equal(loop.snapshot().recoveredRenderFailures, 4);
+  assert.equal(loop.state, 'failed');
+  assert.equal(screen.waiting, false);
+  loop.dispose();
+});
+
+test('retry policy does not swallow update, frame-construction or preparation errors; decline and disposal stay terminal', () => {
+  for (const stage of ['update', 'frame', 'prepare', 'render', 'dispose']) {
+    const display_ = display(),
+      engine = recorder(),
+      fault = new Error(stage);
+    let retries = 0,
+      loop;
+    const errors = [];
+    loop = createBrowserFrameLoop({
+      engine: {
+        ...engine,
+        renderSharedFrame: () => {
+          throw fault;
+        }
+      },
+      frame: () => {
+        if (stage === 'frame') throw fault;
+        return FRAME;
+      },
+      update: () => {
+        if (stage === 'update') throw fault;
+      },
+      beforeRender: () => {
+        if (stage === 'prepare') throw fault;
+        if (stage === 'dispose') loop.dispose();
+      },
+      renderRetry: {
+        maxConsecutive: 1,
+        shouldRetry: () => {
+          retries++;
+          return false;
+        }
+      },
+      onError: e => errors.push(e),
+      ...display_
+    });
+    loop.start();
+    display_.present(0);
+    assert.equal(retries, stage === 'render' ? 1 : 0);
+    assert.equal(loop.state, stage === 'dispose' ? 'closed' : 'failed');
+    assert.deepEqual(errors, stage === 'dispose' ? [] : [fault]);
+    assert.equal(display_.waiting, false);
+    loop.dispose();
+  }
+});
+
+test('render retry validates a small explicit limit and a callable decision', () => {
+  for (const renderRetry of [
+    null,
+    { maxConsecutive: 0, shouldRetry: () => true },
+    { maxConsecutive: 9, shouldRetry: () => true },
+    { maxConsecutive: 1.2, shouldRetry: () => true },
+    { maxConsecutive: 1, shouldRetry: true }
+  ]) {
+    assert.throws(
+      () => createBrowserFrameLoop({ engine: recorder(), frame: FRAME, renderRetry, ...display() }),
+      coded('FRAME_LOOP_OPTIONS_INVALID')
+    );
+  }
+});
+
+test('a presentation callback may restart or dispose without a second request or a resurrected loop', () => {
+  const screen = display(),
+    engine = recorder();
+  let loop,
+    restarted = false;
+  loop = createBrowserFrameLoop({
+    engine,
+    frame: FRAME,
+    beforeRender() {
+      if (!restarted) {
+        restarted = true;
+        loop.stop();
+        loop.start();
+      }
+    },
+    ...screen
+  });
+  loop.start();
+  screen.present(0);
+  assert.equal(loop.snapshot().frames, 0);
+  assert.ok(screen.waiting);
+  screen.present(16);
+  assert.equal(loop.snapshot().frames, 1);
+  loop.dispose();
+  const next = display(),
+    errors = [];
+  const fault = new Error('render');
+  loop = createBrowserFrameLoop({
+    engine: {
+      ...engine,
+      renderSharedFrame() {
+        throw fault;
+      }
+    },
+    frame: FRAME,
+    renderRetry: {
+      maxConsecutive: 1,
+      shouldRetry() {
+        loop.dispose();
+        return false;
+      }
+    },
+    onError: e => errors.push(e),
+    ...next
+  });
+  loop.start();
+  next.present(0);
+  assert.equal(loop.state, 'closed');
+  assert.equal(next.waiting, false);
+  assert.deepEqual(errors, []);
+});
+test('a throwing retry decision preserves both errors and stops the loop', () => {
+  const screen = display(),
+    engine = recorder(),
+    fault = new Error('render'),
+    decision = new Error('decision');
+  const errors = [];
+  const loop = createBrowserFrameLoop({
+    engine: {
+      ...engine,
+      renderSharedFrame() {
+        throw fault;
+      }
+    },
+    frame: FRAME,
+    renderRetry: {
+      maxConsecutive: 1,
+      shouldRetry() {
+        throw decision;
+      }
+    },
+    onError: e => errors.push(e),
+    ...screen
+  });
+  loop.start();
+  screen.present(0);
+  assert.equal(loop.state, 'failed');
+  assert.equal(screen.waiting, false);
+  assert.equal(errors[0].code, 'FRAME_LOOP_RENDER_RETRY_FAILED');
+  assert.deepEqual(errors[0].cause.errors, [fault, decision]);
+});
