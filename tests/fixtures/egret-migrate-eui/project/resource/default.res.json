@@ -1,0 +1,30 @@
+{
+  "groups": [
+    {
+      "name": "preload",
+      "keys": "guardian_ske,guardian_tex_json,guardian_tex_png,trial"
+    }
+  ],
+  "resources": [
+    {
+      "name": "guardian_ske",
+      "type": "json",
+      "url": "guardian_ske.json"
+    },
+    {
+      "name": "guardian_tex_json",
+      "type": "json",
+      "url": "guardian_tex.json"
+    },
+    {
+      "name": "guardian_tex_png",
+      "type": "image",
+      "url": "guardian_tex.png"
+    },
+    {
+      "name": "trial",
+      "type": "json",
+      "url": "trial.json"
+    }
+  ]
+}

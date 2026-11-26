@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin xmlns:e="http://ns.egret.com/eui" class="TrialSkin" width="480" height="720">
+  <e:Rect left="0" right="0" top="0" bottom="0" fillColor="0x101926"/>
+  <e:Group id="header" x="24" y="24" width="432" height="80">
+    <e:Label width="250" height="42" size="31" textColor="0xE8ECE5" text="Lantern Guardian"/>
+    <e:Label id="roundLabel" x="0" y="45" width="250" height="25" size="20" textColor="0xA2C5C7" text="ROUND 1"/>
+    <e:Component id="scoreCard" x="276" y="2" width="156" height="66" skinName="ScoreSkin"/>
+  </e:Group>
+  <e:Group id="arena" x="24" y="122" width="432" height="228">
+    <e:Rect left="0" right="0" top="0" bottom="0" fillColor="0x1D3B4B"/>
+    <e:Rect x="16" y="178" width="400" height="3" fillColor="0x335F67"/>
+    <e:Label width="336" height="30" x="12" y="9" textColor="0xA2C5C7" size="19" text="TRAINING RING"/>
+    <e:Group id="heroAnchor" width="432" height="180" x="0" y="36" touchChildren="false"/>
+    <e:Label id="statusLabel" x="18" y="190" width="396" height="29" size="19" textColor="0xE8ECE5" text="Strike, guard, strike"/>
+  </e:Group>
+  <e:Group id="progress" x="24" y="365" width="432" height="62">
+    <e:Rect left="0" right="0" top="0" bottom="0" fillColor="0x1D3B4B"/>
+    <e:Label id="countLabel" x="14" y="7" width="300" height="25" size="20" textColor="0xE8ECE5" text="0 / 3"/>
+    <e:Rect x="14" y="41" width="404" height="12" fillColor="0x335F67"/>
+    <e:Rect id="meterFill" x="14" y="41" width="0" height="12" fillColor="0xF3C55E"/>
+  </e:Group>
+  <e:Group id="actions" x="24" y="448" width="432" height="72">
+    <e:layout><e:HorizontalLayout gap="16"/></e:layout>
+    <e:Button id="strikeButton" width="208" height="72" label="STRIKE"/>
+    <e:Button id="guardButton" width="208" height="72" label="GUARD"/>
+  </e:Group>
+  <e:Group id="guide" x="24" y="538" width="432" height="82">
+    <e:layout><e:VerticalLayout gap="8"/></e:layout>
+    <e:Label width="432" height="26" size="19" textColor="0xA2C5C7" text="Complete the three-move trial."/>
+    <e:Label id="resultLabel" width="432" height="29" size="22" textColor="0xF3C55E" text="Lantern unlit"/>
+  </e:Group>
+  <e:Button id="restartButton" x="130" y="642" width="220" height="56" label="NEW ROUND"/>
+</e:Skin>

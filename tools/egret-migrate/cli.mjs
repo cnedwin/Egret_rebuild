@@ -15,7 +15,7 @@ egret-migrate convert --source <Egret 5 project> --out <new directory> --engine 
 egret-migrate verify --old <working old HTML> --converted <conversion directory> --scenario <trusted mjs> --playwright <module> --out <new directory>
 egret-migrate preview --run <verified comparison directory> --address <private IPv4> --qr-module <qrcode.mjs>
 
-Convert also accepts --source-order, --resources, --transaction and --project-id. Verify accepts --executable.
+Inspect and convert accept --source-order, --resources, --theme and --bones (a JSON array of explicit RES-name mappings). Convert also accepts --transaction and --project-id. Verify accepts --executable.
 `;
 
 const moduleAt = filename => import(pathToFileURL(path.resolve(filename)).href);
@@ -78,7 +78,9 @@ async function inspectOrConvert(command, values) {
   const config = {
     source: path.resolve(values.source),
     sources: values['source-order'] && readJSON(values['source-order']),
-    resources: values.resources
+    resources: values.resources,
+    theme: values.theme,
+    bones: values.bones && readJSON(values.bones)
   };
   if (command === 'inspect') return inspectLegacyProject(config.source, config);
   return convertProject({
@@ -93,10 +95,10 @@ async function inspectOrConvert(command, values) {
 }
 
 const commands = {
-  inspect: { need: ['source'], extra: ['source-order', 'resources'] },
+  inspect: { need: ['source'], extra: ['source-order', 'resources', 'theme', 'bones'] },
   convert: {
     need: ['source', 'out', 'engine', 'engine-version', 'esbuild'],
-    extra: ['source-order', 'resources', 'transaction', 'project-id']
+    extra: ['source-order', 'resources', 'theme', 'bones', 'transaction', 'project-id']
   },
   verify: { need: ['old', 'converted', 'scenario', 'playwright', 'out'], extra: ['executable'] },
   preview: { need: ['run', 'address', 'qr-module'], extra: [] }

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Browser-only bindings for the declarations admitted by the legacy Web 2D migration profile.
+import { createLegacyEui } from './legacy-eui.mjs';
+import { createLegacyBones } from './legacy-bones.mjs';
 const added = 'addedToStage';
 const tap = 'touchTap';
 
@@ -46,9 +48,18 @@ function localPath(value) {
   );
 }
 
-function resourcesFor(game, view, plan, textures) {
+function resourcesFor(sdk, game, view, plan, textures, sheetPlans = []) {
   const declared = new Map();
   const groups = new Map();
+  const sheets = new Map(sheetPlans.map(item => [item.name, item]));
+  const aliases = new Map(sheetPlans.flatMap(item => item.subkeys.map(key => [key, item.name])));
+  const frameOf = name => {
+    if (aliases.has(name)) return [aliases.get(name), name];
+    if (declared.has(name) || typeof name !== 'string') return undefined;
+    const dot = name.indexOf('.');
+    if (dot > 0 && sheets.has(name.slice(0, dot))) return [name.slice(0, dot), name.slice(dot + 1)];
+    return undefined;
+  };
   for (const item of plan?.resources ?? []) {
     if (declared.has(item.name) || !localPath(item.url) || !['image', 'json'].includes(item.type)) {
       refuse('LEGACY_WEB_RESOURCE_UNSUPPORTED', 'Resource declaration is outside the migration profile.');
@@ -72,6 +83,34 @@ function resourcesFor(game, view, plan, textures) {
   let configured = false;
 
   async function read(item) {
+    const sheetPlan = sheets.get(item.name);
+    if (sheetPlan) {
+      const page = await load(sheetPlan.page);
+      const lease = textures.get(page);
+      const frames = sheetPlan.frames.map(frame => ({
+        name: frame.name,
+        x: frame.x,
+        y: frame.y,
+        width: frame.width,
+        height: frame.height,
+        layout: {
+          sourceWidth: frame.sourceWidth,
+          sourceHeight: frame.sourceHeight,
+          trimX: frame.offsetX,
+          trimY: frame.offsetY,
+          packedRotation: 0
+        }
+      }));
+      const sheet = game.scope.use(sdk.createSpriteSheet(lease, frames, 'trim-rotation-v1'));
+      const values = new Map(
+        sheetPlan.frames.map(frame => {
+          const value = Object.freeze({ textureWidth: frame.sourceWidth, textureHeight: frame.sourceHeight });
+          textures.set(value, { sheet, name: frame.name });
+          return [frame.name, value];
+        })
+      );
+      return Object.freeze({ getTexture: name => values.get(name) ?? null });
+    }
     if (item.type === 'image') {
       const lease = await game.loadTexture(item.url);
       const resource = Object.freeze({ textureWidth: lease.value.width, textureHeight: lease.value.height });
@@ -86,6 +125,13 @@ function resourcesFor(game, view, plan, textures) {
 
   function load(name) {
     if (!configured) refuse('LEGACY_WEB_CONFIG_REQUIRED', 'Load the admitted configuration first.');
+    const frame = frameOf(name);
+    if (frame)
+      return load(frame[0]).then(sheet => {
+        const value = sheet.getTexture(frame[1]);
+        if (value === null) refuse('LEGACY_WEB_RESOURCE_UNKNOWN', 'Unknown sheet frame: ' + name);
+        return value;
+      });
     const item = declared.get(name);
     if (item === undefined) refuse('LEGACY_WEB_RESOURCE_UNKNOWN', 'Unknown resource: ' + name);
     if (ready.has(name)) return Promise.resolve(ready.get(name));
@@ -108,7 +154,10 @@ function resourcesFor(game, view, plan, textures) {
       }
       configured = true;
     },
-    getRes: name => ready.get(name) ?? null,
+    getRes(name) {
+      const frame = frameOf(name);
+      return frame ? (ready.get(frame[0])?.getTexture(frame[1]) ?? null) : (ready.get(name) ?? null);
+    },
     async getResAsync(name, callback, receiver) {
       const value = await load(name);
       callback?.call(receiver, value, name);
@@ -134,14 +183,30 @@ function createBindings(sdk, game, options) {
   const view = options.canvas.ownerDocument.defaultView;
   const textures = new WeakMap();
   const staged = sdk.createEventType(added);
+  const complete = sdk.createEventType('complete');
+  const creationComplete = sdk.createEventType('creationComplete');
   const types = new Map([
     [added, staged],
+    ['complete', complete],
+    ['creationComplete', creationComplete],
+    ['change', sdk.createEventType('change')],
     [tap, game.pointer.events.tap]
   ]);
+  const pointerTypes = new Set([tap]);
+  for (const [legacy, kind] of [
+    ['touchBegin', 'begin'],
+    ['touchMove', 'move'],
+    ['touchEnd', 'end'],
+    ['touchCancel', 'cancel']
+  ]) {
+    if (game.pointer.events[kind] !== undefined) types.set(legacy, game.pointer.events[kind]);
+    pointerTypes.add(legacy);
+  }
   const opening = [];
   const labels = new WeakMap();
   let booting = true;
   let stage;
+  let ui;
 
   function report(error) {
     if (typeof options.onError === 'function') options.onError(error);
@@ -183,6 +248,7 @@ function createBindings(sdk, game, options) {
       if (stageOf(child) !== current) continue;
       if (current === null) labels.get(child)?.leave();
       else {
+        ui?.enter(child);
         labels.get(child)?.enter();
         child.dispatchEvent(new sdk.Event(staged, undefined));
       }
@@ -218,7 +284,7 @@ function createBindings(sdk, game, options) {
           event => {
             const currentTarget = event.currentTarget;
             let fields = {};
-            if (type === tap) {
+            if (pointerTypes.has(type)) {
               const { globalX, globalY, session } = event.payload;
               const { x, y } = currentTarget.globalToLocal(globalX, globalY);
               fields = { stageX: globalX, stageY: globalY, localX: x, localY: y, touchPointID: session.pointerId };
@@ -228,6 +294,7 @@ function createBindings(sdk, game, options) {
                 type,
                 target: event.target,
                 currentTarget,
+                data: event.payload,
                 ...fields,
                 stopPropagation: () => event.stopPropagation(),
                 stopImmediatePropagation: () => event.stopImmediatePropagation(),
@@ -254,6 +321,13 @@ function createBindings(sdk, game, options) {
 
       hasEventListener(type) {
         return this.#listeners.some(entry => entry.type === type);
+      }
+
+      dispatchEventWith(type, bubbles = false, data) {
+        const descriptor = types.get(type);
+        if (!descriptor || pointerTypes.has(type) || descriptor.bubbles !== bubbles)
+          refuse('LEGACY_WEB_EVENT_UNSUPPORTED', 'Unsupported legacy event or propagation: ' + type);
+        return this.dispatchEvent(new sdk.Event(descriptor, data));
       }
     };
 
@@ -299,6 +373,7 @@ function createBindings(sdk, game, options) {
     #texture;
     #bitmap;
     #textureArea;
+    #sheet;
 
     constructor(texture) {
       super();
@@ -313,13 +388,18 @@ function createBindings(sdk, game, options) {
       const lease = value == null ? undefined : textures.get(value);
       if (value != null && lease === undefined)
         refuse('LEGACY_WEB_TEXTURE_UNSUPPORTED', 'Bitmap needs an image acquired by the admitted RES configuration.');
+      if (this.#sheet || lease?.sheet) {
+        if (this.#bitmap) this.#bitmap.dispose();
+        this.#bitmap = undefined;
+      }
       if (this.#bitmap === undefined && lease !== undefined) {
-        this.#bitmap = new sdk.Bitmap(lease);
+        this.#bitmap = lease.sheet ? lease.sheet.createBitmap(lease.name) : new sdk.Bitmap(lease);
         super.addChild(this.#bitmap);
       } else if (this.#bitmap !== undefined) this.#bitmap.textureLease = lease;
+      this.#sheet = lease?.sheet;
       // The texture is drawn by a child, while the old Bitmap owns the click target.
       if (this.hitArea === this.#textureArea) {
-        this.hitArea = lease ? { x: 0, y: 0, width: lease.value.width, height: lease.value.height } : undefined;
+        this.hitArea = lease ? { x: 0, y: 0, width: value.textureWidth, height: value.textureHeight } : undefined;
         this.#textureArea = this.hitArea;
       }
       this.#texture = value;
@@ -354,6 +434,7 @@ function createBindings(sdk, game, options) {
             this.addChild(label.display);
             label.set(this.#style);
             await label.ready;
+            if (this.#owner === owner) this.onLegacyTextReady?.();
           } catch (error) {
             if (this.#owner !== owner) return;
             this.#leave();
@@ -381,9 +462,14 @@ function createBindings(sdk, game, options) {
       const label = this.#label;
       label.set({ [key]: value });
       observe(
-        label.ready.catch(error => {
-          if (this.#label === label) throw error;
-        })
+        label.ready.then(
+          () => {
+            if (this.#label === label) this.onLegacyTextReady?.();
+          },
+          error => {
+            if (this.#label === label) throw error;
+          }
+        )
       );
     }
 
@@ -451,6 +537,24 @@ function createBindings(sdk, game, options) {
   stage.hitArea = { x: 0, y: 0, width: options.width, height: options.height };
   game.stage.addChild(stage);
 
+  const RES = resourcesFor(sdk, game, view, options.resources, textures, options.sheets);
+  if (options.theme)
+    ui = createLegacyEui({
+      sdk,
+      Container,
+      Bitmap,
+      TextField,
+      RES,
+      theme: options.theme,
+      stageOf,
+      observe,
+      events: { complete, creationComplete },
+      stageSize: { width: options.width, height: options.height }
+    });
+  const dragonBones = options.nativeBones
+    ? createLegacyBones({ sdk, game, Container, getTexture: value => textures.get(value) })
+    : undefined;
+
   return {
     api: Object.freeze({
       egret: Object.freeze({
@@ -462,11 +566,19 @@ function createBindings(sdk, game, options) {
         Point: sdk.Point,
         Rectangle: sdk.Rectangle,
         Matrix: sdk.Matrix,
-        Event: Object.freeze({ ADDED_TO_STAGE: added }),
-        TouchEvent: Object.freeze({ TOUCH_TAP: tap }),
+        Event: Object.freeze({ ADDED_TO_STAGE: added, COMPLETE: 'complete', CHANGE: 'change' }),
+        TouchEvent: Object.freeze({
+          TOUCH_TAP: tap,
+          TOUCH_BEGIN: 'touchBegin',
+          TOUCH_MOVE: 'touchMove',
+          TOUCH_END: 'touchEnd',
+          TOUCH_CANCEL: 'touchCancel'
+        }),
         localStorage: projectStorage(view, options.storage, options.projectId)
       }),
-      RES: resourcesFor(game, view, options.resources, textures)
+      RES,
+      eui: ui?.eui,
+      dragonBones
     }),
     async mount(root) {
       if (!(root instanceof Container) && !(root instanceof Sprite)) {
