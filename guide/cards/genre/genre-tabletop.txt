@@ -1,0 +1,26 @@
+---
+id: genre-tabletop
+title: A tabletop game against computer players: cards or tiles, turns and scoring
+applies: [play, engine, web]
+triggers: ["mahjong", "card game", "board game", "poker", "tiles", "ai opponents", "麻将", "棋牌", "牌桌", "电脑对手"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/src/sim/game.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/src/sim/score.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A tabletop game against computer players: cards or tiles, turns and scoring
+
+**Loop.** Deal, take turns, call or pass, win or draw, score; the computer players take their turns by the same rules.
+
+**Files.** The deal, the turn and the calls as rules (`src/sim/game.mjs`), hands and scoring apart (`src/sim/hand.mjs`, `src/sim/score.mjs`), the computer players in `src/sim/bot.mjs`; thousands of hands played in Node test the rules and the bots.
+
+**Entries.** `@egret/engine/play`; a table laid out by the shape of the window.
+
+**Read first.** `play-turned-table`, `play-resolution`, `sprite-swarm` (many tiles), `still-background` (the felt), `keyboard-shortcuts`, `two-languages`.
+
+**Done means.** Every scoring rule tested on hands written by hand; many hands played by four bots without a stuck turn; every call by a key and a button; an auto-play switch. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Taiwan Sixteen-Tile Mahjong.

@@ -1,0 +1,26 @@
+---
+id: genre-match-cards
+title: A match-three board with a card battle
+applies: [engine, web]
+triggers: ["match three", "match-3 board", "swap tiles", "card battler", "deck", "combo chain", "三消", "消除", "卡牌对战", "卡组"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: FivePhases/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: FivePhases/src/core/board.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: FivePhases/src/core/battle.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A match-three board with a card battle
+
+**Loop.** Swap two neighbouring tiles; lines of three or more clear, fall and chain; what clears charges the other half of the game, here energy and cards for a turn-based battle.
+
+**Files.** `src/core/board.mjs` (the grid, swaps, matches, gravity, refills from a seeded generator), `src/core/cards.mjs`, `src/core/battle.mjs` and `src/core/rng.mjs` are rules only, each tested on its own; the view animates what the rules report, step by step.
+
+**Entries.** `@egret/engine/web/game` with sprites and tweens; portraits from Spine where characters act.
+
+**Read first.** `sim-view-split`, `gestures` (swap by drag or by two taps), `game-screens`, `two-colour-tints`, `synthesized-audio`.
+
+**Done means.** No board starts with a match or without a move, which tests prove over many seeds; a swap by drag, by two taps and by keys; a whole encounter played by the rules in Node. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Five Phases.

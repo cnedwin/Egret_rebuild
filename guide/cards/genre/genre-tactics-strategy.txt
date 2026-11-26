@@ -1,0 +1,26 @@
+---
+id: genre-tactics-strategy
+title: A tactics or strategy game on a board or a map
+applies: [world3d, play3d, engine, web]
+triggers: ["tactics", "strategy", "grand strategy", "turn based", "hex map", "fog of war", "战棋", "策略", "三国", "回合", "六边形", "战争迷雾"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: StarBanner/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b3b594351e8017ce43a7c3cb20c769403806553e }
+  - { repo: cnedwin/PortedGamesEgret, path: StarBanner/src/sim/rules.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b3b594351e8017ce43a7c3cb20c769403806553e }
+  - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A tactics or strategy game on a board or a map
+
+**Loop.** Choose units or armies, move and fight on a board or a map, end the turn or let time run; the other side does the same by an AI of the same rules.
+
+**Files.** Maps, units and factions as data; moves, combat, fog and the AI as rules (`src/sim/rules.mjs`, `src/sim/ai.mjs`, `src/sim/fog.mjs`), tested by playing AI against AI; the board drawn from the state.
+
+**Entries.** `@egret/engine/world3d` with `@egret/engine/webgpu/world3d` or `@egret/engine/webgl2/world3d`; a page canvas or atlas labels for many names.
+
+**Read first.** `tile-board-camera`, `toon-figure-hooks`, `label-pages`, `camera-page-layer`, `terrain-stream-tiles`, `world3d-draw-cost`.
+
+**Done means.** A whole campaign or scenario played AI against AI without a stuck turn; every unit chosen by keys, a pad and a tap; the arrows following the view; the largest map measured. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Starbanner Tactics and Nine Provinces Ablaze.

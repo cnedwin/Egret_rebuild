@@ -1,0 +1,26 @@
+---
+id: genre-side-scroller
+title: A side-scrolling action game: run, jump, combos and bosses
+applies: [engine, web]
+triggers: ["platformer", "side scroller", "beat em up", "combo", "boss fight", "jump", "横版", "动作", "平台跳跃", "连招", "打boss"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: LanternShadows/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: LanternShadows/src/rules/hero.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: LanternShadows/src/rules/boss.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A side-scrolling action game: run, jump, combos and bosses
+
+**Loop.** Move and jump through an act, fight with combos, reach and beat its boss; each act adds a move.
+
+**Files.** The hero, foes, bosses and acts as rules (`src/rules/`) stepped at a fixed rate and tested in Node; levels as tile data; the view draws puppets or sprites from what the rules say each frame.
+
+**Entries.** `@egret/engine/web/game` with `@egret/engine/camera`, `@egret/engine/tilemap` and `@egret/engine/particles`; `@egret/spine` for skeletal puppets; `@egret/engine/web/gamepad`.
+
+**Read first.** `action-body-feedback`, `touch-controls`, `keyboard-shortcuts`, `sequence-markers`, `two-colour-tints`, `asset-provenance`.
+
+**Done means.** The first jump within a second of Start; coyote time and a jump buffer set in the rules and tested; every boss beaten by a scripted input in Node; a pad, keys and buttons on the glass. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Lantern Shadows.

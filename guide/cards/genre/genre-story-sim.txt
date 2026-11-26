@@ -1,0 +1,26 @@
+---
+id: genre-story-sim
+title: A story and life sim: days, places, people and choices
+applies: [engine, web]
+triggers: ["dating sim", "visual novel", "life sim", "affection", "dress up", "calendar", "branching story", "恋爱", "养成", "换装", "好感度", "剧情分支"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: LoveElective/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: c1570b0878d1be8716d06320206f51a62f9e3f32 }
+  - { repo: cnedwin/PortedGamesEgret, path: LoveElective/src/sim.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: c1570b0878d1be8716d06320206f51a62f9e3f32 }
+  - { repo: cnedwin/PortedGamesEgret, path: LoveElective/src/data/events.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: c1570b0878d1be8716d06320206f51a62f9e3f32 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A story and life sim: days, places, people and choices
+
+**Loop.** A calendar of days split into parts; each part spent at a place does one thing; people's affection, stats and money change; events and endings follow from them.
+
+**Files.** People, places, items and events as data (`src/data/`); the day and its effects as rules (`src/sim.mjs`), tested by playing whole calendars; the story reader apart from what it reads; a save after every action.
+
+**Entries.** `@egret/engine` display objects with the web input entries (pointer, keyboard, hover) and semantics; paragraphs when the text is long.
+
+**Read first.** `game-screens`, `save-data`, `two-languages`, `label-wrap`, `pause-and-overlays`, `touch-labels`.
+
+**Done means.** Every ending reached by a scripted calendar in Node; no event that can never fire; a save after every action, resumed in a new window; all choices by keys, taps and a screen reader. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Love Elective.
