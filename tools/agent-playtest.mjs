@@ -158,13 +158,13 @@ export async function runPlaytest(options) {
         code: 'PLAYTEST_BROWSER_FAILED',
         message: 'Inspect the failed browser checks.'
       };
-    } else if (checkpoints.every((name, index) => played.checkpoints[index] === name)) {
+    } else if ((options.checkpoints ?? checkpoints).every((name, index) => played.checkpoints[index] === name)) {
       report.status = 'passed';
     } else {
       report.diagnostic = {
         code: 'PLAYTEST_STEPS_MISSING',
         message: 'Confirm the required checkpoints in order.',
-        details: checkpoints
+        details: options.checkpoints ?? checkpoints
       };
     }
     if (
