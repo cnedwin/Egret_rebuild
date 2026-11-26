@@ -107,6 +107,7 @@ Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距�
 | `checked` | toggle | 开或关 |
 | `disabled` | button、toggle、可操作的 panel | 禁用，按下无效 |
 | `visible` | 所有部件 | 连同里面的部件一起隐藏 |
+| `src` | image | 最新图片地址，或 undefined 清除图片 |
 | `color` | text、button、bar、panel | 绘制的颜色 |
 | `tap` | button、toggle、panel | 按下时做什么，参数是状态和激活信息 |
 | `tapTargetOnly` | button、toggle、panel | 只响应直接点中自身的操作，不响应从子部件冒泡的指针点击 |
@@ -120,6 +121,40 @@ Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距�
 绑定了非仅指针 tap 的命名面板可以声明 `role: 'button'`，作为一个无障碍控件，其绘制子部件不进入焦点与语义树。默认面板仍是分组。装饰部件设置 `semantic: false` 可以将其子树移出语义与焦点（指针输入不变）。动态 `label` 绑定优先提供无障碍名称；返回空白时回退到默认名称。
 
 绑定函数抛出的错误会让游戏停下，和 `update` 抛出的一样。
+
+## 有稳定键的列表与可变图片
+
+行囊、手牌或集市的成员变化时，可调用 `view.replaceChildren(panelName, rows, bind?)`。声明一个有名字的面板（必要时设为纵向滚动），每个直接子行都使用稳定的名字。只在成员或静态描述变化时调用，不必每帧重建列表；数值绑定仍然每帧跟随状态。
+
+```js
+const bag = game.show({ root: { type: 'panel', name: 'list', scroll: 'vertical',
+  width: 340, height: 280, layout: 'column', gap: 6, children: [] } }, { state });
+function showItems() {
+  const rows = state.items.map(item => ({ type: 'panel', name: 'item_' + item.id,
+    role: 'button', card: true, height: 54, layout: 'row', children: [
+      { type: 'image', name: 'icon_' + item.id, src: '/art/item-placeholder.webp', width: 48 },
+      { type: 'text', name: 'name_' + item.id, text: '物品', width: 'fill' }
+    ] }));
+  const bind = {};
+  for (const { id } of state.items) {
+    const current = s => s.items.find(x => x.id === id);
+    bind['item_' + id] = { label: s => current(s).name, tap: s => inspectItem(s, id) };
+    bind['icon_' + id] = { src: s => current(s).icon };
+    bind['name_' + id] = { text: s => current(s).name };
+  }
+  bag.replaceChildren('list', rows, bind);
+}
+```
+
+名字必须在整个视图唯一，请用稳定且合法的标识，而不是物品的下标。直接子行的名字是键。某个键保留、静态描述和绑定种类不变时，整行及其子部件都保留精灵和资源借用；静态字段或绑定种类变化时只重建该行。数量、名称、图标或可用性变化应使用值绑定。描述应视作不可变数据。行按给出的数组顺序排列。传入绑定表时只替换本次子行的绑定，省略该参数则保留未消失名字的旧绑定。不能借此绑定该面板以外的名字。
+
+外围面板、滚动句柄和其他控件保持不变。滚动偏移限制在新的内容长度内；保留的焦点如果移出窗口会重新揭示，被移除的焦点先向后、再向前寻找可用控件。语义树保留外围视图与其他对话框的顺序。移除行会释放它持有的图片、段落、文字和输入节点；错误的描述或语义容量拒绝不会破坏原有行。动态更新不调用 `built`，视图首次构建或切换横竖屏变体时仍调用该回调。两个变体都存在时，同名面板必须拥有相同的后代名字，替换行同时用于两种变体；横竖屏原有重建契约不变。
+
+这是按键保留身份的实体化列表，**不是虚拟列表**：视图部件数量、深度和语义树容量限制仍有效。很大的列表应使用底层虚拟列表或自行分页。
+
+有名字的图片可绑定 `src: state => url`（返回 `undefined` 或空字符串清除图片）。旧图在新图完成前仍显示，同一个地址不会随着绑定刷新而重复加载。新地址到来时跳过尚未开始的旧请求；已开始的请求如果随后完成，其过期结果被释放而不覆盖最新图。共用四任务队列仍有界。不保证能够取消浏览器正在进行的解码；当前请求失败仍走既有视图错误路径。
+
+浏览器复跑：`node examples/play/verify-ui.mjs <Playwright index.mjs> <新的输出目录> <Chromium 可执行文件> collections`。Chromium 软件 WebGL2 检查 30 行列表、从中间移除及重排、保留精灵与语义 ID、滚动和焦点、重复名字与语义容量拒绝、竖屏重建、模态顺序，实际延迟 PNG 响应在新图之后到达，以及四个任务都在进行时过期的排队 URL 从未发起请求。另一个 `rich` 用例在保留外围面板的同时删除子行，段落缓存借用从 2 降为 0。这一用例尚未覆盖实体手指操作、辅助技术软件与其他浏览器。
 
 ## 皮肤
 

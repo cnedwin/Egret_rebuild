@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-view-collections.mjs",
+      "originRole": "First-party public browser verification of scoped keyed Play collection replacement, focus and resource identity, semantic capacity rollback, modal order, portrait and latest-intent images; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

@@ -69,6 +69,7 @@ export async function verifyViewRich(page) {
               label: 'Workshop',
               root: {
                 type: 'panel',
+                name: 'workshop',
                 x: 20,
                 y: 20,
                 width: 360,
@@ -146,6 +147,20 @@ export async function verifyViewRich(page) {
             errors: [...errors]
           };
         },
+        clearRows() {
+          const copy = part('copy', 0),
+            body = part('build', 1);
+          const before = cache.getStatus().callerLeases;
+          const owner = view.get('workshop');
+          view.replaceChildren('workshop', [], {});
+          return {
+            before,
+            after: cache.getStatus().callerLeases,
+            retainedOwner: view.get('workshop') === owner,
+            disposed: copy.isDisposed && body.isDisposed,
+            errors: [...errors]
+          };
+        },
         async close() {
           view.close();
           const callerLeases = cache.getStatus().callerLeases;
@@ -190,6 +205,15 @@ export async function verifyViewRich(page) {
     await page.mouse.click(118, 170);
     await page.waitForFunction(handle => handle.read().activated === 1, fixture);
     result.activated = 1;
+    result.collectionRelease = await fixture.evaluate(handle => handle.clearRows());
+    assert.ok(result.collectionRelease.before > 0);
+    assert.deepEqual(result.collectionRelease, {
+      before: result.collectionRelease.before,
+      after: 0,
+      retainedOwner: true,
+      disposed: true,
+      errors: []
+    });
     result.leasesAfterClose = await fixture.evaluate(handle => handle.close());
     assert.equal(result.leasesAfterClose, 0);
     return result;

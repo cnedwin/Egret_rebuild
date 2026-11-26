@@ -531,7 +531,7 @@ export interface PlayGame {
    * Shows a screen described as data, drawn on the ui layer in a skin and placed in the safe part of the screen
    * again whenever it changes. `bind` names the parts that follow `state`, read every frame, or answer a press.
    */
-  show<S>(description: ViewDescription, options?: PlayViewOptions<S>): PlayView;
+  show<S>(description: ViewDescription, options?: PlayViewOptions<S>): PlayView<S>;
   /** Whether what two sprites draw overlaps, taken as upright boxes. `shrink` takes that much off every side of both. */
   overlaps(a: DisplayObject, b: DisplayObject, shrink?: number): boolean;
   /** The first of the sprites that overlaps `a`, or undefined. */
