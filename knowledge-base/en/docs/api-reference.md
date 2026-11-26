@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1484 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1486 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1032,6 +1032,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `keyCap` | function | The words of a key or a button, as a player reads them on a key cap. |
 | `planView` | function | Plans where each part of a view goes on a screen: the parts for its shape, each rectangle in the game's units. |
 | `Request` | interface | A request a button sends: whether it is out, what it came back with, and the failure if it failed. |
+| `TABLET_SHORT_SIDE` | value | The shorter side, in CSS pixels, from which a screen is a tablet's for the `tablet` parts of a view. |
 | `ViewAnchor` | type | Where in its panel a part is placed when the panel lays its parts out freely: an edge, a corner or the middle. |
 | `ViewBar` | interface | How full something is: a value from 0 to 1. |
 | `ViewButton` | interface | A button with words on it. |
@@ -1049,6 +1050,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `ViewSpace` | interface | Empty space: in a row or a column, `'fill'` pushes what follows to the end. |
 | `ViewText` | interface | A line of words. |
 | `ViewToggle` | interface | A switch that is on or off, with words before it. |
+| `ViewVariant` | type | Which parts of a view are used: `root` (`'landscape'`), `portrait`, `tablet` or `tabletPortrait`. |
 
 ## `@egret/engine/web/pointer`
 

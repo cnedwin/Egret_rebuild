@@ -3,7 +3,7 @@
 // Each case gives a description and a frame and reads where the parts go, in the game's units, or what is refused.
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { DEFAULT_VIEW_SKIN, checkView, planView } from '@egret/engine/web/view';
+import { DEFAULT_VIEW_SKIN, TABLET_SHORT_SIDE, checkView, planView } from '@egret/engine/web/view';
 
 const landscape = {
   screen: { x: -80, y: 0, width: 800, height: 360 },
@@ -266,6 +266,57 @@ test('VW03 a screen taller than wide takes the portrait parts; area says whether
   assert.equal(plain.skin.button, 0x112233);
   assert.equal(plain.skin.text, DEFAULT_VIEW_SKIN.text);
   assert.ok(Object.isFrozen(DEFAULT_VIEW_SKIN));
+});
+
+// Break caught: a tablet given a phone's layout stretched wide, a tablet held upright that skips the portrait parts
+// when it has none of its own, a phone given the tablet's parts, or tablet parts with other names accepted.
+test('VW07 a tablet takes its own parts, held wide or upright, and falls back to the portrait parts and the root', () => {
+  const card = (name, width) => ({
+    type: 'panel',
+    name: 'card',
+    width,
+    height: 100,
+    anchor: 'center',
+    children: [{ type: 'text', name }]
+  });
+  const description = {
+    root: card('words', 300),
+    portrait: card('words', 'fill'),
+    tablet: {
+      type: 'panel',
+      name: 'card',
+      layout: 'row',
+      width: 600,
+      height: 100,
+      anchor: 'center',
+      children: [{ type: 'text', name: 'words', width: 'fill' }]
+    }
+  };
+  const wide = { ...landscape, form: 'tablet' },
+    upright = {
+      screen: { x: 0, y: 0, width: 360, height: 640 },
+      safe: { x: 0, y: 0, width: 360, height: 640 },
+      orientation: 'portrait'
+    };
+  assert.equal(TABLET_SHORT_SIDE, 600);
+  assert.equal(planView(description, wide).variant, 'tablet');
+  assert.equal(at(planView(description, wide), 'card').width, 600);
+  assert.equal(planView(description, { ...wide, form: 'phone' }).variant, 'landscape');
+  assert.equal(planView(description, landscape).variant, 'landscape', 'a frame without a form is a phone');
+  // Upright on a tablet without parts of its own: the portrait parts.
+  assert.equal(planView(description, { ...upright, form: 'tablet' }).variant, 'portrait');
+  const withUpright = { ...description, tabletPortrait: card('words', 320) };
+  assert.equal(planView(withUpright, { ...upright, form: 'tablet' }).variant, 'tabletPortrait');
+  assert.equal(planView(withUpright, upright).variant, 'portrait');
+  // Without tablet parts a tablet held wide takes the root.
+  assert.equal(planView({ root: description.root }, wide).variant, 'landscape');
+  assert.throws(
+    () => checkView({ ...description, tablet: card('other', 300) }),
+    error =>
+      error.code === 'UI_VIEW_VARIANT_MISMATCH' &&
+      /not in tablet: words; only in tablet: other/.test(String(error.cause))
+  );
+  assert.throws(() => planView(description, { ...wide, form: 'watch' }), { code: 'UI_VIEW_FRAME_INVALID' });
 });
 
 // Break caught: a misspelt field drawn as nothing, a name used twice binding the wrong part, or portrait parts that

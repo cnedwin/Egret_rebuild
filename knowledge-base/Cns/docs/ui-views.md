@@ -54,6 +54,19 @@ const shop = game.show(
 
 根部件放在 `game.safe` 里，也就是没有刘海遮挡的部分；给出 `area: 'screen'` 时则放在整个 `game.screen` 里。[屏幕](screen-fit.md)每次变化都会重新规划。屏幕高大于宽时，改用 `portrait` 部件并重新创建，每次创建后都会调用 `built(view)`。竖屏部件必须有同样的名字、同样的种类。
 
+### 平板
+
+短边不小于 600 CSS 像素的屏幕算平板（`@egret/engine/web/view` 的 `TABLET_SHORT_SIDE`）：iPad、大尺寸安卓平板、展开的折叠屏、桌面窗口。在平板上，屏幕宽大于高时视图用 `tablet` 部件，高大于宽时用 `tabletPortrait` 部件；没有这些部件时，竖着用 `portrait` 部件，否则用 `root`：
+
+| 屏幕 | 用哪组部件（取视图有的第一个） |
+| --- | --- |
+| 手机，横 | `root` |
+| 手机，竖 | `portrait`、`root` |
+| 平板，横 | `tablet`、`root` |
+| 平板，竖 | `tabletPortrait`、`portrait`、`root` |
+
+每组部件的名字和种类都必须与 `root` 相同。`view.variant` 表示当前用的是哪组，每次变化都会重新创建视图并调用 `built(view)`。手机上一栏的内容，在平板上常常可以排成两栏。
+
 ### 视图按自己的尺寸显示
 
 视图默认跟随游戏的缩放。给 `play` 传入 `uiScale: { min, max }`（单位是每单位多少 CSS 像素）后，视图保持在这个范围内，游戏画面不受影响：
@@ -284,6 +297,7 @@ Galaxy Z Fold7（Android 17、Chrome 157、Adreno 830）分别通过 WebGL2 和 
 `tests/ui-view.test.mjs` 在 Node 里规划视图。它检查：
 
 - 自由面板里的锚点、偏移、比例和填充；
+- 一个带 `portrait` 和 `tablet` 部件的视图，窗口依次改为 844 × 390、1024 × 768、768 × 1024 和 390 × 844，分别用了 `root`、`tablet`、`portrait` 和 `portrait`，共创建三次；
 - 1280 × 720 的游戏加 `uiScale: { min: 0.75, max: 1 }` 后，368 × 80 单位的按钮在 1920 × 1080 窗口里是 368 × 80 CSS 像素，在 640 × 360 窗口里是 276 × 60，两次都居中，点击能按下；
 - 行和列的固定尺寸与填充、间距、内边距、`align` 和 `justify`；
 - 竖屏部件和两种区域；

@@ -266,7 +266,7 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   UI_COMPACT_INVALID: "缩写的不是数字，或者 locale 不是 'en' 或 'zh'，或者 digits 不在 0 到 3 之间。",
   UI_REQUEST_INVALID: '请求要用一个函数发送。原因见 cause。',
   UI_VIEW_INVALID: '视图描述无效。是哪个部件、错在哪里，见 cause。',
-  UI_VIEW_VARIANT_MISMATCH: '视图的竖屏部件与横屏部件的名字或种类不一致。是哪些名字，见 cause。',
+  UI_VIEW_VARIANT_MISMATCH: '视图的竖屏或平板部件与根部件的名字或种类不一致。是哪些名字，见 cause。',
   UI_VIEW_BINDING_UNKNOWN: '绑定指向了视图里没有的部件。视图有哪些名字，见 cause。',
   UI_VIEW_BINDING_INVALID: '绑定给出了部件不能接受的内容，或者不是函数。是哪个、为什么，见 cause。',
   UI_VIEW_NAME_UNKNOWN: '视图里没有这个名字的部件。视图有哪些名字，见 cause。',
