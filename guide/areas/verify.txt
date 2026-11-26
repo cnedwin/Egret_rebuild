@@ -1,0 +1,3 @@
+# Verification
+
+- [verify-end-to-end](../cards/verify/verify-end-to-end.txt) · play play3d engine world3d web · From rule tests to device runs, and recording what was checked.

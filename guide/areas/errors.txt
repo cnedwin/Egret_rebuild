@@ -1,0 +1,3 @@
+# Errors
+
+- [read-engine-errors](../cards/errors/read-engine-errors.txt) · play play3d engine world3d web · An engine error by its code, cause and ending.
