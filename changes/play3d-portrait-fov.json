@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "A play3d camera keeps the sides in view when held upright",
+    "body": "`game.camera.keepWidthBelow` of `play3d`: on a view narrower than this shape (width over height), the camera keeps the angle from side to side that `fov` gives at this shape and shows more above and below. With `keepWidthBelow = 1`, a phone held upright at 393 × 852 sees 55 degrees across, as a square view does, instead of 27; on a view at least that wide, `fov` is unchanged. It is 0 unless set, which keeps `fov` from top to bottom on every shape as before. `game.camera.fov` is the angle the game set; `game.camera.node.fov` the angle drawn."
+  },
+  "zh": {
+    "title": "play3d 的相机竖屏时保留两侧",
+    "body": "`play3d` 新增 `game.camera.keepWidthBelow`：画面比这个比例（宽除以高）更窄时，相机保持 `fov` 在这个比例下的横向视角，多出来的部分显示在上下。设为 1 时，393 × 852 的竖屏手机横向能看到 55 度，与正方形画面相同，而不是 27 度；画面至少这么宽时 `fov` 不变。不设置时为 0，和以前一样在任何比例下都保持 `fov` 为从上到下的视角。`game.camera.fov` 是游戏设置的视角，`game.camera.node.fov` 是实际绘制的视角。"
+  }
+}
