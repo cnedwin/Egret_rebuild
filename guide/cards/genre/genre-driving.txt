@@ -1,0 +1,26 @@
+---
+id: genre-driving
+title: A driving or racing game: a vehicle, a track or a road, and rivals
+applies: [world3d, play3d]
+triggers: ["racing", "kart", "driving", "off road", "drift", "convoy", "lap", "赛车", "卡丁车", "驾驶", "越野", "漂移", "车队"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: Rally/src/sim.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: TeaHorseRoad/src/play/convoy.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A driving or racing game: a vehicle, a track or a road, and rivals
+
+**Loop.** Drive a vehicle along a track or a road, against rivals or the road itself, through checkpoints, to a finish.
+
+**Files.** The vehicle's handling, the track or road and the rivals as rules stepped at a fixed rate (`src/sim.mjs`, `src/track.mjs`, `src/play/convoy.mjs`), tested by laps driven by the AI in Node; scenery placed from data and drawn by distance.
+
+**Entries.** `@egret/engine/world3d` with a backend entry; terrain streams, instanced scenery, cloth and rope where the road needs them.
+
+**Read first.** `terrain-stream-tiles`, `cloth-and-rope`, `world3d-draw-cost`, `prepare-programs`, `touch-controls`, `action-body-feedback`.
+
+**Done means.** Every rival finishes every track without a stall; a lap driven by keys, a pad and buttons on the glass (the kart may accelerate by itself on touch); the busiest stretch of road measured. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Jinxiu Rally and Tea Horse Road.

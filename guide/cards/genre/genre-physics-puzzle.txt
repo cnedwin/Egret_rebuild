@@ -1,0 +1,26 @@
+---
+id: genre-physics-puzzle
+title: A physics or falling-sand puzzle
+applies: [engine, web]
+triggers: ["physics puzzle", "angry birds", "trajectory", "launch", "falling sand", "sand puzzle", "cellular automaton", "物理解谜", "弹道", "落沙", "沙画"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: MechanismCity/src/play/trajectory.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 687037ac462c48dbfe00523312125b94072ffea4 }
+  - { repo: cnedwin/PortedGamesEgret, path: SandScroll/src/sim/sand.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 450bb9eb62fec9d3032b35766817844adc6eba33 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A physics or falling-sand puzzle
+
+**Loop.** The player aims or places, the world settles by its own rules, and the level is won when it reaches a state: a gate opened, the sand sorted.
+
+**Files.** Levels as data (`src/levels/designs.mjs`); the predicted path or the sand step as rules tested in Node (`src/play/trajectory.mjs`, `src/sim/sand.mjs`); the view draws the settled world and replays what moved.
+
+**Entries.** `@egret/engine/physics2d` for bodies and joints, with `@egret/engine/camera`, `@egret/engine/tilemap` and `@egret/engine/particles` (Mechanism City); a grid stepped in the rules and drawn as textures (Sand Scroll).
+
+**Read first.** `rope-joints-2d`, `pixel-strips`, `geometry-budget-2d`, `gestures`, `balance-from-runs`.
+
+**Done means.** Every level solvable, proved by a solution played in Node; a reset that restores the level exactly; aiming by drag, keys and gamepad; the frame measured with the most bodies or the most sand moving. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Mechanism City and Sand Scroll.

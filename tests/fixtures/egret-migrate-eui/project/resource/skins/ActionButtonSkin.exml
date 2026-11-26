@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin xmlns:e="http://ns.egret.com/eui" class="ActionButtonSkin" width="180" height="72">
+  <e:Rect left="0" right="0" top="0" bottom="0" fillColor="0x285A70" strokeColor="0x5FAAD0" strokeWeight="2"/>
+  <e:Label id="labelDisplay" left="8" right="8" top="8" bottom="8" size="27" textColor="0xF0F7ED" textAlign="center" verticalAlign="middle"/>
+</e:Skin>

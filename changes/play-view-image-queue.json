@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Queue image parts in Play views",
+    "body": "Play views with many cold image parts now queue their loads, with up to four declarative loads running at once. Closing or rebuilding a view discards its queued requests."
+  },
+  "zh": {
+    "title": "Play 视图的图片部件按队列加载",
+    "body": "Play 视图首次打开且包含多张图片时，会把图片排入队列，同时最多执行四个声明式加载。关闭或重建视图会丢弃对应的排队请求。"
+  }
+}

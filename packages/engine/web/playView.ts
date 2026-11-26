@@ -101,6 +101,7 @@ interface Made {
   readonly words: PlayText | undefined;
   paragraph: { readonly box: Sprite; readonly text: Paragraph; key: string | undefined } | undefined;
   image: Sprite | undefined;
+  cancelImage?: () => void;
   rect: ViewRect;
   visible: boolean;
   disabled: boolean;
@@ -118,6 +119,9 @@ interface Roll {
   shown: number;
   left: number;
 }
+
+// Keep declarative loads within BrowserGame's image budget across all views in this host.
+const MAX_VIEW_IMAGE_LOADS = 4;
 
 const KEYS_OF: Record<ViewPart['type'], readonly (keyof PlayViewBinding)[]> = {
   panel: ['visible', 'color', 'tap', 'pointerOnly', 'badge'],
@@ -188,6 +192,28 @@ export function createPlayViews(
   const makeScroll = scrollInput.create;
   let paragraphModule: Promise<typeof import('./playViewParagraph.js')> | undefined;
   let counter = 0;
+  const waitingImages = new Set<() => Promise<void>>();
+  let loadingImages = 0;
+
+  function startWaitingImages(): void {
+    for (const load of waitingImages) {
+      if (loadingImages >= MAX_VIEW_IMAGE_LOADS) break;
+      waitingImages.delete(load);
+      loadingImages++;
+      void load().finally(() => {
+        loadingImages--;
+        startWaitingImages();
+      });
+    }
+  }
+
+  function queueImage(load: () => Promise<void>): () => void {
+    waitingImages.add(load);
+    startWaitingImages();
+    return () => {
+      waitingImages.delete(load);
+    };
+  }
 
   interface ViewRecord {
     readonly view: PlayView;
@@ -664,18 +690,20 @@ export function createPlayViews(
             });
         }
         if (part.type === 'image') {
-          void game.image(part.src, { layer: node }).then(
-            image => {
-              if (ended || !made.includes(item)) {
-                game.remove(image);
-                return;
+          item.cancelImage = queueImage(() =>
+            game.image(part.src, { layer: node }).then(
+              image => {
+                if (ended || !made.includes(item)) {
+                  game.remove(image);
+                  return;
+                }
+                item.image = image;
+                placeImage(item);
+              },
+              cause => {
+                if (!ended && made.includes(item)) hooks.failed(cause);
               }
-              item.image = image;
-              placeImage(item);
-            },
-            cause => {
-              if (!ended && made.includes(item)) hooks.failed(cause);
-            }
+            )
           );
         }
         if (part.name !== undefined && bind[part.name]?.badge !== undefined) {
@@ -906,8 +934,10 @@ export function createPlayViews(
     const releaseContent = (): void => {
       paragraphScope?.dispose();
       paragraphScope = undefined;
-      for (const item of made)
+      for (const item of made) {
+        item.cancelImage?.();
         for (const child of [item.words, item.dot?.words, item.image]) if (child !== undefined) game.remove(child);
+      }
     };
 
     const api: PlayView = {

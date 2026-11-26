@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Touch scrolling follows rotated Play viewports",
+    "body": "A vertical Play view now checks the touch drag direction and threshold in its viewport's local coordinates. A drag along the viewport scrolls its content without pressing the row, including when the UI is rotated 90 degrees."
+  },
+  "zh": {
+    "title": "触摸滚动跟随旋转后的 Play 视口",
+    "body": "Play 纵向列表现在使用视口本地坐标判断触摸拖拽的方向和阈值。即使界面旋转 90 度，顺着视口纵轴滑动也能滚动内容，且不会触发列表条目。"
+  }
+}

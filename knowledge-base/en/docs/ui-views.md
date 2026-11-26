@@ -83,6 +83,8 @@ const workshop = game.show({
 
 Any part accepts `border: { color, width }` and draws it inside the layout box. An `image` keeps its aspect ratio and is centred in the box. Give the image a `name` and `label` to expose its role and accessible name. `game.show` releases its own paragraph and image borrows when the view closes. Keep the shared cache and provider alive until the views that use them close, then dispose of them in your game.
 
+Play queues declarative image parts across views in the same game. It starts up to four loads at a time and skips queued parts when their view closes or rebuilds. Explicit image loads share the same browser image budget. When they occupy all the slots, a declarative load can still report a job-limit error.
+
 The paragraph provider and its fonts are selected by the game. For a browser setup, see the [paragraph panel example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/README.md). Its opt-in CanvasKit build and Noto fonts carry the [source and license records](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/manifest.json). Normal single-line views can start without loading those files. A page that uses paragraphs through a native import map also maps `@egret/engine/paragraph` and `@egret/runtime/paragraph`, plus `@egret/engine/web/paragraph` for the CanvasKit provider.
 
 ```text
@@ -152,7 +154,7 @@ const scroll = buildings.scroll('list');
 scroll.scrollTo(48);
 ```
 
-The handle exposes `offset`, `maximum`, `scrollTo`, `scrollBy`, and `page(-1 | 1)`. A binding refresh preserves the offset, clamped to the available content. Tab and Shift+Tab can bring the next or previous control into view. A direct tester or accessibility action on a fully clipped control is refused until it has a visible region. A vertical drag scrolls without pressing the row. A wheel that moves this view is consumed by the view before `game.pointer.wheel`. When migrating existing screens, give each panel one scroll controller.
+The handle exposes `offset`, `maximum`, `scrollTo`, `scrollBy`, and `page(-1 | 1)`. A binding refresh preserves the offset, clamped to the available content. Tab and Shift+Tab can bring the next or previous control into view. A direct tester or accessibility action on a fully clipped control is refused until it has a visible region. A touch drag along the viewport's local vertical axis scrolls without pressing the row, even if an ancestor is rotated. A wheel that moves this view is consumed by the view before `game.pointer.wheel`. When migrating existing screens, give each panel one scroll controller.
 
 ## Interaction bounds
 

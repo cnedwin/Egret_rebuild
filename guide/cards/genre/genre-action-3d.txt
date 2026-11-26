@@ -1,0 +1,26 @@
+---
+id: genre-action-3d
+title: A 3D action game: melee, shooting or duels
+applies: [world3d, play3d]
+triggers: ["3d action", "third person", "first person", "shooter", "fps", "duel", "melee", "combat feel", "三维动作", "第三人称", "第一人称", "射击", "对决", "打击感"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: FiveRegiments/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 5792d800a4932da81ddf6af9314a430c41cb0f30 }
+  - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/src/rules/game.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: FPS/src/sim.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A 3D action game: melee, shooting or duels
+
+**Loop.** Move, attack, guard or dodge, read the enemy's tells; an encounter ends in a win or a fall; levels or a series of fights.
+
+**Files.** Fighters, weapons and enemies as data; combat, AI and tells as rules stepped at a fixed rate and tested in Node (`src/sim/fight.mjs`, `src/rules/game.mjs`, `src/sim.mjs`); the view drives models from the rules' state; quality levels the player can choose.
+
+**Entries.** `@egret/engine/world3d` with `@egret/engine/webgpu/world3d` or `@egret/engine/webgl2/world3d`; `@egret/engine/input/gamepad`.
+
+**Read first.** `action-body-feedback`, `prepare-programs`, `world3d-draw-cost`, `world3d-lights-shadows`, `model-in-code`, `asset-loading`, `touch-controls`.
+
+**Done means.** A hit felt in the body and in sound within the frame it lands; programs prepared while loading, so the first fight does not stall; every encounter won by a scripted bot in Node; keys, a pad and the glass. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Five Regiments, Snow at the Mountain Temple and Operation Cutoff.

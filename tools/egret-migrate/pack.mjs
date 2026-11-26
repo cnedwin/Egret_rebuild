@@ -15,7 +15,14 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 async function pack(options) {
   const out = path.resolve(options.out);
   const esbuild = await import(pathToFileURL(path.resolve(options.esbuild)).href);
-  const engineTools = ['bin.mjs', 'legacy-web.mjs', 'README.md', 'README.zh-CN.md'];
+  const engineTools = [
+    'bin.mjs',
+    'legacy-web.mjs',
+    'legacy-eui.mjs',
+    'legacy-bones.mjs',
+    'README.md',
+    'README.zh-CN.md'
+  ];
   fs.mkdirSync(out);
   const temporary = fs.realpathSync(os.tmpdir());
   const stage = fs.mkdtempSync(path.join(temporary, 'egret-migrate-pack-'));
@@ -49,7 +56,7 @@ async function pack(options) {
       path.join(stage, 'package.json'),
       json({
         name: '@egret/migrate',
-        version: '0.1.0',
+        version: '0.2.0',
         description: 'Local migration tool for the admitted Egret 5.2 Web 2D project profile',
         license: 'Apache-2.0',
         type: 'module',

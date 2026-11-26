@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Recipes for fourteen kinds of game",
+    "body": "The guide's new genre area holds a recipe for each kind of game in the games repository: tower defence, survivors, match-three with cards, physics puzzle, deduction, story sim, RPG, side-scroller, rhythm, management, tabletop, tactics and strategy, 3D action and driving. Each gives the loop, the files, the entries, the cards to read first and what done means, and egret new --genre <kind> puts it first in a new game's AGENTS.md."
+  },
+  "zh": {
+    "title": "十四类游戏的配方",
+    "body": "指南新增 genre 领域，为游戏仓库里的每一类游戏写了一份配方：塔防、幸存者、三消加卡牌、物理解谜、推理、剧情养成、角色扮演、横版动作、音游、经营、棋牌、战棋与策略、三维动作和驾驶。每份写明循环、文件划分、所用入口、先读的卡片和「做完」的标准；egret new --genre <类型> 会把它放在新游戏 AGENTS.md 的最前面。"
+  }
+}

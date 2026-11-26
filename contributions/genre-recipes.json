@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "guide/cards/genre/genre-action-3d.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-deduction.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-driving.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-management.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-match-cards.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-physics-puzzle.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-rhythm.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-rpg.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-side-scroller.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-story-sim.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-survivors.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-tabletop.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-tactics-strategy.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/genre/genre-tower-defence.txt",
+      "originRole": "First-party recipe card for a kind of game, drawn from games in cnedwin/PortedGamesEgret; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/genre.txt",
+      "originRole": "First-party second level of the guide index: the recipes by kind of game; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/agent-guide.md",
+      "zh": "knowledge-base/Cns/docs/agent-guide.md"
+    }
+  ]
+}

@@ -9,6 +9,7 @@
 //   node tools/egret.mjs notes [<game folder>] [--check]
 //   node tools/egret.mjs check [<game folder>] [--strict] [--json]
 //   node tools/egret.mjs verify [<page>] [--playwright <index.mjs>] [--out <new folder>] [--play <script>]
+//   node tools/egret.mjs new <folder> [--target web|mobile|wechat|steam] [--genre <kind>] [--title <name>]
 //
 // The same file runs in this repository and in a game's engine copy, where tools/vendor-game.mjs puts it under
 // vendor/egret/tools/ with the guide beside it and vendor/egret.mjs to start it, so an agent working in the game's
@@ -22,6 +23,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { GUIDE, ROOT, loadCards, render, run as runGuide, search } from './egret-guide.mjs';
 import { checkReport } from './egret-check.mjs';
+import { STARTER_ENTRIES, TARGETS, writeStarter } from './egret-new.mjs';
 import { notesReport } from './egret-notes.mjs';
 
 /** The engine copy of a game holds this file at vendor/egret/tools/egret.mjs, and the runtime at vendor/runtime. */
@@ -40,6 +42,7 @@ function usage() {
     `  ${COMMAND} notes [<game folder>] [--check]                                     the game's engine notes the engine has fixed`,
     `  ${COMMAND} check [<game folder>] [--strict] [--json]                           the game's files read for common mistakes`,
     `  ${COMMAND} verify [<page>] [--playwright <index.mjs>] [--out <dir>] [--play <script>]   the game run in a headless browser`,
+    `  ${COMMAND} new <folder> [--target web|mobile|wechat|steam] [--genre <kind>] [--title <name>]   a game to start from`,
     ''
   ].join('\n');
 }
@@ -136,6 +139,64 @@ export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
   return { tool, args: [tool, playwright, page, out, ...(play ? [play] : [])], out };
 }
 
+/**
+ * A new game in `folder`: the starter of tools/egret-new.mjs, and an engine copy. From this repository the copy is made
+ * by tools/vendor-game.mjs; from a game's engine copy, that copy (vendor/) is copied, at its own pin.
+ */
+export async function newGame(args, cwd = process.cwd()) {
+  const named = {},
+    folders = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--target' || args[i] === '--title' || args[i] === '--genre') {
+      if (args[i + 1] === undefined) return { code: 2, text: `${args[i]} takes a value.\n` };
+      named[args[i].slice(2)] = args[++i];
+    } else if (args[i].startsWith('--')) return { code: 2, text: `Unknown option ${args[i]}.\n` + usage() };
+    else folders.push(args[i]);
+  }
+  if (folders.length !== 1) return { code: 2, text: 'Name the folder of the new game.\n' + usage() };
+  const folder = path.resolve(cwd, folders[0]);
+  const target = named.target ?? 'web';
+  if (!TARGETS[target]) return { code: 2, text: `The target is one of ${Object.keys(TARGETS).join(', ')}.\n` };
+  // A kind of game names a recipe of the guide: genre-<kind>.
+  let recipe;
+  if (named.genre !== undefined) {
+    const kinds = loadCards().filter(card => card.id.startsWith('genre-'));
+    const found = kinds.find(card => card.id === 'genre-' + named.genre || card.id === named.genre);
+    if (!found)
+      return { code: 2, text: `The kind of game is one of ${kinds.map(card => card.id.slice(6)).join(', ')}.\n` };
+    recipe = { id: found.id, title: found.title };
+  }
+  const source = path.dirname(ROOT);
+  if (VENDORED) {
+    const map = JSON.parse(fs.readFileSync(path.join(source, 'importmap.json'), 'utf8')).imports;
+    const missing = STARTER_ENTRIES.filter(entry => !(entry in map));
+    if (missing.length)
+      return {
+        code: 1,
+        text: `This engine copy has no ${missing.join(', ')}: make the game from an engine checkout.\n`
+      };
+    if (path.resolve(folder).startsWith(path.resolve(source, '..') + path.sep + 'vendor'))
+      return { code: 2, text: 'The new game goes outside this engine copy.\n' };
+  }
+  let files;
+  try {
+    files = writeStarter(folder, { title: named.title ?? path.basename(folder), target, recipe });
+  } catch (error) {
+    return { code: 2, text: error.message + '\n' };
+  }
+  if (VENDORED) fs.cpSync(source, path.join(folder, 'vendor'), { recursive: true });
+  else {
+    const { vendorGame } = await import('./vendor-game.mjs');
+    vendorGame(folder, [...STARTER_ENTRIES]);
+  }
+  return {
+    code: 0,
+    text:
+      `A game for ${TARGETS[target].name} in ${folder}: ${files.length} files and the engine copy.\n` +
+      `Next: cd ${path.relative(cwd, folder) || '.'} && npm test && node vendor/egret.mjs check, then serve the folder and open index.html. AGENTS.md says the rest.\n`
+  };
+}
+
 /** Runs the command line and returns what to print and the exit code, so tests need no child process. */
 export async function main(args, cards = loadCards()) {
   const [command, ...rest] = args;
@@ -155,6 +216,8 @@ export async function main(args, cards = loadCards()) {
       if (folders.length > 1 || folders.some(arg => arg.startsWith('--'))) return { code: 2, text: usage() };
       return notesReport(folders[0] ?? process.cwd(), GUIDE, { command: COMMAND, check, copy: VENDORED });
     }
+    case 'new':
+      return newGame(rest);
     case 'verify': {
       const plan = verifyArgs(rest);
       if (plan.error) return { code: 2, text: plan.error + '\n' + usage() };

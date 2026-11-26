@@ -4,8 +4,31 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
+import { crc32 } from 'node:zlib';
+import { PNG } from 'pngjs';
 import { convertProject } from '../tools/egret-migrate/convert.mjs';
 import { inspectLegacyProject } from '../tools/egret-migrate/inspect.mjs';
+import { normalizeLegacyPng } from '../tools/egret-migrate/legacy-assets.mjs';
+
+test('legacy grayscale PNG normalizes to equivalent RGBA8 while admitted PNG bytes remain untouched', () => {
+  const rgba = PNG.sync.write({ width: 2, height: 1, data: Buffer.from([32, 32, 32, 255, 192, 192, 192, 255]) });
+  const grayscale = PNG.sync.write(PNG.sync.read(rgba), { colorType: 0, inputColorType: 6 });
+  assert.equal(grayscale[25], 0);
+  const result = normalizeLegacyPng(grayscale, 'resource/atlas.png');
+  assert.equal(result[25], 6);
+  assert.deepEqual(PNG.sync.read(result).data, PNG.sync.read(grayscale).data);
+  assert.equal(normalizeLegacyPng(rgba, 'resource/atlas.png'), rgba);
+  const text = Buffer.from('Comment\0original art');
+  const chunk = Buffer.alloc(text.length + 12);
+  chunk.writeUInt32BE(text.length);
+  chunk.write('tEXt', 4);
+  text.copy(chunk, 8);
+  chunk.writeUInt32BE(crc32(chunk.subarray(4, 8 + text.length)), 8 + text.length);
+  const metadata = Buffer.concat([rgba.subarray(0, 33), chunk, rgba.subarray(33)]);
+  const normalized = normalizeLegacyPng(metadata, 'resource/atlas.png');
+  assert.deepEqual(PNG.sync.read(normalized).data, PNG.sync.read(metadata).data);
+  assert.equal(normalized.includes(Buffer.from('original art')), false);
+});
 
 function oldProject(t) {
   const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'egret-migrate-'));
@@ -64,9 +87,119 @@ test('inspect refuses unsupported modules, ambiguous script paths, and nonlocal 
   write('egretProperties.json', {
     engineVersion: '5.2.29',
     compilerVersion: '5.2.29',
-    modules: [{ name: 'egret' }, { name: 'eui' }]
+    modules: [{ name: 'egret' }, { name: 'custom-ui' }]
   });
   assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_MODULE_UNSUPPORTED' });
+});
+
+test('inspect admits a declared EUI theme, intact EXML and local atlas subkeys through RES planning', t => {
+  const { folder, write } = oldProject(t);
+  write('egretProperties.json', {
+    engineVersion: '5.2.29',
+    compilerVersion: '5.2.29',
+    modules: [{ name: 'egret' }, { name: 'eui' }]
+  });
+  write('resource/default.thm.json', { skins: { Main: 'PanelSkin' }, exmls: ['resource/PanelSkin.exml'] });
+  write(
+    'resource/PanelSkin.exml',
+    '<e:Skin xmlns:e="http://ns.egret.com/eui" class="PanelSkin" width="360" height="600"><e:Group width="100%"><e:Image id="icon" source="star" width="20" height="30"/></e:Group></e:Skin>'
+  );
+  write('resource/default.res.json', {
+    resources: [{ name: 'icons', type: 'sheet', url: 'icons.json', subkeys: 'star' }],
+    groups: [{ name: 'preload', keys: 'star,icons' }]
+  });
+  write('resource/icons.json', {
+    file: 'icons.png',
+    frames: { star: { x: 1, y: 2, w: 10, h: 12, offX: 2, offY: 3, sourceW: 20, sourceH: 30 } }
+  });
+  write('resource/icons.png', 'Fixture page');
+  const result = inspectLegacyProject(folder);
+  assert.equal(result.theme.exmls[0].className, 'PanelSkin');
+  assert.equal(result.theme.exmls[0].root.children[0].children[0].properties.source, 'star');
+  assert.equal(result.sheets[0].frames[0].sourceWidth, 20);
+  assert.equal(
+    result.resources.files.some(file => file.sourcePath === 'resource/icons.png'),
+    true
+  );
+  assert.deepEqual(result.resources.groups[0].resourceIndices, [0, 0]);
+  assert.equal(
+    result.inputs.some(file => file.path === 'resource/PanelSkin.exml'),
+    true
+  );
+  write('resource/icons.json', { file: '../outside.png', frames: { star: { x: 1, y: 2, w: 10, h: 12 } } });
+  assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_RES_UNSUPPORTED' });
+});
+
+test('conversion admits an exact DragonBones image pair and writes only neutral data into the browser resource paths', async t => {
+  const { folder, write } = oldProject(t);
+  const outputs = fs.mkdtempSync(path.join(os.tmpdir(), 'egret-bones-output-'));
+  t.after(() => fs.rmSync(outputs, { recursive: true, force: true }));
+  write('egretProperties.json', {
+    engineVersion: '5.2.29',
+    compilerVersion: '5.2.29',
+    modules: [{ name: 'egret' }, { name: 'dragonBones' }]
+  });
+  write('resource/default.res.json', {
+    resources: [
+      { name: 'rig', type: 'json', url: 'rig.json' },
+      { name: 'atlas', type: 'json', url: 'atlas.json' },
+      { name: 'page', type: 'image', url: 'page.png' }
+    ],
+    groups: [{ name: 'preload', keys: 'rig,atlas,page' }]
+  });
+  const skeleton = {
+    name: 'rig',
+    version: '5.5',
+    frameRate: 24,
+    armature: [
+      {
+        name: 'actor',
+        bone: [{ name: 'body' }],
+        slot: [{ name: 'part', parent: 'body' }],
+        skin: [{ slot: [{ name: 'part', display: [{ name: 'body' }] }] }],
+        animation: [{ name: 'idle', duration: 24 }]
+      }
+    ]
+  };
+  const atlas = {
+    name: 'rig',
+    imagePath: 'page.png',
+    width: 2,
+    height: 2,
+    SubTexture: [{ name: 'body', x: 0, y: 0, width: 2, height: 2 }]
+  };
+  write('resource/rig.json', skeleton);
+  write('resource/atlas.json', atlas);
+  fs.writeFileSync(
+    path.join(folder, 'resource/page.png'),
+    PNG.sync.write({ width: 2, height: 2, data: Buffer.alloc(16, 255) })
+  );
+  const bones = [{ skeleton: 'rig', atlas: 'atlas', texture: 'page' }];
+  assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_BONES_MANIFEST' });
+  assert.equal(inspectLegacyProject(folder, { bones }).bones[0].descriptor.schema, 'egret.migrate-bones/1');
+  write('engine.mjs', 'export {};\n');
+  const options = {
+    source: folder,
+    out: path.join(outputs, 'converted'),
+    engine: path.join(folder, 'engine.mjs'),
+    engineVersion: '7.0.2',
+    bones,
+    esbuild: {
+      async transform(code) {
+        return { code };
+      }
+    }
+  };
+  const result = await convertProject(options);
+  const generated = key => JSON.parse(fs.readFileSync(path.join(options.out, key), 'utf8'));
+  assert.deepEqual(generated('resource/rig.json'), skeleton);
+  assert.deepEqual(generated('resource/atlas.json'), atlas);
+  assert.deepEqual(generated('web/resource/rig.json'), generated('web/resource/atlas.json'));
+  assert.equal(generated('web/resource/rig.json').schema, 'egret.migrate-bones/1');
+  assert.equal(result.browserFiles.includes('legacy-bones.mjs'), true);
+  assert.deepEqual(generated('bones-map.json'), bones);
+  write('resource/atlas.json', { ...atlas, imagePath: 'wrong.png' });
+  assert.throws(() => inspectLegacyProject(folder, { bones }), { code: 'MIGRATE_BONES_MANIFEST' });
 });
 
 test('convert creates a real scoped import receipt in an independent and reproducible output', async t => {

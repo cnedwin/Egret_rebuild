@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Egret Migrate 0.2 static EUI and native region animation",
+    "body": "Import static EXML skins and RES atlas subkeys, normalize supported legacy PNGs offline, and convert admitted DragonBones 5.x region rigs to native Egret 7 playback. Provide a reproducible old/new gameplay, animation and save benchmark."
+  },
+  "zh": {
+    "title": "Egret Migrate 0.2 静态 EUI 与原生图片骨骼动画",
+    "body": "导入静态 EXML 皮肤和 RES 图集子键，离线无损规范化支持范围内的旧 PNG，将适配范围内的 DragonBones 5.x 图片骨骼转换为白鹭 7 原生播放，并提供可复跑的旧新玩法、动画和存档对照。"
+  }
+}

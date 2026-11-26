@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin xmlns:e="http://ns.egret.com/eui" class="ScoreSkin" width="156" height="66">
+  <e:Rect left="0" right="0" top="0" bottom="0" fillColor="0x1D3B4B"/>
+  <e:Group width="140" height="58" x="8" y="4">
+    <e:layout><e:VerticalLayout gap="2"/></e:layout>
+    <e:Label id="captionLabel" width="140" height="22" size="17" textColor="0xA2C5C7" text="BEST"/>
+    <e:Label id="valueLabel" width="140" height="31" size="25" textColor="0xF3C55E" text="0"/>
+  </e:Group>
+</e:Skin>

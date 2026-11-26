@@ -108,12 +108,17 @@ export async function verifyViewScroll(page) {
         state.showTail = false;
         view.refresh();
       },
+      rotate() {
+        game.ui.x = 360;
+        game.ui.rotation = 90;
+      },
       point(x, y) {
         const box = game.canvas.getBoundingClientRect(),
-          screen = game.screen;
+          screen = game.screen,
+          stage = game.ui.localToGlobal(x, y);
         return {
-          x: box.left + ((x - screen.x) / screen.width) * box.width,
-          y: box.top + ((y - screen.y) / screen.height) * box.height
+          x: box.left + ((stage.x - screen.x) / screen.width) * box.width,
+          y: box.top + ((stage.y - screen.y) / screen.height) * box.height
         };
       },
       close: () => {
@@ -128,17 +133,17 @@ export async function verifyViewScroll(page) {
   const point = (x, y) => fixture.evaluate((f, hit) => f.point(hit.x, hit.y), { x, y });
   const refused = (action, name) => fixture.evaluate((f, args) => f.refused(...args), [action, name]);
   const cdp = await page.context().newCDPSession(page);
-  const drag = async (start, deltas) => {
+  const drag = async (start, end, fractions, release = 'touchEnd') => {
     const at = (x, y) => [{ x, y, id: 1 }];
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: at(start.x, start.y) });
     try {
-      for (const delta of deltas)
+      for (const fraction of fractions)
         await cdp.send('Input.dispatchTouchEvent', {
           type: 'touchMove',
-          touchPoints: at(start.x, start.y + delta)
+          touchPoints: at(start.x + (end.x - start.x) * fraction, start.y + (end.y - start.y) * fraction)
         });
     } finally {
-      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await cdp.send('Input.dispatchTouchEvent', { type: release, touchPoints: [] });
     }
     await frames();
   };
@@ -176,14 +181,13 @@ export async function verifyViewScroll(page) {
     await frames();
     const start = await point(80, 126),
       end = await point(80, 72);
-    const dragDistance = end.y - start.y;
-    await drag(start, [dragDistance / 3, (dragDistance * 2) / 3, dragDistance]);
+    await drag(start, end, [1 / 3, 2 / 3, 1]);
     const touch = (await inspect()).offset;
     assert.ok(Math.abs(touch - 54) < 2, 'the list follows the finger by 54 logical pixels');
     assert.deepEqual((await inspect()).presses, []);
 
     await fixture.evaluate(f => f.scrollTo(0));
-    await drag(start, [dragDistance / 2, dragDistance, 0]);
+    await drag(start, end, [1 / 2, 1, 0]);
     assert.deepEqual((await inspect()).presses, [], 'a completed drag back to its start must not become a tap');
     assert.ok(Math.abs((await inspect()).offset) < 2);
 
@@ -198,7 +202,42 @@ export async function verifyViewScroll(page) {
     assert.equal(revealed?.height, 44, 'the new focus target is fully inside the clip');
     await page.keyboard.press('Enter');
     await frames();
-    assert.deepEqual((await inspect()).presses, ['house2']);
+    const keyboard = (await inspect()).presses;
+    assert.deepEqual(keyboard, ['house2']);
+
+    await fixture.evaluate(f => {
+      f.rotate();
+      f.scrollTo(0);
+    });
+    await frames();
+    const rotatedStart = await point(80, 126),
+      rotatedEnd = await point(80, 24),
+      crossAxis = await point(134, 126);
+    await drag(rotatedStart, crossAxis, [1 / 3, 2 / 3, 1]);
+    assert.equal((await inspect()).offset, 0, 'a viewport-local horizontal drag must not scroll the rotated list');
+    await drag(rotatedStart, rotatedEnd, [1 / 3, 2 / 3, 1]);
+    const rotatedTouch = (await inspect()).offset;
+    assert.ok(Math.abs(rotatedTouch - 102) < 2, 'the rotated list must follow its local vertical drag beyond the clip');
+
+    await fixture.evaluate(f => f.scrollTo(0));
+    await drag(rotatedStart, rotatedEnd, [1 / 2, 1, 0]);
+    assert.ok(Math.abs((await inspect()).offset) < 2);
+    assert.deepEqual(
+      (await inspect()).presses,
+      ['house2'],
+      'the rotated drag returning to its button must not press it'
+    );
+
+    await drag(rotatedStart, rotatedEnd, [1 / 2, 1], 'touchCancel');
+    await fixture.evaluate(f => f.scrollTo(0));
+    await drag(rotatedStart, rotatedEnd, [1 / 2, 1]);
+    assert.ok(Math.abs((await inspect()).offset - 102) < 2, 'a fresh pan must acquire after cancellation');
+    await fixture.evaluate(f => f.scrollTo(0));
+    await page.touchscreen.tap(rotatedStart.x, rotatedStart.y);
+    await frames();
+    const afterCancel = (await inspect()).presses;
+    assert.deepEqual(afterCancel, ['house2', 'house1'], 'a fresh touch must reach the row after cancellation');
+
     await fixture.evaluate(f => f.shrink());
     const shrunk = await inspect();
     assert.equal(shrunk.maximum, 0);
@@ -206,9 +245,11 @@ export async function verifyViewScroll(page) {
     return {
       wheel,
       touch,
+      rotatedTouch,
+      afterCancel,
       tab,
       clampedOffset: shrunk.offset,
-      keyboard: shrunk.presses,
+      keyboard,
       gameplayWheelInside,
       gameplayWheelOutside
     };

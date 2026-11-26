@@ -83,6 +83,8 @@ const workshop = game.show({
 
 每个部件都支持 `border: { color, width }`，边框沿部件内侧绘制。`image` 保持原始宽高比，在部件范围内居中。给图片同时填写 `name` 和 `label`，可以发布图片角色和可访问名称。关闭视图会释放它持有的段落和图片资源引用。共享的缓存和提供器由游戏管理，等使用它们的视图全部关闭后再释放。
 
+同一游戏的各个 Play 视图共用一条声明式图片加载队列，每次最多启动四个加载。关闭或重建视图时，跳过属于该视图且尚未开始的请求。显式加载图片也占用同一浏览器预算。显式请求占满全部名额时，声明式加载仍可能报告并发限制错误。
+
 游戏可以自行选择段落提供器和字体。浏览器配置见[段落面板示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/README.zh-CN.md)，其中可选的 CanvasKit 和 Noto 字体附有[来源和许可记录](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/vendor/manifest.json)。普通的单行视图启动时无需加载这些文件。如果页面原生使用 import map，启用段落时应映射 `@egret/engine/paragraph` 和 `@egret/runtime/paragraph`，使用 CanvasKit 提供器时再映射 `@egret/engine/web/paragraph`。
 
 ```text
@@ -152,7 +154,7 @@ const scroll = buildings.scroll('list');
 scroll.scrollTo(48);
 ```
 
-滚动句柄提供 `offset`、`maximum`、`scrollTo`、`scrollBy` 和 `page(-1 | 1)`。刷新绑定会保留此前的滚动位置，内容缩短时将位置限制在可用范围内。Tab 和 Shift+Tab 可让下一项或上一项滚入视口。完全被裁掉的控件只有重新露出，才可被测试器或辅助技术直接操作。手指纵向拖动会滚动，避免误按列表项。滚轮推动列表时由视图消费，此时 `game.pointer.wheel` 不会再收到同一事件。迁移旧界面时，每个面板保留一个滚动控制器。
+滚动句柄提供 `offset`、`maximum`、`scrollTo`、`scrollBy` 和 `page(-1 | 1)`。刷新绑定会保留此前的滚动位置，内容缩短时将位置限制在可用范围内。Tab 和 Shift+Tab 可让下一项或上一项滚入视口。完全被裁掉的控件只有重新露出，才可被测试器或辅助技术直接操作。即使祖先节点有旋转，手指沿视口本地纵轴拖动也能滚动，并且不会误按列表项。滚轮推动列表时由视图消费，此时 `game.pointer.wheel` 不会再收到同一事件。迁移旧界面时，每个面板保留一个滚动控制器。
 
 ## 可交互区域
 
