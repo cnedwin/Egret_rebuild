@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "The guide in every game, as one command",
+    "body": "The engine copy that tools/vendor-game.mjs writes into a game now carries the guide and node vendor/egret.mjs: guide, card, list and explain, which gives an error code's sentence in English and Chinese with its cards. The guide's index names areas, each listing its own cards, so it stays small as cards are added."
+  },
+  "zh": {
+    "title": "每个游戏里都带着指南，一个命令就能问",
+    "body": "tools/vendor-game.mjs 写进游戏的引擎副本现在带着指南和 node vendor/egret.mjs：guide、card、list，以及 explain（给出错误码的中英文说明和相关卡片）。指南索引改为按领域分两层，每个领域列出自己的卡片，卡片增多时索引也不会变大。"
+  }
+}

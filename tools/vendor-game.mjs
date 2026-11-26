@@ -12,10 +12,16 @@
 // `node --import ./vendor/node-register.mjs`. `vendor/SOURCE.md` records the
 // commit and the entries. Run it again to refresh: files no entry needs any
 // more are taken away.
+//
+// The copy also carries what a coding agent asks while it works in the game: the
+// engine's guide and its command, under vendor/egret/, started by
+// `node vendor/egret.mjs guide <question>` (see tools/egret.mjs). `--no-agent-kit`
+// leaves them out.
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { collectErrorCodes } from './error-codes.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const PACKAGES = ['contracts', 'runtime', 'engine', 'spine', 'project'];
@@ -124,8 +130,53 @@ export function planVendor(entries) {
   return { files, map, third: [...third.values()] };
 }
 
+/** Files of the agent kit: the command, the guide's tool and the guide's index, areas and cards. */
+export function agentKitFiles() {
+  const files = [
+    ['tools/egret.mjs', 'egret/tools/egret.mjs'],
+    ['tools/egret-guide.mjs', 'egret/tools/egret-guide.mjs'],
+    ['guide/index.txt', 'egret/guide/index.txt']
+  ];
+  for (const folder of ['areas', 'cards'])
+    for (const entry of fs.readdirSync(path.join(root, 'guide', folder), { recursive: true, withFileTypes: true })) {
+      if (!entry.isFile() || !entry.name.endsWith('.txt')) continue;
+      const relative = path.relative(path.join(root, 'guide'), path.join(entry.parentPath, entry.name));
+      const posix = relative.split(path.sep).join('/');
+      files.push(['guide/' + posix, 'egret/guide/' + posix]);
+    }
+  return files.sort((a, b) => (a[1] < b[1] ? -1 : 1));
+}
+
+/**
+ * Writes the agent kit into `vendor`: vendor/egret/ is the tool's own, so it is replaced whole and a card the guide no
+ * longer has goes with it. The error codes are listed, since the sentences come from the runtime in the copy.
+ */
+function writeAgentKit(vendor) {
+  const kit = path.join(vendor, 'egret');
+  fs.rmSync(kit, { recursive: true, force: true });
+  for (const [from, to] of agentKitFiles()) {
+    const target = path.join(vendor, ...to.split('/'));
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.copyFileSync(path.join(root, ...from.split('/')), target);
+  }
+  fs.writeFileSync(path.join(kit, 'error-codes.json'), JSON.stringify({ codes: collectErrorCodes() }) + '\n');
+  fs.writeFileSync(
+    path.join(vendor, 'egret.mjs'),
+    '#!/usr/bin/env node\n' +
+      "// The engine's command for an agent working in this game, copied by tools/vendor-game.mjs:\n" +
+      '//   node vendor/egret.mjs guide <question>   the cards of the engine guide that answer\n' +
+      '//   node vendor/egret.mjs card <id>          one card;  list [<area> | all]  the areas or an area\n' +
+      '//   node vendor/egret.mjs explain <CODE>     an engine error in English and Chinese, with its cards\n' +
+      "import { main } from './egret/tools/egret.mjs';\n" +
+      'const { code, text } = await main(process.argv.slice(2));\n' +
+      'process.stdout.write(text);\n' +
+      'process.exitCode = code;\n'
+  );
+}
+
 /** Copies the plan into `<game>/vendor` and writes the import map, the Node loader and SOURCE.md. */
-export function vendorGame(game, entries) {
+export function vendorGame(game, entries, options = {}) {
+  const agentKit = options.agentKit ?? true;
   const plan = planVendor(entries);
   const vendor = path.join(path.resolve(game), 'vendor');
   fs.mkdirSync(vendor, { recursive: true });
@@ -154,6 +205,7 @@ export function vendorGame(game, entries) {
   // Take away what an earlier run copied and no entry needs now; only .js files and licences are touched.
   for (const file of fs.readdirSync(vendor, { recursive: true, withFileTypes: true })) {
     if (!file.isFile()) continue;
+    if (/^egret(\.mjs$|[\\/])/.test(path.relative(vendor, path.join(file.parentPath, file.name)))) continue;
     const relative = path.relative(vendor, path.join(file.parentPath, file.name)).split(path.sep).join('/');
     if (!keep.has(relative) && /\.(m?js)$/.test(relative)) fs.unlinkSync(path.join(vendor, relative));
   }
@@ -206,17 +258,27 @@ export function vendorGame(game, entries) {
         ? `- Third-party packages, copied with their own licences: ${plan.third.map(t => `\`${t.name}\` (${t.license ?? 'see its licence file'})`).join(', ')}.\n`
         : '') +
       '- First-party engine code: Apache-2.0, see `LICENSE` and `NOTICE`.\n' +
-      '- In a page: add `vendor/importmap.json` to the import map, or load `vendor/importmap.js` first. In Node: `node --import ./vendor/node-register.mjs`.\n'
+      '- In a page: add `vendor/importmap.json` to the import map, or load `vendor/importmap.js` first. In Node: `node --import ./vendor/node-register.mjs`.\n' +
+      (agentKit
+        ? "- For a coding agent: `node vendor/egret.mjs guide <question>` asks the engine's guide, copied with its command under `vendor/egret/`; `node vendor/egret.mjs explain <ERROR_CODE>` gives an engine error in English and Chinese.\n"
+        : '')
   );
-  return { files: plan.files.size, map: plan.map, commit };
+  if (agentKit) writeAgentKit(vendor);
+  else {
+    fs.rmSync(path.join(vendor, 'egret'), { recursive: true, force: true });
+    fs.rmSync(path.join(vendor, 'egret.mjs'), { force: true });
+  }
+  return { files: plan.files.size, map: plan.map, commit, agentKit };
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
-  const [game, ...entries] = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  const agentKit = !args.includes('--no-agent-kit');
+  const [game, ...entries] = args.filter(arg => arg !== '--no-agent-kit');
   if (!game || entries.length === 0) {
-    console.error('Usage: node tools/vendor-game.mjs <game folder> <entry> [<entry> ...]');
+    console.error('Usage: node tools/vendor-game.mjs <game folder> <entry> [<entry> ...] [--no-agent-kit]');
     process.exit(2);
   }
-  const result = vendorGame(game, entries);
+  const result = vendorGame(game, entries, { agentKit });
   console.log(`${result.files} files from ${result.commit} into ${path.join(game, 'vendor')}`);
 }

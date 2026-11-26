@@ -1,0 +1,3 @@
+# Structure
+
+- [sim-view-split](../cards/structure/sim-view-split.txt) · engine world3d web · Rules apart from the picture, tested and run in Node.

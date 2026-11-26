@@ -2,7 +2,7 @@
 id: read-engine-errors
 title: Read an engine error by its code before changing code
 applies: [play, play3d, engine, world3d, web]
-triggers: [describeErrorCode, setErrorLanguage, EgretError, OBJECT_DISPOSED, SCOPE_CLOSED, ENGINE_CLOSED, ENGINE_MISMATCH, DISPLAY_VALUE_INVALID, FRAME_TRANSFORM_INVALID, FRAME_BUDGET_EXCEEDED, FRAME_IMAGE_BUDGET, GRAPHICS_FILL_REQUIRED, ASYNC_EVENT_HANDLER, "error code", "engine error", "Cause:", "error message", "cleanupErrors", "disposed object", "used after dispose", "报错", "错误码", "看不懂错误"]
+triggers: [describeErrorCode, setErrorLanguage, EgretError, OBJECT_DISPOSED, SCOPE_CLOSED, ENGINE_CLOSED, ENGINE_MISMATCH, DISPLAY_VALUE_INVALID, FRAME_TRANSFORM_INVALID, FRAME_BUDGET_EXCEEDED, FRAME_IMAGE_BUDGET, GRAPHICS_FILL_REQUIRED, ASYNC_EVENT_HANDLER, "error code", "engine error", "Cause:", "error message", "cleanupErrors", "disposed object", "used after dispose", "报错", "错误码", "看不懂错误", "explain"]
 local: []
 evidence:
   - { repo: cnedwin/Egret_rebuild, path: knowledge-base/en/docs/error-codes.md, line: 9, commit: ec17a5a22eff057b89a2926f638eb51938344459, pin: ec17a5a22eff057b89a2926f638eb51938344459 }
@@ -29,7 +29,7 @@ A code is an area and an ending. The ending says what kind of thing went wrong:
 Rules:
 
 - Read the whole message, including `Cause:`, before changing anything. Compare `error.code` in code, never the message text, which may change.
-- Look a code up in `knowledge-base/en/docs/error-codes.md`, or ask the guide: `node tools/egret-guide.mjs FRAME_BUDGET_EXCEEDED`.
+- Look a code up: in a game with an engine copy, `node vendor/egret.mjs explain FRAME_BUDGET_EXCEEDED` prints its sentence in English and Chinese and the cards that name it; in this repository, `node tools/egret.mjs explain` or `knowledge-base/en/docs/error-codes.md`.
 - `describeErrorCode(code, 'en')` gives the sentence to a program; `setErrorLanguage('zh')` puts Chinese sentences in messages for Chinese players and developers.
 - Show failures that stop the game on screen with a reload button and keep the stack for automated checks, as FPS does. A frozen canvas with an error only in the console is reported by players as "the game hangs".
 - An error thrown by your own callback comes back wrapped, with your error in `cause`. Fix your callback, not the engine call around it.
