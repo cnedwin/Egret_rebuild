@@ -12,6 +12,31 @@ test('genuine ordered multipage geometry interleaves with ordinary graphics and 
 for(const [blend,expected]of [['normal','normal'],['additive','add-accumulate'],['multiply','multiply-factor'],['screen','screen']])test('explicit shared blend and packed tint '+blend,async t=>{const s=await setup(t,renderingSource({blend,tint:true}));s.view();const f=frame(s),c=draws(f)[1],g=f.geometries[c.geometryIndex];assert.equal(f.materials[c.materialIndex].blend,expected);assert.ok(Math.abs(g.lightColors[0]-128/255)<1e-6);assert.ok(Math.abs(g.lightColors[3]-128/255)<1e-6);assert.ok(Math.abs(g.darkColors[0]-128/255)<1e-6);});
 for(const weighted of [false,true])test('Core mesh used ranges with authored positions weighted='+weighted,async t=>{const s=await setup(t,renderingSource({mesh:true,weighted}));s.view();const f=frame(s),g=f.geometries[draws(f)[1].geometryIndex];assert.equal(g.vertexCount,4);assert.equal(g.indexCount,6);[...g.positions].sort((a,b)=>a-b).forEach((v,i)=>assert.ok(Math.abs(v-[-4,-4,0,0,4,4,8,8][i])<1e-5));});
 test('Core polygon clipping is copied into ordinary shared mesh triangles',async t=>{const s=await setup(t,renderingSource({clip:true}));s.view();const f=frame(s);assert.equal(draws(f).length,2);for(const g of f.geometries)for(let i=0;i<g.positions.length;i+=2)assert.ok(g.positions[i]>=-1e-5&&g.positions[i]<=4+1e-5);});
+test('retained weighted and tinted frames keep every copied channel across repeated poses and attachment changes',async t=>{
+ const s=await setup(t,renderingSource({mesh:true,weighted:true,tint:true}));s.view();
+ const channels=['positions','uvs','lightColors','darkColors','indices'];
+ const copy=f=>f.geometries.map(g=>Object.fromEntries(channels.map(name=>[name,[...g[name]]])));
+ const retained=[];
+ function retain(f){
+  for(const g of f.geometries)for(const name of channels)assert.ok(Object.isFrozen(g[name]),name+' must be immutable');
+  retained.push({frame:f,values:copy(f)});
+ }
+ s.player.setAnimation(0,'move',{loop:true});s.player.advance(tick(1,.01));
+ const first=frame(s);assert.equal(draws(first).length,2);retain(first);
+ for(let id=2;id<=18;id++){
+  s.player.advance(tick(id,.01));
+  const next=frame(s);
+  assert.equal(draws(next).length,2);
+  if(id===2)assert.notDeepEqual(copy(next).map(g=>g.positions),retained[0].values.map(g=>g.positions));
+  if(id%3===0)retain(next);
+ }
+ // Reuse the renderer with a different skin and draw order, then a frame with no attachments.
+ s.player.setSkin('alternate');s.player.setAnimation(0,'swap');s.player.advance(tick(19,.01));retain(frame(s));
+ s.player.setAnimation(0,'hide');s.player.advance(tick(20,.01));assert.equal(draws(frame(s)).length,0);
+ s.player.setSkin('default');s.player.setAnimation(0,'move');s.player.advance(tick(21,.06));assert.equal(draws(frame(s)).length,2);
+ // Previously returned frames must retain exact positions, UVs, both tint channels and indices.
+ for(const saved of retained)assert.deepEqual(copy(saved.frame),saved.values);
+});
 test('draw order and hide publish complete topology and restore without new page acquisition',async t=>{const s=await setup(t),v=s.view();s.player.setAnimation(0,'swap');s.player.advance(tick(1));const f=frame(s);assert.equal(f.pages[0].source.pixels,undefined);assert.equal(v.getStatus().commands,2);s.player.setAnimation(0,'hide');s.player.advance(tick(2));assert.equal(draws(frame(s)).length,0);s.player.setSkin('default');s.player.setAnimation(0,'move');s.player.advance(tick(3));assert.equal(draws(frame(s)).length,2);assert.equal(s.p.textures.length,2);});
 test('display failure preserves committed animation and retains only the prior visual',async t=>{
  const raw=renderingSource();raw.slots[1].attachment=null;raw.animations.show={slots:{second:{attachment:[{time:0,name:'blue'}]}}};const s=await setup(t,raw),view=s.view({maxCommands:1}),before=frame(s),snapshot=s.player.getSnapshot();s.player.setAnimation(0,'show');assert.throws(()=>s.player.advance(tick(1)),e=>codes(e).includes('SPINE_DISPLAY_COMMAND_LIMIT'));assert.equal(s.player.getSnapshot().state,'running');assert.equal(s.player.getSnapshot().revision,snapshot.revision+1);assert.equal(s.player.getSnapshot().tickId,1);assert.deepEqual(frame(s).geometries,before.geometries);assert.equal(view.getStatus().commands,1);
