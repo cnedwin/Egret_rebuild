@@ -1325,7 +1325,7 @@
 | `UI_VIEW_FRAME_INVALID` | 交给UI 视图的 `frame` 无效。 |
 | `UI_VIEW_INVALID` | 视图描述无效。是哪个部件、错在哪里，见 cause。 |
 | `UI_VIEW_NAME_UNKNOWN` | 视图里没有这个名字的部件。视图有哪些名字，见 cause。 |
-| `UI_VIEW_VARIANT_MISMATCH` | 视图的竖屏部件与横屏部件的名字或种类不一致。是哪些名字，见 cause。 |
+| `UI_VIEW_VARIANT_MISMATCH` | 视图的竖屏或平板部件与根部件的名字或种类不一致。是哪些名字，见 cause。 |
 
 ### VIDEO
 

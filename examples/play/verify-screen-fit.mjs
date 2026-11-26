@@ -417,6 +417,86 @@ async function verifyUiScale(page) {
   }
 }
 
+// One view with phone, portrait and tablet parts in a window resized from a phone's shape to a tablet's, held wide
+// and upright: the parts follow the shorter side, and the view is built again for each.
+async function verifyTabletParts(page) {
+  const before = page.viewportSize();
+  await page.setViewportSize({ width: 1100, height: 1100 });
+  const fixture = await page.evaluateHandle(async () => {
+    const { play } = await import('@egret/engine/play');
+    const parent = document.createElement('div');
+    parent.style.cssText = 'width:844px;height:390px';
+    document.body.append(parent);
+    const card = width => ({
+      type: 'panel',
+      name: 'card',
+      card: true,
+      anchor: 'center',
+      width,
+      height: 120,
+      children: [{ type: 'text', name: 'words', text: 'Hello' }]
+    });
+    let view;
+    const builds = [];
+    const game = await play({
+      parent,
+      width: 800,
+      height: 450,
+      portrait: { width: 450, height: 800 },
+      fit: 'expand',
+      pixelRatio: 1,
+      backend: 'webgl2',
+      audio: false,
+      setup(g) {
+        view = g.show(
+          { root: card(300), portrait: card('fill'), tablet: card(600) },
+          { state: {}, built: v => builds.push(v.variant) }
+        );
+      }
+    });
+    return {
+      resize(width, height) {
+        parent.style.width = width + 'px';
+        parent.style.height = height + 'px';
+      },
+      read: () => ({ variant: view.variant, width: view.rect('card').width, builds: [...builds] }),
+      async close() {
+        await game.dispose();
+        parent.remove();
+      }
+    };
+  });
+  const frames = () =>
+    page.evaluate(
+      () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done))))
+    );
+  try {
+    await frames();
+    const seen = [];
+    for (const [width, height, variant, cardWidth] of [
+      [844, 390, 'landscape', 300],
+      [1024, 768, 'tablet', 600],
+      [768, 1024, 'portrait', 600],
+      [390, 844, 'portrait', 450]
+    ]) {
+      await fixture.evaluate((f, size) => f.resize(...size), [width, height]);
+      await frames();
+      const now = await fixture.evaluate(f => f.read());
+      assert.equal(now.variant, variant, width + ' x ' + height);
+      assert.equal(now.width, cardWidth, width + ' x ' + height);
+      seen.push([width + 'x' + height, now.variant]);
+    }
+    const { builds } = await fixture.evaluate(f => f.read());
+    // Built once for each change of parts; turning a phone that keeps the portrait parts builds nothing again.
+    assert.deepEqual(builds, ['landscape', 'tablet', 'portrait']);
+    return seen;
+  } finally {
+    await fixture.evaluate(f => f.close());
+    await fixture.dispose();
+    if (before) await page.setViewportSize(before);
+  }
+}
+
 export async function verifyScreenFit(page, PNG) {
   const before = page.viewportSize();
   await page.setViewportSize({ width: 960, height: 540 });
@@ -424,6 +504,7 @@ export async function verifyScreenFit(page, PNG) {
   const fixedFits = PNG === undefined ? undefined : await verifyFixedFits(page, PNG);
   const pins = await verifyPins(page);
   const uiScale = await verifyUiScale(page);
+  const tablet = await verifyTabletParts(page);
   const fixture = await page.evaluateHandle(async () => {
     const { play } = await import('@egret/engine/play');
     const log = { arranged: [], taps: 0 };
@@ -521,6 +602,7 @@ export async function verifyScreenFit(page, PNG) {
       fixedFits,
       pins,
       uiScale,
+      tablet,
       arranged: log.length,
       orientations: [...new Set(log.map(entry => entry.orientation))],
       taps: 1

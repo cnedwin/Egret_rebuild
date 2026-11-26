@@ -1325,7 +1325,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `UI_VIEW_FRAME_INVALID` | The frame given to a UI view is not valid. |
 | `UI_VIEW_INVALID` | A view description is not valid. Which part, and what is wrong with it, are in cause. |
 | `UI_VIEW_NAME_UNKNOWN` | The view has no part of that name. The names it has are in cause. |
-| `UI_VIEW_VARIANT_MISMATCH` | The portrait parts of a view do not have the same names, of the same kinds, as the others. The names are in cause. |
+| `UI_VIEW_VARIANT_MISMATCH` | The portrait or tablet parts of a view do not have the same names, of the same kinds, as its root. The names are in cause. |
 
 ### VIDEO
 
