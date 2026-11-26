@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/egret-migrate/inspect.mjs",
+      "originRole": "First-party classic Egret project inspection and reuse of the bounded RES conversion plan. Independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/convert.mjs",
+      "originRole": "First-party Egret migration conversion, project transactions and browser build assembly. Independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/legacy-web.mjs",
+      "originRole": "First-party bounded compatibility bindings built on the new Egret browser SDK. Independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/cli.mjs",
+      "originRole": "First-party migration CLI and paired browser verification with the existing playable artifact preview. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/bin.mjs",
+      "originRole": "First-party executable entry for the local Egret migration CLI. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/pack.mjs",
+      "originRole": "First-party local npm tool packaging. Bundled jsonc-parser 3.3.1 and pngjs 7.0.0 carry their MIT licenses. Independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/README.md",
+      "originRole": "First-party English guide for the local Egret Migrate tool. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/README.zh-CN.md",
+      "originRole": "First-party Chinese guide for the local Egret Migrate tool. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/skill/SKILL.md",
+      "originRole": "First-party portable Agent instructions for Egret project migration. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/skill/SKILL.zh-CN.md",
+      "originRole": "First-party Chinese translation of portable Agent instructions for Egret project migration. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate.test.mjs",
+      "originRole": "First-party Egret migration CLI regression using original fixture data. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-legacy-web.test.mjs",
+      "originRole": "First-party bounded compatibility regression using the public Egret display tree. Independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "tools/egret-migrate/README.md",
+      "zh": "tools/egret-migrate/README.zh-CN.md"
+    },
+    {
+      "en": "tools/egret-migrate/skill/SKILL.md",
+      "zh": "tools/egret-migrate/skill/SKILL.zh-CN.md"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+---
+id: sprite-swarm
+title: A swarm of moving sprites from pooled rectangles, not shared-texture Bitmaps
+applies: [play, engine, web]
+triggers: [Bitmap, textureFromCanvas, drawRect, Graphics, "many enemies", "swarm", "survivors", "bullet hell", "sprite pool", "texture slow", "bitmap slow", "software rendering slow", "frame time", "大量敌人", "割草", "弹幕", "精灵池", "贴图很卡", "对象池"]
+local: [take, give, pools, make]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: NezhaSea/src/view.mjs, line: 142, commit: 9b3d9263f16bbfda9be05128a7c623408daf947f, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: NezhaSea/ENGINE-NOTES.md, line: 23, commit: 9b3d9263f16bbfda9be05128a7c623408daf947f, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/ENGINE-NOTES.md, line: 37, commit: 936d1e620d68027d54e4fcc7eba047b0248d7ff7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A swarm of moving sprites from pooled rectangles, not shared-texture Bitmaps
+
+In headless Chromium with SwiftShader (no GPU), many `Bitmap`s sharing one small texture cost far more than rectangle sprites. At engine `2e53f45` on a 1280 × 720 play, 800 moving Bitmaps of one 48 × 48 texture from `textureFromCanvas` ran at 66.7 ms p50 and 83.4 ms p95; 800 moving `game.rect` sprites at 16.8 ms p50 and 33.4 ms p95. In the 540 × 960 prototype for Nezha Stirs the Sea at engine `b5628eb`, 100 Bitmaps were already 33.3 ms p95 though they drew in about 2 `drawArrays` a frame, and the profile was led by waiting on the GPU and by `getError`.
+
+So a survivors-like with a hundred soldiers on screen cuts every moving thing from `drawRect` and keeps sprites of a kind in a pool:
+
+```js
+const pools = new Map();
+const take = (key, make) => {
+  const list = pools.get(key) ?? [];
+  pools.set(key, list);
+  const sprite = list.pop() ?? make();   // reuse before drawing a new one
+  sprite.visible = true;
+  return sprite;
+};
+const give = (key, sprite) => { sprite.visible = false; pools.get(key).push(sprite); };
+const crab = take('crab', () => game.sprite((g) => g.beginFill(0xc8553d).drawRect(-12, -8, 24, 16).endFill(), layers.soldiers));
+```
+
+Rules:
+
+- Measure first, with the same count the game reaches at its busiest; the game kept mid-game waves at 16.8 ms p95 and its cap of 140 soldiers at 33.3 ms.
+- Draw a sprite's Graphics once when it is made; per frame, change only `x`, `y`, `rotation`, `alpha` and scale.
+- Cap what is on the field in the rules, not the view, so the bot and the page agree.
+- Rotated rectangles stay cheap; circles and paths that move do not (see moving-shapes).
+
+Still Bitmaps cost the same: 250 tiles cut from one atlas by `sourceRect`, none moving, ran at 50 ms p50 / 66.7 ms p95 on a 1280 × 720 play. Tiles at rest go on a page canvas under the engine's, painted again only when they change (see still-background).
+
+Learnt from Nezha Stirs the Sea (ENGINE-NOTES 3) and Taiwan Sixteen-Tile Mahjong (ENGINE-NOTES 5).

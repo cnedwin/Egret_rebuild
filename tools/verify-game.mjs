@@ -25,6 +25,9 @@
 // `look` gives the colour the page shows at a place of the stage. `player.until(test, label, seconds)` looks again
 // about every 0.12 seconds of real time until `test(look)` is true, and fails after `seconds` (20 unless given).
 // `player.read(fn)` runs a function in the page, for what a game keeps on `window`: `player.read(() => window.state.level)`.
+// `player.warnings()` gives the engine's warnings so far (`{ code, message }`), which the report lists as `engineWarnings`:
+// the page is given a `globalThis.__egretAgent` before it starts, which the engine tells of every warning, whether or not
+// the game asked for them (a frame near its limit of images, a text made in every frame of update).
 // The script runs on the page loaded afresh, with what blind play saved forgotten, after the blind checks; what it
 // throws fails the check `played`.
 import fs from 'node:fs';
@@ -34,6 +37,15 @@ import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
+/** pngjs: installed beside this checkout, or, in a game's engine copy, the one copied under third-party/. */
+function loadPng() {
+  const require = createRequire(import.meta.url);
+  try {
+    return require('pngjs');
+  } catch {
+    return require('../third-party/pngjs/lib/png.js');
+  }
+}
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -124,7 +136,23 @@ export function gameChecks(seen) {
 
 /** What a page is told to count before any of its scripts runs. */
 function counters() {
-  const verify = (window.__verify = { frames: 0, audioContexts: 0, soundsStarted: 0, rejections: [] });
+  const verify = (window.__verify = {
+    frames: 0,
+    audioContexts: 0,
+    soundsStarted: 0,
+    rejections: [],
+    engineWarnings: []
+  });
+  // The engine tells this of every warning of the game; the report lists the first fifty.
+  window.__egretAgent = Object.freeze({
+    warning(warning) {
+      if (verify.engineWarnings.length < 50)
+        verify.engineWarnings.push({
+          code: String(warning?.code),
+          message: String(warning?.message ?? '').slice(0, 300)
+        });
+    }
+  });
   const frame = window.requestAnimationFrame.bind(window);
   window.requestAnimationFrame = callback =>
     frame(time => {
@@ -255,6 +283,7 @@ function driver(tab, PNG, out, size) {
       throw new Error(label + ' did not happen in ' + seconds + ' seconds');
     },
     sounds: () => tab.evaluate(() => window.__verify.soundsStarted),
+    warnings: () => tab.evaluate(() => window.__verify.engineWarnings ?? []),
     /** Runs a function in the page and gives what it returns: `player.read(() => window.state.collected)`. */
     read: (fn, ...args) => tab.evaluate(fn, ...args),
     expect(condition, message) {
@@ -283,12 +312,14 @@ function recordScriptFailure(played, error, fallbackCode) {
   }
 }
 
-function playReport(file, checks, warnings = [], pictures = {}) {
+function playReport(file, checks, warnings = [], pictures = {}, engineWarnings = []) {
   return {
     file,
     pass: Object.values(checks).every(check => check.pass),
     checks,
     consoleWarnings: warnings.slice(0, 10),
+    // Told by the engine (see the head of this file); they do not decide the pass, and each names an engine code.
+    engineWarnings,
     pictures: Object.fromEntries(Object.entries(pictures).map(([name, one]) => [name, one.path]))
   };
 }
@@ -299,6 +330,7 @@ function playReport(file, checks, warnings = [], pictures = {}) {
  * staged build from the page's own directory and plays only the supplied script. Pass `filePaths` in this mode to
  * serve only those logical paths, relative to that directory and separated by forward slashes. A script may record
  * completed steps with `player.checkpoint(name)` and attach a string `code` and JSON `details` to errors.
+ * A script-only module can export `viewport` to reproduce a particular browser layout independently of stage units.
  */
 export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly = false, filePaths }) {
   if (scriptOnly && typeof script?.default !== 'function') throw new Error('scriptOnly requires a play script');
@@ -354,8 +386,11 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
         '--autoplay-policy=no-user-gesture-required'
       ]
     });
-    const WIDTH = 960,
-      HEIGHT = 640;
+    const viewport = scriptOnly && script.viewport ? script.viewport : { width: 960, height: 640 };
+    const { width: WIDTH, height: HEIGHT } = viewport;
+    if (![WIDTH, HEIGHT].every(size => Number.isInteger(size) && size > 0 && size <= 8192)) {
+      throw new TypeError('Script viewport dimensions must be positive integers up to 8192.');
+    }
     const tab = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } });
     const seen = { consoleErrors: [], pageErrors: [], failedRequests: [], externalRequests: [] },
       consoleWarnings = [];
@@ -530,7 +565,8 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
       changedAtEnd: pictureChange(first, pictures['3-later'].png),
       changedMostDuringInput: Math.max(0, ...during.map(one => pictureChange(first, one))),
       audioContexts: end.audioContexts,
-      soundsStarted: end.soundsStarted
+      soundsStarted: end.soundsStarted,
+      engineWarnings: end.engineWarnings ?? []
     });
     let scripted;
     if (script !== undefined) {
@@ -558,7 +594,8 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
     // Network and error observers stay active through scripted play; decide every flag from their final values.
     const checks = gameChecks(seen);
     if (scripted !== undefined) checks.played = scripted;
-    return playReport(file, checks, consoleWarnings, pictures);
+    const engineWarnings = (await state().catch(() => end))?.engineWarnings ?? seen.engineWarnings;
+    return playReport(file, checks, consoleWarnings, pictures, engineWarnings);
   } catch (error) {
     if (!scriptOnly) throw error;
     const played = { pass: false, pictures: [], checkpoints: [] };
@@ -587,7 +624,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   if (fs.existsSync(out)) throw new Error('The output directory must not exist yet: ' + out);
   fs.mkdirSync(out, { recursive: true });
   const { chromium } = await import(pathToFileURL(playwright).href),
-    { PNG } = createRequire(import.meta.url)('pngjs');
+    { PNG } = loadPng();
   const script = play === undefined ? undefined : await import(pathToFileURL(path.resolve(play)).href);
   if (script !== undefined && typeof script.default !== 'function')
     throw new Error('The script has no default export to play the game with: ' + path.resolve(play));

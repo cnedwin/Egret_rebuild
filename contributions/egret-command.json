@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/egret.mjs",
+      "originRole": "First-party command an agent runs while it makes a game: the guide's cards, areas and an error code in English and Chinese, the same in this repository and in a game's engine copy; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/egret-command.test.mjs",
+      "originRole": "First-party checks that the command answers as the guide does, explains error codes from the runtime's sentences, and that the engine copy carries the command and guide and is replaced whole; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "guide/areas/assets.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/audio.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/entries.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/errors.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/game.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/input.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/perf.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/physics.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/ship.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/structure.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/verify.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/world3d.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/agent-guide.md",
+      "zh": "knowledge-base/Cns/docs/agent-guide.md"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+---
+id: still-background
+title: Paint a still background once, under a clear play canvas
+applies: [play, engine, web]
+triggers: [play, transparent, "static background", "still map", "background redrawn every frame", "large translucent fill", "fill rate", "software rendering slow", "swiftshader", "cache as bitmap", "p95 33 ms", "静止背景", "地图每帧重画", "大片半透明", "填充率", "软件渲染慢", "帧时间翻倍"]
+local: [drawMap, canvasGraphics, paintGround, ResizeObserver]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/src/ground.mjs, line: 12, commit: 13dcd4b46bc1cf9103cc45cd59d00e73e58ab5f9, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/src/ground.mjs, line: 92, commit: 13dcd4b46bc1cf9103cc45cd59d00e73e58ab5f9, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/ENGINE-NOTES.md, line: 23, commit: 13dcd4b46bc1cf9103cc45cd59d00e73e58ab5f9, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: NezhaSea/src/ground.mjs, line: 53, commit: 9b3d9263f16bbfda9be05128a7c623408daf947f, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/src/felt.mjs, line: 87, commit: 936d1e620d68027d54e4fcc7eba047b0248d7ff7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Paint a still background once, under a clear play canvas
+
+A sprite that never changes is still drawn every frame. Large translucent fills (washes of hills, a wide river drawn twice for its banks) cost fill, not triangles. In Canal Watch at engine `b5628eb`, one such map sprite made the title's frame time 33.3 ms p95 in headless Chromium with SwiftShader at 1280 × 800; hidden, it was 16.7 ms. At engine `2e53f45`, a 1280 × 720 sprite of six translucent hill washes and two translucent river bands ran at 50 ms p50; hidden, 16.7 ms. `play` has no way to bake a sprite into one texture.
+
+Measure first: hide the sprite (`sprite.visible = false`) and compare p95 frame times. If it is the background, let the page paint it once:
+
+```html
+<div id="field" style="position:relative;aspect-ratio:16/9">
+  <canvas id="ground" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+</div>
+```
+
+```js
+const game = await play({ width: 960, height: 540, parent: field, transparent: true, setup, update });
+paintGround(document.querySelector('#ground'));             // 2D canvas, repainted only on resize
+```
+
+Keep one drawing for both sides: write the background as `drawMap(g)` with Graphics call names (`beginFill`, `lineStyle`, `moveTo`, `lineTo`, `curveTo`, `drawRect`, `drawCircle`) and give it a small adapter that turns those calls into Canvas 2D, scaled from stage units to the box's pixels.
+
+Rules:
+
+- Only what never moves goes to the page. Towers, raiders, shots, gates and anything that changes stay in `play`.
+- Repaint the 2D canvas from a `ResizeObserver` at `devicePixelRatio` (2 at most), not every frame.
+- Measure again in the crowded part of the game, not only the title: Canal Watch was 16.8 ms p95 in its tenth wave afterwards.
+
+Learnt from Canal Watch (ENGINE-NOTES 3).

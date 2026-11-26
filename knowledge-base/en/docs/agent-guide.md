@@ -34,10 +34,24 @@ On November 26, 2026, Windows Chromium ran the example on WebGL2. Revision 0 ret
 
 [`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) gives an agent four ways in: create a first 2D interaction, start a 3D scene, work on an existing game, or investigate an error. The smallest example responds to Space. The full games link to their runnable checkout sources. With a source-size limit, count the final UTF-8 bytes before delivering the game. Use the [geometry budget card](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/perf/geometry-budget-2d.txt) when procedural 2D effects cause the frame capture to refuse a scene. Read more as you need it:
 
-- [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) lists every card in one line: its id, the ways of using the engine it applies to (`play`, `play3d`, `engine`, `world3d`, `web`) and what it answers. It stays under 150 lines.
+- [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) names the areas, each in one line with its number of cards and what they answer. `guide/areas/<area>.txt` lists the cards of one area, one line each: the id, the ways of using the engine it applies to (`play`, `play3d`, `engine`, `world3d`, `web`) and what it answers. An area is a folder of cards, so the index stays small however many cards there are; each level stays under 150 lines and 1,500 tokens.
 - `guide/cards/<area>/<id>.txt` is one topic in under 800 tokens as printed: short rules, a minimal example, and the measured reason or the game a rule was learnt from.
-- `node tools/egret-guide.mjs <question>` prints the best two or three cards within a budget (2,500 tokens by default, `--budget` to change it). A question may be words in English or Chinese, an engine name, an error code or a devtools hint id. `--card <id>` prints one card and `--list` the index.
-- `node tools/egret-guide.mjs --full --out <file>` writes the index and every card as one file for tools that want a single file. It is a build output and is not committed.
+- `node tools/egret-guide.mjs <question>` prints the best two or three cards within a budget (2,500 tokens by default, `--budget` to change it). A question may be words in English or Chinese, an engine name, an error code or a devtools hint id. `--card <id>` prints one card, `--list` the index of areas, `--list <area>` the cards of an area and `--list all` every area.
+- `node tools/egret-guide.mjs --full --out <file>` writes the index, the areas and every card as one file for tools that want a single file. It is a build output and is not committed.
+- `node tools/egret.mjs` is the same guide as one command for an agent: `guide <question>`, `card <id>`, `list [<area> | all]` and `explain <ERROR_CODE>`, which prints the runtime's sentence for the code in English and Chinese and then the cards that name it.
+- In a game, the engine copy carries the guide. `tools/vendor-game.mjs` writes the command and the cards under `vendor/egret/` and starts them with `vendor/egret.mjs`, so an agent working in the game's folder runs `node vendor/egret.mjs guide <question>` and gets the same answer as in this repository, from the engine commit the game is pinned to. The copy is replaced whole on every refresh, so a card the guide dropped leaves with it. `--no-agent-kit` leaves the guide out.
+- `node vendor/egret.mjs check` reads the game's own files, outside `vendor/`, for the mistakes agents make most with this engine, before the game is run. It reports:
+  - names an entry does not export, with the entry that does or the nearest name;
+  - specifiers that are not entries;
+  - entries the engine copy or the page's import map leaves out;
+  - engine files imported by their path in the copy;
+  - text or textures made in `update` every frame;
+  - workarounds for faults the copy has fixed;
+  - `localStorage` written without care for a private window;
+  - engine notes the copy has resolved.
+
+  Each finding gives the file and line, what to do and the card to read. It exits 1 on an error, and with `--strict` on a warning too. When it was written, the 23 games of the games repository, all of which run, gave no error.
+- `node vendor/egret.mjs verify [<page>]` runs the game in a headless browser through `tools/verify-game.mjs`, which the engine copy carries with `pngjs`. It needs Playwright installed in the game's folder, or named with `--playwright`. Its report says whether the page started without an error, drew, kept running, changed under input and made a sound. Under `engineWarnings` it also lists what the engine warned of while it ran, such as a frame near its image limit or text made in every frame, whether or not the game asked for warnings.
 - [`guide/entries.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/entries.json) lists, for each public engine entry, the other entries it brings in through its imports (`includes`) and the entries that bring it in (`partOf`): `@egret/engine/web/game` brings the pointer, the keyboard and the frame loop. A tool that counts what a game uses (the capability matrix of the games repository) reads it to credit the entries behind the one a game names. `node tools/entry-map.mjs` writes it from the built engine, and `--check` says whether it is current.
 
 Like `llms.txt`, the index and the cards are Markdown text kept as `.txt` files in English only. They are data an agent reads through the command, not reading documents, so they have no Chinese twin; this page is the bilingual description.
@@ -98,7 +112,21 @@ Planned for phase 2. A card that the evaluation never retrieves, or whose presen
 
 ### 6. From errors and hints to cards
 
-Planned for phase 2. Engine errors carry codes and `@egret/devtools` emits hint ids such as `frames-skipped`. Both already work as questions to the guide (`node tools/egret-guide.mjs FRAME_BUDGET_EXCEEDED`). The next step is a pointer from each to its card: a line that a developer sees with an error or a hint, naming the card id to ask for. The pointer will be generated from the cards' triggers, so a card and its pointers cannot disagree, and the merge gate will check that every pointer names an existing card.
+Planned for phase 2. Engine errors carry codes and `@egret/devtools` emits hint ids such as `frames-skipped`. Both already work as questions to the guide (`node tools/egret-guide.mjs FRAME_BUDGET_EXCEEDED`). For an error code the pointer now exists: `node tools/egret.mjs explain <ERROR_CODE>`, or `node vendor/egret.mjs explain` in a game, prints the runtime's sentence for the code in English and Chinese and then the cards whose triggers name it, so a card and its pointer cannot disagree. Hint ids still go to the guide as questions.
+
+### 7. Engine notes back from games
+
+A game that meets a fault of the engine works around it with the engine's own parts and writes the fault into `ENGINE-NOTES.md` at its root, one numbered note per fault ([the card](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/verify/engine-notes.txt)). Under each note's heading one line gives what a program needs:
+
+```html
+<!-- engine-note: {"id": "InquestScrolls#3", "status": "open", "topic": "paragraph-without-webassembly", "workaround": ["src/view/plainText.mjs"]} -->
+```
+
+`id` is the game's folder, `#` and the note's number. `status` is `open`, `partly`, `worked-around`, `documented` or `resolved`. `topic` names the fault in words joined by dashes, the same in every game that meets it. `workaround` lists the game's files that hold the workaround.
+
+When the engine resolves or documents a fault, the change adds an entry to [`guide/resolved.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/resolved.json): the topic, what the engine did (`resolved`, `partly` or `documented`), what changed in one or two sentences, the commit and pull request, the card to read and the notes it was written for. The engine copy carries the list as it stood at the game's pin. `node vendor/egret.mjs notes`, run in the game's folder, reads its notes against that list, by topic and by id. It prints each note still marked open that the copy has resolved or documented since, what changed, the files to take the workaround out of and the card to read. `--check` exits 1 while one remains. Run from this repository (`node tools/egret.mjs notes <game folder>`), it reads against the newest list and says to refresh the game's engine copy first.
+
+The first entries come from notes of The Inquest Scrolls (#474 to #478) and from faults that four play games shared, fixed earlier and still marked open in those games.
 
 ## Ownership and review
 

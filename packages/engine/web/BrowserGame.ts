@@ -124,10 +124,20 @@ export interface BrowserGameFrameUsage {
 /**
  * Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold
  * of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a
- * label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache.
+ * label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache, and from
+ * `play`, `PLAY_MADE_EVERY_FRAME` when `update` made a text, a shape or a sprite in each of the last 60 frames.
+ *
+ * A page whose `globalThis.__egretAgent` has a `warning` function is told every warning as well, whether or not the
+ * game asked for them: a tool that runs the game for an agent (tools/verify-game.mjs) puts it there before the game
+ * starts. What that function throws is the tool's, and is not told.
  */
 export interface BrowserGameWarning {
-  readonly code: 'FRAME_IMAGES_NEAR_LIMIT' | 'FRAME_IMAGE_BUDGET' | 'LABEL_NOT_DRAWN' | 'LABEL_CACHE_NEAR_LIMIT';
+  readonly code:
+    | 'FRAME_IMAGES_NEAR_LIMIT'
+    | 'FRAME_IMAGE_BUDGET'
+    | 'LABEL_NOT_DRAWN'
+    | 'LABEL_CACHE_NEAR_LIMIT'
+    | 'PLAY_MADE_EVERY_FRAME';
   readonly message: string;
   readonly usage?: BrowserGameFrameUsage;
   readonly cause?: unknown;
@@ -353,6 +363,17 @@ async function chooseBackend(asked: 'auto' | BrowserGameBackend): Promise<Browse
  * pointer input that threw, which ends that input, is told as a failure of the loop is: to `onError`, or to the page,
  * where the console shows it. Without this it was told to no one, and the game went on without its input.
  */
+/** Tells a tool's `globalThis.__egretAgent.warning`, where a page has one, of a warning; what it throws is the tool's. */
+function tellAgent(warning: BrowserGameWarning): void {
+  const agent = (globalThis as { readonly __egretAgent?: { readonly warning?: unknown } }).__egretAgent;
+  if (typeof agent?.warning !== 'function') return;
+  try {
+    (agent.warning as (warning: BrowserGameWarning) => void)(warning);
+  } catch {
+    /* The tool's own failure, not the game's. */
+  }
+}
+
 export function gameDiagnostics(onError: ((error: unknown) => void) | undefined): DiagnosticHandler {
   return diagnostic => {
     if (diagnostic.severity !== 'error') return;
@@ -483,6 +504,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     let nearLimit = false,
       refusing = false;
     const warn = (warning: BrowserGameWarning): void => {
+      tellAgent(Object.freeze(warning));
       if (onWarning === undefined) return;
       try {
         onWarning(Object.freeze(warning));

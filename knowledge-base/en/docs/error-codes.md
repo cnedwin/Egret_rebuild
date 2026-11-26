@@ -786,6 +786,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
+| `PLAY_MADE_EVERY_FRAME` | A warning of play, not an error: update made a text, a shape or a sprite in each of the last 60 frames. Make it once in setup and change its words, place or colour when they change. |
 | `PLAY_OPTIONS_INVALID` | The options given to play are not valid: one is missing, of the wrong type or out of range. |
 | `PLAY_SFX_UNKNOWN` | No such sfx is known to play. |
 

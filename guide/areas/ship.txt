@@ -1,0 +1,6 @@
+# Where the game ships
+
+- [ship-web-page](../cards/ship/ship-web-page.txt) · play play3d engine web · A web page or a shared link.
+- [ship-mobile-app](../cards/ship/ship-mobile-app.txt) · engine web world3d play play3d · A phone app in a store.
+- [ship-wechat-minigame](../cards/ship/ship-wechat-minigame.txt) · play play3d engine web · Packaged as a WeChat mini game.
+- [ship-steam-desktop](../cards/ship/ship-steam-desktop.txt) · engine web world3d play play3d · Steam and the Steam Deck.

@@ -1,0 +1,8 @@
+# World3D
+
+- [world3d-lights-shadows](../cards/world3d/world3d-lights-shadows.txt) · world3d play3d · Light limits, tiled lights, shadow atlas and cascades. (stale lesson flagged)
+- [cloth-and-rope](../cards/world3d/cloth-and-rope.txt) · world3d play3d · Cloth and rope sizes, slack, culling on vehicles and one-way pins.
+- [model-in-code](../cards/world3d/model-in-code.txt) · world3d play3d · Creatures, props and buildings as distance fields.
+- [terrain-stream-tiles](../cards/world3d/terrain-stream-tiles.txt) · world3d play3d · Heights, scatter, plant distance and navigation on streamed tiles.
+- [tile-board-camera](../cards/world3d/tile-board-camera.txt) · world3d play3d · Picking tiles on a board seen at 45 degrees, keys that follow the view, badges.
+- [toon-figure-hooks](../cards/world3d/toon-figure-hooks.txt) · world3d play3d · Toon figures: rim light, team colours and per-unit tints in one hook.

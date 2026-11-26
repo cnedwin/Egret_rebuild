@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Run a game for an agent, and hear every warning",
+    "body": "node vendor/egret.mjs verify runs a game in a headless browser through tools/verify-game.mjs, which the engine copy now carries with pngjs, and the report lists the engine's warnings as engineWarnings: a page with globalThis.__egretAgent is told every warning, whether or not the game gave onWarning. play adds the warning PLAY_MADE_EVERY_FRAME when update made a text, a shape or a sprite in each of the last 60 frames."
+  },
+  "zh": {
+    "title": "替智能体运行游戏，并听到每一条告警",
+    "body": "node vendor/egret.mjs verify 通过 tools/verify-game.mjs 在无头浏览器里运行游戏，引擎副本现在带着这个工具和 pngjs；报告的 engineWarnings 列出引擎的告警：页面有 globalThis.__egretAgent 时，不管游戏有没有给 onWarning，每条告警都会告诉它。play 新增告警 PLAY_MADE_EVERY_FRAME：update 在最近 60 帧里每帧都新建了文字、形状或精灵时告知。"
+  }
+}
