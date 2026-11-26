@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Floating touch stick",
+    "body": "Play games can start the stick at a player's touch within a battlefield area, define a CSS-pixel dead zone, and reserve pause or HUD regions for ordinary input. The first touch keeps control outside the canvas, and lifting, cancellation, pause, or opening a modal or menu clears movement."
+  },
+  "zh": {
+    "title": "浮动触屏摇杆",
+    "body": "Play 游戏可在战场区域内以触点为摇杆中心，设置 CSS 像素死区，并为暂停按钮或 HUD 保留正常输入。第一个触点拖出画布后仍可操控，抬起、取消、暂停或打开模态界面或菜单时摇杆归零。"
+  }
+}

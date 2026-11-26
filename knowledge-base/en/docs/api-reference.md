@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1469 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1470 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1607,6 +1607,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayBurstOptions` | interface | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
 | `PlayButton` | type | A button: a sprite whose middle is at (x, y), with its words in `label`. |
 | `PlayButtonOptions` | interface | A button to show: where, how large, its colors, text size and layer. |
+| `PlayFloatingStickOptions` | interface | A floating stick starts under a fresh touch in this part of the Play design. |
 | `PlayGame` | interface | Everything a small game is given: its world, UI and view, keys and pointer, sound and random numbers, and calls that make, move, test and time things. |
 | `PlayImageOptions` | interface | An image to show: where, how large, whether smoothed, and its layer. |
 | `PlayKeys` | interface | The keyboard of a play game: what is held, pressed and released, and axes from the arrow and WASD keys. |
