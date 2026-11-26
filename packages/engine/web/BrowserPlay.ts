@@ -1408,6 +1408,60 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const placeAllPinned = (again: boolean): void => {
     for (const [node, held] of [...pinned]) placePinned(node, held, again);
   };
+  // A tool that runs the game for an agent (tools/verify-screens.mjs) is told, about four times a second, where the
+  // nodes that take taps are on the page and where the safe part is, in CSS pixels, to check them on many screens.
+  let toldControls = Infinity;
+  const tellControls = (seconds: number): void => {
+    const agent = (globalThis as { readonly __egretAgent?: { readonly controls?: unknown } }).__egretAgent;
+    if (typeof agent?.controls !== 'function') return;
+    toldControls += seconds;
+    if (toldControls < 0.25) return;
+    toldControls = 0;
+    const box = surface.getBoundingClientRect(),
+      across = box.width / shown.width,
+      down = box.height / shown.height;
+    const page = (r: { x: number; y: number; width: number; height: number }) => ({
+      x: box.left + r.x * across,
+      y: box.top + r.y * down,
+      width: r.width * across,
+      height: r.height * down
+    });
+    const shows = (node: DisplayObject): boolean => {
+      for (let at: DisplayObject | undefined = node; at !== undefined; at = at.parent)
+        if (!at.visible || at.alpha <= 0) return false;
+      return true;
+    };
+    const controls = [];
+    for (const node of tappable) {
+      if (node.isDisposed || !onStage(node) || !shows(node)) continue;
+      const local = node.hitArea ?? node.getBounds();
+      if (!(local.width > 0 && local.height > 0)) continue;
+      const corners = [
+        node.localToGlobal(local.x, local.y),
+        node.localToGlobal(local.x + local.width, local.y + local.height)
+      ];
+      const x = Math.min(corners[0]!.x, corners[1]!.x),
+        y = Math.min(corners[0]!.y, corners[1]!.y);
+      const label = (node as { readonly label?: unknown }).label;
+      controls.push({
+        name: node.name || tapNames.get(node) || (label instanceof PlayText ? label.text : ''),
+        ...page({
+          x,
+          y,
+          width: Math.abs(corners[1]!.x - corners[0]!.x),
+          height: Math.abs(corners[1]!.y - corners[0]!.y)
+        })
+      });
+    }
+    try {
+      (agent.controls as (controls: unknown, screen: unknown) => void)(controls, {
+        safe: page(shown.safe),
+        canvas: { x: box.left, y: box.top, width: box.width, height: box.height }
+      });
+    } catch {
+      /* The tool's own failure, not the game's. */
+    }
+  };
   const areaFromBounds = (node: DisplayObject): void => {
     if (boundsAreas.has(node) || node.hitArea !== undefined) return;
     if (!(node instanceof Sprite) || node.numChildren === 0) return;
@@ -1416,6 +1470,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   };
   // Sprites of onTap with a name: their buttons in the semantic tree.
   const tapButtons = new Map<DisplayObject, { remove(): void }>();
+  // The name onTap was given, by which a tool names the control.
+  const tapNames = new WeakMap<DisplayObject, string>();
   let tapButtonCount = 0;
   const pointerDown = (event: PointerEvent): void => {
     device = event.pointerType === 'touch' ? 'touch' : 'mouse';
@@ -2104,6 +2160,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     frameSeconds = 0;
     if (!disposed) {
       placeAllPinned(false);
+      tellControls(seconds);
       views.tick(seconds);
       syncLabelVisibility();
       if (options.semantics !== undefined)
@@ -2486,6 +2543,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const name = tapOptions?.name;
       if (name !== undefined && (typeof name !== 'string' || name.trim() === '' || name.length > 1024))
         throw invalid('the name of a tap is words');
+      if (name !== undefined) tapNames.set(node, name);
       const tap = (activation: PlayTapActivation): void => {
         const round = generation;
         tapListener(

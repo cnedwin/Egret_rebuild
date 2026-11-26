@@ -76,6 +76,8 @@ game.loop.start();
 
 **给工具的告警。** 页面的 `globalThis.__egretAgent` 上有 `warning(warning)` 函数时，无论游戏有没有给 `onWarning`，每条告警也会告诉它。`tools/verify-game.mjs` 在游戏启动前放上这个对象，并在报告的 `engineWarnings` 里列出收到的告警，这样智能体能看到接近上限的帧、每帧新建的文字这类游戏自己没有要求告知的问题。这个函数抛出的错误属于工具自己，不会再告知。
 
+**给工具的 insets 和控件。** 页面的 `globalThis.__egretAgent` 上有 `insets`（`{ top, right, bottom, left }`，单位是窗口的 CSS 像素）时，除非游戏自己给了 `insets`，游戏会用它代替页面自己的值作为窗口的安全区 insets。无头浏览器没有刘海，`tools/verify-screens.mjs` 就是这样代替刘海的。`play` 游戏还会大约每秒四次调用这个对象的 `controls(controls, { safe, canvas })`，传入每个正在显示、接受点击的节点：它的名字和它在页面上的矩形，单位是 CSS 像素。`safe` 和 `canvas` 也是页面上的矩形。这两个函数抛出的错误都属于工具自己。
+
 **画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。`'cover'` 和 `'stretch'` 时舞台保持自己单位的宽高。`'contain'`、`'expand'` 和白鹭 5 的 fixed 模式下，舞台跟随[屏幕适配的结果](screen-fit.md)：`game.screen` 是当前结果，`game.onScreenChange(listener)` 在结果变化时通知，舞台在高窗口时换成竖版尺寸，`'expand'` 和 fixed 模式下铺满元素。`wholeScale: true` 时每个单位是整数个设备像素，适合像素风。任何模式下指针位置都跟随画布。
 `game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。
 

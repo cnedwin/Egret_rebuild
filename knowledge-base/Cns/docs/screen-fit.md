@@ -96,6 +96,25 @@ game.onScreenChange(plan => {
 
 横向取 `left`、`right`、`centerX` 之一，纵向取 `top`、`bottom`、`centerY` 之一，表示离那条边或中线的距离。没有给的方向保持盒子原来的位置。`isScreenPin(value)` 判断一个值是不是 pin。同一方向给了两个、名字不认识或数字不是有限数时，以 `UI_SCREEN_OPTIONS_INVALID` 拒绝。[play](play.md#任意形状的屏幕) 的 `game.pin` 就是这样摆放节点的，屏幕或包围盒变化时会再摆一次。
 
+## 一次检查多种屏幕
+
+`node tools/egret.mjs verify <页面> --screens`（在游戏的引擎副本里是 `node vendor/egret.mjs verify --screens`）在无头 Chromium 里用八种屏幕打开同一个页面，每种屏幕写一张图片，并写出 `report.json`。这八种屏幕是：没有刘海的手机（375 × 667）、有刘海和主屏指示条的手机（393 × 852）、同一部手机横过来（852 × 393）、细长的安卓手机（360 × 800）、横竖两种方向的平板（768 × 1024 和 1024 × 768）、展开的折叠屏（884 × 1104）和桌面（1920 × 1080）。`--screens=phone-notch,tablet` 只跑其中几种。
+
+无头浏览器没有刘海。工具给页面放上 `globalThis.__egretAgent.insets`，引擎把它当作窗口的安全区 insets，并在每张图片里把被遮住的部分染成红色。每种屏幕都检查：
+
+- 页面里的错误；
+- 空白的画面；
+- 页面会不会滚动；
+- 画布占了窗口的多少，不到四分之三时给出警告。
+
+`play` 游戏还会大约每秒四次把接受点击的节点位置和安全区告诉工具。报告据此列出：
+
+- 超出安全区的控件，记为错误；
+- 触屏上宽或高不到 44 CSS 像素的控件，记为警告；
+- 互相遮挡、又不是一个包含另一个的两个控件，记为警告。
+
+控件用它的 `name`、`onTap` 给的名字或按钮上的文字来称呼。只要有一种屏幕出现错误，工具就以 1 退出。这是按每部手机的尺寸和像素比、加上代替的 insets 运行的 Chromium，不是手机：真实刘海的形状、浏览器自己的栏，以及手机把 insets 交给页面的方式都没有检查。
+
 ## 检查了什么
 
 - `tests/ui-screen.test.mjs` 在 Node 里检查计算：`'contain'` 和 `'expand'`、更宽和更高的空间、竖版设计、在黑边以内和超出黑边的 insets，以及拒绝无效输入。
@@ -116,6 +135,7 @@ game.onScreenChange(plan => {
 - `tests/egret-migrate.test.mjs` 检查 `inspect` 保留每种 fixed 模式并拒绝 `noScale`。
 - SCR08 检查 `pinBox` 贴每条边和中线、不动没给的方向，以及它拒绝的 pin。
 - 浏览器屏幕适配用例里，一个 `'expand'`、右侧有刘海的游戏把分数固定在安全区右上角，把横条固定在屏幕底部中间。窗口变宽和旋转后，两者都仍贴着各自的边。分数的包围盒横向放大一倍后，重新摆到离边 8 个单位处；`set` 立即把它改到别处。
+- `examples/screen-check/verify.mjs` 用 `verify --screens` 在全部八种屏幕上运行一个 `'expand'` 的横版游戏，先带三个错误，再改正。带错误时，固定在屏幕角上的暂停按钮恰好在那个角有 insets 的三部手机上落在刘海下面；24 个单位的帮助按钮在显示不到 44 CSS 像素的每种触屏上都过小；`Jump` 和 `Fire` 两个按钮互相遮挡。引擎采用的安全区就是窗口减去代替的 insets，误差不超过画布的最后一个像素；图片在刘海处是红色，刘海下方不是。加上 `?fixed=1` 后，任何屏幕都没有发现，也没有引擎告警。`tests/egret-verify.test.mjs` 在 Node 里检查命令的选项，以及对给定控件的判断。
 - `tests/egret-migrate-eui.test.mjs` 把一个 `fixedWidth` 项目的屏幕从 480 × 320 个单位变为 480 × 400：`bottom="0"` 的横条从 280 移到 360，居中的部件随新的中点移动，`RESIZE` 只通知一次。
 - 在无头 Chromium 里，把一个迁移来的 750 × 1334 `fixedWidth` 游戏的窗口从 375 × 667 改为 393 × 852：
   - `stage.stageHeight` 从 1334 变为 1625；
@@ -124,7 +144,7 @@ game.onScreenChange(plan => {
 
   这次运行记录在加入这些模式的 PR 里。
 
-没有在带刘海的手机、Safari 或微信本身上运行过。这些运行中页面自己的 insets 始终为 0，刘海是用 `insets` 给出的。`wholeScale` 在浏览器里只在一个 CSS 像素对应一个设备像素时检查过，两个设备像素的情况只在 Node 里检查过。
+没有在带刘海的手机、Safari 或微信本身上运行过。这些运行中页面自己的 insets 始终为 0，刘海是用 `insets` 或 `__egretAgent.insets` 给出的。`wholeScale` 在浏览器里只在一个 CSS 像素对应一个设备像素时检查过，两个设备像素的情况只在 Node 里检查过。
 
 ## 设计说明
 

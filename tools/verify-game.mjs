@@ -38,7 +38,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 /** pngjs: installed beside this checkout, or, in a game's engine copy, the one copied under third-party/. */
-function loadPng() {
+export function loadPng() {
   const require = createRequire(import.meta.url);
   try {
     return require('pngjs');

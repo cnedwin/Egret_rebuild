@@ -20,6 +20,7 @@ export const TARGETS = Object.freeze({
     height: 540,
     fit: undefined,
     card: 'ship-web-page',
+    start: { width: 220, height: 64 },
     input: 'arrows or A and D, or press and drag on the stage',
     notes: [
       'Keep the first load small: everything the first screen needs, and nothing else, before Start.',
@@ -32,10 +33,12 @@ export const TARGETS = Object.freeze({
     height: 1280,
     fit: 'expand',
     card: 'ship-mobile-app',
+    // 96 units are 48 CSS pixels on a phone 360 wide, the narrowest of verify --screens.
+    start: { width: 330, height: 96 },
     input: 'press and drag; keys work too',
     notes: [
       'Place the score and buttons from `game.safe` in `arrange(game)`, so no notch covers them; draw the backdrop over `game.screen`.',
-      'Tap targets of at least 44 units; test held upright and sideways.'
+      'Tap targets of at least 88 units, which are 44 CSS pixels on a phone 360 wide. `node vendor/egret.mjs verify --screens` checks the targets, the notch and buttons that cover each other on phones held upright and sideways, a tablet and a desktop.'
     ]
   },
   wechat: {
@@ -44,8 +47,10 @@ export const TARGETS = Object.freeze({
     height: 1280,
     fit: 'expand',
     card: 'ship-wechat-minigame',
+    start: { width: 330, height: 96 },
     input: 'press and drag',
     notes: [
+      'Tap targets of at least 88 units; `node vendor/egret.mjs verify --screens` checks them and the notch on many phones, in a browser.',
       'Package it from an engine checkout with `node tools/wechat/export-wechat.mjs`, and check it there with `node tools/wechat/check-minigame.mjs`: the main package holds at most 4 MB, the rest goes into subpackages.',
       "A mini game has no WebAssembly, no DOM and no page fonts: use `game.text` (or the canvas paragraph provider) and WeChat's keyboard for typing. Nothing here replaces a run in WeChat DevTools and on a phone."
     ]
@@ -56,6 +61,7 @@ export const TARGETS = Object.freeze({
     height: 720,
     fit: undefined,
     card: 'ship-steam-desktop',
+    start: { width: 220, height: 64 },
     input: "arrows or A and D, a gamepad's stick or d-pad, or the mouse",
     notes: [
       'Every screen works with a gamepad alone: `game.keys` names its buttons `pad:a`, `pad:b` and so on.',
@@ -166,7 +172,7 @@ await play({
     score = game.text('', { x: 24, y: 24, size: 28, layer: game.ui });
     lives = game.text('', { x: WIDTH - 24, y: 24, size: 28, align: 'right', layer: game.ui });
     title = game.text('${title}\\nCatch the falling stars', { x: WIDTH / 2, y: HEIGHT * 0.35, size: 40, align: 'center' });
-    again = game.button('Start', { x: WIDTH / 2, y: HEIGHT * 0.55, width: 220, height: 64 }, () => start(game));
+    again = game.button('Start', { x: WIDTH / 2, y: HEIGHT * 0.55, width: ${t.start.width}, height: ${t.start.height} }, () => start(game));
     show(game);
   },
   update(seconds, game) {
@@ -348,7 +354,7 @@ description: Build or change ${title} on the Egret engine, from a brief to a gam
 3. Change the rules in \`src/rules.mjs\` and their tests in \`test/\`; run \`npm test\`.
 4. Change the picture and the input in \`src/main.mjs\`. Make nodes once and move or change them; keys and touch both.
 5. Run \`node vendor/egret.mjs check\` and fix every error. For an engine error, \`node vendor/egret.mjs explain <CODE>\`.
-6. Run \`node vendor/egret.mjs verify\` and look at the pictures it saves. Answer each of its \`engineWarnings\`.
+6. Run \`node vendor/egret.mjs verify\` and look at the pictures it saves. Answer each of its \`engineWarnings\`.${t.fit === 'expand' ? ' Then \`node vendor/egret.mjs verify --screens\`: answer what it finds on each phone.' : ''}
 7. Write a fault of the engine you had to work around into \`ENGINE-NOTES.md\`, with its header line.
 8. Report what you ran, what passed and what you could not run.
 `;
