@@ -1,0 +1,32 @@
+---
+id: play-turned-table
+title: Turn a landscape table on a tall screen without turning play's canvas
+applies: [play]
+triggers: [POINTER_INPUT_SURFACE_INVALID, play, "rotate", "portrait", "landscape only", "turn the screen", "force landscape", "rotated canvas", "竖屏", "横屏", "旋转画面", "强制横屏", "landscape table on a portrait phone", "rotated element", "竖屏手机横着玩"]
+local: [fit, buildEngine, root, tall]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/src/main.mjs, line: 66, commit: 936d1e620d68027d54e4fcc7eba047b0248d7ff7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/ENGINE-NOTES.md, line: 30, commit: 936d1e620d68027d54e4fcc7eba047b0248d7ff7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserPointerInput.ts, line: 240, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Turn a landscape table on a tall screen without turning play's canvas
+
+`play` refuses to start when an element around its canvas has a CSS transform that rotates it: `POINTER_INPUT_SURFACE_INVALID`, even if the game never reads the pointer, and `error.cause` names the element and the rule. Only moving and scaling by positive amounts keep the pointer mapped straight onto the canvas. A landscape game that turns itself a quarter on an upright phone (to stay as large as when wide) splits the page into three layers:
+
+```js
+// back (page canvas) and front (buttons, panels) turn with CSS; the engine's holder sits between them, unturned.
+const tall = innerHeight > innerWidth;
+for (const layer of [back, front]) layer.style.transform = tall ? `translate(${x + 720 * s}px, ${y}px) rotate(90deg) scale(${s})` : `translate(${x}px, ${y}px) scale(${s})`;
+if (tall !== wasTall) await buildEngine(tall);     // dispose and make play again, 720 x 1280 when tall
+// inside buildEngine: const root = game.sprite(() => {}, game.world); if (tall) { root.rotation = 90; root.x = 720; }
+```
+
+Rules:
+
+- Rotate your own root sprite, not `game.world`; give `game.burst` and other play-drawn effects turned positions yourself.
+- Making the engine again drops what was in flight; make waits and tweens that the game awaits finish on a timer too, so a turned phone cannot hang the game loop.
+- Taps go to page buttons in the turned front layer; the browser maps them through the rotation.
+
+Learnt from Taiwan Sixteen-Tile Mahjong (ENGINE-NOTES 4).

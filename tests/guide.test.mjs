@@ -425,7 +425,16 @@ const QUERIES = [
   ['drag an item from the bag into a slot', 'gestures'],
   ['long press a card to see details', 'gestures'],
   ['背包里长按物品拖到格子', 'gestures'],
-  ['双指缩放地图', 'gestures']
+  ['双指缩放地图', 'gestures'],
+  // Cards learnt from the games repository, asked in a developer's words.
+  ['a hundred place names on a map hit the frame image limit', 'label-pages'],
+  ['falling sand pixels change every frame', 'pixel-strips'],
+  ['rhythm game judge timing against what is heard', 'rhythm-clock'],
+  ['hit flash white on a sprite', 'two-colour-tints'],
+  ['tab and space on page buttons beside play', 'play-page-controls'],
+  ['rotate a landscape table on a portrait phone', 'play-turned-table'],
+  ['大量敌人 割草 帧时间', 'sprite-swarm'],
+  ['pick a tile on an isometric tactics board', 'tile-board-camera']
 ];
 
 // Break caught: a change to the ranking or to a card that sends a known question to the wrong card.

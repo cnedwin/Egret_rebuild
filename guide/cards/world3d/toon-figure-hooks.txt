@@ -1,0 +1,37 @@
+---
+id: toon-figure-hooks
+title: Toon figures: rim light, team colours and per-unit tints in one fragment hook
+applies: [world3d, play3d]
+triggers: [createToonMaterial3D, createCustomShader3D, customFragment, "Material3D.clone", uniforms, "team colour", "palette swap", "rim light", "cel shading", "anime", "卡通渲染", "阵营换色", "边缘光", "变灰", "受击闪白", "克隆材质"]
+local: [material, team, grey, flash, uniforms, worldPosition]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: StarBanner/src/view/toon.mjs, line: 80, commit: db3de4bf2216225eb7683bb6c0dcfd0fa2303578, pin: b3b594351e8017ce43a7c3cb20c769403806553e }
+  - { repo: cnedwin/PortedGamesEgret, path: StarBanner/src/view/figures.mjs, line: 98, commit: db3de4bf2216225eb7683bb6c0dcfd0fa2303578, pin: b3b594351e8017ce43a7c3cb20c769403806553e }
+  - { repo: cnedwin/PortedGamesEgret, path: StarBanner/ENGINE-NOTES.md, line: 7, commit: db3de4bf2216225eb7683bb6c0dcfd0fa2303578, pin: b3b594351e8017ce43a7c3cb20c769403806553e }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Toon figures: rim light, team colours and per-unit tints in one fragment hook
+
+Starbanner Tactics draws every unit with one toon material per texture: banded light from `createToonMaterial3D`, and a custom fragment hook that adds a rim, turns the model's blue cloth to the side's colour, greys a unit that has acted and flashes it white when hit.
+
+```js
+import { createToonMaterial3D, createCustomShader3D } from '@egret/engine/world3d';
+
+const toon = createToonMaterial3D({ steps: 3, map: source.map });
+// uCustom[0] = (hue turn, swap on, grey, flash); uCustom[1] = rim colour and strength.
+toon.shader = createCustomShader3D({ key: 'figure', glsl: FIGURE_GLSL, wgsl: FIGURE_WGSL, uniforms: [0, 1, 0, 0, 1, 0.95, 0.85, 0.2] });
+
+// One unit of many: clone, then give the copy its OWN shader object.
+const mine = toon.clone();
+mine.shader = createCustomShader3D({ ...toon.shader, uniforms: toon.shader.uniforms });
+mine.shader.uniforms[2] = 0.7; // grey only this one
+```
+
+Rules:
+
+- `Material3D.clone()` copies the `shader` reference, and the shader is frozen, so a clone shares its `uniforms` with the original: greying one unit greys its whole kind. Make a new shader for each copy as above; the same `key` keeps one compiled program.
+- The hook sees the lit colour before fog and tone mapping, plus `worldPosition` and `normal`; read the camera from `uCameraPosition` (GLSL) or `frame.cameraPosition` (WGSL) for a rim. Give both languages or the other backend draws the material plain.
+- A palette swap by hue (only saturated pixels inside a hue window) lets one generated model serve both sides; keep steel and skin out of the window.
+- Vertex-only hooks go in `glslVertex` / `wgslVertex`; put in `glsl` they fail with "no matching overloaded function" every frame.
+- Ink outlines come cheaper from `renderer.postProcess.outlineLayers` (give units a layer bit) than from a second hull mesh.

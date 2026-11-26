@@ -1,0 +1,33 @@
+---
+id: label-wrap
+title: Wrapping a label to a width
+applies: [engine, web]
+triggers: [createLabel, wrap, "word wrap", "line break", maxWidth, "long text", "help text", "text overflows", "换行", "自动换行", "长文字", "文字溢出", "说明文字", wrapPlayWords, chooseParagraphProvider]
+local: [wrap, lineHeight]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: SandScroll/src/screens.mjs, line: 25, commit: b218a4b0746d0108e7a0b0cd5aa8a639d7d1bd4b, pin: 450bb9eb62fec9d3032b35766817844adc6eba33 }
+  - { repo: cnedwin/PortedGamesEgret, path: SandScroll/ENGINE-NOTES.md, line: 43, commit: b218a4b0746d0108e7a0b0cd5aa8a639d7d1bd4b, pin: 450bb9eb62fec9d3032b35766817844adc6eba33 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/playWidgets.ts, line: 200, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/ParagraphProviderChoice.ts, line: 93, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Wrapping a label to a width
+
+`browser.createLabel` and `browser.createAtlasLabel` break lines only at `\n` and have no width option. For a few lines of help or a hint, break the words yourself with `wrapPlayWords` of `@egret/engine/play`, which any game with that entry in its engine copy may import: it counts a Chinese, Japanese or Korean character as one unit of the font size and any other as about half, breaks at spaces, and between any two wide characters.
+
+```js
+import { wrapPlayWords } from '@egret/engine/play';
+
+const lines = wrapPlayWords(help, 400 / 15);          // a width of 400 at font size 15, in units of the size
+await browser.createAtlasLabel({ text: lines.join('\n'), fontSize: 15, lineHeight: 23 });
+const below = lines.length * 23;                      // what comes under the text starts here
+```
+
+Rules:
+
+- Wrap again whenever the language or the layout width changes; the count is an estimate per font size, so leave a little room.
+- It does not keep closing marks (，。」) off the start of a line. For text that must break properly, or be selected and edited, use a paragraph: `chooseParagraphProvider` of `@egret/engine/web/paragraph` gives CanvasKit where it loads and a canvas provider where it cannot, as in a WeChat mini game.
+- The quality check I3 of the games repository (no English cut off at 390 px) catches misses.
+
+Learnt from Sand Scroll (ENGINE-NOTES 6), which wrapped by hand at engine `450bb9e`.

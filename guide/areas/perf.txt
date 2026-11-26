@@ -5,3 +5,7 @@
 - [frame-loop-backpressure](../cards/perf/frame-loop-backpressure.txt) · engine web · Loop pacing, skipped frames and lost devices.
 - [world3d-draw-cost](../cards/perf/world3d-draw-cost.txt) · world3d play3d · What to cut first when a 3D frame is GPU bound.
 - [prepare-programs](../cards/perf/prepare-programs.txt) · world3d play3d · First-use shader stalls and preparing programs during loading.
+- [moving-shapes](../cards/perf/moving-shapes.txt) · play engine web · Many moving sprites drawn from rectangles rather than circles and paths.
+- [sprite-swarm](../cards/perf/sprite-swarm.txt) · play engine web · A swarm of moving sprites from pooled rectangles, not shared-texture bitmaps.
+- [still-background](../cards/perf/still-background.txt) · play engine web · A still background painted once on the page under a clear canvas.
+- [play-resolution](../cards/perf/play-resolution.txt) · play · Drawing play at fewer pixels than its stage, with pixelRatio.
