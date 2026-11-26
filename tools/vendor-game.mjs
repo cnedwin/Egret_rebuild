@@ -140,6 +140,7 @@ export function agentKitFiles() {
     ['tools/egret-notes.mjs', 'egret/tools/egret-notes.mjs'],
     ['tools/egret-check.mjs', 'egret/tools/egret-check.mjs'],
     ['tools/verify-game.mjs', 'egret/tools/verify-game.mjs'],
+    ['tools/egret-new.mjs', 'egret/tools/egret-new.mjs'],
     ['guide/index.txt', 'egret/guide/index.txt'],
     ['guide/resolved.json', 'egret/guide/resolved.json']
   ];
@@ -188,6 +189,7 @@ function writeAgentKit(vendor) {
       "//   node vendor/egret.mjs notes [--check]    which of this game's ENGINE-NOTES the engine copy has fixed\n" +
       "//   node vendor/egret.mjs check [--strict]   this game's files read for common mistakes, with the cards\n" +
       '//   node vendor/egret.mjs verify             this game run in a headless browser (needs Playwright)\n' +
+      '//   node vendor/egret.mjs new ../Another     a new game beside this one, with this engine copy\n' +
       "import { main } from './egret/tools/egret.mjs';\n" +
       'const { code, text } = await main(process.argv.slice(2));\n' +
       'process.stdout.write(text);\n' +

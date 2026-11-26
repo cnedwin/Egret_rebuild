@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/egret-new.mjs",
+      "originRole": "First-party starter of a game for a ship target, with AGENTS.md, CLAUDE.md and a Claude Code skill, for the egret command; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/egret-new.test.mjs",
+      "originRole": "First-party checks that a new game passes its tests and egret check as made, here and from a game's engine copy, with a short AGENTS.md naming real cards; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/agent-guide.md",
+      "zh": "knowledge-base/Cns/docs/agent-guide.md"
+    }
+  ]
+}
