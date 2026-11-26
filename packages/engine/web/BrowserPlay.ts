@@ -50,6 +50,12 @@ import type { GestureDrag, GesturePinch, GesturePoint, GestureSwipe } from './ge
 import { pointerTapActivation, semanticTapActivation } from './playActivation.js';
 import type { PlayTapActivation } from './playActivation.js';
 
+/** The size on the screen that play's views keep: at least `min` and at most `max` CSS pixels a unit of theirs. */
+export interface PlayUiScale {
+  readonly min?: number;
+  readonly max?: number;
+}
+
 /** What a node is pinned to: the safe part, unless given, or the whole screen. */
 export interface PlayPinOptions {
   readonly area?: 'safe' | 'screen';
@@ -84,6 +90,13 @@ export interface PlayOptions {
    * Only for a canvas of play's own. False unless given.
    */
   readonly wholeScale?: boolean;
+  /**
+   * Keeps the views of `game.show`, `confirm`, `hints` and `loading` within a size on the screen, apart from the
+   * game: `min` and `max` CSS pixels a unit of theirs. Where the screen shows the game at less than `min` pixels a
+   * unit (a large design on a small phone) the views are drawn larger, and above `max` (a phone design on a desktop)
+   * smaller; `game.uiScale` is how much. Views drawn at the game's own scale unless given.
+   */
+  readonly uiScale?: PlayUiScale;
   /**
    * The stage while the window is taller than it is wide: whole numbers above 0. `width` and `height` then follow the
    * window's shape, and `arrange` is called when it turns.
@@ -659,6 +672,11 @@ export interface PlayGame {
    */
   pin(node: DisplayObject, pin: ScreenPin, options?: PlayPinOptions): PlayPin;
   /**
+   * How much larger than the game's units the views of `game.show`, `confirm`, `hints` and `loading` are drawn now:
+   * 1 without `uiScale`, and otherwise what keeps them within its pixels on this screen.
+   */
+  readonly uiScale: number;
+  /**
    * Shows `Loading 3 / 10` and a bar over everything while promises, or functions that return them, finish; gives
    * what they gave, in order. Functions run `atOnce` at a time. A failure closes it and is thrown.
    */
@@ -863,6 +881,19 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   if (!['contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide'].includes(fitAsked))
     throw invalid("fit is 'contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow' or 'fixedWide'");
   const wholeScale = options.wholeScale ?? false;
+  const uiBounds = options.uiScale;
+  if (uiBounds !== undefined) {
+    const bound = (value: unknown): boolean =>
+      value === undefined || (typeof value === 'number' && Number.isFinite(value) && value > 0);
+    if (
+      uiBounds === null ||
+      typeof uiBounds !== 'object' ||
+      !bound(uiBounds.min) ||
+      !bound(uiBounds.max) ||
+      (uiBounds.min !== undefined && uiBounds.max !== undefined && uiBounds.min > uiBounds.max)
+    )
+      throw invalid('uiScale is { min, max }, CSS pixels a unit above 0, min not above max');
+  }
   if (typeof wholeScale !== 'boolean') throw invalid('wholeScale is true or false');
   if (wholeScale && (options.canvas !== undefined || (options.pixelRatio !== undefined && options.pixelRatio !== 1)))
     throw invalid('wholeScale needs a canvas of play itself, drawn at pixelRatio 1');
@@ -1320,6 +1351,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     if (sameArea(next, given)) return;
     node.hitArea = next;
     boundsAreas.set(node, next);
+  };
+  // How much larger than the game's units play's views are drawn, from the CSS pixels a unit the screen shows now.
+  const uiScaleNow = (): number => {
+    if (uiBounds === undefined || !(shown.scale > 0)) return 1;
+    const kept = Math.min(uiBounds.max ?? Infinity, Math.max(uiBounds.min ?? 0, shown.scale));
+    return kept / shown.scale;
   };
   // Nodes held against the edges of the safe part or the screen: placed again when the area or their box changes.
   interface Pinned {
@@ -2928,6 +2965,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     confirm: (question, confirmOptions) => views.confirm(question, confirmOptions),
     hints: list => views.hints(list),
+    get uiScale() {
+      return uiScaleNow();
+    },
     pin(node, pin, options = {}) {
       if (node === null || typeof node !== 'object' || typeof (node as DisplayObject).getBounds !== 'function')
         throw invalid('pin takes a node of the game');
@@ -3007,7 +3047,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     failed: cause => {
       failure ??= { cause };
     },
-    semantics: () => options.semantics
+    semantics: () => options.semantics,
+    uiScale: () => uiScaleNow()
   });
   const touch = createPlayTouch(game, {
     hold(key) {

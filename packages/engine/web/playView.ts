@@ -198,7 +198,12 @@ export interface PlayLoadingOptions {
 /** Views of one play game: made by `game.view`, read every frame, placed again when the screen changes. */
 export function createPlayViews(
   game: PlayGame,
-  hooks: { readonly failed: (cause: unknown) => void; readonly semantics: () => UiSemantics | undefined }
+  hooks: {
+    readonly failed: (cause: unknown) => void;
+    readonly semantics: () => UiSemantics | undefined;
+    /** How much larger than the game's units a view is drawn: `game.uiScale`. 1 unless given. */
+    readonly uiScale?: () => number;
+  }
 ): {
   view<S>(description: ViewDescription, options?: PlayViewOptions<S>): PlayView<S>;
   confirm(message: string, options?: PlayConfirmOptions): Promise<boolean>;
@@ -426,7 +431,15 @@ export function createPlayViews(
     const scrollHandles = new Map<string, PlayViewScroll>();
     let scrollItems: Made[] = [];
 
-    const frame = () => ({ screen: game.screen, safe: game.safe, orientation: game.orientation });
+    // A view is drawn `uiScale` times larger than the game's units: its root is scaled, and it is planned in an area
+    // that much smaller, so that it fills the same part of the screen.
+    const scaled = (area: ViewRect, by: number): ViewRect =>
+      by === 1 ? area : { x: area.x / by, y: area.y / by, width: area.width / by, height: area.height / by };
+    const frame = () => {
+      const by = hooks.uiScale?.() ?? 1;
+      root.scaleX = root.scaleY = by;
+      return { screen: scaled(game.screen, by), safe: scaled(game.safe, by), orientation: game.orientation };
+    };
     const colourOf = (part: ViewPart, item: Made): number => {
       const skin = plan.skin;
       if (part.type === 'panel' && item.disabled && hasAction(item)) return skin.disabled;
@@ -847,7 +860,7 @@ export function createPlayViews(
     };
     const placeDim = (): void => {
       if (dim === undefined) return;
-      const screen = game.screen;
+      const screen = frame().screen;
       dim.graphics
         .clear()
         .beginFill(0x000000, plan.skin.dim)
@@ -1525,7 +1538,7 @@ export function createPlayViews(
     const turn = asked.then(
       () =>
         new Promise<boolean>(resolve => {
-          const width = Math.min(440, Math.max(240, game.safe.width - 32));
+          const width = Math.min(440, Math.max(240, game.safe.width / (hooks.uiScale?.() ?? 1) - 32));
           let view: PlayView | undefined;
           const answer = (yes: boolean): void => {
             if (open?.answer !== answer) return;
