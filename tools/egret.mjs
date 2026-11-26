@@ -8,12 +8,16 @@
 //   node tools/egret.mjs explain <ERROR_CODE>
 //   node tools/egret.mjs notes [<game folder>] [--check]
 //   node tools/egret.mjs check [<game folder>] [--strict] [--json]
+//   node tools/egret.mjs verify [<page>] [--playwright <index.mjs>] [--out <new folder>] [--play <script>]
 //
 // The same file runs in this repository and in a game's engine copy, where tools/vendor-game.mjs puts it under
 // vendor/egret/tools/ with the guide beside it and vendor/egret.mjs to start it, so an agent working in the game's
 // folder runs `node vendor/egret.mjs guide <question>`. It reads only the folder it is in: no network, no model, and
 // the same answers in both places.
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { GUIDE, ROOT, loadCards, render, run as runGuide, search } from './egret-guide.mjs';
@@ -35,6 +39,7 @@ function usage() {
     `  ${COMMAND} explain <ERROR_CODE>                                                an error in English and Chinese`,
     `  ${COMMAND} notes [<game folder>] [--check]                                     the game's engine notes the engine has fixed`,
     `  ${COMMAND} check [<game folder>] [--strict] [--json]                           the game's files read for common mistakes`,
+    `  ${COMMAND} verify [<page>] [--playwright <index.mjs>] [--out <dir>] [--play <script>]   the game run in a headless browser`,
     ''
   ].join('\n');
 }
@@ -85,6 +90,52 @@ export async function explain(code, cards = loadCards()) {
   return { code: known ? 0 : 1, text: lines.join('\n') };
 }
 
+/**
+ * What `verify` runs: tools/verify-game.mjs (beside this file, in the engine copy too) with Playwright's index.mjs, the
+ * page (index.html of the folder it runs in unless named), a new output folder (one under the system's temporary folder
+ * unless named) and the play script, if any. Playwright is the one named, or the one the game's folder can import.
+ */
+/** Playwright's index.mjs as Node finds it from the game's folder, or undefined. */
+function findPlaywright(cwd) {
+  try {
+    return path.join(
+      path.dirname(createRequire(path.join(cwd, 'package.json')).resolve('playwright/package.json')),
+      'index.mjs'
+    );
+  } catch {
+    return undefined;
+  }
+}
+
+export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
+  const named = {},
+    pages = [];
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (['--playwright', '--out', '--play'].includes(arg)) {
+      if (args[i + 1] === undefined) return { error: `${arg} takes a path.` };
+      named[arg.slice(2)] = args[++i];
+    } else if (arg.startsWith('--')) return { error: `Unknown option ${arg}.` };
+    else pages.push(arg);
+  }
+  if (pages.length > 1) return { error: 'Name one page.' };
+  const page = path.resolve(cwd, pages[0] ?? 'index.html');
+  if (!fs.existsSync(page)) return { error: `There is no page at ${page}.` };
+  const playwright = named.playwright ? path.resolve(cwd, named.playwright) : find(cwd);
+  if (playwright === undefined)
+    return {
+      error:
+        'Playwright is not installed where the game is: run npm install playwright there (or name one with --playwright <its index.mjs>), and npx playwright install chromium once.'
+    };
+  if (!fs.existsSync(playwright)) return { error: `There is no Playwright at ${playwright}.` };
+  const out = path.resolve(cwd, named.out ?? path.join(os.tmpdir(), `egret-verify-${Date.now()}`));
+  if (fs.existsSync(out)) return { error: `The output folder must not exist yet: ${out}` };
+  const play = named.play && path.resolve(cwd, named.play);
+  if (play !== undefined && !fs.existsSync(play)) return { error: `There is no script at ${play}.` };
+  const tool = path.join(path.dirname(fileURLToPath(import.meta.url)), 'verify-game.mjs');
+  return { tool, args: [tool, playwright, page, out, ...(play ? [play] : [])], out };
+}
+
 /** Runs the command line and returns what to print and the exit code, so tests need no child process. */
 export async function main(args, cards = loadCards()) {
   const [command, ...rest] = args;
@@ -103,6 +154,16 @@ export async function main(args, cards = loadCards()) {
         folders = rest.filter(arg => arg !== '--check');
       if (folders.length > 1 || folders.some(arg => arg.startsWith('--'))) return { code: 2, text: usage() };
       return notesReport(folders[0] ?? process.cwd(), GUIDE, { command: COMMAND, check, copy: VENDORED });
+    }
+    case 'verify': {
+      const plan = verifyArgs(rest);
+      if (plan.error) return { code: 2, text: plan.error + '\n' + usage() };
+      // The browser run prints its own report as it goes; its exit code is the pass.
+      const run = spawnSync(process.execPath, plan.args, { stdio: 'inherit' });
+      return {
+        code: run.status ?? 1,
+        text: `The report (report.json) and the pictures are in ${plan.out}. engineWarnings lists what the engine warned of.\n`
+      };
     }
     case 'check': {
       const flags = new Set(rest.filter(arg => arg.startsWith('--'))),

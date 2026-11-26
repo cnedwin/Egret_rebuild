@@ -69,9 +69,12 @@ game.loop.start();
 - 一帧用到某项上限的五分之四时，告知 `FRAME_IMAGES_NEAR_LIMIT`；
 - 有帧没画时，告知 `FRAME_IMAGE_BUDGET`；
 - label 占用文本缓存的五分之四时，告知 `LABEL_CACHE_NEAR_LIMIT`；
-- 有 label 的文字画不出来时，告知 `LABEL_NOT_DRAWN`。
+- 有 label 的文字画不出来时，告知 `LABEL_NOT_DRAWN`；
+- `play` 的 `update` 在最近 60 帧里每帧都新建文字、形状或精灵时，告知 `PLAY_MADE_EVERY_FRAME`：这些应当建一次，之后只修改。
 
 每种告警只在开始时告知一次，不会每帧都告知，引擎也不往控制台写任何东西。游戏自己写循环时，可以用 `game.drawFrame(frame)` 按同样的方式画一帧。
+
+**给工具的告警。** 页面的 `globalThis.__egretAgent` 上有 `warning(warning)` 函数时，无论游戏有没有给 `onWarning`，每条告警也会告诉它。`tools/verify-game.mjs` 在游戏启动前放上这个对象，并在报告的 `engineWarnings` 里列出收到的告警，这样智能体能看到接近上限的帧、每帧新建的文字这类游戏自己没有要求告知的问题。这个函数抛出的错误属于工具自己，不会再告知。
 
 **画布适配。** 给了 `fit` 之后，游戏会把画布居中放在它的元素里，并在该元素大小变化时重新调整。这个元素需要有自己的大小：高度由画布撑开的元素没有可适配的尺寸。`'cover'` 时画布比元素大，元素应当隐藏溢出的部分。`'cover'` 和 `'stretch'` 时舞台保持自己单位的宽高。`'contain'` 和 `'expand'` 时舞台跟随[屏幕适配的结果](screen-fit.md)：`game.screen` 是当前结果，`game.onScreenChange(listener)` 在结果变化时通知，舞台在高窗口时换成竖版尺寸，`'expand'` 时一直延伸到元素边缘。任何模式下指针位置都跟随画布。
 `game.frame` 是循环绘制的那一帧；`game.toStage(clientX, clientY)` 把页面上的位置（页面的指针事件给出的坐标）换算成舞台上的位置。

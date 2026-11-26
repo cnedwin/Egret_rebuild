@@ -1580,7 +1580,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
 | `BrowserGameOptions` | interface | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
-| `BrowserGameWarning` | interface | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache. |
+| `BrowserGameWarning` | interface | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache, and from `play`, `PLAY_MADE_EVERY_FRAME` when `update` made a text, a shape or a sprite in each of the last 60 frames. |
 | `BrowserStatsPanel` | interface | A panel over the canvas showing frame rate and frame times: sample each frame. |
 | `BrowserStatsPanelOptions` | interface | A stats panel to make: the canvas it sits over, its label, and how often it updates. |
 | `BrowserStatsSample` | interface | What a game knows at one frame of the display. |
