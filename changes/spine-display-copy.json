@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Reduce temporary allocations in Spine display geometry",
+    "body": "Spine converts packed colors directly into Float32 components and passes the Core-owned used UV and index ranges directly to the existing synchronous immutable shared-geometry factory. Captured geometry, animation ordering, validation and display lifetime remain unchanged."
+  },
+  "zh": {
+    "title": "减少 Spine 显示几何的临时分配",
+    "body": "Spine 将打包颜色直接写为 Float32 分量，并将 Core 已使用范围的 UV 与索引直接交给已有的同步不可变共享几何工厂。捕获几何、动画事件顺序、校验与显示生命周期保持不变。"
+  }
+}

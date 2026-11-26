@@ -94,21 +94,30 @@ export function copySpineDraws(
       // Core emits packed ARGB8; shared vertices store straight light and dark coefficients.
       const light = command.colors[i]!,
         dark = command.darkColors[i]!;
-      lightColors.set(
-        [((light >>> 16) & 255) / 255, ((light >>> 8) & 255) / 255, (light & 255) / 255, (light >>> 24) / 255],
-        i * 4
-      );
-      darkColors.set([((dark >>> 16) & 255) / 255, ((dark >>> 8) & 255) / 255, (dark & 255) / 255], i * 3);
+      // Store directly in Float32 so each component retains the previous rounding
+      // without allocating two temporary Arrays per vertex.
+      const li = i * 4,
+        di = i * 3;
+      lightColors[li] = ((light >>> 16) & 255) / 255;
+      lightColors[li + 1] = ((light >>> 8) & 255) / 255;
+      lightColors[li + 2] = (light & 255) / 255;
+      lightColors[li + 3] = (light >>> 24) / 255;
+      darkColors[di] = ((dark >>> 16) & 255) / 255;
+      darkColors[di + 1] = ((dark >>> 8) & 255) / 255;
+      darkColors[di + 2] = (dark & 255) / 255;
     }
     rows.push({
       lease,
       material,
       geometry: createSharedGeometry2D({
         positions,
-        uvs: new Float32Array(command.uvs),
+        // Core owns these exact used-range views until its next render. The
+        // synchronous shared-geometry factory validates, copies and freezes them
+        // before returning; never retain a mutable Core view in a frame.
+        uvs: command.uvs as Float32Array<ArrayBuffer>,
         lightColors,
         darkColors,
-        indices: new Uint16Array(command.indices)
+        indices: command.indices as Uint16Array<ArrayBuffer>
       })
     });
   }

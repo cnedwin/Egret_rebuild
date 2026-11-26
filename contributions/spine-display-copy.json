@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/spine/test/bench-display.mjs",
+      "originRole": "First-party optional CPU benchmark using the existing independently authored public numerical Spine fixture and built SDK entries; AI-assisted; Apache-2.0. No third-party assets or private renderer introspection.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
