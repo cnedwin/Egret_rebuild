@@ -107,6 +107,9 @@ In Chromium 157 with software WebGL2, both parts wrapped to three lines with 24-
 | `visible` | every part | hidden with what it holds |
 | `color` | text, button, bar, panel | the colour drawn |
 | `tap` | button, toggle, panel | what a press does, given the state |
+| `pointerOnly` | panel | a boolean; `true` requires a `tap` binding and keeps that panel's action for mouse and touch only |
+
+A panel with `tap` ordinarily takes part in keyboard focus and activation. When the binding also has `pointerOnly: true`, the panel still answers pointer taps without taking keyboard focus. Its own action is not reached by Tab, controller navigation or semantic activation. The panel remains a semantic group, and its children keep their own interaction and semantic state. The option is valid only for a panel. For example, a decorative panel used to absorb presses can bind `paper: { pointerOnly: true, tap: () => {} }`.
 
 What a binding throws stops the game, as what `update` throws does.
 
@@ -121,6 +124,8 @@ Parts without colours of their own are drawn in `DEFAULT_VIEW_SKIN`: white words
 - `get(name)` is the sprite of a part, to give [gestures](gestures.md), add to or tween.
 - `rect(name)` is where the part is in game units, and `shows(name)` whether it shows.
 - `show()`, `hide()`, `close()` and `refresh()`.
+- `focus(name)` requests the view's native focus and returns whether the request succeeds. It may scroll a target into view. It returns `false` if the view is covered or closed, or the part is hidden, disabled, pointer-only or cannot be revealed for focus. An unknown name on an active view is refused with `UI_VIEW_NAME_UNKNOWN`.
+- `focused` is the current eligible focused part's authored name in this view, or `undefined` when none has focus.
 
 A view is also a handle of the [screen stack](ui-screen-stack.md). `open: () => game.show(...)` makes it hide when covered, take no presses when another screen is in front, and go when it closes. To use the stack in a page without a bundler, map `@egret/engine/ui` in its import map.
 
@@ -173,7 +178,7 @@ Keep each control's visible words and accessible name in its `text` binding. Pla
 
 The default cache retains 32 reusable slots and admits up to 64 current and retired generations within its byte budget. For a market with several pages, hide the previous page before showing the next. A direct active label reports `TEXT_CACHE_BUDGET` on `ready` if the limit persists after pending work settles. Release or suspend unused labels, then retry with `label.set({})`. Closing a page releases the labels' borrows. The cache can keep reusable entries until the game closes.
 
-Tab and Shift+Tab move visual focus on the canvas. Enter and Space activate the focused control. A modal owns focus until it closes, and a disabled control is skipped. The foremost modal can also use the standard gamepad D-pad and A. Add `gamepad: true` for a nonmodal menu that should own those controls. Other nonmodal views leave these buttons available to gameplay.
+Tab and Shift+Tab move visual focus on the canvas. Enter and Space activate the focused control. A modal owns focus until it closes, and a disabled control is skipped. Set `initialFocus: 'continue'` in the options of `game.show` to choose its opening control by name. Only a modal can use this option, and the name must identify an actionable, non-pointer-only part. An unknown name, an ineligible part kind or use on a nonmodal view is refused with `UI_VIEW_BINDING_INVALID`. The modal reveals a scrollable target if it can. If the requested part is currently hidden or disabled, or it cannot be revealed, normal first-eligible focus applies. Closing the modal restores its previous eligible focus. The foremost modal can also use the standard gamepad D-pad and A. Add `gamepad: true` for a nonmodal menu that should own those controls. Other nonmodal views leave these buttons available to gameplay.
 
 ```js
 function openPauseMenu(game, pauseView) {
@@ -183,6 +188,7 @@ function openPauseMenu(game, pauseView) {
     game.resume();
   };
   const menu = game.show(pauseView, {
+    initialFocus: 'continue',
     dismiss: resume, // Escape or gamepad B
     resume,          // A fresh Start press while paused
     bind: { continue: { tap: () => resume(menu) } }

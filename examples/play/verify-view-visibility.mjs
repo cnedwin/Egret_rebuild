@@ -48,6 +48,69 @@ export async function verifyViewVisibility(page, backend = 'webgl2') {
     });
     const projection = createBrowserSemantics({ semantics, canvas: game.canvas, width: 960, height: 540 });
     const widget = { choice: -1 };
+    // The modal background accepts pointer input, but it is not a choice in the modal's navigation.
+    const focusTaps = { first: 0, second: 0, paper: 0, legacy: 0, nested: 0, deep: 0 };
+    const makeFocusView = ({ initialFocus = 'second', unavailable, invalid, nonmodal = false } = {}) => {
+      const description = {
+        label: 'Focus picker',
+        modal: !nonmodal,
+        root: panel('picker', {
+          width: 420,
+          height: 245,
+          anchor: 'center',
+          children: [
+            panel('paper', {
+              label: 'Pointer paper',
+              x: 0,
+              y: 0,
+              width: 420,
+              height: 245,
+              children: [
+                button('first', 'First choice', { x: 30, y: 24, width: 145, height: 45 }),
+                button('second', 'Second choice', {
+                  x: unavailable === 'offscreen' ? 900 : 195,
+                  y: 24,
+                  width: 145,
+                  height: 45
+                }),
+                panel('legacy', { label: 'Legacy action', x: 30, y: 100, width: 145, height: 45 }),
+                { type: 'text', name: 'note', text: 'A note', x: 30, y: 162, width: 145, height: 30 }
+              ]
+            })
+          ]
+        })
+      };
+      const bind = {
+        paper: { pointerOnly: true, tap: () => focusTaps.paper++ },
+        first: { tap: () => focusTaps.first++ },
+        second: {
+          visible: () => unavailable !== 'hidden',
+          disabled: () => unavailable === 'disabled',
+          tap: () => focusTaps.second++
+        },
+        legacy: { tap: () => focusTaps.legacy++ }
+      };
+      if (invalid === 'button') bind.first.pointerOnly = true;
+      if (invalid === 'without-tap') delete bind.paper.tap;
+      if (invalid === 'nonboolean') bind.paper.pointerOnly = 'true';
+      return game.show(description, { initialFocus, bind });
+    };
+    const refuse = perform => {
+      try {
+        perform();
+        return undefined;
+      } catch (error) {
+        return error.code;
+      }
+    };
+    const pagePoint = (x, y) => {
+      const box = game.canvas.getBoundingClientRect(),
+        screen = game.screen;
+      return {
+        x: box.left + ((x - screen.x) * box.width) / screen.width,
+        y: box.top + ((y - screen.y) * box.height) / screen.height
+      };
+    };
     return {
       game,
       view,
@@ -57,6 +120,75 @@ export async function verifyViewVisibility(page, backend = 'webgl2') {
       taps,
       projection,
       widget,
+      focusTaps,
+      showFocus(options) {
+        this.focusView = makeFocusView(options);
+      },
+      invalidFocus(options) {
+        return refuse(() => makeFocusView(options).close());
+      },
+      refusedTest(action, name) {
+        return refuse(() => tester[action](name));
+      },
+      unknownViewName() {
+        return refuse(() => this.focusView.focus('unknown-name'));
+      },
+      focusSnapshot() {
+        const node = tester.find('button: Second choice');
+        semantics.publish();
+        return {
+          focus: this.focusView.focused,
+          semanticFocus: node.focused,
+          projected: game.canvas.getAttribute('aria-activedescendant') === projection.elementOf(node.id)?.id
+        };
+      },
+      blankPaperPoint() {
+        const rect = this.focusView.rect('paper');
+        return pagePoint(rect.x + rect.width * 0.85, rect.y + rect.height * 0.86);
+      },
+      showNested() {
+        this.nestedView = game.show(
+          {
+            label: 'Nested dialog',
+            modal: true,
+            root: panel('nested', {
+              width: 330,
+              height: 140,
+              anchor: 'center',
+              children: [
+                button('nestedFirst', 'Stay', { x: 14, y: 14, width: 125, height: 45 }),
+                button('nestedSecond', 'Return', { x: 160, y: 14, width: 125, height: 45 })
+              ]
+            })
+          },
+          {
+            initialFocus: 'nestedSecond',
+            bind: { nestedSecond: { tap: () => focusTaps.nested++ } }
+          }
+        );
+      },
+      showScroll() {
+        this.scrollView = game.show(
+          {
+            label: 'Scroll and focus',
+            modal: true,
+            root: panel('list', {
+              width: 225,
+              height: 106,
+              anchor: 'center',
+              layout: 'column',
+              scroll: 'vertical',
+              gap: 8,
+              children: [
+                button('near', 'First in list', { height: 44 }),
+                { type: 'space', height: 120 },
+                button('deep', 'Last in list', { height: 44 })
+              ]
+            })
+          },
+          { initialFocus: 'deep', bind: { deep: { tap: () => focusTaps.deep++ } } }
+        );
+      },
       openMenu() {
         void game.menu(['Continue']).then(choice => (widget.choice = choice));
       },
@@ -153,7 +285,187 @@ export async function verifyViewVisibility(page, backend = 'webgl2') {
     await page.mouse.click(570, 420);
     await page.keyboard.press('Enter');
     assert.equal((await fixture.evaluate(f => f.taps)).action, 2);
-    return { backend, base, moved, partial, projected, announced, legacyMenu, modal, clipped };
+
+    // Opening a modal with named initial focus must skip its pointer-only paper and other earlier choices.
+    await fixture.evaluate(f => {
+      f.tester.focus('button: Back');
+      f.showFocus();
+    });
+    const initialFocus = await fixture.evaluate(f => f.focusSnapshot());
+    assert.deepEqual(initialFocus, { focus: 'second', semanticFocus: true, projected: true });
+    const pointerSemantics = await fixture.evaluate(f => {
+      const paper = f.tester.find('group: Pointer paper');
+      const choice = f.tester.find('button: Second choice');
+      return {
+        childRemains: choice.parent === paper.id,
+        actions: paper.actions,
+        press: f.refusedTest('press', 'group: Pointer paper'),
+        focus: f.refusedTest('focus', 'group: Pointer paper'),
+        programmatic: f.focusView.focus('paper'),
+        unchanged: f.focusView.focused
+      };
+    });
+    assert.deepEqual(pointerSemantics, {
+      childRemains: true,
+      actions: [],
+      press: 'UI_TESTER_REFUSED',
+      focus: 'UI_TESTER_REFUSED',
+      programmatic: false,
+      unchanged: 'second'
+    });
+    assert.equal(await fixture.evaluate(f => f.unknownViewName()), 'UI_VIEW_NAME_UNKNOWN');
+
+    const frames = () =>
+      page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    let point = await fixture.evaluate(f => f.blankPaperPoint());
+    await page.mouse.click(point.x, point.y);
+    await frames();
+    assert.equal(await fixture.evaluate(f => f.focusTaps.paper), 1);
+    assert.equal(await fixture.evaluate(f => f.focusView.focused), 'second');
+    await page.keyboard.press('Enter');
+    await frames();
+    assert.deepEqual(await fixture.evaluate(f => f.focusTaps), {
+      first: 0,
+      second: 1,
+      paper: 1,
+      legacy: 0,
+      nested: 0,
+      deep: 0
+    });
+
+    // The legacy tappable panel remains keyboard accessible, while Tab passes over the pointer-only paper.
+    assert.equal(await fixture.evaluate(f => f.focusView.focus('first')), true);
+    await page.keyboard.press('Shift+Tab');
+    await frames();
+    assert.equal(await fixture.evaluate(f => f.focusView.focused), 'legacy');
+    await page.keyboard.press('Enter');
+    await frames();
+    assert.equal(await fixture.evaluate(f => f.focusTaps.legacy), 1);
+    await page.keyboard.press('Tab');
+    await frames();
+    assert.equal(await fixture.evaluate(f => f.focusView.focused), 'first');
+    assert.equal(await fixture.evaluate(f => f.tester.find('group: Legacy action').actions.includes('activate')), true);
+
+    // Resize into a new canvas fit and tap the panel with a touch through the browser's native input protocol.
+    assert.equal(await fixture.evaluate(f => f.focusView.focus('second')), true);
+    await page.setViewportSize({ width: 800, height: 450 });
+    await frames();
+    point = await fixture.evaluate(f => f.blankPaperPoint());
+    const cdp = await page.context().newCDPSession(page);
+    try {
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ ...point, id: 1 }] });
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await frames();
+    } finally {
+      await cdp.detach();
+    }
+    assert.equal(await fixture.evaluate(f => f.focusTaps.paper), 2);
+    assert.deepEqual(await fixture.evaluate(f => f.focusSnapshot()), initialFocus);
+
+    const nesting = await fixture.evaluate(f => {
+      f.showNested();
+      const above = f.nestedView.focused,
+        covered = f.focusView.focused,
+        refused = f.focusView.focus('first');
+      f.nestedView.close();
+      const restored = f.focusView.focused;
+      f.focusView.close();
+      return {
+        above,
+        covered,
+        refused,
+        restored,
+        closed: f.focusView.focused,
+        cannotFocusClosed: f.focusView.focus('second'),
+        backRestored: f.tester.find('button: Back').focused
+      };
+    });
+    assert.deepEqual(nesting, {
+      above: 'nestedSecond',
+      covered: undefined,
+      refused: false,
+      restored: 'second',
+      closed: undefined,
+      cannotFocusClosed: false,
+      backRestored: true
+    });
+
+    const invalid = await fixture.evaluate(f => [
+      f.invalidFocus({ initialFocus: 'unknown' }),
+      f.invalidFocus({ initialFocus: 'note' }),
+      f.invalidFocus({ initialFocus: 'paper' }),
+      f.invalidFocus({ nonmodal: true }),
+      f.invalidFocus({ invalid: 'button' }),
+      f.invalidFocus({ invalid: 'without-tap' }),
+      f.invalidFocus({ invalid: 'nonboolean' })
+    ]);
+    assert.deepEqual(
+      invalid,
+      Array.from({ length: 7 }, () => 'UI_VIEW_BINDING_INVALID')
+    );
+    assert.equal(
+      await fixture.evaluate(f => f.tester.find('button: Back').focused),
+      true,
+      'refused views do not consume the previous focus'
+    );
+
+    const fallbacks = await fixture.evaluate(f =>
+      ['hidden', 'disabled', 'offscreen'].map(unavailable => {
+        f.showFocus({ unavailable });
+        const result = { unavailable, focus: f.focusView.focused, secondFocus: f.focusView.focus('second') };
+        f.focusView.close();
+        return result;
+      })
+    );
+    assert.deepEqual(
+      fallbacks,
+      ['hidden', 'disabled', 'offscreen'].map(unavailable => ({
+        unavailable,
+        focus: 'first',
+        secondFocus: false
+      }))
+    );
+
+    const scrollFocus = await fixture.evaluate(f => {
+      f.showScroll();
+      const initial = f.scrollView.focused;
+      const revealed = f.scrollView.scroll('list').offset;
+      const semantic = f.tester.find('button: Last in list').focused;
+      const canReturn = f.scrollView.focus('near');
+      const returned = f.scrollView.scroll('list').offset;
+      const canRevealAgain = f.scrollView.focus('deep');
+      return { initial, revealed, semantic, canReturn, returned, canRevealAgain, focused: f.scrollView.focused };
+    });
+    assert.equal(scrollFocus.initial, 'deep');
+    assert.ok(scrollFocus.revealed > 0);
+    assert.equal(scrollFocus.semantic, true);
+    assert.equal(scrollFocus.canReturn, true);
+    assert.equal(scrollFocus.returned, 0);
+    assert.equal(scrollFocus.canRevealAgain, true);
+    assert.equal(scrollFocus.focused, 'deep');
+    await page.keyboard.press('Enter');
+    await frames();
+    assert.equal(await fixture.evaluate(f => f.focusTaps.deep), 1);
+    await fixture.evaluate(f => f.scrollView.close());
+    assert.equal(await fixture.evaluate(f => f.tester.find('button: Back').focused), true);
+
+    return {
+      backend,
+      base,
+      moved,
+      partial,
+      projected,
+      announced,
+      legacyMenu,
+      modal,
+      clipped,
+      initialFocus,
+      pointerSemantics,
+      nesting,
+      invalid,
+      fallbacks,
+      scrollFocus
+    };
   } finally {
     await fixture.evaluate(async f => {
       await f.game.dispose();

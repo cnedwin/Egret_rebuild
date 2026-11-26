@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Named focus and pointer-only panels in Play views",
+    "body": "A modal can select an opening control by name, including a target in a scrollable viewport. A view can request and read its native focus directly. Panels can keep pointer taps without taking keyboard or controller focus or exposing an activation through semantics."
+  },
+  "zh": {
+    "title": "Play 视图的命名焦点和仅指针响应面板",
+    "body": "模态视图可按名称指定打开时的焦点，包括可滚动视口中的目标。视图可直接请求和读取原生焦点。面板可只响应指针点击，不抢占键盘或手柄焦点，也不提供语义激活。"
+  }
+}
