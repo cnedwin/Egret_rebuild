@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1473 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1476 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1605,6 +1605,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `MusicPart` | type | One part of a piece of play music. |
 | `MusicPiece` | interface | A piece of music made from a seed: its mood, tempo, length and parts. |
 | `play` | function | Starts a game in the page. |
+| `PlayActivationSource` | type | Where an activation came from. |
 | `PlayBar` | class | A bar of health, time or power. |
 | `PlayBarOptions` | interface | A bar to show, as for health: where and how large, its value and maximum, its colors and layer. |
 | `PlayBurstOptions` | interface | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
@@ -1622,12 +1623,14 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlaySayOptions` | interface | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
 | `PlaySfx` | interface | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
 | `PlayStickOptions` | interface | A touch stick to show: where, how large, and whether it shows without touch. |
+| `PlayTapActivation` | type | The information supplied to game.onTap. |
 | `PlayText` | class | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
 | `PlayTextOptions` | interface | Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. |
 | `PlayTiles` | interface | A map of tiles: read and change its cells, and push a sprite out of its solid ones. |
 | `PlayTilesOptions` | interface | A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. |
 | `PlayToastOptions` | interface | A toast to show: how long and in what color. |
 | `PlayTouchButtonOptions` | interface | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
+| `PlayViewActivation` | type | The second argument of a view's tap binding; target and currentTarget are part names, if named. |
 | `SFX_PRESETS` | value | The effects every game is given, by name. |
 | `SfxRecipe` | type | An effect: one tone, or several played one after another. |
 | `SfxTone` | interface | One tone of an effect. |

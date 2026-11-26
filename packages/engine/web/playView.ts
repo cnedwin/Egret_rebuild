@@ -9,6 +9,8 @@ import type { Sprite } from '@egret/engine';
 import type { Paragraph, ParagraphCache } from '@egret/engine/paragraph';
 import type { UiSemantics } from '@egret/engine/ui/semantics';
 import type { PlayGame, PlayText } from './BrowserPlay.js';
+import { directViewActivation, viewTapActivation } from './playActivation.js';
+import type { PlayViewActivation } from './playActivation.js';
 import { checkView, planView } from './view.js';
 import { keyCap } from './viewParts.js';
 import type { ViewDescription, ViewPart, ViewPlan, ViewRect } from './view.js';
@@ -33,10 +35,14 @@ export interface PlayViewBinding<S = unknown> {
   /** Whether a button or a toggle cannot be used now: drawn grey, and a press does nothing. */
   readonly disabled?: (state: S) => boolean;
   readonly visible?: (state: S) => boolean;
+  /** The current accessible name, independently of drawn text. Empty names fall back to the part default. */
+  readonly label?: (state: S) => string;
   /** The colour of words, of a button, of a bar's fill or of a card. */
   readonly color?: (state: S) => number;
   /** What a press of a button, a toggle or a panel does. */
-  readonly tap?: (state: S) => void;
+  readonly tap?: (state: S, activation: PlayViewActivation) => void;
+  /** Answer only a direct pointer hit, without stopping ancestor handlers. */
+  readonly tapTargetOnly?: boolean;
   /** For a panel with tap: keep the pointer action without keyboard, pad or semantic focus and activation. */
   readonly pointerOnly?: boolean;
   /** A red dot at the top right corner of a button, a toggle, a text or a panel: a count, or true for a dot alone. */
@@ -65,8 +71,12 @@ export interface PlayViewOptions<S = unknown> {
 export interface PlayView {
   /** The sprite of a named part, to add to, tween or give gestures; another after the screen turns to other parts. */
   get(name: string): Sprite;
-  /** Where a named part is now, in the game's units. */
+  /** The authored layout box in the game's design units; not moved by scrolling or display transforms. */
   rect(name: string): ViewRect;
+  /** The transformed, clipped visible box in logical Stage units, or undefined when hidden or fully clipped. */
+  visibleRect(name: string): ViewRect | undefined;
+  /** Readiness of a named part’s current single-line text revision; undefined if it has no such text. */
+  textReady(name: string): Promise<void> | undefined;
   /** Whether a named part, and every panel it is in, shows. */
   shows(name: string): boolean;
   /** The red dot a named part shows now: its count, true for a dot alone, or false for none. */
@@ -109,6 +119,7 @@ interface Made {
   value: number;
   color: number | undefined;
   text: string;
+  semanticLabel: string | undefined;
   badge: number | boolean;
   dot: { readonly node: Sprite; readonly words: PlayText } | undefined;
   focusMark: Sprite | undefined;
@@ -124,13 +135,13 @@ interface Roll {
 const MAX_VIEW_IMAGE_LOADS = 4;
 
 const KEYS_OF: Record<ViewPart['type'], readonly (keyof PlayViewBinding)[]> = {
-  panel: ['visible', 'color', 'tap', 'pointerOnly', 'badge'],
-  text: ['text', 'pick', 'format', 'roll', 'visible', 'color', 'badge'],
-  button: ['text', 'pick', 'format', 'roll', 'disabled', 'visible', 'color', 'tap', 'badge'],
-  bar: ['value', 'visible', 'color'],
-  toggle: ['text', 'checked', 'disabled', 'visible', 'tap', 'badge'],
+  panel: ['label', 'disabled', 'visible', 'color', 'tap', 'tapTargetOnly', 'pointerOnly', 'badge'],
+  text: ['label', 'text', 'pick', 'format', 'roll', 'visible', 'color', 'badge'],
+  button: ['label', 'text', 'pick', 'format', 'roll', 'disabled', 'visible', 'color', 'tap', 'tapTargetOnly', 'badge'],
+  bar: ['label', 'value', 'visible', 'color'],
+  toggle: ['label', 'text', 'checked', 'disabled', 'visible', 'tap', 'tapTargetOnly', 'badge'],
   space: ['visible'],
-  image: ['visible']
+  image: ['label', 'visible']
 };
 
 /** A question to answer yes or no: the words of its two buttons, and a title over the question. */
@@ -225,7 +236,7 @@ export function createPlayViews(
     eligible(name: string): boolean;
     reveal(name: string): boolean;
     focusMark(name: string, visible: boolean): void;
-    press(name: string): void;
+    press(name: string, source: 'keyboard' | 'gamepad'): void;
     readonly dismiss: (() => void) | undefined;
     start(): void;
     tick(seconds: number): void;
@@ -320,7 +331,7 @@ export function createPlayViews(
         const ok =
           key === 'roll'
             ? typeof value === 'number' && Number.isFinite(value) && value >= 0
-            : key === 'pointerOnly'
+            : key === 'pointerOnly' || key === 'tapTargetOnly'
               ? typeof value === 'boolean'
               : typeof value === 'function';
         if (!ok) throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': ' + key });
@@ -329,7 +340,19 @@ export function createPlayViews(
         throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': text or pick, not both' });
       if (binding.pointerOnly === true && binding.tap === undefined)
         throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': pointerOnly needs tap' });
+      if (binding.tapTargetOnly === true && binding.tap === undefined)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': tapTargetOnly needs tap' });
     }
+    const checkPanelRoles = (part: ViewPart): void => {
+      if (part.type !== 'panel') return;
+      if (part.role === 'button' && (bind[part.name!]?.tap === undefined || bind[part.name!]?.pointerOnly === true))
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: part.name + ': button role needs a non-pointerOnly tap'
+        });
+      for (const child of part.children ?? []) checkPanelRoles(child);
+    };
+    checkPanelRoles(description.root);
+    if (description.portrait !== undefined) checkPanelRoles(description.portrait);
     const initialFocus = options.initialFocus;
     if (initialFocus !== undefined) {
       const type = typeof initialFocus === 'string' ? names.get(initialFocus) : undefined;
@@ -383,6 +406,7 @@ export function createPlayViews(
     const frame = () => ({ screen: game.screen, safe: game.safe, orientation: game.orientation });
     const colourOf = (part: ViewPart, item: Made): number => {
       const skin = plan.skin;
+      if (part.type === 'panel' && item.disabled && hasAction(item)) return skin.disabled;
       if (item.color !== undefined) return item.color;
       if (part.type === 'button') return item.disabled ? skin.disabled : (part.color ?? skin.button);
       if (part.type === 'bar') return part.color ?? skin.accent;
@@ -560,7 +584,16 @@ export function createPlayViews(
       hasAction(item) &&
       visibleOnStage(item.node, game.browser.stage, true);
     const followsInput = (item: Made): boolean => allowsInput() && hasInput(item);
-    const followsFocus = (item: Made): boolean => followsInput(item) && !pointerOnly(item);
+    // A leaf panel is one accessible control; its drawn children must not add duplicate or unreachable focus targets.
+    const semanticsAllows = (item: Made): boolean => {
+      const index = item.part.name === undefined ? made.indexOf(item) : plan.names.get(item.part.name)!;
+      for (let at = index; at >= 0; at = plan.parts[at]!.parent) {
+        const part = plan.parts[at]!.part;
+        if (part.semantic === false || (at !== index && part.type === 'panel' && part.role === 'button')) return false;
+      }
+      return true;
+    };
+    const followsFocus = (item: Made): boolean => followsInput(item) && !pointerOnly(item) && semanticsAllows(item);
     const stageRect = (item: Made): ViewRect | undefined =>
       visibleRect(
         item.node,
@@ -568,7 +601,7 @@ export function createPlayViews(
         game.screen
       );
     const actionable = (item: Made): boolean => followsInput(item) && stageRect(item) !== undefined;
-    const canFocus = (item: Made): boolean => actionable(item) && !pointerOnly(item);
+    const canFocus = (item: Made): boolean => actionable(item) && !pointerOnly(item) && semanticsAllows(item);
     const revealForTab = (item: Made): boolean => {
       if (!followsFocus(item)) return false;
       const offsets: { viewport: PlayScrollViewport; offset: number }[] = [];
@@ -583,13 +616,13 @@ export function createPlayViews(
       for (const { viewport, offset } of offsets) viewport.scrollTo(offset);
       return false;
     };
-    const press = (item: Made): void => {
-      if (!actionable(item)) return;
+    const press = (item: Made, activation: PlayViewActivation): void => {
+      if (!actionable(item) || (bindingOf(item)?.tapTargetOnly === true && !activation.isTarget)) return;
       const name = nameOf(item);
-      if (name !== undefined && !pointerOnly(item)) focus({ owner: record, name });
+      if (name !== undefined && !pointerOnly(item) && semanticsAllows(item)) focus({ owner: record, name });
       const binding = bindingOf(item);
       try {
-        binding?.tap?.(state());
+        binding?.tap?.(state(), activation);
       } catch (cause) {
         hooks.failed(cause);
       }
@@ -649,7 +682,10 @@ export function createPlayViews(
                 align: part.type === 'button' ? 'center' : part.type === 'text' ? (part.align ?? 'left') : 'left',
                 baseline: 'middle',
                 ...(part.type === 'text' && part.bold !== undefined ? { bold: part.bold } : {}),
-                ...(part.type === 'button' ? { bold: true } : {})
+                ...(part.type === 'button' ? { bold: true } : {}),
+                ...(part.fontFamily !== undefined ? { fontFamily: part.fontFamily } : {}),
+                ...(part.fontWeight !== undefined ? { fontWeight: part.fontWeight } : {}),
+                ...(part.italic !== undefined ? { italic: part.italic } : {})
               })
             : undefined;
         const previous = rolls.get(part.name ?? '');
@@ -668,6 +704,7 @@ export function createPlayViews(
           value: part.type === 'bar' ? (part.value ?? 1) : 0,
           color: undefined,
           text: previous !== undefined ? String(previous.shown) : start,
+          semanticLabel: undefined,
           badge: false,
           dot: undefined,
           focusMark: undefined
@@ -726,7 +763,16 @@ export function createPlayViews(
         if (scroll !== undefined) scrollItems.push(item);
         const binding = part.name === undefined ? undefined : bind[part.name];
         if (part.type === 'button' || part.type === 'toggle' || (part.type === 'panel' && binding?.tap !== undefined))
-          game.onTap(node, () => press(item));
+          game.onTap(node, activation =>
+            press(
+              item,
+              viewTapActivation(
+                activation,
+                nameOf(item),
+                made.find(candidate => candidate.node === activation.target)?.part.name
+              )
+            )
+          );
       }
       if (description.modal === true && dim === undefined) {
         // Behind the parts and over all else: presses that miss the view end here.
@@ -784,6 +830,16 @@ export function createPlayViews(
         if (binding.color !== undefined) {
           const value = binding.color(now);
           item.color = Number.isInteger(value) && value >= 0 && value <= 0xffffff ? value : undefined;
+        }
+        if (binding.label !== undefined) {
+          const label = binding.label(now);
+          item.semanticLabel =
+            typeof label === 'string' && /\S/u.test(label)
+              ? label
+                  .slice(0, 1024)
+                  .replace(/[\uD800-\uDBFF]$/u, '')
+                  .trimEnd() || undefined
+              : undefined;
         }
         if (binding.text !== undefined) item.text = String(binding.text(now));
         if (binding.pick !== undefined) {
@@ -850,10 +906,10 @@ export function createPlayViews(
       });
       removals.push(() => top.remove());
       // Named parts in the order of the first tree; each inside its nearest named panel.
-      const first = planView(description, frame());
+      const first = plan;
       for (const planned of first.parts) {
         const name = planned.part.name;
-        if (name === undefined || planned.part.type === 'space') continue;
+        if (name === undefined || planned.part.type === 'space' || !semanticsAllows(made[planned.index]!)) continue;
         let parent = id;
         for (let at = planned.parent; at >= 0; at = first.parts[at]!.parent) {
           const above = first.parts[at]!.part;
@@ -865,7 +921,9 @@ export function createPlayViews(
         const type = planned.part.type;
         const role =
           type === 'panel'
-            ? 'group'
+            ? planned.part.type === 'panel'
+              ? (planned.part.role ?? 'group')
+              : 'group'
             : type === 'text'
               ? 'text'
               : type === 'button'
@@ -875,13 +933,13 @@ export function createPlayViews(
                   : type === 'image'
                     ? 'image'
                     : 'switch';
-        const label = (planned.part as { readonly label?: string }).label;
         semantics.add({
           id: id + ':' + name,
           role,
           parent,
           describe: () => {
             const item = find(name);
+            const label = item.semanticLabel ?? (item.part as { readonly label?: string }).label;
             const rect = stageRect(item),
               hidden =
                 !isShown() ||
@@ -898,12 +956,16 @@ export function createPlayViews(
               return { ...base, name: label ?? name, disabled: hasAction(item) && !pointerOnly(item) && !enabled };
             if (role === 'image') {
               const imageLabel = item.part.type === 'image' ? item.part.label : undefined;
-              return { ...base, name: imageLabel ?? '', hidden: hidden || !imageLabel };
+              const imageName = label ?? imageLabel;
+              return { ...base, name: imageName ?? '', hidden: hidden || !imageName };
             }
             if (role === 'progressbar')
               return { ...base, name: label ?? name, range: { now: Math.round(item.value * 100), min: 0, max: 100 } };
-            if (role === 'switch') return { ...base, name: item.text, checked: item.checked, disabled: !enabled };
+            if (role === 'switch')
+              return { ...base, name: label ?? item.text, checked: item.checked, disabled: !enabled };
             if (role === 'button') {
+              if (item.part.type === 'panel') return { ...base, name: label ?? name, disabled: !enabled };
+              if (item.semanticLabel !== undefined) return { ...base, name: item.semanticLabel, disabled: !enabled };
               const detail = item.part.type === 'button' ? item.part.description?.replace(/\s+/gu, ' ').trim() : '';
               // Preserve the title and keep its optional detail within the semantic name limit.
               const detailLimit = 1024 - item.text.length - 2;
@@ -916,13 +978,13 @@ export function createPlayViews(
                   : '';
               return { ...base, name: suffix ? item.text + '. ' + suffix : item.text, disabled: !enabled };
             }
-            return { ...base, name: item.text };
+            return { ...base, name: label ?? item.text };
           },
           ...(role === 'button' ||
           role === 'switch' ||
           (role === 'group' && bind[name]?.tap !== undefined && bind[name]?.pointerOnly !== true)
             ? {
-                onActivate: () => press(find(name)),
+                onActivate: () => press(find(name), directViewActivation(name, 'semantic')),
                 onFocus() {
                   if (canFocus(find(name))) focus({ owner: record, name });
                 }
@@ -946,6 +1008,13 @@ export function createPlayViews(
         const item = find(name);
         return Object.freeze({ ...plan.parts[made.indexOf(item)]!.rect });
       },
+      visibleRect: name => {
+        const item = find(name);
+        if (!isShown() || !visibleOnStage(item.node, game.browser.stage)) return undefined;
+        const rect = stageRect(item);
+        return rect === undefined ? undefined : Object.freeze({ ...rect });
+      },
+      textReady: name => (ended ? undefined : made[plan.names.get(name) ?? -1]?.words?.ready),
       shows: name => shown && !ended && visibleUp(find(name)),
       badge: name => find(name).badge,
       scroll(name) {
@@ -1042,7 +1111,7 @@ export function createPlayViews(
         }
         item.focusMark.visible = visible;
       },
-      press: name => press(find(name)),
+      press: (name, source) => press(find(name), directViewActivation(name, source)),
       dismiss: options.dismiss === undefined ? undefined : () => invoke(options.dismiss),
       start: () => invoke(options.resume),
       tick(seconds) {
@@ -1057,7 +1126,9 @@ export function createPlayViews(
           disposeScrolls();
           releaseContent();
           for (const item of made) game.remove(item.node);
+          for (const remove of removals.splice(0)) remove();
           build(offsets);
+          if (!ended) registerSemantics();
           if (focused?.owner === record) record.focusMark(focused.name, eligible(focused));
           return;
         }
@@ -1362,7 +1433,7 @@ export function createPlayViews(
       }
       if (event.code !== 'Tab') {
         if (!eligible(focused)) return modalOwner !== undefined;
-        if (!event.repeat) focused.owner.press(focused.name);
+        if (!event.repeat) focused.owner.press(focused.name, 'keyboard');
         return true;
       }
       if (moveFocus(event.shiftKey ? -1 : 1, !embedded || modalOwner !== undefined)) return true;
@@ -1388,7 +1459,7 @@ export function createPlayViews(
         else if (pressed.has('down') || pressed.has('right')) moveFocus(1, true, owner);
         if (pressed.has('a')) {
           if (focused?.owner !== owner || !eligible(focused)) moveFocus(1, true, owner);
-          if (focused?.owner === owner && eligible(focused)) owner.press(focused.name);
+          if (focused?.owner === owner && eligible(focused)) owner.press(focused.name, 'gamepad');
         }
       }
       return claimed;
