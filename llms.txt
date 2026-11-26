@@ -11,7 +11,7 @@
 - Build menus, shops, settings and results as [screens described as data](guide/cards/input/game-screens.txt): named parts bound to the state, red dots, questions, key hints and loading, placed in the safe part of any screen and tested by name. Holds, swipes, pinches and dragging into slots are [gestures](guide/cards/input/gestures.txt).
 - [Investigate an error](guide/cards/errors/read-engine-errors.txt) using the exact error code, cause and what the player did. For [2D geometry limits and a black screen after a glow](guide/cards/perf/geometry-budget-2d.txt), check the action frame and the scenery already attached to the stage.
 
-Browse the [guide index](guide/index.txt) or, in a checkout, run `node tools/egret-guide.mjs <symptom, API name or error code>`. Use `--card <id>` to read one card. Use the online entry to follow links from a standalone download <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
+Browse the [guide index](guide/index.txt) or, in a checkout, run `node tools/egret-guide.mjs <symptom, API name or error code>`. Use `--card <id>` to read one card. In a game folder with an engine copy, run `node vendor/egret.mjs guide <question>`, or `node vendor/egret.mjs explain <ERROR_CODE>` for an error. Use the online entry to follow links from a standalone download <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
 
 If the brief sets a source-size limit and you have file tools, count the final UTF-8 bytes. In a checkout, `node -p "require('node:fs').statSync('main.mjs').size"` reports the bytes for that file. Include each file covered by the limit. If over, trim secondary decoration and verify the first action again.
 

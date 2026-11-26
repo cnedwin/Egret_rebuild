@@ -34,10 +34,12 @@ node tools/agent-playtest.mjs preview --run <passing-run-folder> --address <priv
 
 [`llms.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt) 为智能体提供四条入口：做第一个 2D 交互、建立 3D 场景、接手已有游戏、排查报错。最小示例能响应空格键，完整游戏则直达仓库里的可运行源码。如果需求限定了源码大小，交付前请计算最终文件的 UTF-8 字节数。程序化 2D 特效触发帧捕获拒绝时，可以查阅[几何预算卡](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/perf/geometry-budget-2d.txt)。更多内容按需读取：
 
-- [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) 每张卡片占一行：卡片 id、它适用的引擎用法（`play`、`play3d`、`engine`、`world3d`、`web`），以及它回答什么问题。索引保持在 150 行以内。
+- [`guide/index.txt`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/index.txt) 列出各个领域，每个领域一行，写明卡片数和它们回答什么问题。`guide/areas/<领域>.txt` 列出一个领域的卡片，每张一行：卡片 id、它适用的引擎用法（`play`、`play3d`、`engine`、`world3d`、`web`），以及它回答什么问题。一个领域就是一个卡片文件夹，所以卡片再多，索引也不会变大；每一层都保持在 150 行和 1,500 个 token 以内。
 - `guide/cards/<area>/<id>.txt` 是一个主题，打印出来不超过 800 个 token：简短的规则、一个最小示例，以及规则所依据的测量结果或总结出它的游戏。
-- `node tools/egret-guide.mjs <问题>` 在预算内（默认 2,500 个 token，用 `--budget` 调整）打印最匹配的两到三张卡片。问题可以是英文或中文的词语、引擎名字、错误码或 devtools 提示 id。`--card <id>` 打印一张卡片，`--list` 打印索引。
-- `node tools/egret-guide.mjs --full --out <文件>` 把索引和所有卡片写成一个文件，供只接受单个文件的工具使用。它是构建产物，不提交到仓库。
+- `node tools/egret-guide.mjs <问题>` 在预算内（默认 2,500 个 token，用 `--budget` 调整）打印最匹配的两到三张卡片。问题可以是英文或中文的词语、引擎名字、错误码或 devtools 提示 id。`--card <id>` 打印一张卡片，`--list` 打印领域索引，`--list <领域>` 打印一个领域的卡片，`--list all` 打印所有领域。
+- `node tools/egret-guide.mjs --full --out <文件>` 把索引、各领域和所有卡片写成一个文件，供只接受单个文件的工具使用。它是构建产物，不提交到仓库。
+- `node tools/egret.mjs` 把同一份指南做成给智能体用的一个命令：`guide <问题>`、`card <id>`、`list [<领域> | all]`，以及 `explain <错误码>`：它先打印运行时为这个错误码写的中英文句子，再打印提到这个错误码的卡片。
+- 在游戏里，引擎副本带着这份指南。`tools/vendor-game.mjs` 把命令和卡片写到 `vendor/egret/` 下，由 `vendor/egret.mjs` 启动，所以在游戏目录里工作的智能体运行 `node vendor/egret.mjs guide <问题>`，得到的回答与在本仓库里相同，取自游戏固定的那个引擎提交。每次刷新副本都会整体替换这部分，指南删掉的卡片也随之消失。`--no-agent-kit` 不带指南。
 - [`guide/entries.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/entries.json) 列出引擎每个公开入口经导入带上的其他入口（`includes`），以及哪些入口带上了它（`partOf`）：例如 `@egret/engine/web/game` 带上指针、键盘和帧循环。统计游戏用到哪些能力的工具（游戏仓库的能力覆盖矩阵）读它，把游戏点名的入口背后的那些入口也算上。它由 `node tools/egret-guide.mjs` 之外的 `node tools/entry-map.mjs` 从构建产物生成，`--check` 检查它是否最新。
 
 与 `llms.txt` 一样，索引和卡片是以 `.txt` 文件保存的 Markdown 文本，只有英文。它们是智能体通过命令读取的数据，而不是阅读文档，因此没有中文对应版本；本页是双语的说明。

@@ -1,0 +1,7 @@
+# Performance
+
+- [geometry-budget-2d](../cards/perf/geometry-budget-2d.txt) · play engine web · A black or frozen frame after adding shapes or radial glows.
+- [frame-budget](../cards/perf/frame-budget.txt) · engine web world3d · Measuring a frame with @egret/devtools and reading its hints.
+- [frame-loop-backpressure](../cards/perf/frame-loop-backpressure.txt) · engine web · Loop pacing, skipped frames and lost devices.
+- [world3d-draw-cost](../cards/perf/world3d-draw-cost.txt) · world3d play3d · What to cut first when a 3D frame is GPU bound.
+- [prepare-programs](../cards/perf/prepare-programs.txt) · world3d play3d · First-use shader stalls and preparing programs during loading.
