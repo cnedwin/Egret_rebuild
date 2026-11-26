@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1470 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1473 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1521,9 +1521,12 @@
 | `runHeadless` | 函数 | Plays the game once per seed with the stand-in player and reports each run. |
 | `SaveProblem` | 接口 | A problem with a save: what kind, which key, and its cause. |
 | `SaveProblemKind` | 类型 | What went wrong with a save: unreadable, invalid, too new or too old, or a migration or write that failed. |
+| `SaveRule` | 类型 | What a field must be beyond the type of its default: one of a list of values, a number in a range (`int` for a whole number), or a check of one's own. |
+| `SaveShape` | 接口 | The check and the fill of a save of the shape of its defaults. |
 | `SaveStorage` | 接口 | Where a save is kept: strings by key. |
 | `SaveStore` | 接口 | A saved value: read it, change it and save it, reset or remove it, export or import it. |
 | `SaveStoreOptions` | 接口 | A save to keep: its key and version, its defaults and migrations, its check and its storage. |
+| `shapeOf` | 函数 | The check and the fill of a save whose new game is `defaults` (the data, or the function a save store is given). |
 | `sliceAssetBundle` | 函数 | The bytes of one entry from bytes of the bundle that start at `start` (0 for the whole file), checked against the index. |
 | `TextTable` | 接口 | A game's words in its languages: the current one, a word by key, and who is told when the language changes. |
 | `TextTableOptions` | 接口 | A text table to make: the words of each language, the language to start in and the one to fall back to. |

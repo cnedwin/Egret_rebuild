@@ -13,6 +13,8 @@ export type {
 } from './inputActions.js';
 export { createMemorySaveStorage, createSaveStore } from './saveStore.js';
 export type { SaveProblem, SaveProblemKind, SaveStorage, SaveStore, SaveStoreOptions } from './saveStore.js';
+export { shapeOf } from './saveShape.js';
+export type { SaveRule, SaveShape } from './saveShape.js';
 export { createRandom, hashSeed } from './random.js';
 export type { Random, RandomState } from './random.js';
 export { createAudioCues, encodeWav } from './audioCues.js';

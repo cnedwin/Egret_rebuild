@@ -73,6 +73,18 @@ A save is kept as `{ version, savedAt, data }`. An older save is brought up to d
 
 **`update(change)`** either edits the data in place and returns nothing, or returns the new data. What it returns must pass `validate` (by default: be an object), and so must the data after an edit in place; otherwise nothing is written, the save is left as it was in memory, `false` is returned and `onProblem` hears `invalid`. Write the change as a block: an arrow such as `data => (data.tier = 2)` returns `2`, which is refused. `save(next)` checks `next` the same way. The change is made on a copy, which becomes the data only once it passes, so a refused change, or one that throws halfway, leaves the save in memory exactly as it was; `save.data` is a new object after an update, so read it again rather than keeping the old one.
 
+**`shapeOf(defaults, rules)`** gives the check and the fill of a save from the shape of its defaults, which games otherwise wrote by hand a field at a time:
+
+```js
+import { createSaveStore, shapeOf } from '@egret/engine/kit';
+
+const fresh = () => ({ best: { normal: 0, hard: 0 }, plays: 0, finished: [], settings: { language: 'zh', sound: true } });
+const shape = shapeOf(fresh, { 'best.*': { int: true, min: 0, max: 3 }, 'settings.language': ['zh', 'en'] });
+const save = createSaveStore({ key: 'canal', version: 1, defaults: fresh, storage, validate: shape.validate });
+```
+
+`shape.validate` fills the data first: a save from an older build gets every field the defaults have that it lacks, at any depth, without losing its own. It then holds the data to the defaults' shape: a number stays a finite number, words stay words, true or false stays true or false, a list stays a list and a table stays a table with at least the defaults' fields. A default of `null` takes anything. The rules are keyed by the path of a field, its names joined by dots, with `*` for every element of a list or every field of a table. A rule is a list of the values allowed, a range (`{ int, min, max }`), or a check of one's own. `shape.problems(data)` lists where data breaks the shape, as `path: what it should be`, for a test. `shape.fill(data)` only fills.
+
 `browserSaveStorage()` is the page's local storage, or memory where the page has none (a private window, a blocked site); `persistent` says which. `createMemorySaveStorage()` is the same for tests.
 
 ## Random numbers that repeat
