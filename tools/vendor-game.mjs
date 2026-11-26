@@ -20,7 +20,9 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { exportsFromReference } from './egret-check.mjs';
 import { collectErrorCodes } from './error-codes.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -136,6 +138,8 @@ export function agentKitFiles() {
     ['tools/egret.mjs', 'egret/tools/egret.mjs'],
     ['tools/egret-guide.mjs', 'egret/tools/egret-guide.mjs'],
     ['tools/egret-notes.mjs', 'egret/tools/egret-notes.mjs'],
+    ['tools/egret-check.mjs', 'egret/tools/egret-check.mjs'],
+    ['tools/verify-game.mjs', 'egret/tools/verify-game.mjs'],
     ['guide/index.txt', 'egret/guide/index.txt'],
     ['guide/resolved.json', 'egret/guide/resolved.json']
   ];
@@ -162,6 +166,18 @@ function writeAgentKit(vendor) {
     fs.copyFileSync(path.join(root, ...from.split('/')), target);
   }
   fs.writeFileSync(path.join(kit, 'error-codes.json'), JSON.stringify({ codes: collectErrorCodes() }) + '\n');
+  // verify-game reads its pictures with pngjs (MIT), which goes with it, licence and all, under third-party/: a games
+  // repository ignores node_modules folders.
+  const pngjs = path.dirname(createRequire(import.meta.url).resolve('pngjs/package.json'));
+  for (const file of ['package.json', 'LICENSE'])
+    fs.cpSync(path.join(pngjs, file), path.join(kit, 'third-party', 'pngjs', file));
+  fs.cpSync(path.join(pngjs, 'lib'), path.join(kit, 'third-party', 'pngjs', 'lib'), { recursive: true });
+  // What each entry exports, for `egret check`, from the API reference the build writes.
+  const reference = fs.readFileSync(path.join(root, 'knowledge-base', 'en', 'docs', 'api-reference.md'), 'utf8');
+  const entries = Object.fromEntries(
+    [...exportsFromReference(reference)].map(([entry, names]) => [entry, [...names].sort()])
+  );
+  fs.writeFileSync(path.join(kit, 'exports.json'), JSON.stringify({ entries }) + '\n');
   fs.writeFileSync(
     path.join(vendor, 'egret.mjs'),
     '#!/usr/bin/env node\n' +
@@ -170,6 +186,8 @@ function writeAgentKit(vendor) {
       '//   node vendor/egret.mjs card <id>          one card;  list [<area> | all]  the areas or an area\n' +
       '//   node vendor/egret.mjs explain <CODE>     an engine error in English and Chinese, with its cards\n' +
       "//   node vendor/egret.mjs notes [--check]    which of this game's ENGINE-NOTES the engine copy has fixed\n" +
+      "//   node vendor/egret.mjs check [--strict]   this game's files read for common mistakes, with the cards\n" +
+      '//   node vendor/egret.mjs verify             this game run in a headless browser (needs Playwright)\n' +
       "import { main } from './egret/tools/egret.mjs';\n" +
       'const { code, text } = await main(process.argv.slice(2));\n' +
       'process.stdout.write(text);\n' +
@@ -263,7 +281,7 @@ export function vendorGame(game, entries, options = {}) {
       '- First-party engine code: Apache-2.0, see `LICENSE` and `NOTICE`.\n' +
       '- In a page: add `vendor/importmap.json` to the import map, or load `vendor/importmap.js` first. In Node: `node --import ./vendor/node-register.mjs`.\n' +
       (agentKit
-        ? "- For a coding agent: `node vendor/egret.mjs guide <question>` asks the engine's guide, copied with its command under `vendor/egret/`; `node vendor/egret.mjs explain <ERROR_CODE>` gives an engine error in English and Chinese.\n"
+        ? "- For a coding agent: `node vendor/egret.mjs guide <question>` asks the engine's guide, copied with its command under `vendor/egret/`; `node vendor/egret.mjs explain <ERROR_CODE>` gives an engine error in English and Chinese. `verify` runs the game in a headless browser with `pngjs` (MIT, `vendor/egret/third-party/pngjs`).\n"
         : '')
   );
   if (agentKit) writeAgentKit(vendor);

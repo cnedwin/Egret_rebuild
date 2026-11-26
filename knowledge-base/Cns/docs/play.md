@@ -66,7 +66,7 @@ await play({
 | `parent` | 放画布的元素。画布占满它的宽度；元素自己没有高度时，按舞台的比例取高度 | 游戏占满窗口 |
 | `canvas` | 页面里已有的画布，位置保持不变 | 自动创建一个 |
 | `onError(error)` | 游戏被什么停下时得到通知 | 抛到控制台 |
-| `onWarning(warning)` | 告知接近图片上限的帧、因超限没画的帧，以及没画出来的文字；见[浏览器游戏](browser-game.md) | 不告知 |
+| `onWarning(warning)` | 告知接近图片上限的帧、因超限没画的帧、没画出来的文字，以及 `update` 在最近 60 帧里每帧都新建的文字、形状或精灵（`PLAY_MADE_EVERY_FRAME`）；见[浏览器游戏](browser-game.md) | 不告知 |
 | `seed` | `game.random` 的种子 | 每次都不同 |
 | `saveKey` | `game.save` 保存数据时用的名字 | 页面的路径 |
 | `semantics` | 来自 `@egret/engine/ui/semantics` 的 `createUiSemantics` 创建的语义树：`game.show` 的视图会把有名字的部件加进去，每帧结束时发布，供 [UI 测试器](ui-testing.md)和辅助技术使用 | 没有语义树 |
