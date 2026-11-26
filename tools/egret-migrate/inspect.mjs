@@ -2,13 +2,15 @@
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { planLegacyResourceManifestConversion } from '../../packages/project/dist/legacy-res-plan.js';
 import { fingerprintFile, logicalPath } from '../lib/file-identity.mjs';
+import { discoverLegacySkins } from './exml.mjs';
+import { convertDragonBones } from './dragonbones.mjs';
+import { planMigratedResources } from './legacy-assets.mjs';
 
 export const hash = data => createHash('sha256').update(data).digest('hex');
 export const json = value => JSON.stringify(value, null, 2) + '\n';
 export const profile = 'egret-5.2-classic-web-2d';
-const supportedModules = new Set(['egret', 'game', 'res', 'assetsmanager', 'promise']);
+const supportedModules = new Set(['egret', 'game', 'res', 'assetsmanager', 'promise', 'eui', 'dragonBones']);
 const scaleModes = { showAll: 'contain', noBorder: 'cover', exactFit: 'stretch' };
 
 export function refuse(code, message, details) {
@@ -32,7 +34,9 @@ export function readProjectFile(owner, key) {
 }
 
 function readJSON(read, key) {
-  const text = read(key).bytes.toString('utf8');
+  const text = read(key)
+    .bytes.toString('utf8')
+    .replace(/^\uFEFF/, '');
   try {
     return JSON.parse(text);
   } catch {
@@ -92,8 +96,9 @@ export function inspectLegacyProject(folder, options = {}) {
   const owner = path.resolve(folder);
   const files = new Map();
   const read = key => {
+    if (files.has(key)) return files.get(key);
     const result = readProjectFile(owner, key);
-    files.set(key, result.identity);
+    files.set(key, result);
     return result;
   };
   const properties = readJSON(read, 'egretProperties.json');
@@ -101,7 +106,9 @@ export function inspectLegacyProject(folder, options = {}) {
     refuse('MIGRATE_VERSION_UNSUPPORTED', 'Expected a declared Egret 5.2.x engine and compiler.');
   }
   const modules = Array.isArray(properties.modules) ? properties.modules : [];
-  const unsupported = modules.filter(module => !supportedModules.has(module?.name) || module.path !== undefined);
+  const unsupported = modules.filter(
+    module => !supportedModules.has(module?.name) || (module.path !== undefined && module.path !== '${EGRET_DEFAULT}')
+  );
   if (!modules.some(module => module?.name === 'egret') || unsupported.length) {
     refuse('MIGRATE_MODULE_UNSUPPORTED', 'A module requires an explicit migration rule.', {
       modules: unsupported.map(module => module?.name)
@@ -111,13 +118,75 @@ export function inspectLegacyProject(folder, options = {}) {
   const sources = readSourceOrder(read, options.sources);
   const manifest = options.resources ?? 'resource/default.res.json';
   const resourceRoot = path.posix.dirname(manifest);
-  const result = planLegacyResourceManifestConversion(read(manifest).bytes.toString('utf8'), resourceRoot);
-  if (!result.plan)
-    refuse('MIGRATE_RES_UNSUPPORTED', 'The RES declaration is outside this profile.', result.report.diagnostics);
+  const result = planMigratedResources(read(manifest).bytes.toString('utf8'), resourceRoot, read);
   for (const file of result.plan.files) read(file.sourcePath);
+  const hasModule = name => modules.some(module => module.name === name);
+  const theme = hasModule('eui') ? discoverLegacySkins(read, options.theme ?? 'resource/default.thm.json') : undefined;
+  let bones;
+  if (hasModule('dragonBones') || options.bones !== undefined) {
+    if (!Array.isArray(options.bones) || !options.bones.length || options.bones.length > 128)
+      refuse('MIGRATE_BONES_MANIFEST', 'Supply a bounded DragonBones resource-name mapping with --bones.');
+    const used = new Set();
+    const resourceOf = (name, type) => {
+      const resource = result.plan.resources.find(item => item.name === name && item.type === type);
+      if (!resource) refuse('MIGRATE_BONES_MANIFEST', 'The mapping must name declared RES resources.', { name, type });
+      return result.plan.files[resource.fileIndex].sourcePath;
+    };
+    bones = options.bones.map(pair => {
+      if (
+        !pair ||
+        Array.isArray(pair) ||
+        Object.keys(pair).some(key => !['atlas', 'skeleton', 'texture', 'allowRenamedPage'].includes(key)) ||
+        !['atlas', 'skeleton', 'texture'].every(key => typeof pair[key] === 'string') ||
+        (pair.allowRenamedPage !== undefined && pair.allowRenamedPage !== true)
+      )
+        refuse('MIGRATE_BONES_MANIFEST', 'Expected a skeleton, atlas and texture RES name.');
+      const skeletonPath = resourceOf(pair.skeleton, 'json');
+      const atlasPath = resourceOf(pair.atlas, 'json');
+      const texturePath = resourceOf(pair.texture, 'image');
+      for (const key of [skeletonPath, atlasPath]) {
+        if (used.has(key))
+          refuse('MIGRATE_BONES_MANIFEST', 'A converted JSON path may be selected only once.', { key });
+        used.add(key);
+      }
+      const atlas = readJSON(read, atlasPath);
+      let expectedPage;
+      try {
+        expectedPage = logicalPath(path.posix.dirname(atlasPath) + '/' + logicalPath(atlas.imagePath));
+      } catch {
+        refuse('MIGRATE_BONES_MANIFEST', 'The atlas must declare a local page.', { atlasPath });
+      }
+      if (expectedPage !== texturePath && !pair.allowRenamedPage)
+        refuse(
+          'MIGRATE_BONES_MANIFEST',
+          'Mapped texture does not match the authored atlas page. A known rename requires allowRenamedPage.',
+          { atlasPath, texturePath, expectedPage }
+        );
+      const descriptor = convertDragonBones(readJSON(read, skeletonPath), atlas);
+      const { bytes: png } = read(texturePath);
+      if (
+        png.length < 24 ||
+        png.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' ||
+        png.toString('ascii', 12, 16) !== 'IHDR' ||
+        png.readUInt32BE(16) !== descriptor.atlas.width ||
+        png.readUInt32BE(20) !== descriptor.atlas.height
+      )
+        refuse('MIGRATE_BONES_MANIFEST', 'Expected a PNG atlas matching the declared dimensions.', { texturePath });
+      return {
+        ...pair,
+        skeletonPath,
+        atlasPath,
+        texturePath,
+        ...(expectedPage === texturePath ? {} : { originalPage: expectedPage }),
+        descriptor
+      };
+    });
+  }
   // Preserve declared project notices byte for byte in the editable output, outside the preview.
   for (const name of fs.readdirSync(owner)) if (/^(?:LICENSE|NOTICE|COPYING)(?:\.(?:md|txt))?$/i.test(name)) read(name);
-  const inputs = [...files.values()].sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
+  const inputs = [...files.values()]
+    .map(file => file.identity)
+    .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
   return {
     schemaVersion: 1,
     profile,
@@ -128,6 +197,9 @@ export function inspectLegacyProject(folder, options = {}) {
     sources,
     manifest,
     resources: result.plan,
+    ...(result.sheets === undefined ? {} : { sheets: result.sheets }),
+    ...(theme === undefined ? {} : { theme }),
+    ...(bones === undefined ? {} : { bones }),
     inputs,
     inputSha256: hash(JSON.stringify(inputs))
   };

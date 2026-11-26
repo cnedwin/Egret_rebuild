@@ -6,6 +6,7 @@ import { createProjectStore, parseProjectTransaction, serializeProjectSnapshot }
 import { ownerRelativePath, samePhysicalPath } from '../lib/file-identity.mjs';
 import { browserBuildTypes } from '../verify-game.mjs';
 import { hash, inspectLegacyProject, json, readProjectFile, refuse } from './inspect.mjs';
+import { normalizeLegacyPng } from './legacy-assets.mjs';
 
 const bridge = new URL('./legacy-web.mjs', import.meta.url);
 const schema = '1.0';
@@ -54,6 +55,7 @@ function outputOwner(original, output) {
 }
 
 function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedProjectId) {
+  const boneBindings = selection.bones?.map(({ descriptor: _descriptor, ...binding }) => binding);
   const projectId = rememberedProjectId ?? 'p_migrated_' + selection.inputSha256.slice(0, 24);
   const store = take(
     createProjectStore({
@@ -75,7 +77,14 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
     kind: 'legacy-web-client',
     dataSchemaVersion: schema,
     references: [],
-    data: { stage: selection.stage, manifest: selection.manifest, resources: selection.resources }
+    data: {
+      stage: selection.stage,
+      manifest: selection.manifest,
+      resources: selection.resources,
+      ...(selection.theme ? { theme: selection.theme } : {}),
+      ...(selection.sheets ? { sheets: selection.sheets } : {}),
+      ...(boneBindings ? { bones: boneBindings } : {})
+    }
   };
   const importResult = store.commit({
     command: 'edit',
@@ -88,7 +97,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
       actorKind: 'legacy-converter',
       intent: 'Import the admitted stage and resource records',
       toolId: 'egret-migrate',
-      toolVersion: '0.1.0'
+      toolVersion: '0.2.0'
     },
     scope: { entityIds: [entity.id], fileIds: assetFiles.map(file => file.id), metadata: false, roots: true },
     operations: [
@@ -118,6 +127,9 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
   const repairedData = JSON.parse(JSON.stringify(current));
   if (
     !isDeepStrictEqual(repairedData.resources, selection.resources) ||
+    !isDeepStrictEqual(repairedData.theme, selection.theme) ||
+    !isDeepStrictEqual(repairedData.sheets, selection.sheets) ||
+    !isDeepStrictEqual(repairedData.bones, boneBindings) ||
     repairedData.manifest !== selection.manifest ||
     repairedData.stage?.entry !== selection.stage.entry ||
     ![repairedData.stage.width, repairedData.stage.height].every(
@@ -136,16 +148,17 @@ import { launchLegacyWeb } from './legacy-web.mjs';
 const response = await fetch('./project.json');
 if (!response.ok) throw new Error('Could not open the migrated project');
 const project = await response.json();
-const { stage, manifest, resources } = project.entities.find(item => item.id === 'e_client').data;
+const { stage, manifest, resources, theme, sheets, bones } = project.entities.find(item => item.id === 'e_client').data;
 const host = await launchLegacyWeb(sdk, {
   canvas: document.querySelector('canvas'), ...stage, projectId: project.projectId,
+  theme, sheets, nativeBones: bones !== undefined,
   resources: {
     configUrl: manifest,
     root: resources.resourceRoot + '/',
     resources: resources.resources.map(item => ({ name: item.name, type: item.type, url: resources.files[item.fileIndex].destinationPath })),
     groups: resources.groups.map(item => ({ name: item.name, keys: item.resourceIndices.map(index => resources.resources[index].name) }))
   },
-  createMain({egret, RES}) {
+  createMain({egret, RES, eui, dragonBones}) {
 ${sources.map(({ key, bytes }) => '// ' + key + '\n' + bytes.toString('utf8')).join('\n')}
     return new ${entry}();
   }
@@ -164,15 +177,36 @@ export async function convertProject(options) {
   if (typeof options.esbuild?.transform !== 'function') refuse('MIGRATE_COMPILER', 'Provide an esbuild module.');
   const engine = fs.readFileSync(options.engine);
   const sourceFile = fs.readFileSync(bridge);
-  const read = key => {
-    const found = readProjectFile(owner, key);
-    if (found.identity.sha256 !== selection.inputs.find(item => item.path === key)?.sha256) {
-      refuse('MIGRATE_INPUT_CHANGED', 'Run inspection again after changing a project input.', { path: key });
-    }
-    return found.bytes;
-  };
+  const inputBytes = new Map(
+    selection.inputs.map(item => {
+      const found = readProjectFile(owner, item.path);
+      if (found.identity.sha256 !== item.sha256) {
+        refuse('MIGRATE_INPUT_CHANGED', 'Run inspection again after changing a project input.', { path: item.path });
+      }
+      return [item.path, found.bytes];
+    })
+  );
+  const read = key => inputBytes.get(key);
   const sources = selection.sources.map(file => ({ key: file.path, bytes: read(file.path) }));
-  const assets = selection.resources.files.map(file => ({ key: file.destinationPath, bytes: read(file.sourcePath) }));
+  const replacements = new Map();
+  for (const conversion of selection.bones ?? []) {
+    const neutral = Buffer.from(json(conversion.descriptor));
+    replacements.set(conversion.skeletonPath, neutral);
+    replacements.set(conversion.atlasPath, neutral);
+  }
+  const resourceTransforms = [];
+  const assets = selection.resources.files.map(file => {
+    const original = read(file.sourcePath);
+    const bytes = replacements.get(file.sourcePath) ?? normalizeLegacyPng(original, file.destinationPath);
+    if (bytes !== original && !replacements.has(file.sourcePath))
+      resourceTransforms.push({
+        path: file.destinationPath,
+        rule: 'png-rgba8-lossless',
+        inputSha256: hash(original),
+        outputSha256: hash(bytes)
+      });
+    return { key: file.destinationPath, bytes };
+  });
   const assetFiles = assets.map(({ key, bytes }, index) => {
     const mime = browserBuildTypes[path.posix.extname(key)]?.split(';')[0];
     if (!mime || !(mime === 'application/json' || mime.startsWith('image/'))) {
@@ -224,15 +258,26 @@ export async function convertProject(options) {
     revision: store.getSnapshot().revision,
     receipt,
     repair,
-    browserFiles: ['game.mjs', 'legacy-web.mjs', 'egret2d.mjs', ...assets.map(file => file.key)]
+    ...(resourceTransforms.length ? { resourceTransforms } : {}),
+    browserFiles: [
+      'game.mjs',
+      'legacy-web.mjs',
+      'legacy-eui.mjs',
+      'legacy-bones.mjs',
+      'egret2d.mjs',
+      ...assets.map(file => file.key)
+    ]
   };
   fs.mkdirSync(out);
   for (const item of selection.inputs) write(out, item.path, read(item.path));
   if (options.sources) write(out, 'source-order.json', json(options.sources));
+  if (selection.bones) write(out, 'bones-map.json', json(options.bones));
   for (const { key, bytes } of assets) write(out, 'web/' + key, bytes);
   write(out, 'web/index.html', entryHtml);
   write(out, 'web/game.mjs', bundled.code);
   write(out, 'web/legacy-web.mjs', sourceFile);
+  for (const name of ['legacy-eui.mjs', 'legacy-bones.mjs'])
+    write(out, 'web/' + name, fs.readFileSync(new URL(name, import.meta.url)));
   write(out, 'web/egret2d.mjs', engine);
   write(out, 'web/project.json', snapshot);
   write(out, 'history.json', take(store.exportHistory()));

@@ -1,0 +1,182 @@
+{
+  "name": "guardian",
+  "version": "5.5",
+  "compatibleVersion": "5.5",
+  "frameRate": 24,
+  "armature": [
+    {
+      "type": "Armature",
+      "name": "Guardian",
+      "bone": [
+        {
+          "name": "body",
+          "transform": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "arm",
+          "parent": "body",
+          "transform": {
+            "x": 22,
+            "y": -16
+          }
+        },
+        {
+          "name": "lamp",
+          "parent": "arm",
+          "transform": {
+            "x": 44,
+            "y": 0
+          }
+        }
+      ],
+      "slot": [
+        {
+          "name": "body",
+          "parent": "body",
+          "displayIndex": 0
+        },
+        {
+          "name": "arm",
+          "parent": "arm",
+          "displayIndex": 0
+        },
+        {
+          "name": "lamp",
+          "parent": "lamp",
+          "displayIndex": 0
+        }
+      ],
+      "skin": [
+        {
+          "name": "",
+          "slot": [
+            {
+              "name": "body",
+              "display": [
+                {
+                  "name": "body",
+                  "type": "image"
+                }
+              ]
+            },
+            {
+              "name": "arm",
+              "display": [
+                {
+                  "name": "arm",
+                  "type": "image",
+                  "transform": {
+                    "x": 22,
+                    "y": 0
+                  }
+                }
+              ]
+            },
+            {
+              "name": "lamp",
+              "display": [
+                {
+                  "name": "lamp",
+                  "type": "image",
+                  "transform": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "animation": [
+        {
+          "name": "idle",
+          "duration": 48,
+          "playTimes": 0,
+          "bone": [
+            {
+              "name": "arm",
+              "rotateFrame": [
+                {
+                  "duration": 24,
+                  "rotate": 25,
+                  "skew": 0,
+                  "tweenEasing": 0
+                },
+                {
+                  "duration": 24,
+                  "rotate": -25,
+                  "skew": 0,
+                  "tweenEasing": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "strike",
+          "duration": 36,
+          "playTimes": 1,
+          "bone": [
+            {
+              "name": "arm",
+              "rotateFrame": [
+                {
+                  "duration": 12,
+                  "rotate": 20,
+                  "skew": 0,
+                  "tweenEasing": 0
+                },
+                {
+                  "duration": 12,
+                  "rotate": -80,
+                  "skew": 0,
+                  "tweenEasing": 0
+                },
+                {
+                  "duration": 12,
+                  "rotate": 20,
+                  "skew": 0,
+                  "tweenEasing": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "guard",
+          "duration": 36,
+          "playTimes": 1,
+          "bone": [
+            {
+              "name": "arm",
+              "rotateFrame": [
+                {
+                  "duration": 12,
+                  "rotate": 20,
+                  "skew": 0,
+                  "tweenEasing": 0
+                },
+                {
+                  "duration": 12,
+                  "rotate": 80,
+                  "skew": 0,
+                  "tweenEasing": 0
+                },
+                {
+                  "duration": 12,
+                  "rotate": 20,
+                  "skew": 0,
+                  "tweenEasing": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

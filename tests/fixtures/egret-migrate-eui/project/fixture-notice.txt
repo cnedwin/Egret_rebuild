@@ -1,0 +1,3 @@
+Lantern Guardian: independent first-party migration control, created for Egret Migrate.
+Source, EXML and raster/skeletal assets have no third-party art or game data.
+Legacy engine files retain their original Egret / DragonBones copyright and license notices.
