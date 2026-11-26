@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Start a game folder for an agent with one command",
+    "body": "node tools/egret.mjs new <folder> --target web|mobile|wechat|steam makes a small whole game to start from: rules in src/rules.mjs tested in Node, the picture drawn with play, an engine copy with the guide, and AGENTS.md, CLAUDE.md and a Claude Code skill that say how to work on it for that target. A game can make another beside it from its own engine copy."
+  },
+  "zh": {
+    "title": "一个命令为智能体建好游戏目录",
+    "body": "node tools/egret.mjs new <目录> --target web|mobile|wechat|steam 生成一个可以直接开始的小而完整的游戏：src/rules.mjs 里的规则在 Node 里测试，画面用 play 画，带指南的引擎副本，以及按目标平台写好的 AGENTS.md、CLAUDE.md 和 Claude Code 技能。游戏还可以用自己的引擎副本在旁边再建一个游戏。"
+  }
+}
