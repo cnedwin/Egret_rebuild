@@ -5377,7 +5377,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  }
 }
 // Particles: one DOM-free entry built on the runtime alone. It starts no timer or request, and no other entry has it.
-const particlesTypes=["ParticleEmitter", "ParticleEmitterOptions", "ParticleRange", "ParticleShape", "ParticleSnapshot", "ParticleView"];
+const particlesTypes=["ParticleBurstSite", "ParticleEmitter", "ParticleEmitterOptions", "ParticleRange", "ParticleShape", "ParticleSnapshot", "ParticleView"];
 const particlesValues=["createParticleEmitter"];
 for(const [file,values,types] of [['packages/engine/src/particles.ts',particlesValues,particlesTypes],['packages/engine/dist/particles.js',particlesValues,[]],['packages/engine/dist/particles.d.ts',particlesValues,particlesTypes]]){
  const surface=mouseExports(uiRead(file),file);

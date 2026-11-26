@@ -347,7 +347,7 @@ test('PA11 a disposed emitter has let go of its mesh and takes no more', async (
     emitter.stop();
   }));
 
-test('PA12 a strict consumer compiles against the entry, and five misuses are refused; the entry has its factory alone', async () => {
+test('PA12 a strict consumer compiles against the entry, and seven misuses are refused; the entry has its factory alone', async () => {
   const { spawnSync } = await import('node:child_process');
   const result = spawnSync(
     process.execPath,
@@ -404,4 +404,171 @@ test('PA14 blendMode is an option: it sets the blend of the display, and a name 
         coded('PARTICLE_OPTIONS_INVALID'),
         String(blendMode)
       );
+  }));
+
+function emittedPayload(emitter) {
+  const mesh = meshOf(emitter);
+  if (!mesh) return undefined;
+  const geometry = mesh.geometry;
+  return {
+    visible: mesh.visible,
+    positions: geometry.positions,
+    uvs: geometry.uvs,
+    lightColors: geometry.lightColors,
+    indices: geometry.indices
+  };
+}
+function burstSequentially(emitter, sites) {
+  for (const site of sites) {
+    emitter.x = site.x;
+    emitter.y = site.y;
+    emitter.burst(site.count);
+  }
+}
+function assertSameEmission(a, b) {
+  assert.deepEqual([a.x, a.y, a.snapshot(), a.particles()], [b.x, b.y, b.snapshot(), b.particles()]);
+  assert.deepEqual(emittedPayload(a), emittedPayload(b));
+}
+
+test('PA15 a 48-site batch preserves capped particles and RNG, publishing one synchronous mesh payload', async () =>
+  fixture(({ make }) => {
+    const options = {
+      running: false,
+      maxParticles: 200,
+      lifetime: [0.3, 0.6],
+      speed: [30, 150],
+      angle: [180, 360],
+      gravity: { x: 0, y: -60 },
+      drag: 2,
+      size: 26,
+      startScale: [0.5, 1],
+      endScale: 1.8,
+      startColor: 0x6a4424,
+      endColor: 0x6a4424,
+      startAlpha: 0.34,
+      endAlpha: 0,
+      shape: { kind: 'rectangle', width: 30, height: 4 },
+      rotation: [0, 360],
+      spin: [-80, 80],
+      seed: 59
+    };
+    const a = make(options),
+      b = make(options);
+    for (const emitter of [a, b]) {
+      emitter.x = 50;
+      emitter.y = 100;
+      emitter.burst(20);
+      emitter.update(0.12);
+    }
+    assertSameEmission(a, b);
+    const sites = Array.from({ length: 48 }, (_, i) => ({ x: 10 + i * 0.5, y: 150 - i * 2, count: 4 }));
+    const aMesh = meshOf(a),
+      bMesh = meshOf(b),
+      bSet = bMesh.setContent;
+    let publications = 0;
+    bMesh.setContent = function (...args) {
+      publications++;
+      return bSet.apply(this, args);
+    };
+    try {
+      burstSequentially(a, sites);
+      b.burstAtMany(sites);
+      assert.equal(publications, 1);
+      assert.equal(meshOf(a), aMesh);
+      assert.equal(meshOf(b), bMesh);
+      assert.equal(a.alive, 200);
+      assert.deepEqual(a.snapshot(), { alive: 200, born: 200, refused: 12, running: false, time: 0.12 });
+      assertSameEmission(a, b);
+      assert.equal(bMesh.geometry.indexCount, 200 * 6);
+    } finally {
+      delete bMesh.setContent;
+    }
+    // Lifetimes, motion and subsequent emission still use exactly the same random sequence.
+    for (const emitter of [a, b]) emitter.update(0.39);
+    assert.ok(a.alive < 200);
+    assertSameEmission(a, b);
+    const next = [
+      { x: 40, y: 60, count: 6 },
+      { x: -0, y: 75, count: 0 }
+    ];
+    burstSequentially(a, next);
+    b.burstAtMany(next);
+    assertSameEmission(a, b);
+    assert.equal(Object.is(b.x, -0), true);
+    for (const emitter of [a, b]) emitter.clear();
+    a.burst(3);
+    b.burst(3);
+    assertSameEmission(a, b);
+  }));
+
+test('PA16 the entire burstAtMany input is checked before any position, particle or mesh is changed', async () =>
+  fixture(({ make }) => {
+    const a = make({ running: false, seed: 72, speed: [1, 99], maxParticles: 16 }),
+      b = make({ running: false, seed: 72, speed: [1, 99], maxParticles: 16 });
+    for (const emitter of [a, b]) {
+      emitter.x = -10;
+      emitter.y = 20;
+      emitter.burst(2);
+    }
+    const site = { x: 2, y: 4, count: 3 },
+      mesh = meshOf(a),
+      previous = mesh.geometry;
+    for (const invalid of [
+      undefined,
+      null,
+      {},
+      [site, null],
+      [site, []],
+      [site, , site],
+      [site, { ...site, x: NaN }],
+      [site, { ...site, y: Infinity }],
+      [site, { ...site, x: '1' }],
+      [site, { ...site, count: -1 }],
+      [site, { ...site, count: 1.5 }],
+      [site, { ...site, count: Infinity }],
+      [site, { ...site, count: NaN }],
+      [site, { ...site, count: Number.MAX_SAFE_INTEGER + 1 }],
+      [site, { ...site, count: 1048574 }],
+      Array(16385).fill({ x: 0, y: 0, count: 0 })
+    ]) {
+      assert.throws(() => a.burstAtMany(invalid), coded('PARTICLE_OPTIONS_INVALID'));
+      assertSameEmission(a, b);
+      assert.equal(mesh.geometry, previous);
+    }
+    // A valid request after all those refusals has neither changed the seed nor the live mesh.
+    a.burstAtMany([site]);
+    burstSequentially(b, [site]);
+    assertSameEmission(a, b);
+    a.dispose();
+    for (const sites of [[], [site]]) assert.throws(() => a.burstAtMany(sites), coded('PARTICLE_CLOSED'));
+    assert.throws(() => a.burstAtMany([null]), coded('PARTICLE_OPTIONS_INVALID'));
+  }));
+
+test('PA17 empty batches are no-ops; zero-count sites set the place and valid boundary counts remain bounded', async () =>
+  fixture(({ make }) => {
+    const a = make({ running: false, maxParticles: 1, speed: [0, 1] });
+    a.burstAtMany([]);
+    assert.equal(meshOf(a), undefined);
+    a.burstAtMany([{ x: 10, y: 2, count: 0 }]);
+    assert.deepEqual([a.x, a.y, a.alive, meshOf(a)], [10, 2, 0, undefined]);
+
+    // Site properties are read once into the validated input, not fetched again during spawning.
+    let reads = 0;
+    const site = {
+      get x() {
+        return ++reads;
+      },
+      y: 4,
+      count: 1048576
+    };
+    a.burstAtMany([site]);
+    assert.equal(reads, 1);
+    assert.deepEqual([a.x, a.y, a.alive, a.snapshot().refused], [1, 4, 1, 1048575]);
+    assert.deepEqual([a.particles()[0].x, a.particles()[0].y], [1, 4]);
+    const mesh = meshOf(a),
+      before = mesh.geometry;
+    a.burstAtMany([]);
+    assert.equal(mesh.geometry, before);
+    a.burstAtMany(Array(16384).fill({ x: 5, y: 10, count: 0 }));
+    assert.deepEqual([a.x, a.y, a.alive, mesh.geometry.indexCount], [5, 10, 1, 6]);
   }));
