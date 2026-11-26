@@ -74,7 +74,9 @@ test('TS04 the workflow runs every shard of the count it names and requires them
   assert.ok(workflow.includes('      fail-fast: false\n      matrix:\n        shard: ['));
   // The job without test files and the shards are both required by the final check.
   assert.equal(workflow.split('node tools/prepush.mjs --integrated --no-tests\n').length, 2);
-  assert.ok(workflow.includes('    needs: [retained, route, prepare-windows-toolchain, windows, windows-tests, cpu]\n'));
+  assert.ok(
+    workflow.includes('    needs: [retained, route, prepare-windows-toolchain, windows, windows-tests, cpu]\n')
+  );
   assert.ok(
     workflow.includes(
       '              test "$ROUTE_PROFILE" = full\n              test "$WINDOWS_TESTS_RESULT" = success\n'
@@ -132,8 +134,13 @@ test('TS07 every Windows job consumes the single verified toolchain without weak
   assert.ok(!workflow.includes('restore-keys:'));
   const cacheKeys = [...workflow.matchAll(/^          key: (egret-pwsh-windows-x64-.+)$/gm)].map(match => match[1]);
   assert.equal(cacheKeys.length, 4);
-  assert.deepEqual([...new Set(cacheKeys)], ["egret-pwsh-windows-x64-${{ hashFiles('tools/windows-pwsh-lock.json') }}"]);
-  const artifactNames = [...workflow.matchAll(/^          name: (egret-pwsh-windows-x64-.+)$/gm)].map(match => match[1]);
+  assert.deepEqual(
+    [...new Set(cacheKeys)],
+    ["egret-pwsh-windows-x64-${{ hashFiles('tools/windows-pwsh-lock.json') }}"]
+  );
+  const artifactNames = [...workflow.matchAll(/^          name: (egret-pwsh-windows-x64-.+)$/gm)].map(
+    match => match[1]
+  );
   assert.equal(artifactNames.length, 3);
   assert.equal(new Set(artifactNames).size, 1);
   assert.equal(workflow.split('EGRET_PWSH_MIRROR_URL: ${{ vars.EGRET_PWSH_MIRROR_URL }}').length - 1, 3);
@@ -151,7 +158,10 @@ test('TS07 every Windows job consumes the single verified toolchain without weak
     assert.ok(worker.includes('node tools/windows-pwsh.mjs install'));
     assert.ok(worker.includes("if: steps.pwsh-probe.outputs.ready != 'true'"));
     assert.ok(worker.includes("if: steps.pwsh-artifact.outcome == 'failure'"));
-    assert.match(worker, /- name: Install and validate exact PowerShell\n        shell: pwsh\n        run: node tools\/windows-pwsh\.mjs install\n/);
+    assert.match(
+      worker,
+      /- name: Install and validate exact PowerShell\n        shell: pwsh\n        run: node tools\/windows-pwsh\.mjs install\n/
+    );
     assert.ok(worker.indexOf('node tools/windows-pwsh.mjs install') < worker.indexOf('pnpm setup:dev --no-build'));
     assert.ok(!worker.includes('Invoke-WebRequest'));
     assert.ok(!worker.includes('actions/cache/save@'));
