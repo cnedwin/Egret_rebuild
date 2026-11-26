@@ -47,6 +47,8 @@ export interface ViewParagraphStyle {
   readonly locale?: string;
   readonly direction?: 'ltr' | 'rtl';
   readonly maxLines?: number;
+  /** Raster pixels per stage unit, from 0.25 to 4. Defaults to 1; logical wrapping and line height are unchanged. */
+  readonly density?: number;
 }
 /** A panel: a card that is drawn, or only a place that holds parts. */
 export interface ViewPanel extends ViewPartBase {
@@ -309,10 +311,16 @@ function partOptions(value: unknown, keys: readonly string[], label: string, fie
 }
 
 function checkParagraph(value: unknown, label: string): void {
-  const row = partOptions(value, ['fontFamilies', 'lineHeight', 'locale', 'direction', 'maxLines'], label, 'paragraph');
+  const row = partOptions(
+    value,
+    ['fontFamilies', 'lineHeight', 'locale', 'direction', 'maxLines', 'density'],
+    label,
+    'paragraph'
+  );
   const families = row['fontFamilies'],
     lineHeight = row['lineHeight'],
-    maxLines = row['maxLines'];
+    maxLines = row['maxLines'],
+    density = row['density'];
   if (
     !Array.isArray(families) ||
     families.length === 0 ||
@@ -328,6 +336,8 @@ function checkParagraph(value: unknown, label: string): void {
     throw invalid(label, 'paragraph direction');
   if (maxLines !== undefined && (!finite(maxLines) || !Number.isInteger(maxLines) || maxLines < 1 || maxLines > 256))
     throw invalid(label, 'paragraph maxLines');
+  if (density !== undefined && (!finite(density) || density < 0.25 || density > 4))
+    throw invalid(label, 'paragraph density');
 }
 
 /** Checks the parts of one tree and returns its named parts with their kinds. */

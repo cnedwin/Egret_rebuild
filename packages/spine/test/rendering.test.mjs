@@ -84,3 +84,23 @@ test('draw refusal delivers committed events and permits a later valid visual wi
  s.player.setAnimation(0,'hide');s.player.advance(tick(2,.01));assert.equal(view.getStatus().commands,0);assert.equal(view.getStatus().revision,prior.revision+1);assert.equal(s.player.getSnapshot().state,'running');
  assert.equal(delivered.filter(e=>e.kind==='start'&&e.animation==='show').length,1);
 });
+
+test('interleaved differently posed displays retain independent immutable geometry through reused staging',async t=>{
+ const s=await setup(t,renderingSource({mesh:true,weighted:true,tint:true})),left=s.view();
+ const rightPlayer=createSpineInstance(s.group.getSpine('e_json'),s.engine.createScope());
+ const right=createSpineDisplay(rightPlayer,s.engine.createScope(),{colorProfile:'egret-shared-linear/1'});s.engine.stage.addChild(right.node);right.node.x=20;
+ s.player.setAnimation(0,'move',{loop:true});rightPlayer.setAnimation(0,'move',{loop:true});
+ const channels=['positions','uvs','lightColors','darkColors','indices'];
+ const copy=f=>f.geometries.map(g=>channels.map(k=>Array.from(g[k])));
+ const retained=[];
+ for(let i=1;i<=24;i++){
+  s.player.advance(tick(i,.01));rightPlayer.advance(tick(i,.02));
+  const f=frame(s);assert.equal(draws(f).length,4);
+  if(i%4===0)retained.push({f,values:copy(f)});
+ }
+ assert.notDeepEqual(retained[0].values,retained.at(-1).values);
+ for(const saved of retained)assert.deepEqual(copy(saved.f),saved.values);
+ left.dispose();assert.equal(draws(frame(s)).length,2);
+ for(const saved of retained)assert.deepEqual(copy(saved.f),saved.values);
+ right.dispose();
+});

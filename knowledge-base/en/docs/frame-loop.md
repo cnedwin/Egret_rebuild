@@ -61,3 +61,9 @@ A failure in `update` or in drawing stops the loop. Its state becomes `failed` a
 ## Limits
 
 The loop takes one step for each frame the display shows, of the length that passed. With `catchUpSeconds` a frame longer than `maxStepSeconds` is given as several steps, so a device that draws at 8 frames a second still plays at full speed, up to that many seconds a frame; the rest of a longer gap is dropped. It has no fixed-rate step: physics that needs one divides the seconds it is given. It does not pause by itself when the page is hidden; the browser stops calling it, and the first step afterwards is the longest length.
+
+### Presentation work and bounded render recovery
+
+Use optional `beforeRender()` to prepare presentation-only data after `update`, `shouldRender` and the Host pending-frame check, just before capture. It is not run for a clean or pending-limit frame; the Host may still reject a provisionally admitted attempt. Do not advance gameplay, clocks or semantic animation events here.
+
+By default errors still stop the loop. With `renderRetry: { maxConsecutive: 2, shouldRetry(error, consecutiveFailure) { ... } }` a game can explicitly accept specific render-call errors and try on a later display frame. The maximum is an integer from 1 through 8; only a successful render call or an explicit restart resets the streak. Time and updates are never replayed; errors in update, frame construction or preparation remain fatal. Returning false, throwing or exhausting the bound stops the loop. The configured snapshot adds `recoveredRenderFailures`, separate from Host-backpressure `skipped`. BrowserGame and Play forward both options; existing Engine diagnostics are still delivered. Use only for independently understood recoverable render failures.

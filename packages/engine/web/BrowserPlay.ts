@@ -14,7 +14,13 @@ import { createBrowserGamepadInput } from './gamepad.js';
 import type { BrowserGamepadInput } from './gamepad.js';
 import { createBrowserGame } from './game.js';
 import { createBrowserFrameLoop } from './loop.js';
-import type { BrowserGame, BrowserGameAtlasLabel, BrowserGameBackend, BrowserGameWarning } from './game.js';
+import type {
+  BrowserGame,
+  BrowserGameAtlasLabel,
+  BrowserGameBackend,
+  BrowserGameOptions,
+  BrowserGameWarning
+} from './game.js';
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 import type { SfxRecipe } from './playSfx.js';
 import { createPlayWidgets, verticalPlayWords } from './playWidgets.js';
@@ -92,6 +98,10 @@ export interface PlayOptions {
   readonly setup?: (game: PlayGame) => void | Promise<void>;
   /** One step of the game, with the seconds since the step before. */
   readonly update?: (seconds: number, game: PlayGame) => void;
+  /** Presentation-only work after a wanted frame passes the Host pending-frame check. */
+  readonly beforeRender?: BrowserGameOptions['beforeRender'];
+  /** Optional bounded retry policy for render failures; does not retry the simulation update. */
+  readonly renderRetry?: BrowserGameOptions['renderRetry'];
   /**
    * Continuous draws each display frame (the default). On-demand retains a static 2D frame until the scene, input
    * or canvas size changes. The clock and update still run on each display frame.
@@ -911,6 +921,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     ...(options.insets === undefined ? {} : { insets: options.insets }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),
     pixelRatio: playDensity,
+    ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
+    ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),
     ...(onError === undefined ? {} : { onError }),
     ...(options.onWarning === undefined ? {} : { onWarning: options.onWarning })
   }).catch((cause: unknown) => {
@@ -986,6 +998,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     host: baseBrowser.host,
     frame: () => baseBrowser.frame,
+    ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
+    ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),
     ...(revision === undefined
       ? {}
       : {

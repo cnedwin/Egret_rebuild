@@ -259,6 +259,7 @@ export async function verifyPlayUiHost(page) {
     closed = true;
     assert.equal(after.cancel.aborted, true);
     assert.notEqual(after.cancel.error, 'attached');
+    after.renderAdmission = await verifyRenderAdmission(page);
     const sample = new URL('/examples/play/index.html?game=semantic-letterbox', page.url());
     await page.goto(sample.href);
     const button = page.getByRole('button', { name: 'Place workshop' });
@@ -344,5 +345,76 @@ async function verifyViewImages(page, fixture) {
   } finally {
     release();
     await page.unroute(pattern, serveImage);
+  }
+}
+
+async function verifyRenderAdmission(page) {
+  const fixture = await page.evaluateHandle(async () => {
+    const { play } = await import('@egret/engine/play');
+    const host = document.createElement('div');
+    host.style.cssText = 'position:fixed;inset:0';
+    document.body.append(host);
+    let prepared = 0,
+      decisions = 0,
+      updates = 0;
+    const errors = [];
+    const game = await play({
+      parent: host,
+      width: 320,
+      height: 180,
+      backend: 'webgl2',
+      audio: false,
+      renderMode: 'on-demand',
+      update() {
+        updates++;
+      },
+      beforeRender() {
+        prepared++;
+      },
+      renderRetry: {
+        maxConsecutive: 1,
+        shouldRetry() {
+          decisions++;
+          return false;
+        }
+      },
+      onError: e => errors.push(e.code)
+    });
+    return {
+      inspect() {
+        return { prepared, decisions, updates, errors: [...errors], loop: game.browser.loop.snapshot() };
+      },
+      invalidate() {
+        game.invalidate();
+      },
+      async dispose() {
+        await game.dispose();
+        host.remove();
+      }
+    };
+  });
+  try {
+    await page.waitForFunction(f => f.inspect().prepared >= 1, fixture);
+    const first = await fixture.evaluate(f => f.inspect());
+    await page.waitForFunction(({ f, n }) => f.inspect().updates >= n + 6, { f: fixture, n: first.updates });
+    const quiet = await fixture.evaluate(f => f.inspect());
+    assert.equal(quiet.prepared, first.prepared);
+    assert.equal(quiet.loop.recoveredRenderFailures, 0);
+    assert.equal(quiet.decisions, 0);
+    await fixture.evaluate(f => f.invalidate());
+    await page.waitForFunction(({ f, n }) => f.inspect().prepared >= n + 1, { f: fixture, n: quiet.prepared });
+    const after = await fixture.evaluate(f => f.inspect());
+    assert.equal(after.prepared, quiet.prepared + 1);
+    assert.deepEqual(after.errors, []);
+    assert.equal(after.loop.state, 'running');
+    return {
+      firstPrepared: first.prepared,
+      quietUpdates: quiet.updates - first.updates,
+      afterPrepared: after.prepared,
+      recovered: after.loop.recoveredRenderFailures
+    };
+  } finally {
+    await fixture.evaluate(f => f.dispose());
+    await fixture.dispose();
   }
 }

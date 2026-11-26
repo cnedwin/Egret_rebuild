@@ -452,7 +452,8 @@ export function createPlayViews(
       const text = button ? part.description! : item.text;
       const size = button ? Math.ceil((part.size ?? plan.skin.size) * 0.72) : (part.size ?? plan.skin.size);
       const color = button ? (part.textColor ?? plan.skin.buttonText) : colourOf(part, item);
-      const key = JSON.stringify([text, size, color, width]);
+      const density = style.density ?? 1;
+      const key = JSON.stringify([text, size, color, width, density]);
       if (key === paragraph.key) return;
       paragraph.key = key;
       paragraph.text.setRequest({
@@ -464,7 +465,7 @@ export function createPlayViews(
         locale: style.locale ?? 'en',
         textAlign: !button && part.type === 'text' ? (part.align ?? 'left') : 'center',
         fillColor: color,
-        density: 1
+        density
       });
       void paragraph.text.prepare().catch(cause => {
         if (
@@ -978,7 +979,10 @@ export function createPlayViews(
                   : '';
               return { ...base, name: suffix ? item.text + '. ' + suffix : item.text, disabled: !enabled };
             }
-            return { ...base, name: label ?? item.text };
+            // Optional noninteractive text has no semantic content while blank.
+            // Retain an explicit accessible label, and keep interactive names strict.
+            const textName = label ?? item.text;
+            return { ...base, name: textName, hidden: hidden || !/\S/u.test(textName) };
           },
           ...(role === 'button' ||
           role === 'switch' ||
