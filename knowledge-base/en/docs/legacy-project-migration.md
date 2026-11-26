@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/旧工程迁移.md)
 
 Migration must carry an existing game into an independently editable Egret project while preserving its behavior, assets and publication path. R008 makes complete one-click migration a formal product deliverable: deterministic conversion and bounded Agent repair work together, followed by old/new comparison, continued editing and real target-platform publication.
 
-This requires more than compatible names. Display order, coordinates, input, animation timing, resource ownership and persistent state all affect observable behavior. Legacy samples therefore participate in core interface design and become regression assets for later upgrades. Migration tools and full-project acceptance remain unfinished; [core progress](core-progress.md) describes current prerequisites.
+Display order, coordinates, input, animation timing, resource ownership and persistent state all affect observable behavior. The first Egret Migrate CLI covers a bounded classic 5.2 Web 2D profile. It combines the existing RES analyzer, project transactions and browser verification in a package usable outside the engine checkout. Full-project acceptance across legacy formats and publication targets remains part of R008. [Egret Migrate guide](https://github.com/cnedwin/Egret_rebuild/tree/main/tools/egret-migrate) · [Core progress](core-progress.md)
 
 [Knowledge base home](../README.md) · [Delivery plan](delivery-plan.md) · [Technical architecture](technical-architecture.md) · [Requirements](../../Cns/registry/需求.json) · [Hypotheses](../../Cns/registry/假设.json)
 
