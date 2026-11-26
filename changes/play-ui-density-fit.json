@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "CSS-only screen fit notifications and paragraph density in Play views",
+    "body": "Embedded contain/expand canvases now notify screen listeners when the CSS scale changes even if logical bounds stay fixed. Declarative paragraphs accept an explicit density from 0.25 to 4, defaulting to 1, while retaining logical metrics and the existing raster/cache budgets."
+  },
+  "zh": {
+    "title": "Play 画布 CSS 缩放通知与段落栅格密度",
+    "body": "嵌入式 contain/expand 画布在只改变 CSS 缩放比、逻辑边界不变时也通知屏幕监听器。声明式段落支持显式设置 0.25–4 的栅格密度，默认 1，逻辑排版及现有栅格和缓存预算保持不变。"
+  }
+}

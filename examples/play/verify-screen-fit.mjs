@@ -3,9 +3,109 @@
 // a turn of the window and a tap on a button placed at a safe edge. The window is turned by resizing the page.
 import assert from 'node:assert/strict';
 
+async function verifyContainScale(page) {
+  const fixture = await page.evaluateHandle(async () => {
+    const { play } = await import('@egret/engine/play');
+    const parent = document.createElement('div');
+    parent.style.cssText = 'width:400px;height:200px';
+    document.body.append(parent);
+    const arranged = [],
+      notified = [];
+    let button,
+      taps = 0;
+    const game = await play({
+      parent,
+      width: 200,
+      height: 100,
+      fit: 'contain',
+      pixelRatio: 1,
+      backend: 'webgl2',
+      audio: false,
+      setup(g) {
+        button = g.button('Tap', { x: 100, y: 50, width: 44, height: 44 }, () => taps++);
+      },
+      arrange(g) {
+        const scale = g.browser.screen.scale;
+        button.scaleX = button.scaleY = 1 / scale;
+        arranged.push({ scale, screen: { ...g.screen }, safe: { ...g.safe } });
+      }
+    });
+    const remove = game.browser.onScreenChange(plan => notified.push(plan.scale));
+    return {
+      resize(width, height) {
+        parent.style.width = width + 'px';
+        parent.style.height = height + 'px';
+      },
+      read() {
+        const box = game.canvas.getBoundingClientRect(),
+          plan = game.browser.screen;
+        return {
+          arranged,
+          notified,
+          scale: plan.scale,
+          canvas: [box.width, box.height],
+          target: [(44 * button.scaleX * box.width) / plan.width, (44 * button.scaleY * box.height) / plan.height],
+          point: { x: box.left + box.width / 2, y: box.top + box.height / 2 },
+          taps
+        };
+      },
+      async close() {
+        remove();
+        await game.dispose();
+        parent.remove();
+      }
+    };
+  });
+  const frames = () =>
+    page.evaluate(
+      () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done))))
+    );
+  try {
+    await frames();
+    const initial = await fixture.evaluate(f => f.read());
+    assert.deepEqual(initial.canvas, [400, 200]);
+    assert.equal(initial.arranged.length, 1);
+    assert.equal(initial.scale, 2);
+    assert.deepEqual(initial.target, [44, 44]);
+    for (const [width, height, scale] of [
+      [180, 90, 0.9],
+      [600, 300, 3]
+    ]) {
+      await fixture.evaluate((f, size) => f.resize(...size), [width, height]);
+      await frames();
+      const next = await fixture.evaluate(f => f.read());
+      assert.equal(next.scale, scale);
+      assert.deepEqual(next.canvas, [width, height]);
+      assert.deepEqual(next.arranged.at(-1).screen, initial.arranged[0].screen);
+      assert.deepEqual(next.arranged.at(-1).safe, initial.arranged[0].safe);
+      assert.equal(next.arranged.at(-1).scale, scale, 'CSS-only scale change calls arrange');
+      assert.ok(
+        next.target.every(size => Math.abs(size - 44) < 0.01),
+        '44 CSS px target survives'
+      );
+    }
+    await fixture.evaluate(f => f.resize(600, 300));
+    await frames();
+    const final = await fixture.evaluate(f => f.read());
+    assert.deepEqual(
+      final.arranged.map(value => value.scale),
+      [2, 0.9, 3]
+    );
+    assert.deepEqual(final.notified, [0.9, 3]);
+    await page.mouse.click(final.point.x, final.point.y);
+    await frames();
+    assert.equal(await fixture.evaluate(f => f.read().taps), 1);
+    return { scales: final.arranged.map(value => value.scale), notifications: final.notified, target: final.target };
+  } finally {
+    await fixture.evaluate(f => f.close());
+    await fixture.dispose();
+  }
+}
+
 export async function verifyScreenFit(page) {
   const before = page.viewportSize();
   await page.setViewportSize({ width: 960, height: 540 });
+  const containScale = await verifyContainScale(page);
   const fixture = await page.evaluateHandle(async () => {
     const { play } = await import('@egret/engine/play');
     const log = { arranged: [], taps: 0 };
@@ -98,7 +198,12 @@ export async function verifyScreenFit(page) {
     await page.mouse.click(at.x, at.y);
     await frames();
     assert.equal(await fixture.evaluate(f => f.log.taps), 1, 'the button at the safe edge takes the tap');
-    return { arranged: log.length, orientations: [...new Set(log.map(entry => entry.orientation))], taps: 1 };
+    return {
+      containScale,
+      arranged: log.length,
+      orientations: [...new Set(log.map(entry => entry.orientation))],
+      taps: 1
+    };
   } finally {
     await fixture.evaluate(f => f.close());
     await fixture.dispose();

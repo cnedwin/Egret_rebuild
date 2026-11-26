@@ -91,6 +91,22 @@ test('VW05 rich text, button details, borders and image leaves share the fixed b
     );
 });
 
+// A paragraph's raster density is independent of its stage-unit layout.
+test('VW06 explicit paragraph density keeps logical boxes and rejects invalid density', () => {
+  const paragraph = { fontFamilies: ['Ahem'], lineHeight: 22 };
+  const root = { type: 'text', name: 'copy', text: 'Text', width: 136, height: 72 };
+  const plan = density =>
+    planView(
+      { root: { ...root, paragraph: { ...paragraph, ...(density === undefined ? {} : { density }) } } },
+      landscape
+    );
+  const plain = at(plan(undefined), 'copy');
+  for (const density of [0.25, 1, 2.625, 4]) assert.deepEqual(at(plan(density), 'copy'), plain);
+  for (const density of [0, 0.249, 4.01, Infinity, NaN, '2', null]) {
+    assert.throws(() => plan(density), { code: 'UI_VIEW_INVALID' });
+  }
+});
+
 // Break caught: an anchor measured from the wrong edge, an offset that goes outward, or a share of the wrong room.
 test('VW01 a free panel places each part from its anchor, inward, at its size or a share of the panel', () => {
   const plan = planView(

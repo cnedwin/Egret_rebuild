@@ -45,7 +45,7 @@ const plan = planScreen({
 `createBrowserGame({ fit: 'expand', portrait, insets })` 按它所在元素的大小和页面的 `safe-area-inset` 值计算舞台，元素尺寸变化时重新计算：
 
 - `game.screen` 是当前的结果，`game.frame` 是按这个尺寸绘制的帧。
-- `game.onScreenChange(listener)` 在舞台尺寸变化或安全区移动后，用新结果调用 `listener`，返回取消订阅的函数。
+- `game.onScreenChange(listener)` 在舞台尺寸、CSS 缩放比、方向或安全区变化后，用新结果调用 `listener`，返回取消订阅的函数。嵌入式 `'contain'` 画布有时只改变 CSS 缩放比，设计区域和安全区不变；包括 Play 的 `arrange` 在内的监听器也会收到这次通知。相同的结果不会重复通知。
 - 指针和悬停输入按舞台当前的尺寸把页面坐标换算到舞台。舞台尺寸会变时，两者各接收一个 `size` 函数，游戏会传进去。
 
 只有视口 meta 标签写了 `viewport-fit=cover`，页面才会给出 `safe-area-inset` 值：
@@ -64,6 +64,7 @@ const plan = planScreen({
   - 1200 × 540 时两侧各多显示 80 个单位；
   - 540 × 960 时换成竖版尺寸；
   - 在页面上点击，能点中 `arrange` 摆在安全区里的按钮。
+- 同一浏览器屏幕适配用例另将嵌入的 200 × 100 设计区域缩小再放大，CSS 缩放比依次为 2 → 0.9 → 3。`arrange` 保持按钮为 44 CSS 像素，安全区及设计区域不变，两次实际变化分别通知一次，最后的鼠标点击命中按钮。
 - `tests/wechat-minigame.test.mjs` 检查适配器把微信的安全区作为页面的 insets 报告。
 
 没有在带刘海的手机、Safari 或微信本身上运行过。这些运行中页面自己的 insets 始终为 0，刘海是用 `insets` 给出的。
