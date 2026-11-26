@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Avoid redundant normalization of qualified shared mesh triangles",
+    "body": "Reuse the canonical corners after nondegenerate authored and placed winding agree. Replay the exact original tuple and predicate charges or take the general path when budget admission fails. Packed output, clipping, UV qualification and refusal ordering stay unchanged."
+  },
+  "zh": {
+    "title": "省去已通过资格检查的共享网格三角形重复规范化",
+    "body": "作者坐标与变换后的非退化绕向一致时复用规范角点。原有元组与谓词费用原子重放，预算不足则继续走通用路径；打包结果、裁剪、纹理坐标资格检查与拒绝顺序保持不变。"
+  }
+}

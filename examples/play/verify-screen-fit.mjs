@@ -497,6 +497,102 @@ async function verifyTabletParts(page) {
   }
 }
 
+// A play3d world held upright: two red boxes four units to each side of the middle. With the camera's angle kept from
+// top to bottom (as before), an upright phone sees too little of the sides to show them; with keepWidthBelow 1 it sees
+// as much of the sides as a square view, and both show. Turned sideways, the angle is the one the game set again.
+async function verifyPortrait3D(page, PNG) {
+  const before = page.viewportSize();
+  await page.setViewportSize({ width: 900, height: 900 });
+  const fixture = await page.evaluateHandle(async () => {
+    const { play3d } = await import('@egret/engine/webgl2/world3d');
+    const parent = document.createElement('div');
+    parent.style.cssText = 'position:fixed;left:0;top:0;z-index:10;width:390px;height:844px';
+    document.body.append(parent);
+    let game;
+    await play3d({
+      parent,
+      width: 390,
+      height: 844,
+      fit: 'expand',
+      pixelRatio: 1,
+      background: 0x101010,
+      audio: false,
+      setup(g) {
+        game = g;
+        g.look({ background: 0x101010, fog: 0 });
+        for (const x of [-4, 4]) g.box(1, 1, 1, 0xff2020, { x, y: 0.5, z: 0 });
+      }
+    });
+    return {
+      resize(width, height) {
+        parent.style.width = width + 'px';
+        parent.style.height = height + 'px';
+      },
+      keep(value) {
+        game.camera.keepWidthBelow = value;
+      },
+      read: () => ({ fov: game.camera.fov, drawn: game.camera.node.fov, aspect: game.camera.node.aspect }),
+      async close() {
+        await game.dispose();
+        parent.remove();
+      }
+    };
+  });
+  const frames = () =>
+    page.evaluate(
+      () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done))))
+    );
+  // Red pixels in the left and the right third of the box the world is shown in.
+  const reds = async (width, height) => {
+    const png = PNG.sync.read(await page.screenshot({ clip: { x: 0, y: 0, width, height } }));
+    let left = 0,
+      right = 0;
+    for (let y = 0; y < png.height; y++)
+      for (let x = 0; x < png.width; x++) {
+        const i = (y * png.width + x) * 4,
+          [r, g, b] = [png.data[i], png.data[i + 1], png.data[i + 2]];
+        if (!(r > 120 && r > 2 * g && r > 2 * b)) continue;
+        if (x < png.width / 3) left++;
+        else if (x >= (png.width * 2) / 3) right++;
+      }
+    return { left, right };
+  };
+  try {
+    await frames();
+    const upright = await fixture.evaluate(f => f.read());
+    const narrow = await reds(390, 844);
+    assert.equal(upright.fov, 55);
+    assert.equal(upright.drawn, 55, 'the angle from top to bottom is kept unless asked');
+    assert.ok(narrow.left === 0 && narrow.right === 0, 'upright, the sides are out of view: ' + JSON.stringify(narrow));
+    await fixture.evaluate(f => f.keep(1));
+    await frames();
+    const kept = await fixture.evaluate(f => f.read());
+    const wide = await reds(390, 844);
+    const expected = (360 / Math.PI) * Math.atan(Math.tan((55 * Math.PI) / 360) / kept.aspect);
+    assert.ok(kept.aspect < 0.5 && Math.abs(kept.drawn - expected) < 1e-6, JSON.stringify(kept));
+    assert.equal(kept.fov, 55, 'the angle the game set is kept');
+    assert.ok(wide.left > 20 && wide.right > 20, 'with the width kept, both boxes show: ' + JSON.stringify(wide));
+    await fixture.evaluate(f => f.resize(844, 390));
+    await frames();
+    const sideways = await fixture.evaluate(f => f.read());
+    assert.ok(
+      sideways.aspect > 2 && sideways.drawn === 55,
+      'sideways, the angle is the one set: ' + JSON.stringify(sideways)
+    );
+    return {
+      uprightFov: upright.drawn,
+      keptFov: Math.round(kept.drawn * 10) / 10,
+      sidewaysFov: sideways.drawn,
+      narrow,
+      wide
+    };
+  } finally {
+    await fixture.evaluate(f => f.close());
+    await fixture.dispose();
+    if (before) await page.setViewportSize(before);
+  }
+}
+
 export async function verifyScreenFit(page, PNG) {
   const before = page.viewportSize();
   await page.setViewportSize({ width: 960, height: 540 });
@@ -505,6 +601,7 @@ export async function verifyScreenFit(page, PNG) {
   const pins = await verifyPins(page);
   const uiScale = await verifyUiScale(page);
   const tablet = await verifyTabletParts(page);
+  const portrait3D = PNG === undefined ? undefined : await verifyPortrait3D(page, PNG);
   const fixture = await page.evaluateHandle(async () => {
     const { play } = await import('@egret/engine/play');
     const log = { arranged: [], taps: 0 };
@@ -603,6 +700,7 @@ export async function verifyScreenFit(page, PNG) {
       pins,
       uiScale,
       tablet,
+      portrait3D,
       arranged: log.length,
       orientations: [...new Set(log.map(entry => entry.orientation))],
       taps: 1
