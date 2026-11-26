@@ -38,7 +38,9 @@ A range is a number, or two numbers between which each particle picks evenly.
 | `seed` | The same seed gives the same particles for the same updates | 1 |
 | `blendMode` | How the particles are combined with what is under them: `'normal'`, `'add'` (glows, sparks, fire), `'multiply'`, `'screen'` or `'erase'`, as `DisplayObject.blendMode`. The same as setting `emitter.display.blendMode` | `'normal'` |
 
-`x` and `y` are the place of the emitter inside its display; a particle stays where it was born when the emitter moves. `start()`, `stop()` (those alive live out their lives), `burst(count)`, `clear()`, `alive`, `snapshot()` and `particles()` (each particle alive, for checks and tools).
+`x` and `y` are the place of the emitter inside its display; a particle stays where it was born when the emitter moves. `start()`, `stop()` (those alive live out their lives), `burst(count)`, `burstAtMany(sites)`, `clear()`, `alive`, `snapshot()` and `particles()` (each particle alive, for checks and tools).
+
+`burstAtMany([{ x, y, count }, ...])` is useful when several effects reach the same emitter in one update, such as a group of characters disappearing together. For a valid batch it emits in array order exactly as setting `x`, `y` and calling `burst(count)` at each site, including the seeded random sequence, the active-particle limit and the number refused. It validates and snapshots all sites before changing the emitter; the list may hold up to 16,384 sites and request up to 1,048,576 particles in total. Coordinates must be finite and each count a nonnegative safe integer. An invalid batch raises `PARTICLE_OPTIONS_INVALID`. An empty list on an active emitter has no effect; a valid list on a disposed emitter raises `PARTICLE_CLOSED`. A zero-count site still sets the position. After a successful nonempty call the last position and the completed mesh are available immediately: it builds the mesh only once, without waiting for an update.
 
 The colour and alpha of a particle are the colour of its vertices, which the renderer multiplies with the texture. Colours are given as they are seen and turned into the renderer's linear light, so a white texture shows the colour given. With the ordinary blending overlapping flames are as bright as the brightest; with `blendMode: 'add'` they add up and grow brighter where they overlap, as fire and sparks should.
 
@@ -55,7 +57,8 @@ The colour and alpha of a particle are the colour of its vertices, which the ren
 | What | Where | Result |
 | --- | --- | --- |
 | Emission by rate across updates, lifetimes, the most alive, motion under gravity and drag at any step, what a particle is born and dies with, the mesh corner by corner, shapes, seeds, durations, disposal, edges of options, a strict TypeScript consumer with five refused misuses, and the exports | Node, [`tests/particles.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/particles.test.mjs) | 13 cases |
-| Every comparison, boolean and logical operator of the built module changed one at a time | Node | 122 changes, 122 caught |
+| Batch emission: 48 sites with existing particles and a cap, one synchronous mesh publication with all geometry channels equal, later motion and emission, invalid input and boundaries; two new strict type refusals | Node, `tests/particles.test.mjs` | 3 new cases; 17 particle cases pass in this revision |
+| Every comparison, boolean and logical operator of the built module changed one at a time (earlier implementation, before the batch API) | Node | 122 changes, 122 caught |
 | The example: the first frame, a brazier that burns the same way for the same steps, petals that fall, sparks where a press is, the fire put out and lit again, real time, a tap on a phone profile | Headless Chromium 153, software WebGL2 | 7 scenarios |
 | A hardware GPU, a real phone, the cost of thousands of particles a frame | — | Not run |
 

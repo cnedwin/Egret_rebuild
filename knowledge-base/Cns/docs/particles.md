@@ -38,7 +38,9 @@ function frame(seconds) { fire.update(seconds); engine.renderSharedFrame(frameOp
 | `seed` | 同样的种子在同样的更新下产生同样的粒子 | 1 |
 | `blendMode` | 粒子与下面内容的混合方式：`'normal'`、`'add'`（光晕、火花、火焰）、`'multiply'`、`'screen'` 或 `'erase'`，与 `DisplayObject.blendMode` 相同；等同于设置 `emitter.display.blendMode` | `'normal'` |
 
-`x` 和 `y` 是发射器在其显示对象内的位置；发射器移动时，粒子停留在出生的位置。另有 `start()`、`stop()`（存活的粒子会走完自己的一生）、`burst(count)`、`clear()`、`alive`、`snapshot()` 和 `particles()`（所有存活的粒子，供检查和工具使用）。
+`x` 和 `y` 是发射器在其显示对象内的位置；发射器移动时，粒子停留在出生的位置。另有 `start()`、`stop()`（存活的粒子会走完自己的一生）、`burst(count)`、`burstAtMany(sites)`、`clear()`、`alive`、`snapshot()` 和 `particles()`（所有存活的粒子，供检查和工具使用）。
+
+当同一次更新中有多个特效使用同一个发射器时（例如一群角色同时消失），可使用 `burstAtMany([{ x, y, count }, ...])`。对有效的批次，它按数组顺序发射，与逐点设置 `x`、`y` 并调用 `burst(count)` 一致，包括有种子的随机序列、存活粒子上限和被拒绝的数量。它先校验并快照所有发射点，再改变发射器；每个批次最多 16384 个发射点，合计最多请求 1048576 个粒子。坐标必须为有限数，每个数量都必须为非负安全整数。无效批次抛出 `PARTICLE_OPTIONS_INVALID`。活动发射器收到空数组时不执行任何操作；已销毁的发射器收到有效数组时抛出 `PARTICLE_CLOSED`。数量为零的点也会设置发射位置。非空批次成功返回时，最终位置和完整网格已立即就绪：只构建一次网格，不需要等待下一次更新。
 
 粒子的颜色和透明度是其顶点颜色，渲染器把它与纹理相乘。颜色按所见颜色给出，并转换为渲染器使用的线性光照，所以白色纹理显示为所给的颜色。普通混合下，重叠的火焰只与其中最亮的一样亮；给 `blendMode: 'add'` 后，重叠处会叠加变亮，火焰和火花应当如此。
 
@@ -55,7 +57,8 @@ function frame(seconds) { fire.update(seconds); engine.renderSharedFrame(frameOp
 | 内容 | 环境 | 结果 |
 | --- | --- | --- |
 | 跨多次更新的按速率发射、生命周期、存活上限、任意步长下的重力和阻力运动、粒子出生和消亡时的属性、逐个角点比对的网格、形状、种子、持续时间、销毁、选项边界、严格 TypeScript 使用方（含五处被拒绝的误用）以及导出 | Node，[`tests/particles.test.mjs`](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/particles.test.mjs) | 13 个用例 |
-| 把构建后模块中的每个比较、布尔和逻辑运算符逐个改掉 | Node | 122 处改动，全部被发现 |
+| 批量发射：已有粒子且达到上限时的 48 个发射点、同步发布一次且所有几何通道完全一致、后续运动及发射、无效输入和边界；新增两处严格类型拒绝 | Node，`tests/particles.test.mjs` | 新增 3 个用例；本版本粒子测试共 17 个通过 |
+| 把构建后模块中的每个比较、布尔和逻辑运算符逐个改掉（早期实现，尚无批量 API） | Node | 122 处改动，全部被发现 |
 | 示例：第一帧、同样步进下同样燃烧的火盆、飘落的花瓣、点击处的火花、熄灭后重新点燃的火焰、真实时间、手机配置下的轻触 | 无头 Chromium 153，软件 WebGL2 | 7 个场景 |
 | 硬件 GPU、真实手机、每帧数千个粒子的开销 | — | 未运行 |
 

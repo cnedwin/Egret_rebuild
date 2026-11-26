@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Burst particles at multiple sites with one mesh rebuild",
+    "body": "The optional 2D particle emitter adds burstAtMany(sites), with a public ParticleBurstSite type. It validates the entire input first, preserves the sequential seeded emission, particle limit and refused counts, and synchronously publishes one final mesh instead of rebuilding after each site. Existing burst(count) keeps its behavior."
+  },
+  "zh": {
+    "title": "批量在多点发射粒子，仅重建一次网格",
+    "body": "可选 2D 粒子发射器新增 burstAtMany(sites) 及公开的 ParticleBurstSite 类型。先校验整个输入，保持顺序发射的随机序列、粒子上限和被拒绝的数量，之后同步发布最终网格，而不在每个点重复重建。原 burst(count) 行为不变。"
+  }
+}
