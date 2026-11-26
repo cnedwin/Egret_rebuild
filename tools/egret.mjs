@@ -7,6 +7,7 @@
 //   node tools/egret.mjs list [<area> | all]
 //   node tools/egret.mjs explain <ERROR_CODE>
 //   node tools/egret.mjs notes [<game folder>] [--check]
+//   node tools/egret.mjs check [<game folder>] [--strict] [--json]
 //
 // The same file runs in this repository and in a game's engine copy, where tools/vendor-game.mjs puts it under
 // vendor/egret/tools/ with the guide beside it and vendor/egret.mjs to start it, so an agent working in the game's
@@ -16,6 +17,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { GUIDE, ROOT, loadCards, render, run as runGuide, search } from './egret-guide.mjs';
+import { checkReport } from './egret-check.mjs';
 import { notesReport } from './egret-notes.mjs';
 
 /** The engine copy of a game holds this file at vendor/egret/tools/egret.mjs, and the runtime at vendor/runtime. */
@@ -32,6 +34,7 @@ function usage() {
     `  ${COMMAND} list [<area> | all]                                                 the areas, or an area's cards`,
     `  ${COMMAND} explain <ERROR_CODE>                                                an error in English and Chinese`,
     `  ${COMMAND} notes [<game folder>] [--check]                                     the game's engine notes the engine has fixed`,
+    `  ${COMMAND} check [<game folder>] [--strict] [--json]                           the game's files read for common mistakes`,
     ''
   ].join('\n');
 }
@@ -100,6 +103,19 @@ export async function main(args, cards = loadCards()) {
         folders = rest.filter(arg => arg !== '--check');
       if (folders.length > 1 || folders.some(arg => arg.startsWith('--'))) return { code: 2, text: usage() };
       return notesReport(folders[0] ?? process.cwd(), GUIDE, { command: COMMAND, check, copy: VENDORED });
+    }
+    case 'check': {
+      const flags = new Set(rest.filter(arg => arg.startsWith('--'))),
+        folders = rest.filter(arg => !arg.startsWith('--'));
+      if (folders.length > 1 || [...flags].some(flag => flag !== '--strict' && flag !== '--json'))
+        return { code: 2, text: usage() };
+      // The notes are read against the list of the engine copy, which is the game's pin; from this repository, the newest.
+      return checkReport(folders[0] ?? process.cwd(), ROOT, {
+        command: COMMAND,
+        resolvedGuide: GUIDE,
+        json: flags.has('--json'),
+        strict: flags.has('--strict')
+      });
     }
     case undefined:
     case 'help':
