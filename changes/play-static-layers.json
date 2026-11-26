@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Retained WebGL2 backgrounds in BrowserGame and Play",
+    "body": "Opt into `staticLayers: true` and place genuine retained WebGL2 layers beneath the ordinary stage. Reuse a baked chunk while moving its placement, replace a changed chunk explicitly, and wake on-demand Play by setting placements. The existing Host limits and context-loss lifecycle remain in force; WebGPU and ordinary rendering are unchanged."
+  },
+  "zh": {
+    "title": "BrowserGame 和 Play 接入 WebGL2 GPU 缓存背景",
+    "body": "通过 `staticLayers: true` 显式启用真实的 WebGL2 缓存图层，在普通舞台绘制之前合成。移动时复用已烘焙的地图块，局部变化时明确更新该块，并由设置放置唤醒按需绘制的 Play。沿用现有宿主的资源限制和上下文丢失处理，WebGPU 和普通绘制不变。"
+  }
+}

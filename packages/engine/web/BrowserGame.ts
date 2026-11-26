@@ -26,6 +26,8 @@ import type {
   Texture
 } from '@egret/engine';
 import { createBrowserTextureProvider } from './image.js';
+import { createBrowserStaticLayers } from './browserStaticLayers.js';
+import type { BrowserGameStaticLayers } from './browserStaticLayers.js';
 import { decodeBrowserImage, sniffBrowserImageFormat } from './BrowserImageTextures.js';
 import { createTextField, createTextRasterCache } from '@egret/engine/text';
 import type { TextField, TextRasterCache } from '@egret/engine/text';
@@ -166,6 +168,8 @@ export interface BrowserGameOptions {
    * Off unless given; a frame with an effect is refused without it.
    */
   readonly effects?: boolean;
+  /** Opt into explicit retained GPU background placements when the chosen backend is WebGL2. */
+  readonly staticLayers?: boolean;
   /** One step of the game, called before each frame with the seconds since the step before. */
   readonly update?: (deltaSeconds: number) => void;
   /** Presentation-only work after frame admission, before capture. */
@@ -216,6 +220,8 @@ export interface BrowserGame {
   readonly engine: Engine;
   /** The Host that draws: its status says what it holds and what last went wrong. It ends with the game. */
   readonly host: { getStatus(): { readonly pendingFrames: number }; whenIdle(): Promise<void> };
+  /** Available only on opted-in WebGL2 games. WebGPU and ordinary games keep their original rendering path. */
+  readonly staticLayers?: BrowserGameStaticLayers;
   /** The stage of the Engine: what is added to it is drawn. */
   readonly stage: Stage;
   /** A scope for what the game creates. It is disposed with the game. */
@@ -435,7 +441,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         options.renderRetry.maxConsecutive > 8 ||
         typeof options.renderRetry.shouldRetry !== 'function')) ||
     (onWarning !== undefined && typeof onWarning !== 'function') ||
-    [options.pointer, options.keyboard, options.hover, options.autoStart, options.stats].some(
+    [options.pointer, options.keyboard, options.hover, options.autoStart, options.stats, options.staticLayers].some(
       flag => flag !== undefined && typeof flag !== 'boolean'
     ) ||
     !['none', 'contain', 'cover', 'stretch', 'expand'].includes(options.fit ?? 'none') ||
@@ -463,9 +469,14 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     backend === 'webgpu'
       ? (await import('./webgpu.js')).createSharedWebGPUHost({ canvas, pixelRatio, blendSpace, enableEffects })
       : (await import('./webgl2.js')).createSharedWebGL2Host({ canvas, pixelRatio, blendSpace, enableEffects });
+  const staticCache =
+    options.staticLayers === true && 'createSharedLayer2D' in host ? createBrowserStaticLayers(host) : undefined;
   let engine: Engine;
   try {
-    engine = await createEngineForProfile({ host, onDiagnostic: gameDiagnostics(onError) }, SHARED_FRAME_PROFILE_2D);
+    engine = await createEngineForProfile(
+      { host: staticCache?.adapter ?? host, onDiagnostic: gameDiagnostics(onError) },
+      SHARED_FRAME_PROFILE_2D
+    );
   } catch (cause) {
     try {
       await host.close();
@@ -1475,6 +1486,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       backend,
       engine,
       host,
+      ...(staticCache === undefined ? {} : { staticLayers: staticCache.api }),
       stage: engine.stage,
       scope,
       get frame() {

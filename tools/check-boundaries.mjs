@@ -5441,18 +5441,28 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
+const gameEntries=['./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],
- 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','@egret/engine','@egret/engine/text'],
+ 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','@egret/engine','@egret/engine/text'],
+ 'web/browserStaticLayers.ts':['@egret/runtime','@egret/contracts'],'dist/web/browserStaticLayers.js':['@egret/runtime'],'dist/web/browserStaticLayers.d.ts':['@egret/contracts'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};
 for(const [file,expected] of Object.entries(gameImports)){
  const body=uiRead('packages/engine/'+file),observed=[...new Set(uiGraphEdges(body).map(([,target])=>target))];
  if(!mouseSame(observed,expected))throw new Error('Browser game: exact graph mismatch: '+file);
  // The panel and the game start no timer, worker or stored state of their own. The game asks the page for an image only
  // when `loadTexture` is called; the panel makes no request at all.
- if(new RegExp('\\b(?:setTimeout|setInterval|Worker|XMLHttpRequest|localStorage'+(file.includes('BrowserGame')?'':'|fetch')+')\\b').test(body))throw new Error('Browser game: acquired automatic host work: '+file);
+ let automatic=body;
+ // This private adapter delegates the Host's already-owned cancellation timer.
+ // The exact forwarding body is the only timer spelling admitted here.
+ if(file==='web/browserStaticLayers.ts'||file==='dist/web/browserStaticLayers.js'){
+  const forwarding=file.endsWith('.ts')?/setTimeout\(callback: \(\) => void, delayMs: number\)\s*\{\s*return host\.setTimeout\(callback, delayMs\);\s*\}/g:/setTimeout\(callback, delayMs\)\s*\{\s*return host\.setTimeout\(callback, delayMs\);\s*\}/g;
+  if([...body.matchAll(forwarding)].length!==1)throw new Error('Browser game: layer adapter timer delegation changed: '+file);
+  automatic=body.replace(forwarding,'');
+ }
+ if(new RegExp('\\b(?:setTimeout|setInterval|Worker|XMLHttpRequest|localStorage'+(file.includes('BrowserGame')?'':'|fetch')+')\\b').test(automatic))throw new Error('Browser game: acquired automatic host work: '+file);
 }
-const gameAllowed={'web/BrowserGame.js':['web/game.ts'],'dist/web/BrowserGame.js':['dist/web/game.js','dist/web/game.d.ts'],
+const gameAllowed={'web/browserStaticLayers.js':['web/BrowserGame.ts'],'dist/web/browserStaticLayers.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'],
+ 'web/BrowserGame.js':['web/game.ts'],'dist/web/BrowserGame.js':['dist/web/game.js','dist/web/game.d.ts'],
  'web/BrowserStatsPanel.js':['web/game.ts','web/BrowserGame.ts'],'dist/web/BrowserStatsPanel.js':['dist/web/game.js','dist/web/game.d.ts','dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts']};
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
  if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');

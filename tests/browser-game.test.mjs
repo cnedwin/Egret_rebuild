@@ -50,6 +50,7 @@ test('BG01 what is not a game is refused before a Host is made', async () => {
     {},
     { ...good, canvas: undefined },
     { ...good, canvas: {} },
+    { ...good, staticLayers: 'true' },
     { ...good, width: 0 },
     { ...good, width: 1.5 },
     { ...good, height: -1 },
@@ -236,6 +237,7 @@ test('padHitArea contains a CSS square after parent scaling, reflection, rotatio
     keyboard: false
   });
   try {
+    assert.equal(game.staticLayers, undefined, 'ordinary WebGL2 games do not opt into the cache');
     const parent = game.stage.addChild(game.scope.use(new egret.Sprite()));
     const icon = parent.addChild(game.scope.use(new egret.Sprite()));
     icon.graphics.beginFill(1).drawRect(0, 0, 8, 8).endFill();
@@ -263,6 +265,118 @@ test('padHitArea contains a CSS square after parent scaling, reflection, rotatio
     parent.scaleX = 0;
     assert.ok(Object.values(area()).every(Number.isFinite));
     assert.deepEqual(game.padHitArea(icon, 0), { x: 0, y: 0, width: 8, height: 8 });
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('opt-in static GPU background remains cached while normal stage geometry changes', async t => {
+  // Existing BrowserGame test-owned page/GL ports. This establishes commands,
+  // upload bytes and lifetime, not physical GPU pixels or timing.
+  const doc = page().document;
+  const globals = {
+    document: doc,
+    window: { document: doc, createImageBitmap() {} },
+    ImageBitmap: class {
+      close() {}
+    }
+  };
+  for (const [name, value] of Object.entries(globals)) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    t.after(() =>
+      previous ? Object.defineProperty(globalThis, name, previous) : Reflect.deleteProperty(globalThis, name)
+    );
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+  }
+  const ports = glPorts(),
+    { canvas } = ports;
+  canvas.getBoundingClientRect = () => ({ width: 128, height: 64 });
+  const game = await createBrowserGame({
+    canvas,
+    width: 128,
+    height: 64,
+    pixelRatio: 1,
+    backend: 'webgl2',
+    autoStart: false,
+    pointer: false,
+    keyboard: false,
+    staticLayers: true
+  });
+  try {
+    const cache = game.staticLayers;
+    assert.ok(cache);
+    const background = game.stage.addChild(game.scope.use(new egret.Sprite()));
+    for (let y = 0; y < 4; y++)
+      for (let x = 0; x < 16; x++)
+        background.graphics
+          .beginFill((x + y) % 2 ? 0x995530 : 0x704620)
+          .drawRect(x * 8, y * 16, 8, 16)
+          .endFill();
+    const source = game.engine.captureSharedFrame({
+      width: 128,
+      height: 64,
+      clearColor: 0,
+      clearAlpha: 0,
+      outputAlpha: 'premultiplied'
+    });
+    assert.equal(source.commands.length, 64);
+    const layer = cache.createLayer();
+    const bakeStart = ports.events.length;
+    await layer.update(source);
+    const bake = ports.events.slice(bakeStart);
+    const texture = bake.find(e => e[0] === 'framebufferTexture2D' && e[2] === ports.gl.COLOR_ATTACHMENT0 && e[4])?.[4];
+    assert.ok(texture);
+    assert.equal(layer.state, 'ready');
+    assert.equal(cache.getStatus().residentBytes, 128 * 64 * 4);
+    const actor = game.stage.addChild(game.scope.use(new egret.Sprite()));
+    actor.graphics.beginFill(0xffcc88).drawRect(0, 0, 8, 8).endFill();
+    actor.x = 16;
+    const submitted = async () => {
+      const start = ports.events.length,
+        frame = game.drawFrame(game.frame);
+      assert.ok(frame);
+      await game.host.whenIdle();
+      const events = ports.events.slice(start);
+      const uploaded = events.filter(e => e[0] === 'bufferSubData').reduce((sum, e) => sum + e[3].byteLength, 0);
+      return { frame, events, uploaded };
+    };
+    const direct = await submitted();
+    assert.equal(direct.frame.commands.length, 65);
+    game.stage.removeChild(background);
+    const placement = { layer, x: 0, y: 0, width: 128, height: 64 };
+    cache.setPlacements([placement]);
+    placement.x = 999; // A set copies the caller's coordinates.
+    const first = await submitted();
+    actor.x = 32;
+    cache.setPlacements([{ ...placement, x: -8 }]);
+    const moved = await submitted();
+    for (const cached of [first, moved]) {
+      assert.equal(cached.frame.commands.length, 1);
+      assert.ok(cached.uploaded < direct.uploaded, 'static geometry is not uploaded again');
+      assert.ok(cached.events.some(e => e[0] === 'bindTexture' && e[2] === texture));
+      assert.ok(!cached.events.some(e => e[0] === 'readPixels' || e[0] === 'texSubImage2D'));
+    }
+    t.diagnostic(
+      `Ordinary frame commands 65 -> 1; bufferSubData bytes ${direct.uploaded} -> ${first.uploaded} / ${moved.uploaded}`
+    );
+    assert.throws(() => cache.setPlacements([{ ...placement, x: NaN }]), coded('BROWSER_GAME_OPTIONS_INVALID'));
+    assert.throws(
+      () => cache.setPlacements([{ ...placement, layer: { ...layer } }]),
+      coded('BROWSER_GAME_OPTIONS_INVALID')
+    );
+    const stillPlaced = await submitted();
+    assert.ok(
+      stillPlaced.events.some(e => e[0] === 'bindTexture' && e[2] === texture),
+      'refusal keeps the last valid placement'
+    );
+    cache.setPlacements([]);
+    assert.equal((await submitted()).frame.commands.length, 1);
+    layer.dispose();
+    assert.equal(cache.getStatus().residentBytes, 0);
+    const owned = cache.createLayer();
+    await owned.update(source);
+    await game.dispose();
+    assert.equal(owned.state, 'disposed');
   } finally {
     await game.dispose();
   }

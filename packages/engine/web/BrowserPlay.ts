@@ -118,6 +118,8 @@ export interface PlayOptions {
   readonly seed?: number | string;
   /** `'auto'` unless given. */
   readonly backend?: 'auto' | BrowserGameBackend;
+  /** Opt into explicit retained GPU backgrounds on WebGL2 (game.browser.staticLayers). */
+  readonly staticLayers?: boolean;
   /** Render pixels per stage unit. Layout, input and semantic bounds stay in stage units. */
   readonly pixelRatio?: number;
   /**
@@ -824,6 +826,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   if (!colour(background)) throw invalid('background is a colour from 0 to 0xffffff');
   if (setup !== undefined && typeof setup !== 'function') throw invalid('setup is a function');
   if (update !== undefined && typeof update !== 'function') throw invalid('update is a function');
+  if (options.staticLayers !== undefined && typeof options.staticLayers !== 'boolean')
+    throw invalid('staticLayers is true or false');
   const renderMode = options.renderMode ?? 'continuous';
   if (renderMode !== 'continuous' && renderMode !== 'on-demand')
     throw invalid("renderMode is 'continuous' or 'on-demand'");
@@ -909,6 +913,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     blendSpace,
     // Masks, glows, outlines, blurs and colour matrices are drawn, as Egret 5 code expects of them.
     effects: true,
+    ...(options.staticLayers === undefined ? {} : { staticLayers: options.staticLayers }),
     autoStart: false,
     keyboard: false,
     ...(holder === undefined ? {} : { fit: fitAsked, fitTo: holder }),
@@ -928,6 +933,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const revision = renderMode === 'on-demand' ? engine.watchDisplayRevision(scope) : undefined;
   let lastFrame: BrowserGame['frame'] | undefined,
     lastRevision = -1,
+    lastLayerRevision = -1,
     redraw = 0,
     shownRedraw = 0;
   const invalidate = (): void => {
@@ -976,13 +982,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       renderSharedFrame(frame) {
         // A refusal or a late mutation must leave the request pending.
         const pending = redraw,
-          next = revision?.revision;
+          next = revision?.revision,
+          nextLayer = baseBrowser.staticLayers?.revision ?? 0;
         // Drawn as the game draws: a frame of too many images is left undrawn with a warning, not the game stopped.
         const submitted = baseBrowser.drawFrame(frame);
         if (submitted === undefined) return undefined;
         if (next !== undefined) {
           lastFrame = frame;
           lastRevision = next;
+          lastLayerRevision = nextLayer;
           shownRedraw = pending;
         }
         return submitted;
@@ -996,7 +1004,10 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       ? {}
       : {
           shouldRender: () =>
-            lastRevision !== revision.revision || shownRedraw !== redraw || lastFrame !== baseBrowser.frame
+            lastRevision !== revision.revision ||
+            lastLayerRevision !== (baseBrowser.staticLayers?.revision ?? 0) ||
+            shownRedraw !== redraw ||
+            lastFrame !== baseBrowser.frame
         }),
     update: () => {
       if (!disposed && playLoop.state === 'running') step(realStep, playStep);
