@@ -233,7 +233,9 @@ export interface BrowserGameOptions {
   readonly portrait?: ScreenSize;
   /**
    * What covers the edges of the element, in CSS pixels, for `game.screen.safe`. The page's own `safe-area-inset`
-   * values unless given, which the page has when its viewport meta tag says `viewport-fit=cover`.
+   * values unless given, which the page has when its viewport meta tag says `viewport-fit=cover`. A page whose
+   * `globalThis.__egretAgent` has `insets` (`{ top, right, bottom, left }`, CSS pixels of the window) takes those as the
+   * window's instead: a tool stands in that way for the notch and the home bar of a phone a headless browser lacks.
    */
   readonly insets?: ScreenInsets;
   /** The loop starts at once unless false is given; then `game.loop.start()` starts it. */
@@ -393,11 +395,6 @@ async function chooseBackend(asked: 'auto' | BrowserGameBackend): Promise<Browse
   }
 }
 
-/**
- * What a game does with the diagnostics of its Engine. An error the Engine can only report, such as a listener of
- * pointer input that threw, which ends that input, is told as a failure of the loop is: to `onError`, or to the page,
- * where the console shows it. Without this it was told to no one, and the game went on without its input.
- */
 /** Tells a tool's `globalThis.__egretAgent.warning`, where a page has one, of a warning; what it throws is the tool's. */
 function tellAgent(warning: BrowserGameWarning): void {
   const agent = (globalThis as { readonly __egretAgent?: { readonly warning?: unknown } }).__egretAgent;
@@ -409,6 +406,24 @@ function tellAgent(warning: BrowserGameWarning): void {
   }
 }
 
+/**
+ * The safe-area insets a tool's `globalThis.__egretAgent.insets` gives, in the window's CSS pixels, to fit the game as
+ * a phone with a notch would; undefined where a page has none, or none of 0 or more on each side.
+ */
+function agentInsets(): ScreenInsets | undefined {
+  const agent = (globalThis as { readonly __egretAgent?: { readonly insets?: unknown } }).__egretAgent;
+  const insets = agent?.insets as Partial<ScreenInsets> | undefined;
+  if (insets === null || typeof insets !== 'object') return undefined;
+  const sides = [insets.top, insets.right, insets.bottom, insets.left];
+  if (!sides.every(side => typeof side === 'number' && Number.isFinite(side) && side >= 0)) return undefined;
+  return { top: insets.top!, right: insets.right!, bottom: insets.bottom!, left: insets.left! };
+}
+
+/**
+ * What a game does with the diagnostics of its Engine. An error the Engine can only report, such as a listener of
+ * pointer input that threw, which ends that input, is told as a failure of the loop is: to `onError`, or to the page,
+ * where the console shows it. Without this it was told to no one, and the game went on without its input.
+ */
 export function gameDiagnostics(onError: ((error: unknown) => void) | undefined): DiagnosticHandler {
   return diagnostic => {
     if (diagnostic.severity !== 'error') return;
@@ -807,15 +822,23 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       }
       const style = view.getComputedStyle(probe),
         read = (value: string): number => (Number.isFinite(parseFloat(value)) ? Math.max(0, parseFloat(value)) : 0);
+      // A tool may stand in for a phone's notch and home bar, which a headless browser does not have.
+      const standIn = agentInsets(),
+        edges = standIn ?? {
+          top: read(style.paddingTop),
+          right: read(style.paddingRight),
+          bottom: read(style.paddingBottom),
+          left: read(style.paddingLeft)
+        };
       // Insets are of the window; the element may be anywhere in it.
       const box = (holder ?? canvas).getBoundingClientRect(),
         across = view.innerWidth,
         down = view.innerHeight;
       return {
-        top: Math.max(0, read(style.paddingTop) - box.top),
-        left: Math.max(0, read(style.paddingLeft) - box.left),
-        right: Math.max(0, read(style.paddingRight) - (finite(across) ? across - box.right : 0)),
-        bottom: Math.max(0, read(style.paddingBottom) - (finite(down) ? down - box.bottom : 0))
+        top: Math.max(0, edges.top - box.top),
+        left: Math.max(0, edges.left - box.left),
+        right: Math.max(0, edges.right - (finite(across) ? across - box.right : 0)),
+        bottom: Math.max(0, edges.bottom - (finite(down) ? down - box.bottom : 0))
       };
     };
     if (fit !== 'none' && holder !== null) {

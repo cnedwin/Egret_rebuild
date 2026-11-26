@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/verify-screens.mjs",
+      "originRole": "First-party tool that opens one game page on eight phone, tablet and desktop screens in headless Chromium with stand-in safe-area insets, pictures each and reports errors, blank pictures, scrolling, fill and, for play games, controls outside the safe part, under 44 CSS pixels or covering each other; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/screen-check/index.html",
+      "originRole": "First-party example page for egret verify --screens; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/screen-check/main.mjs",
+      "originRole": "First-party example of a landscape play game with a pinned pause button, a small help button and two overlapping buttons, and the same game fixed; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/screen-check/verify.mjs",
+      "originRole": "First-party browser check that verify --screens finds the notch, the small target and the overlap on the screens that have them, that the engine took the stand-in insets, and finds nothing once fixed; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
