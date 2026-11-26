@@ -407,6 +407,8 @@ WebGL2 上，将 `reflection.createPass(camera, hidden)` 作为 `preparePrograms
 
 World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为只有 3D 画布的应用返回宿主。`startWorld3DLoop(engine)` 每个显示帧推进一次显式 Engine 时钟，并在间隔超过时钟步长上限后重新设定锚点。
 
+调用 `app.stop()` 后再调用 `app.start()`，若首帧间隔超过上限，该帧会重新设定时钟锚点。引擎保留已累计的游戏时间，下一帧恢复正常更新。在同一引擎上释放并重新创建 `startWorld3DLoop(engine)` 句柄也适用。
+
 `createWorld3DView(engine, scope, options)` 在 Scope 下订阅 Engine 时钟。每次 tick 按需调整绘制缓冲大小，调用 `onUpdate`，推进混合器、控制器和粒子发射器，然后渲染。关闭 Scope 即结束视图。渲染器、场景和控制器仍归创建者所有；用 `scope.use(...)` 登记后可随 Scope 一并退役。
 
 需要在 3D 场景上方显示 2D 界面时，可以把透明的共享 2D 宿主画布叠放在 World3D 画布之上，也可以把 2D 画布作为屏幕层绘制（见“2D 与 3D 同屏”）。把单个 2D 显示对象按深度穿插在 3D 对象之间，仍由可编辑场景路径负责。
