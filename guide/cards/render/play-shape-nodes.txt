@@ -2,7 +2,7 @@
 id: play-shape-nodes
 title: play's rect and circle sit on their centre and are drawn once
 applies: [play]
-triggers: [play, "game.rect", "game.circle", "rect colour", "change colour", "recolour", "rect position", "rect offset", "centre", "graphics.clear", "改颜色", "方块变色", "矩形偏了", "以中心定位"]
+triggers: [play, "game.rect", "game.circle", "rect colour", "change colour", "recolour", "rect position", "rect offset", "centre", "graphics.clear", "改颜色", "方块变色", "矩形偏了", "以中心定位", PLAY_MADE_EVERY_FRAME, "made every frame", "每帧新建"]
 local: [rect, circle, sprite, graphics]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: PeachCreek/src/view.mjs, line: 65, commit: 3c3a780bdf4e25743c37aa95947eb44c39ace864, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
@@ -35,6 +35,6 @@ Rules:
 
 - Give `rect` and `circle` centre positions; a top-left habit puts every part half its size up and left.
 - Use them for shapes that only move, fade or scale; tween `x`, `y`, `alpha`, `scaleX`, `rotation` freely.
-- For a shape that changes colour or size (a season's particles, a selection frame, a bar), make one `game.sprite()` and redraw its graphics on change; do not remove and remake it every frame.
+- For a shape that changes colour or size (a season's particles, a selection frame, a bar), make one `game.sprite()` and redraw its graphics on change; do not remove and remake it every frame. A text, a shape or a sprite that `update` makes in each of 60 frames running is told as the warning `PLAY_MADE_EVERY_FRAME`, and listed by `node vendor/egret.mjs verify`.
 
 Learnt from Magistrate of Peach Creek (ENGINE-NOTES 5), whose petals turn to leaves and snow with the season, and whose focus frame moves between plots.

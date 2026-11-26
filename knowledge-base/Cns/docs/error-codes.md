@@ -786,6 +786,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `PLAY_MADE_EVERY_FRAME` | 这是 play 的告警，不是错误：最近 60 帧里，update 每一帧都新建了文字、形状或精灵。请在 setup 里建一次，内容、位置或颜色变化时再修改它。 |
 | `PLAY_OPTIONS_INVALID` | 交给play的选项无效：缺少某一项、类型不对或超出范围。 |
 | `PLAY_SFX_UNKNOWN` | play中没有这样的 `sfx`。 |
 
