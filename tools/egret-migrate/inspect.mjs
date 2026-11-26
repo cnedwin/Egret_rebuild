@@ -1,0 +1,134 @@
+// SPDX-License-Identifier: Apache-2.0
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { planLegacyResourceManifestConversion } from '../../packages/project/dist/legacy-res-plan.js';
+import { fingerprintFile, logicalPath } from '../lib/file-identity.mjs';
+
+export const hash = data => createHash('sha256').update(data).digest('hex');
+export const json = value => JSON.stringify(value, null, 2) + '\n';
+export const profile = 'egret-5.2-classic-web-2d';
+const supportedModules = new Set(['egret', 'game', 'res', 'assetsmanager', 'promise']);
+const scaleModes = { showAll: 'contain', noBorder: 'cover', exactFit: 'stretch' };
+
+export function refuse(code, message, details) {
+  throw Object.assign(new Error(message), { code, details });
+}
+
+export function readProjectFile(owner, key) {
+  let identity;
+  try {
+    identity = fingerprintFile(owner, key);
+  } catch (error) {
+    refuse('MIGRATE_INPUT_FILE', 'Missing input or invalid project file identity.', {
+      path: key,
+      reason: error.message
+    });
+  }
+  const bytes = fs.readFileSync(path.join(owner, key));
+  if (identity.sha256 !== hash(bytes))
+    refuse('MIGRATE_INPUT_CHANGED', 'Project input changed while it was read.', { path: key });
+  return { identity, bytes };
+}
+
+function readJSON(read, key) {
+  const text = read(key).bytes.toString('utf8');
+  try {
+    return JSON.parse(text);
+  } catch {
+    refuse('MIGRATE_INPUT_JSON', 'Expected a JSON document.', { path: key });
+  }
+}
+
+function readStage(html) {
+  // Read the bootstrap declaration as data; the old HTML and its scripts never run during inspection.
+  const tags = [...html.matchAll(/<div\b[^>]*>/gi)].map(
+    ([tag]) =>
+      new Map([...tag.matchAll(/([\w-]+)\s*=\s*(["'])(.*?)\2/gs)].map(([, key, , value]) => [key.toLowerCase(), value]))
+  );
+  const players = tags.filter(tag => tag.get('class')?.split(/\s+/).includes('egret-player'));
+  if (players.length !== 1) refuse('MIGRATE_ENTRY', 'Expected one classic egret-player bootstrap.');
+  const player = players[0];
+  const entry = player.get('data-entry-class');
+  const width = Number(player.get('data-content-width'));
+  const height = Number(player.get('data-content-height'));
+  const scaleMode = player.get('data-scale-mode') ?? 'showAll';
+  if (
+    !/^[A-Za-z_$][\w$]*$/.test(entry ?? '') ||
+    ![width, height].every(size => Number.isInteger(size) && size > 0 && size <= 8192) ||
+    !Object.hasOwn(scaleModes, scaleMode)
+  )
+    refuse('MIGRATE_ENTRY', 'The entry class, fixed stage size or scale mode is outside this profile.');
+  return { entry, width, height, fit: scaleModes[scaleMode] };
+}
+
+function readSourceOrder(read, configured) {
+  const scriptList = configured ?? readJSON(read, 'manifest.json')?.game;
+  if (!Array.isArray(scriptList) || scriptList.length === 0 || scriptList.length > 512) {
+    refuse('MIGRATE_SOURCE_ORDER', 'A classic manifest or an explicit ordered source list is required.');
+  }
+  const sources = scriptList.map(script => {
+    const prefix = configured ? 'src/' : 'bin-debug/';
+    const extension = configured ? '.ts' : '.js';
+    if (typeof script !== 'string' || !script.startsWith(prefix) || !script.endsWith(extension)) {
+      refuse('MIGRATE_SOURCE_ORDER', 'A script is outside the admitted source order.', { script });
+    }
+    try {
+      logicalPath(script);
+    } catch {
+      refuse('MIGRATE_SOURCE_ORDER', 'Expected a portable source path.', { script });
+    }
+    const source = configured ? script : 'src/' + script.slice(prefix.length, -extension.length) + '.ts';
+    if (source.endsWith('.d.ts')) refuse('MIGRATE_SOURCE_ORDER', 'Expected executable TypeScript source.', { script });
+    return source;
+  });
+  if (new Set(sources.map(source => source.toLowerCase())).size !== sources.length) {
+    refuse('MIGRATE_SOURCE_ORDER', 'Source paths must be unique across platforms.');
+  }
+  return sources.map(source => read(source).identity);
+}
+
+export function inspectLegacyProject(folder, options = {}) {
+  const owner = path.resolve(folder);
+  const files = new Map();
+  const read = key => {
+    const result = readProjectFile(owner, key);
+    files.set(key, result.identity);
+    return result;
+  };
+  const properties = readJSON(read, 'egretProperties.json');
+  if (!/^5\.2\.\d+$/.test(properties?.engineVersion ?? '') || !/^5\.2\.\d+$/.test(properties?.compilerVersion ?? '')) {
+    refuse('MIGRATE_VERSION_UNSUPPORTED', 'Expected a declared Egret 5.2.x engine and compiler.');
+  }
+  const modules = Array.isArray(properties.modules) ? properties.modules : [];
+  const unsupported = modules.filter(module => !supportedModules.has(module?.name) || module.path !== undefined);
+  if (!modules.some(module => module?.name === 'egret') || unsupported.length) {
+    refuse('MIGRATE_MODULE_UNSUPPORTED', 'A module requires an explicit migration rule.', {
+      modules: unsupported.map(module => module?.name)
+    });
+  }
+  const stage = readStage(read('index.html').bytes.toString('utf8'));
+  const sources = readSourceOrder(read, options.sources);
+  const manifest = options.resources ?? 'resource/default.res.json';
+  const resourceRoot = path.posix.dirname(manifest);
+  const result = planLegacyResourceManifestConversion(read(manifest).bytes.toString('utf8'), resourceRoot);
+  if (!result.plan)
+    refuse('MIGRATE_RES_UNSUPPORTED', 'The RES declaration is outside this profile.', result.report.diagnostics);
+  for (const file of result.plan.files) read(file.sourcePath);
+  // Preserve declared project notices byte for byte in the editable output, outside the preview.
+  for (const name of fs.readdirSync(owner)) if (/^(?:LICENSE|NOTICE|COPYING)(?:\.(?:md|txt))?$/i.test(name)) read(name);
+  const inputs = [...files.values()].sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
+  return {
+    schemaVersion: 1,
+    profile,
+    engineVersion: properties.engineVersion,
+    compilerVersion: properties.compilerVersion,
+    modules: modules.map(module => module.name),
+    stage,
+    sources,
+    manifest,
+    resources: result.plan,
+    inputs,
+    inputSha256: hash(JSON.stringify(inputs))
+  };
+}

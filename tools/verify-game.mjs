@@ -299,6 +299,7 @@ function playReport(file, checks, warnings = [], pictures = {}) {
  * staged build from the page's own directory and plays only the supplied script. Pass `filePaths` in this mode to
  * serve only those logical paths, relative to that directory and separated by forward slashes. A script may record
  * completed steps with `player.checkpoint(name)` and attach a string `code` and JSON `details` to errors.
+ * A script-only module can export `viewport` to reproduce a particular browser layout independently of stage units.
  */
 export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly = false, filePaths }) {
   if (scriptOnly && typeof script?.default !== 'function') throw new Error('scriptOnly requires a play script');
@@ -354,8 +355,11 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
         '--autoplay-policy=no-user-gesture-required'
       ]
     });
-    const WIDTH = 960,
-      HEIGHT = 640;
+    const viewport = scriptOnly && script.viewport ? script.viewport : { width: 960, height: 640 };
+    const { width: WIDTH, height: HEIGHT } = viewport;
+    if (![WIDTH, HEIGHT].every(size => Number.isInteger(size) && size > 0 && size <= 8192)) {
+      throw new TypeError('Script viewport dimensions must be positive integers up to 8192.');
+    }
     const tab = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } });
     const seen = { consoleErrors: [], pageErrors: [], failedRequests: [], externalRequests: [] },
       consoleWarnings = [];
