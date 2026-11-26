@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-view-empty-text.mjs",
+      "originRole": "First-party public browser regression of optional text semantics through empty, whitespace and restored values, focus retention and uninterrupted frames; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

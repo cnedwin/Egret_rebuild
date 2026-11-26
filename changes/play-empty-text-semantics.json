@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Keep Play running when an optional text is blank",
+    "body": "A named noninteractive text part with an empty or whitespace-only accessible name is omitted from the semantic tree until it has words again, without changing layout or dropping an explicit label. Other semantic roles retain their existing validation."
+  },
+  "zh": {
+    "title": "可选文字为空时保持 Play 正常运行",
+    "body": "命名的非交互文字若有效无障碍名称为空或仅含空白，则暂时不发布该语义节点；文字恢复后重新出现。布局及显式非空名称保持不变，其他语义角色仍执行原有校验。"
+  }
+}
