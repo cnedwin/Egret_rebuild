@@ -334,10 +334,21 @@ test('SF08 external requests from the scripted run fail the final report', async
 
 test('script-only verification starts once and evaluates ordered gameplay checkpoints without blind input', async () => {
   const browser = observedBrowser({ soundsStarted: 0 });
+  const launch = browser.chromium.launch;
+  browser.chromium.launch = async options => {
+    const host = await launch(options);
+    const newPage = host.newPage;
+    host.newPage = async ({ viewport }) => {
+      assert.deepEqual(viewport, { width: 640, height: 1136 });
+      return newPage();
+    };
+    return host;
+  };
   const report = await verifyGame({
     ...browser,
     scriptOnly: true,
     script: {
+      viewport: { width: 640, height: 1136 },
       async default(player) {
         await player.tap(480, 320);
         player.checkpoint('first-action');
