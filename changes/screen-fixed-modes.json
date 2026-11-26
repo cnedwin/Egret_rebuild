@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Egret 5's fixed scale modes, and whole pixels for pixel art",
+    "body": "fit of planScreen, createBrowserGame and play takes 'fixedWidth', 'fixedHeight', 'fixedNarrow' and 'fixedWide', which fill the screen as the stage scale modes of Egret 5 did: the width or the height of the design fixed and the stage's other side following the window, 'fixedNarrow' as 'expand', and 'fixedWide' covering the window with the stage as what it shows. wholeScale: true gives each unit a whole number of device pixels, draws the canvas at a pixel a unit and enlarges it without smoothing, for pixel art. Egret Migrate keeps these four scale modes of a project: stage.stageWidth and stageHeight follow the window, EUI lays its roots out again and the stage dispatches egret.Event.RESIZE."
+  },
+  "zh": {
+    "title": "白鹭 5 的 fixed 缩放模式，以及像素风的整数倍缩放",
+    "body": "planScreen、createBrowserGame 和 play 的 fit 新增 'fixedWidth'、'fixedHeight'、'fixedNarrow' 和 'fixedWide'，按白鹭 5 舞台缩放模式的方式铺满屏幕：固定设计的宽或高，舞台的另一边跟随窗口；'fixedNarrow' 即 'expand'；'fixedWide' 盖满窗口，舞台就是显示出来的部分。wholeScale: true 让每个单位对应整数个设备像素，画布按每单位一个像素绘制并不加平滑地放大，适合像素风。Egret Migrate 保留项目的这四种缩放模式：stage.stageWidth 和 stageHeight 跟随窗口，EUI 重新排布根节点，舞台派发 egret.Event.RESIZE。"
+  }
+}

@@ -73,7 +73,8 @@ await play({
 | `backend` | `'auto'`、`'webgpu'` 或 `'webgl2'` | `'auto'` |
 | `pixelRatio` | 2D 绘制缓冲区的正数倍率。舞台、布局、输入和语义区域始终使用同一套逻辑坐标 | 浏览器设备像素比，上限为 2 |
 | `blendSpace` | 半透明颜色的混合方式：`'srgb'` 与 2D canvas 和白鹭 5 一致，深色底上 10% 的白仍是淡淡的白；`'linear'` 按光线混合，同样的白看起来更强 | `'srgb'` |
-| `fit` | `'expand'` 铺满窗口：缩放比不变，舞台越过 `width` × `height` 一直延伸到窗口边缘。见[任意形状的屏幕](#任意形状的屏幕) | `'contain'`：窗口形状不同时留黑边 |
+| `fit` | `'expand'` 铺满窗口：缩放比不变，舞台越过 `width` × `height` 一直延伸到窗口边缘。`'fixedWidth'`、`'fixedHeight'`、`'fixedNarrow'`、`'fixedWide'` 按白鹭 5 的方式铺满窗口。见[任意形状的屏幕](#任意形状的屏幕) | `'contain'`：窗口形状不同时留黑边 |
+| `wholeScale` | 像素风用 `true`：每个单位是整数个设备像素，按 `pixelRatio` 1 绘制并清晰放大。只用于 `play` 自己创建的画布 | `false` |
 | `portrait` | `{ width, height }`：窗口高大于宽时的舞台大小 | 两种方向都用 `width` × `height` |
 | `insets` | `{ top, right, bottom, left }`，单位是 CSS 像素：刘海、圆角或底部横条挡住的部分 | 页面的 `safe-area-inset` 值 |
 | `arrange(game)` | 摆放跟屏幕有关的东西：在 `setup` 之后调用，窗口尺寸变化或旋转时再调用 | 什么都不移动 |

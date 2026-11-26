@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1476 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1477 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1469,6 +1469,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `planScreen` | function | Fits a stage to a space on a screen. |
+| `ScreenFit` | type | How a stage fills a space: see `ScreenPlanOptions.fit`. |
 | `ScreenInsets` | interface | How far in from each edge a notch, rounded corners or a home bar reach, in the pixels of the space given. |
 | `ScreenPlan` | interface | Where the stage goes, and what of it is shown and safe to touch. |
 | `ScreenPlanOptions` | interface | What to fit: the space on the screen, the designs, how they fit and what covers the edges. |
@@ -1577,7 +1578,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserGame` | interface | A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. |
 | `BrowserGameAtlasLabel` | interface | A line of text drawn on a page of images shared with other such labels. |
 | `BrowserGameBackend` | type | Which GPU interface a browser game draws with. |
-| `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, or filling it with a stage that grows around the design (`'expand'`). |
+| `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, filling it with a stage that grows around the design (`'expand'`), or filling it as the stage scale modes of Egret 5 did (`'fixedWidth'`, `'fixedHeight'`, `'fixedNarrow'`, `'fixedWide'`; see `planScreen` of `@egret/engine/web/screen`). |
 | `BrowserGameFrameUsage` | interface | What the last frame drawn held of a frame's images, against what one frame may hold. |
 | `BrowserGameLabel` | interface | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |

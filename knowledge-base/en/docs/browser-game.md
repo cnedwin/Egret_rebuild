@@ -69,7 +69,7 @@ For the rest of a game: `animate` moves and fades display objects in a chain (`i
 
 **Warnings for a tool.** A page whose `globalThis.__egretAgent` has a `warning(warning)` function is told every warning as well, whether or not the game gave `onWarning`. `tools/verify-game.mjs` puts one there before the game starts and lists what it was told as `engineWarnings` in its report, so an agent sees a frame near its limit, or text made every frame, that the game itself never asked to hear about. What that function throws is the tool's own and is not told.
 
-**Fitting the canvas.** With `fit`, the game sizes the canvas inside its element now and whenever that element changes size, centred. The element needs a size of its own: one that takes its height from the canvas has nothing to fit to. With `'cover'` the canvas is larger than the element, which should hide what overflows. With `'cover'` and `'stretch'` the stage keeps its width and height in its own units. With `'contain'` and `'expand'` it follows [the plan of the screen](screen-fit.md): `game.screen` is the plan now, `game.onScreenChange(listener)` tells of a new one, and the stage takes the portrait size or, with `'expand'`, grows to the element's edges. Pointer places follow the canvas in every mode.
+**Fitting the canvas.** With `fit`, the game sizes the canvas inside its element now and whenever that element changes size, centred. The element needs a size of its own: one that takes its height from the canvas has nothing to fit to. With `'cover'` the canvas is larger than the element, which should hide what overflows. With `'cover'` and `'stretch'` the stage keeps its width and height in its own units. With `'contain'`, `'expand'` and the fixed modes of Egret 5 it follows [the plan of the screen](screen-fit.md): `game.screen` is the plan now, `game.onScreenChange(listener)` tells of a new one, and the stage takes the portrait size or, with `'expand'` and the fixed modes, fills the element. With `wholeScale: true` each unit is a whole number of device pixels, for pixel art. Pointer places follow the canvas in every mode.
  `game.frame` is the frame the loop draws, and `game.toStage(clientX, clientY)` turns a place on the page, as a pointer event of the page gives it, into a place on the stage.
 
 **Touch targets.** A finger needs about 44 CSS pixels. `game.unitsPerCssPixel` is how many stage units one CSS pixel is as the canvas is shown now, and `game.padHitArea(node, cssPixels = 44)` gives a node a hit area at least that size, centred on what it draws and never smaller, so a 20-unit icon on a scaled-down phone canvas is still easy to press. The target includes the requested CSS square under ancestor scaling, reflection or rotation. Call it again after changing node or ancestor transforms, the drawn bounds, or the canvas size. A collapsed transform has no two-dimensional hit area on screen.
@@ -81,7 +81,7 @@ For the rest of a game: `animate` moves and fades display objects in a chain (`i
 | `canvas` | The canvas to draw on. The page gives it its size on the screen | Required |
 | `width`, `height` | The size of the stage in the game's own units: whole numbers above 0 | Required |
 | `backend` | `'auto'`, `'webgpu'` or `'webgl2'` | `'auto'` |
-| `pixelRatio` | Canvas pixels for each unit of the canvas's own width | The device's ratio, at most 2 |
+| `pixelRatio` | Canvas pixels for each unit of the canvas's own width | The device's ratio, at most 2; 1 with `wholeScale`, which takes no other |
 | `clearColor`, `clearAlpha` | What a frame is cleared to | `0x000000` and 1 |
 | `update(seconds)` | One step of the game, before each frame | No step |
 | `onWarning(warning)` | Told of a frame near its limit of images, a frame not drawn for holding more, labels near the limit of the text cache, and words not drawn: `{ code, message, usage?, cause? }` | Not told |
@@ -89,8 +89,9 @@ For the rest of a game: `animate` moves and fades display objects in a chain (`i
 | `pointer`, `keyboard` | `false` leaves that input out | Both are made |
 | `hover` | `true` makes hover and wheel input, as `game.hover`; its module is loaded only then | No hover input |
 | `stats` | `true` shows the panel | No panel |
-| `fit`, `fitTo` | How the canvas fills an element: `'contain'` whole inside it, `'cover'` covering it, `'stretch'` to its shape, `'expand'` filling it with a stage that grows around the design. `fitTo` is that element | `'none'`, and the canvas's parent |
-| `portrait`, `insets` | With `'contain'` or `'expand'`: the stage's size while the element is taller than wide, and what covers its edges in CSS pixels. See [Fitting a stage to a screen](screen-fit.md) | `width` × `height`, and the page's `safe-area-inset` values |
+| `fit`, `fitTo` | How the canvas fills an element: `'contain'` whole inside it, `'cover'` covering it, `'stretch'` to its shape, `'expand'` filling it with a stage that grows around the design, or as Egret 5's `'fixedWidth'`, `'fixedHeight'`, `'fixedNarrow'` and `'fixedWide'`. `fitTo` is that element | `'none'`, and the canvas's parent |
+| `portrait`, `insets` | With a fit other than `'none'`, `'cover'` and `'stretch'`: the stage's size while the element is taller than wide, and what covers its edges in CSS pixels. See [Fitting a stage to a screen](screen-fit.md) | `width` × `height`, and the page's `safe-area-inset` values |
+| `wholeScale` | With the same fits: a unit is a whole number of device pixels, the canvas is drawn at a pixel a unit and enlarged sharply, and the rest is bars | `false` |
 | `autoStart` | `false` leaves the loop for `game.loop.start()` to start | The loop starts at once |
 
 What is not a valid option is refused with `BROWSER_GAME_OPTIONS_INVALID` before anything is made.

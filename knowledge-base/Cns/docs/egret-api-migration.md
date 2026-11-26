@@ -23,7 +23,7 @@
 | `egret.runEgret({ ... })` 和 `Main` 文档类 | `@egret/engine/web/game` 的 `await createBrowserGame({ canvas, width, height, update })` | 见[一次调用启动页面里的游戏](browser-game.md) |
 | `this.stage` | `game.stage` 或 `engine.stage` | 一个 Engine 一个舞台 |
 | `stage.stageWidth`、`stage.stageHeight` | 你给出的 `width` 和 `height` | 舞台大小固定，使用自己的单位 |
-| `index.html` 里的 `scaleMode` | `createBrowserGame` 的 `fit`：`'contain'`（showAll）、`'cover'`（noBorder）、`'stretch'`（exactFit） | 舞台保持自己的单位和大小；会改变舞台大小的模式没有提供。`orientation` 由页面设置 |
+| `index.html` 里的 `scaleMode` | `createBrowserGame` 的 `fit`：`'contain'`（showAll）、`'cover'`（noBorder）、`'stretch'`（exactFit），以及同名的 `'fixedWidth'`、`'fixedHeight'`、`'fixedNarrow'`、`'fixedWide'` | fixed 模式下舞台大小跟随窗口：读 `game.screen`，用 `game.onScreenChange` 监听。不提供 `noScale`。`orientation` 由页面设置。见[把舞台适配到屏幕](screen-fit.md) |
 | `egret.startTick(fn)`、`Event.ENTER_FRAME` | `createBrowserGame` 或[帧循环](frame-loop.md)的 `update(seconds)` | `seconds` 是距上一步的时间，最多 0.1 |
 | `new egret.Timer(1000, 5)` 与 `TimerEvent.TIMER`、`TIMER_COMPLETE` | `createTimer(engine, scope, 1, 5).onTimer(count => …).onComplete(() => …).start()` | 来自 `@egret/engine`。单位是秒而不是毫秒。它走引擎时钟，时钟暂停时它也停，随 scope 结束。有 `stop`、`reset`、`delay`、`repeatCount`、`currentCount` 和 `running`。一帧比间隔长时，欠下的每次调用都会补上 |
 | `egret.setTimeout(fn, this, 500)`、`egret.clearTimeout(key)` | `const later = after(engine, scope, 0.5, fn)`；`later.cancel()` | 来自 `@egret/engine`，走引擎时钟 |

@@ -102,10 +102,137 @@ async function verifyContainScale(page) {
   }
 }
 
-export async function verifyScreenFit(page) {
+// The stage scale modes of Egret 5, fixedWidth and fixedHeight, and pixel art at whole steps of device pixels, in a
+// parent element that is resized: what the game sees of its design, the canvas's size and a tap at the design's middle.
+async function verifyFixedFits(page, PNG) {
+  const fixture = await page.evaluateHandle(async () => {
+    const { play } = await import('@egret/engine/play');
+    const made = [];
+    async function make(fit, width, height, options = {}) {
+      const parent = document.createElement('div');
+      parent.style.cssText = 'width:' + width + 'px;height:' + height + 'px';
+      document.body.append(parent);
+      const log = { screens: [], taps: 0 };
+      const game = await play({
+        parent,
+        width: options.design?.width ?? 400,
+        height: options.design?.height ?? 300,
+        fit,
+        background: 0x000000,
+        backend: 'webgl2',
+        audio: false,
+        ...(options.wholeScale ? { wholeScale: true } : { pixelRatio: 1 }),
+        setup(g) {
+          if (options.dot) g.rect(80, 45, 2, 2, 0xffffff);
+          else g.button('Middle', { x: 200, y: 150, width: 80, height: 40 }, () => log.taps++);
+        },
+        arrange(g) {
+          log.screens.push({ ...g.screen });
+        }
+      });
+      made.push({ game, parent });
+      return {
+        resize(w, h) {
+          parent.style.width = w + 'px';
+          parent.style.height = h + 'px';
+        },
+        read() {
+          const box = game.canvas.getBoundingClientRect(),
+            screen = game.screen;
+          return {
+            screen: log.screens.at(-1),
+            canvas: [box.width, box.height],
+            backing: [game.canvas.width, game.canvas.height],
+            rendering: game.canvas.style.imageRendering,
+            // In the page's own coordinates, for a screenshot of the whole page.
+            box: { x: box.left + scrollX, y: box.top + scrollY, width: box.width, height: box.height },
+            middle: {
+              x: box.left + ((200 - screen.x) / screen.width) * box.width,
+              y: box.top + ((150 - screen.y) / screen.height) * box.height
+            },
+            taps: log.taps
+          };
+        }
+      };
+    }
+    globalThis.__fixed = {
+      width: await make('fixedWidth', 800, 800),
+      height: await make('fixedHeight', 800, 800),
+      pixels: await make('contain', 700, 400, { wholeScale: true, dot: true, design: { width: 160, height: 90 } })
+    };
+    return {
+      async close() {
+        for (const { game, parent } of made) {
+          await game.dispose();
+          parent.remove();
+        }
+        delete globalThis.__fixed;
+      }
+    };
+  });
+  const frames = () =>
+    page.evaluate(
+      () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done))))
+    );
+  const read = name => page.evaluate(which => globalThis.__fixed[which].read(), name);
+  try {
+    await frames();
+    // fixedWidth: the design's 400 units across fill 800 CSS pixels; the square window shows 400 units down.
+    let width = await read('width');
+    assert.deepEqual(width.screen, { x: 0, y: -50, width: 400, height: 400 });
+    assert.deepEqual(width.canvas, [800, 800]);
+    // A wider window: the width stays, and less of the design shows from top to bottom.
+    await page.evaluate(() => globalThis.__fixed.width.resize(1000, 600));
+    await frames();
+    width = await read('width');
+    assert.deepEqual(width.screen, { x: 0, y: 30, width: 400, height: 240 });
+    assert.deepEqual(width.canvas, [1000, 600]);
+    await page.mouse.click(width.middle.x, width.middle.y);
+    await frames();
+    assert.equal((await read('width')).taps, 1, 'a tap at the middle of the design reaches its button');
+    // fixedHeight: the design's 300 units down fill 800 CSS pixels; the square window shows 300 units across.
+    const height = await read('height');
+    assert.deepEqual(height.screen, { x: 50, y: 0, width: 300, height: 300 });
+    assert.deepEqual(height.canvas, [800, 800]);
+    // Pixel art: 160 × 90 in 700 × 400 CSS pixels at one device pixel to a CSS pixel is 4 whole pixels a unit, drawn
+    // at a pixel a unit and enlarged without smoothing; the 2 × 2 dot is a sharp square of 8 × 8 pixels.
+    const pixels = await read('pixels');
+    assert.deepEqual(pixels.canvas, [640, 360]);
+    assert.deepEqual(pixels.backing, [160, 90]);
+    assert.equal(pixels.rendering, 'pixelated');
+    const png = PNG.sync.read(await page.screenshot({ clip: pixels.box, fullPage: true }));
+    let lit = 0,
+      grey = 0;
+    const xs = [],
+      ys = [];
+    for (let y = 0; y < png.height; y++)
+      for (let x = 0; x < png.width; x++) {
+        const value = png.data[(y * png.width + x) * 4];
+        if (value > 250) {
+          lit++;
+          xs.push(x);
+          ys.push(y);
+        } else if (value > 5) grey++;
+      }
+    assert.equal(lit, 64, 'the dot is 8 × 8 device pixels');
+    assert.equal(grey, 0, 'no pixel between black and white: nothing was smoothed');
+    assert.deepEqual([Math.max(...xs) - Math.min(...xs) + 1, Math.max(...ys) - Math.min(...ys) + 1], [8, 8]);
+    return {
+      fixedWidth: [{ x: 0, y: -50, width: 400, height: 400 }, width.screen],
+      fixedHeight: height.screen,
+      wholeScale: { canvas: pixels.canvas, backing: pixels.backing, dot: [8, 8], smoothed: grey }
+    };
+  } finally {
+    await fixture.evaluate(f => f.close());
+    await fixture.dispose();
+  }
+}
+
+export async function verifyScreenFit(page, PNG) {
   const before = page.viewportSize();
   await page.setViewportSize({ width: 960, height: 540 });
   const containScale = await verifyContainScale(page);
+  const fixedFits = PNG === undefined ? undefined : await verifyFixedFits(page, PNG);
   const fixture = await page.evaluateHandle(async () => {
     const { play } = await import('@egret/engine/play');
     const log = { arranged: [], taps: 0 };
@@ -200,6 +327,7 @@ export async function verifyScreenFit(page) {
     assert.equal(await fixture.evaluate(f => f.log.taps), 1, 'the button at the safe edge takes the tap');
     return {
       containScale,
+      fixedFits,
       arranged: log.length,
       orientations: [...new Set(log.map(entry => entry.orientation))],
       taps: 1

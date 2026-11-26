@@ -44,15 +44,30 @@ type BrowserGameHoverInput = ReturnType<typeof createBrowserHoverInput>;
 import { createBrowserStatsPanel } from './BrowserStatsPanel.js';
 import type { BrowserStatsPanel } from './BrowserStatsPanel.js';
 import { planScreen } from './screen.js';
-import type { ScreenInsets, ScreenPlan, ScreenSize } from './screen.js';
+import type { ScreenFit, ScreenInsets, ScreenPlan, ScreenSize } from './screen.js';
 
 /** Which GPU interface a browser game draws with. */
 export type BrowserGameBackend = 'webgpu' | 'webgl2';
 /**
- * How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, or filling it
- * with a stage that grows around the design (`'expand'`).
+ * How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, filling it with
+ * a stage that grows around the design (`'expand'`), or filling it as the stage scale modes of Egret 5 did
+ * (`'fixedWidth'`, `'fixedHeight'`, `'fixedNarrow'`, `'fixedWide'`; see `planScreen` of `@egret/engine/web/screen`).
  */
-export type BrowserGameFit = 'none' | 'contain' | 'cover' | 'stretch' | 'expand';
+export type BrowserGameFit = 'none' | 'cover' | 'stretch' | ScreenFit;
+const GAME_FITS: readonly BrowserGameFit[] = [
+  'none',
+  'contain',
+  'cover',
+  'stretch',
+  'expand',
+  'fixedWidth',
+  'fixedHeight',
+  'fixedNarrow',
+  'fixedWide'
+];
+/** The fits of which the stage follows the plan of the screen, its size included. */
+const plannedFit = (fit: BrowserGameFit): ScreenFit | undefined =>
+  fit === 'none' || fit === 'cover' || fit === 'stretch' ? undefined : fit;
 /** A text label to make: its text, font, size and weight, line height, color, locale and direction. */
 export interface BrowserGameLabelOptions {
   readonly text?: string;
@@ -153,8 +168,17 @@ export interface BrowserGameOptions {
   readonly height: number;
   /** "auto", unless given: WebGPU where the browser gives an adapter, WebGL2 otherwise. */
   readonly backend?: 'auto' | BrowserGameBackend;
-  /** Canvas pixels for each unit of the canvas's own width. The device's ratio unless given, and then never more than 2. */
+  /**
+   * Canvas pixels for each unit of the canvas's own width. The device's ratio unless given, and then never more than 2;
+   * 1 with `wholeScale`, which takes no other.
+   */
   readonly pixelRatio?: number;
+  /**
+   * With a fit other than "none", "cover" and "stretch": a stage unit covers a whole number of the device's pixels, the
+   * canvas is drawn at a pixel a unit and enlarged without smoothing, and what the whole steps leave of the element is
+   * bars. For pixel art. False unless given.
+   */
+  readonly wholeScale?: boolean;
   /** What a frame is cleared to before the stage is drawn: 0x000000 and 1 unless given. */
   readonly clearColor?: number;
   readonly clearAlpha?: number;
@@ -202,8 +226,9 @@ export interface BrowserGameOptions {
   readonly fit?: BrowserGameFit;
   readonly fitTo?: HTMLElement;
   /**
-   * The stage's size while the element is taller than it is wide, with "contain" or "expand". `width` × `height`
-   * otherwise. The stage changes size when the element changes shape; `game.onScreenChange` tells of it.
+   * The stage's size while the element is taller than it is wide, with a fit other than "none", "cover" and
+   * "stretch". `width` × `height` otherwise. The stage changes size when the element changes shape;
+   * `game.onScreenChange` tells of it.
    */
   readonly portrait?: ScreenSize;
   /**
@@ -230,8 +255,8 @@ export interface BrowserGame {
   readonly frame: SharedFrameOptions2D;
   /**
    * Where the stage is on the screen now: its size in stage units, the scale, the design's place on it and the part
-   * no notch or home bar covers. With "contain" or "expand" it follows the element; otherwise the stage is
-   * `width` × `height` and all of it is safe.
+   * no notch or home bar covers. With a fit other than "none", "cover" and "stretch" it follows the element;
+   * otherwise the stage is `width` × `height` and all of it is safe.
    */
   readonly screen: ScreenPlan;
   /** Calls `listener` with the new plan after the stage size, CSS scale or safe part changes. Returns its removal. */
@@ -411,8 +436,12 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     clearAlpha = options.clearAlpha ?? 1,
     blendSpace = options.blendSpace ?? 'linear',
     enableEffects = options.effects ?? false;
-  const device = Number((globalThis as { readonly devicePixelRatio?: unknown }).devicePixelRatio),
-    pixelRatio = options.pixelRatio ?? (device > 0 ? Math.min(device, 2) : 1);
+  const deviceRatio = (): number => {
+    const ratio = Number((globalThis as { readonly devicePixelRatio?: unknown }).devicePixelRatio);
+    return ratio > 0 && Number.isFinite(ratio) ? ratio : 1;
+  };
+  const wholeScale = options.wholeScale ?? false,
+    pixelRatio = options.pixelRatio ?? (wholeScale ? 1 : Math.min(deviceRatio(), 2));
   if (
     canvas === null ||
     typeof canvas !== 'object' ||
@@ -444,7 +473,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     [options.pointer, options.keyboard, options.hover, options.autoStart, options.stats, options.staticLayers].some(
       flag => flag !== undefined && typeof flag !== 'boolean'
     ) ||
-    !['none', 'contain', 'cover', 'stretch', 'expand'].includes(options.fit ?? 'none') ||
+    !GAME_FITS.includes(options.fit ?? 'none') ||
+    typeof wholeScale !== 'boolean' ||
+    (wholeScale && (plannedFit(options.fit ?? 'none') === undefined || pixelRatio !== 1)) ||
     (options.fitTo !== undefined && (options.fitTo === null || typeof options.fitTo !== 'object'))
   )
     throw invalid();
@@ -454,7 +485,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       box,
       design: { width, height },
       ...(options.portrait === undefined ? {} : { portrait: options.portrait }),
-      fit: options.fit === 'expand' ? 'expand' : 'contain',
+      fit: plannedFit(options.fit ?? 'none') ?? 'contain',
+      ...(wholeScale ? { wholeScale, pixelRatio: deviceRatio() } : {}),
       ...(insets === undefined ? {} : { insets })
     });
   try {
@@ -743,7 +775,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         if (painted.delete(key)) texture.dispose();
       }
     };
-    // The canvas in its element: sized now and whenever the element changes size. With "contain" and "expand" the
+    // The canvas in its element: sized now and whenever the element changes size. With the planned fits the
     // stage follows the plan of the screen: its size, and, with a portrait size, its shape.
     const fit = options.fit ?? 'none',
       holder = options.fitTo ?? canvas.parentElement;
@@ -813,6 +845,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           frame = Object.freeze({ width: next.width, height: next.height, clearColor, clearAlpha });
         style.width = next.width * next.scale + 'px';
         style.height = next.height * next.scale + 'px';
+        // Whole steps are enlarged as they are, a canvas pixel to a square of the device's.
+        if (wholeScale) style.imageRendering = 'pixelated';
         style.marginLeft = next.left + 'px';
         style.marginTop = next.top + 'px';
         const moved =
