@@ -54,6 +54,19 @@ Every part may have `name`, `anchor`, `x`, `y`, `width`, `height` and `visible`.
 
 The root is placed in `game.safe`, the part of the screen no notch covers, or in all of `game.screen` with `area: 'screen'`. It is planned again whenever the [screen](screen-fit.md) changes. While the screen is taller than wide, `portrait` parts are used, and the parts are built again; `built(view)` is told each time. The portrait parts must have the same names, of the same kinds.
 
+### Tablets
+
+A screen whose shorter side is 600 CSS pixels or more is a tablet's (`TABLET_SHORT_SIDE` of `@egret/engine/web/view`): an iPad, a large Android tablet, an unfolded phone, a desktop window. There a view takes `tablet` parts while the screen is wider than tall, and `tabletPortrait` parts while it is taller. Without them it takes `portrait` parts upright, and `root` otherwise:
+
+| Screen | Parts, the first the view has |
+| --- | --- |
+| Phone, wide | `root` |
+| Phone, upright | `portrait`, `root` |
+| Tablet, wide | `tablet`, `root` |
+| Tablet, upright | `tabletPortrait`, `portrait`, `root` |
+
+Each has the same names, of the same kinds, as `root`. `view.variant` says which is used, and the view is built again, with `built(view)` told, whenever that changes. A tablet often has room for two columns where a phone has one.
+
 ### Views at their own size
 
 A view is drawn at the game's scale unless `play` is given `uiScale: { min, max }`, in CSS pixels a unit. The views then keep within those pixels while the game does not:
@@ -282,6 +295,7 @@ A named noninteractive text part is omitted from the published semantic tree whe
 `tests/ui-view.test.mjs` plans views in Node. It checks:
 
 - anchors, offsets, shares and fill in a free panel;
+- one view with `portrait` and `tablet` parts in a window resized to 844 × 390, 1024 × 768, 768 × 1024 and 390 × 844 took `root`, `tablet`, `portrait` and `portrait`, and was built three times;
 - with `uiScale: { min: 0.75, max: 1 }` on a 1280 × 720 game, a button of 368 × 80 units measured 368 × 80 CSS pixels on a 1920 × 1080 window and 276 × 60 on a 640 × 360 one, centred both times, and a click pressed it;
 - rows and columns with fixed sizes and fill, gaps, padding, `align` and `justify`;
 - portrait parts and the two areas;

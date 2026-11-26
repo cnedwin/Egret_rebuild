@@ -304,7 +304,7 @@ const WRITTEN: Readonly<Record<string, string>> = {
   UI_REQUEST_INVALID: 'A request sends with a function. The reason is in cause.',
   UI_VIEW_INVALID: 'A view description is not valid. Which part, and what is wrong with it, are in cause.',
   UI_VIEW_VARIANT_MISMATCH:
-    'The portrait parts of a view do not have the same names, of the same kinds, as the others. The names are in cause.',
+    'The portrait or tablet parts of a view do not have the same names, of the same kinds, as its root. The names are in cause.',
   UI_VIEW_BINDING_UNKNOWN: 'A binding names a part the view does not have. The names it has are in cause.',
   UI_VIEW_BINDING_INVALID:
     'A binding gives what its part cannot take, or is not a function. Which, and why, are in cause.',
