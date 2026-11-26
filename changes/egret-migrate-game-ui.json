@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Egret Migrate 0.4 for multi-screen Egret 5 games",
+    "body": "Import matched Egret 5.1.7 projects, inline button skins, row-major tile layouts and scrollable level maps. Reuse fixed-height list renderers, preserve skinned touch targets and release offscreen text rasters while retaining the display tree."
+  },
+  "zh": {
+    "title": "Egret Migrate 0.4 支持多界面白鹭 5 游戏",
+    "body": "支持引擎与编译器同为 5.1.7 的工程、按钮内联皮肤、按行网格布局和可滚动选关地图。定高列表复用列表项，带皮肤的控件保留原触摸目标，屏外文字释放栅格资源，同时保留显示树。"
+  }
+}

@@ -97,7 +97,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
       actorKind: 'legacy-converter',
       intent: 'Import the admitted stage and resource records',
       toolId: 'egret-migrate',
-      toolVersion: '0.3.0'
+      toolVersion: '0.4.0'
     },
     scope: { entityIds: [entity.id], fileIds: assetFiles.map(file => file.id), metadata: false, roots: true },
     operations: [

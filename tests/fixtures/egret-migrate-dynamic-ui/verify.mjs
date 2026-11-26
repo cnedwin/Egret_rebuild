@@ -166,9 +166,31 @@ try {
     await take('pick-rice');
     await page.evaluate(() => stockProbe.reenter());
     await take('reenter');
+
+    // Keep the original six checkpoints and measure a separate, fixed-height virtual collection.
+    await page.evaluate(() => stockProbe.openRange());
+    run.range = [];
+    for (const index of [0, 500, 999, 0]) {
+      await page.evaluate(i => stockProbe.jumpTo(i), index);
+      await page.waitForFunction(i => {
+        const { center, label } = stockProbe.rangeState(i);
+        return label === 'Lot ' + i && center && center[1] >= 44 && center[1] < 140;
+      }, index);
+      const before = await page.evaluate(i => stockProbe.rangeState(i), index);
+      assert.equal(before.length, 1000);
+      assert.ok(before.children <= 16 && before.created <= 32, 'Renderer allocation must stay bounded across jumps.');
+      await page.mouse.click(...before.center);
+      await page.waitForFunction(i => {
+        const state = stockProbe.rangeState(i);
+        return state.selected === i && state.lastTap === 'Lot ' + i;
+      }, index);
+      run.range.push({ index, ...await page.evaluate(i => stockProbe.rangeState(i), index) });
+    }
     await context.close();
   }
   assert.deepEqual(report.runs.legacy.snapshots, report.runs.converted.snapshots);
+  const picked = run => run.range.map(({index, center, label, selected, lastTap}) => ({index, center, label, selected, lastTap}));
+  assert.deepEqual(picked(report.runs.legacy), picked(report.runs.converted));
   assert.deepEqual(
     report.runs.legacy.snapshots.map(p => [p.status, p.selected, p.firstLabel, p.badgeVisible]),
     [

@@ -188,13 +188,33 @@ test('an empty Wing Config and exact theme self-path carry no runtime behavior',
   });
 });
 
-test('unsupported alignment, text wrapping, TileLayout and root visual attributes are rejected before execution', () => {
+test('button skins own their part IDs and tile groups accept row gaps', () => {
+  const button =
+    '<e:Button><e:skinName><e:Skin><e:Image id="face" fillMode="clip" scale9Grid="2,3,5,6"/></e:Skin></e:skinName></e:Button>';
+  const tree = compileExml(
+    skin(
+      '<e:Group><e:layout><e:TileLayout horizontalGap="4" verticalGap="9"/></e:layout>' +
+        button.repeat(2) +
+        '<e:Label multiline="true"/><e:Rect locked="true"/></e:Group>'
+    )
+  ).root.children[0];
+  assert.deepEqual(tree.layout.properties, { horizontalGap: 4, verticalGap: 9 });
+  assert.deepEqual(tree.children[0].inlineSkin.children[0].properties.scale9Grid, { x: 2, y: 3, width: 5, height: 6 });
+  assert.equal(tree.children[2].properties.multiline, true);
+  assert.deepEqual(tree.children[3].properties, {});
+  assert.throws(() => compileExml(skin(button.replace('<e:Button>', '<e:Button skinName="Other">'))), {
+    code: 'MIGRATE_EXML_UNSUPPORTED'
+  });
+  assert.throws(() => compileExml(skin(button.replace('2,3,5,6', '1,2'))), { code: 'MIGRATE_EXML_UNSUPPORTED' });
+});
+
+test('unsupported alignments, wrap modes, tile orientations and root attributes are rejected before execution', () => {
   for (const source of [
     skin('<e:Label textAlign="justify"/>'),
     skin('<e:Label wordWrap="true"/>'),
-    skin('<e:Label multiline="true"/>'),
+    skin('<e:Label multiline="automatic"/>'),
     skin('<e:Label stroke="1"/>'),
-    skin('<e:Group><e:layout><e:TileLayout/></e:layout></e:Group>'),
+    skin('<e:Group><e:layout><e:TileLayout orientation="columns"/></e:layout></e:Group>'),
     skin('<e:Group><e:layout><e:VerticalLayout horizontalAlign="justify"/></e:layout></e:Group>'),
     skin('<e:Group><e:layout><e:BasicLayout gap="1"/></e:layout></e:Group>'),
     skin('<e:Rect minWidth="20" maxWidth="10"/>'),

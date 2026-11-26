@@ -13,6 +13,7 @@ export function createLegacyEui({
   EventDispatcher,
   LegacyEvent,
   game,
+  measureLine,
   stageSize
 }) {
   const states = new WeakMap();
@@ -21,19 +22,26 @@ export function createLegacyEui({
   const customNames = new Map();
   const activeSkins = new Set();
   const liveNodes = new Set();
+  const clippedText = new WeakSet();
+  const viewportLabels = new Set();
+  let viewportScope;
   function detachObservers(node) {
     const data = state(node);
     for (const record of data?.applied?.values() ?? []) {
       record.off?.();
       record.off = undefined;
     }
+    if (node instanceof Group) node.detachWheel();
     if (node instanceof DataGroup) node.detachProvider();
     if (node instanceof Scroller) node.detachScroll();
+    if (node instanceof Button) node.endPress();
     liveNodes.delete(node);
   }
   game.scope.use({
     dispose() {
       for (const node of liveNodes) detachObservers(node);
+      viewportLabels.clear();
+      viewportScope?.dispose();
     }
   });
   for (const skin of theme?.exmls ?? []) {
@@ -197,30 +205,76 @@ export function createLegacyEui({
     return Math.min(maximum, Math.max(minimum, value));
   }
 
+  function tileGrid(children, availableWidth, properties, availableHeight) {
+    const width = Math.max(0, ...children.map(child => child.width));
+    const height = Math.max(0, ...children.map(child => child.height));
+    const gapX = properties.horizontalGap ?? 6;
+    const gapY = properties.verticalGap ?? 6;
+    const stepX = width + gapX || 1;
+    const stepY = height + gapY || 1;
+    let preferred;
+    if (availableWidth !== undefined) preferred = Math.floor((availableWidth + gapX) / stepX);
+    else if (availableHeight !== undefined) {
+      const rows = Math.max(1, Math.floor((availableHeight + gapY) / stepY));
+      preferred = Math.ceil(children.length / rows);
+    } else preferred = Math.round(Math.sqrt((children.length * stepY) / stepX));
+    const columns = Math.max(1, Math.min(children.length, preferred));
+    return {
+      columns,
+      stepX: width + gapX,
+      stepY: height + gapY,
+      width: columns * (width + gapX) - gapX,
+      height: Math.ceil(children.length / columns) * (height + gapY) - gapY
+    };
+  }
+
   function innerSize(node) {
     const data = state(node);
     const children = childrenOf(node).filter(child => state(child).properties.includeInLayout !== false);
-    if (children.length === 0) return undefined;
+    if (children.length === 0 && !data.virtualRows) return undefined;
     const layout = data.layout?.type;
     const p = data.layout?.properties ?? {};
     const gap = p.gap ?? (layout === 'VerticalLayout' || layout === 'HorizontalLayout' ? 6 : 0);
+    if (layout === 'TileLayout') {
+      const padX = (p.paddingLeft ?? 0) + (p.paddingRight ?? 0);
+      const padY = (p.paddingTop ?? 0) + (p.paddingBottom ?? 0);
+      function available(axis, padding) {
+        const size =
+          data['arranged' + axis] ?? data['explicit' + axis] ?? data.properties[axis] ?? data.skinProperties[axis];
+        return typeof size === 'number' ? Math.max(0, size - padding) : undefined;
+      }
+      const grid = tileGrid(children, available('width', padX), p, available('height', padY));
+      return { width: grid.width + padX, height: grid.height + padY };
+    }
     if (layout === 'HorizontalLayout' || layout === 'VerticalLayout') {
       const width =
         layout === 'HorizontalLayout'
           ? children.reduce((sum, child) => sum + child.width, 0) + gap * (children.length - 1)
-          : Math.max(...children.map(child => child.width));
+          : Math.max(0, ...children.map(child => child.width));
       const height =
         layout === 'VerticalLayout'
-          ? children.reduce((sum, child) => sum + child.height, 0) + gap * (children.length - 1)
+          ? (data.virtualRows?.extent ??
+            children.reduce((sum, child) => sum + child.height, 0) + gap * (children.length - 1))
           : Math.max(...children.map(child => child.height));
       return {
         width: Math.max(0, width + (p.paddingLeft ?? 0) + (p.paddingRight ?? 0)),
         height: Math.max(0, height + (p.paddingTop ?? 0) + (p.paddingBottom ?? 0))
       };
     }
+    // Percentage-sized bitmap skin parts still supply their texture's intrinsic size
+    // while the containing component is being measured without an explicit size.
+    function measured(child, axis) {
+      const props = state(child).properties;
+      if (
+        child instanceof Image &&
+        (typeof props[axis] === 'string' || props[axis === 'width' ? 'percentWidth' : 'percentHeight'] !== undefined)
+      )
+        return (axis === 'width' ? child.texture?.textureWidth : child.texture?.textureHeight) ?? 0;
+      return child[axis];
+    }
     return {
-      width: Math.max(0, ...children.map(child => child.x - child.anchorOffsetX + child.width)),
-      height: Math.max(0, ...children.map(child => child.y - child.anchorOffsetY + child.height))
+      width: Math.max(0, ...children.map(child => child.x - child.anchorOffsetX + measured(child, 'width'))),
+      height: Math.max(0, ...children.map(child => child.y - child.anchorOffsetY + measured(child, 'height')))
     };
   }
 
@@ -238,20 +292,48 @@ export function createLegacyEui({
     );
   }
 
+  let mounting = 0;
+  const dirtyRoots = new Set();
+  function flushLayout() {
+    for (const root of dirtyRoots) {
+      dirtyRoots.delete(root);
+      if (!root.isDisposed) {
+        resolveSize(root, stageSize.width, stageSize.height);
+        arrange(root);
+      }
+    }
+  }
+
+  // Coalesce internal invalidations during a synchronous subtree mount. Game callbacks
+  // still see current geometry and keep immediate read-after-write behavior.
+  function callGame(callback, receiver, ...args) {
+    if (!mounting) return callback.apply(receiver, args);
+    const depth = mounting;
+    mounting = 0;
+    try {
+      flushLayout();
+      return callback.apply(receiver, args);
+    } finally {
+      mounting = depth;
+    }
+  }
+
   function requestLayout(node) {
     if (node.isDisposed) return;
     let root = node;
     while (states.has(root.parent)) root = root.parent;
     const data = state(root);
     if (!data.initialized || data.arranging || data.rowUpdates) return;
-    resolveSize(root, stageSize.width, stageSize.height);
-    arrange(root);
+    dirtyRoots.add(root);
+    if (!mounting) flushLayout();
   }
 
   const sized = Base =>
     class extends Base {
       constructor(...args) {
         super(...args);
+        // In EUI, skinned components and their parts participate in hit testing by default.
+        this.touchEnabled = true;
         states.set(this, {
           initialized: false,
           properties: {},
@@ -389,15 +471,93 @@ export function createLegacyEui({
       requestLayout(this);
     }
   }
-  class Group extends Component {}
+  class Group extends Component {
+    #offWheel;
+    #scrollV = 0;
+    #scrollEnabled = false;
+    get scrollEnabled() {
+      return this.#scrollEnabled;
+    }
+    set scrollEnabled(value) {
+      this.#scrollEnabled = Boolean(value);
+      if (!this.#scrollEnabled) this.updateScroll(0, 0);
+      requestLayout(this);
+    }
+    get scrollV() {
+      return this.#scrollV;
+    }
+    set scrollV(value) {
+      if (!Number.isFinite(value)) refused('Expected a finite vertical scroll offset.');
+      this.#scrollV = this instanceof DataGroup ? Math.max(0, value) : value;
+      requestLayout(this);
+    }
+    // Translate and clip the plain viewport as a whole, keeping authored map positions readable.
+    get anchorOffsetY() {
+      return super.anchorOffsetY - (state(this)?.viewportOffset ?? 0);
+    }
+    set anchorOffsetY(value) {
+      super.anchorOffsetY = value + (state(this)?.viewportOffset ?? 0);
+    }
+    detachWheel() {
+      this.#offWheel?.();
+      this.#offWheel = undefined;
+    }
+    updateScroll(width, height) {
+      const data = state(this);
+      const active = this.#scrollEnabled && width > 0 && height > 0;
+      const offset = active && !(this instanceof DataGroup) ? this.#scrollV : 0;
+      if ((data.viewportOffset ?? 0) !== offset) {
+        super.anchorOffsetY = this.anchorOffsetY + offset;
+        data.viewportOffset = offset;
+      }
+      if (!active) {
+        this.detachWheel();
+        if (data.scrollClip) {
+          this.clipRect = undefined;
+          data.scrollClip = false;
+        }
+        return;
+      }
+      if (this instanceof DataGroup && state(this).layout.type !== 'VerticalLayout')
+        refused('Scrolling currently requires a vertical list layout.');
+      this.clipRect = { x: 0, y: offset, width, height };
+      data.scrollClip = true;
+      if (this instanceof DataGroup) this.#scrollV = Math.min(this.#scrollV, Math.max(0, this.contentHeight - height));
+      if (!stageOf(this)) return;
+      if (!this.#offWheel && game?.hover?.events.wheel) {
+        this.#offWheel = this.on(game.hover.events.wheel, event => {
+          if (event.defaultPrevented || event.payload.zoom) return;
+          const { deltaY, unit } = event.payload;
+          const line = this instanceof DataGroup ? this.scrollLineHeight : 40;
+          const next = Math.max(
+            0,
+            Math.min(
+              this.contentHeight - this.height,
+              this.#scrollV + deltaY * (unit === 'line' ? line : unit === 'page' ? this.height : 1)
+            )
+          );
+          if (next !== this.#scrollV) {
+            this.scrollV = next;
+            event.preventDefault();
+          }
+        });
+      }
+    }
+    get contentHeight() {
+      return innerSize(this)?.height ?? 0;
+    }
+    get contentWidth() {
+      return innerSize(this)?.width ?? 0;
+    }
+  }
   class UILayer extends Component {}
   class Skin extends Group {}
 
   class Rect extends Component {
     #paint = {
-      fillColor: 0xffffff,
+      fillColor: 0,
       fillAlpha: 1,
-      strokeColor: 0,
+      strokeColor: 0x444444,
       strokeAlpha: 1,
       strokeWeight: 0,
       ellipseWidth: 0,
@@ -405,8 +565,10 @@ export function createLegacyEui({
     };
     #drawn;
     #shape = new sdk.Sprite();
-    constructor(width, height, fillColor = 0xffffff) {
+    constructor(width, height, fillColor = 0) {
       super();
+      // A skinned legacy Rect remains the pointer target even when its text or fill is hit.
+      this.touchChildren = false;
       if (width !== undefined) this.width = width;
       if (height !== undefined) this.height = height;
       this.fillColor = fillColor;
@@ -480,6 +642,8 @@ export function createLegacyEui({
 
   class Image extends sized(Bitmap) {
     #source;
+    #fillMode = 'scale';
+    #grid;
     #generation = 0;
     constructor(source) {
       super();
@@ -487,6 +651,23 @@ export function createLegacyEui({
     }
     get source() {
       return this.#source;
+    }
+    get fillMode() {
+      return this.#fillMode;
+    }
+    set fillMode(value) {
+      if (value !== 'scale' && value !== 'clip') refused('Unsupported image fill mode.');
+      this.#fillMode = value;
+      this.resizeImage();
+    }
+    get scale9Grid() {
+      return this.#grid;
+    }
+    set scale9Grid(value) {
+      if (value != null && ['x', 'y', 'width', 'height'].some(k => !Number.isFinite(value[k]) || value[k] < 0))
+        refused('Invalid nine-slice rectangle.');
+      this.#grid = value == null ? undefined : { x: value.x, y: value.y, width: value.width, height: value.height };
+      this.resizeImage();
     }
     set source(value) {
       this.#source = value;
@@ -526,18 +707,35 @@ export function createLegacyEui({
       else observe(RES.getResAsync(source).then(apply));
     }
     resizeImage() {
-      if (this.texture == null || this.numChildren !== 1) return;
-      const native = this.getChildAt(0);
-      const width = this.width,
-        height = this.height;
-      if (native.width !== width) native.width = width;
-      if (native.height !== height) native.height = height;
+      if (this.texture) this.drawLegacyImage(this.width, this.height, this.#grid, this.#fillMode);
     }
   }
 
   class Label extends sized(TextField) {
     #textAlign = 'left';
     #verticalAlign = 'top';
+    // In Egret 5 this flag selects input-field behavior. Read-only labels use their layout width.
+    multiline = false;
+    #words = '';
+    #rows = [];
+    #totalLines = 1;
+    get legacyRasterLineCount() {
+      return this.#rows.length + 1;
+    }
+    #format;
+    #active = true;
+    get text() {
+      return this.#words;
+    }
+    set text(value) {
+      this.#words = String(value);
+      this.alignText();
+    }
+    setLegacyRasterActive(active) {
+      this.#active = active;
+      super.setLegacyRasterActive(active);
+      for (const row of this.#rows) row.setLegacyRasterActive(active);
+    }
     get textAlign() {
       return this.#textAlign;
     }
@@ -555,13 +753,66 @@ export function createLegacyEui({
       this.alignText();
     }
     alignText() {
-      if (this.isDisposed || this.numChildren === 0) return;
-      const visual = this.getChildAt(0);
-      const bounds = visual.getBounds();
+      if (this.isDisposed) return;
       const width = state(this).arrangedwidth ?? state(this).explicitwidth;
       const height = state(this).arrangedheight ?? state(this).explicitheight;
-      visual.x = width === undefined ? 0 : alignment(this.#textAlign, this.width - bounds.width) - bounds.x;
-      visual.y = height === undefined ? 0 : alignment(this.#verticalAlign, this.height - bounds.height) - bounds.y;
+      const font = (this.italic ? 'italic ' : '') + (this.bold ? 'bold ' : '') + this.size + 'px ' + this.fontFamily;
+      const key = JSON.stringify([this.#words, width, height, font, this.textColor]);
+      if (key !== this.#format) {
+        this.#format = key;
+        const rows = [];
+        for (const line of this.#words.split(/\r\n|[\r\n]/)) {
+          if (width === undefined || !(measureLine(line, font) > width)) {
+            rows.push(line);
+            continue;
+          }
+          let row = '';
+          // Egret's default static text wraps at characters. Measure whole candidates
+          // with the browser font so proportional glyphs and grapheme clusters survive.
+          for (const { segment } of new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(line)) {
+            if (row && measureLine(row + segment, font) > width) {
+              rows.push(row);
+              row = '';
+            }
+            row += segment;
+          }
+          rows.push(row);
+        }
+        this.#totalLines = rows.length;
+        // The first row is always drawn. Each following row starts only if its
+        // midpoint fits the explicit box; hidden rows do not acquire raster slots.
+        if (height !== undefined && this.size > 0) {
+          rows.length = Math.min(rows.length, Math.max(1, Math.floor(height / this.size + 0.5)));
+        }
+        if (super.text !== rows[0]) super.text = rows[0];
+        while (this.#rows.length > rows.length - 1) this.#rows.pop().dispose();
+        for (let i = 1; i < rows.length; i++) {
+          let row = this.#rows[i - 1];
+          if (!row) {
+            row = new TextField();
+            row.setLegacyRasterActive(this.#active);
+            row.touchEnabled = false;
+            row.onLegacyTextReady = () => requestLayout(this);
+            this.#rows.push(row);
+            this.addChild(row);
+          }
+          if (row.size !== this.size) row.size = this.size;
+          if (row.textColor !== this.textColor) row.textColor = this.textColor;
+          if (row.fontFamily !== this.fontFamily) row.fontFamily = this.fontFamily;
+          if (row.bold !== this.bold) row.bold = this.bold;
+          if (row.italic !== this.italic) row.italic = this.italic;
+          if (row.text !== rows[i]) row.text = rows[i];
+        }
+      }
+      const visual = this.legacyTextDisplay;
+      if (!visual) return;
+      const blockHeight = this.#totalLines === 1 ? visual.getBounds().height : this.#totalLines * this.size;
+      const top = height === undefined ? 0 : alignment(this.#verticalAlign, Math.max(0, height - blockHeight));
+      for (const [i, line] of [visual, ...this.#rows].entries()) {
+        const b = line.getBounds();
+        line.x = width === undefined ? 0 : alignment(this.#textAlign, width - b.width) - b.x;
+        line.y = top + i * this.size - (height === undefined ? 0 : b.y);
+      }
     }
     onLegacyTextReady() {
       requestLayout(this);
@@ -570,10 +821,27 @@ export function createLegacyEui({
 
   class Button extends Component {
     #label = '';
+    #stopTracking;
     constructor() {
       super();
       this.touchEnabled = true;
       this.touchChildren = false;
+      if (game.pointer.events.begin && game.pointer.observe) {
+        this.on(game.pointer.events.begin, event => {
+          if (!this.enabled || this.#stopTracking || !state(this).skinStates?.includes('down')) return;
+          const session = event.payload.session;
+          this.#stopTracking = game.pointer.observe(({ kind, contact }) => {
+            if (contact.session === session && (kind === 'end' || kind === 'cancel')) this.endPress();
+          });
+          this.updateState();
+        });
+      }
+    }
+    endPress() {
+      if (!this.#stopTracking) return;
+      this.#stopTracking();
+      this.#stopTracking = undefined;
+      this.updateState();
     }
     get enabled() {
       return super.enabled;
@@ -581,6 +849,7 @@ export function createLegacyEui({
     set enabled(value) {
       super.enabled = value;
       this.touchChildren = false;
+      if (!this.enabled) this.endPress();
     }
     get label() {
       return this.#label;
@@ -590,7 +859,7 @@ export function createLegacyEui({
       this.updateLabel();
     }
     updateState() {
-      const name = this.enabled ? 'up' : 'disabled';
+      const name = !this.enabled ? 'disabled' : this.#stopTracking ? 'down' : 'up';
       if (state(this).skinStates?.includes(name)) this.currentState = name;
     }
     updateLabel() {
@@ -681,7 +950,8 @@ export function createLegacyEui({
     set data(value) {
       if (Object.is(value, this.#data)) return;
       this.#data = value;
-      if (state(this).initialized) this.dataChanged();
+      if (state(this).initialized && this.dataChanged !== ItemRenderer.prototype.dataChanged)
+        callGame(this.dataChanged, this);
     }
     dataChanged() {}
     get selected() {
@@ -696,71 +966,29 @@ export function createLegacyEui({
   class DataGroup extends Group {
     #provider;
     #watching = false;
+    #needsInitialWindow = false;
     #renderer = ItemRenderer;
     #skin;
-    #rows = [];
+    #rows = new Map();
+    #count = 0;
+    #virtual = true;
+    #rowHeight;
+    #generation = 0;
+    #sample;
+    #first = 0;
+    #end = 0;
+    #requested = new Set();
     #reconciling = false;
     #refreshPending = false;
-    #offWheel;
-    #scrollV = 0;
-    #scrollEnabled = false;
+    get scrollLineHeight() {
+      return this.#rowHeight || this.getElementAt(0)?.height || 40;
+    }
     get useVirtualLayout() {
-      return false;
+      return this.#virtual;
     }
     set useVirtualLayout(value) {
-      if (value !== false) refused('Virtualized list layout needs an explicit migration.');
-    }
-    get scrollEnabled() {
-      return this.#scrollEnabled;
-    }
-    set scrollEnabled(value) {
-      this.#scrollEnabled = Boolean(value);
+      this.#virtual = Boolean(value);
       requestLayout(this);
-    }
-    get scrollV() {
-      return this.#scrollV;
-    }
-    set scrollV(value) {
-      if (!Number.isFinite(value)) refused('Expected a finite vertical scroll offset.');
-      this.#scrollV = Math.max(0, value);
-      requestLayout(this);
-    }
-    updateScroll(width, height) {
-      if (!this.#scrollEnabled || width <= 0 || height <= 0) {
-        this.#offWheel?.();
-        this.#offWheel = undefined;
-        this.clipRect = undefined;
-        return;
-      }
-      if (state(this).layout.type !== 'VerticalLayout') refused('Scrolling currently requires a vertical list layout.');
-      const content = this.contentHeight;
-      this.clipRect = { x: 0, y: 0, width, height };
-      this.#scrollV = Math.min(this.#scrollV, Math.max(0, content - height));
-      if (!stageOf(this)) return;
-      if (!this.#offWheel && game?.hover?.events.wheel) {
-        this.#offWheel = this.on(game.hover.events.wheel, event => {
-          if (event.defaultPrevented || event.payload.zoom) return;
-          const { deltaY, unit } = event.payload;
-          const line = this.getElementAt(0)?.height || 40;
-          const next = Math.max(
-            0,
-            Math.min(
-              this.contentHeight - this.height,
-              this.#scrollV + deltaY * (unit === 'line' ? line : unit === 'page' ? this.height : 1)
-            )
-          );
-          if (next !== this.#scrollV) {
-            this.scrollV = next;
-            event.preventDefault();
-          }
-        });
-      }
-    }
-    get contentHeight() {
-      return innerSize(this)?.height ?? 0;
-    }
-    get contentWidth() {
-      return innerSize(this)?.width ?? 0;
     }
     constructor() {
       super();
@@ -799,39 +1027,130 @@ export function createLegacyEui({
       }
     }
     get numElements() {
-      return this.#rows.length;
+      return this.#count;
     }
     getElementAt(index) {
-      return this.#rows[index] ?? null;
+      return this.#rows.get(index) ?? null;
     }
     getElementIndex(row) {
-      return this.#rows.indexOf(row);
+      return row && this.#rows.get(row.itemIndex) === row ? row.itemIndex : -1;
     }
     getVirtualElementAt(index) {
+      if (!Number.isInteger(index) || index < 0 || index >= this.#count) return null;
+      if (!this.#rows.has(index) && this.#watching) {
+        this.#requested.add(index);
+        this.#updateRows();
+      }
       return this.getElementAt(index);
     }
+    #newRow() {
+      const row = new this.#renderer();
+      state(row).generation = this.#generation;
+      if (typeof this.#skin === 'string') row.skinName = this.#skin;
+      else if (this.#skin !== undefined) state(row).inlineSkin = this.#skin;
+      return row;
+    }
     #resetRows() {
-      for (const row of this.#rows) {
-        this.removeChild(row);
-        row.dispose();
-      }
-      this.#rows = [];
+      this.#sample?.dispose();
+      this.#sample = undefined;
+      this.#rowHeight = undefined;
+      this.#requested.clear();
+      this.#generation++;
       if (this.#watching) this.#updateRows();
+      else {
+        for (const row of this.#rows.values()) {
+          this.removeChild(row);
+          row.dispose();
+        }
+        this.#rows.clear();
+        this.#count = 0;
+      }
+    }
+    #window() {
+      const count = this.#provider?.length ?? 0;
+      const s = state(this);
+      const viewport = this.parent instanceof Scroller ? state(this.parent) : this.scrollEnabled ? s : undefined;
+      const height =
+        viewport?.arrangedheight ??
+        viewport?.explicitheight ??
+        viewport?.properties.height ??
+        viewport?.skinProperties.height;
+      const p = s.layout.properties;
+      const gap = p.gap ?? 6;
+      if (
+        this.#virtual &&
+        count &&
+        typeof height === 'number' &&
+        height > 0 &&
+        s.layout.type === 'VerticalLayout' &&
+        gap >= 0
+      ) {
+        if (this.#rowHeight === undefined) {
+          // A project renderer can select its EXML skin in its constructor. Use this same instance for real data.
+          const first = this.#rows.values().next().value;
+          const row = first && state(first).generation === this.#generation ? first : (this.#sample ??= this.#newRow());
+          const skin = state(row).inlineSkin ?? selectedSkin(row);
+          const declared = (typeof skin === 'string' ? skins.get(skin) : skin)?.properties.height;
+          this.#rowHeight = typeof declared === 'number' && declared > 0 ? declared : 0;
+        }
+        if (this.#rowHeight > 0) {
+          const step = this.#rowHeight + gap;
+          const extent = count * step - gap;
+          const top = p.paddingTop ?? 0;
+          const padding = top + (p.paddingBottom ?? 0);
+          const origin = top + alignment(p.verticalAlign, Math.max(0, height - padding) - extent);
+          const scroll = Math.min(this.scrollV, Math.max(0, padding + extent - height));
+          const first = Math.min(count, Math.max(0, Math.floor((scroll - origin + gap) / step)));
+          const end = Math.min(count, Math.max(first, Math.ceil((scroll + height - origin) / step)));
+          return { first, end, geometry: { step, extent } };
+        }
+      }
+      return { first: 0, end: count, geometry: undefined };
+    }
+    syncWindow() {
+      if (!this.#watching || this.#reconciling) return;
+      if (this.#needsInitialWindow) {
+        this.#needsInitialWindow = false;
+        this.#updateRows();
+        return;
+      }
+      if (state(this).virtualRows && [...this.#rows.values()].some(row => row.height !== this.#rowHeight))
+        this.#rowHeight = 0;
+      const window = this.#window();
+      if (
+        window.first !== this.#first ||
+        window.end !== this.#end ||
+        window.geometry?.step !== state(this).virtualRows?.step ||
+        window.geometry?.extent !== state(this).virtualRows?.extent
+      ) {
+        this.#requested.clear();
+        this.#updateRows();
+      }
+    }
+    get realizedRows() {
+      return this.#rows.values();
     }
     attachProvider() {
       if (!stageOf(this) || !state(this).initialized || this.#watching) return;
       this.#watching = true;
       this.#provider?.addEventListener('collectionChange', this.#updateRows, this);
-      this.#updateRows();
+      // The parent's percentage and edge constraints resolve during layout. Realizing
+      // before that pass could construct every row and immediately throw most away.
+      if (mounting && this.#virtual && this.parent instanceof Scroller) {
+        this.#needsInitialWindow = true;
+        requestLayout(this);
+      } else this.#updateRows();
     }
     detachProvider() {
       this.#provider?.removeEventListener('collectionChange', this.#updateRows, this);
+      this.#requested.clear();
+      this.#needsInitialWindow = false;
       this.#watching = false;
-      this.#offWheel?.();
-      this.#offWheel = undefined;
     }
     dispose() {
       this.detachProvider();
+      this.#sample?.dispose();
+      this.#sample = undefined;
       super.dispose();
     }
     #updateRows(event) {
@@ -858,44 +1177,87 @@ export function createLegacyEui({
     }
     #reconcileRows(event) {
       const source = this.#provider?.source ?? [];
-      const rows = this.#rows;
+      const oldRows = this.#rows;
       const selected = this.getElementAt(this.selectedIndex);
-      let aligned;
-      if (event?.kind === 'add' || event?.kind === 'remove' || event?.kind === 'replace') {
-        aligned = rows.slice();
-        if (event.kind === 'add') aligned.splice(event.location, 0, ...event.items.map(() => undefined));
-        if (event.kind === 'remove') aligned.splice(event.location, event.items.length);
-      }
-      // Keep the existing renderer for each occurrence, including duplicate items in the collection.
-      const pool = new Map();
-      for (const row of aligned ? [] : rows) {
-        let bucket = pool.get(row.data);
-        if (!bucket) pool.set(row.data, (bucket = []));
+      const { first, end, geometry } = this.#window();
+      this.#first = first;
+      this.#end = end;
+      this.#count = source.length;
+      state(this).virtualRows = geometry;
+      if (event) this.#requested.clear();
+      const indexes = Array.from({ length: end - first }, (_, offset) => first + offset);
+      for (const index of this.#requested)
+        if (index < source.length && (index < first || index >= end)) indexes.push(index);
+      if (indexes.length > end - first) indexes.sort((a, b) => a - b);
+
+      // Reserve the matching renderers before recycling any row for a different collection index.
+      const next = new Map(indexes.map(index => [index, undefined]));
+      const positional = event && ['add', 'remove', 'replace', 'update'].includes(event.kind);
+      const unused = new Set([...oldRows.values()].filter(row => state(row).generation === this.#generation));
+      const byData = new Map();
+      for (const row of positional ? [] : [...unused].reverse()) {
+        let bucket = byData.get(row.data);
+        if (!bucket) byData.set(row.data, (bucket = []));
         bucket.push(row);
       }
-      const next = source.map((item, index) => {
-        const existing = aligned ? aligned[index] : pool.get(item)?.shift();
-        const row = existing ?? new this.#renderer();
-        if (!existing && this.#skin !== undefined) {
-          if (typeof this.#skin === 'string') row.skinName = this.#skin;
-          else state(row).inlineSkin = this.#skin;
+      for (const index of indexes) {
+        let prior = index;
+        if (event?.kind === 'add' && index >= event.location)
+          prior = index < event.location + event.items.length ? -1 : index - event.items.length;
+        else if (event?.kind === 'remove' && index >= event.location) prior += event.items.length;
+        let row;
+        if (positional) row = oldRows.get(prior);
+        else if (Object.is(oldRows.get(index)?.data, source[index]) && unused.has(oldRows.get(index)))
+          row = oldRows.get(index);
+        else {
+          const pool = byData.get(source[index]);
+          while (pool?.length && !unused.has(pool.at(-1))) pool.pop();
+          row = pool?.pop();
+        }
+        if (unused.has(row)) {
+          next.set(index, row);
+          unused.delete(row);
+        }
+      }
+      for (const index of indexes) {
+        let row = next.get(index);
+        if (!row) {
+          row = this.#sample ?? (geometry ? unused.values().next().value : undefined) ?? this.#newRow();
+          this.#sample = undefined;
+          unused.delete(row);
+          next.set(index, row);
         }
         row.itemIndex = index;
-        row.data = item;
-        if (event?.kind === 'update' && index === event.location) row.dataChanged();
-        return row;
-      });
-      const retained = new Set(next);
-      for (const row of rows)
+        row.data = source[index];
+        if (
+          event?.kind === 'update' &&
+          index === event.location &&
+          row.dataChanged !== ItemRenderer.prototype.dataChanged
+        )
+          callGame(row.dataChanged, row);
+      }
+      const retained = new Set(next.values());
+      for (const row of oldRows.values())
         if (!retained.has(row)) {
           this.removeChild(row);
           row.dispose();
         }
+      // Notify child lifecycle handlers only after the full index mapping is available.
       this.#rows = next;
-      next.forEach((row, index) => {
-        if (row.parent !== this || this.getChildAt(index) !== row) this.addChildAt(row, index);
+      indexes.forEach((index, slot) => {
+        const row = next.get(index);
+        if (row.parent !== this || this.getChildAt(slot) !== row) this.addChildAt(row, slot);
       });
-      this.rowsChanged?.(selected);
+      if (this.#sample) {
+        this.#sample.dispose();
+        this.#sample = undefined;
+      }
+      if (geometry && [...next.values()].some(row => row.height !== this.#rowHeight)) {
+        // A custom renderer overrode its skin's literal height. Resume measuring every row.
+        this.#rowHeight = 0;
+        this.#refreshPending = true;
+      }
+      this.rowsChanged?.(event, selected);
     }
   }
   class List extends DataGroup {
@@ -926,8 +1288,8 @@ export function createLegacyEui({
       if (!Number.isInteger(value)) refused('List selection requires an integer index.');
       this.#pendingIndex = this.numElements || value < 0 ? undefined : value;
       this.#index = this.numElements ? Math.max(this.#required ? 0 : -1, Math.min(this.numElements - 1, value)) : -1;
-      this.#selected = this.getElementAt(this.#index)?.data;
-      for (let index = 0; index < this.numElements; index++) this.getElementAt(index).selected = index === this.#index;
+      this.#selected = this.dataProvider?.getItemAt(this.#index);
+      for (const row of this.realizedRows) row.selected = row.itemIndex === this.#index;
     }
     get selectedItem() {
       return this.#selected;
@@ -942,8 +1304,19 @@ export function createLegacyEui({
       this.#required = Boolean(value);
       this.selectedIndex = this.#index;
     }
-    rowsChanged(selected) {
-      this.selectedIndex = this.#pendingIndex ?? this.getElementIndex(selected);
+    rowsChanged(event, previousRow) {
+      let index = this.#index;
+      if (this.#pendingIndex !== undefined) index = this.#pendingIndex;
+      else if (index >= 0) {
+        if (event?.kind === 'add' && index >= event.location) index += event.items.length;
+        else if (event?.kind === 'remove' && index >= event.location)
+          index = index < event.location + event.items.length ? -1 : index - event.items.length;
+        else if (event?.kind !== 'replace' && !Object.is(this.dataProvider?.getItemAt(index), this.#selected)) {
+          index = previousRow && Object.is(previousRow.data, this.#selected) ? this.getElementIndex(previousRow) : -1;
+          if (index < 0) index = this.dataProvider?.getItemIndex(this.#selected) ?? -1;
+        }
+      }
+      this.selectedIndex = index;
     }
   }
   class Scroller extends Component {
@@ -953,7 +1326,7 @@ export function createLegacyEui({
     }
     set viewport(value) {
       if (value === this.viewport) return;
-      if (value != null && !(value instanceof DataGroup)) refused('Expected a vertical list viewport.');
+      if (value != null && !(value instanceof Group)) refused('Expected a Group viewport.');
       if (this.viewport) this.removeChild(this.viewport);
       if (value) this.addChild(value);
     }
@@ -1003,7 +1376,8 @@ export function createLegacyEui({
             if (drag.moved || Math.abs(delta) >= 5) {
               drag.moved = true;
               consumed = drag.session;
-              if (this.viewport) this.viewport.scrollV = drag.offset + delta;
+              const limit = Math.max(0, drag.viewport.contentHeight - drag.viewport.height);
+              drag.viewport.scrollV = Math.max(0, Math.min(limit, drag.offset + delta));
             }
           } else if (kind === 'end' || kind === 'cancel') drag = undefined;
         })
@@ -1147,6 +1521,7 @@ export function createLegacyEui({
     if (!data) refused('Custom skin children must extend an admitted EUI component.');
     Object.assign(data, { descriptor, owner, applied: new Map(), defaults: new Map() });
     data.layout = descriptor.layout ?? data.layout;
+    if (descriptor.inlineSkin) data.inlineSkin = descriptor.inlineSkin;
     if (descriptor.itemRendererSkin) node.itemRendererSkinName = descriptor.itemRendererSkin;
     const id = descriptor.properties.id;
     if (id) skinPart(owner, id, node);
@@ -1212,11 +1587,71 @@ export function createLegacyEui({
     if (properties.left !== undefined) child.x = properties.left + child.anchorOffsetX;
     else if (properties.right !== undefined) child.x = width - properties.right - child.width + child.anchorOffsetX;
     else if (properties.horizontalCenter !== undefined)
-      child.x = (width - child.width) / 2 + properties.horizontalCenter + child.anchorOffsetX;
+      child.x = Math.round((width - child.width) / 2 + properties.horizontalCenter) + child.anchorOffsetX;
     if (properties.top !== undefined) child.y = properties.top + child.anchorOffsetY;
     else if (properties.bottom !== undefined) child.y = height - properties.bottom - child.height + child.anchorOffsetY;
     else if (properties.verticalCenter !== undefined)
-      child.y = (height - child.height) / 2 + properties.verticalCenter + child.anchorOffsetY;
+      child.y = Math.round((height - child.height) / 2 + properties.verticalCenter) + child.anchorOffsetY;
+  }
+
+  function removeViewportLabel(label) {
+    if (viewportLabels.delete(label) && !viewportLabels.size) {
+      viewportScope?.dispose();
+      viewportScope = undefined;
+    }
+  }
+
+  function updateRaster(label) {
+    if (label.isDisposed) {
+      removeViewportLabel(label);
+      return;
+    }
+    const height = state(label)?.arrangedheight ?? label.legacyRasterBoxHeight;
+    const guard = label.size;
+    // Leave a line of overhang on both edges. Intrinsic, multi-line or transformed text keeps its metrics.
+    let bounded = height > 0 && guard > 0 && (label.legacyRasterLineCount ?? 1) === 1 && !/[\n\r]/.test(label.text);
+    let top = -guard,
+      bottom = height + guard,
+      inViewport = false,
+      outside = false;
+    for (let at = label; at.parent; at = at.parent) {
+      const parent = at.parent;
+      if (at.scaleX !== 1 || at.scaleY !== 1 || at.rotation || at.skewX || at.skewY) bounded = false;
+      const offset = at.y - at.anchorOffsetY - (state(at)?.viewportOffset ?? 0);
+      top += offset;
+      bottom += offset;
+      if (!(parent instanceof Group) || parent instanceof DataGroup || !state(parent).scrollClip) continue;
+      inViewport = true;
+      const clip = parent.clipRect;
+      if (bounded && (bottom <= clip.y || top >= clip.y + clip.height)) {
+        outside = true;
+        break;
+      }
+    }
+    if (inViewport && stageOf(label)) {
+      viewportLabels.add(label);
+      if (!viewportScope) {
+        viewportScope = game.engine.createScope();
+        const watch = game.engine.watchDisplayRevision(viewportScope);
+        let last = watch.revision;
+        game.engine.clock.onTick(viewportScope, () => {
+          // Programmatic moves and tweens can change visibility without invalidating EUI layout.
+          if (last === watch.revision) return;
+          for (const candidate of viewportLabels) updateRaster(candidate);
+          last = watch.revision;
+        });
+      }
+    } else removeViewportLabel(label);
+    if (outside && !clippedText.has(label)) {
+      clippedText.add(label);
+      label.setLegacyRasterActive(false);
+    } else if (!outside && clippedText.delete(label)) label.setLegacyRasterActive(true);
+  }
+
+  function projectUnmanagedText(node) {
+    if (node instanceof TextField) updateRaster(node);
+    else if (node instanceof sdk.DisplayObjectContainer)
+      for (let i = 0; i < node.numChildren; i++) projectUnmanagedText(node.getChildAt(i));
   }
 
   function arrange(node) {
@@ -1225,6 +1660,7 @@ export function createLegacyEui({
     data.arranging = true;
     try {
       // Seed fixed child dimensions before measuring an auto-sized group; resolve percentage/edge constraints after.
+      if (node instanceof DataGroup) node.syncWindow();
       const children = childrenOf(node);
       const parentWidth = data.arrangedwidth ?? data.explicitwidth ?? 0;
       const parentHeight = data.arrangedheight ?? data.explicitheight ?? 0;
@@ -1238,7 +1674,7 @@ export function createLegacyEui({
       const innerWidth = Math.max(0, width - left - (p.paddingRight ?? 0));
       const innerHeight = Math.max(0, height - top - (p.paddingBottom ?? 0));
       const gap = p.gap ?? (layout === 'VerticalLayout' || layout === 'HorizontalLayout' ? 6 : 0);
-      if (node instanceof DataGroup) node.updateScroll(width, height);
+      if (node instanceof Group) node.updateScroll(width, height);
       const included = children.filter(child => state(child).properties.includeInLayout !== false);
       if (layout === 'HorizontalLayout' || layout === 'VerticalLayout') {
         // Main-axis percentages divide remaining space in legacy EUI. Only fixed main-axis children are admitted.
@@ -1266,7 +1702,11 @@ export function createLegacyEui({
       const totalWidth =
         included.reduce((value, child) => value + child.width, 0) + Math.max(0, included.length - 1) * gap;
       const totalHeight =
+        data.virtualRows?.extent ??
         included.reduce((value, child) => value + child.height, 0) + Math.max(0, included.length - 1) * gap;
+      // Row-major tiles keep the largest admitted child as their cell, including across a short last row.
+      const grid = layout === 'TileLayout' ? tileGrid(included, innerWidth, p) : undefined;
+      let cellIndex = 0;
       let cursorX = left + alignment(p.horizontalAlign, innerWidth - totalWidth);
       let cursorY =
         top +
@@ -1282,8 +1722,12 @@ export function createLegacyEui({
             cursorX += child.width + gap;
           } else if (layout === 'VerticalLayout') {
             child.x = left + alignment(p.horizontalAlign, innerWidth - child.width) + child.anchorOffsetX;
-            child.y = cursorY + child.anchorOffsetY;
-            cursorY += child.height + gap;
+            child.y = cursorY + child.anchorOffsetY + (data.virtualRows ? child.itemIndex * data.virtualRows.step : 0);
+            if (!data.virtualRows) cursorY += child.height + gap;
+          } else if (grid) {
+            child.x = left + (cellIndex % grid.columns) * grid.stepX + child.anchorOffsetX;
+            child.y = top + Math.floor(cellIndex / grid.columns) * grid.stepY + child.anchorOffsetY;
+            cellIndex++;
           } else if (layout === 'BasicLayout') placeBasic(child, properties, width, height);
           else refused('Unsupported EUI layout ' + layout + '.');
         }
@@ -1296,10 +1740,18 @@ export function createLegacyEui({
         }
         arrange(child);
       }
+      if (node instanceof Label) node.alignText();
+      if (node instanceof TextField) updateRaster(node);
+      else if (node.numChildren > children.length) {
+        for (let i = 0; i < node.numChildren; i++) {
+          const child = node.getChildAt(i);
+          if (!states.has(child)) projectUnmanagedText(child);
+        }
+      }
       if (node instanceof Rect) node.redraw();
       if (node instanceof Image) node.resizeImage();
-      if (node instanceof Label) node.alignText();
-      if (node.touchEnabled) node.hitArea = width > 0 && height > 0 ? { x: 0, y: 0, width, height } : undefined;
+      if (node.touchEnabled)
+        node.hitArea = width > 0 && height > 0 ? { x: 0, y: data.viewportOffset ?? 0, width, height } : undefined;
     } finally {
       data.arranging = false;
     }
@@ -1342,7 +1794,8 @@ export function createLegacyEui({
       for (const group of groups)
         for (const part of group.children) {
           const id = state(part).descriptor.properties.id;
-          if (id) node.partAdded?.(id, part);
+          if (id && node.partAdded && node.partAdded !== Component.prototype.partAdded)
+            callGame(node.partAdded, node, id, part);
         }
     } finally {
       data.pendingChildren = undefined;
@@ -1353,6 +1806,7 @@ export function createLegacyEui({
   }
 
   function enter(node) {
+    if (node instanceof TextField) updateRaster(node);
     const data = state(node);
     if (!data) return;
     liveNodes.add(node);
@@ -1374,14 +1828,20 @@ export function createLegacyEui({
         }
         if (node instanceof ItemRenderer) {
           node.selected = node.selected;
-          node.dataChanged();
+          if (node.dataChanged !== ItemRenderer.prototype.dataChanged) callGame(node.dataChanged, node);
         }
         requestLayout(node);
-        const finished = node.childrenCreated?.();
+        const finished =
+          node.childrenCreated && node.childrenCreated !== Component.prototype.childrenCreated
+            ? callGame(node.childrenCreated, node)
+            : undefined;
         if (finished && typeof finished.then === 'function') return Promise.resolve(finished).then(complete);
         complete();
       };
-      const created = node.createChildren?.();
+      const created =
+        node.createChildren && node.createChildren !== Component.prototype.createChildren
+          ? callGame(node.createChildren, node)
+          : undefined;
       if (created && typeof created.then === 'function') observe(Promise.resolve(created).then(finishChildren));
       else {
         const finished = finishChildren();
@@ -1396,6 +1856,10 @@ export function createLegacyEui({
   }
 
   function leave(node) {
+    if (node instanceof TextField) {
+      removeViewportLabel(node);
+      if (clippedText.delete(node)) node.setLegacyRasterActive(true);
+    }
     if (states.has(node)) detachObservers(node);
   }
 
@@ -1445,6 +1909,17 @@ export function createLegacyEui({
       }),
       UIEvent: Object.freeze({ COMPLETE: 'complete', CREATION_COMPLETE: 'creationComplete' })
     }),
+    beginMount() {
+      mounting++;
+    },
+    endMount() {
+      if (--mounting === 0) flushLayout();
+    },
+    viewportOwner(child) {
+      const parent = child?.parent;
+      return parent instanceof Scroller && parent.viewport === child ? parent : undefined;
+    },
+    callGame,
     enter,
     leave
   };

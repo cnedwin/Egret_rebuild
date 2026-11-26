@@ -16,7 +16,7 @@ const controls = new Set([
   'ItemRenderer',
   'Scroller'
 ]);
-const layouts = new Set(['BasicLayout', 'HorizontalLayout', 'VerticalLayout']);
+const layouts = new Set(['BasicLayout', 'HorizontalLayout', 'VerticalLayout', 'TileLayout']);
 const containers = new Set(['Skin', 'Group', 'Component', 'ItemRenderer', 'List', 'DataGroup', 'Scroller']);
 const fields = source => new Set(source.split(' '));
 const commonNumbers = fields(
@@ -31,16 +31,17 @@ const nonnegativeNumbers = fields(
 const controlNumbers = {
   List: fields('selectedIndex scrollV'),
   DataGroup: fields('scrollV'),
+  Group: fields('scrollV'),
   Label: fields('size'),
   Rect: fields('fillAlpha strokeAlpha strokeWeight ellipseWidth ellipseHeight')
 };
 const controlBooleans = {
   List: fields('requireSelection scrollEnabled useVirtualLayout'),
   DataGroup: fields('scrollEnabled useVirtualLayout'),
-  Label: fields('bold italic'),
+  Label: fields('bold italic multiline'),
   Button: fields('enabled'),
   Component: fields('enabled'),
-  Group: fields('enabled'),
+  Group: fields('enabled scrollEnabled'),
   Rect: fields('enabled')
 };
 const controlStrings = {
@@ -271,6 +272,27 @@ function readProperties(node, path, ids, layout = false) {
   for (const [key, value] of node.attributes) {
     const type = node.local;
     if (key === 'class' && type === 'Skin') continue;
+    if (type === 'Rect' && key === 'locked' && ['true', 'false'].includes(value)) continue;
+    if (type === 'Image' && key === 'fillMode' && ['scale', 'clip'].includes(value)) {
+      properties.set(key, value);
+      continue;
+    }
+    if (type === 'Image' && key === 'scale9Grid') {
+      const values = value.split(',').map(part => literalNumber(part.trim(), path, node.offset, key));
+      if (values.length !== 4 || values.some(n => n < 0) || !values[2] || !values[3])
+        exmlFailure(path, node.offset, 'Expected a nonnegative nine-slice rectangle with a positive center.');
+      const [x, y, width, height] = values;
+      properties.set(key, { x, y, width, height });
+      continue;
+    }
+    if (layout && type === 'TileLayout') {
+      if (!['horizontalGap', 'verticalGap', 'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom'].includes(key))
+        exmlFailure(path, node.offset, 'Unsupported row-major tile layout property.', { property: key });
+      const number = literalNumber(value, path, node.offset, key);
+      if (number < 0) exmlFailure(path, node.offset, 'Tile spacing must be nonnegative.');
+      properties.set(key, number);
+      continue;
+    }
     if (type === 'Skin' && !skinNumbers.has(key))
       exmlFailure(path, node.offset, 'Skin root properties must describe its dimensions.', { property: key });
     if (layout && type === 'BasicLayout')
@@ -317,7 +339,7 @@ function readProperties(node, path, ids, layout = false) {
         properties.set(key, number);
       }
     } else if (!layout && (commonBooleans.has(key) || controlBooleans[type]?.has(key))) {
-      if ((key === 'useVirtualLayout' && value !== 'false') || (value !== 'true' && value !== 'false'))
+      if (value !== 'true' && value !== 'false')
         exmlFailure(path, node.offset, 'Expected a literal boolean.', { property: key });
       properties.set(key, value === 'true');
     } else if (!layout && controlColors[type]?.has(key)) {
@@ -388,15 +410,33 @@ function compileNode(node, path, ids, knownStates = []) {
   const children = [];
   let layout;
   for (const child of node.children) {
-    // Wing's empty Config ID is editor bookkeeping and has no runtime display behavior.
+    // Wing stores preview dimensions alongside the editor ID. They do not describe a display node.
     if (child.namespace === wingNamespace) {
       if (
         node.local !== 'Skin' ||
         child.children.length ||
-        child.attributes.size !== 1 ||
+        [...child.attributes.keys()].some(key => !['id', 'scale9Grid', 'width', 'height'].includes(key)) ||
         !/^[A-Za-z0-9_-]{1,128}$/.test(child.attributes.get('id') ?? '')
       )
         exmlFailure(path, child.offset, 'Unsupported Wing metadata.');
+      continue;
+    }
+    if (
+      child.namespace === euiNamespace &&
+      child.local === 'skinName' &&
+      ['Button', 'Component'].includes(node.local)
+    ) {
+      if (
+        metadata.inlineSkin ||
+        properties.skinName ||
+        child.attributes.size ||
+        child.children.length !== 1 ||
+        child.children[0].namespace !== euiNamespace ||
+        child.children[0].local !== 'Skin'
+      )
+        exmlFailure(path, child.offset, 'Expected one inline component skin.');
+      // Each component owns its named skin parts independently of its enclosing scene.
+      metadata.inlineSkin = compileNode(child.children[0], path, new Set());
       continue;
     }
     if (!containers.has(node.local) && !custom)
@@ -408,9 +448,9 @@ function compileNode(node, path, ids, knownStates = []) {
         children.length ||
         (wrapped && (child.attributes.size || child.children.length !== 1)) ||
         viewport?.namespace !== euiNamespace ||
-        !['List', 'DataGroup'].includes(viewport.local)
+        !['List', 'DataGroup', 'Group'].includes(viewport.local)
       )
-        exmlFailure(path, child.offset, 'A vertical Scroller requires exactly one list viewport.');
+        exmlFailure(path, child.offset, 'A vertical Scroller requires exactly one Group, List or DataGroup viewport.');
       children.push(compileNode(viewport, path, ids, knownStates));
     } else if (
       child.namespace === euiNamespace &&
@@ -546,6 +586,7 @@ export function discoverLegacySkins(read, themePath = 'resource/default.thm.json
     if (node.type === 'Custom') customComponents.add(node.className);
     if (node.properties.itemRenderer && node.properties.itemRenderer !== 'eui.ItemRenderer')
       customComponents.add(node.properties.itemRenderer);
+    if (node.inlineSkin) collect(node.inlineSkin);
     if (node.itemRendererSkin) collect(node.itemRendererSkin);
     node.children.forEach(collect);
   }

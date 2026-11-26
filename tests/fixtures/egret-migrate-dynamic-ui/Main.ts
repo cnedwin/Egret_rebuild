@@ -2,7 +2,8 @@
 // Original migration control. The browser driver selects rows with real pointer events.
 class StockBadge extends eui.Group {}
 class StockRow extends eui.ItemRenderer {
-  constructor() { super(); this.skinName = "StockRowSkin"; }
+  static created = 0;
+  constructor() { super(); StockRow.created++; this.skinName = "StockRowSkin"; }
 }
 class StockPanel extends eui.Component {
   model = { title: "Harbor" };
@@ -27,6 +28,7 @@ class Main extends eui.UILayer {
       picked.push(event.item.name);
     }, this);
     const original = menu.model;
+    let beforeRange = 0;
     // This hook exposes observations and equivalent model actions to both browser versions.
     (globalThis as any).stockProbe = {
       snapshot: () => ({
@@ -35,6 +37,32 @@ class Main extends eui.UILayer {
         count: menu.items.length, scroll: menu.inventory.scrollV,
         firstLabel: (menu.inventory.getElementAt(0) as any)?.titlePart?.text ?? null
       }),
+      openRange: () => {
+        beforeRange = StockRow.created;
+        menu.inventory.useVirtualLayout = true;
+        menu.items = new eui.ArrayCollection(Array.from({ length: 1000 }, (_, i) => ({ name: "Lot " + i })));
+        menu.inventory.scrollV = 0;
+      },
+      jumpTo: (index: number) => {
+        const maxScroll = Math.max(0, menu.items.length * 32 - menu.inventory.height);
+        menu.inventory.scrollV = Math.min(index * 32, maxScroll);
+      },
+      rangeState: (index: number) => {
+        const list = menu.inventory;
+        let center: number[] | null = null;
+        let label: string | null = null;
+        for (let i = 0; i < list.numChildren; i++) {
+          const row = list.getChildAt(i) as any;
+          if (row.visible && row.itemIndex === index && row.data === menu.items.getItemAt(index)) {
+            const p = row.localToGlobal(24, 16);
+            center = [p.x, p.y];
+            label = row.titlePart?.text ?? null;
+            break;
+          }
+        }
+        return { center, label, selected: list.selectedIndex, created: StockRow.created - beforeRange,
+          children: list.numChildren, length: menu.items.length, lastTap: picked[picked.length - 1] };
+      },
       change: () => {
         menu.model = { title: "Gate" };
         original.title = "Stale";
