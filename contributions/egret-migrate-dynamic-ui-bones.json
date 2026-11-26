@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/fixtures/egret-migrate-dynamic-ui/Main.ts",
+      "originRole": "Independently authored first-party EUI inventory control for comparing data binding, state and renderer lifecycles. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-dynamic-ui/StockPanel.exml",
+      "originRole": "Independently authored first-party EUI inventory control for comparing data binding, state and renderer lifecycles. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-dynamic-ui/StockRow.exml",
+      "originRole": "Independently authored first-party EUI inventory control for comparing data binding, state and renderer lifecycles. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-dynamic-ui/verify.mjs",
+      "originRole": "Independently authored first-party comparison of an original EUI control on pinned local Egret 5 and Egret 7 builds. No historical source assets or binaries are bundled. AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

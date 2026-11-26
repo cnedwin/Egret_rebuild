@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<e:Skin xmlns:e="http://ns.egret.com/eui" xmlns:g="*" class="StockPanelSkin" states="ready,detail" width="320" height="220">
+  <e:Rect width="320" height="220" fillColor="0x203146"/>
+  <e:Label id="status" x="10" y="4" width="230" height="30" size="22" text="{hostComponent.model.title}" text.detail="{'Dock ' + hostComponent.model.title}"/>
+  <g:StockBadge id="badge" x="245" y="6" width="24" height="24" includeIn="detail"><e:Rect width="24" height="24" fillColor="0xe7bc52"/></g:StockBadge>
+  <e:List id="inventory" x="10" y="44" width="210" height="96" useVirtualLayout="false" scrollEnabled="true" itemRenderer="StockRow" dataProvider="{hostComponent.items}">
+    <e:layout><e:VerticalLayout gap="0"/></e:layout>
+  </e:List>
+</e:Skin>

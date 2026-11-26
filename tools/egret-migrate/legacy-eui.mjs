@@ -10,11 +10,32 @@ export function createLegacyEui({
   stageOf,
   observe,
   events,
+  EventDispatcher,
+  LegacyEvent,
+  game,
   stageSize
 }) {
   const states = new WeakMap();
   const skins = new Map();
+  const customTypes = new Map();
+  const customNames = new Map();
   const activeSkins = new Set();
+  const liveNodes = new Set();
+  function detachObservers(node) {
+    const data = state(node);
+    for (const record of data?.applied?.values() ?? []) {
+      record.off?.();
+      record.off = undefined;
+    }
+    if (node instanceof DataGroup) node.detachProvider();
+    if (node instanceof Scroller) node.detachScroll();
+    liveNodes.delete(node);
+  }
+  game.scope.use({
+    dispose() {
+      for (const node of liveNodes) detachObservers(node);
+    }
+  });
   for (const skin of theme?.exmls ?? []) {
     if (skin.className) skins.set(skin.className, skin.root);
     skins.set(skin.sourcePath, skin.root);
@@ -33,6 +54,131 @@ export function createLegacyEui({
   }
 
   const state = node => states.get(node);
+  // A plain legacy model can expose fields without an EventDispatcher. Share one observer per field
+  // and restore the original descriptor, with its latest value, after the final subscriber leaves.
+  const observed = new WeakMap();
+  function watchField(source, key, notify) {
+    let fields = observed.get(source);
+    if (!fields) observed.set(source, (fields = new Map()));
+    let entry = fields.get(key);
+    if (!entry) {
+      const callbacks = new Set();
+      const signal = () => {
+        for (const callback of [...callbacks]) callback();
+      };
+      const own = Object.getOwnPropertyDescriptor(source, key);
+      let proto = Object.getPrototypeOf(source);
+      let inherited;
+      while (!own && proto && !inherited) {
+        inherited = Object.getOwnPropertyDescriptor(proto, key);
+        proto = Object.getPrototypeOf(proto);
+      }
+      const descriptor = own ?? inherited;
+      const accessor = descriptor && !Object.hasOwn(descriptor, 'value');
+      let value = source[key];
+      let written = false;
+      let unwrap;
+      if (
+        (own ? own.configurable : Object.isExtensible(source)) &&
+        (accessor ? descriptor.get && descriptor.set : descriptor?.writable !== false)
+      ) {
+        const get = accessor
+          ? function () {
+              return descriptor.get.call(this);
+            }
+          : () => value;
+        const set = function (next) {
+          const previous = get.call(this);
+          if (accessor) descriptor.set.call(this, next);
+          else {
+            written = true;
+            value = next;
+          }
+          if (!Object.is(previous, get.call(this))) signal();
+        };
+        Object.defineProperty(source, key, {
+          configurable: true,
+          enumerable: descriptor?.enumerable ?? true,
+          get,
+          set
+        });
+        unwrap = () => {
+          if (Object.getOwnPropertyDescriptor(source, key)?.get !== get) return;
+          if (own) Object.defineProperty(source, key, accessor ? own : { ...own, value });
+          else if (!accessor && written)
+            Object.defineProperty(source, key, { value, configurable: true, writable: true, enumerable: true });
+          else delete source[key];
+        };
+      }
+      const change = event => {
+        if (event.property === key) signal();
+      };
+      const acceptsEvents =
+        typeof source.addEventListener === 'function' && typeof source.removeEventListener === 'function';
+      if (acceptsEvents) source.addEventListener('propertyChange', change, source);
+      fields.set(
+        key,
+        (entry = {
+          callbacks,
+          close() {
+            unwrap?.();
+            if (acceptsEvents) source.removeEventListener('propertyChange', change, source);
+          }
+        })
+      );
+    }
+    entry.callbacks.add(notify);
+    return () => {
+      entry.callbacks.delete(notify);
+      if (entry.callbacks.size === 0 && fields.get(key) === entry) {
+        entry.close();
+        fields.delete(key);
+      }
+    };
+  }
+
+  function bind(chain, owner, write, restore) {
+    let subscriptions = [];
+    let previous = Symbol();
+    let reading = false;
+    function release() {
+      for (const off of subscriptions) off();
+      subscriptions = [];
+    }
+    function read() {
+      if (reading) return;
+      reading = true;
+      try {
+        release();
+        const values = chain.map(term => {
+          if ('literal' in term) return term.literal;
+          let value = owner;
+          for (const key of term.path[0] === 'hostComponent' ? term.path.slice(1) : term.path) {
+            if (value === null || value === undefined) return undefined;
+            if (typeof value === 'object' || typeof value === 'function')
+              subscriptions.push(watchField(value, key, read));
+            value = value[key];
+          }
+          return value;
+        });
+        const value = values.length === 1 ? values[0] : values.map(part => part ?? '').join('');
+        if (!Object.is(value, previous)) {
+          previous = value;
+          write(restore ? restore.value : value);
+          restore = undefined;
+        }
+      } finally {
+        reading = false;
+      }
+    }
+    try {
+      read();
+    } catch (error) {
+      release();
+      throw error;
+    }
+    return release;
+  }
 
   function childrenOf(node) {
     const data = state(node);
@@ -57,7 +203,7 @@ export function createLegacyEui({
     if (children.length === 0) return undefined;
     const layout = data.layout?.type;
     const p = data.layout?.properties ?? {};
-    const gap = p.gap ?? 0;
+    const gap = p.gap ?? (layout === 'VerticalLayout' || layout === 'HorizontalLayout' ? 6 : 0);
     if (layout === 'HorizontalLayout' || layout === 'VerticalLayout') {
       const width =
         layout === 'HorizontalLayout'
@@ -97,7 +243,7 @@ export function createLegacyEui({
     let root = node;
     while (states.has(root.parent)) root = root.parent;
     const data = state(root);
-    if (!data.initialized || data.arranging) return;
+    if (!data.initialized || data.arranging || data.rowUpdates) return;
     resolveSize(root, stageSize.width, stageSize.height);
     arrange(root);
   }
@@ -172,7 +318,10 @@ export function createLegacyEui({
         if (typeof value !== 'string' || !value) refused('Expected an admitted skin class or path.');
         if (data.initialized && data.skin !== value && !(data.acceptInitialSkin && data.skin === undefined))
           refused('Changing a live skin requires an explicit migration.');
+        if (data.skinApplied && data.skin !== value)
+          refused('Replacing an applied EUI skin requires an explicit migration.');
         data.skin = value;
+        if (!data.skinApplied) attachSkin(this, value);
       }
       addChild(child) {
         const node = super.addChild(child);
@@ -201,6 +350,11 @@ export function createLegacyEui({
         this.x = x;
         this.y = y;
       }
+      dispose() {
+        detachObservers(this);
+        for (const child of state(this)?.skinParts ?? []) if (!child.parent && !child.isDisposed) child.dispose();
+        super.dispose();
+      }
       invalidateDisplayList() {
         requestLayout(this);
       }
@@ -211,6 +365,19 @@ export function createLegacyEui({
     // Legacy subclasses regularly call the base hooks even when they have no base work.
     createChildren() {}
     childrenCreated() {}
+    partAdded(_name, _part) {}
+    partRemoved(_name, _part) {}
+    get currentState() {
+      return state(this).currentState ?? '';
+    }
+    set currentState(value) {
+      const data = state(this);
+      if (data.currentState === value) return;
+      if (typeof value !== 'string' || (data.skinStates?.length && !data.skinStates.includes(value)))
+        refused('Unknown EUI skin state: ' + value);
+      data.currentState = value;
+      data.refreshState?.();
+    }
     get enabled() {
       return this.#enabled;
     }
@@ -218,6 +385,7 @@ export function createLegacyEui({
       this.#enabled = Boolean(value);
       this.touchEnabled = this.#enabled;
       this.touchChildren = this.#enabled;
+      if (this instanceof Button) this.updateState();
       requestLayout(this);
     }
   }
@@ -421,6 +589,10 @@ export function createLegacyEui({
       this.#label = String(value);
       this.updateLabel();
     }
+    updateState() {
+      const name = this.enabled ? 'up' : 'disabled';
+      if (state(this).skinStates?.includes(name)) this.currentState = name;
+    }
     updateLabel() {
       if (this.labelDisplay) {
         if (!(this.labelDisplay instanceof Label)) refused('Button labelDisplay must be an EUI Label.');
@@ -429,7 +601,445 @@ export function createLegacyEui({
     }
   }
 
-  const classes = { Skin, Group, Component, UILayer, Rect, Image, Label, Button };
+  class ArrayCollection extends EventDispatcher {
+    #source;
+    constructor(source = []) {
+      super();
+      this.source = source;
+    }
+    get source() {
+      return this.#source;
+    }
+    set source(value) {
+      if (!Array.isArray(value)) refused('ArrayCollection requires an array.');
+      this.#source = value;
+      this.#notify('reset', -1);
+    }
+    get length() {
+      return this.#source.length;
+    }
+    getItemAt(index) {
+      return this.#source[index];
+    }
+    getItemIndex(item) {
+      return this.#source.indexOf(item);
+    }
+    #index(index, end = false) {
+      if (!Number.isInteger(index) || index < 0 || index >= this.length + Number(end))
+        throw new RangeError('ArrayCollection index out of range.');
+    }
+    #notify(kind, location, items = [], oldItems = []) {
+      this.dispatchEvent(new sdk.Event(events.collectionChange, { kind, location, oldLocation: -1, items, oldItems }));
+    }
+    addItem(item) {
+      this.addItemAt(item, this.length);
+    }
+    addItemAt(item, index) {
+      this.#index(index, true);
+      this.#source.splice(index, 0, item);
+      this.#notify('add', index, [item]);
+    }
+    removeItemAt(index) {
+      this.#index(index);
+      const [old] = this.#source.splice(index, 1);
+      this.#notify('remove', index, [old]);
+      return old;
+    }
+    replaceItemAt(item, index) {
+      this.#index(index);
+      const old = this.#source[index];
+      this.#source[index] = item;
+      this.#notify('replace', index, [item], [old]);
+      return old;
+    }
+    itemUpdated(item) {
+      const index = this.getItemIndex(item);
+      if (index >= 0) this.#notify('update', index, [item]);
+    }
+    removeAll() {
+      if (this.#source.length) {
+        const removed = this.#source;
+        this.#source = [];
+        this.#notify('remove', 0, removed);
+      }
+    }
+    refresh() {
+      this.#notify('refresh', -1);
+    }
+  }
+  class ItemRenderer extends Component {
+    #data;
+    #selected = false;
+    itemIndex = -1;
+    constructor() {
+      super();
+      this.touchEnabled = true;
+    }
+    get data() {
+      return this.#data;
+    }
+    set data(value) {
+      if (Object.is(value, this.#data)) return;
+      this.#data = value;
+      if (state(this).initialized) this.dataChanged();
+    }
+    dataChanged() {}
+    get selected() {
+      return this.#selected;
+    }
+    set selected(value) {
+      this.#selected = Boolean(value);
+      const name = this.#selected ? 'upAndSelected' : 'up';
+      if (state(this).skinStates?.includes(name)) this.currentState = name;
+    }
+  }
+  class DataGroup extends Group {
+    #provider;
+    #watching = false;
+    #renderer = ItemRenderer;
+    #skin;
+    #rows = [];
+    #reconciling = false;
+    #refreshPending = false;
+    #offWheel;
+    #scrollV = 0;
+    #scrollEnabled = false;
+    get useVirtualLayout() {
+      return false;
+    }
+    set useVirtualLayout(value) {
+      if (value !== false) refused('Virtualized list layout needs an explicit migration.');
+    }
+    get scrollEnabled() {
+      return this.#scrollEnabled;
+    }
+    set scrollEnabled(value) {
+      this.#scrollEnabled = Boolean(value);
+      requestLayout(this);
+    }
+    get scrollV() {
+      return this.#scrollV;
+    }
+    set scrollV(value) {
+      if (!Number.isFinite(value)) refused('Expected a finite vertical scroll offset.');
+      this.#scrollV = Math.max(0, value);
+      requestLayout(this);
+    }
+    updateScroll(width, height) {
+      if (!this.#scrollEnabled || width <= 0 || height <= 0) {
+        this.#offWheel?.();
+        this.#offWheel = undefined;
+        this.clipRect = undefined;
+        return;
+      }
+      if (state(this).layout.type !== 'VerticalLayout') refused('Scrolling currently requires a vertical list layout.');
+      const content = this.contentHeight;
+      this.clipRect = { x: 0, y: 0, width, height };
+      this.#scrollV = Math.min(this.#scrollV, Math.max(0, content - height));
+      if (!stageOf(this)) return;
+      if (!this.#offWheel && game?.hover?.events.wheel) {
+        this.#offWheel = this.on(game.hover.events.wheel, event => {
+          if (event.defaultPrevented || event.payload.zoom) return;
+          const { deltaY, unit } = event.payload;
+          const line = this.getElementAt(0)?.height || 40;
+          const next = Math.max(
+            0,
+            Math.min(
+              this.contentHeight - this.height,
+              this.#scrollV + deltaY * (unit === 'line' ? line : unit === 'page' ? this.height : 1)
+            )
+          );
+          if (next !== this.#scrollV) {
+            this.scrollV = next;
+            event.preventDefault();
+          }
+        });
+      }
+    }
+    get contentHeight() {
+      return innerSize(this)?.height ?? 0;
+    }
+    get contentWidth() {
+      return innerSize(this)?.width ?? 0;
+    }
+    constructor() {
+      super();
+      state(this).layout = { type: 'VerticalLayout', properties: { gap: 0 } };
+    }
+    get dataProvider() {
+      return this.#provider;
+    }
+    set dataProvider(value) {
+      if (value != null && !(value instanceof ArrayCollection)) refused('An EUI list requires an ArrayCollection.');
+      if (value === this.#provider) return;
+      this.detachProvider();
+      this.#provider = value;
+      this.attachProvider();
+    }
+    get itemRenderer() {
+      return this.#renderer;
+    }
+    set itemRenderer(value) {
+      const ctor =
+        value === 'eui.ItemRenderer' ? ItemRenderer : typeof value === 'string' ? customTypes.get(value) : value;
+      if (ctor !== ItemRenderer && !(ctor?.prototype instanceof ItemRenderer))
+        refused('Expected an admitted ItemRenderer.');
+      if (ctor !== this.#renderer) {
+        this.#renderer = ctor;
+        this.#resetRows();
+      }
+    }
+    get itemRendererSkinName() {
+      return this.#skin;
+    }
+    set itemRendererSkinName(value) {
+      if (value !== this.#skin) {
+        this.#skin = value;
+        this.#resetRows();
+      }
+    }
+    get numElements() {
+      return this.#rows.length;
+    }
+    getElementAt(index) {
+      return this.#rows[index] ?? null;
+    }
+    getElementIndex(row) {
+      return this.#rows.indexOf(row);
+    }
+    getVirtualElementAt(index) {
+      return this.getElementAt(index);
+    }
+    #resetRows() {
+      for (const row of this.#rows) {
+        this.removeChild(row);
+        row.dispose();
+      }
+      this.#rows = [];
+      if (this.#watching) this.#updateRows();
+    }
+    attachProvider() {
+      if (!stageOf(this) || !state(this).initialized || this.#watching) return;
+      this.#watching = true;
+      this.#provider?.addEventListener('collectionChange', this.#updateRows, this);
+      this.#updateRows();
+    }
+    detachProvider() {
+      this.#provider?.removeEventListener('collectionChange', this.#updateRows, this);
+      this.#watching = false;
+      this.#offWheel?.();
+      this.#offWheel = undefined;
+    }
+    dispose() {
+      this.detachProvider();
+      super.dispose();
+    }
+    #updateRows(event) {
+      if (this.#reconciling) {
+        this.#refreshPending = true;
+        return;
+      }
+      let root = this;
+      while (states.has(root.parent)) root = root.parent;
+      const layout = state(root);
+      layout.rowUpdates = (layout.rowUpdates ?? 0) + 1;
+      this.#reconciling = true;
+      try {
+        this.#reconcileRows(event);
+        while (this.#refreshPending) {
+          this.#refreshPending = false;
+          this.#reconcileRows();
+        }
+      } finally {
+        layout.rowUpdates--;
+        this.#reconciling = false;
+      }
+      requestLayout(this);
+    }
+    #reconcileRows(event) {
+      const source = this.#provider?.source ?? [];
+      const rows = this.#rows;
+      const selected = this.getElementAt(this.selectedIndex);
+      let aligned;
+      if (event?.kind === 'add' || event?.kind === 'remove' || event?.kind === 'replace') {
+        aligned = rows.slice();
+        if (event.kind === 'add') aligned.splice(event.location, 0, ...event.items.map(() => undefined));
+        if (event.kind === 'remove') aligned.splice(event.location, event.items.length);
+      }
+      // Keep the existing renderer for each occurrence, including duplicate items in the collection.
+      const pool = new Map();
+      for (const row of aligned ? [] : rows) {
+        let bucket = pool.get(row.data);
+        if (!bucket) pool.set(row.data, (bucket = []));
+        bucket.push(row);
+      }
+      const next = source.map((item, index) => {
+        const existing = aligned ? aligned[index] : pool.get(item)?.shift();
+        const row = existing ?? new this.#renderer();
+        if (!existing && this.#skin !== undefined) {
+          if (typeof this.#skin === 'string') row.skinName = this.#skin;
+          else state(row).inlineSkin = this.#skin;
+        }
+        row.itemIndex = index;
+        row.data = item;
+        if (event?.kind === 'update' && index === event.location) row.dataChanged();
+        return row;
+      });
+      const retained = new Set(next);
+      for (const row of rows)
+        if (!retained.has(row)) {
+          this.removeChild(row);
+          row.dispose();
+        }
+      this.#rows = next;
+      next.forEach((row, index) => {
+        if (row.parent !== this || this.getChildAt(index) !== row) this.addChildAt(row, index);
+      });
+      this.rowsChanged?.(selected);
+    }
+  }
+  class List extends DataGroup {
+    #index = -1;
+    #pendingIndex;
+    #selected;
+    #required = false;
+    constructor() {
+      super();
+      this.touchEnabled = true;
+      this.addEventListener('touchTap', this.#tap, this);
+    }
+    #tap(event) {
+      let row = event.target;
+      while (row && row.parent !== this) row = row.parent;
+      const index = this.getElementIndex(row);
+      if (index < 0 || row.enabled === false) return;
+      if (index !== this.#index && this.dispatchEvent(new sdk.Event(events.changing, undefined))) {
+        this.selectedIndex = index;
+        this.dispatchEvent(new sdk.Event(events.change, undefined));
+      }
+      this.dispatchEvent(new sdk.Event(events.itemTap, { item: row.data, itemIndex: index, itemRenderer: row }));
+    }
+    get selectedIndex() {
+      return this.#index;
+    }
+    set selectedIndex(value) {
+      if (!Number.isInteger(value)) refused('List selection requires an integer index.');
+      this.#pendingIndex = this.numElements || value < 0 ? undefined : value;
+      this.#index = this.numElements ? Math.max(this.#required ? 0 : -1, Math.min(this.numElements - 1, value)) : -1;
+      this.#selected = this.getElementAt(this.#index)?.data;
+      for (let index = 0; index < this.numElements; index++) this.getElementAt(index).selected = index === this.#index;
+    }
+    get selectedItem() {
+      return this.#selected;
+    }
+    set selectedItem(value) {
+      this.selectedIndex = this.dataProvider?.getItemIndex(value) ?? -1;
+    }
+    get requireSelection() {
+      return this.#required;
+    }
+    set requireSelection(value) {
+      this.#required = Boolean(value);
+      this.selectedIndex = this.#index;
+    }
+    rowsChanged(selected) {
+      this.selectedIndex = this.#pendingIndex ?? this.getElementIndex(selected);
+    }
+  }
+  class Scroller extends Component {
+    #input = [];
+    get viewport() {
+      return childrenOf(this)[0];
+    }
+    set viewport(value) {
+      if (value === this.viewport) return;
+      if (value != null && !(value instanceof DataGroup)) refused('Expected a vertical list viewport.');
+      if (this.viewport) this.removeChild(this.viewport);
+      if (value) this.addChild(value);
+    }
+    removeChild(child) {
+      const viewport = child === this.viewport;
+      const removed = super.removeChild(child);
+      if (viewport) child.scrollEnabled = false;
+      return removed;
+    }
+    removeChildren() {
+      const viewport = this.viewport;
+      super.removeChildren();
+      if (viewport) viewport.scrollEnabled = false;
+    }
+    attachScroll() {
+      if (this.#input.length || !game.pointer.events.begin || !game.pointer.observe) return;
+      let drag;
+      let consumed;
+      const localY = contact => this.globalToLocal(contact.globalX, contact.globalY).y;
+      this.#input.push(
+        this.on(
+          game.pointer.events.begin,
+          event => {
+            const viewport = this.viewport;
+            if (drag || !viewport || viewport.contentHeight <= viewport.height) return;
+            consumed = undefined;
+            drag = {
+              session: event.payload.session,
+              viewport,
+              y: localY(event.payload),
+              offset: viewport.scrollV,
+              moved: false
+            };
+          },
+          { capture: true }
+        )
+      );
+      this.#input.push(
+        game.pointer.observe(({ kind, contact }) => {
+          if (!drag || contact.session !== drag.session) return;
+          if (drag.viewport !== this.viewport) {
+            drag = undefined;
+            return;
+          }
+          if (kind === 'move') {
+            const delta = drag.y - localY(contact);
+            if (drag.moved || Math.abs(delta) >= 5) {
+              drag.moved = true;
+              consumed = drag.session;
+              if (this.viewport) this.viewport.scrollV = drag.offset + delta;
+            }
+          } else if (kind === 'end' || kind === 'cancel') drag = undefined;
+        })
+      );
+      this.#input.push(
+        this.on(
+          game.pointer.events.tap,
+          event => {
+            if (consumed && event.payload.session === consumed) {
+              event.stopImmediatePropagation();
+              consumed = undefined;
+            }
+          },
+          { capture: true }
+        )
+      );
+    }
+    detachScroll() {
+      for (const off of this.#input) off();
+      this.#input.length = 0;
+    }
+  }
+  const classes = {
+    Skin,
+    Group,
+    Component,
+    UILayer,
+    Rect,
+    Image,
+    Label,
+    Button,
+    List,
+    DataGroup,
+    ItemRenderer,
+    Scroller
+  };
   const layoutKeys = new Set([
     'id',
     'width',
@@ -449,15 +1059,69 @@ export function createLegacyEui({
     'includeInLayout'
   ]);
 
-  function setProperties(node, properties) {
+  function refreshProperties(node, owner, active) {
     const data = state(node);
-    data.properties = { ...properties };
-    // EUI dimensions are layout units, unlike the engine width/height scaling setters.
-    for (const [key, value] of Object.entries(properties)) {
-      if (layoutKeys.has(key)) continue;
-      if (!(key in node)) refused('Unsupported EUI property ' + key + ' on ' + node.constructor.name + '.');
-      node[key] = value;
+    const descriptor = data.descriptor;
+    if (!descriptor) return;
+    const overrides = descriptor.overrides?.[owner.currentState] ?? {};
+    const values = { ...descriptor.properties, ...overrides };
+    // Alignment constraints change the displayed position without assigning x/y through the skin.
+    // Remember the pre-constraint position so removing the override also removes its layout effect.
+    data.beforeConstraint ??= {};
+    const restorePosition = {};
+    for (const [axis, fields] of [
+      ['x', ['left', 'right', 'horizontalCenter']],
+      ['y', ['top', 'bottom', 'verticalCenter']]
+    ]) {
+      if (fields.some(key => Object.hasOwn(overrides, key))) {
+        if (!Object.hasOwn(data.beforeConstraint, axis)) data.beforeConstraint[axis] = node[axis];
+      } else if (Object.hasOwn(data.beforeConstraint, axis)) {
+        restorePosition[axis] = data.beforeConstraint[axis];
+        delete data.beforeConstraint[axis];
+      }
     }
+    const keys = new Set([...Object.keys(values), ...data.applied.keys()]);
+    for (const key of keys) {
+      const value = values[key];
+      const overridden = Object.hasOwn(descriptor.overrides?.[owner.currentState] ?? {}, key);
+      const binding = value?.binding;
+      const previous = data.applied.get(key);
+      if (
+        previous &&
+        previous.value === value &&
+        previous.overridden === overridden &&
+        (!binding || Boolean(previous.off) === active)
+      )
+        continue;
+      previous?.off?.();
+      if (!data.defaults.has(key) && !layoutKeys.has(key)) {
+        if (
+          !(key in node) ||
+          (typeof node[key] === 'function' && !(key === 'itemRenderer' && node instanceof DataGroup))
+        )
+          refused('Unsupported EUI property ' + key + ' on ' + node.constructor.name + '.');
+        data.defaults.set(key, node[key]);
+      }
+      const write = next => {
+        if (next === undefined || next === null) delete data.properties[key];
+        else data.properties[key] = next;
+        if (!layoutKeys.has(key)) node[key] = next ?? data.defaults.get(key);
+        if (data.initialized) requestLayout(node);
+      };
+      // EUI restores the value observed when the override took effect, even if the model changed in the meantime.
+      const restore = previous?.overridden ? previous.restore : undefined;
+      const record = {
+        value,
+        overridden,
+        restore: overridden ? (restore ?? { value: layoutKeys.has(key) ? data.properties[key] : node[key] }) : undefined
+      };
+      data.applied.set(key, record);
+      if (binding) {
+        if (active) record.off = bind(binding, owner, write, overridden ? undefined : restore);
+      } else write(!overridden && restore ? restore.value : value);
+      if (value === undefined) data.applied.delete(key);
+    }
+    Object.assign(node, restorePosition);
   }
 
   function skinPart(owner, id, node) {
@@ -474,17 +1138,45 @@ export function createLegacyEui({
     if (node.name === '') node.name = id;
   }
 
-  function construct(descriptor, owner) {
-    const Type = Object.hasOwn(classes, descriptor.type) ? classes[descriptor.type] : undefined;
-    if (!Type || Type === Skin || Type === UILayer) refused('Unsupported EUI element ' + descriptor.type + '.');
+  function construct(descriptor, owner, groups) {
+    const Type = descriptor.type === 'Custom' ? customTypes.get(descriptor.className) : classes[descriptor.type];
+    if (!Type || Type === Skin || Type === UILayer)
+      refused('Unsupported EUI element ' + (descriptor.className ?? descriptor.type) + '.');
     const node = new Type();
     const data = state(node);
-    setProperties(node, descriptor.properties);
-    data.layout = descriptor.layout;
+    if (!data) refused('Custom skin children must extend an admitted EUI component.');
+    Object.assign(data, { descriptor, owner, applied: new Map(), defaults: new Map() });
+    data.layout = descriptor.layout ?? data.layout;
+    if (descriptor.itemRendererSkin) node.itemRendererSkinName = descriptor.itemRendererSkin;
     const id = descriptor.properties.id;
     if (id) skinPart(owner, id, node);
-    for (const child of descriptor.children) node.addChild(construct(child, owner));
+    refreshProperties(node, owner, false);
+    if (descriptor.children.length) {
+      const children = descriptor.children.map(child => construct(child, owner, groups));
+      groups.push({ parent: node, children });
+    }
     return node;
+  }
+
+  function applyState(owner, groups) {
+    for (const { parent, children } of groups) {
+      const wanted = children.filter(child => {
+        const { includeIn, excludeFrom } = state(child).descriptor;
+        return (!includeIn || includeIn.includes(owner.currentState)) && !excludeFrom?.includes(owner.currentState);
+      });
+      for (const child of children) {
+        if (!wanted.includes(child) && child.parent === parent) parent.removeChild(child);
+        refreshProperties(child, owner, Boolean(stageOf(child)));
+      }
+      // Reuse the same skin part on re-entry and insert it before the next attached declaration.
+      for (let index = 0; index < wanted.length; index++) {
+        const child = wanted[index];
+        if (child.parent === parent) continue;
+        const next = wanted.slice(index + 1).find(part => part.parent === parent);
+        parent.addChildAt(child, next ? parent.getChildIndex(next) : parent.numChildren);
+      }
+    }
+    requestLayout(owner);
   }
 
   function resolveDimension(data, axis, parent, start, end, percent) {
@@ -545,7 +1237,8 @@ export function createLegacyEui({
         top = p.paddingTop ?? 0;
       const innerWidth = Math.max(0, width - left - (p.paddingRight ?? 0));
       const innerHeight = Math.max(0, height - top - (p.paddingBottom ?? 0));
-      const gap = p.gap ?? 0;
+      const gap = p.gap ?? (layout === 'VerticalLayout' || layout === 'HorizontalLayout' ? 6 : 0);
+      if (node instanceof DataGroup) node.updateScroll(width, height);
       const included = children.filter(child => state(child).properties.includeInLayout !== false);
       if (layout === 'HorizontalLayout' || layout === 'VerticalLayout') {
         // Main-axis percentages divide remaining space in legacy EUI. Only fixed main-axis children are admitted.
@@ -575,7 +1268,10 @@ export function createLegacyEui({
       const totalHeight =
         included.reduce((value, child) => value + child.height, 0) + Math.max(0, included.length - 1) * gap;
       let cursorX = left + alignment(p.horizontalAlign, innerWidth - totalWidth);
-      let cursorY = top + alignment(p.verticalAlign, innerHeight - totalHeight);
+      let cursorY =
+        top +
+        alignment(p.verticalAlign, innerHeight - totalHeight) -
+        (node instanceof DataGroup && node.scrollEnabled ? node.scrollV : 0);
 
       for (const child of children) {
         const properties = state(child).properties;
@@ -590,6 +1286,13 @@ export function createLegacyEui({
             cursorY += child.height + gap;
           } else if (layout === 'BasicLayout') placeBasic(child, properties, width, height);
           else refused('Unsupported EUI layout ' + layout + '.');
+        }
+        if (node instanceof Scroller && node.viewport === child) {
+          state(child).arrangedwidth = width;
+          state(child).arrangedheight = height;
+          child.x = child.anchorOffsetX;
+          child.y = child.anchorOffsetY;
+          if (!child.scrollEnabled) child.scrollEnabled = true;
         }
         arrange(child);
       }
@@ -606,7 +1309,7 @@ export function createLegacyEui({
     const data = state(node);
     if (data.skin !== undefined) return data.skin;
     if (!themeLoaded) return undefined;
-    const name = node.constructor.name;
+    const name = customNames.get(node.constructor) ?? node.constructor.name;
     return (
       theme?.skins?.[name] ??
       theme?.skins?.['eui.' + name] ??
@@ -614,32 +1317,49 @@ export function createLegacyEui({
     );
   }
 
+  function attachSkin(node, name) {
+    const data = state(node);
+    if (data.skinApplied) return;
+    const skin = typeof name === 'string' ? skins.get(name) : name;
+    if (!skin) refused('Unknown EXML skin ' + name + '.');
+    if (activeSkins.has(skin)) refused('Recursive EXML skin reference: ' + name + '.');
+    activeSkins.add(skin);
+    if (typeof name === 'string') data.skin = name;
+    data.skinProperties = skin.properties;
+    data.layout ??= skin.layout;
+    // Parts are created before attachment, so every named sibling exists for lifecycle callbacks.
+    try {
+      data.skinStates = skin.states ?? [];
+      if (data.currentState && data.skinStates.length && !data.skinStates.includes(data.currentState))
+        refused('Unknown initial EUI state: ' + data.currentState);
+      data.currentState ||= data.skinStates[0] ?? '';
+      const groups = [];
+      const parts = skin.children.map(descriptor => construct(descriptor, node, groups));
+      groups.push({ parent: node, children: parts });
+      data.skinParts = groups.flatMap(group => group.children);
+      data.refreshState = () => applyState(node, groups);
+      data.refreshState();
+      for (const group of groups)
+        for (const part of group.children) {
+          const id = state(part).descriptor.properties.id;
+          if (id) node.partAdded?.(id, part);
+        }
+    } finally {
+      data.pendingChildren = undefined;
+      activeSkins.delete(skin);
+    }
+    data.skinApplied = true;
+    node.dispatchEvent(new sdk.Event(events.complete, undefined));
+  }
+
   function enter(node) {
     const data = state(node);
     if (!data) return;
+    liveNodes.add(node);
     if (!data.initialized) {
       data.initialized = true;
-      function attachSkin(name) {
-        const skin = skins.get(name);
-        if (!skin) refused('Unknown EXML skin ' + name + '.');
-        if (activeSkins.has(skin)) refused('Recursive EXML skin reference: ' + name + '.');
-        activeSkins.add(skin);
-        data.skin = name;
-        data.skinProperties = skin.properties;
-        data.layout ??= skin.layout;
-        // Parts are created before attachment, so every named sibling exists for lifecycle callbacks.
-        try {
-          const parts = skin.children.map(descriptor => construct(descriptor, node));
-          data.pendingChildren = parts;
-          requestLayout(node);
-          for (const child of parts) node.addChild(child);
-        } finally {
-          data.pendingChildren = undefined;
-          activeSkins.delete(skin);
-        }
-      }
-      const initial = selectedSkin(node);
-      if (initial !== undefined) attachSkin(initial);
+      const initial = data.inlineSkin ?? selectedSkin(node);
+      if (initial !== undefined) attachSkin(node, initial);
       else data.acceptInitialSkin = true;
       const complete = () => {
         if (!node.isDisposed) node.dispatchEvent(new sdk.Event(events.creationComplete, undefined));
@@ -647,8 +1367,15 @@ export function createLegacyEui({
       const finishChildren = () => {
         if (node.isDisposed) return;
         data.acceptInitialSkin = false;
-        if (initial === undefined && data.skin !== undefined) attachSkin(data.skin);
-        if (node instanceof Button) node.updateLabel();
+        if (initial === undefined && data.skin !== undefined) attachSkin(node, data.skin);
+        if (node instanceof Button) {
+          node.updateState();
+          node.updateLabel();
+        }
+        if (node instanceof ItemRenderer) {
+          node.selected = node.selected;
+          node.dataChanged();
+        }
         requestLayout(node);
         const finished = node.childrenCreated?.();
         if (finished && typeof finished.then === 'function') return Promise.resolve(finished).then(complete);
@@ -661,10 +1388,28 @@ export function createLegacyEui({
         if (finished && typeof finished.then === 'function') observe(finished);
       }
     }
+    if (data.owner) refreshProperties(node, data.owner, true);
+    if (node instanceof DataGroup) node.attachProvider();
+    if (node instanceof Scroller) node.attachScroll();
     if (node instanceof Image) node.loadSource();
     requestLayout(node);
   }
 
+  function leave(node) {
+    if (states.has(node)) detachObservers(node);
+  }
+
+  function registerCustomComponent(name, ctor) {
+    if (
+      !(typeof name === 'string' && /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(name)) ||
+      typeof ctor !== 'function' ||
+      !(ctor.prototype instanceof Component) ||
+      (customTypes.has(name) && customTypes.get(name) !== ctor)
+    )
+      refused('Invalid custom EUI component: ' + name);
+    customTypes.set(name, ctor);
+    customNames.set(ctor, name);
+  }
   class Theme extends Container {
     constructor(url) {
       super();
@@ -678,8 +1423,29 @@ export function createLegacyEui({
     eui: Object.freeze({
       ...classes,
       Theme,
+      ArrayCollection,
+      registerCustomComponent,
+      ItemTapEvent: Object.freeze({ ITEM_TAP: 'itemTap' }),
+      CollectionEvent: Object.freeze({ COLLECTION_CHANGE: 'collectionChange' }),
+      CollectionEventKind: Object.freeze({
+        ADD: 'add',
+        REMOVE: 'remove',
+        REPLACE: 'replace',
+        UPDATE: 'update',
+        REFRESH: 'refresh',
+        RESET: 'reset'
+      }),
+      PropertyEvent: Object.freeze({
+        PROPERTY_CHANGE: 'propertyChange',
+        dispatchPropertyEvent(target, type, property) {
+          const event = new LegacyEvent(type);
+          event.property = property;
+          return target.dispatchEvent(event);
+        }
+      }),
       UIEvent: Object.freeze({ COMPLETE: 'complete', CREATION_COMPLETE: 'creationComplete' })
     }),
-    enter
+    enter,
+    leave
   };
 }

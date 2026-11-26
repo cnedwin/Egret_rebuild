@@ -30,6 +30,23 @@ test('legacy grayscale PNG normalizes to equivalent RGBA8 while admitted PNG byt
   assert.equal(normalized.includes(Buffer.from('original art')), false);
 });
 
+test('normalizing a tagged source atlas preserves its sRGB intent and produces a directly admissible PNG', () => {
+  const grayscale = PNG.sync.write(
+    { width: 1, height: 1, gamma: 0.45455, data: Buffer.from([32, 32, 32, 255]) },
+    { colorType: 0, inputColorType: 6 }
+  );
+  const intent = Buffer.alloc(13);
+  intent.writeUInt32BE(1);
+  intent.write('sRGB', 4);
+  intent[8] = 2;
+  intent.writeUInt32BE(crc32(intent.subarray(4, 9)), 9);
+  const source = Buffer.concat([grayscale.subarray(0, 33), intent, grayscale.subarray(33)]);
+  const result = normalizeLegacyPng(source, 'effect.png');
+  assert.equal(normalizeLegacyPng(result, 'effect.png'), result);
+  assert.ok(result.includes(intent));
+  assert.deepEqual(PNG.sync.read(result).data, PNG.sync.read(source).data);
+});
+
 function oldProject(t) {
   const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'egret-migrate-'));
   t.after(() => fs.rmSync(folder, { recursive: true, force: true }));
@@ -72,6 +89,34 @@ test('inspect reuses the RES plan and preserves source and group order from a 5.
   );
   assert.deepEqual(project.resources.groups, [{ name: 'preload', resourceIndices: [0, 0] }]);
   assert.equal(project.resources.files[0].sourcePath, 'resource/settings.json');
+});
+
+test('5.0.15 Wing admission records exactly the declared SDK and bounds the bundled Promise alias', t => {
+  const { folder, write } = oldProject(t);
+  const properties = {
+    egret_version: '5.0.15',
+    modules: [{ name: 'egret' }, { name: 'tween' }, { name: 'promise', path: './promise' }]
+  };
+  write('egretProperties.json', properties);
+  const inspected = inspectLegacyProject(folder);
+  assert.equal(inspected.engineVersion, '5.0.15');
+  assert.equal(Object.hasOwn(inspected, 'compilerVersion'), false);
+  properties.modules[2].path = '../unrelated';
+  write('egretProperties.json', properties);
+  assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_MODULE_UNSUPPORTED' });
+});
+
+test('5.1.9 retains both declared versions and refuses a mismatched compiler', t => {
+  const { folder, write } = oldProject(t);
+  const properties = {
+    engineVersion: '5.1.9',
+    compilerVersion: '5.1.9',
+    modules: [{ name: 'egret' }, { name: 'tween' }]
+  };
+  write('egretProperties.json', properties);
+  assert.equal(inspectLegacyProject(folder).profile, 'egret-5.1.9-classic-web-2d');
+  write('egretProperties.json', { ...properties, compilerVersion: '5.2.29' });
+  assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_VERSION_UNSUPPORTED' });
 });
 
 test('inspect refuses unsupported modules, ambiguous script paths, and nonlocal RES', t => {
