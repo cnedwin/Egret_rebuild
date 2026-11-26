@@ -10,7 +10,7 @@ Egret Migrate 是面向受支持的经典白鹭 5 Web 2D 源工程的本地 CLI�
 
 ```text
 node tools/egret-migrate/pack.mjs --esbuild <esbuild-module> --npm <npm-cli.js> --out <new-package-dir>
-npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.3.0.tgz
+npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.4.0.tgz
 ```
 
 使用安装后的 `egret-migrate` 命令，也可以直接运行 `node <tool-folder>/node_modules/@egret/migrate/bin.mjs`。CLI 可以在引擎仓库之外运行。准备固定版本的白鹭 7.0 系列 `egret2d.mjs`、esbuild 模块和带 Chromium 的 Playwright。扫码预览另需 qrcode-generator 2.0.4。使用时显式传入这些工具的路径。
@@ -23,6 +23,8 @@ egret-migrate preview --run <new-evidence-directory> --address <LAN-IPv4> --qr-m
 ```
 
 工具读取经典 HTML 的舞台声明、引擎与编译器配置、`manifest.json` 中有序的游戏脚本，以及本地 RES 清单。已接纳 `egret`、`game`、`res`、`assetsmanager`、`promise`、受支持范围内的 `eui` 和 `dragonBones` 模块。浏览器适配器提供测试所覆盖的显示、监听、图片和 JSON 资源组及本地存储操作。可以用 `--source-order` 提供按加载顺序排列的工程内 `src/*.ts` 路径数组，用 `--resources` 指定另一份工程内资源清单。自定义运行时模块和动态舞台尺寸需要按工程适配。
+
+经典 5.1 工程支持引擎与编译器同时声明为 5.1.7 或同时声明为 5.1.9 的项目。
 
 ### EUI、图集资源与骨骼导出
 
@@ -40,7 +42,7 @@ egret-migrate preview --run <new-evidence-directory> --address <LAN-IPv4> --qr-m
 
 当前支持局部变换的 DragonBones 5.x 刚性图片骨骼、父节点优先的层级、普通附件顺序、未旋转的裁切矩形、有限的动画通道、线性与阶跃插值、有限和循环片段以及受支持的插槽显示和透明度变化。0.3 版新增关闭缩放继承、单帧保持姿态和加法混合图片插槽。权重网格、IK、形变时间线、动态绘制顺序、非线性缓动和多层混合仍需单独转换，遇到超出支持范围的声明会给出诊断。Agent 可在工程所有者授权下适配源码或导出，也可通过白鹭 7 的 Spine 路径接入具备单独许可的数据，再做姿态与行为验证。自动转换至 Spine 和任意 DragonBones 骨骼仍待完成。
 
-基础布局支持边约束和百分比尺寸。`eui.ArrayCollection` 变更会更新使用自定义行渲染器的 `List` 或 `DataGroup`。应与旧版对照选中、取消、行顺序和纵向滚动。目前为每个列表项创建渲染器。大型虚拟列表、TileLayout、任意换肤和多行描边文字仍需另行验收。自定义事件支持冒泡和取消，指针和舞台事件由引擎派发。
+基础布局支持边约束和百分比尺寸。`eui.ArrayCollection` 变更会更新使用自定义行渲染器的 `List` 或 `DataGroup`。应与旧版对照选中、取消、行顺序和纵向滚动。固定行高的纵向虚拟列表会复用滚出视区的列表项，行高不一致时保留完整布局。普通 Group 也可作为 Scroller 视口。通过旧版容器移动它时，滚动状态会随即解除。混用白鹭 7 原生容器时，应先设置 `scroller.viewport = null`，再移动 Group。按行排列的 TileLayout 支持固定尺寸的单元格、横纵间距和内边距。每个按钮各自拥有内联皮肤的命名部件。用可运行的旧版对照导航、状态切换和存档进度。按列排列、运行中换肤和描边文字仍需单独适配。自定义事件支持冒泡和取消，指针和舞台事件由引擎派发。
 
 转换将可编辑 TypeScript 及已接纳的输入、`web/` 构建、`history.json` 和 `conversion.json` 写入新目录。工程事务回执记录导入的舞台和资源身份。修正工程数据可传入基于导入修订的 `--transaction <json>`。修正源码时编辑副本，再转换到另一个新目录。需要复用存档命名空间时，通过 `--project-id` 保持报告里的工程 ID。浏览器存档按站点来源隔离。跨站点迁移时，按游戏自己的数据格式选择并导入所需键。
 

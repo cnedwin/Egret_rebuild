@@ -118,7 +118,7 @@ function resourcesFor(sdk, game, view, plan, textures, sheetPlans, EventDispatch
       const values = new Map(
         sheetPlan.frames.map(frame => {
           const value = Object.freeze({ textureWidth: frame.sourceWidth, textureHeight: frame.sourceHeight });
-          textures.set(value, { sheet, name: frame.name });
+          textures.set(value, { sheet, name: frame.name, page: lease, frame });
           return [frame.name, value];
         })
       );
@@ -379,21 +379,28 @@ function createBindings(sdk, game, options) {
     return nodes;
   }
 
-  function moveOnStage(node, previous) {
+  function moveOnStage(node, previous, previousViewportOwner) {
+    // Native insertion changes the parent atomically without calling the old Scroller's removeChild().
+    if (previousViewportOwner && node.parent !== previousViewportOwner) node.scrollEnabled = false;
     const current = stageOf(node);
     if (current === previous) return;
-    // Take the list before listeners run. A listener's new children dispatch through their own insertion.
-    for (const child of subtree(node)) {
-      if (child.isDisposed || stageOf(child) !== current) continue;
-      if (current === null) {
-        ui?.leave?.(child);
-        labels.get(child)?.leave();
-        if (!child.isDisposed && stageOf(child) === null) child.dispatchEvent(new sdk.Event(unstaged, undefined));
-      } else {
-        ui?.enter(child);
-        labels.get(child)?.enter();
-        if (!child.isDisposed && stageOf(child) === current) child.dispatchEvent(new sdk.Event(staged, undefined));
+    if (current !== null) ui?.beginMount();
+    try {
+      // Take the list before listeners run. A listener's new children dispatch through their own insertion.
+      for (const child of subtree(node)) {
+        if (child.isDisposed || stageOf(child) !== current) continue;
+        if (current === null) {
+          ui?.leave?.(child);
+          labels.get(child)?.leave();
+          if (!child.isDisposed && stageOf(child) === null) child.dispatchEvent(new sdk.Event(unstaged, undefined));
+        } else {
+          ui?.enter(child);
+          labels.get(child)?.enter();
+          if (!child.isDisposed && stageOf(child) === current) child.dispatchEvent(new sdk.Event(staged, undefined));
+        }
       }
+    } finally {
+      if (current !== null) ui?.endMount();
     }
   }
 
@@ -459,7 +466,7 @@ function createBindings(sdk, game, options) {
               activeLegacy.set(adapted, event);
               targets.set(adapted, event.target);
               try {
-                const result = handler.call(receiver, adapted);
+                const result = ui ? ui.callGame(handler, receiver, adapted) : handler.call(receiver, adapted);
                 if (result && typeof result.then === 'function') observe(Promise.resolve(result));
               } catch (error) {
                 if (booting) observe(Promise.reject(error));
@@ -517,15 +524,17 @@ function createBindings(sdk, game, options) {
     class extends withEvents(Base) {
       addChild(child) {
         const before = stageOf(child);
+        const owner = ui?.viewportOwner(child);
         const inserted = super.addChild(child);
-        moveOnStage(inserted, before);
+        moveOnStage(inserted, before, owner);
         return inserted;
       }
 
       addChildAt(child, index) {
         const before = stageOf(child);
+        const owner = ui?.viewportOwner(child);
         const inserted = super.addChildAt(child, index);
-        moveOnStage(inserted, before);
+        moveOnStage(inserted, before, owner);
         return inserted;
       }
 
@@ -555,6 +564,8 @@ function createBindings(sdk, game, options) {
   class Bitmap extends Container {
     #texture;
     #bitmap;
+    #panel;
+    #panelKey;
     #textureArea;
     #sheet;
     #width;
@@ -600,10 +611,97 @@ function createBindings(sdk, game, options) {
       return this.#texture;
     }
 
+    // An EUI grid stretches the center even when fillMode is clip. If either pair of
+    // fixed borders cannot fit, the legacy player scales the whole source instead.
+    drawLegacyImage(width, height, grid, fillMode) {
+      const bitmap = this.#bitmap;
+      if (!bitmap || !this.#texture) return;
+      const entry = textures.get(this.#texture);
+      const { textureWidth, textureHeight } = this.#texture;
+      const frame = entry.frame;
+      const sourceWidth = frame?.width ?? textureWidth;
+      const sourceHeight = frame?.height ?? textureHeight;
+      const offsetX = frame?.offsetX ?? 0;
+      const offsetY = frame?.offsetY ?? 0;
+      const targetWidth = width - (textureWidth - sourceWidth);
+      const targetHeight = height - (textureHeight - sourceHeight);
+      if (grid) {
+        const left = Math.min(sourceWidth - 1, grid.x - offsetX);
+        const top = Math.min(sourceHeight - 1, grid.y - offsetY);
+        const right = sourceWidth - left - (grid.width || 1);
+        const bottom = sourceHeight - top - (grid.height || 1);
+        if (Math.min(left, top, right, bottom) < 0)
+          refuse('LEGACY_WEB_TEXTURE_UNSUPPORTED', 'The nine-slice center must be inside the stored image.');
+        if (targetWidth > 0 && targetHeight > 0 && left + right <= targetWidth && top + bottom <= targetHeight) {
+          const key = [left, top, right, bottom].join(',');
+          if (key !== this.#panelKey) {
+            this.#panel?.dispose();
+            this.#panel = undefined;
+            this.#panelKey = key;
+          }
+          const insets = { left, top, right, bottom };
+          if (!frame) {
+            if (!this.#panel) this.#panel = new sdk.NineSliceBitmap(entry, { width, height, insets });
+            else if (this.#panel.targetWidth !== width || this.#panel.targetHeight !== height)
+              this.#panel.resize(width, height);
+          } else if (!this.#panel || this.#panel.width !== targetWidth || this.#panel.height !== targetHeight) {
+            const source = sdk.createNineSliceGeometry2D({
+              sourceWidth,
+              sourceHeight,
+              targetWidth,
+              targetHeight,
+              insets
+            });
+            // A packed frame borrows its existing page. Its local UVs refer only to that frame's pixels.
+            const geometry = sdk.createTexturedGeometry2D({
+              positions: Float64Array.from(source.positions),
+              uvs: Float64Array.from(source.uvs, (v, i) =>
+                i % 2
+                  ? (frame.y + v * sourceHeight) / entry.page.value.height
+                  : (frame.x + v * sourceWidth) / entry.page.value.width
+              ),
+              lightColors: Float64Array.from(source.lightColors),
+              indices: Uint16Array.from(source.indices)
+            });
+            if (this.#panel) this.#panel.setContent(entry.page, geometry);
+            else this.#panel = new sdk.Mesh2D(entry.page, geometry);
+          }
+          if (!this.#panel.parent) {
+            this.#panel.touchEnabled = false;
+            this.#panel.x = offsetX;
+            this.#panel.y = offsetY;
+            super.addChild(this.#panel);
+          }
+          bitmap.visible = false;
+          return;
+        }
+      }
+      this.#panel?.dispose();
+      this.#panel = this.#panelKey = undefined;
+      bitmap.visible = true;
+      const clip = !grid && fillMode === 'clip';
+      if (clip) {
+        bitmap.scaleX = bitmap.scaleY = 1;
+        const w = Math.min(width, textureWidth),
+          h = Math.min(height, textureHeight);
+        if (w === 0 || h === 0) bitmap.visible = false;
+        else if (bitmap.clipRect?.width !== w || bitmap.clipRect?.height !== h)
+          bitmap.clipRect = { x: 0, y: 0, width: w, height: h };
+      } else {
+        bitmap.clipRect = undefined;
+        bitmap.scaleX = width / textureWidth;
+        bitmap.scaleY = height / textureHeight;
+      }
+    }
+
     set texture(value) {
       const lease = value == null ? undefined : textures.get(value);
       if (value != null && lease === undefined)
         refuse('LEGACY_WEB_TEXTURE_UNSUPPORTED', 'Bitmap needs an image acquired by the admitted RES configuration.');
+      if (value !== this.#texture) {
+        this.#panel?.dispose();
+        this.#panel = this.#panelKey = undefined;
+      }
       if (this.#sheet || lease?.sheet) {
         if (this.#bitmap) this.#bitmap.dispose();
         this.#bitmap = undefined;
@@ -622,6 +720,7 @@ function createBindings(sdk, game, options) {
   class TextField extends Container {
     #label;
     #owner;
+    #rasterActive = true;
     #width;
     #height;
     #textAlign = 'left';
@@ -636,6 +735,9 @@ function createBindings(sdk, game, options) {
     }
     get height() {
       return this.#height ?? super.height;
+    }
+    get legacyRasterBoxHeight() {
+      return this.#height;
     }
     set height(value) {
       this.#height = this.#dimension(value);
@@ -673,7 +775,7 @@ function createBindings(sdk, game, options) {
     }
 
     #enter() {
-      if (this.#owner !== undefined) return;
+      if (!this.#rasterActive || this.#owner !== undefined) return;
       // Offstage legacy text stays attachable but releases both the prepared raster and pending work.
       const owner = game.engine.createScope();
       this.#owner = owner;
@@ -687,7 +789,7 @@ function createBindings(sdk, game, options) {
               return;
             }
             this.#label = label;
-            this.addChild(label.display);
+            this.addChildAt(label.display, 0);
             label.set(this.#style);
             await label.ready;
             if (this.#owner === owner) this.onLegacyTextReady?.();
@@ -705,6 +807,17 @@ function createBindings(sdk, game, options) {
       this.#owner = undefined;
       this.#label = undefined;
       owner?.dispose();
+    }
+
+    setLegacyRasterActive(active) {
+      if (this.#rasterActive === active || this.isDisposed) return;
+      this.#rasterActive = active;
+      if (!active) this.#leave();
+      else if (stageOf(this)) this.#enter();
+    }
+
+    get legacyTextDisplay() {
+      return this.#label?.display;
     }
 
     dispose() {
@@ -808,6 +921,7 @@ function createBindings(sdk, game, options) {
     LegacyEvent,
     observe
   );
+  let measureContext;
   if (options.theme)
     ui = createLegacyEui({
       sdk,
@@ -818,6 +932,12 @@ function createBindings(sdk, game, options) {
       EventDispatcher,
       LegacyEvent,
       game,
+      measureLine(words, font) {
+        measureContext ??= options.canvas.ownerDocument.createElement?.('canvas').getContext('2d');
+        if (!measureContext) return undefined;
+        measureContext.font = font;
+        return measureContext.measureText(words).width;
+      },
       theme: options.theme,
       stageOf,
       observe,

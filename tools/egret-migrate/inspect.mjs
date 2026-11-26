@@ -107,21 +107,22 @@ export function inspectLegacyProject(folder, options = {}) {
     properties?.egret_version === '5.0.15' &&
     properties.engineVersion === undefined &&
     properties.compilerVersion === undefined;
-  const classic519 = properties?.engineVersion === '5.1.9' && properties?.compilerVersion === '5.1.9';
+  const classic51 =
+    ['5.1.7', '5.1.9'].includes(properties?.engineVersion) && properties.compilerVersion === properties.engineVersion;
   if (
     !wing5015 &&
-    !classic519 &&
+    !classic51 &&
     (!/^5\.2\.\d+$/.test(properties?.engineVersion ?? '') || !/^5\.2\.\d+$/.test(properties?.compilerVersion ?? ''))
   ) {
     refuse(
       'MIGRATE_VERSION_UNSUPPORTED',
-      'Expected matched Egret 5.1.9 declarations, Egret 5.2.x declarations or the 5.0.15 Wing project format.'
+      'Expected matched Egret 5.1.7 or 5.1.9 declarations, Egret 5.2.x declarations or the 5.0.15 Wing project format.'
     );
   }
   const modules = Array.isArray(properties.modules) ? properties.modules : [];
   const unsupported = modules.filter(
     module =>
-      !(supportedModules.has(module?.name) || ((wing5015 || classic519) && module?.name === 'tween')) ||
+      !(supportedModules.has(module?.name) || ((wing5015 || classic51) && module?.name === 'tween')) ||
       (module.path !== undefined &&
         module.path !== '${EGRET_DEFAULT}' &&
         !(wing5015 && module.name === 'promise' && module.path === './promise'))
@@ -206,7 +207,11 @@ export function inspectLegacyProject(folder, options = {}) {
     .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
   return {
     schemaVersion: 1,
-    profile: wing5015 ? 'egret-5.0.15-classic-web-2d' : classic519 ? 'egret-5.1.9-classic-web-2d' : profile,
+    profile: wing5015
+      ? 'egret-5.0.15-classic-web-2d'
+      : classic51
+        ? `egret-${properties.engineVersion}-classic-web-2d`
+        : profile,
     engineVersion: wing5015 ? properties.egret_version : properties.engineVersion,
     ...(wing5015 ? {} : { compilerVersion: properties.compilerVersion }),
     modules: modules.map(module => module.name),

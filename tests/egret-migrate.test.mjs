@@ -106,18 +106,19 @@ test('5.0.15 Wing admission records exactly the declared SDK and bounds the bund
   assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_MODULE_UNSUPPORTED' });
 });
 
-test('5.1.9 retains both declared versions and refuses a mismatched compiler', t => {
-  const { folder, write } = oldProject(t);
-  const properties = {
-    engineVersion: '5.1.9',
-    compilerVersion: '5.1.9',
-    modules: [{ name: 'egret' }, { name: 'tween' }]
-  };
-  write('egretProperties.json', properties);
-  assert.equal(inspectLegacyProject(folder).profile, 'egret-5.1.9-classic-web-2d');
-  write('egretProperties.json', { ...properties, compilerVersion: '5.2.29' });
-  assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_VERSION_UNSUPPORTED' });
-});
+for (const version of ['5.1.7', '5.1.9'])
+  test(`${version} retains both declared versions and refuses a mismatched compiler`, t => {
+    const { folder, write } = oldProject(t);
+    const properties = {
+      engineVersion: version,
+      compilerVersion: version,
+      modules: [{ name: 'egret' }, { name: 'tween' }]
+    };
+    write('egretProperties.json', properties);
+    assert.equal(inspectLegacyProject(folder).profile, `egret-${version}-classic-web-2d`);
+    write('egretProperties.json', { ...properties, compilerVersion: '5.2.29' });
+    assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_VERSION_UNSUPPORTED' });
+  });
 
 test('inspect refuses unsupported modules, ambiguous script paths, and nonlocal RES', t => {
   const { folder, write } = oldProject(t);
