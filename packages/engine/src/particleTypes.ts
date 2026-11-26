@@ -62,6 +62,13 @@ export interface ParticleSnapshot {
   readonly running: boolean;
   readonly time: number;
 }
+/** A place and a count for one burst in a batch. */
+export interface ParticleBurstSite {
+  readonly x: number;
+  readonly y: number;
+  readonly count: number;
+}
+
 /** One live particle: where it is and how fast it moves, its age, scale, alpha, color and rotation. */
 export interface ParticleView {
   readonly x: number;
@@ -92,6 +99,12 @@ export interface ParticleEmitter {
   stop(): void;
   /** Makes this many particles at once, running or not. */
   burst(count: number): void;
+  /**
+   * Makes bursts in order at up to 16,384 sites and 1,048,576 requested particles, then builds the mesh once.
+   * Every coordinate must be finite and each count a nonnegative safe integer. The final place is that of
+   * the last site, even if its count is zero; an empty batch does nothing.
+   */
+  burstAtMany(sites: readonly ParticleBurstSite[]): void;
   /** Takes every particle away at once. */
   clear(): void;
   update(seconds: number): void;
