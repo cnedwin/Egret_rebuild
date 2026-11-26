@@ -160,6 +160,51 @@
       "notes": [
         "PeachCreek#9"
       ]
+    },
+    {
+      "topic": "save-refused-update-memory",
+      "status": "resolved",
+      "what": "A save store's update changes a copy, which becomes the data only once it passes validate: a refused or throwing change leaves the save in memory as it was.",
+      "pr": 424,
+      "commit": "1e60300915d86725438b28d6ec41dddc93213cc7",
+      "card": "save-update-callbacks",
+      "notes": [
+        "MechanismCity#18"
+      ]
+    },
+    {
+      "topic": "ui-root-during-input",
+      "status": "resolved",
+      "what": "A managed UI root can be made from a button's callback, while input is being delivered.",
+      "pr": 424,
+      "commit": "1e60300915d86725438b28d6ec41dddc93213cc7",
+      "card": "ui-callbacks",
+      "notes": [
+        "MechanismCity#19",
+        "TeaHorseRoad#20"
+      ]
+    },
+    {
+      "topic": "sideways-scroll-wheel",
+      "status": "resolved",
+      "what": "A sideways scroll list reads an ordinary vertical mouse wheel.",
+      "pr": 424,
+      "commit": "1e60300915d86725438b28d6ec41dddc93213cc7",
+      "notes": [
+        "MechanismCity#20"
+      ]
+    },
+    {
+      "topic": "save-update-return",
+      "status": "documented",
+      "what": "What a save store's update callback returns, other than undefined, replaces the data only if it passes validate; write a change as a block. shapeOf gives the validate.",
+      "pr": 424,
+      "commit": "1e60300915d86725438b28d6ec41dddc93213cc7",
+      "card": "save-update-callbacks",
+      "notes": [
+        "TaiwanMahjong#6",
+        "PeachCreek#6"
+      ]
     }
   ]
 }

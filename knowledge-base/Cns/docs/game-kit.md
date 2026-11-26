@@ -73,6 +73,18 @@ save.update(data => { data.tier = 2; });
 
 **`update(change)`** 要么原地修改数据、不返回值，要么返回新数据。返回的值必须通过 `validate`（默认要求是对象），原地修改后的数据也一样；不通过时什么也不写入，内存里的存档保持原样，返回 `false`，并以 `invalid` 报告给 `onProblem`。请把修改写成块体：`data => (data.tier = 2)` 这样的箭头函数会返回 `2`，会被拒绝。`save(next)` 对 `next` 做同样的检查。修改是在副本上做的，副本通过检查后才成为存档数据，所以被拒绝的修改、或中途抛错的修改，都不会改动内存里的存档；每次 update 之后 `save.data` 是一个新对象，请重新读取，不要留着旧的引用。
 
+**`shapeOf(defaults, rules)`** 按默认值的形状给出存档的检查和补全。游戏以前都是逐个字段手写这两样：
+
+```js
+import { createSaveStore, shapeOf } from '@egret/engine/kit';
+
+const fresh = () => ({ best: { normal: 0, hard: 0 }, plays: 0, finished: [], settings: { language: 'zh', sound: true } });
+const shape = shapeOf(fresh, { 'best.*': { int: true, min: 0, max: 3 }, 'settings.language': ['zh', 'en'] });
+const save = createSaveStore({ key: 'canal', version: 1, defaults: fresh, storage, validate: shape.validate });
+```
+
+`shape.validate` 先补全：旧版本的存档会在任意层级补上默认值里有、它缺少的字段，自己已有的值不会丢失。然后按默认值的形状检查：数字仍须是有限的数字，文字仍是文字，真假值仍是真假值，列表仍是列表，表仍是表，并且至少有默认值的那些字段。默认值是 `null` 的字段可以是任何值。规则以字段路径为键，用点连接各级名字，`*` 代表列表的每个元素或表的每个字段。规则可以是允许的值的列表、一个范围（`{ int, min, max }`），也可以是自己写的检查函数。`shape.problems(data)` 以 `路径: 应当是什么` 的形式列出数据不合形状之处，供测试使用。`shape.fill(data)` 只做补全。
+
 `browserSaveStorage()` 是页面的本地存储；页面没有可用存储时（无痕窗口、被屏蔽的站点）改用内存，`persistent` 说明是哪一种。`createMemorySaveStorage()` 是供测试使用的同类存储。
 
 ## 可以复现的随机数
