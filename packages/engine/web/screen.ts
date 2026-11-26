@@ -181,3 +181,65 @@ export function planScreen(options: ScreenPlanOptions): ScreenPlan {
     safe
   });
 }
+
+/**
+ * Where a box is held in an area: on each axis a distance in from one edge, or from the middle. `left`, `right` and
+ * `centerX` place it across, `top`, `bottom` and `centerY` down; at most one of each three, and an axis with none is
+ * left as it is. A distance in from an edge is 0 or more for the box to be inside.
+ */
+export interface ScreenPin {
+  readonly left?: number;
+  readonly right?: number;
+  readonly centerX?: number;
+  readonly top?: number;
+  readonly bottom?: number;
+  readonly centerY?: number;
+}
+
+const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
+const rect = (value: unknown): value is ScreenRect =>
+  value !== null &&
+  typeof value === 'object' &&
+  finite((value as ScreenRect).x) &&
+  finite((value as ScreenRect).y) &&
+  finite((value as ScreenRect).width) &&
+  finite((value as ScreenRect).height) &&
+  (value as ScreenRect).width >= 0 &&
+  (value as ScreenRect).height >= 0;
+const PIN_KEYS = ['left', 'right', 'centerX', 'top', 'bottom', 'centerY'];
+
+/** Whether `pin` is a pin: only its six names, finite numbers, and at most one of each axis. */
+export function isScreenPin(pin: unknown): pin is ScreenPin {
+  if (pin === null || typeof pin !== 'object') return false;
+  const given = Object.entries(pin as Record<string, unknown>).filter(([, value]) => value !== undefined);
+  if (given.some(([key, value]) => !PIN_KEYS.includes(key) || !finite(value))) return false;
+  const named = new Set(given.map(([key]) => key));
+  const count = (keys: readonly string[]): number => keys.filter(key => named.has(key)).length;
+  return count(['left', 'right', 'centerX']) <= 1 && count(['top', 'bottom', 'centerY']) <= 1;
+}
+
+/**
+ * Where `box` goes in `area` by `pin`: the place of its top left corner, in the units of both. The rectangle of the
+ * safe part of a plan, or of the whole stage, held against its edges: a score at `{ right: 16, top: 16 }`, a bar at
+ * `{ bottom: 0, centerX: 0 }`. Place again whenever the area or the box's size changes, as `onScreenChange` tells.
+ */
+export function pinBox(area: ScreenRect, box: ScreenRect, pin: ScreenPin): { readonly x: number; readonly y: number } {
+  if (!rect(area) || !rect(box) || !isScreenPin(pin)) throw invalid();
+  const x =
+    pin.left !== undefined
+      ? area.x + pin.left
+      : pin.right !== undefined
+        ? area.x + area.width - pin.right - box.width
+        : pin.centerX !== undefined
+          ? area.x + (area.width - box.width) / 2 + pin.centerX
+          : box.x;
+  const y =
+    pin.top !== undefined
+      ? area.y + pin.top
+      : pin.bottom !== undefined
+        ? area.y + area.height - pin.bottom - box.height
+        : pin.centerY !== undefined
+          ? area.y + (area.height - box.height) / 2 + pin.centerY
+          : box.y;
+  return Object.freeze({ x, y });
+}

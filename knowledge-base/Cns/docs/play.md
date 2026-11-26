@@ -116,6 +116,23 @@ const game = await play({
 });
 ```
 
+**用 pin 固定位置，不必写 `arrange`。** `game.pin(node, { right: 16, top: 16 })` 把 `ui` 层的节点固定在 `game.safe` 的边上，加 `{ area: 'screen' }` 则固定在 `game.screen` 的边上：
+
+```js
+setup(g) {
+  g.pin(g.text('0', { size: 48 }), { left: 32, top: 24 });
+  g.pin(g.button('II', { x: 0, y: 0, width: 96, height: 96 }, () => g.pause()), { right: 16, top: 16 });
+  g.pin(g.rect(0, 0, 600, 12, 0x88ccff, g.ui), { bottom: 0, centerX: 0 }, { area: 'screen' });
+}
+```
+
+- **每个方向一个。** 横向取 `left`、`right`、`centerX` 之一，纵向取 `top`、`bottom`、`centerY` 之一，表示离那条边或中线的距离。没有给的方向保持不动。
+- **按包围盒摆放。** 摆放的是节点的包围盒，包括子节点、缩放和旋转。调用时立即摆放；屏幕变化或包围盒大小变化时（例如分数的文字变长）再摆放。
+- **两次摆放之间，游戏可以移动它。** 弹跳或滑动不会被立即拉回，下次变化时才重新摆放。
+- **句柄。** `pin.set(edges)` 立即改到别处，`pin.dispose()` 解除固定。节点结束时自动解除。
+
+自己适配舞台的游戏可以用同样的计算：[把舞台适配到屏幕](screen-fit.md#把盒子固定在边上)里的 `pinBox`。
+
 `game.orientation` 是 `'portrait'` 或 `'landscape'`，`game.width` 和 `game.height` 是当前所用的设计尺寸。对话框、菜单、提示和触屏摇杆会自动放在 `game.safe` 里。只有视口 meta 标签写了 `viewport-fit=cover`，页面才会给出 `safe-area-inset` 值；页面或宿主更清楚安全区时，用 `insets` 直接给出。[把舞台适配到屏幕](screen-fit.md)讲了其中的计算，供自己适配舞台的游戏使用。
 
 ## 在页面控件旁嵌入游戏

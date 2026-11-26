@@ -228,11 +228,104 @@ async function verifyFixedFits(page, PNG) {
   }
 }
 
+// A score pinned to the safe part's top right corner and a bar to the bottom middle of the screen, in a window that
+// grows wider, turns and gets a notch: each stays against its edges, and the score stays when its words grow.
+async function verifyPins(page) {
+  const fixture = await page.evaluateHandle(async () => {
+    const { play } = await import('@egret/engine/play');
+    const parent = document.createElement('div');
+    parent.style.cssText = 'width:800px;height:600px';
+    document.body.append(parent);
+    let score, bar, pins;
+    const game = await play({
+      parent,
+      width: 400,
+      height: 300,
+      portrait: { width: 300, height: 400 },
+      fit: 'expand',
+      insets: { top: 0, right: 40, bottom: 0, left: 0 },
+      pixelRatio: 1,
+      backend: 'webgl2',
+      audio: false,
+      setup(g) {
+        score = g.rect(0, 0, 60, 20, 0xffffff, g.ui);
+        bar = g.rect(0, 0, 100, 10, 0xffffff, g.ui);
+        pins = [g.pin(score, { right: 8, top: 8 }), g.pin(bar, { bottom: 0, centerX: 0 }, { area: 'screen' })];
+      }
+    });
+    const box = node => {
+      const b = node.getBounds(),
+        at = game.fromStage(...Object.values(node.localToGlobal(b.x, b.y)));
+      return { x: Math.round(at.x), y: Math.round(at.y), width: b.width, height: b.height };
+    };
+    return {
+      resize(width, height) {
+        parent.style.width = width + 'px';
+        parent.style.height = height + 'px';
+      },
+      grow() {
+        score.scaleX = 2;
+      },
+      read: () => ({ score: box(score), bar: box(bar), safe: { ...game.safe }, screen: { ...game.screen } }),
+      setPin: () => pins[0].set({ left: 0, top: 0 }),
+      async close() {
+        await game.dispose();
+        parent.remove();
+      }
+    };
+  });
+  const frames = () =>
+    page.evaluate(
+      () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done))))
+    );
+  const right = now => Math.round(now.safe.x + now.safe.width);
+  try {
+    await frames();
+    // 800 × 600 shows the 400 × 300 design at 2; the notch of 40 CSS pixels covers 20 units on the right.
+    let now = await fixture.evaluate(f => f.read());
+    assert.equal(now.score.x + now.score.width, right(now) - 8);
+    assert.equal(now.score.y, Math.round(now.safe.y) + 8);
+    assert.equal(now.bar.y + now.bar.height, now.screen.y + now.screen.height);
+    assert.equal(now.bar.x, Math.round(now.screen.x + (now.screen.width - 100) / 2));
+    const first = now;
+    // Wider: the stage grows to the sides and both follow their edges.
+    await fixture.evaluate(f => f.resize(1000, 600));
+    await frames();
+    now = await fixture.evaluate(f => f.read());
+    assert.ok(now.screen.width > first.screen.width);
+    assert.equal(now.score.x + now.score.width, right(now) - 8);
+    assert.equal(now.bar.x, Math.round(now.screen.x + (now.screen.width - 100) / 2));
+    // Turned: the portrait design, and still against the same edges.
+    await fixture.evaluate(f => f.resize(600, 800));
+    await frames();
+    now = await fixture.evaluate(f => f.read());
+    assert.equal(now.screen.width, 300);
+    assert.equal(now.score.x + now.score.width, right(now) - 8);
+    assert.equal(now.bar.y + now.bar.height, now.screen.y + now.screen.height);
+    // The score's box grows: it is placed again at the next frame, still 8 units from the safe right edge.
+    await fixture.evaluate(f => f.grow());
+    await frames();
+    const grown = await fixture.evaluate(f => f.read());
+    // Its own box is still 60 wide; doubled across, it ends 8 units from the edge.
+    assert.equal(grown.score.width, 60);
+    assert.equal(grown.score.x + 120, right(grown) - 8);
+    // set holds it elsewhere at once.
+    await fixture.evaluate(f => f.setPin());
+    now = await fixture.evaluate(f => f.read());
+    assert.deepEqual([now.score.x, now.score.y], [Math.round(now.safe.x), Math.round(now.safe.y)]);
+    return { score: grown.score, bar: now.bar, screen: now.screen };
+  } finally {
+    await fixture.evaluate(f => f.close());
+    await fixture.dispose();
+  }
+}
+
 export async function verifyScreenFit(page, PNG) {
   const before = page.viewportSize();
   await page.setViewportSize({ width: 960, height: 540 });
   const containScale = await verifyContainScale(page);
   const fixedFits = PNG === undefined ? undefined : await verifyFixedFits(page, PNG);
+  const pins = await verifyPins(page);
   const fixture = await page.evaluateHandle(async () => {
     const { play } = await import('@egret/engine/play');
     const log = { arranged: [], taps: 0 };
@@ -328,6 +421,7 @@ export async function verifyScreenFit(page, PNG) {
     return {
       containScale,
       fixedFits,
+      pins,
       arranged: log.length,
       orientations: [...new Set(log.map(entry => entry.orientation))],
       taps: 1
