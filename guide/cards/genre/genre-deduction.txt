@@ -1,0 +1,26 @@
+---
+id: genre-deduction
+title: A deduction game: evidence, notes and a verdict
+applies: [play, engine, web]
+triggers: ["detective", "deduction", "mystery", "evidence", "case file", "verdict", "fill in the blanks", "推理", "探案", "证物", "断案", "填空"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: InquestScrolls/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 95897d78095ae8fda9e34dbc13bbbd15db8eaa12 }
+  - { repo: cnedwin/PortedGamesEgret, path: InquestScrolls/src/sim/rules.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 95897d78095ae8fda9e34dbc13bbbd15db8eaa12 }
+  - { repo: cnedwin/PortedGamesEgret, path: InquestScrolls/src/sim/cases/index.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 95897d78095ae8fda9e34dbc13bbbd15db8eaa12 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A deduction game: evidence, notes and a verdict
+
+**Loop.** Read the case, examine evidence, take words from it into notes, fill the blanks of a verdict; a wrong verdict says which part does not hold.
+
+**Files.** Each case is data (`src/sim/cases/c1.mjs`…) checked by rules (`src/sim/rules.mjs`) that tests run over every case; an audit (`src/sim/audit.mjs`) proves each case has one answer reachable from its evidence. The view lays out long text, evidence cards and blanks.
+
+**Entries.** `@egret/engine/play` for the frame; `@egret/engine/paragraph` (with `@egret/engine/web/paragraph`) for long, selectable text; `@egret/engine/web/text-input` and editing for notes; semantics for keys and screen readers.
+
+**Read first.** `label-pages`, `label-wrap`, `touch-labels`, `two-languages`, `game-screens`; for a mini game `ship-wechat-minigame`.
+
+**Done means.** Every case solved by its audit in Node, and every wrong verdict told why; the whole game played by keys alone; text that fits at 390 pixels wide in both languages. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from The Inquest Scrolls.

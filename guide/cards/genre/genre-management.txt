@@ -1,0 +1,26 @@
+---
+id: genre-management
+title: A management or city-building game: build, produce, wait, grow
+applies: [play, engine, web, world3d]
+triggers: ["city builder", "management", "idle", "tycoon", "economy", "sect management", "production chain", "经营", "模拟经营", "放置", "建造", "门派经营"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: PeachCreek/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 95897d78095ae8fda9e34dbc13bbbd15db8eaa12 }
+  - { repo: cnedwin/PortedGamesEgret, path: PeachCreek/src/sim/world.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 95897d78095ae8fda9e34dbc13bbbd15db8eaa12 }
+  - { repo: cnedwin/PortedGamesEgret, path: Wulin/src/core/battle.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A management or city-building game: build, produce, wait, grow
+
+**Loop.** Place buildings, produce and trade, wait while the world runs, unlock more; a long game checked in short visits.
+
+**Files.** Buildings, goods and unlocks as data (`src/sim/data.mjs`); the economy as rules stepped by time (`src/sim/world.mjs`); a bot that plays a simulated player's day to tune the pacing (Peach Creek's `tools/pacing.mjs`); time away worked out when the game is opened again.
+
+**Entries.** `@egret/engine/play` with `@egret/engine/ui` for sheets and lists (Peach Creek); `@egret/engine/world3d` for a 3D seat (Wulin).
+
+**Read first.** `balance-from-runs`, `save-data`, `game-screens`, `ui-callbacks`, `touch-labels`, `pause-and-overlays`.
+
+**Done means.** The first building placed within ten seconds; pacing tuned from bot runs, with the numbers written down; time away applied once and capped; every sheet usable by keys and a screen reader. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Magistrate of Peach Creek and Wulin.

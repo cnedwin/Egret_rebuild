@@ -65,7 +65,7 @@ export const TARGETS = Object.freeze({
 });
 
 /** The files of a new game, by path, for a title and a target. */
-export function starterFiles({ title, target, folder }) {
+export function starterFiles({ title, target, folder, recipe }) {
   const t = TARGETS[target];
   const fit = t.fit ? `\n  fit: '${t.fit}',` : '';
   return {
@@ -259,9 +259,9 @@ test('the catcher stays on the stage and moves towards a finger', () => {
   assert.ok(state.catcher.x > state.catcher.width / 2);
 });
 `,
-    'AGENTS.md': agentsMd({ title, target, folder }),
+    'AGENTS.md': agentsMd({ title, target, folder, recipe }),
     'CLAUDE.md': '@AGENTS.md\n',
-    '.claude/skills/egret-game/SKILL.md': skillMd({ title, target }),
+    '.claude/skills/egret-game/SKILL.md': skillMd({ title, target, recipe }),
     'ENGINE-NOTES.md': `# Engine notes
 
 The faults of the engine this game met, one numbered note each, with a header line under its heading
@@ -297,12 +297,15 @@ A game built on the Egret engine, for ${t.name}. Catch the falling stars: ${t.in
 }
 
 /** AGENTS.md: short, since an agent reads it every time; the guide holds the rest, and the command finds it. */
-export function agentsMd({ title, target }) {
+export function agentsMd({ title, target, recipe }) {
   const t = TARGETS[target];
+  const kind = recipe
+    ? `\n## The kind of game: ${recipe.title}\n\nRead \`node vendor/egret.mjs card ${recipe.id}\` before anything else: the loop of this kind of game, the files it is split into, the entries it uses, the cards to read first and what done means for it. The star catcher here is only a start: replace its rules and picture with the recipe's, keeping the rules apart from the picture.\n`
+    : '';
   return `# ${title}: how to work on this game
 
 A game on the Egret engine, for ${t.name}. The engine is copied in \`vendor/\` with its guide; do not edit \`vendor/\`.
-
+${kind}
 ## Ask before you write
 
 - \`node vendor/egret.mjs guide <question>\` gives the cards that answer, in English or Chinese, by words, an engine name or an error code. Start with \`card first-playable-world\`, \`card choose-entry\` and \`card ${t.card}\`.
@@ -331,7 +334,7 @@ ${t.notes.map(note => '- ' + note).join('\n')}
 }
 
 /** The skill for Claude Code: the same way through, as steps to follow with the commands at each. */
-export function skillMd({ title, target }) {
+export function skillMd({ title, target, recipe }) {
   const t = TARGETS[target];
   return `---
 name: egret-game
@@ -340,7 +343,7 @@ description: Build or change ${title} on the Egret engine, from a brief to a gam
 
 # Make ${title} on the Egret engine
 
-1. Read AGENTS.md. Ask the guide before writing engine code: \`node vendor/egret.mjs guide "<what you need>"\`, and \`card ${t.card}\` for ${t.name}.
+1. Read AGENTS.md. Ask the guide before writing engine code: \`node vendor/egret.mjs guide "<what you need>"\`, and \`card ${t.card}\` for ${t.name}.${recipe ? ` Read \`card ${recipe.id}\` first: the recipe for this kind of game.` : ''}
 2. Write the brief at the top of \`src/rules.mjs\`: what the player acts on, what changes, what that opens.
 3. Change the rules in \`src/rules.mjs\` and their tests in \`test/\`; run \`npm test\`.
 4. Change the picture and the input in \`src/main.mjs\`. Make nodes once and move or change them; keys and touch both.
@@ -352,12 +355,12 @@ description: Build or change ${title} on the Egret engine, from a brief to a gam
 }
 
 /** Writes a new game into `folder`: refuses a folder that has files, and a target or title that is not one. */
-export function writeStarter(folder, { title, target = 'web' } = {}) {
+export function writeStarter(folder, { title, target = 'web', recipe } = {}) {
   if (!TARGETS[target]) throw new Error(`The target is one of ${Object.keys(TARGETS).join(', ')}.`);
   if (typeof title !== 'string' || !title.trim() || /[\r\n<>"`$\\]/.test(title))
     throw new Error('A title is one line of words, without < > " ` $ or \\.');
   if (fs.existsSync(folder) && fs.readdirSync(folder).length > 0) throw new Error(`${folder} is not empty.`);
-  const files = starterFiles({ title: title.trim(), target, folder: path.basename(path.resolve(folder)) });
+  const files = starterFiles({ title: title.trim(), target, folder: path.basename(path.resolve(folder)), recipe });
   for (const [name, text] of Object.entries(files)) {
     const file = path.join(folder, ...name.split('/'));
     fs.mkdirSync(path.dirname(file), { recursive: true });

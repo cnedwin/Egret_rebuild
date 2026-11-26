@@ -434,7 +434,14 @@ const QUERIES = [
   ['tab and space on page buttons beside play', 'play-page-controls'],
   ['rotate a landscape table on a portrait phone', 'play-turned-table'],
   ['大量敌人 割草 帧时间', 'sprite-swarm'],
-  ['pick a tile on an isometric tactics board', 'tile-board-camera']
+  ['pick a tile on an isometric tactics board', 'tile-board-camera'],
+  // Recipes by kind of game, asked as a developer starts one.
+  ['make a tower defence game with waves', 'genre-tower-defence'],
+  ['做一个三消卡牌游戏', 'genre-match-cards'],
+  ['a rhythm game with a chart of notes', 'genre-rhythm'],
+  ['做一个塔防游戏', 'genre-tower-defence'],
+  ['kart racing game with rivals', 'genre-driving'],
+  ['a detective game with evidence and a verdict', 'genre-deduction']
 ];
 
 // Break caught: a change to the ranking or to a card that sends a known question to the wrong card.
