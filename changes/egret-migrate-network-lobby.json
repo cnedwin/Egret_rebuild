@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Egret Migrate 0.5 imports a two-player network lobby",
+    "body": "Import the Egret 5.0.14 EraserSanGuoSha lobby and room from a local checkout. Keep the original EUI classes, four EXML skins and the project's Socket.IO client through server-confirmed match entry."
+  },
+  "zh": {
+    "title": "Egret Migrate 0.5 支持迁移双人联机大厅",
+    "body": "从本地白鹭 5.0.14《橡皮三国杀》工程自动迁出大厅与房间，保留原 EUI 业务类、四份 EXML 和工程随附的 Socket.IO 客户端，接到原服务端确认开局。"
+  }
+}

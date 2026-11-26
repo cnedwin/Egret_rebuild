@@ -10,7 +10,7 @@ From an Egret checkout with built packages, pack the local CLI. Use the installe
 
 ```text
 node tools/egret-migrate/pack.mjs --esbuild <esbuild-module> --npm <npm-cli.js> --out <new-package-dir>
-npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.4.0.tgz
+npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.5.0.tgz
 ```
 
 Use the installed `egret-migrate` command or invoke `node <tool-folder>/node_modules/@egret/migrate/bin.mjs` directly. The CLI works outside the engine checkout. Supply a pinned Egret 7.0-series `egret2d.mjs`, an installed esbuild module, Playwright with Chromium and, for preview, qrcode-generator 2.0.4. These tools are selected explicitly.
@@ -23,6 +23,21 @@ egret-migrate preview --run <new-evidence-directory> --address <LAN-IPv4> --qr-m
 ```
 
 The profile reads the classic HTML stage declaration, the Egret engine/compiler configuration, the ordered `manifest.json` game scripts and a local RES manifest. It admits `egret`, `game`, `res`, `assetsmanager`, `promise`, and the supported subset of `eui` and `dragonBones`. The bridge implements the display, listener, image/JSON group and local storage operations covered by the tests. The classic 5.1 profile accepts matching engine/compiler declarations for 5.1.7 and 5.1.9. An explicit `--source-order` JSON array may name portable `src/*.ts` paths in load order. `--resources` selects a different project-relative manifest. Custom runtime modules and dynamic stage sizes require project-specific adaptation.
+
+### A networked lobby from Egret 5.0.14
+
+Use `eraser-lobby` with the upstream repository root containing both `client/` and `socket.io/`. The profile imports the original lobby and room classes, their two skins, the list-row and button skins, the two button images and the bundled Socket.IO client. It selects these inputs from the checkout and records their identities. The rest of the game can stay in the source tree. [Reference checkout](https://github.com/EraserTeam/EraserSanGuoSha/tree/30c315bb7296efd0518eb0c31dd0e4d115742b69)
+
+```text
+egret-migrate inspect --profile eraser-lobby --source <EraserSanGuoSha-root>
+egret-migrate convert --profile eraser-lobby --source <EraserSanGuoSha-root> --out <new-project> --engine <egret2d.mjs> --engine-version <7.0.x> --esbuild <esbuild-module> --socket-url http://127.0.0.1:43676
+```
+
+Start the original Node game server separately. Set its `PORT` to the port used above to enable the original multi-room flow. Serve the generated `web/` directory over HTTP. The Socket.IO origin defaults to the page origin when both services share an origin. Use an explicit loopback origin when running them on separate local ports.
+
+Open the output in two independent browser sessions. In A, click **创建房间** (create room). In B, click **刷新列表** (refresh), select the row with A's room number and click **加入房间** (join). Verify that both clients reach the match handoff for the same room after the server starts the game. Leaving before the second player joins can be checked in a fresh room. The playable card table, persistence and reconnect behavior require separate migration work.
+
+The Windows reference run used two isolated Chromium 157 sessions with software WebGL2 and an unchanged source checkout. Leaving and refreshing removed the first room from the list. In the next room, both canvases and their accessible status text showed the same room number, two players and distinct seats. The original server logged both joins and the start of that room. The two clients used the imported Socket.IO bytes without a replacement protocol. Mobile input and rendering performance were outside this run.
 
 ### EUI, atlas resources and skeletal exports
 

@@ -6,9 +6,39 @@ import path from 'node:path';
 import { test } from 'node:test';
 import { crc32 } from 'node:zlib';
 import { PNG } from 'pngjs';
+import { runCli } from '../tools/egret-migrate/cli.mjs';
 import { convertProject } from '../tools/egret-migrate/convert.mjs';
 import { inspectLegacyProject } from '../tools/egret-migrate/inspect.mjs';
 import { normalizeLegacyPng } from '../tools/egret-migrate/legacy-assets.mjs';
+
+test('explicit lobby arguments cannot silently select another project or an unreviewed input list', async () => {
+  const refuseArguments = args => assert.rejects(runCli(args), { code: 'MIGRATE_ARGUMENTS' });
+  await refuseArguments(['inspect', '--source', 'missing', '--profile', 'unknown']);
+  await refuseArguments([
+    'inspect',
+    '--source',
+    'missing',
+    '--profile',
+    'eraser-lobby',
+    '--source-order',
+    'unread.json'
+  ]);
+  await refuseArguments([
+    'convert',
+    '--source',
+    'missing',
+    '--out',
+    'unused',
+    '--engine',
+    'unused',
+    '--engine-version',
+    '7.0.2',
+    '--esbuild',
+    'unused',
+    '--socket-url',
+    'http://127.0.0.1:43676'
+  ]);
+});
 
 test('legacy grayscale PNG normalizes to equivalent RGBA8 while admitted PNG bytes remain untouched', () => {
   const rgba = PNG.sync.write({ width: 2, height: 1, data: Buffer.from([32, 32, 32, 255, 192, 192, 192, 255]) });
