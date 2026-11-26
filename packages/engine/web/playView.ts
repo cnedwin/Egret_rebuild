@@ -420,6 +420,8 @@ export function createPlayViews(
       active = true,
       ended = false;
     const rolls = new Map<string, Roll>();
+    let readingBindings = false,
+      replacingRows = false;
     const removals: (() => void)[] = [];
     const scrollHandles = new Map<string, PlayViewScroll>();
     let scrollItems: Made[] = [];
@@ -713,7 +715,11 @@ export function createPlayViews(
       scrollItems = [];
     };
     // Each part is inside its panel; a scroll panel holds the parts in its moving content.
-    const makeItem = (planned: ViewPlannedPart, offsets: ReadonlyMap<string, number> = new Map()): Made => {
+    const makeItem = (
+      planned: ViewPlannedPart,
+      offsets: ReadonlyMap<string, number> = new Map(),
+      restoreRoll = true
+    ): Made => {
       const { part } = planned;
       const container = planned.parent < 0 ? undefined : made[planned.parent]!;
       const parent = container?.scroll?.content ?? container?.node ?? root;
@@ -742,7 +748,7 @@ export function createPlayViews(
               ...(part.italic !== undefined ? { italic: part.italic } : {})
             })
           : undefined;
-      const previous = rolls.get(part.name ?? '');
+      const previous = restoreRoll ? rolls.get(part.name ?? '') : undefined;
       const item: Made = {
         part,
         node,
@@ -851,75 +857,84 @@ export function createPlayViews(
     // Reads every binding; repaints only what changed.
     const read = (seconds: number): boolean => {
       if (ended) return false;
-      let any = false;
-      let scrollLayoutChanged = false;
-      const now = state();
-      for (const item of made) {
-        const binding = bindingOf(item);
-        if (binding === undefined) continue;
-        const before = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
-        if (binding.badge !== undefined) {
-          const value = binding.badge(now);
-          item.badge = value === true ? true : typeof value === 'number' && value >= 1 ? Math.floor(value) : false;
-        }
-        if (binding.visible !== undefined) {
-          const visible = binding.visible(now) === true;
-          if (item.visible !== visible) scrollLayoutChanged = true;
-          item.visible = visible;
-        }
-        if (binding.disabled !== undefined) item.disabled = binding.disabled(now) === true;
-        if (binding.checked !== undefined) item.checked = binding.checked(now) === true;
-        if (binding.value !== undefined) {
-          const value = binding.value(now);
-          item.value = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
-        }
-        if (binding.color !== undefined) {
-          const value = binding.color(now);
-          item.color = Number.isInteger(value) && value >= 0 && value <= 0xffffff ? value : undefined;
-        }
-        if (binding.label !== undefined) {
-          const label = binding.label(now);
-          item.semanticLabel =
-            typeof label === 'string' && /\S/u.test(label)
-              ? label
-                  .slice(0, 1024)
-                  .replace(/[\uD800-\uDBFF]$/u, '')
-                  .trimEnd() || undefined
-              : undefined;
-        }
-        if (binding.text !== undefined) item.text = String(binding.text(now));
-        if (binding.src !== undefined) requestImage(item, binding.src(now));
-        if (binding.pick !== undefined) {
-          const target = binding.pick(now);
-          const name = item.part.name!;
-          let roll = rolls.get(name);
-          if (typeof target === 'number' && Number.isFinite(target)) {
-            if (roll === undefined) {
-              roll = { from: target, to: target, shown: target, left: 0 };
-              rolls.set(name, roll);
-            } else if (roll.to !== target) {
-              roll.from = roll.shown;
-              roll.to = target;
-              roll.left = binding.roll ?? 0;
+      if (readingBindings)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: 'bindings cannot refresh the same view while being read'
+        });
+      readingBindings = true;
+      try {
+        let any = false;
+        let scrollLayoutChanged = false;
+        const now = state();
+        for (const item of made) {
+          const binding = bindingOf(item);
+          if (binding === undefined) continue;
+          const before = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
+          if (binding.badge !== undefined) {
+            const value = binding.badge(now);
+            item.badge = value === true ? true : typeof value === 'number' && value >= 1 ? Math.floor(value) : false;
+          }
+          if (binding.visible !== undefined) {
+            const visible = binding.visible(now) === true;
+            if (item.visible !== visible) scrollLayoutChanged = true;
+            item.visible = visible;
+          }
+          if (binding.disabled !== undefined) item.disabled = binding.disabled(now) === true;
+          if (binding.checked !== undefined) item.checked = binding.checked(now) === true;
+          if (binding.value !== undefined) {
+            const value = binding.value(now);
+            item.value = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
+          }
+          if (binding.color !== undefined) {
+            const value = binding.color(now);
+            item.color = Number.isInteger(value) && value >= 0 && value <= 0xffffff ? value : undefined;
+          }
+          if (binding.label !== undefined) {
+            const label = binding.label(now);
+            item.semanticLabel =
+              typeof label === 'string' && /\S/u.test(label)
+                ? label
+                    .slice(0, 1024)
+                    .replace(/[\uD800-\uDBFF]$/u, '')
+                    .trimEnd() || undefined
+                : undefined;
+          }
+          if (binding.text !== undefined) item.text = String(binding.text(now));
+          if (binding.src !== undefined) requestImage(item, binding.src(now));
+          if (binding.pick !== undefined) {
+            const target = binding.pick(now);
+            const name = item.part.name!;
+            let roll = rolls.get(name);
+            if (typeof target === 'number' && Number.isFinite(target)) {
+              if (roll === undefined) {
+                roll = { from: target, to: target, shown: target, left: 0 };
+                rolls.set(name, roll);
+              } else if (roll.to !== target) {
+                roll.from = roll.shown;
+                roll.to = target;
+                roll.left = binding.roll ?? 0;
+              }
+              if (roll.left > 0 && seconds > 0) {
+                roll.left = Math.max(0, roll.left - seconds);
+                const t = 1 - roll.left / (binding.roll ?? 1);
+                const eased = 1 - (1 - t) * (1 - t);
+                roll.shown = roll.left === 0 ? roll.to : roll.from + (roll.to - roll.from) * eased;
+              } else if (roll.left <= 0) roll.shown = roll.to;
+              const whole = roll.left > 0 ? Math.round(roll.shown) : roll.shown;
+              item.text = binding.format !== undefined ? String(binding.format(whole)) : String(Math.round(whole));
             }
-            if (roll.left > 0 && seconds > 0) {
-              roll.left = Math.max(0, roll.left - seconds);
-              const t = 1 - roll.left / (binding.roll ?? 1);
-              const eased = 1 - (1 - t) * (1 - t);
-              roll.shown = roll.left === 0 ? roll.to : roll.from + (roll.to - roll.from) * eased;
-            } else if (roll.left <= 0) roll.shown = roll.to;
-            const whole = roll.left > 0 ? Math.round(roll.shown) : roll.shown;
-            item.text = binding.format !== undefined ? String(binding.format(whole)) : String(Math.round(whole));
+          }
+          const after = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
+          if (after !== before) {
+            paint(item);
+            any = true;
           }
         }
-        const after = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
-        if (after !== before) {
-          paint(item);
-          any = true;
-        }
+        if (scrollLayoutChanged) syncScrollLayout();
+        return any;
+      } finally {
+        readingBindings = false;
       }
-      if (scrollLayoutChanged) syncScrollLayout();
-      return any;
     };
     const refresh = (): void => {
       try {
@@ -940,6 +955,7 @@ export function createPlayViews(
     // Semantics: the view as a group, or a dialog when modal, and each named part as what it is.
     const semantics = hooks.semantics();
     const semanticNodes = new Map<string, SemanticNode>();
+    let semanticRoot: SemanticNode | undefined;
     // Named parts in reading order, each inside its nearest named panel.
     const registerParts = (from = 0, to = plan.parts.length): void => {
       if (semantics === undefined) return;
@@ -1046,8 +1062,10 @@ export function createPlayViews(
           ...(description.modal === true ? { modal: active } : {})
         })
       });
+      semanticRoot = top;
       removals.push(() => {
         top.remove();
+        semanticRoot = undefined;
         semanticNodes.clear();
       });
       registerParts();
@@ -1147,7 +1165,7 @@ export function createPlayViews(
       syncScrollLayout();
     };
     // Membership changes are explicit rather than reallocating a collection descriptor every frame.
-    const replaceChildren = (
+    const replaceRows = (
       name: string,
       children: readonly ViewPart[],
       replacement?: Readonly<Record<string, PlayViewBinding<S>>>
@@ -1248,16 +1266,22 @@ export function createPlayViews(
         for (const planned of plan.parts) {
           let item = reuse.get(planned.index);
           if (item === undefined) {
-            item = makeItem(planned);
+            // Rebuilt rows are new content, unlike the same named parts rebuilt by orientation.
+            item = makeItem(planned, new Map(), false);
             created.push(item);
           }
           made.push(item);
         }
         // Keep the root and other parts mounted in the semantic tree. Replacing a row
         // in a covered view cannot change the reading order or priority of other dialogs.
-        semanticsReplaced = true;
-        removeRowSemantics(oldNames);
-        registerParts(at + 1, nextEnd);
+        // built() can populate the collection before the outer view registers
+        // semantics (also when switching portrait variant). That outer registration
+        // will see this new plan; there is no attached subtree to replace yet.
+        if (semanticRoot?.attached === true) {
+          semanticsReplaced = true;
+          removeRowSemantics(oldNames);
+          registerParts(at + 1, nextEnd);
+        }
       } catch (cause) {
         if (semanticsReplaced) removeRowSemantics(newNames);
         description = oldDescription;
@@ -1291,17 +1315,39 @@ export function createPlayViews(
       let position = 0;
       for (let i = at + 1; i < nextEnd; i = endOf(plan, i)) parent.setChildIndex(made[i]!.node, position++);
       scrollItems = made.filter(item => item.scroll !== undefined);
-      read(0);
+      // The structure is now committed. Establish its authored geometry and
+      // recover focus even if an application binding throws while reading it.
       layoutItems();
-      if (previousFocus !== undefined) {
-        if (record.reveal(previousFocus)) focus({ owner: record, name: previousFocus });
-        else {
-          const choices = record.targets(),
-            start = Math.min(previousIndex, choices.length - 1);
-          const order = [...choices.slice(Math.max(0, start)), ...choices.slice(0, Math.max(0, start)).reverse()];
-          const fallback = order.find(key => record.reveal(key));
-          if (fallback !== undefined) focus({ owner: record, name: fallback });
+      try {
+        read(0);
+      } catch (cause) {
+        // Runtime bindings are not description validation. Reconcile any values
+        // already assigned and keep the committed result arranged before reporting.
+        layoutItems();
+        throw cause;
+      } finally {
+        if (previousFocus !== undefined) {
+          if (record.reveal(previousFocus)) focus({ owner: record, name: previousFocus });
+          else {
+            const choices = record.targets(),
+              start = Math.min(previousIndex, choices.length - 1);
+            const order = [...choices.slice(Math.max(0, start)), ...choices.slice(0, Math.max(0, start)).reverse()];
+            const fallback = order.find(key => record.reveal(key));
+            if (fallback !== undefined) focus({ owner: record, name: fallback });
+          }
         }
+      }
+    };
+    const replaceChildren: PlayView<S>['replaceChildren'] = (name, children, replacement) => {
+      if (readingBindings || replacingRows)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: 'collection replacement cannot reenter the view from a binding or a replacement'
+        });
+      replacingRows = true;
+      try {
+        replaceRows(name, children, replacement);
+      } finally {
+        replacingRows = false;
       }
     };
 

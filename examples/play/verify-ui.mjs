@@ -13,9 +13,17 @@ if (
   !output ||
   !executablePath ||
   ![playwrightFile, output, executablePath].every(file => path.isAbsolute(file)) ||
-  !['all', 'visibility', 'scroll', 'host', 'rich', 'activation', 'semantics-geometry', 'empty-text', 'collections'].includes(
-    selection
-  ) ||
+  ![
+    'all',
+    'visibility',
+    'scroll',
+    'host',
+    'rich',
+    'activation',
+    'semantics-geometry',
+    'empty-text',
+    'collections'
+  ].includes(selection) ||
   process.argv.length > 6
 ) {
   throw new Error(

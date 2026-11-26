@@ -45,7 +45,8 @@ export async function verifyViewCollections(page) {
       );
     const ids = Array.from({ length: 30 }, (_, id) => id);
     const rows = ids.map(row);
-    let view, imageView, queueView;
+    let view, imageView, queueView, builtView;
+    const builtVisits = [];
     const queueState = { src: '/collection-queue-old.png' };
     const game = await play({
       width: 640,
@@ -268,6 +269,104 @@ export async function verifyViewCollections(page) {
           lower.close();
         }
       },
+      staleRoll() {
+        const rolling = game.show(
+          {
+            root: {
+              type: 'panel',
+              name: 'rollList',
+              layout: 'column',
+              children: [{ type: 'text', name: 'amount', text: 'Initial' }]
+            }
+          },
+          { bind: { amount: { pick: () => 42 } } }
+        );
+        try {
+          const before = rolling.get('amount').getChildAt(0).text;
+          rolling.replaceChildren('rollList', [{ type: 'text', name: 'amount', text: 'New' }], {});
+          const after = rolling.get('amount').getChildAt(0).text;
+          const spoken = semantics.publish().nodes.find(node => node.id.endsWith(':amount'))?.name;
+          return { before, after, spoken };
+        } finally {
+          rolling.close();
+        }
+      },
+      callbacks() {
+        const first = { type: 'button', name: 'first', text: 'First', height: 44 };
+        const stable = { type: 'button', name: 'stable', text: 'Stable', height: 44 };
+        const text = { type: 'text', name: 'callback', text: 'Callback', height: 44 };
+        const callView = game.show(
+          {
+            root: { type: 'panel', name: 'callbackList', layout: 'column', gap: 5, height: 210, children: [stable] }
+          },
+          { bind: { stable: { tap: () => {} } } }
+        );
+        try {
+          callView.focus('stable');
+          let nested;
+          callView.replaceChildren('callbackList', [first, stable, text], {
+            stable: { tap: () => {} },
+            callback: {
+              text: () => {
+                try {
+                  callView.replaceChildren('callbackList', [first], {});
+                } catch (cause) {
+                  nested = cause.code;
+                }
+                return 'Callback';
+              }
+            }
+          });
+          const afterNested = callView.focused;
+          let thrown = '';
+          try {
+            callView.replaceChildren('callbackList', [stable, first, text], {
+              stable: { tap: () => {} },
+              callback: {
+                text: () => {
+                  throw Error('assigned callback failure');
+                }
+              }
+            });
+          } catch (cause) {
+            thrown = cause.message;
+          }
+          const arranged = callView.get('stable').y === callView.rect('stable').y - callView.rect('callbackList').y;
+          const afterFailure = callView.focused;
+          // An application binding is a runtime callback, not description validation.
+          // Replace the intentionally throwing fixture callback before another frame runs.
+          callView.replaceChildren('callbackList', [stable], { stable: { tap: () => {} } });
+          return { nested, afterNested, thrown, arranged, afterFailure, recovered: callView.focused };
+        } finally {
+          callView.close();
+        }
+      },
+      createBuiltView() {
+        const panel = { type: 'panel', name: 'builtList', layout: 'column', width: 220, height: 100, children: [] };
+        builtView = game.show(
+          { root: panel, portrait: panel },
+          {
+            built(v) {
+              builtVisits.push(v.variant);
+              const name = v.variant === 'portrait' ? 'portraitRow' : 'landscapeRow';
+              v.replaceChildren('builtList', [{ type: 'button', name, text: name, height: 44 }], {
+                [name]: { tap: () => {} }
+              });
+            }
+          }
+        );
+        return this.builtRead();
+      },
+      builtRead() {
+        const name = builtView.variant === 'portrait' ? 'portraitRow' : 'landscapeRow';
+        const mounted = !builtView.get(name).isDisposed;
+        const published = semantics.publish().nodes.some(n => n.name === name);
+        return { variant: builtView.variant, mounted, published, visits: [...builtVisits], errors: [...errors] };
+      },
+      closeBuilt() {
+        builtView?.close();
+        builtView = undefined;
+      },
       async image() {
         imageView = game.show(
           {
@@ -338,6 +437,7 @@ export async function verifyViewCollections(page) {
         return { loaded: children.filter(name => queueView.get(name).numChildren === 1).length, errors: [...errors] };
       },
       async close() {
+        builtView?.close();
         queueView?.close();
         imageView?.close();
         view.close();
@@ -347,6 +447,17 @@ export async function verifyViewCollections(page) {
     };
   });
   try {
+    const roll = await fixture.evaluate(f => f.staleRoll());
+    assert.deepEqual(roll, { before: '42', after: 'New', spoken: 'New' });
+    const runtimeCallbacks = await fixture.evaluate(f => f.callbacks());
+    assert.deepEqual(runtimeCallbacks, {
+      nested: 'UI_VIEW_BINDING_INVALID',
+      afterNested: 'stable',
+      thrown: 'assigned callback failure',
+      arranged: true,
+      afterFailure: 'stable',
+      recovered: 'stable'
+    });
     const result = await fixture.evaluate(f => f.collection());
     assert.ok(result.initialMax > 1000 && result.before > 400);
     assert.equal(result.after, result.before, 'scroll position is retained near a sold item');
@@ -372,6 +483,27 @@ export async function verifyViewCollections(page) {
     await page.waitForFunction(f => f.portrait().variant === 'portrait', fixture);
     const portrait = await fixture.evaluate(f => f.portrait());
     assert.deepEqual(portrait, { variant: 'portrait', focus: 'row8', names: [false, false] });
+    if (before) await page.setViewportSize(before);
+    await page.waitForFunction(f => f.portrait().variant === 'landscape', fixture);
+    const builtInitial = await fixture.evaluate(f => f.createBuiltView());
+    assert.deepEqual(builtInitial, {
+      variant: 'landscape',
+      mounted: true,
+      published: true,
+      visits: ['landscape'],
+      errors: []
+    });
+    await page.setViewportSize({ width: 420, height: 700 });
+    await page.waitForFunction(f => f.builtRead().variant === 'portrait', fixture);
+    const builtPortrait = await fixture.evaluate(f => f.builtRead());
+    assert.deepEqual(builtPortrait, {
+      variant: 'portrait',
+      mounted: true,
+      published: true,
+      visits: ['landscape', 'portrait'],
+      errors: []
+    });
+    await fixture.evaluate(f => f.closeBuilt());
     if (before) await page.setViewportSize(before);
     const modal = await fixture.evaluate(f => f.modalOrdering());
     assert.deepEqual(modal, {
@@ -441,7 +573,18 @@ export async function verifyViewCollections(page) {
         assert.equal(started.filter(name => name === '/collection-queue-new.png').length, 1);
         const queue = { started, ...(await fixture.evaluate(f => f.queueRead())) };
         assert.deepEqual(queue.errors, []);
-        return { collection: result, portrait, modal, image, late, queue };
+        return {
+          roll,
+          runtimeCallbacks,
+          builtInitial,
+          builtPortrait,
+          collection: result,
+          portrait,
+          modal,
+          image,
+          late,
+          queue
+        };
       } finally {
         releaseQueue();
         await page.unroute(queuePattern);
