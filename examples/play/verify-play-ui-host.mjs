@@ -14,6 +14,7 @@ export async function verifyPlayUiHost(page) {
     document.body.append(host);
     const semantics = createUiSemantics();
     let pressed = 0;
+    const viewImageErrors = [];
     const game = await play({
       parent: host,
       width: 640,
@@ -23,6 +24,9 @@ export async function verifyPlayUiHost(page) {
       audio: false,
       pixelRatio: 0.5,
       semantics,
+      onError(error) {
+        viewImageErrors.push([error.code, error.cause?.code, error.cause?.cause?.code]);
+      },
       setup(game) {
         game.show(
           {
@@ -133,7 +137,48 @@ export async function verifyPlayUiHost(page) {
     } catch (error) {
       observed.projectionError = error.code;
     }
+    const imageViews = new Map();
     return {
+      webp() {
+        return cover.slice(cover.indexOf(',') + 1);
+      },
+      openImageView(key, names) {
+        const view = game.show({
+          label: key,
+          root: {
+            type: 'panel',
+            x: 180,
+            y: imageViews.size * 40,
+            width: 240,
+            height: 40,
+            children: names.map((name, index) => ({
+              type: 'image',
+              name,
+              x: index * 40,
+              y: 0,
+              width: 40,
+              height: 40,
+              src: '/cold-play-view-images/' + name + '.webp'
+            }))
+          }
+        });
+        imageViews.set(key, { view, names });
+      },
+      closeImageView(key) {
+        imageViews.get(key).view.close();
+        imageViews.delete(key);
+      },
+      viewImages() {
+        const bounds = [...imageViews.values()].flatMap(({ view, names }) =>
+          names.map(name => {
+            const part = view.get(name);
+            if (part.numChildren !== 1) return null;
+            const { width, height } = part.getChildAt(0).getBounds();
+            return [width, height];
+          })
+        );
+        return { bounds, errors: [...viewImageErrors] };
+      },
       current() {
         const bounds = game.canvas.getBoundingClientRect();
         const button = semantics.snapshot.nodes.find(node => node.name === 'Build workshop');
@@ -209,6 +254,7 @@ export async function verifyPlayUiHost(page) {
     };
     for (const [key, expected] of Object.entries(cases))
       assert.deepEqual(after[key], expected, key + ': ' + JSON.stringify(after));
+    after.imageQueue = await verifyViewImages(page, fixture);
     after.cancel = await fixture.evaluate(handle => handle.dispose());
     closed = true;
     assert.equal(after.cancel.aborted, true);
@@ -228,5 +274,75 @@ export async function verifyPlayUiHost(page) {
   } finally {
     if (!closed) await fixture.evaluate(handle => handle.dispose());
     await fixture.dispose();
+  }
+}
+
+async function verifyViewImages(page, fixture) {
+  const pattern = '**/cold-play-view-images/*.webp';
+  const webp = Buffer.from(await fixture.evaluate(handle => handle.webp()), 'base64');
+  const started = [];
+  let active = 0;
+  let peak = 0;
+  const { promise: releaseReads, resolve: release } = Promise.withResolvers();
+  const serveImage = async route => {
+    const name = new URL(route.request().url()).pathname.split('/').at(-1).slice(0, -5);
+    started.push(name);
+    active++;
+    peak = Math.max(peak, active);
+    await releaseReads;
+    active--;
+    await route.fulfill(
+      name === 'missing'
+        ? { status: 404 }
+        : { status: 200, contentType: 'image/webp', body: webp, headers: { 'cache-control': 'no-store' } }
+    );
+  };
+
+  await page.route(pattern, serveImage);
+  try {
+    // Keep all four browser jobs occupied while the other views open.
+    const first = ['one', 'two', 'three', 'four'];
+    const readsStarted = Promise.all(
+      first.map(name =>
+        page.waitForRequest(request => request.url().endsWith('/cold-play-view-images/' + name + '.webp'))
+      )
+    );
+    await Promise.all([
+      readsStarted,
+      fixture.evaluate((handle, names) => handle.openImageView('First shelf', names), first)
+    ]);
+    await fixture.evaluate(handle => {
+      handle.openImageView('Retired shelf', ['retired']);
+      handle.closeImageView('Retired shelf');
+      handle.openImageView('Second shelf', ['five', 'six']);
+    });
+    release();
+    await page.waitForFunction(handle => {
+      const { bounds, errors } = handle.viewImages();
+      return errors.length > 0 || (bounds.length === 6 && bounds.every(Boolean));
+    }, fixture);
+    const result = await fixture.evaluate(handle => handle.viewImages());
+    assert.deepEqual(result.errors, [], 'current declarative images wait for an image job instead of failing');
+    assert.deepEqual(
+      result.bounds,
+      Array.from({ length: 6 }, () => [12, 8])
+    );
+    assert.deepEqual(
+      [...started].sort(),
+      [...first, 'five', 'six'].sort(),
+      'a retired view never starts a queued read'
+    );
+    assert.ok(peak <= 4, 'declarative image reads respect the browser job limit');
+
+    await fixture.evaluate(handle => handle.openImageView('Broken shelf', ['missing']));
+    await page.waitForFunction(handle => handle.viewImages().errors.length > 0, fixture);
+    result.genuineFailure = (await fixture.evaluate(handle => handle.viewImages())).errors;
+    assert.deepEqual(result.genuineFailure, [
+      ['ASSET_LOAD_FAILED', 'WEB_PNG_READ_FAILED', 'BROWSER_GAME_IMAGE_FAILED']
+    ]);
+    return { ...result, peak, started };
+  } finally {
+    release();
+    await page.unroute(pattern, serveImage);
   }
 }
