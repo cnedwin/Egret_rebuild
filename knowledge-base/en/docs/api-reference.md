@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1470 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1473 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1521,9 +1521,12 @@ For which entry to import from, see [What to import](entry-points.md).
 | `runHeadless` | function | Plays the game once per seed with the stand-in player and reports each run. |
 | `SaveProblem` | interface | A problem with a save: what kind, which key, and its cause. |
 | `SaveProblemKind` | type | What went wrong with a save: unreadable, invalid, too new or too old, or a migration or write that failed. |
+| `SaveRule` | type | What a field must be beyond the type of its default: one of a list of values, a number in a range (`int` for a whole number), or a check of one's own. |
+| `SaveShape` | interface | The check and the fill of a save of the shape of its defaults. |
 | `SaveStorage` | interface | Where a save is kept: strings by key. |
 | `SaveStore` | interface | A saved value: read it, change it and save it, reset or remove it, export or import it. |
 | `SaveStoreOptions` | interface | A save to keep: its key and version, its defaults and migrations, its check and its storage. |
+| `shapeOf` | function | The check and the fill of a save whose new game is `defaults` (the data, or the function a save store is given). |
 | `sliceAssetBundle` | function | The bytes of one entry from bytes of the bundle that start at `start` (0 for the whole file), checked against the index. |
 | `TextTable` | interface | A game's words in its languages: the current one, a word by key, and who is told when the language changes. |
 | `TextTableOptions` | interface | A text table to make: the words of each language, the language to start in and the one to fall back to. |

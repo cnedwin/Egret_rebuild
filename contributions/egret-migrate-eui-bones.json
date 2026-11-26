@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/egret-migrate/legacy-eui.mjs",
+      "originRole": "Independently authored first-party static legacy EUI skin and layout compatibility on the Egret 7 display API. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/exml.mjs",
+      "originRole": "Independently authored first-party bounded EXML and theme data compiler. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/legacy-assets.mjs",
+      "originRole": "Independently authored first-party RES atlas and lossless PNG migration rules reusing the existing resource analyzer and MIT pngjs. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/dragonbones.mjs",
+      "originRole": "Independently authored first-party region-animation data conversion informed by the DragonBones 5.x public format and MIT reference implementation semantics. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/legacy-bones.mjs",
+      "originRole": "Independently authored first-party native region skeletal playback on the public Egret 7 display, clock and resource APIs. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/egret-migrate-bones.test.mjs",
+      "originRole": "Independently authored first-party native skeleton converter and playback regression. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-eui.test.mjs",
+      "originRole": "Independently authored first-party static EUI runtime regression. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-exml.test.mjs",
+      "originRole": "Independently authored first-party EXML parser and theme admission regression. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/prepare.mjs",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/scenario.mjs",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/bones.json",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/egretProperties.json",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/index.html",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/manifest.json",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/fixture-notice.txt",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/default.res.json",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/default.thm.json",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/guardian_ske.json",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/guardian_tex.json",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/guardian_tex.png",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/trial.json",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/skins/ActionButtonSkin.exml",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/skins/ScoreSkin.exml",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/resource/skins/TrialSkin.exml",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/egret-migrate-eui/project/src/Main.ts",
+      "originRole": "Independently authored first-party Lantern Guardian migration-control source, asset or verification. No original legacy library or third-party gameplay asset is included. AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

@@ -300,3 +300,87 @@ test('retired screens release text resources while a detached scene can reenter 
     await game.dispose();
   }
 });
+
+test('legacy sheet aliases and qualified names share one page and preserve trimmed bounds across Bitmap replacement', async () => {
+  const { sdk, canvas, trace } = host();
+  let bitmap, RES, first;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_sheet',
+    resources: {
+      ...resources,
+      resources: [
+        { name: 'icons', type: 'json', url: 'resource/icons.json' },
+        { name: 'page', type: 'image', url: 'resource/icons.png' }
+      ],
+      groups: [{ name: 'preload', keys: ['icons'] }]
+    },
+    sheets: [
+      {
+        name: 'icons',
+        page: 'page',
+        subkeys: ['star'],
+        frames: [
+          { name: 'star', x: 0, y: 0, width: 1, height: 1, sourceWidth: 3, sourceHeight: 2, offsetX: 1, offsetY: 1 },
+          { name: 'moon', x: 1, y: 0, width: 1, height: 1, sourceWidth: 1, sourceHeight: 1, offsetX: 0, offsetY: 0 }
+        ]
+      }
+    ],
+    async createMain(api) {
+      const { egret } = api;
+      RES = api.RES;
+      await RES.loadConfig('resource/default.res.json', 'resource/');
+      await RES.loadGroup('preload');
+      assert.equal(RES.getRes('star'), RES.getRes('icons.star'));
+      assert.equal(RES.getRes('icons').getTexture('moon'), RES.getRes('icons.moon'));
+      bitmap = new egret.Bitmap(RES.getRes('star'));
+      first = bitmap.getChildAt(0);
+      const root = new egret.Sprite();
+      root.addChild(bitmap);
+      return root;
+    }
+  });
+  try {
+    assert.equal(bitmap.width, 3);
+    assert.deepEqual(bitmap.hitArea, { x: 0, y: 0, width: 3, height: 2 });
+    assert.equal(await RES.getResAsync('icons.moon'), RES.getRes('icons.moon'));
+    bitmap.texture = RES.getRes('icons.moon');
+    assert.equal(first.isDisposed, true);
+    assert.equal(bitmap.width, 1);
+    assert.equal(trace.filter(item => item === 'image allocated').length, 1);
+    await assert.rejects(RES.getResAsync('icons.absent'), { code: 'LEGACY_WEB_RESOURCE_UNKNOWN' });
+  } finally {
+    await game.dispose();
+  }
+  assert.equal(trace.filter(item => item === 'image disposed').length, 1);
+});
+
+test('admitted custom events retain data and refuse unsupported propagation', async () => {
+  const { sdk, canvas } = host();
+  const calls = [];
+  let child;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_events',
+    resources,
+    createMain({ egret }) {
+      const root = new egret.Sprite();
+      child = new egret.Sprite();
+      child.addEventListener(egret.Event.CHANGE, event => calls.push(event.data), child);
+      root.addEventListener(egret.Event.CHANGE, () => calls.push('parent'), root);
+      root.addChild(child);
+      return root;
+    }
+  });
+  try {
+    child.dispatchEventWith('change', false, 17);
+    assert.deepEqual(calls, [17]);
+    assert.throws(() => child.dispatchEventWith('change', true, 18), { code: 'LEGACY_WEB_EVENT_UNSUPPORTED' });
+  } finally {
+    await game.dispose();
+  }
+});

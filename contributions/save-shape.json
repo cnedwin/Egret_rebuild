@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/saveShape.ts",
+      "originRole": "First-party check and fill of a save from the shape of its defaults, with rules by path, for the game kit; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/save-shape.test.mjs",
+      "originRole": "First-party checks of shapeOf on the save shapes three games keep, alone and as a save store's validate; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

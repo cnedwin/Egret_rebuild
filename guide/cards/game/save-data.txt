@@ -2,7 +2,7 @@
 id: save-data
 title: Saves and settings that survive a new build and a private window
 applies: [engine, web, world3d, play, play3d]
-triggers: [createSaveStore, browserSaveStorage, createMemorySaveStorage, openIndexedDBSaveStorage, "save game", "save progress", "load save", "settings saved", "localStorage", "private window", "old save breaks", "save migration", "save version", "export save", "存档", "保存进度", "读档", "存档丢失", "旧存档", "设置保存", "无痕模式"]
+triggers: [createSaveStore, browserSaveStorage, createMemorySaveStorage, openIndexedDBSaveStorage, "save game", "save progress", "load save", "settings saved", "localStorage", "private window", "old save breaks", "save migration", "save version", "export save", "存档", "保存进度", "读档", "存档丢失", "旧存档", "设置保存", "无痕模式", shapeOf, "save validate", "missing field old save", "存档校验"]
 local: [adoptBare]
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: SnowTemple/src/saves.mjs, line: 6, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: c049bc385441647ae3fc4bad96d9ff93cbf4fbb3, fix: e99e4e4 }
@@ -38,7 +38,7 @@ Rules:
 
 - Raise `version` and add a migration whenever the shape changes. LoveElective moved dyes from equipped pieces to a per-character table and had to infer them from old saves; a migration step does that once, in one place.
 - A save from before versions existed is bare data. SnowTemple wraps it as version 1 before opening the store.
-- Check values read back, not only the shape: FPS clamps a saved sensitivity to its range; use `validate` for whole-save checks.
+- Check values read back, not only the shape: FPS clamps a saved sensitivity to its range. `shapeOf(defaults, rules)` gives a `validate` that holds a save to the shape of its defaults and to rules by path, and fills the fields an older save lacks; twelve games wrote the same by hand.
 - Keep settings (quality, language, volume, key bindings from `input.saveBindings()`) apart from progress, so resetting a run does not reset the controls.
 - Save at calm points (a level end, a menu), not every frame.
 - Give a large or precious save a way out: `save.export()` as a file and `save.import(text)`, as Wulin offers when storage is refused. Saves too large for local storage go to `openIndexedDBSaveStorage`.

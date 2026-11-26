@@ -1,0 +1,29 @@
+{
+  "name": "guardian",
+  "imagePath": "guardian_tex.png",
+  "width": 128,
+  "height": 64,
+  "SubTexture": [
+    {
+      "name": "body",
+      "x": 0,
+      "y": 0,
+      "width": 48,
+      "height": 64
+    },
+    {
+      "name": "arm",
+      "x": 48,
+      "y": 0,
+      "width": 44,
+      "height": 16
+    },
+    {
+      "name": "lamp",
+      "x": 94,
+      "y": 0,
+      "width": 24,
+      "height": 24
+    }
+  ]
+}

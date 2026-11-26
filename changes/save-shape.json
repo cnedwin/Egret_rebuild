@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Check and fill a save from the shape of its defaults",
+    "body": "shapeOf(defaults, rules) of @egret/engine/kit gives a save store's validate from the shape of a game's defaults: it fills the fields an older save lacks and holds the data to the defaults' types and to rules by path (allowed values, a range, or a check). Twelve games of the games repository wrote this by hand. The guide's list of resolved engine notes gains the save and UI fixes of #424."
+  },
+  "zh": {
+    "title": "按默认值的形状检查并补全存档",
+    "body": "@egret/engine/kit 新增 shapeOf(defaults, rules)，按游戏默认值的形状生成存档库的 validate：先给旧存档补上缺少的字段，再按默认值的类型和按路径写的规则（允许的值、范围或自定义检查）检查数据。游戏仓库里有十二个游戏是手写这段代码的。指南的已解决引擎笔记清单补上了 #424 的存档和界面修复。"
+  }
+}
