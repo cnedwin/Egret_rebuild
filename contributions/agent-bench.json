@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/agent-bench.mjs",
+      "originRole": "First-party agent benchmark: starts a fixed brief with egret new and scores what an agent leaves by the game's tests, egret check, a browser run, its engine notes, its change from the starter and a review a person marks; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/agent-bench.test.mjs",
+      "originRole": "First-party checks of the agent benchmark: the briefs in both languages, a start identical to egret new, and scores for an untouched starter, common agent mistakes and a game without package.json; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/agent-bench/briefs/a3-duel.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/dd-ledger.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/mc-tiles.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/mg-orchard.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/pp-crane.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/rh-drum.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/rp-pass.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/sc-kite.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/ss-tea.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/sv-lanterns.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/td-canal.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/agent-bench/briefs/tt-dominoes.txt",
+      "originRole": "First-party benchmark brief in English and Chinese, one kind of game for one target of egret new, written for the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/agent-bench.md",
+      "originRole": "First-party bilingual protocol and calibration of the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/agent-bench.md",
+      "originRole": "First-party bilingual protocol and calibration of the agent benchmark; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/agent-bench.md",
+      "zh": "knowledge-base/Cns/docs/agent-bench.md"
+    }
+  ]
+}

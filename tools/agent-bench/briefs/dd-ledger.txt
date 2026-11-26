@@ -1,0 +1,16 @@
+---
+id: dd-ledger
+genre: deduction
+target: wechat
+title: The Missing Ledger
+---
+
+Make a short deduction game as a WeChat mini game. A merchant's ledger is gone. The player examines five pieces of evidence, takes words from them into notes, and fills the three blanks of a verdict: who, where and why. A wrong verdict says which blank does not hold. One case, Chinese and English.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个微信小游戏形式的短篇推理游戏。一位商人的账本不见了。玩家查看五件证物，从中摘取词语记入笔记，再填好判词的三个空：谁、在哪、为什么。判错时说明哪个空站不住。一个案件，中英文两种语言。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

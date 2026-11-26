@@ -1,0 +1,16 @@
+---
+id: pp-crane
+genre: physics-puzzle
+target: web
+title: Crane Yard
+---
+
+Make a physics puzzle for a web page. The player swings a crane hook and lets crates go to build a stack that reaches a flag. Ten levels, each solvable, with a reset. Aim by drag, keys or a gamepad.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个网页物理解谜游戏。玩家摆动吊车钩，松开让木箱落下，搭出够到旗子的箱堆。十关，每关都能解，可以重来。用拖动、键盘或手柄瞄准。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

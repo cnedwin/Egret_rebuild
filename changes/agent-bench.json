@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Compare coding agents on twelve fixed briefs",
+    "body": "tools/agent-bench.mjs starts each of twelve briefs, one per kind of game and in English or Chinese, with egret new, and scores what an agent leaves: health out of 100 from the game's tests, egret check, a browser run with its engine warnings and its engine notes; how much of the starter it replaced; and the asks of the brief and the recipe, which a person marks after playing. The untouched starter scores 100 for health and 0% for change, so health alone does not say a game was made. knowledge-base/en/docs/agent-bench.md gives the protocol for Codex and Claude Code."
+  },
+  "zh": {
+    "title": "在十二份固定简报上比较编程智能体",
+    "body": "tools/agent-bench.mjs 用 egret new 开始十二份简报中的任意一份（每类游戏一份，英文或中文），并给智能体留下的结果打分：健康度满分 100，来自游戏自己的测试、egret check、带引擎告警的浏览器运行和引擎记录；替换了起始项目的多少；以及简报和配方提出的要求，由人试玩后标记。未经改动的起始项目健康度为 100、改动为 0%，所以只看健康度不能说明做出了游戏。knowledge-base/Cns/docs/agent-bench.md 写明了 Codex 和 Claude Code 的运行步骤。"
+  }
+}

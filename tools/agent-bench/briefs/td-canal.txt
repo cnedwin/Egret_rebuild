@@ -1,0 +1,16 @@
+---
+id: td-canal
+genre: tower-defence
+target: web
+title: Lock Keepers
+---
+
+Make a tower defence for a web page. Boats come down a canal in waves and men walk the towpath beside it. The player builds and upgrades towers on fixed slots along the bank with the coins kills earn. Ten waves, a speed switch and a pause. Lives lost when a boat reaches the lock. Keys and touch both.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个网页塔防游戏。船只沿运河一波波驶来，纤道上还有人步行跟随。玩家用击杀得到的铜钱，在河岸固定的炮位上建塔和升级。共十波，有加速开关和暂停。船到船闸就扣命。键盘和触屏都能玩。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

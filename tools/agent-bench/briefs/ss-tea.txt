@@ -1,0 +1,16 @@
+---
+id: ss-tea
+genre: story-sim
+target: mobile
+title: Tea House Spring
+---
+
+Make a small life sim for a phone. Thirty days, each in four parts; the player spends each part at one of four places in a town to work, learn or meet one of three people. Money, two skills and affection change. Three endings. Saves after every action.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个手机上的小型生活模拟游戏。共三十天，每天分四段；每段玩家去镇上四个地点之一，打工、学习，或见三个人中的一个。金钱、两项技能和好感会变化。三个结局。每次行动后存档。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

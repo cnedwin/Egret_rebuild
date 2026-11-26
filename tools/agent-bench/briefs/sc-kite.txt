@@ -1,0 +1,16 @@
+---
+id: sc-kite
+genre: side-scroller
+target: steam
+title: Kite Runner
+---
+
+Make a side-scrolling action game for Steam. Run and jump across rooftops, strike with a three-hit combo, and beat a boss at the end of one level. A gamepad, keys and buttons on the glass. Coyote time and a jump buffer.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个上架 Steam 的横版动作游戏。在屋顶间奔跑跳跃，用三段连击攻击，在一关末尾打败首领。手柄、键盘和屏幕按钮都能玩。有土狼时间和跳跃缓冲。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。

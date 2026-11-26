@@ -1,0 +1,16 @@
+---
+id: mg-orchard
+genre: management
+target: wechat
+title: Hill Orchard
+---
+
+Make a gentle management game as a WeChat mini game. Plant trees on a hillside, harvest fruit, press juice in a mill and sell it at a stall; unlock three more buildings. The world keeps growing while the game is closed, up to a cap.
+
+Work in this folder. Read AGENTS.md first. When you are done, say what you ran and what you could not run.
+
+--- zh ---
+
+做一个微信小游戏形式的休闲经营游戏。在山坡上种树、收果子，在磨坊榨汁，在摊位上卖；再解锁三座建筑。游戏关着时世界也在生长，有上限。
+
+在这个文件夹里工作。先读 AGENTS.md。完成后说明你运行了什么、有什么没能运行。
