@@ -116,6 +116,23 @@ const game = await play({
 });
 ```
 
+**Pins hold a node there without `arrange`.** `game.pin(node, { right: 16, top: 16 })` holds a node of the `ui` layer against the edges of `game.safe`, or of `game.screen` with `{ area: 'screen' }`:
+
+```js
+setup(g) {
+  g.pin(g.text('0', { size: 48 }), { left: 32, top: 24 });
+  g.pin(g.button('II', { x: 0, y: 0, width: 96, height: 96 }, () => g.pause()), { right: 16, top: 16 });
+  g.pin(g.rect(0, 0, 600, 12, 0x88ccff, g.ui), { bottom: 0, centerX: 0 }, { area: 'screen' });
+}
+```
+
+- **A pin per axis.** On each axis it takes one of `left`, `right` and `centerX` across, and one of `top`, `bottom` and `centerY` down: a distance in from that edge or from the middle. An axis without one is left as it is.
+- **The box is what is placed.** The node's box, children, scale and turn included, is placed at once. It is placed again when the screen changes or the box changes size, as when a score's words grow.
+- **Between, the game may move it.** A bounce or a slide is not undone until the next change.
+- **The handle.** `pin.set(edges)` holds the node elsewhere at once, and `pin.dispose()` lets it go. A node that ends is let go by itself.
+
+The same arithmetic, for a game of its own, is `pinBox` in [Fitting a stage to a screen](screen-fit.md#pinning-a-box-to-the-edges).
+
 `game.orientation` is `'portrait'` or `'landscape'`, and `game.width` and `game.height` are the design that applies now. Boxes of words, menus, notices and the touch stick are placed in `game.safe` on their own. A page gives `safe-area-inset` values only when its viewport meta tag says `viewport-fit=cover`; `insets` gives them where a page or a host knows better. [Fitting a stage to a screen](screen-fit.md) has the arithmetic, for a game that fits its own stage.
 
 ## Embedding a game alongside page controls

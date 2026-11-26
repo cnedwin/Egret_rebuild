@@ -2,7 +2,7 @@
 id: mobile-viewport
 title: Fit the page to a phone screen and its safe areas
 applies: [web, world3d, play, play3d]
-triggers: [createWorld3DView, createWorld3DApp, pickWorld3DQuality, "viewport", "mobile layout", "phone screen", "safe area", "notch", "landscape", "address bar", "page scrolls on phone", "blurry on phone", "device pixel ratio", "hud cut off", "resize", "portrait", "orientation", "rotate the phone", "fit expand", "arrange", "black bars", "fixedWidth", "fixedHeight", "scale mode", "pixel art", "横竖屏", "竖屏", "黑边", "手机适配", "屏幕适配", "安全区", "刘海", "地址栏", "画面模糊", "像素比", "像素风"]
+triggers: [createWorld3DView, createWorld3DApp, pickWorld3DQuality, "viewport", "mobile layout", "phone screen", "safe area", "notch", "landscape", "address bar", "page scrolls on phone", "blurry on phone", "device pixel ratio", "hud cut off", "resize", "portrait", "orientation", "rotate the phone", "fit expand", "arrange", "black bars", "fixedWidth", "fixedHeight", "scale mode", "pixel art", "横竖屏", "竖屏", "黑边", "手机适配", "屏幕适配", "安全区", "刘海", "地址栏", "画面模糊", "像素比", "像素风", "pin to the edge", "贴边"]
 local: []
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/index.html, line: 5, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }
@@ -14,7 +14,7 @@ engine: ec17a5a22eff057b89a2926f638eb51938344459
 
 # Fit the page to a phone screen and its safe areas
 
-`play` and `play3d` fill the window by themselves. For a phone held either way, give them `fit: 'expand'` (no black bars) and a `portrait` size, and place edge controls from `game.safe` in `arrange(game)`, which runs after `setup` and on every turn; see `knowledge-base/en/docs/screen-fit.md`. A game that lays out its own page needs the following, all taken from the large games.
+`play` and `play3d` fill the window by themselves. For a phone held either way, give them `fit: 'expand'` (no black bars) and a `portrait` size, and hold edge controls with `game.pin(node, { right: 16, top: 16 })`, which places them in `game.safe` again on every turn, or place them from `game.safe` in `arrange(game)`; see `knowledge-base/en/docs/screen-fit.md`. A game that lays out its own page needs the following, all taken from the large games.
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

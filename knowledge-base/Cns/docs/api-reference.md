@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1477 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1483 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1468,9 +1468,12 @@
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
+| `isScreenPin` | 函数 | Whether `pin` is a pin: only its six names, finite numbers, and at most one of each axis. |
+| `pinBox` | 函数 | Where `box` goes in `area` by `pin`: the place of its top left corner, in the units of both. |
 | `planScreen` | 函数 | Fits a stage to a space on a screen. |
 | `ScreenFit` | 类型 | How a stage fills a space: see `ScreenPlanOptions.fit`. |
 | `ScreenInsets` | 接口 | How far in from each edge a notch, rounded corners or a home bar reach, in the pixels of the space given. |
+| `ScreenPin` | 接口 | Where a box is held in an area: on each axis a distance in from one edge, or from the middle. |
 | `ScreenPlan` | 接口 | Where the stage goes, and what of it is shown and safe to touch. |
 | `ScreenPlanOptions` | 接口 | What to fit: the space on the screen, the designs, how they fit and what covers the edges. |
 | `ScreenRect` | 接口 | A rectangle in stage units. |
@@ -1620,6 +1623,8 @@
 | `PlayMotion` | 类型 | A tween of `game.tween`: a motion that can be waited for. |
 | `PlayMusic` | 接口 | The music of a play game: play or stop it, and set its intensity, volume and mood. |
 | `PlayOptions` | 接口 | A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. |
+| `PlayPin` | 接口 | A node held against the edges of the screen: `set` holds it otherwise, `dispose` lets it go. |
+| `PlayPinOptions` | 接口 | What a node is pinned to: the safe part, unless given, or the whole screen. |
 | `PlayPointer` | 接口 | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
 | `PlaySayOptions` | 接口 | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
 | `PlaySfx` | 接口 | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
@@ -1632,6 +1637,7 @@
 | `PlayToastOptions` | 接口 | A toast to show: how long and in what color. |
 | `PlayTouchButtonOptions` | 接口 | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
 | `PlayViewActivation` | 类型 | The second argument of a view's tap binding; target and currentTarget are part names, if named. |
+| `ScreenPin` | 接口 | Where a box is held in an area: on each axis a distance in from one edge, or from the middle. |
 | `SFX_PRESETS` | 值 | The effects every game is given, by name. |
 | `SfxRecipe` | 类型 | An effect: one tone, or several played one after another. |
 | `SfxTone` | 接口 | One tone of an effect. |

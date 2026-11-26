@@ -81,6 +81,21 @@ const plan = planScreen({
 
 用 [Egret Migrate](旧工程迁移.md) 从白鹭 5 迁移的项目保留它的 `scaleMode`。用 fixed 模式时，`stage.stageWidth` 和 `stage.stageHeight` 跟随窗口，EUI 按新尺寸重新排布各个根节点，舞台派发 `egret.Event.RESIZE`，和白鹭 5 一样。
 
+## 把盒子固定在边上
+
+`pinBox(area, box, pin)` 算出一个盒子要固定在某个区域的边上时应放在哪里：返回它的左上角，单位与两者相同。区域可以是 `plan.safe`，也可以是整个舞台 `{ x: 0, y: 0, width: plan.width, height: plan.height }`：
+
+```js
+import { pinBox } from '@egret/engine/web/screen';
+
+game.onScreenChange(plan => {
+  const at = pinBox(plan.safe, { x: score.x, y: score.y, width: score.width, height: score.height }, { right: 16, top: 16 });
+  score.x = at.x; score.y = at.y;
+});
+```
+
+横向取 `left`、`right`、`centerX` 之一，纵向取 `top`、`bottom`、`centerY` 之一，表示离那条边或中线的距离。没有给的方向保持盒子原来的位置。`isScreenPin(value)` 判断一个值是不是 pin。同一方向给了两个、名字不认识或数字不是有限数时，以 `UI_SCREEN_OPTIONS_INVALID` 拒绝。[play](play.md#任意形状的屏幕) 的 `game.pin` 就是这样摆放节点的，屏幕或包围盒变化时会再摆一次。
+
 ## 检查了什么
 
 - `tests/ui-screen.test.mjs` 在 Node 里检查计算：`'contain'` 和 `'expand'`、更宽和更高的空间、竖版设计、在黑边以内和超出黑边的 insets，以及拒绝无效输入。
@@ -99,6 +114,8 @@ const plan = planScreen({
 
   `wholeScale` 方面，160 × 90 的游戏放在 700 × 400 CSS 像素里，画布按 160 × 90 绘制、显示为 640 × 360。其中 2 × 2 的点在屏幕上是 8 × 8 像素，黑白之间没有任何中间色。
 - `tests/egret-migrate.test.mjs` 检查 `inspect` 保留每种 fixed 模式并拒绝 `noScale`。
+- SCR08 检查 `pinBox` 贴每条边和中线、不动没给的方向，以及它拒绝的 pin。
+- 浏览器屏幕适配用例里，一个 `'expand'`、右侧有刘海的游戏把分数固定在安全区右上角，把横条固定在屏幕底部中间。窗口变宽和旋转后，两者都仍贴着各自的边。分数的包围盒横向放大一倍后，重新摆到离边 8 个单位处；`set` 立即把它改到别处。
 - `tests/egret-migrate-eui.test.mjs` 把一个 `fixedWidth` 项目的屏幕从 480 × 320 个单位变为 480 × 400：`bottom="0"` 的横条从 280 移到 360，居中的部件随新的中点移动，`RESIZE` 只通知一次。
 - 在无头 Chromium 里，把一个迁移来的 750 × 1334 `fixedWidth` 游戏的窗口从 375 × 667 改为 393 × 852：
   - `stage.stageHeight` 从 1334 变为 1625；

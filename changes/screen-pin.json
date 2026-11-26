@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Pin a node to the edges of the screen",
+    "body": "game.pin(node, { right: 16, top: 16 }) of play holds a node of the ui layer against the edges of game.safe, or of game.screen with { area: 'screen' }: one of left, right and centerX across and one of top, bottom and centerY down. Its box is placed at once and again when the screen changes or the box changes size, so a score or a pause button needs no arrange. pinBox and isScreenPin of @egret/engine/web/screen give the same arithmetic to a game of its own."
+  },
+  "zh": {
+    "title": "把节点固定在屏幕边上",
+    "body": "play 的 game.pin(node, { right: 16, top: 16 }) 把 ui 层的节点固定在 game.safe 的边上，加 { area: 'screen' } 则固定在 game.screen 的边上：横向取 left、right、centerX 之一，纵向取 top、bottom、centerY 之一。包围盒立即摆放，屏幕变化或包围盒大小变化时再摆放，分数和暂停按钮因此不必写 arrange。@egret/engine/web/screen 的 pinBox 和 isScreenPin 为自己适配舞台的游戏提供同样的计算。"
+  }
+}
