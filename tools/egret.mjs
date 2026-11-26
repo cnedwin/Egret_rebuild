@@ -9,7 +9,7 @@
 //   node tools/egret.mjs notes [<game folder>] [--check]
 //   node tools/egret.mjs check [<game folder>] [--strict] [--json]
 //   node tools/egret.mjs verify [<page>] [--playwright <index.mjs>] [--out <new folder>] [--play <script>]
-//   node tools/egret.mjs new <folder> [--target web|mobile|wechat|steam] [--title <name>]
+//   node tools/egret.mjs new <folder> [--target web|mobile|wechat|steam] [--genre <kind>] [--title <name>]
 //
 // The same file runs in this repository and in a game's engine copy, where tools/vendor-game.mjs puts it under
 // vendor/egret/tools/ with the guide beside it and vendor/egret.mjs to start it, so an agent working in the game's
@@ -42,7 +42,7 @@ function usage() {
     `  ${COMMAND} notes [<game folder>] [--check]                                     the game's engine notes the engine has fixed`,
     `  ${COMMAND} check [<game folder>] [--strict] [--json]                           the game's files read for common mistakes`,
     `  ${COMMAND} verify [<page>] [--playwright <index.mjs>] [--out <dir>] [--play <script>]   the game run in a headless browser`,
-    `  ${COMMAND} new <folder> [--target web|mobile|wechat|steam] [--title <name>]   a game to start from, with AGENTS.md`,
+    `  ${COMMAND} new <folder> [--target web|mobile|wechat|steam] [--genre <kind>] [--title <name>]   a game to start from`,
     ''
   ].join('\n');
 }
@@ -147,7 +147,7 @@ export async function newGame(args, cwd = process.cwd()) {
   const named = {},
     folders = [];
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--target' || args[i] === '--title') {
+    if (args[i] === '--target' || args[i] === '--title' || args[i] === '--genre') {
       if (args[i + 1] === undefined) return { code: 2, text: `${args[i]} takes a value.\n` };
       named[args[i].slice(2)] = args[++i];
     } else if (args[i].startsWith('--')) return { code: 2, text: `Unknown option ${args[i]}.\n` + usage() };
@@ -157,6 +157,15 @@ export async function newGame(args, cwd = process.cwd()) {
   const folder = path.resolve(cwd, folders[0]);
   const target = named.target ?? 'web';
   if (!TARGETS[target]) return { code: 2, text: `The target is one of ${Object.keys(TARGETS).join(', ')}.\n` };
+  // A kind of game names a recipe of the guide: genre-<kind>.
+  let recipe;
+  if (named.genre !== undefined) {
+    const kinds = loadCards().filter(card => card.id.startsWith('genre-'));
+    const found = kinds.find(card => card.id === 'genre-' + named.genre || card.id === named.genre);
+    if (!found)
+      return { code: 2, text: `The kind of game is one of ${kinds.map(card => card.id.slice(6)).join(', ')}.\n` };
+    recipe = { id: found.id, title: found.title };
+  }
   const source = path.dirname(ROOT);
   if (VENDORED) {
     const map = JSON.parse(fs.readFileSync(path.join(source, 'importmap.json'), 'utf8')).imports;
@@ -171,7 +180,7 @@ export async function newGame(args, cwd = process.cwd()) {
   }
   let files;
   try {
-    files = writeStarter(folder, { title: named.title ?? path.basename(folder), target });
+    files = writeStarter(folder, { title: named.title ?? path.basename(folder), target, recipe });
   } catch (error) {
     return { code: 2, text: error.message + '\n' };
   }

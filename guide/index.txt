@@ -9,11 +9,12 @@ Cards are in English and name their sources; ask in either language. A question 
 
 `applies` names the engine entry or host. Stale cards say what changed.
 
-Start a game with the cards `first-playable-world` and `choose-entry`; start on an error with `read-engine-errors`.
+Start a game with the cards `first-playable-world` and `choose-entry`, and the recipe of its kind in the area `genre`; start on an error with `read-engine-errors`.
 
 ## Areas
 
 - [game](areas/game.txt) · 6 cards · The first action, feedback in the moving body, saves, two languages and balance.
+- [genre](areas/genre.txt) · 14 cards · Recipes by kind of game: loop, files, entries, cards to read first and what done means.
 - [structure](areas/structure.txt) · 1 card · Rules apart from the picture.
 - [entries](areas/entries.txt) · 2 cards · Which entry to start from, and the engine copy in a game.
 - [input](areas/input.txt) · 11 cards · Touch, keys, gestures, phone screens, pause, UI callbacks, page buttons beside play and a turned table.

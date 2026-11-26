@@ -1,0 +1,26 @@
+---
+id: genre-tower-defence
+title: A tower defence: waves along a path, towers on slots
+applies: [play, engine, web]
+triggers: ["tower defence", "tower defense", "waves", "build towers", "tower slots", "auto turret", "塔防", "守城", "波次", "建塔"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: CanalWatch/src/sim/world.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: NightWardens/src/sim/world.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: a778bed53ecdbf9c65e9abc5624d4b3751a4331d }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A tower defence: waves along a path, towers on slots
+
+**Loop.** Enemies come along a path in waves; the player spends what kills earn on towers in fixed slots and on their upgrades; a wave that gets through costs lives. A speed switch (×1, ×2, ×3) and a pause belong in the first version.
+
+**Files.** `src/sim/data.mjs` holds towers, enemies and waves as plain data; `src/sim/world.mjs` steps the state and gives events (shot, hit, leaked, wave over); `src/sim/bot.mjs` plays whole runs in Node to tune the waves. `src/view.mjs` draws the state; `src/saves.mjs` keeps progress.
+
+**Entries.** `@egret/engine/play` carries a page game (Canal Watch). A phone game held upright with many screens uses `@egret/engine/web/game` with `@egret/engine/ui` (Night Wardens).
+
+**Read first.** `sim-view-split`, `balance-from-runs`, `sprite-swarm` (many moving enemies), `still-background` (the map), `play-page-controls` (build slots as page buttons), `sequence-markers` (walk cycles), `two-colour-tints` (hit flashes).
+
+**Done means.** The first wave within five seconds of Start; a tower placed by a tap and by keys; every wave beaten by the bot in Node at each difficulty; the busiest wave measured, not guessed; a run resumed from its save. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Canal Watch and Night Wardens.
