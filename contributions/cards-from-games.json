@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "guide/cards/input/play-page-controls.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/input/play-turned-table.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/perf/play-resolution.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/render/play-shape-nodes.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/perf/moving-shapes.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/perf/sprite-swarm.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/perf/still-background.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/audio/rhythm-clock.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/render/label-pages.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/render/label-wrap.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/render/pixel-strips.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/render/camera-page-layer.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/animation/sequence-markers.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/render/two-colour-tints.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/world3d/tile-board-camera.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/cards/world3d/toon-figure-hooks.txt",
+      "originRole": "First-party guide card distilled from a game in cnedwin/PortedGamesEgret and checked against the current engine; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/render.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "guide/areas/animation.txt",
+      "originRole": "First-party second level of the guide index: the cards of one area, one line each; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/agent-guide.md",
+      "zh": "knowledge-base/Cns/docs/agent-guide.md"
+    }
+  ]
+}

@@ -334,4 +334,4 @@ game.music.intensity = lanterns / 3;                          // 强度越高，
 
 ## 游戏变大之后
 
-`game.browser` 是它所基于的[浏览器游戏](browser-game.md)，`game.engine` 和 `game.scope` 是它的 Engine 和 scope。从这里可以使用所有入口：图片和图集、[2D 相机](camera-2d.md)、[瓦片地图](tilemap.md)、带贴图的[粒子](particles.md)、[2D 物理](physics-2d.md)、[界面控件](ui-controls.md)、[带手柄的按动作输入](game-kit.md)和 [World3D](world3d.md)。它们创建的内容可以和 `play` 创建的一起加进 `game.world` 与 `game.ui`。
+`game.canvas` 是 `play` 绘制用的画布：传入的 `canvas`，或它在 `parent` 或页面里创建的那一个。`game.browser` 是它所基于的[浏览器游戏](browser-game.md)，自身没有画布；`game.engine` 和 `game.scope` 是它的 Engine 和 scope。从这里可以使用所有入口：图片和图集、[2D 相机](camera-2d.md)、[瓦片地图](tilemap.md)、带贴图的[粒子](particles.md)、[2D 物理](physics-2d.md)、[界面控件](ui-controls.md)、[带手柄的按动作输入](game-kit.md)和 [World3D](world3d.md)。它们创建的内容可以和 `play` 创建的一起加进 `game.world` 与 `game.ui`。
