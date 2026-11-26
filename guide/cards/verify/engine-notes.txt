@@ -1,0 +1,35 @@
+---
+id: engine-notes
+title: Write the engine's faults into ENGINE-NOTES, and ask which are fixed
+applies: [play, play3d, engine, world3d, web]
+triggers: ["ENGINE-NOTES", "engine note", "engine bug", "engine gap", "workaround", "is it fixed", "fixed in the engine", "remove the workaround", "notes --check", "engine-note header", "引擎笔记", "引擎缺口", "绕过办法", "修好了吗", "去掉绕过"]
+local: []
+evidence:
+  - { repo: cnedwin/Egret_rebuild, path: tools/egret-notes.mjs, line: 1, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+  - { repo: cnedwin/Egret_rebuild, path: guide/resolved.json, line: 1, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+  - { repo: cnedwin/PortedGamesEgret, path: InquestScrolls/ENGINE-NOTES.md, line: 9, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 95897d78095ae8fda9e34dbc13bbbd15db8eaa12 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Write the engine's faults into ENGINE-NOTES, and ask which are fixed
+
+When the engine cannot do what a game needs, the game works around it with the engine's own parts and writes the fault down, so that the engine can fix it and the game can drop the workaround later. Each fault is a note in `ENGINE-NOTES.md` at the game's root: a heading `### <n>. <title> — open`, what happens, the workaround and where it is, a suggestion, and one header line under the heading:
+
+```html
+<!-- engine-note: {"id": "MyGame#3", "status": "open", "topic": "paragraph-without-webassembly", "workaround": ["src/view/plainText.mjs"]} -->
+```
+
+- `id` is the game's folder, `#` and the note's number; a number is never used again.
+- `status` is `open`, `partly`, `worked-around`, `documented` or `resolved`.
+- `topic` names the fault in words joined by dashes, the same in every game that meets it. The engine says what it fixed by topic, so a game it never named still learns.
+- `workaround` lists the game's files that hold the workaround.
+
+After every refresh of the engine copy, run `node vendor/egret.mjs notes` in the game's folder. It lists each note the copy has resolved or documented since, what changed, the files to take the workaround out of and the card to read; `--check` exits 1 while one is still marked open. Take the workaround out, check the game again, then change the note's status and its heading.
+
+Rules:
+
+- One fault, one note. Two games that meet one fault give it one topic.
+- Name the engine commit the fault was found at, and keep a reproduction (a test or a page) beside the workaround.
+- Do not edit `vendor/`: a fix goes to the engine, then into a fresh copy.
+
+Learnt from The Inquest Scrolls, whose notes led to engine changes in #474 to #478 that the game could not see from its own folder.
