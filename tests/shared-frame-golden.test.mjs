@@ -405,39 +405,38 @@ async function digest(seed) {
 }
 
 // The captured frame, the clipped geometry without its upload sum, and the eleven first values of every vertex row.
-// Recorded from the build before draws were batched across regions, which reproduced the recording made
-// before the capture and preparation paths were made cheaper.
-// The twelfth value of both lists was recorded again when a clipped polygon that is degenerate by a rounding error
-// stopped being refused: in seed 12's `mixed` scene, three views whose geometry was `refused: precision` are now
-// prepared, packed and batched. Every other stage of every seed, with every charge, is as it was recorded.
+// The historical recording in 5ef2b034 includes image pages charged before Host clipping. This successor
+// records empty barriers and reduced page/region tables when capture proves an image completely clipped.
+// The before/after comparison covered 288 scene views: all 244 accepted views kept visible order, clipped
+// geometry, materials, texture samples and vertex values; the 44 refusal outcomes were identical.
 const EXPECTED_BEFORE = [
-  '6f1d6756c5db727006e608b352078ac168cd8885099c168d1b28d37180ff463a',
-  'f4b5679156b44d77c34e9345ff0f6648cdfb34e4107cc63189136f47f7b64d50',
-  '5af060fee76b1358d3fb372e86bc9c32a9841f492302a62d2c222462b8ab8ca5',
-  '4fc124701d86a8c65241d4b7d776e2d4a72082231e04d57e3ca6fb84dd91ed13',
-  '2ba4c93354e919971627dc2de405b440eb9275b6c09aba4a85f9ad7ea386060c',
-  '666258b23268be520e8507fa32c4574aa85687b7252d220a824129424f065c09',
-  'ea5836982daa537f925a48f9d2a11529558f92c433363c0ed9849b9111759650',
-  '12d1c806ea71abcd1226307ed6e7fd529be2d79e528094c7d57a0cd64a0822d3',
-  'd132c43ba132163679c9abf526850b9ebe23cf74d646e254f88b201d531c8340',
-  '7f67b514f7484ec71c71f70f71ca67addbdfbcfa7a5ec30cd79d123645803b32',
-  '6eabc82f9a9a427bad7509269ea70eb7d07c54f717b679971dbec4dcd597a5cb',
-  '5157419116b40ae1d718035beda06245d7d5b89aeb0fea151d0d3980ecca4b45'
+  'b35541c13457eb1f044f59a54efe03ea68a52cd787f6ef100a41f25b1805b2c3',
+  'e749db0db3c5e30bb7d8e054bcc2ff31807eec1a7c52db4b39c0e97ace7cdfce',
+  'c59712099100a3ddaff9efb4fdf63b5afc7fb9845a965bab2d77d948379df9b5',
+  '72da633576c5c95115b64d9589cfd7311f54f2ed2901da1260972302059fe113',
+  '897e8cfbebfedf49d40f200d62e8cde5d8c51702be1060d42ed85fd8997efff1',
+  'e96712ece0f3c27aba76735ecb444c345e68578004716169fb9e0b61fc5da258',
+  'c465ec0a424b26ce93b7bee54500b2e520bf1cbbbdeff83601d13e83d47f4051',
+  'c839666577b1e37c6575246218a35271c72e5521153903c7b9064329e5635a70',
+  '53bd056e765d5ce227111e312769a48083bcaddc7ea232fa893110c2033ba8e5',
+  '410dcf700aecee62e5870f97ce4f9055801a53765b35aedd06f84a82b2b636de',
+  '7fab7c7b955f3e1b33a337ee30d0b5e5ffd7544e76813bbf76d4fd0f07a75194',
+  'cabc73b82d25bf4a986e9fe8d335c439dec72434df446d47a7603d6b73fdbd87'
 ];
 // The rows, uniform blocks and batches as they are uploaded, recorded with batching across regions.
 const EXPECTED = [
-  'f72520f13c962871f29672572a8e7b0361dd5603772a1c1c2f4d2794ac2d6b4e',
-  '65252485cea874456fa6d2cbd3c14370690c83a58a165563b2473558ed0aa492',
-  'cc0473a13420d3bdd082f6bee2c198e998af6f60070a9e2136c07efb7b403ea7',
-  'fb61788f26e7a3cf1ff70b933fcc579c51dfebf3fb0c991ef40bee65a413fa09',
-  'db18e5a9d41d5030aa12ee83d0d3e61cbe037b2d36ffed795ebfed194b3ec103',
-  'd3eb8b6207a7b459c225b17885f3c7c546f21b18de2c372c80c3b1d36693752b',
-  '247b24e22fba5b0701054c458b16c337b9b27c2f050d39ab464ee5c558dfd382',
-  '3dfbdb6b8d5bb1d04eed820fa80dea754c2c9ed92c6d4b5ee9cf1efca6c18499',
-  'bee283d1332f29537bef99cc857df89e2493515aa44942fd9a66ebc88d74c501',
-  '476f7edcb96dc2b2155cba7b0560b7e65bd9a3c33f74330f17fce64c0e9bf4d6',
-  '68ea6f2d88092229beea433f45b29b7cac334356bad9669a2850f8325939f884',
-  'c2c890cfd90e94bca5d9de0f1ef6338497a426993540e5da976746e2954d368c'
+  '000fc927de79e382d8a5aa06c8eca85e3f4a6dec43f4f52321597aa7e5aac3a3',
+  '1182d46c23887d5450ba197233543428067967a106cef729a3719990a7f5254a',
+  'bb8b601dff9695805e735647d87e47b1615ac27b3900c11648814ca02ed6e7ac',
+  'f54cea77bfbb399dd4bafdf89ce11a935f41c2c61403604a0a31f9ce5f1514fa',
+  '3d017c7d164e5b00ae5a41c855fdd9178e34a7ffab1452051c17122ebd77f9d7',
+  '43809d36b57031baf6875688fd920704ae068dcb33020f78018aaf3fb4ec3f8b',
+  'fedb38ad96104ef070343d9e8ba14a2a37be11afca825cea27cb7429b1ad11f8',
+  'acdd6de03e24db9a5ad8981bbef8fbffc165010b92166a9173132cc1ecaa0c54',
+  '3f78dbbc0890af5027003471c76ea3e3602e92d82766d079c589c3a99464a720',
+  '410e62c134d05aa3973d5df6caa6ea207a24d201fbf5342a39e965279825b6b0',
+  '2ed1f14dff6cdb90f17eed902f7d74be04c7a6ca5dd162519cba52775a41ea38',
+  'bbab58fefcdbe636cd943d3009c64e7ac576da9f5aa25566c1e48f05cb3a51e3'
 ];
 
 test('SHG01 captured frames, clipped geometry, vertex rows and batches reproduce the recorded values', async () => {

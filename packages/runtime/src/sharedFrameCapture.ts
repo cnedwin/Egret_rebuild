@@ -44,11 +44,18 @@ export interface CapturedSharedContent2D {
 }
 
 type Geometry = TexturedGeometry2D | SharedGeometry2D;
+interface StageBounds {
+  readonly left: number;
+  readonly right: number;
+  readonly top: number;
+  readonly bottom: number;
+}
 /** `charged` is the number of the capture that last charged every clip of the chain. */
 interface ClipChain {
   readonly previous: ClipChain | undefined;
   readonly clip: ClipRectangle2D;
   readonly depth: number;
+  readonly bounds: StageBounds | undefined;
   flat: readonly ClipRectangle2D[] | undefined;
   charged: number;
 }
@@ -430,6 +437,64 @@ function checkRectangle(matrix: Matrix2D, rect: Rectangle2D): void {
 function rectangle(matrix: Matrix2D, rect: Rectangle2D): Rectangle2D {
   checkRectangle(matrix, rect);
   return freeze({ x: rect.x, y: rect.y, width: rect.width, height: rect.height });
+}
+const PREPARATION_COORDINATE_LIMIT = 2 ** 20;
+const PROJECTION_MARGIN = 4 * Number.EPSILON * PREPARATION_COORDINATE_LIMIT;
+
+/** A conservative stage-space rectangle for a qualified draw or clip, before the Host applies pixel ratio. */
+function projectedBounds(matrix: Matrix2D, rect: Rectangle2D): StageBounds | undefined {
+  const { a, b, c, d, tx, ty } = matrix,
+    { x, y, width, height } = rect;
+  const right = x + width,
+    bottom = y + height;
+  const reachX = Math.max(Math.abs(x), Math.abs(right)),
+    reachY = Math.max(Math.abs(y), Math.abs(bottom));
+  // Leave unusual coordinates and intermediate products to Host preparation's range and precision checks.
+  if (
+    Math.max(
+      reachX,
+      reachY,
+      width,
+      height,
+      Math.abs(a),
+      Math.abs(b),
+      Math.abs(c),
+      Math.abs(d),
+      Math.abs(a) * reachX + Math.abs(c) * reachY + Math.abs(tx),
+      Math.abs(b) * reachX + Math.abs(d) * reachY + Math.abs(ty)
+    ) > PREPARATION_COORDINATE_LIMIT
+  )
+    return undefined;
+  // The Host snaps very small intermediate values to zero. Pad the proof so that comparison close to an
+  // edge goes through its ordinary polygon clip, including with reflected or skewed transforms.
+  return {
+    left: Math.min(a * x, a * right) + Math.min(c * y, c * bottom) + tx - PROJECTION_MARGIN,
+    right: Math.max(a * x, a * right) + Math.max(c * y, c * bottom) + tx + PROJECTION_MARGIN,
+    top: Math.min(b * x, b * right) + Math.min(d * y, d * bottom) + ty - PROJECTION_MARGIN,
+    bottom: Math.max(b * x, b * right) + Math.max(d * y, d * bottom) + ty + PROJECTION_MARGIN
+  };
+}
+function clipBounds(matrix: Matrix2D, rect: Rectangle2D, above: ClipChain | undefined): StageBounds | undefined {
+  const here = projectedBounds(matrix, rect);
+  if (here === undefined || above === undefined) return here;
+  const parent = above.bounds;
+  if (parent === undefined) return undefined;
+  return {
+    left: Math.max(here.left, parent.left),
+    right: Math.min(here.right, parent.right),
+    top: Math.max(here.top, parent.top),
+    bottom: Math.min(here.bottom, parent.bottom)
+  };
+}
+function clippedImage(matrix: Matrix2D, rect: Rectangle2D, clips: ClipChain | undefined): boolean {
+  const clip = clips?.bounds;
+  if (clip === undefined) return false;
+  const draw = projectedBounds(matrix, rect);
+  return (
+    draw !== undefined &&
+    (Math.max(clip.left, draw.left) > Math.min(clip.right, draw.right) ||
+      Math.max(clip.top, draw.top) > Math.min(clip.bottom, draw.bottom))
+  );
 }
 function referencedTuples(matrix: Matrix2D, geometry: Geometry): void {
   const shared = isSharedGeometry2D(geometry);
@@ -854,6 +919,7 @@ function captureSharedContent(
                 previous: clips,
                 clip: freeze({ matrix, rect }),
                 depth: (clips?.depth ?? 0) + 1,
+                bounds: clipBounds(matrix, rect, clips),
                 flat: undefined,
                 charged: 0
               };
@@ -1098,43 +1164,49 @@ function captureSharedContent(
           kept.regionHash = hash;
         }
       }
-      budget.source(snapshot.image);
-      const sharedRegionIndex = regionIndex(snapshot.image, region, hash);
-      budget.emission(clips, false);
-      const material2 = materialIndex(material),
-        flat = flattenClips(clips),
-        last = kept?.commands[given];
-      usedMaterial = material2;
-      usedRegion = sharedRegionIndex;
-      if (
-        last !== undefined &&
-        last.kind === 'image' &&
-        last.ordinal === commands.length &&
-        last.occurrenceId === occurrenceId &&
-        last.materialIndex === material2 &&
-        last.matrix === matrix &&
-        is(last.opacity, alpha) &&
-        last.clips === flat &&
-        last.rect === rect &&
-        last.regionIndex === sharedRegionIndex
-      )
-        commands.push(last);
-      else {
-        const command = freeze({
-          kind: 'image' as const,
-          ordinal: commands.length,
-          occurrenceId,
-          materialIndex: material2,
-          matrix,
-          opacity: alpha,
-          clips: flat,
-          rect,
-          regionIndex: sharedRegionIndex
-        });
-        commands.push(command);
-        if (kept !== undefined) kept.commands[given] = command;
+      if (clippedImage(matrix, rect, clips)) {
+        // An empty occurrence still orders neighbouring draws. Recheck the lease on future captures.
+        empty(occurrenceId);
+        plain = false;
+      } else {
+        budget.source(snapshot.image);
+        const sharedRegionIndex = regionIndex(snapshot.image, region, hash);
+        budget.emission(clips, false);
+        const material2 = materialIndex(material),
+          flat = flattenClips(clips),
+          last = kept?.commands[given];
+        usedMaterial = material2;
+        usedRegion = sharedRegionIndex;
+        if (
+          last !== undefined &&
+          last.kind === 'image' &&
+          last.ordinal === commands.length &&
+          last.occurrenceId === occurrenceId &&
+          last.materialIndex === material2 &&
+          last.matrix === matrix &&
+          is(last.opacity, alpha) &&
+          last.clips === flat &&
+          last.rect === rect &&
+          last.regionIndex === sharedRegionIndex
+        )
+          commands.push(last);
+        else {
+          const command = freeze({
+            kind: 'image' as const,
+            ordinal: commands.length,
+            occurrenceId,
+            materialIndex: material2,
+            matrix,
+            opacity: alpha,
+            clips: flat,
+            rect,
+            regionIndex: sharedRegionIndex
+          });
+          commands.push(command);
+          if (kept !== undefined) kept.commands[given] = command;
+        }
+        given++;
       }
-      given++;
     }
     if (mesh !== undefined) {
       const occurrenceId = nextOccurrence++,
@@ -1172,8 +1244,9 @@ function captureSharedContent(
         else {
           const rect = rectangle(matrix, committed.raster),
             snapshot = readBitmapImage(committed.lease);
-          budget.source(snapshot.image);
-          if (rect.width === 0 || rect.height === 0) empty(occurrenceId);
+          const clipped = clippedImage(matrix, rect, clips);
+          if (!clipped) budget.source(snapshot.image);
+          if (clipped || rect.width === 0 || rect.height === 0) empty(occurrenceId);
           else {
             const sharedRegionIndex = regionIndex(
               snapshot.image,
