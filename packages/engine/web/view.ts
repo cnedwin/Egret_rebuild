@@ -25,6 +25,8 @@ export type ViewSize = number | `${number}%` | 'fill';
 interface ViewPartBase {
   /** Letters, digits, `_`, `-` and `.`, starting with a letter or `_`; unique in a view. A part without one is drawn only. */
   readonly name?: string;
+  /** False to leave this decorative part and its descendants out of semantics and focus. */
+  readonly semantic?: false;
   /** Where it goes in a panel that lays out freely. `'top-left'` unless given. In a row or a column it is ignored. */
   readonly anchor?: ViewAnchor;
   /** How far in from the anchor, or, in a row or a column, a nudge from where it falls. */
@@ -49,6 +51,8 @@ export interface ViewParagraphStyle {
 /** A panel: a card that is drawn, or only a place that holds parts. */
 export interface ViewPanel extends ViewPartBase {
   readonly type: 'panel';
+  /** Opt into a single accessible control when a named panel has a tap binding; its children remain decorative. */
+  readonly role?: 'group' | 'button';
   /** `'free'` unless given: each part by its anchor. `'row'` and `'column'` place the parts one after another. */
   readonly layout?: 'free' | 'row' | 'column';
   /** The space between parts of a row or a column. */
@@ -73,6 +77,10 @@ export interface ViewPanel extends ViewPartBase {
 /** A line of words. */
 export interface ViewText extends ViewPartBase {
   readonly type: 'text';
+  /** Font used by the single-line words (the title only for a button). */
+  readonly fontFamily?: string;
+  readonly fontWeight?: number;
+  readonly italic?: boolean;
   readonly text?: string | number;
   readonly size?: number;
   readonly color?: number;
@@ -84,6 +92,10 @@ export interface ViewText extends ViewPartBase {
 /** A button with words on it. */
 export interface ViewButton extends ViewPartBase {
   readonly type: 'button';
+  /** Font used by the single-line words (the title only for a button). */
+  readonly fontFamily?: string;
+  readonly fontWeight?: number;
+  readonly italic?: boolean;
   readonly text: string | number;
   readonly size?: number;
   readonly color?: number;
@@ -104,6 +116,10 @@ export interface ViewBar extends ViewPartBase {
 /** A switch that is on or off, with words before it. */
 export interface ViewToggle extends ViewPartBase {
   readonly type: 'toggle';
+  /** Font used by the single-line words (the title only for a button). */
+  readonly fontFamily?: string;
+  readonly fontWeight?: number;
+  readonly italic?: boolean;
   readonly text: string | number;
   readonly checked?: boolean;
   readonly size?: number;
@@ -223,7 +239,7 @@ const ANCHORS = new Set([
   'bottom',
   'bottom-right'
 ]);
-const BASE_KEYS = ['type', 'name', 'anchor', 'x', 'y', 'width', 'height', 'visible', 'border'];
+const BASE_KEYS = ['type', 'name', 'anchor', 'x', 'y', 'width', 'height', 'visible', 'border', 'semantic'];
 const KEYS: Record<ViewPart['type'], ReadonlySet<string>> = {
   panel: new Set([
     ...BASE_KEYS,
@@ -237,12 +253,35 @@ const KEYS: Record<ViewPart['type'], ReadonlySet<string>> = {
     'alpha',
     'label',
     'scroll',
+    'role',
     'children'
   ]),
-  text: new Set([...BASE_KEYS, 'text', 'size', 'color', 'align', 'bold', 'paragraph']),
-  button: new Set([...BASE_KEYS, 'text', 'size', 'color', 'textColor', 'description', 'paragraph']),
+  text: new Set([
+    ...BASE_KEYS,
+    'text',
+    'size',
+    'color',
+    'align',
+    'bold',
+    'paragraph',
+    'fontFamily',
+    'fontWeight',
+    'italic'
+  ]),
+  button: new Set([
+    ...BASE_KEYS,
+    'text',
+    'size',
+    'color',
+    'textColor',
+    'description',
+    'paragraph',
+    'fontFamily',
+    'fontWeight',
+    'italic'
+  ]),
   bar: new Set([...BASE_KEYS, 'value', 'color', 'label']),
-  toggle: new Set([...BASE_KEYS, 'text', 'checked', 'size']),
+  toggle: new Set([...BASE_KEYS, 'text', 'checked', 'size', 'fontFamily', 'fontWeight', 'italic']),
   space: new Set(BASE_KEYS),
   image: new Set([...BASE_KEYS, 'src', 'label'])
 };
@@ -312,6 +351,11 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
       names.set(name, type as ViewPart['type']);
     }
     const label = name === undefined ? at : at + ' (' + name + ')';
+    if (part['semantic'] !== undefined && part['semantic'] !== false) throw invalid(label, 'semantic is false');
+    if (part['role'] !== undefined && part['role'] !== 'group' && part['role'] !== 'button')
+      throw invalid(label, 'panel role');
+    if (part['role'] === 'button' && (name === undefined || part['semantic'] === false))
+      throw invalid(label, 'a button role needs a named semantic panel');
     if (part['anchor'] !== undefined && !ANCHORS.has(part['anchor'] as string)) throw invalid(label, 'anchor');
     for (const key of ['x', 'y']) if (part[key] !== undefined && !finite(part[key])) throw invalid(label, key);
     for (const key of ['width', 'height']) if (part[key] !== undefined && !size(part[key])) throw invalid(label, key);
@@ -342,8 +386,14 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
     for (const key of ['alpha', 'value'])
       if (part[key] !== undefined && (!finite(part[key]) || (part[key] as number) < 0 || (part[key] as number) > 1))
         throw invalid(label, key + ' is 0 to 1');
-    for (const key of ['visible', 'card', 'bold', 'checked'])
+    for (const key of ['visible', 'card', 'bold', 'checked', 'italic'])
       if (part[key] !== undefined && typeof part[key] !== 'boolean') throw invalid(label, key + ' is true or false');
+    const family = part['fontFamily'];
+    if (family !== undefined && (typeof family !== 'string' || !family.trim() || family.length > 256))
+      throw invalid(label, 'fontFamily');
+    const weight = part['fontWeight'];
+    if (weight !== undefined && (!Number.isInteger(weight) || (weight as number) < 1 || (weight as number) > 1000))
+      throw invalid(label, 'fontWeight is an integer from 1 to 1000');
     for (const key of ['text'])
       if (part[key] !== undefined && typeof part[key] !== 'string' && !finite(part[key])) throw invalid(label, 'text');
     if ((type === 'button' || type === 'toggle') && part['text'] === undefined)

@@ -58,7 +58,7 @@ A field a part does not have, a name used twice, or a portrait that lacks a name
 
 ## Wrapped labels, button details, images and borders
 
-Pass a `paragraphCache` to `game.show` to use the [paragraph SDK](paragraph-layout-controls.md) inside a text part or a button description. Give each paragraph part a height in the view description. Text wraps to the planned width and clips at the bottom of the box. Button details sit below the title and wrap within the button's inner width. Use `lineHeight` for minimum line spacing, `fontFamilies` in fallback order, and `maxLines` to cap the number of lines. A button with only `text` continues to use its single-line title.
+Pass a `paragraphCache` to `game.show` to use the [paragraph SDK](paragraph-layout-controls.md) inside a text part or a button description. Give each paragraph part a height in the view description. Text wraps to the planned width and clips at the bottom of the box. Button details sit below the title and wrap within the button's inner width. Use `lineHeight` for minimum line spacing, `fontFamilies` in fallback order, and `maxLines` to cap the number of lines. A button with only `text` continues to use its single-line title. Single-line text, button titles and toggles accept `fontFamily`, `fontWeight` (integer 1–1000; overrides the default bold choice) and `italic`. These options do not change the paragraph provider or its font fallback list.
 
 ```js
 import { createParagraphCache } from '@egret/engine/paragraph';
@@ -103,13 +103,19 @@ In Chromium 157 with software WebGL2, both parts wrapped to three lines with 24-
 | `pick`, `format`, `roll` | text, button | a number, the words for it (whole numbers unless given), and seconds to count to a new one |
 | `value` | bar | 0 to 1 |
 | `checked` | toggle | on or off |
-| `disabled` | button, toggle | greyed; a press does nothing |
+| `disabled` | button, toggle, actionable panel | disabled; a press does nothing |
 | `visible` | every part | hidden with what it holds |
 | `color` | text, button, bar, panel | the colour drawn |
-| `tap` | button, toggle, panel | what a press does, given the state |
+| `tap` | button, toggle, panel | what a press does, given the state and an activation |
+| `tapTargetOnly` | button, toggle, panel | only answer direct hits, not pointer taps bubbling from descendants |
+| `label` | named parts except space | current accessible name independently of the drawn words |
 | `pointerOnly` | panel | a boolean; `true` requires a `tap` binding and keeps that panel's action for mouse and touch only |
 
 A panel with `tap` ordinarily takes part in keyboard focus and activation. When the binding also has `pointerOnly: true`, the panel still answers pointer taps without taking keyboard focus. Its own action is not reached by Tab, controller navigation or semantic activation. The panel remains a semantic group, and its children keep their own interaction and semantic state. The option is valid only for a panel. For example, a decorative panel used to absorb presses can bind `paper: { pointerOnly: true, tap: () => {} }`.
+
+With `tap: (state, activation) => { ... }`, the second argument has `source` (mouse, touch, pen, keyboard, semantic or gamepad), `target` and `currentTarget` (part names when known), and `isTarget`. Pointer activation also provides `pointerId`, `stageX`, `stageY` and, when the transform can be inverted, `localX`, `localY` in the current part. Other sources have no pointer coordinates. Pointer taps still bubble from the hit part to its ancestors by default; call `activation.stopPropagation()` during the tap handler to keep it from reaching further ancestors, or set `tapTargetOnly: true` on an ancestor that should only answer its own hits. Neither changes the default behavior of existing one-argument handlers. Keyboard, gamepad and semantic activation target one part.
+
+A named panel with a non-pointer-only tap binding can declare `role: 'button'` to be one accessible control, with its drawn contents omitted from focus and the semantic tree. The default panel is still a group. Set `semantic: false` on a decorative part to omit its subtree from semantics and focus (pointer input is unchanged). A dynamic `label` binding takes precedence over the default accessible name; a blank result falls back to the default.
 
 What a binding throws stops the game, as what `update` throws does.
 
@@ -122,7 +128,8 @@ Parts without colours of their own are drawn in `DEFAULT_VIEW_SKIN`: white words
 `game.show` returns the view:
 
 - `get(name)` is the sprite of a part, to give [gestures](gestures.md), add to or tween.
-- `rect(name)` is where the part is in game units, and `shows(name)` whether it shows.
+- `rect(name)` is its authored box in game design units, not the scrolled or transformed screen position. `visibleRect(name)` is the transformed visible box in logical Stage units, clipped by ancestor viewports and the screen, or `undefined` when hidden or fully clipped. With `fit: 'expand'`, the design origin may differ from the Stage origin. `shows(name)` says whether it shows.
+- `textReady(name)` returns the Promise for the current single-line text revision (the title for a button), or `undefined` for other parts. Read it again after changing the words or rebuilding the view. It resolves when that revision is ready, not when all images, paragraphs or badges have been drawn. A superseded pending revision can reject with `AbortError`. The existing `built(view)` callback still means the structure is built.
 - `show()`, `hide()`, `close()` and `refresh()`.
 - `focus(name)` requests the view's native focus and returns whether the request succeeds. It may scroll a target into view. It returns `false` if the view is covered or closed, or the part is hidden, disabled, pointer-only or cannot be revealed for focus. An unknown name on an active view is refused with `UI_VIEW_NAME_UNKNOWN`.
 - `focused` is the current eligible focused part's authored name in this view, or `undefined` when none has focus.

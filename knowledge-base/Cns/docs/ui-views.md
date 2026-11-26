@@ -95,6 +95,8 @@ node examples/play/verify-ui.mjs <Playwright index.mjs 绝对路径> <新的绝�
 
 Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距为 24 个逻辑单位。取样像素确认了边框和 WebP 封面，按钮点击执行一次操作，关闭视图后段落缓存的借用计数回到零。这个用例的硬件 WebGPU、Safari、Firefox 和实体手机渲染仍待验证。
 
+单行文字、按钮标题及开关支持 `fontFamily`、`fontWeight`（1–1000 的整数，覆盖默认粗体选择）与 `italic`。这几个字段不改变段落提供者和段落的字体回退列表。
+
 ## 绑定
 
 | 键 | 用于 | 读作 |
@@ -103,13 +105,19 @@ Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距�
 | `pick`、`format`、`roll` | text、button | 一个数字、它的文字（不给时取整），以及滚动到新数字所用的秒数 |
 | `value` | bar | 0 到 1 |
 | `checked` | toggle | 开或关 |
-| `disabled` | button、toggle | 变灰，按下无效 |
+| `disabled` | button、toggle、可操作的 panel | 禁用，按下无效 |
 | `visible` | 所有部件 | 连同里面的部件一起隐藏 |
 | `color` | text、button、bar、panel | 绘制的颜色 |
-| `tap` | button、toggle、panel | 按下时做什么，参数是状态 |
+| `tap` | button、toggle、panel | 按下时做什么，参数是状态和激活信息 |
+| `tapTargetOnly` | button、toggle、panel | 只响应直接点中自身的操作，不响应从子部件冒泡的指针点击 |
+| `label` | 除 space 外的命名部件 | 独立于绘制文字的当前无障碍名称 |
 | `pointerOnly` | panel | 布尔值；设为 `true` 时必须绑定 `tap`，该面板的操作只响应鼠标和触摸 |
 
 绑定了 `tap` 的面板通常也参与键盘焦点和激活。当绑定同时设置 `pointerOnly: true` 时，面板仍响应指针点击，但不会抢占键盘焦点。面板自身的操作不参与 Tab、手柄导航和语义激活。面板仍是语义分组，其子项保留各自的交互和语义状态。该选项仅适用于面板。例如，用来拦住点击的装饰面板可以绑定 `paper: { pointerOnly: true, tap: () => {} }`。
+
+使用 `tap: (state, activation) => { ... }` 时，第二个参数带有 `source`（mouse、touch、pen、keyboard、semantic 或 gamepad）、`target` 和 `currentTarget`（已知时为部件名称），以及 `isTarget`。指针激活还提供 `pointerId`、`stageX`、`stageY`，当变换可逆时也提供当前部件局部坐标 `localX`、`localY`；其他来源没有指针坐标。指针点击默认仍会从命中部件向祖先冒泡；点击处理函数内调用 `activation.stopPropagation()` 可阻止继续冒泡，也可以在只处理自身点击的祖先绑定 `tapTargetOnly: true`。现有只接受状态参数的函数行为不变。键盘、手柄和语义激活只针对一个部件。
+
+绑定了非仅指针 tap 的命名面板可以声明 `role: 'button'`，作为一个无障碍控件，其绘制子部件不进入焦点与语义树。默认面板仍是分组。装饰部件设置 `semantic: false` 可以将其子树移出语义与焦点（指针输入不变）。动态 `label` 绑定优先提供无障碍名称；返回空白时回退到默认名称。
 
 绑定函数抛出的错误会让游戏停下，和 `update` 抛出的一样。
 
@@ -122,7 +130,8 @@ Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距�
 `game.show` 返回视图：
 
 - `get(name)` 是某个部件的精灵，可以给它加[手势](gestures.md)、往里加东西或做缓动。
-- `rect(name)` 是它以游戏单位计的位置；`shows(name)` 表示它当前是否显示。
+- `rect(name)` 是游戏设计单位下声明的布局矩形，不是滚动或变换后的屏幕位置。`visibleRect(name)` 返回逻辑 Stage 单位下经过变换、祖先视口与屏幕裁剪后的可见矩形；隐藏或完全裁掉时为 `undefined`。`fit: 'expand'` 下设计原点可能与 Stage 原点不同。`shows(name)` 表示它当前是否显示。
+- `textReady(name)` 返回当前单行文字版本的就绪 Promise（按钮只包括标题）；其他部件返回 `undefined`。换字或重建后应重新读取。文字版本就绪不代表图片、段落或角标都已绘制。被替换的未完成文字版本可能以 `AbortError` 拒绝。原有 `built(view)` 仍表示结构已建立。
 - `show()`、`hide()`、`close()` 和 `refresh()`。
 - `focus(name)` 请求视图的原生焦点，返回请求是否成功，必要时将目标滚入视口。视图被覆盖或关闭，或目标隐藏、禁用、仅指针响应、无法滚入焦点范围时，返回 `false`。在活动视图中使用未知名称会被拒绝，并报告 `UI_VIEW_NAME_UNKNOWN`。
 - `focused` 是该视图当前持有有效焦点的部件声明名称；没有焦点时为 `undefined`。

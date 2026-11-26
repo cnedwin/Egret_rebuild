@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/playActivation.ts",
+      "originRole": "First-party snapshot of native Play pointer and view activations with propagation control; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-view-activation.mjs",
+      "originRole": "First-party browser verification of pointer, keyboard, semantic and standard gamepad activation context and propagation; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-view-semantics-geometry.mjs",
+      "originRole": "First-party public browser verification of view semantics, panel disabling and transformed clipped geometry; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-native-text.mjs",
+      "originRole": "First-party browser verification of native label pixel alignment, native text revision readiness and lifecycle; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-view-semantic-schema.test.mjs",
+      "originRole": "First-party public view schema and planning regression for declarative semantics; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/play-native-text.test.mjs",
+      "originRole": "First-party public type and schema behavior tests for native Play text readiness and typography; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

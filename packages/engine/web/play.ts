@@ -3,6 +3,7 @@
 // sound effects made in code, overlap tests, timers, text, tweens, the small effects of a hit, and bars, notices,
 // boxes of words and menus.
 export { play, PlayText } from './BrowserPlay.js';
+export type { PlayActivationSource, PlayTapActivation, PlayViewActivation } from './playActivation.js';
 export type {
   PlayBurstOptions,
   PlayButton,
