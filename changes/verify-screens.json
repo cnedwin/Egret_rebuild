@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "egret verify checks many screens",
+    "body": "`egret verify --screens` opens a game page on eight screens in headless Chromium: phones with and without a notch, held both ways, a tablet both ways, an unfolded phone and a desktop. It writes a picture of each, with what a notch or a home bar covers in red, and a report. For a `play` game it names the controls that reach outside the safe part, those under 44 CSS pixels on a touch screen and those that cover each other. The engine takes `globalThis.__egretAgent.insets` as the window's insets, which is how the tool stands in for a notch, and `play` tells `__egretAgent.controls` where its controls are. A new phone or WeChat game's Start button is now 96 units tall, 48 CSS pixels on a phone 360 wide."
+  },
+  "zh": {
+    "title": "egret verify 一次检查多种屏幕",
+    "body": "`egret verify --screens` 在无头 Chromium 里用八种屏幕打开游戏页面：有刘海和没有刘海的手机、横竖两种拿法、横竖两种方向的平板、展开的折叠屏和桌面。每种屏幕写一张图片（刘海或主屏指示条遮住的部分染成红色）和一份报告。对 `play` 游戏，它列出超出安全区的控件、触屏上小于 44 CSS 像素的控件，以及互相遮挡的控件。引擎把 `globalThis.__egretAgent.insets` 当作窗口的 insets，工具就是这样代替刘海的；`play` 把控件位置告诉 `__egretAgent.controls`。新建的手机或微信小游戏的开始按钮改为 96 个单位高，在 360 宽的手机上是 48 CSS 像素。"
+  }
+}

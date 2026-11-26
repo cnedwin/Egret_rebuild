@@ -140,6 +140,7 @@ export function agentKitFiles() {
     ['tools/egret-notes.mjs', 'egret/tools/egret-notes.mjs'],
     ['tools/egret-check.mjs', 'egret/tools/egret-check.mjs'],
     ['tools/verify-game.mjs', 'egret/tools/verify-game.mjs'],
+    ['tools/verify-screens.mjs', 'egret/tools/verify-screens.mjs'],
     ['tools/egret-new.mjs', 'egret/tools/egret-new.mjs'],
     ['guide/index.txt', 'egret/guide/index.txt'],
     ['guide/resolved.json', 'egret/guide/resolved.json']
