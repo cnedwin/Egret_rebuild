@@ -13,13 +13,13 @@ if (
   !output ||
   !executablePath ||
   ![playwrightFile, output, executablePath].every(file => path.isAbsolute(file)) ||
-  !['all', 'visibility', 'scroll', 'host', 'rich', 'activation', 'semantics-geometry', 'collections'].includes(
+  !['all', 'visibility', 'scroll', 'host', 'rich', 'activation', 'semantics-geometry', 'empty-text', 'collections'].includes(
     selection
   ) ||
   process.argv.length > 6
 ) {
   throw new Error(
-    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|activation|semantics-geometry|collections]'
+    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|activation|semantics-geometry|empty-text|collections]'
   );
 }
 
@@ -55,6 +55,7 @@ try {
     { id: 'scroll', file: './verify-view-scroll.mjs', method: 'verifyViewScroll', touch: true },
     { id: 'host', file: './verify-play-ui-host.mjs', method: 'verifyPlayUiHost', touch: false },
     { id: 'activation', file: './verify-view-activation.mjs', method: 'verifyViewActivation', touch: true },
+    { id: 'empty-text', file: './verify-view-empty-text.mjs', method: 'verifyViewEmptyText', touch: false },
     { id: 'collections', file: './verify-view-collections.mjs', method: 'verifyViewCollections', touch: false },
     {
       id: 'semantics-geometry',
