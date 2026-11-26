@@ -149,7 +149,7 @@ const scroll = buildings.scroll('list');
 scroll.scrollTo(48);
 ```
 
-The handle exposes `offset`, `maximum`, `scrollTo`, `scrollBy`, and `page(-1 | 1)`. A binding refresh preserves the offset, clamped to the available content. Tab and Shift+Tab can bring the next or previous control into view. A direct tester or accessibility action on a fully clipped control is refused until it has a visible region. A vertical drag scrolls without pressing the row. A wheel that moves this view is consumed by the view before `game.pointer.wheel`. When migrating existing screens, give each panel one scroll controller.
+The handle exposes `offset`, `maximum`, `scrollTo`, `scrollBy`, and `page(-1 | 1)`. A binding refresh preserves the offset, clamped to the available content. Tab and Shift+Tab can bring the next or previous control into view. A direct tester or accessibility action on a fully clipped control is refused until it has a visible region. A touch drag along the viewport's local vertical axis scrolls without pressing the row, even if an ancestor is rotated. A wheel that moves this view is consumed by the view before `game.pointer.wheel`. When migrating existing screens, give each panel one scroll controller.
 
 ## Interaction bounds
 
