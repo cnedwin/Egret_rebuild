@@ -1,0 +1,26 @@
+---
+id: genre-survivors
+title: A survivors-like: a horde, weapons that fire by themselves, an upgrade each level
+applies: [play, play3d, engine, world3d, web]
+triggers: ["survivors", "horde", "auto attack", "bullet heaven", "upgrade cards", "roguelite", "幸存者", "割草", "自动攻击", "升级卡"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: NezhaSea/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: NezhaSea/src/sim/world.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/src/sim.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A survivors-like: a horde, weapons that fire by themselves, an upgrade each level
+
+**Loop.** The player only moves; weapons fire by themselves; enemies come in growing waves; each level offers a choice of upgrades; a run lasts minutes and ends in a win or a fall.
+
+**Files.** `src/sim/data.mjs` holds enemies, weapons and their levels; `src/sim/world.mjs` steps the horde, the shots and the pick-ups, capped in the rules; `src/sim/bot.mjs` plays runs for pacing. The view keeps every kind of sprite in a pool.
+
+**Entries.** `@egret/engine/play` in 2D (Nezha Stirs the Sea, with a stick of its own on the glass); `@egret/engine/world3d` in 3D (Jelly Pandas).
+
+**Read first.** `sprite-swarm`, `moving-shapes`, `touch-controls`, `balance-from-runs`, `action-body-feedback`; in 3D `world3d-draw-cost` and `prepare-programs`.
+
+**Done means.** Moving from the first second; an upgrade choice taken by keys, a tap and a gamepad; the cap on enemies set in the rules and the busiest moment measured; a whole run played by the bot in Node. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Nezha Stirs the Sea and Jelly Pandas.

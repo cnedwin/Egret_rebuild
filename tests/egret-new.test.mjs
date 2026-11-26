@@ -75,6 +75,38 @@ test('EW02 a new game from this repository passes its own tests and the check, a
   }
 });
 
+// Break caught: a kind of game that does not send the agent to its recipe, a recipe too long for AGENTS.md to point at,
+// or a kind the guide has no recipe for taken without a word.
+test('EW04 a kind of game puts its recipe first in AGENTS.md and the skill, and an unknown kind is refused', async () => {
+  const kinds = loadCards().filter(card => card.id.startsWith('genre-'));
+  assert.ok(kinds.length >= 12, kinds.length + ' recipes');
+  for (const kind of kinds) {
+    assert.match(kind.title, /^An? /, kind.id + ' names its kind');
+    for (const word of ['**Loop.**', '**Files.**', '**Entries.**', '**Read first.**', '**Done means.**'])
+      assert.ok(kind.body.includes(word), kind.id + ' has ' + word);
+    for (const [, id] of kind.body.matchAll(/`([a-z0-9]+(?:-[a-z0-9]+)+)`/g))
+      if (!id.includes('/')) assert.ok(cardIds.has(id), kind.id + ' sends to ' + id);
+  }
+  const root = temporary();
+  try {
+    const made = await newGame(['Gate', '--genre', 'tower-defence', '--target', 'mobile'], root);
+    assert.equal(made.code, 0, made.text);
+    const agents = fs.readFileSync(path.join(root, 'Gate', 'AGENTS.md'), 'utf8');
+    assert.match(agents, /## The kind of game: A tower defence/);
+    assert.ok(agents.indexOf('card genre-tower-defence') < agents.indexOf('## Ask before you write'));
+    assert.ok(estimateTokens(agents) <= 1000);
+    assert.match(
+      fs.readFileSync(path.join(root, 'Gate', '.claude/skills/egret-game/SKILL.md'), 'utf8'),
+      /Read `card genre-tower-defence` first/
+    );
+    const unknown = await newGame(['Other', '--genre', 'chess'], root);
+    assert.equal(unknown.code, 2);
+    assert.match(unknown.text, /The kind of game is one of action-3d, .*tower-defence\./);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 // Break caught: `new` from a game's engine copy failing, or making a game without the engine it runs on.
 test('EW03 a game makes another beside it from its own engine copy', async () => {
   const root = temporary();

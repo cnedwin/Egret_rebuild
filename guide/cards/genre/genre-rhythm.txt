@@ -1,0 +1,26 @@
+---
+id: genre-rhythm
+title: A rhythm game: a chart, a clock and judging strokes
+applies: [play, engine, web]
+triggers: ["rhythm game", "music game", "beat", "notes", "chart", "judge timing", "calibration", "音游", "节奏", "谱面", "判定"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: OperaDrums/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: OperaDrums/src/sim/judge.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: OperaDrums/src/sim/chart.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A rhythm game: a chart, a clock and judging strokes
+
+**Loop.** Notes travel to a line in time with the music; the player strikes; each stroke is judged early, on time or late; a song ends in a grade.
+
+**Files.** Charts as data (`src/sim/songs.mjs`, `src/sim/chart.mjs`); judging as rules with windows in milliseconds (`src/sim/judge.mjs`), tested with strokes at known times; a bot that strikes with a given spread (`src/sim/bot.mjs`), to show that a steady player clears each chart and random striking does not; the music rendered once and played as one voice.
+
+**Entries.** `@egret/engine/play` for the stage; `@egret/engine/web/audio` for the music voice whose `position` is the clock.
+
+**Read first.** `rhythm-clock`, `moving-shapes`, `synthesized-audio`, `keyboard-shortcuts`.
+
+**Done means.** The clock taken from the music, never from frames; strokes judged from their event time; a delay setting the player measures; every chart cleared by the steady bot and failed by the random one in Node; notes drawn from rectangles or measured. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from Opera Drums.

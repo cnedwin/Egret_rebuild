@@ -21,7 +21,7 @@
 - 目标平台的舞台、适配方式和输入，以及发布平台对应的卡片；
 - 说「做完了」之前要跑什么。
 
-在游戏里运行 `node vendor/egret.mjs new ../另一个`，会用它自己的引擎副本在旁边再建一个游戏。新建出来的游戏直接就能通过自己的测试、`egret check` 和 `egret verify`。
+`--genre <类型>` 会把这一类游戏的配方放在 `AGENTS.md` 和技能的最前面。指南的 `genre` 领域收了十四份配方，每份都取自游戏仓库里同类型的游戏：塔防、幸存者、三消加卡牌、物理解谜、推理、剧情养成、角色扮演、横版动作、音游、经营、棋牌、战棋与策略、三维动作和驾驶。每份配方写明循环、规则和画面拆成哪些文件、这些游戏用了哪些入口、先读哪些卡片，以及「做完」是什么标准。在游戏里运行 `node vendor/egret.mjs new ../另一个`，会用它自己的引擎副本在旁边再建一个游戏。新建出来的游戏直接就能通过自己的测试、`egret check` 和 `egret verify`。
 
 先用一句话说明玩家要对谁做什么、场景中哪里会发生变化，以及玩家接下来还能做什么，再选引擎入口。经营或叙事游戏可以先读[让首次操作改变场景](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/game/first-playable-world.txt)。如果开场靠移动、落地或打击来表达玩法，再读[用角色或载具的动作传达反馈](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/game/action-body-feedback.txt)。例如，第一次跳跃可以用起跳时的舒展和接触地面时的下压，让玩家看清落点。已有游戏需要排错时，按 API 名称、错误码或症状查询下文的技术指南。
 

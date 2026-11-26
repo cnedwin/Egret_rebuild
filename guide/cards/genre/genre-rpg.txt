@@ -1,0 +1,26 @@
+---
+id: genre-rpg
+title: A role-playing game: a world to walk, a party, fights and a story
+applies: [engine, web, world3d]
+triggers: ["rpg", "role playing", "turn based battle", "party", "quests", "inventory", "wuxia", "角色扮演", "回合制", "任务", "背包", "武侠"]
+local: []
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: JY/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: c1570b0878d1be8716d06320206f51a62f9e3f32 }
+  - { repo: cnedwin/PortedGamesEgret, path: FengshenChronicle/README.md, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 60991a46eb2252e5c0e7790b90b51517e3cbd14c }
+  - { repo: cnedwin/PortedGamesEgret, path: FengshenChronicle/src/sim/campaign.mjs, line: 1, commit: b0e1fba24a4d10c22700cd25743f9e6998679fd7, pin: 60991a46eb2252e5c0e7790b90b51517e3cbd14c }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A role-playing game: a world to walk, a party, fights and a story
+
+**Loop.** Walk the world, talk, take quests, fight, grow stronger, go on; fights are turn-based on a grid (Heroes of Jin Yong's kind) or in real time (Fengshen Chronicle).
+
+**Files.** Maps, people, items, skills and quests as data; the campaign, the battle and progression as rules tested in Node (`src/sim/campaign.mjs`, `src/sim/progression.mjs`); dialogue apart from what it shows; saves in slots.
+
+**Entries.** `@egret/engine/web/game` for a 2D world and battles; `@egret/engine/world3d` with `@egret/engine/webgl2/world3d` for a 3D one; gamepad and keyboard entries.
+
+**Read first.** `save-data`, `game-screens`, `balance-from-runs`, `fast-startup`, `asset-loading`, `pause-and-overlays`.
+
+**Done means.** The main quest finished by a script in Node; every fight winnable by the party the story gives; three saves that load in a new window; menus by keys, a pad and taps. `npm test` plays the rules; `node vendor/egret.mjs check` gives no error; `node vendor/egret.mjs verify` passes with its pictures looked at.
+
+Learnt from JY and Fengshen Chronicle.
