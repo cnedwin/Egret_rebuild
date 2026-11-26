@@ -107,6 +107,9 @@ Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距�
 | `visible` | 所有部件 | 连同里面的部件一起隐藏 |
 | `color` | text、button、bar、panel | 绘制的颜色 |
 | `tap` | button、toggle、panel | 按下时做什么，参数是状态 |
+| `pointerOnly` | panel | 布尔值；设为 `true` 时必须绑定 `tap`，该面板的操作只响应鼠标和触摸 |
+
+绑定了 `tap` 的面板通常也参与键盘焦点和激活。当绑定同时设置 `pointerOnly: true` 时，面板仍响应指针点击，但不会抢占键盘焦点。面板自身的操作不参与 Tab、手柄导航和语义激活。面板仍是语义分组，其子项保留各自的交互和语义状态。该选项仅适用于面板。例如，用来拦住点击的装饰面板可以绑定 `paper: { pointerOnly: true, tap: () => {} }`。
 
 绑定函数抛出的错误会让游戏停下，和 `update` 抛出的一样。
 
@@ -121,6 +124,8 @@ Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距�
 - `get(name)` 是某个部件的精灵，可以给它加[手势](gestures.md)、往里加东西或做缓动。
 - `rect(name)` 是它以游戏单位计的位置；`shows(name)` 表示它当前是否显示。
 - `show()`、`hide()`、`close()` 和 `refresh()`。
+- `focus(name)` 请求视图的原生焦点，返回请求是否成功，必要时将目标滚入视口。视图被覆盖或关闭，或目标隐藏、禁用、仅指针响应、无法滚入焦点范围时，返回 `false`。在活动视图中使用未知名称会被拒绝，并报告 `UI_VIEW_NAME_UNKNOWN`。
+- `focused` 是该视图当前持有有效焦点的部件声明名称；没有焦点时为 `undefined`。
 
 视图同时也是[界面栈](ui-screen-stack.md)的句柄：`open: () => game.show(...)` 会让它被覆盖时隐藏、别的界面在前面时不接受按下、关闭时移除。在不用打包工具的页面里使用界面栈，需要在 import map 里映射 `@egret/engine/ui`。
 
@@ -149,7 +154,7 @@ const scroll = buildings.scroll('list');
 scroll.scrollTo(48);
 ```
 
-滚动句柄提供 `offset`、`maximum`、`scrollTo`、`scrollBy` 和 `page(-1 | 1)`。刷新绑定会保留此前的滚动位置，内容缩短时将位置限制在可用范围内。Tab 和 Shift+Tab 可让下一项或上一项滚入视口。完全被裁掉的控件只有重新露出，才可被测试器或辅助技术直接操作。手指纵向拖动会滚动，避免误按列表项。滚轮推动列表时由视图消费，此时 `game.pointer.wheel` 不会再收到同一事件。迁移旧界面时，每个面板保留一个滚动控制器。
+滚动句柄提供 `offset`、`maximum`、`scrollTo`、`scrollBy` 和 `page(-1 | 1)`。刷新绑定会保留此前的滚动位置，内容缩短时将位置限制在可用范围内。Tab 和 Shift+Tab 可让下一项或上一项滚入视口。完全被裁掉的控件只有重新露出，才可被测试器或辅助技术直接操作。即使祖先节点有旋转，手指沿视口本地纵轴拖动也能滚动，并且不会误按列表项。滚轮推动列表时由视图消费，此时 `game.pointer.wheel` 不会再收到同一事件。迁移旧界面时，每个面板保留一个滚动控制器。
 
 ## 可交互区域
 
@@ -173,7 +178,7 @@ Windows Chromium 157 软件 WebGL2 复现了初始位置 (620, 430, 120, 42)。�
 
 默认缓存保留 32 个可复用入口，已退役和当前的纹理代合计最多 64 个，且受字节预算限制。多页集市可先隐藏旧页再显示新页。直接创建的活动标签如果在待处理任务结束后仍超预算，`ready` 会拒绝并报告 `TEXT_CACHE_BUDGET`。释放或暂停闲置标签后，可用 `label.set({})` 重试。关闭页面会归还标签借用的资源，缓存中的可复用项可保留到游戏关闭。
 
-Tab 和 Shift+Tab 在画布中移动可见焦点，Enter 和空格激活当前控件。模态关闭前独占焦点，禁用控件会被跳过。最前面的模态也接收标准手柄的方向键和 A。非模态菜单可设置 `gamepad: true` 接管这些按键，普通非模态视图会把按键留给玩法。
+Tab 和 Shift+Tab 在画布中移动可见焦点，Enter 和空格激活当前控件。模态关闭前独占焦点，禁用控件会被跳过。在 `game.show` 的选项中设置 `initialFocus: 'continue'`，可按名称选择模态打开时的焦点。这个选项仅用于模态，名称必须对应可操作且非仅指针响应的部件。未知名称、不支持焦点的部件类型或在非模态视图中使用该选项会被拒绝，并报告 `UI_VIEW_BINDING_INVALID`。模态会尝试将目标滚入可滚动视口。若指定部件当前隐藏、禁用或无法滚入焦点范围，则按原规则选择首个可获得焦点的部件。关闭模态后还原此前仍有效的焦点。最前面的模态也接收标准手柄的方向键和 A。非模态菜单可设置 `gamepad: true` 接管这些按键，普通非模态视图会把按键留给玩法。
 
 ```js
 function openPauseMenu(game, pauseView) {
@@ -183,6 +188,7 @@ function openPauseMenu(game, pauseView) {
     game.resume();
   };
   const menu = game.show(pauseView, {
+    initialFocus: 'continue',
     dismiss: resume, // Escape 或手柄 B
     resume,          // 暂停后新按下 Start
     bind: { continue: { tap: () => resume(menu) } }

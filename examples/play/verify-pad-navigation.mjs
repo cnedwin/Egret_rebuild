@@ -27,6 +27,7 @@ export async function verifyPadNavigation(page) {
     let nested;
     let shell;
     let legacyModal;
+    let priority;
     let round = 0;
     const id = name => name.replaceAll(' ', '');
     const view = (label, names, modal = false) => ({
@@ -120,6 +121,37 @@ export async function verifyPadNavigation(page) {
         });
       },
       closeNested: () => nested.close(),
+
+      openPriorityMenu() {
+        game.pause();
+        const description = view('Priority menu', ['First choice', 'Second choice'], true);
+        description.root.children.splice(1, 0, { type: 'panel', name: 'pointerPanel', height: 44, card: true });
+        priority = game.show(description, {
+          initialFocus: id('Second choice'),
+          bind: {
+            [id('First choice')]: { tap: () => actions.push('priority-first') },
+            pointerPanel: { pointerOnly: true, tap: () => actions.push('priority-pointer') },
+            [id('Second choice')]: { tap: () => actions.push('priority-second') }
+          }
+        });
+      },
+      priorityFocus(name) {
+        return { accepted: priority.focus(name), focused: priority.focused };
+      },
+      priorityFocused: () => priority.focused,
+      priorityPointerPoint() {
+        const rect = priority.rect('pointerPanel');
+        const screen = game.screen;
+        const canvas = game.canvas.getBoundingClientRect();
+        return {
+          x: canvas.x + ((rect.x + rect.width / 2 - screen.x) / screen.width) * canvas.width,
+          y: canvas.y + ((rect.y + rect.height / 2 - screen.y) / screen.height) * canvas.height
+        };
+      },
+      closePriorityMenu() {
+        priority.close();
+        game.resume();
+      },
       openLegacyModal() {
         legacyModal = game.show(view('Legacy dialog', ['Legacy action'], true));
       },
@@ -239,6 +271,58 @@ export async function verifyPadNavigation(page) {
     assert.equal((await get()).actions.at(-1), 'dismiss');
     assert.equal((await get()).paused, false);
     await set();
+
+    await fixture.evaluate(f => f.openPriorityMenu());
+    assert.equal(await focused(), 'Second choice', 'modal initialFocus chooses the named second eligible button');
+    assert.equal(
+      await fixture.evaluate(f => f.priorityFocused()),
+      'Secondchoice',
+      'view.focused exposes the active name'
+    );
+    await set('up');
+    assert.equal(await focused(), 'First choice', 'D-pad skips the pointer-only panel in the middle');
+    await set();
+    await set('a');
+    assert.equal((await get()).actions.at(-1), 'priority-first');
+    await set();
+    await set('down');
+    assert.equal(await focused(), 'Second choice', 'D-pad also skips the panel in the other direction');
+    await set();
+    await set('a');
+    assert.equal((await get()).actions.at(-1), 'priority-second');
+    await set();
+    const rejected = await fixture.evaluate(f => f.priorityFocus('pointerPanel'));
+    assert.deepEqual(
+      rejected,
+      { accepted: false, focused: 'Secondchoice' },
+      'pointer-only panel refuses programmatic focus'
+    );
+    const panel = await fixture.evaluate(f => f.priorityPointerPoint());
+    await page.mouse.click(panel.x, panel.y);
+    await frames();
+    assert.equal((await get()).actions.at(-1), 'priority-pointer', 'pointer-only panel remains clickable');
+    assert.equal(await focused(), 'Second choice', 'pointer click does not move navigation focus to the panel');
+
+    const changed = await fixture.evaluate(f => f.priorityFocus('Firstchoice'));
+    assert.deepEqual(
+      changed,
+      { accepted: true, focused: 'Firstchoice' },
+      'view.focus changes to an eligible named action'
+    );
+    assert.equal(await focused(), 'First choice');
+    await fixture.evaluate(f => f.openNested());
+    assert.equal(await focused(), 'Nested button');
+    await fixture.evaluate(f => f.closeNested());
+    assert.equal(
+      await focused(),
+      'First choice',
+      'closing nested view restores the actual prior focus, not initialFocus'
+    );
+    await set('a');
+    assert.equal((await get()).actions.at(-1), 'priority-first');
+    await set();
+    await fixture.evaluate(f => f.closePriorityMenu());
+    assert.equal(await focused(), 'Play button', 'closing priority menu restores focus to its invoking view');
 
     await fixture.evaluate(f => f.openLegacyModal());
     assert.equal(await focused(), 'Legacy action');
