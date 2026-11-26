@@ -134,3 +134,30 @@ panel.sample({ frame: lastDrawnFrame, pendingFrames: host.getStatus().pendingFra
 Everything the call makes is what the separate entries make. A game that needs a Host with its own limits, readback, several scopes, or a loop of its own makes those itself, as [what to import](entry-points.md) lists them, and does not use this entry. Nothing else in the Engine depends on it.
 
 In a page without a bundler, the import map needs `@egret/engine/web/game` and what it loads: copy the map of the [starter](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/index.html).
+
+## Retained GPU backgrounds (WebGL2, opt-in)
+
+Pass `staticLayers: true` to `createBrowserGame` or `play`. The actual WebGL2 game exposes `game.staticLayers` (under `game.browser.staticLayers` in Play). It is absent on WebGPU and without the option; keep the ordinary painter as a fallback. This uses the WebGL2 Host's real [cached layer targets](webgl2-executor-contract.md#cached-2d-layers), not a CPU canvas or a texture upload for each placement.
+
+Use an Engine capture of a chunk or a static draw group, with transparent clear and no dynamic actors. The Host only accepts its documented layer recipe. For example, during initial setup with an isolated background on the stage:
+
+```js
+const cache = game.browser.staticLayers; // Play with backend: 'webgl2', staticLayers: true
+if (cache) {
+  const layer = cache.createLayer();
+  const source = game.engine.captureSharedFrame({
+    width: 128, height: 64, clearColor: 0, clearAlpha: 0,
+    outputAlpha: 'premultiplied'
+  });
+  await layer.update(source);
+  // Only after readiness: detach the source's display nodes from the live stage.
+  game.world.removeChild(backgroundSource);
+  cache.setPlacements([{ layer, x: 0, y: 0, width: 128, height: 64 }]);
+}
+```
+
+The layers are composited in the array's painter order **before all ordinary stage draws**, at stage coordinates. Keep actors, interleaved occluders, UI and hit targets in the ordinary display tree. The cached layer is not a touch object and does not automatically follow camera/world transforms. On a camera move update only the placements. When a chunk changes, rebake that chunk using a new genuine capture, await `layer.update`, then reapply `setPlacements` (even if the positions stayed the same). A replacement retains the old ready texture until completion. Setting placements copies coordinates/effects, validates ready handles created by this cache, and wakes on-demand Play. See the Host contract for effect, blend, clipping, extent, placement and memory limits. An effect requires the game's effects option.
+
+Before disposal, clear a layer from placements. On native context loss the layer becomes stale: clear or replace the placements, await `cache.whenReady()` and rebake from the retained source recipe before placing it again. The game closes its Host and all its retained layers. No automatic display-tree snapshotting, arbitrary z-interleaving, partial framebuffer redraw or WebGPU layer support is claimed by this bridge.
+
+The public fixture `node tools/verify-play-static-layers.mjs <playwright-root> <chrome> <new-output>` compares initial, moved and edited cached pixels against direct rendering. The controlled browser game test also compares ordinary frame commands and upload bytes. These are scoped acceptance checks, not a phone frame-rate claim.

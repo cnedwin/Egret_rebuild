@@ -141,3 +141,30 @@ panel.sample({ frame: lastDrawnFrame, pendingFrames: host.getStatus().pendingFra
 这次调用创建的每样东西，都是各个独立入口创建的那一样。需要自定上限的 Host、读回、多个作用域或自己的循环的游戏，按[该引哪个入口](entry-points.md)所列自己创建这些对象，不使用本入口。Engine 的其他部分都不依赖它。
 
 在没有打包工具的页面里，import map 需要 `@egret/engine/web/game` 以及它加载的内容：复制[起步示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/starter/index.html)的 import map。
+
+## 保留在 GPU 中的背景（WebGL2，显式启用）
+
+向 `createBrowserGame` 或 `play` 传入 `staticLayers: true`。实际使用 WebGL2 的游戏才会提供 `game.staticLayers`（Play 中是 `game.browser.staticLayers`）。未启用或实际使用 WebGPU 时该能力不存在，可继续使用普通绘制路径。这里使用 WebGL2 宿主实际的[缓存图层目标](webgl2-executor-contract.md#可缓存的-2d-图层)，不是 CPU 画布缓存，也不会在每次放置时重新上传纹理。
+
+使用 Engine 捕获地图块或静态绘制组，透明清屏且不包含动态人物。宿主只接收其契约允许的图层绘制内容。例如在初始 setup 阶段，舞台上只有隔离的背景时：
+
+```js
+const cache = game.browser.staticLayers; // Play: backend: 'webgl2', staticLayers: true
+if (cache) {
+  const layer = cache.createLayer();
+  const source = game.engine.captureSharedFrame({
+    width: 128, height: 64, clearColor: 0, clearAlpha: 0,
+    outputAlpha: 'premultiplied'
+  });
+  await layer.update(source);
+  // 就绪以后才把背景源的显示节点从实时舞台移走。
+  game.world.removeChild(backgroundSource);
+  cache.setPlacements([{ layer, x: 0, y: 0, width: 128, height: 64 }]);
+}
+```
+
+合成按数组的绘制顺序进行，**在所有普通舞台绘制之前**，使用舞台坐标。角色、需要交错遮挡的物件、界面和命中区域仍在普通显示树中。缓存图层不是触控对象，不会自动跟随镜头或世界变换。移动镜头时只改放置位置；地图块变化时，用新的真实捕获更新这个块，等待 `layer.update` 完成后重新调用 `setPlacements`（即使位置没变也要调用）。新版本准备好前仍保留原有就绪纹理。设置放置时复制坐标和效果，检查图层属于本缓存且已就绪，并唤醒按需绘制的 Play。效果、颜色混合、裁剪、尺寸、放置数量及内存限制沿用宿主契约；使用效果需要开启游戏的 effects 选项。
+
+释放图层前将其从放置列表清除。原生上下文丢失后，图层变为 stale：清空或替换放置列表，等待 `cache.whenReady()`，再用保留的源配方重新烘焙、放置。游戏结束时关闭宿主并释放其缓存图层。本接入不自动捕获子树，不支持任意前后交错合成、局部帧缓冲重绘或 WebGPU 缓存图层。
+
+公开验证程序 `node tools/verify-play-static-layers.mjs <playwright-root> <chrome> <new-output>` 比较初始画面、移动和局部更新后的直接与缓存像素；受控浏览器游戏测试还比较每帧普通绘制指令与上传字节。这些都是限定范围的验收，不等于手机帧率测试。

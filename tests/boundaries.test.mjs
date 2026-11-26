@@ -1367,7 +1367,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Frame loop: inert copies of its modules and their build output, for the same reason.
     const loopGraphFiles=['web/loop.ts','web/BrowserFrameLoop.ts','dist/web/loop.js','dist/web/loop.d.ts','dist/web/BrowserFrameLoop.js','dist/web/BrowserFrameLoop.d.ts'];
     // Browser game: inert copies of its modules and their build output, for the same reason.
-    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
+    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
     // World3D app: names what it imports from the main entry, so it is copied as it is.
     const world3dAppFiles=['web/world3d/app3D.ts','dist/web/world3d/app3D.js','dist/web/world3d/app3D.d.ts'];
     const playFiles=['BrowserPlay','playWidgets','playTouch','gestures','playView','playViewParagraph','playViewScroll','view'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
@@ -1420,6 +1420,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'extra-export':['packages/engine/web/game.ts',"export const extra=1;\n"],
         'implementation-import':['packages/engine/web/BrowserGame.ts',"import './BrowserFrameLoop.js';\n"],
         'timer':['packages/engine/web/BrowserStatsPanel.ts',"setInterval(()=>{},1000);\n"],
+        'layer-escaped-module':['packages/engine/web/ProbeStaticLayer.ts',"import {createBrowserStaticLayers} from './browserStaticLayers.js';\nvoid createBrowserStaticLayers;\n"],
+        'layer-owned-timer':['packages/engine/web/browserStaticLayers.ts',"setTimeout(()=>{},1000);\n"],
+        'layer-optional-gl':['packages/engine/web/browserStaticLayers.ts',"import './webgl2.js';\n"],
       };
       const edit=edits[gameMutation];assert.ok(edit,'finite browser game assigned mutation');const [file,added]=edit;
       write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+added);
@@ -2574,6 +2577,9 @@ for(const [name,reason] of [
   ['extra-export','Browser game: exact browser entry exports mismatch'],
   ['implementation-import','Frame loop: implementation module imported outside its entry'],
   ['timer','Browser game: acquired automatic host work'],
+  ['layer-escaped-module','Browser game: implementation module imported outside its entry'],
+  ['layer-owned-timer','Browser game: acquired automatic host work'],
+  ['layer-optional-gl','M14: WebGL2 module imported outside exact optional closure'],
 ])test('browser game policy '+name+' is refused for its own reason',()=>{
   fixture({imported:'robust-predicates',gameMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
 });
