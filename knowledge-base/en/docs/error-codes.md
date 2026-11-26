@@ -500,8 +500,10 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
+| `FRAME_LOOP_CANCEL_FAILED` | The cancel of the frame loop failed. The cause is in cause. |
 | `FRAME_LOOP_CLOSED` | The frame loop was disposed. Create a new one. |
 | `FRAME_LOOP_OPTIONS_INVALID` | The options given to the frame loop are not valid: one is missing, of the wrong type or out of range. |
+| `FRAME_LOOP_RENDER_RETRY_FAILED` | The render retry of the frame loop failed. The cause is in cause. |
 
 ### GAMEPAD
 
