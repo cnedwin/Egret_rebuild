@@ -1,0 +1,13 @@
+# Input and screen
+
+- [touch-controls](../cards/input/touch-controls.txt) · engine web world3d play play3d · Touch controls that keep one finger per control.
+- [mobile-viewport](../cards/input/mobile-viewport.txt) · web world3d play play3d · Viewport, safe areas, pixel ratio and quality on phones.
+- [short-screen-hud](../cards/input/short-screen-hud.txt) · web world3d play play3d · HUD, dialogue and commands that fit a phone held sideways.
+- [touch-labels](../cards/input/touch-labels.txt) · web world3d play play3d · Text, labels and tap targets that read and press on a phone.
+- [keyboard-shortcuts](../cards/input/keyboard-shortcuts.txt) · engine web world3d play play3d · Shortcuts the browser leaves alone.
+- [pause-and-overlays](../cards/input/pause-and-overlays.txt) · engine web world3d play play3d · Pausing from every input; holds and focus across menus.
+- [ui-callbacks](../cards/input/ui-callbacks.txt) · engine web world3d play play3d · Synchronous callbacks; UI roots opened after the press.
+- [game-screens](../cards/input/game-screens.txt) · play · Shops, dialogs, red dots and key hints as data.
+- [gestures](../cards/input/gestures.txt) · play engine web · Hold, swipe, pinch and drag into slots.
+- [play-page-controls](../cards/input/play-page-controls.txt) · play · Page buttons beside an embedded play, its keys and a clear canvas.
+- [play-turned-table](../cards/input/play-turned-table.txt) · play · A landscape table turned on a tall phone without turning play's canvas.

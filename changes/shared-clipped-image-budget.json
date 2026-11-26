@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Fully clipped 2D images leave the texture budget available",
+    "body": "Shared frame capture skips page and region accounting for bitmaps and committed raster text it can prove fully outside the active clip. Empty occurrences preserve ordering and partially visible content still counts toward the existing limits."
+  },
+  "zh": {
+    "title": "完全裁掉的 2D 图像释放帧贴图预算",
+    "body": "共享帧捕获确认位图或已提交的光栅文字完全位于裁剪区外时，不计入贴图页和区域预算。空绘制仍保留顺序，部分可见的内容继续计入现有上限。"
+  }
+}

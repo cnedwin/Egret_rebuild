@@ -40,7 +40,10 @@ function canonical(value){
 }
 /** Actual pinned public-package identity, never a caller assertion. */
 export function getContentProducer(){
-  if(process.versions.node!=='26.7.0'||PNGJS_VERSION!=='7.0.0'||typeof process.versions.zlib!=='string'||!process.versions.zlib)throw fault('PRODUCER','Content producers require actual Node 26.7.0 and installed public pngjs 7.0.0.');
+  // The producer's versions are part of every artifact's build key and of its recipe, and a PNG's bytes depend on the
+  // zlib of the Node that wrote it: another Node would make other keys for the same sources, so it is refused, fonts
+  // included, rather than allowed to build artifacts the project cannot match.
+  if(process.versions.node!=='26.7.0'||PNGJS_VERSION!=='7.0.0'||typeof process.versions.zlib!=='string'||!process.versions.zlib)throw fault('PRODUCER','Content builds, fonts included, need Node 26.7.0 exactly and pngjs 7.0.0; this is Node '+process.versions.node+'. The producer\'s versions are part of every build key and recipe, and compressed images depend on the zlib of that Node, so another version would build artifacts the project cannot match. Use Node 26.7.0, the version package.json pins.');
   return Object.freeze({nodeVersion:process.versions.node,pngjsVersion:PNGJS_VERSION,zlibVersion:process.versions.zlib});
 }
 function admitEntry(entry){

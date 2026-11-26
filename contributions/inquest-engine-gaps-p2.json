@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/play-vertical-words.test.mjs",
+      "originRole": "First-party focused validation of the vertical rows of play texts; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/content-producer-node.test.mjs",
+      "originRole": "First-party check that a content build on another Node is refused with the version found, the version needed and why, run in a child process whose versions object is replaced; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

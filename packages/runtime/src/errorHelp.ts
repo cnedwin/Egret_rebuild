@@ -215,6 +215,10 @@ const WRITTEN: Readonly<Record<string, string>> = {
   BROWSER_TEXT_INPUT_SURFACE: 'The surface given to the browser text input is not a canvas it can use.',
   DISPLAY_SUBTREE_OVERLAP: 'Two prepared display subtrees share a node.',
   DISPLAY_SUBTREE_TARGET_DETACHED: 'The target of a prepared display subtree is no longer on the stage.',
+  PARAGRAPH_CACHE_ALREADY_CREATED:
+    'An asset manager has one paragraph cache for its whole life, shared by every paragraph, UI leaf and text editor of its Engine: keep the first one made and pass it wherever a cache is asked for. A second would keep the same rasters under another budget.',
+  TEXT_CACHE_ALREADY_CREATED:
+    'An asset manager has one text cache for its whole life, shared by every text field and label of its Engine: keep the first one made and pass it wherever a cache is asked for. A browser game makes it for its labels.',
   PARAGRAPH_FONT_SET_IDENTITY_COLLISION: 'Two fonts of a paragraph font set have the same identity.',
   PARAGRAPH_FONT_SET_PROVIDER: 'The provider given to a paragraph font set is not valid.',
   SEQUENCE_RESET_NOT_PREPARED: 'The sequence reset slot has not been prepared.',
@@ -337,6 +341,8 @@ const WRITTEN: Readonly<Record<string, string>> = {
     'The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 4,096 different geometries or 65,536 mesh triangles. A circle of radius 40 is 32 triangles.',
   FRAME_IMAGE_BUDGET:
     'The frame uses more images than it takes: 64 pages, 4,096 regions or 64 MiB of distinct pixels. Pack images into fewer atlases.',
+  FRAME_IMAGES_NEAR_LIMIT:
+    'A warning of the browser game, not an error: a frame holds four fifths of the images a frame takes (64 pages, 4,096 regions, 64 MiB). Labels of createAtlasLabel share pages.',
   FRAME_TRANSFORM_INVALID:
     'A display object is placed where its corners are not finite numbers. Check its x, y, scale and rotation, and those of its parents.',
   FRAME_STAGE_INVALID: 'A frame is captured from the stage of an Engine, and this is not one.',

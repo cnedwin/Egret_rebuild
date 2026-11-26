@@ -62,6 +62,7 @@ test('BG01 what is not a game is refused before a Host is made', async () => {
     { ...good, clearAlpha: 2 },
     { ...good, update: 1 },
     { ...good, onError: 'no' },
+    { ...good, onWarning: 'no' },
     { ...good, pointer: 1 },
     { ...good, keyboard: 'yes' },
     { ...good, hover: 'yes' },

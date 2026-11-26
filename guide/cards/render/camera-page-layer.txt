@@ -1,0 +1,44 @@
+---
+id: camera-page-layer
+title: A still map on a page canvas that follows the engine's 2D camera
+applies: [engine, web]
+triggers: [createCamera2D, screenToWorld, worldToScreen, "fit cover", "page canvas", "big map", "map behind the engine", "background follows camera", zoomTo, CAMERA_OPTIONS_INVALID, "zoom out of range", "地图跟着相机", "大地图", "网页画布", "缩放报错"]
+local: [camera, back, map, zoom, view]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/src/view/mapview.mjs, line: 267, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
+  - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/src/view/mapview.mjs, line: 393, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
+  - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/ENGINE-NOTES.md, line: 15, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
+  - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/ENGINE-NOTES.md, line: 29, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/src/camera2d.ts, line: 281, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserGame.ts, line: 294, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# A still map on a page canvas that follows the engine's 2D camera
+
+A large still map (land, borders, names) is cheaper painted on a page canvas under a clear engine canvas (`clearAlpha: 0`), with only what moves in the engine. Both must follow one `createCamera2D`. The game from `createBrowserGame` does not give its canvas back (keep the one you passed in), and `toStage(clientX, clientY)` converts only from the page to the stage. With `fit: 'cover'` the canvas is larger than the window and centred, so convert from the stage to the page through the canvas's rectangle.
+
+```js
+function paintBack() {
+  const r = canvas.getBoundingClientRect(), b = back.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio);
+  const W = Math.round(back.clientWidth * dpr), H = Math.round(back.clientHeight * dpr);
+  const view = camera.snapshot(), key = `${view.center.x},${view.center.y},${view.zoom},${W},${H},${r.left},${r.width}`;
+  if (key === lastKey && !dirty) return;            // repaint only when the view changed
+  lastKey = key;
+  if (back.width !== W || back.height !== H) Object.assign(back, { width: W, height: H });
+  const toWorld = (px, py) => camera.screenToWorld(((px / dpr + b.left - r.left) * stageW) / r.width, ((py / dpr + b.top - r.top) * stageH) / r.height);
+  const a = toWorld(0, 0), c = toWorld(W, H), k = W / (c.x - a.x);
+  const source = k < 0.6 ? half : full, s = source === half ? 0.5 : 1;   // a half-size copy far out
+  ctx.drawImage(source, a.x * s, a.y * s, (c.x - a.x) * s, (c.y - a.y) * s, 0, 0, W, H);
+  ctx.setTransform(k, 0, 0, k, -a.x * k, -a.y * k);  // marks and names in world units from here
+}
+```
+
+Rules:
+
+- Call it after `camera.update(dt)` each frame; it returns at once while the view is still.
+- Draw marks and names at a steady size on screen: sizes times `dpr / k`.
+- Clamp every zoom yourself: `camera.zoomTo` and `camera.setZoom` throw `CAMERA_OPTIONS_INVALID` outside `[minZoom, maxZoom]`, and a wheel, a pinch or a window-sized overview easily overshoots.
+- Under software rendering a full repaint of a 3600 × 2600 map cost about 37 ms, mostly `drawImage`; the half-size copy cuts the far views. Dragging still repaints each frame.
+
+Learnt from Nine Provinces Ablaze (ENGINE-NOTES 2 and 4): the realm and the battlefield both paint their ground this way under armies and units drawn by the engine.

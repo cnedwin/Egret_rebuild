@@ -4,8 +4,10 @@
 // is exercised in a browser by examples/world3d-app.
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { createEngine } from '@egret/engine';
 import * as webgl2 from '@egret/engine/webgl2/world3d';
 import * as webgpu from '@egret/engine/webgpu/world3d';
+import { host } from './helpers.mjs';
 
 const { WORLD3D_QUALITY_PRESETS, createDynamicResolution3D, createWorld3DApp, pickWorld3DBackend, pickWorld3DQuality } =
   webgl2;
@@ -257,4 +259,58 @@ test('WA11 the stats readout averages frame parts and reads the renderer', () =>
   assert.throws(() => stats.lap('frame'), { code: 'WORLD3D_INPUT_INVALID' });
   assert.throws(() => createWorld3DStats({}), { code: 'WORLD3D_INPUT_INVALID' });
   stats.dispose();
+});
+
+test('WA12 restarting the display loop anchors the same Engine clock on its first frame', async t => {
+  const engine = await createEngine({ host: host().adapter, clock: { maxDeltaSeconds: 0.125 } });
+  let next;
+  const frames = {
+    requestAnimationFrame(callback) {
+      next = callback;
+      return 1;
+    },
+    cancelAnimationFrame() {
+      next = undefined;
+    }
+  };
+  for (const [name, value] of Object.entries(frames)) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    Object.defineProperty(globalThis, name, { value, configurable: true });
+    t.after(() => {
+      if (previous) Object.defineProperty(globalThis, name, previous);
+      else delete globalThis[name];
+    });
+  }
+  const present = milliseconds => {
+    const callback = next;
+    assert.ok(callback, 'a frame must be scheduled');
+    callback(milliseconds);
+  };
+  const errors = [];
+  const start = () => webgl2.startWorld3DLoop(engine, error => errors.push(error.code));
+  let loop = start();
+  try {
+    present(0);
+    present(16);
+    const before = engine.clock.elapsedSeconds;
+    loop.dispose();
+    assert.equal(next, undefined);
+    loop = start();
+    present(5000);
+    assert.deepEqual(errors, []);
+    assert.equal(engine.clock.elapsedSeconds, before);
+    present(5016);
+    assert.ok(close(engine.clock.elapsedSeconds - before, 0.016));
+    const pausedAt = engine.clock.elapsedSeconds;
+    loop.dispose();
+    engine.clock.pause();
+    loop = start();
+    present(10000);
+    assert.equal(engine.clock.state, 'paused');
+    assert.equal(engine.clock.elapsedSeconds, pausedAt);
+    assert.deepEqual(errors, []);
+  } finally {
+    loop.dispose();
+    await engine.dispose();
+  }
 });

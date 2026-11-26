@@ -13,10 +13,12 @@
 | 入口 | 公开能力 |
 | --- | --- |
 | `@egret/engine/paragraph` | `createParagraphCache(assets, options)`、`createParagraph(engine, scope, cache)` 及段落类型 |
-| `@egret/engine/web/paragraph` | `createCanvasKitParagraphProvider(options)` 及 host/module/font 类型 |
+| `@egret/engine/web/paragraph` | `createCanvasKitParagraphProvider(options)` 及 host/module/font 类型；不需要 WebAssembly 的 `createCanvasParagraphProvider(options)`；`chooseParagraphProvider(options)` |
 | `@egret/engine/ui` | 既有 `createUiRoot`，新增 `UiLeafContent`、`UiLeafPrepareContext` |
 
 默认 Engine 入口不加载段落 provider、Wasm 或字体。runtime 段落代码不依赖 DOM/Node。web adapter 接收已初始化的 CanvasKit 模块和明确的字体字节，不负责模块加载、网络请求或系统字体发现。
+
+**一个资源管理器只有一个段落缓存。** 每个 Engine 只创建一次，把同一个缓存传给所有段落、UI 叶子和文本编辑器。在同一个 `engine.assets` 上第二次调用 `createParagraphCache` 会以 `PARAGRAPH_CACHE_ALREADY_CREATED` 拒绝，错误信息会说明原因。标签用的文本缓存也一样（`TEXT_CACHE_ALREADY_CREATED`）；浏览器游戏会为它的标签创建那个缓存。
 
 真实 Engine 只接纳自己的 Scope 和已注册缓存。同一个真实 `engine.assets` 可同时拥有一个固定显式行缓存和一个固定段落缓存；每种 profile 在每个 manager 上只有一次生命周期。另建 AssetManager 不会取得 Engine 权限，显示父子关系也不转移资源所有权。
 
@@ -135,3 +137,41 @@ async function bind(context) {
 ## 只读样式范围
 
 可选[样式范围契约](paragraph-styled-runs.md)通过同一提供者、缓存和 UI 所有权增加有界字体族、字号与前景色范围。上文原单样式配置仍是兼容基线；链接的增量契约记录当前准入、整簇颜色与合成内容限制。
+
+## 不需要 WebAssembly 的提供者
+
+`createCanvasParagraphProvider(options)` 用画布的 2D 上下文排版和绘制。它不需要 WebAssembly，也不需要字体字节：它使用网页用 `FontFace`、或小游戏用 `wx.loadFont` 注册过的字体，按字体族名引用。它接收的请求、给出的度量和几何与 CanvasKit 提供者相同，能力为 `styledRuns`、`textAlign`、`textGeometry` 和 `maxLines`。
+
+- `families` 列出请求可以使用的字体族。请求用了别的字体族，会以 `PARAGRAPH_FONT_NOT_REGISTERED` 拒绝。不给时接受任何字体族。
+- `buildIdentity` 给这组字体命名，字体变了，提供者的标识也随之改变。
+- `createCanvas` 返回一个能 `getContext('2d')` 的画布。默认用 `document.createElement('canvas')`，小游戏的适配器用 `wx.createCanvas()` 生成它。
+
+它按 CanvasKit 的方式排版：
+
+- 英文在空格处、`-` 和 `/` 之后断行。中文和日文在字与字之间断行。`，` 这类收尾标点不放在行首，`（` 这类开头标点不放在行尾。比一行还宽的单词在字母之间截断。
+- 全角字符单独测量，与 CanvasKit 的排法相同。
+- 给了 `lineHeight` 时，每行取这个高度，多出的空间平分到第一个字体族字体的上方和下方。不给时，一行的高度取该行实际用到的最高字体。
+- 限行时，从最后一行末尾逐个去掉字符，直到后面放得下省略号。省略号用最后保留字符的字体，并由该字符的框一并覆盖。
+
+从右到左的文字（`direction: 'rtl'`，或从右到左书写系统的字符）以 `PARAGRAPH_FEATURE_UNSUPPORTED` 拒绝，不会按错误的顺序画出来。
+
+**与 CanvasKit 的对比。** `examples/paragraph-canvas/verify.mjs` 在无头 Chromium 里，用同样的 Noto Sans 和 Noto Sans CJK SC 字体，把同一段带样式的中英文段落分别交给两个提供者排版。共排三次：带最小行高、自然行高居中、限三行。2026 年 11 月 26 日，三组的行都相同，字符框和选区误差都在 0.000 px 以内，在每个字符上点中的位置也相同。手机上的画布可能只给 `measureText` 一个宽度。这时提供者会估计字体的上伸和下伸，行高可能与 CanvasKit 差几个像素。手机上没有运行过。
+
+`chooseParagraphProvider(options)` 创建设备承受得起的提供者，返回 `{ backend, reason, provider, cause? }`：
+
+```js
+import { chooseParagraphProvider } from '@egret/engine/web/paragraph';
+
+const { provider, backend, reason } = await chooseParagraphProvider({
+  // 只有选中 CanvasKit 时才调用。
+  loadCanvasKit: async () => ({ canvasKit: await CanvasKitInit({ locateFile }), fonts, buildIdentity }),
+  canvas: { families: ['Noto Sans', 'Noto Sans CJK SC'] }
+});
+const cache = createParagraphCache(engine.assets, { provider });
+```
+
+- 没有 `WebAssembly` 全局、在微信小游戏里，或 `navigator.deviceMemory` 不超过 `lowMemory`（默认 2）时，给画布提供者。此时不调用 `loadCanvasKit`，模块和字体字节都不会下载。
+- 否则加载 CanvasKit。加载或启动失败时，给画布提供者，`reason` 为 `'load-failed'`，错误放在 `cause` 里。
+- `prefer: 'canvas'` 或 `prefer: 'canvaskit'` 直接指定。指名要 CanvasKit 时，失败会抛出。`device` 用已知的设备情况代替从全局对象读到的值。
+
+使用画布提供者时，要在准备第一个段落之前注册好字体。

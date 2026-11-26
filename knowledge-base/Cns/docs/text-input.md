@@ -119,6 +119,29 @@ input.open({
 
 `onChange`、`onCommit` 或 `onCancel` 抛出的错误交给 `options.onError`；没有提供时交给页面的错误报告。会话照常结束。
 
+## 在微信小游戏里
+
+小游戏没有可以放文本框的网页。`@egret/engine/web/wechat-text-input` 的 `createWechatTextInput(options)` 给出与 `createBrowserTextInput` 相同的对象，有 `open`、`commit`、`cancel`、`setValue`、`move`、`resize`、`sync`、`getSnapshot` 和 `dispose`。文字输入到微信显示的键盘里，键盘上方有微信自己的输入框：使用 `wx.showKeyboard`，以及键盘的输入、确认和收起事件。`options.keyboard` 不给时就是 `wx`；`options.onError` 同上。
+
+```js
+import { createBrowserTextInput } from '@egret/engine/web/text-input';
+import { createWechatTextInput } from '@egret/engine/web/wechat-text-input';
+
+const input =
+  typeof wx === 'object' && typeof wx.showKeyboard === 'function'
+    ? createWechatTextInput()
+    : createBrowserTextInput({ canvas, logicalWidth: 720, logicalHeight: 1280 });
+input.open({ x: 60, y: 1000, width: 600, height: 60, maxLength: 12, onCommit: name => (player.name = name) });
+```
+
+- 请求的检查方式与网页输入相同。其中的值、`multiline`、`maxLength` 和 `enterKeyHint` 会交给键盘。输入框由微信自己绘制，所以位置和外观不使用，`move`、`resize` 和 `sync` 也没有东西可放置。
+- 每次变化都会告诉 `onChange`，`composing` 总是 false：微信告知的是输入框里的文字，不告知组字过程。
+- 键盘的确认键提交，`multiline` 会话也一样。玩家用别的方式收起键盘时，按 `blur` 结束会话：除非是 `'cancel'`，否则提交。`commit()` 和 `cancel()` 会收起键盘。
+- `maxLength` 按字符计数，与网页相同。不设上限时向键盘要 65,536 个字符，因为微信自己的默认上限是 100。
+- 在 `onCommit` 里打开的下一个输入框能保住自己的键盘：确认键按下后键盘保持打开，直到输入对象把它收起；前一个键盘收起的消息由微信在调用之后才送来，不会被当成新键盘的。
+
+`tests/wechat-text-input.test.mjs` 驱动一个按微信文档行为的键盘，通过 `options.keyboard` 传入。`examples/minigame/verify.mjs` 在 `tools/wechat/check-minigame.mjs` 的替身里，通过替身的键盘完成输入、确认、收起和取消；网页的文本框在那里会失败。**没有检查的：微信本身。** 手机和微信开发者工具都没有运行，所以微信告知键盘事件的顺序及其输入法的行为依据文档，没有实际观察。
+
 ## 与托管 UI 原生文本编辑的关系
 
 [原生文本编辑](native-text-editing.md)（`@egret/engine/web/editing`）在原位编辑托管 UI 的文本节点，使用引擎的段落排版、光标和字体集。它需要 UI 根和已准入的字体。本入口只需要一块画布和一个矩形：适合自己绘制界面的游戏，无论 2D 还是 3D，用来向玩家要一个名字、一句聊天或一段备注。

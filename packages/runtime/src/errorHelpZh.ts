@@ -194,6 +194,10 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   BROWSER_TEXT_INPUT_SURFACE: '交给浏览器文本输入的画布不是它能使用的画布。',
   DISPLAY_SUBTREE_OVERLAP: '两个预备的显示子树共用了同一个节点。',
   DISPLAY_SUBTREE_TARGET_DETACHED: '预备的显示子树的目标已经不在舞台上。',
+  PARAGRAPH_CACHE_ALREADY_CREATED:
+    '一个资源管理器在整个生命周期里只有一个段落缓存，它的引擎里所有段落、UI 叶子和文本编辑器共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。再建一个只会用另一份预算保存同样的光栅。',
+  TEXT_CACHE_ALREADY_CREATED:
+    '一个资源管理器在整个生命周期里只有一个文本缓存，它的引擎里所有文本字段和标签共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。浏览器游戏会为它的标签创建这个缓存。',
   PARAGRAPH_FONT_SET_IDENTITY_COLLISION: '段落字体集中有两个字体的标识相同。',
   PARAGRAPH_FONT_SET_PROVIDER: '交给段落字体集的提供者无效。',
   SEQUENCE_RESET_NOT_PREPARED: '序列重置槽还没有预备。',
@@ -291,6 +295,8 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
   FRAME_BUDGET_EXCEEDED:
     '舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、4,096 个不同的几何体或 65,536 个网格三角形。半径 40 的圆是 32 个三角形。',
   FRAME_IMAGE_BUDGET: '这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。',
+  FRAME_IMAGES_NEAR_LIMIT:
+    '这是浏览器游戏的告警，不是错误：一帧用到的图片已达上限的五分之四（64 页、4,096 个区域、64 MiB）。createAtlasLabel 的标签共用纹理页。',
   FRAME_TRANSFORM_INVALID: '某个显示对象被放到了角点不是有限数字的位置。请检查它及其父级的 x、y、缩放和旋转。',
   FRAME_STAGE_INVALID: '帧是从 Engine 的舞台捕获的，而这不是一个舞台。',
   FRAME_REENTRANT: '在捕获一帧的过程中又请求了一帧。请在帧循环中绘制，不要在捕获的回调里绘制。',

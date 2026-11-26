@@ -19,6 +19,7 @@ import type {
   UiTextEditor,
   UiTextEditorOptions,
   UiTextEditorStyle,
+  UiTextEditorStyleInput,
   UiTextEditorSnapshot,
   UiTextEditorTarget,
   UiTextEditorChange,
@@ -47,13 +48,18 @@ function text(value: unknown, maximum: number): string {
     return fail('OPTIONS');
   return value;
 }
-function captureStyle(input: UiTextEditorStyle): UiTextEditorStyle {
-  if (input === null || typeof input !== 'object' || !Array.isArray(input.fontFamilies)) return fail('STYLE');
-  const fontSet = text(input.fontSet, 256),
-    count = input.fontFamilies.length;
+function captureStyle(input: UiTextEditorStyleInput): UiTextEditorStyle {
+  if (input === null || typeof input !== 'object') return fail('STYLE');
+  // The font set itself gives its key, and its families unless they are given beside it.
+  const given = input.fontSet,
+    set = given !== null && typeof given === 'object' ? given : undefined;
+  const families = input.fontFamilies ?? set?.fontFamilies;
+  if (!Array.isArray(families)) return fail('STYLE');
+  const fontSet = text(set === undefined ? given : set.key, 256),
+    count = families.length;
   if (!Number.isInteger(count) || count < 1 || count > 16) return fail('STYLE');
   const fontFamilies: string[] = [];
-  for (let index = 0; index < count; index++) fontFamilies.push(text(input.fontFamilies[index], 256));
+  for (let index = 0; index < count; index++) fontFamilies.push(text(families[index], 256));
   const fontSize = number(input.fontSize, 1, 512),
     locale = text(input.locale, 64),
     direction = input.direction;
@@ -132,7 +138,7 @@ export interface TextEditorHostPort {
   root(root: UiRoot): UiRootAccess;
   presentation(root: UiRootAccess, target: UiTextEditorTarget): EditorPresentation | undefined;
   showNative(value: boolean): void;
-  setStyle(style: UiTextEditorStyle): void;
+  setStyle(style: UiTextEditorStyleInput): void;
   release(): void;
 }
 interface EditorRecord {
@@ -280,7 +286,7 @@ export function createUiTextEditor(options: UiTextEditorOptions): UiTextEditor {
       throw cause;
     }
   }
-  function setStyle(input: UiTextEditorStyle): void {
+  function setStyle(input: UiTextEditorStyleInput): void {
     live();
     const next = captureStyle(input);
     live();

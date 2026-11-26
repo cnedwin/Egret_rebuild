@@ -144,11 +144,62 @@ export const PAGE_NAMES = [
   'ServiceWorker',
   'EventSource',
   'Gamepad',
-  'GamepadEvent'
+  'GamepadEvent',
+  // A canvas's 2D drawing and WebAssembly are not names of a mini game's global: WeChat gives a 2D context from
+  // wx.createCanvas() with no class to name, and WXWebAssembly in place of WebAssembly. Code that needs them asks the
+  // canvas, as the engine's text does.
+  'CanvasRenderingContext2D',
+  'OffscreenCanvasRenderingContext2D',
+  'ImageBitmapRenderingContext',
+  'CanvasGradient',
+  'CanvasPattern',
+  'TextMetrics',
+  'WebAssembly',
+  'CSS',
+  'FontFaceSet',
+  'HTMLInputElement',
+  'HTMLTextAreaElement',
+  'getSelection',
+  'requestIdleCallback',
+  'cancelIdleCallback'
 ];
 
 function refuse(message) {
   return Object.assign(new Error(message), { code: 'WECHAT_EXPORT' });
+}
+
+/**
+ * The subpackages asked for, as `{ name, root }` with `root` a folder of the game, written with forward slashes and
+ * no slash at either end. Names are letters, digits, `_` and `-`; no two share a name, and no folder holds another.
+ */
+export function readSubpackages(gameDir, subpackages) {
+  if (!Array.isArray(subpackages)) throw refuse('subpackages is a list of { name, root }');
+  const parts = subpackages.map(part => {
+    if (part === null || typeof part !== 'object') throw refuse('A subpackage is { name, root }');
+    const { name } = part;
+    const root = String(part.root ?? '')
+      .split(path.sep)
+      .join('/')
+      .replace(/^\.\/+/, '')
+      .replace(/^\/+|\/+$/g, '');
+    if (typeof name !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(name))
+      throw refuse('A subpackage name is 1 to 64 letters, digits, _ or -: ' + name);
+    if (!root || root.split('/').some(piece => piece === '' || piece === '.' || piece === '..'))
+      throw refuse('The folder of subpackage ' + name + ' is not a folder of the game: ' + part.root);
+    const full = path.join(gameDir, ...root.split('/'));
+    if (!fs.existsSync(full) || !fs.statSync(full).isDirectory())
+      throw refuse('The folder of subpackage ' + name + ' is not in the game: ' + root);
+    if (/^src(\/|$)/.test(root))
+      throw refuse('The code of the game is bundled into game.js; ' + root + ' cannot be a subpackage');
+    return { name, root };
+  });
+  for (const [index, part] of parts.entries())
+    for (const other of parts.slice(index + 1)) {
+      if (part.name === other.name) throw refuse('Two subpackages are named ' + part.name);
+      if ((part.root + '/').startsWith(other.root + '/') || (other.root + '/').startsWith(part.root + '/'))
+        throw refuse('Subpackage folders ' + part.root + ' and ' + other.root + ' hold one another');
+    }
+  return parts;
 }
 
 /** The import map of a game's index.html, as absolute file paths by specifier. */
@@ -324,9 +375,11 @@ export async function exportWechat({
   orientation = 'portrait',
   name,
   minify = true,
-  transcode
+  transcode,
+  subpackages = []
 }) {
   if (!fs.existsSync(path.join(gameDir, 'index.html'))) throw refuse('There is no index.html in ' + gameDir);
+  const parts = readSubpackages(gameDir, subpackages);
   if (fs.existsSync(out) && fs.readdirSync(out).length > 0)
     throw refuse('The output folder must be new or empty: ' + out);
   if (!['portrait', 'landscape'].includes(orientation)) throw refuse('orientation must be portrait or landscape');
@@ -365,7 +418,8 @@ export async function exportWechat({
         // WebGL2 on iOS: high-performance mode runs the game in a WebKit with WebGL2. It must also be enabled for the
         // AppID on the WeChat platform.
         iOSHighPerformance: true,
-        networkTimeout: { request: 10000, downloadFile: 10000 }
+        networkTimeout: { request: 10000, downloadFile: 10000 },
+        ...(parts.length === 0 ? {} : { subpackages: parts.map(part => ({ name: part.name, root: part.root + '/' })) })
       },
       null,
       2
@@ -394,21 +448,41 @@ export async function exportWechat({
     if (done) fs.writeFileSync(target, done.bytes);
     else fs.copyFileSync(asset.full, target);
   }
-  let total = 0;
+  // A subpackage is a folder with an entry script of its own, which WeChat runs when wx.loadSubpackage({ name }) has
+  // downloaded it. A folder of pictures and sounds has none, so it is given one that does nothing.
+  for (const part of parts) {
+    const entryScript = path.join(out, part.root, 'game.js');
+    fs.mkdirSync(path.dirname(entryScript), { recursive: true });
+    if (!fs.existsSync(entryScript))
+      fs.writeFileSync(
+        entryScript,
+        '// The subpackage ' +
+          part.name +
+          ': its files, downloaded by wx.loadSubpackage({ name: ' +
+          JSON.stringify(part.name) +
+          ' }).\n'
+      );
+  }
   const sizeOf = dir => {
+    let bytes = 0;
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) sizeOf(full);
-      else total += fs.statSync(full).size;
+      bytes += entry.isDirectory() ? sizeOf(full) : fs.statSync(full).size;
     }
+    return bytes;
   };
-  sizeOf(out);
+  const total = sizeOf(out),
+    parted = parts.map(part => ({ name: part.name, root: part.root, bytes: sizeOf(path.join(out, part.root)) })),
+    main = total - parted.reduce((sum, part) => sum + part.bytes, 0);
   return {
     out,
     gameJsBytes: Buffer.byteLength(script),
     totalBytes: total,
+    mainPackageBytes: main,
+    subpackages: parted,
     mainPackageLimit: MAIN_PACKAGE_LIMIT,
-    withinMainPackage: total <= MAIN_PACKAGE_LIMIT,
+    totalLimit: TOTAL_LIMIT,
+    withinMainPackage: main <= MAIN_PACKAGE_LIMIT,
     withinTotal: total <= TOTAL_LIMIT,
     assets: assets.filter(a => a.uploadable).length,
     refused,
@@ -424,7 +498,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   for (let i = 0; i < args.length; i++) {
     const key = args[i];
     if (key === '--no-minify') options.minify = false;
-    else if (
+    else if (key === '--subpackage' && args[i + 1] !== undefined) {
+      const [name, root] = args[++i].split('=');
+      if (root === undefined) throw refuse('--subpackage takes name=folder');
+      (options.subpackages ??= []).push({ name, root });
+    } else if (
       ['--playwright', '--esbuild', '--game', '--out', '--entry', '--appid', '--orientation', '--name'].includes(key) &&
       args[i + 1] !== undefined
     )
@@ -433,7 +511,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   }
   if (!options.esbuild || !options.game || !options.out)
     throw refuse(
-      'Usage: node tools/wechat/export-wechat.mjs --esbuild <esbuild> --game <game folder> --out <new folder> [--entry src/main.mjs] [--appid <AppID>] [--orientation portrait|landscape] [--playwright <Playwright index.mjs: writes .webp pictures as .jpg or .png>]'
+      'Usage: node tools/wechat/export-wechat.mjs --esbuild <esbuild> --game <game folder> --out <new folder> [--entry src/main.mjs] [--appid <AppID>] [--orientation portrait|landscape] [--playwright <Playwright index.mjs: writes .webp pictures as .jpg or .png>] [--subpackage <name>=<folder of the game> ...]'
     );
   const require = createRequire(import.meta.url);
   const esbuild = require(path.resolve(options.esbuild));
@@ -449,13 +527,15 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     orientation: options.orientation,
     name: options.name,
     minify: options.minify,
-    transcode: transcoder?.transcode
+    transcode: transcoder?.transcode,
+    subpackages: options.subpackages ?? []
   }).finally(() => transcoder?.close());
   console.log(JSON.stringify(report, null, 2));
   if (!report.withinMainPackage)
     console.error(
-      "The package is larger than WeChat's 4 MB main package: move assets to a subpackage or load them from a CDN."
+      "The main package is larger than WeChat's 4 MB: move assets to a subpackage (--subpackage name=folder) or load them from a CDN."
     );
+  if (!report.withinTotal) console.error("The package with its subpackages is larger than WeChat's 30 MB.");
   if (report.webp.length)
     console.error(
       'WeChat on some phones does not decode WebP; give --playwright to write these as JPEG or PNG: ' +

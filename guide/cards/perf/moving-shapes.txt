@@ -1,0 +1,34 @@
+---
+id: moving-shapes
+title: Draw many moving sprites from rectangles
+applies: [play, engine, web]
+triggers: [drawCircle, drawRect, drawRoundRect, Graphics, "moving sprites", "many notes", "bullets", "particles drawn by hand", "circles slow", "frame time doubles", "software rendering slow", "batch", "draw calls", "移动的圆", "圆形很卡", "大量精灵", "合批", "帧时间翻倍"]
+local: [drawNote, disc, labels]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: OperaDrums/src/view.mjs, line: 31, commit: 6e7d5bbf96d4dea53c9bcd43b4df269dceab1fc5, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: OperaDrums/ENGINE-NOTES.md, line: 23, commit: 6e7d5bbf96d4dea53c9bcd43b4df269dceab1fc5, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Draw many moving sprites from rectangles
+
+A sprite whose Graphics hold circles or paths costs more each frame it moves than one made of rectangles. At engine `2e53f45` in headless Chromium with SwiftShader at 1280 × 720, forty moving sprites of three `drawCircle` discs each ran at 33.3 ms p50; the same forty of `drawRect` at 16.7 ms. Ten of either ran alike (16.7 ms p50, 33.3 ms p95). In Opera Drums at engine `b5628eb` ten notes of circles were already 33.4 ms p95 and rectangles 16.7 ms; polygons of 28 sides drawn with `moveTo`/`lineTo` were no better than circles.
+
+```js
+function drawNote(g, note) {            // a square seal for the drum; the sprite is turned 45° for a gong
+  const half = note.big ? 30 : 22;
+  g.beginFill(0xf3e6c8).drawRect(-half - 3, -half - 3, (half + 3) * 2, (half + 3) * 2).endFill();
+  g.beginFill(note.kind === 'drum' ? 0xb8231e : 0xa8742a).drawRect(-half, -half, half * 2, half * 2).endFill();
+}
+const note = game.sprite((g) => drawNote(g, spec), layers.notes);
+if (spec.kind === 'gong') note.rotation = 45;
+```
+
+Rules:
+
+- Measure first: hide the layer of the moving sprites and compare p95 frame times. If it is them, try rectangles before anything else.
+- Use shape as well as colour to tell kinds apart (a square and a diamond); it also helps players who cannot tell the colours.
+- Keep text in a layer of its own above the shapes. Text placed between shapes breaks the batches: about 27 draws a frame became about 7.
+- Circles that do not move (a target ring, a backdrop) cost little; leave them.
+
+Learnt from Opera Drums (ENGINE-NOTES 3).

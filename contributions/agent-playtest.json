@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/agent-playtest.mjs",
+      "originRole": "Independently authored Egret CLI for game verification, scoped project repair and local preview. The QR option loads an externally installed qrcode-generator 2.0.4 under MIT. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/agent-playtest.test.mjs",
+      "originRole": "Independently authored first-party agent playtest and local preview regression. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/agent-playtest/game.mjs",
+      "originRole": "Independently authored first-party Harbor Beacon example with original procedural art. AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/agent-playtest/index.html",
+      "originRole": "Independently authored first-party Harbor Beacon example. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/agent-playtest/project.json",
+      "originRole": "Independently authored first-party Harbor Beacon example project. AI-assisted; Apache-2.0."
+    },
+    {
+      "path": "examples/agent-playtest/scenario.mjs",
+      "originRole": "Independently authored first-party Harbor Beacon browser play scenario. AI-assisted; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

@@ -17,7 +17,7 @@ const refusal = async run => {
   return undefined;
 };
 
-test('PL01 the entry gives play, the text class, the bar, the sound effect parts and the word wrapping', () => {
+test('PL01 the entry gives play, the text class, the bar, the sound effect parts, the word wrapping and the vertical rows', () => {
   assert.deepEqual(Object.keys(entry).sort(), [
     'MUSIC_MOODS',
     'MUSIC_PARTS',
@@ -29,6 +29,7 @@ test('PL01 the entry gives play, the text class, the bar, the sound effect parts
     'musicMix',
     'play',
     'synthesizeSfx',
+    'verticalPlayWords',
     'wrapPlayWords'
   ]);
   assert.equal(typeof play, 'function');

@@ -14,10 +14,10 @@ import { createBrowserGamepadInput } from './gamepad.js';
 import type { BrowserGamepadInput } from './gamepad.js';
 import { createBrowserGame } from './game.js';
 import { createBrowserFrameLoop } from './loop.js';
-import type { BrowserGame, BrowserGameBackend, BrowserGameLabel } from './game.js';
+import type { BrowserGame, BrowserGameAtlasLabel, BrowserGameBackend, BrowserGameWarning } from './game.js';
 import { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 import type { SfxRecipe } from './playSfx.js';
-import { createPlayWidgets } from './playWidgets.js';
+import { createPlayWidgets, verticalPlayWords } from './playWidgets.js';
 import { prefersReducedMotion, watchReducedMotion } from './BrowserPreferences.js';
 import { createPlayTouch } from './playTouch.js';
 import type { PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
@@ -97,6 +97,11 @@ export interface PlayOptions {
   readonly renderMode?: 'continuous' | 'on-demand';
   /** Told of what stopped the game. Without it the failure is thrown where the console shows it. */
   readonly onError?: (error: unknown) => void;
+  /**
+   * Told of what the game should know before it shows: a frame near its limit of images, a frame not drawn for holding
+   * more, words that could not be drawn. Without it they are not told; the engine writes nothing to the console.
+   */
+  readonly onWarning?: (warning: BrowserGameWarning) => void;
   /** The seed of `game.random`. A different one each time unless given. */
   readonly seed?: number | string;
   /** `'auto'` unless given. */
@@ -139,6 +144,13 @@ export interface PlayTextOptions {
   readonly baseline?: 'top' | 'middle';
   /** The language of the words, as `'zh'` or `'en'`. Chosen from the words unless given. */
   readonly locale?: string;
+  /**
+   * Top to bottom, in columns from right to left, one character under another: for titles and seals. Marks such as
+   * `，。（）《》「」` turn to their upright forms. A `\n` starts a new column, and with `{ column }` that many
+   * characters at most make one. `align` and `baseline` place the whole block. Characters of one width, as Chinese
+   * and Japanese are, stand in straight columns.
+   */
+  readonly vertical?: boolean | { readonly column?: number };
 }
 /** A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. */
 export class PlayText extends Sprite {
@@ -461,8 +473,20 @@ export interface PlayGame {
   text(text: string | number, options?: PlayTextOptions): PlayText;
   /** Takes a sprite off the stage and ends it. */
   remove(node: DisplayObject): void;
-  /** Calls a function when the sprite is tapped or clicked. */
-  onTap(node: DisplayObject, callback: () => void): void;
+  /**
+   * Calls a function when the sprite is tapped or clicked. A sprite with children and no hit area of its own is hit
+   * anywhere in its bounds, its children's drawing included, as they move; a sprite with no children is hit on what it
+   * draws, as before. With `name`, the sprite is also a button of that name in the semantic tree of `semantics`: where
+   * it is drawn, hidden while it is not shown, gone with it, and activating it there taps it.
+   */
+  onTap(node: DisplayObject, callback: () => void, options?: { readonly name?: string }): void;
+  /**
+   * A place in the game's units (those of `pointer.x` and `.y` and of the `ui` layer) as a place on the stage, as
+   * `localToGlobal` gives it and hover events tell it. With `fit: 'expand'` the two differ by where the design is.
+   */
+  toStage(x: number, y: number): { x: number; y: number };
+  /** A place on the stage as a place in the game's units: the other way from `toStage`. */
+  fromStage(x: number, y: number): { x: number; y: number };
   /**
    * Long presses, double taps, drags, swipes and two-finger pinches on a sprite, each told once. A press that is
    * a drag or a long press is no tap. Returns a function that stops them.
@@ -781,6 +805,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   )
     throw invalid('insets is { top, right, bottom, left } of numbers 0 or more');
   if (options.arrange !== undefined && typeof options.arrange !== 'function') throw invalid('arrange is a function');
+  if (options.onWarning !== undefined && typeof options.onWarning !== 'function')
+    throw invalid('onWarning is a function');
   if (
     options.semantics !== undefined &&
     (options.semantics === null ||
@@ -843,7 +869,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     ...(options.insets === undefined ? {} : { insets: options.insets }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),
     ...(options.pixelRatio === undefined ? {} : { pixelRatio: options.pixelRatio }),
-    ...(onError === undefined ? {} : { onError })
+    ...(onError === undefined ? {} : { onError }),
+    ...(options.onWarning === undefined ? {} : { onWarning: options.onWarning })
   }).catch((cause: unknown) => {
     holder?.remove();
     throw cause;
@@ -901,7 +928,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         // A refusal or a late mutation must leave the request pending.
         const pending = redraw,
           next = revision?.revision;
-        const submitted = engine.renderSharedFrame(frame);
+        // Drawn as the game draws: a frame of too many images is left undrawn with a warning, not the game stopped.
+        const submitted = baseBrowser.drawFrame(frame);
+        if (submitted === undefined) return undefined;
         if (next !== undefined) {
           lastFrame = frame;
           lastRevision = next;
@@ -1173,6 +1202,40 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // The sprites a tap is given to. A press on one of them is the sprite's, and is not also told as `pressed`: a game
   // that places something wherever the stage is pressed would place it under its own buttons.
   let tappable: DisplayObject[] = [];
+  // Sprites that take taps or gestures and have children but no hit area of their own: each is given its bounds,
+  // children included, as its area, again at each step while they move, and until the game sets an area itself.
+  const boundsAreas = new Map<DisplayObject, { x: number; y: number; width: number; height: number } | undefined>();
+  const sameArea = (
+    a: { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined,
+    b: { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined
+  ): boolean =>
+    a === b ||
+    (a !== undefined && b !== undefined && a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height);
+  const fitBoundsArea = (node: DisplayObject): void => {
+    const given = boundsAreas.get(node);
+    if (node.isDisposed || !sameArea(node.hitArea, given)) {
+      // Ended, or the game gave it an area of its own.
+      boundsAreas.delete(node);
+      return;
+    }
+    const bounds = node.getBounds();
+    const next =
+      bounds.width > 0 && bounds.height > 0
+        ? { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height }
+        : undefined;
+    if (sameArea(next, given)) return;
+    node.hitArea = next;
+    boundsAreas.set(node, next);
+  };
+  const areaFromBounds = (node: DisplayObject): void => {
+    if (boundsAreas.has(node) || node.hitArea !== undefined) return;
+    if (!(node instanceof Sprite) || node.numChildren === 0) return;
+    boundsAreas.set(node, undefined);
+    fitBoundsArea(node);
+  };
+  // Sprites of onTap with a name: their buttons in the semantic tree.
+  const tapButtons = new Map<DisplayObject, { remove(): void }>();
+  let tapButtonCount = 0;
   const pointerDown = (event: PointerEvent): void => {
     device = event.pointerType === 'touch' ? 'touch' : 'mouse';
     if (embedded) surface.focus({ preventScroll: true });
@@ -1519,7 +1582,23 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     if (!finite(size) || size <= 0 || !colour(color)) throw invalid('a text has a size above 0 and a colour');
     if (align !== 'left' && align !== 'center' && align !== 'right')
       throw invalid("align is 'left', 'center' or 'right'");
-    let label: BrowserGameLabel | undefined,
+    const vertical = o.vertical;
+    if (
+      vertical !== undefined &&
+      typeof vertical !== 'boolean' &&
+      (vertical === null ||
+        typeof vertical !== 'object' ||
+        (vertical.column !== undefined && !(Number.isInteger(vertical.column) && vertical.column >= 1)))
+    )
+      throw invalid('vertical is true or { column } with a whole number of characters');
+    // What the label draws: the words, or their rows when written vertically.
+    const drawn = (words: string): string =>
+      vertical === undefined || vertical === false
+        ? words
+        : verticalPlayWords(words, typeof vertical === 'object' ? (vertical.column ?? Infinity) : Infinity);
+    // The words are drawn on pages shared with the game's other texts, so a screen of many short texts takes few of
+    // the images a frame may hold.
+    let label: BrowserGameAtlasLabel | undefined,
       rasterActive = true,
       gone = false;
     const round = generation;
@@ -1533,8 +1612,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       ready.then(
         () => {
           if (gone || !rasterActive || pendingReady !== ready) return;
-          made.display.x = align === 'center' ? -made.display.width / 2 : align === 'right' ? -made.display.width : 0;
-          made.display.y = o.baseline === 'middle' ? -made.display.height / 2 : 0;
+          const box = made.bounds;
+          made.display.x = align === 'center' ? -box.width / 2 : align === 'right' ? -box.width : 0;
+          made.display.y = o.baseline === 'middle' ? -box.height / 2 : 0;
           made.display.visible = true;
         },
         () => {}
@@ -1547,7 +1627,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           if (label === undefined) return;
           // A label's old wording must not describe an action after its semantic name changed.
           label.display.visible = false;
-          label.text = next;
+          label.text = drawn(next);
           settle();
         },
         color,
@@ -1592,9 +1672,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     const words = node.text;
     prepareLabelVisibility();
     browser
-      .createLabel({
-        text: words,
+      .createAtlasLabel({
+        text: drawn(words),
         fontSize: size,
+        // A column's characters stand one under another, as close as their size.
+        ...(vertical === undefined || vertical === false ? {} : { lineHeight: size * 1.1 }),
         color,
         fontWeight: bold ? 700 : 400,
         locale: o.locale ?? (/[぀-ヿ㐀-鿿가-힯]/.test(words) ? 'zh' : 'en')
@@ -1611,7 +1693,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           node.addChild(made.display);
           labelVisibility.add(syncVisibility);
           syncVisibility();
-          if (node.text !== words) made.text = node.text;
+          if (node.text !== words) made.text = drawn(node.text);
           // What was set while the words were being made.
           if (node.color !== color || node.size !== size) made.set({ color: node.color, fontSize: node.size });
           settle();
@@ -1721,6 +1803,12 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   }
   function step(real: number, seconds: number): void {
     frameSeconds = real;
+    for (const node of [...boundsAreas.keys()]) fitBoundsArea(node);
+    for (const [node, button] of [...tapButtons])
+      if (node.isDisposed) {
+        tapButtons.delete(node);
+        button.remove();
+      }
     if (failure !== undefined) {
       const { cause } = failure;
       failure = undefined;
@@ -1735,6 +1823,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       padSampled = false;
     }
     if (padSampled) pollPadButtons();
+    // A modal may open between steps while the floating stick's owner stays down.
+    touch.sync();
     if (disposed || version !== generation || playLoop.state !== 'running') {
       endFrame();
       return;
@@ -2027,18 +2117,61 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       node.parent?.removeChild(node);
       leaving.push(node);
     },
-    onTap(node, callback) {
+    onTap(node, callback, tapOptions) {
       if (typeof callback !== 'function') throw invalid('onTap takes a sprite and a function');
-      if (browser.pointer === undefined) return;
-      node.touchEnabled = true;
-      node.on(browser.pointer.events.tap, () => {
+      if (tapOptions !== undefined && (tapOptions === null || typeof tapOptions !== 'object'))
+        throw invalid('the options of onTap are { name }');
+      const name = tapOptions?.name;
+      if (name !== undefined && (typeof name !== 'string' || name.trim() === '' || name.length > 1024))
+        throw invalid('the name of a tap is words');
+      const tap = (): void => {
         const round = generation;
         tapListener(callback, cause => {
           // A delayed input callback belongs to the round that received the press.
           if (!disposed && generation === round) failure ??= { cause };
         })();
-      });
+      };
+      if (name !== undefined && options.semantics !== undefined) {
+        tapButtons.get(node)?.remove();
+        tapButtons.set(
+          node,
+          options.semantics.add({
+            id: 'play-tap-' + ++tapButtonCount,
+            role: 'button',
+            describe: () => {
+              const box = node.isDisposed ? undefined : boxOf(node);
+              let shownNow = box !== undefined;
+              for (let at: DisplayObject | undefined = node; shownNow && at !== undefined; at = at.parent) {
+                if (at.isDisposed || !at.visible || at.alpha === 0) shownNow = false;
+                else if (at === stage) break;
+                else if (at.parent === undefined) shownNow = false;
+              }
+              return {
+                name,
+                bounds:
+                  box === undefined
+                    ? { x: 0, y: 0, width: 0, height: 0 }
+                    : { x: box.left, y: box.top, width: box.right - box.left, height: box.bottom - box.top },
+                hidden: !shownNow
+              };
+            },
+            onActivate: tap
+          })
+        );
+      }
+      if (browser.pointer === undefined) return;
+      node.touchEnabled = true;
+      node.on(browser.pointer.events.tap, tap);
+      areaFromBounds(node);
       if (!tappable.includes(node)) tappable.push(node);
+    },
+    toStage(x, y) {
+      if (!finite(x) || !finite(y)) throw invalid('toStage takes two numbers');
+      return { x: x + shown.designRect.x, y: y + shown.designRect.y };
+    },
+    fromStage(x, y) {
+      if (!finite(x) || !finite(y)) throw invalid('fromStage takes two numbers');
+      return { x: x - shown.designRect.x, y: y - shown.designRect.y };
     },
     gestures(node, handlers) {
       if (handlers === null || typeof handlers !== 'object')
@@ -2049,6 +2182,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const input = browser.pointer;
       if (input === undefined) return () => {};
       node.touchEnabled = true;
+      areaFromBounds(node);
       if (!tappable.includes(node)) tappable.push(node);
       const round = generation;
       // Places in the game's units; what a handler throws stops the game, as a tap's does.
@@ -2099,6 +2233,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           if (o === null || typeof o !== 'object' || typeof o.data !== 'function')
             throw invalid('source takes a sprite and { data, ghost }');
           node.touchEnabled = true;
+          areaFromBounds(node);
           if (!tappable.includes(node)) tappable.push(node);
           return made.source({ node, data: o.data, ...(o.ghost === undefined ? {} : { ghost: o.ghost }) });
         },

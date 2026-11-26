@@ -1,0 +1,4 @@
+# Audio
+
+- [synthesized-audio](../cards/audio/synthesized-audio.txt) · play play3d engine web · Sounds made in code, mixed with cues and a limiter.
+- [rhythm-clock](../cards/audio/rhythm-clock.txt) · engine web play · The clock of a rhythm game, from the music voice and event time stamps.

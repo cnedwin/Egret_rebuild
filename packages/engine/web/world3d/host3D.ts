@@ -2,6 +2,7 @@
 // Minimal browser host for applications whose only surface is a world3d
 // canvas, plus an animation-frame loop feeding the explicit Engine clock.
 import type { Disposable, HostAdapter } from '@egret/contracts';
+import { EgretError } from '@egret/runtime';
 import { World3DError } from '../../rendering/world3d/core3D.js';
 
 /**
@@ -39,18 +40,26 @@ export function startWorld3DLoop(engine: World3DLoopSource, onError?: (cause: un
   let request = 0,
     stopped = false,
     previous: number | undefined;
+  const reanchor = (): void => {
+    engine.clock.pause();
+    engine.clock.resume();
+  };
   const frame = (milliseconds: number): void => {
     if (stopped) return;
     request = requestAnimationFrame(frame);
     const seconds = milliseconds / 1000;
     try {
-      if (previous !== undefined && seconds - previous > engine.clock.maxDeltaSeconds) {
-        // Resuming discards the old anchor, so this sample dispatches no tick.
-        engine.clock.pause();
-        engine.clock.resume();
+      if (previous !== undefined && seconds - previous > engine.clock.maxDeltaSeconds) reanchor();
+      try {
+        engine.advanceTime(seconds);
+      } catch (cause) {
+        // A restarted loop has no previous RAF timestamp. The Engine refuses an oversized first
+        // sample before ticking, so only that refusal can be retried against a fresh anchor.
+        if (previous !== undefined || !(cause instanceof EgretError) || cause.code !== 'CLOCK_DELTA_LIMIT') throw cause;
+        reanchor();
+        engine.advanceTime(seconds);
       }
       previous = seconds;
-      engine.advanceTime(seconds);
     } catch (cause) {
       stopped = true;
       cancelAnimationFrame(request);

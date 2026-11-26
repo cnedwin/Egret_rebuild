@@ -1297,6 +1297,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
   "packages/engine/web/CanvasKitFontSetProvider.ts",
   "packages/engine/dist/web/CanvasKitFontSetProvider.js",
   "packages/engine/dist/web/CanvasKitFontSetProvider.d.ts",
+  "packages/engine/web/CanvasParagraphProvider.ts",
+  "packages/engine/dist/web/CanvasParagraphProvider.js",
+  "packages/engine/dist/web/CanvasParagraphProvider.d.ts",
+  "packages/engine/web/ParagraphProviderChoice.ts",
+  "packages/engine/dist/web/ParagraphProviderChoice.js",
+  "packages/engine/dist/web/ParagraphProviderChoice.d.ts",
   "packages/engine/src/fontContentTypes.ts",
   "packages/engine/dist/fontContentTypes.js",
   "packages/engine/dist/fontContentTypes.d.ts",
@@ -1328,8 +1334,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       'dist/keyboardInput.js','dist/keyboardInput.d.ts','dist/keyboardInputTypes.js','dist/keyboardInputTypes.d.ts',
       'dist/input.js','dist/input.d.ts','dist/web/BrowserKeyboardInput.js','dist/web/BrowserKeyboardInput.d.ts','dist/web/keyboard.js','dist/web/keyboard.d.ts',
     ];
-    // Text input: the same inert copies of its two modules, so that its exact graph is checked.
-    const textInputGraphFiles=['web/BrowserTextInput.ts','web/textInput.ts','dist/web/BrowserTextInput.js','dist/web/BrowserTextInput.d.ts','dist/web/textInput.js','dist/web/textInput.d.ts'];
+    // Text input: the same inert copies of its modules and of the WeChat keyboard input, so that their exact graph is checked.
+    const textInputGraphFiles=['web/BrowserTextInput.ts','web/textInput.ts','dist/web/BrowserTextInput.js','dist/web/BrowserTextInput.d.ts','dist/web/textInput.js','dist/web/textInput.d.ts','web/WechatKeyboardTextInput.ts','web/wechatTextInput.ts','dist/web/WechatKeyboardTextInput.js','dist/web/WechatKeyboardTextInput.d.ts','dist/web/wechatTextInput.js','dist/web/wechatTextInput.d.ts'];
     // Hover and wheel: inert copies of its five modules and their build output, for the same reason.
     const hoverGraphFiles=['src/hover.ts','src/hoverInput.ts','src/hoverInputTypes.ts','web/hover.ts','web/BrowserHoverInput.ts',
       'dist/hover.js','dist/hover.d.ts','dist/hoverInput.js','dist/hoverInput.d.ts','dist/hoverInputTypes.js','dist/hoverInputTypes.d.ts',

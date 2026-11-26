@@ -1,0 +1,44 @@
+---
+id: pixel-strips
+title: Pixels that change every frame, as strips of textureFromPixels
+applies: [engine, web]
+triggers: [textureFromPixels, "pixel buffer", "falling sand", "cellular automaton", "dynamic texture", "update texture", "texture every frame", ASSET_LEASE_RELEASED, "lease released", "Bitmap textureLease", "像素缓冲", "落沙", "每帧更新贴图", "动态贴图", "租约已释放"]
+local: [createBoardView, STRIP, upload, forget]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: SandScroll/src/view/board.mjs, line: 105, commit: b218a4b0746d0108e7a0b0cd5aa8a639d7d1bd4b, pin: 450bb9eb62fec9d3032b35766817844adc6eba33 }
+  - { repo: cnedwin/PortedGamesEgret, path: SandScroll/src/view/play.mjs, line: 225, commit: b218a4b0746d0108e7a0b0cd5aa8a639d7d1bd4b, pin: 450bb9eb62fec9d3032b35766817844adc6eba33 }
+  - { repo: cnedwin/PortedGamesEgret, path: SandScroll/ENGINE-NOTES.md, line: 29, commit: b218a4b0746d0108e7a0b0cd5aa8a639d7d1bd4b, pin: 450bb9eb62fec9d3032b35766817844adc6eba33 }
+  - { repo: cnedwin/PortedGamesEgret, path: SandScroll/ENGINE-NOTES.md, line: 22, commit: b218a4b0746d0108e7a0b0cd5aa8a639d7d1bd4b, pin: 450bb9eb62fec9d3032b35766817844adc6eba33 }
+engine: 450bb9eb62fec9d3032b35766817844adc6eba33
+---
+
+# Pixels that change every frame, as strips of textureFromPixels
+
+A 2D `Texture` cannot be changed: each `game.textureFromPixels(w, h, pixels)` is a new texture and a new upload. For a picture that changes a little every frame (falling sand, a paint layer, a tile map being dug), cut it into strips, give each strip its own `Bitmap`, and make again only the strips that changed. Sand Scroll draws a 200 × 300 tray as fifteen 200 × 20 strips and sends two or three a frame.
+
+```js
+const strips = [];
+for (let k = 0; k < rows / STRIP; k++) {
+  const lease = await game.textureFromPixels(cols, STRIP, pixels.subarray(k * STRIP * cols * 4, (k + 1) * STRIP * cols * 4));
+  strips.push({ bitmap: root.addChild(scope.use(new Bitmap(lease))), lease, dirty: false, busy: false });
+  strips[k].bitmap.y = k * STRIP;
+}
+async function upload(k) {                       // call for each dirty strip that is not busy
+  const strip = strips[k];
+  strip.busy = true; strip.dirty = false;
+  const lease = await game.textureFromPixels(cols, STRIP, pixels.subarray(/* the strip's rows */));
+  const old = strip.lease;
+  strip.bitmap.textureLease = strip.lease = lease; // swap first …
+  old.release();                                   // … then let the old one go
+  strip.busy = false;
+}
+```
+
+Rules:
+
+- Swap the bitmap to the new lease before releasing the old one. A lease released while any `Bitmap` still holds it, even a hidden one, fails the next frame with `ASSET_LEASE_RELEASED` and stops the loop; `release()` itself does not complain.
+- When textures are shared (one per game piece, shown in a dish, in the air and as a shadow), release a texture only when no piece and no bitmap uses it.
+- One upload in flight per strip; a strip changed meanwhile is sent on a later frame.
+- The default 2D material samples nearest, so pixels stay sharp when the bitmap is scaled up.
+
+Learnt from Sand Scroll (ENGINE-NOTES 3, 4).

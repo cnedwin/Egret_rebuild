@@ -218,9 +218,11 @@ test("SF06 a script plays in the stage's own units, with the names a game asks i
 });
 
 // Frozen browser observations exercise the real runner without starting a browser or measuring a device.
-function observedBrowser() {
+function observedBrowser({ soundsStarted = 2, loadError } = {}) {
   const listeners = new Map();
+  const calls = { navigation: 0, click: 0, closed: 0 };
   let route,
+    openedUrl,
     frames = 0,
     pictures = 0;
   const canvas = { x: 0, y: 0, w: 960, h: 640, pixelWidth: 960, pixelHeight: 640 };
@@ -234,7 +236,11 @@ function observedBrowser() {
       route = handler;
     },
     async addInitScript() {},
-    async goto() {},
+    async goto(address) {
+      calls.navigation++;
+      if (loadError) throw loadError;
+      openedUrl = address;
+    },
     async waitForTimeout(milliseconds) {
       frames += milliseconds / 20;
       await new Promise(resolve => setTimeout(resolve, 1));
@@ -245,7 +251,7 @@ function observedBrowser() {
     async evaluate(read) {
       return structuredClone(
         runInNewContext('(' + read + ')()', {
-          window: { __verify: { frames, audioContexts: 1, soundsStarted: 2, rejections: [] } },
+          window: { __verify: { frames, audioContexts: 1, soundsStarted, rejections: [] } },
           document: {
             querySelectorAll: () => [
               {
@@ -258,7 +264,14 @@ function observedBrowser() {
         })
       );
     },
-    mouse: { async click() {}, async move() {}, async down() {}, async up() {} },
+    mouse: {
+      async click() {
+        calls.click++;
+      },
+      async move() {},
+      async down() {},
+      async up() {}
+    },
     keyboard: { async press() {}, async down() {}, async up() {} }
   };
   return {
@@ -268,13 +281,19 @@ function observedBrowser() {
           async newPage() {
             return tab;
           },
-          async close() {}
+          async close() {
+            calls.closed++;
+          }
         };
       }
     },
     PNG: { sync: { read: bytes => bytes } },
     file: fileURLToPath(new URL('../examples/play/index.html', import.meta.url)),
     out: '.',
+    calls,
+    get openedUrl() {
+      return openedUrl;
+    },
     failRequest(url) {
       listeners.get('requestfailed')({ url: () => url, failure: () => ({ errorText: 'net::ERR_ABORTED' }) });
     },
@@ -311,4 +330,113 @@ test('SF08 external requests from the scripted run fail the final report', async
   assert.deepEqual(refused.checks.noExternalRequests.externalRequests, ['https://example.invalid/late']);
   assert.equal(refused.checks.noExternalRequests.pass, false);
   assert.equal(refused.pass, false);
+});
+
+test('script-only verification starts once and evaluates ordered gameplay checkpoints without blind input', async () => {
+  const browser = observedBrowser({ soundsStarted: 0 });
+  const report = await verifyGame({
+    ...browser,
+    scriptOnly: true,
+    script: {
+      async default(player) {
+        await player.tap(480, 320);
+        player.checkpoint('first-action');
+        await player.tap(480, 480);
+        player.checkpoint('restart');
+      }
+    }
+  });
+  assert.equal(report.pass, true);
+  assert.deepEqual(browser.calls, { navigation: 1, click: 0, closed: 1 });
+  assert.deepEqual(report.checks.played.checkpoints, ['first-action', 'restart']);
+  assert.equal('makesSound' in report.checks, false);
+  assert.equal('keepsRunning' in report.checks, false);
+});
+
+test('script-only failures retain the checkpoints reached and an actionable diagnostic', async () => {
+  const failed = await verifyGame({
+    ...observedBrowser(),
+    scriptOnly: true,
+    script: {
+      async default(player) {
+        player.checkpoint('ready');
+        throw Object.assign(new Error('Missing item'), { code: 'PLAY_ITEM_MISSING', details: { item: 'lamp' } });
+      }
+    }
+  });
+  assert.equal(failed.pass, false);
+  assert.deepEqual(failed.checks.played.checkpoints, ['ready']);
+  assert.deepEqual(failed.checks.played.diagnostic, {
+    code: 'PLAY_ITEM_MISSING',
+    message: 'Missing item',
+    details: { item: 'lamp' }
+  });
+});
+
+test('script-only launch and navigation failures report startup and never play', async () => {
+  const browser = observedBrowser({ loadError: new Error('navigation timed out') });
+  const script = { default: () => assert.fail('gameplay must start on a loaded page') };
+  const navigation = await verifyGame({ ...browser, scriptOnly: true, script });
+  assert.equal(navigation.pass, false);
+  assert.deepEqual(navigation.checks.played.diagnostic, {
+    code: 'VERIFY_GAME_STARTUP',
+    message: 'navigation timed out'
+  });
+  assert.equal(browser.calls.closed, 1);
+
+  const launch = await verifyGame({
+    ...browser,
+    scriptOnly: true,
+    script,
+    chromium: {
+      async launch() {
+        throw new Error('missing browser executable');
+      }
+    }
+  });
+  assert.equal(launch.pass, false);
+  assert.deepEqual(launch.checks.played.diagnostic, {
+    code: 'VERIFY_GAME_STARTUP',
+    message: 'missing browser executable'
+  });
+});
+
+test('script-only serving is confined to the staged entry directory', async () => {
+  const browser = observedBrowser();
+  const report = await verifyGame({
+    ...browser,
+    scriptOnly: true,
+    script: {
+      async default(player) {
+        assert.equal((await fetch(browser.openedUrl)).status, 200);
+        assert.equal((await fetch(new URL('/package.json', browser.openedUrl))).status, 404);
+        assert.equal((await fetch(new URL('/..%5c..%5cpackage.json', browser.openedUrl))).status, 404);
+        assert.equal((await fetch(new URL('/%', browser.openedUrl))).status, 404);
+        await browser.externalRequest('https://example.invalid/unexpected');
+        player.checkpoint('observed');
+      }
+    }
+  });
+  assert.equal(report.checks.played.pass, true);
+  assert.deepEqual(report.checks.played.checkpoints, ['observed']);
+  assert.equal(report.checks.noExternalRequests.pass, false);
+  assert.equal(report.pass, false);
+  await assert.rejects(fetch(browser.openedUrl));
+});
+
+test('script-only serving can restrict staged siblings to the build manifest', async () => {
+  const browser = observedBrowser();
+  const report = await verifyGame({
+    ...browser,
+    scriptOnly: true,
+    filePaths: ['index.html', 'memory.mjs'],
+    script: {
+      async default() {
+        assert.equal((await fetch(browser.openedUrl)).status, 200);
+        assert.equal((await fetch(new URL('memory.mjs', browser.openedUrl))).status, 200);
+        assert.equal((await fetch(new URL('breakout.mjs', browser.openedUrl))).status, 404);
+      }
+    }
+  });
+  assert.equal(report.pass, true, report.checks.played.diagnostic?.message);
 });

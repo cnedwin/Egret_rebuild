@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "World3D clock restarts after a long stop",
+    "body": "The World3D display loop re-anchors an oversized first frame after restarting on the same Engine, preserving elapsed gameplay time and resuming on the next frame."
+  },
+  "zh": {
+    "title": "修复 World3D 长时间停止后的时钟重启",
+    "body": "在同一引擎上重启 World3D 显示循环时，首帧间隔超限会重新设定时钟锚点，保留已累计的游戏时间并在下一帧恢复更新。"
+  }
+}

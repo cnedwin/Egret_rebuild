@@ -24,11 +24,20 @@
 
 网页有、小游戏没有的其他名字（`XMLHttpRequest`、`Worker`、`OffscreenCanvas`、`indexedDB` 等）在游戏里都绑定为空。游戏要用其中一个，在替身里就会失败，和在手机上一样，不会只在手机上才出错。
 
+这些名字包括画布 2D 绘制的类（`CanvasRenderingContext2D`、`TextMetrics`、`CanvasGradient`）、`WebAssembly`、`FontFace`、`CSS` 和网页的文本框。小游戏用 `wx.createCanvas()` 给出 2D 上下文，但没有可以引用的类名，并用 `WXWebAssembly` 代替 `WebAssembly`。所以引擎的标签向画布要 2D 上下文，检查它能否测量和填充文字，而不是查找这个类。
+
+## 文字
+
+标签（`game.text`、`createLabel`）画在 2D 画布上。段落使用不需要 WebAssembly 的画布提供者：在小游戏里，`chooseParagraphProvider` 会选它。CanvasKit 需要 WebAssembly，体积也超过 4 MB 主包，因此不会加载。见[不需要 WebAssembly 的提供者](readonly-paragraph-sdk.md#不需要-webassembly-的提供者)。游戏自带的字体用 `wx.loadFont` 注册，使用它返回的字体族名。不注册时用手机自带的字体。
+
+网页的文本框在小游戏里显示不出来。`@egret/engine/web/wechat-text-input` 的 `createWechatTextInput` 给出与 `createBrowserTextInput` 相同的对象，文字输入到微信的键盘里。见[在微信小游戏里输入文字](text-input.md#在微信小游戏里)。
+
 ## 导出
 
 ```sh
 node tools/wechat/export-wechat.mjs --esbuild <已安装的 esbuild> --game <游戏目录> --out <新目录> \
-  [--appid <AppID>] [--orientation portrait|landscape] [--playwright <已安装的 Playwright index.mjs>]
+  [--appid <AppID>] [--orientation portrait|landscape] [--playwright <已安装的 Playwright index.mjs>] \
+  [--subpackage <名字>=<游戏里的目录> ...]
 ```
 
 - 游戏的 `index.html` 提供导入映射，说明引擎每个模块在哪里。它也提供游戏要查找的元素。入口默认是 `src/main.mjs`，可用 `--entry` 指定别的。
@@ -36,7 +45,8 @@ node tools/wechat/export-wechat.mjs --esbuild <已安装的 esbuild> --game <游
 - `game.json` 设定方向、隐藏状态栏，并申请 iOS 高性能模式（`iOSHighPerformance`）。`project.config.json` 把它设为游戏项目，AppID 用给定的值，没给就用 `touristappid`。
 - 游戏的其他文件，微信接受的类型会被复制。会被拒绝的文件列出来，不放进包里。
 - 部分手机上的微信不能解码 WebP。给了 `--playwright` 时，每个 `.webp` 由无头 Chromium 重新写一遍：像素全部不透明的写成质量 0.9 的 JPEG，否则写成 PNG。适配器会按新名字找到它。不给这个选项时，导出会列出 WebP 文件。
-- 报告给出 `game.js` 和整个包的大小，对照微信的上限：主包 4 MB，总共 30 MB。
+- `--subpackage art=assets/art` 把游戏里的一个目录做成分包，游戏调用 `wx.loadSubpackage({ name: 'art' })` 时才下载。`game.json` 里写上它，`root` 是这个目录。目录里没有自己的 `game.js` 时，会补一个什么也不做的入口，因为微信下载完分包后会运行它的入口。名字只能用字母、数字、`_` 和 `-`。装着游戏代码的目录（`src`）、游戏以外的目录，以及在另一个分包里面的目录都会被拒绝。分包加载之前，它的文件并不存在：这时请求的图片会失败，而且失败会被记住，所以要在加载之后再请求。
+- 报告给出 `game.js`、主包（`mainPackageBytes`）、每个分包以及全部的大小，对照微信的上限：主包 4 MB，总共 30 MB。超出任一上限时导出失败。
 
 ## 检查
 
@@ -45,13 +55,15 @@ node tools/wechat/check-minigame.mjs <已安装的 Playwright index.mjs> <小游
   [--size 390x844] [--ratio 2] [--wait 8] [--tap x,y ...] [--then-wait 3]
 ```
 
-替身只给游戏小游戏所给的东西，不多给。`GameGlobal` 里有 `wx`、控制台、计时器和帧回调。`wx.createCanvas` 先给屏幕，之后给屏幕外的画布。文件从目录里读，存储放在内存里。触摸来自鼠标，`--tap` 点击屏幕。报告包括：
+替身只给游戏小游戏所给的东西，不多给。`GameGlobal` 里有 `wx`、控制台、计时器和帧回调，`wx` 也和手机上一样是全局名字。手机小游戏没有的名字在 `game.js` 运行前就从页面上拿掉：`WebAssembly`、2D 绘制的类、`FontFace`、`FontFaceSet` 和 `CSS`。`wx.loadSubpackage` 下载 `game.json` 里写着的分包：先报告进度，再运行分包的 `game.js`，之后它的文件才存在。`wx.createCanvas` 先给屏幕，之后给屏幕外的画布。文件从目录里读，存储放在内存里。触摸来自鼠标，`--tap` 点击屏幕。报告包括：
 
 - 游戏是否停止；
 - 控制台上的错误；
 - 调用过的 `wx` 接口和写入的存储键；
 - 截图有多少种颜色；
 - 有没有元素绕过适配器进入真正的网页。
+
+`wx.showKeyboard`、`hideKeyboard`、`updateKeyboard` 和键盘的事件也都有。页面的 `window.__keyboard` 像玩家一样往键盘里输入、按确认键和收起键盘。
 
 `ok` 要求没有失败、没有错误、颜色多于八种，并且没有元素泄漏。
 
@@ -83,6 +95,8 @@ node tools/wechat/check-minigame.mjs <已安装的 Playwright index.mjs> <小游
 - 帧下面画出的背景，以及绑回去的游戏 WebGL 状态；
 - 一个小游戏目录的导出，并在这个上下文里运行。
 
+`examples/minigame/verify.mjs` 导出一个探测游戏，并在替身里运行。游戏里上面这些名字都不存在。2026 年 11 月 26 日，探测游戏的标签画出了三行字。段落因为没有 `WebAssembly` 而得到画布提供者，换成三行并画到了屏幕上；在单词 “lantern” 里点一下，找到了对应的字母。网页的文本框在那里失败（`setSelectionRange` 不是函数）；微信键盘输入接收了输入的文字，在按确认键和收起键盘时提交，也能取消。探测游戏导出时带了一个分包 `art/`：调用 `wx.loadSubpackage` 之前它的图片不存在，调用后报告了 50 和 100 的进度，之后图片加载成功。这项检查还发现，小游戏里包内的图片原本都加载不了：适配器给出的响应没有引擎读取用的 `body`。现在已经补上。
+
 2026 年 11 月 22 日，一个按这种方式导出的移植 2D 游戏在替身里试玩过，环境是无头 Chromium 加软件 WebGL2。游戏的图片共 0.54 MB，场景是 CSS 背景。WebP 改写成 JPEG 后，整个包 1.75 MB。标题画面在画布下显示出了场景；点一下进入选夜界面，再点一下开始第一夜。没有报错，也没有元素泄漏。
 
 **没有检查的。** 没有运行过微信本身：开发者工具、手机和审核都没有。替身是浏览器，它的 JavaScript 引擎、WebGL 和限制都是浏览器的。尤其是安卓微信上的 WebGL2、iOS 高性能模式下的 WebGL2、各种格式能否解码，以及在手机上的速度，都还没有确认。
@@ -90,5 +104,5 @@ node tools/wechat/check-minigame.mjs <已安装的 Playwright index.mjs> <小游
 **限制。**
 
 - 游戏显示在画布上面的 HTML（菜单、文本框、浮层）不会画出来。只画舞台下面的背景。
-- 屏幕画布铺满窗口。形状不同的舞台会被拉伸，除非游戏用 `fit: 'expand'` 适配（见[把舞台适配到屏幕](screen-fit.md)），它按设计尺寸的缩放比铺满窗口；适配器把微信的 `safeArea` 当作页面的 insets 报告。两种情况下触摸位置都与画面一致。
+- 屏幕画布铺满窗口。形状不同的舞台会被拉伸，除非游戏用 `fit: 'expand'` 适配（见[把舞台适配到屏幕](screen-fit.md)），它按设计尺寸的缩放比铺满窗口；适配器把微信的 `safeArea` 当作页面的 insets 报告。两种情况下触摸位置都与画面一致。用 `expand` 时，`game.width` 和 `game.height` 仍是设计尺寸；`game.screen` 是整个窗口，它变化时会调用 `arrange`。在替身里以 390 × 844 运行，720 × 1280 的设计得到 720 × 1558 的舞台，`game.screen` 从 y = −139 开始；在 `arrange` 里按 `game.screen` 画的背景铺到了最上一行和最下一行。`game.pointer` 用设计单位，`localToGlobal` 用舞台单位：`game.toStage` 和 `game.fromStage` 在两者之间换算。
 - 小游戏没有 WebGPU。必须用 WebGPU 的游戏启动不了。

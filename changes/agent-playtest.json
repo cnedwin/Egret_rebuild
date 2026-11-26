@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Agent playtest, project repair and QR preview",
+    "body": "Check the first meaningful action and restart in verify-game, apply a scoped project transaction to a failed revision and preview the same passing build by QR on a phone."
+  },
+  "zh": {
+    "title": "智能体试玩、工程修复与扫码预览",
+    "body": "通过 verify-game 核对首次有效操作与重开，用有范围约束的事务修复失败修订，并在手机上扫码试玩通过检查的同一构建。"
+  }
+}

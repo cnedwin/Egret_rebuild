@@ -24,7 +24,7 @@ cancel() discards provisional composition and retains already committed ordinary
 
 ## Managed UI and rendering
 
-Create a control with engine, scope, cache, mode and a style containing the paired fontSet key/families, fontSize, locale, direction and fillColor. Optional lineHeight, textAlign, backgroundColor, padding, minHeight and visibleLines describe its readonly presentation. The default readonly limit is one line for single-line controls and six for multiline controls; the native element edits the complete admitted source. The control exposes content for a normal leaf and prepare(context) for an existing virtual source. Natural paragraph height drives layout, within the configured minimum.
+Create a control with engine, scope, cache, mode and a style containing the paired fontSet key/families, fontSize, locale, direction and fillColor. The cache is the Engine's one paragraph cache, shared with its other paragraphs: an asset manager refuses a second (`PARAGRAPH_CACHE_ALREADY_CREATED`). Optional lineHeight, textAlign, backgroundColor, padding, minHeight and visibleLines describe its readonly presentation. The default readonly limit is one line for single-line controls and six for multiline controls; the native element edits the complete admitted source. The control exposes content for a normal leaf and prepare(context) for an existing virtual source. Natural paragraph height drives layout, within the configured minimum.
 
 Only value/style changes advance content.revision. Selection and provisional composition do not reraster text. An onChange callback stages a new existing tree/source revision. Run the normal root.prepare()/commit(), then bridge.sync(), then the application's existing shared capture/render path. onInvalidate requests that same path when native/canvas visibility changes; it never starts a loop. Callback errors preserve the committed model and close native ownership; applications must retry their UI publication explicitly.
 
@@ -33,6 +33,38 @@ The native bridge authenticates the committed leaf ID or virtual list ID/stable 
 An active virtual editor borrows the existing row-retention accounting and caps. Its private token retains stable row identity while allowing its readonly content, font metrics, width and density to republish; existing public focus/composition tokens continue to lock their original binding. A row cannot be deleted under either token; finish/dispose the editor before deleting the key. Fully clipping a row ends native editing and releases its token. Scope, root or Engine closure removes the native element, listeners/observers, provisional state and row/font leases; repeated cleanup is harmless.
 
 ## Fonts and placement
+
+**From a font manifest to an editor.** `style.fontSet` takes the set `createBrowserEditorFontProvider` loads: its key is taken, and its families unless `fontFamilies` is given beside it. With a key alone, `fontFamilies` is needed, as before. The steps, with the roots as the content build names them:
+
+```js
+import { admitResourceManifest } from '@egret/contracts/resources';
+import { createParagraphCache } from '@egret/engine/paragraph';
+import { createUiTextEditor } from '@egret/engine/ui/editing';
+import { createBrowserEditorFontProvider, createBrowserTextEditor } from '@egret/engine/web/editing';
+import { createCanvasKitFontSetProvider } from '@egret/engine/web/paragraph';
+import { createManifestFontContentLoader } from '@egret/engine/web/resources';
+
+// 1. The manifest the content build wrote, admitted, and a loader of its fonts.
+const manifest = admitResourceManifest(await (await fetch('build/manifest.json')).json());
+if (!manifest.ok) throw Error('manifest refused');
+const transport = createManifestFontContentLoader(engine, manifest.value, { baseUrl: new URL('build/', location.href).href });
+// 2. One paragraph provider and one paragraph cache for the Engine.
+const paragraphs = createCanvasKitFontSetProvider({ canvasKit: await CanvasKitInit({ locateFile }), buildIdentity });
+const cache = createParagraphCache(engine.assets, { provider: paragraphs });
+// 3. The editor's fonts: the same bytes for the paragraph and for the native field.
+const fonts = createBrowserEditorFontProvider({ engine, scope, paragraphProvider: paragraphs });
+const set = await fonts.load(scope, transport.loader, ['fonts/noto-sans', 'fonts/noto-sans-sc']);
+// 4. The editor takes the set itself: its key, and its families.
+const editor = createUiTextEditor({
+  engine, scope, cache, mode: 'single-line', value: '',
+  style: { fontSet: set, fontSize: 20, locale: 'zh', direction: 'ltr', fillColor: 0xffffff }
+});
+// 5. Its leaf in a UI root, and its native field over the canvas.
+const binding = createBrowserTextEditor({ editor, root, target, canvas, fonts: set, logicalWidth: 720, logicalHeight: 1280 });
+```
+
+[`examples/text-editing`](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md) runs these steps with a checked manifest and two editors.
+
 
 createBrowserEditorFontProvider loads the same immutable FontContentLoader roots through the existing paragraph font-set provider and resource groups. It creates binary FontFace registrations under generated CSS aliases, waits for actual load completion and returns a genuine handle whose key is the paragraph font-set key. Readiness in CanvasKit alone is insufficient. No network font URL or second asset cache is used. Retired sets cancel active native users before their CSS registrations are removed. Failed/cancelled candidates leave the previous handle usable. setFontSet accepts a ready paired handle outside composition; callers coordinate multiple fields and retire prior sets after their readonly handoff.
 

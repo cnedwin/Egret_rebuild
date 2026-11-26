@@ -11,7 +11,7 @@
 - Build menus, shops, settings and results as [screens described as data](guide/cards/input/game-screens.txt): named parts bound to the state, red dots, questions, key hints and loading, placed in the safe part of any screen and tested by name. Holds, swipes, pinches and dragging into slots are [gestures](guide/cards/input/gestures.txt).
 - [Investigate an error](guide/cards/errors/read-engine-errors.txt) using the exact error code, cause and what the player did. For [2D geometry limits and a black screen after a glow](guide/cards/perf/geometry-budget-2d.txt), check the action frame and the scenery already attached to the stage.
 
-Browse the [guide index](guide/index.txt) or, in a checkout, run `node tools/egret-guide.mjs <symptom, API name or error code>`. Use `--card <id>` to read one card. Use the online entry to follow links from a standalone download <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
+Browse the [guide index](guide/index.txt) or, in a checkout, run `node tools/egret-guide.mjs <symptom, API name or error code>`. Use `--card <id>` to read one card. In a game folder with an engine copy, run `node vendor/egret.mjs guide <question>`, or `node vendor/egret.mjs explain <ERROR_CODE>` for an error. Use the online entry to follow links from a standalone download <https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt>.
 
 If the brief sets a source-size limit and you have file tools, count the final UTF-8 bytes. In a checkout, `node -p "require('node:fs').statSync('main.mjs').size"` reports the bytes for that file. Include each file covered by the limit. If over, trim secondary decoration and verify the first action again.
 
@@ -100,13 +100,14 @@ Text: `label.text = 'Score ' + n` changes it, and `label.color` and `label.size`
 | `game.keys.down('space', 'pad:a')` | A gamepad's buttons are keys named `pad:a`, `pad:b`, `pad:x`, `pad:y`, `pad:l1`, `pad:r1`, `pad:l2`, `pad:r2`, `pad:select`, `pad:start` and `pad:up` … `pad:right` |
 | `game.touchStick()` | A stick on the glass, bottom left unless `{ x, y, radius }`; it counts in `keys.axis()`. It and the buttons below appear once a finger touches the stage, or at once with `always: true`; a mouse does not use them. Make them in `setup`: a restart takes them away |
 | `game.touchButton('A', { x, y, key: 'space' })` | A round button on the glass that holds that key while a finger is on it |
-| `game.pointer.x`, `game.pointer.y` | Where the mouse or finger is, on the stage; it follows the mouse with no button held |
+| `game.pointer.x`, `game.pointer.y` | Where the mouse or finger is, in the game's units; it follows the mouse with no button held |
+| `game.toStage(x, y)`, `game.fromStage(x, y)` | A place in the game's units as a place on the stage (as `localToGlobal` gives it), and back; they differ with `fit: 'expand'` |
 | `game.pointer.down`, `.pressed`, `.released` | Whether it is down, went down, or came up. A press on a button or on a sprite with `onTap` is theirs and is not `pressed` |
 | `game.pointer.swipe` | `'left'`, `'right'`, `'up'` or `'down'` in the update after a swipe, else `undefined` |
 | `game.pointer.over(sprite)` | Whether the pointer is over the sprite |
 | `game.pointer.dx`, `.dy`, `.wheel` | How far the mouse moved and the wheel turned since the last update: for looking about |
 | `game.pointer.lock()`, `game.pointer.unlock()`, `game.pointer.locked` | Hides the cursor and keeps the mouse to the game, for a first-person view. Call `lock` after a click; Escape gives the mouse back |
-| `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked; the one in front gets it |
+| `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked; the one in front gets it. A sprite drawn only by its children is hit by their bounds; `{ name: 'Start' }` also makes it a button a screen reader names |
 | `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | Long press, double tap, drag (`d.dx`, `d.dy`, `d.phase`), swipe and two-finger pinch (`scale`, `rotation`) on a sprite, in game units; returns its stop. A drag or long press is no tap |
 | `game.dragAndDrop()` | `.source(sprite, { data, ghost })`, `.target(sprite, { drop, accepts, hover })` and `.dragging`: a picture made by `ghost` follows the finger, and the innermost accepting target takes `data()` |
 
@@ -241,6 +242,8 @@ A thing has `x`, `y`, `z`, `rotationX`, `rotationY`, `rotationZ` (degrees), `sca
 ## Check a game
 
 In a checkout, `node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs]` runs the page in a headless browser, plays it blind with keys, clicks and drags, and reports whether it started without an error, drew, kept running, changed under input and made a sound. Run it after writing or changing a game, and read the three pictures it saves. For a 3D model made in code, `node tools/model-preview.mjs <absolute Playwright index.mjs> <model.mjs> <picture.png>` draws it from four sides; look at it after each change.
+
+For an editable game, use [`node tools/agent-playtest.mjs`](knowledge-base/en/docs/agent-guide.md#run-a-playtest-and-retry-a-project-edit) to check the first meaningful action and restart. Read the diagnostic before making a scoped project transaction, then retry the same scenario. Preview the passing build by QR on a phone.
 
 Blind play does not reach a win or a loss. The optional `play.mjs` plays the game as a person would, in the stage's own units, and reads the page by the colour at a place. It starts a new game, with what blind play saved forgotten. `player.until(test, label, seconds)` looks about every 0.12 seconds of real time until `test(look)` is true and fails after `seconds`, 20 unless given; `player.wait(seconds)` waits. What a game keeps on `window` (`window.state = state`) is read with `player.read(() => window.state.collected)`, so a script need not time its moves:
 

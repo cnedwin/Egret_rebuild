@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/CanvasParagraphProvider.ts",
+      "originRole": "First-party paragraph provider that lays out and draws with a canvas's 2D context, needing no WebAssembly, and its device-based choice beside CanvasKit; independently authored with AI assistance; line breaking and metrics follow CanvasKit's observed layout, compared in headless Chromium; no third-party code; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/ParagraphProviderChoice.ts",
+      "originRole": "First-party paragraph provider that lays out and draws with a canvas's 2D context, needing no WebAssembly, and its device-based choice beside CanvasKit; independently authored with AI assistance; line breaking and metrics follow CanvasKit's observed layout, compared in headless Chromium; no third-party code; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/paragraph-canvas.test.mjs",
+      "originRole": "First-party focused validation of the canvas paragraph provider and the provider choice through a genuine paragraph cache, with stand-in 2D contexts owned by the test; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/paragraph-choice.test.mjs",
+      "originRole": "First-party focused validation of the canvas paragraph provider and the provider choice through a genuine paragraph cache, with stand-in 2D contexts owned by the test; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-canvas/index.html",
+      "originRole": "First-party browser comparison of the canvas and CanvasKit paragraph providers with the same Noto fonts, in headless Chromium; independently authored with AI assistance; uses the caller's installed Playwright and the vendored fonts of the paragraph panel; Apache-2.0."
+    },
+    {
+      "path": "examples/paragraph-canvas/main.mjs",
+      "originRole": "First-party browser comparison of the canvas and CanvasKit paragraph providers with the same Noto fonts, in headless Chromium; independently authored with AI assistance; uses the caller's installed Playwright and the vendored fonts of the paragraph panel; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/paragraph-canvas/verify.mjs",
+      "originRole": "First-party browser comparison of the canvas and CanvasKit paragraph providers with the same Noto fonts, in headless Chromium; independently authored with AI assistance; uses the caller's installed Playwright and the vendored fonts of the paragraph panel; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/minigame/index.html",
+      "originRole": "First-party probe game exported as a WeChat mini game and run in the stand-in of tools/wechat/check-minigame.mjs, checking labels and paragraphs where a mini game lacks the 2D context classes and WebAssembly; independently authored with AI assistance; uses the caller's installed Playwright and esbuild; Apache-2.0."
+    },
+    {
+      "path": "examples/minigame/src/main.mjs",
+      "originRole": "First-party probe game exported as a WeChat mini game and run in the stand-in of tools/wechat/check-minigame.mjs, checking labels and paragraphs where a mini game lacks the 2D context classes and WebAssembly; independently authored with AI assistance; uses the caller's installed Playwright and esbuild; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/minigame/verify.mjs",
+      "originRole": "First-party probe game exported as a WeChat mini game and run in the stand-in of tools/wechat/check-minigame.mjs, checking labels and paragraphs where a mini game lacks the 2D context classes and WebAssembly; independently authored with AI assistance; uses the caller's installed Playwright and esbuild; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

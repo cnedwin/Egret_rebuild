@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Mini game subpackages, a stricter stand-in, and pictures that load in a mini game",
+    "body": "export-wechat.mjs takes --subpackage name=folder: game.json names the folder as a subpackage, it is given an entry script, and the report counts the main package (4 MB) apart from each subpackage and from the whole (30 MB). The stand-in of check-minigame.mjs takes WebAssembly, the 2D context classes, FontFace and CSS off the page, makes wx a global as on a phone, and downloads subpackages with wx.loadSubpackage, whose files are only there after. That check found that a picture of the package could not load in a mini game, as the adapter's responses had no body for the engine to read; they now have one."
+  },
+  "zh": {
+    "title": "小游戏分包、更严格的替身，以及小游戏里能加载的图片",
+    "body": "export-wechat.mjs 新增 --subpackage 名字=目录：game.json 里把该目录写成分包，并给它一个入口脚本；报告分别统计主包（上限 4 MB）、每个分包和全部（上限 30 MB）的大小。check-minigame.mjs 的替身把 WebAssembly、2D 上下文的类、FontFace 和 CSS 从页面上拿掉，像手机上一样让 wx 成为全局名字，并用 wx.loadSubpackage 下载分包，下载之后它的文件才存在。这项检查还发现，小游戏里包内的图片原本都加载不了：适配器给出的响应没有引擎读取用的 body。现在已经补上。"
+  }
+}

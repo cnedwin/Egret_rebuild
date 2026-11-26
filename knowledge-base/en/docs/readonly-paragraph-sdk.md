@@ -13,12 +13,14 @@ The optional request fields are `textAlign` and `maxLines`; a clamped result add
 | Entry | Public surface |
 | --- | --- |
 | `@egret/engine/paragraph` | `createParagraphCache(assets, options)`, `createParagraph(engine, scope, cache)` and paragraph types |
-| `@egret/engine/web/paragraph` | `createCanvasKitParagraphProvider(options)` and its host/module/font types |
+| `@egret/engine/web/paragraph` | `createCanvasKitParagraphProvider(options)` and its host/module/font types; `createCanvasParagraphProvider(options)`, which needs no WebAssembly; `chooseParagraphProvider(options)` |
 | `@egret/engine/ui` | Existing `createUiRoot`, plus `UiLeafContent` and `UiLeafPrepareContext` |
 
 The default Engine entry does not load a paragraph provider, Wasm or fonts. The runtime paragraph code is DOM/Node-free. The web adapter accepts an already initialized CanvasKit module and explicit font bytes; it performs no module loading, network access or system-font discovery.
 
-A genuine Engine admits only its own Scope and registered cache. One fixed explicit-line cache and one fixed paragraph cache may coexist on the same authentic `engine.assets`; each profile has one lifetime per manager. Creating another AssetManager does not grant access to an Engine. Display parentage does not transfer resource ownership.
+A genuine Engine admits only its own Scope and registered cache. One fixed explicit-line cache and one fixed paragraph cache may coexist on the same authentic `engine.assets`; each profile has one lifetime per manager.
+
+**One paragraph cache per asset manager.** Make it once for an Engine and pass the same cache to every paragraph, UI leaf and text editor. A second `createParagraphCache` on the same `engine.assets` is refused with `PARAGRAPH_CACHE_ALREADY_CREATED`, whose message says so. The text cache of labels follows the same rule (`TEXT_CACHE_ALREADY_CREATED`); a browser game makes that one for its labels. Creating another AssetManager does not grant access to an Engine. Display parentage does not transfer resource ownership.
 
 The application owns the provider and its backend module. The provider snapshots registered font bytes and derives an identity from the declared build/module and font identities. Caller-declared hashes are not independently verified by this synchronous adapter. Keep the provider's fonts immutable; a different registered font set requires a new provider and a new Engine/AssetManager lifetime for its paragraph cache. The cache borrows the provider and does not dispose it. After application-owned preparation work and cache/display borrowers have retired, the host explicitly disposes the provider. Engine shutdown owns Scope and AssetManager cleanup; native module/realm lifetime remains with the host.
 
@@ -135,3 +137,41 @@ Run `node examples/paragraph-panel/verify-browser.mjs <playwright-root> <new-out
 ## Styled readonly runs
 
 The optional [styled-run contract](paragraph-styled-runs.md) adds bounded font-family, size and foreground ranges through the same provider, cache and UI ownership. The original one-style profile above remains the compatibility baseline; the linked increment records current admission, cluster paint and synthetic-content limits.
+
+## A provider without WebAssembly
+
+`createCanvasParagraphProvider(options)` lays out and draws with a canvas's 2D context. It needs no WebAssembly and no font bytes: it uses the fonts the page has registered with `FontFace`, or the mini game with `wx.loadFont`, named by family. It takes the same requests and gives the same metrics and geometry as the CanvasKit provider, with the capabilities `styledRuns`, `textAlign`, `textGeometry` and `maxLines`.
+
+- `families` lists the families a request may name. A request naming another is refused with `PARAGRAPH_FONT_NOT_REGISTERED`. Any family is admitted when it is not given.
+- `buildIdentity` names the fonts, so that the provider's identity changes when they do.
+- `createCanvas` returns a canvas with `getContext('2d')`. By default the provider uses `document.createElement('canvas')`, which a mini game's adapter makes from `wx.createCanvas()`.
+
+It lays text out as CanvasKit does:
+
+- English breaks at spaces and after `-` and `/`. Chinese and Japanese break between characters. A closing mark such as `，` does not start a line, and an opening mark such as `（` does not end one. A word wider than the line is cut between letters.
+- A wide character is measured alone, as CanvasKit sets it.
+- With `lineHeight`, each line takes that height, its extra room shared above and below the first family's font. Without it, a line is as tall as the tallest font drawn on it.
+- A line cap takes characters off the end of the last line until an ellipsis fits after them. The ellipsis is set in the font of the last character kept, and that character's box covers it.
+
+Right-to-left text (`direction: 'rtl'`, or a character of a right-to-left script) is refused with `PARAGRAPH_FEATURE_UNSUPPORTED` rather than drawn in the wrong order.
+
+**Compared with CanvasKit.** `examples/paragraph-canvas/verify.mjs` lays one styled paragraph of Chinese and English out with both providers in headless Chromium, with the same Noto Sans and Noto Sans CJK SC fonts. It does so three times: with a minimum line height, centred at natural line heights, and capped at three lines. On November 26, 2026 each pair had the same lines, character boxes and selections within 0.000 px, and the same offset for a hit at every character. On a phone, a canvas may give `measureText` only a width. The provider then estimates a font's ascent and descent, and line heights may differ from CanvasKit's by a few pixels. No phone has been run.
+
+`chooseParagraphProvider(options)` creates the provider a device can afford and returns `{ backend, reason, provider, cause? }`:
+
+```js
+import { chooseParagraphProvider } from '@egret/engine/web/paragraph';
+
+const { provider, backend, reason } = await chooseParagraphProvider({
+  // Called only when CanvasKit is chosen.
+  loadCanvasKit: async () => ({ canvasKit: await CanvasKitInit({ locateFile }), fonts, buildIdentity }),
+  canvas: { families: ['Noto Sans', 'Noto Sans CJK SC'] }
+});
+const cache = createParagraphCache(engine.assets, { provider });
+```
+
+- With no `WebAssembly` global, in a WeChat mini game, or with `navigator.deviceMemory` at or below `lowMemory` (2 by default), it gives the canvas provider. `loadCanvasKit` is not called, so neither the module nor the font bytes are downloaded.
+- Otherwise it loads CanvasKit. If loading or starting it fails, it gives the canvas provider, with `reason: 'load-failed'` and the error as `cause`.
+- `prefer: 'canvas'` or `prefer: 'canvaskit'` decides instead. CanvasKit asked for by name throws when it fails. `device` states what is known of the device in place of what the global object says.
+
+With the canvas provider, register the fonts before the first paragraph is prepared.

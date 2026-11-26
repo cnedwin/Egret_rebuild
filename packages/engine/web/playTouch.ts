@@ -402,7 +402,9 @@ export function createPlayTouch(
       return owned;
     },
     sync(): void {
-      if (active !== undefined && !attached(active.stick)) finishFloating('owner');
+      if (active === undefined) return;
+      if (!attached(active.stick)) finishFloating('owner');
+      else if (!port.allowFloating()) finishFloating('suspended');
     },
     cancel(): void {
       // A window can lose focus before the browser sends the last pointer event.

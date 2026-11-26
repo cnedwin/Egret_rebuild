@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 47 entries, 1448 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1470 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1197,9 +1197,20 @@ For which entry to import from, see [What to import](entry-points.md).
 | `CanvasKitParagraphModule` | interface | Minimal host-injected CanvasKit port. |
 | `CanvasKitParagraphProvider` | interface | Lays out and draws paragraphs with CanvasKit; dispose of it when done. |
 | `CanvasKitParagraphProviderOptions` | interface | A CanvasKit paragraph provider to make: its CanvasKit, build identity and fonts. |
+| `CanvasParagraphCanvas` | interface | What the provider draws with: a canvas whose 2D context measures and fills words. |
+| `CanvasParagraphContext` | interface | The part of a 2D context the provider uses. |
+| `CanvasParagraphProvider` | interface | Lays out and draws paragraphs with a canvas's 2D context; dispose of it when done. |
+| `CanvasParagraphProviderOptions` | interface | A canvas paragraph provider to make. |
+| `chooseParagraphProvider` | function | Creates the paragraph provider the device can afford. |
 | `createCanvasKitFontSetProvider` | function | A stable cache provider routes immutable generations; it never mutates a live native font table. |
 | `createCanvasKitParagraphProvider` | function | Lays out and draws paragraphs with CanvasKit and the fonts it is given. |
+| `createCanvasParagraphProvider` | function | Lays out and draws paragraphs with a canvas's 2D context, with no WebAssembly. |
+| `ParagraphBackend` | type | The two paragraph providers of `@egret/engine/web/paragraph`. |
+| `ParagraphBackendReason` | type | Why a provider was chosen. |
+| `ParagraphDevice` | interface | What the choice reads of the device. |
 | `ParagraphFontSet` | interface | A set of fonts loaded for paragraphs: its key and families; dispose of it when done. |
+| `ParagraphProviderChoice` | interface | The provider chosen, which of the two it is, and why. |
+| `ParagraphProviderChoiceOptions` | interface | How to choose: which provider is wanted, how to load CanvasKit, and the canvas provider's options. |
 
 ## `@egret/engine/web/keyboard`
 
@@ -1234,6 +1245,16 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserTextInputSnapshot` | interface | Browser text input as it is now: its state, value and composition. |
 | `createBrowserTextInput` | function | Platform text entry over a canvas: a native field placed on a rectangle of the stage, so that input methods (Chinese, Japanese, Korean), on-screen keyboards, paste and accessibility work as the platform provides them. |
 
+## `@egret/engine/web/wechat-text-input`
+
+| Name | Kind | What the sources say |
+| --- | --- | --- |
+| `createWechatTextInput` | function | Text input through WeChat's keyboard, with the object of `createBrowserTextInput`. |
+| `WechatKeyboard` | interface | The part of `wx` the text input uses. |
+| `WechatKeyboardEvent` | interface | What a keyboard event of WeChat carries: the text in the keyboard's field. |
+| `WechatKeyboardListener` | type | A listener of WeChat's keyboard events. |
+| `WechatTextInputOptions` | interface | WeChat text input to make: the keyboard to use, and where errors of the game's callbacks go. |
+
 ## `@egret/engine/ui/editing`
 
 | Name | Kind | What the sources say |
@@ -1242,10 +1263,12 @@ For which entry to import from, see [What to import](entry-points.md).
 | `TextEditSelection` | interface | Source offsets are UTF-16, never glyph indices or guessed advance widths. |
 | `UiTextEditor` | interface | A text editor: its content, the calls that set its value, selection and style, and the geometry of its text. |
 | `UiTextEditorChange` | interface | A change to a text editor's content or selection, and what made it. |
+| `UiTextEditorFontSet` | interface | Fonts for an editor as a font provider gives them, such as a set of `createBrowserEditorFontProvider`. |
 | `UiTextEditorOptions` | interface | A text editor to make: its engine, scope and cache, its mode, value and limits, its style and size, and what it calls. |
 | `UiTextEditorSetOptions` | interface | How a value is set: the selection after it, the revision it expects, and whether a composition is cancelled. |
 | `UiTextEditorSnapshot` | interface | A text editor as it is now: its content revision, style, and whether the native editor shows. |
 | `UiTextEditorStyle` | interface | How a text editor's text looks: its fonts and size, line height, locale and direction, colors and alignment. |
+| `UiTextEditorStyleInput` | interface | A style to give an editor: as its style, but `fontSet` may be the font set itself, whose key is taken, and whose families are taken unless `fontFamilies` is given. |
 | `UiTextEditorTarget` | type | What a text editor is drawn in: a leaf of the tree, or a row of a list. |
 
 ## `@egret/engine/web/editing`
@@ -1549,12 +1572,15 @@ For which entry to import from, see [What to import](entry-points.md).
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `BrowserGame` | interface | A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. |
+| `BrowserGameAtlasLabel` | interface | A line of text drawn on a page of images shared with other such labels. |
 | `BrowserGameBackend` | type | Which GPU interface a browser game draws with. |
 | `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, or filling it with a stage that grows around the design (`'expand'`). |
+| `BrowserGameFrameUsage` | interface | What the last frame drawn held of a frame's images, against what one frame may hold. |
 | `BrowserGameLabel` | interface | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
 | `BrowserGameOptions` | interface | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
+| `BrowserGameWarning` | interface | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache. |
 | `BrowserStatsPanel` | interface | A panel over the canvas showing frame rate and frame times: sample each frame. |
 | `BrowserStatsPanelOptions` | interface | A stats panel to make: the canvas it sits over, its label, and how often it updates. |
 | `BrowserStatsSample` | interface | What a game knows at one frame of the display. |
@@ -1604,6 +1630,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SfxTone` | interface | One tone of an effect. |
 | `SfxWave` | type | The wave of a tone. |
 | `synthesizeSfx` | function | The samples of an effect, one channel, from -1 to 1. |
+| `verticalPlayWords` | function | Words written top to bottom in columns from right to left, as rows a line of text draws: one character under another, marks turned to their upright forms, a `\n` or `column` characters ending a column, and an ideographic space where a column is shorter than the longest. |
 | `wrapPlayWords` | function | Breaks words into lines no wider than `units`: at a space where there is one, between any two wide characters. |
 
 ## `@egret/engine/audio`

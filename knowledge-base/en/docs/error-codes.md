@@ -488,6 +488,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | --- | --- |
 | `FRAME_BUDGET_EXCEEDED` | The stage holds more than one frame takes: 65,536 nodes or commands, 256 materials, 4,096 different geometries or 65,536 mesh triangles. A circle of radius 40 is 32 triangles. |
 | `FRAME_ID_EXHAUSTED` | The id counter of a frame ran out. Make a new one. |
+| `FRAME_IMAGES_NEAR_LIMIT` | A warning of the browser game, not an error: a frame holds four fifths of the images a frame takes (64 pages, 4,096 regions, 64 MiB). Labels of createAtlasLabel share pages. |
 | `FRAME_IMAGE_BUDGET` | The frame uses more images than it takes: 64 pages, 4,096 regions or 64 MiB of distinct pixels. Pack images into fewer atlases. |
 | `FRAME_PROFILE_METADATA_UNSUPPORTED` | The profile metadata is not supported by a frame. |
 | `FRAME_REENTRANT` | A frame was asked for while another was being captured. Draw from the frame loop, not from inside a callback of the capture. |
@@ -694,6 +695,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | --- | --- |
 | `PARAGRAPH_BACKEND_CLEANUP_FAILED` | Cleaning up a paragraph failed. Each cause is in cleanupErrors. |
 | `PARAGRAPH_BACKEND_TERMINAL` | The backend of a paragraph has ended and cannot be used again. |
+| `PARAGRAPH_BACKEND_UNAVAILABLE` | The backend of a paragraph is not available here. |
 | `PARAGRAPH_BUILD_REFUSED` | The build of a paragraph was refused. |
 | `PARAGRAPH_CANCELLED` | A paragraph was cancelled. |
 | `PARAGRAPH_DISPOSED` | A paragraph was disposed and takes nothing more. |
@@ -722,7 +724,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
-| `PARAGRAPH_CACHE_ALREADY_CREATED` | The paragraph cache was already created. |
+| `PARAGRAPH_CACHE_ALREADY_CREATED` | An asset manager has one paragraph cache for its whole life, shared by every paragraph, UI leaf and text editor of its Engine: keep the first one made and pass it wherever a cache is asked for. A second would keep the same rasters under another budget. |
 | `PARAGRAPH_CACHE_BUDGET` | A limit of the paragraph cache was passed. |
 | `PARAGRAPH_CACHE_CLOSED` | The paragraph cache was closed and takes nothing more. |
 | `PARAGRAPH_CACHE_INVALID` | What was given to the paragraph cache is not valid. |
@@ -1061,7 +1063,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 
 | Code | Meaning |
 | --- | --- |
-| `TEXT_CACHE_ALREADY_CREATED` | The text cache was already created. |
+| `TEXT_CACHE_ALREADY_CREATED` | An asset manager has one text cache for its whole life, shared by every text field and label of its Engine: keep the first one made and pass it wherever a cache is asked for. A browser game makes it for its labels. |
 | `TEXT_CACHE_BUDGET` | A limit of the text cache was passed. |
 | `TEXT_CACHE_CLEANUP_FAILED` | Cleaning up the text cache failed. Each cause is in cleanupErrors. |
 | `TEXT_CACHE_CLOSED` | The text cache was closed and takes nothing more. |

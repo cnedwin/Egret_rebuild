@@ -51,6 +51,8 @@ export async function verifyFloatingStick(page, backend = 'webgl2') {
       outsideTaps = 0,
       worldTaps = 0,
       beaconTaps = 0,
+      menuChoice,
+      modal,
       control,
       hero;
     const game = await play({
@@ -82,6 +84,7 @@ export async function verifyFloatingStick(page, backend = 'webgl2') {
         g.button('Mark', { x: 512, y: 230, width: 90, height: 38 }, () => {
           outsideTaps++;
         });
+        g.touchButton('OK', { x: 548, y: 128, key: 'enter', always: true });
         control = g.touchStick({
           radius: 72,
           floating: {
@@ -112,7 +115,8 @@ export async function verifyFloatingStick(page, backend = 'webgl2') {
         mark: level(512, 230),
         pause: level(236, 124),
         fresh: level(147, 264),
-        beacon: level(128, 160)
+        beacon: level(128, 160),
+        confirm: level(548, 128)
       };
     };
     const listen = event => {
@@ -146,12 +150,26 @@ export async function verifyFloatingStick(page, backend = 'webgl2') {
         outsideTaps,
         worldTaps,
         beaconTaps,
+        asking: game.asking,
+        menuChoice,
         visible: !control.isDisposed && control.visible,
         detached: control.isDisposed || control.parent === null,
         centre: control.isDisposed ? null : { x: control.x, y: control.y },
         hero: { x: hero.x, y: hero.y },
         faults: [...faults]
       }),
+      openModal: () => {
+        modal = game.show({
+          modal: true,
+          root: { type: 'panel', width: 200, height: 96, anchor: 'center' }
+        });
+      },
+      closeModal: () => modal.close(),
+      openMenu: () => {
+        void game.menu(['First', 'Second']).then(index => {
+          menuChoice = index;
+        });
+      },
       removeControl: () => game.remove(control),
       hasCapture: id => canvas.hasPointerCapture(id),
       async close() {
@@ -190,7 +208,7 @@ export async function verifyFloatingStick(page, backend = 'webgl2') {
   const finger = (id, point) => ({ ...point, id });
   const at = (event, point) => Math.abs(event.x - point.x) < 2 && Math.abs(event.y - point.y) < 2;
   try {
-    const { start, second, outside, mark, pause, fresh, beacon, bounds } = await page.evaluate(() =>
+    const { start, second, outside, mark, pause, fresh, beacon, confirm, bounds } = await page.evaluate(() =>
       globalThis.__egretFloatingStickFixture.pos()
     );
     report.cssCanvas = bounds;
@@ -371,6 +389,42 @@ export async function verifyFloatingStick(page, backend = 'webgl2') {
       neutral(state);
       assert.equal(state.visible, false);
     });
+
+    const modalOwner = finger(53, fresh);
+    await touch('touchStart', modalOwner);
+    await touch('touchMove', shifted(modalOwner, 0, 40));
+    await check('a stationary modal owner starts active', state => near(state.axis.y, 0.9));
+    await page.evaluate(() => globalThis.__egretFloatingStickFixture.openModal());
+    await settle();
+    await check('opening a modal retires unmoved floating input', state => {
+      neutral(state);
+      assert.equal(state.visible, false);
+    });
+    await page.evaluate(() => globalThis.__egretFloatingStickFixture.closeModal());
+    await touch('touchMove', shifted(modalOwner, 0, 44));
+    await check('closing a modal cannot restore its old touch', neutral);
+    await touch('touchEnd');
+
+    const menuOwner = finger(54, fresh),
+      menuDrag = shifted(menuOwner, 0, 40);
+    await touch('touchStart', menuOwner);
+    await touch('touchMove', menuDrag);
+    await check('a fresh touch drives before a legacy menu', state => assert(state.axis.y > 0.6));
+    await page.evaluate(() => globalThis.__egretFloatingStickFixture.openMenu());
+    await settle();
+    await check('opening a legacy menu neutralizes floating input', state => {
+      assert.equal(state.asking, true);
+      neutral(state);
+      assert.equal(state.visible, false);
+    });
+    const ok = finger(55, confirm);
+    await touch('touchStart', menuDrag, ok);
+    await touch('touchEnd', ok);
+    await check('the retired stick cannot steer a legacy menu', state => {
+      assert.equal(state.asking, false);
+      assert.equal(state.menuChoice, 0);
+    });
+    await touch('touchEnd');
 
     const e = finger(61, fresh);
     await touch('touchStart', e);

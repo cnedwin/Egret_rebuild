@@ -4,6 +4,8 @@ export type {
   UiTextEditor,
   UiTextEditorOptions,
   UiTextEditorStyle,
+  UiTextEditorStyleInput,
+  UiTextEditorFontSet,
   UiTextEditorChange,
   UiTextEditorTarget,
   UiTextEditorSnapshot,

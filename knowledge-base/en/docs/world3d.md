@@ -408,6 +408,8 @@ Differences to keep in mind: factories replace constructors; colours are linear 
 
 A World3D canvas is separate from the 2D stage surface. `createWorld3DHost(canvas)` returns a host for applications whose only surface is the 3D canvas. `startWorld3DLoop(engine)` advances the explicit Engine clock once per display frame and re-anchors it after a gap longer than the clock's delta limit.
 
+On `app.stop()` followed by `app.start()`, a first frame whose gap exceeds the limit establishes a fresh anchor. The Engine keeps its elapsed game time, and the following frame resumes ordinary updates. This also applies when replacing a disposed `startWorld3DLoop(engine)` handle on the same Engine.
+
 `createWorld3DView(engine, scope, options)` subscribes to the Engine clock under a Scope. Each tick resizes the drawing buffer when needed, calls `onUpdate`, advances mixers, controls and particle emitters, and renders. Closing the Scope ends the view. The renderer, scene and controls stay owned by their creator; register them with `scope.use(...)` to retire them with the Scope.
 
 For a 2D interface above a 3D scene, either stack a transparent shared 2D host canvas over the World3D canvas or draw the 2D canvas as a screen layer (see 2D and 3D on one surface). Interleaving individual 2D display objects between 3D objects in depth remains the job of the authored scene path.

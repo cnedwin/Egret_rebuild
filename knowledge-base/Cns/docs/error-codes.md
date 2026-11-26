@@ -488,6 +488,7 @@
 | --- | --- |
 | `FRAME_BUDGET_EXCEEDED` | 舞台上的内容超出了一帧的上限：65,536 个节点或命令、256 种材质、4,096 个不同的几何体或 65,536 个网格三角形。半径 40 的圆是 32 个三角形。 |
 | `FRAME_ID_EXHAUSTED` | 帧的 `id` 计数器用尽了。请新建一个。 |
+| `FRAME_IMAGES_NEAR_LIMIT` | 这是浏览器游戏的告警，不是错误：一帧用到的图片已达上限的五分之四（64 页、4,096 个区域、64 MiB）。createAtlasLabel 的标签共用纹理页。 |
 | `FRAME_IMAGE_BUDGET` | 这一帧使用的图片超出上限：64 页、4,096 个区域或 64 MiB 的不同像素。请把图片合并到更少的图集中。 |
 | `FRAME_PROFILE_METADATA_UNSUPPORTED` | 帧不支持 `profile metadata`。 |
 | `FRAME_REENTRANT` | 在捕获一帧的过程中又请求了一帧。请在帧循环中绘制，不要在捕获的回调里绘制。 |
@@ -694,6 +695,7 @@
 | --- | --- |
 | `PARAGRAPH_BACKEND_CLEANUP_FAILED` | 清理段落时失败。各个原因在 cleanupErrors 中。 |
 | `PARAGRAPH_BACKEND_TERMINAL` | 段落的 `backend` 已经结束，不能再使用。 |
+| `PARAGRAPH_BACKEND_UNAVAILABLE` | 段落的 `backend` 在这里不可用。 |
 | `PARAGRAPH_BUILD_REFUSED` | 段落的 `build` 被拒绝了。 |
 | `PARAGRAPH_CANCELLED` | 段落被取消了。 |
 | `PARAGRAPH_DISPOSED` | 段落已销毁，不再接受任何操作。 |
@@ -722,7 +724,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
-| `PARAGRAPH_CACHE_ALREADY_CREATED` | 段落缓存已经创建过了。 |
+| `PARAGRAPH_CACHE_ALREADY_CREATED` | 一个资源管理器在整个生命周期里只有一个段落缓存，它的引擎里所有段落、UI 叶子和文本编辑器共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。再建一个只会用另一份预算保存同样的光栅。 |
 | `PARAGRAPH_CACHE_BUDGET` | 超出了段落缓存的一项上限。 |
 | `PARAGRAPH_CACHE_CLOSED` | 段落缓存已关闭，不再接受任何操作。 |
 | `PARAGRAPH_CACHE_INVALID` | 交给段落缓存的内容无效。 |
@@ -1061,7 +1063,7 @@
 
 | 错误码 | 含义 |
 | --- | --- |
-| `TEXT_CACHE_ALREADY_CREATED` | 文本缓存已经创建过了。 |
+| `TEXT_CACHE_ALREADY_CREATED` | 一个资源管理器在整个生命周期里只有一个文本缓存，它的引擎里所有文本字段和标签共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。浏览器游戏会为它的标签创建这个缓存。 |
 | `TEXT_CACHE_BUDGET` | 超出了文本缓存的一项上限。 |
 | `TEXT_CACHE_CLEANUP_FAILED` | 清理文本缓存时失败。各个原因在 cleanupErrors 中。 |
 | `TEXT_CACHE_CLOSED` | 文本缓存已关闭，不再接受任何操作。 |

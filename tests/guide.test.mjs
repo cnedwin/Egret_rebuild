@@ -11,6 +11,8 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import {
   APPLIES,
+  AREA_BUDGET,
+  AREA_LINES,
   CARD_BUDGET,
   CARD_FILE_BUDGET,
   DEFAULT_BUDGET,
@@ -20,8 +22,10 @@ import {
   answer,
   estimateTokens,
   fullText,
+  listAreas,
   loadCards,
   parseCard,
+  readArea,
   readIndex,
   render,
   run
@@ -30,7 +34,8 @@ import { harvest } from '../tools/harvest-games.mjs';
 
 const read = file => fs.readFileSync(path.join(ROOT, file), 'utf8');
 const cards = loadCards(),
-  index = readIndex();
+  index = readIndex(),
+  areas = listAreas();
 
 /** The names each entry of the engine exports, from the generated API reference, and of @egret/devtools. */
 function entryExports() {
@@ -245,30 +250,56 @@ test('GD03 every trigger error code is an engine error code, and every hint trig
   assert.ok(codes >= 10 && hints >= 6, codes + ' codes, ' + hints + ' hints');
 });
 
-// Break caught: a card or the index grows past what an agent should spend on it.
-test('GD04 every card is within its token budget, and the index within its own', () => {
+// Break caught: a card, the index or an area's list grows past what an agent should spend on it.
+test('GD04 every card is within its token budget, and the index and each area within their own', () => {
   for (const card of cards) {
     assert.ok(estimateTokens(render(card)) <= CARD_BUDGET, card.id + ' as printed: ' + estimateTokens(render(card)));
     assert.ok(estimateTokens(card.text) <= CARD_FILE_BUDGET, card.id + ' as a file: ' + estimateTokens(card.text));
   }
   assert.ok(index.split('\n').length <= INDEX_LINES, index.split('\n').length + ' lines');
   assert.ok(estimateTokens(index) <= INDEX_BUDGET, estimateTokens(index) + ' tokens');
+  for (const area of areas) {
+    const text = readArea(area);
+    assert.ok(text.split('\n').length <= AREA_LINES, area + ': ' + text.split('\n').length + ' lines');
+    assert.ok(estimateTokens(text) <= AREA_BUDGET, area + ': ' + estimateTokens(text) + ' tokens');
+  }
 });
 
-// Break caught: a card no index line reaches, a line to a card that is gone, or applies that disagree.
-test('GD05 every card is reachable from the index, once, with the same applies', () => {
-  const lines = [...index.matchAll(/^- \[([a-z0-9-]+)\]\((cards\/[^)]+)\) · ([a-z0-9 ]+) · (.+)$/gm)];
-  assert.equal(lines.length, cards.length);
+// Break caught: a card no area reaches, a card listed in another folder's area, a line to a card that is gone, applies
+// that disagree, an area the index does not name, or a count of cards in the index that is no longer true.
+test('GD05 every card is reachable from the index through its area, once, with the same applies', () => {
+  const folders = [...new Set(cards.map(card => card.file.split('/')[1]))].sort();
+  assert.deepEqual([...areas].sort(), folders, 'one area for each folder of cards, and no other');
+  assert.deepEqual(
+    fs.readdirSync(path.join(ROOT, 'guide', 'areas')).sort(),
+    folders.map(folder => folder + '.txt'),
+    'no area file the index does not name'
+  );
   const seen = new Set();
-  for (const [, id, link, applies, hook] of lines) {
-    const card = cards.find(item => item.id === id);
-    assert.ok(card, 'index names ' + id);
-    assert.ok(!seen.has(id), id + ' twice');
-    seen.add(id);
-    assert.equal(link, card.file, id);
-    assert.deepEqual(applies.trim().split(' ').sort(), [...card.applies].sort(), id);
-    assert.ok(hook.length > 20, id);
+  for (const area of areas) {
+    const text = readArea(area);
+    assert.match(text, /^# \S/, area + ' starts with its title');
+    const lines = [...text.matchAll(/^- \[([a-z0-9-]+)\]\(\.\.\/(cards\/[^)]+)\) · ([a-z0-9 ]+) · (.+)$/gm)];
+    const count = index.match(
+      new RegExp('^- \\[' + area + '\\]\\(areas/' + area + '\\.txt\\) · (\\d+) cards? · .{20,}$', 'm')
+    );
+    assert.ok(count, 'the index names ' + area + ' with its number of cards and what they answer');
+    assert.equal(Number(count[1]), lines.length, area + ': the number the index gives');
+    for (const [, id, link, applies, hook] of lines) {
+      const card = cards.find(item => item.id === id);
+      assert.ok(card, area + ' names ' + id);
+      assert.ok(!seen.has(id), id + ' twice');
+      seen.add(id);
+      assert.equal(link, card.file, id);
+      assert.equal(link.split('/')[1], area, id + ' is listed in the area of its folder');
+      assert.deepEqual(applies.trim().split(' ').sort(), [...card.applies].sort(), id);
+      assert.ok(hook.length > 20, id);
+    }
+    for (const [, link] of text.matchAll(/\]\(([^)]+)\)/g))
+      assert.ok(fs.existsSync(path.join(ROOT, 'guide', 'areas', link)), area + ': ' + link);
   }
+  assert.equal(seen.size, cards.length, 'every card is in an area');
+  assert.equal([...index.matchAll(/\]\(cards\//g)].length, 0, 'the index names areas, not cards');
   for (const [, link] of index.matchAll(/\]\(([^)]+)\)/g))
     assert.ok(fs.existsSync(path.join(ROOT, 'guide', link)), link);
 });
@@ -394,7 +425,16 @@ const QUERIES = [
   ['drag an item from the bag into a slot', 'gestures'],
   ['long press a card to see details', 'gestures'],
   ['背包里长按物品拖到格子', 'gestures'],
-  ['双指缩放地图', 'gestures']
+  ['双指缩放地图', 'gestures'],
+  // Cards learnt from the games repository, asked in a developer's words.
+  ['a hundred place names on a map hit the frame image limit', 'label-pages'],
+  ['falling sand pixels change every frame', 'pixel-strips'],
+  ['rhythm game judge timing against what is heard', 'rhythm-clock'],
+  ['hit flash white on a sprite', 'two-colour-tints'],
+  ['tab and space on page buttons beside play', 'play-page-controls'],
+  ['rotate a landscape table on a portrait phone', 'play-turned-table'],
+  ['大量敌人 割草 帧时间', 'sprite-swarm'],
+  ['pick a tile on an isometric tactics board', 'tile-board-camera']
 ];
 
 // Break caught: a change to the ranking or to a card that sends a known question to the wrong card.
@@ -427,6 +467,12 @@ test('GD09 --card, --list, --full and a question with no match', () => {
   assert.match(one.text, /^=== touch-controls · /);
   assert.equal(run(['--card', 'no-such-card'], cards).code, 1);
   assert.equal(run(['--list'], cards).text, index);
+  assert.equal(run(['--list', 'perf'], cards).text, readArea('perf'));
+  const all = run(['--list', 'all'], cards).text;
+  for (const area of areas) assert.ok(all.includes(readArea(area).trim()), area);
+  const unknown = run(['--list', 'nowhere'], cards);
+  assert.equal(unknown.code, 1);
+  assert.match(unknown.text, /No area is called "nowhere"\. Areas: game, /);
   const none = run(['xyzzy', 'qwertyuiop'], cards);
   assert.equal(none.code, 1);
   assert.match(none.text, /No card matches/);
@@ -437,9 +483,10 @@ test('GD09 --card, --list, --full and a question with no match', () => {
 });
 
 // Break caught: the single file leaving out a card or the index, or being committed by hand.
-test('GD10 the full file holds the index and every card, and is a build output', () => {
+test('GD10 the full file holds the index, every area and every card, and is a build output', () => {
   const text = fullText(cards, index);
   assert.ok(text.startsWith(index.trim()));
+  for (const area of areas) assert.ok(text.includes(readArea(area).trim()), area);
   for (const card of cards) assert.ok(text.includes('=== ' + card.id + ' · '), card.id);
   assert.ok(
     !fs.existsSync(path.join(ROOT, 'llms-full.txt')),

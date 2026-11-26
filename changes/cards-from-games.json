@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Sixteen guide cards learnt from the games",
+    "body": "The guide has sixteen more cards drawn from the engine notes and fixes of the games repository: page buttons beside play, a turned table, resolution, moving shapes, swarms, still backgrounds, a rhythm clock, many labels, wrapping, play's shapes, tints, changing pixels, a map under the camera, sequence markers, tile boards and toon figures. Each was checked against the current engine: five were rewritten where the engine had changed, and the frame times of the performance cards were measured again."
+  },
+  "zh": {
+    "title": "从游戏里学来的十六张指南卡片",
+    "body": "指南新增十六张卡片，取自游戏仓库的引擎笔记和修复：play 旁的页面按钮、旋转的牌桌、分辨率、移动的图形、大量精灵、静止背景、节奏游戏的时钟、大量文字、换行、play 的形状、着色、逐帧变化的像素、跟随相机的地图、序列标记、格子棋盘和卡通人物。每张都对照当前引擎核对过：引擎已经改变的五张重写了，性能卡片的帧时间也重新测过。"
+  }
+}

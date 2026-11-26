@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 47 个入口、1448 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1470 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1197,9 +1197,20 @@
 | `CanvasKitParagraphModule` | 接口 | Minimal host-injected CanvasKit port. |
 | `CanvasKitParagraphProvider` | 接口 | Lays out and draws paragraphs with CanvasKit; dispose of it when done. |
 | `CanvasKitParagraphProviderOptions` | 接口 | A CanvasKit paragraph provider to make: its CanvasKit, build identity and fonts. |
+| `CanvasParagraphCanvas` | 接口 | What the provider draws with: a canvas whose 2D context measures and fills words. |
+| `CanvasParagraphContext` | 接口 | The part of a 2D context the provider uses. |
+| `CanvasParagraphProvider` | 接口 | Lays out and draws paragraphs with a canvas's 2D context; dispose of it when done. |
+| `CanvasParagraphProviderOptions` | 接口 | A canvas paragraph provider to make. |
+| `chooseParagraphProvider` | 函数 | Creates the paragraph provider the device can afford. |
 | `createCanvasKitFontSetProvider` | 函数 | A stable cache provider routes immutable generations; it never mutates a live native font table. |
 | `createCanvasKitParagraphProvider` | 函数 | Lays out and draws paragraphs with CanvasKit and the fonts it is given. |
+| `createCanvasParagraphProvider` | 函数 | Lays out and draws paragraphs with a canvas's 2D context, with no WebAssembly. |
+| `ParagraphBackend` | 类型 | The two paragraph providers of `@egret/engine/web/paragraph`. |
+| `ParagraphBackendReason` | 类型 | Why a provider was chosen. |
+| `ParagraphDevice` | 接口 | What the choice reads of the device. |
 | `ParagraphFontSet` | 接口 | A set of fonts loaded for paragraphs: its key and families; dispose of it when done. |
+| `ParagraphProviderChoice` | 接口 | The provider chosen, which of the two it is, and why. |
+| `ParagraphProviderChoiceOptions` | 接口 | How to choose: which provider is wanted, how to load CanvasKit, and the canvas provider's options. |
 
 ## `@egret/engine/web/keyboard`
 
@@ -1234,6 +1245,16 @@
 | `BrowserTextInputSnapshot` | 接口 | Browser text input as it is now: its state, value and composition. |
 | `createBrowserTextInput` | 函数 | Platform text entry over a canvas: a native field placed on a rectangle of the stage, so that input methods (Chinese, Japanese, Korean), on-screen keyboards, paste and accessibility work as the platform provides them. |
 
+## `@egret/engine/web/wechat-text-input`
+
+| 名字 | 种类 | 说明 |
+| --- | --- | --- |
+| `createWechatTextInput` | 函数 | Text input through WeChat's keyboard, with the object of `createBrowserTextInput`. |
+| `WechatKeyboard` | 接口 | The part of `wx` the text input uses. |
+| `WechatKeyboardEvent` | 接口 | What a keyboard event of WeChat carries: the text in the keyboard's field. |
+| `WechatKeyboardListener` | 类型 | A listener of WeChat's keyboard events. |
+| `WechatTextInputOptions` | 接口 | WeChat text input to make: the keyboard to use, and where errors of the game's callbacks go. |
+
 ## `@egret/engine/ui/editing`
 
 | 名字 | 种类 | 说明 |
@@ -1242,10 +1263,12 @@
 | `TextEditSelection` | 接口 | Source offsets are UTF-16, never glyph indices or guessed advance widths. |
 | `UiTextEditor` | 接口 | A text editor: its content, the calls that set its value, selection and style, and the geometry of its text. |
 | `UiTextEditorChange` | 接口 | A change to a text editor's content or selection, and what made it. |
+| `UiTextEditorFontSet` | 接口 | Fonts for an editor as a font provider gives them, such as a set of `createBrowserEditorFontProvider`. |
 | `UiTextEditorOptions` | 接口 | A text editor to make: its engine, scope and cache, its mode, value and limits, its style and size, and what it calls. |
 | `UiTextEditorSetOptions` | 接口 | How a value is set: the selection after it, the revision it expects, and whether a composition is cancelled. |
 | `UiTextEditorSnapshot` | 接口 | A text editor as it is now: its content revision, style, and whether the native editor shows. |
 | `UiTextEditorStyle` | 接口 | How a text editor's text looks: its fonts and size, line height, locale and direction, colors and alignment. |
+| `UiTextEditorStyleInput` | 接口 | A style to give an editor: as its style, but `fontSet` may be the font set itself, whose key is taken, and whose families are taken unless `fontFamilies` is given. |
 | `UiTextEditorTarget` | 类型 | What a text editor is drawn in: a leaf of the tree, or a row of a list. |
 
 ## `@egret/engine/web/editing`
@@ -1549,12 +1572,15 @@
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `BrowserGame` | 接口 | A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. |
+| `BrowserGameAtlasLabel` | 接口 | A line of text drawn on a page of images shared with other such labels. |
 | `BrowserGameBackend` | 类型 | Which GPU interface a browser game draws with. |
 | `BrowserGameFit` | 类型 | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, or filling it with a stage that grows around the design (`'expand'`). |
+| `BrowserGameFrameUsage` | 接口 | What the last frame drawn held of a frame's images, against what one frame may hold. |
 | `BrowserGameLabel` | 接口 | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | 接口 | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | 接口 | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
 | `BrowserGameOptions` | 接口 | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
+| `BrowserGameWarning` | 接口 | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache. |
 | `BrowserStatsPanel` | 接口 | A panel over the canvas showing frame rate and frame times: sample each frame. |
 | `BrowserStatsPanelOptions` | 接口 | A stats panel to make: the canvas it sits over, its label, and how often it updates. |
 | `BrowserStatsSample` | 接口 | What a game knows at one frame of the display. |
@@ -1604,6 +1630,7 @@
 | `SfxTone` | 接口 | One tone of an effect. |
 | `SfxWave` | 类型 | The wave of a tone. |
 | `synthesizeSfx` | 函数 | The samples of an effect, one channel, from -1 to 1. |
+| `verticalPlayWords` | 函数 | Words written top to bottom in columns from right to left, as rows a line of text draws: one character under another, marks turned to their upright forms, a `\n` or `column` characters ending a column, and an ideographic space where a column is shorter than the longest. |
 | `wrapPlayWords` | 函数 | Breaks words into lines no wider than `units`: at a space where there is one, between any two wide characters. |
 
 ## `@egret/engine/audio`
