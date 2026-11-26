@@ -1,0 +1,42 @@
+---
+id: sequence-markers
+title: Frame walks from one atlas, and a sequence controller with markers for the big ones
+applies: [engine, web]
+triggers: [createSequenceController, SequencePlayer, createSequenceClip, ANIMATION_OPTIONS_INVALID, "sprite sheet animation", "frame animation", "walk cycle", "animation marker", "animation event", "footstep event", "pause animation", "帧动画", "序列帧", "走路动画", "动画标记", "动画事件", "脚步"]
+local: [walk, warden, dust, makeWarden, frameTime]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: NightWardens/src/view/field.mjs, line: 201, commit: 886c81c1c8c0fa2bbc36736c21429aacd07f79ab, pin: a778bed53ecdbf9c65e9abc5624d4b3751a4331d }
+  - { repo: cnedwin/PortedGamesEgret, path: NightWardens/src/view/field.mjs, line: 474, commit: 886c81c1c8c0fa2bbc36736c21429aacd07f79ab, pin: a778bed53ecdbf9c65e9abc5624d4b3751a4331d }
+  - { repo: cnedwin/PortedGamesEgret, path: NightWardens/ENGINE-NOTES.md, line: 8, commit: 886c81c1c8c0fa2bbc36736c21429aacd07f79ab, pin: a778bed53ecdbf9c65e9abc5624d4b3751a4331d }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Frame walks from one atlas, and a sequence controller with markers for the big ones
+
+Many small walkers: give each a `Bitmap` of the whole atlas and a `SequencePlayer` with a clip of its frames, and call `applyAt(seconds)` with the walker's own age each frame. The game decides the time, so a hop or a stun picks its frame from the rules. A few big actors whose steps should cause something: `createSequenceController` from `@egret/engine/animation` runs the clip on the engine's clock and calls back at markers.
+
+```js
+import { Bitmap, SequencePlayer, createSequenceClip } from '@egret/engine';
+import { createSequenceController } from '@egret/engine/animation';
+
+const walk = createSequenceClip({ atlasWidth, atlasHeight, frames: [
+  { ...rectA, durationSeconds: 0.45 }, { ...rectB, durationSeconds: 0.45 }] });
+const body = scope.use(new Bitmap(atlasLease));
+const controller = scope.use(createSequenceController(engine, scope, body, walk, {
+  profile: 'egret.sequence-control/1',
+  totalPlays: 'infinite',
+  markers: [{ id: 'stepLeft', timeSeconds: 0 }, { id: 'stepRight', timeSeconds: 0.45 }],
+  onEvent: (event) => { if (event.kind === 'marker') dust(event.id); return undefined; }
+}));
+controller.start();
+```
+
+Rules:
+
+- Marker ids must differ within one controller, start with a letter and fall within the clip. A repeated id is refused with `ANIMATION_OPTIONS_INVALID`, which does not say which marker; Night Wardens met it with two markers named `step`.
+- `onEvent` returns `undefined`; keep it short and only start effects there.
+- Pause it with the game: `pause()` while a menu holds the rules still, `resume()` after; `stop()` when the actor is gone. A `SequencePlayer` needs nothing, since the game gives it the time.
+- Anchor a bitmap at the frame's centre in atlas pixels before scaling it; `width` already includes the scale.
+- Paint shadows into the frames: a second bitmap per walker for its shadow doubled the draw work, and dropping it took a busy software-rendered frame from p50 33.3 ms to 16.7 ms.
+
+Learnt from Night Wardens (ENGINE-NOTES 1).

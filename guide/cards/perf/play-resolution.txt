@@ -1,0 +1,32 @@
+---
+id: play-resolution
+title: Draw play at fewer pixels than its stage, with pixelRatio
+applies: [play]
+triggers: [play, "resolution", "pixel ratio", "large stage slow", "1280x720 slow", "full screen canvas slow", "frame time", "software rendering", "降低分辨率", "画布太大", "帧时间", "全屏画布卡", pixelRatio]
+local: [root, host]
+evidence:
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/src/main.mjs, line: 96, commit: 936d1e620d68027d54e4fcc7eba047b0248d7ff7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/src/view.mjs, line: 17, commit: 936d1e620d68027d54e4fcc7eba047b0248d7ff7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/PortedGamesEgret, path: TaiwanMahjong/ENGINE-NOTES.md, line: 23, commit: 936d1e620d68027d54e4fcc7eba047b0248d7ff7, pin: b5628eb9997b67cf6163a388f5aa06f321f3833a }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserPlay.ts, line: 110, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
+---
+
+# Draw play at fewer pixels than its stage, with pixelRatio
+
+`play({ width, height, pixelRatio })` draws `pixelRatio` render pixels for each stage unit; layout, input, `game.pointer` and semantic bounds stay in stage units. A 1280 × 720 stage at `pixelRatio: 0.75` draws a canvas of 960 × 540 pixels, which the page shows at its own size.
+
+```js
+const game = await play({ width: 1280, height: 720, pixelRatio: 0.75, setup, update });
+// game.canvas is 960 x 540; everything the game places is still in units of 1280 x 720.
+```
+
+Measure the empty stage first; the cost there is the floor for everything drawn on it. In Taiwan Sixteen-Tile Mahjong at engine `b5628eb`, before play had the option, an empty 1280 × 720 stage ran at 33.4 ms p95 in headless Chromium with SwiftShader, and the game drew a 960 × 540 play under a scaled root to reach 16.8 ms. At engine `2e53f45`, on another run, an empty 1280 × 720 stage was 16.8 ms p95 with and without `pixelRatio: 0.75`: lower the ratio when fill is what costs, which a measurement shows.
+
+Rules:
+
+- Lower `pixelRatio` before cutting what the game draws, and keep text large enough to read at the lower ratio: words drawn at 0.75 are softer.
+- Do not scale `game.world` or a root sprite to fake a smaller stage any more; the old workaround moved every play-drawn effect off its place.
+- Unless given, the ratio is the screen's `devicePixelRatio`, at most 2: on a phone, `pixelRatio: 1` already draws a quarter of the pixels of the default.
+
+Learnt from Taiwan Sixteen-Tile Mahjong (ENGINE-NOTES 3); `pixelRatio` came with engine `e7184a8`.
