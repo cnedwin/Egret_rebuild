@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Retain keyed Play rows and bind picture addresses",
+    "body": "Named Play panels can replace materialized children by stable names, retaining unchanged row subtrees, focus, scroll, resources and surrounding semantic order. Image parts can bind changing addresses; only the latest intent may replace the picture, and queued obsolete requests are dropped. Covers recurring inventory, card and market updates without rebuilding a whole view."
+  },
+  "zh": {
+    "title": "保留有稳定键的 Play 行并绑定图片地址",
+    "body": "有名字的 Play 面板能够按稳定名字替换实体化子行，保留未变化的子树、焦点、滚动、资源及外围语义顺序。图片部件可以绑定变化的地址，只允许最新意图替换图片，并跳过尚未开始的过期请求。行囊、卡牌与集市更新无需重建整个视图。"
+  }
+}

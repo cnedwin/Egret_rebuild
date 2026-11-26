@@ -107,6 +107,7 @@ In Chromium 157 with software WebGL2, both parts wrapped to three lines with 24-
 | `checked` | toggle | on or off |
 | `disabled` | button, toggle, actionable panel | disabled; a press does nothing |
 | `visible` | every part | hidden with what it holds |
+| `src` | image | the latest image address, or undefined to clear |
 | `color` | text, button, bar, panel | the colour drawn |
 | `tap` | button, toggle, panel | what a press does, given the state and an activation |
 | `tapTargetOnly` | button, toggle, panel | only answer direct hits, not pointer taps bubbling from descendants |
@@ -120,6 +121,40 @@ With `tap: (state, activation) => { ... }`, the second argument has `source` (mo
 A named panel with a non-pointer-only tap binding can declare `role: 'button'` to be one accessible control, with its drawn contents omitted from focus and the semantic tree. The default panel is still a group. Set `semantic: false` on a decorative part to omit its subtree from semantics and focus (pointer input is unchanged). A dynamic `label` binding takes precedence over the default accessible name; a blank result falls back to the default.
 
 What a binding throws stops the game, as what `update` throws does.
+
+## Keyed rows and changing pictures
+
+Use `view.replaceChildren(panelName, rows, bind?)` for an inventory, hand of cards or market whose membership changes. Make a named panel (a vertical scroll panel when needed), and give every direct row its stable name. Call this only when membership or a static description changes, not in every update. Binding values still follow the state each frame.
+
+```js
+const bag = game.show({ root: { type: 'panel', name: 'list', scroll: 'vertical',
+  width: 340, height: 280, layout: 'column', gap: 6, children: [] } }, { state });
+function showItems() {
+  const rows = state.items.map(item => ({ type: 'panel', name: 'item_' + item.id,
+    role: 'button', card: true, height: 54, layout: 'row', children: [
+      { type: 'image', name: 'icon_' + item.id, src: '/art/item-placeholder.webp', width: 48 },
+      { type: 'text', name: 'name_' + item.id, text: 'Item', width: 'fill' }
+    ] }));
+  const bind = {};
+  for (const { id } of state.items) {
+    const current = s => s.items.find(x => x.id === id);
+    bind['item_' + id] = { label: s => current(s).name, tap: s => inspectItem(s, id) };
+    bind['icon_' + id] = { src: s => current(s).icon };
+    bind['name_' + id] = { text: s => current(s).name };
+  }
+  bag.replaceChildren('list', rows, bind);
+}
+```
+
+Names must be unique in the whole view; use a stable, valid identifier (not the item index). Direct row names are the keys. When a key survives and its authored description and binding kinds are unchanged, the entire row subtree retains its sprites and resource borrows. Changes to static fields or binding kinds rebuild that row; use value bindings for changing amounts, labels, icons or availability. Keep descriptions immutable. The order of the rows follows the given array. A supplied binding table replaces bindings for these children only; omitting it preserves old bindings of surviving names. Names outside the panel cannot be bound by this call.
+
+The enclosing panel, its scroll handle and other controls are retained. Offset is clamped to the available content; a focused surviving control is revealed again if necessary, and a removed focus falls forward then back to an eligible control. The semantic tree keeps the outer view and other dialogs in order. Removed rows release their images, paragraphs, labels and input nodes, and a rejected malformed description or a semantic capacity refusal leaves the old mounted rows. The public `built` callback is not called for a collection update; it still runs when the view is built or switches portrait variant, and can populate a collection before the view's semantic tree is mounted. Value bindings must not reenter the same view's refresh or row replacement. An application binding's runtime exception follows the existing error path; the already accepted structure stays arranged and focus is reconciled, not rolled back. When both variants exist, the named panel must own the same descendant names and the replacement rows go into both variants. The ordinary orientation rebuild contract remains.
+
+This is a keyed materialized collection, **not virtualization**: view part/depth limits and the semantic tree capacity still apply. For a very large collection, use a lower-level virtual list or page the data yourself.
+
+An image name can bind `src: state => url` (or return `undefined`/an empty string to clear it). A previously loaded picture stays visible until the new one finishes; the same address is not loaded again by a binding refresh. When a newer address arrives, an older queued request is dropped and an already started request is discarded and released when it settles. The shared four-job queue remains bounded. No explicit request-cancellation guarantee is made for an in-flight browser decode; a current load failure follows the existing view error path.
+
+Browser regression: `node examples/play/verify-ui.mjs <Playwright index.mjs> <new output directory> <Chromium executable> collections`. Chromium software WebGL2 checks a 30-row list, middle-row removal/reorder, stable sprite/semantic IDs, scroll and focus, duplicate and semantic-capacity refusal, portrait rebuild, modal ordering, an actual delayed PNG response arriving after a newer image, and four occupied image jobs preventing a superseded queued URL from requesting any bytes. The separate `rich` case releases two paragraph cache leases to zero when the rows are removed while their enclosing panel remains. Hardware hand input, assistive software and other browsers have not been covered by this check.
 
 ## The skin
 

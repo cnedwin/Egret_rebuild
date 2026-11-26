@@ -7,13 +7,13 @@ import { EgretError } from '@egret/runtime';
 import type { DisplayObject } from '@egret/runtime';
 import type { Sprite } from '@egret/engine';
 import type { Paragraph, ParagraphCache } from '@egret/engine/paragraph';
-import type { UiSemantics } from '@egret/engine/ui/semantics';
+import type { SemanticNode, UiSemantics } from '@egret/engine/ui/semantics';
 import type { PlayGame, PlayText } from './BrowserPlay.js';
 import { directViewActivation, viewTapActivation } from './playActivation.js';
 import type { PlayViewActivation } from './playActivation.js';
 import { checkView, planView } from './view.js';
 import { keyCap } from './viewParts.js';
-import type { ViewDescription, ViewPart, ViewPlan, ViewRect } from './view.js';
+import type { ViewDescription, ViewPanel, ViewPart, ViewPlan, ViewPlannedPart, ViewRect } from './view.js';
 import { createPlayViewScrolls } from './playViewScroll.js';
 import type { PlayScrollViewport, PlayViewScroll } from './playViewScroll.js';
 
@@ -21,6 +21,8 @@ import type { PlayScrollViewport, PlayViewScroll } from './playViewScroll.js';
 export interface PlayViewBinding<S = unknown> {
   /** The words of a text, a button or a toggle. */
   readonly text?: (state: S) => string | number;
+  /** Image address; undefined or empty clears the picture. The latest requested address alone may replace it. */
+  readonly src?: (state: S) => string | undefined;
   /**
    * A number shown in words: `pick` reads it, `format` writes it (whole numbers unless given), and with `roll`, in
    * seconds, the words count up or down to a new number instead of jumping.
@@ -55,7 +57,7 @@ export interface PlayViewOptions<S = unknown> {
   /** A binding for each named part that follows the state or answers a press. A name the view does not have is refused. */
   readonly bind?: { readonly [name: string]: PlayViewBinding<S> };
   /** Called after the parts are made, and again when the screen turns to the other set of parts. */
-  readonly built?: (view: PlayView) => void;
+  readonly built?: (view: PlayView<S>) => void;
   /** An existing cache for width-wrapped labels and button descriptions. The caller owns the cache. */
   readonly paragraphCache?: ParagraphCache;
   /** Give this nonmodal view standard D-pad navigation and A activation. The top modal gets these automatically. */
@@ -63,12 +65,12 @@ export interface PlayViewOptions<S = unknown> {
   /** The named control that a modal focuses on opening, if it can be revealed and focused. */
   readonly initialFocus?: string;
   /** Handle Escape or the pad's B on the top modal. Close the view here to restore its previous focus. */
-  readonly dismiss?: (view: PlayView) => void;
+  readonly dismiss?: (view: PlayView<S>) => void;
   /** Handle a fresh pad Start press on the top modal while the game is paused. */
-  readonly resume?: (view: PlayView) => void;
+  readonly resume?: (view: PlayView<S>) => void;
 }
 /** A view on the screen. It is also a screen's handle: open one from a screen stack's `open` and it shows, hides and closes with the screen. */
-export interface PlayView {
+export interface PlayView<S = unknown> {
   /** The sprite of a named part, to add to, tween or give gestures; another after the screen turns to other parts. */
   get(name: string): Sprite;
   /** The authored layout box in the game's design units; not moved by scrolling or display transforms. */
@@ -90,6 +92,17 @@ export interface PlayView {
   readonly focused: string | undefined;
   /** Focus a named part, revealing it within a scroll viewport if needed. Returns false if it cannot take focus. */
   focus(name: string): boolean;
+  /**
+   * Replace the children of a named panel, using each direct child's name as its stable key.
+   * Unchanged rows retain their sprites, text, resource borrows and focus; bindings are replaced for those children.
+   * Pass both variants' common row descriptions here; their enclosing panel layouts can differ.
+   * This materializes the rows, not a virtual list.
+   */
+  replaceChildren(
+    name: string,
+    children: readonly ViewPart[],
+    bind?: Readonly<Record<string, PlayViewBinding<S>>>
+  ): void;
   /** Reads the bindings now, rather than at the end of the frame. */
   refresh(): void;
   show(): void;
@@ -111,7 +124,9 @@ interface Made {
   readonly words: PlayText | undefined;
   paragraph: { readonly box: Sprite; readonly text: Paragraph; key: string | undefined } | undefined;
   image: Sprite | undefined;
-  cancelImage?: () => void;
+  imageSrc?: string | undefined;
+  imageRevision?: number;
+  cancelImage?: (() => void) | undefined;
   rect: ViewRect;
   visible: boolean;
   disabled: boolean;
@@ -141,7 +156,7 @@ const KEYS_OF: Record<ViewPart['type'], readonly (keyof PlayViewBinding)[]> = {
   bar: ['label', 'value', 'visible', 'color'],
   toggle: ['label', 'text', 'checked', 'disabled', 'visible', 'tap', 'tapTargetOnly', 'badge'],
   space: ['visible'],
-  image: ['label', 'visible']
+  image: ['label', 'visible', 'src']
 };
 
 /** A question to answer yes or no: the words of its two buttons, and a title over the question. */
@@ -185,7 +200,7 @@ export function createPlayViews(
   game: PlayGame,
   hooks: { readonly failed: (cause: unknown) => void; readonly semantics: () => UiSemantics | undefined }
 ): {
-  view<S>(description: ViewDescription, options?: PlayViewOptions<S>): PlayView;
+  view<S>(description: ViewDescription, options?: PlayViewOptions<S>): PlayView<S>;
   confirm(message: string, options?: PlayConfirmOptions): Promise<boolean>;
   hints(list: readonly PlayHint[]): PlayHints;
   loading<T>(tasks: readonly (Promise<T> | (() => T | Promise<T>))[], options?: PlayLoadingOptions): Promise<T[]>;
@@ -309,50 +324,56 @@ export function createPlayViews(
     return false;
   };
 
-  function view<S>(description: ViewDescription, options: PlayViewOptions<S> = {}): PlayView {
-    const names = checkView(description);
+  function view<S>(description: ViewDescription, options: PlayViewOptions<S> = {}): PlayView<S> {
     if (options === null || typeof options !== 'object')
       throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'options' });
-    const bind = options.bind ?? {};
-    if (bind === null || typeof bind !== 'object') throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'bind' });
-    for (const [name, binding] of Object.entries(bind)) {
-      const type = names.get(name);
-      if (type === undefined)
-        throw new EgretError('UI_VIEW_BINDING_UNKNOWN', {
-          cause: name + ' is not a name of the view; it has ' + ([...names.keys()].join(', ') || 'no names')
-        });
-      if (binding === null || typeof binding !== 'object')
-        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': a binding is an object' });
-      for (const [key, value] of Object.entries(binding)) {
-        if (!KEYS_OF[type].includes(key as keyof PlayViewBinding))
-          throw new EgretError('UI_VIEW_BINDING_INVALID', {
-            cause: name + ' is a ' + type + ', which binds ' + KEYS_OF[type].join(', ') + ', not ' + key
+    const supplied = options.bind ?? {};
+    if (supplied === null || typeof supplied !== 'object')
+      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'bind' });
+    let bind: Readonly<Record<string, PlayViewBinding<S>>> = Object.assign(Object.create(null), supplied);
+    const validate = (description: ViewDescription, bind: Readonly<Record<string, PlayViewBinding<S>>>) => {
+      const names = checkView(description);
+      for (const [name, binding] of Object.entries(bind)) {
+        const type = names.get(name);
+        if (type === undefined)
+          throw new EgretError('UI_VIEW_BINDING_UNKNOWN', {
+            cause: name + ' is not a name of the view; it has ' + ([...names.keys()].join(', ') || 'no names')
           });
-        const ok =
-          key === 'roll'
-            ? typeof value === 'number' && Number.isFinite(value) && value >= 0
-            : key === 'pointerOnly' || key === 'tapTargetOnly'
-              ? typeof value === 'boolean'
-              : typeof value === 'function';
-        if (!ok) throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': ' + key });
+        if (binding === null || typeof binding !== 'object')
+          throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': a binding is an object' });
+        for (const [key, value] of Object.entries(binding)) {
+          if (!KEYS_OF[type].includes(key as keyof PlayViewBinding))
+            throw new EgretError('UI_VIEW_BINDING_INVALID', {
+              cause: name + ' is a ' + type + ', which binds ' + KEYS_OF[type].join(', ') + ', not ' + key
+            });
+          const ok =
+            key === 'roll'
+              ? typeof value === 'number' && Number.isFinite(value) && value >= 0
+              : key === 'pointerOnly' || key === 'tapTargetOnly'
+                ? typeof value === 'boolean'
+                : typeof value === 'function';
+          if (!ok) throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': ' + key });
+        }
+        if (binding.text !== undefined && binding.pick !== undefined)
+          throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': text or pick, not both' });
+        if (binding.pointerOnly === true && binding.tap === undefined)
+          throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': pointerOnly needs tap' });
+        if (binding.tapTargetOnly === true && binding.tap === undefined)
+          throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': tapTargetOnly needs tap' });
       }
-      if (binding.text !== undefined && binding.pick !== undefined)
-        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': text or pick, not both' });
-      if (binding.pointerOnly === true && binding.tap === undefined)
-        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': pointerOnly needs tap' });
-      if (binding.tapTargetOnly === true && binding.tap === undefined)
-        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': tapTargetOnly needs tap' });
-    }
-    const checkPanelRoles = (part: ViewPart): void => {
-      if (part.type !== 'panel') return;
-      if (part.role === 'button' && (bind[part.name!]?.tap === undefined || bind[part.name!]?.pointerOnly === true))
-        throw new EgretError('UI_VIEW_BINDING_INVALID', {
-          cause: part.name + ': button role needs a non-pointerOnly tap'
-        });
-      for (const child of part.children ?? []) checkPanelRoles(child);
+      const checkPanelRoles = (part: ViewPart): void => {
+        if (part.type !== 'panel') return;
+        if (part.role === 'button' && (bind[part.name!]?.tap === undefined || bind[part.name!]?.pointerOnly === true))
+          throw new EgretError('UI_VIEW_BINDING_INVALID', {
+            cause: part.name + ': button role needs a non-pointerOnly tap'
+          });
+        for (const child of part.children ?? []) checkPanelRoles(child);
+      };
+      checkPanelRoles(description.root);
+      if (description.portrait !== undefined) checkPanelRoles(description.portrait);
+      return names;
     };
-    checkPanelRoles(description.root);
-    if (description.portrait !== undefined) checkPanelRoles(description.portrait);
+    const names = validate(description, bind);
     const initialFocus = options.initialFocus;
     if (initialFocus !== undefined) {
       const type = typeof initialFocus === 'string' ? names.get(initialFocus) : undefined;
@@ -381,7 +402,7 @@ export function createPlayViews(
     for (const key of ['dismiss', 'resume'] as const)
       if (options[key] !== undefined && (description.modal !== true || typeof options[key] !== 'function'))
         throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: key + ' takes a callback on a modal view' });
-    const invoke = (callback: ((view: PlayView) => void) | undefined): void => {
+    const invoke = (callback: ((view: PlayView<S>) => void) | undefined): void => {
       try {
         callback?.(api);
       } catch (cause) {
@@ -399,6 +420,8 @@ export function createPlayViews(
       active = true,
       ended = false;
     const rolls = new Map<string, Roll>();
+    let readingBindings = false,
+      replacingRows = false;
     const removals: (() => void)[] = [];
     const scrollHandles = new Map<string, PlayViewScroll>();
     let scrollItems: Made[] = [];
@@ -430,6 +453,42 @@ export function createPlayViews(
       item.image.x = width / 2;
       item.image.y = height / 2;
       item.image.scaleX = item.image.scaleY = scale;
+    };
+    const requestImage = (item: Made, address: string | undefined): void => {
+      if (address !== undefined && typeof address !== 'string')
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: item.part.name + ': src takes an address or undefined'
+        });
+      const src = address === '' ? undefined : address;
+      if (item.imageRevision !== undefined && item.imageSrc === src) return;
+      const revision = (item.imageRevision ?? 0) + 1;
+      item.imageRevision = revision;
+      item.imageSrc = src;
+      item.cancelImage?.();
+      item.cancelImage = undefined;
+      if (src === undefined) {
+        if (item.image !== undefined) game.remove(item.image);
+        item.image = undefined;
+        return;
+      }
+      const current = () => !ended && made.includes(item) && item.imageRevision === revision;
+      item.cancelImage = queueImage(() =>
+        game.image(src, { layer: item.node }).then(
+          image => {
+            if (!current()) {
+              game.remove(image);
+              return;
+            }
+            const previous = item.image;
+            item.image = image;
+            placeImage(item);
+            if (previous !== undefined) game.remove(previous);
+          },
+          cause => {
+            if (current()) hooks.failed(cause);
+          }
+        )
+      );
     };
     const paintParagraph = (item: Made): void => {
       const { paragraph, part, rect } = item;
@@ -657,123 +716,116 @@ export function createPlayViews(
       scrollItems = [];
     };
     // Each part is inside its panel; a scroll panel holds the parts in its moving content.
+    const makeItem = (
+      planned: ViewPlannedPart,
+      offsets: ReadonlyMap<string, number> = new Map(),
+      restoreRoll = true
+    ): Made => {
+      const { part } = planned;
+      const container = planned.parent < 0 ? undefined : made[planned.parent]!;
+      const parent = container?.scroll?.content ?? container?.node ?? root;
+      const node = game.sprite(undefined, parent);
+      const scroll =
+        part.type === 'panel' && part.scroll === 'vertical'
+          ? makeScroll(
+              node,
+              offsets.get(part.name ?? '') ?? 0,
+              () => allowsInput() && visibleOnStage(node, game.browser.stage, true)
+            )
+          : undefined;
+      const start =
+        part.type === 'text' || part.type === 'button' || part.type === 'toggle' ? String(part.text ?? '') : '';
+      const words =
+        (part.type === 'text' && part.paragraph === undefined) || part.type === 'button' || part.type === 'toggle'
+          ? game.text(start, {
+              layer: node,
+              size: part.size ?? (part.type === 'text' ? plan.skin.size : Math.round(plan.skin.size * 0.9)),
+              align: part.type === 'button' ? 'center' : part.type === 'text' ? (part.align ?? 'left') : 'left',
+              baseline: 'middle',
+              ...(part.type === 'text' && part.bold !== undefined ? { bold: part.bold } : {}),
+              ...(part.type === 'button' ? { bold: true } : {}),
+              ...(part.fontFamily !== undefined ? { fontFamily: part.fontFamily } : {}),
+              ...(part.fontWeight !== undefined ? { fontWeight: part.fontWeight } : {}),
+              ...(part.italic !== undefined ? { italic: part.italic } : {})
+            })
+          : undefined;
+      const previous = restoreRoll ? rolls.get(part.name ?? '') : undefined;
+      const item: Made = {
+        part,
+        node,
+        scroll,
+        scrollParent: container?.scroll === undefined ? container?.scrollParent : container,
+        words,
+        paragraph: undefined,
+        image: undefined,
+        rect: relative(planned.rect, planned.parent < 0 ? undefined : plan.parts[planned.parent]!.rect),
+        visible: part.visible ?? true,
+        disabled: false,
+        checked: part.type === 'toggle' ? (part.checked ?? false) : false,
+        value: part.type === 'bar' ? (part.value ?? 1) : 0,
+        color: undefined,
+        text: previous !== undefined ? String(previous.shown) : start,
+        semanticLabel: undefined,
+        badge: false,
+        dot: undefined,
+        focusMark: undefined
+      };
+      if (richStyle(part) !== undefined) {
+        paragraphScope ??= game.engine.createScope();
+        const box = game.sprite(undefined, node);
+        const owner = paragraphScope;
+        paragraphModule ??= import('./playViewParagraph.js');
+        void paragraphModule
+          .then(({ createParagraph }) => {
+            if (ended || !made.includes(item) || owner.state !== 'open') return;
+            const text = createParagraph(game.engine, owner, paragraphCache!);
+            box.addChild(text);
+            item.paragraph = { box, text, key: undefined };
+            paintParagraph(item);
+          })
+          .catch(cause => {
+            if (!ended && made.includes(item)) hooks.failed(cause);
+          });
+      }
+      if (part.type === 'image' && (part.name === undefined || bind[part.name]?.src === undefined))
+        requestImage(item, part.src);
+      if (part.name !== undefined && bind[part.name]?.badge !== undefined) {
+        const dot = game.sprite(undefined, node);
+        item.dot = {
+          node: dot,
+          words: game.text('', {
+            layer: dot,
+            size: 13,
+            align: 'center',
+            baseline: 'middle',
+            bold: true,
+            color: 0xffffff
+          })
+        };
+      }
+      node.x = item.rect.x;
+      node.y = item.rect.y;
+      const binding = part.name === undefined ? undefined : bind[part.name];
+      if (part.type === 'button' || part.type === 'toggle' || (part.type === 'panel' && binding?.tap !== undefined))
+        game.onTap(node, activation =>
+          press(
+            item,
+            viewTapActivation(
+              activation,
+              nameOf(item),
+              made.find(candidate => candidate.node === activation.target)?.part.name
+            )
+          )
+        );
+      return item;
+    };
     const build = (offsets: ReadonlyMap<string, number> = new Map()): void => {
       plan = planView(description, frame());
       made = [];
       for (const planned of plan.parts) {
-        const { part } = planned;
-        const container = planned.parent < 0 ? undefined : made[planned.parent]!;
-        const parent = container?.scroll?.content ?? container?.node ?? root;
-        const node = game.sprite(undefined, parent);
-        const scroll =
-          part.type === 'panel' && part.scroll === 'vertical'
-            ? makeScroll(
-                node,
-                offsets.get(part.name ?? '') ?? 0,
-                () => allowsInput() && visibleOnStage(node, game.browser.stage, true)
-              )
-            : undefined;
-        const start =
-          part.type === 'text' || part.type === 'button' || part.type === 'toggle' ? String(part.text ?? '') : '';
-        const words =
-          (part.type === 'text' && part.paragraph === undefined) || part.type === 'button' || part.type === 'toggle'
-            ? game.text(start, {
-                layer: node,
-                size: part.size ?? (part.type === 'text' ? plan.skin.size : Math.round(plan.skin.size * 0.9)),
-                align: part.type === 'button' ? 'center' : part.type === 'text' ? (part.align ?? 'left') : 'left',
-                baseline: 'middle',
-                ...(part.type === 'text' && part.bold !== undefined ? { bold: part.bold } : {}),
-                ...(part.type === 'button' ? { bold: true } : {}),
-                ...(part.fontFamily !== undefined ? { fontFamily: part.fontFamily } : {}),
-                ...(part.fontWeight !== undefined ? { fontWeight: part.fontWeight } : {}),
-                ...(part.italic !== undefined ? { italic: part.italic } : {})
-              })
-            : undefined;
-        const previous = rolls.get(part.name ?? '');
-        const item: Made = {
-          part,
-          node,
-          scroll,
-          scrollParent: container?.scroll === undefined ? container?.scrollParent : container,
-          words,
-          paragraph: undefined,
-          image: undefined,
-          rect: relative(planned.rect, planned.parent < 0 ? undefined : plan.parts[planned.parent]!.rect),
-          visible: part.visible ?? true,
-          disabled: false,
-          checked: part.type === 'toggle' ? (part.checked ?? false) : false,
-          value: part.type === 'bar' ? (part.value ?? 1) : 0,
-          color: undefined,
-          text: previous !== undefined ? String(previous.shown) : start,
-          semanticLabel: undefined,
-          badge: false,
-          dot: undefined,
-          focusMark: undefined
-        };
-        if (richStyle(part) !== undefined) {
-          paragraphScope ??= game.engine.createScope();
-          const box = game.sprite(undefined, node);
-          const owner = paragraphScope;
-          paragraphModule ??= import('./playViewParagraph.js');
-          void paragraphModule
-            .then(({ createParagraph }) => {
-              if (ended || !made.includes(item) || owner.state !== 'open') return;
-              const text = createParagraph(game.engine, owner, paragraphCache!);
-              box.addChild(text);
-              item.paragraph = { box, text, key: undefined };
-              paintParagraph(item);
-            })
-            .catch(cause => {
-              if (!ended && made.includes(item)) hooks.failed(cause);
-            });
-        }
-        if (part.type === 'image') {
-          item.cancelImage = queueImage(() =>
-            game.image(part.src, { layer: node }).then(
-              image => {
-                if (ended || !made.includes(item)) {
-                  game.remove(image);
-                  return;
-                }
-                item.image = image;
-                placeImage(item);
-              },
-              cause => {
-                if (!ended && made.includes(item)) hooks.failed(cause);
-              }
-            )
-          );
-        }
-        if (part.name !== undefined && bind[part.name]?.badge !== undefined) {
-          const dot = game.sprite(undefined, node);
-          item.dot = {
-            node: dot,
-            words: game.text('', {
-              layer: dot,
-              size: 13,
-              align: 'center',
-              baseline: 'middle',
-              bold: true,
-              color: 0xffffff
-            })
-          };
-        }
-        node.x = item.rect.x;
-        node.y = item.rect.y;
+        const item = makeItem(planned, offsets);
         made.push(item);
-        if (scroll !== undefined) scrollItems.push(item);
-        const binding = part.name === undefined ? undefined : bind[part.name];
-        if (part.type === 'button' || part.type === 'toggle' || (part.type === 'panel' && binding?.tap !== undefined))
-          game.onTap(node, activation =>
-            press(
-              item,
-              viewTapActivation(
-                activation,
-                nameOf(item),
-                made.find(candidate => candidate.node === activation.target)?.part.name
-              )
-            )
-          );
+        if (item.scroll !== undefined) scrollItems.push(item);
       }
       if (description.modal === true && dim === undefined) {
         // Behind the parts and over all else: presses that miss the view end here.
@@ -806,74 +858,84 @@ export function createPlayViews(
     // Reads every binding; repaints only what changed.
     const read = (seconds: number): boolean => {
       if (ended) return false;
-      let any = false;
-      let scrollLayoutChanged = false;
-      const now = state();
-      for (const item of made) {
-        const binding = bindingOf(item);
-        if (binding === undefined) continue;
-        const before = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
-        if (binding.badge !== undefined) {
-          const value = binding.badge(now);
-          item.badge = value === true ? true : typeof value === 'number' && value >= 1 ? Math.floor(value) : false;
-        }
-        if (binding.visible !== undefined) {
-          const visible = binding.visible(now) === true;
-          if (item.visible !== visible) scrollLayoutChanged = true;
-          item.visible = visible;
-        }
-        if (binding.disabled !== undefined) item.disabled = binding.disabled(now) === true;
-        if (binding.checked !== undefined) item.checked = binding.checked(now) === true;
-        if (binding.value !== undefined) {
-          const value = binding.value(now);
-          item.value = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
-        }
-        if (binding.color !== undefined) {
-          const value = binding.color(now);
-          item.color = Number.isInteger(value) && value >= 0 && value <= 0xffffff ? value : undefined;
-        }
-        if (binding.label !== undefined) {
-          const label = binding.label(now);
-          item.semanticLabel =
-            typeof label === 'string' && /\S/u.test(label)
-              ? label
-                  .slice(0, 1024)
-                  .replace(/[\uD800-\uDBFF]$/u, '')
-                  .trimEnd() || undefined
-              : undefined;
-        }
-        if (binding.text !== undefined) item.text = String(binding.text(now));
-        if (binding.pick !== undefined) {
-          const target = binding.pick(now);
-          const name = item.part.name!;
-          let roll = rolls.get(name);
-          if (typeof target === 'number' && Number.isFinite(target)) {
-            if (roll === undefined) {
-              roll = { from: target, to: target, shown: target, left: 0 };
-              rolls.set(name, roll);
-            } else if (roll.to !== target) {
-              roll.from = roll.shown;
-              roll.to = target;
-              roll.left = binding.roll ?? 0;
+      if (readingBindings)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: 'bindings cannot refresh the same view while being read'
+        });
+      readingBindings = true;
+      try {
+        let any = false;
+        let scrollLayoutChanged = false;
+        const now = state();
+        for (const item of made) {
+          const binding = bindingOf(item);
+          if (binding === undefined) continue;
+          const before = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
+          if (binding.badge !== undefined) {
+            const value = binding.badge(now);
+            item.badge = value === true ? true : typeof value === 'number' && value >= 1 ? Math.floor(value) : false;
+          }
+          if (binding.visible !== undefined) {
+            const visible = binding.visible(now) === true;
+            if (item.visible !== visible) scrollLayoutChanged = true;
+            item.visible = visible;
+          }
+          if (binding.disabled !== undefined) item.disabled = binding.disabled(now) === true;
+          if (binding.checked !== undefined) item.checked = binding.checked(now) === true;
+          if (binding.value !== undefined) {
+            const value = binding.value(now);
+            item.value = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
+          }
+          if (binding.color !== undefined) {
+            const value = binding.color(now);
+            item.color = Number.isInteger(value) && value >= 0 && value <= 0xffffff ? value : undefined;
+          }
+          if (binding.label !== undefined) {
+            const label = binding.label(now);
+            item.semanticLabel =
+              typeof label === 'string' && /\S/u.test(label)
+                ? label
+                    .slice(0, 1024)
+                    .replace(/[\uD800-\uDBFF]$/u, '')
+                    .trimEnd() || undefined
+                : undefined;
+          }
+          if (binding.text !== undefined) item.text = String(binding.text(now));
+          if (binding.src !== undefined) requestImage(item, binding.src(now));
+          if (binding.pick !== undefined) {
+            const target = binding.pick(now);
+            const name = item.part.name!;
+            let roll = rolls.get(name);
+            if (typeof target === 'number' && Number.isFinite(target)) {
+              if (roll === undefined) {
+                roll = { from: target, to: target, shown: target, left: 0 };
+                rolls.set(name, roll);
+              } else if (roll.to !== target) {
+                roll.from = roll.shown;
+                roll.to = target;
+                roll.left = binding.roll ?? 0;
+              }
+              if (roll.left > 0 && seconds > 0) {
+                roll.left = Math.max(0, roll.left - seconds);
+                const t = 1 - roll.left / (binding.roll ?? 1);
+                const eased = 1 - (1 - t) * (1 - t);
+                roll.shown = roll.left === 0 ? roll.to : roll.from + (roll.to - roll.from) * eased;
+              } else if (roll.left <= 0) roll.shown = roll.to;
+              const whole = roll.left > 0 ? Math.round(roll.shown) : roll.shown;
+              item.text = binding.format !== undefined ? String(binding.format(whole)) : String(Math.round(whole));
             }
-            if (roll.left > 0 && seconds > 0) {
-              roll.left = Math.max(0, roll.left - seconds);
-              const t = 1 - roll.left / (binding.roll ?? 1);
-              const eased = 1 - (1 - t) * (1 - t);
-              roll.shown = roll.left === 0 ? roll.to : roll.from + (roll.to - roll.from) * eased;
-            } else if (roll.left <= 0) roll.shown = roll.to;
-            const whole = roll.left > 0 ? Math.round(roll.shown) : roll.shown;
-            item.text = binding.format !== undefined ? String(binding.format(whole)) : String(Math.round(whole));
+          }
+          const after = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
+          if (after !== before) {
+            paint(item);
+            any = true;
           }
         }
-        const after = `${item.visible}|${item.disabled}|${item.checked}|${item.value}|${item.color}|${item.text}|${item.badge}`;
-        if (after !== before) {
-          paint(item);
-          any = true;
-        }
+        if (scrollLayoutChanged) syncScrollLayout();
+        return any;
+      } finally {
+        readingBindings = false;
       }
-      if (scrollLayoutChanged) syncScrollLayout();
-      return any;
     };
     const refresh = (): void => {
       try {
@@ -893,22 +955,13 @@ export function createPlayViews(
     };
     // Semantics: the view as a group, or a dialog when modal, and each named part as what it is.
     const semantics = hooks.semantics();
-    const registerSemantics = (): void => {
+    const semanticNodes = new Map<string, SemanticNode>();
+    let semanticRoot: SemanticNode | undefined;
+    // Named parts in reading order, each inside its nearest named panel.
+    const registerParts = (from = 0, to = plan.parts.length): void => {
       if (semantics === undefined) return;
-      const top = semantics.add({
-        id,
-        role: description.modal === true ? 'dialog' : 'group',
-        describe: () => ({
-          ...(description.label !== undefined ? { name: description.label } : {}),
-          bounds: stageRect(made[0]!) ?? EMPTY,
-          hidden: !isShown(),
-          ...(description.modal === true ? { modal: active } : {})
-        })
-      });
-      removals.push(() => top.remove());
-      // Named parts in the order of the first tree; each inside its nearest named panel.
       const first = plan;
-      for (const planned of first.parts) {
+      for (const planned of first.parts.slice(from, to)) {
         const name = planned.part.name;
         if (name === undefined || planned.part.type === 'space' || !semanticsAllows(made[planned.index]!)) continue;
         let parent = id;
@@ -934,7 +987,7 @@ export function createPlayViews(
                   : type === 'image'
                     ? 'image'
                     : 'switch';
-        semantics.add({
+        const semantic = semantics.add({
           id: id + ':' + name,
           role,
           parent,
@@ -995,18 +1048,311 @@ export function createPlayViews(
               }
             : {})
         });
+        semanticNodes.set(name, semantic);
       }
     };
+    const registerSemantics = (): void => {
+      if (semantics === undefined) return;
+      const top = semantics.add({
+        id,
+        role: description.modal === true ? 'dialog' : 'group',
+        describe: () => ({
+          ...(description.label !== undefined ? { name: description.label } : {}),
+          bounds: stageRect(made[0]!) ?? EMPTY,
+          hidden: !isShown(),
+          ...(description.modal === true ? { modal: active } : {})
+        })
+      });
+      semanticRoot = top;
+      removals.push(() => {
+        top.remove();
+        semanticRoot = undefined;
+        semanticNodes.clear();
+      });
+      registerParts();
+    };
+    const removeRowSemantics = (names: Set<string>): void => {
+      for (const name of names) {
+        semanticNodes.get(name)?.remove();
+        semanticNodes.delete(name);
+      }
+    };
+    const releaseItem = (item: Made): void => {
+      item.cancelImage?.();
+      item.imageRevision = (item.imageRevision ?? 0) + 1;
+      item.paragraph?.text.dispose();
+      for (const child of [item.words, item.dot?.words, item.image]) if (child !== undefined) game.remove(child);
+    };
     const releaseContent = (): void => {
+      for (const item of made) releaseItem(item);
       paragraphScope?.dispose();
       paragraphScope = undefined;
-      for (const item of made) {
-        item.cancelImage?.();
-        for (const child of [item.words, item.dot?.words, item.image]) if (child !== undefined) game.remove(child);
+    };
+
+    // Plans are pre-order; a root's descendants occupy one contiguous interval.
+    const endOf = (p: ViewPlan, at: number): number => {
+      let end = at + 1;
+      while (end < p.parts.length && p.parts[end]!.parent >= at) end++;
+      return end;
+    };
+    const rowNames = (children: readonly ViewPart[]): Set<string> => {
+      const names = new Set<string>();
+      const collect = (part: ViewPart): void => {
+        if (part.name !== undefined) names.add(part.name);
+        if (part.type === 'panel') for (const child of part.children ?? []) collect(child);
+      };
+      for (const child of children) {
+        if (child?.name === undefined)
+          throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'collection rows need stable names' });
+        collect(child);
+      }
+      return names;
+    };
+    const collectionPanel = (root: ViewPart, name: string): ViewPanel | undefined => {
+      if (root.type !== 'panel') return undefined;
+      if (root.name === name) return root;
+      for (const child of root.children ?? []) {
+        const result = collectionPanel(child, name);
+        if (result !== undefined) return result;
+      }
+      return undefined;
+    };
+    const withChildren = (root: ViewPart, name: string, children: readonly ViewPart[]): ViewPart => {
+      if (root.type !== 'panel') return root;
+      if (root.name === name) return { ...root, children };
+      const nested = root.children?.map(child => withChildren(child, name, children));
+      return nested === undefined || nested.every((child, index) => child === root.children![index])
+        ? root
+        : { ...root, children: nested };
+    };
+    // Descriptions are data. Property order is not a reason to renew a retained node.
+    const sameDescription = (a: unknown, b: unknown): boolean => {
+      if (Object.is(a, b)) return true;
+      if (
+        a === null ||
+        b === null ||
+        typeof a !== 'object' ||
+        typeof b !== 'object' ||
+        Array.isArray(a) !== Array.isArray(b)
+      )
+        return false;
+      const left = a as Record<string, unknown>,
+        right = b as Record<string, unknown>;
+      const keys = Object.keys(left);
+      return (
+        keys.length === Object.keys(right).length &&
+        keys.every(key => Object.hasOwn(right, key) && sameDescription(left[key], right[key]))
+      );
+    };
+    const compatible = (before: PlayViewBinding<S> | undefined, after: PlayViewBinding<S> | undefined): boolean => {
+      const a = before ?? {},
+        b = after ?? {};
+      const keys = Object.keys(a) as (keyof PlayViewBinding<S>)[];
+      return (
+        keys.length === Object.keys(b).length &&
+        keys.every(key => (typeof a[key] === 'function' ? typeof b[key] === 'function' : a[key] === b[key]))
+      );
+    };
+    const layoutItems = (): void => {
+      placeDim();
+      made.forEach((item, index) => {
+        const planned = plan.parts[index]!;
+        item.rect = relative(planned.rect, planned.parent < 0 ? undefined : plan.parts[planned.parent]!.rect);
+        item.node.x = item.rect.x;
+        item.node.y = item.rect.y;
+        paint(item);
+        if (item.focusMark?.visible === true) setFocusOutline(item, plan.skin.accent);
+      });
+      syncScrollLayout();
+    };
+    // Membership changes are explicit rather than reallocating a collection descriptor every frame.
+    const replaceRows = (
+      name: string,
+      children: readonly ViewPart[],
+      replacement?: Readonly<Record<string, PlayViewBinding<S>>>
+    ): void => {
+      if (
+        ended ||
+        !Array.isArray(children) ||
+        (replacement !== undefined && (replacement === null || typeof replacement !== 'object'))
+      )
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: 'replaceChildren needs a live named panel, rows and a binding table'
+        });
+      const original = collectionPanel(description.root, name);
+      if (original === undefined)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': expected a named panel' });
+      const oldNames = rowNames(original.children ?? []);
+      if (description.portrait !== undefined) {
+        const other = collectionPanel(description.portrait, name);
+        const otherNames = other === undefined ? undefined : rowNames(other.children ?? []);
+        if (
+          otherNames === undefined ||
+          otherNames.size !== oldNames.size ||
+          [...oldNames].some(key => !otherNames.has(key))
+        )
+          throw new EgretError('UI_VIEW_VARIANT_MISMATCH', {
+            cause: name + ': collection descendants must belong to the same panel in both variants'
+          });
+      }
+      const nextDescription: ViewDescription = {
+        ...description,
+        root: withChildren(description.root, name, children),
+        ...(description.portrait === undefined ? {} : { portrait: withChildren(description.portrait, name, children) })
+      };
+      // Validate shape, size, depth and globally unique names before traversing supplied rows.
+      checkView(nextDescription);
+      const newNames = rowNames(children),
+        nextBind: Record<string, PlayViewBinding<S>> = Object.create(null);
+      for (const [key, binding] of Object.entries(bind))
+        if (!oldNames.has(key) || (replacement === undefined && newNames.has(key))) nextBind[key] = binding;
+      if (replacement !== undefined)
+        for (const [key, binding] of Object.entries(replacement)) {
+          if (!newNames.has(key))
+            throw new EgretError('UI_VIEW_BINDING_UNKNOWN', { cause: key + ' is outside the replacement rows' });
+          nextBind[key] = binding;
+        }
+      validate(nextDescription, nextBind);
+      if (
+        paragraphCache === undefined &&
+        (usesParagraph(nextDescription.root) ||
+          (nextDescription.portrait !== undefined && usesParagraph(nextDescription.portrait)))
+      )
+        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'paragraph parts need a paragraphCache' });
+      const nextPlan = planView(nextDescription, frame());
+      const oldPlan = plan,
+        oldMade = made,
+        oldBind = bind,
+        oldDescription = description;
+      const at = oldPlan.names.get(name)!,
+        nextAt = nextPlan.names.get(name)!;
+      if (nextAt !== at || nextPlan.variant !== oldPlan.variant)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'arrange the view before replacing rows' });
+      const oldEnd = endOf(oldPlan, at),
+        nextEnd = endOf(nextPlan, at);
+      const reuse = new Map<number, Made>();
+      for (let i = 0; i <= at; i++) reuse.set(i, oldMade[i]!);
+      for (let i = nextEnd; i < nextPlan.parts.length; i++) reuse.set(i, oldMade[oldEnd + i - nextEnd]!);
+      for (let i = at + 1; i < nextEnd; ) {
+        const planned = nextPlan.parts[i]!,
+          end = endOf(nextPlan, i);
+        const old = oldPlan.names.get(planned.part.name!);
+        if (
+          old !== undefined &&
+          oldPlan.parts[old]!.parent === at &&
+          endOf(oldPlan, old) - old === end - i &&
+          sameDescription(oldPlan.parts[old]!.part, planned.part)
+        ) {
+          let stable = true;
+          for (let n = i; n < end; n++) {
+            const key = nextPlan.parts[n]!.part.name;
+            if (key !== undefined && !compatible(oldBind[key], nextBind[key])) stable = false;
+          }
+          if (stable) for (let n = i; n < end; n++) reuse.set(n, oldMade[old + n - i]!);
+        }
+        i = end;
+      }
+      const previousFocus = focused?.owner === record ? focused.name : undefined;
+      const previousTargets = previousFocus === undefined ? [] : record.targets();
+      const previousIndex = previousFocus === undefined ? -1 : previousTargets.indexOf(previousFocus);
+      if (previousFocus !== undefined) focus(undefined);
+      const created: Made[] = [];
+      // Do not release the old resource graph until the new semantic tree is admitted.
+      description = nextDescription;
+      bind = nextBind;
+      plan = nextPlan;
+      made = [];
+      let semanticsReplaced = false;
+      try {
+        for (const planned of plan.parts) {
+          let item = reuse.get(planned.index);
+          if (item === undefined) {
+            // Rebuilt rows are new content, unlike the same named parts rebuilt by orientation.
+            item = makeItem(planned, new Map(), false);
+            created.push(item);
+          }
+          made.push(item);
+        }
+        // Keep the root and other parts mounted in the semantic tree. Replacing a row
+        // in a covered view cannot change the reading order or priority of other dialogs.
+        // built() can populate the collection before the outer view registers
+        // semantics (also when switching portrait variant). That outer registration
+        // will see this new plan; there is no attached subtree to replace yet.
+        if (semanticRoot?.attached === true) {
+          semanticsReplaced = true;
+          removeRowSemantics(oldNames);
+          registerParts(at + 1, nextEnd);
+        }
+      } catch (cause) {
+        if (semanticsReplaced) removeRowSemantics(newNames);
+        description = oldDescription;
+        bind = oldBind;
+        plan = oldPlan;
+        made = oldMade;
+        for (const item of created) {
+          item.scroll?.dispose();
+          releaseItem(item);
+          game.remove(item.node);
+        }
+        if (semanticsReplaced) registerParts(at + 1, oldEnd);
+        if (previousFocus !== undefined && record.reveal(previousFocus)) focus({ owner: record, name: previousFocus });
+        throw cause;
+      }
+      const kept = new Set(made);
+      for (const item of oldMade)
+        if (!kept.has(item)) {
+          item.scroll?.dispose();
+          releaseItem(item);
+          game.remove(item.node);
+          const key = item.part.name;
+          if (key !== undefined) {
+            rolls.delete(key);
+            if (!plan.names.has(key)) scrollHandles.delete(key);
+          }
+        }
+      // Reordering retained row roots, rather than renewing their sprite identities,
+      // also reorders pointer hit testing and the semantic registration above.
+      const parent = made[at]!.scroll?.content ?? made[at]!.node;
+      let position = 0;
+      for (let i = at + 1; i < nextEnd; i = endOf(plan, i)) parent.setChildIndex(made[i]!.node, position++);
+      scrollItems = made.filter(item => item.scroll !== undefined);
+      // The structure is now committed. Establish its authored geometry and
+      // recover focus even if an application binding throws while reading it.
+      layoutItems();
+      try {
+        read(0);
+      } catch (cause) {
+        // Runtime bindings are not description validation. Reconcile any values
+        // already assigned and keep the committed result arranged before reporting.
+        layoutItems();
+        throw cause;
+      } finally {
+        if (previousFocus !== undefined) {
+          if (record.reveal(previousFocus)) focus({ owner: record, name: previousFocus });
+          else {
+            const choices = record.targets(),
+              start = Math.min(previousIndex, choices.length - 1);
+            const order = [...choices.slice(Math.max(0, start)), ...choices.slice(0, Math.max(0, start)).reverse()];
+            const fallback = order.find(key => record.reveal(key));
+            if (fallback !== undefined) focus({ owner: record, name: fallback });
+          }
+        }
+      }
+    };
+    const replaceChildren: PlayView<S>['replaceChildren'] = (name, children, replacement) => {
+      if (readingBindings || replacingRows)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: 'collection replacement cannot reenter the view from a binding or a replacement'
+        });
+      replacingRows = true;
+      try {
+        replaceRows(name, children, replacement);
+      } finally {
+        replacingRows = false;
       }
     };
 
-    const api: PlayView = {
+    const api: PlayView<S> = {
       get: name => find(name).node,
       rect: name => {
         const item = find(name);
@@ -1060,6 +1406,7 @@ export function createPlayViews(
         focus({ owner: record, name });
         return true;
       },
+      replaceChildren,
       refresh,
       show() {
         if (ended) return;
@@ -1102,10 +1449,11 @@ export function createPlayViews(
       modal: () => description.modal === true && active && isShown(),
       padNavigation: () => options.gamepad === true && active && isShown(),
       targets: () => made.flatMap(item => (item.part.name !== undefined && followsFocus(item) ? [item.part.name] : [])),
-      keeps: name => followsFocus(find(name)),
-      eligible: name => canFocus(find(name)),
-      reveal: name => revealForTab(find(name)),
+      keeps: name => plan.names.has(name) && followsFocus(find(name)),
+      eligible: name => plan.names.has(name) && canFocus(find(name)),
+      reveal: name => plan.names.has(name) && revealForTab(find(name)),
       focusMark(name, visible) {
+        if (!plan.names.has(name)) return;
         const item = find(name);
         if (item.node.isDisposed) return;
         if (item.focusMark === undefined) {
@@ -1115,7 +1463,9 @@ export function createPlayViews(
         }
         item.focusMark.visible = visible;
       },
-      press: (name, source) => press(find(name), directViewActivation(name, source)),
+      press: (name, source) => {
+        if (plan.names.has(name)) press(find(name), directViewActivation(name, source));
+      },
       dismiss: options.dismiss === undefined ? undefined : () => invoke(options.dismiss),
       start: () => invoke(options.resume),
       tick(seconds) {
@@ -1137,16 +1487,7 @@ export function createPlayViews(
           return;
         }
         plan = next;
-        placeDim();
-        made.forEach((item, index) => {
-          const planned = plan.parts[index]!;
-          item.rect = relative(planned.rect, planned.parent < 0 ? undefined : plan.parts[planned.parent]!.rect);
-          item.node.x = item.rect.x;
-          item.node.y = item.rect.y;
-          paint(item);
-          if (item.focusMark?.visible === true) setFocusOutline(item, plan.skin.accent);
-        });
-        syncScrollLayout();
+        layoutItems();
       },
       end() {
         if (ended) return;
