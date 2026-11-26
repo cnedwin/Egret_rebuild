@@ -100,7 +100,21 @@ Planned for phase 2. A card that the evaluation never retrieves, or whose presen
 
 ### 6. From errors and hints to cards
 
-Planned for phase 2. Engine errors carry codes and `@egret/devtools` emits hint ids such as `frames-skipped`. Both already work as questions to the guide (`node tools/egret-guide.mjs FRAME_BUDGET_EXCEEDED`). The next step is a pointer from each to its card: a line that a developer sees with an error or a hint, naming the card id to ask for. The pointer will be generated from the cards' triggers, so a card and its pointers cannot disagree, and the merge gate will check that every pointer names an existing card.
+Planned for phase 2. Engine errors carry codes and `@egret/devtools` emits hint ids such as `frames-skipped`. Both already work as questions to the guide (`node tools/egret-guide.mjs FRAME_BUDGET_EXCEEDED`). For an error code the pointer now exists: `node tools/egret.mjs explain <ERROR_CODE>`, or `node vendor/egret.mjs explain` in a game, prints the runtime's sentence for the code in English and Chinese and then the cards whose triggers name it, so a card and its pointer cannot disagree. Hint ids still go to the guide as questions.
+
+### 7. Engine notes back from games
+
+A game that meets a fault of the engine works around it with the engine's own parts and writes the fault into `ENGINE-NOTES.md` at its root, one numbered note per fault ([the card](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/cards/verify/engine-notes.txt)). Under each note's heading one line gives what a program needs:
+
+```html
+<!-- engine-note: {"id": "InquestScrolls#3", "status": "open", "topic": "paragraph-without-webassembly", "workaround": ["src/view/plainText.mjs"]} -->
+```
+
+`id` is the game's folder, `#` and the note's number. `status` is `open`, `partly`, `worked-around`, `documented` or `resolved`. `topic` names the fault in words joined by dashes, the same in every game that meets it. `workaround` lists the game's files that hold the workaround.
+
+When the engine resolves or documents a fault, the change adds an entry to [`guide/resolved.json`](https://github.com/cnedwin/Egret_rebuild/blob/main/guide/resolved.json): the topic, what the engine did (`resolved`, `partly` or `documented`), what changed in one or two sentences, the commit and pull request, the card to read and the notes it was written for. The engine copy carries the list as it stood at the game's pin. `node vendor/egret.mjs notes`, run in the game's folder, reads its notes against that list, by topic and by id. It prints each note still marked open that the copy has resolved or documented since, what changed, the files to take the workaround out of and the card to read. `--check` exits 1 while one remains. Run from this repository (`node tools/egret.mjs notes <game folder>`), it reads against the newest list and says to refresh the game's engine copy first.
+
+The first entries come from notes of The Inquest Scrolls (#474 to #478) and from faults that four play games shared, fixed earlier and still marked open in those games.
 
 ## Ownership and review
 

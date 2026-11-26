@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "A game asks which of its engine notes are fixed",
+    "body": "guide/resolved.json lists the engine notes of games that the engine has resolved or documented, by topic, with the commit and the card to read. node vendor/egret.mjs notes, run in a game's folder, reads its ENGINE-NOTES.md against the list as it stood at the game's pin and names the workarounds the engine copy no longer needs; --check fails while one is still marked open."
+  },
+  "zh": {
+    "title": "游戏可以问：我的哪些引擎笔记已经修好",
+    "body": "guide/resolved.json 按 topic 列出引擎已经解决或用文档说明的游戏引擎笔记，附提交和要读的卡片。在游戏目录里运行 node vendor/egret.mjs notes，会把游戏的 ENGINE-NOTES.md 与游戏固定版本时的这份清单对照，指出引擎副本已经不再需要的绕过代码；只要还有标为未解决的这类笔记，--check 就失败。"
+  }
+}

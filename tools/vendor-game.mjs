@@ -135,7 +135,9 @@ export function agentKitFiles() {
   const files = [
     ['tools/egret.mjs', 'egret/tools/egret.mjs'],
     ['tools/egret-guide.mjs', 'egret/tools/egret-guide.mjs'],
-    ['guide/index.txt', 'egret/guide/index.txt']
+    ['tools/egret-notes.mjs', 'egret/tools/egret-notes.mjs'],
+    ['guide/index.txt', 'egret/guide/index.txt'],
+    ['guide/resolved.json', 'egret/guide/resolved.json']
   ];
   for (const folder of ['areas', 'cards'])
     for (const entry of fs.readdirSync(path.join(root, 'guide', folder), { recursive: true, withFileTypes: true })) {
@@ -167,6 +169,7 @@ function writeAgentKit(vendor) {
       '//   node vendor/egret.mjs guide <question>   the cards of the engine guide that answer\n' +
       '//   node vendor/egret.mjs card <id>          one card;  list [<area> | all]  the areas or an area\n' +
       '//   node vendor/egret.mjs explain <CODE>     an engine error in English and Chinese, with its cards\n' +
+      "//   node vendor/egret.mjs notes [--check]    which of this game's ENGINE-NOTES the engine copy has fixed\n" +
       "import { main } from './egret/tools/egret.mjs';\n" +
       'const { code, text } = await main(process.argv.slice(2));\n' +
       'process.stdout.write(text);\n' +
