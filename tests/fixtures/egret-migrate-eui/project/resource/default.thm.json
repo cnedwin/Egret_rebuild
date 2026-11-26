@@ -1,0 +1,11 @@
+{
+  "skins": {
+    "eui.Button": "resource/skins/ActionButtonSkin.exml"
+  },
+  "exmls": [
+    "resource/skins/ActionButtonSkin.exml",
+    "resource/skins/ScoreSkin.exml",
+    "resource/skins/TrialSkin.exml"
+  ],
+  "autoGenerateExmlsList": false
+}

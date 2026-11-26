@@ -1,0 +1,181 @@
+// SPDX-License-Identifier: Apache-2.0
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { compileExml, discoverLegacySkins } from '../tools/egret-migrate/exml.mjs';
+
+const namespace = 'http://ns.egret.com/eui';
+const skin = inner =>
+  '<e:Skin xmlns:e="' + namespace + '" class="skins.Panel" width="480" height="320">' + inner + '</e:Skin>';
+
+test('EXML compiles visible parts, fixed and fluid layout values, and literal text without executing code', () => {
+  const file = 'resource/skins/Panel.exml';
+  const result = compileExml(
+    skin(
+      '<e:Group id="content" width="100%" top="14">' +
+        '<e:layout><e:VerticalLayout gap="8" paddingLeft="12" horizontalAlign="center"/></e:layout>' +
+        '<e:Rect width="240" height="96" fillColor="0x006699" fillAlpha="0.75"/>' +
+        '<e:Label id="title" size="24" text="Tea &amp; rice &#x8336;" textColor="#ffeeaa" bold="true"/>' +
+        '<e:Button id="open" label="Open" width="40%" skinName="skins.ButtonSkin"/>' +
+        '<e:Image source="icon_png" anchorOffsetX="2" scaleX="-1"/>' +
+        '<e:Component skinName="skins.Badge"/>' +
+        '</e:Group>'
+    ),
+    { path: file }
+  );
+  assert.equal(result.className, 'skins.Panel');
+  assert.equal(result.sourcePath, file);
+  assert.deepEqual(result.root.properties, { width: 480, height: 320 });
+  const [content] = result.root.children;
+  assert.deepEqual(content.layout, {
+    type: 'VerticalLayout',
+    properties: { gap: 8, paddingLeft: 12, horizontalAlign: 'center' }
+  });
+  assert.deepEqual(content.properties, { id: 'content', width: '100%', top: 14 });
+  assert.deepEqual(
+    content.children.map(child => child.type),
+    ['Rect', 'Label', 'Button', 'Image', 'Component']
+  );
+  assert.deepEqual(content.children[0].properties, { width: 240, height: 96, fillColor: 0x006699, fillAlpha: 0.75 });
+  assert.deepEqual(content.children[1].properties, {
+    id: 'title',
+    size: 24,
+    text: 'Tea & rice 茶',
+    textColor: 0xffeeaa,
+    bold: true
+  });
+  assert.deepEqual(content.children[2].properties, {
+    id: 'open',
+    label: 'Open',
+    width: '40%',
+    skinName: 'skins.ButtonSkin'
+  });
+});
+
+test('EXML accepts a default EUI namespace, declaration, comments, and an omitted class', () => {
+  const result = compileExml(
+    '<?xml version="1.0" encoding="utf-8"?>\n<!-- heading -->\n<Skin xmlns="' +
+      namespace +
+      '"><Label text="ready"/></Skin>',
+    { path: 'resource/skin.exml' }
+  );
+  assert.equal(result.className, null);
+  assert.equal(result.root.children[0].type, 'Label');
+});
+
+test('EXML refuses unknown constructs, malformed XML, active syntax, unsupported bindings and unresolved skin parts', () => {
+  const invalid = [
+    '<!DOCTYPE e:Skin [<!ENTITY value SYSTEM "x">]>' + skin('<e:Label text="&value;"/>'),
+    skin('<e:Label text="{hostComponent.count}"/>'),
+    skin('<e:Label onclick="execute()"/>'),
+    skin('<e:Label text="bad &unknown;"/>'),
+    skin('<e:Label id="constructor"/>'),
+    skin('<e:Label id="same"/><e:Group id="same"/>'),
+    skin('<e:Label includeIn="selected"/>'),
+    skin('<e:List/>'),
+    skin('<e:Label>unadmitted text</e:Label>'),
+    skin('<e:Group unknown="1"/>'),
+    skin('<e:Label size="NaN"/>'),
+    skin('<e:Group width="100%%"/>'),
+    skin('<e:Group><e:layout><e:HorizontalLayout/><e:BasicLayout/></e:layout></e:Group>'),
+    skin('<e:Group><e:Label></e:Group></e:Label>'),
+    skin('<e:Group id="x" id="y"/>'),
+    skin('<other:Label/>'),
+    skin('<e:Label text="unterminated/>')
+  ];
+  for (const source of invalid) {
+    assert.throws(
+      () => compileExml(source, { path: 'resource/skin.exml' }),
+      error => error.code === 'MIGRATE_EXML_UNSUPPORTED' && error.details.path === 'resource/skin.exml',
+      source
+    );
+  }
+});
+
+test('theme discovery reads only declared local EXML paths, including default skin paths', () => {
+  const files = new Map([
+    [
+      'resource/default.thm.json',
+      JSON.stringify({
+        skins: { 'eui.Button': 'resource/Button.exml', Panel: 'skins.Panel' },
+        exmls: ['resource/Panel.exml'],
+        autoGenerateExmlsList: true
+      })
+    ],
+    ['resource/Panel.exml', skin('<e:Button id="open"/>')],
+    ['resource/Button.exml', '<e:Skin xmlns:e="' + namespace + '"/>']
+  ]);
+  const seen = [];
+  const result = discoverLegacySkins(key => {
+    seen.push(key);
+    assert.ok(files.has(key), key);
+    return { bytes: Buffer.from(files.get(key)) };
+  });
+  assert.deepEqual(seen, ['resource/default.thm.json', 'resource/Panel.exml', 'resource/Button.exml']);
+  assert.deepEqual(result.skins, { 'eui.Button': 'resource/Button.exml', Panel: 'skins.Panel' });
+  assert.deepEqual(
+    result.exmls.map(file => file.sourcePath),
+    ['resource/Panel.exml', 'resource/Button.exml']
+  );
+  assert.equal(result.exmls[0].className, 'skins.Panel');
+});
+
+test('theme discovery refuses non-portable, ambiguous and unknown declaration paths before using them', () => {
+  for (const declaration of [
+    { skins: {}, exmls: ['https://example.org/Skin.exml'] },
+    { skins: {}, exmls: ['../escape.exml'] },
+    { skins: {}, exmls: ['resource/Panel.exml', 'resource/panel.exml'] },
+    { skins: { 'eui.Button': 'Unknown.Skin' }, exmls: [] },
+    { skins: {}, exmls: [], styles: { common: {} } },
+    { skins: {}, exmls: [{ path: 'resource/Panel.exml', gjs: 'compiled' }] }
+  ]) {
+    assert.throws(
+      () =>
+        discoverLegacySkins(key => ({
+          bytes: Buffer.from(key === 'resource/default.thm.json' ? JSON.stringify(declaration) : skin(''))
+        })),
+      { code: 'MIGRATE_THEME_UNSUPPORTED' }
+    );
+  }
+});
+
+// Validate only a Wing editor marker and a theme self-reference; neither becomes a runtime node.
+test('an empty Wing Config and exact theme self-path carry no runtime behavior', () => {
+  const source =
+    '<e:Skin xmlns:e="' +
+    namespace +
+    '" xmlns:w="http://ns.egret.com/wing"><w:Config id="16569ab8646"/><e:Label text="Ready"/></e:Skin>';
+  const result = compileExml(source);
+  assert.deepEqual(
+    result.root.children.map(node => node.type),
+    ['Label']
+  );
+  const theme = discoverLegacySkins(key => ({
+    bytes: Buffer.from(
+      key.endsWith('json')
+        ? JSON.stringify({ path: 'resource/default.thm.json', exmls: ['resource/ready.exml'] })
+        : source
+    )
+  }));
+  assert.equal(theme.exmls.length, 1);
+  assert.throws(() => compileExml(source.replace('id="16569ab8646"', 'url="external"')), {
+    code: 'MIGRATE_EXML_UNSUPPORTED'
+  });
+  assert.throws(() => discoverLegacySkins(() => ({ bytes: Buffer.from('{"path":"another.json"}') })), {
+    code: 'MIGRATE_THEME_UNSUPPORTED'
+  });
+});
+
+test('unsupported alignment, text wrapping, TileLayout and root visual attributes are rejected before execution', () => {
+  for (const source of [
+    skin('<e:Label textAlign="justify"/>'),
+    skin('<e:Label wordWrap="true"/>'),
+    skin('<e:Label multiline="true"/>'),
+    skin('<e:Label stroke="1"/>'),
+    skin('<e:Group><e:layout><e:TileLayout/></e:layout></e:Group>'),
+    skin('<e:Group><e:layout><e:VerticalLayout horizontalAlign="justify"/></e:layout></e:Group>'),
+    skin('<e:Group><e:layout><e:BasicLayout gap="1"/></e:layout></e:Group>'),
+    skin('<e:Rect minWidth="20" maxWidth="10"/>'),
+    '<e:Skin xmlns:e="' + namespace + '" alpha="0.5"/>'
+  ])
+    assert.throws(() => compileExml(source), { code: 'MIGRATE_EXML_UNSUPPORTED' }, source);
+});
