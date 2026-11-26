@@ -37,6 +37,8 @@ export interface PlayViewBinding<S = unknown> {
   readonly color?: (state: S) => number;
   /** What a press of a button, a toggle or a panel does. */
   readonly tap?: (state: S) => void;
+  /** For a panel with tap: keep the pointer action without keyboard, pad or semantic focus and activation. */
+  readonly pointerOnly?: boolean;
   /** A red dot at the top right corner of a button, a toggle, a text or a panel: a count, or true for a dot alone. */
   readonly badge?: (state: S) => number | boolean;
 }
@@ -52,6 +54,8 @@ export interface PlayViewOptions<S = unknown> {
   readonly paragraphCache?: ParagraphCache;
   /** Give this nonmodal view standard D-pad navigation and A activation. The top modal gets these automatically. */
   readonly gamepad?: boolean;
+  /** The named control that a modal focuses on opening, if it can be revealed and focused. */
+  readonly initialFocus?: string;
   /** Handle Escape or the pad's B on the top modal. Close the view here to restore its previous focus. */
   readonly dismiss?: (view: PlayView) => void;
   /** Handle a fresh pad Start press on the top modal while the game is paused. */
@@ -72,6 +76,10 @@ export interface PlayView {
   /** Which parts are used: `'portrait'` while the screen is taller than wide and the view has portrait parts. */
   readonly variant: 'landscape' | 'portrait';
   readonly visible: boolean;
+  /** The name of this view's currently actionable focused part, if any. */
+  readonly focused: string | undefined;
+  /** Focus a named part, revealing it within a scroll viewport if needed. Returns false if it cannot take focus. */
+  focus(name: string): boolean;
   /** Reads the bindings now, rather than at the end of the frame. */
   refresh(): void;
   show(): void;
@@ -112,7 +120,7 @@ interface Roll {
 }
 
 const KEYS_OF: Record<ViewPart['type'], readonly (keyof PlayViewBinding)[]> = {
-  panel: ['visible', 'color', 'tap', 'badge'],
+  panel: ['visible', 'color', 'tap', 'pointerOnly', 'badge'],
   text: ['text', 'pick', 'format', 'roll', 'visible', 'color', 'badge'],
   button: ['text', 'pick', 'format', 'roll', 'disabled', 'visible', 'color', 'tap', 'badge'],
   bar: ['value', 'visible', 'color'],
@@ -183,6 +191,7 @@ export function createPlayViews(
 
   interface ViewRecord {
     readonly view: PlayView;
+    readonly initialFocus: string | undefined;
     modal(): boolean;
     padNavigation(): boolean;
     targets(): readonly string[];
@@ -230,7 +239,8 @@ export function createPlayViews(
     modalOwner = modal;
     if (modal !== undefined && !beforeModal.has(modal)) {
       beforeModal.set(modal, focused);
-      focus(targets().find(eligible));
+      const name = modal.initialFocus;
+      focus(name !== undefined && modal.reveal(name) ? { owner: modal, name } : targets().find(eligible));
       return;
     }
     let restore = previous === undefined ? undefined : beforeModal.get(previous);
@@ -284,11 +294,27 @@ export function createPlayViews(
         const ok =
           key === 'roll'
             ? typeof value === 'number' && Number.isFinite(value) && value >= 0
-            : typeof value === 'function';
+            : key === 'pointerOnly'
+              ? typeof value === 'boolean'
+              : typeof value === 'function';
         if (!ok) throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': ' + key });
       }
       if (binding.text !== undefined && binding.pick !== undefined)
         throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': text or pick, not both' });
+      if (binding.pointerOnly === true && binding.tap === undefined)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': pointerOnly needs tap' });
+    }
+    const initialFocus = options.initialFocus;
+    if (initialFocus !== undefined) {
+      const type = typeof initialFocus === 'string' ? names.get(initialFocus) : undefined;
+      const interactive =
+        type === 'button' ||
+        type === 'toggle' ||
+        (type === 'panel' && bind[initialFocus]?.tap !== undefined && bind[initialFocus]?.pointerOnly !== true);
+      if (description.modal !== true || !interactive)
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: 'initialFocus names a focusable part on a modal view'
+        });
     }
     if (options.built !== undefined && typeof options.built !== 'function')
       throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'built' });
@@ -498,6 +524,7 @@ export function createPlayViews(
       item.part.type === 'button' ||
       item.part.type === 'toggle' ||
       (item.part.type === 'panel' && bindingOf(item)?.tap !== undefined);
+    const pointerOnly = (item: Made): boolean => bindingOf(item)?.pointerOnly === true;
     const isShown = (): boolean => !ended && shown && visibleOnStage(root, game.browser.stage);
     const allowsInput = (): boolean => active && isShown() && inView(record);
     const hasInput = (item: Made): boolean =>
@@ -507,6 +534,7 @@ export function createPlayViews(
       hasAction(item) &&
       visibleOnStage(item.node, game.browser.stage, true);
     const followsInput = (item: Made): boolean => allowsInput() && hasInput(item);
+    const followsFocus = (item: Made): boolean => followsInput(item) && !pointerOnly(item);
     const stageRect = (item: Made): ViewRect | undefined =>
       visibleRect(
         item.node,
@@ -514,8 +542,9 @@ export function createPlayViews(
         game.screen
       );
     const actionable = (item: Made): boolean => followsInput(item) && stageRect(item) !== undefined;
+    const canFocus = (item: Made): boolean => actionable(item) && !pointerOnly(item);
     const revealForTab = (item: Made): boolean => {
-      if (!followsInput(item)) return false;
+      if (!followsFocus(item)) return false;
       const offsets: { viewport: PlayScrollViewport; offset: number }[] = [];
       const box = item.node.hitArea ?? { x: 0, y: 0, width: item.rect.width, height: item.rect.height };
       for (let above = item.scrollParent; above !== undefined; above = above.scrollParent) {
@@ -523,7 +552,7 @@ export function createPlayViews(
         offsets.push({ viewport, offset: viewport.offset });
         viewport.reveal(item.node, box);
       }
-      if (actionable(item)) return true;
+      if (canFocus(item)) return true;
       // A candidate hidden by an unrelated clip cannot move the list during keyboard traversal.
       for (const { viewport, offset } of offsets) viewport.scrollTo(offset);
       return false;
@@ -531,7 +560,7 @@ export function createPlayViews(
     const press = (item: Made): void => {
       if (!actionable(item)) return;
       const name = nameOf(item);
-      if (name !== undefined) focus({ owner: record, name });
+      if (name !== undefined && !pointerOnly(item)) focus({ owner: record, name });
       const binding = bindingOf(item);
       try {
         binding?.tap?.(state());
@@ -834,9 +863,11 @@ export function createPlayViews(
               base = {
                 bounds: rect ?? EMPTY,
                 hidden,
-                focused: enabled && allowsInput() && focused?.owner === record && focused.name === name
+                focused:
+                  enabled && !pointerOnly(item) && allowsInput() && focused?.owner === record && focused.name === name
               };
-            if (role === 'group') return { ...base, name: label ?? name, disabled: hasAction(item) && !enabled };
+            if (role === 'group')
+              return { ...base, name: label ?? name, disabled: hasAction(item) && !pointerOnly(item) && !enabled };
             if (role === 'image') {
               const imageLabel = item.part.type === 'image' ? item.part.label : undefined;
               return { ...base, name: imageLabel ?? '', hidden: hidden || !imageLabel };
@@ -859,11 +890,13 @@ export function createPlayViews(
             }
             return { ...base, name: item.text };
           },
-          ...(role === 'button' || role === 'switch' || (role === 'group' && bind[name]?.tap !== undefined)
+          ...(role === 'button' ||
+          role === 'switch' ||
+          (role === 'group' && bind[name]?.tap !== undefined && bind[name]?.pointerOnly !== true)
             ? {
                 onActivate: () => press(find(name)),
                 onFocus() {
-                  if (actionable(find(name))) focus({ owner: record, name });
+                  if (canFocus(find(name))) focus({ owner: record, name });
                 }
               }
             : {})
@@ -916,6 +949,14 @@ export function createPlayViews(
       get visible() {
         return shown && !ended;
       },
+      get focused() {
+        return focused?.owner === record && eligible(focused) ? focused.name : undefined;
+      },
+      focus(name) {
+        if (!live.has(record) || !allowsInput() || !revealForTab(find(name))) return false;
+        focus({ owner: record, name });
+        return true;
+      },
       refresh,
       show() {
         if (ended) return;
@@ -954,11 +995,12 @@ export function createPlayViews(
     };
     const record: ViewRecord = {
       view: api,
+      initialFocus,
       modal: () => description.modal === true && active && isShown(),
       padNavigation: () => options.gamepad === true && active && isShown(),
-      targets: () => made.flatMap(item => (item.part.name !== undefined && followsInput(item) ? [item.part.name] : [])),
-      keeps: name => followsInput(find(name)),
-      eligible: name => actionable(find(name)),
+      targets: () => made.flatMap(item => (item.part.name !== undefined && followsFocus(item) ? [item.part.name] : [])),
+      keeps: name => followsFocus(find(name)),
+      eligible: name => canFocus(find(name)),
       reveal: name => revealForTab(find(name)),
       focusMark(name, visible) {
         const item = find(name);
@@ -1079,13 +1121,12 @@ export function createPlayViews(
               }
             },
             {
+              initialFocus: 'yes',
               dismiss: () => answer(false),
               bind: { no: { tap: () => answer(false) }, yes: { tap: () => answer(true) } }
             }
           );
           open = { answer, view };
-          const owner = [...live].find(record => record.view === view);
-          if (owner !== undefined && owner.eligible('yes')) focus({ owner, name: 'yes' });
           openedAt = frame;
         })
     );
