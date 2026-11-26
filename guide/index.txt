@@ -25,7 +25,7 @@ Start a game with the cards `first-playable-world` and `choose-entry`; start on 
 - [audio](areas/audio.txt) · 2 cards · Sounds made in code, mixed with cues and a limiter, and the clock of a rhythm game.
 - [assets](areas/assets.txt) · 3 cards · Loading, startup and provenance.
 - [ship](areas/ship.txt) · 4 cards · A web page, a phone app, a WeChat mini game or Steam.
-- [verify](areas/verify.txt) · 1 card · From rule tests to device runs.
+- [verify](areas/verify.txt) · 2 cards · From rule tests to device runs, and the engine notes a game keeps.
 - [errors](areas/errors.txt) · 1 card · An engine error by its code.
 
 ## How cards are made
