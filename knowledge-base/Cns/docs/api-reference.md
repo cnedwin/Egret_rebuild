@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1473 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1476 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1605,6 +1605,7 @@
 | `MusicPart` | 类型 | One part of a piece of play music. |
 | `MusicPiece` | 接口 | A piece of music made from a seed: its mood, tempo, length and parts. |
 | `play` | 函数 | Starts a game in the page. |
+| `PlayActivationSource` | 类型 | Where an activation came from. |
 | `PlayBar` | 类 | A bar of health, time or power. |
 | `PlayBarOptions` | 接口 | A bar to show, as for health: where and how large, its value and maximum, its colors and layer. |
 | `PlayBurstOptions` | 接口 | A burst of particles: its color and count, how fast and how long they fly, their size and gravity. |
@@ -1622,12 +1623,14 @@
 | `PlaySayOptions` | 接口 | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
 | `PlaySfx` | 接口 | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
 | `PlayStickOptions` | 接口 | A touch stick to show: where, how large, and whether it shows without touch. |
+| `PlayTapActivation` | 类型 | The information supplied to game.onTap. |
 | `PlayText` | 类 | A line of text: a sprite to place, fade, tween and remove like any other, with words that can be changed. |
 | `PlayTextOptions` | 接口 | Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. |
 | `PlayTiles` | 接口 | A map of tiles: read and change its cells, and push a sprite out of its solid ones. |
 | `PlayTilesOptions` | 接口 | A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. |
 | `PlayToastOptions` | 接口 | A toast to show: how long and in what color. |
 | `PlayTouchButtonOptions` | 接口 | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
+| `PlayViewActivation` | 类型 | The second argument of a view's tap binding; target and currentTarget are part names, if named. |
 | `SFX_PRESETS` | 值 | The effects every game is given, by name. |
 | `SfxRecipe` | 类型 | An effect: one tone, or several played one after another. |
 | `SfxTone` | 接口 | One tone of an effect. |
