@@ -15,7 +15,9 @@ egret-migrate convert --source <Egret 5 project> --out <new directory> --engine 
 egret-migrate verify --old <working old HTML> --converted <conversion directory> --scenario <trusted mjs> --playwright <module> --out <new directory>
 egret-migrate preview --run <verified comparison directory> --address <private IPv4> --qr-module <qrcode.mjs>
 
-Inspect and convert accept --source-order, --resources, --theme and --bones (a JSON array of explicit RES-name mappings). Convert also accepts --transaction and --project-id. Verify accepts --executable.
+For the original EraserSanGuoSha repository, pass --profile eraser-lobby --source <repository-root> to inspect or convert. Convert accepts --socket-url <loopback-origin> for a separate local game server and otherwise uses the page origin.
+
+Classic project inspection and conversion accept --source-order, --resources, --theme and --bones (a JSON array of explicit RES-name mappings). Convert also accepts --transaction and --project-id. Verify accepts --executable.
 `;
 
 const moduleAt = filename => import(pathToFileURL(path.resolve(filename)).href);
@@ -75,8 +77,19 @@ export async function verifyMigration(options) {
 }
 
 async function inspectOrConvert(command, values) {
+  const profile = values.profile;
+  if (profile !== undefined && profile !== 'eraser-lobby')
+    refuse('MIGRATE_ARGUMENTS', 'Unknown migration profile.', { profile });
+  if (values['socket-url'] !== undefined && profile !== 'eraser-lobby')
+    refuse('MIGRATE_ARGUMENTS', '--socket-url requires --profile eraser-lobby.');
+  if (profile && ['source-order', 'resources', 'theme', 'bones'].some(key => values[key] !== undefined))
+    refuse(
+      'MIGRATE_ARGUMENTS',
+      'The lobby profile selects its source order, resource subset and skins from the repository.'
+    );
   const config = {
     source: path.resolve(values.source),
+    profile,
     sources: values['source-order'] && readJSON(values['source-order']),
     resources: values.resources,
     theme: values.theme,
@@ -89,16 +102,17 @@ async function inspectOrConvert(command, values) {
     engine: values.engine,
     engineVersion: values['engine-version'],
     projectId: values['project-id'],
+    socketUrl: values['socket-url'],
     esbuild: await moduleAt(values.esbuild),
     transaction: values.transaction ? fs.readFileSync(values.transaction, 'utf8') : undefined
   });
 }
 
 const commands = {
-  inspect: { need: ['source'], extra: ['source-order', 'resources', 'theme', 'bones'] },
+  inspect: { need: ['source'], extra: ['profile', 'source-order', 'resources', 'theme', 'bones'] },
   convert: {
     need: ['source', 'out', 'engine', 'engine-version', 'esbuild'],
-    extra: ['source-order', 'resources', 'theme', 'bones', 'transaction', 'project-id']
+    extra: ['profile', 'socket-url', 'source-order', 'resources', 'theme', 'bones', 'transaction', 'project-id']
   },
   verify: { need: ['old', 'converted', 'scenario', 'playwright', 'out'], extra: ['executable'] },
   preview: { need: ['run', 'address', 'qr-module'], extra: [] }

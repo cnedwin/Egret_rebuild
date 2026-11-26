@@ -7,6 +7,7 @@ import { ownerRelativePath, samePhysicalPath } from '../lib/file-identity.mjs';
 import { browserBuildTypes } from '../verify-game.mjs';
 import { hash, inspectLegacyProject, json, readProjectFile, refuse } from './inspect.mjs';
 import { normalizeLegacyPng } from './legacy-assets.mjs';
+import { socketOrigin } from './lobby-session.mjs';
 
 const bridge = new URL('./legacy-web.mjs', import.meta.url);
 const schema = '1.0';
@@ -25,6 +26,24 @@ const entryHtml = `<!doctype html>
 </body>
 </html>
 `;
+
+const lobbyFiles = ['lobby-session.mjs', 'socket.io.js'];
+
+function lobbyHtml(vendorSha256) {
+  const integrity = Buffer.from(vendorSha256, 'hex').toString('base64');
+  return entryHtml
+    .replace('<html lang="en">', '<html lang="zh-CN">')
+    .replace(
+      '</style>',
+      '#room-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}#room-status.connection-error{inset:auto 0 0;width:auto;height:auto;clip-path:none;background:#222;color:#fff;padding:1em}</style>'
+    )
+    .replace(
+      '<canvas></canvas>',
+      '<canvas></canvas>\n  <output id="room-status" aria-live="polite"></output>\n  <script src="./socket.io.js" integrity="sha256-' +
+        integrity +
+        '"></script>'
+    );
+}
 
 function take(result) {
   if (!result.ok) refuse('MIGRATE_PROJECT_REFUSED', 'The project SDK rejected the action.', result.diagnostics);
@@ -54,7 +73,7 @@ function outputOwner(original, output) {
   refuse('MIGRATE_OUTPUT_OWNER', 'Choose a new output directory outside the original project.');
 }
 
-function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedProjectId) {
+function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedProjectId, network) {
   const boneBindings = selection.bones?.map(({ descriptor: _descriptor, ...binding }) => binding);
   const projectId = rememberedProjectId ?? 'p_migrated_' + selection.inputSha256.slice(0, 24);
   const store = take(
@@ -79,6 +98,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
     references: [],
     data: {
       stage: selection.stage,
+      ...(network ? { profile: selection.profile, network } : {}),
       manifest: selection.manifest,
       resources: selection.resources,
       ...(selection.theme ? { theme: selection.theme } : {}),
@@ -97,7 +117,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
       actorKind: 'legacy-converter',
       intent: 'Import the admitted stage and resource records',
       toolId: 'egret-migrate',
-      toolVersion: '0.4.0'
+      toolVersion: '0.5.0'
     },
     scope: { entityIds: [entity.id], fileIds: assetFiles.map(file => file.id), metadata: false, roots: true },
     operations: [
@@ -126,6 +146,8 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
   const current = store.getSnapshot().entities.find(item => item.id === entity.id).data;
   const repairedData = JSON.parse(JSON.stringify(current));
   if (
+    repairedData.profile !== (network ? selection.profile : undefined) ||
+    !isDeepStrictEqual(repairedData.network, network) ||
     !isDeepStrictEqual(repairedData.resources, selection.resources) ||
     !isDeepStrictEqual(repairedData.theme, selection.theme) ||
     !isDeepStrictEqual(repairedData.sheets, selection.sheets) ||
@@ -142,7 +164,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
   return { store, receipt: importResult.receipt, repair: edited.receipt };
 }
 
-function gameSource(sources, entry, theme) {
+function gameSource(sources, entry, theme, network) {
   // EXML names are resolved in the imported project's lexical scope, including its TS namespaces.
   const registrations = (theme?.customComponents ?? [])
     .map(name => {
@@ -151,13 +173,30 @@ function gameSource(sources, entry, theme) {
       return '    eui.registerCustomComponent(' + JSON.stringify(name) + ', ' + name + ');';
     })
     .join('\n');
+  const lobbyImport = network ? "import { createLobbyRoot, launchLobbyHost } from './lobby-session.mjs';\n" : '';
+  const socketSetup = network
+    ? 'const socket = globalThis.io.connect(' +
+      (network.origin === null ? 'location.origin' : JSON.stringify(network.origin)) +
+      ', { autoConnect: false, forceNew: true, reconnection: false });\n'
+    : '';
+  const main = network
+    ? `const Game = { socket };
+    const UI = {
+      get sceneLobby() { return SceneLobby.instance; }, get sceneRoom() { return SceneRoom.instance; },
+      sceneGame: new eui.Group()
+    };
+    return createLobbyRoot({
+      eui, RES, UI, socket, manifest, resourceRoot: resources.resourceRoot,
+      group: resources.groups[0].name, theme: theme.themePath, status: document.getElementById('room-status')
+    });`
+    : 'return new ' + entry + '();';
   return `import * as sdk from './egret2d.mjs';
 import { launchLegacyWeb } from './legacy-web.mjs';
-const response = await fetch('./project.json');
+${lobbyImport}const response = await fetch('./project.json');
 if (!response.ok) throw new Error('Could not open the migrated project');
 const project = await response.json();
 const { stage, manifest, resources, theme, sheets, bones } = project.entities.find(item => item.id === 'e_client').data;
-const host = await launchLegacyWeb(sdk, {
+${socketSetup}const host = await ${network ? 'launchLobbyHost(socket, () => ' : ''}launchLegacyWeb(sdk, {
   canvas: document.querySelector('canvas'), ...stage, projectId: project.projectId,
   theme, sheets, nativeBones: bones !== undefined,
   resources: {
@@ -169,9 +208,9 @@ const host = await launchLegacyWeb(sdk, {
   createMain({egret, RES, eui, dragonBones}) {
 ${sources.map(({ key, bytes }) => '// ' + key + '\n' + bytes.toString('utf8')).join('\n')}
 ${registrations}
-    return new ${entry}();
+    ${main}
   }
-});
+})${network ? ')' : ''};
 export { host };
 `;
 }
@@ -179,6 +218,12 @@ export { host };
 export async function convertProject(options) {
   const owner = path.resolve(options.source);
   const selection = inspectLegacyProject(owner, options);
+  if (options.socketUrl !== undefined && !selection.network) {
+    refuse('MIGRATE_SOCKET_URL', 'Only a room profile accepts a socket origin.');
+  }
+  const network = selection.network
+    ? { ...selection.network, browserPath: 'socket.io.js', origin: socketOrigin(options.socketUrl) }
+    : undefined;
   const out = outputOwner(owner, options.out);
   if (!/^7\.0\.\d+(?:-[A-Za-z0-9.-]+)?$/.test(options.engineVersion ?? '')) {
     refuse('MIGRATE_TARGET_VERSION', 'Choose an exact Egret 7.0 build version.');
@@ -188,7 +233,7 @@ export async function convertProject(options) {
   const sourceFile = fs.readFileSync(bridge);
   const inputBytes = new Map(
     selection.inputs.map(item => {
-      const found = readProjectFile(owner, item.path);
+      const found = readProjectFile(owner, item.path, network ? 1024 * 1024 : undefined);
       if (found.identity.sha256 !== item.sha256) {
         refuse('MIGRATE_INPUT_CHANGED', 'Run inspection again after changing a project input.', { path: item.path });
       }
@@ -230,16 +275,28 @@ export async function convertProject(options) {
       byteLength: bytes.length
     };
   });
+  if (network) {
+    const vendor = read(network.vendorPath);
+    assetFiles.push({
+      id: 'f_socket_io',
+      path: network.browserPath,
+      role: 'source',
+      mediaType: 'text/javascript',
+      sha256: network.vendorSha256,
+      byteLength: vendor.length
+    });
+  }
   const { store, receipt, repair } = snapshotOf(
     selection,
     assetFiles,
     options.engineVersion,
     options.transaction,
-    options.projectId
+    options.projectId,
+    network
   );
   let bundled;
   try {
-    bundled = await options.esbuild.transform(gameSource(sources, selection.stage.entry, selection.theme), {
+    bundled = await options.esbuild.transform(gameSource(sources, selection.stage.entry, selection.theme, network), {
       loader: 'ts',
       format: 'esm',
       sourcefile: 'generated-legacy-client.ts',
@@ -268,12 +325,14 @@ export async function convertProject(options) {
     receipt,
     repair,
     ...(resourceTransforms.length ? { resourceTransforms } : {}),
+    ...(network ? { network } : {}),
     browserFiles: [
       'game.mjs',
       'legacy-web.mjs',
       'legacy-eui.mjs',
       'legacy-bones.mjs',
       'egret2d.mjs',
+      ...(network ? lobbyFiles : []),
       ...assets.map(file => file.key)
     ]
   };
@@ -282,7 +341,11 @@ export async function convertProject(options) {
   if (options.sources) write(out, 'source-order.json', json(options.sources));
   if (selection.bones) write(out, 'bones-map.json', json(options.bones));
   for (const { key, bytes } of assets) write(out, 'web/' + key, bytes);
-  write(out, 'web/index.html', entryHtml);
+  if (network) {
+    write(out, 'web/' + network.browserPath, read(network.vendorPath));
+    write(out, 'web/lobby-session.mjs', fs.readFileSync(new URL('./lobby-session.mjs', import.meta.url)));
+  }
+  write(out, 'web/index.html', network ? lobbyHtml(network.vendorSha256) : entryHtml);
   write(out, 'web/game.mjs', bundled.code);
   write(out, 'web/legacy-web.mjs', sourceFile);
   for (const name of ['legacy-eui.mjs', 'legacy-bones.mjs'])

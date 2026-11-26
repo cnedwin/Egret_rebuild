@@ -10,7 +10,7 @@ Egret Migrate 是面向受支持的经典白鹭 5 Web 2D 源工程的本地 CLI�
 
 ```text
 node tools/egret-migrate/pack.mjs --esbuild <esbuild-module> --npm <npm-cli.js> --out <new-package-dir>
-npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.4.0.tgz
+npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.5.0.tgz
 ```
 
 使用安装后的 `egret-migrate` 命令，也可以直接运行 `node <tool-folder>/node_modules/@egret/migrate/bin.mjs`。CLI 可以在引擎仓库之外运行。准备固定版本的白鹭 7.0 系列 `egret2d.mjs`、esbuild 模块和带 Chromium 的 Playwright。扫码预览另需 qrcode-generator 2.0.4。使用时显式传入这些工具的路径。
@@ -25,6 +25,21 @@ egret-migrate preview --run <new-evidence-directory> --address <LAN-IPv4> --qr-m
 工具读取经典 HTML 的舞台声明、引擎与编译器配置、`manifest.json` 中有序的游戏脚本，以及本地 RES 清单。已接纳 `egret`、`game`、`res`、`assetsmanager`、`promise`、受支持范围内的 `eui` 和 `dragonBones` 模块。浏览器适配器提供测试所覆盖的显示、监听、图片和 JSON 资源组及本地存储操作。可以用 `--source-order` 提供按加载顺序排列的工程内 `src/*.ts` 路径数组，用 `--resources` 指定另一份工程内资源清单。自定义运行时模块和动态舞台尺寸需要按工程适配。
 
 经典 5.1 工程支持引擎与编译器同时声明为 5.1.7 或同时声明为 5.1.9 的项目。
+
+### 从白鹭 5.0.14 迁出联网大厅
+
+对同时包含 `client/` 和 `socket.io/` 的上游仓库根目录使用 `eraser-lobby`。工具自动选取原版大厅与房间两个业务类、两幕皮肤、列表行和按钮皮肤、两张按钮图片，以及工程随附的 Socket.IO 客户端，并记录所选输入的文件身份。其余游戏内容可原样留在工程里。[参考工程](https://github.com/EraserTeam/EraserSanGuoSha/tree/30c315bb7296efd0518eb0c31dd0e4d115742b69)
+
+```text
+egret-migrate inspect --profile eraser-lobby --source <EraserSanGuoSha-root>
+egret-migrate convert --profile eraser-lobby --source <EraserSanGuoSha-root> --out <new-project> --engine <egret2d.mjs> --engine-version <7.0.x> --esbuild <esbuild-module> --socket-url http://127.0.0.1:43676
+```
+
+单独启动原版 Node 服务端，将其 `PORT` 设为示例使用的端口，以启用原作的多房间流程。通过 HTTP 托管生成的 `web/` 目录。两个服务同源时默认连接页面来源；在本机分端口运行时，用 `--socket-url` 指定回环地址。
+
+用两个独立浏览器会话打开生成的客户端。A 点击「创建房间」；B 点击「刷新列表」，选中 A 的房号，再点击「加入房间」。原服务开始对局后，核对两端是否进入同一房号的开局交接界面。可另开一间房，在第二位玩家加入前验证离房。可玩的牌桌、持久化和断线重连需另行迁移。
+
+Windows 对照使用两个隔离的 Chromium 157 会话、软件 WebGL2 和未改动的源工程。A 离开第一间房后，B 刷新列表，房间消失。第二间房开局时，两端画布及无障碍状态文本都显示同一房号、两名玩家和不同座位。原服务端记录了双方加入以及该房开局。两端都使用原项目随附的 Socket.IO 字节。本次采集范围为桌面功能，移动输入与渲染性能另行验收。
 
 ### EUI、图集资源与骨骼导出
 

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/egret-migrate/lobby-profile.mjs",
+      "originRole": "First-party Wing project inspection and selection of networked lobby inputs. Independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/lobby-session.mjs",
+      "originRole": "First-party browser lifecycle and server-confirmed room handoff for converted lobby projects. Independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/egret-migrate-lobby-profile.test.mjs",
+      "originRole": "First-party regressions for bounded input selection and source identities using original test data; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-lobby-session.test.mjs",
+      "originRole": "First-party regressions for loopback endpoint configuration, server events and socket ownership; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

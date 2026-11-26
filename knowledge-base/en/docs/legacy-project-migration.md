@@ -10,6 +10,10 @@ Egret Migrate 0.2 adds static EUI/EXML skin compilation and uses the existing Sp
 
 Egret Migrate 0.3 extends the local CLI with property-chain bindings, state-dependent parts, project-defined item renderers and observable collections. During acceptance, replace both a property value and its owner, change rows above the selection, then close and reopen the view. The native animation route now also covers held poses, additive slots and bones that inherit rotation without inheriting scale. A historical 37-bone training asset provides a ten-clip reference. In the seven-item goods list, editing and replacing the last item preserved index 6 and the settled scroll offset of 224 on both versions. The old list briefly overscrolled to 242.94 and bounced back. The migrated list stopped at 224 and instantiated all seven rows. Complete commercial migrations still require a runnable old client, access to any required services, and representative gameplay and persistence checks. [CLI support and measured comparisons](https://github.com/cnedwin/Egret_rebuild/tree/main/tools/egret-migrate)
 
+## Migrating a networked lobby
+
+Egret Migrate 0.5 has a scoped import for the Egret 5.0.14 EraserSanGuoSha lobby and room. It keeps the original EUI business classes, EXML and Socket.IO browser library. Run the original server separately and verify both players against one authoritative room. Match entry is the boundary of this profile. The card table and completed rounds have their own acceptance criteria. [CLI instructions](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/egret-migrate/README.md) · [Original client and server](https://github.com/EraserTeam/EraserSanGuoSha/tree/30c315bb7296efd0518eb0c31dd0e4d115742b69)
+
 ## Porting an existing multi-screen game
 
 Choose a release with project source and a playable build. Record a route that changes game state, then repeat the actions on the migrated client. Include an incorrect move, a successful round, a scene transition and a saved game reopened in a fresh page. Choose animation checks from the scenes the player actually reaches.

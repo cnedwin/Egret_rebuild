@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fingerprintFile, logicalPath } from '../lib/file-identity.mjs';
 import { discoverLegacySkins } from './exml.mjs';
+import { eraserLobbyProfile, inspectEraserLobby } from './lobby-profile.mjs';
 import { convertDragonBones } from './dragonbones.mjs';
 import { planMigratedResources } from './legacy-assets.mjs';
 
@@ -17,15 +18,21 @@ export function refuse(code, message, details) {
   throw Object.assign(new Error(message), { code, details });
 }
 
-export function readProjectFile(owner, key) {
+export function readProjectFile(owner, key, maxBytes) {
   let identity;
   try {
+    if (maxBytes !== undefined && fs.lstatSync(path.join(owner, logicalPath(key))).size > maxBytes) {
+      throw new RangeError('Input exceeds the profile file size limit');
+    }
     identity = fingerprintFile(owner, key);
   } catch (error) {
     refuse('MIGRATE_INPUT_FILE', 'Missing input or invalid project file identity.', {
       path: key,
       reason: error.message
     });
+  }
+  if (maxBytes !== undefined && identity.bytes > maxBytes) {
+    refuse('MIGRATE_INPUT_FILE', 'Input exceeds the profile file size limit.', { path: key });
   }
   const bytes = fs.readFileSync(path.join(owner, key));
   if (identity.sha256 !== hash(bytes))
@@ -92,15 +99,32 @@ function readSourceOrder(read, configured) {
   return sources.map(source => read(source).identity);
 }
 
+function recordInputs(owner, files, read, selection) {
+  // Preserve declared project notices byte for byte in the editable output, outside the preview.
+  for (const name of fs.readdirSync(owner)) if (/^(?:LICENSE|NOTICE|COPYING)(?:\.(?:md|txt))?$/i.test(name)) read(name);
+  const inputs = [...files.values()]
+    .map(file => file.identity)
+    .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
+  return { ...selection, inputs, inputSha256: hash(JSON.stringify(inputs)) };
+}
+
 export function inspectLegacyProject(folder, options = {}) {
   const owner = path.resolve(folder);
   const files = new Map();
   const read = key => {
     if (files.has(key)) return files.get(key);
-    const result = readProjectFile(owner, key);
+    const result = readProjectFile(owner, key, options.profile === eraserLobbyProfile ? 1024 * 1024 : undefined);
     files.set(key, result);
     return result;
   };
+  if (options.profile !== undefined) {
+    if (options.profile !== eraserLobbyProfile) refuse('MIGRATE_ARGUMENTS', 'Unknown migration profile.');
+    if (['sources', 'resources', 'theme', 'bones'].some(name => options[name] !== undefined)) {
+      refuse('MIGRATE_ARGUMENTS', 'The lobby profile selects its own sources, theme and resources.');
+    }
+    const selection = inspectEraserLobby({ read, readJSON: key => readJSON(read, key), readStage });
+    return recordInputs(owner, files, read, selection);
+  }
   const properties = readJSON(read, 'egretProperties.json');
   // This older Wing project format records one SDK release and no separate compiler version.
   const wing5015 =
@@ -200,12 +224,7 @@ export function inspectLegacyProject(folder, options = {}) {
       };
     });
   }
-  // Preserve declared project notices byte for byte in the editable output, outside the preview.
-  for (const name of fs.readdirSync(owner)) if (/^(?:LICENSE|NOTICE|COPYING)(?:\.(?:md|txt))?$/i.test(name)) read(name);
-  const inputs = [...files.values()]
-    .map(file => file.identity)
-    .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
-  return {
+  return recordInputs(owner, files, read, {
     schemaVersion: 1,
     profile: wing5015
       ? 'egret-5.0.15-classic-web-2d'
@@ -221,8 +240,6 @@ export function inspectLegacyProject(folder, options = {}) {
     resources: result.plan,
     ...(result.sheets === undefined ? {} : { sheets: result.sheets }),
     ...(theme === undefined ? {} : { theme }),
-    ...(bones === undefined ? {} : { bones }),
-    inputs,
-    inputSha256: hash(JSON.stringify(inputs))
-  };
+    ...(bones === undefined ? {} : { bones })
+  });
 }
