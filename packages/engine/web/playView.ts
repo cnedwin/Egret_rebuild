@@ -979,7 +979,10 @@ export function createPlayViews(
                   : '';
               return { ...base, name: suffix ? item.text + '. ' + suffix : item.text, disabled: !enabled };
             }
-            return { ...base, name: label ?? item.text };
+            // Optional noninteractive text has no semantic content while blank.
+            // Retain an explicit accessible label, and keep interactive names strict.
+            const textName = label ?? item.text;
+            return { ...base, name: textName, hidden: hidden || !/\S/u.test(textName) };
           },
           ...(role === 'button' ||
           role === 'switch' ||

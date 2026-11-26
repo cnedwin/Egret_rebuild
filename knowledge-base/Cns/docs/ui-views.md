@@ -233,6 +233,8 @@ Galaxy Z Fold7（Android 17、Chrome 157、Adreno 830）分别通过 WebGL2 和 
 
 给 `play` 一棵语义树，即来自 `@egret/engine/ui/semantics` 的 `semantics: createUiSemantics()`，每个视图都会把自己加进去。视图的 `label` 成为一个组，模态时成为对话框。每个有名字的部件成为对应的角色：组、文字、按钮、进度条或开关。语义树在每帧结束时发布。这样 [UI 测试器](ui-testing.md)就能按名字按下 `'Shop / Buy 60'`、读取 `state('Sound').checked`。按钮不可用或有模态对话框挡住时，测试器会像玩家一样被拒绝。`@egret/engine/web/semantics` 把同一棵树提供给读屏软件。
 
+命名的非交互文字部件在有效无障碍名称为空或只有空白字符时，不进入发布的语义树。其布局和显示对象不变，文字或显式无障碍名称恢复为非空时，同一节点重新出现。即使绘制文字为空，显式非空名称仍有意义。交互控件仍须具有合法的无障碍名称。
+
 ## 检查了什么
 
 `tests/ui-view.test.mjs` 在 Node 里规划视图。它检查：

@@ -231,6 +231,8 @@ On Galaxy Z Fold7 with Android 17, Chrome 157 and the Adreno 830 GPU, the functi
 
 Give `play` a tree, `semantics: createUiSemantics()` from `@egret/engine/ui/semantics`. Every view then adds itself to it. Its `label` is a group, or a dialog when modal. Each named part becomes what it is: a group, a text, a button, a progress bar or a switch. The tree is published at the end of every frame. A [UI tester](ui-testing.md) then presses `'Shop / Buy 60'` and reads `state('Sound').checked`. It is refused, as a player is, when the button is disabled or a modal is over it. `@egret/engine/web/semantics` shows the same tree to a screen reader.
 
+A named noninteractive text part is omitted from the published semantic tree when its effective accessible name is empty or whitespace-only. Its layout and display remain unchanged, and the same node returns when the text or its explicit accessible label becomes nonempty. An explicit nonempty label remains meaningful even with empty drawn words. Interactive controls still require valid accessible names.
+
 ## What is checked
 
 `tests/ui-view.test.mjs` plans views in Node. It checks:

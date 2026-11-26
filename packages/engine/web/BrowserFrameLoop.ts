@@ -24,6 +24,13 @@ export interface BrowserFrameLoopOptions<F> {
   readonly update?: (deltaSeconds: number) => void;
   /** After the update, return false to retain the frame already displayed. Time and input still advance. */
   readonly shouldRender?: () => boolean;
+  /** Optional presentation-only preparation after the wanted-frame and Host admission checks. The Host may still refuse the attempt. */
+  readonly beforeRender?: () => void;
+  /** Opt-in bounded recovery of a failed render call, never of clock/update/preparation errors. */
+  readonly renderRetry?: {
+    readonly maxConsecutive: number;
+    readonly shouldRetry: (error: unknown, consecutiveFailure: number) => boolean;
+  };
   /** The longest step, in seconds. A tab that was hidden comes back with one step of this length. Defaults to 0.1, and is never more than the Engine's clock takes. */
   readonly maxStepSeconds?: number;
   /**
@@ -51,6 +58,8 @@ export interface BrowserFrameLoopSnapshot {
   /** The seconds of game time the loop has given the Engine's clock. */
   readonly seconds: number;
   readonly failure: unknown;
+  /** Number of render failures explicitly accepted for retry, present only with a configured policy. */
+  readonly recoveredRenderFailures?: number;
 }
 /** Steps the Engine and draws a frame on each animation frame of the browser. */
 export interface BrowserFrameLoop {
@@ -75,7 +84,7 @@ const backpressure = (error: unknown): boolean => {
  */
 export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): BrowserFrameLoop {
   if (options === null || typeof options !== 'object') throw invalid();
-  const { engine, frame, host, update, shouldRender, onError } = options,
+  const { engine, frame, host, update, shouldRender, beforeRender, onError, renderRetry } = options,
     limit = options.maxPendingFrames ?? 2;
   const request =
     options.requestFrame ?? ((callback: (milliseconds: number) => void): number => requestAnimationFrame(callback));
@@ -92,6 +101,14 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
     limit < 1 ||
     (update !== undefined && typeof update !== 'function') ||
     (shouldRender !== undefined && typeof shouldRender !== 'function') ||
+    (beforeRender !== undefined && typeof beforeRender !== 'function') ||
+    (renderRetry !== undefined &&
+      (renderRetry === null ||
+        typeof renderRetry !== 'object' ||
+        !Number.isSafeInteger(renderRetry.maxConsecutive) ||
+        renderRetry.maxConsecutive < 1 ||
+        renderRetry.maxConsecutive > 8 ||
+        typeof renderRetry.shouldRetry !== 'function')) ||
     (onError !== undefined && typeof onError !== 'function') ||
     typeof request !== 'function' ||
     typeof cancel !== 'function'
@@ -117,11 +134,17 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
   let state: BrowserFrameLoopState = 'idle',
     handle: number | undefined,
     last: number | undefined;
+  const retryLimit = renderRetry?.maxConsecutive ?? 0;
+  const shouldRetry = renderRetry?.shouldRetry;
+  let consecutiveRenderFailures = 0,
+    recoveredRenderFailures = 0;
   let seconds = 0,
     steps = 0,
     frames = 0,
     skipped = 0,
     failure: unknown;
+  const currentTick = (): boolean => state === 'running' && handle === undefined;
+  const isClosed = (): boolean => state === 'closed';
   const tick = (milliseconds: number): void => {
     handle = undefined;
     if (state !== 'running') return;
@@ -137,31 +160,69 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
         seconds += delta;
         engine.advanceTime(seconds);
         steps++;
+        if (!currentTick()) return;
         update?.(delta);
         // The update may have stopped or disposed the loop.
-        if (state !== 'running') return;
+        if (!currentTick()) return;
         if (!(owed > 1e-9)) break;
       }
       const wantsFrame = shouldRender?.() ?? true;
-      if (state !== 'running') return;
+      if (!currentTick()) return;
       if (wantsFrame) {
-        if (host !== undefined && host.getStatus().pendingFrames >= limit) skipped++;
+        const pending = host?.getStatus().pendingFrames;
+        if (!currentTick()) return;
+        if (pending !== undefined && pending >= limit) skipped++;
         else {
+          beforeRender?.();
+          if (!currentTick()) return;
+          const optionsForFrame = typeof frame === 'function' ? (frame as () => F)() : frame;
+          if (!currentTick()) return;
           try {
-            engine.renderSharedFrame(typeof frame === 'function' ? (frame as () => F)() : frame);
+            engine.renderSharedFrame(optionsForFrame);
             frames++;
+            consecutiveRenderFailures = 0;
           } catch (error) {
-            if (host !== undefined || !backpressure(error)) throw error;
-            skipped++;
+            if (host === undefined && backpressure(error)) skipped++;
+            else {
+              const attempt = consecutiveRenderFailures + 1;
+              let retry = false;
+              if (shouldRetry !== undefined && attempt <= retryLimit) {
+                try {
+                  retry = shouldRetry(error, attempt) === true;
+                } catch (decisionError) {
+                  throw new EgretError('FRAME_LOOP_RENDER_RETRY_FAILED', {
+                    cause: new AggregateError([error, decisionError], 'Render retry decision failed')
+                  });
+                }
+              }
+              if (!currentTick()) return;
+              if (!retry) throw error;
+              consecutiveRenderFailures = attempt;
+              recoveredRenderFailures++;
+            }
           }
         }
       }
-      handle = request(tick);
+      if (state === 'running' && handle === undefined) handle = request(tick);
     } catch (error) {
-      state = 'failed';
-      failure = error;
-      if (onError === undefined) throw error;
-      onError(error);
+      // A callback may have disposed the loop or explicitly queued a restart
+      // before throwing. An error must not resurrect disposal or leave that request live.
+      if (!isClosed()) state = 'failed';
+      const queued = handle;
+      handle = undefined;
+      let reported = error;
+      if (queued !== undefined) {
+        try {
+          cancel(queued);
+        } catch (cancelError) {
+          reported = new EgretError('FRAME_LOOP_CANCEL_FAILED', {
+            cause: new AggregateError([error, cancelError], 'Frame failure and queued-request cancellation failed')
+          });
+        }
+      }
+      failure = reported;
+      if (onError === undefined) throw reported;
+      onError(reported);
     }
   };
   const stop = (): void => {
@@ -181,11 +242,21 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
       // What stopped the loop is forgotten when it is started again; the gap since it ran is not a step.
       state = 'running';
       failure = undefined;
+      consecutiveRenderFailures = 0;
       last = undefined;
       handle = request(tick);
     },
     stop,
-    snapshot: () => Object.freeze({ state, steps, frames, skipped, seconds, failure }),
+    snapshot: () =>
+      Object.freeze({
+        state,
+        steps,
+        frames,
+        skipped,
+        seconds,
+        failure,
+        ...(renderRetry === undefined ? {} : { recoveredRenderFailures })
+      }),
     dispose(): void {
       stop();
       state = 'closed';
