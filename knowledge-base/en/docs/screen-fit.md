@@ -81,6 +81,21 @@ A page has `safe-area-inset` values only when its viewport meta tag says `viewpo
 
 A project moved from Egret 5 by [Egret Migrate](legacy-project-migration.md) keeps its `scaleMode`. With a fixed mode, `stage.stageWidth` and `stage.stageHeight` follow the window, EUI lays its roots out again against the new size, and the stage dispatches `egret.Event.RESIZE`, as Egret 5 did.
 
+## Pinning a box to the edges
+
+`pinBox(area, box, pin)` says where a box goes to be held against the edges of an area: its top left corner, in the units of both. The area is `plan.safe`, or the whole stage, `{ x: 0, y: 0, width: plan.width, height: plan.height }`:
+
+```js
+import { pinBox } from '@egret/engine/web/screen';
+
+game.onScreenChange(plan => {
+  const at = pinBox(plan.safe, { x: score.x, y: score.y, width: score.width, height: score.height }, { right: 16, top: 16 });
+  score.x = at.x; score.y = at.y;
+});
+```
+
+On each axis the pin takes one of `left`, `right` and `centerX` across, and one of `top`, `bottom` and `centerY` down: a distance in from that edge, or from the middle. An axis without one keeps the box where it is. `isScreenPin(value)` says whether a value is a pin. A pin with two of one axis, an unknown name or a number that is not finite is refused with `UI_SCREEN_OPTIONS_INVALID`. `game.pin` of [play](play.md#screens-of-any-shape) places a node this way, again whenever the screen or its box changes.
+
 ## What is checked
 
 - `tests/ui-screen.test.mjs` checks the arithmetic in Node: `'contain'` and `'expand'`, wider and taller spaces, the portrait design, insets inside and beyond the bars, and refusals.
@@ -99,6 +114,8 @@ A project moved from Egret 5 by [Egret Migrate](legacy-project-migration.md) kee
 
   For `wholeScale`, a 160 × 90 game in 700 × 400 CSS pixels draws a 160 × 90 canvas at 640 × 360. Its 2 × 2 dot is 8 × 8 screen pixels, with no pixel between black and white.
 - `tests/egret-migrate.test.mjs` checks that `inspect` keeps each fixed mode and refuses `noScale`.
+- SCR08 checks `pinBox` on each edge and the middle, an axis left alone, and the pins it refuses.
+- The browser screen-fit fixture pins a score to the safe part's top right and a bar to the screen's bottom middle, in a game of `'expand'` with a notch on the right. Each stayed against its edges when the window grew wider and when it turned. When the score's box doubled across, it was placed again 8 units from the edge, and `set` moved it at once.
 - `tests/egret-migrate-eui.test.mjs` grows the screen of a `fixedWidth` project from 480 × 320 to 480 × 400 units. A bar at `bottom="0"` moves from 280 to 360, a centred part moves with the new middle, and `RESIZE` is told once.
 - In headless Chromium, a migrated `fixedWidth` game of 750 × 1334 was turned from a 375 × 667 window to 393 × 852:
   - `stage.stageHeight` went from 1334 to 1625;

@@ -13,6 +13,8 @@ import { createBrowserAudio } from './audio.js';
 import { createBrowserGamepadInput } from './gamepad.js';
 import type { BrowserGamepadInput } from './gamepad.js';
 import { createBrowserGame } from './game.js';
+import { isScreenPin, pinBox } from './screen.js';
+import type { ScreenPin } from './screen.js';
 import { createBrowserFrameLoop } from './loop.js';
 import type {
   BrowserGame,
@@ -47,6 +49,17 @@ import type { UiSemantics } from '@egret/engine/ui/semantics';
 import type { GestureDrag, GesturePinch, GesturePoint, GestureSwipe } from './gestures.js';
 import { pointerTapActivation, semanticTapActivation } from './playActivation.js';
 import type { PlayTapActivation } from './playActivation.js';
+
+/** What a node is pinned to: the safe part, unless given, or the whole screen. */
+export interface PlayPinOptions {
+  readonly area?: 'safe' | 'screen';
+}
+/** A node held against the edges of the screen: `set` holds it otherwise, `dispose` lets it go. */
+export interface PlayPin {
+  readonly pin: ScreenPin;
+  set(pin: ScreenPin): void;
+  dispose(): void;
+}
 
 /** A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. */
 export interface PlayOptions {
@@ -639,6 +652,12 @@ export interface PlayGame {
    * keyboard, `A Jump` on a pad, and `touch` words on a touch screen. It changes when the player changes.
    */
   hints(list: readonly PlayHint[]): PlayHints;
+  /**
+   * Holds a node against the edges of `game.safe`, or of `game.screen` with `area: 'screen'`: `{ right: 16, top: 16 }`
+   * for a score, `{ bottom: 12, centerX: 0 }` for a bar. Its box, children included, is placed now, and again when
+   * the screen changes or the box changes size; between, the game may move it. For nodes of the `ui` layer.
+   */
+  pin(node: DisplayObject, pin: ScreenPin, options?: PlayPinOptions): PlayPin;
   /**
    * Shows `Loading 3 / 10` and a bar over everything while promises, or functions that return them, finish; gives
    * what they gave, in order. Functions run `atOnce` at a time. A failure closes it and is thrown.
@@ -1301,6 +1320,56 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     if (sameArea(next, given)) return;
     node.hitArea = next;
     boundsAreas.set(node, next);
+  };
+  // Nodes held against the edges of the safe part or the screen: placed again when the area or their box changes.
+  interface Pinned {
+    pin: ScreenPin;
+    readonly area: 'safe' | 'screen';
+    last: string | undefined;
+  }
+  const pinned = new Map<DisplayObject, Pinned>();
+  const onStage = (node: DisplayObject): boolean => {
+    let at: DisplayObject | undefined = node;
+    while (at !== undefined && at !== stage) at = at.parent;
+    return at === stage;
+  };
+  const placePinned = (node: DisplayObject, held: Pinned, again: boolean): void => {
+    if (node.isDisposed) {
+      pinned.delete(node);
+      return;
+    }
+    const parent = node.parent;
+    if (parent === undefined || !onStage(node)) return;
+    // The node's box on the stage, children, scale and turn included.
+    const local = node.getBounds();
+    const corners = [
+      node.localToGlobal(local.x, local.y),
+      node.localToGlobal(local.x + local.width, local.y),
+      node.localToGlobal(local.x, local.y + local.height),
+      node.localToGlobal(local.x + local.width, local.y + local.height)
+    ];
+    const left = Math.min(...corners.map(c => c.x)),
+      top = Math.min(...corners.map(c => c.y));
+    const box = {
+      x: left,
+      y: top,
+      width: Math.max(...corners.map(c => c.x)) - left,
+      height: Math.max(...corners.map(c => c.y)) - top
+    };
+    const area = held.area === 'screen' ? { x: 0, y: 0, width: shown.width, height: shown.height } : shown.safe;
+    const key = [area.x, area.y, area.width, area.height, box.width, box.height].join(',');
+    if (!again && key === held.last) return;
+    held.last = key;
+    const to = pinBox(area, box, held.pin);
+    if (to.x === box.x && to.y === box.y) return;
+    // The move on the stage, as a move in the parent's units.
+    const from = parent.globalToLocal(box.x, box.y),
+      moved = parent.globalToLocal(to.x, to.y);
+    node.x += moved.x - from.x;
+    node.y += moved.y - from.y;
+  };
+  const placeAllPinned = (again: boolean): void => {
+    for (const [node, held] of [...pinned]) placePinned(node, held, again);
   };
   const areaFromBounds = (node: DisplayObject): void => {
     if (boundsAreas.has(node) || node.hitArea !== undefined) return;
@@ -1997,6 +2066,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     const seconds = frameSeconds;
     frameSeconds = 0;
     if (!disposed) {
+      placeAllPinned(false);
       views.tick(seconds);
       syncLabelVisibility();
       if (options.semantics !== undefined)
@@ -2858,6 +2928,31 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     },
     confirm: (question, confirmOptions) => views.confirm(question, confirmOptions),
     hints: list => views.hints(list),
+    pin(node, pin, options = {}) {
+      if (node === null || typeof node !== 'object' || typeof (node as DisplayObject).getBounds !== 'function')
+        throw invalid('pin takes a node of the game');
+      if (!isScreenPin(pin))
+        throw invalid('a pin is at most one of left, right, centerX and one of top, bottom, centerY');
+      const area = options?.area ?? 'safe';
+      if (area !== 'safe' && area !== 'screen') throw invalid("a pin's area is 'safe' or 'screen'");
+      const held: Pinned = { pin: Object.freeze({ ...pin }), area, last: undefined };
+      pinned.set(node, held);
+      placePinned(node, held, true);
+      return Object.freeze({
+        get pin() {
+          return held.pin;
+        },
+        set(next: ScreenPin) {
+          if (!isScreenPin(next))
+            throw invalid('a pin is at most one of left, right, centerX and one of top, bottom, centerY');
+          held.pin = Object.freeze({ ...next });
+          if (pinned.get(node) === held) placePinned(node, held, true);
+        },
+        dispose() {
+          if (pinned.get(node) === held) pinned.delete(node);
+        }
+      });
+    },
     loading: (tasks, loadingOptions) => views.loading(tasks, loadingOptions),
     badges,
     compact: (value, compactOptions) =>
@@ -2954,13 +3049,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     point.x = Math.min(point.x, game.width);
     point.y = Math.min(point.y, game.height);
     if (!disposed) views.arrange();
-    if (api === undefined || disposed || options.arrange === undefined) return;
-    try {
-      options.arrange(game);
-    } catch (cause) {
-      // As what `update` throws: the game stops at its next step and is told.
-      failure ??= { cause };
-    }
+    if (api !== undefined && !disposed && options.arrange !== undefined)
+      try {
+        options.arrange(game);
+      } catch (cause) {
+        // As what `update` throws: the game stops at its next step and is told.
+        failure ??= { cause };
+      }
+    if (!disposed) placeAllPinned(true);
   });
   try {
     if (mixer !== undefined) await Promise.all(Object.entries(SFX_PRESETS).map(([name, recipe]) => make(name, recipe)));

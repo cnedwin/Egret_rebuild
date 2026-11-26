@@ -4,7 +4,7 @@
 // examples/play/verify.mjs.
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { planScreen } from '@egret/engine/web/screen';
+import { isScreenPin, pinBox, planScreen } from '@egret/engine/web/screen';
 
 const near = (actual, expected, label) => assert.ok(Math.abs(actual - expected) < 1e-9, label + ': ' + actual);
 
@@ -156,4 +156,22 @@ test('SCR07 wholeScale gives each unit a whole number of device pixels, with bar
   // Below one device pixel a unit, the scale is as the fit makes it.
   const small = planScreen({ box: { width: 300, height: 170 }, design, wholeScale: true });
   assert.equal(small.scale, 300 / 320);
+});
+
+// Break caught: a score pinned to the right edge drawn at the left, a bar held at the bottom that leaves the bottom
+// when its height changes, two pins of one axis taken, or an axis without a pin moved.
+test('SCR08 pinBox holds a box against an edge or the middle of an area, on each axis apart', () => {
+  const area = { x: 10, y: 20, width: 400, height: 300 },
+    box = { x: 0, y: 0, width: 50, height: 30 };
+  assert.deepEqual(pinBox(area, box, { right: 16, top: 16 }), { x: 344, y: 36 });
+  assert.deepEqual(pinBox(area, box, { left: 0, bottom: 0 }), { x: 10, y: 290 });
+  assert.deepEqual(pinBox(area, box, { centerX: 0, centerY: -10 }), { x: 185, y: 145 });
+  // An axis without a pin keeps the box where it is.
+  assert.deepEqual(pinBox(area, { ...box, x: 77, y: 5 }, { bottom: 4 }), { x: 77, y: 286 });
+  assert.ok(isScreenPin({ right: 1, centerY: 0 }));
+  assert.ok(isScreenPin({}));
+  for (const bad of [null, 5, { left: 1, right: 1 }, { top: 0, centerY: 0 }, { left: '1' }, { up: 1 }, { left: NaN }])
+    assert.equal(isScreenPin(bad), false, JSON.stringify(bad));
+  assert.throws(() => pinBox(area, box, { left: 1, centerX: 0 }), { code: 'UI_SCREEN_OPTIONS_INVALID' });
+  assert.throws(() => pinBox({ ...area, width: -1 }, box, {}), { code: 'UI_SCREEN_OPTIONS_INVALID' });
 });

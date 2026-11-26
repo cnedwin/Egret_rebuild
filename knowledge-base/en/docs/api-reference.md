@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1477 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1483 exports; 3 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1468,9 +1468,12 @@ For which entry to import from, see [What to import](entry-points.md).
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
+| `isScreenPin` | function | Whether `pin` is a pin: only its six names, finite numbers, and at most one of each axis. |
+| `pinBox` | function | Where `box` goes in `area` by `pin`: the place of its top left corner, in the units of both. |
 | `planScreen` | function | Fits a stage to a space on a screen. |
 | `ScreenFit` | type | How a stage fills a space: see `ScreenPlanOptions.fit`. |
 | `ScreenInsets` | interface | How far in from each edge a notch, rounded corners or a home bar reach, in the pixels of the space given. |
+| `ScreenPin` | interface | Where a box is held in an area: on each axis a distance in from one edge, or from the middle. |
 | `ScreenPlan` | interface | Where the stage goes, and what of it is shown and safe to touch. |
 | `ScreenPlanOptions` | interface | What to fit: the space on the screen, the designs, how they fit and what covers the edges. |
 | `ScreenRect` | interface | A rectangle in stage units. |
@@ -1620,6 +1623,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayMotion` | type | A tween of `game.tween`: a motion that can be waited for. |
 | `PlayMusic` | interface | The music of a play game: play or stop it, and set its intensity, volume and mood. |
 | `PlayOptions` | interface | A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. |
+| `PlayPin` | interface | A node held against the edges of the screen: `set` holds it otherwise, `dispose` lets it go. |
+| `PlayPinOptions` | interface | What a node is pinned to: the safe part, unless given, or the whole screen. |
 | `PlayPointer` | interface | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
 | `PlaySayOptions` | interface | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
 | `PlaySfx` | interface | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
@@ -1632,6 +1637,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayToastOptions` | interface | A toast to show: how long and in what color. |
 | `PlayTouchButtonOptions` | interface | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
 | `PlayViewActivation` | type | The second argument of a view's tap binding; target and currentTarget are part names, if named. |
+| `ScreenPin` | interface | Where a box is held in an area: on each axis a distance in from one edge, or from the middle. |
 | `SFX_PRESETS` | value | The effects every game is given, by name. |
 | `SfxRecipe` | type | An effect: one tone, or several played one after another. |
 | `SfxTone` | interface | One tone of an effect. |
