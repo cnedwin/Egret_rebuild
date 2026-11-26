@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/screen-fit.md)
 
-A game is designed for one size and played on screens of every shape: a phone held either way, a tablet, a wide monitor, a WeChat mini game. Parts of a phone's screen are covered by a notch, rounded corners or a home bar. `planScreen` of the optional entry `@egret/engine/web/screen` says where the stage goes on such a screen; [`play`](play.md#screens-of-any-shape) and [`createBrowserGame`](browser-game.md) use it with `fit: 'expand'` and `'contain'`.
+A game is designed for one size and played on screens of every shape: a phone held either way, a tablet, a wide monitor, a WeChat mini game. Parts of a phone's screen are covered by a notch, rounded corners or a home bar. `planScreen` of the optional entry `@egret/engine/web/screen` says where the stage goes on such a screen; [`play`](play.md#screens-of-any-shape) and [`createBrowserGame`](browser-game.md) use it with `fit: 'expand'`, `'contain'` and the stage scale modes of Egret 5.
 
 ## The rules
 
@@ -10,6 +10,27 @@ A game is designed for one size and played on screens of every shape: a phone he
 2. **`'contain'` leaves bars; `'expand'` shows more stage.** With `'contain'` the stage is the design, centred, and the rest of the space is bars. With `'expand'` the scale is the same, and the stage takes as many whole units as the space holds, never fewer than the design. A wider phone then shows more of the stage at its sides, and the design lies in the middle of the stage.
 3. **A portrait design for a tall space.** While the space is taller than it is wide, a `portrait` size is the design. With designs that share their short side (1920 × 1080 and 1080 × 1920), a thing of the design is as large on the screen held either way.
 4. **The safe part.** `insets` say how far a notch, rounded corners or a home bar reach in from each edge of the space. `safe` is the stage less what they cover, in stage units. What belongs at an edge is placed from it.
+5. **The fixed modes of Egret 5 fill the space.** Each takes its scale from one side, and the stage is as many whole units as the space then holds:
+   - `'fixedWidth'` fits the design's width to the space, and the stage's height follows the space;
+   - `'fixedHeight'` does the same with the height;
+   - `'fixedNarrow'` is `'expand'`;
+   - `'fixedWide'` scales the design until it covers the space, and the stage is what the space shows of it.
+
+   Where the stage is smaller than the design, the design is centred on it and its edges are not shown. Egret 5 rounded stage sizes to the nearest unit; here they are rounded down, so the stage never reaches past the space.
+6. **Whole steps for pixel art.** With `wholeScale: true`, a stage unit covers a whole number of the device's pixels: the scale is rounded down to the step below, and the rest of the space is bars. `pixelRatio` says how many device pixels a pixel of the space has. Where the space cannot hold the design at one device pixel a unit, the scale stays as the fit makes it.
+
+| Egret 5 `scaleMode` | `fit` | On a phone taller than the design (portrait design) |
+| --- | --- | --- |
+| `showAll` | `'contain'` | The design, bars above and below |
+| `noBorder` | `'cover'` (browser game) | The design, its sides cut |
+| `exactFit` | `'stretch'` (browser game) | The design, stretched |
+| `fixedWidth` | `'fixedWidth'` | The design's width, more stage below and above |
+| `fixedHeight` | `'fixedHeight'` | The design's height, less of it across |
+| `fixedNarrow` | `'fixedNarrow'`, `'expand'` | As `fixedWidth`; on a wider screen, more stage at the sides |
+| `fixedWide` | `'fixedWide'` | As `fixedHeight` |
+| `noScale` | none | Not available |
+
+A 750 × 1334 design with `'fixedWidth'` is 750 × 1625 units on a 393 × 852 phone (scale 0.524). On a 768 × 1024 tablet it is 750 × 1000 units, 167 units of the design cut above and below. `'expand'` keeps the whole design there instead: 1000 × 1334 units.
 
 ## Use
 
@@ -32,13 +53,13 @@ const plan = planScreen({
 | --- | --- |
 | `orientation` | `'portrait'` while the space is taller than wide, `'landscape'` otherwise |
 | `design` | The design that applies |
-| `width`, `height` | The stage, in whole units: the design's, or more with `'expand'` |
+| `width`, `height` | The stage, in whole units: the design's with `'contain'`, at least the design's with `'expand'`, and less than the design's on one side with `'fixedWide'`, or with `'fixedWidth'` and `'fixedHeight'` on a screen of the other shape |
 | `scale` | Pixels of the space in a stage unit |
 | `left`, `top` | Where the stage's top left corner is in the space; above 0 where bars are left |
-| `designRect` | Where the design is on the stage |
+| `designRect` | Where the design is on the stage, centred; past the stage's edges where the stage is smaller |
 | `safe` | The part of the stage that is shown and that nothing covers |
 
-The plan is frozen. Plan again whenever the space or the insets change. What is not a space, a whole design or insets of 0 or more is refused with `UI_SCREEN_OPTIONS_INVALID`.
+The plan is frozen. Plan again whenever the space or the insets change. What is not a space, a whole design, insets of 0 or more, a fit of these six, true or false for `wholeScale` or a `pixelRatio` above 0 is refused with `UI_SCREEN_OPTIONS_INVALID`.
 
 ## In a browser game
 
@@ -56,6 +77,10 @@ A page has `safe-area-inset` values only when its viewport meta tag says `viewpo
 
 `insets` gives them where the page or its host knows better. In a WeChat mini game, the adapter of `tools/wechat/export-wechat.mjs` reports WeChat's `safeArea` as the page's insets, and `'expand'` fills the screen canvas without stretching it.
 
+`wholeScale: true` reads the page's device pixel ratio each time it plans the stage. The canvas is then drawn at one pixel a unit (`pixelRatio` 1, and no other is taken) and enlarged with `image-rendering: pixelated`, so each unit is a sharp square. It needs a planned fit: `'contain'`, `'expand'` or a fixed mode.
+
+A project moved from Egret 5 by [Egret Migrate](legacy-project-migration.md) keeps its `scaleMode`. With a fixed mode, `stage.stageWidth` and `stage.stageHeight` follow the window, EUI lays its roots out again against the new size, and the stage dispatches `egret.Event.RESIZE`, as Egret 5 did.
+
 ## What is checked
 
 - `tests/ui-screen.test.mjs` checks the arithmetic in Node: `'contain'` and `'expand'`, wider and taller spaces, the portrait design, insets inside and beyond the bars, and refusals.
@@ -66,8 +91,23 @@ A page has `safe-area-inset` values only when its viewport meta tag says `viewpo
   - a tap in the page reaches a button that `arrange` placed in the safe part.
 - The same browser screen-fit fixture shrinks and enlarges an embedded 200 × 100 design through CSS scales 2 → 0.9 → 3. Its arrange callback keeps a 44 CSS-pixel button, the safe and design rectangles stay the same, the two actual changes notify once each, and the final mouse tap reaches the button.
 - `tests/wechat-minigame.test.mjs` checks that the adapter reports WeChat's safe area as the page's insets.
+- SCR06 and SCR07 check the four fixed modes against Egret 5's arithmetic, on spaces taller and wider than the design, and the whole steps, including a page of two device pixels to a CSS pixel.
+- The browser screen-fit fixture also runs `'fixedWidth'` and `'fixedHeight'` in a resized element:
+  - an 800 × 800 element shows 400 × 400 units of a 400 × 300 design;
+  - at 1000 × 600 it shows 400 × 240 units;
+  - a tap at the design's middle reaches its button.
 
-No phone with a notch, Safari or WeChat itself was run. The page's own insets were never other than 0 in these runs; the notch was given as `insets`.
+  For `wholeScale`, a 160 × 90 game in 700 × 400 CSS pixels draws a 160 × 90 canvas at 640 × 360. Its 2 × 2 dot is 8 × 8 screen pixels, with no pixel between black and white.
+- `tests/egret-migrate.test.mjs` checks that `inspect` keeps each fixed mode and refuses `noScale`.
+- `tests/egret-migrate-eui.test.mjs` grows the screen of a `fixedWidth` project from 480 × 320 to 480 × 400 units. A bar at `bottom="0"` moves from 280 to 360, a centred part moves with the new middle, and `RESIZE` is told once.
+- In headless Chromium, a migrated `fixedWidth` game of 750 × 1334 was turned from a 375 × 667 window to 393 × 852:
+  - `stage.stageHeight` went from 1334 to 1625;
+  - `RESIZE` was told once;
+  - a bar drawn from `stageHeight` reached the bottom row of the window.
+
+  That run is recorded in the pull request that added the modes.
+
+No phone with a notch, Safari or WeChat itself was run. The page's own insets were never other than 0 in these runs; the notch was given as `insets`. `wholeScale` was checked at one device pixel to a CSS pixel in the browser, and at two only in Node.
 
 ## Design notes
 

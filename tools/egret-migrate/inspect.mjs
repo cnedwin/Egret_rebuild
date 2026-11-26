@@ -12,7 +12,15 @@ export const hash = data => createHash('sha256').update(data).digest('hex');
 export const json = value => JSON.stringify(value, null, 2) + '\n';
 export const profile = 'egret-5.2-classic-web-2d';
 const supportedModules = new Set(['egret', 'game', 'res', 'assetsmanager', 'promise', 'eui', 'dragonBones']);
-const scaleModes = { showAll: 'contain', noBorder: 'cover', exactFit: 'stretch' };
+const scaleModes = {
+  showAll: 'contain',
+  noBorder: 'cover',
+  exactFit: 'stretch',
+  fixedWidth: 'fixedWidth',
+  fixedHeight: 'fixedHeight',
+  fixedNarrow: 'fixedNarrow',
+  fixedWide: 'fixedWide'
+};
 
 export function refuse(code, message, details) {
   throw Object.assign(new Error(message), { code, details });

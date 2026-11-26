@@ -45,6 +45,8 @@ Windows 对照使用两个隔离的 Chromium 157 会话、软件 WebGL2 和未�
 
 静态和动态皮肤共用工程事务和浏览器宿主。`eui` 默认读取 `resource/default.thm.json`，也可用 `--theme <相对路径>` 指定另一份本地主题。编译器把主题声明的 EXML 作为数据读取，保留皮肤部件 ID、层级、字面量属性、尺寸及受支持的基础与线性布局。业务代码可用原 ID 访问部件。0.3 版支持 `{hostComponent.model.title}`、`{data.name}` 等属性链，注册 EXML 以限定名引用的工程组件，并按状态更新属性和子项。验收时应替换一次绑定对象，再卸载并重新进入页面，核对监听和部件状态。编译器会指出无法转换的表达式位置。保留原主题并记录任何主题范围调整，部分未实例化的默认皮肤也可能包含未支持声明。适配器复用显示树和作用域文字资源。
 
+`index.html` 的 `data-scale-mode` 会保留。`showAll`、`noBorder` 和 `exactFit` 的舞台保持设计尺寸。`fixedWidth`、`fixedHeight`、`fixedNarrow` 和 `fixedWide` 按白鹭 5 的方式计算舞台。窗口变化时，`stage.stageWidth` 和 `stage.stageHeight` 跟着变化，EUI 按新尺寸重新排布各个根节点，舞台派发 `egret.Event.RESIZE`。`noScale` 在 `inspect` 时被拒绝。
+
 传统 RES 图集支持未旋转帧、裁切偏移和已声明子键，复用同一张原生纹理页和现有 SpriteSheet API。页路径来自原声明，裸子键和带图集名的帧键都能解析到同一帧。已兼容的 PNG 保持字节一致；受支持但超出目标解码范围的旧 PNG 可离线规范为 RGBA8，对照解码像素并记录输入输出 SHA-256。非 sRGB 色彩配置和未知语义元数据需要明确适配。缺失、歧义及旋转帧需要明确修复。
 
 为每组已接纳的 DragonBones 骨骼、图集描述及纹理提供本地 JSON 映射：

@@ -121,6 +121,26 @@ test('inspect reuses the RES plan and preserves source and group order from a 5.
   assert.equal(project.resources.files[0].sourcePath, 'resource/settings.json');
 });
 
+// Break caught: a project made for phones with fixedWidth, fixedHeight, fixedNarrow or fixedWide refused, or moved
+// with another fit, so that its stage no longer follows the screen as it did in Egret 5.
+test('inspect keeps the fixed scale modes of Egret 5 and refuses one it cannot keep', t => {
+  const { folder, write } = oldProject(t);
+  for (const mode of ['fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide']) {
+    write(
+      'index.html',
+      '<div class="egret-player" data-entry-class="Main" data-content-width="750" data-content-height="1334" data-scale-mode="' +
+        mode +
+        '"></div>'
+    );
+    assert.deepEqual(inspectLegacyProject(folder).stage, { entry: 'Main', width: 750, height: 1334, fit: mode });
+  }
+  write(
+    'index.html',
+    '<div class="egret-player" data-entry-class="Main" data-content-width="750" data-content-height="1334" data-scale-mode="noScale"></div>'
+  );
+  assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_ENTRY' });
+});
+
 test('5.0.15 Wing admission records exactly the declared SDK and bounds the bundled Promise alias', t => {
   const { folder, write } = oldProject(t);
   const properties = {

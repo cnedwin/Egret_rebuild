@@ -1348,3 +1348,72 @@ test('an explicit-height label always draws its first line and admits later line
     await game.dispose();
   }
 });
+
+// Break caught: a project of fixedWidth or another fixed scale mode keeping the stage size it started with when the
+// window changes, its EUI constraints laid out against the old size, or Event.RESIZE not told, as Egret 5 told it.
+test('with a fixed scale mode the stage follows the screen, EUI lays its roots out again and RESIZE is told', async () => {
+  const menuSkin = skin(
+    'MenuSkin',
+    '<e:Rect id="bar" left="0" right="0" bottom="0" height="40"/>' +
+      '<e:Rect id="corner" right="10" top="10" width="20" height="20"/>' +
+      '<e:Rect id="middle" width="40" height="40" horizontalCenter="0" verticalCenter="0"/>',
+    'width="100%" height="100%"'
+  );
+  const { sdk, options } = setup(menuSkin);
+  const make = sdk.createBrowserGame;
+  const listeners = new Set();
+  let plan = { width: 480, height: 320 },
+    fit;
+  sdk.createBrowserGame = async asked => {
+    fit = asked.fit;
+    const game = await make(asked);
+    Object.defineProperty(game, 'screen', { get: () => plan });
+    game.onScreenChange = listener => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    };
+    return game;
+  };
+  let root, menu, stage;
+  const sizes = [];
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    fit: 'fixedWidth',
+    createMain({ eui, egret }) {
+      new eui.Theme('resource/default.thm.json');
+      class Menu extends eui.Component {}
+      root = new eui.UILayer();
+      menu = new Menu();
+      root.addChild(menu);
+      root.addEventListener(
+        egret.Event.ADDED_TO_STAGE,
+        function () {
+          stage = this.stage;
+          stage.addEventListener(egret.Event.RESIZE, () => sizes.push([stage.stageWidth, stage.stageHeight]), null);
+        },
+        root
+      );
+      return root;
+    }
+  });
+  try {
+    assert.equal(fit, 'fixedWidth');
+    assert.deepEqual([stage.stageWidth, stage.stageHeight, root.width, root.height], [480, 320, 480, 320]);
+    assert.deepEqual(
+      [menu.bar.y, menu.bar.width, menu.corner.x, menu.middle.x, menu.middle.y],
+      [280, 480, 450, 220, 140]
+    );
+    // The window grows taller: with fixedWidth the stage keeps its width and takes the new height.
+    plan = { width: 480, height: 400 };
+    for (const listener of [...listeners]) listener(plan);
+    assert.deepEqual([stage.stageWidth, stage.stageHeight, root.width, root.height], [480, 400, 480, 400]);
+    assert.deepEqual([menu.bar.y, menu.bar.width, menu.corner.x, menu.middle.y], [360, 480, 450, 180]);
+    assert.deepEqual(stage.hitArea, { x: 0, y: 0, width: 480, height: 400 });
+    // A notice of the same size tells nothing again.
+    for (const listener of [...listeners]) listener(plan);
+    assert.deepEqual(sizes, [[480, 400]]);
+  } finally {
+    await game.dispose();
+  }
+  assert.equal(listeners.size, 0, 'the listener ends with the game');
+});

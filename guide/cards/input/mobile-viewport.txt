@@ -2,7 +2,7 @@
 id: mobile-viewport
 title: Fit the page to a phone screen and its safe areas
 applies: [web, world3d, play, play3d]
-triggers: [createWorld3DView, createWorld3DApp, pickWorld3DQuality, "viewport", "mobile layout", "phone screen", "safe area", "notch", "landscape", "address bar", "page scrolls on phone", "blurry on phone", "device pixel ratio", "hud cut off", "resize", "portrait", "orientation", "rotate the phone", "fit expand", "arrange", "black bars", "横竖屏", "竖屏", "黑边", "手机适配", "屏幕适配", "安全区", "刘海", "地址栏", "画面模糊", "像素比"]
+triggers: [createWorld3DView, createWorld3DApp, pickWorld3DQuality, "viewport", "mobile layout", "phone screen", "safe area", "notch", "landscape", "address bar", "page scrolls on phone", "blurry on phone", "device pixel ratio", "hud cut off", "resize", "portrait", "orientation", "rotate the phone", "fit expand", "arrange", "black bars", "fixedWidth", "fixedHeight", "scale mode", "pixel art", "横竖屏", "竖屏", "黑边", "手机适配", "屏幕适配", "安全区", "刘海", "地址栏", "画面模糊", "像素比", "像素风"]
 local: []
 evidence:
   - { repo: cnedwin/PortedGamesEgret, path: jelly-pandas/index.html, line: 5, commit: 63971d5012e7776b675e1a4fbecb8e092a6fa09a, pin: db9772ee104e77b5c34e4c59bbc6f7dde7e90419 }
@@ -30,6 +30,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; }
 
 Rules:
 
+- An Egret 5 project of `scaleMode` fixedWidth, fixedHeight, fixedNarrow or fixedWide keeps it: they are values of `fit` too, and the stage then follows the window. Pixel art takes `wholeScale: true`, a whole number of device pixels a unit.
 - Size the canvas with CSS and let the view follow it. `createWorld3DView` resizes the drawing buffer when the canvas's displayed size changes; its `maxPixelRatio` defaults to 2. All three games pass 1.5, so a 3x phone does not draw nine times the CSS pixels.
 - Use `100dvh`, not `100vh`: mobile address bars change the visible height.
 - Pad every edge control by `env(safe-area-inset-*)`, which a page has only with `viewport-fit=cover`. Phones in landscape put a notch or a rounded corner under the left or right HUD.

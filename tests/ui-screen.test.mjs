@@ -94,7 +94,66 @@ test('SCR05 what is not a screen is refused', () => {
   refused({ box: { width: 100, height: 100 }, design: { width: 640.5, height: 360 } });
   refused({ box: { width: 100, height: 100 }, design, portrait: { width: 0, height: 10 } });
   refused({ box: { width: 100, height: 100 }, design, fit: 'cover' });
+  refused({ box: { width: 100, height: 100 }, design, fit: 'noScale' });
+  refused({ box: { width: 100, height: 100 }, design, wholeScale: 'yes' });
+  refused({ box: { width: 100, height: 100 }, design, wholeScale: true, pixelRatio: 0 });
   refused({ box: { width: 100, height: 100 }, design, insets: { top: -1, right: 0, bottom: 0, left: 0 } });
   refused({ box: { width: 100, height: 100 }, design, insets: { top: 0, right: 0, bottom: 0 } });
   assert.ok(Object.isFrozen(planScreen({ box: { width: 100, height: 100 }, design })));
+});
+
+// Break caught: an Egret 5 project moved here with fixedWidth, fixedHeight, fixedNarrow or fixedWide given a stage of
+// another size than it had, bars where Egret 5 filled the screen, or a design not centred on the stage.
+test('SCR06 the four fixed modes of Egret 5 fill the space, each with the scale of its side', () => {
+  const design = { width: 400, height: 300 };
+  const plan = (box, fit) => {
+    const { width, height, scale, left, top, designRect } = planScreen({ box, design, fit });
+    return { width, height, scale, left, top, x: designRect.x, y: designRect.y };
+  };
+  // A space taller than the design: the width fixed shows more below and above; the height fixed shows less across.
+  const tall = { width: 800, height: 800 };
+  assert.deepEqual(plan(tall, 'fixedWidth'), { width: 400, height: 400, scale: 2, left: 0, top: 0, x: 0, y: 50 });
+  const byHeight = plan(tall, 'fixedHeight');
+  assert.deepEqual([byHeight.width, byHeight.height, byHeight.x, byHeight.y], [300, 300, -50, 0]);
+  assert.equal(byHeight.scale, 800 / 300);
+  assert.deepEqual(plan(tall, 'fixedWide'), byHeight, 'the larger scale, and the stage is what the space shows');
+  // A space wider than the design: the width fixed now shows less from top to bottom.
+  const wide = { width: 1000, height: 600 };
+  assert.deepEqual(plan(wide, 'fixedWidth'), { width: 400, height: 240, scale: 2.5, left: 0, top: 0, x: 0, y: -30 });
+  assert.deepEqual(plan(wide, 'fixedHeight'), { width: 500, height: 300, scale: 2, left: 0, top: 0, x: 50, y: 0 });
+  assert.deepEqual(plan(wide, 'fixedWide'), plan(wide, 'fixedWidth'));
+  // fixedNarrow is expand, on every shape.
+  for (const box of [tall, wide, { width: 390, height: 844 }, { width: 400, height: 300 }])
+    assert.deepEqual(
+      planScreen({ box, design, fit: 'fixedNarrow' }),
+      planScreen({ box, design, fit: 'expand' }),
+      JSON.stringify(box)
+    );
+  // The safe part stays within a stage smaller than the design.
+  const safe = planScreen({
+    box: tall,
+    design,
+    fit: 'fixedWide',
+    insets: { top: 40, right: 0, bottom: 0, left: 0 }
+  }).safe;
+  assert.deepEqual(safe, { x: 0, y: 15, width: 300, height: 285 });
+});
+
+// Break caught: pixel art drawn at a scale between two whole numbers of device pixels, and so blurred or uneven, or
+// whole steps taken where the space cannot hold the design at one device pixel a unit.
+test('SCR07 wholeScale gives each unit a whole number of device pixels, with bars for the rest', () => {
+  const design = { width: 320, height: 180 };
+  const exact = planScreen({ box: { width: 1280, height: 720 }, design, wholeScale: true });
+  assert.deepEqual([exact.scale, exact.left, exact.top], [4, 0, 0]);
+  const over = planScreen({ box: { width: 1300, height: 740 }, design, wholeScale: true });
+  assert.deepEqual([over.scale, over.left, over.top, over.width, over.height], [4, 10, 10, 320, 180]);
+  // On a page of two device pixels to a CSS pixel the steps are of device pixels: here 4 of them, 2 CSS pixels.
+  const dense = planScreen({ box: { width: 650, height: 370 }, design, wholeScale: true, pixelRatio: 2 });
+  assert.deepEqual([dense.scale, dense.left, dense.top], [2, 5, 5]);
+  // With expand the stage fills what the whole steps reach.
+  const grown = planScreen({ box: { width: 1400, height: 720 }, design, fit: 'expand', wholeScale: true });
+  assert.deepEqual([grown.scale, grown.width, grown.height, grown.left], [4, 350, 180, 0]);
+  // Below one device pixel a unit, the scale is as the fit makes it.
+  const small = planScreen({ box: { width: 300, height: 170 }, design, wholeScale: true });
+  assert.equal(small.scale, 300 / 320);
 });

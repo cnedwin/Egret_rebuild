@@ -37,12 +37,27 @@ export interface ScreenPlanOptions {
   /**
    * `'contain'` unless given: the stage is the design, scaled to fit and centred, with bars where the shapes differ.
    * `'expand'`: the same scale, and the stage grows to fill the space, so the screen shows the design whole and more
-   * of the stage on two sides.
+   * of the stage on two sides. The other four fill the space too, and are the stage scale modes of Egret 5:
+   * `'fixedWidth'` scales the design's width to the space's and the stage's height follows the space, more or less
+   * than the design's; `'fixedHeight'` is the same with height; `'fixedNarrow'` is `'expand'`; `'fixedWide'` scales
+   * the design until it covers the space and the stage is what the space shows of it, less than the design on one side.
    */
-  readonly fit?: 'contain' | 'expand';
+  readonly fit?: ScreenFit;
   /** What covers the edges of the space, in its pixels. None unless given. */
   readonly insets?: ScreenInsets;
+  /**
+   * When true, a stage unit covers a whole number of the device's pixels wherever the space holds the design at one or
+   * more of them: the scale is rounded down to the step below, and what that leaves of the space is bars, for pixel
+   * art. Below one device pixel a unit the scale is as the fit makes it. False unless given.
+   */
+  readonly wholeScale?: boolean;
+  /** The device's pixels in a pixel of the space (`devicePixelRatio` on a page), for `wholeScale`. 1 unless given. */
+  readonly pixelRatio?: number;
 }
+
+/** How a stage fills a space: see `ScreenPlanOptions.fit`. */
+export type ScreenFit = 'contain' | 'expand' | 'fixedWidth' | 'fixedHeight' | 'fixedNarrow' | 'fixedWide';
+const FITS: readonly ScreenFit[] = ['contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide'];
 
 /** Where the stage goes, and what of it is shown and safe to touch. */
 export interface ScreenPlan {
@@ -50,7 +65,11 @@ export interface ScreenPlan {
   readonly orientation: 'landscape' | 'portrait';
   /** The design that applies: `portrait` while the space is taller than wide and one was given, `design` otherwise. */
   readonly design: ScreenSize;
-  /** The size of the stage, in stage units: whole numbers, the design's or, with `'expand'`, at least the design's. */
+  /**
+   * The size of the stage, in stage units, whole numbers: the design's with `'contain'`, at least the design's with
+   * `'expand'`, and on one side less than the design's with `'fixedWide'`, or with `'fixedWidth'` and `'fixedHeight'`
+   * where the space is of the other shape.
+   */
   readonly width: number;
   readonly height: number;
   /** The screen's pixels in a stage unit. */
@@ -58,7 +77,10 @@ export interface ScreenPlan {
   /** Where the stage's top left corner is in the space, in its pixels: above 0 where bars are left. */
   readonly left: number;
   readonly top: number;
-  /** Where the design lies on the stage: all of it with `'contain'`, its middle with `'expand'`. */
+  /**
+   * Where the design lies on the stage, centred: all of it with `'contain'`, its middle with `'expand'`, and reaching
+   * past the stage where the stage is smaller than the design, which is then not all shown.
+   */
   readonly designRect: ScreenRect;
   /** The part of the stage that is shown and that nothing covers, in stage units. */
   readonly safe: ScreenRect;
@@ -74,21 +96,26 @@ const size = (value: unknown): value is ScreenSize =>
 const whole = (value: ScreenSize): boolean => Number.isSafeInteger(value.width) && Number.isSafeInteger(value.height);
 
 /**
- * Fits a stage to a space on a screen. The scale keeps the whole design in the space whatever its shape; with
- * `'expand'` the stage takes the rest of the space, so an edge of the screen is at `0` or `width` of the stage and
- * the design lies in its middle. `safe` is the stage less what the insets cover. Recompute it whenever the space or
- * the insets change, as they do when a phone turns.
+ * Fits a stage to a space on a screen. With `'contain'` and `'expand'` the scale keeps the whole design in the space
+ * whatever its shape; with `'expand'` the stage takes the rest of the space, so an edge of the screen is at `0` or
+ * `width` of the stage and the design lies in its middle. The fixed modes choose the scale from one side and fill the
+ * space as Egret 5 did. `safe` is the stage less what the insets cover. Recompute it whenever the space or the insets
+ * change, as they do when a phone turns.
  */
 export function planScreen(options: ScreenPlanOptions): ScreenPlan {
   if (options === null || typeof options !== 'object') throw invalid();
   const { box, design: landscape, portrait, insets } = options,
-    fit = options.fit ?? 'contain';
+    fit = options.fit ?? 'contain',
+    wholeScale = options.wholeScale ?? false,
+    pixelRatio = options.pixelRatio ?? 1;
   if (
     !size(box) ||
     !size(landscape) ||
     !whole(landscape) ||
     (portrait !== undefined && (!size(portrait) || !whole(portrait))) ||
-    (fit !== 'contain' && fit !== 'expand') ||
+    !FITS.includes(fit) ||
+    typeof wholeScale !== 'boolean' ||
+    !positive(pixelRatio) ||
     (insets !== undefined &&
       (insets === null ||
         typeof insets !== 'object' ||
@@ -99,10 +126,34 @@ export function planScreen(options: ScreenPlanOptions): ScreenPlan {
     throw invalid();
   const orientation = box.height > box.width ? 'portrait' : 'landscape',
     design = orientation === 'portrait' && portrait !== undefined ? portrait : landscape;
-  const scale = Math.min(box.width / design.width, box.height / design.height);
-  // With 'expand' the stage is as many whole units as the space holds, and never less than the design.
-  const width = fit === 'expand' ? Math.max(design.width, Math.floor(box.width / scale + 1e-6)) : design.width,
-    height = fit === 'expand' ? Math.max(design.height, Math.floor(box.height / scale + 1e-6)) : design.height;
+  const across = box.width / design.width,
+    down = box.height / design.height;
+  let scale =
+    fit === 'fixedWidth'
+      ? across
+      : fit === 'fixedHeight'
+        ? down
+        : fit === 'fixedWide'
+          ? Math.max(across, down)
+          : Math.min(across, down);
+  // A whole number of device pixels a unit, where there is room for one or more.
+  if (wholeScale && scale * pixelRatio >= 1) scale = Math.floor(scale * pixelRatio + 1e-9) / pixelRatio;
+  // As many whole units as the space holds: never fewer than the design with 'expand', and as the space makes them
+  // with the fixed modes; the design itself with 'contain'.
+  const fill = (space: number): number => Math.max(1, Math.floor(space / scale + 1e-6)),
+    grows = fit === 'expand' || fit === 'fixedNarrow';
+  const width =
+      fit === 'contain' || fit === 'fixedWidth'
+        ? design.width
+        : grows
+          ? Math.max(design.width, fill(box.width))
+          : fill(box.width),
+    height =
+      fit === 'contain' || fit === 'fixedHeight'
+        ? design.height
+        : grows
+          ? Math.max(design.height, fill(box.height))
+          : fill(box.height);
   const left = (box.width - width * scale) / 2,
     top = (box.height - height * scale) / 2;
   const designRect = Object.freeze({

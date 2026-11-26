@@ -73,7 +73,8 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `backend` | `'auto'`, `'webgpu'` or `'webgl2'` | `'auto'` |
 | `pixelRatio` | Positive multiplier for the 2D drawing buffer. The stage, layout, input and semantic bounds use the same logical units at every density | Browser device pixel ratio, capped at 2 |
 | `blendSpace` | How translucent things mix: `'srgb'` as a 2D canvas and Egret 5 do, so white at 10% over a dark ground is a faint white; `'linear'` mixes light, and the same white looks stronger | `'srgb'` |
-| `fit` | `'expand'` fills the window: the same scale, and the stage reaches past `width` × `height` to the edges. See [Screens of any shape](#screens-of-any-shape) | `'contain'`: bars where the window has another shape |
+| `fit` | `'expand'` fills the window: the same scale, and the stage reaches past `width` × `height` to the edges. `'fixedWidth'`, `'fixedHeight'`, `'fixedNarrow'` and `'fixedWide'` fill it as Egret 5 did. See [Screens of any shape](#screens-of-any-shape) | `'contain'`: bars where the window has another shape |
+| `wholeScale` | `true` for pixel art: a unit is a whole number of device pixels, drawn at `pixelRatio` 1 and enlarged sharply. Only for a canvas of `play`'s own | `false` |
 | `portrait` | `{ width, height }`: the stage while the window is taller than wide | `width` × `height` either way |
 | `insets` | `{ top, right, bottom, left }` in CSS pixels: what a notch, rounded corners or a home bar cover | The page's `safe-area-inset` values |
 | `arrange(game)` | Places what depends on the screen: called after `setup` and whenever the window changes size or turns | Nothing moves |
