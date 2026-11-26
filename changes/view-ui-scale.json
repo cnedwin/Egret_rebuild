@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Views keep their own size on the screen",
+    "body": "uiScale: { min, max } of play keeps the views of game.show, confirm, hints and loading within those CSS pixels a unit, apart from the game: a large design on a small phone gets larger views, a phone design on a desktop smaller ones. game.uiScale is the factor; a view is planned in an area that much smaller and its root scaled by it, so it fills the same part of the screen."
+  },
+  "zh": {
+    "title": "视图在屏幕上保持自己的尺寸",
+    "body": "play 的 uiScale: { min, max } 让 game.show、confirm、hints 和 loading 的视图每单位保持在这个 CSS 像素范围内，与游戏画面分开：大尺寸设计在小手机上视图变大，手机设计在桌面上视图变小。game.uiScale 是当前倍数；视图在缩小了同样倍数的区域里规划，根节点再按它缩放，因此仍占屏幕上同样的位置。"
+  }
+}

@@ -320,12 +320,110 @@ async function verifyPins(page) {
   }
 }
 
+// A 1280 × 720 game whose views keep between 0.75 and 1 CSS pixel a unit of theirs: on a large window the panel is
+// drawn smaller than the game's scale would make it, on a small one larger; it stays centred and takes a click.
+async function verifyUiScale(page) {
+  // The window holds the whole element, so that all of it is safe.
+  const before = page.viewportSize();
+  await page.setViewportSize({ width: 1940, height: 1100 });
+  const fixture = await page.evaluateHandle(async () => {
+    const { play } = await import('@egret/engine/play');
+    const parent = document.createElement('div');
+    parent.style.cssText = 'width:1920px;height:1080px';
+    document.body.append(parent);
+    const state = { taps: 0 };
+    let view;
+    const game = await play({
+      parent,
+      width: 1280,
+      height: 720,
+      fit: 'expand',
+      uiScale: { min: 0.75, max: 1 },
+      pixelRatio: 1,
+      backend: 'webgl2',
+      audio: false,
+      setup(g) {
+        view = g.show(
+          {
+            label: 'Panel',
+            root: {
+              type: 'panel',
+              card: true,
+              anchor: 'center',
+              width: 400,
+              height: 200,
+              padding: 16,
+              layout: 'column',
+              children: [{ type: 'button', name: 'go', text: 'Go', height: 80 }]
+            }
+          },
+          { state, bind: { go: { tap: s => s.taps++ } } }
+        );
+      }
+    });
+    return {
+      resize(width, height) {
+        parent.style.width = width + 'px';
+        parent.style.height = height + 'px';
+      },
+      read() {
+        const box = game.canvas.getBoundingClientRect(),
+          plan = game.browser.screen,
+          go = view.visibleRect('go');
+        // The button in the page's CSS pixels.
+        const css = {
+          x: box.left + go.x * plan.scale,
+          y: box.top + go.y * plan.scale,
+          width: go.width * plan.scale,
+          height: go.height * plan.scale
+        };
+        return { uiScale: game.uiScale, scale: plan.scale, css, taps: state.taps, middle: box.left + box.width / 2 };
+      },
+      async close() {
+        await game.dispose();
+        parent.remove();
+      }
+    };
+  });
+  const frames = () =>
+    page.evaluate(
+      () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done))))
+    );
+  try {
+    await frames();
+    // 1920 × 1080: the game at 1.5 pixels a unit; the views kept at 1, so drawn at 2 / 3 of the game's units.
+    let now = await fixture.evaluate(f => f.read());
+    assert.equal(now.scale, 1.5);
+    assert.ok(Math.abs(now.uiScale - 1 / 1.5) < 1e-9);
+    assert.ok(Math.abs(now.css.width - 368) < 1, 'the button is 368 of its units across at 1 pixel: ' + now.css.width);
+    assert.ok(Math.abs(now.css.height - 80) < 1);
+    assert.ok(Math.abs(now.css.x + now.css.width / 2 - now.middle) < 1, 'the panel stays centred');
+    const large = now;
+    // 640 × 360: the game at 0.5; the views kept at 0.75, drawn at 1.5 of the game's units.
+    await fixture.evaluate(f => f.resize(640, 360));
+    await frames();
+    now = await fixture.evaluate(f => f.read());
+    assert.equal(now.scale, 0.5);
+    assert.ok(Math.abs(now.uiScale - 1.5) < 1e-9);
+    assert.ok(Math.abs(now.css.height - 60) < 1, 'the button is 80 of its units at 0.75 pixel: ' + now.css.height);
+    await page.mouse.click(now.css.x + now.css.width / 2, now.css.y + now.css.height / 2);
+    await frames();
+    assert.equal((await fixture.evaluate(f => f.read())).taps, 1, 'a click on the larger button presses it');
+    return { large: { uiScale: large.uiScale, button: large.css }, small: { uiScale: now.uiScale, button: now.css } };
+  } finally {
+    await fixture.evaluate(f => f.close());
+    await fixture.dispose();
+    if (before) await page.setViewportSize(before);
+  }
+}
+
 export async function verifyScreenFit(page, PNG) {
   const before = page.viewportSize();
   await page.setViewportSize({ width: 960, height: 540 });
   const containScale = await verifyContainScale(page);
   const fixedFits = PNG === undefined ? undefined : await verifyFixedFits(page, PNG);
   const pins = await verifyPins(page);
+  const uiScale = await verifyUiScale(page);
   const fixture = await page.evaluateHandle(async () => {
     const { play } = await import('@egret/engine/play');
     const log = { arranged: [], taps: 0 };
@@ -422,6 +520,7 @@ export async function verifyScreenFit(page, PNG) {
       containScale,
       fixedFits,
       pins,
+      uiScale,
       arranged: log.length,
       orientations: [...new Set(log.map(entry => entry.orientation))],
       taps: 1

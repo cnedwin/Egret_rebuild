@@ -1637,6 +1637,7 @@
 | `PlayTilesOptions` | 接口 | A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. |
 | `PlayToastOptions` | 接口 | A toast to show: how long and in what color. |
 | `PlayTouchButtonOptions` | 接口 | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
+| `PlayUiScale` | 接口 | The size on the screen that play's views keep: at least `min` and at most `max` CSS pixels a unit of theirs. |
 | `PlayViewActivation` | 类型 | The second argument of a view's tap binding; target and currentTarget are part names, if named. |
 | `ScreenPin` | 接口 | Where a box is held in an area: on each axis a distance in from one edge, or from the middle. |
 | `SFX_PRESETS` | 值 | The effects every game is given, by name. |

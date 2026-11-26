@@ -17,6 +17,7 @@ export type {
   PlayOptions,
   PlayPin,
   PlayPinOptions,
+  PlayUiScale,
   PlayPointer,
   PlaySfx,
   PlayTextOptions,

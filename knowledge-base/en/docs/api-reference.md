@@ -1637,6 +1637,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayTilesOptions` | interface | A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. |
 | `PlayToastOptions` | interface | A toast to show: how long and in what color. |
 | `PlayTouchButtonOptions` | interface | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
+| `PlayUiScale` | interface | The size on the screen that play's views keep: at least `min` and at most `max` CSS pixels a unit of theirs. |
 | `PlayViewActivation` | type | The second argument of a view's tap binding; target and currentTarget are part names, if named. |
 | `ScreenPin` | interface | Where a box is held in an area: on each axis a distance in from one edge, or from the middle. |
 | `SFX_PRESETS` | value | The effects every game is given, by name. |

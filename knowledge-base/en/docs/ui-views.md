@@ -54,6 +54,15 @@ Every part may have `name`, `anchor`, `x`, `y`, `width`, `height` and `visible`.
 
 The root is placed in `game.safe`, the part of the screen no notch covers, or in all of `game.screen` with `area: 'screen'`. It is planned again whenever the [screen](screen-fit.md) changes. While the screen is taller than wide, `portrait` parts are used, and the parts are built again; `built(view)` is told each time. The portrait parts must have the same names, of the same kinds.
 
+### Views at their own size
+
+A view is drawn at the game's scale unless `play` is given `uiScale: { min, max }`, in CSS pixels a unit. The views then keep within those pixels while the game does not:
+
+- **A 1920 × 1080 design on a 844 × 390 phone** shows the game at 0.36 pixels a unit. With `min: 0.75`, its views are drawn about twice as large, so an 88-unit button is 66 pixels tall.
+- **A 1280 × 720 design on a 1920 × 1080 window** shows the game at 1.5. With `max: 1`, its views are drawn at 2 / 3 of the game's units, so a panel is no larger than it was designed.
+
+`game.uiScale` is the factor now. A view is planned in an area that much smaller and its root scaled by it, so it fills the same part of the screen, anchors and shares included. `rect(name)` stays in the view's own units, and `visibleRect(name)` in the stage's. Boxes of words, menus, notices, bars and touch controls keep the game's scale.
+
 A field a part does not have, a name used twice, or a portrait that lacks a name is refused with `UI_VIEW_INVALID` or `UI_VIEW_VARIANT_MISMATCH`. The error says which part, such as `root/3/0 (buy)`. A binding for a name the view does not have is refused with `UI_VIEW_BINDING_UNKNOWN`, and one a part cannot take with `UI_VIEW_BINDING_INVALID`. A misspelt field is never drawn as nothing.
 
 ## Wrapped labels, button details, images and borders
@@ -273,6 +282,7 @@ A named noninteractive text part is omitted from the published semantic tree whe
 `tests/ui-view.test.mjs` plans views in Node. It checks:
 
 - anchors, offsets, shares and fill in a free panel;
+- with `uiScale: { min: 0.75, max: 1 }` on a 1280 × 720 game, a button of 368 × 80 units measured 368 × 80 CSS pixels on a 1920 × 1080 window and 276 × 60 on a 640 × 360 one, centred both times, and a click pressed it;
 - rows and columns with fixed sizes and fill, gaps, padding, `align` and `justify`;
 - portrait parts and the two areas;
 - every refusal, with the place it names.
