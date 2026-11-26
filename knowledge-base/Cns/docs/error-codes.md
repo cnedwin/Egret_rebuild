@@ -500,8 +500,10 @@
 
 | 错误码 | 含义 |
 | --- | --- |
+| `FRAME_LOOP_CANCEL_FAILED` | 帧循环的 `cancel` 失败了。原因在 cause 中。 |
 | `FRAME_LOOP_CLOSED` | 帧循环已销毁。请新建一个。 |
 | `FRAME_LOOP_OPTIONS_INVALID` | 交给帧循环的选项无效：缺少某一项、类型不对或超出范围。 |
+| `FRAME_LOOP_RENDER_RETRY_FAILED` | 帧循环的 `render retry` 失败了。原因在 cause 中。 |
 
 ### GAMEPAD
 
