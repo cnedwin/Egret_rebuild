@@ -186,6 +186,13 @@ export interface ViewDescription {
   readonly root: ViewPart;
   /** The parts while the screen is taller than wide. The same names, of the same kinds, as `root`. */
   readonly portrait?: ViewPart;
+  /**
+   * The parts on a tablet held wide: a screen whose shorter side is 600 CSS pixels or more. `root` there unless given.
+   * The same names, of the same kinds, as `root`.
+   */
+  readonly tablet?: ViewPart;
+  /** The parts on a tablet held upright. `portrait`, else `root`, there unless given. The same names and kinds. */
+  readonly tabletPortrait?: ViewPart;
   /** `'safe'` unless given: the part of the screen no notch or home bar covers. `'screen'`: all the screen shows. */
   readonly area?: 'safe' | 'screen';
   /** Over everything, with the screen behind it dimmed and closed to the pointer. */
@@ -206,7 +213,13 @@ export interface ViewFrame {
   readonly screen: ViewRect;
   readonly safe: ViewRect;
   readonly orientation: 'landscape' | 'portrait';
+  /** `'tablet'` when the screen's shorter side is `TABLET_SHORT_SIDE` CSS pixels or more; `'phone'` unless given. */
+  readonly form?: 'phone' | 'tablet';
 }
+/** The shorter side, in CSS pixels, from which a screen is a tablet's for the `tablet` parts of a view. */
+export const TABLET_SHORT_SIDE = 600;
+/** Which parts of a view are used: `root` (`'landscape'`), `portrait`, `tablet` or `tabletPortrait`. */
+export type ViewVariant = 'landscape' | 'portrait' | 'tablet' | 'tabletPortrait';
 /** A part where it goes: its place in the tree, what it is, and its rectangle in the game's units. */
 export interface ViewPlannedPart {
   /** Its index in `parts`; parents come before what they hold. */
@@ -218,8 +231,11 @@ export interface ViewPlannedPart {
 }
 /** Where every part of a view goes on one screen. */
 export interface ViewPlan {
-  /** Which parts are used: `'portrait'` when the screen is taller than wide and the view has portrait parts. */
-  readonly variant: 'landscape' | 'portrait';
+  /**
+   * Which parts are used: on a tablet its own parts where the view has them, upright the portrait parts where it has
+   * them, and `root` (`'landscape'`) otherwise.
+   */
+  readonly variant: ViewVariant;
   readonly area: ViewRect;
   readonly parts: readonly ViewPlannedPart[];
   /** The index of each named part. */
@@ -438,7 +454,7 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
 export function checkView(description: ViewDescription): ReadonlyMap<string, ViewPart['type']> {
   if (description === null || typeof description !== 'object') throw invalid('view', 'a description is an object');
   for (const key of Object.keys(description))
-    if (!['label', 'root', 'portrait', 'area', 'modal', 'skin'].includes(key))
+    if (!['label', 'root', 'portrait', 'tablet', 'tabletPortrait', 'area', 'modal', 'skin'].includes(key))
       throw invalid('view', 'a view has no ' + key);
   if (description.label !== undefined && typeof description.label !== 'string') throw invalid('view', 'label');
   if (description.area !== undefined && description.area !== 'safe' && description.area !== 'screen')
@@ -459,8 +475,10 @@ export function checkView(description: ViewDescription): ReadonlyMap<string, Vie
     }
   }
   const names = checkTree(description.root, 'root');
-  if (description.portrait !== undefined) {
-    const other = checkTree(description.portrait, 'portrait');
+  for (const variant of ['portrait', 'tablet', 'tabletPortrait'] as const) {
+    const parts = description[variant];
+    if (parts === undefined) continue;
+    const other = checkTree(parts, variant);
     const missing = [...names.keys()].filter(name => !other.has(name)),
       extra = [...other.keys()].filter(name => !names.has(name)),
       changed = [...names].filter(([name, type]) => other.has(name) && other.get(name) !== type).map(([name]) => name);
@@ -468,9 +486,9 @@ export function checkView(description: ViewDescription): ReadonlyMap<string, Vie
       throw new EgretError('UI_VIEW_VARIANT_MISMATCH', {
         cause:
           [
-            missing.length ? 'not in portrait: ' + missing.join(', ') : '',
-            extra.length ? 'only in portrait: ' + extra.join(', ') : '',
-            changed.length ? 'of another kind in portrait: ' + changed.join(', ') : ''
+            missing.length ? 'not in ' + variant + ': ' + missing.join(', ') : '',
+            extra.length ? 'only in ' + variant + ': ' + extra.join(', ') : '',
+            changed.length ? 'of another kind in ' + variant + ': ' + changed.join(', ') : ''
           ]
             .filter(Boolean)
             .join('; ') + '.'
@@ -516,11 +534,23 @@ export function planView(description: ViewDescription, frame: ViewFrame): ViewPl
     typeof frame !== 'object' ||
     !rect(frame.screen) ||
     !rect(frame.safe) ||
-    (frame.orientation !== 'landscape' && frame.orientation !== 'portrait')
+    (frame.orientation !== 'landscape' && frame.orientation !== 'portrait') ||
+    (frame.form !== undefined && frame.form !== 'phone' && frame.form !== 'tablet')
   )
     throw new EgretError('UI_VIEW_FRAME_INVALID');
   const skin: ViewSkin = Object.freeze({ ...DEFAULT_VIEW_SKIN, ...description.skin });
-  const variant = frame.orientation === 'portrait' && description.portrait !== undefined ? 'portrait' : 'landscape';
+  const upright = frame.orientation === 'portrait',
+    tablet = frame.form === 'tablet';
+  // A tablet's own parts first, then the parts of the shape, then the root.
+  const variant: ViewVariant =
+    tablet && upright && description.tabletPortrait !== undefined
+      ? 'tabletPortrait'
+      : tablet && !upright && description.tablet !== undefined
+        ? 'tablet'
+        : upright && description.portrait !== undefined
+          ? 'portrait'
+          : 'landscape';
+  const chosen = variant === 'landscape' ? description.root : description[variant]!;
   const area = Object.freeze({ ...(description.area === 'screen' ? frame.screen : frame.safe) });
   const parts: ViewPlannedPart[] = [];
   const names = new Map<string, number>();
@@ -571,11 +601,7 @@ export function planView(description: ViewDescription, frame: ViewFrame): ViewPl
       cursor += length + gap + spread;
     });
   };
-  put(
-    variant === 'portrait' ? description.portrait! : description.root,
-    -1,
-    placeFree(variant === 'portrait' ? description.portrait! : description.root, area, skin)
-  );
+  put(chosen, -1, placeFree(chosen, area, skin));
   return Object.freeze({ variant, area, parts: Object.freeze(parts), names, skin });
 }
 

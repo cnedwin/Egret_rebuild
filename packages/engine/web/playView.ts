@@ -11,9 +11,9 @@ import type { SemanticNode, UiSemantics } from '@egret/engine/ui/semantics';
 import type { PlayGame, PlayText } from './BrowserPlay.js';
 import { directViewActivation, viewTapActivation } from './playActivation.js';
 import type { PlayViewActivation } from './playActivation.js';
-import { checkView, planView } from './view.js';
+import { TABLET_SHORT_SIDE, checkView, planView } from './view.js';
 import { keyCap } from './viewParts.js';
-import type { ViewDescription, ViewPanel, ViewPart, ViewPlan, ViewPlannedPart, ViewRect } from './view.js';
+import type { ViewDescription, ViewPanel, ViewPart, ViewPlan, ViewPlannedPart, ViewRect, ViewVariant } from './view.js';
 import { createPlayViewScrolls } from './playViewScroll.js';
 import type { PlayScrollViewport, PlayViewScroll } from './playViewScroll.js';
 
@@ -85,8 +85,8 @@ export interface PlayView<S = unknown> {
   badge(name: string): number | boolean;
   /** The position of a named scroll panel. The handle follows the name through a layout change. */
   scroll(name: string): PlayViewScroll;
-  /** Which parts are used: `'portrait'` while the screen is taller than wide and the view has portrait parts. */
-  readonly variant: 'landscape' | 'portrait';
+  /** Which parts are used: `'tablet'` or `'tabletPortrait'` on a tablet, `'portrait'` upright, `'landscape'` for the root. */
+  readonly variant: ViewVariant;
   readonly visible: boolean;
   /** The name of this view's currently actionable focused part, if any. */
   readonly focused: string | undefined;
@@ -374,8 +374,7 @@ export function createPlayViews(
           });
         for (const child of part.children ?? []) checkPanelRoles(child);
       };
-      checkPanelRoles(description.root);
-      if (description.portrait !== undefined) checkPanelRoles(description.portrait);
+      for (const parts of variantsOf(description)) checkPanelRoles(parts);
       return names;
     };
     const names = validate(description, bind);
@@ -397,10 +396,7 @@ export function createPlayViews(
     const usesParagraph = (part: ViewPart): boolean =>
       richStyle(part) !== undefined || (part.type === 'panel' && (part.children?.some(usesParagraph) ?? false));
     const paragraphCache = options.paragraphCache;
-    if (
-      paragraphCache === undefined &&
-      (usesParagraph(description.root) || (description.portrait !== undefined && usesParagraph(description.portrait)))
-    )
+    if (paragraphCache === undefined && variantsOf(description).some(usesParagraph))
       throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'paragraph parts need a paragraphCache' });
     if (options.gamepad !== undefined && typeof options.gamepad !== 'boolean')
       throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'gamepad takes a boolean' });
@@ -438,7 +434,11 @@ export function createPlayViews(
     const frame = () => {
       const by = hooks.uiScale?.() ?? 1;
       root.scaleX = root.scaleY = by;
-      return { screen: scaled(game.screen, by), safe: scaled(game.safe, by), orientation: game.orientation };
+      // A tablet's screen: its shorter side, in CSS pixels, at least TABLET_SHORT_SIDE.
+      const plan = game.browser.screen,
+        form: 'phone' | 'tablet' =
+          Math.min(plan.width, plan.height) * plan.scale >= TABLET_SHORT_SIDE ? 'tablet' : 'phone';
+      return { screen: scaled(game.screen, by), safe: scaled(game.safe, by), orientation: game.orientation, form };
     };
     const colourOf = (part: ViewPart, item: Made): number => {
       const skin = plan.skin;
@@ -1196,8 +1196,8 @@ export function createPlayViews(
       if (original === undefined)
         throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': expected a named panel' });
       const oldNames = rowNames(original.children ?? []);
-      if (description.portrait !== undefined) {
-        const other = collectionPanel(description.portrait, name);
+      for (const parts of variantsOf(description).slice(1)) {
+        const other = collectionPanel(parts, name);
         const otherNames = other === undefined ? undefined : rowNames(other.children ?? []);
         if (
           otherNames === undefined ||
@@ -1205,13 +1205,17 @@ export function createPlayViews(
           [...oldNames].some(key => !otherNames.has(key))
         )
           throw new EgretError('UI_VIEW_VARIANT_MISMATCH', {
-            cause: name + ': collection descendants must belong to the same panel in both variants'
+            cause: name + ': collection descendants must belong to the same panel in every variant'
           });
       }
       const nextDescription: ViewDescription = {
         ...description,
         root: withChildren(description.root, name, children),
-        ...(description.portrait === undefined ? {} : { portrait: withChildren(description.portrait, name, children) })
+        ...(description.portrait === undefined ? {} : { portrait: withChildren(description.portrait, name, children) }),
+        ...(description.tablet === undefined ? {} : { tablet: withChildren(description.tablet, name, children) }),
+        ...(description.tabletPortrait === undefined
+          ? {}
+          : { tabletPortrait: withChildren(description.tabletPortrait, name, children) })
       };
       // Validate shape, size, depth and globally unique names before traversing supplied rows.
       checkView(nextDescription);
@@ -1226,11 +1230,7 @@ export function createPlayViews(
           nextBind[key] = binding;
         }
       validate(nextDescription, nextBind);
-      if (
-        paragraphCache === undefined &&
-        (usesParagraph(nextDescription.root) ||
-          (nextDescription.portrait !== undefined && usesParagraph(nextDescription.portrait)))
-      )
+      if (paragraphCache === undefined && variantsOf(nextDescription).some(usesParagraph))
         throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'paragraph parts need a paragraphCache' });
       const nextPlan = planView(nextDescription, frame());
       const oldPlan = plan,
@@ -1957,4 +1957,11 @@ function relative(rect: ViewRect, parent: ViewRect | undefined): ViewRect {
   return parent === undefined
     ? rect
     : { x: rect.x - parent.x, y: rect.y - parent.y, width: rect.width, height: rect.height };
+}
+
+/** The parts of every variant a description has: `root` first, then portrait, tablet and tablet upright. */
+function variantsOf(description: ViewDescription): ViewPart[] {
+  return [description.root, description.portrait, description.tablet, description.tabletPortrait].filter(
+    (parts): parts is ViewPart => parts !== undefined
+  );
 }

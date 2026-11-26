@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1484 个导出，其中 3 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1486 个导出，其中 3 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1032,6 +1032,7 @@
 | `keyCap` | 函数 | The words of a key or a button, as a player reads them on a key cap. |
 | `planView` | 函数 | Plans where each part of a view goes on a screen: the parts for its shape, each rectangle in the game's units. |
 | `Request` | 接口 | A request a button sends: whether it is out, what it came back with, and the failure if it failed. |
+| `TABLET_SHORT_SIDE` | 值 | The shorter side, in CSS pixels, from which a screen is a tablet's for the `tablet` parts of a view. |
 | `ViewAnchor` | 类型 | Where in its panel a part is placed when the panel lays its parts out freely: an edge, a corner or the middle. |
 | `ViewBar` | 接口 | How full something is: a value from 0 to 1. |
 | `ViewButton` | 接口 | A button with words on it. |
@@ -1049,6 +1050,7 @@
 | `ViewSpace` | 接口 | Empty space: in a row or a column, `'fill'` pushes what follows to the end. |
 | `ViewText` | 接口 | A line of words. |
 | `ViewToggle` | 接口 | A switch that is on or off, with words before it. |
+| `ViewVariant` | 类型 | Which parts of a view are used: `root` (`'landscape'`), `portrait`, `tablet` or `tabletPortrait`. |
 
 ## `@egret/engine/web/pointer`
 

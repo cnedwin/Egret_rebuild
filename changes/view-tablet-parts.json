@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Views take tablet parts",
+    "body": "A view description takes tablet parts, for a screen whose shorter side is 600 CSS pixels or more held wide, and tabletPortrait parts for one held upright, with the same names and kinds as its root. A tablet without them takes the portrait parts upright and the root otherwise; view.variant says which, and the view is built again when it changes. TABLET_SHORT_SIDE of @egret/engine/web/view is the 600."
+  },
+  "zh": {
+    "title": "视图支持平板部件",
+    "body": "视图描述新增 tablet 部件，用于短边不小于 600 CSS 像素、横着拿的屏幕；tabletPortrait 部件用于竖着拿的平板，名字和种类须与 root 相同。没有这些部件时，平板竖着用 portrait 部件，否则用 root；view.variant 表示用的是哪组，变化时重新创建视图。@egret/engine/web/view 的 TABLET_SHORT_SIDE 即 600。"
+  }
+}
