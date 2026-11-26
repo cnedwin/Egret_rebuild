@@ -1,0 +1,11 @@
+{
+  "version": "7.6.5",
+  "arch": "x64",
+  "archive": "PowerShell-7.6.5-win-x64.zip",
+  "bytes": 106319290,
+  "sha256": "32eb8f6cdce08f86e987d625a2733e54ac3e289ae7e1621b14c0b5bcec2434ea",
+  "urls": [
+    "https://github.com/PowerShell/PowerShell/releases/download/v7.6.5/PowerShell-7.6.5-win-x64.zip",
+    "https://api.github.com/repos/PowerShell/PowerShell/releases/assets/514628305"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Resilient pinned Windows toolchain preparation",
+    "body": "M0 prepares one verified PowerShell archive for Windows and all four test shards, with exact cache reuse, run-local artifact reuse, alternate release transport, optional managed HTTPS mirror and bounded retries. Fixed toolchain verification and protected merge checks remain required."
+  },
+  "zh": {
+    "title": "增强固定 Windows 工具链准备的可靠性",
+    "body": "M0 统一准备一个经校验的 PowerShell 归档供 Windows 主检查和四个测试分片复用，支持精确缓存、本次运行产物、备用发行传输路径、可选 HTTPS 自管镜像及有界重试。固定工具链校验和保护合并检查保持必需。"
+  }
+}

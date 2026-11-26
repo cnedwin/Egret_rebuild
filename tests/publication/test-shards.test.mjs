@@ -74,7 +74,9 @@ test('TS04 the workflow runs every shard of the count it names and requires them
   assert.ok(workflow.includes('      fail-fast: false\n      matrix:\n        shard: ['));
   // The job without test files and the shards are both required by the final check.
   assert.equal(workflow.split('node tools/prepush.mjs --integrated --no-tests\n').length, 2);
-  assert.ok(workflow.includes('    needs: [retained, route, windows, windows-tests, cpu]\n'));
+  assert.ok(
+    workflow.includes('    needs: [retained, route, prepare-windows-toolchain, windows, windows-tests, cpu]\n')
+  );
   assert.ok(
     workflow.includes(
       '              test "$ROUTE_PROFILE" = full\n              test "$WINDOWS_TESTS_RESULT" = success\n'
@@ -110,4 +112,62 @@ test('TS06 the browser PNG controls are dealt to exactly four files', () => {
       .filter(line => line && !line.startsWith('//'));
     assert.deepEqual(lines, ["import './browser-png-boundaries.test.mjs?part=" + part + "';"]);
   }
+});
+
+test('TS07 every Windows job consumes the single verified toolchain without weakening the gate', () => {
+  const workflow = read('.github/workflows/ci.yml');
+  const job = name => {
+    const start = workflow.indexOf('\n  ' + name + ':\n');
+    assert.notEqual(start, -1, name);
+    const next = workflow.slice(start + 3).search(/\n  [a-z-]+:\n/);
+    return workflow.slice(start, next < 0 ? undefined : start + 3 + next);
+  };
+  const prepare = job('prepare-windows-toolchain'),
+    merge = job('merge-ready');
+  assert.ok(prepare.includes('needs: [route]'));
+  assert.ok(prepare.includes('node tools/windows-pwsh.mjs prepare'));
+  assert.ok(prepare.includes('actions/cache/restore@'));
+  assert.ok(prepare.includes('actions/cache/save@'));
+  assert.ok(prepare.includes("github.event_name == 'push' && github.ref == 'refs/heads/main'"));
+  assert.ok(prepare.includes('actions/upload-artifact@'));
+  assert.ok(prepare.includes('overwrite: true'));
+  assert.ok(!workflow.includes('restore-keys:'));
+  const cacheKeys = [...workflow.matchAll(/^          key: (egret-pwsh-windows-x64-.+)$/gm)].map(match => match[1]);
+  assert.equal(cacheKeys.length, 4);
+  assert.deepEqual(
+    [...new Set(cacheKeys)],
+    ["egret-pwsh-windows-x64-${{ hashFiles('tools/windows-pwsh-lock.json') }}"]
+  );
+  const artifactNames = [...workflow.matchAll(/^          name: (egret-pwsh-windows-x64-.+)$/gm)].map(
+    match => match[1]
+  );
+  assert.equal(artifactNames.length, 3);
+  assert.equal(new Set(artifactNames).size, 1);
+  assert.equal(workflow.split('EGRET_PWSH_MIRROR_URL: ${{ vars.EGRET_PWSH_MIRROR_URL }}').length - 1, 3);
+  // Only the transfer actions may continue after a failure; the helper always checks the content.
+  for (const step of workflow.split(/\n      - /).filter(step => step.includes('continue-on-error: true'))) {
+    assert.match(step, /uses: actions\/(?:cache\/(?:restore|save)|(?:upload|download)-artifact)@[0-9a-f]{40}/);
+    assert.doesNotMatch(step, /run: node tools\/windows-pwsh\.mjs/);
+  }
+  for (const name of ['windows', 'windows-tests']) {
+    const worker = job(name);
+    assert.ok(worker.includes('needs: [route, prepare-windows-toolchain]'));
+    assert.ok(worker.includes('node tools/windows-pwsh.mjs probe'));
+    assert.ok(worker.includes('actions/download-artifact@'));
+    assert.ok(worker.includes('node tools/windows-pwsh.mjs prepare'));
+    assert.ok(worker.includes('node tools/windows-pwsh.mjs install'));
+    assert.ok(worker.includes("if: steps.pwsh-probe.outputs.ready != 'true'"));
+    assert.ok(worker.includes("if: steps.pwsh-artifact.outcome == 'failure'"));
+    assert.match(
+      worker,
+      /- name: Install and validate exact PowerShell\n        shell: pwsh\n        run: node tools\/windows-pwsh\.mjs install\n/
+    );
+    assert.ok(worker.indexOf('node tools/windows-pwsh.mjs install') < worker.indexOf('pnpm setup:dev --no-build'));
+    assert.ok(!worker.includes('Invoke-WebRequest'));
+    assert.ok(!worker.includes('actions/cache/save@'));
+  }
+  assert.equal(workflow.split('node tools/windows-pwsh.mjs install').length - 1, 2);
+  assert.ok(merge.includes('test "$WINDOWS_TOOLCHAIN_RESULT" = skipped'));
+  assert.ok(merge.includes('test "$WINDOWS_TOOLCHAIN_RESULT" = success'));
+  assert.ok(merge.includes('test "$WINDOWS_TESTS_RESULT" = skipped'));
 });

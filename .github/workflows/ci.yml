@@ -173,8 +173,55 @@ jobs:
           }
           Write-Output "$profile Windows merge checks. $receipt"
           "profile=$profile" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
-  windows:
+  # One verified archive per run, restored by exact lock identity when available.
+  # 每次运行统一准备一个已校验的归档；可用时按锁定身份精确恢复缓存。
+  prepare-windows-toolchain:
+    name: Prepare Windows toolchain
     needs: [route]
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Restore exact PowerShell archive cache
+        id: pwsh-cache
+        continue-on-error: true
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: ${{ runner.temp }}/egret-pwsh-archive/PowerShell-7.6.5-win-x64.zip
+          key: egret-pwsh-windows-x64-${{ hashFiles('tools/windows-pwsh-lock.json') }}
+      - name: Prepare and verify exact PowerShell archive
+        shell: pwsh
+        env:
+          EGRET_PWSH_MIRROR_URL: ${{ vars.EGRET_PWSH_MIRROR_URL }}
+        run: node tools/windows-pwsh.mjs prepare
+      # PRs can read the base cache but cannot publish shared toolchain bytes.
+      # PR 可以读取基准缓存，但不能发布共享工具链字节。
+      - name: Save verified PowerShell archive cache
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.pwsh-cache.outputs.cache-hit != 'true' }}
+        continue-on-error: true
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: ${{ runner.temp }}/egret-pwsh-archive/PowerShell-7.6.5-win-x64.zip
+          key: egret-pwsh-windows-x64-${{ hashFiles('tools/windows-pwsh-lock.json') }}
+      # A stable run-local name also works when only failed consumers are rerun.
+      # 本次运行内的固定名称也支持只重跑失败的消费作业。
+      - name: Share verified PowerShell archive with Windows jobs
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: egret-pwsh-windows-x64-7.6.5
+          path: ${{ runner.temp }}/egret-pwsh-archive/PowerShell-7.6.5-win-x64.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+          overwrite: true
+  windows:
+    needs: [route, prepare-windows-toolchain]
     runs-on: windows-latest
     # The test files run in the windows-tests shards; this job keeps every other merge check.
     timeout-minutes: 60
@@ -186,22 +233,36 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
-      - name: Install exact PowerShell
+      - name: Probe preinstalled exact PowerShell
+        id: pwsh-probe
+        shell: pwsh
+        run: node tools/windows-pwsh.mjs probe
+      - name: Receive verified PowerShell archive from this run
+        id: pwsh-artifact
+        if: steps.pwsh-probe.outputs.ready != 'true'
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: egret-pwsh-windows-x64-7.6.5
+          path: ${{ runner.temp }}/egret-pwsh-archive
+      - name: Recover PowerShell archive from exact cache if transfer failed
+        if: steps.pwsh-artifact.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: ${{ runner.temp }}/egret-pwsh-archive/PowerShell-7.6.5-win-x64.zip
+          key: egret-pwsh-windows-x64-${{ hashFiles('tools/windows-pwsh-lock.json') }}
+      # Transport failure is recoverable; exact archive and version checks are mandatory.
+      # 传输失败可恢复；归档身份及实际版本的精确检查不可跳过。
+      - name: Verify shared PowerShell archive or recover from pinned sources
+        if: steps.pwsh-probe.outputs.ready != 'true'
         shell: pwsh
         env:
-          GH_RELEASE_TOKEN: ${{ github.token }}
-        run: |
-          # Authenticate public metadata with the read-only job token; never forward it to the archive URL.
-          $headers = @{ Authorization = "Bearer $env:GH_RELEASE_TOKEN"; Accept = "application/vnd.github+json" }
-          $release = Invoke-RestMethod -Headers $headers https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.6.5
-          $asset = $release.assets | Where-Object name -eq 'PowerShell-7.6.5-win-x64.zip'
-          if (-not $asset -or $asset.digest -notmatch '^sha256:[0-9a-f]{64}$') { throw 'Missing verified PowerShell asset' }
-          $archive = Join-Path $env:RUNNER_TEMP 'pwsh.zip'
-          Invoke-WebRequest $asset.browser_download_url -OutFile $archive
-          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $asset.digest.Substring(7)) { throw 'PowerShell checksum mismatch' }
-          $target = Join-Path $env:RUNNER_TEMP 'egret-pwsh'
-          Expand-Archive $archive $target
-          $target | Out-File $env:GITHUB_PATH -Append -Encoding utf8
+          EGRET_PWSH_MIRROR_URL: ${{ vars.EGRET_PWSH_MIRROR_URL }}
+        run: node tools/windows-pwsh.mjs prepare
+      - name: Install and validate exact PowerShell
+        shell: pwsh
+        run: node tools/windows-pwsh.mjs install
       - name: Select canonical temporary directory
         shell: pwsh
         run: |
@@ -238,7 +299,7 @@ jobs:
   # 完整测试文件清单分配到并行运行器；每个分片都是必需的。
   windows-tests:
     name: windows tests (${{ matrix.shard }}/4)
-    needs: [route]
+    needs: [route, prepare-windows-toolchain]
     if: ${{ needs.route.outputs.profile != 'documentation' }}
     strategy:
       fail-fast: false
@@ -254,22 +315,36 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
-      - name: Install exact PowerShell
+      - name: Probe preinstalled exact PowerShell
+        id: pwsh-probe
+        shell: pwsh
+        run: node tools/windows-pwsh.mjs probe
+      - name: Receive verified PowerShell archive from this run
+        id: pwsh-artifact
+        if: steps.pwsh-probe.outputs.ready != 'true'
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: egret-pwsh-windows-x64-7.6.5
+          path: ${{ runner.temp }}/egret-pwsh-archive
+      - name: Recover PowerShell archive from exact cache if transfer failed
+        if: steps.pwsh-artifact.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: ${{ runner.temp }}/egret-pwsh-archive/PowerShell-7.6.5-win-x64.zip
+          key: egret-pwsh-windows-x64-${{ hashFiles('tools/windows-pwsh-lock.json') }}
+      # Transport failure is recoverable; exact archive and version checks are mandatory.
+      # 传输失败可恢复；归档身份及实际版本的精确检查不可跳过。
+      - name: Verify shared PowerShell archive or recover from pinned sources
+        if: steps.pwsh-probe.outputs.ready != 'true'
         shell: pwsh
         env:
-          GH_RELEASE_TOKEN: ${{ github.token }}
-        run: |
-          # Authenticate public metadata with the read-only job token; never forward it to the archive URL.
-          $headers = @{ Authorization = "Bearer $env:GH_RELEASE_TOKEN"; Accept = "application/vnd.github+json" }
-          $release = Invoke-RestMethod -Headers $headers https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.6.5
-          $asset = $release.assets | Where-Object name -eq 'PowerShell-7.6.5-win-x64.zip'
-          if (-not $asset -or $asset.digest -notmatch '^sha256:[0-9a-f]{64}$') { throw 'Missing verified PowerShell asset' }
-          $archive = Join-Path $env:RUNNER_TEMP 'pwsh.zip'
-          Invoke-WebRequest $asset.browser_download_url -OutFile $archive
-          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $asset.digest.Substring(7)) { throw 'PowerShell checksum mismatch' }
-          $target = Join-Path $env:RUNNER_TEMP 'egret-pwsh'
-          Expand-Archive $archive $target
-          $target | Out-File $env:GITHUB_PATH -Append -Encoding utf8
+          EGRET_PWSH_MIRROR_URL: ${{ vars.EGRET_PWSH_MIRROR_URL }}
+        run: node tools/windows-pwsh.mjs prepare
+      - name: Install and validate exact PowerShell
+        shell: pwsh
+        run: node tools/windows-pwsh.mjs install
       - name: Select canonical temporary directory
         shell: pwsh
         run: |
@@ -329,7 +404,7 @@ jobs:
   merge-ready:
     name: M0 / merge-ready
     if: ${{ always() }}
-    needs: [retained, route, windows, windows-tests, cpu]
+    needs: [retained, route, prepare-windows-toolchain, windows, windows-tests, cpu]
     runs-on: ubuntu-latest
     steps:
       - name: Require all declared jobs
@@ -338,6 +413,7 @@ jobs:
           RETAINED_RESULT: ${{ needs.retained.result }}
           ROUTE_RESULT: ${{ needs.route.result }}
           ROUTE_PROFILE: ${{ needs.route.outputs.profile }}
+          WINDOWS_TOOLCHAIN_RESULT: ${{ needs.prepare-windows-toolchain.result }}
           WINDOWS_RESULT: ${{ needs.windows.result }}
           WINDOWS_TESTS_RESULT: ${{ needs.windows-tests.result }}
           CPU_RESULT: ${{ needs.cpu.result }}
@@ -345,11 +421,13 @@ jobs:
           if [ "$PR120" = true ]; then
             test "$RETAINED_RESULT" = success
             test "$ROUTE_RESULT" = skipped
+            test "$WINDOWS_TOOLCHAIN_RESULT" = skipped
             test "$WINDOWS_RESULT" = skipped
             test "$WINDOWS_TESTS_RESULT" = skipped
           else
             test "$RETAINED_RESULT" = skipped
             test "$ROUTE_RESULT" = success
+            test "$WINDOWS_TOOLCHAIN_RESULT" = success
             test "$WINDOWS_RESULT" = success
             # Only the trusted documentation route may leave the test shards unrun.
             if [ "$ROUTE_PROFILE" = documentation ]; then
