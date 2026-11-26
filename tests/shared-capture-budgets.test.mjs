@@ -271,3 +271,30 @@ test('CAPTURE B11 ordered draw clip references accept 262144 and reject one more
     refusedThenRestored(f, before, 'FRAME_BUDGET_EXCEEDED', () => extra.dispose(), inspect);
   });
 });
+
+test('CAPTURE B12 fully clipped bitmap pages are uncharged and partially visible pages still count', async () => {
+  await scene(async f => {
+    const parent = f.sprite();
+    parent.x = 4;
+    parent.clipRect = { x: 0, y: 0, width: 10, height: 10 };
+    const bitmaps = [];
+    for (let index = 0; index < 65; index++) {
+      const bitmap = f.add(new egret.Bitmap((await f.resource()).lease), parent);
+      bitmap.x = 20;
+      bitmaps.push(bitmap);
+    }
+    const hidden = f.capture();
+    assert.deepEqual([hidden.pages.length, hidden.regions.length], [0, 0]);
+    assert.equal(hidden.commands.filter(command => command.reason === 'empty').length, 65);
+
+    bitmaps[0].x = 9.5;
+    const partial = f.capture();
+    assert.deepEqual([partial.pages.length, partial.regions.length], [1, 1]);
+    assert.equal(partial.commands.filter(command => command.kind === 'image').length, 1);
+
+    for (const bitmap of bitmaps.slice(1, 64)) bitmap.x = 1;
+    assert.equal(f.capture().pages.length, 64);
+    bitmaps[64].x = 1;
+    assert.throws(() => f.capture(), hasCode('FRAME_IMAGE_BUDGET'));
+  });
+});
