@@ -152,7 +152,11 @@ const route = path.join(here, 'play.mjs');
 const scripted = run('scripted', 'fixed=1', undefined, route);
 assert.equal(scripted.status, 0, scripted.stdout);
 const pictures = new Set();
-assert.equal(scripted.report.screens.length, 8);
+assert.deepEqual(
+  scripted.report.screens.map(screen => screen.name),
+  Object.keys(SCREENS),
+  'the route covers every profile'
+);
 for (const screen of scripted.report.screens) {
   assert.equal(screen.played.pass, true, screen.name);
   assert.deepEqual(screen.played.checkpoints, ['table', 'question', 'back']);

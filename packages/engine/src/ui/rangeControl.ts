@@ -2,6 +2,7 @@
 import { EgretError } from '@egret/runtime';
 import type { DisplayObject } from '@egret/runtime';
 import type { PointerContact, PointerInput } from '../pointerInputTypes.js';
+import { trackScreenControl } from '../internal/uiControlReportState.js';
 
 /**
  * One value out of a range, for a slider an application draws itself: a volume, a share, an amount.
@@ -154,6 +155,7 @@ export function createRangeControl(options: RangeControlOptions): RangeControl {
     })
   ];
 
+  const untrack = trackScreenControl(input, target, 'range', () => enabled && !closed);
   return Object.freeze({
     get value() {
       return value;
@@ -203,6 +205,7 @@ export function createRangeControl(options: RangeControlOptions): RangeControl {
     dispose() {
       if (closed) return;
       closed = true;
+      untrack();
       let failure: unknown;
       try {
         setDragging(undefined);
