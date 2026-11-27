@@ -166,7 +166,34 @@ pause.touchEnabled = true;
 ui.game.stage.addChild(pause);
 ```
 
-`createWorld3DOverlay` lays a transparent canvas exactly over the 3D canvas, which must sit in a positioned parent, and starts a 2D game on it with `createBrowserGame`. Menus, bars, text, bitmap buttons and the `ui` controls then draw with the engine's 2D stage on top of the scene. The overlay follows the 3D canvas's box as the page resizes. By default it stretches its stage over that box, which squashes the interface when a phone turns; `fit: 'contain'` keeps the stage's shape, as large as fits and centred, and `fit: 'cover'` keeps its shape and fills the box, its edges cut off by the parent. `overlay.box` says where the stage is now and its scale in CSS pixels per unit. The stage's own `width` and `height` stay as made: for a layout that changes with the shape, make the overlay again at the new width.
+`createWorld3DOverlay` lays a transparent canvas exactly over the 3D canvas, which must sit in a positioned parent, and starts a 2D game on it with `createBrowserGame`. Menus, bars, text, bitmap buttons and the `ui` controls then draw with the engine's 2D stage on top of the scene. The overlay follows the 3D canvas's box as the page resizes. By default it stretches its stage over that box, which squashes the interface when a phone turns; `fit: 'contain'` keeps the stage's shape, as large as fits and centred, and `fit: 'cover'` keeps its shape and fills the box, its edges cut off by the parent. `overlay.box` says where the stage is now and its scale in CSS pixels per unit. With these three the stage's own `width` and `height` stay as made.
+
+An interface that should reach every edge on any shape takes `fit: 'expand'`, or one of the fixed modes of Egret 5 (`fixedWidth`, `fixedHeight`, `fixedNarrow`, `fixedWide`). The 2D game then plans its stage as `createBrowserGame` does with those fits:
+
+- **The stage follows the 3D canvas.** The design is kept whole at its scale, and the stage grows to fill the canvas.
+- **A portrait size applies while the canvas is taller than wide.** `portrait: { width, height }` gives it.
+- **The safe part keeps clear of a notch.** `game.screen.safe` leaves out the page's safe-area insets, or the `insets` given.
+- **Each change is told.** `game.onScreenChange` tells of it, so the game places its interface again instead of making the overlay again:
+
+```js
+const ui = await createWorld3DOverlay(canvas, { width: 1280, height: 720, portrait: { width: 720, height: 1280 }, fit: 'expand' });
+const place = () => {
+  const safe = ui.game.screen.safe;
+  pause.x = safe.x + safe.width - 16 - pause.width;
+  pause.y = safe.y + 16;
+};
+place();
+ui.game.onScreenChange(place);
+```
+
+`portrait` and `insets` with `stretch`, `contain` or `cover` are refused with `WORLD3D_OVERLAY_OPTIONS_INVALID`.
+
+`examples/world3d/verify-overlay.mjs` checks this in headless Chromium (SwiftShader WebGL2), with the insets of a notch given as `__egretAgent.insets`:
+
+- **Sideways, 852 × 393.** The stage was 1560 × 720 and the overlay covered the 3D canvas. The safe part left out 59 CSS pixels at each side, and the pause button sat at its top right. A tap on the button stayed with the interface, and a tap on an empty part reached the 3D canvas.
+- **Turned upright, 393 × 852.** The stage was 720 × 1560, `onScreenChange` told of it, and the button moved below the notch.
+
+No phone, Safari, Firefox or WebGPU overlay was run.
 
 A press or wheel over a 2D node with `touchEnabled` stays on the overlay. A press in an empty area and the rest of its drag go to the 3D canvas. A browser-native primary click goes to the scene only if it comes from a scene-owned press that also ended in an empty area. The forwarded event is a DOM copy. A drag from a 2D control into an empty area keeps its original ownership. Hover moves go where the interface is empty. `passThrough: false` keeps every event on the overlay. `ui.dispose()` ends the 2D game and removes the overlay. Windows mouse and Fold7 touch automation verified click routing and the drag control on both backends.
 

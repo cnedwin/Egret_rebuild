@@ -45,6 +45,10 @@ The page was run on WebGL2 in headless Chromium with software rendering. It has 
 
 The ground is four tiling textures blended by a weight map. The water darkens with depth, foams along its shore and shows caustics in the shallows; move the camera below the surface and the view turns to blue fog. Heads in the crowd turn on their own, clip changes cross-fade, and the status line shows how many of the 600 figures are drawn after those outside the view are left out. Sparks bounce off the ground, smoke and mist are drawn back to front, and "Volumetric" swaps the screen-space fog for fog lit through the sun's shadow map.
 
+## Interface over the scene
+
+Open `http://127.0.0.1:4173/examples/world3d/overlay.html` for a 2D overlay of `fit: 'expand'` over a turning box. The pause button is held at the top right of the safe part, and a bar along its bottom, on any shape; a press on an empty part goes on to the scene. `node examples/world3d/verify-overlay.mjs <absolute Playwright index.mjs>` checks it in headless Chromium.
+
 ## Limits
 
 The example demonstrates rendering and interaction. The desktop Edge and physical Android Chrome checks observed visible output, shadow toggles, and disposal on both backends. Performance, human gestures and broader device coverage remain open. See the [World3D contract](../../knowledge-base/en/docs/world3d.md) for scope and open items.
