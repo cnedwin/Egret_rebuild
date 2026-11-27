@@ -57,13 +57,15 @@ export function bindRoomHandoff(socket, show) {
   });
 }
 
-export function createLobbyRoot({ eui, RES, UI, socket, manifest, resourceRoot, group, theme, status }) {
-  const message = new eui.Label();
-  message.x = 32;
-  message.y = 40;
-  message.size = 30;
-  message.textColor = 0xffffff;
-  UI.sceneGame.addChild(message);
+export function createLobbyRoot({ eui, RES, UI, socket, manifest, resourceRoot, group, theme, status, initialize }) {
+  const message = initialize ? undefined : new eui.Label();
+  if (message) {
+    message.x = 32;
+    message.y = 40;
+    message.size = 30;
+    message.textColor = 0xffffff;
+    UI.sceneGame.addChild(message);
+  }
 
   return new (class extends eui.UILayer {
     async createChildren() {
@@ -74,17 +76,19 @@ export function createLobbyRoot({ eui, RES, UI, socket, manifest, resourceRoot, 
       await new Promise(resolve => loaded.addEventListener(eui.UIEvent.COMPLETE, resolve, this));
 
       // Keep the original scenes in charge of list selection and room membership. Only the server starts a game.
-      bindRoomHandoff(socket, ({ roomID, seats, seat }) => {
-        const room = UI.sceneRoom;
-        if (room.parent) {
-          room.parent.addChild(UI.sceneGame);
-          room.parent.removeChild(room);
-        }
-        const text =
-          '房间 ' + roomID + ' · 对局已开始 · ' + seats + ' 人' + (seat === undefined ? '' : ' · 座位 ' + seat);
-        message.text = text;
-        status.textContent = text;
-      });
+      if (initialize) initialize();
+      else
+        bindRoomHandoff(socket, ({ roomID, seats, seat }) => {
+          const room = UI.sceneRoom;
+          if (room.parent) {
+            room.parent.addChild(UI.sceneGame);
+            room.parent.removeChild(room);
+          }
+          const text =
+            '房间 ' + roomID + ' · 对局已开始 · ' + seats + ' 人' + (seat === undefined ? '' : ' · 座位 ' + seat);
+          message.text = text;
+          status.textContent = text;
+        });
       socket.on('connect_error', () => {
         status.className = 'connection-error';
         status.textContent = '无法连接房间服务器，请检查本机服务后刷新。';

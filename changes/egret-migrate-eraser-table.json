@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Migrate a two-player EraserSanGuoSha match",
+    "body": "The eraser-table profile imports the original client rules, cards and local Socket.IO connection. Both desktop clients can play to a server-confirmed winner and receive the next deal."
+  },
+  "zh": {
+    "title": "迁出《橡皮三国杀》的双人完整对局",
+    "body": "eraser-table 配置导入原版客户端规则、卡牌和本机 Socket.IO 连接。两位玩家可操作至服务端确认胜方，并接到下一局发牌。"
+  }
+}

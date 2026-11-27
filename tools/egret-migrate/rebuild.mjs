@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { convertProject } from './convert.mjs';
 import { hash, readProjectFile, refuse } from './inspect.mjs';
-import { eraserLobbyProfile } from './lobby-profile.mjs';
+import { isEraserProfile } from './lobby-profile.mjs';
 
 function localJson(owner, key) {
   const { bytes } = readProjectFile(owner, key, 64 * 1024 * 1024);
@@ -28,7 +28,7 @@ export async function rebuildProject({ source, out, esbuild, transaction }) {
   ) {
     refuse('MIGRATE_REBUILD_RECORD', 'Expected a completed conversion with its original input identities.');
   }
-  const lobby = previous.original.profile === eraserLobbyProfile;
+  const lobby = isEraserProfile(previous.original.profile);
   const known = previous.rebuildInputs;
   const exists = key => fs.readdirSync(owner).includes(key);
   const explicitOrder =
@@ -60,7 +60,7 @@ export async function rebuildProject({ source, out, esbuild, transaction }) {
     transaction: edit,
     previousInputs: previous.original.inputs,
     ...(lobby
-      ? { profile: eraserLobbyProfile, socketUrl: previous.network?.origin ?? undefined }
+      ? { profile: previous.original.profile, socketUrl: previous.network?.origin ?? undefined }
       : {
           resources: previous.original.manifest,
           theme: previous.original.theme?.themePath,

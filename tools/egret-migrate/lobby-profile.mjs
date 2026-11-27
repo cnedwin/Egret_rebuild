@@ -2,6 +2,12 @@
 import { compileExml } from './exml.mjs';
 import { planMigratedResources } from './legacy-assets.mjs';
 
+import { tableSourcePaths } from './table-source.mjs';
+
+export const eraserTableProfile = 'eraser-table';
+export function isEraserProfile(value) {
+  return value === eraserLobbyProfile || value === eraserTableProfile;
+}
 export const eraserLobbyProfile = 'eraser-lobby';
 const vendorPath = 'socket.io/bin/socket.io/socket.io.js';
 // The original browser bundle is supplied by the game owner and is never executed during inspection.
@@ -94,7 +100,7 @@ function skinImageNames(theme) {
   return [...names];
 }
 
-function readLobbyResources(read, declaration, resourceNames) {
+function readLobbyResources(read, declaration, resourceNames, table) {
   if (!Array.isArray(declaration?.resources) || declaration.resources.length > 4096) {
     invalid('Expected a bounded set of source RES entries.');
   }
@@ -102,9 +108,9 @@ function readLobbyResources(read, declaration, resourceNames) {
     const matches = declaration.resources.filter(resource => resource?.name === name);
     if (
       matches.length !== 1 ||
-      matches[0].type !== 'image' ||
+      matches[0].type !== (table && ['Cards_json', 'SoundLink_json'].includes(name) ? 'json' : 'image') ||
       typeof matches[0].url !== 'string' ||
-      !matches[0].url.endsWith('.png')
+      !matches[0].url.endsWith(matches[0].type === 'json' ? '.json' : '.png')
     ) {
       invalid('Expected one local RES image declaration for each lobby skin PNG.', { name });
     }
@@ -127,24 +133,46 @@ function readLobbyResources(read, declaration, resourceNames) {
   return { ...plan, files };
 }
 
-export function selectLobbyInterface(read, readJSON) {
+export function selectLobbyInterface(read, readJSON, table = false) {
   const manifest = 'resource/default.res.json';
   const theme = readLobbyTheme(read, readJSON('client/resource/default.thm.json'));
+  const declaration = readJSON('client/' + manifest);
+  const names = skinImageNames(theme);
+  if (table) {
+    if (!Array.isArray(declaration?.resources) || declaration.resources.length > 4096)
+      invalid('Expected a bounded resource manifest.');
+    names.push('Cards_json', 'SoundLink_json');
+    const catalogs = declaration.resources.filter(resource => resource?.name === 'Cards_json');
+    if (catalogs.length !== 1 || catalogs[0].type !== 'json' || typeof catalogs[0].url !== 'string')
+      invalid('Expected the card catalog.');
+    const cards = readJSON('client/resource/' + catalogs[0].url);
+    if (
+      !Array.isArray(cards) ||
+      cards.length > 4096 ||
+      cards.some(card => typeof card?.class !== 'string' || !/^[A-Za-z][A-Za-z0-9]{0,63}$/.test(card.class))
+    ) {
+      invalid('Expected card class names in the catalog.');
+    }
+    names.push(...new Set(['Card_Back_png', ...cards.map(card => 'Card_' + card.class + '_png')]));
+  }
   return {
-    sources: scenes.map(name => read('client/src/Game/UI/' + name + '.ts').identity),
+    sources: [...scenes.map(name => 'client/src/Game/UI/' + name + '.ts'), ...(table ? tableSourcePaths : [])].map(
+      name => read(name).identity
+    ),
     manifest,
-    resources: readLobbyResources(read, readJSON('client/' + manifest), skinImageNames(theme)),
+    resources: readLobbyResources(read, declaration, names, table),
     theme
   };
 }
 
 /** Select a two-scene entry from a repository root; the sibling module cannot escape that owner. */
-export function inspectEraserLobby({ read, readJSON, readStage }) {
+export function inspectEraserLobby({ read, readJSON, readStage, profile = eraserLobbyProfile }) {
   const properties = readJSON('client/egretProperties.json');
   checkProperties(properties);
   const stage = readStage(read('client/index.html').bytes.toString('utf8'));
   if (stage.entry !== 'Main') invalid('Expected the original Main bootstrap.');
   read('client/src/Main.ts');
+  if (profile === eraserTableProfile) read('LICENSE');
 
   const socketBuild = readJSON('socket.io/tsconfig.json');
   if (socketBuild?.compilerOptions?.outFile !== 'bin/socket.io/socket.io.js') {
@@ -155,11 +183,11 @@ export function inspectEraserLobby({ read, readJSON, readStage }) {
   }
   return {
     schemaVersion: 1,
-    profile: eraserLobbyProfile,
+    profile,
     engineVersion: properties.egret_version,
     modules: properties.modules.map(item => item.name),
     stage,
-    ...selectLobbyInterface(read, readJSON),
-    network: { vendorPath, vendorSha256, scenes }
+    ...selectLobbyInterface(read, readJSON, profile === eraserTableProfile),
+    network: { vendorPath, vendorSha256, scenes, ...(profile === eraserTableProfile ? { table: true } : {}) }
   };
 }
