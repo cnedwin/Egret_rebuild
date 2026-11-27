@@ -215,6 +215,22 @@ While post-processing is on, canvas multisampling does not apply; FXAA takes its
 
 Level geometry collides as a triangle mesh: `world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(levelRoot)}})`. `createMeshShape3D` accepts a triangle geometry or an object subtree. It merges non-instanced, unskinned triangle meshes using their base geometry and current world transforms. Mesh bodies are static, or kinematic for moving platforms, and triangles are solid on their front side. Spheres, capsules, the character controller and rays collide with the exact triangles; boxes rest on them through their corners. A bounding-volume hierarchy keeps the cost proportional to nearby triangles, and contacts at triangle seams are filtered so bodies cross them smoothly.
 
+Building that hierarchy takes time in proportion to the triangles, and on the main thread a large mesh, such as a terrain tile streamed in, holds the frame while it is built. A worker can build the shape instead and hand it back:
+
+- **Hand it over.** `shape.exportBuffers()` gives the shape's own arrays (positions, indices and the hierarchy's four arrays), not copies, so they can be transferred with `postMessage`. Once transferred, the worker's shape is empty.
+- **Adopt it.** `TriangleMeshShape3D.fromBuffers(buffers)` makes a shape of them as they are, with no copy and no rebuild, after checking that they are a shape as the constructor lays one out: their types, finite positions, indices within them, and a hierarchy whose children follow their parents and split their triangles exactly. Arrays that are not are refused with `WORLD3D_INPUT_INVALID`.
+
+```js
+// worker
+const shape = createHeightField3D(tile).createShape().mesh;
+const buffers = shape.exportBuffers();
+postMessage(buffers, Object.values(buffers).map(view => view.buffer));
+// main thread
+worker.onmessage = ({ data }) => world.createBody({ type: 'static', shape: { type: 'mesh', mesh: TriangleMeshShape3D.fromBuffers(data) } });
+```
+
+The adopted shape answers every query and ray exactly as the one that built it: `tests/world3d-mesh-transfer.test.mjs` checks this on an 18 432-triangle terrain tile moved by `structuredClone` with transfer, the way `postMessage` moves it.
+
 `world.raycast(origin, direction, maxDistance, mask)` returns the nearest solid body with the hit point and normal, and `world.overlapSphere(center, radius, mask)` lists solid bodies in a volume. `world.shapeCast(shape, origin, direction, maxDistance, mask, quaternion)` moves a sphere, capsule, box, convex hull or compound along a unit direction and reports the first solid body it touches: the distance travelled, the point and the normal facing the shape. It finds what a ray through the middle would miss, which is what a camera boom, a melee swing or a ledge probe needs. The path is walked in steps no longer than the shape's thinnest half and refined between two steps, so an obstacle thinner than that step can be passed over; a cast that starts inside something reports distance zero. `createCharacterController3D(world, options)` is a kinematic capsule: `move(dx, dy, dz)` slides along obstacles and reports `isGrounded`, `groundNormal` and `groundBody`.
 
 `createCharacterMotor3D(world, options)` builds a walking, jumping character on that capsule. After `world.step()`, call `motor.update(deltaSeconds, wishX, wishZ, jump)` with the horizontal velocity the player asks for. The motor applies gravity and jumping (`jumpSpeed`, with a short `coyoteTime` after walking off a ledge), ground and air acceleration (`acceleration`, `airControl`), climbs ledges up to `stepHeight` and stays on the ground when walking down steps and slopes, and stops rising under a ceiling. A kinematic or dynamic body under its feet carries it along, including around a turning platform; `motor.carriedYaw` is the turn to add to the character's facing, and leaving a moving platform keeps its speed. Walking into dynamic bodies pushes them at the character's pace, limited by `pushForce`. Move platforms with velocities, not by writing positions, so the motor can see how they move. Low steps are climbed by the capsule's rounded foot at reduced speed; long staircases walk better over a ramp collider. `motor.teleport(x, y, z)` repositions the character and clears its motion. A non-finite coordinate is rejected before any position or motion changes.

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1487 exports; 3 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1488 exports; 4 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -719,7 +719,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `TransformGizmo3D` | class | Handles to move, turn or scale an object by dragging them, with snapping. |
 | `TransformGizmoOptions3D` | interface | A gizmo to make: its mode, its space and its size. |
 | `TransitionOptions3D` | interface | A transition to add: from and to which state, how long it fades, its conditions, its exit time and whether it can be interrupted. |
-| `TriangleMeshShape3D` | class | A triangle mesh as a physics shape, for bodies that do not move. |
+| `TriangleMeshBuffers3D` | interface | The arrays of a triangle mesh shape, its hierarchy included: what `exportBuffers` gives and `fromBuffers` takes. |
+| `TriangleMeshShape3D` | class |  |
 | `triangulateShape3D` | function | Triangulate an outline with holes by ear clipping. |
 | `TubeGeometryOptions3D` | interface | A tube to make along a curve: its segments, radius and whether it closes. |
 | `vec3Add` | function | Adds two vectors. |
