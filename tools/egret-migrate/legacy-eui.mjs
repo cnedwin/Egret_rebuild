@@ -1,4 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
+import {
+  HorizontalLayout,
+  VerticalLayout,
+  TileLayout,
+  ScrollPolicy,
+  checkScrollPolicy,
+  layoutFromDescriptor,
+  bindLayout,
+  releaseLayout
+} from './compat/layout.mjs';
 // Bounded EUI skin and layout behavior on the public Egret 7 display API.
 export function createLegacyEui({
   sdk,
@@ -217,7 +227,8 @@ export function createLegacyEui({
     const stepX = width + gapX || 1;
     const stepY = height + gapY || 1;
     let preferred;
-    if (availableWidth !== undefined) preferred = Math.floor((availableWidth + gapX) / stepX);
+    if (properties.requestedColumnCount > 0) preferred = properties.requestedColumnCount;
+    else if (availableWidth !== undefined) preferred = Math.floor((availableWidth + gapX) / stepX);
     else if (availableHeight !== undefined) {
       const rows = Math.max(1, Math.floor((availableHeight + gapY) / stepY));
       preferred = Math.ceil(children.length / rows);
@@ -501,7 +512,47 @@ export function createLegacyEui({
     }
   }
   class Group extends Component {
+    get layout() {
+      const data = state(this);
+      if (!data.layoutObject && data.layout) {
+        const object = layoutFromDescriptor(data.layout);
+        if (object) {
+          data.layout = bindLayout(object, this, () => requestLayout(this));
+          data.layoutObject = object;
+        }
+      }
+      return data.layoutObject ?? null;
+    }
+    set layout(value) {
+      const data = state(this);
+      if (value && data.layoutObject === value) return;
+      const next =
+        value == null ? { type: 'BasicLayout', properties: {} } : bindLayout(value, this, () => requestLayout(this));
+      releaseLayout(data.layoutObject, this);
+      data.layoutObject = value;
+      data.layout = next;
+      requestLayout(this);
+    }
+    dispose() {
+      releaseLayout(state(this).layoutObject, this);
+      super.dispose();
+    }
     #offWheel;
+    #scrollH = 0;
+    get scrollH() {
+      return this.#scrollH;
+    }
+    set scrollH(value) {
+      if (!Number.isFinite(value)) refused('Expected a finite horizontal scroll offset.');
+      this.#scrollH = this instanceof DataGroup ? Math.max(0, value) : value;
+      requestLayout(this);
+    }
+    get anchorOffsetX() {
+      return super.anchorOffsetX - (state(this)?.viewportOffsetX ?? 0);
+    }
+    set anchorOffsetX(value) {
+      super.anchorOffsetX = value + (state(this)?.viewportOffsetX ?? 0);
+    }
     #scrollV = 0;
     #scrollEnabled = false;
     get scrollEnabled() {
@@ -534,7 +585,17 @@ export function createLegacyEui({
     updateScroll(width, height) {
       const data = state(this);
       const active = this.#scrollEnabled && width > 0 && height > 0;
-      const offset = active && !(this instanceof DataGroup) ? this.#scrollV : 0;
+      const dataGroup = this instanceof DataGroup;
+      if (active && dataGroup) {
+        this.#scrollH = Math.min(this.#scrollH, Math.max(0, this.contentWidth - width));
+        this.#scrollV = Math.min(this.#scrollV, Math.max(0, this.contentHeight - height));
+      }
+      const offsetX = active ? this.#scrollH : 0;
+      if ((data.viewportOffsetX ?? 0) !== offsetX) {
+        super.anchorOffsetX = this.anchorOffsetX + offsetX;
+        data.viewportOffsetX = offsetX;
+      }
+      const offset = active && !(dataGroup && data.layout.type === 'VerticalLayout') ? this.#scrollV : 0;
       if ((data.viewportOffset ?? 0) !== offset) {
         super.anchorOffsetY = this.anchorOffsetY + offset;
         data.viewportOffset = offset;
@@ -547,16 +608,25 @@ export function createLegacyEui({
         }
         return;
       }
-      if (this instanceof DataGroup && state(this).layout.type !== 'VerticalLayout')
-        refused('Scrolling currently requires a vertical list layout.');
-      this.clipRect = { x: 0, y: offset, width, height };
+      this.clipRect = { x: offsetX, y: offset, width, height };
       data.scrollClip = true;
-      if (this instanceof DataGroup) this.#scrollV = Math.min(this.#scrollV, Math.max(0, this.contentHeight - height));
       if (!stageOf(this)) return;
       if (!this.#offWheel && game?.hover?.events.wheel) {
         this.#offWheel = this.on(game.hover.events.wheel, event => {
           if (event.defaultPrevented || event.payload.zoom) return;
-          const { deltaY, unit } = event.payload;
+          const { deltaX = 0, deltaY, unit } = event.payload;
+          const owner = this.parent instanceof Scroller ? this.parent : undefined;
+          let changed = false;
+          if (deltaX && owner?.scrollPolicyH !== ScrollPolicy.OFF) {
+            const step = unit === 'line' ? 40 : unit === 'page' ? this.width : 1;
+            const h = Math.max(0, Math.min(this.contentWidth - this.width, this.#scrollH + deltaX * step));
+            if (h !== this.#scrollH) {
+              this.scrollH = h;
+              changed = true;
+            }
+          }
+          if (changed) event.preventDefault();
+          if (owner?.scrollPolicyV === ScrollPolicy.OFF) return;
           const line = this instanceof DataGroup ? this.scrollLineHeight : 40;
           const next = Math.max(
             0,
@@ -767,6 +837,19 @@ export function createLegacyEui({
     }
     set text(value) {
       this.#words = String(value);
+      if (this.hasLegacyTextFlow) {
+        super.text = this.#words;
+        this.#format = undefined;
+      }
+      this.alignText();
+    }
+    get textFlow() {
+      return super.textFlow;
+    }
+    set textFlow(value) {
+      super.textFlow = value;
+      this.#words = super.text;
+      while (this.#rows.length) this.#rows.pop().dispose();
       this.alignText();
     }
     setLegacyRasterActive(active) {
@@ -794,6 +877,10 @@ export function createLegacyEui({
       if (this.isDisposed) return;
       const width = state(this).arrangedwidth ?? state(this).explicitwidth;
       const height = state(this).arrangedheight ?? state(this).explicitheight;
+      if (this.hasLegacyTextFlow) {
+        this.setLegacyFlowBox(width, height, this.#textAlign, this.#verticalAlign, this.#lineSpacing);
+        return;
+      }
       const font = (this.italic ? 'italic ' : '') + (this.bold ? 'bold ' : '') + this.size + 'px ' + this.fontFamily;
       const style = {
         size: this.size,
@@ -1379,6 +1466,20 @@ export function createLegacyEui({
   }
   class Scroller extends Component {
     #input = [];
+    #policyH = ScrollPolicy.AUTO;
+    #policyV = ScrollPolicy.AUTO;
+    get scrollPolicyH() {
+      return this.#policyH;
+    }
+    set scrollPolicyH(value) {
+      this.#policyH = checkScrollPolicy(value);
+    }
+    get scrollPolicyV() {
+      return this.#policyV;
+    }
+    set scrollPolicyV(value) {
+      this.#policyV = checkScrollPolicy(value);
+    }
     get viewport() {
       return childrenOf(this)[0];
     }
@@ -1403,19 +1504,30 @@ export function createLegacyEui({
       if (this.#input.length || !game.pointer.events.begin || !game.pointer.observe) return;
       let drag;
       let consumed;
-      const localY = contact => this.globalToLocal(contact.globalX, contact.globalY).y;
+      const point = contact => this.globalToLocal(contact.globalX, contact.globalY);
+      const axes = viewport => ({
+        x:
+          this.#policyH !== ScrollPolicy.OFF &&
+          (this.#policyH === ScrollPolicy.ON || viewport.contentWidth > viewport.width),
+        y:
+          this.#policyV !== ScrollPolicy.OFF &&
+          (this.#policyV === ScrollPolicy.ON || viewport.contentHeight > viewport.height)
+      });
       this.#input.push(
         this.on(
           game.pointer.events.begin,
           event => {
             const viewport = this.viewport;
-            if (drag || !viewport || viewport.contentHeight <= viewport.height) return;
+            if (drag || !viewport) return;
+            const enabled = axes(viewport);
+            if (!enabled.x && !enabled.y) return;
             consumed = undefined;
             drag = {
               session: event.payload.session,
               viewport,
-              y: localY(event.payload),
-              offset: viewport.scrollV,
+              start: point(event.payload),
+              left: viewport.scrollH,
+              top: viewport.scrollV,
               moved: false
             };
           },
@@ -1430,14 +1542,29 @@ export function createLegacyEui({
             return;
           }
           if (kind === 'move') {
-            const delta = drag.y - localY(contact);
-            if (drag.moved || Math.abs(delta) >= 5) {
-              drag.moved = true;
-              consumed = drag.session;
-              const limit = Math.max(0, drag.viewport.contentHeight - drag.viewport.height);
-              drag.viewport.scrollV = Math.max(0, Math.min(limit, drag.offset + delta));
+            const active = axes(drag.viewport);
+            const here = point(contact);
+            const dx = active.x ? drag.start.x - here.x : 0;
+            const dy = active.y ? drag.start.y - here.y : 0;
+            if (!drag.moved && Math.max(Math.abs(dx), Math.abs(dy)) < 5) return;
+            const current = drag;
+            if (!current.moved) {
+              current.moved = true;
+              consumed = current.session;
+              this.dispatchEventWith('changeStart');
             }
-          } else if (kind === 'end' || kind === 'cancel') drag = undefined;
+            if (current.viewport !== this.viewport || !this.stage) return;
+            const view = current.viewport;
+            const nextX = Math.max(0, Math.min(view.contentWidth - view.width, current.left + dx));
+            const nextY = Math.max(0, Math.min(view.contentHeight - view.height, current.top + dy));
+            if (active.x && nextX !== view.scrollH) view.scrollH = nextX;
+            if (active.y && nextY !== view.scrollV) view.scrollV = nextY;
+            this.dispatchEventWith('change');
+          } else if (kind === 'end' || kind === 'cancel') {
+            const moved = drag.moved;
+            drag = undefined;
+            if (moved) this.dispatchEventWith('changeEnd');
+          }
         })
       );
       this.#input.push(
@@ -1809,7 +1936,10 @@ export function createLegacyEui({
       if (node instanceof Rect) node.redraw();
       if (node instanceof Image) node.resizeImage();
       if (node.touchEnabled)
-        node.hitArea = width > 0 && height > 0 ? { x: 0, y: data.viewportOffset ?? 0, width, height } : undefined;
+        node.hitArea =
+          width > 0 && height > 0
+            ? { x: data.viewportOffsetX ?? 0, y: data.viewportOffset ?? 0, width, height }
+            : undefined;
     } finally {
       data.arranging = false;
     }
@@ -2003,6 +2133,10 @@ export function createLegacyEui({
   return {
     eui: Object.freeze({
       ...classes,
+      HorizontalLayout,
+      VerticalLayout,
+      TileLayout,
+      ScrollPolicy,
       Theme,
       ArrayCollection,
       registerCustomComponent,
@@ -2021,7 +2155,7 @@ export function createLegacyEui({
         for (const [control, target] of Object.entries(defaults))
           if (entries.has(target)) compiledDefaults.set(control, target);
       },
-      ItemTapEvent: Object.freeze({ ITEM_TAP: 'itemTap' }),
+      ItemTapEvent: Object.freeze({ ITEM_TAP: 'itemTap', CHANGE: 'change', CHANGING: 'changing' }),
       CollectionEvent: Object.freeze({ COLLECTION_CHANGE: 'collectionChange' }),
       CollectionEventKind: Object.freeze({
         ADD: 'add',
@@ -2039,7 +2173,14 @@ export function createLegacyEui({
           return target.dispatchEvent(event);
         }
       }),
-      UIEvent: Object.freeze({ COMPLETE: 'complete', CREATION_COMPLETE: 'creationComplete' })
+      UIEvent: Object.freeze({
+        COMPLETE: 'complete',
+        CREATION_COMPLETE: 'creationComplete',
+        CHANGE: 'change',
+        CHANGING: 'changing',
+        CHANGE_START: 'changeStart',
+        CHANGE_END: 'changeEnd'
+      })
     }),
     resolveDefinition(name) {
       return customTypes.get(name) ?? compiledTypes.get(name);

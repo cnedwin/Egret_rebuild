@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 import * as sdk from '@egret/engine';
 import { createPointerInput } from '@egret/engine/input';
+import { androidEnvironment, androidLog } from './host-environment.mjs';
 import { createLegacyBindings } from '../legacy-web.mjs';
+import { androidChannel, androidTransport } from './transport-android.mjs';
 
 function rgb(value) {
   if (!Number.isInteger(value) || value < 0 || value > 0xffffff) throw new RangeError('Expected an RGB color');
@@ -294,9 +296,31 @@ export async function openLegacyAndroid(services, options) {
       loadTexture: imageLoader(services, scope, options.images ?? []),
       createLabel: initial => labelFor(raster, initial)
     };
+    const logs = androidLog(options.logger, options.captureLogs);
     const { api, mount } = createLegacyBindings(sdk, game, options, {
+      environment: androidEnvironment(logs.logger),
+      transport: androidTransport(options.network),
+      channel: androidChannel(services.host, options.channelActions),
       storage: () => services.storage,
-      readJson: async item => JSON.parse(await services.assets.readText(item.url, scope.signal)),
+      async readAsset(item) {
+        if (item.type === 'bin') {
+          const parts = [];
+          let length = 0;
+          for await (const part of services.assets.readChunks(item.url, scope.signal)) {
+            length += part.byteLength;
+            parts.push(part);
+          }
+          const bytes = new Uint8Array(length);
+          let offset = 0;
+          for (const part of parts) {
+            bytes.set(part, offset);
+            offset += part.byteLength;
+          }
+          return bytes.buffer;
+        }
+        const text = await services.assets.readText(item.url, scope.signal);
+        return item.type === 'text' ? text : JSON.parse(text);
+      },
       measureLine: (text, _font, style) => raster.measureText([{ text, ...style }])[0],
       graphemes: text => raster.graphemes(text),
       onVisibility(listener) {
@@ -354,6 +378,7 @@ export async function openLegacyAndroid(services, options) {
         pointer.setInteractive(true);
         visibility?.(false);
       },
+      closedSnapshot: logs.snapshot,
       close
     };
   } catch (error) {

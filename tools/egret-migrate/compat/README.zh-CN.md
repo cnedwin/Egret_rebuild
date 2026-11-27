@@ -1,8 +1,20 @@
-# 可选的白鹭 5 协议字节兼容包
+# 可选的白鹭 5 兼容层
 
-[English](README.md)
+[English](README.md) · [HTTP、套接字和渠道调用](transport.zh-CN.md)
 
 Egret Migrate 会把本模块带入转换后的浏览器游戏。原业务包可继续继承 `egret.ByteArray`，并通过 `egret.Endian.LITTLE_ENDIAN` 指定小端序。其他宿主可从源码目录运行 `npm install ./tools/egret-migrate`，再通过 `import { ByteArray, Endian } from '@egret/legacy/protocol'` 引入。本模块无依赖，可在没有 DOM 和宿主文本编解码器的环境执行。
+
+### 项目自有 SDK 方法
+
+旧游戏调用项目自有 SDK 的方法时，可向 `launchLegacyWeb` 或 `openLegacyAndroid` 传入 `provideBindings(base, scope)`。它在第一个业务脚本执行前运行，可向已启用的 `egret`、`eui`、`RES` 或 `dragonBones` 命名空间新增方法或值。既有类和方法保持身份一致，重名会在启动时报出。异步操作应归属于本局游戏。例如 `provideBindings: (base, scope) => ({RES: {loadPortrait: id => portraits.acquire(id, scope.signal)}})` 可让原业务继续调用自己的头像资源服务。
+
+### 资源目录
+
+用 `RES.getResByUrl(url, callback, owner, type)` 读取本地 PNG、UTF-8 文本、JSON 或 ArrayBuffer。按名称和 URL 读取共享同一份缓存及同一个在途请求。没有可识别扩展名的二进制可显式传入 `RES.ResourceItem.TYPE_BIN`。Android 工程须把文件列入资源清单，并在图片声明中绑定 PNG 尺寸。运营服务地址通过网络适配器访问。原清单中的文本和二进制文件在迁移中保留原始字节与类型，文本支持 `.txt`、`.csv`，二进制支持 `.bin`、`.dat`。
+
+`RES.createGroup(name, keys)` 可组合已有条目和组。`destroyRes(group, false)` 保留其他已加载组共用的资源。关闭游戏会取消未完成的工作，迟到的回调不会进入旧游戏。命中缓存时，`getResAsync` 的 Promise 先完成，回调在游戏时钟后续一帧执行。Edge 已对照原版 5.3.10 的执行顺序、分组释放、名称、回调接收者和二进制字节。Android 布局示例从安装包读取宽 2 像素的 PNG、中文文本和五个二进制字节。
+
+### 封包示例
 
 ```js
 const packet = new ByteArray();
@@ -67,6 +79,33 @@ await layer.close();
 
 ## 计时、属性缓动和类型名称
 
+使用 `RES.setMaxLoadingThread(2)` 可同时限制所有组、直接 URL 和纹理页的本地读取数。默认并发数为四，小于一时按一处理。调低上限后已开始的读取会完成，待处理项遵循新上限。图集构造等待纹理页时不占用读取名额。释放尚在排队的资源会阻止其开始读取。关闭视图时丢弃排队项和迟到的结果，各组分别报告成功加载的项数。
+
+通过 `egret.Capabilities` 与 `egret.MainContext.instance.stage` 读取设备和舞台信息。浏览器返回当前后端（WebGL2 为 `webgl`）、系统和移动设备状态。Android GLES3 播放器的 runtimeType、os、isMobile、renderMode 分别为 `native`、`Android`、`true`、`gles3`。`RuntimeType.RUNTIME2` 对应历史 2.0 SDK。舞台宽高使用游戏逻辑单位。`stage.orientation` 返回挂载时的方向策略（`auto`），实际浏览器显示空间可独立旋转。请在创建视图时设置适配方式；挂载后可重复赋同一策略，更换策略会收到 `LEGACY_SCREEN_POLICY_FIXED`。原生界面按既定设计尺寸等比留边。视图关闭后原 MainContext 的 stage 返回 `null`。
+
+Windows Edge 158 的 WebGL2 实测中，窗口视区从 720 × 440 变为 390 × 844，再回到原尺寸；固定宽度模式下舞台依次为 320 × 195、320 × 692、320 × 195。每次变化都发出了 resize 事件，挂载方向策略始终是 `auto`。
+
+浏览器上的 `egret.log/warn/error` 将原参数转发到控制台。在 Android 上可将项目自己的 `logger` 传给 `openLegacyAndroid`。默认关闭回执按日志级别记录次数；显式开启 `captureLogs: true` 后，本地回执还保留最近 32 条、每条最多 256 字符的日志。开启内容采集前，应由应用处理日志中的敏感信息。
+
+迁移后的浏览器和 Android 客户端共用 `egret` 的经典计时接口，时长单位为毫秒。`new egret.Timer(500, 3)` 运行时发送 `egret.TimerEvent.TIMER`，第三次计时后发送 `TIMER_COMPLETE`。`stop()` 保留次数，`start()` 从一个新间隔继续，`reset()` 将次数清零。运行中修改 `delay` 会重置按帧计时的预算。沿用白鹭 5 的行为，每个长帧最多触发一次，同时参考实际游戏时间和标称 60 Hz 的帧数。
+
+```js
+const countdown = new egret.Timer(500, 3);
+countdown.addEventListener(egret.TimerEvent.TIMER, this.updateCountdown, this);
+countdown.start();
+
+const handle = egret.setInterval(this.refreshPrices, this, 2000, 'market');
+egret.clearInterval(handle);
+egret.setTimeout(this.restock, this, 250, 'north');
+egret.callLater(this.relayout, this);
+```
+
+`setTimeout` 和 `setInterval` 保留接收对象及尾部参数。两者分别分配数字句柄，分别使用对应的清除函数。重复回调每帧最多触发一次，长帧之后从完整间隔重新计时。`callLater` 在适配层的本帧计时回调之后处理当前队列，队列执行中再次调用会留到下一帧。游戏时钟暂停后这些回调停止，恢复时从新的时间基准开始。游戏关闭时会清空待处理回调并拒绝继续调度。旧接口 `getTimer()` 仍返回绑定启动后经过的实际毫秒数，含暂停时间。
+
+`getQualifiedClassName`、`getQualifiedSuperclassName` 和 `is` 读取原版编译器或 `registerClass` 写入的反射信息。可用 `registerImplementation('eui.IAssetAdapter', adapter)` 登记接口，再用 `getImplementation` 取回当前值。每个游戏单独维护登记项。将特定游戏或渠道提供的对象接到加载流程，仍需在应用侧完成接线。
+
+运行 `node --test tests/egret-migrate-clock.test.mjs`。如需和旧版对照，将 `EGRET_LEGACY_MODULES` 指向受信任的旧 SDK 的 `libs/modules` 路径，其中应有 `egret/egret.js` 和 `game/game.js`。仅在启用对照时执行这两份旧脚本。回归覆盖事件顺序、次数、暂停、取消、回调参数、嵌套延迟和反射查询。线上游戏服务器时序与渠道 SDK 仍需分别验收。
+
 移植后的两个宿主都提供 `egret.getTimer()`、`egret.Tween`、`egret.Ease` 和 `egret.getDefinitionByName()`。计时器返回自绑定初始化以来经过的毫秒数，包含暂停时间。属性缓动复用游戏的既有时钟，跟随它的缩放和单帧步长上限推进，并在作用域关闭时释放。
 
 ```js
@@ -120,3 +159,32 @@ adb shell am start -n org.egret.sample.courier/org.egret.example.LibraryActivity
 ```
 
 打开游戏后点击路线按钮，标题由「北门驿站」变为「南门渡口」，路标由蓝变橙，存档路线变为 1。Windows Edge 158 与 Galaxy Z Fold7 的裁剪 V8 15.7.112.19 执行了完全相同的 2,365 字节 Egret TypeScript-Plus 编译产物。两端在操作前后的选项、中文标题、标记宽度、存档值、路线加载状态和控件数均相同。按各自显示比例截图，桌面橙色路标占 2,209 像素，手机占 48,400 像素。关闭后浏览器剩余零租约。在同一 Android Activity 中关闭第一个视图，再创建新视图，可读回路线 1「南门渡口」。再次操作后返回「北门驿站」并存为 0。手机两次关闭都释放全部五个已发布页面，文字剩余零字节，废弃上传均为零。该样例使用包内自制数据和注入的指针操作，生产服务器和渠道 SDK 仍需另行验收。
+
+## 代码布局、混合和富文本
+
+给 `group.layout` 指定 `new eui.HorizontalLayout()`、`new eui.VerticalLayout()` 或逐行填充的 `new eui.TileLayout()`，修改间距、内边距或支持的对齐属性即可重新布局。格子支持等尺寸和指定列数。将组设置为 `scroller.viewport`，再分别给 `scrollPolicyH`、`scrollPolicyV` 设置 `eui.ScrollPolicy.AUTO`、`ON` 或 `OFF`。可以在已裁剪视区的空白边缘继续拖动。惯性滚动、弹性越界和通用虚拟格子渲染器需要另行移植。`egret.BlendMode.ADD` 和 `NORMAL` 按显示顺序走引擎的共享材质。代码派发的触摸经过捕获、目标、冒泡三阶段，三处读到的都是原目标局部坐标。
+
+只读 `egret.TextField` 可接收解析的富文本或原版文字元素数组。打开 `touchEnabled`，在字段自身监听链接。文字布局提交后，点击链接会收到 `text`，值为去掉 `event:` 前缀的参数。替换内容、从舞台移除或关闭视图后，旧文字页随作用域释放。
+
+```js
+const title = new egret.TextField();
+title.width = 240;
+title.size = 20;
+title.touchEnabled = true;
+title.textFlow = new egret.HtmlTextParser().parser(
+  '<a href="event:open:gate"><font color="#18f570"><b>北门</b></font></a><font color="#ff9840">驿站</font>'
+);
+title.addEventListener(egret.TextEvent.LINK, event => visit(event.text), this);
+```
+
+支持嵌套的 `font`、`b`、`i`、`u`、`a`，换行字符、五种具名 XML 实体、事件链接、字号、字体、填充色和描边。只读 EUI Label 可以使用排版后的边框。每段复用宿主字体测量、现有文字光栅缓存及引擎作用域。单字段支持最多 256 个输入段、16,384 个 UTF-16 单元和换行后的 256 个绘制片段。可见片段和其他标签共享已有的文字页预算。原生缓存提供拒绝、释放和占用计数。外部链接、任意 HTML、跨样式的双向文字整形和富文本输入另需实现。
+
+[布局样例](../../../runtime-sdk/examples/legacy-layout/board.js)通过 `RES.getResByUrl` 读取自制 PNG、中文 UTF-8 和二进制。连续点击绿色控件切换三种布局和混合方式。横向滑列表后，从视区末端空白处继续拖动。分别点橙色说明和绿色文字，仅绿色链接会触发进城事件。
+
+```sh
+node runtime-sdk/examples/legacy-layout/verify-browser.mjs --engine <egret2d.mjs> --playwright <playwright/index.mjs> --channel msedge --out ./edge-board-evidence
+node runtime-sdk/android/player/create-app.mjs --project runtime-sdk/examples/legacy-layout --aar <trimmed-player.aar> --esbuild <esbuild-module> --id org.egret.sample.layout --layout embedded --out ./layout-app
+gradle -p ./layout-app assembleDebug
+adb install -r ./layout-app/build/outputs/apk/debug/EgretGame-debug.apk
+adb shell am start -n org.egret.sample.layout/org.egret.example.LibraryActivity
+```

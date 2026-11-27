@@ -94,6 +94,57 @@ test('legacy compiler preserves classic boundaries, reflection, deferred order a
   assert.throws(() => f.build('module'), { code: 'MIGRATE_COMPILER_CONFIG' });
 });
 
+test('lists runtime and type-only SDK declarations separately without exporting business namespaces', {
+  skip: !process.env.EGRET_LEGACY_TYPESCRIPT_PLUS && 'Supply a trusted original TypeScript-Plus compiler'
+}, t => {
+  const f = fixture(t);
+  f.put(
+    'libs/modules/example/example.d.ts',
+    [
+      'declare namespace egret {',
+      ' class Clip { static readonly limit:number; draw():void; private hidden:number; }',
+      ' interface RenderOptions { visible:boolean; }',
+      ' let Loader:{new():Loader; readonly mode:string;};',
+      ' interface Loader { open(url:string):void; }',
+      ' const OrientationMode: { AUTO:string; };',
+      ' let ExternalInterface: { call(name:string):void; };',
+      ' namespace sys { function flush():void; }',
+      ' /** @internal */ function inspectOnly():void;',
+      '}',
+      'declare namespace eui.sys { const enum StateKey { Current } }',
+      'declare namespace egret { const enum Priority { Normal } }',
+      'declare module "egret" { export const importedOnly:number; }',
+      'declare namespace StudioGame {class InternalQuest {}}'
+    ].join('\n')
+  );
+  const { out, report } = f.build('sdk-surface');
+  const schema = JSON.parse(fs.readFileSync(path.join(out, report.sdkDeclarations.details), 'utf8'));
+  const find = (name, placement) => schema.entries.find(x => x.name === name && x.placement === placement);
+  assert.equal(find('egret.OrientationMode.AUTO', 'static').kind, 'property');
+  assert.equal(find('egret.ExternalInterface.call', 'static').kind, 'method');
+  assert.equal(find('egret.Clip', 'namespace').kind, 'class');
+  assert.equal(find('egret.Clip.draw', 'instance').kind, 'method');
+  assert.equal(find('egret.Clip.limit', 'static').visibility, 'public');
+  assert.equal(find('egret.Clip.hidden', 'instance').visibility, 'private');
+  assert.equal(find('egret.sys.flush', 'namespace').visibility, 'internal');
+  assert.equal(find('egret.inspectOnly', 'namespace').visibility, 'internal');
+  assert.equal(find('egret.RenderOptions', 'type').kind, 'interface');
+  assert.equal(find('egret.RenderOptions.visible', 'instance'), undefined);
+  assert.equal(find('egret.Loader.open', 'instance').kind, 'method');
+  assert.equal(find('egret.Loader.mode', 'static').kind, 'property');
+  assert.equal(find('eui.sys.StateKey.Current', 'type').visibility, 'internal');
+  assert.equal(find('egret.Priority', 'type').kind, 'const-enum');
+  assert.equal(find('egret.Priority.Normal', 'type').visibility, 'public');
+  assert.equal(
+    schema.entries.some(x => x.name.startsWith('StudioGame')),
+    false
+  );
+  assert.equal(
+    schema.entries.some(x => x.name === 'egret.importedOnly'),
+    false
+  );
+});
+
 test('ES2015 emission allows a legacy subclass to construct a native class adapter', {
   skip: !process.env.EGRET_LEGACY_TYPESCRIPT_PLUS && 'Set EGRET_LEGACY_TYPESCRIPT_PLUS'
 }, t => {

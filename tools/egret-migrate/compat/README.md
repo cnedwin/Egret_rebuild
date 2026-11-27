@@ -1,8 +1,20 @@
-# Optional Egret 5 packet compatibility
+# Optional Egret 5 compatibility
 
-[简体中文](README.zh-CN.md)
+[简体中文](README.zh-CN.md) · [HTTP, sockets and channel calls](transport.md)
 
 Egret Migrate includes this module in converted browser games. Existing packet subclasses can extend `egret.ByteArray` and choose `egret.Endian.LITTLE_ENDIAN`. Another host can install the local package (`npm install ./tools/egret-migrate` from a checkout) and import `{ ByteArray, Endian } from '@egret/legacy/protocol'`. This module has no dependencies and uses neither DOM nor host text codecs.
+
+### Project-owned SDK methods
+
+When a legacy game calls methods supplied by its own SDK, pass `provideBindings(base, scope)` to `launchLegacyWeb` or `openLegacyAndroid`. It runs before the first business script. Return additional named values under an enabled `egret`, `eui`, `RES` or `dragonBones` namespace. Existing methods and classes keep their identity. A name collision is reported at startup. Attach asynchronous work to the game scope. For example, `provideBindings: (base, scope) => ({RES: {loadPortrait: id => portraits.acquire(id, scope.signal)}})` retains an application's asset service and its original business call.
+
+### Resource catalog
+
+Use `RES.getResByUrl(url, callback, owner, type)` for a local PNG, UTF-8 text, JSON or an ArrayBuffer. Name and URL reads share the same cache and in-flight load. Pass `RES.ResourceItem.TYPE_BIN` for a binary file with no recognized extension. The Android project must list the source file and bind the dimensions of a PNG in its image declarations. Use the network adapter for operator addresses. Text or binary declarations in the original manifest retain their bytes and their type during conversion. The converter accepts `.txt` and `.csv` for text, and `.bin` and `.dat` for binary files.
+
+`RES.createGroup(name, keys)` accepts resource names and existing groups. `destroyRes(group, false)` keeps resources shared with another loaded group. Closing the owning game cancels outstanding work and suppresses late callbacks. On a cache hit, `getResAsync` resolves its promise before it calls the completion handler on the game clock. Edge compared this order, group release, names, callback receiver and binary bytes with the original 5.3.10 SDK. The Android layout example reads a two-pixel-wide PNG, Chinese text and five binary bytes from the installed package.
+
+### Packet example
 
 ```js
 const packet = new ByteArray();
@@ -67,6 +79,33 @@ In the local 5.3.10 corpus, these additions raised the number of individually co
 
 ## Timers, property tweens and type names
 
+Use `RES.setMaxLoadingThread(2)` to cap concurrent local reads across groups, direct URL loads and texture pages. The default is four. Values below one use one slot. A smaller limit lets active reads finish; queued reads use the new limit. Atlas construction reserves no slot while waiting for its page. Releasing a queued resource cancels it before I/O. Closing the view discards waiting and late results, with each group reporting successfully loaded items on its own progress callbacks.
+
+Read device and stage settings through `egret.Capabilities` and `egret.MainContext.instance.stage`. The browser reports the selected backend (`webgl` for WebGL2), platform and mobile status. The Android GLES3 player reports `native`, `Android`, `true` and `gles3` for runtimeType, os, isMobile and renderMode. `RuntimeType.RUNTIME2` identifies the historic 2.0 SDK. Stage width and height use logical game units. `stage.orientation` reports the mounted orientation policy (`auto`); the actual browser space may rotate independently. Change fit when creating the view. Reassigning the same policy is allowed, switching a mounted policy raises `LEGACY_SCREEN_POLICY_FIXED`. Native layouts follow their fixed design and the player's letterboxing. When a view closes, its main-context stage becomes `null`.
+
+In Windows Edge 158 with WebGL2, resizing a fixed-width game's viewport from 720 × 440 to 390 × 844 and back changed its logical stage from 320 × 195 to 320 × 692 and back. The engine sent a resize event for each change, and the mounted policy remained `auto`.
+
+Browser `egret.log/warn/error` forward the original arguments to the console. On Android, pass a `logger` to `openLegacyAndroid` to route them to a project sink. The normal close receipt records per-level counts. With `captureLogs: true` it also retains up to 32 local messages, 256 characters each. The app owns redaction before enabling message capture.
+
+Migrated browser and Android clients expose the same classic timing API through `egret`. Durations are milliseconds. `new egret.Timer(500, 3)` sends `egret.TimerEvent.TIMER` while running and sends `TIMER_COMPLETE` after its third tick. `stop()` retains the count, `start()` begins a fresh interval, and `reset()` clears the count. Changing `delay` while running resets the nominal frame budget. A long frame fires at most once, as in Egret 5. The timer checks elapsed game time and Egret 5's nominal 60 Hz cadence.
+
+```js
+const countdown = new egret.Timer(500, 3);
+countdown.addEventListener(egret.TimerEvent.TIMER, this.updateCountdown, this);
+countdown.start();
+
+const handle = egret.setInterval(this.refreshPrices, this, 2000, 'market');
+egret.clearInterval(handle);
+egret.setTimeout(this.restock, this, 250, 'north');
+egret.callLater(this.relayout, this);
+```
+
+`setTimeout` and `setInterval` preserve the receiver and trailing arguments. Each has its own numeric handles and corresponding clear function. Repeating callbacks fire at most once per tick and begin a fresh delay after a late frame. `callLater` processes the current queue after this adapter's timed callbacks. A nested `callLater` runs on the next tick. The game clock pauses these callbacks and resumes from a fresh anchor. Closing the game releases pending callbacks and prevents further scheduling. The vintage SDK's `getTimer()` remains wall-clock time since the binding started and includes pauses.
+
+`getQualifiedClassName`, `getQualifiedSuperclassName`, and `is` read classic reflection metadata written by the original compiler or `registerClass`. Register named interfaces with `registerImplementation('eui.IAssetAdapter', adapter)` and retrieve the current value with `getImplementation`. Each running game owns a separate registry. Registration alone does not connect a particular game or channel provider to an asset load.
+
+Run `node --test tests/egret-migrate-clock.test.mjs`. To include the 5.x reference comparison, set `EGRET_LEGACY_MODULES` to a trusted SDK's `libs/modules` directory containing `egret/egret.js` and `game/game.js`. The reference scripts execute only for this opt-in comparison. The tests compare event order, counts, pause, clear, callback arguments, deferred nesting and named type lookups. Live game server timing and channel SDK integration need separate acceptance.
+
 Both migrated hosts expose `egret.getTimer()`, `egret.Tween`, `egret.Ease` and `egret.getDefinitionByName()`. The timer returns elapsed wall-clock milliseconds from binding initialization, including pauses. Property tweens advance on the game's existing clock and stop with its scope. They accept the engine's scaled and bounded tick intervals.
 
 ```js
@@ -120,3 +159,32 @@ adb shell am start -n org.egret.sample.courier/org.egret.example.LibraryActivity
 ```
 
 Open the game and press the route button. The heading changes from 北门驿站 to 南门渡口, the marker changes from blue to orange and the saved route becomes 1. Windows Edge 158 and a Galaxy Z Fold7 running trimmed V8 15.7.112.19 used identical 2,365-byte output from the Egret TypeScript-Plus compiler. Both reported the same selection, Chinese heading, marker width, stored value, loaded route and control count before and after the press. The captured orange marker occupied 2,209 pixels on the desktop and 48,400 display pixels on the phone at their respective scales. The browser closed with zero leases. In the same Android activity, closing the first view and opening a new one restored route 1 (南门渡口). The next press returned to 北门驿站 and saved 0. At each close the phone released all five published pages, retained zero text bytes and reported zero abandoned uploads. This sample used bundled local data and injected pointer input; it exercises neither a live game server nor a channel SDK.
+
+## Programmatic layouts, blend modes and rich text
+
+A migrated board can assign `new eui.HorizontalLayout()`, `new eui.VerticalLayout()` or a row-major `new eui.TileLayout()` to `group.layout`. Changing the gap, padding or supported alignment reflows the group. TileLayout accepts equal cells and a requested column count. Set `scroller.viewport` to the group, then set `scrollPolicyH` and `scrollPolicyV` to `eui.ScrollPolicy.AUTO`, `ON` or `OFF`. Horizontal and vertical drags use the clipped viewport, including its empty trailing edge. Inertial scrolling, elastic overshoot and general virtual tile renderers need separate migration. `egret.BlendMode.ADD` and `NORMAL` use the engine's shared material in display order. Scripted touch dispatch preserves the target's local coordinates in capture, target and bubble listeners.
+
+For a Chinese link in a read-only `egret.TextField`, assign parsed text or an array of legacy text elements. Set `touchEnabled` and listen on the field. A link fires after its visible layout has committed. Its event's `text` contains the part following `event:`. Replacing the content, removing the field, or closing the view retires its text pages.
+
+```js
+const title = new egret.TextField();
+title.width = 240;
+title.size = 20;
+title.touchEnabled = true;
+title.textFlow = new egret.HtmlTextParser().parser(
+  '<a href="event:open:gate"><font color="#18f570"><b>北门</b></font></a><font color="#ff9840">驿站</font>'
+);
+title.addEventListener(egret.TextEvent.LINK, event => visit(event.text), this);
+```
+
+The reader supports nested `font`, `b`, `i`, `u` and `a`, literal newlines, five named XML entities, event links, font size and family, fill and outline. Read-only EUI Labels also use their arranged box. Each fragment uses host font measurement, the existing text raster/cache and engine scope. Admission allows 256 source runs, 16,384 UTF-16 units and 256 wrapped fragments per field. Visible fragments share the host's existing text-page budget, including pages used by other labels. The native cache exposes refusal, release and size counters when that budget is reached. External URL navigation, arbitrary HTML, mixed-direction shaping across style boundaries and editable rich text require a separate implementation.
+
+The [layout board](../../../runtime-sdk/examples/legacy-layout/board.js) loads an original PNG, a UTF-8 caption and binary data through `RES.getResByUrl`. Its green control cycles the layouts and blend modes. Drag the horizontal panel twice, starting the second drag on its empty edge. Tap the orange caption and the green linked characters. Only the green link opens the gate.
+
+```sh
+node runtime-sdk/examples/legacy-layout/verify-browser.mjs --engine <egret2d.mjs> --playwright <playwright/index.mjs> --channel msedge --out ./edge-board-evidence
+node runtime-sdk/android/player/create-app.mjs --project runtime-sdk/examples/legacy-layout --aar <trimmed-player.aar> --esbuild <esbuild-module> --id org.egret.sample.layout --layout embedded --out ./layout-app
+gradle -p ./layout-app assembleDebug
+adb install -r ./layout-app/build/outputs/apk/debug/EgretGame-debug.apk
+adb shell am start -n org.egret.sample.layout/org.egret.example.LibraryActivity
+```

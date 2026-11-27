@@ -6,6 +6,7 @@ import { Script } from 'node:vm';
 import { logicalPath, ownerRelativePath, samePhysicalPath } from '../lib/file-identity.mjs';
 import { hash, json, readProjectFile, refuse } from './inspect.mjs';
 import { compileExml } from './exml.mjs';
+import { collectSdkSurface } from './sdk-surface.mjs';
 import { collectLegacyUses } from './api-usage.mjs';
 import { prepareThemeFactories } from './precompiled-themes.mjs';
 
@@ -424,6 +425,8 @@ export function compileClassic({
     fs.writeFileSync(path.join(temp, 'v8-scripts.json'), json(plan));
     const usage = [...apiUses.values()].sort((a, b) => b.uses - a.uses || a.namespace.localeCompare(b.namespace));
     fs.writeFileSync(path.join(temp, 'api-usage.json'), json(usage));
+    const declarations = collectSdkSurface(tool.ts, program, owner);
+    fs.writeFileSync(path.join(temp, 'sdk-surface.json'), json(declarations));
     if (skins) fs.writeFileSync(path.join(temp, 'static-skins.json'), json(skins));
     const report = {
       schemaVersion: 1,
@@ -443,6 +446,11 @@ export function compileClassic({
       diagnostics: semantic,
       diagnosticStatus: baseline !== undefined ? 'matched' : semantic.length ? 'needs-review' : 'clean',
       namespaceReferences: { paths: usage.length, details: 'api-usage.json' },
+      sdkDeclarations: {
+        sources: declarations.sources.length,
+        entries: declarations.entries.length,
+        details: 'sdk-surface.json'
+      },
       ...(factory
         ? {
             themeFactories: {
