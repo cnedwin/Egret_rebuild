@@ -134,3 +134,7 @@ await play3d({ width: 960, height: 540, setup(game) { … }, update(dt, game) { 
 ## When a game outgrows it
 
 `game.scene` is the [Scene3D](world3d.md) and `game.app` the [World3D app](world3d-app.md): models loaded from glTF, materials, more lights, particles, physics and post-processing are added to the scene beside what `play3d` made. `game.camera.node` and `thing.node` are the camera and the meshes themselves.
+
+## November 27 device follow-up
+
+November 27 follow-up: retaining camera width in a narrow 140 × 325 CSS parent on Fold7 rendered the two side objects on WebGL2 and WebGPU; both changed 55°→100.78°. Windows hardware WebGL2 also passed the original projection fixture. The narrow parent was scripted inside the native portrait session (411 × 813 CSS); actual orientation transition and human visual judgement remain open. [Device observations and remaining coverage](november-27-claude-hardware.md).

@@ -175,3 +175,7 @@ const cache = createParagraphCache(engine.assets, { provider });
 - `prefer: 'canvas'` 或 `prefer: 'canvaskit'` 直接指定。指名要 CanvasKit 时，失败会抛出。`device` 用已知的设备情况代替从全局对象读到的值。
 
 使用画布提供者时，要在准备第一个段落之前注册好字体。
+
+## 11 月 27 日真机补验
+
+11 月 27 日实测：Windows 真实 WebGL2 以相同字体对照 Canvas 和 CanvasKit；Fold7 上不需要 WASM 的 Canvas provider 生成三行中英文段落。字体集合编辑 Node 测试通过，真实微信字体度量及宿主输入待验收。 [真机观测及剩余范围](november-27-claude-hardware.md).

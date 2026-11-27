@@ -344,3 +344,7 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 - 托管 UI 的叶子和层对应的节点由应用自己添加，用 [`semanticBoxOf`](#托管-ui-的盒与层) 度量。虚拟列表的行有[辅助对象](#托管虚拟列表)。
 - 一次选中一段连续的行（例如 Shift 加方向键）由应用自行处理，多选示例给出了一种做法。
 - 原生编辑器自身的投射。编辑器本身就是一个元素。
+
+## 11 月 27 日真机补验
+
+11 月 27 日实测：Windows 与 Fold7 真机验收命名子对象命中、可见性、语义激活和模态控件过滤。实际辅助技术、读屏朗读仍需单独验收。 [真机观测及剩余范围](november-27-claude-hardware.md).
