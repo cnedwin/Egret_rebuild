@@ -77,6 +77,7 @@ extern "C" {
     pub fn glUniform3f(location: i32, x: f32, y: f32, z: f32);
     pub fn glUniformMatrix4fv(location: i32, count: i32, transpose: u8, values: *const f32);
     pub fn glUniform4f(location: i32, x: f32, y: f32, z: f32, w: f32);
+    pub fn glUniform2i(location: i32, x: i32, y: i32);
     pub fn glUniform2f(location: i32, x: f32, y: f32);
     pub fn glGenBuffers(count: i32, buffers: *mut u32);
     pub fn glBindBuffer(target: u32, buffer: u32);

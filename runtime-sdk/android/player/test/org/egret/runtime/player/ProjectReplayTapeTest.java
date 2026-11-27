@@ -146,6 +146,33 @@ public final class ProjectReplayTapeTest {
         return b.array();
     }
 
+    private static byte[] isolatedPacket(int id) {
+        byte[] quad = packet(id, 0);
+        ByteBuffer b = ByteBuffer.allocate(24 + 28 + 68 + 4).order(ByteOrder.LITTLE_ENDIAN);
+        b.put(quad, 0, 24).putInt(0, 0x36524745).putInt(20, 3);
+        b.putInt(128).putInt(2).putFloat(0).putFloat(0).putFloat(W).putFloat(H).putFloat(3);
+        b.putInt(0).put(quad, 24, 64).putInt(129);
+        // The draw begins at byte 56. Use the whole UV region and logical surface.
+        b.putFloat(96, 1).putFloat(100, 1).putFloat(112, W).putFloat(116, H);
+        return b.array();
+    }
+
+    private static void effectReplay(File file) throws Exception {
+        ProjectReplayTape.Recorder recorder = new ProjectReplayTape.Recorder(W, H);
+        byte[] original = isolatedPacket(0);
+        for (int[] edit : new int[][]{{24, 129}, {28, 0}, {28, 32}, {48, 0x7fc00000}, {48, 0x41200000}, {120, 128}, {20, 2},
+                {60, 0x7fc00000}, {64, 0x4c000000}, {96, 0}, {116, 0x7fc00000}}) {
+            byte[] bad = original.clone();
+            ByteBuffer.wrap(bad).order(ByteOrder.LITTLE_ENDIAN).putInt(edit[0], edit[1]);
+            reject(() -> recorder.add(new PlayerGraphics.Frame(1, bad, Collections.emptyMap())));
+        }
+        for (int i = 0; i < ProjectReplayTape.FRAMES; i++)
+            recorder.add(new PlayerGraphics.Frame(1, isolatedPacket(i), Collections.emptyMap()));
+        recorder.write(file);
+        ProjectReplayTape tape = ProjectReplayTape.read(file, W, H);
+        require(Arrays.equals(tape.frame(2, 1).bytes, isolatedPacket(2)));
+    }
+
     private static void materialReplay() throws Exception {
         byte[] mesh = indexedPacket(0, false);
         ByteBuffer colored = ByteBuffer.allocate(mesh.length + 3 * 16).order(ByteOrder.LITTLE_ENDIAN);
@@ -525,6 +552,7 @@ public final class ProjectReplayTapeTest {
             atlasReplay(file);
             indexedReplay(file);
             materialReplay();
+            effectReplay(file);
             expandedBudget();
             residentReplay(file);
             skinnedReplay(file);
