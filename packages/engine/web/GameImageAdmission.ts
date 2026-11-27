@@ -40,10 +40,14 @@ export function createGameImageAdmission(activeLimit: number) {
       if (signal.aborted) return Promise.reject(signal.reason);
       if (active < activeLimit && queue.length === 0) return Promise.resolve(permit());
       if (queue.length >= waitingLimit)
-        return Promise.reject(new EgretError('WEB_PNG_JOB_LIMIT', { cause: new RangeError('Game image waiting job limit') }));
+        return Promise.reject(
+          new EgretError('WEB_PNG_JOB_LIMIT', { cause: new RangeError('Game image waiting job limit') })
+        );
       return new Promise((resolve, reject) => {
         const entry: WaitingJob = {
-          signal, resolve, reject,
+          signal,
+          resolve,
+          reject,
           cancel() {
             const index = queue.indexOf(entry);
             if (index < 0) return;

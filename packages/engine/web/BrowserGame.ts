@@ -505,7 +505,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     (blendSpace !== 'linear' && blendSpace !== 'srgb') ||
     typeof enableEffects !== 'boolean' ||
     (renderMode !== 'continuous' && renderMode !== 'on-demand') ||
-    (options.webgl2PageBatching !== undefined && options.webgl2PageBatching !== 'single-page' && options.webgl2PageBatching !== 'multi-page') ||
+    (options.webgl2PageBatching !== undefined &&
+      options.webgl2PageBatching !== 'single-page' &&
+      options.webgl2PageBatching !== 'multi-page') ||
     (options.uiScale !== undefined && (plannedFit(options.fit ?? 'none') === undefined || wholeScale)) ||
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
@@ -544,7 +546,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     throw invalid();
   }
   let screen = planFor({ width, height });
-  const backend = await chooseBackend(asked), backendReady = performance.now();
+  const backend = await chooseBackend(asked),
+    backendReady = performance.now();
   // Measure the selected module and native host separately. Neither needs to load the other backend.
   let moduleReady = backendReady;
   const host =
@@ -555,7 +558,13 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         })
       : await import('./webgl2.js').then(module => {
           moduleReady = performance.now();
-          return module.createSharedWebGL2Host({ canvas, pixelRatio, blendSpace, enableEffects, ...(options.webgl2PageBatching === undefined ? {} : {pageBatching: options.webgl2PageBatching}) });
+          return module.createSharedWebGL2Host({
+            canvas,
+            pixelRatio,
+            blendSpace,
+            enableEffects,
+            ...(options.webgl2PageBatching === undefined ? {} : { pageBatching: options.webgl2PageBatching })
+          });
         });
   const hostCreated = performance.now();
   const staticCache =
@@ -576,16 +585,24 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
   }
   const engineOpened = performance.now();
   const webgl2Startup = 'getStartupTiming' in host ? host.getStartupTiming() : undefined;
-  let ready = engineOpened, firstSubmit: number | undefined;
+  let ready = engineOpened,
+    firstSubmit: number | undefined;
   let loop: BrowserFrameLoop | undefined, stats: BrowserStatsPanel | undefined, disposal: Promise<void> | undefined;
   try {
     const scope = engine.createScope(),
       initialFrame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha });
     let frame = initialFrame;
     const revision = renderMode === 'on-demand' ? engine.watchDisplayRevision(scope) : undefined;
-    let lastFrame: SharedFrameOptions2D | undefined, lastScreen: ScreenPlan | undefined,
-      lastRevision = -1, lastLayerRevision = -1, lastGeneration = -1, redraw = 0, shownRedraw = -1;
-    const invalidate = (): void => { if (revision !== undefined) redraw++; };
+    let lastFrame: SharedFrameOptions2D | undefined,
+      lastScreen: ScreenPlan | undefined,
+      lastRevision = -1,
+      lastLayerRevision = -1,
+      lastGeneration = -1,
+      redraw = 0,
+      shownRedraw = -1;
+    const invalidate = (): void => {
+      if (revision !== undefined) redraw++;
+    };
     const frameNow = (): SharedFrameOptions2D => frame;
     const stageSize = (): { readonly width: number; readonly height: number } => frame;
     const pointer =
@@ -675,9 +692,14 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     // the game.
     const drawFrame = (given: SharedFrameOptions2D): SharedRenderFrame2D | undefined => {
       // Continuous mode keeps its old frame-time maintenance. On-demand performs it each display step below.
-      if (revision === undefined) { sweepLabels(); waitAtlas(); }
-      const pending = redraw, nextRevision = revision?.revision,
-        nextLayer = staticCache?.api.revision ?? 0, nextScreen = screen,
+      if (revision === undefined) {
+        sweepLabels();
+        waitAtlas();
+      }
+      const pending = redraw,
+        nextRevision = revision?.revision,
+        nextLayer = staticCache?.api.revision ?? 0,
+        nextScreen = screen,
         nextGeneration = revision === undefined ? -1 : host.getSessionStatus().generation;
       {
         let frame: SharedRenderFrame2D;
@@ -706,8 +728,12 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         if (firstSubmit === undefined) firstSubmit = performance.now();
         // A refused frame leaves the dirty request pending; a late mutation after capture is not acknowledged.
         if (nextRevision !== undefined) {
-          lastFrame = given; lastScreen = nextScreen; lastRevision = nextRevision;
-          lastLayerRevision = nextLayer; lastGeneration = nextGeneration; shownRedraw = pending;
+          lastFrame = given;
+          lastScreen = nextScreen;
+          lastRevision = nextRevision;
+          lastLayerRevision = nextLayer;
+          lastGeneration = nextGeneration;
+          shownRedraw = pending;
         }
         measureFrame(frame);
         return frame;
@@ -723,15 +749,23 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       engine: drawing,
       host,
       frame: frameNow,
-      ...(revision === undefined ? {} : {
-        shouldRender: () => {
-          // Raster packing/disposal is work that must settle even when a static frame is retained.
-          sweepLabels(); waitAtlas();
-          return lastRevision !== revision.revision || lastLayerRevision !== (staticCache?.api.revision ?? 0) ||
-            lastGeneration !== host.getSessionStatus().generation || shownRedraw !== redraw ||
-            lastFrame !== frame || lastScreen !== screen;
-        }
-      }),
+      ...(revision === undefined
+        ? {}
+        : {
+            shouldRender: () => {
+              // Raster packing/disposal is work that must settle even when a static frame is retained.
+              sweepLabels();
+              waitAtlas();
+              return (
+                lastRevision !== revision.revision ||
+                lastLayerRevision !== (staticCache?.api.revision ?? 0) ||
+                lastGeneration !== host.getSessionStatus().generation ||
+                shownRedraw !== redraw ||
+                lastFrame !== frame ||
+                lastScreen !== screen
+              );
+            }
+          }),
       ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
       ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),
       ...(onError === undefined ? {} : { onError }),
@@ -1614,16 +1648,17 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     }
     const game: BrowserGame = Object.freeze({
       invalidate,
-      getStartupTiming: () => Object.freeze({
-        backendSelectMs: backendReady - started,
-        backendModuleMs: moduleReady - backendReady,
-        hostCreateMs: hostCreated - moduleReady,
-        engineOpenMs: engineOpened - hostCreated,
-        setupMs: ready - engineOpened,
-        readyMs: ready - started,
-        ...(firstSubmit === undefined ? {} : { firstSubmitMs: firstSubmit - started }),
-        ...(webgl2Startup === undefined ? {} : { webgl2: webgl2Startup })
-      }),
+      getStartupTiming: () =>
+        Object.freeze({
+          backendSelectMs: backendReady - started,
+          backendModuleMs: moduleReady - backendReady,
+          hostCreateMs: hostCreated - moduleReady,
+          engineOpenMs: engineOpened - hostCreated,
+          setupMs: ready - engineOpened,
+          readyMs: ready - started,
+          ...(firstSubmit === undefined ? {} : { firstSubmitMs: firstSubmit - started }),
+          ...(webgl2Startup === undefined ? {} : { webgl2: webgl2Startup })
+        }),
       backend,
       engine,
       host,

@@ -86,7 +86,9 @@ try {
   assert.equal(check.presses, 1);
   // Nothing changes in the UI while the animated 3D scene continues to draw. Updates/clock must not stop.
   const idleA = await page.evaluate(() => globalThis.overlayCheck.loop());
-  await frames(); await frames(); await frames();
+  await frames();
+  await frames();
+  await frames();
   const idleB = await page.evaluate(() => globalThis.overlayCheck.loop());
   assert.equal(idleB.frames, idleA.frames, 'static overlay keeps the last native frame');
   assert.ok(idleB.steps > idleA.steps, 'on-demand does not stop the interface clock');
@@ -123,34 +125,85 @@ try {
   const parity = await page.evaluate(async () => {
     const sdk = await import('@egret/engine');
     const { createSharedWebGL2Host } = await import('/packages/engine/dist/web/webgl2.js');
-    const engine = await sdk.createEngine({ host: { surface: {}, start() {}, stop() {}, async close() {}, setTimeout() { return () => {}; } } });
+    const engine = await sdk.createEngine({
+      host: {
+        surface: {},
+        start() {},
+        stop() {},
+        async close() {},
+        setTimeout() {
+          return () => {};
+        }
+      }
+    });
     const scope = engine.createScope();
     try {
       const type = sdk.createAssetType('overlay-single-page-pixels', sdk.isTexture);
-      engine.assets.register(type, { async load(ref) {
-        const pixel = ref.id === 'a' ? [240, 52, 70, 180] : [30, 220, 120, 190];
-        return sdk.createTexture(sdk.createImageData2D({width:2,height:2,pixels:new Uint8Array([...pixel,...pixel,...pixel,...pixel])}));
-      }, dispose(value) { value.dispose(); } });
+      engine.assets.register(type, {
+        async load(ref) {
+          const pixel = ref.id === 'a' ? [240, 52, 70, 180] : [30, 220, 120, 190];
+          return sdk.createTexture(
+            sdk.createImageData2D({
+              width: 2,
+              height: 2,
+              pixels: new Uint8Array([...pixel, ...pixel, ...pixel, ...pixel])
+            })
+          );
+        },
+        dispose(value) {
+          value.dispose();
+        }
+      });
       const leases = [];
-      for (const id of ['a', 'b']) leases.push(scope.use(await engine.assets.acquire(sdk.createAssetRef(type,id),{signal:scope.signal})));
-      for (const [index,page] of [0,0,1,0,1].entries()) {
-        const bitmap=scope.use(new sdk.Bitmap(leases[page]));bitmap.x=2*index;bitmap.y=index%2;bitmap.width=6;bitmap.height=6;
+      for (const id of ['a', 'b'])
+        leases.push(scope.use(await engine.assets.acquire(sdk.createAssetRef(type, id), { signal: scope.signal })));
+      for (const [index, page] of [0, 0, 1, 0, 1].entries()) {
+        const bitmap = scope.use(new sdk.Bitmap(leases[page]));
+        bitmap.x = 2 * index;
+        bitmap.y = index % 2;
+        bitmap.width = 6;
+        bitmap.height = 6;
         engine.stage.addChild(bitmap);
       }
-      const frame=engine.captureSharedFrame({width:16,height:12,clearColor:0x243357,clearAlpha:1});
-      const results=[];
-      for (const pageBatching of ['multi-page','single-page']) {
-        const canvas=document.createElement('canvas');const host=createSharedWebGL2Host({canvas,pageBatching,enableReadback:true});
-        try { await host.start();const read=host.requestReadback();void read.catch(()=>{});host.renderSharedFrame(frame);const out=await read;await host.whenIdle();
-          results.push({bytes:Array.from(out.bytes),draws:host.getFrameDrawCalls(),timing:host.getStartupTiming()});
-        } finally { await host.close(); }
+      const frame = engine.captureSharedFrame({ width: 16, height: 12, clearColor: 0x243357, clearAlpha: 1 });
+      const results = [];
+      for (const pageBatching of ['multi-page', 'single-page']) {
+        const canvas = document.createElement('canvas');
+        const host = createSharedWebGL2Host({ canvas, pageBatching, enableReadback: true });
+        try {
+          await host.start();
+          const read = host.requestReadback();
+          void read.catch(() => {});
+          host.renderSharedFrame(frame);
+          const out = await read;
+          await host.whenIdle();
+          results.push({
+            bytes: Array.from(out.bytes),
+            draws: host.getFrameDrawCalls(),
+            timing: host.getStartupTiming()
+          });
+        } finally {
+          await host.close();
+        }
       }
-      const [multi,single]=results;return {diff:multi.bytes.filter((byte,i)=>byte!==single.bytes[i]).length,bytes:multi.bytes.length,multiDraws:multi.draws,singleDraws:single.draws,pagedMs:single.timing.pagedMs};
-    } finally {scope.dispose();await engine.dispose();}
+      const [multi, single] = results;
+      return {
+        diff: multi.bytes.filter((byte, i) => byte !== single.bytes[i]).length,
+        bytes: multi.bytes.length,
+        multiDraws: multi.draws,
+        singleDraws: single.draws,
+        pagedMs: single.timing.pagedMs
+      };
+    } finally {
+      scope.dispose();
+      await engine.dispose();
+    }
   });
-  assert.ok(parity.bytes>0);assert.equal(parity.diff,0,'readback pixels match exactly across batching policies');
-  assert.ok(parity.singleDraws >= parity.multiDraws);assert.equal(parity.pagedMs,0);
-  console.log(JSON.stringify({singlePagePixelParity:parity}));
+  assert.ok(parity.bytes > 0);
+  assert.equal(parity.diff, 0, 'readback pixels match exactly across batching policies');
+  assert.ok(parity.singleDraws >= parity.multiDraws);
+  assert.equal(parity.pagedMs, 0);
+  console.log(JSON.stringify({ singlePagePixelParity: parity }));
   assert.deepEqual(errors, []);
   console.log(
     JSON.stringify({

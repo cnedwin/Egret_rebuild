@@ -166,20 +166,21 @@ export function planScreen(options: ScreenPlanOptions): ScreenPlan {
   // with the fixed modes; the design itself with 'contain'.
   const fill = (space: number): number => Math.max(1, Math.floor(space / scale + 1e-6)),
     grows = fit === 'expand' || fit === 'fixedNarrow';
-  const width =
-      bounded ? fill(box.width) : fit === 'contain' || fit === 'fixedWidth'
+  const width = bounded
+      ? fill(box.width)
+      : fit === 'contain' || fit === 'fixedWidth'
         ? design.width
         : grows
           ? Math.max(design.width, fill(box.width))
           : fill(box.width),
-    height =
-      bounded ? fill(box.height) : fit === 'contain' || fit === 'fixedHeight'
+    height = bounded
+      ? fill(box.height)
+      : fit === 'contain' || fit === 'fixedHeight'
         ? design.height
         : grows
           ? Math.max(design.height, fill(box.height))
           : fill(box.height);
-  if (bounded && (!Number.isSafeInteger(width) || !Number.isSafeInteger(height)))
-    throw invalid();
+  if (bounded && (!Number.isSafeInteger(width) || !Number.isSafeInteger(height))) throw invalid();
   const left = (box.width - width * scale) / 2,
     top = (box.height - height * scale) / 2;
   const designRect = Object.freeze({

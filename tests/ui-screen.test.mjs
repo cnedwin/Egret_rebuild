@@ -178,10 +178,15 @@ test('SCR08 pinBox holds a box against an edge or the middle of an area, on each
 
 // The overlay's own stage is resized when its native unit is clamped, not the World3D view behind it.
 test('SCR10 UI scale clamps a filling stage while keeping every reported coordinate in the same units', () => {
-  const design = { width: 800, height: 420 }, portrait = { width: 380, height: 680 };
+  const design = { width: 800, height: 420 },
+    portrait = { width: 380, height: 680 };
   const uiScale = { min: 1, max: 1.35 };
   const up = planScreen({
-    box: { width: 375, height: 667 }, design, portrait, fit: 'expand', uiScale,
+    box: { width: 375, height: 667 },
+    design,
+    portrait,
+    fit: 'expand',
+    uiScale,
     insets: { left: 7, top: 30, right: 5, bottom: 20 }
   });
   assert.deepEqual([up.width, up.height, up.scale], [375, 667, 1]);
@@ -192,7 +197,11 @@ test('SCR10 UI scale clamps a filling stage while keeping every reported coordin
   near(desk.left, (1920 - 1422 * 1.35) / 2, 'centred remainder');
   assert.deepEqual(desk.designRect, { x: 311, y: 190, width: 800, height: 420 });
   const options = { box: { width: 1000, height: 500 }, design, fit: 'fixedWidth' };
-  assert.deepEqual(planScreen({ ...options, uiScale }), planScreen(options), 'inside the bounds, the original fit stays');
+  assert.deepEqual(
+    planScreen({ ...options, uiScale }),
+    planScreen(options),
+    'inside the bounds, the original fit stays'
+  );
   const fixed = planScreen({ ...options, uiScale: { max: 1 } });
   assert.deepEqual([fixed.width, fixed.height, fixed.scale], [1000, 500, 1]);
 });
@@ -201,6 +210,10 @@ test('SCR11 UI scale is validated, only for filling fits and without whole-pixel
   const options = { box: { width: 1000, height: 500 }, design: { width: 800, height: 420 }, fit: 'expand' };
   for (const uiScale of [null, [], 'large', { min: 0 }, { max: NaN }, { min: 2, max: 1 }, { max: 1e-300 }])
     assert.throws(() => planScreen({ ...options, uiScale }), { code: 'UI_SCREEN_OPTIONS_INVALID' });
-  assert.throws(() => planScreen({ ...options, fit: 'contain', uiScale: { min: 1 } }), { code: 'UI_SCREEN_OPTIONS_INVALID' });
-  assert.throws(() => planScreen({ ...options, wholeScale: true, uiScale: { max: 1 } }), { code: 'UI_SCREEN_OPTIONS_INVALID' });
+  assert.throws(() => planScreen({ ...options, fit: 'contain', uiScale: { min: 1 } }), {
+    code: 'UI_SCREEN_OPTIONS_INVALID'
+  });
+  assert.throws(() => planScreen({ ...options, wholeScale: true, uiScale: { max: 1 } }), {
+    code: 'UI_SCREEN_OPTIONS_INVALID'
+  });
 });

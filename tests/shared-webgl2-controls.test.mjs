@@ -1739,43 +1739,75 @@ test('GL: single-page batching omits the expensive paged program and preserves o
     const type = egret.createAssetType('single-page-startup-test', egret.isTexture);
     a.engine.assets.register(type, {
       async load(ref) {
-        return egret.createTexture(egret.createImageData2D({width:2,height:2,pixels:new Uint8Array(16).fill(ref.id==='a'?255:128)}));
-      }, dispose(value) { value.dispose(); }
+        return egret.createTexture(
+          egret.createImageData2D({ width: 2, height: 2, pixels: new Uint8Array(16).fill(ref.id === 'a' ? 255 : 128) })
+        );
+      },
+      dispose(value) {
+        value.dispose();
+      }
     });
     const leases = [];
-    for (const id of ['a','b']) leases.push(a.scope.use(await a.engine.assets.acquire(egret.createAssetRef(type,id),{signal:a.scope.signal})));
-    a.sprite.visible=false;
+    for (const id of ['a', 'b'])
+      leases.push(
+        a.scope.use(await a.engine.assets.acquire(egret.createAssetRef(type, id), { signal: a.scope.signal }))
+      );
+    a.sprite.visible = false;
     // Adjacent same-page draws may still batch; an intervening page must split the batch.
-    for (const [index,page] of [0,0,1,0].entries()) {
-      const node=a.scope.use(new egret.Bitmap(leases[page])); node.x=index*2; a.engine.stage.addChild(node);
+    for (const [index, page] of [0, 0, 1, 0].entries()) {
+      const node = a.scope.use(new egret.Bitmap(leases[page]));
+      node.x = index * 2;
+      a.engine.stage.addChild(node);
     }
-    const f=glPorts(), h=createSharedWebGL2Host({canvas:f.canvas,pageBatching:'single-page'});
+    const f = glPorts(),
+      h = createSharedWebGL2Host({ canvas: f.canvas, pageBatching: 'single-page' });
     try {
       await h.start();
-      const programs=f.events.filter(row=>row[0]==='linkProgram').map(row=>row[1]);
-      assert.equal(programs.length,3);
-      assert.ok(programs.every(p=>!/uniform highp sampler2D page7;/.test(p.shaders[1].source)));
-      const timing=h.getStartupTiming();assert.equal(timing.pagedMs,0);
-      assert.ok(timing.totalMs>=0 && timing.contextMs>=0);
-      const before=f.events.length;h.renderSharedFrame(a.frame());await h.whenIdle();
-      const events=f.events.slice(before);
-      assert.deepEqual(events.filter(row=>row[0]==='drawArrays').map(row=>row.slice(1)),[[f.gl.TRIANGLES,0,12],[f.gl.TRIANGLES,12,6],[f.gl.TRIANGLES,18,6],[f.gl.TRIANGLES,0,3]]);
-      assert.equal(events.filter(row=>row[0]==='linkProgram').length,0,'no deferred shader work');
-    } finally { await h.close(); }
-    assert.throws(()=>createSharedWebGL2Host({canvas:glPorts().canvas,pageBatching:'bogus'}),code('OPTIONS_INVALID'));
+      const programs = f.events.filter(row => row[0] === 'linkProgram').map(row => row[1]);
+      assert.equal(programs.length, 3);
+      assert.ok(programs.every(p => !/uniform highp sampler2D page7;/.test(p.shaders[1].source)));
+      const timing = h.getStartupTiming();
+      assert.equal(timing.pagedMs, 0);
+      assert.ok(timing.totalMs >= 0 && timing.contextMs >= 0);
+      const before = f.events.length;
+      h.renderSharedFrame(a.frame());
+      await h.whenIdle();
+      const events = f.events.slice(before);
+      assert.deepEqual(
+        events.filter(row => row[0] === 'drawArrays').map(row => row.slice(1)),
+        [
+          [f.gl.TRIANGLES, 0, 12],
+          [f.gl.TRIANGLES, 12, 6],
+          [f.gl.TRIANGLES, 18, 6],
+          [f.gl.TRIANGLES, 0, 3]
+        ]
+      );
+      assert.equal(events.filter(row => row[0] === 'linkProgram').length, 0, 'no deferred shader work');
+    } finally {
+      await h.close();
+    }
+    assert.throws(
+      () => createSharedWebGL2Host({ canvas: glPorts().canvas, pageBatching: 'bogus' }),
+      code('OPTIONS_INVALID')
+    );
   });
 });
 
 // The fast policy must also omit the paged source when the parallel program extension is available.
 test('GL: single-page mode with parallel shader compilation prepares only the admitted programs', async () => {
   const { f, control } = parallelPorts();
-  const h = createSharedWebGL2Host({canvas:f.canvas,pageBatching:'single-page'});
+  const h = createSharedWebGL2Host({ canvas: f.canvas, pageBatching: 'single-page' });
   try {
-    control.asks=2; await h.start();
-    const links=f.events.filter(row=>row[0]==='linkProgram').map(row=>row[1]);
-    assert.equal(links.length,3);
-    assert.ok(links.every(program=>!/uniform highp sampler2D page7;/.test(program.shaders[1].source)));
-    const timing=h.getStartupTiming();assert.equal(timing.parallelPrograms,true);assert.equal(timing.pagedMs,0);
-    assert.ok(timing.programPreparationMs>=0 && timing.totalMs>=timing.programPreparationMs);
-  } finally { await h.close(); }
+    control.asks = 2;
+    await h.start();
+    const links = f.events.filter(row => row[0] === 'linkProgram').map(row => row[1]);
+    assert.equal(links.length, 3);
+    assert.ok(links.every(program => !/uniform highp sampler2D page7;/.test(program.shaders[1].source)));
+    const timing = h.getStartupTiming();
+    assert.equal(timing.parallelPrograms, true);
+    assert.equal(timing.pagedMs, 0);
+    assert.ok(timing.programPreparationMs >= 0 && timing.totalMs >= timing.programPreparationMs);
+  } finally {
+    await h.close();
+  }
 });

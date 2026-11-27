@@ -19,9 +19,12 @@ const publish = async root => {
 };
 
 test('responsive trees keep committed leaves and focus until publication; new leaves attach once in owned scopes', async () => {
-  const engine = await createEngine({ host: host().adapter }), scope = engine.createScope();
+  const engine = await createEngine({ host: host().adapter }),
+    scope = engine.createScope();
   const keyboard = createKeyboardInput({ engine, scope });
-  const prepared = new Map(), attached = [], closed = [];
+  const prepared = new Map(),
+    attached = [],
+    closed = [];
   let root;
   function source(id) {
     return {
@@ -44,7 +47,9 @@ test('responsive trees keep committed leaves and focus until publication; new le
       }
     };
   }
-  const a = source('a'), b = source('b'), c = source('c');
+  const a = source('a'),
+    b = source('b'),
+    c = source('c');
   const original = tree('column', [leaf('a', a), leaf('b', b)]);
   root = createUiRoot({ engine, scope, id: 'responsive', viewport, density: 1, tree: original });
   try {
@@ -93,8 +98,12 @@ test('responsive trees keep committed leaves and focus until publication; new le
 });
 
 test('responsive refusal and superseded preparation never attach or remove committed content', async () => {
-  const engine = await createEngine({ host: host().adapter }), scope = engine.createScope();
-  const attach = [], contexts = [], late = deferred(), cause = new Error('post-attachment failure');
+  const engine = await createEngine({ host: host().adapter }),
+    scope = engine.createScope();
+  const attach = [],
+    contexts = [],
+    late = deferred(),
+    cause = new Error('post-attachment failure');
   const source = (name, wait = false, throws = false) => ({
     revision: 0,
     prepare(context) {
@@ -107,14 +116,33 @@ test('responsive refusal and superseded preparation never attach or remove commi
       if (throws) throw cause;
     }
   });
-  const a = source('a'), b = source('b', true), c = source('c', false, true);
-  const root = createUiRoot({ engine, scope, id: 'responsive', viewport, density: 1, tree: tree('column', [leaf('a', a)]) });
+  const a = source('a'),
+    b = source('b', true),
+    c = source('c', false, true);
+  const root = createUiRoot({
+    engine,
+    scope,
+    id: 'responsive',
+    viewport,
+    density: 1,
+    tree: tree('column', [leaf('a', a)])
+  });
   try {
     await publish(root);
     const before = root.snapshot();
-    assert.throws(() => root.setTree(tree('row', [leaf('a', a), leaf('a', b)]), { responsive: true }), code('UI_DUPLICATE_ID'));
+    assert.throws(
+      () => root.setTree(tree('row', [leaf('a', a), leaf('a', b)]), { responsive: true }),
+      code('UI_DUPLICATE_ID')
+    );
     assert.deepEqual(root.snapshot().boxes, before.boxes);
-    assert.throws(() => root.setTree({ id: 'list', kind: 'virtualList', source: { revision: 0, records: [], bind() {}, unbind() {} } }, { responsive: true }), code('UI_TREE_SHAPE'));
+    assert.throws(
+      () =>
+        root.setTree(
+          { id: 'list', kind: 'virtualList', source: { revision: 0, records: [], bind() {}, unbind() {} } },
+          { responsive: true }
+        ),
+      code('UI_TREE_SHAPE')
+    );
     root.setTree(tree('column', [leaf('b', b)]), { responsive: true });
     const pending = root.prepare();
     const refused = assert.rejects(pending, code('UI_STALE'));
@@ -137,11 +165,26 @@ test('responsive refusal and superseded preparation never attach or remove commi
 });
 
 test('responsive changes may move a fixed virtual list, not replace its identity', async () => {
-  const engine = await createEngine({ host: host().adapter }), scope = engine.createScope();
-  const source = { revision: 0, records: [{ key: 'k', contentVersion: 0, estimatedHeight: 20, value: null }], bind(context) { return { content: context.scope.use(new DisplayObjectContainer()), measuredHeight: 20 }; }, unbind() {} };
+  const engine = await createEngine({ host: host().adapter }),
+    scope = engine.createScope();
+  const source = {
+    revision: 0,
+    records: [{ key: 'k', contentVersion: 0, estimatedHeight: 20, value: null }],
+    bind(context) {
+      return { content: context.scope.use(new DisplayObjectContainer()), measuredHeight: 20 };
+    },
+    unbind() {}
+  };
   const list = { id: 'list', kind: 'virtualList', explicitWidth: 80, explicitHeight: 40, source };
   const spacer = { id: 'spacer', kind: 'leaf', explicitWidth: 36, explicitHeight: 12 };
-  const root = createUiRoot({ engine, scope, id: 'responsive-list', viewport, density: 1, tree: tree('column', [list]) });
+  const root = createUiRoot({
+    engine,
+    scope,
+    id: 'responsive-list',
+    viewport,
+    density: 1,
+    tree: tree('column', [list])
+  });
   try {
     await publish(root);
     const generation = root.snapshot().rows[0].bindingGeneration;
@@ -150,7 +193,10 @@ test('responsive changes may move a fixed virtual list, not replace its identity
     assert.equal(root.snapshot().rows[0].bindingGeneration, generation);
     assert.ok(root.snapshot().rows[0].box.x > 0);
     assert.throws(() => root.setTree(tree('row', [spacer]), { responsive: true }), code('UI_TREE_SHAPE'));
-    assert.throws(() => root.setTree(tree('row', [{ ...list, id: 'other' }]), { responsive: true }), code('UI_TREE_SHAPE'));
+    assert.throws(
+      () => root.setTree(tree('row', [{ ...list, id: 'other' }]), { responsive: true }),
+      code('UI_TREE_SHAPE')
+    );
     assert.equal(root.list('list').snapshot().rows[0].bindingGeneration, generation);
   } finally {
     await engine.dispose();
@@ -158,18 +204,40 @@ test('responsive changes may move a fixed virtual list, not replace its identity
 });
 
 test('responsive removal retires popup anchors only at committed publication', async () => {
-  const engine = await createEngine({ host: host().adapter }), scope = engine.createScope();
+  const engine = await createEngine({ host: host().adapter }),
+    scope = engine.createScope();
   const input = createPointerInput({ engine, scope, ...viewport });
   const anchor = { id: 'anchor', kind: 'leaf', explicitWidth: 36, explicitHeight: 20 };
   const spare = { id: 'spare', kind: 'leaf', explicitWidth: 36, explicitHeight: 20 };
-  const base = createUiRoot({ engine, scope, input, id: 'base', viewport, density: 1, tree: tree('column', [anchor, spare]) });
-  const popup = createUiRoot({ engine, scope, input, id: 'popup', viewport: { width: 40, height: 25 }, density: 1, tree: { id: 'menu', kind: 'leaf', explicitWidth: 40, explicitHeight: 25 } });
+  const base = createUiRoot({
+    engine,
+    scope,
+    input,
+    id: 'base',
+    viewport,
+    density: 1,
+    tree: tree('column', [anchor, spare])
+  });
+  const popup = createUiRoot({
+    engine,
+    scope,
+    input,
+    id: 'popup',
+    viewport: { width: 40, height: 25 },
+    density: 1,
+    tree: { id: 'menu', kind: 'leaf', explicitWidth: 40, explicitHeight: 25 }
+  });
   try {
     await publish(base);
     await publish(popup);
     const layers = createUiLayerManager({ engine, scope, input, viewport: { x: 0, y: 0, ...viewport } });
     layers.register({ id: 'base', root: base, kind: 'base' });
-    layers.register({ id: 'popup', root: popup, kind: 'popup', anchor: { root: base, target: { kind: 'leaf', id: 'anchor' } } });
+    layers.register({
+      id: 'popup',
+      root: popup,
+      kind: 'popup',
+      anchor: { root: base, target: { kind: 'leaf', id: 'anchor' } }
+    });
     layers.open('popup');
     layers.sync();
     assert.deepEqual(layers.snapshot().openStack, ['popup']);
@@ -189,13 +257,33 @@ test('responsive removal retires popup anchors only at committed publication', a
 });
 
 test('post-attachment callbacks observe the committed revision and may close without later registrations', async () => {
-  const engine = await createEngine({ host: host().adapter }), scope = engine.createScope();
+  const engine = await createEngine({ host: host().adapter }),
+    scope = engine.createScope();
   const attached = [];
-  const make = onAttach => ({ revision: 0, prepare(context) { return { content: context.scope.use(new DisplayObjectContainer()), measuredHeight: 20 }; }, onAttach });
+  const make = onAttach => ({
+    revision: 0,
+    prepare(context) {
+      return { content: context.scope.use(new DisplayObjectContainer()), measuredHeight: 20 };
+    },
+    onAttach
+  });
   let root;
-  const first = make(context => { assert.equal(root.snapshot().committedRevision, context.committedRevision); attached.push('first'); root.dispose(); });
-  const second = make(() => { attached.push('second'); });
-  root = createUiRoot({ engine, scope, id: 'responsive-close', viewport, density: 1, tree: tree('row', [leaf('first', first), leaf('second', second)]) });
+  const first = make(context => {
+    assert.equal(root.snapshot().committedRevision, context.committedRevision);
+    attached.push('first');
+    root.dispose();
+  });
+  const second = make(() => {
+    attached.push('second');
+  });
+  root = createUiRoot({
+    engine,
+    scope,
+    id: 'responsive-close',
+    viewport,
+    density: 1,
+    tree: tree('row', [leaf('first', first), leaf('second', second)])
+  });
   try {
     const result = await publish(root);
     assert.equal(result.kind, 'committed');

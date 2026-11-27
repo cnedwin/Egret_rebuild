@@ -88,7 +88,9 @@ export interface UiLeafContent {
   readonly revision: number;
   prepare(context: UiLeafPrepareContext): RowBinding | Promise<RowBinding>;
   /** Once per fresh binding, after publication and old leaf cleanup. Register attached controls in this scope. */
-  onAttach?(context: UiLeafPrepareContext & Readonly<{ content: DisplayObjectContainer; committedRevision: number }>): void;
+  onAttach?(
+    context: UiLeafPrepareContext & Readonly<{ content: DisplayObjectContainer; committedRevision: number }>
+  ): void;
 }
 /** What a bound row shows, and its measured height. */
 export interface RowBinding {

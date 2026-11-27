@@ -67,7 +67,9 @@ game.onScreenChange(() => {
 });
 globalThis.overlayCheck = {
   check,
-  move: () => { pause.x -= 1; },
+  move: () => {
+    pause.x -= 1;
+  },
   invalidate: () => game.invalidate(),
   timings: () => ui.getStartupTiming(),
   loop: () => game.loop.snapshot(),

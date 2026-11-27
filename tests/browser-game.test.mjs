@@ -387,25 +387,45 @@ test('opt-in static GPU background remains cached while normal stage geometry ch
   }
 });
 
-
 test('game image jobs wait in a bounded FIFO and canceled waiting work does not reach the transport', async t => {
   // Test-owned page/GL ports as in the geometry case above. A genuine loopback HTTP server holds
   // replies, testing admission and scope cancellation rather than claiming native image decoding.
   const { createServer } = await import('node:http');
   const doc = page().document;
-  const globals = { document: doc, window: { document: doc, createImageBitmap() {} }, ImageBitmap: class { close() {} } };
+  const globals = {
+    document: doc,
+    window: { document: doc, createImageBitmap() {} },
+    ImageBitmap: class {
+      close() {}
+    }
+  };
   for (const [name, value] of Object.entries(globals)) {
     const previous = Object.getOwnPropertyDescriptor(globalThis, name);
-    t.after(() => previous ? Object.defineProperty(globalThis, name, previous) : Reflect.deleteProperty(globalThis, name));
+    t.after(() =>
+      previous ? Object.defineProperty(globalThis, name, previous) : Reflect.deleteProperty(globalThis, name)
+    );
     Object.defineProperty(globalThis, name, { configurable: true, value });
   }
-  const received = [], server = createServer((request, response) => received.push({ url: request.url, response }));
+  const received = [],
+    server = createServer((request, response) => received.push({ url: request.url, response }));
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const url = 'http://127.0.0.1:' + server.address().port;
   const { canvas } = glPorts();
   canvas.getBoundingClientRect = () => ({ width: 128, height: 64 });
-  const game = await createBrowserGame({ canvas, width: 128, height: 64, backend: 'webgl2', autoStart: false, pointer: false, keyboard: false });
-  const observed = path => game.loadTexture(url + path).then(value => ({ value }), error => ({ error }));
+  const game = await createBrowserGame({
+    canvas,
+    width: 128,
+    height: 64,
+    backend: 'webgl2',
+    autoStart: false,
+    pointer: false,
+    keyboard: false
+  });
+  const observed = path =>
+    game.loadTexture(url + path).then(
+      value => ({ value }),
+      error => ({ error })
+    );
   const until = async predicate => {
     const deadline = Date.now() + 8000;
     while (!predicate()) {
@@ -413,7 +433,10 @@ test('game image jobs wait in a bounded FIFO and canceled waiting work does not 
       await new Promise(resolve => setTimeout(resolve, 10));
     }
   };
-  const refuse = item => { item.response.writeHead(404); item.response.end(); };
+  const refuse = item => {
+    item.response.writeHead(404);
+    item.response.end();
+  };
   try {
     const first = Array.from({ length: 6 }, (_, i) => observed('/first-' + i));
     await until(() => received.length === 4);

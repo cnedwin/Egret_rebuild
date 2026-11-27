@@ -108,9 +108,13 @@ export async function createWorld3DOverlay(
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
   if (!options || !(options.width > 0) || !(options.height > 0))
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
-  if ((options.renderMode !== undefined && options.renderMode !== 'continuous' && options.renderMode !== 'on-demand') ||
-      (options.effects !== undefined && typeof options.effects !== 'boolean') ||
-      (options.webgl2PageBatching !== undefined && options.webgl2PageBatching !== 'single-page' && options.webgl2PageBatching !== 'multi-page'))
+  if (
+    (options.renderMode !== undefined && options.renderMode !== 'continuous' && options.renderMode !== 'on-demand') ||
+    (options.effects !== undefined && typeof options.effects !== 'boolean') ||
+    (options.webgl2PageBatching !== undefined &&
+      options.webgl2PageBatching !== 'single-page' &&
+      options.webgl2PageBatching !== 'multi-page')
+  )
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
   const fit = options.fit ?? 'stretch';
   if (!(OVERLAY_FITS as readonly unknown[]).includes(fit)) throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
@@ -285,7 +289,8 @@ export async function createWorld3DOverlay(
   return {
     game,
     canvas: overlay,
-    getStartupTiming: () => Object.freeze({ placementMs: placedAt - started, readyMs: ready - started, game: game.getStartupTiming() }),
+    getStartupTiming: () =>
+      Object.freeze({ placementMs: placedAt - started, readyMs: ready - started, game: game.getStartupTiming() }),
     get box() {
       if (!fills) return placed;
       const screen = game.screen;

@@ -1049,8 +1049,13 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
     setTree(value, options) {
       admit('tree', () => {
         const revision = desired;
-        if (options !== undefined && (options === null || typeof options !== 'object' ||
-            Reflect.ownKeys(options).some(key => key !== 'responsive'))) fail('UI_VALUE_INVALID');
+        if (
+          options !== undefined &&
+          (options === null ||
+            typeof options !== 'object' ||
+            Reflect.ownKeys(options).some(key => key !== 'responsive'))
+        )
+          fail('UI_VALUE_INVALID');
         const responsive = options?.responsive;
         if (responsive !== undefined && typeof responsive !== 'boolean') fail('UI_VALUE_INVALID');
         const captured = captureUiTree(value),
@@ -1259,7 +1264,9 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
           content: c.bindings.get(row.key)!.content!,
           visible: row.visible
         }));
-        const freshLeaves = [...c.preparedWindow.leafBindings.values()].filter(leaf => leafBindings.get(leaf.id) !== leaf);
+        const freshLeaves = [...c.preparedWindow.leafBindings.values()].filter(
+          leaf => leafBindings.get(leaf.id) !== leaf
+        );
         const restoreFocus = keyboard?.before(keyboardRows);
         // Cancellation callbacks may change or close the UI. Never publish their obsolete proposal.
         if (closed || desired !== preparation.desiredRevision || committed !== preparation.baseCommittedRevision) {
@@ -1322,10 +1329,18 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
           const source = leaf.source;
           if (leaf.terminal || source?.onAttach === undefined) continue;
           try {
-            source.onAttach.call(source.identity, freeze({
-              theme: leaf.theme, scope: leaf.scope.scope, signal: leaf.scope.signal, width: leaf.width,
-              density: leaf.density, content: leaf.content!, committedRevision: committed
-            }));
+            source.onAttach.call(
+              source.identity,
+              freeze({
+                theme: leaf.theme,
+                scope: leaf.scope.scope,
+                signal: leaf.scope.signal,
+                width: leaf.width,
+                density: leaf.density,
+                content: leaf.content!,
+                committedRevision: committed
+              })
+            );
           } catch (cause) {
             errors.push(cause);
           }

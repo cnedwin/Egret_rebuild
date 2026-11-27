@@ -17,7 +17,12 @@ export type {
   WebGL2HostDiagnostic,
   WebGL2HostStatus
 } from './webgl2Types.js';
-export type { SharedWebGL2FrameTiming, SharedWebGL2TimingPhase, SharedWebGL2TimingSample, SharedWebGL2StartupTiming } from './webgl2Types.js';
+export type {
+  SharedWebGL2FrameTiming,
+  SharedWebGL2TimingPhase,
+  SharedWebGL2TimingSample,
+  SharedWebGL2StartupTiming
+} from './webgl2Types.js';
 export type {
   SharedDeviceSessionState,
   SharedDeviceSessionStatus,

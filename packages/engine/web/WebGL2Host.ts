@@ -15,7 +15,12 @@ import type {
 import { readOwnedSharedFrame } from '#egret-textured-frame-state';
 import { admitSharedWebGL2Options } from './sharedWebGL2Options.js';
 import type { SharedWebGL2HostOptions, SharedWebGL2Configuration } from './sharedWebGL2Options.js';
-import type { SharedWebGL2FrameTiming, SharedWebGL2TimingPhase, SharedWebGL2TimingSample, SharedWebGL2StartupTiming } from './webgl2Types.js';
+import type {
+  SharedWebGL2FrameTiming,
+  SharedWebGL2TimingPhase,
+  SharedWebGL2TimingSample,
+  SharedWebGL2StartupTiming
+} from './webgl2Types.js';
 import type {
   SharedLayerWebGL2Host,
   SharedWebGL2Layer2D,
@@ -948,7 +953,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       if (!native.cleanup(target)) throw glFailure('WEBGL2_CLOSE_UNSAFE', native.cleanupFailure?.cause);
-      const coded = native.codedTargets, contextReady = clock();
+      const coded = native.codedTargets,
+        contextReady = clock();
       const effectPasses = this.options.enableEffects ? EFFECT_PASSES : [];
       const sources: (readonly [string, string])[] = [
         [sharedWebGL2VertexSource, sampledFragmentSource(false, coded)],
@@ -1010,12 +1016,17 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       this.generationFailure = null;
       const ended = clock();
       this.startupTiming = Object.freeze({
-        generation, contextMs: contextReady - started,
-        parallelPrograms: programs !== undefined, programPreparationMs: preparationReady - contextReady,
+        generation,
+        contextMs: contextReady - started,
+        parallelPrograms: programs !== undefined,
+        programPreparationMs: preparationReady - contextReady,
         sampledMs: sampledReady - preparationReady,
-        solidMs: solidReady - sampledReady, resolveMs: resolveReady - solidReady,
-        effectsMs: effectsReady - resolveReady, pagedMs: this.options.pageBatching === 'single-page' ? 0 : pagedReady - effectsReady,
-        finishMs: ended - pagedReady, totalMs: ended - started
+        solidMs: solidReady - sampledReady,
+        resolveMs: resolveReady - solidReady,
+        effectsMs: effectsReady - resolveReady,
+        pagedMs: this.options.pageBatching === 'single-page' ? 0 : pagedReady - effectsReady,
+        finishMs: ended - pagedReady,
+        totalMs: ended - started
       });
       this.cancelRestore();
       barrier.resolve();
@@ -2970,7 +2981,9 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     });
     return this.closing;
   }
-  public getStartupTiming(): SharedWebGL2StartupTiming | undefined { return this.startupTiming; }
+  public getStartupTiming(): SharedWebGL2StartupTiming | undefined {
+    return this.startupTiming;
+  }
   public getSessionStatus(): SharedDeviceSessionStatus<WebGL2HostFailure> {
     return Object.freeze({
       state: this.state === 'active' ? 'ready' : this.state,
