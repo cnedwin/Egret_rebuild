@@ -3,6 +3,7 @@ import {Bitmap, Mesh2D, Sprite} from '@egret/engine';
 // The 5.x Graphics port needs the exact same local triangle coverage as the 7.x Stage.
 import {containsOwnPaint} from '../../packages/runtime/dist/displayHitTest.js';
 import {original5NineSlice} from './original5-nine-slice.mjs';
+import {original4BitmapData} from './original5-bitmap-abi4.mjs';
 import {createOriginal5Images} from './original5-images.mjs';
 
 function unsupported(name) {
@@ -13,7 +14,8 @@ function rectangle(x, y, width, height) {
   return {x, y, width, height};
 }
 
-export function createOriginal5Display(services) {
+export function createOriginal5Display(services, nativeAbi = 5) {
+  if (nativeAbi !== 4 && nativeAbi !== 5) throw new TypeError('Unsupported original 5.x display ABI');
   const images = createOriginal5Images(services);
   const objects = new Map();
   const cleanup = new FinalizationRegistry(id => objects.delete(id));
@@ -51,6 +53,8 @@ export function createOriginal5Display(services) {
       } finally { old?.release(); }
     }
   }
+
+  const abi4 = nativeAbi === 4 ? original4BitmapData(NativeBitmapData) : null;
 
   class NativeDisplayObject {
     constructor(kind) {
@@ -158,7 +162,8 @@ export function createOriginal5Display(services) {
 
     setTexture(texture) {
       const old = this.boundData;
-      const data = texture?.$bitmapData?.$nativeBitmapData;
+      const holder = texture?.$bitmapData;
+      const data = abi4 ? abi4.dataOf(holder) : holder?.$nativeBitmapData;
       if (texture?.$rotated) unsupported('rotated atlas');
       if (texture && !(data instanceof NativeBitmapData)) throw new Error('Expected original 5 BitmapData');
       if (data !== old) {
@@ -251,8 +256,16 @@ export function createOriginal5Display(services) {
     return result.x + ',' + result.y;
   }
 
+  if (abi4) {
+    // ABI 4 passes the original Texture object despite the historical method name.
+    NativeDisplayObject.prototype.setBitmapData = NativeDisplayObject.prototype.setTexture;
+    NativeDisplayObject.disposeBitmapData = data => abi4.dispose(data);
+    // A packed Texture only describes an atlas region; BitmapData owns the native page.
+    NativeDisplayObject.disposeTexture = () => {};
+  }
+
   const api = {
-    nrABIVersion: 5, nrMinEgretVersion: '5.3.10', NativeDisplayObject, NativeBitmapData,
+    nrABIVersion: nativeAbi, nrMinEgretVersion: nativeAbi === 4 ? '5.3.1' : '5.3.5', NativeDisplayObject, NativeBitmapData,
     nrLocalToGlobal: (id, x, y) => point(id, 'localToGlobal', x, y),
     nrGlobalToLocal: (id, x, y) => point(id, 'globalToLocal', x, y),
     // The player captures the bound tree after the original ticker has advanced the game.
@@ -272,6 +285,7 @@ export function createOriginal5Display(services) {
       return containsOwnPaint(native.content, point) ? target : null;
     }
     if (undoGraphics) throw new Error('Original 5 Graphics already installed');
+    abi4?.install(egret);
     originalEngine = egret;
     proto.$hitTest = hit;
     undoGraphics = () => { if (proto.$hitTest === hit) proto.$hitTest = previous; };
@@ -281,6 +295,7 @@ export function createOriginal5Display(services) {
     if (closed) return;
     closed = true;
     undoGraphics?.();
+    abi4?.close();
     originalEngine = undefined;
     stage?.frame.dispose();
     stage = undefined;

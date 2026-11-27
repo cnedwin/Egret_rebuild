@@ -29,6 +29,7 @@ final class ProjectAssets {
     final String entry;
     final Object v8Scripts;
     final boolean codeCache;
+    final boolean strictScripts;
     final boolean requiresWasm;
 
     ProjectAssets(Context context, String root) throws Exception {
@@ -49,6 +50,9 @@ final class ProjectAssets {
                 || (required.contains("Intl") && !"standard".equals(BundledScripts.PROFILE)))
             throw new IOException("The selected host cannot provide the game's declared V8 features");
         requiresWasm = required.contains("WebAssembly");
+        Object mode = manifest.has("v8ScriptMode") ? manifest.get("v8ScriptMode") : "strict";
+        if (!"strict".equals(mode) && !"classic".equals(mode)) throw new IOException("Expected strict or classic V8 script mode");
+        strictScripts = "strict".equals(mode);
         v8Scripts = manifest.opt("v8Scripts");
         Object cache = manifest.opt("v8CodeCache");
         if (manifest.has("v8CodeCache") && !(cache instanceof Boolean)) throw new IOException("Expected v8CodeCache boolean");

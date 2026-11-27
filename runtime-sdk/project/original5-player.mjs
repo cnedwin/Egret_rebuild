@@ -9,7 +9,8 @@ const opened = new WeakSet();
 const identifier = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/;
 
 function checkOptions({width, height, entryClass, frameRate = 30, coreGroup = 'originalCore',
-  moduleGroup = 'originalModules', gameGroup = 'originalGame'}) {
+  moduleGroup = 'originalModules', gameGroup = 'originalGame', nativeAbi = 5}) {
+  if (nativeAbi !== 4 && nativeAbi !== 5) throw new TypeError('Original native display ABI must be 4 or 5');
   if (![width, height].every(n => Number.isInteger(n) && n > 0 && n <= 4096) ||
       !Number.isFinite(frameRate) || frameRate <= 0 || frameRate > 120 ||
       typeof entryClass !== 'string' || !identifier.test(entryClass) ||
@@ -21,7 +22,7 @@ function checkOptions({width, height, entryClass, frameRate = 30, coreGroup = 'o
       groups.some(name => typeof name !== 'string' || !/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(name))) {
     throw new TypeError('Expected distinct original 5.x script groups');
   }
-  return {coreGroup, moduleGroup, gameGroup, frameRate};
+  return {coreGroup, moduleGroup, gameGroup, frameRate, nativeAbi};
 }
 
 // The package runs in a fresh script isolate. Dispose only globals that we installed.
@@ -34,9 +35,11 @@ function expose(installed, name, value) {
   installed.set(name, value);
 }
 
-function touchInput(egret, stage) {
+function touchInput(egret, stage, nativeAbi) {
   const handler = new egret.sys.TouchHandler(stage);
-  handler.$initMaxTouches();
+  if (nativeAbi === 4) stage.$touch = handler;
+  const refresh = nativeAbi === 4 ? () => handler.$updateMaxTouches() : () => handler.$initMaxTouches();
+  refresh();
   const positions = new Map();
   // The original handler emits TAP on an ordinary up. Cancel an interrupted contact
   // on its captured target without converting an OS cancellation into a purchase or click.
@@ -51,7 +54,7 @@ function touchInput(egret, stage) {
       point.x, point.y, id, false);
   }
   return {
-    refresh: () => handler.$initMaxTouches(),
+    refresh,
     cancelAll() { for (const id of [...positions.keys()]) cancel(id); },
     send({type, id, x, y}) {
       if (!Number.isInteger(id) || !Number.isFinite(x) || !Number.isFinite(y)) return;
@@ -68,14 +71,14 @@ function touchInput(egret, stage) {
 }
 
 export async function openOriginal5Project(services, options) {
-  const {coreGroup, moduleGroup, gameGroup, frameRate} = checkOptions(options);
+  const {coreGroup, moduleGroup, gameGroup, frameRate, nativeAbi} = checkOptions(options);
   const scripts = globalThis.EgretRuntimeScripts;
   if (typeof scripts?.loadGroup !== 'function' || opened.has(scripts) || 'egret' in globalThis) {
     throw new Error('Original 5.x requires a fresh player script isolate');
   }
   services.signal.throwIfAborted();
   opened.add(scripts);
-  const display = createOriginal5Display(services);
+  const display = createOriginal5Display(services, nativeAbi);
   const installed = new Map();
   let closed = false, player, touch, lifecycle, text, editor;
   function close() {
@@ -106,7 +109,7 @@ export async function openOriginal5Project(services, options) {
     await load(coreGroup);
     const egret = globalThis.egret;
     if (!egret?.nativeRender || !/^5\.3\.\d+$/.test(egret.Capabilities?.engineVersion ?? '')) {
-      throw new Error('This adapter requires an original Egret 5.3.x core with native rendering ABI 5');
+      throw new Error('The original Egret 5.3.x core must accept the packaged native display ABI');
     }
     display.installGraphics(egret);
     installOriginal5Platform(egret, services, display, options.images, options.remoteRequest);
@@ -127,7 +130,7 @@ export async function openOriginal5Project(services, options) {
       throw new Error('Missing original game entry class: ' + options.entryClass);
     }
     const stage = new egret.Stage();
-    touch = touchInput(egret, stage);
+    touch = touchInput(egret, stage, nativeAbi);
     stage.$screen = {
       updateMaxTouches: () => touch.refresh(),
       updateScreenSize: () => player.updateStageSize(options.width, options.height),

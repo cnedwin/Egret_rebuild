@@ -6,6 +6,26 @@ import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 import { inputFile } from './export-project.mjs';
 
+/** Select the compatibility contract before running the unmodified core in its fresh isolate. */
+export function original5NativeAbi(coreSource, explicit) {
+  // Some published tags report the same JS engine version. Both of the known
+  // early cores use ABI 4. Never infer the native contract from the game version.
+  const versions = new Set([...coreSource.matchAll(/\.engineVersion\s*=\s*["'](5\.3\.\d+)["']/g)].map(match => match[1]));
+  if (versions.size > 1) throw new Error('Ambiguous original core version');
+  const [version] = versions;
+  const known = /^5\.3\.(1|2)$/.test(version) ? 4 : /^5\.3\.(5|6|7|8|9|10)$/.test(version) ? 5 : undefined;
+  const declarations = new Set([...coreSource.matchAll(/\brequiredNrABIVersion\s*=\s*(\d+)\b/g)].map(match => Number(match[1])));
+  if (declarations.size > 1) throw new Error('Ambiguous native ABI in original core');
+  const [declared] = declarations;
+  const nativeAbi = explicit ?? declared ?? known ?? 5;
+  if ((nativeAbi !== 4 && nativeAbi !== 5) || (known && nativeAbi !== known) ||
+      (declared !== undefined && declared !== nativeAbi)) {
+    throw new Error('Native ABI disagrees with the original engine core');
+  }
+  if (version && !known && declared === undefined && explicit === undefined) throw new Error('Specify nativeAbi for this unqualified 5.3.x core');
+  return nativeAbi;
+}
+
 /** Stage original published JS byte-for-byte for the normal Android exporter and its signed build. */
 export async function prepareOriginal5(source, config, output) {
   source = await realpath(source);
@@ -24,6 +44,8 @@ export async function prepareOriginal5(source, config, output) {
   if (manifest.initial[0] !== core || (!config.coreScript && !/(?:^|\/)egret(?:\.min)?\.js$/.test(core))) {
     throw new Error('The first original engine script must be identified in coreScript');
   }
+  const coreSource = await readFile(await inputFile(source,core), 'utf8');
+  const nativeAbi = original5NativeAbi(coreSource, config.nativeAbi);
   const originalScripts = [...manifest.initial, ...manifest.game];
   if (originalScripts.length > 4095 || new Set(originalScripts.map(name => name.toLowerCase())).size !== originalScripts.length ||
       originalScripts.some(name => !name.endsWith('.js'))) throw new Error('Duplicate, invalid or oversized original script plan');
@@ -77,7 +99,7 @@ export async function prepareOriginal5(source, config, output) {
       await mkdir(path.dirname(destination),{recursive:true});
       await copyFile(original,destination,constants.COPYFILE_EXCL);
     }
-    const options = {width,height,entryClass,frameRate,clearColor,images};
+    const options = {width,height,entryClass,frameRate,clearColor,images,nativeAbi};
     if (!modules.length) options.moduleGroup = null;
     const setup = ["import { installOriginal5Project } from '@egret/android-original5';"];
     if (adapter !== undefined) {
@@ -91,7 +113,7 @@ export async function prepareOriginal5(source, config, output) {
     await writeFile(path.join(staging,'original-script-map.json'),JSON.stringify(scriptMap,null,2) + '\n');
     await writeFile(path.join(staging,'index.html'),'<!doctype html><meta charset="utf-8"><script src="game.js"></script>\n');
     await writeFile(path.join(staging,'project.json'), JSON.stringify({
-      width,height,entry:'index.html',pages:[],assets:resources,v8Scripts:{groups}
+      width,height,entry:'index.html',pages:[],assets:resources,v8ScriptMode:'classic',v8Scripts:{groups}
     },null,2) + '\n');
     await rename(staging,output);
   } finally { await rm(staging,{recursive:true,force:true}); }

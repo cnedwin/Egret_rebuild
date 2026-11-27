@@ -35,7 +35,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
     private int width, height;
     // Last explicitly sampled vertex/index payload, excluding driver and texture allocations.
     volatile long sampledWorldGeometryBytes = -1;
-    volatile int contexts, uploads, releases, abandoned;
+    volatile int contexts, uploads, releases, abandoned, replacedPages, residentPages;
 
     PlayerGraphics(EgretPlayerView owner) { this.owner = owner; }
 
@@ -147,6 +147,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
                         check(PlayerGpu.release(handle, id), "release", id);
                         worldViews[id] = dataViews[id] = null;
                         releases++;
+                        residentPages--;
                     }
                 }
                 for (Map.Entry<Integer, Page> entry : frame.pages.entrySet()) {
@@ -155,6 +156,8 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
                     if (page == uploaded.get(id)) continue;
                     check(PlayerGpu.upload(handle, id, page.width, page.height, page.data), "upload", id);
                     worldViews[id] = dataViews[id] = null;
+                    if (uploaded.containsKey(id)) replacedPages++;
+                    else residentPages++;
                     uploads++;
                 }
                 uploaded = frame.pages;
@@ -201,6 +204,7 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
         PlayerGpu.destroy(handle, false);
         handle = 0;
         abandoned++;
+        residentPages = 0;
         sampledWorldGeometryBytes = 0;
         Arrays.fill(worldViews, null);
         Arrays.fill(dataViews, null);
@@ -215,8 +219,13 @@ final class PlayerGraphics implements GLSurfaceView.Renderer, GLSurfaceView.EGLC
         if (context == null || EGL14.EGL_NO_CONTEXT.equals(context) || !context.equals(EGL14.eglGetCurrentContext())) {
             abandon();
         } else {
-            for (int id : uploaded.keySet()) if (PlayerGpu.release(handle, id) == 0) releases++;
+            for (int id : uploaded.keySet()) if (PlayerGpu.release(handle, id) == 0) {
+                releases++;
+                residentPages--;
+            }
             PlayerGpu.destroy(handle, true);
+            // Native teardown also owns pages created before a failed batch was committed.
+            residentPages = 0;
             handle = 0;
             uploaded = Collections.emptyMap();
         }

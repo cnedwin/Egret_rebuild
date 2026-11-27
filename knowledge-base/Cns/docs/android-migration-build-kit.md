@@ -130,3 +130,9 @@ export function installHost({defineGlobal, services}) {
 Fold7 上的原版 5.3.10 工程用 RES 加载 PNG，用同一图集绘制两个 EUI 图片，并排版双色中文标签。点击实心圆或图集按钮会推进存档计数，点击圆形包围盒的透明角不会触发。强停重开后计数恢复。原版输入框唤起 Android 系统编辑器，在 `12` 后输入 `34` 并确认，收到一次获得焦点、两次内容变更和一次失去焦点事件。原版 InputController 继续处理游戏的字符过滤规则。密码输入需要单独的安全输入绑定。[图集与资源记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-original5-atlas.json) · [系统编辑器记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-original5-editor.json)
 
 每个应用只加载一种 V8 构建。切换配置时应验证游戏实际依赖的原引擎模块和第三方 SDK。浏览器插件启动前注册真实的原生接口，权限弹窗、渠道 Activity 回调、安全存储及交易走对应的平台服务。上面的命令用于 Android 工程。iOS 上加载原版 5 模块、任意浏览器 DOM 插件和白鹭 5 全部补丁版本仍需各自验证。
+
+### 打包原版 5.3 脚本
+
+准备工具会在启动前读取原引擎版本。5.3.1、5.3.2 两个标签使用原生显示接口 ABI 4，其中 5.3.2 标签附带的核心文件自报 5.3.1。5.3.5 到 5.3.10 使用 ABI 5。已人工确认接口的特殊构建可以在准备配置中填写 `nativeAbi`，与已识别版本相矛盾时会报错。图集样例的 `--engine-version` 填核心文件自报的版本。
+
+原版项目会声明 `v8ScriptMode: "classic"`。部分旧版调试 EUI 依赖经典浏览器脚本中块级函数的作用域。原文件若自行指定严格模式，该声明仍生效。现有项目继续使用默认的严格模式。需要在同一宿主安装包中嵌入两种 V8 模式时，请将它们放在不同应用进程。[覆盖版本与像素核对](original5-atlas-verification.md)
