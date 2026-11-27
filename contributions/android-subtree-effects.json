@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/legacy-subtree-effects/board.js",
+      "originRole": "Original procedural display tree and interaction for comparing subtree effects on the same scene. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-subtree-effects/index.html",
+      "originRole": "Android project entry page for the subtree effect fixture. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-subtree-effects/main.mjs",
+      "originRole": "Android player project factory for the procedural subtree effect fixture. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-subtree-effects/project.json",
+      "originRole": "Android project asset and script group manifest for the subtree effect fixture. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-project-subtree-effects.json",
+      "originRole": "Device and reference measurements for the procedural Android project subtree effect fixture. First-party evidence recorded with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/project_effect.frag",
+      "originRole": "GLES3 implementation of the Egret 7 shared subtree effect contract for a linear-light surface. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "runtime-sdk/native/src/project_effects.rs",
+      "originRole": "Context-owned GLES target lifecycle, pass ordering and compositing for native subtree effects. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "runtime-sdk/native/src/project_target_budget.rs",
+      "originRole": "Physical attachment byte accounting and capacity tests for nested targets and World3D depth. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "runtime-sdk/scene/project-effects.mjs",
+      "originRole": "Validation and little-endian encoding of EGR6 isolated group descriptors. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

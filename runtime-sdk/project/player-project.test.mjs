@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { PNG } from 'pngjs';
-import { copyImageData2DPixels, Bitmap, createAssetRef, createAssetType, createImageData2D, createTexture, isTexture } from '@egret/engine';
+import { copyImageData2DPixels, Bitmap, createAssetRef, createAssetType, createImageData2D, createTexture, isTexture, Sprite } from '@egret/engine';
 import { createSaveStore } from '@egret/engine/kit';
 import { createHerbarium } from '../examples/moon-herbarium/herbarium.mjs';
 import { loadPng } from '../examples/moon-herbarium/lettering.mjs';
@@ -24,6 +24,30 @@ function host() {
     }
   };
 }
+
+test('the installed native decoder advertises subtree effects before any effect frame is submitted', async () => {
+  for (const version of [undefined, 5, 6]) {
+    let group, capabilities;
+    const native = host();
+    if (version !== undefined) native.projectFrameVersion = () => version;
+    const project = createPlayerProject({ width: 8, height: 8, create(services) {
+      capabilities = services.capabilities;
+      group = services.engine.stage.addChild(services.scope.use(new Sprite()));
+      group.graphics.beginFill(0xffa000).drawRect(1, 1, 4, 4).endFill();
+      return {};
+    } }, native);
+    try {
+      await project.start();
+      assert.equal(capabilities.subtreeEffects, version === 6);
+      assert.equal(Buffer.from(project.frame(0).subarray(0, 4)).toString(), 'EGR2');
+      group.renderEffect = { blurRadius: 1 };
+      if (version === 6)
+        assert.equal(Buffer.from(project.frame(16).subarray(0, 4)).toString(), 'EGR6');
+      else
+        assert.throws(() => project.frame(16), /EGR6-capable Android player/);
+    } finally { await project.close(); }
+  }
+});
 
 function saveProject(native) {
   let storage;

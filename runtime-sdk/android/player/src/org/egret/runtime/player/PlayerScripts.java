@@ -127,6 +127,7 @@ final class PlayerScripts extends ScriptSession {
             try { pages.publish(id, width, height, rgba); }
             catch (RuntimeException e) { owner.reportFailure("Cannot publish project page: " + e); }
         }
+        @JavascriptInterface public int projectFrameVersion() { return PlayerGpu.projectFrameVersion(); }
         @JavascriptInterface public void releasePage(int id) { pages.release(id); }
         @JavascriptInterface public boolean hostStart(int id, String action, String json) { return owner.hostServices.start(id, action, json); }
         @JavascriptInterface public void hostCancel(int id) { owner.hostServices.cancel(id); }

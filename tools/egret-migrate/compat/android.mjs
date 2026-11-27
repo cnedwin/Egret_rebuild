@@ -307,6 +307,8 @@ export async function openLegacyAndroid(services, options) {
     const logs = androidLog(options.logger, options.captureLogs);
     const music = androidClassicMusic(services.host, scope, options.onError ?? logs.logger.error);
     const { api, mount } = createLegacyBindings({ ...sdk, createBitmapText, parseBitmapFont }, game, options, {
+      // An updated script bundle can run on an older AAR during development.
+      sharedEffects: services.capabilities?.subtreeEffects === true,
       atlasRaster: (w, h, runs) => nativeAtlasRaster(raster, w, h, runs),
       async pngBytes(png) {
         if (scope.signal.aborted) throw scope.signal.reason;

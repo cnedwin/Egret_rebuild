@@ -474,3 +474,11 @@ Rust 单元测试覆盖帧长度与取值检查、纹理标识、透明度转换
 此前的 EGR1 样板另有带 Intl 和不带 Intl 的 Javet/V8 两种可选构建、冻结命令回放及 Galaxy Z Fold7 的耗时和 PSS 记录。该数据对应原样板及其脚本宿主。上面的实机记录使用当时选定的系统 WebView 版 AAR。[原样板与实机记录](runtime-sdk-v8-fold7.md)
 
 项目适配器、Android 视图、Rust 渲染器和示例游戏均为本项目贡献。AAR 的 `assets/egret-player-licenses/` 包含项目 LICENSE/NOTICE，以及 Rust 标准库、NDK/工具链和 robust-predicates 的许可文件。发布应用时请保留这些文件及游戏自带资源适用的许可声明。
+
+### Android 上的 2D 子树滤镜
+
+原生帧解码器支持 EGR6 时，播放器通过 `services.capabilities.subtreeEffects` 声明能力。滤镜先按显示顺序将子节点绘制到离屏纹理，再将整组结果一次合成到父级。Android 工程播放器支持共享的 4 × 5 颜色矩阵、半径为 0 到 8 个舞台单位的整数模糊、扩散范围最多 16 个舞台单位的发光和描边，以及合成时的矩形裁剪。换算到实际绘制缓冲后，采样核半径上限为 16 像素。全尺寸离屏附件、主画面颜色附件及可选的 World3D 深度附件共用已有的 64 MiB 渲染目标预算。绘制前按最深同时占用的组和临时纹理核算内存。每帧最多八组，最多嵌套四层。
+
+导出游戏时使用同一版原生播放器。普通帧沿用已有编码。较早的播放器会在提交含子树滤镜的帧之前报告能力缺失。旧游戏可能依赖不同的模糊核或 sRGB 混色，需要使用一致的实际绘制分辨率和颜色设置逐屏对照原作。另见[经典项目 Android 指南](classic-game-android.md)。
+
+在相同的 1236 × 824 绘制缓冲和线性混色下，Galaxy Z Fold7 GLES3 与 Windows Edge WebGL2 整幅画面的 RGB 单通道最大差值，单层和嵌套矩阵均为 1/255，半径 5 的模糊为 2/255，扩散范围 7 的发光为 1/255。切后台后 EGL 上下文重新创建，返回时的嵌套画面和重新打开后的普通画面均与各自的原采样点一致。原版 5.3.10 WebGL 在此矩阵上的颜色计算不同。本次未测帧时和内存占用。[Fold7 与 Edge 像素及生命周期记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-subtree-effects.json)

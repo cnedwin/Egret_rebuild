@@ -312,6 +312,7 @@ public final class JavetProjectScripts extends ScriptSession {
             if (timer != null) worker.removeCallbacks(timer);
         }
         @V8Function public void page(int id, int width, int height, String rgba) { pages.publish(id, width, height, rgba); }
+        @V8Function public int projectFrameVersion() { return PlayerGpu.projectFrameVersion(); }
         @V8Function public void releasePage(int id) { pages.release(id); }
         @V8Function public boolean hostStart(int id, String action, String json) { return owner.hostServices.start(id, action, json); }
         @V8Function public void hostCancel(int id) { owner.hostServices.cancel(id); }

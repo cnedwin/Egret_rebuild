@@ -66,7 +66,10 @@ function createPlayerStorage(native, lifetime) {
 }
 
 export function createPlayerProject(definition, native, composeWorld, extendServices) {
-  const encoder = createCapturedProjectEncoder();
+  // Ask the installed native library once. Older player archives have no probe.
+  const version = typeof native.projectFrameVersion === 'function' ? native.projectFrameVersion() : 0;
+  const capabilities = Object.freeze({ subtreeEffects: Number.isInteger(version) && version >= 6 });
+  const encoder = createCapturedProjectEncoder(capabilities);
   const pageIds = new Map();
   const resident = new Map();
   const textPageIds = new Set();
@@ -187,7 +190,7 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
           scope = engine.createScope();
           const raster = createPlayerRaster(native, lifetime.signal);
           const services = {
-            engine, scope, assets, host, publishPage, signal: lifetime.signal,
+            engine, scope, assets, host, capabilities, publishPage, signal: lifetime.signal,
             publishTransientPage(image) {
               // App-declared classic image pages occupy 1..223. Dynamic PNG and text share the remaining slots.
               const reservation = reserveTextPage(224);
