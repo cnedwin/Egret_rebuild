@@ -33,7 +33,7 @@ python3 runtime-sdk/ios/verify-simulator.py --app "$OUT/build/simulator/product/
 node runtime-sdk/ios/check-receipt.mjs "$OUT/evidence/receipt.json"
 ```
 
-验证器创建临时模拟器并启动应用，读取实测记录。JSC 第 0 帧和第 7 帧的指纹须与原 Node 场景一致。有 Metal 设备时，还核对四个参考像素、动画变化、释放纹理后的缺页错误、重建后逐字节一致的画面，以及系统图层的呈现回调。关闭游戏须退还一张图集。模拟器未提供 GPU 时，记录中会单列该状态。实体 iPhone 签名安装、真实前后台切换、温控和帧时仍需真机实测。
+验证器创建临时模拟器并启动应用，读取实测记录。JSC 第 0 帧和第 7 帧的指纹须与原 Node 场景一致。有 Metal 设备时，还核对四个参考像素、动画变化、释放纹理后的缺页错误、重建后逐字节一致的画面，以及模拟器实际屏幕截图中的四个对应游戏像素。关闭游戏须退还一张图集。模拟器未提供 GPU 时，记录中会单列该状态。实体 iPhone 签名安装、真实前后台切换、温控和帧时仍需真机实测。
 
 ## 原生接口
 

@@ -221,22 +221,24 @@ static NSData *bufferData(JSValue *value, NSUInteger maximum) {
     if (!drawable) return;
     [_context[@"EgretIosScene"] invokeMethod:@"poll" withArguments:@[]];
     NSData *packet = [self packet:_tick++%60];
+    NSError *error = nil;
+    if (!packet || ![_frame draw:packet target:drawable.texture drawable:drawable error:&error]) {
+        [self fail:error.localizedDescription ?: @"Invalid JavaScriptCore frame"];
+        return;
+    }
     if (_awaitingPresentation) {
         _awaitingPresentation = NO;
-        _surface.paused = YES;
-        __weak GameHost *owner = self;
-        [drawable addPresentedHandler:^(id<MTLDrawable> item) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                GameHost *host = owner;
-                if (!host || host->_closed || host->_finished) return;
-                host->_receipt[@"drawablePresented"] = @YES;
-                [host finishDiagnostic:@"passed"];
-            });
-        }];
+        // The simulator SDK does not expose the device presentation callback. The verifier reads
+        // the actual Simulator screenshot and maps scene pixels into this window viewport.
+        UIWindow *window = _surface.window;
+        CGRect viewport = [_surface convertRect:_surface.bounds toView:window];
+        CGSize screen = window.bounds.size;
+        if (screen.width <= 0 || screen.height <= 0) { [self fail:@"Invalid presentation viewport"]; return; }
+        _receipt[@"screenViewport"] = @[@(viewport.origin.x/screen.width),@(viewport.origin.y/screen.height),
+                                        @(viewport.size.width/screen.width),@(viewport.size.height/screen.height)];
+        _receipt[@"drawableSubmitted"] = @YES;
+        [self finishDiagnostic:@"passed"];
     }
-    NSError *error = nil;
-    if (!packet || ![_frame draw:packet target:drawable.texture drawable:drawable error:&error])
-        [self fail:error.localizedDescription ?: @"Invalid JavaScriptCore frame"];
 }
 - (void)suspendGame {
     _suspended = YES;

@@ -33,7 +33,7 @@ python3 runtime-sdk/ios/verify-simulator.py --app "$OUT/build/simulator/product/
 node runtime-sdk/ios/check-receipt.mjs "$OUT/evidence/receipt.json"
 ```
 
-The verifier creates a temporary simulator, opens the app and retrieves its receipt. It compares the JSC frame hashes for ticks 0 and 7 with captures from the original Node fixture. With a Metal device it also requires four reference pixels, a changed animation frame, a missing-page error after release, byte-identical restored pixels and a presentation callback from the layer. Closing the JS scene must release one atlas. The receipt records an unavailable simulator GPU separately. Physical iPhone signing, actual background/foreground behavior, thermal load and frame times require a phone run.
+The verifier creates a temporary simulator, opens the app and retrieves its receipt. It compares the JSC frame hashes for ticks 0 and 7 with captures from the original Node fixture. With a Metal device it also requires four reference pixels, a changed animation frame, a missing-page error after release, byte-identical restored pixels and four corresponding game pixels in the composed Simulator screenshot. Closing the JS scene must release one atlas. The receipt records an unavailable simulator GPU separately. Physical iPhone signing, actual background/foreground behavior, thermal load and frame times require a phone run.
 
 ## Native boundary
 

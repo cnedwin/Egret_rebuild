@@ -47,7 +47,22 @@ def main():
         if not report.is_file():
             raise RuntimeError("The installed app produced no verification receipt within 90 seconds")
         shutil.copyfile(report, args.out / "receipt.json")
-        print(report.read_text(encoding="utf-8"))
+        result = report.read_text(encoding="utf-8")
+        print(result)
+        if json.loads(result).get("status") == "passed":
+            # The submitted drawable travels through Core Animation. Observe the composed display
+            # after that transfer and retain the first screenshot that matches the game probes.
+            deadline = time.monotonic() + 15
+            verify = Path(__file__).with_name("check-receipt.mjs")
+            while True:
+                sim("io", udid, "screenshot", "--type=png", str(args.out / "screen.png"))
+                check = subprocess.run(["node", str(verify), str(args.out / "receipt.json")],
+                                       capture_output=True, text=True)
+                if check.returncode == 0:
+                    break
+                if time.monotonic() >= deadline:
+                    raise RuntimeError(check.stderr or "Simulator screenshot differs from the expected frame")
+                time.sleep(0.5)
     finally:
         sim("delete", udid)
 
