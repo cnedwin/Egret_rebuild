@@ -26,6 +26,24 @@ egret-migrate preview --run <new-evidence-directory> --address <LAN-IPv4> --qr-m
 
 经典 5.1 工程支持引擎与编译器同时声明为 5.1.7 或同时声明为 5.1.9 的项目。
 
+### 盘点 5.3 工程
+
+引擎与编译器声明为相同 5.3.x 版本时，可以直接只读盘点。报告保留原游戏脚本的加载顺序，列出缺失或未进入清单的 TypeScript 源文件、额外的启动库，并列出类型声明文件。可转换工程会保留这些声明和已提供的 tsconfig.json。替换旧宿主前，须复核自定义 HTML 启动脚本。每份本地 `.res.json` 和 `.thm.json` 都会列出已引用、交付目录中却缺少的资源或皮肤。远程资源按 RES 名称报告。盘点范围包括项目根目录、`src/` 和 `resource/`。服务端下发或运行时拼接的资源路径仍需结合实际玩法核对。
+
+先看 `conversion.status`。`eligible` 表示所选输入通过了经典 Web 转换方案的准入检查。`review-required` 会带上原因，转换会在建立输出目录前停止。例如，`MIGRATE_SOURCE_LIMIT` 表示超出自动转换的 512 个脚本上限。报告仍会保留完整顺序，同时列出自定义启动库、多份资源清单和缺失皮肤。盘点在本地读取项目声明，旧工程脚本始终作为数据处理。输入摘要覆盖本次实际读取的文件，其他文件内容、玩法和渠道服务还需实测。
+
+### 重建可编辑的迁移工程
+
+在转换目录中修改保留下来的 TypeScript、EXML、原始资源或清单，保留已有 `conversion.json` 和固定版本的浏览器引擎。用新的同级目录接收重建结果，再复跑同一段玩法。
+
+```text
+egret-migrate rebuild --source <可编辑转换目录> --out <新构建目录> --esbuild <esbuild模块>
+```
+
+重建会沿用游戏存档所用的项目 ID，核对引擎文件摘要，重新解析输入和编译。新 `conversion.json` 中的 `inputChanges.added`、`.changed`、`.removed` 按原始文件字节比较本次准入的输入和上次清单。`web/` 内的生成文件由源码重建。沿用原浏览器存档时还需保持同源。
+
+应用过项目事务的新转换会保存 `project-transaction.json`，以便重建时重放原修正。替换该修正，或者处理没有保存原事务的旧版输出时，传入 `--transaction <文件>`。缺失输入可以在可编辑工程内补齐后重试。升级引擎版本时请显式运行新的 `convert`。
+
 ### 从白鹭 5.0.14 迁出联网大厅
 
 对同时包含 `client/` 和 `socket.io/` 的上游仓库根目录使用 `eraser-lobby`。工具自动选取原版大厅与房间两个业务类、两幕皮肤、列表行和按钮皮肤、两张按钮图片，以及工程随附的 Socket.IO 客户端，并记录所选输入的文件身份。其余游戏内容可原样留在工程里。[参考工程](https://github.com/EraserTeam/EraserSanGuoSha/tree/30c315bb7296efd0518eb0c31dd0e4d115742b69)

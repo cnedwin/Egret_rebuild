@@ -24,6 +24,24 @@ egret-migrate preview --run <new-evidence-directory> --address <LAN-IPv4> --qr-m
 
 The profile reads the classic HTML stage declaration, the Egret engine/compiler configuration, the ordered `manifest.json` game scripts and a local RES manifest. It admits `egret`, `game`, `res`, `assetsmanager`, `promise`, and the supported subset of `eui` and `dragonBones`. The bridge implements the display, listener, image/JSON group and local storage operations covered by the tests. The classic 5.1 profile accepts matching engine/compiler declarations for 5.1.7 and 5.1.9. An explicit `--source-order` JSON array may name portable `src/*.ts` paths in load order. `--resources` selects a different project-relative manifest. Custom runtime modules and dynamic stage sizes require project-specific adaptation.
 
+### Inspect a 5.3 project
+
+Matched 5.3.x engine and compiler declarations enter read-only inspection. The report preserves game script order, lists missing or unlisted TypeScript sources and custom startup libraries, and lists type declaration files. Eligible editable outputs retain those declarations and a supplied tsconfig.json. Custom HTML bootstrap scripts require review before the old host is replaced. For each local `.res.json` and `.thm.json` it lists referenced resources or skins missing from the supplied files. Remote resources are identified by their RES name. The scan covers the project root and its `src/` and `resource/` trees. Resources discovered through server responses or constructed paths still need a gameplay trace.
+
+Read `conversion.status`. `eligible` means the selected inputs passed the classic Web profile checks. `review-required` includes reason codes and prevents conversion from creating an output. For example, `MIGRATE_SOURCE_LIMIT` identifies a program exceeding the 512-script conversion limit. Project-specific startup libraries, additional resource manifests, and missing skins remain visible in the same report. The ordered list stays complete above that conversion limit. Inspection reads project declarations locally and does not execute legacy scripts. The input digest covers the files read. It does not attest every discovered file's bytes, game behavior, or a vendor service.
+
+### Rebuild an editable conversion
+
+Edit the copied TypeScript, EXML, original resources or manifests in the conversion directory. Keep the previous `conversion.json` and its pinned browser bundle. Rebuild into a fresh sibling directory, then rerun the same gameplay scenario.
+
+```text
+egret-migrate rebuild --source <editable-conversion> --out <new-build-directory> --esbuild <esbuild-module>
+```
+
+The command preserves the project ID used for the game's local save namespace. It validates the bundled engine digest, admits the edited inputs again, recompiles and writes `inputChanges.added`, `.changed` and `.removed` to the new conversion receipt. These paths compare admitted raw inputs against the previous receipt. Generated files in `web/` are replaced from their sources. Game saves continue to require the same browser origin.
+
+A new conversion that applies a project transaction keeps `project-transaction.json` so a subsequent rebuild can replay the correction. To replace the correction or rebuild an older edited conversion missing the transaction, supply `--transaction <file>`. Restore missing inputs in the editable source and retry. A different engine version requires an explicit new `convert`.
+
 ### A networked lobby from Egret 5.0.14
 
 Use `eraser-lobby` with the upstream repository root containing both `client/` and `socket.io/`. The profile imports the original lobby and room classes, their two skins, the list-row and button skins, the two button images and the bundled Socket.IO client. It selects these inputs from the checkout and records their identities. The rest of the game can stay in the source tree. [Reference checkout](https://github.com/EraserTeam/EraserSanGuoSha/tree/30c315bb7296efd0518eb0c31dd0e4d115742b69)
