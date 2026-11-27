@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "A 2D overlay over a 3D scene can fill it on any screen",
+    "body": "`createWorld3DOverlay` takes `fit: 'expand'` and the fixed modes of Egret 5 (`fixedWidth`, `fixedHeight`, `fixedNarrow`, `fixedWide`), with `portrait` and `insets`. The 2D game then plans its stage as `createBrowserGame` does: the stage follows the 3D canvas, the portrait size applies while it is taller than wide, `game.screen.safe` keeps clear of a notch, and `game.onScreenChange` tells of each change. A 3D game no longer makes its overlay again when the phone turns. `overlay.box` follows the plan, and presses on empty parts of the interface still go on to the scene. `examples/world3d/overlay.html` shows it."
+  },
+  "zh": {
+    "title": "3D 场景上的 2D 叠加层可以在任何屏幕上铺满",
+    "body": "`createWorld3DOverlay` 新增 `fit: 'expand'` 和白鹭 5 的固定模式（`fixedWidth`、`fixedHeight`、`fixedNarrow`、`fixedWide`），以及 `portrait` 和 `insets`。这时 2D 游戏像 `createBrowserGame` 一样规划舞台：舞台跟随 3D 画布，画布高大于宽时用竖屏尺寸，`game.screen.safe` 避开刘海，每次变化由 `game.onScreenChange` 告知。手机转屏时，3D 游戏不再需要重建叠加层。`overlay.box` 跟随规划结果，点界面空白处仍会传到场景。示例见 `examples/world3d/overlay.html`。"
+  }
+}

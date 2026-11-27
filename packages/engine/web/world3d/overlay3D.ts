@@ -7,6 +7,7 @@
 import { EgretError } from '@egret/runtime';
 import { createBrowserGame } from '../game.js';
 import type { BrowserGame, BrowserGameBackend } from '../game.js';
+import type { ScreenFit, ScreenInsets, ScreenSize } from '../screen.js';
 
 /** A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. */
 export interface World3DOverlayOptions {
@@ -28,9 +29,22 @@ export interface World3DOverlayOptions {
    * How the stage of `width` × `height` is laid over the 3D canvas when their shapes differ, as a phone turns:
    * `stretch` (the default) fills the canvas and squashes the interface; `contain` keeps its shape, as large as fits,
    * centred, with the scene showing at the sides; `cover` keeps its shape and fills the canvas, its edges cut off by the
-   * canvas's parent. Read `overlay.box` for where it is.
+   * canvas's parent. With these three the stage stays `width` × `height`.
+   *
+   * `expand` keeps the scale at which `width` × `height` fits whole and grows the stage to fill the 3D canvas, so an
+   * interface placed from `game.screen` and `game.safe` reaches every edge on any shape, clear of a notch. The fixed
+   * modes of Egret 5 (`fixedWidth`, `fixedHeight`, `fixedNarrow`, `fixedWide`) fill it too. With these five the stage
+   * follows the canvas, `game.screen` says how, and `game.onScreenChange` tells of each change, as for
+   * `createBrowserGame`. Read `overlay.box` for where it is.
    */
-  readonly fit?: 'stretch' | 'contain' | 'cover';
+  readonly fit?: 'stretch' | 'contain' | 'cover' | Exclude<ScreenFit, 'contain'>;
+  /** The stage while the 3D canvas is taller than wide, with a fit that fills it. `width` × `height` otherwise. */
+  readonly portrait?: ScreenSize;
+  /**
+   * What covers the edges of the 3D canvas, in CSS pixels, for `game.safe`, with a fit that fills it. The page's own
+   * `safe-area-inset` values unless given, as for `createBrowserGame`.
+   */
+  readonly insets?: ScreenInsets;
 }
 /** A 2D game drawn on a canvas over a 3D view. */
 export interface World3DOverlay {
@@ -48,6 +62,10 @@ export interface World3DOverlay {
   /** Ends the 2D game and takes the overlay canvas away. The 3D canvas is left as it was. */
   dispose(): Promise<void>;
 }
+
+/** The fits an overlay takes: three that lay a stage of fixed size over the 3D canvas, and five that fill it. */
+const PLANNED = ['expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide'] as const;
+const OVERLAY_FITS = ['stretch', 'contain', 'cover', ...PLANNED] as const;
 
 const FORWARDED = [
   'pointerdown',
@@ -73,18 +91,40 @@ export async function createWorld3DOverlay(
   if (!options || !(options.width > 0) || !(options.height > 0))
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
   const fit = options.fit ?? 'stretch';
-  if (fit !== 'stretch' && fit !== 'contain' && fit !== 'cover')
-    throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
+  if (!(OVERLAY_FITS as readonly unknown[]).includes(fit)) throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
+  // With a fit that fills the 3D canvas, the 2D game plans its own stage in an element laid exactly over it.
+  const fills = (PLANNED as readonly string[]).includes(fit);
+  if ((options.portrait !== undefined || options.insets !== undefined) && !fills)
+    throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID', {
+      cause: 'portrait and insets go with a fit that fills the 3D canvas: ' + PLANNED.join(', ')
+    });
   let placed = { x: 0, y: 0, width: 0, height: 0, scale: 0 };
   const doc = canvas.ownerDocument;
   const overlay = doc.createElement('canvas');
   overlay.className = 'egret-world3d-overlay';
   overlay.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0;touch-action:none;background:transparent';
-  canvas.parentElement.appendChild(overlay);
+  const holder = fills ? doc.createElement('div') : undefined;
+  if (holder !== undefined) {
+    holder.className = 'egret-world3d-overlay-box';
+    holder.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none';
+    overlay.style.pointerEvents = 'auto';
+    // The whole element until the 2D game sizes it, so that its input has a surface to measure from the start.
+    overlay.style.width = overlay.style.height = '100%';
+    holder.appendChild(overlay);
+  }
+  canvas.parentElement.appendChild(holder ?? overlay);
   // The overlay follows the 3D canvas's box, wherever the page lays it out.
   const place = (): void => {
     const parent = canvas.parentElement!.getBoundingClientRect(),
       box = canvas.getBoundingClientRect();
+    if (holder !== undefined) {
+      // The 2D game sizes its canvas inside this element, and plans its stage, as the element changes.
+      holder.style.left = `${box.left - parent.left + canvas.parentElement!.scrollLeft}px`;
+      holder.style.top = `${box.top - parent.top + canvas.parentElement!.scrollTop}px`;
+      holder.style.width = `${box.width}px`;
+      holder.style.height = `${box.height}px`;
+      return;
+    }
     let width = box.width,
       height = box.height;
     if (fit !== 'stretch' && width > 0 && height > 0) {
@@ -119,6 +159,9 @@ export async function createWorld3DOverlay(
       clearColor: 0,
       clearAlpha: 0,
       effects: true,
+      ...(fills && holder !== undefined ? { fit: fit as ScreenFit, fitTo: holder } : {}),
+      ...(options.portrait === undefined ? {} : { portrait: options.portrait }),
+      ...(options.insets === undefined ? {} : { insets: options.insets }),
       ...(options.blendSpace === undefined ? {} : { blendSpace: options.blendSpace }),
       ...(options.pixelRatio === undefined ? {} : { pixelRatio: options.pixelRatio }),
       ...(options.update ? { update: options.update } : {}),
@@ -127,7 +170,7 @@ export async function createWorld3DOverlay(
   } catch (cause) {
     observer?.disconnect();
     win.removeEventListener('resize', place);
-    overlay.remove();
+    (holder ?? overlay).remove();
     throw cause;
   }
 
@@ -137,8 +180,10 @@ export async function createWorld3DOverlay(
   const empty = (event: MouseEvent): boolean => {
     const box = overlay.getBoundingClientRect();
     if (!(box.width > 0 && box.height > 0)) return true;
-    const x = ((event.clientX - box.left) / box.width) * options.width,
-      y = ((event.clientY - box.top) / box.height) * options.height;
+    // The stage's size now: the design, or with a fit that fills the 3D canvas, the plan's.
+    const stage = fills ? game.screen : options;
+    const x = ((event.clientX - box.left) / box.width) * stage.width,
+      y = ((event.clientY - box.top) / box.height) * stage.height;
     try {
       return game.stage.hitTest(x, y) === undefined;
     } catch {
@@ -213,14 +258,22 @@ export async function createWorld3DOverlay(
     game,
     canvas: overlay,
     get box() {
-      return placed;
+      if (!fills) return placed;
+      const screen = game.screen;
+      return Object.freeze({
+        x: screen.left,
+        y: screen.top,
+        width: screen.width * screen.scale,
+        height: screen.height * screen.scale,
+        scale: screen.scale
+      });
     },
     async dispose(): Promise<void> {
       for (const type of FORWARDED) win.removeEventListener(type, forward, { capture: true });
       observer?.disconnect();
       win.removeEventListener('resize', place);
       await game.dispose();
-      overlay.remove();
+      (holder ?? overlay).remove();
     }
   };
 }

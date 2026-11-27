@@ -21,9 +21,34 @@ test('OV01 both backends export the overlay, and bad arguments are refused', asy
   });
 });
 
-test('OV02 a fit other than stretch, contain or cover is refused before anything is made', async () => {
+test('OV02 a fit the overlay does not have is refused before anything is made', async () => {
   const placed = { getBoundingClientRect: () => ({}), parentElement: {} };
   await assert.rejects(webgl2.createWorld3DOverlay(placed, { width: 640, height: 360, fit: 'fill' }), {
     code: 'WORLD3D_OVERLAY_OPTIONS_INVALID'
   });
+});
+
+// Break caught: a portrait size or insets given with a fit whose stage never changes, which would do nothing.
+test('OV03 portrait and insets go with a fit that fills the 3D canvas, and the fixed modes are fits', async () => {
+  const placed = { getBoundingClientRect: () => ({}), parentElement: {} };
+  for (const fit of [undefined, 'stretch', 'contain', 'cover'])
+    await assert.rejects(
+      webgl2.createWorld3DOverlay(placed, { width: 640, height: 360, fit, portrait: { width: 360, height: 640 } }),
+      error => error.code === 'WORLD3D_OVERLAY_OPTIONS_INVALID' && /fills the 3D canvas/.test(String(error.cause))
+    );
+  await assert.rejects(
+    webgl2.createWorld3DOverlay(placed, {
+      width: 640,
+      height: 360,
+      fit: 'contain',
+      insets: { top: 10, right: 0, bottom: 0, left: 0 }
+    }),
+    { code: 'WORLD3D_OVERLAY_OPTIONS_INVALID' }
+  );
+  // A fit that fills the canvas is taken: what fails is the stand-in canvas, which has no page to lay an element in.
+  for (const fit of ['expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide'])
+    await assert.rejects(
+      webgl2.createWorld3DOverlay(placed, { width: 640, height: 360, fit }),
+      error => error.code !== 'WORLD3D_OVERLAY_OPTIONS_INVALID'
+    );
 });
