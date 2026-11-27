@@ -89,7 +89,7 @@ export async function prepareV8({profile, cache, working, jar, strip, run}) {
     await asset(path.join(extracted, 'META-INF', file), 'assets/licenses/javet-' + file);
   }
   const thirdParty = fileURLToPath(new URL('../../third-party/', import.meta.url));
-  await asset(path.join(thirdParty, 'v8-15.7.112.19.NOTICES'), 'assets/licenses/v8-third-party.txt');
+  await asset(path.join(thirdParty, 'v8-' + provenance.v8.version + '.NOTICES'), 'assets/licenses/v8-third-party.txt');
   if (profile === 'standard') {
     await asset(await pinnedFile(cache, icu), 'assets/icudtl.dat');
     await asset(path.join(thirdParty, 'icu-19dfb44.LICENSE'), 'assets/licenses/icu.txt');

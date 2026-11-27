@@ -6,19 +6,21 @@ import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
 
+import { selectV8Profile } from './v8-profile.mjs';
 import { bundleV8, writeHostFactory } from './bundle-v8.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../../..');
 const {values} = parseArgs({options: Object.fromEntries(
-  ['out','sdk','ndk','jdk','rust-lib','rust-notice','v8-profile','v8-cache'].map(key => [key,{type:'string'}]))});
+  ['out','sdk','ndk','jdk','rust-lib','rust-notice','v8-profile','v8-cache','project'].map(key => [key,{type:'string'}]))});
 function dir(value, label) {
   if (!value) throw new Error('Missing ' + label);
   return path.resolve(value);
 }
 const output = dir(values.out, '--out');
-const profile = values['v8-profile'] ?? 'trimmed';
-if (!['webview','standard','trimmed'].includes(profile)) throw new Error('Unknown Android script host: ' + profile);
+const requirements = values.project === undefined ? undefined :
+  JSON.parse(readFileSync(path.join(values.project, 'project.json'), 'utf8')).requiredV8Features;
+const profile = selectV8Profile(values['v8-profile'], requirements);
 const sdk = dir(values.sdk ?? process.env.ANDROID_HOME, 'Android SDK');
 const ndk = dir(values.ndk ?? process.env.ANDROID_NDK_HOME, 'Android NDK');
 const jdk = dir(values.jdk ?? process.env.JAVA_HOME, 'JDK');

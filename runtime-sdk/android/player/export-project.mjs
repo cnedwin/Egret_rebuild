@@ -6,6 +6,8 @@ import { parseArgs } from 'node:util';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { workspaceModules } from '../../../tools/pack-single-file.mjs';
 
+import { selectV8Profile } from './v8-profile.mjs';
+
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const require = createRequire(import.meta.url);
 const spineRequire = createRequire(path.join(root, 'packages/spine/package.json'));
@@ -98,6 +100,7 @@ export async function exportProject(project, output, esbuildModule, { verifyDeli
     ids.add(page.id);
   }
   if (desc.v8CodeCache !== undefined && typeof desc.v8CodeCache !== 'boolean') throw new Error('Expected v8CodeCache boolean');
+  selectV8Profile(undefined, desc.requiredV8Features);
   const scripts = classicScriptFiles(desc.v8Scripts);
   const files = [desc.entry, ...desc.pages.map(page => page.src), ...(desc.assets ?? []), ...scripts];
   const names = new Set(['project.json', 'game.js']);

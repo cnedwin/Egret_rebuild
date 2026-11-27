@@ -29,6 +29,10 @@ const ANDROID_V8_LEGAL = new Map([
   [
     'third-party/v8-15.7.112.19.NOTICES',
     { bytes: 82707, sha256: '5648a319050688ac3e56d798280e4c9e2eb1f1d3d51520bc944e01897b145f7f' }
+  ],
+  [
+    'third-party/v8-15.8.62.52.NOTICES',
+    { bytes: 82707, sha256: 'f567fb3f5c2481a6bd042fdbc04c4d3918d522dff06d7eddf58a92d1d5eabb85' }
   ]
 ]);
 // Exact new paragraph-distribution legal originals reviewed with this package.
