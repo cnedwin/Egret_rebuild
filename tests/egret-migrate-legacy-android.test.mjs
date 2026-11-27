@@ -267,21 +267,34 @@ test('a classic matrix is admitted only when the installed Android player can re
   });
   for (const supported of [false, true]) {
     globalThis.EgretRuntimeScripts = { ...loadGroup };
-    const host = { raster() { throw new Error('Unexpected raster request'); } };
+    const host = {
+      raster() {
+        throw new Error('Unexpected raster request');
+      }
+    };
     if (supported) host.projectFrameVersion = () => 6;
-    const project = createPlayerProject({
-      width: 12, height: 12,
-      create: services => openLegacyAndroid(services, {
-        width:12, height:12, projectId:'p_matrix', scriptGroup:'scene', entry:'EffectRoot'
-      })
-    }, host);
+    const project = createPlayerProject(
+      {
+        width: 12,
+        height: 12,
+        create: services =>
+          openLegacyAndroid(services, {
+            width: 12,
+            height: 12,
+            projectId: 'p_matrix',
+            scriptGroup: 'scene',
+            entry: 'EffectRoot'
+          })
+      },
+      host
+    );
     try {
       if (supported) {
         await project.start();
-        const buffer = project.frame(0,1);
-        assert.equal(new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength).getUint32(0,true),0x36524745);
+        const buffer = project.frame(0, 1);
+        assert.equal(new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength).getUint32(0, true), 0x36524745);
       } else {
-        await assert.rejects(project.start(), {code:'LEGACY_ANDROID_FILTER_UNSUPPORTED'});
+        await assert.rejects(project.start(), { code: 'LEGACY_ANDROID_FILTER_UNSUPPORTED' });
       }
     } finally {
       await project.close();
