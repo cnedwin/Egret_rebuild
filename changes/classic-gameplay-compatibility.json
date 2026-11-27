@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Run classic gameplay APIs on the browser and Android player",
+    "body": "Compare direct game references with the original SDK declarations. Share resource reads and frame events within a game, preserve classic layout and formatted text, and use the same HTTP, socket and channel callbacks on desktop and Android."
+  },
+  "zh": {
+    "title": "在浏览器和 Android 播放器运行旧版游戏接口",
+    "body": "将业务直接调用与原 SDK 声明对照。游戏内共享资源读取与逐帧事件，保留旧版布局和富文本，并在桌面和 Android 使用相同的 HTTP、套接字及渠道回调。"
+  }
+}

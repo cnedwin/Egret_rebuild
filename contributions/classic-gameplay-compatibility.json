@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/legacy-layout/board.js",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-layout/caption.txt",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-layout/host-bindings.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-layout/index.html",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-layout/main.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-layout/palette.bin",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-layout/pin.png",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-layout/project.json",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-layout/verify-browser.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/november-classic-gameplay.json",
+      "originRole": "First-party measurements from a controlled, original synthetic fixture on physical hardware; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-clock.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-environment.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-frame-events.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-resource-reads.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-transport.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/migrate-transport/classic.js",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/display-options.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/frame-events.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/game-clock.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/host-environment.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/layout.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/project-bindings.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/resource-catalog.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/resource-reads.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/rich-text.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/transport-android.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/transport.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/transport.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/transport.zh-CN.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/sdk-surface.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "tools/egret-migrate/compat/transport.md",
+      "zh": "tools/egret-migrate/compat/transport.zh-CN.md"
+    }
+  ]
+}

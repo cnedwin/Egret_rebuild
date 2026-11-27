@@ -59,13 +59,15 @@ panel.skinName = 'resource/Panel.exml';
 
 公开夹具 `tests/fixtures/migrate-theme-factories` 随附自制 EXML 和 5.3.10 编译产物。在 RTX 5090 Laptop 的 Windows Edge 158 中，旧版和迁移版均创建三个具名部件，标签完成关闭、打开、关闭的切换，列表选中 B，并构造了自定义标记。迁移版 WebGL2 使用一页纹理（7,280 字节），零帧遭拒。另一次私有工程盘点中，保持原字节的注册表覆盖主主题 935 个路径中的 929 个，副主题 34 个路径中的 28 个。两个主题各保留六个缺失路径和六个未解析映射。上述数字说明工厂的可用范围；各工程的画面和玩法仍需单独验收。
 
+同一次编译会生成 `sdk-surface.json`。工具用原编译器读取 `libs/modules` 中配套的声明，逐项记录完整名称、定义位置、可见性，以及命名空间值、静态成员、实例成员或纯类型。将它与 `api-usage.json`、实际宿主的绑定结合查看。继承成员的声明可能在父类。计算属性、导出别名、重载签名和实例行为还需用项目验证。若项目改过 SDK，这份清单反映项目随附的版本。
+
 ## 安装和运行
 
 在已经构建白鹭包的仓库里生成本地 CLI 归档。传入本机安装的 esbuild 模块和 npm CLI 入口。
 
 ```text
 node tools/egret-migrate/pack.mjs --esbuild <esbuild-module> --npm <npm-cli.js> --out <new-package-dir>
-npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.5.0.tgz
+npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.6.0.tgz
 ```
 
 使用安装后的 `egret-migrate` 命令，也可以直接运行 `node <tool-folder>/node_modules/@egret/migrate/bin.mjs`。CLI 可以在引擎仓库之外运行。准备固定版本的白鹭 7.0 系列 `egret2d.mjs`、esbuild 模块和带 Chromium 的 Playwright。扫码预览另需 qrcode-generator 2.0.4。使用时显式传入这些工具的路径。

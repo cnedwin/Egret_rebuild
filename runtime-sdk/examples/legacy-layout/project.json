@@ -1,0 +1,8 @@
+{
+  "width": 320,
+  "height": 180,
+  "entry": "index.html",
+  "pages": [],
+  "assets": ["pin.png", "caption.txt", "palette.bin"],
+  "v8Scripts": { "groups": { "board": ["board.js"] } }
+}

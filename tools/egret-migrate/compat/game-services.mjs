@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
+import { classicClock } from './game-clock.mjs';
+
 // Classic tweens advance together on the owning Egret 7 game clock. A single
 // tick may cross several actions, including the boundary between two steps.
 const unchanged = value => value;
@@ -160,10 +162,11 @@ function timeline(target, options, activate, deactivate, closed) {
 }
 
 /** Resolve only registered own names; dispose cuts every timeline at its current value. */
-export function createLegacyGameServices(game, resolveKnown, now = Date.now) {
+export function createLegacyGameServices(game, resolveKnown, now = Date.now, events) {
   const epoch = now(),
     registered = new Map(),
-    active = new Set();
+    active = new Set(),
+    implementations = new Map();
   const scope = game.scope;
   let timer;
   function deactivate(record) {
@@ -189,6 +192,7 @@ export function createLegacyGameServices(game, resolveKnown, now = Date.now) {
     () => {
       for (const item of [...active]) item.handle.setPaused(true);
       registered.clear();
+      implementations.clear();
     },
     { once: true }
   );
@@ -202,7 +206,43 @@ export function createLegacyGameServices(game, resolveKnown, now = Date.now) {
       !name.split('.').some(part => ['__proto__', 'prototype', 'constructor'].includes(part))
     );
   }
+  function prototypeOf(value) {
+    if (typeof value === 'function') return value.prototype;
+    return value !== null && typeof value === 'object' ? Object.getPrototypeOf(value) : undefined;
+  }
+  function className(value) {
+    const proto = prototypeOf(value);
+    return proto
+      ? (Object.getOwnPropertyDescriptor(proto, '__class__')?.value ?? proto.constructor?.name ?? '')
+      : typeof value;
+  }
   return {
+    ...classicClock(game, events, now),
+    getQualifiedClassName: className,
+    getQualifiedSuperclassName(value) {
+      const proto = prototypeOf(value);
+      const parent = proto && Object.getPrototypeOf(proto);
+      return parent?.constructor ? className(parent.constructor) : null;
+    },
+    is(value, name) {
+      if (value && typeof value === 'object' && (name === 'egret.HashObject' || name === 'egret.IHashObject')) {
+        const type = resolveKnown('egret.HashObject');
+        if (typeof type === 'function' && value instanceof type) return true;
+      }
+      return (
+        value !== null &&
+        typeof value === 'object' &&
+        Array.isArray(Object.getPrototypeOf(value)?.__types__) &&
+        Object.getPrototypeOf(value).__types__.includes(name)
+      );
+    },
+    registerImplementation(name, value) {
+      if (scope.signal.aborted)
+        throw Object.assign(new Error('Legacy binding is closed.'), { code: 'LEGACY_BINDINGS_CLOSED' });
+      if (!safeName(name)) throw new TypeError('Expected a qualified interface name.');
+      implementations.set(name, value);
+    },
+    getImplementation: name => implementations.get(name),
     getTimer: () => Math.floor(now() - epoch),
     getDefinitionByName(name) {
       if (scope.signal.aborted) return null;

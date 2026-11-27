@@ -80,13 +80,13 @@ export function normalizeLegacyPng(bytes, key) {
   }
 }
 
-/** Extend only recognized sheet declarations, then run the existing analyzer on the resulting local intents. */
+/** Extend the manifest's copy intents with local data files and atlas metadata. The conservative analyzer retains its original public profile. */
 export function planMigratedResources(text, root, read) {
   const original = planLegacyResourceManifestConversion(text, root);
   if (original.plan) return { plan: original.plan };
   if (
     original.status !== 'unsupported' ||
-    !original.report.resources.some(item => item.type === 'sheet') ||
+    !original.report.resources.some(item => ['sheet', 'bin', 'text'].includes(item.type)) ||
     original.report.diagnostics.some(
       item =>
         !['LEGACY_RES_TYPE_UNSUPPORTED', 'LEGACY_RES_SUBKEYS_UNSUPPORTED', 'LEGACY_RES_REFERENCE_UNRESOLVED'].includes(
@@ -101,7 +101,17 @@ export function planMigratedResources(text, root, read) {
   const aliases = new Map();
   const sheets = [];
   const pages = [];
+  const dataTypes = new Map();
   for (const item of source.resources) {
+    if (item.type === 'text' || item.type === 'bin') {
+      const allowed = item.type === 'text' ? ['.txt', '.csv'] : ['.bin', '.dat'];
+      if (!allowed.includes(path.posix.extname(item.url).toLowerCase()))
+        refused('Unexpected local data file extension.', { name: item.name });
+      dataTypes.set(item.name, item.type);
+      // The analyzer validates copy paths, duplicates and group references. Its simple-file branch reads no content.
+      item.type = 'json';
+      continue;
+    }
     if (item.type !== 'sheet') continue;
     let atlas;
     try {
@@ -180,5 +190,9 @@ export function planMigratedResources(text, root, read) {
   source.resources.push(...pages);
   const normalized = planLegacyResourceManifestConversion(JSON.stringify(source), root);
   if (!normalized.plan) refused('The extended RES declaration is outside this profile.', normalized.report.diagnostics);
-  return { plan: normalized.plan, sheets };
+  const plan = normalized.plan;
+  const resources = plan.resources.map(item =>
+    dataTypes.has(item.name) ? { ...item, type: dataTypes.get(item.name) } : item
+  );
+  return { plan: { ...plan, resources }, ...(sheets.length ? { sheets } : {}) };
 }

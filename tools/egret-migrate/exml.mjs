@@ -45,6 +45,7 @@ const controlBooleans = {
   Rect: fields('enabled')
 };
 const controlStrings = {
+  Scroller: fields('scrollPolicyH scrollPolicyV'),
   List: fields('itemRenderer itemRendererSkinName skinName'),
   DataGroup: fields('itemRenderer itemRendererSkinName skinName'),
   ItemRenderer: fields('skinName'),
@@ -351,6 +352,8 @@ function readProperties(node, path, ids, layout = false) {
     } else if (
       layout ? layoutStrings.has(key) : commonStrings.has(key) || controlStrings[type]?.has(key) || customProperty
     ) {
+      if ((key === 'scrollPolicyH' || key === 'scrollPolicyV') && !['auto', 'off', 'on'].includes(value))
+        exmlFailure(path, node.offset, 'Unsupported scroll policy.', { property: key, value });
       if (key === 'itemRenderer' && !isIdentifier(value))
         exmlFailure(path, node.offset, 'Invalid item renderer class.');
       if (Object.hasOwn(alignments, key) && !alignments[key].has(value))
