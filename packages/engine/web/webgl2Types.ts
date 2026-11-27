@@ -185,7 +185,20 @@ export interface SharedWebGL2FrameTiming {
 }
 
 /** A host that draws shared frames with WebGL2: start and stop it, stage frames, read them back, time them and recover a lost context. */
+/** Elapsed startup phases in the current successful WebGL2 generation, not GPU execution timers. */
+export interface SharedWebGL2StartupTiming {
+  readonly generation: number;
+  readonly contextMs: number;
+  readonly sampledMs: number;
+  readonly solidMs: number;
+  readonly resolveMs: number;
+  readonly effectsMs: number;
+  readonly pagedMs: number;
+  readonly finishMs: number;
+  readonly totalMs: number;
+}
 export interface SharedWebGL2Host extends SharedRenderHostAdapter {
+  getStartupTiming(): SharedWebGL2StartupTiming | undefined;
   readonly surface: HTMLCanvasElement;
   start(): Promise<void>;
   stop(): void;

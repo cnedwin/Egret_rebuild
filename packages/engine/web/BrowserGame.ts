@@ -29,6 +29,7 @@ import { createBrowserTextureProvider } from './image.js';
 import { createBrowserStaticLayers } from './browserStaticLayers.js';
 import type { BrowserGameStaticLayers } from './browserStaticLayers.js';
 import { decodeBrowserImage, sniffBrowserImageFormat } from './BrowserImageTextures.js';
+import { createGameImageAdmission } from './GameImageAdmission.js';
 import { createTextField, createTextRasterCache } from '@egret/engine/text';
 import type { TextField, TextRasterCache } from '@egret/engine/text';
 import { createBrowserFrameLoop } from './loop.js';
@@ -44,7 +45,8 @@ type BrowserGameHoverInput = ReturnType<typeof createBrowserHoverInput>;
 import { createBrowserStatsPanel } from './BrowserStatsPanel.js';
 import type { BrowserStatsPanel } from './BrowserStatsPanel.js';
 import { planScreen } from './screen.js';
-import type { ScreenFit, ScreenInsets, ScreenPlan, ScreenSize } from './screen.js';
+import type { ScreenFit, ScreenInsets, ScreenPlan, ScreenSize, ScreenUiScale } from './screen.js';
+import type { SharedWebGL2StartupTiming, SharedWebGL2PageBatching } from './webgl2.js';
 
 /** Which GPU interface a browser game draws with. */
 export type BrowserGameBackend = 'webgpu' | 'webgl2';
@@ -164,6 +166,19 @@ export interface BrowserGameWarning {
   readonly cause?: unknown;
 }
 /** A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. */
+/** Continuous presentation or a retained frame, with the same simulation clock in either mode. */
+export type BrowserGameRenderMode = 'continuous' | 'on-demand';
+/** Wall-clock preparation durations, and the first accepted SDK submission (not GPU completion or presentation). */
+export interface BrowserGameStartupTiming {
+  readonly backendSelectMs: number;
+  readonly backendModuleMs: number;
+  readonly hostCreateMs: number;
+  readonly engineOpenMs: number;
+  readonly setupMs: number;
+  readonly readyMs: number;
+  readonly firstSubmitMs?: number;
+  readonly webgl2?: SharedWebGL2StartupTiming;
+}
 export interface BrowserGameOptions {
   /** The canvas the game is drawn on. The page gives it its size on the screen. */
   readonly canvas: HTMLCanvasElement;
@@ -198,6 +213,10 @@ export interface BrowserGameOptions {
   readonly effects?: boolean;
   /** Opt into explicit retained GPU background placements when the chosen backend is WebGL2. */
   readonly staticLayers?: boolean;
+  /** On demand retains the last frame until visual, screen, native-generation or explicit invalidation changes. */
+  readonly renderMode?: BrowserGameRenderMode;
+  /** WebGL2-only: single-page omits the multi-page shader at startup, trading extra draws across pages. */
+  readonly webgl2PageBatching?: SharedWebGL2PageBatching;
   /** One step of the game, called before each frame with the seconds since the step before. */
   readonly update?: (deltaSeconds: number) => void;
   /** Presentation-only work after frame admission, before capture. */
@@ -242,11 +261,16 @@ export interface BrowserGameOptions {
    * window's instead: a tool stands in that way for the notch and the home bar of a phone a headless browser lacks.
    */
   readonly insets?: ScreenInsets;
+  /** Bounds CSS pixels per interface unit for the filling fits. The stage and all input follow the new plan. */
+  readonly uiScale?: ScreenUiScale;
   /** The loop starts at once unless false is given; then `game.loop.start()` starts it. */
   readonly autoStart?: boolean;
 }
 /** A game in a canvas: its Engine, host and stage, its frame loop and input, and calls that load textures and make labels. */
 export interface BrowserGame {
+  /** Request a new frame in on-demand mode; useful for presentation data outside the display tree. */
+  invalidate(): void;
+  getStartupTiming(): BrowserGameStartupTiming;
   readonly backend: BrowserGameBackend;
   readonly engine: Engine;
   /** The Host that draws: its status says what it holds and what last went wrong. It ends with the game. */
@@ -448,13 +472,15 @@ export function gameDiagnostics(onError: ((error: unknown) => void) | undefined)
  * to `game.stage`. Everything it makes is what the separate entries make; a game that outgrows it takes them apart.
  */
 export async function createBrowserGame(options: BrowserGameOptions): Promise<BrowserGame> {
+  const started = performance.now();
   if (options === null || typeof options !== 'object') throw invalid();
   const { canvas, width, height, update, onError, onWarning } = options;
   const asked = options.backend ?? 'auto',
     clearColor = options.clearColor ?? 0,
     clearAlpha = options.clearAlpha ?? 1,
     blendSpace = options.blendSpace ?? 'linear',
-    enableEffects = options.effects ?? false;
+    enableEffects = options.effects ?? false,
+    renderMode = options.renderMode ?? 'continuous';
   const deviceRatio = (): number => {
     const ratio = Number((globalThis as { readonly devicePixelRatio?: unknown }).devicePixelRatio);
     return ratio > 0 && Number.isFinite(ratio) ? ratio : 1;
@@ -478,6 +504,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     !(clearAlpha >= 0 && clearAlpha <= 1) ||
     (blendSpace !== 'linear' && blendSpace !== 'srgb') ||
     typeof enableEffects !== 'boolean' ||
+    (renderMode !== 'continuous' && renderMode !== 'on-demand') ||
+    (options.webgl2PageBatching !== undefined && options.webgl2PageBatching !== 'single-page' && options.webgl2PageBatching !== 'multi-page') ||
+    (options.uiScale !== undefined && (plannedFit(options.fit ?? 'none') === undefined || wholeScale)) ||
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
     (options.beforeRender !== undefined && typeof options.beforeRender !== 'function') ||
@@ -506,7 +535,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       ...(options.portrait === undefined ? {} : { portrait: options.portrait }),
       fit: plannedFit(options.fit ?? 'none') ?? 'contain',
       ...(wholeScale ? { wholeScale, pixelRatio: deviceRatio() } : {}),
-      ...(insets === undefined ? {} : { insets })
+      ...(insets === undefined ? {} : { insets }),
+      ...(options.uiScale === undefined ? {} : { uiScale: options.uiScale })
     });
   try {
     planFor({ width, height }, options.insets);
@@ -514,12 +544,20 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     throw invalid();
   }
   let screen = planFor({ width, height });
-  const backend = await chooseBackend(asked);
-  // Only the chosen backend's module is loaded.
+  const backend = await chooseBackend(asked), backendReady = performance.now();
+  // Measure the selected module and native host separately. Neither needs to load the other backend.
+  let moduleReady = backendReady;
   const host =
     backend === 'webgpu'
-      ? (await import('./webgpu.js')).createSharedWebGPUHost({ canvas, pixelRatio, blendSpace, enableEffects })
-      : (await import('./webgl2.js')).createSharedWebGL2Host({ canvas, pixelRatio, blendSpace, enableEffects });
+      ? await import('./webgpu.js').then(module => {
+          moduleReady = performance.now();
+          return module.createSharedWebGPUHost({ canvas, pixelRatio, blendSpace, enableEffects });
+        })
+      : await import('./webgl2.js').then(module => {
+          moduleReady = performance.now();
+          return module.createSharedWebGL2Host({ canvas, pixelRatio, blendSpace, enableEffects, ...(options.webgl2PageBatching === undefined ? {} : {pageBatching: options.webgl2PageBatching}) });
+        });
+  const hostCreated = performance.now();
   const staticCache =
     options.staticLayers === true && 'createSharedLayer2D' in host ? createBrowserStaticLayers(host) : undefined;
   let engine: Engine;
@@ -536,11 +574,18 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     }
     throw cause;
   }
+  const engineOpened = performance.now();
+  const webgl2Startup = 'getStartupTiming' in host ? host.getStartupTiming() : undefined;
+  let ready = engineOpened, firstSubmit: number | undefined;
   let loop: BrowserFrameLoop | undefined, stats: BrowserStatsPanel | undefined, disposal: Promise<void> | undefined;
   try {
     const scope = engine.createScope(),
       initialFrame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha });
     let frame = initialFrame;
+    const revision = renderMode === 'on-demand' ? engine.watchDisplayRevision(scope) : undefined;
+    let lastFrame: SharedFrameOptions2D | undefined, lastScreen: ScreenPlan | undefined,
+      lastRevision = -1, lastLayerRevision = -1, lastGeneration = -1, redraw = 0, shownRedraw = -1;
+    const invalidate = (): void => { if (revision !== undefined) redraw++; };
     const frameNow = (): SharedFrameOptions2D => frame;
     const stageSize = (): { readonly width: number; readonly height: number } => frame;
     const pointer =
@@ -629,8 +674,11 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     // the panel, and lets a frame that holds more images than a frame may go undrawn, with a warning, rather than stop
     // the game.
     const drawFrame = (given: SharedFrameOptions2D): SharedRenderFrame2D | undefined => {
-      sweepLabels();
-      waitAtlas();
+      // Continuous mode keeps its old frame-time maintenance. On-demand performs it each display step below.
+      if (revision === undefined) { sweepLabels(); waitAtlas(); }
+      const pending = redraw, nextRevision = revision?.revision,
+        nextLayer = staticCache?.api.revision ?? 0, nextScreen = screen,
+        nextGeneration = revision === undefined ? -1 : host.getSessionStatus().generation;
       {
         let frame: SharedRenderFrame2D;
         try {
@@ -655,6 +703,12 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           return undefined;
         }
         drawn = frame;
+        if (firstSubmit === undefined) firstSubmit = performance.now();
+        // A refused frame leaves the dirty request pending; a late mutation after capture is not acknowledged.
+        if (nextRevision !== undefined) {
+          lastFrame = given; lastScreen = nextScreen; lastRevision = nextRevision;
+          lastLayerRevision = nextLayer; lastGeneration = nextGeneration; shownRedraw = pending;
+        }
         measureFrame(frame);
         return frame;
       }
@@ -669,6 +723,15 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       engine: drawing,
       host,
       frame: frameNow,
+      ...(revision === undefined ? {} : {
+        shouldRender: () => {
+          // Raster packing/disposal is work that must settle even when a static frame is retained.
+          sweepLabels(); waitAtlas();
+          return lastRevision !== revision.revision || lastLayerRevision !== (staticCache?.api.revision ?? 0) ||
+            lastGeneration !== host.getSessionStatus().generation || shownRedraw !== redraw ||
+            lastFrame !== frame || lastScreen !== screen;
+        }
+      }),
       ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
       ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),
       ...(onError === undefined ? {} : { onError }),
@@ -692,7 +755,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     const imageType = createAssetType<Texture>('egret.browser-game.image', isTexture);
     const pendingPngBytes = new WeakMap<object, Uint8Array<ArrayBuffer>>();
     const pngTextures = new WeakSet<Texture>();
-    let imageJobs = 0;
+    const imageJobs = createGameImageAdmission(MAX_GAME_IMAGE_JOBS);
     const images = createBrowserTextureProvider({
       async readBytes(_ref, context) {
         const bytes = pendingPngBytes.get(context);
@@ -704,14 +767,12 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       async load(ref, context) {
         // Hold the original admission budget through fetch and decode for every format.
         // Even a cancelled native decode retains its slot until the browser settles it.
-        if (imageJobs >= MAX_GAME_IMAGE_JOBS)
-          throw new EgretError('WEB_PNG_JOB_LIMIT', { cause: new RangeError('Game image occupied job limit') });
-        if (context.signal.aborted) throw context.signal.reason;
+        const release = await imageJobs.admit(context.signal);
         const stop = new AbortController(),
           abort = (): void => stop.abort();
-        imageJobs++;
-        context.signal.addEventListener('abort', abort, { once: true });
         try {
+          context.signal.addEventListener('abort', abort, { once: true });
+          if (context.signal.aborted) throw context.signal.reason;
           let bytes: Uint8Array<ArrayBuffer>;
           try {
             const response = await globalThis.fetch(ref.id, { signal: stop.signal });
@@ -739,9 +800,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           pngTextures.add(texture);
           return texture;
         } finally {
-          imageJobs--;
           context.signal.removeEventListener('abort', abort);
           pendingPngBytes.delete(context);
+          release();
         }
       },
       dispose(texture) {
@@ -1552,6 +1613,17 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       });
     }
     const game: BrowserGame = Object.freeze({
+      invalidate,
+      getStartupTiming: () => Object.freeze({
+        backendSelectMs: backendReady - started,
+        backendModuleMs: moduleReady - backendReady,
+        hostCreateMs: hostCreated - moduleReady,
+        engineOpenMs: engineOpened - hostCreated,
+        setupMs: ready - engineOpened,
+        readyMs: ready - started,
+        ...(firstSubmit === undefined ? {} : { firstSubmitMs: firstSubmit - started }),
+        ...(webgl2Startup === undefined ? {} : { webgl2: webgl2Startup })
+      }),
       backend,
       engine,
       host,
@@ -1689,6 +1761,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         })());
       }
     });
+    ready = performance.now();
     if (options.autoStart !== false) made.start();
     return game;
   } catch (cause) {

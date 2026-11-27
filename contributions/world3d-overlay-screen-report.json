@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/screenControlReportState.ts",
+      "originRole": "First-party browser semantics-to-surface association for screen verification; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/world3d/overlayScreenReport.ts",
+      "originRole": "First-party screen-tool reporting of actual World3D overlay touch geometry and registered native semantics; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/world3d-overlay-screen-browser.mjs",
+      "originRole": "First-party Chromium regression of native World3D overlay scale, hit geometry, semantic names, touch routing, screen findings, rotation and reporting lifetime; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

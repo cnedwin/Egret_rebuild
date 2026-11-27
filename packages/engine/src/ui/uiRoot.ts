@@ -142,6 +142,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
   let cancelFlight: ((error: unknown) => void) | undefined,
     preparedWindow: WindowState | undefined,
     plan: UiLayoutPlan | undefined,
+    committedTree: UiLayoutTree | undefined,
     committedIndex: UiHeightIndex | undefined,
     committedSource: CapturedSource | undefined;
   let bindings = new Map<string, Binding>(),
@@ -603,6 +604,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
           prior.source?.identity === captured.identity &&
           prior.source.revision === captured.revision &&
           prior.source.prepare === captured.prepare &&
+          prior.source.onAttach === captured.onAttach &&
           prior.width === width &&
           prior.density === density
         ) {
@@ -1044,13 +1046,21 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         change();
       });
     },
-    setTree(value) {
+    setTree(value, options) {
       admit('tree', () => {
-        const revision = desired,
-          captured = captureUiTree(value),
+        const revision = desired;
+        if (options !== undefined && (options === null || typeof options !== 'object' ||
+            Reflect.ownKeys(options).some(key => key !== 'responsive'))) fail('UI_VALUE_INVALID');
+        const responsive = options?.responsive;
+        if (responsive !== undefined && typeof responsive !== 'boolean') fail('UI_VALUE_INVALID');
+        const captured = captureUiTree(value),
           t = applyUiTheme(captured.tree, captured.themes, theme);
         check(revision);
-        if (
+        if (responsive) {
+          // The single list's wrapper, row bindings, editor and retention identities never change.
+          const nextList = [...t.nodes.values()].find(node => node.kind === 'virtualList');
+          if (nextList?.id !== listId) fail('UI_TREE_SHAPE');
+        } else if (
           t.nodes.size !== tree.nodes.size ||
           [...t.nodes].some(([key, node]) => tree.nodes.get(key)?.kind !== node.kind)
         )
@@ -1090,7 +1100,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
           if (
             previous?.identity === content.identity &&
             (content.revision < previous.revision ||
-              (content.revision === previous.revision && content.prepare !== previous.prepare))
+              (content.revision === previous.revision &&
+                (content.prepare !== previous.prepare || content.onAttach !== previous.onAttach)))
           )
             fail('UI_SOURCE_REVISION');
         }
@@ -1098,6 +1109,8 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         themeBindings = captured.themes;
         tree = withoutSources(t);
         leafContents = captured.contents;
+        // Pending invalidations of deleted ordinary nodes cannot reach the new planner.
+        for (const name of dirty.keys()) if (!t.nodes.has(name)) dirty.delete(name);
         if (s !== undefined) {
           if (s.identity !== source?.identity || s.revision !== source?.revision) revealIntent = undefined;
           source = s;
@@ -1246,6 +1259,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
           content: c.bindings.get(row.key)!.content!,
           visible: row.visible
         }));
+        const freshLeaves = [...c.preparedWindow.leafBindings.values()].filter(leaf => leafBindings.get(leaf.id) !== leaf);
         const restoreFocus = keyboard?.before(keyboardRows);
         // Cancellation callbacks may change or close the UI. Never publish their obsolete proposal.
         if (closed || desired !== preparation.desiredRevision || committed !== preparation.baseCommittedRevision) {
@@ -1265,6 +1279,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
         fills = c.fillScopes;
         leafBindings = c.preparedWindow.leafBindings;
         committed = desired;
+        committedTree = tree;
         committedIndex = c.preparedWindow.index;
         committedSource = c.preparedWindow.source;
         plan = c.preparedWindow.plan;
@@ -1298,6 +1313,21 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
             s.dispose();
           } catch (e) {
             errors.push(e);
+          }
+        }
+        // These hooks are post-publication, so native keyboard targets are genuine attached descendants.
+        // Old registrations have already been retired; replacing a leaf can safely reuse their IDs.
+        for (const leaf of freshLeaves) {
+          if (closed) break;
+          const source = leaf.source;
+          if (leaf.terminal || source?.onAttach === undefined) continue;
+          try {
+            source.onAttach.call(source.identity, freeze({
+              theme: leaf.theme, scope: leaf.scope.scope, signal: leaf.scope.signal, width: leaf.width,
+              density: leaf.density, content: leaf.content!, committedRevision: committed
+            }));
+          } catch (cause) {
+            errors.push(cause);
           }
         }
         return result('committed', errors);
@@ -1371,6 +1401,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
       committedSource = undefined;
       committedIndex = undefined;
       plan = undefined;
+      committedTree = undefined;
       tree = emptyTree;
       authoredTree = emptyTree;
       themeBindings = new Map();
@@ -1438,7 +1469,7 @@ export function createUiRoot(options: UiRootOptions): UiRoot {
       box = row.box;
       content = bindings.get(target.key)?.content;
     } else {
-      if (tree.nodes.get(target.id)?.kind !== 'leaf') return undefined;
+      if (committedTree?.nodes.get(target.id)?.kind !== 'leaf') return undefined;
       box = snapshot.boxes.find(b => b.id === target.id);
       content = leafBindings.get(target.id)?.content;
     }

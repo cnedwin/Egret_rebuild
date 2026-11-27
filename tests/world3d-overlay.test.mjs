@@ -52,3 +52,12 @@ test('OV03 portrait and insets go with a fit that fills the 3D canvas, and the f
       error => error.code !== 'WORLD3D_OVERLAY_OPTIONS_INVALID'
     );
 });
+
+// A bad policy must fail before touching a page, not silently become continuous.
+test('OV04 invalid render mode and effects option are refused before DOM creation', async () => {
+  const placed = { getBoundingClientRect: () => ({}), parentElement: {} };
+  for (const extra of [{renderMode: 'idle'}, {effects: 'off'}, {webgl2PageBatching: 'bogus'}])
+    await assert.rejects(webgl2.createWorld3DOverlay(placed, { width: 640, height: 360, ...extra }), {
+      code: 'WORLD3D_OVERLAY_OPTIONS_INVALID'
+    });
+});
