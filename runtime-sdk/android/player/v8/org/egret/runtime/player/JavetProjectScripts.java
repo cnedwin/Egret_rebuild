@@ -62,16 +62,20 @@ public final class JavetProjectScripts extends ScriptSession {
         synchronized (interruptLock) {
             if (deadlineExpired) return;
         }
-        V8Runtime opened = V8Host.getInstance(type).createV8Runtime();
+        V8Host host = V8Host.getInstance(type);
+        V8Runtime opened = host.createV8Runtime();
         synchronized (interruptLock) { runtime = opened; }
         if (owner.ending) return;
         // Leave ICU tables cold until a game actually needs locale formatting.
         boolean intl = runtime.getExecutor("typeof Intl !== 'undefined'").executeBoolean();
         if (intl != full)
             throw new IOException("Unexpected Intl capability for " + profile);
+        if (project.requiresWasm && !runtime.getExecutor(
+                "typeof WebAssembly === 'object' && WebAssembly.validate(Uint8Array.of(0,97,115,109,1,0,0,0))")
+                .executeBoolean()) throw new IOException("WebAssembly unavailable in the selected V8 build");
         String version = runtime.getVersion();
         if (project.codeCache) {
-            String environment = "Javet-6.0.3|" + version + "|" + profile + "|" + android.os.Build.SUPPORTED_ABIS[0]
+            String environment = "Javet-" + host.getJavetVersion() + "|" + version + "|" + profile + "|" + android.os.Build.SUPPORTED_ABIS[0]
                 + "|" + V8RuntimeOptions.V8_FLAGS.toString();
             cache = new ProjectCodeCache(context.getCodeCacheDir(), environment);
         }
