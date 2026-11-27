@@ -5,6 +5,10 @@ on:
   pull_request:
     paths:
       - '.github/workflows/release.yml'
+      - '.github/workflows/publish-github-browser.yml'
+      - 'tools/pack-browser-npm.mjs'
+      - 'tools/browser-distribution/**'
+      - 'tools/github-browser-distribution/**'
       - 'tools/pack-release.mjs'
       - 'tools/pack-single-file.mjs'
       - 'tools/publish-registry.mjs'
@@ -59,6 +63,14 @@ jobs:
           commit=$(git rev-parse HEAD)
           test "$commit" = "$(git rev-parse "$GITHUB_SHA^{commit}")"
           node tools/record-release-assets.mjs "$release" "$browser/report.json" "$version" "$commit"
+      - name: Rehearse all three browser packages from the release snapshot
+        run: |
+          set -euo pipefail
+          release="$RUNNER_TEMP/release"
+          digest=$(sha256sum "$release/release.json" | cut -d' ' -f1)
+          for registry in npm github; do
+            node tools/pack-browser-npm.mjs --target "$registry" --release "$release" --manifest-sha256 "$digest" --out "$RUNNER_TEMP/browser-$registry"
+          done
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: github.event_name == 'push'
         with:

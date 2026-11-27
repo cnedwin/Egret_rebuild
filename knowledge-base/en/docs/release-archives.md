@@ -2,19 +2,26 @@
 
 English | [简体中文](../../Cns/docs/release-archives.md)
 
-[Egret Engine 7.0.2](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.2) is the stable release of the 7.0 series. The browser files for 2D and 3D, five JavaScript packages and editable starter are built from one source commit.
+The downloads and install commands below target [Egret Engine 7.0.3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.3). The 2D and 3D browser files, five modular packages and editable starter come from one source commit.
 
 | Use case | Download |
 | --- | --- |
-| Start with an editable 2D game | [Starter project](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-first-game.zip) |
-| Add the engine to a web page | [Browser files and licences](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-browser.zip). For 2D, choose [`egret2d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret2d.js) or [`egret2d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret2d.mjs). For World3D, choose [`egret3d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret3d.js) or [`egret3d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret3d.mjs). |
-| Import modules into an npm project | `npm install @egret/engine` from the npm registry, or the archives: [`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-engine-7.0.2.tgz), [`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-contracts-7.0.2.tgz), [`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-runtime-7.0.2.tgz), [`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-project-7.0.2.tgz), [`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-spine-7.0.2.tgz) |
+| Start with an editable 2D game | [Starter project](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-first-game.zip) |
+| Add the engine to a web page | [Browser files and licences](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-browser.zip). For 2D, choose [`egret2d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret2d.js) or [`egret2d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret2d.mjs). For World3D, choose [`egret3d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret3d.js) or [`egret3d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret3d.mjs). |
+| Import modules into an npm project | `npm install @egret/engine` from the npm registry, or the archives: [`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-engine-7.0.3.tgz), [`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-contracts-7.0.3.tgz), [`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-runtime-7.0.3.tgz), [`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-project-7.0.3.tgz), [`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-spine-7.0.3.tgz) |
 
-The [release manifest](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/release.json) lists the source commit, file sizes and SHA-256 digests. Serve downloaded browser files from your own game directory or site. Include the licence notices from the browser archive when redistributing them.
+The [release manifest](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/release.json) lists the source commit, file sizes and SHA-256 digests. Serve downloaded browser files from your own game directory or site. Include the licence notices from the browser archive when redistributing them.
 
-The previous candidate, [7.0.1-rc.3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3), remains available from GitHub and by exact version on npm.
+The previous stable release is [7.0.2](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.2). The previous candidate, [7.0.1-rc.3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3), remains available from GitHub and by exact version on npm.
 
 On November 22, 2026, GitHub returned 404 for the tags and release downloads of two earlier versions. For historical builds, use the [7.0.1-rc.2 source](https://github.com/cnedwin/Egret_rebuild/tree/859bd0eecdc039ffc34e89c55d5de0986bafb67c), [0.1.0-preview.1 source](https://github.com/cnedwin/Egret_rebuild/tree/51b122555503533a4064736e7cbad4934db70862) or [7.0.1-rc.1 browser-build record](https://github.com/cnedwin/Egret_rebuild/pull/367).
+
+## What's new in 7.0.3
+
+- **In-game UI.** Declarative views support scrolling and keyboard focus. Clipping and parent transforms affect hit testing and the published control bounds. Static screens can request redraws on demand. [Play guide](play.md)
+- **World3D.** WebGL2 scenes can prepare standard and custom shader programs, including automatic instancing variants, before the first interactive draw. Games can restart the display loop after a long stop. [World3D guide](world3d.md)
+- **Egret 5 migration.** The EraserSanGuoSha import keeps the original EUI code, EXML and Socket.IO. Two desktop clients verified five turns, settlement and the next deal against the original server. The migration guide lists the supported profiles and server limitations. [Migration guide](legacy-project-migration.md)
+- **Android Runtime SDK.** The Egret 7 project player and original-engine compatibility route use separate launch profiles. On a Fold7 the original Egret 5.3.10 fixture restored its Chinese text, images and saved counter. Compatibility coverage is recorded per original module version and scenario. Build the native player from the tagged source. [Runtime SDK](runtime-sdk.md) · [Device coverage](original5-atlas-verification.md)
 
 ## What's new in 7.0.2
 
@@ -25,7 +32,7 @@ On November 22, 2026, GitHub returned 404 for the tags and release downloads of 
 
 ## Run and edit the starter
 
-1. Extract the [starter ZIP](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-first-game.zip) into a new folder. Its `package.json` pins the engine archive from this release and esbuild 0.28.2.
+1. Extract the [starter ZIP](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-first-game.zip) into a new folder. Its `package.json` pins the engine archive from this release and esbuild 0.28.2.
 2. With Node.js 26.7.0 and npm, run `npm install`, then `npm start`. Open `http://127.0.0.1:8000`. Click the amber square or press Space. It moves 32 stage units per action.
 3. In `main.mjs`, change `STEP` from `32` to `64`, save and reload the page. The square now moves twice as far. Press Ctrl+C in the terminal to stop the local server.
 
@@ -37,24 +44,24 @@ Stable releases use the npm `latest` tag. Candidates use `next`. The following c
 npm install @egret/engine
 ```
 
-`@egret/engine` brings `@egret/contracts` and `@egret/runtime` of the same version. Add `@egret/project` for the project format or `@egret/spine` for Spine. To select the candidate tag explicitly, run `npm install @egret/engine@next`. To pin this version in `package.json`, run `npm install --save-exact @egret/engine@7.0.2`.
+`@egret/engine` brings `@egret/contracts` and `@egret/runtime` of the same version. Add `@egret/project` for the project format or `@egret/spine` for Spine. To select the candidate tag explicitly, run `npm install @egret/engine@next`. To pin this version in `package.json`, run `npm install --save-exact @egret/engine@7.0.3`.
 
 The same packages also install from GitHub Releases by archive address, without the registry for Egret's own packages:
 
 ```sh
-npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-engine-7.0.2.tgz
+npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-engine-7.0.3.tgz
 ```
 
 npm then fetches `@egret/contracts` and `@egret/runtime` from the same release. To add project format or Spine support, run `npm install` with the corresponding `.tgz` URL in the table.
 
 ## Install the prebuilt browser scripts from npm
 
-The five modular packages provide feature-specific imports. Two additional npm packages distribute the same prebuilt browser scripts as the 7.0.2 GitHub release for games that deploy a single file.
+The five modular packages provide feature-specific imports. Two additional npm packages distribute the same prebuilt browser scripts as the 7.0.3 GitHub release for games that deploy a single file.
 
 | Game | Install | Module entry | Script to copy |
 | --- | --- | --- | --- |
-| 2D game | `npm install @egret/2d@7.0.2` | `import { play } from '@egret/2d'` | `egret2d.js` |
-| World3D scene and 2D UI | `npm install @egret/3d@7.0.2` | `import { play3d } from '@egret/3d'` | `egret3d.js` |
+| 2D game | `npm install @egret/2d@7.0.3` | `import { play } from '@egret/2d'` | `egret2d.js` |
+| World3D scene and 2D UI | `npm install @egret/3d@7.0.3` | `import { play3d } from '@egret/3d'` | `egret3d.js` |
 
 The 3D bundle includes the 2D game entry. Choose one bundle per game and keep engine objects and resource lifetimes within that instance. [HTML and ES module examples](single-file.md)
 
@@ -64,7 +71,7 @@ For projects that consume GitHub Packages, `@cnedwin/egret-browser` combines the
 
 ```sh
 npm login --scope=@cnedwin --registry=https://npm.pkg.github.com --auth-type=legacy
-npm install --save-exact @cnedwin/egret-browser@7.0.2
+npm install --save-exact @cnedwin/egret-browser@7.0.3
 ```
 
 GitHub requires authentication for npm downloads even when the package is public. At the password prompt, use a classic personal access token with `read:packages` from an account with access to the package. Import `play` from `@cnedwin/egret-browser` or its `/2d` entry, or import `play3d` from `@cnedwin/egret-browser/3d`. For a plain HTML page, copy one classic script from the package. [GitHub Packages installation and browser examples](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/github-browser-distribution/README.md)
@@ -87,8 +94,8 @@ To rehearse packaging and installation of the five npm archives locally, run the
 
 ```sh
 node tools/build.mjs
-node tools/pack-release.mjs --version 7.0.2 --out ../release
-node tools/verify-release.mjs --version 7.0.2 --archives ../release
+node tools/pack-release.mjs --version 7.0.3 --out ../release
+node tools/verify-release.mjs --version 7.0.3 --archives ../release
 node tools/publish-registry.mjs --release ../release --dry-run
 ```
 
@@ -100,7 +107,7 @@ Maintainers download the assets from the matching GitHub release into one direct
 
     node tools/pack-browser-npm.mjs --release <downloaded-release-directory> --manifest-sha256 <sha256-from-github> --out <new-directory>
 
-The [GitHub Packages workflow](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml) is dispatched manually from `main` for 7.0.2. It checks the release manifest and builds the combined archive with `--target github`, then installs the published package in an empty project. The run summary reports package visibility. Use the package settings to grant community access if the result is `private`. [Package access and visibility](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
+The [GitHub Packages workflow](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml) runs from `main`. Enter the published stable `tag`, its 40-character `source_commit` and the 64-character `manifest_sha256` from the GitHub asset record for `release.json`. The workflow verifies the tag, commit and manifest, adds a missing version to the repository’s package, and checks the integrity of an existing version on retry. It builds the combined archive with `--target github`, then installs the published package in an empty project. The run summary reports package visibility. Use the package settings to grant community access if the result is `private`. [Package access and visibility](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
 
 ## Earlier engineering preview evidence
 
