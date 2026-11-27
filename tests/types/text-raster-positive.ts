@@ -17,13 +17,13 @@ type Assert<T extends true>=T;
 type Mutable<T>={-readonly[K in keyof T]:T[K]};
 type ReadonlyKeys<T>={[K in keyof T]-?:Equal<Pick<T,K>,Mutable<Pick<T,K>>>extends true?never:K}[keyof T];
 type OptionalKeys<T>={[K in keyof T]-?:{}extends Pick<T,K>?K:never}[keyof T];
-type InputKeys='text'|'fontFamily'|'fontSize'|'fontWeight'|'fontStyle'|'lineHeight'|'locale'|'direction'|'density'|'fillColor';
+type InputKeys='text'|'fontFamily'|'fontSize'|'fontWeight'|'fontStyle'|'lineHeight'|'locale'|'direction'|'density'|'fillColor'|'strokeWidth'|'strokeColor';
 type ExactInput=Assert<Equal<TextRasterRequestInput,{
   readonly text:string;readonly fontFamily:string;readonly fontSize:number;readonly fontWeight:number;
   readonly fontStyle:'normal'|'italic';readonly lineHeight:number;readonly locale:string;
-  readonly direction:'ltr'|'rtl';readonly density:number;readonly fillColor:number;
+  readonly direction:'ltr'|'rtl';readonly density:number;readonly fillColor:number;readonly strokeWidth?:number;readonly strokeColor?:number;
 }>>;
-type InputRequired=Assert<Equal<OptionalKeys<TextRasterRequestInput>,never>>;
+type InputRequired=Assert<Equal<OptionalKeys<TextRasterRequestInput>,'strokeWidth'|'strokeColor'>>;
 type InputReadonly=Assert<Equal<ReadonlyKeys<TextRasterRequestInput>,InputKeys>>;
 type RequestProfile=Assert<Equal<TextRasterRequest['profile'],'canvas-explicit-lines-v1'>>;
 type RequestFields=Assert<Equal<Pick<TextRasterRequest,InputKeys>,TextRasterRequestInput>>;

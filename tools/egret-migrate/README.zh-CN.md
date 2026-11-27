@@ -4,6 +4,61 @@
 
 Egret Migrate 是面向受支持的经典白鹭 5 Web 2D 源工程的本地 CLI。它复用白鹭 7 的工程存储和现有浏览器验收工具。保留旧源码和可运行的浏览器构建，用它们对照验收新工程。
 
+可选的本地包 `@egret/legacy` 通过 `@egret/legacy/web` 提供原浏览器适配器，通过 `@egret/legacy/protocol` 提供无需 DOM 的二进制协议读写。从源码目录运行 `npm install ./tools/egret-migrate` 即可安装。转换产物已包含这些模块。字段类型和容量边界见[协议兼容指南](compat/README.zh-CN.md)。
+
+## 编译 5.3 业务脚本清单
+
+当原工程仍能编译，而检查结果显示业务或宿主需要人工适配时，可先保留原项目的 TypeScript 编译流程。由项目方提供可信、版本匹配的 Egret TypeScript-Plus `lib/typescript.js`，放在原工程目录以外。CLI 在本机加载这个编译器，核对原输入指纹，逐个解析生成的脚本，全程不执行游戏代码。
+
+```sh
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/lib/typescript.js --compiler-sha256 <已核准的SHA256> --out ./classic-first --theme resource/default.thm.json
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/lib/typescript.js --out ./classic-reviewed --theme resource/default.thm.json --baseline ./classic-first/classic-build.json
+```
+
+先审阅 `classic-build.json`，再用它作为诊断基线。回执记录编译器、标准库、原模块顺序和指纹、业务源码与 JS 产物的逐文件对应关系、原清单略过的已配置脚本，以及带行列的语义诊断。缺失的原模块和待接宿主适配器也会列出。与已审基线不符会拒绝产物。配置、语法或原脚本顺序错误时，编译在发布输出前结束。
+
+默认的 `--target config` 继承原 tsconfig 的编译目标。如果旧代码用 ES5 的调用方式继承迁移后提供的原生 ES2015 类，可以显式选择 `--target es2015`，并为该目标另审一份诊断基线。新目标保留原生基类构造，顶层具名类仍可用原名从全局查找，支持经典皮肤解析。两个目标均启用原编译器的 `__reflect`。用 `--mode debug` 或 `--mode release` 选择原 DEBUG、RELEASE 编译常量。
+
+把 `classic/` 复制到可编辑的 Android 游戏目录，再将 `v8-scripts.json` 合入它的 `project.json`。默认所有业务脚本按 `manifest.game` 顺序先于游戏入口启动。若要先安装宿主类型，可把原业务放入延后加载组。例如，`--groups groups.json` 读取 `[{"name":"business","from":"src/Boot.ts"}]`，其中路径替换为第一个延后加载的原文件。游戏入口安装已审适配器后调用 `await EgretRuntimeScripts.loadGroup("business")`。每组覆盖从起始文件到下一组之前的连续范围，有依赖的组按原顺序加载。导出器允许至多 4,095 个附加脚本，每个脚本最多 16 MiB，含主入口合计 64 MiB，Android 工程清单最多 64 KiB。
+
+传入 `--theme` 后，`static-skins.json` 列出 EUI 适配器接收的描述树、待处理的类映射和剩余 EXML 位置。解析器提供消息与偏移时一并保留。涉及业务代码的构造器、原外部服务、画面、登录和玩法仍需分别联调。
+
+一个非公开的 5.3.10 工程按原编译目标生成 1,633 个脚本，共 10,189,917 字节。两次编译均得到相同的十条语义诊断。统一换行、去除 source-map 文件尾和文末空白后，1,633 份均与保留的原版编译结果相同。Android 导出器逐份复制，每个文件都匹配新产物的 SHA-256。独立的 ES2015 目标生成 8,737,317 字节，报告 60 条语义诊断。本次静态 EUI 读取接收 935 个引用中的 451 个，记录 478 个超出现有能力的 EXML 及六个缺失文件，另有八个默认皮肤映射待处理。这些结果覆盖静态编译和装包；原创小工程独立验证原生类构造、命名空间继承和反射。此次未运行客户游戏。
+
+### 使用原工程预编译的 EUI 皮肤
+
+在工程副本里，用项目有使用权、版本匹配的原 EUI 发布工具重新构建。若工具支持 EXML 发布策略，可在原发布流程选择 `new ExmlPlugin('gjs')`。保留原来按路径列出 EXML 的主题，把生成的主题另存一份。生成文件中的每条 `exmls` 应包含 `path`、`className` 和 `gjs` 构造器表达式。记录生成文件的 SHA-256，把原 EXML 和构建工具留在可编辑工程中。
+
+在工程副本内新建 `migration/theme-profile.json`：
+
+```json
+{
+  "schemaVersion": 1, "origin": "project-regenerated", "format": "gjs",
+  "global": "ShelfTheme", "provider": "migration/published.thm.json",
+  "sha256": "<完整生成文件的 SHA-256>", "namespaces": ["sample"]
+}
+```
+
+```sh
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/lib/typescript.js --theme resource/default.thm.json --theme-factories migration/theme-profile.json --out ./classic-with-skins
+```
+
+工程也可直接提供已有的经典 `.js` 注册表。将 `format` 设为 `registry`、`origin` 设为 `project-owned`，在 `entries` 中逐项填写原 EXML 路径和类名。指定的全局对象需实现 `names()` 与 `get(className)`，后者返回原构造器。工具按原字节保留这个脚本。注册前先装载其原有依赖，并确认项目有权运行和分发所提供的代码。
+
+命令生成有装载顺序的经典脚本和 `theme-factories.json`。可选的 `after: "src/Boot.ts"` 会将脚本放到对应原业务代码之后，两者属于同一个启动组或延迟组。先加载脚本，再在业务创建控件前注册：
+
+```js
+import { registerLegacyThemeFactories } from '@egret/legacy/theme-factories';
+
+registerLegacyThemeFactories(eui, themeManifest, {egret, namespaces: {sample}});
+const panel = new eui.Component();
+panel.skinName = 'resource/Panel.exml';
+```
+
+在相应命名空间传入游戏的真实自定义构造器。检查 `missingProviders`、`unresolvedMappings` 及单独生成的静态皮肤报告。当前适配器支持已验证的控件和基于属性的状态切换。依赖其他 EUI 类、状态操作或业务服务的工厂仍需补对应适配并逐项运行对照。
+
+公开夹具 `tests/fixtures/migrate-theme-factories` 随附自制 EXML 和 5.3.10 编译产物。在 RTX 5090 Laptop 的 Windows Edge 158 中，旧版和迁移版均创建三个具名部件，标签完成关闭、打开、关闭的切换，列表选中 B，并构造了自定义标记。迁移版 WebGL2 使用一页纹理（7,280 字节），零帧遭拒。另一次私有工程盘点中，保持原字节的注册表覆盖主主题 935 个路径中的 929 个，副主题 34 个路径中的 28 个。两个主题各保留六个缺失路径和六个未解析映射。上述数字说明工厂的可用范围；各工程的画面和玩法仍需单独验收。
+
 ## 安装和运行
 
 在已经构建白鹭包的仓库里生成本地 CLI 归档。传入本机安装的 esbuild 模块和 npm CLI 入口。
@@ -41,6 +96,8 @@ egret-migrate rebuild --source <可编辑转换目录> --out <新构建目录> -
 ```
 
 重建会沿用游戏存档所用的项目 ID，核对引擎文件摘要，重新解析输入和编译。新 `conversion.json` 中的 `inputChanges.added`、`.changed`、`.removed` 按原始文件字节比较本次准入的输入和上次清单。`web/` 内的生成文件由源码重建。沿用原浏览器存档时还需保持同源。
+
+大尺寸 MovieClip 图集可在转换时传入 `--movie-atlases <JSON文件>`，明确指定 RES 键，例如 `[{"data":"action_json","texture":"action_png"}]`。重建会复用保留的 `movie-atlases.json` 映射。
 
 应用过项目事务的新转换会保存 `project-transaction.json`，以便重建时重放原修正。替换该修正，或者处理没有保存原事务的旧版输出时，传入 `--transaction <文件>`。缺失输入可以在可编辑工程内补齐后重试。升级引擎版本时请显式运行新的 `convert`。
 

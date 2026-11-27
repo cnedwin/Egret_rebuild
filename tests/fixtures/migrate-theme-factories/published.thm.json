@@ -1,0 +1,12 @@
+{
+  "skins": {
+    "sample.Panel": "Demo.PanelSkin"
+  },
+  "exmls": [
+    {
+      "path": "resource/Panel.exml",
+      "className": "Demo.PanelSkin",
+      "gjs": "(function (_super) {\n\t__extends(PanelSkin, _super);\n\tfunction PanelSkin() {\n\t\t_super.call(this);\n\t\t\n\t\tthis.height = 96;\n\t\tthis.width = 160;\n\t\tthis.elementsContent = [this.caption_i(),this.list_i(),this.marker_i()];\n\t\tthis.states = [\n\t\t\tnew eui.State (\"closed\",\n\t\t\t\t[\n\t\t\t\t])\n\t\t\t,\n\t\t\tnew eui.State (\"open\",\n\t\t\t\t[\n\t\t\t\t\tnew eui.SetProperty(\"caption\",\"text\",\"open\")\n\t\t\t\t])\n\t\t];\n\t}\n\tvar _proto = PanelSkin.prototype;\n\n\t_proto.caption_i = function () {\n\t\tvar t = new eui.Label();\n\t\tthis.caption = t;\n\t\tt.text = \"closed\";\n\t\treturn t;\n\t};\n\t_proto.list_i = function () {\n\t\tvar t = new eui.List();\n\t\tthis.list = t;\n\t\tt.height = 40;\n\t\tt.width = 80;\n\t\tt.y = 28;\n\t\treturn t;\n\t};\n\t_proto.marker_i = function () {\n\t\tvar t = new sample.Marker();\n\t\tthis.marker = t;\n\t\tt.x = 110;\n\t\treturn t;\n\t};\n\tObject.defineProperty(_proto, \"skinParts\", {\n\t\tget: function () {\n\t\t\treturn [\"caption\",\"list\",\"marker\"];\n\t\t},\n\t\tenumerable: true,\n\t\tconfigurable: true\n\t});\n\treturn PanelSkin;\n})(eui.Skin);"
+    }
+  ]
+}

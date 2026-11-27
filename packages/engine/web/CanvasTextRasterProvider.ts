@@ -72,6 +72,11 @@ function drawingState(context: TextContext, request: TextRasterRequest, font: st
   setState(context, 'shadowOffsetX', 0);
   setState(context, 'shadowOffsetY', 0);
   setState(context, 'shadowColor', 'rgba(0, 0, 0, 0)');
+  if (request.strokeWidth !== undefined) {
+    setState(context, 'lineWidth', request.strokeWidth * 2);
+    setState(context, 'lineJoin', 'round');
+    setState(context, 'strokeStyle', `#${(request.strokeColor ?? 0).toString(16).padStart(6, '0')}`);
+  }
   setState(context, 'fillStyle', `#${request.fillColor.toString(16).padStart(6, '0')}`);
 }
 
@@ -82,7 +87,7 @@ function scalar(value: number): number {
   return value;
 }
 
-function lineMetrics(metrics: TextMetrics): TextLineMetricsInput {
+function lineMetrics(metrics: TextMetrics, strokeWidth = 0): TextLineMetricsInput {
   const advance = scalar(metrics.width);
   const left = -scalar(metrics.actualBoundingBoxLeft);
   const top = -scalar(metrics.actualBoundingBoxAscent);
@@ -95,10 +100,10 @@ function lineMetrics(metrics: TextMetrics): TextLineMetricsInput {
   return {
     advance,
     hasInk,
-    inkLeft: hasInk ? left : 0,
-    inkTop: hasInk ? top : 0,
-    inkRight: hasInk ? right : 0,
-    inkBottom: hasInk ? bottom : 0
+    inkLeft: hasInk ? left - strokeWidth : 0,
+    inkTop: hasInk ? top - strokeWidth : 0,
+    inkRight: hasInk ? right + strokeWidth : 0,
+    inkBottom: hasInk ? bottom + strokeWidth : 0
   };
 }
 
@@ -194,6 +199,7 @@ export function createCanvasTextRasterProvider(): TextRasterProvider {
   const released = new WeakSet<TextRasterPlan>();
   const provider: TextRasterProvider = Object.freeze({
     identity: 'egret.canvas-text.wc1',
+    supportsStroke: true,
     profile: 'canvas-explicit-lines-v1',
     async measure(
       this: TextRasterProvider,
@@ -224,7 +230,7 @@ export function createCanvasTextRasterProvider(): TextRasterProvider {
             drawingState(canvas, request, font);
             canvas.setTransform(1, 0, 0, 1, 0, 0);
             const lines = request.sourceLines.map(line =>
-              lineMetrics(canvas.measureText(request.text.slice(line.start, line.end)))
+              lineMetrics(canvas.measureText(request.text.slice(line.start, line.end)), request.strokeWidth)
             );
             cancelled(context.signal);
             // Exactly one authentic invocation issuer owns all plan geometry.
@@ -297,7 +303,9 @@ export function createCanvasTextRasterProvider(): TextRasterProvider {
             drawingState(canvas, request, font);
             canvas.setTransform(request.density, 0, 0, request.density, -placement.pixelLeft, -placement.pixelTop);
             for (const line of plan.metrics.lines) {
-              canvas.fillText(request.text.slice(line.source.start, line.source.end), 0, line.baselineY);
+              const text = request.text.slice(line.source.start, line.source.end);
+              if (request.strokeWidth !== undefined) canvas.strokeText(text, 0, line.baselineY);
+              canvas.fillText(text, 0, line.baselineY);
             }
             cancelled(context.signal);
             const pixels = canvas.getImageData(0, 0, placement.width, placement.height);

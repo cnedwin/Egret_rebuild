@@ -1,0 +1,12 @@
+<e:Skin xmlns:e="http://ns.egret.com/eui" class="CourierBoard" width="320" height="180">
+  <e:Label id="heading" x="12" y="8" width="220" height="40" size="22" stroke="1" strokeColor="#14252c" textColor="#ffffff"/>
+  <e:Image id="marker" x="244" y="12" width="48" height="48"/>
+  <e:Button id="choose" x="16" y="64" width="208" height="78" label="切换路线">
+    <e:skinName>
+      <e:Skin>
+        <e:Rect width="100%" height="100%" fillColor="#20865e"/>
+        <e:Label id="labelDisplay" width="100%" height="100%" size="21" textColor="#ffffff" textAlign="center" verticalAlign="middle"/>
+      </e:Skin>
+    </e:skinName>
+  </e:Button>
+</e:Skin>

@@ -1417,3 +1417,140 @@ test('with a fixed scale mode the stage follows the screen, EUI lays its roots o
   }
   assert.equal(listeners.size, 0, 'the listener ends with the game');
 });
+
+test('an outlined EUI label keeps row style, signed line spacing and center-based viewport admission', async () => {
+  const menu = skin(
+    'MenuSkin',
+    '<e:Label id="words" size="10" width="100" height="42" stroke="2" strokeColor="#00ff44" lineSpacing="6" verticalAlign="bottom"/>'
+  );
+  const { sdk, options } = setup(menu);
+  let panel;
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui }) {
+      panel = new eui.Component();
+      panel.skinName = 'MenuSkin';
+      return panel;
+    }
+  });
+  try {
+    const label = panel.words;
+    label.text = '甲\n乙\n丙';
+    await new Promise(resolve => setImmediate(resolve));
+    const rows = () => Array.from({ length: label.numChildren }, (_, index) => label.getChildAt(index));
+    assert.deepEqual(
+      rows().map(node => node.y),
+      [0, 16, 32]
+    );
+    for (const row of rows().filter(row => row !== label.legacyTextDisplay)) {
+      assert.equal(row.stroke, 2);
+      assert.equal(row.strokeColor, 0x00ff44);
+    }
+    label.height = 20;
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(label.numChildren, 1);
+    label.lineSpacing = -2;
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(
+      rows().map(row => row.y),
+      [0, 8]
+    );
+    label.stroke = 1;
+    label.strokeColor = 0xffa000;
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(rows().find(row => row !== label.legacyTextDisplay).strokeColor, 0xffa000);
+    assert.throws(() => skin('Bad', '<e:Label stroke="513"/>'), /Outline radius/);
+    assert.throws(() => skin('Bad', '<e:Label shadowBlur="2"/>'));
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('an original 5.3 precompiled factory constructs list and custom parts and switches states on a real Egret 7 host', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { runInNewContext } = await import('node:vm');
+  const { createHash } = await import('node:crypto');
+  const { prepareThemeFactories } = await import('../tools/egret-migrate/precompiled-themes.mjs');
+  const { registerLegacyThemeFactories } = await import('../tools/egret-migrate/compat/theme-factories.mjs');
+  const published = readFileSync(new URL('./fixtures/migrate-theme-factories/published.thm.json', import.meta.url));
+  const theme = {
+    skins: { 'sample.Panel': 'Demo.PanelSkin' },
+    exmls: ['resource/Panel.exml', 'resource/Missing.exml']
+  };
+  const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+  const profile = {
+    schemaVersion: 1,
+    format: 'gjs',
+    global: 'ShelfTheme',
+    origin: 'project-regenerated',
+    provider: 'published.thm.json',
+    sha256: hash(published),
+    namespaces: ['sample']
+  };
+  function read(key) {
+    const record = { 'profile.json': profile, 'theme.json': theme, 'published.thm.json': published }[key];
+    const bytes = Buffer.isBuffer(record) ? record : Buffer.from(JSON.stringify(record));
+    return { bytes, identity: { path: key, sha256: hash(bytes) } };
+  }
+  const factories = prepareThemeFactories(read, 'theme.json', 'profile.json');
+  assert.deepEqual(factories.manifest.missingProviders, ['resource/Missing.exml']);
+  const scripts = {};
+  runInNewContext(factories.source.toString(), scripts);
+  const { sdk, options } = setup();
+  let owner;
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui, egret }) {
+      let lastMarker;
+      const sample = {
+        Marker: class Marker extends eui.Component {
+          tag = 'marker';
+          constructor() {
+            super();
+            lastMarker = this;
+          }
+        }
+      };
+      registerLegacyThemeFactories(eui, factories.manifest, { root: scripts, egret, namespaces: { sample } });
+      const skinClass = egret.getDefinitionByName(factories.manifest.entries[0].className);
+      assert.equal(typeof skinClass, 'function');
+      assert.equal(egret.getDefinitionByName('eui.Component'), eui.Component);
+      owner = new eui.Component();
+      // The second binding collides after the factory fills the game's non-configurable first field.
+      Object.defineProperty(owner, 'caption', { value: null, writable: true, configurable: false, enumerable: false });
+      const captionField = Object.getOwnPropertyDescriptor(owner, 'caption');
+      owner.list = 'occupied';
+      assert.throws(() => {
+        owner.skinName = 'resource/Panel.exml';
+      }, /already exists/);
+      assert.deepEqual(Object.getOwnPropertyDescriptor(owner, 'caption'), captionField);
+      assert.equal(owner.list, 'occupied');
+      assert.equal(owner.numChildren, 0);
+      assert.equal(owner.skinName, undefined);
+      assert.equal(lastMarker.isDisposed, true);
+      delete owner.list;
+      owner.skinName = 'resource/Panel.exml';
+      assert.equal(owner.numChildren, 3);
+      assert.ok(owner.list instanceof eui.List);
+      assert.ok(owner.marker instanceof sample.Marker);
+      owner.list.dataProvider = new eui.ArrayCollection(['A', 'B']);
+      owner.list.selectedIndex = 1;
+      const root = new eui.UILayer();
+      root.addChild(owner);
+      return root;
+    }
+  });
+  try {
+    assert.equal(owner.list.selectedItem, 'B');
+    assert.equal(owner.caption.text, 'closed');
+    assert.equal(owner.marker.tag, 'marker');
+    owner.currentState = 'open';
+    assert.equal(owner.caption.text, 'open');
+    owner.currentState = 'closed';
+    assert.equal(owner.caption.text, 'closed');
+  } finally {
+    await game.dispose();
+  }
+  profile.sha256 = '0'.repeat(64);
+  assert.throws(() => prepareThemeFactories(read, 'theme.json', 'profile.json'), { code: 'MIGRATE_THEME_FACTORIES' });
+});

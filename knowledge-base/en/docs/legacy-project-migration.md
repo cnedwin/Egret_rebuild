@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/旧工程迁移.md)
 
+For classic 5.3 projects targeting Android, follow the ordered compiler, host integration and independent build steps. [Classic game to Android](classic-game-android.md)
+
 Migration must carry an existing game into an independently editable Egret project while preserving its behavior, assets and publication path. R008 makes complete one-click migration a formal product deliverable: deterministic conversion and bounded Agent repair work together, followed by old/new comparison, continued editing and real target-platform publication.
 
 Display order, coordinates, input, animation timing, resource ownership and persistent state all affect observable behavior. The first Egret Migrate CLI covers a bounded classic 5.2 Web 2D profile. It combines the existing RES analyzer, project transactions and browser verification in a package usable outside the engine checkout. Full-project acceptance across legacy formats and publication targets remains part of R008. [Egret Migrate guide](https://github.com/cnedwin/Egret_rebuild/tree/main/tools/egret-migrate) · [Core progress](core-progress.md)

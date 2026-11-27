@@ -1,0 +1,26 @@
+{
+  "device": "SM-F966U1",
+  "android": "17",
+  "vmVersion": "15.7.112.19",
+  "apkSha256": "a78697c5448f62803197ec65822177dc528d4bb289a8e873caf34709cc3c80fc",
+  "transport": "App-scoped TLS test endpoint with HTTPS and binary WSS",
+  "assertions": [
+    "https bytes",
+    "origin refused",
+    "cancel",
+    "wss bytes",
+    "stale",
+    "reconnect"
+  ],
+  "packetLength": 12,
+  "decodedMessage": "起航",
+  "peer": {
+    "http": 1,
+    "opened": 2,
+    "closed": 2,
+    "frames": 2
+  },
+  "closeAction": "native view Close game",
+  "restoredForeground": true,
+  "scope": "Original synthetic game packets. External operators, vendor accounts and public service availability require separate acceptance."
+}

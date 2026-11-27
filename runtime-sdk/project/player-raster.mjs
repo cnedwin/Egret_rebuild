@@ -47,13 +47,38 @@ export function createPlayerRaster(native, lifetime) {
       return embeddedImage('glbPng', path, offset, length);
     },
     measureText(runs) {
+      if (runs.some(run => run.italic === true || (run.fontFamily !== undefined && run.fontFamily !== 'sans-serif'))) {
+        const { metrics } = request({ op: 'textMetrics', runs });
+        if (!Array.isArray(metrics) || metrics.length !== runs.length || !metrics.every(m => Number.isFinite(m?.width) && m.width >= 0))
+          throw new Error('Invalid Android text widths');
+        return metrics.map(m => m.width);
+      }
       const {widths} = request({op: 'measure', runs});
       if (!Array.isArray(widths) || widths.length !== runs.length || !widths.every(n => Number.isFinite(n) && n >= 0))
         throw new Error('Invalid Android text widths');
       return widths;
     },
+    measureTextInk(runs) {
+      const { metrics } = request({ op: 'textMetrics', runs });
+      if (!Array.isArray(metrics) || metrics.length !== runs.length || !metrics.every(row =>
+        row && ['width','ascent','descent','left','top','right','bottom'].every(key => Number.isFinite(row[key])) &&
+        row.width >= 0 && row.left <= row.right && row.top <= row.bottom))
+        throw new Error('Invalid Android text metrics');
+      return metrics;
+    },
+    graphemes(text) {
+      const { ends } = request({ op: 'graphemes', text });
+      if (!Array.isArray(ends) || (ends.at(-1) ?? 0) !== text.length ||
+          !ends.every((end, i) => Number.isInteger(end) && end > (i ? ends[i - 1] : 0)))
+        throw new Error('Invalid Android grapheme boundaries');
+      return ends.map((end, i) => text.slice(i ? ends[i - 1] : 0, end));
+    },
     drawText(width, height, runs) {
-      return image({op: 'text', width, height, runs});
+      // A distinct operation lets older AARs reject outlined text instead of silently painting just the fill.
+      const styled = runs.some(run => (run.strokeWidth !== undefined && run.strokeWidth !== 0) ||
+        run.italic === true || (run.fontFamily !== undefined && run.fontFamily !== 'sans-serif'));
+      const op = styled ? 'textOutline' : 'text';
+      return image({op, width, height, runs});
     }
   });
 }

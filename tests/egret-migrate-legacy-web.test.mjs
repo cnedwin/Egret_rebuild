@@ -605,3 +605,213 @@ test('custom events retain payload, cancellation and target across a bubbling di
     await game.dispose();
   }
 });
+
+test('a migrated game gets the packet types from its own egret namespace', async () => {
+  const { sdk, canvas } = host();
+  let wire;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_packet_bridge',
+    createMain({ egret }) {
+      class Packet extends egret.ByteArray {}
+      const message = new Packet();
+      message.endian = egret.Endian.LITTLE_ENDIAN;
+      message.writeUnsignedShort(0xf012);
+      wire = new Uint8Array(message.buffer);
+      return new egret.Sprite();
+    }
+  });
+  try {
+    assert.deepEqual([...wire], [0x12, 0xf0]);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('MovieClip samples RES atlas holds, offsets and labels on the shared clock and releases its binding', async () => {
+  const { sdk, canvas, trace } = host();
+  const events = [];
+  let movie, root, factory, data;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 120,
+    height: 80,
+    projectId: 'p_legacy_movie',
+    resources: {
+      ...resources,
+      resources: [{ name: 'page', type: 'image', url: 'page.png' }],
+      groups: [{ name: 'preload', keys: ['page'] }]
+    },
+    async createMain({ egret, RES }) {
+      await RES.loadConfig(resources.configUrl, resources.root);
+      const texture = await RES.getResAsync('page');
+      const authored = {
+        mc: {
+          step: {
+            frameRate: 10,
+            labels: [{ name: 'action', frame: 2, end: 3 }],
+            events: [{ name: 'land', frame: 3 }],
+            frames: [
+              { res: 'left', x: -3, duration: 2 },
+              { res: 'right', x: 5, y: 1 }
+            ]
+          }
+        },
+        res: { left: { x: 0, y: 0, w: 1, h: 1 }, right: { x: 1, y: 0, w: 1, h: 1 } }
+      };
+      factory = new egret.MovieClipDataFactory(authored, texture);
+      data = factory.generateMovieClipData('step');
+      assert.equal(factory.generateMovieClipData('step'), data);
+      assert.equal(factory.generateMovieClipData('unknown'), null);
+      movie = new egret.MovieClip(data);
+      movie.addEventListener(egret.MovieClipEvent.FRAME_LABEL, event => events.push(event.frameLabel), movie);
+      movie.addEventListener(egret.Event.COMPLETE, () => events.push('complete'), movie);
+      root = new egret.Sprite();
+      root.addChild(movie);
+      movie.gotoAndPlay('action', 1);
+      return root;
+    }
+  });
+  try {
+    const bitmap = movie.getChildAt(0);
+    assert.deepEqual([movie.totalFrames, movie.currentFrame, bitmap.x, bitmap.sourceRect.x], [3, 2, -3, 0]);
+    game.engine.advanceTime(1);
+    game.engine.advanceTime(1.11);
+    assert.deepEqual([movie.currentFrame, bitmap.x, bitmap.y, bitmap.sourceRect.x], [3, 5, 1, 1]);
+    game.engine.advanceTime(1.22);
+    assert.deepEqual(events, ['land', 'complete']);
+    assert.equal(movie.isPlaying, false);
+
+    movie.gotoAndPlay(1, -1);
+    root.removeChild(movie);
+    game.engine.advanceTime(1.33);
+    assert.equal(movie.currentFrame, 1);
+    root.addChild(movie);
+    game.engine.advanceTime(1.44);
+    assert.equal(movie.currentFrame, 2);
+    movie.gotoAndStop(3);
+    factory.clearCache();
+    movie.movieClipData = factory.generateMovieClipData('step');
+    assert.equal(bitmap.isDisposed, true);
+    assert.equal(movie.numChildren, 1);
+    assert.equal(movie.currentFrame, 1);
+  } finally {
+    await game.dispose();
+  }
+  assert.equal(trace.filter(entry => entry === 'image allocated').length, 1);
+  assert.equal(trace.filter(entry => entry === 'image disposed').length, 1);
+});
+
+test('MovieClip reports a label once on entry and one loop notification for a multi-loop tick', async () => {
+  const { sdk, canvas } = host();
+  const seen = [];
+  let movie;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 120,
+    height: 80,
+    projectId: 'p_clip_events',
+    resources: { ...resources, resources: [{ name: 'p', type: 'image', url: 'p.png' }], groups: [] },
+    async createMain({ egret, RES }) {
+      await RES.loadConfig(resources.configUrl, resources.root);
+      const page = await RES.getResAsync('p');
+      const authored = {
+        mc: {
+          loop: {
+            frameRate: 50,
+            frames: [{ res: 'one' }, { res: 'two' }],
+            events: [
+              { frame: 1, name: 'first' },
+              { frame: 2, name: 'second' }
+            ]
+          }
+        },
+        res: { one: { x: 0, y: 0, w: 1, h: 1 }, two: { x: 1, y: 0, w: 1, h: 1 } }
+      };
+      movie = new egret.MovieClip();
+      movie.addEventListener(egret.MovieClipEvent.FRAME_LABEL, e => seen.push(e.frameLabel), movie);
+      movie.addEventListener(egret.Event.LOOP_COMPLETE, () => seen.push('loop'), movie);
+      movie.movieClipData = new egret.MovieClipDataFactory(authored, page).generateMovieClipData();
+      movie.gotoAndStop(1);
+      movie.gotoAndPlay(1, -1);
+      movie.gotoAndStop(2);
+      movie.gotoAndStop(2);
+      movie.gotoAndPlay(1, -1);
+      return movie;
+    }
+  });
+  try {
+    assert.deepEqual(seen, ['first', 'second', 'first']);
+    seen.length = 0;
+    game.engine.advanceTime(0);
+    const step = game.engine.advanceTime(0.1);
+    assert.equal(step.deltaSeconds, 0.1);
+    assert.deepEqual(seen, ['second', 'first', 'second', 'first', 'second', 'loop']);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('a repaged texture serves an ordinary Bitmap and a MovieClip crossing the page boundary', async () => {
+  const { sdk, canvas, trace } = host();
+  let actor, picture;
+  const tiles = [
+    { x: 0, y: 0, width: 1, height: 1, left: 0, top: 0, url: 'page-left.png' },
+    { x: 1, y: 0, width: 1, height: 1, left: 1, top: 0, url: 'page-right.png' }
+  ];
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 120,
+    height: 80,
+    projectId: 'p_repage',
+    moviePages: [{ texture: 'page', width: 2, height: 1, tiles }],
+    resources: { ...resources, resources: [{ name: 'page', type: 'image', url: 'huge.png' }], groups: [] },
+    async createMain({ egret, RES }) {
+      await RES.loadConfig(resources.configUrl, resources.root);
+      const texture = await RES.getResAsync('page');
+      const data = {
+        mc: {
+          move: {
+            frameRate: 12,
+            frames: [
+              { res: 'wide', x: -2, y: 1 },
+              { res: 'part', x: 3, y: -2 }
+            ]
+          }
+        },
+        res: { wide: { x: 0, y: 0, w: 2, h: 1 }, part: { x: 1, y: 0, w: 1, h: 1 } }
+      };
+      picture = new egret.Bitmap(texture);
+      actor = new egret.MovieClip(new egret.MovieClipDataFactory(data, texture).generateMovieClipData());
+      const root = new egret.Sprite();
+      root.addChild(picture);
+      root.addChild(actor);
+      return root;
+    }
+  });
+  try {
+    const composite = actor.getChildAt(0),
+      full = picture.getChildAt(0);
+    assert.deepEqual([picture.width, picture.height, full.numChildren], [2, 1, 2]);
+    assert.deepEqual([composite.x, composite.y, composite.numChildren], [-2, 1, 2]);
+    assert.deepEqual(
+      [0, 1].map(i => {
+        const b = composite.getChildAt(i);
+        return [b.x, b.sourceRect.x, b.sourceRect.width];
+      }),
+      [
+        [0, 0, 1],
+        [1, 1, 1]
+      ]
+    );
+    actor.gotoAndStop(2);
+    assert.equal(composite.getChildAt(0).visible, false);
+    assert.deepEqual([composite.x, composite.y, composite.getChildAt(1).x], [3, -2, 0]);
+    assert.equal(trace.filter(item => item === 'image allocated').length, 2);
+  } finally {
+    await game.dispose();
+  }
+  assert.equal(trace.filter(item => item === 'image disposed').length, 2);
+});

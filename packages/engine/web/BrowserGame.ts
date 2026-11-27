@@ -81,6 +81,10 @@ export interface BrowserGameLabelOptions {
   readonly lineHeight?: number;
   /** 0xffffff unless given. */
   readonly color?: number;
+  /** Outline radius in stage units, from 0 to 512. Zero draws only the fill. */
+  readonly strokeWidth?: number;
+  /** Outline RGB color. Defaults to black. */
+  readonly strokeColor?: number;
   /** The language of the text, such as "zh" or "en": "en" unless given. */
   readonly locale?: string;
   readonly direction?: 'ltr' | 'rtl';
@@ -996,6 +1000,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         italic: false,
         lineHeight: 0,
         color: 0xffffff,
+        strokeWidth: 0,
+        strokeColor: 0,
         locale: 'en',
         direction: 'ltr'
       };
@@ -1020,7 +1026,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
           locale: now.locale,
           direction: now.direction,
           density: pixelRatio,
-          fillColor: now.color
+          fillColor: now.color,
+          strokeWidth: now.strokeWidth,
+          strokeColor: now.strokeColor
         });
       const enterLabelLane = (): boolean | Promise<boolean> => {
         if (labelsDrawing < LABEL_LANES) {
@@ -1328,6 +1336,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         italic: false,
         lineHeight: 0,
         color: 0xffffff,
+        strokeWidth: 0,
+        strokeColor: 0,
         locale: 'en',
         direction: 'ltr'
       };
@@ -1392,7 +1402,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
               locale: now.locale,
               direction: now.direction,
               density: pixelRatio,
-              fillColor: now.color
+              fillColor: now.color,
+              strokeWidth: now.strokeWidth,
+              strokeColor: now.strokeColor
             } as const;
             let prepared: Awaited<ReturnType<TextRasterCache['acquire']>>;
             try {

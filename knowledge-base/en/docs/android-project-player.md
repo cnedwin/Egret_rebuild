@@ -4,6 +4,8 @@ English | [简体中文](../../Cns/docs/android-project-player.md)
 
 Package a trusted JavaScript or TypeScript game as an arm64 Android app, or embed its view in an existing Activity. The project player defaults to trimmed V8 and draws through Rust and OpenGL ES 3 on a `GLSurfaceView`. Embedded V8 requires Android API 29. Games that use JavaScript `Intl` can select standard V8. The explicit System WebView build supports API 26 with a recent WebView that provides ES2022 and AbortController. [Choosing a script host](android-project-player-v8.md)
 
+Existing games can keep their Activity, external signing and channel libraries while replacing gameplay assets. The migration kit includes a typed player API, an offline Gradle export and a device-specific debug task. [Migrated game builds and handoff](android-migration-build-kit.md)
+
 ## Build the library and a game
 
 Run these commands from the engine checkout. Use Node 26.7.0, pnpm 11.25.0, JDK 17, Android SDK Platform 36, Build Tools 35.0.0, NDK r27c and Rust with the `aarch64-linux-android` target. Set `JAVA_HOME`, `ANDROID_HOME` and `ANDROID_NDK_HOME`. Keep the matching Rust installation's `share/doc/rust/COPYRIGHT-library.html` available. Provide the path to an installed esbuild **0.28.2** module for the game export.

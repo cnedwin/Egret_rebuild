@@ -1,0 +1,35 @@
+// SPDX-License-Identifier: Apache-2.0
+pluginManagement {
+    repositories {
+        def mirror = providers.environmentVariable('EGRET_ANDROID_MAVEN_REPO').orNull
+        if (mirror != null) {
+            def root = new File(mirror)
+            if (!root.isAbsolute() || !root.isDirectory()) {
+                throw new GradleException('EGRET_ANDROID_MAVEN_REPO must be an existing absolute directory')
+            }
+            maven {
+                url = root.toURI()
+                metadataSources { gradleMetadata(); mavenPom() }
+            }
+        } else {
+            google()
+            mavenCentral()
+            gradlePluginPortal()
+        }
+    }
+}
+dependencyResolutionManagement {
+    repositories {
+        def mirror = providers.environmentVariable('EGRET_ANDROID_MAVEN_REPO').orNull
+        if (mirror != null) {
+            maven {
+                url = new File(mirror).toURI()
+                metadataSources { gradleMetadata(); mavenPom() }
+            }
+        } else {
+            google()
+            mavenCentral()
+        }
+    }
+}
+rootProject.name = 'EgretGame'

@@ -213,7 +213,7 @@ test('unsupported alignments, wrap modes, tile orientations and root attributes 
     skin('<e:Label textAlign="justify"/>'),
     skin('<e:Label wordWrap="true"/>'),
     skin('<e:Label multiline="automatic"/>'),
-    skin('<e:Label stroke="1"/>'),
+    skin('<e:Label stroke="-1"/>'),
     skin('<e:Group><e:layout><e:TileLayout orientation="columns"/></e:layout></e:Group>'),
     skin('<e:Group><e:layout><e:VerticalLayout horizontalAlign="justify"/></e:layout></e:Group>'),
     skin('<e:Group><e:layout><e:BasicLayout gap="1"/></e:layout></e:Group>'),

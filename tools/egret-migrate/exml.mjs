@@ -26,13 +26,13 @@ const commonBooleans = fields('visible touchEnabled touchChildren includeInLayou
 const commonStrings = fields('id name');
 const skinNumbers = fields('width height minWidth minHeight maxWidth maxHeight');
 const nonnegativeNumbers = fields(
-  'width height minWidth minHeight maxWidth maxHeight percentWidth percentHeight size strokeWeight ellipseWidth ellipseHeight paddingLeft paddingRight paddingTop paddingBottom'
+  'width height minWidth minHeight maxWidth maxHeight percentWidth percentHeight size stroke strokeWeight ellipseWidth ellipseHeight paddingLeft paddingRight paddingTop paddingBottom'
 );
 const controlNumbers = {
   List: fields('selectedIndex scrollV'),
   DataGroup: fields('scrollV'),
   Group: fields('scrollV'),
-  Label: fields('size'),
+  Label: fields('size stroke lineSpacing'),
   Rect: fields('fillAlpha strokeAlpha strokeWeight ellipseWidth ellipseHeight')
 };
 const controlBooleans = {
@@ -53,7 +53,7 @@ const controlStrings = {
   Button: fields('label skinName'),
   Component: fields('skinName')
 };
-const controlColors = { Label: fields('textColor'), Rect: fields('fillColor strokeColor') };
+const controlColors = { Label: fields('textColor strokeColor'), Rect: fields('fillColor strokeColor') };
 const layoutNumbers = fields('gap paddingLeft paddingRight paddingTop paddingBottom');
 const layoutStrings = fields('horizontalAlign verticalAlign');
 const alignments = {
@@ -336,6 +336,8 @@ function readProperties(node, path, ids, layout = false) {
           exmlFailure(path, node.offset, 'Expected a nonnegative layout or style value.', { property: key });
         if (['alpha', 'fillAlpha', 'strokeAlpha'].includes(key) && (number < 0 || number > 1))
           exmlFailure(path, node.offset, 'Expected alpha between zero and one.', { property: key });
+        if (key === 'stroke' && number > 512)
+          exmlFailure(path, node.offset, 'Outline radius exceeds 512.', { property: key });
         properties.set(key, number);
       }
     } else if (!layout && (commonBooleans.has(key) || controlBooleans[type]?.has(key))) {
