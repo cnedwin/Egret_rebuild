@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1488 exports; 4 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1495 exports; 8 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -255,14 +255,16 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SharedHostResourceStatus` | interface | Fresh immutable data; reads do no native work. |
 | `SharedLayerWebGL2Host` | interface | A shared WebGL2 host that also draws kept layers. |
 | `SharedWebGL2FrameTiming` | interface | The timings of a host's frames: totals by phase, the recent samples and how many were dropped. |
-| `SharedWebGL2Host` | interface | A host that draws shared frames with WebGL2: start and stop it, stage frames, read them back, time them and recover a lost context. |
+| `SharedWebGL2Host` | interface |  |
 | `SharedWebGL2HostOptions` | interface | A shared WebGL2 host to make: its canvas, what it reports to, and whether it measures frames. |
 | `SharedWebGL2HostStatus` | interface | A shared WebGL2 host as it is now: its resources, host status, bytes pending and retention. |
 | `SharedWebGL2Layer2D` | interface | A layer drawn once and kept on the GPU: update it, or dispose of it. |
 | `SharedWebGL2LayerEffect2D` | interface | How a kept layer is tinted when it is placed: its bounds and its multiplied and added color. |
 | `SharedWebGL2LayerPlacement2D` | interface | Where a kept layer is placed in a frame, how large, and with what effect. |
 | `SharedWebGL2LayerStatus` | interface | The kept layers of a host: the bytes they hold, and how many are ready and pending. |
+| `SharedWebGL2PageBatching` | type | Same-page batches still merge. |
 | `SharedWebGL2Readback` | interface | The pixels of a shared frame read back: its generation and frame, size, format, color space, alpha and bytes. |
+| `SharedWebGL2StartupTiming` | interface | Elapsed startup phases in the current successful WebGL2 generation, not GPU execution timers. |
 | `SharedWebGL2TimingPhase` | type | A phase of drawing a shared frame that the host can time. |
 | `SharedWebGL2TimingSample` | interface | One timed phase of a frame: its generation and frame, the phase, when it began and how long it took. |
 | `WebGL2HostDiagnostic` | interface | Something a WebGL2 host reports: a failure, with how serious it is. |
@@ -848,6 +850,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `World3DLoopSource` | interface | What drives a 3D view: an Engine's clock and the call that advances it. |
 | `World3DOverlay` | interface | A 2D game drawn on a canvas over a 3D view. |
 | `World3DOverlayOptions` | interface | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
+| `World3DOverlayStartupTiming` | interface |  |
 | `World3DPassKind` | type | What a pass drew: color, shadows, a depth prepass, an outline mask or post-processing. |
 | `World3DQuality` | type | How much a 3D app draws: low, medium or high quality. |
 | `World3DQualityPreset` | interface | What one picture quality turns on. |
@@ -936,6 +939,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `World3DLoopSource` | interface | What drives a 3D view: an Engine's clock and the call that advances it. |
 | `World3DOverlay` | interface | A 2D game drawn on a canvas over a 3D view. |
 | `World3DOverlayOptions` | interface | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
+| `World3DOverlayStartupTiming` | interface |  |
 | `World3DQuality` | type | How much a 3D app draws: low, medium or high quality. |
 | `World3DQualityPreset` | interface | What one picture quality turns on. |
 | `World3DShowOptions` | interface | What a 3D app shows: its update, mixers and controls. |
@@ -1482,6 +1486,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `ScreenPlanOptions` | interface | What to fit: the space on the screen, the designs, how they fit and what covers the edges. |
 | `ScreenRect` | interface | A rectangle in stage units. |
 | `ScreenSize` | interface | A width and a height above 0. |
+| `ScreenUiScale` | interface | Bounds on the screen's CSS pixels per unit of an independently laid-out interface. |
 
 ## `@egret/engine/kit`
 
@@ -1590,7 +1595,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserGameLabel` | interface | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
-| `BrowserGameOptions` | interface | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
+| `BrowserGameOptions` | interface |  |
+| `BrowserGameRenderMode` | type | Continuous presentation or a retained frame, with the same simulation clock in either mode. |
+| `BrowserGameStartupTiming` | interface | Wall-clock preparation durations, and the first accepted SDK submission (not GPU completion or presentation). |
 | `BrowserGameWarning` | interface | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache, and from `play`, `PLAY_MADE_EVERY_FRAME` when `update` made a text, a shape or a sprite in each of the last 60 frames. |
 | `BrowserStatsPanel` | interface | A panel over the canvas showing frame rate and frame times: sample each frame. |
 | `BrowserStatsPanelOptions` | interface | A stats panel to make: the canvas it sits over, its label, and how often it updates. |
