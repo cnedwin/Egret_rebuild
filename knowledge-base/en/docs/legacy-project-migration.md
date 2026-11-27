@@ -14,7 +14,7 @@ Egret Migrate 0.3 extends the local CLI with property-chain bindings, state-depe
 
 ## Migrating a networked lobby
 
-Egret Migrate 0.5 has a scoped import for the Egret 5.0.14 EraserSanGuoSha lobby and room. It keeps the original EUI business classes, EXML and Socket.IO browser library. Run the original server separately and verify both players against one authoritative room. Match entry is the boundary of this profile. The card table and completed rounds have their own acceptance criteria. [CLI instructions](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/egret-migrate/README.md) · [Original client and server](https://github.com/EraserTeam/EraserSanGuoSha/tree/30c315bb7296efd0518eb0c31dd0e4d115742b69)
+Egret Migrate 0.5 has a scoped import for the Egret 5.0.14 EraserSanGuoSha lobby and room. It keeps the original EUI business classes, EXML and Socket.IO browser library. Run the original server separately and verify both players against one authoritative room. Match entry is the boundary of this profile. The separate `eraser-table` profile retains the owner's match rules and card faces. Two desktop clients in each build followed the same five turns through settlement and the next deal. The original server closes the room when a seat disconnects; its Node 26 teardown failure is recorded in the CLI guide. [CLI instructions](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/egret-migrate/README.md) · [Original client and server](https://github.com/EraserTeam/EraserSanGuoSha/tree/30c315bb7296efd0518eb0c31dd0e4d115742b69)
 
 ## Porting an existing multi-screen game
 

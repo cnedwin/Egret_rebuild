@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 import { inspectLegacyProject } from '../tools/egret-migrate/inspect.mjs';
+import { tableSourcePaths } from '../tools/egret-migrate/table-source.mjs';
 import { selectLobbyInterface } from '../tools/egret-migrate/lobby-profile.mjs';
 
 function viewFixture() {
@@ -44,7 +45,14 @@ function viewFixture() {
     return { identity: { path: key }, bytes: Buffer.from(files.get(key)) };
   };
   const declarations = { 'client/resource/default.res.json': manifest, 'client/resource/default.thm.json': theme };
-  return { manifest, theme, files, button, select: () => selectLobbyInterface(read, key => declarations[key]) };
+  return {
+    manifest,
+    theme,
+    files,
+    button,
+    declarations,
+    select: (table = false) => selectLobbyInterface(read, key => declarations[key], table)
+  };
 }
 
 test('the room interface selects its two scenes and retains author-owned resources and skin classes', () => {
@@ -62,6 +70,30 @@ test('the room interface selects its two scenes and retains author-owned resourc
     selected.theme.exmls.map(skin => skin.className),
     ['SceneLobbySkin', 'SceneRoomSkin', 'RoomListItemRendererSkin', 'skins.ButtonSkin']
   );
+});
+
+test('the table includes owner-supplied rules and only card faces reachable from its local catalog', () => {
+  const fixture = viewFixture();
+  for (const path of tableSourcePaths) fixture.files.set(path, 'declaration fixture');
+  for (const [name, type, url] of [
+    ['Cards_json', 'json', 'deck.json'],
+    ['SoundLink_json', 'json', 'sounds.json'],
+    ['Card_Back_png', 'image', 'back.png'],
+    ['Card_Example_png', 'image', 'example.png']
+  ]) {
+    fixture.manifest.resources.push({ name, type, url });
+    fixture.files.set('client/resource/' + url, type === 'json' ? '{}' : 'fixture image');
+  }
+  fixture.declarations['client/resource/deck.json'] = [{ class: 'Example' }, { class: 'Example' }];
+  const selection = fixture.select(true);
+  assert.equal(selection.sources.length, tableSourcePaths.length + 2);
+  assert.ok(selection.sources.some(source => source.path.endsWith('/Room.ts')));
+  assert.deepEqual(
+    selection.resources.resources.map(r => r.name),
+    ['idle_png', 'pressed_png', 'Cards_json', 'SoundLink_json', 'Card_Back_png', 'Card_Example_png']
+  );
+  fixture.declarations['client/resource/deck.json'] = [{ class: '../bad' }];
+  assert.throws(() => fixture.select(true), { code: 'MIGRATE_LOBBY_PROFILE' });
 });
 
 test('selected resource ambiguity, escaping URLs and missing theme declarations fail closed', () => {

@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fingerprintFile, logicalPath } from '../lib/file-identity.mjs';
 import { inspectClassicInventory, inspectHtmlBootstrap } from './intake.mjs';
 import { discoverLegacySkins } from './exml.mjs';
-import { eraserLobbyProfile, inspectEraserLobby } from './lobby-profile.mjs';
+import { isEraserProfile, inspectEraserLobby } from './lobby-profile.mjs';
 import { convertDragonBones } from './dragonbones.mjs';
 import { planMigratedResources } from './legacy-assets.mjs';
 
@@ -123,16 +123,21 @@ export function inspectLegacyProject(folder, options = {}) {
   const files = new Map();
   const read = (key, maxBytes) => {
     if (files.has(key)) return files.get(key);
-    const result = readProjectFile(owner, key, options.profile === eraserLobbyProfile ? 1024 * 1024 : maxBytes);
+    const result = readProjectFile(owner, key, isEraserProfile(options.profile) ? 1024 * 1024 : maxBytes);
     files.set(key, result);
     return result;
   };
   if (options.profile !== undefined) {
-    if (options.profile !== eraserLobbyProfile) refuse('MIGRATE_ARGUMENTS', 'Unknown migration profile.');
+    if (!isEraserProfile(options.profile)) refuse('MIGRATE_ARGUMENTS', 'Unknown migration profile.');
     if (['sources', 'resources', 'theme', 'bones'].some(name => options[name] !== undefined)) {
       refuse('MIGRATE_ARGUMENTS', 'The lobby profile selects its own sources, theme and resources.');
     }
-    const selection = inspectEraserLobby({ read, readJSON: key => readJSON(read, key), readStage });
+    const selection = inspectEraserLobby({
+      profile: options.profile,
+      read,
+      readJSON: key => readJSON(read, key),
+      readStage
+    });
     return recordInputs(owner, files, read, selection);
   }
   const properties = readJSON(read, 'egretProperties.json');

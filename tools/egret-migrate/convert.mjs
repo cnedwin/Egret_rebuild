@@ -179,13 +179,24 @@ function gameSource(sources, entry, theme, network) {
     })
     .join('\n');
   const lobbyImport = network ? "import { createLobbyRoot, launchLobbyHost } from './lobby-session.mjs';\n" : '';
+  const tableImport = network?.table ? "import { createTableView } from './table-session.mjs';\n" : '';
   const socketSetup = network
     ? 'const socket = globalThis.io.connect(' +
       (network.origin === null ? 'location.origin' : JSON.stringify(network.origin)) +
       ', { autoConnect: false, forceNew: true, reconnection: false });\n'
     : '';
-  const main = network
-    ? `const Game = { socket };
+  const tableMain = `const status = document.getElementById('room-status');
+    const { UI, initialize, CardSelectorWindow, GlobalCardSelectorWindow } = createTableView({
+      egret, eui, Game, SceneLobby, SceneRoom, SceneGame, SelfGameArea, SkillButton, status, socket
+    });
+    return createLobbyRoot({
+      eui, RES, UI, socket, manifest, resourceRoot: resources.resourceRoot,
+      group: resources.groups[0].name, theme: theme.themePath, status, initialize
+    });`;
+  const main = network?.table
+    ? tableMain
+    : network
+      ? `const Game = { socket };
     const UI = {
       get sceneLobby() { return SceneLobby.instance; }, get sceneRoom() { return SceneRoom.instance; },
       sceneGame: new eui.Group()
@@ -194,10 +205,10 @@ function gameSource(sources, entry, theme, network) {
       eui, RES, UI, socket, manifest, resourceRoot: resources.resourceRoot,
       group: resources.groups[0].name, theme: theme.themePath, status: document.getElementById('room-status')
     });`
-    : 'egret.registerClass(' + entry + ', ' + JSON.stringify(entry) + '); return new ' + entry + '();';
+      : 'egret.registerClass(' + entry + ', ' + JSON.stringify(entry) + '); return new ' + entry + '();';
   return `import * as sdk from './egret2d.mjs';
 import { launchLegacyWeb } from './legacy-web.mjs';
-${lobbyImport}const response = await fetch('./project.json');
+${lobbyImport}${tableImport}const response = await fetch('./project.json');
 if (!response.ok) throw new Error('Could not open the migrated project');
 const project = await response.json();
 const { stage, manifest, resources, theme, sheets, bones, moviePages } = project.entities.find(item => item.id === 'e_client').data;
@@ -387,6 +398,7 @@ export async function convertProject(options) {
       ...browserModules,
       'egret2d.mjs',
       ...(network ? lobbyFiles : []),
+      ...(network?.table ? ['table-session.mjs', 'EraserSanGuoSha-LICENSE.txt'] : []),
       ...assets.map(file => file.key)
     ]
   };
@@ -399,6 +411,10 @@ export async function convertProject(options) {
   for (const { key, bytes } of assets) write(out, 'web/' + key, bytes);
   if (network) {
     write(out, 'web/' + network.browserPath, read(network.vendorPath));
+    if (network.table) {
+      write(out, 'web/table-session.mjs', fs.readFileSync(new URL('./table-session.mjs', import.meta.url)));
+      write(out, 'web/EraserSanGuoSha-LICENSE.txt', read('LICENSE'));
+    }
     write(out, 'web/lobby-session.mjs', fs.readFileSync(new URL('./lobby-session.mjs', import.meta.url)));
   }
   write(out, 'web/index.html', network ? lobbyHtml(network.vendorSha256) : entryHtml);
