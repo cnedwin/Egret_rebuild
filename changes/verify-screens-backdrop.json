@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "verify --screens leaves out a modal's backdrop",
+    "body": "`egret verify --screens` no longer takes the backdrop of a modal view for a control. A node a `play` game takes taps on that covers the whole canvas, such as a modal's backdrop or a \"tap anywhere\" layer, is not told to `__egretAgent.controls`, and neither is a control it is drawn over. Before, any open question failed every phone with a notch for a control outside the safe part and warned that its buttons covered those of the game. A view's parts now give their nodes their names, so a view's buttons are reported by part name."
+  },
+  "zh": {
+    "title": "verify --screens 不再把模态遮罩当成控件",
+    "body": "`egret verify --screens` 不再把模态视图的遮罩当成控件。`play` 游戏里盖满整块画布、接受点击的节点（例如模态遮罩或「点任意处继续」的层）不再告知 `__egretAgent.controls`，被它盖住的控件也不告知。以前只要打开一个询问，每部有刘海的手机都会报「控件超出安全区」的错误，并警告询问的按钮和游戏的按钮互相遮挡。视图部件现在把名字写到自己的节点上，所以视图里的按钮按部件名报告。"
+  }
+}
