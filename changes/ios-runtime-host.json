@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "First iOS Runtime host for 2D quad scenes",
+    "body": "A JavaScriptCore and Metal sample uses the Rust project-frame decoder to render the existing 40-card scene. Mac builds produce separate simulator and unsigned device applications. The verification receipt distinguishes simulator Metal availability from physical iPhone testing."
+  },
+  "zh": {
+    "title": "iOS Runtime 首次接入 2D 四边形场景",
+    "body": "JavaScriptCore 和 Metal 宿主通过 Rust 帧解码器绘制现有的 40 卡片场景。Mac 可构建模拟器应用和未签名的真机应用。验证记录区分模拟器 Metal 可用性与实体 iPhone 测试。"
+  }
+}
