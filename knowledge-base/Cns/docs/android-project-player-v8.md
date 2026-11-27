@@ -182,4 +182,4 @@ Galaxy Z Fold7、Android 17 上，两份自制脚本加生成的入口共 17,057
 | 裁剪 V8 | 37.750 ms | 28.468、28.306 ms | 33.887 ms |
 | 标准 V8 | 38.451 ms | 28.820、28.151 ms | 32.456 ms |
 
-两个冷开各写入三条记录。各宿主两次热开均读到全部三条，损坏组读到两条并重建一条。八次开关的执行顺序、单次执行和资源关闭结果一致。此处只计该用例中候选脚本的编译时间；文件读写、代码执行、设备恢复和首个可交互帧各有开销。缓存处理时间见原始回执。[Fold7 实测记录](../../../runtime-sdk/measurements/fold7-modular-scripts-and-mobile-services.json)
+两个冷开各写入三条记录。各宿主两次热开均读到全部三条，损坏组读到两条并重建一条。八次开关的执行顺序、单次执行和资源关闭结果一致。此处只计该用例中候选脚本的编译时间；文件读写、代码执行、设备恢复和首个可交互帧各有开销。缓存处理时间见原始回执。[Fold7 实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-modular-scripts-and-mobile-services.json)
