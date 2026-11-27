@@ -35,7 +35,7 @@ const state:SemanticsState=semantics.state,size:number=semantics.size;void state
 const page:BrowserSemanticsOptions={semantics,canvas,width:480,height:300,label:'Game',onError:(cause:unknown)=>{void cause;}};
 const browser:BrowserSemantics=createBrowserSemantics(page);
 const container:HTMLElement=browser.container,element:HTMLElement|undefined=browser.elementOf('sound'),projected:'active'|'closed'=browser.state;void container;void element;void projected;
-browser.sync();browser.dispose();node.remove();semantics.dispose();
+browser.sync();browser.sync({width:600,height:320});browser.dispose();node.remove();semantics.dispose();
 // @ts-expect-error a role is one the tree knows
 semantics.add({id:'a',role:'toolbar',describe:()=>({bounds})});
 // @ts-expect-error a node says how it is read

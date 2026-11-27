@@ -9,6 +9,7 @@ export async function verifyViewSemanticsGeometry(page) {
     const { play } = await import('@egret/engine/play');
     const { createUiSemantics } = await import('@egret/engine/ui/semantics');
     const { createUiTester } = await import('@egret/engine/ui/testing');
+    const { createBrowserSemantics } = await import('@egret/engine/web/semantics');
     const semantics = createUiSemantics();
     const tester = createUiTester({ semantics });
     const host = document.createElement('div');
@@ -94,12 +95,57 @@ export async function verifyViewSemanticsGeometry(page) {
         );
       }
     });
+    const projection = createBrowserSemantics({
+      semantics,
+      canvas: game.canvas,
+      width: game.browser.frame.width,
+      height: game.browser.frame.height
+    });
+    const unwatchProjection = game.browser.onScreenChange(() => projection.sync(game.browser.frame));
+    let rememberedElement, rememberedId, rememberedContainer;
+    function projectionState(remember = false) {
+      const node = semantics.publish().nodes.find(n => n.role === 'button' && n.name === state.label);
+      const element = projection.elementOf(node.id);
+      if (remember) {
+        rememberedElement = element;
+        rememberedId = element.id;
+        rememberedContainer = projection.container;
+      }
+      const rect = element.getBoundingClientRect(),
+        box = game.canvas.getBoundingClientRect();
+      const { width, height } = game.browser.frame;
+      const bounds = node.bounds;
+      const wanted = {
+        x: box.left + (bounds.x * box.width) / width,
+        y: box.top + (bounds.y * box.height) / height,
+        width: (bounds.width * box.width) / width,
+        height: (bounds.height * box.height) / height
+      };
+      return {
+        extent: { width, height },
+        rect: { x: rect.left, y: rect.top, width: rect.width, height: rect.height },
+        wanted,
+        sameElement: element === rememberedElement && element.id === rememberedId,
+        sameContainer: projection.container === rememberedContainer,
+        activeDescendant: game.canvas.getAttribute('aria-activedescendant') === element.id,
+        canvasOwns: game.canvas.getAttribute('aria-owns') === projection.container.id,
+        keyboardOnCanvas: document.activeElement === game.canvas,
+        focused: view.focused
+      };
+    }
     function snapshot() {
       return semantics
         .publish()
         .nodes.map(({ role, name, bounds, disabled, focused }) => ({ role, name, bounds, disabled, focused }));
     }
     return {
+      startProjectionCheck() {
+        if (!view.focus('tile')) throw new Error('The tile could not receive its named focus');
+        if (!game.canvas.hasAttribute('tabindex')) game.canvas.tabIndex = 0;
+        game.canvas.focus({ preventScroll: true });
+        return projectionState(true);
+      },
+      projectionState,
       inspect() {
         return { snapshot: snapshot(), variant: view.variant, taps: state.taps, pointerTaps: state.pointerTaps };
       },
@@ -148,6 +194,8 @@ export async function verifyViewSemanticsGeometry(page) {
         return view.visibleRect('tile');
       },
       async dispose() {
+        unwatchProjection();
+        projection.dispose();
         await game.dispose();
         semantics.dispose();
         host.remove();
@@ -185,13 +233,31 @@ export async function verifyViewSemanticsGeometry(page) {
     assert.ok(renamed.snapshot.some(n => n.role === 'button' && n.name === '工坊 — 已升级'));
     assert.equal(await fixture.evaluate(f => f.hide()), undefined);
     assert.ok(await fixture.evaluate(f => f.show()));
+    // The semantic projection must follow the real expanded/turned stage, keeping the same element and focus.
+    const checkProjection = receipt => {
+      for (const key of ['x', 'y', 'width', 'height'])
+        assert.ok(Math.abs(receipt.rect[key] - receipt.wanted[key]) < 1, JSON.stringify(receipt));
+      for (const key of ['sameElement', 'sameContainer', 'activeDescendant', 'canvasOwns', 'keyboardOnCanvas'])
+        assert.ok(receipt[key], key + ': ' + JSON.stringify(receipt));
+      assert.equal(receipt.focused, 'tile');
+    };
+    const projectionInitial = await fixture.evaluate(f => f.startProjectionCheck());
+    checkProjection(projectionInitial);
+    await page.setViewportSize({ width: 1000, height: 480 });
+    await page.waitForFunction(f => f.projectionState().extent.width === 750, fixture);
+    const projectionExpanded = await fixture.evaluate(f => f.projectionState());
+    checkProjection(projectionExpanded);
+    assert.notDeepEqual(projectionExpanded.extent, projectionInitial.extent);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.waitForFunction(f => f.inspect().variant === 'portrait', fixture);
+    const projectionPortrait = await fixture.evaluate(f => f.projectionState());
+    checkProjection(projectionPortrait);
+    assert.notDeepEqual(projectionPortrait.extent, projectionExpanded.extent);
     const portrait = await fixture.evaluate(f => f.inspect());
     assert.ok(portrait.snapshot.some(n => n.role === 'button' && n.name === '工坊 — 已升级'));
     assert.ok(!portrait.snapshot.some(n => n.name === 'Icon text' || n.name === 'Decorative flourish'));
     assert.equal(await fixture.evaluate(f => f.close()), undefined);
-    return { initialGeometry, scrolled, renamed, portrait };
+    return { initialGeometry, scrolled, renamed, portrait, projectionInitial, projectionExpanded, projectionPortrait };
   } finally {
     await fixture.evaluate(f => f.dispose());
     await fixture.dispose();

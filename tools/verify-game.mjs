@@ -135,7 +135,7 @@ export function gameChecks(seen) {
 }
 
 /** What a page is told to count before any of its scripts runs. */
-function counters() {
+export function counters(insets) {
   const verify = (window.__verify = {
     frames: 0,
     audioContexts: 0,
@@ -144,6 +144,17 @@ function counters() {
     engineWarnings: []
   });
   // The engine tells this of every warning of the game; the report lists the first fifty.
+  // A screen pass uses the same input, sound and warning witnesses as scripted one-window play, with the screen
+  // probe and its stand-in insets added before the game starts.
+  const screens =
+    insets === undefined
+      ? undefined
+      : (window.__egretScreens = {
+          warnings: verify.engineWarnings,
+          controls: undefined,
+          screen: undefined,
+          receipts: 0
+        });
   window.__egretAgent = Object.freeze({
     warning(warning) {
       if (verify.engineWarnings.length < 50)
@@ -151,7 +162,17 @@ function counters() {
           code: String(warning?.code),
           message: String(warning?.message ?? '').slice(0, 300)
         });
-    }
+    },
+    ...(screens === undefined
+      ? {}
+      : {
+          insets,
+          controls(controls, screen) {
+            screens.controls = controls;
+            screens.screen = screen;
+            screens.receipts++;
+          }
+        })
   });
   const frame = window.requestAnimationFrame.bind(window);
   window.requestAnimationFrame = callback =>
@@ -217,7 +238,14 @@ export function stagePlace(box, width, height, x, y) {
   return [box.x + (x * box.w) / width, box.y + (y * box.h) / height];
 }
 /** What a script is given to play a game with: input in the stage's own units, and the page read from its pictures. */
-export function driver(tab, PNG, out, size, { picturePrefix = 'played-', warnings, sounds } = {}) {
+export function driver(
+  tab,
+  PNG,
+  out,
+  size,
+  { uniquePictures = false, picturePrefix = 'played-', warnings, sounds } = {}
+) {
+  const usedPictures = new Set();
   const box = async () => {
     const canvases = await tab.evaluate(() =>
       [...document.querySelectorAll('canvas')].map(canvas => {
@@ -267,6 +295,7 @@ export function driver(tab, PNG, out, size, { picturePrefix = 'played-', warning
     letGo: name => tab.keyboard.up(keyOf(name)),
     async look() {
       const canvas = await box(),
+        // Stage placement and the canvas rectangle are CSS pixels, even on an emulated high-density phone.
         png = PNG.sync.read(await tab.screenshot({ scale: 'css' }));
       return (x, y) => {
         const [px, py] = stagePlace(canvas, size?.width ?? canvas.w, size?.height ?? canvas.h, x, y),
@@ -291,6 +320,9 @@ export function driver(tab, PNG, out, size, { picturePrefix = 'played-', warning
     },
     async picture(name) {
       const target = path.join(out, picturePrefix + String(name).replace(/[^A-Za-z0-9_-]+/g, '-') + '.png');
+      const identity = target.toLowerCase();
+      if (uniquePictures && usedPictures.has(identity)) throw new TypeError('Repeated play picture name: ' + name);
+      usedPictures.add(identity);
       await tab.screenshot({ path: target });
       return target;
     }
@@ -298,7 +330,7 @@ export function driver(tab, PNG, out, size, { picturePrefix = 'played-', warning
   return game;
 }
 
-function recordScriptFailure(played, error, fallbackCode) {
+export function recordScriptFailure(played, error, fallbackCode) {
   const message = String(error?.message ?? error).slice(0, 1200);
   const code = typeof error?.code === 'string' && error.code ? error.code : fallbackCode;
   played.error = String(error?.stack ?? error).slice(0, 1200);

@@ -20,7 +20,11 @@ await play({
     game.rect(240, 135, 480, 270, 0x1d3247);
     game.circle(120, 110, 36, 0xf59e0b);
     game.text('Screen check', { x: 240, y: 40, size: 28, align: 'center' });
-    const ask = () => game.confirm('Leave the match?', { yes: 'Leave', no: 'Stay' });
+    const ask = async () => {
+      game.pause();
+      await game.confirm('Leave the match?', { yes: 'Leave', no: 'Stay' });
+      game.resume();
+    };
     const pause = game.button('Pause', { x: 0, y: 0, width: 120, height: tall }, ask);
     // The mistake: the screen's corner is under the notch; the safe part keeps clear of it.
     game.pin(pause, { right: 8, top: 8 }, { area: fixed ? 'safe' : 'screen' });

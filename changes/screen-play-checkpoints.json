@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Screen checks can follow a play route and inspect checkpoints",
+    "body": "`egret verify --screens --play <script>` runs the existing play script separately on each screen. Await `player.checkpoint(name)` at stable states to collect tinted screenshots and the same screen findings. Native control geometry waits for a fresh receipt, including when simulation is paused; if it stops reporting, the capture fails instead of passing stale geometry. An unsafe checkpoint or script failure fails only that screen and the run, and the other profiles continue. Pixel sampling now reads CSS pixels at every device pixel ratio. The default title-only screen check and single-window verification remain available."
+  },
+  "zh": {
+    "title": "多屏检查支持试玩路线与界面检查点",
+    "body": "`egret verify --screens --play <脚本>` 在每种屏幕上分别运行原有试玩脚本。在稳定的界面状态等待 `player.checkpoint(name)`，就能获得带红色遮挡区的截图和同样的屏幕检查结果。原生控件几何会等到新报告（包括游戏模拟暂停时）；报告中断会使检查失败，而不会拿过时的几何通过。检查点不安全或脚本失败会使该屏幕及整次检查失败，其他屏幕继续运行。各种设备像素比下按 CSS 像素取色。默认的初始界面多屏检查和单窗口验证仍可照常使用。"
+  }
+}
