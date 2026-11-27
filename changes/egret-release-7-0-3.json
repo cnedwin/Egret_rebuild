@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Egret Engine 7.0.3 release and installation",
+    "body": "The release guide covers the browser, migration and Android Runtime changes and pins 7.0.3 installation commands. Release verification now builds the three browser registry archives from the same verified snapshot. GitHub Packages checks the published tag, commit and manifest before adding a version."
+  },
+  "zh": {
+    "title": "白鹭引擎 7.0.3 发行与安装",
+    "body": "发行指南记录了浏览器引擎、旧工程移植和 Android Runtime 的改动，并提供固定 7.0.3 的安装命令。发行检查会从同一快照生成三个浏览器分发包，GitHub Packages 在添加版本前核对发行标签、提交和清单。"
+  }
+}

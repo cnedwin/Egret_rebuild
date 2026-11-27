@@ -2,19 +2,26 @@
 
 [English](../../en/docs/release-archives.md) | 简体中文
 
-[白鹭引擎 7.0.2](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.2) 是 7.0 产品线的稳定发行版。浏览器 2D 和 3D 单文件、五个 JavaScript 包及可编辑示例从同一份源代码构建。
+以下下载与安装命令对应[白鹭引擎 7.0.3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.3)。2D、3D 浏览器文件、五个模块包及可编辑示例均从同一份源代码构建。
 
 | 开发方式 | 下载 |
 | --- | --- |
-| 从可编辑的 2D 游戏开始 | [入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-first-game.zip) |
-| 给已有网页加入引擎 | [浏览器文件与许可证](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-browser.zip)。2D 可选 [`egret2d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret2d.js) 或 [`egret2d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret2d.mjs)，包含 World3D 的版本可选 [`egret3d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret3d.js) 或 [`egret3d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret3d.mjs)。 |
-| 在现有 npm 工程中导入模块 | 运行 `npm install @egret/engine` 从 npm 注册表安装，或使用归档：[`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-engine-7.0.2.tgz)、[`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-contracts-7.0.2.tgz)、[`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-runtime-7.0.2.tgz)、[`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-project-7.0.2.tgz)、[`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-spine-7.0.2.tgz) |
+| 从可编辑的 2D 游戏开始 | [入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-first-game.zip) |
+| 给已有网页加入引擎 | [浏览器文件与许可证](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-browser.zip)。2D 可选 [`egret2d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret2d.js) 或 [`egret2d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret2d.mjs)，包含 World3D 的版本可选 [`egret3d.js`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret3d.js) 或 [`egret3d.mjs`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret3d.mjs)。 |
+| 在现有 npm 工程中导入模块 | 运行 `npm install @egret/engine` 从 npm 注册表安装，或使用归档：[`@egret/engine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-engine-7.0.3.tgz)、[`@egret/contracts`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-contracts-7.0.3.tgz)、[`@egret/runtime`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-runtime-7.0.3.tgz)、[`@egret/project`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-project-7.0.3.tgz)、[`@egret/spine`](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-spine-7.0.3.tgz) |
 
-[发行清单](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/release.json)记录源提交、文件大小及 SHA-256。下载浏览器单文件后，请放在游戏自己的站点或目录中提供给页面；分发游戏时一并保留浏览器归档里的许可声明。
+[发行清单](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/release.json)记录源提交、文件大小及 SHA-256。下载浏览器单文件后，请放在游戏自己的站点或目录中提供给页面；分发游戏时一并保留浏览器归档里的许可声明。
 
-此前的候选版 [7.0.1-rc.3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3) 仍可下载，也可以用准确版本号从 npm 安装。
+上一稳定版 [7.0.2](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.2) 保留下载。此前的候选版 [7.0.1-rc.3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3) 仍可下载，也可以用准确版本号从 npm 安装。
 
 GitHub 在 2026 年 11 月 22 日核对时对两个更早版本的标签和发行下载返回 404。研究历史版本请使用 [7.0.1-rc.2 的源码](https://github.com/cnedwin/Egret_rebuild/tree/859bd0eecdc039ffc34e89c55d5de0986bafb67c)、[0.1.0-preview.1 的源码](https://github.com/cnedwin/Egret_rebuild/tree/51b122555503533a4064736e7cbad4934db70862) 和 [7.0.1-rc.1 浏览器构建记录](https://github.com/cnedwin/Egret_rebuild/pull/367)。
+
+## 7.0.3 更新内容
+
+- **游戏界面。** 声明式视图支持滚动和键盘焦点。命中测试和控件语义区域会随父级变换及裁剪更新。静止界面可以按需重绘。[Play 指南](play.md)
+- **World3D。** WebGL2 场景可在首次交互绘制前准备标准材质、自定义材质和自动实例化使用的程序变体。长时间停止后，游戏可以重新启动显示循环。[World3D 指南](world3d.md)
+- **白鹭 5 移植。** 《橡皮三国杀》移植流程保留原 EUI 业务代码、EXML 和 Socket.IO。两个桌面客户端连接原服务端，验证了五个回合、结算及下一轮发牌。移植指南列出了适用范围和原服务端的限制。[移植指南](旧工程迁移.md)
+- **Android Runtime SDK。** 白鹭 7 工程播放器和旧引擎兼容模式各有启动配置。Fold7 上的白鹭 5.3.10 示例重开后恢复了中文、图片和已保存的计数。其他版本的覆盖范围按原模块版本及场景分别记录。原生播放器可从同版源码构建。[Runtime SDK](runtime-sdk.md) · [真机验证范围](original5-atlas-verification.md)
 
 ## 7.0.2 更新内容
 
@@ -25,7 +32,7 @@ GitHub 在 2026 年 11 月 22 日核对时对两个更早版本的标签和发�
 
 ## 运行与修改入门示例
 
-1. 把[入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-first-game.zip)解压到新目录。它的 `package.json` 已固定同版引擎归档和 esbuild 0.28.2。
+1. 把[入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-first-game.zip)解压到新目录。它的 `package.json` 已固定同版引擎归档和 esbuild 0.28.2。
 2. 使用 Node.js 26.7.0 和 npm，运行 `npm install`，再运行 `npm start`。打开 `http://127.0.0.1:8000`，点击橙色方块或按空格，每次移动 32 个舞台单位。
 3. 将 `main.mjs` 中的 `STEP` 从 `32` 改为 `64`，保存并刷新页面。方块每次移动的距离会翻倍。在终端按 Ctrl+C 停止本地服务器。
 
@@ -37,24 +44,24 @@ GitHub 在 2026 年 11 月 22 日核对时对两个更早版本的标签和发�
 npm install @egret/engine
 ```
 
-`@egret/engine` 会一并安装同一版本的 `@egret/contracts` 和 `@egret/runtime`。需要工程格式时加装 `@egret/project`，需要 Spine 时加装 `@egret/spine`。要显式选择候选版标签，可运行 `npm install @egret/engine@next`。要在 `package.json` 中固定本版，可运行 `npm install --save-exact @egret/engine@7.0.2`。
+`@egret/engine` 会一并安装同一版本的 `@egret/contracts` 和 `@egret/runtime`。需要工程格式时加装 `@egret/project`，需要 Spine 时加装 `@egret/spine`。要显式选择候选版标签，可运行 `npm install @egret/engine@next`。要在 `package.json` 中固定本版，可运行 `npm install --save-exact @egret/engine@7.0.3`。
 
 同样的包也可以按归档地址从 GitHub Releases 安装，白鹭自己的包不经过注册表：
 
 ```sh
-npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-engine-7.0.2.tgz
+npm install https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.3/egret-engine-7.0.3.tgz
 ```
 
 npm 会从同一发行版取得 `@egret/contracts` 和 `@egret/runtime`。需要工程格式或 Spine 时，用上表相应的 `.tgz` 地址运行 `npm install`。
 
 ## 通过 npm 使用已构建的浏览器脚本
 
-五个模块包按功能提供导入入口。另外两个独立分发包提供与 7.0.2 GitHub 发行相同的浏览器脚本，适合需要单文件部署的游戏。
+五个模块包按功能提供导入入口。另外两个独立分发包提供与 7.0.3 GitHub 发行相同的浏览器脚本，适合需要单文件部署的游戏。
 
 | 游戏需要 | 安装 | 模块入口 | 可直接部署的脚本 |
 | --- | --- | --- | --- |
-| 2D 游戏 | `npm install @egret/2d@7.0.2` | `import { play } from '@egret/2d'` | `egret2d.js` |
-| World3D 场景与 2D 界面 | `npm install @egret/3d@7.0.2` | `import { play3d } from '@egret/3d'` | `egret3d.js` |
+| 2D 游戏 | `npm install @egret/2d@7.0.3` | `import { play } from '@egret/2d'` | `egret2d.js` |
+| World3D 场景与 2D 界面 | `npm install @egret/3d@7.0.3` | `import { play3d } from '@egret/3d'` | `egret3d.js` |
 
 3D 包已包含 2D 游戏入口，每个游戏使用一个包。引擎对象及其资源在同一入口内创建和释放。[HTML 与 ES 模块用法](single-file.md)
 
@@ -64,7 +71,7 @@ npm 会从同一发行版取得 `@egret/contracts` 和 `@egret/runtime`。需要
 
 ```sh
 npm login --scope=@cnedwin --registry=https://npm.pkg.github.com --auth-type=legacy
-npm install --save-exact @cnedwin/egret-browser@7.0.2
+npm install --save-exact @cnedwin/egret-browser@7.0.3
 ```
 
 从 GitHub 下载公开 npm 包也需要登录。请在密码提示处输入具有 `read:packages` 权限的个人访问令牌（classic），账号须有该包的访问权限。从 `@cnedwin/egret-browser` 或其 `/2d` 入口导入 `play`，从 `@cnedwin/egret-browser/3d` 导入 `play3d`。直接编写 HTML 时，从包中复制一个传统脚本即可。[GitHub Packages 安装与浏览器示例](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/github-browser-distribution/README.zh-CN.md)
@@ -87,8 +94,8 @@ GitHub Release 发布后，把 `release.json` 和五个 `npm-*.tgz` 归档下载
 
 ```sh
 node tools/build.mjs
-node tools/pack-release.mjs --version 7.0.2 --out ../release
-node tools/verify-release.mjs --version 7.0.2 --archives ../release
+node tools/pack-release.mjs --version 7.0.3 --out ../release
+node tools/verify-release.mjs --version 7.0.3 --archives ../release
 node tools/publish-registry.mjs --release ../release --dry-run
 ```
 
@@ -100,7 +107,7 @@ node tools/publish-registry.mjs --release ../release --dry-run
 
     node tools/pack-browser-npm.mjs --release <已下载的发行目录> --manifest-sha256 <GitHub记录的SHA-256> --out <新目录>
 
-维护者从 `main` 手动运行 [GitHub Packages 工作流](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml) 来分发 7.0.2。工作流核对原发行清单，用 `--target github` 制作合集，再在空工程里安装已发布的包。运行摘要会列出实际可见性。如果结果为 `private`，需要在包设置中调整访问权限，社区开发者才能安装。[包的访问权限与可见性](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
+维护者从 `main` 手动运行 [GitHub Packages 工作流](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml)。输入稳定发行的 `tag`、该标签的 40 位 `source_commit`，以及 GitHub 上 `release.json` 资产记录里的 64 位 `manifest_sha256`。工作流核对标签、提交和清单，为关联本仓库的包添加缺少的版本，重跑时核对已有版本的完整性。从 7.0.3 起，打包工具与包内说明也取自已验证标签。它用 `--target github` 制作合集，再在空工程里安装已发布的包。运行摘要会列出实际可见性。如果结果为 `private`，需要在包设置中调整访问权限，社区开发者才能安装。[包的访问权限与可见性](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
 
 ## 早期工程预览的验证记录
 

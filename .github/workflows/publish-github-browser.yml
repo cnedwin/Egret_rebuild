@@ -1,19 +1,31 @@
 name: Publish the GitHub browser package
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Published stable release tag (vX.Y.Z)
+        required: true
+        type: string
+      source_commit:
+        description: Full commit SHA resolved from the release tag
+        required: true
+        type: string
+      manifest_sha256:
+        description: SHA-256 from the release.json GitHub asset record, without the prefix
+        required: true
+        type: string
 
 permissions: {}
 concurrency:
-  group: publish-egret-browser-7-0-2
+  group: publish-egret-browser
   cancel-in-progress: false
 
 env:
   PACKAGE: '@cnedwin/egret-browser'
-  VERSION: '7.0.2'
-  TAG: v7.0.2
+  TAG: ${{ inputs.tag }}
   REGISTRY: https://npm.pkg.github.com
-  SOURCE_COMMIT: 60991a46eb2252e5c0e7790b90b51517e3cbd14c
-  MANIFEST_SHA256: 5687ce4e23eceadaa6ad23a21a8f032b5d6618215c516bf609996a0e5bb614f8
+  SOURCE_COMMIT: ${{ inputs.source_commit }}
+  MANIFEST_SHA256: ${{ inputs.manifest_sha256 }}
 
 jobs:
   pack:
@@ -24,27 +36,40 @@ jobs:
       contents: read
     outputs:
       integrity: ${{ steps.pack.outputs.integrity }}
+      version: ${{ steps.release.outputs.version }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version-file: .node-version
       - name: Read the immutable browser release
+        id: release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          [[ "$TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          [[ "$SOURCE_COMMIT" =~ ^[a-f0-9]{40}$ && "$MANIFEST_SHA256" =~ ^[a-f0-9]{64}$ ]]
+          VERSION="${TAG#v}"
+          printf 'version=%s\n' "$VERSION" >> "$GITHUB_OUTPUT"
           source="$RUNNER_TEMP/source"
           mkdir "$source"
           test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$TAG" --jq .sha)" = "$SOURCE_COMMIT"
-          digest=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[] | select(.name == "release.json") | .digest')
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" > "$RUNNER_TEMP/release-api.json"
+          jq -e --arg tag "$TAG" '.tag_name == $tag and .draft == false and .prerelease == false' "$RUNNER_TEMP/release-api.json"
+          digest=$(jq -er '[.assets[] | select(.name == "release.json")] | select(length == 1) | .[0].digest' "$RUNNER_TEMP/release-api.json")
           test "$digest" = "sha256:$MANIFEST_SHA256"
           gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir "$source" --pattern release.json --pattern egret-browser.zip
           (cd "$source" && echo "$MANIFEST_SHA256  release.json" | sha256sum -c -)
           jq -e --arg v "$VERSION" --arg c "$SOURCE_COMMIT" '.version == $v and .sourceCommit == $c' "$source/release.json"
+          # Use only release sources that passed through the main branch selected for this dispatch.
+          git merge-base --is-ancestor "$SOURCE_COMMIT" "$GITHUB_SHA"
+          git checkout --detach "$SOURCE_COMMIT"
+          test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
       - name: Package the verified classic and module files
         id: pack
         run: |
@@ -62,10 +87,13 @@ jobs:
 
   publish:
     needs: pack
+    env:
+      VERSION: ${{ needs.pack.outputs.version }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       packages: write
+      contents: read
     steps:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
@@ -89,17 +117,28 @@ jobs:
           lookup() { curl -sS -o "$meta" -w '%{http_code}' -H "Authorization: Bearer $NODE_AUTH_TOKEN" "$REGISTRY/@cnedwin%2fegret-browser"; }
           status=$(lookup)
           if [[ "$status" == 200 ]]; then
-            # Never replace an existing namespace or a release built from different bytes.
-            jq -e --arg v "$VERSION" --arg h "$INTEGRITY" '.versions[$v].dist.integrity == $h' "$meta"
-          elif [[ "$status" == 404 ]]; then
-            npm publish "$tgz" --registry="$REGISTRY" --tag latest --ignore-scripts
-          else
+            # The existing collection must belong to this repository before adding a version.
+            GH_TOKEN="$NODE_AUTH_TOKEN" gh api users/cnedwin/packages/npm/egret-browser |
+              jq -e --arg repo "$GITHUB_REPOSITORY" '.repository.full_name == $repo'
+            jq -e --arg n "$PACKAGE" '.name == $n and (.versions | type == "object")' "$meta"
+            if jq -e --arg v "$VERSION" '.versions | has($v)' "$meta" > /dev/null; then
+              jq -e --arg v "$VERSION" --arg h "$INTEGRITY" '.versions[$v].dist.integrity == $h' "$meta"
+              exit 0
+            fi
+            # A late GitHub release must not send an existing stable registry tag backwards.
+            jq -e --arg v "$VERSION" '.["dist-tags"].latest | select(type == "string" and test("^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)$")) | (split(".") | map(tonumber)) <= ($v | split(".") | map(tonumber))' "$meta"
+          elif [[ "$status" != 404 ]]; then
             echo "GitHub npm metadata returned HTTP $status" >&2
             exit 1
           fi
+          # A delayed run for an older tag must not move the stable install backwards.
+          test "$(GH_TOKEN="$NODE_AUTH_TOKEN" gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq .tag_name)" = "$TAG"
+          npm publish "$tgz" --registry="$REGISTRY" --tag latest --ignore-scripts
 
   verify:
     needs: [pack, publish]
+    env:
+      VERSION: ${{ needs.pack.outputs.version }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -157,6 +196,9 @@ jobs:
           assert.equal(typeof world.play, 'function');
           JS
           test "$(npm view "$PACKAGE@$VERSION" dist.integrity --registry="$REGISTRY")" = "$INTEGRITY"
+          if [[ "$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq .tag_name)" == "$TAG" ]]; then
+            test "$(npm view "$PACKAGE" dist-tags.latest --registry="$REGISTRY")" = "$VERSION"
+          fi
           for attempt in {1..8}; do
             if gh api users/cnedwin/packages/npm/egret-browser > "$consumer/metadata.json" &&
               jq -e --arg r "$GITHUB_REPOSITORY" '.repository.full_name == $r' "$consumer/metadata.json" > /dev/null; then break; fi
