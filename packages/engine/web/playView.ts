@@ -1541,9 +1541,25 @@ export function createPlayViews(
           disposeScrolls();
           releaseContent();
           for (const item of made) game.remove(item.node);
-          for (const remove of removals.splice(0)) remove();
-          build(offsets);
-          if (!ended) registerSemantics();
+          // A covered modal must keep its original semantic root order when its variant changes.
+          // Its descendants may be reparented by the new description, so rebuild those alone.
+          const retainedRoot = semanticRoot?.attached === true;
+          try {
+            if (retainedRoot) removeRowSemantics(new Set(semanticNodes.keys()));
+            else for (const remove of removals.splice(0)) remove();
+            build(offsets);
+            if (!ended) {
+              if (retainedRoot && semanticRoot?.attached === true) registerParts();
+              else {
+                for (const remove of removals.splice(0)) remove();
+                registerSemantics();
+              }
+            }
+          } catch (cause) {
+            // Do not publish a root whose replacement descendants failed partway through construction.
+            for (const remove of removals.splice(0)) remove();
+            throw cause;
+          }
           if (focused?.owner === record) record.focusMark(focused.name, eligible(focused));
           return;
         }

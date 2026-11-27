@@ -28,6 +28,31 @@ export async function verifyConfirm(page, out) {
       audio: false,
       semantics
     });
+    // Keep an active, visible lower modal whose authored parent relationships change with orientation.
+    const lowerPart = upright => ({
+      type: 'panel',
+      anchor: 'center',
+      width: upright ? 300 : 560,
+      height: upright ? 590 : 300,
+      card: true,
+      layout: 'column',
+      padding: 12,
+      gap: 12,
+      children: ['landscapePane', 'portraitPane'].map(name => ({
+        type: 'panel',
+        name,
+        height: 64,
+        layout: 'column',
+        children:
+          name === (upright ? 'portraitPane' : 'landscapePane')
+            ? [{ type: 'button', name: 'lowerAction', text: 'Lower action', height: 48 }]
+            : []
+      }))
+    });
+    const lower = game.show(
+      { label: 'Lower active modal', modal: true, root: lowerPart(false), portrait: lowerPart(true) },
+      { bind: { lowerAction: { tap: () => answers.push('wrong lower action') } } }
+    );
     const tester = createUiTester({ semantics });
     const zh = {
       title: '\u786e\u8ba4\u51fa\u552e\u73cd\u8d35\u6cd5\u5b9d',
@@ -67,7 +92,7 @@ export async function verifyConfirm(page, out) {
         asking: game.asking,
         no: control(copy.no),
         yes: control(copy.yes),
-        dialog: tester.find('dialog').name,
+        dialog: semantics.publish().nodes.find(node => node.role === 'dialog' && !node.inert && !node.hidden)?.name,
         text: tester.findAll('text').find(node => node.name === copy.text)?.name,
         answers: [...answers]
       };
@@ -103,6 +128,12 @@ export async function verifyConfirm(page, out) {
         return copy;
       },
       asking: () => game.asking,
+      lowerState() {
+        const nodes = semantics.publish().nodes,
+          root = nodes.find(node => node.name === 'Lower active modal'),
+          action = nodes.find(node => node.name === 'Lower action');
+        return { variant: lower.variant, id: root?.id, parent: action?.parent, inert: action?.inert };
+      },
       close: async () => {
         await game.dispose();
         parent.remove();
@@ -159,6 +190,9 @@ export async function verifyConfirm(page, out) {
     assert.equal(state.yes.name, zh.yes);
     assert.equal(state.no.name, zh.no);
     assert.equal(state.yes.focused, true);
+    const originalLower = await fixture.evaluate(f => f.lowerState());
+    assert.equal(originalLower.variant, 'portrait');
+    assert.ok(originalLower.parent?.endsWith(':portraitPane') && originalLower.inert === true);
     bounded(state.no, 360, 780);
     bounded(state.yes, 360, 780);
     const zhShot = await page.screenshot({ path: path.join(out, 'confirm-zh-360x780.png') });
@@ -173,6 +207,13 @@ export async function verifyConfirm(page, out) {
     await frames();
     state = await fixture.evaluate((f, copy) => f.read(copy), zh);
     assert.equal(state.no.focused, true, 'focus and unresolved question survive native resize');
+    const wideLower = await fixture.evaluate(f => f.lowerState());
+    assert.equal(wideLower.variant, 'landscape');
+    assert.equal(wideLower.id, originalLower.id);
+    assert.ok(
+      wideLower.parent?.endsWith(':landscapePane') && wideLower.inert === true,
+      'lower variant is reparented but remains behind the confirmation'
+    );
     assert.deepEqual(state.answers, []);
     bounded(state.no, 820, 390);
     bounded(state.yes, 820, 390);
@@ -195,6 +236,12 @@ export async function verifyConfirm(page, out) {
     await frames();
     assert.deepEqual(await fixture.evaluate(f => f.answers()), [false, true]);
     assert.equal(await fixture.evaluate(f => f.asking()), false);
+    const returnedLower = await fixture.evaluate(f => f.lowerState());
+    assert.equal(returnedLower.id, originalLower.id);
+    assert.ok(
+      returnedLower.parent?.endsWith(':portraitPane') && returnedLower.inert === false,
+      'closing the questions restores the lower view'
+    );
     const long = await fixture.evaluate(f => f.long());
     await frames();
     const last = await fixture.evaluate((f, copy) => f.read(copy), long);
@@ -218,7 +265,8 @@ export async function verifyConfirm(page, out) {
       themedPixels: pixels,
       bilingualLongLabels: true,
       resizedFocus: true,
-      questionScroll: true
+      questionScroll: true,
+      coveredVariantModalKeepsOrder: true
     };
   } finally {
     await fixture.evaluate(f => f.close());
