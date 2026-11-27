@@ -1,10 +1,10 @@
 name: Android Runtime SDK
 on:
   pull_request:
-    paths: ['.cargo/config.toml', 'runtime-sdk/**', 'third-party/icu-19dfb44.LICENSE', 'third-party/v8-15.7.112.19.NOTICES', '.github/workflows/android-runtime.yml']
+    paths: ['.cargo/config.toml', 'runtime-sdk/**', 'third-party/icu-*.LICENSE', 'third-party/v8-*.NOTICES', '.github/workflows/android-runtime.yml']
   push:
     branches: [main]
-    paths: ['.cargo/config.toml', 'runtime-sdk/**', 'third-party/icu-19dfb44.LICENSE', 'third-party/v8-15.7.112.19.NOTICES', '.github/workflows/android-runtime.yml']
+    paths: ['.cargo/config.toml', 'runtime-sdk/**', 'third-party/icu-*.LICENSE', 'third-party/v8-*.NOTICES', '.github/workflows/android-runtime.yml']
   workflow_dispatch:
 permissions:
   contents: read
