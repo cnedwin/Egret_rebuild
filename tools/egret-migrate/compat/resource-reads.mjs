@@ -42,6 +42,9 @@ export function createResourceReads(signal) {
     { once: true }
   );
   return {
+    snapshot() {
+      return Object.freeze({ active: using, queued: waiting.size, limit });
+    },
     setLimit(value) {
       if (signal.aborted) throw signal.reason;
       if (typeof value !== 'number' || !Number.isFinite(value))

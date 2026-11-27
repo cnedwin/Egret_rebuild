@@ -70,12 +70,12 @@ export async function stageRevision(project, store, esbuild) {
   } finally { await rm(candidate, {recursive: true, force: true}); }
 }
 
-/** Keep two explicitly accepted revisions once all builds using the store have stopped. */
-export async function pruneRevisions(store, keep) {
+/** Prune only complete revisions after every consumer of this store has stopped. */
+export async function pruneRevisions(store, keep, retainCount = 2) {
   const owner = await realpath(path.resolve(store));
-  if (!Array.isArray(keep) || new Set(keep).size !== 2 || keep.length !== 2 ||
+  if (!Number.isSafeInteger(retainCount) || retainCount < 1 || !Array.isArray(keep) || new Set(keep).size !== retainCount || keep.length !== retainCount ||
       !keep.every(id => typeof id === 'string' && /^[a-f0-9]{64}$/.test(id))) {
-    throw new Error('Supply two distinct accepted revision IDs');
+    throw new Error('Supply the requested number of distinct accepted revision IDs');
   }
   for (const id of keep) await verifyRevision(path.join(owner, id));
   const candidates = [];
@@ -95,12 +95,12 @@ export async function pruneRevisions(store, keep) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const {values} = parseArgs({options: {
-    prune: {type: 'boolean'}, keep: {type: 'string', multiple: true},
+    prune: {type: 'boolean'}, keep: {type: 'string', multiple: true}, 'retain-count': {type:'string'},
     project: {type: 'string'}, store: {type: 'string'}, esbuild: {type: 'string'}, verify: {type: 'string'}
   }});
   if (values.prune) {
-    if (!values.store || values.verify) throw new Error('Supply --prune --store and two --keep values');
-    console.log(JSON.stringify(await pruneRevisions(values.store, values.keep)));
+    if (!values.store || values.verify) throw new Error('Supply --prune --store and the selected --keep values');
+    console.log(JSON.stringify(await pruneRevisions(values.store, values.keep, Number(values['retain-count'] ?? 2))));
   } else if (values.verify) {
     const result = await verifyRevision(path.resolve(values.verify));
     console.log(JSON.stringify({sha256: result.sha256, files: result.files.length}));

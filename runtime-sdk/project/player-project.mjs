@@ -71,6 +71,8 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
   const resident = new Map();
   const textPageIds = new Set();
   const lifetime = new AbortController();
+  const editorEvents = new Map();
+  let nextEditorId = 1;
   const { host, hostResult } = createHostServices(native, lifetime.signal);
   const { assets, textResult } = createPlayerAssets(native, lifetime.signal);
   const frameOptions = Object.freeze({
@@ -103,10 +105,10 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
     return publish(id, image);
   }
 
-  function reserveTextPage() {
+  function reserveTextPage(minimum = 1) {
     let id = 255;
-    while (id > 0 && (resident.has(id) || textPageIds.has(id))) id--;
-    if (!id) throw new Error('No free texture page for text');
+    while (id >= minimum && (resident.has(id) || textPageIds.has(id))) id--;
+    if (id < minimum) throw new Error('No free dynamic texture page');
     textPageIds.add(id);
     let handle;
     return {
@@ -186,6 +188,12 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
           const raster = createPlayerRaster(native, lifetime.signal);
           const services = {
             engine, scope, assets, host, publishPage, signal: lifetime.signal,
+            publishTransientPage(image) {
+              // App-declared classic image pages occupy 1..223. Dynamic PNG and text share the remaining slots.
+              const reservation = reserveTextPage(224);
+              try { reservation.publish(image); return reservation; }
+              catch (error) { reservation.release(); throw error; }
+            },
             raster: raster && Object.freeze({ ...raster, ...createPlayerTextPages(engine, raster.drawText, reserveTextPage, lifetime.signal) }),
             storage: createPlayerStorage(native, lifetime.signal),
             music: Object.freeze({
@@ -199,7 +207,30 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
             editText(options = {}, signal) {
               const text = options.text ?? '';
               if (typeof text !== 'string' || text.length > 8192) throw new RangeError('Expected up to 8192 UTF-16 units');
-              return host.call('egret.editText', {text, multiline: options.multiline === true}, signal);
+              const request = {text, multiline: options.multiline === true};
+              if (options.inputMode !== undefined) {
+                if (!['text','tel'].includes(options.inputMode)) throw new RangeError('Unsupported keyboard type');
+                request.inputMode = options.inputMode;
+              }
+              if (options.maxLength !== undefined) {
+                if (!Number.isInteger(options.maxLength) || options.maxLength < 1 || options.maxLength > 8192)
+                  throw new RangeError('Expected a maximum of 1 through 8192 UTF-16 units');
+                request.maxLength = options.maxLength;
+              }
+              if (options.digitsOnly === true) request.digitsOnly = true;
+              const {onFocus,onChange} = options;
+              if (onFocus === undefined && onChange === undefined) return host.call('egret.editText',request,signal);
+              if ((onFocus !== undefined && typeof onFocus !== 'function') || (onChange !== undefined && typeof onChange !== 'function'))
+                throw new TypeError('Expected text editor callbacks');
+              // The UI may report its last change after cancel or after a replacement dialog opens.
+              // Keep the native session identity until this call settles and ignore aborted events.
+              if (nextEditorId > 0x7fffffff) throw new RangeError('Text editor session limit reached');
+              const id = nextEditorId++;
+              request.editorId = id;
+              editorEvents.set(id,{onFocus,onChange,signal});
+              try {
+                return host.call('egret.editText',request,signal).finally(()=>editorEvents.delete(id));
+              } catch(error) { editorEvents.delete(id);throw error; }
             },
             state: value => native.state(JSON.stringify(value)),
             playSound: path => native.playSound(path)
@@ -233,7 +264,15 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
       return output;
     },
     input(event) {
-      if (!paused && !stopped) game?.input?.(event);
+      if (paused || stopped) return;
+      if (event.type === 'editorFocus' || event.type === 'editorChange') {
+        const session = editorEvents.get(event.id);
+        if (!session || session.signal?.aborted) return;
+        if (event.type === 'editorFocus') session.onFocus?.();
+        else if (typeof event.text === 'string') session.onChange?.(event.text);
+        return;
+      }
+      game?.input?.(event);
     },
     pause() {
       if (!paused && !stopped) { paused = true; game?.pause?.(); }

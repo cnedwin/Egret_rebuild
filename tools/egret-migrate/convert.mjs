@@ -295,16 +295,25 @@ export async function convertProject(options) {
   assets.push(...movie.assets);
   const assetFiles = assets.map(({ key, bytes }, index) => {
     const extension = path.posix.extname(key).toLowerCase();
-    const mime = ['.txt', '.csv'].includes(extension)
-      ? 'text/plain'
-      : ['.bin', '.dat'].includes(extension)
-        ? 'application/octet-stream'
-        : browserBuildTypes[extension]?.split(';')[0];
+    const mime =
+      extension === '.fnt'
+        ? 'application/json'
+        : ['.txt', '.csv'].includes(extension)
+          ? 'text/plain'
+          : ['.bin', '.dat'].includes(extension)
+            ? 'application/octet-stream'
+            : browserBuildTypes[extension]?.split(';')[0];
     if (
       !mime ||
-      !(['application/json', 'application/octet-stream', 'text/plain'].includes(mime) || mime.startsWith('image/'))
+      !(
+        ['application/json', 'application/octet-stream', 'text/plain'].includes(mime) ||
+        mime.startsWith('image/') ||
+        mime.startsWith('audio/')
+      )
     ) {
-      refuse('MIGRATE_RES_UNSUPPORTED', 'Expected a supported local image, text or binary data file.', { path: key });
+      refuse('MIGRATE_RES_UNSUPPORTED', 'Expected a supported local image, soundtrack, text or binary data file.', {
+        path: key
+      });
     }
     return {
       id: 'f_resource_' + index,

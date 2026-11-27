@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Rebuild editable classic themes and update games on a development phone",
+    "body": "Regenerate EUI factories with the original compiler, review project-owned methods, open classic text and texture assets on both hosts, and transfer changed game files to an installed Android debug player."
+  },
+  "zh": {
+    "title": "从可编辑的旧版皮肤构建界面，向开发手机增量更新游戏",
+    "body": "用原版编译器重新生成 EUI 工厂，核对游戏自定义方法，在两个宿主中加载文字和纹理资源，并将修改的游戏文件增量发送到已安装的 Android 调试播放器。"
+  }
+}

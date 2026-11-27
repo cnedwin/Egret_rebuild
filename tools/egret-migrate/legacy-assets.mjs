@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import path from 'node:path';
+import { validateClassicBitmapFont } from './compat/bitmap-label.mjs';
 import { crc32 } from 'node:zlib';
 import { PNG } from 'pngjs';
 import { planLegacyResourceManifestConversion } from '../../packages/project/dist/legacy-res-plan.js';
@@ -86,7 +87,7 @@ export function planMigratedResources(text, root, read) {
   if (original.plan) return { plan: original.plan };
   if (
     original.status !== 'unsupported' ||
-    !original.report.resources.some(item => ['sheet', 'bin', 'text'].includes(item.type)) ||
+    !original.report.resources.some(item => ['sheet', 'bin', 'text', 'font', 'sound'].includes(item.type)) ||
     original.report.diagnostics.some(
       item =>
         !['LEGACY_RES_TYPE_UNSUPPORTED', 'LEGACY_RES_SUBKEYS_UNSUPPORTED', 'LEGACY_RES_REFERENCE_UNRESOLVED'].includes(
@@ -103,8 +104,32 @@ export function planMigratedResources(text, root, read) {
   const pages = [];
   const dataTypes = new Map();
   for (const item of source.resources) {
-    if (item.type === 'text' || item.type === 'bin') {
-      const allowed = item.type === 'text' ? ['.txt', '.csv'] : ['.bin', '.dat'];
+    if (item.type === 'font') {
+      if (path.posix.extname(item.url).toLowerCase() !== '.fnt')
+        refused('Expected a local .fnt descriptor.', { name: item.name });
+      let font;
+      try {
+        font = JSON.parse(read(root + '/' + item.url).bytes.toString('utf8'));
+        validateClassicBitmapFont(font);
+      } catch (cause) {
+        refused('Expected a supported Egret JSON bitmap font.', { name: item.name, reason: cause.message });
+      }
+      if (!/\.png$/i.test(font.file)) refused('Expected a local PNG font page.', { name: item.name });
+      const dir = path.posix.dirname(item.url);
+      const pagePath = logicalPath((dir === '.' ? '' : dir + '/') + logicalPath(font.file));
+      const page = '__migrate_font_page_' + pages.length;
+      if (names.has(page)) refused('Bitmap font page identity collides with RES.', { name: page });
+      if (![...source.resources, ...pages].some(resource => resource.type === 'image' && resource.url === pagePath)) {
+        names.add(page);
+        pages.push({ name: page, type: 'image', url: pagePath });
+      }
+      dataTypes.set(item.name, 'font');
+      item.type = 'json';
+      continue;
+    }
+    if (['text', 'bin', 'sound'].includes(item.type)) {
+      const allowed =
+        item.type === 'text' ? ['.txt', '.csv'] : item.type === 'sound' ? ['.wav', '.mp3', '.ogg'] : ['.bin', '.dat'];
       if (!allowed.includes(path.posix.extname(item.url).toLowerCase()))
         refused('Unexpected local data file extension.', { name: item.name });
       dataTypes.set(item.name, item.type);

@@ -188,3 +188,79 @@ gradle -p ./layout-app assembleDebug
 adb install -r ./layout-app/build/outputs/apk/debug/EgretGame-debug.apk
 adb shell am start -n org.egret.sample.layout/org.egret.example.LibraryActivity
 ```
+
+Windows Edge 158 在 RTX 5090 Laptop 上通过 ANGLE D3D11 运行 WebGL2。320 × 180 截图里，绿色与橙色的中文字形分别有 228 和 224 个像素超过样例的颜色阈值。Galaxy Z Fold7 使用 Android 17、裁剪 V8 15.7.112.19 和 GLES3，按手机截图的显示比例分别测得 4,892 和 6,099 个。两端各点一次橙字和绿字，都只收到一次 `open:gate`，项目注入的资源方法都返回 `north-gate-board`。红蓝色块的重叠处随三次切换依次为品红、红、品红。Fold7 关闭后 3 张上传页全部释放，包括两张文字页。文字占用为零字节，废弃上传为零。真机输入通过自动化注入。旧 Egret 5 的解析器和事件派发器在 Edge 中实测，三组自制标记和链接事件的参数、冒泡行为与新实现一致。
+
+## 旧版贴图和共享图集页
+
+单页 RES 图片和已接入的图集子帧均返回 `egret.Texture`。`new egret.SpriteSheet(page).createTexture(name, x, y, width, height, offsetX?, offsetY?, textureWidth?, textureHeight?)` 直接借用已有 GPU 页。嵌套裁切会计入上一级在图集中的坐标和裁边。同名新帧会替换名称查找，已有 Bitmap 可以继续使用原帧。每个图集可持有 2,048 个子贴图，包括被同名替换的旧帧。释放子贴图可归还名额。调用图集的 `dispose()` 释放全部子帧。底图由 RES 管理，`destroyRes` 或关闭游戏时回收。
+
+```js
+const page = await RES.getResAsync('buttons_png');
+const sheet = new egret.SpriteSheet(page);
+const icon = sheet.createTexture('accept', 2, 0, 2, 2);
+const button = new egret.Bitmap(icon);
+
+egret.BitmapData.create('base64', pngBase64, data => {
+  const texture = new egret.Texture();
+  texture.bitmapData = data;
+  button.texture = texture;
+  // 视图不再使用这张动态图时，调用 texture.dispose()。
+});
+```
+
+`BitmapData.create` 支持纯 Base64 字符串和 ArrayBuffer 格式的 PNG。两个宿主的压缩输入上限均为 64 KiB，单边最多 4,096 像素，解码后最多 1,048,576 像素。资源就绪后调用回调。浏览器也支持 `new egret.BitmapData(loadedImage)` 读取已加载、允许读取像素的同源图片或画布。原生游戏可使用包内 PNG 或字节接口。Android 的动态 PNG 页与文字共享现有分配器，使用 224–255 号槽，实际可用数取决于当前占用。编码的 JPEG/GIF、任意 GPU 离屏抓图和跨物理页裁切仍待接入。
+
+运行 `node --test tests/egret-migrate-textures.test.mjs` 可复验资源和回收。自制 4 × 2 PNG 在 Windows Edge 158（RTX 5090 Laptop、WebGL2）以及 Fold7（Android 17、裁剪 V8 15.7.112.19、GLES3）均已验证。两端都显示了 RES 红色裁片和内存解码的绿色裁片。Edge 的四个取样点与原始 RGB 一致，包括已加载的 HTML 图片。Fold7 关闭后两张原生页均已释放。
+
+### 页签、进度条皮肤与位图计分牌
+
+`eui.TabBar` 可使用 `eui.ArrayCollection`，在必选状态下默认选择第一项，以非虚拟的水平行分配页签宽度。每项沿用原来的渲染器和皮肤。ViewStack 联动需另接适配。赋值 `egret.TextField.default_fontFamily` 影响此后构造的文本框及 EUI 标签，已有标签保留原字体。在组件上监听 `eui.UIEvent.MOVE`，`setLayoutBoundsPosition(x,y)` 改变位置时派发一次不冒泡的移动事件，直接写入 x/y 的改动则在宿主时钟合并通知。
+
+`eui.ProgressBar` 使用皮肤的 `thumb` 和 `labelDisplay`，支持 `minimum`、`maximum`、`snapInterval`、`value`、`direction` 和 `labelFunction`。`slideDuration = 0` 立即更新，正值通过已有游戏时钟过渡。原引擎独立对照中，宽 120 的行把 20、40、20 的页签排成 30、60、30。最大值 80、步长 5 的反向进度条赋值 43 后显示 45，裁出末尾 68 个单位。迁移端已核对相同结果。
+
+在 RES 中将单页 Egret JSON `.fnt` 声明为 `type: "font"`。转换时会带上本地 PNG，同一 PNG 也可作为普通图片声明。生成浏览器单文件时，在 `node tools/pack-single-file.mjs` 命令中增加 `--with bitmapfont`，并把这份引擎交给迁移器。在 npm/ES 模块宿主中，可从同一个引擎模块图的 `@egret/engine/bitmapfont` 提供 `createBitmapText` 和 `parseBitmapFont`。Android 兼容入口已经接入。已加载字体持有自己的图页租约；`eui.BitmapLabel.font` 可接收资源名称或已加载的字体对象。释放字体会撤下正在使用的字形网格，重新取得字体后再赋给标签即可恢复。
+
+```js
+await RES.loadGroup('board');
+const score = new eui.BitmapLabel('12');
+score.font = 'digits';
+this.addChild(score);
+```
+
+浏览器复验命令为 `node runtime-sdk/examples/legacy-bitmap-score/verify-browser.mjs --engine <含位图字体的egret2d.mjs> --playwright <playwright/index.mjs> --out ./score-evidence`。Android 沿用布局样例的 APK 构建命令，将工程换成 `--project runtime-sdk/examples/legacy-bitmap-score`。点两次橙色按钮，观察字体释放、重载。Edge 158／RTX 5090 Laptop 和 Fold7／GLES3 在释放前、释放后和重载后三个阶段的五个采样点均一致，覆盖透明裁切、字形原点和进度条方向。两个字形计入透明留白后实测为 8 × 5，释放后为 0 × 0，重取后恢复 8 × 5。Egret 5.3.10、Edge 和 Fold7 三端的加载尺寸一致。Fold7 记录 2 次上传、2 次释放，废弃上传为零。抽查的 37 份旧字体描述全部解析成功，共有 455 个字形及配套图页。源高度不一的多行排版、缺字或空格、系统字体替换仍需独立核对。本次真机验收用例为单行数字。
+
+## 只包含文字的 RenderTexture
+
+用 `new egret.RenderTexture().drawToTexture(container, clip, 1)` 捕获只读 TextField 和普通 DisplayObjectContainer，可包含平移。调用当下复制文字、位置、颜色和字体样式，源容器可以不在舞台上。修改源数据后，再调用 drawToTexture 时生效。逻辑页最大 2,048 × 2,048。已取出的 SpriteSheet 子帧保持对象身份，显示时跟随新快照。宿主只栅格化被使用的裁片，空裁片不占贴图。迟到的旧绘制结果会被释放。
+
+```js
+const target = new egret.RenderTexture();
+const clip = new egret.Rectangle(0, 0, 2048, 2048);
+target.drawToTexture(labels, clip);
+const atlas = new egret.SpriteSheet(target);
+// Egret 5 WebGL 的渲染目标以底边为分帧坐标原点。
+const title = atlas.createTexture('title', 32, 2048 - 22 - 34, 40, 34);
+const bitmap = new egret.Bitmap(title);
+labels.removeChildren();
+```
+
+逻辑裁片使用无裁边位移的矩形，每片最多 1,048,576 像素。一次快照最多遍历 1,024 个节点、测量 256 个文字片段和 8,192 个 UTF-16 单元。颜色、字体与描边复用宿主文字路径。下划线、遮罩、平移以外的变换、任意图形、逻辑裁片的再次嵌套切片及嵌入位图均须使用其他渲染路径。本模式不提供整张逻辑页的像素读取或导出。
+
+同一台 Windows 硬件上，旧版 5.3.10 的 Edge 158 WebGL 在 40 × 34 的底边裁片内得到 (4, 4)–(29, 20) 的有色字形范围，新版 WebGL2 为 (4, 5)–(29, 21)。两次对照中错误的顶边裁片均为空白。原子帧由红色重绘为绿色，位置和字形朝向保持一致。字形抗锯齿的逐像素结果随渲染器和颜色而异。Fold7 的 GLES3 原生播放器实测红绿字形的物理边界均为 (625, 421)–(734, 498)，关闭后两张已上传文字页均释放，废弃上传为零。
+
+### ImageLoader
+
+浏览器读取跨域图片前可设置 `egret.ImageLoader.crossOrigin = 'anonymous'`，实例可以覆盖默认值。图片服务器需要返回相应的 CORS 头。解码、缓存和租约复用引擎现有图片加载通道。Android 使用项目中已声明 PNG 的路径。成功时 `loader.data` 为 `BitmapData`，并派发 `complete`。读取失败时派发 `ioError`。将结果赋给 `texture.bitmapData` 即可显示。再次调用 `load()`、适配层的 `close()` 或关闭宿主会抑制过期事件。如果其他消费者也需要图片，共享读取可以继续，退出的加载者归还自己的租约。
+
+Edge 158 实测向另一个本机来源发出两次请求，均未发送测试 Cookie。缺少 CORS 头时触发失败，启用匿名跨域读取后成功加载 4 × 2 图片。Fold7 从未声明路径和已声明路径分别得到失败、成功事件，开始读取前被替换的请求未发事件。包内图片与 RES 共享纹理页。
+
+### 状态限定的子项与编译生成的数据绑定
+
+Egret 5.3.10 的皮肤工厂将 `includeIn` 编译成 `eui.AddItems`，将 `text="{data.name}"` 编译成 `eui.Binding.$bindProperties`。进入状态时，适配层在原皮肤宿主或指定容器内查找同一个子项及其参照项，支持首位、末位、参照项之前和之后四种位置。反复切换状态会复用同一子项。业务主动把子项移到别的父容器后，退出状态会保留新的归属。关闭视图会释放已脱离显示树的状态子项。
+
+从 `hostComponent` 开始的属性路径能跟随 `data` 整体替换和内部字段变化。多项表达式沿用旧版 JavaScript 加法规则组合字面量与字段。视图移出舞台时解除观察，重新进入时读取当前数据。超出范围的属性路径会报告工厂错误。本次覆盖经核对的皮肤工厂，业务直接调用内部 Watcher API 仍须另行验证。
+
+`tests/fixtures/migrate-theme-factories/Dispatch.exml` 与 `dispatch.thm.json` 分别是可编辑的自制样例和原版编译器生成的对应工厂。运行 `node --test --test-name-pattern "5.3 generated state" tests/egret-migrate-eui.test.mjs` 复验。原版 5.3.10 和 Edge 158/WebGL2 的五个观察点一致。打开时，标签进入指定兄弟之前，徽章出现在根容器末尾，关闭再打开顺序保持一致。移出后换数据再进入，标签和数量更新。新版同时验证了观察解除和关闭时隐藏控件的释放。
+
+浏览器游戏含可编辑文字时，构建单文件引擎可加 `--with text-input`。如果同一游戏也使用位图字，可加 `--with bitmapfont,text-input`。按模块使用时，从可选入口 `@egret/engine/web/text-input` 取出 `createBrowserTextInput`，和游戏接口一起传给适配器。Android 播放器使用原生输入框。

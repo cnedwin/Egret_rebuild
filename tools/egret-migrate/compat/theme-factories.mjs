@@ -16,6 +16,52 @@ class SetProperty {
   }
 }
 
+class AddItems {
+  constructor(target, parent, position, relativeTo) {
+    Object.assign(this, { target, parent, position, relativeTo });
+  }
+}
+
+const bindingPlans = new WeakMap();
+const safeKey = value =>
+  typeof value === 'string' &&
+  /^[A-Za-z_$][\w$]*$/.test(value) &&
+  !['__proto__', 'constructor', 'prototype'].includes(value);
+
+// An emitted constructor runs before its skin has a host. Let EUI attach the observers with the view.
+const Binding = Object.freeze({
+  $bindProperties(skin, templates, indices, target, property) {
+    if (
+      !(skin instanceof Skin) ||
+      !Array.isArray(templates) ||
+      !templates.length ||
+      !Array.isArray(indices) ||
+      !safeKey(property) ||
+      !target ||
+      !(property in target) ||
+      typeof target[property] === 'function'
+    )
+      refuse('Invalid generated skin binding.');
+    const dynamic = new Set(indices);
+    if (dynamic.size !== indices.length || !indices.every(i => Number.isInteger(i) && i >= 0 && i < templates.length))
+      refuse('Invalid generated skin binding indices.');
+    const chain = templates.map((term, i) => {
+      if (!dynamic.has(i)) {
+        if (term !== null && !['string', 'number', 'boolean'].includes(typeof term))
+          refuse('Unsupported binding literal.');
+        return { literal: term };
+      }
+      const path = typeof term === 'string' ? term.split('.') : [];
+      if (path.length < 2 || path[0] !== 'hostComponent' || !path.every(safeKey))
+        refuse('Expected a property path starting at hostComponent.');
+      return { path };
+    });
+    let plans = bindingPlans.get(skin);
+    if (!plans) bindingPlans.set(skin, (plans = []));
+    plans.push({ target, property, chain });
+  }
+});
+
 function inherit(child, parent) {
   if (typeof parent !== 'function') throw new TypeError('Missing precompiled skin superclass.');
   Object.setPrototypeOf(child, parent);
@@ -28,58 +74,104 @@ function refuse(message, cause) {
   throw Object.assign(new Error(message, cause ? { cause } : undefined), { code: 'LEGACY_THEME_FACTORY' });
 }
 
+function write(target, key, value) {
+  return undo => {
+    undo.push(write(target, key, target[key]));
+    target[key] = value;
+  };
+}
+
+// Inverses are recorded before calling game setters or stage listeners which may throw.
+function place(target, parent, index) {
+  return undo => {
+    const oldParent = target.parent;
+    undo.push(place(target, oldParent, oldParent ? oldParent.getChildIndex(target) : 0));
+    if (oldParent) oldParent.removeChild(target);
+    if (parent) parent.addChildAt(target, Math.min(index, parent.numChildren));
+  };
+}
+
 function stateRunner(skin, owner, states) {
-  const byName = new Map();
+  const byName = new Map(),
+    participants = new Set();
+  const part = key => typeof key === 'string' && Object.hasOwn(skin, key) && skin[key];
   for (const state of states) {
     if (typeof state?.name !== 'string' || byName.has(state.name) || !Array.isArray(state.overrides))
       refuse('Malformed or duplicate precompiled skin state.');
-    byName.set(
-      state.name,
-      state.overrides.map(op => {
-        if (
-          !(op instanceof SetProperty) ||
-          typeof op.property !== 'string' ||
-          ['__proto__', 'constructor', 'prototype'].includes(op.property)
-        )
-          refuse('Unsupported skin state override in ' + state.name);
-        const node = op.target === '' ? owner : Object.hasOwn(skin, op.target) && skin[op.target];
-        if (!node || !(op.property in node) || typeof node[op.property] === 'function')
+    const actions = state.overrides.map(op => {
+      if (op instanceof SetProperty) {
+        const target = op.target === '' ? owner : part(op.target);
+        if (!target || !safeKey(op.property) || !(op.property in target) || typeof target[op.property] === 'function')
           refuse('Unknown skin state target or property in ' + state.name);
-        return [node, op.property, op.value];
-      })
-    );
+        return write(target, op.property, op.value);
+      }
+      if (!(op instanceof AddItems)) refuse('Unsupported skin state override in ' + state.name);
+      const target = part(op.target),
+        container = op.parent === '' ? owner : part(op.parent);
+      const anchor = op.position >= 2 ? part(op.relativeTo) : undefined;
+      if (
+        !target ||
+        target === container ||
+        typeof target.dispose !== 'function' ||
+        typeof container?.addChildAt !== 'function' ||
+        ![0, 1, 2, 3].includes(op.position) ||
+        (op.position >= 2 && (!anchor || anchor === target))
+      )
+        refuse('Invalid skin state child in ' + state.name);
+      participants.add(target);
+      return undo => {
+        let index = op.position === 0 ? 0 : container.numChildren;
+        if (anchor) {
+          index = anchor.parent === container ? container.getChildIndex(anchor) : -1;
+          if (index < 0) index = op.position === 2 ? container.numChildren : 0;
+          else if (op.position === 3) index++;
+        }
+        const remove = [];
+        try {
+          place(target, container, index)(remove);
+        } catch (error) {
+          undo.push(...remove);
+          throw error;
+        }
+        // A screen can deliberately move a skin part. Leaving the state must respect its new parent.
+        undo.push(actions => {
+          if (target.parent === container) remove[0](actions);
+        });
+      };
+    });
+    byName.set(state.name, actions);
   }
   let restore = [];
-  return name => {
-    const writes = byName.get(name);
-    if (!writes) refuse('Unknown skin state: ' + name);
-    const undo = [],
-      nextRestore = [];
-    function write(node, key, value) {
-      const previous = node[key];
-      undo.push([node, key, previous]);
-      node[key] = value;
-      return previous;
-    }
-    try {
-      for (let index = restore.length - 1; index >= 0; index--) write(...restore[index]);
-      for (const [node, key, value] of writes) nextRestore.push([node, key, write(node, key, value)]);
-      restore = nextRestore;
-    } catch (error) {
-      for (const [node, key, previous] of undo.reverse()) {
-        try {
-          node[key] = previous;
-        } catch {
-          /* Preserve the first failing project setter. */
+  return {
+    participants,
+    clear() {
+      for (const op of restore.splice(0).reverse()) op([]);
+    },
+    apply(name) {
+      const actions = byName.get(name);
+      if (!actions) refuse('Unknown skin state: ' + name);
+      const prior = [],
+        next = [];
+      try {
+        for (const op of restore.slice().reverse()) op(prior);
+        for (const op of actions) op(next);
+        restore = next;
+      } catch (error) {
+        for (const op of [...next.reverse(), ...prior.reverse()]) {
+          try {
+            op([]);
+          } catch {
+            /* Preserve the first failing project callback. */
+          }
         }
+        throw error;
       }
-      throw error;
     }
   };
 }
 
 function hostControls(eui) {
-  const controls = { ...eui, Skin, State, SetProperty };
+  const controls = { ...eui, Skin, State, SetProperty, AddItems, Binding };
   let active;
   for (const [name, Base] of Object.entries(eui)) {
     if (
@@ -157,12 +249,15 @@ export function registerLegacyThemeFactories(eui, manifest, { root = globalThis,
             !parts.every(key => typeof key === 'string' && Object.hasOwn(skin, key))
           )
             refuse('Invalid precompiled skin parts: ' + row.className);
-          const apply = stateRunner(skin, owner, states);
+          const { apply, clear, participants } = stateRunner(skin, owner, states);
           return {
             parts: parts.map(key => [key, skin[key]]),
             children,
+            owned: [...new Set([...children, ...participants])],
+            bindings: bindingPlans.get(skin) ?? [],
             states: states.map(state => state.name),
             apply,
+            clear,
             skin
           };
         });

@@ -7,6 +7,7 @@ import { PNG } from 'pngjs';
 import { runPlaytest, startPreview } from '../agent-playtest.mjs';
 import { verifyGame } from '../verify-game.mjs';
 import { rebuildProject } from './rebuild.mjs';
+import { compileTheme } from './compile-theme.mjs';
 import { compileClassic } from './compile-classic.mjs';
 import { convertProject } from './convert.mjs';
 import { hash, inspectLegacyProject, json, refuse } from './inspect.mjs';
@@ -14,7 +15,8 @@ import { hash, inspectLegacyProject, json, refuse } from './inspect.mjs';
 const requiredChecks = ['first-action', 'round-finished', 'restart', 'first-action-after-restart', 'save-restored'];
 const usage = `egret-migrate inspect --source <Egret 5 project> [--source-order <json>]
 egret-migrate convert --source <Egret 5 project> --out <new directory> --engine <egret2d.mjs> --engine-version <7.0.x> --esbuild <module>
-egret-migrate compile-classic --source <Egret 5.3 project> --compiler <trusted typescript.js> --out <new directory> [--compiler-sha256 <hash>] [--baseline <receipt>] [--groups <json>] [--theme <relative-path>] [--theme-factories <project profile>] [--mode debug|release] [--target config|es2015]
+egret-migrate compile-theme --source <trusted legacy project> --classic <compiled scripts> --theme <relative theme> --playwright <module> --out <new directory> [--entry index.html] [--ready <project.ready>] [--namespaces <namespace,...>] [--executable <browser>]
+egret-migrate compile-classic --source <Egret 5.3 project> --compiler <trusted typescript.js> --out <new directory> [--compiler-sha256 <hash>] [--baseline <receipt>] [--groups <json>] [--theme <relative-path>] [--theme-factories <project profile> | --compiled-theme <compile-theme output>] [--mode debug|release] [--target config|es2015]
 egret-migrate rebuild --source <editable conversion> --out <new directory> --esbuild <module> [--transaction <json>]
 egret-migrate verify --old <working old HTML> --converted <conversion directory> --scenario <trusted mjs> --playwright <module> --out <new directory>
 egret-migrate preview --run <verified comparison directory> --address <private IPv4> --qr-module <qrcode.mjs>
@@ -81,6 +83,7 @@ export async function verifyMigration(options) {
 }
 
 async function inspectOrConvert(command, values) {
+  if (command === 'compile-theme') return compileTheme(values);
   if (command === 'compile-classic') {
     return compileClassic({
       source: values.source,
@@ -91,6 +94,7 @@ async function inspectOrConvert(command, values) {
       target: values.target,
       theme: values.theme,
       themeFactories: values['theme-factories'],
+      compiledTheme: values['compiled-theme'],
       groups: values.groups ? readJSON(values.groups) : [],
       baseline: values.baseline ? readJSON(values.baseline) : undefined
     });
@@ -139,9 +143,13 @@ async function inspectOrConvert(command, values) {
 }
 
 const commands = {
+  'compile-theme': {
+    need: ['source', 'classic', 'theme', 'playwright', 'out'],
+    extra: ['entry', 'ready', 'namespaces', 'executable']
+  },
   'compile-classic': {
     need: ['source', 'compiler', 'out'],
-    extra: ['compiler-sha256', 'mode', 'target', 'theme', 'theme-factories', 'groups', 'baseline']
+    extra: ['compiler-sha256', 'mode', 'target', 'theme', 'theme-factories', 'compiled-theme', 'groups', 'baseline']
   },
   inspect: { need: ['source'], extra: ['profile', 'source-order', 'resources', 'theme', 'bones'] },
   convert: {
