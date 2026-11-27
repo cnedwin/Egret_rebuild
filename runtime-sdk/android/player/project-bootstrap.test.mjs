@@ -68,3 +68,32 @@ test('abort reaches remaining listeners after cancellation and listener removal'
   assert.deepEqual(seen, ['AbortError', 'onabort']);
   assert.deepEqual(failures, ['Error: listener failed']);
 });
+
+test('deferred V8 scripts share one request, fail once per isolate, and reject pending work on close', async () => {
+  const calls = [];
+  const context = { EgretNativePlayer: {
+    requestScriptGroup(name) {
+      calls.push(name);
+      return ['battle', 'broken', 'pending'].includes(name);
+    }
+  }};
+  runInNewContext(source, context);
+  const service = context.EgretRuntimeScripts;
+  const tasks = context.EgretRuntimeTasks;
+  const first = service.loadGroup('battle');
+  assert.equal(service.loadGroup('battle'), first);
+  tasks.scriptGroupResult('battle', null);
+  await first;
+  await service.loadGroup('battle');
+  const failed = service.loadGroup('broken');
+  tasks.scriptGroupResult('broken', 'broken.js: invalid syntax');
+  await assert.rejects(failed, /broken\.js/);
+  await assert.rejects(service.loadGroup('broken'), /broken\.js/);
+  await assert.rejects(service.loadGroup('unknown'), /Unknown script group/);
+  const pending = service.loadGroup('pending');
+  tasks.closeScripts();
+  await assert.rejects(pending, {name: 'AbortError'});
+  tasks.scriptGroupResult('pending', null);
+  await assert.rejects(service.loadGroup('battle'), {name: 'AbortError'});
+  assert.deepEqual(calls, ['battle', 'broken', 'unknown', 'pending']);
+});

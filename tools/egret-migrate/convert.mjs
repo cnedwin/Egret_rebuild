@@ -6,10 +6,11 @@ import { createProjectStore, parseProjectTransaction, serializeProjectSnapshot }
 import { ownerRelativePath, samePhysicalPath } from '../lib/file-identity.mjs';
 import { browserBuildTypes } from '../verify-game.mjs';
 import { hash, inspectLegacyProject, json, readProjectFile, refuse } from './inspect.mjs';
+import { browserAdapterFiles } from './browser-adapter-files.mjs';
+import { prepareMovieAtlases } from './movie-atlases.mjs';
 import { normalizeLegacyPng } from './legacy-assets.mjs';
 import { socketOrigin } from './lobby-session.mjs';
 
-const bridge = new URL('./legacy-web.mjs', import.meta.url);
 const schema = '1.0';
 const versions = { resourceFormatVersion: schema, toolProtocolVersion: schema };
 const entryHtml = `<!doctype html>
@@ -73,7 +74,7 @@ function outputOwner(original, output) {
   refuse('MIGRATE_OUTPUT_OWNER', 'Choose a new output directory outside the original project.');
 }
 
-function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedProjectId, network) {
+function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedProjectId, network, moviePages) {
   const boneBindings = selection.bones?.map(({ descriptor: _descriptor, ...binding }) => binding);
   const projectId = rememberedProjectId ?? 'p_migrated_' + selection.inputSha256.slice(0, 24);
   const store = take(
@@ -101,6 +102,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
       ...(network ? { profile: selection.profile, network } : {}),
       manifest: selection.manifest,
       resources: selection.resources,
+      ...(moviePages.length ? { moviePages } : {}),
       ...(selection.theme ? { theme: selection.theme } : {}),
       ...(selection.sheets ? { sheets: selection.sheets } : {}),
       ...(boneBindings ? { bones: boneBindings } : {})
@@ -149,6 +151,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
     repairedData.profile !== (network ? selection.profile : undefined) ||
     !isDeepStrictEqual(repairedData.network, network) ||
     !isDeepStrictEqual(repairedData.resources, selection.resources) ||
+    !isDeepStrictEqual(repairedData.moviePages, moviePages.length ? moviePages : undefined) ||
     !isDeepStrictEqual(repairedData.theme, selection.theme) ||
     !isDeepStrictEqual(repairedData.sheets, selection.sheets) ||
     !isDeepStrictEqual(repairedData.bones, boneBindings) ||
@@ -191,16 +194,16 @@ function gameSource(sources, entry, theme, network) {
       eui, RES, UI, socket, manifest, resourceRoot: resources.resourceRoot,
       group: resources.groups[0].name, theme: theme.themePath, status: document.getElementById('room-status')
     });`
-    : 'return new ' + entry + '();';
+    : 'egret.registerClass(' + entry + ', ' + JSON.stringify(entry) + '); return new ' + entry + '();';
   return `import * as sdk from './egret2d.mjs';
 import { launchLegacyWeb } from './legacy-web.mjs';
 ${lobbyImport}const response = await fetch('./project.json');
 if (!response.ok) throw new Error('Could not open the migrated project');
 const project = await response.json();
-const { stage, manifest, resources, theme, sheets, bones } = project.entities.find(item => item.id === 'e_client').data;
+const { stage, manifest, resources, theme, sheets, bones, moviePages } = project.entities.find(item => item.id === 'e_client').data;
 ${socketSetup}const host = await ${network ? 'launchLobbyHost(socket, () => ' : ''}launchLegacyWeb(sdk, {
   canvas: document.querySelector('canvas'), ...stage, projectId: project.projectId,
-  theme, sheets, nativeBones: bones !== undefined,
+  theme, sheets, moviePages, nativeBones: bones !== undefined,
   resources: {
     configUrl: manifest,
     root: resources.resourceRoot + '/',
@@ -255,7 +258,7 @@ export async function convertProject(options) {
   if (options.expectedEngineSha256 !== undefined && engineDigest !== options.expectedEngineSha256) {
     refuse('MIGRATE_REBUILD_ENGINE', 'The pinned Egret browser bundle changed during the rebuild.');
   }
-  const sourceFile = fs.readFileSync(bridge);
+  const browserModules = browserAdapterFiles();
   const inputBytes = new Map(
     selection.inputs.map(item => {
       const found = readProjectFile(owner, item.path, network ? 1024 * 1024 : undefined);
@@ -273,19 +276,23 @@ export async function convertProject(options) {
     replacements.set(conversion.skeletonPath, neutral);
     replacements.set(conversion.atlasPath, neutral);
   }
-  const resourceTransforms = [];
-  const assets = selection.resources.files.map(file => {
-    const original = read(file.sourcePath);
-    const bytes = replacements.get(file.sourcePath) ?? normalizeLegacyPng(original, file.destinationPath);
-    if (bytes !== original && !replacements.has(file.sourcePath))
-      resourceTransforms.push({
-        path: file.destinationPath,
-        rule: 'png-rgba8-lossless',
-        inputSha256: hash(original),
-        outputSha256: hash(bytes)
-      });
-    return { key: file.destinationPath, bytes };
-  });
+  const movie = prepareMovieAtlases(options.movieAtlases, selection, read, normalizeLegacyPng);
+  const resourceTransforms = [...movie.transforms];
+  const assets = selection.resources.files
+    .filter(file => !movie.replaced.has(file.sourcePath))
+    .map(file => {
+      const original = read(file.sourcePath);
+      const bytes = replacements.get(file.sourcePath) ?? normalizeLegacyPng(original, file.destinationPath);
+      if (bytes !== original && !replacements.has(file.sourcePath))
+        resourceTransforms.push({
+          path: file.destinationPath,
+          rule: 'png-rgba8-lossless',
+          inputSha256: hash(original),
+          outputSha256: hash(bytes)
+        });
+      return { key: file.destinationPath, bytes };
+    });
+  assets.push(...movie.assets);
   const assetFiles = assets.map(({ key, bytes }, index) => {
     const mime = browserBuildTypes[path.posix.extname(key)]?.split(';')[0];
     if (!mime || !(mime === 'application/json' || mime.startsWith('image/'))) {
@@ -317,7 +324,8 @@ export async function convertProject(options) {
     options.engineVersion,
     options.transaction,
     options.projectId,
-    network
+    network,
+    movie.plans
   );
   let bundled;
   try {
@@ -345,7 +353,11 @@ export async function convertProject(options) {
     status: 'converted',
     original: selection,
     target: { version: options.engineVersion, sha256: engineDigest },
-    rebuildInputs: { sourceOrder: options.sources !== undefined, bonesMap: selection.bones !== undefined },
+    rebuildInputs: {
+      sourceOrder: options.sources !== undefined,
+      bonesMap: selection.bones !== undefined,
+      movieAtlases: options.movieAtlases !== undefined
+    },
     ...(options.previousInputs ? { inputChanges: changedInputs(options.previousInputs, selection.inputs) } : {}),
     projectId: store.getSnapshot().projectId,
     revision: store.getSnapshot().revision,
@@ -355,9 +367,7 @@ export async function convertProject(options) {
     ...(network ? { network } : {}),
     browserFiles: [
       'game.mjs',
-      'legacy-web.mjs',
-      'legacy-eui.mjs',
-      'legacy-bones.mjs',
+      ...browserModules,
       'egret2d.mjs',
       ...(network ? lobbyFiles : []),
       ...assets.map(file => file.key)
@@ -366,6 +376,7 @@ export async function convertProject(options) {
   fs.mkdirSync(out);
   for (const item of selection.inputs) write(out, item.path, read(item.path));
   if (options.transaction !== undefined) write(out, 'project-transaction.json', options.transaction);
+  if (options.movieAtlases) write(out, 'movie-atlases.json', json(options.movieAtlases));
   if (options.sources) write(out, 'source-order.json', json(options.sources));
   if (selection.bones) write(out, 'bones-map.json', json(options.bones));
   for (const { key, bytes } of assets) write(out, 'web/' + key, bytes);
@@ -375,9 +386,7 @@ export async function convertProject(options) {
   }
   write(out, 'web/index.html', network ? lobbyHtml(network.vendorSha256) : entryHtml);
   write(out, 'web/game.mjs', bundled.code);
-  write(out, 'web/legacy-web.mjs', sourceFile);
-  for (const name of ['legacy-eui.mjs', 'legacy-bones.mjs'])
-    write(out, 'web/' + name, fs.readFileSync(new URL(name, import.meta.url)));
+  for (const name of browserModules) write(out, 'web/' + name, fs.readFileSync(new URL(name, import.meta.url)));
   write(out, 'web/egret2d.mjs', engine);
   write(out, 'web/project.json', snapshot);
   write(out, 'history.json', take(store.exportHistory()));

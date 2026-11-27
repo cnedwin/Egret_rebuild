@@ -16,7 +16,40 @@
     globalThis.clearTimeout = id => {
         if (timers.delete(id)) native.cancel(id);
     };
+    const groups = new Map();
+    let scriptsClosed = false;
+    const closedError = () => Object.assign(new Error("Project scripts closed"), {name: "AbortError"});
+    globalThis.EgretRuntimeScripts = Object.freeze({
+        loadGroup(name) {
+            if (scriptsClosed) return Promise.reject(closedError());
+            if (typeof name !== "string" || !/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(name)) {
+                return Promise.reject(new TypeError("Invalid script group name"));
+            }
+            const existing = groups.get(name);
+            if (existing) return existing.promise;
+            if (!native.requestScriptGroup(name)) return Promise.reject(new Error("Unknown script group: " + name));
+            const record = {};
+            record.promise = new Promise((resolve, reject) => Object.assign(record, {resolve, reject}));
+            groups.set(name, record);
+            return record.promise;
+        },
+    });
     globalThis.EgretRuntimeTasks = Object.freeze({
+        scriptGroupResult(name, error) {
+            const record = groups.get(name);
+            if (!record || !record.resolve) return;
+            if (error == null) record.resolve();
+            else record.reject(new Error(error));
+            // Keep the settled promise: retrying a partly executed classic script
+            // in this isolate would repeat its global side effects.
+            delete record.resolve;
+            delete record.reject;
+        },
+        closeScripts() {
+            scriptsClosed = true;
+            for (const record of groups.values()) record.reject?.(closedError());
+            groups.clear();
+        },
         fire(id) {
             const callback = timers.get(id);
             if (callback) {

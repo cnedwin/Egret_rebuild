@@ -128,6 +128,9 @@ final class PlayerScripts extends ScriptSession {
             catch (RuntimeException e) { owner.reportFailure("Cannot publish project page: " + e); }
         }
         @JavascriptInterface public void releasePage(int id) { pages.release(id); }
+        @JavascriptInterface public boolean hostStart(int id, String action, String json) { return owner.hostServices.start(id, action, json); }
+        @JavascriptInterface public void hostCancel(int id) { owner.hostServices.cancel(id); }
+        @JavascriptInterface public String hostTake(int id) { return owner.hostServices.take(id); }
         @JavascriptInterface public String saveRead(String key) { return readSave(key); }
         @JavascriptInterface public boolean saveWrite(String key, String value) { return writeSave(key, value); }
         @JavascriptInterface public boolean saveRemove(String key) { return removeSave(key); }

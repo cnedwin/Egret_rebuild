@@ -1,0 +1,44 @@
+{
+  "scope": "Synthetic paged MovieClip crossing tile boundaries",
+  "browser": "158.0.4370.33",
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 Laptop GPU (0x00002C58) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "firstFrame": {
+    "pages": 4,
+    "regions": 4,
+    "imageBytes": 16990880,
+    "limits": {
+      "pages": 64,
+      "regions": 4096,
+      "imageBytes": 67108864
+    },
+    "refusedFrames": 0
+  },
+  "sampledRgb": [
+    [
+      255,
+      0,
+      0
+    ],
+    [
+      0,
+      255,
+      0
+    ],
+    [
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "nextFrameRgb": [
+    0,
+    255,
+    0
+  ],
+  "errors": []
+}

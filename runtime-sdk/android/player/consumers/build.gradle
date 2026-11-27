@@ -2,8 +2,9 @@
 plugins { id 'com.android.application' version '8.9.1' }
 
 def game = new groovy.json.JsonSlurper().parse(file('egret-app.json'), 'UTF-8')
-def playerMinSdk = new java.util.zip.ZipFile(file('libs/egret-player.aar')).withCloseable { aar ->
-    aar.getEntry('assets/egret-player-host.txt') == null ? 26 : 29
+def player = new java.util.zip.ZipFile(file('libs/egret-player.aar')).withCloseable { aar ->
+    [minApi: aar.getEntry('assets/egret-player-host.txt') == null ? 26 : 29,
+     systemBack: aar.getEntry('assets/egret-player-features/system-back-v1') != null]
 }
 
 // Only configure a release signer from the submitting application's environment.
@@ -24,10 +25,13 @@ android {
         applicationId game.applicationId
         versionCode game.versionCode
         versionName game.versionName
-        minSdk playerMinSdk
+        minSdk player.minApi
         targetSdk 36
         ndk { abiFilters 'arm64-v8a' }
     }
+
+    // Compile against the AAR selected by this app, including a previously delivered player.
+    sourceSets.main.java.srcDir(player.systemBack ? 'src/egretBack/current/java' : 'src/egretBack/legacy/java')
 
     signingConfigs {
         if (signingReady) {
@@ -48,7 +52,49 @@ android {
     }
 }
 
-dependencies { implementation files('libs/egret-player.aar') }
+// Resolve only explicitly named, digest-pinned local archives. The exported project also
+// checks the bytes on its customer's machine, including when Gradle builds offline.
+def sha256 = { File archive ->
+    def digest = java.security.MessageDigest.getInstance('SHA-256')
+    archive.withInputStream { input ->
+        byte[] buffer = new byte[65536]
+        int count
+        while ((count = input.read(buffer)) != -1) digest.update(buffer, 0, count)
+    }
+    digest.digest().encodeHex().toString()
+}
+def channelLock = file('egret-channel.json')
+def channelLibraries = []
+if (channelLock.exists()) {
+    def profile = new groovy.json.JsonSlurper().parse(channelLock, 'UTF-8')
+    if (profile.schemaVersion != 1 || !(profile.libraries instanceof List)) {
+        throw new GradleException('Invalid egret-channel.json')
+    }
+    def channelDirectory = file('libs/channel')
+    def onDisk = (channelDirectory.list() ?: []) as Set
+    def seen = [] as Set
+    profile.libraries.each { entry ->
+        def name = entry.file
+        if (!(name instanceof String) || !(name ==~ /[A-Za-z0-9_][A-Za-z0-9_.-]{0,110}\.(aar|jar)/) ||
+                !seen.add(name.toLowerCase(Locale.ROOT)) || !onDisk.contains(name)) {
+            throw new GradleException('Invalid, duplicate or missing local channel archive: ' + name)
+        }
+        def archive = new File(channelDirectory, name)
+        if (!java.nio.file.Files.isRegularFile(archive.toPath(), java.nio.file.LinkOption.NOFOLLOW_LINKS) ||
+                archive.canonicalFile.parentFile != channelDirectory.absoluteFile ||
+                sha256(archive) != entry.sha256) {
+            throw new GradleException('Channel archive identity mismatch: ' + name)
+        }
+        channelLibraries.add(archive)
+    }
+}
+dependencies {
+    implementation files('libs/egret-player.aar')
+    implementation files(channelLibraries)
+}
+
+if (providers.gradleProperty('egretGameRevision').isPresent()) apply from: 'revision.gradle'
+apply from: 'device.gradle'
 
 // Applying the guard to packaging tasks also covers aggregate builds and Gradle
 // task abbreviations, while permitting unsigned compilation, lint and R8 checks.

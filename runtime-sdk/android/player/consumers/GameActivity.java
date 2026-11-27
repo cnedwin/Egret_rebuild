@@ -23,6 +23,11 @@ public final class GameActivity extends Activity {
         setContentView(player);
     }
 
+    @SuppressWarnings("deprecation")
+    @Override public void onBackPressed() {
+        if (!GameBack.consume(player)) super.onBackPressed();
+    }
+
     @Override protected void onResume() {
         super.onResume();
         player.onResume();

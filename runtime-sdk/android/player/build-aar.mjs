@@ -71,6 +71,8 @@ try {
   const manifest = readFileSync(path.join(here,'AndroidManifest.xml'),'utf8');
   writeFileSync(path.join(archive,'AndroidManifest.xml'), profile === 'webview' ? manifest :
     manifest.replace('android:minSdkVersion="26"', 'android:minSdkVersion="29"'));
+  mkdirSync(path.join(archive, 'assets/egret-player-features'), {recursive: true});
+  writeFileSync(path.join(archive, 'assets/egret-player-features/system-back-v1'), '1\n');
   writeFileSync(path.join(archive,'R.txt'),'');
   const result = path.join(work,'player.aar');
   run(java('jar'), ['cMf',result,'-C',archive,'.']);

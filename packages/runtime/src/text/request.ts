@@ -50,6 +50,8 @@ interface Fields {
   readonly direction: unknown;
   readonly density: unknown;
   readonly fillColor: unknown;
+  readonly strokeWidth: unknown;
+  readonly strokeColor: unknown;
 }
 interface Normalized extends TextRasterRequestInput {
   readonly providerIdentity: string;
@@ -138,7 +140,7 @@ function limit(invocation: TextValueInvocation, message: string): never {
   throw createTextValueFailure(invocation, 'TEXT_REQUEST_LIMIT', new RangeFault(message));
 }
 
-/** Snapshot all ten fields first. The cache performs its post-read lifecycle check next. */
+/** Snapshot request fields first. The cache performs its post-read lifecycle check next. */
 export function snapshotTextRasterRequest(
   input: TextRasterRequestInput,
   invocation: TextValueInvocation
@@ -147,7 +149,7 @@ export function snapshotTextRasterRequest(
   if (typeof input !== 'object' || input === null) invalid(invocation, 'Text request must be a record');
   let text: unknown, fontFamily: unknown, fontSize: unknown, fontWeight: unknown;
   let fontStyle: unknown, lineHeight: unknown, locale: unknown, direction: unknown;
-  let density: unknown, fillColor: unknown;
+  let density: unknown, fillColor: unknown, strokeWidth: unknown, strokeColor: unknown;
   try {
     text = input.text;
     fontFamily = input.fontFamily;
@@ -159,6 +161,8 @@ export function snapshotTextRasterRequest(
     direction = input.direction;
     density = input.density;
     fillColor = input.fillColor;
+    if ('strokeWidth' in input) strokeWidth = input.strokeWidth;
+    if ('strokeColor' in input) strokeColor = input.strokeColor;
   } catch (cause) {
     throw createTextValueFailure(invocation, 'TEXT_REQUEST_INVALID', cause);
   }
@@ -166,7 +170,20 @@ export function snapshotTextRasterRequest(
   const value = freeze({}) as TextRasterRequestSnapshot;
   apply(weakSet, snapshots, [
     value,
-    { text, fontFamily, fontSize, fontWeight, fontStyle, lineHeight, locale, direction, density, fillColor }
+    {
+      text,
+      fontFamily,
+      fontSize,
+      fontWeight,
+      fontStyle,
+      lineHeight,
+      locale,
+      direction,
+      density,
+      fillColor,
+      strokeWidth,
+      strokeColor
+    }
   ]);
   return value;
 }
@@ -227,7 +244,8 @@ export function summarizeTextRasterRequest(
   snapshot: TextRasterRequestSnapshot,
   providerIdentity: string,
   fontGeneration: number,
-  invocation: TextValueInvocation
+  invocation: TextValueInvocation,
+  supportsStroke = false
 ): TextRasterRequestSummary {
   openInvocation(invocation);
   const fields = apply(weakGet, snapshots, [snapshot]) as Fields | undefined;
@@ -258,6 +276,11 @@ export function summarizeTextRasterRequest(
   const direction = fields.direction;
   const density = numeric(fields.density, 0.5, 4, false, 'Raster density', invocation);
   const fillColor = numeric(fields.fillColor, 0, 0xffffff, true, 'Fill color', invocation);
+  const strokeWidth =
+    fields.strokeWidth === undefined ? 0 : numeric(fields.strokeWidth, 0, 512, false, 'Stroke width', invocation);
+  const strokeColor =
+    fields.strokeColor === undefined ? 0 : numeric(fields.strokeColor, 0, 0xffffff, true, 'Stroke color', invocation);
+  if (strokeWidth > 0 && !supportsStroke) invalid(invocation, 'Provider does not support text outlines');
   const metadataBytes =
     512 + 2 * (text.length + fontFamily.length + locale.length + providerIdentity.length) + 128 * lineCount;
   const data: Normalized = {
@@ -271,6 +294,7 @@ export function summarizeTextRasterRequest(
     direction,
     density,
     fillColor,
+    ...(strokeWidth > 0 ? { strokeWidth, strokeColor } : {}),
     providerIdentity,
     fontGeneration,
     lineCount,
@@ -300,7 +324,8 @@ export function createTextFieldRequestInput(
     locale: data.locale,
     direction: data.direction,
     density: data.density,
-    fillColor: data.fillColor
+    fillColor: data.fillColor,
+    ...(data.strokeWidth === undefined ? {} : { strokeWidth: data.strokeWidth, strokeColor: data.strokeColor })
   });
 }
 
@@ -337,6 +362,7 @@ export function createOwnedTextRasterRequest(
     direction: data.direction,
     density: data.density,
     fillColor: data.fillColor,
+    ...(data.strokeWidth === undefined ? {} : { strokeWidth: data.strokeWidth, strokeColor: data.strokeColor }),
     profile: 'canvas-explicit-lines-v1',
     providerIdentity: data.providerIdentity,
     fontGeneration: data.fontGeneration,
@@ -383,6 +409,8 @@ export function matchesTextRasterRequestSummary(
     current.locale === candidate.locale &&
     current.direction === candidate.direction &&
     current.density === candidate.density &&
-    current.fillColor === candidate.fillColor
+    current.fillColor === candidate.fillColor &&
+    current.strokeWidth === candidate.strokeWidth &&
+    current.strokeColor === candidate.strokeColor
   );
 }

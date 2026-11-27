@@ -1,0 +1,33 @@
+{
+  "name": "@egret/legacy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Optional Egret 5 packet and browser adapters for games migrated to Egret 7",
+  "exports": {
+    ".": {
+      "types": "./compat/protocol.d.mts",
+      "import": "./compat/protocol.mjs"
+    },
+    "./protocol": {
+      "types": "./compat/protocol.d.mts",
+      "import": "./compat/protocol.mjs"
+    },
+    "./coverage": { "types": "./compat/coverage.d.mts", "import": "./compat/coverage.mjs" },
+    "./web": "./legacy-web.mjs",
+    "./theme-factories": { "types": "./compat/theme-factories.d.mts", "import": "./compat/theme-factories.mjs" },
+    "./android": { "types": "./compat/android.d.mts", "import": "./compat/android.mjs" },
+    "./scene": { "types": "./compat/scene.d.mts", "import": "./compat/scene.mjs" }
+  },
+  "files": [
+    "compat",
+    "legacy-web.mjs",
+    "legacy-eui.mjs",
+    "legacy-bones.mjs",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE",
+    "NOTICE"
+  ]
+}

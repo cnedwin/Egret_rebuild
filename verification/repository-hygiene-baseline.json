@@ -970,6 +970,16 @@
       "path": "third-party/v8-15.7.112.19.NOTICES",
       "bytes": 82707,
       "sha256": "5648a319050688ac3e56d798280e4c9e2eb1f1d3d51520bc944e01897b145f7f"
+    },
+    {
+      "path": "runtime-sdk/android/network/licenses/Java-WebSocket-1.6.0.LICENSE",
+      "bytes": 1082,
+      "sha256": "15101a7cbdaa7f1c161424b760e907e7832e4a1e7f05d03373ca91fbffdb95ee"
+    },
+    {
+      "path": "runtime-sdk/android/network/licenses/slf4j-2.0.13.LICENSE",
+      "bytes": 1154,
+      "sha256": "6fbe2eaf44b193b8a40eed9208f52848572224ad8d7672dd09418aa174847e73"
     }
   ]
 }

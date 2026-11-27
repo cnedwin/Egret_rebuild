@@ -1,0 +1,1 @@
+<e:Skin class="Demo.PanelSkin" xmlns:e="http://ns.egret.com/eui" xmlns:c="sample.*" states="closed,open" width="160" height="96"><e:Label id="caption" text="closed" text.open="open"/><e:List id="list" y="28" width="80" height="40"/><c:Marker id="marker" x="110"/></e:Skin>

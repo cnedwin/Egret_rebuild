@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: Apache-2.0
+// Use an explicit serial so a desk with multiple attached devices updates only the selected game.
+def gameId = new groovy.json.JsonSlurper().parse(file('egret-app.json'), 'UTF-8').applicationId
+def selectedSerial = providers.gradleProperty('egretDevice')
+def platformTools = new File(android.sdkDirectory, 'platform-tools')
+def defaultAdb = new File(platformTools, System.getProperty('os.name').startsWith('Windows') ? 'adb.exe' : 'adb')
+def adbFile = providers.gradleProperty('egretAdb').map { value ->
+    File tool = new File(value)
+    if (!tool.isAbsolute()) throw new GradleException('egretAdb must be an absolute path')
+    tool
+}.getOrElse(defaultAdb)
+
+tasks.register('egretRunDebug') {
+    group = 'install'
+    description = 'Update this game on one selected Android device and start its launcher Activity.'
+    dependsOn 'assembleDebug'
+    doLast {
+        if (!selectedSerial.isPresent() || !selectedSerial.get().trim())
+            throw new GradleException('Specify the serial from adb devices with -PegretDevice=<serial>')
+        def serial = selectedSerial.get()
+        def release = fileTree(layout.buildDirectory.dir('outputs/apk/debug')) { include '*.apk' }.files
+        if (release.size() != 1) throw new GradleException('Expected exactly one debug APK')
+        def device = { List<String> args ->
+            project.exec { commandLine([adbFile.absolutePath, '-s', serial] + args) }
+        }
+        device(['install', '-r', release.first().absolutePath])
+        def parser = javax.xml.parsers.DocumentBuilderFactory.newInstance()
+        parser.setNamespaceAware(true)
+        parser.setFeature('http://apache.org/xml/features/disallow-doctype-decl', true)
+        def manifest = parser.newDocumentBuilder().parse(file('src/main/AndroidManifest.xml'))
+        def names = javax.xml.xpath.XPathFactory.newInstance().newXPath()
+        def launcher = names.evaluate("(/manifest/application/*[self::activity or self::activity-alias][intent-filter[action/@*='android.intent.action.MAIN' and category/@*='android.intent.category.LAUNCHER']])[1]", manifest, javax.xml.xpath.XPathConstants.NODE)
+        if (launcher == null) throw new GradleException('Expected a MAIN/LAUNCHER activity in the application manifest')
+        def activity = launcher.getAttributeNS('http://schemas.android.com/apk/res/android', 'name')
+        if (activity.startsWith('.')) activity = android.namespace + activity
+        else if (!activity.contains('.')) activity = android.namespace + '.' + activity
+        def output = new ByteArrayOutputStream()
+        project.exec {
+            commandLine adbFile.absolutePath, '-s', serial, 'shell', 'am', 'start', '-S', '-W', '-n', gameId + '/' + activity
+            standardOutput = output
+        }
+        def reply = output.toString('UTF-8')
+        if (!(reply =~ /(?m)^Status: ok\s*$/)) throw new GradleException('Android launcher did not report success: ' + reply.trim())
+        logger.lifecycle(reply.trim())
+    }
+}

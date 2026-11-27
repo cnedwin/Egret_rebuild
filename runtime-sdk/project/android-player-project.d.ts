@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Include this file in the game's tsconfig. The Android exporter supplies this module at bundle time.
 declare module '@egret/android-player-project' {
-  import type { CancellationSignal, Engine, ImageData2D, Scope } from '@egret/engine';
+  import type { AssetLease, CancellationSignal, Engine, ImageData2D, Scope, Texture } from '@egret/engine';
   import type { SaveStorage } from '@egret/engine/kit';
 
   export interface PlayerInput {
@@ -19,6 +19,8 @@ declare module '@egret/android-player-project' {
     /** Font size in texture pixels, 1–256. */
     readonly size: number;
     readonly weight?: number;
+    readonly fontFamily?: string;
+    readonly italic?: boolean;
   }
 
   export interface PlayerPaintedRun extends PlayerTextRun {
@@ -28,12 +30,25 @@ declare module '@egret/android-player-project' {
     readonly maxWidth: number;
     /** A six-digit RGB color such as #fff0c9. */
     readonly color: string;
+    /** Outline radius in texture pixels. Zero draws only the fill. */
+    readonly strokeWidth?: number;
+    readonly strokeColor?: string;
   }
 
   export interface PlayerRaster {
     loadPng(path: string, width: number, height: number, signal?: Pick<AbortSignal, 'aborted' | 'reason'>): Promise<ImageData2D>;
     measureText(runs: readonly PlayerTextRun[]): readonly number[];
+    measureTextInk(runs: readonly PlayerTextRun[]): readonly Readonly<{
+      width: number; ascent: number; descent: number; left: number; top: number; right: number; bottom: number;
+    }>[];
+    graphemes(text: string): readonly string[];
     drawText(width: number, height: number, runs: readonly PlayerPaintedRun[]): ImageData2D;
+    /** Equal text pages share one published texture until the final lease is released. */
+    acquireText(width: number, height: number, runs: readonly PlayerPaintedRun[]): Promise<AssetLease<Texture>>;
+    textPageUsage(): Readonly<{
+      occupied: number; bytes: number; hits: number; rasterizations: number; releases: number; refusals: number;
+      maxSlots: number; maxBytes: number;
+    }>;
   }
 
   export interface PlayerChunkReader extends AsyncIterableIterator<Uint8Array> {
@@ -53,6 +68,8 @@ declare module '@egret/android-player-project' {
 
   export interface PlayerServices {
     readonly assets: PlayerAssets;
+    /** Calls a named Activity provider with JSON. Closing the project cancels pending requests. */
+    readonly host: { call(action: string, value: unknown, signal?: AbortSignal): Promise<unknown> };
     readonly engine: Engine;
     /** App-private saves for this game. Writes return after commit. Older hosts throw on use. */
     readonly storage: SaveStorage;
@@ -60,7 +77,15 @@ declare module '@egret/android-player-project' {
     readonly scope: Scope;
     readonly signal: AbortSignal;
     publishPage(id: number, image: ImageData2D): { release(): boolean };
+    readonly music: {
+      play(path: string, options?: {loop?: boolean; signal?: AbortSignal}): Promise<boolean>;
+      stop(): Promise<boolean>;
+    };
+    /** Claim the next system Back once. A newer overlay resolves the previous wait with false. */
+    waitForBack(signal?: AbortSignal): Promise<boolean>;
     edit(text: string): void;
+    editText(options?: {text?: string; multiline?: boolean}, signal?: AbortSignal): Promise<
+      {status: 'confirmed'; text: string} | {status: 'canceled'}>;
     state(value: unknown): void;
     playSound(assetPath: string): void;
   }
@@ -94,10 +119,15 @@ declare module '@egret/android-player-project' {
   export interface NativePlayerSession extends PlayerSession {
     /** The host may acknowledge its last completed draw. Omitting the epoch produces a replayable full frame. */
     frame(elapsedMs: number, epoch?: number, previousFrameId?: number): Uint8Array;
+    hostResult(id: number, ok: boolean): void;
     textResult(id: number, errorName: string): void;
   }
 
   export interface NativePlayer {
+    /** Replies are retrieved once by request ID. */
+    hostStart?(id: number, action: string, json: string): boolean;
+    hostCancel?(id: number): void;
+    hostTake?(id: number): string | null;
     /** A synchronous JSON reply containing either {value: string | null} or {error: string}. */
     saveRead?(key: string): string;
     /** True acknowledges a completed write or removal in this project's namespace. */
@@ -149,3 +179,9 @@ declare module '@egret/android-player-world3d' {
   /** Install a trusted game using the opaque Standard-material GLES3 profile. */
   export function installWorld3DPlayerProject(definition: World3DPlayerDefinition): NativeWorld3DPlayerSession;
 }
+
+/** Embedded Android V8 only. Groups are ordered classic scripts from project.json.v8Scripts. */
+declare var EgretRuntimeScripts: {
+  /** Concurrent requests share one result. Open a new view to retry partly executed code. */
+  loadGroup(name: string): Promise<void>;
+} | undefined;

@@ -319,6 +319,16 @@ test('convert creates a real scoped import receipt in an independent and reprodu
   const second = await convertProject({ ...options, out: path.join(outputs, 'two') });
   assert.deepEqual(second, receipt);
   assert.equal(receipt.revision, 1);
+  assert.equal(new Set(receipt.browserFiles).size, receipt.browserFiles.length);
+  for (const module of ['compat/protocol.mjs', 'compat/game-services.mjs', 'compat/movieclip.mjs', 'legacy-eui.mjs']) {
+    assert(
+      receipt.browserFiles.indexOf(module) >= 0 &&
+        receipt.browserFiles.indexOf(module) < receipt.browserFiles.indexOf('legacy-web.mjs')
+    );
+    assert(fs.statSync(path.join(options.out, 'web', module)).isFile());
+  }
+  assert(receipt.browserFiles.includes('compat/scene.mjs'));
+  assert(receipt.browserFiles.includes('compat/theme-factories.mjs'));
   assert.deepEqual(receipt.receipt.diff.addedFileIds, ['f_resource_0']);
   const actual = key => fs.readFileSync(path.join(options.out, key), 'utf8');
   const project = JSON.parse(actual('web/project.json'));

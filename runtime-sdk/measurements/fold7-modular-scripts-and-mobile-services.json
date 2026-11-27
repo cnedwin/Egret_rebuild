@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "baseline": "80fa909d",
+  "device": {
+    "model": "SM-F966U1",
+    "android": "17",
+    "graphics": "GLES3 native project player"
+  },
+  "fixture": "First-party synthetic classic scripts, packaged silent PCM and test Activity callbacks. Hardware checks used Android Debug APKs.",
+  "moduleSourceBytes": {
+    "firstStartup": 8400031,
+    "secondStartup": 8400073,
+    "bundledEntry": 257617,
+    "startupTotal": 17057721
+  },
+  "v8Scripts": {
+    "startup": [
+      "globals.js",
+      "skin.js"
+    ],
+    "groups": {
+      "battle": [
+        "battle.js",
+        "skill.js"
+      ],
+      "broken": [
+        "broken.js"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "scriptHost": "trimmed",
+      "apkSha256": "171dd20c120dcd5b5cb0b6d99168fb9f1380cf94bf19264c7f99851c8bdc92de",
+      "views": [
+        {
+          "glContexts": 2,
+          "completedFrames": 430,
+          "abandonedFrames": 0,
+          "scriptOrder": "base,synthetic,battle,skill,before-failure",
+          "skillCode": 42,
+          "failedGroupAwaits": 2,
+          "activityEcho": "灯楼",
+          "pendingActivityCallAtClose": "AbortError",
+          "lateActivityRepliesAccepted": 0,
+          "activityCancellationsAndSimulatedLateReplies": [
+            1,
+            1
+          ],
+          "v8": "15.7.112.19",
+          "intl": false
+        },
+        {
+          "glContexts": 1,
+          "completedFrames": 382,
+          "abandonedFrames": 0,
+          "scriptOrder": "base,synthetic,battle,skill,before-failure",
+          "skillCode": 42,
+          "failedGroupAwaits": 2,
+          "activityEcho": "灯楼",
+          "pendingActivityCallAtClose": "AbortError",
+          "lateActivityRepliesAccepted": 0,
+          "activityCancellationsAndSimulatedLateReplies": [
+            2,
+            2
+          ],
+          "v8": "15.7.112.19",
+          "intl": false
+        }
+      ]
+    },
+    {
+      "scriptHost": "standard",
+      "apkSha256": "5787f4eeb47d4c2d5a3b454cfbd282057dfc37eed02c59ab1dfdb041d534b202",
+      "views": [
+        {
+          "glContexts": 2,
+          "completedFrames": 479,
+          "abandonedFrames": 0,
+          "scriptOrder": "base,synthetic,battle,skill,before-failure",
+          "skillCode": 42,
+          "failedGroupAwaits": 2,
+          "activityEcho": "灯楼",
+          "pendingActivityCallAtClose": "AbortError",
+          "lateActivityRepliesAccepted": 0,
+          "activityCancellationsAndSimulatedLateReplies": [
+            1,
+            1
+          ],
+          "v8": "15.7.112.19",
+          "intl": true
+        },
+        {
+          "glContexts": 1,
+          "completedFrames": 382,
+          "abandonedFrames": 0,
+          "scriptOrder": "base,synthetic,battle,skill,before-failure",
+          "skillCode": 42,
+          "failedGroupAwaits": 2,
+          "activityEcho": "灯楼",
+          "pendingActivityCallAtClose": "AbortError",
+          "lateActivityRepliesAccepted": 0,
+          "activityCancellationsAndSimulatedLateReplies": [
+            2,
+            2
+          ],
+          "v8": "15.7.112.19",
+          "intl": true
+        }
+      ]
+    },
+    {
+      "scriptHost": "webview",
+      "apkSha256": "da1bb50f136a54b598eabe20fe96c089560665cd8f2c75ea2d2aeddc6955de92",
+      "views": [
+        {
+          "glContexts": 2,
+          "completedFrames": 410,
+          "abandonedFrames": 0,
+          "scriptOrder": "base,synthetic",
+          "skillCode": 0,
+          "failedGroupAwaits": 0,
+          "activityEcho": "灯楼",
+          "pendingActivityCallAtClose": "AbortError",
+          "lateActivityRepliesAccepted": 0,
+          "activityCancellationsAndSimulatedLateReplies": [
+            1,
+            1
+          ]
+        },
+        {
+          "glContexts": 1,
+          "completedFrames": 358,
+          "abandonedFrames": 0,
+          "scriptOrder": "base,synthetic",
+          "skillCode": 0,
+          "failedGroupAwaits": 0,
+          "activityEcho": "灯楼",
+          "pendingActivityCallAtClose": "AbortError",
+          "lateActivityRepliesAccepted": 0,
+          "activityCancellationsAndSimulatedLateReplies": [
+            2,
+            2
+          ]
+        }
+      ]
+    }
+  ],
+  "media": {
+    "scriptHost": "trimmed",
+    "apkSha256": "b2e9a29571dad26f74c73f431cd71f379f534e5a90248dfce517f4d6bd92d708",
+    "mode": "landscape",
+    "windowPixels": [
+      2520,
+      1080
+    ],
+    "systemBarAndCutoutInsets": [
+      102,
+      79,
+      126,
+      0
+    ],
+    "surfaceRectXYWH": [
+      424,
+      256,
+      1648,
+      824
+    ],
+    "imeShown": true,
+    "inputKind": "Real Android IME, prefilled Chinese, ASCII injected through Android shell, real dialog buttons.",
+    "confirmed": {
+      "status": "confirmed",
+      "text": "灯A7"
+    },
+    "multilineDraftPreservedWhileEditing": true,
+    "canceled": {
+      "status": "canceled"
+    },
+    "replacedAndCurrentBackWait": [
+      false,
+      true
+    ],
+    "unclaimedBackLeftActivity": true,
+    "music": {
+      "firstForeground": {
+        "active": true,
+        "prepared": true,
+        "playing": true,
+        "positionMs": 386
+      },
+      "background": {
+        "active": true,
+        "prepared": true,
+        "playing": false,
+        "positionMs": 1353
+      },
+      "backgroundUnchangedOverMs": 650,
+      "resumed": {
+        "active": true,
+        "prepared": true,
+        "playing": true,
+        "positionMs": 1403
+      },
+      "closed": {
+        "active": false,
+        "prepared": false
+      }
+    },
+    "abandonedFrames": 0
+  },
+  "restoration": {
+    "bothOriginalForegroundsRestored": true,
+    "bothStayAwakeSettingsRestored": true,
+    "bothDeviceLeasesReleased": true,
+    "ownedPackagesRemoved": true
+  },
+  "limits": [
+    "Frame counts are lifecycle observations, not timing measurements.",
+    "The WebView case referenced startup scripts from HTML. Named V8 groups ran only in the two embedded V8 cases.",
+    "The physical Back action was an injected Android KEYCODE_BACK. Edge gestures, API 26–32 fallback, human IME composition, audio fidelity and audio interruptions were not measured.",
+    "No network endpoint, vendor SDK or customer asset participated in these checks."
+  ],
+  "compiledCodeCache": {
+    "fixture": "Same signed Debug APK for each profile. Two original large scripts and the generated entry are eligible. Fresh install then close/reopen. Damage one app-private record before the third open.",
+    "startupBytes": [
+      8400031,
+      8400073,
+      257667
+    ],
+    "sampleOrder": [
+      "cold",
+      "warm",
+      "one-record-damaged",
+      "warm-after-repair"
+    ],
+    "profiles": [
+      {
+        "profile": "trimmed",
+        "apkSha256": "abf687d6b349a649c90e8f42b26172dfcddf480ceeba0533669221d5d5305a27",
+        "opens": [
+          {
+            "vmVersion": "15.7.112.19",
+            "candidates": 3,
+            "recordsRead": 0,
+            "recordsWritten": 3,
+            "compileFallbacks": 0,
+            "compileUs": 37750,
+            "cacheUs": 8844,
+            "abandonedFrames": 0,
+            "executionOrder": "base,synthetic,battle,skill,before-failure"
+          },
+          {
+            "vmVersion": "15.7.112.19",
+            "candidates": 3,
+            "recordsRead": 3,
+            "recordsWritten": 0,
+            "compileFallbacks": 0,
+            "compileUs": 28468,
+            "cacheUs": 6901,
+            "abandonedFrames": 0,
+            "executionOrder": "base,synthetic,battle,skill,before-failure"
+          },
+          {
+            "vmVersion": "15.7.112.19",
+            "candidates": 3,
+            "recordsRead": 2,
+            "recordsWritten": 1,
+            "compileFallbacks": 0,
+            "compileUs": 33887,
+            "cacheUs": 7842,
+            "abandonedFrames": 0,
+            "executionOrder": "base,synthetic,battle,skill,before-failure"
+          },
+          {
+            "vmVersion": "15.7.112.19",
+            "candidates": 3,
+            "recordsRead": 3,
+            "recordsWritten": 0,
+            "compileFallbacks": 0,
+            "compileUs": 28306,
+            "cacheUs": 6842,
+            "abandonedFrames": 0,
+            "executionOrder": "base,synthetic,battle,skill,before-failure"
+          }
+        ]
+      },
+      {
+        "profile": "standard",
+        "apkSha256": "9cb443341ae9a17600b03d63d53eb6f03f7e15d6f53c4b690726d17e0fa13bb4",
+        "opens": [
+          {
+            "vmVersion": "15.7.112.19",
+            "candidates": 3,
+            "recordsRead": 0,
+            "recordsWritten": 3,
+            "compileFallbacks": 0,
+            "compileUs": 38451,
+            "cacheUs": 8770,
+            "abandonedFrames": 0,
+            "executionOrder": "base,synthetic,battle,skill,before-failure"
+          },
+          {
+            "vmVersion": "15.7.112.19",
+            "candidates": 3,
+            "recordsRead": 3,
+            "recordsWritten": 0,
+            "compileFallbacks": 0,
+            "compileUs": 28820,
+            "cacheUs": 6860,
+            "abandonedFrames": 0,
+            "executionOrder": "base,synthetic,battle,skill,before-failure"
+          },
+          {
+            "vmVersion": "15.7.112.19",
+            "candidates": 3,
+            "recordsRead": 2,
+            "recordsWritten": 1,
+            "compileFallbacks": 0,
+            "compileUs": 32456,
+            "cacheUs": 7280,
+            "abandonedFrames": 0,
+            "executionOrder": "base,synthetic,battle,skill,before-failure"
+          },
+          {
+            "vmVersion": "15.7.112.19",
+            "candidates": 3,
+            "recordsRead": 3,
+            "recordsWritten": 0,
+            "compileFallbacks": 0,
+            "compileUs": 28151,
+            "cacheUs": 6779,
+            "abandonedFrames": 0,
+            "executionOrder": "base,synthetic,battle,skill,before-failure"
+          }
+        ]
+      }
+    ],
+    "interpretation": "compileUs times only compilation of cache-eligible scripts. cacheUs includes source identity, disk reads, serialization and writes. Javet does not expose the internal V8 rejection bit. Records read are validated cache inputs, not proof of an internal compiler hit or whole-game startup improvement."
+  }
+}

@@ -168,3 +168,18 @@ Four additional process-scoped heap profiles sampled native allocations on the F
 In a separate control, the same app waited at the terminal frame, serviced the ordinary V8 task queue and entered JavaScript once without advancing the game. The measured V8 malloc counter was unchanged across those steps; the later diagnostic low-memory notification reduced it. Servicing the queue again provided no evidence of an outstanding-task problem. This investigation keeps the #388 encoder and the host’s existing scheduling and memory policy. [Idle-task control](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-v8-idle-pump.json)
 
 Finally, a fresh comparison on the original #386 scene used six uninstrumented cold-start pairs per profile. Standard V8 reduced generation p95 in all six pairs by a median 108 µs (12.9%). Trimmed V8 improved in five of six by 127.5 µs (15.4%). Both met the original acceptance rule. Dispatch to enqueue improved by 110.5 and 133 µs; the submission interval increased by 44.5 µs on standard and fell by 8.5 µs on trimmed. Each profile reproduced the original 2,483,048-byte command and texture tape and the full 1080 × 1920 viewport before and after EGL recreation, with eight uploads and eight releases over two contexts. [Original-scene paired recheck and recovery results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-v8-quad-recheck.json)
+
+## Optional compiled-script cache
+
+A game can enable `"v8CodeCache": true` in `project.json` for its standard or trimmed V8 player. First use compiles the APK source and stores a disposable V8 record in Android's private code cache. A subsequent view offers the record to V8 only after matching the script name and bytes, V8 version, Javet configuration, VM flags, profile, ABI and stored payload checksum. The signed APK still supplies every source. A missing, stale or damaged record falls back to source compilation. A compilation failure may retry without cached data before execution begins. An exception raised by game code propagates after its single execution.
+
+The cache processes up to 64 scripts of at least 8 KiB per isolate, stores up to 96 records and 8 MiB in total, and admits up to 1 MiB of cached data per script. Concurrent writers yield if another process owns the writer lock. The limits on project scripts and resources still apply. The optional `codeCache` section of `getDiagnostics()` reports candidate count, validated records read, successful writes, compilation retries, compile microseconds and cache-handling microseconds. Javet 6.0.3 does not expose V8's internal cached-data rejection flag. A record read counts as a validated input to compilation.
+
+On Galaxy Z Fold7 with Android 17, two synthetic scripts and the generated entry totaled 17,057,771 bytes. Each profile ran one cold open, two warm opens and an intermediate open with one damaged cache record:
+
+| Profile | Cold compile | Warm compile, two opens | Compile with one damaged record |
+| --- | ---: | ---: | ---: |
+| Trimmed V8 | 37.750 ms | 28.468, 28.306 ms | 33.887 ms |
+| Standard V8 | 38.451 ms | 28.820, 28.151 ms | 32.456 ms |
+
+Both cold opens wrote three records, both warm opens per profile read all three, and each damaged run read two and rebuilt one. Script order, single execution and resource closure matched across the eight opens. These samples time compilation of the eligible scripts on this fixture. Filesystem handling, game execution, device recovery and first interactive frame have separate costs. The linked receipt includes the cache-handling times. [Fold7 measurement](../../../runtime-sdk/measurements/fold7-modular-scripts-and-mobile-services.json)
