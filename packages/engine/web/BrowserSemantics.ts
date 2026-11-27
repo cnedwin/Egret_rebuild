@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { EgretError } from '@egret/runtime';
+import { registerScreenSemantics } from './screenControlReportState.js';
 import type { SemanticRole, SemanticSnapshot, SemanticSnapshotNode, UiSemantics } from '@egret/engine/ui/semantics';
 
 /** Browser semantics to make: the semantic tree, the canvas and its size, its label, and what is called on an error. */
@@ -413,6 +414,7 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
     if (ownedSurfaces.has(surface)) throw new EgretError('UI_SEMANTICS_SURFACE_BUSY');
     ownedSurfaces.add(surface);
     owned = surface;
+    restores.push(registerScreenSemantics(surface, semantics));
     const holder = page.createElement('div');
     do holder.id = 'egret-semantics-' + ++containers;
     while (page.getElementById(holder.id) !== null);

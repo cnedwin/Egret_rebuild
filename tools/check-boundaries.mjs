@@ -1306,9 +1306,9 @@ function sceneClauses(code, label, allowed) {
 const sceneForbiddenNames=[...privateSharedGPU,...meshPrivate,...texturedPrivate,...privateTexturedGPU,...privateCapture,...privateCoordinates,...privateBounds,...assetGroupPublicTypes,'AssetGroupOperations',...assetGroupPrivateNames,'packMeshGeometry3D','PackedMeshGeometry3D','MeshPacking3DError','getMeshPacking3DErrorOrigin','B1BuiltinProtocol','getBuiltinB1Protocol','isBuiltinB1Protocol','createB1WebGPUHostInternal'];
 // M14_WEBGL2_BOUNDARY_BEGIN
 const glValues = ['createSharedWebGL2Host'];
-const glTypes = ['SharedWebGL2HostOptions','SharedWebGL2Host','SharedWebGL2HostStatus','SharedWebGL2Readback','WebGL2HostState','WebGL2HostErrorCode','WebGL2HostFailure','WebGL2HostDiagnostic','WebGL2HostStatus'];
+const glTypes = ['SharedWebGL2HostOptions','SharedWebGL2PageBatching','SharedWebGL2Host','SharedWebGL2HostStatus','SharedWebGL2Readback','WebGL2HostState','WebGL2HostErrorCode','WebGL2HostFailure','WebGL2HostDiagnostic','WebGL2HostStatus'];
 const glLayerTypes = ['SharedLayerWebGL2Host','SharedWebGL2Layer2D','SharedWebGL2LayerEffect2D','SharedWebGL2LayerPlacement2D','SharedWebGL2LayerStatus'];
-const glTimingTypes = ['SharedWebGL2FrameTiming','SharedWebGL2TimingPhase','SharedWebGL2TimingSample'];
+const glTimingTypes = ['SharedWebGL2FrameTiming','SharedWebGL2TimingPhase','SharedWebGL2TimingSample','SharedWebGL2StartupTiming'];
 const glTimingClause = "export type { "+glTimingTypes.join(', ')+" } from './webgl2Types.js';";
 const hasGLTiming = /\bmeasureSharedFrames\?\s*:\s*boolean\s*;/.test(sceneRead('packages/engine/web/sharedWebGL2Options.ts'));
 const glFacade = await import('@egret/engine/webgl2');
@@ -1317,7 +1317,7 @@ if (!sceneEqual(Object.keys(glFacade),glValues) || !sceneEqual(Object.keys(glHos
     || glFacade.createSharedWebGL2Host !== glHostModule.createSharedWebGL2Host)
   throw new Error('M14: exact WebGL2 runtime facade mismatch');
 const glFacadeRules = [
-  ['webgl2', "export { createSharedWebGL2Host } from './WebGL2Host.js';", "export type { SharedWebGL2HostOptions } from './sharedWebGL2Options.js'; export type { SharedWebGL2Host, SharedWebGL2HostStatus, SharedWebGL2Readback, WebGL2HostState, WebGL2HostErrorCode, WebGL2HostFailure, WebGL2HostDiagnostic, WebGL2HostStatus } from './webgl2Types.js';"],
+  ['webgl2', "export { createSharedWebGL2Host } from './WebGL2Host.js';", "export type { SharedWebGL2HostOptions, SharedWebGL2PageBatching } from './sharedWebGL2Options.js'; export type { SharedWebGL2Host, SharedWebGL2HostStatus, SharedWebGL2Readback, WebGL2HostState, WebGL2HostErrorCode, WebGL2HostFailure, WebGL2HostDiagnostic, WebGL2HostStatus } from './webgl2Types.js';"],
 ];
 for (const [stem,valueClause,typeClauses] of glFacadeRules) {
   for (const [directory,suffix] of [['web','.ts'],['dist/web','.js'],['dist/web','.d.ts']]) {
@@ -1369,11 +1369,24 @@ const glClosureFiles = new Set(glModuleNames.flatMap(name=>['packages/engine/web
 for (const directory of ['src','rendering','web','dist']) for (const file of files(path.join(root,'packages/engine',directory))) {
   if (!/\.(?:ts|js)$/.test(file)) continue;
   const relative=path.relative(root,file).split(path.sep).join('/'),code=sceneRead(relative);
-  for (const [,imported] of sceneGraphEdges(code)) {
+  for (const [kind,imported] of sceneGraphEdges(code)) {
     if (!imported.startsWith('.')) continue;
     const target=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),imported)).split(path.sep).join('/');
-    // The browser game entry loads the WebGL2 Host through its entry module alone, when that backend is chosen.
-    if (['web/webgl2.js','dist/web/webgl2.js'].includes(target) && ['packages/engine/web/BrowserGame.ts','packages/engine/dist/web/BrowserGame.js'].includes(relative)) continue;
+    // BrowserGame alone may load the optional backend at runtime, only when chosen.
+    if (['web/webgl2.js','dist/web/webgl2.js'].includes(target)) {
+      if (kind==='dynamic' && ['packages/engine/web/BrowserGame.ts','packages/engine/dist/web/BrowserGame.js'].includes(relative)) continue;
+      // Exactly these public option/result types are erased. Neither declaration grants runtime backend admission.
+      const typeContracts={
+        'packages/engine/web/BrowserGame.ts':["./webgl2.js","SharedWebGL2StartupTiming, SharedWebGL2PageBatching"],
+        'packages/engine/dist/web/BrowserGame.d.ts':["./webgl2.js","SharedWebGL2StartupTiming, SharedWebGL2PageBatching"],
+        'packages/engine/web/world3d/overlay3D.ts':["../webgl2.js","SharedWebGL2PageBatching"],
+        'packages/engine/dist/web/world3d/overlay3D.d.ts':["../webgl2.js","SharedWebGL2PageBatching"]
+      };
+      const contract=typeContracts[relative];
+      if(kind==='static'&&contract&&imported===contract[0]&&
+         sceneGraphEdges(code).filter(([edgeKind,edgeTarget])=>edgeKind==='static'&&edgeTarget===imported).length===1&&
+         code.replace(/\s+/g,'').includes(("import type { "+contract[1]+" } from '"+imported+"';").replace(/\s+/g,'')))continue;
+    }
     if (glTargets.has(target) && !glClosureFiles.has(relative))
       throw new Error('M14: WebGL2 module imported outside exact optional closure: '+relative);
   }
@@ -5431,7 +5444,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
 }
 // Browser game: one optional browser entry. It uses the shared browser image decoder and loads a Host's entry
 // only when that backend is chosen. No other entry has it.
-const gameTypes=['BrowserGame','BrowserGameAtlasLabel','BrowserGameBackend','BrowserGameFit','BrowserGameFrameUsage','BrowserGameLabel','BrowserGameLabelCreateOptions','BrowserGameLabelOptions','BrowserGameOptions','BrowserGameWarning','BrowserStatsPanel','BrowserStatsPanelOptions','BrowserStatsSample','BrowserStatsSnapshot'],gameValues=['createBrowserGame','createBrowserStatsPanel'];
+const gameTypes=['BrowserGame','BrowserGameAtlasLabel','BrowserGameBackend','BrowserGameFit','BrowserGameFrameUsage','BrowserGameLabel','BrowserGameLabelCreateOptions','BrowserGameLabelOptions','BrowserGameOptions','BrowserGameRenderMode','BrowserGameStartupTiming','BrowserGameWarning','BrowserStatsPanel','BrowserStatsPanelOptions','BrowserStatsSample','BrowserStatsSnapshot'],gameValues=['createBrowserGame','createBrowserStatsPanel'];
 for(const [file,types] of [['packages/engine/web/game.ts',gameTypes],['packages/engine/dist/web/game.js',[]],['packages/engine/dist/web/game.d.ts',gameTypes]]){
  const surface=mouseExports(uiRead(file),file);
  if(!mouseSame(surface.values,gameValues)||!mouseSame(surface.types,types))throw new Error('Browser game: exact browser entry exports mismatch: '+file);
@@ -5441,9 +5454,10 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
+const gameEntries=['./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./GameImageAdmission.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],
- 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','@egret/engine','@egret/engine/text'],
+ 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','./webgl2.js','@egret/engine','@egret/engine/text'],
+ 'web/GameImageAdmission.ts':['@egret/contracts','@egret/runtime'],'dist/web/GameImageAdmission.js':['@egret/runtime'],'dist/web/GameImageAdmission.d.ts':['@egret/contracts'],
  'web/browserStaticLayers.ts':['@egret/runtime','@egret/contracts'],'dist/web/browserStaticLayers.js':['@egret/runtime'],'dist/web/browserStaticLayers.d.ts':['@egret/contracts'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};
 for(const [file,expected] of Object.entries(gameImports)){
@@ -5461,7 +5475,8 @@ for(const [file,expected] of Object.entries(gameImports)){
  }
  if(new RegExp('\\b(?:setTimeout|setInterval|Worker|XMLHttpRequest|localStorage'+(file.includes('BrowserGame')?'':'|fetch')+')\\b').test(automatic))throw new Error('Browser game: acquired automatic host work: '+file);
 }
-const gameAllowed={'web/browserStaticLayers.js':['web/BrowserGame.ts'],'dist/web/browserStaticLayers.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'],
+const gameAllowed={'web/GameImageAdmission.js':['web/BrowserGame.ts'],'dist/web/GameImageAdmission.js':['dist/web/BrowserGame.js'],
+ 'web/browserStaticLayers.js':['web/BrowserGame.ts'],'dist/web/browserStaticLayers.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'],
  'web/BrowserGame.js':['web/game.ts'],'dist/web/BrowserGame.js':['dist/web/game.js','dist/web/game.d.ts'],
  'web/BrowserStatsPanel.js':['web/game.ts','web/BrowserGame.ts'],'dist/web/BrowserStatsPanel.js':['dist/web/game.js','dist/web/game.d.ts','dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts']};
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
@@ -5649,9 +5664,9 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
   if(Object.hasOwn(audioAllowed,resolved)&&!audioAllowed[resolved].includes(relative))throw new Error('Audio: implementation module imported outside its entry: '+relative);
  }
 }
-// Semantics: a DOM-free tree entry and a browser projection entry, each with one implementation
-// module. The tree is built on the runtime alone, the projection on the tree's types alone, and no
-// other entry has either.
+// Semantics: a DOM-free tree entry and a browser projection entry, each with its named implementation.
+// The browser projection shares a structural, read-only surface association with the World3D screen
+// reporter; only named adapters import the public tree's types, and no other entry has either.
 const semanticTypes=['SemanticAction','SemanticBounds','SemanticChecked','SemanticDescription','SemanticExtent','SemanticNode','SemanticNodeOptions','SemanticOrientation','SemanticPosition','SemanticRange','SemanticRole','SemanticSnapshot','SemanticSnapshotNode','SemanticSort','SemanticsState','UiSemantics','UiSemanticsOptions','SemanticListRow','SemanticListSource','UiListSemantics','UiListSemanticsOptions'];
 const semanticBrowserTypes=['BrowserSemantics','BrowserSemanticsOptions'];
 const semanticValues=['createUiSemantics','semanticBoundsOf','createUiListSemantics','semanticBoxOf'];
@@ -5681,16 +5696,39 @@ const semanticImports={
  'web/semantics.ts':['./BrowserSemantics.js','./BrowserSemantics.js'],
  'dist/web/semantics.js':['./BrowserSemantics.js'],
  'dist/web/semantics.d.ts':['./BrowserSemantics.js','./BrowserSemantics.js'],
- 'web/BrowserSemantics.ts':['@egret/runtime','@egret/engine/ui/semantics'],
- 'dist/web/BrowserSemantics.js':['@egret/runtime'],
+ 'web/BrowserSemantics.ts':['@egret/runtime','./screenControlReportState.js','@egret/engine/ui/semantics'],
+ 'dist/web/BrowserSemantics.js':['@egret/runtime','./screenControlReportState.js'],
  'dist/web/BrowserSemantics.d.ts':['@egret/engine/ui/semantics'],
+ 'web/screenControlReportState.ts':[],
+ 'dist/web/screenControlReportState.js':[],
+ 'dist/web/screenControlReportState.d.ts':[],
 };
 for(const [file,expected] of Object.entries(semanticImports)){
  const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
  if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Semantics: exact graph mismatch: '+file);
  if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Semantics: acquired automatic host work: '+file);
 }
-const semanticAllowed={'src/semanticTree.js':['src/semantics.ts'],'dist/semanticTree.js':['dist/semantics.js','dist/semantics.d.ts'],'src/semanticList.js':['src/semantics.ts'],'dist/semanticList.js':['dist/semantics.js','dist/semantics.d.ts'],'web/BrowserSemantics.js':['web/semantics.ts'],'dist/web/BrowserSemantics.js':['dist/web/semantics.js','dist/web/semantics.d.ts']};
+ // World3D's screen report observes only native geometry and the browser projection's private read-only registry.
+ // It owns a tool-only receipt interval; the ordinary game and semantics runtime keep their no-timer rule above.
+const overlayReporterImports={
+ 'web/world3d/overlayScreenReport.ts':['@egret/runtime','@egret/runtime','../game.js','../screen.js','../screenControlReportState.js','../screenControlReportState.js'],
+ 'dist/web/world3d/overlayScreenReport.js':['@egret/runtime','../screenControlReportState.js'],
+ 'dist/web/world3d/overlayScreenReport.d.ts':['../game.js']
+};
+for(const [file,expected] of Object.entries(overlayReporterImports)){
+ const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
+ if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Overlay screen reporter: exact graph mismatch: '+file);
+ if(/\b(?:setTimeout|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Overlay screen reporter: acquired automatic host work: '+file);
+}
+const semanticAllowed={
+ 'web/world3d/overlayScreenReport.js':['web/world3d/overlay3D.ts'],
+ 'dist/web/world3d/overlayScreenReport.js':['dist/web/world3d/overlay3D.js'],
+ 'src/semanticTree.js':['src/semantics.ts'],'dist/semanticTree.js':['dist/semantics.js','dist/semantics.d.ts'],
+ 'src/semanticList.js':['src/semantics.ts'],'dist/semanticList.js':['dist/semantics.js','dist/semantics.d.ts'],
+ 'web/BrowserSemantics.js':['web/semantics.ts'],'dist/web/BrowserSemantics.js':['dist/web/semantics.js','dist/web/semantics.d.ts'],
+ 'web/screenControlReportState.js':['web/BrowserSemantics.ts','web/world3d/overlayScreenReport.ts'],
+ 'dist/web/screenControlReportState.js':['dist/web/BrowserSemantics.js','dist/web/world3d/overlayScreenReport.js']
+};
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
  if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){

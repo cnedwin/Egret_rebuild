@@ -3,6 +3,8 @@ import type { SharedPreparationOptions2D } from '../rendering/prepareSharedDraws
 import type { SharedStorageLimits2D } from './sharedSubmissionStorage2D.js';
 import type { WebGL2HostDiagnostic } from './webgl2Types.js';
 
+/** Same-page batches still merge. The single-page path omits the multi-page program completely. */
+export type SharedWebGL2PageBatching = 'multi-page' | 'single-page';
 export interface SharedWebGL2Configuration extends SharedPreparationOptions2D, SharedStorageLimits2D {
   /** Distinct regions one frame may name; at most the profile's 4,096. */
   readonly maxFrameRegions: number;
@@ -17,6 +19,7 @@ export interface SharedWebGL2Configuration extends SharedPreparationOptions2D, S
   readonly restoreTimeoutMs: number;
   /** Where translucent draws mix: `linear` light (the default) or the stored `srgb` codes, as a 2D canvas does. */
   readonly blendSpace: 'linear' | 'srgb';
+  readonly pageBatching: SharedWebGL2PageBatching;
 }
 /** A shared WebGL2 host to make: its canvas, what it reports to, and whether it measures frames. */
 export interface SharedWebGL2HostOptions extends Partial<SharedWebGL2Configuration> {
@@ -49,7 +52,8 @@ const DEFAULTS: SharedWebGL2Configuration = Object.freeze({
   maxFrameRegions: 4096,
   maxFramePageBytes: 67108864,
   maxReadyPageBytes: 134217728,
-  blendSpace: 'linear'
+  blendSpace: 'linear',
+  pageBatching: 'multi-page'
 });
 const KEYS = [
   'canvas',
@@ -76,7 +80,8 @@ const KEYS = [
   'maxFrameRegions',
   'maxFramePageBytes',
   'maxReadyPageBytes',
-  'blendSpace'
+  'blendSpace',
+  'pageBatching'
 ] as const;
 function object(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -106,6 +111,8 @@ export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions): {
       if (value !== 'premultiplied' && value !== 'opaque') throw new TypeError(key);
     } else if (key === 'blendSpace') {
       if (value !== 'linear' && value !== 'srgb') throw new TypeError(key);
+    } else if (key === 'pageBatching') {
+      if (value !== 'multi-page' && value !== 'single-page') throw new TypeError(key);
     } else {
       if (
         typeof value !== 'number' ||

@@ -186,3 +186,24 @@ export default async function prepare(player, screen) {
 ## 11 月 27 日真机补验
 
 11 月 27 日实测：Windows 硬件 WebGL2 与 Fold7 WebGL2/WebGPU 的 fixed 模式、贴边、高 DPR 整倍数像素及 UI/视图几何专项通过。Fold7 真实视口 873 × 325 CSS 像素、DPR 2.625，指定 insets 和竖屏/平板容器尺寸由脚本提供；实体刘海与折叠转换仍待测。 [真机观测及剩余范围](november-27-claude-hardware.md). 另在独立重建的 #516 上确认双终端双后端关闭视图独立缩放时，覆盖层保持世界坐标及点击。
+
+## 3D 叠加层的独立 UI 缩放与原生屏幕报告
+
+普通适配决定每个逻辑单位对应多少 CSS 像素。覆盖 3D 画布的透明叠加层可以单独限制 UI 大小，避免界面在手机上缩得太小，或者在显示器上无限放大：
+
+```js
+const overlay = await createWorld3DOverlay(canvas, {
+  width: 800, height: 420, portrait: { width: 380, height: 680 },
+  fit: 'expand', uiScale: { min: 1, max: 1.35 }
+});
+const game = overlay.game;
+// 用 game.screen.width、height、safe、scale 布局并投影世界位置。
+```
+
+`uiScale` 限制叠加层逻辑单位实际对应的 CSS 像素。两项界限都可省略，给出时必须为有限正数，且下限不得超过上限。它适用于铺满空间的适配模式（`expand` 或 fixed 模式），不可与 `stretch`、`contain`、`cover` 或 `wholeScale` 一起使用。当界限改变了适配的缩放比，舞台逻辑尺寸在**两个**轴上跟随可用空间，居中的设计区域可能被裁切。因此按当前的 `game.screen.safe` 摆放控件，而不是按原设计矩形。`game.onScreenChange`、指针命中检测、语义投影和 `overlay.box` 使用同一个实际逻辑尺寸与缩放比。该选项不改变 3D 画布尺寸。把场景中的点投影到叠加层时，先得到 CSS 坐标，减去叠加层画布的 CSS 原点，再除以实际逻辑缩放比（也可以按 CSS 矩形和舞台逻辑宽高映射）。
+
+`planScreen` 和底层 `createBrowserGame` 在铺满空间的规划适配模式中也接受此选项。它与 `play({ uiScale })` 不同：后者仅缩放声明式视图，不改变游戏舞台。
+
+原生 `verify --screens` 现在也检查 World3D 叠加层的控件，即使它按需绘制或者绘制循环暂停。位置来自可见、可交互的显示对象：将显式 `hitArea` 变换为舞台和 CSS 坐标，并受裁剪矩形约束。隐式命中区或变换后的图形报告其轴对齐包围矩形，不证明逐像素遮挡关系。覆盖整舞台的指针遮罩会排除其后的控件。当当前叠加层画布由真实的 `createBrowserSemantics` 投影持有时，与原生边界匹配的可操作语义节点提供当前名称及模态、禁用状态；尺寸仍取真实命中区，而非绘制的阴影或焦点描边。具名的原生触控目标即使没有语义节点也可以报告；含语义控件的界面内，无名的纯指针阻挡面板不算按钮。其他情况下，可见的原生触控目标按名称或位置报告。只有屏幕验证采集器存在时才会启用报告计时器，销毁叠加层时清理计时器。
+
+`tests/ui-screen.test.mjs` 检查缩放界限及无效参数。`tests/world3d-overlay-screen-browser.mjs` 在 Chromium 中验证独立缩放、真实语义名称与命中区边界、触控路由、刘海/触控尺寸/重叠发现、暂停绘制期间转屏和报告清理；这不是设备性能测试。

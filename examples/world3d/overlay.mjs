@@ -34,7 +34,9 @@ const ui = await createWorld3DOverlay(canvas, {
   width: 1280,
   height: 720,
   portrait: { width: 720, height: 1280 },
-  fit: 'expand'
+  fit: 'expand',
+  renderMode: 'on-demand',
+  webgl2PageBatching: 'single-page'
 });
 const game = ui.game;
 const block = (color, width, height) => {
@@ -65,6 +67,12 @@ game.onScreenChange(() => {
 });
 globalThis.overlayCheck = {
   check,
+  move: () => {
+    pause.x -= 1;
+  },
+  invalidate: () => game.invalidate(),
+  timings: () => ui.getStartupTiming(),
+  loop: () => game.loop.snapshot(),
   read: () => ({
     screen: {
       width: game.screen.width,

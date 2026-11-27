@@ -16,6 +16,35 @@ A ready token belongs to one root and is single-use. An unchanged token performs
 
 Managed root, shell and row wrappers reject direct geometry, hit-region, reparenting and disposal writes. Update them through their owner. Custom row content remains owned by its binding Scope; a new content version replaces it. The logical Stage must have an identity transform at admission and publication. Ordinary Stage transform changes remain possible, but that interval is outside this qualified UI profile.
 
+## Responsive ordinary trees and attachment
+
+The original one-argument `root.setTree(tree)` keeps its strict identity/kind-set contract. Use `root.setTree(tree, { responsive: true })` to add, remove, reorder or change the kind of ordinary layout nodes (for example switching a column into a row at a width breakpoint). An already-declared virtual list may move, but its identity must remain exactly the one declared at root creation; adding, removing or replacing it is refused. Use a separate root when a virtual list itself must have a different lifetime. The existing node, depth, list, retention and geometry budgets still apply.
+
+This is still a staged layout change: until a fresh ready token commits, the old content, scope registrations, hit regions and popup anchors stay committed. Reused leaf bindings keep identity and their registered controls where their source, revision, measured width, density and theme remain compatible. Removed/replaced leaves close their old scopes as part of successful publication. Superseded or failed preparation never attaches new content. Changing the source's prepare or attachment callback without advancing its revision is refused just as a changed preparer was before.
+
+An ordinary `UiLeafContent` may supply a synchronous `onAttach(context)` alongside `prepare(context)`. The prepare callback must still return genuine detached content and its height. The attachment callback runs **after** successful publication and old binding cleanup, once for each newly committed binding (not for reused, superseded, or unchanged bindings). It receives the same owning Scope, cancellation signal, width, density and theme, plus the actual attached `content` and `committedRevision`. Register keyboard/pointer controls using this Scope; their registrations then end with the leaf. If the callback throws, its error is in `postCommitErrors`: the published revision has already committed, so this is not a transactional rollback. If a callback closes the root, later callbacks will not run. Do not try to start a second prepare/commit during the callback; stage any further intent and prepare it after this commit returns. Replaced input registrations do not implicitly transfer focus to a new authored target; restore focus explicitly where that is the screen's policy.
+
+```js
+const actionLeaf = {
+  revision: 0,
+  prepare(context) {
+    const view = context.scope.use(new DisplayObjectContainer());
+    view.hitArea = { x: 0, y: 0, width: context.width, height: 48 };
+    view.touchEnabled = true;
+    return { content: view, measuredHeight: 48 };
+  },
+  onAttach({ scope, content }) {
+    scope.use(keyboard.registerTarget({ id: 'action', target: content }));
+  }
+};
+root.setTree(nextLayout, { responsive: true });
+const prepared = await root.prepare();
+// For a pending list window, keep preparing until ready as usual.
+if (prepared.status !== 'pending') root.commit(prepared);
+```
+
+The public SDK regression `tests/ui-responsive-root.test.mjs` covers growing/shrinking/rearranging a tree, retaining compatible leaf focus, scope cleanup, callback replacement, stale/refused proposals, committed popup anchoring, post-commit errors and virtual-list identity boundaries. These are deterministic controlled-host tests, not a native display or accessibility-device claim.
+
 ## Data, preparation and recycling
 
 A source supplies an immutable revision with unique string keys, content versions, estimated heights and values, plus a paired `bind`/`unbind`. A binding receives a genuine Scope, cancellation signal, key, generation, width and density. It returns detached, fully ready content and a measured height. It also receives `target`, the display object of its row: what a press on the row and a pointer over it reach once the row is committed, and the `target` of its pointer notifications. A control of the application may listen on it, so a row is [pointed at, held and activated](ui-controls.md#rows-of-a-managed-list) as a drawn button is. It belongs to the root: add nothing to it, and do not move or dispose it. A row that is bound again has another. Existing text and image owners remain responsible for raster preparation and resource leases; UI adds no asset manager.
