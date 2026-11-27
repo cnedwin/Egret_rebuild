@@ -429,7 +429,11 @@ async function verifyUiScale(page) {
     assert.ok(Math.abs(now.css.x + now.css.width / 2 - now.middle) < 1, 'the panel stays centred');
     // The board's view keeps the game's scale: its tap area is 120 × 80 of the game's units, where the piece is.
     const over = r => [r.x, r.y, r.width, r.height].map(v => Math.round(v * 100) / 100);
-    assert.deepEqual(over(now.tile), over({ x: now.piece.x, y: now.piece.y, width: 120, height: 80 }), 'over the piece');
+    assert.deepEqual(
+      over(now.tile),
+      over({ x: now.piece.x, y: now.piece.y, width: 120, height: 80 }),
+      'over the piece'
+    );
     const large = now;
     // 640 × 360: the game at 0.5; the views kept at 0.75, drawn at 1.5 of the game's units.
     await fixture.evaluate(f => f.resize(640, 360));
@@ -439,7 +443,10 @@ async function verifyUiScale(page) {
     assert.ok(Math.abs(now.uiScale - 1.5) < 1e-9);
     assert.ok(Math.abs(now.css.height - 60) < 1, 'the button is 80 of its units at 0.75 pixel: ' + now.css.height);
     assert.deepEqual(over(now.tile), over({ x: now.piece.x, y: now.piece.y, width: 120, height: 80 }), 'still over it');
-    assert.ok(Math.abs(now.tileCss.height - 40) < 1, 'the tap area is 80 units at the game\'s 0.5: ' + now.tileCss.height);
+    assert.ok(
+      Math.abs(now.tileCss.height - 40) < 1,
+      "the tap area is 80 units at the game's 0.5: " + now.tileCss.height
+    );
     await page.mouse.click(now.css.x + now.css.width / 2, now.css.y + now.css.height / 2);
     await frames();
     assert.equal((await fixture.evaluate(f => f.read())).taps, 1, 'a click on the larger button presses it');
