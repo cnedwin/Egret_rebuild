@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Keep paused world and effects aligned when the screen changes",
+    "body": "Play reprojects the world and effects layers before arrange on a screen change, including while paused. The camera and last presented shake offsets are retained, so resizing or turning the phone cannot leave the paused world clipped or displaced behind a correctly placed UI. It does not advance the simulation or sample another shake."
+  },
+  "zh": {
+    "title": "屏幕变化时让暂停的世界层和特效层保持对齐",
+    "body": "Play 在屏幕变化时先重新投影世界层和特效层，再调用 arrange，暂停期间也一样。保留镜头偏移和上一帧已显示的震动偏移，避免改变尺寸或旋转手机后，界面已经正确摆放，暂停的世界却被裁切或错位。重新投影不会推进游戏模拟，也不会重新采样震动。"
+  }
+}

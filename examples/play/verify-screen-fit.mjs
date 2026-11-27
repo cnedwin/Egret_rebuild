@@ -640,12 +640,201 @@ async function verifyPortrait3D(page, PNG) {
   }
 }
 
+// A turn while play is paused changes the projection, not the simulation. Observe
+// the last presented shake and a non-zero camera offset, including the effects layer.
+export async function verifyPausedWorldPlacement(page, PNG) {
+  const before = page.viewportSize();
+  await page.setViewportSize({ width: 1300, height: 1160 });
+  const fixture = await page.evaluateHandle(async () => {
+    const { play } = await import('@egret/engine/play');
+    const parent = document.createElement('div');
+    parent.style.cssText = 'position:fixed;left:0;top:0;width:540px;height:1100px;z-index:2147483647';
+    document.body.append(parent);
+    const arranged = [];
+    let marker,
+      nextCamera,
+      updates = 0;
+    const read = game => {
+      const d = game.browser.screen.designRect,
+        box = game.canvas.getBoundingClientRect(),
+        at = game.world.localToGlobal(230, 200);
+      return {
+        orientation: game.orientation,
+        design: [d.x, d.y],
+        world: [game.world.x, game.world.y],
+        ui: [game.ui.x, game.ui.y],
+        camera: [game.view.x, game.view.y],
+        marker: marker?.localToGlobal(0, 0),
+        paused: game.paused,
+        time: game.time,
+        updates,
+        effectPixel: [
+          box.left + (at.x * box.width) / game.browser.frame.width,
+          box.top + (at.y * box.height) / game.browser.frame.height
+        ]
+      };
+    };
+    const game = await play({
+      parent,
+      width: 640,
+      height: 360,
+      portrait: { width: 360, height: 640 },
+      fit: 'expand',
+      pixelRatio: 1,
+      backend: 'webgl2',
+      audio: false,
+      background: 0x000000,
+      setup(g) {
+        marker = g.rect(150, 120, 30, 30, 0xff0055);
+        g.view.x = 11;
+        g.view.y = 13;
+        nextCamera = [17, 23];
+        g.pause();
+      },
+      update() {
+        updates++;
+      },
+      arrange(g) {
+        arranged.push(read(g));
+        if (nextCamera) {
+          [g.view.x, g.view.y] = nextCamera;
+          nextCamera = undefined;
+        }
+      }
+    });
+    return {
+      resize(width, height) {
+        parent.style.width = width + 'px';
+        parent.style.height = height + 'px';
+      },
+      cameraOnArrange(x, y) {
+        nextCamera = [x, y];
+      },
+      shake() {
+        game.view.x = 37;
+        game.view.y = 19;
+        game.reducedMotion = false;
+        game.shake(12, 2);
+        game.burst(230, 200, { color: 0x00ff00, size: 10, count: 1, speed: 0, life: 5 });
+      },
+      pause() {
+        game.pause();
+        return read(game);
+      },
+      resume() {
+        game.resume();
+        game.reducedMotion = true;
+      },
+      read: () => ({ ...read(game), arranged }),
+      async close() {
+        await game.dispose();
+        parent.remove();
+      }
+    };
+  });
+  const frames = () =>
+    page.evaluate(
+      () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done))))
+    );
+  const near = (actual, expected, message) => {
+    assert.ok(
+      actual.every((value, i) => Math.abs(value - expected[i]) < 1e-7),
+      message + ': ' + actual + ' vs ' + expected
+    );
+  };
+  const checkPlacement = (now, shake, message) => {
+    const expected = now.design.map((value, i) => value + shake[i] - now.camera[i]);
+    near(now.world, expected, message + ' world');
+    near(now.ui, now.design, message + ' UI');
+    near([now.marker.x, now.marker.y], [expected[0] + 150, expected[1] + 120], message + ' marker');
+  };
+  const checkEffect = async now => {
+    if (PNG === undefined) return;
+    const [x, y] = now.effectPixel.map(Math.floor);
+    const pixel = PNG.sync.read(await page.screenshot({ clip: { x, y, width: 1, height: 1 } })).data;
+    assert.ok(pixel[1] > 120 && pixel[0] < 40 && pixel[2] < 40, 'the green burst shares the world projection');
+  };
+  try {
+    await frames();
+    const initial = await fixture.evaluate(f => f.read());
+    assert.equal(initial.paused, true, 'setup paused immediately');
+    assert.equal(initial.time, 0);
+    assert.equal(initial.updates, 0);
+    assert.deepEqual(initial.arranged[0].camera, [11, 13]);
+    checkPlacement(initial.arranged[0], [0, 0], 'initial arrange after setup camera');
+    assert.deepEqual(initial.camera, [17, 23]);
+    checkPlacement(initial, [0, 0], 'initial paused frame after arrange camera');
+    await fixture.evaluate(f => f.resume());
+    await fixture.evaluate(f => f.shake());
+    await frames();
+    const held = await fixture.evaluate(f => f.pause());
+    assert.equal(held.orientation, 'portrait');
+    const shake = held.world.map((value, i) => value - held.design[i] + held.camera[i]);
+    assert.ok(
+      shake.some(value => Math.abs(value) > 0.001),
+      'an actual presented shake was in flight'
+    );
+    await checkEffect(held);
+    const paused = [];
+    for (const [width, height, orientation] of [
+      [1200, 540, 'landscape'],
+      [540, 1050, 'portrait']
+    ]) {
+      await fixture.evaluate((f, size) => f.resize(...size), [width, height]);
+      await frames();
+      const now = await fixture.evaluate(f => f.read());
+      assert.equal(now.orientation, orientation);
+      assert.equal(now.paused, true);
+      assert.equal(now.time, held.time);
+      assert.equal(now.updates, held.updates);
+      assert.deepEqual(now.camera, held.camera);
+      checkPlacement(now.arranged.at(-1), shake, 'paused arrange callback');
+      checkPlacement(now, shake, 'paused frame');
+      await checkEffect(now);
+      paused.push({ design: now.design, world: now.world });
+    }
+    // A layout callback may choose a different camera for the new screen.
+    // Enter it with the held projection; the finished frame uses its new view.
+    await fixture.evaluate(f => {
+      f.cameraOnArrange(61, 11);
+      f.resize(1200, 540);
+    });
+    await frames();
+    const aimed = await fixture.evaluate(f => f.read());
+    assert.equal(aimed.paused, true);
+    assert.equal(aimed.time, held.time);
+    assert.equal(aimed.updates, held.updates);
+    assert.deepEqual(aimed.arranged.at(-1).camera, held.camera);
+    assert.deepEqual(aimed.camera, [61, 11]);
+    checkPlacement(aimed.arranged.at(-1), shake, 'paused camera callback');
+    checkPlacement(aimed, shake, 'paused camera change');
+    await checkEffect(aimed);
+    paused.push({ design: aimed.design, world: aimed.world });
+    await fixture.evaluate(f => f.resume());
+    await frames();
+    const resumed = await fixture.evaluate(f => f.read());
+    assert.ok(resumed.time > held.time && resumed.updates > held.updates);
+    checkPlacement(resumed, [0, 0], 'resumed frame');
+    await fixture.evaluate(f => f.resize(1000, 540));
+    await frames();
+    const active = await fixture.evaluate(f => f.read());
+    checkPlacement(active.arranged.at(-1), [0, 0], 'active arrange callback');
+    checkPlacement(active, [0, 0], 'active frame');
+    await checkEffect(active);
+    return { camera: held.camera, shake, paused, active: { design: active.design, world: active.world } };
+  } finally {
+    await fixture.evaluate(f => f.close());
+    await fixture.dispose();
+    if (before) await page.setViewportSize(before);
+  }
+}
 export async function verifyScreenFit(page, PNG) {
   const before = page.viewportSize();
   await page.setViewportSize({ width: 960, height: 540 });
   const containScale = await verifyContainScale(page);
   const fixedFits = PNG === undefined ? undefined : await verifyFixedFits(page, PNG);
   const pins = await verifyPins(page);
+  const pausedWorld = await verifyPausedWorldPlacement(page, PNG);
   const uiScale = await verifyUiScale(page);
   const tablet = await verifyTabletParts(page);
   const portrait3D = PNG === undefined ? undefined : await verifyPortrait3D(page, PNG);
@@ -745,6 +934,7 @@ export async function verifyScreenFit(page, PNG) {
       containScale,
       fixedFits,
       pins,
+      pausedWorld,
       uiScale,
       tablet,
       portrait3D,

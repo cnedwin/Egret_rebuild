@@ -1102,12 +1102,21 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   // Where the design is on the stage: the layers are moved there, so (0, 0) is the design's corner however much of
   // the stage the window shows around it. The cover is the stage's own, over all of it.
   let shown = baseBrowser.screen;
+  const view = { x: 0, y: 0 };
+  // The last sampled shake belongs to the presented state. A resize projects
+  // that state again, even while paused, without advancing the play clock.
+  let shiftX = 0,
+    shiftY = 0;
+  const placeWorldLayers = (): void => {
+    world.x = effects.x = shown.designRect.x + shiftX - view.x;
+    world.y = effects.y = shown.designRect.y + shiftY - view.y;
+  };
   const placeLayers = (): void => {
+    placeWorldLayers();
     ui.x = glass.x = shown.designRect.x;
     ui.y = glass.y = shown.designRect.y;
   };
   placeLayers();
-  const view = { x: 0, y: 0 };
   const random = createRandom(options.seed ?? Date.now() + ':' + Math.random());
 
   // What the player used last, for hints in the player's own words.
@@ -2344,8 +2353,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       dx = (Math.random() * 2 - 1) * strength;
       dy = (Math.random() * 2 - 1) * strength;
     }
-    world.x = effects.x = shown.designRect.x + dx - view.x;
-    world.y = effects.y = shown.designRect.y + dy - view.y;
+    shiftX = dx;
+    shiftY = dy;
+    placeWorldLayers();
     if (flashLeft > 0) {
       flashLeft -= real;
       cover.alpha = Math.max(0, flashLeft / flashSpan) * (reduced ? 0.3 : 0.85);
@@ -2387,6 +2397,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     timeScale = 1;
     paused = false;
     stopped = shakeLeft = flashLeft = 0;
+    shiftX = shiftY = 0;
+    placeWorldLayers();
     cover.visible = false;
   }
 
@@ -2405,8 +2417,10 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         if (disposed) return;
         await setup?.(game);
         if (disposed) return;
+        placeWorldLayers();
         options.arrange?.(game);
         if (disposed) return;
+        placeWorldLayers();
         // A tap that returned an unsuccessful restart may have failed the loop.
         // An explicit retry resumes it, while a deliberately stopped loop stays idle.
         if (restarting && playLoop.state === 'failed') playLoop.start();
@@ -3178,6 +3192,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     if (api !== undefined && !disposed && options.arrange !== undefined)
       try {
         options.arrange(game);
+        // The callback may choose a new camera for the changed design.
+        if (!disposed) placeWorldLayers();
       } catch (cause) {
         // As what `update` throws: the game stops at its next step and is told.
         failure ??= { cause };

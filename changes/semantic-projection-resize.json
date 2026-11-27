@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Browser semantic projection follows a resized logical stage",
+    "body": "`projection.sync({ width, height })` updates the logical stage dimensions in place, without replacing its DOM nodes, semantic identities or active descendant. Use the current frame dimensions when a play stage expands or turns. Ordinary `sync()` still measures CSS geometry, using the last valid dimensions; invalid sizes are refused without disturbing a live projection."
+  },
+  "zh": {
+    "title": "浏览器语义投射跟随逻辑舞台的尺寸变化",
+    "body": "`projection.sync({ width, height })` 就地更新逻辑舞台尺寸，不替换其 DOM 节点、语义身份或活动后代。play 舞台扩展或转向时可以传入当前帧的宽高。普通 `sync()` 仍使用上一次有效尺寸测量 CSS 几何；无效尺寸会被拒绝，不影响已有投射。"
+  }
+}
