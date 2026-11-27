@@ -25,5 +25,5 @@ set_target_properties(EgretPlayer PROPERTIES
   XCODE_GENERATE_SCHEME YES)
 target_include_directories(EgretPlayer PRIVATE "../native/include")
 target_link_libraries(EgretPlayer PRIVATE "${EGRET_RUST_LIBRARY}" "-framework UIKit" "-framework Foundation"
-  "-framework QuartzCore" "-framework JavaScriptCore" "-framework Metal" "-framework MetalKit" "-framework Security"
+  "-framework CoreGraphics" "-framework QuartzCore" "-framework JavaScriptCore" "-framework Metal" "-framework MetalKit" "-framework Security"
   "-framework CoreFoundation" "-liconv")
