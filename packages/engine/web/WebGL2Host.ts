@@ -946,22 +946,40 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       if (!native.cleanup(target)) throw glFailure('WEBGL2_CLOSE_UNSAFE', native.cleanupFailure?.cause);
       const coded = native.codedTargets;
-      this.program = native.program(sharedWebGL2VertexSource, sampledFragmentSource(false, coded));
+      const effectPasses = this.options.enableEffects ? EFFECT_PASSES : [];
+      const sources: (readonly [string, string])[] = [
+        [sharedWebGL2VertexSource, sampledFragmentSource(false, coded)],
+        [sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragment(coded)],
+        [sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragment(coded)],
+        ...effectPasses.map(mode => [sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode, coded)] as const),
+        // The program of a batch of several pages.
+        [sharedWebGL2VertexSource, sampledFragmentSource(true, coded)]
+      ];
+      // With KHR_parallel_shader_compile the programs are built side by side while the page goes on, the host asking
+      // after them every 8 ms; without it each is made in turn, at once, as before.
+      const prepared = native.preparePrograms(sources, () => new Promise<void>(resolve => schedule(resolve, 8)));
+      const programs = prepared === undefined ? undefined : await prepared;
+      this.generationGate(token);
+      let next = 0;
+      const nextProgram = (): WebGLProgram => {
+        const index = next++;
+        return programs?.[index] ?? native.program(...sources[index]!);
+      };
+      this.program = nextProgram();
       native.block(this.program, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       native.block(this.program, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
-      this.solidProgram = native.program(sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragment(coded));
+      this.solidProgram = nextProgram();
       native.block(this.solidProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
-      this.resolveProgram = native.program(sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragment(coded));
-      if (this.options.enableEffects)
-        for (const mode of EFFECT_PASSES) {
-          const program = native.program(sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode, coded));
-          const index = gl.getUniformBlockIndex(program, 'Effect');
-          if (index === gl.INVALID_INDEX) throw glFailure('WEBGL2_CONTEXT_LIMIT');
-          gl.uniformBlockBinding(program, index, 0);
-          this.effectPrograms.set(mode, program);
-        }
-      // The program of a batch of several pages. Its eight page samplers name the eight units once, here.
-      this.pagedProgram = native.program(sharedWebGL2VertexSource, sampledFragmentSource(true, coded));
+      this.resolveProgram = nextProgram();
+      for (const mode of effectPasses) {
+        const program = nextProgram();
+        const index = gl.getUniformBlockIndex(program, 'Effect');
+        if (index === gl.INVALID_INDEX) throw glFailure('WEBGL2_CONTEXT_LIMIT');
+        gl.uniformBlockBinding(program, index, 0);
+        this.effectPrograms.set(mode, program);
+      }
+      // Its eight page samplers name the eight units once, here.
+      this.pagedProgram = nextProgram();
       native.block(this.pagedProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       native.block(this.pagedProgram, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
       gl.useProgram(this.pagedProgram);

@@ -127,6 +127,8 @@ Engine 在调用 Host 前提交真实帧与 frame ID。因此 GL 的同步拒绝
 
 每代拥有一个 shared program、一个固定输出 resolve program，scene 才增加 B1 program；对应 VAO 至多三个。一个 working FBO 绑定当前 record 租用的 color/depth。没有逐 draw program/VAO 或 target 组合缓存。建立全部依赖的 framebuffer、draw/read buffer、viewport、vertex/UBO/texture、blend、mask、depth/scissor/cull/stencil/dither/sample 与 pixel-store 状态；附件改变时检查完整性。淘汰和关闭时解除保存的原生引用；resize 核对实际 drawing-buffer 尺寸。
 
+上下文提供 `KHR_parallel_shader_compile`（其 `COMPLETION_STATUS_KHR` 为 0x91B1）时，每次初始化先编译并链接全部程序，再每 8 ms 询问一次完成状态，让驱动并行构建、页面照常运行；全部完成后才读取链接结果，链接失败时与逐个创建一样报告出错着色器的日志。每次询问都经过代际门控，因此丢失、stop、close 或恢复期限会以与初始化其他环节相同的结果结束等待。`getExtension` 在有限捕获之外只读取一次；上下文没有它或没有该扩展时，仍与以前完全一样逐个创建并检查程序。
+
 同步 render 调用内，在上传/绘制/resolve 后，为 ticket owner 发出 `readPixels` 到其专用 PIXEL_PACK_BUFFER，再 fence 与 flush。复制命令必须先于返回或 yield；后续 extraction 读取该 PBO，不重新读取当前 canvas。一个有界退休 pump 为至多两个已接受 record 拥有至多一个 timer，在之后的 event-loop task 用零 timeout 查询 fence，并在没有后续 render 时继续推进。不使用自旋或 glFinish。Fence 超时或无法证明清理时保留所有权并以 unsafe 失败；单独 fence 不授权复用。
 
 `requestReadback` 只允许 active 且 enableReadback。唯一 outstanding ticket 绑定下一次已接受提交；第二次请求拒绝 READBACK_PENDING。纯准入拒绝保留未绑定 ticket；stop/loss/close/终态失败拒绝它。不可变结果包含 `serial`、`frameId`、`generation`、`width`、`height`、`format: 'rgba8unorm'`、`sourceFormat: 'rgba8unorm'`、`colorSpace: 'srgb'`、`alphaMode: 'premultiplied' | 'opaque'`，以及独立拥有、按左上起始行排列的 `bytes: Uint8Array`。格式承诺以前置资格通过为条件。PBO 与输出各计 `4*width*height`，均纳入 maxReadbackBytes。PACK_ALIGNMENT 为 1，row/skip 参数为零；恰好归一化一次行方向，不暗增未计费的全尺寸副本。

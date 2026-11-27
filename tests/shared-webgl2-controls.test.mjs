@@ -1546,3 +1546,182 @@ test(
       }
     })
 );
+
+// KHR_parallel_shader_compile: the context's own extension object, its completion status asked per program.
+const COMPLETION = 0x91b1,
+  LINK = 0x8b82,
+  COMPILE = 0x8b81;
+function parallelPorts(extended = true) {
+  const f = glPorts(),
+    control = { names: [], hold: false, asks: 1, onAsk: undefined, counts: new Map() };
+  const extension = Object.freeze({ COMPLETION_STATUS_KHR: COMPLETION });
+  f.gl.getExtension = name => {
+    control.names.push(name);
+    return extended && name === 'KHR_parallel_shader_compile' ? extension : null;
+  };
+  const base = f.gl.getProgramParameter;
+  f.gl.getProgramParameter = (p, pname) => {
+    if (pname !== COMPLETION) return base(p, pname);
+    f.events.push(['completion', p]);
+    const n = (control.counts.get(p) ?? 0) + 1;
+    control.counts.set(p, n);
+    control.onAsk?.(p, n);
+    return !control.hold && n >= control.asks;
+  };
+  return { f, control };
+}
+const indices = (f, keep) => f.events.flatMap((event, index) => (keep(event) ? [index] : []));
+const programTrace = f =>
+  f.events
+    .filter(([name]) => /Shader|Program|completion/.test(name))
+    .map(([name, , pname]) => (name.endsWith('Parameter') ? name + ':' + pname : name));
+
+test(
+  'GL G21 KHR_parallel_shader_compile links every startup program before asking after any, waiting between asks',
+  {
+    timeout: 2000
+  },
+  async () =>
+    author(async a => {
+      const { f, control } = parallelPorts(),
+        plain = glPorts(),
+        h = createSharedWebGL2Host({ canvas: f.canvas, enableEffects: true }),
+        p = createSharedWebGL2Host({ canvas: plain.canvas, enableEffects: true });
+      control.asks = 3;
+      try {
+        await Promise.all([h.start(), p.start()]);
+        assert.equal(h.getStatus().state, 'active');
+        assert.deepEqual(control.names, ['KHR_parallel_shader_compile'], 'one lookup, by name');
+        const links = indices(f, ([name]) => name === 'linkProgram'),
+          asks = indices(f, ([name]) => name === 'completion'),
+          outcomes = indices(f, ([name, , pname]) => name === 'getProgramParameter' && pname === LINK);
+        assert.ok(links.length >= 5, 'the main, solid, resolve, effect and paged programs');
+        assert.equal(outcomes.length, links.length);
+        assert.equal(asks.length, links.length * 3, 'each program asked until its third ask completes');
+        assert.ok(Math.max(...links) < Math.min(...asks), 'every program is linked before the first ask');
+        assert.ok(Math.max(...asks) < Math.min(...outcomes), 'no link outcome is read before all are complete');
+        assert.deepEqual(
+          indices(f, ([name, , pname]) => name === 'getShaderParameter' && pname === COMPILE),
+          [],
+          'a successful link needs no compile query'
+        );
+        const sources = ports => ports.events.filter(([name]) => name === 'shaderSource').map(([, , source]) => source);
+        assert.deepEqual(sources(f), sources(plain), 'the same shaders, in the same order, as one by one');
+        h.renderSharedFrame(a.frame());
+        await h.whenIdle();
+        await h.close();
+        assert.equal(h.getStatus().cleanupOutcome, 'safe');
+        assert.equal(f.live().length, 0);
+        assert.equal(f.listenerCount(), 0);
+      } finally {
+        await h.close().catch(error => assert.ok(code('CLOSE_UNSAFE')(error)));
+        await p.close().catch(error => assert.ok(code('CLOSE_UNSAFE')(error)));
+      }
+    })
+);
+
+test('GL G22 without the extension each program is still made and checked in turn', async () => {
+  const bare = glPorts(),
+    absent = parallelPorts(false),
+    traces = [];
+  for (const f of [bare, absent.f]) {
+    const h = createSharedWebGL2Host({ canvas: f.canvas, enableEffects: true });
+    await h.start();
+    await h.close();
+    assert.equal(h.getStatus().cleanupOutcome, 'safe');
+    assert.equal(f.live().length, 0);
+    traces.push(programTrace(f));
+  }
+  assert.deepEqual(absent.control.names, ['KHR_parallel_shader_compile']);
+  assert.deepEqual(traces[1], traces[0], 'a context without the extension starts exactly as one without getExtension');
+  assert.ok(!traces[0].includes('completion'));
+  // Each link is checked before the next program's shaders are made.
+  const trace = traces[0];
+  for (let i = trace.indexOf('linkProgram'); i >= 0; i = trace.indexOf('linkProgram', i + 1))
+    assert.equal(trace[i + 1], 'getProgramParameter:' + LINK);
+});
+
+test('GL G23 a failed compile among programs built together names its shader, as one by one does', async () => {
+  const outcomes = [];
+  for (const together of [false, true]) {
+    const { f } = together ? parallelPorts() : { f: glPorts() };
+    let made = 0;
+    f.onCall = (name, args) => {
+      // The fourth shader is the solid program's fragment stage.
+      if (name === 'shaderSource' && ++made === 4) args[0].broken = true;
+    };
+    const shaderStatus = f.gl.getShaderParameter,
+      programStatus = f.gl.getProgramParameter;
+    f.gl.getShaderParameter = (s, pname) => shaderStatus(s, pname) && !(pname === COMPILE && s.broken);
+    f.gl.getShaderInfoLog = s => (s.broken ? 'ERROR: 0:1: solid' : '');
+    f.gl.getProgramParameter = (p, pname) =>
+      programStatus(p, pname) && !(pname === LINK && p.shaders?.some(s => s.broken));
+    const h = createSharedWebGL2Host({ canvas: f.canvas });
+    const error = await h.start().then(
+      () => assert.fail('started'),
+      error => error
+    );
+    assert.ok(code('START_FAILED')(error), String(error));
+    outcomes.push(error.cause?.message);
+    assert.equal(h.getStatus().state, 'failed');
+    await h.close();
+    assert.equal(h.getStatus().cleanupOutcome, 'safe');
+    assert.equal(f.live().length, 0, 'the other programs built together are let go as well');
+    f.onCall = undefined;
+  }
+  assert.deepEqual(outcomes, ['ERROR: 0:1: solid', 'ERROR: 0:1: solid']);
+});
+
+test('GL G24 a loss while restored programs are built hands over to the next restore', { timeout: 2000 }, async () => {
+  const { f, control } = parallelPorts(),
+    h = createSharedWebGL2Host({ canvas: f.canvas });
+  try {
+    await h.start();
+    f.lose();
+    const ready = h.whenReady(),
+      rejected = assert.rejects(ready, code('CONTEXT_LOST'));
+    control.hold = true;
+    let asked = 0;
+    control.onAsk = () => {
+      // The second loss arrives while the host waits between asks.
+      if (++asked === 1) setTimeout(() => f.lose(), 0);
+    };
+    f.restore();
+    await rejected;
+    assert.equal(h.getStatus().state, 'lost');
+    const after = asked;
+    await new Promise(resolve => setTimeout(resolve, 30));
+    assert.equal(asked, after, 'no program of the lost generation is asked after again');
+    control.hold = false;
+    control.onAsk = undefined;
+    const again = h.whenReady();
+    f.restore();
+    await again;
+    assert.equal(h.getStatus().state, 'active');
+    assert.equal(h.getStatus().generation, 3);
+    await h.close();
+    assert.equal(h.getStatus().cleanupOutcome, 'safe');
+    assert.equal(f.live().length, 0);
+    assert.equal(f.listenerCount(), 0);
+  } finally {
+    await h.close().catch(error => assert.ok(code('CLOSE_UNSAFE')(error)));
+  }
+});
+
+test('GL G25 close while startup programs are built ends the wait and lets them all go', {
+  timeout: 2000
+}, async () => {
+  const { f, control } = parallelPorts(),
+    h = createSharedWebGL2Host({ canvas: f.canvas });
+  control.hold = true;
+  let closing;
+  control.onAsk = () => {
+    closing ??= new Promise(resolve => setTimeout(resolve, 0)).then(() => h.close());
+  };
+  await assert.rejects(h.start(), code('CLOSED'));
+  await closing;
+  assert.equal(h.getStatus().state, 'closed');
+  assert.equal(h.getStatus().cleanupOutcome, 'safe');
+  assert.equal(f.live().length, 0);
+  assert.equal(f.listenerCount(), 0);
+});
