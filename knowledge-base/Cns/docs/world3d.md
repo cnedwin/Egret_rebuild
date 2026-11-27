@@ -214,6 +214,22 @@ Windows Edge 157 在 RTX 5090 Laptop GPU（ANGLE D3D11）上运行 `pointShadows
 
 关卡几何体以三角网格参与碰撞：`world.createBody({shape: {type: 'mesh', mesh: createMeshShape3D(levelRoot)}})`。`createMeshShape3D` 接受三角形几何体或对象子树。对象子树中，非实例化、无蒙皮的三角网格会按其基础几何体与当前世界变换合并。网格刚体是静态的，也可以是运动学的（用于移动平台），三角形只在正面是实心的。球、胶囊、角色控制器和射线与三角形精确碰撞；盒子通过它的八个角落在网格上。包围体层次结构让开销只与附近的三角形数量有关，三角形接缝处的接触经过过滤，物体可以平滑地越过接缝。
 
+建这个包围体层次的耗时与三角形数量成正比。在主线程上建一个大网格（例如流式加载进来的一块地形）会卡住当前帧。可以改在 Worker 里建好再交回来：
+
+- **交出。** `shape.exportBuffers()` 给出形状自己的数组（顶点、索引和层次的四个数组），不是副本，所以可以用 `postMessage` 转移。转移之后，Worker 里的那个形状就空了。
+- **接收。** `TriangleMeshShape3D.fromBuffers(buffers)` 用这些数组原样建出形状，不复制、不重建。建之前会检查它们是不是按构造函数的方式排好的形状：数组类型、顶点都是有限数、索引不越界，层次里子节点排在父节点之后、正好平分父节点的三角形。不符合的以 `WORLD3D_INPUT_INVALID` 拒绝。
+
+```js
+// Worker 里
+const shape = createHeightField3D(tile).createShape().mesh;
+const buffers = shape.exportBuffers();
+postMessage(buffers, Object.values(buffers).map(view => view.buffer));
+// 主线程
+worker.onmessage = ({ data }) => world.createBody({ type: 'static', shape: { type: 'mesh', mesh: TriangleMeshShape3D.fromBuffers(data) } });
+```
+
+接过来的形状对每次查询和射线的回答都与原来的形状完全相同：`tests/world3d-mesh-transfer.test.mjs` 用一块 18 432 个三角形的地形，以 `structuredClone` 加转移（与 `postMessage` 的移动方式相同）验证了这一点。
+
 `world.raycast(origin, direction, maxDistance, mask)` 返回最近的实体刚体及命中点和法线，`world.overlapSphere(center, radius, mask)` 列出一个体积内的实体刚体。`world.shapeCast(shape, origin, direction, maxDistance, mask, quaternion)` 让球、胶囊、盒子、凸包或组合体沿单位方向移动，返回它最先碰到的实体刚体：移动的距离、接触点和朝向该形状的法线。它能发现从中间穿过的射线会漏掉的物体，相机防穿墙、近战挥砍和台阶探测都需要它。路径按不超过形状最薄处一半的步长前进，并在两步之间细化，因此比这个步长更薄的障碍物可能被越过；起点已在物体内部时返回距离零。`createCharacterController3D(world, options)` 是运动学胶囊：`move(dx, dy, dz)` 沿障碍物滑动，并报告 `isGrounded`、`groundNormal` 和 `groundBody`。
 
 `createCharacterMotor3D(world, options)` 在这个胶囊上构建会行走和跳跃的角色。在 `world.step()` 之后调用 `motor.update(deltaSeconds, wishX, wishZ, jump)`，传入玩家期望的水平速度。它处理重力和跳跃（`jumpSpeed`，走出平台边缘后还有一小段 `coyoteTime` 可以起跳）、地面与空中的加速（`acceleration`、`airControl`），能走上不高于 `stepHeight` 的台阶，下台阶和下坡时贴住地面，头顶碰到天花板时停止上升。脚下的运动学或动力学刚体会带着角色移动，包括绕旋转平台转动；`motor.carriedYaw` 是应加到角色朝向上的转角，离开移动平台时保留平台的速度。走向动力学刚体时会以角色自身的速度推动它，推力上限为 `pushForce`。平台要用速度来移动，不要直接改写位置，这样角色才能知道平台的运动。低台阶靠胶囊的圆形底部爬上去，速度会变慢；较长的楼梯用斜坡碰撞体走起来更顺。`motor.teleport(x, y, z)` 重新放置角色并清除其运动状态。若任一坐标不是有限数值，位置与运动状态都保持原样。

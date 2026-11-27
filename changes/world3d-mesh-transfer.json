@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "A triangle mesh shape can be built in a worker and handed back",
+    "body": "`TriangleMeshShape3D` gains `exportBuffers()`, which gives the shape's own arrays with its hierarchy, for transfer to another thread, and `TriangleMeshShape3D.fromBuffers(buffers)`, which adopts them as they are, with no copy and no rebuild. The arrays are checked first: their types, finite positions, indices in range and a well-formed hierarchy. A worker can now build the collider of a large mesh, such as a streamed terrain tile, without holding the main thread's frame. The adopted shape answers every query and ray exactly as the one that built it."
+  },
+  "zh": {
+    "title": "三角网碰撞形状可以在 Worker 里建好再交回",
+    "body": "`TriangleMeshShape3D` 新增 `exportBuffers()` 和 `TriangleMeshShape3D.fromBuffers(buffers)`。前者给出形状自己的数组（含包围体层次），可以转移到另一个线程；后者原样接过这些数组，不复制、不重建，接之前先检查数组类型、顶点是否有限、索引是否越界、层次是否完整。现在可以在 Worker 里为大网格（例如流式加载的地形块）建碰撞体，不再卡住主线程的帧。接过来的形状对每次查询和射线的回答都与原来的形状完全相同。"
+  }
+}
