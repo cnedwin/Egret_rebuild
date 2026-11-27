@@ -35,7 +35,7 @@ jobs:
         run: |
           target=aarch64-apple-ios-sim
           [[ $(uname -m) == arm64 ]] || target=x86_64-apple-ios
-          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target "$target" aarch64-apple-ios
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target "$target,aarch64-apple-ios"
           cargo test --locked --offline --manifest-path runtime-sdk/native/Cargo.toml
           bash runtime-sdk/ios/build.sh simulator "$RUNNER_TEMP/ios" "$RUNNER_TEMP/scene"
           bash runtime-sdk/ios/build.sh device "$RUNNER_TEMP/ios" "$RUNNER_TEMP/scene"

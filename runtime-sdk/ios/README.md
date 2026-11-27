@@ -13,7 +13,7 @@ export OUT="$(mktemp -d)"
 export RUSTUP_TOOLCHAIN=1.100.0
 target=aarch64-apple-ios-sim
 [[ $(uname -m) == arm64 ]] || target=x86_64-apple-ios
-rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target "$target" aarch64-apple-ios
+rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target "$target,aarch64-apple-ios"
 pnpm install --frozen-lockfile --ignore-scripts
 node tools/build.mjs
 npm install --prefix "$OUT/bundler" --no-save --ignore-scripts esbuild@0.28.2
