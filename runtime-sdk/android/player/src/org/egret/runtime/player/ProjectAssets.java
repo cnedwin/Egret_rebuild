@@ -29,12 +29,26 @@ final class ProjectAssets {
     final String entry;
     final Object v8Scripts;
     final boolean codeCache;
+    final boolean requiresWasm;
 
     ProjectAssets(Context context, String root) throws Exception {
         this.assets = context.getAssets();
         this.root = relative(root);
         this.revision = DebugProjectRevision.active(context, this.root);
         JSONObject manifest = new JSONObject(new String(read("project.json", 65536), StandardCharsets.UTF_8));
+        Set<String> required = new HashSet<>();
+        if (manifest.has("requiredV8Features")) {
+            JSONArray features = manifest.getJSONArray("requiredV8Features");
+            for (int i = 0; i < features.length(); i++) {
+                Object feature = features.get(i);
+                if (!("Intl".equals(feature) || "WebAssembly".equals(feature)) || !required.add((String) feature))
+                    throw new IOException("Invalid requiredV8Features");
+            }
+        }
+        if ((!required.isEmpty() && "webview".equals(BundledScripts.PROFILE))
+                || (required.contains("Intl") && !"standard".equals(BundledScripts.PROFILE)))
+            throw new IOException("The selected host cannot provide the game's declared V8 features");
+        requiresWasm = required.contains("WebAssembly");
         v8Scripts = manifest.opt("v8Scripts");
         Object cache = manifest.opt("v8CodeCache");
         if (manifest.has("v8CodeCache") && !(cache instanceof Boolean)) throw new IOException("Expected v8CodeCache boolean");

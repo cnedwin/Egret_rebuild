@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-27",
+  "base": "968c1ca9",
+  "fixture": "Moon Herbarium, same exported game files with requiredV8Features [\"WebAssembly\"] and v8CodeCache enabled on all four builds.",
+  "build": "arm64-v8a, API 36 target, AGP 8.9.1, Gradle 8.11.1, JDK 17, R8-minified signed release APKs under two isolated test application IDs, one per VM. One disposable test signer.",
+  "javet": "6.0.4",
+  "v8": "15.8.62.52",
+  "sharedGameSha256": {
+    "assets/game/assets/botanicals.png": "75b0d6a394cc8cf20715c4256e3965c5b69ecb7533599ec6cb48527955c2cd94",
+    "assets/game/assets/chime.wav": "3bf36e8428e33ae5a28df08f99bc98b6940b63f06d6dfa2eacfc0bcdf9dffa70",
+    "assets/game/assets/workshop.png": "57e08e050fdcf7f01dd06d2e5918258bb5bccf59cde42cf2debf3bf21b384e68",
+    "assets/game/game.js": "ed311bfcdc2d1933cc388084032efc1b2586eb48f388846713bfcaf05de89ba2",
+    "assets/game/index.html": "f7398401f297f90baab1a397d0c782a99932a1ba4b6d3d34775e6c7627a7567f",
+    "assets/game/project.json": "33d41e885871a3c77ec28bf747ed2f6d1565f1b261ad981dab5ccc775185723c"
+  },
+  "packages": {
+    "standard-direct": {
+      "bytes": 71900388,
+      "sha256": "fbefde8ea0f129e91d8ee46ecdd2dea88a7becddbc68ecc388e82e8962608719",
+      "packedLibraries": {
+        "lib/arm64-v8a/libegret_player.so": {
+          "bytes": 1282304,
+          "packedBytes": 1282304,
+          "sha256": "f21ecabbdc72102a581a79fd2859906c07616e0d4e462801143c53137dccc9d5"
+        },
+        "lib/arm64-v8a/libjavet-v8-android-i18n.v.6.0.4.so": {
+          "bytes": 65003920,
+          "packedBytes": 65003920,
+          "sha256": "9878b5d47d45a42d72ca2c8c427a155cfaf2f0d57fe8b58d10eaa074156ce0aa"
+        }
+      },
+      "icuData": {
+        "bytes": 10824576,
+        "packedBytes": 4622761,
+        "sha256": "e1ed8f674bb8449731b79cae956042da59f9ecbd37c8d3f86586a22b4836e5b2"
+      }
+    },
+    "standard-compact": {
+      "bytes": 23488240,
+      "sha256": "a555ac786ce88a6b777001cdd1e81297e34fc4c15ba81fccaa614baa15299039",
+      "packedLibraries": {
+        "lib/arm64-v8a/libegret_player.so": {
+          "bytes": 1282304,
+          "packedBytes": 516008,
+          "sha256": "f21ecabbdc72102a581a79fd2859906c07616e0d4e462801143c53137dccc9d5"
+        },
+        "lib/arm64-v8a/libjavet-v8-android-i18n.v.6.0.4.so": {
+          "bytes": 65003920,
+          "packedBytes": 17383249,
+          "sha256": "9878b5d47d45a42d72ca2c8c427a155cfaf2f0d57fe8b58d10eaa074156ce0aa"
+        }
+      },
+      "icuData": {
+        "bytes": 10824576,
+        "packedBytes": 4622761,
+        "sha256": "e1ed8f674bb8449731b79cae956042da59f9ecbd37c8d3f86586a22b4836e5b2"
+      }
+    },
+    "trimmed-direct": {
+      "bytes": 64305415,
+      "sha256": "e0b42f47301a2f9a54b2f30b762a3b98efc40cff68c3f2d68b8cef77c0b90cef",
+      "packedLibraries": {
+        "lib/arm64-v8a/libegret_player.so": {
+          "bytes": 1282304,
+          "packedBytes": 1282304,
+          "sha256": "f21ecabbdc72102a581a79fd2859906c07616e0d4e462801143c53137dccc9d5"
+        },
+        "lib/arm64-v8a/libjavet-v8-android.v.6.0.4.so": {
+          "bytes": 62039024,
+          "packedBytes": 62039024,
+          "sha256": "4fc524cd48e21b64eafd31f8bb8332f6a7d59cfd8ba5edfe7012a9b27d086310"
+        }
+      },
+      "icuData": null
+    },
+    "trimmed-compact": {
+      "bytes": 17670631,
+      "sha256": "5643a70387f6d41700b62a69d5c753d497abe68b723babf337e01e1c8ec96efc",
+      "packedLibraries": {
+        "lib/arm64-v8a/libegret_player.so": {
+          "bytes": 1282304,
+          "packedBytes": 516008,
+          "sha256": "f21ecabbdc72102a581a79fd2859906c07616e0d4e462801143c53137dccc9d5"
+        },
+        "lib/arm64-v8a/libjavet-v8-android.v.6.0.4.so": {
+          "bytes": 62039024,
+          "packedBytes": 16196737,
+          "sha256": "4fc524cd48e21b64eafd31f8bb8332f6a7d59cfd8ba5edfe7012a9b27d086310"
+        }
+      },
+      "icuData": null
+    }
+  },
+  "bundles": {
+    "validation": "bundletool 1.18.3 validate plus build-apks for an Android API 37 arm64-v8a Fold7 specification. Generated ABI splits store both ELFs uncompressed on both profiles even with egretApkPackaging=compact.",
+    "profiles": {
+      "standard": {
+        "bytes": 23296028,
+        "sha256": "9444a49e43ed1804067417dc9451085c518aad425071fe1ffc260f960eca8d6c",
+        "abiSplit": "splits/base-arm64_v8a.apk",
+        "entries": {
+          "lib/arm64-v8a/libegret_player.so": {
+            "bytes": 1282304,
+            "packedBytes": 1282304,
+            "sha256": "f21ecabbdc72102a581a79fd2859906c07616e0d4e462801143c53137dccc9d5"
+          },
+          "lib/arm64-v8a/libjavet-v8-android-i18n.v.6.0.4.so": {
+            "bytes": 65003920,
+            "packedBytes": 65003920,
+            "sha256": "9878b5d47d45a42d72ca2c8c427a155cfaf2f0d57fe8b58d10eaa074156ce0aa"
+          }
+        }
+      },
+      "trimmed": {
+        "bytes": 17478036,
+        "sha256": "0f204f8bf6c4d69089ac4c7408b3d9c9aac4fcf9758bf4c42cd868850e049539",
+        "abiSplit": "splits/base-arm64_v8a.apk",
+        "entries": {
+          "lib/arm64-v8a/libegret_player.so": {
+            "bytes": 1282304,
+            "packedBytes": 1282304,
+            "sha256": "f21ecabbdc72102a581a79fd2859906c07616e0d4e462801143c53137dccc9d5"
+          },
+          "lib/arm64-v8a/libjavet-v8-android.v.6.0.4.so": {
+            "bytes": 62039024,
+            "packedBytes": 62039024,
+            "sha256": "4fc524cd48e21b64eafd31f8bb8332f6a7d59cfd8ba5edfe7012a9b27d086310"
+          }
+        }
+      }
+    }
+  },
+  "device": {
+    "model": "Galaxy Z Fold7 (SM-F966U1)",
+    "os": "Android 17",
+    "backend": "Android native GLES3",
+    "cases": [
+      {
+        "apkSha256": "5643a70387f6d41700b62a69d5c753d497abe68b723babf337e01e1c8ec96efc",
+        "profile": "trimmed",
+        "layout": "compact",
+        "freshInstall": true,
+        "usbInstallWallMs": 4123.6,
+        "androidActivityStartMs": 117,
+        "extractedElfBytes": [
+          1282304,
+          62039024
+        ],
+        "opens": [
+          {
+            "frames": 328,
+            "contexts": 2,
+            "vm": "15.8.62.52",
+            "intl": false,
+            "codeCache": {
+              "candidates": 1,
+              "recordsRead": 0,
+              "recordsWritten": 1,
+              "compileFallbacks": 0,
+              "compileUs": 3921,
+              "cacheUs": 1468
+            },
+            "loads": 4,
+            "releases": 4
+          },
+          {
+            "frames": 319,
+            "contexts": 1,
+            "vm": "15.8.62.52",
+            "intl": false,
+            "codeCache": {
+              "candidates": 1,
+              "recordsRead": 1,
+              "recordsWritten": 0,
+              "compileFallbacks": 0,
+              "compileUs": 1747,
+              "cacheUs": 738
+            },
+            "loads": 4,
+            "releases": 4
+          }
+        ]
+      },
+      {
+        "apkSha256": "fbefde8ea0f129e91d8ee46ecdd2dea88a7becddbc68ecc388e82e8962608719",
+        "profile": "standard",
+        "layout": "direct",
+        "freshInstall": true,
+        "usbInstallWallMs": 5226.1,
+        "androidActivityStartMs": 97,
+        "extractedElfBytes": [],
+        "opens": [
+          {
+            "frames": 325,
+            "contexts": 2,
+            "vm": "15.8.62.52",
+            "intl": true,
+            "codeCache": {
+              "candidates": 1,
+              "recordsRead": 0,
+              "recordsWritten": 1,
+              "compileFallbacks": 0,
+              "compileUs": 3876,
+              "cacheUs": 1615
+            },
+            "loads": 4,
+            "releases": 4
+          },
+          {
+            "frames": 318,
+            "contexts": 1,
+            "vm": "15.8.62.52",
+            "intl": true,
+            "codeCache": {
+              "candidates": 1,
+              "recordsRead": 1,
+              "recordsWritten": 0,
+              "compileFallbacks": 0,
+              "compileUs": 1484,
+              "cacheUs": 821
+            },
+            "loads": 4,
+            "releases": 4
+          }
+        ]
+      },
+      {
+        "apkSha256": "e0b42f47301a2f9a54b2f30b762a3b98efc40cff68c3f2d68b8cef77c0b90cef",
+        "profile": "trimmed",
+        "layout": "direct",
+        "freshInstall": false,
+        "usbInstallWallMs": 3116.8,
+        "androidActivityStartMs": 91,
+        "extractedElfBytes": [],
+        "opens": [
+          {
+            "frames": 331,
+            "contexts": 2,
+            "vm": "15.8.62.52",
+            "intl": false,
+            "codeCache": {
+              "candidates": 1,
+              "recordsRead": 0,
+              "recordsWritten": 1,
+              "compileFallbacks": 0,
+              "compileUs": 6431,
+              "cacheUs": 2861
+            },
+            "loads": 4,
+            "releases": 4
+          },
+          {
+            "frames": 316,
+            "contexts": 1,
+            "vm": "15.8.62.52",
+            "intl": false,
+            "codeCache": {
+              "candidates": 1,
+              "recordsRead": 1,
+              "recordsWritten": 0,
+              "compileFallbacks": 0,
+              "compileUs": 1699,
+              "cacheUs": 682
+            },
+            "loads": 4,
+            "releases": 4
+          }
+        ]
+      },
+      {
+        "apkSha256": "a555ac786ce88a6b777001cdd1e81297e34fc4c15ba81fccaa614baa15299039",
+        "profile": "standard",
+        "layout": "compact",
+        "freshInstall": false,
+        "usbInstallWallMs": 2431.3,
+        "androidActivityStartMs": 92,
+        "extractedElfBytes": [
+          1282304,
+          65003920
+        ],
+        "opens": [
+          {
+            "frames": 377,
+            "contexts": 2,
+            "vm": "15.8.62.52",
+            "intl": true,
+            "codeCache": {
+              "candidates": 1,
+              "recordsRead": 0,
+              "recordsWritten": 1,
+              "compileFallbacks": 0,
+              "compileUs": 4215,
+              "cacheUs": 1734
+            },
+            "loads": 4,
+            "releases": 4
+          },
+          {
+            "frames": 313,
+            "contexts": 1,
+            "vm": "15.8.62.52",
+            "intl": true,
+            "codeCache": {
+              "candidates": 1,
+              "recordsRead": 1,
+              "recordsWritten": 0,
+              "compileFallbacks": 0,
+              "compileUs": 1645,
+              "cacheUs": 1381
+            },
+            "loads": 4,
+            "releases": 4
+          }
+        ]
+      }
+    ],
+    "restored": true
+  },
+  "interpretation": "Each case has one USB install or update and one Android am start -W measurement before two view opens. These are not paired cold-start or storage quota benchmarks. Compact includes the same native code and on installation extracts an additional copy of each ELF. Default direct loading avoids those extracted files. Runtime checked WebAssembly.validate on open; standard reported Intl present and trimmed reported absent. Reopening read a validated code-cache record; Javet does not expose whether V8 internally accepted it."
+}

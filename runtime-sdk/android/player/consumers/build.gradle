@@ -3,8 +3,17 @@ plugins { id 'com.android.application' version '8.9.1' }
 
 def game = new groovy.json.JsonSlurper().parse(file('egret-app.json'), 'UTF-8')
 def player = new java.util.zip.ZipFile(file('libs/egret-player.aar')).withCloseable { aar ->
-    [minApi: aar.getEntry('assets/egret-player-host.txt') == null ? 26 : 29,
+    def marker = aar.getEntry('assets/egret-player-host.txt')
+    [minApi: marker == null ? 26 : 29,
+     host: marker == null ? 'webview' : aar.getInputStream(marker).withCloseable { it.getText('UTF-8').trim() },
      systemBack: aar.getEntry('assets/egret-player-features/system-back-v1') != null]
+}
+
+// Also guard a prebuilt AAR: exporting the sources does not select the VM already in this archive.
+def projectAssets = new groovy.json.JsonSlurper().parse(file('src/main/assets/game/project.json'), 'UTF-8')
+def requiredV8 = projectAssets.requiredV8Features ?: []
+if ((player.host == 'webview' && !requiredV8.empty) || (player.host != 'standard' && 'Intl' in requiredV8)) {
+    throw new GradleException("Selected ${player.host} AAR cannot satisfy requiredV8Features: ${requiredV8}")
 }
 
 // Only configure a release signer from the submitting application's environment.
@@ -50,6 +59,15 @@ android {
             if (signingReady) signingConfig signingConfigs.release
         }
     }
+}
+
+// Compact standalone APKs trade a smaller file for extracting the same ELF on install.
+// Bundle-generated splits retain the direct-load policy and their native page alignment.
+def nativeApk = providers.gradleProperty('egretApkPackaging').orElse('direct').get()
+if (!(nativeApk in ['direct', 'compact'])) throw new GradleException('egretApkPackaging must be direct or compact')
+androidComponents.onVariants(androidComponents.selector().withBuildType('release')) { variant ->
+    variant.packaging.jniLibs.useLegacyPackaging.set(nativeApk == 'compact')
+    variant.packaging.jniLibs.useLegacyPackagingFromBundle.set(false)
 }
 
 // Resolve only explicitly named, digest-pinned local archives. The exported project also

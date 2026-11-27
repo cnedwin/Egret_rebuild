@@ -28,7 +28,7 @@ export async function bundleV8({profile, cache, work, archive, jar, strip, run})
   copyFileSync(path.join(here,'v8/project-bootstrap.js'), path.join(assets,'bootstrap.js'));
   mkdirSync(path.join(archive,'libs'), {recursive:true});
   copyFileSync(v8.classes, path.join(archive,'libs/javet.jar'));
-  // Javet 6.0.3 resolves Java classes and callback signatures from native code.
+  // Javet resolves Java classes and callback signatures from native code.
   // Its published consumer file is empty. Preserve that ABI in an R8-enabled game.
   appendFileSync(path.join(archive, 'proguard.txt'), [
     '', readFileSync(v8.consumerRules, 'utf8'),
