@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/playConfirm.ts",
+      "originRole": "First-party internal responsive confirmation copy and layout for the Play web host; independently authored with AI assistance from the existing view contracts; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/play-confirm.test.mjs",
+      "originRole": "First-party CPU unit tests of the private confirmation layout helper using deterministic font measurements; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/ui-view-tabs.test.mjs",
+      "originRole": "First-party public view-schema and geometry tests of named tablists, selected tabs and variant consistency; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-confirm.mjs",
+      "originRole": "First-party actual-browser fixture exercising responsive bilingual Play confirmations, theme, focus, queue and scrolling; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/play/verify-view-tabs.mjs",
+      "originRole": "First-party actual-browser fixture testing named Play tabs, selection, input, layout variants and browser semantic projection; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/screen-check/prepare.mjs",
+      "originRole": "First-party explicit local scene-preparation example for the multi-screen verifier; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

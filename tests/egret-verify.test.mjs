@@ -15,7 +15,7 @@ import { describeErrorCode } from '../packages/runtime/dist/errorHelp.js';
 import { collectErrorCodes } from '../tools/error-codes.mjs';
 import { verifyArgs } from '../tools/egret.mjs';
 import { vendorGame } from '../tools/vendor-game.mjs';
-import { SCREENS, TOUCH_TARGET, controlFindings } from '../tools/verify-screens.mjs';
+import { SCREENS, TOUCH_TARGET, controlFindings, prepareScreen } from '../tools/verify-screens.mjs';
 
 const temporary = () => fs.mkdtempSync(path.join(os.tmpdir(), 'egret-verify-'));
 
@@ -88,7 +88,7 @@ test('EV03 PLAY_MADE_EVERY_FRAME is an engine code with a sentence in English an
 
 // Break caught: --screens running the one-window check, a screen name taken for the page, or a misspelt screen run as
 // nothing.
-test('EV04 verify --screens runs verify-screens on every screen, or on those named, and refuses a script', () => {
+test('EV04 verify --screens runs every screen or those named, with an optional explicit preparation script', () => {
   const game = temporary();
   try {
     fs.writeFileSync(path.join(game, 'index.html'), '<canvas></canvas>');
@@ -111,7 +111,37 @@ test('EV04 verify --screens runs verify-screens on every screen, or on those nam
     fs.writeFileSync(path.join(game, 'play.mjs'), '');
     assert.match(
       verifyArgs(['--screens', '--play', 'play.mjs', '--playwright', 'pw.mjs'], game).error,
-      /--screens takes no script/
+      /--play plays in one window; use --prepare with --screens/
+    );
+    fs.writeFileSync(path.join(game, 'prepare.mjs'), 'export default async () => "market";');
+    const prepared = verifyArgs(
+      ['--screens=phone-notch,desktop', '--prepare', 'prepare.mjs', '--playwright', 'pw.mjs', '--out', 'prepared'],
+      game
+    );
+    assert.deepEqual(prepared.args.slice(1), [
+      playwright,
+      path.join(game, 'index.html'),
+      path.join(game, 'prepared'),
+      'phone-notch,desktop',
+      path.join(game, 'prepare.mjs')
+    ]);
+    assert.match(
+      verifyArgs(['--prepare', 'prepare.mjs', '--playwright', 'pw.mjs'], game).error,
+      /--prepare requires --screens/
+    );
+    assert.match(
+      verifyArgs(['--screens', '--prepare', 'missing.mjs', '--playwright', 'pw.mjs'], game).error,
+      /There is no preparation script/
+    );
+    assert.match(
+      verifyArgs(['--screens', '--prepare', '.', '--playwright', 'pw.mjs'], game).error,
+      /There is no preparation script/
+    );
+    assert.match(verifyArgs(['--screens', '--prepare'], game).error, /--prepare takes a path/);
+    assert.match(
+      verifyArgs(['--screens', '--prepare', 'https://example.invalid/prepare.mjs', '--playwright', 'pw.mjs'], game)
+        .error,
+      /There is no preparation script/
     );
   } finally {
     fs.rmSync(game, { recursive: true, force: true });
@@ -163,4 +193,35 @@ test('EV06 the screens check finds controls outside the safe part, smaller than 
     ),
     []
   );
+});
+
+// A prepared screen must report the scene it reached; a rejection or asynchronous timeout is a failure.
+test('EV07 preparation reports its actual scene, rejections and asynchronous deadline', async () => {
+  const screen = { name: 'phone-notch' };
+  const player = { read: async () => 'market' };
+  assert.deepEqual(
+    await prepareScreen(
+      async (p, s) => {
+        assert.equal(s, screen);
+        return p.read();
+      },
+      player,
+      screen
+    ),
+    { pass: true, scene: 'market' }
+  );
+  assert.match(
+    (
+      await prepareScreen(
+        async () => {
+          throw new Error('not ready');
+        },
+        player,
+        screen
+      )
+    ).error,
+    /not ready/
+  );
+  assert.match((await prepareScreen(async () => ' ', player, screen)).error, /nonempty scene name/);
+  assert.match((await prepareScreen(() => new Promise(() => {}), player, screen, 10)).error, /exceeded 10 ms/);
 });

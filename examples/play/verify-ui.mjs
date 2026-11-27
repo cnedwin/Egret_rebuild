@@ -22,12 +22,14 @@ if (
     'activation',
     'semantics-geometry',
     'empty-text',
-    'collections'
+    'collections',
+    'tabs',
+    'confirm'
   ].includes(selection) ||
   process.argv.length > 6
 ) {
   throw new Error(
-    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|activation|semantics-geometry|empty-text|collections]'
+    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|activation|semantics-geometry|empty-text|collections|tabs|confirm]'
   );
 }
 
@@ -65,6 +67,8 @@ try {
     { id: 'activation', file: './verify-view-activation.mjs', method: 'verifyViewActivation', touch: true },
     { id: 'empty-text', file: './verify-view-empty-text.mjs', method: 'verifyViewEmptyText', touch: false },
     { id: 'collections', file: './verify-view-collections.mjs', method: 'verifyViewCollections', touch: false },
+    { id: 'tabs', file: './verify-view-tabs.mjs', method: 'verifyViewTabs', touch: false },
+    { id: 'confirm', file: './verify-confirm.mjs', method: 'verifyConfirm', touch: false },
     {
       id: 'semantics-geometry',
       file: './verify-view-semantics-geometry.mjs',
@@ -87,7 +91,8 @@ try {
         route.fulfill({ contentType: 'text/html; charset=utf-8', body: fixture })
       );
       await page.goto(origin + '/play-ui-fixture');
-      result.observations = await (await import(entry.file))[entry.method](page);
+      const verify = (await import(entry.file))[entry.method];
+      result.observations = await (entry.id === 'confirm' ? verify(page, output) : verify(page));
       assert.deepEqual(errors, []);
       result.passed = true;
     } catch (cause) {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Usage: node tools/verify-screens.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [screen,...]
+// Usage: node tools/verify-screens.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [screen,...] [prepare.mjs]
 // Opens one game page on the screens of several devices, in headless Chromium with software rendering, and says, for
 // each, what an agent cannot see from one window: whether the page scrolls or is blank, how much of the screen bars
 // take, whether the controls of a play game lie in the safe part, are at least 44 CSS pixels square and keep apart,
@@ -10,11 +10,13 @@
 // window's safe-area insets. The controls are those a `play` game takes taps on, which it reports to
 // `globalThis.__egretAgent.controls`; a game of its own reports none, and their checks are then not run.
 // Screens are named: SCREENS lists them; a comma-separated list of names picks some.
+// With an explicitly named local preparation module, run its default(player, screen) on each fresh page first.
+// It asserts the desired state and returns its nonempty scene name. The asynchronous preparation has 20 seconds.
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { browserBuildTypes, loadPng, pictureStats } from './verify-game.mjs';
+import { browserBuildTypes, driver, loadPng, pictureStats } from './verify-game.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 
@@ -100,7 +102,42 @@ function tintInsets(png, insets, scale) {
       }
 }
 
-export async function verifyScreens({ chromium, PNG, file, out, names = Object.keys(SCREENS), settle = 1500 }) {
+/** Execute a trusted local preparation callback, reporting rather than swallowing its failure. */
+export async function prepareScreen(prepare, player, screen, timeoutMs = 20000) {
+  let timer;
+  try {
+    const scene = await Promise.race([
+      Promise.resolve().then(() => prepare(player, screen)),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Scene preparation exceeded ' + timeoutMs + ' ms')), timeoutMs);
+      })
+    ]);
+    if (typeof scene !== 'string' || !scene.trim())
+      throw new Error('Preparation must return the nonempty scene name it reached.');
+    return { pass: true, scene: scene.trim() };
+  } catch (error) {
+    return { pass: false, error: String(error?.message ?? error).slice(0, 1200) };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** Optional prepare is the explicitly supplied local module (or programmatic callback). */
+export async function verifyScreens({
+  chromium,
+  PNG,
+  file,
+  out,
+  names = Object.keys(SCREENS),
+  settle = 1500,
+  prepare,
+  prepareTimeout = 20000
+}) {
+  const scenario = typeof prepare === 'function' ? prepare : prepare?.default;
+  if (prepare !== undefined && typeof scenario !== 'function')
+    throw new Error('The preparation script must have a default function.');
+  if (!Number.isFinite(prepareTimeout) || prepareTimeout <= 0)
+    throw new Error('Preparation timeout must be a positive number.');
   const inCheckout = !path.relative(root, file).startsWith('..'),
     base = inCheckout ? root : path.dirname(file);
   const server = http.createServer((request, response) => {
@@ -178,11 +215,30 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
           }
         };
       }, screen.insets);
+      let prepared, observed;
+      const target = path.join(out, name + '.png');
       try {
         await tab.goto(address);
+        if (scenario) {
+          const player = driver(tab, PNG, out, prepare?.stage, {
+            picturePrefix: 'prepared-' + name + '-',
+            warnings: () => tab.evaluate(() => globalThis.__egretScreens.warnings),
+            sounds: async () => {
+              throw new Error('Audio is not measured by --screens; use --play for that.');
+            }
+          });
+          const info = Object.freeze({ name, ...screen, insets: Object.freeze({ ...screen.insets }) });
+          prepared = await prepareScreen(scenario, player, info, prepareTimeout);
+          // Require a fresh control report after preparation, not stale title/menu controls.
+          if (prepared.pass)
+            await tab.evaluate(() => {
+              globalThis.__egretScreens.controls = undefined;
+              globalThis.__egretScreens.screen = undefined;
+            });
+        }
         await tab.waitForSelector('canvas', { timeout: 15000 }).catch(() => {});
         await tab.waitForTimeout(settle);
-        const seen = await tab.evaluate(() => {
+        const seen = (observed = await tab.evaluate(() => {
           const canvases = [...document.querySelectorAll('canvas')].map(canvas => {
             const box = canvas.getBoundingClientRect();
             return { x: box.x, y: box.y, width: box.width, height: box.height };
@@ -193,9 +249,8 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
             canvases,
             scrolls: page.scrollWidth > innerWidth + 1 || page.scrollHeight > innerHeight + 1
           };
-        });
-        const target = path.join(out, name + '.png'),
-          bytes = await tab.screenshot();
+        }));
+        const bytes = await tab.screenshot();
         const png = PNG.sync.read(bytes);
         const stats = pictureStats(png);
         tintInsets(png, screen.insets, screen.scale);
@@ -209,20 +264,46 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
         if (stats.colors < 3 || stats.dominant > 0.995) findings.push({ check: 'drawn', severity: 'error' });
         if (seen.scrolls) findings.push({ check: 'noScroll', severity: 'error' });
         if (shown < 0.75) findings.push({ check: 'fills', severity: 'warning', shown: Math.round(shown * 100) / 100 });
-        if (seen.controls !== undefined)
-          findings.push(...controlFindings(seen.controls, seen.screen.safe, screen.touch));
+        if (prepared && !prepared.pass) findings.push({ check: 'prepare', severity: 'error', error: prepared.error });
+        const hasControls = Array.isArray(seen.controls) && !!seen.screen?.safe;
+        if (prepared?.pass && (!hasControls || seen.controls.length === 0))
+          findings.push({ check: 'noControls', severity: 'error' });
+        if (hasControls) findings.push(...controlFindings(seen.controls, seen.screen.safe, screen.touch));
         screens.push({
           name,
           size: [screen.width, screen.height],
           insets: screen.insets,
           pass: !findings.some(finding => finding.severity === 'error'),
           shown: Math.round(shown * 100) / 100,
-          controls: seen.controls === undefined ? null : seen.controls.length,
+          ...(prepared ? { prepared } : {}),
+          controls: Array.isArray(seen.controls) ? seen.controls.length : null,
           // The safe part of the canvas as the engine took it, in CSS pixels of the window, for a play game.
-          safe: seen.screen === undefined ? null : round(seen.screen.safe),
+          safe: seen.screen?.safe ? round(seen.screen.safe) : null,
           findings,
           engineWarnings: seen.warnings ?? [],
           picture: target
+        });
+      } catch (error) {
+        // A local preparation can accidentally close its page. Record that screen, never fabricate a picture,
+        // and continue the other fresh device contexts. Leave the original unscripted behavior unchanged.
+        if (!scenario) throw error;
+        const findings = [
+          { check: 'capture', severity: 'error', error: String(error?.message ?? error).slice(0, 1200) }
+        ];
+        if (prepared && !prepared.pass) findings.push({ check: 'prepare', severity: 'error', error: prepared.error });
+        if (errors.length) findings.push({ check: 'noErrors', severity: 'error', errors: errors.slice(0, 5) });
+        screens.push({
+          name,
+          size: [screen.width, screen.height],
+          insets: screen.insets,
+          pass: false,
+          shown: null,
+          ...(prepared ? { prepared } : {}),
+          controls: null,
+          safe: null,
+          findings,
+          engineWarnings: observed?.warnings ?? [],
+          picture: fs.existsSync(target) ? target : null
         });
       } finally {
         await context.close();
@@ -241,10 +322,10 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const [playwright, page, output, list] = process.argv.slice(2);
-  if (!playwright || !page || !output || !path.isAbsolute(playwright) || process.argv.length > 6)
+  const [playwright, page, output, list, prepareFile] = process.argv.slice(2);
+  if (!playwright || !page || !output || !path.isAbsolute(playwright) || process.argv.length > 7)
     throw new Error(
-      'Usage: node tools/verify-screens.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [screen,...]'
+      'Usage: node tools/verify-screens.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [screen,...] [prepare.mjs]'
     );
   const file = path.resolve(page),
     out = path.resolve(output);
@@ -256,12 +337,17 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   fs.mkdirSync(out, { recursive: true });
   const { chromium } = await import(pathToFileURL(playwright).href),
     { PNG } = loadPng();
-  const report = await verifyScreens({ chromium, PNG, file, out, names });
+  const preparePath = prepareFile === undefined ? undefined : path.resolve(prepareFile);
+  if (preparePath !== undefined && !fs.statSync(preparePath, { throwIfNoEntry: false })?.isFile())
+    throw new Error('There is no preparation script at ' + preparePath);
+  const prepare = preparePath === undefined ? undefined : await import(pathToFileURL(preparePath).href);
+  const report = await verifyScreens({ chromium, PNG, file, out, names, prepare });
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   for (const screen of report.screens)
     console.log(
       `${screen.pass ? 'ok  ' : 'FAIL'} ${screen.name.padEnd(17)} ${screen.size.join('x').padEnd(10)} shown ${screen.shown}` +
         (screen.controls === null ? '' : `, ${screen.controls} controls`) +
+        (screen.prepared?.pass ? ' scene ' + screen.prepared.scene : '') +
         (screen.findings.length
           ? ': ' +
             screen.findings

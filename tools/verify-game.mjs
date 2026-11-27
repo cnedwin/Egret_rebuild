@@ -217,7 +217,7 @@ export function stagePlace(box, width, height, x, y) {
   return [box.x + (x * box.w) / width, box.y + (y * box.h) / height];
 }
 /** What a script is given to play a game with: input in the stage's own units, and the page read from its pictures. */
-function driver(tab, PNG, out, size) {
+export function driver(tab, PNG, out, size, { picturePrefix = 'played-', warnings, sounds } = {}) {
   const box = async () => {
     const canvases = await tab.evaluate(() =>
       [...document.querySelectorAll('canvas')].map(canvas => {
@@ -267,7 +267,7 @@ function driver(tab, PNG, out, size) {
     letGo: name => tab.keyboard.up(keyOf(name)),
     async look() {
       const canvas = await box(),
-        png = PNG.sync.read(await tab.screenshot());
+        png = PNG.sync.read(await tab.screenshot({ scale: 'css' }));
       return (x, y) => {
         const [px, py] = stagePlace(canvas, size?.width ?? canvas.w, size?.height ?? canvas.h, x, y),
           o = 4 * (Math.round(py) * png.width + Math.round(px));
@@ -282,15 +282,15 @@ function driver(tab, PNG, out, size) {
       }
       throw new Error(label + ' did not happen in ' + seconds + ' seconds');
     },
-    sounds: () => tab.evaluate(() => window.__verify.soundsStarted),
-    warnings: () => tab.evaluate(() => window.__verify.engineWarnings ?? []),
+    sounds: sounds ?? (() => tab.evaluate(() => window.__verify.soundsStarted)),
+    warnings: warnings ?? (() => tab.evaluate(() => window.__verify.engineWarnings ?? [])),
     /** Runs a function in the page and gives what it returns: `player.read(() => window.state.collected)`. */
     read: (fn, ...args) => tab.evaluate(fn, ...args),
     expect(condition, message) {
       if (!condition) throw new Error('Expected: ' + message);
     },
     async picture(name) {
-      const target = path.join(out, 'played-' + String(name).replace(/[^A-Za-z0-9_-]+/g, '-') + '.png');
+      const target = path.join(out, picturePrefix + String(name).replace(/[^A-Za-z0-9_-]+/g, '-') + '.png');
       await tab.screenshot({ path: target });
       return target;
     }

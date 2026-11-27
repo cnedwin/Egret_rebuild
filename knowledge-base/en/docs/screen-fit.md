@@ -115,6 +115,23 @@ A `play` game also tells the tool, about four times a second, where the nodes it
 
 A control is named by its `name`, the name `onTap` was given, the name of its part in a view, or the words of its button. A node over the whole canvas, such as the backdrop of a modal view or a "tap anywhere" layer, is no control, and the controls it is drawn over are left out while it shows. The tool exits with 1 when a screen has an error. It is Chromium with stand-in insets at each phone's size and pixel ratio, not a phone: a real notch's shape, the browser's own bars and the way a phone hands its insets to the page are not checked.
 
+### Check a later scene
+
+`node vendor/egret.mjs verify --screens --prepare test/prepare-market.mjs --out screen-market` opens the ordinary game page on each fresh screen, then runs the explicitly named local module before the screenshot and safe-area checks. The module uses the same player helpers as `--play`; its default function receives the player and a read-only screen descriptor (`name`, CSS `width` and `height`, `scale`, `touch`, `insets`). For example, a game with a menu opened by Enter can use:
+
+```js
+export default async function prepare(player, screen) {
+  await player.page.waitForFunction(() => window.demo?.ready);
+  await player.key('Enter');
+  await player.page.waitForFunction(() => window.demo?.screen === 'market');
+  const actual = await player.read(() => window.demo.screen);
+  player.expect(actual === 'market', screen.name + ': market ready');
+  return actual;
+}
+```
+
+Return the nonempty scene name actually reached, after checking readiness. The report for each screen includes `prepared` with the scene or the error. The tool waits for a fresh native control report after preparation; an absent or empty native control list fails that screen. Exceptions and an asynchronous preparation exceeding 20 seconds fail the screen as well. Its screenshot and other checks still serve as failure evidence. The asynchronous deadline cannot interrupt synchronous blocking code: the local module is trusted Node code, supplied explicitly by the operator; the tool never discovers or fetches a script from the page. `--play` remains the one-window gameplay check, including audio; `--prepare` does not measure audio or complete playthroughs. For a real runnable example see `examples/screen-check/prepare.mjs`.
+
 ## What is checked
 
 - `tests/ui-screen.test.mjs` checks the arithmetic in Node: `'contain'` and `'expand'`, wider and taller spaces, the portrait design, insets inside and beyond the bars, and refusals.
