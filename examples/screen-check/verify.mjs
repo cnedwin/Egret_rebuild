@@ -22,20 +22,23 @@ const tools = path.join(here, '..', '..', 'tools');
 fs.mkdirSync(output, { recursive: true });
 const { PNG } = loadPng();
 
-/** The status and report of one run: plain through the command, or with ?fixed=1 through the tool. */
-function run(name, fixed) {
+/**
+ * The status and report of one run: plain through the command, or with a query (?fixed=1) through the tool, on every
+ * screen or on those listed.
+ */
+function run(name, query, screens) {
   let page = path.join(here, 'index.html');
-  if (fixed) {
-    page = path.join(here, 'fixed.tmp.html');
+  if (query) {
+    page = path.join(here, name + '.tmp.html');
     fs.writeFileSync(
       page,
-      fs.readFileSync(path.join(here, 'index.html'), 'utf8').replace('./main.mjs', './main.mjs?fixed=1')
+      fs.readFileSync(path.join(here, 'index.html'), 'utf8').replace('./main.mjs', './main.mjs?' + query)
     );
   }
   try {
     const out = path.join(output, name);
-    const args = fixed
-      ? [path.join(tools, 'verify-screens.mjs'), playwright, page, out]
+    const args = query
+      ? [path.join(tools, 'verify-screens.mjs'), playwright, page, out, ...(screens ? [screens] : [])]
       : [path.join(tools, 'egret.mjs'), 'verify', page, '--screens', '--playwright', playwright, '--out', out];
     const result = spawnSync(process.execPath, args, { encoding: 'utf8' });
     if (!fs.existsSync(path.join(out, 'report.json'))) throw new Error(result.stdout + result.stderr);
@@ -45,14 +48,14 @@ function run(name, fixed) {
       report: JSON.parse(fs.readFileSync(path.join(out, 'report.json'), 'utf8'))
     };
   } finally {
-    if (fixed) fs.rmSync(page, { force: true });
+    if (query) fs.rmSync(page, { force: true });
   }
 }
 
 const checks = (screen, check) => screen.findings.filter(finding => finding.check === check);
 const byName = report => Object.fromEntries(report.screens.map(screen => [screen.name, screen]));
 
-const plain = run('plain', false);
+const plain = run('plain');
 assert.equal(plain.status, 1, plain.stdout);
 assert.deepEqual(
   plain.report.screens.map(screen => screen.name),
@@ -110,7 +113,7 @@ assert.ok(red > green + 80, `the notch is tinted red: ${at(notch.width >> 1, 20 
 const [red2, green2] = at(notch.width >> 1, 400 * scale);
 assert.ok(red2 < green2 + 40, `the middle is not tinted: ${at(notch.width >> 1, 400 * scale)}`);
 
-const fixed = run('fixed', true);
+const fixed = run('fixed', 'fixed=1');
 assert.equal(fixed.status, 0, fixed.stdout);
 for (const screen of fixed.report.screens) {
   assert.equal(screen.controls, 4, `${screen.name}: the four buttons are told`);
@@ -118,6 +121,18 @@ for (const screen of fixed.report.screens) {
   assert.deepEqual(screen.engineWarnings, [], `${screen.name}: no engine warnings`);
 }
 
+// With a question open, its backdrop covers the whole canvas, the notch included: it is no control, and the buttons
+// under it cannot be tapped while it shows. Only the question's own two buttons are told, by their part names.
+const asked = run('asked', 'fixed=1&ask=1', 'phone-notch,phone-small,desktop');
+assert.equal(asked.status, 0, asked.stdout);
+for (const screen of asked.report.screens) {
+  assert.equal(screen.controls, 2, `${screen.name}: the question's two buttons`);
+  assert.deepEqual(checks(screen, 'inSafeArea'), [], `${screen.name}: the backdrop is no control`);
+  assert.deepEqual(checks(screen, 'apart'), [], `${screen.name}: the buttons under the backdrop are left out`);
+  for (const finding of checks(screen, 'touchTarget'))
+    assert.ok(['no', 'yes'].includes(finding.control), `${screen.name}: named by its part: ${finding.control}`);
+}
+
 console.log(
-  `screen-check: ${plain.report.screens.length} screens; plain finds the notch, the small target and the overlap; fixed finds nothing.`
+  `screen-check: ${plain.report.screens.length} screens; plain finds the notch, the small target and the overlap; fixed finds nothing; a question's backdrop is no control.`
 );

@@ -1410,6 +1410,23 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   };
   // A tool that runs the game for an agent (tools/verify-screens.mjs) is told, about four times a second, where the
   // nodes that take taps are on the page and where the safe part is, in CSS pixels, to check them on many screens.
+  /** Whether `top` is drawn after `under` on the stage, and so over it where they meet; false for its own ancestor. */
+  const drawnOver = (top: DisplayObject, under: DisplayObject): boolean => {
+    const chain = (node: DisplayObject): DisplayObject[] => {
+      const list: DisplayObject[] = [];
+      for (let at: DisplayObject | undefined = node; at !== undefined; at = at.parent) list.unshift(at);
+      return list;
+    };
+    const a = chain(top),
+      b = chain(under);
+    let i = 0;
+    while (i < a.length && i < b.length && a[i] === b[i]) i++;
+    if (i === a.length) return false;
+    if (i === b.length) return true;
+    const parent = a[i - 1] as { getChildIndex?(child: DisplayObject): number } | undefined;
+    if (parent?.getChildIndex === undefined) return false;
+    return parent.getChildIndex(a[i]!) > parent.getChildIndex(b[i]!);
+  };
   let toldControls = Infinity;
   const tellControls = (seconds: number): void => {
     const agent = (globalThis as { readonly __egretAgent?: { readonly controls?: unknown } }).__egretAgent;
@@ -1431,7 +1448,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         if (!at.visible || at.alpha <= 0) return false;
       return true;
     };
-    const controls = [];
+    // Each tappable node that shows, with its box on the page.
+    const seen: { node: DisplayObject; name: string; rect: ReturnType<typeof page> }[] = [];
     for (const node of tappable) {
       if (node.isDisposed || !onStage(node) || !shows(node)) continue;
       const local = node.hitArea ?? node.getBounds();
@@ -1443,9 +1461,10 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       const x = Math.min(corners[0]!.x, corners[1]!.x),
         y = Math.min(corners[0]!.y, corners[1]!.y);
       const label = (node as { readonly label?: unknown }).label;
-      controls.push({
+      seen.push({
+        node,
         name: node.name || tapNames.get(node) || (label instanceof PlayText ? label.text : ''),
-        ...page({
+        rect: page({
           x,
           y,
           width: Math.abs(corners[1]!.x - corners[0]!.x),
@@ -1453,6 +1472,14 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         })
       });
     }
+    // A node over the whole canvas takes taps anywhere: the backdrop of a modal view, or "tap to go on". It is no
+    // control, and what it is drawn over cannot be tapped while it shows.
+    const whole = (r: ReturnType<typeof page>): boolean =>
+      r.x <= box.left + 1 && r.y <= box.top + 1 && r.x + r.width >= box.right - 1 && r.y + r.height >= box.bottom - 1;
+    const blockers = seen.filter(item => whole(item.rect)).map(item => item.node);
+    const controls = seen
+      .filter(item => !blockers.includes(item.node) && !blockers.some(blocker => drawnOver(blocker, item.node)))
+      .map(item => ({ name: item.name, ...item.rect }));
     try {
       (agent.controls as (controls: unknown, screen: unknown) => void)(controls, {
         safe: page(shown.safe),

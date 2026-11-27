@@ -738,6 +738,8 @@ export function createPlayViews(
       const container = planned.parent < 0 ? undefined : made[planned.parent]!;
       const parent = container?.scroll?.content ?? container?.node ?? root;
       const node = game.sprite(undefined, parent);
+      // The part's name names its node, as a tool reading the controls of a game finds it.
+      if (part.name !== undefined) node.name = part.name;
       const scroll =
         part.type === 'panel' && part.scroll === 'vertical'
           ? makeScroll(
