@@ -353,6 +353,8 @@ test('VW04 what cannot be drawn or bound is refused, saying where', () => {
   refused({ root: { type: 'panel', layout: 'grid' } }, /layout is free, row, column/);
   refused({ root: { type: 'text' }, skin: { glow: 1 } }, /a skin has no glow/);
   refused({ root: { type: 'text' }, theme: 'dark' }, /a view has no theme/);
+  refused({ root: { type: 'text' }, uiScale: 'no' }, /uiScale is true or false/);
+  assert.equal(checkView({ root: { type: 'text', name: 'a' }, uiScale: false }).get('a'), 'text');
   const deep = { type: 'panel', children: [] };
   let at = deep;
   for (let i = 0; i < 40; i++) {

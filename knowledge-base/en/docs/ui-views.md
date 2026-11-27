@@ -76,6 +76,12 @@ A view is drawn at the game's scale unless `play` is given `uiScale: { min, max 
 
 `game.uiScale` is the factor now. A view is planned in an area that much smaller and its root scaled by it, so it fills the same part of the screen, anchors and shares included. `rect(name)` stays in the view's own units, and `visibleRect(name)` in the stage's. Boxes of words, menus, notices, bars and touch controls keep the game's scale.
 
+A view whose parts lie over the game's world must keep the game's scale too, or it would drift off what it covers as `uiScale` changes. Tap areas over the tiles of a hand or the squares of a board are such parts. `uiScale: false` in its description keeps that view at the game's scale while the others keep their own:
+
+```js
+g.show({ label: 'Hand', uiScale: false, root: { type: 'panel', children: tiles.map(tapAreaOver) } });
+```
+
 A field a part does not have, a name used twice, or a portrait that lacks a name is refused with `UI_VIEW_INVALID` or `UI_VIEW_VARIANT_MISMATCH`. The error says which part, such as `root/3/0 (buy)`. A binding for a name the view does not have is refused with `UI_VIEW_BINDING_UNKNOWN`, and one a part cannot take with `UI_VIEW_BINDING_INVALID`. A misspelt field is never drawn as nothing.
 
 ## Wrapped labels, button details, images and borders
@@ -296,7 +302,7 @@ A named noninteractive text part is omitted from the published semantic tree whe
 
 - anchors, offsets, shares and fill in a free panel;
 - one view with `portrait` and `tablet` parts in a window resized to 844 × 390, 1024 × 768, 768 × 1024 and 390 × 844 took `root`, `tablet`, `portrait` and `portrait`, and was built three times;
-- with `uiScale: { min: 0.75, max: 1 }` on a 1280 × 720 game, a button of 368 × 80 units measured 368 × 80 CSS pixels on a 1920 × 1080 window and 276 × 60 on a 640 × 360 one, centred both times, and a click pressed it;
+- with `uiScale: { min: 0.75, max: 1 }` on a 1280 × 720 game, a button of 368 × 80 units measured 368 × 80 CSS pixels on a 1920 × 1080 window and 276 × 60 on a 640 × 360 one, centred both times, and a click pressed it. A view with `uiScale: false` beside it kept its 120 × 80-unit tap area at the game's scale, 180 × 120 and then 60 × 40 CSS pixels, exactly over the place it was put, and a click there pressed it;
 - rows and columns with fixed sizes and fill, gaps, padding, `align` and `justify`;
 - portrait parts and the two areas;
 - every refusal, with the place it names.

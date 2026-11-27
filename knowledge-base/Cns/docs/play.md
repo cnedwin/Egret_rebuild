@@ -75,7 +75,7 @@ await play({
 | `blendSpace` | 半透明颜色的混合方式：`'srgb'` 与 2D canvas 和白鹭 5 一致，深色底上 10% 的白仍是淡淡的白；`'linear'` 按光线混合，同样的白看起来更强 | `'srgb'` |
 | `fit` | `'expand'` 铺满窗口：缩放比不变，舞台越过 `width` × `height` 一直延伸到窗口边缘。`'fixedWidth'`、`'fixedHeight'`、`'fixedNarrow'`、`'fixedWide'` 按白鹭 5 的方式铺满窗口。见[任意形状的屏幕](#任意形状的屏幕) | `'contain'`：窗口形状不同时留黑边 |
 | `wholeScale` | 像素风用 `true`：每个单位是整数个设备像素，按 `pixelRatio` 1 绘制并清晰放大。只用于 `play` 自己创建的画布 | `false` |
-| `uiScale` | `{ min, max }`：`game.show`、`confirm`、`hints` 和 `loading` 的视图每单位保持的 CSS 像素范围，与游戏画面分开。大尺寸设计在小手机上视图变大，手机设计在桌面上视图变小；`game.uiScale` 是当前倍数。见[视图按自己的尺寸显示](ui-views.md#视图按自己的尺寸显示) | 跟随游戏本身的缩放 |
+| `uiScale` | `{ min, max }`：`game.show`、`confirm`、`hints` 和 `loading` 的视图每单位保持的 CSS 像素范围，与游戏画面分开。大尺寸设计在小手机上视图变大，手机设计在桌面上视图变小；`game.uiScale` 是当前倍数，描述里写了 `uiScale: false` 的视图保持游戏的缩放。见[视图按自己的尺寸显示](ui-views.md#视图按自己的尺寸显示) | 跟随游戏本身的缩放 |
 | `portrait` | `{ width, height }`：窗口高大于宽时的舞台大小 | 两种方向都用 `width` × `height` |
 | `insets` | `{ top, right, bottom, left }`，单位是 CSS 像素：刘海、圆角或底部横条挡住的部分 | 页面的 `safe-area-inset` 值 |
 | `arrange(game)` | 摆放跟屏幕有关的东西：在 `setup` 之后调用，窗口尺寸变化或旋转时再调用 | 什么都不移动 |

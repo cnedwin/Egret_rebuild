@@ -199,6 +199,11 @@ export interface ViewDescription {
   readonly modal?: boolean;
   /** Colours and sizes that differ from the default skin. */
   readonly skin?: Partial<ViewSkin>;
+  /**
+   * `true` unless given: the view is drawn at `uiScale` of `play`, apart from the game. `false` keeps it at the game's
+   * own scale, as parts that lie over the game's world must be: tap areas over the pieces of a board, say.
+   */
+  readonly uiScale?: boolean;
 }
 
 /** A rectangle in the game's units. */
@@ -454,13 +459,15 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
 export function checkView(description: ViewDescription): ReadonlyMap<string, ViewPart['type']> {
   if (description === null || typeof description !== 'object') throw invalid('view', 'a description is an object');
   for (const key of Object.keys(description))
-    if (!['label', 'root', 'portrait', 'tablet', 'tabletPortrait', 'area', 'modal', 'skin'].includes(key))
+    if (!['label', 'root', 'portrait', 'tablet', 'tabletPortrait', 'area', 'modal', 'skin', 'uiScale'].includes(key))
       throw invalid('view', 'a view has no ' + key);
   if (description.label !== undefined && typeof description.label !== 'string') throw invalid('view', 'label');
   if (description.area !== undefined && description.area !== 'safe' && description.area !== 'screen')
     throw invalid('view', "area is 'safe' or 'screen'");
   if (description.modal !== undefined && typeof description.modal !== 'boolean')
     throw invalid('view', 'modal is true or false');
+  if (description.uiScale !== undefined && typeof description.uiScale !== 'boolean')
+    throw invalid('view', 'uiScale is true or false');
   if (description.skin !== undefined) {
     if (description.skin === null || typeof description.skin !== 'object') throw invalid('skin', 'a skin is an object');
     for (const [key, value] of Object.entries(description.skin)) {
