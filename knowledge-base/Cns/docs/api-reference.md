@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1488 个导出，其中 4 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1495 个导出，其中 8 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -255,14 +255,16 @@
 | `SharedHostResourceStatus` | 接口 | Fresh immutable data; reads do no native work. |
 | `SharedLayerWebGL2Host` | 接口 | A shared WebGL2 host that also draws kept layers. |
 | `SharedWebGL2FrameTiming` | 接口 | The timings of a host's frames: totals by phase, the recent samples and how many were dropped. |
-| `SharedWebGL2Host` | 接口 | A host that draws shared frames with WebGL2: start and stop it, stage frames, read them back, time them and recover a lost context. |
+| `SharedWebGL2Host` | 接口 |  |
 | `SharedWebGL2HostOptions` | 接口 | A shared WebGL2 host to make: its canvas, what it reports to, and whether it measures frames. |
 | `SharedWebGL2HostStatus` | 接口 | A shared WebGL2 host as it is now: its resources, host status, bytes pending and retention. |
 | `SharedWebGL2Layer2D` | 接口 | A layer drawn once and kept on the GPU: update it, or dispose of it. |
 | `SharedWebGL2LayerEffect2D` | 接口 | How a kept layer is tinted when it is placed: its bounds and its multiplied and added color. |
 | `SharedWebGL2LayerPlacement2D` | 接口 | Where a kept layer is placed in a frame, how large, and with what effect. |
 | `SharedWebGL2LayerStatus` | 接口 | The kept layers of a host: the bytes they hold, and how many are ready and pending. |
+| `SharedWebGL2PageBatching` | 类型 | Same-page batches still merge. |
 | `SharedWebGL2Readback` | 接口 | The pixels of a shared frame read back: its generation and frame, size, format, color space, alpha and bytes. |
+| `SharedWebGL2StartupTiming` | 接口 | Elapsed startup phases in the current successful WebGL2 generation, not GPU execution timers. |
 | `SharedWebGL2TimingPhase` | 类型 | A phase of drawing a shared frame that the host can time. |
 | `SharedWebGL2TimingSample` | 接口 | One timed phase of a frame: its generation and frame, the phase, when it began and how long it took. |
 | `WebGL2HostDiagnostic` | 接口 | Something a WebGL2 host reports: a failure, with how serious it is. |
@@ -848,6 +850,7 @@
 | `World3DLoopSource` | 接口 | What drives a 3D view: an Engine's clock and the call that advances it. |
 | `World3DOverlay` | 接口 | A 2D game drawn on a canvas over a 3D view. |
 | `World3DOverlayOptions` | 接口 | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
+| `World3DOverlayStartupTiming` | 接口 |  |
 | `World3DPassKind` | 类型 | What a pass drew: color, shadows, a depth prepass, an outline mask or post-processing. |
 | `World3DQuality` | 类型 | How much a 3D app draws: low, medium or high quality. |
 | `World3DQualityPreset` | 接口 | What one picture quality turns on. |
@@ -936,6 +939,7 @@
 | `World3DLoopSource` | 接口 | What drives a 3D view: an Engine's clock and the call that advances it. |
 | `World3DOverlay` | 接口 | A 2D game drawn on a canvas over a 3D view. |
 | `World3DOverlayOptions` | 接口 | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
+| `World3DOverlayStartupTiming` | 接口 |  |
 | `World3DQuality` | 类型 | How much a 3D app draws: low, medium or high quality. |
 | `World3DQualityPreset` | 接口 | What one picture quality turns on. |
 | `World3DShowOptions` | 接口 | What a 3D app shows: its update, mixers and controls. |
@@ -1482,6 +1486,7 @@
 | `ScreenPlanOptions` | 接口 | What to fit: the space on the screen, the designs, how they fit and what covers the edges. |
 | `ScreenRect` | 接口 | A rectangle in stage units. |
 | `ScreenSize` | 接口 | A width and a height above 0. |
+| `ScreenUiScale` | 接口 | Bounds on the screen's CSS pixels per unit of an independently laid-out interface. |
 
 ## `@egret/engine/kit`
 
@@ -1590,7 +1595,9 @@
 | `BrowserGameLabel` | 接口 | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | 接口 | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | 接口 | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
-| `BrowserGameOptions` | 接口 | A browser game to make: its canvas and size, its backend and colors, its update, its input and stats, and how it fits the page. |
+| `BrowserGameOptions` | 接口 |  |
+| `BrowserGameRenderMode` | 类型 | Continuous presentation or a retained frame, with the same simulation clock in either mode. |
+| `BrowserGameStartupTiming` | 接口 | Wall-clock preparation durations, and the first accepted SDK submission (not GPU completion or presentation). |
 | `BrowserGameWarning` | 接口 | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache, and from `play`, `PLAY_MADE_EVERY_FRAME` when `update` made a text, a shape or a sprite in each of the last 60 frames. |
 | `BrowserStatsPanel` | 接口 | A panel over the canvas showing frame rate and frame times: sample each frame. |
 | `BrowserStatsPanelOptions` | 接口 | A stats panel to make: the canvas it sits over, its label, and how often it updates. |

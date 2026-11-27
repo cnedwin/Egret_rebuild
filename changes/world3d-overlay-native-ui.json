@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Native World3D overlay rendering and UI controls",
+    "body": "Retain unchanged overlay frames while keeping the clock and input active; add optional single-page WebGL2 batching that omits the expensive multi-page shader while preserving the parallel startup path, plus measured startup phases. Add independent overlay scale and screen checks, a bounded image admission queue, responsive managed roots and post-attachment controls."
+  },
+  "zh": {
+    "title": "World3D 叠加层原生绘制和界面控件",
+    "body": "保留未变化的叠加层帧，同时维持时钟与输入；增加可选 WebGL2 单页批处理，在保留并行启动路径的前提下省掉多页着色程序，并报告启动阶段耗时。支持独立 UI 缩放、多屏控件检查、有界图片准入队列，以及响应式托管根和挂载后控件注册。"
+  }
+}

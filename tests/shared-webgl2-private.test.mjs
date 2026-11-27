@@ -30,10 +30,12 @@ const TOP = [
   'enableEffects',
   'outputAlpha',
   'restoreTimeoutMs',
+  'measureSharedFrames',
   'maxFrameRegions',
   'maxFramePageBytes',
   'maxReadyPageBytes',
-  'blendSpace'
+  'blendSpace',
+  'pageBatching'
 ];
 const DEFAULTS = Object.freeze({
   pixelRatio: 1,
@@ -57,7 +59,8 @@ const DEFAULTS = Object.freeze({
   maxFrameRegions: 4096,
   maxFramePageBytes: 67108864,
   maxReadyPageBytes: 134217728,
-  blendSpace: 'linear'
+  blendSpace: 'linear',
+  pageBatching: 'multi-page'
 });
 const canvas = Object.freeze({
   getContext() {
@@ -106,16 +109,20 @@ test('UNIT GLP01 options snapshot all named getters once and ignore unknown prop
   assert.deepEqual(trace, TOP);
   assert.equal(result.surface, canvas);
   assert.equal(result.callback, callback);
+  assert.equal(result.measureSharedFrames, false);
   assert.deepEqual(result.configuration, DEFAULTS);
   assert.ok(Object.isFrozen(result.configuration));
   values.pixelRatio = 3;
   values.restoreTimeoutMs = 1;
+  values.measureSharedFrames = true;
+  values.pageBatching = 'single-page';
+  assert.equal(result.measureSharedFrames, false);
   assert.deepEqual(result.configuration, DEFAULTS);
   assert.deepEqual(trace, TOP, 'configuration reads must not reread caller getters');
 });
 
 test('UNIT GLP02 a getter cause precedes semantics and stops only later option reads', () => {
-  for (const stop of ['restoreTimeoutMs', 'maxUploadBytes']) {
+  for (const stop of ['restoreTimeoutMs', 'maxUploadBytes', 'pageBatching']) {
     const trace = [],
       cause = Object.freeze({ stop });
     const input = Object.defineProperties(
@@ -152,6 +159,16 @@ test('UNIT GLP03 option scalar domains preserve lowered caps without coercion', 
   for (const value of [0, -1, NaN, Infinity, '1', null]) assert.throws(() => admit({ pixelRatio: value }));
   for (const value of [false, true]) assert.equal(admit({ enableReadback: value }).configuration.enableReadback, value);
   for (const value of [0, 1, 'true', null]) assert.throws(() => admit({ enableReadback: value }));
+  assert.equal(admit().measureSharedFrames, false);
+  assert.equal(admit({ measureSharedFrames: true }).measureSharedFrames, true);
+  assert.equal(admit({ measureSharedFrames: false }).measureSharedFrames, false);
+  for (const value of [null, 0, 1, 'true'])
+    assert.throws(() => admit({ measureSharedFrames: value }), { name: 'TypeError', message: 'measureSharedFrames' });
+  assert.equal(admit().configuration.pageBatching, 'multi-page');
+  for (const value of ['multi-page', 'single-page'])
+    assert.equal(admit({ pageBatching: value }).configuration.pageBatching, value);
+  for (const value of [null, false, 1, {}, 'single', 'auto', 'unknown'])
+    assert.throws(() => admit({ pageBatching: value }), { name: 'TypeError', message: 'pageBatching' });
   assert.equal(admit().callback, undefined);
   const callback = () => {};
   assert.equal(admit({ onDiagnostic: callback }).callback, callback);

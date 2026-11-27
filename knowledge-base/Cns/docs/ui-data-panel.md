@@ -16,6 +16,35 @@
 
 托管根节点、容器壳和行包装器拒绝直接修改几何、命中区域、父子关系及直接销毁，必须通过所属 UI 管理器更新。自定义行内容仍由绑定 Scope 所有，通过新内容版本替换。在准入与发布时，逻辑 Stage 必须保持单位变换。普通 Stage 变换仍可修改，但修改后的时段不属于此 UI 配置的已限定范围。
 
+## 普通树的响应式调整与挂接回调
+
+原有单参数 `root.setTree(tree)` 保持严格的节点 ID／类型集合契约。使用 `root.setTree(tree, { responsive: true })`，可增加、移除、重排普通布局节点或改变其类型（例如响应宽度断点，将列布局切换为行布局）。已经声明的虚拟列表可以改变在布局中的位置，但其身份必须仍为根创建时声明的 ID；新增、移除或改成其他列表 ID 均被拒绝。列表自身需要不同生命周期时请建立独立根。既有节点数、深度、列表、保留行和几何限制继续生效。
+
+树调整仍然是暂存意图：新的 ready 令牌成功提交之前，旧内容、Scope 注册、命中区域和弹层锚点保持已提交状态。源、版本、测量宽度、密度和主题兼容时，叶绑定及其原生控件注册复用原有身份。删除或替换的旧叶子 Scope 在成功发布后结束。失败或被新意图取代的准备不挂接新内容。与原来的准备函数一致，在同一个源的同一个版本中修改准备函数或挂接回调会被拒绝。
+
+普通 `UiLeafContent` 除了 `prepare(context)`，还可提供同步的 `onAttach(context)`。准备仍需返回真实离树内容及高度。挂接回调在**成功发布且旧绑定清理之后**执行，每个首次提交的新绑定执行一次；复用、过期或无变化的绑定不执行。参数提供相同的所有者 Scope、取消信号、宽度、密度和主题，以及实际已经挂接的 `content`、`committedRevision`。将键盘和指针控件注册到该 Scope，叶结束时注册也结束。回调抛出的错误进入 `postCommitErrors`；此时版本已发布，因此不是事务回滚。如果回调关闭根节点，后续回调不再执行。不要在回调期间开启第二次 prepare/commit；可以暂存后续意图，待此次提交返回后再准备。替换输入注册不会隐式转移焦点至另一个自定义目标；替换时若屏幕约定保留焦点，请显式恢复。
+
+```js
+const actionLeaf = {
+  revision: 0,
+  prepare(context) {
+    const view = context.scope.use(new DisplayObjectContainer());
+    view.hitArea = { x: 0, y: 0, width: context.width, height: 48 };
+    view.touchEnabled = true;
+    return { content: view, measuredHeight: 48 };
+  },
+  onAttach({ scope, content }) {
+    scope.use(keyboard.registerTarget({ id: 'action', target: content }));
+  }
+};
+root.setTree(nextLayout, { responsive: true });
+const prepared = await root.prepare();
+// 行窗口尚 pending 时，与原来一样继续 prepare，直到 ready。
+if (prepared.status !== 'pending') root.commit(prepared);
+```
+
+公开 SDK 回归 `tests/ui-responsive-root.test.mjs` 覆盖树扩缩/重排、兼容叶焦点保持、Scope 清理、回调替换、过期/拒绝方案、已提交弹层锚点、提交后错误和虚拟列表身份边界。这些是确定性的受控宿主验证，不等同于真机显示或辅助技术的实测。
+
 ## 数据、准备与复用
 
 数据源提供不可变版本：唯一字符串键、内容版本、预估高度和值，以及成对的 `bind`／`unbind`。绑定获得真实 Scope、取消信号、键、代次、宽度和密度，返回离树且完全就绪的内容与实测高度。绑定还会得到 `target`，即这一行的显示对象：行提交之后，按在这一行上和指针悬停在它上面时到达的就是它，它也是行指针通知中的 `target`。应用的控件可以在它上面监听，所以行可以像自绘按钮一样[悬停、按住和激活](ui-controls.md#托管列表的行)。它属于根：不要往里面添加对象，也不要移动或销毁它。重新绑定的行会得到另一个。既有文字和图像所有者继续负责栅格准备与资源租约，UI 不新增资源管理器。

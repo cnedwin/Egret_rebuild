@@ -199,6 +199,24 @@ A press or wheel over a 2D node with `touchEnabled` stays on the overlay. A pres
 
 The 2D stage uses WebGL2 by default, so the 3D renderer keeps WebGPU for itself where it uses it. The two canvases are composited by the page; nothing is copied between them.
 
+### Retain a static interface and measure startup
+
+```js
+const ui = await createWorld3DOverlay(canvas, {
+  width: 800, height: 420, portrait: { width: 380, height: 680 },
+  fit: 'expand', uiScale: { min: 44 / 48, max: 1.35 },
+  renderMode: 'on-demand', webgl2PageBatching: 'single-page'
+});
+console.log(ui.getStartupTiming());
+```
+
+- The original default is continuous rendering. In on-demand mode the 2D clock, update, input and label maintenance continue every display step. The overlay retains its last submitted frame while its display revision, screen plan, retained layers and native generation are unchanged. Moving a projected 3D marker's display object draws again; use `ui.game.invalidate()` for presentation data outside the display tree. A refused draw stays dirty. No 3D draw is suppressed.
+- `uiScale` bounds CSS pixels per logical unit for the filling fits: the overlay screen, safe rectangle, pointer and semantics follow the same native plan independently of 3D. See [screen fit](screen-fit.md). The multi-screen verifier reports native control hit rectangles and real semantic names when available; axis-aligned boxes are not pixel-level occlusion proof.
+- `webgl2PageBatching: 'single-page'` draws consecutive compatible draws on one texture page together and splits the batch at another page. It omits the multi-page shader at startup and never compiles it later on that host, rather than moving startup work to the first interaction. The default remains `'multi-page'`, and the option applies only to WebGL2. Pixel resolution, composition, blend order and effects remain the same; a UI with many alternating pages may make more draw calls. `effects: false` separately opts out of effects if none are used; the overlay default is true.
+- `ui.getStartupTiming()` reports milliseconds for placement, readiness and `game` phases (backend selection/module loading, host creation, engine open, game setup). `ui.game.getStartupTiming()` includes time to the first accepted SDK submission if one has occurred; this is not a GPU fence or display presentation. The WebGL2 observation separates context/capability checks, common program preparation, sampled, solid, resolve, effects, paged and finish startup phases in its successful generation. When parallelPrograms is true, programPreparationMs is the shared compile/link wait; subsequent per-program timings are retrieval and binding, not independent compile durations. Without the extension, sequential phases include the main branch's cooperative yields. A cold cached-vs-uncached browser is not the same experiment. Inspect both `game.loop.snapshot().steps` and `.frames` to distinguish application updates from submitted frames.
+
+`node examples/world3d/verify-overlay.mjs <absolute Playwright index.mjs>` exercises the on-demand clock, first frame, visual mutation and explicit invalidation, rotation and native pointer ownership, and checks exact real WebGL2 readback equality for two alternating translucent pages in both batching policies. The software Chromium run matched all 768 RGBA bytes and made two versus five draw calls in that intentionally alternating sample. This is a functional and pixel test, not device FPS qualification.
+
 ## A performance readout
 
 `createWorld3DStats(renderer, { container })` shows frame time, the game's own parts of a frame, and what the renderer drew: draw calls, triangles, lights dropped, programs, geometries and textures. Call `begin()` at the start of a frame, `lap(name)` after each part, and `end()` after drawing. Without `container` the numbers are still gathered, for automated checks.

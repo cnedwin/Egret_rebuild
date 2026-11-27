@@ -87,6 +87,10 @@ export interface UiLeafPrepareContext {
 export interface UiLeafContent {
   readonly revision: number;
   prepare(context: UiLeafPrepareContext): RowBinding | Promise<RowBinding>;
+  /** Once per fresh binding, after publication and old leaf cleanup. Register attached controls in this scope. */
+  onAttach?(
+    context: UiLeafPrepareContext & Readonly<{ content: DisplayObjectContainer; committedRevision: number }>
+  ): void;
 }
 /** What a bound row shows, and its measured height. */
 export interface RowBinding {
@@ -288,7 +292,8 @@ export interface UiRoot {
       y: number;
     }>
   ): void;
-  setTree(tree: LayoutNode): void;
+  /** Opt into structural changes to ordinary nodes; the initial virtual-list identity remains fixed. */
+  setTree(tree: LayoutNode, options?: Readonly<{ responsive?: boolean }>): void;
   /** Stage a generation; restore snapshot().theme to cancel a pending theme switch. */
   setTheme(theme: UiTheme | undefined): void;
   setInput(input: PointerInput | undefined): void;

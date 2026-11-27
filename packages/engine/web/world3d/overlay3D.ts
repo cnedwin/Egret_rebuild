@@ -6,8 +6,10 @@
 // below, so the scene can still be orbited, aimed at and picked.
 import { EgretError } from '@egret/runtime';
 import { createBrowserGame } from '../game.js';
-import type { BrowserGame, BrowserGameBackend } from '../game.js';
-import type { ScreenFit, ScreenInsets, ScreenSize } from '../screen.js';
+import type { BrowserGame, BrowserGameBackend, BrowserGameRenderMode, BrowserGameStartupTiming } from '../game.js';
+import type { SharedWebGL2PageBatching } from '../webgl2.js';
+import type { ScreenFit, ScreenInsets, ScreenSize, ScreenUiScale } from '../screen.js';
+import { createOverlayScreenReporter } from './overlayScreenReport.js';
 
 /** A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. */
 export interface World3DOverlayOptions {
@@ -18,6 +20,12 @@ export interface World3DOverlayOptions {
   readonly backend?: 'auto' | BrowserGameBackend;
   /** Canvas pixels per unit of the canvas width; the device's ratio, at most 2, by default. */
   readonly pixelRatio?: number;
+  /** Retain static UI frames in on-demand mode while clocks, input and updates keep running. Continuous by default. */
+  readonly renderMode?: BrowserGameRenderMode;
+  /** Effects are enabled by default. Set false only when the overlay uses no masks, filters or effects. */
+  readonly effects?: boolean;
+  /** WebGL2 single-page batching skips the multi-page shader instead of deferring it to the first interaction. */
+  readonly webgl2PageBatching?: SharedWebGL2PageBatching;
   /** One step of the interface, called before each 2D frame. */
   readonly update?: (deltaSeconds: number) => void;
   readonly onError?: (error: unknown) => void;
@@ -45,12 +53,21 @@ export interface World3DOverlayOptions {
    * `safe-area-inset` values unless given, as for `createBrowserGame`.
    */
   readonly insets?: ScreenInsets;
+  /** Bounds the filling overlay's scale independently of the scene, in CSS px per stage unit. */
+  readonly uiScale?: ScreenUiScale;
+}
+export interface World3DOverlayStartupTiming {
+  readonly placementMs: number;
+  readonly readyMs: number;
+  readonly game: BrowserGameStartupTiming;
 }
 /** A 2D game drawn on a canvas over a 3D view. */
 export interface World3DOverlay {
   /** The 2D game on the overlay: its stage, scope, pointer, keyboard, loop and textures. */
   readonly game: BrowserGame;
   readonly canvas: HTMLCanvasElement;
+  /** Separate overlay placement/ready times and the 2D game's own preparation/submission durations. */
+  getStartupTiming(): World3DOverlayStartupTiming;
   /** Where the stage is now, in CSS pixels from the 3D canvas's top left corner, and its scale: CSS pixels per unit. */
   readonly box: {
     readonly x: number;
@@ -86,17 +103,26 @@ export async function createWorld3DOverlay(
   canvas: HTMLCanvasElement,
   options: World3DOverlayOptions
 ): Promise<World3DOverlay> {
+  const started = performance.now();
   if (!canvas || typeof canvas.getBoundingClientRect !== 'function' || !canvas.parentElement)
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
   if (!options || !(options.width > 0) || !(options.height > 0))
+    throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
+  if (
+    (options.renderMode !== undefined && options.renderMode !== 'continuous' && options.renderMode !== 'on-demand') ||
+    (options.effects !== undefined && typeof options.effects !== 'boolean') ||
+    (options.webgl2PageBatching !== undefined &&
+      options.webgl2PageBatching !== 'single-page' &&
+      options.webgl2PageBatching !== 'multi-page')
+  )
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
   const fit = options.fit ?? 'stretch';
   if (!(OVERLAY_FITS as readonly unknown[]).includes(fit)) throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID');
   // With a fit that fills the 3D canvas, the 2D game plans its own stage in an element laid exactly over it.
   const fills = (PLANNED as readonly string[]).includes(fit);
-  if ((options.portrait !== undefined || options.insets !== undefined) && !fills)
+  if ((options.portrait !== undefined || options.insets !== undefined || options.uiScale !== undefined) && !fills)
     throw new EgretError('WORLD3D_OVERLAY_OPTIONS_INVALID', {
-      cause: 'portrait and insets go with a fit that fills the 3D canvas: ' + PLANNED.join(', ')
+      cause: 'portrait, insets and uiScale go with a fit that fills the 3D canvas: ' + PLANNED.join(', ')
     });
   let placed = { x: 0, y: 0, width: 0, height: 0, scale: 0 };
   const doc = canvas.ownerDocument;
@@ -149,6 +175,7 @@ export async function createWorld3DOverlay(
   const win = doc.defaultView ?? (globalThis as unknown as Window);
   win.addEventListener('resize', place);
 
+  const placedAt = performance.now();
   let game: BrowserGame;
   try {
     game = await createBrowserGame({
@@ -158,7 +185,10 @@ export async function createWorld3DOverlay(
       backend: options.backend ?? 'webgl2',
       clearColor: 0,
       clearAlpha: 0,
-      effects: true,
+      effects: options.effects ?? true,
+      ...(options.renderMode === undefined ? {} : { renderMode: options.renderMode }),
+      ...(options.webgl2PageBatching === undefined ? {} : { webgl2PageBatching: options.webgl2PageBatching }),
+      ...(options.uiScale === undefined ? {} : { uiScale: options.uiScale }),
       ...(fills && holder !== undefined ? { fit: fit as ScreenFit, fitTo: holder } : {}),
       ...(options.portrait === undefined ? {} : { portrait: options.portrait }),
       ...(options.insets === undefined ? {} : { insets: options.insets }),
@@ -254,9 +284,13 @@ export async function createWorld3DOverlay(
   // Capturing on the window runs before the 2D game's own listeners on the overlay.
   for (const type of FORWARDED) win.addEventListener(type, forward, { capture: true, passive: false });
 
+  const stopScreenReport = createOverlayScreenReporter(game, overlay, canvas);
+  const ready = performance.now();
   return {
     game,
     canvas: overlay,
+    getStartupTiming: () =>
+      Object.freeze({ placementMs: placedAt - started, readyMs: ready - started, game: game.getStartupTiming() }),
     get box() {
       if (!fills) return placed;
       const screen = game.screen;
@@ -269,6 +303,7 @@ export async function createWorld3DOverlay(
       });
     },
     async dispose(): Promise<void> {
+      stopScreenReport();
       for (const type of FORWARDED) win.removeEventListener(type, forward, { capture: true });
       observer?.disconnect();
       win.removeEventListener('resize', place);
