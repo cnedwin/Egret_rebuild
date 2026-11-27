@@ -61,7 +61,7 @@ xcodebuild -exportArchive -archivePath "$OUT/MyGame.xcarchive" \
   -exportOptionsPlist "$EXPORT_OPTIONS_PLIST" -exportPath "$OUT/ipa"
 ```
 
-The hosted build checks an unsigned arm64 archive. IPA export, provisioning, device installation and App Store acceptance require the corresponding Apple credentials and devices.
+The hosted build publishes `ios-unsigned-xcarchive` with the sample’s unsigned arm64 archive and its SHA-256. Extract the GitHub artifact, check the inner ZIP with `shasum -a 256 -c EgretRuntime-iOS-unsigned.sha256`, and expand it on macOS with `ditto -x -k EgretRuntime-iOS-unsigned.xcarchive.zip .`. For your own identity and game, generate the project and archive with the bundle ID and entry above. IPA export, provisioning, device installation and App Store acceptance require the corresponding Apple credentials and devices.
 
 ## Verify a build
 

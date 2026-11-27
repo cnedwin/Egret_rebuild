@@ -61,7 +61,7 @@ xcodebuild -exportArchive -archivePath "$OUT/MyGame.xcarchive" \
   -exportOptionsPlist "$EXPORT_OPTIONS_PLIST" -exportPath "$OUT/ipa"
 ```
 
-托管构建检查未签名的 arm64 归档。签名 IPA 导出、描述文件、真机安装和商店审核须使用相应 Apple 凭据及设备。
+托管构建输出 `ios-unsigned-xcarchive`，包含样例未签名的 arm64 归档及 SHA-256。先解开 GitHub 工件，用 `shasum -a 256 -c EgretRuntime-iOS-unsigned.sha256` 核对内部 ZIP，然后在 macOS 用 `ditto -x -k EgretRuntime-iOS-unsigned.xcarchive.zip .` 展开。发行自己的游戏时，使用上面的 bundle ID 和入口重新生成工程并归档。签名 IPA 导出、描述文件、真机安装和商店审核须使用相应 Apple 凭据及设备。
 
 ## 验证构建结果
 
