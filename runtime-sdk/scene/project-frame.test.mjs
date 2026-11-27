@@ -381,3 +381,34 @@ test('only the built-in solid Graphics page may use native slot zero', async () 
     assert.throws(() => encodeProjectFrame({...captured, pages:[ordinaryPage]}, 0, new Map()), /missing project page/);
   } finally { await engine.dispose(); }
 });
+
+const effectState = {blurRadius: 0, clips: [], colorMatrix: [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,17, 0,0,0,1,0]};
+const enter = (id, effect = effectState) => ({kind: 'barrier', reason: 'effect-enter', boundaryId: id, effect});
+const exit = id => ({kind: 'barrier', reason: 'effect-exit', boundaryId: id});
+
+test('native isolated groups bracket ordinary and indexed draws in paint order', () => {
+  const inner = { ...effectState, colorMatrix: undefined, blurRadius: 3, clips: [{matrix, rect}] };
+  const commands=[solid, enter(1), meshDraw, enter(2, inner), solid, exit(2), exit(1), solid];
+  const view=encode(commands,{geometries:[patchGeometry]});
+  assert.deepEqual(wordsAt(view,0,6),[0x36524745,42,80,64,0x102030ff,8]);
+  const first=24+68, second=first+104+140, child=second+28;
+  assert.deepEqual(wordsAt(view,first,2),[128,1]);
+  assert.deepEqual(floatsAt(view,first+8,4),[0,0,80,64]);
+  assert.deepEqual(floatsAt(view,first+24,20),effectState.colorMatrix);
+  assert.equal(view.getUint32(first+104,true),2);
+  assert.deepEqual(wordsAt(view,second,2),[128,2]);
+  assert.equal(view.getFloat32(second+24,true),3);
+  assert.deepEqual(wordsAt(view,child+68,3),[129,129,0]);
+  assert.equal(view.byteLength,child+68+8+68);
+  const ordinary=encode([solid]);
+  assert.equal(ordinary.getUint32(0,true),0x32524745);
+});
+
+test('malformed effect structure and unsupported effects fail before emission', () => {
+  for (const commands of [[exit(1)], [enter(2)], [enter(2),exit(3)], [enter(1),{...exit(1), effect:effectState}],
+    [enter(0),enter(1),enter(2),enter(3),enter(4)], Array.from({length:9},(_,i)=>[enter(i),exit(i)]).flat(),
+    [enter(1,{...effectState,colorMatrix:null}),exit(1)], [enter(1,{...effectState,glow:false}),exit(1)],
+    [enter(1,{...effectState,maskPageIndex:0}),exit(1)], [enter(1,{...effectState,blurRadius:20}),exit(1)],
+    [enter(1,{...effectState,colorMatrix:Array(20).fill(Infinity)}),exit(1)]])
+    assert.throws(()=>encode(commands));
+});

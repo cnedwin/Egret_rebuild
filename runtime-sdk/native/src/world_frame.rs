@@ -275,7 +275,7 @@ impl<'a> WorldFrame<'a> {
         let hud_offset = bytes.len().checked_sub(word(bytes, 8) as usize)?;
         let overlay = &bytes[hud_offset..];
         if !(crate::frame::HEADER_BYTES..=crate::frame::MAX_FRAME_BYTES).contains(&overlay.len())
-            || !matches!(word(overlay, 0), 0x32524745 | 0x33524745 | 0x34524745 | 0x35524745)
+            || !matches!(word(overlay, 0), 0x32524745 | 0x33524745 | 0x34524745 | 0x35524745 | 0x36524745)
             || word(overlay, 4) != word(bytes, 4) || word(overlay, 16) & 255 != 0 {
             return None;
         }

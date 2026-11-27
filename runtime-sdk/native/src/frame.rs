@@ -2,6 +2,10 @@
 //! Painter-ordered baseline (EGR1), project quads (EGR2/EGR3), and indexed project meshes (EGR4).
 #[path = "frame_indexed.rs"]
 mod indexed;
+/// Highest project packet version this native renderer decodes. No GL context is needed.
+#[no_mangle]
+pub extern "C" fn egret_renderer_project_frame_version() -> u32 { 6 }
+
 pub(crate) const HEADER_BYTES: usize = 24;
 pub(crate) const QUAD_BYTES: usize = 48;
 const PROJECT_QUAD_BYTES: usize = 64;
@@ -14,6 +18,10 @@ pub(crate) const ADD: u32 = 8;
 pub(crate) const LINEAR: u32 = 16;
 const VERTEX_LIGHT: u32 = 32;
 const SOLID_PAGE: u32 = 64;
+pub(crate) const EFFECT_ENTER: u32 = 128;
+pub(crate) const EFFECT_EXIT: u32 = 129;
+const MAX_EFFECT_GROUPS: usize = 8;
+const MAX_EFFECT_DEPTH: usize = 4;
 pub(crate) const MAX_DIMENSION: u32 = 16384;
 
 #[derive(Debug, PartialEq)]
@@ -75,21 +83,46 @@ pub(crate) struct Batch {
 }
 
 impl Batch {
-    /// A logical half-open interval contains precisely these physical pixel centers.
     pub fn scissor(&self, logical: [f32; 2], physical: [u32; 2]) -> [i32; 4] {
-        let edge = |v: f32, axis: usize| {
-            ((f64::from(v) * f64::from(physical[axis]) / f64::from(logical[axis]) - 0.5).ceil() as i32)
-                .clamp(0, physical[axis] as i32)
-        };
-        let [left, top, right, bottom] = self.clip;
-        let (x, y, r, b) = (edge(left, 0), edge(top, 1), edge(right, 0), edge(bottom, 1));
-        [x, physical[1] as i32 - b, r - x, b - y]
+        scissor(self.clip, logical, physical)
     }
+}
+
+/// Both draw clipping and isolated composition use the same physical pixel centers.
+pub(crate) fn scissor(clip: [f32; 4], logical: [f32; 2], physical: [u32; 2]) -> [i32; 4] {
+    let edge = |v: f32, axis: usize| {
+        ((f64::from(v) * f64::from(physical[axis]) / f64::from(logical[axis]) - 0.5).ceil() as i32)
+            .clamp(0, physical[axis] as i32)
+    };
+    let [left, top, right, bottom] = clip;
+    let (x, y, r, b) = (edge(left, 0), edge(top, 1), edge(right, 0), edge(bottom, 1));
+    [x, physical[1] as i32 - b, r - x, b - y]
+}
+
+#[derive(Debug)]
+pub(crate) struct ProjectGlow {
+    pub spread: f32,
+    pub strength: f32,
+    pub color: u32,
+    pub alpha: f32,
+    pub offset: [f32; 2],
+    pub inner: bool,
+    pub knockout: bool,
+    pub outline: bool,
+}
+
+#[derive(Debug)]
+pub(crate) struct ProjectEffect {
+    pub clip: [f32; 4],
+    pub matrix: Option<[f32; 20]>,
+    pub blur: f32,
+    pub glow: Option<ProjectGlow>,
 }
 
 pub(crate) struct Header {
     pub project: bool,
     pub mapped: bool,
+    pub effects: Vec<ProjectEffect>,
     pub size: [f32; 2],
     pub clear: [u8; 4],
 }
@@ -190,11 +223,13 @@ pub(crate) fn prepare_lit_frame(
     if !(HEADER_BYTES..=MAX_FRAME_BYTES).contains(&bytes.len()) {
         return Err(Error::Invalid);
     }
-    let (project, mapped, stride) = match word(bytes, 0) {
+    let format = word(bytes, 0);
+    let layered = format == 0x36524745;
+    let (project, mapped, stride) = match format {
         0x31524745 => (false, false, QUAD_BYTES),
         0x32524745 => (true, false, PROJECT_QUAD_BYTES),
         0x33524745 => (true, true, PROJECT_QUAD_BYTES),
-        0x34524745 | 0x35524745 => (true, false, 0),
+        0x34524745 | 0x35524745 | 0x36524745 => (true, false, 0),
         _ => return Err(Error::Invalid),
     };
     let width = word(bytes, 8);
@@ -204,15 +239,16 @@ pub(crate) fn prepare_lit_frame(
     if !(1..=MAX_DIMENSION).contains(&width)
         || !(1..=MAX_DIMENSION).contains(&height)
         || (!project && clear[3] != 255)
-        || count > MAX_QUADS
+        || count > MAX_QUADS + if layered { 2 * MAX_EFFECT_GROUPS } else { 0 }
     {
         return Err(Error::Invalid);
     }
     let size = [width as f32, height as f32];
+    let mut effects = Vec::new();
     if stride == 0 {
         let mapped = indexed::decode(&bytes[HEADER_BYTES..], count, size, page_sizes, vertices, batches, indices,
-                                     word(bytes, 0) == 0x35524745, lights)?;
-        return Ok(Header { project, mapped, size, clear });
+                                     format == 0x35524745 || layered, layered, lights, &mut effects)?;
+        return Ok(Header { project, mapped, size, clear, effects });
     }
     let records_end = HEADER_BYTES + count * stride;
     let suffix = bytes.get(records_end..).ok_or(Error::Invalid)?;
@@ -232,7 +268,7 @@ pub(crate) fn prepare_lit_frame(
         decode_quad(record, mapping, project, size, 0, page_sizes, vertices, batches)?;
     }
     if next.is_some() { return Err(Error::Invalid); }
-    Ok(Header { project, mapped, size, clear })
+    Ok(Header { project, mapped, size, clear, effects })
 }
 
 #[cfg(test)]
@@ -477,6 +513,65 @@ mod indexed_tests {
         let color = 24 + 68 + plain.len() + 52 + 16;
         bytes[color..color + 4].copy_from_slice(&f32::NAN.to_le_bytes());
         assert!(parse(&bytes).is_err());
+    }
+
+    fn effect(blur: f32) -> Vec<u8> {
+        let mut record = Vec::new();
+        words(&mut record, &[EFFECT_ENTER, 7]);
+        words(&mut record, &[2., 1., 60., 47.].map(f32::to_bits));
+        let mut matrix = [0f32; 20];
+        for i in [0, 6, 12, 18] { matrix[i] = 1.; }
+        matrix[4] = 31.;
+        words(&mut record, &matrix.map(f32::to_bits));
+        words(&mut record, &[blur.to_bits(), 4f32.to_bits(), 2f32.to_bits(), 0x987654, 0.25f32.to_bits(),
+            (-3f32).to_bits(), 2f32.to_bits(), 3]);
+        record
+    }
+
+    fn layered(records: &[Vec<u8>]) -> Vec<u8> {
+        let mut bytes = packet(records);
+        bytes[..4].copy_from_slice(b"EGR6");
+        bytes
+    }
+
+    #[test]
+    fn matches_boundaries_and_never_batches_across_an_isolated_group() {
+        let (enter, exit) = (effect(3.), EFFECT_EXIT.to_le_bytes().to_vec());
+        let records = [quad(false), enter.clone(), quad(false), enter, mesh(2, 1), exit.clone(), exit, quad(false)];
+        let (mut vertices, mut batches, mut indices) = (Vec::new(), Vec::new(), Vec::new());
+        let h = prepare_frame(&layered(&records), &[[16, 8]; PAGE_SLOTS], &mut vertices, &mut batches, &mut indices).unwrap();
+        let batch_order: Vec<_> = batches.iter().map(|b| (b.policy, b.first, b.count)).collect();
+        assert_eq!(batch_order, [(0,0,6),(EFFECT_ENTER,0,0),(0,6,6),(EFFECT_ENTER,1,0),
+            (0,0,6),(EFFECT_EXIT,1,0),(EFFECT_EXIT,0,0),(0,16,6)]);
+        assert_eq!(h.effects.len(), 2);
+        assert_eq!(h.effects[0].matrix.unwrap()[4], 31.);
+        assert_eq!(h.effects[0].clip, [2.,1.,60.,47.]);
+        assert_eq!(h.effects[0].blur, 3.);
+        let glow = h.effects[0].glow.as_ref().unwrap();
+        assert_eq!((glow.spread, glow.strength, glow.color, glow.alpha), (4.,2.,0x987654,0.25));
+        assert_eq!(glow.offset, [-3.,2.]);
+        assert!(glow.inner && glow.knockout && !glow.outline);
+    }
+
+    #[test]
+    fn rejects_bad_group_payloads_before_native_execution() {
+        let (enter, exit) = (effect(3.), EFFECT_EXIT.to_le_bytes().to_vec());
+        let good=layered(&[enter.clone(),exit.clone()]);
+        for end in 0..good.len() { assert!(parse(&good[..end]).is_err()); }
+        for (offset,value) in [(28,0),(32,f32::NAN.to_bits()),(48,f32::NAN.to_bits()),
+                               (128,9f32.to_bits()),(132,(-1f32).to_bits()),(140,0xffffffff),(156,8)] {
+            let mut bad=good.clone();
+            bad[offset..offset+4].copy_from_slice(&value.to_le_bytes());
+            assert!(parse(&bad).is_err(), "offset {offset}");
+        }
+        assert!(parse(&layered(&[quad(false)])).is_err());
+        assert!(parse(&layered(std::slice::from_ref(&exit))).is_err());
+        assert!(parse(&layered(std::slice::from_ref(&enter))).is_err());
+        let nested=[vec![enter.clone(); 5],vec![exit.clone(); 5]].concat();
+        assert!(parse(&layered(&nested)).is_err());
+        let many=(0..9).flat_map(|_| [enter.clone(),exit.clone()]).collect::<Vec<_>>();
+        assert!(parse(&layered(&many)).is_err());
+        assert!(parse(&packet(&[enter,exit])).is_err());
     }
 
     #[test]

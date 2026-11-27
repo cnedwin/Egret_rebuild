@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "fixture": "runtime-sdk/examples/legacy-subtree-effects",
+  "fixtureBoardSha256": "9862605091618e5ff5a28da15d12d87ae237e007c6283ee555dc91b0c44050a0",
+  "android": {
+    "model": "Samsung Galaxy Z Fold7 (SM-F966U1)",
+    "os": "Android 17",
+    "graphics": "Native GLES3",
+    "scriptHost": "trimmed V8 15.7.112.19",
+    "packageType": "instrumented debug APK",
+    "apkSha256": "85f0c5117a3203b4bf25b0a2849a68a85c6c05e18167e6010533e0bf70b53f68",
+    "aarSha256": "4850a1b75d6b1e6c5ec2141b39274b0f154cfa0afbd47a82ae50840e14d77913"
+  },
+  "reference": {
+    "os": "Windows",
+    "browser": "Microsoft Edge 158.0.4370.33",
+    "graphics": "ANGLE D3D11, NVIDIA GeForce RTX 5090 Laptop GPU",
+    "backend": "Egret 7 shared WebGL2",
+    "blendSpace": "linear",
+    "stage": [
+      192,
+      128
+    ],
+    "buffer": [
+      1236,
+      824
+    ],
+    "ratio": 6.4375
+  },
+  "comparison": {
+    "method": "Compare RGB at corresponding physical pixels in the full Android SurfaceView and Edge WebGL2 canvas. Error is the largest absolute difference among RGB components per pixel. Eleven stage probes include the clipped edge, overlap and following sibling.",
+    "pixelsPerState": 1018464,
+    "limits": {
+      "stageProbeMax": 3,
+      "fullFrameP95": 5,
+      "subjectP95": 5
+    },
+    "states": [
+      {
+        "state": "plain",
+        "fullFrameP95": 0,
+        "subjectP95": 0,
+        "fullFrameMax": 0
+      },
+      {
+        "state": "matrix",
+        "fullFrameP95": 1,
+        "subjectP95": 1,
+        "fullFrameMax": 1
+      },
+      {
+        "state": "nested",
+        "fullFrameP95": 1,
+        "subjectP95": 1,
+        "fullFrameMax": 1
+      },
+      {
+        "state": "oldBlur10Refused",
+        "fullFrameP95": 0,
+        "subjectP95": 0,
+        "fullFrameMax": 0
+      },
+      {
+        "state": "oldGlow35Refused",
+        "fullFrameP95": 0,
+        "subjectP95": 0,
+        "fullFrameMax": 0
+      },
+      {
+        "state": "sharedBlur5",
+        "fullFrameP95": 0,
+        "subjectP95": 1,
+        "fullFrameMax": 2
+      },
+      {
+        "state": "sharedGlow7",
+        "fullFrameP95": 0,
+        "subjectP95": 0,
+        "fullFrameMax": 1
+      },
+      {
+        "state": "clear",
+        "fullFrameP95": 0,
+        "subjectP95": 0,
+        "fullFrameMax": 0
+      }
+    ],
+    "overlapRgb": {
+      "nativeMatrix": [
+        9,
+        142,
+        190
+      ],
+      "referenceMatrix": [
+        9,
+        142,
+        191
+      ],
+      "nativeNested": [
+        9,
+        51,
+        190
+      ],
+      "referenceNested": [
+        9,
+        50,
+        191
+      ]
+    },
+    "unaffectedRgb": {
+      "clipped": [
+        16,
+        32,
+        48
+      ],
+      "sibling": [
+        32,
+        64,
+        208
+      ]
+    }
+  },
+  "lifecycle": {
+    "procedure": "Tap through states. Send the embedded activity to the background while nested isolation is visible, resume, close the player, and open the same project again.",
+    "contextsBeforeBackground": 1,
+    "contextsAfterResume": 2,
+    "recoveredNestedStageProbesMatch": true,
+    "framesAtClose": 2137,
+    "abandonedAtClose": 0,
+    "staticTexturePageUploads": 0,
+    "staticTexturePageReleases": 0,
+    "textCacheSlotsAtClose": 0,
+    "textCacheBytesAtClose": 0,
+    "reopenedPlainStageProbesMatch": true
+  },
+  "originalBrowser": {
+    "engine": "Egret 5.3.10 WebGL",
+    "buffer": [
+      192,
+      128
+    ],
+    "overlapMatrixRgb": [
+      8,
+      112,
+      151
+    ],
+    "overlapNestedRgb": [
+      8,
+      48,
+      151
+    ],
+    "blur10RgbThreePixelsLeftOfShape": [
+      103,
+      20,
+      30
+    ],
+    "glow35RgbThreePixelsLeftOfShape": [
+      161,
+      100,
+      17
+    ],
+    "limits": "The original sRGB-code blend and quality-dependent wide filters are a separate migration reference. Native and Egret 7 reject these two legacy filters with LEGACY_FILTER_RADIUS_UNSUPPORTED. Shared controls use a radius of 5 or 7, capped at 16 physical pixels."
+  },
+  "boundaries": [
+    "A comparison made at different backing ratios showed different edge widths. The matched ratio above controls this effect.",
+    "The fixture has authored vector shapes and no static atlas or text pages. Its close diagnostics do not measure driver-resident bytes or per-frame intermediate allocation.",
+    "Measurements concern appearance and lifecycle on the named hardware. They do not establish performance, broad device coverage, or old wide-filter equivalence."
+  ]
+}

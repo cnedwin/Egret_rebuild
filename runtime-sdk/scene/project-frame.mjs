@@ -2,6 +2,8 @@
 // EGR2 uses a 24-byte little-endian header and 64-byte records. Page 0 is white.
 // Each record contains page:u8, straight RGB:u8x3, opacity:f32, three affine
 // corners, two UV corners and the intersected logical clip (left,top,right,bottom).
+import {EFFECT_MAGIC, EFFECT_EXIT, MAX_EFFECT_GROUPS, MAX_EFFECT_DEPTH, prepareProjectEffect, writeEffectEnter} from './project-effects.mjs';
+
 export const PROJECT_FRAME_MAGIC = 0x32524745;
 const ATLAS_FRAME_MAGIC = 0x33524745;
 const INDEXED_FRAME_MAGIC = 0x34524745;
@@ -232,11 +234,11 @@ function canReuse(saved, cmd, material, frame, slots) {
 
 // Only the project player feeds this encoder immutable Engine captures. A command
 // can keep its identity while its material, atlas entry or page binding changes.
-export function createCapturedProjectEncoder() {
+export function createCapturedProjectEncoder({subtreeEffects = true} = {}) {
   const records = [];
   return {
     encode(frame, frameId, pageIds) {
-      try { return encode(frame, frameId, pageIds, records); }
+      try { return encode(frame, frameId, pageIds, records, subtreeEffects); }
       catch (error) { records.length = 0; throw error; }
     },
     clear() { records.length = 0; }
@@ -249,7 +251,7 @@ export function encodeProjectFrame(frame, frameId, pageIds) {
   return encode(frame, frameId, pageIds);
 }
 
-function encode(frame, frameId, pageIds, records) {
+function encode(frame, frameId, pageIds, records, subtreeEffects = true) {
   if (frame.profile !== 'egret.shared-frame2d/1' || frame.colorRecipe !== 'egret.linear-srgb-pma/1' ||
       frame.targetRepresentation !== 'egret.srgb-pma8-target/1' ||
       !(frame.outputAlpha === 'premultiplied' || (frame.outputAlpha === 'opaque' && frame.clearAlpha === 1)))
@@ -271,9 +273,32 @@ function encode(frame, frameId, pageIds, records) {
   });
   const flags = [];
   let count = 0, needsTypedDraws = false;
+  let groups, stack, groupCount = 0, markerBytes = 0, markerCount = 0;
   for (const command of frame.commands) {
     if (command.kind === 'barrier') {
-      if (!barriers.has(command.reason)) throw new Error('Unsupported project barrier: ' + command.reason);
+      if (command.effect !== undefined && command.reason !== 'effect-enter')
+        throw new Error('Unsupported project effect metadata on barrier: ' + command.reason);
+      if (command.reason === 'effect-enter') {
+        if (!subtreeEffects) throw new Error('Subtree effects require an EGR6-capable Android player');
+        const effect = command.effect;
+        if (!effect || !Array.isArray(effect.clips) || effect.clips.length > 8 ||
+            !Number.isSafeInteger(command.boundaryId) || command.boundaryId < 0)
+          throw new Error('Unsupported project effect boundary');
+        groups ??= new Map();
+        stack ??= [];
+        if (++groupCount > MAX_EFFECT_GROUPS || stack.length >= MAX_EFFECT_DEPTH)
+          throw new RangeError('Project effect group limit exceeded');
+        const group = prepareProjectEffect(effect, clipBounds(effect.clips, frame.width, frame.height));
+        stack.push(command.boundaryId);
+        groups.set(command, group);
+        markerBytes += group.length;
+        markerCount++;
+        needsTypedDraws = true;
+      } else if (command.reason === 'effect-exit') {
+        if (!stack?.length || stack.pop() !== command.boundaryId) throw new Error('Unbalanced project effect boundary');
+        markerBytes += 4;
+        markerCount++;
+      } else if (!barriers.has(command.reason)) throw new Error('Unsupported project barrier: ' + command.reason);
     } else if (command.kind === 'rect' || command.kind === 'image' || command.kind === 'mesh') {
       if (++count > MAX_QUADS) throw new RangeError('Project draw limit exceeded');
       const index = command.materialIndex;
@@ -281,18 +306,31 @@ function encode(frame, frameId, pageIds, records) {
       if (command.kind === 'mesh' || policy !== 0) needsTypedDraws = true;
     } else throw new Error('Unsupported project draw: ' + command.kind);
   }
+  if (stack?.length) throw new Error('Unclosed project effect boundary');
   const indexed = needsTypedDraws ? indexedLayout(frame, slots, flags) : undefined;
-  const buffer = new ArrayBuffer(indexed?.size ?? (HEADER + QUAD * count));
+  const size = (indexed?.size ?? (HEADER + QUAD * count)) + markerBytes;
+  if (size > MAX_FRAME_BYTES) throw new RangeError('Project frame byte limit exceeded');
+  const buffer = new ArrayBuffer(size);
   const view = new DataView(buffer);
   const clear = rgb(frame.clearColor)*256 + Math.round(unit(frame.clearAlpha)*255);
-  [indexed?.extended ? MATERIAL_FRAME_MAGIC : indexed ? INDEXED_FRAME_MAGIC : PROJECT_FRAME_MAGIC, frameId, frame.width, frame.height, clear, count]
+  [groups ? EFFECT_MAGIC : indexed?.extended ? MATERIAL_FRAME_MAGIC : indexed ? INDEXED_FRAME_MAGIC : PROJECT_FRAME_MAGIC, frameId, frame.width, frame.height, clear, count + markerCount]
     .forEach((value, i) => view.setUint32(i*4, value, true));
   const bytes = new Uint8Array(buffer);
   if (records) records.length = count;
   let base = HEADER, index = 0;
   let atlasWords;
   for (const cmd of frame.commands) {
-    if (cmd.kind === 'barrier') continue;
+    if (cmd.kind === 'barrier') {
+      if (cmd.reason === 'effect-enter') {
+        const group = groups.get(cmd);
+        writeEffectEnter(view, base, group);
+        base += group.length;
+      } else if (cmd.reason === 'effect-exit') {
+        view.setUint32(base, EFFECT_EXIT, true);
+        base += 4;
+      }
+      continue;
+    }
     const material = frame.materials[cmd.materialIndex];
     const saved = records?.[index];
     const draw = indexed?.draws[index];
