@@ -37,6 +37,21 @@ The Gradle task validates all revision files, replaces the game's assets in the 
 node runtime-sdk/android/player/stage-revision.mjs --prune --store <revisions> --keep <accepted-SHA256> --keep <previous-SHA256>
 ```
 
+## Ship a second local release
+
+Keep the installed game's application ID, signing identity and Android project. Build an accepted first APK with the customer's signing configuration. For the next edition, edit the game and stage a new revision as above. Increase `versionCode` in the existing Android project's `egret-app.json` and update `versionName`. Build the same Android application with the staged game. This preserves Activity registrations, vendor integrations and the application's storage namespace.
+
+```sh
+gradle --offline -p <application> -PegretGameRevision=<accepted-revision-directory> assembleRelease bundleRelease
+node runtime-sdk/android/player/compare-release-apks.mjs --previous <first.apk> --candidate <second.apk> --build-tools <android-sdk>/build-tools/35.0.0 --jdk <jdk17>
+```
+
+The command verifies both APK signatures using Android Build Tools and reads both manifests. `ready-for-device-test` identifies the same application and current signer set with an increasing version code. A changed signing certificate requires separate review of the signing lineage. Compare the actual device-distributed builds when a store signs them. Use the standalone APKs produced by `assembleRelease`. For a split installation, validate the complete set of APKs delivered by bundletool or the store on the device.
+
+Install the first APK on a dedicated device, make a recognizable save, and restart it. Install the candidate with `adb install -r <second.apk>`. Open the game again and verify the previous state, a change unique to the new edition, and a second successful save. Uninstalling before the upgrade removes the data required by this check.
+
+On Fold7 the first edition saved one move and recovered it after a forced restart. Its optional call to `customer.revision` failed at the real host dispatcher. Edition 102 corrected the game to call the registered `customer.version` handler. Android's package manager returned 102, the new background appeared, and the saved move was still present. A second move survived another restart. Both builds used the extracted offline kit and a local test signer. An external team's own delivery, proprietary channel callbacks and a second GPU family remain to be verified. [Device and build record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-receiver-upgrade.json)
+
 ## Include a channel library
 
 Place the vendor's AARs, JARs and a JSON file together. Supply the filenames with their exact case and the vendor-approved digests. List any local transitive libraries. Pass `--channel <manifest.json>` to `create-app.mjs`. The standalone project rechecks these files when Gradle configures its dependencies. SDK credentials and signing keys stay with the operator.

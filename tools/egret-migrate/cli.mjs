@@ -10,10 +10,11 @@ import { rebuildProject } from './rebuild.mjs';
 import { compileTheme } from './compile-theme.mjs';
 import { compileClassic } from './compile-classic.mjs';
 import { convertProject } from './convert.mjs';
-import { hash, inspectLegacyProject, json, refuse } from './inspect.mjs';
+import { hash, json, refuse } from './inspect.mjs';
+import { inspectRoutes } from './inspect-routes.mjs';
 
 const requiredChecks = ['first-action', 'round-finished', 'restart', 'first-action-after-restart', 'save-restored'];
-const usage = `egret-migrate inspect --source <Egret 5 project> [--source-order <json>]
+const usage = `egret-migrate inspect --source <Egret 5 project> [--source-order <json>] [--published <old compiled project>] [--prepared <prepared Android project> --android-run <launch.json>] [--compiler <trusted TypeScript-Plus>]
 egret-migrate convert --source <Egret 5 project> --out <new directory> --engine <egret2d.mjs> --engine-version <7.0.x> --esbuild <module>
 egret-migrate compile-theme --source <trusted legacy project> --classic <compiled scripts> --theme <relative theme> --playwright <module> --out <new directory> [--entry index.html] [--ready <project.ready>] [--namespaces <namespace,...>] [--executable <browser>]
 egret-migrate compile-classic --source <Egret 5.3 project> --compiler <trusted typescript.js> --out <new directory> [--compiler-sha256 <hash>] [--baseline <receipt>] [--groups <json>] [--theme <relative-path>] [--theme-factories <project profile> | --compiled-theme <compile-theme output>] [--mode debug|release] [--target config|es2015]
@@ -128,7 +129,14 @@ async function inspectOrConvert(command, values) {
     theme: values.theme,
     bones: values.bones && readJSON(values.bones)
   };
-  if (command === 'inspect') return inspectLegacyProject(config.source, config);
+  if (command === 'inspect')
+    return inspectRoutes(config.source, config, {
+      published: values.published,
+      prepared: values.prepared,
+      launch: values['android-run'],
+      compiler: values.compiler,
+      compilerSha256: values['compiler-sha256']
+    });
   return convertProject({
     ...config,
     out: values.out,
@@ -151,7 +159,21 @@ const commands = {
     need: ['source', 'compiler', 'out'],
     extra: ['compiler-sha256', 'mode', 'target', 'theme', 'theme-factories', 'compiled-theme', 'groups', 'baseline']
   },
-  inspect: { need: ['source'], extra: ['profile', 'source-order', 'resources', 'theme', 'bones'] },
+  inspect: {
+    need: ['source'],
+    extra: [
+      'profile',
+      'source-order',
+      'resources',
+      'theme',
+      'bones',
+      'published',
+      'prepared',
+      'android-run',
+      'compiler',
+      'compiler-sha256'
+    ]
+  },
   convert: {
     need: ['source', 'out', 'engine', 'engine-version', 'esbuild'],
     extra: [

@@ -20,3 +20,5 @@ For the Egret 5.0.14 EraserSanGuoSha lobby, follow the installed guide's `--prof
 5. Run `egret-migrate preview` for an accepted comparison. Record the preview build digest and actual device behavior separately from the desktop checks.
 
 A successful conversion creates editable source and a Web build. A game is verified when both versions pass the same game scenario. If a dependency, source, old build, permission or device is unavailable, retain the artifacts and report exactly where the workflow stopped. Keep the report and source local unless the user authorizes distribution.
+
+For an unfamiliar project start with `inspect` and save `routes.web.nextAction`, `routes.android.nextAction` and `routes.hostUsage` with the source identity. Select the requested target. Use ordered review ranges to inspect large classic projects. A matching native launch receipt can identify an original published script. Verify static host candidates during the first playable route. See [the two-route intake](../README.md#inspect-both-routes-before-choosing-a-target).
