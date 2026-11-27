@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: Apache-2.0
+import org.gradle.api.file.FileSystemOperations
+import javax.inject.Inject
+
+abstract class EgretRevisionAssets extends DefaultTask {
+    @InputDirectory @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getOriginalAssets()
+    @InputDirectory @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getRevision()
+    @Input abstract Property<String> getRevisionId()
+    @OutputDirectory abstract DirectoryProperty getOutputDirectory()
+    @Inject abstract FileSystemOperations getFileOperations()
+
+    @TaskAction void collect() {
+        def root = revision.get().asFile
+        def game = new File(root, 'game')
+        def receipt = new groovy.json.JsonSlurper().parse(new File(root, 'revision.json'), 'UTF-8')
+        def rows = []
+        def byName = [:]
+        if (!game.isDirectory() || java.nio.file.Files.isSymbolicLink(game.toPath())) {
+            throw new GradleException('Invalid game assets directory')
+        }
+        java.nio.file.Files.walk(game.toPath()).withCloseable { paths ->
+            paths.forEach { entry ->
+                if (java.nio.file.Files.isSymbolicLink(entry)) throw new GradleException('Linked revision asset')
+                if (java.nio.file.Files.isRegularFile(entry)) {
+                    def name = game.toPath().relativize(entry).toString().replace(File.separator, '/')
+                    byName[name] = entry.toFile()
+                }
+            }
+        }
+        receipt.files.each { row ->
+            def input = byName.remove(row.name)
+            if (input == null || input.length() != row.size) throw new GradleException('Missing or changed revision asset')
+            def digest = java.security.MessageDigest.getInstance('SHA-256')
+            input.withInputStream { stream ->
+                byte[] buffer = new byte[65536]
+                int count
+                while ((count = stream.read(buffer)) != -1) digest.update(buffer, 0, count)
+            }
+            def hash = digest.digest().encodeHex().toString()
+            if (hash != row.sha256) throw new GradleException('Changed revision asset: ' + row.name)
+            rows << [name:row.name, size:row.size, sha256:hash]
+        }
+        def id = java.security.MessageDigest.getInstance('SHA-256')
+                .digest(new groovy.json.JsonGenerator.Options().disableUnicodeEscaping().build().toJson(rows).getBytes('UTF-8')).encodeHex().toString()
+        if (!byName.isEmpty() || receipt.schemaVersion != 1 || id != receipt.sha256 || id != revisionId.get()) {
+            throw new GradleException('Revision identity mismatch')
+        }
+
+        fileOperations.sync {
+            from(originalAssets) { exclude 'game', 'game/**' }
+            from(game) { into 'game' }
+            into outputDirectory
+        }
+    }
+}
+
+def root = file(providers.gradleProperty('egretGameRevision').get())
+def initial = layout.projectDirectory.dir('src/main/assets')
+android.sourceSets.main.assets.setSrcDirs([])
+androidComponents.onVariants(androidComponents.selector().all(), { variant ->
+    def task = tasks.register("collectEgretAssets${variant.name.capitalize()}", EgretRevisionAssets) {
+        originalAssets.set(initial)
+        revision.set(root)
+        revisionId.set(root.name)
+    }
+    variant.sources.assets.addGeneratedSourceDirectory(task) { it.outputDirectory }
+})

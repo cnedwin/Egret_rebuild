@@ -27,7 +27,7 @@ jobs:
           npm install --global pnpm@11.25.0 --ignore-scripts
           pnpm install --frozen-lockfile --ignore-scripts
           node tools/build.mjs
-          node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --strict --target ES2022 --module esnext --moduleResolution bundler runtime-sdk/project/android-player-project.d.ts
+          node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --strict --target ES2022 --module esnext --moduleResolution bundler runtime-sdk/project/android-player-project.d.ts runtime-sdk/project/android-player-network.d.ts
           esbuild=$(node -p "require('./examples/starter/release/package.json').devDependencies.esbuild")
           npm install --prefix "$RUNNER_TEMP/bundler" --no-save --ignore-scripts --no-audit --no-fund "esbuild@$esbuild"
           EGRET_PLAYER_ESBUILD="$RUNNER_TEMP/bundler/node_modules/esbuild" node --test runtime-sdk/scene/*.test.mjs runtime-sdk/project/*.test.mjs runtime-sdk/android/player/*.test.mjs
@@ -69,9 +69,10 @@ jobs:
           (cd "$replay_test" && "$JAVA_HOME/bin/jar" xf "$RUNNER_TEMP/apk/egret-player-webview.aar" classes.jar)
           player_cp="$replay_test/classes.jar:$ANDROID_HOME/platforms/android-36/android.jar"
           "$JAVA_HOME/bin/javac" --release 8 -encoding UTF-8 -cp "$player_cp" -d "$replay_test" \
-            runtime-sdk/android/player/test/org/egret/runtime/player/{ProjectReplayTapeTest,WebViewFrameTransportTest,ProjectAssetReadsTest,ProjectSaveStorageTest}.java
+            runtime-sdk/android/player/test/org/egret/runtime/player/{ProjectReplayTapeTest,WebViewFrameTransportTest,ProjectAssetReadsTest,ProjectSaveStorageTest,ProjectHostServicesTest}.java
           "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectReplayTapeTest
           "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.WebViewFrameTransportTest
+          "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectHostServicesTest
           "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectSaveStorageTest
           # Exercise the same JNI entry as the AAR, using the host CPU for this JVM check.
           cc -std=c11 -O2 -shared -fPIC -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" \

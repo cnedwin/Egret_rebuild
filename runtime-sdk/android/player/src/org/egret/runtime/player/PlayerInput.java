@@ -120,6 +120,53 @@ final class PlayerInput {
         edits++;
     }
 
+    /** A dialog is a single input session. Dismissal and submission settle the same reply once. */
+    Runnable openEditor(String json, ProjectHostServices.Reply reply) {
+        try {
+            JSONObject options = new JSONObject(json);
+            String initial = options.optString("text", "");
+            boolean multiline = options.optBoolean("multiline", false);
+            if (!owner.isPlaying() || activity.isFinishing() || activity.isDestroyed()) {
+                reply.reject("Editor requires a foreground game");
+                return null;
+            }
+            if (editor != null) editor.dismiss();
+            EditText field = new EditText(activity);
+            field.setSingleLine(!multiline);
+            field.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN
+                    | (multiline ? EditorInfo.IME_ACTION_NONE : EditorInfo.IME_ACTION_DONE));
+            field.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(8192)});
+            field.setText(initial);
+            field.setSelection(field.length());
+            AlertDialog dialog = new AlertDialog.Builder(activity).setView(field)
+                    .setPositiveButton(android.R.string.ok, (d, which) -> {
+                        try {
+                            reply.resolve(new JSONObject().put("status", "confirmed")
+                                    .put("text", field.getText().toString()).toString());
+                        } catch (JSONException error) { reply.reject("Invalid edited text"); }
+                    })
+                    .setNegativeButton(android.R.string.cancel, null).create();
+            editor = dialog;
+            dialog.setOnDismissListener(d -> {
+                if (editor == dialog) editor = null;
+                reply.resolve("{\"status\":\"canceled\"}");
+            });
+            field.setOnEditorActionListener((v, action, event) -> {
+                if (multiline || action != EditorInfo.IME_ACTION_DONE) return false;
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+                return true;
+            });
+            field.requestFocus();
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            dialog.show();
+            edits++;
+            return dialog::dismiss;
+        } catch (JSONException error) {
+            reply.reject("Invalid editor request");
+            return null;
+        }
+    }
+
     void stop() {
         cancelPointers();
         if (editor != null) { editor.dismiss(); editor = null; }

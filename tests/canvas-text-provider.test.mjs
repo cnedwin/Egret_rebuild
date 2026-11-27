@@ -671,3 +671,26 @@ test('WC06 supplement: thrown undefined is a raster operation failure despite tw
   assert.equal(releaseCalls, 1); assert.equal(base.state.released.length, 1);
   assert.deepEqual(retirement().map(event => event[2]), ['width', 'height'], 'undefined does not enable public success or cleanup retry');
 });
+
+test('outlined text reuses equal requests, expands ink without changing advance, and paints the fill last', async t => {
+  const native = realm(t), strokes = [];
+  Object.assign(native.Context.prototype, { strokeStyle: '#000000', lineJoin: 'miter', lineWidth: 1,
+    strokeText(text, x, y) {
+      strokes.push([text, x, y, this.lineWidth, this.strokeStyle, this.lineJoin]);
+      native.events.push(['stroke', this.canvas.id, text]);
+    }
+  });
+  const provider = (await factory())(), base = await setup(t, provider);
+  const input = wcRequest({ text: 'A', strokeWidth: 2, strokeColor: 0x22aa44 });
+  const [first, second] = await Promise.all([base.cache.acquire(input), base.cache.acquire({ ...input })]);
+  assert.equal(first.lease.value, second.lease.value);
+  assert.deepEqual(strokes, [['A', 0, 20, 4, '#22aa44', 'round']]);
+  assert.deepEqual(native.events.filter(([op]) => op === 'stroke' || op === 'fill').map(([op]) => op), ['stroke', 'fill']);
+  assert.equal(first.metrics.lines[0].advance, 8);
+  assert.deepEqual(first.metrics.inkBounds, { x: -3, y: 14, width: 12, height: 10 });
+  const changed = await base.cache.acquire({ ...input, strokeColor: 0xdd0011 });
+  assert.notEqual(changed.lease.value, first.lease.value);
+  assert.equal(strokes.at(-1)[4], '#dd0011');
+  for (const lease of [first.lease, second.lease, changed.lease]) lease.release();
+  assert.equal(base.cache.getStatus().activeCallerLeases, 0);
+});

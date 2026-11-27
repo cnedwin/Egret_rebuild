@@ -7,11 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Base64;
 import java.io.IOException;
 import java.io.DataInputStream;
+import java.text.BreakIterator;
+import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,12 +33,14 @@ final class PlayerRaster {
             JSONObject job = new JSONObject(encoded);
             String operation = job.getString("op");
             if (operation.equals("measure")) return measure(runs(job));
+            if (operation.equals("textMetrics")) return metrics(runs(job));
+            if (operation.equals("graphemes")) return graphemes(job.getString("text"));
             if (operation.equals("glbJpeg")) return embeddedImage(job, "image/jpeg");
             if (operation.equals("glbPng")) return embeddedImage(job, "image/png");
             int width = dimension(job, "width"), height = dimension(job, "height");
             if ((long) width * height > MAX_PIXELS) throw new IOException("Raster exceeds pixel budget");
             if (operation.equals("png")) return png(job.getString("path"), width, height);
-            if (operation.equals("text")) return text(runs(job), width, height);
+            if (operation.equals("text") || operation.equals("textOutline")) return text(runs(job), width, height);
             throw new IOException("Unknown raster operation");
         } catch (IOException | JSONException | IllegalArgumentException error) {
             return "{\"error\":" + JSONObject.quote(error.toString()) + "}";
@@ -113,13 +118,41 @@ final class PlayerRaster {
         String text = run.getString("text");
         if (text.length() > 4096) throw new IllegalArgumentException("Text run is too long");
         int weight = run.has("weight") ? (int)number(run, "weight", 1, 1000) : 400;
+        String family = run.optString("fontFamily", "sans-serif");
+        if (family.isEmpty() || family.length() > 256) throw new IllegalArgumentException("Invalid font family");
+        boolean italic = run.optBoolean("italic", false);
+        Typeface face = family.equals("sans-serif") ? Typeface.DEFAULT : Typeface.create(family, Typeface.NORMAL);
         Typeface type = Build.VERSION.SDK_INT >= 28
-            ? Typeface.create(Typeface.DEFAULT, weight, false)
-            : Typeface.create("sans-serif", weight >= 600 ? Typeface.BOLD : Typeface.NORMAL);
+            ? Typeface.create(face, weight, italic)
+            : Typeface.create(face, (weight >= 600 ? Typeface.BOLD : Typeface.NORMAL) | (italic ? Typeface.ITALIC : 0));
         paint.setTypeface(type);
         paint.setTextSize(number(run, "size", 1, 256));
         paint.setTextScaleX(1f);
         return text;
+    }
+
+    private static String graphemes(String text) throws JSONException {
+        if (text.length() > 8192) throw new IllegalArgumentException("Text exceeds grapheme limit");
+        BreakIterator iterator = BreakIterator.getCharacterInstance(Locale.ROOT);
+        iterator.setText(text);
+        JSONArray ends = new JSONArray();
+        iterator.first();
+        for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()) ends.put(end);
+        return new JSONObject().put("ends", ends).toString();
+    }
+
+    private static String metrics(JSONArray runs) throws JSONException {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
+        Rect ink = new Rect();
+        JSONArray result = new JSONArray();
+        for (int i = 0; i < runs.length(); i++) {
+            String text = prepare(paint, runs.getJSONObject(i));
+            paint.getTextBounds(text, 0, text.length(), ink);
+            result.put(new JSONObject().put("width", paint.measureText(text)).put("ascent", -paint.ascent())
+                .put("descent", paint.descent()).put("left", ink.left).put("top", ink.top)
+                .put("right", ink.right).put("bottom", ink.bottom));
+        }
+        return new JSONObject().put("metrics", result).toString();
     }
 
     private static String measure(JSONArray runs) throws JSONException {
@@ -144,11 +177,24 @@ final class PlayerRaster {
                 float maxWidth = number(run, "maxWidth", 0, 4096);
                 String rgb = run.getString("color");
                 if (rgb.length() != 7 || rgb.charAt(0) != '#') throw new IllegalArgumentException("Expected #RRGGBB");
-                paint.setColor(Color.parseColor(rgb));
+                int fillColor = Color.parseColor(rgb);
                 float advance = paint.measureText(value);
                 if (advance > 0 && maxWidth > 0) {
                     paint.setTextScaleX(Math.min(1f, maxWidth / advance));
-                    canvas.drawText(value, x, top - paint.ascent(), paint);
+                    float baseline = top - paint.ascent();
+                    float stroke = run.has("strokeWidth") ? number(run, "strokeWidth", 0, 512) : 0;
+                    if (stroke > 0) {
+                        String outline = run.optString("strokeColor", "#000000");
+                        if (!outline.matches("#[0-9a-fA-F]{6}")) throw new IllegalArgumentException("Expected #RRGGBB");
+                        paint.setColor(Color.parseColor(outline));
+                        paint.setStyle(Paint.Style.STROKE);
+                        paint.setStrokeJoin(Paint.Join.ROUND);
+                        paint.setStrokeWidth(stroke * 2);
+                        canvas.drawText(value, x, baseline, paint);
+                    }
+                    paint.setStyle(Paint.Style.FILL);
+                    paint.setColor(fillColor);
+                    canvas.drawText(value, x, baseline, paint);
                 }
             }
             return pixels(bitmap);

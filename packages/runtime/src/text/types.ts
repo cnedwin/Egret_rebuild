@@ -18,6 +18,9 @@ export interface TextRasterRequestInput {
   readonly direction: 'ltr' | 'rtl';
   readonly density: number;
   readonly fillColor: number;
+  /** Outline radius in stage units. Zero draws only the fill. */
+  readonly strokeWidth?: number;
+  readonly strokeColor?: number;
 }
 /** UTF-16 ranges [start, end) omit a delimiter; [end, breakEnd) preserves it. */
 export interface TextSourceLine {
@@ -108,6 +111,8 @@ export interface TextRasterContext {
   readonly reservedScratchBytes: number;
 }
 export interface TextRasterProvider {
+  /** Advertise only when both ink measurement and painting account for outlines. */
+  readonly supportsStroke?: true;
   readonly identity: string;
   readonly profile: 'canvas-explicit-lines-v1';
   /** Return this invocation's exact context.createPlan result. */

@@ -7,12 +7,14 @@ import { PNG } from 'pngjs';
 import { runPlaytest, startPreview } from '../agent-playtest.mjs';
 import { verifyGame } from '../verify-game.mjs';
 import { rebuildProject } from './rebuild.mjs';
+import { compileClassic } from './compile-classic.mjs';
 import { convertProject } from './convert.mjs';
 import { hash, inspectLegacyProject, json, refuse } from './inspect.mjs';
 
 const requiredChecks = ['first-action', 'round-finished', 'restart', 'first-action-after-restart', 'save-restored'];
 const usage = `egret-migrate inspect --source <Egret 5 project> [--source-order <json>]
 egret-migrate convert --source <Egret 5 project> --out <new directory> --engine <egret2d.mjs> --engine-version <7.0.x> --esbuild <module>
+egret-migrate compile-classic --source <Egret 5.3 project> --compiler <trusted typescript.js> --out <new directory> [--compiler-sha256 <hash>] [--baseline <receipt>] [--groups <json>] [--theme <relative-path>] [--theme-factories <project profile>] [--mode debug|release] [--target config|es2015]
 egret-migrate rebuild --source <editable conversion> --out <new directory> --esbuild <module> [--transaction <json>]
 egret-migrate verify --old <working old HTML> --converted <conversion directory> --scenario <trusted mjs> --playwright <module> --out <new directory>
 egret-migrate preview --run <verified comparison directory> --address <private IPv4> --qr-module <qrcode.mjs>
@@ -79,6 +81,20 @@ export async function verifyMigration(options) {
 }
 
 async function inspectOrConvert(command, values) {
+  if (command === 'compile-classic') {
+    return compileClassic({
+      source: values.source,
+      out: values.out,
+      compiler: values.compiler,
+      compilerSha256: values['compiler-sha256'],
+      mode: values.mode,
+      target: values.target,
+      theme: values.theme,
+      themeFactories: values['theme-factories'],
+      groups: values.groups ? readJSON(values.groups) : [],
+      baseline: values.baseline ? readJSON(values.baseline) : undefined
+    });
+  }
   if (command === 'rebuild') {
     return rebuildProject({
       source: values.source,
@@ -92,7 +108,10 @@ async function inspectOrConvert(command, values) {
     refuse('MIGRATE_ARGUMENTS', 'Unknown migration profile.', { profile });
   if (values['socket-url'] !== undefined && profile !== 'eraser-lobby')
     refuse('MIGRATE_ARGUMENTS', '--socket-url requires --profile eraser-lobby.');
-  if (profile && ['source-order', 'resources', 'theme', 'bones'].some(key => values[key] !== undefined))
+  if (
+    profile &&
+    ['source-order', 'resources', 'theme', 'bones', 'movie-atlases'].some(key => values[key] !== undefined)
+  )
     refuse(
       'MIGRATE_ARGUMENTS',
       'The lobby profile selects its source order, resource subset and skins from the repository.'
@@ -113,16 +132,31 @@ async function inspectOrConvert(command, values) {
     engineVersion: values['engine-version'],
     projectId: values['project-id'],
     socketUrl: values['socket-url'],
+    movieAtlases: values['movie-atlases'] && readJSON(values['movie-atlases']),
     esbuild: await moduleAt(values.esbuild),
     transaction: values.transaction ? fs.readFileSync(values.transaction, 'utf8') : undefined
   });
 }
 
 const commands = {
+  'compile-classic': {
+    need: ['source', 'compiler', 'out'],
+    extra: ['compiler-sha256', 'mode', 'target', 'theme', 'theme-factories', 'groups', 'baseline']
+  },
   inspect: { need: ['source'], extra: ['profile', 'source-order', 'resources', 'theme', 'bones'] },
   convert: {
     need: ['source', 'out', 'engine', 'engine-version', 'esbuild'],
-    extra: ['profile', 'socket-url', 'source-order', 'resources', 'theme', 'bones', 'transaction', 'project-id']
+    extra: [
+      'profile',
+      'socket-url',
+      'source-order',
+      'resources',
+      'theme',
+      'bones',
+      'movie-atlases',
+      'transaction',
+      'project-id'
+    ]
   },
   rebuild: { need: ['source', 'out', 'esbuild'], extra: ['transaction'] },
   verify: { need: ['old', 'converted', 'scenario', 'playwright', 'out'], extra: ['executable'] },

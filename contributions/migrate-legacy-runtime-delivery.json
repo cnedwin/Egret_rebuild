@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "docs/evidence/migrate-paged-movie-edge.json",
+      "originRole": "First-party measurements from a controlled, original synthetic fixture on physical hardware; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/android-migration-build-kit.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/classic-game-android.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/android-migration-build-kit.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/classic-game-android.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/network/README.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/network/README.zh-CN.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/network/install.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/network/licenses/Java-WebSocket-1.6.0.LICENSE",
+      "originRole": "Unmodified MIT license for upstream Java-WebSocket 1.6.0 (TooTallNate/Java-WebSocket), SHA-256 15101a7cbdaa7f1c161424b760e907e7832e4a1e7f05d03373ca91fbffdb95ee."
+    },
+    {
+      "path": "runtime-sdk/android/network/licenses/slf4j-2.0.13.LICENSE",
+      "originRole": "Unmodified MIT license for upstream SLF4J 2.0.13 (qos-ch/slf4j), SHA-256 6fbe2eaf44b193b8a40eed9208f52848572224ad8d7672dd09418aa174847e73."
+    },
+    {
+      "path": "runtime-sdk/android/network/src/org/egret/runtime/network/PlayerNetwork.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/network/test/org/egret/runtime/network/PlayerNetworkTest.java",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/network/test/org/egret/runtime/player/PlayerNetworkMailboxTest.java",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/channel-libraries.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/LegacyBack.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/SystemBack.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/device.gradle",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/revision.gradle",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/consumers/settings.gradle",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/handoff.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/handoff.test.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/pack-build-kit.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectBack.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectHostServices.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/ProjectMusic.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/stage-revision.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/stage-revision.test.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectCodeCacheTest.java",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/test/org/egret/runtime/player/ProjectHostServicesTest.java",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/v8/org/egret/runtime/player/ProjectCodeCache.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/v8/org/egret/runtime/player/ProjectScriptPlan.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/verify-build-kit.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/Board.exml",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/courier.js",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/main.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/original/egretProperties.json",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/original/groups.json",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/original/libs/courier.d.ts",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/original/manifest.json",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/original/src/CourierMain.ts",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/original/tsconfig.json",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-courier/prepare.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/text-pages/index.html",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/text-pages/main.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/text-pages/project.json",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-migrated-game-network.json",
+      "originRole": "First-party measurements from a controlled, original synthetic fixture on physical hardware; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-modular-scripts-and-mobile-services.json",
+      "originRole": "First-party measurements from a controlled, original synthetic fixture on physical hardware; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/android-player-network.d.ts",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/host-services.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/network.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/network.test.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/player-mobile-services.test.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/player-text-pages.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/android-channel-libraries.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/android-host-service.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-api-coverage.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-compile-classic.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-game-services.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-legacy-android.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-legacy-protocol.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-legacy-scene.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-movie-atlases.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/migrate-theme-factories/Panel.exml",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/migrate-theme-factories/published.thm.json",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/api-usage.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/browser-adapter-files.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/README.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/README.zh-CN.md",
+      "originRole": "First-party bilingual migration and Android host integration guide. Prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/android.d.mts",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/android.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/coverage.d.mts",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/coverage.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/game-services.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/movieclip.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/protocol.d.mts",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/protocol.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/scene.d.mts",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/scene.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/theme-factories.d.mts",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/theme-factories.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compile-classic.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/movie-atlases.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/package.json",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/precompiled-themes.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/android-migration-build-kit.md",
+      "zh": "knowledge-base/Cns/docs/android-migration-build-kit.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/classic-game-android.md",
+      "zh": "knowledge-base/Cns/docs/classic-game-android.md"
+    },
+    {
+      "en": "runtime-sdk/android/network/README.md",
+      "zh": "runtime-sdk/android/network/README.zh-CN.md"
+    },
+    {
+      "en": "tools/egret-migrate/compat/README.md",
+      "zh": "tools/egret-migrate/compat/README.zh-CN.md"
+    }
+  ]
+}

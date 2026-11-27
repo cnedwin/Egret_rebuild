@@ -700,3 +700,70 @@ test('binary reads admit the full byte limit and reject an oversized bridge resu
     }
   } finally { await project.close(); }
 });
+
+test('native labels share one painted and published page, with independent leases and bounded retirement', async () => {
+  const calls = [], native = { ...host(), raster(json) {
+    const job = JSON.parse(json);
+    calls.push(job);
+    if (job.runs[0]?.text === 'fail') return JSON.stringify({ error: 'paint failed' });
+    return JSON.stringify({ pixels: Buffer.alloc(job.width * job.height * 4).toString('base64') });
+  } };
+  let raster, publish, scene;
+  const game = createPlayerProject({ width: 32, height: 16, create(services) {
+    raster = services.raster;
+    publish = services.publishPage;
+    scene = services.engine.stage;
+    return {};
+  } }, native);
+  const run = { text: '北门', x: 0, y: 0, maxWidth: 30, size: 12, color: '#FFEE11', strokeWidth: 1 };
+  try {
+    await game.start();
+    const [a, b] = await Promise.all([raster.acquireText(32, 16, [run]),
+      raster.acquireText(32, 16, [{ ...run, weight: 400, color: '#ffee11', strokeColor: '#000000' }])]);
+    assert.equal(a.value, b.value);
+    assert.notEqual(a, b);
+    const bitmap = scene.addChild(new Bitmap(a));
+    scene.addChild(new Bitmap(b)).x = 16;
+    game.frame(0, 1);
+    assert.equal(raster.textPageUsage().hits, 1);
+    assert.equal(raster.textPageUsage().bytes, 2048);
+    assert.equal(calls.length, 1);
+    assert.deepEqual(native.uploads, [255]);
+    assert.throws(() => publish(255, image(1, 1)), /active text lease/);
+    const variants = await Promise.all([
+      { ...run, text: '南门' }, { ...run, x: 2 }, { ...run, strokeColor: '#ff2200' }
+    ].map(changed => raster.acquireText(32, 16, [changed])));
+    assert.equal(raster.textPageUsage().occupied, 4);
+    bitmap.dispose();
+    a.release();
+    assert.equal(native.released.length, 0);
+    b.release();
+    assert.deepEqual(native.released, [255]);
+    for (const lease of variants) lease.release();
+    assert.equal(raster.textPageUsage().occupied, 0);
+    await assert.rejects(raster.acquireText(32, 16, [{ ...run, text: 'fail' }]));
+    assert.equal(raster.textPageUsage().bytes, 0);
+    const many = await Promise.all(Array.from({ length: 32 }, (_, i) =>
+      raster.acquireText(2, 2, [{ ...run, text: String(i) }])));
+    await assert.rejects(raster.acquireText(2, 2, [run]), /budget/);
+    assert.equal(raster.textPageUsage().refusals, 1);
+    many.pop().release();
+    await raster.acquireText(2, 2, [run]);
+    assert.equal(raster.textPageUsage().occupied, 32);
+  } finally { await game.close(); }
+  assert.equal(raster.textPageUsage().occupied, 0);
+  assert.equal(native.uploads.length, native.released.length);
+  await assert.rejects(raster.acquireText(1, 1, [run]));
+});
+
+test('native text descriptors cannot reserve a page after their view closes during capture', async () => {
+  let service, closing;
+  const game = createPlayerProject({ width: 2, height: 2, create(s) { service = s.raster; return {}; } },
+    { ...host(), raster() { throw new Error('closed view painted'); } });
+  await game.start();
+  const run = { get text() { closing = game.close(); return '北'; }, size: 2, x: 0, y: 0, maxWidth: 2, color: '#ffffff' };
+  await assert.rejects(service.acquireText(2, 2, [run]));
+  await closing;
+  assert.equal(service.textPageUsage().occupied, 0);
+  assert.equal(service.textPageUsage().bytes, 0);
+});

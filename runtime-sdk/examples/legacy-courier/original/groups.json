@@ -1,0 +1,6 @@
+[
+  {
+    "name": "courier",
+    "from": "src/CourierMain.ts"
+  }
+]

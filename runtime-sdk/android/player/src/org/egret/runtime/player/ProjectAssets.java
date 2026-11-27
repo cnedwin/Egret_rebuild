@@ -25,11 +25,17 @@ final class ProjectAssets {
     private final Set<String> declaredAssets = new HashSet<>();
     final int width, height;
     final String entry;
+    final Object v8Scripts;
+    final boolean codeCache;
 
     ProjectAssets(AssetManager assets, String root) throws Exception {
         this.assets = assets;
         this.root = relative(root);
         JSONObject manifest = new JSONObject(new String(read("project.json", 65536), StandardCharsets.UTF_8));
+        v8Scripts = manifest.opt("v8Scripts");
+        Object cache = manifest.opt("v8CodeCache");
+        if (manifest.has("v8CodeCache") && !(cache instanceof Boolean)) throw new IOException("Expected v8CodeCache boolean");
+        codeCache = Boolean.TRUE.equals(cache);
         width = manifest.getInt("width");
         height = manifest.getInt("height");
         if (width < 1 || width > 16384 || height < 1 || height > 16384)
@@ -60,8 +66,18 @@ final class ProjectAssets {
         return assets.open(root + "/" + path);
     }
 
+    android.content.res.AssetFileDescriptor openSoundtrack(String name) throws IOException {
+        String path = relative(name);
+        if (!declaredAssets.contains(path)) throw new FileNotFoundException("Undeclared soundtrack");
+        return assets.openFd(root + "/" + path);
+    }
+
+    InputStream openPackaged(String name) throws IOException {
+        return assets.open(root + "/" + relative(name));
+    }
+
     byte[] read(String name, int limit) throws IOException {
-        try (InputStream input = assets.open(root + "/" + relative(name))) {
+        try (InputStream input = openPackaged(name)) {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             byte[] block = new byte[8192];
             for (int n; (n = input.read(block)) != -1;) {

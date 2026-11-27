@@ -130,7 +130,7 @@ export function observedProvider(provider, hooks = {}) {
   const state = { requests: [], measureContexts: [], rasterContexts: [], inputs: [], plans: [],
     returnedPlans: [], images: [], released: [] };
   const wrapper = {
-    identity: provider.identity, profile: provider.profile,
+    identity: provider.identity, profile: provider.profile, supportsStroke: provider.supportsStroke,
     async measure(value, context) {
       state.requests.push(value); state.measureContexts.push(context);
       const observed = Object.freeze({ ...context, createPlan(input) {

@@ -90,6 +90,7 @@ interface SignalBinding {
 }
 interface ProviderBinding {
   readonly receiver: TextRasterProvider;
+  readonly supportsStroke: boolean;
   readonly identity: string;
   readonly measure: TextRasterProvider['measure'];
   readonly rasterize: TextRasterProvider['rasterize'];
@@ -844,7 +845,8 @@ function acquire(
         snapshot,
         state.provider.identity,
         state.fontGeneration,
-        invocation
+        invocation,
+        state.provider.supportsStroke
       );
       // Count refusal precedes any optional route retirement and external cleanup.
       state.budget.check({ pendingWaiters: 1, callerLeaseSlots: 1 }, (code, cause) =>
@@ -1126,7 +1128,14 @@ export function createTextRasterCache(assets: AssetManager, options: TextRasterC
     try {
       if (receiver === null || (typeof receiver !== 'object' && typeof receiver !== 'function'))
         throw new TypeError('Text provider required');
-      providerValues = [receiver.identity, receiver.profile, receiver.measure, receiver.rasterize, receiver.release];
+      providerValues = [
+        receiver.identity,
+        receiver.profile,
+        receiver.measure,
+        receiver.rasterize,
+        receiver.release,
+        'supportsStroke' in receiver ? receiver.supportsStroke : undefined
+      ];
     } catch (cause) {
       try {
         owner.assertOpen();
@@ -1140,7 +1149,7 @@ export function createTextRasterCache(assets: AssetManager, options: TextRasterC
     } catch (cause) {
       throw new EgretError('TEXT_CACHE_CLOSED', { cause });
     }
-    const [identity, profile, measure, rasterize, releasePlan] = providerValues;
+    const [identity, profile, measure, rasterize, releasePlan, supportsStroke] = providerValues;
     const match =
       typeof identity === 'string'
         ? (APPLY(REGEXP_EXEC, PROVIDER_IDENTITY, [identity]) as RegExpExecArray | null)
@@ -1149,6 +1158,7 @@ export function createTextRasterCache(assets: AssetManager, options: TextRasterC
       match === null ||
       match[0].length !== (identity as string).length ||
       profile !== PROFILE ||
+      (supportsStroke !== undefined && supportsStroke !== true) ||
       typeof measure !== 'function' ||
       typeof rasterize !== 'function' ||
       typeof releasePlan !== 'function'
@@ -1185,6 +1195,7 @@ export function createTextRasterCache(assets: AssetManager, options: TextRasterC
       provider: FREEZE({
         receiver,
         identity: identity as string,
+        supportsStroke: supportsStroke === true,
         measure: measure as TextRasterProvider['measure'],
         rasterize: rasterize as TextRasterProvider['rasterize'],
         release: releasePlan as TextRasterProvider['release']
@@ -1240,7 +1251,8 @@ export function createTextRasterCache(assets: AssetManager, options: TextRasterC
                 snapshot,
                 state.provider.identity,
                 state.fontGeneration,
-                invocation
+                invocation,
+                state.provider.supportsStroke
               );
               return createTextFieldRequestInput(summary, invocation);
             } catch (cause) {
