@@ -133,7 +133,7 @@ try {
   await tree(path.join(root, network, 'src'), network + '/src', name => name.endsWith('.java'));
   await tree(path.join(root, network, 'licenses'), network + '/licenses', name => name.endsWith('.LICENSE'));
   const player = 'runtime-sdk/android/player/';
-  for (const file of ['handoff.mjs', 'compare-release-apks.mjs', 'stage-revision.mjs', 'sync-debug.mjs', 'prepare-original5.mjs', 'export-project.mjs', 'v8-profile.mjs', 'create-app.mjs', 'app-resources.mjs', 'channel-libraries.mjs']) {
+  for (const file of ['handoff.mjs', 'compare-release-apks.mjs', 'stage-revision.mjs', 'sync-debug.mjs', 'prepare-original5.mjs', 'original5-abi.mjs', 'export-project.mjs', 'v8-profile.mjs', 'create-app.mjs', 'app-resources.mjs', 'channel-libraries.mjs']) {
     await copy(path.join(root, player, file), player + file);
   }
   await tree(path.join(root, player, 'consumers'), player + 'consumers', name => /\.(?:java|gradle)$/.test(name));

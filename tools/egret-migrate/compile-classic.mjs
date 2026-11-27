@@ -85,9 +85,9 @@ function diagnostics(ts, list, owner, compilerDir) {
   });
 }
 
-function loadCompiler(owner, moduleFile, expectedHash) {
+export function loadCompiler(owner, moduleFile, expectedHash, otherGameRoots = []) {
   const file = fs.realpathSync(path.resolve(moduleFile));
-  if (inside(owner, file) || !fs.lstatSync(file).isFile())
+  if ([owner, ...otherGameRoots].some(root => inside(fs.realpathSync(root), file)) || !fs.lstatSync(file).isFile())
     refuse('MIGRATE_COMPILER', 'Use a separately installed, trusted Egret TypeScript-Plus compiler.');
   const sha256 = hash(fs.readFileSync(file));
   if (expectedHash !== undefined && expectedHash !== sha256)
