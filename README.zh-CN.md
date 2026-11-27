@@ -2,9 +2,9 @@
 
 [English](README.md) | 简体中文
 
-**白鹭引擎 7.0 是面向游戏开发者的开源 TypeScript 引擎。** 可以用 WebGPU 或 WebGL2 制作有复杂 UI、角色动画和轻量 3D 场景的浏览器游戏。7.0.2 提供浏览器单文件、五个 npm 格式模块和可编辑的入门工程。[7.0.2 下载与安装说明](knowledge-base/Cns/docs/release-archives.md)
+**白鹭引擎 7.0 是面向 2D 动画、复杂 UI 和轻量 3D 游戏的开源 TypeScript 引擎。** 游戏可以通过 WebGPU 或 WebGL2 在浏览器运行，支持的场景也可以使用白鹭原生打包方案 Egret Runtime SDK（RSDK）生成 Android 应用。
 
-[试玩白鹭游戏](https://github.com/cnedwin/PortedGamesEgret) · [开始开发](#运行示例) · [文档](DOCUMENTATION.zh-CN.md) · [参与贡献](CONTRIBUTING.zh-CN.md) · [项目看板](https://github.com/users/cnedwin/projects/2)
+[试玩游戏展示站](https://cnedwin.github.io/PortedGamesEgret/) · [开始做游戏](#运行示例) · [用 RSDK 打包 Android APK／AAB](knowledge-base/Cns/docs/android-migration-build-kit.md) · [文档](DOCUMENTATION.zh-CN.md) · [项目看板](https://github.com/users/cnedwin/projects/2)
 
 ## 创始人寄语
 
@@ -14,11 +14,11 @@
 
 ## 运行示例
 
-使用 Node.js 26.7.0，解压[可编辑入门示例](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-first-game.zip)，在该目录运行 `npm install` 和 `npm start`。打开 `http://127.0.0.1:8000`，点击方块，然后把 `main.mjs` 中的 `STEP` 从 32 改为 64 并刷新，方块每次移动的距离就会翻倍。
+使用 Node.js 26.7.0，解压[可编辑入门示例](https://github.com/cnedwin/Egret_rebuild/releases/latest/download/egret-first-game.zip)，在该目录运行 `npm install` 和 `npm start`。打开 `http://127.0.0.1:8000`，点击方块，然后把 `main.mjs` 中的 `STEP` 从 32 改为 64 并刷新，方块每次移动的距离就会翻倍。
 
-要在已有网页里使用白鹭，可以[下载浏览器引擎和许可证](https://github.com/cnedwin/Egret_rebuild/releases/download/v7.0.2/egret-browser.zip)并选用 2D 或 3D 单文件。使用 npm 的工程可运行 `npm install @egret/engine` 安装公共默认版本，也可按归档地址安装模块。[7.0 发行说明与校验清单](knowledge-base/Cns/docs/release-archives.md) · [历史版本 RC3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3)
+要在已有网页里使用白鹭，可以[下载浏览器引擎和许可证](https://github.com/cnedwin/Egret_rebuild/releases/latest/download/egret-browser.zip)并选用 2D 或 3D 单文件。使用 npm 的工程可运行 `npm install @egret/engine` 安装公共默认版本，也可按归档地址安装模块。[7.0 发行说明与校验清单](knowledge-base/Cns/docs/release-archives.md) · [历史版本 RC3](https://github.com/cnedwin/Egret_rebuild/releases/tag/v7.0.1-rc.3)
 
-如果希望从 npm 安装现成的浏览器单文件包，2D 游戏选 `npm install @egret/2d@7.0.2`，带 World3D 的游戏选 `npm install @egret/3d@7.0.2`。[浏览器包用法](knowledge-base/Cns/docs/single-file.md)
+如果希望从 npm 安装现成的浏览器单文件包，2D 游戏选 `npm install @egret/2d`，带 World3D 的游戏选 `npm install @egret/3d`。[浏览器包用法](knowledge-base/Cns/docs/single-file.md)
 
 参与引擎本身的开发时，可以直接运行仓库里的示例。
 
@@ -32,13 +32,11 @@
 
 ## 选择开发路径
 
-- **浏览器。** `play` 和 `play3d` 适合从一个文件开始。需要更多控制时，可直接导入共享 2D、序列帧、可选 Spine、托管 UI、原生文字输入或 World3D 模块。[游戏入口](knowledge-base/Cns/docs/play.md) · [3D 入门](knowledge-base/Cns/docs/play3d.md) · [给 AI 工具的接口索引](llms.txt)
-
-- **Android 原生。** Runtime SDK 可导出 arm64 工程，用外部签名构建 APK 和 AAB。默认使用裁剪 V8 与 Rust GLES3 播放器。Fold7 已运行带 Spine 和滚动 UI 的 2D 关卡，以及带纹理模型和 2D HUD 的选定 3D 关卡。[原生播放器与适用范围](knowledge-base/Cns/docs/android-project-player.md)
-
-- **微信小游戏。** 仓库工具可导出使用 WebGL2 的小游戏工程。现有检查使用模拟 wx 宿主，微信开发者工具、微信客户端真机和提交审核仍待验证。[微信小游戏导出指南](knowledge-base/Cns/docs/wechat-minigame.md)
-
-一体化可视化创作平台、更多原生宿主和旧工程一键迁移属于后续产品目标。[核心能力与真机证据](knowledge-base/Cns/docs/core-progress.md) · [产品需求](knowledge-base/Cns/docs/产品需求说明书.md) · [工程规划](knowledge-base/Cns/docs/工程规划.md)
+- **浏览器游戏。** 2D 从 `play` 开始，World3D 从 `play3d` 开始，两者都能叠加 UI。共享 2D 渲染器支持精灵、序列帧和可选的 Spine 角色。World3D 支持带贴图的 glTF／GLB 模型、灯光、阴影及界面叠层。[2D 指南](knowledge-base/Cns/docs/play.md) · [3D 指南](knowledge-base/Cns/docs/play3d.md) · [图形能力](knowledge-base/Cns/docs/core-progress.md) · [Windows 与 Fold7 实测](knowledge-base/Cns/docs/november-27-claude-hardware.md)
+- **用 RSDK 构建 Android 应用。** 导出 arm64 Gradle 工程，用裁剪 V8 运行游戏逻辑，由 Rust／GLES3 绘制，生成本地签名的 APK 或 AAB。交接指南覆盖独立重建、两个发行包比对和升级后读回存档。[游戏播放器](knowledge-base/Cns/docs/android-project-player.md) · [打包与交接](knowledge-base/Cns/docs/android-migration-build-kit.md)
+- **维护白鹭 5 老游戏。** 用 Egret Migrate 检查原工程并选路。符合支持范围的工程可迁到白鹭 7 网页版，部分 5.3 游戏也可保留原版引擎模块，用 RSDK 在 Android 上运行。[迁移工具](tools/egret-migrate/README.zh-CN.md) · [兼容实测](knowledge-base/Cns/docs/original5-atlas-verification.md)
+- **用 Agent 做游戏。** 从接口索引出发，先做出一个可玩的循环，再用试玩工具核对首次有效操作和重开。集成可视化创作平台仍在产品规划中。[Agent 创作入口](llms.txt) · [产品需求](knowledge-base/Cns/docs/产品需求说明书.md)
+- **其他宿主。** iOS 的 JavaScriptCore／Metal 工程已在模拟器运行 2D 样例，微信导出器已在模拟 wx 宿主运行。RSDK 的实体 iPhone 安装和微信客户端真机验证仍待完成。[RSDK 各平台进度](knowledge-base/Cns/docs/runtime-sdk.md) · [微信导出](knowledge-base/Cns/docs/wechat-minigame.md)
 
 ## 开发与社区参与
 
@@ -48,11 +46,10 @@
 
 | PR | Main change | 主要变化 |
 | --- | --- | --- |
-| [#447](https://github.com/cnedwin/Egret_rebuild/pull/447) | Export a browser game as a WeChat Mini Game project and check it against a simulated wx host | 将浏览器游戏导出为微信小游戏工程，可在模拟 wx 环境中检查 |
-| [#445](https://github.com/cnedwin/Egret_rebuild/pull/445) · [#446](https://github.com/cnedwin/Egret_rebuild/pull/446) | Verify selected browser paths on Windows and Fold7. Prebuild 22 static meshes for the 24-model gallery | Windows 和 Fold7 浏览器实测。含 24 个模型的画廊改为预生成 22 个静态网格 |
-| [#436](https://github.com/cnedwin/Egret_rebuild/pull/436) · [#438](https://github.com/cnedwin/Egret_rebuild/pull/438) · [#441](https://github.com/cnedwin/Egret_rebuild/pull/441) | Keep native Android geometry resident and replay 210 frames of Rally driving | Android 原生播放器复用驻留几何，实机回放 210 帧赛车驾驶 |
-| [#429](https://github.com/cnedwin/Egret_rebuild/pull/429) – [#432](https://github.com/cnedwin/Egret_rebuild/pull/432) | Signed local Android builds, a playable 2D act and selected World3D levels with textured GLBs | Android 本地签名构建，跑通 2D 关卡与包含贴图 GLB 的选定 3D 关卡 |
-| [#411](https://github.com/cnedwin/Egret_rebuild/pull/411) | Build Spine 4.3 atlas, JSON and binary skeleton artifacts from exported inputs | 从 Spine 4.3 导出文件构建图集、JSON 及二进制骨骼产物 |
+| [#539](https://github.com/cnedwin/Egret_rebuild/pull/539) | Retain original Egret 5 login controls and system text editing in an Android Release APK | 在 Android 发行包中运行旧作原版登录、系统输入和选服界面 |
+| [#537](https://github.com/cnedwin/Egret_rebuild/pull/537) · [#538](https://github.com/cnedwin/Egret_rebuild/pull/538) | Select a migration route and replay a two-player match from a real Egret 5 game | 识别旧工程迁移路径，验证双人联机旧作打完一局并重新发牌 |
+| [#536](https://github.com/cnedwin/Egret_rebuild/pull/536) | Check signing identity and saved progress across a local Android upgrade | 验证 Android 本地签名包覆盖升级与读回存档 |
+| [#535](https://github.com/cnedwin/Egret_rebuild/pull/535) | Check World3D native UI hit areas in a software browser at Fold7 cover-screen dimensions | 在软件浏览器用 Fold7 外屏尺寸核对 World3D 原生 UI 命中区域 |
 
 [完整更新日志](knowledge-base/Cns/CHANGELOG.md) · [English changelog](knowledge-base/en/CHANGELOG.md) · [早期预览里程碑](https://github.com/cnedwin/Egret_rebuild/blob/ab2527359e475f2f24f6758538d925abcce53846/README.zh-CN.md)
 

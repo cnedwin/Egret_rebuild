@@ -2,19 +2,19 @@
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
-Implementation reviewed for 7.0.2 against main [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d) on November 22, 2026.
+Reviewed for 7.0.3 against main [8d162d9c](https://github.com/cnedwin/Egret_rebuild/commit/8d162d9c87f6110d5940a7d576944cddef6edbcf) on November 27, 2026.
 
-**Host delivery.** Browser games use WebGPU or WebGL2. The Android SDK exports signed local APK/AAB builds and has Fold7 evidence for selected 2D and World3D games. The WeChat project exporter has a simulated-host check. Hardware verification inside WeChat and broader native profiles are separate engineering work. [Device results](november-browser-hardware.md) · [Android player](android-project-player.md) · [WeChat scope](wechat-minigame.md)
+**Host delivery.** Android supports locally signed arm64 APK/AAB builds, original Egret 5.3 and selected Egret 7 scenes. A receiver can compare signers and verify saved progress across two releases. The next native checks are an independent team rebuilding its own game and an additional GPU family. iOS has a working JavaScriptCore/Metal simulator fixture and an unsigned device build. The first signed iPhone installation and native input/lifecycle checks are open. The WeChat exporter still needs DevTools and physical client testing. [Android build and handoff](android-migration-build-kit.md) · [RSDK platform matrix](runtime-sdk.md) · [Hardware report](november-27-claude-hardware.md)
 
 The next phase turns existing components into a usable core workflow. Preserve the eleven M2–M4 packages, their public contracts and current contributor ownership. [Core capabilities](core-progress.md) states what exists; the [architecture plan](architecture-and-engineering-plan.md) defines authority and gates; the [M2–M4 roadmap](m2-m4-delivery-plan.md) retains complete milestone acceptance.
 
 Use [the device follow-up](https://github.com/cnedwin/Egret_rebuild/issues/289) to find outstanding physical-device checks. Reuse the iPhone PNG evidence in [#342](https://github.com/cnedwin/Egret_rebuild/pull/342) for that startup path. Mixed-scene performance and current-renderer pacing retain separate acceptance in [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) and [#55](https://github.com/cnedwin/Egret_rebuild/issues/55).
 
-## M3.4 layer implementation checkpoint
+## Earlier M3.4 layer implementation checkpoint
 
 The delivered [popup/modal layers and focus](ui-layers.md) use the native editor and the existing paragraph, font and root lifetimes. The form supports details, draft rename and return. Remaining controls and semantics stay in #90.
 
-## M3.3 implementation checkpoint
+## Earlier M3.3 native editing checkpoint
 
 The native single/multiline increment uses the existing optional editing entries and [form](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md). The [contract](native-text-editing.md) retains source/session, row-retention, paired-font and publication authority. Final desktop checks cover 21 fixed plus eight responsive cases per shared backend; the [Android report](android-native-text-editing.md) separates actual keyboard observations, predecessor reuse and final-source lifecycle. Terminal composition teardown and responsive view-Scope retirement are corrected. Other IMEs/devices, clipboard, accessibility and full #89 acceptance remain OPEN; no new work package or touch assignment. Later batches retain their dependencies and are not started by this increment.
 
