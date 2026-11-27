@@ -63,6 +63,27 @@ test('native World3D carries current indexed meshes, camera/light and a transpar
   another.visible = false;
   assert.equal(new DataView(encode(data, data.hud).buffer).getUint32(16, true), 1);
 });
+test('native World3D keeps isolated HUD effects through ordinary and recovery composition', () => {
+  const data = fixture(), encode = createWorldProjectEncoder();
+  // A transparent HUD containing one isolated group with a one-pixel blur.
+  const hud = new Uint8Array(56);
+  hud.set(data.hud);
+  const packet = new DataView(hud.buffer);
+  packet.setUint32(0, 0x36524745, true);
+  packet.setUint32(20, 2, true);
+  packet.setUint32(24, 128, true);
+  packet.setUint32(28, 2, true);
+  packet.setFloat32(40, 960, true);
+  packet.setFloat32(44, 540, true);
+  packet.setFloat32(48, 1, true);
+  packet.setUint32(52, 129, true);
+  const pages = new Map();
+  assert.deepEqual(encode(data, hud, pages, 1, -1).subarray(-hud.length), hud);
+  packet.setUint32(4, 18, true);
+  assert.deepEqual(encode(data, hud, pages, 1, 17).subarray(-hud.length), hud);
+  assert.deepEqual(encode.recover(1, 18).subarray(-hud.length), hud);
+});
+
 test('a profile mismatch or invalid HUD is reported before crossing the device bridge', () => {
   const data = fixture(),
     encode = createWorldProjectEncoder();

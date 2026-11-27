@@ -104,7 +104,7 @@ final class WorldProjectPacket {
         int offset = data.limit() - length;
         int format = data.getInt(offset);
         if ((offset & 3) != 0 ||
-            (format != 0x32524745 && format != 0x33524745 && format != 0x34524745 && format != 0x35524745) ||
+            (format != 0x32524745 && format != 0x33524745 && format != 0x34524745 && format != 0x35524745 && format != 0x36524745) ||
             data.getInt(offset + 4) != data.getInt(4) || (data.getInt(offset + 16) & 255) != 0) return -1;
         return offset;
     }

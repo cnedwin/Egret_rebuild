@@ -5,6 +5,10 @@ use crate::{frame::{Batch, Header, PAGE_SLOTS, MULTIPLY, ADD, LINEAR}, gl::*, gl
 use crate::{world_frame::WorldFrame, world_gles::{WorldPipeline, PendingMeshes}};
 use std::ptr;
 
+#[path = "project_effects.rs"]
+mod effects;
+use effects::Effects;
+
 const DRAW: &[u8] = concat!("#version 300 es\n", include_str!("project_draw.frag"), "\0").as_bytes();
 const ATLAS_DRAW: &[u8] = concat!("#version 300 es\n#define EGRET_MAPPED_ATLAS\n", include_str!("project_draw.frag"), "\0").as_bytes();
 const RESOLVE_VERTEX: &[u8] = b"#version 300 es\n\
@@ -57,6 +61,7 @@ pub(crate) struct ProjectPipeline {
     depth: u32,
     pub(super) world: Option<WorldPipeline>,
     physical: [u32; 2],
+    effects: Effects,
 }
 
 impl ProjectPipeline {
@@ -68,7 +73,7 @@ impl ProjectPipeline {
         };
         let mut p = Self {
             draw, mapped_draw: None, resolve,
-            resolve_vao: 0, target: 0, target_texture: 0, depth: 0, world: None, physical: [0; 2],
+            resolve_vao: 0, target: 0, target_texture: 0, depth: 0, world: None, physical: [0; 2], effects: Effects::default(),
         };
         glGenVertexArrays(1, &mut p.resolve_vao);
         glUseProgram(resolve);
@@ -86,6 +91,7 @@ impl ProjectPipeline {
     }
 
     pub(crate) unsafe fn destroy(&self) {
+        self.effects.destroy();
         if let Some(world) = &self.world { world.destroy(); }
         glDeleteRenderbuffers(1, &self.depth);
         glDeleteFramebuffers(1, &self.target);
@@ -139,7 +145,12 @@ impl ProjectPipeline {
     pub(crate) unsafe fn render(&mut self, header: &Header, physical: [u32; 2], vao: u32,
                                 pages: &[u32; PAGE_SLOTS], world_pages: &[u32; PAGE_SLOTS], data_pages: &[u32; PAGE_SLOTS], batches: &[Batch], world: Option<&WorldFrame<'_>>,
                                 mut pending: PendingMeshes) -> bool {
-        if !self.resize(physical, world.is_some()) { return false; }
+        let Some((required, maximum)) = crate::project_target_budget::capacity(
+            physical, world.is_some(), &header.effects, batches
+        ) else { return false; };
+        if self.physical != physical { self.effects.trim(0); }
+        else { self.effects.trim(maximum); }
+        if !self.resize(physical, world.is_some()) || !self.effects.prepare(physical,required) { return false; }
         if world.is_some() && self.world.is_none() { self.world = Some(WorldPipeline::create()); }
         // Compile the mapped shader only when a quad or mesh first needs atlas mapping.
         let draw = if header.mapped {
@@ -165,7 +176,22 @@ impl ProjectPipeline {
         glEnable(BLEND);
         let mut last_policy = None;
         glEnable(SCISSOR_TEST);
+        let mut depth=0usize;
         for batch in batches {
+            if batch.policy==crate::frame::EFFECT_ENTER {
+                self.effects.enter(depth);
+                depth+=1;
+                continue;
+            }
+            if batch.policy==crate::frame::EFFECT_EXIT {
+                depth-=1;
+                let group=&header.effects[batch.first as usize];
+                self.effects.composite(group,depth,self.target,physical,header.size,self.resolve_vao);
+                glUseProgram(draw.name);
+                glBindVertexArray(vao);
+                last_policy=None;
+                continue;
+            }
             let [x, y, w, h] = batch.scissor(header.size, physical);
             if w == 0 || h == 0 { continue; }
             if last_policy != Some(batch.policy) {

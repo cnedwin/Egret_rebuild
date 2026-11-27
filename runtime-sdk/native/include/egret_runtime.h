@@ -11,6 +11,9 @@ extern "C" {
 
 typedef struct EgretRenderer EgretRenderer;
 
+/* Highest project packet version supported by this binary; callable before creating a renderer. */
+uint32_t egret_renderer_project_frame_version(void);
+
 /* Calls are serialized on the owning GL thread with its GLES 3 context current.
  * abandon is the sole exception: after context loss it frees CPU state only.
  * destroy and abandon both consume the pointer. Every other call borrows it.

@@ -109,7 +109,8 @@ export function prepareSharedBatches2D(
   input: readonly PackedSharedEntry2D[],
   maxBufferSize: number,
   scratch: PreparedBatchScratch2D,
-  kept?: KeptSharedBatches2D
+  kept?: KeptSharedBatches2D,
+  pageLimit: number = SHARED_BATCH_PAGES_2D
 ): PreparedSharedBatchPlan2D {
   const plan: PreparedSharedBatchPlan2D = {
     draws: [],
@@ -178,7 +179,7 @@ export function prepareSharedBatches2D(
             next.data.byteLength <= ceiling - total
           ) {
             const page = next.prepared.pageIndex;
-            same = page !== undefined && !old.pages.includes(page) && old.pages.length === SHARED_BATCH_PAGES_2D;
+            same = page !== undefined && !old.pages.includes(page) && old.pages.length === pageLimit;
           }
         }
         if (same && scratch.reserve(plan, total)) {
@@ -218,7 +219,7 @@ export function prepareSharedBatches2D(
         if ('barrier' in next || !compatible(first, next, previous) || next.data.byteLength > ceiling - bytes) break;
         const page = next.prepared.pageIndex;
         if (page !== undefined && !pages.includes(page)) {
-          if (pages.length === SHARED_BATCH_PAGES_2D) break;
+          if (pages.length === pageLimit) break;
           pages = [...pages, page];
         }
         bytes += next.data.byteLength;

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Android GLES3 renders filtered 2D subtrees",
+    "body": "Android projects can use `services.capabilities.subtreeEffects` to detect native support for isolated color matrices, blur, glow and outlines. The player preserves group order in live frames and recordings. Existing games without these effects keep their previous frame format."
+  },
+  "zh": {
+    "title": "Android GLES3 支持对整个 2D 显示子树应用滤镜",
+    "body": "Android 工程可通过 `services.capabilities.subtreeEffects` 查询播放器是否支持对子树应用颜色矩阵、模糊、发光和描边。实时绘制和录像回放都保留子树的合成顺序。未使用这些效果的游戏继续使用原有帧格式。"
+  }
+}

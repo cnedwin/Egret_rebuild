@@ -8,14 +8,64 @@ fn take<'a>(bytes: &mut &'a [u8], length: usize) -> Result<&'a [u8], Error> {
     Ok(record)
 }
 
+fn effect_descriptor(bytes: &mut &[u8], size: [f32; 2]) -> Result<ProjectEffect, Error> {
+    let fixed = take(bytes, 20)?;
+    let flags = word(fixed, 0);
+    let clip = [4, 8, 12, 16].map(|p| f32::from_bits(word(fixed, p)));
+    if !(1..=7).contains(&flags) || !valid_clip(clip, size) { return Err(Error::Invalid); }
+    let matrix = if flags & 1 != 0 {
+        let values = take(bytes, 80)?;
+        let matrix: [f32; 20] = std::array::from_fn(|i| f32::from_bits(word(values, i * 4)));
+        if matrix.iter().any(|v| !(-65536.0..=65536.0).contains(v)) { return Err(Error::Invalid); }
+        Some(matrix)
+    } else { None };
+    let blur = if flags & 2 != 0 { f32::from_bits(word(take(bytes, 4)?, 0)) } else { 0. };
+    if !(0.0..=8.0).contains(&blur) || blur.fract() != 0. { return Err(Error::Invalid); }
+    let glow = if flags & 4 != 0 {
+        let g = take(bytes, 28)?;
+        let field = |p| f32::from_bits(word(g, p));
+        let (spread, strength, color, alpha) = (field(0), field(4), word(g, 8), field(12));
+        let offset = [field(16), field(20)];
+        let options = word(g, 24);
+        if !(0.0..=16.0).contains(&spread) || !(0.0..=255.0).contains(&strength) || color > 0xffffff
+            || !(0.0..=1.0).contains(&alpha) || offset.iter().any(|v| !(-256.0..=256.0).contains(v))
+            || options > 7 { return Err(Error::Invalid); }
+        Some(ProjectGlow { spread, strength, color, alpha, offset, inner: options & 1 != 0,
+            knockout: options & 2 != 0, outline: options & 4 != 0 })
+    } else { None };
+    Ok(ProjectEffect { clip, matrix, blur, glow })
+}
+
+/// Keep markers in the ordered batch list so draws cannot coalesce across an isolation boundary.
+fn marker(batches: &mut Vec<Batch>, policy: u32, group: usize) {
+    batches.push(Batch { page: 0, opacity: 1., clip: [0.; 4], region: [0.; 4], mapping: None,
+        indexed: false, policy, first: group as i32, count: 0 });
+}
+
 pub(super) fn decode(mut bytes: &[u8], count: usize, size: [f32; 2], pages: &[[u32; 2]; PAGE_SLOTS],
                      vertices: &mut Vec<Vertex>, batches: &mut Vec<Batch>, indices: &mut Vec<u32>,
-                     extended: bool, lights: &mut Vec<[f32; 4]>) -> Result<bool, Error> {
+                     extended: bool, layered: bool, lights: &mut Vec<[f32; 4]>, effects: &mut Vec<ProjectEffect>) -> Result<bool, Error> {
     let mut mapped = false;
     let mut contains_mesh = false;
     let mut has_policy = false;
+    let mut stack = Vec::new();
+    let mut draw_count = 0;
     for _ in 0..count {
         let tag = word(take(&mut bytes, 4)?, 0);
+        if layered && tag == EFFECT_ENTER {
+            if effects.len() >= MAX_EFFECT_GROUPS || stack.len() >= MAX_EFFECT_DEPTH { return Err(Error::Invalid); }
+            let group = effects.len();
+            effects.push(effect_descriptor(&mut bytes, size)?);
+            stack.push(group);
+            marker(batches, tag, group);
+            continue;
+        }
+        if layered && tag == EFFECT_EXIT {
+            marker(batches, tag, stack.pop().ok_or(Error::Invalid)?);
+            continue;
+        }
+        draw_count += 1;
+        if draw_count > MAX_QUADS { return Err(Error::Invalid); }
         let policy = tag & !3;
         let lit = policy & VERTEX_LIGHT != 0;
         let white = policy & SOLID_PAGE != 0;
@@ -86,7 +136,9 @@ pub(super) fn decode(mut bytes: &[u8], count: usize, size: [f32; 2], pages: &[[u
             _ => return Err(Error::Invalid),
         }
     }
-    if !(if extended { has_policy } else { contains_mesh }) || !bytes.is_empty() { return Err(Error::Invalid); }
+    let matches_format = if layered { !effects.is_empty() && stack.is_empty() }
+        else if extended { has_policy } else { contains_mesh };
+    if !matches_format || !bytes.is_empty() { return Err(Error::Invalid); }
     if !lights.is_empty() { lights.resize(vertices.len(), [1.; 4]); }
     Ok(mapped)
 }

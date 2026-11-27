@@ -67,6 +67,8 @@ declare module '@egret/android-player-project' {
   }
 
   export interface PlayerServices {
+    /** Native renderer support reported by the installed player archive. */
+    readonly capabilities: { readonly subtreeEffects: boolean };
     readonly assets: PlayerAssets;
     /** Calls a named Activity provider with JSON. Closing the project cancels pending requests. */
     readonly host: { call(action: string, value: unknown, signal?: AbortSignal): Promise<unknown> };
@@ -125,6 +127,8 @@ declare module '@egret/android-player-project' {
   }
 
   export interface NativePlayer {
+    /** Absent on player archives released before EGR6. */
+    projectFrameVersion?(): number;
     /** Replies are retrieved once by request ID. */
     hostStart?(id: number, action: string, json: string): boolean;
     hostCancel?(id: number): void;

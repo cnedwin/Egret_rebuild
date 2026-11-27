@@ -30,6 +30,7 @@ export interface CapturedLeafContent {
   readonly identity: UiLeafContent;
   readonly revision: number;
   readonly prepare: UiLeafContent['prepare'];
+  readonly onAttach: UiLeafContent['onAttach'];
 }
 export interface CapturedUiTree {
   readonly themes: ReadonlyMap<string, UiThemeNode>;
@@ -88,10 +89,16 @@ export function captureUiTree(input: LayoutNode): CapturedUiTree {
         throw new EgretError('UI_CONTENT_INVALID');
       const source = content as UiLeafContent,
         revision = source.revision,
-        prepare = source.prepare;
-      if (!Number.isSafeInteger(revision) || revision < 0 || typeof prepare !== 'function')
+        prepare = source.prepare,
+        onAttach = source.onAttach;
+      if (
+        !Number.isSafeInteger(revision) ||
+        revision < 0 ||
+        typeof prepare !== 'function' ||
+        (onAttach !== undefined && typeof onAttach !== 'function')
+      )
         throw new EgretError('UI_CONTENT_INVALID');
-      contents.set(raw.id, Object.freeze({ identity: source, revision, prepare }));
+      contents.set(raw.id, Object.freeze({ identity: source, revision, prepare, onAttach }));
     }
     if (container) {
       if (!Array.isArray(raw.children)) throw new EgretError('UI_INVALID');

@@ -15,7 +15,12 @@ import type {
 import { readOwnedSharedFrame } from '#egret-textured-frame-state';
 import { admitSharedWebGL2Options } from './sharedWebGL2Options.js';
 import type { SharedWebGL2HostOptions, SharedWebGL2Configuration } from './sharedWebGL2Options.js';
-import type { SharedWebGL2FrameTiming, SharedWebGL2TimingPhase, SharedWebGL2TimingSample } from './webgl2Types.js';
+import type {
+  SharedWebGL2FrameTiming,
+  SharedWebGL2TimingPhase,
+  SharedWebGL2TimingSample,
+  SharedWebGL2StartupTiming
+} from './webgl2Types.js';
 import type {
   SharedLayerWebGL2Host,
   SharedWebGL2Layer2D,
@@ -416,6 +421,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
   private solidProgram: WebGLProgram | undefined;
   private pagedProgram: WebGLProgram | undefined;
   private effectPrograms = new Map<SharedEffectPass, WebGLProgram>();
+  private startupTiming: SharedWebGL2StartupTiming | undefined;
   private resolveProgram: WebGLProgram | undefined;
   private drawVAO: WebGLVertexArrayObject | undefined;
   private resolveVAO: WebGLVertexArrayObject | undefined;
@@ -838,6 +844,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     for (const record of [...this.records]) if (record.native.invalidated) this.retire(record);
   }
   private async initialize(restoring: boolean): Promise<void> {
+    const started = clock();
+    this.startupTiming = undefined;
     const barrier = this.ready!;
     this.busy = true;
     this.cpu = deferred<void>();
@@ -945,21 +953,24 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       if (!native.cleanup(target)) throw glFailure('WEBGL2_CLOSE_UNSAFE', native.cleanupFailure?.cause);
-      const coded = native.codedTargets;
+      const coded = native.codedTargets,
+        contextReady = clock();
       const effectPasses = this.options.enableEffects ? EFFECT_PASSES : [];
       const sources: (readonly [string, string])[] = [
         [sharedWebGL2VertexSource, sampledFragmentSource(false, coded)],
         [sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragment(coded)],
         [sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragment(coded)],
-        ...effectPasses.map(mode => [sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode, coded)] as const),
-        // The program of a batch of several pages.
-        [sharedWebGL2VertexSource, sampledFragmentSource(true, coded)]
+        ...effectPasses.map(mode => [sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode, coded)] as const)
       ];
-      // With KHR_parallel_shader_compile the programs are built side by side while the page goes on, the host asking
-      // after them every 8 ms. Without it each is made in turn, the host yielding to the page between two programs.
+      // The faster UI policy omits this source altogether, including when asynchronous parallel compilation is available.
+      if (this.options.pageBatching === 'multi-page')
+        sources.push([sharedWebGL2VertexSource, sampledFragmentSource(true, coded)]);
+      // Preserve the main branch's shared publication and generation gates. On unsupported browsers,
+      // yield between programs; never defer work past host readiness.
       const prepared = native.preparePrograms(sources, () => new Promise<void>(resolve => schedule(resolve, 8)));
       const programs = prepared === undefined ? undefined : await prepared;
       this.generationGate(token);
+      const preparationReady = clock();
       let next = 0;
       const nextProgram = async (): Promise<WebGLProgram> => {
         const index = next++;
@@ -973,9 +984,12 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       this.program = await nextProgram();
       native.block(this.program, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       native.block(this.program, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
+      const sampledReady = clock();
       this.solidProgram = await nextProgram();
       native.block(this.solidProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
+      const solidReady = clock();
       this.resolveProgram = await nextProgram();
+      const resolveReady = clock();
       for (const mode of effectPasses) {
         const program = await nextProgram();
         const index = gl.getUniformBlockIndex(program, 'Effect');
@@ -983,20 +997,37 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         gl.uniformBlockBinding(program, index, 0);
         this.effectPrograms.set(mode, program);
       }
-      // Its eight page samplers name the eight units once, here.
-      this.pagedProgram = await nextProgram();
-      native.block(this.pagedProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
-      native.block(this.pagedProgram, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
-      gl.useProgram(this.pagedProgram);
-      for (let unit = 0; unit < SHARED_BATCH_PAGES_2D; unit++)
-        gl.uniform1i(gl.getUniformLocation(this.pagedProgram, 'page' + unit), unit);
-      gl.useProgram(null);
+      const effectsReady = clock();
+      if (this.options.pageBatching === 'multi-page') {
+        this.pagedProgram = await nextProgram();
+        native.block(this.pagedProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
+        native.block(this.pagedProgram, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
+        gl.useProgram(this.pagedProgram);
+        for (let unit = 0; unit < SHARED_BATCH_PAGES_2D; unit++)
+          gl.uniform1i(gl.getUniformLocation(this.pagedProgram, 'page' + unit), unit);
+        gl.useProgram(null);
+      }
+      const pagedReady = clock();
       this.drawVAO = native.create('VertexArray').value as WebGLVertexArrayObject;
       this.resolveVAO = native.create('VertexArray').value as WebGLVertexArrayObject;
       native.check();
       this.generationGate(token);
       this.state = 'active';
       this.generationFailure = null;
+      const ended = clock();
+      this.startupTiming = Object.freeze({
+        generation,
+        contextMs: contextReady - started,
+        parallelPrograms: programs !== undefined,
+        programPreparationMs: preparationReady - contextReady,
+        sampledMs: sampledReady - preparationReady,
+        solidMs: solidReady - sampledReady,
+        resolveMs: resolveReady - solidReady,
+        effectsMs: effectsReady - resolveReady,
+        pagedMs: this.options.pageBatching === 'single-page' ? 0 : pagedReady - effectsReady,
+        finishMs: ended - pagedReady,
+        totalMs: ended - started
+      });
       this.cancelRestore();
       barrier.resolve();
     } catch (cause) {
@@ -1373,7 +1404,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
               packed,
               options.maxUploadBytes,
               this.scratch,
-              staging ? undefined : prepared.retention
+              staging ? undefined : prepared.retention,
+              options.pageBatching === 'single-page' ? 1 : SHARED_BATCH_PAGES_2D
             );
             this.active();
             const arena = planSharedWebGL2Arenas(
@@ -2948,6 +2980,9 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       else barrier.resolve();
     });
     return this.closing;
+  }
+  public getStartupTiming(): SharedWebGL2StartupTiming | undefined {
+    return this.startupTiming;
   }
   public getSessionStatus(): SharedDeviceSessionStatus<WebGL2HostFailure> {
     return Object.freeze({
