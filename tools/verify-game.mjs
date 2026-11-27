@@ -238,7 +238,13 @@ export function stagePlace(box, width, height, x, y) {
   return [box.x + (x * box.w) / width, box.y + (y * box.h) / height];
 }
 /** What a script is given to play a game with: input in the stage's own units, and the page read from its pictures. */
-export function driver(tab, PNG, out, size, { uniquePictures = false } = {}) {
+export function driver(
+  tab,
+  PNG,
+  out,
+  size,
+  { uniquePictures = false, picturePrefix = 'played-', warnings, sounds } = {}
+) {
   const usedPictures = new Set();
   const box = async () => {
     const canvases = await tab.evaluate(() =>
@@ -305,15 +311,15 @@ export function driver(tab, PNG, out, size, { uniquePictures = false } = {}) {
       }
       throw new Error(label + ' did not happen in ' + seconds + ' seconds');
     },
-    sounds: () => tab.evaluate(() => window.__verify.soundsStarted),
-    warnings: () => tab.evaluate(() => window.__verify.engineWarnings ?? []),
+    sounds: sounds ?? (() => tab.evaluate(() => window.__verify.soundsStarted)),
+    warnings: warnings ?? (() => tab.evaluate(() => window.__verify.engineWarnings ?? [])),
     /** Runs a function in the page and gives what it returns: `player.read(() => window.state.collected)`. */
     read: (fn, ...args) => tab.evaluate(fn, ...args),
     expect(condition, message) {
       if (!condition) throw new Error('Expected: ' + message);
     },
     async picture(name) {
-      const target = path.join(out, 'played-' + String(name).replace(/[^A-Za-z0-9_-]+/g, '-') + '.png');
+      const target = path.join(out, picturePrefix + String(name).replace(/[^A-Za-z0-9_-]+/g, '-') + '.png');
       const identity = target.toLowerCase();
       if (uniquePictures && usedPictures.has(identity)) throw new TypeError('Repeated play picture name: ' + name);
       usedPictures.add(identity);

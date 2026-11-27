@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Responsive confirmations, selected tab semantics and screen-state verification",
+    "body": "Native Play confirmations wrap long questions and action names within the safe area and can use a game-specific skin. Named tablists and tab buttons expose the application’s selected state to semantic trees and browser projection without changing button input. An explicit trusted local --prepare module can bring each --screens sample to a later game scene, report the scene name and fail if readiness or native-control reporting fails. Responsive view variant rebuilds keep the semantic modal root in its original order, preserving upper-dialog focus and cancellation across orientation changes."
+  },
+  "zh": {
+    "title": "响应式确认框、页签选中语义与多屏状态验收",
+    "body": "Play 原生确认框会在安全区内换行显示长问题与操作名称，并可采用游戏主题。命名页签组和页签按钮将应用的选中状态传入语义树及浏览器投影，保留按钮输入方式。多屏检查可显式指定可信本地 --prepare 模块，在每个设备样本中进入后续界面，记录场景名，就绪失败或缺少原生控件报告时拒绝通过。 原生视图切换屏幕变体后保留原语义模态根的顺序，避免下层界面覆盖上层确认框的焦点与取消操作。"
+  }
+}

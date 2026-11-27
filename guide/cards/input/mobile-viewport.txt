@@ -14,7 +14,7 @@ engine: ec17a5a22eff057b89a2926f638eb51938344459
 
 # Fit the page to a phone screen and its safe areas
 
-`play` and `play3d` fill the window by themselves. For a phone held either way, give them `fit: 'expand'` (no black bars) and a `portrait` size, and hold edge controls with `game.pin(node, { right: 16, top: 16 })`, which places them in `game.safe` again on every turn, or place them from `game.safe` in `arrange(game)`; see `knowledge-base/en/docs/screen-fit.md`. A game that lays out its own page needs the following, all taken from the large games.
+`play` and `play3d` fill the window. Use `fit: 'expand'` (no bars) and a `portrait` size for either orientation. Keep edge controls in `game.safe` across turns with `game.pin(node, { right: 16, top: 16 })` or arrange them from `game.safe` in `arrange(game)`; see `knowledge-base/en/docs/screen-fit.md`. For a self-laid-out page:
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -27,6 +27,8 @@ html, body { margin: 0; height: 100%; overflow: hidden; }
 .touch-left { left: max(12px, env(safe-area-inset-left)); }
 .panel { max-height: calc(100dvh - 22px); }
 ```
+
+Later scenes: `node vendor/egret.mjs verify --screens --prepare test/prepare.mjs`; the trusted local callback asserts readiness and returns the scene name. See the screen-fit guide above.
 
 Rules:
 

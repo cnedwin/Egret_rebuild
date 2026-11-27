@@ -192,7 +192,7 @@ setup(g) {
 | `game.onTap(sprite, () => …, { name })` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。有子节点、自己没有 `hitArea` 的精灵，在它的包围盒（含子节点的绘制）内都能点中，并随子节点移动；自己有绘制、没有子节点的精灵，仍按它画出的内容点中。给了 `name` 时，这个精灵同时是 `semantics` 里同名的按钮：位置与它画出的地方一致，它隐藏时从语义树里略去，它结束时随之消失；在语义树里激活它就等于点击它。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
 | `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | 精灵上的长按、双击、带每一步位移的拖动、滑动和双指缩放，每个只报告一次，位置用游戏单位；返回停止识别的函数。变成拖动或长按的那一下不算点击。有子节点、没有 `hitArea` 的精灵按包围盒点中，与 `onTap` 相同。阈值见[手势](gestures.md) |
 | `game.show(description, { state, bind })` | 用数据描述的界面：由面板、行和列组成，包含文字、按钮、进度条和开关，放在 `game.safe` 里，屏幕变化时重新摆放，竖握手机时可以换用竖屏部件。`bind` 让有名字的部件跟随 `state`（每帧读取），并响应按下。返回视图：`get(name)`、`rect(name)`、`show()`、`hide()`、`close()`。部件和绑定见[用数据描述界面](ui-views.md) |
-| `game.confirm(question, { yes, no })`、`game.hints(list)`、`game.loading(tasks)`、`game.badges`、`game.compact(n)`、`game.request(send)`、`game.device` | 用是或否回答的提问、按玩家设备显示按键的提示栏、计数的加载、累加的红点、数字缩写（12.3K、1.2万），以及按钮不能重复发出的请求。见[大多数界面都需要的部件](ui-views.md#大多数界面都需要的部件) |
+| `game.confirm(question, { yes, no, title, skin, noColor })`、`game.hints(list)`、`game.loading(tasks)`、`game.badges`、`game.compact(n)`、`game.request(send)`、`game.device` | 可换行、适应安全区且可定主题的是非提问、按玩家设备显示按键的提示栏、计数的加载、累加的红点、数字缩写（12.3K、1.2万），以及按钮不能重复发出的请求。见[大多数界面都需要的部件](ui-views.md#大多数界面都需要的部件) |
 | `game.dragAndDrop()` | `.source(sprite, { data, ghost })` 和 `.target(sprite, { drop, accepts, hover })`，各自返回移除函数，以及 `.dragging`。被拖的精灵留在原处，`ghost` 画出的图跟着手指显示在最上层；最里层且接受这份数据的目标接收它 |
 
 点击回调可接受 `PlayTapActivation`，包含指针 `source`、`pointerId`、真实 Stage 坐标、变换可逆时的局部坐标、命中的显示对象 `target` 及当前监听者 `currentTarget`。语义激活没有指针坐标。点击默认仍冒泡；在回调中同步调用 `stopPropagation()` 可阻止继续到达祖先。对应的视图绑定见[声明式视图激活](ui-views.md#绑定)。

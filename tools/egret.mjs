@@ -8,7 +8,7 @@
 //   node tools/egret.mjs explain <ERROR_CODE>
 //   node tools/egret.mjs notes [<game folder>] [--check]
 //   node tools/egret.mjs check [<game folder>] [--strict] [--json]
-//   node tools/egret.mjs verify [<page>] [--playwright <index.mjs>] [--out <new folder>] [--play <script>] [--screens[=<names>]]
+//   node tools/egret.mjs verify [<page>] [--playwright <index.mjs>] [--out <new folder>] [--play <script>] [--screens[=<names>] [--prepare <script>]]
 //   node tools/egret.mjs new <folder> [--target web|mobile|wechat|steam] [--genre <kind>] [--title <name>]
 //
 // The same file runs in this repository and in a game's engine copy, where tools/vendor-game.mjs puts it under
@@ -43,7 +43,7 @@ function usage() {
     `  ${COMMAND} notes [<game folder>] [--check]                                     the game's engine notes the engine has fixed`,
     `  ${COMMAND} check [<game folder>] [--strict] [--json]                           the game's files read for common mistakes`,
     `  ${COMMAND} verify [<page>] [--playwright <index.mjs>] [--out <dir>] [--play <script>]   the game run in a headless browser`,
-    `  ${COMMAND} verify [<page>] --screens[=<name>,...] [--playwright <index.mjs>] [--out <dir>] [--play <script>]   the game on phones, tablets and a desktop`,
+    `  ${COMMAND} verify [<page>] --screens[=<name>,...] [--prepare <script>] [--play <script>] [--playwright <index.mjs>] [--out <dir>]   the game on phones, tablets and a desktop`,
     `  ${COMMAND} new <folder> [--target web|mobile|wechat|steam] [--genre <kind>] [--title <name>]   a game to start from`,
     ''
   ].join('\n');
@@ -111,8 +111,9 @@ function findPlaywright(cwd) {
  * What `verify` runs: tools/verify-game.mjs (beside this file, in the engine copy too) with Playwright's index.mjs, the
  * page (index.html of the folder it runs in unless named), a new output folder (one under the system's temporary folder
  * unless named) and the play script, if any. Playwright is the one named, or the one the game's folder can import.
- * With `--screens`, tools/verify-screens.mjs instead, on every screen it knows or on those named after `=`, with the
- * same optional play script.
+ * With `--screens`, tools/verify-screens.mjs instead, on every screen it knows or on those named after `=`.
+ * An optional local `--prepare` module navigates each fresh page to its starting scene; an optional
+ * `--play` module then drives the route and checks intermediate screen states.
  */
 export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
   const named = {},
@@ -128,8 +129,8 @@ export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
         };
       if (new Set(list).size !== list.length) return { error: 'Each screen must be named only once.' };
       named.screens = list;
-    } else if (['--playwright', '--out', '--play'].includes(arg)) {
-      if (args[i + 1] === undefined) return { error: `${arg} takes a path.` };
+    } else if (['--playwright', '--out', '--play', '--prepare'].includes(arg)) {
+      if (args[i + 1] === undefined || args[i + 1].startsWith('--')) return { error: `${arg} takes a path.` };
       named[arg.slice(2)] = args[++i];
     } else if (arg.startsWith('--')) return { error: `Unknown option ${arg}.` };
     else pages.push(arg);
@@ -144,6 +145,7 @@ export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
         'Playwright is not installed where the game is: run npm install playwright there (or name one with --playwright <its index.mjs>), and npx playwright install chromium once.'
     };
   if (!fs.existsSync(playwright)) return { error: `There is no Playwright at ${playwright}.` };
+  if (named.prepare && !named.screens) return { error: '--prepare requires --screens.' };
   const out = path.resolve(
     cwd,
     named.out ?? path.join(os.tmpdir(), `egret-${named.screens ? 'screens' : 'verify'}-${Date.now()}`)
@@ -154,9 +156,20 @@ export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
   const here = path.dirname(fileURLToPath(import.meta.url));
   if (named.screens) {
     const tool = path.join(here, 'verify-screens.mjs');
+    const prepare = named.prepare && path.resolve(cwd, named.prepare);
+    if (prepare !== undefined && !fs.statSync(prepare, { throwIfNoEntry: false })?.isFile())
+      return { error: `There is no preparation script at ${prepare}.` };
     return {
       tool,
-      args: [tool, playwright, page, out, named.screens.join(','), ...(play ? [play] : [])],
+      args: [
+        tool,
+        playwright,
+        page,
+        out,
+        named.screens.join(','),
+        ...(prepare ? ['--prepare', prepare] : []),
+        ...(play ? ['--play', play] : [])
+      ],
       out,
       screens: named.screens
     };

@@ -117,6 +117,8 @@ game.onScreenChange(plan => {
 
 控件用它的 `name`、`onTap` 给的名字、它在视图里的部件名或按钮上的文字来称呼。盖满整块画布的节点（例如模态视图的遮罩，或「点任意处继续」的层）不算控件；它显示时，被它盖住的控件也不检查。只要有一种屏幕出现错误，工具就以 1 退出。这是按每部手机的尺寸和像素比、加上代替的 insets 运行的 Chromium，不是手机：真实刘海的形状、浏览器自己的栏，以及手机把 insets 交给页面的方式都没有检查。
 
+### 沿试玩路线检查多个状态
+
 不提供脚本时，工具检查初始页面，通常是标题页。要在同一次运行里检查菜单、对局或结算，可以加上原有 verify 的试玩脚本：
 
 ```sh
@@ -126,6 +128,23 @@ node vendor/egret.mjs verify --screens --play test/play.mjs --out screen-route
 脚本的默认异步函数拿到与单窗口验证相同的 player：`tap`、`drag`、`key`、`look`、`until`、`read`、`expect`、`sounds`、`warnings` 和 `picture`。脚本模块加载一次，函数在每种指定屏幕的全新浏览器上下文中各运行一次，不先盲打；一种屏幕产生的存档不会带到下一种。将脚本自身的状态留在函数内部。视口和 insets 由屏幕配置决定，忽略脚本导出的 `viewport`；截图检查时如果视口被改动，就报错。可选的 `stage` 导出与单窗口验证一样，将坐标映射到最大的一块画布；没有该导出时，坐标是相对于该画布的 CSS 像素。对于随屏幕移动的控件，点击前先读实际位置（见 `examples/screen-check/play.mjs`）。即使设备像素比很高，`look` 也按 CSS 像素取色。
 
 在每个稳定的界面状态使用例如 `await player.checkpoint('rules')`。每个检查点写出带红色遮挡区的截图并执行相同的屏幕检查。引擎如果已经提供过控件位置，检查点和终态截图会等待下一次位置报告（最长五秒，游戏模拟暂停时也适用）。未收到新报告时，`controlsFresh` 会报错，不用过时的几何进行检查；从未报告控件的游戏则仍然没有控件位置检查。名称必须是唯一、非空且不含控制字符的字符串。改变界面前应等待这次调用结束。最后仍按原来的方式写出终态截图。`report.json` 中每种屏幕都保留终态检查和 `played` 结果（脚本图片、检查点名称以及失败时的诊断）；有序的 `checkpoints` 各有自己的检查结果和截图路径。`controlReceipt` 说明位置报告是最新的、缺失的还是未经确认的。检查点文件在各自的屏幕子目录内编号，与 `player.picture` 文件分开；重复的图片路径会被拒绝。即使终态通过，只要某个检查点有错误或脚本失败，该屏幕仍然失败，后续屏幕也会继续运行。与普通的 `verify --play` 一样，脚本是受信任的本地 JavaScript，浏览器中的外部请求仍被拒绝。player 的点按与拖动是鼠标输入；专门的触控脚本可在触屏配置上使用 `player.page.touchscreen`。两者都不等同于实体触控或真机测试。
+
+### 检查后续场景
+
+`node vendor/egret.mjs verify --screens --prepare test/prepare-market.mjs --out screen-market` 在每个全新屏幕上打开普通游戏页，再在截图和安全区检查之前运行明确指定的本地模块。模块沿用 `--play` 的玩家辅助方法；它的默认导出函数收到玩家对象和只读的屏幕描述（`name`、CSS 像素的 `width`、`height`、`scale`、`touch`、`insets`）。例如，按 Enter 打开集市的游戏可以这样写：
+
+```js
+export default async function prepare(player, screen) {
+  await player.page.waitForFunction(() => window.demo?.ready);
+  await player.key('Enter');
+  await player.page.waitForFunction(() => window.demo?.screen === 'market');
+  const actual = await player.read(() => window.demo.screen);
+  player.expect(actual === 'market', screen.name + ': market ready');
+  return actual;
+}
+```
+
+确认场景已经就绪后，返回实际进入的非空场景名称。每个屏幕的报告都包含 `prepared`，记录场景或错误。工具等待准备完成后的新原生控件报告；没有报告或原生控件列表为空即判该屏幕失败。异常、异步准备超过 20 秒也判失败，截图及其他检查仍是失败证据。异步时限不能中断阻塞的同步代码：这是操作者明确提供的可信本地 Node 模块，工具不会从页面自动寻找或下载脚本。不加 `--screens` 时，`--play` 仍是单窗口游戏流程检查，含音频。多屏验证不测音频；使用 `--screens` 加 `--play` 检查多个状态的画面与控件位置，或用 `--prepare` 确认后续场景就绪。两种选项同时使用时，先准备场景。准备失败则跳过该屏幕的试玩脚本；准备成功后，在路线检查点之前单独检查并记录 `preparedState`。两者都不能替代游戏流程或音频检查。实际可运行的示例见 `examples/screen-check/prepare.mjs`。
 
 ## 检查了什么
 

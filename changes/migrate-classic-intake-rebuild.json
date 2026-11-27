@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Inspect classic 5.3 projects and rebuild editable conversions",
+    "body": "Review script order, missing assets, theme declarations and host dependencies before conversion. Rebuild an edited conversion against its recorded engine and project ID, then compare changed inputs and gameplay."
+  },
+  "zh": {
+    "title": "盘点白鹭 5.3 工程并重建可编辑的迁移结果",
+    "body": "转换前核对脚本顺序、缺失资源、主题声明及宿主依赖。修改迁移工程后使用已记录的引擎和工程标识重建，再对照输入差异与玩法。"
+  }
+}

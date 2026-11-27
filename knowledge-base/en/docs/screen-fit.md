@@ -117,6 +117,8 @@ A `play` game also tells the tool, about four times a second, where the nodes it
 
 A control is named by its `name`, the name `onTap` was given, the name of its part in a view, or the words of its button. A node over the whole canvas, such as the backdrop of a modal view or a "tap anywhere" layer, is no control, and the controls it is drawn over are left out while it shows. The tool exits with 1 when a screen has an error. It is Chromium with stand-in insets at each phone's size and pixel ratio, not a phone: a real notch's shape, the browser's own bars and the way a phone hands its insets to the page are not checked.
 
+### Check several states along a route
+
 Without a script the tool inspects the initial page, usually the title. To inspect the menus, a match or the result in the same run, add the existing verify play script:
 
 ```sh
@@ -126,6 +128,23 @@ node vendor/egret.mjs verify --screens --play test/play.mjs --out screen-route
 The script's default async function receives the same player as one-window verification: `tap`, `drag`, `key`, `look`, `until`, `read`, `expect`, `sounds`, `warnings` and `picture`. Its module is loaded once and the function runs in a fresh browser context for every named screen, without blind play, so a save made on one screen does not carry to the next. Keep script state local to the function. The screen profile decides the viewport and insets; the script's `viewport` export is ignored, and a changed viewport at a capture is an error. The optional `stage` export maps its coordinates across the largest canvas, as in one-window verification; without it, coordinates are CSS pixels relative to that canvas. For a layout whose controls move between screens, read their actual position before tapping (see `examples/screen-check/play.mjs`). `look` samples CSS pixels even at a high device pixel ratio.
 
 At each stable interface state, use `await player.checkpoint('rules')`, for example. Each checkpoint writes a tinted screenshot and runs the same screen findings. When the engine has told the tool of controls, the checkpoint and final capture wait for a new control report (up to five seconds, including while the game simulation is paused). If no new report arrives, `controlsFresh` fails the capture instead of checking stale geometry; a game that never reports controls has no control checks, as before. Names must be unique, non-empty strings without control characters. Await the call before changing the interface again. The final capture is still written as before. In `report.json`, each screen has its final findings and a `played` result (script pictures, checkpoint names and, on failure, a diagnostic); its ordered `checkpoints` contain independent findings and picture paths. The `controlReceipt` tells whether the reported geometry is fresh, absent or unconfirmed. Checkpoint files are numbered inside the screen's own folder, separate from `player.picture` files; repeated picture paths are refused. A checkpoint error or script failure fails the screen, even if its final state passes. The other screens still run. The scripts are trusted local JavaScript, as with ordinary `verify --play`; the browser's external requests are still refused. The player's tap and drag are mouse inputs; a touch-specific script can use `player.page.touchscreen` on a touch profile. Neither is physical touch or device testing.
+
+### Check a later scene
+
+`node vendor/egret.mjs verify --screens --prepare test/prepare-market.mjs --out screen-market` opens the ordinary game page on each fresh screen, then runs the explicitly named local module before the screenshot and safe-area checks. The module uses the same player helpers as `--play`; its default function receives the player and a read-only screen descriptor (`name`, CSS `width` and `height`, `scale`, `touch`, `insets`). For example, a game with a menu opened by Enter can use:
+
+```js
+export default async function prepare(player, screen) {
+  await player.page.waitForFunction(() => window.demo?.ready);
+  await player.key('Enter');
+  await player.page.waitForFunction(() => window.demo?.screen === 'market');
+  const actual = await player.read(() => window.demo.screen);
+  player.expect(actual === 'market', screen.name + ': market ready');
+  return actual;
+}
+```
+
+Return the nonempty scene name actually reached, after checking readiness. The report for each screen includes `prepared` with the scene or the error. The tool waits for a fresh native control report after preparation; an absent or empty native control list fails that screen. Exceptions and an asynchronous preparation exceeding 20 seconds fail the screen as well. Its screenshot and other checks still serve as failure evidence. The asynchronous deadline cannot interrupt synchronous blocking code: the local module is trusted Node code, supplied explicitly by the operator; the tool never discovers or fetches a script from the page. Without `--screens`, `--play` remains the one-window gameplay check, including audio. Screen verification does not measure audio; use `--play` with `--screens` for a multi-state visual and geometry check, or `--prepare` to assert readiness of a later scene. When both options are supplied, preparation runs first. A preparation failure skips the play script on that screen; successful preparation is independently checked and recorded as `preparedState` before route checkpoints. Neither replaces a gameplay or audio check. For a real runnable example see `examples/screen-check/prepare.mjs`.
 
 ## What is checked
 
