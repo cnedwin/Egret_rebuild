@@ -4,7 +4,7 @@ English | [简体中文](../../Cns/docs/产品需求说明书.md)
 
 Egret is an open-source game-engine project for creating, running and maintaining complex 2D games and lightweight 3D experiences. Its product direction joins a dependable rendering/runtime core with editable projects, resource tools, AI-assisted creation and complete legacy-project migration. A playable result must remain understandable, editable, recoverable and publishable throughout later changes.
 
-This document defines product obligations and acceptance scenarios. The [current engine core](core-progress.md) provides runnable prerequisites; complete creator tools, host coverage, performance, market validation and migration remain open.
+The requirements below describe the complete product. Browser games, selected Android releases, agent-driven playtests and two routes for legacy games are available today. Scope and remaining gaps are recorded per target in [core progress](core-progress.md). The integrated visual creator, assisted migration across arbitrary legacy projects, hardware coverage and publication on each host still need acceptance.
 
 The current source-to-runtime pipeline, optional Spine, UI and text capabilities are summarized in [core progress](core-progress.md). The [M2–M4 plans](m2-m4-delivery-plan.md) define the next core acceptance; they do not replace the complete product requirements below.
 

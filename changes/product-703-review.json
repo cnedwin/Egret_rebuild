@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Find playable games, the native build kit and the 7.0.3 product review",
+    "body": "The entry pages link directly to the community game showcase, Android signing and handoff, legacy migration and the iOS simulator project. The product review records tested routes, outstanding host and device requirements, and the mixed-scene lifecycle evidence."
+  },
+  "zh": {
+    "title": "更新游戏试玩、原生打包入口与 7.0.3 产品进度",
+    "body": "首页直接链接社区游戏展示站、Android 签名与交接、旧工程迁移及 iOS 模拟器工程。产品复盘区分已验收的交付路径、各平台和设备缺口，更新混合场景生命周期记录。"
+  }
+}
