@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "testDate": "2026-11-27",
+  "fixture": "runtime-sdk/examples/original5-atlas/nine-slice.js",
+  "fixtureSha256": "e3b9dcce6a0adb2df7e378f6cbad75721fb5ad0655eb9f6b36ea8a611cb926a7",
+  "stage": [
+    192,
+    128
+  ],
+  "original": {
+    "engine": "Egret 5.3.10 WebGL, original release modules supplied by the tester",
+    "edge": "158.0.4370.33",
+    "display": [
+      1236,
+      824
+    ],
+    "backing": [
+      1344,
+      896
+    ],
+    "earlierDisplayAndBacking": [
+      192,
+      128
+    ]
+  },
+  "android": {
+    "model": "Samsung Galaxy Z Fold7 SM-F966U1",
+    "os": "Android 17",
+    "scriptHost": "trimmed V8 15.7.112.19",
+    "renderer": "GLES3",
+    "backing": [
+      1236,
+      824
+    ],
+    "apkSha256": "2c72e1ea9f5215044b890609ad29521f44959e50b56a9f3b57c7295c2cca7307",
+    "build": "Debug APK with an Activity state observer.",
+    "input": "Android ADB single-pointer taps on the authored original Shape."
+  },
+  "method": "Probe native screenshot RGB and original browser screenshot RGB at corresponding logical pixel centers. All channels use their unrounded 8-bit codes. Five states have 154 samples each; the 3 by 3 target has 9. The browser's showAll host rounded its internal scale to 7.",
+  "states": [
+    {
+      "name": "ordinary 8 by 8",
+      "step": 0,
+      "samples": 154,
+      "exact": 154,
+      "maxChannelError": 0,
+      "original192x128Exact": 154,
+      "original192x128MaxError": 0,
+      "uploads": 1,
+      "releases": 0
+    },
+    {
+      "name": "scale9 44 by 32",
+      "step": 1,
+      "samples": 154,
+      "exact": 154,
+      "maxChannelError": 0,
+      "original192x128Exact": 154,
+      "original192x128MaxError": 0,
+      "uploads": 1,
+      "releases": 0
+    },
+    {
+      "name": "scale9 3 by 3 below fixed border sum",
+      "step": 2,
+      "samples": 9,
+      "exact": 9,
+      "maxChannelError": 0,
+      "original192x128Exact": 5,
+      "original192x128MaxError": 40,
+      "uploads": 1,
+      "releases": 0
+    },
+    {
+      "name": "replace with second packed region at 44 by 32",
+      "step": 3,
+      "samples": 154,
+      "exact": 154,
+      "maxChannelError": 0,
+      "original192x128Exact": 154,
+      "original192x128MaxError": 0,
+      "uploads": 1,
+      "releases": 0
+    },
+    {
+      "name": "clear grid, render ordinary second region",
+      "step": 4,
+      "samples": 154,
+      "exact": 154,
+      "maxChannelError": 0,
+      "original192x128Exact": 154,
+      "original192x128MaxError": 0,
+      "uploads": 1,
+      "releases": 0
+    },
+    {
+      "name": "dispose SpriteSheet while Bitmap remains attached",
+      "step": 5,
+      "samples": 154,
+      "exact": 154,
+      "maxChannelError": 0,
+      "original192x128Exact": 154,
+      "original192x128MaxError": 0,
+      "uploads": 1,
+      "releases": 1
+    }
+  ],
+  "totals": {
+    "exactMatches": 779,
+    "samples": 779,
+    "maxChannelError": 0,
+    "earlierSmallTargetMismatches": 4,
+    "earlierSmallTargetMaxChannelError": 40,
+    "driverUploads": 1,
+    "driverReleases": 1,
+    "projectPagesReleased": 1,
+    "abandoned": 0,
+    "foregroundRestored": true
+  },
+  "scope": "Measurements cover these two original atlas regions and this display size. The earlier 192 by 128 browser comparison retains its four downsampled edge differences. No general pixel identity across display scales, rotated atlas regions, GPU timing or production-game coverage was measured."
+}

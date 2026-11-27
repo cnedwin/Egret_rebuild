@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Run both original Egret 5.3 native display interfaces",
+    "body": "Select the native display interface from the original engine. Package original scripts with classic JavaScript semantics and share the Android player’s texture ownership and touch dispatch across both interfaces."
+  },
+  "zh": {
+    "title": "Android 播放器支持两代白鹭 5.3 原生显示接口",
+    "body": "从原引擎文件识别显示接口，按经典 JavaScript 语义执行原版脚本。两代接口复用同一播放器的纹理管理和触控事件。"
+  }
+}

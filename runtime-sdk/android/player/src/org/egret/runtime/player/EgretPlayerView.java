@@ -433,6 +433,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
                 .put("lastError", lastError).put("scriptHost", benchmark != null && benchmark.replays() ? "native-replay" : BundledScripts.PROFILE).put("vmVersion", vmVersion).put("intl", vmIntl).put("codeCache", codeCacheStats)
                 .put("music", music.snapshot()).put("timing", timing.snapshot()).put("frames", frames).put("lastFrameId", lastFrameId).put("contexts", graphics == null ? 0 : graphics.contexts)
                 .put("uploads", graphics == null ? 0 : graphics.uploads).put("releases", graphics == null ? 0 : graphics.releases)
+                .put("replacedPages", graphics == null ? 0 : graphics.replacedPages)
+                .put("residentPages", graphics == null ? 0 : graphics.residentPages)
                 .put("geometryBatchPackets", scripts == null ? 0 : scripts.geometryBatchPackets)
                 .put("geometryBatchBridgeBytes", scripts == null ? 0 : scripts.geometryBatchBridgeBytes)
                 .put("largestGeometryBatchBytes", scripts == null ? 0 : scripts.largestGeometryBatchBytes)

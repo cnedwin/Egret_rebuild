@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "testDate": "2026-11-27",
+  "authoredProject": "runtime-sdk/examples/original5-atlas",
+  "appSourceSha256": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f",
+  "stage": [
+    192,
+    128
+  ],
+  "original": {
+    "version": "5.3.10",
+    "nativeRenderingAbi": 5,
+    "unchangedInputModuleSha256": {
+      "egret.js": "edbbac063256c61419b662613740e258c4803e3031237b4ccca0d20f506e1b90",
+      "eui.js": "348224f786ed96f20f3f9cfd309f0d91fd79a7763f268f642b24c3398cf5f9f7",
+      "assetsmanager.js": "42f824d1fe98a590b4eb6273584982ef154a180f499a5af4a59330824dc6fc93",
+      "game.js": "122d35aed51b6306b20201707af141e6e21037bd17179ca0f1d0eba8710595da",
+      "egret.web.js (browser only)": "b5459b57c2045d4e8d7186a3baa1cd5f4cdead7abeac4cdc01bc8c6b0815a2fb"
+    }
+  },
+  "reference": {
+    "os": "Windows",
+    "browser": "158.0.4370.33",
+    "renderer": "Original Egret 5 WebGL browser release",
+    "backing": [
+      192,
+      128
+    ],
+    "console": "The original Graphics hit-test path emitted a browser Canvas2D readback performance warning."
+  },
+  "android": {
+    "model": "SM-F966U1",
+    "os": "17",
+    "renderer": "Native GLES3",
+    "scriptHost": "trimmed V8 15.7.112.19",
+    "backing": [
+      1236,
+      824
+    ],
+    "build": "debug APK with an Activity state reader",
+    "apkSha256": "3803bed7ffa71a2136f31ebd403022f4a987dc887c4bcad3d7654c2fc0b733bf",
+    "aarSha256": "f2b01456c6fab88e374b1f4c7ddddaf9e685fa322825f2df2f4c15a4728058ff",
+    "input": "ADB single-pointer taps delivered through Android to the installed app; no manual touch or accessibility user study."
+  },
+  "input": {
+    "misses": [
+      {
+        "point": [
+          10,
+          12
+        ],
+        "target": "background"
+      },
+      {
+        "point": [
+          174,
+          39
+        ],
+        "target": "outside disc, inside bounding box"
+      }
+    ],
+    "hits": [
+      {
+        "point": [
+          163,
+          28
+        ],
+        "target": "disc",
+        "savedTurns": 1
+      },
+      {
+        "point": [
+          145,
+          98
+        ],
+        "target": "EUI image",
+        "savedTurns": 2
+      },
+      {
+        "point": [
+          145,
+          98
+        ],
+        "target": "EUI image",
+        "savedTurns": 3
+      }
+    ],
+    "initial": 0,
+    "afterBackground": 3,
+    "afterForceStopAndRelaunch": 3
+  },
+  "pixels": {
+    "method": "Five named stage points sampled in each native state. Compare with original browser at equal state; background and solid colors in the two crops are exact. Label masks compare per device at its own resolution and font rasterization.",
+    "stagePoints": {
+      "background": [
+        10,
+        10
+      ],
+      "badge": [
+        50,
+        47
+      ],
+      "overlap": [
+        78,
+        54
+      ],
+      "past": [
+        105,
+        61
+      ],
+      "button": [
+        145,
+        98
+      ]
+    },
+    "evenRgb": {
+      "background": [
+        20,
+        38,
+        56
+      ],
+      "badge": [
+        26,
+        194,
+        177
+      ],
+      "overlap": [
+        244,
+        162,
+        43
+      ],
+      "past": [
+        20,
+        38,
+        56
+      ],
+      "button": [
+        244,
+        162,
+        43
+      ]
+    },
+    "oddRgb": {
+      "background": [
+        20,
+        38,
+        56
+      ],
+      "badge": [
+        244,
+        162,
+        43
+      ],
+      "overlap": [
+        244,
+        162,
+        43
+      ],
+      "past": [
+        26,
+        194,
+        177
+      ],
+      "button": [
+        244,
+        162,
+        43
+      ]
+    },
+    "allNativeStateProbesMatchBrowser": true,
+    "labelMask": "Within x=[9,107), y=[88,113), amber requires R>130, G>100, R>1.6B; cyan requires G>100, B>0.95G, B>1.4R. Source is a two-run Egret 5 EUI label. Compare occupied positions on the same device after recovery."
+  },
+  "states": [
+    {
+      "name": "open",
+      "turns": 0,
+      "frame": 40,
+      "contexts": 1,
+      "uploads": 2,
+      "releases": 0,
+      "androidAmberPixels": 7032,
+      "androidCyanPixels": 1690,
+      "androidTextMaskSha256": "bba0580bf91eeabfd0945b61409cde59cb24c3bc6a43354559eaacb814ee92c9",
+      "referenceAmberPixels": 137,
+      "referenceCyanPixels": 33
+    },
+    {
+      "name": "circle",
+      "turns": 1,
+      "frame": 692,
+      "contexts": 1,
+      "uploads": 3,
+      "releases": 1,
+      "androidAmberPixels": 7032,
+      "androidCyanPixels": 1014,
+      "androidTextMaskSha256": "947662d0af0b0bfcd86a24c7cb649cf7f6e069225fbcaca86be92b863e4f79a4",
+      "referenceAmberPixels": 137,
+      "referenceCyanPixels": 30
+    },
+    {
+      "name": "even",
+      "turns": 2,
+      "frame": 1109,
+      "contexts": 1,
+      "uploads": 4,
+      "releases": 2,
+      "androidAmberPixels": 7032,
+      "androidCyanPixels": 1463,
+      "androidTextMaskSha256": "6a1e90acf5acf584db93d4e3d045af5fe81c8c4b255166878d5c8b724616c455",
+      "referenceAmberPixels": 137,
+      "referenceCyanPixels": 35
+    },
+    {
+      "name": "tap",
+      "turns": 3,
+      "frame": 1524,
+      "contexts": 1,
+      "uploads": 5,
+      "releases": 3,
+      "androidAmberPixels": 7032,
+      "androidCyanPixels": 1674,
+      "androidTextMaskSha256": "faebe4f997136b88e4e135a2d2f23e72ae10e0fb33294981db66104d73a5e1b2",
+      "referenceAmberPixels": 137,
+      "referenceCyanPixels": 33
+    },
+    {
+      "name": "resume",
+      "turns": 3,
+      "frame": 1902,
+      "contexts": 2,
+      "uploads": 7,
+      "releases": 5,
+      "androidAmberPixels": 7032,
+      "androidCyanPixels": 1674,
+      "androidTextMaskSha256": "faebe4f997136b88e4e135a2d2f23e72ae10e0fb33294981db66104d73a5e1b2",
+      "referenceAmberPixels": 137,
+      "referenceCyanPixels": 33
+    },
+    {
+      "name": "relaunch",
+      "turns": 3,
+      "frame": 38,
+      "contexts": 1,
+      "uploads": 2,
+      "releases": 0,
+      "androidAmberPixels": 7032,
+      "androidCyanPixels": 1674,
+      "androidTextMaskSha256": "faebe4f997136b88e4e135a2d2f23e72ae10e0fb33294981db66104d73a5e1b2",
+      "referenceAmberPixels": 137,
+      "referenceCyanPixels": 33
+    }
+  ],
+  "close": {
+    "renderedFrames": 2397,
+    "contexts": 2,
+    "uploads": 7,
+    "releases": 7,
+    "abandoned": 0,
+    "logicalPagesReleased": 5,
+    "foregroundRestored": true
+  },
+  "priorFailure": {
+    "trigger": "Before synchronous text page handoff, the first count change invalidated a page needed by a captured frame.",
+    "frame": 397,
+    "nativeStatus": 2,
+    "error": "MissingPage",
+    "archiveApkSha256": "8e3ebf4e8d1579ad6857f2ca6dd110d1a74e5cd5660701d7ceebbdd69b8ca979"
+  },
+  "limits": [
+    "This original, authored scene covers RES JSON/PNG, one two-cell sheet, EUI images and a two-colour label, legacy drawing order, native shape hits, local storage, EGL reconstruction and process restart.",
+    "The geometric coverage check uses the original Stage event propagation and shared 7.x CPU triangle coverage. Pixel-perfect alpha hit testing of arbitrary rendered subtrees is a distinct feature.",
+    "No cross-device glyph pixel equality, physical human input, encrypted/networked commercial game, generic third-party SDK, every 5.x module, or release-build performance claim is made."
+  ]
+}
