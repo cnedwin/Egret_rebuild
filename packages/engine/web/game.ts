@@ -12,6 +12,8 @@ export type {
   BrowserGameLabelCreateOptions,
   BrowserGameLabelOptions,
   BrowserGameOptions,
+  BrowserGameRenderMode,
+  BrowserGameStartupTiming,
   BrowserGameWarning
 } from './BrowserGame.js';
 export { createBrowserStatsPanel } from './BrowserStatsPanel.js';

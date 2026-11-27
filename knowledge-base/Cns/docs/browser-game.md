@@ -55,7 +55,11 @@ game.loop.start();
 | 帧循环 | `game.loop` | `createBrowserFrameLoop`，见[帧循环](frame-loop.md) |
 | 面板（如果要求） | `game.stats` | `createBrowserStatsPanel`，见下文 |
 
-`await game.loadTexture(url)` 加载一张 PNG 图片并给出其纹理的租约，可用于 `new Bitmap(lease)` 或 `graphics.beginBitmapFill(lease)`；租约属于 `game.scope`，同一地址加载两次得到同一张纹理。其他格式不能读取，请使用[内容构建](content-build-pipeline.md)。`game.host` 是 Host，可读取它的状态。
+`await game.loadTexture(url)` 加载图片并给出其纹理的租约，可用于 `new Bitmap(lease)` 或 `graphics.beginBitmapFill(lease)`；租约属于 `game.scope`，同一地址加载两次得到同一张纹理。PNG 使用严格解码器；其他识别为浏览器图片的格式（JPEG、WebP、GIF、AVIF）采用浏览器解码。上述格式之外的源素材请使用[内容构建](content-build-pipeline.md)。`game.host` 是 Host，可读取它的状态。
+
+**有界图片准入。** 单个游戏最多同时接纳四个不同的图片操作（网络读取、编码字节检查、解码及退休）。额外最多 256 个等待操作，按照 FIFO 次序进入，不提前发出网络请求或占用已解码图片额度。所属资源取得操作取消时，尚在等待的操作会被移除；游戏 Scope 释放也取消剩余等待工作。进行中的操作取消后仍保留占用，直到其原始网络/解码工作实际结束，不能因取消提前退还原生工作额度。等待队列已满时，新请求的资源失败原因是 `WEB_PNG_JOB_LIMIT`（指出等待队列上限）。既有单图编码／解码限制、严格资源／manifest provider 的独立准入机制保持不变。普通头像组可直接 `await Promise.all(urls.map(url => game.loadTexture(url)))`，无需应用自己实现四并发节流，但仍受有限队列及资源限制约束。
+
+`tests/browser-game.test.mjs` 中的队列回归通过公开 BrowserGame API 暂时扣住真实回环 HTTP 响应：第五、第六次请求只有在前面的占用释放后进入，等待上限明确，释放游戏时尚未进入的请求不会发出。该受控宿主验证准入和生命周期，不证明原生解码像素或浏览器性能基线。
 
 **代码画出的贴图。** `await game.textureFromCanvas(canvas)` 给出画布此刻内容的纹理租约——开局画好的粒子光点、木屑、位图字体页都可以；`await game.textureFromPixels(width, height, pixels)` 给出 RGBA 字节的纹理租约，行从上到下，alpha 未预乘，与 `ImageData` 相同。每次调用都是一张独立的纹理，租约属于 `game.scope`，租约结束时纹理随之结束。WebGL 画的画布会先复制到一张 2D 画布上再读。单边最多 4,096 像素，总数最多 4,194,304；更大的图请用 [`@egret/engine/web/kit` 的 `textureFromCanvas`](browser-images.md)，它会等比缩小，给出的是纹理本身而不是租约。
 

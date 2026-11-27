@@ -186,3 +186,24 @@ Game UI frameworks commonly handle screen shapes this way. LumioGames LGUI, for 
 ## November 27 device follow-up
 
 November 27 follow-up: Windows hardware WebGL2 and Fold7 WebGL2/WebGPU passed the selected fixed modes, pin, whole-scale high-DPR and UI/view geometry cases. Fold7 ran at 873 × 325 CSS pixels and DPR 2.625; supplied insets and portrait/tablet parent sizes were scripted. Actual notch/fold transitions remain open. [Device observations and remaining coverage](november-27-claude-hardware.md). The separately tested #516 opt-out preserves world coordinates under independently scaled views on both physical devices and APIs.
+
+## Independent scale and native screen reports for a 3D overlay
+
+The ordinary fit sets CSS pixels per logical unit. With a full-coverage transparent World3D overlay, the interface may need its own size instead of shrinking with the design on a phone or growing without bound on a monitor:
+
+```js
+const overlay = await createWorld3DOverlay(canvas, {
+  width: 800, height: 420, portrait: { width: 380, height: 680 },
+  fit: 'expand', uiScale: { min: 1, max: 1.35 }
+});
+const game = overlay.game;
+// Layout and projected world positions use game.screen.width, height, safe and scale.
+```
+
+`uiScale` bounds the actual CSS pixels per overlay logical unit. Both bounds are optional, finite, positive, and the minimum must not exceed the maximum. It is for a fit filling the overlay (`expand` or a fixed mode), not `stretch`, `contain`, `cover` or `wholeScale`. If a bound changes the fit's scale, the stage follows the space on **both** axes; the design centred on it may be cut off. Place controls using the current `game.screen.safe` instead of the design rectangle. `game.onScreenChange`, pointer hit testing, the semantic projection and `overlay.box` use the same actual logical extent and scale. The 3D canvas is not resized by this option. To project a point from the scene canvas, first map it to CSS pixels, subtract the overlay canvas's CSS origin and divide by the actual logical scale (or map by its CSS rectangle and logical width/height).
+
+The same option is available to `planScreen` and the underlying `createBrowserGame` with a filling planned fit. It is distinct from `play({ uiScale })`, which scales its declarative views without changing its gameplay stage.
+
+The native `verify --screens` report is emitted for World3D overlays even when the overlay draws on demand or its drawing loop is stopped. Geometry comes from visible, interactive display objects: explicit `hitArea` transformed to stage and CSS coordinates and restricted by clip rectangles. For an implicit hit area or transformed shape the report uses its axis-aligned envelope; pixel-level shape occlusion is not proved. A full-stage pointer barrier excludes background controls. When a real `createBrowserSemantics` projection owns the overlay canvas, actionable semantic nodes with matching native bounds supply their current names and modal/disabled state; sizes come from the native hit areas, not the painted shadow or focus outline. Named native targets can report without a semantic claim; anonymous pointer-only panels are not treated as buttons in a semantic interface. Otherwise native visible touch targets report by name or position. The tool-only receipt timer is removed on disposal and runs only when a screen-tool collector is present.
+
+`tests/ui-screen.test.mjs` checks clamping and invalid bounds. `tests/world3d-overlay-screen-browser.mjs` exercises independent scale, actual semantic names and hit-area geometry, real touch routing, notch/target/overlap findings, a turn while drawing is stopped, and report cleanup in Chromium; it is not a device performance test.

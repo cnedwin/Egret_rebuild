@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Explicit WebGL2 entry leaves the default engine and Canvas imports unchanged.
 export { createSharedWebGL2Host } from './WebGL2Host.js';
-export type { SharedWebGL2HostOptions } from './sharedWebGL2Options.js';
+export type { SharedWebGL2HostOptions, SharedWebGL2PageBatching } from './sharedWebGL2Options.js';
 export type {
   SharedWebGL2Host,
   SharedLayerWebGL2Host,
@@ -17,7 +17,12 @@ export type {
   WebGL2HostDiagnostic,
   WebGL2HostStatus
 } from './webgl2Types.js';
-export type { SharedWebGL2FrameTiming, SharedWebGL2TimingPhase, SharedWebGL2TimingSample } from './webgl2Types.js';
+export type {
+  SharedWebGL2FrameTiming,
+  SharedWebGL2TimingPhase,
+  SharedWebGL2TimingSample,
+  SharedWebGL2StartupTiming
+} from './webgl2Types.js';
 export type {
   SharedDeviceSessionState,
   SharedDeviceSessionStatus,
