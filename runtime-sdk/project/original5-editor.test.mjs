@@ -45,3 +45,31 @@ test('original InputController events follow only the current Android editor', a
   editor.close();
   assert.equal(egret.StageText, previous);
 });
+
+test('an EUI prompt is display text and does not consume the native input length', () => {
+  class Dispatcher { dispatchEventWith() {} }
+  let options;
+  const egret = {EventDispatcher: Dispatcher};
+  const editor = installOriginal5Editor(egret, {
+    signal: new AbortController().signal,
+    editText(value) { options = value; return new Promise(() => {}); }
+  });
+  const input = new egret.StageText();
+  const owner = {stage:true, text:'', prompt:'Enter account', maxChars:10};
+  input.$setTextField(owner);
+  input.$setText(owner.prompt);
+  input.$show();
+  assert.equal(options.text, '');
+  assert.equal(options.maxLength, 10);
+  input.$hide();
+  owner.text = 'Alan';
+  input.$setText('Alan');
+  input.$show();
+  assert.equal(options.text, 'Alan');
+  input.$hide();
+  // EUI temporarily clears displayAsPassword while painting a placeholder.
+  owner.$isShowPrompt = true;
+  owner.$EditableText = [owner.prompt, 0, true];
+  assert.throws(() => input.$show(), /secure native editor/);
+  editor.close();
+});

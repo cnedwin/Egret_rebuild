@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {createEngine, createImageData2D} from '@egret/engine';
 import {createOriginal5Display} from './original5-display.mjs';
 
-async function fixture(run, nativeAbi = 5) {
+async function fixture(run, nativeAbi = 5, subtreeEffects = true) {
   const engine = await createEngine({host: {
     surface: {}, close: async () => {},
     setTimeout(callback, delay) {
@@ -14,7 +14,7 @@ async function fixture(run, nativeAbi = 5) {
   }});
   const calls = [];
   const display = createOriginal5Display({
-    engine, signal: new AbortController().signal,
+    engine, signal: new AbortController().signal, capabilities: {subtreeEffects},
     publishPage(id) {
       calls.push('+' + id);
       return {release() { calls.push('-' + id); }};
@@ -190,3 +190,51 @@ test('ABI 4 retains shared sources through original Texture and BitmapData dispo
   d.close();
   assert.equal(Object.hasOwn(OriginalBitmapData.prototype,'source'), false);
 }, 4));
+
+test('unattached original filters are lazy and a live filter updates only its bound subtrees', () => fixture(async d => {
+  const Native = d.api.NativeDisplayObject;
+  const matrix = [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,1,0];
+  const filter = {type: null};
+  Native.createFilter(filter);
+  assert.ok(Number.isInteger(filter.$id));
+  filter.type = 'colorTransform';
+  filter.matrix = matrix;
+  Native.setFilterPadding(filter.$id, 0, 0, 0, 0);
+  Native.setDataToFilter(filter);
+  const group = new Native(9), second = new Native(9);
+  group.setFilters([filter]);
+  second.setFilters([filter]);
+  assert.deepEqual([...group.frame.renderEffect.colorMatrix], matrix);
+  group.setFilters(null);
+  filter.matrix = [...matrix];
+  filter.matrix[4] = 57;
+  Native.setDataToFilter(filter);
+  assert.equal(group.frame.renderEffect, undefined);
+  assert.equal(second.frame.renderEffect.colorMatrix[4], 57);
+  const glow = {type: 'glow'};
+  Native.createFilter(glow);
+  Native.setDataToFilter(glow);
+  assert.throws(() => second.setFilters([glow]), /filter/);
+  assert.equal(second.frame.renderEffect.colorMatrix[4], 57);
+  d.close();
+}));
+
+test('the transparent or absent strokes emitted for an EUI rectangle do not require pixel snapping', () => fixture(({api}) => {
+  const shape = new api.NativeDisplayObject(9);
+  shape.setBeginFill(0x456789, 1);
+  shape.setLineStyle(0, 0, 1, true, 'normal', 'square', 'miter', 3);
+  shape.setLineStyle(1, 0, 0, true, 'normal', 'square', 'miter', 3);
+  shape.setDrawRect(0, 0, 10, 8);
+  shape.setEndFill();
+  assert.throws(() => shape.setLineStyle(2, 0, 1, true, 'normal', 'square', 'miter', 3),
+    {code:'ORIGINAL5_NATIVE_UNSUPPORTED'});
+}));
+
+test('older Android players reject color transforms at attachment', () => fixture(({api}) => {
+  const Native = api.NativeDisplayObject;
+  const filter = {type:'colorTransform', matrix:[1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,1,0]};
+  Native.createFilter(filter);
+  const group = new Native(9);
+  assert.throws(() => group.setFilters([filter]), {code:'ORIGINAL5_NATIVE_UNSUPPORTED'});
+  assert.equal(group.frame.renderEffect, undefined);
+}, 5, false));

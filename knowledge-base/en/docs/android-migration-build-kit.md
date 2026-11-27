@@ -138,7 +138,11 @@ export function installHost({defineGlobal, services}) {
 }
 ```
 
-An Android run of a private 5.3.10 project demonstrated the boundary. The unchanged archive library tried to create a download link during initialization. Supplying a native export binding advanced startup to a project mouse plugin that accesses the DOM. Such a plugin needs a project-specific input adapter. This run covered startup diagnostics and did not establish gameplay or an operational channel connection.
+A private 5.3.10 project reached its original login and server selection screens on a Galaxy Z Fold7. Its archive library used a project-owned native export binding. Its mouse plugin installed the browser context-menu handler only where a document exists. Its native-host check accepted both the old Runtime 2 identifier and the Android player's native identifier. The project retained its original touch dispatcher, channel calls and backend request logic.
+
+The original login group loaded all 69 entries. Android's system editor accepted the test input, the original login button advanced to server selection, and a process restart restored the input from app-private storage. The packaged build had no live server with which to authenticate or populate the list. A channel-specific remote image was unavailable. The theme compiled 929 of its 935 declared skins from the available source. [Physical device results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-original5-login-ui.json)
+
+An empty original `TextField` paints its authored background and one-unit border. An EUI `EditableText` supplies its editable value when opening the native editor so the prompt leaves the full character limit available. Password fields require a secure host binding. Players supporting subtree effects accept a single `egret.ColorMatrixFilter`. Changing its `matrix` updates each attached subtree. Assign `filters = null` to restore its own colors. Other filters and older player protocols report unsupported attachment.
 
 ### Tested interfaces of the original engine
 

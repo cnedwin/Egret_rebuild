@@ -138,7 +138,11 @@ export function installHost({defineGlobal, services}) {
 }
 ```
 
-一个私有 5.3.10 商业工程的 Android 实测说明了这条边界。原归档库在初始化时创建浏览器下载链接。接入原生导出绑定后，启动推进到读取 DOM 的项目鼠标插件。该插件需要项目侧的输入适配。此次只覆盖启动诊断，线上渠道与实际玩法仍待验证。
+一个私有 5.3.10 商业工程已在 Galaxy Z Fold7 上进入原有登录界面和选服界面。工程为归档库提供原生导出绑定，鼠标插件仅在存在 document 时安装浏览器右键处理。工程的原生宿主判断同时识别旧 Runtime 2 标识和 Android 播放器的 native 标识。触控分派、渠道调用和后端请求沿用原有业务逻辑。
+
+原登录资源组的 69 项资源全部加载。通过 Android 系统编辑器输入测试标记，原登录按钮可以进入选服界面，强停重开后输入框从应用私有存档恢复标记。本次测试包缺少可用于鉴权和返回区服列表的服务器，一张渠道专用远程图片也无法取得。原主题声明 935 个皮肤，现有源码编译出其中 929 个。[真机验证记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-original5-login-ui.json)
+
+空白的原版 `TextField` 会绘制原有的背景与一个舞台单位宽的边框。EUI 的 `EditableText` 打开原生编辑器时传入可编辑值，提示文字不会占用可输入的字符数。密码框需要安全输入绑定。支持子树效果的播放器可以应用一个 `egret.ColorMatrixFilter`。修改其 `matrix` 会更新所有已挂载它的子树，设为 `filters = null` 可恢复原色。其他滤镜及旧版播放器协议会在挂载时报告不支持。
 
 ### 原版引擎已验证的接口
 

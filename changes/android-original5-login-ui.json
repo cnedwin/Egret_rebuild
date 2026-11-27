@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Support original 5.x native login controls",
+    "body": "Original EUI input fields paint empty backgrounds and borders and keep prompts out of the Android editor. Native color matrices update shared display subtrees. A commercial 5.3.10 client reached server selection on a Fold7 and restored local input after restart."
+  },
+  "zh": {
+    "title": "支持原版白鹭 5.x 的原生登录控件",
+    "body": "原版 EUI 输入框可绘制空白背景和边框，打开 Android 编辑器时会移除提示文字。颜色矩阵更新会同步到已绑定的显示子树。一个 5.3.10 商业客户端在 Fold7 上进入选服界面，重启后恢复了本地输入。"
+  }
+}

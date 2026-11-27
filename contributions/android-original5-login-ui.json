@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "documents": [],
+  "files": [
+    {
+      "path": "runtime-sdk/measurements/fold7-original5-login-ui.json",
+      "originRole": "Observed original-engine login UI and an independently authored filter sample on a physical Android device. Private material is retained outside the repository."
+    }
+  ]
+}
