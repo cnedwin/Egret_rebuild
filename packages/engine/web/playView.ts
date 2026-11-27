@@ -1543,14 +1543,20 @@ export function createPlayViews(
           for (const item of made) game.remove(item.node);
           // A covered modal must keep its original semantic root order when its variant changes.
           // Its descendants may be reparented by the new description, so rebuild those alone.
-          const retainedRoot = semanticRoot?.attached === true;
+          const retainedRoot = semanticRoot?.attached === true ? semanticRoot : undefined;
           try {
-            if (retainedRoot) removeRowSemantics(new Set(semanticNodes.keys()));
-            else for (const remove of removals.splice(0)) remove();
+            if (retainedRoot !== undefined) {
+              removeRowSemantics(new Set(semanticNodes.keys()));
+              // A built callback can replace rows. Treat descendants as not yet registered, just as on the
+              // initial build, without detaching the actual modal root or losing its order in the tree.
+              semanticRoot = undefined;
+            } else for (const remove of removals.splice(0)) remove();
             build(offsets);
             if (!ended) {
-              if (retainedRoot && semanticRoot?.attached === true) registerParts();
-              else {
+              if (retainedRoot?.attached === true) {
+                semanticRoot = retainedRoot;
+                registerParts();
+              } else {
                 for (const remove of removals.splice(0)) remove();
                 registerSemantics();
               }
