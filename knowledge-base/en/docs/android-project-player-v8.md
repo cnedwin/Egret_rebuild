@@ -7,10 +7,32 @@ A game exported with the [Android project player](android-project-player.md) can
 | Build | Script environment | Minimum Android API |
 | --- | --- | ---: |
 | `webview` | Installed System WebView, local HTML entry and browser APIs | 26 |
-| `standard` | V8 15.7.112.19 with JavaScript `Intl` and packaged ICU locale data | 29 |
+| `standard` | V8 15.8.62.52 with JavaScript `Intl` and packaged ICU locale data | 29 |
 | `trimmed` (default) | The same V8 version built without `Intl` or its ICU data | 29 |
 
-Use the WebView build for games that rely on the DOM or need the smallest download. For a self-contained VM, choose standard when the game calls `Intl` for locale-aware formats or sorting. A game can display Chinese with all three hosts through Android's fonts. The two embedded profiles select Javet 6.0.3 arm64 artifacts. Build inputs, versions, hashes and licenses are pinned in the [source manifest](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/v8-provenance.json).
+Use the WebView build for games that rely on the DOM or need the smallest download. For a self-contained VM, choose standard when the game calls `Intl` for locale-aware formats or sorting. A game can display Chinese with all three hosts through Android's fonts. The two embedded profiles select Javet 6.0.4 arm64 artifacts. Build inputs, versions, hashes and licenses are pinned in the [source manifest](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/v8-provenance.json).
+
+## VM selection and Release APK size
+
+Declare the features required by the game and its SDKs in `project.json`, for example `"requiredV8Features": ["Intl", "WebAssembly"]`. Pass the game directory to the AAR builder:
+
+```sh
+node runtime-sdk/android/player/build-aar.mjs --project path/to/game --v8-cache out/v8-cache --out out/player.aar
+```
+
+An `Intl` requirement selects standard. A WebAssembly-only declaration selects trimmed. With no declaration, trimmed remains the default. You can still request standard explicitly. The builder and the exported Gradle project reject a trimmed AAR for a game that declares `Intl`. Embedded V8 declarations also reject an explicit WebView host. If a game uses the system WebView, qualify that host’s capabilities on the target device.
+
+Both arm64 builds enable pointer compression, WebAssembly and V8’s upstream Temporal support at build time. Their GN settings differ only in internationalization. Review locale-sensitive methods such as `String.localeCompare`, optional WebAssembly decoders, deferred scripts and third-party libraries when declaring requirements. Choose standard when the game’s locale requirements are unknown. The compile cache key includes the actual loaded Javet and V8 versions, VM flags, ABI and profile.
+
+| Signed Release APK | Standard | Trimmed |
+| --- | ---: | ---: |
+| Direct load, bytes | 71,900,388 | 64,305,415 |
+| Compact download, bytes | 23,488,240 | 17,670,631 |
+| VM ELF, bytes | 65,003,920 | 62,039,024 |
+
+The generated app defaults to direct loading. For a smaller standalone download run `gradle assembleRelease -PegretApkPackaging=compact`. Both layouts contain one identical VM ELF per profile. On install, compact extracts that ELF plus the 1,282,304-byte renderer onto the device. Direct loads the aligned libraries from the APK. Bundle-generated splits keep direct loading in both configurations.
+
+On a Galaxy Z Fold7, all four signed Moon Herbarium builds opened twice, validated WebAssembly, reported the selected `Intl` capability, restored GLES after backgrounding and released four of four game textures. The second open read one validated code-cache record. The four USB installs or updates took 2.43–5.23 s and Android reported Activity start times of 91–117 ms. These single observations include different install histories and do not establish a cold-start advantage; Activity start ends before the game's first frame. [Verified package contents and Fold7 results](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-android-v8-604.json)
 
 ## Build and run
 

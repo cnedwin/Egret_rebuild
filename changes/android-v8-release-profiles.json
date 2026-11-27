@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Choose Android V8 by game requirements",
+    "body": "The arm64 player uses Javet 6.0.4 and V8 15.8.62.52. A game can declare Intl and WebAssembly when selecting its host, and can opt into a compact, signed standalone Release APK."
+  },
+  "zh": {
+    "title": "按游戏依赖选择 Android V8",
+    "body": "arm64 播放器使用 Javet 6.0.4 和 V8 15.8.62.52，支持按游戏声明的 Intl 和 WebAssembly 选择宿主，并可选择生成更小的独立签名发行 APK。"
+  }
+}

@@ -14,6 +14,12 @@
       "originRole": "Redistribution bundle of upstream V8, Abseil, simdutf and zlib license texts. Each verbatim source follows its immutable URL; two LF bytes separate records.",
       "bytes": 82707,
       "sha256": "5648a319050688ac3e56d798280e4c9e2eb1f1d3d51520bc944e01897b145f7f"
+    },
+    {
+      "path": "third-party/v8-15.8.62.52.NOTICES",
+      "originRole": "Redistribution bundle of upstream V8, Abseil, simdutf and zlib license texts. Each verbatim source follows its immutable URL; two LF bytes separate records.",
+      "bytes": 82707,
+      "sha256": "f567fb3f5c2481a6bd042fdbc04c4d3918d522dff06d7eddf58a92d1d5eabb85"
     }
   ]
 }

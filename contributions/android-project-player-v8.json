@@ -48,6 +48,18 @@
     {
       "path": "runtime-sdk/project/player-raster.mjs",
       "originRole": "Project adapter for the Android raster service. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-android-v8-604.json",
+      "originRole": "Physical Fold7 observations and package inspection for two V8 profiles and two signed APK layouts. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/v8-profile.mjs",
+      "originRole": "Selection of embedded V8 profiles from declared game and third-party requirements. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/v8-profile.test.mjs",
+      "originRole": "Checks for automatic V8 profile selection and incompatible declarations. Independently prepared with AI assistance; Apache-2.0."
     }
   ],
   "documents": [

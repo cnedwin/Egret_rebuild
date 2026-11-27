@@ -7,10 +7,32 @@
 | 构建参数 | 脚本环境 | 最低 Android API |
 | --- | --- | ---: |
 | `webview` | 已安装的系统 WebView、本地 HTML 入口及浏览器 API | 26 |
-| `standard` | V8 15.7.112.19，带 JavaScript `Intl` 和 ICU 语言数据 | 29 |
+| `standard` | V8 15.8.62.52，带 JavaScript `Intl` 和 ICU 语言数据 | 29 |
 | `trimmed`（默认） | 相同版本的 V8，构建时去掉 `Intl` 及其 ICU 数据 | 29 |
 
-游戏依赖 DOM 或优先控制下载体积时，可用系统 WebView。需要自带虚拟机，且使用 `Intl` 进行本地化格式化或排序时，选标准 V8。三种宿主均可调用 Android 字体显示中文。两种内置 V8 使用 Javet 6.0.3 的 arm64 构建。依赖版本、哈希及许可见[来源清单](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/v8-provenance.json)。
+游戏依赖 DOM 或优先控制下载体积时，可用系统 WebView。需要自带虚拟机，且使用 `Intl` 进行本地化格式化或排序时，选标准 V8。三种宿主均可调用 Android 字体显示中文。两种内置 V8 使用 Javet 6.0.4 的 arm64 构建。依赖版本、哈希及许可见[来源清单](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/android/v8-provenance.json)。
+
+## 虚拟机选型与发行包大小
+
+在 `project.json` 中声明游戏及其 SDK 依赖，例如 `"requiredV8Features": ["Intl", "WebAssembly"]`，然后把游戏目录传给 AAR 构建工具。
+
+```sh
+node runtime-sdk/android/player/build-aar.mjs --project path/to/game --v8-cache out/v8-cache --out out/player.aar
+```
+
+声明 `Intl` 会选择标准版；只声明 WebAssembly 时选择裁剪版。未声明仍默认选择裁剪版，也可明确指定标准版。声明 `Intl` 后，AAR 构建和导出的 Gradle 工程都会拒绝裁剪版。声明内置 V8 能力后也会拒绝显式选择 WebView。采用系统 WebView 的游戏应在目标设备核验它实际提供的能力。
+
+两个 arm64 版本都启用指针压缩、WebAssembly 和上游 V8 的 Temporal 编译选项，GN 配置仅在国际化开关上有差异。确定依赖时应检查 `String.localeCompare` 等与语言有关的方法、可选 WebAssembly 解码器、延迟加载脚本和第三方库。语言行为尚未核实时，优先使用标准版。编译缓存身份包含实际加载的 Javet 和 V8 版本、虚拟机参数、ABI 及宿主档位。
+
+| 已签名 Release APK | 标准版 | 裁剪版 |
+| --- | ---: | ---: |
+| 直接加载，字节 | 71,900,388 | 64,305,415 |
+| 紧凑下载，字节 | 23,488,240 | 17,670,631 |
+| 虚拟机 ELF，字节 | 65,003,920 | 62,039,024 |
+
+导出的工程默认直接加载。要分发较小的独立 APK，运行 `gradle assembleRelease -PegretApkPackaging=compact`。每个档位的两种包只含一个字节相同的虚拟机 ELF。安装紧凑包时，系统会额外解压这个 ELF 和 1,282,304 字节的渲染库；直接加载包从对齐的 APK 原位读取。两种配置的 AAB 所生成的分包均保持直接加载。
+
+Galaxy Z Fold7 上，同一款月草图鉴的四个签名发行包均能打开两次、验证 WebAssembly、报告相符的 `Intl` 能力，切后台后恢复 GLES，关闭时四份游戏纹理全部释放。第二次打开均读取一个已校验的编译缓存记录。四次 USB 安装或覆盖升级用时 2.43–5.23 秒，Android 报告的 Activity 启动为 91–117 毫秒。每种组合仅采集一次，安装历史有差异，尚无法比较冷启动优劣；Activity 启动结束时游戏未必已绘制首帧。[包内容与 Fold7 实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-android-v8-604.json)
 
 ## 构建与运行
 
