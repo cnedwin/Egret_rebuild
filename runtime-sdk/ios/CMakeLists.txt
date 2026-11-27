@@ -20,6 +20,8 @@ add_executable(EgretPlayer MACOSX_BUNDLE app/main.m app/GameHost.m app/MetalFram
 set_target_properties(EgretPlayer PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/app/Info.plist"
   XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${EGRET_BUNDLE_ID}"
+  # Xcode archives only installed products; CMake leaves an executable target's install path empty.
+  XCODE_ATTRIBUTE_INSTALL_PATH "/Applications"
   XCODE_ATTRIBUTE_SKIP_INSTALL NO
   XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
   XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES
