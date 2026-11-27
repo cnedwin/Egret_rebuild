@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // World3D UI control geometry for the same native screen-tool protocol used by play.
 import { DisplayObjectContainer } from '@egret/runtime';
+import { screenControlFor } from '#egret-pointer-input';
 import type { DisplayObject } from '@egret/runtime';
 import type { BrowserGame } from '../game.js';
 import type { ScreenRect } from '../screen.js';
@@ -52,9 +53,24 @@ function onStage(node: DisplayObject, local: ScreenRect): ScreenRect {
   return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
 }
 
+// A semantic range can intentionally offer no assistive action, while its native target still receives a
+// pointer drag. Roles such as slider and radio name that target without inventing a clickable backdrop.
+const interactiveRoles = new Set([
+  'button',
+  'checkbox',
+  'switch',
+  'radio',
+  'option',
+  'slider',
+  'scrollbar',
+  'spinbutton',
+  'textbox',
+  'tab',
+  'menuitem'
+]);
+const structuralRoles = new Set(['gridcell', 'columnheader', 'treeitem']);
 const actionable = (node: ScreenControlSemanticNode): boolean =>
-  node.actions.includes('activate') ||
-  (['slider', 'scrollbar', 'spinbutton', 'textbox'].includes(node.role) && node.actions.includes('focus'));
+  node.actions.includes('activate') || interactiveRoles.has(node.role);
 const sameRect = (one: ScreenRect, other: ScreenRect): boolean =>
   Math.abs(one.x - other.x) <= 1e-6 &&
   Math.abs(one.y - other.y) <= 1e-6 &&
@@ -116,7 +132,7 @@ function report(game: BrowserGame, surface: HTMLCanvasElement, scene: HTMLCanvas
     width: r.width * across,
     height: r.height * down
   });
-  const claims = screenSemanticsFor(surface)?.snapshot.nodes.filter(actionable);
+  const claims = screenSemanticsFor(surface)?.snapshot.nodes;
   const seen = candidates(game.stage, claims !== undefined);
   const whole = (r: ScreenRect): boolean => {
     const rect = page(r);
@@ -135,18 +151,25 @@ function report(game: BrowserGame, surface: HTMLCanvasElement, scene: HTMLCanvas
   for (let index = barrier + 1; index < seen.length; index++) {
     const item = seen[index]!;
     if (!item.shown || whole(item.hit)) continue;
+    const native = game.pointer === undefined ? undefined : screenControlFor(game.pointer, item.node);
+    if (native?.enabled === false) continue;
     // semanticBoundsOf() describes the actual node's painted AABB. Match that geometry only for names
     // and modal/disabled state; size and position below always come from the native hit area.
     const matches =
       claims?.filter(
-        claim => (item.visual !== undefined && sameRect(claim.bounds, item.visual)) || sameRect(claim.bounds, item.hit)
+        claim =>
+          (actionable(claim) || (native !== undefined && structuralRoles.has(claim.role))) &&
+          ((item.visual !== undefined && sameRect(claim.bounds, item.visual)) || sameRect(claim.bounds, item.hit))
       ) ?? [];
     const match = matches.length === 1 ? matches[0] : undefined;
     if (match?.inert || match?.disabled) continue;
-    // A semantic interface tells which native targets are controls; anonymous pointer-only panels are
-    // intentionally not reported as buttons. Native named targets still report without a semantic claim.
-    if (claims !== undefined && claims.length > 0 && match === undefined && item.node.name === '') continue;
-    controls.push({ name: match?.name ?? item.node.name, ...page(item.hit) });
+    // A semantic interface identifies custom controls. Registered native controls are authoritative
+    // even without a semantic claim; an anonymous pointer-only panel is still not a button.
+    if (claims !== undefined && match === undefined && native === undefined && item.node.name === '') continue;
+    controls.push({
+      name: match?.name || item.node.name || (native ? native.kind + ' control' : ''),
+      ...page(item.hit)
+    });
   }
   let safe = intersection(page(stage.safe), asRect(scene.getBoundingClientRect()));
   const view = surface.ownerDocument.defaultView,

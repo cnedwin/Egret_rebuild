@@ -439,7 +439,7 @@ for (const [name, allowed] of Object.entries(expected)) {
           throw new Error('M3.3: keyboard assembly import outside the named browser modules: '+relative);
       } else if (imported === '#egret-pointer-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
-        if(name!=='engine'||!['web/pointer.ts','web/BrowserPointerInput.ts','dist/web/pointer.js','dist/web/pointer.d.ts','dist/web/BrowserPointerInput.js','dist/web/BrowserPointerInput.d.ts'].includes(relative))
+        if(name!=='engine'||!['web/pointer.ts','web/BrowserPointerInput.ts','dist/web/pointer.js','dist/web/pointer.d.ts','dist/web/BrowserPointerInput.js','dist/web/BrowserPointerInput.d.ts','web/world3d/overlayScreenReport.ts','dist/web/world3d/overlayScreenReport.js'].includes(relative))
           throw new Error('M3: pointer assembly import outside the named browser modules: '+relative);
       } else if (imported === '#egret-mouse-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
@@ -4670,6 +4670,20 @@ for (const file of ['packages/engine/web/WebGL2Host.ts','packages/engine/dist/we
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./sharedHostDeferred.js']]
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
+// Native control reporting shares one read-only private association through the existing pointer alias.
+for (const file of ['src/pointerInput.ts','dist/pointerInput.js','dist/pointerInput.d.ts'])
+  currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],
+    ['static','./internal/uiControlReportState.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+for (const file of ['src/ui/controls.ts','dist/ui/controls.js','src/ui/rangeControl.ts','dist/ui/rangeControl.js','src/ui/scrollControl.ts','dist/ui/scrollControl.js'])
+  currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],
+    ['static','../internal/uiControlReportState.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+for (const [file, targets] of Object.entries({
+  'src/internal/uiControlReportState.ts':['../pointerInputTypes.js','@egret/runtime'],
+  'dist/internal/uiControlReportState.js':[],
+  'dist/internal/uiControlReportState.d.ts':['../pointerInputTypes.js','@egret/runtime']
+}))
+  currentSceneLiteralClosure['packages/engine/' + file] = targets.map(target=>['static',target])
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 for (const [file,edges] of Object.entries(currentSceneLiteralClosure)) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
@@ -5711,8 +5725,8 @@ for(const [file,expected] of Object.entries(semanticImports)){
  // World3D's screen report observes only native geometry and the browser projection's private read-only registry.
  // It owns a tool-only receipt interval; the ordinary game and semantics runtime keep their no-timer rule above.
 const overlayReporterImports={
- 'web/world3d/overlayScreenReport.ts':['@egret/runtime','@egret/runtime','../game.js','../screen.js','../screenControlReportState.js','../screenControlReportState.js'],
- 'dist/web/world3d/overlayScreenReport.js':['@egret/runtime','../screenControlReportState.js'],
+ 'web/world3d/overlayScreenReport.ts':['@egret/runtime','@egret/runtime','#egret-pointer-input','../game.js','../screen.js','../screenControlReportState.js','../screenControlReportState.js'],
+ 'dist/web/world3d/overlayScreenReport.js':['@egret/runtime','#egret-pointer-input','../screenControlReportState.js'],
  'dist/web/world3d/overlayScreenReport.d.ts':['../game.js']
 };
 for(const [file,expected] of Object.entries(overlayReporterImports)){
@@ -5721,6 +5735,8 @@ for(const [file,expected] of Object.entries(overlayReporterImports)){
  if(/\b(?:setTimeout|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Overlay screen reporter: acquired automatic host work: '+file);
 }
 const semanticAllowed={
+ 'src/internal/uiControlReportState.js':['src/pointerInput.ts','src/ui/controls.ts','src/ui/rangeControl.ts','src/ui/scrollControl.ts'],
+ 'dist/internal/uiControlReportState.js':['dist/pointerInput.js','dist/pointerInput.d.ts','dist/ui/controls.js','dist/ui/rangeControl.js','dist/ui/scrollControl.js'],
  'web/world3d/overlayScreenReport.js':['web/world3d/overlay3D.ts'],
  'dist/web/world3d/overlayScreenReport.js':['dist/web/world3d/overlay3D.js'],
  'src/semanticTree.js':['src/semantics.ts'],'dist/semanticTree.js':['dist/semantics.js','dist/semantics.d.ts'],

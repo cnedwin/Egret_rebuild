@@ -198,6 +198,37 @@ test('EV05 every screen is whole CSS pixels with a safe part, and phones and tab
   assert.ok(SCREENS['phone-notch'].insets.top > 0 && SCREENS['phone-notch-wide'].insets.left > 0);
 });
 
+// A measured Fold7 cover-screen landscape browser viewport supplements (not replaces) the unfolded profile.
+test('EV05A the ninth profile covers the measured folded phone CSS viewport and remains explicitly selectable', () => {
+  assert.equal(Object.keys(SCREENS).length, 9);
+  assert.deepEqual(SCREENS['foldable-cover-wide'], {
+    width: 873,
+    height: 325,
+    scale: 2.625,
+    touch: true,
+    insets: { top: 0, right: 0, bottom: 0, left: 0 }
+  });
+  assert.deepEqual(SCREENS.foldable, {
+    width: 884,
+    height: 1104,
+    scale: 2.5,
+    touch: true,
+    insets: { top: 0, right: 0, bottom: 0, left: 0 }
+  });
+  const game = temporary();
+  try {
+    fs.writeFileSync(path.join(game, 'index.html'), '<canvas></canvas>');
+    fs.writeFileSync(path.join(game, 'pw.mjs'), '');
+    const all = verifyArgs(['--screens', '--playwright', 'pw.mjs'], game);
+    assert.ok(all.screens.includes('foldable-cover-wide') && all.screens.includes('foldable'));
+    const one = verifyArgs(['--screens=foldable-cover-wide', '--playwright', 'pw.mjs'], game);
+    assert.deepEqual(one.screens, ['foldable-cover-wide']);
+    assert.equal(one.args.at(-1), 'foldable-cover-wide');
+  } finally {
+    fs.rmSync(game, { recursive: true, force: true });
+  }
+});
+
 // Break caught: a control under the notch passed, a nested control told as overlapping its holder, a mouse held to a
 // finger's size, or a control told without the name an agent finds it by.
 test('EV06 the screens check finds controls outside the safe part, smaller than a finger, or covering each other', () => {

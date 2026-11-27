@@ -3,7 +3,7 @@ import { EgretError } from '@egret/runtime';
 import type { DisplayObject } from '@egret/runtime';
 import type { HoverInput } from '../hoverInputTypes.js';
 import type { PointerInput } from '../pointerInputTypes.js';
-import { createActionControl } from './controls.js';
+import { createActionControl, createSelectionItemAction } from './controls.js';
 import type { ActionControl } from './controls.js';
 
 /**
@@ -347,13 +347,16 @@ export function createSelectionGroup(options: SelectionGroupOptions): SelectionG
   try {
     // Each item takes its press through an action control; whether the press may select is decided in one place, above.
     for (const entry of entries)
-      entry.action = createActionControl({
-        input,
-        target: entry.target,
-        onActivate: () => {
-          choose(entry);
-        }
-      });
+      entry.action = createSelectionItemAction(
+        {
+          input,
+          target: entry.target,
+          onActivate: () => {
+            choose(entry);
+          }
+        },
+        () => enabled && entry.enabled && !closed
+      );
   } catch (cause) {
     for (const entry of entries)
       try {
