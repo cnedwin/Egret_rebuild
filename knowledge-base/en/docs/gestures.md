@@ -49,8 +49,12 @@ A long press waits on the engine's clock, so it does not fire while the game is 
 - drag and drop onto the innermost target, a drop with no target, and an empty source;
 - refusals, and an ended recognizer that hears nothing.
 
-`examples/play/verify-gestures.mjs` runs in headless Chromium with the mouse. It checks a double click, a long press, a drag that moves a card, a fast flick that is a swipe, and a gem dragged onto a slot. Two fingers are not tried in a browser; nor is a real touch screen.
+`examples/play/verify-gestures.mjs` runs in headless Chromium with the mouse. It checks a double click, a long press, a drag that moves a card, a fast flick that is a swipe, and a gem dragged onto a slot. That original software run did not exercise two browser contacts or a physical touch screen; the later device follow-up below does.
 
 ## Design notes
 
 LumioGames LGUI gives its controls drag, long press and drop handling. Here they are made from the contacts pointer input already routes, so a host and a test give contacts the same way, and play's sprites, buttons and taps share one pointer. The design was studied as a reference; none of its code is used.
+
+## November 27 device follow-up
+
+November 27 follow-up: the Windows mouse gesture helper passed; on actual Fold7 each backend received two CDP touch contacts, with measured pinch scale 1.9167, turn 28°, single hold, drag and drop. These are device-browser inputs, not human fingers. [Device observations and remaining coverage](november-27-claude-hardware.md).

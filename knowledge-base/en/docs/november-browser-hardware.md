@@ -66,3 +66,7 @@ We opened fresh foreground pages on the same Galaxy Z Fold7 in Chrome 157, with 
 The first interactive picture is the later of controls becoming ready and Chrome compositing its first frame containing the models, measured from navigation start. Startup times are the median of six runs per version. The percentages compare those medians. The frame interval column is the median of six 90-interval foreground samples per version. Every pair reached the first interactive picture sooner with the pack. The median steady frame interval p95 stayed at about 16.7 ms on both backends.
 
 At a fixed animation pose, the two versions produced identical canvas pixels at both normalized and true sizes. An injected touch drag on the physical phone changed the camera on both versions and both backends. After the drag, setting the camera to the same rotated pose gave identical images on both backends. The browser reached the gallery over USB localhost. The additional GLB transfer depends on network speed for a public deployment. Upload-call durations measure CPU time. The record also gives submit-to-completion observations for the whole frame. [Paired samples, diagnostics and image comparisons](https://github.com/cnedwin/Egret_rebuild/blob/main/docs/evidence/fold7-model-gallery-startup.json)
+
+## November 27 device follow-up
+
+A separate later review covers the 32 merged Claude-named branches after #442 through #516, with the tested main and physical-device evidence. [Device observations and remaining coverage](november-27-claude-hardware.md).

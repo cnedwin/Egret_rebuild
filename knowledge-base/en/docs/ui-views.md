@@ -364,8 +364,12 @@ A named noninteractive text part is omitted from the published semantic tree whe
 - the hint bar after a key, a mouse click and a tap;
 - loading that counts to three.
 
-It was not run on a phone, with a screen reader, with a gamepad, or in another browser.
+The original software run did not cover phones, screen readers, physical gamepads or other browsers. The later physical-device follow-up is given below.
 
 ## Design notes
 
 LumioGames LGUI builds its screens from data made in an editor, finds controls by name, and binds data to them in code. This keeps that division but writes the data by hand or by an agent, as a plain object. The data is checked strictly, so a typo is an error and not an empty space. Screens are placed in the safe part of any screen shape, are reached by tests through the semantic tree, and close as screens of the stack. The design was studied as a reference; none of its code is used.
+
+## November 27 device follow-up
+
+November 27 follow-up: physical Fold7 WebGL2 and WebGPU passed named views, disabled actions, modal confirmation, one request under repeated taps, badge/progress and scripted tablet part switches. The unchanged desktop full view helper retains a focused-outline assertion failure; a separate semantic diagnosis passed. Human accessibility and actual device postures remain open. [Device observations and remaining coverage](november-27-claude-hardware.md). The separately tested #516 opt-out preserves world coordinates under independently scaled views on both physical devices and APIs.
