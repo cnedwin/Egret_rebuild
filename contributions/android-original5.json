@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/Cns/docs/original5-atlas-verification.md",
+      "originRole": "Chinese original-engine browser and physical Android acceptance guide. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/original5-atlas-verification.md",
+      "originRole": "English original-engine browser and physical Android acceptance guide. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/prepare-original5.mjs",
+      "originRole": "Preparation of existing classic scripts and resources for the current Android exporter. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/prepare-original5.test.mjs",
+      "originRole": "Tests for original script identity, module order and package path ownership. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/original5-atlas/board.js",
+      "originRole": "First-party test game expressed through existing Egret 5 classes. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/original5-atlas/editor.js",
+      "originRole": "First-party original-engine input and focus fixture. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/original5-atlas/main.mjs",
+      "originRole": "Native validation entry for the original-engine sample. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/original5-atlas/nine-slice.js",
+      "originRole": "First-party stretchable atlas fixture for original Bitmap behavior. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/original5-atlas/prepare.mjs",
+      "originRole": "Local fixture assembly using operator-provided engine files and generated PNG assets. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-original5-atlas.json",
+      "originRole": "Sanitized same-scene browser and physical Android measurements for original Egret 5 modules. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-original5-editor.json",
+      "originRole": "Scoped physical Android system editor fixture observations. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-original5-nine-slice.json",
+      "originRole": "Fold7 and original-engine Windows reference measurements for nine-slice geometry. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/android-original5.d.ts",
+      "originRole": "Type declarations for the original-engine Android project entry. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-display.mjs",
+      "originRole": "Adapter between original display identities and the shared Engine display tree. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-display.test.mjs",
+      "originRole": "Regression coverage for native display ownership and geometry. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-editor.mjs",
+      "originRole": "Original StageText integration with the existing Android system editor. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-editor.test.mjs",
+      "originRole": "Focus, replacement, cancellation and stale native editor event regressions. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-images.mjs",
+      "originRole": "Original bitmap source and atlas lifetime mapped to shared asset leases. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-nine-slice.mjs",
+      "originRole": "Mapping of the original nine-slice results onto retained shared geometry. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-platform.mjs",
+      "originRole": "Implementation of the original resource loader and storage host interfaces. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-platform.test.mjs",
+      "originRole": "Tests for stale resource completion, cancellation, failure and native data ownership. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-player.mjs",
+      "originRole": "Boot and lifecycle of original JavaScript modules in the embedded player. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-text.mjs",
+      "originRole": "Original line layouts and measured text pages in the Android renderer. Independently prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/original5-text.test.mjs",
+      "originRole": "Text layout and asynchronous texture retirement regressions. Independently prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/original5-atlas-verification.md",
+      "zh": "knowledge-base/Cns/docs/original5-atlas-verification.md"
+    }
+  ]
+}

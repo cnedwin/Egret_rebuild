@@ -117,7 +117,7 @@ function contains(rectangle: Rectangle2D, point: Point2D): boolean {
  * Whether a point, in a node's own units, is on what the node itself draws: one of its filled rectangles, a triangle
  * of its shapes, or its bitmap's rectangle. A node that is touch enabled and has no hit area is hit by this.
  */
-function onContent(node: DisplayObject, point: Point2D): boolean {
+export function containsOwnPaint(node: DisplayObject, point: Point2D): boolean {
   const visual = visualOf(node),
     x = point.x,
     y = point.y;
@@ -242,7 +242,7 @@ export function queryDisplayHit(
       // topmost hit cannot hide another active branch's arithmetic failure.
       if (
         winner === undefined &&
-        (cursor.area === true ? onContent(cursor.node, localPoint) : contains(cursor.area, localPoint))
+        (cursor.area === true ? containsOwnPaint(cursor.node, localPoint) : contains(cursor.area, localPoint))
       )
         winner = cursor.node;
     }

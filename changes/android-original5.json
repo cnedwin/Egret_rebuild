@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Open original Egret 5 scripts in the Android player",
+    "body": "Package original engine modules, EUI, RES and game scripts in their original order. The native display binding shares the current player, texture lifecycle and storage. The guide lists the tested original 5.3.10 operations and the host services a project must supply."
+  },
+  "zh": {
+    "title": "Android 播放器接入原版白鹭 5 脚本",
+    "body": "保留原引擎模块、EUI、RES 和游戏脚本的执行顺序，原版显示对象共用现有播放器、纹理生命周期和存档。指南列出了已验证的 5.3.10 操作及项目需要提供的宿主服务。"
+  }
+}
