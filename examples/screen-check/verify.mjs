@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { loadPng } from '../../tools/verify-game.mjs';
 import { SCREENS } from '../../tools/verify-screens.mjs';
 
@@ -26,7 +26,7 @@ const { PNG } = loadPng();
  * The status and report of one run: plain through the command, or with a query (?fixed=1) through the tool, on every
  * screen or on those listed.
  */
-function run(name, query, screens) {
+function run(name, query, screens, play) {
   let page = path.join(here, 'index.html');
   if (query) {
     page = path.join(here, name + '.tmp.html');
@@ -37,9 +37,20 @@ function run(name, query, screens) {
   }
   try {
     const out = path.join(output, name);
-    const args = query
-      ? [path.join(tools, 'verify-screens.mjs'), playwright, page, out, ...(screens ? [screens] : [])]
-      : [path.join(tools, 'egret.mjs'), 'verify', page, '--screens', '--playwright', playwright, '--out', out];
+    const args =
+      query && !play
+        ? [path.join(tools, 'verify-screens.mjs'), playwright, page, out, ...(screens ? [screens] : [])]
+        : [
+            path.join(tools, 'egret.mjs'),
+            'verify',
+            page,
+            screens ? '--screens=' + screens : '--screens',
+            '--playwright',
+            playwright,
+            '--out',
+            out,
+            ...(play ? ['--play', play] : [])
+          ];
     const result = spawnSync(process.execPath, args, { encoding: 'utf8' });
     if (!fs.existsSync(path.join(out, 'report.json'))) throw new Error(result.stdout + result.stderr);
     return {
@@ -133,6 +144,133 @@ for (const screen of asked.report.screens) {
     assert.ok(['no', 'yes'].includes(finding.control), `${screen.name}: named by its part: ${finding.control}`);
 }
 
+// A route really taps the Pause control and the modal's Stay action, exporting no fixed stage for these screens.
+// Three checkpoints cover title, open question and return. Each has its own observation, even when the final
+// question is gone, and pictures cannot overwrite the same checkpoint or picture name on another device.
+const route = path.join(here, 'play.mjs');
+const scripted = run('scripted', 'fixed=1', undefined, route);
+assert.equal(scripted.status, 0, scripted.stdout);
+const pictures = new Set();
+assert.equal(scripted.report.screens.length, 8);
+for (const screen of scripted.report.screens) {
+  assert.equal(screen.played.pass, true, screen.name);
+  assert.deepEqual(screen.played.checkpoints, ['table', 'question', 'back']);
+  assert.deepEqual(
+    screen.checkpoints.map(one => [one.name, one.controls]),
+    [
+      ['table', 4],
+      ['question', 2],
+      ['back', 4]
+    ]
+  );
+  assert.equal(screen.controls, 4);
+  assert.equal(screen.pass, true);
+  assert.equal(screen.played.pictures.length, 1);
+  for (const one of [...screen.checkpoints, screen]) {
+    assert.equal(one.pass, true, screen.name + ': ' + one.name);
+    assert.equal(one.controlReceipt.fresh, true, 'the game sent a new control report for this state');
+    assert.ok(one.controlReceipt.after > one.controlReceipt.before, 'a control receipt, not a wall-time guess');
+    assert.ok(fs.existsSync(one.picture), one.picture);
+    assert.ok(!pictures.has(one.picture), 'each picture belongs to just one checkpoint or screen');
+    pictures.add(one.picture);
+  }
+  const raw = screen.played.pictures[0];
+  assert.ok(fs.existsSync(raw));
+  assert.ok(!pictures.has(raw), 'script pictures on separate screens cannot overwrite one another');
+  pictures.add(raw);
+}
+const modalPicture = PNG.sync.read(fs.readFileSync(byName(scripted.report)['phone-notch'].checkpoints[1].picture));
+const modalTop = 4 * (20 * scale * modalPicture.width + (modalPicture.width >> 1));
+assert.ok(modalPicture.data[modalTop] > modalPicture.data[modalTop + 1] + 80, 'checkpoint pictures tint the notch');
+
+// Even with the question open and the controls now safely inset, a failing earlier checkpoint cannot be hidden.
+// An assigned script failure on the second screen must not stop the third screen from running.
+const failingPlay = path.resolve(output, 'failure-route.mjs');
+fs.writeFileSync(
+  failingPlay,
+  `import { openQuestion } from ${JSON.stringify(pathToFileURL(route).href)};
+export default async function (player) {
+  await openQuestion(player);
+  if (player.page.viewportSize().width === 360) throw Object.assign(new Error('assigned stop'), {
+    code: 'FIXTURE_STOP', details: { stage: 'question' }
+  });
+}\n`
+);
+const failure = run('failure', 'plain=1', 'phone-notch,phone-tall,desktop', failingPlay);
+assert.equal(failure.status, 1);
+const failed = byName(failure.report);
+assert.equal(failed['phone-notch'].played.pass, true);
+assert.equal(failed['phone-notch'].checkpoints[0].pass, false);
+assert.equal(failed['phone-notch'].checkpoints[1].pass, true);
+assert.deepEqual(checks(failed['phone-notch'], 'inSafeArea'), []);
+assert.equal(failed['phone-notch'].pass, false, 'the earlier checkpoint still fails the screen');
+assert.equal(failed['phone-tall'].played.pass, false);
+assert.equal(failed['phone-tall'].played.diagnostic.code, 'FIXTURE_STOP');
+assert.deepEqual(failed['phone-tall'].played.diagnostic.details, { stage: 'question' });
+assert.equal(failed.desktop.played.pass, true, 'later screen was still played');
+assert.equal(failed.desktop.pass, true);
+
+// Labels are report data, not paths; even a traversal-looking label cannot leave the profile directory.
+// Never overwrite a checkpoint or a raw picture, including case-colliding picture filenames on Windows.
+const badNames = path.resolve(output, 'name-route.mjs');
+fs.writeFileSync(
+  badNames,
+  `export default async function (player) {
+  await player.checkpoint('../報告/界面');
+  const width = player.page.viewportSize().width;
+  if (width === 393) await player.checkpoint(' ../報告/界面 ');
+  if (width === 360) await player.checkpoint(' ');
+  if (width === 375) {
+    await player.picture('Table');
+    await player.picture('table');
+  }
+  if (width === 1024) await player.page.setViewportSize({ width: 1000, height: 700 });
+  if (width === 884) await player.page.goto('about:blank');
+}\n`
+);
+const names = run(
+    'name-checks',
+    'fixed=1',
+    'phone-notch,phone-tall,phone-small,tablet-wide,foldable,desktop',
+    badNames
+  ),
+  nameChecks = byName(names.report);
+assert.equal(names.status, 1);
+assert.match(nameChecks['phone-notch'].played.diagnostic.message, /Repeated checkpoint name/);
+assert.match(nameChecks['phone-tall'].played.diagnostic.message, /non-empty name/);
+assert.match(nameChecks['phone-small'].played.diagnostic.message, /Repeated play picture name/);
+assert.deepEqual(checks(nameChecks['tablet-wide'], 'viewport'), [
+  {
+    check: 'viewport',
+    severity: 'error',
+    expected: [1024, 768],
+    actual: [1000, 700]
+  }
+]);
+assert.equal(nameChecks['tablet-wide'].pass, false);
+assert.deepEqual(checks(nameChecks.foldable, 'controlsFresh'), [
+  {
+    check: 'controlsFresh',
+    severity: 'error',
+    previous: 0,
+    received: 0
+  }
+]);
+assert.equal(nameChecks.foldable.controlReceipt.fresh, false);
+assert.equal(nameChecks.foldable.controls, null);
+assert.equal(nameChecks.foldable.pass, false);
+assert.equal(nameChecks.desktop.pass, true);
+for (const screen of names.report.screens) {
+  assert.deepEqual(screen.played.checkpoints, ['../報告/界面']);
+  assert.equal(screen.checkpoints.length, 1);
+  assert.equal(screen.checkpoints[0].name, '../報告/界面');
+  assert.equal(
+    path.dirname(screen.checkpoints[0].picture),
+    path.join(path.resolve(output), 'name-checks', screen.name)
+  );
+  assert.equal(path.basename(screen.checkpoints[0].picture), 'checkpoint-1.png');
+}
+
 console.log(
-  `screen-check: ${plain.report.screens.length} screens; plain finds the notch, the small target and the overlap; fixed finds nothing; a question's backdrop is no control.`
+  `screen-check: ${plain.report.screens.length} screens; plain finds the notch, the small target and the overlap; fixed finds nothing; a question's backdrop is no control; a real pointer route reports each checkpoint and keeps failures local.`
 );

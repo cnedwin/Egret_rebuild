@@ -88,7 +88,7 @@ test('EV03 PLAY_MADE_EVERY_FRAME is an engine code with a sentence in English an
 
 // Break caught: --screens running the one-window check, a screen name taken for the page, or a misspelt screen run as
 // nothing.
-test('EV04 verify --screens runs verify-screens on every screen, or on those named, and refuses a script', () => {
+test('EV04 verify --screens runs verify-screens on every screen, or on those named, with an optional play script', () => {
   const game = temporary();
   try {
     fs.writeFileSync(path.join(game, 'index.html'), '<canvas></canvas>');
@@ -108,10 +108,23 @@ test('EV04 verify --screens runs verify-screens on every screen, or on those nam
     assert.match(path.basename(two.out), /^egret-screens-/);
     assert.match(verifyArgs(['--screens=phone', '--playwright', 'pw.mjs'], game).error, /not phone\./);
     assert.match(verifyArgs(['--screens=', '--playwright', 'pw.mjs'], game).error, /The screens are phone-small/);
+    assert.match(verifyArgs(['--screens=desktop,desktop', '--playwright', 'pw.mjs'], game).error, /only once/);
     fs.writeFileSync(path.join(game, 'play.mjs'), '');
+    const route = verifyArgs(
+      ['--screens=phone-notch,desktop', '--play', 'play.mjs', '--playwright', 'pw.mjs', '--out', 'played'],
+      game
+    );
+    assert.match(route.tool, /tools[\\/]verify-screens\.mjs$/);
+    assert.deepEqual(route.args.slice(1), [
+      playwright,
+      path.join(game, 'index.html'),
+      path.join(game, 'played'),
+      'phone-notch,desktop',
+      path.join(game, 'play.mjs')
+    ]);
     assert.match(
-      verifyArgs(['--screens', '--play', 'play.mjs', '--playwright', 'pw.mjs'], game).error,
-      /--screens takes no script/
+      verifyArgs(['--screens', '--play', 'missing.mjs', '--playwright', 'pw.mjs'], game).error,
+      /There is no script/
     );
   } finally {
     fs.rmSync(game, { recursive: true, force: true });

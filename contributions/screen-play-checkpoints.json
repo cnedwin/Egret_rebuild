@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/screen-check/play.mjs",
+      "originRole": "First-party responsive verification route that taps the actual Pause and Stay controls and records three screen checkpoints; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

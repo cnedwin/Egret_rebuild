@@ -301,6 +301,18 @@ A handler that throws is reported to `onError` and the projection goes on. A fai
 
 The application may set `role`, `aria-label` or `aria-owns` on its canvas first. The projection leaves the first two as they are and adds its container to the third.
 
+For a responsive `play` game using `fit: 'expand'`, a fixed-side fit or `portrait`, the logical stage can change size too. Pass the actual stage bounds' dimensions, not the design size (`game.width` and `game.height`):
+
+```js
+const projection = createBrowserSemantics({
+  semantics, canvas: game.canvas, width: game.browser.frame.width, height: game.browser.frame.height
+});
+const stopProjectionSync = game.browser.onScreenChange(() => projection.sync(game.browser.frame));
+// When leaving the game, call stopProjectionSync() and projection.dispose().
+```
+
+`projection.sync({ width, height })` replaces that logical mapping and measures the canvas in place; the existing projected elements, their IDs, the semantic tree, and its active descendant are retained. Both dimensions must be finite and positive, as at construction; invalid sizes throw `UI_SEMANTICS_OPTIONS` without altering or closing the existing projection. A subsequent no-argument `sync()`, resize or publication uses the last valid dimensions. The application still publishes the semantic nodes' updated bounds as its layout changes.
+
 One canvas has one projection: a second is refused with `UI_SEMANTICS_SURFACE_BUSY`. A canvas that is not in the page, has no size, or is under a transform or a zoom is refused with `UI_SEMANTICS_SURFACE_INVALID`, the same profile as the other browser adapters.
 
 ### A text field

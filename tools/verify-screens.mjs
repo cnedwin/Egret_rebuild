@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Usage: node tools/verify-screens.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [screen,...]
+// Usage: node tools/verify-screens.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [screen,...] [play.mjs]
 // Opens one game page on the screens of several devices, in headless Chromium with software rendering, and says, for
 // each, what an agent cannot see from one window: whether the page scrolls or is blank, how much of the screen bars
 // take, whether the controls of a play game lie in the safe part, are at least 44 CSS pixels square and keep apart,
@@ -10,11 +10,14 @@
 // window's safe-area insets. The controls are those a `play` game takes taps on, which it reports to
 // `globalThis.__egretAgent.controls`; a game of its own reports none, and their checks are then not run.
 // Screens are named: SCREENS lists them; a comma-separated list of names picks some.
+// A trusted play script uses the same driver as verify-game, once in a fresh context for each named screen.
+// Await player.checkpoint(name) at each stable interface state: it writes a tinted picture and the same findings
+// as the final screen. The screen and the run fail if any checkpoint fails or the script itself fails.
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { browserBuildTypes, loadPng, pictureStats } from './verify-game.mjs';
+import { browserBuildTypes, counters, driver, loadPng, pictureStats, recordScriptFailure } from './verify-game.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 
@@ -100,7 +103,12 @@ function tintInsets(png, insets, scale) {
       }
 }
 
-export async function verifyScreens({ chromium, PNG, file, out, names = Object.keys(SCREENS), settle = 1500 }) {
+export async function verifyScreens({ chromium, PNG, file, out, names = Object.keys(SCREENS), settle = 1500, script }) {
+  if (script !== undefined && typeof script.default !== 'function')
+    throw new TypeError('The play script needs a default function');
+  if (new Set(names).size !== names.length) throw new TypeError('Each screen must be named only once');
+  for (const name of names)
+    if (!Object.hasOwn(SCREENS, name)) throw new Error(`No screen ${name}: ${Object.keys(SCREENS).join(', ')}`);
   const inCheckout = !path.relative(root, file).startsWith('..'),
     base = inCheckout ? root : path.dirname(file);
   const server = http.createServer((request, response) => {
@@ -140,7 +148,6 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
     });
     for (const name of names) {
       const screen = SCREENS[name];
-      if (screen === undefined) throw new Error(`No screen ${name}: ${Object.keys(SCREENS).join(', ')}`);
       const context = await browser.newContext({
         viewport: { width: screen.width, height: screen.height },
         deviceScaleFactor: screen.scale,
@@ -157,6 +164,8 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
       tab.on('response', response => {
         if (response.status() >= 400) errors.push(response.url() + ' ' + response.status());
       });
+      if (script !== undefined)
+        tab.on('requestfailed', request => errors.push(request.url() + ' ' + (request.failure()?.errorText ?? '')));
       // Nothing is reached but this server, as in verify-game.
       await tab.route('**/*', route => {
         const url = route.request().url();
@@ -164,24 +173,41 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
         errors.push('external request ' + url);
         return route.abort();
       });
-      await tab.addInitScript(insets => {
-        const told = { warnings: [], controls: undefined, screen: undefined };
-        globalThis.__egretScreens = told;
-        globalThis.__egretAgent = {
-          insets,
-          warning: warning => {
-            if (told.warnings.length < 50) told.warnings.push({ code: warning.code, message: warning.message });
-          },
-          controls: (controls, screen) => {
-            told.controls = controls;
-            told.screen = screen;
-          }
-        };
-      }, screen.insets);
-      try {
-        await tab.goto(address);
-        await tab.waitForSelector('canvas', { timeout: 15000 }).catch(() => {});
-        await tab.waitForTimeout(settle);
+      if (script !== undefined) await tab.addInitScript(counters, screen.insets);
+      else
+        await tab.addInitScript(insets => {
+          const told = { warnings: [], controls: undefined, screen: undefined };
+          globalThis.__egretScreens = told;
+          globalThis.__egretAgent = {
+            insets,
+            warning: warning => {
+              if (told.warnings.length < 50) told.warnings.push({ code: warning.code, message: warning.message });
+            },
+            controls: (controls, screen) => {
+              told.controls = controls;
+              told.screen = screen;
+            }
+          };
+        }, screen.insets);
+      let hadControls = false;
+      const capture = async target => {
+        let previous,
+          fresh = true;
+        if (script !== undefined) {
+          previous = await tab.evaluate(() => globalThis.__egretScreens?.receipts ?? 0);
+          hadControls ||= previous > 0;
+          if (hadControls) {
+            // The Play end-of-frame callback reports even while simulation is paused. Wait for a new actual
+            // receipt rather than assuming 300ms of wall time included a rendered frame on a slow browser.
+            try {
+              await tab.waitForFunction(previous => (globalThis.__egretScreens?.receipts ?? 0) > previous, previous, {
+                timeout: 5000
+              });
+            } catch {
+              fresh = false;
+            }
+          } else await tab.waitForTimeout(300);
+        }
         const seen = await tab.evaluate(() => {
           const canvases = [...document.querySelectorAll('canvas')].map(canvas => {
             const box = canvas.getBoundingClientRect();
@@ -191,11 +217,11 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
           return {
             ...globalThis.__egretScreens,
             canvases,
+            rejections: globalThis.__verify?.rejections ?? [],
             scrolls: page.scrollWidth > innerWidth + 1 || page.scrollHeight > innerHeight + 1
           };
         });
-        const target = path.join(out, name + '.png'),
-          bytes = await tab.screenshot();
+        const bytes = await tab.screenshot();
         const png = PNG.sync.read(bytes);
         const stats = pictureStats(png);
         tintInsets(png, screen.insets, screen.scale);
@@ -204,25 +230,123 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
         const window = { x: 0, y: 0, width: screen.width, height: screen.height };
         const shown = Math.max(0, ...seen.canvases.map(c => overlap(c, window))) / (screen.width * screen.height);
         const findings = [];
-        if (errors.length) findings.push({ check: 'noErrors', severity: 'error', errors: errors.slice(0, 5) });
+        const viewport = tab.viewportSize();
+        if (script !== undefined && (viewport?.width !== screen.width || viewport?.height !== screen.height))
+          findings.push({
+            check: 'viewport',
+            severity: 'error',
+            expected: [screen.width, screen.height],
+            actual: viewport === null ? null : [viewport.width, viewport.height]
+          });
+        if (script !== undefined && hadControls && (seen.receipts ?? 0) <= previous) fresh = false;
+        if (!fresh)
+          findings.push({ check: 'controlsFresh', severity: 'error', previous, received: seen.receipts ?? 0 });
+        hadControls ||= (seen.receipts ?? 0) > 0;
+        const failures = [...errors, ...seen.rejections];
+        if (failures.length) findings.push({ check: 'noErrors', severity: 'error', errors: failures.slice(0, 5) });
         if (seen.canvases.length === 0) findings.push({ check: 'canvas', severity: 'error' });
         if (stats.colors < 3 || stats.dominant > 0.995) findings.push({ check: 'drawn', severity: 'error' });
         if (seen.scrolls) findings.push({ check: 'noScroll', severity: 'error' });
         if (shown < 0.75) findings.push({ check: 'fills', severity: 'warning', shown: Math.round(shown * 100) / 100 });
-        if (seen.controls !== undefined)
+        if (fresh && seen.controls !== undefined)
           findings.push(...controlFindings(seen.controls, seen.screen.safe, screen.touch));
+        return {
+          pass: !findings.some(finding => finding.severity === 'error'),
+          shown: Math.round(shown * 100) / 100,
+          controls: !fresh || seen.controls === undefined ? null : seen.controls.length,
+          // The safe part of the canvas as the engine took it, in CSS pixels of the window, for a play game.
+          safe: !fresh || seen.screen === undefined ? null : round(seen.screen.safe),
+          ...(script === undefined
+            ? {}
+            : { controlReceipt: { before: previous, after: seen.receipts ?? 0, fresh: hadControls ? fresh : null } }),
+          findings,
+          engineWarnings: seen.warnings ?? [],
+          picture: target
+        };
+      };
+      const checkpoints = [];
+      let played, folder;
+      if (script !== undefined) {
+        folder = path.join(out, name);
+        fs.mkdirSync(folder);
+        played = { pass: false, pictures: [], checkpoints: [] };
+      }
+      try {
+        await tab.goto(address);
+        await tab.waitForSelector('canvas', { timeout: 15000 }).catch(() => {});
+        await tab.waitForTimeout(settle);
+        if (played !== undefined) {
+          hadControls = (await tab.evaluate(() => globalThis.__egretScreens?.receipts ?? 0)) > 0;
+          const player = driver(tab, PNG, folder, script.stage, { uniquePictures: true }),
+            keep = player.picture;
+          player.picture = async picture => {
+            const target = await keep(picture);
+            played.pictures.push(target);
+            return target;
+          };
+          // Checkpoints are ordered and their filenames are ordinal, never derived from labels supplied by a script.
+          // Waiting for the next normal control report (about four per second) avoids inspecting a stale layout.
+          let pending = Promise.resolve();
+          player.checkpoint = label => {
+            if (typeof label !== 'string' || !label.trim() || /[\x00-\x1f\x7f]/.test(label))
+              throw new TypeError('A checkpoint needs a non-empty name without control characters');
+            const checkpoint = label.trim();
+            if (played.checkpoints.includes(checkpoint)) throw new TypeError('Repeated checkpoint name: ' + checkpoint);
+            played.checkpoints.push(checkpoint);
+            const index = played.checkpoints.length;
+            pending = pending.then(async () => {
+              const observation = await capture(path.join(folder, 'checkpoint-' + index + '.png'));
+              checkpoints.push({ name: checkpoint, ...observation });
+              return observation;
+            });
+            // As in one-window play, older scripts may record a step without awaiting it. Keep the failure for
+            // the report even then; awaiting the checkpoint is required to inspect it before the next input.
+            pending.catch(() => {});
+            return pending;
+          };
+          try {
+            await script.default(player);
+            await pending;
+            played.pass = true;
+          } catch (error) {
+            await pending.catch(() => {});
+            recordScriptFailure(played, error, 'VERIFY_GAME_SCRIPT');
+            await tab.screenshot({ path: path.join(folder, 'failed.png') }).catch(() => {});
+          }
+        }
+        const final = await capture(path.join(out, name + '.png'));
         screens.push({
           name,
           size: [screen.width, screen.height],
           insets: screen.insets,
-          pass: !findings.some(finding => finding.severity === 'error'),
-          shown: Math.round(shown * 100) / 100,
-          controls: seen.controls === undefined ? null : seen.controls.length,
-          // The safe part of the canvas as the engine took it, in CSS pixels of the window, for a play game.
-          safe: seen.screen === undefined ? null : round(seen.screen.safe),
-          findings,
-          engineWarnings: seen.warnings ?? [],
-          picture: target
+          ...final,
+          ...(played === undefined
+            ? {}
+            : {
+                pass: final.pass && played.pass && checkpoints.every(checkpoint => checkpoint.pass),
+                played,
+                checkpoints
+              })
+        });
+      } catch (error) {
+        // A script or page may make its final capture impossible (navigation failed, page closed).
+        // In scripted mode retain earlier pictures/findings, report the error and still try the next screen.
+        if (played === undefined) throw error;
+        if (played.diagnostic === undefined) recordScriptFailure(played, error, 'VERIFY_SCREEN_CAPTURE');
+        played.pass = false;
+        screens.push({
+          name,
+          size: [screen.width, screen.height],
+          insets: screen.insets,
+          pass: false,
+          shown: 0,
+          controls: null,
+          safe: null,
+          findings: [{ check: 'capture', severity: 'error', errors: [String(error?.message ?? error).slice(0, 400)] }],
+          engineWarnings: [],
+          picture: null,
+          played,
+          checkpoints
         });
       } finally {
         await context.close();
@@ -241,10 +365,10 @@ export async function verifyScreens({ chromium, PNG, file, out, names = Object.k
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const [playwright, page, output, list] = process.argv.slice(2);
-  if (!playwright || !page || !output || !path.isAbsolute(playwright) || process.argv.length > 6)
+  const [playwright, page, output, list, play] = process.argv.slice(2);
+  if (!playwright || !page || !output || !path.isAbsolute(playwright) || process.argv.length > 7)
     throw new Error(
-      'Usage: node tools/verify-screens.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [screen,...]'
+      'Usage: node tools/verify-screens.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [screen,...] [play.mjs]'
     );
   const file = path.resolve(page),
     out = path.resolve(output);
@@ -252,24 +376,41 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   if (fs.existsSync(out)) throw new Error('The output directory must not exist yet: ' + out);
   const names = list === undefined ? Object.keys(SCREENS) : list.split(',').filter(Boolean);
   for (const name of names)
-    if (!(name in SCREENS)) throw new Error(`No screen ${name}: ${Object.keys(SCREENS).join(', ')}`);
+    if (!Object.hasOwn(SCREENS, name)) throw new Error(`No screen ${name}: ${Object.keys(SCREENS).join(', ')}`);
+  if (new Set(names).size !== names.length) throw new TypeError('Each screen must be named only once');
+  if (play !== undefined && !fs.existsSync(path.resolve(play)))
+    throw new Error('There is no script at ' + path.resolve(play));
+  const script = play === undefined ? undefined : await import(pathToFileURL(path.resolve(play)).href);
+  if (script !== undefined && typeof script.default !== 'function')
+    throw new TypeError('The play script needs a default function');
   fs.mkdirSync(out, { recursive: true });
   const { chromium } = await import(pathToFileURL(playwright).href),
     { PNG } = loadPng();
-  const report = await verifyScreens({ chromium, PNG, file, out, names });
+  const report = await verifyScreens({ chromium, PNG, file, out, names, script });
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
-  for (const screen of report.screens)
+  const describe = screen =>
+    (screen.controls === null ? '' : `, ${screen.controls} controls`) +
+    (screen.findings.length
+      ? ': ' +
+        screen.findings
+          .map(f => f.check + (f.control ? ' ' + f.control : f.controls ? ' ' + f.controls.join(' / ') : ''))
+          .join('; ')
+      : '') +
+    (screen.engineWarnings.length ? '; engine: ' + screen.engineWarnings.map(w => w.code).join(', ') : '');
+  for (const screen of report.screens) {
     console.log(
       `${screen.pass ? 'ok  ' : 'FAIL'} ${screen.name.padEnd(17)} ${screen.size.join('x').padEnd(10)} shown ${screen.shown}` +
-        (screen.controls === null ? '' : `, ${screen.controls} controls`) +
-        (screen.findings.length
-          ? ': ' +
-            screen.findings
-              .map(f => f.check + (f.control ? ' ' + f.control : f.controls ? ' ' + f.controls.join(' / ') : ''))
-              .join('; ')
-          : '') +
-        (screen.engineWarnings.length ? '; engine: ' + screen.engineWarnings.map(w => w.code).join(', ') : '')
+        describe(screen)
     );
+    if (screen.played) {
+      for (const checkpoint of screen.checkpoints)
+        console.log(
+          `     ${checkpoint.pass ? 'ok  ' : 'FAIL'} ${checkpoint.name}: shown ${checkpoint.shown}` +
+            describe(checkpoint)
+        );
+      if (!screen.played.pass) console.log('     FAIL script: ' + screen.played.diagnostic.message);
+    }
+  }
   console.log(`The report (report.json) and a picture of each screen are in ${out}.`);
   process.exit(report.pass ? 0 : 1);
 }

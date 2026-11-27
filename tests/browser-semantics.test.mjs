@@ -1414,3 +1414,101 @@ test('BS14 a strict consumer compiles against both entries, and nine misuses are
   );
   assert.equal(result.status, 0, result.stdout + result.stderr);
 });
+
+test('BS15 an expanded or portrait stage updates its logical projection in place', () =>
+  fixture(({ canvas, body, window, state, semantics, described, add, create, emit, done }) => {
+    add('menu', 'group', { name: 'Menu', bounds: box(0, 0, 100, 80) });
+    add(
+      'go',
+      'button',
+      { name: 'Go', focused: true, bounds: box(60, 20, 30, 16) },
+      {
+        parent: 'menu',
+        onActivate: () => done.push('go'),
+        onFocus: () => done.push('focus')
+      }
+    );
+    semantics.publish();
+    const browser = create(),
+      container = browser.container,
+      menu = browser.elementOf('menu'),
+      go = browser.elementOf('go');
+    const identity = () => {
+      same(body.children, [canvas, container]);
+      same(container.children, [menu]);
+      same(menu.children, [go]);
+      same([browser.elementOf('menu'), browser.elementOf('go')], [menu, go]);
+      assert.equal(canvas.getAttribute('aria-owns'), container.id);
+      assert.equal(canvas.getAttribute('aria-activedescendant'), go.id);
+      assert.equal(semantics.snapshot.focused, 'go');
+    };
+    // A wider screen expands the stage while its separate design stays at 100 × 80.
+    state.rect = { left: 5, top: 10, width: 320, height: 160 };
+    described.menu.bounds = box(0, 0, 160, 80);
+    described.go.bounds = box(120, 20, 30, 16);
+    semantics.publish();
+    browser.sync({ width: 160, height: 80 });
+    assert.match(container.style.cssText, /width:160px;height:80px;transform-origin:0 0;transform:scale\(2,2\);/);
+    assert.match(go.style.cssText, /left:120px;top:20px;width:30px;height:16px$/);
+    identity();
+    const before = state.writes;
+    browser.sync({ width: 160, height: 80 });
+    browser.sync();
+    assert.equal(state.writes, before, 'an unchanged plan writes nothing');
+    // A turn changes logical dimensions as well as CSS dimensions. The next publication moves the same node.
+    state.rect = { left: 15, top: 25, width: 160, height: 320 };
+    browser.sync({ width: 80, height: 160 });
+    described.menu.bounds = box(0, 0, 80, 160);
+    described.go.bounds = box(40, 100, 30, 16);
+    semantics.publish();
+    assert.match(
+      container.style.cssText,
+      /left:15px;top:25px;width:80px;height:160px;transform-origin:0 0;transform:scale\(2,2\);/
+    );
+    assert.match(go.style.cssText, /left:40px;top:100px;width:30px;height:16px$/);
+    identity();
+    emit(container, go, 'click');
+    emit(container, go, 'focusin');
+    assert.deepEqual(done, ['go', 'focus']);
+    assert.deepEqual(state.focused, [['CANVAS', { preventScroll: true }]]);
+    // A later browser-only resize uses the latest logical dimensions, not the constructor's dimensions.
+    state.rect = { ...state.rect, width: 240, height: 480 };
+    window.dispatchEvent(new Event('resize'));
+    assert.match(container.style.cssText, /width:80px;height:160px;transform-origin:0 0;transform:scale\(3,3\);/);
+    identity();
+  }));
+
+test('BS16 invalid logical sizes do not disturb a live projection and hidden surfaces can be resized', () =>
+  fixture(({ state, window, canvas, semantics, add, create, failures }) => {
+    add('go', 'button', { name: 'Go', focused: true });
+    semantics.publish();
+    const browser = create(),
+      container = browser.container,
+      go = browser.elementOf('go');
+    const before = state.writes,
+      oldStyle = container.style.cssText;
+    for (const size of [
+      null,
+      {},
+      '80x100',
+      { width: 0, height: 100 },
+      { width: 80, height: -1 },
+      { width: Infinity, height: 100 },
+      { width: 80, height: NaN }
+    ]) {
+      assert.throws(() => browser.sync(size), coded('UI_SEMANTICS_OPTIONS'));
+      assert.equal(browser.state, 'active');
+      assert.equal(state.writes, before);
+      assert.equal(container.style.cssText, oldStyle);
+      assert.equal(canvas.getAttribute('aria-activedescendant'), go.id);
+    }
+    assert.deepEqual(failures, [], 'bad caller input is refused before the adapter is changed');
+    state.rect = { left: 0, top: 0, width: 0, height: 0 };
+    browser.sync({ width: 80, height: 140 });
+    assert.equal(container.style.cssText, 'display:none');
+    state.rect = { left: 0, top: 0, width: 160, height: 280 };
+    window.dispatchEvent(new Event('resize'));
+    assert.match(container.style.cssText, /width:80px;height:140px;transform-origin:0 0;transform:scale\(2,2\);/);
+    same([browser.elementOf('go'), browser.container], [go, container]);
+    assert.equal(canvas.getAttribute('aria-activedescendant'), go.id);
+  }));

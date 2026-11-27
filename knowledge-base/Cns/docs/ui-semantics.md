@@ -301,6 +301,18 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 
 应用可以事先在画布上设置 `role`、`aria-label` 或 `aria-owns`。投射保留前两者，并把自己的容器追加到第三者。
 
+使用 `fit: 'expand'`、固定边的适配模式或 `portrait` 的 `play` 游戏，逻辑舞台本身也可能改变尺寸。应传入实际舞台范围的宽高，而不是设计尺寸（`game.width` 与 `game.height`）：
+
+```js
+const projection = createBrowserSemantics({
+  semantics, canvas: game.canvas, width: game.browser.frame.width, height: game.browser.frame.height
+});
+const stopProjectionSync = game.browser.onScreenChange(() => projection.sync(game.browser.frame));
+// 离开游戏时调用 stopProjectionSync() 和 projection.dispose()。
+```
+
+`projection.sync({ width, height })` 就地更新逻辑映射并重新测量画布，保留已有的投射元素、元素 ID、语义树及其活动后代。与创建时相同，两个尺寸须为有限正数；非法尺寸会抛出 `UI_SEMANTICS_OPTIONS`，既不修改也不关闭已存在的投射。后续无参数的 `sync()`、窗口尺寸变化或发布都会使用最后一次有效的逻辑尺寸。布局变化时，应用仍须发布更新后的语义节点边界。
+
 一个画布只能有一个投射，第二个以 `UI_SEMANTICS_SURFACE_BUSY` 被拒绝。画布不在页面中、没有尺寸，或处于变换或缩放之下时，以 `UI_SEMANTICS_SURFACE_INVALID` 被拒绝，条件与其他浏览器适配器相同。
 
 ### 文本框

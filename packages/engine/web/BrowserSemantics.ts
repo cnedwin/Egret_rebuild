@@ -26,8 +26,8 @@ export interface BrowserSemantics {
   readonly container: HTMLElement;
   /** The element a published node is projected to. */
   elementOf(id: string): HTMLElement | undefined;
-  /** Measures the canvas again, for a layout change that came without a resize or a scroll. */
-  sync(): void;
+  /** Measures the canvas again. When the logical stage itself changes size, give its new width and height. */
+  sync(size?: { readonly width: number; readonly height: number }): void;
   dispose(): void;
 }
 
@@ -103,7 +103,8 @@ let containers = 0;
  */
 export function createBrowserSemantics(options: BrowserSemanticsOptions): BrowserSemantics {
   if (options === null || typeof options !== 'object') throw new EgretError('UI_SEMANTICS_OPTIONS');
-  const { semantics, canvas: surface, width, height, label, onError } = options;
+  const { semantics, canvas: surface, label, onError } = options;
+  let { width, height } = options;
   if (
     semantics === null ||
     typeof semantics !== 'object' ||
@@ -470,17 +471,27 @@ export function createBrowserSemantics(options: BrowserSemanticsOptions): Browse
       },
       container: holder,
       elementOf: (id: string): HTMLElement | undefined => (closed ? undefined : projected.get(id)?.element),
-      sync(): void {
-        if (!closed)
-          try {
-            const wasTransformed = transformed;
-            profile(true);
-            if (placed !== 'display:none' && (wasTransformed || transformed)) placed = '';
-            place();
-          } catch (cause) {
-            fail(cause);
-            throw cause;
-          }
+      sync(size?: { readonly width: number; readonly height: number }): void {
+        if (closed) return;
+        // Refuse bad caller input before changing the active mapping. CSS resize alone does not tell
+        // us the logical stage size, and only the mapping changes: the container and its focus stay.
+        if (size !== undefined) {
+          if (size === null || typeof size !== 'object') throw new EgretError('UI_SEMANTICS_OPTIONS');
+          const next = { width: size.width, height: size.height };
+          if (!finite(next.width) || next.width <= 0 || !finite(next.height) || next.height <= 0)
+            throw new EgretError('UI_SEMANTICS_OPTIONS');
+          width = next.width;
+          height = next.height;
+        }
+        try {
+          const wasTransformed = transformed;
+          profile(true);
+          if (placed !== 'display:none' && (wasTransformed || transformed)) placed = '';
+          place();
+        } catch (cause) {
+          fail(cause);
+          throw cause;
+        }
       },
       dispose: cleanup
     });
