@@ -57,8 +57,20 @@
       "originRole": "Cross-checks JSC packet hashes and available simulator Metal results against the existing Egret scene. First-party work with AI assistance, licensed under Apache-2.0."
     },
     {
+      "path": "runtime-sdk/ios/check-custom-entry.mjs",
+      "originRole": "Runs an independently bundled customer entry to check dimensions, animation and close. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
       "path": "runtime-sdk/ios/entry.mjs",
       "originRole": "Bundled JavaScriptCore entry for the existing 40-card scene. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/examples/moving-square.mjs",
+      "originRole": "An independent customer entry producing a moving quad on a 160 by 120 native stage. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/fixture-game.mjs",
+      "originRole": "Adapter that exposes the original 40-card resource scope through the public iOS game-entry contract. First-party work with AI assistance, licensed under Apache-2.0."
     },
     {
       "path": "runtime-sdk/ios/prepare.mjs",

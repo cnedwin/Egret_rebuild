@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
-// Stage only the public engine fixture and its distribution notices into a fresh bundle.
+// Stage the selected customer entry and its distribution notices into a fresh bundle.
 import {copyFile, mkdir, mkdtemp, readFile, rename, rm, writeFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';
 import {workspaceModules} from '../../tools/pack-single-file.mjs';
-const {values} = parseArgs({options: {esbuild:{type:'string'}, out:{type:'string'}}});
+const {values} = parseArgs({options: {esbuild:{type:'string'}, out:{type:'string'}, entry:{type:'string'}}});
 if (!values.esbuild || !values.out) throw Error('Supply --esbuild <module-directory> --out <new-directory>');
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const target = path.resolve(values.out);
+const gameEntry = values.entry ? path.resolve(values.entry) : path.join(root,'runtime-sdk/ios/fixture-game.mjs');
 await mkdir(path.dirname(target), {recursive:true});
 const stage = await mkdtemp(path.join(path.dirname(target), '.egret-ios-'));
 try {
@@ -19,6 +20,7 @@ try {
   await esbuild.build({entryPoints:[path.join(root, 'runtime-sdk/ios/entry.mjs')], outfile:path.join(stage,'scene.js'),
     bundle:true, minify:true, target:'safari16.4', platform:'browser', format:'iife', legalComments:'eof',
     plugins:[{name:'built-egret-modules', setup(builder) {
+      builder.onResolve({filter:/^egret-ios:game$/}, () => ({path:gameEntry}));
       builder.onResolve({filter:/^(@egret\/|#)/}, args => {
         const found = modules.get(args.path);
         if (!found) throw Error('Unknown workspace export ' + args.path);

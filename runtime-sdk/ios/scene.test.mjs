@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {PAGE, createScene} from '../scene/scene.mjs';
 import {encodeProjectFrame} from '../scene/project-frame.mjs';
+import {openGame} from './fixture-game.mjs';
 import {createIosScene} from './scene.mjs';
 
 test('JSC entry emits the same captured EGR2 frames and republishes the same page after renderer loss', async () => {
@@ -10,7 +11,7 @@ test('JSC entry emits the same captured EGR2 frames and republishes the same pag
   const published = createIosScene({now:() => 0, upload(id, width, height, buffer) {
     uploads.push({id, width, height, bytes:Buffer.from(buffer)});
     return true;
-  }});
+  }},openGame);
   const reference = await createScene();
   try {
     await Promise.all([published.start(), published.start()]);
@@ -33,7 +34,7 @@ test('JSC entry emits the same captured EGR2 frames and republishes the same pag
 });
 
 test('close during opening waits for the real atlas owner and retires it once', async () => {
-  const game = createIosScene({now:() => 0, upload() { throw Error('Late upload'); }});
+  const game = createIosScene({now:() => 0, upload() { throw Error('Late upload'); }},openGame);
   const opening = game.start();
   const closing = game.close();
   assert.throws(() => game.publish(),/unavailable/);
@@ -41,4 +42,17 @@ test('close during opening waits for the real atlas owner and retires it once', 
   assert.deepEqual(await closing,{releases:1});
   assert.deepEqual(await game.close(),{releases:1});
   assert.throws(() => game.frame(0),/unavailable/);
+});
+
+test('invalid customer entries close their owner before exposing pages or frames',async () => {
+  let closed = 0;
+  const page = {slot:1,width:1,height:1,source:{},pixels:()=>new Uint8Array(4)};
+  const game = createIosScene({upload() { throw Error('Unexpected GPU write'); }},async () => ({
+    width:80,height:60,pages:[page,{...page,source:{}}],capture() {},close() { closed++; }
+  }));
+  await assert.rejects(game.start(),/Invalid iOS atlas page/);
+  assert.equal(closed,1);
+  assert.throws(()=>game.publish(),/unavailable/);
+  await assert.rejects(game.close(),/Invalid iOS atlas page/);
+  assert.equal(closed,1);
 });

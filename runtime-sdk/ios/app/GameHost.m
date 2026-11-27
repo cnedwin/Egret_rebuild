@@ -37,7 +37,9 @@ static NSData *bufferData(JSValue *value, NSUInteger maximum) {
     UILabel *_label;
     NSMutableDictionary *_receipt;
     NSMutableDictionary<NSNumber *,NSNumber *> *_timers;
-    NSUInteger _timerGeneration, _tick;
+    NSUInteger _timerGeneration;
+    uint32_t _tick;
+    CGSize _stageSize;
     BOOL _ready, _suspended, _closed, _diagnose, _finished, _awaitingPresentation;
 }
 - (void)viewDidLoad {
@@ -67,8 +69,10 @@ static NSData *bufferData(JSValue *value, NSUInteger maximum) {
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     CGRect r = UIEdgeInsetsInsetRect(self.view.bounds,self.view.safeAreaInsets);
-    CGFloat scale = MIN(r.size.width/320,r.size.height/192);
-    _surface.frame = CGRectMake(CGRectGetMidX(r)-160*scale,CGRectGetMidY(r)-96*scale,320*scale,192*scale);
+    if (_stageSize.width <= 0 || _stageSize.height <= 0) return;
+    CGFloat scale = MIN(r.size.width/_stageSize.width,r.size.height/_stageSize.height);
+    CGFloat width = _stageSize.width*scale, height = _stageSize.height*scale;
+    _surface.frame = CGRectMake(CGRectGetMidX(r)-width/2,CGRectGetMidY(r)-height/2,width,height);
 }
 - (void)writeResult:(NSString *)status {
     if (!_diagnose || _finished) return;
@@ -97,7 +101,9 @@ static NSData *bufferData(JSValue *value, NSUInteger maximum) {
     _context[@"EgretApple"] = bridge;
     bridge[@"now"] = ^double { return CACurrentMediaTime()*1000; };
     bridge[@"failure"] = bridge[@"fail"] = ^(NSString *message) { [owner fail:message]; };
-    bridge[@"ready"] = ^{ dispatch_async(dispatch_get_main_queue(), ^{ [owner scriptsReady]; }); };
+    bridge[@"ready"] = ^(int width,int height) {
+        dispatch_async(dispatch_get_main_queue(), ^{ [owner scriptsReadyWithWidth:width height:height]; });
+    };
     bridge[@"schedule"] = ^(int identifier, int delay) { [owner schedule:@(identifier) delay:delay]; };
     bridge[@"cancel"] = ^(int identifier) {
         GameHost *host = owner;
@@ -137,18 +143,27 @@ static NSData *bufferData(JSValue *value, NSUInteger maximum) {
     NSError *error = nil;
     _frame = [[MetalFrame alloc] initWithDevice:_device error:&error];
     if (!_frame || ![[_context[@"EgretIosScene"] invokeMethod:@"publish" withArguments:@[]] toBool]) {
+        [_frame releasePages];
+        _frame = nil;
         [self fail:error.localizedDescription ?: @"Could not restore the scene atlas"];
         return NO;
     }
     return YES;
 }
-- (void)scriptsReady {
+- (void)scriptsReadyWithWidth:(int)width height:(int)height {
     if (_closed) return;
+    if (width < 1 || width > 16384 || height < 1 || height > 16384) { [self fail:@"Invalid game dimensions"]; return; }
+    _stageSize = CGSizeMake(width,height);
+    [self.view setNeedsLayout];
+    [self.view layoutIfNeeded];
     _ready = YES;
-    NSData *initial = [self packet:0], *animated = [self packet:7];
-    if (!initial || !animated) { [self fail:@"JavaScriptCore did not return two frame packets"]; return; }
-    _receipt[@"frame0"] = digest(initial);
-    _receipt[@"frame7"] = digest(animated);
+    NSData *initial = nil, *animated = nil;
+    if (_diagnose) {
+        initial = [self packet:0]; animated = [self packet:7];
+        if (!initial || !animated) { [self fail:@"JavaScriptCore did not return two frame packets"]; return; }
+        _receipt[@"frame0"] = digest(initial);
+        _receipt[@"frame7"] = digest(animated);
+    }
     if (!_device) {
         _label.text = @"Metal device unavailable";
         if (_diagnose) [self finishDiagnostic:@"metal-unavailable"];
@@ -219,8 +234,7 @@ static NSData *bufferData(JSValue *value, NSUInteger maximum) {
     if (_closed || _suspended || !_ready) return;
     id<CAMetalDrawable> drawable = view.currentDrawable;
     if (!drawable) return;
-    [_context[@"EgretIosScene"] invokeMethod:@"poll" withArguments:@[]];
-    NSData *packet = [self packet:_tick++%60];
+    NSData *packet = [self packet:_tick++];
     NSError *error = nil;
     if (!packet || ![_frame draw:packet target:drawable.texture drawable:drawable error:&error]) {
         [self fail:error.localizedDescription ?: @"Invalid JavaScriptCore frame"];

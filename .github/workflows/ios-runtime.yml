@@ -29,6 +29,8 @@ jobs:
           node --test runtime-sdk/ios/scene.test.mjs
           npm install --prefix "$RUNNER_TEMP/bundler" --no-save --ignore-scripts --no-audit --no-fund esbuild@0.28.2
           node runtime-sdk/ios/prepare.mjs --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --out "$RUNNER_TEMP/scene"
+          node runtime-sdk/ios/prepare.mjs --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --entry runtime-sdk/ios/examples/moving-square.mjs --out "$RUNNER_TEMP/custom-scene"
+          node runtime-sdk/ios/check-custom-entry.mjs "$RUNNER_TEMP/custom-scene"
       - name: Build both Apple targets using Xcode
         env:
           RUSTUP_TOOLCHAIN: 1.100.0
@@ -39,6 +41,9 @@ jobs:
           cargo test --locked --offline --manifest-path runtime-sdk/native/Cargo.toml
           bash runtime-sdk/ios/build.sh simulator "$RUNNER_TEMP/ios" "$RUNNER_TEMP/scene"
           bash runtime-sdk/ios/build.sh device "$RUNNER_TEMP/ios" "$RUNNER_TEMP/scene"
+          xcodebuild archive -project "$RUNNER_TEMP/ios/device/EgretIosPlayer.xcodeproj" -scheme EgretPlayer \
+            -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/ios/player.xcarchive" CODE_SIGNING_ALLOWED=NO
+          test -x "$RUNNER_TEMP/ios/player.xcarchive/Products/Applications/EgretPlayer.app/EgretPlayer"
       - name: Run JavaScriptCore and report simulator Metal availability
         run: |
           python3 runtime-sdk/ios/verify-simulator.py --app "$RUNNER_TEMP/ios/simulator/product/EgretPlayer.app" --out "$RUNNER_TEMP/evidence"
