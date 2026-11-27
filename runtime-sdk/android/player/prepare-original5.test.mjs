@@ -21,6 +21,9 @@ test('preparing native input preserves published scripts in manifest order and p
     const groups = desc.v8Scripts.groups;
     assert.equal(groups.originalCore.length, 1);
     assert.equal(groups.originalModules.length, 1);
+    const scriptMap = JSON.parse(await readFile(path.join(output,'original-script-map.json')));
+    assert.deepEqual(Object.values(scriptMap), ['egret.js','eui.min.js','base.js','entry.js']);
+    assert.equal(scriptMap[groups.originalGame[1]], 'entry.js');
     for (const [n, member] of [[initial[0],groups.originalCore[0]],[initial[2],groups.originalModules[0]],
         ...game.map((name,index) => [name,groups.originalGame[index]])]) {
       assert.deepEqual(await readFile(path.join(output,member)), await readFile(path.join(source,n)));

@@ -44,7 +44,7 @@ export async function prepareOriginal5(source, config, output) {
   if (adapter !== undefined && (typeof adapter !== 'string' || !adapter.endsWith('.mjs'))) {
     throw new Error('hostAdapter must name a self-contained ES module under the published root');
   }
-  const names = new Set(['main.mjs','index.html','project.json','game.js','original-host.mjs']);
+  const names = new Set(['main.mjs','index.html','project.json','game.js','original-host.mjs','original-script-map.json']);
   for (const name of resources) {
     const key = name.toLowerCase();
     if (names.has(key) || key === 'original' || key.startsWith('original/')) throw new Error('Conflicting original resource: ' + name);
@@ -56,12 +56,14 @@ export async function prepareOriginal5(source, config, output) {
   const staging = await mkdtemp(path.join(path.dirname(output),'egret-original5-'));
   try {
     await mkdir(path.join(staging,'original'));
+    const scriptMap = Object.create(null);
     let index = 0;
     async function copyScripts(list) {
       const result = [];
       for (const name of list) {
         const file = 'original/' + String(index++).padStart(4,'0') + '.js';
         await copyFile(await inputFile(source,name),path.join(staging,file),constants.COPYFILE_EXCL);
+        scriptMap[file] = name;
         result.push(file);
       }
       return result;
@@ -85,6 +87,8 @@ export async function prepareOriginal5(source, config, output) {
     setup.push('const options = ' + JSON.stringify(options,null,2) + ';');
     setup.push(adapter === undefined ? 'installOriginal5Project(options);' : 'installOriginal5Project({...options, installHost: host.installHost, remoteRequest: host.remoteRequest});');
     await writeFile(path.join(staging,'main.mjs'), setup.join('\n') + '\n');
+    // Keep diagnostics usable with thousands of scripts without growing the on-device manifest.
+    await writeFile(path.join(staging,'original-script-map.json'),JSON.stringify(scriptMap,null,2) + '\n');
     await writeFile(path.join(staging,'index.html'),'<!doctype html><meta charset="utf-8"><script src="game.js"></script>\n');
     await writeFile(path.join(staging,'project.json'), JSON.stringify({
       width,height,entry:'index.html',pages:[],assets:resources,v8Scripts:{groups}

@@ -111,7 +111,7 @@ node runtime-sdk/android/player/create-app.mjs --project ../prepared-game --aar 
 gradle --offline -p ../android-game assembleDebug
 ```
 
-请选择内置 V8 的 AAR。准备工具按原清单顺序逐字节复制引擎和业务 JS。默认首个 `egret.js` 或 `egret.min.js` 是核心，同名的浏览器宿主脚本由原生宿主接管。发布文件如果改过名，请通过 `coreScript` 和 `webHostScript` 填写两个文件的确切路径。资源清单应包含附加许可文件，以及 RES 需要的包内文本、二进制和 PNG。随后可直接使用上文的 APK／AAB 签名构建流程。若拿到的是缺少已编译业务 JS 的源码工程，先使用匹配的旧工具链编译。
+请选择内置 V8 的 AAR。准备工具按原清单顺序逐字节复制引擎和业务 JS。默认首个 `egret.js` 或 `egret.min.js` 是核心，同名的浏览器宿主脚本由原生宿主接管。发布文件如果改过名，请通过 `coreScript` 和 `webHostScript` 填写两个文件的确切路径。资源清单应包含附加许可文件，以及 RES 需要的包内文本、二进制和 PNG。请保留准备目录中的 `original-script-map.json`，用它将诊断里的 `original/0007.js` 等短名还原到原文件路径。该表不会进入 APK。随后可直接使用上文的 APK／AAB 签名构建流程。若拿到的是缺少已编译业务 JS 的源码工程，先使用匹配的旧工具链编译。
 
 需要自定义启动时，可在准备好的游戏 `main.mjs` 中从 `@egret/android-original5` 引入 `installOriginal5Project`。可选的 `remoteRequest` 接口用于连接项目明确配置的 HTTPS 通讯。使用原渠道 SDK 的应用需要接上相应原生服务。包内资源和游戏私有存档沿用 RSDK 现有机制。只有 5.3.x 接口版本一致还不能证明商业游戏的私有引擎扩展、高级滤镜、动态脚本、编辑控件或线上后台可用。
 
@@ -127,6 +127,6 @@ export function installHost({defineGlobal, services}) {
 
 ### 原版引擎已验证的接口
 
-Fold7 上的原版 5.3.10 工程用 RES 加载 PNG，用同一图集绘制两个 EUI 图片，并排版双色中文标签。点击实心圆或图集按钮会推进存档计数，点击圆形包围盒的透明角不会触发。强停重开后计数恢复。原版输入框唤起 Android 系统编辑器，在 `12` 后输入 `34` 并确认，收到一次获得焦点、两次内容变更和一次失去焦点事件。原版 InputController 继续处理游戏的字符过滤规则。密码输入需要单独的安全输入绑定。[图集与资源记录](../../../runtime-sdk/measurements/fold7-original5-atlas.json) · [系统编辑器记录](../../../runtime-sdk/measurements/fold7-original5-editor.json)
+Fold7 上的原版 5.3.10 工程用 RES 加载 PNG，用同一图集绘制两个 EUI 图片，并排版双色中文标签。点击实心圆或图集按钮会推进存档计数，点击圆形包围盒的透明角不会触发。强停重开后计数恢复。原版输入框唤起 Android 系统编辑器，在 `12` 后输入 `34` 并确认，收到一次获得焦点、两次内容变更和一次失去焦点事件。原版 InputController 继续处理游戏的字符过滤规则。密码输入需要单独的安全输入绑定。[图集与资源记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-original5-atlas.json) · [系统编辑器记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-original5-editor.json)
 
 每个应用只加载一种 V8 构建。切换配置时应验证游戏实际依赖的原引擎模块和第三方 SDK。浏览器插件启动前注册真实的原生接口，权限弹窗、渠道 Activity 回调、安全存储及交易走对应的平台服务。上面的命令用于 Android 工程。iOS 上加载原版 5 模块、任意浏览器 DOM 插件和白鹭 5 全部补丁版本仍需各自验证。
