@@ -746,9 +746,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       "packages/runtime/src/displayVisualState.ts": [["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./graphicsShape.js"],["static","./ownership.js"],["static","./renderEffect.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
       "packages/runtime/dist/displayVisualState.js": [["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
       "packages/runtime/dist/displayVisualState.d.ts": [["static","./DisplayObject.js"],["static","./graphicsShape.js"],["static","./renderEffect.js"],["static","@egret/contracts"]],
-      "packages/engine/src/pointerInput.ts": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./mouseInput.js"],["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/input"],["static","@egret/runtime/input"]],
-      "packages/engine/dist/pointerInput.js": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","@egret/runtime"],["static","@egret/runtime/input"]],
-      "packages/engine/dist/pointerInput.d.ts": [["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"]],
+      "packages/engine/src/pointerInput.ts": [["static","./internal/uiControlReportState.js"],["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./mouseInput.js"],["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/input"],["static","@egret/runtime/input"]],
+      "packages/engine/dist/pointerInput.js": [["static","./internal/uiControlReportState.js"],["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","@egret/runtime"],["static","@egret/runtime/input"]],
+      "packages/engine/dist/pointerInput.d.ts": [["static","./internal/uiControlReportState.js"],["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"]],
       "packages/engine/src/internal/uiFactoryState.ts": [["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
       "packages/engine/dist/internal/uiFactoryState.js": [["static","@egret/runtime"]],
       "packages/engine/dist/internal/uiFactoryState.d.ts": [["static","../keyboardInputTypes.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
@@ -812,7 +812,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write('node_modules/@egret/engine/ui.js',"export * from '../../../packages/engine/dist/ui/index.js';\n");
     write('node_modules/@egret/runtime/ui.js',"export * from '../../../packages/runtime/dist/ui/index.js';\n");
     // The optional UI entry now publishes the control module; the fixture keeps its exact bytes.
-    for(const file of ['packages/engine/src/ui/controls.ts','packages/engine/dist/ui/controls.js','packages/engine/dist/ui/controls.d.ts',
+    // The private status association has no synthetic input route; copy the exact source and emissions too.
+    for(const file of ['packages/engine/src/internal/uiControlReportState.ts','packages/engine/dist/internal/uiControlReportState.js','packages/engine/dist/internal/uiControlReportState.d.ts',
+      'packages/engine/src/ui/controls.ts','packages/engine/dist/ui/controls.js','packages/engine/dist/ui/controls.d.ts',
       'packages/engine/src/ui/stateControls.ts','packages/engine/dist/ui/stateControls.js','packages/engine/dist/ui/stateControls.d.ts',
       'packages/engine/src/ui/scrollControl.ts','packages/engine/dist/ui/scrollControl.js','packages/engine/dist/ui/scrollControl.d.ts',
       'packages/engine/src/ui/textFieldControl.ts','packages/engine/dist/ui/textFieldControl.js','packages/engine/dist/ui/textFieldControl.d.ts',
@@ -1429,6 +1431,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'layer-owned-timer':['packages/engine/web/browserStaticLayers.ts',"setTimeout(()=>{},1000);\n"],
         'image-queue-escaped-module':['packages/engine/web/ProbeImageQueue.ts',"import {createGameImageAdmission} from './GameImageAdmission.js';\nvoid createGameImageAdmission;\n"],
         'overlay-reporter-escaped-module':['packages/engine/web/world3d/ProbeOverlayReporter.ts',"import {createOverlayScreenReporter} from './overlayScreenReport.js';\nvoid createOverlayScreenReporter;\n"],
+        'native-control-report-escaped-module':['packages/engine/src/ui/ProbeControlReport.ts',"import {screenControlFor} from '../internal/uiControlReportState.js';\nvoid screenControlFor;\n"],
         'overlay-wrong-gl-runtime':['packages/engine/web/world3d/overlay3D.ts',"import '../webgl2.js';\n"],
         'browser-wrong-gl-static':['packages/engine/web/BrowserGame.ts',"import './webgl2.js';\n"],
         'layer-optional-gl':['packages/engine/web/browserStaticLayers.ts',"import './webgl2.js';\n"],
@@ -2591,6 +2594,7 @@ for(const [name,reason] of [
   ['layer-optional-gl','M14: WebGL2 module imported outside exact optional closure'],
   ['image-queue-escaped-module','Browser game: implementation module imported outside its entry'],
   ['overlay-reporter-escaped-module','Semantics: implementation module imported outside its entry'],
+  ['native-control-report-escaped-module','Semantics: implementation module imported outside its entry'],
   ['overlay-wrong-gl-runtime','M14: WebGL2 module imported outside exact optional closure'],
   ['browser-wrong-gl-static','M14: WebGL2 module imported outside exact optional closure'],
 ])test('browser game policy '+name+' is refused for its own reason',()=>{
