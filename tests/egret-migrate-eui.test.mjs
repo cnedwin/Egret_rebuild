@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { test } from 'node:test';
 import * as engine from '@egret/engine';
 import { createPointerInput } from '@egret/engine/input';
@@ -1553,4 +1554,73 @@ test('an original 5.3 precompiled factory constructs list and custom parts and s
   }
   profile.sha256 = '0'.repeat(64);
   assert.throws(() => prepareThemeFactories(read, 'theme.json', 'profile.json'), { code: 'MIGRATE_THEME_FACTORIES' });
+});
+
+test('a programmatic layout can be changed live and scripted touch follows the real capture/target/bubble route', async () => {
+  const trial = setup();
+  trial.options.canvas.ownerDocument.createElement = () => ({
+    getContext: () => ({ measureText: text => ({ width: Array.from(text).length * 10 }) })
+  });
+  const state = {};
+  let board, api;
+  const script = fs.readFileSync(new URL('../runtime-sdk/examples/legacy-layout/board.js', import.meta.url), 'utf8');
+  const host = await launchLegacyWeb(trial.sdk, {
+    ...trial.options,
+    createMain({ egret, eui }) {
+      api = eui;
+      Function('egret', 'eui', 'globalThis', script)(egret, eui, state);
+      return (board = new state.LayoutBoard());
+    }
+  });
+  try {
+    board.observe();
+    assert.deepEqual(state.layoutObservation.tiles, [
+      [0, 0],
+      [32, 0],
+      [64, 0]
+    ]);
+    board.lines[0].gap = 8;
+    assert.equal(board.strip.getChildAt(2).x, 72);
+    board.advance();
+    assert.equal(board.light.blendMode, 'normal');
+    assert.deepEqual(state.layoutObservation.tiles, [
+      [0, 0],
+      [0, 19],
+      [0, 38]
+    ]);
+    assert.deepEqual(state.layoutObservation.trace, [
+      [1, 10, 7, true],
+      [2, 10, 7, true],
+      [3, 10, 7, true]
+    ]);
+    board.advance();
+    assert.deepEqual(state.layoutObservation.tiles, [
+      [0, 0],
+      [32, 0],
+      [0, 19]
+    ]);
+    assert.equal(board.light.blendMode, 'add');
+    assert.equal(board.lines[1].target, null);
+    assert.equal(board.lines[2].target, board.strip);
+    board.content.scrollH = 98;
+    assert.equal(
+      host.stage.hitTest(137, 150),
+      board.content,
+      'after scrolling, blank space at the trailing viewport edge still receives input'
+    );
+    assert.throws(
+      () => {
+        new api.Group().layout = board.lines[2];
+      },
+      { code: 'LEGACY_EUI_UNSUPPORTED' }
+    );
+    assert.throws(
+      () => {
+        board.scroller.scrollPolicyH = 'maybe';
+      },
+      { code: 'LEGACY_EUI_UNSUPPORTED' }
+    );
+  } finally {
+    await host.dispose();
+  }
 });

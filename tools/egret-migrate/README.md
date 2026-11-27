@@ -59,13 +59,15 @@ Supply the game's real custom constructors in the named namespaces. Review `miss
 
 The public fixture in `tests/fixtures/migrate-theme-factories` starts with an original EXML and includes its 5.3.10 compiler output. Windows Edge 158 on an RTX 5090 Laptop ran the old and migrated skins: both exposed three parts, changed the label from closed to open and back, selected item B and instantiated the custom marker. The migrated WebGL2 run used one texture page (7,280 bytes) and refused zero frames. In a separate private project inventory, the unchanged registry provided 929 of 935 paths in the primary theme and 28 of 34 in the secondary theme. Each theme retained six missing paths and six unresolved mappings. These counts establish provider availability. Visual and gameplay acceptance remain per project.
 
+The same compile writes `sdk-surface.json`. It reads the matching declarations under `libs/modules` with the project's compiler. Each entry records its qualified name, declaring location, visibility, and whether it is a namespace value, a static member, an instance member, or an erased type. Match this inventory to `api-usage.json` and the trusted host's bindings. Inherited members can be declared on the superclass. Computed members, exported aliases, overloaded signatures and instance behaviour still need project tests. Project-modified SDK declarations describe that supplied distribution.
+
 ## Install and run
 
 From an Egret checkout with built packages, pack the local CLI. Use the installed esbuild module and npm CLI entry from your environment.
 
 ```text
 node tools/egret-migrate/pack.mjs --esbuild <esbuild-module> --npm <npm-cli.js> --out <new-package-dir>
-npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.5.0.tgz
+npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.6.0.tgz
 ```
 
 Use the installed `egret-migrate` command or invoke `node <tool-folder>/node_modules/@egret/migrate/bin.mjs` directly. The CLI works outside the engine checkout. Supply a pinned Egret 7.0-series `egret2d.mjs`, an installed esbuild module, Playwright with Chromium and, for preview, qrcode-generator 2.0.4. These tools are selected explicitly.

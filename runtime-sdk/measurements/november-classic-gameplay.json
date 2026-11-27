@@ -1,0 +1,136 @@
+{
+  "date": "2026-11-27",
+  "scope": "Original fixtures. Input injection on physical Windows and Android devices. Resource, layout and network results are separate runs.",
+  "windows": {
+    "browser": "Microsoft Edge 158.0.4370.33",
+    "backend": "WebGL2",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU (ANGLE D3D11)",
+    "overlapRgb": [
+      [
+        255,
+        0,
+        255
+      ],
+      [
+        255,
+        0,
+        0
+      ],
+      [
+        255,
+        0,
+        255
+      ]
+    ],
+    "glyphPixels": {
+      "green": 228,
+      "orange": 224
+    },
+    "clickedLinks": [
+      "open:gate"
+    ],
+    "scrollOffsets": [
+      78,
+      138
+    ],
+    "fixedWidthStage": [
+      [
+        320,
+        195
+      ],
+      [
+        320,
+        692
+      ],
+      [
+        320,
+        195
+      ]
+    ]
+  },
+  "android": {
+    "model": "Galaxy Z Fold7 (SM-F966U1)",
+    "os": "Android 17",
+    "host": "trimmed V8 15.7.112.19, GLES3",
+    "overlapRgb": [
+      [
+        255,
+        0,
+        255
+      ],
+      [
+        255,
+        0,
+        0
+      ],
+      [
+        255,
+        0,
+        255
+      ]
+    ],
+    "scrollOffsets": [
+      78.25831604003906,
+      137.70712280273438
+    ],
+    "layoutFixtureClose": {
+      "uploads": 1,
+      "releases": 1,
+      "abandoned": 0
+    },
+    "richTextRun": {
+      "greenGlyphPixels": 4892,
+      "orangeGlyphPixels": 6099,
+      "clickedLinks": [
+        "open:gate"
+      ],
+      "uploads": 3,
+      "releases": 3,
+      "textRasterizations": 2,
+      "textReleases": 2,
+      "textSlotsAfterClose": 0,
+      "textBytesAfterClose": 0
+    }
+  },
+  "shared": {
+    "layoutModes": [
+      "horizontal",
+      "vertical",
+      "tile"
+    ],
+    "iconSize": [
+      2,
+      2
+    ],
+    "caption": "北门驿站",
+    "packagedBinary": [
+      0,
+      252,
+      17,
+      128,
+      55
+    ],
+    "transportBusinessScriptSha256": "7386785d977ce009ed553552107d81a854d1eb0ce19c255fd7529995d83fd8fc",
+    "httpsResponseBytes": 12,
+    "secureSocketSessions": 2,
+    "secureSocketFrames": 2,
+    "closedSessions": 2,
+    "channelResponse": "启航 / 42",
+    "projectBinding": "north-gate-board"
+  },
+  "originalComparison": {
+    "originalSdk": "Egret 5.3.10",
+    "resourceBinary": [
+      0,
+      255,
+      13,
+      10
+    ],
+    "cachedCallback": "after promise resolution on the game frame",
+    "groupRelease": "shared resource remains after first non-forced destruction and is evicted after the last group releases it"
+  },
+  "limits": [
+    "Synthetic credentials, endpoints and channel callbacks. No commercial server, payments or human IME certification.",
+    "Pixel counts belong to the stated surface and font. Hardware timings are not portable performance targets."
+  ]
+}

@@ -108,6 +108,41 @@ function oldProject(t) {
   return { folder, write };
 }
 
+test('converts declared UTF-8 text and binary files without changing their bytes or RES types', async t => {
+  const { folder, write } = oldProject(t);
+  const entries = [
+    { name: 'dialog', type: 'text', url: 'dialog.txt' },
+    { name: 'terrain', type: 'bin', url: 'terrain.bin' }
+  ];
+  write('resource/default.res.json', { resources: entries, groups: [{ name: 'world', keys: 'dialog,terrain' }] });
+  write('resource/dialog.txt', '渡口\r\nNorth bank\n');
+  fs.writeFileSync(path.join(folder, 'resource/terrain.bin'), Uint8Array.of(0, 255, 13, 10));
+  write('engine.mjs', 'export function createBrowserGame(){}\n');
+  const target = fs.mkdtempSync(path.join(os.tmpdir(), 'egret-data-conversion-'));
+  t.after(() => fs.rmSync(target, { recursive: true, force: true }));
+  const out = path.join(target, 'content');
+  const esbuild = { transform: async source => ({ code: source }) };
+  await convertProject({
+    source: folder,
+    out,
+    engine: path.join(folder, 'engine.mjs'),
+    engineVersion: '7.0.2',
+    esbuild
+  });
+  for (const item of entries) {
+    assert.deepEqual(
+      fs.readFileSync(path.join(out, 'web/resource', item.url)),
+      fs.readFileSync(path.join(folder, 'resource', item.url))
+    );
+  }
+  assert.deepEqual(
+    inspectLegacyProject(folder).resources.resources.map(item => item.type),
+    ['text', 'bin']
+  );
+  write('resource/default.res.json', { resources: [{ name: 'bad', type: 'text', url: 'startup.js' }], groups: [] });
+  assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_RES_UNSUPPORTED' });
+});
+
 test('inspect reuses the RES plan and preserves source and group order from a 5.2 web project', t => {
   const { folder } = oldProject(t);
   const project = inspectLegacyProject(folder);

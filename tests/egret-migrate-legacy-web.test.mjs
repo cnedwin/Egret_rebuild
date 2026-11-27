@@ -5,6 +5,206 @@ import * as engine from '@egret/engine';
 import { createPointerInput } from '@egret/engine/input';
 import { launchLegacyWeb } from '../tools/egret-migrate/legacy-web.mjs';
 
+test('classic RES loads local URLs once, reports failures, and shares dynamic groups until released', async () => {
+  const { sdk, canvas } = host();
+  let res;
+  const counts = new Map();
+  canvas.ownerDocument.defaultView.fetch = async url => {
+    counts.set(url, 1 + (counts.get(url) ?? 0));
+    if (url === 'missing.txt' && counts.get(url) === 1) return new Response('', { status: 404 });
+    if (url === 'chapter.bin') return new Response(Uint8Array.of(0, 255, 42));
+    return new Response(url.endsWith('.json') ? '{"points":3}' : '渡口');
+  };
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_catalog',
+    resources,
+    createMain({ egret, RES }) {
+      res = RES;
+      return new egret.DisplayObjectContainer();
+    }
+  });
+  try {
+    assert.equal(await res.getResByUrl('before-config.txt'), '渡口');
+    assert.equal(res.destroyRes('before-config.txt'), true);
+    assert.equal(res.hasRes('before-config.txt'), false);
+    await res.loadConfig(resources.configUrl, resources.root);
+    assert.equal(res.hasRes('level'), true);
+    assert.equal(res.hasRes('unknown'), false);
+    assert.equal(res.createGroup('neighbors', ['preload', 'level']), true);
+    assert.equal(res.createGroup('neighbors', ['level']), false);
+    assert.deepEqual(
+      res.getGroupByName('neighbors').map(item => item.name),
+      ['level']
+    );
+    const receiver = {};
+    const callback = [];
+    const [a, b] = await Promise.all([
+      res.getResByUrl(
+        'resource/level.json',
+        function (value, url) {
+          assert.equal(this, receiver);
+          callback.push([value, url]);
+        },
+        receiver,
+        res.ResourceItem.TYPE_JSON
+      ),
+      res.getResAsync('level')
+    ]);
+    assert.equal(a, b);
+    assert.equal(counts.get('resource/level.json'), 1);
+    assert.deepEqual(callback, [[a, 'resource/level.json']]);
+    assert.equal(res.createGroup('url-group', ['resource/level.json']), true);
+    await res.loadGroup('url-group');
+    assert.equal(res.isGroupLoaded('url-group'), true);
+    await res.loadGroup('preload');
+    await res.loadGroup('neighbors');
+    res.destroyRes('url-group', false);
+    assert.equal(res.destroyRes('preload', false), true);
+    assert.equal(res.getRes('level'), a);
+    assert.equal(res.destroyRes('neighbors', false), true);
+    assert.equal(res.getRes('level'), null);
+    assert.deepEqual(Array.from(new Uint8Array(await res.getResByUrl('chapter.bin'))), [0, 255, 42]);
+    let failure;
+    await assert.rejects(
+      res.getResByUrl('missing.txt', (...args) => {
+        failure = args;
+      }),
+      error => error === null
+    );
+    assert.deepEqual(failure, [null, 'missing.txt']);
+    assert.equal(res.destroyRes('missing.txt'), true);
+    assert.equal(res.hasRes('missing.txt'), false);
+    assert.equal(await res.getResByUrl('missing.txt'), '渡口');
+    assert.equal(counts.get('missing.txt'), 2);
+    await assert.rejects(res.getResByUrl('../external.txt'));
+    assert.equal(counts.has('../external.txt'), false);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('closing the resource owner cancels a pending URL without calling old business code', async () => {
+  const { sdk, canvas } = host();
+  let res,
+    finish,
+    reads = 0,
+    callbacks = 0;
+  canvas.ownerDocument.defaultView.fetch = async () => {
+    reads++;
+    return reads === 1
+      ? new Response('kept')
+      : new Promise(ok => {
+          finish = ok;
+        });
+  };
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_res_closed',
+    resources,
+    createMain({ egret, RES }) {
+      res = RES;
+      return new egret.DisplayObjectContainer();
+    }
+  });
+  await res.getResByUrl('ready.txt');
+  const waiting = res.getResByUrl('pending.txt', () => callbacks++);
+  const stopped = assert.rejects(waiting);
+  await game.dispose();
+  finish(new Response('late'));
+  await stopped;
+  assert.equal(res.getRes('ready.txt'), null);
+  await assert.rejects(res.getResByUrl('new.txt', () => callbacks++));
+  assert.deepEqual([reads, callbacks], [2, 0]);
+});
+
+test('a released URL cannot report an old failure against a new load with the same key', async () => {
+  const { sdk, canvas } = host();
+  let res,
+    fail,
+    reads = 0,
+    errors = 0,
+    callbacks = 0;
+  canvas.ownerDocument.defaultView.fetch = async () =>
+    ++reads === 1
+      ? new Promise((_ok, no) => {
+          fail = no;
+        })
+      : new Response('current');
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_res_stale',
+    resources,
+    createMain({ egret, RES }) {
+      res = RES;
+      return new egret.DisplayObjectContainer();
+    }
+  });
+  try {
+    res.addEventListener(res.ResourceEvent.ITEM_LOAD_ERROR, () => errors++);
+    const old = assert.rejects(
+      res.getResByUrl('chapter.txt', () => callbacks++),
+      { code: 'LEGACY_RESOURCE_RETIRED' }
+    );
+    assert.equal(res.destroyRes('chapter.txt'), true);
+    assert.equal(await res.getResByUrl('chapter.txt'), 'current');
+    fail(new Error('old request failed'));
+    await old;
+    assert.deepEqual([res.getRes('chapter.txt'), errors, callbacks], ['current', 0, 0]);
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('project additions use the game scope and keep engine operations and class identity intact', async () => {
+  const { sdk, canvas } = host();
+  let closed = 0,
+    baseClass;
+  const options = {
+    canvas,
+    width: 200,
+    height: 100,
+    projectId: 'p_extensions',
+    resources,
+    provideBindings(api, scope) {
+      baseClass = api.egret.Sprite;
+      scope.use({
+        dispose() {
+          closed++;
+        }
+      });
+      return {
+        egret: { SomeCodec: class SomeCodec {} },
+        RES: {
+          getProjectPortrait(id) {
+            return 'sprite:' + id;
+          }
+        }
+      };
+    },
+    createMain({ egret, RES }) {
+      assert.equal(egret.Sprite, baseClass);
+      assert.equal(egret.getDefinitionByName('egret.SomeCodec'), egret.SomeCodec);
+      assert.equal(RES.getProjectPortrait(4), 'sprite:4');
+      assert.equal(typeof RES.getResByUrl, 'function');
+      return new egret.Sprite();
+    }
+  };
+  const game = await launchLegacyWeb(sdk, options);
+  await game.dispose();
+  assert.equal(closed, 1);
+  await assert.rejects(
+    launchLegacyWeb(sdk, { ...options, provideBindings: () => ({ RES: { getRes() {} } }) }),
+    /Conflicting/
+  );
+});
+
 function host(storage = new Map(), realPointer = false) {
   const trace = [];
   const tap = engine.createEventType('tap', { bubbles: true });
@@ -814,4 +1014,137 @@ test('a repaged texture serves an ordinary Bitmap and a MovieClip crossing the p
     await game.dispose();
   }
   assert.equal(trace.filter(item => item === 'image disposed').length, 2);
+});
+
+test('shared legacy HTML keeps Chinese styled runs, resolves only committed link hits, and retires stale views', async () => {
+  const { sdk, canvas, trace } = host();
+  canvas.ownerDocument.createElement = () => ({
+    getContext: () => ({ measureText: text => ({ width: Array.from(text).length * 10 }) })
+  });
+  let api, caption, root;
+  const links = [];
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 160,
+    height: 80,
+    projectId: 'p_legacy_styled_caption',
+    createMain(value) {
+      api = value.egret;
+      root = new api.Sprite();
+      const parser = new api.HtmlTextParser();
+      caption = new api.TextField();
+      caption.touchEnabled = true;
+      caption.x = 7;
+      caption.y = 2;
+      caption.width = 20;
+      caption.height = 60;
+      caption.size = 16;
+      caption.textFlow = parser.parser('<font color="#ff9000">市</font><a href="event:gate&amp;menu"><b>北门</b></a>');
+      assert.equal(caption.text, '市北门');
+      assert.deepEqual(caption.textFlow, [
+        { text: '市', style: { textColor: 0xff9000 } },
+        { text: '北门', style: { href: 'event:gate&menu', bold: true } }
+      ]);
+      assert.throws(() => parser.parser('<a href="https://example.invalid">x</a>'), {
+        code: 'LEGACY_RICH_TEXT_UNSUPPORTED'
+      });
+      assert.throws(() => parser.parser('<font color="bad">x</font>'), { code: 'LEGACY_RICH_TEXT_UNSUPPORTED' });
+      assert.throws(
+        () => {
+          caption.textFlow = [{ text: 'X', style: { background: true } }];
+        },
+        { code: 'LEGACY_RICH_TEXT_UNSUPPORTED' }
+      );
+      caption.addEventListener(api.TextEvent.LINK, e => links.push([e.text, e.target === caption, e.bubbles]), root);
+      root.addChild(caption);
+      return root;
+    }
+  });
+  const tapAt = (x, y) =>
+    api.TouchEvent.dispatchTouchEvent(caption, api.TouchEvent.TOUCH_TAP, true, false, 7 + x, 2 + y, 1, true);
+  try {
+    assert(trace.some(s => Array.isArray(s) && s[1] === '市' && s[3] === 0xff9000));
+    tapAt(3, 8);
+    tapAt(14, 8);
+    tapAt(4, 22);
+    tapAt(21, 8);
+    assert.deepEqual(links, [
+      ['gate&menu', true, false],
+      ['gate&menu', true, false]
+    ]);
+    const old = caption.getChildAt(0);
+    const duplicate = caption.textFlow;
+    duplicate[1].style.href = 'event:outdated';
+    assert.equal(caption.textFlow[1].style.href, 'event:gate&menu');
+    caption.textFlow = [{ text: '新', style: { href: 'event:new' } }];
+    tapAt(4, 8);
+    assert.equal(links.length, 2);
+    assert.equal(old.isDisposed, true);
+    root.removeChild(caption);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(caption.numChildren, 0);
+    root.addChild(caption);
+    await new Promise(resolve => setImmediate(resolve));
+    tapAt(4, 8);
+    assert.deepEqual(links.at(-1), ['new', true, false]);
+    caption.text = '结';
+    await new Promise(resolve => setImmediate(resolve));
+    tapAt(4, 8);
+    assert.equal(links.length, 3);
+    assert.equal(caption.getChildAt(0).name, '结');
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('an EUI label preserves a linked styled row when relaid out, then returns to ordinary text', async () => {
+  const { sdk, canvas } = host();
+  canvas.ownerDocument.createElement = () => ({
+    getContext: () => ({ measureText: text => ({ width: Array.from(text).length * 10 }) })
+  });
+  let label,
+    api,
+    opened = 0;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 120,
+    height: 80,
+    projectId: 'p_legacy_eui_link',
+    theme: { skins: {}, exmls: [] },
+    createMain({ egret, eui }) {
+      api = egret;
+      const root = new eui.Group();
+      label = new eui.Label();
+      label.width = 72;
+      label.height = 60;
+      label.size = 12;
+      label.textAlign = 'right';
+      label.verticalAlign = 'bottom';
+      label.touchEnabled = true;
+      label.textFlow = [{ text: '入口', style: { italic: true, underline: true, href: 'event:open' } }];
+      label.addEventListener(egret.TextEvent.LINK, () => opened++, label);
+      root.addChild(label);
+      return root;
+    }
+  });
+  try {
+    const tap = (x, y) =>
+      api.TouchEvent.dispatchTouchEvent(label, api.TouchEvent.TOUCH_TAP, true, false, x, y, 1, true);
+    tap(64, 55);
+    tap(5, 55);
+    assert.equal(opened, 1);
+    label.width = 60;
+    await new Promise(resolve => setImmediate(resolve));
+    tap(64, 55);
+    tap(47, 55);
+    assert.equal(opened, 2);
+    assert.equal(label.text, '入口');
+    label.text = '普通';
+    await new Promise(resolve => setImmediate(resolve));
+    tap(47, 55);
+    assert.equal(opened, 2);
+    assert.equal(label.getChildAt(0).name, '普通');
+  } finally {
+    await game.dispose();
+  }
 });
