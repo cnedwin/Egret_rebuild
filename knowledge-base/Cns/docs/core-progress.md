@@ -2,13 +2,11 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-2026-11-22 对照主干 [ab1ded6d](https://github.com/cnedwin/Egret_rebuild/commit/ab1ded6d) 核对 7.0.2 的功能与验收范围。浏览器单文件、可编辑入门工程和五个 npm 格式包使用统一的 7.0.2 版本号。[安装与发行归档](release-archives.md)
+2026 年 11 月 27 日对照主干 [8d162d9c](https://github.com/cnedwin/Egret_rebuild/commit/8d162d9c87f6110d5940a7d576944cddef6edbcf) 复核 7.0.3 的产品能力。本文覆盖公共引擎、开发工具和各端运行时。发行文件、包版本和安装方法见[发行指南](release-archives.md)。
 
-本页说明当前能力，[工程计划](工程规划.md)说明接下来的工作，子系统契约给出准确 API 和证据范围。历史预览记录不再作为并行的“当前版本”。
+## 团队现在可以交付什么
 
-## 产品目标与当前实现
-
-开发者可以用共享 2D、UI 和 World3D 制作浏览器游戏。Android Runtime SDK 可打包选定的 2D 和 3D 游戏，微信导出工具可生成本地小游戏工程。一体化 AI 创作工作台和旧工程一键迁移属于后续产品需求。
+浏览器是当前覆盖面最广的目标。游戏可组合 2D 动画角色、滚动 UI、原生文字编辑与轻量 World3D。Android 上的 RSDK 可为已支持的场景生成本地签名 APK 和 AAB。老游戏团队可以将业务代码迁到白鹭 7，也可保留原版 5.3 模块，用 Android 播放器运行。选择路径后，需要用实际交付的游戏、资产和宿主服务验收。[游戏展示站](https://cnedwin.github.io/PortedGamesEgret/) · [RSDK 各平台指南](runtime-sdk.md) · [迁移指南](旧工程迁移.md)
 
 | 领域 | 已有实现 | 仍缺失的能力或验收 |
 | --- | --- | --- |
@@ -22,8 +20,10 @@
 | 声音 | [可选的 2D 混音器](audio.md)：计入预算的已解码声音、以流播放的长音乐、发声位、带渐变的单首音乐、有名字的音量，以及等待第一次点击、页面隐藏时静音的 Web Audio 后端 | 资源清单中的声音、其他宿主，以及扬声器、手机、Safari 和 Firefox 的验证 |
 | 3D | [可选 World3D](world3d.md)提供独立 WebGL2／WebGPU 渲染器，以及 glTF 实例、光照阴影、后处理、蒙皮、变形和文字。物理预览包含形状扫掠、组合刚体、分片求解和玩法辅助组件。 | 后端功能与验收范围见契约。更广资产、设备与性能资格及统一 2D／3D 创作流程仍待交付。 |
 | Play 与 AI 智能体 | 单次调用的 [Play](play.md) 与 [Play3D](play3d.md)、[单文件](single-file.md)、[智能体接口索引](https://github.com/cnedwin/Egret_rebuild/blob/main/llms.txt)和无头浏览器玩法检查器。选定示例在 Fold7 的两个浏览器后端均已通关和重开。[真机记录](november-browser-hardware.md) | 实体手柄、真人输入与听音、更多设备以及持续性能仍待验证。 |
-| Android 原生与小游戏导出 | [Android SDK](android-project-player.md) 生成面向 API 36 的 arm64 工程，可本地签名构建 APK 和 AAB。GLES3 播放器默认使用裁剪 V8。Fold7 已跑通带 Spine 和滚动 UI 的 2D 关卡、带纹理 GLB 的赛道，以及复用驻留几何的 210 帧驾驶回放。[微信工具](wechat-minigame.md)可生成 WebGL2 小游戏工程。 | 更广的原生着色器、特效与设备覆盖，以及 Vulkan。微信开发者工具、微信客户端真机和平台审核仍待验证。iOS、鸿蒙和抖音发行仍属路线图。 |
-| 工程与工具 | 版本化工程快照／事务、换装工作室内打开工程、干净工程包和浏览器冒烟检查、结构化诊断与有界旧 RES／MovieClip 分析 | 工程到运行游戏的创作闭环、集成可视化工具、Agent／Skill／MCP 应用、发布／更新适配和完整迁移 |
+| Android RSDK | 裁剪 V8 与 Rust GLES3 播放器可生成 arm64、目标 API 36 的本地 APK 和 AAB。Fold7 已跑通含 Spine 和滚动 UI 的 2D 关卡、带贴图 GLB 的赛车及 210 帧驾驶录像回放。自制签名样例完成覆盖升级并恢复存档。[播放器](android-project-player.md) · [构建与交接](android-migration-build-kit.md) | 目前集中于一款手机的选定场景。发行前需验证实际游戏的着色器、其他 GPU 的持续性能、渠道登录／支付回调，以及客户自行构建的升级包。 |
+| 原版白鹭 5 的 Android 打包 | 同一个 RSDK 用八个 5.3 标签运行了图集／EUI 样例。真实 5.3.10 工程的 Release APK 打开原登录界面，接受系统文字输入，进入选服并在重启后恢复输入。[兼容实测](original5-atlas-verification.md) · [原工程实测](android-migration-build-kit.md) | 提供的构建没有可连接的服务端，缺一张渠道图片，按已有源码编译了 935 个已声明皮肤中的 929 个。完整联网玩法、渠道回调及其他 5.x 工程仍需验证。 |
+| iOS 与小游戏宿主 | JavaScriptCore、Rust 帧解码器与 Metal 在 iOS 26.2 模拟器绘制了 40 卡片场景。微信导出器能生成 WebGL2 工程。[iOS 及各平台进度](runtime-sdk.md) · [微信导出](wechat-minigame.md) | iPhone 签名真机安装、原生输入及前后台切换待验证。微信仍缺开发者工具与客户端实测。鸿蒙、抖音宿主处于规划阶段。 |
+| 工程与迁移工具 | 已有版本化快照与事务、浏览器内编辑工程、Egret Migrate、首次有效操作与重开的试玩验证。联网卡牌旧作的原版与迁移版分别使用相同的本地服务端实现完成五个回合，命令、扣血、胜负和下一局发牌一致。[迁移指南](旧工程迁移.md) · [迁移工具](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/egret-migrate/README.zh-CN.md) | 对照在 Windows 软件 WebGL2 完成，限于双人玩法。各张卡牌、技能、原版动态桌面皮肤及手机实操仍待覆盖。下一局有客户端退出后，原服务端发生清理错误。通用自动转换、集成编辑器和 Agent 扩展商店仍为产品目标。 |
 
 ## 游戏内容兼容范围
 
@@ -167,15 +167,15 @@ M1.1–M1.5 工程已集成。最新固定 Windows 正式对照中，静态／�
 
 [Android 报告](android-device-validation.md)记录了有限 WebGPU／WebGL2 组件、生命周期与受控恢复，包括 #129 字体注册示例修正和 #130 新增十二个诊断／生命周期用例。历史约 41.4 ms 回调触发条件未复现；精确堆／后备存储观察不能证明物理内存或通用零泄漏验收。已撤回的错误目标启动报告不是 Engine 回归。
 
-这些手机证据不等于完整 X-MTouch/1、混合百次生命周期／十次恢复、必需 iPhone／IME／无障碍记录或完整授权 Spine 素材。API 探测、模拟输入、CI 或短时回调采样不能关闭这些项目。
+X-MTouch/2 已在 Fold7 的每个后端分别完成 100 次场景生命周期。此前每个后端各有十次实际设备丢失，补测分别丢失两个画布后的恢复画面一致。WebGL2 的 30 分钟运行完成清理；早期 WebGPU 长跑保留外层清理异常。帧时与输入预算、iPhone／输入法／读屏，以及授权 Spine 内容仍各自验收。[混合场景记录](m4-core-acceptance-plan.md)
 
 M0 的[独立新贡献者演练 #52](https://github.com/cnedwin/Egret_rebuild/issues/52)及[剩余场景／权利／设备资格 #54](https://github.com/cnedwin/Egret_rebuild/issues/54)同样保持开放。它们阻塞相应声明，不阻塞无关实现。
 
 ## 下一开发阶段
 
-换装工作室在运行中的页面内以一次编辑事务打开已导出的工程。原始打开工程用例已在软件 WebGL2 通过。[#236](https://github.com/cnedwin/Egret_rebuild/pull/236) 后续修复已在 Windows 和 Fold7 通过 WebGPU 与 WebGL2 限定验证。[#91](https://github.com/cnedwin/Egret_rebuild/issues/91) 已有 X-D60/2 与 X-MTouch/2 双画布负载在 Windows 和 Fold7 上的限定功能证据。#55 需为稀疏与全脏墙钟间隔固定基于相同输入的 SharedFrame2D 成对测量方案。#92 在 #91 选定能力和经评审的后继档位就绪后开展正式验收。
+优先选一款真实游戏，由接收方独立交付。使用离线构建工具包，自行签名、安装两个版号，在第二类 GPU 上验证自己的存档和已授权的渠道回调。iOS RSDK 的下一步是签名真机安装、实际输入、前后台切换及资源恢复。浏览器端优先让新贡献者走完创作试玩流程，并补足相关界面的实体手柄／读屏实操，以及独立的动画参考素材。[Android 项目交接](android-migration-build-kit.md) · [RSDK](runtime-sdk.md) · [工程计划](工程规划.md)
 
-[#86](https://github.com/cnedwin/Egret_rebuild/issues/86) 已通过保留播放的替换路径的限定验证，继续跟踪组合动画生命周期与预算验收。剩余输入法、控件和语义见 [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) 和 [#90](https://github.com/cnedwin/Egret_rebuild/issues/90)。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 跟踪归档发布、选定产物的浏览器和首次交互验收，以及真人演练。完整交接依赖 #91 和 #92，详见[工程计划](工程规划.md)。
+桌面帧节奏与换装工作室的整场景预算分别验收。评估混合场景时复用前述生命周期结果；剩余帧时、GPU 计时和真人输入各自使用对应负载。[桌面帧节奏 #55](https://github.com/cnedwin/Egret_rebuild/issues/55) · [混合场景 #92](https://github.com/cnedwin/Egret_rebuild/issues/92) · [设备实测 #289](https://github.com/cnedwin/Egret_rebuild/issues/289)
 
 ## 历史记录
 

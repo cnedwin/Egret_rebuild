@@ -6,9 +6,12 @@ Choose a starting point below, or browse the full [English knowledge base](knowl
 
 ## Current project entry
 
+- **Try the engine in a game.** [Play the community showcase](https://cnedwin.github.io/PortedGamesEgret/) · [Browse the game sources](https://github.com/cnedwin/PortedGamesEgret)
 - **Build a game.** [Get started](knowledge-base/en/docs/getting-started.md) · [Public imports](knowledge-base/en/docs/entry-points.md)
 - **Make a game in one file, or with an AI agent.** [Play](knowledge-base/en/docs/play.md) · [Play3D](knowledge-base/en/docs/play3d.md) · [Single files](knowledge-base/en/docs/single-file.md) · [llms.txt](llms.txt)
-- **Choose a host or distribution.** [Android Runtime SDK](knowledge-base/en/docs/runtime-sdk.md) · [Local APK/AAB builds](knowledge-base/en/docs/android-project-player.md) · [WeChat Mini Game export](knowledge-base/en/docs/wechat-minigame.md) · [Browser archives and npm](knowledge-base/en/docs/release-archives.md) · [GitHub Packages browser collection](tools/github-browser-distribution/README.md)
+- **Build a native app.** [RSDK platform status](knowledge-base/en/docs/runtime-sdk.md) · [Android game player](knowledge-base/en/docs/android-project-player.md) · [Package and hand off APK/AAB builds](knowledge-base/en/docs/android-migration-build-kit.md) · [iOS simulator project](runtime-sdk/ios/README.md)
+- **Bring a legacy game.** [Egret Migrate CLI](tools/egret-migrate/README.md) · [Egret 5 to Android](knowledge-base/en/docs/classic-game-android.md)
+- **Choose a web distribution.** [WeChat Mini Game export](knowledge-base/en/docs/wechat-minigame.md) · [Browser archives and npm](knowledge-base/en/docs/release-archives.md) · [GitHub Packages browser collection](tools/github-browser-distribution/README.md)
 - **Check coverage.** [Requirements and implementation](knowledge-base/en/docs/core-progress.md) · [Windows and Fold7 browser verification](knowledge-base/en/docs/november-browser-hardware.md) · [Native Android measurements](https://github.com/cnedwin/Egret_rebuild/tree/main/runtime-sdk/measurements) · [Changelog](knowledge-base/en/CHANGELOG.md)
 - **Contribute.** [Contribution guide](CONTRIBUTING.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md) · [Project board](https://github.com/users/cnedwin/projects/2)
 
