@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Rust encodes packaged Android resource chunks",
+    "body": "The shared native library encodes the player's 64 KiB chunks into padded Base64. Built-in arm64 NEON preserves the vector path. Existing JavaScript and Android consumers keep the same bytes, exceptions and resource lifecycle."
+  },
+  "zh": {
+    "title": "Android 包内资源分块由 Rust 编码",
+    "body": "共享原生库负责将播放器的 64 KiB 分块编码为带填充的 Base64，arm64 继续使用 NEON。现有 JavaScript 与 Android 调用方保留原有字节、异常和资源生命周期。"
+  }
+}
