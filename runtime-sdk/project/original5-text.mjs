@@ -77,6 +77,26 @@ export function installOriginal5Text(egret, services, display) {
     const revision = node.revision;
     if (!node.field?.stage) { drop(node); return; }
     const {width,height,runs} = layout(node);
+    // The field paints its box before its child glyph bitmap, even when the string is empty.
+    const {background, backgroundColor, border, borderColor} = node.field;
+    if (background || border || node.decorated) {
+      const graphics = node.content.graphics;
+      graphics.clear();
+      node.decorated = !!(background || border);
+      if (width > 0 && height > 0) {
+        if (background) graphics.beginFill(backgroundColor).drawRect(0, 0, width, height).endFill();
+        if (border) {
+          const dx = Math.min(1, width), dy = Math.min(1, height);
+          graphics.beginFill(borderColor).drawRect(0, 0, width, dy);
+          if (height > dy) graphics.drawRect(0, height - dy, width, dy);
+          if (height > 2 * dy) {
+            graphics.drawRect(0, dy, dx, height - 2 * dy);
+            if (width > dx) graphics.drawRect(width - dx, dy, dx, height - 2 * dy);
+          }
+          graphics.endFill();
+        }
+      }
+    }
     if (!runs.length || width <= 0 || height <= 0) { drop(node); return; }
     const lease = await raster.acquireText(Math.ceil(width),Math.ceil(height),runs);
     if (closed || revision !== node.revision || !node.field.stage) { lease.release(); return; }
@@ -108,10 +128,10 @@ export function installOriginal5Text(egret, services, display) {
     setType(value) {
       if (value !== 'dynamic' && value !== 'input') throw new Error('Unsupported original 5 text field type');
     }
-    setBorder(value) { if (value) throw new Error('Original 5 native TextField border is unsupported'); }
-    setBackground(value) { if (value) throw new Error('Original 5 native TextField background is unsupported'); }
-    setBorderColor() {}
-    setBackgroundColor() {}
+    setBorder() { change(this); }
+    setBackground() { change(this); }
+    setBorderColor() { change(this); }
+    setBackgroundColor() { change(this); }
     static disposeTextData(field) { if (field.$nativeDisplayObject) drop(field.$nativeDisplayObject); }
   }
   // The JS field retains the actual values. A mutation only invalidates the native copy.

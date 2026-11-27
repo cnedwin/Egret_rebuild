@@ -22,7 +22,8 @@ export function installOriginal5Editor(egret, services) {
       if (this.#session || !this.#field?.stage || services.signal.aborted) return;
       active?.$hide();
       const field = this.#field;
-      if (field.displayAsPassword || field.inputType === 'password') {
+      const euiPasswordPrompt = field.$isShowPrompt === true && field.$EditableText?.[2] === true;
+      if (field.displayAsPassword || field.inputType === 'password' || euiPasswordPrompt) {
         throw new Error('Original 5 password input requires a secure native editor');
       }
       const session = new AbortController();
@@ -35,7 +36,8 @@ export function installOriginal5Editor(egret, services) {
       };
       const finish = () => { if (this.#session === session) this.$hide(); };
       const options = {
-        text: this.#text, multiline: !!field.multiline,
+        // EUI can paint a prompt into StageText while exposing an empty editable value.
+        text: field.text ?? this.#text, multiline: !!field.multiline,
         inputMode: field.inputType === 'tel' ? 'tel' : 'text',
         onFocus: () => {
           if (session === this.#session && !this.#focused) {

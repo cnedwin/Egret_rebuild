@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-27",
+  "device": "Samsung Galaxy Z Fold7",
+  "host": {
+    "script": "embedded trimmed V8 15.8.62.52",
+    "graphics": "GLES3",
+    "originalCore": "5.3.10",
+    "build": "isolated debug APK",
+    "apkSha256": "ec973f60e9ac704f98f82f467f02dba0feed50f28f9b676d90e863589eb4ed29"
+  },
+  "application": {
+    "source": "Privately supplied original project. Product code, art, screenshots and credentials are excluded from this record.",
+    "originalGameScripts": 1633,
+    "declaredSkins": 935,
+    "compiledSkins": 929,
+    "missingSourceSkins": 6,
+    "loginGroupMembers": 69,
+    "loginGroupFailures": 0,
+    "displayPixels": [
+      2520,
+      1080
+    ],
+    "designUnits": [
+      1334,
+      750
+    ],
+    "surfaceBounds": [
+      515,
+      256,
+      1981,
+      1080
+    ],
+    "actions": [
+      "Open the actual login view.",
+      "Tap its text field and enter an eight-character synthetic marker through the Android EditText.",
+      "Confirm, tap the original login button and observe the original server selection view.",
+      "Force-stop the isolated package and reopen. Verify the saved marker in the original input."
+    ],
+    "method": "USB-injected actions on the physical device. Scene state, native editor layout and screenshots were checked.",
+    "initialPrompt": "Before correction, the displayed prompt consumed five of ten editing slots.",
+    "authenticatedSession": false,
+    "serverListReceived": false,
+    "unavailable": [
+      "Channel-specific remote artwork referenced by the packaged configuration",
+      "Reachable game server and registered vendor identity",
+      "Six source skin files listed by the original theme absent from the supplied tree"
+    ],
+    "scope": "Tests cover entering the selection UI on this package. Gameplay, payment and real sign-in require their own evidence."
+  },
+  "separateRelease": {
+    "build": "Offline Release APK and AAB using a separate application ID and local self-signed test identity. The release has no QA state publisher or embedded color fixture.",
+    "apkBytes": 76129141,
+    "apkSha256": "5fe5ae60b9bb67953ab5f6990743053d293ca6f17d1a36413fef08f4f2d3e1cf",
+    "aabBytes": 29424209,
+    "aabSha256": "449c5ccdaef331d3b4b6ec1a016037ff3891fc1a4c6ef56dc0f5e1bc7fb74780",
+    "signatures": "APK Signature Scheme v2 and signed bundle JAR were verified. The key is a local test key.",
+    "test": "The APK was installed on the same Fold7. Its original login field opened with an empty native EditText. USB input entered the marker. The original button opened server selection. After force-stop and reopening, the native EditText contained the same marker.",
+    "screenComparison": {
+      "reference": "The debug acceptance above on the same device and original scene",
+      "method": "Uniform 119 by 69 point interior grid on the Android game Surface. Compares RGB from screenshots, excluding the sample Activity controls and system bars.",
+      "login": {"samples": 8211, "exact": 8211},
+      "serverSelection": {"samples": 8211, "exact": 8211},
+      "loginAfterProcessRestart": {"samples": 8211, "exact": 8211}
+    },
+    "scope": "The signed APK was installed. The AAB was built and signature-verified. No store submission or operating service was exercised."
+  },
+  "independentColorFixture": {
+    "description": "A solid red rectangle in an original Shape. Apply one ColorMatrixFilter with green offset 255, mutate the same filter to blue, then remove it.",
+    "samples": "Center of the native surface sampled from three device screenshots after actual taps.",
+    "green": [
+      0,
+      255,
+      0,
+      255
+    ],
+    "blue": [
+      0,
+      0,
+      255,
+      255
+    ],
+    "removed": [
+      255,
+      0,
+      0,
+      255
+    ]
+  }
+}

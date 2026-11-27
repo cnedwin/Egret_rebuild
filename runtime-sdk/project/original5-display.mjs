@@ -20,6 +20,9 @@ export function createOriginal5Display(services, nativeAbi = 5) {
   const objects = new Map();
   const cleanup = new FinalizationRegistry(id => objects.delete(id));
   const dropConsumer = new FinalizationRegistry(({set, ref}) => set.delete(ref));
+  const filterConsumers = new WeakMap();
+  const filterCleanup = new FinalizationRegistry(({consumers, ref}) => consumers.delete(ref));
+  let nextFilterId = 0;
   let nextId = 0;
   let stage;
   let closed = false;
@@ -151,7 +154,25 @@ export function createOriginal5Display(services, nativeAbi = 5) {
     setChildrenSortMode(value) { if (value) unsupported('sorted children'); }
     setSortableChildren(value) { if (value) unsupported('sorted children'); }
     setZIndex(value) { if (value) unsupported('zIndex'); }
-    setFilters(values) { if (values?.length) unsupported('filters'); }
+    setFilters(values) {
+      const filter = values?.[0];
+      if (values != null && (!Array.isArray(values) || values.length > 1)) unsupported('filter chain');
+      if (values?.length && (!filterConsumers.has(filter) || filter?.type !== 'colorTransform' ||
+          !services.capabilities?.subtreeEffects)) unsupported('filter ' + filter?.type);
+      // Assign before changing subscriptions: a rejected value leaves the current effect intact.
+      this.frame.renderEffect = filter ? {colorMatrix: filter.matrix} : undefined;
+      if (filter === this.boundFilter) return;
+      if (this.boundFilter) {
+        filterConsumers.get(this.boundFilter).delete(this.consumerRef);
+        filterCleanup.unregister(this);
+      }
+      this.boundFilter = filter;
+      if (filter) {
+        const consumers = filterConsumers.get(filter);
+        consumers.add(this.consumerRef);
+        filterCleanup.register(this, {consumers, ref: this.consumerRef}, this);
+      }
+    }
     setScale9Grid(x, y, width, height) {
       this.grid = width === -1 && height === -1 ? undefined : rectangle(x, y, width, height);
       this.syncBitmap();
@@ -227,7 +248,10 @@ export function createOriginal5Display(services, nativeAbi = 5) {
     setCubicCurveTo(...points) { this.content.graphics.cubicCurveTo(...points); }
     setDrawArc(...arc) { this.content.graphics.drawArc(...arc); }
     setLineStyle(width, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-      if (pixelHinting || (scaleMode && scaleMode !== 'normal')) unsupported('nonstandard stroke scaling');
+      // EUI Rect also passes pixelHinting for the hidden stroke around its fill.
+      if (width > 0 && alpha !== 0 && (pixelHinting || (scaleMode && scaleMode !== 'normal'))) {
+        unsupported('nonstandard stroke scaling');
+      }
       this.content.graphics.lineStyle(width > 0 ? width : undefined, color, alpha, {
         caps: caps || 'round',
         joints: joints || 'round',
@@ -237,6 +261,25 @@ export function createOriginal5Display(services, nativeAbi = 5) {
     setEndFill() { this.content.graphics.endFill(); }
     setGraphicsClear() { this.content.graphics.clear(); }
 
+    // The base constructor runs before the concrete type and uniforms are assigned.
+    // Projects often construct filters at module load without putting them on a display.
+    static createFilter(filter) {
+      if (filterConsumers.has(filter)) throw new Error('Original filter already registered');
+      filter.$id = ++nextFilterId;
+      filterConsumers.set(filter, new Set());
+    }
+    static setDataToFilter(filter) {
+      if (closed) return;
+      const consumers = filterConsumers.get(filter);
+      if (!consumers) throw new Error('Unknown original filter');
+      for (const ref of consumers) {
+        const node = ref.deref();
+        if (node) node.setFilters([filter]);
+        else consumers.delete(ref);
+      }
+    }
+    // A color transform has zero padding. Other filter kinds are rejected on attachment.
+    static setFilterPadding() {}
     static setSourceToNativeBitmapData(data, value) { data.assign(value); }
     static disposeNativeBitmapData(data) { data.assign(undefined); }
     // Egret 5 invokes this on stage detachment to retire a backend cache. The shared
@@ -246,9 +289,6 @@ export function createOriginal5Display(services, nativeAbi = 5) {
 
   for (const name of ['setBeginGradientFill', 'setDataToMesh', 'setBitmapDataToMesh', 'setDataToBitmapNode']) {
     NativeDisplayObject.prototype[name] = () => unsupported(name);
-  }
-  for (const name of ['createFilter', 'setDataToFilter', 'setFilterPadding']) {
-    NativeDisplayObject[name] = () => unsupported(name);
   }
 
   function point(id, name, x, y) {

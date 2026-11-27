@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {containsOwnPaint} from '../../packages/runtime/dist/displayHitTest.js';
 import { createEngine, createImageData2D, createTexture, createAssetType, createAssetRef, isTexture } from '@egret/engine';
 import { createOriginal5Display } from './original5-display.mjs';
 import { installOriginal5Text, original5TextLayout } from './original5-text.mjs';
@@ -73,4 +74,42 @@ test('a text page remains valid between command capture and the native page snap
     display.close();
     await engine.dispose();
   }
+});
+
+test('an empty original input retains its fill and one-unit border independently of text pages', () => {
+  class Field {
+    createNativeDisplayObject() { this.$nativeDisplayObject = new display.api.NativeDisplayObject(7); }
+    $onAddToStage() { this.stage = true; }
+    $onRemoveFromStage() { this.stage = false; }
+    $getLinesArr2() { return []; }
+  }
+  const display = createOriginal5Display({engine:{assets:{register() {}}}});
+  const text = installOriginal5Text({sys:{}, TextField:Field}, {raster:{}}, display);
+  try {
+    const field = Object.assign(new Field(), {lineSpacing:0});
+    field.createNativeDisplayObject();
+    field.$onAddToStage();
+    const node = field.$nativeDisplayObject;
+    node.setTextFieldWidth(10);
+    node.setTextFieldHeight(8);
+    field.background = true;
+    field.backgroundColor = 0xaaff00;
+    node.setBackground(true);
+    text.flush();
+    assert.equal(containsOwnPaint(node.content,{x:5,y:4}), true);
+    field.background = false;
+    field.border = true;
+    field.borderColor = 0x000000;
+    node.setBackground(false);
+    node.setBorder(true);
+    text.flush();
+    assert.equal(containsOwnPaint(node.content,{x:5,y:4}), false);
+    assert.equal(containsOwnPaint(node.content,{x:0.5,y:4}), true);
+    assert.equal(containsOwnPaint(node.content,{x:9.5,y:4}), true);
+    field.border = false;
+    node.setBorder(false);
+    text.flush();
+    assert.equal(containsOwnPaint(node.content,{x:0.5,y:4}), false);
+    assert.equal(node.picture, undefined);
+  } finally { text.close(); display.close(); }
 });
