@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "A view can keep the game's scale beside uiScale",
+    "body": "A view description takes `uiScale: false`, which keeps that view at the game's own scale while play's `uiScale` draws the other views at their own size. Parts that lie over the game's world need it, such as tap areas over the tiles of a hand or the squares of a board: scaled apart from the game, they drifted off what they covered. Any other value is refused with `UI_VIEW_INVALID`."
+  },
+  "zh": {
+    "title": "视图可以在 uiScale 之外保持游戏的缩放",
+    "body": "视图描述新增 `uiScale: false`：`play` 的 `uiScale` 让其他视图按自己的尺寸显示时，这个视图仍保持游戏本身的缩放。盖在游戏世界上的部件需要它，例如手牌或棋盘格子上的点击区：它们若与游戏分开缩放，就会偏离盖着的东西。其他取值以 `UI_VIEW_INVALID` 拒绝。"
+  }
+}

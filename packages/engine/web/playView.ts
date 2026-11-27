@@ -428,11 +428,11 @@ export function createPlayViews(
     let scrollItems: Made[] = [];
 
     // A view is drawn `uiScale` times larger than the game's units: its root is scaled, and it is planned in an area
-    // that much smaller, so that it fills the same part of the screen.
+    // that much smaller, so that it fills the same part of the screen. One with `uiScale: false` keeps the game's.
     const scaled = (area: ViewRect, by: number): ViewRect =>
       by === 1 ? area : { x: area.x / by, y: area.y / by, width: area.width / by, height: area.height / by };
     const frame = () => {
-      const by = hooks.uiScale?.() ?? 1;
+      const by = description.uiScale === false ? 1 : (hooks.uiScale?.() ?? 1);
       root.scaleX = root.scaleY = by;
       // A tablet's screen: its shorter side, in CSS pixels, at least TABLET_SHORT_SIDE.
       const plan = game.browser.screen,

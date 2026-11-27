@@ -331,8 +331,8 @@ async function verifyUiScale(page) {
     const parent = document.createElement('div');
     parent.style.cssText = 'width:1920px;height:1080px';
     document.body.append(parent);
-    const state = { taps: 0 };
-    let view;
+    const state = { taps: 0, tiles: 0 };
+    let view, board;
     const game = await play({
       parent,
       width: 1280,
@@ -359,6 +359,16 @@ async function verifyUiScale(page) {
           },
           { state, bind: { go: { tap: s => s.taps++ } } }
         );
+        // A tap area over a piece of the game's world keeps the game's scale, and so stays over the piece.
+        board = g.show(
+          {
+            label: 'Board',
+            uiScale: false,
+            root: { type: 'button', name: 'tile', text: 'Tile', x: 40, y: 40, width: 120, height: 80 }
+          },
+          { state, bind: { tile: { tap: s => s.tiles++ } } }
+        );
+        g.rect(100, 80, 120, 80, 0x3366cc);
       }
     });
     return {
@@ -369,7 +379,10 @@ async function verifyUiScale(page) {
       read() {
         const box = game.canvas.getBoundingClientRect(),
           plan = game.browser.screen,
-          go = view.visibleRect('go');
+          go = view.visibleRect('go'),
+          tile = board.visibleRect('tile'),
+          // Where the part at (40, 40) of the safe part is on the stage: there, at the game's scale.
+          piece = game.toStage(game.safe.x + 40, game.safe.y + 40);
         // The button in the page's CSS pixels.
         const css = {
           x: box.left + go.x * plan.scale,
@@ -377,7 +390,23 @@ async function verifyUiScale(page) {
           width: go.width * plan.scale,
           height: go.height * plan.scale
         };
-        return { uiScale: game.uiScale, scale: plan.scale, css, taps: state.taps, middle: box.left + box.width / 2 };
+        const tileCss = {
+          x: box.left + tile.x * plan.scale,
+          y: box.top + tile.y * plan.scale,
+          width: tile.width * plan.scale,
+          height: tile.height * plan.scale
+        };
+        return {
+          uiScale: game.uiScale,
+          scale: plan.scale,
+          css,
+          taps: state.taps,
+          middle: box.left + box.width / 2,
+          tile,
+          tileCss,
+          tiles: state.tiles,
+          piece
+        };
       },
       async close() {
         await game.dispose();
@@ -398,6 +427,9 @@ async function verifyUiScale(page) {
     assert.ok(Math.abs(now.css.width - 368) < 1, 'the button is 368 of its units across at 1 pixel: ' + now.css.width);
     assert.ok(Math.abs(now.css.height - 80) < 1);
     assert.ok(Math.abs(now.css.x + now.css.width / 2 - now.middle) < 1, 'the panel stays centred');
+    // The board's view keeps the game's scale: its tap area is 120 × 80 of the game's units, where the piece is.
+    const over = r => [r.x, r.y, r.width, r.height].map(v => Math.round(v * 100) / 100);
+    assert.deepEqual(over(now.tile), over({ x: now.piece.x, y: now.piece.y, width: 120, height: 80 }), 'over the piece');
     const large = now;
     // 640 × 360: the game at 0.5; the views kept at 0.75, drawn at 1.5 of the game's units.
     await fixture.evaluate(f => f.resize(640, 360));
@@ -406,10 +438,18 @@ async function verifyUiScale(page) {
     assert.equal(now.scale, 0.5);
     assert.ok(Math.abs(now.uiScale - 1.5) < 1e-9);
     assert.ok(Math.abs(now.css.height - 60) < 1, 'the button is 80 of its units at 0.75 pixel: ' + now.css.height);
+    assert.deepEqual(over(now.tile), over({ x: now.piece.x, y: now.piece.y, width: 120, height: 80 }), 'still over it');
+    assert.ok(Math.abs(now.tileCss.height - 40) < 1, 'the tap area is 80 units at the game\'s 0.5: ' + now.tileCss.height);
     await page.mouse.click(now.css.x + now.css.width / 2, now.css.y + now.css.height / 2);
     await frames();
     assert.equal((await fixture.evaluate(f => f.read())).taps, 1, 'a click on the larger button presses it');
-    return { large: { uiScale: large.uiScale, button: large.css }, small: { uiScale: now.uiScale, button: now.css } };
+    await page.mouse.click(now.tileCss.x + now.tileCss.width / 2, now.tileCss.y + now.tileCss.height / 2);
+    await frames();
+    assert.equal((await fixture.evaluate(f => f.read())).tiles, 1, 'a click on the piece presses its tap area');
+    return {
+      large: { uiScale: large.uiScale, button: large.css, tile: large.tileCss },
+      small: { uiScale: now.uiScale, button: now.css, tile: now.tileCss }
+    };
   } finally {
     await fixture.evaluate(f => f.close());
     await fixture.dispose();
