@@ -6,6 +6,8 @@ declare module '@egret/android-original5' {
     height: number;
     entryClass: string;
     frameRate?: number;
+    /** Native ABI required by the original published core, before its scripts run. */
+    nativeAbi?: 4 | 5;
     clearColor?: number;
     /** Each group contains unchanged classic scripts in their original manifest order. */
     coreGroup?: string;

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
+import {nativeAbi} from './original-profile.mjs';
 import {installOriginal5Project} from '@egret/android-original5';
 
 installOriginal5Project({
-  width: 192, height: 128, frameRate: 30,
+  width: 192, height: 128, frameRate: 30, nativeAbi,
   entryClass: 'AtlasStation',
   coreGroup: 'originalCore', moduleGroup: 'originalModules', gameGroup: 'originalGame',
   images: [{path: 'assets/station.png', width: 16, height: 8}],

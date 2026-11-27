@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-27",
+  "stage": {
+    "width": 192,
+    "height": 128
+  },
+  "fixture": "runtime-sdk/examples/original5-atlas",
+  "origin": "https://github.com/egret-labs/egret-core",
+  "method": "Each original release tag ran in a fresh Windows Edge WebGL session and a fresh app process on the same physical Galaxy Z Fold7. The Android build bundled all fixtures in one test-only APK. Each original-stage input was an ADB-injected tap on the physical touch surface. Five game-space point samples from the Android screenshot matched the corresponding desktop original before and after the tap.",
+  "desktop": {
+    "browser": "Microsoft Edge 158.0.4370.33",
+    "renderer": "Original Egret WebGL host"
+  },
+  "android": {
+    "device": "Samsung Galaxy Z Fold7",
+    "renderer": "Egret Android Runtime, arm64 GLES3, trimmed V8 15.8.62.52",
+    "appBuild": "Debug diagnostic host with unchanged release modules",
+    "aarSha256": "d7a41de01d46f7e7fff193b6947bc58351cea83a382710ec1170fdc56b1a28d8",
+    "apkSha256": "8e5645f1f38c312eaa7163b5677837f73155efa7734911bf451a7052314f8d6f",
+    "restoredForeground": true
+  },
+  "samples": {
+    "stageCoordinates": {
+      "background": [
+        10,
+        10
+      ],
+      "badge": [
+        50,
+        47
+      ],
+      "overlap": [
+        78,
+        54
+      ],
+      "past": [
+        105,
+        61
+      ],
+      "button": [
+        145,
+        98
+      ]
+    },
+    "openRgb": {
+      "background": [
+        20,
+        38,
+        56
+      ],
+      "badge": [
+        26,
+        194,
+        177
+      ],
+      "overlap": [
+        244,
+        162,
+        43
+      ],
+      "past": [
+        20,
+        38,
+        56
+      ],
+      "button": [
+        244,
+        162,
+        43
+      ]
+    },
+    "afterTapRgb": {
+      "background": [
+        20,
+        38,
+        56
+      ],
+      "badge": [
+        244,
+        162,
+        43
+      ],
+      "overlap": [
+        244,
+        162,
+        43
+      ],
+      "past": [
+        26,
+        194,
+        177
+      ],
+      "button": [
+        244,
+        162,
+        43
+      ]
+    }
+  },
+  "releases": [
+    {
+      "tag": "v5.3.1",
+      "commit": "52411c011dc481c28c34de468f31a81678932d95",
+      "reportedVersion": "5.3.1",
+      "nativeAbi": 4,
+      "sources": {
+        "original/egret.js": "9395dee2a94f1d2d29d75db38bec475d9c4ce09d3bbc65d54182458f11a34d03",
+        "original/eui.js": "afce6bdfbcbbb7559765671c4bd14fe3a0ecaea69feabaf4cb98ca1f5dd7c440",
+        "original/assetsmanager.js": "cf63d3b1075b8996acf2632465409c3524bb8c7a9c12c0c293992fc7ea654349",
+        "original/game.js": "2cf4659d8ba74e4cc5022f09209705de6cecac350326610fe0d42fcb4703439e",
+        "board.js": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f"
+      },
+      "nativeRendering": true,
+      "turns": [
+        0,
+        1
+      ],
+      "matchedRgbSamples": 10,
+      "uploads": 4,
+      "replacements": 1,
+      "explicitReleases": 3,
+      "residentAfterClose": 0,
+      "abandonedContexts": 0
+    },
+    {
+      "tag": "v5.3.2",
+      "commit": "acfc9604542cfa95259d3cc8707c83893a410dda",
+      "reportedVersion": "5.3.1",
+      "nativeAbi": 4,
+      "sources": {
+        "original/egret.js": "6f2d364a8b1cc92a3da0c630f3d22dfdf8fa5169dc6cd12db2feff409bc52976",
+        "original/eui.js": "63e3a538870da6b45bd69a99d3cffec00faf597f0075487ff4d2b94220093add",
+        "original/assetsmanager.js": "7763ffd272e2fc95319ae41d19c2b11e299ec1ac3e15c22b6ba5624a90e31010",
+        "original/game.js": "2cf4659d8ba74e4cc5022f09209705de6cecac350326610fe0d42fcb4703439e",
+        "board.js": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f"
+      },
+      "nativeRendering": true,
+      "turns": [
+        0,
+        1
+      ],
+      "matchedRgbSamples": 10,
+      "uploads": 4,
+      "replacements": 1,
+      "explicitReleases": 3,
+      "residentAfterClose": 0,
+      "abandonedContexts": 0
+    },
+    {
+      "tag": "v5.3.5",
+      "commit": "9abe3a504a7c4dc35e44b75a20fde9a75f5c0557",
+      "reportedVersion": "5.3.5",
+      "nativeAbi": 5,
+      "sources": {
+        "original/egret.js": "7d28ac09cecc70f3d2ac491b0c8d38eb075dc64396557142bff2bc1271d806e6",
+        "original/eui.js": "8660bc02e6f40bc20d61c5ad6129d6bf3e9671be3076664f4aa2486fd57e9a80",
+        "original/assetsmanager.js": "4efd63c0807bc386197ea2b04b05de5d18a9388cf9423f1015e50b5cb055930d",
+        "original/game.js": "d3f78b63cde852b094c3c6351ed1c12e6d4a4147c6c5f01aa7e184027db02b0a",
+        "board.js": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f"
+      },
+      "nativeRendering": true,
+      "turns": [
+        0,
+        1
+      ],
+      "matchedRgbSamples": 10,
+      "uploads": 4,
+      "replacements": 1,
+      "explicitReleases": 3,
+      "residentAfterClose": 0,
+      "abandonedContexts": 0
+    },
+    {
+      "tag": "v5.3.6",
+      "commit": "390ccf14f1cb1005ee147c626b5adfa62daf5430",
+      "reportedVersion": "5.3.6",
+      "nativeAbi": 5,
+      "sources": {
+        "original/egret.js": "7e8fbf1e6626aa46177033ec44eac56791691278f4e86f686803953904c14cd2",
+        "original/eui.js": "8660bc02e6f40bc20d61c5ad6129d6bf3e9671be3076664f4aa2486fd57e9a80",
+        "original/assetsmanager.js": "4efd63c0807bc386197ea2b04b05de5d18a9388cf9423f1015e50b5cb055930d",
+        "original/game.js": "b07fd976157abce8cda85257a4a9391f687a22b7275926ff5b9d3875b8602e37",
+        "board.js": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f"
+      },
+      "nativeRendering": true,
+      "turns": [
+        0,
+        1
+      ],
+      "matchedRgbSamples": 10,
+      "uploads": 4,
+      "replacements": 1,
+      "explicitReleases": 3,
+      "residentAfterClose": 0,
+      "abandonedContexts": 0
+    },
+    {
+      "tag": "v5.3.7",
+      "commit": "7a731761265de431ded7bb74bd593cd331b0469e",
+      "reportedVersion": "5.3.7",
+      "nativeAbi": 5,
+      "sources": {
+        "original/egret.js": "9333e0980badb8dba7d40d4a840d6bb01d34857fc4ad1616e13bb574ff99dd1d",
+        "original/eui.js": "8660bc02e6f40bc20d61c5ad6129d6bf3e9671be3076664f4aa2486fd57e9a80",
+        "original/assetsmanager.js": "4efd63c0807bc386197ea2b04b05de5d18a9388cf9423f1015e50b5cb055930d",
+        "original/game.js": "b07fd976157abce8cda85257a4a9391f687a22b7275926ff5b9d3875b8602e37",
+        "board.js": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f"
+      },
+      "nativeRendering": true,
+      "turns": [
+        0,
+        1
+      ],
+      "matchedRgbSamples": 10,
+      "uploads": 4,
+      "replacements": 1,
+      "explicitReleases": 3,
+      "residentAfterClose": 0,
+      "abandonedContexts": 0
+    },
+    {
+      "tag": "v5.3.8",
+      "commit": "30a495b5ac2e183692918abd0c28cbb5e7ef2ac6",
+      "reportedVersion": "5.3.8",
+      "nativeAbi": 5,
+      "sources": {
+        "original/egret.js": "b9118b3a32c75af5cc062276d7e808b4f78e7a939da308a1a4208867f43c49c5",
+        "original/eui.js": "8660bc02e6f40bc20d61c5ad6129d6bf3e9671be3076664f4aa2486fd57e9a80",
+        "original/assetsmanager.js": "4efd63c0807bc386197ea2b04b05de5d18a9388cf9423f1015e50b5cb055930d",
+        "original/game.js": "b07fd976157abce8cda85257a4a9391f687a22b7275926ff5b9d3875b8602e37",
+        "board.js": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f"
+      },
+      "nativeRendering": true,
+      "turns": [
+        0,
+        1
+      ],
+      "matchedRgbSamples": 10,
+      "uploads": 4,
+      "replacements": 1,
+      "explicitReleases": 3,
+      "residentAfterClose": 0,
+      "abandonedContexts": 0
+    },
+    {
+      "tag": "v5.3.9",
+      "commit": "460e4b792f047971df9153b305bd5b6b4741e102",
+      "reportedVersion": "5.3.9",
+      "nativeAbi": 5,
+      "sources": {
+        "original/egret.js": "d6e84e1c47e7a8976fed9b6a1b0fcc163abce51654a1af3d72b8fb740dbb7b55",
+        "original/eui.js": "8660bc02e6f40bc20d61c5ad6129d6bf3e9671be3076664f4aa2486fd57e9a80",
+        "original/assetsmanager.js": "4efd63c0807bc386197ea2b04b05de5d18a9388cf9423f1015e50b5cb055930d",
+        "original/game.js": "b07fd976157abce8cda85257a4a9391f687a22b7275926ff5b9d3875b8602e37",
+        "board.js": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f"
+      },
+      "nativeRendering": true,
+      "turns": [
+        0,
+        1
+      ],
+      "matchedRgbSamples": 10,
+      "uploads": 4,
+      "replacements": 1,
+      "explicitReleases": 3,
+      "residentAfterClose": 0,
+      "abandonedContexts": 0
+    },
+    {
+      "tag": "v5.3.10",
+      "commit": "fc784edde01d00cfad66203d89ec957b28ff6ad3",
+      "reportedVersion": "5.3.10",
+      "nativeAbi": 5,
+      "sources": {
+        "original/egret.js": "eb87a825b89913f034ba820510e925771902fc1630cc920fa02944b6f0e38afe",
+        "original/eui.js": "8660bc02e6f40bc20d61c5ad6129d6bf3e9671be3076664f4aa2486fd57e9a80",
+        "original/assetsmanager.js": "4efd63c0807bc386197ea2b04b05de5d18a9388cf9423f1015e50b5cb055930d",
+        "original/game.js": "b07fd976157abce8cda85257a4a9391f687a22b7275926ff5b9d3875b8602e37",
+        "board.js": "6a4f05983c185b48f630df078be92f103fa673ccbd820deb73d7737298db5d5f"
+      },
+      "nativeRendering": true,
+      "turns": [
+        0,
+        1
+      ],
+      "matchedRgbSamples": 10,
+      "uploads": 4,
+      "replacements": 1,
+      "explicitReleases": 3,
+      "residentAfterClose": 0,
+      "abandonedContexts": 0
+    }
+  ],
+  "baseline": "Forced V8 strict execution failed to start the 5.3.1 and 5.3.2 debug EUI modules at the original getRepeatedIds block declaration. The final package selected classic-script semantics before initializing V8. Existing strict-mode projects retain their default.",
+  "coverage": "Only the eight listed tags and this native display, EUI and RES fixture were compared. This is not a whole-frame pixel or performance benchmark. It does not qualify arbitrary plug-ins, production channels, or untested tags."
+}

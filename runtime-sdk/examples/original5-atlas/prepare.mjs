@@ -5,14 +5,17 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';
 import {deflateSync} from 'node:zlib';
+import { original5NativeAbi } from '../../android/player/prepare-original5.mjs';
 
-const {values} = parseArgs({options: {modules: {type: 'string'}, out: {type: 'string'}, 'nine-slice': {type: 'boolean'}, editor: {type: 'boolean'}}});
-if (!values.modules || !values.out) throw new Error('Specify --modules <5.3.10 libs/modules> and --out <new directory>');
+const {values} = parseArgs({options: {modules: {type: 'string'}, out: {type: 'string'}, 'nine-slice': {type: 'boolean'}, editor: {type: 'boolean'}, 'engine-version': {type: 'string'}}});
+if (!values.modules || !values.out) throw new Error('Specify --modules <original 5.3.x modules> and --out <new directory>');
 const out = path.resolve(values.out), modules = path.resolve(values.modules);
 const source = fileURLToPath(new URL('.', import.meta.url));
 const core = 'egret/egret.js';
-if (!/Capabilities\.engineVersion\s*=\s*"5\.3\.10"/.test(await readFile(path.join(modules, core), 'utf8')))
-  throw new Error('This fixture expects the original 5.3.10 debug release modules');
+const original = await readFile(path.join(modules, core), 'utf8');
+const reported = /Capabilities\.engineVersion\s*=\s*"([^"]+)"/.exec(original)?.[1];
+if (reported !== (values['engine-version'] ?? '5.3.10')) throw new Error('Unexpected original engine version');
+const nativeAbi = original5NativeAbi(original);
 // The reference includes the matching web host. The shipped Android script groups never execute it.
 const parts = [core, 'egret/egret.web.js', 'eui/eui.js', 'assetsmanager/assetsmanager.js', 'game/game.js'];
 await mkdir(out);
@@ -21,6 +24,7 @@ for (const file of parts) await copyFile(path.join(modules, file), path.join(out
 await copyFile(path.join(source, values.editor ? 'editor.js' : values['nine-slice'] ? 'nine-slice.js' : 'board.js'), path.join(out, 'board.js'));
 await copyFile(path.join(source, 'main.mjs'), path.join(out, 'main.mjs'));
 const text = (name, value) => writeFile(path.join(out, name), value + '\n');
+await text('original-profile.mjs', 'export const nativeAbi = ' + nativeAbi + ';');
 await text('index.html', '<!doctype html><meta charset="utf-8"><script src="game.js"></script>');
 const html = '<!doctype html><meta charset="utf-8"><style>*{margin:0;padding:0}</style>'
   + '<div style="width:192px;height:128px" class="egret-player" data-entry-class="AtlasStation" data-orientation="auto" data-scale-mode="showAll" data-content-width="192" data-content-height="128"></div>'
@@ -36,6 +40,7 @@ await text('assets/station.res.json', JSON.stringify({groups: [], resources: [
 await text('project.json', JSON.stringify({
   width: 192, height: 128, entry: 'index.html', pages: [],
   assets: ['assets/station.res.json', 'assets/station.png'],
+  v8ScriptMode: 'classic',
   v8Scripts: {groups: {originalCore: ['original/egret.js'],
     originalModules: ['original/eui.js', 'original/assetsmanager.js', 'original/game.js'],
     originalGame: ['board.js']}}

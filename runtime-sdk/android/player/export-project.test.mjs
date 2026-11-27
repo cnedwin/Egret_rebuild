@@ -60,6 +60,10 @@ test('the Android exporter rejects unbounded, ambiguous or non-classic V8 script
     await writeFile(path.join(project, 'project.json'), JSON.stringify({...manifest, v8Scripts}));
     await assert.rejects(exportProject(project, path.join(project, 'out'), 'unused'), message);
   }
+  for (const invalid of [null, true, 'module']) {
+    await writeFile(path.join(project, 'project.json'), JSON.stringify({...manifest, v8ScriptMode: invalid}));
+    await assert.rejects(exportProject(project, path.join(project,'out'), 'unused'), /strict or classic/);
+  }
   await refuses(null, /Invalid v8Scripts/);
   await refuses({unknown: []}, /Invalid v8Scripts/);
   await refuses({groups: {battle: []}}, /Invalid V8 script group/);
@@ -80,17 +84,19 @@ test('the exporter preserves classic bytes and startup order across the old 16 M
   const project = await mkdtemp(path.join(os.tmpdir(), 'egret-v8-script-export-'));
   t.after(() => rm(project, {recursive: true, force: true}));
   const v8Scripts = {startup: ['globals.js', 'skin.js'], groups: {battle: ['battle.js']}};
-  const manifest = {width: 64, height: 64, entry: 'index.html', pages: [], v8Scripts};
+  const manifest = {width: 64, height: 64, entry: 'index.html', pages: [], v8ScriptMode: 'classic', v8Scripts};
   await writeFile(path.join(project, 'project.json'), JSON.stringify(manifest));
   await writeFile(path.join(project, 'index.html'), '<script src="globals.js"></script><script src="skin.js"></script><script src="game.js"></script>');
   await writeFile(path.join(project, 'main.mjs'), 'globalThis.ready = true;');
   const source = '/*' + 'x'.repeat(8 << 20) + '*/\n';
   await writeFile(path.join(project, 'globals.js'), source + 'var order = [1];');
-  await writeFile(path.join(project, 'skin.js'), source + 'order.push(2);');
+  await writeFile(path.join(project, 'skin.js'), source + '"use strict"; order.push(2);');
   await writeFile(path.join(project, 'battle.js'), 'order.push(3);');
   const out = path.join(project, 'out');
   await exportProject(project, out, process.env.EGRET_PLAYER_ESBUILD);
-  assert.deepEqual(JSON.parse(await readFile(path.join(out, 'project.json'), 'utf8')).v8Scripts, v8Scripts);
+  const packed = JSON.parse(await readFile(path.join(out, 'project.json'), 'utf8'));
+  assert.deepEqual(packed.v8Scripts, v8Scripts);
+  assert.equal(packed.v8ScriptMode, 'classic');
   for (const name of [...v8Scripts.startup, ...v8Scripts.groups.battle]) {
     assert.deepEqual(await readFile(path.join(out, name)), await readFile(path.join(project, name)));
   }
