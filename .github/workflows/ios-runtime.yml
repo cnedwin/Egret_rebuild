@@ -1,0 +1,68 @@
+name: iOS Runtime SDK
+on:
+  pull_request:
+    paths:
+      - 'runtime-sdk/ios/**'
+      - 'runtime-sdk/native/**'
+      - 'runtime-sdk/scene/**'
+      - '.github/workflows/ios-runtime.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  simulator:
+    name: Build unsigned iOS and verify the simulator
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Prepare the existing Egret scene
+        run: |
+          npm install --global pnpm@11.25.0 --ignore-scripts
+          pnpm install --frozen-lockfile --ignore-scripts
+          node tools/build.mjs
+          node --test runtime-sdk/ios/scene.test.mjs
+          npm install --prefix "$RUNNER_TEMP/bundler" --no-save --ignore-scripts --no-audit --no-fund esbuild@0.28.2
+          node runtime-sdk/ios/prepare.mjs --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --out "$RUNNER_TEMP/scene"
+          node runtime-sdk/ios/prepare.mjs --esbuild "$RUNNER_TEMP/bundler/node_modules/esbuild" --entry runtime-sdk/ios/examples/moving-square.mjs --out "$RUNNER_TEMP/custom-scene"
+          node runtime-sdk/ios/check-custom-entry.mjs "$RUNNER_TEMP/custom-scene"
+      - name: Build both Apple targets using Xcode
+        env:
+          RUSTUP_TOOLCHAIN: 1.100.0
+        run: |
+          target=aarch64-apple-ios-sim
+          [[ $(uname -m) == arm64 ]] || target=x86_64-apple-ios
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --target "$target,aarch64-apple-ios"
+          cargo test --locked --offline --manifest-path runtime-sdk/native/Cargo.toml
+          bash runtime-sdk/ios/build.sh simulator "$RUNNER_TEMP/ios" "$RUNNER_TEMP/scene"
+          bash runtime-sdk/ios/build.sh device "$RUNNER_TEMP/ios" "$RUNNER_TEMP/scene"
+          xcodebuild archive -project "$RUNNER_TEMP/ios/device/EgretIosPlayer.xcodeproj" -scheme EgretPlayer \
+            -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/ios/player.xcarchive" CODE_SIGNING_ALLOWED=NO
+          test -x "$RUNNER_TEMP/ios/player.xcarchive/Products/Applications/EgretPlayer.app/EgretPlayer"
+          ditto -c -k --keepParent "$RUNNER_TEMP/ios/player.xcarchive" "$RUNNER_TEMP/EgretRuntime-iOS-unsigned.xcarchive.zip"
+          (cd "$RUNNER_TEMP" && shasum -a 256 EgretRuntime-iOS-unsigned.xcarchive.zip > EgretRuntime-iOS-unsigned.sha256)
+      - name: Keep the unsigned iPhone archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ios-unsigned-xcarchive
+          path: |
+            ${{ runner.temp }}/EgretRuntime-iOS-unsigned.xcarchive.zip
+            ${{ runner.temp }}/EgretRuntime-iOS-unsigned.sha256
+          compression-level: 0
+          if-no-files-found: error
+      - name: Run JavaScriptCore and report simulator Metal availability
+        run: |
+          python3 runtime-sdk/ios/verify-simulator.py --app "$RUNNER_TEMP/ios/simulator/product/EgretPlayer.app" --out "$RUNNER_TEMP/evidence"
+          node runtime-sdk/ios/check-receipt.mjs "$RUNNER_TEMP/evidence/receipt.json"
+          cat "$RUNNER_TEMP/evidence/receipt.json" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: ios-simulator-receipt
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: warn

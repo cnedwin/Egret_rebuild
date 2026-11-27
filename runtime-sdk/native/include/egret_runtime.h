@@ -11,6 +11,12 @@ extern "C" {
 
 typedef struct EgretRenderer EgretRenderer;
 
+/* Encode up to 65536 bytes with RFC 4648 padding and no terminator. Both buffers are
+ * caller-owned and non-overlapping. Empty input accepts null. Returns 0 on success,
+ * 1 for invalid input or a short destination, leaving the destination untouched. */
+int32_t egret_chunk_encode_base64(const uint8_t *source, size_t length,
+                                 uint8_t *output, size_t capacity);
+
 /* Highest project packet version supported by this binary; callable before creating a renderer. */
 uint32_t egret_renderer_project_frame_version(void);
 

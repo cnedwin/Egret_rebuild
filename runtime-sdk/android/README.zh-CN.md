@@ -49,3 +49,9 @@ adb -s <serial> shell run-as org.egret.runtime.sample cat files/result.json
 `raster.textPageUsage()` 返回占用页数、RGBA 逻辑字节、命中、实际栅格化、释放及拒绝次数。共享池上限为 32 页、合计 8 MiB，并沿用单张图片上限。从 255 起向下寻找空闲原生页，避开应用已经发布的纹理；活跃文字页无法被手动覆写。已有的 `drawText` 继续返回独立图片，可由调用方管理。旧版 AAR 遇到非零描边会提示不支持该绘制请求。[可运行的文字页示例](../examples/text-pages/main.mjs)
 
 Galaxy Z Fold7（Android 17、裁剪 V8 15.7.112.19、GLES3）上，两个路标共用一张 61,440 字节的纹理。触碰后第二个路标更换文字和描边，再次触碰时命中原纹理。两个状态总计栅格化两次。关闭播放器后记录到两页全部释放，占用页数与逻辑字节均为零。屏幕截图验证了红绿两种描边。上述数据来自双标签功能场景。
+
+## 包内二进制资源的分块
+
+共享 Rust 库将播放器每块最多 64 KiB 的包内资源编码为带填充的 Base64。JNI 负责借用输入数组和创建 Java 结果。arm64 使用 NEON 每次处理十六组三字节输入，余下的字节由标量代码处理。
+
+在 Android 17 的 Galaxy Z Fold7 上，原 C 版和 Rust 版在 323 种长度下都与 Android 的 Base64 输出一致。设备上的 Android ART 使用发行 AAR 内的 Java 类和原生库，通过了现有资源测试。固定同一核交替采集 24 对，每个 64 KiB 分块的纯编码耗时中位数分别为 2.379 和 2.360 微秒。计入 JNI 数组处理后，两者分别为 51.26 和 50.54 微秒。两种实现之间的差异小于 JNI 计时波动。此次计时范围止于数组返回，未覆盖 Java 字符串构造和 JS 桥接。[采集口径、原始配对及原生库身份](../measurements/fold7-rust-chunk-base64.json)
