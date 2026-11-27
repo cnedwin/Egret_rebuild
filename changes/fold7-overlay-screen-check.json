@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Check short folding-phone viewports and native overlay targets",
+    "body": "Add the Fold7 cover-screen landscape Chrome viewport (873 × 325 CSS pixels, DPR 2.625, no stand-in insets) to the default screen set, keeping the existing unfolded profile. Include actual native World3D overlay control hit rectangles even where a control is unnamed or a semantic range has no activate action; omit disabled controls and non-control pointer panels."
+  },
+  "zh": {
+    "title": "检查折叠屏矮横屏及原生叠加层控件",
+    "body": "默认多屏检查新增 Fold7 外屏横向 Chrome 有效视口（873 × 325 CSS 像素、DPR 2.625、不注入模拟安全区内缩），保留原有展开折叠屏规格。World3D 叠加层检查纳入实际原生控件命中边界，包括无名称控件及不带激活动作的语义范围控件；排除禁用控件和非控件指针面板。"
+  }
+}

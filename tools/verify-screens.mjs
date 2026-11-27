@@ -37,6 +37,15 @@ export const SCREENS = Object.freeze({
   'phone-tall': { width: 360, height: 800, scale: 3, touch: true, insets: { top: 24, right: 0, bottom: 0, left: 0 } },
   tablet: { width: 768, height: 1024, scale: 2, touch: true, insets: { top: 0, right: 0, bottom: 0, left: 0 } },
   'tablet-wide': { width: 1024, height: 768, scale: 2, touch: true, insets: { top: 0, right: 0, bottom: 0, left: 0 } },
+  // Galaxy Z Fold7 cover screen, landscape Chrome content viewport with browser chrome present.
+  // The measured page had no inset; this profile adds no simulated cutout. The unfolded profile stays separate.
+  'foldable-cover-wide': {
+    width: 873,
+    height: 325,
+    scale: 2.625,
+    touch: true,
+    insets: { top: 0, right: 0, bottom: 0, left: 0 }
+  },
   foldable: { width: 884, height: 1104, scale: 2.5, touch: true, insets: { top: 0, right: 0, bottom: 0, left: 0 } },
   desktop: { width: 1920, height: 1080, scale: 1, touch: false, insets: { top: 0, right: 0, bottom: 0, left: 0 } }
 });
