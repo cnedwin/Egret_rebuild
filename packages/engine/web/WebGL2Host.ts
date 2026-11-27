@@ -956,30 +956,35 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         [sharedWebGL2VertexSource, sampledFragmentSource(true, coded)]
       ];
       // With KHR_parallel_shader_compile the programs are built side by side while the page goes on, the host asking
-      // after them every 8 ms; without it each is made in turn, at once, as before.
+      // after them every 8 ms. Without it each is made in turn, the host yielding to the page between two programs.
       const prepared = native.preparePrograms(sources, () => new Promise<void>(resolve => schedule(resolve, 8)));
       const programs = prepared === undefined ? undefined : await prepared;
       this.generationGate(token);
       let next = 0;
-      const nextProgram = (): WebGLProgram => {
+      const nextProgram = async (): Promise<WebGLProgram> => {
         const index = next++;
-        return programs?.[index] ?? native.program(...sources[index]!);
+        if (programs) return programs[index]!;
+        if (index > 0) {
+          await new Promise<void>(resolve => schedule(resolve, 0));
+          this.generationGate(token);
+        }
+        return native.program(...sources[index]!);
       };
-      this.program = nextProgram();
+      this.program = await nextProgram();
       native.block(this.program, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       native.block(this.program, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
-      this.solidProgram = nextProgram();
+      this.solidProgram = await nextProgram();
       native.block(this.solidProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
-      this.resolveProgram = nextProgram();
+      this.resolveProgram = await nextProgram();
       for (const mode of effectPasses) {
-        const program = nextProgram();
+        const program = await nextProgram();
         const index = gl.getUniformBlockIndex(program, 'Effect');
         if (index === gl.INVALID_INDEX) throw glFailure('WEBGL2_CONTEXT_LIMIT');
         gl.uniformBlockBinding(program, index, 0);
         this.effectPrograms.set(mode, program);
       }
       // Its eight page samplers name the eight units once, here.
-      this.pagedProgram = nextProgram();
+      this.pagedProgram = await nextProgram();
       native.block(this.pagedProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       native.block(this.pagedProgram, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
       gl.useProgram(this.pagedProgram);

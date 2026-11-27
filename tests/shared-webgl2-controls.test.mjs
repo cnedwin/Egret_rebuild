@@ -1620,13 +1620,20 @@ test(
     })
 );
 
-test('GL G22 without the extension each program is still made and checked in turn', async () => {
+test('GL G22 without the extension each program is made and checked in turn, the page going on between two', async () => {
   const bare = glPorts(),
     absent = parallelPorts(false),
     traces = [];
   for (const f of [bare, absent.f]) {
     const h = createSharedWebGL2Host({ canvas: f.canvas, enableEffects: true });
-    await h.start();
+    const started = h.start(),
+      links = () => f.events.filter(([name]) => name === 'linkProgram').length;
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert.equal(h.getStatus().state, 'starting');
+    assert.equal(links(), 1, 'one program, then a turn of the page');
+    assert.equal(h.whenReady(), started, 'one startup barrier throughout');
+    await started;
+    assert.ok(links() >= 5);
     await h.close();
     assert.equal(h.getStatus().cleanupOutcome, 'safe');
     assert.equal(f.live().length, 0);
