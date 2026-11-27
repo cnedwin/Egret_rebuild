@@ -37,6 +37,21 @@ Gradle 检查版本中的文件，用所选游戏资源生成 APK，并保留应
 node runtime-sdk/android/player/stage-revision.mjs --prune --store <版本库> --keep <已验收SHA256> --keep <上一版SHA256>
 ```
 
+## 从第一版升级到第二版
+
+保留已安装游戏的包名、签名身份和 Android 工程，用客户自己的签名配置生成第一版 APK。修改游戏后，按上文导出新的资源版本，在原 Android 工程的 `egret-app.json` 中提高 `versionCode` 并更新 `versionName`。使用同一个 Android 工程构建新版本，可以保留 Activity 中的注册、渠道集成和原有存档空间。
+
+```sh
+gradle --offline -p <application> -PegretGameRevision=<已验收资源版本目录> assembleRelease bundleRelease
+node runtime-sdk/android/player/compare-release-apks.mjs --previous <第一版.apk> --candidate <第二版.apk> --build-tools <Android-SDK>/build-tools/35.0.0 --jdk <JDK17>
+```
+
+工具使用 Android Build Tools 检查两个 APK 的签名，并读取应用清单。`ready-for-device-test` 表示两个包的应用标识和当前签名证书集合一致，版号递增，可以上机验收。若证书改变，应单独核对签名轮换记录。使用商店签名时请对照设备实际收到的包。请使用 `assembleRelease` 生成的单体 APK。采用分包安装时，应在设备上验证 bundletool 或商店实际交付的整套 APK。
+
+在专用设备安装第一版，留下可辨认的存档并重开一次。使用 `adb install -r <第二版.apk>` 覆盖安装，核对原进度、第二版新增的画面或功能，再次保存并重开。升级前卸载会清除这次验收需要的数据。
+
+Fold7 实测中，第一版保存了一步操作，强停重开后进度仍为一。可选的 `customer.revision` 回调在真实宿主分发时失败。第二版将游戏调用修正为已注册的 `customer.version`，由 Android 包管理器返回版号 102。界面底色已更新，原进度仍为一。再操作一步并重开，进度为二。两版均使用解压后的离线工具包和本地测试签名构建。外部团队独立交付、真实厂商渠道和第二类 GPU 机型仍需验收。[真机与构建记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-receiver-upgrade.json)
+
 ## 引入渠道库
 
 把厂商提供的 AAR、JAR 与 JSON 清单放在同一目录，保留文件名大小写，填入已核对的摘要，同时列出需本地提供的间接依赖。在 `create-app.mjs` 后加 `--channel <manifest.json>`。独立工程会在 Gradle 配置时再核对依赖。渠道凭据及签名私钥由运营方保管。

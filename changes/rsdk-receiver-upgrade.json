@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Check signed Android releases before an in-place update",
+    "body": "Compare the application IDs, version codes and signing certificates of two local standalone APKs. The receiver guide includes a two-release Fold7 test with saved progress and a corrected host callback."
+  },
+  "zh": {
+    "title": "在原地升级前核对两个 Android 发行包",
+    "body": "比较本地独立 APK 的应用标识、版号和签名证书。交接指南记录了 Fold7 上两个连续版本的覆盖升级、进度恢复与宿主回调修正。"
+  }
+}
