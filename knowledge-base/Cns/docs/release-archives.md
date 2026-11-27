@@ -107,7 +107,7 @@ node tools/publish-registry.mjs --release ../release --dry-run
 
     node tools/pack-browser-npm.mjs --release <已下载的发行目录> --manifest-sha256 <GitHub记录的SHA-256> --out <新目录>
 
-维护者从 `main` 手动运行 [GitHub Packages 工作流](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml) 。输入稳定发行的 `tag`、该标签的 40 位 `source_commit`，以及 GitHub 上 `release.json` 资产记录里的 64 位 `manifest_sha256`。工作流核对标签、提交和清单，为关联本仓库的包添加缺少的版本，重跑时核对已有版本的完整性。它用 `--target github` 制作合集，再在空工程里安装已发布的包。运行摘要会列出实际可见性。如果结果为 `private`，需要在包设置中调整访问权限，社区开发者才能安装。[包的访问权限与可见性](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
+维护者从 `main` 手动运行 [GitHub Packages 工作流](https://github.com/cnedwin/Egret_rebuild/blob/main/.github/workflows/publish-github-browser.yml)。输入稳定发行的 `tag`、该标签的 40 位 `source_commit`，以及 GitHub 上 `release.json` 资产记录里的 64 位 `manifest_sha256`。工作流核对标签、提交和清单，为关联本仓库的包添加缺少的版本，重跑时核对已有版本的完整性。从 7.0.3 起，打包工具与包内说明也取自已验证标签。它用 `--target github` 制作合集，再在空工程里安装已发布的包。运行摘要会列出实际可见性。如果结果为 `private`，需要在包设置中调整访问权限，社区开发者才能安装。[包的访问权限与可见性](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
 
 ## 早期工程预览的验证记录
 
