@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": ".github/workflows/ios-runtime.yml",
+      "originRole": "CI builds the simulator and device targets and collects the installed iOS app receipt. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/CMakeLists.txt",
+      "originRole": "Xcode project generation for an iOS sample linking the Rust frame library and Apple system frameworks. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/README.md",
+      "originRole": "English build, resource ownership and simulator evidence guide. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/README.zh-CN.md",
+      "originRole": "Chinese counterpart of the iOS build, ownership and evidence guide. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/app/GameHost.h",
+      "originRole": "iOS scene lifecycle surface for the sample controller. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/app/GameHost.m",
+      "originRole": "JavaScriptCore host, timer ownership, scene reconstruction and diagnostic readback. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "runtime-sdk/ios/app/Info.plist",
+      "originRole": "Bundle metadata for the UIKit scene sample. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/app/MetalFrame.h",
+      "originRole": "Metal consumer interface for scoped frame and page ownership. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/app/MetalFrame.m",
+      "originRole": "Metal resource publication, Rust packet submission and diagnostic GPU readback. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "runtime-sdk/ios/app/Quad.metal",
+      "originRole": "Metal shader for the shared EGR2 quad vertex, crop and linear-light opacity contracts. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "runtime-sdk/ios/app/main.m",
+      "originRole": "UIKit application and scene lifecycle entry points. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/build.sh",
+      "originRole": "Local Xcode generation and unsigned device/simulator build recipe. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/check-receipt.mjs",
+      "originRole": "Cross-checks JSC packet hashes and available simulator Metal results against the existing Egret scene. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/entry.mjs",
+      "originRole": "Bundled JavaScriptCore entry for the existing 40-card scene. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/prepare.mjs",
+      "originRole": "Builds and stages JSC resources, bundled shader and distribution notices. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/scene.mjs",
+      "originRole": "Shared fixture and EGR2 capture adapter with deterministic close and republish. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "runtime-sdk/ios/scene.test.mjs",
+      "originRole": "Tests byte equivalence, page publication and retirement while opening. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/ios/verify-simulator.py",
+      "originRole": "Temporary simulator provisioning and collection of the actual app receipt. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/include/egret_frame2d.h",
+      "originRole": "C ownership contract for the platform-neutral EGR2 decoder output. First-party work with AI assistance, licensed under Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/frame_ffi.rs",
+      "originRole": "C entry points over the existing Rust packet decoder with page and viewport tests. First-party work with AI assistance, licensed under Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "runtime-sdk/ios/README.md",
+      "zh": "runtime-sdk/ios/README.zh-CN.md"
+    }
+  ]
+}
