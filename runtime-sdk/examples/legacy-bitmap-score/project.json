@@ -1,0 +1,5 @@
+{
+  "width": 160, "height": 90, "entry": "index.html", "pages": [],
+  "assets": ["score.fnt","digits.png"],
+  "v8Scripts": { "groups": {"score":["score.js"]} }
+}

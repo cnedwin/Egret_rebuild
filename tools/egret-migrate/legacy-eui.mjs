@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
+import { bitmapLabelClass } from './compat/bitmap-label.mjs';
+import { Direction, progressClass, tabWidths } from './compat/skin-controls.mjs';
 import {
   HorizontalLayout,
   VerticalLayout,
@@ -16,6 +18,7 @@ export function createLegacyEui({
   Bitmap,
   TextField,
   RES,
+  bitmapFonts,
   theme,
   stageOf,
   observe,
@@ -24,6 +27,7 @@ export function createLegacyEui({
   LegacyEvent,
   game,
   measureLine,
+  callLater,
   graphemes,
   stageSize
 }) {
@@ -41,6 +45,7 @@ export function createLegacyEui({
   let viewportScope;
   function detachObservers(node) {
     const data = state(node);
+    data?.stopCompiledBindings?.();
     for (const record of data?.applied?.values() ?? []) {
       record.off?.();
       record.off = undefined;
@@ -159,7 +164,7 @@ export function createLegacyEui({
     };
   }
 
-  function bind(chain, owner, write, restore) {
+  function bind(chain, owner, write, restore, combine) {
     let subscriptions = [];
     let previous = Symbol();
     let reading = false;
@@ -183,7 +188,11 @@ export function createLegacyEui({
           }
           return value;
         });
-        const value = values.length === 1 ? values[0] : values.map(part => part ?? '').join('');
+        const value = combine
+          ? combine(values)
+          : values.length === 1
+            ? values[0]
+            : values.map(part => part ?? '').join('');
         if (!Object.is(value, previous)) {
           previous = value;
           write(restore ? restore.value : value);
@@ -200,6 +209,35 @@ export function createLegacyEui({
       throw error;
     }
     return release;
+  }
+
+  function compiledObservers(owner, plans) {
+    const active = [];
+    function stop() {
+      for (const off of active.splice(0)) off();
+    }
+    function start() {
+      if (active.length) return;
+      try {
+        for (const { chain, target, property } of plans) {
+          active.push(
+            bind(
+              chain,
+              owner,
+              value => {
+                target[property] = value;
+              },
+              undefined,
+              values => values.map(value => value ?? null).reduce((result, part) => result + part)
+            )
+          );
+        }
+      } catch (error) {
+        stop();
+        throw error;
+      }
+    }
+    return { start, stop };
   }
 
   function childrenOf(node) {
@@ -364,6 +402,7 @@ export function createLegacyEui({
         if (typeof value !== 'number') refused('EUI width must be numeric when set by code.');
         state(this).explicitwidth = dimension(value, 0);
         state(this).arrangedwidth = state(this).explicitwidth;
+        if (this.type === 'input') this.updateLegacyInputArea?.();
         requestLayout(this);
       }
       get height() {
@@ -373,6 +412,7 @@ export function createLegacyEui({
         if (typeof value !== 'number') refused('EUI height must be numeric when set by code.');
         state(this).explicitheight = dimension(value, 0);
         state(this).arrangedheight = state(this).explicitheight;
+        if (this.type === 'input') this.updateLegacyInputArea?.();
         requestLayout(this);
       }
       get minWidth() {
@@ -449,9 +489,38 @@ export function createLegacyEui({
         this.width = width;
         this.height = height;
       }
+      #pendingMove;
+      #queueMove(x, y) {
+        if (this.#pendingMove || !stageOf(this) || !this.hasEventListener('move')) return;
+        const origin = (this.#pendingMove = { x, y });
+        callLater(() => {
+          if (this.#pendingMove !== origin) return;
+          this.#pendingMove = undefined;
+          if (!this.isDisposed && stageOf(this) && (this.x !== x || this.y !== y)) this.dispatchEventWith('move');
+        });
+      }
+      get x() {
+        return super.x;
+      }
+      set x(value) {
+        const old = super.x;
+        super.x = value;
+        if (old !== value) this.#queueMove(old, super.y);
+      }
+      get y() {
+        return super.y;
+      }
+      set y(value) {
+        const old = super.y;
+        super.y = value;
+        if (old !== value) this.#queueMove(super.x, old);
+      }
       setLayoutBoundsPosition(x, y) {
-        this.x = x;
-        this.y = y;
+        const changed = x !== this.x || y !== this.y;
+        super.x = x;
+        super.y = y;
+        this.#pendingMove = undefined;
+        if (changed && this.hasEventListener('move')) this.dispatchEventWith('move');
       }
       dispose() {
         detachObservers(this);
@@ -1464,6 +1533,20 @@ export function createLegacyEui({
       this.selectedIndex = index;
     }
   }
+  class TabBar extends List {
+    constructor() {
+      super();
+      this.requireSelection = true;
+      this.useVirtualLayout = false;
+      const row = new HorizontalLayout();
+      row.gap = 0;
+      row.horizontalAlign = 'justify';
+      row.verticalAlign = 'contentJustify';
+      this.layout = row;
+    }
+  }
+  const ProgressBar = progressClass(Component, game);
+  const BitmapLabel = bitmapLabelClass(sized(Container), RES, bitmapFonts, observe, requestLayout, layoutSize);
   class Scroller extends Component {
     #input = [];
     #policyH = ScrollPolicy.AUTO;
@@ -1585,7 +1668,18 @@ export function createLegacyEui({
       this.#input.length = 0;
     }
   }
+  class EditableText extends sized(TextField) {
+    prompt = '';
+    constructor() {
+      super();
+      this.type = 'input';
+    }
+  }
   const classes = {
+    EditableText,
+    TabBar,
+    ProgressBar,
+    BitmapLabel,
     Skin,
     Group,
     Component,
@@ -1884,6 +1978,19 @@ export function createLegacyEui({
           layout === 'VerticalLayout' ? innerWidth : width,
           layout === 'HorizontalLayout' ? innerHeight : height
         );
+      if (layout === 'HorizontalLayout' && included.length) {
+        if (p.horizontalAlign === 'justify') {
+          const preferred = included.map(child => child.width);
+          const widths = tabWidths(preferred, Math.max(0, innerWidth - gap * (preferred.length - 1)));
+          included.forEach((child, index) => {
+            state(child).arrangedwidth = widths[index];
+          });
+        }
+        if (p.verticalAlign === 'contentJustify') {
+          const tallest = Math.max(innerHeight, ...included.map(child => child.height));
+          for (const child of included) state(child).arrangedheight = tallest;
+        }
+      }
       const totalWidth =
         included.reduce((value, child) => value + child.width, 0) + Math.max(0, included.length - 1) * gap;
       const totalHeight =
@@ -1926,6 +2033,7 @@ export function createLegacyEui({
         arrange(child);
       }
       if (node instanceof Label) node.alignText();
+      if (node instanceof EditableText) node.updateLegacyInputArea();
       if (node instanceof TextField) updateRaster(node);
       else if (node.numChildren > children.length) {
         for (let i = 0; i < node.numChildren; i++) {
@@ -1933,9 +2041,12 @@ export function createLegacyEui({
           if (!states.has(child)) projectUnmanagedText(child);
         }
       }
+      if (node instanceof BitmapLabel)
+        node.setBitmapBox(data.arrangedwidth ?? data.explicitwidth, data.arrangedheight ?? data.explicitheight);
+      if (node instanceof ProgressBar) node.refreshProgress();
       if (node instanceof Rect) node.redraw();
       if (node instanceof Image) node.resizeImage();
-      if (node.touchEnabled)
+      if (node.touchEnabled && !(node instanceof EditableText))
         node.hitArea =
           width > 0 && height > 0
             ? { x: data.viewportOffsetX ?? 0, y: data.viewportOffset ?? 0, width, height }
@@ -1966,7 +2077,10 @@ export function createLegacyEui({
     if (build) {
       if (activeSkins.has(build)) refused('Recursive precompiled skin: ' + name);
       activeSkins.add(build);
-      let children = [];
+      let children = [],
+        owned = [],
+        stop,
+        clear;
       const attachedParts = [];
       const before = {
         skin: data.skin,
@@ -1974,12 +2088,16 @@ export function createLegacyEui({
         skinStates: data.skinStates,
         currentState: data.currentState,
         skinProperties: data.skinProperties,
-        refreshState: data.refreshState
+        refreshState: data.refreshState,
+        startCompiledBindings: data.startCompiledBindings,
+        stopCompiledBindings: data.stopCompiledBindings
       };
       try {
         const value = build(node);
         children = value.children;
-        if (children.some(child => !states.has(child)))
+        owned = value.owned;
+        clear = value.clear;
+        if (owned.some(child => !states.has(child)))
           refused('Compiled skin requires an unavailable EUI control: ' + name);
         for (const [id, part] of value.parts) {
           const descriptor = Object.getOwnPropertyDescriptor(node, id);
@@ -1991,7 +2109,7 @@ export function createLegacyEui({
           if (value.skin[key] !== undefined) data.skinProperties[key] = dimension(value.skin[key], 0);
         }
         data.skin = name;
-        data.skinParts = children.slice();
+        data.skinParts = owned;
         data.skinStates = value.states;
         data.currentState ||= value.states[0] ?? '';
         data.refreshState = () => {
@@ -1999,17 +2117,29 @@ export function createLegacyEui({
         };
         if (value.states.length && !value.states.includes(data.currentState))
           refused('Unknown initial EUI state: ' + data.currentState);
-        data.refreshState();
+        // State-only siblings need the base children in place to resolve BEFORE and AFTER.
         for (const child of children) node.addChild(child);
+        const observers = compiledObservers(node, value.bindings);
+        stop = data.stopCompiledBindings = observers.stop;
+        data.startCompiledBindings = observers.start;
+        observers.start();
+        if (!stageOf(node)) observers.stop();
+        data.refreshState();
         for (const [id, part] of value.parts) callGame(node.partAdded, node, id, part);
         data.skinApplied = true;
       } catch (error) {
+        stop?.();
+        try {
+          clear?.();
+        } catch {
+          /* Keep the original project callback error. */
+        }
         // A failed factory may have temporarily filled a non-configurable game field.
         for (const [id, descriptor] of attachedParts.reverse()) {
           if (descriptor) Object.defineProperty(node, id, descriptor);
           else delete node[id];
         }
-        for (const child of children) if (states.has(child) && !child.isDisposed) child.dispose();
+        for (const child of owned) if (states.has(child) && !child.isDisposed) child.dispose();
         Object.assign(data, before);
         throw error;
       } finally {
@@ -2094,6 +2224,7 @@ export function createLegacyEui({
         if (finished && typeof finished.then === 'function') observe(finished);
       }
     }
+    data.startCompiledBindings?.();
     if (data.owner) refreshProperties(node, data.owner, true);
     if (node instanceof DataGroup) node.attachProvider();
     if (node instanceof Scroller) node.attachScroll();
@@ -2137,6 +2268,7 @@ export function createLegacyEui({
       VerticalLayout,
       TileLayout,
       ScrollPolicy,
+      Direction,
       Theme,
       ArrayCollection,
       registerCustomComponent,
@@ -2174,6 +2306,7 @@ export function createLegacyEui({
         }
       }),
       UIEvent: Object.freeze({
+        MOVE: 'move',
         COMPLETE: 'complete',
         CREATION_COMPLETE: 'creationComplete',
         CHANGE: 'change',

@@ -107,9 +107,9 @@ function sourceForGjs(entries, namespaces, globalName) {
 }
 
 /** Preserve a project-owned precompiled provider or the Egret 5 gjs release output. Static gaps remain in the build report. */
-export function prepareThemeFactories(read, themePath, profilePath) {
+export function prepareThemeFactories(read, themePath, profilePath, readProvider = read) {
   if (!themePath) fail('Select the original theme with --theme.');
-  const profile = parse(read, pathOf(profilePath, '.json'));
+  const profile = parse(readProvider, pathOf(profilePath, '.json'));
   if (
     profile.schemaVersion !== 1 ||
     !['gjs', 'registry'].includes(profile.format) ||
@@ -120,6 +120,8 @@ export function prepareThemeFactories(read, themePath, profilePath) {
     fail('Provide a named, project-owned or regenerated theme provider.');
   }
   const theme = parse(read, pathOf(themePath, '.json'));
+  if (profile.themeSha256 !== undefined && read(themePath).identity.sha256 !== profile.themeSha256)
+    fail('The theme manifest changed. Regenerate its factories.');
   if (!Array.isArray(theme.exmls) || !theme.skins || typeof theme.skins !== 'object' || Array.isArray(theme.skins))
     fail('Expected the original theme with EXMLs and control mappings.');
   const declared = new Set();
@@ -131,7 +133,7 @@ export function prepareThemeFactories(read, themePath, profilePath) {
   }
   if (!declared.size || declared.size > 4096) fail('Expected 1 to 4096 original skin paths.');
   const providerPath = pathOf(profile.provider, profile.format === 'gjs' ? '.json' : '.js');
-  const provider = read(providerPath);
+  const provider = readProvider(providerPath);
   if (provider.identity.sha256 !== profile.sha256 || !/^[0-9a-f]{64}$/.test(profile.sha256))
     fail('The theme provider digest differs from the reviewed file.', { path: providerPath });
   let rows;
@@ -152,6 +154,8 @@ export function prepareThemeFactories(read, themePath, profilePath) {
   for (const row of rows) {
     const key = pathOf(row?.path, '.exml');
     const name = className(row?.className);
+    if (row.sourceSha256 !== undefined && read(key).identity.sha256 !== row.sourceSha256)
+      fail('The editable skin changed. Regenerate its factory.', { path: key });
     if (!declared.has(key) || paths.has(key) || classes.has(name))
       fail('Unknown or duplicate theme identity.', { path: key, className: name });
     if (profile.format === 'gjs' && (typeof row.gjs !== 'string' || !row.gjs.trim()))

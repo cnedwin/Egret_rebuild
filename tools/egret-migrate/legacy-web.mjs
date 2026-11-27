@@ -1,10 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 // Shared display bindings for admitted legacy 2D projects and the browser host entry.
+import { createClassicFilters } from './compat/filters.mjs';
+import { createClassicEditor, browserClassicEditor, TextFieldInputType, TextFieldType } from './compat/text-input.mjs';
+import { bitmapFontResources } from './compat/bitmap-label.mjs';
 import { captureTextFlow, HtmlTextParser, layoutTextFlow, richTextEvent } from './compat/rich-text.mjs';
 import { BlendMode, EventPhase, HorizontalAlign, VerticalAlign, legacyTouchEvent } from './compat/display-options.mjs';
 import { createLegacyMovieClips, createPagedBitmap } from './compat/movieclip.mjs';
+import { browserAtlasRaster } from './compat/text-atlas.mjs';
+import { classicImageLoader } from './compat/image-loader.mjs';
+import { createLegacyTextures } from './compat/legacy-textures.mjs';
 import { createFrameEvents } from './compat/frame-events.mjs';
+import { installProjectMethods, readProjectMethod } from './compat/project-methods.mjs';
 import { extendProjectBindings } from './compat/project-bindings.mjs';
+import { browserClassicMusic, classicSoundResource } from './compat/sound.mjs';
 import { createResourceReads } from './compat/resource-reads.mjs';
 import { createResourceCatalog } from './compat/resource-catalog.mjs';
 import { ByteArray, Endian } from './compat/protocol.mjs';
@@ -65,12 +73,16 @@ function resourcesFor(
   readAsset,
   plan,
   textures,
+  textureTypes,
+  bitmapFonts,
   sheetPlans,
   moviePages,
   EventDispatcher,
   LegacyEvent,
   observe,
-  callLater
+  callLater,
+  ports,
+  reportError
 ) {
   const dispatcher = new EventDispatcher();
   const ResourceEvent = Object.freeze({
@@ -98,7 +110,11 @@ function resourcesFor(
     return undefined;
   };
   for (const item of plan?.resources ?? []) {
-    if (declared.has(item.name) || !localPath(item.url) || !['image', 'json', 'text', 'bin'].includes(item.type)) {
+    if (
+      declared.has(item.name) ||
+      !localPath(item.url) ||
+      !['image', 'json', 'text', 'bin', 'font', 'sound'].includes(item.type)
+    ) {
       refuse('LEGACY_WEB_RESOURCE_UNSUPPORTED', 'Resource declaration is outside the migration profile.');
     }
     declared.set(item.name, item);
@@ -156,14 +172,13 @@ function resourcesFor(
       const sheet = game.scope.use(sdk.createSpriteSheet(lease, frames, 'trim-rotation-v1'));
       const values = new Map(
         sheetPlan.frames.map(frame => {
-          const value = Object.freeze({ textureWidth: frame.sourceWidth, textureHeight: frame.sourceHeight });
-          textures.set(value, { sheet, name: frame.name, page: lease, frame });
+          const value = textureTypes.adopt(lease, { sheet, name: frame.name, page: lease, frame });
           return [frame.name, value];
         })
       );
       const resource = Object.freeze({ getTexture: name => values.get(name) ?? null });
       releases.set(resource, () => {
-        for (const value of values.values()) textures.delete(value);
+        for (const value of values.values()) textureTypes.retire(value, false);
         sheet.dispose();
       });
       return resource;
@@ -212,13 +227,29 @@ function resourcesFor(
     }
     if (item.type === 'image') {
       const lease = await leaf(() => game.loadTexture(item.url));
-      const resource = Object.freeze({ textureWidth: lease.value.width, textureHeight: lease.value.height });
-      textures.set(resource, lease);
+      const resource = textureTypes.adopt(lease);
       releases.set(resource, () => {
-        textures.delete(resource);
+        textureTypes.retire(resource, true);
         lease.release();
       });
       return resource;
+    }
+    if (item.type === 'sound') {
+      if (!ports.loadSound) refuse('LEGACY_SOUND_UNAVAILABLE', 'Install the soundtrack provider for this host.');
+      const output = await leaf(() => ports.loadSound(item.url));
+      const resource = classicSoundResource(output, EventDispatcher, game.scope, reportError);
+      releases.set(resource, resource.close);
+      return resource;
+    }
+    if (item.type === 'font') {
+      const data = await leaf(() => readAsset(item));
+      generation.check();
+      if (typeof data?.file !== 'string' || !localPath(data.file) || !data.file.toLowerCase().endsWith('.png'))
+        refuse('LEGACY_BITMAP_FONT_INVALID', 'Expected a local PNG font page.');
+      const pageUrl = item.url.slice(0, item.url.lastIndexOf('/') + 1) + data.file;
+      const resource = await bitmapFonts.load(data, pageUrl, url => leaf(() => game.loadTexture(url)));
+      releases.set(resource.value, resource.dispose);
+      return resource.value;
     }
     return leaf(() => readAsset(item));
   }
@@ -298,6 +329,20 @@ function resourcesFor(
   );
   return Object.freeze({
     ...catalog.api,
+    profile() {
+      requireOpen();
+      const snapshot = Object.freeze({
+        declared: declared.size,
+        groups: groups.size,
+        ...catalog.counts(),
+        ready: ready.size,
+        pending: pending.size,
+        reads: reads.snapshot(),
+        host: Object.freeze(ports.resourceUsage?.() ?? {})
+      });
+      ports.environment?.logger?.log?.('RES.profile ' + JSON.stringify(snapshot));
+      return snapshot;
+    },
     setMaxLoadingThread: reads.setLimit,
     ResourceEvent,
     addEventListener: dispatcher.addEventListener.bind(dispatcher),
@@ -429,12 +474,25 @@ function resourcesFor(
 /** Shared display, RES, EUI and event bindings. Host ports own I/O and native lifecycle events. */
 export function createLegacyBindings(sdk, game, options, ports) {
   const identity = createHashDomain();
+  const classicFilters = createClassicFilters(game.scope.signal, ports.sharedEffects === true, identity.HashObject);
   const frameEvents = createFrameEvents(
     game,
     () => stage,
     error => report(error)
   );
   const textures = new WeakMap();
+  const bitmapFonts = bitmapFontResources(sdk);
+  const atlasFields = new WeakMap();
+  const textureTypes = createLegacyTextures(
+    sdk,
+    game,
+    textures,
+    identity.HashObject,
+    ports,
+    observe,
+    node => atlasFields.get(node)?.(),
+    node => node?.constructor === Container
+  );
   const staged = sdk.createEventType(added);
   const unstaged = sdk.createEventType(removed);
   const complete = sdk.createEventType('complete');
@@ -548,6 +606,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
     ADDED_TO_STAGE: added,
     REMOVED_FROM_STAGE: removed,
     COMPLETE: 'complete',
+    SOUND_COMPLETE: 'soundComplete',
     LOOP_COMPLETE: 'loopComplete',
     ENTER_FRAME: 'enterFrame',
     ACTIVATE: 'activate',
@@ -555,11 +614,22 @@ export function createLegacyBindings(sdk, game, options, ports) {
     CONNECT: 'connect',
     CLOSE: 'close',
     CHANGE: 'change',
+    FOCUS_IN: 'focusIn',
+    FOCUS_OUT: 'focusOut',
     CHANGING: 'changing',
     RESIZE: 'resize'
   });
   const TouchEvent = legacyTouchEvent(LegacyEvent);
   const TextEvent = richTextEvent(LegacyEvent);
+  class FocusEvent extends LegacyEvent {}
+  const editor = createClassicEditor(
+    game.scope.signal,
+    ports.openEditor,
+    (field, type) => {
+      field.dispatchEvent(type === 'change' ? new LegacyEvent(type, true) : new FocusEvent(type, true));
+    },
+    report
+  );
   const opening = [];
   const labels = new WeakMap();
   let booting = true;
@@ -755,6 +825,16 @@ export function createLegacyBindings(sdk, game, options, ports) {
 
   const withChildren = Base =>
     class extends withEvents(Base) {
+      get filters() {
+        return classicFilters.read(this);
+      }
+      set filters(value) {
+        classicFilters.apply(this, value);
+      }
+      dispose() {
+        classicFilters.release(this);
+        super.dispose();
+      }
       addChild(child) {
         const before = stageOf(child);
         const owner = ui?.viewportOwner(child);
@@ -796,6 +876,8 @@ export function createLegacyBindings(sdk, game, options, ports) {
 
   class Bitmap extends Container {
     #texture;
+    #stopWatching;
+    #sourceEntry;
     #bitmap;
     #panel;
     #panelKey;
@@ -831,7 +913,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
       }
     }
     #resize() {
-      if (this.#bitmap && this.#texture) {
+      if (this.#bitmap && this.#texture?.textureWidth > 0 && this.#texture?.textureHeight > 0) {
         this.#bitmap.scaleX = this.width / this.#texture.textureWidth;
         this.#bitmap.scaleY = this.height / this.#texture.textureHeight;
       }
@@ -849,7 +931,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
     // fixed borders cannot fit, the legacy player scales the whole source instead.
     drawLegacyImage(width, height, grid, fillMode) {
       const bitmap = this.#bitmap;
-      if (!bitmap || !this.#texture) return;
+      if (!bitmap || !this.#texture || !textures.has(this.#texture)) return;
       const entry = textures.get(this.#texture);
       const { textureWidth, textureHeight } = this.#texture;
       const frame = entry.frame;
@@ -932,13 +1014,19 @@ export function createLegacyBindings(sdk, game, options, ports) {
 
     set texture(value) {
       const lease = value == null ? undefined : textures.get(value);
-      if (value != null && lease === undefined)
+      if (value != null && lease === undefined && !textureTypes.has(value))
         refuse('LEGACY_WEB_TEXTURE_UNSUPPORTED', 'Bitmap needs an image acquired by the admitted RES configuration.');
       if (value !== this.#texture) {
+        this.#stopWatching?.();
+        this.#stopWatching = textureTypes.watch(value, () => {
+          if (!this.isDisposed) this.texture = value;
+        });
+      }
+      if (value !== this.#texture || lease !== this.#sourceEntry) {
         this.#panel?.dispose();
         this.#panel = this.#panelKey = undefined;
       }
-      if (this.#sheet || lease?.sheet || this.#paged || lease?.tiles) {
+      if (this.#sheet || lease?.sheet || this.#paged || lease?.tiles || !lease) {
         if (this.#bitmap) this.#bitmap.dispose();
         this.#bitmap = undefined;
       }
@@ -954,11 +1042,55 @@ export function createLegacyBindings(sdk, game, options, ports) {
       this.#sheet = lease?.sheet;
       this.#paged = Boolean(lease?.tiles);
       this.#texture = value;
+      this.#sourceEntry = lease;
       this.#resize();
+    }
+    dispose() {
+      this.#stopWatching?.();
+      super.dispose();
     }
   }
 
   class TextField extends Container {
+    static default_fontFamily = 'Arial';
+    #editing = false;
+    #type = 'dynamic';
+    #inputArea;
+    inputType = TextFieldInputType.TEXT;
+    maxChars = 0;
+    restrict = null;
+    multiline = false;
+    get type() {
+      return this.#type;
+    }
+    set type(value) {
+      if (!Object.values(TextFieldType).includes(value)) throw new TypeError('Invalid text field type');
+      if (value === this.#type) return;
+      this.#type = value;
+      if (value === 'input') {
+        this.touchEnabled = true;
+        this.addEventListener(tap, this.setFocus, this);
+      } else {
+        this.removeEventListener(tap, this.setFocus, this);
+        editor.detach(this);
+      }
+      this.updateLegacyInputArea();
+    }
+    updateLegacyInputArea() {
+      if (this.hitArea !== undefined && this.hitArea !== this.#inputArea) return;
+      this.hitArea =
+        this.#type === 'input' ? { x: 0, y: 0, width: this.width || 100, height: this.height || 30 } : undefined;
+      // The display tree owns and freezes a copy of the supplied rectangle.
+      this.#inputArea = this.hitArea;
+    }
+    setFocus() {
+      editor.focus(this);
+    }
+    setLegacyEditing(value) {
+      this.#editing = value;
+      if (value) this.#leave();
+      else if (!this.isDisposed && stageOf(this)) this.#enter();
+    }
     #label;
     #owner;
     #rasterActive = true;
@@ -981,6 +1113,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
       const next = this.#dimension(value);
       if (this.#width === next) return;
       this.#width = next;
+      if (this.#type === 'input') this.updateLegacyInputArea();
       if (this.#flow) this.#refreshFlow();
       else this.#positionLabel();
     }
@@ -994,6 +1127,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
       const next = this.#dimension(value);
       if (this.#height === next) return;
       this.#height = next;
+      if (this.#type === 'input') this.updateLegacyInputArea();
       if (this.#flow) this.#refreshFlow();
     }
     #dimension(value) {
@@ -1027,7 +1161,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
       text: '',
       fontSize: 30,
       color: 0xffffff,
-      fontFamily: 'Arial',
+      fontFamily: TextField.default_fontFamily,
       fontWeight: 400,
       italic: false,
       strokeWidth: 0,
@@ -1036,9 +1170,52 @@ export function createLegacyBindings(sdk, game, options, ports) {
 
     constructor() {
       super();
-      labels.set(this, { enter: () => this.#enter(), leave: () => this.#leave() });
+      atlasFields.set(this, () => this.#atlasLayout());
+      labels.set(this, {
+        enter: () => this.#enter(),
+        leave: () => {
+          editor.detach(this);
+          this.#leave();
+        }
+      });
     }
 
+    #atlasLayout() {
+      if (this.#type === 'input' || this.background || this.border || this.displayAsPassword || this.scrollV > 1)
+        refuse(
+          'LEGACY_TEXT_ATLAS_UNSUPPORTED',
+          'An atlas accepts static text without password masking, scrolling, background or border.'
+        );
+      return layoutTextFlow(
+        this.#flow ?? [{ text: this.#style.text }],
+        this.#style,
+        {
+          width: this.#width,
+          height: this.#height,
+          align: this.#textAlign,
+          verticalAlign: this.verticalAlign,
+          lineSpacing: this.lineSpacing,
+          ...this.#flowOptions
+        },
+        ports
+      );
+    }
+    getBounds(options) {
+      if (
+        options === undefined &&
+        this.#type !== 'input' &&
+        this.#style.text &&
+        !this.#label &&
+        !this.#flowOwner &&
+        !stageOf(this) &&
+        typeof ports.measureLine === 'function' &&
+        !this.isDisposed
+      ) {
+        const plan = this.#atlasLayout();
+        return { x: 0, y: 0, width: plan.width, height: plan.height };
+      }
+      return super.getBounds(options);
+    }
     #listenForLinks(enabled) {
       if (enabled === this.#listensForLinks) return;
       this.#listensForLinks = enabled;
@@ -1153,7 +1330,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
     }
 
     #enter() {
-      if (!this.#rasterActive || this.#owner !== undefined) return;
+      if (this.#editing || !this.#rasterActive || this.#owner !== undefined || game.scope.signal.aborted) return;
       // Offstage legacy text stays attachable but releases both the prepared raster and pending work.
       const owner = game.engine.createScope();
       this.#owner = owner;
@@ -1210,6 +1387,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
     }
 
     dispose() {
+      editor.detach(this);
       this.#leave(false);
       super.dispose();
     }
@@ -1349,12 +1527,16 @@ export function createLegacyBindings(sdk, game, options, ports) {
     ports.readAsset ?? ports.readJson,
     options.resources,
     textures,
+    textureTypes,
+    bitmapFonts,
     options.sheets ?? [],
     options.moviePages ?? [],
     EventDispatcher,
     LegacyEvent,
     observe,
-    listener => gameServices.callLater(listener, undefined)
+    listener => gameServices.callLater(listener, undefined),
+    ports,
+    report
   );
   if (options.theme)
     ui = createLegacyEui({
@@ -1363,9 +1545,11 @@ export function createLegacyBindings(sdk, game, options, ports) {
       Bitmap,
       TextField,
       RES,
+      bitmapFonts,
       EventDispatcher,
       LegacyEvent,
       game,
+      callLater: callback => gameServices.callLater(callback, undefined),
       measureLine: ports.measureLine,
       graphemes: ports.graphemes,
       theme: options.theme,
@@ -1440,7 +1624,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
       let current = Object.hasOwn(api, parts[0]) ? api : globalThis;
       for (const part of parts) {
         if (current == null) return undefined;
-        current = Object.getOwnPropertyDescriptor(current, part)?.value;
+        current = Object.getOwnPropertyDescriptor(current, part)?.value ?? readProjectMethod(current, part);
       }
       return current;
     },
@@ -1451,6 +1635,8 @@ export function createLegacyBindings(sdk, game, options, ports) {
     egret: Object.freeze({
       ...gameServices,
       ...legacyHost(game.scope, stage, ports.environment, identity),
+      ...textureTypes.types,
+      ImageLoader: classicImageLoader(EventDispatcher, game, textureTypes.ownImage, observe, ports.checkImageOrigin),
       ...createLegacyTransport({
         EventDispatcher,
         LegacyEvent,
@@ -1466,6 +1652,10 @@ export function createLegacyBindings(sdk, game, options, ports) {
       TextField,
       HtmlTextParser,
       TextEvent,
+      FocusEvent,
+      TextFieldType,
+      TextFieldInputType,
+      ...classicFilters.types,
       ...createLegacyMovieClips({ sdk, game, Container, LegacyEvent, textures }),
       ByteArray,
       Endian,
@@ -1490,6 +1680,7 @@ export function createLegacyBindings(sdk, game, options, ports) {
     dragonBones
   });
   api = extendProjectBindings(api, game.scope, options.provideBindings);
+  api = installProjectMethods(api, game.scope, options.projectMethods);
   return {
     api,
     async mount(root) {
@@ -1532,7 +1723,46 @@ export async function launchLegacyWeb(sdk, options) {
     else game.scope.signal.addEventListener('abort', cancel, { once: true });
     let measureContext, segmenter;
     const { api, mount } = createLegacyBindings(sdk, game, options, {
+      sharedEffects: true,
+      loadSound: browserClassicMusic(view, controller.signal),
+      resourceUsage() {
+        const labels = game.getLabelStatus();
+        return { drawingLabels: labels.drawing, queuedLabels: labels.queued, atlasPages: labels.atlasPages };
+      },
+      openEditor: browserClassicEditor(sdk, options.canvas, game),
       environment: browserEnvironment(view, game.backend, options.fit ?? 'contain'),
+      checkImageOrigin(url, mode) {
+        const destination = new URL(url, doc.baseURI);
+        if (!['http:', 'https:'].includes(destination.protocol) || destination.username || destination.password)
+          throw new Error('ImageLoader accepts HTTP(S) image URLs without credentials.');
+        if (destination.origin !== view.location.origin && mode !== 'anonymous')
+          throw new Error('Set ImageLoader.crossOrigin to anonymous for a CORS-enabled image origin.');
+      },
+      atlasRaster: (width, height, runs) => browserAtlasRaster(doc, game, width, height, runs),
+      imageSource(source) {
+        const copy = doc.createElement('canvas');
+        copy.width = source.naturalWidth ?? source.width;
+        copy.height = source.naturalHeight ?? source.height;
+        const context = copy.getContext('2d');
+        if (!context) throw new Error('Could not capture the legacy image.');
+        context.drawImage(source, 0, 0);
+        return game.textureFromCanvas(copy);
+      },
+      async pngBytes({ data, width, height }) {
+        const bytes = Uint8Array.from(view.atob(data), c => c.charCodeAt(0));
+        const blob = new view.Blob([bytes], { type: 'image/png' });
+        const url = view.URL.createObjectURL(blob);
+        try {
+          const image = new view.Image();
+          image.src = url;
+          await image.decode();
+          if (image.naturalWidth !== width || image.naturalHeight !== height)
+            throw new Error('Unexpected decoded PNG dimensions.');
+          return await this.imageSource(image);
+        } finally {
+          view.URL.revokeObjectURL(url);
+        }
+      },
       transport: view ? browserTransport(view) : undefined,
       channel: options.externalChannel,
       storage: () => options.storage ?? view?.localStorage,

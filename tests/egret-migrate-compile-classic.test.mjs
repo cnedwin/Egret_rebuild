@@ -223,3 +223,70 @@ test('preserve a reviewed precompiled provider after its last business dependenc
   f.put('factories.json', { ...profile, entries: [...profile.entries, ...profile.entries] });
   assert.throws(() => f.build('duplicate', opts), { code: 'MIGRATE_THEME_FACTORIES' });
 });
+
+test('regenerate edited EXML using the supplied original SDK and reject a stale provider', {
+  skip:
+    !(
+      process.env.EGRET_LEGACY_TYPESCRIPT_PLUS &&
+      process.env.EGRET_LEGACY_MODULES &&
+      process.env.EGRET_THEME_PLAYWRIGHT
+    ) && 'Supply the original TypeScript/EUI SDK and a Playwright browser.'
+}, async t => {
+  const { compileTheme } = await import('../tools/egret-migrate/compile-theme.mjs');
+  const f = fixture(t);
+  const modules = process.env.EGRET_LEGACY_MODULES;
+  for (const file of ['egret/egret.js', 'egret/egret.web.js', 'eui/eui.js'])
+    f.put('libs/' + file, fs.readFileSync(path.join(modules, file), 'utf8'));
+  f.put(
+    'index.html',
+    '<!doctype html><meta charset="utf-8"><script src="libs/egret/egret.js"></script><script src="libs/egret/egret.web.js"></script><script src="libs/eui/eui.js"></script><script src="bin-debug/Item.js"></script><script src="bin-debug/Shelf.js"></script>'
+  );
+  const classic = f.build('bootstrap').out;
+  const root = path.dirname(classic);
+  const options = {
+    source: f.source,
+    classic,
+    theme: 'theme.json',
+    playwright: process.env.EGRET_THEME_PLAYWRIGHT,
+    executable: process.env.EGRET_THEME_BROWSER,
+    ready: 'Shelf'
+  };
+  async function generate(folder) {
+    const out = path.join(root, folder);
+    const report = await compileTheme({ ...options, out });
+    assert.deepEqual([report.status, report.declared, report.compiled], ['partial', 2, 1]);
+    assert.deepEqual(report.gaps, [{ path: 'assets/Missing.exml', reason: 'missing-source' }]);
+    return out;
+  }
+  const first = await generate('first-theme');
+  const migrated = f.build('compiled-theme', { compiledTheme: first });
+  const before = fs.readFileSync(path.join(migrated.out, 'classic/theme-factories.js'), 'utf8');
+  assert.ok(before.includes('货架'));
+  const input = fs.readFileSync(path.join(f.source, 'src/Item.ts'), 'utf8');
+  f.put('src/Item.ts', input + '\n// The original page evaluated this script.\n');
+  assert.throws(() => f.build('changed-bootstrap-source', { compiledTheme: first }), {
+    code: 'MIGRATE_THEME_FACTORIES'
+  });
+  f.put('src/Item.ts', input);
+  f.put(
+    'assets/Shelf.exml',
+    '<e:Skin class="ShelfSkin" xmlns:e="http://ns.egret.com/eui"><e:Label text="今日特价"/></e:Skin>'
+  );
+  assert.throws(() => f.build('stale', { compiledTheme: first }), { code: 'MIGRATE_THEME_FACTORIES' });
+  const refreshed = await generate('updated-theme');
+  const updated = f.build('updated', { compiledTheme: refreshed });
+  const after = fs.readFileSync(path.join(updated.out, 'classic/theme-factories.js'), 'utf8');
+  assert.ok(after.includes('今日特价'));
+  assert.ok(!after.includes('货架'));
+  f.put('assets/Missing.exml', '<e:Skin class="NewSkin" xmlns:e="http://ns.egret.com/eui"/>');
+  assert.throws(() => f.build('newly-arrived', { compiledTheme: refreshed }), { code: 'MIGRATE_THEME_FACTORIES' });
+  const html = fs.readFileSync(path.join(f.source, 'index.html'), 'utf8');
+  f.put('index.html', html + '<script>globalThis.ShelfSkin=class OtherBusinessType{};</script>');
+  const conflict = await compileTheme({ ...options, out: path.join(root, 'conflicting-skin') });
+  assert.equal(conflict.compiled, 1);
+  assert.ok(conflict.gaps.some(row => row.path === 'assets/Shelf.exml' && row.message.includes('conflicts')));
+  f.put('src/Item.ts', 'throw new Error("changed after compilation");');
+  await assert.rejects(compileTheme({ ...options, out: path.join(root, 'stale-scripts') }), {
+    code: 'MIGRATE_THEME_COMPILER'
+  });
+});

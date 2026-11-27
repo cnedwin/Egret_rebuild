@@ -1624,3 +1624,159 @@ test('a programmatic layout can be changed live and scripted touch follows the r
     await host.dispose();
   }
 });
+
+test('tab row selection, clipped progress skins, move notifications and default fonts use legacy contracts', async () => {
+  const meterSkin = skin(
+    'MeterSkin',
+    '<e:Rect id="thumb" width="120" height="18" fillColor="0x11bb55"/><e:Label id="labelDisplay"/>'
+  );
+  const controls = skin(
+    'PlaySkin',
+    '<e:TabBar id="tabs" width="120" height="30"/><e:ProgressBar id="meter" y="40" skinName="MeterSkin" maximum="80" value="25" slideDuration="0"/>'
+  );
+  const { sdk, options } = setup(controls, meterSkin);
+  let root, egret, eui;
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain(api) {
+      ({ egret, eui } = api);
+      root = new eui.Component();
+      root.skinName = 'PlaySkin';
+      class Chip extends eui.ItemRenderer {
+        dataChanged() {
+          this.width = this.data;
+          this.height = 18;
+        }
+      }
+      root.tabs.itemRenderer = Chip;
+      root.tabs.dataProvider = new eui.ArrayCollection([20, 40, 20]);
+      return root;
+    }
+  });
+  try {
+    assert.equal(root.tabs.selectedIndex, 0);
+    assert.equal(root.tabs.requireSelection, true);
+    assert.equal(root.tabs.useVirtualLayout, false);
+    assert.deepEqual(
+      [0, 1, 2].map(i => {
+        const c = root.tabs.getElementAt(i);
+        return [c.x, c.width, c.height];
+      }),
+      [
+        [0, 30, 30],
+        [30, 60, 30],
+        [90, 30, 30]
+      ]
+    );
+    const middle = root.tabs.getElementAt(1);
+    egret.TouchEvent.dispatchTouchEvent(middle, egret.TouchEvent.TOUCH_TAP, true, false, 36, 8, 1, true);
+    assert.equal(root.tabs.selectedItem, 40);
+    const bar = root.meter;
+    assert.equal(bar.labelDisplay.text, '25 / 80');
+    assert.deepEqual(bar.thumb.clipRect, { x: 0, y: 0, width: 38, height: 18 });
+    bar.labelFunction = (n, max) => n + '|' + max;
+    bar.snapInterval = 5;
+    bar.value = 43;
+    bar.direction = eui.Direction.RTL;
+    assert.equal(bar.labelDisplay.text, '45|80');
+    assert.deepEqual(bar.thumb.clipRect, { x: 52, y: 0, width: 68, height: 18 });
+    bar.direction = eui.Direction.BTT;
+    bar.value = 1000;
+    assert.equal(bar.value, 80);
+    assert.deepEqual(bar.thumb.clipRect, { x: 0, y: 0, width: 120, height: 18 });
+    const moved = [];
+    bar.addEventListener(eui.UIEvent.MOVE, event => moved.push([bar.x, bar.y, event.bubbles]), bar);
+    bar.setLayoutBoundsPosition(4, 20);
+    bar.setLayoutBoundsPosition(4, 20);
+    assert.deepEqual(moved, [[4, 20, false]]);
+    const first = new egret.TextField();
+    egret.TextField.default_fontFamily = 'serif';
+    assert.deepEqual(
+      [first.fontFamily, new egret.TextField().fontFamily, new eui.Label().fontFamily],
+      ['Arial', 'serif', 'serif']
+    );
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('the 5.3 generated state attaches its original parts and binding follows the view lifetime', async () => {
+  const { runInNewContext } = await import('node:vm');
+  const { createHash } = await import('node:crypto');
+  const { prepareThemeFactories } = await import('../tools/egret-migrate/precompiled-themes.mjs');
+  const { registerLegacyThemeFactories } = await import('../tools/egret-migrate/compat/theme-factories.mjs');
+  const source = fs.readFileSync(new URL('./fixtures/migrate-theme-factories/dispatch.thm.json', import.meta.url));
+  const digest = bytes => createHash('sha256').update(bytes).digest('hex');
+  const inputs = {
+    'generated.json': source,
+    'theme.json': Buffer.from(JSON.stringify({ skins: {}, exmls: ['resource/Dispatch.exml'] })),
+    'profile.json': Buffer.from(
+      JSON.stringify({
+        schemaVersion: 1,
+        format: 'gjs',
+        global: 'DispatchTheme',
+        origin: 'project-regenerated',
+        provider: 'generated.json',
+        sha256: digest(source)
+      })
+    )
+  };
+  const { source: script, manifest } = prepareThemeFactories(
+    key => ({ bytes: inputs[key], identity: { path: key, sha256: digest(inputs[key]) } }),
+    'theme.json',
+    'profile.json'
+  );
+  const registry = {};
+  runInNewContext(script.toString(), registry);
+  const original = { name: '东门', count: 2 },
+    replacement = { name: '西门', count: 3 };
+  const { sdk, options } = setup();
+  let panel, root;
+  const game = await launchLegacyWeb(sdk, {
+    ...options,
+    createMain({ eui, egret }) {
+      registerLegacyThemeFactories(eui, manifest, { egret, root: registry });
+      panel = new eui.Component();
+      panel.data = original;
+      panel.skinName = 'Demo.DispatchSkin';
+      root = new eui.UILayer();
+      root.addChild(panel);
+      return root;
+    }
+  });
+  const order = () => Array.from({ length: panel.row.numChildren }, (_, i) => panel.row.getChildAt(i).name);
+  try {
+    assert.equal(panel.caption.text, '东门');
+    assert.equal(panel.count.text, 'Qty:2');
+    const caption = panel.caption;
+    for (const entry of ['open', 'closed', 'open']) {
+      panel.currentState = entry;
+      assert.equal(panel.caption, caption);
+      assert.deepEqual(order(), entry === 'open' ? ['left', 'caption', 'right', 'count'] : ['left', 'right', 'count']);
+      assert.equal(panel.badge.parent === panel, entry === 'open');
+    }
+    original.count = 4;
+    assert.equal(panel.count.text, 'Qty:4');
+    root.removeChild(panel);
+    assert.equal(Object.getOwnPropertyDescriptor(original, 'name').get, undefined);
+    panel.data = replacement;
+    root.addChild(panel);
+    assert.equal(panel.caption.text, '西门');
+    assert.equal(panel.count.text, 'Qty:3');
+    original.name = '离开';
+    assert.equal(panel.caption.text, '西门');
+    replacement.name = '南门';
+    assert.equal(panel.caption.text, '南门');
+    root.addChild(panel.badge);
+    panel.currentState = 'closed';
+    assert.equal(panel.badge.parent, root);
+    root.removeChild(panel.badge);
+    const badge = panel.badge;
+    panel.dispose();
+    assert.equal(badge.isDisposed, true);
+    assert.equal(caption.isDisposed, true);
+    assert.equal(Object.getOwnPropertyDescriptor(replacement, 'name').get, undefined);
+  } finally {
+    await game.dispose();
+  }
+});

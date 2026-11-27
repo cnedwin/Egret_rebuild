@@ -38,6 +38,7 @@ export interface LegacyAndroidOptions {
   readonly sheets?: readonly Readonly<Record<string, unknown>>[];
   readonly moviePages?: readonly Readonly<Record<string, unknown>>[];
   readonly nativeBones?: boolean;
+  readonly projectMethods?: readonly { readonly namespace: 'egret'|'eui'|'RES'|'dragonBones'; readonly name: string }[];
   /** Add project-owned operations to admitted namespaces before the first business script runs. */
   readonly provideBindings?: (base: Readonly<Record<'egret'|'eui'|'RES'|'dragonBones', object | undefined>>, scope: import('@egret/engine').Scope) => Partial<Record<'egret'|'eui'|'RES'|'dragonBones', Readonly<Record<string, unknown>>>>;
   readonly logger?: { log(...args: unknown[]): void; warn(...args: unknown[]): void; error(...args: unknown[]): void };

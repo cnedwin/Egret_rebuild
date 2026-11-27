@@ -205,6 +205,43 @@ test('project additions use the game scope and keep engine operations and class 
   );
 });
 
+test('input hit bounds resize without replacing a game-owned area', async () => {
+  const { sdk, canvas } = host();
+  let plain, editable;
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    projectId: 'p_editor_bounds',
+    width: 320,
+    height: 180,
+    theme: { skins: {}, exmls: [] },
+    resources: { resources: [], groups: [] },
+    createMain({ egret, eui }) {
+      const root = new egret.Sprite();
+      plain = new egret.TextField();
+      plain.type = 'input';
+      editable = new eui.EditableText();
+      for (const node of [plain, editable]) {
+        node.width = 140;
+        node.height = 28;
+        root.addChild(node);
+      }
+      return root;
+    }
+  });
+  try {
+    for (const node of [plain, editable]) {
+      assert.deepEqual(node.hitArea, { x: 0, y: 0, width: 140, height: 28 });
+      node.width = 160;
+      assert.equal(node.hitArea.width, 160);
+      node.hitArea = { x: 1, y: 2, width: 10, height: 20 };
+      node.width = 180;
+      assert.deepEqual(node.hitArea, { x: 1, y: 2, width: 10, height: 20 });
+    }
+  } finally {
+    await game.dispose();
+  }
+});
+
 function host(storage = new Map(), realPointer = false) {
   const trace = [];
   const tap = engine.createEventType('tap', { bubbles: true });
@@ -615,7 +652,8 @@ test('declared image lookup keeps a real texture lease through bitmap replacemen
       await RES.loadConfig('resource/default.res.json', 'resource/');
       await RES.loadGroup('preload');
       resource = RES.getRes('tile');
-      assert.deepEqual(resource, { textureWidth: 2, textureHeight: 1 });
+      assert(resource instanceof egret.Texture);
+      assert.deepEqual([resource.textureWidth, resource.textureHeight], [2, 1]);
       const root = new egret.Sprite();
       bitmap = new egret.Bitmap();
       bitmap.texture = resource;
@@ -1144,6 +1182,50 @@ test('an EUI label preserves a linked styled row when relaid out, then returns t
     tap(47, 55);
     assert.equal(opened, 2);
     assert.equal(label.getChildAt(0).name, '普通');
+  } finally {
+    await game.dispose();
+  }
+});
+
+test('a bitmap label measures transparent advances, clears on font retirement and reacquires a new font', async () => {
+  const { sdk, canvas } = host();
+  Object.assign(sdk, await import('@egret/engine/bitmapfont'));
+  const atlas = {
+    file: 'digits.png',
+    frames: { A: { x: 0, y: 0, w: 1, h: 1, offX: 2, offY: 1, sourceW: 5, sourceH: 4 } }
+  };
+  canvas.ownerDocument.defaultView.fetch = async () => new Response(JSON.stringify(atlas));
+  let label, res;
+  const resources = {
+    configUrl: 'manifest',
+    root: '',
+    resources: [{ name: 'font', url: 'digits.fnt', type: 'font' }],
+    groups: []
+  };
+  const game = await launchLegacyWeb(sdk, {
+    canvas,
+    width: 120,
+    height: 80,
+    projectId: 'p_legacy_score',
+    resources,
+    theme: { skins: {}, exmls: [] },
+    async createMain({ eui, RES }) {
+      res = RES;
+      await res.loadConfig('manifest', '');
+      label = new eui.BitmapLabel('AA');
+      label.font = await res.getResAsync('font');
+      const root = new eui.Group();
+      root.addChild(label);
+      return root;
+    }
+  });
+  try {
+    assert.deepEqual([label.width, label.height], [10, 4]);
+    assert.deepEqual(label.getChildAt(0).getBounds(), { x: 2, y: 1, width: 6, height: 1 });
+    assert.equal(res.destroyRes('font'), true);
+    assert.equal(label.numChildren, 0);
+    label.font = await res.getResAsync('font');
+    assert.deepEqual([label.width, label.height], [10, 4]);
   } finally {
     await game.dispose();
   }

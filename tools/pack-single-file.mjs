@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Usage: node tools/pack-single-file.mjs --esbuild <installed esbuild module> --out <new directory> [--version <version>]
+// Usage: node tools/pack-single-file.mjs --esbuild <installed esbuild module> --out <new directory> [--version <version>] [--with bitmapfont,text-input]
 // Writes the engine as one file, and report.json saying what is in each file and how large it is, with llms.txt and the
 // licences beside them:
 //   egret2d.js    for <script src>; everything is on the global `Egret`, so a game is `Egret.play({ ... })`
@@ -113,13 +113,21 @@ export function groupOf(file) {
 async function main(args) {
   const options = {};
   for (let i = 0; i < args.length; i += 2) {
-    if (!['--esbuild', '--out', '--version'].includes(args[i]) || args[i + 1] === undefined)
+    if (!['--esbuild', '--out', '--version', '--with'].includes(args[i]) || args[i + 1] === undefined)
       throw new TypeError(
-        'Usage: node tools/pack-single-file.mjs --esbuild <installed esbuild module> --out <new directory> [--version <version>]'
+        'Usage: node tools/pack-single-file.mjs --esbuild <installed esbuild module> --out <new directory> [--version <version>] [--with bitmapfont,text-input]'
       );
     options[args[i].slice(2)] = args[i + 1];
   }
   if (!options.esbuild || !options.out) throw new TypeError('--esbuild and --out are required');
+  const optional = new Map([
+    ['bitmapfont', '@egret/engine/bitmapfont'],
+    ['text-input', '@egret/engine/web/text-input']
+  ]);
+  const selected = options.with === undefined ? [] : options.with.split(',');
+  if (new Set(selected).size !== selected.length || selected.some(name => !optional.has(name)))
+    throw new TypeError('--with accepts a comma-separated selection of bitmapfont and text-input.');
+  const extraEntries = selected.map(name => optional.get(name));
   const out = path.resolve(options.out);
   if (fs.existsSync(out)) throw refuse('SINGLE_FILE_OUT', 'The output directory must not exist yet: ' + out);
   const version = options.version ?? '0.0.0';
@@ -131,7 +139,7 @@ async function main(args) {
     throw refuse('SINGLE_FILE_BUNDLER', 'Not an esbuild module: ' + options.esbuild);
 
   const modules = workspaceModules();
-  for (const entry of SINGLE_FILE_ENTRIES_3D)
+  for (const entry of [...SINGLE_FILE_ENTRIES_3D, ...extraEntries])
     if (!fs.existsSync(modules.get(entry) ?? ''))
       throw refuse('SINGLE_FILE_NOT_BUILT', entry + ' is not built. Run the build first.');
   // The manifest of the third-party package is beside its entry; its own exports do not name it.
@@ -162,8 +170,8 @@ async function main(args) {
   const files = [],
     made = [];
   for (const [base, entries, what, works] of [
-    ['egret2d', SINGLE_FILE_ENTRIES, 'the 2D engine', 'play'],
-    ['egret3d', SINGLE_FILE_ENTRIES_3D, 'the 2D and the 3D engine', 'play3d']
+    ['egret2d', [...SINGLE_FILE_ENTRIES, ...extraEntries], 'the 2D engine', 'play'],
+    ['egret3d', [...SINGLE_FILE_ENTRIES_3D, ...extraEntries], 'the 2D and the 3D engine', 'play3d']
   ]) {
     const namespaces = [];
     for (const entry of entries) namespaces.push([entry, await import(pathToFileURL(modules.get(entry)).href)]);

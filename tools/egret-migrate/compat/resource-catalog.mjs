@@ -13,6 +13,8 @@ const resourceTypes = Object.freeze({
 function inferType(url) {
   const extension = url.slice(url.lastIndexOf('.') + 1).toLowerCase();
   if (extension === 'json') return 'json';
+  if (['wav', 'mp3', 'ogg'].includes(extension)) return 'sound';
+  if (extension === 'fnt') return 'font';
   if (['png', 'jpeg', 'jpg', 'webp'].includes(extension)) return 'image';
   if (['txt', 'csv'].includes(extension)) return 'text';
   return 'bin';
@@ -89,6 +91,9 @@ export function createResourceCatalog({
       loadedGroups.set(name, [...new Set([...previous, ...loaded])]);
       return groups.get(name) === captured;
     },
+    counts() {
+      return { urlAliases: urls.size, temporary: temporary.size, loadedGroups: loadedGroups.size };
+    },
     resolveName: keyOf,
     api: {
       ResourceItem: resourceTypes,
@@ -121,7 +126,7 @@ export function createResourceCatalog({
         const key = known ?? url;
         if (known === undefined) {
           const kind = type || inferType(url);
-          if (!['image', 'json', 'text', 'bin'].includes(kind))
+          if (!['image', 'json', 'text', 'bin', 'font', 'sound'].includes(kind))
             throw new TypeError('Unsupported URL resource type: ' + kind);
           temporary.add(key);
           declared.set(key, { name: key, url, type: kind });

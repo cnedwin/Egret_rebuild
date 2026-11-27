@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-27",
+  "scope": "Local original compiler input and independently authored device fixtures. The customer game and its assets are excluded.",
+  "classicBuild": {
+    "sdk": "5.3.10",
+    "compiler": "TypeScript Plus 2.4.2",
+    "scripts": 1633,
+    "bytes": 10189917,
+    "compilerDiagnostics": 10,
+    "themePaths": 935,
+    "generatedFactories": 929,
+    "missingEditableFiles": 6,
+    "generatedBundleBytes": 3974586,
+    "observedProjectFunctionSlots": 4,
+    "sdkDeclarationConflicts": 0,
+    "meaning": "Factories were generated and linked into the script manifest. Individual screens require host interaction tests.",
+    "verifiedThemeBootstrapInputs": 2651
+  },
+  "bitmapFont": {
+    "originalDescriptions": 37,
+    "parsed": 37,
+    "pages": 37,
+    "glyphs": 455,
+    "mixedLineMetrics": 14,
+    "authoredTwoGlyphWidthsAndHeights": [
+      [
+        8,
+        5
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        8,
+        5
+      ]
+    ],
+    "desktop": "Original 5.3.10 and Edge 158 WebGL2",
+    "android": "Fold7 trimmed V8 / GLES3",
+    "textureUploads": 2,
+    "textureReleases": 2,
+    "abandoned": 0
+  },
+  "input": {
+    "hosts": [
+      "Edge",
+      "Fold7 trimmed V8 / GLES3"
+    ],
+    "orderedEvents": [
+      "focusIn(1)",
+      "change(14)",
+      "change(142)",
+      "focusOut(142)"
+    ],
+    "limits": "Programmatic input and Android editor events. Human keyboard candidate selection not measured."
+  },
+  "generatedStateSkin": {
+    "hosts": [
+      "Original 5.3.10 browser",
+      "Windows Edge 158 / WebGL2"
+    ],
+    "behavior": "State-only nested children restore sibling order after reopening. Model replacement updates the bound caption and count."
+  },
+  "images": {
+    "browser": "Two local origins. Anonymous image load without a CORS grant reports ioError; with a grant it completes. Neither request sent a cookie.",
+    "android": "Missing packaged asset reports ioError. The next valid 4 by 2 PNG loads successfully and shares the RES texture."
+  },
+  "renderTexture": {
+    "originalLogicalSize": [
+      2048,
+      2048
+    ],
+    "render": "Only the requested visible text subregion is rasterized.",
+    "windowsReferenceInclusiveInkBounds": [
+      4,
+      4,
+      29,
+      20
+    ],
+    "windowsAdapterInclusiveInkBounds": [
+      4,
+      5,
+      29,
+      21
+    ],
+    "android": "Both red and green text slices are visible after recoloring; both uploads are released."
+  },
+  "debugRefresh": {
+    "device": "Samsung SM-F966U1",
+    "android": 17,
+    "installedApks": 1,
+    "initial": {
+      "uploaded": 7,
+      "assetBytes": 478293,
+      "usbAssetPayloadBytes": 637736
+    },
+    "edit": {
+      "uploaded": 2,
+      "reused": 5,
+      "assetBytes": 2474,
+      "usbAssetPayloadBytes": 3304
+    },
+    "repeat": {
+      "uploaded": 0,
+      "reused": 7,
+      "assetBytes": 0,
+      "usbAssetPayloadBytes": 0
+    },
+    "embeddedRollback": {
+      "saveRestored": true,
+      "initialContentRestored": true
+    },
+    "transport": "Asset payload only. Excludes the manifest, shell and ADB control traffic.",
+    "damagedCache": {
+      "sameLength": true,
+      "changedBytes": 1,
+      "uploadedFiles": 1,
+      "reusedFiles": 6,
+      "rawBytes": 91,
+      "usbAssetPayloadBytes": 124,
+      "sha256Restored": true,
+      "savePreserved": true
+    }
+  },
+  "limits": [
+    "Live carrier login, payment, account entitlement and production traffic require the operator test environment.",
+    "GLES3 isolated subtree filters, and wide legacy blur/glow kernel output, remain outside these device results.",
+    "Private SDK members and dynamic calls require project-specific review."
+  ],
+  "sound": {
+    "fixture": {
+      "seconds": 1,
+      "format": "PCM WAV"
+    },
+    "desktop": "Old SDK and new classic game in Edge 158. One natural completion received on the owning channel. Stop and replacement produced none.",
+    "android": "Real MediaPlayer in the trimmed V8 player on Fold7. One completion, old playback ID rejected, zero active media after release.",
+    "audibleHumanListening": "not measured"
+  },
+  "directReferenceInventory": {
+    "total": {
+      "paths": 183,
+      "uses": 3893
+    },
+    "descriptorPresent": {
+      "paths": 158,
+      "uses": 3830
+    },
+    "stageInstanceChainsVerified": {
+      "paths": 4,
+      "uses": 22
+    },
+    "internalSdk": {
+      "paths": 17,
+      "uses": 33
+    },
+    "projectDefinitions": {
+      "paths": 4,
+      "uses": 8,
+      "assignmentLocations": 4
+    },
+    "limits": "Direct names in emitted business scripts, plus the four stage paths checked on a real stage. Availability of a name does not establish all its behavior. Dynamic lookups, all old SDK declarations and all customer screens are outside this count."
+  }
+}

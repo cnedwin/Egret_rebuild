@@ -72,7 +72,7 @@ async function pack(options) {
         path.join(stage, 'package.json'),
         json({
           name: '@egret/migrate',
-          version: '0.6.0',
+          version: '0.7.0',
           description: 'Local migration tool for the admitted classic Egret 5 Web 2D project profiles',
           license: 'Apache-2.0',
           type: 'module',

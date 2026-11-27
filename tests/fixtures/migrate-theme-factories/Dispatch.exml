@@ -1,0 +1,9 @@
+<e:Skin class="Demo.DispatchSkin" xmlns:e="http://ns.egret.com/eui" width="160" height="80" states="closed,open">
+  <e:Group id="row">
+    <e:Rect id="left" width="8" height="8"/>
+    <e:Label id="caption" includeIn="open" text="{data.name}"/>
+    <e:Rect id="right" x="60" width="8" height="8"/>
+    <e:Label id="count" text="{'Qty:' + data.count}"/>
+  </e:Group>
+  <e:Rect id="badge" width="5" height="5" includeIn="open"/>
+</e:Skin>

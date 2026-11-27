@@ -35,6 +35,13 @@ final class PlayerRaster {
             if (operation.equals("measure")) return measure(runs(job));
             if (operation.equals("textMetrics")) return metrics(runs(job));
             if (operation.equals("graphemes")) return graphemes(job.getString("text"));
+            if (operation.equals("bitmapPng")) {
+                String encodedPng = job.getString("data");
+                if (encodedPng.length() > 87384) throw new IOException("BitmapData PNG exceeds 64 KiB");
+                byte[] png = Base64.decode(encodedPng, Base64.NO_WRAP);
+                if (png.length < 24 || png.length > 65536) throw new IOException("Invalid BitmapData PNG");
+                return probedImage(png, "image/png", "BitmapData");
+            }
             if (operation.equals("glbJpeg")) return embeddedImage(job, "image/jpeg");
             if (operation.equals("glbPng")) return embeddedImage(job, "image/png");
             int width = dimension(job, "width"), height = dimension(job, "height");
@@ -69,6 +76,10 @@ final class PlayerRaster {
             }
             input.readFully(bytes);
         }
+        return probedImage(bytes, expectedMimeType, path);
+    }
+
+    private static String probedImage(byte[] bytes, String expectedMimeType, String path) throws IOException {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);

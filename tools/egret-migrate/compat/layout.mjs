@@ -46,8 +46,18 @@ for (const key of ['paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom']
   field(Layout.prototype, key, 0, n => Number.isFinite(n) && n >= 0);
 for (const Kind of [HorizontalLayout, VerticalLayout]) {
   field(Kind.prototype, 'gap', 6, Number.isFinite);
-  field(Kind.prototype, 'horizontalAlign', 'left', v => ['left', 'center', 'right'].includes(v));
-  field(Kind.prototype, 'verticalAlign', 'top', v => ['top', 'middle', 'bottom'].includes(v));
+  field(
+    Kind.prototype,
+    'horizontalAlign',
+    'left',
+    v => ['left', 'center', 'right'].includes(v) || (Kind === HorizontalLayout && v === 'justify')
+  );
+  field(
+    Kind.prototype,
+    'verticalAlign',
+    'top',
+    v => ['top', 'middle', 'bottom'].includes(v) || (Kind === HorizontalLayout && v === 'contentJustify')
+  );
 }
 for (const key of ['horizontalGap', 'verticalGap'])
   field(TileLayout.prototype, key, 6, n => Number.isFinite(n) && n >= 0);

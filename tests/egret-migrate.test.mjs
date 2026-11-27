@@ -108,13 +108,15 @@ function oldProject(t) {
   return { folder, write };
 }
 
-test('converts declared UTF-8 text and binary files without changing their bytes or RES types', async t => {
+test('converts declared text, binary and audio files without changing their bytes or RES types', async t => {
   const { folder, write } = oldProject(t);
   const entries = [
     { name: 'dialog', type: 'text', url: 'dialog.txt' },
-    { name: 'terrain', type: 'bin', url: 'terrain.bin' }
+    { name: 'terrain', type: 'bin', url: 'terrain.bin' },
+    { name: 'music', type: 'sound', url: 'music.wav' }
   ];
   write('resource/default.res.json', { resources: entries, groups: [{ name: 'world', keys: 'dialog,terrain' }] });
+  fs.writeFileSync(path.join(folder, 'resource/music.wav'), Buffer.from('RIFF\\u0000\\u0001\\u0002WAVE', 'latin1'));
   write('resource/dialog.txt', '渡口\r\nNorth bank\n');
   fs.writeFileSync(path.join(folder, 'resource/terrain.bin'), Uint8Array.of(0, 255, 13, 10));
   write('engine.mjs', 'export function createBrowserGame(){}\n');
@@ -137,7 +139,7 @@ test('converts declared UTF-8 text and binary files without changing their bytes
   }
   assert.deepEqual(
     inspectLegacyProject(folder).resources.resources.map(item => item.type),
-    ['text', 'bin']
+    ['text', 'bin', 'sound']
   );
   write('resource/default.res.json', { resources: [{ name: 'bad', type: 'text', url: 'startup.js' }], groups: [] });
   assert.throws(() => inspectLegacyProject(folder), { code: 'MIGRATE_RES_UNSUPPORTED' });
@@ -401,4 +403,49 @@ test('convert creates a real scoped import receipt in an independent and reprodu
   const repaired = await convertProject({ ...options, out: path.join(outputs, 'repair'), transaction: repair });
   assert.equal(repaired.revision, 2);
   assert.deepEqual(repaired.repair.diff.changedEntityIds, ['e_client']);
+});
+
+test('conversion carries a legacy JSON bitmap font and its local page once, preserving an ordinary image alias', async t => {
+  const { folder, write } = oldProject(t);
+  const example = new URL('../runtime-sdk/examples/legacy-bitmap-score/', import.meta.url);
+  write('resource/default.res.json', {
+    resources: [
+      { name: 'score', type: 'font', url: 'type/score.fnt' },
+      { name: 'icon', type: 'image', url: 'type/digits.png' }
+    ],
+    groups: [{ name: 'preload', keys: 'score' }]
+  });
+  fs.mkdirSync(path.join(folder, 'resource/type'), { recursive: true });
+  for (const key of ['score.fnt', 'digits.png'])
+    fs.copyFileSync(new URL(key, example), path.join(folder, 'resource/type', key));
+  write('engine.mjs', 'export function createBrowserGame(){}\n');
+  const parent = fs.mkdtempSync(path.join(os.tmpdir(), 'egret-score-migration-'));
+  t.after(() => fs.rmSync(parent, { recursive: true, force: true }));
+  const out = path.join(parent, 'game');
+  await convertProject({
+    source: folder,
+    out,
+    engine: path.join(folder, 'engine.mjs'),
+    engineVersion: '7.0.2',
+    esbuild: { transform: async code => ({ code }) }
+  });
+  for (const key of ['score.fnt', 'digits.png'])
+    assert.deepEqual(fs.readFileSync(path.join(out, 'web/resource/type', key)), fs.readFileSync(new URL(key, example)));
+  assert.deepEqual(
+    inspectLegacyProject(folder).resources.resources.map(r => [r.name, r.type]),
+    [
+      ['score', 'font'],
+      ['icon', 'image']
+    ]
+  );
+  write('resource/default.res.json', {
+    resources: [{ name: 'score', type: 'font', url: 'type/score.fnt' }],
+    groups: [{ name: 'preload', keys: 'score' }]
+  });
+  assert.equal(
+    inspectLegacyProject(folder).resources.files.filter(r => r.sourcePath.endsWith('/digits.png')).length,
+    1
+  );
+  write('resource/type/score.fnt', { file: '../outside.png', frames: { A: { w: 1, h: 1, x: 0, y: 0 } } });
+  assert.throws(() => inspectLegacyProject(folder));
 });

@@ -51,6 +51,7 @@ const TYPES = {
   '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json',
+  '.fnt': 'application/octet-stream',
   '.css': 'text/css',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',

@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import * as sdk from '@egret/engine';
+import { createBitmapText, parseBitmapFont } from '@egret/engine/bitmapfont';
 import { createLegacyBindings } from '../tools/egret-migrate/legacy-web.mjs';
 
 const drain = () => new Promise(resolve => setImmediate(resolve));
@@ -75,10 +76,43 @@ async function fixture(sheets = []) {
   };
   const {
     api: { RES }
-  } = createLegacyBindings(sdk, game, options, { storage: () => ({}), readAsset: item => begin(item.name) });
+  } = createLegacyBindings({ ...sdk, createBitmapText, parseBitmapFont }, game, options, {
+    storage: () => ({}),
+    readAsset: item => begin(item.name)
+  });
   await RES.loadConfig('r/config.json', 'r/');
   return { engine, RES, inflight, order, released, peak: () => peak };
 }
+
+test('RES.profile snapshots active reads and retained resources without starting more I/O', async () => {
+  const h = await fixture();
+  try {
+    h.RES.setMaxLoadingThread(1);
+    const first = h.RES.getResAsync('a');
+    const second = h.RES.getResAsync('b');
+    await drain();
+    const during = h.RES.profile();
+    assert.deepEqual(during.reads, { active: 1, queued: 1, limit: 1 });
+    assert.equal(during.declared, 8);
+    assert.equal(during.pending, 2);
+    assert.equal(during.ready, 0);
+    assert.ok(Object.isFrozen(during) && Object.isFrozen(during.reads));
+    h.inflight.get('a').resolve('a');
+    await first;
+    await drain();
+    h.inflight.get('b').resolve('b');
+    await second;
+    await drain();
+    assert.deepEqual(h.RES.profile().reads, { active: 0, queued: 0, limit: 1 });
+    assert.equal(h.RES.profile().ready, 2);
+    assert.equal(h.RES.destroyRes('a'), true);
+    assert.equal(h.RES.profile().ready, 1);
+    assert.equal(during.ready, 0);
+    assert.deepEqual(h.order, ['a', 'b']);
+  } finally {
+    await h.engine.dispose();
+  }
+});
 
 test('one limit covers direct reads and simultaneous groups, with coalesced items and per-group progress', async () => {
   const h = await fixture(),
@@ -230,4 +264,25 @@ test('an atlas and its page share one physical read with a concurrency limit of 
     await h.engine.dispose();
   }
   assert.equal(h.released.length, 1);
+});
+
+test('two fonts share one I/O slot across descriptors and PNG pages', async () => {
+  const h = await fixture();
+  try {
+    h.RES.setMaxLoadingThread(1);
+    const loading = Promise.all(['alpha', 'beta'].map(key => h.RES.getResByUrl(key + '.fnt', null, null, 'font')));
+    for (let i = 0; i < 4; i++) {
+      await drain();
+      assert.equal(h.inflight.size, 1);
+      const [key, job] = h.inflight.entries().next().value;
+      if (key.endsWith('.fnt'))
+        job.resolve({ file: key.replace('.fnt', '.png'), frames: { A: { x: 0, y: 0, w: 1, h: 1 } } });
+      else job.resolve();
+    }
+    await loading;
+    assert.equal(h.peak(), 1);
+    assert.equal(h.order.length, 4);
+  } finally {
+    await h.engine.dispose();
+  }
 });

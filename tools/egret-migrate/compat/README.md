@@ -188,3 +188,79 @@ gradle -p ./layout-app assembleDebug
 adb install -r ./layout-app/build/outputs/apk/debug/EgretGame-debug.apk
 adb shell am start -n org.egret.sample.layout/org.egret.example.LibraryActivity
 ```
+
+On Windows Edge 158, WebGL2 ran on an RTX 5090 Laptop through ANGLE D3D11. The 320 × 180 capture contained 228 green and 224 orange glyph pixels above the fixture's color thresholds. On a Galaxy Z Fold7, Android 17 with trimmed V8 15.7.112.19 and GLES3 produced 4,892 and 6,099 at the phone's display scale. Both hosts emitted one `open:gate` after a tap on each color and reported `north-gate-board` from the injected project resource method. The red/blue overlap sampled magenta, red and magenta across the three modes. The Fold7 released all three uploaded pages on close, including two text pages. Text occupied zero bytes and abandoned uploads were zero. Input on the physical devices was injected. The original Egret 5 parser and dispatcher matched three independent markup samples and the non-bubbling link event payload in Edge.
+
+## Classic textures and shared atlas pages
+
+A single-page RES image and an admitted packed frame are `egret.Texture` objects. `new egret.SpriteSheet(page).createTexture(name, x, y, width, height, offsetX?, offsetY?, textureWidth?, textureHeight?)` borrows the existing GPU page. Nested crops use the base frame's packed origin and trim. Reusing a name replaces its lookup while existing bitmaps keep their frame. A sheet owns up to 2,048 live child textures, including replaced names. Dispose a child to make room. Disposing a sheet releases its child crops. RES owns its pages until `destroyRes` or game close.
+
+```js
+const page = await RES.getResAsync('buttons_png');
+const sheet = new egret.SpriteSheet(page);
+const icon = sheet.createTexture('accept', 2, 0, 2, 2);
+const button = new egret.Bitmap(icon);
+
+egret.BitmapData.create('base64', pngBase64, data => {
+  const texture = new egret.Texture();
+  texture.bitmapData = data;
+  button.texture = texture;
+  // When the view no longer needs the dynamic image, call texture.dispose().
+});
+```
+
+`BitmapData.create` accepts a PNG as plain Base64 or an ArrayBuffer. Both hosts accept up to 64 KiB compressed, 4,096 pixels per side and 1,048,576 decoded pixels. The callback runs after the asset is ready. In a browser, `new egret.BitmapData(loadedImage)` also accepts a readable same-origin image or canvas. Native games use the packaged PNG or byte API. Android dynamic PNG pages share the player's existing allocator with text and occupy slots 224–255. Actual availability depends on active pages. Encoded JPEG/GIF, general GPU render-to-texture, and slicing across multiple physical pages remain outside this API.
+
+Run `node --test tests/egret-migrate-textures.test.mjs`. A generated 4 × 2 PNG was exercised in Windows Edge 158 (RTX 5090 Laptop, WebGL2) and on a Fold7 (Android 17, trimmed V8 15.7.112.19, GLES3). Both displayed the red crop from RES and the green crop decoded from bytes. Four Edge samples matched exact RGB values, including an already-loaded HTML image. The Fold7 released both native pages at close.
+
+### Tabs, progress skins and bitmap scores
+
+`eui.TabBar` accepts an `eui.ArrayCollection`, selects the first item when required, and uses a nonvirtual horizontal row with justified widths by default. A tab still uses its own renderer and skin. ViewStack-backed synchronization requires a separate adapter. Assigning `egret.TextField.default_fontFamily` changes the family for subsequently constructed text fields and EUI labels. Existing labels retain their chosen family. Listen to `eui.UIEvent.MOVE` on the component. A real change to `setLayoutBoundsPosition(x,y)` emits one non-bubbling event; direct x/y assignments coalesce on the host clock.
+
+`eui.ProgressBar` consumes the `thumb` and `labelDisplay` skin parts. Set `minimum`, `maximum`, `snapInterval`, `value`, `direction` or `labelFunction` as needed. `slideDuration = 0` shows changes immediately. A positive duration uses the shared game clock. In the independent old-runtime comparison, a 120-unit row arranged 20/40/20-unit tabs as 30/60/30. A right-to-left bar set to 43 of 80 with a five-unit step reported 45 and clipped its thumb to the last 68 units. The same cases pass on the migration host.
+
+For a bitmap score, declare an Egret single-page JSON `.fnt` as `type: "font"` in RES. Its local PNG is included when converting. A regular image alias may share that PNG. Add `--with bitmapfont` to the usual `node tools/pack-single-file.mjs` build and pass that edition to the browser converter. npm/ES-module hosts can supply `createBitmapText` and `parseBitmapFont` from `@egret/engine/bitmapfont` in the same engine graph. The classic Android adapter includes these operations. A loaded font owns one image lease. `eui.BitmapLabel.font` accepts its RES name or the loaded value. Explicitly releasing the font removes the attached meshes. After reacquisition, assign the new font to the label.
+
+```js
+await RES.loadGroup('board');
+const score = new eui.BitmapLabel('12');
+score.font = 'digits';
+this.addChild(score);
+```
+
+Run `node runtime-sdk/examples/legacy-bitmap-score/verify-browser.mjs --engine <font-enabled-egret2d.mjs> --playwright <playwright/index.mjs> --out ./score-evidence`. To run the Android sample, use the layout APK command above with `--project runtime-sdk/examples/legacy-bitmap-score`. Tap the orange button twice to release and reload the font. Edge 158/RTX 5090 Laptop and Fold7/GLES3 matched all five pixel probes before release, after release and after reload, including the trimmed glyph origin, clipped edge and direction of the progress bar. The two glyphs measure 8 × 5 including transparent advances, then 0 × 0 on font release and 8 × 5 after reacquisition. Egret 5.3.10, Edge and Fold7 agree on the loaded dimensions. Fold7 recorded two uploads, two releases and zero abandoned uploads. All 37 supplied legacy font descriptors parsed and 455 glyphs had paired pages. Multiline spacing for mixed source heights, missing glyphs/spaces, and OS font substitution remain separate fidelity checks. The custom single-line score is the verified workload.
+
+## Text-only RenderTexture
+
+Use `new egret.RenderTexture().drawToTexture(container, clip, 1)` for a translated tree of read-only TextFields and plain DisplayObjectContainers. It captures text, position, color and type style immediately, even off stage. Later mutations of the source take effect on the next drawToTexture. Within a 2,048 × 2,048 logical page, existing named SpriteSheet crops keep their identity and update to the new snapshot when displayed. The host rasterizes only referenced crops. Empty crops use no texture. A stale or released bitmap cannot publish an earlier raster over a new one.
+
+```js
+const target = new egret.RenderTexture();
+const clip = new egret.Rectangle(0, 0, 2048, 2048);
+target.drawToTexture(labels, clip);
+const atlas = new egret.SpriteSheet(target);
+// Egret 5 WebGL packed a render target from the bottom edge.
+const title = atlas.createTexture('title', 32, 2048 - 22 - 34, 40, 34);
+const bitmap = new egret.Bitmap(title);
+labels.removeChildren();
+```
+
+Logical crops use untrimmed rectangles of at most 1,048,576 pixels. Draw accepts up to 1,024 visited nodes, 256 measured fragments and 8,192 UTF-16 code units. Rich fill, typeface and outline reuse the host text path. Underlines, masks, non-translation transforms, arbitrary graphics, nested crops of logical crop textures, and embedded bitmaps require other rendering paths. Reading pixels or exporting the entire logical atlas is outside this profile.
+
+On the same Windows Edge 158 hardware, the original 5.3.10 WebGL viewport showed colored ink at (4, 4)–(29, 20) inside a 40 × 34 bottom-origin crop. The migrated WebGL2 path produced (4, 5)–(29, 21). The corresponding top-origin crop remained blank in both runs. Repainting the same crop changed red to green, preserving position and orientation. Edge antialiasing differed by renderer and color. On the Fold7 GLES3 player the red and green ink occupied the same physical bounds, (625, 421)–(734, 498), and closing released both uploaded text pages with zero abandoned uploads.
+
+### ImageLoader
+
+Set `egret.ImageLoader.crossOrigin = 'anonymous'` before loading a browser image from another origin. An instance can override the default. The remote server must return an appropriate CORS header. The engine's existing image loader reads and decodes the image. On Android, supply a PNG path in the application's declared image bindings. A successful request sets `loader.data` to a `BitmapData` and dispatches `complete`. An unreadable image dispatches `ioError`. Assign the data to `texture.bitmapData` to display it. A subsequent `load()`, the compatibility adapter's `close()`, and owner close suppress outdated events. A shared read can finish for other consumers; the retired caller releases its lease.
+
+Edge 158 made two requests to a separate loopback origin without sending its test cookie. The server's missing CORS header produced an error, and allowing anonymous reads loaded a 4 × 2 PNG. The Fold7 reported the same failure/success sequence for an undeclared and a declared image. A request replaced before admission emitted no event. Declared package reads shared their texture page with RES.
+
+### State-only children and generated bindings
+
+An Egret 5.3.10 release factory may emit `eui.AddItems` for `includeIn` and `eui.Binding.$bindProperties` for `text="{data.name}"`. The generated-factory adapter resolves the original child and sibling at state entry. It supports first, last, before and after insertion in a named container or the skin host. The same part can leave and re-enter multiple times. A part explicitly moved to a different parent remains there on state exit. Closing the view also disposes its detached state-only parts.
+
+Bindings starting at `hostComponent` can follow a changed `data` object or a property of that object. Template literals and observed values combine using the original JavaScript addition rules. Leaving the stage releases observers and re-entering reads the current model. Generated calls with unsupported paths report a factory error. The covered entry is the reviewed generated skin provider. Arbitrary application calls into the internal Watcher API require separate coverage.
+
+`tests/fixtures/migrate-theme-factories/Dispatch.exml` and `dispatch.thm.json` contain an editable sample and the factory generated from it with the original compiler. Run `node --test --test-name-pattern "5.3 generated state" tests/egret-migrate-eui.test.mjs`. Original 5.3.10 and Edge 158/WebGL2 followed the same five observations. Opening inserted the caption before its sibling and the badge after the root group. Closing and reopening restored both in the same order. Reattaching with a new model displayed the new caption and count. The Egret 7 run also verified observer removal and disposal of the hidden parts.
+
+For a browser game with an editable field, build its single-file engine with `--with text-input`. Use `--with bitmapfont,text-input` when the same game also uses bitmap fonts. A module consumer can supply `createBrowserTextInput` from the optional `@egret/engine/web/text-input` entry alongside its game functions. The Android player uses its native editor.
