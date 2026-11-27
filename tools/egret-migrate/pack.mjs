@@ -20,6 +20,7 @@ async function pack(options) {
     'browser-adapter-files.mjs',
     ...browserAdapterFiles(),
     'lobby-session.mjs',
+    'table-session.mjs',
     'compat/android.mjs',
     'compat/transport-android.mjs',
     'compat/transport.md',

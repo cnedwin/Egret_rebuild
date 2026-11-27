@@ -21,7 +21,7 @@ egret-migrate rebuild --source <editable conversion> --out <new directory> --esb
 egret-migrate verify --old <working old HTML> --converted <conversion directory> --scenario <trusted mjs> --playwright <module> --out <new directory>
 egret-migrate preview --run <verified comparison directory> --address <private IPv4> --qr-module <qrcode.mjs>
 
-For the original EraserSanGuoSha repository, pass --profile eraser-lobby --source <repository-root> to inspect or convert. Convert accepts --socket-url <loopback-origin> for a separate local game server and otherwise uses the page origin.
+For the original EraserSanGuoSha repository, pass --profile eraser-lobby or --profile eraser-table and --source <repository-root> to inspect or convert. Convert accepts --socket-url <loopback-origin> for a separate local game server and otherwise uses the page origin.
 
 For matched Egret 5.3.x declarations, inspect reports ordered sources, module adapters, RES manifests and theme delivery. Review conversion.status and reasons before converting.\n\nClassic project inspection and conversion accept --source-order, --resources, --theme and --bones (a JSON array of explicit RES-name mappings). Convert also accepts --transaction and --project-id. Verify accepts --executable.
 `;
@@ -108,10 +108,10 @@ async function inspectOrConvert(command, values) {
     });
   }
   const profile = values.profile;
-  if (profile !== undefined && profile !== 'eraser-lobby')
+  if (profile !== undefined && !['eraser-lobby', 'eraser-table'].includes(profile))
     refuse('MIGRATE_ARGUMENTS', 'Unknown migration profile.', { profile });
-  if (values['socket-url'] !== undefined && profile !== 'eraser-lobby')
-    refuse('MIGRATE_ARGUMENTS', '--socket-url requires --profile eraser-lobby.');
+  if (values['socket-url'] !== undefined && !['eraser-lobby', 'eraser-table'].includes(profile))
+    refuse('MIGRATE_ARGUMENTS', '--socket-url requires an Eraser network profile.');
   if (
     profile &&
     ['source-order', 'resources', 'theme', 'bones', 'movie-atlases'].some(key => values[key] !== undefined)

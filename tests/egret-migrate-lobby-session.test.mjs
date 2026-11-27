@@ -4,6 +4,24 @@ import { EventEmitter } from 'node:events';
 import test from 'node:test';
 import { bindRoomHandoff, launchLobbyHost, socketOrigin } from '../tools/egret-migrate/lobby-session.mjs';
 
+import { bindTableChoices } from '../tools/egret-migrate/table-session.mjs';
+
+test('both match boundaries drop all active table pickers and their hand page', () => {
+  const socket = new EventEmitter();
+  const scene = {};
+  const choices = bindTableChoices(socket, scene);
+  for (const boundary of ['game end', 'game begin']) {
+    choices.privateWindow = { cards: [1] };
+    choices.globalWindow = scene.globalCardSelectorWindow = { cards: [2] };
+    choices.page = 1;
+    socket.emit(boundary);
+    assert.equal(choices.privateWindow, undefined);
+    assert.equal(choices.globalWindow, undefined);
+    assert.equal(scene.globalCardSelectorWindow, undefined);
+    assert.equal(choices.page, 0);
+  }
+});
+
 test('the optional room server is an HTTP(S) loopback origin without user data', () => {
   assert.equal(socketOrigin(undefined), null);
   assert.equal(socketOrigin('http://127.0.0.1:45123/'), 'http://127.0.0.1:45123');

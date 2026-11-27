@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/egret-migrate/table-source.mjs",
+      "originRole": "First-party mapping of owner-supplied EraserSanGuoSha rule declarations. The converter carries no upstream game code or artwork. Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/egret-migrate/table-session.mjs",
+      "originRole": "First-party Egret 7 table presentation using owner-supplied state and selection behavior. Independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
