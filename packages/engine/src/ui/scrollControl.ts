@@ -3,6 +3,7 @@ import { EgretError } from '@egret/runtime';
 import type { DisplayObject } from '@egret/runtime';
 import type { HoverInput, WheelPoint } from '../hoverInputTypes.js';
 import type { PointerContact, PointerInput } from '../pointerInputTypes.js';
+import { trackScreenControl } from '../internal/uiControlReportState.js';
 
 /**
  * The scroll position of one axis of a clipped viewport an application draws itself.
@@ -228,6 +229,8 @@ export function createScrollControl(options: ScrollControlOptions): ScrollContro
     );
   }
 
+  const untrack =
+    thumb === undefined ? undefined : trackScreenControl(thumb.input, thumb.target, 'scroll', () => enabled && !closed);
   return Object.freeze({
     axis,
     get offset() {
@@ -291,6 +294,7 @@ export function createScrollControl(options: ScrollControlOptions): ScrollContro
     dispose() {
       if (closed) return;
       closed = true;
+      untrack?.();
       let failure: unknown;
       try {
         setDragging(undefined);

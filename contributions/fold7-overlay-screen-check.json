@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/internal/uiControlReportState.ts",
+      "originRole": "First-party DOM-free private association of live native UI control targets and enabled state for screen verification; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
