@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "types": [],
+    "lib": [
+      "es5",
+      "es2015.promise"
+    ]
+  },
+  "include": [
+    "src",
+    "libs"
+  ]
+}

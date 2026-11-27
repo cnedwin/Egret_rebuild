@@ -7,6 +7,10 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import com.caoccao.javet.annotations.V8Function;
 import com.caoccao.javet.enums.JSRuntimeType;
+import com.caoccao.javet.exceptions.JavetException;
+import com.caoccao.javet.interop.options.V8RuntimeOptions;
+import com.caoccao.javet.values.reference.V8Script;
+import org.json.JSONObject;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.values.V8Value;
@@ -16,9 +20,11 @@ import com.caoccao.javet.values.reference.V8ValueObject;
 import com.caoccao.javet.values.reference.V8ValueTypedArray;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** One worker owns the isolate, its persistent handles and all timer callbacks. */
 public final class JavetProjectScripts extends ScriptSession {
@@ -30,6 +36,11 @@ public final class JavetProjectScripts extends ScriptSession {
     private final Object interruptLock = new Object();
     private V8Runtime runtime;
     private V8ValueObject servicesObject, tasks, game;
+    private ProjectScriptPlan scripts;
+    private ProjectCodeCache cache;
+    private int candidates, recordsRead, recordsWritten, compileFallbacks;
+    private long compileNanos, cacheNanos;
+    private final Set<String> requestedGroups = new HashSet<>();
     private boolean retired;
     private volatile boolean deadlineExpired;
 
@@ -45,6 +56,7 @@ public final class JavetProjectScripts extends ScriptSession {
         if (owner.ending) return;
         boolean full = "standard".equals(profile);
         if (!full && !"trimmed".equals(profile)) throw new IOException("Unknown embedded V8 profile");
+        scripts = new ProjectScriptPlan(project.v8Scripts);
         if (full) ProjectV8Assets.installIcu(context);
         JSRuntimeType type = full ? JSRuntimeType.V8I18n : JSRuntimeType.V8;
         synchronized (interruptLock) {
@@ -58,6 +70,11 @@ public final class JavetProjectScripts extends ScriptSession {
         if (intl != full)
             throw new IOException("Unexpected Intl capability for " + profile);
         String version = runtime.getVersion();
+        if (project.codeCache) {
+            String environment = "Javet-6.0.3|" + version + "|" + profile + "|" + android.os.Build.SUPPORTED_ABIS[0]
+                + "|" + V8RuntimeOptions.V8_FLAGS.toString();
+            cache = new ProjectCodeCache(context.getCodeCacheDir(), environment);
+        }
         owner.ui.post(() -> owner.vmDetails(version, intl));
         servicesObject = runtime.createV8ValueObject();
         servicesObject.bind(services);
@@ -65,14 +82,70 @@ public final class JavetProjectScripts extends ScriptSession {
         runtime.getExecutor(ProjectV8Assets.read(context, "bootstrap.js", 65536))
             .setResourceName("egret-project-bootstrap.js").executeVoid();
         tasks = runtime.getGlobalObject().get("EgretRuntimeTasks");
-        String source = new String(project.read("game.js", 16 << 20), StandardCharsets.UTF_8);
-        runtime.getExecutor(source).setResourceName("game.js").executeVoid();
+        execute(scripts.startup());
+        if (owner.ending) return;
         runtime.getExecutor("for (const k of ['start','frame','input','pause','resume','close']) "
             + "if (typeof globalThis.EgretPlayerProject?.[k] !== 'function') throw Error('Missing project method '+k)")
             .executeVoid();
         game = runtime.getGlobalObject().get("EgretPlayerProject");
         if (!owner.ending) runtime.getExecutor("Promise.resolve().then(()=>EgretPlayerProject.start())"
             + ".then(()=>EgretNativePlayer.started(),e=>EgretNativePlayer.failure(String(e)))").executeVoid();
+    }
+
+    private void execute(List<String> files) throws Exception {
+        try {
+            scripts.execute(files, project::openPackaged, this::executeOne, () -> owner.ending);
+        } finally {
+            if (cache != null) {
+                JSONObject report = new JSONObject().put("candidates", candidates).put("recordsRead", recordsRead)
+                    .put("recordsWritten", recordsWritten).put("compileFallbacks", compileFallbacks)
+                    .put("compileUs", compileNanos / 1000).put("cacheUs", cacheNanos / 1000);
+                owner.ui.post(() -> owner.vmCache(report));
+            }
+        }
+    }
+
+    private void executeOne(String name, String source, byte[] bytes) throws Exception {
+        if (cache == null) {
+            if (!owner.ending) runtime.getExecutor(source).setResourceName(name).executeVoid();
+            return;
+        }
+        long io = System.nanoTime();
+        String key = cache.key(name, bytes);
+        if (key == null) {
+            if (!owner.ending) runtime.getExecutor(source).setResourceName(name).executeVoid();
+            return;
+        }
+        candidates++;
+        byte[] stored = cache.read(key);
+        if (stored != null) recordsRead++;
+        cacheNanos += System.nanoTime() - io;
+        if (owner.ending) return;
+        long start = System.nanoTime();
+        V8Script compiled;
+        try {
+            compiled = runtime.getExecutor(source, stored).setResourceName(name).compileV8Script();
+        } catch (JavetException error) {
+            if (stored == null) throw error;
+            // Retry compilation only. Never retry execution after a script changed its realm.
+            compileFallbacks++;
+            stored = null;
+            compiled = runtime.getExecutor(source).setResourceName(name).compileV8Script();
+        }
+        compileNanos += System.nanoTime() - start;
+        try (V8Script script = compiled) {
+            if (owner.ending) return;
+            script.executeVoid();
+            if (stored == null && !owner.ending) {
+                long write = System.nanoTime();
+                try {
+                    if (cache.write(key, script.getCachedData())) recordsWritten++;
+                } catch (JavetException unavailable) {
+                    // A cache serialization failure cannot change the result of executed code.
+                }
+                cacheNanos += System.nanoTime() - write;
+            }
+        }
     }
 
     // Promise continuations run on this worker. Timers re-enter through its
@@ -153,6 +226,7 @@ public final class JavetProjectScripts extends ScriptSession {
 
     @Override boolean requestClose() {
         worker.post(() -> run(() -> {
+            if (tasks != null) tasks.invokeVoid("closeScripts");
             if (game == null) { finish(null, null); return; }
             runtime.getExecutor("Promise.resolve().then(()=>EgretPlayerProject.close())"
                 + ".then(r=>EgretNativePlayer.finished(JSON.stringify(r??null)))"
@@ -208,6 +282,18 @@ public final class JavetProjectScripts extends ScriptSession {
     }
 
     public final class Services {
+        // Post rather than entering V8 recursively from a native callback.
+        @V8Function public boolean requestScriptGroup(String name) {
+            List<String> files = scripts.group(name);
+            if (owner.ending || files == null || !requestedGroups.add(name)) return false;
+            return worker.post(() -> run(() -> {
+                if (owner.ending) return;
+                String error = null;
+                try { execute(files); }
+                catch (Exception failure) { error = failure.toString(); }
+                if (!owner.ending) tasks.invokeVoid("scriptGroupResult", name, error);
+            }));
+        }
         @V8Function public double now() { return System.nanoTime() / 1_000_000.0; }
         @V8Function public void schedule(int id, int delay) {
             Runnable timer = () -> run(() -> {
@@ -223,6 +309,9 @@ public final class JavetProjectScripts extends ScriptSession {
         }
         @V8Function public void page(int id, int width, int height, String rgba) { pages.publish(id, width, height, rgba); }
         @V8Function public void releasePage(int id) { pages.release(id); }
+        @V8Function public boolean hostStart(int id, String action, String json) { return owner.hostServices.start(id, action, json); }
+        @V8Function public void hostCancel(int id) { owner.hostServices.cancel(id); }
+        @V8Function public String hostTake(int id) { return owner.hostServices.take(id); }
         @V8Function public String saveRead(String key) { return readSave(key); }
         @V8Function public boolean saveWrite(String key, String value) { return writeSave(key, value); }
         @V8Function public boolean saveRemove(String key) { return removeSave(key); }

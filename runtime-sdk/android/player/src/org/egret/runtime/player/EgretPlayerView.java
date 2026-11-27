@@ -36,6 +36,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
 
     final Handler ui = new Handler(Looper.getMainLooper());
     private final Listener listener;
+    final ProjectHostServices hostServices;
     private ProjectAssets project;
     ProjectSaveStorage saves;
     private boolean drainingSaves;
@@ -47,7 +48,10 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     final PlayerTiming timing = new PlayerTiming();
     private String vmVersion, lastError;
     private Boolean vmIntl;
+    private JSONObject codeCacheStats;
     private PlayerInput controls;
+    private final ProjectMusic music = new ProjectMusic();
+    private final ProjectBack back;
     private final PlayerAudio audio = new PlayerAudio(this);
     private final Choreographer.FrameCallback tick = this::tick;
     private final Runnable startupTimeout = () -> fail("Project did not submit its first native frame within 30 seconds");
@@ -63,7 +67,13 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
     volatile boolean ending;
 
     public EgretPlayerView(Activity activity, String projectAssetDir, Listener listener) {
-        this(activity, projectAssetDir, listener, null, null);
+        this(activity, projectAssetDir, listener, java.util.Collections.emptyMap(), null, null);
+    }
+
+    /** Open a project with explicit Activity-owned operations, such as a channel SDK. */
+    public EgretPlayerView(Activity activity, String projectAssetDir, Listener listener,
+                          java.util.Map<String, ProjectHostServices.Handler> actions) {
+        this(activity, projectAssetDir, listener, actions, null, null);
     }
 
     /** Run a fixed workload in a debuggable application. Files stay in the app's private storage. */
@@ -72,13 +82,26 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         if ((activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0)
             throw new IllegalStateException("Project benchmarks require a debuggable app");
         if (mode == null) throw new IllegalArgumentException("Missing project benchmark mode");
-        return new EgretPlayerView(activity, projectAssetDir, listener, mode, expectedCaptureSha256);
+        return new EgretPlayerView(activity, projectAssetDir, listener, java.util.Collections.emptyMap(), mode, expectedCaptureSha256);
     }
 
-    private EgretPlayerView(Activity activity, String projectAssetDir, Listener listener, String mode, String expectedDigest) {
+    private EgretPlayerView(Activity activity, String projectAssetDir, Listener listener,
+                           java.util.Map<String, ProjectHostServices.Handler> actions, String mode, String expectedDigest) {
         super(activity);
         mainThread();
         this.listener = listener != null ? listener : new Listener() {};
+        back = new ProjectBack(activity);
+        java.util.Map<String, ProjectHostServices.Handler> registered = new java.util.HashMap<>(actions);
+        if (registered.keySet().stream().anyMatch(name -> name.startsWith("egret."))) {
+            throw new IllegalArgumentException("The egret. namespace belongs to the player");
+        }
+        registered.put("egret.waitForBack", (json, reply) -> back.waitForBack(reply));
+        registered.put("egret.editText", (json, reply) -> controls.openEditor(json, reply));
+        registered.put("egret.music.play", (json, reply) -> music.play(project, json, reply));
+        registered.put("egret.music.stop", (json, reply) -> { music.stop(); reply.resolve("true"); return null; });
+        hostServices = new ProjectHostServices(registered, task -> ui.post(task), (id, ok) -> {
+            if (!ending && scripts != null) scripts.invoke("EgretPlayerProject.hostResult(" + id + "," + ok + ")");
+        }, error -> ui.post(() -> notifyError("Channel cleanup failed: " + error.getClass().getSimpleName())));
         setBackgroundColor(Color.BLACK);
         try {
             project = new ProjectAssets(activity.getAssets(), projectAssetDir);
@@ -114,6 +137,12 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         int h = Math.max(1, (int) Math.round(project.height * scale));
         surface.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
+    }
+
+    /** Forward Activity.onBackPressed() here on legacy hosts, then delegate to Android if false. */
+    public boolean consumeSystemBack() {
+        mainThread();
+        return !ending && back.consume();
     }
 
     /** Start or resume delivery of foreground time, input and frames. */
@@ -156,6 +185,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
             surface.onResume();
             surfacePaused = false;
         }
+        back.setForeground(true);
+        music.setForeground(true);
         scripts.resumeVm();
         if (scriptReady) scripts.invoke("EgretPlayerProject.resume()");
         if (!ready) ui.postDelayed(startupTimeout, 30000);
@@ -164,6 +195,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
 
     private void deactivate() {
         if (!foreground) return;
+        back.setForeground(false);
+        music.setForeground(false);
         controls.stop();
         audio.stop();
         elapsedNs += SystemClock.elapsedRealtimeNanos() - foregroundStartNs;
@@ -326,6 +359,9 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         mainThread();
         if (ending) return;
         ending = true;
+        back.clear();
+        hostServices.close();
+        music.stop();
         wanted = false;
         if (saves == null) { closeScripts(); return; }
         // Retire admission immediately. A save that already entered may finish
@@ -381,6 +417,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         timing.setEnabled(enabled && (benchmark == null || !benchmark.captures()));
     }
 
+    void vmCache(JSONObject report) { codeCacheStats = report; }
     void vmDetails(String version, boolean intl) { vmVersion = version; vmIntl = intl; }
 
     /** A new snapshot of observed session counters. A draw records CPU submission. */
@@ -389,8 +426,8 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         try {
             return new JSONObject().put("ready", ready).put("foreground", foreground).put("closed", closed)
                 .put("benchmark", benchmark == null ? null : benchmark.diagnostics())
-                .put("lastError", lastError).put("scriptHost", benchmark != null && benchmark.replays() ? "native-replay" : BundledScripts.PROFILE).put("vmVersion", vmVersion).put("intl", vmIntl)
-                .put("timing", timing.snapshot()).put("frames", frames).put("lastFrameId", lastFrameId).put("contexts", graphics == null ? 0 : graphics.contexts)
+                .put("lastError", lastError).put("scriptHost", benchmark != null && benchmark.replays() ? "native-replay" : BundledScripts.PROFILE).put("vmVersion", vmVersion).put("intl", vmIntl).put("codeCache", codeCacheStats)
+                .put("music", music.snapshot()).put("timing", timing.snapshot()).put("frames", frames).put("lastFrameId", lastFrameId).put("contexts", graphics == null ? 0 : graphics.contexts)
                 .put("uploads", graphics == null ? 0 : graphics.uploads).put("releases", graphics == null ? 0 : graphics.releases)
                 .put("geometryBatchPackets", scripts == null ? 0 : scripts.geometryBatchPackets)
                 .put("geometryBatchBridgeBytes", scripts == null ? 0 : scripts.geometryBatchBridgeBytes)

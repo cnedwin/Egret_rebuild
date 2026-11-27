@@ -14,10 +14,14 @@ export function createLegacyEui({
   LegacyEvent,
   game,
   measureLine,
+  graphemes,
   stageSize
 }) {
   const states = new WeakMap();
   const skins = new Map();
+  const compiledSkins = new Map(),
+    compiledDefaults = new Map(),
+    compiledTypes = new Map();
   const customTypes = new Map();
   const customNames = new Map();
   const activeSkins = new Set();
@@ -402,8 +406,14 @@ export function createLegacyEui({
           refused('Changing a live skin requires an explicit migration.');
         if (data.skinApplied && data.skin !== value)
           refused('Replacing an applied EUI skin requires an explicit migration.');
+        const previous = data.skin;
         data.skin = value;
-        if (!data.skinApplied) attachSkin(this, value);
+        try {
+          if (!data.skinApplied) attachSkin(this, value);
+        } catch (error) {
+          data.skin = previous;
+          throw error;
+        }
       }
       addChild(child) {
         const node = super.addChild(child);
@@ -444,6 +454,19 @@ export function createLegacyEui({
 
   class Component extends sized(Container) {
     #enabled = true;
+    get elementsContent() {
+      return Array.from({ length: this.numChildren }, (_, i) => this.getChildAt(i));
+    }
+    set elementsContent(children) {
+      if (
+        !Array.isArray(children) ||
+        new Set(children).size !== children.length ||
+        children.some(child => !states.has(child))
+      )
+        refused('Expected an ordered list of EUI children.');
+      this.removeChildren();
+      for (const child of children) this.addChild(child);
+    }
     // Legacy subclasses regularly call the base hooks even when they have no base work.
     createChildren() {}
     childrenCreated() {}
@@ -457,8 +480,14 @@ export function createLegacyEui({
       if (data.currentState === value) return;
       if (typeof value !== 'string' || (data.skinStates?.length && !data.skinStates.includes(value)))
         refused('Unknown EUI skin state: ' + value);
+      const previous = data.currentState;
       data.currentState = value;
-      data.refreshState?.();
+      try {
+        data.refreshState?.();
+      } catch (error) {
+        data.currentState = previous;
+        throw error;
+      }
     }
     get enabled() {
       return this.#enabled;
@@ -713,6 +742,15 @@ export function createLegacyEui({
 
   class Label extends sized(TextField) {
     #textAlign = 'left';
+    #lineSpacing = 0;
+    get lineSpacing() {
+      return this.#lineSpacing;
+    }
+    set lineSpacing(value) {
+      if (!Number.isFinite(value)) refused('Expected finite EUI line spacing.');
+      this.#lineSpacing = value;
+      this.alignText();
+    }
     #verticalAlign = 'top';
     // In Egret 5 this flag selects input-field behavior. Read-only labels use their layout width.
     multiline = false;
@@ -757,20 +795,36 @@ export function createLegacyEui({
       const width = state(this).arrangedwidth ?? state(this).explicitwidth;
       const height = state(this).arrangedheight ?? state(this).explicitheight;
       const font = (this.italic ? 'italic ' : '') + (this.bold ? 'bold ' : '') + this.size + 'px ' + this.fontFamily;
-      const key = JSON.stringify([this.#words, width, height, font, this.textColor]);
+      const style = {
+        size: this.size,
+        weight: this.bold ? 700 : 400,
+        italic: this.italic,
+        fontFamily: this.fontFamily
+      };
+      const step = this.size + this.#lineSpacing;
+      const key = JSON.stringify([
+        this.#words,
+        width,
+        height,
+        font,
+        this.textColor,
+        this.stroke,
+        this.strokeColor,
+        step
+      ]);
       if (key !== this.#format) {
         this.#format = key;
         const rows = [];
         for (const line of this.#words.split(/\r\n|[\r\n]/)) {
-          if (width === undefined || !(measureLine(line, font) > width)) {
+          if (width === undefined || !(measureLine(line, font, style) > width)) {
             rows.push(line);
             continue;
           }
           let row = '';
           // Egret's default static text wraps at characters. Measure whole candidates
           // with the browser font so proportional glyphs and grapheme clusters survive.
-          for (const { segment } of new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(line)) {
-            if (row && measureLine(row + segment, font) > width) {
+          for (const segment of graphemes(line)) {
+            if (row && measureLine(row + segment, font, style) > width) {
               rows.push(row);
               row = '';
             }
@@ -781,8 +835,9 @@ export function createLegacyEui({
         this.#totalLines = rows.length;
         // The first row is always drawn. Each following row starts only if its
         // midpoint fits the explicit box; hidden rows do not acquire raster slots.
-        if (height !== undefined && this.size > 0) {
-          rows.length = Math.min(rows.length, Math.max(1, Math.floor(height / this.size + 0.5)));
+        if (height !== undefined && rows.length > 1) {
+          if (this.size / 2 + step > height) rows.length = 1;
+          else if (step > 0) rows.length = Math.min(rows.length, 1 + Math.floor((height - this.size / 2) / step));
         }
         if (super.text !== rows[0]) super.text = rows[0];
         while (this.#rows.length > rows.length - 1) this.#rows.pop().dispose();
@@ -798,6 +853,8 @@ export function createLegacyEui({
           }
           if (row.size !== this.size) row.size = this.size;
           if (row.textColor !== this.textColor) row.textColor = this.textColor;
+          if (row.stroke !== this.stroke) row.stroke = this.stroke;
+          if (row.strokeColor !== this.strokeColor) row.strokeColor = this.strokeColor;
           if (row.fontFamily !== this.fontFamily) row.fontFamily = this.fontFamily;
           if (row.bold !== this.bold) row.bold = this.bold;
           if (row.italic !== this.italic) row.italic = this.italic;
@@ -806,12 +863,13 @@ export function createLegacyEui({
       }
       const visual = this.legacyTextDisplay;
       if (!visual) return;
-      const blockHeight = this.#totalLines === 1 ? visual.getBounds().height : this.#totalLines * this.size;
+      const blockHeight =
+        this.#totalLines === 1 ? visual.getBounds().height : this.size + (this.#totalLines - 1) * step;
       const top = height === undefined ? 0 : alignment(this.#verticalAlign, Math.max(0, height - blockHeight));
       for (const [i, line] of [visual, ...this.#rows].entries()) {
         const b = line.getBounds();
         line.x = width === undefined ? 0 : alignment(this.#textAlign, width - b.width) - b.x;
-        line.y = top + i * this.size - (height === undefined ? 0 : b.y);
+        line.y = top + i * step - (height === undefined ? 0 : b.y);
       }
     }
     onLegacyTextReady() {
@@ -1763,6 +1821,8 @@ export function createLegacyEui({
     if (!themeLoaded) return undefined;
     const name = customNames.get(node.constructor) ?? node.constructor.name;
     return (
+      compiledDefaults.get(name) ??
+      compiledDefaults.get('eui.' + name) ??
       theme?.skins?.[name] ??
       theme?.skins?.['eui.' + name] ??
       (node instanceof Button ? theme?.skins?.['eui.Button'] : undefined)
@@ -1772,6 +1832,62 @@ export function createLegacyEui({
   function attachSkin(node, name) {
     const data = state(node);
     if (data.skinApplied) return;
+    const build = compiledSkins.get(name);
+    if (build) {
+      if (activeSkins.has(build)) refused('Recursive precompiled skin: ' + name);
+      activeSkins.add(build);
+      let children = [];
+      const attachedParts = [];
+      const before = {
+        skin: data.skin,
+        skinParts: data.skinParts,
+        skinStates: data.skinStates,
+        currentState: data.currentState,
+        skinProperties: data.skinProperties,
+        refreshState: data.refreshState
+      };
+      try {
+        const value = build(node);
+        children = value.children;
+        if (children.some(child => !states.has(child)))
+          refused('Compiled skin requires an unavailable EUI control: ' + name);
+        for (const [id, part] of value.parts) {
+          const descriptor = Object.getOwnPropertyDescriptor(node, id);
+          skinPart(node, id, part);
+          attachedParts.push([id, descriptor]);
+        }
+        data.skinProperties = { ...before.skinProperties };
+        for (const key of ['width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight']) {
+          if (value.skin[key] !== undefined) data.skinProperties[key] = dimension(value.skin[key], 0);
+        }
+        data.skin = name;
+        data.skinParts = children.slice();
+        data.skinStates = value.states;
+        data.currentState ||= value.states[0] ?? '';
+        data.refreshState = () => {
+          if (data.currentState) value.apply(data.currentState);
+        };
+        if (value.states.length && !value.states.includes(data.currentState))
+          refused('Unknown initial EUI state: ' + data.currentState);
+        data.refreshState();
+        for (const child of children) node.addChild(child);
+        for (const [id, part] of value.parts) callGame(node.partAdded, node, id, part);
+        data.skinApplied = true;
+      } catch (error) {
+        // A failed factory may have temporarily filled a non-configurable game field.
+        for (const [id, descriptor] of attachedParts.reverse()) {
+          if (descriptor) Object.defineProperty(node, id, descriptor);
+          else delete node[id];
+        }
+        for (const child of children) if (states.has(child) && !child.isDisposed) child.dispose();
+        Object.assign(data, before);
+        throw error;
+      } finally {
+        activeSkins.delete(build);
+      }
+      node.dispatchEvent(new sdk.Event(events.complete, undefined));
+      return;
+    }
     const skin = typeof name === 'string' ? skins.get(name) : name;
     if (!skin) refused('Unknown EXML skin ' + name + '.');
     if (activeSkins.has(skin)) refused('Recursive EXML skin reference: ' + name + '.');
@@ -1868,6 +1984,7 @@ export function createLegacyEui({
       !(typeof name === 'string' && /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(name)) ||
       typeof ctor !== 'function' ||
       !(ctor.prototype instanceof Component) ||
+      compiledTypes.has(name) ||
       (customTypes.has(name) && customTypes.get(name) !== ctor)
     )
       refused('Invalid custom EUI component: ' + name);
@@ -1889,6 +2006,21 @@ export function createLegacyEui({
       Theme,
       ArrayCollection,
       registerCustomComponent,
+      registerPrecompiledSkins(entries, defaults, types = new Map()) {
+        for (const [name, type] of types) {
+          if (typeof type !== 'function' || compiledTypes.has(name) || customTypes.has(name))
+            refused('Invalid or duplicate precompiled skin type: ' + name);
+        }
+        for (const key of entries.keys()) if (compiledSkins.has(key)) refused('Duplicate precompiled skin: ' + key);
+        for (const [control, target] of Object.entries(defaults)) {
+          if (compiledDefaults.has(control) && compiledDefaults.get(control) !== target)
+            refused('Conflicting default skin for ' + control);
+        }
+        for (const [name, type] of types) compiledTypes.set(name, type);
+        for (const [key, build] of entries) compiledSkins.set(key, build);
+        for (const [control, target] of Object.entries(defaults))
+          if (entries.has(target)) compiledDefaults.set(control, target);
+      },
       ItemTapEvent: Object.freeze({ ITEM_TAP: 'itemTap' }),
       CollectionEvent: Object.freeze({ COLLECTION_CHANGE: 'collectionChange' }),
       CollectionEventKind: Object.freeze({
@@ -1909,6 +2041,9 @@ export function createLegacyEui({
       }),
       UIEvent: Object.freeze({ COMPLETE: 'complete', CREATION_COMPLETE: 'creationComplete' })
     }),
+    resolveDefinition(name) {
+      return customTypes.get(name) ?? compiledTypes.get(name);
+    },
     beginMount() {
       mounting++;
     },

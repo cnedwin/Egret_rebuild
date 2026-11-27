@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Build, run and hand over a migrated Android game",
+    "body": "Compile ordered classic scripts, page large MovieClip atlases and reuse scene and text resources. Register scoped channel and network services, cache V8 script compilation and rebuild the Android application from an editable game using a portable kit."
+  },
+  "zh": {
+    "title": "构建、运行并交接迁移后的 Android 游戏",
+    "body": "按原顺序编译旧业务脚本，为大型 MovieClip 图集分页，复用场景与文字资源。按游戏视图注册渠道和网络服务，缓存 V8 脚本编译结果，通过可携带的工具包从可编辑源码重建 Android 应用。"
+  }
+}

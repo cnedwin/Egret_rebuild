@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
-// Browser-only bindings for the declarations admitted by the legacy Web 2D migration profile.
+// Shared display bindings for admitted legacy 2D projects and the browser host entry.
+import { createLegacyMovieClips, createPagedBitmap } from './compat/movieclip.mjs';
+import { ByteArray, Endian } from './compat/protocol.mjs';
+import { createLegacyGameServices } from './compat/game-services.mjs';
 import { createLegacyEui } from './legacy-eui.mjs';
 import { createLegacyBones } from './legacy-bones.mjs';
 const added = 'addedToStage';
@@ -10,9 +13,8 @@ function refuse(code, message) {
   throw Object.assign(new Error(message), { code });
 }
 
-function projectStorage(view, supplied, projectId) {
+function projectStorage(storage, projectId) {
   const prefix = 'egret7:legacy:' + projectId + ':';
-  const storage = () => supplied ?? view?.localStorage;
   return Object.freeze({
     getItem(key) {
       try {
@@ -49,7 +51,18 @@ function localPath(value) {
   );
 }
 
-function resourcesFor(sdk, game, view, plan, textures, sheetPlans, EventDispatcher, LegacyEvent, observe) {
+function resourcesFor(
+  sdk,
+  game,
+  readJson,
+  plan,
+  textures,
+  sheetPlans,
+  moviePages,
+  EventDispatcher,
+  LegacyEvent,
+  observe
+) {
   const dispatcher = new EventDispatcher();
   const ResourceEvent = Object.freeze({
     CONFIG_COMPLETE: 'configComplete',
@@ -65,6 +78,7 @@ function resourcesFor(sdk, game, view, plan, textures, sheetPlans, EventDispatch
   const declared = new Map();
   const groups = new Map();
   const sheets = new Map(sheetPlans.map(item => [item.name, item]));
+  const paged = new Map(moviePages.map(page => [page.texture, page]));
   const aliases = new Map(sheetPlans.flatMap(item => item.subkeys.map(key => [key, item.name])));
   const frameOf = name => {
     if (aliases.has(name)) return [aliases.get(name), name];
@@ -88,11 +102,6 @@ function resourcesFor(sdk, game, view, plan, textures, sheetPlans, EventDispatch
 
   const ready = new Map();
   const pending = new Map();
-  // Fetch requires a browser AbortSignal. Keep it tied to the same scope as image leases.
-  const controller = new view.AbortController();
-  const cancel = () => controller.abort(game.scope.signal.reason);
-  if (game.scope.signal.aborted) cancel();
-  else game.scope.signal.addEventListener('abort', cancel, { once: true });
   let configured = false;
 
   async function read(item) {
@@ -124,16 +133,51 @@ function resourcesFor(sdk, game, view, plan, textures, sheetPlans, EventDispatch
       );
       return Object.freeze({ getTexture: name => values.get(name) ?? null });
     }
+    if (paged.has(item.name)) {
+      const { width, height, tiles } = paged.get(item.name);
+      if (
+        ![width, height].every(n => Number.isSafeInteger(n) && n > 0 && n <= 8192) ||
+        !Array.isArray(tiles) ||
+        !tiles.length ||
+        tiles.length > 64
+      )
+        refuse('LEGACY_WEB_RESOURCE_UNSUPPORTED', 'Invalid paged texture.');
+      const acquired = [];
+      try {
+        for (const tile of tiles) {
+          if (
+            !localPath(tile.url) ||
+            ![tile.x, tile.y, tile.left, tile.top, tile.width, tile.height].every(Number.isSafeInteger) ||
+            tile.x < 0 ||
+            tile.y < 0 ||
+            tile.width < 1 ||
+            tile.height < 1 ||
+            tile.x + tile.width > width ||
+            tile.y + tile.height > height ||
+            ![0, 1].includes(tile.left) ||
+            ![0, 1].includes(tile.top)
+          )
+            refuse('LEGACY_WEB_RESOURCE_UNSUPPORTED', 'Invalid atlas tile rectangle.');
+          const lease = await game.loadTexture(tile.url);
+          acquired.push({ ...tile, lease });
+          if (tile.left + tile.width > lease.value.width || tile.top + tile.height > lease.value.height)
+            refuse('LEGACY_WEB_RESOURCE_UNSUPPORTED', 'Atlas tile exceeds its decoded image.');
+        }
+        const texture = Object.freeze({ textureWidth: width, textureHeight: height });
+        textures.set(texture, { width, height, tiles: acquired });
+        return texture;
+      } catch (error) {
+        for (const tile of acquired) tile.lease.release();
+        throw error;
+      }
+    }
     if (item.type === 'image') {
       const lease = await game.loadTexture(item.url);
       const resource = Object.freeze({ textureWidth: lease.value.width, textureHeight: lease.value.height });
       textures.set(resource, lease);
       return resource;
     }
-    const response = await view.fetch(item.url, { signal: controller.signal });
-    if (!response.ok)
-      refuse('LEGACY_WEB_RESOURCE_READ_FAILED', 'Could not load ' + item.name + ' (HTTP ' + response.status + ').');
-    return response.json();
+    return readJson(item);
   }
 
   function load(name) {
@@ -241,8 +285,8 @@ function resourcesFor(sdk, game, view, plan, textures, sheetPlans, EventDispatch
   });
 }
 
-function createBindings(sdk, game, options) {
-  const view = options.canvas.ownerDocument.defaultView;
+/** Shared display, RES, EUI and event bindings. Host ports own I/O and native lifecycle events. */
+export function createLegacyBindings(sdk, game, options, ports) {
   const textures = new WeakMap();
   const staged = sdk.createEventType(added);
   const unstaged = sdk.createEventType(removed);
@@ -338,6 +382,7 @@ function createBindings(sdk, game, options) {
     ADDED_TO_STAGE: added,
     REMOVED_FROM_STAGE: removed,
     COMPLETE: 'complete',
+    LOOP_COMPLETE: 'loopComplete',
     CHANGE: 'change',
     CHANGING: 'changing',
     RESIZE: 'resize'
@@ -350,7 +395,7 @@ function createBindings(sdk, game, options) {
 
   function report(error) {
     if (typeof options.onError === 'function') options.onError(error);
-    else if (typeof view?.reportError === 'function') view.reportError(error);
+    else if (ports.reportError) ports.reportError(error);
     else throw error;
   }
 
@@ -569,6 +614,7 @@ function createBindings(sdk, game, options) {
     #panelKey;
     #textureArea;
     #sheet;
+    #paged;
     #width;
     #height;
 
@@ -626,6 +672,8 @@ function createBindings(sdk, game, options) {
       const offsetY = frame?.offsetY ?? 0;
       const targetWidth = width - (textureWidth - sourceWidth);
       const targetHeight = height - (textureHeight - sourceHeight);
+      if (grid && entry.tiles)
+        refuse('LEGACY_WEB_TEXTURE_UNSUPPORTED', 'Nine-slice scaling of a repaged atlas is unsupported.');
       if (grid) {
         const left = Math.min(sourceWidth - 1, grid.x - offsetX);
         const top = Math.min(sourceHeight - 1, grid.y - offsetY);
@@ -703,16 +751,21 @@ function createBindings(sdk, game, options) {
         this.#panel?.dispose();
         this.#panel = this.#panelKey = undefined;
       }
-      if (this.#sheet || lease?.sheet) {
+      if (this.#sheet || lease?.sheet || this.#paged || lease?.tiles) {
         if (this.#bitmap) this.#bitmap.dispose();
         this.#bitmap = undefined;
       }
       if (this.#bitmap === undefined && lease !== undefined) {
-        this.#bitmap = lease.sheet ? lease.sheet.createBitmap(lease.name) : new sdk.Bitmap(lease);
+        if (lease.tiles) {
+          const composite = createPagedBitmap(sdk, lease);
+          composite.apply({ x: 0, y: 0, width: lease.width, height: lease.height });
+          this.#bitmap = composite.display;
+        } else this.#bitmap = lease.sheet ? lease.sheet.createBitmap(lease.name) : new sdk.Bitmap(lease);
         this.#bitmap.touchEnabled = false;
         super.addChild(this.#bitmap);
       } else if (this.#bitmap !== undefined) this.#bitmap.textureLease = lease;
       this.#sheet = lease?.sheet;
+      this.#paged = Boolean(lease?.tiles);
       this.#texture = value;
       this.#resize();
     }
@@ -768,7 +821,16 @@ function createBindings(sdk, game, options) {
     onLegacyTextReady() {
       this.#positionLabel();
     }
-    #style = { text: '', fontSize: 30, color: 0xffffff, fontFamily: 'Arial', fontWeight: 400, italic: false };
+    #style = {
+      text: '',
+      fontSize: 30,
+      color: 0xffffff,
+      fontFamily: 'Arial',
+      fontWeight: 400,
+      italic: false,
+      strokeWidth: 0,
+      strokeColor: 0
+    };
 
     constructor() {
       super();
@@ -867,6 +929,24 @@ function createBindings(sdk, game, options) {
       this.#change('color', value);
     }
 
+    get stroke() {
+      return this.#style.strokeWidth;
+    }
+
+    set stroke(value) {
+      if (!Number.isFinite(value) || value < 0 || value > 512) throw new RangeError('Invalid text outline radius');
+      this.#change('strokeWidth', value);
+    }
+
+    get strokeColor() {
+      return this.#style.strokeColor;
+    }
+
+    set strokeColor(value) {
+      if (!Number.isInteger(value) || value < 0 || value > 0xffffff) throw new RangeError('Invalid text outline color');
+      this.#change('strokeColor', value);
+    }
+
     get fontFamily() {
       return this.#style.fontFamily;
     }
@@ -918,15 +998,15 @@ function createBindings(sdk, game, options) {
   const RES = resourcesFor(
     sdk,
     game,
-    view,
+    ports.readJson,
     options.resources,
     textures,
     options.sheets ?? [],
+    options.moviePages ?? [],
     EventDispatcher,
     LegacyEvent,
     observe
   );
-  let measureContext;
   if (options.theme)
     ui = createLegacyEui({
       sdk,
@@ -937,12 +1017,8 @@ function createBindings(sdk, game, options) {
       EventDispatcher,
       LegacyEvent,
       game,
-      measureLine(words, font) {
-        measureContext ??= options.canvas.ownerDocument.createElement?.('canvas').getContext('2d');
-        if (!measureContext) return undefined;
-        measureContext.font = font;
-        return measureContext.measureText(words).width;
-      },
+      measureLine: ports.measureLine,
+      graphemes: ports.graphemes,
       theme: options.theme,
       stageOf,
       observe,
@@ -996,48 +1072,68 @@ function createBindings(sdk, game, options) {
   };
   const ticker = Object.freeze({ pause: () => game.engine.clock.pause(), resume: () => game.engine.clock.resume() });
   const lifecycle = { onPause: undefined, onResume: undefined };
-  const doc = options.canvas.ownerDocument;
-  const visibility = () => (doc.hidden ? lifecycle.onPause?.() : lifecycle.onResume?.());
-  doc.addEventListener?.('visibilitychange', visibility);
+  const unsubscribeVisibility = ports.onVisibility?.(hidden =>
+    hidden ? lifecycle.onPause?.() : lifecycle.onResume?.()
+  );
   game.scope.signal.addEventListener(
     'abort',
     () => {
-      doc.removeEventListener?.('visibilitychange', visibility);
+      unsubscribeVisibility?.();
       ticks.clear();
     },
     { once: true }
   );
 
-  return {
-    api: Object.freeze({
-      egret: Object.freeze({
-        DisplayObjectContainer: Container,
-        Sprite,
-        Shape: Sprite,
-        Bitmap,
-        TextField,
-        Point: sdk.Point,
-        Rectangle: sdk.Rectangle,
-        Matrix: sdk.Matrix,
-        Event: LegacyEvent,
-        EventDispatcher,
-        startTick,
-        stopTick,
-        ticker,
-        lifecycle,
-        TouchEvent: Object.freeze({
-          TOUCH_TAP: tap,
-          TOUCH_BEGIN: 'touchBegin',
-          TOUCH_MOVE: 'touchMove',
-          TOUCH_END: 'touchEnd',
-          TOUCH_CANCEL: 'touchCancel'
-        }),
-        localStorage: projectStorage(view, options.storage, options.projectId)
+  const gameServices = createLegacyGameServices(
+    game,
+    name => {
+      const registered = ui?.resolveDefinition(name);
+      if (registered !== undefined) return registered;
+      const parts = name.split('.');
+      let current = Object.hasOwn(api, parts[0]) ? api : globalThis;
+      for (const part of parts) {
+        if (current == null) return undefined;
+        current = Object.getOwnPropertyDescriptor(current, part)?.value;
+      }
+      return current;
+    },
+    ports.now
+  );
+  const api = Object.freeze({
+    egret: Object.freeze({
+      ...gameServices,
+      DisplayObjectContainer: Container,
+      Sprite,
+      Shape: Sprite,
+      Bitmap,
+      TextField,
+      ...createLegacyMovieClips({ sdk, game, Container, LegacyEvent, textures }),
+      ByteArray,
+      Endian,
+      Point: sdk.Point,
+      Rectangle: sdk.Rectangle,
+      Matrix: sdk.Matrix,
+      Event: LegacyEvent,
+      EventDispatcher,
+      startTick,
+      stopTick,
+      ticker,
+      lifecycle,
+      TouchEvent: Object.freeze({
+        TOUCH_TAP: tap,
+        TOUCH_BEGIN: 'touchBegin',
+        TOUCH_MOVE: 'touchMove',
+        TOUCH_END: 'touchEnd',
+        TOUCH_CANCEL: 'touchCancel'
       }),
-      RES,
-      eui: ui?.eui,
-      dragonBones
+      localStorage: projectStorage(ports.storage, options.projectId)
     }),
+    RES,
+    eui: ui?.eui,
+    dragonBones
+  });
+  return {
+    api,
     async mount(root) {
       if (!(root instanceof Container) && !(root instanceof Sprite)) {
         refuse('LEGACY_WEB_ENTRY_UNSUPPORTED', 'The legacy entry must create a supported display container.');
@@ -1070,7 +1166,38 @@ export async function launchLegacyWeb(sdk, options) {
     autoStart: false
   });
   try {
-    const { api, mount } = createBindings(sdk, game, options);
+    const doc = options.canvas.ownerDocument,
+      view = doc.defaultView;
+    const controller = new view.AbortController();
+    const cancel = () => controller.abort(game.scope.signal.reason);
+    if (game.scope.signal.aborted) cancel();
+    else game.scope.signal.addEventListener('abort', cancel, { once: true });
+    let measureContext, segmenter;
+    const { api, mount } = createLegacyBindings(sdk, game, options, {
+      storage: () => options.storage ?? view?.localStorage,
+      reportError: view?.reportError?.bind(view),
+      async readJson(item) {
+        const response = await view.fetch(item.url, { signal: controller.signal });
+        if (!response.ok)
+          refuse('LEGACY_WEB_RESOURCE_READ_FAILED', 'Could not load ' + item.name + ' (HTTP ' + response.status + ').');
+        return response.json();
+      },
+      measureLine(words, font) {
+        measureContext ??= doc.createElement?.('canvas').getContext('2d');
+        if (!measureContext) return undefined;
+        measureContext.font = font;
+        return measureContext.measureText(words).width;
+      },
+      *graphemes(text) {
+        segmenter ??= new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+        for (const part of segmenter.segment(text)) yield part.segment;
+      },
+      onVisibility(listener) {
+        const visibility = () => listener(doc.hidden);
+        doc.addEventListener?.('visibilitychange', visibility);
+        return () => doc.removeEventListener?.('visibilitychange', visibility);
+      }
+    });
     await mount(await options.createMain(api));
     game.loop.start();
     return game;

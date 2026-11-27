@@ -4,6 +4,8 @@
 
 同一份 arm64 Android 库既能把可信的 JavaScript 或 TypeScript 游戏打成独立应用，也可将游戏视图嵌入已有 Activity。项目播放器默认使用裁剪 V8，Rust 通过 OpenGL ES 3 在 `GLSurfaceView` 上绘制游戏。内置 V8 最低支持 Android API 29。使用 JavaScript `Intl` 的游戏可选标准 V8；显式选择系统 WebView 时最低支持 API 26，并需安装支持 ES2022 和 AbortController 的较新 WebView。[选择脚本宿主](android-project-player-v8.md)
 
+已有游戏可沿用 Activity、外部签名与渠道库，单独更新游戏资源。迁移工具包提供播放器类型、可离线构建的 Gradle 工程，以及指定设备的调试安装命令。[迁移游戏构建与交接](android-migration-build-kit.md)
+
 ## 构建 AAR 和游戏应用
 
 在引擎仓库根目录执行以下命令。准备 Node 26.7.0、pnpm 11.25.0、JDK 17、Android SDK Platform 36、Build Tools 35.0.0、NDK r27c，以及已安装 `aarch64-linux-android` 目标的 Rust。配置 `JAVA_HOME`、`ANDROID_HOME` 和 `ANDROID_NDK_HOME`。构建时需要对应 Rust 安装中的 `share/doc/rust/COPYRIGHT-library.html`。游戏导出器需要已安装的 **esbuild 0.28.2** 模块路径。

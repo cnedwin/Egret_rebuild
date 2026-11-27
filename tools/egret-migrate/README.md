@@ -4,6 +4,61 @@ English | [简体中文](README.zh-CN.md)
 
 Egret Migrate is a local CLI for supported classic Egret 5 Web 2D source projects. It uses the Egret 7 project store and the existing browser verifier. Keep the old project and its runnable browser build alongside the new project.
 
+An optional local package, `@egret/legacy`, exposes the browser bindings under `@egret/legacy/web` and the DOM-free packet codec under `@egret/legacy/protocol`. From a source checkout, install it with `npm install ./tools/egret-migrate`. Generated games already include these bindings. Read the [packet guide](compat/README.md) for wire types and limits.
+
+## Compile a classic 5.3 business manifest
+
+Use this route when inspection calls for manual adaptation but the team's original TypeScript still builds. Supply the matching, trusted Egret TypeScript-Plus `lib/typescript.js` from outside the original project. The CLI loads that compiler as a local tool. It hashes each original input and parses each emitted script without running game code.
+
+```sh
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/lib/typescript.js --compiler-sha256 <approved-sha256> --out ./classic-first --theme resource/default.thm.json
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/lib/typescript.js --out ./classic-reviewed --theme resource/default.thm.json --baseline ./classic-first/classic-build.json
+```
+
+Review `classic-build.json` before accepting it as the baseline. It records the compiler and standard libraries, original module order and fingerprints, one output and SHA-256 per business source, configured files omitted by the original manifest, and semantic diagnostics with source lines and columns. Missing original libraries and required host adapters remain listed. A changed diagnostic set rejects the reviewed build. Compiler options, syntax or source-order errors stop the build before publishing any output.
+
+The default `--target config` respects the original TypeScript target. Its ES5 subclass calls can fail when a migrated superclass is an ES2015 class. Select `--target es2015` for that case and review a separate diagnostic baseline. This target retains native superclass construction and exposes emitted top-level classes by their original names for classic skin lookups. Both targets enable the original compiler's `__reflect` metadata. `--mode debug` and `--mode release` select the original DEBUG and RELEASE defines.
+
+Copy `classic/` into the editable Android game and merge `v8-scripts.json` into its `project.json`. With no groups, startup follows `manifest.game` exactly and precedes the bundled game entry. If host classes must be installed first, put the business scripts in deferred groups. For example, pass `--groups groups.json` with `[{"name":"business","from":"src/Boot.ts"}]`, using the name of the first original source to defer. The game's entry installs its reviewed adapters and then calls `await EgretRuntimeScripts.loadGroup("business")`. A group owns the contiguous range up to the next boundary. Load dependent groups in original order. The exporter checks up to 4,095 additional scripts, 16 MiB per script, 64 MiB including the game entry, and a 64 KiB Android project manifest.
+
+With `--theme`, `static-skins.json` contains the descriptor trees accepted by the EUI adapter, unresolved mappings and remaining EXML locations, including parser messages and offsets when available. Constructors with application-specific behavior, original external services, visuals, logging in and gameplay still require their own integration checks.
+
+A private 5.3.10 project emitted 1,633 scripts totaling 10,189,917 bytes with its original target. The compiler reported the same ten semantic diagnostics on repeat. All 1,633 scripts matched the retained old build after normalizing line endings, the source-map trailer and trailing whitespace. The Android exporter copied every script with its exact generated SHA-256. The independent ES2015 build emitted 8,737,317 bytes and 60 diagnostics. At the tested revision, the static EUI reader accepted 451 of 935 referenced paths, flagged 478 unsupported EXMLs and identified six missing files. Eight default skin mappings remained unresolved. These receipts cover static emission and packaging. A small original fixture separately verifies actual native class construction, namespaced inheritance and reflection. The private game was not executed in this check.
+
+### Load a project's compiled EUI skins
+
+Use the original project's authorised, matching EUI release tools on a working copy. For tools that expose the EXML publishing policy, select `new ExmlPlugin('gjs')` in the existing release pipeline. Keep the original path-based theme and save the generated theme under a second name. Each generated `exmls` entry must have `path`, `className` and the `gjs` constructor expression. Record the SHA-256 of the generated file. Keep the original EXML and its build tools with the editable project.
+
+In the project copy, create `migration/theme-profile.json`:
+
+```json
+{
+  "schemaVersion": 1, "origin": "project-regenerated", "format": "gjs",
+  "global": "ShelfTheme", "provider": "migration/published.thm.json",
+  "sha256": "<SHA-256 of the exact provider file>", "namespaces": ["sample"]
+}
+```
+
+```sh
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/lib/typescript.js --theme resource/default.thm.json --theme-factories migration/theme-profile.json --out ./classic-with-skins
+```
+
+A project can supply an existing classic `.js` registry instead. Set `format` to `registry`, set `origin` to `project-owned`, and list `entries` with one original EXML path and class name per factory. The named global must implement `names()` and `get(className)`, returning its original constructor. Registry source bytes are preserved. Register its original dependencies first. Use only code the application has permission to run and distribute.
+
+The command emits an ordered classic script and `theme-factories.json`. Optional `after: "src/Boot.ts"` places the script immediately after that original source in the same startup or deferred group. Load the script, then install factories before constructing controls:
+
+```js
+import { registerLegacyThemeFactories } from '@egret/legacy/theme-factories';
+
+registerLegacyThemeFactories(eui, themeManifest, {egret, namespaces: {sample}});
+const panel = new eui.Component();
+panel.skinName = 'resource/Panel.exml';
+```
+
+Supply the game's real custom constructors in the named namespaces. Review `missingProviders`, `unresolvedMappings` and the separate static-skin report. This adapter supports the tested controls and property-based states. Factories that require further EUI classes, state operations or game-specific services need a corresponding adapter and a runtime comparison.
+
+The public fixture in `tests/fixtures/migrate-theme-factories` starts with an original EXML and includes its 5.3.10 compiler output. Windows Edge 158 on an RTX 5090 Laptop ran the old and migrated skins: both exposed three parts, changed the label from closed to open and back, selected item B and instantiated the custom marker. The migrated WebGL2 run used one texture page (7,280 bytes) and refused zero frames. In a separate private project inventory, the unchanged registry provided 929 of 935 paths in the primary theme and 28 of 34 in the secondary theme. Each theme retained six missing paths and six unresolved mappings. These counts establish provider availability. Visual and gameplay acceptance remain per project.
+
 ## Install and run
 
 From an Egret checkout with built packages, pack the local CLI. Use the installed esbuild module and npm CLI entry from your environment.
@@ -39,6 +94,8 @@ egret-migrate rebuild --source <editable-conversion> --out <new-build-directory>
 ```
 
 The command preserves the project ID used for the game's local save namespace. It validates the bundled engine digest, admits the edited inputs again, recompiles and writes `inputChanges.added`, `.changed` and `.removed` to the new conversion receipt. These paths compare admitted raw inputs against the previous receipt. Generated files in `web/` are replaced from their sources. Game saves continue to require the same browser origin.
+
+For large MovieClip atlases, `convert --movie-atlases <json>` takes an explicit list of RES keys such as `[{"data":"action_json","texture":"action_png"}]`. Rebuild reuses the retained `movie-atlases.json` mapping.
 
 A new conversion that applies a project transaction keeps `project-transaction.json` so a subsequent rebuild can replay the correction. To replace the correction or rebuild an older edited conversion missing the transaction, supply `--transaction <file>`. Restore missing inputs in the editable source and retry. A different engine version requires an explicit new `convert`.
 

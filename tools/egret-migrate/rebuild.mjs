@@ -65,6 +65,7 @@ export async function rebuildProject({ source, out, esbuild, transaction }) {
           resources: previous.original.manifest,
           theme: previous.original.theme?.themePath,
           sources: explicitOrder ? localJson(owner, 'source-order.json') : undefined,
+          movieAtlases: known?.movieAtlases ? localJson(owner, 'movie-atlases.json') : undefined,
           bones: hasBones ? localJson(owner, 'bones-map.json') : undefined
         })
   });

@@ -4,6 +4,8 @@ import { createEngine, copyImageData2DPixels } from '@egret/engine';
 import { createCapturedProjectEncoder } from '../scene/project-frame.mjs';
 import { base64 } from '../scene/commands.mjs';
 import { createPlayerRaster } from './player-raster.mjs';
+import { createPlayerTextPages } from './player-text-pages.mjs';
+import { createHostServices } from './host-services.mjs';
 import { createPlayerAssets } from './player-text-assets.mjs';
 
 const MAX_SAVE_BYTES = 1024 * 1024;
@@ -67,7 +69,9 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
   const encoder = createCapturedProjectEncoder();
   const pageIds = new Map();
   const resident = new Map();
+  const textPageIds = new Set();
   const lifetime = new AbortController();
+  const { host, hostResult } = createHostServices(native, lifetime.signal);
   const { assets, textResult } = createPlayerAssets(native, lifetime.signal);
   const frameOptions = Object.freeze({
     width: definition.width, height: definition.height, clearColor: definition.clearColor ?? 0,
@@ -95,6 +99,25 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
   }
 
   function publishPage(id, image) {
+    if (textPageIds.has(id)) throw new Error('Texture page belongs to an active text lease');
+    return publish(id, image);
+  }
+
+  function reserveTextPage() {
+    let id = 255;
+    while (id > 0 && (resident.has(id) || textPageIds.has(id))) id--;
+    if (!id) throw new Error('No free texture page for text');
+    textPageIds.add(id);
+    let handle;
+    return {
+      publish(image) { handle = publish(id, image); },
+      release() {
+        try { handle?.release(); } finally { textPageIds.delete(id); }
+      }
+    };
+  }
+
+  function publish(id, image) {
     if (stopped) throw new Error('Project closed');
     if (!Number.isInteger(id) || id < 1 || id > 255) throw new RangeError('Texture page ID');
     const old = resident.get(id);
@@ -136,7 +159,7 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
   }
 
   return Object.freeze({
-    textResult,
+    textResult, hostResult,
     ...(composeWorld && {
       worldGeometryBatch(epoch, frameId, ordinal) {
         if (stopped || !game) throw new Error('Project unavailable');
@@ -160,10 +183,24 @@ export function createPlayerProject(definition, native, composeWorld, extendServ
           } });
           if (stopped) return;
           scope = engine.createScope();
+          const raster = createPlayerRaster(native, lifetime.signal);
           const services = {
-            engine, scope, assets, publishPage, signal: lifetime.signal, raster: createPlayerRaster(native, lifetime.signal),
+            engine, scope, assets, host, publishPage, signal: lifetime.signal,
+            raster: raster && Object.freeze({ ...raster, ...createPlayerTextPages(engine, raster.drawText, reserveTextPage, lifetime.signal) }),
             storage: createPlayerStorage(native, lifetime.signal),
+            music: Object.freeze({
+              play(path, {loop = true, signal} = {}) {
+                return host.call('egret.music.play', {path, loop}, signal);
+              },
+              stop() { return host.call('egret.music.stop', null); }
+            }),
+            waitForBack: signal => host.call('egret.waitForBack', null, signal),
             edit: text => native.edit(text),
+            editText(options = {}, signal) {
+              const text = options.text ?? '';
+              if (typeof text !== 'string' || text.length > 8192) throw new RangeError('Expected up to 8192 UTF-16 units');
+              return host.call('egret.editText', {text, multiline: options.multiline === true}, signal);
+            },
             state: value => native.state(JSON.stringify(value)),
             playSound: path => native.playSound(path)
           };

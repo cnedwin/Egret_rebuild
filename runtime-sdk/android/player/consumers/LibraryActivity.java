@@ -67,6 +67,11 @@ public final class LibraryActivity extends Activity {
         player.close();
     }
 
+    @SuppressWarnings("deprecation")
+    @Override public void onBackPressed() {
+        if (!GameBack.consume(player)) super.onBackPressed();
+    }
+
     @Override protected void onResume() {
         super.onResume();
         foreground = true;
