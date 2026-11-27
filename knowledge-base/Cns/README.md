@@ -47,6 +47,7 @@
 
 - [共享二维真机结果](docs/shared-2d-hardware-results.md)记录原生像素、压力与 SharedFrame2D 成对计时。
 - [11 月桌面与 Android 显卡验收](docs/november-browser-hardware.md)
+- [11 月 27 日近期合并内容真机验收](docs/november-27-claude-hardware.md)
 
 ## 阅读状态与证据
 

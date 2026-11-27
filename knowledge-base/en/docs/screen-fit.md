@@ -144,8 +144,12 @@ A control is named by its `name`, the name `onTap` was given, the name of its pa
 
   That run is recorded in the pull request that added the modes.
 
-No phone with a notch, Safari or WeChat itself was run. The page's own insets were never other than 0 in these runs; the notch was given as `insets` or through `__egretAgent.insets`. `wholeScale` was checked at one device pixel to a CSS pixel in the browser, and at two only in Node.
+The original software runs did not cover a physical notch phone, Safari or WeChat itself. The page's own insets were never other than 0 in these runs; the notch was given as `insets` or through `__egretAgent.insets`. `wholeScale` was checked at one device pixel to a CSS pixel in the browser, and at two only in Node.
 
 ## Design notes
 
 Game UI frameworks commonly handle screen shapes this way. LumioGames LGUI, for one, uses two designs that share a short side and a safe node that the framework moves; it was studied as a reference and none of its code is used. Here the rules apply to a stage rather than to named components. A game places its edges from `safe` in its own code.
+
+## November 27 device follow-up
+
+November 27 follow-up: Windows hardware WebGL2 and Fold7 WebGL2/WebGPU passed the selected fixed modes, pin, whole-scale high-DPR and UI/view geometry cases. Fold7 ran at 873 × 325 CSS pixels and DPR 2.625; supplied insets and portrait/tablet parent sizes were scripted. Actual notch/fold transitions remain open. [Device observations and remaining coverage](november-27-claude-hardware.md). The separately tested #516 opt-out preserves world coordinates under independently scaled views on both physical devices and APIs.

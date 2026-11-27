@@ -384,3 +384,7 @@ A page can also take the engine as [one file](single-file.md), with no import ma
 ## When a game outgrows it
 
 `game.canvas` is the canvas `play` draws on: the one given as `canvas`, or the one it made inside `parent` or the page. `game.browser` is the [browser game](browser-game.md) this is built on, which has no canvas of its own, and `game.engine` and `game.scope` its Engine and scope. From there every entry is open: images and atlases, [the 2D camera](camera-2d.md), [tilemaps](tilemap.md), [particles](particles.md) with textures, [2D physics](physics-2d.md), [the interface controls](ui-controls.md), [input by action with gamepads](game-kit.md) and [World3D](world3d.md). What they make can be added to `game.world` and `game.ui` beside what `play` made.
+
+## November 27 device follow-up
+
+November 27 follow-up: selected physical 2D cases cover both Windows and Fold7 GPUs for 100 short labels, image-budget recovery, 500-label parent removal, view/input and vertical CJK title. See the recorded exact scope and the retained view-helper assertion. [Device observations and remaining coverage](november-27-claude-hardware.md). The separately tested #516 opt-out preserves world coordinates under independently scaled views on both physical devices and APIs.

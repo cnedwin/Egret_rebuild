@@ -69,3 +69,7 @@ A press reaches the same function a tap does, but not the drawing in between: a 
 ## Design notes
 
 LumioGames LGUI tests its screens in Node by control paths such as `Bag/BagPanel.list[0]`, with a fake clock. Here a control is found through the semantic tree instead, which the application already publishes for assistive technology. A test and a screen reader then reach the same names and the same actions. The design was studied as a reference; none of its code is used.
+
+## November 27 device follow-up
+
+November 27 follow-up: the named UI tester and screen stack passed 12 Node cases, and selected named-view semantics/actions were exercised on Windows and Fold7. The actual full views helper failure and its preserved focus-state diagnosis are linked below. [Device observations and remaining coverage](november-27-claude-hardware.md).

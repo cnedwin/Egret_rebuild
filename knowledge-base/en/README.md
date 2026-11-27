@@ -47,6 +47,7 @@ The [full documentation catalog](https://github.com/cnedwin/Egret_rebuild/blob/m
 
 - [Shared 2D hardware results](docs/shared-2d-hardware-results.md) records native pixel, stress and paired SharedFrame2D evidence.
 - [November desktop and Android GPU verification](docs/november-browser-hardware.md)
+- [November 27 verification of recent merged changes](docs/november-27-claude-hardware.md)
 
 ## Reading status and evidence
 
