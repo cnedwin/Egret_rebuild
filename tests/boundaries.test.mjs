@@ -685,6 +685,11 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       const forwarded = missingCachedLayerEffectType === suffix ? layerTypeNames.filter(name => name !== 'SharedWebGL2LayerEffect2D') : layerTypeNames;
       if (missingCachedLayerTypes !== suffix) write(facade,original.replace(anchor,anchor+' '+forwarded.join(', ')+','));
       append(types,layerTypeNames.map(name=>'export type '+name+' = unknown;\n').join(''));
+      // Current erased options extend the fixture without changing any retained graph or cached-layer denial.
+      const current = readFileSync(path.join(root,facade),'utf8'), optionsAnchor='SharedWebGL2HostOptions }';
+      assert.equal(current.split(optionsAnchor).length,2,'one retained WebGL2 options forwarding clause');
+      write(facade,current.replace(optionsAnchor,'SharedWebGL2HostOptions, SharedWebGL2PageBatching }'));
+      append('packages/engine/'+directory+'/sharedWebGL2Options'+suffix,"export type SharedWebGL2PageBatching = 'auto' | 'single';\n");
     }
     const m15EngineImports="import type {AdmittedResourceManifest} from '@egret/contracts/resources';\nimport type {ManifestAssetGroup,ManifestBinding,ManifestGroupOptions} from './manifestResourceTypes.js';\n";
     const m15Methods=['capturePreparedSharedFrame(ticket: BitmapBindingTicket, options: SharedFrameOptions2D): SharedRenderFrame2D',
@@ -1343,7 +1348,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Semantics: inert copies of its five modules and their build output, for the same reason.
     const semanticGraphFiles=['src/semantics.ts','src/semanticTree.ts','src/semanticList.ts','src/semanticTypes.ts','web/semantics.ts','web/BrowserSemantics.ts',
       'dist/semantics.js','dist/semantics.d.ts','dist/semanticTree.js','dist/semanticTree.d.ts','dist/semanticList.js','dist/semanticList.d.ts','dist/semanticTypes.js','dist/semanticTypes.d.ts',
-      'dist/web/semantics.js','dist/web/semantics.d.ts','dist/web/BrowserSemantics.js','dist/web/BrowserSemantics.d.ts'];
+      'dist/web/semantics.js','dist/web/semantics.d.ts','dist/web/BrowserSemantics.js','dist/web/BrowserSemantics.d.ts','web/screenControlReportState.ts','dist/web/screenControlReportState.js','dist/web/screenControlReportState.d.ts'];
     // Sound: inert copies of its five modules and their build output, for the same reason.
     const audioGraphFiles=['src/audio.ts','src/audioMixer.ts','src/audioTypes.ts','web/audio.ts','web/BrowserAudio.ts',
       'dist/audio.js','dist/audio.d.ts','dist/audioMixer.js','dist/audioMixer.d.ts','dist/audioTypes.js','dist/audioTypes.d.ts',
@@ -1367,7 +1372,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Frame loop: inert copies of its modules and their build output, for the same reason.
     const loopGraphFiles=['web/loop.ts','web/BrowserFrameLoop.ts','dist/web/loop.js','dist/web/loop.d.ts','dist/web/BrowserFrameLoop.js','dist/web/BrowserFrameLoop.d.ts'];
     // Browser game: inert copies of its modules and their build output, for the same reason.
-    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
+    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
     // World3D app: names what it imports from the main entry, so it is copied as it is.
     const world3dAppFiles=['web/world3d/app3D.ts','dist/web/world3d/app3D.js','dist/web/world3d/app3D.d.ts'];
     const playFiles=['BrowserPlay','playWidgets','playTouch','gestures','playView','playViewParagraph','playViewScroll','view'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
@@ -1422,6 +1427,10 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'timer':['packages/engine/web/BrowserStatsPanel.ts',"setInterval(()=>{},1000);\n"],
         'layer-escaped-module':['packages/engine/web/ProbeStaticLayer.ts',"import {createBrowserStaticLayers} from './browserStaticLayers.js';\nvoid createBrowserStaticLayers;\n"],
         'layer-owned-timer':['packages/engine/web/browserStaticLayers.ts',"setTimeout(()=>{},1000);\n"],
+        'image-queue-escaped-module':['packages/engine/web/ProbeImageQueue.ts',"import {createGameImageAdmission} from './GameImageAdmission.js';\nvoid createGameImageAdmission;\n"],
+        'overlay-reporter-escaped-module':['packages/engine/web/world3d/ProbeOverlayReporter.ts',"import {createOverlayScreenReporter} from './overlayScreenReport.js';\nvoid createOverlayScreenReporter;\n"],
+        'overlay-wrong-gl-runtime':['packages/engine/web/world3d/overlay3D.ts',"import '../webgl2.js';\n"],
+        'browser-wrong-gl-static':['packages/engine/web/BrowserGame.ts',"import './webgl2.js';\n"],
         'layer-optional-gl':['packages/engine/web/browserStaticLayers.ts',"import './webgl2.js';\n"],
       };
       const edit=edits[gameMutation];assert.ok(edit,'finite browser game assigned mutation');const [file,added]=edit;
@@ -2580,6 +2589,10 @@ for(const [name,reason] of [
   ['layer-escaped-module','Browser game: implementation module imported outside its entry'],
   ['layer-owned-timer','Browser game: acquired automatic host work'],
   ['layer-optional-gl','M14: WebGL2 module imported outside exact optional closure'],
+  ['image-queue-escaped-module','Browser game: implementation module imported outside its entry'],
+  ['overlay-reporter-escaped-module','Semantics: implementation module imported outside its entry'],
+  ['overlay-wrong-gl-runtime','M14: WebGL2 module imported outside exact optional closure'],
+  ['browser-wrong-gl-static','M14: WebGL2 module imported outside exact optional closure'],
 ])test('browser game policy '+name+' is refused for its own reason',()=>{
   fixture({imported:'robust-predicates',gameMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
 });
