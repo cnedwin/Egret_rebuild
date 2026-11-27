@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Inspect Web migration and original Android packaging from one project",
+    "body": "Compare target-specific next actions, script order and limits, source locations for host calls and an observed native startup failure."
+  },
+  "zh": {
+    "title": "从同一份旧工程盘点 Web 迁移和原版 Android 打包",
+    "body": "分别查看下一步动作、脚本顺序与上限，定位宿主调用，并将真机启动故障对应到原发布脚本。"
+  }
+}

@@ -16,7 +16,7 @@ Egret Migrate 是面向受支持的经典白鹭 5 Web 2D 源工程的本地 CLI�
 
 把一个 `egret.ColorMatrixFilter` 放进显示对象的 `filters` 数组，浏览器适配器通过已有的共享效果组处理整棵显示子树。4×5 矩阵每行包含四个通道系数和一个按字节计的偏移值。给滤镜的 `matrix` 属性重新赋值会更新所有已使用它的节点，设 `filters = null` 或 `[]` 可移除矩阵并由宿主归还离屏目标。节点已有的遮罩和模糊配置保留，效果组数量沿用共享宿主上限。
 
-Windows Edge 158 分别以原版 5.3.10 WebGL 和新版 WebGL2 绘制[自制面板和贴图](../../tests/fixtures/migrate-editor/filters.js)。两处不透明红色的采样值都由 `(255,0,0,255)` 变成 `(0,32,255,255)`，清除矩阵后还原，迁移资源可正常销毁。经典 BlurFilter 和 GlowFilter 可保留原始参数；应用超过上限或两轴不等的配置（包括 10×10 模糊、35×35 辉光）会报 `LEGACY_FILTER_RADIUS_UNSUPPORTED`。半径在范围内时，原版与共享采样核心仍有差异，应用会报 `LEGACY_FILTER_KERNEL_UNVERIFIED`。Android GLES3 工程帧尚缺离屏效果组，应用迁移滤镜会在下一帧绘制前报 `LEGACY_ANDROID_FILTER_UNSUPPORTED`。
+Windows Edge 158 分别以原版 5.3.10 WebGL 和新版 WebGL2 绘制[自制面板和贴图](../../tests/fixtures/migrate-editor/filters.js)。两处不透明红色的采样值都由 `(255,0,0,255)` 变成 `(0,32,255,255)`，清除矩阵后还原，迁移资源可正常销毁。经典 BlurFilter 和 GlowFilter 可保留原始参数；应用超过上限或两轴不等的配置（包括 10×10 模糊、35×35 辉光）会报 `LEGACY_FILTER_RADIUS_UNSUPPORTED`。半径在范围内时，原版与共享采样核心仍有差异，应用会报 `LEGACY_FILTER_KERNEL_UNVERIFIED`。Android 迁移适配器通过 `services.capabilities.subtreeEffects` 读取宿主能力。支持 EGR6 的宿主可以对子树应用一个颜色矩阵，旧帧协议会报 `LEGACY_ANDROID_FILTER_UNSUPPORTED`。保留白鹭 5 原引擎的 Android 绑定有自己的兼容范围。
 
 ## 迁移控件的文字编辑
 
@@ -222,3 +222,13 @@ node tests/fixtures/egret-migrate-dynamic-ui/verify.mjs --legacy-libs <Egret-5.2
 复跑时需固定旧浏览器构建和新引擎单文件。5.0.15 的 Wing 工程从 `egret_version` 读取 SDK 版本；5.1.9 工程需同时声明匹配的引擎和编译器版本。这两类工程声明了预加载的 tween 模块时，仍需核实业务代码实际调用的补间 API，超出支持范围的调用应列为独立适配项。
 
 完整阶段目标见[旧工程迁移规格](https://github.com/cnedwin/Egret_rebuild/blob/main/knowledge-base/Cns/docs/%E6%97%A7%E5%B7%A5%E7%A8%8B%E8%BF%81%E7%A7%BB.md)。
+
+## 选择目标前同时查看两条路线
+
+运行 `egret-migrate inspect --source <旧工程>`。JSON 保留可编辑 Web 迁移报告，并提供 `routes.web`、`routes.android` 和 `routes.hostUsage`。各目标都有状态及供工具读取的 `nextAction`。将 JSON 与本轮输入一同保存，接手人可以继续执行对应动作。
+
+Web 路线按转换原因和原清单顺序处理。超过 512 个源码文件的转换上限时，报告列出保留原顺序的审阅区间，便于选择一段玩法。尝试较小范围转换前要核对跨区间的脚本依赖。Android 路线用 `--published <目录>` 指定已编译的 5.3.x 发布目录。如果只有发布目录，也可将它直接传给 `--source`。报告列出引擎、模块和业务脚本组，标明缺失脚本及数量、字节上限。`ready-for-preparation` 表示下一步要运行原生准备工具核对 ABI 并实际启动。
+
+加上 `--compiler <受信任的typescript.js>`，可定位业务源码和额外启动库使用的浏览器全局对象、渠道调用及动态资源请求。只有发布目录时检查其中的业务脚本。可用 `--compiler-sha256 <SHA-256>` 固定编译器。报告给出检查范围、出现次数和每类最多八处位置。请在目标宿主中核对相关调用是否实际执行。
+
+追查 Android 启动失败时，在 `--published` 之外传入 `--prepared <对应的准备目录> --android-run <启动记录.json>`。记录须包含实测 APK 的 `apkSha256` 和播放器的 `lastError`。成功映射后可查到包内脚本、原发布路径和已核对的脚本 SHA-256。早期准备目录可用保存的脚本组顺序和一致的脚本字节定位。请保留实测 APK 并独立核对摘要，再将观察归到相关版本。标题、进服和完整玩法分别记录实际结果。
