@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "WebGL2 2D host builds its programs together",
+    "body": "With KHR_parallel_shader_compile, the shared WebGL2 host compiles and links all startup and restore programs first and then asks their completion every 8 ms, so startup no longer blocks the page while the driver compiles one program after another. Without the extension, programs are still made one by one, with the page going on between two of them."
+  },
+  "zh": {
+    "title": "WebGL2 2D 宿主并行构建着色器程序",
+    "body": "上下文支持 KHR_parallel_shader_compile 时，共享 WebGL2 宿主在启动与恢复中先编译并链接全部程序，再每 8 ms 询问完成状态，不再在驱动逐个编译时阻塞页面。没有该扩展时仍逐个创建程序，但每两个之间让页面继续运行。"
+  }
+}
