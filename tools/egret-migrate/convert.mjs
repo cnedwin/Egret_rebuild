@@ -217,9 +217,28 @@ export { host };
 `;
 }
 
+function changedInputs(before, after) {
+  const oldFiles = new Map(before.map(file => [file.path, file.sha256]));
+  const newFiles = new Map(after.map(file => [file.path, file.sha256]));
+  return {
+    added: after.filter(file => !oldFiles.has(file.path)).map(file => file.path),
+    changed: after
+      .filter(file => oldFiles.has(file.path) && oldFiles.get(file.path) !== file.sha256)
+      .map(file => file.path),
+    removed: before.filter(file => !newFiles.has(file.path)).map(file => file.path)
+  };
+}
+
 export async function convertProject(options) {
   const owner = path.resolve(options.source);
   const selection = inspectLegacyProject(owner, options);
+  if (selection.conversion?.status === 'review-required') {
+    refuse(
+      'MIGRATE_REVIEW_REQUIRED',
+      'Run inspect to review the unresolved conversion requirements.',
+      selection.conversion
+    );
+  }
   if (options.socketUrl !== undefined && !selection.network) {
     refuse('MIGRATE_SOCKET_URL', 'Only a room profile accepts a socket origin.');
   }
@@ -232,6 +251,10 @@ export async function convertProject(options) {
   }
   if (typeof options.esbuild?.transform !== 'function') refuse('MIGRATE_COMPILER', 'Provide an esbuild module.');
   const engine = fs.readFileSync(options.engine);
+  const engineDigest = hash(engine);
+  if (options.expectedEngineSha256 !== undefined && engineDigest !== options.expectedEngineSha256) {
+    refuse('MIGRATE_REBUILD_ENGINE', 'The pinned Egret browser bundle changed during the rebuild.');
+  }
   const sourceFile = fs.readFileSync(bridge);
   const inputBytes = new Map(
     selection.inputs.map(item => {
@@ -321,7 +344,9 @@ export async function convertProject(options) {
     schemaVersion: 1,
     status: 'converted',
     original: selection,
-    target: { version: options.engineVersion, sha256: hash(engine) },
+    target: { version: options.engineVersion, sha256: engineDigest },
+    rebuildInputs: { sourceOrder: options.sources !== undefined, bonesMap: selection.bones !== undefined },
+    ...(options.previousInputs ? { inputChanges: changedInputs(options.previousInputs, selection.inputs) } : {}),
     projectId: store.getSnapshot().projectId,
     revision: store.getSnapshot().revision,
     receipt,
@@ -340,6 +365,7 @@ export async function convertProject(options) {
   };
   fs.mkdirSync(out);
   for (const item of selection.inputs) write(out, item.path, read(item.path));
+  if (options.transaction !== undefined) write(out, 'project-transaction.json', options.transaction);
   if (options.sources) write(out, 'source-order.json', json(options.sources));
   if (selection.bones) write(out, 'bones-map.json', json(options.bones));
   for (const { key, bytes } of assets) write(out, 'web/' + key, bytes);

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/egret-migrate/intake.mjs",
+      "originRole": "First-party commercial-project inspection, editable rebuild or synthetic regression. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/rebuild.mjs",
+      "originRole": "First-party commercial-project inspection, editable rebuild or synthetic regression. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-intake.test.mjs",
+      "originRole": "First-party commercial-project inspection, editable rebuild or synthetic regression. Independently authored with AI assistance; Apache-2.0."
+    }
+  ]
+}

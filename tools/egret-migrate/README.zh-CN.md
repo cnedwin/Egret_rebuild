@@ -4,6 +4,8 @@
 
 Egret Migrate 是面向受支持的经典白鹭 5 Web 2D 源工程的本地 CLI。它复用白鹭 7 的工程存储和现有浏览器验收工具。保留旧源码和可运行的浏览器构建，用它们对照验收新工程。
 
+可选的本地包 `@egret/legacy` 通过 `@egret/legacy/web` 提供原浏览器适配器，通过 `@egret/legacy/protocol` 提供无需 DOM 的二进制协议读写。从源码目录运行 `npm install ./tools/egret-migrate` 即可安装。转换产物已包含这些模块。字段类型和容量边界见[协议兼容指南](compat/README.zh-CN.md)。
+
 ## 安装和运行
 
 在已经构建白鹭包的仓库里生成本地 CLI 归档。传入本机安装的 esbuild 模块和 npm CLI 入口。
@@ -25,6 +27,24 @@ egret-migrate preview --run <new-evidence-directory> --address <LAN-IPv4> --qr-m
 工具读取经典 HTML 的舞台声明、引擎与编译器配置、`manifest.json` 中有序的游戏脚本，以及本地 RES 清单。已接纳 `egret`、`game`、`res`、`assetsmanager`、`promise`、受支持范围内的 `eui` 和 `dragonBones` 模块。浏览器适配器提供测试所覆盖的显示、监听、图片和 JSON 资源组及本地存储操作。可以用 `--source-order` 提供按加载顺序排列的工程内 `src/*.ts` 路径数组，用 `--resources` 指定另一份工程内资源清单。自定义运行时模块和动态舞台尺寸需要按工程适配。
 
 经典 5.1 工程支持引擎与编译器同时声明为 5.1.7 或同时声明为 5.1.9 的项目。
+
+### 盘点 5.3 工程
+
+引擎与编译器声明为相同 5.3.x 版本时，可以直接只读盘点。报告保留原游戏脚本的加载顺序，列出缺失或未进入清单的 TypeScript 源文件、额外的启动库，并列出类型声明文件。可转换工程会保留这些声明和已提供的 tsconfig.json。替换旧宿主前，须复核自定义 HTML 启动脚本。每份本地 `.res.json` 和 `.thm.json` 都会列出已引用、交付目录中却缺少的资源或皮肤。远程资源按 RES 名称报告。盘点范围包括项目根目录、`src/` 和 `resource/`。服务端下发或运行时拼接的资源路径仍需结合实际玩法核对。
+
+先看 `conversion.status`。`eligible` 表示所选输入通过了经典 Web 转换方案的准入检查。`review-required` 会带上原因，转换会在建立输出目录前停止。例如，`MIGRATE_SOURCE_LIMIT` 表示超出自动转换的 512 个脚本上限。报告仍会保留完整顺序，同时列出自定义启动库、多份资源清单和缺失皮肤。盘点在本地读取项目声明，旧工程脚本始终作为数据处理。输入摘要覆盖本次实际读取的文件，其他文件内容、玩法和渠道服务还需实测。
+
+### 重建可编辑的迁移工程
+
+在转换目录中修改保留下来的 TypeScript、EXML、原始资源或清单，保留已有 `conversion.json` 和固定版本的浏览器引擎。用新的同级目录接收重建结果，再复跑同一段玩法。
+
+```text
+egret-migrate rebuild --source <可编辑转换目录> --out <新构建目录> --esbuild <esbuild模块>
+```
+
+重建会沿用游戏存档所用的项目 ID，核对引擎文件摘要，重新解析输入和编译。新 `conversion.json` 中的 `inputChanges.added`、`.changed`、`.removed` 按原始文件字节比较本次准入的输入和上次清单。`web/` 内的生成文件由源码重建。沿用原浏览器存档时还需保持同源。
+
+应用过项目事务的新转换会保存 `project-transaction.json`，以便重建时重放原修正。替换该修正，或者处理没有保存原事务的旧版输出时，传入 `--transaction <文件>`。缺失输入可以在可编辑工程内补齐后重试。升级引擎版本时请显式运行新的 `convert`。
 
 ### 从白鹭 5.0.14 迁出联网大厅
 

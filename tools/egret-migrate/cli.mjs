@@ -6,18 +6,20 @@ import { parseArgs } from 'node:util';
 import { PNG } from 'pngjs';
 import { runPlaytest, startPreview } from '../agent-playtest.mjs';
 import { verifyGame } from '../verify-game.mjs';
+import { rebuildProject } from './rebuild.mjs';
 import { convertProject } from './convert.mjs';
 import { hash, inspectLegacyProject, json, refuse } from './inspect.mjs';
 
 const requiredChecks = ['first-action', 'round-finished', 'restart', 'first-action-after-restart', 'save-restored'];
 const usage = `egret-migrate inspect --source <Egret 5 project> [--source-order <json>]
 egret-migrate convert --source <Egret 5 project> --out <new directory> --engine <egret2d.mjs> --engine-version <7.0.x> --esbuild <module>
+egret-migrate rebuild --source <editable conversion> --out <new directory> --esbuild <module> [--transaction <json>]
 egret-migrate verify --old <working old HTML> --converted <conversion directory> --scenario <trusted mjs> --playwright <module> --out <new directory>
 egret-migrate preview --run <verified comparison directory> --address <private IPv4> --qr-module <qrcode.mjs>
 
 For the original EraserSanGuoSha repository, pass --profile eraser-lobby --source <repository-root> to inspect or convert. Convert accepts --socket-url <loopback-origin> for a separate local game server and otherwise uses the page origin.
 
-Classic project inspection and conversion accept --source-order, --resources, --theme and --bones (a JSON array of explicit RES-name mappings). Convert also accepts --transaction and --project-id. Verify accepts --executable.
+For matched Egret 5.3.x declarations, inspect reports ordered sources, module adapters, RES manifests and theme delivery. Review conversion.status and reasons before converting.\n\nClassic project inspection and conversion accept --source-order, --resources, --theme and --bones (a JSON array of explicit RES-name mappings). Convert also accepts --transaction and --project-id. Verify accepts --executable.
 `;
 
 const moduleAt = filename => import(pathToFileURL(path.resolve(filename)).href);
@@ -77,6 +79,14 @@ export async function verifyMigration(options) {
 }
 
 async function inspectOrConvert(command, values) {
+  if (command === 'rebuild') {
+    return rebuildProject({
+      source: values.source,
+      out: values.out,
+      esbuild: await moduleAt(values.esbuild),
+      transaction: values.transaction ? fs.readFileSync(values.transaction, 'utf8') : undefined
+    });
+  }
   const profile = values.profile;
   if (profile !== undefined && profile !== 'eraser-lobby')
     refuse('MIGRATE_ARGUMENTS', 'Unknown migration profile.', { profile });
@@ -114,6 +124,7 @@ const commands = {
     need: ['source', 'out', 'engine', 'engine-version', 'esbuild'],
     extra: ['profile', 'socket-url', 'source-order', 'resources', 'theme', 'bones', 'transaction', 'project-id']
   },
+  rebuild: { need: ['source', 'out', 'esbuild'], extra: ['transaction'] },
   verify: { need: ['old', 'converted', 'scenario', 'playwright', 'out'], extra: ['executable'] },
   preview: { need: ['run', 'address', 'qr-module'], extra: [] }
 };

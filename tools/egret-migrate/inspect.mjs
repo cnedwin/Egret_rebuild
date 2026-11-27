@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fingerprintFile, logicalPath } from '../lib/file-identity.mjs';
+import { inspectClassicInventory, inspectHtmlBootstrap } from './intake.mjs';
 import { discoverLegacySkins } from './exml.mjs';
 import { eraserLobbyProfile, inspectEraserLobby } from './lobby-profile.mjs';
 import { convertDragonBones } from './dragonbones.mjs';
@@ -11,6 +12,7 @@ import { planMigratedResources } from './legacy-assets.mjs';
 export const hash = data => createHash('sha256').update(data).digest('hex');
 export const json = value => JSON.stringify(value, null, 2) + '\n';
 export const profile = 'egret-5.2-classic-web-2d';
+const sourceLimit = 512;
 const supportedModules = new Set(['egret', 'game', 'res', 'assetsmanager', 'promise', 'eui', 'dragonBones']);
 const scaleModes = {
   showAll: 'contain',
@@ -83,7 +85,7 @@ function readStage(html) {
 
 function readSourceOrder(read, configured) {
   const scriptList = configured ?? readJSON(read, 'manifest.json')?.game;
-  if (!Array.isArray(scriptList) || scriptList.length === 0 || scriptList.length > 512) {
+  if (!Array.isArray(scriptList) || scriptList.length === 0 || scriptList.length > sourceLimit) {
     refuse('MIGRATE_SOURCE_ORDER', 'A classic manifest or an explicit ordered source list is required.');
   }
   const sources = scriptList.map(script => {
@@ -119,9 +121,9 @@ function recordInputs(owner, files, read, selection) {
 export function inspectLegacyProject(folder, options = {}) {
   const owner = path.resolve(folder);
   const files = new Map();
-  const read = key => {
+  const read = (key, maxBytes) => {
     if (files.has(key)) return files.get(key);
-    const result = readProjectFile(owner, key, options.profile === eraserLobbyProfile ? 1024 * 1024 : undefined);
+    const result = readProjectFile(owner, key, options.profile === eraserLobbyProfile ? 1024 * 1024 : maxBytes);
     files.set(key, result);
     return result;
   };
@@ -134,6 +136,76 @@ export function inspectLegacyProject(folder, options = {}) {
     return recordInputs(owner, files, read, selection);
   }
   const properties = readJSON(read, 'egretProperties.json');
+  if (/^5\.3\.\d+$/.test(properties?.engineVersion ?? '') && properties.engineVersion === properties.compilerVersion) {
+    let metadataBytes = 0;
+    const readMetadata = key => {
+      const file = read(key, 16 * 1024 * 1024);
+      metadataBytes += file.identity.bytes;
+      if (metadataBytes > 64 * 1024 * 1024)
+        refuse('MIGRATE_INVENTORY_LIMIT', 'The selected inventory declarations exceed 64 MiB.');
+      return readJSON(read, key);
+    };
+    const { inventory, issues } = inspectClassicInventory(
+      owner,
+      properties,
+      options,
+      readMetadata,
+      supportedModules,
+      sourceLimit
+    );
+    const declaration = {
+      schemaVersion: 1,
+      profile: 'egret-5.3-classic-web-2d',
+      engineVersion: properties.engineVersion,
+      compilerVersion: properties.compilerVersion,
+      modules: (Array.isArray(properties.modules) ? properties.modules : []).map(item => item?.name ?? null)
+    };
+    try {
+      const html = read('index.html', 1024 * 1024).bytes.toString('utf8');
+      inventory.htmlBootstrap = inspectHtmlBootstrap(html, inventory.scripts);
+      if (inventory.htmlBootstrap.requiresReview) issues.push('MIGRATE_HTML_BOOTSTRAP');
+      declaration.stage = readStage(html);
+    } catch (error) {
+      if (error.code !== 'MIGRATE_ENTRY' && error.code !== 'MIGRATE_INPUT_FILE') throw error;
+      issues.push(error.code);
+    }
+    if (!issues.length) {
+      try {
+        const selected = inspectClassic(properties, options, read, true);
+        for (const source of inventory.scripts.declarations) read(source);
+        if (fs.readdirSync(owner).includes('tsconfig.json')) read('tsconfig.json');
+        return recordInputs(owner, files, read, {
+          ...selected,
+          inventory,
+          conversion: { status: 'eligible', reasons: [] }
+        });
+      } catch (error) {
+        // Preserve authoring and capability gaps in an inspection report. Identity/race and programming errors still fail closed.
+        if (
+          ![
+            'MIGRATE_ENTRY',
+            'MIGRATE_SOURCE_ORDER',
+            'MIGRATE_RES_UNSUPPORTED',
+            'MIGRATE_BONES_MANIFEST',
+            'MIGRATE_EXML_UNSUPPORTED',
+            'MIGRATE_THEME_UNSUPPORTED',
+            'MIGRATE_DRAGONBONES_UNSUPPORTED'
+          ].includes(error.code)
+        )
+          throw error;
+        issues.push(error.code);
+      }
+    }
+    return recordInputs(owner, files, read, {
+      ...declaration,
+      inventory,
+      conversion: { status: 'review-required', reasons: [...new Set(issues)].sort() }
+    });
+  }
+  return recordInputs(owner, files, read, inspectClassic(properties, options, read, false));
+}
+
+function inspectClassic(properties, options, read, classic53) {
   // This older Wing project format records one SDK release and no separate compiler version.
   const wing5015 =
     properties?.egret_version === '5.0.15' &&
@@ -142,13 +214,14 @@ export function inspectLegacyProject(folder, options = {}) {
   const classic51 =
     ['5.1.7', '5.1.9'].includes(properties?.engineVersion) && properties.compilerVersion === properties.engineVersion;
   if (
+    !classic53 &&
     !wing5015 &&
     !classic51 &&
     (!/^5\.2\.\d+$/.test(properties?.engineVersion ?? '') || !/^5\.2\.\d+$/.test(properties?.compilerVersion ?? ''))
   ) {
     refuse(
       'MIGRATE_VERSION_UNSUPPORTED',
-      'Expected matched Egret 5.1.7 or 5.1.9 declarations, Egret 5.2.x declarations or the 5.0.15 Wing project format.'
+      'Expected matched Egret 5.1.7 or 5.1.9 declarations, Egret 5.2.x declarations, matched Egret 5.3.x declarations or the 5.0.15 Wing project format.'
     );
   }
   const modules = Array.isArray(properties.modules) ? properties.modules : [];
@@ -232,13 +305,15 @@ export function inspectLegacyProject(folder, options = {}) {
       };
     });
   }
-  return recordInputs(owner, files, read, {
+  return {
     schemaVersion: 1,
     profile: wing5015
       ? 'egret-5.0.15-classic-web-2d'
       : classic51
         ? `egret-${properties.engineVersion}-classic-web-2d`
-        : profile,
+        : classic53
+          ? 'egret-5.3-classic-web-2d'
+          : profile,
     engineVersion: wing5015 ? properties.egret_version : properties.engineVersion,
     ...(wing5015 ? {} : { compilerVersion: properties.compilerVersion }),
     modules: modules.map(module => module.name),
@@ -249,5 +324,5 @@ export function inspectLegacyProject(folder, options = {}) {
     ...(result.sheets === undefined ? {} : { sheets: result.sheets }),
     ...(theme === undefined ? {} : { theme }),
     ...(bones === undefined ? {} : { bones })
-  });
+  };
 }
