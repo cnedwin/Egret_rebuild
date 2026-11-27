@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/world3d-mesh-transfer.test.mjs",
+      "originRole": "First-party test that a triangle mesh shape's arrays, moved as a worker moves them, are adopted by TriangleMeshShape3D.fromBuffers without a copy and answer every query and ray as the original, and that malformed arrays are refused; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
