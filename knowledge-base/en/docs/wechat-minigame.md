@@ -106,3 +106,7 @@ On November 22, 2026, a ported 2D game exported this way was played in the stand
 - HTML the game shows over the canvas (menus, text fields, overlays) is not drawn. Only backgrounds under the stage are drawn.
 - The screen canvas fills the window. A stage of another shape is stretched unless the game fits with `fit: 'expand'` (see [Fitting a stage to a screen](screen-fit.md)), which fills the window at the design's scale; the adapter reports WeChat's `safeArea` as the page's insets. Touches stay where they are drawn either way. With `expand`, `game.width` and `game.height` stay the design's; `game.screen` is the whole window, and `arrange` is told when it changes. In the stand-in at 390 × 844, a 720 × 1280 design gave a stage of 720 × 1558 with `game.screen` at y = −139, and a backdrop drawn over `game.screen` in `arrange` reached the top and bottom rows. `game.pointer` is in the design's units and `localToGlobal` in the stage's: `game.toStage` and `game.fromStage` take one to the other.
 - WebGPU is not available in a mini game. A game that requires it does not start.
+
+## November 27 device follow-up
+
+November 27 follow-up: physical Chrome/Edge browser results for labels, text and UI are available, but they do not run the WeChat runtime, subpackage loading or its keyboard callbacks. Actual WeChat DevTools and devices remain open. [Device observations and remaining coverage](november-27-claude-hardware.md).

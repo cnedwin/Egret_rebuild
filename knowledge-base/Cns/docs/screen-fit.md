@@ -158,8 +158,12 @@ node vendor/egret.mjs verify --screens --play test/play.mjs --out screen-route
 
   这次运行记录在加入这些模式的 PR 里。
 
-没有在带刘海的手机、Safari 或微信本身上运行过。这些运行中页面自己的 insets 始终为 0，刘海是用 `insets` 或 `__egretAgent.insets` 给出的。`wholeScale` 在浏览器里只在一个 CSS 像素对应一个设备像素时检查过，两个设备像素的情况只在 Node 里检查过。
+上述原软件渲染测试没有覆盖带刘海的实体手机、Safari 或微信本身。这些运行中页面自己的 insets 始终为 0，刘海是用 `insets` 或 `__egretAgent.insets` 给出的。`wholeScale` 在浏览器里只在一个 CSS 像素对应一个设备像素时检查过，两个设备像素的情况只在 Node 里检查过。
 
 ## 设计说明
 
 游戏 UI 框架通常这样应对不同形状的屏幕。比如 LumioGames 的 LGUI 用短边相同的两版设计，加一个由框架移动的安全区节点；这里把它作为参考研究过，没有用它的任何代码。这里的规则作用在舞台上，而不是作用在有名字的组件上；游戏在自己的代码里按 `safe` 摆放贴边的东西。
+
+## 11 月 27 日真机补验
+
+11 月 27 日实测：Windows 硬件 WebGL2 与 Fold7 WebGL2/WebGPU 的 fixed 模式、贴边、高 DPR 整倍数像素及 UI/视图几何专项通过。Fold7 真实视口 873 × 325 CSS 像素、DPR 2.625，指定 insets 和竖屏/平板容器尺寸由脚本提供；实体刘海与折叠转换仍待测。 [真机观测及剩余范围](november-27-claude-hardware.md). 另在独立重建的 #516 上确认双终端双后端关闭视图独立缩放时，覆盖层保持世界坐标及点击。

@@ -441,3 +441,7 @@ Headless tests `tests/world3d-core.test.mjs`, `tests/world3d-animation-picking.t
 - Baked skinned instances have fixed comparison and headless behavior coverage. A software-rendered benchmark remains separate from physical performance qualification.
 - Fixed comparisons include terrain, water and the planar mirror. WebGPU canvas presentation and interactive use of the landscape remain open.
 - Not implemented: Draco and Basis Universal decoding without the official modules, float-precision environment prefiltering, more than one layer of refraction, bevelled extrusions, text shaping and CFF fonts, soft bodies and fluids, cloth that collides with itself or pushes bodies, wheels with width, gears and differentials, and continuous collision for the turning of a body within a step.
+
+## November 27 device follow-up
+
+November 27 follow-up: sharp SDF geometry, three selected LOD levels and seven surface materials were rendered on the RTX 5090 Laptop and Adreno 830 across WebGL2 and WebGPU. The report records per-material pixel coverage and cross-API differences; no frame-time claim is made. [Device observations and remaining coverage](november-27-claude-hardware.md).

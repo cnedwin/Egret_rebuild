@@ -175,3 +175,7 @@ const cache = createParagraphCache(engine.assets, { provider });
 - `prefer: 'canvas'` or `prefer: 'canvaskit'` decides instead. CanvasKit asked for by name throws when it fails. `device` states what is known of the device in place of what the global object says.
 
 With the canvas provider, register the fonts before the first paragraph is prepared.
+
+## November 27 device follow-up
+
+November 27 follow-up: physical Windows WebGL2 compared Canvas and CanvasKit using the same fonts; on Fold7 the no-WASM Canvas provider rendered a three-line mixed Chinese/English sample. The font-set editor Node checks passed; actual WeChat font metrics and host input remain open. [Device observations and remaining coverage](november-27-claude-hardware.md).

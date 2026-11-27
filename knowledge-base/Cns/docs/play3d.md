@@ -134,3 +134,7 @@ await play3d({ width: 960, height: 540, setup(game) { … }, update(dt, game) { 
 ## 游戏变大之后
 
 `game.scene` 是 [Scene3D](world3d.md)，`game.app` 是 [World3D 应用](world3d-app.md)：从 glTF 加载的模型、材质、更多的灯光、粒子、物理和后期处理，都可以加到场景里，与 `play3d` 创建的内容并存。`game.camera.node` 和 `thing.node` 就是相机和网格本身。
+
+## 11 月 27 日真机补验
+
+11 月 27 日实测：Fold7 在 140 × 325 CSS 的窄容器中，双后端保持相机宽视野后显示两侧物体，视角由 55° 变为 100.78°；Windows 硬件 WebGL2 原投影测试也通过。该窄容器在真实竖屏会话（411 × 813 CSS）中由脚本设置，实际旋转过渡和真人画面体验仍待测。 [真机观测及剩余范围](november-27-claude-hardware.md).
