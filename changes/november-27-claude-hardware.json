@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-27",
+  "en": {
+    "title": "Record physical verification of recent screen, UI and World3D changes",
+    "body": "The consolidated report inventories 32 merged Claude-named PRs through #516, records Windows RTX 5090 Laptop and Fold7 Adreno 830 hardware observations, preserves the original views-helper focus assertion failure and identifies remaining platform and formal performance limits."
+  },
+  "zh": {
+    "title": "补充近期屏幕、UI 与 World3D 真机验收",
+    "body": "汇总覆盖至 #516 的 32 个 Claude 来源分支，记录 Windows RTX 5090 Laptop 与 Fold7 Adreno 830 实测，保留原视图辅助测试焦点断言失败及诊断，明确平台与正式性能待验收范围。"
+  }
+}

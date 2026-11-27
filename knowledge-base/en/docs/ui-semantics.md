@@ -344,3 +344,7 @@ Operator faults were written into the built list helper one at a time: 108, and 
 - Nodes for the leaves and the layers of the managed UI are the application's own, measured with [`semanticBoxOf`](#boxes-and-layers-of-the-managed-ui). The rows of a virtual list have [a helper](#a-managed-virtual-list).
 - Selecting a range of rows at once, as with Shift and the arrow keys, is the application's; the multiple selection example shows one way.
 - A projection of the native editor itself. The editor is its own element.
+
+## November 27 device follow-up
+
+November 27 follow-up: named child hit areas, visibility, semantic activation and modal filtering were exercised on physical Windows and Fold7 browsers. This extends selected hardware cases; no actual assistive-technology session or announcement audibility was observed. [Device observations and remaining coverage](november-27-claude-hardware.md).

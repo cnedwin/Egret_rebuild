@@ -106,3 +106,7 @@ node tools/wechat/check-minigame.mjs <已安装的 Playwright index.mjs> <小游
 - 游戏显示在画布上面的 HTML（菜单、文本框、浮层）不会画出来。只画舞台下面的背景。
 - 屏幕画布铺满窗口。形状不同的舞台会被拉伸，除非游戏用 `fit: 'expand'` 适配（见[把舞台适配到屏幕](screen-fit.md)），它按设计尺寸的缩放比铺满窗口；适配器把微信的 `safeArea` 当作页面的 insets 报告。两种情况下触摸位置都与画面一致。用 `expand` 时，`game.width` 和 `game.height` 仍是设计尺寸；`game.screen` 是整个窗口，它变化时会调用 `arrange`。在替身里以 390 × 844 运行，720 × 1280 的设计得到 720 × 1558 的舞台，`game.screen` 从 y = −139 开始；在 `arrange` 里按 `game.screen` 画的背景铺到了最上一行和最下一行。`game.pointer` 用设计单位，`localToGlobal` 用舞台单位：`game.toStage` 和 `game.fromStage` 在两者之间换算。
 - 小游戏没有 WebGPU。必须用 WebGPU 的游戏启动不了。
+
+## 11 月 27 日真机补验
+
+11 月 27 日实测：已有真实 Chrome/Edge 的标签、文字和 UI 记录；微信 Runtime、分包加载和键盘回调尚未运行，仍需真实微信开发者工具及设备。 [真机观测及剩余范围](november-27-claude-hardware.md).

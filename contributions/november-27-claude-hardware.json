@@ -1,0 +1,23 @@
+{
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/november-27-claude-hardware.md",
+      "zh": "knowledge-base/Cns/docs/november-27-claude-hardware.md"
+    }
+  ],
+  "files": [
+    {
+      "path": "knowledge-base/en/docs/november-27-claude-hardware.md",
+      "originRole": "First-party physical browser test record and analysis, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/november-27-claude-hardware.md",
+      "originRole": "First-party physical browser test record and analysis, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "docs/evidence/november-27-claude-hardware.json",
+      "originRole": "First-party measurements, PR inventory and normalized physical browser verification records, independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "schemaVersion": 1
+}

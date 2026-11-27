@@ -81,3 +81,7 @@ The stack draws nothing, so pictures and input are checked with the screens buil
 ## Design notes
 
 LumioGames LGUI has five layers, a stack and a modal queue, results given back on close, and a check for the same parameters when a screen is opened twice. These rules follow that design, which was studied as a reference; none of its code is used. Here the stack is separate from drawing and from any screen format, so a `play` game, a managed UI root or the data-described screens can each use it.
+
+## November 27 device follow-up
+
+November 27 follow-up: the existing screen-stack and named UI tester Node cases passed 12/12. The physical browser probes exercised modal blocking/confirmation and selected view lifetimes; they do not qualify every screen stack transition on devices. [Device observations and remaining coverage](november-27-claude-hardware.md).
