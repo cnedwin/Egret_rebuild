@@ -48,6 +48,23 @@
     ],
     "scope": "Tests cover entering the selection UI on this package. Gameplay, payment and real sign-in require their own evidence."
   },
+  "separateRelease": {
+    "build": "Offline Release APK and AAB using a separate application ID and local self-signed test identity. The release has no QA state publisher or embedded color fixture.",
+    "apkBytes": 76129141,
+    "apkSha256": "5fe5ae60b9bb67953ab5f6990743053d293ca6f17d1a36413fef08f4f2d3e1cf",
+    "aabBytes": 29424209,
+    "aabSha256": "449c5ccdaef331d3b4b6ec1a016037ff3891fc1a4c6ef56dc0f5e1bc7fb74780",
+    "signatures": "APK Signature Scheme v2 and signed bundle JAR were verified. The key is a local test key.",
+    "test": "The APK was installed on the same Fold7. Its original login field opened with an empty native EditText. USB input entered the marker. The original button opened server selection. After force-stop and reopening, the native EditText contained the same marker.",
+    "screenComparison": {
+      "reference": "The debug acceptance above on the same device and original scene",
+      "method": "Uniform 119 by 69 point interior grid on the Android game Surface. Compares RGB from screenshots, excluding the sample Activity controls and system bars.",
+      "login": {"samples": 8211, "exact": 8211},
+      "serverSelection": {"samples": 8211, "exact": 8211},
+      "loginAfterProcessRestart": {"samples": 8211, "exact": 8211}
+    },
+    "scope": "The signed APK was installed. The AAB was built and signature-verified. No store submission or operating service was exercised."
+  },
   "independentColorFixture": {
     "description": "A solid red rectangle in an original Shape. Apply one ColorMatrixFilter with green offset 255, mutate the same filter to blue, then remove it.",
     "samples": "Center of the native surface sampled from three device screenshots after actual taps.",
