@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "testDate": "2026-11-27",
+  "device": "Samsung Galaxy Z Fold7 SM-F966U1; Android 17",
+  "baselineCommit": "22c1cd585d921326a422b63499ea563e77caf5a1",
+  "workload": {
+    "kind": "One complete 64 KiB asset read prefix, taskset CPU 7, alternating AB and BA in one process",
+    "pages": 16,
+    "data": "65,536 deterministic xorshift32 bytes per page, seed 0x5a672913",
+    "pairs": 24,
+    "rawIterationsPerArm": 512,
+    "jniIterationsPerArm": 192,
+    "rawWarmupArms": 8,
+    "jniWarmupArms": 10
+  },
+  "units": "Nanoseconds per 64 KiB chunk, normalized within each timed arm. p95 is nearest-rank across 24 arm means, not an individual request latency.",
+  "rawLoop": {
+    "cNs": {
+      "median": 2378.5,
+      "p95": 2473
+    },
+    "rustNs": {
+      "median": 2359.5,
+      "p95": 2409
+    },
+    "pairedMedianPercent": -0.85
+  },
+  "rawThreadCpu": {
+    "cNs": {
+      "median": 2371,
+      "p95": 2431
+    },
+    "rustNs": {
+      "median": 2339,
+      "p95": 2406
+    },
+    "pairedMedianPercent": -0.74
+  },
+  "jniWithResultArray": {
+    "cNs": {
+      "median": 51258.5,
+      "p95": 59586
+    },
+    "rustNs": {
+      "median": 50537,
+      "p95": 56207
+    },
+    "pairedMedianPercent": -3.92
+  },
+  "correctness": {
+    "validLengths": 323,
+    "coverage": "0 through 256 and 65471 through 65536 inclusive; original C and Rust JNI compared with Android java.util.Base64",
+    "exceptionChecks": 8,
+    "releaseAarLibrarySha256": "dc61b85d54c3bfa579f955821e11fd9edc86f89bb7a5158b4740d35ba766bddf",
+    "fold7LifecycleTest": "ProjectAssetReadsTest passed on Android ART using the output player AAR: text, bytes, exact chunks, prefix tails, active cancel/close and retry.",
+    "rustTests": 28,
+    "arm64VerifiedInstructions": [
+      "ld3",
+      "tbl",
+      "st4"
+    ]
+  },
+  "results": {
+    "loopPairs": [
+      [
+        2576,
+        2376,
+        2537,
+        2377
+      ],
+      [
+        2346,
+        2306,
+        2324,
+        2307
+      ],
+      [
+        2314,
+        2306,
+        2315,
+        2307
+      ],
+      [
+        2336,
+        2304,
+        2318,
+        2305
+      ],
+      [
+        2318,
+        2305,
+        2318,
+        2306
+      ],
+      [
+        2313,
+        2318,
+        2314,
+        2310
+      ],
+      [
+        2315,
+        2330,
+        2315,
+        2309
+      ],
+      [
+        2319,
+        2305,
+        2319,
+        2305
+      ],
+      [
+        2318,
+        2379,
+        2319,
+        2320
+      ],
+      [
+        2315,
+        2304,
+        2315,
+        2305
+      ],
+      [
+        2372,
+        2304,
+        2320,
+        2306
+      ],
+      [
+        2347,
+        2304,
+        2335,
+        2305
+      ],
+      [
+        2363,
+        2327,
+        2363,
+        2328
+      ],
+      [
+        2386,
+        2349,
+        2379,
+        2350
+      ],
+      [
+        2385,
+        2370,
+        2385,
+        2371
+      ],
+      [
+        2394,
+        2409,
+        2396,
+        2363
+      ],
+      [
+        2392,
+        2396,
+        2393,
+        2374
+      ],
+      [
+        2397,
+        2380,
+        2398,
+        2380
+      ],
+      [
+        2429,
+        2396,
+        2430,
+        2382
+      ],
+      [
+        2424,
+        2389,
+        2424,
+        2391
+      ],
+      [
+        2449,
+        2395,
+        2427,
+        2396
+      ],
+      [
+        2473,
+        2400,
+        2423,
+        2400
+      ],
+      [
+        2430,
+        2406,
+        2431,
+        2406
+      ],
+      [
+        2424,
+        2422,
+        2424,
+        2413
+      ]
+    ],
+    "jniPairs": [
+      [
+        59586,
+        54746
+      ],
+      [
+        51870,
+        42345
+      ],
+      [
+        40633,
+        55943
+      ],
+      [
+        41005,
+        51481
+      ],
+      [
+        59566,
+        44176
+      ],
+      [
+        40030,
+        56207
+      ],
+      [
+        63097,
+        40940
+      ],
+      [
+        55085,
+        52743
+      ],
+      [
+        41328,
+        51717
+      ],
+      [
+        40297,
+        52121
+      ],
+      [
+        51646,
+        52085
+      ],
+      [
+        50891,
+        40451
+      ],
+      [
+        51708,
+        39925
+      ],
+      [
+        52845,
+        50947
+      ],
+      [
+        40266,
+        57894
+      ],
+      [
+        40941,
+        50104
+      ],
+      [
+        56815,
+        52834
+      ],
+      [
+        51387,
+        41080
+      ],
+      [
+        51417,
+        40184
+      ],
+      [
+        40057,
+        53475
+      ],
+      [
+        52526,
+        39872
+      ],
+      [
+        51130,
+        49957
+      ],
+      [
+        49667,
+        39255
+      ],
+      [
+        49357,
+        50127
+      ]
+    ],
+    "columns": "loop: C wall, Rust wall, C thread CPU, Rust thread CPU. JNI: C wall, Rust wall. Even pairs run C first."
+  },
+  "limits": "Single phone with warm prepared data. JNI timing excludes Java String creation, JS transfer and game rendering. The fractional loop difference and fluctuating JNI samples do not establish a general speed improvement."
+}

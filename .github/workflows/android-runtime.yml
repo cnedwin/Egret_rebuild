@@ -75,8 +75,10 @@ jobs:
           "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectHostServicesTest
           "$JAVA_HOME/bin/java" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectSaveStorageTest
           # Exercise the same JNI entry as the AAR, using the host CPU for this JVM check.
+          cargo build --locked --offline --release --manifest-path runtime-sdk/native/Cargo.toml --target-dir "$replay_test/native-host"
           cc -std=c11 -O2 -shared -fPIC -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" \
-            runtime-sdk/android/src/chunk_base64.c -o "$replay_test/libegret_player.so"
+            -Iruntime-sdk/native/include runtime-sdk/android/src/chunk_base64.c \
+            "$replay_test/native-host/release/libegret_runtime_native.a" -ldl -lpthread -lm -o "$replay_test/libegret_player.so"
           "$JAVA_HOME/bin/java" -Djava.library.path="$replay_test" -cp "$replay_test:$player_cp" org.egret.runtime.player.ProjectAssetReadsTest
           # The hosted runner can miss Central artifacts which are present on Google's Central mirror.
           cat > "$RUNNER_TEMP/central-mirror.gradle" <<'GRADLE'

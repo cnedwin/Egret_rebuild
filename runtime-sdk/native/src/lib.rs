@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 //! GLES executor for EGR1 baseline, EGR2/EGR3 quads, and EGR4 indexed textured meshes.
 
+mod chunk_base64;
 #[cfg(any(test, target_os = "android"))]
 mod frame;
 #[cfg(target_os = "android")]

@@ -87,7 +87,7 @@
     },
     {
       "path": "runtime-sdk/android/src/chunk_base64.c",
-      "originRole": "First-party Base64 encoder for bounded Android package asset reads, including the arm64 vector path and portable tail. Independently prepared with AI assistance; Apache-2.0."
+      "originRole": "First-party JNI adapter for bounded Android package asset reads, including Java array ownership and exception handling. Independently prepared with AI assistance; Apache-2.0."
     },
     {
       "path": "runtime-sdk/examples/moon-herbarium/assets/botanicals.png",

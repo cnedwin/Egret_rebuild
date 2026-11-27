@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/measurements/fold7-rust-chunk-base64.json",
+      "originRole": "First-party Fold7 paired timing and compatibility measurements for packaged resource chunks, recorded with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/chunk_base64.rs",
+      "originRole": "First-party bounded Rust Base64 codec and arm64 vector implementation following the existing Egret byte contract, with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
