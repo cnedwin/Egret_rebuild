@@ -4,7 +4,7 @@ import test from 'node:test';
 import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
-import { prepareOriginal5 } from './prepare-original5.mjs';
+import { original5NativeAbi, prepareOriginal5 } from './prepare-original5.mjs';
 
 test('preparing native input preserves published scripts in manifest order and preserves resource URLs', async () => {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'egret-original5-'));
@@ -18,6 +18,7 @@ test('preparing native input preserves published scripts in manifest order and p
     const output = path.join(dir, 'ready');
     await prepareOriginal5(source, {entryClass:'menu.Main',width:480,height:270,assets:['level.json']}, output);
     const desc = JSON.parse(await readFile(path.join(output,'project.json')));
+    assert.equal(desc.v8ScriptMode, 'classic');
     const groups = desc.v8Scripts.groups;
     assert.equal(groups.originalCore.length, 1);
     assert.equal(groups.originalModules.length, 1);
@@ -40,4 +41,17 @@ test('preparing native input preserves published scripts in manifest order and p
     await assert.rejects(readFile(path.join(dir,'bad','project.json')));
     await assert.rejects(prepareOriginal5(source, {entryClass:'Main',width:2,height:2}, output));
   } finally { await rm(dir, {recursive:true,force:true}); }
+});
+
+test('the original core selects its native ABI before it executes', () => {
+  for (const version of ['5.3.1', '5.3.2']) assert.equal(original5NativeAbi('e.engineVersion="'+version+'"'), 4);
+  for (const version of ['5.3.5', '5.3.9', '5.3.10']) assert.equal(original5NativeAbi('Capabilities.engineVersion = "'+version+'"'), 5);
+  assert.throws(() => original5NativeAbi('e.engineVersion="5.3.1"', 5), /disagrees/);
+  assert.throws(() => original5NativeAbi('e.engineVersion="5.3.4"'), /Specify nativeAbi/);
+  assert.equal(original5NativeAbi('e.engineVersion="5.3.4"', 4), 4);
+  assert.throws(() => original5NativeAbi('e.engineVersion="5.3.2";e.engineVersion="5.3.9"'), /Ambiguous/);
+  assert.equal(original5NativeAbi('var requiredNrABIVersion = 4;'), 4);
+  assert.throws(() => original5NativeAbi('e.engineVersion="5.3.9";var requiredNrABIVersion=4'), /disagrees/);
+  assert.throws(() => original5NativeAbi('var requiredNrABIVersion=6'), /disagrees/);
+  assert.throws(() => original5NativeAbi('', 7));
 });

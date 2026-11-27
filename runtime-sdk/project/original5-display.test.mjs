@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {createEngine, createImageData2D} from '@egret/engine';
 import {createOriginal5Display} from './original5-display.mjs';
 
-async function fixture(run) {
+async function fixture(run, nativeAbi = 5) {
   const engine = await createEngine({host: {
     surface: {}, close: async () => {},
     setTimeout(callback, delay) {
@@ -19,7 +19,7 @@ async function fixture(run) {
       calls.push('+' + id);
       return {release() { calls.push('-' + id); }};
     }
-  });
+  }, nativeAbi);
   try { await run(display, calls); }
   finally { display.close(); await engine.dispose(); }
 }
@@ -148,3 +148,45 @@ test('nine-slice reuses the original layout and tracks BitmapData replacement an
   assert.equal(panel.bitmap, undefined);
   assert.deepEqual(calls, ['+1', '+2', '-1', '-2']);
 }));
+test('ABI 4 retains shared sources through original Texture and BitmapData disposal', () => fixture(async (d, calls) => {
+  const Native = d.api.NativeDisplayObject;
+  class OriginalBitmapData {
+    constructor(source) { this.source = source; this.width = source.width; this.height = source.height; }
+  }
+  d.installGraphics({Graphics: class {}, BitmapData: OriginalBitmapData});
+  assert.equal(d.api.nrABIVersion, 4);
+  const pixels = createImageData2D({width: 2, height: 1, pixels: new Uint8Array(8)});
+  const source = await d.imageSource(pixels);
+  const a = new OriginalBitmapData(source);
+  const b = new OriginalBitmapData(source);
+  function texture(data) {
+    return {$bitmapData:data, $bitmapX:0, $bitmapY:0, $bitmapWidth:2, $bitmapHeight:1, $offsetX:0, $offsetY:0,
+      $textureWidth:2, $textureHeight:1, $getScaleBitmapWidth:() => 2, $getScaleBitmapHeight:() => 1};
+  }
+  assert.equal(a.source, source);
+  assert(Object.keys(a).includes('source'));
+  const first = new Native(1), second = new Native(1);
+  first.setBitmapData(texture(a));
+  second.setBitmapData(texture(b));
+  const page = second.bitmap.textureLease;
+  assert.equal(first.bitmap.textureLease, page);
+  // The original Texture.dispose clears its descriptor first. The Bitmap retains the old crop.
+  first.texture.$bitmapData = null;
+  Native.disposeTexture(first.texture);
+  assert.equal(first.bitmap.textureLease, page);
+  assert.equal(second.bitmap.textureLease, page);
+
+  // Original BitmapData clears its source before the optional static display-list callback.
+  a.source = null;
+  Native.disposeBitmapData(a);
+  assert.equal(first.bitmap, undefined);
+  assert.equal(second.bitmap.textureLease, page);
+  assert.deepEqual(calls, ['+1']);
+  b.source = null;
+  assert.deepEqual(calls, ['+1','-1']);
+  const unused = new OriginalBitmapData(await d.imageSource(pixels));
+  unused.source = null;
+  assert.deepEqual(calls, ['+1','-1','+1','-1']);
+  d.close();
+  assert.equal(Object.hasOwn(OriginalBitmapData.prototype,'source'), false);
+}, 4));

@@ -28,6 +28,7 @@ import java.util.Set;
 
 /** One worker owns the isolate, its persistent handles and all timer callbacks. */
 public final class JavetProjectScripts extends ScriptSession {
+    private static final ProjectV8ScriptMode SCRIPT_MODE = new ProjectV8ScriptMode();
     private interface Job { void run() throws Exception; }
     private final HandlerThread thread = new HandlerThread("Egret project V8");
     private final Handler worker;
@@ -57,15 +58,21 @@ public final class JavetProjectScripts extends ScriptSession {
         boolean full = "standard".equals(profile);
         if (!full && !"trimmed".equals(profile)) throw new IOException("Unknown embedded V8 profile");
         scripts = new ProjectScriptPlan(project.v8Scripts);
-        if (full) ProjectV8Assets.installIcu(context);
         JSRuntimeType type = full ? JSRuntimeType.V8I18n : JSRuntimeType.V8;
         synchronized (interruptLock) {
             if (deadlineExpired) return;
         }
+        V8Runtime opened = SCRIPT_MODE.open(project.strictScripts, V8RuntimeOptions.V8_FLAGS, () -> {
+            if (full) ProjectV8Assets.installIcu(context);
+            return V8Host.getInstance(type).createV8Runtime();
+        });
         V8Host host = V8Host.getInstance(type);
-        V8Runtime opened = host.createV8Runtime();
         synchronized (interruptLock) { runtime = opened; }
         if (owner.ending) return;
+        // An embedding application may already have initialized Javet. Check the effective
+        // compiler behavior before executing any project or reusing its cached bytecode.
+        if (runtime.getExecutor("(function(){return this===undefined;})()").executeBoolean() != project.strictScripts)
+            throw new IOException("Effective V8 compiler mode differs from the project");
         // Leave ICU tables cold until a game actually needs locale formatting.
         boolean intl = runtime.getExecutor("typeof Intl !== 'undefined'").executeBoolean();
         if (intl != full)
@@ -76,7 +83,7 @@ public final class JavetProjectScripts extends ScriptSession {
         String version = runtime.getVersion();
         if (project.codeCache) {
             String environment = "Javet-" + host.getJavetVersion() + "|" + version + "|" + profile + "|" + android.os.Build.SUPPORTED_ABIS[0]
-                + "|" + V8RuntimeOptions.V8_FLAGS.toString();
+                + "|" + V8RuntimeOptions.V8_FLAGS.toString() + "|scriptMode=" + (project.strictScripts ? "strict" : "classic");
             cache = new ProjectCodeCache(context.getCodeCacheDir(), environment);
         }
         owner.ui.post(() -> owner.vmDetails(version, intl));

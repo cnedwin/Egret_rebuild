@@ -100,6 +100,9 @@ export async function exportProject(project, output, esbuildModule, { verifyDeli
     ids.add(page.id);
   }
   if (desc.v8CodeCache !== undefined && typeof desc.v8CodeCache !== 'boolean') throw new Error('Expected v8CodeCache boolean');
+  if (desc.v8ScriptMode !== undefined && !['strict','classic'].includes(desc.v8ScriptMode)) {
+    throw new Error('Expected strict or classic V8 script mode');
+  }
   selectV8Profile(undefined, desc.requiredV8Features);
   const scripts = classicScriptFiles(desc.v8Scripts);
   const files = [desc.entry, ...desc.pages.map(page => page.src), ...(desc.assets ?? []), ...scripts];
