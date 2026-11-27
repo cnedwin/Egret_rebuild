@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/android/player/compare-release-apks.mjs",
+      "originRole": "Independent read-only identity comparison for locally signed Android releases, using official Android SDK executables. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/compare-release-apks.test.mjs",
+      "originRole": "Independent behavior tests for the local APK update comparison. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-receiver-upgrade.json",
+      "originRole": "Independently measured Windows rebuild and physical Android upgrade with an authored test integration."
+    }
+  ],
+  "documents": []
+}

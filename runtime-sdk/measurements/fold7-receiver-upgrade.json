@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-27",
+  "scope": "Local stand-in for an Android client receiving and updating a game. External customer handoff, vendor test credentials, Mali hardware and distribution are separate acceptance.",
+  "fixture": "Original Egret v5.3.2 atlas sample (self-reported core 5.3.1). First-party version 102 changes a background color and corrects the name of a native callback. The Android handler reads the installed application version via PackageManager.",
+  "kitSha256": "7a8c624822598a774934f6c638b5a5e52625867bdd2818ea6b975288edcaf25d",
+  "environment": {
+    "os": "Windows",
+    "jdk": 17,
+    "androidSdkPlatform": 36,
+    "buildTools": "35.0.0",
+    "gradle": "8.11.1",
+    "offline": true,
+    "retainedHost": true
+  },
+  "applicationId": "org.egret.acceptance.handoffstation",
+  "testPublicSignerSha256": "4f44b7ccd0fa97cf426fa5f088332e2926ad2c184cf82045ff333ef39983ec7d",
+  "builds": [
+    {
+      "versionCode": 101,
+      "type": "apk",
+      "size": 64649269,
+      "sha256": "1e4e3e526217c8fae96d2f6c2a64501c91f84d80bd4c2473c217bf06791484e3",
+      "pairedBuildSeconds": 70.35
+    },
+    {
+      "versionCode": 101,
+      "type": "aab",
+      "size": 17836731,
+      "sha256": "55560bcc2bf64e7d052d03ef57e4d4b566a94ca2421327354e63d2bf17965ef7",
+      "pairedBuildSeconds": 70.35
+    },
+    {
+      "versionCode": 102,
+      "type": "apk",
+      "size": 64649269,
+      "sha256": "e54419b81eccbf95dc1f1f4bf58af86191a9b8b79b184b91f83b0afe2ee76ce9",
+      "pairedBuildSeconds": 22.13
+    },
+    {
+      "versionCode": 102,
+      "type": "aab",
+      "size": 17836739,
+      "sha256": "deed89618aedc4f61e652e1f76fd9bb9fe5191b13afc9f443dc7644724724cb0",
+      "pairedBuildSeconds": 22.13
+    }
+  ],
+  "artifactVerification": {
+    "apkSignature": "Android Build Tools apksigner verify on each standalone APK",
+    "aab": "bundletool 1.18.3 validate on each local release AAB",
+    "sameSignerHigherVersion": "ready-for-device-test",
+    "reversedVersion": "version-not-increased",
+    "differentSignerSameApplicationAndHigherVersion": "review-signing-lineage"
+  },
+  "device": {
+    "model": "Samsung Galaxy Z Fold7",
+    "input": "ADB-injected tap on the physical surface",
+    "appData": "Version 101 was installed fresh; saved before forced process restart; version 102 was installed using adb install -r without removing 101. Restarted 102 again after saving.",
+    "states": [
+      {
+        "id": "v1-open",
+        "version": 101,
+        "turns": 0,
+        "native": true,
+        "channelValue": null,
+        "channelDiagnostic": "Error: Host action unavailable: customer.revision",
+        "pixels": {
+          "ground": [
+            20,
+            38,
+            56
+          ],
+          "badge": [
+            26,
+            194,
+            177
+          ]
+        }
+      },
+      {
+        "id": "v1-save",
+        "version": 101,
+        "turns": 1,
+        "native": true,
+        "channelValue": null,
+        "channelDiagnostic": "Error: Host action unavailable: customer.revision",
+        "pixels": {
+          "ground": [
+            20,
+            38,
+            56
+          ],
+          "badge": [
+            244,
+            162,
+            43
+          ]
+        }
+      },
+      {
+        "id": "v1-reopen",
+        "version": 101,
+        "turns": 1,
+        "native": true,
+        "channelValue": null,
+        "channelDiagnostic": "Error: Host action unavailable: customer.revision",
+        "pixels": {
+          "ground": [
+            20,
+            38,
+            56
+          ],
+          "badge": [
+            244,
+            162,
+            43
+          ]
+        }
+      },
+      {
+        "id": "v2-upgrade",
+        "version": 102,
+        "turns": 1,
+        "native": true,
+        "channelValue": 102,
+        "channelDiagnostic": null,
+        "pixels": {
+          "ground": [
+            37,
+            56,
+            73
+          ],
+          "badge": [
+            244,
+            162,
+            43
+          ]
+        }
+      },
+      {
+        "id": "v2-save",
+        "version": 102,
+        "turns": 2,
+        "native": true,
+        "channelValue": 102,
+        "channelDiagnostic": null,
+        "pixels": {
+          "ground": [
+            37,
+            56,
+            73
+          ],
+          "badge": [
+            26,
+            194,
+            177
+          ]
+        }
+      },
+      {
+        "id": "v2-reopen",
+        "version": 102,
+        "turns": 2,
+        "native": true,
+        "channelValue": 102,
+        "channelDiagnostic": null,
+        "pixels": {
+          "ground": [
+            37,
+            56,
+            73
+          ],
+          "badge": [
+            26,
+            194,
+            177
+          ]
+        }
+      }
+    ],
+    "temporaryApplicationRemoved": true
+  },
+  "limits": [
+    "The intentionally mismatched callback is a real failure in a local registration contract. It is not a vendor login, purchase or online service.",
+    "One physical Fold7; external operator and a second physical GPU family were unavailable.",
+    "RGB values are point samples, not full-screen image equality. Same-signer standalone APK upgrade; split delivery and signing-key rotation are separate cases."
+  ]
+}
