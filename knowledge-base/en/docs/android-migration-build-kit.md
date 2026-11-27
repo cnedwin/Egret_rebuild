@@ -93,3 +93,40 @@ player = GameNetwork.open(this, "game", listener, channels);
 ```
 
 The game reads the value with `await services.host.call('channel.locale', null, services.signal)`. The example uses Android locale. The operator supplies login, purchase, acknowledgements and credentials through the registered SDK.
+
+## Packaging the original Egret 5.3.x JavaScript engine
+
+For an existing 2D Android title, the kit can load the game's original Egret engine, EUI, RES and business scripts on the embedded V8 host. The original engine owns its classes, event dispatch, validation, input hit testing and game clock. Its native display bindings submit to the shared player and Rust GLES3 renderer. Use a fresh native view when reopening a game. The `@egret/legacy` migration route remains available for games adopting Egret 7 APIs.
+
+Start with the game's already published `manifest.json` and files, including the original JS modules and license notices. Provide the stage size, entry class, packaged resource paths and decoded dimensions of each PNG. For example, a build configuration for a game with one atlas is:
+
+```json
+{"entryClass":"Main","width":480,"height":270,"frameRate":30,"assets":["resource/default.res.json"],"images":[{"path":"resource/atlas.png","width":256,"height":128}]}
+```
+
+```sh
+node verify-build-kit.mjs
+node runtime-sdk/android/player/prepare-original5.mjs --source ../published5 --config ../original5.json --out ../prepared-game
+node runtime-sdk/android/player/create-app.mjs --project ../prepared-game --aar ./libs/egret-player.aar --esbuild ./node_modules/esbuild --layout embedded --id org.example.originalgame --out ../android-game
+gradle --offline -p ../android-game assembleDebug
+```
+
+Use the embedded V8 AAR. The preparation step checks the original manifest and copies the engine modules and game JS unchanged, in order. The default identifies the core as the first `egret.js` or `egret.min.js` and replaces the matching browser host script with the native host. For renamed published files, specify the exact `coreScript` and `webHostScript` paths. Include additional license files and all packaged text, binary and PNG assets needed by RES in the resource list. Continue with the ordinary signed APK/AAB build instructions above. If a source checkout omits compiled business JS, compile it first with its matching Egret toolchain.
+
+For custom startup code, import `installOriginal5Project` from `@egret/android-original5` in the prepared game's `main.mjs`. The optional `remoteRequest` hook supplies an explicitly configured HTTPS transport. An application requiring its existing channel SDK must connect the appropriate native provider. Package assets and app-private saves use the existing RSDK services. A 5.3.x ABI version alone cannot certify a game's private engine extensions, advanced filters, dynamic scripts, editing widgets or operating backend.
+
+A browser plugin can inspect globals while the original module is being evaluated. Set `hostAdapter` in the preparation configuration to the relative path of a self-contained project-owned ES module. Its optional `installHost({defineGlobal,services})` export runs before the original modules. The same module may export `remoteRequest` for the original HTTP loader. Register the actual channel provider and preserve its success, failure and cancellation behavior. For example:
+
+```js
+export function installHost({defineGlobal, services}) {
+  defineGlobal('readDeviceLocale', () => services.host.call('channel.locale', null, services.signal));
+}
+```
+
+An Android run of a private 5.3.10 project demonstrated the boundary. The unchanged archive library tried to create a download link during initialization. Supplying a native export binding advanced startup to a project mouse plugin that accesses the DOM. Such a plugin needs a project-specific input adapter. This run covered startup diagnostics and did not establish gameplay or an operational channel connection.
+
+### Tested interfaces of the original engine
+
+On the Fold7 the original 5.3.10 project loaded a PNG through RES, painted two EUI images from one atlas and laid out a two-colour Chinese label. Tapping the painted circle or atlas button advanced the saved counter; tapping the circle's transparent corner left it unchanged. Restarting the process restored the counter. An original input TextField opened Android's real editor, appended `34` to `12`, and received one focus-in, two change events and one focus-out. The old InputController applies the game's text restrictions. Password entry currently requires a separate secure binding. [Atlas and resource evidence](../../../runtime-sdk/measurements/fold7-original5-atlas.json) · [System editor evidence](../../../runtime-sdk/measurements/fold7-original5-editor.json)
+
+The kit loads one VM per application. Recheck the game's actual engine modules and third-party SDKs when opting into a different V8 profile. Register native endpoints before plugins execute. Keep permission dialogs, vendor Activity callbacks, secure storage and transactions in their supported platform service. The commands above qualify a packaged project on Android. Original 5 modules on iOS, arbitrary browser DOM plugins and all point releases of Egret 5 remain separate compatibility targets.

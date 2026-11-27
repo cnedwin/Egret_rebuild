@@ -21,7 +21,7 @@ function relativeName(name) {
 }
 
 // Validate each component, including its authored case, before following any path.
-async function inputFile(project, name) {
+export async function inputFile(project, name) {
   const parts = relativeName(name).split('/');
   let source = project;
   for (const [index, part] of parts.entries()) {
@@ -124,6 +124,7 @@ export async function exportProject(project, output, esbuildModule, { verifyDeli
   workspace.set('@egret/android-player-world3d', path.join(root, 'runtime-sdk/project/world3d-player.mjs'));
   workspace.set('@egret/android-play3d-session', path.join(root, 'packages/engine/dist/web/world3d/BrowserPlay3D.js'));
   workspace.set('@egret/android-player-network', path.join(root, 'runtime-sdk/project/network.mjs'));
+  workspace.set('@egret/android-original5', path.join(root, 'runtime-sdk/project/original5-player.mjs'));
   workspace.set('@egret/android-player-project', path.join(root, 'runtime-sdk/project/player-project.mjs'));
   await mkdir(path.dirname(output), {recursive: true});
   // A new destination makes a failed export unable to replace a previously shipped project.

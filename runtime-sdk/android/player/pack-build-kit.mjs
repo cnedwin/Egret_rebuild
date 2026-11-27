@@ -120,7 +120,7 @@ try {
   }
   const config = {
     compilerOptions: {strict: true, noEmit: true, target: 'es2022', module: 'esnext', moduleResolution: 'bundler', paths},
-    files: ['./runtime-sdk/project/android-player-project.d.ts', './runtime-sdk/project/android-player-network.d.ts']
+    files: ['./runtime-sdk/project/android-player-project.d.ts', './runtime-sdk/project/android-player-network.d.ts', './runtime-sdk/project/android-original5.d.ts']
   };
   const typeConfig = JSON.stringify(config, null, 2) + '\n';
   await writeFile(path.join(stage, 'game-types.json'), typeConfig);
@@ -133,7 +133,7 @@ try {
   await tree(path.join(root, network, 'src'), network + '/src', name => name.endsWith('.java'));
   await tree(path.join(root, network, 'licenses'), network + '/licenses', name => name.endsWith('.LICENSE'));
   const player = 'runtime-sdk/android/player/';
-  for (const file of ['handoff.mjs', 'stage-revision.mjs', 'sync-debug.mjs', 'export-project.mjs', 'create-app.mjs', 'app-resources.mjs', 'channel-libraries.mjs']) {
+  for (const file of ['handoff.mjs', 'stage-revision.mjs', 'sync-debug.mjs', 'prepare-original5.mjs', 'export-project.mjs', 'create-app.mjs', 'app-resources.mjs', 'channel-libraries.mjs']) {
     await copy(path.join(root, player, file), player + file);
   }
   await tree(path.join(root, player, 'consumers'), player + 'consumers', name => /\.(?:java|gradle)$/.test(name));

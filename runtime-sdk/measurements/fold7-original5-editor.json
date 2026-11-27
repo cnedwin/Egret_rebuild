@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-27",
+  "device": "Samsung Galaxy Z Fold7 · Android 17",
+  "fixture": "runtime-sdk/examples/original5-atlas/editor.js",
+  "scriptHost": "Original Egret 5.3.10, embedded trimmed V8 15.7.112.19, shared GLES3",
+  "input": "Physical Android system EditText; USB-injected tap, ASCII text, and positive button. Human interaction, password fields and IME composition were not tested.",
+  "apkSha256": "39cbd293e6f34254f597e07a0a4ee770fce4fd2f7bf17afbf9c8d2961e3f781d",
+  "open": {
+    "version": "5.3.10",
+    "native": true,
+    "ready": true,
+    "turns": 0,
+    "error": "",
+    "text": "12",
+    "focus": 0,
+    "blur": 0
+  },
+  "focus": {
+    "version": "5.3.10",
+    "native": true,
+    "ready": true,
+    "turns": 0,
+    "error": "",
+    "text": "12",
+    "focus": 1,
+    "blur": 0
+  },
+  "typed": {
+    "version": "5.3.10",
+    "native": true,
+    "ready": true,
+    "turns": 2,
+    "error": "",
+    "text": "1234",
+    "focus": 1,
+    "blur": 0
+  },
+  "committed": {
+    "version": "5.3.10",
+    "native": true,
+    "ready": true,
+    "turns": 2,
+    "error": "",
+    "text": "1234",
+    "focus": 1,
+    "blur": 1
+  },
+  "passed": true,
+  "restored": true
+}
