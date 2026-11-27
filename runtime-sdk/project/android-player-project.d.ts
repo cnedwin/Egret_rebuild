@@ -84,7 +84,8 @@ declare module '@egret/android-player-project' {
     /** Claim the next system Back once. A newer overlay resolves the previous wait with false. */
     waitForBack(signal?: AbortSignal): Promise<boolean>;
     edit(text: string): void;
-    editText(options?: {text?: string; multiline?: boolean}, signal?: AbortSignal): Promise<
+    editText(options?: {text?: string; multiline?: boolean; inputMode?: 'text' | 'tel'; maxLength?: number;
+      digitsOnly?: boolean; onFocus?: () => void; onChange?: (value: string) => void}, signal?: AbortSignal): Promise<
       {status: 'confirmed'; text: string} | {status: 'canceled'}>;
     state(value: unknown): void;
     playSound(assetPath: string): void;

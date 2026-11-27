@@ -189,6 +189,10 @@ export interface SharedWebGL2FrameTiming {
 export interface SharedWebGL2StartupTiming {
   readonly generation: number;
   readonly contextMs: number;
+  /** True when the native parallel program extension accepted the batch. */
+  readonly parallelPrograms: boolean;
+  /** Elapsed common preparation; per-program fields then measure retrieval/bindings (or sequential creation). */
+  readonly programPreparationMs: number;
   readonly sampledMs: number;
   readonly solidMs: number;
   readonly resolveMs: number;

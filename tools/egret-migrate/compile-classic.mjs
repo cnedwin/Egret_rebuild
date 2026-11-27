@@ -6,6 +6,7 @@ import { Script } from 'node:vm';
 import { logicalPath, ownerRelativePath, samePhysicalPath } from '../lib/file-identity.mjs';
 import { hash, json, readProjectFile, refuse } from './inspect.mjs';
 import { compileExml } from './exml.mjs';
+import { collectSdkSurface } from './sdk-surface.mjs';
 import { collectLegacyUses } from './api-usage.mjs';
 import { prepareThemeFactories } from './precompiled-themes.mjs';
 
@@ -302,6 +303,7 @@ export function compileClassic({
   groups = [],
   theme,
   themeFactories,
+  compiledTheme,
   mode = 'debug',
   target = 'config'
 }) {
@@ -363,13 +365,47 @@ export function compileClassic({
     });
   }
   const skins = staticSkins(read, theme);
-  const factory = themeFactories ? prepareThemeFactories(read, theme, themeFactories) : undefined;
+  if (themeFactories && compiledTheme) refuse('MIGRATE_ARGUMENTS', 'Select a single theme provider.');
+  let factory;
+  if (compiledTheme) {
+    const generated = fs.realpathSync(path.resolve(compiledTheme));
+    const readProvider = key => readProjectFile(generated, key, fileLimit);
+    const profile = JSON.parse(decode(readProvider('profile.json').bytes));
+    const themeBuild = readProvider('theme-build.json');
+    if (profile.origin !== 'project-regenerated' || themeBuild.identity.sha256 !== profile.buildReportSha256)
+      refuse('MIGRATE_THEME_FACTORIES', 'Expected the matching build report for a regenerated theme.');
+    const receipt = JSON.parse(decode(themeBuild.bytes));
+    if (!Array.isArray(receipt.bootstrapInputs)) refuse('MIGRATE_THEME_FACTORIES', 'Missing theme bootstrap inputs.');
+    // Game classes and project metadata loaded by the original SDK influence its EUI output.
+    for (const input of receipt.bootstrapInputs) {
+      const key = logicalPath(input.path);
+      if (
+        !fs.existsSync(path.join(owner, key)) ||
+        readProjectFile(owner, key, fileLimit).identity.sha256 !== input.sha256
+      )
+        refuse('MIGRATE_THEME_FACTORIES', 'A theme bootstrap dependency changed. Regenerate the theme.', { path: key });
+    }
+    for (const key of profile.unavailableSources ?? []) {
+      if (fs.existsSync(path.join(owner, logicalPath(key))))
+        refuse('MIGRATE_THEME_FACTORIES', 'A previously missing skin has arrived. Regenerate the theme.', {
+          path: key
+        });
+    }
+    for (const row of profile.unresolvedSources ?? []) {
+      if (read(logicalPath(row.path)).identity.sha256 !== row.sha256)
+        refuse('MIGRATE_THEME_FACTORIES', 'A previously failing skin changed. Regenerate the theme.', {
+          path: row.path
+        });
+    }
+    factory = prepareThemeFactories(read, theme, 'profile.json', readProvider);
+  } else if (themeFactories) factory = prepareThemeFactories(read, theme, themeFactories);
   const temp = fs.mkdtempSync(path.join(parent, '.egret-classic-'));
   try {
     fs.mkdirSync(path.join(temp, 'classic'));
     const slots = new Map(order.map((key, ix) => [key, ix]));
     const artifacts = new Array(order.length);
     const apiUses = new Map();
+    const projectDefinitions = [];
     let total = 0;
     // The callback is the compiler's only output sink. Each classic script keeps
     // its own top-level directive and declaration boundary, even when deferred.
@@ -388,7 +424,7 @@ export function compileClassic({
         refuse('MIGRATE_SCRIPT_BUDGET', 'Classic scripts exceed the V8 byte budget.');
       new Script(text, { filename: key }); // Parse only; the business code never runs here.
       const file = 'classic/' + String(ix).padStart(4, '0') + '.js';
-      collectLegacyUses(tool.ts, apiUses, text, file);
+      collectLegacyUses(tool.ts, apiUses, text, file, projectDefinitions);
       fs.writeFileSync(path.join(temp, file), bytes);
       artifacts[ix] = {
         source: key,
@@ -424,6 +460,25 @@ export function compileClassic({
     fs.writeFileSync(path.join(temp, 'v8-scripts.json'), json(plan));
     const usage = [...apiUses.values()].sort((a, b) => b.uses - a.uses || a.namespace.localeCompare(b.namespace));
     fs.writeFileSync(path.join(temp, 'api-usage.json'), json(usage));
+    const declarations = collectSdkSurface(tool.ts, program, owner);
+    fs.writeFileSync(path.join(temp, 'sdk-surface.json'), json(declarations));
+    const declared = new Set(declarations.entries.map(entry => entry.name));
+    const methods = new Map();
+    for (const { namespace, name, ...location } of projectDefinitions) {
+      const key = namespace + '.' + name;
+      if (!methods.has(key)) methods.set(key, { namespace, name, definitions: [] });
+      methods.get(key).definitions.push(location);
+    }
+    const candidates = [],
+      conflicts = [];
+    for (const method of methods.values()) {
+      const safeName =
+        /^[A-Za-z_$][\w$]*$/.test(method.name) && !['__proto__', 'constructor', 'prototype'].includes(method.name);
+      if (!safeName || declared.has(method.namespace + '.' + method.name)) conflicts.push(method);
+      else candidates.push(method);
+    }
+    const projectMethodReport = { schemaVersion: 1, candidates, conflicts };
+    fs.writeFileSync(path.join(temp, 'project-methods.json'), json(projectMethodReport));
     if (skins) fs.writeFileSync(path.join(temp, 'static-skins.json'), json(skins));
     const report = {
       schemaVersion: 1,
@@ -442,7 +497,13 @@ export function compileClassic({
       unlistedConfigScripts: unlisted,
       diagnostics: semantic,
       diagnosticStatus: baseline !== undefined ? 'matched' : semantic.length ? 'needs-review' : 'clean',
+      projectMethods: { candidates: candidates.length, conflicts: conflicts.length, details: 'project-methods.json' },
       namespaceReferences: { paths: usage.length, details: 'api-usage.json' },
+      sdkDeclarations: {
+        sources: declarations.sources.length,
+        entries: declarations.entries.length,
+        details: 'sdk-surface.json'
+      },
       ...(factory
         ? {
             themeFactories: {

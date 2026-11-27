@@ -8,16 +8,20 @@ const controls = new Set([
   'Group',
   'Image',
   'Label',
+  'EditableText',
   'Rect',
   'Button',
   'Component',
   'List',
   'DataGroup',
+  'TabBar',
+  'ProgressBar',
+  'BitmapLabel',
   'ItemRenderer',
   'Scroller'
 ]);
 const layouts = new Set(['BasicLayout', 'HorizontalLayout', 'VerticalLayout', 'TileLayout']);
-const containers = new Set(['Skin', 'Group', 'Component', 'ItemRenderer', 'List', 'DataGroup', 'Scroller']);
+const containers = new Set(['Skin', 'Group', 'Component', 'ItemRenderer', 'List', 'TabBar', 'DataGroup', 'Scroller']);
 const fields = source => new Set(source.split(' '));
 const commonNumbers = fields(
   'x y width height minWidth minHeight maxWidth maxHeight left right top bottom horizontalCenter verticalCenter percentWidth percentHeight anchorOffsetX anchorOffsetY scaleX scaleY rotation alpha'
@@ -29,15 +33,21 @@ const nonnegativeNumbers = fields(
   'width height minWidth minHeight maxWidth maxHeight percentWidth percentHeight size stroke strokeWeight ellipseWidth ellipseHeight paddingLeft paddingRight paddingTop paddingBottom'
 );
 const controlNumbers = {
+  TabBar: fields('selectedIndex scrollV'),
+  ProgressBar: fields('minimum maximum value snapInterval slideDuration'),
+  BitmapLabel: fields('lineSpacing letterSpacing'),
   List: fields('selectedIndex scrollV'),
   DataGroup: fields('scrollV'),
   Group: fields('scrollV'),
+  EditableText: fields('size stroke maxChars'),
   Label: fields('size stroke lineSpacing'),
   Rect: fields('fillAlpha strokeAlpha strokeWeight ellipseWidth ellipseHeight')
 };
 const controlBooleans = {
+  TabBar: fields('requireSelection scrollEnabled useVirtualLayout'),
   List: fields('requireSelection scrollEnabled useVirtualLayout'),
   DataGroup: fields('scrollEnabled useVirtualLayout'),
+  EditableText: fields('bold italic multiline'),
   Label: fields('bold italic multiline'),
   Button: fields('enabled'),
   Component: fields('enabled'),
@@ -45,15 +55,24 @@ const controlBooleans = {
   Rect: fields('enabled')
 };
 const controlStrings = {
+  Scroller: fields('scrollPolicyH scrollPolicyV'),
+  TabBar: fields('itemRenderer itemRendererSkinName skinName'),
+  ProgressBar: fields('direction skinName'),
+  BitmapLabel: fields('font text textAlign verticalAlign'),
   List: fields('itemRenderer itemRendererSkinName skinName'),
   DataGroup: fields('itemRenderer itemRendererSkinName skinName'),
   ItemRenderer: fields('skinName'),
   Image: fields('source'),
+  EditableText: fields('text fontFamily textAlign inputType restrict prompt'),
   Label: fields('text fontFamily textAlign verticalAlign'),
   Button: fields('label skinName'),
   Component: fields('skinName')
 };
-const controlColors = { Label: fields('textColor strokeColor'), Rect: fields('fillColor strokeColor') };
+const controlColors = {
+  EditableText: fields('textColor strokeColor'),
+  Label: fields('textColor strokeColor'),
+  Rect: fields('fillColor strokeColor')
+};
 const layoutNumbers = fields('gap paddingLeft paddingRight paddingTop paddingBottom');
 const layoutStrings = fields('horizontalAlign verticalAlign');
 const alignments = {
@@ -272,6 +291,8 @@ function readProperties(node, path, ids, layout = false) {
   for (const [key, value] of node.attributes) {
     const type = node.local;
     if (key === 'class' && type === 'Skin') continue;
+    if (type === 'ProgressBar' && key === 'direction' && !['ltr', 'rtl', 'ttb', 'btt'].includes(value))
+      exmlFailure(path, node.offset, 'Unsupported progress direction.');
     if (type === 'Rect' && key === 'locked' && ['true', 'false'].includes(value)) continue;
     if (type === 'Image' && key === 'fillMode' && ['scale', 'clip'].includes(value)) {
       properties.set(key, value);
@@ -313,7 +334,7 @@ function readProperties(node, path, ids, layout = false) {
           controlBooleans[type]?.has(key) ||
           controlStrings[type]?.has(key) ||
           controlColors[type]?.has(key) ||
-          (['List', 'DataGroup'].includes(type) && key === 'dataProvider')
+          (['List', 'TabBar', 'DataGroup'].includes(type) && key === 'dataProvider')
         )
       )
         exmlFailure(path, node.offset, 'Binding target has no migration rule.', { property: key });
@@ -351,6 +372,8 @@ function readProperties(node, path, ids, layout = false) {
     } else if (
       layout ? layoutStrings.has(key) : commonStrings.has(key) || controlStrings[type]?.has(key) || customProperty
     ) {
+      if ((key === 'scrollPolicyH' || key === 'scrollPolicyV') && !['auto', 'off', 'on'].includes(value))
+        exmlFailure(path, node.offset, 'Unsupported scroll policy.', { property: key, value });
       if (key === 'itemRenderer' && !isIdentifier(value))
         exmlFailure(path, node.offset, 'Invalid item renderer class.');
       if (Object.hasOwn(alignments, key) && !alignments[key].has(value))
@@ -450,14 +473,14 @@ function compileNode(node, path, ids, knownStates = []) {
         children.length ||
         (wrapped && (child.attributes.size || child.children.length !== 1)) ||
         viewport?.namespace !== euiNamespace ||
-        !['List', 'DataGroup', 'Group'].includes(viewport.local)
+        !['List', 'TabBar', 'DataGroup', 'Group'].includes(viewport.local)
       )
         exmlFailure(path, child.offset, 'A vertical Scroller requires exactly one Group, List or DataGroup viewport.');
       children.push(compileNode(viewport, path, ids, knownStates));
     } else if (
       child.namespace === euiNamespace &&
       child.local === 'itemRendererSkinName' &&
-      ['List', 'DataGroup'].includes(node.local)
+      ['List', 'TabBar', 'DataGroup'].includes(node.local)
     ) {
       if (
         metadata.itemRendererSkin ||
@@ -483,7 +506,7 @@ function compileNode(node, path, ids, knownStates = []) {
       layout = { type: definition.local, properties: readProperties(definition, path, ids, true) };
     } else {
       if (child.local === 'Skin') exmlFailure(path, child.offset, 'Only the root may declare a Skin.');
-      if (['List', 'DataGroup'].includes(node.local))
+      if (['List', 'TabBar', 'DataGroup'].includes(node.local))
         exmlFailure(path, child.offset, 'List children require an item renderer skin.');
       children.push(compileNode(child, path, ids, knownStates));
     }

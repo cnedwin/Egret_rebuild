@@ -6,6 +6,26 @@ Egret Migrate 是面向受支持的经典白鹭 5 Web 2D 源工程的本地 CLI�
 
 可选的本地包 `@egret/legacy` 通过 `@egret/legacy/web` 提供原浏览器适配器，通过 `@egret/legacy/protocol` 提供无需 DOM 的二进制协议读写。从源码目录运行 `npm install ./tools/egret-migrate` 即可安装。转换产物已包含这些模块。字段类型和容量边界见[协议兼容指南](compat/README.zh-CN.md)。
 
+## 旧项目的背景音乐与资源统计
+
+将本地 WAV、MP3 或 Ogg 文件声明为 RES 的 `sound` 类型。调用 `RES.loadConfig` 后，用 `await RES.getResAsync("music")` 取得音乐，调用 `sound.play(0, 1)` 播放一次，在**返回的声道**上监听 `egret.Event.SOUND_COMPLETE`。音量范围为 0 到 1。切换曲目或调用 `stop()` 会结束旧声道，销毁资源会释放媒体。浏览器通过媒体元素流式播放，启用自动播放限制时需要用户手势。Android 播放器使用 MediaPlayer 读取 APK 内已声明且未经压缩的文件。每个视图同时播放一首背景音乐。Android 播放位置在准备完成和恢复前台后按系统播放器校准，两次采样之间按前台时钟推进。编解码格式的可用性取决于设备。
+
+`RES.profile()` 打印并返回冻结的资源统计，包含声明、组、URL 别名、已加载与待完成的资源数量，以及执行中和排队的读取数量。浏览器还提供文字标签计数，原生宿主提供文字页占用。在 Windows Edge 158 上，白鹭 5.3.10 和新版各播放同一段自制的一秒 WAV，在 Galaxy Z Fold7 的裁剪 V8 上也用同一文件验收。三者都只在自然结束时收到一次事件，事件目标均为播放声道；停止或替换均未触发完成。新版释放后已加载资源从 1 降到 0。此次验证了事件和资源回收，听感仍需人工验收。
+
+## 经典显示滤镜
+
+把一个 `egret.ColorMatrixFilter` 放进显示对象的 `filters` 数组，浏览器适配器通过已有的共享效果组处理整棵显示子树。4×5 矩阵每行包含四个通道系数和一个按字节计的偏移值。给滤镜的 `matrix` 属性重新赋值会更新所有已使用它的节点，设 `filters = null` 或 `[]` 可移除矩阵并由宿主归还离屏目标。节点已有的遮罩和模糊配置保留，效果组数量沿用共享宿主上限。
+
+Windows Edge 158 分别以原版 5.3.10 WebGL 和新版 WebGL2 绘制[自制面板和贴图](../../tests/fixtures/migrate-editor/filters.js)。两处不透明红色的采样值都由 `(255,0,0,255)` 变成 `(0,32,255,255)`，清除矩阵后还原，迁移资源可正常销毁。经典 BlurFilter 和 GlowFilter 可保留原始参数；应用超过上限或两轴不等的配置（包括 10×10 模糊、35×35 辉光）会报 `LEGACY_FILTER_RADIUS_UNSUPPORTED`。半径在范围内时，原版与共享采样核心仍有差异，应用会报 `LEGACY_FILTER_KERNEL_UNVERIFIED`。Android GLES3 工程帧尚缺离屏效果组，应用迁移滤镜会在下一帧绘制前报 `LEGACY_ANDROID_FILTER_UNSUPPORTED`。
+
+## 迁移控件的文字编辑
+
+经典 `egret.TextField` 设为 `egret.TextFieldType.INPUT` 后，与 `eui.EditableText` 使用同一套编辑会话。数量框可设 `inputType = egret.TextFieldInputType.TEL`、`restrict = '0-9'` 和 `maxChars = 3`。控件上台后，轻点或调用 `setFocus()` 打开编辑器。在每次冒泡的 `egret.Event.CHANGE` 中读取 `field.text`，在控件或父节点监听 `egret.FocusEvent.FOCUS_IN`、`FOCUS_OUT`。编辑之外由业务代码给 `text` 赋值不会触发用户改值事件。
+
+浏览器单文件包含引擎已有的系统文字输入端口，Android 使用配套播放器里的原生编辑框。两端支持普通和电话输入；迁移适配器接受不限制字符和显式的 `0-9` 约束。密码字段和其他字符规则需要另做适配。本轮验证覆盖单行字段，中文输入法组合、编辑时父节点持续移动、辅助技术和生产表单仍需在具体游戏验收。
+
+[同一份自制控件](../../tests/fixtures/migrate-editor/board.js) 在 Windows Edge 158 分别加载原版 5.3.10 和新版浏览器宿主，在 Android 17 的 Fold7 上使用裁剪 V8。三端的父节点都按 `focusIn(1) → change(14) → change(142) → focusOut(142)` 收到事件，目标均为正在编辑的字段。在手机继续输入第四位会被长度限制拦下；关闭视图后两页文字均释放，占用为零字节。数字通过自动操作实际系统输入控件完成。
+
 ## 编译 5.3 业务脚本清单
 
 当原工程仍能编译，而检查结果显示业务或宿主需要人工适配时，可先保留原项目的 TypeScript 编译流程。由项目方提供可信、版本匹配的 Egret TypeScript-Plus `lib/typescript.js`，放在原工程目录以外。CLI 在本机加载这个编译器，核对原输入指纹，逐个解析生成的脚本，全程不执行游戏代码。
@@ -59,13 +79,27 @@ panel.skinName = 'resource/Panel.exml';
 
 公开夹具 `tests/fixtures/migrate-theme-factories` 随附自制 EXML 和 5.3.10 编译产物。在 RTX 5090 Laptop 的 Windows Edge 158 中，旧版和迁移版均创建三个具名部件，标签完成关闭、打开、关闭的切换，列表选中 B，并构造了自定义标记。迁移版 WebGL2 使用一页纹理（7,280 字节），零帧遭拒。另一次私有工程盘点中，保持原字节的注册表覆盖主主题 935 个路径中的 929 个，副主题 34 个路径中的 28 个。两个主题各保留六个缺失路径和六个未解析映射。上述数字说明工厂的可用范围；各工程的画面和玩法仍需单独验收。
 
+同一次编译会生成 `sdk-surface.json`。工具用原编译器读取 `libs/modules` 中配套的声明，逐项记录完整名称、定义位置、可见性，以及命名空间值、静态成员、实例成员或纯类型。将它与 `api-usage.json`、实际宿主的绑定结合查看。继承成员的声明可能在父类。计算属性、导出别名、重载签名和实例行为还需用项目验证。若项目改过 SDK，这份清单反映项目随附的版本。
+
+## 用原编译器重新生成编辑后的 EXML
+
+依赖项目自定义控件、超过静态转换范围的皮肤，可以复用旧项目的编译器。先生成旧版目标脚本，再从本地 HTML 入口启动原项目；用实际存在的就绪属性指明何时可以反射业务控件。浏览器会话读取提供的目录和已核对的脚本，阻断外网请求，把结果写入新目录。
+
+```sh
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/typescript.js --out ./original-build
+egret-migrate compile-theme --source ./old-client --classic ./original-build --theme resource/default.thm.json --entry index.html --ready Main.ready --namespaces app --playwright ./tools/playwright/index.mjs --out ./skin-build
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/typescript.js --target es2015 --theme resource/default.thm.json --compiled-theme ./skin-build --out ./android-scripts
+```
+
+将示例中的就绪属性和命名空间换成项目实际使用的值。报告会列出源文件和启动依赖的摘要、生成的类、缺失及编译失败的皮肤。改动 EXML 或补入此前缺失的文件后，需要重新生成。Windows Edge 上，工具从引用 935 个路径的真实主题生成了 929 份工厂，其余 6 个路径缺源文件。组件能否在目标宿主上创建、界面玩法是否一致，须分别验证。
+
 ## 安装和运行
 
 在已经构建白鹭包的仓库里生成本地 CLI 归档。传入本机安装的 esbuild 模块和 npm CLI 入口。
 
 ```text
 node tools/egret-migrate/pack.mjs --esbuild <esbuild-module> --npm <npm-cli.js> --out <new-package-dir>
-npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.5.0.tgz
+npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.7.0.tgz
 ```
 
 使用安装后的 `egret-migrate` 命令，也可以直接运行 `node <tool-folder>/node_modules/@egret/migrate/bin.mjs`。CLI 可以在引擎仓库之外运行。准备固定版本的白鹭 7.0 系列 `egret2d.mjs`、esbuild 模块和带 Chromium 的 Playwright。扫码预览另需 qrcode-generator 2.0.4。使用时显式传入这些工具的路径。

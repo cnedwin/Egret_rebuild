@@ -949,27 +949,51 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       if (!native.cleanup(target)) throw glFailure('WEBGL2_CLOSE_UNSAFE', native.cleanupFailure?.cause);
       const coded = native.codedTargets, contextReady = clock();
-      this.program = native.program(sharedWebGL2VertexSource, sampledFragmentSource(false, coded));
+      const effectPasses = this.options.enableEffects ? EFFECT_PASSES : [];
+      const sources: (readonly [string, string])[] = [
+        [sharedWebGL2VertexSource, sampledFragmentSource(false, coded)],
+        [sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragment(coded)],
+        [sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragment(coded)],
+        ...effectPasses.map(mode => [sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode, coded)] as const)
+      ];
+      // The faster UI policy omits this source altogether, including when asynchronous parallel compilation is available.
+      if (this.options.pageBatching === 'multi-page')
+        sources.push([sharedWebGL2VertexSource, sampledFragmentSource(true, coded)]);
+      // Preserve the main branch's shared publication and generation gates. On unsupported browsers,
+      // yield between programs; never defer work past host readiness.
+      const prepared = native.preparePrograms(sources, () => new Promise<void>(resolve => schedule(resolve, 8)));
+      const programs = prepared === undefined ? undefined : await prepared;
+      this.generationGate(token);
+      const preparationReady = clock();
+      let next = 0;
+      const nextProgram = async (): Promise<WebGLProgram> => {
+        const index = next++;
+        if (programs) return programs[index]!;
+        if (index > 0) {
+          await new Promise<void>(resolve => schedule(resolve, 0));
+          this.generationGate(token);
+        }
+        return native.program(...sources[index]!);
+      };
+      this.program = await nextProgram();
       native.block(this.program, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       native.block(this.program, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
       const sampledReady = clock();
-      this.solidProgram = native.program(sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragment(coded));
+      this.solidProgram = await nextProgram();
       native.block(this.solidProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
       const solidReady = clock();
-      this.resolveProgram = native.program(sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragment(coded));
+      this.resolveProgram = await nextProgram();
       const resolveReady = clock();
-      if (this.options.enableEffects)
-        for (const mode of EFFECT_PASSES) {
-          const program = native.program(sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode, coded));
-          const index = gl.getUniformBlockIndex(program, 'Effect');
-          if (index === gl.INVALID_INDEX) throw glFailure('WEBGL2_CONTEXT_LIMIT');
-          gl.uniformBlockBinding(program, index, 0);
-          this.effectPrograms.set(mode, program);
-        }
+      for (const mode of effectPasses) {
+        const program = await nextProgram();
+        const index = gl.getUniformBlockIndex(program, 'Effect');
+        if (index === gl.INVALID_INDEX) throw glFailure('WEBGL2_CONTEXT_LIMIT');
+        gl.uniformBlockBinding(program, index, 0);
+        this.effectPrograms.set(mode, program);
+      }
       const effectsReady = clock();
-      // The program of a batch of several pages. Its eight page samplers name the eight units once, here.
       if (this.options.pageBatching === 'multi-page') {
-        this.pagedProgram = native.program(sharedWebGL2VertexSource, sampledFragmentSource(true, coded));
+        this.pagedProgram = await nextProgram();
         native.block(this.pagedProgram, 'DrawUniform', DRAW_UNIFORM_MEMBERS, 128);
         native.block(this.pagedProgram, 'RegionWindow', ['regions'], SHARED_REGION_WINDOW_BYTES_2D, 1);
         gl.useProgram(this.pagedProgram);
@@ -986,7 +1010,9 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       this.generationFailure = null;
       const ended = clock();
       this.startupTiming = Object.freeze({
-        generation, contextMs: contextReady - started, sampledMs: sampledReady - contextReady,
+        generation, contextMs: contextReady - started,
+        parallelPrograms: programs !== undefined, programPreparationMs: preparationReady - contextReady,
+        sampledMs: sampledReady - preparationReady,
         solidMs: solidReady - sampledReady, resolveMs: resolveReady - solidReady,
         effectsMs: effectsReady - resolveReady, pagedMs: this.options.pageBatching === 'single-page' ? 0 : pagedReady - effectsReady,
         finishMs: ended - pagedReady, totalMs: ended - started

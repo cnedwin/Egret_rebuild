@@ -38,4 +38,8 @@ test('immutable revisions allow retry, preserve other store files and retain two
   assert.deepEqual((await pruneRevisions(store, [second.sha256, third.sha256])).removed, [first.sha256]);
   assert.equal(await readFile(path.join(store, 'user-owned.txt'), 'utf8'), 'keep');
   assert.equal((await readdir(store)).length, 3);
+  await assert.rejects(pruneRevisions(store,[third.sha256]),/distinct/);
+  await assert.rejects(pruneRevisions(store,[],0),/distinct/);
+  assert.deepEqual(await pruneRevisions(store,[third.sha256],1),{retained:[third.sha256],removed:[second.sha256]});
+  assert.equal(await readFile(path.join(store,'user-owned.txt'),'utf8'),'keep');
 });

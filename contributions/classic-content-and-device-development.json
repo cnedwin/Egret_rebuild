@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/android/player/src/org/egret/runtime/player/DebugProjectRevision.java",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/sync-debug.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/android/player/sync-debug.test.mjs",
+      "originRole": "First-party Android game runtime, packaging or integration source. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-bitmap-score/digits.png",
+      "originRole": "Original synthetic bitmap glyph artwork, font, and independently authored example and verifier. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-bitmap-score/index.html",
+      "originRole": "Original synthetic bitmap glyph artwork, font, and independently authored example and verifier. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-bitmap-score/main.mjs",
+      "originRole": "Original synthetic bitmap glyph artwork, font, and independently authored example and verifier. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-bitmap-score/profile.mjs",
+      "originRole": "Original synthetic bitmap glyph artwork, font, and independently authored example and verifier. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-bitmap-score/project.json",
+      "originRole": "Original synthetic bitmap glyph artwork, font, and independently authored example and verifier. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-bitmap-score/score.fnt",
+      "originRole": "Original synthetic bitmap glyph artwork, font, and independently authored example and verifier. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-bitmap-score/score.js",
+      "originRole": "Original synthetic bitmap glyph artwork, font, and independently authored example and verifier. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/legacy-bitmap-score/verify-browser.mjs",
+      "originRole": "Original synthetic bitmap glyph artwork, font, and independently authored example and verifier. Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/november-classic-content.json",
+      "originRole": "Aggregate counts from an authorized local migration and first-party synthetic device fixtures. No client source, names, assets or endpoints."
+    },
+    {
+      "path": "tests/egret-migrate-filter.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-project-methods.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-sound.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-text-input.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/egret-migrate-textures.test.mjs",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/migrate-editor/board.js",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/migrate-editor/filters.js",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/migrate-editor/sound.js",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/migrate-theme-factories/Dispatch.exml",
+      "originRole": "First-party behavioral regression and lifecycle assertions using original synthetic fixtures; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/migrate-theme-factories/dispatch.thm.json",
+      "originRole": "Compiler-generated EUI factory from this project's original Dispatch.exml regression fixture, generated with the supplied Egret 5.3.10 SDK. No client skin or art."
+    },
+    {
+      "path": "tools/egret-migrate/compat/bitmap-label.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/filters.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/image-loader.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/legacy-textures.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/project-methods.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/skin-controls.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/sound.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/text-atlas.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compat/text-input.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/egret-migrate/compile-theme.mjs",
+      "originRole": "First-party classic Egret migration, conversion or compatibility implementation. Independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

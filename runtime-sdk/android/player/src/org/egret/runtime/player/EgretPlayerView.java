@@ -97,6 +97,10 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         }
         registered.put("egret.waitForBack", (json, reply) -> back.waitForBack(reply));
         registered.put("egret.editText", (json, reply) -> controls.openEditor(json, reply));
+        registered.put("egret.music.describe", (json, reply) -> music.describe(project, json, reply));
+        registered.put("egret.music.once", (json, reply) -> music.once(project, json, reply));
+        registered.put("egret.music.volume", music::volume);
+        registered.put("egret.music.position", music::position);
         registered.put("egret.music.play", (json, reply) -> music.play(project, json, reply));
         registered.put("egret.music.stop", (json, reply) -> { music.stop(); reply.resolve("true"); return null; });
         hostServices = new ProjectHostServices(registered, task -> ui.post(task), (id, ok) -> {
@@ -104,7 +108,7 @@ public final class EgretPlayerView extends FrameLayout implements AutoCloseable 
         }, error -> ui.post(() -> notifyError("Channel cleanup failed: " + error.getClass().getSimpleName())));
         setBackgroundColor(Color.BLACK);
         try {
-            project = new ProjectAssets(activity.getAssets(), projectAssetDir);
+            project = new ProjectAssets(activity, projectAssetDir);
             graphics = new PlayerGraphics(this);
             surface = new GLSurfaceView(activity);
             surface.setEGLContextClientVersion(3);

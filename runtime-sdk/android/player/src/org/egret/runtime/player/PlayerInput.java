@@ -135,7 +135,13 @@ final class PlayerInput {
             field.setSingleLine(!multiline);
             field.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN
                     | (multiline ? EditorInfo.IME_ACTION_NONE : EditorInfo.IME_ACTION_DONE));
-            field.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(8192)});
+            int session = options.optInt("editorId", 0);
+            boolean digitsOnly = options.optBoolean("digitsOnly", false);
+            if (digitsOnly) field.setKeyListener(android.text.method.DigitsKeyListener.getInstance("0123456789"));
+            if ("tel".equals(options.optString("inputMode"))) field.setRawInputType(android.text.InputType.TYPE_CLASS_PHONE);
+            int maxLength = options.optInt("maxLength", 8192);
+            if (maxLength < 1 || maxLength > 8192) { reply.reject("Invalid editor length"); return null; }
+            field.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(maxLength)});
             field.setText(initial);
             field.setSelection(field.length());
             AlertDialog dialog = new AlertDialog.Builder(activity).setView(field)
@@ -147,6 +153,24 @@ final class PlayerInput {
                     })
                     .setNegativeButton(android.R.string.cancel, null).create();
             editor = dialog;
+            if (session > 0) {
+                final boolean[] focused = {false};
+                Runnable reportFocus = () -> {
+                    if (editor == dialog && dialog.isShowing() && field.hasFocus() && !focused[0]) {
+                        focused[0] = true;
+                        send("editorFocus", session, 0, 0, 0, 0, null);
+                    }
+                };
+                field.setOnFocusChangeListener((view, hasFocus) -> { if (hasFocus) reportFocus.run(); });
+                dialog.setOnShowListener(ignored -> { field.requestFocus(); reportFocus.run(); });
+                field.addTextChangedListener(new TextWatcher() {
+                    @Override public void beforeTextChanged(CharSequence s, int st, int count, int after) { }
+                    @Override public void onTextChanged(CharSequence s, int st, int before, int count) { }
+                    @Override public void afterTextChanged(Editable s) {
+                        if (editor == dialog && focused[0]) send("editorChange", session, 0, 0, 0, 0, s.toString());
+                    }
+                });
+            }
             dialog.setOnDismissListener(d -> {
                 if (editor == dialog) editor = null;
                 reply.resolve("{\"status\":\"canceled\"}");

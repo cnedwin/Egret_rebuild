@@ -3,6 +3,39 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createPlayerProject} from './player-project.mjs';
 
+test('native editor events belong to the admitted request and ignore late input', async () => {
+  let services, admitted;
+  const events = [], canceled = [];
+  const native = {
+    hostStart(id,_name,json) { admitted={id, options:JSON.parse(json)};return true; },
+    hostCancel(id) { canceled.push(id); },
+    hostTake() { return JSON.stringify({status:'confirmed',text:'42'}); }
+  };
+  const project=createPlayerProject({width:4,height:4,create(ctx) {services=ctx;return {}; }},native);
+  try {
+    await project.start();
+    const request={text:'',inputMode:'tel',maxLength:3,digitsOnly:true,
+      onFocus:()=>events.push('focus'),onChange:value=>events.push(value)};
+    const old = new AbortController();
+    const first=services.editText(request,old.signal);
+    const firstId=admitted.options.editorId;
+    const canceledResult=assert.rejects(first,{name:'AbortError'});
+    old.abort();await canceledResult;
+    const next=services.editText(request);
+    const secondId=admitted.options.editorId;
+    assert.notEqual(firstId,secondId);
+    project.input({type:'editorFocus',id:firstId});
+    project.input({type:'editorChange',id:firstId,text:'stale'});
+    project.input({type:'editorFocus',id:secondId});
+    project.input({type:'editorChange',id:secondId,text:'42'});
+    project.hostResult(admitted.id,true);
+    assert.deepEqual(await next,{status:'confirmed',text:'42'});
+    project.input({type:'editorChange',id:secondId,text:'late'});
+    assert.deepEqual(events,['focus','42']);
+    assert.equal(canceled.length,1);
+  } finally {await project.close();}
+});
+
 test('system overlays use the session host and cancel outstanding input on close', async () => {
   const calls = [];
   const replies = new Map();

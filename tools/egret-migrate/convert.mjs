@@ -119,7 +119,7 @@ function snapshotOf(selection, assetFiles, engineVersion, editText, rememberedPr
       actorKind: 'legacy-converter',
       intent: 'Import the admitted stage and resource records',
       toolId: 'egret-migrate',
-      toolVersion: '0.5.0'
+      toolVersion: '0.6.0'
     },
     scope: { entityIds: [entity.id], fileIds: assetFiles.map(file => file.id), metadata: false, roots: true },
     operations: [
@@ -294,9 +294,26 @@ export async function convertProject(options) {
     });
   assets.push(...movie.assets);
   const assetFiles = assets.map(({ key, bytes }, index) => {
-    const mime = browserBuildTypes[path.posix.extname(key)]?.split(';')[0];
-    if (!mime || !(mime === 'application/json' || mime.startsWith('image/'))) {
-      refuse('MIGRATE_RES_UNSUPPORTED', 'Expected a supported local image or JSON file.', { path: key });
+    const extension = path.posix.extname(key).toLowerCase();
+    const mime =
+      extension === '.fnt'
+        ? 'application/json'
+        : ['.txt', '.csv'].includes(extension)
+          ? 'text/plain'
+          : ['.bin', '.dat'].includes(extension)
+            ? 'application/octet-stream'
+            : browserBuildTypes[extension]?.split(';')[0];
+    if (
+      !mime ||
+      !(
+        ['application/json', 'application/octet-stream', 'text/plain'].includes(mime) ||
+        mime.startsWith('image/') ||
+        mime.startsWith('audio/')
+      )
+    ) {
+      refuse('MIGRATE_RES_UNSUPPORTED', 'Expected a supported local image, soundtrack, text or binary data file.', {
+        path: key
+      });
     }
     return {
       id: 'f_resource_' + index,

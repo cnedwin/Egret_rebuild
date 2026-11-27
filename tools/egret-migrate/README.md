@@ -6,6 +6,26 @@ Egret Migrate is a local CLI for supported classic Egret 5 Web 2D source project
 
 An optional local package, `@egret/legacy`, exposes the browser bindings under `@egret/legacy/web` and the DOM-free packet codec under `@egret/legacy/protocol`. From a source checkout, install it with `npm install ./tools/egret-migrate`. Generated games already include these bindings. Read the [packet guide](compat/README.md) for wire types and limits.
 
+## Classic soundtracks and resource counts
+
+Declare a local WAV, MP3 or Ogg file with RES type `sound`. After `RES.loadConfig`, a call to `await RES.getResAsync("music")` returns the soundtrack. Call `sound.play(0, 1)` to play it once and listen for `egret.Event.SOUND_COMPLETE` on the **returned channel**. The channel accepts volume from 0 to 1. Switching tracks or calling `stop()` retires the old channel. Destruction returns the media resource. The browser streams the file with its media element and requires a user gesture where autoplay is restricted. The Android player reads a declared, uncompressed APK asset with MediaPlayer. One soundtrack can play per view. The Android position uses the native position sampled after preparation or resume and advances with the foreground clock. Android codec availability depends on the device.
+
+`RES.profile()` logs and returns an immutable count of declarations, groups, URL aliases, ready and pending resources, and active and queued reads. The host supplies browser label or native text-page counters. One generated one-second WAV produced exactly one natural completion on Windows Edge 158 with both 5.3.10 and the migrated host, and on Galaxy Z Fold7 with trimmed V8. Stopping and replacing channels produced no completion, the returned event target matched the playing channel, and the loaded resource count fell from one to zero after release. These tests check events and ownership. Audio quality requires a listening test.
+
+## Classic display filters
+
+Assign one `egret.ColorMatrixFilter` to a display object's `filters` array. The browser adapter uses the existing shared effect group for the complete subtree. A 4×5 matrix uses four channel coefficients and a byte-scale offset per output row. Setting the filter's `matrix` property updates every attached node. Assign `null` or `[]` to clear the converted matrix and return its targets to the host. Pre-existing masks and blur settings stay on the node. The shared host's existing effect-group limits apply.
+
+A Windows Edge 158 check ran the [synthetic panel and image](../../tests/fixtures/migrate-editor/filters.js) in both the original 5.3.10 WebGL player and the converted WebGL2 renderer. Their sampled opaque red pixels changed from `(255,0,0,255)` to `(0,32,255,255)` and back after clearing the matrix. The converted resource retired successfully. At present, classic blur and glow objects can be read as legacy settings. Applying them reports `LEGACY_FILTER_RADIUS_UNSUPPORTED` for oversized or unequal axes (including 10×10 blur and 35×35 glow), or `LEGACY_FILTER_KERNEL_UNVERIFIED` when the radius fits the shared kernel. This preserves the old effect values for visual review. Android's GLES3 project frame lacks offscreen effect groups; applying any converted filter reports `LEGACY_ANDROID_FILTER_UNSUPPORTED` before the next draw.
+
+## Text entry in migrated controls
+
+A classic `egret.TextField` with `type = egret.TextFieldType.INPUT` and an `eui.EditableText` share the same editing session. Set `inputType = egret.TextFieldInputType.TEL`, `restrict = '0-9'` and `maxChars = 3` for a quantity. A tap or `setFocus()` opens the editor when the field is on stage. Listeners can read `field.text` on each bubbling `egret.Event.CHANGE`. Handle `egret.FocusEvent.FOCUS_IN` and `FOCUS_OUT` on the field or its parent. Programmatic assignment to `text` outside an editing session does not send a user-change event.
+
+The browser bundle includes the engine’s platform text field. Android uses the system editor in the matching player library. Both support plain text and telephone input. This migration adapter handles unrestricted text and the explicit `0-9` restriction. Password fields and other character sets need an adapter. The desktop and phone checks exercised one single-line field. Chinese composition, cursor movement under an animating parent, assistive technology and production forms require separate game checks.
+
+With the [shared fixture](../../tests/fixtures/migrate-editor/board.js), Edge 158 on Windows ran the original 5.3.10 player and the converted browser game. Fold7 on Android 17 ran the converted game on trimmed V8. All three reported `focusIn(1) → change(14) → change(142) → focusOut(142)` on the parent, with the edited field as the target. On the phone a fourth digit exceeded the three-character limit. Closing the view returned both text pages and left zero occupied bytes. The numeric entries were automated through the real system editors.
+
 ## Compile a classic 5.3 business manifest
 
 Use this route when inspection calls for manual adaptation but the team's original TypeScript still builds. Supply the matching, trusted Egret TypeScript-Plus `lib/typescript.js` from outside the original project. The CLI loads that compiler as a local tool. It hashes each original input and parses each emitted script without running game code.
@@ -59,13 +79,27 @@ Supply the game's real custom constructors in the named namespaces. Review `miss
 
 The public fixture in `tests/fixtures/migrate-theme-factories` starts with an original EXML and includes its 5.3.10 compiler output. Windows Edge 158 on an RTX 5090 Laptop ran the old and migrated skins: both exposed three parts, changed the label from closed to open and back, selected item B and instantiated the custom marker. The migrated WebGL2 run used one texture page (7,280 bytes) and refused zero frames. In a separate private project inventory, the unchanged registry provided 929 of 935 paths in the primary theme and 28 of 34 in the secondary theme. Each theme retained six missing paths and six unresolved mappings. These counts establish provider availability. Visual and gameplay acceptance remain per project.
 
+The same compile writes `sdk-surface.json`. It reads the matching declarations under `libs/modules` with the project's compiler. Each entry records its qualified name, declaring location, visibility, and whether it is a namespace value, a static member, an instance member, or an erased type. Match this inventory to `api-usage.json` and the trusted host's bindings. Inherited members can be declared on the superclass. Computed members, exported aliases, overloaded signatures and instance behaviour still need project tests. Project-modified SDK declarations describe that supplied distribution.
+
+## Rebuild edited EXML with its original compiler
+
+Use this route for source skins that depend on project controls or exceed the static reader's vocabulary. Build the original script target once, then run the project's own local HTML entry in an isolated browser session. Specify a property that becomes available after its reflective controls have initialized. The command serves the supplied directory and the verified script artifacts to this session, blocks external network requests and writes results to a new directory.
+
+```sh
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/typescript.js --out ./original-build
+egret-migrate compile-theme --source ./old-client --classic ./original-build --theme resource/default.thm.json --entry index.html --ready Main.ready --namespaces app --playwright ./tools/playwright/index.mjs --out ./skin-build
+egret-migrate compile-classic --source ./old-client --compiler ./original-tools/typescript.js --target es2015 --theme resource/default.thm.json --compiled-theme ./skin-build --out ./android-scripts
+```
+
+Use the project's real readiness property and namespaces. Each theme build records the source and bootstrap digests, produced classes and missing or failing skins. A changed skin or a newly supplied missing file requires regeneration. A Windows Edge run of the tool generated 929 factories from a theme referencing 935 paths. Six source files were absent. Constructing each component on a target host and playing through its UI remain separate checks.
+
 ## Install and run
 
 From an Egret checkout with built packages, pack the local CLI. Use the installed esbuild module and npm CLI entry from your environment.
 
 ```text
 node tools/egret-migrate/pack.mjs --esbuild <esbuild-module> --npm <npm-cli.js> --out <new-package-dir>
-npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.5.0.tgz
+npm install --prefix <tool-folder> <new-package-dir>/egret-migrate-0.7.0.tgz
 ```
 
 Use the installed `egret-migrate` command or invoke `node <tool-folder>/node_modules/@egret/migrate/bin.mjs` directly. The CLI works outside the engine checkout. Supply a pinned Egret 7.0-series `egret2d.mjs`, an installed esbuild module, Playwright with Chromium and, for preview, qrcode-generator 2.0.4. These tools are selected explicitly.

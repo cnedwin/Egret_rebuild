@@ -31,7 +31,7 @@ node runtime-sdk/android/player/stage-revision.mjs --verify <returned-revision-d
 gradle --offline -p <application> -PegretGameRevision=<returned-revision-directory> assembleDebug
 ```
 
-The Gradle task validates all revision files, replaces the game's assets in the APK and retains other application assets. Omitting the property builds the original embedded version. When all builds using the store have stopped, the following optional command keeps the two explicitly accepted revisions. It validates the candidates before removing older managed directories. Leave the store outside the game and the kit.
+The Gradle task validates all revision files, replaces the game's assets in the APK and retains other application assets. Omitting the property builds the original embedded version. When all builds using the store have stopped, the following command keeps two accepted revisions. To select another number, pass `--retain-count N` and one distinct `--keep` digest for each of the N versions. It validates the candidates before removing older managed directories. Leave the store outside the game and the kit.
 
 ```sh
 node runtime-sdk/android/player/stage-revision.mjs --prune --store <revisions> --keep <accepted-SHA256> --keep <previous-SHA256>
@@ -67,6 +67,17 @@ For editor type checking, extend the kit's `game-types.json` in the game’s tsc
 gradle --offline -p <application> -PegretDevice=<serial> -PegretGameRevision=<revision> egretRunDebug
 gradle --offline -p <application> -PegretGameRevision=<revision> assembleRelease bundleRelease
 ```
+
+### Update a running debug installation
+
+Install the debug APK once and open the game inside its Activity. Stage the edits, then send the revision to that same game's private development store. The command verifies the local receipt, sends new content by SHA-256, and starts a fresh Activity pointing to the selected revision. Existing game saves stay in place. The report's `assetBytesSent` counts asset contents. `assetTransportBytes` includes the Windows USB transfer's Base64 encoding. Manifest and activation traffic are additional.
+
+```sh
+node runtime-sdk/android/player/sync-debug.mjs --app ./application --device <serial> --revision ./revisions/<digest>
+node runtime-sdk/android/player/sync-debug.mjs --app ./application --device <serial> --embedded
+```
+
+The second command returns to the game embedded in the APK. Start a new debug build after changing Java, channel libraries, the native renderer or the player AAR. Release applications with debugging disabled always open their packaged assets. The device retains uploaded blobs for subsequent revisions.
 
 ### Register the vendor's SDK
 

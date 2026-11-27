@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.egret.runtime.player;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.webkit.WebResourceResponse;
@@ -22,15 +23,17 @@ final class ProjectAssets {
     static final String ORIGIN = "https://egret-player.invalid/";
     private final AssetManager assets;
     final String root;
+    private final DebugProjectRevision revision;
     private final Set<String> declaredAssets = new HashSet<>();
     final int width, height;
     final String entry;
     final Object v8Scripts;
     final boolean codeCache;
 
-    ProjectAssets(AssetManager assets, String root) throws Exception {
-        this.assets = assets;
+    ProjectAssets(Context context, String root) throws Exception {
+        this.assets = context.getAssets();
         this.root = relative(root);
+        this.revision = DebugProjectRevision.active(context, this.root);
         JSONObject manifest = new JSONObject(new String(read("project.json", 65536), StandardCharsets.UTF_8));
         v8Scripts = manifest.opt("v8Scripts");
         Object cache = manifest.opt("v8CodeCache");
@@ -52,7 +55,7 @@ final class ProjectAssets {
         }
     }
 
-    private static String relative(String name) {
+    static String relative(String name) {
         if (name == null || name.isEmpty() || name.length() > 1024) throw new IllegalArgumentException("Invalid asset path");
         for (String part : name.split("/", -1))
             if (!part.matches("[A-Za-z0-9_~.-]+") || part.equals(".") || part.equals(".."))
@@ -63,17 +66,18 @@ final class ProjectAssets {
     InputStream openDeclared(String name) throws IOException {
         String path = relative(name);
         if (!declaredAssets.contains(path)) throw new FileNotFoundException("Undeclared project asset");
-        return assets.open(root + "/" + path);
+        return openPackaged(path);
     }
 
     android.content.res.AssetFileDescriptor openSoundtrack(String name) throws IOException {
         String path = relative(name);
         if (!declaredAssets.contains(path)) throw new FileNotFoundException("Undeclared soundtrack");
-        return assets.openFd(root + "/" + path);
+        return revision == null ? assets.openFd(root + "/" + path) : revision.openFd(path);
     }
 
     InputStream openPackaged(String name) throws IOException {
-        return assets.open(root + "/" + relative(name));
+        String path = relative(name);
+        return revision == null ? assets.open(root + "/" + path) : revision.open(path);
     }
 
     byte[] read(String name, int limit) throws IOException {
@@ -93,7 +97,7 @@ final class ProjectAssets {
             return denied();
         try {
             String path = relative(uri.getPath().substring(1));
-            InputStream stream = assets.open(root + "/" + path);
+            InputStream stream = openPackaged(path);
             Map<String, String> headers = new HashMap<>();
             headers.put("Cache-Control", "no-store");
             headers.put("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; "

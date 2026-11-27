@@ -14,7 +14,7 @@ export function createPlayerRaster(native, lifetime) {
   function image(job) {
     // Legacy operations know the expected size. An embedded image is sized by
     // Android's bounded header probe before allocating or decoding its bitmap.
-    const embedded = job.op === 'glbJpeg' || job.op === 'glbPng';
+    const embedded = job.op === 'glbJpeg' || job.op === 'glbPng' || job.op === 'bitmapPng';
     const decoded = embedded ? request(job) : undefined;
     const {width, height} = decoded ?? job;
     if (![width, height].every(n => Number.isInteger(n) && n > 0 && n <= 4096) || width * height > 1048576)
@@ -39,6 +39,10 @@ export function createPlayerRaster(native, lifetime) {
       await Promise.resolve();
       if (signal?.aborted) throw signal.reason;
       return image({op: 'png', path, width, height});
+    },
+    decodeBitmapPng(data) {
+      if (typeof data !== 'string' || data.length > 87384) throw new RangeError('BitmapData PNG exceeds 64 KiB');
+      return image({op:'bitmapPng',data});
     },
     decodeEmbeddedJpeg(path, offset, length) {
       return embeddedImage('glbJpeg', path, offset, length);

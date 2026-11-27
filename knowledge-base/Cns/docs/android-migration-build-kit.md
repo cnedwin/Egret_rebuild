@@ -31,7 +31,7 @@ node runtime-sdk/android/player/stage-revision.mjs --verify <返回的版本目�
 gradle --offline -p <应用工程> -PegretGameRevision=<返回的版本目录> assembleDebug
 ```
 
-Gradle 检查版本中的文件，用所选游戏资源生成 APK，并保留应用自己的其他资源。省略该参数可构建原来随工程交付的版本。使用此版本库的所有构建停止后，可运行下面的命令，保留明确指定的两个已验收版本。工具先核对候选项，再清理旧的受管目录。请将版本库放在游戏和工具包以外。
+Gradle 检查版本中的文件，用所选游戏资源生成 APK，并保留应用自己的其他资源。省略该参数可构建原来随工程交付的版本。使用此版本库的所有构建停止后，可用以下命令保留两个已验收版本。要保留其他数量，指定 `--retain-count N`，并为每个版本分别提供一个 `--keep` 摘要。工具先核对候选项，再清理旧的受管目录。请将版本库放在游戏和工具包以外。
 
 ```sh
 node runtime-sdk/android/player/stage-revision.mjs --prune --store <版本库> --keep <已验收SHA256> --keep <上一版SHA256>
@@ -67,6 +67,17 @@ node runtime-sdk/android/player/handoff.mjs --project <editable-game> --plan <ha
 gradle --offline -p <application> -PegretDevice=<serial> -PegretGameRevision=<revision> egretRunDebug
 gradle --offline -p <application> -PegretGameRevision=<revision> assembleRelease bundleRelease
 ```
+
+### 更新已安装的调试应用
+
+首次安装调试 APK 后，在其 Activity 中打开一次游戏。修改业务脚本或资源，生成资源版本，即可把差异内容发到该应用的私有调试目录。工具核对本地版本清单，按 SHA-256 发送新内容，再从选定版本重新启动 Activity。游戏存档会保留。报告中的 `assetBytesSent` 只统计资源内容，`assetTransportBytes` 包含 Windows USB 传输所需的 Base64 编码；清单和激活指令的流量另计。
+
+```sh
+node runtime-sdk/android/player/sync-debug.mjs --app ./application --device <序列号> --revision ./revisions/<摘要>
+node runtime-sdk/android/player/sync-debug.mjs --app ./application --device <序列号> --embedded
+```
+
+第二条命令切回 APK 自带的游戏。如果修改了 Java、渠道库、原生渲染器或播放器 AAR，需要重建调试 APK。关闭调试的发行应用始终读取包内资源。上传过的资源留在设备的应用私有目录内，供后续版本复用。
 
 ### 注册厂商 SDK
 

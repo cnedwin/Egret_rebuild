@@ -2,7 +2,7 @@
 const roots = new Set(['egret', 'eui', 'RES', 'dragonBones']);
 
 /** Inventory emitted property expressions. Type-only references have disappeared at this point. */
-export function collectLegacyUses(ts, entries, code, file) {
+export function collectLegacyUses(ts, entries, code, file, definitions) {
   const syntax = ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
   const kind = ts.SyntaxKind;
   const access = node =>
@@ -28,6 +28,25 @@ export function collectLegacyUses(ts, entries, code, file) {
           entries.set(key, entry);
         }
         entry.uses++;
+        const assignment = node.parent;
+        if (
+          definitions &&
+          !dynamic &&
+          members.length === 1 &&
+          assignment.kind === kind.BinaryExpression &&
+          assignment.left === node &&
+          assignment.operatorToken.kind === kind.EqualsToken &&
+          (assignment.right.kind === kind.FunctionExpression || assignment.right.kind === kind.ArrowFunction)
+        ) {
+          const pos = syntax.getLineAndCharacterOfPosition(node.getStart(syntax));
+          definitions.push({
+            namespace: cursor.text,
+            name: members[0],
+            file,
+            line: pos.line + 1,
+            column: pos.character + 1
+          });
+        }
         if (entry.examples.length < 3) {
           const pos = syntax.getLineAndCharacterOfPosition(node.getStart(syntax));
           entry.examples.push({ file, line: pos.line + 1, column: pos.character + 1 });

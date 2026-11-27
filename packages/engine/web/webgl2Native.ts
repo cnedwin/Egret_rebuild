@@ -123,6 +123,14 @@ const KINDS: readonly GLNativeKind[] = [
   'Sync'
 ];
 
+/** A program whose shaders are compiled and which is linked, its outcome not yet asked. */
+interface SubmittedProgram {
+  readonly program: WebGLProgram;
+  readonly v: GLNativeOwner;
+  readonly f: GLNativeOwner;
+  readonly verified: boolean;
+}
+
 /** One context generation owns every returned native object before another native call. */
 export class GLNativeSession {
   public readonly gl: WebGL2RenderingContext;
@@ -454,6 +462,50 @@ export class GLNativeSession {
       );
   }
   public program(vertex: string, fragment: string): WebGLProgram {
+    return this.finishProgram(this.submitProgram(vertex, fragment, true));
+  }
+  /**
+   * The programs of `sources`, made together when the context has KHR_parallel_shader_compile: every shader is
+   * compiled and every program linked first, and their completion is then asked, with `wait` between the asks, so the
+   * driver builds them side by side and the page goes on meanwhile. Undefined without the extension: the caller makes
+   * them one by one with `program`, as before. The extension is looked up once, by name, between gates; it is no part
+   * of the finite capture, and a context without it is not refused.
+   */
+  public preparePrograms(
+    sources: readonly (readonly [vertex: string, fragment: string])[],
+    wait: () => Promise<void>
+  ): Promise<WebGLProgram[]> | undefined {
+    this.gate();
+    const lookup = (this.context as unknown as { readonly getExtension?: unknown }).getExtension;
+    this.gate();
+    const extension =
+      typeof lookup === 'function'
+        ? ((lookup as (name: string) => unknown).call(this.context, 'KHR_parallel_shader_compile') as {
+            readonly COMPLETION_STATUS_KHR?: unknown;
+          } | null)
+        : null;
+    this.gate();
+    const completion = extension?.COMPLETION_STATUS_KHR;
+    this.gate();
+    // COMPLETION_STATUS_KHR is 0x91B1 by the extension's specification; anything else is not that extension.
+    return completion === 0x91b1 ? this.prepareTogether(sources, completion, wait) : undefined;
+  }
+  private async prepareTogether(
+    sources: readonly (readonly [string, string])[],
+    completion: number,
+    wait: () => Promise<void>
+  ): Promise<WebGLProgram[]> {
+    const batch = sources.map(([vertex, fragment]) => this.submitProgram(vertex, fragment, false));
+    // Each ask goes through the gate: a context lost or replaced meanwhile ends the wait with its failure.
+    let pending = batch;
+    while (pending.length) {
+      pending = pending.filter(({ program }) => !this.gl.getProgramParameter(program, completion));
+      if (pending.length) await wait();
+    }
+    return batch.map(entry => this.finishProgram(entry));
+  }
+  /** Compiles two shaders and links them; checks the compile at once when `verify`, else when the link fails. */
+  private submitProgram(vertex: string, fragment: string, verify: boolean): SubmittedProgram {
     const gl = this.gl,
       v = this.create('Shader', 0, gl.VERTEX_SHADER),
       f = this.create('Shader', 0, gl.FRAGMENT_SHADER);
@@ -464,7 +516,7 @@ export class GLNativeSession {
       const shader = owner.value as WebGLShader;
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+      if (verify && !gl.getShaderParameter(shader, gl.COMPILE_STATUS))
         throw new Error(gl.getShaderInfoLog(shader) ?? 'Shader compilation');
     }
     const p = this.create('Program'),
@@ -472,8 +524,18 @@ export class GLNativeSession {
     gl.attachShader(program, v.value as WebGLShader);
     gl.attachShader(program, f.value as WebGLShader);
     gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS))
+    return { program, v, f, verified: verify };
+  }
+  /** Checks a submitted program's link, then lets its shaders go. A failed link names a failed compile first. */
+  private finishProgram({ program, v, f, verified }: SubmittedProgram): WebGLProgram {
+    const gl = this.gl;
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      if (!verified)
+        for (const owner of [v, f])
+          if (!gl.getShaderParameter(owner.value as WebGLShader, gl.COMPILE_STATUS))
+            throw new Error(gl.getShaderInfoLog(owner.value as WebGLShader) ?? 'Shader compilation');
       throw new Error(gl.getProgramInfoLog(program) ?? 'Program link');
+    }
     gl.detachShader(program, v.value as WebGLShader);
     gl.detachShader(program, f.value as WebGLShader);
     const vSafe = this.cleanup(v),

@@ -1,0 +1,10 @@
+{
+  "skins": {},
+  "exmls": [
+    {
+      "path": "resource/Dispatch.exml",
+      "className": "Demo.DispatchSkin",
+      "gjs": "(function (_super) {\n\t__extends(DispatchSkin, _super);\n\tfunction DispatchSkin() {\n\t\t_super.call(this);\n\t\t\n\t\tthis.height = 80;\n\t\tthis.width = 160;\n\t\tthis.elementsContent = [this.row_i()];\n\t\tthis.caption_i();\n\t\tthis.badge_i();\n\t\t\n\t\tthis.states = [\n\t\t\tnew eui.State (\"closed\",\n\t\t\t\t[\n\t\t\t\t])\n\t\t\t,\n\t\t\tnew eui.State (\"open\",\n\t\t\t\t[\n\t\t\t\t\tnew eui.AddItems(\"caption\",\"row\",2,\"right\"),\n\t\t\t\t\tnew eui.AddItems(\"badge\",\"\",1,\"\")\n\t\t\t\t])\n\t\t];\n\t\t\n\t\teui.Binding.$bindProperties(this, [\"hostComponent.data.name\"],[0],this.caption,\"text\")\n\t\teui.Binding.$bindProperties(this, ['Qty:' ,\"hostComponent.data.count\"],[1],this.count,\"text\")\n\t}\n\tvar _proto = DispatchSkin.prototype;\n\n\t_proto.row_i = function () {\n\t\tvar t = new eui.Group();\n\t\tthis.row = t;\n\t\tt.elementsContent = [this.left_i(),this.right_i(),this.count_i()];\n\t\treturn t;\n\t};\n\t_proto.left_i = function () {\n\t\tvar t = new eui.Rect();\n\t\tthis.left = t;\n\t\tt.height = 8;\n\t\tt.width = 8;\n\t\treturn t;\n\t};\n\t_proto.caption_i = function () {\n\t\tvar t = new eui.Label();\n\t\tthis.caption = t;\n\t\treturn t;\n\t};\n\t_proto.right_i = function () {\n\t\tvar t = new eui.Rect();\n\t\tthis.right = t;\n\t\tt.height = 8;\n\t\tt.width = 8;\n\t\tt.x = 60;\n\t\treturn t;\n\t};\n\t_proto.count_i = function () {\n\t\tvar t = new eui.Label();\n\t\tthis.count = t;\n\t\treturn t;\n\t};\n\t_proto.badge_i = function () {\n\t\tvar t = new eui.Rect();\n\t\tthis.badge = t;\n\t\tt.height = 5;\n\t\tt.width = 5;\n\t\treturn t;\n\t};\n\tObject.defineProperty(_proto, \"skinParts\", {\n\t\tget: function () {\n\t\t\treturn [\"left\",\"caption\",\"right\",\"count\",\"row\",\"badge\"];\n\t\t},\n\t\tenumerable: true,\n\t\tconfigurable: true\n\t});\n\treturn DispatchSkin;\n})(eui.Skin);"
+    }
+  ]
+}

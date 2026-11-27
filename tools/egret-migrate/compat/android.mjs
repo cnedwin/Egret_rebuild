@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 import * as sdk from '@egret/engine';
+import { createBitmapText, parseBitmapFont } from '@egret/engine/bitmapfont';
 import { createPointerInput } from '@egret/engine/input';
+import { androidEnvironment, androidLog } from './host-environment.mjs';
+import { androidClassicMusic } from './sound.mjs';
+import { androidClassicEditor } from './text-input.mjs';
+import { nativeAtlasRaster } from './text-atlas.mjs';
 import { createLegacyBindings } from '../legacy-web.mjs';
+import { androidChannel, androidTransport } from './transport-android.mjs';
 
 function rgb(value) {
   if (!Number.isInteger(value) || value < 0 || value > 0xffffff) throw new RangeError('Expected an RGB color');
@@ -147,12 +153,16 @@ function imageRegistry(engine) {
       const row = rows.get(ref.id);
       if (!row || row.scope.signal.aborted) throw new Error('Closed Android legacy image binding');
       const { item, services } = row;
-      const image = await services.raster.loadPng(item.url, item.width, item.height, context.signal);
+      const image = row.png
+        ? services.raster.decodeBitmapPng(row.png.data)
+        : await services.raster.loadPng(item.url, item.width, item.height, context.signal);
+      if (row.png && (image.width !== row.png.width || image.height !== row.png.height))
+        throw new Error('Decoded BitmapData dimensions differ.');
       if (context.signal.aborted) throw context.signal.reason;
       if (row.scope.signal.aborted) throw row.scope.signal.reason;
       const texture = sdk.createTexture(image);
       try {
-        handles.set(texture, services.publishPage(item.page, image));
+        handles.set(texture, row.png ? services.publishTransientPage(image) : services.publishPage(item.page, image));
       } catch (error) {
         texture.dispose();
         throw error;
@@ -167,7 +177,7 @@ function imageRegistry(engine) {
       }
     }
   });
-  registry = { type, rows };
+  registry = { type, rows, nextBitmap: 0 };
   imageRegistries.set(engine, registry);
   return registry;
 }
@@ -294,9 +304,52 @@ export async function openLegacyAndroid(services, options) {
       loadTexture: imageLoader(services, scope, options.images ?? []),
       createLabel: initial => labelFor(raster, initial)
     };
-    const { api, mount } = createLegacyBindings(sdk, game, options, {
+    const logs = androidLog(options.logger, options.captureLogs);
+    const music = androidClassicMusic(services.host, scope, options.onError ?? logs.logger.error);
+    const { api, mount } = createLegacyBindings({ ...sdk, createBitmapText, parseBitmapFont }, game, options, {
+      atlasRaster: (w, h, runs) => nativeAtlasRaster(raster, w, h, runs),
+      async pngBytes(png) {
+        if (scope.signal.aborted) throw scope.signal.reason;
+        if (!services.raster.decodeBitmapPng || !services.publishTransientPage)
+          throw new Error('Install a player with BitmapData PNG support.');
+        const registry = imageRegistry(engine);
+        const ref = sdk.createAssetRef(registry.type, 'egret.legacy.bitmap:' + ++registry.nextBitmap);
+        registry.rows.set(ref.id, { png, scope, services });
+        try {
+          return scope.use(await engine.assets.acquire(ref, { signal: scope.signal }));
+        } finally {
+          registry.rows.delete(ref.id);
+        }
+      },
+      openEditor: androidClassicEditor(services),
+      environment: androidEnvironment(logs.logger),
+      loadSound: music.load,
+      resourceUsage() {
+        const status = raster.textPageUsage?.();
+        return status ? { textPages: status.occupied, textPageBytes: status.bytes } : {};
+      },
+      transport: androidTransport(options.network),
+      channel: androidChannel(services.host, options.channelActions),
       storage: () => services.storage,
-      readJson: async item => JSON.parse(await services.assets.readText(item.url, scope.signal)),
+      async readAsset(item) {
+        if (item.type === 'bin') {
+          const parts = [];
+          let length = 0;
+          for await (const part of services.assets.readChunks(item.url, scope.signal)) {
+            length += part.byteLength;
+            parts.push(part);
+          }
+          const bytes = new Uint8Array(length);
+          let offset = 0;
+          for (const part of parts) {
+            bytes.set(part, offset);
+            offset += part.byteLength;
+          }
+          return bytes.buffer;
+        }
+        const text = await services.assets.readText(item.url, scope.signal);
+        return item.type === 'text' ? text : JSON.parse(text);
+      },
       measureLine: (text, _font, style) => raster.measureText([{ text, ...style }])[0],
       graphemes: text => raster.graphemes(text),
       onVisibility(listener) {
@@ -348,12 +401,15 @@ export async function openLegacyAndroid(services, options) {
       pause() {
         contacts.clear();
         pointer.setInteractive(false);
+        music.visibility(true);
         visibility?.(true);
       },
       resume() {
         pointer.setInteractive(true);
+        music.visibility(false);
         visibility?.(false);
       },
+      closedSnapshot: logs.snapshot,
       close
     };
   } catch (error) {

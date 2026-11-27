@@ -213,7 +213,7 @@ console.log(ui.getStartupTiming());
 - 默认仍持续绘制。按需模式的 2D 时钟、更新、输入和文字维护每个显示步照常运行；显示版本、屏幕方案、缓存图层和宿主原生代未变时保留上次提交的帧。改变 3D 投影标记的显示节点会重绘；显示树外的数据用 `ui.game.invalidate()` 请求重绘。被拒绝的帧仍保留待绘请求，不影响 3D 绘制。
 - `uiScale` 限定铺满模式的 CSS 像素/逻辑单位，安全区、输入和语义都走同一套原生方案，不改变 3D 场景，见[屏幕适配](screen-fit.md)。多屏验证可采集实际命中矩形和语义名称，但轴对齐包围框不代表逐像素遮挡验证。
 - `webgl2PageBatching: 'single-page'` 仍合并同一纹理页、相邻的兼容绘制，遇到另一页才拆批。启动不编译多页着色程序，此宿主后来也不会编译它，不把等待搬到首次操作。默认仍是 `'multi-page'`，仅 WebGL2 使用此选项。分辨率、合成、混合顺序和效果不变；频繁交错纹理页可能增加绘制调用。没有效果时可另设 `effects: false`；叠加层默认开启效果。
-- `ui.getStartupTiming()` 给出放置、就绪及 `game` 的后端选择、模块加载、宿主创建、引擎打开、游戏准备等毫秒耗时。首次被 SDK 接受的提交发生后，`ui.game.getStartupTiming()` 还会报告该时点，这不是 GPU 完成或屏幕呈现。WebGL2 诊断区分当前已成功启动原生代的上下文/能力检查、采样、纯色、输出、效果、多页和收尾耗时。冷缓存与热缓存是不同实验。分别看 `game.loop.snapshot().steps` 与 `.frames` 区分更新和帧提交。
+- `ui.getStartupTiming()` 给出放置、就绪及 `game` 的后端选择、模块加载、宿主创建、引擎打开、游戏准备等毫秒耗时。首次被 SDK 接受的提交发生后，`ui.game.getStartupTiming()` 还会报告该时点，这不是 GPU 完成或屏幕呈现。WebGL2 诊断区分当前已成功启动原生代的上下文/能力检查、共同程序准备、采样、纯色、输出、效果、多页和收尾耗时。parallelPrograms 为 true 时，programPreparationMs 是共同编译及链接等待，后续逐程序耗时仅是取回及绑定，不能当作各程序独立编译时间；无扩展时逐程序阶段包含主线的协作让步。冷缓存与热缓存是不同实验。分别看 `game.loop.snapshot().steps` 与 `.frames` 区分更新和帧提交。
 
 `node examples/world3d/verify-overlay.mjs <Playwright index.mjs 的绝对路径>` 验证按需时钟、首帧、显示变更、显式重绘、转屏和原生触控归属，以及两页交错半透明图形在两种批处理策略下的真实 WebGL2 读回。软件 Chromium 中 768 个 RGBA 字节完全一致，该交错样例分别两次和五次绘制调用。属于功能和像素验证，不是假定设备帧率。
 
