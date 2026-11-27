@@ -30,6 +30,10 @@ JNIEXPORT jint JNICALL METHOD(upload)(JNIEnv *env, jclass cls, jlong handle, jin
 }
 
 #ifdef EGRET_ANDROID_PLAYER
+JNIEXPORT jint JNICALL METHOD(projectFrameVersion)(JNIEnv *env, jclass cls) {
+    return (jint)egret_renderer_project_frame_version();
+}
+
 JNIEXPORT jlong JNICALL METHOD(worldGeometryBytes)(JNIEnv *env, jclass cls, jlong handle) {
     return (jlong)egret_renderer_world_geometry_bytes((EgretRenderer *)(intptr_t)handle);
 }

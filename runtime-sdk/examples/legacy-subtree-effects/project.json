@@ -1,0 +1,14 @@
+{
+  "width": 192,
+  "height": 128,
+  "entry": "index.html",
+  "pages": [],
+  "assets": [],
+  "v8Scripts": {
+    "groups": {
+      "board": [
+        "board.js"
+      ]
+    }
+  }
+}

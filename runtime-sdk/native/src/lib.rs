@@ -9,6 +9,8 @@ mod gl;
 mod gles;
 #[cfg(any(test, target_os = "android"))]
 mod project_color;
+#[cfg(any(test, target_os = "android"))]
+mod project_target_budget;
 #[cfg(target_os = "android")]
 mod project_gles;
 #[cfg(any(test, target_os = "android"))]

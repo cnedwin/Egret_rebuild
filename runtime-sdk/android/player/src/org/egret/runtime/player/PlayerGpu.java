@@ -7,6 +7,7 @@ final class PlayerGpu {
     static { System.loadLibrary("egret_player"); }
 
     static final int MISSING_WORLD_BASE = 4;
+    static native int projectFrameVersion();
     static native long create();
     static native long worldGeometryBytes(long handle);
     static native void destroy(long handle, boolean current);

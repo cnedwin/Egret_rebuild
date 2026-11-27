@@ -27,7 +27,7 @@ import java.util.TreeMap;
 /** A bounded, local recording of the exact project submissions and immutable RGBA page versions. */
 final class ProjectReplayTape {
     static final int FRAMES = 210;
-    private static final int MAGIC = 0x45475250, FULL_VERSION = 1, RESIDENT_VERSION = 2, EGR2 = 0x32524745, EGR3 = 0x33524745, EGR4 = 0x34524745, EGR5 = 0x35524745;
+    private static final int MAGIC = 0x45475250, FULL_VERSION = 1, RESIDENT_VERSION = 2, EGR2 = 0x32524745, EGR3 = 0x33524745, EGR4 = 0x34524745, EGR5 = 0x35524745, EGR6 = 0x36524745;
     private static final int MAX_BYTES = 64 << 20, MAX_GENERATIONS = 4096, CHECKSUM = 32;
     private static final int HEADER = 5 * Integer.BYTES, REUSE = -1;
     private final PlayerGraphics.Frame[] frames;
@@ -273,11 +273,11 @@ final class ProjectReplayTape {
     private static void validateHud(ByteBuffer data, int id, int width, int height,
                                     Map<Integer, PlayerGraphics.Page> pages) throws IOException {
         int format = data.getInt(0), quads = data.getInt(20);
-        if ((format != EGR2 && format != EGR3 && format != EGR4 && format != EGR5) || data.getInt(4) != id || data.getInt(8) != width
-            || data.getInt(12) != height || quads < 0 || quads > PlayerGraphics.MAX_QUADS)
+        if ((format != EGR2 && format != EGR3 && format != EGR4 && format != EGR5 && format != EGR6) || data.getInt(4) != id || data.getInt(8) != width
+            || data.getInt(12) != height || quads < 0 || quads > PlayerGraphics.MAX_QUADS + (format == EGR6 ? 16 : 0))
             throw new IOException("Invalid or discontinuous project frame");
-        if (format == EGR4 || format == EGR5) {
-            validateIndexedPacket(data, quads, width, height, pages, format == EGR5);
+        if (format == EGR4 || format == EGR5 || format == EGR6) {
+            validateIndexedPacket(data, quads, width, height, pages, format != EGR4, format == EGR6);
             return;
         }
         int recordsEnd = 24 + quads * PlayerGraphics.QUAD_BYTES;
@@ -304,12 +304,24 @@ final class ProjectReplayTape {
     // EGR4 records are interleaved in painter order. Bounds-check every variable
     // section before indexing it so malformed tapes cannot publish a partial session.
     private static void validateIndexedPacket(ByteBuffer data, int draws, int width, int height,
-                                             Map<Integer, PlayerGraphics.Page> pages, boolean extended) throws IOException {
+                                             Map<Integer, PlayerGraphics.Page> pages, boolean extended, boolean layered) throws IOException {
         int pos = 24;
+        int depth = 0, groups = 0, paint = 0;
         boolean sawMesh = false, sawPolicy = false;
         for (int draw = 0; draw < draws; draw++) {
             requireRemaining(data, pos, 4);
             int tag = data.getInt(pos), kind = tag & 3;
+            if (layered && tag == 128) {
+                if (++depth > 4 || ++groups > 8) throw new IOException("Too many isolated groups");
+                pos = validateEffect(data, pos + 4, width, height);
+                continue;
+            }
+            if (layered && tag == 129) {
+                if (--depth < 0) throw new IOException("Unmatched isolated group exit");
+                pos += 4;
+                continue;
+            }
+            if (++paint > PlayerGraphics.MAX_QUADS) throw new IOException("Too many project draws");
             boolean light = (tag & 32) != 0, white = (tag & 64) != 0;
             if ((!extended && tag != kind) || (tag & ~127) != 0 || (tag & 12) == 12 || (light && kind < 2) || (white && kind != 2))
                 throw new IOException("Unknown project draw policy");
@@ -320,6 +332,7 @@ final class ProjectReplayTape {
                 int slot = data.get(pos) & 255;
                 PlayerGraphics.Page page = pages.get(slot);
                 if (slot != 0 && page == null) throw new IOException("Missing project page " + slot);
+                if (layered) validateEffectFrameQuad(data, pos, width, height, slot);
                 if (kind == 1) validateMapping(data, pos + PlayerGraphics.QUAD_BYTES, page, pos + 32);
                 pos += PlayerGraphics.QUAD_BYTES + (kind == 1 ? 20 : 0);
                 continue;
@@ -356,7 +369,57 @@ final class ProjectReplayTape {
                 if (index < 0 || index >= vertices) throw new IOException("Mesh index outside its vertex table");
             }
         }
-        if (!(extended ? sawPolicy : sawMesh) || pos != data.limit()) throw new IOException("Invalid indexed project packet length or contents");
+        if (!(layered ? groups > 0 && depth == 0 : extended ? sawPolicy : sawMesh) || pos != data.limit()) throw new IOException("Invalid indexed project packet length or contents");
+    }
+
+    /** Validate EGR6 quad data before the tape can change resident page generations. */
+    private static void validateEffectFrameQuad(ByteBuffer data, int pos, int width, int height, int slot) throws IOException {
+        if (slot != 0 && (data.get(pos + 1) != -1 || data.get(pos + 2) != -1 || data.get(pos + 3) != -1))
+            throw new IOException("Invalid textured quad tint");
+        if (!unit(data.getFloat(pos + 4))) throw new IOException("Invalid quad opacity");
+        for (int axis = 8; axis < 32; axis += 4)
+            if (!(Math.abs(data.getFloat(pos + axis)) <= 16777216f)) throw new IOException("Invalid quad coordinate");
+        float u0 = data.getFloat(pos + 32), v0 = data.getFloat(pos + 36);
+        float u1 = data.getFloat(pos + 40), v1 = data.getFloat(pos + 44);
+        float left = data.getFloat(pos + 48), top = data.getFloat(pos + 52);
+        float right = data.getFloat(pos + 56), bottom = data.getFloat(pos + 60);
+        if (!(0 <= u0 && u0 < u1 && u1 <= 1 && 0 <= v0 && v0 < v1 && v1 <= 1)
+            || !(0 <= left && left <= right && right <= width && 0 <= top && top <= bottom && bottom <= height))
+            throw new IOException("Invalid quad UV region or clip");
+    }
+
+    /** Admit the complete effect before accepting a replay frame or replacing its page generations. */
+    private static int validateEffect(ByteBuffer data, int pos, int width, int height) throws IOException {
+        requireRemaining(data, pos, 20);
+        int flags = data.getInt(pos);
+        float left = data.getFloat(pos + 4), top = data.getFloat(pos + 8);
+        float right = data.getFloat(pos + 12), bottom = data.getFloat(pos + 16);
+        if (flags < 1 || flags > 7 || !(0 <= left && left <= right && right <= width)
+                || !(0 <= top && top <= bottom && bottom <= height))
+            throw new IOException("Invalid isolated group clip or options");
+        pos += 20;
+        if ((flags & 1) != 0) {
+            requireRemaining(data, pos, 80);
+            for (int i = 0; i < 20; i++, pos += 4)
+                if (!(Math.abs(data.getFloat(pos)) <= 65536)) throw new IOException("Invalid color matrix");
+        }
+        if ((flags & 2) != 0) {
+            requireRemaining(data, pos, 4);
+            float radius = data.getFloat(pos);
+            if (!(0 <= radius && radius <= 8 && radius == (int)radius)) throw new IOException("Invalid group blur");
+            pos += 4;
+        }
+        if ((flags & 4) != 0) {
+            requireRemaining(data, pos, 28);
+            float spread = data.getFloat(pos), strength = data.getFloat(pos + 4);
+            int color = data.getInt(pos + 8), options = data.getInt(pos + 24);
+            if (!(0 <= spread && spread <= 16 && 0 <= strength && strength <= 255 && color >= 0 && color <= 0xffffff
+                    && unit(data.getFloat(pos + 12)) && Math.abs(data.getFloat(pos + 16)) <= 256
+                    && Math.abs(data.getFloat(pos + 20)) <= 256 && options >= 0 && options <= 7))
+                throw new IOException("Invalid group glow");
+            pos += 28;
+        }
+        return pos;
     }
 
     private static boolean unit(float value) { return 0 <= value && value <= 1; }

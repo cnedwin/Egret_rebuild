@@ -20,7 +20,7 @@ const HEADER = 160,
   TEXTURED_BYTE_LIMIT = 2 * 1024 * 1024,
   RESIDENT_LIMIT = 16 * 1024 * 1024,
   BATCH_HEADER = 24;
-const hudFormats = new Set([0x32524745, 0x33524745, 0x34524745, 0x35524745]);
+const hudFormats = new Set([0x32524745, 0x33524745, 0x34524745, 0x35524745, 0x36524745]);
 
 function reject(reason) {
   throw new RangeError('Android World3D profile: ' + reason);
