@@ -94,7 +94,19 @@ node runtime-sdk/examples/legacy-courier/prepare.mjs ./courier-game --classic-bu
 
 ## Use the same legacy entry in the Android player
 
-Import `openLegacyAndroid` from `@egret/legacy/android` and return its result from the player project's `create(services)`. Pass the fixed stage dimensions, portable project ID, classic script group name, entry class name, compiled theme, RES configuration and image bindings. The adapter installs Egret, EUI and RES before evaluating that group. The display tree, pointer routing, asset leases and native text pages belong to the current player view. Closing removes this view's bindings. A paused touch cannot activate a button on resume.
+Import `openLegacyAndroid` from `@egret/legacy/android` and return its result from the player project's `create(services)`. Pass the fixed stage dimensions, portable project ID, classic script group name, entry class name, compiled theme, RES configuration and image bindings. The adapter installs Egret, EUI and RES before evaluating that group. The display tree, pointer routing, asset leases and native text pages belong to the current player view. Closing removes this view's bindings. A paused touch cannot activate a button on resume. The game can change routes, levels and screens within this session. To restart the whole game, close its player view and create a new one with the same application and project identity. A classic script group runs once per V8 isolate. Calling `openLegacyAndroid` again in that isolate raises `LEGACY_ANDROID_NEW_VIEW_REQUIRED` before registering globals or reserving resources.
+
+For a project-owned precompiled theme, enable EUI using its static descriptor (or `{ skins: {}, exmls: [] }`). Use `prepareTheme` to load the reviewed registry group and any custom class dependencies, then install the factories on that same EUI host. The player awaits this step before loading the business group and constructing the first control. The independent Edge factory comparison exercises generated skin constructors. The Fold7 courier run described below uses compiled static EXML.
+
+```js
+import { registerLegacyThemeFactories } from '@egret/legacy/theme-factories';
+
+async function prepareTheme({ eui, egret }) {
+  await EgretRuntimeScripts.loadGroup('theme');
+  registerLegacyThemeFactories(eui, themeManifest, { egret });
+}
+// Include prepareTheme in the options passed to openLegacyAndroid.
+```
 
 Declare PNGs by their packaged path, dimensions and native page ID (1–223). Also list the PNGs and JSON files in the player project's assets. For example, bind `{ url: 'north.png', page: 1, width: 8, height: 8 }` to the image resource whose URL is `north.png`. Local JSON comes from the packaged resource reader. The native text cache distinguishes the font family, weight, italic style and outline. One page supports up to 1,048,576 pixels. Review the conversion's unsupported types and remaining host calls for each original game.
 
@@ -107,4 +119,4 @@ adb install -r ./courier-app/build/outputs/apk/debug/EgretGame-debug.apk
 adb shell am start -n org.egret.sample.courier/org.egret.example.LibraryActivity
 ```
 
-Open the game and press the route button. The heading changes from 北门驿站 to 南门渡口, the marker changes from blue to orange and the saved route becomes 1. Windows Edge 158 and a Galaxy Z Fold7 running trimmed V8 15.7.112.19 used identical 2,365-byte output from the Egret TypeScript-Plus compiler. Both reported the same selection, Chinese heading, marker width, stored value, loaded route and control count before and after the press. The captured orange marker occupied 2,209 pixels on the desktop and 48,400 display pixels on the phone at their respective scales. The browser closed with zero leases and the phone released all five published pages. This sample used bundled local data and injected pointer input; it exercises neither a live game server nor a channel SDK.
+Open the game and press the route button. The heading changes from 北门驿站 to 南门渡口, the marker changes from blue to orange and the saved route becomes 1. Windows Edge 158 and a Galaxy Z Fold7 running trimmed V8 15.7.112.19 used identical 2,365-byte output from the Egret TypeScript-Plus compiler. Both reported the same selection, Chinese heading, marker width, stored value, loaded route and control count before and after the press. The captured orange marker occupied 2,209 pixels on the desktop and 48,400 display pixels on the phone at their respective scales. The browser closed with zero leases. In the same Android activity, closing the first view and opening a new one restored route 1 (南门渡口). The next press returned to 北门驿站 and saved 0. At each close the phone released all five published pages, retained zero text bytes and reported zero abandoned uploads. This sample used bundled local data and injected pointer input; it exercises neither a live game server nor a channel SDK.

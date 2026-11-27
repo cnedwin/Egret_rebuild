@@ -94,7 +94,19 @@ node runtime-sdk/examples/legacy-courier/prepare.mjs ./courier-game --classic-bu
 
 ## 在 Android 播放器运行同一份旧业务入口
 
-从 `@egret/legacy/android` 导入 `openLegacyAndroid`，让播放器工程的 `create(services)` 返回其结果。传入固定舞台宽高、可移植的工程 ID、经典脚本组名、入口类名、已编译主题、RES 配置和图片绑定。适配器先安装 Egret、EUI 和 RES，再求值该脚本组。显示树、指针路由、资源租约和原生文字页归当前播放器视图管理。关闭时撤销本视图安装的绑定，暂停前按下的触点在恢复时失效。
+从 `@egret/legacy/android` 导入 `openLegacyAndroid`，让播放器工程的 `create(services)` 返回其结果。传入固定舞台宽高、可移植的工程 ID、经典脚本组名、入口类名、已编译主题、RES 配置和图片绑定。适配器先安装 Egret、EUI 和 RES，再求值该脚本组。显示树、指针路由、资源租约和原生文字页归当前播放器视图管理。关闭时撤销本视图安装的绑定，暂停前按下的触点在恢复时失效。同一游戏会话内可以切换路线、关卡和界面。完整重开游戏时，关闭播放器视图并以相同的应用和工程标识创建新视图。每个 V8 隔离环境内的经典脚本组只执行一次。在同一环境再次调用 `openLegacyAndroid`，会在注册全局名称和分配资源前返回 `LEGACY_ANDROID_NEW_VIEW_REQUIRED`。
+
+项目自有预编译主题仍需提供静态描述（也可用 `{ skins: {}, exmls: [] }`）来启用 EUI。在 `prepareTheme` 中先加载已核查的项目注册脚本组和所依赖的自定义类，再向同一 EUI 宿主安装工厂。播放器等待注册完成后才加载业务组并构造第一个控件。独立的 Edge 工厂对照覆盖生成的皮肤构造函数，下述 Fold7 驿站样例使用静态 EXML 编译结果。
+
+```js
+import { registerLegacyThemeFactories } from '@egret/legacy/theme-factories';
+
+async function prepareTheme({ eui, egret }) {
+  await EgretRuntimeScripts.loadGroup('theme');
+  registerLegacyThemeFactories(eui, themeManifest, { egret });
+}
+// 将 prepareTheme 传入 openLegacyAndroid 的选项。
+```
 
 按包内路径、宽高和原生页号（1–223）声明 PNG，同时在播放器工程的 assets 中列入所用 PNG 和 JSON。例如可用 `{ url: 'north.png', page: 1, width: 8, height: 8 }` 绑定 URL 为 `north.png` 的图片资源。播放器从安装包读取本地 JSON。原生文字缓存区分字体族、字重、斜体和描边，每页最多支持 1,048,576 像素。接入其他旧项目时，需逐项检查迁移报告中剩余的类型和宿主调用。
 
@@ -107,4 +119,4 @@ adb install -r ./courier-app/build/outputs/apk/debug/EgretGame-debug.apk
 adb shell am start -n org.egret.sample.courier/org.egret.example.LibraryActivity
 ```
 
-打开游戏后点击路线按钮，标题由「北门驿站」变为「南门渡口」，路标由蓝变橙，存档路线变为 1。Windows Edge 158 与 Galaxy Z Fold7 的裁剪 V8 15.7.112.19 执行了完全相同的 2,365 字节 Egret TypeScript-Plus 编译产物。两端在操作前后的选项、中文标题、标记宽度、存档值、路线加载状态和控件数均相同。按各自显示比例截图，桌面橙色路标占 2,209 像素，手机占 48,400 像素。关闭后浏览器剩余零租约，手机释放全部五个已发布页面。该样例使用包内自制数据和注入的指针操作，生产服务器和渠道 SDK 仍需另行验收。
+打开游戏后点击路线按钮，标题由「北门驿站」变为「南门渡口」，路标由蓝变橙，存档路线变为 1。Windows Edge 158 与 Galaxy Z Fold7 的裁剪 V8 15.7.112.19 执行了完全相同的 2,365 字节 Egret TypeScript-Plus 编译产物。两端在操作前后的选项、中文标题、标记宽度、存档值、路线加载状态和控件数均相同。按各自显示比例截图，桌面橙色路标占 2,209 像素，手机占 48,400 像素。关闭后浏览器剩余零租约。在同一 Android Activity 中关闭第一个视图，再创建新视图，可读回路线 1「南门渡口」。再次操作后返回「北门驿站」并存为 0。手机两次关闭都释放全部五个已发布页面，文字剩余零字节，废弃上传均为零。该样例使用包内自制数据和注入的指针操作，生产服务器和渠道 SDK 仍需另行验收。

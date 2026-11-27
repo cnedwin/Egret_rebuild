@@ -240,7 +240,10 @@ function globalBindings(api) {
   return release;
 }
 
-/** Mount a converted legacy entry in the current player view and its existing Engine. */
+// Classic groups execute once per JS isolate. Their constructors close over the first binding set.
+const usedScriptHosts = new WeakSet();
+
+/** Mount one legacy game per player view. Reopening the complete game requires a fresh player view. */
 export async function openLegacyAndroid(services, options) {
   const { width, height, entry, scriptGroup, projectId } = options;
   if (
@@ -258,8 +261,15 @@ export async function openLegacyAndroid(services, options) {
     { engine, raster } = services;
   if (typeof scripts?.loadGroup !== 'function' || typeof raster?.acquireText !== 'function')
     throw new Error('This project needs the V8 script-group player and the native text page port');
+  if (usedScriptHosts.has(scripts))
+    throw Object.assign(new Error('Create a new Egret player view to reopen this legacy game.'), {
+      code: 'LEGACY_ANDROID_NEW_VIEW_REQUIRED'
+    });
+  if (services.signal.aborted) throw services.signal.reason;
   const scope = engine.createScope(),
     contacts = new Map();
+  usedScriptHosts.add(scripts);
+  let groupRequested = false;
   let visibility,
     removeGlobals,
     closed = false;
@@ -300,6 +310,13 @@ export async function openLegacyAndroid(services, options) {
     scope.signal.addEventListener('abort', () => removeGlobals(), { once: true });
     services.signal.addEventListener('abort', close, { once: true });
     if (services.signal.aborted) throw services.signal.reason;
+    // Once evaluation begins, even a failed group may already have installed global declarations.
+    groupRequested = true;
+    if (options.prepareTheme) {
+      if (!api.eui) throw new TypeError('Supply a theme descriptor to prepare legacy EUI skin factories.');
+      await options.prepareTheme(api);
+      if (scope.signal.aborted) throw scope.signal.reason;
+    }
     await scripts.loadGroup(scriptGroup);
     if (scope.signal.aborted) throw scope.signal.reason;
     let entryType = globalThis;
@@ -340,6 +357,7 @@ export async function openLegacyAndroid(services, options) {
       close
     };
   } catch (error) {
+    if (!groupRequested) usedScriptHosts.delete(scripts);
     close();
     throw error;
   }

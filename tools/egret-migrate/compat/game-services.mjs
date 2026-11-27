@@ -196,7 +196,9 @@ export function createLegacyGameServices(game, resolveKnown, now = Date.now) {
     return (
       typeof name === 'string' &&
       // Keep reflection names usable on both stock and no-ICU V8, including CJK class names.
-      name.split('.').every(part => /^[$A-Z_a-z\u3400-\u4dbf\u4e00-\u9fff][$\w\u3400-\u4dbf\u4e00-\u9fff]*$/.test(part)) &&
+      name
+        .split('.')
+        .every(part => /^[$A-Z_a-z\u3400-\u4dbf\u4e00-\u9fff][$\w\u3400-\u4dbf\u4e00-\u9fff]*$/.test(part)) &&
       !name.split('.').some(part => ['__proto__', 'prototype', 'constructor'].includes(part))
     );
   }

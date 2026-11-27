@@ -13,6 +13,7 @@ const resources = {
 installPlayerProject({
   width: 320, height: 180, clearColor: 0x192334,
   async create(services) {
+    // Each player view evaluates this legacy entry once. Its project ID also owns the saved route on reopen.
     const game = await openLegacyAndroid(services, {
       width: 320, height: 180, projectId: 'p_legacy_courier', scriptGroup: 'courier',
       entry: 'CourierMain', theme, resources, images,

@@ -13,6 +13,7 @@ test('deferred classic entry uses a single engine for EUI, packaged RES, touch, 
     directory = path.join(tmp, 'game');
   t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
   prepareCourier(directory);
+  let preparedTheme = false;
   const uploads = [],
     released = [],
     scripts = [],
@@ -21,6 +22,8 @@ test('deferred classic entry uses a single engine for EUI, packaged RES, touch, 
   globalThis.EgretRuntimeScripts = {
     async loadGroup(name) {
       assert(globalThis.egret?.DisplayObjectContainer && globalThis.eui?.Label && globalThis.RES?.loadGroup);
+      assert(preparedTheme, 'prepare the theme against the installed bindings before running the business group');
+      if (scripts.includes(name)) return;
       scripts.push(name);
       Function(fs.readFileSync(path.join(directory, 'courier.js'), 'utf8'))();
     }
@@ -89,6 +92,12 @@ test('deferred classic entry uses a single engine for EUI, packaged RES, touch, 
                 groups: [{ name: 'routes', keys: ['routes_json', 'north_png', 'south_png'] }]
               },
               images: ['north', 'south'].map((name, i) => ({ url: name + '.png', page: i + 1, width: 8, height: 8 })),
+              async prepareTheme(api) {
+                assert.equal(api.eui, globalThis.eui);
+                assert.equal(api.RES, globalThis.RES);
+                await Promise.resolve();
+                preparedTheme = true;
+              },
               theme: JSON.parse(fs.readFileSync(path.join(directory, 'theme.json'))),
               onError(cause) {
                 failure = cause;
@@ -128,11 +137,13 @@ test('deferred classic entry uses a single engine for EUI, packaged RES, touch, 
     assert.equal(failure, undefined);
     mounted.close();
     assert.equal(owner.stage.numChildren, 0);
-    const reopened = await mount();
-    assert.equal(owner.stage.numChildren, 1);
-    assert.equal(globalThis.courierObservation.heading, '南门渡口');
-    assert.equal(globalThis.courierObservation.markerWidth, 8);
-    reopened.close();
+    const previousUploads = [...uploads];
+    await assert.rejects(mount, { code: 'LEGACY_ANDROID_NEW_VIEW_REQUIRED' });
+    assert.equal(owner.stage.numChildren, 0);
+    assert.deepEqual(uploads, previousUploads);
+    assert.deepEqual(scripts, ['courier']);
+    assert.equal(globalThis.courierObservation.saved, '1');
+    assert.equal('egret' in globalThis, false);
   } finally {
     await session.close();
   }
@@ -185,4 +196,53 @@ test('close while the script group is pending removes only the namespaces instal
   resume();
   await assert.rejects(starting);
   await closing;
+});
+
+test('closing during asynchronous theme registration prevents the business group from starting', async t => {
+  let begin, finish;
+  const entered = new Promise(resolve => {
+    begin = resolve;
+  });
+  globalThis.EgretRuntimeScripts = {
+    loadGroup() {
+      assert.fail('closed view loaded its business group');
+    }
+  };
+  t.after(() => {
+    delete globalThis.EgretRuntimeScripts;
+  });
+  const session = createPlayerProject(
+    {
+      width: 20,
+      height: 20,
+      create: services =>
+        openLegacyAndroid(services, {
+          width: 20,
+          height: 20,
+          projectId: 'p_theme_close',
+          scriptGroup: 'entry',
+          entry: 'Main',
+          theme: { skins: {}, exmls: [] },
+          async prepareTheme({ eui }) {
+            assert.equal(eui, globalThis.eui);
+            begin();
+            await new Promise(resolve => {
+              finish = resolve;
+            });
+          }
+        })
+    },
+    {
+      raster() {
+        throw new Error('unexpected draw');
+      }
+    }
+  );
+  const starting = session.start();
+  await entered;
+  const closed = session.close();
+  finish();
+  await assert.rejects(starting);
+  await closed;
+  assert.equal('eui' in globalThis, false);
 });
