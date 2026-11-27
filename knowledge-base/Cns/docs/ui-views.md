@@ -65,7 +65,7 @@ const shop = game.show(
 | 平板，横 | `tablet`、`root` |
 | 平板，竖 | `tabletPortrait`、`portrait`、`root` |
 
-每组部件的名字和种类都必须与 `root` 相同。`view.variant` 表示当前用的是哪组，每次变化都会重新创建视图并调用 `built(view)`。手机上一栏的内容，在平板上常常可以排成两栏。
+每组部件的名字、种类以及显式页签角色都必须与 `root` 相同。`view.variant` 表示当前用的是哪组，每次变化都会重新创建视图并调用 `built(view)`。手机上一栏的内容，在平板上常常可以排成两栏。
 
 ### 视图按自己的尺寸显示
 
@@ -135,6 +135,7 @@ Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距�
 | `pick`、`format`、`roll` | text、button | 一个数字、它的文字（不给时取整），以及滚动到新数字所用的秒数 |
 | `value` | bar | 0 到 1 |
 | `checked` | toggle | 开或关 |
+| `selected` | 带 `role: 'tab'` 的 button | 语义选中状态，与绘制颜色相互独立 |
 | `disabled` | button、toggle、可操作的 panel | 禁用，按下无效 |
 | `visible` | 所有部件 | 连同里面的部件一起隐藏 |
 | `src` | image | 最新图片地址，或 undefined 清除图片 |
@@ -151,6 +152,24 @@ Chromium 157 软件 WebGL2 实测，两段文字都换成三行，基线间距�
 绑定了非仅指针 tap 的命名面板可以声明 `role: 'button'`，作为一个无障碍控件，其绘制子部件不进入焦点与语义树。默认面板仍是分组。装饰部件设置 `semantic: false` 可以将其子树移出语义与焦点（指针输入不变）。动态 `label` 绑定优先提供无障碍名称；返回空白时回退到默认名称。
 
 绑定函数抛出的错误会让游戏停下，和 `update` 抛出的一样。
+
+### 原生页签选中状态
+
+将命名语义面板声明为 `role: 'tablist'`，下面使用带 `role: 'tab'` 的命名按钮。中间可以有不命名的布局面板，但最近的语义祖先必须是该 tablist。tablist 仅作为结构分组，操作和禁用状态绑定到各个 tab，而不是 tablist 本身。不声明页签角色的按钮仍是普通按钮。
+
+```js
+const state = { page: 'offers' };
+game.show({ root: { type: 'panel', name: 'pages', role: 'tablist', layout: 'row',
+  label: '集市分页', height: 48, gap: 8, children: [
+    { type: 'button', name: 'offers', text: '货架', role: 'tab', width: 110 },
+    { type: 'button', name: 'relics', text: '法宝', role: 'tab', width: 110 }
+  ] } }, { state, bind: {
+  offers: { selected: s => s.page === 'offers', tap: s => { s.page = 'offers'; } },
+  relics: { selected: s => s.page === 'relics', tap: s => { s.page = 'relics'; } }
+} });
+```
+
+语义树及浏览器语义投影会提供 `tablist`、`tab` 和当前为 true 或 false 的 `selected` 状态（浏览器中的 `aria-selected`）。描述中没有填写 `selected: true` 时，页签初始未选中；使用 `selected` 绑定时改为读取当前状态。选中不会改动标签或视觉样式，需要选中外观时可绑定 `color`。页签复用按钮原有的指针、键盘焦点与激活、手柄及语义测试器行为，例如 `tester.press('tab:法宝')`。分页内容和选择逻辑仍由游戏管理；这里不附加自动切换、互斥选择、tab panel 或独立的方向键导航模式。同一部件在各种屏幕适配方案中须保持相同的页签角色。
 
 ## 有稳定键的列表与可变图片
 
@@ -283,18 +302,32 @@ Galaxy Z Fold7（Android 17、Chrome 157、Adreno 830）分别通过 WebGL2 和 
 
 | 调用 | 是什么 |
 | --- | --- |
-| `await game.confirm(question, { yes, no, title })` | 模态提问。Enter、空格和手柄 A 激活当前焦点按钮，Escape 和 B 取消。打开期间提出的其他问题会排队等待。`game.asking` 此时为真，`update` 可以借此暂停游戏逻辑 |
+| `await game.confirm(question, { yes, no, title, skin, noColor })` | 模态提问。Enter、空格和手柄 A 激活当前焦点按钮，Escape 和 B 取消。打开期间提出的其他问题会排队等待。`game.asking` 此时为真，`update` 可以借此暂停游戏逻辑 |
 | `game.hints(list)` | 安全区底部的一条提示栏。每条提示是 `{ action, key, pad, touch }`，按玩家最近使用的设备 `game.device` 显示：键盘或鼠标显示 `Space Jump`，手柄显示 `A Jump`，手指显示 `touch` 的文字；在触屏上，没有 `touch` 的提示不显示。`shown` 是当前显示的内容；另有 `set(list)` 和 `dispose()` |
 | `await game.loading(tasks, { label, atOnce })` | 在所有东西之上显示 `Loading 2 / 5` 和进度条，直到所有 promise（或返回 promise 的函数）完成；函数每次最多运行 `atOnce` 个（默认 4 个）。按顺序返回结果；有一个失败就关闭并抛出 |
 | `game.badges` | 沿路径累加的红点：`set('mail/system', 3)` 之后 `count('mail')` 也是 3。另有 `has`、`clear(path)`、`paths()`、`onChange`。重新开始时清空。`badge` 绑定会在部件右上角画出红点，`view.badge(name)` 可以读取它 |
 | `game.compact(n, { locale, digits })` | `999`、`12.3K`、`4.5M`；`locale: 'zh'` 时为 `9999`、`1.2万`、`3.4亿`。截断而不是四舍五入，所以 9999 是 `9.9K` 而不是 `10K`。不给时按页面的语言 |
 | `game.request(send)` | 按钮发出的请求，同一时间只发一个。请求未返回时再次 `run()` 得到的是同一个 promise。`busy`、`result` 和 `error` 可以绑定到按钮的 `disabled` 和文字上；失败保存在 `error` 里，不会抛出 |
 
+确认框用实际绘制字体测量问题、可选标题和两个按钮标签。过长单词以及中日韩文本会换行；当空间允许且有帮助时，两个按钮改成竖排，取消在前。问题及标题的完整高度放不下时，在原生垂直滚动区中展示；两个操作按钮留在安全区内。确认框遵循 `uiScale`，有空间时保留原有短对话几何，并尽量让两个操作按钮的宽、高都至少达到 44 CSS 像素。宽度最多 440 个视图单位，不会超过可用安全区；若屏幕物理尺寸过小，或任意长的按钮文字在横排和竖排中均放不下，绘制标签会缩略；只有连一个字都放不下时才不绘制文字，仍保留完整语义名称。屏幕尺寸变化时，当前问题会重新布局而不会自行回答，并在适用时保留当前焦点及滚动位置。每段输入文字最多 8192 个代码单元，与文字缓存一致。
+
+```js
+const accept = await game.confirm('出售这件稀有法宝，得到二十八颗珍珠？', {
+  yes: '确认出售法宝并收取珍珠',
+  no: '保留法宝在行囊中',
+  skin: { panel: 0x153329, button: 0x92352a, buttonText: 0xffe8bd, radius: 6 },
+  noColor: 0x245b48
+});
+```
+
+`skin` 与 `game.show` 的部分 `ViewSkin` 相同（此处 `size` 范围为 1 到 512）；`noColor` 覆盖原有石板灰色取消按钮，确定按钮使用 `skin.button`。提出问题时立即快照选项和文字；无效主题、文字或 RGB 颜色会在加入队列前以 `UI_VIEW_BINDING_INVALID` 拒绝。
+
+
 `createBadges`、`formatCompact`、`createRequest` 和 `keyCap` 也从 `@egret/engine/web/view` 导出，供不用 play 的代码使用。
 
 ## 测试与辅助技术
 
-给 `play` 一棵语义树，即来自 `@egret/engine/ui/semantics` 的 `semantics: createUiSemantics()`，每个视图都会把自己加进去。视图的 `label` 成为一个组，模态时成为对话框。每个有名字的部件成为对应的角色：组、文字、按钮、进度条或开关。语义树在每帧结束时发布。这样 [UI 测试器](ui-testing.md)就能按名字按下 `'Shop / Buy 60'`、读取 `state('Sound').checked`。按钮不可用或有模态对话框挡住时，测试器会像玩家一样被拒绝。`@egret/engine/web/semantics` 把同一棵树提供给读屏软件。
+给 `play` 一棵语义树，即来自 `@egret/engine/ui/semantics` 的 `semantics: createUiSemantics()`，每个视图都会把自己加进去。视图的 `label` 成为一个组，模态时成为对话框。每个有名字的部件成为对应的角色：组、文字、按钮、页签组、页签、进度条或开关。语义树在每帧结束时发布。这样 [UI 测试器](ui-testing.md)就能按名字按下 `'Shop / Buy 60'`、读取 `state('Sound').checked`。按钮不可用或有模态对话框挡住时，测试器会像玩家一样被拒绝。`@egret/engine/web/semantics` 把同一棵树提供给读屏软件。
 
 命名的非交互文字部件在有效无障碍名称为空或只有空白字符时，不进入发布的语义树。其布局和显示对象不变，文字或显式无障碍名称恢复为非空时，同一节点重新出现。即使绘制文字为空，显式非空名称仍有意义。交互控件仍须具有合法的无障碍名称。
 

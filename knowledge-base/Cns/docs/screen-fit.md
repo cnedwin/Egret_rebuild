@@ -115,6 +115,23 @@ game.onScreenChange(plan => {
 
 控件用它的 `name`、`onTap` 给的名字、它在视图里的部件名或按钮上的文字来称呼。盖满整块画布的节点（例如模态视图的遮罩，或「点任意处继续」的层）不算控件；它显示时，被它盖住的控件也不检查。只要有一种屏幕出现错误，工具就以 1 退出。这是按每部手机的尺寸和像素比、加上代替的 insets 运行的 Chromium，不是手机：真实刘海的形状、浏览器自己的栏，以及手机把 insets 交给页面的方式都没有检查。
 
+### 检查后续场景
+
+`node vendor/egret.mjs verify --screens --prepare test/prepare-market.mjs --out screen-market` 在每个全新屏幕上打开普通游戏页，再在截图和安全区检查之前运行明确指定的本地模块。模块沿用 `--play` 的玩家辅助方法；它的默认导出函数收到玩家对象和只读的屏幕描述（`name`、CSS 像素的 `width`、`height`、`scale`、`touch`、`insets`）。例如，按 Enter 打开集市的游戏可以这样写：
+
+```js
+export default async function prepare(player, screen) {
+  await player.page.waitForFunction(() => window.demo?.ready);
+  await player.key('Enter');
+  await player.page.waitForFunction(() => window.demo?.screen === 'market');
+  const actual = await player.read(() => window.demo.screen);
+  player.expect(actual === 'market', screen.name + ': market ready');
+  return actual;
+}
+```
+
+确认场景已经就绪后，返回实际进入的非空场景名称。每个屏幕的报告都包含 `prepared`，记录场景或错误。工具等待准备完成后的新原生控件报告；没有报告或原生控件列表为空即判该屏幕失败。异常、异步准备超过 20 秒也判失败，截图及其他检查仍是失败证据。异步时限不能中断阻塞的同步代码：这是操作者明确提供的可信本地 Node 模块，工具不会从页面自动寻找或下载脚本。`--play` 仍是单窗口游戏流程检查，含音频；`--prepare` 不测音频，也不是完整通关测试。实际可运行的示例见 `examples/screen-check/prepare.mjs`。
+
 ## 检查了什么
 
 - `tests/ui-screen.test.mjs` 在 Node 里检查计算：`'contain'` 和 `'expand'`、更宽和更高的空间、竖版设计、在黑边以内和超出黑边的 insets，以及拒绝无效输入。

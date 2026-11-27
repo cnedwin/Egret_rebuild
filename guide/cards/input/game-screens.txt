@@ -32,7 +32,8 @@ Rules:
 - Change the state, never the screen: bindings are read every frame and only what changed is drawn again.
 - Place against `anchor`s in the safe part, not at numbers; give `portrait` parts with the same names for a phone held upright, and `tablet` parts for a screen whose shorter side is 600 CSS pixels or more. `uiScale: { min, max }` of `play` keeps views a readable size on a phone and a desktop alike; a view of tap areas over the game's world takes `uiScale: false`.
 - A button that sends something goes through `game.request`, so a second press sends nothing; bind `disabled` to `busy`.
-- Ask one question at a time with `game.confirm`; while it is open `game.asking` is true, so `update` leaves the game alone.
+- Ask one question at a time with `game.confirm`; while it is open `game.asking` is true, so `update` leaves the game alone. Long questions and labels wrap within the safe area; `{ skin, noColor }` can match the rest of a game.
+- To name a two-page shop for assistive technology, use a named panel with `role: 'tablist'` and buttons with `role: 'tab'`. Bind `selected` to the active page; update the game's state in the tap. The controls keep ordinary button focus and input.
 - Hints name the keys of what the player is using (`game.device`); give `touch` words or the hint is left out on a phone.
 - Give `play` a `semantics` tree and test with `createUiTester`: `press('Shop / Buy 60')` is refused, as a player is, when the button is disabled or a dialog is over it.
 - A misspelt field or an unknown name throws `UI_VIEW_INVALID` or `UI_VIEW_BINDING_UNKNOWN` with the place: fix the description, do not wrap it in `try`.

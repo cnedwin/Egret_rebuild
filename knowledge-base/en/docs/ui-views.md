@@ -65,7 +65,7 @@ A screen whose shorter side is 600 CSS pixels or more is a tablet's (`TABLET_SHO
 | Tablet, wide | `tablet`, `root` |
 | Tablet, upright | `tabletPortrait`, `portrait`, `root` |
 
-Each has the same names, of the same kinds, as `root`. `view.variant` says which is used, and the view is built again, with `built(view)` told, whenever that changes. A tablet often has room for two columns where a phone has one.
+Each has the same names, of the same kinds and explicit tab roles, as `root`. `view.variant` says which is used, and the view is built again, with `built(view)` told, whenever that changes. A tablet often has room for two columns where a phone has one.
 
 ### Views at their own size
 
@@ -133,6 +133,7 @@ In Chromium 157 with software WebGL2, both parts wrapped to three lines with 24-
 | `pick`, `format`, `roll` | text, button | a number, the words for it (whole numbers unless given), and seconds to count to a new one |
 | `value` | bar | 0 to 1 |
 | `checked` | toggle | on or off |
+| `selected` | button with `role: 'tab'` | semantic selection, independent of the drawn colour |
 | `disabled` | button, toggle, actionable panel | disabled; a press does nothing |
 | `visible` | every part | hidden with what it holds |
 | `src` | image | the latest image address, or undefined to clear |
@@ -149,6 +150,24 @@ With `tap: (state, activation) => { ... }`, the second argument has `source` (mo
 A named panel with a non-pointer-only tap binding can declare `role: 'button'` to be one accessible control, with its drawn contents omitted from focus and the semantic tree. The default panel is still a group. Set `semantic: false` on a decorative part to omit its subtree from semantics and focus (pointer input is unchanged). A dynamic `label` binding takes precedence over the default accessible name; a blank result falls back to the default.
 
 What a binding throws stops the game, as what `update` throws does.
+
+### Native tab selection
+
+Declare a named semantic panel with `role: 'tablist'` and use named buttons with `role: 'tab'` beneath it. Unnamed layout panels may intervene, but the nearest semantic ancestor must be the tablist. The tablist is structural; give individual tabs the actions and disabled states, not the tablist. A button without a tab role remains an ordinary button.
+
+```js
+const state = { page: 'offers' };
+game.show({ root: { type: 'panel', name: 'pages', role: 'tablist', layout: 'row',
+  label: 'Market pages', height: 48, gap: 8, children: [
+    { type: 'button', name: 'offers', text: 'Offers', role: 'tab', width: 110 },
+    { type: 'button', name: 'relics', text: 'Relics', role: 'tab', width: 110 }
+  ] } }, { state, bind: {
+  offers: { selected: s => s.page === 'offers', tap: s => { s.page = 'offers'; } },
+  relics: { selected: s => s.page === 'relics', tap: s => { s.page = 'relics'; } }
+} });
+```
+
+The tree and the browser semantic projection expose `tablist`, `tab` and the current true or false `selected` state (`aria-selected` in the browser). A tab starts unselected unless `selected: true` is given in its description. A `selected` binding reads the current state instead. Selection does not change the label or visual styling; use a `color` binding for a selected appearance when desired. Tabs reuse the button pointer, keyboard focus and activation, controller and semantic tester behavior, such as `tester.press('tab:Relics')`. The game owns page content and the selection logic; this does not add automatic selection, exclusive choices, tab panels, or a separate arrow-key navigation model. Keep the same tab roles on the same names across viewport variants.
 
 ## Keyed rows and changing pictures
 
@@ -281,18 +300,32 @@ On Galaxy Z Fold7 with Android 17, Chrome 157 and the Adreno 830 GPU, the functi
 
 | Call | What it is |
 | --- | --- |
-| `await game.confirm(question, { yes, no, title })` | A modal question. Enter, Space and gamepad A activate the focused button. Escape and B cancel. Questions asked while one is open wait their turn. `game.asking` is true while one is open, so `update` can leave the game alone |
+| `await game.confirm(question, { yes, no, title, skin, noColor })` | A modal question. Enter, Space and gamepad A activate the focused button. Escape and B cancel. Questions asked while one is open wait their turn. `game.asking` is true while one is open, so `update` can leave the game alone |
 | `game.hints(list)` | A bar at the bottom of the safe part. Each hint is `{ action, key, pad, touch }`, and the bar names it in the words of what the player last used, `game.device`. A keyboard or a mouse shows `Space Jump`, a pad `A Jump`, and a finger the `touch` words; a hint without them is left out on a touch screen. `shown` is what it says now; `set(list)` and `dispose()` |
 | `await game.loading(tasks, { label, atOnce })` | `Loading 2 / 5` and a bar over everything while promises, or functions that return them, finish; functions run `atOnce` at a time (4). Gives their results in order; a failure closes it and is thrown |
 | `game.badges` | Red dots that add up along paths: `set('mail/system', 3)` makes `count('mail')` 3 as well. `has`, `clear(path)`, `paths()`, `onChange`. A restart clears them. The `badge` binding draws one at a part's top right corner, and `view.badge(name)` reads it |
 | `game.compact(n, { locale, digits })` | `999`, `12.3K`, `4.5M`; with `locale: 'zh'`, `9999`, `1.2万`, `3.4亿`. Cut rather than rounded, so 9999 is `9.9K` and not `10K`. The page's language unless given |
 | `game.request(send)` | What a button sends, sent once at a time. A second `run()` while one is out gets the same promise. `busy`, `result` and `error` are there to bind the button's `disabled` and words to; a failure is kept in `error`, not thrown |
 
+A confirmation measures its question, optional title and button labels in the drawing font. Long words and CJK copy wrap; if useful and space permits, the two buttons are stacked with the cancel action first. The question and title scroll in a native vertical viewport when their full height cannot fit; the two actions stay in the safe part. The view follows `uiScale`, keeps the old short-dialog geometry where it fits, and aims for at least 44 CSS pixels on either side of each action. The width is at most 440 view units and never wider than the available safe part; if the screen is physically too small, or an arbitrarily long button label cannot fit either arrangement, the visual label is abbreviated, or omitted only when even one glyph cannot fit, while its full semantic name is retained. A change of size relays out the pending question without answering it and retains the selected action and scroll offset where applicable. Each supplied string is bounded to 8,192 code units (as for the text cache).
+
+```js
+const accept = await game.confirm('Sell the extraordinary treasure for twenty-eight pearls?', {
+  yes: 'Sell the treasure and collect the pearls',
+  no: 'Keep it in the inventory',
+  skin: { panel: 0x153329, button: 0x92352a, buttonText: 0xffe8bd, radius: 6 },
+  noColor: 0x245b48
+});
+```
+
+`skin` is the same partial `ViewSkin` as `game.show` (including `size`, from 1 to 512 here); `noColor` overrides the original slate cancel button. The yes action uses `skin.button`. Options and copy are snapshotted when the question is asked; invalid theme, copy or RGB fields are refused with `UI_VIEW_BINDING_INVALID` before the question enters its queue.
+
+
 `createBadges`, `formatCompact`, `createRequest` and `keyCap` are exported from `@egret/engine/web/view` too, for code that does not use play.
 
 ## Tests and assistive technology
 
-Give `play` a tree, `semantics: createUiSemantics()` from `@egret/engine/ui/semantics`. Every view then adds itself to it. Its `label` is a group, or a dialog when modal. Each named part becomes what it is: a group, a text, a button, a progress bar or a switch. The tree is published at the end of every frame. A [UI tester](ui-testing.md) then presses `'Shop / Buy 60'` and reads `state('Sound').checked`. It is refused, as a player is, when the button is disabled or a modal is over it. `@egret/engine/web/semantics` shows the same tree to a screen reader.
+Give `play` a tree, `semantics: createUiSemantics()` from `@egret/engine/ui/semantics`. Every view then adds itself to it. Its `label` is a group, or a dialog when modal. Each named part becomes what it is: a group, a text, a button, a tablist, a tab, a progress bar or a switch. The tree is published at the end of every frame. A [UI tester](ui-testing.md) then presses `'Shop / Buy 60'` and reads `state('Sound').checked`. It is refused, as a player is, when the button is disabled or a modal is over it. `@egret/engine/web/semantics` shows the same tree to a screen reader.
 
 A named noninteractive text part is omitted from the published semantic tree when its effective accessible name is empty or whitespace-only. Its layout and display remain unchanged, and the same node returns when the text or its explicit accessible label becomes nonempty. An explicit nonempty label remains meaningful even with empty drawn words. Interactive controls still require valid accessible names.
 

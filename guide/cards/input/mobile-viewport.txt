@@ -28,6 +28,8 @@ html, body { margin: 0; height: 100%; overflow: hidden; }
 .panel { max-height: calc(100dvh - 22px); }
 ```
 
+For a later menu, shop or confirmation, run `node vendor/egret.mjs verify --screens --prepare test/prepare-scene.mjs`. Explicitly supply your own trusted local Node module: its default function receives the `player` helpers and screen descriptor; assert the reached scene and return its nonempty name. A rejected or asynchronously timed-out preparation, or absence of fresh native controls, fails that screen. No script is downloaded from the game. See `knowledge-base/en/docs/screen-fit.md`.
+
 Rules:
 
 - An Egret 5 project of `scaleMode` fixedWidth, fixedHeight, fixedNarrow or fixedWide keeps it: they are values of `fit` too, and the stage then follows the window. Pixel art takes `wholeScale: true`, a whole number of device pixels a unit.

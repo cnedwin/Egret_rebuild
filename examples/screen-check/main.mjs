@@ -20,7 +20,8 @@ await play({
     game.rect(240, 135, 480, 270, 0x1d3247);
     game.circle(120, 110, 36, 0xf59e0b);
     game.text('Screen check', { x: 240, y: 40, size: 28, align: 'center' });
-    const pause = game.button('Pause', { x: 0, y: 0, width: 120, height: tall }, () => {});
+    const ask = () => game.confirm('Leave the match?', { yes: 'Leave', no: 'Stay' });
+    const pause = game.button('Pause', { x: 0, y: 0, width: 120, height: tall }, ask);
     // The mistake: the screen's corner is under the notch; the safe part keeps clear of it.
     game.pin(pause, { right: 8, top: 8 }, { area: fixed ? 'safe' : 'screen' });
     game.button(
@@ -31,6 +32,6 @@ await play({
     game.button('Jump', { x: fixed ? 150 : 190, y: 210, width: 120, height: tall }, () => {});
     game.button('Fire', { x: fixed ? 300 : 290, y: 210, width: 120, height: tall }, () => {});
     // With ?ask=1 a question stands open over the game: its backdrop takes taps anywhere and is no control.
-    if (asks) game.confirm('Leave the match?', { yes: 'Leave', no: 'Stay' });
+    if (asks) ask();
   }
 });

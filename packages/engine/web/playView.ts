@@ -13,7 +13,17 @@ import { directViewActivation, viewTapActivation } from './playActivation.js';
 import type { PlayViewActivation } from './playActivation.js';
 import { TABLET_SHORT_SIDE, checkView, planView } from './view.js';
 import { keyCap } from './viewParts.js';
-import type { ViewDescription, ViewPanel, ViewPart, ViewPlan, ViewPlannedPart, ViewRect, ViewVariant } from './view.js';
+import { planConfirmLayout, prepareConfirmCopy } from './playConfirm.js';
+import type {
+  ViewDescription,
+  ViewPanel,
+  ViewPart,
+  ViewPlan,
+  ViewPlannedPart,
+  ViewRect,
+  ViewSkin,
+  ViewVariant
+} from './view.js';
 import { createPlayViewScrolls } from './playViewScroll.js';
 import type { PlayScrollViewport, PlayViewScroll } from './playViewScroll.js';
 
@@ -34,6 +44,8 @@ export interface PlayViewBinding<S = unknown> {
   readonly value?: (state: S) => number;
   /** Whether a toggle is on. */
   readonly checked?: (state: S) => boolean;
+  /** A tab's current selected state. The game still owns selection and its visual style. */
+  readonly selected?: (state: S) => boolean;
   /** Whether a button or a toggle cannot be used now: drawn grey, and a press does nothing. */
   readonly disabled?: (state: S) => boolean;
   readonly visible?: (state: S) => boolean;
@@ -131,6 +143,7 @@ interface Made {
   visible: boolean;
   disabled: boolean;
   checked: boolean;
+  selected: boolean;
   value: number;
   color: number | undefined;
   text: string;
@@ -152,7 +165,20 @@ const MAX_VIEW_IMAGE_LOADS = 4;
 const KEYS_OF: Record<ViewPart['type'], readonly (keyof PlayViewBinding)[]> = {
   panel: ['label', 'disabled', 'visible', 'color', 'tap', 'tapTargetOnly', 'pointerOnly', 'badge'],
   text: ['label', 'text', 'pick', 'format', 'roll', 'visible', 'color', 'badge'],
-  button: ['label', 'text', 'pick', 'format', 'roll', 'disabled', 'visible', 'color', 'tap', 'tapTargetOnly', 'badge'],
+  button: [
+    'label',
+    'text',
+    'pick',
+    'format',
+    'roll',
+    'disabled',
+    'visible',
+    'color',
+    'tap',
+    'tapTargetOnly',
+    'badge',
+    'selected'
+  ],
   bar: ['label', 'value', 'visible', 'color'],
   toggle: ['label', 'text', 'checked', 'disabled', 'visible', 'tap', 'tapTargetOnly', 'badge'],
   space: ['visible'],
@@ -166,6 +192,10 @@ export interface PlayConfirmOptions {
   /** `'Cancel'` unless given. */
   readonly no?: string;
   readonly title?: string;
+  /** The same theme as a view: colours, text size and modal dim. */
+  readonly skin?: Partial<ViewSkin>;
+  /** Cancel button colour; retains its original slate unless given. */
+  readonly noColor?: number;
 }
 /** One action a hint bar names: the key, the pad button and what a finger does for it. */
 export interface PlayHint {
@@ -366,15 +396,22 @@ export function createPlayViews(
         if (binding.tapTargetOnly === true && binding.tap === undefined)
           throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': tapTargetOnly needs tap' });
       }
-      const checkPanelRoles = (part: ViewPart): void => {
+      const checkRoles = (part: ViewPart): void => {
+        const binding = part.name === undefined ? undefined : bind[part.name];
+        if (part.type === 'button' && part.role !== 'tab' && binding?.selected !== undefined)
+          throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: part.name + ': selected needs a tab role' });
         if (part.type !== 'panel') return;
-        if (part.role === 'button' && (bind[part.name!]?.tap === undefined || bind[part.name!]?.pointerOnly === true))
+        if (part.role === 'button' && (binding?.tap === undefined || binding.pointerOnly === true))
           throw new EgretError('UI_VIEW_BINDING_INVALID', {
             cause: part.name + ': button role needs a non-pointerOnly tap'
           });
-        for (const child of part.children ?? []) checkPanelRoles(child);
+        if (part.role === 'tablist' && (binding?.tap !== undefined || binding?.disabled !== undefined))
+          throw new EgretError('UI_VIEW_BINDING_INVALID', {
+            cause: part.name + ': tablist is a container; bind tap and disabled on its tabs'
+          });
+        for (const child of part.children ?? []) checkRoles(child);
       };
-      for (const parts of variantsOf(description)) checkPanelRoles(parts);
+      for (const parts of variantsOf(description)) checkRoles(parts);
       return names;
     };
     const names = validate(description, bind);
@@ -777,6 +814,7 @@ export function createPlayViews(
         visible: part.visible ?? true,
         disabled: false,
         checked: part.type === 'toggle' ? (part.checked ?? false) : false,
+        selected: part.type === 'button' && part.role === 'tab' ? (part.selected ?? false) : false,
         value: part.type === 'bar' ? (part.value ?? 1) : 0,
         color: undefined,
         text: previous !== undefined ? String(previous.shown) : start,
@@ -897,6 +935,8 @@ export function createPlayViews(
           }
           if (binding.disabled !== undefined) item.disabled = binding.disabled(now) === true;
           if (binding.checked !== undefined) item.checked = binding.checked(now) === true;
+          // Selection describes the tab to assistive technology; its colour remains a separate binding.
+          if (binding.selected !== undefined) item.selected = binding.selected(now) === true;
           if (binding.value !== undefined) {
             const value = binding.value(now);
             item.value = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
@@ -996,7 +1036,9 @@ export function createPlayViews(
             : type === 'text'
               ? 'text'
               : type === 'button'
-                ? 'button'
+                ? planned.part.type === 'button'
+                  ? (planned.part.role ?? 'button')
+                  : 'button'
                 : type === 'bar'
                   ? 'progressbar'
                   : type === 'image'
@@ -1013,7 +1055,7 @@ export function createPlayViews(
               hidden =
                 !isShown() ||
                 !visibleOnStage(item.node, game.browser.stage) ||
-                (role !== 'group' && rect === undefined),
+                (role !== 'group' && role !== 'tablist' && rect === undefined),
               enabled = rect !== undefined && hasInput(item),
               base = {
                 bounds: rect ?? EMPTY,
@@ -1023,6 +1065,7 @@ export function createPlayViews(
               };
             if (role === 'group')
               return { ...base, name: label ?? name, disabled: hasAction(item) && !pointerOnly(item) && !enabled };
+            if (role === 'tablist') return { ...base, name: label ?? name };
             if (role === 'image') {
               const imageLabel = item.part.type === 'image' ? item.part.label : undefined;
               const imageName = label ?? imageLabel;
@@ -1032,9 +1075,11 @@ export function createPlayViews(
               return { ...base, name: label ?? name, range: { now: Math.round(item.value * 100), min: 0, max: 100 } };
             if (role === 'switch')
               return { ...base, name: label ?? item.text, checked: item.checked, disabled: !enabled };
-            if (role === 'button') {
+            if (role === 'button' || role === 'tab') {
+              const selected = role === 'tab' ? { selected: item.selected } : {};
               if (item.part.type === 'panel') return { ...base, name: label ?? name, disabled: !enabled };
-              if (item.semanticLabel !== undefined) return { ...base, name: item.semanticLabel, disabled: !enabled };
+              if (item.semanticLabel !== undefined)
+                return { ...base, ...selected, name: item.semanticLabel, disabled: !enabled };
               const detail = item.part.type === 'button' ? item.part.description?.replace(/\s+/gu, ' ').trim() : '';
               // Preserve the title and keep its optional detail within the semantic name limit.
               const detailLimit = 1024 - item.text.length - 2;
@@ -1045,7 +1090,7 @@ export function createPlayViews(
                       .replace(/[\uD800-\uDBFF]$/u, '')
                       .trimEnd()
                   : '';
-              return { ...base, name: suffix ? item.text + '. ' + suffix : item.text, disabled: !enabled };
+              return { ...base, ...selected, name: suffix ? item.text + '. ' + suffix : item.text, disabled: !enabled };
             }
             // Optional noninteractive text has no semantic content while blank.
             // Retain an explicit accessible label, and keep interactive names strict.
@@ -1053,6 +1098,7 @@ export function createPlayViews(
             return { ...base, name: textName, hidden: hidden || !/\S/u.test(textName) };
           },
           ...(role === 'button' ||
+          role === 'tab' ||
           role === 'switch' ||
           (role === 'group' && bind[name]?.tap !== undefined && bind[name]?.pointerOnly !== true)
             ? {
@@ -1527,71 +1573,79 @@ export function createPlayViews(
 
   // Questions asked one at a time; each waits for the one before it to be answered.
   let asked: Promise<unknown> = Promise.resolve(),
-    open: { readonly answer: (yes: boolean) => void; readonly view: PlayView } | undefined,
+    open:
+      | { readonly answer: (yes: boolean) => void; readonly view: PlayView; readonly relayout: () => void }
+      | undefined,
     // A question opened this frame does not take the key that opened it.
     openedAt = -1,
     frame = 0;
+  let confirmMeasure: CanvasRenderingContext2D | undefined;
+  const measureConfirm = (words: string, size: number, bold: boolean): number => {
+    confirmMeasure ??= game.canvas.ownerDocument.createElement('canvas').getContext('2d') ?? undefined;
+    if (confirmMeasure === undefined)
+      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'confirm requires canvas text measurement' });
+    // Match the normal PlayText rasterizer: one literal sans-serif family and weights 400/700.
+    confirmMeasure.font = `normal ${bold ? 700 : 400} ${size}px "sans-serif"`;
+    return confirmMeasure.measureText(words).width;
+  };
   const confirm = (message: string, options: PlayConfirmOptions = {}): Promise<boolean> => {
-    if (typeof message !== 'string' || options === null || typeof options !== 'object')
-      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'confirm takes words and { yes, no, title }' });
-    for (const key of ['yes', 'no', 'title'] as const)
-      if (options[key] !== undefined && typeof options[key] !== 'string')
-        throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'confirm: ' + key + ' is words' });
+    const copy = prepareConfirmCopy(message, options);
     const turn = asked.then(
       () =>
         new Promise<boolean>(resolve => {
-          const width = Math.min(440, Math.max(240, game.safe.width / (hooks.uiScale?.() ?? 1) - 32));
-          let view: PlayView | undefined;
+          let view: PlayView | undefined,
+            layoutKey = '';
           const answer = (yes: boolean): void => {
             if (open?.answer !== answer) return;
             open = undefined;
             view?.close();
             resolve(yes);
           };
-          view = api(
-            {
-              label: options.title ?? message,
-              modal: true,
-              root: {
-                type: 'panel',
-                card: true,
-                alpha: 1,
-                anchor: 'center',
-                width,
-                height: options.title === undefined ? 168 : 212,
-                padding: 20,
-                layout: 'column',
-                gap: 14,
-                children: [
-                  ...(options.title === undefined
-                    ? []
-                    : [{ type: 'text' as const, text: options.title, align: 'center' as const, bold: true, size: 26 }]),
-                  { type: 'text', name: 'question', text: message, align: 'center' },
-                  { type: 'space', height: 'fill' },
-                  {
-                    type: 'panel',
-                    layout: 'row',
-                    gap: 12,
-                    height: 48,
-                    children: [
-                      { type: 'button', name: 'no', text: options.no ?? 'Cancel', width: 'fill', color: 0x475569 },
-                      { type: 'button', name: 'yes', text: options.yes ?? 'OK', width: 'fill' }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              initialFocus: 'yes',
-              dismiss: () => answer(false),
-              bind: { no: { tap: () => answer(false) }, yes: { tap: () => answer(true) } }
+          const relayout = (): void => {
+            const scale = hooks.uiScale?.() ?? 1,
+              width = game.safe.width / scale,
+              height = game.safe.height / scale,
+              cssScale = game.browser.screen.scale * scale,
+              key = `${width}:${height}:${cssScale}`;
+            if (key === layoutKey) return;
+            const previous = view,
+              focused = previous?.focused === 'no' ? 'no' : 'yes';
+            // Retain the old modal until the replacement has been built; a failed reflow must not resolve the question.
+            let offset: number | undefined;
+            try {
+              offset = previous?.scroll('confirmCopy').offset;
+            } catch {
+              /* An unscrolled question has no viewport. */
             }
-          );
-          open = { answer, view };
+            view = api(planConfirmLayout(copy, { width, height, cssScale }, measureConfirm), {
+              initialFocus: focused,
+              dismiss: () => answer(false),
+              bind: {
+                question: { label: () => copy.message },
+                ...(copy.title === undefined ? {} : { confirmTitle: { label: () => copy.title! } }),
+                no: { label: () => copy.no, tap: () => answer(false) },
+                yes: { label: () => copy.yes, tap: () => answer(true) }
+              }
+            });
+            layoutKey = key;
+            open = { answer, view, relayout };
+            if (offset !== undefined)
+              try {
+                view.scroll('confirmCopy').scrollTo(offset);
+              } catch {
+                /* The new size may no longer need scrolling. */
+              }
+            previous?.close();
+          };
+          relayout();
           openedAt = frame;
         })
     );
-    asked = turn;
+    // Even if a queued modal cannot be built, later valid confirmations still get a turn.
+    asked = turn.then(
+      () => undefined,
+      () => undefined
+    );
     return turn;
   };
   const hints = (list: readonly PlayHint[]): PlayHints => {
@@ -1847,6 +1901,12 @@ export function createPlayViews(
       }
     },
     arrange() {
+      if (open !== undefined)
+        try {
+          open.relayout();
+        } catch (cause) {
+          hooks.failed(cause);
+        }
       for (const record of [...live]) {
         try {
           record.arrange();

@@ -53,8 +53,8 @@ export interface ViewParagraphStyle {
 /** A panel: a card that is drawn, or only a place that holds parts. */
 export interface ViewPanel extends ViewPartBase {
   readonly type: 'panel';
-  /** Opt into a single accessible control when a named panel has a tap binding; its children remain decorative. */
-  readonly role?: 'group' | 'button';
+  /** A named button panel is one accessible control; a named tablist groups the tab buttons below it. */
+  readonly role?: 'group' | 'button' | 'tablist';
   /** `'free'` unless given: each part by its anchor. `'row'` and `'column'` place the parts one after another. */
   readonly layout?: 'free' | 'row' | 'column';
   /** The space between parts of a row or a column. */
@@ -94,6 +94,10 @@ export interface ViewText extends ViewPartBase {
 /** A button with words on it. */
 export interface ViewButton extends ViewPartBase {
   readonly type: 'button';
+  /** A named semantic tab inside a named tablist. Omit for an ordinary button. */
+  readonly role?: 'tab';
+  /** The tab's initial selected state, false unless given; it does not change selection or styling by itself. */
+  readonly selected?: boolean;
   /** Font used by the single-line words (the title only for a button). */
   readonly fontFamily?: string;
   readonly fontWeight?: number;
@@ -293,6 +297,8 @@ const KEYS: Record<ViewPart['type'], ReadonlySet<string>> = {
   ]),
   button: new Set([
     ...BASE_KEYS,
+    'role',
+    'selected',
     'text',
     'size',
     'color',
@@ -361,11 +367,24 @@ function checkParagraph(value: unknown, label: string): void {
     throw invalid(label, 'paragraph density');
 }
 
-/** Checks the parts of one tree and returns its named parts with their kinds. */
-function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> {
-  const names = new Map<string, ViewPart['type']>();
+/** Checks one tree, including the semantic ancestry of explicit native tabs. */
+function checkTree(
+  root: unknown,
+  where: string
+): {
+  names: Map<string, ViewPart['type']>;
+  tabRoles: Map<string, 'tab' | 'tablist'>;
+} {
+  const names = new Map<string, ViewPart['type']>(),
+    tabRoles = new Map<string, 'tab' | 'tablist'>();
   let count = 0;
-  const visit = (value: unknown, at: string, depth: number): void => {
+  const visit = (
+    value: unknown,
+    at: string,
+    depth: number,
+    parentRole?: 'tablist' | 'other',
+    semanticParent = true
+  ): void => {
     if (++count > MAX_PARTS) throw invalid(at, 'a view has at most ' + MAX_PARTS + ' parts');
     if (depth > MAX_DEPTH) throw invalid(at, 'parts are at most ' + MAX_DEPTH + ' deep');
     if (value === null || typeof value !== 'object' || Array.isArray(value)) throw invalid(at, 'a part is an object');
@@ -383,10 +402,28 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
     }
     const label = name === undefined ? at : at + ' (' + name + ')';
     if (part['semantic'] !== undefined && part['semantic'] !== false) throw invalid(label, 'semantic is false');
-    if (part['role'] !== undefined && part['role'] !== 'group' && part['role'] !== 'button')
-      throw invalid(label, 'panel role');
-    if (part['role'] === 'button' && (name === undefined || part['semantic'] === false))
-      throw invalid(label, 'a button role needs a named semantic panel');
+    const role = part['role'];
+    if (type === 'panel') {
+      if (role !== undefined && role !== 'group' && role !== 'button' && role !== 'tablist')
+        throw invalid(label, 'panel role');
+      if (role === 'button' && (name === undefined || part['semantic'] === false))
+        throw invalid(label, 'a button role needs a named semantic panel');
+      if (role === 'tablist') {
+        if (typeof name !== 'string' || part['semantic'] === false || !semanticParent)
+          throw invalid(label, 'a tablist role needs a named semantic panel');
+        tabRoles.set(name, role);
+      }
+    }
+    if (type === 'button') {
+      if (role !== undefined && role !== 'tab') throw invalid(label, 'button role');
+      if (part['selected'] !== undefined && (role !== 'tab' || typeof part['selected'] !== 'boolean'))
+        throw invalid(label, 'selected is a boolean on a tab');
+      if (role === 'tab') {
+        if (typeof name !== 'string' || part['semantic'] === false || !semanticParent || parentRole !== 'tablist')
+          throw invalid(label, 'a tab role needs a named semantic button inside a named tablist');
+        tabRoles.set(name, role);
+      }
+    }
     if (part['anchor'] !== undefined && !ANCHORS.has(part['anchor'] as string)) throw invalid(label, 'anchor');
     for (const key of ['x', 'y']) if (part[key] !== undefined && !finite(part[key])) throw invalid(label, key);
     for (const key of ['width', 'height']) if (part[key] !== undefined && !size(part[key])) throw invalid(label, key);
@@ -442,13 +479,16 @@ function checkTree(root: unknown, where: string): Map<string, ViewPart['type']> 
     const children = part['children'];
     if (children !== undefined) {
       if (!Array.isArray(children)) throw invalid(label, 'children is a list');
+      const nextParent =
+        name !== undefined && type === 'panel' ? (role === 'tablist' ? 'tablist' : 'other') : parentRole;
+      const nextSemantic = semanticParent && part['semantic'] !== false && !(type === 'panel' && role === 'button');
       children.forEach((child, index) => {
-        visit(child, at + '/' + index, depth + 1);
+        visit(child, at + '/' + index, depth + 1, nextParent, nextSemantic);
       });
     }
   };
   visit(root, where, 1);
-  return names;
+  return { names, tabRoles };
 }
 
 /**
@@ -481,21 +521,23 @@ export function checkView(description: ViewDescription): ReadonlyMap<string, Vie
       if (!ok) throw invalid('skin', key);
     }
   }
-  const names = checkTree(description.root, 'root');
+  const { names, tabRoles } = checkTree(description.root, 'root');
   for (const variant of ['portrait', 'tablet', 'tabletPortrait'] as const) {
     const parts = description[variant];
     if (parts === undefined) continue;
-    const other = checkTree(parts, variant);
+    const { names: other, tabRoles: otherRoles } = checkTree(parts, variant);
     const missing = [...names.keys()].filter(name => !other.has(name)),
       extra = [...other.keys()].filter(name => !names.has(name)),
-      changed = [...names].filter(([name, type]) => other.has(name) && other.get(name) !== type).map(([name]) => name);
-    if (missing.length + extra.length + changed.length > 0)
+      changed = [...names].filter(([name, type]) => other.has(name) && other.get(name) !== type).map(([name]) => name),
+      changedRoles = [...names.keys()].filter(name => other.has(name) && tabRoles.get(name) !== otherRoles.get(name));
+    if (missing.length + extra.length + changed.length + changedRoles.length > 0)
       throw new EgretError('UI_VIEW_VARIANT_MISMATCH', {
         cause:
           [
             missing.length ? 'not in ' + variant + ': ' + missing.join(', ') : '',
             extra.length ? 'only in ' + variant + ': ' + extra.join(', ') : '',
-            changed.length ? 'of another kind in ' + variant + ': ' + changed.join(', ') : ''
+            changed.length ? 'of another kind in ' + variant + ': ' + changed.join(', ') : '',
+            changedRoles.length ? 'of another tab role in ' + variant + ': ' + changedRoles.join(', ') : ''
           ]
             .filter(Boolean)
             .join('; ') + '.'
