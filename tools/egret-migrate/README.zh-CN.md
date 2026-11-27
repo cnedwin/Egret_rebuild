@@ -4,8 +4,6 @@
 
 Egret Migrate 是面向受支持的经典白鹭 5 Web 2D 源工程的本地 CLI。它复用白鹭 7 的工程存储和现有浏览器验收工具。保留旧源码和可运行的浏览器构建，用它们对照验收新工程。
 
-可选的本地包 `@egret/legacy` 通过 `@egret/legacy/web` 提供原浏览器适配器，通过 `@egret/legacy/protocol` 提供无需 DOM 的二进制协议读写。从源码目录运行 `npm install ./tools/egret-migrate` 即可安装。转换产物已包含这些模块。字段类型和容量边界见[协议兼容指南](compat/README.zh-CN.md)。
-
 ## 安装和运行
 
 在已经构建白鹭包的仓库里生成本地 CLI 归档。传入本机安装的 esbuild 模块和 npm CLI 入口。

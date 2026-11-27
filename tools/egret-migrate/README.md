@@ -4,8 +4,6 @@ English | [简体中文](README.zh-CN.md)
 
 Egret Migrate is a local CLI for supported classic Egret 5 Web 2D source projects. It uses the Egret 7 project store and the existing browser verifier. Keep the old project and its runnable browser build alongside the new project.
 
-An optional local package, `@egret/legacy`, exposes the browser bindings under `@egret/legacy/web` and the DOM-free packet codec under `@egret/legacy/protocol`. From a source checkout, install it with `npm install ./tools/egret-migrate`. Generated games already include these bindings. Read the [packet guide](compat/README.md) for wire types and limits.
-
 ## Install and run
 
 From an Egret checkout with built packages, pack the local CLI. Use the installed esbuild module and npm CLI entry from your environment.

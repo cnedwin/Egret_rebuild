@@ -13,5 +13,6 @@
       "path": "tests/egret-migrate-intake.test.mjs",
       "originRole": "First-party commercial-project inspection, editable rebuild or synthetic regression. Independently authored with AI assistance; Apache-2.0."
     }
-  ]
+  ],
+  "documents": []
 }
