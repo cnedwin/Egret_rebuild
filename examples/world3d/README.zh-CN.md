@@ -37,6 +37,10 @@
 
 “Post / 后处理”“SSAO”“Depth of field / 景深”和“Shadows / 阴影”开关对应效果。功能展示页已在使用软件渲染的无头 Chromium 中以 WebGL2 运行，并用真实指针事件拖动过手柄；尚未在真实 GPU 上运行，也未经 WebGPU 画布呈现和真人操作验证。
 
+## 场景上的界面
+
+打开 `http://127.0.0.1:4173/examples/world3d/overlay.html`，可以看到一个 `fit: 'expand'` 的 2D 叠加层盖在旋转的方块上。无论宽高比如何，暂停按钮都在安全区右上角，底部有一条横条；点界面空白处会传到场景。`node examples/world3d/verify-overlay.mjs <Playwright index.mjs 的绝对路径>` 在无头 Chromium 里检查它。
+
 ## 限制
 
 本示例展示渲染与交互。桌面 Edge 和 Android 真机 Chrome 均已检查两个后端的可见输出、阴影开关与释放行为。性能、真人手势与更广泛的设备覆盖仍待验收。范围和待完成事项见 [World3D 契约](../../knowledge-base/Cns/docs/world3d.md)。

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/world3d/overlay.html",
+      "originRole": "First-party example page of a 2D overlay of fit expand over a 3D canvas; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/world3d/overlay.mjs",
+      "originRole": "First-party example of createWorld3DOverlay with fit expand and a portrait size: a pause button and a bar held to the safe part, placed again on each screen change, and presses on empty parts passed to the scene; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "examples/world3d/verify-overlay.mjs",
+      "originRole": "First-party browser check that the overlay's stage follows the 3D canvas held either way, keeps its safe part clear of stand-in insets, tells of each change and routes taps between the interface and the scene; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
