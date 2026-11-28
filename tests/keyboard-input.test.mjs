@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEngine, DisplayObjectContainer } from '@egret/engine';
+import { createEngine, DisplayObject, DisplayObjectContainer } from '@egret/engine';
 import { host } from './helpers.mjs';
 const api = await import('@egret/engine/input');
 const key = (code = 'Space', extra = {}) => ({ code, key: code, ...extra });
@@ -374,4 +374,32 @@ test('keyboard focusIn listener hiding its target clears before publishing obser
     input.focus('a');
     assert.equal(input.getSnapshot().focusedId, undefined);
     assert.equal(changes.at(-1).focusedId, undefined);
+  }));
+// Admission walks the display tree with getters captured when the SDK loads, so replacing the
+// public accessors afterwards neither redirects nor breaks it.
+test('keyboard admission ignores display accessors replaced after the SDK loads', async () =>
+  fixture(({ input, a, b }) => {
+    input.registerTarget({ id: 'a', target: a });
+    input.registerTarget({ id: 'b', target: b });
+    const prototype = DisplayObject.prototype,
+      replaced = ['parent', 'visible'].map(name => [name, Object.getOwnPropertyDescriptor(prototype, name)]);
+    let reads = 0;
+    const results = [];
+    try {
+      for (const [name, descriptor] of replaced)
+        Object.defineProperty(prototype, name, {
+          ...descriptor,
+          get() {
+            reads++;
+            throw new Error('replaced ' + name + ' accessor is not admission authority');
+          }
+        });
+      results.push(input.moveFocus('next'), input.moveFocus('next'));
+      input.sync();
+      results.push(input.getSnapshot().focusedId);
+    } finally {
+      for (const [name, descriptor] of replaced) Object.defineProperty(prototype, name, descriptor);
+    }
+    assert.deepEqual(results, ['a', 'b', 'b']);
+    assert.equal(reads, 0);
   }));

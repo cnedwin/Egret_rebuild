@@ -2320,11 +2320,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'browser-extra-import':['packages/engine/web/MouseInput.ts','',"import {Scope} from '@egret/runtime';\n"],
         'browser-dynamic-import':['packages/engine/web/MouseInput.ts','',"const lazyInput=()=>import('./MouseInput.js');\n"],
         'browser-emitted-src':['packages/engine/web/MouseInput.ts',"from '#egret-mouse-input'","from '../src/mouseInput.js'"],
-        'public-picker':['packages/runtime/src/displayInputOperations.ts','queryDisplayHit(stage,x,y,{maxNodes})','stage.hitTest(x,y,{maxNodes})'],
-        'public-dispatch':['packages/runtime/src/displayInputOperations.ts','dispatchDisplayInputEvent(target,event,[])','target.dispatchEvent(event)'],
-        'early-gate':['packages/engine/src/Engine.ts','this.#mouseInputOwner.close(); this.#assetGroupOwner.close();','this.#assetGroupOwner.close(); this.#mouseInputOwner.close();'],
         'startup-ready':['packages/engine/src/startEngine.ts','await host.start?.(); markMouseInputEngineStarted(engine);','markMouseInputEngineStarted(engine); await host.start?.();'],
-        'module-signal-capture':['packages/engine/src/mouseInput.ts','export function createMouseInputOwner(engine, assembly) {\nconst sample = new CancellationController().signal;','const sample = new CancellationController().signal;\nexport function createMouseInputOwner(engine, assembly) {'],
         'private-type-target':['packages/engine/src/ProbeMouse.ts','',"import type {MouseInput} from './mouseInputTypes.js';\n"],
         'private-alias-importer':['packages/engine/web/ProbeMouse.ts','',"import type {MouseInput} from '#egret-mouse-input';\n"],
       };
@@ -2540,11 +2536,7 @@ for(const [name,reason]of [
   ['browser-extra-import','MI1: exact input module import closure mismatch'],
   ['browser-dynamic-import','MI1: exact input module import closure mismatch'],
   ['browser-emitted-src','MI1: exact input module import closure mismatch'],
-  ['public-picker','MI1: captured display port must reuse private HT1 and typed route'],
-  ['public-dispatch','MI1: captured display port must reuse private HT1 and typed route'],
-  ['early-gate','MI1: early Engine input gate order mismatch'],
   ['startup-ready','MI1: successful startup readiness guard missing'],
-  ['module-signal-capture','MI1: Signal intrinsic capture must occur per Engine assembly'],
   ['private-type-target','MI1: private input target imported outside named paths'],
   ['private-alias-importer','MI1: private mouse input alias imported outside exact browser ports'],
 ])test('MI1 policy '+name+' requires canonical baseline and assigned refusal',()=>{

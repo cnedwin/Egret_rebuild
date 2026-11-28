@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEngine, DisplayObjectContainer } from '@egret/engine';
+import { createAssetRef, createAssetType, createEngine, DisplayObjectContainer } from '@egret/engine';
 import { host, deferred } from './helpers.mjs';
 const api = await import('@egret/engine/input').catch(error => ({ missing: error.message }));
 function sample(id, x = 10) {
@@ -237,3 +237,29 @@ test('M3 pointer closure during capture phase suppresses target and bubble begin
     assert.deepEqual(trace, ['capture']);
     assert.equal(input.state, 'closed');
   }));
+// Engine close retires routed input before any owner whose cleanup runs application code: a
+// provider's abort listener already sees the input closed.
+test('M3 pointer Engine close retires input before asset group cleanup reaches a provider', async () => {
+  const engine = await createEngine({ host: host().adapter }),
+    scope = engine.createScope();
+  const input = api.createPointerInput({ engine, scope, width: 100, height: 100 });
+  const type = createAssetType('M3 pointer close order', value => typeof value === 'number');
+  const observed = [];
+  engine.assets.register(type, {
+    load(_ref, context) {
+      context.signal.addEventListener('abort', () => observed.push(input.state));
+      return new Promise(() => {});
+    },
+    dispose() {}
+  });
+  const group = engine.createAssetGroup(scope, [createAssetRef(type, '1')]);
+  const outcome = group.ready.then(
+    () => 'ready',
+    error => error.code
+  );
+  assert.equal(input.state, 'active');
+  const close = engine.dispose();
+  assert.deepEqual(observed, ['closed']);
+  await close;
+  assert.equal(await outcome, 'ASSET_GROUP_DISPOSED');
+});
