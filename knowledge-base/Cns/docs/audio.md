@@ -43,6 +43,34 @@ backend.attach(mixer);
 
 在无法返回结果的地方发生的失败（页面的监听器里，或请求输出开始、停止之后）会交给 `onError`；没有提供时交给页面的 `reportError`。
 
+## 网页外部音源
+
+游戏的合成器、自带包络的解码片段、按镜头计算的监听器，可以接入同一套命名总线，而不必把音源的调度交给混音器：
+
+```js
+const audio = createBrowserAudio({ buses: ['music', 'effects', 'voice', 'ambience'] });
+const line = scope.use(audio.createInput('ambience', { volume: 0.72, pan: 0, lowpass: 6300 }));
+const oscillator = audio.context.createOscillator();
+oscillator.connect(line.input);  // 游戏自己的 Web Audio 图必须使用同一个 context
+if (audio.mixer.state === 'running') {
+  oscillator.start();
+  oscillator.stop(audio.context.currentTime + 0.5);
+}
+// 游戏按镜头视点和缩放计算监听方式，而不是用 HRTF 监听器。
+line.setVolume(0.4, { timeConstant: 0.085 });
+line.setPan?.(-0.3, { timeConstant: 0.075 });
+line.setLowpass?.(1600, { timeConstant: 0.12 });
+// 语音事件可以压低环境声，并保留玩家原本调好的音量。
+line.setDuck(0.30, { timeConstant: 0.025 });
+line.setDuck(1, { timeConstant: 0.12 });
+```
+
+已调用 `attach` 的 `createWebAudioBackend` 也可以用 `createInput(bus, options)`。总线必须存在（`master` 代表总音量）。`volume` 和独立的压低系数 `duck` 都是 0–1，默认为 1。给出 `pan`（-1–1）创建浏览器原生等功率立体声声像，不同于解码发声位使用的左右平衡；没有这一处理器的宿主不提供 `setPan`。给出 `lowpass` 创建低通滤波器，截止频率（Hz）须为正数且不高于采样率的一半。省略该选项时没有滤波器和 `setLowpass`。接线顺序为输入 → 可选低通 → 音量 → 可选声像 → 压低 → 命名总线 → 总音量。初始设置直接生效，之后从当前值连续变化；不指定 `timeConstant` 时是五毫秒线性渐变，指定了（大于 0、不超过 60 秒）则指数趋近目标值。
+
+命名总线的静音和音量、总音量、可选限幅器、解锁和音频上下文挂起对外部音源同样有效。游戏仍须自己停止、断开和限制音源节点数量，并且只在混音器运行时调度一次性音效。`stopAll()` 和解码发声位统计并不拥有外部音源图。输入条由混音器管理：`dispose()` 只断开自己的处理图，不停止游戏自己的生成器或切断它的其它连接；混音器释放时也会撤销所有输入条。每个 Web Audio 后端最多同时持有 64 条输入，超出以 `AUDIO_BUDGET` 拒绝。未知总线和非法数值在分配节点前拒绝。游戏传入的音频上下文和原来一样不会被关闭。
+
+浏览器的系统 `SpeechSynthesis` 没有可接入的 `AudioNode` 输出，仍须单独管理自身音量、取消和生命周期。它实际开始、结束、错误的回调，可以和通过混音器播放的录音旁白一样控制 `setDuck`。这是显式的事件驱动压低，不是自动分析音量或接入系统语音；也没有改变 World3D 物理监听器及其 HRTF。
+
 ## 声音
 
 `mixer.decode(bytes)` 接收一个已编码文件的字节（`Uint8Array` 或 `ArrayBuffer`），完成时得到一个整体解码的声音。这些字节仍然属于调用方，并且不会被改动。能解码哪些格式由浏览器决定：WAV、MP3 和 MP4 中的 AAC 在所有当前浏览器中都能解码，Ogg Vorbis 和 Opus 在大多数浏览器中可以。
@@ -144,7 +172,7 @@ mixer.master.setVolume(0.8);
 
 ## 其他宿主
 
-`createAudioMixer({ backend, ... })` 接受任何实现了 `AudioBackend` 的对象：一个以秒为单位、在输出挂起期间停住的时钟，以及 `decode`、`createBus`、`start`、`suspend`、`resume` 和 `close`。`openStream` 是可选的；发声位的 `position` 也是可选的，供比时钟更清楚声音位置的宿主使用。不是网页的宿主写出这些，就能使用同一个混音器。宿主通过 `locked: true` 和 `mixer.setLocked(...)` 说明自己是否允许输出开始。
+`createAudioMixer({ backend, ... })` 接受任何实现了 `AudioBackend` 的对象：一个以秒为单位、在输出挂起期间停住的时钟，以及 `decode`、`createBus`、`start`、`suspend`、`resume` 和 `close`。混音器把总线名称作为 `createBus` 的可选第二个参数传入；已有后端可以忽略。`openStream` 是可选的；发声位的 `position` 也是可选的，供比时钟更清楚声音位置的宿主使用。不是网页的宿主写出这些，就能使用同一个混音器。宿主通过 `locked: true` 和 `mixer.setLocked(...)` 说明自己是否允许输出开始。
 
 ## 错误
 
@@ -160,7 +188,7 @@ mixer.master.setVolume(0.8);
 | `AUDIO_URL_INVALID` | 没有给 `stream` 地址，或者地址超过 4096 个字符 |
 | `AUDIO_STREAM_UNSUPPORTED` | 后端不能边读边播一个文件 |
 | `AUDIO_STREAM_FAILED` | 文件无法打开；`cause` 是后端给出的原因 |
-| `AUDIO_BUDGET`、`AUDIO_SOUND_LIMIT` | 已解码的样本或声音的数量会超过混音器可以持有的量 |
+| `AUDIO_BUDGET`、`AUDIO_SOUND_LIMIT` | 已解码样本、声音或网页外部输入条超过各自的预算 |
 | `AUDIO_SOUND_INVALID`、`AUDIO_SOUND_RELEASED` | 这个值不是本混音器的声音，或者是已经释放的声音 |
 | `AUDIO_REASON_INVALID`、`AUDIO_REASON_LIMIT` | 请求静音的名字不是 1 到 32 个字符的字符串，或者已经有八个名字在请求 |
 | `AUDIO_BACKEND_FAILED` | 后端抛出了错误，或返回了不符合要求的东西；`cause` 是它抛出的内容 |

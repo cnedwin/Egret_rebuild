@@ -264,6 +264,15 @@
 | `BOUNDS_RECEIVER_INVALID` | 交给边界查询的 `receiver` 无效。 |
 | `BOUNDS_TREE_LIMIT` | 超出了边界查询的 `tree` 上限。 |
 
+### BROWSER_FILE
+
+| 错误码 | 含义 |
+| --- | --- |
+| `BROWSER_FILE_GESTURE_REQUIRED` | 应在玩家当前的用户激活期间直接请求文件选择器或下载。 |
+| `BROWSER_FILE_INVALID` | 文件选择器参数、下载文件名或内容无效。 |
+| `BROWSER_FILE_TOO_LARGE` | 选中的文件超出允许的字节上限，未读取其内容。 |
+| `BROWSER_FILE_UNAVAILABLE` | 浏览器文件交换需要具备文档主体的有效页面。 |
+
 ### BROWSER_GAME
 
 | 错误码 | 含义 |

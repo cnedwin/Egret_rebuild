@@ -31,7 +31,14 @@ import { createPlayTouch } from './playTouch.js';
 import type { PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
 import { MUSIC_MOODS, MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
 import type { MusicOptions, MusicMood } from './playMusic.js';
-import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
+import type {
+  PlayBar,
+  PlayBarOptions,
+  PlayMenuOptions,
+  PlaySayOptions,
+  PlayToastOptions,
+  PlayToastHandle
+} from './playWidgets.js';
 import { createDragAndDrop, createGestures } from './gestures.js';
 import { createPlayViews } from './playView.js';
 import type {
@@ -39,6 +46,8 @@ import type {
   PlayHint,
   PlayHints,
   PlayLoadingOptions,
+  PlaySelectChoice,
+  PlaySelectOptions,
   PlayView,
   PlayViewOptions
 } from './playView.js';
@@ -657,7 +666,7 @@ export interface PlayGame {
   /** A bar of health, time or power, on the ui layer unless given another; set its `value` and it slides there. */
   bar(options: PlayBarOptions): PlayBar;
   /** A short notice at the top of the stage that fades after `seconds`; several stack. */
-  toast(words: string, options?: PlayToastOptions): void;
+  toast(words: string, options?: PlayToastOptions): PlayToastHandle;
   /**
    * A box of words at the bottom of the stage, shown letter by letter, with a name above it when `who` is given. A
    * press of Space, Enter or Z or a tap shows the rest, and another closes it. With `choices` it gives the index of
@@ -679,6 +688,13 @@ export interface PlayGame {
    * Enter, Space and a pad's A activate the focused action, initially Yes when available. Escape and B answer no.
    */
   confirm(question: string, options?: PlayConfirmOptions): Promise<boolean>;
+  /** A scrollable native modal of valued choices; Escape, Back or Cancel resolves undefined. */
+  select<T extends string | number>(
+    choices: readonly PlaySelectChoice<T>[],
+    options?: PlaySelectOptions<T>
+  ): Promise<T | undefined>;
+  /** True while a named view part has a browser-native editing session. */
+  readonly editing: boolean;
   /**
    * A bar at the bottom of the safe part naming what keys do, in the words of what the player uses: `Space Jump` on a
    * keyboard, `A Jump` on a pad, and `touch` words on a touch screen. It changes when the player changes.
@@ -3251,6 +3267,10 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       return device;
     },
     confirm: (question, confirmOptions) => views.confirm(question, confirmOptions),
+    select: (choices, selectOptions) => views.select(choices, selectOptions),
+    get editing() {
+      return views.editing;
+    },
     hints: list => views.hints(list),
     get uiScale() {
       return uiScaleNow();
@@ -3315,6 +3335,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
         }
         try {
           stopLoops();
+          views.reset();
           resizeObserver?.disconnect();
           for (const [target, type, listener] of listening) target.removeEventListener(type, listener);
           if (addedTabIndex && surface.getAttribute('tabindex') === '0') surface.removeAttribute('tabindex');

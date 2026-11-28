@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1532 exports; 19 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1545 exports; 22 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -1594,17 +1594,22 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserInputActionsOptions` | interface | Where input actions read the browser: which element takes keys and pointers, whether gamepads count, and which keys pass through. |
 | `browserLanguages` | function | The languages the player's browser asks for, most wanted first, such as `['zh-CN', 'en']`; empty where unknown. |
 | `browserSaveStorage` | function | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
+| `BrowserTextDownloadOptions` | interface |  |
+| `BrowserTextFile` | interface | A text file explicitly chosen by the player. |
+| `BrowserTextFileOptions` | interface |  |
 | `BundleCache` | interface | Where fetched bundle entries are kept between visits; used as `cache` of `openBrowserAssetBundle`. |
 | `createBrowserImageTextureProvider` | function | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
 | `createTouchButton` | function | Makes `element` an on-screen button that holds `binding` (such as `Touch:jump`) while a finger is on it. |
 | `createTouchStick` | function | A stick that appears where a finger lands in its zone of `element` and follows it. |
 | `decodeBrowserImage` | function | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
+| `downloadBrowserTextFile` | function | Offer the caller's text as a local download from a fresh user activation. |
 | `fitBrowserImageSize` | function | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
 | `IndexedDBSaveStorage` | interface | Save storage kept in IndexedDB: flush pending writes, and close it. |
 | `IndexedDBSaveStorageOptions` | interface | IndexedDB save storage to open: its database name, the IndexedDB to use, and what is called on an error. |
 | `openBrowserAssetBundle` | function | Opens the bundle at `url`, reading its index. |
 | `openBrowserBundleCache` | function | A bundle cache in the Cache API under `name`. |
 | `openIndexedDBSaveStorage` | function | A save storage over IndexedDB. |
+| `pickBrowserTextFile` | function | Show the platform's single-file chooser from a fresh user activation. |
 | `prefersReducedMotion` | function | Whether the player has asked the system for less motion (`prefers-reduced-motion: reduce`): then leave out shakes, flashes, parallax and large moves that are only for show. |
 | `sniffBrowserImageFormat` | function | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | function | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
@@ -1675,6 +1680,8 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayPointerLockOptions` | interface | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
 | `PlayPointerLockResult` | interface |  |
 | `PlaySayOptions` | interface | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
+| `PlaySelectChoice` | interface | A valued item in a native, scrollable selection dialog. |
+| `PlaySelectOptions` | interface | The current selection, visible title, cancellation label and skin. |
 | `PlaySfx` | interface | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
 | `PlayStickOptions` | interface | A touch stick to show: where, how large, and whether it shows without touch. |
 | `PlayTapActivation` | type | The information supplied to game.onTap. |
@@ -1682,10 +1689,13 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayTextOptions` | interface | Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. |
 | `PlayTiles` | interface | A map of tiles: read and change its cells, and push a sprite out of its solid ones. |
 | `PlayTilesOptions` | interface | A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. |
-| `PlayToastOptions` | interface | A toast to show: how long and in what color. |
+| `PlayToastHandle` | interface |  |
+| `PlayToastOptions` | interface | A toast to show: duration, color and optional safe-area placement/skin. |
+| `PlayToastPlacement` | interface | A notice's position in the safe area. |
 | `PlayTouchButtonOptions` | interface | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
 | `PlayUiScale` | interface | The size on the screen that play's views keep: at least `min` and at most `max` CSS pixels a unit of theirs. |
 | `PlayViewActivation` | type | The second argument of a view's tap binding; target and currentTarget are part names, if named. |
+| `PlayViewEditOptions` | type | Native text input over the current clipped rectangle of a named view part. |
 | `ScreenPin` | interface | Where a box is held in an area: on each axis a distance in from one edge, or from the middle. |
 | `SFX_PRESETS` | value | The effects every game is given, by name. |
 | `SfxRecipe` | type | An effect: one tone, or several played one after another. |
@@ -1725,6 +1735,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | Name | Kind | What the sources say |
 | --- | --- | --- |
 | `BrowserAudio` | interface | A sound mixer playing through Web Audio, with its context and output node. |
+| `BrowserAudioGlide` | interface | An exponential approach to a parameter's new value, with a time constant in seconds. |
+| `BrowserAudioInput` | interface | A mixer-owned input strip; its upstream generators, decoded buffers and transport are caller-owned. |
+| `BrowserAudioInputOptions` | interface | Initial levels for an external input. |
 | `BrowserAudioOptions` | interface | Browser audio to make: its audio context, what unlocks it, whether it pauses when the page is hidden, and its limiter. |
 | `createBrowserAudio` | function | Sound for a page on Web Audio. |
 | `createWebAudioBackend` | function | A Web Audio backend for a mixer the page makes itself with `createAudioMixer`: const backend = createWebAudioBackend(); const mixer = createAudioMixer({ backend, locked: backend.locked }); backend.attach(mixer); `createBrowserAudio` does these three steps in one call. |

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Wait for observable startup readiness before ordinary game verification",
+    "body": "The ordinary game verifier waits within a bounded startup deadline for a visible canvas, a nonblank composed picture and frame progress, instead of sampling a fixed 2.5 seconds after navigation. A game can declare window.egretGame.ready as a boolean to defer verification while its initial scene is preparing. Unmarked pages use best-effort browser observations and settled local asset requests. Reports include the startup outcome and elapsed time; a timeout does not run blind input or substitute a scripted pass. The optional --startup-timeout sets the deadline in milliseconds. Script-only build checks and multi-screen routes retain their own contracts."
+  },
+  "zh": {
+    "title": "通用游戏验收等待可观察的启动就绪",
+    "body": "通用游戏验收在有限的启动截止时间内等待可见画布、非空白合成画面及帧推进，不再固定在导航后 2.5 秒采样。游戏可将 window.egretGame.ready 声明为布尔值，在初始场景准备期间延后验收。没有声明的页面使用浏览器观察与本地资源请求稳定状态，属于尽力判断。报告包含启动结果及耗时，超时不发送盲输入，也不以脚本通过替代启动失败。可选 --startup-timeout 以毫秒设置截止时间。纯脚本构建检查及多屏路线保持原有契约。"
+  }
+}

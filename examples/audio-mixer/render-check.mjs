@@ -44,7 +44,7 @@ async function render(seconds, options, arrange) {
       context.resume();
     });
   };
-  const kept = await arrange(audio.mixer, at, context);
+  const kept = await arrange(audio.mixer, at, context, audio);
   const buffer = await context.startRendering();
   await new Promise(resolve => setTimeout(resolve, 0));
   const after = typeof kept === 'function' ? kept() : kept;
@@ -217,6 +217,68 @@ export async function measure() {
         peak(left, 0.65, 0.7)
       ],
       after
+    };
+  }
+  {
+    // A caller-owned oscillator passes through independent volume, duck, bus and master.
+    const { left, right, after } = await render(
+      1.2,
+      { volume: 0.5, buses: [{ name: 'effects', volume: 0.5 }] },
+      async (mixer, at, context, audio) => {
+        const line = audio.createInput('effects', { volume: 0.5, duck: 0.5 });
+        const source = context.createOscillator();
+        source.frequency.value = 440;
+        source.connect(line.input);
+        source.start(0);
+        source.stop(1.18); // the caller, not the mixer, owns the generator
+        let sourceEnded = false;
+        source.addEventListener('ended', () => {
+          sourceEnded = true;
+        });
+        at(0.2, () => line.setDuck(1, { timeConstant: 0.02 }));
+        at(0.4, () => line.setVolume(0.25, { timeConstant: 0.02 }));
+        at(0.6, () => mixer.bus('effects').setMuted(true));
+        at(0.8, () => {
+          mixer.bus('effects').setMuted(false);
+          line.setVolume(0.5);
+        });
+        at(1.0, () => line.dispose());
+        return () => [line.disposed, sourceEnded, mixer.snapshot().voices];
+      }
+    );
+    result.externalChain = {
+      heard: [
+        [0.05, 0.15],
+        [0.34, 0.39],
+        [0.54, 0.59],
+        [0.68, 0.78],
+        [0.86, 0.96],
+        [1.06, 1.16]
+      ].map(([from, to]) => [amplitude(left, 440, from, to), amplitude(right, 440, from, to)]),
+      after
+    };
+  }
+  {
+    // A listener in a strategy camera can supply attenuation, pan and lowpass of its own, rather than a fixed 3D listener.
+    const { left, right } = await render(0.8, {}, async (_mixer, at, context, audio) => {
+      const line = audio.createInput('effects', { volume: 0.5, pan: -1, lowpass: 650 });
+      for (const hz of [440, 5000]) {
+        const source = context.createOscillator(),
+          level = context.createGain();
+        source.frequency.value = hz;
+        level.gain.value = 0.5;
+        source.connect(level).connect(line.input);
+        source.start(0);
+        source.stop(0.8);
+      }
+      at(0.3, () => {
+        line.setPan(1, { timeConstant: 0.025 });
+        line.setLowpass(6300, { timeConstant: 0.04 });
+      });
+    });
+    result.externalSpatial = {
+      near: [amplitude(left, 440, 0.1, 0.25), amplitude(left, 5000, 0.1, 0.25), amplitude(right, 440, 0.1, 0.25)],
+      moved: [amplitude(right, 440, 0.62, 0.78), amplitude(right, 5000, 0.62, 0.78), amplitude(left, 440, 0.62, 0.78)]
     };
   }
   return result;

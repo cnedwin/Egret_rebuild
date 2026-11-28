@@ -124,9 +124,11 @@ Logical layout height includes the actual line metrics and empty lines. The rast
 | Provider font/build identities | Each at most 512 code units; combined provider identity at most 8,192 |
 | Registered original font bytes | At most 32 MiB per CanvasKit provider |
 | Raster | At most 4,096 pixels per edge and 1,048,576 total pixels |
-| Paragraph cache entries / simultaneous provider jobs | Defaults 32/32; configurable 1–32 each |
+| Paragraph cache entries / simultaneous provider jobs | Defaults 32/32; configurable 1–128 each |
 | Logical cached/live image bytes | Default 16 MiB; configurable 4 bytes–64 MiB |
 | Caller leases plus pending caller demand | At most 256 combined |
+
+For a rich-text page and a modal that together hold 40 distinct paragraphs, configure the shared cache explicitly, for example `createParagraphCache(engine.assets, { provider, maxEntries: 96, maxPendingJobs: 96 })`. The default remains 32 for smaller games. Raising these two limits does not increase the independent caller, image or geometry byte budgets. Pending jobs count concurrent provider preparations, not a queue that automatically throttles work or a guarantee that every request can fit. Rich view rows still prepare eagerly; raising the budget is not viewport virtualization. Use `getStatus()` to inspect actual resident entries, byte charges, active preparations and caller leases before selecting a suitable value.
 
 Limits reject work; they do not silently truncate text, choose system fonts or lower density. Live borrowed images remain charged until retired and may prevent eviction. Image-byte limits cover owned image charges, not all CPU/Wasm scratch, provider fonts, pending native allocations or physical memory. An empty/inkless cached result uses a bounded transparent image resource.
 

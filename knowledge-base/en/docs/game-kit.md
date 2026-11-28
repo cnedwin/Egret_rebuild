@@ -87,6 +87,21 @@ const save = createSaveStore({ key: 'canal', version: 1, defaults: fresh, storag
 
 `browserSaveStorage()` is the page's local storage, or memory where the page has none (a private window, a blocked site); `persistent` says which. `createMemorySaveStorage()` is the same for tests.
 
+### Importing and exporting a player's text file
+
+```js
+import { pickBrowserTextFile, downloadBrowserTextFile } from '@egret/engine/web/kit';
+
+// Call directly inside the trusted press of an import/export control.
+void pickBrowserTextFile({ accept: '.json,application/json', maxBytes: 4 * 1024 * 1024 })
+  .then(file => { if (file) restoreCheckedSave(file.text); }, showImportError);
+downloadBrowserTextFile('saved-game.json', serializeSave(), { mimeType: 'application/json' });
+```
+
+The chooser determines which single file the player shares; it never takes a path. Its `accept` filter is only a hint; validate the contents before applying them. The result includes `name`, `text`, `size` (bytes) and `type`. The byte limit defaults to 16 MiB and is checked before text is read. Cancellation returns `undefined` (the browser's cancel event or the optional AbortSignal); the temporary chooser is removed on completion, error or abort. Invalid options, excessive size, an unavailable page or absent transient user activation are refused. Do not await another operation before requesting a chooser or download: browsers require the player's current activation. Older browsers without a cancel event can use an abort signal; their native dialog's cancellation is not inferred from unreliable focus events.
+
+Download offers the text through a browser-managed local download, removes its temporary link and revokes the object URL. It accepts a filename rather than a path. Returning means the request was made, not that a particular directory or successful file write was confirmed. Neither function changes a game's persistent storage or save format.
+
 ## Random numbers that repeat
 
 ```js

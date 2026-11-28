@@ -39,7 +39,7 @@ Every factory is named `create...` and returns an object with `dispose()`.
 | ... from the page | `createBrowserHoverInput` | `@egret/engine/web/hover` |
 | Gamepads | `createGamepadInput`, `bindGamepadKeys` | `@egret/engine/input/gamepad` |
 | ... from the browser | `createBrowserGamepadInput` | `@egret/engine/web/gamepad` |
-| A mouse-only button on a bitmap | `createMouseInput`, `createBitmapButton` | `@egret/engine/web/input` |
+| A mouse-only button on a bitmap (deprecated: use `createActionControl` on the browser pointer input) | `createMouseInput`, `createBitmapButton` | `@egret/engine/web/input` |
 | A camera that follows, zooms and shakes | `createCamera2D` | `@egret/engine/camera` |
 | A tile map, also from Tiled | `createTileMap`, `importTiledMap` | `@egret/engine/tilemap` |
 | Particles | `createParticleEmitter` | `@egret/engine/particles` |

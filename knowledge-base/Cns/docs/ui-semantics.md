@@ -297,6 +297,8 @@ const projection = createBrowserSemantics({ semantics, canvas, width: 480, heigh
 - **指针穿透。**容器不接收指针，鼠标和手指仍然落在画布上。
 - **请求。**以无障碍接口的方式对元素发出的点击执行 `activate`；请求聚焦某个元素执行 `focus`，随后页面焦点交还给画布。
 
+验收键盘操作时，应区分浏览器的实际焦点持有者与语义树中的控件。嵌入式 Play 页面通常在第一次按 Tab 时进入画布；之后的 Tab 可以让原生界面的焦点改变，而 `document.activeElement` 始终是同一画布，Shift+Tab 可向前返回。只统计不同 DOM 焦点元素的检测会错误地认为只有一个控件可达。应从实际获得焦点的元素读取 `aria-activedescendant`，解析为由 `aria-owns` 子树拥有（或在焦点元素自身后代中）的已连接元素；不存在、不相关、处于 inert、禁用或面积为零的目标均应拒绝。投射层的 `opacity:0` 是有意设置的透明，不是拒绝该目标的理由。仅在校验通过后以活跃后代 ID 识别控件；其余情况应分别报告普通 DOM 焦点或无效的活跃后代关系。[Play 页签浏览器用例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/verify-view-tabs.mjs) 实际按下 Tab、Shift+Tab，检查模态循环、Escape 和最后一个 Tab 离开嵌入式画布；其中的[键盘焦点探针](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/play/keyboard-focus-probe.mjs) 只是测试工具，不是运行时 API。原生焦点环是否可见及辅助技术能否实际使用，仍需单独验收。
+
 处理函数抛出的错误会报告给 `onError`，投射继续工作。页面本身的失败会停止投射并被报告，失败所在的那次发布仍然有效。没有 `onError` 时，两者都作为未捕获错误报告给页面。`projection.dispose()` 移除容器和监听器，并把它设置的属性还给画布。语义树关闭时投射随之关闭。
 
 应用可以事先在画布上设置 `role`、`aria-label` 或 `aria-owns`。投射保留前两者，并把自己的容器追加到第三者。

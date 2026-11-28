@@ -222,6 +222,36 @@ A view is also a handle of the [screen stack](ui-screen-stack.md). `open: () => 
 
 `modal: true` puts a dim over everything behind the view and takes every press that misses it.
 
+## Selecting and editing values
+
+A selection dialog uses the same data-view layout, modal focus and clipped scroll viewport as other native screens. Give each choice a distinct string or finite numeric value. The current enabled choice is focused (or the first enabled choice). Arrows, Tab and the pad's D-pad move through enabled items; Enter, Space, A and a tap select the value. Escape, B, the cancel button, an abort signal or game reset/disposal resolve `undefined`. The previous view's focus is restored; `game.asking` is true during selection.
+
+```js
+const result = await game.select([
+  { value: 'red', text: 'Red' },
+  { value: 'green', text: 'Green' },
+  { value: 'blue', text: 'Blue', disabled: true }
+], { title: 'Choose colour', value: 'green', cancel: 'Cancel' });
+if (result !== undefined) chooseColour(result);
+```
+
+A button (or another actionable part) can become a native editing field directly from its press binding. `view.edit(name, options)` opens the browser's existing [native text input](text-input.md) over the part's current visible rectangle. The request uses the same label, value, input mode, font, composition and commit/cancel callbacks, but does not need x, y, width or height.
+
+```js
+const view = game.show({
+  root: { type: 'button', name: 'name', text: 'Name', width: 220, height: 52 }
+}, {
+  bind: {
+    name: { tap: () => view.edit('name', {
+      label: 'Name', value: hero.name, select: 'all', maxLength: 20,
+      onCommit: value => { hero.name = value; }
+    }) }
+  }
+});
+```
+
+The method returns false if the named part cannot take focus or its visible box is unavailable. The native input follows the named part during scrolling, keyed row rearrangement and screen changes while it remains eligible; closing, covering, disabling, removing or fully clipping the part cancels the edit. `view.editing` and `game.editing` report the session, and `view.cancelEdit()` cancels that view's field. Numeric or decimal entry asks the platform for the corresponding keyboard using `inputMode`; the game still validates, clamps or steps the number with ordinary native controls and owns its value. These are Play's browser conveniences, not a new DOM UI framework or a new data format.
+
 ## Scrollable views
 
 Add `scroll: 'vertical'` to a panel with an explicit height. A column of row panels works for a two-column building list. The viewport clips its descendants and accepts wheel, touch drag and keyboard navigation.

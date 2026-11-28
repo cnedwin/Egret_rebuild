@@ -533,7 +533,15 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Keep the retained fixture graphs intact; do not derive policy from the checker.
     const m12FixtureGraph = {
     };
-    for (const [file,edges] of Object.entries({...sceneGraph,...m13SharedGraph,...m14FixtureGraph,...m12FixtureGraph})) {
+    // Both geometry factories admit their arrays through one private contracts module, which imports nothing.
+    const geometryAdmissionFixtureGraph = {
+      "packages/contracts/src/SharedGeometry2D.ts":[["static","./geometryAdmission2D.js"]],
+      "packages/contracts/dist/SharedGeometry2D.js":[["static","./geometryAdmission2D.js"]],
+      "packages/contracts/src/geometryAdmission2D.ts":[],
+      "packages/contracts/dist/geometryAdmission2D.js":[],
+      "packages/contracts/dist/geometryAdmission2D.d.ts":[],
+    };
+    for (const [file,edges] of Object.entries({...sceneGraph,...m13SharedGraph,...m14FixtureGraph,...m12FixtureGraph,...geometryAdmissionFixtureGraph})) {
       if (Object.hasOwn(m15FixtureGraph,file)) continue; // Completed after the retained facade scaffolds below.
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
@@ -1374,7 +1382,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Frame loop: inert copies of its modules and their build output, for the same reason.
     const loopGraphFiles=['web/loop.ts','web/BrowserFrameLoop.ts','dist/web/loop.js','dist/web/loop.d.ts','dist/web/BrowserFrameLoop.js','dist/web/BrowserFrameLoop.d.ts'];
     // Browser game: inert copies of its modules and their build output, for the same reason.
-    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','browserGameParagraph','browserGameGlyphFont','browserGameFamilies','screenControlGeometry','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
+    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','browserGameParagraph','browserGameGlyphFont','browserGameFamilies','screenControlGeometry','screenClipGeometry','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
     // World3D app: names what it imports from the main entry, so it is copied as it is.
     const world3dAppFiles=['web/world3d/app3D.ts','dist/web/world3d/app3D.js','dist/web/world3d/app3D.d.ts'];
     const playFiles=['BrowserPlay','playWidgets','playTouch','gestures','playView','playViewParagraph','playViewScroll','view'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
@@ -1431,6 +1439,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'layer-owned-timer':['packages/engine/web/browserStaticLayers.ts',"setTimeout(()=>{},1000);\n"],
         'image-queue-escaped-module':['packages/engine/web/ProbeImageQueue.ts',"import {createGameImageAdmission} from './GameImageAdmission.js';\nvoid createGameImageAdmission;\n"],
         'overlay-reporter-escaped-module':['packages/engine/web/world3d/ProbeOverlayReporter.ts',"import {createOverlayScreenReporter} from './overlayScreenReport.js';\nvoid createOverlayScreenReporter;\n"],
+        'screen-clip-escaped-module':['packages/engine/web/ProbeScreenClip.ts',"import {polygonBounds} from './screenClipGeometry.js';\nvoid polygonBounds;\n"],
+        'screen-clip-owned-timer':['packages/engine/web/screenClipGeometry.ts','setTimeout(()=>{},0);\n'],
         'native-control-report-escaped-module':['packages/engine/src/ui/ProbeControlReport.ts',"import {screenControlFor} from '../internal/uiControlReportState.js';\nvoid screenControlFor;\n"],
         'overlay-wrong-gl-runtime':['packages/engine/web/world3d/overlay3D.ts',"import '../webgl2.js';\n"],
         'browser-wrong-gl-static':['packages/engine/web/BrowserGame.ts',"import './webgl2.js';\n"],
@@ -2259,8 +2269,14 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     }
     // MI1_MUTATION_END
     if(textInputMutation){
+      if(textInputMutation==='play-extra-clause'){
+        const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});
+        assert.ifError(baseline.error);
+        assert.equal(baseline.status,0,'Complete Play text editor baseline: '+baseline.stdout+baseline.stderr);
+      }
       const edits={
         'escaped-module':['packages/engine/web/ProbeTextInput.ts',"import {createBrowserTextInput} from './BrowserTextInput.js';\nvoid createBrowserTextInput;\n"],
+        'play-extra-clause':['packages/engine/web/playView.ts',"import type {BrowserTextInputOptions} from './BrowserTextInput.js';\n"],
         'extra-export':['packages/engine/web/textInput.ts','export const extra=1;\n'],
         'engine-import':['packages/engine/web/BrowserTextInput.ts',"import './keyboard.js';\n"],
         'timer':['packages/engine/web/BrowserTextInput.ts','setTimeout(()=>{},0);\n'],
@@ -2471,6 +2487,7 @@ for(const [name,reason]of [
 // MI1_POLICY_TESTS_END
 for(const [name,reason] of [
   ['escaped-module','Text input: implementation module imported outside its entry'],
+  ['play-extra-clause','Text input: Play editor exact input clauses mismatch'],
   ['extra-export','Text input: exact browser text input exports mismatch'],
   ['engine-import','Text input: exact graph mismatch'],
   ['timer','Text input: acquired automatic host work'],
@@ -2594,6 +2611,8 @@ for(const [name,reason] of [
   ['layer-optional-gl','M14: WebGL2 module imported outside exact optional closure'],
   ['image-queue-escaped-module','Browser game: implementation module imported outside its entry'],
   ['overlay-reporter-escaped-module','Semantics: implementation module imported outside its entry'],
+  ['screen-clip-escaped-module','Semantics: implementation module imported outside its entry'],
+  ['screen-clip-owned-timer','Overlay screen reporter: acquired automatic host work'],
   ['native-control-report-escaped-module','Semantics: implementation module imported outside its entry'],
   ['overlay-wrong-gl-runtime','M14: WebGL2 module imported outside exact optional closure'],
   ['browser-wrong-gl-static','M14: WebGL2 module imported outside exact optional closure'],

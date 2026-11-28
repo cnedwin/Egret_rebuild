@@ -264,6 +264,15 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `BOUNDS_RECEIVER_INVALID` | The receiver given to a bounds query is not valid. |
 | `BOUNDS_TREE_LIMIT` | The tree limit of a bounds query was passed. |
 
+### BROWSER_FILE
+
+| Code | Meaning |
+| --- | --- |
+| `BROWSER_FILE_GESTURE_REQUIRED` | Request a file chooser or download directly from the player’s current user activation. |
+| `BROWSER_FILE_INVALID` | The file chooser options, download filename or content are invalid. |
+| `BROWSER_FILE_TOO_LARGE` | The selected file exceeds the permitted byte limit; it was not read. |
+| `BROWSER_FILE_UNAVAILABLE` | Browser file exchange requires an active page with a body. |
+
 ### BROWSER_GAME
 
 | Code | Meaning |

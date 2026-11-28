@@ -25,7 +25,10 @@ import type {
   ViewVariant
 } from './view.js';
 import { createPlayViewScrolls } from './playViewScroll.js';
+import { clippedDisplayRect } from './screenClipGeometry.js';
 import type { PlayScrollViewport, PlayViewScroll } from './playViewScroll.js';
+import { createBrowserTextInput } from './BrowserTextInput.js';
+import type { BrowserTextInput, BrowserTextInputRequest } from './BrowserTextInput.js';
 
 /** How one named part follows the game's state. Each function is given the state and read every frame. */
 export interface PlayViewBinding<S = unknown> {
@@ -81,6 +84,26 @@ export interface PlayViewOptions<S = unknown> {
   /** Handle a fresh pad Start press on the top modal while the game is paused. */
   readonly resume?: (view: PlayView<S>) => void;
 }
+/** Native text input over the current clipped rectangle of a named view part. */
+export type PlayViewEditOptions = Omit<BrowserTextInputRequest, 'x' | 'y' | 'width' | 'height'>;
+
+/** A valued item in a native, scrollable selection dialog. */
+export interface PlaySelectChoice<T extends string | number = string> {
+  readonly value: T;
+  readonly text: string;
+  readonly disabled?: boolean;
+}
+
+/** The current selection, visible title, cancellation label and skin. */
+export interface PlaySelectOptions<T extends string | number = string> {
+  readonly value?: T;
+  readonly title?: string;
+  readonly cancel?: string;
+  readonly skin?: Partial<ViewSkin>;
+  /** Close the choice without selecting a value. */
+  readonly signal?: AbortSignal;
+}
+
 /** A view on the screen. It is also a screen's handle: open one from a screen stack's `open` and it shows, hides and closes with the screen. */
 export interface PlayView<S = unknown> {
   /** The sprite of a named part, to add to, tween or give gestures; another after the screen turns to other parts. */
@@ -104,6 +127,12 @@ export interface PlayView<S = unknown> {
   readonly focused: string | undefined;
   /** Focus a named part, revealing it within a scroll viewport if needed. Returns false if it cannot take focus. */
   focus(name: string): boolean;
+  /** Edit an actionable part with the browser's native input and IME. */
+  edit(name: string, options: PlayViewEditOptions): boolean;
+  /** True while this view owns the active native text input. */
+  readonly editing: boolean;
+  /** Cancel the active edit if this view owns it. */
+  cancelEdit(): void;
   /**
    * Replace the children of a named panel, using each direct child's name as its stable key.
    * Unchanged rows retain their sprites, text, resource borrows and focus; bindings are replaced for those children.
@@ -237,6 +266,11 @@ export function createPlayViews(
 ): {
   view<S>(description: ViewDescription, options?: PlayViewOptions<S>): PlayView<S>;
   confirm(message: string, options?: PlayConfirmOptions): Promise<boolean>;
+  select<T extends string | number>(
+    choices: readonly PlaySelectChoice<T>[],
+    options?: PlaySelectOptions<T>
+  ): Promise<T | undefined>;
+  readonly editing: boolean;
   hints(list: readonly PlayHint[]): PlayHints;
   loading<T>(tasks: readonly (Promise<T> | (() => T | Promise<T>))[], options?: PlayLoadingOptions): Promise<T[]>;
   readonly asking: boolean;
@@ -298,6 +332,17 @@ export function createPlayViews(
     readonly name: string;
   }
   let focused: Focus | undefined, modalOwner: ViewRecord | undefined;
+  let textEditor: BrowserTextInput | undefined;
+  interface Editing {
+    readonly owner: ViewRecord;
+    readonly name: string;
+    rect: ViewRect;
+    width: number;
+    height: number;
+  }
+  let editing: Editing | undefined;
+  const selectionViews = new Set<PlayView>();
+  const cancelSelections = new Set<() => void>();
   const beforeModal = new WeakMap<ViewRecord, Focus | undefined>();
   const topModal = (): ViewRecord | undefined => {
     let modal: ViewRecord | undefined;
@@ -319,11 +364,75 @@ export function createPlayViews(
     focused = next;
     focused?.owner.focusMark(focused.name, true);
   };
+  function cancelEdit(owner?: ViewRecord): void {
+    if (editing !== undefined && (owner === undefined || editing.owner === owner)) textEditor?.cancel();
+  }
+  function syncEditing(): void {
+    const current = editing;
+    if (current === undefined || textEditor === undefined) return;
+    if (!eligible({ owner: current.owner, name: current.name })) return cancelEdit();
+    const rect = current.owner.view.visibleRect(current.name);
+    if (rect === undefined || rect.width < 1 || rect.height < 1) return cancelEdit();
+    const { width, height } = game.screen;
+    if (width !== current.width || height !== current.height) {
+      textEditor.resize(width, height);
+      current.width = width;
+      current.height = height;
+    }
+    if (
+      rect.x !== current.rect.x ||
+      rect.y !== current.rect.y ||
+      rect.width !== current.rect.width ||
+      rect.height !== current.rect.height
+    ) {
+      textEditor.move(rect);
+      current.rect = rect;
+    }
+  }
+  function startEdit(owner: ViewRecord, name: string, options: PlayViewEditOptions): boolean {
+    if (!eligible({ owner, name })) return false;
+    const rect = owner.view.visibleRect(name);
+    if (rect === undefined || rect.width < 1 || rect.height < 1) return false;
+    cancelEdit();
+    // Native editing is only created when requested, with the browser's control,
+    // selection, composition and key isolation rather than a second text editor.
+    const { width, height } = game.screen;
+    textEditor ??= createBrowserTextInput({
+      canvas: game.canvas,
+      logicalWidth: width,
+      logicalHeight: height,
+      zIndex: 30,
+      onError: hooks.failed
+    });
+    focus({ owner, name });
+    const current: Editing = { owner, name, rect, width, height };
+    editing = current;
+    try {
+      textEditor.resize(width, height);
+      textEditor.open({
+        ...options,
+        ...rect,
+        onCommit(value) {
+          if (editing === current) editing = undefined;
+          options.onCommit?.(value);
+        },
+        onCancel() {
+          if (editing === current) editing = undefined;
+          options.onCancel?.();
+        }
+      });
+    } catch (cause) {
+      if (editing === current) editing = undefined;
+      throw cause;
+    }
+    return true;
+  }
   const syncModalFocus = (): void => {
     const modal = topModal();
     if (modal === modalOwner) return;
     const previous = modalOwner;
     modalOwner = modal;
+    if (editing !== undefined && !inView(editing.owner, modal)) cancelEdit();
     if (modal !== undefined && !beforeModal.has(modal)) {
       beforeModal.set(modal, focused);
       const name = modal.initialFocus;
@@ -1467,6 +1576,15 @@ export function createPlayViews(
         focus({ owner: record, name });
         return true;
       },
+      edit(name, request) {
+        return startEdit(record, name, request);
+      },
+      get editing() {
+        return editing?.owner === record;
+      },
+      cancelEdit() {
+        cancelEdit(record);
+      },
       replaceChildren,
       refresh,
       show() {
@@ -1478,6 +1596,7 @@ export function createPlayViews(
       hide() {
         shown = false;
         root.visible = false;
+        cancelEdit(record);
         syncModalFocus();
       },
       cover() {
@@ -1494,6 +1613,7 @@ export function createPlayViews(
       deactivate() {
         active = false;
         root.touchChildren = false;
+        cancelEdit(record);
         syncModalFocus();
       },
       close() {
@@ -1575,6 +1695,7 @@ export function createPlayViews(
       end() {
         if (ended) return;
         ended = true;
+        cancelEdit(record);
         live.delete(record);
         syncModalFocus();
         if (focused?.owner === record) focus(undefined);
@@ -1669,6 +1790,123 @@ export function createPlayViews(
       () => undefined
     );
     return turn;
+  };
+  const select = <T extends string | number>(
+    choices: readonly PlaySelectChoice<T>[],
+    options: PlaySelectOptions<T> = {}
+  ): Promise<T | undefined> => {
+    if (!Array.isArray(choices) || choices.length > 1000)
+      throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: 'select takes at most 1000 choices' });
+    const values = new Set<string | number>();
+    for (const choice of choices) {
+      if (
+        !choice ||
+        typeof choice !== 'object' ||
+        !(typeof choice.value === 'string' || (typeof choice.value === 'number' && Number.isFinite(choice.value))) ||
+        typeof choice.text !== 'string' ||
+        !choice.text.trim() ||
+        (choice.disabled !== undefined && typeof choice.disabled !== 'boolean') ||
+        values.has(choice.value)
+      )
+        throw new EgretError('UI_VIEW_BINDING_INVALID', {
+          cause: 'select choices need unique values, text and optional disabled'
+        });
+      values.add(choice.value);
+    }
+    if (options.signal?.aborted) return Promise.resolve(undefined);
+    return new Promise<T | undefined>((resolve, reject) => {
+      let shown: PlayView | undefined,
+        finished = false;
+      const finish = (value?: T): void => {
+        if (finished) return;
+        finished = true;
+        cancelSelections.delete(cancel);
+        options.signal?.removeEventListener('abort', cancel);
+        if (shown !== undefined) {
+          selectionViews.delete(shown);
+          shown.close();
+        }
+        resolve(value);
+      };
+      const cancel = (): void => finish();
+      const bind: Record<string, PlayViewBinding> = {};
+      const firstEnabled = choices.findIndex(choice => !choice.disabled);
+      const selectedIndex = choices.findIndex(choice => choice.value === options.value && !choice.disabled);
+      const items: ViewPart[] = choices.map((choice, index) => {
+        const name = 'choice' + index;
+        const selected = choice.value === options.value;
+        bind[name] = {
+          label: () => choice.text,
+          disabled: () => choice.disabled === true,
+          tap: () => finish(choice.value)
+        };
+        return {
+          type: 'button',
+          name,
+          text: (selected ? '✓ ' : '') + choice.text,
+          width: 'fill',
+          height: 52,
+          ...(selected ? { color: options.skin?.accent ?? 0x38604f } : {})
+        };
+      });
+      bind.cancel = { tap: cancel };
+      const parts: ViewPart[] = [
+        ...(options.title === undefined
+          ? []
+          : [
+              {
+                type: 'text' as const,
+                name: 'title',
+                text: options.title,
+                width: 'fill' as const,
+                height: 40,
+                bold: true
+              }
+            ]),
+        {
+          type: 'panel',
+          name: 'choices',
+          layout: 'column',
+          width: 'fill',
+          height: 'fill',
+          scroll: 'vertical',
+          gap: 5,
+          children: items
+        },
+        { type: 'button', name: 'cancel', text: options.cancel ?? 'Cancel', width: 'fill', height: 48 }
+      ];
+      try {
+        shown = view(
+          {
+            modal: true,
+            ...(options.title === undefined ? {} : { label: options.title }),
+            ...(options.skin === undefined ? {} : { skin: options.skin }),
+            root: {
+              type: 'panel',
+              layout: 'column',
+              anchor: 'center',
+              width: '92%',
+              height: '90%',
+              card: true,
+              padding: 8,
+              gap: 6,
+              children: parts
+            }
+          },
+          {
+            initialFocus:
+              selectedIndex >= 0 ? 'choice' + selectedIndex : firstEnabled >= 0 ? 'choice' + firstEnabled : 'cancel',
+            bind,
+            dismiss: cancel
+          }
+        );
+        selectionViews.add(shown);
+        cancelSelections.add(cancel);
+        options.signal?.addEventListener('abort', cancel, { once: true });
+      } catch (cause) {
+        reject(cause);
+      }
+    });
   };
   const hints = (list: readonly PlayHint[]): PlayHints => {
     let current: readonly PlayHint[] = [],
@@ -1848,10 +2086,14 @@ export function createPlayViews(
   return {
     view,
     confirm,
+    select,
+    get editing() {
+      return editing !== undefined;
+    },
     hints,
     loading,
     get asking() {
-      return open !== undefined;
+      return open !== undefined || cancelSelections.size !== 0;
     },
     get modalActive() {
       return topModal() !== undefined;
@@ -1859,6 +2101,14 @@ export function createPlayViews(
     wheel: scrollInput.wheel,
     keyDown(event, embedded) {
       if (event.altKey || event.ctrlKey || event.metaKey) return false;
+      if (
+        ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code) &&
+        modalOwner !== undefined &&
+        selectionViews.has(modalOwner.view)
+      ) {
+        if (!event.repeat) moveFocus(event.code === 'ArrowUp' || event.code === 'ArrowLeft' ? -1 : 1, true, modalOwner);
+        return true;
+      }
       if (event.code !== 'Escape' && event.code !== 'Tab' && event.code !== 'Enter' && event.code !== 'Space')
         return false;
       syncModalFocus();
@@ -1879,6 +2129,10 @@ export function createPlayViews(
     },
     padButtons(pressed, legacyAsking) {
       syncModalFocus();
+      if (editing !== undefined) {
+        if (pressed.has('b')) cancelEdit();
+        return pausedModalPadButtons;
+      }
       const modal = modalOwner;
       let owner = modal;
       if (owner === undefined && !legacyAsking) for (const record of live) if (record.padNavigation()) owner = record;
@@ -1917,6 +2171,7 @@ export function createPlayViews(
         }
       }
       syncModalFocus();
+      syncEditing();
       if (focused !== undefined) {
         if (!focused.owner.keeps(focused.name)) focus(undefined);
         else focused.owner.focusMark(focused.name, eligible(focused));
@@ -1936,11 +2191,16 @@ export function createPlayViews(
           hooks.failed(cause);
         }
       }
+      syncEditing();
     },
     reset() {
       // A restart has taken the sprites away; what is left is to forget the views and their semantics. A question
       // still open is answered no, so what awaits it goes on.
       open?.answer(false);
+      for (const cancel of [...cancelSelections]) cancel();
+      cancelEdit();
+      textEditor?.dispose();
+      textEditor = undefined;
       for (const record of [...hintBars]) record.end();
       for (const record of [...live]) record.end();
       live.clear();
@@ -1970,71 +2230,8 @@ function visibleOnStage(node: DisplayObject, stage: DisplayObject, input = false
   return false;
 }
 
-interface Point {
-  readonly x: number;
-  readonly y: number;
-}
-
-const edge = (a: Point, b: Point, c: Point): number => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-
-function corners({ x, y, width, height }: ViewRect, node?: DisplayObject): Point[] {
-  if (width <= 0 || height <= 0) return [];
-  const points = [
-    { x, y },
-    { x: x + width, y },
-    { x: x + width, y: y + height },
-    { x, y: y + height }
-  ];
-  return node === undefined ? points : points.map(at => node.localToGlobal(at.x, at.y));
-}
-
-/** Clip the two actual shapes before enclosing them for the rectangular accessibility projection. */
-function intersect(points: Point[], clip: Point[]): Point[] {
-  if (clip.length === 0 || points.length === 0) return [];
-  const winding = Math.sign(edge(clip[0]!, clip[1]!, clip[2]!));
-  if (!winding) return [];
-  for (let index = 0; index < clip.length && points.length > 0; index++) {
-    const from = clip[index]!,
-      to = clip[(index + 1) % clip.length]!,
-      distances = points.map(point => winding * edge(from, to, point)),
-      out: Point[] = [];
-    for (let at = 0; at < points.length; at++) {
-      const prior = (at + points.length - 1) % points.length,
-        start = points[prior]!,
-        end = points[at]!,
-        a = distances[prior]!,
-        b = distances[at]!;
-      if (a < 0 !== b < 0) {
-        const fraction = a / (a - b);
-        out.push({ x: start.x + (end.x - start.x) * fraction, y: start.y + (end.y - start.y) * fraction });
-      }
-      if (b >= 0) out.push(end);
-    }
-    points = out;
-  }
-  return points;
-}
-
-function visibleRect(node: DisplayObject, area: ViewRect, screen: ViewRect): ViewRect | undefined {
-  if (node.isDisposed) return undefined;
-  let points = corners(area, node);
-  if (points.length === 0 || !edge(points[0]!, points[1]!, points[2]!)) return undefined;
-  for (let at: DisplayObject | undefined = node; at !== undefined && points.length !== 0; at = at.parent) {
-    const clip = at.clipRect;
-    if (clip !== undefined) points = intersect(points, corners(clip, at));
-  }
-  points = intersect(points, corners({ x: 0, y: 0, width: screen.width, height: screen.height }));
-  if (points.length < 3) return undefined;
-  let areaTwice = 0;
-  for (let index = 1; index + 1 < points.length; index++)
-    areaTwice += edge(points[0]!, points[index]!, points[index + 1]!);
-  if (!Number.isFinite(areaTwice) || areaTwice === 0) return undefined;
-  const xs = points.map(point => point.x),
-    ys = points.map(point => point.y),
-    x = Math.min(...xs),
-    y = Math.min(...ys);
-  return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
-}
+const visibleRect = (node: DisplayObject, area: ViewRect, screen: ViewRect): ViewRect | undefined =>
+  clippedDisplayRect(node, area, screen);
 
 /** A rectangle measured from the corner of the one it is in. */
 function relative(rect: ViewRect, parent: ViewRect | undefined): ViewRect {
