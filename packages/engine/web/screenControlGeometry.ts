@@ -71,8 +71,10 @@ const same = (a: ScreenRect, b: ScreenRect): boolean =>
   Math.abs(a.y - b.y) <= 1e-6 &&
   Math.abs(a.width - b.width) <= 1e-6 &&
   Math.abs(a.height - b.height) <= 1e-6;
-const related = (a: { id: string; ancestors: readonly string[] }, b: { id: string; ancestors: readonly string[] }): boolean =>
-  a.id === b.id || a.ancestors.includes(b.id) || b.ancestors.includes(a.id);
+const related = (
+  a: { id: string; ancestors: readonly string[] },
+  b: { id: string; ancestors: readonly string[] }
+): boolean => a.id === b.id || a.ancestors.includes(b.id) || b.ancestors.includes(a.id);
 const area = (r: ScreenRect): number => r.width * r.height;
 const actionableRoles = new Set([
   'button',
@@ -164,19 +166,17 @@ function matchingClaims(
   const visual = onStage(item.node, item.node.getBounds()),
     exposed = item.clip === undefined ? visual : screenIntersection(visual, item.clip);
   return claims.filter(
-    claim => same(claim.bounds, item.hit) || same(claim.bounds, item.authored) ||
-      same(claim.bounds, visual) || same(claim.bounds, exposed)
+    claim =>
+      same(claim.bounds, item.hit) ||
+      same(claim.bounds, item.authored) ||
+      same(claim.bounds, visual) ||
+      same(claim.bounds, exposed)
   );
 }
 function contains(node: DisplayObject, local: ScreenRect, x: number, y: number): boolean {
   try {
     const p = node.globalToLocal(x, y);
-    return (
-      p.x >= local.x &&
-      p.x < local.x + local.width &&
-      p.y >= local.y &&
-      p.y < local.y + local.height
-    );
+    return p.x >= local.x && p.x < local.x + local.width && p.y >= local.y && p.y < local.y + local.height;
   } catch {
     return false;
   }
@@ -223,7 +223,9 @@ export function collectNativeScreenControls(options: {
     const native = pointer === undefined ? undefined : screenControlFor(pointer, item.node);
     if (native?.enabled === false) continue;
     const matches = matchingClaims(item, claims),
-      possible = matches.filter(claim => actionable(claim) || (native !== undefined && structuralRoles.has(claim.role))),
+      possible = matches.filter(
+        claim => actionable(claim) || (native !== undefined && structuralRoles.has(claim.role))
+      ),
       match = possible.length === 1 ? possible[0] : undefined;
     if (match?.inert || match?.disabled) continue;
     // Native registrations and actionable semantics are authoritative.
@@ -232,8 +234,7 @@ export function collectNativeScreenControls(options: {
     const legacy = options.legacyName?.(item.node);
     if (native === undefined && match === undefined) {
       if (matches.length > 0) continue;
-      if (legacy === undefined && !(options.rawTargets && (claims === undefined || item.node.name !== '')))
-        continue;
+      if (legacy === undefined && !(options.rawTargets && (claims === undefined || item.node.name !== ''))) continue;
     }
     controls.push({ item, name: match?.name || legacy || item.node.name || (native ? native.kind + ' control' : '') });
   }
@@ -244,12 +245,7 @@ export function collectNativeScreenControls(options: {
     // target overlaps. This avoids probing every node on every tool tick.
     let blockedBy: string | undefined;
     for (const blocker of candidates) {
-      if (
-        blocker.order <= item.order ||
-        related(item, blocker) ||
-        known.has(blocker.node) ||
-        whole(blocker.hit)
-      )
+      if (blocker.order <= item.order || related(item, blocker) || known.has(blocker.node) || whole(blocker.hit))
         continue;
       const overlap = screenIntersection(item.hit, blocker.hit);
       if (area(page(overlap)) <= 1) continue;
@@ -266,12 +262,16 @@ export function collectNativeScreenControls(options: {
         // A refused pick is no evidence of an interception.
       }
     }
-    const coveredBy = [...new Set(
-      paints
-        .filter(paint => paint.order > item.order && !related(item, paint) &&
-          area(screenIntersection(rect, page(paint.rect))) > 1)
-        .map(paint => paint.name)
-    )];
+    const coveredBy = [
+      ...new Set(
+        paints
+          .filter(
+            paint =>
+              paint.order > item.order && !related(item, paint) && area(screenIntersection(rect, page(paint.rect))) > 1
+          )
+          .map(paint => paint.name)
+      )
+    ];
     return {
       name,
       id: item.id,

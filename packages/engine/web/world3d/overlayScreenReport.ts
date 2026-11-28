@@ -8,7 +8,10 @@ import type { NativeScreenControl } from '../screenControlGeometry.js';
 
 interface ScreenAgent {
   readonly insets?: { readonly left: number; readonly top: number; readonly right: number; readonly bottom: number };
-  readonly controls?: (controls: readonly NativeScreenControl[], screen: { safe: ScreenRect; canvas: ScreenRect }) => void;
+  readonly controls?: (
+    controls: readonly NativeScreenControl[],
+    screen: { safe: ScreenRect; canvas: ScreenRect }
+  ) => void;
 }
 const tool = (): ScreenAgent | undefined => (globalThis as { readonly __egretAgent?: ScreenAgent }).__egretAgent;
 function asRect(box: DOMRect): ScreenRect {

@@ -172,7 +172,10 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     const defaultView = getter(globalThis.Document?.prototype, 'defaultView');
     const visibility = getter(globalThis.Document?.prototype, 'visibilityState');
     // Pointer Lock is optional on a browser host. If present, read the native getter once.
-    const lockElement = Object.getOwnPropertyDescriptor(globalThis.Document?.prototype ?? {}, 'pointerLockElement')?.get;
+    const lockElement = Object.getOwnPropertyDescriptor(
+      globalThis.Document?.prototype ?? {},
+      'pointerLockElement'
+    )?.get;
     const inlineStyle = getter(globalThis.HTMLElement?.prototype, 'style');
     const styleValue = method(globalThis.CSSStyleDeclaration?.prototype, 'getPropertyValue');
     const stylePriority = method(globalThis.CSSStyleDeclaration?.prototype, 'getPropertyPriority');
@@ -494,14 +497,15 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     listen(win, 'pointerup', true, event => pointer(event, 'up'));
     listen(win, 'pointercancel', true, event => pointer(event, 'cancel'));
     listen(surface as EventTarget, 'lostpointercapture', false, event => pointer(event, 'lost'));
-    if (lockElement !== undefined) listen(document, 'pointerlockchange', false, () => {
-      const next = lockedHere();
-      if (next === mouseLocked) return;
-      mouseLocked = next;
-      // A lock transition changes mouse ownership, not an independent touch.
-      for (const session of [...sessions.values()])
-        if (session.pointerType === 'mouse') input.cancel(session, 'lostcapture');
-    });
+    if (lockElement !== undefined)
+      listen(document, 'pointerlockchange', false, () => {
+        const next = lockedHere();
+        if (next === mouseLocked) return;
+        mouseLocked = next;
+        // A lock transition changes mouse ownership, not an independent touch.
+        for (const session of [...sessions.values()])
+          if (session.pointerType === 'mouse') input.cancel(session, 'lostcapture');
+      });
     listen(win, 'blur', false, () => cancel('blur'));
     listen(win, 'pagehide', false, () => cancel('pagehide'));
     listen(document, 'visibilitychange', false, () => {

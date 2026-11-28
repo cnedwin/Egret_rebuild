@@ -1166,8 +1166,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   const keyDown = (event: KeyboardEvent): void => {
     if (typing(event.target) || (embedded && event.target !== surface) || event.defaultPrevented) return;
     let claimed = false;
-    if (!widgets.asking && !views.modalActive &&
-        (embedded || page.activeElement === surface || page.activeElement === page.body)) {
+    if (
+      !widgets.asking &&
+      !views.modalActive &&
+      (embedded || page.activeElement === surface || page.activeElement === page.body)
+    ) {
       try {
         claimed = [...keyClaims].some(entry => entry.code === event.code && entry.when());
       } catch (cause) {
@@ -1301,7 +1304,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       if (disposed) return () => {};
       const entry = { code: codeOf(name), when };
       keyClaims.add(entry);
-      return () => { keyClaims.delete(entry); };
+      return () => {
+        keyClaims.delete(entry);
+      };
     },
     down: (...names) => any(held, names),
     pressed: (...names) => any(wentDown, names),
@@ -1601,7 +1606,11 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   let lastLock = ownsLock();
   let lockListeners = true;
   const exitLock = (): void => {
-    try { if (ownsLock()) page.exitPointerLock?.(); } catch { /* browser refused */ }
+    try {
+      if (ownsLock()) page.exitPointerLock?.();
+    } catch {
+      /* browser refused */
+    }
   };
   const removeLockListeners = (): void => {
     if (!lockListeners) return;
@@ -1614,7 +1623,10 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     lockRequest = undefined;
     if (request.abort !== undefined) request.signal?.removeEventListener('abort', request.abort);
     const result = request.canceled || disposed ? 'canceled' : status;
-    if (!request.settled) { request.settled = true; request.resolve({ status: result }); }
+    if (!request.settled) {
+      request.settled = true;
+      request.resolve({ status: result });
+    }
     if (result !== 'locked' && ownsLock()) exitLock();
     if (disposed) removeLockListeners();
   };
@@ -1625,12 +1637,17 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       clearMouseButtons();
       point.dx = point.dy = 0;
       seenMove = false;
-      if (pointerKind === 'mouse') { pointerOwner = undefined; pointerKind = undefined; }
+      if (pointerKind === 'mouse') {
+        pointerOwner = undefined;
+        pointerKind = undefined;
+      }
       invalidate();
     }
     if (locked && lockRequest !== undefined) settleLock(lockRequest, 'locked');
   };
-  const lockError = (): void => { if (lockRequest !== undefined) settleLock(lockRequest, 'denied'); };
+  const lockError = (): void => {
+    if (lockRequest !== undefined) settleLock(lockRequest, 'denied');
+  };
   const cancelPointerLock = (): void => {
     const request = lockRequest;
     if (request !== undefined && !request.canceled) {
@@ -1659,9 +1676,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     get released() {
       return point.released;
     },
-    get buttons() { return point.buttons; },
-    get pressedButtons() { return point.pressedButtons; },
-    get releasedButtons() { return point.releasedButtons; },
+    get buttons() {
+      return point.buttons;
+    },
+    get pressedButtons() {
+      return point.pressedButtons;
+    },
+    get releasedButtons() {
+      return point.releasedButtons;
+    },
     get swipe() {
       return point.swipe;
     },
@@ -1675,31 +1698,53 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       return point.wheel;
     },
     lock(options = {}) {
-      if (options === null || typeof options !== 'object' ||
-          (options.unadjustedMovement !== undefined && typeof options.unadjustedMovement !== 'boolean') ||
-          (options.signal !== undefined && (typeof options.signal.aborted !== 'boolean' ||
-            typeof options.signal.addEventListener !== 'function' || typeof options.signal.removeEventListener !== 'function')))
+      if (
+        options === null ||
+        typeof options !== 'object' ||
+        (options.unadjustedMovement !== undefined && typeof options.unadjustedMovement !== 'boolean') ||
+        (options.signal !== undefined &&
+          (typeof options.signal.aborted !== 'boolean' ||
+            typeof options.signal.addEventListener !== 'function' ||
+            typeof options.signal.removeEventListener !== 'function'))
+      )
         throw invalid('lock takes a raw movement option and an abort signal');
       if (disposed || options.signal?.aborted) return Promise.resolve({ status: 'canceled' });
-      if (lockRequest !== undefined) return lockRequest.canceled ? Promise.resolve({ status: 'canceled' }) : lockRequest.promise;
+      if (lockRequest !== undefined)
+        return lockRequest.canceled ? Promise.resolve({ status: 'canceled' }) : lockRequest.promise;
       if (ownsLock()) return Promise.resolve({ status: 'locked' });
-      const ask = (surface as unknown as { requestPointerLock?: (options?: { unadjustedMovement?: boolean }) => unknown }).requestPointerLock;
+      const ask = (
+        surface as unknown as { requestPointerLock?: (options?: { unadjustedMovement?: boolean }) => unknown }
+      ).requestPointerLock;
       if (typeof ask !== 'function') return Promise.resolve({ status: 'unavailable' });
       let resolve!: LockRequest['resolve'];
-      const promise = new Promise<PlayPointerLockResult>(done => { resolve = done; });
-      const request: LockRequest = { promise, resolve, signal: options.signal, abort: undefined, canceled: false, settled: false };
+      const promise = new Promise<PlayPointerLockResult>(done => {
+        resolve = done;
+      });
+      const request: LockRequest = {
+        promise,
+        resolve,
+        signal: options.signal,
+        abort: undefined,
+        canceled: false,
+        settled: false
+      };
       lockRequest = request;
       if (options.signal !== undefined) {
-        request.abort = () => { if (lockRequest === request) cancelPointerLock(); };
+        request.abort = () => {
+          if (lockRequest === request) cancelPointerLock();
+        };
         options.signal.addEventListener('abort', request.abort, { once: true });
       }
       try {
-        const asked = options.unadjustedMovement === undefined
-          ? ask.call(surface)
-          : ask.call(surface, { unadjustedMovement: options.unadjustedMovement });
+        const asked =
+          options.unadjustedMovement === undefined
+            ? ask.call(surface)
+            : ask.call(surface, { unadjustedMovement: options.unadjustedMovement });
         if (asked !== null && typeof asked === 'object' && 'then' in asked)
           Promise.resolve(asked).then(
-            () => { if (ownsLock()) settleLock(request, 'locked'); },
+            () => {
+              if (ownsLock()) settleLock(request, 'locked');
+            },
             () => settleLock(request, 'denied')
           );
         if (ownsLock()) settleLock(request, 'locked');
@@ -1708,9 +1753,15 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       }
       return promise;
     },
-    get lockPending() { return lockRequest !== undefined && !lockRequest.canceled; },
-    unlock() { cancelPointerLock(); },
-    get locked() { return ownsLock(); },
+    get lockPending() {
+      return lockRequest !== undefined && !lockRequest.canceled;
+    },
+    unlock() {
+      cancelPointerLock();
+    },
+    get locked() {
+      return ownsLock();
+    },
     over(node) {
       if (!seen(node)) return false;
       const box = boxOf(node);
@@ -1734,7 +1785,16 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     [win, 'pointercancel', pointerCancel as EventListener],
     [win, 'mousedown', mouseButtons as EventListener],
     [win, 'mouseup', mouseButtons as EventListener],
-    [page, 'visibilitychange', () => { if (page.hidden) { clearMouseButtons(); cancelPointerLock(); } }]
+    [
+      page,
+      'visibilitychange',
+      () => {
+        if (page.hidden) {
+          clearMouseButtons();
+          cancelPointerLock();
+        }
+      }
+    ]
   ];
   if (embedded) listening.push([surface, 'blur', leaveCanvas]);
   let resizeObserver: ResizeObserver | undefined;

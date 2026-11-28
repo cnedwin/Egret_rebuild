@@ -704,11 +704,12 @@ test('MP browser listener acquisition preserves first failure when compensating 
     { create: false }
   ));
 
-
 test('MP browser keeps a logical mouse contact while its canvas owns pointer lock', async () =>
   fixture(f => {
     f.browser.lock();
-    f.browser.hooks.capture = () => { throw Error('native capture is forbidden under pointer lock'); };
+    f.browser.hooks.capture = () => {
+      throw Error('native capture is forbidden under pointer lock');
+    };
     f.browser.emit(f.browser.canvas, 'pointerdown', { pointerType: 'mouse', pointerId: 20, buttons: 1 });
     assert.equal(f.input.state, 'active');
     assert.equal(f.input.contacts.length, 1);
@@ -729,13 +730,19 @@ test('MP browser lock transitions retire only the mouse owner and leave independ
     f.browser.emit(f.browser.canvas, 'pointerdown', { pointerType: 'touch', pointerId: 21, buttons: 1 });
     assert.deepEqual([...f.browser.captures], [20, 21]);
     f.browser.lock();
-    assert.deepEqual(f.input.contacts.map(c => c.session.pointerId), [21]);
+    assert.deepEqual(
+      f.input.contacts.map(c => c.session.pointerId),
+      [21]
+    );
     assert.equal(f.notifications.at(-1).reason, 'lostcapture');
     assert.deepEqual([...f.browser.captures], [21]);
     f.browser.emit(f.browser.canvas, 'pointerdown', { pointerType: 'mouse', pointerId: 20, buttons: 1 });
     assert.equal(f.input.contacts.length, 2);
     f.browser.unlock();
-    assert.deepEqual(f.input.contacts.map(c => c.session.pointerId), [21]);
+    assert.deepEqual(
+      f.input.contacts.map(c => c.session.pointerId),
+      [21]
+    );
     assert.equal(f.notifications.at(-1).reason, 'lostcapture');
     assert.deepEqual(f.diagnostics, []);
   }));

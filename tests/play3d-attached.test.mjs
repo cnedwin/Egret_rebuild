@@ -12,6 +12,11 @@ test('Attached Play3D is shared by both explicit World3D browser backends', () =
 
 test('Attached Play3D refuses invalid factories and setup before touching a page', async () => {
   const { play3dAttached } = webgl2;
-  for (const options of [null, {}, { width: 128, height: 96, world: 2 }, { width: 128, height: 96, world() {}, setup: 2 }])
+  for (const options of [
+    null,
+    {},
+    { width: 128, height: 96, world: 2 },
+    { width: 128, height: 96, world() {}, setup: 2 }
+  ])
     await assert.rejects(play3dAttached(options), { code: 'PLAY_OPTIONS_INVALID' });
 });
