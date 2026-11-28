@@ -26,6 +26,8 @@ import type {
   Texture
 } from '@egret/engine';
 import { createBrowserTextureProvider } from './image.js';
+import { createBrowserTextWork } from './browserTextWork.js';
+import type { CanvasWorkSchedule } from './browserTextWork.js';
 import { createBrowserStaticLayers } from './browserStaticLayers.js';
 import type { BrowserGameStaticLayers } from './browserStaticLayers.js';
 import { decodeBrowserImage, sniffBrowserImageFormat } from './BrowserImageTextures.js';
@@ -225,6 +227,8 @@ export interface BrowserGameOptions {
   readonly staticLayers?: boolean;
   /** On demand retains the last frame until visual, screen, native-generation or explicit invalidation changes. */
   readonly renderMode?: BrowserGameRenderMode;
+  /** Opt-in Canvas text work budget (milliseconds between display frames, > 0 and <= 16). */
+  readonly textWorkBudgetMs?: number;
   /** Opt-in CPU frame timing; submitted does not mean GPU complete or presented. */
   readonly onFrameTiming?: (sample: BrowserGameFrameTiming) => void;
   /** Enable the existing bounded shared WebGL2 Host phase samples (available on game.host). */
@@ -341,6 +345,8 @@ export interface BrowserGame {
    * are drawn as `createLabel` draws them. A label's display, its parent or an ancestor disposed ends it.
    */
   createAtlasLabel(options?: BrowserGameLabelCreateOptions): Promise<BrowserGameAtlasLabel>;
+  /** The same optional budget for a caller-owned Canvas paragraph provider; owned by the game. */
+  readonly scheduleTextWork?: CanvasWorkSchedule;
   /** Measured, width-wrapped text using the existing Canvas paragraph provider and cache. */
   createParagraphLabel(options: BrowserGameParagraphLabelCreateOptions): Promise<BrowserGameParagraphLabel>;
   /** Build one reusable immutable page of fixed-advance glyphs for ordinary BitmapText counters. */
@@ -523,6 +529,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     (blendSpace !== 'linear' && blendSpace !== 'srgb') ||
     typeof enableEffects !== 'boolean' ||
     (renderMode !== 'continuous' && renderMode !== 'on-demand') ||
+    (options.textWorkBudgetMs !== undefined &&
+      (!Number.isFinite(options.textWorkBudgetMs) || options.textWorkBudgetMs <= 0 || options.textWorkBudgetMs > 16)) ||
     (options.webgl2PageBatching !== undefined &&
       options.webgl2PageBatching !== 'single-page' &&
       options.webgl2PageBatching !== 'multi-page') ||
@@ -612,6 +620,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
   try {
     const scope = engine.createScope(),
       initialFrame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha });
+    const textWork =
+      options.textWorkBudgetMs === undefined ? undefined : scope.use(createBrowserTextWork(options.textWorkBudgetMs));
+    const scheduleTextWork = textWork?.schedule;
     let frame = initialFrame;
     const revision = renderMode === 'on-demand' ? engine.watchDisplayRevision(scope) : undefined;
     let lastFrame: SharedFrameOptions2D | undefined,
@@ -1128,7 +1139,11 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       if (owner === null || typeof owner !== 'object') throw invalid();
       textCache ??= import('./text.js').then(
         text =>
-          (currentTextCache = createTextRasterCache(engine.assets, { provider: text.createCanvasTextRasterProvider() }))
+          (currentTextCache = createTextRasterCache(engine.assets, {
+            provider: text.createCanvasTextRasterProvider(
+              scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork }
+            )
+          }))
       );
       const cache = await textCache;
       const field = createTextField(engine, owner, cache);
@@ -1464,7 +1479,11 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       if (owner === null || typeof owner !== 'object') throw invalid();
       textCache ??= import('./text.js').then(
         text =>
-          (currentTextCache = createTextRasterCache(engine.assets, { provider: text.createCanvasTextRasterProvider() }))
+          (currentTextCache = createTextRasterCache(engine.assets, {
+            provider: text.createCanvasTextRasterProvider(
+              scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork }
+            )
+          }))
       );
       const cache = await textCache;
       const display = owner.use(new Sprite());
@@ -1705,7 +1724,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       const captured = given.fontFamilies === undefined ? given : { ...given, fontFamilies: [...given.fontFamilies] };
       paragraphLabels ??= import('./browserGameParagraph.js').then(({ createGameParagraphs }) => {
         if (scope.state !== 'open') throw new EgretError('SCOPE_CLOSED');
-        return createGameParagraphs(engine);
+        return createGameParagraphs(engine, scheduleTextWork);
       });
       const labels = await paragraphLabels;
       const label = labels.create(owner, captured, Math.max(0.25, Math.min(4, pixelRatio)), notDrawn);
@@ -1789,6 +1808,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       hover,
       stats: panel,
       createLabel,
+      ...(scheduleTextWork === undefined ? {} : { scheduleTextWork }),
       getLabelStatus() {
         sweepLabels();
         return Object.freeze({

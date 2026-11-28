@@ -239,7 +239,7 @@
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `createCanvasTextRasterProvider` | 函数 | Caller-owned fonts and explicit cache invalidation; no waiting or font loading. |
+| `createCanvasTextRasterProvider` | 函数 | Caller-owned fonts and explicit cache invalidation; no font loading. |
 
 ## `@egret/engine/webgl2`
 

@@ -239,7 +239,7 @@ For which entry to import from, see [What to import](entry-points.md).
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `createCanvasTextRasterProvider` | function | Caller-owned fonts and explicit cache invalidation; no waiting or font loading. |
+| `createCanvasTextRasterProvider` | function | Caller-owned fonts and explicit cache invalidation; no font loading. |
 
 ## `@egret/engine/webgl2`
 

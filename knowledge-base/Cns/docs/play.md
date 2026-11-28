@@ -394,3 +394,22 @@ game.touchStick({
 ## 11 月 27 日真机补验
 
 11 月 27 日实测：Windows 与 Fold7 双后端覆盖 100 个短标签、独立图像预算恢复、500 标签父节点移除、选定视图/输入及竖排中文；具体范围与保留的视图辅助测试断言见记录。 [真机观测及剩余范围](november-27-claude-hardware.md). 另在独立重建的 #516 上确认双终端双后端关闭视图独立缩放时，覆盖层保持世界坐标及点击。
+
+## 可选的 Canvas 文字工作预算
+
+新菜单若有大量尚未命中缓存的文字，Canvas 测量与像素读回可能在一次输入事件的微任务中集中运行。给 `play`（或 `createBrowserGame`）设置 `textWorkBudgetMs`，让实际 Canvas 工作在显示帧之间协作执行。调用者自己管理富文本缓存时，可共用游戏所有的同一个调度器：
+
+```js
+const game = await play({
+  width: 960, height: 540, textWorkBudgetMs: 4,
+  setup(game) {
+    const provider = createCanvasParagraphProvider({ schedule: game.browser.scheduleTextWork });
+    const cache = createParagraphCache(game.engine.assets, { provider });
+    // 所有包含富文本段落的 game.show() 都传入这个缓存。
+  }
+});
+```
+
+不传这个选项，继续使用原有的即时执行路径。预算为大于零且不超过 16 毫秒的有限数字，控制每个完整同步 Canvas 工作之间的准入，不能中断一个不可分割的长任务。即使计时器精度较低，也按先来先服务和有限任务数处理。文档进入后台时显示帧可能暂停，此时通过后续浏览器任务继续。取消排队中的请求或回收其所有者时，无需等待下一帧就能移除排队工作。
+
+这不改变文字请求键、缓存/租约归属、控件命中范围、焦点或文字就绪的含义。新显示且未命中缓存的文字可能跨数帧就绪。应同时测量新页关键文字与全部可见文字（含段落）的就绪耗时和最长帧，不能只把长帧挪到稍后。普通具名文字可用 `view.textReady(name)` 测量。原缓存的准入限制和单个段落的处理开销仍然有效。
