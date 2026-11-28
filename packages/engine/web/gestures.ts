@@ -58,6 +58,11 @@ export interface GestureOptions {
   readonly onDrag?: (drag: GestureDrag) => void;
   readonly onSwipe?: (swipe: GestureSwipe, at: GesturePoint) => void;
   readonly onPinch?: (pinch: GesturePinch) => void;
+  /**
+   * A press of the mouse's secondary (usually right) button that ends within `slop` of where it began. A mouse press
+   * of any button but the primary one never makes a tap, double tap, long press, drag, swipe or pinch.
+   */
+  readonly onSecondaryTap?: (at: GesturePoint) => void;
   /** How far a contact moves, in stage units, before it is a drag and no longer a tap or a press. 12 unless given. */
   readonly slop?: number;
   /** Seconds of a still press before it is a long press. 0.5 unless given. */
@@ -87,6 +92,15 @@ interface Track {
   hold: Delayed | undefined;
 }
 
+/**
+ * Which button a contact was begun with. Touches and pens, and a mouse press that holds the primary button, are the
+ * primary kind; a mouse press of the secondary button alone is secondary; one of any other button is neither.
+ */
+function pressButton(contact: PointerContact): 'primary' | 'secondary' | 'other' {
+  const buttons = contact.buttons;
+  if (contact.session.pointerType !== 'mouse' || buttons === 0 || (buttons & 1) !== 0) return 'primary';
+  return (buttons & 2) !== 0 ? 'secondary' : 'other';
+}
 const invalid = (what: string): EgretError => new EgretError('GESTURE_OPTIONS_INVALID', { cause: what });
 const positive = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value > 0;
 
@@ -103,7 +117,7 @@ export function createGestures(options: GestureOptions): Gestures {
   if (!(target instanceof DisplayObject)) throw invalid('target');
   if (scope === null || typeof scope !== 'object' || engine === null || typeof engine !== 'object')
     throw invalid('engine and scope');
-  for (const name of ['onTap', 'onDoubleTap', 'onHold', 'onDrag', 'onSwipe', 'onPinch'] as const)
+  for (const name of ['onTap', 'onDoubleTap', 'onHold', 'onDrag', 'onSwipe', 'onPinch', 'onSecondaryTap'] as const)
     if (options[name] !== undefined && typeof options[name] !== 'function') throw invalid(name);
   const slop = options.slop ?? 12,
     holdSeconds = options.holdSeconds ?? 0.5,
@@ -118,6 +132,8 @@ export function createGestures(options: GestureOptions): Gestures {
     if (!positive(value)) throw invalid(name);
 
   const tracks = new Map<number, Track>();
+  // Secondary mouse presses, by session: where each began and whether it has moved past the slop.
+  const secondary = new Map<number, { readonly startX: number; readonly startY: number; moved: boolean }>();
   let pinch: { distance: number; angle: number } | undefined,
     lastTap: { x: number; y: number; t: number } | undefined,
     closed = false;
@@ -170,7 +186,13 @@ export function createGestures(options: GestureOptions): Gestures {
   };
 
   const begin = (contact: PointerContact): void => {
-    if (closed || tracks.size >= 2) return;
+    if (closed) return;
+    const button = pressButton(contact);
+    if (button === 'secondary') {
+      secondary.set(contact.session.id, { startX: contact.globalX, startY: contact.globalY, moved: false });
+      return;
+    }
+    if (button === 'other' || tracks.size >= 2) return;
     const track: Track = {
       id: contact.session.id,
       startX: contact.globalX,
@@ -219,6 +241,11 @@ export function createGestures(options: GestureOptions): Gestures {
     });
   };
   const move = (contact: PointerContact): void => {
+    const press = secondary.get(contact.session.id);
+    if (press !== undefined) {
+      if (Math.hypot(contact.globalX - press.startX, contact.globalY - press.startY) > slop) press.moved = true;
+      return;
+    }
     const track = tracks.get(contact.session.id);
     if (closed || track === undefined || track.spent) return;
     const dx = contact.globalX - track.x,
@@ -241,6 +268,14 @@ export function createGestures(options: GestureOptions): Gestures {
     if (track.dragging) options.onDrag?.(dragOf(track, 'move', dx, dy));
   };
   const finish = (contact: PointerContact, cancelled: boolean): void => {
+    const press = secondary.get(contact.session.id);
+    if (press !== undefined) {
+      secondary.delete(contact.session.id);
+      const still = Math.hypot(contact.globalX - press.startX, contact.globalY - press.startY) <= slop;
+      if (!closed && !cancelled && !press.moved && still)
+        options.onSecondaryTap?.(point(contact.globalX, contact.globalY));
+      return;
+    }
     const track = tracks.get(contact.session.id);
     if (track === undefined) return;
     if (!cancelled) {
@@ -303,6 +338,7 @@ export function createGestures(options: GestureOptions): Gestures {
       for (const remove of removals) remove();
       for (const track of tracks.values()) stopHold(track);
       tracks.clear();
+      secondary.clear();
       pinch = undefined;
     }
   };

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Gestures tell a right click apart",
+    "body": "createGestures takes onSecondaryTap for a still press of the mouse's right button. Only the primary mouse button, touches and pens make taps, double taps, long presses, drags, swipes and pinches, so a right click no longer counts as a tap and the middle button makes no gesture."
+  },
+  "zh": {
+    "title": "手势区分鼠标右键",
+    "body": "createGestures 新增 onSecondaryTap，接收鼠标右键的静止点击。只有鼠标主键、触摸和触控笔会产生点击、双击、长按、拖动、滑动和双指缩放：右键点击不再算作点击，中键不产生任何手势。"
+  }
+}
