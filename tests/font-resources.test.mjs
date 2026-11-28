@@ -495,3 +495,196 @@ test('failed alias allocation releases its borrowed native face before later gen
   await later.closed;
   assert.equal(deleted, 2);
 });
+
+// Repack a temporary copy of the existing OFL font with independently authored color tables.
+// Directory entries and the head checksum follow the OpenType file layout; no vendor bytes are edited on disk.
+function fontWithTables(extra) {
+  const source = originals.get('e_latin');
+  const tables = new Map();
+  for (let i = 0; i < source.readUInt16BE(4); i++) {
+    const row = 12 + i * 16;
+    const offset = source.readUInt32BE(row + 8),
+      length = source.readUInt32BE(row + 12);
+    tables.set(source.toString('ascii', row, row + 4), Buffer.from(source.subarray(offset, offset + length)));
+  }
+  for (const [tag, bytes] of Object.entries(extra)) tables.set(tag, bytes);
+  const align = n => Math.ceil(n / 4) * 4;
+  const directoryEnd = 12 + tables.size * 16;
+  const result = Buffer.alloc(directoryEnd + [...tables.values()].reduce((sum, table) => sum + align(table.length), 0));
+  source.copy(result, 0, 0, 4);
+  const power = Math.floor(Math.log2(tables.size));
+  result.writeUInt16BE(tables.size, 4);
+  result.writeUInt16BE(16 * 2 ** power, 6);
+  result.writeUInt16BE(power, 8);
+  result.writeUInt16BE(tables.size * 16 - 16 * 2 ** power, 10);
+  function checksum(start, length) {
+    let sum = 0;
+    for (let i = 0; i < length; i += 4) sum = (sum + result.readUInt32BE(start + i)) >>> 0;
+    return sum;
+  }
+  let row = 12,
+    offset = directoryEnd,
+    head;
+  for (const tag of [...tables.keys()].sort()) {
+    const bytes = tables.get(tag);
+    bytes.copy(result, offset);
+    if (tag === 'head') {
+      head = offset;
+      result.writeUInt32BE(0, head + 8);
+    }
+    result.write(tag, row, 4, 'ascii');
+    result.writeUInt32BE(checksum(offset, align(bytes.length)), row + 4);
+    result.writeUInt32BE(offset, row + 8);
+    result.writeUInt32BE(bytes.length, row + 12);
+    row += 16;
+    offset += align(bytes.length);
+  }
+  result.writeUInt32BE((0xb1b0afba - checksum(0, result.length)) >>> 0, head + 8);
+  return result;
+}
+
+// U+0041 is glyph 36 in the pinned Noto Sans. Each color fixture assigns green to that glyph.
+const cpal = Buffer.from('0000 0001 0001 0001 0000000e 0000 00ff00ff'.replaceAll(' ', ''), 'hex');
+const colr0 = Buffer.from('0000 0001 0000000e 00000014 0001 0024 0000 0001 0024 0000'.replaceAll(' ', ''), 'hex');
+const colr1 = Buffer.from(
+  // v1 header, one BaseGlyphPaintRecord, PaintGlyph(36), PaintSolid(palette 0).
+  (
+    '0001 0000 00000000 00000000 0000 00000022 00000000 00000000 00000000 00000000 ' +
+    '00000001 0024 0000000a 0a 000006 0024 02 0000 4000'
+  ).replaceAll(' ', ''),
+  'hex'
+);
+const drawing = Buffer.from(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path id="glyph36" fill="lime" d="M0 0H800V800H0Z"/></svg>'
+);
+const svgTable = Buffer.alloc(24 + drawing.length);
+svgTable.writeUInt32BE(10, 2); // Offset to the document list.
+svgTable.writeUInt16BE(1, 10);
+svgTable.writeUInt16BE(36, 12);
+svgTable.writeUInt16BE(36, 14);
+svgTable.writeUInt32BE(14, 16);
+svgTable.writeUInt32BE(drawing.length, 20);
+drawing.copy(svgTable, 24);
+
+// An authored green PNG represents A at the 32 ppem strike of the pinned test face.
+function bitmapStrike() {
+  const source = originals.get('e_latin');
+  let glyphCount;
+  for (let i = 0; i < source.readUInt16BE(4); i++) {
+    const entry = 12 + 16 * i;
+    if (source.toString('ascii', entry, entry + 4) === 'maxp') {
+      glyphCount = source.readUInt16BE(source.readUInt32BE(entry + 8) + 4);
+      break;
+    }
+  }
+  assert(glyphCount > 36);
+  const { PNG } = createRequire(import.meta.url)('pngjs');
+  const image = new PNG({ width: 16, height: 16 });
+  for (let i = 0; i < image.data.length; i += 4) {
+    image.data[i + 1] = 255;
+    image.data[i + 3] = 255;
+  }
+  const png = PNG.sync.write(image);
+  const strike = 12,
+    dataOffset = 4 + 4 * (glyphCount + 1);
+  const table = Buffer.alloc(strike + dataOffset + 8 + png.length);
+  table.writeUInt16BE(1); // version
+  table.writeUInt16BE(1, 2); // bitmap only
+  table.writeUInt32BE(1, 4); // one strike
+  table.writeUInt32BE(strike, 8);
+  table.writeUInt16BE(32, strike);
+  table.writeUInt16BE(72, strike + 2);
+  for (let i = 0; i <= glyphCount; i++)
+    table.writeUInt32BE(i <= 36 ? dataOffset : dataOffset + 8 + png.length, strike + 4 + 4 * i);
+  table.write('png ', strike + dataOffset + 4);
+  png.copy(table, strike + dataOffset + 8);
+  return table;
+}
+
+test('CanvasKit paragraphs explicitly refuse SVG and v1 color paints before a fallback outline can render', async () => {
+  const fixed = bytes =>
+    createCanvasKitParagraphProvider({
+      canvasKit: ck,
+      fonts: [{ family: 'Example', identity: sha(bytes), data: bytes }]
+    });
+  for (const table of [{ 'SVG ': svgTable }, { COLR: colr1, CPAL: cpal }]) {
+    const bytes = fontWithTables(table);
+    assert.equal(inspectFontArtifact(bytes).format, 'truetype');
+    assert.throws(
+      () => fixed(bytes),
+      e => e.code === 'PARAGRAPH_FONT_COLOR_UNSUPPORTED'
+    );
+  }
+  for (const tables of [{ COLR: colr0, CPAL: cpal }, { sbix: bitmapStrike() }]) {
+    const valid = fixed(fontWithTables(tables));
+    try {
+      const rendered = await valid.prepare(request(undefined, { text: 'A', fillColor: 0xff0000 }), {
+        signal: new CancellationController().signal
+      });
+      const pixels = copyImageData2DPixels(rendered.image);
+      assert(
+        pixels.some((value, i) => i % 4 === 1 && value > 128 && pixels[i - 1] === 0 && pixels[i + 1] === 0),
+        'supported color layers and bitmap strikes preserve their authored green'
+      );
+    } finally {
+      valid.dispose();
+    }
+  }
+});
+
+test('a rejected color font generation releases its group and preserves the previous paragraph face', async t => {
+  const bytes = fontWithTables({ 'SVG ': svgTable });
+  const colorFile = {
+    ...files[0],
+    id: 'f_colored',
+    path: 'sources/colored.ttf',
+    sha256: sha(bytes),
+    byteLength: bytes.length
+  };
+  fs.writeFileSync(path.join(root, colorFile.path), bytes);
+  const colorRecipe = {
+    ...recipes[0],
+    resourceId: 'e_colored',
+    sourceFileId: colorFile.id,
+    provenance: {
+      ...recipes[0].provenance,
+      origin: 'Temporary Noto derivative with an authored SVG table',
+      sha256: sha(bytes)
+    }
+  };
+  const colorBuild = await buildContentProject({
+    ...options,
+    projectStore: get(createProjectStore({ ...snapshot, files: [files[0], colorFile] })),
+    recipe: { ...options.recipe, recipes: [recipes[0], colorRecipe] },
+    selectorId: 'e_color_test',
+    transactionId: 't_color_test'
+  });
+  assert.equal(colorBuild.status, 'adopted');
+  const engine = await createEngine({ host: host().adapter });
+  const loader = createFontContentLoader(engine, colorBuild.manifest, rows => {
+    const sources = new Map(
+      rows.map(row => [row.binding.ref, row.id === 'e_colored' ? bytes : originals.get('e_latin')])
+    );
+    return { load: async ref => Uint8Array.from(sources.get(ref)), dispose() {} };
+  });
+  const scope = engine.createScope(),
+    provider = createCanvasKitFontSetProvider({ canvasKit: ck });
+  t.after(async () => {
+    engine.dispose();
+    await provider.close();
+  });
+  const original = await provider.load(scope, loader, ['e_latin']);
+  const before = provider.getStatus();
+  await assert.rejects(provider.load(scope, loader, ['e_colored']), e => e.code === 'PARAGRAPH_FONT_COLOR_UNSUPPORTED');
+  assert.deepEqual(provider.getStatus(), before);
+  assert.equal(loader.getStatus().groups, 1);
+  assert.ok(provider.hasFontSet(original.key));
+  assert(
+    (await provider.prepare(request(original.key, { text: 'A' }), { signal: new CancellationController().signal }))
+      .image
+  );
+  original.dispose();
+  await original.closed;
+  assert.deepEqual(loader.getStatus(), { groups: 0, sourceBytes: 0 });
+  assert.equal(provider.getStatus().sets, 0);
+});

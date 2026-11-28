@@ -24,6 +24,12 @@ A genuine Engine admits only its own Scope and registered cache. One fixed expli
 
 The application owns the provider and its backend module. The provider snapshots registered font bytes and derives an identity from the declared build/module and font identities. Caller-declared hashes are not independently verified by this synchronous adapter. Keep the provider's fonts immutable; a different registered font set requires a new provider and a new Engine/AssetManager lifetime for its paragraph cache. The cache borrows the provider and does not dispose it. After application-owned preparation work and cache/display borrowers have retired, the host explicitly disposes the provider. Engine shutdown owns Scope and AssetManager cleanup; native module/realm lifetime remains with the host.
 
+## Color fonts in CanvasKit paragraphs
+
+For standalone TTF and OTF files, the fixed provider and the manifest-backed font-set provider reject an OpenType `SVG ` table or a `COLR` table newer than version 0 with `PARAGRAPH_FONT_COLOR_UNSUPPORTED`. Check this error when loading optional fonts and keep using the previous font set if a replacement fails. In the bundled renderer an SVG test glyph silently drew the outline in the text color, while its COLRv0 counterpart drew the green palette color. This check leaves bitmap tables and outline fonts on the existing decoder path.
+
+The direct byte API also checks the first face it opens from a TrueType Collection and the visible table directory of WOFF1. It can identify an SVG table in WOFF1 and read an uncompressed COLR version. Compressed WOFF1 COLR data, WOFF2, and other opaque wrappers retain the host decoder's behavior. Supply standalone TTF or OTF when the application requires this admission check. The font asset importer remains usable by other renderers. [OpenType color layers](https://learn.microsoft.com/en-us/typography/opentype/spec/colr) · [OpenType SVG glyphs](https://learn.microsoft.com/en-us/typography/opentype/spec/svg)
+
 ## Prepare and display a paragraph
 
 The application first initializes `hostCanvasKit` and loads `fonts`, whose entries contain `{ family, data: Uint8Array, identity }`. The runnable [paragraph panel](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/README.md) verifies font bytes and supplies the bundled build identity.

@@ -738,6 +738,7 @@
 | --- | --- |
 | `PARAGRAPH_FONT_ALLOCATION_REFUSED` | 段落字体的 `allocation` 被拒绝了。 |
 | `PARAGRAPH_FONT_ALLOCATION_TERMINAL` | 段落字体的 `allocation` 已经结束，不能再使用。 |
+| `PARAGRAPH_FONT_COLOR_UNSUPPORTED` | 这个 CanvasKit 段落字体含有 SVG 字形或高于 0 的 COLR 版本。请改用支持的彩色图层、点阵字形或轮廓字体。 |
 | `PARAGRAPH_FONT_DECODE_REFUSED` | 段落字体的 `decode` 被拒绝了。 |
 | `PARAGRAPH_FONT_NOT_REGISTERED` | 段落使用的字体族没有在它的字体集中注册。 |
 | `PARAGRAPH_FONT_PROVIDER_REFUSED` | 段落字体的 `provider` 被拒绝了。 |

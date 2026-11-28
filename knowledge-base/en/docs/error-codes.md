@@ -738,6 +738,7 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | --- | --- |
 | `PARAGRAPH_FONT_ALLOCATION_REFUSED` | The allocation of a paragraph font was refused. |
 | `PARAGRAPH_FONT_ALLOCATION_TERMINAL` | The allocation of a paragraph font has ended and cannot be used again. |
+| `PARAGRAPH_FONT_COLOR_UNSUPPORTED` | This CanvasKit paragraph font uses SVG or a COLR version above 0. Use supported color layers, a bitmap strike or an outline face. |
 | `PARAGRAPH_FONT_DECODE_REFUSED` | The decode of a paragraph font was refused. |
 | `PARAGRAPH_FONT_NOT_REGISTERED` | The paragraph names a font family that was not registered with its font set. |
 | `PARAGRAPH_FONT_PROVIDER_REFUSED` | The provider of a paragraph font was refused. |

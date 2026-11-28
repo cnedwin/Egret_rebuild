@@ -198,6 +198,8 @@ export const ZH_WRITTEN: Readonly<Record<string, string>> = {
     '一个资源管理器在整个生命周期里只有一个段落缓存，它的引擎里所有段落、UI 叶子和文本编辑器共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。再建一个只会用另一份预算保存同样的光栅。',
   TEXT_CACHE_ALREADY_CREATED:
     '一个资源管理器在整个生命周期里只有一个文本缓存，它的引擎里所有文本字段和标签共用这一个：保留第一次创建的缓存，凡是要缓存的地方都传它。浏览器游戏会为它的标签创建这个缓存。',
+  PARAGRAPH_FONT_COLOR_UNSUPPORTED:
+    '这个 CanvasKit 段落字体含有 SVG 字形或高于 0 的 COLR 版本。请改用支持的彩色图层、点阵字形或轮廓字体。',
   PARAGRAPH_FONT_SET_IDENTITY_COLLISION: '段落字体集中有两个字体的标识相同。',
   PARAGRAPH_FONT_SET_PROVIDER: '交给段落字体集的提供者无效。',
   SEQUENCE_RESET_NOT_PREPARED: '序列重置槽还没有预备。',

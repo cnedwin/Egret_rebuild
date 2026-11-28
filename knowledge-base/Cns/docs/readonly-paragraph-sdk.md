@@ -24,6 +24,12 @@
 
 应用拥有 provider 及其后端模块。provider 快照注册字体字节，并从声明的 build/module 与字体身份构建自身身份。同步 adapter 不独立验证调用者声明的哈希。provider 的字体集合保持不变；不同注册字体集合需要新的 provider，以及用于段落缓存的新 Engine/AssetManager 生命周期。缓存借用 provider，不负责销毁它。应用持有的准备任务及缓存／显示借用全部退役后，由 host 显式销毁 provider。Engine 关闭负责 Scope 和 AssetManager 清理；原生模块／realm 生命周期仍由 host 负责。
 
+## CanvasKit 段落的彩色字体
+
+对于独立 TTF 和 OTF 文件，固定字体提供器和从资源清单加载字体集合的提供器，都会在遇到 OpenType `SVG ` 表或版本高于 0 的 `COLR` 表时返回 `PARAGRAPH_FONT_COLOR_UNSUPPORTED`。应用可以在加载可选字体时捕获这个错误，替换失败后继续使用上一套字体。在内置渲染器上，用作对照的 SVG 字形悄然变成了文字颜色的轮廓，而 COLRv0 字形正确使用了绿色调色板。位图表和普通轮廓字体继续交给现有解码器处理。
+
+直接接收字节的接口还会检查 TrueType 字体集合中实际打开的第一个字体，以及 WOFF1 可见的表目录。它可以识别 WOFF1 中的 SVG 表，也可以读取未压缩的 COLR 版本。WOFF1 中压缩的 COLR、WOFF2 及其他无法直接读取表信息的封装继续沿用宿主解码行为。如果应用依赖这个准入检查，请提供独立 TTF 或 OTF。通用字体资源导入器仍可供其他渲染器使用。[OpenType 彩色图层](https://learn.microsoft.com/en-us/typography/opentype/spec/colr) · [OpenType SVG 字形](https://learn.microsoft.com/en-us/typography/opentype/spec/svg)
+
 ## 准备并显示段落
 
 应用先初始化 `hostCanvasKit`，再加载条目形如 `{ family, data: Uint8Array, identity }` 的 `fonts`。[段落面板示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/paragraph-panel/README.zh-CN.md) 校验字体字节并提供随附 build 身份。
