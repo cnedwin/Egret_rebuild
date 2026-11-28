@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/snowtemple/bake-yard.mjs",
+      "originRole": "Local staging of selected geometry from a separately supplied, pinned game; contains no game model data. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/check-lit-temple.mjs",
+      "originRole": "Behavior check for real seeded hit and effect toggles. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/prepare-matched-browser.mjs",
+      "originRole": "Staging the same compiled engine revision for the browser reference, preserving notices and source identity. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/prepare-yard.mjs",
+      "originRole": "Local game provenance checks, preparation and adapter assembly. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/snowtemple/yard-lighting.mjs",
+      "originRole": "Android sample lighting and probe controls for the pinned Snow Temple yard. Original game rules and art retain their own terms. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-snowtemple-lit-yard.json",
+      "originRole": "Sanitized measurements from the physical Galaxy Z Fold7, with separate clock boundaries. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/world_lighting.rs",
+      "originRole": "Native scene lighting packet validation and draw roles. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/native/src/world_shadow.rs",
+      "originRole": "Context-owned GLES depth target and skinned directional shadow pass. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/world3d-lighting.mjs",
+      "originRole": "Bounded capture of game light, fog, shadow projection and per-draw roles. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

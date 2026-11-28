@@ -5,12 +5,18 @@ use crate::gl::*;
 use crate::gles::link_program;
 use crate::world_frame::{Geometry, StagedMeshes, WorldFrame, SKIN_MAGIC, SKIN_STRIDE};
 use std::{collections::BTreeMap, ptr};
+#[path = "world_shadow.rs"]
+mod shadow;
+use shadow::ShadowMap;
 
 const VERTEX: &[u8] = concat!("#version 300 es\n", include_str!("world_standard.vert"), "\0").as_bytes();
 const FRAGMENT: &[u8] = concat!("#version 300 es\n", include_str!("world_standard.frag"), "\0").as_bytes();
 
 const SKIN_VERTEX: &[u8] = concat!("#version 300 es\n#define EGRET_SKIN_FRAME\n", include_str!("world_standard.vert"), "\0").as_bytes();
 const SKIN_FRAGMENT: &[u8] = concat!("#version 300 es\n#define EGRET_SKIN_FRAME\n", include_str!("world_standard.frag"), "\0").as_bytes();
+
+const LIT_FRAGMENT: &[u8] = concat!("#version 300 es\n#define EGRET_LIT_FRAME\n", include_str!("world_standard.frag"), "\0").as_bytes();
+const SKIN_LIT_FRAGMENT: &[u8] = concat!("#version 300 es\n#define EGRET_LIT_FRAME\n#define EGRET_SKIN_FRAME\n", include_str!("world_standard.frag"), "\0").as_bytes();
 
 pub(super) struct Mesh {
     vao: u32,
@@ -113,13 +119,42 @@ struct WorldProgram {
     has_normal: i32,
     normal_scale: i32,
     emissive: i32,
+    lighting: Option<LightUniforms>,
+}
+
+struct LightUniforms {
+    fill_direction: i32, fill_color: i32, fog_color: i32, fog_density: i32,
+    point_count: i32, point_at: [i32; 8], point_color: [i32; 8],
+    shadow_matrix: i32, shadow_params: i32, receive_shadow: i32,
 }
 
 impl WorldProgram {
-    unsafe fn create(skin: bool) -> Option<Self> {
-        let program = if skin { link_program(SKIN_VERTEX, SKIN_FRAGMENT) } else { link_program(VERTEX, FRAGMENT) }?;
+    unsafe fn create(skin: bool, lit: bool) -> Option<Self> {
+        let fragment = match (skin, lit) {
+            (true, true) => SKIN_LIT_FRAGMENT, (true, false) => SKIN_FRAGMENT,
+            (false, true) => LIT_FRAGMENT, (false, false) => FRAGMENT,
+        };
+        let program = link_program(if skin { SKIN_VERTEX } else { VERTEX }, fragment)?;
         let loc = |s: &[u8]| glGetUniformLocation(program, s.as_ptr().cast());
-        let pipeline = Self {
+        let lighting = if lit {
+            let locations = |name: &str| std::array::from_fn(|i| loc(format!("{name}[{i}]\0").as_bytes()));
+            let u = LightUniforms {
+                fill_direction: loc(b"fillDirection\0"), fill_color: loc(b"fillColor\0"), fog_color: loc(b"fogColor\0"),
+                fog_density: loc(b"fogDensity\0"), point_count: loc(b"pointCount\0"), point_at: locations("pointAt"),
+                point_color: locations("pointColor"), shadow_matrix: loc(b"lightMatrix\0"), shadow_params: loc(b"shadowParams\0"),
+                receive_shadow: loc(b"receiveShadow\0"),
+            };
+            let depth = loc(b"shadowDepth\0");
+            if [depth,u.fill_direction,u.fill_color,u.fog_color,u.fog_density,u.point_count,u.shadow_matrix,
+                u.shadow_params,u.receive_shadow].contains(&-1) || u.point_at.contains(&-1) || u.point_color.contains(&-1) {
+                glDeleteProgram(program);
+                return None;
+            }
+            glUseProgram(program);
+            glUniform1i(depth, 3);
+            Some(u)
+        } else { None };
+        let pipeline = Self { lighting,
             program, view_projection: loc(b"viewProjection\0"), model: loc(b"model\0"), eye: loc(b"eye\0"),
             to_sun: loc(b"toSun\0"), sun: loc(b"sun\0"), sky: loc(b"sky\0"), ground: loc(b"ground\0"),
             ambient: loc(b"ambient\0"), albedo: loc(b"albedo\0"), surface: loc(b"surface\0"), has_map: loc(b"hasMap\0"),
@@ -149,23 +184,26 @@ impl WorldProgram {
 }
 
 pub(crate) struct WorldPipeline {
-    rigid_program: Option<WorldProgram>,
-    skin_program: Option<WorldProgram>,
+    programs: [Option<WorldProgram>; 4],
+    shadow: ShadowMap,
     meshes: BTreeMap<u32, Mesh>,
     pub(super) confirmed: Option<(u32, u32)>,
 }
 
 impl WorldPipeline {
     pub fn create() -> Self {
-        Self { rigid_program: None, skin_program: None, meshes: BTreeMap::new(), confirmed: None }
+        Self { programs: Default::default(), shadow: Default::default(), meshes: BTreeMap::new(), confirmed: None }
     }
 
     pub unsafe fn destroy(&self) {
         for mesh in self.meshes.values() { mesh.destroy(); }
-        for program in [&self.skin_program, &self.rigid_program].into_iter().flatten() {
+        self.shadow.destroy();
+        for program in self.programs.iter().flatten() {
             glDeleteProgram(program.program);
         }
     }
+
+    pub(super) unsafe fn trim_shadow(&mut self, size: u32) { self.shadow.trim(size); }
 
     pub(super) fn mesh_joints(&self, id: u32) -> Option<usize> {
         self.meshes.get(&id).map(|m| m.required_joints)
@@ -193,17 +231,41 @@ impl WorldPipeline {
 
     pub(super) unsafe fn draw(&mut self, frame: &WorldFrame<'_>, white: u32,
                               pages: &[u32; crate::frame::PAGE_SLOTS], data_pages: &[u32; crate::frame::PAGE_SLOTS],
-                              pending: &mut PendingMeshes) -> bool {
+                              pending: &mut PendingMeshes, color_target: u32, physical: [u32;2]) -> bool {
         let skin = frame.format == SKIN_MAGIC || frame.batches.is_some();
-        let slot = if skin { &mut self.skin_program } else { &mut self.rigid_program };
-        if slot.is_none() { *slot = WorldProgram::create(skin); }
+        let lighting = &frame.lighting;
+        let slot = &mut self.programs[usize::from(skin) + 2 * usize::from(lighting.enabled)];
+        if slot.is_none() { *slot = WorldProgram::create(skin, lighting.enabled); }
         let Some(program) = slot.as_ref() else { return false; };
         for g in &frame.geometry {
             if self.meshes.get(&g.id).is_some_and(|m| m.stride == g.stride && m.vertices == g.vertices && m.indices == g.indices) { continue; }
             let Some(uploaded) = Mesh::upload(g) else { return false; };
             pending.0.insert(g.id, uploaded);
         }
+        if lighting.shadow_size > 0 {
+            let rendered = self.shadow.render(frame, &self.meshes, pending);
+            glBindFramebuffer(FRAMEBUFFER, color_target);
+            glViewport(0, 0, physical[0] as i32, physical[1] as i32);
+            if !rendered { return false; }
+        }
         glUseProgram(program.program);
+        if let Some(u) = &program.lighting {
+            for (location, c) in [(u.fill_direction, lighting.fill_direction), (u.fill_color, lighting.fill_color),
+                    (u.fog_color, lighting.fog_color)] {
+                glUniform3f(location, c[0], c[1], c[2]);
+            }
+            glUniform1i(u.point_count, lighting.points.len() as i32);
+            for (i,p) in lighting.points.iter().enumerate() {
+                glUniform4f(u.point_at[i], p[0],p[1],p[2],p[3]);
+                glUniform3f(u.point_color[i], p[4],p[5],p[6]);
+            }
+            let [bias, offset, radius] = lighting.shadow_params;
+            glUniform3f(u.shadow_params, bias, offset, radius / lighting.shadow_size.max(1) as f32);
+            glUniformMatrix4fv(u.shadow_matrix, 1, FALSE, lighting.shadow_matrix.as_ptr());
+            glActiveTexture(TEXTURE0 + 3);
+            glBindTexture(TEXTURE_2D, self.shadow.texture);
+            glActiveTexture(TEXTURE0);
+        }
         glUniformMatrix4fv(program.view_projection, 1, FALSE, frame.view_projection.as_ptr());
         for (location, value) in [
             (program.eye, frame.eye), (program.to_sun, frame.to_sun), (program.sun, frame.sun),
@@ -215,6 +277,11 @@ impl WorldPipeline {
         glCullFace(BACK);
         let mut last_palette = None;
         for draw in &frame.draws {
+            if draw.lighting_policy & 8 != 0 { continue; }
+            if let Some(u) = &program.lighting {
+                glUniform1i(u.receive_shadow, i32::from(draw.lighting_policy & 2 != 0));
+                glUniform1f(u.fog_density, if draw.lighting_policy & 4 != 0 { lighting.fog_density } else { 0. });
+            }
             // Browser World3D reverses winding only for mirrored rigid nodes. A
             // skinned draw carries its bind matrix here, not a rigid node transform.
             let m = &draw.world;

@@ -60,9 +60,9 @@ function caption(game, encounter) {
   if (game.stage === 'gate' && gate && game.time - gate.time < DIALOGUE['lin-gate'].seconds + 0.19) return line('lin-gate');
 }
 
-export function openScene(services) {
+export function openScene(services, createLighting) {
   return openYard(services, {
-    createGateway, frameMeet, caption,
+    createGateway, frameMeet, caption, createLighting,
     messages: ['Gate open', 'Meet Lu Qian', 'Lu Qian', 'Chapter cleared', ...['lin-gate', 'lu-meet', 'lu-demand'].map(line)]
   });
 }
