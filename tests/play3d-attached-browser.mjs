@@ -19,6 +19,7 @@ const html = '<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,
   '<script type="module">' + String.raw`
 import * as gl from '@egret/engine/webgl2/world3d';
 import * as gpu from '@egret/engine/webgpu/world3d';
+import { Bitmap } from '@egret/engine';
 import { Scene3D, Mesh3D, createBoxGeometry3D, createPerspectiveCamera3D, createStandardMaterial3D, createHemisphereLight3D } from '@egret/engine/world3d';
 const require=(ok,why)=>{if(!ok)throw Error(why);};
 const frames=async(n=5)=>{for(let i=0;i<n;i++)await new Promise(resolve=>requestAnimationFrame(resolve));};
@@ -41,7 +42,9 @@ async function run(){
   const order=[];let game,session,firstView,phase='initial',ticks=0,updates=0,worldCalls=0,framesObserved=0,entered=gate(),release=gate();
   const rejection=new Error('controlled asset refusal'),arrangeRejection=new Error('controlled arrange refusal');
   const worldOptions={renderer,scene,camera,autoResize:false,onUpdate(){worldCalls++;},onFrameTiming(s){if(s.outcome==='rendered')framesObserved++;}};
+  const playTimings=[];
   const options={parent:holder,width:192,height:144,backend,audio:false,renderMode:'on-demand',
+    onFrameTiming(sample){playTimings.push(sample);if(playTimings.length===1)throw Error('observer failure is observational');},
     setup(p){order.push('setup:'+phase);if(game===undefined){game=p;p.engine.clock.onTick(p.scope,()=>{ticks++;return undefined;});}else require(game===p,'setup game identity changed');p.rect(12,12,16,16,0xff8030);},
     async world(p){order.push('world:'+phase);require(p===game,'factory borrowed other Play instance');if(phase==='held'||phase==='close'){entered.release();await release.promise;}if(phase==='failure')throw rejection;if(phase==='no-view')return undefined;return worldOptions;},
     arrange(p){require(p===game,'arrange game identity changed');if(phase==='arrange-failure')throw arrangeRejection;},
@@ -53,10 +56,24 @@ async function run(){
     require(order.join(',')==='setup:initial,world:initial','normal setup precedes world factory');
     require(holder.querySelectorAll('canvas').length===2,'one existing 3D and one native 2D canvas');
     await frames();
-    const count=()=>({clock:ticks,world:worldCalls,renderer:renderer.info.frame,timing:framesObserved,updates});
+    const count=()=>({clock:ticks,world:worldCalls,renderer:renderer.info.frame,timing:framesObserved,updates,playTiming:playTimings.length});
     const first=count();await frames(12);const second=count();
     const difference=Object.fromEntries(Object.keys(first).map(k=>[k,second[k]-first[k]]));
     require(difference.clock>3&&difference.clock===difference.world&&difference.clock===difference.renderer&&difference.clock===difference.timing,'one world render for every Play Engine clock tick');
+    require(difference.playTiming===difference.updates,'one Play timing sample per active update callback');
+    require(playTimings.length>=12&&playTimings.every((s,i)=>Object.isFrozen(s)&&Number.isFinite(s.rafTimestampMs)&&s.callbackEndMs>=s.callbackStartMs&&s.updateMs>=0&&s.renderMs>=0&&(i===0||s.id===playTimings[i-1].id+1)),'Play observer did not receive one immutable, ordered sample per actual active loop callback');
+    require(playTimings.some(s=>s.outcome==='submitted')&&playTimings.some(s=>s.outcome==='retained')&&!playTimings.some(s=>s.outcome==='rendered'),'Play must distinguish submission from retained UI');
+    const overStart=playTimings.length,pictures=[];
+    for(let i=0;i<70;i++){
+      const pixels=new Uint8Array(8*8*4).fill(255);pixels[0]=i;
+      const picture=game.scope.use(new Bitmap(await game.browser.textureFromPixels(8,8,pixels)));
+      picture.x=5+(i%10)*12;picture.y=35+Math.floor(i/10)*12;game.ui.addChild(picture);pictures.push(picture);
+      if(i%8===7)await frames(2);
+    }
+    await frames(8);require(playTimings.slice(overStart).some(s=>s.outcome==='refused'),'actual image-budget refusal must not be labeled submitted');
+    const recovering=playTimings.length;for(const picture of pictures.slice(40))game.remove(picture);
+    await frames(10);require(playTimings.slice(recovering).some(s=>s.outcome==='submitted')&&game.browser.loop.state==='running','recoverable refusal must return to actual submission');
+    for(const picture of pictures.slice(0,40))game.remove(picture);await frames();
     require(camera.fov===original.fov&&camera.aspect===original.aspect&&camera.position.every((v,i)=>v===original.position[i])&&scene.children.length===original.children&&scene.background.every((v,i)=>v===original.background[i])&&renderer.exposure===original.exposure&&renderer.toneMapping===original.toneMapping&&renderer.shadowsEnabled===original.shadows&&renderer.postProcess.enabled===original.post,'caller camera, lights, renderer quality or scene changed');
     const duplicate=await outcome(api.play3dAttached({parent:holder,width:192,height:144,backend,audio:false,world:()=>worldOptions}));
     require(duplicate.error?.code==='PLAY_OPTIONS_INVALID'&&holder.querySelectorAll('canvas').length===2&&!firstView.isDisposed,'second live attach either succeeded or damaged original');
@@ -79,7 +96,7 @@ async function run(){
     const initialFailure=await outcome(api.play3dAttached({parent:holder,width:192,height:144,backend,audio:false,world:async()=>{throw rejection;}}));
     require(initialFailure.error===rejection&&holder.querySelectorAll('canvas').length===1&&canvas.isConnected,'initial failure leaked a canvas or damaged borrowed canvas');
     const finalCount=renderer.info.frame;await frames();require(renderer.info.frame===finalCount,'hidden world loop remained after disposal/failure');
-    return{backend,identity,difference,order,duplicateRefused:true,exactIdentity:true,configurationPreserved:original,heldRestartNoFrames:true,failedRestartNoFrames:true,arrangeFailureNoFrames:true,repeatedRestarts:8,uiOnlyRetry:true,borrowedAliveAfterClose:true,lateCloseRefused:true,initialFailureNoCanvasLeak:true};
+    return{backend,identity,difference,order,playTiming:{samples:playTimings.length,outcomes:[...new Set(playTimings.map(s=>s.outcome))]},duplicateRefused:true,exactIdentity:true,configurationPreserved:original,heldRestartNoFrames:true,failedRestartNoFrames:true,arrangeFailureNoFrames:true,repeatedRestarts:8,uiOnlyRetry:true,borrowedAliveAfterClose:true,lateCloseRefused:true,initialFailureNoCanvasLeak:true};
   }finally{release.release();await session?.game.dispose();renderer.dispose();geometry.dispose();material.dispose();}
 }
 window.receipt=await run().then(value=>({ok:true,value}),error=>({ok:false,error:String(error),stack:error.stack}));
