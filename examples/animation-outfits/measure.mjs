@@ -46,22 +46,27 @@ export async function measureOutfits({
         page = await context.newPage();
       try {
         const url = origin + '/examples/animation-outfits/index.html?backend=' + backend;
-        const timed = () =>
-          page.evaluate(async () => {
+        const timed = firstOpen =>
+          page.evaluate(async firstOpen => {
             window.sceneAPI ??= await import('./main.mjs');
-            const start = performance.now();
             try {
-              const state = await window.sceneAPI.open();
-              return { ms: performance.now() - start, state: state.state, errors: state.errors };
+              // Navigation starts the first open. Calling open again here can measure a second generation.
+              const state = await (firstOpen ? window.sceneAPI.ready : window.sceneAPI.open());
+              return {
+                ms: state.openMs,
+                readyAt: state.readyAt,
+                id: state.openingId,
+                state: state.state,
+                errors: state.errors
+              };
             } catch (error) {
-              // A backend this browser cannot start is a row that was not run, not a failure of the measurement.
-              return { ms: performance.now() - start, state: 'failed', errors: [String(error?.code ?? error)] };
+              // Retain startup errors so a missing feature or broken input is visible in the report.
+              return { state: 'failed', errors: [String(error?.code ?? error)] };
             }
-          });
-        const navigate = Date.now();
+          }, firstOpen);
         await page.goto(url);
-        const cold = await timed(),
-          coldFromNavigation = Date.now() - navigate;
+        await page.bringToFront();
+        const cold = await timed(true);
         if (cold.state !== 'ready') {
           report.notRun.push({
             backend,
@@ -69,21 +74,28 @@ export async function measureOutfits({
           });
           continue;
         }
-        const renderer = await page.evaluate(() => {
-          const gl = document.createElement('canvas').getContext('webgl2'),
+        if (cold.id !== 1) throw Error('Expected the original automatic open');
+        const renderer = await page.evaluate(backend => {
+          // Identify the GL context that actually drew the frame. A second GL context cannot identify a WebGPU adapter.
+          if (backend !== 'webgl2') return null;
+          const gl = document.querySelector('canvas').getContext('webgl2'),
             info = gl?.getExtension('WEBGL_debug_renderer_info');
           return info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : null;
-        });
+        }, backend);
         const first = await page.evaluate(n => window.sceneAPI.measure(n), frames);
         // Open again in the same page: the modules are loaded and compiled; the content is fetched again.
         await page.evaluate(() => window.sceneAPI.close());
-        const warm = await timed();
+        const warm = await timed(false);
+        if (warm.state !== 'ready' || warm.id !== 2) throw Error('Expected the first reopened scene');
         const second = await page.evaluate(n => window.sceneAPI.measure(n), frames);
         const closed = await page.evaluate(() => window.sceneAPI.close());
+        if (!software && [first, second].some(run => run.foregroundFrames !== frames))
+          throw Error('Hardware timing requires foreground throughout');
         report.rows.push({
           backend,
           renderer,
-          openMs: { cold: cold.ms, coldFromNavigation, warm: warm.ms },
+          openMs: { cold: cold.ms, coldFromNavigation: cold.readyAt, warm: warm.ms },
+          openingIds: [cold.id, warm.id],
           counts: first.counts,
           afterColdOpen: first,
           afterWarmOpen: second,
@@ -139,4 +151,5 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       );
   }
   for (const row of report.notRun) console.log(row.backend + '  not run: ' + row.reason);
+  if (report.notRun.length) process.exitCode = 1;
 }

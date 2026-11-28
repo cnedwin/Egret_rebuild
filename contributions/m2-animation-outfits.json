@@ -56,6 +56,10 @@
     {
       "path": "examples/animation-outfits/verification-summary.json",
       "originRole": "First-party editable animation/outfit reference, original programmatic content and bounded validation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/animation-outfits/pair-hardware-summary.json",
+      "originRole": "First-party observed desktop geometry, lifecycle and phase timing results from the original animation outfit fixture; Apache-2.0."
     }
   ],
   "documents": [

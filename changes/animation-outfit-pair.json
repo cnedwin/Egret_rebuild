@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Replace a character and spark together in the editable animation scene",
+    "body": "Stage one Spine and sequence RESET pair on the same GPU frame, with cancellation, retry and cleanup. Record foreground Windows WebGL2 and WebGPU phases on the 20-character, 200-sequence scene."
+  },
+  "zh": {
+    "title": "可编辑动画场景支持同时替换角色与火花",
+    "body": "用同一帧准备和提交 Spine 与序列的 RESET 组合，支持取消、重试与回收。记录 20 个角色、200 个序列在 Windows 前台双后端的分段耗时。"
+  }
+}
