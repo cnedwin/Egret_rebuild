@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "verification/d60-shared-frame-desktop-20261128.json",
+      "originRole": "First-party measurements from a physical Windows GPU, containing all 30 desktop timing windows and separate GPU pass timestamps; prepared with AI assistance, Apache-2.0."
+    },
+    {
+      "path": "verification/d60-shared-frame-main-integration-20261128.json",
+      "originRole": "First-party physical desktop results for the fixed shared 2D workload after upstream geometry-admission integration; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/sharedContainedQuad2D.ts",
+      "originRole": "First-party shared 2D helper that expands an admitted, fully contained solid or unit-UV image quad and encodes its six vertex rows. Independently authored with AI assistance, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "verification/d60-shared-frame-final-20261128.json",
+      "originRole": "First-party paired desktop measurements, hardware pixel and ordering checks, and separate GPU pass timestamps for the integrated shared 2D renderer, prepared with AI assistance, Apache-2.0."
+    }
+  ],
+  "documents": []
+}

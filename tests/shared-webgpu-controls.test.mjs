@@ -545,6 +545,14 @@ test('GPU G10 adjacent merge joins A-B-A across pages, keeps explicit barriers, 
       const r = capture(f, () => h.renderSharedFrame(saved)); admitted(r);
       assert.equal(h.getStatus().pendingUploadBytes, logical * 440 + saved.regions.length * 48, '6*52 + 128 per logical image, and 48 per region of the frame');
       const ds = uiPass(r).draws; assert.equal(ds.length, expectedDraws);
+      // Each render pass establishes its own full target. Isolated batches in
+      // the geometry pass retain its viewport and scissor through both draws.
+      for (const [name, arguments_] of [
+        ['setViewport', [0, 0, FRAME.width, FRAME.height, 0, 1]],
+        ['setScissorRect', [0, 0, FRAME.width, FRAME.height]]
+      ]) {
+        assert.deepEqual(r.events.filter(call => call[0] === name).map(call => call.slice(1)), [arguments_, arguments_]);
+      }
       if (sequence.length === 3 && !sequence.includes('|')) {
         // One draw of eighteen vertices; page A is the first unit and page B the second, in the order they are first drawn.
         assert.equal(ds[0].args[0], 18);

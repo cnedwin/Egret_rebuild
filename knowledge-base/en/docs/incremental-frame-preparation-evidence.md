@@ -2,6 +2,52 @@
 
 English | [中文](../../Cns/docs/incremental-frame-preparation-evidence.md)
 
+## Integrated M1 desktop acceptance · 2026-11-28
+
+The RTX 5090 Laptop and Chrome for Testing 157 ran five pairs for each of the three D60 update states. Both roles include the same bitmap resource readers and geometry ownership checks. Reference `05f3676a65b5`, measured candidate `47c5659df0d7`. Each of the 30 windows used 30 seconds of warm-up and 60 seconds of foreground measurement. Values below are milliseconds.
+
+| State | Engine p95, reference → candidate | Candidate Host p95 | Frame interval p95 / p99 | Weighted gap p95 / p99 | GPU pass span p95 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| static | 2.2 → 2.0 | 0.8 | 4.3 / 4.4 | 4.3 / 6.8 | 0.065536 |
+| sparse | 2.4 → 2.1 | 1.0 | 4.3 / 8.3 | 4.3 / 8.4 | 0.065536 |
+| full | 8.1 → 5.1 | 3.2 | 8.5 / 12.5 | 9.8 / 12.2 | 0.065536 |
+
+The enclosing Host span includes preparation and submission. All three state medians meet the 4 ms bound. The full-dirty update-through-render ratio was 0.670 against 1.10. On this GPU and browser, the separate pass timestamps advanced in observed steps of 65,536 ns. They cover the scene-to-resolve interval.
+
+WebGPU pixel and command-count controls passed. WebGL2 matched both revisions pixel for pixel in four transformed and reordered scene states and an additional moving-quad fixture with solid fills, mirrored textures and alpha overlap. The compact encoder executed during the test. Both hosts released their resources on close. The earlier stationary fixture recorded zero compact writes on the geometry-retention path. Continuous movement produced 0, 0, 3, 3, 3 and 3 writes across six frames. An initial command comparison lost signed zero in archived JSON. The two live roles then matched bit for bit on all 84 numeric fields in each frame, including the two negative zeros.
+
+[All 30 windows, controls, GPU measurements and WebGL2 results](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json)
+
+## Fixed desktop SharedFrame2D qualification · 2026-11-28
+
+The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads.
+
+Windows Chrome for Testing 157.0.8103.6, public WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`. All 30 timed windows qualified. The report preserves all individual windows and their checksums. [Machine-readable measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-desktop-20261128.json)
+
+| State | Reference Engine p95 | Candidate Engine p95 | Candidate Host p95 | RAF p95 / p99 | Weighted gap p95 / p99 | GPU pass-span p95 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| static | 2.9 | 2.6 | 0.9 | 4.3 / 4.4 | 4.3 / 7 | 0.065536 |
+| sparse | 3.3 | 3.1 | 1.3 | 4.3 / 8.4 | 7 / 8.6 | 0.065536 |
+| full | 9.1 | 4.9 | 3.4 | 8.4 / 12.5 | 10.2 / 12.6 | 0.065536 |
+
+All times are in milliseconds. The fully dirty update-through-render ratio was 0.5588 against 1.10. Preflight, correctness, operation counts and short diagnostics completed 2, 6, 6 and 6 trials respectively.
+
+GPU timestamps cover the first scene pass through the end of the resolve pass. Each state contributed 60 measured frames in a separate diagnostic. Work submitted before that pass, queue completion delivery, the compositor and display have separate boundaries.
+
+In the separate WebGL2 check, all four authored frames matched byte for byte and preserved draw order. Reordering the meshes changed 658 pixels. Moving and rotating their clipping parent changed 860 pixels. Restoring the scene restored the original image. The host retained zero textures after close.
+
+After #558 moved the geometry ownership check used on every frame, the integration comparison froze main `d88ed3b56b10` and the merged candidate `2afec4c53ab5`. The 121-module SDKs passed six WebGPU pixel trials, six draw-count trials and the four WebGL2 picture and ordering checks. One additional full-dirty pair used the same 30 s warm-up and 60 s measurement: Engine 7.8 → 6.0 ms, Host 6.2 → 4.2 ms. The 4.2 ms enclosing Host observation includes preparation and submission. A single window cannot establish the 4 ms preparation upper bound for this revision. Four subsequent pairs retained this first pair and alternated role order. Across the ten full-dirty windows, the median Engine p95 improved from 9.0 to 6.0 ms and the complete Host from 6.9 to 4.2 ms. Every candidate Host p95 exceeded the 4 ms sufficient bound (4.1–4.9 ms). The integrated revision therefore still lacks an independent preparation bound. This pair is recorded separately from the 30 formal windows above. [Integration measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-main-integration-20261128.json)
+
+## Measurement scope
+
+The paired desktop workload has 10,000 display nodes, 1,000 visible nodes including nine structural nodes, 991 ordered draws, eight levels of clipping, 7,928 draw-to-clip references and 4,992 source triangles. SharedFrame2D also emits 16 ordered barriers. Both roles use the public SharedFrame2D WebGPU path, the same 1024 × 768 surface and a capacity of two real outstanding submissions. Count-based callback intervals, wall-time-weighted complete gaps, update through render, and synchronous host time each retain their own units and sampling interval.
+
+The original acceptance schedule uses five pairs per state, with 30 seconds of warm-up and 60 seconds of measurement for each role. Each reporting value is the median of the five per-run percentiles. The thresholds are 16.7 / 33.4 ms for cadence and duration-weighted gap p95 / p99, 8 ms for Engine p95, 4 ms for CPU preparation, 8 ms for GPU p95 when measured, and 1.10 for the fully dirty same-machine CPU ratio. A containing Host p95 within 4 ms establishes the preparation upper bound. A slower containing span leaves isolated preparation undetermined.
+
+### Earlier baseline-only GPU diagnostic
+
+A separate physical Windows WebGPU diagnostic on revision `56e92dfac4e5` collected 60 steady frames per state after 30 warm-up frames. It timed the interval from the first render pass beginning to the end of the resolve pass on the GPU. The observed endpoint grid was 65,536 ns. Each state had a p95 of 0.065536 ms, with observed intervals of zero or one grid step. This describes GPU work within those pass endpoints on that revision. CPU submission, queue wait before those passes, presentation, and any newer candidate require their own measurements.
+
 ## E20 · Fixed desktop paired qualification, 2026-11-12
 
 Schema 7 used the original M1.1 reference and current candidate on one physical Windows PC in the same Chrome 157/WebGPU environment. Each run warmed for 30 seconds and measured for 60 seconds. The static, exactly 1% changed and full-dirty states each had five pairs. The two preflight, six correctness, six operation-count and six diagnostic trials passed. All 30 formal trials completed and the 15 paired environments qualified. The table reports medians of five trial percentiles in milliseconds.

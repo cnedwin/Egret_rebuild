@@ -1,0 +1,918 @@
+{
+  "schema": "egret.d60.shared-frame2d.desktop-qualification/1",
+  "date": "2026-11-28",
+  "sdk": {
+    "baseline": "05f3676a65b5267df54ed48661d81501ece5f637",
+    "candidate": "47c5659df0d742ac0a4f6a1175c2c8ecd2373b30",
+    "changedWebGPUInputs": [
+      "packages/engine/dist/rendering/packSharedDraws2D.js",
+      "packages/engine/dist/rendering/prepareRectangles2D.js",
+      "packages/engine/dist/rendering/prepareSharedDraws2D.js",
+      "packages/engine/dist/rendering/sharedContainedQuad2D.js",
+      "packages/engine/dist/rendering/sharedPreparationRetention2D.js",
+      "packages/engine/dist/web/WebGPUHost.js"
+    ]
+  },
+  "hardware": {
+    "os": "Windows",
+    "browser": "Chrome for Testing 157.0.8103.6",
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 Laptop GPU (0x00002C58) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "webgpuAdapter": {
+      "vendor": "nvidia",
+      "architecture": "blackwell",
+      "device": "",
+      "description": "",
+      "isFallbackAdapter": false,
+      "subgroupMinSize": 32,
+      "subgroupMaxSize": 32
+    },
+    "backingSize": [
+      1024,
+      768
+    ],
+    "hostPixelRatio": 1
+  },
+  "conditions": {
+    "warmSeconds": 30,
+    "measurementSeconds": 60,
+    "pairsPerState": 5,
+    "logicalNodes": 10000,
+    "visibleDrawCommands": 991,
+    "clipReferences": 7928,
+    "authoredMeshTriangles": 4992,
+    "maxPendingNativeSubmissions": 2
+  },
+  "criteria": {
+    "engineP95Ms": 8,
+    "preparationUpperBoundMs": 4,
+    "rafAndWeightedGapP95Ms": 16.7,
+    "rafAndWeightedGapP99Ms": 33.4,
+    "fullDirtyRatio": 1.1,
+    "gpuRenderPassP95Ms": 8
+  },
+  "validations": {
+    "preflight": {
+      "status": "PASS_PREFLIGHT",
+      "trials": 2,
+      "reportSha256": "111a32c9a68cc777f0cf131c80d5b6488f4521658792a75fbfc013550077ab83"
+    },
+    "correctness": {
+      "status": "PASS_CORRECTNESS",
+      "trials": 6,
+      "reportSha256": "dbe2cd54c4739b996febdecd72d462c044b7534e60c15f0aeefbbf6831025fcd"
+    },
+    "counts": {
+      "status": "PASS_COUNTS",
+      "trials": 6,
+      "reportSha256": "a88daf8d07140712af55329893ac1bfdce597430c797e179e2725ec26b6d6771"
+    },
+    "diagnostic": {
+      "status": "PASS_DIAGNOSTIC",
+      "trials": 6,
+      "reportSha256": "074b87644eb0cfff1c5856f88a68d29fd5f19bc763b5e041aaaf4577962d94ca"
+    }
+  },
+  "webgl2": {
+    "compact": {
+      "states": [
+        {
+          "name": "initial",
+          "rgbaSha256": "2dc2d01861c7729457a7d47c77e1e13ab514640441755616c7bda2d3dd3cb19f",
+          "orderedCommandsSha256": "406da25cd7fdad2093b4f215aa38dbd9c430ece6cc009caf49d496be135a3d97",
+          "writerCalls": 0
+        },
+        {
+          "name": "shift1",
+          "rgbaSha256": "23ffc551e807adad6e28a948e2b87b5f046ee819c219c40bf2a620e427fa3dc2",
+          "orderedCommandsSha256": "d1a30bdd695016d2789c546da8ba180b33e5934264167dcb5a7a15d019a9178e",
+          "writerCalls": 0
+        },
+        {
+          "name": "shift2",
+          "rgbaSha256": "61e1418478c458f10e74e0c5133db300510073754d4b15e10be82407153c4f5d",
+          "orderedCommandsSha256": "160a8a0d65ea811b95669a2b362b4c41e78bd99679b46508fb611a30a0917542",
+          "writerCalls": 3
+        },
+        {
+          "name": "shift3",
+          "rgbaSha256": "30f22cf022995038ada7ce2a46560d1d49577a21cad6d76009e7e9f3bdd46387",
+          "orderedCommandsSha256": "99dd46228298456aa05086af87429ef3298b41741a74072b96436cbdc2482655",
+          "writerCalls": 3
+        },
+        {
+          "name": "shift4",
+          "rgbaSha256": "1308def4d0d12cfdeffa9a41b229007fbebf41af2aae0774845f49594c6e7022",
+          "orderedCommandsSha256": "7464e4da724775f47a928b6e16814c8648c8a6ba8dde2f2e808fa40d1722d585",
+          "writerCalls": 3
+        },
+        {
+          "name": "restore",
+          "rgbaSha256": "2dc2d01861c7729457a7d47c77e1e13ab514640441755616c7bda2d3dd3cb19f",
+          "orderedCommandsSha256": "406da25cd7fdad2093b4f215aa38dbd9c430ece6cc009caf49d496be135a3d97",
+          "writerCalls": 3
+        }
+      ],
+      "candidateWriterCalls": 12,
+      "baselineWriterCalls": 0,
+      "retainedAfterClose": 0,
+      "earlierStaticAttempt": {
+        "status": "FAILED_WRITER_COVERAGE",
+        "reportedCandidateWriterCount": 0,
+        "observedError": "Actual compact quad writer coverage: 0",
+        "candidateRawCoverageSaved": false,
+        "baselineWriterCountRecomputed": 0,
+        "baselineRetainedQuadPixelFrames": 4,
+        "limitation": "The earlier collector asserted before saving candidate quad pixels and V8 ranges. It covered the retained path and cannot qualify the transient compact writer."
+      },
+      "rawAuditSha256": "03ac127f33d4755f6dea6cfb79aebf36778bfa21a8f96f14b816ebd8024fca8a",
+      "signedCommandComparison": {
+        "matched": true,
+        "states": [
+          {
+            "name": "initial",
+            "scalars": 84,
+            "negativeZero": 2
+          },
+          {
+            "name": "shift1",
+            "scalars": 84,
+            "negativeZero": 2
+          },
+          {
+            "name": "shift2",
+            "scalars": 84,
+            "negativeZero": 2
+          },
+          {
+            "name": "shift3",
+            "scalars": 84,
+            "negativeZero": 2
+          },
+          {
+            "name": "shift4",
+            "scalars": 84,
+            "negativeZero": 2
+          },
+          {
+            "name": "restore",
+            "scalars": 84,
+            "negativeZero": 2
+          }
+        ],
+        "reportSha256": "b7c19f3e036ff2d273557308969226fef62a286f6a0b59d34ec094881be2be97"
+      },
+      "earlierMotionAttempt": {
+        "status": "FAILED_LIVE_TO_ARCHIVED_JSON_SIGNED_ZERO",
+        "reused": "Twelve actual per-frame coverage samples and twelve pixel buffers from attempt 01 are retained and checked.",
+        "supplement": "Attempt 02 uses the byte-identical bundles to add IEEE-754 traces; only historical JSON comparisons are made in the JSON number domain."
+      }
+    },
+    "frames": [
+      {
+        "name": "original",
+        "rgbaSha256": "37d8733b59c5b1d583a9a0353e1ba0618ce1355d4290c361707efcb32a69cb5b",
+        "sameCommandOrder": true,
+        "mismatchedPixels": 0
+      },
+      {
+        "name": "reordered",
+        "rgbaSha256": "5e6c109b7d5304c1210bcb15efeebc6ed862bca73fe5b718325f9daa30e8e462",
+        "sameCommandOrder": true,
+        "mismatchedPixels": 0
+      },
+      {
+        "name": "moved",
+        "rgbaSha256": "ecd7452ee4641016e862c51372c52cc6c699ef480512da7a0d099c7ae0c96a44",
+        "sameCommandOrder": true,
+        "mismatchedPixels": 0
+      },
+      {
+        "name": "restored",
+        "rgbaSha256": "37d8733b59c5b1d583a9a0353e1ba0618ce1355d4290c361707efcb32a69cb5b",
+        "sameCommandOrder": true,
+        "mismatchedPixels": 0
+      }
+    ],
+    "reorderedPixels": 658,
+    "movedClipPixels": 860,
+    "retainedTexturesAfterClose": 0
+  },
+  "webgpuPassTimestampMs": {
+    "static": {
+      "renderPassSpanMs": {
+        "count": 60,
+        "p50": 0.065536,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "scenePassMs": {
+        "count": 60,
+        "p50": 0.065536,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "resolvePassMs": {
+        "count": 60,
+        "p50": 0,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "sourceSha256": "7fabf230eaac4e9028a3f3b2f7c9129bc5c6a56a2cc94847124accff7f0b69eb"
+    },
+    "sparse": {
+      "renderPassSpanMs": {
+        "count": 60,
+        "p50": 0.065536,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "scenePassMs": {
+        "count": 60,
+        "p50": 0,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "resolvePassMs": {
+        "count": 60,
+        "p50": 0,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "sourceSha256": "2d0aeac125dea5e9e52e9ff7e2adad48f2ee86ea14513041efeee4509dbe1c59"
+    },
+    "full": {
+      "renderPassSpanMs": {
+        "count": 60,
+        "p50": 0.065536,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "scenePassMs": {
+        "count": 60,
+        "p50": 0.065536,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "resolvePassMs": {
+        "count": 60,
+        "p50": 0,
+        "p95": 0.065536,
+        "p99": 0.065536,
+        "maximum": 0.065536
+      },
+      "sourceSha256": "77cb5305619cc1ee4176dadd434079e8131aa23a8bc976fa3e50cc141bdaeb0b"
+    }
+  },
+  "timing": {
+    "aggregate": "Median of five quantiles per role and state. Every timed trial is included.",
+    "medians": {
+      "static": {
+        "baseline": {
+          "updateThroughRenderP95": 2.199999988079071,
+          "engineP95": 2.199999988079071,
+          "hostP95": 0.800000011920929,
+          "intervalP95": 4.30000000000291,
+          "intervalP99": 4.400000000001455,
+          "wallGapP95": 4.300000011920929,
+          "wallGapP99": 7
+        },
+        "candidate": {
+          "updateThroughRenderP95": 2,
+          "engineP95": 2,
+          "hostP95": 0.800000011920929,
+          "intervalP95": 4.30000000000291,
+          "intervalP99": 4.400000000001455,
+          "wallGapP95": 4.300000011920929,
+          "wallGapP99": 6.800000011920929
+        }
+      },
+      "sparse": {
+        "baseline": {
+          "updateThroughRenderP95": 2.4000000059604645,
+          "engineP95": 2.4000000059604645,
+          "hostP95": 1.0999999940395355,
+          "intervalP95": 4.30000000000291,
+          "intervalP99": 8.30000000000291,
+          "wallGapP95": 5.9000000059604645,
+          "wallGapP99": 8.5
+        },
+        "candidate": {
+          "updateThroughRenderP95": 2.199999988079071,
+          "engineP95": 2.100000023841858,
+          "hostP95": 1,
+          "intervalP95": 4.30000000000291,
+          "intervalP99": 8.299999999995634,
+          "wallGapP95": 4.300000011920929,
+          "wallGapP99": 8.400000005960464
+        }
+      },
+      "full": {
+        "baseline": {
+          "updateThroughRenderP95": 9.099999994039536,
+          "engineP95": 8.100000023841858,
+          "hostP95": 6.5,
+          "intervalP95": 12.60000000000582,
+          "intervalP99": 16.69999999999709,
+          "wallGapP95": 12.700000017881393,
+          "wallGapP99": 17.899999976158142
+        },
+        "candidate": {
+          "updateThroughRenderP95": 6.0999999940395355,
+          "engineP95": 5.100000023841858,
+          "hostP95": 3.2000000178813934,
+          "intervalP95": 8.5,
+          "intervalP99": 12.5,
+          "wallGapP95": 9.800000011920929,
+          "wallGapP99": 12.200000017881393
+        }
+      }
+    },
+    "fullDirtyRatio": 0.6703296701137376,
+    "formalReportSha256": "89eaab75a9dce6aa9488202380064d22090fe2697f04908e9d80d18de8b36c22",
+    "runs": [
+      {
+        "round": 1,
+        "state": "static",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 14244,
+        "stalled": 154,
+        "updateThroughRenderP95": 2.699999988079071,
+        "engineP95": 2.699999988079071,
+        "hostP95": 1,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.19999999999709,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 8.299999982118607,
+        "maximumGap": 15.899999976158142,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.90000000596,
+        "reportSha256": "0349103bb244f92f6ae6543dc0ec78a7a5aaeec31c4bd53ae219be1e81815e5a"
+      },
+      {
+        "round": 1,
+        "state": "static",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 14089,
+        "stalled": 307,
+        "updateThroughRenderP95": 2.9000000059604645,
+        "engineP95": 2.9000000059604645,
+        "hostP95": 1,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.39999999999418,
+        "weightedGapP95": 4.700000017881393,
+        "weightedGapP99": 8.5,
+        "maximumGap": 12.699999988079071,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.19999998808,
+        "reportSha256": "1a06d551b35276a9d11615eb8d54611ba4e16c6200d735a9ad977d79a3cfed17"
+      },
+      {
+        "round": 1,
+        "state": "sparse",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 13756,
+        "stalled": 631,
+        "updateThroughRenderP95": 3.5999999940395355,
+        "engineP95": 3.5,
+        "hostP95": 1.5,
+        "rafP95": 4.400000000001455,
+        "rafP99": 8.39999999999418,
+        "weightedGapP95": 8.300000011920929,
+        "weightedGapP99": 8.600000023841858,
+        "maximumGap": 13.5,
+        "foregroundSamples": 92,
+        "observedWallMs": 60002,
+        "reportSha256": "60635a9901007777dfdf9bf2a91a1bc8ad47caf0b75fb175897b866438190ad6"
+      },
+      {
+        "round": 1,
+        "state": "sparse",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 13757,
+        "stalled": 621,
+        "updateThroughRenderP95": 3.4000000059604645,
+        "engineP95": 3.4000000059604645,
+        "hostP95": 1.4000000059604645,
+        "rafP95": 4.400000000008731,
+        "rafP99": 8.400000000001455,
+        "weightedGapP95": 8.400000005960464,
+        "weightedGapP99": 9.899999976158142,
+        "maximumGap": 15.400000005960464,
+        "foregroundSamples": 92,
+        "observedWallMs": 60003.79999998212,
+        "reportSha256": "63bb6aabcda2f0a70c161d50a07ae909c0e6e75c7ca97f63e240f3b3c68a932f"
+      },
+      {
+        "round": 1,
+        "state": "full",
+        "role": "baseline",
+        "status": "FAIL_TIMING_TARGET",
+        "admitted": 5798,
+        "stalled": 3674,
+        "updateThroughRenderP95": 10,
+        "engineP95": 8.800000011920929,
+        "hostP95": 6.9000000059604645,
+        "rafP95": 16.59999999999127,
+        "rafP99": 16.700000000004366,
+        "weightedGapP95": 12.900000005960464,
+        "weightedGapP99": 17.899999976158142,
+        "maximumGap": 26.5,
+        "foregroundSamples": 92,
+        "observedWallMs": 60004.09999999404,
+        "reportSha256": "200f5825eabf57c15854968cb878c967170db61e83a41791f47d54decc56589d"
+      },
+      {
+        "round": 1,
+        "state": "full",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 8046,
+        "stalled": 6000,
+        "updateThroughRenderP95": 6.5,
+        "engineP95": 5.300000011920929,
+        "hostP95": 3.2000000178813934,
+        "rafP95": 8.5,
+        "rafP99": 12.5,
+        "weightedGapP95": 10.099999994039536,
+        "weightedGapP99": 11.699999988079071,
+        "maximumGap": 15,
+        "foregroundSamples": 92,
+        "observedWallMs": 60002.40000000596,
+        "reportSha256": "55c820d7bc41c3b473a648e5e69a16c42c705015f52a19c8be12e74db0b6a751"
+      },
+      {
+        "round": 2,
+        "state": "sparse",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 13975,
+        "stalled": 414,
+        "updateThroughRenderP95": 3.4000000059604645,
+        "engineP95": 3.300000011920929,
+        "hostP95": 1.399999976158142,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.39999999999418,
+        "weightedGapP95": 7.5,
+        "weightedGapP99": 8.899999976158142,
+        "maximumGap": 13.400000005960464,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.69999998808,
+        "reportSha256": "ce57c15bfbe91fdbe28b49bc1970a7eb7fe413d8dc4ebd48667a7df42cc90086"
+      },
+      {
+        "round": 2,
+        "state": "sparse",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 13862,
+        "stalled": 532,
+        "updateThroughRenderP95": 3.5,
+        "engineP95": 3.5,
+        "hostP95": 1.5,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.39999999999418,
+        "weightedGapP95": 8.099999994039536,
+        "weightedGapP99": 8.5,
+        "maximumGap": 12.699999988079071,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.69999998808,
+        "reportSha256": "5061134e9d185ba8c1d5bfe2809bb541953e8fbe114454fa84427742e683852a"
+      },
+      {
+        "round": 2,
+        "state": "full",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 9043,
+        "stalled": 5057,
+        "updateThroughRenderP95": 6.0999999940395355,
+        "engineP95": 5.100000023841858,
+        "hostP95": 3.2000000178813934,
+        "rafP95": 8.5,
+        "rafP99": 12.5,
+        "weightedGapP95": 9.200000017881393,
+        "weightedGapP99": 11.699999988079071,
+        "maximumGap": 15.300000011920929,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.09999999404,
+        "reportSha256": "dd470cd820ca447e3226694a5a4d282d0d911363e0d2adcd54d4fb1fdedaf4da"
+      },
+      {
+        "round": 2,
+        "state": "full",
+        "role": "baseline",
+        "status": "FAIL_TIMING_TARGET",
+        "admitted": 6656,
+        "stalled": 3581,
+        "updateThroughRenderP95": 9.099999994039536,
+        "engineP95": 8.100000023841858,
+        "hostP95": 6.5,
+        "rafP95": 12.60000000000582,
+        "rafP99": 16.69999999999709,
+        "weightedGapP95": 12.700000017881393,
+        "weightedGapP99": 18.299999982118607,
+        "maximumGap": 24.299999982118607,
+        "foregroundSamples": 92,
+        "observedWallMs": 60002.69999998808,
+        "reportSha256": "ee4a18dc3e97f86e89e71e213b1becfa0d1481205ce1b2f2f86f34abeb1fb3db"
+      },
+      {
+        "round": 2,
+        "state": "static",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 13952,
+        "stalled": 445,
+        "updateThroughRenderP95": 2.5999999940395355,
+        "engineP95": 2.5999999940395355,
+        "hostP95": 0.9000000059604645,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.39999999999418,
+        "weightedGapP95": 8.199999988079071,
+        "weightedGapP99": 8.900000005960464,
+        "maximumGap": 12.599999994039536,
+        "foregroundSamples": 92,
+        "observedWallMs": 60003.69999998808,
+        "reportSha256": "2298f16e74c87758b0813016031dcff0e6eb918bfae277af0fce7c965155330a"
+      },
+      {
+        "round": 2,
+        "state": "static",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 13818,
+        "stalled": 578,
+        "updateThroughRenderP95": 3,
+        "engineP95": 3,
+        "hostP95": 1.0999999940395355,
+        "rafP95": 4.400000000008731,
+        "rafP99": 8.400000000001455,
+        "weightedGapP95": 8.300000011920929,
+        "weightedGapP99": 9.699999988079071,
+        "maximumGap": 13.099999994039536,
+        "foregroundSamples": 92,
+        "observedWallMs": 60003.60000002384,
+        "reportSha256": "1527a2c4e62f451d476153d5288719bca0455d49a6a478542b2f94515153e2fb"
+      },
+      {
+        "round": 3,
+        "state": "full",
+        "role": "baseline",
+        "status": "FAIL_TIMING_TARGET",
+        "admitted": 5785,
+        "stalled": 3841,
+        "updateThroughRenderP95": 10.099999994039536,
+        "engineP95": 9.099999994039536,
+        "hostP95": 7.300000011920929,
+        "rafP95": 16.599999999998545,
+        "rafP99": 16.70000000001164,
+        "weightedGapP95": 13.099999994039536,
+        "weightedGapP99": 18.100000023841858,
+        "maximumGap": 32.5,
+        "foregroundSamples": 91,
+        "observedWallMs": 60002.40000000596,
+        "reportSha256": "51b64111bd159380091daa2e91f447d22e576de9ab9c6954c020459367d250d1"
+      },
+      {
+        "round": 3,
+        "state": "full",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 9393,
+        "stalled": 4560,
+        "updateThroughRenderP95": 6.199999988079071,
+        "engineP95": 5.399999976158142,
+        "hostP95": 3.5,
+        "rafP95": 8.5,
+        "rafP99": 12.5,
+        "weightedGapP95": 10.099999994039536,
+        "weightedGapP99": 12.5,
+        "maximumGap": 18,
+        "foregroundSamples": 91,
+        "observedWallMs": 60003.30000001192,
+        "reportSha256": "ea88234168ffa46f46fb43ef166da9af03f2fe802a07e479585e95d247b228d4"
+      },
+      {
+        "round": 3,
+        "state": "static",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 14298,
+        "stalled": 103,
+        "updateThroughRenderP95": 2.199999988079071,
+        "engineP95": 2.199999988079071,
+        "hostP95": 0.800000011920929,
+        "rafP95": 4.30000000000291,
+        "rafP99": 4.400000000001455,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 7,
+        "maximumGap": 8.5,
+        "foregroundSamples": 92,
+        "observedWallMs": 60002.19999998808,
+        "reportSha256": "d1385df525fae81818af90f570d4da4b6d2df585788c88d29ab539588f4d0c9d"
+      },
+      {
+        "round": 3,
+        "state": "static",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 14297,
+        "stalled": 104,
+        "updateThroughRenderP95": 2,
+        "engineP95": 2,
+        "hostP95": 0.800000011920929,
+        "rafP95": 4.30000000000291,
+        "rafP99": 4.399999999994179,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 6.5999999940395355,
+        "maximumGap": 12.5,
+        "foregroundSamples": 92,
+        "observedWallMs": 60003.29999998212,
+        "reportSha256": "da91cfe858cce29aa05c5426b9e8d1941b7ab97cc52a768801a2b29bb5d433f9"
+      },
+      {
+        "round": 3,
+        "state": "sparse",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 14149,
+        "stalled": 251,
+        "updateThroughRenderP95": 2.300000011920929,
+        "engineP95": 2.2999999821186066,
+        "hostP95": 1.0999999940395355,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.30000000000291,
+        "weightedGapP95": 4.4000000059604645,
+        "weightedGapP99": 8.400000005960464,
+        "maximumGap": 9.599999994039536,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.79999998212,
+        "reportSha256": "4a0e760c0f1416c63365baac93edd1bf67489d5cdc1dcd8916a550f8dff3b118"
+      },
+      {
+        "round": 3,
+        "state": "sparse",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 14220,
+        "stalled": 179,
+        "updateThroughRenderP95": 2.100000023841858,
+        "engineP95": 2.0999999940395355,
+        "hostP95": 1,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.299999999995634,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 8.400000005960464,
+        "maximumGap": 12.599999994039536,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.40000000596,
+        "reportSha256": "e086a296598185316af9cc72fe51ab9b0a2a1fce4dca0c12504631a48a746869"
+      },
+      {
+        "round": 4,
+        "state": "static",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 14299,
+        "stalled": 98,
+        "updateThroughRenderP95": 1.9000000059604645,
+        "engineP95": 1.9000000059604645,
+        "hostP95": 0.7999999821186066,
+        "rafP95": 4.30000000000291,
+        "rafP99": 4.30000000000291,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 6.5,
+        "maximumGap": 21.099999994039536,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.69999998808,
+        "reportSha256": "1410ef2bf56f311612e97d98034812bf6acceec1922f6e8bb84597f83ee5c394"
+      },
+      {
+        "round": 4,
+        "state": "static",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 14313,
+        "stalled": 88,
+        "updateThroughRenderP95": 2,
+        "engineP95": 2,
+        "hostP95": 0.800000011920929,
+        "rafP95": 4.30000000000291,
+        "rafP99": 4.399999999994179,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 6.5999999940395355,
+        "maximumGap": 11,
+        "foregroundSamples": 92,
+        "observedWallMs": 60001.19999998808,
+        "reportSha256": "cb8384732ddd68c0c65845107fe4ec75670e9f7840cdec15047a8056ecde2987"
+      },
+      {
+        "round": 4,
+        "state": "sparse",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 14294,
+        "stalled": 100,
+        "updateThroughRenderP95": 2.199999988079071,
+        "engineP95": 2.100000023841858,
+        "hostP95": 1,
+        "rafP95": 4.30000000000291,
+        "rafP99": 4.30000000000291,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 7.0999999940395355,
+        "maximumGap": 13.599999994039536,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.90000000596,
+        "reportSha256": "d1d7e520357b6b5187875741d26144eed346ea922e8435eb4cd2c5e24ee05f49"
+      },
+      {
+        "round": 4,
+        "state": "sparse",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 14239,
+        "stalled": 161,
+        "updateThroughRenderP95": 2.399999976158142,
+        "engineP95": 2.300000011920929,
+        "hostP95": 1.0999999940395355,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.299999999988358,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 8.200000017881393,
+        "maximumGap": 10.5,
+        "foregroundSamples": 92,
+        "observedWallMs": 60001.70000001788,
+        "reportSha256": "1f02146a525005b5c6403ee3499ed27e8ebb1339e928969882a2d546d2d0abbb"
+      },
+      {
+        "round": 4,
+        "state": "full",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 10247,
+        "stalled": 3969,
+        "updateThroughRenderP95": 5.100000023841858,
+        "engineP95": 4.5,
+        "hostP95": 2.899999976158142,
+        "rafP95": 8.400000000008731,
+        "rafP99": 12.5,
+        "weightedGapP95": 9.699999988079071,
+        "weightedGapP99": 12.200000017881393,
+        "maximumGap": 14.400000005960464,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.30000001192,
+        "reportSha256": "456e2f6f8d000476d2a9389015bb63bf47b68caf618e86b3ef418bb2297af6f7"
+      },
+      {
+        "round": 4,
+        "state": "full",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 7075,
+        "stalled": 3104,
+        "updateThroughRenderP95": 8.300000011920929,
+        "engineP95": 7.699999988079071,
+        "hostP95": 6.300000011920929,
+        "rafP95": 12.599999999998545,
+        "rafP99": 12.80000000000291,
+        "weightedGapP95": 11.900000005960464,
+        "weightedGapP99": 17.099999994039536,
+        "maximumGap": 26.400000005960464,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.29999998212,
+        "reportSha256": "572285ffe3b3984595f8b043d2ae821da07c58bc7c04838db146a23bc4b7420a"
+      },
+      {
+        "round": 5,
+        "state": "sparse",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 14056,
+        "stalled": 343,
+        "updateThroughRenderP95": 2.4000000059604645,
+        "engineP95": 2.4000000059604645,
+        "hostP95": 1.0999999940395355,
+        "rafP95": 4.30000000000291,
+        "rafP99": 8.30000000000291,
+        "weightedGapP95": 5.9000000059604645,
+        "weightedGapP99": 8.5,
+        "maximumGap": 12.5,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.90000000596,
+        "reportSha256": "4968a8d0ff45f367af53c528ea71db1231aceb602e654a81b8b8781e09d3deb0"
+      },
+      {
+        "round": 5,
+        "state": "sparse",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 14289,
+        "stalled": 105,
+        "updateThroughRenderP95": 2.199999988079071,
+        "engineP95": 2.100000023841858,
+        "hostP95": 1,
+        "rafP95": 4.30000000000291,
+        "rafP99": 4.400000000001455,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 7.0999999940395355,
+        "maximumGap": 10.699999988079071,
+        "foregroundSamples": 92,
+        "observedWallMs": 60001.19999998808,
+        "reportSha256": "6306853072c2b4a6a062355bd6f6e8331930eac19cb51e19aae2af00c7e025cd"
+      },
+      {
+        "round": 5,
+        "state": "full",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 7101,
+        "stalled": 3084,
+        "updateThroughRenderP95": 8.099999994039536,
+        "engineP95": 7.5,
+        "hostP95": 6.0999999940395355,
+        "rafP95": 12.599999999998545,
+        "rafP99": 12.80000000000291,
+        "weightedGapP95": 12.099999994039536,
+        "weightedGapP99": 17,
+        "maximumGap": 25.5,
+        "foregroundSamples": 92,
+        "observedWallMs": 60006.89999997616,
+        "reportSha256": "ea9eed8bdf2853a832e8ddf4f33c6b8c6d2c1c55bbf5ea4994ddaaa8d585af49"
+      },
+      {
+        "round": 5,
+        "state": "full",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 10220,
+        "stalled": 4008,
+        "updateThroughRenderP95": 5.199999988079071,
+        "engineP95": 4.5999999940395355,
+        "hostP95": 3,
+        "rafP95": 8.400000000008731,
+        "rafP99": 12.5,
+        "weightedGapP95": 9.800000011920929,
+        "weightedGapP99": 12.299999982118607,
+        "maximumGap": 14.300000011920929,
+        "foregroundSamples": 92,
+        "observedWallMs": 60004.20000001788,
+        "reportSha256": "16451d337be03bc58d564fc23383fd9a096eb7c6a3948a453e56dc93c3fb566c"
+      },
+      {
+        "round": 5,
+        "state": "static",
+        "role": "baseline",
+        "status": "PASS_TIMING",
+        "admitted": 14308,
+        "stalled": 93,
+        "updateThroughRenderP95": 2,
+        "engineP95": 2,
+        "hostP95": 0.800000011920929,
+        "rafP95": 4.30000000000291,
+        "rafP99": 4.400000000001455,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 6.800000011920929,
+        "maximumGap": 11.600000023841858,
+        "foregroundSamples": 92,
+        "observedWallMs": 60001,
+        "reportSha256": "374465999319279aecefcd56f5e012354938dba75df11a8bfe13b64b8c261239"
+      },
+      {
+        "round": 5,
+        "state": "static",
+        "role": "candidate",
+        "status": "PASS_TIMING",
+        "admitted": 14305,
+        "stalled": 96,
+        "updateThroughRenderP95": 2,
+        "engineP95": 2,
+        "hostP95": 0.800000011920929,
+        "rafP95": 4.30000000000291,
+        "rafP99": 4.400000000001455,
+        "weightedGapP95": 4.300000011920929,
+        "weightedGapP99": 6.800000011920929,
+        "maximumGap": 8.5,
+        "foregroundSamples": 92,
+        "observedWallMs": 60000.90000000596,
+        "reportSha256": "49fe4c15decf928ceb2ffc9647998e3006bcd8df3dd45d88c3809fe1989959f8"
+      }
+    ]
+  },
+  "limits": [
+    "The enclosing synchronous Host span is a conservative upper bound for preparation CPU time.",
+    "GPU timestamps cover the first scene pass to the final resolve pass. Texture writes preceding the first pass, completion delivery, compositor and display are outside the interval.",
+    "WebGL2 results verify pixel identity and order. The D60 timing uses the desktop WebGPU host."
+  ]
+}

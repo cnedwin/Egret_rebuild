@@ -1,0 +1,333 @@
+{
+  "schema": "egret.d60.shared-frame2d.integration/1",
+  "date": "2026-11-28",
+  "sdk": {
+    "base": "d88ed3b56b1072cd7642b634d905ac6a38940549",
+    "target": "2afec4c53ab5a62b5651bc2782906ddc917263a4",
+    "changed": [
+      "packages/engine/dist/rendering/prepareRectangles2D.js",
+      "packages/engine/dist/rendering/prepareSharedDraws2D.js",
+      "packages/engine/dist/web/WebGPUHost.js"
+    ],
+    "modules": {
+      "baseline": 121,
+      "candidate": 121
+    }
+  },
+  "context": "The upstream geometry admission refactor is present in both roles. The formal 30-window qualification uses the preceding frozen pair; these results are a separate integration check.",
+  "workload": "The same 10,000-node D60 workload and original two-pending-frame capacity.",
+  "checks": {
+    "correctness": {
+      "status": "PASS_CORRECTNESS",
+      "trials": 6,
+      "sha256": "1542697d22e347ad88fbcb1131269ff40f3d235ec2f7b30304f728da65fbfc99"
+    },
+    "counts": {
+      "status": "PASS_COUNTS",
+      "trials": 6,
+      "sha256": "9528b64d9f22ef12a4933adad3565d0fe3df80c3a512141b0799abacf7a71685"
+    }
+  },
+  "webgl2": {
+    "frames": [
+      {
+        "name": "original",
+        "rgbaSha256": "37d8733b59c5b1d583a9a0353e1ba0618ce1355d4290c361707efcb32a69cb5b",
+        "mismatchedPixels": 0,
+        "sameCommandOrder": true
+      },
+      {
+        "name": "reordered",
+        "rgbaSha256": "5e6c109b7d5304c1210bcb15efeebc6ed862bca73fe5b718325f9daa30e8e462",
+        "mismatchedPixels": 0,
+        "sameCommandOrder": true
+      },
+      {
+        "name": "moved",
+        "rgbaSha256": "ecd7452ee4641016e862c51372c52cc6c699ef480512da7a0d099c7ae0c96a44",
+        "mismatchedPixels": 0,
+        "sameCommandOrder": true
+      },
+      {
+        "name": "restored",
+        "rgbaSha256": "37d8733b59c5b1d583a9a0353e1ba0618ce1355d4290c361707efcb32a69cb5b",
+        "mismatchedPixels": 0,
+        "sameCommandOrder": true
+      }
+    ],
+    "reorderedPixels": 658,
+    "movedClipPixels": 860,
+    "retainedTexturesAfterClose": 0,
+    "reportSha256": "8dc7fc93de747089d7867975132c91e4f4a4200e96054864a8bec5d2612be97c"
+  },
+  "fullDirty": {
+    "warmSeconds": 30,
+    "measurementSeconds": 60,
+    "pairs": 1,
+    "runs": {
+      "baseline": {
+        "status": "PASS_TIMING",
+        "admittedFrames": 6761,
+        "stalledCallbacks": 4105,
+        "engineP95Ms": 7.800000011920929,
+        "hostP95Ms": 6.200000017881393,
+        "updateThroughRenderP95Ms": 8.600000023841858,
+        "rafP95Ms": 12.60000000000582,
+        "rafP99Ms": 16.69999999999709,
+        "weightedGapP95Ms": 12.599999994039536,
+        "weightedGapP99Ms": 17.900000005960464,
+        "osForegroundSamples": 91,
+        "rawReportSha256": "55aba17f02d150e55fc098234e1436557e5f2ab054c31e3f664791a1c8046e42"
+      },
+      "candidate": {
+        "status": "PASS_TIMING",
+        "admittedFrames": 8251,
+        "stalledCallbacks": 5599,
+        "engineP95Ms": 6,
+        "hostP95Ms": 4.200000017881393,
+        "updateThroughRenderP95Ms": 6.9000000059604645,
+        "rafP95Ms": 12.39999999999418,
+        "rafP99Ms": 12.599999999998545,
+        "weightedGapP95Ms": 10.800000011920929,
+        "weightedGapP99Ms": 13.800000011920929,
+        "osForegroundSamples": 91,
+        "rawReportSha256": "f4478b6383def2f4ac9ece8f9f9e21817954d5dd77ec62ae69fe23d8db3fa091"
+      }
+    }
+  },
+  "fullDirtySupplement": {
+    "schema": "egret-issue55-integrated-full-dirty-pairs/1",
+    "scope": "Five full-dirty integration pairs only; R5 is the original complete three-state qualification.",
+    "recipeSha256": "07ad25282f3ef3cc2053c1b19ff6dfa94d031b87c7dccbbeec9724e01e35cb8b",
+    "roles": {
+      "baseline": "d88ed3b56b1072cd7642b634d905ac6a38940549",
+      "candidate": "2afec4c53ab5a62b5651bc2782906ddc917263a4"
+    },
+    "windows": [
+      {
+        "round": 1,
+        "role": "baseline",
+        "scope": "full",
+        "status": "PASS_TIMING",
+        "reportSha256": "55aba17f02d150e55fc098234e1436557e5f2ab054c31e3f664791a1c8046e42",
+        "values": {
+          "engineP95": 7.800000011920929,
+          "hostP95": 6.200000017881393,
+          "updateThroughRenderP95": 8.600000023841858,
+          "intervalP95": 12.60000000000582,
+          "intervalP99": 16.69999999999709,
+          "wallGapP95": 12.599999994039536,
+          "wallGapP99": 17.900000005960464
+        },
+        "admitted": 6761,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 1,
+        "role": "candidate",
+        "scope": "full",
+        "status": "PASS_TIMING",
+        "reportSha256": "f4478b6383def2f4ac9ece8f9f9e21817954d5dd77ec62ae69fe23d8db3fa091",
+        "values": {
+          "engineP95": 6,
+          "hostP95": 4.200000017881393,
+          "updateThroughRenderP95": 6.9000000059604645,
+          "intervalP95": 12.39999999999418,
+          "intervalP99": 12.599999999998545,
+          "wallGapP95": 10.800000011920929,
+          "wallGapP99": 13.800000011920929
+        },
+        "admitted": 8251,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 2,
+        "role": "candidate",
+        "scope": "full",
+        "status": "PASS_TIMING",
+        "reportSha256": "73898e205c14d78a1d41b64ae65b5eb0af9f412f02c2cd06e1c094c22272f353",
+        "values": {
+          "engineP95": 5.800000011920929,
+          "hostP95": 4.0999999940395355,
+          "updateThroughRenderP95": 6.699999988079071,
+          "intervalP95": 8.60000000000582,
+          "intervalP99": 12.599999999991269,
+          "wallGapP95": 10.700000017881393,
+          "wallGapP99": 12.099999994039536
+        },
+        "admitted": 8498,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 2,
+        "role": "baseline",
+        "scope": "full",
+        "status": "PASS_TIMING",
+        "reportSha256": "274666a0d3dcb32ea71982a2192407f3d70e2159c3ad22c41f77342843f606cf",
+        "values": {
+          "engineP95": 8,
+          "hostP95": 6.300000011920929,
+          "updateThroughRenderP95": 9,
+          "intervalP95": 12.60000000000582,
+          "intervalP99": 16.69999999999709,
+          "wallGapP95": 12.699999988079071,
+          "wallGapP99": 18.099999994039536
+        },
+        "admitted": 6737,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 3,
+        "role": "baseline",
+        "scope": "full",
+        "status": "FAIL_TIMING_TARGET",
+        "reportSha256": "37ec1bd4adacc727dce37638d343bac6567ea06a8c05e8f2e9847cc473ce3d14",
+        "values": {
+          "engineP95": 9.099999994039536,
+          "hostP95": 7.199999988079071,
+          "updateThroughRenderP95": 10.099999994039536,
+          "intervalP95": 16.599999999998545,
+          "intervalP99": 16.70000000001164,
+          "wallGapP95": 14.099999994039536,
+          "wallGapP99": 18.5
+        },
+        "admitted": 5893,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 3,
+        "role": "candidate",
+        "scope": "full",
+        "status": "PASS_TIMING",
+        "reportSha256": "c54195aed99123af1e22877ae62d9b68d3815dccbb2e3ea975e9eaa69ad69962",
+        "values": {
+          "engineP95": 6.5,
+          "hostP95": 4.799999982118607,
+          "updateThroughRenderP95": 7.300000011920929,
+          "intervalP95": 12.5,
+          "intervalP99": 12.599999999998545,
+          "wallGapP95": 11,
+          "wallGapP99": 14
+        },
+        "admitted": 7969,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 4,
+        "role": "candidate",
+        "scope": "full",
+        "status": "PASS_TIMING",
+        "reportSha256": "f1ed4c2dd05596490dcb15bc83153435ad5a7aa2836cc724ed6d5a556ef274b2",
+        "values": {
+          "engineP95": 6,
+          "hostP95": 4.199999988079071,
+          "updateThroughRenderP95": 7,
+          "intervalP95": 8.5,
+          "intervalP99": 12.5,
+          "wallGapP95": 10.600000023841858,
+          "wallGapP99": 12.300000011920929
+        },
+        "admitted": 8225,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 4,
+        "role": "baseline",
+        "scope": "full",
+        "status": "FAIL_TIMING_TARGET",
+        "reportSha256": "f93a2edf3eae639cb059fc8e0417e977a2f61010b68ff51d8b4211b5148ac267",
+        "values": {
+          "engineP95": 9,
+          "hostP95": 6.9000000059604645,
+          "updateThroughRenderP95": 10.099999994039536,
+          "intervalP95": 12.60000000000582,
+          "intervalP99": 16.69999999999709,
+          "wallGapP95": 12.700000017881393,
+          "wallGapP99": 17.5
+        },
+        "admitted": 5447,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 5,
+        "role": "baseline",
+        "scope": "full",
+        "status": "FAIL_TIMING_TARGET",
+        "reportSha256": "50957c183add25781ed401c13d456c2db982c81a7ead5676d7c46d1304c828a3",
+        "values": {
+          "engineP95": 11.5,
+          "hostP95": 8.900000005960464,
+          "updateThroughRenderP95": 12.800000011920929,
+          "intervalP95": 16.69999999999709,
+          "intervalP99": 20.80000000000291,
+          "wallGapP95": 16.799999982118607,
+          "wallGapP99": 22.69999998807907
+        },
+        "admitted": 4755,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      },
+      {
+        "round": 5,
+        "role": "candidate",
+        "scope": "full",
+        "status": "PASS_TIMING",
+        "reportSha256": "323000d8673afa8563a217e9615fef5de40880fd520d47f188a154a84adb07d4",
+        "values": {
+          "engineP95": 6.800000011920929,
+          "hostP95": 4.9000000059604645,
+          "updateThroughRenderP95": 7.800000011920929,
+          "intervalP95": 12.5,
+          "intervalP99": 12.60000000000582,
+          "wallGapP95": 11.300000011920929,
+          "wallGapP99": 14.700000017881393
+        },
+        "admitted": 7411,
+        "osForegroundSamples": 91,
+        "acSamples": 19
+      }
+    ],
+    "terminalQualified": 10,
+    "medians": {
+      "baseline": {
+        "engineP95": 9,
+        "hostP95": 6.9000000059604645,
+        "updateThroughRenderP95": 10.099999994039536,
+        "intervalP95": 12.60000000000582,
+        "intervalP99": 16.69999999999709,
+        "wallGapP95": 12.700000017881393,
+        "wallGapP99": 18.099999994039536
+      },
+      "candidate": {
+        "engineP95": 6,
+        "hostP95": 4.200000017881393,
+        "updateThroughRenderP95": 7,
+        "intervalP95": 12.39999999999418,
+        "intervalP99": 12.599999999998545,
+        "wallGapP95": 10.800000011920929,
+        "wallGapP99": 13.800000011920929
+      }
+    },
+    "updateThroughRenderRatio": 0.6930693073397044,
+    "criteria": {
+      "engine": true,
+      "containingHostAtMost4ms": false,
+      "countP95": true,
+      "countP99": true,
+      "wallP95": true,
+      "wallP99": true,
+      "relative": true
+    },
+    "status": "PREPARATION_NOT_PROVEN",
+    "hostConclusion": "This integrated campaign has not independently bounded preparation to 4 ms.",
+    "independentReceiptSha256": "95a345af6321b76fde90a5008144449a39ecc6ec292bc5c4c0bb16360f13f2b6"
+  }
+}

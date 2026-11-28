@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Reuse clipping work in shared 2D rendering",
+    "body": "Sibling draws can share the resolved clip stack. Strictly convex clipped triangles and quads use a bounded fast path. WebGPU sets the full viewport and scissor once per geometry pass. WebGPU and WebGL2 encode fully visible, axis-aligned fills and unit-UV images directly. For partially clipped shapes, consecutive clip edges that contain the shape can share one budget check, preserving vertex order and the original limits."
+  },
+  "zh": {
+    "title": "共享 2D 渲染复用裁剪计算",
+    "body": "相邻绘制可复用已解析的裁剪栈。裁剪后的严格凸三角形和四边形可在原预算内快速完成准备。WebGPU 在每次几何渲染通道中设置一次全幅视口和裁剪区域。WebGPU 和 WebGL2 可直接编码完整可见的轴对齐填充矩形及使用单位 UV 坐标的图像。形状被部分裁剪时，可一次核对连续多条无须切割的边所消耗的预算，保留顶点顺序和原有上限。"
+  }
+}
