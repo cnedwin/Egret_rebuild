@@ -59,7 +59,8 @@ function identifyNativeSurface(context: TextContext, canvas: HTMLCanvasElement):
     typeof realm.CanvasRenderingContext2D !== 'function' ||
     !(canvas instanceof realm.HTMLCanvasElement) ||
     !(context instanceof realm.CanvasRenderingContext2D)
-  ) return;
+  )
+    return;
   // Calling the platform getter also checks the underlying Web IDL brand.
   const getter = Object.getOwnPropertyDescriptor(realm.CanvasRenderingContext2D.prototype, 'canvas')?.get;
   if (getter && getter.call(context) === canvas) nativeSurfaces.add(context);
@@ -173,9 +174,10 @@ function surface<T>(
     if (attributes.colorSpace !== 'srgb') throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
     // An untouched alpha-enabled canvas starts transparent. Only probe when the
     // native implementation omits alpha from its reported context attributes.
-    if (attributes.alpha !== true && !(
-      attributes.alpha === undefined && nativeSurfaces.has(context) && context.getImageData(0, 0, 1, 1).data[3] === 0
-    )) {
+    if (
+      attributes.alpha !== true &&
+      !(attributes.alpha === undefined && nativeSurfaces.has(context) && context.getImageData(0, 0, 1, 1).data[3] === 0)
+    ) {
       throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
     }
     const readbackHint = typeof attributes.willReadFrequently === 'boolean' ? attributes.willReadFrequently : undefined;
