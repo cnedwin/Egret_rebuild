@@ -166,7 +166,7 @@ Use them: a hit wants a sound, a burst and a small shake; a death wants a flash.
 | Call | Does |
 | --- | --- |
 | `game.bar({ x, y, width, height, value, max, color, back, layer })` | A bar of health, time or power, on the ui unless `layer`; `x`, `y` is its top left. Set `bar.value` and it slides there; a fall leaves a pale trail |
-| `game.toast('Saved')` | A short notice at the top that fades after 2 seconds, or `{ seconds }`; several stack |
+| `game.toast('Saved')` | Fading notice; handle has active, bounds and close. Optional placement uses safe-area anchor, offsets, UI scale and passive foreground; persistent notices can be closed |
 | `await game.say('words', { who, choices, color, speed })` | A box of words at the bottom, shown letter by letter and wrapped; words longer than a box holds (about three lines) go on in a second box. It does not pause the game: check `game.asking`. Space, Enter, Z or a tap shows the rest, another closes it. With `choices` it gives the index chosen with the arrows and Enter or a tap; without, undefined |
 | `await game.menu(['Start', 'Quit'], { title })` | A list in the middle of the stage; gives the index chosen |
 | `game.asking` | Whether a box of words or a menu is open; an `update` can return early while it is |
@@ -198,6 +198,7 @@ Parts are `panel` (`layout` `'free'`, `'row'` or `'column'`, `gap`, `padding`, `
 | Call | Does |
 | --- | --- |
 | `await game.confirm('Quit?', { yes, no, title, skin, noColor })` | A question over everything, one at a time: true or false. Questions and long labels wrap within the safe area; the optional skin uses the view theme. Enter, Space or a pad's A is yes; Escape or B is no |
+| `await game.select([{ value: 1, text: 'First' }], { title: 'Choose', value: 1, cancel: 'Cancel' })` | Named scrolling selection modal; returns selected value or undefined on cancel; optional AbortSignal. Native view edit(name, options) owns text input lifecycle; game.editing reports an open editor |
 | `game.hints([{ action: 'Jump', key: 'space', pad: 'a', touch: 'Tap' }])` | A bar at the bottom naming what keys do, in the words of what the player uses (`game.device`: `'keyboard'`, `'gamepad'`, `'touch'`, `'mouse'`); `.set(list)`, `.dispose()` |
 | `await game.loading([load1, load2], { label, atOnce })` | `Loading 1 / 2` and a bar while promises, or functions that give them, finish; gives their results in order |
 | `game.badges.set('mail/system', 3)` | Red dots that add up: `game.badges.count('mail')` is 3 too. Bind one to a part: `mail: { badge: () => game.badges.count('mail') }` |
