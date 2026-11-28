@@ -313,7 +313,8 @@ update(seconds, game) {
 ```
 
 - `game.bar({ x, y, width = 120, height = 12, value, max = 1, color, back, layer })` 是一个精灵，`x`、`y` 为左上角。设置 `value` 后会滑到该值，范围在 0 到 `max` 之间。
-- `game.toast(words, { seconds = 2, color })` 在顶部显示一条会淡出的提示，多条会叠放。
+- `game.toast(words, { seconds = 2, color })` 仍在顶部显示一条会淡出的提示，多条会叠放。返回的句柄具有 `active`、`bounds`（按舞台单位报告可见卡片）、`close()`。
+- 可定位提示始终在安全区内，转屏或视图缩放时跟随锚点。例如：`game.toast('已保存', { color: 0xf3edde, background: 0x284e3d, backgroundAlpha: 1, borderColor: 0x88612f, placement: { anchor: 'top-right', offsetX: 8, offsetY: 64, maxWidth: 240, fontSize: 16, foreground: true } })`。偏移和尺寸默认使用 UI 单位，可显式指定 `units: 'stage'`；上、下分别支持左、中、右，共六种锚点。前景提示位于普通视图之上，而非转场遮罩之上，不改变焦点、不拦截指针。文字在卡片内换行，叠放超出安全区时优先显示最新提示。可定位提示使用 UI 帧时间，即使玩法暂停也能正常消失。`persistent: true` 持续显示，替换状态后关闭对应句柄。队列最多十六条、换行最多十二行，工作量有明确上限。旧版不定位提示的样式和计时保持不变。
 - `await game.say(words, { who, choices, color, speed = 40 })` 在底部打开对白框，文字按每秒 `speed` 个字逐字出现，并按框宽换行。空格、回车、Z 或轻触会显示剩余文字，再按一次关闭，返回 `undefined`。带 `choices` 时，文字全部出现后显示选项；方向键或 W、S 以及摇杆移动选择，回车、空格、Z 或轻触确认，返回选项序号。对白框打开期间再请求的对白会排队。超出一个框容量的文字会分到后续的框里，每个框按一次关闭，选项随最后一个框出现。
 - `await game.menu(items, { title, x, y, width, color })` 在舞台中间（或 `x`、`y` 处）打开一个列表，以同样方式选择并返回序号。新菜单会关闭正在打开的菜单，被关闭的菜单不返回结果。
 - `game.asking` 表示是否有对白框或菜单打开。

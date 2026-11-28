@@ -27,9 +27,18 @@ export type {
   PlayTilesOptions
 } from './BrowserPlay.js';
 export { PlayBar, verticalPlayWords, wrapPlayWords } from './playWidgets.js';
-export type { PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
+export type {
+  PlayBarOptions,
+  PlayMenuOptions,
+  PlaySayOptions,
+  PlayToastOptions,
+  PlayToastPlacement,
+  PlayToastHandle
+} from './playWidgets.js';
 export { SFX_PRESETS, isSfxRecipe, synthesizeSfx } from './playSfx.js';
 export { MUSIC_MOODS, MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js';
 export type { MusicMood, MusicOptions, MusicPart, MusicPiece } from './playMusic.js';
 export type { PlayFloatingStickOptions, PlayStickOptions, PlayTouchButtonOptions } from './playTouch.js';
 export type { SfxRecipe, SfxTone, SfxWave } from './playSfx.js';
+
+export type { PlayViewEditOptions, PlaySelectChoice, PlaySelectOptions } from './playView.js';

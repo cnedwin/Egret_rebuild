@@ -5308,8 +5308,8 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
   if(Object.hasOwn(keyboardAllowed,resolved)&&!keyboardAllowed[resolved].includes(relative))throw new Error('M3.3: keyboard private target escaped its exact optional owners: '+relative);
  }
 }
-// Platform text entry: one browser entry with one implementation module, which no other module imports,
-// and which depends on nothing of the engine but the error type.
+// Platform text entry: a browser-only implementation, also used by the opt-in Play view editor.
+// Its implementation depends on nothing of the engine but the error type; no other entry may use it.
 const textInputTypes=['BrowserTextInput','BrowserTextInputOptions','BrowserTextInputRequest','BrowserTextInputRectangle','BrowserTextInputChange','BrowserTextInputSnapshot','BrowserTextInputMode','BrowserTextInputEnterHint'];
 for(const [file,typed] of [['packages/engine/web/textInput.ts',true],['packages/engine/dist/web/textInput.js',false],['packages/engine/dist/web/textInput.d.ts',true]]){
  const surface=mouseExports(uiRead(file),file);
@@ -5329,7 +5329,21 @@ for(const [file,expected] of Object.entries(textInputImports)){
  if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Text input: exact graph mismatch: '+file);
  if(/\b(?:setTimeout|setInterval|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Text input: acquired automatic host work: '+file);
 }
-const textInputAllowed={'web/BrowserTextInput.js':['web/textInput.ts'],'dist/web/BrowserTextInput.js':['dist/web/textInput.js','dist/web/textInput.d.ts']};
+const textInputAllowed={'web/BrowserTextInput.js':['web/textInput.ts','web/playView.ts'],'dist/web/BrowserTextInput.js':['dist/web/textInput.js','dist/web/textInput.d.ts','dist/web/playView.js','dist/web/playView.d.ts']};
+const playTextInputClauses={
+ 'web/playView.ts':[{kind:'value',members:['createBrowserTextInput']},{kind:'type',members:['BrowserTextInput','BrowserTextInputRequest']}],
+ 'dist/web/playView.js':[{kind:'value',members:['createBrowserTextInput']}],
+ 'dist/web/playView.d.ts':[{kind:'type',members:['BrowserTextInputRequest']}],
+};
+for(const [file,expected] of Object.entries(playTextInputClauses)){
+ const body=uiRead('packages/engine/'+file),target='./BrowserTextInput.js';
+ const observed=[...body.matchAll(/\bimport(\s+type)?\s*\{([^}]+)\}\s*from\s*['"]\.\/BrowserTextInput\.js['"]/g)]
+  .map(match=>({kind:match[1]?'type':'value',members:match[2].split(',').map(name=>name.trim()).filter(Boolean)}));
+ const key=row=>m15ClauseKey({operation:'import',target,...row});
+ const references=uiGraphEdges(body).filter(([,specifier])=>specifier===target).length;
+ if(references!==observed.length||!mouseSame(observed.map(key),expected.map(key)))
+  throw new Error('Text input: Play editor exact input clauses mismatch: '+file);
+}
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
  if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');
  for(const [,target] of uiGraphEdges(uiRead('packages/engine/'+relative)))if(target.startsWith('.')){
@@ -5681,7 +5695,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
 // mixer is built on the runtime alone, the browser module on the mixer entry alone, neither starts
 // a timer or a request, and no other entry has either.
 const audioTypes=['AudioBackend','AudioBackendBus','AudioBackendSound','AudioBackendStart','AudioBackendVoice','AudioBus','AudioBusOptions','AudioBusSnapshot','AudioEndReason','AudioFade','AudioMixer','AudioMixerOptions','AudioMixerSnapshot','AudioMixerState','AudioMusicOptions','AudioPlayOptions','AudioSound','AudioVoice','AudioVoiceState'];
-const audioBrowserTypes=['BrowserAudio','BrowserAudioOptions','WebAudioBackend','WebAudioBackendOptions'],audioBrowserValues=['createBrowserAudio','createWebAudioBackend'];
+const audioBrowserTypes=['BrowserAudio','BrowserAudioOptions','BrowserAudioInput','BrowserAudioInputOptions','BrowserAudioGlide','WebAudioBackend','WebAudioBackendOptions'],audioBrowserValues=['createBrowserAudio','createWebAudioBackend'];
 for(const [file,value,types] of [['packages/engine/src/audio.ts','createAudioMixer',audioTypes],['packages/engine/dist/audio.js','createAudioMixer',[]],['packages/engine/dist/audio.d.ts','createAudioMixer',audioTypes],
  ['packages/engine/web/audio.ts',audioBrowserValues,audioBrowserTypes],['packages/engine/dist/web/audio.js',audioBrowserValues,[]],['packages/engine/dist/web/audio.d.ts',audioBrowserValues,audioBrowserTypes]]){
  const surface=mouseExports(uiRead(file),file);

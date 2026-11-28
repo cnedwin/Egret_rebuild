@@ -87,6 +87,21 @@ const save = createSaveStore({ key: 'canal', version: 1, defaults: fresh, storag
 
 `browserSaveStorage()` 是页面的本地存储；页面没有可用存储时（无痕窗口、被屏蔽的站点）改用内存，`persistent` 说明是哪一种。`createMemorySaveStorage()` 是供测试使用的同类存储。
 
+### 玩家文件的导入和导出
+
+```js
+import { pickBrowserTextFile, downloadBrowserTextFile } from '@egret/engine/web/kit';
+
+// 直接在玩家可信的导入或导出按键回调中调用。
+void pickBrowserTextFile({ accept: '.json,application/json', maxBytes: 4 * 1024 * 1024 })
+  .then(file => { if (file) restoreCheckedSave(file.text); }, showImportError);
+downloadBrowserTextFile('saved-game.json', serializeSave(), { mimeType: 'application/json' });
+```
+
+选择器由玩家决定共享哪一个文件，不接受路径。 `accept` 仅提示文件类型，应用内容前仍须校验。结果包含 `name`、 `text`、 `size`（字节）和 `type`。默认最大 16 MiB，读取前检查大小。取消返回 `undefined`（浏览器的取消事件或可选的 AbortSignal），完成、失败、中止都会移除临时文件控件。无效参数、超限、没有可用页面或没有当前用户激活时拒绝。不要先等待其他异步操作才调用选择器或下载：浏览器要求当前用户激活。缺少取消事件的旧浏览器可用中止信号结束请求，不根据不可靠的焦点事件猜测原生对话框是否关闭。
+
+下载把文本交给浏览器管理的本地下载，移除临时链接并释放对象 URL。参数是文件名而不是路径。返回只表示发起请求，不能证明文件已经写入或确定目录。这两个接口都不修改游戏的持久存储及存档格式。
+
 ## 可以复现的随机数
 
 ```js

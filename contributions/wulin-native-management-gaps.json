@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-view-rich-budget.mjs",
+      "originRole": "First-party native rich-view paragraph cache browser regression with original generated labels; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/BrowserFileExchange.ts",
+      "originRole": "First-party optional browser text file exchange adapter, user-initiated picker, bounded text read and download lifecycle; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/placed-toast-browser.mjs",
+      "originRole": "First-party browser regression for positioned native notices, input pass-through, screen scaling and lifetime; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/play-form-file-browser.mjs",
+      "originRole": "First-party browser regressions for selection, native view editing and user-initiated text file exchange; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

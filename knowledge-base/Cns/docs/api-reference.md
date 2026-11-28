@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1532 个导出，其中 19 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1545 个导出，其中 22 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -1594,17 +1594,22 @@
 | `BrowserInputActionsOptions` | 接口 | Where input actions read the browser: which element takes keys and pointers, whether gamepads count, and which keys pass through. |
 | `browserLanguages` | 函数 | The languages the player's browser asks for, most wanted first, such as `['zh-CN', 'en']`; empty where unknown. |
 | `browserSaveStorage` | 函数 | The page's local storage as a save storage, or a memory stand-in where the page has none (a private window, a blocked site): every call is guarded, so a save never throws for want of storage. |
+| `BrowserTextDownloadOptions` | 接口 |  |
+| `BrowserTextFile` | 接口 | A text file explicitly chosen by the player. |
+| `BrowserTextFileOptions` | 接口 |  |
 | `BundleCache` | 接口 | Where fetched bundle entries are kept between visits; used as `cache` of `openBrowserAssetBundle`. |
 | `createBrowserImageTextureProvider` | 函数 | An asset provider that reads bytes with `readBytes` and decodes them with the browser. |
 | `createTouchButton` | 函数 | Makes `element` an on-screen button that holds `binding` (such as `Touch:jump`) while a finger is on it. |
 | `createTouchStick` | 函数 | A stick that appears where a finger lands in its zone of `element` and follows it. |
 | `decodeBrowserImage` | 函数 | Decodes PNG, JPEG, WebP, GIF or AVIF bytes with the browser and returns a texture of them. |
+| `downloadBrowserTextFile` | 函数 | Offer the caller's text as a local download from a fresh user activation. |
 | `fitBrowserImageSize` | 函数 | The size a picture is read at: its own, or scaled down evenly to fit both limits. |
 | `IndexedDBSaveStorage` | 接口 | Save storage kept in IndexedDB: flush pending writes, and close it. |
 | `IndexedDBSaveStorageOptions` | 接口 | IndexedDB save storage to open: its database name, the IndexedDB to use, and what is called on an error. |
 | `openBrowserAssetBundle` | 函数 | Opens the bundle at `url`, reading its index. |
 | `openBrowserBundleCache` | 函数 | A bundle cache in the Cache API under `name`. |
 | `openIndexedDBSaveStorage` | 函数 | A save storage over IndexedDB. |
+| `pickBrowserTextFile` | 函数 | Show the platform's single-file chooser from a fresh user activation. |
 | `prefersReducedMotion` | 函数 | Whether the player has asked the system for less motion (`prefers-reduced-motion: reduce`): then leave out shakes, flashes, parallax and large moves that are only for show. |
 | `sniffBrowserImageFormat` | 函数 | The picture format the bytes start with, or undefined when they start like none of them. |
 | `textureFromCanvas` | 函数 | Reads a canvas, image or bitmap as a texture of straight RGBA bytes, scaled down when it is larger than the limits. |
@@ -1675,6 +1680,8 @@
 | `PlayPointerLockOptions` | 接口 | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
 | `PlayPointerLockResult` | 接口 |  |
 | `PlaySayOptions` | 接口 | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
+| `PlaySelectChoice` | 接口 | A valued item in a native, scrollable selection dialog. |
+| `PlaySelectOptions` | 接口 | The current selection, visible title, cancellation label and skin. |
 | `PlaySfx` | 接口 | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
 | `PlayStickOptions` | 接口 | A touch stick to show: where, how large, and whether it shows without touch. |
 | `PlayTapActivation` | 类型 | The information supplied to game.onTap. |
@@ -1682,10 +1689,13 @@
 | `PlayTextOptions` | 接口 | Text to show: where, how large, its color and alignment, whether bold, its layer, baseline and locale. |
 | `PlayTiles` | 接口 | A map of tiles: read and change its cells, and push a sprite out of its solid ones. |
 | `PlayTilesOptions` | 接口 | A map of tiles to make: the size of a tile, where its top left corner is, its colours, which characters are solid, and its layer. |
-| `PlayToastOptions` | 接口 | A toast to show: how long and in what color. |
+| `PlayToastHandle` | 接口 |  |
+| `PlayToastOptions` | 接口 | A toast to show: duration, color and optional safe-area placement/skin. |
+| `PlayToastPlacement` | 接口 | A notice's position in the safe area. |
 | `PlayTouchButtonOptions` | 接口 | A touch button to show: where, the key it presses, how large, its color, and whether it shows without touch. |
 | `PlayUiScale` | 接口 | The size on the screen that play's views keep: at least `min` and at most `max` CSS pixels a unit of theirs. |
 | `PlayViewActivation` | 类型 | The second argument of a view's tap binding; target and currentTarget are part names, if named. |
+| `PlayViewEditOptions` | 类型 | Native text input over the current clipped rectangle of a named view part. |
 | `ScreenPin` | 接口 | Where a box is held in an area: on each axis a distance in from one edge, or from the middle. |
 | `SFX_PRESETS` | 值 | The effects every game is given, by name. |
 | `SfxRecipe` | 类型 | An effect: one tone, or several played one after another. |
@@ -1725,6 +1735,9 @@
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
 | `BrowserAudio` | 接口 | A sound mixer playing through Web Audio, with its context and output node. |
+| `BrowserAudioGlide` | 接口 | An exponential approach to a parameter's new value, with a time constant in seconds. |
+| `BrowserAudioInput` | 接口 | A mixer-owned input strip; its upstream generators, decoded buffers and transport are caller-owned. |
+| `BrowserAudioInputOptions` | 接口 | Initial levels for an external input. |
 | `BrowserAudioOptions` | 接口 | Browser audio to make: its audio context, what unlocks it, whether it pauses when the page is hidden, and its limiter. |
 | `createBrowserAudio` | 函数 | Sound for a page on Web Audio. |
 | `createWebAudioBackend` | 函数 | A Web Audio backend for a mixer the page makes itself with `createAudioMixer`: const backend = createWebAudioBackend(); const mixer = createAudioMixer({ backend, locked: backend.locked }); backend.attach(mixer); `createBrowserAudio` does these three steps in one call. |

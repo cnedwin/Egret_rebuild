@@ -453,6 +453,16 @@ await scenario('what the browser renders is what was asked for, sample by sample
   near(m.pause.after[1], 0.2, 0.005, 'the place it paused at');
   near(m.pause.after[2], 0.2, 0.005, 'the place it kept');
   assert.deepEqual(m.pause.after.slice(3), ['ended', 'finished']);
+  // The caller's oscillator is gated by a separate duck, the bus and the master; disposing its input cuts only that path.
+  [0.0625, 0.125, 0.0625, 0, 0.125, 0].forEach((expected, index) => {
+    m.externalChain.heard[index].forEach(value => near(value, expected, 0.002, 'external input measure ' + index));
+  });
+  assert.deepEqual(m.externalChain.after, [true, true, 0]);
+  // The distant source really loses high frequencies, and changes direction and filter when the camera asks.
+  assert.ok(m.externalSpatial.near[0] > 0.15 && m.externalSpatial.near[1] < 0.02 && m.externalSpatial.near[2] < 0.002);
+  assert.ok(
+    m.externalSpatial.moved[0] > 0.15 && m.externalSpatial.moved[1] > 0.12 && m.externalSpatial.moved[2] < 0.002
+  );
 });
 
 fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');

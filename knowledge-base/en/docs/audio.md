@@ -43,6 +43,34 @@ The adapter fetches nothing for `decode`: a game reads the bytes of a file the w
 
 What fails where nothing can be returned, in a listener of the page or after the output was asked to start or stop, goes to `onError`, or to `reportError` of the page without it.
 
+## External browser sources
+
+A game synthesizer, decoded clip with a custom envelope, or camera-based listener can use the same named buses without handing its source scheduling over to the mixer:
+
+```js
+const audio = createBrowserAudio({ buses: ['music', 'effects', 'voice', 'ambience'] });
+const line = scope.use(audio.createInput('ambience', { volume: 0.72, pan: 0, lowpass: 6300 }));
+const oscillator = audio.context.createOscillator();
+oscillator.connect(line.input);  // an owned Web Audio graph must use this same context
+if (audio.mixer.state === 'running') {
+  oscillator.start();
+  oscillator.stop(audio.context.currentTime + 0.5);
+}
+// A listener computed by the game from camera focus and zoom, not from an HRTF listener.
+line.setVolume(0.4, { timeConstant: 0.085 });
+line.setPan?.(-0.3, { timeConstant: 0.075 });
+line.setLowpass?.(1600, { timeConstant: 0.12 });
+// Speech events can duck the ambience without changing the player's volume preference.
+line.setDuck(0.30, { timeConstant: 0.025 });
+line.setDuck(1, { timeConstant: 0.12 });
+```
+
+`createInput(bus, options)` is also available from an attached `createWebAudioBackend`. The bus must exist (`master` names the master bus). Its `volume` and independent `duck` are 0–1 and default to 1. Requesting `pan` (-1–1) creates a native equal-power stereo panner, not the balance used by decoded mixer voices; `setPan` is absent on a host without that processor. Requesting `lowpass` enables a lowpass filter whose positive cutoff in Hz is no higher than half the context's sample rate. Without the option the filter and `setLowpass` are absent. The chain is input → optional lowpass → volume → optional panner → duck → named bus → master. The initial settings apply directly. Subsequent changes glide continuously from their current level; without `timeConstant` the ramp is five milliseconds, while a time constant (>0 to 60 seconds) gives an exponential approach.
+
+The named bus's mute and volume, the master, optional limiter, unlock and context suspension apply to caller-generated sounds too. The caller must still stop, disconnect and budget source nodes and schedule one-shots only while the mixer is running. `stopAll()` and decoded voice counts do not own the external graph. An input is a rented strip: `dispose()` disconnects its own graph, does not stop the caller's generator or disconnect its unrelated connections, and released inputs are also withdrawn when their mixer is disposed. Up to 64 live input strips per Web Audio backend; exhausting them is `AUDIO_BUDGET`. Unknown buses or malformed numbers are refused before allocation. Audio contexts supplied by the caller remain open as before.
+
+A browser's system `SpeechSynthesis` has no `AudioNode` output to connect; its own volume and cancel/lifecycle remain separate. Its actual start/end/error callbacks may control `setDuck`, as may recorded narration routed through the mixer. This is explicit event-driven attenuation, not automatic level detection or support for routing system speech. It does not change the physical World3D listener or its HRTF.
+
 ## Sounds
 
 `mixer.decode(bytes)` takes the bytes of one encoded file, as a `Uint8Array` or an `ArrayBuffer`, and settles with a sound that is decoded whole. The bytes stay the caller's and unchanged. Which formats decode is the browser's matter: WAV, MP3 and AAC in MP4 decode in every current browser, Ogg Vorbis and Opus in most.
@@ -144,7 +172,7 @@ At most `maxVoices` voices are not over at once (32 unless said otherwise, up to
 
 ## Another host
 
-`createAudioMixer({ backend, ... })` takes anything that implements `AudioBackend`: a clock in seconds that stands still while the output is suspended, `decode`, `createBus`, `start`, `suspend`, `resume` and `close`. `openStream` is optional, and so is `position` of a voice, for a host that knows better than the clock where a sound is. A host that is not a page writes those and has the same mixer. `locked: true` and `mixer.setLocked(...)` are how a host says whether it lets the output start.
+`createAudioMixer({ backend, ... })` takes anything that implements `AudioBackend`: a clock in seconds that stands still while the output is suspended, `decode`, `createBus`, `start`, `suspend`, `resume` and `close`. The mixer passes the bus name as the optional second argument to `createBus`; existing backends can ignore it. `openStream` is optional, and so is `position` of a voice, for a host that knows better than the clock where a sound is. A host that is not a page writes those and has the same mixer. `locked: true` and `mixer.setLocked(...)` are how a host says whether it lets the output start.
 
 ## Errors
 
@@ -160,7 +188,7 @@ Every error is an `EgretError` with one of these codes.
 | `AUDIO_URL_INVALID` | `stream` was given no address, or one longer than 4096 characters |
 | `AUDIO_STREAM_UNSUPPORTED` | The backend cannot play a file as it reads it |
 | `AUDIO_STREAM_FAILED` | The file could not be opened; `cause` is what the backend said |
-| `AUDIO_BUDGET`, `AUDIO_SOUND_LIMIT` | The decoded samples or the number of sounds would pass what the mixer may hold |
+| `AUDIO_BUDGET`, `AUDIO_SOUND_LIMIT` | The decoded samples, sounds, or external browser input strips would pass the respective budget |
 | `AUDIO_SOUND_INVALID`, `AUDIO_SOUND_RELEASED` | The value is no sound of this mixer, or one that was released |
 | `AUDIO_REASON_INVALID`, `AUDIO_REASON_LIMIT` | A name for silence is not a string of 1 to 32 characters, or eight names already ask |
 | `AUDIO_BACKEND_FAILED` | The backend threw or returned something that is not what it should be; `cause` is what it threw |

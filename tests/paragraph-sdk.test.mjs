@@ -185,6 +185,77 @@ test('SDK bounded cache refuses pinned overflow, reclaims released entries and r
   assert.equal(cache.getStatus().imageBytes, 0);
   assert.equal(cache.getStatus().callerLeases, 0);
 });
+test('SDK default cache retains the finite 32-entry and provider-job budgets', async t => {
+  const { cache, state } = await setup(t);
+  const gate = deferred();
+  state.hook = input => gate.promise.then(() => raster(input));
+  const held = Array.from({ length: 32 }, (_, index) => cache.acquire(request({ text: 'Default ' + index })));
+  await flush();
+  assert.equal(cache.getStatus().pendingJobs, 32);
+  assert.equal(cache.getStatus().entries, 32);
+  await assert.rejects(cache.acquire(request({ text: 'Default excess' })), code('PARAGRAPH_CACHE_BUDGET'));
+  gate.resolve();
+  const prepared = await Promise.all(held);
+  assert.equal(cache.getStatus().callerLeases, 32);
+  for (const item of prepared) item.lease.release();
+  assert.equal(cache.getStatus().callerLeases, 0);
+});
+test('SDK an opted-in larger cache holds 40 unique rich page and modal paragraphs at once', async t => {
+  const { cache, state } = await setup(t, { maxEntries: 96, maxPendingJobs: 96 });
+  const gate = deferred();
+  state.hook = input => gate.promise.then(() => raster(input));
+  const page = Array.from({ length: 20 }, (_, index) => cache.acquire(request({ text: 'Page row ' + index })));
+  const modal = Array.from({ length: 20 }, (_, index) => cache.acquire(request({ text: 'Modal row ' + index })));
+  await flush();
+  assert.equal(cache.getStatus().entries, 40);
+  assert.equal(cache.getStatus().pendingJobs, 40);
+  gate.resolve();
+  const both = [...(await Promise.all(page)), ...(await Promise.all(modal))];
+  assert.equal(cache.getStatus().pendingJobs, 0);
+  assert.equal(cache.getStatus().callerLeases, 40);
+  assert.equal(cache.getStatus().imageBytes, 40 * 16);
+  for (const item of both.slice(20)) item.lease.release();
+  assert.equal(cache.getStatus().callerLeases, 20);
+  const repeat = await cache.acquire(request({ text: 'Modal row 0' }));
+  assert.equal(state.calls, 40, 'a still-resident paragraph does not call the provider again');
+  repeat.lease.release();
+  for (const item of both.slice(0, 20)) item.lease.release();
+  assert.equal(cache.getStatus().callerLeases, 0);
+});
+test('SDK larger cache retains independent provider, byte and caller admission ceilings', async t => {
+  const { cache, state } = await setup(t, { maxEntries: 128, maxPendingJobs: 1, maxImageBytes: 16 });
+  const gate = deferred();
+  state.hook = input => gate.promise.then(() => raster(input));
+  const pending = cache.acquire(request({ text: 'First' }));
+  const providerBudget = error => error?.code === 'ASSET_LOAD_FAILED' && error.cause?.code === 'PARAGRAPH_CACHE_BUDGET';
+  await flush();
+  await assert.rejects(cache.acquire(request({ text: 'Second' })), providerBudget);
+  gate.resolve();
+  const one = await pending;
+  assert.equal(cache.getStatus().pendingJobs, 0);
+  await assert.rejects(cache.acquire(request({ text: 'Second' })), providerBudget);
+  one.lease.release();
+  const two = await cache.acquire(request({ text: 'Second' }));
+  assert.equal(cache.getStatus().imageBytes, 16);
+  const same = await Promise.all(Array.from({ length: 255 }, () => cache.acquire(request({ text: 'Second' }))));
+  assert.equal(cache.getStatus().callerLeases, 256);
+  await assert.rejects(cache.acquire(request({ text: 'Second' })), code('PARAGRAPH_CACHE_BUDGET'));
+  two.lease.release();
+  for (const item of same) item.lease.release();
+  assert.equal(cache.getStatus().callerLeases, 0);
+});
+test('SDK explicit cap configuration is bounded and failed options do not consume the cache lifetime', async t => {
+  const engine = await createEngine({ host: host().adapter });
+  t.after(() => engine.dispose());
+  const provider = literal().provider;
+  for (const property of ['maxEntries', 'maxPendingJobs'])
+    for (const value of [0, 129, -1, 64.5, Infinity, NaN, '96'])
+      assert.throws(
+        () => createParagraphCache(engine.assets, { provider, [property]: value }),
+        code('PARAGRAPH_CACHE_OPTIONS_INVALID')
+      );
+  assert.ok(createParagraphCache(engine.assets, { provider, maxEntries: 128, maxPendingJobs: 128 }));
+});
 test('SDK close cancels pending work and late successful native result is not retained', async t => {
   const { engine, scope, cache, state } = await setup(t),
     p = createParagraph(engine, scope, cache),
