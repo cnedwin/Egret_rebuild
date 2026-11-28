@@ -12,7 +12,7 @@ import { createManifestByteSource, createManifestTextureProvider } from '@egret/
 import { createSharedWebGPUHost } from '@egret/engine/webgpu';
 import { createSharedWebGL2Host } from '@egret/engine/webgl2';
 import { createManifestSpineContentLoader } from '@egret/spine/web';
-import { createOutfitScene } from './scene.mjs';
+import { createOutfitScene, presentOutfitPair } from './scene.mjs';
 const canvas = document.querySelector('canvas'),
   status = document.querySelector('#status');
 const backend = new URL(location.href).searchParams.get('backend') ?? 'webgpu';
@@ -43,6 +43,8 @@ function describe() {
       seconds: s.seconds,
       counts: s.scene?.counts,
       sharedSetup: s.loader,
+      pairVersion: s.scene?.pairVersion,
+      replacing: s.replacing,
       selected: s.scene?.players[Number(document.querySelector('#player').value)],
       transport: s.transport,
       cleanup: s.cleanup,
@@ -57,9 +59,13 @@ export function inspect() {
   return r
     ? {
         state: r.state,
+        openingId: r.id,
+        openMs: r.openMs,
+        readyAt: r.readyAt,
         backend,
         seconds: r.seconds,
         scene: r.scene?.inspect(),
+        replacing: !!r.pendingPair,
         loader: r.loader?.getStatus(),
         transport: r.loader?.getTransportStatus(),
         sequenceTransport: { source: r.source?.getStatus(), provider: r.provider?.getStatus() },
@@ -115,10 +121,12 @@ export function measure(frames = 120) {
       const rows = { animation: [], capture: [], render: [], settle: [] },
         heap = () => performance.memory?.usedJSHeapSize ?? null,
         before = heap();
+      let foregroundFrames = 0;
       for (let i = 0; i < frames; i++) {
         if (r !== current || r.state !== 'ready') throw Error('SCENE_NOT_READY');
         await r.host.whenIdle();
         r.seconds += 1 / 60;
+        if (document.visibilityState === 'visible' && document.hasFocus()) foregroundFrames++;
         const t0 = performance.now();
         r.engine.advanceTime(r.seconds);
         const t1 = performance.now();
@@ -141,6 +149,7 @@ export function measure(frames = 120) {
       describe();
       return {
         frames,
+        foregroundFrames,
         backend,
         counts: r.scene.inspect().counts,
         animation: summary(rows.animation),
@@ -166,6 +175,59 @@ export async function pixels() {
   await r.host.whenIdle();
   return { width: result.width, height: result.height, bytes: Array.from(result.bytes) };
 }
+export function cancelPair() {
+  const pending = current?.pendingPair;
+  if (!pending || pending.committed) return false;
+  current.pendingPair = undefined;
+  pending.upload?.dispose();
+  pending.ticket?.dispose();
+  pending.owner.dispose();
+  return true;
+}
+
+// Load both resource families offstage. Only the last, GPU-backed publication joins the scene's frame queue.
+export function replacePair(version) {
+  const r = assertReady(),
+    source = r.pairSources[version];
+  if (!Object.hasOwn(r.pairSources, version)) throw Error('PAIR_VERSION');
+  cancelPair();
+  const owner = r.engine.createScope(),
+    pending = { owner, committed: false };
+  r.pendingPair = pending;
+  const live = () => {
+    if (r !== current || r.state !== 'ready' || r.pendingPair !== pending) throw Error('PAIR_CANCELLED');
+  };
+  const operation = (async () => {
+    try {
+      const group = r.loader.load(owner, [source.assetId]);
+      const sequences = r.loadSequence(owner, source);
+      await Promise.all([group.ready, sequences.ready]);
+      live();
+      const sheet = owner.use(
+        createSpriteSheet(sequences.get(source.page), [{ name: 'spark', x: 0, y: 0, width: 1, height: 1 }])
+      );
+      const clip = createSequenceClip(sequences.get(source.sequence).value);
+      r.work = (r.work ?? Promise.resolve())
+        .catch(() => {})
+        .then(async () => {
+          await r.host.whenIdle();
+          live();
+          pending.ticket = r.scene.preparePair(owner, group.getSpine(source.assetId), sheet, clip, version);
+          await presentOutfitPair(pending, r.host, frameOptions, live);
+        });
+      await r.work;
+      return version;
+    } finally {
+      pending.upload?.dispose();
+      pending.ticket?.dispose();
+      if (!pending.committed) owner.dispose();
+      if (r.pendingPair === pending) r.pendingPair = undefined;
+      if (r === current) describe();
+    }
+  })();
+  r.pendingOperation = operation;
+  return operation;
+}
 export function close() {
   intent++;
   return closeCurrent();
@@ -180,6 +242,7 @@ function closeCurrent() {
   r.cancelled = true;
   r.state = 'closing';
   r.abort.abort();
+  cancelPair();
   // Revoke scopes before awaiting pending source work, including close during load.
   r.scene?.dispose();
   r.data?.dispose();
@@ -187,6 +250,7 @@ function closeCurrent() {
   r.loader?.dispose();
   r.closing = (async () => {
     await r.opening.catch(() => {});
+    await r.pendingOperation?.catch(() => {});
     await r.work?.catch(() => {});
     const failures = [];
     const attempt = async fn => {
@@ -226,12 +290,12 @@ function closeCurrent() {
 export function open() {
   if (openingRequest) return openingRequest;
   const ticket = ++intent;
-  openingRequest = openOnce(ticket).finally(() => {
+  openingRequest = openOnce(ticket, performance.now()).finally(() => {
     openingRequest = undefined;
   });
   return openingRequest;
 }
-async function openOnce(ticket) {
+async function openOnce(ticket, start) {
   await closeCurrent();
   if (ticket !== intent) throw Error('SCENE_CANCELLED');
   const r = {
@@ -278,9 +342,20 @@ async function openOnce(ticket) {
     r.group = r.loader.load(r.data, ['e_character']);
     const imageType = createAssetType('outfit-sequence-image', isTexture),
       metadataType = createAssetType('outfit-sequence-metadata', v => v !== null && typeof v === 'object');
-    const page = createManifestAssetBinding(manifest, 'e_sparks', imageType),
-      sequence = createManifestAssetBinding(manifest, 'e_sequence', metadataType),
-      bindings = [page, sequence];
+    r.pairSources = {};
+    for (const [version, suffix] of [
+      ['original', ''],
+      ['alternate', '_alt']
+    ]) {
+      r.pairSources[version] = {
+        assetId: 'e_character' + suffix,
+        page: createManifestAssetBinding(manifest, 'e_sparks' + suffix, imageType),
+        sequenceId: 'e_sequence' + suffix,
+        sequence: createManifestAssetBinding(manifest, 'e_sequence' + suffix, metadataType)
+      };
+    }
+    const bindings = Object.values(r.pairSources).flatMap(entry => [entry.page, entry.sequence]);
+    const { page, sequence } = r.pairSources.original;
     r.source = createManifestByteSource(manifest, bindings, {
       baseUrl: base.href,
       deadlineMs: 15000,
@@ -294,7 +369,9 @@ async function openOnce(ticket) {
       },
       dispose() {}
     });
-    r.sequenceGroup = r.engine.createManifestGroup(r.data, manifest, ['e_sequence'], bindings);
+    r.loadSequence = (scope, entry) =>
+      r.engine.createManifestGroup(scope, manifest, [entry.sequenceId], [entry.page, entry.sequence]);
+    r.sequenceGroup = r.loadSequence(r.data, r.pairSources.original);
     await Promise.all([r.group.ready, r.sequenceGroup.ready]);
     live();
     const lease = r.sequenceGroup.get(page);
@@ -305,6 +382,8 @@ async function openOnce(ticket) {
     r.engine.advanceTime(0);
     r.state = 'ready';
     render();
+    r.readyAt = performance.now();
+    r.openMs = r.readyAt - start;
     describe();
     return inspect();
   })().catch(e => {
@@ -356,6 +435,8 @@ for (const button of document.querySelectorAll('[data-action]'))
       .then(() => {
         if (kind === 'open') return open();
         if (kind === 'close') return close();
+        if (kind === 'pair') return replacePair(inspect().scene?.pairVersion === 'original' ? 'alternate' : 'original');
+        if (kind === 'cancel-pair') return cancelPair();
         if (kind === 'step') return step(0.1);
         if (kind === 'apply') return edit(Number(playerSelect.value), values());
         if (kind === 'run') {

@@ -20,20 +20,7 @@ export function buildOriginalContent() {
       { width, height, data: Buffer.from(colors.flat()) },
       { colorType: 6, inputColorType: 6, bitDepth: 8 }
     );
-  const values = new Map([
-    ['e_warm', png(2, 2, Array(4).fill([255, 128, 32, 255]))],
-    ['e_cool', png(2, 2, Array(4).fill([32, 160, 255, 255]))],
-    ['e_atlas', Buffer.from(atlasText)],
-    ['e_character', Buffer.from(JSON.stringify(skeletonSource()))],
-    [
-      'e_sparks',
-      png(2, 1, [
-        [255, 255, 0, 255],
-        [0, 255, 128, 255]
-      ])
-    ],
-    ['e_sequence', Buffer.from(JSON.stringify(sequenceInput))]
-  ]);
+  const values = new Map();
   const row = (id, resourceKind, importer, artifactFormatVersion, mediaType, dependencies, settings = {}) => {
     const b = values.get(id);
     const file = role => ({
@@ -57,23 +44,60 @@ export function buildOriginalContent() {
       provenance
     };
   };
+  function outfitEntries(suffix, warm, cool, sparks) {
+    const id = part => 'e_' + part + suffix;
+    values.set(id('warm'), png(2, 2, Array(4).fill(warm)));
+    values.set(id('cool'), png(2, 2, Array(4).fill(cool)));
+    values.set(id('atlas'), Buffer.from(atlasText));
+    values.set(id('character'), Buffer.from(JSON.stringify(skeletonSource())));
+    values.set(id('sparks'), png(2, 1, sparks));
+    values.set(id('sequence'), Buffer.from(JSON.stringify(sequenceInput)));
+    return [
+      row(id('warm'), 'image', 'egret.png', 'png/1', 'image/png', []),
+      row(id('cool'), 'image', 'egret.png', 'png/1', 'image/png', []),
+      row(
+        id('atlas'),
+        'spine-atlas',
+        'egret.spine-atlas',
+        'spine-atlas/4.3-1',
+        'text/plain',
+        [id('warm'), id('cool')],
+        {
+          coreVersion: '4.3.13',
+          pageNames: ['warm.png', 'cool.png']
+        }
+      ),
+      row(id('character'), 'spine', 'egret.spine-json', 'spine-json/4.3-1', 'application/json', [id('atlas')], {
+        coreVersion: '4.3.13'
+      }),
+      row(id('sparks'), 'image', 'egret.png', 'png/1', 'image/png', []),
+      row(id('sequence'), 'sequence', 'egret.sequence', 'sequence/1', 'application/json', [id('sparks')])
+    ];
+  }
   const result = buildResourceManifest({
     format: 'egret.resource-build/1',
     projectId: 'p_animation_outfits',
     targetProfile: 'web-shared/1',
     versions: { engineVersion: '0.0.0', resourceFormatVersion: '1.0', toolProtocolVersion: '1.0' },
     entries: [
-      row('e_warm', 'image', 'egret.png', 'png/1', 'image/png', []),
-      row('e_cool', 'image', 'egret.png', 'png/1', 'image/png', []),
-      row('e_atlas', 'spine-atlas', 'egret.spine-atlas', 'spine-atlas/4.3-1', 'text/plain', ['e_warm', 'e_cool'], {
-        coreVersion: '4.3.13',
-        pageNames: ['warm.png', 'cool.png']
-      }),
-      row('e_character', 'spine', 'egret.spine-json', 'spine-json/4.3-1', 'application/json', ['e_atlas'], {
-        coreVersion: '4.3.13'
-      }),
-      row('e_sparks', 'image', 'egret.png', 'png/1', 'image/png', []),
-      row('e_sequence', 'sequence', 'egret.sequence', 'sequence/1', 'application/json', ['e_sparks'])
+      ...outfitEntries(
+        '',
+        [255, 128, 32, 255],
+        [32, 160, 255, 255],
+        [
+          [255, 255, 0, 255],
+          [0, 255, 128, 255]
+        ]
+      ),
+      ...outfitEntries(
+        '_alt',
+        [240, 64, 128, 255],
+        [48, 224, 192, 255],
+        [
+          [64, 96, 255, 255],
+          [248, 248, 248, 255]
+        ]
+      )
     ]
   });
   if (!result.ok) throw Error(JSON.stringify(result.diagnostics));

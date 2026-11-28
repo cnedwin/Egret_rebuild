@@ -1,0 +1,280 @@
+{
+  "date": "2026-11-28",
+  "base": "8424ff2afb0afdc103b06d51e3fd749f7a8fc379",
+  "browser": "Windows Edge 158.0.4370.45",
+  "workload": {
+    "spine": 20,
+    "sequences": 200,
+    "sampling": "240 fixed 1/60-second simulation steps per open, two opens per backend",
+    "resolution": [
+      640,
+      400
+    ],
+    "origin": "loopback HTTP"
+  },
+  "behavior": [
+    {
+      "backend": "webgpu",
+      "initialPixelWitnesses": 242,
+      "alternateRGBA": [
+        [
+          240,
+          64,
+          128,
+          255
+        ],
+        [
+          64,
+          96,
+          255,
+          255
+        ],
+        [
+          255,
+          128,
+          32,
+          255
+        ],
+        [
+          255,
+          255,
+          0,
+          255
+        ]
+      ],
+      "unchangedDuringHeldRequest": true,
+      "cancelPreservedOriginal": true,
+      "failedSparkPreservedOriginal": true,
+      "retryAndReversePassed": true,
+      "closeDuringHeldRequest": {
+        "spine": 0,
+        "sequences": 0,
+        "groups": 0,
+        "failures": []
+      }
+    },
+    {
+      "backend": "webgl2",
+      "initialPixelWitnesses": 242,
+      "alternateRGBA": [
+        [
+          240,
+          64,
+          128,
+          255
+        ],
+        [
+          64,
+          96,
+          255,
+          255
+        ],
+        [
+          255,
+          128,
+          32,
+          255
+        ],
+        [
+          255,
+          255,
+          0,
+          255
+        ]
+      ],
+      "unchangedDuringHeldRequest": true,
+      "cancelPreservedOriginal": true,
+      "failedSparkPreservedOriginal": true,
+      "retryAndReversePassed": true,
+      "closeDuringHeldRequest": {
+        "spine": 0,
+        "sequences": 0,
+        "groups": 0,
+        "failures": []
+      }
+    }
+  ],
+  "timing": [
+    {
+      "backend": "webgpu",
+      "webgl2Renderer": null,
+      "openingIds": [
+        1,
+        2
+      ],
+      "openMilliseconds": {
+        "cold": 394.90000000596046,
+        "coldFromNavigation": 779.9000000059605,
+        "warm": 48.70000001788139
+      },
+      "afterColdOpen": {
+        "frames": 240,
+        "foregroundFrames": 240,
+        "backend": "webgpu",
+        "counts": {
+          "spine": 20,
+          "sequences": 200
+        },
+        "animation": {
+          "p50": 0.4000000059604645,
+          "p95": 0.7999999821186066,
+          "max": 3.4000000059604645
+        },
+        "capture": {
+          "p50": 0.10000002384185791,
+          "p95": 0.29999998211860657,
+          "max": 0.5999999940395355
+        },
+        "render": {
+          "p50": 0.5,
+          "p95": 0.7999999821186066,
+          "max": 2
+        },
+        "settle": {
+          "p50": 2.800000011920929,
+          "p95": 3.5,
+          "max": 5
+        },
+        "heapBytes": {
+          "before": 13242813,
+          "after": 26966931
+        }
+      },
+      "afterReopen": {
+        "frames": 240,
+        "foregroundFrames": 240,
+        "backend": "webgpu",
+        "counts": {
+          "spine": 20,
+          "sequences": 200
+        },
+        "animation": {
+          "p50": 0.4000000059604645,
+          "p95": 0.7999999821186066,
+          "max": 1
+        },
+        "capture": {
+          "p50": 0.19999998807907104,
+          "p95": 0.29999998211860657,
+          "max": 0.5999999940395355
+        },
+        "render": {
+          "p50": 0.4000000059604645,
+          "p95": 0.7999999821186066,
+          "max": 1
+        },
+        "settle": {
+          "p50": 2.699999988079071,
+          "p95": 3.4000000059604645,
+          "max": 5.799999982118607
+        },
+        "heapBytes": {
+          "before": 23131913,
+          "after": 43824939
+        }
+      },
+      "leftAfterClose": {
+        "spine": 0,
+        "sequences": 0
+      }
+    },
+    {
+      "backend": "webgl2",
+      "webgl2Renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 Laptop GPU (0x00002C58) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "openingIds": [
+        1,
+        2
+      ],
+      "openMilliseconds": {
+        "cold": 1993.0999999940395,
+        "coldFromNavigation": 2414.300000011921,
+        "warm": 44.69999998807907
+      },
+      "afterColdOpen": {
+        "frames": 240,
+        "foregroundFrames": 240,
+        "backend": "webgl2",
+        "counts": {
+          "spine": 20,
+          "sequences": 200
+        },
+        "animation": {
+          "p50": 0.4000000059604645,
+          "p95": 0.7000000178813934,
+          "max": 3.4000000059604645
+        },
+        "capture": {
+          "p50": 0.09999999403953552,
+          "p95": 0.29999998211860657,
+          "max": 0.7999999821186066
+        },
+        "render": {
+          "p50": 0.9000000059604645,
+          "p95": 1.300000011920929,
+          "max": 2.4000000059604645
+        },
+        "settle": {
+          "p50": 5,
+          "p95": 6.0999999940395355,
+          "max": 11.200000017881393
+        },
+        "heapBytes": {
+          "before": 13483881,
+          "after": 25650276
+        }
+      },
+      "afterReopen": {
+        "frames": 240,
+        "foregroundFrames": 240,
+        "backend": "webgl2",
+        "counts": {
+          "spine": 20,
+          "sequences": 200
+        },
+        "animation": {
+          "p50": 0.4000000059604645,
+          "p95": 0.6000000238418579,
+          "max": 0.9000000059604645
+        },
+        "capture": {
+          "p50": 0.10000002384185791,
+          "p95": 0.20000001788139343,
+          "max": 0.4000000059604645
+        },
+        "render": {
+          "p50": 0.9000000059604645,
+          "p95": 1.2000000178813934,
+          "max": 1.5
+        },
+        "settle": {
+          "p50": 4.9000000059604645,
+          "p95": 6.300000011920929,
+          "max": 10.799999982118607
+        },
+        "heapBytes": {
+          "before": 22842886,
+          "after": 25833932
+        }
+      },
+      "leftAfterClose": {
+        "spine": 0,
+        "sequences": 0
+      }
+    }
+  ],
+  "sha256": {
+    "rawBrowserReport": "b4e719b03d0509e3b6242f8430bc5443137a1e540f23fd0f61909a7b2b72920d",
+    "rawTimingReport": "8d42334c9563ee9d06b740a562b916c306817f6db138bdf2c20a74a93108556c",
+    "rawFixtureInputs": "27e55cc5161607d18d5fe5acf5ad0e8304b09077f92286fd8d42eb001bc42901",
+    "exampleInputs": {
+      "examples/animation-outfits/author.mjs": "a70d289a039f82afbcbc971c4def2546b28889d04ce3af682e3833af04c3636b",
+      "examples/animation-outfits/content.mjs": "a8c389e14eda276531170474d7bc4ae1409cf17b7f1035f88d08f48e5d0c2fb8",
+      "examples/animation-outfits/index.html": "e72a7cd6aece86264b1dfced98c715674044e6ddc0c8683853fc3cfc5ec721d5",
+      "examples/animation-outfits/main.mjs": "cf0bea2f898613e96ee185cd143393a0449d5bb5217a9f6d5777298725dd2bd8",
+      "examples/animation-outfits/measure.mjs": "e673c261448b9a68c87a76c1512736cc55874fec969ffd1ec8d4c6c65833472e",
+      "examples/animation-outfits/scene.mjs": "4559e05d295d56835289a08af32a577f09a87cc8200b5f02ce7d477c83e0235d",
+      "examples/animation-outfits/verify.mjs": "8669e6880060fd4aab8e8ae29c8c6c47e4a01db7324b34331b53fdfd92082d41"
+    }
+  },
+  "scope": "Selected RESET pair with 218 unaffected neighbors. CPU phase time and fence completion wait. No on-device GPU duration, production Editor export, preserved selected playback, mobile or formal budget qualification."
+}
