@@ -10,7 +10,7 @@ Android AAR、游戏导出与 Activity 接入方法见[Android 游戏项目播�
 
 | 目标 | 构建产物 | 宿主与首轮验收 |
 | --- | --- | --- |
-| Android | AAR 及生成的 Gradle 工程，可外部签名构建面向 API 36 的 arm64 APK／AAB。 | Fold7 已验证分包安装与覆盖升级恢复存档，GLES3 播放器已运行选定的 2D 和含 2D HUD 的 World3D 游戏，并从驻留几何恢复回放。更多图形档位及 Vulkan 待验证。[播放器与测量](android-project-player.md) |
+| Android | AAR 及生成的 Gradle 工程，可外部签名构建面向 API 36 的 arm64 APK／AAB。 | Fold7 已验证分包安装与覆盖升级恢复存档，GLES3 播放器已运行选定的 2D 和含 2D HUD 的 World3D 游戏，并从驻留几何恢复回放。《风雪山神庙》草料场中，蒙皮角色会投下月影，命中点光会照亮周围表面。更多图形档位及 Vulkan 待验证。[场景、包体与宿主选型](android-project-player.md#草料场光照) · [播放器与测量](android-project-player.md) |
 | iOS | Xcode 工程可分别构建模拟器应用与未签名的 arm64 真机应用。 | 游戏可指定自己的 ES 模块打入 JavaScriptCore。iOS 26.2 模拟器用 Metal 绘制了共享的 40 卡片 EGR2 场景，截图像素及贴图恢复均已实测。实体 iPhone 签名安装、输入与前后台切换仍待验收。[构建与验证](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/ios/README.zh-CN.md) |
 | 原生鸿蒙 | 原生库和可构建签名应用包的 DevEco Studio 工程 | ArkTS 通过 C ABI 对接 XComponent 原生窗口。实机验证窗口替换和图形后端后再设为默认。 |
 | 微信小游戏 | 仓库工具导出 WebGL2 所需的 JS 入口、适配层、包内资产和工程配置。 | 2D 游戏已在模拟 wx 宿主进入玩法。微信开发者工具、客户端真机及平台提交待验证。[导出方法与限制](wechat-minigame.md) |

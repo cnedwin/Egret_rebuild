@@ -164,7 +164,12 @@ declare module '@egret/android-player-world3d' {
 
   export interface World3DPlayerGame extends PlayerGame {
     /** Return the live scene and camera after the game advances. The existing stage supplies the 2D overlay. */
-    world3D(): {readonly scene: Scene3D; readonly camera: Camera3D};
+    world3D(): {
+      readonly scene: Scene3D;
+      readonly camera: Camera3D;
+      /** Opt into a single directional shadow tile, 64–2048 texels per side (power of two). */
+      readonly shadows?: { readonly mapSize: number };
+    };
   }
 
   export interface World3DPlayerServices extends PlayerServices {

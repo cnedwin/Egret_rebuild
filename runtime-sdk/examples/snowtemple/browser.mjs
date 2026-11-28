@@ -47,10 +47,11 @@ async function start() {
     return item;
   }
   const buttons = controls.map(([text, x, y]) => label(text, x, y));
+  for (const [text, x, y] of hero.probeControls ?? []) label(text, x, y);
   const health = hero.state().encounter ? [label('', 86, 26), label('', 646, 26)] : null;
   const message = hero.messages ? label('Ready', WIDTH / 2, 66) : null;
   let reported = -Infinity;
-  renderer = createWebGL2Renderer3D({ canvas, shadows: false, antialias: false, toneMapping: 'aces' });
+  renderer = createWebGL2Renderer3D({ canvas, shadows: Boolean(hero.shadows), shadowAtlasSize: hero.shadows ? hero.shadows.mapSize * 2 : undefined, antialias: false, toneMapping: 'aces' });
   renderer.setSize(WIDTH, HEIGHT);
   const selected = new URLSearchParams(location.search).get('checkpoint');
   if (selected && hero.hold) hero.hold(selected);

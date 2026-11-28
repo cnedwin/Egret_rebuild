@@ -320,6 +320,39 @@ public final class ProjectReplayTapeTest {
         return b.array();
     }
 
+    private static byte[] withLight(byte[] frame, float flash) {
+        int hud = frame.length - 24, length = 128 + 28 + 4;
+        ByteBuffer dst = ByteBuffer.allocate(frame.length + length).order(ByteOrder.LITTLE_ENDIAN);
+        dst.put(frame, 0, hud).putInt(16, (length << 16) | 1);
+        dst.putInt(hud, 0x3154494c).putInt(hud + 4, 1).putInt(hud + 8, 1024);
+        dst.putFloat(hud + 12, .016f).putFloat(hud + 140, 8).putFloat(hud + 144, flash);
+        dst.put(hud + 156, (byte)7);
+        dst.position(hud + length);
+        dst.put(frame, hud, 24);
+        return dst.array();
+    }
+
+    private static void lightTableSurvivesReplay() throws Exception {
+        Map<Integer, PlayerGraphics.Page> pages = Collections.singletonMap(9, page(45));
+        int[] mesh = {19};
+        byte[] initial = withLight(world(1, true, false, mesh, mesh, 3), 0);
+        WorldProjectPacket.GeometryState prior = WorldProjectPacket.validate(initial, pages, null);
+        byte[] next = withLight(world(2, true, true, new int[0], mesh, 3), 12);
+        WorldProjectPacket.GeometryState step = WorldProjectPacket.validate(next, pages, prior);
+        require(Arrays.equals(step.complete(next), withLight(world(2, true, false, mesh, mesh, 3), 12)));
+        ByteBuffer data = ByteBuffer.wrap(next).order(ByteOrder.LITTLE_ENDIAN);
+        int[] seen = {0};
+        WorldProjectPacket.visitTexturePages(data, id -> seen[0] += id);
+        require(seen[0] == 9);
+        int light = next.length - 24 - 160;
+        for (int[] change : new int[][]{{4,9},{8,63},{12,Float.floatToIntBits(Float.NaN)},{140,Float.floatToIntBits(-1)},
+                {156,8},{156,0x10000}}) {
+            byte[] bad = next.clone();
+            ByteBuffer.wrap(bad).order(ByteOrder.LITTLE_ENDIAN).putInt(light + change[0],change[1]);
+            reject(() -> WorldProjectPacket.validate(bad, pages, prior));
+        }
+    }
+
     private static void residentReplay(File file) throws Exception {
         int[] empty = {}, a = {19}, b = {27}, both = {19, 27}, reordered = {27, 19};
         Map<Integer, PlayerGraphics.Page> firstPage = Collections.singletonMap(9, page(45));
@@ -505,6 +538,7 @@ public final class ProjectReplayTapeTest {
     public static void main(String[] args) throws Exception {
         worldOverlay();
         texturedWorldOverlay();
+        lightTableSurvivesReplay();
         residentWorldOverlay();
         File dir = Files.createTempDirectory("egret-project-tape-test").toFile();
         File file = new File(dir, "scene.bin");

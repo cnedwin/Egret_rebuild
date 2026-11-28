@@ -5,12 +5,13 @@ import { heroPose, pose } from './original/figures.mjs';
 
 export const WIDTH = 768, HEIGHT = 432, DT = 1 / 60;
 
-export function createActorStage() {
+export function createActorStage({ defaultLights = true } = {}) {
   const scene = new Scene3D();
   scene.background = [0.043, 0.062, 0.082];
   const camera = createPerspectiveCamera3D({ fov: 32, near: 0.1, far: 24 });
   camera.aspect = WIDTH / HEIGHT;
   scene.addChild(camera);
+  if (!defaultLights) return { scene, camera };
   scene.addChild(createAmbientLight3D({ intensity: 0.45 }));
   const sun = scene.addChild(createDirectionalLight3D({ color: 0xffe8cd, intensity: 2.1 }));
   sun.setPosition(3, 5, -4).lookAt(0, 0, 0);

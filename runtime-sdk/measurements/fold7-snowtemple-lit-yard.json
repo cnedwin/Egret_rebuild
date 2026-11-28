@@ -1,0 +1,271 @@
+{
+  "issue": 393,
+  "recorded": "2026-11-28",
+  "engineBase": "aaf9f49b6eb7f52eefa6314491b08114fe5b5f53",
+  "gameSource": "https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple",
+  "workload": {
+    "chapter": "Fodder Yard to the Temple, first party",
+    "seed": 7,
+    "backingPixels": [
+      768,
+      432
+    ],
+    "device": "Galaxy Z Fold7 (SM-F966U1)",
+    "android": 17,
+    "native": "arm64-v8a, trimmed V8 15.8.62.52, OpenGL ES 3",
+    "browser": "Android Chrome 158.0.8127.44, WebGL2",
+    "browserRenderer": "ANGLE (Qualcomm, Adreno (TM) 830, OpenGL ES 3.2)",
+    "input": "Physical device with software-injected touch at stage (576,398) for both timings; static camera, game simulation advances. Lighting checks use original first-strike controls."
+  },
+  "firstVisible": {
+    "method": "Two consecutive compositor captures match each host’s known playable reference, after the first scene draw returns. The lower and upper limits include capture/clock uncertainty. They bracket effective content, not just a splash or CPU draw.",
+    "native": {
+      "origin": "Start of new Android package process after force-stop; OS caches retained",
+      "milliseconds": {
+        "low": 539.183133,
+        "high": 915
+      },
+      "displayCandidates": 43,
+      "traceDrawMatchedToLog": true
+    },
+    "browser": {
+      "origin": "Document navigation in the existing foreground Chrome process; HTTP cache disabled, chapter and module graph served over USB localhost",
+      "milliseconds": {
+        "low": 2752.2,
+        "high": 3167.9
+      },
+      "displayCandidates": 17
+    }
+  },
+  "sustained": {
+    "method": "Nearest-rank p50, p95, p99 and maximum. Each host has 30 warmup and 180 CPU draws; asynchronous GPU execution time is unavailable. The original simulation clocks and presentation cadence differ.",
+    "native": {
+      "cpuMicroseconds": {
+        "generationUs": {
+          "samples": 180,
+          "p50": 1426,
+          "p95": 2947,
+          "p99": 3412,
+          "max": 16079
+        },
+        "copyUs": {
+          "samples": 180,
+          "p50": 102,
+          "p95": 201,
+          "p99": 418,
+          "max": 1647
+        },
+        "glesSubmitUs": {
+          "samples": 180,
+          "p50": 474,
+          "p95": 860,
+          "p99": 1729,
+          "max": 3004
+        },
+        "dispatchToEnqueueUs": {
+          "samples": 180,
+          "p50": 1806,
+          "p95": 3315,
+          "p99": 3935,
+          "max": 17814
+        },
+        "enqueueToCallbackUs": {
+          "samples": 180,
+          "p50": 667,
+          "p95": 1267,
+          "p99": 2130,
+          "max": 8703
+        },
+        "submittedIntervalUs": {
+          "samples": 180,
+          "p50": 8182,
+          "p95": 10753,
+          "p99": 12520,
+          "max": 33203
+        }
+      },
+      "fields": "generationUs includes V8 callback and packet encoding; copyUs is V8-to-Java transfer; glesSubmitUs brackets the visible JNI draw. Dispatch, callback and final submission intervals overlap named stages.",
+      "physicalDisplayMilliseconds": {
+        "samples": 178,
+        "p50": 8.286927,
+        "p95": 8.287969,
+        "p99": 8.288334,
+        "max": 33.149635
+      },
+      "surface": "Android game SurfaceView BLAST buffer",
+      "presentationMethod": "Named game-buffer latch under SurfaceFlinger commit, matching composite and non-dropped Actual Display Frame end for its vsync token",
+      "window": "180 contiguous measured JNI draws uniquely located in Perfetto from their duration signature; 178 intervals between game-buffer presentations inside that period.",
+      "sceneState": "Round 1, party 0, fighting. The capture validated start tick 1–90 and an increase of more than 45 ticks. The original stage assertion passed but its precise tick pair was not retained."
+    },
+    "browser": {
+      "cpuMilliseconds": {
+        "updateMs": {
+          "samples": 180,
+          "p50": 0.7,
+          "p95": 1,
+          "p99": 1.2,
+          "max": 1.7
+        },
+        "renderMs": {
+          "samples": 180,
+          "p50": 0.9,
+          "p95": 1.6,
+          "p99": 8.7,
+          "max": 18.4
+        },
+        "intervalMs": {
+          "samples": 180,
+          "p50": 16.6,
+          "p95": 16.7,
+          "p99": 16.7,
+          "max": 16.7
+        }
+      },
+      "fields": "updateMs is JS chapter and simulation update, renderMs is elapsed synchronous WebGL2 renderer call; intervalMs is rAF cadence. The browser uses no V8-to-Java bridge.",
+      "physicalDisplayMilliseconds": {
+        "samples": 220,
+        "p50": 16.575936,
+        "p95": 16.57849,
+        "p99": 16.578957,
+        "max": 33.150521
+      },
+      "surface": "ChromeChildSurface game buffer",
+      "presentationMethod": "Named game-buffer latch under SurfaceFlinger commit, matching composite and non-dropped Actual Display Frame end for its vsync token",
+      "window": "Actual presents between arming and receipt; includes warmup/collection latency. These 220 presentation intervals have a wider time window than the 180 CPU samples.",
+      "round": 1,
+      "party": 0,
+      "startTick": 4,
+      "endTick": 229
+    }
+  },
+  "visuals": {
+    "method": "Independent per-host removal/reinstatement at fixed tick 423. A changed pixel has an absolute RGB-channel delta of at least 3/255, return-to-reference threshold 5/255. Regions use half-open canonical game pixels; the browser comparison uses the game canvas, native uses the stage projected from a device screenshot.",
+    "regions": {
+      "scene": [
+        5,
+        122,
+        762,
+        375
+      ],
+      "actorShadow": [
+        335,
+        318,
+        456,
+        365
+      ],
+      "hitLight": [
+        320,
+        265,
+        460,
+        346
+      ]
+    },
+    "heroHp": 120,
+    "enemyId": 3,
+    "enemyHp": 71,
+    "damage": 13,
+    "native": {
+      "shadow": {
+        "changed": 1371,
+        "positive": 1371
+      },
+      "flash": {
+        "changed": 10665,
+        "positive": 10665
+      },
+      "restoredPixelsChanged": [
+        0,
+        0,
+        0
+      ]
+    },
+    "browser": {
+      "shadow": {
+        "changed": 1391,
+        "positive": 1391
+      },
+      "flash": {
+        "changed": 10769,
+        "positive": 10769
+      },
+      "restoredPixelsChanged": [
+        0,
+        0
+      ]
+    },
+    "restoredInOrder": [
+      "shadow reinstated",
+      "hit light reinstated",
+      "native EGL generation 1 to 2 only"
+    ],
+    "centroidDistanceInGamePixels": {
+      "shadow": 0.888025,
+      "flash": 0.14812
+    }
+  },
+  "packaging": {
+    "method": "Separate locally signed release builds with identical generated game JavaScript and arm64 ABI; native timing and visual APKs include private QA hooks. WebView is the size comparison only.",
+    "signedReleases": [
+      {
+        "host": "webview",
+        "releaseApkBytes": 5695551,
+        "sha256": "42b75ae4b1c37f1ab204cfa720b7adafdc0f3f59e54517d463c151ce5e86dd62",
+        "aarBytes": 819876,
+        "gameJsSha256": "c9705b0f3ba7ee36341151163e7a15549d8baeeeae688bf5b5fd5e67c4b0d92b"
+      },
+      {
+        "host": "trimmed",
+        "releaseApkBytes": 68336517,
+        "sha256": "271c9af4f6d5687739394e31b33662f69ac3a5bcb3ab917bccb66aac2302a201",
+        "aarBytes": 17611005,
+        "gameJsSha256": "c9705b0f3ba7ee36341151163e7a15549d8baeeeae688bf5b5fd5e67c4b0d92b"
+      }
+    ]
+  },
+  "sha256": {
+    "nativeTiming": {
+      "cpu-raw.json": "72f15daa9aa9f99088d7e38f81158e3080ff20be316f46f9103e02b9562a8751",
+      "steady.perfetto-trace": "10fd97c3de541de5031f5841f15d118d8aeecda0da30d3a98b559c006ae7d284",
+      "startup.perfetto-trace": "c2105afe6fd84fcb7932f7049006a25908ce702d1e21eaa7efaa5e0c9d4102e4",
+      "screen-samples.json": "2b4dd79da5cc05411701f584c9015b10c34cee5a9677a2f06c6b75a313530800",
+      "native-recovered.json": "7ff99238d10a5cb4a378580400d1adc4c814f59e133964e0d7ebce16e2b66a70"
+    },
+    "browserTiming": {
+      "cpu-raw.json": "d71889ff7469364bcf0e36ec2b8ec2c6b5871da41d87b6e296042e48078210c1",
+      "steady.perfetto-trace": "a475e70144b7ea2fbb3be9205d525f87d3461687519fab9f1dc08db777641c66",
+      "startup.perfetto-trace": "46e19d708147abe93198c09d4946e3e37338d631a30d4692c0c5ac4d2b317040",
+      "screen-samples.json": "63a88617ac417ccc19250ab81116e8fe15542fdf61303521c0371adec69f9488",
+      "trace-presents.json": "330a0d44fc31b48a024a522d4892f36b9fe3dc482f3b2181e8978bf3895a1862",
+      "measurement.json": "97421e886cb150daed0017af1630ab797e6624c84e1ecf21f6ffc98ce4107089"
+    },
+    "nativeVisual": {
+      "before.png": "da338dcf9f3ba1b40d8c8ec2f13b2835ec8e2ba55db39c08bed130e8411c61c9",
+      "hit.png": "a9c18777683d928270f62ceabd9f6b1acaa6ae125a6684a0bb24e709dde7c608",
+      "no-shadow.png": "36ec66dd594fae5297655cb1b4a4171884a997a1441ee2cfd2e4c23bcfd568eb",
+      "shadow-back.png": "a9c18777683d928270f62ceabd9f6b1acaa6ae125a6684a0bb24e709dde7c608",
+      "no-flash.png": "514965f9ccb71f0aa53d308da581c27bc9ece1da93739234dbd6b248605e4ef4",
+      "flash-back.png": "a9c18777683d928270f62ceabd9f6b1acaa6ae125a6684a0bb24e709dde7c608",
+      "resumed.png": "a9c18777683d928270f62ceabd9f6b1acaa6ae125a6684a0bb24e709dde7c608",
+      "paired-visual.json": "ca8223ac3e056ac5476b2874b749b18bab6c28f4b0f67b5846403a5248729336",
+      "visual.json": "fcb4b745655c7214e927f73f11baf03a961bedd4cdb2480ac55aa0b20468d416"
+    },
+    "browserVisual": {
+      "before.png": "94129b51aea206aa42925eb4c73542ca6d363d92f015fb838d415e6d7966370f",
+      "hit.png": "3d31a7bf9850b5c4dd741b36b8a6381f756e13299694185ef51fa7d1b9273632",
+      "no-shadow.png": "569eaf86915c8bfe611d8713630690aa0351219a78762e10b07cf84206f431b1",
+      "shadow-back.png": "3d31a7bf9850b5c4dd741b36b8a6381f756e13299694185ef51fa7d1b9273632",
+      "no-flash.png": "13e7a2384ede0ba807aa13bb16f441b02b34043d4734cdb910018ba33286d5b0",
+      "flash-back.png": "3d31a7bf9850b5c4dd741b36b8a6381f756e13299694185ef51fa7d1b9273632",
+      "visual.json": "d8af9b1ac788b83d60eb0a5ade621deeced1ca1fc634185e20dba73f431436e9"
+    },
+    "derivedBrowserModuleManifest": "744ef61a0928dbb435c5513055922c585d2ddbcaf415092b2f5a1b99a503b075",
+    "releaseSizesReceipt": "877ad94904fc96c98de6dd7adcbde994a51caa510f6780e276d15d015d14e3da",
+    "nativeTimingInstrumentedApk": "382e65520ddfa0cc9475708e27e7bf0b7bf5fd03baa9a578f840a283d81ac581",
+    "nativeVisualInstrumentedApk": "d3ce2013abee764663b3f323c561f51c5b3ac412ab0cc142bc78853ccc61770a"
+  },
+  "limits": [
+    "One device and one observation per host. Start conditions, frame scheduling and display sample windows differ; these data do not establish a cross-host speedup.",
+    "The screenshot brackets cannot isolate a single first visible vsync. No independent GPU execution time, power, thermal soak, other handset or physical-finger operator was measured.",
+    "Lighting comparison covers the selected yard and original scripted hit. It is a local differential test across the two backends, not full-frame identity for every scene."
+  ]
+}

@@ -33,6 +33,9 @@ installWorld3DPlayerProject({
     hud.reset();
     const buttons = controls.map(([label, x, y, width]) =>
       hud.button(label, { x, y, width, height: 36, size: 18, color: 0x223342 }, () => {}).label);
+    for (const [text, x, y, width] of game.probeControls ?? []) {
+      hud.button(text, { x, y, width, height: 36, size: 16, color: 0x223342 }, () => {});
+    }
     // All three choice buttons use the same font and share the HUD's text pages.
     if (game.choiceLabels) for (const name of game.choiceLabels) buttons[1].text = name;
     const counters = [];
@@ -69,7 +72,7 @@ installWorld3DPlayerProject({
     await hud.ready();
     services.engine.clock.onTick(services.scope, tick => { elapsed += tick.deltaSeconds; });
     return {
-      world3D() { return { scene: game.scene, camera: game.camera }; },
+      world3D() { return { scene: game.scene, camera: game.camera, shadows: game.shadows }; },
       update(now) {
         hud.check();
         game.update(elapsed);
