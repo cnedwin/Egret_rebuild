@@ -2082,6 +2082,30 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       ['static','./webgl2LayerState.js'],['static','./webgl2LayerState.js']);
     effectFixtureGraph['packages/engine/dist/web/WebGL2Host.js'].push(['static','./webgl2LayerState.js']);
     reviseCaptureEdges(effectFixtureGraph);
+    // The submission helper is imported by preparation. Its own type-only
+    // dependency is erased from JavaScript, while retention materializes it.
+    for (const file of [
+      'rendering/prepareSharedDraws2D.ts',
+      'dist/rendering/prepareSharedDraws2D.js',
+      'dist/rendering/prepareSharedDraws2D.d.ts',
+    ]) {
+      effectFixtureGraph['packages/engine/'+file].push(['static','./sharedContainedQuad2D.js']);
+    }
+    for (const [file,targets] of Object.entries({
+      'rendering/sharedContainedQuad2D.ts': ['./prepareSharedDraws2D.js'],
+      'dist/rendering/sharedContainedQuad2D.js': [],
+      'dist/rendering/sharedContainedQuad2D.d.ts': ['./prepareSharedDraws2D.js'],
+      'rendering/sharedPreparationRetention2D.ts': [
+        '@egret/contracts','./packSharedDraws2D.js','./prepareRectangles2D.js',
+        './prepareSharedDraws2D.js','./prepareSharedDraws2D.js',
+      ],
+      'dist/rendering/sharedPreparationRetention2D.js': ['./prepareSharedDraws2D.js'],
+      'dist/rendering/sharedPreparationRetention2D.d.ts': [
+        '@egret/contracts','./packSharedDraws2D.js','./prepareRectangles2D.js','./prepareSharedDraws2D.js',
+      ],
+    })) {
+      effectFixtureGraph['packages/engine/'+file]=targets.map(target=>['static',target]);
+    }
     Object.assign(effectFixtureGraph,{
       'packages/engine/web/webgl2LayerState.ts':[['static','./sharedWebGL2Options.js'],['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js'],['static','./webgl2Native.js'],['static','./webgl2Types.js']],
       'packages/engine/dist/web/webgl2LayerState.js':[['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js']],
@@ -2141,6 +2165,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'mesh-wide-getter':['packages/runtime/dist/Mesh2D.d.ts','get geometry(): G | undefined;','get geometry(): TexturedGeometry2D | SharedGeometry2D | undefined;'],
         'shared-private-helper':['packages/engine/dist/index.d.ts','','export interface SharedOwnerSnapshot2D {}\n'],
         'shared-extra-edge':['packages/engine/dist/rendering/packSharedDraws2D.js','',"const extra=()=>import('./packSharedMeshGeometry3D.js');\n"],
+        'contained-quad-runtime-edge':['packages/engine/dist/rendering/sharedContainedQuad2D.js','',"import './prepareSharedDraws2D.js';\n"],
       };
       const edit=edits[sharedMutation];assert.ok(edit,'finite M1.3 mutation');const[file,before,after]=edit,original=readFileSync(path.join(root,file),'utf8');
       if(before)assert.equal(original.split(before).length,2,'unique M1.3 mutation anchor');
@@ -2921,6 +2946,7 @@ for(const [name,reason]of [
   ['mesh-wide-getter','M13: Mesh2D canonical generic contract mismatch'],
   ['shared-private-helper','M13: private shared helper leaked'],
   ['shared-extra-edge','S3D1: scene entry imported outside approved closure'],
+  ['contained-quad-runtime-edge','S3D1: scene entry imported outside approved closure: packages/engine/dist/rendering/sharedContainedQuad2D.js'],
 ])test('M1.3 policy '+name+' requires healthy baseline and assigned refusal',()=>{
   fixture({imported:'robust-predicates',sharedMutation:name},result=>{
     assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);
