@@ -844,8 +844,9 @@ for(const relative of ['web/webgpu.ts','dist/web/webgpu.d.ts','dist/web/webgpu.j
   if(!relative.endsWith('.js'))for(const name of sharedGPUTypes)sharedForward(text,name,true,'./WebGPUHost.js',file);
 }
 const privateSharedGPU = ["SharedStorageLimits2D","SharedStorageFees2D","SharedReadbackLayout2D","SharedStoragePlan2D","planSharedStorageFees2D","withSharedReadbackLayout2D","createRetentionLedger","RetentionRequestBase","KeyedRetentionRequest","LedgerHandle","LedgerLease","LedgerPlan","LedgerReturnPlan","RetentionLedgerStatus","RetentionSettlement","RetentionLedger","MeshPacking3DError","MeshPacking3DErrorCode","MeshPacking3DErrorOrigin","PackedMeshGeometry3D","PackedSharedDraw2D","PackedSharedEntry2D","PreparedSharedBarrier2D","PreparedSharedBatchPlan2D","PreparedSharedDraw2D","PreparedSharedEntry2D","PreparedSharedFrame2D","RetentionBufferRequest","RetentionHandle","RetentionLease","RetentionPlan","RetentionRequest","RetentionReturnPlan","RetentionTargetRequest","SHARED_BLENDS","SharedB1BuiltinProtocol","SharedDrawCommand2D","SharedOwnerSnapshot2D","SharedPoint2D","SharedPreparationError","SharedPreparationOptions2D","SharedSceneStorage2D","SharedStorageError2D","SharedSubmissionStorage2D","SharedWebGPUConfiguration","WebGPURetentionPool","admitSharedWebGPUOptions","checkSharedCapacity2D","copySharedPagePixels","createSharedResolvePipeline","createSharedWebGPUMeshPipeline","createSharedWebGPUPipeline","createWebGPURetentionPool","decodeSharedSRGB","encodeSharedSRGB","encodeSharedWebGPUMesh","getBuiltinSharedB1Protocol","getSharedMeshPacking3DErrorOrigin","isBuiltinSharedB1Protocol","materializeSharedPages2D","packSharedDraws2D","packSharedMeshGeometry3D","packSharedSubmission2D","planSharedSubmission2D","prepareSharedBatches2D","prepareSharedDraws2D","qualifySharedUV","sharedFailure"];
+privateSharedGPU.push("SharedResourcePending2D","SharedResourceImages2D","SharedResourceTotals2D","SharedResourceStatusInput2D","createPageCopyDiagnostics","createUnknownNativeDiagnostics","createReuseDiagnostics","createPendingHighWater","createImagesHighWater","createResourceTotals","raisePendingHighWater","raiseImagesHighWater","addResourceTotal","sharedResourceStatus");
 privateSharedGPU.push("attachSharedSceneCardSources2D","attachSharedSceneSources2D","packSharedSceneCardUniform3D","createSharedWebGPUCardPipeline","createSharedWebGPUTexturedMeshPipeline","packSharedSceneLambertUniform3D","createSharedWebGPULambertMeshPipeline");
-const privateSharedModules = ["sharedSubmissionStorage2D","sharedRetentionLedger","packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedHostDeferred","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
+const privateSharedModules = ["sharedSubmissionStorage2D","sharedRetentionLedger","sharedResourceDiagnostics","packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedHostDeferred","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
 for(const [entry,values,stem]of meshEntries) {
   const text=readFileSync(path.join(root,stem+'.d.ts'),'utf8')+'\n'+readFileSync(path.join(root,stem+'.js'),'utf8');
   for(const name of [...privateSharedGPU,...privateSharedModules])if(name in values||new RegExp('\\b'+name+'\\b').test(text))throw new Error('M13: private shared helper leaked: '+entry+'/'+name);
@@ -4685,6 +4686,27 @@ for (const file of ['packages/engine/web/WebGL2Host.ts','packages/engine/dist/we
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./sharedHostDeferred.js']]
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
+// Both shared Hosts keep their logical resource observations through one private module of types and counters.
+function reviseClosureEdges(file, add, remove = []) {
+  const edges = [...currentSceneLiteralClosure[file]];
+  for (const target of remove) {
+    const index = edges.findIndex(edge => edge[1] === target);
+    if (index < 0) throw new Error('S3D1: revised closure edge missing: ' + file + ' ' + target);
+    edges.splice(index, 1);
+  }
+  currentSceneLiteralClosure[file] = [...edges, ...add.map(target => ['static', target])]
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+}
+reviseClosureEdges('packages/engine/web/WebGL2Host.ts', ['./sharedResourceDiagnostics.js','./sharedResourceDiagnostics.js'], ['../rendering/sharedColor2D.js']);
+reviseClosureEdges('packages/engine/web/WebGPUHost.ts', ['./sharedResourceDiagnostics.js','./sharedResourceDiagnostics.js'], ['../rendering/sharedColor2D.js','./sharedRetentionLedger.js']);
+for (const file of ['packages/engine/dist/web/WebGL2Host.js','packages/engine/dist/web/WebGPUHost.js'])
+  reviseClosureEdges(file, ['./sharedResourceDiagnostics.js']);
+for (const [file, targets] of Object.entries({
+  'web/sharedResourceDiagnostics.ts':['../rendering/sharedColor2D.js','./sharedDeviceSession.js','./sharedRetentionLedger.js'],
+  'dist/web/sharedResourceDiagnostics.js':[],
+  'dist/web/sharedResourceDiagnostics.d.ts':['../rendering/sharedColor2D.js','./sharedDeviceSession.js','./sharedRetentionLedger.js']
+}))
+  currentSceneLiteralClosure['packages/engine/' + file] = targets.map(target => ['static', target]);
 // A Host-owned fully visible quad is encoded by one shared renderer helper. Its return type edge erases in JS.
 for (const name of ['rendering/prepareSharedDraws2D.ts','dist/rendering/prepareSharedDraws2D.js','dist/rendering/prepareSharedDraws2D.d.ts']) {
   const file='packages/engine/'+name;
