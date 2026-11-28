@@ -238,10 +238,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // The inert synthetic factory reports Node unavailability; it provides no
     // native Canvas, genuine resource, font, TextField or rendering evidence.
     const canvasTextBarrel = "export {createCanvasTextRasterProvider} from './CanvasTextRasterProvider.js';\n";
-    const canvasTextProviderTypes = "import type {TextRasterProvider} from '@egret/engine/text';\nexport declare function createCanvasTextRasterProvider(): TextRasterProvider;\n";
+    const canvasTextProviderImports = "import type {TextRasterProvider} from '@egret/engine/text';\nimport type {CanvasWorkSchedule} from './browserTextWork.js';\n";
+    const canvasTextProviderOptions = "export interface CanvasTextRasterProviderOptions { readonly schedule?: CanvasWorkSchedule; }\n";
+    const canvasTextProviderTypes = canvasTextProviderImports + canvasTextProviderOptions + "export declare function createCanvasTextRasterProvider(options?: CanvasTextRasterProviderOptions): TextRasterProvider;\n";
     const canvasTextProviderBody = "export function createCanvasTextRasterProvider() { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n";
     write('packages/engine/web/text.ts', canvasTextBarrel);
-    write('packages/engine/web/CanvasTextRasterProvider.ts', "import type {TextRasterProvider} from '@egret/engine/text';\nexport function createCanvasTextRasterProvider(): TextRasterProvider { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n");
+    write('packages/engine/web/CanvasTextRasterProvider.ts', canvasTextProviderImports + canvasTextProviderOptions + "export function createCanvasTextRasterProvider(options?: CanvasTextRasterProviderOptions): TextRasterProvider { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n");
     write('packages/engine/dist/web/text.js', canvasTextBarrel);
     write('packages/engine/dist/web/text.d.ts', canvasTextBarrel);
     write('packages/engine/dist/web/CanvasTextRasterProvider.js', canvasTextProviderBody);
@@ -1385,7 +1387,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Frame loop: inert copies of its modules and their build output, for the same reason.
     const loopGraphFiles=['web/loop.ts','web/BrowserFrameLoop.ts','dist/web/loop.js','dist/web/loop.d.ts','dist/web/BrowserFrameLoop.js','dist/web/BrowserFrameLoop.d.ts'];
     // Browser game: inert copies of its modules and their build output, for the same reason.
-    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','browserGameParagraph','browserGameGlyphFont','browserGameFamilies','screenControlGeometry','screenClipGeometry','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
+    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','browserGameParagraph','browserGameGlyphFont','browserGameFamilies','browserTextWork','screenControlGeometry','screenClipGeometry','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
     // World3D app: names what it imports from the main entry, so it is copied as it is.
     const world3dAppFiles=['web/world3d/app3D.ts','dist/web/world3d/app3D.js','dist/web/world3d/app3D.d.ts'];
     const playFiles=['BrowserPlay','playWidgets','playTouch','gestures','playView','playViewParagraph','playViewScroll','view'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
