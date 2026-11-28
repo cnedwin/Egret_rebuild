@@ -79,3 +79,47 @@ test('SB05 a binary skeleton plays as its JSON does: the same pose at the same t
  assert.ok(Math.abs(rotations[2]-27)<1e-3,String(rotations[2]));
  assert.ok(rotations.slice(4).every(r=>Math.abs(r-45)<1e-3),String(rotations));
 });
+
+test('SB06 binary providers can return a byte window into a larger file', async t => {
+  const { createSpineInstance } = await import('@egret/spine');
+  const data = fixture({ skeleton: swing, includeBinary: true });
+  const payload = data.values.get('e_binary');
+  const archive = Buffer.alloc(payload.length + 32);
+  payload.copy(archive, 16);
+  const window = archive.subarray(16, 16 + payload.length);
+
+  for (const source of [new Uint8Array(window.buffer, window.byteOffset, window.length), window]) {
+    const s = await setup(t, { data, control: { replace: { e_binary: source } } });
+    const group = s.load(['e_json', 'e_binary']);
+    await group.ready;
+    const json = group.getSpine('e_json');
+    const binary = group.getSpine('e_binary');
+    assert.deepEqual({ ...binary.info, format: 'json' }, json.info);
+    const players = [json, binary].map(asset => createSpineInstance(asset, s.engine.createScope()));
+    const tick = { tickId: 1, deltaSeconds: 0.1, elapsedSeconds: 0.1 };
+    const poses = players.map(player => {
+      player.setAnimation(0, 'swing');
+      return player.advance(tick);
+    });
+    assert.deepEqual(poses[1].bones, poses[0].bones);
+    assert.deepEqual(poses[1].slots, poses[0].slots);
+    for (const player of players) player.dispose();
+    group.dispose();
+    await flush();
+    await s.loader.close();
+    drained(s);
+  }
+});
+
+test('SB07 a truncated view cannot use trailing bytes from the same backing buffer', async t => {
+  const complete = encodeSkeleton(swing);
+  const archive = Buffer.alloc(complete.length);
+  archive.set(complete);
+  const truncated = archive.subarray(0, archive.length - 6);
+  const data = fixture({ skeleton: swing, includeBinary: true, binary: truncated });
+  const s = await setup(t, { data, control: { replace: { e_binary: truncated } } });
+  const group = s.load(['e_binary']);
+  await assert.rejects(group.ready, error => codes(error).includes('SPINE_PARSE_FAILED'));
+  await s.loader.close();
+  drained(s);
+});

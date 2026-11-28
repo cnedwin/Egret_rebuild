@@ -17,8 +17,8 @@ const ELEMENTS_PER_BYTE = 16;
 export function readSpineBinary(loader: Core.AttachmentLoader, bytes: Uint8Array, id: string): Core.SkeletonData {
   if (!(bytes instanceof Uint8Array) || bytes.byteLength < 9 || bytes.byteLength > 4194304)
     throw spineFault('BINARY_LIMIT', id);
-  // Core reads the whole buffer behind the array, from its start: give it a buffer of these bytes alone.
-  const own = bytes.slice().buffer;
+  // Core starts at byte zero of its input buffer. Copy the view even when its slice method would share storage.
+  const own = new Uint8Array(bytes).buffer;
   const input = Core.BinaryInput.prototype,
     readInt = input.readInt,
     utils = Core.Utils,
