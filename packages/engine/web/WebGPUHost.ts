@@ -12,7 +12,7 @@ import type { SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contra
 import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
 import { admitSharedWebGPUOptions } from './sharedWebGPUOptions.js';
 import type { SharedWebGPUHostOptions, SharedWebGPUConfiguration } from './sharedWebGPUOptions.js';
-import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
+import { prepareSharedDrawsForSubmission2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
 import { SharedPreparationRetention2D } from '../rendering/sharedPreparationRetention2D.js';
 import {
   planSharedSubmission2D,
@@ -2192,7 +2192,7 @@ class WebGPUHostImplementation {
               width > Math.floor(options.maxBackingPixels / height)
             )
               refuse('WEBGPU_BACKING_LIMIT');
-            const prepared = prepareSharedDraws2D(frame, width, height, options, this.retention, true),
+            const prepared = prepareSharedDrawsForSubmission2D(frame, width, height, options, this.retention),
               ticket = this.ticket && !this.ticket.bound ? this.ticket : undefined;
             const storage = planSharedSubmission2D(
               prepared,

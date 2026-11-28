@@ -519,3 +519,71 @@ test('SAT05 an exhausted clip ledger cannot call the actual exact predicate duri
   assert.equal(tupleBudget.tupleComparisonsCharged, 0);
   assert.equal(counts.calls, 1);
 });
+
+test('SAT06 contained spans across partial clips preserve packed attributes and the first unpaid operation', async t => {
+  let activeBudget;
+  const spans = [];
+  const admit = TexturedPreparationBudget2D.prototype.admitSourceTriangles;
+  const replay = Preparation.prototype.tryReplayContainedMeshEdges;
+  t.mock.method(TexturedPreparationBudget2D.prototype, 'admitSourceTriangles', function (count) {
+    activeBudget = this;
+    return admit.call(this, count);
+  });
+  t.mock.method(Preparation.prototype, 'tryReplayContainedMeshEdges', function (corners, edges) {
+    if (edges > 1 && activeBudget && spans.length < 32) spans.push({ corners, edges, before: activeBudget.snapshot() });
+    return replay.call(this, corners, edges);
+  });
+  const clips = [
+    { x: -4, y: -5, width: 30, height: 32 },
+    { x: 2, y: 2, width: 21, height: 18 },
+    { x: 0, y: 6, width: 29, height: 21 },
+    { x: 7, y: 2, width: 15, height: 23 }
+  ];
+  await withFrame(
+    [
+      { transform: { x: -2.5, y: 1.25, scaleX: 3.7, scaleY: 2.2 } },
+      { transform: { x: 26, y: 10, rotation: 27, scaleX: -2.5, scaleY: 1.6 } }
+    ],
+    frame => {
+      const compared = (limits, owned) => {
+        activeBudget = undefined;
+        const result = outcome(frame, limits, owned);
+        return { result, ledger: activeBudget?.snapshot() };
+      };
+      const exact = compared(LIMITS, false);
+      assert.ok(exact.result.budget.preparedVerticesCharged > 0);
+      const actual = compared(LIMITS, true);
+      assert.deepEqual(actual, exact);
+      const captured = spans.slice();
+      assert.ok(captured.some(span => span.edges >= 4));
+      assert.ok(
+        captured.some(span => span.corners > 3),
+        'a real cut changed the number of corners before a paid span'
+      );
+      const boundaries = [captured[0], captured.find(span => span.corners > 3), captured.at(-1)];
+      for (const { corners, edges, before } of boundaries) {
+        const predicateEnd = before.predicatesCharged + edges * 2 * corners;
+        const tupleEnd = before.tupleComparisonsCharged + (edges * corners * (corners + 1)) / 2;
+        for (const limits of [
+          { ...LIMITS, maxClipEdgeTests: before.predicatesCharged + 1 },
+          { ...LIMITS, maxTupleComparisons: before.tupleComparisonsCharged + 1 },
+          { ...LIMITS, maxClipEdgeTests: predicateEnd - 1, maxTupleComparisons: tupleEnd },
+          { ...LIMITS, maxClipEdgeTests: predicateEnd, maxTupleComparisons: tupleEnd - 1 },
+          { ...LIMITS, maxClipEdgeTests: predicateEnd, maxTupleComparisons: tupleEnd }
+        ]) {
+          const reference = compared(limits, false);
+          assert.deepEqual(compared(limits, true), reference);
+        }
+      }
+    },
+    (engine, scope) => {
+      let parent = engine.stage;
+      for (const rect of clips) {
+        const sprite = parent.addChild(scope.use(new egret.Sprite()));
+        sprite.clipRect = rect;
+        parent = sprite;
+      }
+      return parent;
+    }
+  );
+});

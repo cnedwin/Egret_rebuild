@@ -181,9 +181,10 @@ export class Preparation {
   /** Intersect only already qualified canonical clip bounds, with the viewport last. */
   public containedClipStackBounds(
     clips: readonly (readonly PreparedPoint2D[])[],
-    viewport: readonly PreparedPoint2D[]
+    viewport: readonly PreparedPoint2D[],
+    minimumClips = 2
   ): ContainedClipStackBounds2D | undefined {
-    if (!this.reuseContainedSubjects || clips.length < 2) return undefined;
+    if (!this.reuseContainedSubjects || clips.length < minimumClips) return undefined;
     let left = -Infinity,
       top = -Infinity,
       right = Infinity,
@@ -239,6 +240,23 @@ export class Preparation {
     if (
       predicates > this.options.maxClipEdgeTests - this.edgeTests ||
       !tryReplayPreparedStage2D(this.budget, { preparedVertices: 0, predicates, tupleComparisons: tuples })
+    )
+      return false;
+    this.edgeTests += predicates;
+    return true;
+  }
+  /** Pay a consecutive run of mesh half-planes proved to contain the current polygon. */
+  public tryReplayContainedMeshEdges(corners: number, edges: number): boolean {
+    if (edges === 0) return true;
+    if (!this.reuseContainedSubjects || corners < 3 || corners > 64) return false;
+    const predicates = 2 * corners * edges;
+    if (
+      predicates > this.options.maxClipEdgeTests - this.edgeTests ||
+      !tryReplayPreparedStage2D(this.budget, {
+        preparedVertices: 0,
+        predicates,
+        tupleComparisons: ((corners * (corners + 1)) / 2) * edges
+      })
     )
       return false;
     this.edgeTests += predicates;
@@ -603,10 +621,12 @@ export function clipPolygon2D<P extends PreparedPoint2D>(
   normalize: (preparation: Preparation, input: P[]) => P[],
   attach: CrossingAttributes<P>,
   policy?: PolygonClipPolicy2D<P>,
-  normalization?: 'rectangle' | 'image' | 'mesh'
+  normalization?: 'rectangle' | 'image' | 'mesh',
+  onlyEdge?: number
 ): P[] {
   if (!clip.length) return [];
-  for (let edge = 0; edge < clip.length && subject.length; edge++) {
+  const end = onlyEdge === undefined ? clip.length : onlyEdge + 1;
+  for (let edge = onlyEdge ?? 0; edge < end && subject.length; edge++) {
     // Only known first-party call sites mark their successful normalization.
     // Preparation independently requires the existing trusted clipping selection.
     if (normalization !== undefined) {

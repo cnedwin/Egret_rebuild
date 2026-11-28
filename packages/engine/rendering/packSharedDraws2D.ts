@@ -1,5 +1,11 @@
 import type { PreparedSharedDraw2D, PreparedSharedFrame2D } from './prepareSharedDraws2D.js';
-import { qualifySharedUVIn, sharedFailure, sharedUVDomain } from './prepareSharedDraws2D.js';
+import {
+  isPreparedContainedQuad,
+  qualifySharedUVIn,
+  sharedFailure,
+  sharedUVDomain,
+  writePreparedContainedQuad
+} from './prepareSharedDraws2D.js';
 import { packedOrientation } from './packedOrientation.js';
 import { sharedPageLevels2D } from './sharedColor2D.js';
 /**
@@ -202,7 +208,8 @@ export function packSharedDraws2D(prepared: PreparedSharedFrame2D): PackedShared
     if (draw.kind === 'barrier') continue;
     const kept = retained?.[entry];
     if (kept !== undefined && kept.rested && kept.rows !== undefined) continue;
-    for (const polygon of draw.polygons) if (polygon.length > 2) capacity += (polygon.length - 2) * 3;
+    if (isPreparedContainedQuad(draw)) capacity += 6;
+    else for (const polygon of draw.polygons) if (polygon.length > 2) capacity += (polygon.length - 2) * 3;
   }
   let rows = new Float32Array(capacity * ROW),
     used = 0;
@@ -304,7 +311,8 @@ export function packSharedDraws2D(prepared: PreparedSharedFrame2D): PackedShared
       // No room was counted for it, so the draws from here on are packed into a new allocation with that
       // room; the draws before it keep their views of the old one.
       let own = 0;
-      for (const polygon of draw.polygons) if (polygon.length > 2) own += (polygon.length - 2) * 3;
+      if (isPreparedContainedQuad(draw)) own = 6;
+      else for (const polygon of draw.polygons) if (polygon.length > 2) own += (polygon.length - 2) * 3;
       rows = new Float32Array(rows.length - used + own * ROW);
       used = 0;
     }
@@ -329,6 +337,14 @@ export function packSharedDraws2D(prepared: PreparedSharedFrame2D): PackedShared
         rows[o + 1] = opacity;
       }
       used += keptRows.length;
+    } else if (isPreparedContainedQuad(draw)) {
+      // A rectangle with distinct represented endpoints has exactly two positive represented triangles.
+      // Keep the two individual debits so one remaining predicate fails at the original second triangle.
+      budget.admitPredicate();
+      budget.admitPredicate();
+      writePreparedContainedQuad(draw, rows, used, slot, opacity);
+      used += 6 * ROW;
+      vertices = 6;
     } else {
       const uvDomain = sharedUVDomain(draw, frame);
       for (const polygon of draw.polygons) {
