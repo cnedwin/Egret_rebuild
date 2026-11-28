@@ -168,8 +168,13 @@ declare module '@egret/android-player-world3d' {
   }
 
   export interface World3DPlayerServices extends PlayerServices {
-    /** Load a declared binary glTF with embedded base-color JPEGs. The scope retires its pages and meshes. */
-    loadGlb(path: string, options: { readonly firstPage: number; readonly signal?: AbortSignal }): Promise<GltfAsset3D>;
+    /** Load a declared binary glTF with embedded JPEG or PNG images. The scope retires its pages and meshes. */
+    loadGlb(path: string, options: {
+      readonly firstPage: number;
+      readonly signal?: AbortSignal;
+      /** Cumulative container bytes copied and total size from the GLB header, before decoding. */
+      readonly onProgress?: (bytesRead: number, totalBytes: number) => void;
+    }): Promise<GltfAsset3D>;
   }
 
   export interface World3DPlayerDefinition extends Omit<PlayerDefinition, 'create'> {

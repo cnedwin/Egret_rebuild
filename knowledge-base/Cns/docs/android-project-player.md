@@ -266,6 +266,23 @@ node runtime-sdk/android/player/export-project.mjs --project /projects/my-game -
 
 在末姿势，四路在 EGL 上下文重建前后的 1080 × 1920 全幅画面逐像素相同。与独立 CPU 光栅参考比较，远离颜色分界的 2,030,094 个像素全部吻合。剩余区域有 22 个像素与同一网格内的相邻纹素同色，21 个像素与轮廓处的相邻图层同色。这 43 个像素均能在各自的期望 3 × 3 邻域找到相同颜色。每路在两代上下文中各上传两页，关闭时累计释放四次。三个游戏会话各释放两份逻辑纹理，回放释放命令带。[Fold7 测量记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-indexed-mesh.json)
 
+### 导入超过 1 MiB 的包内 GLB
+
+`services.loadGlb(path, { firstPage, signal, onProgress })` 可选择报告已复制的字节数和从有效 GLB 头部读出的文件总长。每块复制完成后同步调用回调。在回调中取消信号，读取器会在请求下一块之前关闭。回调抛出异常时，本次导入会以该异常拒绝并释放读取器。字节复制完成后还需解码 glTF、发布贴图页，使用场景前应等待返回的 Promise 完成。
+
+Terraced Hills 示例使用 27,225 个带法线和 UV 的顶点、53,792 个有索引的三角形和现有披风纹理，生成 1,195,336 字节的地形 GLB。首次导入在已读 131,072 字节时取消。重试沿用同一路径和贴图页编号。点击地形将其释放，再点一次重新加载，最后按 **Close game** 查看资源回收读数。
+
+```sh
+node runtime-sdk/examples/terrain-glb/prepare.mjs out/terrain-game
+node runtime-sdk/android/player/create-app.mjs --project out/terrain-game --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.terrain --layout embedded --out out/terrain-app
+gradle -p out/terrain-app assembleRelease
+node --test runtime-sdk/project/large-glb.test.mjs
+```
+
+使用裁剪 V8 的 arm64 AAR，并按上文配置外部测试签名。设备安装运行后，用 `adb shell dumpsys activity org.example.terrain/org.egret.example.LibraryActivity` 查看播放器计数。关闭视图后，`projectClose` 给出 `canceledAt`、`loadedBytes`、`imports`、`retirements` 和 `pagesReleased`。
+
+Fold7 两次完整导入均读完模型。卸载模型时，649,904 个取样像素中有 218,886 个明显变化；重载后与原画面逐像素一致。关闭后两次页发布都已归还，驻留页为零。本项覆盖 #393 的大文件资源验收，《风雪山神庙》的灯光、阴影、特效和同场景呈现计时另行验收。[真机记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-terrain-glb.json)
+
 ### 在 Android 上驾驶带贴图的 GLB 赛车
 
 《锦绣飞车》的 Android 本地导出沿用原作单圈赛、八车模拟和赛道。熊猫团团的车身及坐姿车手来自游戏原有的两个 GLB，各自内嵌一张 768 × 768 的 JPEG。比赛规则、模型装配和赛道数据取自固定的游戏版本。[浏览器试玩](https://cnedwin.github.io/PortedGamesEgret/Rally/) · [游戏源码与美术说明](https://github.com/cnedwin/PortedGamesEgret/tree/ce6144533b890be992bea9eb09cb344457f8364c/Rally)

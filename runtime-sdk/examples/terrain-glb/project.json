@@ -1,0 +1,11 @@
+{
+  "name": "Terraced Hills",
+  "width": 768,
+  "height": 432,
+  "entry": "index.html",
+  "script": "main.mjs",
+  "pages": [],
+  "assets": [
+    "terrain.glb"
+  ]
+}
