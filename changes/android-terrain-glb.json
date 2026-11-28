@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Report chunk progress for packaged World3D models on Android",
+    "body": "Games can observe packaged GLB bytes and cancel a load between chunks. A textured terrain example covers retrying the same file and releasing its geometry and texture page on the Fold7."
+  },
+  "zh": {
+    "title": "Android 包内三维模型支持分块进度通知",
+    "body": "游戏可观察 GLB 的实际读取进度，并在块间取消导入。带贴图的地形示例在 Fold7 上验证了重试同一文件，以及几何与贴图页的回收。"
+  }
+}

@@ -266,6 +266,23 @@ The packet consumed by GLES3 was 948 bytes in every lane. The bridge figures cou
 
 All four paths produced identical 1080 × 1920 surfaces at the final pose, both before and after EGL context recreation. Against an independent CPU rasterization, all 2,030,094 pixels away from color boundaries matched. Of the remaining pixels, 22 matched the color of a neighboring texel within the same mesh and 21 matched a neighboring layer at a silhouette. Every differing color appeared in the expected 3 × 3 neighborhood. Each execution uploaded both atlas pages once per context and recorded four page releases by close. The three game sessions released both logical textures, and replay released its tape. [Fold7 measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-project-indexed-mesh.json)
 
+### Load a packaged GLB larger than 1 MiB
+
+`services.loadGlb(path, { firstPage, signal, onProgress })` optionally reports the bytes already copied and the total from the validated GLB header. Each notification runs synchronously after copying a chunk. Aborting the signal inside the callback closes the reader before it requests another chunk. A thrown callback error rejects the load and releases the reader. Finishing the byte copy is followed by glTF decoding and page publication. Await the returned promise before using the scene.
+
+The Terraced Hills example generates a 1,195,336-byte model from 27,225 lit vertices, 53,792 indexed triangles and the existing mantle texture. The first import cancels at 131,072 bytes. The retry uses the same file and page number. Tap the terrain to release it, tap again to reload it, then use **Close game** to inspect the final resource counts.
+
+```sh
+node runtime-sdk/examples/terrain-glb/prepare.mjs out/terrain-game
+node runtime-sdk/android/player/create-app.mjs --project out/terrain-game --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.terrain --layout embedded --out out/terrain-app
+gradle -p out/terrain-app assembleRelease
+node --test runtime-sdk/project/large-glb.test.mjs
+```
+
+Use a trimmed arm64 V8 AAR and the external test signing settings described above. In the installed game, `adb shell dumpsys activity org.example.terrain/org.egret.example.LibraryActivity` reports the player counters. After closing the view, `projectClose` includes `canceledAt`, `loadedBytes`, `imports`, `retirements` and `pagesReleased`.
+
+On the Fold7, both successful imports consumed the entire model. Removing it changed 218,886 pixels across 649,904 sampled surface pixels. Reloading reproduced the initial pixels exactly. Closing returned both pages and left zero resident pages. This is the large-GLB resource acceptance for #393. The Snow Temple lighting, shadows, effects and matched frame presentation have separate acceptance criteria. [Device record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-terrain-glb.json)
+
 ### Race a textured GLB kart on Android
 
 The local Android export of *Jinxiu Rally* uses the original one-lap race, eight-driver simulation and course. Tuan's chassis and seated driver come from the game's original GLBs. Each contains an embedded 768 × 768 JPEG. The original race rules, fitted models and track data come from the specified game checkout. [Browser game](https://cnedwin.github.io/PortedGamesEgret/Rally/) · [Game source and artwork](https://github.com/cnedwin/PortedGamesEgret/tree/ce6144533b890be992bea9eb09cb344457f8364c/Rally)

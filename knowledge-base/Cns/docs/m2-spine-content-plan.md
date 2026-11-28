@@ -9,7 +9,7 @@
 | M2.1 #83 | PNG、图集、序列、字体和 Spine 图集／JSON／二进制骨骼构建器，运行时准入与缓存失效处理。[Spine 内容](spine-content-ingress.md) | 选定的目标纹理变体、授权编辑器导出物、独立参考与完整资格。 |
 | M2.2 #84 | 独立 Spine 播放器、轨道／队列、组合皮肤、有限播放及序列控制；[有界历史的分阶段跳转与向前事件重放](spine-seek.md) | 完整选定版本语义、带物理的跳转参考和检查点 |
 | M2.3 #85 | WebGPU／WebGL2 下 egret-shared-linear/1 的复制有序共享显示 | 完整附件／裁剪／双色／混合／采样参考 |
-| M2.4 #86 | 可编辑的 20 个 Spine 和 200 个序列动画场景、RESET、兼容序列状态保留，以及在 Windows／Fold7 验证的选定 Spine 播放保留替换。 | 声明状态、内容及宿主范围内的组合生命周期和预算。 |
+| M2.4 #86 | 可编辑的 20 个 Spine 和 200 个序列动画场景、RESET、兼容序列状态保留，以及在 Windows／Fold7 验证的选定 Spine 播放保留替换。 可编辑场景还可用 RESET 同时替换一个角色与一个序列，已有 Windows 前台 WebGL2 和 WebGPU 的分段计时。 | 声明状态、内容及宿主范围内的组合生命周期和预算。 |
 
 复用[现有资产／播放器／显示](spine-content-ingress.md)、[内容构建](content-build-pipeline.md)、[字体代次](font-resource-generations.md)、[Spine RESET](spine-reset-slot.md)、[序列 RESET](序列动画RESET替换.md)及[Android 记录](android-device-validation.md)，这些切片不关闭完整 Spine 或 M4。
 

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "runtime-sdk/examples/terrain-glb/index.html",
+      "originRole": "Native project entry page. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/terrain-glb/project.json",
+      "originRole": "Declared native example assets and viewport. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/terrain-glb/main.mjs",
+      "originRole": "Functional model import, cancellation, retry, display and release. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/examples/terrain-glb/prepare.mjs",
+      "originRole": "Original geometry and glTF authoring for an indexed terrain. Reuses the existing indexed-mesh example PNG with its original repository license. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/project/large-glb.test.mjs",
+      "originRole": "Behavior tests for bounded GLB progress, cancellation and retirement. First-party contribution prepared with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "runtime-sdk/measurements/fold7-terrain-glb.json",
+      "originRole": "Sanitized Windows and physical Android results for the packaged terrain. First-party contribution prepared with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}
