@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1550 exports; 22 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1551 exports; 22 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -698,6 +698,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `surfaceShaderSources3D` | function | The shader sources of a surface: its height, the colour it gives and the relief it gives, in GLSL and WGSL. |
 | `Terrain3D` | class | A height field drawn as a grid of chunk meshes. |
 | `TERRAIN3D_LIMITS` | value | The largest height field, chunk and number of levels and chunks terrain has, and the most streamed tiles. |
+| `TerrainLoadContext3D` | interface | Cooperative lifetime of one tile load. |
 | `TerrainMaterialOptions3D` | interface | A terrain material's layers, their weights, and how often they repeat. |
 | `TerrainOptions3D` | interface | Terrain to make: its chunks, levels of detail and their distance, its skirts, texture scale and colors. |
 | `TerrainStream3D` | class | Terrain loaded in tiles around the camera: read heights, and update it as the camera moves. |

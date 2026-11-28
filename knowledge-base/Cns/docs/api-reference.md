@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1550 个导出，其中 22 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1551 个导出，其中 22 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -698,6 +698,7 @@
 | `surfaceShaderSources3D` | 函数 | The shader sources of a surface: its height, the colour it gives and the relief it gives, in GLSL and WGSL. |
 | `Terrain3D` | 类 | A height field drawn as a grid of chunk meshes. |
 | `TERRAIN3D_LIMITS` | 值 | The largest height field, chunk and number of levels and chunks terrain has, and the most streamed tiles. |
+| `TerrainLoadContext3D` | 接口 | Cooperative lifetime of one tile load. |
 | `TerrainMaterialOptions3D` | 接口 | A terrain material's layers, their weights, and how often they repeat. |
 | `TerrainOptions3D` | 接口 | Terrain to make: its chunks, levels of detail and their distance, its skirts, texture scale and colors. |
 | `TerrainStream3D` | 类 | Terrain loaded in tiles around the camera: read heights, and update it as the camera moves. |

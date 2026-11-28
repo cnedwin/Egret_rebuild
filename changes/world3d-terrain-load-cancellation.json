@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-29",
+  "en": {
+    "title": "Cooperative World3D terrain loading",
+    "body": "Terrain stream loaders receive a per-request cancellation signal, notified on retirement or disposal. Cooperative jobs can settle promptly without exceeding the outstanding-load budget; stale results cannot publish. A terrain options factory receives each tile index and validated field. Two-argument loaders and static options remain compatible."
+  },
+  "zh": {
+    "title": "World3D 流式地形协作取消",
+    "body": "地形流加载器收到每次请求独立的取消信号，离开保留范围或销毁时通知。协作式任务可尽快结束而不放宽加载并发上限，旧结果不能发布。地形选项工厂收到各瓦片坐标和已验证的高度场。原双参数加载器和静态选项仍然兼容。"
+  }
+}
