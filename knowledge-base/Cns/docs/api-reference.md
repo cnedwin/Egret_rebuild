@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1495 个导出，其中 8 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1520 个导出，其中 12 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -771,6 +771,7 @@
 | `createFlyControls3D` | 函数 | Makes fly controls for a camera on an element. |
 | `createFollowControls3D` | 函数 | Makes follow controls for a follow camera on an element. |
 | `createOrbitControls3D` | 函数 | Makes orbit controls for a camera on an element. |
+| `createOverlayScreenMarkers3D` | 函数 | A display layer for World3DOverlay. |
 | `createPositionalAudio3D` | 函数 | Makes a sound that plays from a place in the scene. |
 | `createPostProcessSettings3D` | 函数 | Post-processing settings with every effect off. |
 | `createScreenMarkers3D` | 函数 | A layer of page elements that follow scene points. |
@@ -800,6 +801,10 @@
 | `loadTexture3D` | 函数 | Load an image or KTX2 file as a texture. |
 | `OrbitControls3D` | 类 | Turns a camera around a target, pans and zooms it, with the mouse and touch. |
 | `OrbitControlsOptions3D` | 接口 | Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. |
+| `OverlayScreenMarker3D` | 接口 | A borrowed native display marker; the layer owns its holder, not its artwork. |
+| `OverlayScreenMarkerOptions3D` | 接口 | Options for a native display marker; its visible footprint is kept within the selected part of the overlay. |
+| `OverlayScreenMarkers3D` | 接口 | A layer of native display objects over the 3D picture. |
+| `OverlayScreenMarkersOptions3D` | 接口 | The native stage and the actual 3D canvas whose scene the camera projects. |
 | `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `play3d` | 函数 | Starts a 3D game in the page. |
@@ -826,6 +831,7 @@
 | `Renderer3DInfo` | 接口 | What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. |
 | `SCENE_ASSET_3D` | 值 | A scene document written by serializeScene3D. |
 | `ScreenMarker3D` | 接口 | A marker over the screen that follows a point of the scene: its element and where it is. |
+| `ScreenMarkerInsets3D` | 接口 | CSS-pixel margins for independent edges. |
 | `ScreenMarkerOptions3D` | 接口 | A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. |
 | `ScreenMarkers3D` | 接口 | Elements over the screen that follow points of the scene: add them, and update them each frame. |
 | `ScreenMarkersOptions3D` | 接口 | Screen markers to make: the container they go in, and the camera they follow. |
@@ -847,7 +853,9 @@
 | `World3DFrameMetrics` | 接口 | What a frame drew: its draws and triangles, its CPU time, and its passes and reflections. |
 | `World3DFramePass` | 接口 | One pass of a frame: its view and kind, its size, its draws and triangles, and its times. |
 | `World3DGpuTiming` | 类型 | How long a pass took on the GPU, or why that is not known. |
+| `World3DLoopOptions` | 接口 |  |
 | `World3DLoopSource` | 接口 | What drives a 3D view: an Engine's clock and the call that advances it. |
+| `World3DLoopTiming` | 接口 | A 3D RAF callback and its CPU clock advance, on the same time origin as 2D loop timings. |
 | `World3DOverlay` | 接口 | A 2D game drawn on a canvas over a 3D view. |
 | `World3DOverlayOptions` | 接口 | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
 | `World3DOverlayStartupTiming` | 接口 |  |
@@ -860,6 +868,7 @@
 | `World3DView` | 类 | Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. |
 | `World3DViewKind` | 类型 | Which view a pass drew: the main one, a reflection, or offscreen. |
 | `World3DViewOptions` | 接口 | A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. |
+| `World3DViewTiming` | 接口 | CPU phases of a World3D view tick; a rendered result is not GPU completion. |
 
 ## `@egret/engine/webgpu/world3d`
 
@@ -879,6 +888,7 @@
 | `createFlyControls3D` | 函数 | Makes fly controls for a camera on an element. |
 | `createFollowControls3D` | 函数 | Makes follow controls for a follow camera on an element. |
 | `createOrbitControls3D` | 函数 | Makes orbit controls for a camera on an element. |
+| `createOverlayScreenMarkers3D` | 函数 | A display layer for World3DOverlay. |
 | `createPositionalAudio3D` | 函数 | Makes a sound that plays from a place in the scene. |
 | `createPostProcessSettings3D` | 函数 | Post-processing settings with every effect off. |
 | `createScreenMarkers3D` | 函数 | A layer of page elements that follow scene points. |
@@ -908,6 +918,10 @@
 | `loadTexture3D` | 函数 | Load an image or KTX2 file as a texture. |
 | `OrbitControls3D` | 类 | Turns a camera around a target, pans and zooms it, with the mouse and touch. |
 | `OrbitControlsOptions3D` | 接口 | Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. |
+| `OverlayScreenMarker3D` | 接口 | A borrowed native display marker; the layer owns its holder, not its artwork. |
+| `OverlayScreenMarkerOptions3D` | 接口 | Options for a native display marker; its visible footprint is kept within the selected part of the overlay. |
+| `OverlayScreenMarkers3D` | 接口 | A layer of native display objects over the 3D picture. |
+| `OverlayScreenMarkersOptions3D` | 接口 | The native stage and the actual 3D canvas whose scene the camera projects. |
 | `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | 类 | A sound placed in the scene. |
@@ -919,6 +933,7 @@
 | `Renderer3DInfo` | 接口 | What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. |
 | `SCENE_ASSET_3D` | 值 | A scene document written by serializeScene3D. |
 | `ScreenMarker3D` | 接口 | A marker over the screen that follows a point of the scene: its element and where it is. |
+| `ScreenMarkerInsets3D` | 接口 | CSS-pixel margins for independent edges. |
 | `ScreenMarkerOptions3D` | 接口 | A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. |
 | `ScreenMarkers3D` | 接口 | Elements over the screen that follow points of the scene: add them, and update them each frame. |
 | `ScreenMarkersOptions3D` | 接口 | Screen markers to make: the container they go in, and the camera they follow. |
@@ -936,7 +951,9 @@
 | `World3DBackend` | 类型 | Which GPU interface a 3D app draws with. |
 | `World3DClockSource` | 接口 | The part of an Engine this view needs: its explicit game clock. |
 | `World3DDeviceHints` | 接口 | What `pickWorld3DQuality` reads about the device. |
+| `World3DLoopOptions` | 接口 |  |
 | `World3DLoopSource` | 接口 | What drives a 3D view: an Engine's clock and the call that advances it. |
+| `World3DLoopTiming` | 接口 | A 3D RAF callback and its CPU clock advance, on the same time origin as 2D loop timings. |
 | `World3DOverlay` | 接口 | A 2D game drawn on a canvas over a 3D view. |
 | `World3DOverlayOptions` | 接口 | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
 | `World3DOverlayStartupTiming` | 接口 |  |
@@ -947,6 +964,7 @@
 | `World3DStatsOptions` | 接口 | 3D stats to make: the container they show in, how they smooth, and how often they refresh. |
 | `World3DView` | 类 | Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. |
 | `World3DViewOptions` | 接口 | A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. |
+| `World3DViewTiming` | 接口 | CPU phases of a World3D view tick; a rendered result is not GPU completion. |
 
 ## `@egret/engine/resources`
 
@@ -1075,10 +1093,10 @@
 | `ControlKeys` | 接口 | Keys bound to a control: which are pressed now; dispose of it to unbind them. |
 | `ControlKeysOptions` | 类型 | Keys for one control: an action, a toggle, a text field or a selection group. |
 | `ControlKeysSource` | 接口 | The keyboard input, or anything that delivers its three key events. |
-| `createActionControl` | 函数 | A button on a target: a press and release inside it activates it. |
+| `createActionControl` | 函数 | A button on a target: a captured press and release activates it by default. |
 | `createControlKeys` | 函数 | Binds the keyboard to a control: Space and Enter press an action or a toggle, arrows move a selection. |
 | `createHoverControl` | 函数 | Tells whether a pointer hovers over a target. |
-| `createMovementControl` | 函数 | A virtual stick on a target: dragging inside its radius gives a direction. |
+| `createMovementControl` | 函数 | A virtual stick on a target: dragging from its contact origin or a fixed center gives a direction. |
 | `createRangeControl` | 函数 | A slider on a target: dragging along its track or pressing keys sets a value between its least and greatest. |
 | `createScrollControl` | 函数 | Scrolls content past a viewport along one axis, by wheel, by dragging a thumb, or by calls. |
 | `createSelectionGroup` | 函数 | Radio buttons or tabs: one item of the group is selected at a time. |
@@ -1092,7 +1110,7 @@
 | `HoverControlOptions` | 接口 | Hover, toggle and single-selection state for controls an application draws itself. |
 | `LayoutNode` | 类型 | A node of a UI layout tree: a leaf, a stack of children, or a virtual list. |
 | `MovementControl` | 接口 | A virtual stick: where it points now, whether it is held, and calls that set or disable it. |
-| `MovementControlOptions` | 接口 | A movement control to make: its input and target, its radius and dead zone, and what it calls. |
+| `MovementControlOptions` | 接口 | A movement control to make: its input and target, its geometry, and what it calls. |
 | `MovementKeysOptions` | 接口 | The keys that are down give the direction; opposite keys cancel each other. |
 | `MovementValue` | 接口 | Reusable movement and action controls over the existing contact stream. |
 | `RangeAxis` | 类型 | One value out of a range, for a slider an application draws itself: a volume, a share, an amount. |
@@ -1468,6 +1486,7 @@
 | `BrowserFrameLoopOptions` | 接口 | A frame loop to run: its engine, frame and host, its update, how long a step and a catch-up may be, and its frame requests. |
 | `BrowserFrameLoopSnapshot` | 接口 | A frame loop as it is now: its state, its steps, frames and skipped frames, its seconds and any failure. |
 | `BrowserFrameLoopState` | 类型 | Whether a frame loop is idle, running, failed or closed. |
+| `BrowserFrameTiming` | 接口 | An observational CPU sample for one browser callback. |
 | `createBrowserFrameLoop` | 函数 | The frame loop of a game in a page. |
 | `FrameLoopEngine` | 接口 | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | 接口 | What the loop asks of a Host: how many frames it holds that it has not finished. |
@@ -1591,11 +1610,17 @@
 | `BrowserGameAtlasLabel` | 接口 | A line of text drawn on a page of images shared with other such labels. |
 | `BrowserGameBackend` | 类型 | Which GPU interface a browser game draws with. |
 | `BrowserGameFit` | 类型 | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, filling it with a stage that grows around the design (`'expand'`), or filling it as the stage scale modes of Egret 5 did (`'fixedWidth'`, `'fixedHeight'`, `'fixedNarrow'`, `'fixedWide'`; see `planScreen` of `@egret/engine/web/screen`). |
+| `BrowserGameFrameTiming` | 接口 | A loop sample with the game's image-budget refusal distinguished from a submitted frame. |
 | `BrowserGameFrameUsage` | 接口 | What the last frame drawn held of a frame's images, against what one frame may hold. |
+| `BrowserGameGlyphFont` | 接口 | Spread font and pages into createBitmapText; retire all borrowers before releasing the shared page. |
+| `BrowserGameGlyphFontOptions` | 接口 |  |
 | `BrowserGameLabel` | 接口 | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | 接口 | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | 接口 | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
 | `BrowserGameOptions` | 接口 |  |
+| `BrowserGameParagraphLabel` | 接口 |  |
+| `BrowserGameParagraphLabelCreateOptions` | 接口 | The initial wrapping width is required; ownership defaults to the game's scope. |
+| `BrowserGameParagraphLabelOptions` | 接口 | Style and width for a wrapped native label. |
 | `BrowserGameRenderMode` | 类型 | Continuous presentation or a retained frame, with the same simulation clock in either mode. |
 | `BrowserGameStartupTiming` | 接口 | Wall-clock preparation durations, and the first accepted SDK submission (not GPU completion or presentation). |
 | `BrowserGameWarning` | 接口 | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache, and from `play`, `PLAY_MADE_EVERY_FRAME` when `update` made a text, a shape or a sprite in each of the last 60 frames. |

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1495 exports; 8 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1520 exports; 12 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -771,6 +771,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createFlyControls3D` | function | Makes fly controls for a camera on an element. |
 | `createFollowControls3D` | function | Makes follow controls for a follow camera on an element. |
 | `createOrbitControls3D` | function | Makes orbit controls for a camera on an element. |
+| `createOverlayScreenMarkers3D` | function | A display layer for World3DOverlay. |
 | `createPositionalAudio3D` | function | Makes a sound that plays from a place in the scene. |
 | `createPostProcessSettings3D` | function | Post-processing settings with every effect off. |
 | `createScreenMarkers3D` | function | A layer of page elements that follow scene points. |
@@ -800,6 +801,10 @@ For which entry to import from, see [What to import](entry-points.md).
 | `loadTexture3D` | function | Load an image or KTX2 file as a texture. |
 | `OrbitControls3D` | class | Turns a camera around a target, pans and zooms it, with the mouse and touch. |
 | `OrbitControlsOptions3D` | interface | Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. |
+| `OverlayScreenMarker3D` | interface | A borrowed native display marker; the layer owns its holder, not its artwork. |
+| `OverlayScreenMarkerOptions3D` | interface | Options for a native display marker; its visible footprint is kept within the selected part of the overlay. |
+| `OverlayScreenMarkers3D` | interface | A layer of native display objects over the 3D picture. |
+| `OverlayScreenMarkersOptions3D` | interface | The native stage and the actual 3D canvas whose scene the camera projects. |
 | `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `play3d` | function | Starts a 3D game in the page. |
@@ -826,6 +831,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `Renderer3DInfo` | interface | What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. |
 | `SCENE_ASSET_3D` | value | A scene document written by serializeScene3D. |
 | `ScreenMarker3D` | interface | A marker over the screen that follows a point of the scene: its element and where it is. |
+| `ScreenMarkerInsets3D` | interface | CSS-pixel margins for independent edges. |
 | `ScreenMarkerOptions3D` | interface | A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. |
 | `ScreenMarkers3D` | interface | Elements over the screen that follow points of the scene: add them, and update them each frame. |
 | `ScreenMarkersOptions3D` | interface | Screen markers to make: the container they go in, and the camera they follow. |
@@ -847,7 +853,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `World3DFrameMetrics` | interface | What a frame drew: its draws and triangles, its CPU time, and its passes and reflections. |
 | `World3DFramePass` | interface | One pass of a frame: its view and kind, its size, its draws and triangles, and its times. |
 | `World3DGpuTiming` | type | How long a pass took on the GPU, or why that is not known. |
+| `World3DLoopOptions` | interface |  |
 | `World3DLoopSource` | interface | What drives a 3D view: an Engine's clock and the call that advances it. |
+| `World3DLoopTiming` | interface | A 3D RAF callback and its CPU clock advance, on the same time origin as 2D loop timings. |
 | `World3DOverlay` | interface | A 2D game drawn on a canvas over a 3D view. |
 | `World3DOverlayOptions` | interface | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
 | `World3DOverlayStartupTiming` | interface |  |
@@ -860,6 +868,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `World3DView` | class | Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. |
 | `World3DViewKind` | type | Which view a pass drew: the main one, a reflection, or offscreen. |
 | `World3DViewOptions` | interface | A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. |
+| `World3DViewTiming` | interface | CPU phases of a World3D view tick; a rendered result is not GPU completion. |
 
 ## `@egret/engine/webgpu/world3d`
 
@@ -879,6 +888,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `createFlyControls3D` | function | Makes fly controls for a camera on an element. |
 | `createFollowControls3D` | function | Makes follow controls for a follow camera on an element. |
 | `createOrbitControls3D` | function | Makes orbit controls for a camera on an element. |
+| `createOverlayScreenMarkers3D` | function | A display layer for World3DOverlay. |
 | `createPositionalAudio3D` | function | Makes a sound that plays from a place in the scene. |
 | `createPostProcessSettings3D` | function | Post-processing settings with every effect off. |
 | `createScreenMarkers3D` | function | A layer of page elements that follow scene points. |
@@ -908,6 +918,10 @@ For which entry to import from, see [What to import](entry-points.md).
 | `loadTexture3D` | function | Load an image or KTX2 file as a texture. |
 | `OrbitControls3D` | class | Turns a camera around a target, pans and zooms it, with the mouse and touch. |
 | `OrbitControlsOptions3D` | interface | Orbit controls to make: their target, distances and angles, how fast they turn, pan and zoom, and which of these are on. |
+| `OverlayScreenMarker3D` | interface | A borrowed native display marker; the layer owns its holder, not its artwork. |
+| `OverlayScreenMarkerOptions3D` | interface | Options for a native display marker; its visible footprint is kept within the selected part of the overlay. |
+| `OverlayScreenMarkers3D` | interface | A layer of native display objects over the 3D picture. |
+| `OverlayScreenMarkersOptions3D` | interface | The native stage and the actual 3D canvas whose scene the camera projects. |
 | `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
@@ -919,6 +933,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `Renderer3DInfo` | interface | What a renderer drew in its last frame: draws, triangles, culled nodes, lights, shadow maps and resources. |
 | `SCENE_ASSET_3D` | value | A scene document written by serializeScene3D. |
 | `ScreenMarker3D` | interface | A marker over the screen that follows a point of the scene: its element and where it is. |
+| `ScreenMarkerInsets3D` | interface | CSS-pixel margins for independent edges. |
 | `ScreenMarkerOptions3D` | interface | A screen marker to add: what it points at, its offset, whether it sticks to the screen's edge, and how far it shows. |
 | `ScreenMarkers3D` | interface | Elements over the screen that follow points of the scene: add them, and update them each frame. |
 | `ScreenMarkersOptions3D` | interface | Screen markers to make: the container they go in, and the camera they follow. |
@@ -936,7 +951,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `World3DBackend` | type | Which GPU interface a 3D app draws with. |
 | `World3DClockSource` | interface | The part of an Engine this view needs: its explicit game clock. |
 | `World3DDeviceHints` | interface | What `pickWorld3DQuality` reads about the device. |
+| `World3DLoopOptions` | interface |  |
 | `World3DLoopSource` | interface | What drives a 3D view: an Engine's clock and the call that advances it. |
+| `World3DLoopTiming` | interface | A 3D RAF callback and its CPU clock advance, on the same time origin as 2D loop timings. |
 | `World3DOverlay` | interface | A 2D game drawn on a canvas over a 3D view. |
 | `World3DOverlayOptions` | interface | A 2D overlay to make over a 3D view: its size, backend, pixel ratio, update, and whether it lets input through. |
 | `World3DOverlayStartupTiming` | interface |  |
@@ -947,6 +964,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `World3DStatsOptions` | interface | 3D stats to make: the container they show in, how they smooth, and how often they refresh. |
 | `World3DView` | class | Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. |
 | `World3DViewOptions` | interface | A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. |
+| `World3DViewTiming` | interface | CPU phases of a World3D view tick; a rendered result is not GPU completion. |
 
 ## `@egret/engine/resources`
 
@@ -1075,10 +1093,10 @@ For which entry to import from, see [What to import](entry-points.md).
 | `ControlKeys` | interface | Keys bound to a control: which are pressed now; dispose of it to unbind them. |
 | `ControlKeysOptions` | type | Keys for one control: an action, a toggle, a text field or a selection group. |
 | `ControlKeysSource` | interface | The keyboard input, or anything that delivers its three key events. |
-| `createActionControl` | function | A button on a target: a press and release inside it activates it. |
+| `createActionControl` | function | A button on a target: a captured press and release activates it by default. |
 | `createControlKeys` | function | Binds the keyboard to a control: Space and Enter press an action or a toggle, arrows move a selection. |
 | `createHoverControl` | function | Tells whether a pointer hovers over a target. |
-| `createMovementControl` | function | A virtual stick on a target: dragging inside its radius gives a direction. |
+| `createMovementControl` | function | A virtual stick on a target: dragging from its contact origin or a fixed center gives a direction. |
 | `createRangeControl` | function | A slider on a target: dragging along its track or pressing keys sets a value between its least and greatest. |
 | `createScrollControl` | function | Scrolls content past a viewport along one axis, by wheel, by dragging a thumb, or by calls. |
 | `createSelectionGroup` | function | Radio buttons or tabs: one item of the group is selected at a time. |
@@ -1092,7 +1110,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `HoverControlOptions` | interface | Hover, toggle and single-selection state for controls an application draws itself. |
 | `LayoutNode` | type | A node of a UI layout tree: a leaf, a stack of children, or a virtual list. |
 | `MovementControl` | interface | A virtual stick: where it points now, whether it is held, and calls that set or disable it. |
-| `MovementControlOptions` | interface | A movement control to make: its input and target, its radius and dead zone, and what it calls. |
+| `MovementControlOptions` | interface | A movement control to make: its input and target, its geometry, and what it calls. |
 | `MovementKeysOptions` | interface | The keys that are down give the direction; opposite keys cancel each other. |
 | `MovementValue` | interface | Reusable movement and action controls over the existing contact stream. |
 | `RangeAxis` | type | One value out of a range, for a slider an application draws itself: a volume, a share, an amount. |
@@ -1468,6 +1486,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserFrameLoopOptions` | interface | A frame loop to run: its engine, frame and host, its update, how long a step and a catch-up may be, and its frame requests. |
 | `BrowserFrameLoopSnapshot` | interface | A frame loop as it is now: its state, its steps, frames and skipped frames, its seconds and any failure. |
 | `BrowserFrameLoopState` | type | Whether a frame loop is idle, running, failed or closed. |
+| `BrowserFrameTiming` | interface | An observational CPU sample for one browser callback. |
 | `createBrowserFrameLoop` | function | The frame loop of a game in a page. |
 | `FrameLoopEngine` | interface | What the loop asks of an Engine: its clock's limit, time and frames. |
 | `FrameLoopHost` | interface | What the loop asks of a Host: how many frames it holds that it has not finished. |
@@ -1591,11 +1610,17 @@ For which entry to import from, see [What to import](entry-points.md).
 | `BrowserGameAtlasLabel` | interface | A line of text drawn on a page of images shared with other such labels. |
 | `BrowserGameBackend` | type | Which GPU interface a browser game draws with. |
 | `BrowserGameFit` | type | How the canvas fills the element it is in: not at all, whole inside it, covering it, stretched to it, filling it with a stage that grows around the design (`'expand'`), or filling it as the stage scale modes of Egret 5 did (`'fixedWidth'`, `'fixedHeight'`, `'fixedNarrow'`, `'fixedWide'`; see `planScreen` of `@egret/engine/web/screen`). |
+| `BrowserGameFrameTiming` | interface | A loop sample with the game's image-budget refusal distinguished from a submitted frame. |
 | `BrowserGameFrameUsage` | interface | What the last frame drawn held of a frame's images, against what one frame may hold. |
+| `BrowserGameGlyphFont` | interface | Spread font and pages into createBitmapText; retire all borrowers before releasing the shared page. |
+| `BrowserGameGlyphFontOptions` | interface |  |
 | `BrowserGameLabel` | interface | A line of text on the stage whose words can be set like a value. |
 | `BrowserGameLabelCreateOptions` | interface | A label to make: its words and style, and the scope that owns it. |
 | `BrowserGameLabelOptions` | interface | A text label to make: its text, font, size and weight, line height, color, locale and direction. |
 | `BrowserGameOptions` | interface |  |
+| `BrowserGameParagraphLabel` | interface |  |
+| `BrowserGameParagraphLabelCreateOptions` | interface | The initial wrapping width is required; ownership defaults to the game's scope. |
+| `BrowserGameParagraphLabelOptions` | interface | Style and width for a wrapped native label. |
 | `BrowserGameRenderMode` | type | Continuous presentation or a retained frame, with the same simulation clock in either mode. |
 | `BrowserGameStartupTiming` | interface | Wall-clock preparation durations, and the first accepted SDK submission (not GPU completion or presentation). |
 | `BrowserGameWarning` | interface | Something to know before it shows: `FRAME_IMAGES_NEAR_LIMIT` when a frame holds four fifths of what a frame may hold of images, `FRAME_IMAGE_BUDGET` when a frame held more and was not drawn (the loop goes on), `LABEL_NOT_DRAWN` when a label's words could not be drawn, `LABEL_CACHE_NEAR_LIMIT` when the labels hold four fifths of the text cache, and from `play`, `PLAY_MADE_EVERY_FRAME` when `update` made a text, a shape or a sprite in each of the last 60 frames. |

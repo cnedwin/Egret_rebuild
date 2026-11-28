@@ -9,7 +9,6 @@ const [playwright]=process.argv.slice(2);
 if(!playwright||!path.isAbsolute(playwright))throw Error('Usage: node tests/world3d-overlay-timing-browser.mjs <Playwright index.mjs>');
 const root=fileURLToPath(new URL('..',import.meta.url));
 const imports=JSON.parse(fs.readFileSync(path.join(root,'examples/world3d/overlay.html'),'utf8').match(/<script type="importmap">([\s\S]*?)<\/script>/)[1]);
-imports.imports['@egret/engine/bitmapfont']='/packages/engine/dist/bitmapfont.js';
 const html='<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><style>html,body{margin:0;overflow:hidden}#place{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}</style><script type="importmap">'+JSON.stringify(imports)+'</script><div id="place"><canvas id="scene"></canvas></div><script type="module">'+String.raw`
 import { Sprite } from '@egret/engine';
 import { createBitmapText } from '@egret/engine/bitmapfont';
