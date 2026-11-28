@@ -144,7 +144,17 @@ export class Preparation {
   public tryFinishClippedMesh<P extends PreparedPoint2D>(points: P[]): P[] | undefined {
     const count = points.length;
     if (!this.reuseContainedSubjects || (count !== 3 && count !== 4)) return undefined;
-    const turn = (a: P, b: P, c: P): number => -Math.sign(orient2d(a.x, a.y, b.x, b.y, c.x, c.y));
+    // A conservative binary64 filter only. Qualified coordinates lie within
+    // 2**20 and nonzero magnitudes start at 2**-100, so products of their
+    // differences stay normal. Near cancellation goes back to the original
+    // traversal, which charges each actual robust predicate before calling it.
+    const turn = (a: P, b: P, c: P): number => {
+      const left = (a.x - c.x) * (b.y - c.y),
+        right = (a.y - c.y) * (b.x - c.x),
+        det = left - right,
+        error = 8 * Number.EPSILON * (Math.abs(left) + Math.abs(right));
+      return det > error ? 1 : det < -error ? -1 : 0;
+    };
     const a = points[0]!,
       b = points[1]!,
       c = points[2]!;

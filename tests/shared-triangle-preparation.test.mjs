@@ -4,6 +4,7 @@
 // The synchronous controls change only built private geometry helpers, restore
 // their exact descriptors, and establish operation counts (not GPU timing).
 import test from 'node:test';
+import { registerHooks } from 'node:module';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 import { prepareSharedDraws2D } from '../packages/engine/dist/rendering/prepareSharedDraws2D.js';
@@ -334,6 +335,9 @@ test('SAT04 strict triangles and quads from a cut retain the original winding an
     { xy: [[0, 0], [0, 2], [2, 2], [2, 0]], winding: -1 },
     { xy: [[0, 0], [2, 0], [1, 2 ** -70]], winding: 1 },
     { xy: [[0, 0], [1, 0], [2, 0]], winding: 0 },
+    // The turn exists, but cancellation makes the cheap bound inconclusive.
+    // Return the polygon to the original exact procedure with no pre-charge.
+    { xy: [[0, 0], [1, 1], [2, 2 + 2 ** -51]], winding: 0 },
     { xy: [[0, 0], [1, 1], [1, 1], [0, 2]], winding: 0 },
     { xy: [[0, 0], [2, 2], [0, 2], [2, 0]], winding: 0 },
     { xy: [[0, 0], [2, 0], [1, 0.5], [0, 2]], winding: 0 },
@@ -360,4 +364,39 @@ test('SAT04 strict triangles and quads from a cut retain the original winding an
       assert.equal(budget.tupleComparisonsCharged, accepted ? tuples : 0);
     }
   }
+});
+
+test('SAT05 an exhausted clip ledger cannot call the actual exact predicate during qualification', async () => {
+  const file = new URL('../packages/engine/dist/rendering/prepareRectangles2D.js?clip-debit-probe', import.meta.url);
+  const real = import.meta.resolve('robust-predicates');
+  const counter = 'data:text/javascript,' + encodeURIComponent(
+    "import { orient2d as original } from " + JSON.stringify(real) + "; " +
+    "export let calls = 0; export function orient2d(...args) { ++calls; return original(...args); }"
+  );
+  const hooks = registerHooks({ resolve(id, context, next) {
+    if (id === 'robust-predicates' && context.parentURL === file.href) return { url: counter, shortCircuit: true };
+    return next(id, context);
+  } });
+  let Probe;
+  try { ({ Preparation: Probe } = await import(file.href)); }
+  finally { hooks.deregister(); }
+  const counts = await import(counter);
+  const limits = { ...LIMITS, maxClipEdgeTests: 1 };
+  const budget = new TexturedPreparationBudget2D(limits);
+  const preparation = new Probe(limits, budget, true, { options: limits, budget });
+  const strict = [{ x: 0, y: 0 }, { x: 3, y: 0 }, { x: 2, y: 1 }];
+  assert.equal(preparation.sign(...strict), 1);
+  assert.equal(counts.calls, 1, 'counted the real robust dependency, not ledger entries');
+  assert.equal(budget.predicatesCharged, 1);
+  assert.equal(preparation.tryFinishClippedMesh(strict), undefined);
+  assert.equal(preparation.tryFinishClippedMesh([strict[0], strict[1], strict[1]]), undefined);
+  assert.throws(() => preparation.sign(...strict), error => error.reason === 'budget');
+  assert.equal(counts.calls, 1);
+  const tupleLimited = { ...LIMITS, maxTupleComparisons: 1 };
+  const tupleBudget = new TexturedPreparationBudget2D(tupleLimited);
+  const tupleCase = new Probe(tupleLimited, tupleBudget, true, { options: tupleLimited, budget: tupleBudget });
+  assert.equal(tupleCase.tryFinishClippedMesh(strict), undefined);
+  assert.equal(tupleBudget.predicatesCharged, 0);
+  assert.equal(tupleBudget.tupleComparisonsCharged, 0);
+  assert.equal(counts.calls, 1);
 });

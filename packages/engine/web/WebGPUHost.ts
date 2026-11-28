@@ -3268,6 +3268,7 @@ class WebGPUHostImplementation {
       const raw = begin({ colorAttachments: [colors] });
       gate();
       return {
+        hasFullViewport: false,
         pass: capture(raw, ['setPipeline', 'setViewport', 'setScissorRect', 'setVertexBuffer', 'setBindGroup', 'draw']),
         end: this.method(raw, 'end', gate)
       };
@@ -3276,8 +3277,13 @@ class WebGPUHostImplementation {
     const drawOne = (draw: PackedSharedDraw2D): void => {
       const role = this.sharedRole(draw);
       active.pass.setPipeline(role.pipeline);
-      active.pass.setViewport(0, 0, width, height, 0, 1);
-      active.pass.setScissorRect(0, 0, width, height);
+      // These two states belong to the pass, including across pipeline changes.
+      // Empty passes keep their old call sequence. Reopening an attachment starts fresh.
+      if (!active.hasFullViewport) {
+        active.pass.setViewport(0, 0, width, height, 0, 1);
+        active.pass.setScissorRect(0, 0, width, height);
+        active.hasFullViewport = true;
+      }
       active.pass.setVertexBuffer(0, vertices.get(draw)!.buffer);
       active.pass.setBindGroup(0, bindings.get(draw)!);
       if (draw.regionWindow >= 0) active.pass.setBindGroup(1, recipe.regionBindings.get(draw)!);
