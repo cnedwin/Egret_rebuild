@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/browserGameFamilies.ts",
+      "originRole": "First-party browser font family candidate validation and CSS family construction; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/browserGameGlyphFont.ts",
+      "originRole": "First-party bounded native bitmap glyph page adapter for BrowserGame; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/browserGameParagraph.ts",
+      "originRole": "First-party BrowserGame native paragraph adapter using existing canvas paragraph provider/cache; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/browser-game-text.test.mjs",
+      "originRole": "First-party public BrowserGame paragraph and fixed-glyph behavioral regression fixtures; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-frame-diagnostics.test.mjs",
+      "originRole": "First-party public World3D loop/view diagnostic controlled-port regressions; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-native-markers-browser.mjs",
+      "originRole": "First-party public native-screen-marker browser fixture; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-native-markers.test.mjs",
+      "originRole": "First-party public native marker geometry, ownership and lifecycle regressions; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-overlay-input-browser.mjs",
+      "originRole": "First-party public native-overlay relative motion, hover and ownership browser fixture; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/world3d-overlay-timing-browser.mjs",
+      "originRole": "First-party public World3D two-canvas diagnostic browser fixture with original procedural scene; independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

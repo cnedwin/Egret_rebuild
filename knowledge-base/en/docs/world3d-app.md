@@ -152,6 +152,38 @@ markers.update();
 
 An element is moved with a CSS transform, so give it `position: absolute; left: 0; top: 0`. A marker hides while its target is behind the camera or beyond `maxDistance`. With `clampToEdge` it stays at the edge of the screen instead, gets `data-on-edge`, and `marker.angle` gives the direction for an arrow. `projectToViewport3D(camera, point, width, height)` gives the same projection to code that draws its own markers.
 
+### Native markers in a World3D overlay
+
+Use the same projection with native display objects when a game already has a `World3DOverlay`. Pass the actual 3D canvas as well as the overlay: a point in the scene's CSS viewport is not necessarily a point in the overlay's logical stage (for example, with `contain`, `cover` or a separate `uiScale`).
+
+```js
+import { Sprite } from '@egret/engine';
+import { createOverlayScreenMarkers3D } from '@egret/engine/webgl2/world3d';
+
+const marks = createOverlayScreenMarkers3D({ overlay: ui, sceneCanvas: canvas, camera });
+const icon = new Sprite();
+icon.graphics.beginFill(0xe8b65a).drawCircle(0, 0, 14).endFill();
+const goal = marks.add(icon, {
+  target: enemy, offset: [0, 2.1, 0],
+  area: 'safe', clampToEdge: true,
+  margin: { left: 12, top: 8, right: 16, bottom: 16 },
+  anchor: { x: 0.5, y: 0.5 }, extent: { width: 32, height: 32 }
+});
+// After updating the camera, before drawing the overlay:
+marks.update();
+goal.setVisible(false);         // a pooled marker can wait without new display allocation
+goal.retarget([120, 0, -40]);
+goal.setVisible(true);          // the next update places it
+```
+
+- The default area is `'safe'`: the overlay's live safe rectangle intersected with the part shared by the actual scene and overlay canvases. `'screen'` uses that visible intersection without the safe inset. A margin is one number or independent sides in CSS pixels, zero by default; `extent` is a minimum footprint in **stage units**. The actual measured display bounds (including its own scale, rotation and children) always take precedence over a smaller extent.
+- The normalised anchor (default centre) is where the world point attaches to the artwork's bounds. A non-clamping marker hides if its footprint would leave the selected area. A clamping marker follows the scene-centre ray to a feasible edge, including behind-camera targets. A marker too large to fit or beyond `maxDistance` hides even with clamping. A target directly behind the camera uses the lower edge. `marker.point.x/y` are overlay stage coordinates; `onScreen`, `inFront` and depth still describe the original scene projection. `angle` is in the scene canvas's coordinate system, in radians.
+- The display must be live and unparented when added. The layer borrows it in an engine display holder, preserving its own transform, children, visibility and cleanup ownership; `marker.visible` reports the layer's placement, not additional visibility rules in the caller's artwork. The entire layer ignores pointer input, even when an artwork child was interactive. Create the layer before HUD widgets when the HUD should draw above markers. No DOM marker layer or second projection is needed.
+- Call `update()` after a camera or screen change; no extra clock is started. `marker.dispose()` and `marks.dispose()` detach the artwork without disposing it; closing the overlay retires the layer automatically (the overlay's own scope then disposes the displays it owns). Retargeting and visibility changes reuse the same holder. A display reclaimed or disposed by its caller is removed from the marker layer on its next update. The existing HTMLElement helper and its margin defaults are unchanged.
+
+Public behaviour checks are in `tests/world3d-native-markers.test.mjs`; the actual-browser fixture is `node tests/world3d-native-markers-browser.mjs <absolute Playwright index.mjs> [webgl2|webgpu|both]`. It uses a real overlay, camera, rendered native targets, pointer delivery and live viewport changes; it is not a 3D GPU timing or physical-phone qualification.
+
+
 ## The engine's 2D interface over the scene
 
 ```js
@@ -224,3 +256,28 @@ console.log(ui.getStartupTiming());
 ## Limits
 
 The app draws one scene through one camera at a time. A game with a second view or a picture-in-picture drives `World3DView` itself. A device that is lost is reported to `onDeviceLost`; making a new app is the way back.
+
+### Native hover, scene capture and relative motion
+
+`hover: true` on `createWorld3DOverlay` opts into the same native hover/wheel adapter as BrowserGame; it is off by default. The original contact still belongs to the UI or the scene, not both. Moving into empty space retires the previous UI hover. Forwarded pointer copies retain the source's `movementX/Y`, buttons and coordinates; they remain DOM copies, not trusted events. Scene-native pointer capture may deliver the release directly to the scene, so trusted terminal events, fresh downs, blur, page exit and pointer-lock changes retire stale scene ownership. Pointer lock itself delivers real browser events directly to the scene.
+
+### Measuring the two overlay loops
+
+Use short synchronous timing observers and a bounded history. For example:
+
+```js
+const worldRaf = [], viewCpu = [], uiCpu = [];
+const keep = (rows, sample) => { if (rows.length === 120) rows.shift(); rows.push(sample); };
+const app = await createWorld3DApp(sceneCanvas, {
+  dynamicResolution: false, onLoopTiming: sample => keep(worldRaf, sample)
+});
+app.show(scene, camera, { onFrameTiming: sample => keep(viewCpu, sample) });
+const ui = await createWorld3DOverlay(sceneCanvas, {
+  width: 960, height: 540, fit: 'expand', hover: true, renderMode: 'on-demand',
+  onFrameTiming: sample => keep(uiCpu, sample), measureSharedFrames: true
+});
+```
+
+The view also accepts `onFrameTiming` directly; a paused view does not report an active tick. The lower-level `startWorld3DLoop(engine, onError, { onFrameTiming })` reports actual RAF timestamps, CPU advance and clock re-anchoring. Match the 2D and 3D loops using `rafTimestampMs` on the same browser time origin, and bracket the view CPU sample by its enclosing 3D callback's start/end. Local ids are per loop, not cross-loop global frame ids. The 3D view separates update and render calls and records false render returns as refused. The 2D sample distinguishes retained, submitted, refused, backpressure, retry and failed/interrupted outcomes. `measureSharedFrames` additionally enables the existing WebGL2 Host timing ring (read it after narrowing `ui.game.host`). None of these intervals is a GPU fence or display presentation. When needed on WebGL2, use the existing renderer `measureFrame(draw, { gpuTiming: true })` and later `pollFrameTimings()`; only ready samples represent available GPU timer results. Browser compositor observation requires a separate browser trace.
+
+`node tests/world3d-overlay-timing-browser.mjs <Playwright index.mjs>` compares a fixed 3D scene alone, with a retained native UI, and with a changing fixed-glyph counter, without screenshots during the timing windows. Compare identical viewport, quality, backend and hardware; do not infer the cause of a long frame solely from the CPU samples.

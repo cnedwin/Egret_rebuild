@@ -67,3 +67,9 @@ loop.start();
 可选的 `beforeRender()` 在 `update`、`shouldRender` 以及 Host 待完成帧检查之后、捕获之前进行仅用于画面的准备。静止或因积压而跳过的帧不调用它；Host 仍可能拒绝一次已初步准入的绘制。不得在此推进游戏逻辑、时钟或语义动画事件。
 
 默认错误仍停止循环。使用 `renderRetry: { maxConsecutive: 2, shouldRetry(error, consecutiveFailure) { ... } }` 时，游戏可显式接受特定绘制调用错误并于后续显示帧尝试。上限为 1 至 8 的整数；仅成功绘制调用或显式重新启动重置连续失败次数。时间与更新不会重放；更新、帧构建或绘制准备错误仍是致命错误。返回 false、抛错或达到上限后仍失败会停止循环。配置后快照含 `recoveredRenderFailures`，与 Host 背压的 `skipped` 分开。BrowserGame 和 Play 均转发两个选项；已有 Engine 诊断仍会通知。仅用于已独立确认可恢复的绘制错误。
+
+## 可选的回调计时
+
+给 `createBrowserFrameLoop` 传入 `onFrameTiming(sample)`，每次运行中的浏览器回调会产生一份不可变样本。每个循环的 `id` 单调递增，`rafTimestampMs` 为实际传入的动画帧时间戳，`callbackStartMs` / `callbackEndMs` 使用浏览器 performance 的时间原点。可与同页其他循环对齐，但不能当作显示呈现。
+
+CPU 墙钟阶段 `updateMs`、`decisionMs`、`hostCheckMs`、`prepareMs`、`renderMs` 分别为时钟与更新、是否需要绘制的判断、实际宿主准入检查、呈现准备与绘制调用。未进入阶段为零。仅在既有宿主准入检查读到时才有 `pendingFrames`，保留旧帧不额外检查宿主。结果为 `retained`（保留）、`backpressure`（背压）、`rendered`（绘制调用返回，不是 GPU 完成）、`retry`（重试）、`interrupted`（中断）或 `failed`（失败）。原有步数、帧数和跳帧数不改变。诊断回调在计时完成后执行，应保持简短同步、保留有限历史，不等待 Promise；同步观察者异常不影响循环。未设置观察者时不分配逐回调计时样本。

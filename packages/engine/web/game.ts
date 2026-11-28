@@ -8,6 +8,7 @@ export type {
   BrowserGameBackend,
   BrowserGameFit,
   BrowserGameFrameUsage,
+  BrowserGameFrameTiming,
   BrowserGameLabel,
   BrowserGameLabelCreateOptions,
   BrowserGameLabelOptions,
@@ -16,6 +17,12 @@ export type {
   BrowserGameStartupTiming,
   BrowserGameWarning
 } from './BrowserGame.js';
+export type {
+  BrowserGameParagraphLabel,
+  BrowserGameParagraphLabelCreateOptions,
+  BrowserGameParagraphLabelOptions
+} from './browserGameParagraph.js';
+export type { BrowserGameGlyphFont, BrowserGameGlyphFontOptions } from './browserGameGlyphFont.js';
 export { createBrowserStatsPanel } from './BrowserStatsPanel.js';
 export type {
   BrowserStatsPanel,

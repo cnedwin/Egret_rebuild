@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 // A strict consumer of the browser game entry: what it may write, and what it may not.
 import {createBrowserGame,createBrowserStatsPanel} from '@egret/engine/web/game';
-import type {BrowserGame,BrowserGameBackend,BrowserGameFit,BrowserGameLabel,BrowserGameLabelOptions,BrowserGameOptions,BrowserStatsPanel,BrowserStatsPanelOptions,BrowserStatsSample,BrowserStatsSnapshot} from '@egret/engine/web/game';
+import type {BrowserGame,BrowserGameBackend,BrowserGameFit,BrowserGameFrameTiming,BrowserGameLabel,BrowserGameLabelOptions,BrowserGameOptions,BrowserStatsPanel,BrowserStatsPanelOptions,BrowserStatsSample,BrowserStatsSnapshot} from '@egret/engine/web/game';
 import {animate,Bitmap,Sprite} from '@egret/engine';
 import type {Motion} from '@egret/engine';
 declare const canvas:HTMLCanvasElement;
-const options:BrowserGameOptions={canvas,width:480,height:270,backend:'auto',staticLayers:true,pixelRatio:1.5,clearColor:0x1b1f2a,clearAlpha:1,update(seconds:number){void seconds;},onError(error:unknown){void error;},pointer:true,keyboard:false,stats:true,fit:'contain',fitTo:canvas.parentElement??undefined as never,autoStart:false};
+const options:BrowserGameOptions={canvas,width:480,height:270,backend:'auto',staticLayers:true,pixelRatio:1.5,clearColor:0x1b1f2a,clearAlpha:1,update(seconds:number){void seconds;},onError(error:unknown){void error;},pointer:true,keyboard:false,stats:true,fit:'contain',fitTo:canvas.parentElement??undefined as never,autoStart:false,measureSharedFrames:true,onFrameTiming(sample:BrowserGameFrameTiming){const outcome:BrowserGameFrameTiming['outcome']=sample.outcome;void outcome;
+// @ts-expect-error timing samples are immutable
+sample.outcome='submitted';
+}};
 const game:BrowserGame=await createBrowserGame(options);
 const backend:BrowserGameBackend=game.backend,fit:BrowserGameFit='cover';void backend;void fit;
 const hero=game.stage.addChild(game.scope.use(new Sprite()));
@@ -20,6 +23,17 @@ const picture=new Bitmap(await game.loadTexture('/image.png'));void picture;
 const labelOptions:BrowserGameLabelOptions={text:'金币 0',fontSize:14,color:0xf0c030,locale:'zh'};
 const label:BrowserGameLabel=await game.createLabel(labelOptions);
 label.text='金币 1';await label.ready;game.stage.addChild(label.display);label.set({color:0xffffff});
+// Width-constrained paragraphs and fixed glyph pages are opt-in; old labels retain literal names.
+const para:import('@egret/engine/web/game').BrowserGameParagraphLabel=await game.createParagraphLabel({width:120,text:'中文 English',fontFamilies:['Arial','sans-serif'],locale:'zh',maxLines:2});
+await para.ready;const wrapped:number|undefined=para.metrics?.height;void wrapped;
+para.set({width:160,maxLines:undefined});game.stage.addChild(para.display);
+const glyphs:import('@egret/engine/web/game').BrowserGameGlyphFont=await game.createGlyphFont({characters:'0123456789:/',fontSize:32,fontFamilies:['Arial','sans-serif']});
+const glyphAdvance:number|undefined=glyphs.font.glyph(48)?.xAdvance;void glyphAdvance;
+glyphs.dispose();para.dispose();
+// @ts-expect-error a measured paragraph needs its width
+game.createParagraphLabel({text:'Hello'});
+// @ts-expect-error font candidates are individual names in an array
+game.createGlyphFont({characters:'0123',fontFamilies:'Arial, sans-serif'});
 const place:{x:number;y:number}=game.toStage(10,20);void place;
 const pending:number=game.host.getStatus().pendingFrames;void pending;
 // Optional retained WebGL2 backgrounds need no backend-private import.

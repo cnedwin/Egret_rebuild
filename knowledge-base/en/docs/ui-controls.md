@@ -10,7 +10,7 @@ They own state only. A control adds no listener of the page, draws nothing and d
 
 | Factory | Holds | Driven by |
 | --- | --- | --- |
-| `createMovementControl` | A direction of length at most one | One contact dragged from where it began |
+| `createMovementControl` | A direction of length at most one | One contact dragged from its own origin or a fixed center |
 | `createActionControl` | Pressed, and a count of activations | A press that is released |
 | `createHoverControl` | Hovered | A mouse or a pen over the target or a descendant |
 | `createToggleControl` | Checked | An activation flips it |
@@ -30,9 +30,21 @@ const stick = createMovementControl({ input, target: pad, radius: 40, onMovement
 const fire = createActionControl({ input, target: button, onActivate: () => player.fire(), onPressChange: pressed => paint(pressed) });
 ```
 
-`input` is the contact input, and `target` the display object whose contacts the control takes. A movement control takes one contact and refuses a second without stealing the first. Its `value` is the drag from where the contact began divided by `radius`, clamped to length one, and zero inside `deadZone` (a tenth of the radius by default). Release, cancellation, disabling and disposal all end at zero. `setDirection(x, y)` sets the same value from keys or a script.
+`input` is the contact input, and `target` the display object whose contacts the control takes. A movement control takes one contact and refuses a second without stealing the first. Its `value` is displacement from an origin divided by `radius`, clamped to length one, and zero at or below `deadZone` (a tenth of the radius by default). Release, cancellation, disabling and disposal all end at zero. `setDirection(x, y)` sets the same value from keys or a script.
 
-An action control is `pressed` while its contact is down and activates when that contact ends on its route. A cancelled contact releases without activating. `press()` and `release()` are the scripted equivalents: a release activates only when a press is outstanding. Disabling clears a held press without an activation. `activationCount` counts activations.
+- Omit `center` for a floating stick: the origin is where the contact began, and radius and dead zone are in logical stage units. This is the original behavior, even on a transformed target.
+- Set `center: { x: 60, y: 60 }` for a fixed stick: the center, radius and dead zone are all in the target's local coordinate system, including through ancestor transforms. An off-center down gives a direction immediately. Captured movement still works beyond the target. If a transform becomes singular while moving, the control retires the owner and returns to rest.
+- `setGeometry({ radius: 50, deadZone: 5, center: { x: 65, y: 65 } })` replaces the geometry; an omitted center restores a floating stick, and an omitted dead zone restores the default. A change retires the current owner and resets the value to zero. A fresh down is needed: subsequent moves or the terminal of the old contact cannot re-arm or release a new owner. Geometrically equal updates do not interrupt a press. Invalid geometry is rejected without changing the held state (`UI_CONTROL_RADIUS` for invalid radius/dead zone, `UI_CONTROL_OPTIONS` for invalid center). The center is copied, not retained as a mutable reference.
+
+An action control is `pressed` while its owning contact is down. Choose its pointer activation policy with `activation`:
+
+| Policy | Activates on |
+| --- | --- |
+| `'capturedRelease'` (default) | The captured contact ends on its route, even after leaving the surface. Existing controls retain this behavior. |
+| `'releaseInside'` | The captured contact ends inside the target's current authored `hitArea` rectangle. Leaving and returning is allowed. |
+| `'tap'` | The captured contact ends inside that rectangle and never moved farther than `tapTolerance` from down, including the terminal sample. Returning after a swipe does not qualify. |
+
+Inside is measured in target-local coordinates (left/top included, right/bottom excluded); a missing hit area or singular transform cannot satisfy the inside condition. `tapTolerance` is a nonnegative distance in logical stage units, 12 by default, and can be provided only with `activation: 'tap'`. Leaving the surface or exceeding the tap tolerance does not transfer ownership or create another press. A cancelled contact releases without activating. `press()` and `release()` are the scripted equivalents and do not use pointer geometry: a release activates only when a press is outstanding. Disabling clears a held press without an activation. `activationCount` counts activations.
 
 ## Hover
 

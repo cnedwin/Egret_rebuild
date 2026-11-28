@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Native World3D interface controls, text and frame observations",
+    "body": "Add fixed-centre movement geometry with safe reconfiguration and opt-in release-inside or tap activation for action controls, retaining the existing defaults. Forward overlay hover and wheel input while preserving blank-scene pointer routing and clearing lost ownership. Project native display markers through the World3D overlay with measured footprints and per-edge safe margins. Add measured BrowserGame paragraph labels with explicit font candidates and line caps, plus immutable fixed-glyph bitmap font pages for changing counters without rerasterizing text. Expose opt-in 2D and 3D frame timing, including accepted submissions and backpressure, for cross-layer diagnostics; these CPU/browser observations do not certify GPU execution or compositor presentation."
+  },
+  "zh": {
+    "title": "World3D 原生界面控件、文字和帧时序观测",
+    "body": "移动控件增加固定中心与可安全调整的几何设置，动作控件增加可选的区域内松手和轻触激活策略，保留原有默认行为。叠加层转发悬停和滚轮输入，保留空白区域向场景的指针路由并清理失去的触点归属。支持将原生显示对象作为 World3D 叠加层的投影标记，按实际图形范围和分边安全区留出空间。BrowserGame 增加可度量的限宽段落标签、明确的候选字体及行数上限，并提供不可变的固定字形位图字体图页，以更新计数而不重复光栅化文字。提供可选的 2D 和 3D 帧时序观测，包括接受的提交和背压，用于跨层诊断；这些 CPU 和浏览器观测不能证明 GPU 执行或合成器呈现。"
+  }
+}

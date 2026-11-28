@@ -13,6 +13,8 @@ import type { AnimationMixer3D } from '../../rendering/world3d/Animation3D.js';
 import type { Renderer3D, ToneMapping3D } from './frame3D.js';
 import { createWorld3DHost, startWorld3DLoop } from './host3D.js';
 import { World3DView } from './World3DView.js';
+import type { World3DViewTiming } from './World3DView.js';
+import type { World3DLoopTiming } from './host3D.js';
 import type { OrbitControls3D } from './OrbitControls3D.js';
 
 /** Which GPU interface a 3D app draws with. */
@@ -239,11 +241,14 @@ export interface World3DAppOptions {
   readonly onError?: (cause: unknown) => void;
   /** Told once when the graphics device is lost. */
   readonly onDeviceLost?: (message: string) => void;
+  /** Opt-in time-origin observations for the app's 3D animation-frame loop. */
+  readonly onLoopTiming?: (sample: World3DLoopTiming) => void;
 }
 /** What a 3D app shows: its update, mixers and controls. */
 export interface World3DShowOptions {
   /** Called every frame before animation and drawing. */
   readonly onUpdate?: (deltaSeconds: number, elapsedSeconds: number) => void;
+  readonly onFrameTiming?: (sample: World3DViewTiming) => void;
   readonly mixers?: readonly AnimationMixer3D[];
   readonly controls?: OrbitControls3D;
 }
@@ -292,7 +297,12 @@ export async function createWorld3DApp(
   options: World3DAppOptions = {}
 ): Promise<World3DApp> {
   if (typeof canvas !== 'object' || canvas === null) throw new World3DError('WORLD3D_INPUT_INVALID', 'canvas');
-  if (typeof options !== 'object' || options === null) throw new World3DError('WORLD3D_INPUT_INVALID', 'options');
+  if (
+    typeof options !== 'object' ||
+    options === null ||
+    (options.onLoopTiming !== undefined && typeof options.onLoopTiming !== 'function')
+  )
+    throw new World3DError('WORLD3D_INPUT_INVALID', 'options');
   const asked = options.backend ?? pickWorld3DBackend(options.query);
   if (asked !== 'webgl2' && asked !== 'webgpu') throw new World3DError('WORLD3D_INPUT_INVALID', 'backend');
   const askedQuality = options.quality ?? 'auto';
@@ -405,6 +415,7 @@ export async function createWorld3DApp(
         autoResize: false,
         ...(show.mixers ? { mixers: show.mixers } : {}),
         ...(show.controls ? { controls: show.controls } : {}),
+        ...(show.onFrameTiming === undefined ? {} : { onFrameTiming: show.onFrameTiming }),
         ...(options.onError ? { onError: options.onError } : {}),
         onUpdate(deltaSeconds, elapsedSeconds) {
           resolution?.update(deltaSeconds);
@@ -418,10 +429,14 @@ export async function createWorld3DApp(
     },
     start(): void {
       if (disposed) throw new World3DError('WORLD3D_DISPOSED', 'app');
-      loop ??= startWorld3DLoop(engine, cause => {
-        loop = undefined;
-        fail(cause);
-      });
+      loop ??= startWorld3DLoop(
+        engine,
+        cause => {
+          loop = undefined;
+          fail(cause);
+        },
+        options.onLoopTiming === undefined ? {} : { onFrameTiming: options.onLoopTiming }
+      );
     },
     stop(): void {
       loop?.dispose();

@@ -6,7 +6,13 @@
 // below, so the scene can still be orbited, aimed at and picked.
 import { EgretError } from '@egret/runtime';
 import { createBrowserGame } from '../game.js';
-import type { BrowserGame, BrowserGameBackend, BrowserGameRenderMode, BrowserGameStartupTiming } from '../game.js';
+import type {
+  BrowserGame,
+  BrowserGameBackend,
+  BrowserGameFrameTiming,
+  BrowserGameRenderMode,
+  BrowserGameStartupTiming
+} from '../game.js';
 import type { SharedWebGL2PageBatching } from '../webgl2.js';
 import type { ScreenFit, ScreenInsets, ScreenSize, ScreenUiScale } from '../screen.js';
 import { createOverlayScreenReporter } from './overlayScreenReport.js';
@@ -22,6 +28,12 @@ export interface World3DOverlayOptions {
   readonly pixelRatio?: number;
   /** Retain static UI frames in on-demand mode while clocks, input and updates keep running. Continuous by default. */
   readonly renderMode?: BrowserGameRenderMode;
+  /** Native hover/wheel input on interactive 2D content. Disabled by default. */
+  readonly hover?: boolean;
+  /** Observe 2D CPU timings, RAF timestamps and admission outcomes without changing the loop. */
+  readonly onFrameTiming?: (sample: BrowserGameFrameTiming) => void;
+  /** Opt in to the existing bounded 2D WebGL2 Host phase timings. */
+  readonly measureSharedFrames?: boolean;
   /** Effects are enabled by default. Set false only when the overlay uses no masks, filters or effects. */
   readonly effects?: boolean;
   /** WebGL2 single-page batching skips the multi-page shader instead of deferring it to the first interaction. */
@@ -111,6 +123,9 @@ export async function createWorld3DOverlay(
   if (
     (options.renderMode !== undefined && options.renderMode !== 'continuous' && options.renderMode !== 'on-demand') ||
     (options.effects !== undefined && typeof options.effects !== 'boolean') ||
+    (options.hover !== undefined && typeof options.hover !== 'boolean') ||
+    (options.onFrameTiming !== undefined && typeof options.onFrameTiming !== 'function') ||
+    (options.measureSharedFrames !== undefined && typeof options.measureSharedFrames !== 'boolean') ||
     (options.webgl2PageBatching !== undefined &&
       options.webgl2PageBatching !== 'single-page' &&
       options.webgl2PageBatching !== 'multi-page')
@@ -187,6 +202,9 @@ export async function createWorld3DOverlay(
       clearAlpha: 0,
       effects: options.effects ?? true,
       ...(options.renderMode === undefined ? {} : { renderMode: options.renderMode }),
+      ...(options.hover === undefined ? {} : { hover: options.hover }),
+      ...(options.onFrameTiming === undefined ? {} : { onFrameTiming: options.onFrameTiming }),
+      ...(options.measureSharedFrames === undefined ? {} : { measureSharedFrames: options.measureSharedFrames }),
       ...(options.webgl2PageBatching === undefined ? {} : { webgl2PageBatching: options.webgl2PageBatching }),
       ...(options.uiScale === undefined ? {} : { uiScale: options.uiScale }),
       ...(fills && holder !== undefined ? { fit: fit as ScreenFit, fitTo: holder } : {}),
@@ -220,12 +238,27 @@ export async function createWorld3DOverlay(
       return true;
     }
   };
+  const reportHoverFailure = (cause: unknown): void => {
+    if (options.onError !== undefined) options.onError(cause);
+    else if (typeof globalThis.reportError === 'function') globalThis.reportError(cause);
+    else void Promise.reject(cause);
+  };
   const forward = (event: Event): void => {
-    if (options.passThrough === false || event.target !== overlay) return;
+    if (options.passThrough === false) return;
     const pointer = event as PointerEvent;
-    const id = typeof pointer.pointerId === 'number' ? pointer.pointerId : -1;
+    const id = Number.isSafeInteger(pointer.pointerId) ? pointer.pointerId : -1;
+    // A scene listener may obtain actual native capture from a forwarded down. Its trusted terminal
+    // event then bypasses the overlay. Never retain that ownership for the next use of the same id.
+    if (event.target !== overlay) {
+      if (event.isTrusted && (event.type === 'pointerup' || event.type === 'pointercancel')) {
+        passing.delete(id);
+        if (pointer.isPrimary) pendingClick = undefined;
+      }
+      return;
+    }
     let send: boolean;
     if (event.type === 'pointerdown') {
+      passing.delete(id);
       if (pointer.isPrimary) pendingClick = undefined;
       send = empty(pointer);
       if (send) passing.add(id);
@@ -265,6 +298,8 @@ export async function createWorld3DOverlay(
       clientY: pointer.clientY,
       screenX: pointer.screenX,
       screenY: pointer.screenY,
+      movementX: pointer.movementX,
+      movementY: pointer.movementY,
       button: pointer.button,
       buttons: pointer.buttons,
       pointerId: pointer.pointerId,
@@ -280,9 +315,45 @@ export async function createWorld3DOverlay(
       deltaMode: (event as WheelEvent).deltaMode
     });
     canvas.dispatchEvent(copy);
+    // A scene-owned original never reaches the overlay adapter. End its former hover, even if an
+    // app's leave callback fails: the scene has already received its event.
+    if (
+      game.hover?.state === 'active' &&
+      id >= 0 &&
+      (pointer.pointerType === 'mouse' || pointer.pointerType === 'pen')
+    ) {
+      try {
+        if (event.type === 'pointerdown') game.hover.leave(id, 'contact');
+        else if (event.type === 'pointercancel') game.hover.leave(id, 'pointercancel');
+        else if (event.type === 'pointermove') game.hover.leave(id, pointer.buttons === 0 ? 'outside' : 'contact');
+      } catch (cause) {
+        reportHoverFailure(cause);
+      }
+    }
   };
   // Capturing on the window runs before the 2D game's own listeners on the overlay.
   for (const type of FORWARDED) win.addEventListener(type, forward, { capture: true, passive: false });
+  const releaseOwnership = (): void => {
+    passing.clear();
+    pendingClick = undefined;
+  };
+  const visibility = (): void => {
+    if (doc.visibilityState === 'hidden') releaseOwnership();
+  };
+  const lock = (): void => {
+    releaseOwnership();
+    if (doc.pointerLockElement !== null && game.hover?.state === 'active') {
+      try {
+        game.hover.leaveAll('outside');
+      } catch (cause) {
+        reportHoverFailure(cause);
+      }
+    }
+  };
+  win.addEventListener('blur', releaseOwnership);
+  win.addEventListener('pagehide', releaseOwnership);
+  doc.addEventListener('visibilitychange', visibility);
+  doc.addEventListener('pointerlockchange', lock);
 
   const stopScreenReport = createOverlayScreenReporter(game, overlay, canvas);
   const ready = performance.now();
@@ -305,6 +376,11 @@ export async function createWorld3DOverlay(
     async dispose(): Promise<void> {
       stopScreenReport();
       for (const type of FORWARDED) win.removeEventListener(type, forward, { capture: true });
+      win.removeEventListener('blur', releaseOwnership);
+      win.removeEventListener('pagehide', releaseOwnership);
+      doc.removeEventListener('visibilitychange', visibility);
+      doc.removeEventListener('pointerlockchange', lock);
+      releaseOwnership();
       observer?.disconnect();
       win.removeEventListener('resize', place);
       await game.dispose();

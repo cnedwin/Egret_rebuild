@@ -182,6 +182,11 @@ const m15DeepClauses = {
   "packages/project/src/resources/index.ts": [{"operation":"export","kind":"type","members":["ResourceBuildPlanDescription"],"target":"@egret/contracts/resources"},{"operation":"export","kind":"type","members":["ResourceBuildDescription","ResourceBuildEntry","ResourceManifestEntry","AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
   "packages/project/src/resources/manifest.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildDescription","ResourceBuildEntry","ResourceManifestResult"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["admitResourceManifest","serializeResourceManifest as encodeManifest","validateResourceBuildDescription"],"target":"@egret/contracts/resources"}],
 };
+Object.assign(m15DeepClauses, Object.fromEntries(
+  ["packages/engine/web/browserGameParagraph.ts", "packages/engine/dist/web/browserGameParagraph.d.ts"].map(file => [file, [
+    {operation:"import",kind:"type",members:["Engine"],target:"@egret/engine"}
+  ]])
+));
 const m15ClauseKey = row => JSON.stringify([row.operation,row.kind,row.target,[...row.members].sort()]);
 // M3.2: exact optional protocol clauses; no same-package value/deep-import wildcard.
 const m32ParagraphDeepClauses = {
@@ -318,6 +323,18 @@ Object.assign(m32ParagraphDeepClauses, {
   ...Object.fromEntries(["web/playViewParagraph.ts","dist/web/playViewParagraph.js","dist/web/playViewParagraph.d.ts"].map(file => [
     "packages/engine/"+file, [{operation:"export",kind:"value",members:["createParagraph"],target:"@egret/engine/paragraph"}]
   ]))
+});
+Object.assign(m32ParagraphDeepClauses, {
+  "packages/engine/web/browserGameParagraph.ts": [
+    {operation:"import",kind:"value",members:["createParagraph","createParagraphCache"],target:"@egret/engine/paragraph"},
+    {operation:"import",kind:"type",members:["Paragraph","ParagraphMetrics","ParagraphRequestInput","ParagraphTextAlign"],target:"@egret/engine/paragraph"}
+  ],
+  "packages/engine/dist/web/browserGameParagraph.js": [
+    {operation:"import",kind:"value",members:["createParagraph","createParagraphCache"],target:"@egret/engine/paragraph"}
+  ],
+  "packages/engine/dist/web/browserGameParagraph.d.ts": [
+    {operation:"import",kind:"type",members:["Paragraph","ParagraphMetrics","ParagraphTextAlign"],target:"@egret/engine/paragraph"}
+  ]
 });
 let inspected = 0;
 const forbidden = /\b(?:document|window|HTMLCanvasElement|GPUDevice|process|Buffer|require)\b|["']node:/;
@@ -458,6 +475,15 @@ for (const [name, allowed] of Object.entries(expected)) {
           && /\bexport\s+type\s*\*\s*$/.test(code.slice(0,match.index));
         if (!retainedTypeForward && (!row || !(m32ParagraphDeepClauses[relative]??[]).some(expected=>m15ClauseKey(expected)===m15ClauseKey(row))))
           throw new Error('M3.2: unapproved paragraph protocol dependency: '+relative+'/'+imported);
+      } else if (imported === '@egret/engine/bitmapfont') {
+        // The opt-in browser fixed-glyph builder uses the public bitmap font parser, not another renderer.
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        const clause=code.slice(0,match.index).match(/\bimport(\s+type)?\s*\{([^{}]+)\}\s*$/);
+        const member=clause?.[2].trim();
+        if(name!=='engine' || !(clause?.[1]
+          ? ['web/browserGameGlyphFont.ts','dist/web/browserGameGlyphFont.d.ts'].includes(relative) && member==='BitmapFont'
+          : ['web/browserGameGlyphFont.ts','dist/web/browserGameGlyphFont.js'].includes(relative) && member==='parseBitmapFont'))
+          throw new Error('Bitmapfont: browser glyph builder dependency outside its exact entry: '+relative);
       } else if (imported === '@egret/runtime/text') {
         const relative = path.relative(dir, file).split(path.sep).join('/');
         if (name !== 'engine' || !['src/text.ts', 'dist/text.js', 'dist/text.d.ts'].includes(relative)) throw new Error(`${file}: unapproved/deep package import ${imported}`);
@@ -5430,7 +5456,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
  }
 }
 // Frame loop: one optional browser entry built on the runtime's error alone. No other entry has it.
-const loopTypes=['BrowserFrameLoop','BrowserFrameLoopOptions','BrowserFrameLoopSnapshot','BrowserFrameLoopState','FrameLoopEngine','FrameLoopHost'];
+const loopTypes=['BrowserFrameLoop','BrowserFrameLoopOptions','BrowserFrameLoopSnapshot','BrowserFrameTiming','BrowserFrameLoopState','FrameLoopEngine','FrameLoopHost'];
 for(const [file,types] of [['packages/engine/web/loop.ts',loopTypes],['packages/engine/dist/web/loop.js',[]],['packages/engine/dist/web/loop.d.ts',loopTypes]]){
  const surface=mouseExports(uiRead(file),file);
  if(!mouseSame(surface.values,['createBrowserFrameLoop'])||!mouseSame(surface.types,types))throw new Error('Frame loop: exact browser entry exports mismatch: '+file);
@@ -5458,7 +5484,7 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
 }
 // Browser game: one optional browser entry. It uses the shared browser image decoder and loads a Host's entry
 // only when that backend is chosen. No other entry has it.
-const gameTypes=['BrowserGame','BrowserGameAtlasLabel','BrowserGameBackend','BrowserGameFit','BrowserGameFrameUsage','BrowserGameLabel','BrowserGameLabelCreateOptions','BrowserGameLabelOptions','BrowserGameOptions','BrowserGameRenderMode','BrowserGameStartupTiming','BrowserGameWarning','BrowserStatsPanel','BrowserStatsPanelOptions','BrowserStatsSample','BrowserStatsSnapshot'],gameValues=['createBrowserGame','createBrowserStatsPanel'];
+const gameTypes=['BrowserGame','BrowserGameAtlasLabel','BrowserGameBackend','BrowserGameFit','BrowserGameFrameUsage','BrowserGameFrameTiming','BrowserGameGlyphFont','BrowserGameGlyphFontOptions','BrowserGameLabel','BrowserGameLabelCreateOptions','BrowserGameLabelOptions','BrowserGameOptions','BrowserGameParagraphLabel','BrowserGameParagraphLabelCreateOptions','BrowserGameParagraphLabelOptions','BrowserGameRenderMode','BrowserGameStartupTiming','BrowserGameWarning','BrowserStatsPanel','BrowserStatsPanelOptions','BrowserStatsSample','BrowserStatsSnapshot'],gameValues=['createBrowserGame','createBrowserStatsPanel'];
 for(const [file,types] of [['packages/engine/web/game.ts',gameTypes],['packages/engine/dist/web/game.js',[]],['packages/engine/dist/web/game.d.ts',gameTypes]]){
  const surface=mouseExports(uiRead(file),file);
  if(!mouseSame(surface.values,gameValues)||!mouseSame(surface.types,types))throw new Error('Browser game: exact browser entry exports mismatch: '+file);
@@ -5468,9 +5494,16 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./GameImageAdmission.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
-const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js'],
- 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','./webgl2.js','@egret/engine','@egret/engine/text'],
+const gameEntries=['./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./GameImageAdmission.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
+const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js','./browserGameParagraph.js','./browserGameGlyphFont.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js','./browserGameParagraph.js','./browserGameGlyphFont.js'],
+ 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','./webgl2.js','@egret/engine','@egret/engine/text'],
+ 'web/browserGameParagraph.ts':['@egret/engine/paragraph','@egret/engine','@egret/runtime','./CanvasParagraphProvider.js','./browserGameFamilies.js'],
+ 'dist/web/browserGameParagraph.js':['@egret/engine/paragraph','@egret/runtime','./CanvasParagraphProvider.js','./browserGameFamilies.js'],
+ 'dist/web/browserGameParagraph.d.ts':['@egret/engine/paragraph','@egret/engine','@egret/runtime'],
+ 'web/browserGameGlyphFont.ts':['@egret/engine/bitmapfont','@egret/runtime','./browserGameFamilies.js'],
+ 'dist/web/browserGameGlyphFont.js':['@egret/engine/bitmapfont','@egret/runtime','./browserGameFamilies.js'],
+ 'dist/web/browserGameGlyphFont.d.ts':['@egret/engine/bitmapfont','@egret/runtime'],
+ 'web/browserGameFamilies.ts':['@egret/runtime'],'dist/web/browserGameFamilies.js':['@egret/runtime'],'dist/web/browserGameFamilies.d.ts':[],
  'web/GameImageAdmission.ts':['@egret/contracts','@egret/runtime'],'dist/web/GameImageAdmission.js':['@egret/runtime'],'dist/web/GameImageAdmission.d.ts':['@egret/contracts'],
  'web/browserStaticLayers.ts':['@egret/runtime','@egret/contracts'],'dist/web/browserStaticLayers.js':['@egret/runtime'],'dist/web/browserStaticLayers.d.ts':['@egret/contracts'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};
@@ -5489,7 +5522,14 @@ for(const [file,expected] of Object.entries(gameImports)){
  }
  if(new RegExp('\\b(?:setTimeout|setInterval|Worker|XMLHttpRequest|localStorage'+(file.includes('BrowserGame')?'':'|fetch')+')\\b').test(automatic))throw new Error('Browser game: acquired automatic host work: '+file);
 }
-const gameAllowed={'web/GameImageAdmission.js':['web/BrowserGame.ts'],'dist/web/GameImageAdmission.js':['dist/web/BrowserGame.js'],
+const gameAllowed={
+ 'web/browserGameParagraph.js':['web/BrowserGame.ts','web/game.ts'],
+ 'dist/web/browserGameParagraph.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','dist/web/game.d.ts'],
+ 'web/browserGameGlyphFont.js':['web/BrowserGame.ts','web/game.ts'],
+ 'dist/web/browserGameGlyphFont.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','dist/web/game.d.ts'],
+ 'web/browserGameFamilies.js':['web/browserGameParagraph.ts','web/browserGameGlyphFont.ts'],
+ 'dist/web/browserGameFamilies.js':['dist/web/browserGameParagraph.js','dist/web/browserGameGlyphFont.js'],
+ 'web/GameImageAdmission.js':['web/BrowserGame.ts'],'dist/web/GameImageAdmission.js':['dist/web/BrowserGame.js'],
  'web/browserStaticLayers.js':['web/BrowserGame.ts'],'dist/web/browserStaticLayers.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'],
  'web/BrowserGame.js':['web/game.ts'],'dist/web/BrowserGame.js':['dist/web/game.js','dist/web/game.d.ts'],
  'web/BrowserStatsPanel.js':['web/game.ts','web/BrowserGame.ts'],'dist/web/BrowserStatsPanel.js':['dist/web/game.js','dist/web/game.d.ts','dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts']};
