@@ -13,6 +13,10 @@
       "path": "packages/engine/rendering/sharedContainedQuad2D.ts",
       "originRole": "First-party shared 2D helper that expands an admitted, fully contained solid or unit-UV image quad and encodes its six vertex rows. Independently authored with AI assistance, Apache-2.0.",
       "criticalComment": true
+    },
+    {
+      "path": "verification/d60-shared-frame-final-20261128.json",
+      "originRole": "First-party paired desktop measurements, hardware pixel and ordering checks, and separate GPU pass timestamps for the integrated shared 2D renderer, prepared with AI assistance, Apache-2.0."
     }
   ],
   "documents": []

@@ -6,7 +6,7 @@
 
 ## 桌面 SharedFrame2D 固定场景验收 · 2026-11-28
 
-冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `3ab82995f7ba`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-desktop-20261128.json)
+冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `47c5659df0d7`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json)
 
 ## 工作包核对
 
@@ -140,6 +140,6 @@ M1.5 于 2026 年 10 月 21 日集成。D60 渲染一行按后续的桌面成对
 | --- | --- |
 | 流程集成与固定恢复验证 | 已完成：流程 [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78) 与经独立评审的 C7 结果。 |
 | M1.5 回归与受保护集成 | 已通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付，main 为 `4924b471b52927184252191055f902c30c29af52`。二十四个浏览器套件、三十六次实际调用及 C7 已经独立评审；完整受保护 CI 通过 290 项发布、4,528 项核心及 160 项 F2 测试，失败、跳过、取消均为零。[证据记录](resource-recovery-evidence.md)保留有限范围与原始失败。 |
-| M1.2 性能与 M1 收口 | 冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `3ab82995f7ba`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-desktop-20261128.json) |
+| M1.2 性能与 M1 收口 | 冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `47c5659df0d7`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json) |
 
 以上是既有 M1 中相连的成果。功能合并不能关闭未完成的性能或平台验收项。不可用的 GPU 时间、外部设备、授权 Editor 内容与真人上手验证，在缺少证据时继续明确标为未验收。

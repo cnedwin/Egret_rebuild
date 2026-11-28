@@ -8,7 +8,7 @@
 
 环境保持 Node 26.7.0、pnpm 11.25.0、TypeScript 7.0.2、PowerShell 7.6.5。当前元数据生成、聚焦开发反馈、正常 hooks 及最终候选完整合并 CI 已实现；下一项核心功能不以前置新增维护自动化为条件。
 
-M0 独立新贡献者演练与剩余权利／设备资格由 [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) 和 [#54](https://github.com/cnedwin/Egret_rebuild/issues/54) 跟踪。 冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `3ab82995f7ba`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-desktop-20261128.json)
+M0 独立新贡献者演练与剩余权利／设备资格由 [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) 和 [#54](https://github.com/cnedwin/Egret_rebuild/issues/54) 跟踪。 冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `47c5659df0d7`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json)
 
 [M2–M4 路线图](m2-m4-delivery-plan.md)保留十一个工作包和既有验收目标。先推进 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，让换装工作室通过既有工程事务在浏览器中打开导出的工程。导入取消或被拒绝时应保留当前场景及其资源租约。选定内容及输入行为就绪，且场景恢复等效混合合成或有经评审的后继档位后，再执行 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) 的正式验收。[#93](https://github.com/cnedwin/Egret_rebuild/issues/93) 的干净环境交接准备可并行进行。
 

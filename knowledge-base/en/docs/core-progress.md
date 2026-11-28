@@ -163,7 +163,7 @@ Roles describe responsibilities, not staffing or automatic volunteer assignments
 
 ## Evidence that remains open
 
-M1.1–M1.5 engineering is integrated. The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads. Measured revision `3ab82995f7ba`. [D60 paired desktop measurements](incremental-frame-preparation-evidence.md) · [Machine-readable measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-desktop-20261128.json)
+M1.1–M1.5 engineering is integrated. The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads. Measured revision `47c5659df0d7`. [D60 paired desktop measurements](incremental-frame-preparation-evidence.md) · [Machine-readable measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json)
 
 The [Android report](android-device-validation.md) records finite WebGPU/WebGL2 component, lifecycle and controlled recovery results, including the font-registration example correction in #129 and twelve added diagnostic/lifecycle cases in #130. The historical approximately 41.4 ms callback trigger was not reproduced; precise heap/backing observations do not establish physical-memory or universal zero-leak acceptance. The withdrawn wrong-target startup report is not an Engine regression.
 

@@ -2,6 +2,22 @@
 
 English | [中文](../../Cns/docs/incremental-frame-preparation-evidence.md)
 
+## Integrated M1 desktop acceptance · 2026-11-28
+
+The RTX 5090 Laptop and Chrome for Testing 157 ran five pairs for each of the three D60 update states. Both roles include the same bitmap resource readers and geometry ownership checks. Reference `05f3676a65b5`, measured candidate `47c5659df0d7`. Each of the 30 windows used 30 seconds of warm-up and 60 seconds of foreground measurement. Values below are milliseconds.
+
+| State | Engine p95, reference → candidate | Candidate Host p95 | Frame interval p95 / p99 | Weighted gap p95 / p99 | GPU pass span p95 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| static | 2.2 → 2.0 | 0.8 | 4.3 / 4.4 | 4.3 / 6.8 | 0.065536 |
+| sparse | 2.4 → 2.1 | 1.0 | 4.3 / 8.3 | 4.3 / 8.4 | 0.065536 |
+| full | 8.1 → 5.1 | 3.2 | 8.5 / 12.5 | 9.8 / 12.2 | 0.065536 |
+
+The enclosing Host span includes preparation and submission. All three state medians meet the 4 ms bound. The full-dirty update-through-render ratio was 0.670 against 1.10. On this GPU and browser, the separate pass timestamps advanced in observed steps of 65,536 ns. They cover the scene-to-resolve interval.
+
+WebGPU pixel and command-count controls passed. WebGL2 matched both revisions pixel for pixel in four transformed and reordered scene states and an additional moving-quad fixture with solid fills, mirrored textures and alpha overlap. The compact encoder executed during the test. Both hosts released their resources on close. The earlier stationary fixture recorded zero compact writes on the geometry-retention path. Continuous movement produced 0, 0, 3, 3, 3 and 3 writes across six frames. An initial command comparison lost signed zero in archived JSON. The two live roles then matched bit for bit on all 84 numeric fields in each frame, including the two negative zeros.
+
+[All 30 windows, controls, GPU measurements and WebGL2 results](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json)
+
 ## Fixed desktop SharedFrame2D qualification · 2026-11-28
 
 The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads.
