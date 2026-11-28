@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/runtime/src/displayNodeState.ts",
+      "originRole": "First-party private display tree records and their callback-free readers; moved unchanged from the existing first-party displayTreeState module with AI assistance so that the visual and managed state no longer import the tree operations; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/runtime/src/engineAffinity.ts",
+      "originRole": "First-party private engine affinity record and its reader; moved unchanged from the existing first-party ownership module with AI assistance so that the display state no longer imports ownership; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

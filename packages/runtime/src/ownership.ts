@@ -6,6 +6,8 @@ import type { CapturedSharedContent2D } from './sharedFrameCapture.js';
 import type { Diagnostic } from '@egret/contracts';
 import { EgretError } from './EgretError.js';
 import { recordVisualChange, watchDisplayRevision, VISUAL_BINDING } from './displayVisualState.js';
+import { engineOf, engines } from './engineAffinity.js';
+export { engineOf } from './engineAffinity.js';
 import {
   assertLive,
   captureChildInsertion,
@@ -73,14 +75,10 @@ export const ASSERT_ATTACHABLE: unique symbol = Symbol('egret.assertAttachable')
 
 // Cleanup ownership and engine affinity are separate lifetime identities.
 const owners = new WeakMap<object, object>();
-const engines = new WeakMap<object, EngineContext>();
 const readInsertionEngine = engines.get.bind(engines);
 
 export function ownerOf(value: object): object | undefined {
   return owners.get(value);
-}
-export function engineOf(value: object): EngineContext | undefined {
-  return readInsertionEngine(value);
 }
 export function claimOwner(value: object, owner: object): void {
   owners.set(value, owner);

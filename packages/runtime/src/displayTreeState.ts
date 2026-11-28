@@ -1,18 +1,23 @@
 import type { DisplayObject } from "./DisplayObject.js";
 import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
-import type { Stage } from "./Stage.js";
 import { EgretError } from "./EgretError.js";
 import { recordVisualChange, VISUAL_STRUCTURE } from "./displayVisualState.js";
-// Read at call time only; ownership imports this module for its own tree operations.
-import { engineOf } from "./ownership.js";
+import { engineOf } from "./engineAffinity.js";
+import { assertLive, childLists, nodes, parentOf, parents, roots, terminated } from "./displayNodeState.js";
+export {
+  assertLive,
+  childAtOf,
+  childCountOf,
+  childrenOf,
+  isDisplayNode,
+  isStageRoot,
+  isTerminated,
+  parentOf
+} from "./displayNodeState.js";
 
 // Internal state authority: validation/commit never uses overridable getters
 // or public removeChild. Public subclass hooks run only during preflight.
-const nodes = new WeakSet<object>();
-const terminated = new WeakSet<object>();
-const roots = new WeakSet<object>();
-const parents = new WeakMap<DisplayObject, DisplayObjectContainer>();
-const childLists = new WeakMap<DisplayObjectContainer, DisplayObject[]>();
+// The records themselves live in displayNodeState; this module is the only one that changes them.
 // The batch path uses captured original operations, never caller getters/hooks.
 const readChildList = childLists.get.bind(childLists);
 const readParent = parents.get.bind(parents);
@@ -32,31 +37,6 @@ export function assertContainer(value: object): void {
 export function markStageRoot(node: DisplayObject): void {
   roots.add(node);
 }
-/** Identity-only authentication never reads a forged or proxied Stage. */
-export function isStageRoot(value: unknown): value is Stage {
-  return roots.has(value as object);
-}
-export function isDisplayNode(value: object): value is DisplayObject {
-  return nodes.has(value);
-}
-export function isTerminated(node: DisplayObject): boolean {
-  return terminated.has(node);
-}
-export function parentOf(node: DisplayObject): DisplayObjectContainer | undefined {
-  return parents.get(node);
-}
-/** Return a snapshot so callers cannot mutate the authoritative child list. */
-export function childrenOf(node: DisplayObject): readonly DisplayObject[] {
-  return [...(childLists.get(node as DisplayObjectContainer) ?? [])];
-}
-
-/** Callback-free O(1) readers for budgeted traversal; never clone the list. */
-export function childCountOf(node: DisplayObject): number {
-  return childLists.get(node as DisplayObjectContainer)?.length ?? 0;
-}
-export function childAtOf(node: DisplayObject, index: number): DisplayObject | undefined {
-  return childLists.get(node as DisplayObjectContainer)?.[index];
-}
 
 /** Read the exact direct-child index in O(n), without a snapshot or callbacks. */
 export function childIndexOf(parent: DisplayObjectContainer, child: DisplayObject): number {
@@ -68,10 +48,6 @@ export function childIndexOf(parent: DisplayObjectContainer, child: DisplayObjec
     if (list[index] === child) return index;
   }
   throw new EgretError("DISPLAY_TREE_INVARIANT");
-}
-
-export function assertLive(node: DisplayObject): void {
-  if (terminated.has(node)) throw new EgretError("OBJECT_DISPOSED");
 }
 
 export function assertAttachable(node: DisplayObject): void {
