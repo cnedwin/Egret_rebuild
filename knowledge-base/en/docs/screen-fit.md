@@ -117,7 +117,7 @@ A `play` game also tells the tool, about four times a second, where the nodes it
 
 A control is named by its `name`, the name `onTap` was given, the name of its part in a view, or the words of its button. A node over the whole canvas, such as the backdrop of a modal view or a "tap anywhere" layer, is no control, and the controls it is drawn over are left out while it shows. The tool exits with 1 when a screen has an error. It is Chromium with stand-in insets at each phone's size and pixel ratio, not a phone: a real notch's shape, the browser's own bars and the way a phone hands its insets to the page are not checked.
 
-For Play controls in a scroll panel or another clipped ancestor, the report clips the transformed hit rectangle against every ancestor's clip polygon before taking its axis-aligned envelope. Fully clipped controls, hidden or pointer-disabled ancestor routes are omitted. A partially clipped control reports only its visible hit area; a narrow visible strip can still give a `touchTarget` warning. The report does not intersect controls with the safe area or the canvas boundary to make misplaced controls pass. The Chromium `examples/play/verify-ui.mjs ... scroll` case checks whole and partial rows, a rotated nested clip, a pointer-disabled ancestor, and preserves genuine `inSafeArea` and `apart` findings. These rectangular findings do not prove pixel-level occlusion or hardware touch behaviour.
+The Play and World3D native control reporters share the same transformed clipping geometry. Their safety and overlap findings use the exposed hit envelope; the touch-target size uses the authored hit rectangle when a real ancestor clip trims it (see below).
 
 ### Check several states along a route
 
@@ -209,3 +209,27 @@ The same option is available to `planScreen` and the underlying `createBrowserGa
 The native `verify --screens` report is emitted for World3D overlays even when the overlay draws on demand or its drawing loop is stopped. Geometry comes from visible, interactive display objects: explicit `hitArea` transformed to stage and CSS coordinates and restricted by clip rectangles. For an implicit hit area or transformed shape the report uses its axis-aligned envelope; pixel-level shape occlusion is not proved. A full-stage pointer barrier excludes background controls. When a real `createBrowserSemantics` projection owns the overlay canvas, actionable semantic nodes with matching native bounds supply their current names and modal/disabled state; sizes come from the native hit areas, not the painted shadow or focus outline. Native action, movement, range, and scrollbar-thumb bindings report even without a semantic name; toggle and selection items use their action binding. Their live enabled state is observed without adding an input route. An interactive semantic role (for example a slider with pointer drag but no activation action) can name a matching target. An anonymous pointer-only panel is not treated as a button when there is a semantic projection. Without a projection, visible native touch targets retain the name or position fallback. The tool-only receipt timer is removed on disposal and runs only when a screen-tool collector is present.
 
 `tests/ui-screen.test.mjs` checks clamping and invalid bounds. `tests/world3d-overlay-screen-browser.mjs` exercises independent scale, actual semantic names and hit-area geometry, real touch routing, notch/target/overlap findings, a turn while drawing is stopped, and report cleanup in Chromium; it is not a device performance test.
+
+## Clipped controls and declared painted coverage
+
+Play and the World3D native overlay use one screen-receipt geometry collector. It includes real directly installed native action, range, movement and scroll bindings, as well as Play's own taps and gestures. Where a native hit rectangle matches a real semantic node, the receipt names it by that node's current accessible name. Hidden, disabled or inert actions are excluded, and decorative structural groups do not become buttons merely by having bounds.
+
+A control's authored hit envelope is transformed with all four corners. The actual convex polygons of transformed ancestor clip rectangles and hit areas are intersected before taking their axis-aligned envelope. This avoids false exposed targets or inflated bounds at rotated, nested clips, and also applies to declared painted faces and semantic geometry matching. A completely clipped row is absent, and a partly clipped row uses its exposed geometry for safety and overlap but its authored size for the 44 CSS-pixel touch-target check. A row legitimately peeking out of a scrolling list is not inherently an undersized button. The reporter does not clip to the safe area or canvas boundary to hide a misplaced target; an unclipped target under a notch still fails. Native display ancestry, not geometric containment alone, identifies related targets; two unrelated buttons with one inside the other still produce an overlap warning. Older third-party receipts without identity metadata retain their former containment interpretation.
+
+A later native input surface can receive an actual pick inside an unrelated target's overlap; the report then advises `occluded`. This is input obstruction, not a claim about pixels. To also check a visual-only HUD panel that deliberately paints over controls but takes no input, mark its actual painted face:
+
+```js
+import { registerScreenOccluder } from '@egret/engine/ui';
+
+const registration = registerScreenOccluder(statusCardSprite, {
+  name: 'Status card',
+  rect: () => ({ x: 0, y: 0, width: cardWidth, height: cardHeight })
+});
+scope.use(registration);
+```
+
+The local rectangle and name may be values or functions. Registration is purely diagnostic; it does not alter rendering, hit testing, controls or focus. The reporter maps the declared face from the live display tree with its actual transform, ancestor clips, visibility and draw order. It reports an advisory `occluded` finding with `source: 'paint'` for an unrelated, later face that overlaps a target. It excludes invisible and alpha-zero faces and related ancestor/descendant decoration. Dispose the returned handle when its face is retired. For a declarative view, `view.get(name)` is the actual panel sprite; use its own painted local rectangle (not a container's combined children), and replace the registration from `built(view)` if an orientation variant replaces that sprite. Use a conservative inner rectangle for rounded faces. Do not mark a transparent holder or infer opacity from a semantic group's aggregate bounds.
+
+These findings are geometric/input observations, not pixel-level visibility proof for arbitrary masks, texture transparency, filters or rotated shapes. Unregistered visual-only artwork remains a screenshot-review task. The native receipt runs only under the existing screen verifier.
+
+`tests/egret-verify.test.mjs` checks visible-versus-authored sizes, real ancestry and input/paint finding interpretation. The real-browser fixture `tests/screen-control-report-browser.mjs <absolute Playwright index.mjs>` exercises both actual Play and World3D overlay surfaces, native scrolling and direct actions, declared painted coverage, true input obstruction, unrelated containment and disposal. It is not a device performance qualification.

@@ -1,11 +1,11 @@
 {
   "date": "2026-11-28",
   "en": {
-    "title": "Native view screen reports respect scroll clipping and keyboard semantics",
-    "body": "Play screen verification reports controls using their effective visible hit bounds, excluding fully clipped scroll rows while retaining partially visible, genuinely unsafe or overlapping targets. Native keyboard focus is exposed through the focused canvas's owned aria-activedescendant projection; browser verification checks real Tab navigation without moving focus to the invisible projection."
+    "title": "Exact transformed clipping and native keyboard focus verification",
+    "body": "The shared Play and World3D screen-control collector intersects transformed clipping polygons before deriving visible hit bounds. It excludes fully clipped controls even when rotated enclosing rectangles overlap, retains authored bounds for target size, and preserves genuine safety and occlusion findings. Browser verification also checks actual Tab navigation through the focused canvas's owned aria-activedescendant projection, without moving focus to the invisible semantic projection."
   },
   "zh": {
-    "title": "原生视图多屏报告遵守滚动裁切和键盘语义焦点",
-    "body": "Play 多屏检查按控件实际可见的命中边界报告，排除完全裁切的滚动行，同时保留部分可见、真正越过安全区或相交的控件。原生键盘焦点由获得焦点的画布通过其拥有的 aria-activedescendant 语义投影公布；浏览器验收检查实际 Tab 导航，不将焦点移到不可见投影层。"
+    "title": "精确变换裁切与原生键盘焦点验收",
+    "body": "Play 和 World3D 共用的多屏控件采集器先求变换后的裁切多边形交集，再计算可见命中边界。即使旋转后的外包矩形相交，也会排除完全裁切的控件；保留原始命中边界用于触控尺寸检查，并保留真实的安全区及遮挡问题。浏览器验收也通过已获得焦点画布拥有的 aria-activedescendant 语义投影验证实际 Tab 导航，不将焦点转移到不可见投影层。"
   }
 }

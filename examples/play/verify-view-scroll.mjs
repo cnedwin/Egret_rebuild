@@ -199,10 +199,14 @@ export async function verifyViewScroll(page) {
     assert.equal(initial.maximum, 104);
     assert.equal(initial.panelRefusal, 'UI_VIEW_BINDING_INVALID');
     const initialReport = await freshReport();
+    const rowKey = name => {
+      const match = /^(house|workshop)\s*([0-9])\b/i.exec(name);
+      return match === null ? undefined : match[1].toLowerCase() + match[2];
+    };
     const rowNames = report =>
       report.controls
-        .map(c => c.name)
-        .filter(name => /^(house|workshop)[0-9]$/.test(name))
+        .map(c => rowKey(c.name))
+        .filter(Boolean)
         .sort();
     assert.deepEqual(
       rowNames(initialReport),
@@ -214,7 +218,8 @@ export async function verifyViewScroll(page) {
     assert.ok(
       initialFindings.some(f => f.check === 'apart' && f.controls.includes('overlap-a') && f.controls.includes('overlap-b'))
     );
-    assert.ok(!initialReport.controls.some(c => c.name === 'ancestor-blocked' || c.name === 'diagonal-outside'));
+    assert.ok(!initialReport.controls.some(c => c.name === 'ancestor-blocked'), 'pointer-disabled ancestor route is not a control');
+    assert.ok(!initialReport.controls.some(c => c.name === 'diagonal-outside'), 'AABB overlap alone cannot make a fully clipped diagonal control visible');
     const diagonal = initialReport.controls.find(c => c.name === 'diagonal-partial');
     // Only 23×40 local units remain after both clips. The 45° rotation and
     // 1.5 CSS scale make their enclosing square (23+40)/sqrt(2)*1.5.
@@ -235,7 +240,7 @@ export async function verifyViewScroll(page) {
     assert.equal(wheel, 62);
     const scrolledReport = await freshReport();
     assert.deepEqual(rowNames(scrolledReport), ['house1', 'house2', 'house3', 'workshop1', 'workshop2', 'workshop3']);
-    const height = name => scrolledReport.controls.find(control => control.name === name)?.height;
+    const height = name => scrolledReport.controls.find(control => rowKey(control.name) === name)?.height;
     assert.ok(
       height('house1') > 0 && height('house1') < height('house2'),
       'partially clipped first row keeps only its visible hit geometry'
@@ -243,6 +248,14 @@ export async function verifyViewScroll(page) {
     assert.ok(
       height('house3') > 0 && height('house3') < height('house2'),
       'partially clipped last row keeps only its visible hit geometry'
+    );
+    const exposed = scrolledReport.controls.find(control => rowKey(control.name) === 'house3');
+    assert.ok(exposed.authored?.height >= 44 && exposed.height < 44, 'authored touch target is separate from a sliver');
+    assert.ok(
+      !controlFindings(scrolledReport.controls, scrolledReport.safe, true).some(
+        finding => finding.check === 'touchTarget' && rowKey(finding.control) === 'house3'
+      ),
+      'a full-height scroll item is not an undersized target just because the viewport clips it'
     );
     const gameplayWheelInside = (await inspect()).gameplayWheel;
     assert.equal(gameplayWheelInside, 0, 'scrolling a view must not also scroll gameplay');
@@ -290,8 +303,8 @@ export async function verifyViewScroll(page) {
     await frames();
     const rotatedReport = await freshReport();
     assert.deepEqual(rowNames(rotatedReport), ['house0', 'house1', 'workshop0', 'workshop1']);
-    const rotated = rotatedReport.controls.find(c => c.name === 'house0');
-    const ordinary = initialReport.controls.find(c => c.name === 'house0');
+    const rotated = rotatedReport.controls.find(c => rowKey(c.name) === 'house0');
+    const ordinary = initialReport.controls.find(c => rowKey(c.name) === 'house0');
     assert.ok(Math.abs(rotated.width - ordinary.height) < 0.01 && Math.abs(rotated.height - ordinary.width) < 0.01);
     const rotatedStart = await point(80, 126),
       rotatedEnd = await point(80, 24),

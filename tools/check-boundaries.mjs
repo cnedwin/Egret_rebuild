@@ -456,7 +456,7 @@ for (const [name, allowed] of Object.entries(expected)) {
           throw new Error('M3.3: keyboard assembly import outside the named browser modules: '+relative);
       } else if (imported === '#egret-pointer-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
-        if(name!=='engine'||!['web/pointer.ts','web/BrowserPointerInput.ts','dist/web/pointer.js','dist/web/pointer.d.ts','dist/web/BrowserPointerInput.js','dist/web/BrowserPointerInput.d.ts','web/world3d/overlayScreenReport.ts','dist/web/world3d/overlayScreenReport.js'].includes(relative))
+        if(name!=='engine'||!['web/pointer.ts','web/BrowserPointerInput.ts','dist/web/pointer.js','dist/web/pointer.d.ts','dist/web/BrowserPointerInput.js','dist/web/BrowserPointerInput.d.ts','web/screenControlGeometry.ts','dist/web/screenControlGeometry.js'].includes(relative))
           throw new Error('M3: pointer assembly import outside the named browser modules: '+relative);
       } else if (imported === '#egret-mouse-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
@@ -4703,6 +4703,9 @@ for (const file of ['src/pointerInput.ts','dist/pointerInput.js','dist/pointerIn
 for (const file of ['src/ui/controls.ts','dist/ui/controls.js','src/ui/rangeControl.ts','dist/ui/rangeControl.js','src/ui/scrollControl.ts','dist/ui/scrollControl.js'])
   currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],
     ['static','../internal/uiControlReportState.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+// The opt-in visual occluder is exported only by the existing native UI entry.
+for (const [file, count] of Object.entries({'src/ui/index.ts':2,'dist/ui/index.js':1,'dist/ui/index.d.ts':2}))
+  currentSceneLiteralClosure['packages/engine/'+file]=[...currentSceneLiteralClosure['packages/engine/'+file],...Array.from({length:count},()=>['static','../internal/uiControlReportState.js'])].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 for (const [file, targets] of Object.entries({
   'src/internal/uiControlReportState.ts':['../pointerInputTypes.js','@egret/runtime'],
   'dist/internal/uiControlReportState.js':[],
@@ -5165,7 +5168,8 @@ for (const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runti
 const uiRead=file=>readFileSync(path.join(root,file),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'').trim();
 const uiSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
 const uiGraphEdges=code=>[...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>['literal',match[1]]);
-const uiValues=['createUiRoot','createUiTheme','selectUiSkin','createMovementControl','createActionControl','createHoverControl','createToggleControl','createSelectionGroup','createScrollControl','createTextFieldControl','createRangeControl','createControlKeys','createUiLayerManager','createUiScreenStack'];
+const uiValues=['createUiRoot','createUiTheme','selectUiSkin','createMovementControl','createActionControl','createHoverControl','createToggleControl','createSelectionGroup','createScrollControl','createTextFieldControl','createRangeControl','createControlKeys','createUiLayerManager','createUiScreenStack','registerScreenOccluder'];
+const uiOccluderTypes=['ScreenOccluderRect','ScreenOccluderOptions','ScreenOccluder'];
 const uiScreenStackTypes=['UiScreenContext','UiScreenDefinition','UiScreenHandle','UiScreenLayer','UiScreenStack','UiScreenStackOptions','UiScreenStackSnapshot'];
 const uiScrollControlTypes=['ScrollAxis','ScrollControl','ScrollControlOptions','ScrollThumb','ScrollThumbOptions','ScrollWheelOptions'];
 const uiTextFieldTypes=['TextFieldChange','TextFieldControl','TextFieldControlOptions','TextFieldEditor','TextFieldRectangle','TextFieldSession'];
@@ -5180,12 +5184,12 @@ const runtimeUiValues=['UiHeightIndex','captureUiLayout','createUiDisplayOperati
 for(const [entry,values]of [['engine',await import('@egret/engine/ui')],['runtime',await import('@egret/runtime/ui')]])
   if(!uiSame(Object.keys(values),entry==='engine'?uiValues:runtimeUiValues))throw new Error('M3.1: exact optional UI values mismatch: '+entry);
 for(const [file,typed]of [['packages/engine/src/ui/index.ts',true],['packages/engine/dist/ui/index.js',false],['packages/engine/dist/ui/index.d.ts',true]]){
-  const expected="export{createUiRoot}from'./uiRoot.js';"+(typed?"exporttype{"+uiTypes.join(',')+"}from'./types.js';":'')+"export{createUiTheme,selectUiSkin}from'./theme.js';"+(typed?"exporttype{"+uiThemeTypes.join(',')+"}from'./theme.js';":'')+"export{createMovementControl,createActionControl}from'./controls.js';"+(typed?"exporttype{"+uiControlTypes.join(',')+"}from'./controls.js';":'')+"export{createHoverControl,createToggleControl,createSelectionGroup}from'./stateControls.js';"+(typed?"exporttype{"+uiStateControlTypes.join(',')+"}from'./stateControls.js';":'')+"export{createScrollControl}from'./scrollControl.js';"+(typed?"exporttype{"+uiScrollControlTypes.join(',')+"}from'./scrollControl.js';":'')+"export{createTextFieldControl}from'./textFieldControl.js';"+(typed?"exporttype{"+uiTextFieldTypes.join(',')+"}from'./textFieldControl.js';":'')+"export{createRangeControl}from'./rangeControl.js';"+(typed?"exporttype{"+uiRangeTypes.join(',')+"}from'./rangeControl.js';":'')+"export{createControlKeys}from'./controlKeys.js';"+(typed?"exporttype{"+uiControlKeysTypes.join(',')+"}from'./controlKeys.js';":'')+"export{createUiLayerManager}from'./layers.js';"+(typed?"exporttype{"+uiLayerTypes.join(',')+"}from'./layerTypes.js';":'')+"export{createUiScreenStack}from'./screenStack.js';"+(typed?"exporttype{"+uiScreenStackTypes.join(',')+"}from'./screenStack.js';":'');
+  const expected="export{createUiRoot}from'./uiRoot.js';export{registerScreenOccluder}from'../internal/uiControlReportState.js';"+(typed?"exporttype{"+uiOccluderTypes.join(',')+"}from'../internal/uiControlReportState.js';":'')+(typed?"exporttype{"+uiTypes.join(',')+"}from'./types.js';":'')+"export{createUiTheme,selectUiSkin}from'./theme.js';"+(typed?"exporttype{"+uiThemeTypes.join(',')+"}from'./theme.js';":'')+"export{createMovementControl,createActionControl}from'./controls.js';"+(typed?"exporttype{"+uiControlTypes.join(',')+"}from'./controls.js';":'')+"export{createHoverControl,createToggleControl,createSelectionGroup}from'./stateControls.js';"+(typed?"exporttype{"+uiStateControlTypes.join(',')+"}from'./stateControls.js';":'')+"export{createScrollControl}from'./scrollControl.js';"+(typed?"exporttype{"+uiScrollControlTypes.join(',')+"}from'./scrollControl.js';":'')+"export{createTextFieldControl}from'./textFieldControl.js';"+(typed?"exporttype{"+uiTextFieldTypes.join(',')+"}from'./textFieldControl.js';":'')+"export{createRangeControl}from'./rangeControl.js';"+(typed?"exporttype{"+uiRangeTypes.join(',')+"}from'./rangeControl.js';":'')+"export{createControlKeys}from'./controlKeys.js';"+(typed?"exporttype{"+uiControlKeysTypes.join(',')+"}from'./controlKeys.js';":'')+"export{createUiLayerManager}from'./layers.js';"+(typed?"exporttype{"+uiLayerTypes.join(',')+"}from'./layerTypes.js';":'')+"export{createUiScreenStack}from'./screenStack.js';"+(typed?"exporttype{"+uiScreenStackTypes.join(',')+"}from'./screenStack.js';":'');
   if(uiRead(file).replace(/\s+/g,'').replaceAll('"',"'")!==expected)throw new Error('M3.1: exact optional UI facade mismatch: '+file);
 }
 for(const [label,values,stem]of textEntries){
   const declaration=uiRead(stem+'.d.ts');
-  for(const name of [...uiValues,...uiTypes,...uiThemeTypes,...uiScreenStackTypes,...runtimeUiValues])
+  for(const name of [...uiValues,...uiTypes,...uiThemeTypes,...uiScreenStackTypes,...uiOccluderTypes,...runtimeUiValues])
     if(name in values||new RegExp('\\b'+name+'\\b').test(declaration))throw new Error('M3.1: optional UI leaked outside its entry: '+label+'/'+name);
 }
 const uiFactoryAllowed={
@@ -5765,9 +5769,12 @@ for(const [file,expected] of Object.entries(semanticImports)){
  // World3D's screen report observes only native geometry and the browser projection's private read-only registry.
  // It owns a tool-only receipt interval; the ordinary game and semantics runtime keep their no-timer rule above.
 const overlayReporterImports={
- 'web/world3d/overlayScreenReport.ts':['@egret/runtime','@egret/runtime','#egret-pointer-input','../game.js','../screen.js','../screenControlReportState.js','../screenControlReportState.js'],
- 'dist/web/world3d/overlayScreenReport.js':['@egret/runtime','#egret-pointer-input','../screenControlReportState.js'],
- 'dist/web/world3d/overlayScreenReport.d.ts':['../game.js']
+ 'web/world3d/overlayScreenReport.ts':['../game.js','../screen.js','../screenControlReportState.js','../screenControlGeometry.js','../screenControlGeometry.js'],
+ 'dist/web/world3d/overlayScreenReport.js':['../screenControlReportState.js','../screenControlGeometry.js'],
+ 'dist/web/world3d/overlayScreenReport.d.ts':['../game.js'],
+ 'web/screenControlGeometry.ts':['@egret/runtime','#egret-pointer-input','@egret/runtime','./game.js','./screen.js','./screenControlReportState.js'],
+ 'dist/web/screenControlGeometry.js':['@egret/runtime','#egret-pointer-input'],
+ 'dist/web/screenControlGeometry.d.ts':['@egret/runtime','./game.js','./screen.js','./screenControlReportState.js']
 };
 for(const [file,expected] of Object.entries(overlayReporterImports)){
  const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
@@ -5775,15 +5782,17 @@ for(const [file,expected] of Object.entries(overlayReporterImports)){
  if(/\b(?:setTimeout|requestAnimationFrame|fetch|Worker|XMLHttpRequest|localStorage)\b/.test(body))throw new Error('Overlay screen reporter: acquired automatic host work: '+file);
 }
 const semanticAllowed={
- 'src/internal/uiControlReportState.js':['src/pointerInput.ts','src/ui/controls.ts','src/ui/rangeControl.ts','src/ui/scrollControl.ts'],
- 'dist/internal/uiControlReportState.js':['dist/pointerInput.js','dist/pointerInput.d.ts','dist/ui/controls.js','dist/ui/rangeControl.js','dist/ui/scrollControl.js'],
+ 'src/internal/uiControlReportState.js':['src/pointerInput.ts','src/ui/controls.ts','src/ui/rangeControl.ts','src/ui/scrollControl.ts','src/ui/index.ts'],
+ 'dist/internal/uiControlReportState.js':['dist/pointerInput.js','dist/pointerInput.d.ts','dist/ui/controls.js','dist/ui/rangeControl.js','dist/ui/scrollControl.js','dist/ui/index.js','dist/ui/index.d.ts'],
  'web/world3d/overlayScreenReport.js':['web/world3d/overlay3D.ts'],
  'dist/web/world3d/overlayScreenReport.js':['dist/web/world3d/overlay3D.js'],
  'src/semanticTree.js':['src/semantics.ts'],'dist/semanticTree.js':['dist/semantics.js','dist/semantics.d.ts'],
  'src/semanticList.js':['src/semantics.ts'],'dist/semanticList.js':['dist/semantics.js','dist/semantics.d.ts'],
  'web/BrowserSemantics.js':['web/semantics.ts'],'dist/web/BrowserSemantics.js':['dist/web/semantics.js','dist/web/semantics.d.ts'],
- 'web/screenControlReportState.js':['web/BrowserSemantics.ts','web/world3d/overlayScreenReport.ts'],
- 'dist/web/screenControlReportState.js':['dist/web/BrowserSemantics.js','dist/web/world3d/overlayScreenReport.js']
+ 'web/screenControlReportState.js':['web/BrowserSemantics.ts','web/world3d/overlayScreenReport.ts','web/screenControlGeometry.ts','web/BrowserPlay.ts'],
+ 'dist/web/screenControlReportState.js':['dist/web/BrowserSemantics.js','dist/web/world3d/overlayScreenReport.js','dist/web/screenControlGeometry.d.ts','dist/web/BrowserPlay.js'],
+ 'web/screenControlGeometry.js':['web/BrowserPlay.ts','web/world3d/overlayScreenReport.ts'],
+ 'dist/web/screenControlGeometry.js':['dist/web/BrowserPlay.js','dist/web/world3d/overlayScreenReport.js']
 };
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
  if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');

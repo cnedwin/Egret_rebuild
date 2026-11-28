@@ -295,3 +295,61 @@ test('EV07 preparation reports its actual scene, rejections and asynchronous dea
   assert.match((await prepareScreen(async () => ' ', player, screen)).error, /nonempty scene name/);
   assert.match((await prepareScreen(() => new Promise(() => {}), player, screen, 10)).error, /exceeded 10 ms/);
 });
+
+// Screen reports with native ancestry and clipped input geometry must not
+// mistake a list's exposed edge for an intrinsically undersized control.
+test('EV06 native clipped controls use exposed safe geometry and genuine containment/occlusion evidence', () => {
+  const safe = { x: 0, y: 59, width: 393, height: 759 };
+  const controls = [
+    { id: '1', ancestors: [], name: 'Scattered outside', x: 320, y: 50, width: 70, height: 48 },
+    {
+      id: '2',
+      ancestors: [],
+      name: 'Clipped row',
+      x: 20,
+      y: 80,
+      width: 110,
+      height: 17,
+      authored: { x: 20, y: 50, width: 110, height: 60 }
+    },
+    {
+      id: '3',
+      ancestors: [],
+      name: 'Small clipped row',
+      x: 20,
+      y: 120,
+      width: 32,
+      height: 18,
+      authored: { x: 20, y: 112, width: 32, height: 24 }
+    },
+    { id: '4', ancestors: [], name: 'Independent card', x: 180, y: 200, width: 180, height: 150 },
+    { id: '5', ancestors: [], name: 'Unrelated inside', x: 202, y: 220, width: 48, height: 48 },
+    { id: '6', ancestors: ['4'], name: 'Real descendant', x: 270, y: 280, width: 48, height: 48 },
+    {
+      id: '7',
+      ancestors: [],
+      name: 'Covered',
+      x: 20,
+      y: 600,
+      width: 60,
+      height: 60,
+      blockedBy: 'HUD blocker',
+      coveredBy: ['HUD panel']
+    }
+  ];
+  const findings = controlFindings(controls, safe, true);
+  assert.ok(findings.some(f => f.check === 'inSafeArea' && f.control === 'Scattered outside'));
+  assert.ok(!findings.some(f => f.check === 'inSafeArea' && f.control === 'Clipped row'));
+  assert.ok(!findings.some(f => f.check === 'touchTarget' && f.control === 'Clipped row'));
+  assert.deepEqual(findings.find(f => f.check === 'touchTarget' && f.control === 'Small clipped row')?.size, [32, 24]);
+  assert.deepEqual(
+    findings.filter(f => f.check === 'apart').map(f => f.controls),
+    [['Independent card', 'Unrelated inside']]
+  );
+  assert.ok(findings.some(f => f.check === 'occluded' && f.control === 'Covered' && f.by === 'HUD blocker'));
+  assert.ok(
+    findings.some(
+      f => f.check === 'occluded' && f.control === 'Covered' && f.by === 'HUD panel' && f.source === 'paint'
+    )
+  );
+});

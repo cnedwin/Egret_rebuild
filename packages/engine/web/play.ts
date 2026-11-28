@@ -19,6 +19,8 @@ export type {
   PlayPinOptions,
   PlayUiScale,
   PlayPointer,
+  PlayPointerLockOptions,
+  PlayPointerLockResult,
   PlaySfx,
   PlayTextOptions,
   PlayTiles,

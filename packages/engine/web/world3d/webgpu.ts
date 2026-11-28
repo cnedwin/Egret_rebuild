@@ -71,3 +71,6 @@ export { createWorld3DStats } from './stats3D.js';
 export type { World3DStats, World3DStatsOptions } from './stats3D.js';
 export { createWorld3DOverlay } from './overlay3D.js';
 export type { World3DOverlay, World3DOverlayOptions, World3DOverlayStartupTiming } from './overlay3D.js';
+
+export { play3dAttached } from './BrowserPlay3D.js';
+export type { Play3DAttachedOptions, Play3DAttachedSession } from './BrowserPlay3D.js';
