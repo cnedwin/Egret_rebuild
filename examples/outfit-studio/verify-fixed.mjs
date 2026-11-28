@@ -180,11 +180,16 @@ async function mixedKeyboard(page, row) {
     if (id === 'studio-roster:details') {
       // Return through both layers using the same input device, without refocusing the canvas.
       for (const [key, expected] of [
-        ['Enter', 'studio-detail:rename'], ['Enter', 'studio-rename:draft'],
-        ['Escape', 'studio-detail:rename'], ['Escape', id]
+        ['Enter', 'studio-detail:rename'],
+        ['Enter', 'studio-rename:draft'],
+        ['Escape', 'studio-detail:rename'],
+        ['Escape', id]
       ]) {
         await page.keyboard.press(key);
-        await page.waitForFunction(target => globalThis.__egretOutfitStudio.inspect().ui.keyboard.focusedId === target, expected);
+        await page.waitForFunction(
+          target => globalThis.__egretOutfitStudio.inspect().ui.keyboard.focusedId === target,
+          expected
+        );
       }
       assert.deepEqual((await inspect(page)).ui.layers.openStack, []);
     }
@@ -200,7 +205,13 @@ async function mixedKeyboard(page, row) {
   const final = await inspect(page);
   assert.equal(final.selected, initial.selected);
   assert.equal(final.revision, initial.revision);
-  row.keyboard = { visited, returnedFromModal: 'studio-roster:details', toolbar: 'pause', returnedToCanvas: true, restoredPlayback: final.playing };
+  row.keyboard = {
+    visited,
+    returnedFromModal: 'studio-roster:details',
+    toolbar: 'pause',
+    returnedToCanvas: true,
+    restoredPlayback: final.playing
+  };
 }
 
 async function correctness(page, row) {
