@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/helpers/incremental-fixtures.mjs",
+      "originRole": "First-party temporary-repository fixtures for the incremental-check and maintenance tests; moved unchanged from the existing first-party incremental-checks publication test with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/helpers/maintenance-history.mjs",
+      "originRole": "First-party recorded source histories and predecessor reconstruction for the maintenance tests; moved unchanged from the existing first-party incremental-checks publication test with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/publication/incremental-selection.test.mjs",
+      "originRole": "First-party regressions for conservative incremental check selection; moved unchanged from the existing first-party incremental-checks publication test with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/publication/maintenance-proposals.test.mjs",
+      "originRole": "First-party regressions for check maintenance proposals; moved unchanged from the existing first-party incremental-checks publication test with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/publication/check-runners.test.mjs",
+      "originRole": "First-party regressions for the push, setup, merge, verify and shared-baseline runners; moved unchanged from the existing first-party incremental-checks publication test with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": []
+}

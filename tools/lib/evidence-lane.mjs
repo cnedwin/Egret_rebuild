@@ -48,6 +48,7 @@ export const EVIDENCE_TESTS = Object.freeze([
   'tests/spritesheet-boundaries.test.mjs',
   'tests/strict-successor-boundaries.test.mjs',
   // The maintenance tools rebuild earlier revisions of the tools above and of the type checks from
-  // recorded bytes. Their gate-order and selection cases stay in incremental-checks.test.mjs.
+  // recorded bytes. Their other cases stay in incremental-checks.test.mjs and
+  // maintenance-proposals.test.mjs, which run before every merge.
   'tests/publication/incremental-checks-evidence.test.mjs'
 ]);
