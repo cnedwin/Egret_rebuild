@@ -1,0 +1,65 @@
+{
+  "date": "2026-11-28",
+  "issue": 393,
+  "engineBase": "8424ff2afb0afdc103b06d51e3fd749f7a8fc379",
+  "asset": {
+    "source": "runtime-sdk/examples/terrain-glb/prepare.mjs",
+    "bytes": 1195336,
+    "sha256": "f1c75798cea53152a10f3b604f485c2f1f5b87503673e4ce0d227b9acb6536b1",
+    "vertices": 27225,
+    "triangles": 53792,
+    "attributes": [
+      "position",
+      "normal",
+      "uv"
+    ],
+    "image": "16 by 16 PNG from the indexed-mesh example",
+    "chunkBytes": 65536
+  },
+  "android": {
+    "device": "Samsung Galaxy Z Fold7 (SM-F966U1)",
+    "android": 17,
+    "abi": "arm64-v8a",
+    "layout": "embedded",
+    "graphics": "native GLES3",
+    "scriptHost": "trimmed",
+    "v8": "15.8.62.52",
+    "intl": false,
+    "buildType": "Release",
+    "testSignedApkBytes": 64923918,
+    "apkSha256": "a378fb53fafa4380f88fbb593600eaebedf289d3841aa5c075c9d88a7eb61c45",
+    "apkSignature": "v2",
+    "canceledAt": 131072,
+    "completedImports": 2,
+    "bytesReadOnSuccess": 1195336,
+    "assetRetirements": 2,
+    "textureUploads": 2,
+    "textureReleases": 2,
+    "projectPagesReleased": 2,
+    "livePagesAfterClose": 0,
+    "screen": {
+      "method": "Android compositor screenshots from the active display. Compare the same SurfaceView inset by two physical pixels per side. The camera and scene are stationary.",
+      "pixelsCompared": 649904,
+      "changedByMoreThan12PerChannelWhenRemoved": 218886,
+      "changedOnReload": 0
+    },
+    "interaction": "Android shell injected taps at the measured game surface and Close game button on the phone.",
+    "cleanup": "Temporary APK removed, foreground and stay-awake setting restored, device lease released."
+  },
+  "windows": {
+    "browser": "Edge 158.0.4370.45",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "graphics": "WebGL2, ANGLE D3D11",
+    "scope": "Real browser renderer and game scene. The desktop adapter supplied 64 KiB slices of the fetched model and decoded its embedded PNG with the browser.",
+    "viewport": [
+      768,
+      432
+    ],
+    "significantlyDifferentFromBackground": {
+      "visible": 110790,
+      "released": 0,
+      "reloaded": 110790
+    }
+  },
+  "note": "The first phone run verified terrain pixels, removal and reload. Its driver searched for a mixed-case Android button label and did not collect the final close. The successful run matched the button case-insensitively, using the identical signed APK. The Snow Temple chapters, lighting and presentation timing retain their separate records."
+}
