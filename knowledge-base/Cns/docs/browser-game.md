@@ -211,6 +211,10 @@ if (cache) {
 
 `createBrowserGame({ ..., onFrameTiming })` 转发[帧循环 CPU 计时](frame-loop.md)样本，并区分 SDK 已提交的 `submitted` 与超图像预算未绘制的 `refused`；其他结果名称不变。按需保留帧时仿真和时钟仍推进。传入 `measureSharedFrames: true` 可启用已有的有界 WebGL2 宿主阶段计时；将 `game.host` 缩窄为 WebGL2 宿主后读取 `getSharedFrameTiming()`。该报告含原生阶段和提交序号，包括提交、栅栏轮询和退役，不能解释为 GPU 执行耗时。WebGPU 不提供这个 WebGL2 专用报告。诊断选项不改变宿主准入、画质、更新频率或绘制策略。观察者应简短同步、保留有限记录。浏览器合成调度及真实呈现需单独追踪。
 
+**WebKit 保留帧呈现。** WebKit 浏览器上的 WebGL2 按需绘制（含 Play 及透明 World3D 叠加层）请求 `preserveDrawingBuffer: true`。在 Windows Playwright WebKit 样本中，采用原有丢弃缓冲属性时，即使 SDK 接受一次提交、GL 无错误，浏览器也仍显示上一帧。保留缓冲后，首帧及稍后异步图片就绪的变化无需额外绘制即可显示；静止回合仍不提交。连续绘制仍使用原有丢弃缓冲属性；WebGPU 和非 WebKit 浏览器保持不变。保留缓冲可能有额外显存／带宽开销；这项截图回归未测量 iPhone 真机性能。底层宿主仍遵循[显式属性契约](webgl2-executor-contract.md)。
+
+**WebKit 稳定转屏呈现。** 同一浏览器样本中，调整可见 WebGL2 backing 尺寸后，即使后续帧成功提交，画布仍持续空白。WebKit 里的 BrowserGame、Play 和透明 2D 叠加层无论哪种绘制模式，都保留首次准入的可见 backing，而 fit、portrait、输入和工作纹理仍随当前逻辑帧变化。尺寸不同时复用原有 GPU resolve，遵循所选混合空间，不增加绘制通路或 CPU 读回。CSS 根据当前屏幕尺寸缩放；长宽比或尺寸变化很大时，原 backing 可能限制最终清晰度，直至新游戏建立新 backing。按需模式仍仅提交变化帧。底层宿主默认直接缩放，可显式选择稳定缩放但不能同时启用精确尺寸读回。
+
 `createBrowserGame({ ..., afterFrame })` 把同步帧末钩子转发至其自身循环。主画面决定／提交之后（包括保留画面或宿主繁忙时）执行；配置的计时样本带有 `afterFrameMs`。手动 `game.drawFrame()` 不属于浏览器循环回合。
 
 **浏览器标签兼容。** `createLabel` 和 `createAtlasLabel` 使用 Canvas 文字提供者的 `{ compatibility: 'game-labels' }` 模式。浏览器缺少可选 Canvas 状态属性时，新画布采用标准默认状态，画布元素语言取自标签的 locale。仅默认透明 sRGB 画布允许缺省 alpha 或色彩空间报告；显式不兼容的报告仍会被拒绝。保留原生度量和精确 RGBA 字节校验。此模式拥有独立缓存标识，底层默认 `createCanvasTextRasterProvider()` 仍执行严格 WC1 状态验证，字体可用性与字形覆盖仍由调用方负责。

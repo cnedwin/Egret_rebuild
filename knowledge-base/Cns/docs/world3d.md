@@ -186,6 +186,15 @@ Windows Edge 157 在 RTX 5090 Laptop GPU（ANGLE D3D11）上运行 `pointShadows
 
 另一次负对照在查询区间内完全不绘制。把绘制移到查询区间之外时，即使出现 8.2–8.5 ms 的回调间隔，空查询也至多返回 0.000224 ms。独立的无绘制窗口里，768 次空查询有 5 次达到或超过 3 ms，最高 81.30 ms，同组回调间隔最大 4.5 ms。单独一次查询尖峰不足以归因到阴影或主画面绘制。本轮没有采集驱动内部调度和实际呈现时间。 [固定用例](https://github.com/cnedwin/Egret_rebuild/blob/042231238489f9542eaca36966b49dc3bd33de92/tools/world3d/cases.mjs) · [受测版本](https://github.com/cnedwin/Egret_rebuild/commit/042231238489f9542eaca36966b49dc3bd33de92)
 
+### 稳定的 WebGL2 画布呈现
+
+在移动 Apple WebKit 宿主上，改变画布的 backing 像素尺寸后，WebGL2 可能仍然正常绘制，但浏览器合成画面却不再显示该画布。底层渲染器提供明确的选项：`createWebGL2Renderer3D({ canvas, presentationResize: 'stable' })`。现有底层调用者默认保持 `'direct'`。稳定模式允许首次成功呈现前调整画布尺寸，其后保持已显示画布的 backing 尺寸；后续 `setSize` 与 `resizeToDisplaySize` 改为调整 GPU 内部场景目标。输出保持画布所用的颜色编码，通过 GPU 纹理采样通道呈现，不进行 CPU 读回或同步等待 GPU 完成。主动传入的 `RenderTarget3D` 继续使用原有输出编码，不呈现到画布。
+
+稳定模式以 `renderer.renderSize` 表示实际场景绘制尺寸，计算摄像机宽高比时不能直接使用画布 backing 的 `canvas.width` / `canvas.height`。普通 World3D 视图和应用会自动处理，其他渲染器可以回退到 `renderer.canvas`。恢复到原始 backing 尺寸会恢复直接绘制。改变宽高比时，内部目标以请求的宽高比绘制，再映射到画布当前的 CSS 区域。使用内部目标时，增加一个 GPU 目标和一个全屏呈现通道；CSS 尺寸变化可能拉伸固定的 backing。若初始 backing 像素数较低，后续画质请求更多像素也不会提高 backing 像素数；自适应场景尺寸亦不会减少原始 backing 的显存。仍需实机测量视觉清晰度、显存和帧耗时。
+
+复现与浏览器检查：构建 SDK 后运行 `node tests/world3d-presentation-resize-browser.mjs <Playwright index.mjs 的绝对路径> <输出目录> webkit`。Windows Playwright WebKit 的 iPhone 15 Pro 浏览器配置（非 iOS 实机）中，将已经呈现的 393 × 659 backing 调整为 235 × 395，GL 中心像素读回仍为 RGB (227, 106, 54)，实际截图却显示页面背景 (19, 71, 90)。稳定呈现改变场景尺寸而不改呈现 backing，随后各尺寸的截图中心像素均与 GL 一致，包括 395 × 235 的横屏场景。此用例也检查后处理、透明、调用者的独立渲染目标、底层直接通道和 World3D 应用自适应尺寸。已修复自身调整尺寸缺陷的浏览器不必复现直接通道故障；受影响宿主可设置 `EGRET_EXPECT_WEBKIT_RESIZE_BLANK=1`。使用已安装的 Microsoft Edge / SwiftShader 进行 Chromium 对照时，直接与稳定通道均通过；同一用例设置 `EGRET_BROWSER_CHANNEL=msedge`，选择 `chromium` 即可复跑。回归用例测量实际绘制与合成像素，并不代表真 iPhone 帧性能。
+
+
 ## 压缩资源
 
 纹理源可以是块压缩的多级链：`{width, height, format, levels}`，`format` 为 `bc1`、`bc3`、`bc7`、`etc2-rgb8`、`etc2-rgba8` 或 `astc-4x4`。数据按存储的样子上传，在显存中保持压缩。`renderer.supportsCompressedFormat(format)` 报告设备是否接受某种格式；桌面 GPU 通常提供 BC，移动 GPU 提供 ETC2 和 ASTC。

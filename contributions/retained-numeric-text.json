@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-retained-numeric-text.mjs",
+      "originRole": "First-party public browser regression for rapid native numeric label revisions, actual WebKit pixels and action, readiness, failure, visibility and disposal semantics; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

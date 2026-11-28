@@ -106,6 +106,10 @@ test('WA06 bad arguments are refused before anything is made', async () => {
   await assert.rejects(createWorld3DApp(null), { code: 'WORLD3D_INPUT_INVALID' });
   await assert.rejects(createWorld3DApp({}, { backend: 'vulkan' }), { code: 'WORLD3D_INPUT_INVALID' });
   await assert.rejects(createWorld3DApp({}, { quality: 'ultra' }), { code: 'WORLD3D_INPUT_INVALID' });
+  await assert.rejects(createWorld3DApp({}, { backend: 'webgpu', presentationResize: 'unknown' }), {
+    code: 'WORLD3D_INPUT_INVALID',
+    message: /presentation resize/
+  });
 });
 
 import {

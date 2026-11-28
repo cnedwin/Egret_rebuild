@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/world3d-presentation-resize-browser.mjs",
+      "originRole": "First-party procedural scene and actual browser composition regression using public World3D SDK entrypoints. Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

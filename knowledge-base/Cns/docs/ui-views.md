@@ -216,6 +216,7 @@ function showItems() {
 - `get(name)` 是某个部件的精灵，可以给它加[手势](gestures.md)、往里加东西或做缓动。
 - `rect(name)` 是游戏设计单位下声明的布局矩形，不是滚动或变换后的屏幕位置。`visibleRect(name)` 返回逻辑 Stage 单位下经过变换、祖先视口与屏幕裁剪后的可见矩形；隐藏或完全裁掉时为 `undefined`。`fit: 'expand'` 下设计原点可能与 Stage 原点不同。`shows(name)` 表示它当前是否显示。
 - `textReady(name)` 返回当前单行文字版本的就绪 Promise（按钮只包括标题）；其他部件返回 `undefined`。换字或重建后应重新读取。文字版本就绪不代表图片、段落或角标都已绘制。被替换的未完成文字版本可能以 `AbortError` 拒绝。原有 `built(view)` 仍表示结构已建立。
+- 非操作型单行 `text` 部件使用数字 `pick` 绑定时，准备最新格式化数值期间默认保留上一次已提交的字形。也可显式指定 `bind: { score: { text: s => s.score, retainLastText: true } }`，或以 `retainLastText: false` 禁用数字读数的保留。该策略只影响视觉栅格；语义名称、当前状态和 `textReady(name)` 仍指最新更新。同一文字只等一个图集请求，其后请求合并到新文字。空文字、样式、显示或生命周期变化仍清掉旧图。普通按钮、开关、段落和可操作面板的数字后代部件不会自动启用；按钮、开关和段落拒绝 `retainLastText`。有操作的容器内只有不会因数字短暂落后而描述不同操作的读数适合显式启用。
 - `show()`、`hide()`、`close()` 和 `refresh()`。
 - `focus(name)` 请求视图的原生焦点，返回请求是否成功，必要时将目标滚入视口。视图被覆盖或关闭，或目标隐藏、禁用、仅指针响应、无法滚入焦点范围时，返回 `false`。在活动视图中使用未知名称会被拒绝，并报告 `UI_VIEW_NAME_UNKNOWN`。
 - `focused` 是该视图当前持有有效焦点的部件声明名称；没有焦点时为 `undefined`。

@@ -60,7 +60,7 @@ await play({
 | `width`、`height` | 舞台大小，使用游戏自己的单位：大于 0 的整数。画布会缩放以适应页面，并保持这个比例 | 必填 |
 | `background` | 每帧清除成的颜色 | 黑色 |
 | `transparent` | `true` 时每帧清为透明，页面上位于画布下面的内容会透出来 | 绘制背景色 |
-| `audio` | 启用内置音效和音乐。静音游戏或自带混音器的游戏可设为 `false` | `true` |
+| `audio` | 内置音效和音乐；`true` 要求 Web Audio，`false` 交给游戏自行管理 | 有可用实时 Web Audio 构造器时自动启用 |
 | `setup(game)` | 搭建游戏；可以是 `async` | 什么都不搭建 |
 | `update(seconds, game)` | 游戏的一步 | 没有这一步 |
 | `parent` | 放画布的元素。画布占满它的宽度；元素自己没有高度时，按舞台的比例取高度 | 游戏占满窗口 |
@@ -180,6 +180,8 @@ setup(g) {
 
 用 `fontFamily`（一个已安装的字体族）、`fontWeight`（1–1000，优先于 `bold`）和 `italic` 设置短文字字形。`await score.ready` 等待当前文字、颜色、字号版本就绪；更新后重新读取该 Promise。未完成的版本若被替换、隐藏或移除，会以 `AbortError` 拒绝。就绪不表示帧已经呈现。轴对齐 UI 文字的栅格原点对齐实际像素；精灵声明位置和世界文字仍可连续移动。
 
+非操作型 HUD 读数可用 `game.text(0, { retainLastText: true })`：准备新字形时保留最近一次已提交的文字图像。同一文字仅保有一个正在进行的图集请求，后续赋值合并到最新文字，持续变化的数字也能逐步呈现，不会因反复替换而一直无字。当前可见文字可能短暂落后于 `text` 属性；当前版本的 `ready` 仍只等最新赋值，未完成的旧版本仍以 `AbortError` 拒绝。文字为空、更改颜色或字号、隐藏、移除或最终准备失败时不会保留旧图。描述操作或安全关键状态的文字不可使用此选项；普通文字与按钮标题保持严格替换。每帧变化的数字也可使用[生成的定宽字形集](browser-game.md)。
+
 ## 输入
 
 | 询问 | 回答 |
@@ -216,7 +218,7 @@ setup(g) {
 
 游戏自行管理音频时，给 `play` 或 `play3d` 传入 `audio: false`。在本次游戏的整个生命周期内，Play 跳过音频上下文的创建、首次交互解锁音频的监听，以及 14 个预设的合成和解码。后续调用 `sfx.define`、`sfx.play`、`sfx.loop` 或 `music.play` 都不会启动内置音频。循环音效返回已停止的句柄，可以再次安全地调用 `stop()`。自有混音器的暂停、恢复和释放由游戏负责；重开游戏会再次执行 `setup`，应复用同一个混音器。
 
-显式设置 `audio: true` 或省略此项时，Play 会在 `setup` 前准备好预设。运行时临时静音仍可使用 `game.sfx.muted`。
+显式设置 `audio: true` 时，Play 要求可用的实时 Web Audio 构造器，并在 `setup` 前准备预设。省略此项表示自动选择：如果标准 `AudioContext` 和旧 WebKit 的 `webkitAudioContext` 都不可用，游戏仍能静音启动，不伪造时间基准或混音器。有构造器时正常音频流程不变；已存在的宿主发生其他错误时不会悄悄吞掉。依赖音频的游戏可以要求 `true` 并处理 `AUDIO_HOST_UNAVAILABLE`。运行时临时静音仍可使用 `game.sfx.muted`。
 
 `game.sfx.play('coin')` 播放一个用代码合成的音效。可用的名字有 `jump`、`coin`、`hit`、`hurt`、`explosion`、`shoot`、`powerup`、`bounce`、`pop`、`click`、`hum`、`wind`、`win` 和 `lose`。`game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` 只改变这一次播放。不存在的名字会以 `PLAY_SFX_UNKNOWN` 被拒绝，错误信息里列出全部名字。
 

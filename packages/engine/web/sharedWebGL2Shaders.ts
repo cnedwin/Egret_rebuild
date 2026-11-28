@@ -376,11 +376,11 @@ void main() {
  * Writes the working target to the canvas as it stores colour there: light encoded at the end, or, for a target
  * that mixes codes, the codes as they are.
  */
-export const sharedWebGL2ResolveFragment = (srgb: boolean): string => `#version 300 es
+export const sharedWebGL2ResolveFragment = (srgb: boolean, stablePresentation = false): string => `#version 300 es
 precision highp float;
 precision highp int;
 uniform highp sampler2D workingTexture;
-uniform bool opaque;
+uniform bool opaque;${stablePresentation ? '\nuniform vec2 outputSize;' : ''}
 layout(location = 0) out vec4 fragmentColor;
 vec3 encoded(vec3 value) {
     return mix(12.92 * value, 1.055 * pow(value, vec3(1.0 / 2.4)) - vec3(0.055),
@@ -388,7 +388,28 @@ vec3 encoded(vec3 value) {
 }
 void main() {
     // SRGB8_ALPHA8 integer fetch already decodes RGB; an RGBA8 target holds codes. Both targets use the same GL row.
-    vec4 value = texelFetch(workingTexture, ivec2(gl_FragCoord.xy), 0);
+    ${
+      stablePresentation
+        ? `
+    ivec2 size = textureSize(workingTexture, 0);
+    vec4 value;
+    if (all(equal(size, ivec2(outputSize)))) {
+        value = texelFetch(workingTexture, ivec2(gl_FragCoord.xy), 0);
+    } else {
+        // Resample the premultiplied working target in its blend space, with clamped edge texels.
+        vec2 source = gl_FragCoord.xy * vec2(size) / outputSize - vec2(0.5);
+        ivec2 base = ivec2(floor(source));
+        vec2 weight = fract(source);
+        ivec2 lo = ivec2(0);
+        ivec2 hi = size - ivec2(1);
+        vec4 a = mix(texelFetch(workingTexture, clamp(base, lo, hi), 0),
+            texelFetch(workingTexture, clamp(base + ivec2(1, 0), lo, hi), 0), weight.x);
+        vec4 b = mix(texelFetch(workingTexture, clamp(base + ivec2(0, 1), lo, hi), 0),
+            texelFetch(workingTexture, clamp(base + ivec2(1, 1), lo, hi), 0), weight.x);
+        value = mix(a, b, weight.y);
+    }`
+        : 'vec4 value = texelFetch(workingTexture, ivec2(gl_FragCoord.xy), 0);'
+    }
     if (opaque) {
         fragmentColor = vec4(${srgb ? 'clamp(value.rgb, vec3(0.0), vec3(1.0))' : 'encoded(clamp(value.rgb, vec3(0.0), vec3(1.0)))'}, 1.0);
         return;

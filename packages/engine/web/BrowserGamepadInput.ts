@@ -5,6 +5,8 @@ import type { GamepadInput, GamepadInputOptions, GamepadSample } from '@egret/en
 
 /** Browser gamepad input to make: what is called on an error. */
 export interface BrowserGamepadInputOptions extends GamepadInputOptions {
+  /** With optional input, an absent or permission-blocked Gamepad host has no connected pads. Defaults to false. */
+  readonly optional?: boolean;
   /**
    * Told what failed where nothing could be returned: in a listener of the page, or when a pad
    * was asked to shake. Without it the failure is reported to the page.
@@ -52,12 +54,33 @@ const within = (value: unknown, least: number, most: number): value is number =>
 export function createBrowserGamepadInput(options: BrowserGamepadInputOptions = {}): BrowserGamepadInput {
   if (options === null || typeof options !== 'object' || Array.isArray(options))
     throw new EgretError('GAMEPAD_OPTIONS_INVALID');
-  const { onError, ...configuration } = options;
-  if (onError !== undefined && typeof onError !== 'function') throw new EgretError('GAMEPAD_OPTIONS_INVALID');
+  const { onError, optional = false, ...configuration } = options;
+  if ((onError !== undefined && typeof onError !== 'function') || typeof optional !== 'boolean')
+    throw new EgretError('GAMEPAD_OPTIONS_INVALID');
   const host = globalThis.navigator,
     page = globalThis.document,
     win = globalThis.window;
-  if (host === undefined || typeof host.getGamepads !== 'function') throw new EgretError('GAMEPAD_HOST_UNAVAILABLE');
+  if ((host === undefined || typeof host.getGamepads !== 'function') && !optional)
+    throw new EgretError('GAMEPAD_HOST_UNAVAILABLE');
+  const readPads = (): ReturnType<Navigator['getGamepads']> => {
+    if (typeof host?.getGamepads !== 'function') {
+      if (!optional) throw new EgretError('GAMEPAD_HOST_UNAVAILABLE');
+      return [];
+    }
+    try {
+      return host.getGamepads();
+    } catch (cause) {
+      // A Permissions Policy can deliberately make this otherwise present optional input unavailable.
+      if (
+        optional &&
+        typeof DOMException === 'function' &&
+        cause instanceof DOMException &&
+        cause.name === 'SecurityError'
+      )
+        return [];
+      throw cause;
+    }
+  };
   const input = createGamepadInput(configuration);
   const pairs: Pair[] = [];
   let closed = false,
@@ -108,7 +131,7 @@ export function createBrowserGamepadInput(options: BrowserGamepadInputOptions = 
       if (timestamp !== undefined && !within(timestamp, 0, Number.MAX_VALUE)) throw new EgretError('GAMEPAD_SAMPLE');
       if (closed || input.state === 'closed' || page?.visibilityState === 'hidden') return;
       const samples: GamepadSample[] = [];
-      for (const pad of host.getGamepads()) {
+      for (const pad of readPads()) {
         // A browser keeps a place for a pad that was taken away.
         if (pad === null || pad === undefined || pad.connected === false) continue;
         samples.push({
@@ -138,7 +161,7 @@ export function createBrowserGamepadInput(options: BrowserGamepadInputOptions = 
       )
         throw new EgretError('GAMEPAD_OPTIONS_INVALID');
       if (closed || page?.visibilityState === 'hidden') return false;
-      const pad = [...host.getGamepads()].find(
+      const pad = [...readPads()].find(
         candidate =>
           candidate !== null && candidate !== undefined && candidate.index === index && candidate.connected !== false
       );

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Optional browser audio and controller hosts",
+    "body": "Play starts without built-in sound when the browser provides neither standard nor legacy WebKit Web Audio, while explicit required audio retains its error. Browser audio accepts the legacy constructor and the optional browser controller adapter treats absent or permission-blocked input as disconnected, without inventing input or swallowing unrelated failures."
+  },
+  "zh": {
+    "title": "浏览器可选音频和手柄能力",
+    "body": "浏览器缺少标准和旧 WebKit Web Audio 时，Play 默认静音启动；显式要求音频仍会正常报错。浏览器音频支持旧前缀构造器，可选的手柄适配器在接口缺失或权限策略阻止时视为没有已连接手柄，不伪造输入或吞掉其他错误。"
+  }
+}

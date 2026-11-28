@@ -20,6 +20,10 @@ export interface SharedWebGL2Configuration extends SharedPreparationOptions2D, S
   /** Where translucent draws mix: `linear` light (the default) or the stored `srgb` codes, as a 2D canvas does. */
   readonly blendSpace: 'linear' | 'srgb';
   readonly pageBatching: SharedWebGL2PageBatching;
+  /** Retain the default drawing buffer between presentations. Defaults to false. */
+  readonly preserveDrawingBuffer: boolean;
+  /** Retain the first admitted canvas backing, while rendering logical frame sizes to a working texture. */
+  readonly presentationResize: 'direct' | 'stable';
 }
 /** A shared WebGL2 host to make: its canvas, what it reports to, and whether it measures frames. */
 export interface SharedWebGL2HostOptions extends Partial<SharedWebGL2Configuration> {
@@ -53,7 +57,9 @@ const DEFAULTS: SharedWebGL2Configuration = Object.freeze({
   maxFramePageBytes: 67108864,
   maxReadyPageBytes: 134217728,
   blendSpace: 'linear',
-  pageBatching: 'multi-page'
+  pageBatching: 'multi-page',
+  preserveDrawingBuffer: false,
+  presentationResize: 'direct'
 });
 const KEYS = [
   'canvas',
@@ -81,7 +87,9 @@ const KEYS = [
   'maxFramePageBytes',
   'maxReadyPageBytes',
   'blendSpace',
-  'pageBatching'
+  'pageBatching',
+  'preserveDrawingBuffer',
+  'presentationResize'
 ] as const;
 function object(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -105,12 +113,14 @@ export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions): {
   const configuration = {} as SharedWebGL2Configuration;
   for (const key of Object.keys(DEFAULTS) as (keyof SharedWebGL2Configuration)[]) {
     const value = captured[key] === undefined ? DEFAULTS[key] : captured[key];
-    if (key === 'enableReadback' || key === 'enableEffects') {
+    if (key === 'enableReadback' || key === 'enableEffects' || key === 'preserveDrawingBuffer') {
       if (typeof value !== 'boolean') throw new TypeError(key);
     } else if (key === 'outputAlpha') {
       if (value !== 'premultiplied' && value !== 'opaque') throw new TypeError(key);
     } else if (key === 'blendSpace') {
       if (value !== 'linear' && value !== 'srgb') throw new TypeError(key);
+    } else if (key === 'presentationResize') {
+      if (value !== 'direct' && value !== 'stable') throw new TypeError(key);
     } else if (key === 'pageBatching') {
       if (value !== 'multi-page' && value !== 'single-page') throw new TypeError(key);
     } else {
@@ -125,6 +135,9 @@ export function admitSharedWebGL2Options(input: SharedWebGL2HostOptions): {
     }
     Object.defineProperty(configuration, key, { value, enumerable: true });
   }
+  // The current readback contract returns exact logical pixels from the default framebuffer.
+  if (configuration.presentationResize === 'stable' && configuration.enableReadback)
+    throw new TypeError('presentationResize');
   return {
     surface: captured.canvas as unknown as HTMLCanvasElement,
     configuration: Object.freeze(configuration),
