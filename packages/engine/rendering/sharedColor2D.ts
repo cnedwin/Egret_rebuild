@@ -1,6 +1,6 @@
 import { copyImageData2DPixels } from '@egret/contracts';
 import type { ImageData2D } from '@egret/contracts';
-import { decodeSRGBByte } from './srgbBytes.js';
+import { decodeSRGBByte } from '@egret/contracts';
 /** Selected sRGB transfer. Alpha and tint coefficients are never gamma converted. */
 export function decodeSharedSRGB(value: number): number {
   return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;

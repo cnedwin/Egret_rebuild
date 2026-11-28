@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "files": [
     {"path": "packages/runtime/src/graphicsShape.ts", "originRole": "First-party tessellation of Graphics shapes, paths and lines into coloured triangles; independently authored with AI assistance; Apache-2.0. Ear cutting, mitred lines and de Casteljau subdivision written from their definitions; no third-party code.", "criticalComment": true},
-    {"path": "packages/runtime/src/srgbBytes.ts", "originRole": "First-party written table of the linear-light value of each sRGB byte, for Graphics shapes; independently authored with AI assistance; Apache-2.0. Numbers computed from the sRGB transfer function.", "criticalComment": true},
+    {"path": "packages/contracts/src/srgbBytes.ts", "originRole": "First-party written table of the linear-light value of each sRGB byte, shared by the runtime, the engine core and rendering; independently authored with AI assistance; Apache-2.0. Numbers computed from the sRGB transfer function.", "criticalComment": true},
     {"path": "tests/graphics-shapes.test.mjs", "originRole": "First-party Node tests of Graphics shapes, paths and lines as the triangles a frame carries; independently authored with AI assistance; Apache-2.0.", "criticalComment": true},
     {"path": "examples/graphics/index.html", "originRole": "First-party page of the graphics example; independently authored with AI assistance; Apache-2.0. No third-party asset."},
     {"path": "examples/graphics/main.mjs", "originRole": "First-party example of shapes, paths, lines, curves and arcs drawn with Graphics; independently authored with AI assistance; Apache-2.0. Original example text; no third-party asset.", "criticalComment": true},

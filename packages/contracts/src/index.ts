@@ -25,6 +25,7 @@ export type {
 export type { TextureViewRegionInput2D, TextureViewRegion2D } from './TextureViewRegion2D.js';
 
 export { SHARED_FRAME_PROFILE_2D } from './SharedRenderFrame2D.js';
+export { decodeSRGBByte } from './srgbBytes.js';
 export type {
   SharedFrameProfile2D,
   SharedOutputAlpha2D,

@@ -714,10 +714,13 @@ const geometryValues = ['createTexturedGeometry2D', 'isTexturedGeometry2D'];
 const geometryTypes = ['TexturedFloatArray2D', 'TexturedIndexArray2D', 'TexturedGeometry2DInput', 'TexturedGeometry2D'];
 const contractValues = [...imageValues, ...geometryValues].sort();
 const sharedContractValues = ['createSharedMaterial2D','createSharedGeometry2D','isSharedMaterial2D','isSharedGeometry2D','SHARED_FRAME_PROFILE_2D'];
-const completeContractValues = [...contractValues,...sharedContractValues].sort();
+// The one written sRGB byte table, shared by the runtime, the engine core and rendering. It is not an engine entry value.
+const colorContractValues = ['decodeSRGBByte'];
+const completeContractValues = [...contractValues,...sharedContractValues,...colorContractValues].sort();
 if (JSON.stringify(Object.keys(contractsFacade)) !== JSON.stringify(completeContractValues)) throw new Error('contracts: executable image/geometry export surface mismatch');
 for (const name of imageValues) if (facade[name] !== contractsFacade[name]) throw new Error(`engine: image contract identity mismatch: ${name}`);
 for (const name of geometryValues) if (typeof contractsFacade[name] !== 'function' || facade[name] !== contractsFacade[name]) throw new Error(`engine: geometry contract identity mismatch: ${name}`);
+for (const name of colorContractValues) if (typeof contractsFacade[name] !== 'function' || name in facade || name in gpuFacade) throw new Error(`contracts: sRGB byte table leaked or missing: ${name}`);
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
 const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'animate', 'CancellationController', 'EgretError', 'describeErrorCode', 'setErrorLanguage', 'getErrorLanguage', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', 'Shape', 'Point', 'Rectangle', 'Matrix', 'createTimer', 'after', ...imageValues, ...geometryValues, 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'NineSliceBitmap', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
 const completeRootValues = [...texturedRootValues,'createSharedMaterial2D','createSharedGeometry2D','SHARED_FRAME_PROFILE_2D','createTextureView'].sort();
@@ -4696,6 +4699,14 @@ for (const [name,targets] of Object.entries({
   'dist/rendering/sharedPreparationRetention2D.js':['./prepareSharedDraws2D.js'],
   'dist/rendering/sharedPreparationRetention2D.d.ts':['@egret/contracts','./prepareRectangles2D.js','./prepareSharedDraws2D.js','./packSharedDraws2D.js']
 })) currentSceneLiteralClosure['packages/engine/'+name]=glEdges(targets);
+// Shared colour and effects read the one written sRGB byte table from the contracts, not a copy of their own.
+for (const name of ['rendering/sharedColor2D.ts','dist/rendering/sharedColor2D.js','rendering/sharedEffects2D.ts','dist/rendering/sharedEffects2D.js']) {
+  const file = 'packages/engine/' + name, edges = [...currentSceneLiteralClosure[file]];
+  const index = edges.findIndex(edge => edge[1] === './srgbBytes.js');
+  if (index < 0) throw new Error('S3D1: revised closure edge missing: ' + file + ' ./srgbBytes.js');
+  edges[index] = ['static', '@egret/contracts'];
+  currentSceneLiteralClosure[file] = edges.sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+}
 // Both geometry factories admit their arrays through one private contracts module, which imports nothing.
 for (const file of ['packages/contracts/src/SharedGeometry2D.ts','packages/contracts/dist/SharedGeometry2D.js'])
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./geometryAdmission2D.js']]
@@ -5500,7 +5511,7 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...particlesTypes,...particlesValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Particles: leaked to default/other entry: '+label+'/'+name);
 }
-const particlesImports={"src/particles.ts": ["./particleEmitter.js", "./particleTypes.js"], "dist/particles.js": ["./particleEmitter.js"], "dist/particles.d.ts": ["./particleEmitter.js", "./particleTypes.js"], "src/particleEmitter.ts": ["./srgbBytes.js", "@egret/runtime", "@egret/contracts", "./particleTypes.js"], "dist/particleEmitter.js": ["./srgbBytes.js", "@egret/runtime", "@egret/contracts"], "dist/particleEmitter.d.ts": ["./particleTypes.js"], "src/particleTypes.ts": ["@egret/runtime"], "dist/particleTypes.js": [], "dist/particleTypes.d.ts": ["@egret/runtime"]};
+const particlesImports={"src/particles.ts": ["./particleEmitter.js", "./particleTypes.js"], "dist/particles.js": ["./particleEmitter.js"], "dist/particles.d.ts": ["./particleEmitter.js", "./particleTypes.js"], "src/particleEmitter.ts": ["@egret/contracts", "@egret/runtime", "@egret/contracts", "./particleTypes.js"], "dist/particleEmitter.js": ["@egret/contracts", "@egret/runtime", "@egret/contracts"], "dist/particleEmitter.d.ts": ["./particleTypes.js"], "src/particleTypes.ts": ["@egret/runtime"], "dist/particleTypes.js": [], "dist/particleTypes.d.ts": ["@egret/runtime"]};
 for(const [file,expected] of Object.entries(particlesImports)){
  const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
  if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Particles: exact graph mismatch: '+file);
@@ -5650,7 +5661,7 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...bitmapfontTypes,...bitmapfontValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Bitmapfont: leaked to default/other entry: '+label+'/'+name);
 }
-const bitmapfontImports={"src/bitmapfont.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "dist/bitmapfont.js": ["./bitmapFontParse.js", "./bitmapText.js"], "dist/bitmapfont.d.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "src/bitmapFontParse.ts": ["@egret/runtime", "./bitmapFontTypes.js"], "dist/bitmapFontParse.js": ["@egret/runtime"], "dist/bitmapFontParse.d.ts": ["./bitmapFontTypes.js"], "src/bitmapText.ts": ["./srgbBytes.js", "@egret/runtime", "@egret/runtime", "@egret/contracts", "./bitmapFontParse.js", "./bitmapFontTypes.js"], "dist/bitmapText.js": ["./srgbBytes.js", "@egret/runtime", "@egret/contracts", "./bitmapFontParse.js"], "dist/bitmapText.d.ts": ["./bitmapFontTypes.js"], "src/bitmapFontTypes.ts": ["@egret/runtime"], "dist/bitmapFontTypes.js": [], "dist/bitmapFontTypes.d.ts": ["@egret/runtime"]};
+const bitmapfontImports={"src/bitmapfont.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "dist/bitmapfont.js": ["./bitmapFontParse.js", "./bitmapText.js"], "dist/bitmapfont.d.ts": ["./bitmapFontParse.js", "./bitmapText.js", "./bitmapFontTypes.js"], "src/bitmapFontParse.ts": ["@egret/runtime", "./bitmapFontTypes.js"], "dist/bitmapFontParse.js": ["@egret/runtime"], "dist/bitmapFontParse.d.ts": ["./bitmapFontTypes.js"], "src/bitmapText.ts": ["@egret/contracts", "@egret/runtime", "@egret/runtime", "@egret/contracts", "./bitmapFontParse.js", "./bitmapFontTypes.js"], "dist/bitmapText.js": ["@egret/contracts", "@egret/runtime", "@egret/contracts", "./bitmapFontParse.js"], "dist/bitmapText.d.ts": ["./bitmapFontTypes.js"], "src/bitmapFontTypes.ts": ["@egret/runtime"], "dist/bitmapFontTypes.js": [], "dist/bitmapFontTypes.d.ts": ["@egret/runtime"]};
 for(const [file,expected] of Object.entries(bitmapfontImports)){
  const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
  if(!mouseSame(observed,expected)||/\bimport\s*\(/.test(body))throw new Error('Bitmapfont: exact graph mismatch: '+file);

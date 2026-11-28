@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { Matrix2D, Rectangle2D, SharedRenderFrame2D } from '@egret/contracts';
-import { decodeSRGBByte } from './srgbBytes.js';
+import { decodeSRGBByte } from '@egret/contracts';
 /** A schedule contains no native handles and borrows only immutable captured data. */
 /** `spread` is the radius in backing pixels of a glow or outline, whose alpha a pass spreads into the group's scratch target, or -1 for neither. */
 export interface PreparedEffect2D {
