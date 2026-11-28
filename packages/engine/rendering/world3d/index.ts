@@ -292,6 +292,7 @@ export {
   type TerrainOptions3D,
   type TerrainMaterialOptions3D,
   type TerrainStreamOptions3D,
+  type TerrainLoadContext3D,
   type TerrainTile3D
 } from './Terrain3D.js';
 export {

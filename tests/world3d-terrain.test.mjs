@@ -995,3 +995,193 @@ test('terrain disposal retires attached factory decals and keeps borrowed resour
   transferred.geometry.dispose();
   material.dispose();
 });
+
+test('streamed terrain exposes one cooperative cancellation context per load, and frees retired jobs only when they settle', async () => {
+  const calls = [];
+  const { field } = terrainRequestFixture();
+  const stream = createTerrainStream3D({
+    tileSize: 10,
+    viewDistance: 1,
+    material: createStandardMaterial3D(),
+    load(x, z, context) {
+      const call = { x, z, context, cancelled: 0 };
+      calls.push(call);
+      assert.ok(Object.isFrozen(context));
+      assert.equal(context.signal.aborted, false);
+      return new Promise(resolve => {
+        call.resolve = resolve;
+        context.signal.addEventListener(
+          'abort',
+          () => {
+            call.cancelled++;
+            resolve(undefined);
+          },
+          { once: true }
+        );
+      });
+    }
+  });
+  stream.update(5, 5);
+  assert.equal(calls.length, 1);
+  stream.update(105, 5);
+  assert.equal(calls[0].context.signal.aborted, true);
+  assert.equal(calls[0].context.signal.reason, 'retired');
+  assert.equal(calls[0].cancelled, 1);
+  assert.notEqual(calls[1].context.signal, calls[0].context.signal);
+  await Promise.resolve();
+  assert.equal(stream.pendingCount, 1);
+  stream.update(5, 5);
+  assert.equal(calls[1].context.signal.aborted, true);
+  await Promise.resolve();
+  calls[2].resolve(field(2));
+  await Promise.resolve();
+  assert.equal(stream.pendingCount, 0);
+  assert.equal(stream.heightAt(5, 5), 2);
+  assert.equal(calls[2].context.signal.aborted, false);
+  stream.update(105, 5);
+  stream.dispose();
+  assert.equal(calls[3].context.signal.aborted, true);
+  assert.equal(calls[3].context.signal.reason, 'disposed');
+  await Promise.resolve();
+  assert.equal(stream.pendingCount, 0);
+  assert.equal(stream.numChildren, 0);
+});
+
+test('cooperative retirement drains the full old quota; ignoring cancellation retains the hard outstanding bound', async () => {
+  for (const cooperate of [true, false]) {
+    const calls = [];
+    const stream = createTerrainStream3D({
+      tileSize: 10,
+      viewDistance: 1,
+      material: createStandardMaterial3D(),
+      load(x, z, context) {
+        return new Promise(resolve => {
+          calls.push({ x, z, context, resolve });
+          if (cooperate) context.signal.addEventListener('abort', () => resolve(undefined));
+        });
+      }
+    });
+    for (let i = 0; i < TERRAIN3D_LIMITS.maxStreamPending; i++) stream.update(5 + i * 100, 5);
+    assert.equal(stream.pendingCount, TERRAIN3D_LIMITS.maxStreamPending);
+    stream.update(3205, 5);
+    assert.equal(calls.length, TERRAIN3D_LIMITS.maxStreamPending);
+    assert.ok(calls.every(call => call.context.signal.aborted));
+    await Promise.resolve();
+    assert.equal(stream.pendingCount, cooperate ? 0 : TERRAIN3D_LIMITS.maxStreamPending);
+    stream.update(3205, 5);
+    assert.equal(calls.length, TERRAIN3D_LIMITS.maxStreamPending + (cooperate ? 1 : 0));
+    stream.dispose();
+    for (const call of calls) call.resolve(undefined);
+    await Promise.resolve();
+    assert.equal(stream.pendingCount, 0);
+  }
+});
+
+test('terrain cancellation listeners may remove one another, and a throwing listener cannot prevent retirement', async () => {
+  const failure = new Error('loader abort listener'),
+    observed = [];
+  const stream = createTerrainStream3D({
+    tileSize: 10,
+    viewDistance: 1,
+    material: createStandardMaterial3D(),
+    load(x, z, { signal }) {
+      return new Promise(resolve => {
+        const removed = () => observed.push('removed');
+        const first = () => {
+          signal.removeEventListener('abort', removed);
+          throw failure;
+        };
+        signal.addEventListener('abort', first);
+        signal.addEventListener('abort', first);
+        signal.addEventListener('abort', removed);
+        signal.addEventListener('abort', () => {
+          observed.push('settled');
+          resolve(undefined);
+        });
+      });
+    }
+  });
+  stream.update(5, 5);
+  assert.doesNotThrow(() => stream.update(105, 5));
+  assert.deepEqual(observed, ['settled']);
+  assert.equal(stream.lastFailure.cause, failure);
+  assert.equal(stream.lastFailure.phase, 'load');
+  await Promise.resolve();
+  assert.equal(stream.pendingCount, 1);
+  assert.doesNotThrow(() => stream.dispose());
+  await Promise.resolve();
+  assert.equal(stream.pendingCount, 0);
+});
+
+test('a streamed terrain options factory receives the actual tile and original field before constructing its colour callback', () => {
+  const { field } = terrainRequestFixture();
+  const shared = field(3),
+    seen = [];
+  const stream = createTerrainStream3D({
+    tileSize: 10,
+    viewDistance: 3,
+    material: createStandardMaterial3D({ vertexColors: true }),
+    load: () => shared,
+    terrain(x, z, actualField) {
+      seen.push([x, z, actualField]);
+      return {
+        chunkCells: 1,
+        levels: 1,
+        colorAt(height, slope, localX, localZ, out) {
+          assert.ok(localX >= -5 && localX <= 5 && localZ >= -5 && localZ <= 5);
+          out[0] = x === 0 ? 0.2 : 0.8;
+          out[1] = 0.5;
+          out[2] = z === 0 ? 0.1 : 0.9;
+        }
+      };
+    }
+  });
+  stream.update(5, 5);
+  stream.update(15, 5);
+  assert.deepEqual(
+    seen.map(([x, z, value]) => [x, z, value === shared]),
+    [
+      [0, 0, true],
+      [1, 0, true]
+    ]
+  );
+  assert.equal(stream.tiles.length, 2);
+  close(stream.tiles[0].terrain.getChildAt(0).geometry.getAttribute('color').data[0], 0.2);
+  close(stream.tiles[1].terrain.getChildAt(0).geometry.getAttribute('color').data[0], 0.8);
+  stream.dispose();
+});
+
+test('settled terrain loaders are closed before tile preparation and cannot be cancelled by its callbacks', async () => {
+  const { field } = terrainRequestFixture();
+  for (const asyncLoad of [false, true]) {
+    const events = [],
+      material = createStandardMaterial3D();
+    let context, stream;
+    stream = createTerrainStream3D({
+      tileSize: 10,
+      viewDistance: 1,
+      material,
+      load(x, z, value) {
+        context = value;
+        value.signal.addEventListener('abort', () => events.push('abort'));
+        return asyncLoad ? Promise.resolve(field(2)) : field(2);
+      },
+      terrain() {
+        stream.dispose();
+        events.push('prepare');
+        return {};
+      },
+      onLoad() {
+        events.push('published');
+      }
+    });
+    stream.update(5, 5);
+    await Promise.resolve();
+    assert.equal(context.signal.aborted, false);
+    assert.deepEqual(events, ['prepare']);
+    assert.equal(stream.pendingCount, 0);
+    assert.equal(stream.tiles.length, 0);
+    assert.equal(stream.numChildren, 0);
+    material.dispose();
+  }
+});

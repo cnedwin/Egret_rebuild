@@ -2306,8 +2306,8 @@
       "en": "knowledge-base/en/docs/world3d.md",
       "zh": "knowledge-base/Cns/docs/world3d.md",
       "kind": "public_reading",
-      "enSha256": "5a710528d30875baeed127826ebc6423cc7183a65071ffea19572645e53a01b0",
-      "zhSha256": "e9e2801be1738cd3a60b89da8fb3819504e60e68979e572ff7391ae47cdc19ba"
+      "enSha256": "285864ffa4dcfa75f0f5b21035505d0b55c9108f846fba9b4557736f554a6931",
+      "zhSha256": "a99bf68f3c7a991b6183d620eec77dfada7381098c6e261b7a5035a8d3b534e4"
     },
     {
       "en": "examples/world3d/README.md",
@@ -2677,8 +2677,8 @@
       "en": "knowledge-base/en/docs/api-reference.md",
       "zh": "knowledge-base/Cns/docs/api-reference.md",
       "kind": "public_reading",
-      "enSha256": "3ce8aedc9f0d2f7c1ee7e3910653b33eb3d89536f01d3ca0984c57149cdc691b",
-      "zhSha256": "5c3b5a30271a4a034c75bf60f62ed4d866dd80d16d3c7a50e946e1c605f4d134"
+      "enSha256": "81a1600e757098e2ec637937ec6ca81de1b1794fe65a19f0d9d574f8430b9773",
+      "zhSha256": "928e5dcac51dd4e61108d02e9b9fea0973448790e84af101599795d731518b5f"
     },
     {
       "en": "knowledge-base/en/docs/shared-2d-hardware-results.md",
@@ -4869,7 +4869,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/index.ts",
-      "sha256": "4247baa598767c2dd9d0d47b3d5baa220ce332a22be3a1b66684784eca7be376"
+      "sha256": "ca1777c76153704ca9cc670351975b4ed0183a8f3da5c2c870247d5b281f8463"
     },
     {
       "path": "packages/engine/rendering/world3d/math3D.ts",
@@ -5049,7 +5049,7 @@
     },
     {
       "path": "packages/engine/rendering/world3d/Terrain3D.ts",
-      "sha256": "5e4818b40a30aae3672247f735cbf186807e57eaf4b357e09987cdd07d0320e8"
+      "sha256": "1e9c599a19859f22297ae4a1a428008add732222bc7cb0ecc65ffd5d61a8bdbc"
     },
     {
       "path": "packages/engine/rendering/world3d/Water3D.ts",

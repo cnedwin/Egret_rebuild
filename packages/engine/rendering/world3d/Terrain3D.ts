@@ -3,6 +3,7 @@
 // chunked mesh whose pieces drop detail with distance, and a collision shape
 // built from the same triangles. DOM-free; decode images in the host and pass
 // the pixels in.
+import type { CancellationListener, CancellationSignal } from '@egret/contracts';
 import { World3DError, requireCount3D, requireFinite3D, requirePositive3D } from './core3D.js';
 import { Attribute3D, Geometry3D } from './Geometry3D.js';
 import { type Material3D, type StandardMaterialOptions3D, createStandardMaterial3D } from './Material3D.js';
@@ -771,6 +772,11 @@ export interface TerrainTile3D {
    */
   readonly center: readonly [number, number];
 }
+/** Cooperative lifetime of one tile load. A settled load is no longer cancellable. */
+export interface TerrainLoadContext3D {
+  /** Aborts when the pending tile leaves retention (reason retired) or its stream is disposed (reason disposed). */
+  readonly signal: CancellationSignal;
+}
 /** Streamed terrain to make: its tile size and view distance, how a tile is loaded, and what is called as tiles come and go. */
 export interface TerrainStreamOptions3D {
   /** World size of one square tile. Tile (x, z) covers x * size to (x + 1) * size on each axis. */
@@ -780,11 +786,17 @@ export interface TerrainStreamOptions3D {
   /**
    * Supplies the heights of a tile, now or later, as a field `tileSize`
    * wide and deep; undefined leaves the tile empty. Neighbouring tiles
-   * should share the samples along their common edge.
+   * should share the samples along their common edge. Honour the signal and settle
+   * pending work promptly on retirement; calls that ignore it still occupy the pending budget until settled.
    */
-  readonly load: (x: number, z: number) => HeightField3D | undefined | Promise<HeightField3D | undefined>;
+  readonly load: (
+    x: number,
+    z: number,
+    context: TerrainLoadContext3D
+  ) => HeightField3D | undefined | Promise<HeightField3D | undefined>;
   readonly material: Material3D | ((x: number, z: number, field: HeightField3D) => Material3D);
-  readonly terrain?: TerrainOptions3D;
+  /** Common terrain options or a factory for a tile and its original field. */
+  readonly terrain?: TerrainOptions3D | ((x: number, z: number, field: HeightField3D) => TerrainOptions3D);
   /** Tiles requested per update, nearest first. Default 2. */
   readonly loadsPerUpdate?: number;
   /** Called when a tile has been added to or removed from the scene, as for creating and removing its collision body. */
@@ -802,6 +814,51 @@ export interface TerrainStreamOptions3D {
 interface TerrainStreamRequest3D {
   readonly x: number;
   readonly z: number;
+  readonly cancellation: ReturnType<typeof createTerrainLoadCancellation>;
+}
+
+// Rendering is host independent; expose only the shared read-only CancellationSignal contract.
+function createTerrainLoadCancellation(onFailure: (cause: unknown) => void) {
+  const listeners = new Set<CancellationListener>();
+  let aborted = false,
+    closed = false;
+  let reason: unknown;
+  const signal: CancellationSignal = Object.freeze({
+    get aborted() {
+      return aborted;
+    },
+    get reason() {
+      return reason;
+    },
+    addEventListener(_type: 'abort', listener: CancellationListener): void {
+      if (!closed && !aborted) listeners.add(listener);
+    },
+    removeEventListener(_type: 'abort', listener: CancellationListener): void {
+      listeners.delete(listener);
+    }
+  });
+  return {
+    signal,
+    abort(value: 'retired' | 'disposed'): void {
+      if (closed || aborted) return;
+      aborted = true;
+      reason = value;
+      for (const listener of [...listeners]) {
+        if (!listeners.delete(listener)) continue;
+        try {
+          listener();
+        } catch (cause) {
+          onFailure(cause);
+        }
+      }
+      closed = true;
+      listeners.clear();
+    },
+    close(): void {
+      closed = true;
+      listeners.clear();
+    }
+  };
 }
 type TerrainStreamFailure3D = Readonly<{
   x: number;
@@ -902,8 +959,13 @@ export class TerrainStream3D extends Object3D {
     this.#updating = true;
     try {
       for (const [key, tile] of this.#tiles) if (near(tile.x, tile.z) > retention) this.release(key, tile);
-      for (const [key, request] of this.#requests)
-        if (near(request.x, request.z) > retention) this.#requests.delete(key);
+      for (const [key, request] of this.#requests) {
+        if (near(request.x, request.z) > retention) {
+          // Retire ownership before notifying loader code.
+          this.#requests.delete(key);
+          request.cancellation.abort('retired');
+        }
+      }
       const budget = Math.min(this.#loadsPerUpdate, TERRAIN3D_LIMITS.maxStreamPending - this.#outstanding);
       if (budget <= 0 || this.#disposed) return;
       const wanted: { x: number; z: number; distance: number }[] = [];
@@ -928,21 +990,26 @@ export class TerrainStream3D extends Object3D {
   dispose(): void {
     if (this.#disposed) return;
     this.#disposed = true;
+    const retired = [...this.#requests.values()];
     this.#requests.clear();
+    for (const request of retired) request.cancellation.abort('disposed');
     for (const [key, tile] of this.#tiles) this.release(key, tile);
   }
   private request(x: number, z: number): void {
-    const key = x + ',' + z,
-      request: TerrainStreamRequest3D = { x, z };
+    const key = x + ',' + z;
+    const cancellation = createTerrainLoadCancellation(cause => this.recordFailure({ x, z }, 'load', cause));
+    const request: TerrainStreamRequest3D = { x, z, cancellation };
     this.#requests.set(key, request);
     this.#outstanding++;
     const current = (): boolean => this.#requests.get(key) === request;
     const reject = (cause: unknown): void => {
+      cancellation.close();
       this.#outstanding--;
       if (!current()) return;
       this.recordFailure(request, 'load', cause);
     };
     const accept = (field: HeightField3D | undefined): void => {
+      cancellation.close();
       let staged: Terrain3D | undefined;
       try {
         if (!current()) return;
@@ -953,7 +1020,10 @@ export class TerrainStream3D extends Object3D {
         const material =
           typeof this.#options.material === 'function' ? this.#options.material(x, z, field) : this.#options.material;
         if (!current()) return;
-        const terrain = new Terrain3D(field, material, this.#options.terrain);
+        const options =
+          typeof this.#options.terrain === 'function' ? this.#options.terrain(x, z, field) : this.#options.terrain;
+        if (!current()) return;
+        const terrain = new Terrain3D(field, material, options);
         staged = terrain;
         if (!current()) return;
         terrain.setPosition((x + 0.5) * this.tileSize, 0, (z + 0.5) * this.tileSize);
@@ -988,7 +1058,7 @@ export class TerrainStream3D extends Object3D {
     };
     let result: HeightField3D | undefined | Promise<HeightField3D | undefined>;
     try {
-      result = this.#options.load(x, z);
+      result = this.#options.load(x, z, Object.freeze({ signal: cancellation.signal }));
     } catch (cause) {
       reject(cause);
       return;
