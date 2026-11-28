@@ -2,15 +2,7 @@
 // A game in a page from one call: a Host chosen for the browser, an Engine, a scope, pointer and keyboard input and
 // a frame loop, each made the way its own entry makes it, and all of them ended by one dispose.
 import { EgretError } from '@egret/runtime';
-import {
-  createAssetRef,
-  createAssetType,
-  createEngineForProfile,
-  createImageData2D,
-  createTexture,
-  isTexture,
-  SHARED_FRAME_PROFILE_2D
-} from '@egret/engine';
+import { createEngineForProfile, SHARED_FRAME_PROFILE_2D } from '@egret/engine';
 import type {
   AssetLease,
   DisplayObject,
@@ -22,13 +14,11 @@ import type {
   SharedRenderFrame2D,
   Texture
 } from '@egret/engine';
-import { createBrowserTextureProvider } from './image.js';
 import { createBrowserTextWork } from './browserTextWork.js';
 import type { CanvasWorkSchedule } from './browserTextWork.js';
 import { createBrowserStaticLayers } from './browserStaticLayers.js';
 import type { BrowserGameStaticLayers } from './browserStaticLayers.js';
-import { decodeBrowserImage, sniffBrowserImageFormat } from './BrowserImageTextures.js';
-import { createGameImageAdmission } from './GameImageAdmission.js';
+import { createGameTextures } from './BrowserGameTextures.js';
 import { createTextRasterCache } from '@egret/engine/text';
 import type { TextRasterCache } from '@egret/engine/text';
 import { createGameLabels } from './browserGameLabels.js';
@@ -48,6 +38,7 @@ type BrowserGameHoverInput = ReturnType<typeof createBrowserHoverInput>;
 import { createBrowserStatsPanel } from './BrowserStatsPanel.js';
 import type { BrowserStatsPanel } from './BrowserStatsPanel.js';
 import { planScreen } from './screen.js';
+import { fitGameCanvas } from './browserGameScreen.js';
 import type { ScreenFit, ScreenInsets, ScreenPlan, ScreenSize, ScreenUiScale } from './screen.js';
 import type { SharedWebGL2StartupTiming, SharedWebGL2PageBatching } from './webgl2.js';
 
@@ -342,41 +333,6 @@ const invalid = (): EgretError => new EgretError('BROWSER_GAME_OPTIONS_INVALID')
 const whole = (value: unknown): value is number =>
   typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
-const MAX_GAME_IMAGE_JOBS = 4;
-const MAX_GAME_IMAGE_BYTES = 8 * 1024 * 1024;
-
-function gameImageLimit(): EgretError {
-  return new EgretError('WEB_PNG_INPUT_LIMIT', { cause: new RangeError('Game image encoded payload limit') });
-}
-
-async function boundedGameImageBytes(response: Response): Promise<Uint8Array<ArrayBuffer>> {
-  if (Number(response.headers.get('content-length')) > MAX_GAME_IMAGE_BYTES) throw gameImageLimit();
-  if (response.body === null) return new Uint8Array();
-  const reader = response.body.getReader();
-  const chunks: Uint8Array<ArrayBufferLike>[] = [];
-  let length = 0;
-  try {
-    for (;;) {
-      const chunk = await reader.read();
-      if (chunk.done) break;
-      length += chunk.value.byteLength;
-      if (length > MAX_GAME_IMAGE_BYTES) throw gameImageLimit();
-      chunks.push(chunk.value);
-    }
-  } catch (cause) {
-    void reader.cancel().catch(() => {});
-    throw cause;
-  } finally {
-    reader.releaseLock();
-  }
-  const bytes = new Uint8Array(length);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return bytes;
-}
 
 // WebKit may discard a one-off frame or stop presenting after a backing resize. Chromium also advertises
 // AppleWebKit in its compatibility UA; these presentation policies apply only to WebKit.
@@ -406,19 +362,6 @@ function tellAgent(warning: BrowserGameWarning): void {
   } catch {
     /* The tool's own failure, not the game's. */
   }
-}
-
-/**
- * The safe-area insets a tool's `globalThis.__egretAgent.insets` gives, in the window's CSS pixels, to fit the game as
- * a phone with a notch would; undefined where a page has none, or none of 0 or more on each side.
- */
-function agentInsets(): ScreenInsets | undefined {
-  const agent = (globalThis as { readonly __egretAgent?: { readonly insets?: unknown } }).__egretAgent;
-  const insets = agent?.insets as Partial<ScreenInsets> | undefined;
-  if (insets === null || typeof insets !== 'object') return undefined;
-  const sides = [insets.top, insets.right, insets.bottom, insets.left];
-  if (!sides.every(side => typeof side === 'number' && Number.isFinite(side) && side >= 0)) return undefined;
-  return { top: insets.top!, right: insets.right!, bottom: insets.bottom!, left: insets.left! };
 }
 
 /**
@@ -799,212 +742,31 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         update?.(seconds);
       }
     }));
-    // Keep the strict PNG decoder and its ownership contract. Route other known encodings by
-    // bytes so file names, query strings and response content types cannot select a wrong decoder.
-    const imageType = createAssetType<Texture>('egret.browser-game.image', isTexture);
-    const pendingPngBytes = new WeakMap<object, Uint8Array<ArrayBuffer>>();
-    const pngTextures = new WeakSet<Texture>();
-    const imageJobs = createGameImageAdmission(MAX_GAME_IMAGE_JOBS);
-    const images = createBrowserTextureProvider({
-      async readBytes(_ref, context) {
-        const bytes = pendingPngBytes.get(context);
-        if (bytes === undefined) throw new Error('Missing PNG bytes for the current image load');
-        return bytes;
-      }
-    });
-    engine.assets.register(imageType, {
-      async load(ref, context) {
-        // Hold the original admission budget through fetch and decode for every format.
-        // Even a cancelled native decode retains its slot until the browser settles it.
-        const release = await imageJobs.admit(context.signal);
-        const stop = new AbortController(),
-          abort = (): void => stop.abort();
-        try {
-          context.signal.addEventListener('abort', abort, { once: true });
-          if (context.signal.aborted) throw context.signal.reason;
-          let bytes: Uint8Array<ArrayBuffer>;
-          try {
-            const response = await globalThis.fetch(ref.id, { signal: stop.signal });
-            if (!response.ok)
-              throw new EgretError('WEB_PNG_READ_FAILED', {
-                cause: new EgretError('BROWSER_GAME_IMAGE_FAILED', { cause: new Error(response.status + ' ' + ref.id) })
-              });
-            bytes = await boundedGameImageBytes(response);
-          } catch (cause) {
-            stop.abort();
-            if (context.signal.aborted) throw context.signal.reason;
-            if (cause instanceof EgretError) throw cause;
-            throw new EgretError('WEB_PNG_READ_FAILED', { cause });
-          }
-          if (context.signal.aborted) throw context.signal.reason;
-          const format = sniffBrowserImageFormat(bytes);
-          if (format !== undefined && format !== 'png') {
-            const texture = await decodeBrowserImage(bytes);
-            if (!context.signal.aborted) return texture;
-            texture.dispose();
-            throw context.signal.reason;
-          }
-          pendingPngBytes.set(context, bytes);
-          const texture = await images.load(ref, context);
-          pngTextures.add(texture);
-          return texture;
-        } finally {
-          context.signal.removeEventListener('abort', abort);
-          pendingPngBytes.delete(context);
-          release();
-        }
-      },
-      dispose(texture) {
-        if (pngTextures.has(texture)) images.dispose(texture);
-        else texture.dispose();
-      }
-    });
-    // Textures painted in code: each call puts its texture under a key of its own, and its lease ends it.
-    const paintedType = createAssetType<Texture>('egret.browser-game.painted', isTexture),
-      painted = new Map<string, Texture>();
-    let paintedCount = 0;
-    engine.assets.register(paintedType, {
-      async load(ref) {
-        const texture = painted.get(ref.id);
-        painted.delete(ref.id);
-        if (texture === undefined) throw invalid();
-        return texture;
-      },
-      dispose(texture) {
-        texture.dispose();
-      }
-    });
-    const leasePixels = async (
-      width: number,
-      height: number,
-      pixels: Uint8Array | Uint8ClampedArray,
-      owner = scope
-    ): Promise<AssetLease<Texture>> => {
-      if (
-        !whole(width) ||
-        !whole(height) ||
-        !(pixels instanceof Uint8Array || pixels instanceof Uint8ClampedArray) ||
-        pixels.length !== width * height * 4
-      )
-        throw invalid();
-      let texture: Texture;
-      try {
-        texture = createTexture(
-          createImageData2D({ width, height, pixels: new Uint8Array(pixels) as Uint8Array<ArrayBuffer> })
-        );
-      } catch (cause) {
-        // Larger than the 2D image limits: 4,096 pixels on an edge, 4,194,304 in all.
-        throw new EgretError('BROWSER_GAME_OPTIONS_INVALID', { cause });
-      }
-      const key = 'painted-' + ++paintedCount;
-      painted.set(key, texture);
-      try {
-        const lease = await engine.assets.acquire(createAssetRef(paintedType, key), { signal: owner.signal });
-        try {
-          return owner.use(lease);
-        } catch (cause) {
-          lease.release();
-          throw cause;
-        }
-      } finally {
-        // Not loaded (the scope ended first): the texture is ended here.
-        if (painted.delete(key)) texture.dispose();
-      }
-    };
+    // Images the game loads, and pixels painted in code; each texture is leased for a scope.
+    const textures = createGameTextures(engine, scope),
+      leasePixels = textures.leasePixels;
     // The canvas in its element: sized now and whenever the element changes size. With the planned fits the
     // stage follows the plan of the screen: its size, and, with a portrait size, its shape.
-    const fit = options.fit ?? 'none',
-      holder = options.fitTo ?? canvas.parentElement;
     const screenListeners = new Set<(screen: ScreenPlan) => void>();
-    let watcher: ResizeObserver | undefined, probe: HTMLElement | undefined;
-    // The page's safe-area insets, read from an element that is padded by them and shows nothing.
-    const pageInsets = (): ScreenInsets | undefined => {
-      if (options.insets !== undefined) return options.insets;
-      const page = canvas.ownerDocument as Document | undefined,
-        view = page?.defaultView;
-      if (
-        page === undefined ||
-        page === null ||
-        view === null ||
-        view === undefined ||
-        typeof view.getComputedStyle !== 'function' ||
-        typeof page.createElement !== 'function' ||
-        page.body === null ||
-        page.body === undefined
-      )
-        return undefined;
-      if (probe === undefined) {
-        probe = page.createElement('div');
-        probe.setAttribute('aria-hidden', 'true');
-        probe.style.cssText =
-          'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;' +
-          'padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)';
-        page.body.appendChild(probe);
-      }
-      const style = view.getComputedStyle(probe),
-        read = (value: string): number => (Number.isFinite(parseFloat(value)) ? Math.max(0, parseFloat(value)) : 0);
-      // A tool may stand in for a phone's notch and home bar, which a headless browser does not have.
-      const standIn = agentInsets(),
-        edges = standIn ?? {
-          top: read(style.paddingTop),
-          right: read(style.paddingRight),
-          bottom: read(style.paddingBottom),
-          left: read(style.paddingLeft)
-        };
-      // Insets are of the window; the element may be anywhere in it.
-      const box = (holder ?? canvas).getBoundingClientRect(),
-        across = view.innerWidth,
-        down = view.innerHeight;
-      return {
-        top: Math.max(0, edges.top - box.top),
-        left: Math.max(0, edges.left - box.left),
-        right: Math.max(0, edges.right - (finite(across) ? across - box.right : 0)),
-        bottom: Math.max(0, edges.bottom - (finite(down) ? down - box.bottom : 0))
-      };
-    };
-    if (fit !== 'none' && holder !== null) {
-      const place = (): void => {
-        const projected = holder.getBoundingClientRect();
-        // CSS dimensions are set in the holder's layout space. A transformed bounding box is
-        // measured in page space and would multiply the ancestor scale a second time.
-        const box = { width: holder.clientWidth || projected.width, height: holder.clientHeight || projected.height };
-        const style = canvas.style;
-        if (fit === 'cover' || fit === 'stretch') {
-          const wide = box.width / width,
-            tall = box.height / height;
-          const scaleX = fit === 'stretch' ? wide : Math.max(wide, tall),
-            scaleY = fit === 'stretch' ? tall : scaleX;
-          style.width = width * scaleX + 'px';
-          style.height = height * scaleY + 'px';
-          // Centred in its element; with "cover" what does not fit is outside it, for the element to cut off.
-          style.marginLeft = (box.width - width * scaleX) / 2 + 'px';
-          style.marginTop = (box.height - height * scaleY) / 2 + 'px';
-          return;
-        }
-        if (!(box.width > 0 && box.height > 0)) return;
-        const next = planFor({ width: box.width, height: box.height }, pageInsets()),
-          before = screen;
+    const unfit = fitGameCanvas({
+      canvas,
+      holder: options.fitTo ?? canvas.parentElement,
+      fit: options.fit ?? 'none',
+      width,
+      height,
+      wholeScale,
+      insets: options.insets,
+      plan: planFor,
+      current: () => screen,
+      follow: next => {
         screen = next;
         if (next.width !== frame.width || next.height !== frame.height)
           frame = Object.freeze({ width: next.width, height: next.height, clearColor, clearAlpha });
-        style.width = next.width * next.scale + 'px';
-        style.height = next.height * next.scale + 'px';
-        // Whole steps are enlarged as they are, a canvas pixel to a square of the device's.
-        if (wholeScale) style.imageRendering = 'pixelated';
-        style.marginLeft = next.left + 'px';
-        style.marginTop = next.top + 'px';
-        const moved =
-          next.width !== before.width ||
-          next.height !== before.height ||
-          next.scale !== before.scale ||
-          next.orientation !== before.orientation ||
-          (['x', 'y', 'width', 'height'] as const).some(key => next.safe[key] !== before.safe[key]);
-        if (moved) for (const listener of [...screenListeners]) listener(next);
-      };
-      place();
-      watcher = new ResizeObserver(place);
-      watcher.observe(holder);
-    }
+      },
+      movedTo: next => {
+        for (const listener of [...screenListeners]) listener(next);
+      }
+    });
     // Labels: one text cache for the Engine, made with the page's rasterizer when the first label is asked for.
     const labels = createGameLabels({
       engine,
@@ -1076,29 +838,10 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       createGlyphFont: labels.createGlyphFont,
       getFrameUsage: () => usage,
       drawFrame,
-      async loadTexture(url: string) {
-        if (typeof url !== 'string' || url === '') throw invalid();
-        return scope.use(await engine.assets.acquire(createAssetRef(imageType, url), { signal: scope.signal }));
-      },
+      loadTexture: textures.loadTexture,
       textureFromPixels: (width: number, height: number, pixels: Uint8Array | Uint8ClampedArray) =>
         leasePixels(width, height, pixels),
-      async textureFromCanvas(source: HTMLCanvasElement | OffscreenCanvas) {
-        if (source === null || typeof source !== 'object' || typeof source.getContext !== 'function') throw invalid();
-        const { width, height } = source;
-        if (!whole(width) || !whole(height)) throw invalid();
-        let context = source.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
-        if (context === null) {
-          // A canvas of another kind of context: drawn onto a 2D canvas of its size, and read there.
-          const copy =
-            typeof OffscreenCanvas === 'function'
-              ? new OffscreenCanvas(width, height)
-              : Object.assign(document.createElement('canvas'), { width, height });
-          context = copy.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
-          if (context === null) throw invalid();
-          context.drawImage(source, 0, 0);
-        }
-        return leasePixels(width, height, context.getImageData(0, 0, width, height).data);
-      },
+      textureFromCanvas: textures.textureFromCanvas,
       padHitArea(node: DisplayObject, cssPixels = 44) {
         if (
           node === null ||
@@ -1158,14 +901,13 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         return (disposal ??= (async () => {
           made.dispose();
           panel?.dispose();
-          watcher?.disconnect();
-          probe?.remove();
+          unfit();
           screenListeners.clear();
           // The scope ends the labels; then the cache they were drawn from can end, before the Engine does.
           scope.dispose();
           await labels.close();
           await engine.dispose();
-          await images.close();
+          await textures.close();
         })());
       }
     });
