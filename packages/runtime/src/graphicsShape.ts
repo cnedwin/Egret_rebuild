@@ -3,7 +3,7 @@
 // coloured triangles, in drawing order, and a path still being drawn. Capture reads them as one shared geometry.
 import { createImageData2D, createSharedGeometry2D } from '@egret/contracts';
 import type { ImageData2D, Matrix2D, Rectangle2D, SharedGeometry2D } from '@egret/contracts';
-import { decodeSRGBByte } from './srgbBytes.js';
+import { decodeSRGBByte } from '@egret/contracts';
 import { fillNonZero, gradientColor, outlineCrosses, refineForGradient } from './graphicsFill.js';
 import type { ShapeGradient } from './graphicsFill.js';
 import type { AssetLease } from './AssetLease.js';

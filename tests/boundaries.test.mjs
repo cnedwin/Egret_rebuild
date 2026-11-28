@@ -87,6 +87,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     write('packages/contracts/dist/index.js', [
       ...imageValues.filter(name => !missingImageExport || name !== 'isImageData2D').map(name => 'export const '+name+' = 1;'),
       ...geometryValues.filter(name => name !== missingGeometryExport).map(name => 'export function '+name+'() {}'),
+      // The one written sRGB byte table is a contracts value that no engine entry exports.
+      'export function decodeSRGBByte() {}',
     ].join('\n'));
     const meshEngineValue = missingMesh === 'root' ? '' : splitMesh || missingMesh === 'runtime' ? 'export class Mesh2D {}\n' : "export {Mesh2D} from '../../../packages/runtime/dist/index.js';\n";
     write('node_modules/@egret/engine/index.js', "export * from '../../../packages/contracts/dist/index.js';\n" + meshEngineValue);
@@ -736,6 +738,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     for(const file of ['packages/runtime/src/Bitmap.ts','packages/runtime/dist/Bitmap.js'])reviseFixtureEdges(m15FixtureGraph,file,['./bitmapImage.js','./bitmapImage.js'],['./Texture.js']);
     reviseFixtureEdges(m15FixtureGraph,'packages/runtime/dist/Bitmap.d.ts',['./bitmapImage.js']);
     reviseCaptureEdges(m15FixtureGraph);
+    // Shared colour and effects read the one written sRGB byte table from the contracts.
+    const reviseColorEdges=graph=>{
+      for(const file of ['packages/engine/rendering/sharedColor2D.ts','packages/engine/dist/rendering/sharedColor2D.js','packages/engine/rendering/sharedEffects2D.ts','packages/engine/dist/rendering/sharedEffects2D.js'])
+        if(Object.hasOwn(graph,file))reviseFixtureEdges(graph,file,['@egret/contracts'],['./srgbBytes.js']);
+    };
+    reviseColorEdges(m15FixtureGraph);
     // The tree records and engine affinity live in two leaf modules, so the visual and managed state read them without importing the tree operations or ownership back.
     for(const file of ['packages/runtime/src/ownership.ts','packages/runtime/dist/ownership.js'])reviseFixtureEdges(m15FixtureGraph,file,['./engineAffinity.js','./engineAffinity.js']);
     reviseFixtureEdges(m15FixtureGraph,'packages/runtime/dist/ownership.d.ts',['./engineAffinity.js']);
@@ -2103,6 +2111,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       ['static','./webgl2LayerState.js'],['static','./webgl2LayerState.js']);
     effectFixtureGraph['packages/engine/dist/web/WebGL2Host.js'].push(['static','./webgl2LayerState.js']);
     reviseCaptureEdges(effectFixtureGraph);
+    reviseColorEdges(effectFixtureGraph);
     reviseVisualEdges(effectFixtureGraph);
     // The submission helper is imported by preparation. Its own type-only
     // dependency is erased from JavaScript, while retention materializes it.

@@ -2,7 +2,7 @@
 // Filling for Graphics beyond one simple outline: the non-zero rule over any number of outlines, so that holes and
 // outlines that cross themselves are filled as a canvas fills them, and gradients, which are given as vertex colours.
 
-import { decodeSRGBByte } from './srgbBytes.js';
+import { decodeSRGBByte } from '@egret/contracts';
 
 export interface GradientStop {
   readonly offset: number;
