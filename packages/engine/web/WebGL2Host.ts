@@ -1329,7 +1329,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
               width,
               height,
               options,
-              layerWrite ? undefined : this.retention
+              layerWrite ? undefined : this.retention,
+              true
             );
             const ticket = !layerWrite && !staging && this.ticket && !this.ticket.bound ? this.ticket : undefined;
             const reserve = staging ? options.enableReadback : !!ticket;

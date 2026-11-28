@@ -94,7 +94,6 @@ export interface PreparedSharedFrame2D {
   readonly retention?: SharedPreparationRetention2D;
   readonly retained?: readonly (RetainedSharedDraw2D | undefined)[];
 }
-const ATTRS = ['u', 'v', 'r', 'g', 'b', 'a', 'dr', 'dg', 'db'] as const;
 function unit(value: number): number {
   if (!Number.isFinite(value) || value < 0 || value > 1) sharedFailure('precision');
   return value === 0 ? 0 : value;
@@ -264,20 +263,11 @@ function policyFor(budget: TexturedPreparationBudget2D) {
         q.dg = unit(q.dg);
         q.db = unit(q.db);
         value = q;
-      } else
-        value = {
-          x: coordinate(p.x),
-          y: coordinate(p.y),
-          u: uv(p.u),
-          v: uv(p.v),
-          r: unit(p.r),
-          g: unit(p.g),
-          b: unit(p.b),
-          a: unit(p.a),
-          dr: unit(p.dr),
-          dg: unit(p.dg),
-          db: unit(p.db)
-        };
+      } else {
+        // Every surviving input and every interpolated crossing has already been
+        // qualified. Only the result array is reordered or shortened by this stage.
+        value = p;
+      }
       const previous = result[result.length - 1];
       if (previous && sameXY(previous, value)) {
         // The comparison is made, and charged, as it always was; only its refusal is spared a clip's own corners.
@@ -342,22 +332,22 @@ function policyFor(budget: TexturedPreparationBudget2D) {
   return { policy, normalize, normalizeOwned };
 }
 const attach: CrossingAttributes<SharedPoint2D> = (p, q, weight, complementary, x, y) => {
-  const value = (key: (typeof ATTRS)[number]): number => {
-    const n = complementary ? q[key] + weight * (p[key] - q[key]) : p[key] + weight * (q[key] - p[key]);
-    return key === 'u' || key === 'v' ? uv(n) : unit(n);
-  };
+  // Use the smaller complementary weight directly, exactly as for the XY crossing.
+  // Static property reads keep the UV and color channels on their ordinary numeric path.
+  const start = complementary ? q : p,
+    end = complementary ? p : q;
   return {
     x: coordinate(x),
     y: coordinate(y),
-    u: value('u'),
-    v: value('v'),
-    r: value('r'),
-    g: value('g'),
-    b: value('b'),
-    a: value('a'),
-    dr: value('dr'),
-    dg: value('dg'),
-    db: value('db')
+    u: uv(start.u + weight * (end.u - start.u)),
+    v: uv(start.v + weight * (end.v - start.v)),
+    r: unit(start.r + weight * (end.r - start.r)),
+    g: unit(start.g + weight * (end.g - start.g)),
+    b: unit(start.b + weight * (end.b - start.b)),
+    a: unit(start.a + weight * (end.a - start.a)),
+    dr: unit(start.dr + weight * (end.dr - start.dr)),
+    dg: unit(start.dg + weight * (end.dg - start.dg)),
+    db: unit(start.db + weight * (end.db - start.db))
   };
 };
 type OwnedPoint = { -readonly [K in keyof SharedPoint2D]: SharedPoint2D[K] };
@@ -382,7 +372,8 @@ export function prepareSharedDraws2D(
   width: number,
   height: number,
   options: SharedPreparationOptions2D,
-  retention?: SharedPreparationRetention2D
+  retention?: SharedPreparationRetention2D,
+  engineOwned = false
 ): PreparedSharedFrame2D {
   if (frame.profile !== 'egret.shared-frame2d/1' || sharedBlendSpace2D(frame) === undefined) sharedFailure('profile');
   if (
@@ -499,7 +490,7 @@ export function prepareSharedDraws2D(
   retention?.begin(frame.commands.length, width, height, options.pixelRatio, options);
   // One clip policy and one predicate ledger serve every command; the ledger's per-command count restarts at each draw.
   // The inactive context only states that every polygon handed to clipping is owned by this call, so a
-  // step that leaves a polygon unchanged returns it instead of a copy. No clip rectangle is cached.
+  // step that leaves a polygon unchanged returns it instead of a copy.
   const owned: ClipRectanglePreparationContext2D = { options, budget, active: false, entries: undefined };
   const { policy, normalize, normalizeOwned } = policyFor(budget),
     preparation = new Preparation(options, budget, true, owned);
@@ -517,6 +508,12 @@ export function prepareSharedDraws2D(
     clips: readonly (readonly PreparedPoint2D[])[] = NO_CLIPS,
     polygons: SharedPoint2D[][] = [],
     vertexReservation = 0;
+  // The capture shares one immutable clip list among siblings. Keep only the most recent
+  // qualified list in this call. Authored motion changes its numbers in the next frame.
+  let previousClipList: SharedDrawCommand2D['clips'] | undefined,
+    previousClips: typeof clips = NO_CLIPS,
+    clipBounds: ReturnType<Preparation['containedClipStackBounds']>;
+  const clipCost = { preparedVertices: 0, predicates: 0, tupleComparisons: 0 };
   // What the corners of the command's texture coordinates are qualified against; undefined for a draw without a page.
   let uvDomain: SharedUVDomain2D | undefined;
   // Both SHARED Hosts authenticate the frame before this private helper owns its budget.
@@ -631,8 +628,10 @@ export function prepareSharedDraws2D(
         polygon = sign < 0 ? points.reverse() : points;
       } else polygon = normalizeOwned(preparation, points);
     }
-    for (const clip of clips) polygon = intersect(polygon, clip);
-    polygon = intersect(polygon, viewport!);
+    if (clipBounds === undefined || !preparation.tryContainedClipStack(polygon, clipBounds, 'mesh')) {
+      for (const clip of clips) polygon = intersect(polygon, clip);
+      polygon = intersect(polygon, viewport!);
+    }
     if (uvDomain !== undefined) for (const p of polygon) qualifySharedUVIn(p.u, p.v, uvDomain);
     if (polygon.length < 3 || command.opacity === 0) return;
     const count = (polygon.length - 2) * 3;
@@ -689,7 +688,16 @@ export function prepareSharedDraws2D(
       const verticesBefore = budget.preparedVerticesCharged,
         predicatesBefore = budget.predicatesCharged,
         tuplesBefore = budget.tupleComparisonsCharged;
-      clips = command.clips.length === 0 ? NO_CLIPS : command.clips.map(clip => preparation.rectangle(clip));
+      const reuseClips = engineOwned && command.clips === previousClipList &&
+        clipCost.predicates <= options.maxClipEdgeTests - preparation.edgeTests && budget.tryReplayStageCost(clipCost);
+      if (reuseClips) {
+        clips = previousClips;
+        preparation.edgeTests += clipCost.predicates;
+      } else {
+        const edgeStart = preparation.edgeTests;
+        clips = command.clips.length === 0 ? NO_CLIPS : command.clips.map(clip => preparation.rectangle(clip));
+        clipCost.predicates = preparation.edgeTests - edgeStart;
+      }
       // The viewport corners are the same for every command; they are checked when the first draw reaches them.
       viewport ??= [
         { x: 0, y: 0 },
@@ -697,6 +705,11 @@ export function prepareSharedDraws2D(
         { x: coordinate(width), y: coordinate(height) },
         { x: 0, y: coordinate(height) }
       ];
+      if (!reuseClips) {
+        previousClipList = engineOwned ? command.clips : undefined;
+        previousClips = clips;
+        clipBounds = engineOwned ? preparation.containedClipStackBounds(clips, viewport) : undefined;
+      }
       polygons = [];
       vertexReservation = 0;
       uvDomain = sharedUVDomain({ region, material, pageIndex }, frame);

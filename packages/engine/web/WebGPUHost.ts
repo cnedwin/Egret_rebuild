@@ -2192,7 +2192,7 @@ class WebGPUHostImplementation {
               width > Math.floor(options.maxBackingPixels / height)
             )
               refuse('WEBGPU_BACKING_LIMIT');
-            const prepared = prepareSharedDraws2D(frame, width, height, options, this.retention),
+            const prepared = prepareSharedDraws2D(frame, width, height, options, this.retention, true),
               ticket = this.ticket && !this.ticket.bound ? this.ticket : undefined;
             const storage = planSharedSubmission2D(
               prepared,
