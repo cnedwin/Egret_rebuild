@@ -20,3 +20,10 @@ test('Attached Play3D refuses invalid factories and setup before touching a page
   ])
     await assert.rejects(play3dAttached(options), { code: 'PLAY_OPTIONS_INVALID' });
 });
+
+test('Attached Play3D validates the Play timing callback before touching a page', async () => {
+  await assert.rejects(
+    webgl2.play3dAttached({ width: 128, height: 96, world() {}, onFrameTiming: 7 }),
+    error => error.code === 'PLAY_OPTIONS_INVALID' && /onFrameTiming/.test(error.message)
+  );
+});

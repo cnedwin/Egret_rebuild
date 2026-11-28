@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Observe the active Play frame loop",
+    "body": "Play and the attached World3D companion now accept onFrameTiming. Its immutable CPU sample distinguishes a submitted frame from an image-budget refusal, retained content, or host backpressure. The callback observes the actual active loop without starting another one; World3D view timing remains a separate overlapping observation, not GPU completion or presentation timing."
+  },
+  "zh": {
+    "title": "观察实际 Play 帧循环的时序",
+    "body": "Play 及接入 World3D 的伴随入口现支持 onFrameTiming。不可变的 CPU 样本区分帧提交、图像预算拒绝、内容保留或宿主背压等结果。回调只观察正在工作的循环，不开启另一条循环；World3D 视图时序是独立且有重叠的观察，并非 GPU 完成或呈现时间。"
+  }
+}
