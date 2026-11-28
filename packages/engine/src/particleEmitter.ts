@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { decodeSRGBByte } from './srgbBytes.js';
+import { decodeSRGBByte } from '@egret/contracts';
 import { DisplayObjectContainer, EgretError, Mesh2D } from '@egret/runtime';
 import { createTexturedGeometry2D } from '@egret/contracts';
 import type {

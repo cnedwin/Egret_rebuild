@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "One sRGB byte table",
+    "body": "The written table of the linear-light value of each sRGB byte now lives once, in `@egret/contracts` as `decodeSRGBByte`. The runtime's Graphics fills and shapes, the engine's bitmap text and particles, and the shared colour and effects preparation all import it from there, instead of keeping three copies. `tools/sync-srgb-byte-tables.mjs` is gone, because there is nothing left to copy. The numbers are the same: `tests/srgb-byte-table.test.mjs` still holds them to their recorded digest, and the shared frame digests are unchanged. The engine's public entries do not export the function."
+  },
+  "zh": {
+    "title": "只保留一份 sRGB 字节表",
+    "body": "每个 sRGB 字节对应的线性光值，原来手写了三份表，现在只在 `@egret/contracts` 里保留一份，名为 `decodeSRGBByte`。运行时的 Graphics 填充和形状、引擎的位图文字和粒子、共享颜色和特效的预处理，都改为从这里引用。`tools/sync-srgb-byte-tables.mjs` 已删除，因为不再需要同步副本。数值没有变：`tests/srgb-byte-table.test.mjs` 仍按记录的摘要核对，共享帧的摘要也没有变化。引擎的公开入口不导出这个函数。"
+  }
+}
