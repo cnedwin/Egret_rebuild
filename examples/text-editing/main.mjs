@@ -20,6 +20,7 @@ const backend = query.get('backend') ?? 'webgl2',
   preset = query.get('preset') ?? 'preview';
 if (!['preview', 'verification'].includes(preset)) throw Error('EXAMPLE_OPTIONS');
 const layered = query.get('layers') === '1';
+const catalog = query.get('catalog') === '1' ? (await import('./catalog.mjs')).catalog : undefined;
 const verification = preset === 'verification',
   scene = canvas.parentElement;
 document.documentElement.dataset.preset = preset;
@@ -66,13 +67,16 @@ let state = 'loading',
   closePromise,
   lastPixels,
   pendingFonts,
+  replacingFonts = false,
   nextNativeEnd;
 let resizeObserver,
   resizeQueued = false,
   rebuilding = false,
   viewRebuilds = 0,
   narrow = false,
-  layerExample;
+  layerExample,
+  catalogProjection,
+  editorPointer;
 const origin = verification ? { x: 36, y: 36 } : { x: 16, y: 16 };
 const frameOptions = { width: sceneWidth(), height: 480, clearColor: 0x142033, clearAlpha: 1, outputAlpha: 'opaque' };
 width = verification ? 680 : frameOptions.width - origin.x * 2;
@@ -96,6 +100,7 @@ function inspect() {
     ui: root?.snapshot(),
     keyboard: keyboard?.getSnapshot(),
     layers: layerExample?.inspect(),
+    catalogSemantics: catalogProjection?.snapshot(),
     fontStatus: fontProvider?.getStatus(),
     paragraphStatus: cache?.getStatus(),
     fields: Object.fromEntries([...fields].map(([key, value]) => [key, value.snapshot()])),
@@ -140,22 +145,28 @@ function changed(change) {
 function source() {
   return {
     revision,
-    records: Array.from({ length: 10 }, (_, index) => {
-      const key = index === 0 ? 'name' : index === 1 ? 'description' : 'note-' + index,
-        field = fields.get(key);
-      return {
-        key,
-        contentVersion: field?.content.revision ?? 1,
-        estimatedHeight: key === 'description' ? 120 : 48,
-        value: key
-      };
-    }),
+    records:
+      catalog?.records(fields) ??
+      Array.from({ length: 10 }, (_, index) => {
+        const key = index === 0 ? 'name' : index === 1 ? 'description' : 'note-' + index,
+          field = fields.get(key);
+        return {
+          key,
+          contentVersion: field?.content.revision ?? 1,
+          estimatedHeight: key === 'description' ? 120 : 48,
+          value: key
+        };
+      }),
     async bind(context) {
       const field = fields.get(context.key);
       if (field) return field.prepare(context);
       const content = context.scope.use(new Sprite());
-      content.graphics.beginFill(0x243950).drawRect(0, 0, context.width, 40).endFill();
-      return { content, measuredHeight: 48 };
+      const height = catalog?.rowHeight(context.index) ?? 48;
+      content.graphics
+        .beginFill(context.theme?.colors.row ?? 0x243950)
+        .drawRect(0, 0, context.width, height - 8)
+        .endFill();
+      return { content, measuredHeight: height };
     },
     unbind() {}
   };
@@ -171,6 +182,7 @@ async function publish() {
     if (!['committed', 'unchanged'].includes(result.kind)) throw Error('EXAMPLE_COMMIT');
     if (layerExample) await layerExample.prepare();
     for (const binding of bindings.values()) binding.sync();
+    catalogProjection?.sync();
     await draw();
     return;
   }
@@ -240,30 +252,49 @@ async function retireFonts(set) {
   owner?.dispose();
   fontScopes.delete(owner);
 }
+function requireFontChange() {
+  if (closed) throw Error('EXAMPLE_CLOSED');
+  if (
+    [...fields.values()].some(field => field.snapshot().state === 'composing') ||
+    layerExample?.inspect().draft.state === 'composing'
+  )
+    throw Error('EXAMPLE_COMPOSING');
+}
 async function replaceFonts(roots) {
-  if (pendingFonts) throw Error('EXAMPLE_FONTS_BUSY');
-  if ([...fields.values()].some(field => field.snapshot().state === 'composing')) throw Error('EXAMPLE_COMPOSING');
-  const candidate = await loadFonts(roots),
-    previous = fonts;
+  if (pendingFonts || replacingFonts) throw Error('EXAMPLE_FONTS_BUSY');
+  requireFontChange();
+  replacingFonts = true;
+  const previous = fonts;
+  let candidate;
   try {
+    candidate = await loadFonts(roots);
+    // A native composition can start during the download. Check every editor
+    // before changing the first binding so the previous font stays usable.
+    requireFontChange();
     for (const binding of bindings.values()) binding.setFontSet(candidate);
     layerExample?.replaceFonts(candidate);
     fonts = candidate;
-    await queue;
-    await publish();
-    await retireFonts(previous);
+    try {
+      await queue;
+      await publish();
+    } finally {
+      await retireFonts(previous);
+    }
     return inspect();
   } catch (cause) {
-    await retireFonts(candidate);
+    if (candidate && fonts !== candidate) await retireFonts(candidate);
     throw cause;
+  } finally {
+    replacingFonts = false;
   }
 }
-function active(key) {
+function active(key, point) {
   const binding = bindings.get(key);
   if (!binding) throw Error('EXAMPLE_FIELD');
   for (const [other, item] of bindings) if (other !== key) item.finish();
   root.list('fields').focus(key);
-  binding.activate();
+  binding.activate(point);
+  catalogProjection?.sync();
   describe();
 }
 async function action(kind) {
@@ -295,6 +326,13 @@ async function action(kind) {
   else if (kind === 'fonts') {
     alternate = !alternate;
     return replaceFonts(alternate ? config.alternate : config.initial);
+  } else if (kind === 'reading-theme' && catalog) {
+    const theme = catalog.roomyTheme;
+    root.setTheme(theme);
+    for (const field of fields.values()) {
+      const { fontSize, lineHeight } = theme.typography.fields;
+      field.setStyle({ ...field.snapshot().style, fontSize, lineHeight });
+    }
   } else if (kind === 'width') {
     narrow = !narrow;
     width = verification
@@ -318,12 +356,21 @@ async function action(kind) {
   return inspect();
 }
 function tree() {
-  return { kind: 'virtualList', id: 'fields', explicitWidth: width, explicitHeight: 360, source: source() };
+  return {
+    kind: 'virtualList',
+    id: 'fields',
+    explicitWidth: width,
+    explicitHeight: 360,
+    source: source(),
+    initialScrollOffset: catalog?.initialScrollOffset
+  };
 }
 async function close() {
   if (closePromise) return closePromise;
   closed = true;
+  pendingFonts?.dispose();
   resizeObserver?.disconnect();
+  scene.removeEventListener('pointerdown', keepEditorFocus);
   window.removeEventListener('resize', resized);
   closePromise = (async () => {
     const failures = [];
@@ -336,6 +383,7 @@ async function close() {
     };
     await attempt(() => layerExample?.dispose());
     layerExample = undefined;
+    await attempt(() => catalogProjection?.dispose());
     await attempt(() => root?.dispose());
     for (const binding of bindings.values()) await attempt(() => binding.dispose());
     await attempt(() => queue);
@@ -381,14 +429,16 @@ async function createView(previous) {
     tree: tree(),
     onRowPointer(notification) {
       if (notification.kind === 'begin' && bindings.has(notification.key)) {
-        for (const [key, item] of bindings) if (key !== notification.key) item.finish();
-        bindings
-          .get(notification.key)
-          .activate({ x: notification.event.payload.globalX, y: notification.event.payload.globalY });
+        const { session, globalX, globalY } = notification.event.payload;
+        active(notification.key, { x: globalX, y: globalY });
+        editorPointer = session.pointerId;
       }
     },
     limits: { overscan: 1, residentCap: 12, retainedCap: 2 }
   });
+  if (catalog) {
+    catalogProjection = viewScope.use(catalog.project(root, canvas, frameOptions));
+  }
   if (previous) root.list('fields').setScrollOffset(previous.scrollOffset);
   await publish();
   if (closed) return;
@@ -507,6 +557,14 @@ function resized() {
     }
   }).catch(() => {});
 }
+// Canvas pointerdown opens and focuses the native field. Suppress the browser's
+// following mouse focus only for that same press, so it cannot steal the caret.
+function keepEditorFocus(event) {
+  if (event.target !== canvas || event.pointerId !== editorPointer) return;
+  editorPointer = undefined;
+  if (document.activeElement?.hasAttribute('data-egret-text-editor')) event.preventDefault();
+}
+scene.addEventListener('pointerdown', keepEditorFocus);
 export const ready = (async () => {
   host = (backend === 'webgpu' ? createSharedWebGPUHost : createSharedWebGL2Host)({
     canvas,
@@ -562,6 +620,7 @@ export const ready = (async () => {
     window.addEventListener('resize', resized);
   }
   for (const button of document.querySelectorAll('[data-layer-control]')) button.hidden = !layered;
+  document.querySelector('[data-catalog-control]').hidden = !catalog;
   state = 'ready';
   describe();
   return inspect();

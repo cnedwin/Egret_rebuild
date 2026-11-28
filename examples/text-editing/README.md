@@ -17,3 +17,15 @@ Default preview fits the scene CSS width and caps startup DPR at 3. Add preset=v
 Append layers=1 to the existing URL to use profile details, a draft rename dialog and return to the list. Save changes the original name; Cancel leaves it intact. The same UI, fonts/cache and input channels are used. Overlay logical focus does not force a native keyboard; activate the dialog field explicitly. Default/fixed verification retains its separate profile. See the [layer contract](../../knowledge-base/en/docs/ui-layers.md) and [scoped summary](layer-verification-summary.json).
 
 The current Android follow-up includes actual Samsung software-key composition, OS rotation and background/return. Rebuilding a view settles preedit before saving it; programmatic fallback focus keeps the native keyboard closed. These finite observations do not qualify all IMEs/devices.
+
+## Editing a 50,000-row catalogue
+
+Append `catalog=1` to the URL printed by `node examples/text-editing/serve.mjs`. The catalogue opens near its middle; click the name or description to edit it. **Reading theme** increases the type size and line height. **Replace fonts** swaps the bundled Noto Latin and CJK faces. The active field, row hit area and accessibility nodes all follow the list's committed layout.
+
+To reproduce the desktop check, run the following from the repository root after setup. Use a new output directory outside the checkout.
+
+```sh
+node examples/text-editing/verify-catalog.mjs <playwright-root> <new-output-directory>
+```
+
+Windows Edge 158 produced the same geometry on WebGL2 and WebGPU. Changing the theme grew the single-line row from 48 to 62 logical units. Changing only the font rewrapped the same multiline value from three to four lines and grew its row from 154 to 200. Both retained the scroll anchor `note-24999` at offset 7 and the selection. The test compares the native input and ARIA bounds against the committed row, holds a real font request to test cancellation and HTTP failure, starts a controlled composition during a download, and closes the example with a request pending. The output includes the JSON observations and a screenshot per backend. The 5–8 visible rows created at most 11 resident row shells across the sampled states. This run measures geometry and ownership; it gives no per-edit CPU or frame-time bound. Controlled composition covers event ordering. Human IME and assistive-technology observations have separate records. [Recorded results](catalog-verification-summary.json)

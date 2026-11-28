@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Keep the native editing field focused in a variable-height catalogue",
+    "body": "Clicking an editable row now keeps the caret in the native field. A pending font replacement rechecks all editors before switching any of them. The 50,000-row text-editing example covers cancelled and failed font loads, a theme change and real font reflow on both browser backends."
+  },
+  "zh": {
+    "title": "变高目录中的原生编辑框保持焦点",
+    "body": "点击可编辑行后，插入光标会留在原生输入框。字体下载完成时重新检查全部编辑器，再切换字体。五万行文字编辑示例在两个浏览器后端验证取消和失败的字体请求、主题变更及真实字体换行。"
+  }
+}

@@ -2,7 +2,20 @@
 
 [English](../../en/docs/ui-data-panel.md) | 中文
 
-这是 M3.1 的首个实现配置：可调整尺寸、支持变高行和稳定数据键、显式准备与提交的数据面板。完整 M3.1、段落文字、键盘焦点、原生编辑、无障碍和移动设备验收仍未完成。验证与交付状态单独记录。
+M3.1 提供可调整尺寸的数据面板，支持变高行、稳定的数据键，以及显式准备与提交。下表介绍布局契约的验证方法。[可编辑长列表示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.zh-CN.md) 使用列表中的原生文本框，演示字体延迟就绪和主题变化时的重排。
+
+## 五万行列表的验收范围
+
+| 开发者关心的问题 | 如何核对 |
+| --- | --- |
+| 旧布局 API 还能正常使用吗？ | [线性布局用例](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/linear-layout.test.mjs)覆盖坐标计算和对齐，输入与 API 用例覆盖 4,096 项边界。托管布局另测内容测量、最小和最大尺寸、循环依赖。 |
+| 行的位置、画面和点击结果一致吗？ | [虚拟列表用例](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-virtual-list.test.mjs)用简单的逐行扫描计算预期边界。[数据面板示例](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-data-panel)在两个共享后端核对像素和实际鼠标命中。 |
+| 滚动时有哪些行驻留？ | [生命周期用例](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-lifecycle.test.mjs)滚到五万条记录的末端，统计实际创建的行，并核对返回时保留的行。语义树记录可见行在整张列表中的位置。 |
+| 修改数据后，阅读位置会跳吗？ | [高度索引用例](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-height-index-unit.test.mjs)覆盖插入、重排、行高变化和删除锚点，也覆盖列表清空。预期偏移由独立数组计算。 |
+| 延迟到达的内容会填错行吗？ | 生命周期用例在等待绑定、复用行或清理资源时改动列表，另测销毁一个根节点后另一面板继续使用。检查结果落在哪一代绑定，以及资源由谁释放。 |
+| 静态面板会重复测量或栅格化吗？ | [布局计数](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-layout-unit.test.mjs)统计重新测量的叶节点，[主题](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-theme.test.mjs)和[编辑行用例](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-editor-row-integration.test.mjs)检查只改绘制属性和准备段落时的工作量。实际帧时另行测量。 |
+
+在 7.0.3 源码上，25 项旧版布局用例和 94 项托管布局、生命周期、主题、编辑行与语义用例均通过。这些用例核对逻辑几何和操作计数。[对应源码](https://github.com/cnedwin/Egret_rebuild/commit/a1d6bc6215ce1fd9af1e9361286525ae737ad347)
 
 ## 所有权与发布
 
@@ -85,7 +98,7 @@ if (prepared.status !== 'pending') root.commit(prepared);
 
 集成 UI／输入回归通过 158 项，失败、取消和跳过均为零。实际桌面验证使用 Windows 10.0.26300、Node 26.7.0、Playwright 1.62.1 与默认无头 Edge 155.0.4283.62，WebGPU 和 WebGL2 分别通过。每个后端检查 177 个精确像素、35 个实际鼠标位置和十次原始帧捕获，覆盖延迟替换期间完整旧画面不变，以及保留原始帧的逐字节回放一致。52 次进入的绑定均对应一次终结回调；缓存、Scope、输入、字体与提供器的清理观测通过。这些是功能和逻辑所有权证据，不代表物理回收或计时结果。
 
-`examples/ui-data-panel/verification-summary.json` 为附带原始结果哈希的公开摘要，不替代保留的原始证据。此前示例容量、缺少尺寸和沙箱启动失败分别保留。受保护 CI 与 main 交付单独记录。完整 M3.1、手机输入与性能验收继续开放。参见 [M3 计划](m3-ui-text-input-plan.md) 和 `examples/ui-data-panel/README.zh-CN.md`。
+`examples/ui-data-panel/verification-summary.json` 为附带原始结果哈希的公开摘要，不替代保留的原始证据。此前示例容量、缺少尺寸和沙箱启动失败分别保留。受保护 CI 与 main 交付单独记录。首次验证该面板时，综合布局、手机输入与性能仍待验收。参见 [M3 计划](m3-ui-text-input-plan.md) 和 `examples/ui-data-panel/README.zh-CN.md`。
 
 ## 托管虚拟行的键盘焦点
 

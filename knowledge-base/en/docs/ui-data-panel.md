@@ -2,7 +2,20 @@
 
 English | [中文](../../Cns/docs/ui-data-panel.md)
 
-This is the first implementation profile within M3.1: a resizable panel with variable-height rows, stable data keys and explicit preparation. Complete M3.1, paragraph text, keyboard focus, native editing, accessibility and mobile qualification remain open. Validation and delivery status are recorded separately below.
+M3.1 provides a resizable panel with variable-height rows, stable data keys and explicit preparation. The checks below cover the layout contract. The [editable catalogue](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/text-editing) exercises late font and theme changes with a native text field inside the list.
+
+## What the 50,000-row checks cover
+
+| Question | How to reproduce the check |
+| --- | --- |
+| Does the original layout API still work? | The [linear layout cases](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/linear-layout.test.mjs) cover numeric placement and alignment. The input and API suites cover the 4,096-item boundary. Managed layout separately checks intrinsic sizes, min/max constraints and cycles. |
+| Do drawing, picking and row placement agree? | The [virtual-list cases](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-virtual-list.test.mjs) compare row edges to a simple linear scan. The [panel example](https://github.com/cnedwin/Egret_rebuild/tree/main/examples/ui-data-panel) checks the displayed pixels and actual pointer hits on each shared backend. |
+| What stays resident when the list scrolls? | The [lifecycle cases](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-lifecycle.test.mjs) scroll to the far end of 50,000 records, count realized rows and check retained rows on return. The semantic tree exposes the visible rows with their positions in the entire list. |
+| What happens to the scroll anchor after an edit? | The [height-index cases](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-height-index-unit.test.mjs) check inserts, reorders, height changes and deletion of the anchor, including an empty list. A separate reference array supplies the expected offsets. |
+| Can a delayed bind change a recycled row? | The lifecycle cases interrupt pending work, reuse keys, reenter during cleanup and dispose one root while another remains active. They check which binding receives each result and which owner releases it. |
+| Does a static panel repeat layout or raster work? | [Layout counters](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-layout-unit.test.mjs) count measured leaves. [Theme](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-theme.test.mjs) and [editor-row](https://github.com/cnedwin/Egret_rebuild/blob/main/tests/ui-editor-row-integration.test.mjs) cases check paint-only changes and paragraph preparation. Physical frame time has its own measurement. |
+
+The 25 legacy layout cases and 94 managed layout, lifecycle, theme, editor-row and semantics cases passed on the 7.0.3 source commit. These checks use logical geometry and work counters. [Source revision](https://github.com/cnedwin/Egret_rebuild/commit/a1d6bc6215ce1fd9af1e9361286525ae737ad347)
 
 ## Ownership and publication
 
@@ -85,7 +98,7 @@ Counters describe logical records, bindings, shells, measurements and outstandin
 
 The integrated UI/input regression passed 158 tests with no failures, cancellations or skips. Real desktop verification on Windows 10.0.26300, Node 26.7.0, Playwright 1.62.1 and default headless Edge 155.0.4283.62 passed separately on WebGPU and WebGL2. Each backend checked 177 exact pixels, 35 actual mouse positions and ten raw-frame captures, including unchanged complete pixels during delayed replacement and byte-identical replay of the retained original frame. All 52 entered bindings received exactly one terminal callback; cache, scope, input, font and provider cleanup observations passed. These are functional and logical ownership observations, not physical reclamation or timing evidence.
 
-`examples/ui-data-panel/verification-summary.json` is a public projection with the original receipt hash; it does not replace the retained raw evidence. Earlier example-capacity, missing-dimension and sandbox-launch failures are preserved separately. Protected CI and main delivery have separate outcomes. Full M3.1, phone input and performance acceptance remain open. See the [M3 plan](m3-ui-text-input-plan.md) and `examples/ui-data-panel/README.md`.
+`examples/ui-data-panel/verification-summary.json` is a public projection with the original receipt hash; it does not replace the retained raw evidence. Earlier example-capacity, missing-dimension and sandbox-launch failures are preserved separately. Protected CI and main delivery have separate outcomes. At the time of that first panel run, integrated layout, phone input and performance qualification were still pending. See the [M3 plan](m3-ui-text-input-plan.md) and `examples/ui-data-panel/README.md`.
 
 ## Managed virtual-row keyboard focus
 
