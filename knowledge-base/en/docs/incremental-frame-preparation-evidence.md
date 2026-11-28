@@ -6,7 +6,7 @@ English | [中文](../../Cns/docs/incremental-frame-preparation-evidence.md)
 
 The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads.
 
-Windows Chrome for Testing 157.0.8103.6, public WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`. All 30 timed windows qualified. The report preserves all individual windows and their checksums. [Machine-readable measurements](../../../verification/d60-shared-frame-desktop-20261128.json)
+Windows Chrome for Testing 157.0.8103.6, public WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`. All 30 timed windows qualified. The report preserves all individual windows and their checksums. [Machine-readable measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-desktop-20261128.json)
 
 | State | Reference Engine p95 | Candidate Engine p95 | Candidate Host p95 | RAF p95 / p99 | Weighted gap p95 / p99 | GPU pass-span p95 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -19,6 +19,8 @@ All times are in milliseconds. The fully dirty update-through-render ratio was 0
 GPU timestamps cover the first scene pass through the end of the resolve pass. Each state contributed 60 measured frames in a separate diagnostic. Work submitted before that pass, queue completion delivery, the compositor and display have separate boundaries.
 
 In the separate WebGL2 check, all four authored frames matched byte for byte and preserved draw order. Reordering the meshes changed 658 pixels. Moving and rotating their clipping parent changed 860 pixels. Restoring the scene restored the original image. The host retained zero textures after close.
+
+After #558 moved the geometry ownership check used on every frame, the integration comparison froze main `d88ed3b56b10` and the merged candidate `2afec4c53ab5`. The 121-module SDKs passed six WebGPU pixel trials, six draw-count trials and the four WebGL2 picture and ordering checks. One additional full-dirty pair used the same 30 s warm-up and 60 s measurement: Engine 7.8 → 6.0 ms, Host 6.2 → 4.2 ms. The 4.2 ms enclosing Host observation includes preparation and submission. A single window cannot establish the 4 ms preparation upper bound for this revision. This pair is recorded separately from the 30 formal windows above. [Integration measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-main-integration-20261128.json)
 
 ## Measurement scope
 

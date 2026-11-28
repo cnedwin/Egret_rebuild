@@ -6,7 +6,7 @@
 
 冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。
 
-Windows Chrome for Testing 157.0.8103.6，公开 WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`。30 个正式窗口均完成环境核验。各窗口的结果和校验和见[结构化实测记录](../../../verification/d60-shared-frame-desktop-20261128.json)。
+Windows Chrome for Testing 157.0.8103.6，公开 WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`。30 个正式窗口均完成环境核验。各窗口的结果和校验和见[结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-desktop-20261128.json)。
 
 | 状态 | 基线引擎 p95 | 候选引擎 p95 | 候选宿主 p95 | 回调间隔 p95 / p99 | 加权间隔 p95 / p99 | GPU 通道区间 p95 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -19,6 +19,8 @@ Windows Chrome for Testing 157.0.8103.6，公开 WebGPU SDK `56e92dfac4e5` → `
 GPU 时间戳覆盖首个场景通道开始到最终输出通道结束。每种状态另测 60 帧。通道之前的上传、队列完成通知、浏览器合成及屏幕呈现另有测量边界。
 
 在单独的 WebGL2 对照中，四幅场景的 RGBA 逐字节一致，绘制次序相同。两张网格换序使 658 个像素变化；移动并旋转裁剪父级后有 860 个像素变化。复原后画面与最初一致，关闭后宿主的驻留纹理数为零。
+
+#558 调整了每帧都会调用的几何归属校验。整合复验固定主干 `d88ed3b56b10` 与合并候选 `2afec4c53ab5`。两版各 121 个模块，通过六组 WebGPU 像素对照、六组绘制计数及四种 WebGL2 画面和顺序检查。另做一对全脏对照，每端预热 30 秒、采集 60 秒，Engine 7.8 → 6.0 ms, Host 6.2 → 4.2 ms。这次 4.2 ms 的宿主观测包含准备与提交，单窗不足以确认该版本的 4 ms 准备上界。这组数据与上方 30 个正式时窗分别记录。[整合实测数据](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-main-integration-20261128.json)
 
 ## 本次测量范围
 

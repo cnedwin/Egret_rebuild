@@ -4,6 +4,10 @@
     {
       "path": "verification/d60-shared-frame-desktop-20261128.json",
       "originRole": "First-party measurements from a physical Windows GPU, containing all 30 desktop timing windows and separate GPU pass timestamps; prepared with AI assistance, Apache-2.0."
+    },
+    {
+      "path": "verification/d60-shared-frame-main-integration-20261128.json",
+      "originRole": "First-party physical desktop results for the fixed shared 2D workload after upstream geometry-admission integration; Apache-2.0."
     }
   ],
   "documents": []

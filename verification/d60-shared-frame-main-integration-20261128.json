@@ -1,0 +1,98 @@
+{
+  "schema": "egret.d60.shared-frame2d.integration/1",
+  "date": "2026-11-28",
+  "sdk": {
+    "base": "d88ed3b56b1072cd7642b634d905ac6a38940549",
+    "target": "2afec4c53ab5a62b5651bc2782906ddc917263a4",
+    "changed": [
+      "packages/engine/dist/rendering/prepareRectangles2D.js",
+      "packages/engine/dist/rendering/prepareSharedDraws2D.js",
+      "packages/engine/dist/web/WebGPUHost.js"
+    ],
+    "modules": {
+      "baseline": 121,
+      "candidate": 121
+    }
+  },
+  "context": "The upstream geometry admission refactor is present in both roles. The formal 30-window qualification uses the preceding frozen pair; these results are a separate integration check.",
+  "workload": "The same 10,000-node D60 workload and original two-pending-frame capacity.",
+  "checks": {
+    "correctness": {
+      "status": "PASS_CORRECTNESS",
+      "trials": 6,
+      "sha256": "1542697d22e347ad88fbcb1131269ff40f3d235ec2f7b30304f728da65fbfc99"
+    },
+    "counts": {
+      "status": "PASS_COUNTS",
+      "trials": 6,
+      "sha256": "9528b64d9f22ef12a4933adad3565d0fe3df80c3a512141b0799abacf7a71685"
+    }
+  },
+  "webgl2": {
+    "frames": [
+      {
+        "name": "original",
+        "rgbaSha256": "37d8733b59c5b1d583a9a0353e1ba0618ce1355d4290c361707efcb32a69cb5b",
+        "mismatchedPixels": 0,
+        "sameCommandOrder": true
+      },
+      {
+        "name": "reordered",
+        "rgbaSha256": "5e6c109b7d5304c1210bcb15efeebc6ed862bca73fe5b718325f9daa30e8e462",
+        "mismatchedPixels": 0,
+        "sameCommandOrder": true
+      },
+      {
+        "name": "moved",
+        "rgbaSha256": "ecd7452ee4641016e862c51372c52cc6c699ef480512da7a0d099c7ae0c96a44",
+        "mismatchedPixels": 0,
+        "sameCommandOrder": true
+      },
+      {
+        "name": "restored",
+        "rgbaSha256": "37d8733b59c5b1d583a9a0353e1ba0618ce1355d4290c361707efcb32a69cb5b",
+        "mismatchedPixels": 0,
+        "sameCommandOrder": true
+      }
+    ],
+    "reorderedPixels": 658,
+    "movedClipPixels": 860,
+    "retainedTexturesAfterClose": 0,
+    "reportSha256": "8dc7fc93de747089d7867975132c91e4f4a4200e96054864a8bec5d2612be97c"
+  },
+  "fullDirty": {
+    "warmSeconds": 30,
+    "measurementSeconds": 60,
+    "pairs": 1,
+    "runs": {
+      "baseline": {
+        "status": "PASS_TIMING",
+        "admittedFrames": 6761,
+        "stalledCallbacks": 4105,
+        "engineP95Ms": 7.800000011920929,
+        "hostP95Ms": 6.200000017881393,
+        "updateThroughRenderP95Ms": 8.600000023841858,
+        "rafP95Ms": 12.60000000000582,
+        "rafP99Ms": 16.69999999999709,
+        "weightedGapP95Ms": 12.599999994039536,
+        "weightedGapP99Ms": 17.900000005960464,
+        "osForegroundSamples": 91,
+        "rawReportSha256": "55aba17f02d150e55fc098234e1436557e5f2ab054c31e3f664791a1c8046e42"
+      },
+      "candidate": {
+        "status": "PASS_TIMING",
+        "admittedFrames": 8251,
+        "stalledCallbacks": 5599,
+        "engineP95Ms": 6,
+        "hostP95Ms": 4.200000017881393,
+        "updateThroughRenderP95Ms": 6.9000000059604645,
+        "rafP95Ms": 12.39999999999418,
+        "rafP99Ms": 12.599999999998545,
+        "weightedGapP95Ms": 10.800000011920929,
+        "weightedGapP99Ms": 13.800000011920929,
+        "osForegroundSamples": 91,
+        "rawReportSha256": "f4478b6383def2f4ac9ece8f9f9e21817954d5dd77ec62ae69fe23d8db3fa091"
+      }
+    }
+  }
+}
