@@ -100,9 +100,12 @@ const m15DeepClauses = {
 "packages/engine/web/world3d/app3D.ts":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
 "packages/engine/dist/web/world3d/app3D.js":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"}],
 "packages/engine/dist/web/world3d/app3D.d.ts":[{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
-"packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["Bitmap","copyImageData2DPixels","createAssetRef","createAssetType","createEngineForProfile","createImageData2D","createTexture","isTexture","SHARED_FRAME_PROFILE_2D","Sprite"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
-"packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["Bitmap","copyImageData2DPixels","createAssetRef","createAssetType","createEngineForProfile","createImageData2D","createTexture","isTexture","SHARED_FRAME_PROFILE_2D","Sprite"],"target":"@egret/engine"}],
-"packages/engine/dist/web/BrowserGame.d.ts":[{"operation":"import","kind":"value","members":["Sprite"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
+"packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","createImageData2D","createTexture","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","createImageData2D","createTexture","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserGame.d.ts":[{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
+"packages/engine/web/browserGameLabels.ts":[{"operation":"import","kind":"value","members":["Bitmap","copyImageData2DPixels","createAssetRef","createAssetType","createImageData2D","createTexture","isTexture","Sprite"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","Engine","Scope","Texture"],"target":"@egret/engine"}],
+"packages/engine/dist/web/browserGameLabels.js":[{"operation":"import","kind":"value","members":["Bitmap","copyImageData2DPixels","createAssetRef","createAssetType","createImageData2D","createTexture","isTexture","Sprite"],"target":"@egret/engine"}],
+"packages/engine/dist/web/browserGameLabels.d.ts":[{"operation":"import","kind":"value","members":["Sprite"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","Engine","Scope","Texture"],"target":"@egret/engine"}],
 "packages/engine/web/BrowserStatsPanel.ts":[{"operation":"import","kind":"type","members":["SharedRenderFrame2D"],"target":"@egret/engine"}],
 "packages/engine/dist/web/BrowserStatsPanel.d.ts":[{"operation":"import","kind":"type","members":["SharedRenderFrame2D"],"target":"@egret/engine"}],
 "packages/engine/src/fontContentLoader.ts":[{"operation":"import","kind":"value","members":["isAdmittedResourceManifest","inspectFontArtifact"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
@@ -494,10 +497,11 @@ for (const [name, allowed] of Object.entries(expected)) {
         const clause = code.slice(0, match.index).match(/\bimport\s+type\s*\{([^{}]+)\}\s*$/);
         const types = ['TextLineMetricsInput','TextMeasureContext','TextRasterContext','TextRasterPlan','TextRasterProvider','TextRasterRequest'];
         const names = clause?.[1].split(',').map(value=>value.trim()).filter(Boolean);
-        // The browser game entry makes labels with the text entry's two factories, and names two of its types.
+        // The browser game entry makes labels with the text entry's two factories, and names two of its types: the game
+        // opens the text cache, and its labels module makes the fields.
         const gameClause = code.slice(0, match.index).match(/\bimport(\s+type)?\s*\{([^{}]+)\}\s*$/);
         const gameNames = gameClause?.[2].split(',').map(value=>value.trim()).filter(Boolean);
-        const gameText = name === 'engine' && ['web/BrowserGame.ts','dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'].includes(relative) && gameNames !== undefined && gameNames.length !== 0
+        const gameText = name === 'engine' && ['web/BrowserGame.ts','dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','web/browserGameLabels.ts','dist/web/browserGameLabels.js','dist/web/browserGameLabels.d.ts'].includes(relative) && gameNames !== undefined && gameNames.length !== 0
           && gameNames.every(value=>(gameClause[1] ? ['TextField','TextRasterCache'] : ['createTextField','createTextRasterCache']).includes(value)) && new Set(gameNames).size===gameNames.length;
         if (!gameText && (name !== 'engine' || !['web/CanvasTextRasterProvider.ts','dist/web/CanvasTextRasterProvider.d.ts'].includes(relative)
             || !names?.length || names.some(value=>!types.includes(value)) || new Set(names).size!==names.length))
@@ -5602,9 +5606,13 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./browserTextWork.js','./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./GameImageAdmission.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
+const gameEntries=['./browserTextWork.js','./browserGameLabels.js','./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./GameImageAdmission.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js','./browserGameParagraph.js','./browserGameGlyphFont.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js','./browserGameParagraph.js','./browserGameGlyphFont.js'],
- 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./browserTextWork.js','./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','./webgl2.js','@egret/engine','@egret/engine/text'],
+ 'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./browserTextWork.js','./browserGameLabels.js','./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','./webgl2.js','@egret/engine','@egret/engine/text'],
+ // The labels of a game: the text entry's fields, and the types of the two optional text paths the game loads.
+ 'web/browserGameLabels.ts':['@egret/runtime','@egret/engine','@egret/engine/text','./browserTextWork.js','./browserGameParagraph.js','./browserGameGlyphFont.js'],
+ 'dist/web/browserGameLabels.js':['@egret/runtime','@egret/engine','@egret/engine/text'],
+ 'dist/web/browserGameLabels.d.ts':['@egret/engine','@egret/engine/text','./browserTextWork.js','./browserGameParagraph.js','./browserGameGlyphFont.js'],
  'web/browserGameParagraph.ts':['./browserTextWork.js','@egret/engine/paragraph','@egret/engine','@egret/runtime','./CanvasParagraphProvider.js','./browserGameFamilies.js'],
  'dist/web/browserGameParagraph.js':['@egret/engine/paragraph','@egret/runtime','./CanvasParagraphProvider.js','./browserGameFamilies.js'],
  'dist/web/browserGameParagraph.d.ts':['./browserTextWork.js','@egret/engine/paragraph','@egret/engine','@egret/runtime'],
@@ -5642,12 +5650,13 @@ for(const [file,expected] of Object.entries(textWorkImports)){
  if(/\b(?:Worker|XMLHttpRequest|localStorage|fetch|setInterval)\b/.test(body))throw new Error('Browser game: text work acquired unrelated host I/O: '+file);
 }
 const gameAllowed={
- 'web/browserTextWork.js':['web/BrowserGame.ts','web/CanvasTextRasterProvider.ts','web/CanvasParagraphProvider.ts','web/browserGameParagraph.ts'],
- 'dist/web/browserTextWork.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','dist/web/CanvasTextRasterProvider.d.ts','dist/web/CanvasParagraphProvider.d.ts','dist/web/browserGameParagraph.d.ts'],
- 'web/browserGameParagraph.js':['web/BrowserGame.ts','web/game.ts'],
- 'dist/web/browserGameParagraph.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','dist/web/game.d.ts'],
- 'web/browserGameGlyphFont.js':['web/BrowserGame.ts','web/game.ts'],
- 'dist/web/browserGameGlyphFont.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','dist/web/game.d.ts'],
+ 'web/browserTextWork.js':['web/BrowserGame.ts','web/browserGameLabels.ts','web/CanvasTextRasterProvider.ts','web/CanvasParagraphProvider.ts','web/browserGameParagraph.ts'],
+ 'dist/web/browserTextWork.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','dist/web/browserGameLabels.d.ts','dist/web/CanvasTextRasterProvider.d.ts','dist/web/CanvasParagraphProvider.d.ts','dist/web/browserGameParagraph.d.ts'],
+ 'web/browserGameParagraph.js':['web/BrowserGame.ts','web/browserGameLabels.ts','web/game.ts'],
+ 'dist/web/browserGameParagraph.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','dist/web/browserGameLabels.d.ts','dist/web/game.d.ts'],
+ 'web/browserGameGlyphFont.js':['web/BrowserGame.ts','web/browserGameLabels.ts','web/game.ts'],
+ 'dist/web/browserGameGlyphFont.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts','dist/web/browserGameLabels.d.ts','dist/web/game.d.ts'],
+ 'web/browserGameLabels.js':['web/BrowserGame.ts'],'dist/web/browserGameLabels.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'],
  'web/browserGameFamilies.js':['web/browserGameParagraph.ts','web/browserGameGlyphFont.ts'],
  'dist/web/browserGameFamilies.js':['dist/web/browserGameParagraph.js','dist/web/browserGameGlyphFont.js'],
  'web/GameImageAdmission.js':['web/BrowserGame.ts'],'dist/web/GameImageAdmission.js':['dist/web/BrowserGame.js'],
