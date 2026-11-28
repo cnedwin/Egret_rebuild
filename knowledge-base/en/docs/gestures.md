@@ -33,10 +33,13 @@ A dragged sprite stays where it is. The picture that `ghost` makes follows the f
 | `onDrag` | A contact moves past the slop of 12 units. Then each move, and the end or cancel | `phase`, the step `dx`, `dy`, and all of it so far, `totalX`, `totalY` |
 | `onSwipe` | A drag ends faster than 600 units a second over its last tenth of a second | `direction`, `speed`, `dx`, `dy` |
 | `onPinch` | A second contact goes down. What the first was doing ends | `phase`, `scale` against the start, `rotation` in degrees, the middle |
+| `onSecondaryTap` | A press of the mouse's secondary (usually right) button lifts within the slop of where it went down, however long it was held | Where it was |
 
 All of these come from `createGestures({ engine, scope, input, target, ... })`. The thresholds are options: `slop`, `holdSeconds`, `doubleTapSeconds` and `swipeSpeed`. `createDragAndDrop({ engine, scope, input, layer })` gives `source`, `target` and `dragging`, and each registration returns its removal. Both end with their scope or `dispose()`. They refuse unusable options with `GESTURE_OPTIONS_INVALID`, and refuse registering on one that has ended with `GESTURE_CLOSED`.
 
 A long press waits on the engine's clock, so it does not fire while the game is paused. A pinch ends when either finger lifts. The other finger is done until it lifts too, so it never turns into a drag.
+
+Only touches, pens and the mouse's primary button make taps, double taps, long presses, drags, swipes and pinches. A press that also holds the primary button counts as a primary one. A right press goes to `onSecondaryTap` alone; the middle button and the side buttons make no gesture. Gestures add no listener to the page, so the browser still opens its menu on a right click: a game that uses `onSecondaryTap` stops it on its own canvas with `canvas.addEventListener('contextmenu', event => event.preventDefault())`. `createMouseInput` of `@egret/engine/web/input` keeps its primary-button contract.
 
 ## What is checked
 
@@ -46,6 +49,7 @@ A long press waits on the engine's clock, so it does not fire while the game is 
 - a long press on the clock, and no tap after it;
 - a drag past the slop, the steps it reports, and a swipe;
 - a two-finger pinch with its scale and turn;
+- mouse buttons: a still right press as a secondary tap however long held, no tap, drag or long press from the right or middle button, and the primary button tapping and dragging as before;
 - drag and drop onto the innermost target, a drop with no target, and an empty source;
 - refusals, and an ended recognizer that hears nothing.
 

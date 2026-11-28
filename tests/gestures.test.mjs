@@ -33,8 +33,17 @@ async function fixture(run) {
       up: (ux, uy, ut) => input.end(session, { globalX: ux, globalY: uy, buttons: 0, timestamp: ut })
     };
   };
+  // A mouse press of the given buttons (1 primary, 2 secondary, 4 middle), moved and released.
+  const mouse = (buttons, x, y, t) => {
+    const session = input.begin({ pointerId: 1, pointerType: 'mouse', globalX: x, globalY: y, buttons, timestamp: t });
+    return {
+      move: (mx, my, mt) => input.move(session, { globalX: mx, globalY: my, buttons, timestamp: mt }),
+      up: (ux, uy, ut) => input.end(session, { globalX: ux, globalY: uy, buttons: 0, timestamp: ut }),
+      cancel: () => input.cancel(session, 'pointercancel')
+    };
+  };
   try {
-    await run({ engine, scope, pad, input, finger });
+    await run({ engine, scope, pad, input, finger, mouse });
   } finally {
     input.dispose();
     await engine.dispose();
@@ -230,4 +239,69 @@ test('GE06 what is not a gesture is refused, and an ended one hears nothing', ()
     gestures.dispose();
     finger(1, 10, 10, 0).up(10, 10, 20);
     assert.deepEqual(seen, []);
+  }));
+
+// Break caught: a right click told as a tap, a drag or a long press; a moved or cancelled right press told as a
+// secondary tap; the middle button making any gesture; the primary mouse button no longer tapping.
+test('GE07 only the primary mouse button makes gestures; a still right press is a secondary tap', () =>
+  fixture(({ engine, scope, pad, input, mouse }) => {
+    const seen = [];
+    createGestures({
+      engine,
+      scope,
+      input,
+      target: pad,
+      onTap: at => seen.push(['tap', at.x]),
+      onDoubleTap: () => seen.push(['double']),
+      onHold: () => seen.push(['hold']),
+      onDrag: drag => seen.push(['drag', drag.phase]),
+      onSecondaryTap: at => seen.push(['secondary', at.x, at.y, at.localX])
+    });
+    let now = 0;
+    const run = seconds => {
+      for (const end = now + seconds; now < end - 1e-9; ) engine.advanceTime((now = Math.min(end, now + 0.1)));
+    };
+    engine.advanceTime(0);
+    // A right press held past the long-press time and released where it began.
+    const right = mouse(2, 30, 40, 0);
+    run(0.8);
+    right.up(31, 40, 800);
+    assert.deepEqual(seen, [['secondary', 31, 40, 31]]);
+    seen.length = 0;
+    // Moved past the slop, or moved away and back, or cancelled: nothing at all.
+    let press = mouse(2, 30, 40, 1000);
+    press.move(80, 40, 1050);
+    press.up(80, 40, 1100);
+    press = mouse(2, 30, 40, 1200);
+    press.move(80, 40, 1250);
+    press.up(30, 40, 1300);
+    mouse(2, 30, 40, 1400).cancel();
+    // The middle button, still or dragged, is no gesture.
+    mouse(4, 30, 40, 1500).up(30, 40, 1550);
+    press = mouse(4, 30, 40, 1600);
+    press.move(90, 40, 1650);
+    press.up(90, 40, 1700);
+    assert.deepEqual(seen, []);
+    // Two right clicks close together are no double tap, and do not start one for a later left click.
+    mouse(2, 30, 40, 2000).up(30, 40, 2040);
+    mouse(1, 30, 40, 2100).up(30, 40, 2140);
+    assert.deepEqual(seen, [
+      ['secondary', 30, 40, 30],
+      ['tap', 30]
+    ]);
+    seen.length = 0;
+    // The primary button still taps and drags, also with the right button held as well.
+    press = mouse(1, 30, 40, 3000);
+    press.move(60, 40, 3050);
+    press.up(60, 40, 3100);
+    mouse(3, 30, 40, 3500).up(30, 40, 3540);
+    assert.deepEqual(seen, [
+      ['drag', 'start'],
+      ['drag', 'end'],
+      ['tap', 30]
+    ]);
+    assert.throws(
+      () => createGestures({ engine, scope, input, target: pad, onSecondaryTap: 'erase' }),
+      error => error?.code === 'GESTURE_OPTIONS_INVALID'
+    );
   }));
