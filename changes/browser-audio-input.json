@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "External sources on browser audio buses",
+    "body": "The Web Audio mixer now accepts caller-owned audio graphs through named input strips with independent volume and duck attenuation, optional equal-power pan and lowpass, continuous automation and scoped disposal. System SpeechSynthesis remains outside the Web Audio graph."
+  },
+  "zh": {
+    "title": "浏览器混音器接入外部音源",
+    "body": "Web Audio 混音器支持将游戏自己管理的音频图接入命名总线，提供独立的音量和压低系数、可选等功率声像和低通、连续参数变化及作用域回收。系统 SpeechSynthesis 仍不能接入 Web Audio 图。"
+  }
+}

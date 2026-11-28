@@ -2269,8 +2269,14 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     }
     // MI1_MUTATION_END
     if(textInputMutation){
+      if(textInputMutation==='play-extra-clause'){
+        const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});
+        assert.ifError(baseline.error);
+        assert.equal(baseline.status,0,'Complete Play text editor baseline: '+baseline.stdout+baseline.stderr);
+      }
       const edits={
         'escaped-module':['packages/engine/web/ProbeTextInput.ts',"import {createBrowserTextInput} from './BrowserTextInput.js';\nvoid createBrowserTextInput;\n"],
+        'play-extra-clause':['packages/engine/web/playView.ts',"import type {BrowserTextInputOptions} from './BrowserTextInput.js';\n"],
         'extra-export':['packages/engine/web/textInput.ts','export const extra=1;\n'],
         'engine-import':['packages/engine/web/BrowserTextInput.ts',"import './keyboard.js';\n"],
         'timer':['packages/engine/web/BrowserTextInput.ts','setTimeout(()=>{},0);\n'],
@@ -2481,6 +2487,7 @@ for(const [name,reason]of [
 // MI1_POLICY_TESTS_END
 for(const [name,reason] of [
   ['escaped-module','Text input: implementation module imported outside its entry'],
+  ['play-extra-clause','Text input: Play editor exact input clauses mismatch'],
   ['extra-export','Text input: exact browser text input exports mismatch'],
   ['engine-import','Text input: exact graph mismatch'],
   ['timer','Text input: acquired automatic host work'],

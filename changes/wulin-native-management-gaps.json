@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Native management UI paragraph capacity, forms and positioned notices",
+    "body": "Keep the default paragraph cache capacity and permit explicit bounded entry/pending budgets up to 128 for large native views. Add browser text-file exchange, native selectable dialogs and view-owned text editing with focus/lifetime ownership. Add optional safe-area anchored, skinned, passive foreground toasts with bounded wrapping, close handles and persistent notices. Existing default toast appearance and timing are retained."
+  },
+  "zh": {
+    "title": "原生经营界面段落容量、表单与可定位通知",
+    "body": "段落缓存保留默认容量，大型原生视图可显式将条目和等待作业预算配置至 128（原字节和需求限制不变）。新增浏览器文本文件交换、原生选项弹窗及视图管理的文字输入，完整处理焦点和生命周期。通知新增安全区锚点、配色、被动前景层、有限换行、主动关闭和持续显示，保留原默认通知样式和时序。"
+  }
+}

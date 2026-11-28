@@ -120,10 +120,50 @@ export interface PlayMenuOptions {
   /** The colour of the chosen item. */
   readonly color?: number;
 }
-/** A toast to show: how long and in what color. */
+/** A notice's position in the safe area. Offsets are inward from the selected edge; a centered notice offsets right. */
+export interface PlayToastPlacement {
+  readonly anchor?: 'top-left' | 'top' | 'top-right' | 'bottom-left' | 'bottom' | 'bottom-right';
+  readonly offsetX?: number;
+  readonly offsetY?: number;
+  readonly maxWidth?: number;
+  readonly fontSize?: number;
+  /** View units by default; stage units when explicitly requested. */
+  readonly units?: 'ui' | 'stage';
+  /** Draw above ordinary UI views, without taking input or focus. */
+  readonly foreground?: boolean;
+}
+/** A toast to show: duration, color and optional safe-area placement/skin. */
 export interface PlayToastOptions {
   readonly seconds?: number;
   readonly color?: number;
+  readonly placement?: PlayToastPlacement;
+  readonly background?: number;
+  readonly backgroundAlpha?: number;
+  readonly borderColor?: number;
+  /** Keep the notice until the caller closes it (instead of timing out). */
+  readonly persistent?: boolean;
+}
+export interface PlayToastHandle {
+  /** True until the notice expires, is closed, or its game restarts. */
+  readonly active: boolean;
+  /** The visible card in stage units, or undefined for a closed/overflowed notice. */
+  readonly bounds:
+    | { readonly x: number; readonly y: number; readonly width: number; readonly height: number }
+    | undefined;
+  close(): void;
+}
+interface PlacedNotice {
+  readonly node: Sprite;
+  readonly words: string;
+  readonly options: PlayToastOptions;
+  readonly placement: PlayToastPlacement;
+  readonly duration: number;
+  readonly foreground: boolean;
+  readonly labels: PlayText[];
+  live: boolean;
+  elapsed: number;
+  layoutKey: string;
+  bounds?: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
 }
 
 /** How wide words are in units of their size: a character of Chinese, Japanese or Korean is one, any other about half. */
@@ -238,7 +278,7 @@ export function createPlayWidgets(
   wake: () => void = () => {}
 ): {
   bar(options: PlayBarOptions): PlayBar;
-  toast(words: string, options?: PlayToastOptions): void;
+  toast(words: string, options?: PlayToastOptions): PlayToastHandle;
   say(words: string, options?: PlaySayOptions): Promise<number | undefined>;
   sayPage(words: string, options?: PlaySayOptions): Promise<number | undefined>;
   menu(items: readonly string[], options?: PlayMenuOptions): Promise<number>;
@@ -251,6 +291,10 @@ export function createPlayWidgets(
     Number.isInteger(value) && (value as number) >= 0 && (value as number) <= 0xffffff ? (value as number) : fallback;
   let bars: PlayBar[] = [];
   let toasts: Sprite[] = [];
+  let placed: PlacedNotice[] = [];
+  let toastForeground: Sprite | undefined;
+  let noticeRevision = 0,
+    lastNoticeLayout = '';
   // What is open: a box of words being read, and a list being chosen from. At most one of each at a time.
   let talking:
     | {
@@ -325,6 +369,240 @@ export function createPlayWidgets(
   /** The part of the screen nothing covers, in the game's units: where boxes, menus and notices go. */
   const area = (): { readonly x: number; readonly y: number; readonly width: number; readonly height: number } =>
     game.safe;
+
+  const clamp = (n: number, lo: number, hi: number): number => Math.max(lo, Math.min(hi, n));
+  function closeNotice(notice: PlacedNotice): void {
+    if (!notice.live) return;
+    notice.live = false;
+    noticeRevision++;
+    delete notice.bounds;
+    game.remove(notice.node);
+    game.invalidate();
+  }
+  // Keep long unbroken tokens inside the safe card as well as ordinary word wrapping.
+  function noticeLines(words: string, units: number, maxLines: number): string[] {
+    const result: string[] = [];
+    for (const line of wrapPlayWords(words, units)) {
+      let part = '',
+        length = 0;
+      for (const character of line) {
+        const advance = measure(character);
+        if (part && length + advance > units) {
+          result.push(part);
+          part = '';
+          length = 0;
+        }
+        part += character;
+        length += advance;
+      }
+      result.push(part);
+    }
+    if (result.length > maxLines) {
+      result.length = maxLines;
+      const last = [...result[maxLines - 1]!];
+      while (last.length && measure(last.join('') + '…') > units) last.pop();
+      result[maxLines - 1] = last.join('') + '…';
+    }
+    return result.length ? result : [''];
+  }
+  function arrangeNotices(): void {
+    const before = placed.length;
+    placed = placed.filter(notice => {
+      if (notice.live && !nodeGone(notice)) return true;
+      notice.live = false;
+      delete notice.bounds;
+      return false;
+    });
+    if (placed.length !== before) noticeRevision++;
+    if (!placed.length) {
+      if (toastForeground && !toastForeground.isDisposed) game.remove(toastForeground);
+      toastForeground = undefined;
+      lastNoticeLayout = '';
+      return;
+    }
+    const safe = area(),
+      stacks = new Map<string, number>();
+    // A later ordinary view must not cover a requested foreground notice.
+    if (toastForeground?.parent === game.ui && game.ui.getChildIndex(toastForeground) !== game.ui.numChildren - 1)
+      game.toFront(toastForeground);
+    const layout = [safe.x, safe.y, safe.width, safe.height, game.uiScale, noticeRevision].join('/');
+    if (layout === lastNoticeLayout) return;
+    lastNoticeLayout = layout;
+    // Newest first: if there is not room for a whole stack, keep the newest card.
+    for (const notice of [...placed].reverse()) {
+      const p = notice.placement,
+        node = notice.node,
+        anchor =
+          p.anchor === 'top-left' ||
+          p.anchor === 'top-right' ||
+          p.anchor === 'bottom-left' ||
+          p.anchor === 'bottom-right' ||
+          p.anchor === 'bottom'
+            ? p.anchor
+            : 'top',
+        scale = p.units === 'stage' ? 1 : game.uiScale,
+        x = finite(p.offsetX) ? p.offsetX * scale : anchor === 'top' || anchor === 'bottom' ? 0 : 12 * scale,
+        y = finite(p.offsetY) ? Math.max(0, p.offsetY * scale) : 12 * scale,
+        font = clamp((finite(p.fontSize) && p.fontSize > 0 ? p.fontSize : 16) * scale, 1, safe.height),
+        padding = 8 * scale,
+        limit = Math.max(
+          0,
+          Math.min(
+            safe.width - Math.abs(x) - padding,
+            finite(p.maxWidth) && p.maxWidth > 0 ? p.maxWidth * scale : safe.width - 2 * padding
+          )
+        ),
+        heightAvailable = safe.height - y,
+        lineHeight = Math.max(1, font * 1.35),
+        maxLines = Math.min(12, Math.floor((heightAvailable - padding * 2) / lineHeight)),
+        group = [anchor, x, y, notice.foreground].join('/');
+      if (!(limit > padding * 2 && maxLines >= 1)) {
+        if (node.visible) {
+          node.visible = false;
+          game.invalidate();
+        }
+        delete notice.bounds;
+        continue;
+      }
+      const units = Math.max(1, (limit - padding * 2) / (font * 1.15));
+      const lines = noticeLines(notice.words, units, maxLines);
+      const width = Math.min(
+          limit,
+          Math.max(font * 2 + padding * 2, ...lines.map(line => measure(line) * font * 1.15 + padding * 2))
+        ),
+        height = lines.length * lineHeight + 2 * padding,
+        stack = stacks.get(group) ?? 0;
+      if (height + stack > heightAvailable) {
+        if (node.visible) {
+          node.visible = false;
+          game.invalidate();
+        }
+        delete notice.bounds;
+        continue;
+      }
+      stacks.set(group, stack + height + 6 * scale);
+      const left = anchor.endsWith('left')
+        ? safe.x + Math.max(0, x)
+        : anchor.endsWith('right')
+          ? safe.x + safe.width - width - Math.max(0, x)
+          : safe.x + (safe.width - width) / 2 + x;
+      const top = anchor.startsWith('bottom') ? safe.y + safe.height - y - stack - height : safe.y + y + stack;
+      const bx = clamp(left, safe.x, safe.x + safe.width - width),
+        by = clamp(top, safe.y, safe.y + safe.height - height);
+      const key = JSON.stringify([font, width, height, lines]);
+      if (notice.layoutKey !== key) {
+        notice.layoutKey = key;
+        const o = notice.options,
+          back = colour(o.background, 0x0b1020),
+          opacity = finite(o.backgroundAlpha) ? clamp(o.backgroundAlpha, 0, 1) : 0.9,
+          border = colour(o.borderColor, -1);
+        node.graphics
+          .clear()
+          .beginFill(back, opacity)
+          .drawRoundRect(0, 0, width, height, Math.min(8 * scale, height / 2))
+          .endFill();
+        if (border >= 0)
+          node.graphics
+            .lineStyle(scale, border, 1)
+            .drawRoundRect(
+              0.5 * scale,
+              0.5 * scale,
+              Math.max(1, width - scale),
+              Math.max(1, height - scale),
+              6 * scale
+            );
+        node.clipRect = { x: 0, y: 0, width, height };
+        for (const label of notice.labels) game.remove(label);
+        notice.labels.length = 0;
+        lines.forEach((line, index) => {
+          const label = game.text(line, {
+            x: width / 2,
+            y: padding + lineHeight * (index + 0.5),
+            size: font,
+            align: 'center',
+            baseline: 'middle',
+            color: colour(o.color, 0xffffff),
+            layer: node
+          });
+          notice.labels.push(label);
+        });
+        game.invalidate();
+      }
+      if (!node.visible || node.x !== bx || node.y !== by) {
+        node.visible = true;
+        node.x = bx;
+        node.y = by;
+        game.invalidate();
+      }
+      notice.bounds = Object.freeze({ x: bx, y: by, width, height });
+    }
+  }
+  function placedToast(words: string, o: PlayToastOptions): PlayToastHandle {
+    const placement = { ...o.placement },
+      foreground = placement.foreground === true;
+    if (foreground && (!toastForeground || toastForeground.isDisposed || toastForeground.parent === undefined)) {
+      toastForeground = game.sprite(undefined, game.ui);
+      toastForeground.touchEnabled = false;
+      toastForeground.touchChildren = false;
+    }
+    const node = game.sprite(undefined, foreground ? toastForeground : game.ui);
+    node.touchEnabled = false;
+    node.touchChildren = false;
+    node.alpha = 0;
+    const notice: PlacedNotice = {
+      node,
+      words: String(words).slice(0, 4096),
+      options: { ...o },
+      placement,
+      foreground,
+      labels: [],
+      live: true,
+      elapsed: 0,
+      layoutKey: '',
+      duration: finite(o.seconds) && o.seconds > 0 ? o.seconds : 2
+    };
+    // Finite admission even for callers creating persistent notices every step.
+    if (placed.length >= 16) closeNotice(placed[0]!);
+    placed.push(notice);
+    noticeRevision++;
+    arrangeNotices();
+    wake();
+    return {
+      get active() {
+        return notice.live && !nodeGone(notice);
+      },
+      get bounds() {
+        return notice.bounds;
+      },
+      close() {
+        closeNotice(notice);
+        arrangeNotices();
+      }
+    };
+  }
+  function tickNotices(seconds: number): void {
+    if (!placed.length) return;
+    for (const notice of placed) {
+      if (!notice.live) continue;
+      notice.elapsed += Math.max(0, seconds);
+      const fade = notice.options.persistent ? 1 : clamp((notice.duration + 0.45 - notice.elapsed) / 0.3, 0, 1);
+      const alpha = Math.min(clamp(notice.elapsed / 0.15, 0, 1), fade);
+      if (nodeGone(notice)) {
+        notice.live = false;
+        noticeRevision++;
+        delete notice.bounds;
+        continue;
+      }
+      if (alpha !== notice.node.alpha) {
+        notice.node.alpha = alpha;
+        game.invalidate();
+      }
+      if (!notice.options.persistent && fade <= 0) closeNotice(notice);
+    }
+    arrangeNotices();
+  }
+  const nodeGone = (notice: PlacedNotice): boolean => notice.node.isDisposed || notice.node.parent === undefined;
+
   /** The size of the words of a box, and how many lines fit under its name. */
   const boxOf = (named: boolean): { size: number; width: number; lines: number } => {
     const size = Math.max(14, Math.round(game.height / 22)),
@@ -387,12 +665,21 @@ export function createPlayWidgets(
       bars.push(bar);
       return bar;
     },
-    toast(words: string, o: PlayToastOptions = {}): void {
+    toast(words: string, o: PlayToastOptions = {}): PlayToastHandle {
+      o = o ?? {};
+      if (
+        o.placement !== undefined ||
+        o.persistent ||
+        o.background !== undefined ||
+        o.backgroundAlpha !== undefined ||
+        o.borderColor !== undefined
+      )
+        return placedToast(words, o);
       const size = Math.max(14, Math.round(game.height / 24)),
         seconds = finite(o?.seconds) && o.seconds > 0 ? o.seconds : 2,
         w = Math.min(area().width - 32, measure(String(words)) * size + 40),
         h = Math.round(size * 2);
-      toasts = toasts.filter(node => !node.isDisposed && node.parent !== null);
+      toasts = toasts.filter(node => !node.isDisposed && node.parent !== undefined);
       const node = game.sprite(g => {
         g.beginFill(0x0b1020, 0.85)
           .drawRoundRect(-w / 2, 0, w, h, h / 2)
@@ -410,12 +697,26 @@ export function createPlayWidgets(
       });
       toasts.push(node);
       node.alpha = 0;
-      game
+      const motion = game
         .tween(node)
         .to({ alpha: 1 }, 0.15)
         .wait(seconds)
         .to({ alpha: 0 }, 0.3)
         .call(() => game.remove(node));
+      return {
+        get active() {
+          return !node.isDisposed && node.parent !== undefined;
+        },
+        get bounds() {
+          return !node.isDisposed && node.parent !== undefined
+            ? { x: node.x - w / 2, y: node.y, width: w, height: h }
+            : undefined;
+        },
+        close() {
+          motion.stop();
+          game.remove(node);
+        }
+      };
     },
     say(words: string, o: PlaySayOptions = {}): Promise<number | undefined> {
       // Words longer than a box holds are shown a box at a time; the answers, if any, come with the last.
@@ -548,6 +849,7 @@ export function createPlayWidgets(
     tick(seconds: number): void {
       bars = bars.filter(bar => !bar.isDisposed);
       for (const bar of bars) bar.step(seconds);
+      tickNotices(seconds);
       if (menu !== undefined) {
         const open = menu;
         if (steer(open.choice)) {
@@ -583,6 +885,14 @@ export function createPlayWidgets(
       // A restart has taken their sprites; what was being awaited is not answered.
       bars = [];
       toasts = [];
+      for (const notice of placed) {
+        notice.live = false;
+        delete notice.bounds;
+      }
+      placed = [];
+      toastForeground = undefined;
+      lastNoticeLayout = '';
+      noticeRevision++;
       talking = undefined;
       menu = undefined;
       queue = [];

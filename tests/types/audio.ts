@@ -3,7 +3,7 @@
 import {createAudioMixer} from '@egret/engine/audio';
 import type {AudioBackend,AudioBackendBus,AudioBackendSound,AudioBackendStart,AudioBackendVoice,AudioBus,AudioBusOptions,AudioBusSnapshot,AudioEndReason,AudioFade,AudioMixer,AudioMixerOptions,AudioMixerSnapshot,AudioMixerState,AudioMusicOptions,AudioPlayOptions,AudioSound,AudioVoice,AudioVoiceState} from '@egret/engine/audio';
 import {createBrowserAudio} from '@egret/engine/web/audio';
-import type {BrowserAudio,BrowserAudioOptions} from '@egret/engine/web/audio';
+import type {BrowserAudio,BrowserAudioOptions,BrowserAudioInput,BrowserAudioInputOptions,BrowserAudioGlide} from '@egret/engine/web/audio';
 import type {Scope} from '@egret/engine';
 declare const scope:Scope,bytes:Uint8Array,buffer:ArrayBuffer,context:OfflineAudioContext;
 // A host of its own writes the five things a backend is.
@@ -44,6 +44,9 @@ const picture:AudioMixerSnapshot=mixer.snapshot(),row:AudioBusSnapshot=picture.b
 const page:BrowserAudioOptions={buses:['music','effects'],volume:0.8,pauseWhenHidden:true,unlockTarget:document,onError:(cause:unknown)=>{void cause;},maxVoices:24};
 const audio:BrowserAudio=scope.use(createBrowserAudio(page)),same:AudioMixer=audio.mixer,output:AudioNode=audio.output,made:BaseAudioContext=audio.context;void same;void output;void made;
 createBrowserAudio({context}).dispose();createBrowserAudio().dispose();
+const inputOptions:BrowserAudioInputOptions={volume:0.8,duck:0.6,pan:0,lowpass:650},glide:BrowserAudioGlide={timeConstant:0.12};
+const input:BrowserAudioInput=scope.use(audio.createInput('effects',inputOptions));
+const generated=context.createOscillator();generated.connect(input.input);input.setVolume(0.6,glide);input.setDuck(0.3,glide);input.setPan?.(1,glide);input.setLowpass?.(6300,glide);input.dispose();
 // @ts-expect-error a mixer needs a backend
 createAudioMixer({});
 // @ts-expect-error the page brings its own backend

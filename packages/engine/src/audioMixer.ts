@@ -160,7 +160,7 @@ export function createAudioMixer(options: AudioMixerOptions): AudioMixer {
   let music: Voice | undefined;
 
   function makeBus(name: string, level: number, quiet: boolean, parent: AudioBackendBus | undefined): Bus {
-    const raw = guard(() => backend.createBus(parent));
+    const raw = guard(() => backend.createBus(parent, name));
     if (!callable(raw, ['setGain', 'release'])) throw new EgretError('AUDIO_BACKEND_FAILED');
     const apply = (seconds: number): void => {
       guard(() => raw.setGain(bus.muted ? 0 : bus.volume, seconds));
