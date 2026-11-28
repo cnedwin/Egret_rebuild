@@ -4,8 +4,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runInNewContext } from 'node:vm';
+import { createContext, runInContext, runInNewContext } from 'node:vm';
 import {
   SINGLE_FILE_ENTRIES,
   SINGLE_FILE_ENTRIES_3D,
@@ -218,16 +220,97 @@ test("SF06 a script plays in the stage's own units, with the names a game asks i
 });
 
 // Frozen browser observations exercise the real runner without starting a browser or measuring a device.
-function observedBrowser({ soundsStarted = 2, loadError } = {}) {
+function observedBrowser({
+  soundsStarted = 2,
+  loadError,
+  drawAt = 0,
+  frameStartAt = 0,
+  declaredReadyAt,
+  reloadDeclaredReadyAt,
+  canvas = 'visible',
+  hangEvaluate = false,
+  reloadHangEvaluate = false,
+  localRequestAt,
+  localRequestUntil
+} = {}) {
   const listeners = new Map();
   const calls = { navigation: 0, click: 0, closed: 0 };
+  const telemetry = {
+    elapsed: 0,
+    screenshots: [],
+    inputs: [],
+    evaluations: [],
+    localRequests: [],
+    hungSettled: false,
+    savedStart: undefined
+  };
+  const out = fs.mkdtempSync(path.join(os.tmpdir(), 'egret-observed-'));
   let route,
     openedUrl,
     frames = 0,
-    pictures = 0;
-  const canvas = { x: 0, y: 0, w: 960, h: 640, pixelWidth: 960, pixelHeight: 640 };
+    initScript,
+    context,
+    hungTimer,
+    hasHung = false,
+    pendingLocal,
+    navClicks = 0;
+  const blank = picture(10, 10, () => [0, 0, 0, 255]);
   const initial = picture(10, 10, (x, y) => [x < 3 ? 255 : 0, y < 3 ? 255 : 0, 40, 255]);
+  const loading = picture(10, 10, (x, y) => [x < 3 ? 0 : 255, y < 3 ? 255 : 0, 90, 255]);
   const changed = picture(10, 10, (x, y) => [x < 5 ? 255 : 0, y < 3 ? 255 : 0, 40, 255]);
+  const images = { blank, initial, loading, changed };
+  const bounds = () => ({ x: 0, y: 0, width: canvas === 'hidden' ? 0 : 960, height: canvas === 'hidden' ? 0 : 640 });
+  const readyAt = () =>
+    calls.navigation > 1 && reloadDeclaredReadyAt !== undefined ? reloadDeclaredReadyAt : declaredReadyAt;
+  const newPageContext = () => {
+    const style = { display: canvas === 'hidden' ? 'none' : 'block', visibility: 'visible', opacity: '1' };
+    const element = {
+      width: 960,
+      height: 640,
+      isConnected: true,
+      getBoundingClientRect: bounds,
+      getClientRects: () => [bounds()]
+    };
+    const page = {
+      __verify: { frames, audioContexts: 1, soundsStarted, rejections: [], engineWarnings: [] },
+      document: { querySelectorAll: () => (canvas === 'absent' ? [] : [element]) },
+      innerWidth: 960,
+      innerHeight: 640,
+      getComputedStyle: () => style,
+      performance: { now: () => telemetry.elapsed },
+      requestAnimationFrame() {
+        return 1;
+      },
+      addEventListener() {}
+    };
+    page.window = page;
+    page.globalThis = page;
+    if (readyAt() !== undefined)
+      page.egretGame = {
+        get ready() {
+          return telemetry.elapsed >= readyAt();
+        }
+      };
+    context = createContext(page);
+    if (initScript) runInContext('(' + initScript + ')()', context);
+    // The actual init script installs the observer. Advance only simulated
+    // browser callbacks; waiting and screenshots do not manufacture extra ones.
+    Object.assign(page.__verify, { frames, audioContexts: 1, soundsStarted, rejections: [], engineWarnings: [] });
+  };
+  const input = kind => telemetry.inputs.push({ at: telemetry.elapsed, kind, navigation: calls.navigation });
+  const updateLocal = () => {
+    if (calls.navigation !== 1 || localRequestAt === undefined) return;
+    if (!pendingLocal && telemetry.localRequests.length === 0 && telemetry.elapsed >= localRequestAt) {
+      pendingLocal = { url: () => new URL('art.glb', openedUrl).href };
+      telemetry.localRequests.push({ kind: 'start', at: telemetry.elapsed });
+      listeners.get('request')?.(pendingLocal);
+    }
+    if (pendingLocal && telemetry.elapsed >= localRequestUntil) {
+      telemetry.localRequests.push({ kind: 'finish', at: telemetry.elapsed });
+      listeners.get('requestfinished')?.(pendingLocal);
+      pendingLocal = undefined;
+    }
+  };
   const tab = {
     on(name, handler) {
       listeners.set(name, handler);
@@ -235,44 +318,80 @@ function observedBrowser({ soundsStarted = 2, loadError } = {}) {
     async route(pattern, handler) {
       route = handler;
     },
-    async addInitScript() {},
+    async addInitScript(fn) {
+      initScript = fn;
+    },
     async goto(address) {
       calls.navigation++;
+      telemetry.elapsed = frames = navClicks = 0;
+      newPageContext();
       if (loadError) throw loadError;
       openedUrl = address;
+      updateLocal();
     },
     async waitForTimeout(milliseconds) {
-      frames += milliseconds / 20;
+      const before = telemetry.elapsed;
+      telemetry.elapsed += milliseconds;
+      frames += Math.max(0, telemetry.elapsed - Math.max(before, frameStartAt)) / 20;
+      context.__verify.frames = frames;
+      updateLocal();
       await new Promise(resolve => setTimeout(resolve, 1));
     },
-    async screenshot() {
-      return ++pictures === 1 ? initial : changed;
+    async screenshot(options = {}) {
+      const name =
+        telemetry.elapsed < drawAt
+          ? 'blank'
+          : readyAt() !== undefined && telemetry.elapsed < readyAt()
+            ? 'loading'
+            : navClicks === 0
+              ? 'initial'
+              : 'changed';
+      const bytes = Buffer.from(name);
+      telemetry.screenshots.push({ name, at: telemetry.elapsed, path: options.path, navigation: calls.navigation });
+      if (options.path) fs.writeFileSync(options.path, bytes);
+      return bytes;
     },
-    async evaluate(read) {
-      return structuredClone(
-        runInNewContext('(' + read + ')()', {
-          window: { __verify: { frames, audioContexts: 1, soundsStarted, rejections: [] } },
-          document: {
-            querySelectorAll: () => [
-              {
-                width: canvas.pixelWidth,
-                height: canvas.pixelHeight,
-                getBoundingClientRect: () => ({ x: canvas.x, y: canvas.y, width: canvas.w, height: canvas.h })
-              }
-            ]
-          }
-        })
-      );
+    async evaluate(read, arg) {
+      telemetry.evaluations.push({ navigation: calls.navigation, at: telemetry.elapsed });
+      if ((hangEvaluate || (reloadHangEvaluate && calls.navigation > 1)) && !hasHung) {
+        hasHung = true;
+        // Let a broken implementation finish instead of leaking a serving
+        // socket forever. The correct runner returns before this resolves.
+        await new Promise(resolve => {
+          hungTimer = setTimeout(resolve, 1500);
+        });
+        telemetry.hungSettled = true;
+      }
+      context.__arg = arg;
+      return structuredClone(await runInContext('(' + read + ')(__arg)', context));
     },
     mouse: {
       async click() {
         calls.click++;
+        navClicks++;
+        input('click');
       },
-      async move() {},
-      async down() {},
-      async up() {}
+      async move() {
+        input('move');
+      },
+      async down() {
+        input('down');
+      },
+      async up() {
+        input('up');
+      }
     },
-    keyboard: { async press() {}, async down() {}, async up() {} }
+    keyboard: {
+      async press() {
+        input('press');
+      },
+      async down() {
+        input('key-down');
+      },
+      async up() {
+        input('key-up');
+      }
+    }
   };
   return {
     chromium: {
@@ -282,15 +401,20 @@ function observedBrowser({ soundsStarted = 2, loadError } = {}) {
             return tab;
           },
           async close() {
+            clearTimeout(hungTimer);
             calls.closed++;
+            const start = path.join(out, '1-start.png');
+            if (fs.existsSync(start)) telemetry.savedStart = fs.readFileSync(start, 'utf8');
+            fs.rmSync(out, { recursive: true, force: true });
           }
         };
       }
     },
-    PNG: { sync: { read: bytes => bytes } },
+    PNG: { sync: { read: bytes => images[bytes.toString()] } },
     file: fileURLToPath(new URL('../examples/play/index.html', import.meta.url)),
-    out: '.',
+    out,
     calls,
+    telemetry,
     get openedUrl() {
       return openedUrl;
     },
@@ -332,6 +456,148 @@ test('SF08 external requests from the scripted run fail the final report', async
   assert.equal(refused.pass, false);
 });
 
+// Break caught: a blind fixed-delay picture can record a blank loading surface
+// and reject a fully functioning game. Reuse the successful observation.
+test('SF startup readiness waits beyond 2.5 seconds for drawn and advancing browser content', async () => {
+  const browser = observedBrowser({ drawAt: 3200, frameStartAt: 3200 });
+  const report = await verifyGame(browser);
+  assert.equal(report.pass, true);
+  assert.equal(report.checks.startupReady.pass, true);
+  assert.equal(report.checks.startupReady.source, 'observed');
+  assert.equal(report.checks.startupReady.timeoutMs, 60000);
+  assert.ok(report.checks.startupReady.elapsedMs >= 0);
+  assert.equal(report.checks.drawsSomething.pass, true);
+  assert.equal(report.checks.keepsRunning.pass, true);
+  const firstInput = browser.telemetry.inputs[0]?.at;
+  assert.ok(firstInput >= 3200, 'blind inputs wait for actual startup');
+  assert.equal(browser.telemetry.savedStart, 'initial', '1-start is the accepted picture, not a later probe');
+  assert.equal(
+    browser.telemetry.screenshots.filter(picture => picture.at <= firstInput && picture.name === 'initial').length,
+    1
+  );
+});
+
+// Break caught: a colorful animated loading screen must not overrule the game's
+// explicit startup intent; the same gate must unblock when the game says ready.
+test('SF declared startup readiness is respected even when loading art already draws and ticks', async () => {
+  const browser = observedBrowser({ declaredReadyAt: 3200 });
+  const report = await verifyGame(browser);
+  assert.equal(report.pass, true);
+  assert.equal(report.checks.startupReady.pass, true);
+  assert.equal(report.checks.startupReady.source, 'declared');
+  assert.ok(browser.telemetry.inputs[0]?.at >= 3200);
+  assert.equal(browser.telemetry.savedStart, 'initial');
+});
+
+// Break caught: removing the blind delay must not turn permanent loading, a
+// drawing-free callback loop, a stalled loop or a hidden canvas into a pass.
+test('SF startup timeout fails closed without blind input or ineligible canvas probes', async t => {
+  const cases = [
+    ['declared pending', { declaredReadyAt: Infinity }, 'declared', /declar|ready|waiting/i],
+    ['black with callbacks', { drawAt: Infinity }, 'observed', /blank|draw|paint|color/i],
+    ['painted but stopped', { frameStartAt: Infinity }, 'observed', /frame|running|heartbeat/i],
+    ['hidden canvas', { canvas: 'hidden' }, 'observed', /canvas|visible/i],
+    ['absent canvas', { canvas: 'absent' }, 'observed', /canvas|visible/i],
+    ['declared ready but black', { declaredReadyAt: 0, drawAt: Infinity }, 'declared', /blank|draw|paint|color/i]
+  ];
+  for (const [name, options, source, reason] of cases)
+    await t.test(name, async () => {
+      const browser = observedBrowser(options);
+      const report = await verifyGame({ ...browser, startupTimeoutMs: 250 });
+      assert.equal(report.pass, false);
+      assert.equal(report.checks.startupReady.pass, false);
+      assert.equal(report.checks.startupReady.source, source);
+      assert.equal(report.checks.startupReady.timeoutMs, 250);
+      assert.match(report.checks.startupReady.reason, reason);
+      assert.equal(browser.telemetry.inputs.length, 0, 'do not interact with an unready page');
+      if (options.canvas)
+        assert.equal(browser.telemetry.screenshots.length, 0, 'never screenshot an ineligible canvas');
+      assert.equal(browser.calls.closed, 1);
+    });
+});
+
+// Break caught: a hung renderer/evaluation may not be allowed to consume an
+// unbounded wait. Verify the real runner returns while that command is unresolved.
+test('SF startup deadline also bounds an unfinished browser evaluation', async () => {
+  const browser = observedBrowser({ hangEvaluate: true });
+  const report = await verifyGame({ ...browser, startupTimeoutMs: 250 });
+  assert.equal(report.pass, false);
+  assert.equal(report.checks.startupReady.pass, false);
+  assert.equal(report.checks.startupReady.timeoutMs, 250);
+  assert.match(report.checks.startupReady.reason, /timeout|deadline|evaluat|observ/i);
+  assert.equal(browser.telemetry.hungSettled, false);
+  assert.equal(browser.telemetry.inputs.length, 0);
+  assert.equal(browser.calls.closed, 1);
+});
+
+// Break caught: a tinted loading screen can draw while a same-origin art fetch
+// is in flight. Even a request wholly within one observation interval invalidates
+// that interval; first input has to follow a fresh, stable sample.
+test('SF observed startup waits for same-origin requests to settle before sampling and input', async t => {
+  for (const [name, localRequestAt, localRequestUntil] of [
+    ['delayed art', 0, 3200],
+    ['request within one sample', 100, 600]
+  ])
+    await t.test(name, async () => {
+      const browser = observedBrowser({ localRequestAt, localRequestUntil });
+      const report = await verifyGame(browser);
+      assert.equal(report.pass, true);
+      assert.equal(report.checks.startupReady.source, 'observed');
+      assert.equal(report.checks.startupReady.pendingRequests, 0);
+      assert.deepEqual(
+        browser.telemetry.localRequests.map(event => event.kind),
+        ['start', 'finish']
+      );
+      const finished = browser.telemetry.localRequests[1].at;
+      assert.ok(
+        browser.telemetry.screenshots[0]?.at > finished,
+        'capture fresh quiet interval, not loading/changed network'
+      );
+      assert.ok(browser.telemetry.inputs[0]?.at > finished);
+    });
+});
+
+// Break caught: a second ordinary navigation may fail its own startup. It must
+// not touch the unready scene again for a diagnostic screenshot or stale state.
+test('SF bounded scripted reload failure never starts the script or reprobes the unready page', async t => {
+  for (const [name, options] of [
+    ['declared pending', { reloadDeclaredReadyAt: Infinity }],
+    ['hung evaluation', { reloadHangEvaluate: true }]
+  ])
+    await t.test(name, async () => {
+      const browser = observedBrowser(options);
+      let scriptRan = false;
+      const report = await verifyGame({
+        ...browser,
+        startupTimeoutMs: 250,
+        script: {
+          async default() {
+            scriptRan = true;
+          }
+        }
+      });
+      assert.equal(report.checks.startupReady.pass, true, 'first startup did succeed');
+      assert.equal(report.pass, false);
+      assert.equal(report.checks.played.pass, false);
+      assert.equal(report.checks.played.startupReady.pass, false, 'second startup has its own failure receipt');
+      assert.equal(report.checks.played.startupReady.timeoutMs, 250);
+      assert.equal(report.checks.played.diagnostic.code, 'VERIFY_GAME_STARTUP');
+      assert.equal(browser.calls.navigation, 2);
+      assert.equal(browser.calls.closed, 1);
+      assert.equal(scriptRan, false);
+      assert.equal(browser.telemetry.inputs.filter(input => input.navigation === 2).length, 0);
+      assert.equal(browser.telemetry.screenshots.filter(picture => picture.navigation === 2).length, 0);
+      if (options.reloadHangEvaluate) {
+        assert.equal(browser.telemetry.hungSettled, false, 'deadline returns before the hung command resolves');
+        assert.equal(
+          browser.telemetry.evaluations.filter(evaluation => evaluation.navigation === 2).length,
+          1,
+          'never read stale page after startup failure'
+        );
+      }
+    });
+});
+
 test('script-only verification starts once and evaluates ordered gameplay checkpoints without blind input', async () => {
   const browser = observedBrowser({ soundsStarted: 0 });
   const launch = browser.chromium.launch;
@@ -362,6 +628,7 @@ test('script-only verification starts once and evaluates ordered gameplay checkp
   assert.deepEqual(report.checks.played.checkpoints, ['first-action', 'restart']);
   assert.equal('makesSound' in report.checks, false);
   assert.equal('keepsRunning' in report.checks, false);
+  assert.equal('startupReady' in report.checks, false);
 });
 
 test('script-only failures retain the checkpoints reached and an actionable diagnostic', async () => {

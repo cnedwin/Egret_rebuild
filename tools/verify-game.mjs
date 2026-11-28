@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Usage: node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs]
+// Usage: node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs] [--startup-timeout <ms>]
 // Runs one game page in a headless browser with software rendering and says whether it starts, draws, keeps drawing,
 // answers input and makes sound. It is the check to run after writing or changing a game: it prints a report, writes
 // it as report.json beside three pictures of the page, and exits with 1 when a check fails.
@@ -9,6 +9,8 @@
 // pictures. A page inside this checkout is served from its root, so that an import map to /packages works; any
 // other page is served from its own folder, and asking for anything outside the server fails `noExternalRequests`.
 // Frame rates under software rendering are far below a device's and are not a measure of the game.
+// Ordinary verification waits for a visible, painted canvas and an advancing frame sample before blind input.
+// A game may declare window.egretGame.ready=false during loading, then true when its initial view is ready.
 //
 // Blind play does not reach the end of a game. A fourth argument names a script that plays it as a person would:
 //
@@ -105,7 +107,10 @@ function observedChecks(seen) {
       failedRequests: seen.failedRequests
     },
     noExternalRequests: { pass: seen.externalRequests.length === 0, externalRequests: seen.externalRequests },
-    hasCanvas: { pass: seen.canvases.some(canvas => canvas.w > 0 && canvas.h > 0), canvases: seen.canvases }
+    hasCanvas: {
+      pass: seen.canvases.some(canvas => canvas.w > 0 && canvas.h > 0 && canvas.visible !== false),
+      canvases: seen.canvases
+    }
   };
 }
 
@@ -114,8 +119,9 @@ export function gameChecks(seen) {
   const changed = Math.max(seen.changedAfterFirstInputs, seen.changedAtEnd, seen.changedMostDuringInput);
   return {
     ...observedChecks(seen),
+    ...(seen.startup ? { startupReady: seen.startup } : {}),
     drawsSomething: {
-      pass: seen.start.colors >= 3 && seen.start.dominant < 0.995,
+      pass: hasPicture(seen.start),
       ...seen.start,
       note: 'colours are counted in steps of sixteen; dominant is the share of the commonest colour'
     },
@@ -123,7 +129,7 @@ export function gameChecks(seen) {
       pass: seen.framesPerSecondIdle >= 2 && seen.framesPerSecondPlaying >= 2,
       framesPerSecondIdle: seen.framesPerSecondIdle,
       framesPerSecondPlaying: seen.framesPerSecondPlaying,
-      note: 'software rendering: frames must keep advancing while idle and during input'
+      note: 'requestAnimationFrame callbacks must keep advancing while idle and during input; not GPU or presentation FPS'
     },
     reactsOrMoves: {
       pass: changed > 0.004,
@@ -357,6 +363,153 @@ function playReport(file, checks, warnings = [], pictures = {}, engineWarnings =
   };
 }
 
+const DEFAULT_STARTUP_TIMEOUT_MS = 60_000;
+const STARTUP_SAMPLE_MS = 1000;
+const STARTUP_POLL_MS = 250;
+
+function hasPicture(stats) {
+  return stats.colors >= 3 && stats.dominant < 0.995;
+}
+
+/** The timeout for the ordinary verifier, including navigation and the first usable sample. */
+export function parseStartupTimeout(value) {
+  const number = typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value;
+  if (!Number.isSafeInteger(number) || number < 1 || number > 300_000)
+    throw new TypeError('--startup-timeout takes an integer from 1 to 300000 milliseconds.');
+  return number;
+}
+
+function usableCanvas(canvas) {
+  return canvas.visible !== false && canvas.w > 0 && canvas.h > 0 && canvas.pixelWidth > 0 && canvas.pixelHeight > 0;
+}
+
+function visibleCanvas(state) {
+  return (state?.canvases ?? []).some(usableCanvas);
+}
+
+function startupGate(state, net) {
+  if (state.ready === false) return 'declared-ready';
+  if (!visibleCanvas(state)) return 'visible-canvas';
+  if (state.ready !== true && net.pending > 0) return 'asset-requests';
+  return undefined;
+}
+
+// Playwright evaluate can wait indefinitely for a blocked page. The outside monotonic deadline also
+// bounds that case; closing the browser in the owning runner retires outstanding page operations.
+async function withinStartupDeadline(deadline, operation) {
+  const remaining = Math.ceil(deadline - performance.now());
+  const timeoutError = () => Object.assign(new Error('Startup deadline reached.'), { code: 'VERIFY_STARTUP_TIMEOUT' });
+  if (remaining <= 0) throw timeoutError();
+  let timer;
+  try {
+    return await Promise.race([
+      Promise.resolve().then(() => operation(remaining)),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(timeoutError()), remaining);
+      })
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Each ordinary navigation gets its own deadline. Reuse the accepted screenshot and interval as the
+// original draw/idle checks, rather than sampling a second, possibly different loading state.
+async function observeStartup({ navigate, state, wait, capture, network, timeoutMs }) {
+  const started = performance.now(),
+    deadline = started + timeoutMs;
+  let last,
+    picture,
+    fpsIdle = 0,
+    framesObserved = 0,
+    waitingFor = 'navigation';
+  const receipt = (pass, reason, message) => ({
+    pass,
+    source: typeof last?.ready === 'boolean' ? 'declared' : 'observed',
+    elapsedMs: Math.round(performance.now() - started),
+    timeoutMs,
+    reason: reason === 'timeout' ? 'timeout-' + waitingFor : reason,
+    timedOut: reason === 'timeout',
+    ...(pass ? {} : { waitingFor, ...(message ? { message } : {}) }),
+    pendingRequests: network().pending,
+    hasVisibleCanvas: visibleCanvas(last),
+    framesPerSecondIdle: fpsIdle,
+    framesObserved,
+    pictureObserved: picture !== undefined,
+    ...(picture ? { colors: picture.colors, dominant: picture.dominant } : {})
+  });
+  try {
+    await withinStartupDeadline(deadline, navigate);
+    waitingFor = 'observation';
+    while (performance.now() < deadline) {
+      const before = await withinStartupDeadline(deadline, state),
+        beforeNet = network();
+      last = before;
+      const blocker = startupGate(before, beforeNet);
+      waitingFor = blocker ?? (picture && hasPicture(picture) ? 'frames' : 'frames-and-nonblank-picture');
+      const begun = performance.now();
+      await withinStartupDeadline(deadline, remaining =>
+        wait(Math.min(blocker ? STARTUP_POLL_MS : STARTUP_SAMPLE_MS, remaining))
+      );
+      const after = await withinStartupDeadline(deadline, state),
+        afterNet = network();
+      last = after;
+      const elapsed = Math.max(1, performance.now() - begun);
+      framesObserved = Math.max(0, (after.frames ?? 0) - (before.frames ?? 0));
+      fpsIdle = Math.round(((framesObserved * 1000) / elapsed) * 10) / 10;
+      const afterBlocker = startupGate(after, afterNet);
+      if (blocker || afterBlocker) {
+        waitingFor = afterBlocker ?? blocker;
+        continue;
+      }
+      // False -> true must be followed by a real quiet interval, not accepted using loader frames.
+      if (before.ready !== after.ready) {
+        waitingFor = 'declared-ready';
+        continue;
+      }
+      if (after.ready !== true && beforeNet.revision !== afterNet.revision) {
+        waitingFor = 'asset-requests';
+        continue;
+      }
+      const advancing = framesObserved >= 2 && fpsIdle >= 2;
+      // Retain a diagnostic picture for a painted but stopped canvas, without repeatedly reading it
+      // back while no frame advances. For advancing blank frames, keep looking until the deadline.
+      if (picture === undefined || advancing) {
+        waitingFor = 'nonblank-picture';
+        picture = await withinStartupDeadline(deadline, capture);
+      }
+      if (performance.now() >= deadline) break;
+      // A loading-state change during screenshot capture cannot authorize later blind input.
+      if (advancing && hasPicture(picture)) {
+        const confirmed = await withinStartupDeadline(deadline, state);
+        last = confirmed;
+        const confirmationBlocker = startupGate(confirmed, network());
+        if (confirmationBlocker || after.ready !== confirmed.ready) {
+          waitingFor = confirmationBlocker ?? 'declared-ready';
+          continue;
+        }
+      }
+      if (last.ready !== true && network().revision !== afterNet.revision) {
+        waitingFor = 'asset-requests';
+        continue;
+      }
+      if (performance.now() < deadline && advancing && hasPicture(picture))
+        return { receipt: receipt(true, 'ready'), state: last, picture };
+      waitingFor = advancing ? 'nonblank-picture' : 'frames';
+    }
+    return { receipt: receipt(false, 'timeout'), state: last, picture };
+  } catch (error) {
+    const message = String(error?.message ?? error).slice(0, 500);
+    const reason =
+      error?.code === 'VERIFY_STARTUP_TIMEOUT' || error?.name === 'TimeoutError'
+        ? 'timeout'
+        : waitingFor === 'navigation'
+          ? 'navigation-error'
+          : 'observation-error';
+    return { receipt: receipt(false, reason, message), state: last, picture };
+  }
+}
+
 /**
  * Runs the page at `file` and gives the report. `chromium` is Playwright's; `PNG` is pngjs's. `script`, where given,
  * is the module of a script that plays the game: its default export, and the `stage` it names. `scriptOnly` serves the
@@ -365,7 +518,17 @@ function playReport(file, checks, warnings = [], pictures = {}, engineWarnings =
  * completed steps with `player.checkpoint(name)` and attach a string `code` and JSON `details` to errors.
  * A script-only module can export `viewport` to reproduce a particular browser layout independently of stage units.
  */
-export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly = false, filePaths }) {
+export async function verifyGame({
+  chromium,
+  PNG,
+  file,
+  out,
+  script,
+  scriptOnly = false,
+  filePaths,
+  startupTimeoutMs = DEFAULT_STARTUP_TIMEOUT_MS
+}) {
+  startupTimeoutMs = parseStartupTimeout(startupTimeoutMs);
   if (scriptOnly && typeof script?.default !== 'function') throw new Error('scriptOnly requires a play script');
   const inside = !path.relative(root, file).startsWith('..'),
     base = inside && !scriptOnly ? root : path.dirname(file);
@@ -434,9 +597,24 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
       else if (message.type() === 'warning') consoleWarnings.push(text.slice(0, 300));
     });
     tab.on('pageerror', error => seen.pageErrors.push(String(error.stack || error.message).slice(0, 900)));
-    tab.on('requestfailed', request =>
-      seen.failedRequests.push(request.url() + ' ' + (request.failure()?.errorText ?? ''))
-    );
+    // Only ordinary readiness consumes this local request witness; error observers keep their old authority.
+    const pendingRequests = new Set();
+    let requestRevision = 0;
+    tab.on('request', request => {
+      if (request.url().startsWith(origin)) {
+        pendingRequests.add(request);
+        requestRevision++;
+      }
+    });
+    const finishRequest = request => {
+      if (pendingRequests.delete(request)) requestRevision++;
+    };
+    tab.on('requestfinished', finishRequest);
+    tab.on('requestfailed', request => {
+      finishRequest(request);
+      seen.failedRequests.push(request.url() + ' ' + (request.failure()?.errorText ?? ''));
+    });
+    const network = () => ({ pending: pendingRequests.size, revision: requestRevision });
     tab.on('response', response => {
       if (response.status() >= 400) seen.failedRequests.push(response.url() + ' ' + response.status());
     });
@@ -449,27 +627,65 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
     });
     await tab.addInitScript(counters);
     const pictures = {};
-    const picture = async name => {
+    const picture = async (name, timeout) => {
       const target = path.join(out, name + '.png'),
-        bytes = await tab.screenshot({ path: target });
+        bytes = await tab.screenshot({ path: target, ...(timeout === undefined ? {} : { timeout }) });
       pictures[name] = { path: target, png: PNG.sync.read(bytes) };
+      return pictures[name].png;
     };
     const state = () =>
-      tab.evaluate(() => ({
-        ...window.__verify,
-        canvases: [...document.querySelectorAll('canvas')].map(canvas => {
-          const box = canvas.getBoundingClientRect();
-          return {
-            x: box.x,
-            y: box.y,
-            w: box.width,
-            h: box.height,
-            pixelWidth: canvas.width,
-            pixelHeight: canvas.height
-          };
-        })
-      }));
+      tab.evaluate(
+        (inspectStartup = true) => ({
+          ...window.__verify,
+          ...(inspectStartup
+            ? { ready: typeof window.egretGame?.ready === 'boolean' ? window.egretGame.ready : null }
+            : {}),
+          canvases: [...document.querySelectorAll('canvas')].map(canvas => {
+            const box = canvas.getBoundingClientRect();
+            const style =
+              inspectStartup && typeof window.getComputedStyle === 'function'
+                ? window.getComputedStyle(canvas)
+                : undefined;
+            const visible =
+              !inspectStartup ||
+              ((typeof canvas.checkVisibility !== 'function' ||
+                canvas.checkVisibility({
+                  checkOpacity: true,
+                  checkVisibilityCSS: true
+                })) &&
+                style?.visibility !== 'hidden' &&
+                style?.visibility !== 'collapse' &&
+                style?.display !== 'none' &&
+                style?.opacity !== '0' &&
+                canvas.hidden !== true &&
+                (typeof window.innerWidth !== 'number' || (box.x + box.width > 0 && box.x < window.innerWidth)) &&
+                (typeof window.innerHeight !== 'number' || (box.y + box.height > 0 && box.y < window.innerHeight)));
+            return {
+              x: box.x,
+              y: box.y,
+              w: box.width,
+              h: box.height,
+              pixelWidth: canvas.width,
+              pixelHeight: canvas.height,
+              ...(inspectStartup ? { visible } : {})
+            };
+          })
+        }),
+        !scriptOnly
+      );
     const address = origin + path.relative(base, file).split(path.sep).join('/');
+    const startPage = save =>
+      observeStartup({
+        navigate: timeout => tab.goto(address, { waitUntil: 'load', timeout }),
+        state,
+        wait: ms => tab.waitForTimeout(ms),
+        capture: timeout =>
+          save
+            ? picture('1-start', timeout).then(pictureStats)
+            : tab.screenshot({ timeout }).then(bytes => pictureStats(PNG.sync.read(bytes))),
+        network,
+        timeoutMs: startupTimeoutMs
+      });
     const runScript = async (prepare, fallbackCode) => {
       const before = [seen.pageErrors.length, seen.consoleErrors.length];
       const played = { pass: false, pictures: [] };
@@ -501,7 +717,9 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
         played.pass = true;
       } catch (error) {
         recordScriptFailure(played, error, fallbackCode());
-        await tab.screenshot({ path: path.join(out, 'played-failed.png') }).catch(() => {});
+        // A failed ordinary readiness deadline may mean the browser is stuck. Do not read it again.
+        if (scriptOnly || error?.code !== 'VERIFY_GAME_STARTUP')
+          await tab.screenshot({ path: path.join(out, 'played-failed.png') }).catch(() => {});
       }
       return played;
     };
@@ -519,19 +737,40 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
       seen.canvases = (await state().catch(() => null))?.canvases ?? [];
       return playReport(file, { ...observedChecks(seen), played }, consoleWarnings);
     }
-    try {
-      await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
-    } catch (error) {
-      seen.loadError = String(error.message);
+    const initial = await startPage(true);
+    const idle = initial.state;
+    seen.startup = initial.receipt;
+    seen.framesPerSecondIdle = initial.receipt.framesPerSecondIdle;
+    if (!initial.receipt.pass) {
+      if (initial.receipt.waitingFor === 'navigation')
+        seen.loadError = initial.receipt.message ?? 'Startup navigation did not complete.';
+      Object.assign(seen, {
+        rejections: idle?.rejections ?? [],
+        canvases: idle?.canvases ?? [],
+        start: initial.picture ?? { colors: 0, dominant: 1 },
+        framesPerSecondPlaying: 0,
+        changedAfterFirstInputs: 0,
+        changedAtEnd: 0,
+        changedMostDuringInput: 0,
+        audioContexts: idle?.audioContexts ?? 0,
+        soundsStarted: idle?.soundsStarted ?? 0
+      });
+      const checks = gameChecks(seen);
+      if (script !== undefined)
+        checks.played = {
+          pass: false,
+          pictures: [],
+          checkpoints: [],
+          diagnostic: {
+            code: 'VERIFY_GAME_STARTUP',
+            message: 'Blind startup did not become ready.',
+            details: initial.receipt
+          }
+        };
+      return playReport(file, checks, consoleWarnings, pictures, idle?.engineWarnings ?? []);
     }
-    await tab.waitForTimeout(2500);
-    await picture('1-start');
-    const before = await state();
-    await tab.waitForTimeout(1000);
-    const idle = await state();
-    seen.framesPerSecondIdle = idle.frames - before.frames;
     // Input is aimed at the largest canvas of the page.
-    const canvas = idle.canvases.filter(one => one.w > 0 && one.h > 0).sort((p, q) => q.w * q.h - p.w * p.h)[0];
+    const canvas = idle.canvases.filter(usableCanvas).sort((p, q) => q.w * q.h - p.w * p.h)[0];
     const middleX = canvas ? canvas.x + canvas.w / 2 : WIDTH / 2,
       middleY = canvas ? canvas.y + canvas.h / 2 : HEIGHT / 2,
       spanX = canvas ? canvas.w : WIDTH,
@@ -601,7 +840,7 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
       soundsStarted: end.soundsStarted,
       engineWarnings: end.engineWarnings ?? []
     });
-    let scripted;
+    let scripted, scriptedStartup;
     if (script !== undefined) {
       // The game is played from its start: the page is loaded again, and what goes wrong from here is the script's.
       scripted = await runScript(
@@ -618,16 +857,28 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
               }
             })
             .catch(() => {});
-          await tab.goto(address, { waitUntil: 'load', timeout: 30000 });
-          await tab.waitForTimeout(1500);
+          const fresh = await startPage(false);
+          scriptedStartup = fresh.receipt;
+          if (!fresh.receipt.pass) {
+            seen.rejections.push(...(fresh.state?.rejections ?? []));
+            seen.engineWarnings.push(...(fresh.state?.engineWarnings ?? []));
+            throw Object.assign(new Error('Scripted startup did not become ready: ' + fresh.receipt.reason), {
+              code: 'VERIFY_GAME_STARTUP',
+              details: fresh.receipt
+            });
+          }
         },
         () => 'VERIFY_GAME_SCRIPT'
       );
+      if (scriptedStartup) scripted.startupReady = scriptedStartup;
     }
     // Network and error observers stay active through scripted play; decide every flag from their final values.
     const checks = gameChecks(seen);
     if (scripted !== undefined) checks.played = scripted;
-    const engineWarnings = (await state().catch(() => end))?.engineWarnings ?? seen.engineWarnings;
+    const engineWarnings =
+      scriptedStartup?.pass === false
+        ? seen.engineWarnings
+        : ((await state().catch(() => end))?.engineWarnings ?? seen.engineWarnings);
     return playReport(file, checks, consoleWarnings, pictures, engineWarnings);
   } catch (error) {
     if (!scriptOnly) throw error;
@@ -644,10 +895,17 @@ export async function verifyGame({ chromium, PNG, file, out, script, scriptOnly 
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const [playwright, page, output, play] = process.argv.slice(2);
-  if (!playwright || !page || !output || !path.isAbsolute(playwright) || process.argv.length > 6)
+  const [playwright, page, output, ...options] = process.argv.slice(2);
+  let play,
+    startupTimeoutMs = DEFAULT_STARTUP_TIMEOUT_MS;
+  for (let i = 0; i < options.length; i++) {
+    if (options[i] === '--startup-timeout') startupTimeoutMs = parseStartupTimeout(options[++i]);
+    else if (!options[i].startsWith('--') && play === undefined) play = options[i];
+    else throw new Error('Unknown verify-game option: ' + options[i]);
+  }
+  if (!playwright || !page || !output || !path.isAbsolute(playwright))
     throw new Error(
-      'Usage: node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs]'
+      'Usage: node tools/verify-game.mjs <absolute Playwright index.mjs> <game.html> <new output directory> [play.mjs] [--startup-timeout <ms>]'
     );
   if (play !== undefined && !fs.existsSync(path.resolve(play)))
     throw new Error('There is no script at ' + path.resolve(play));
@@ -661,7 +919,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const script = play === undefined ? undefined : await import(pathToFileURL(path.resolve(play)).href);
   if (script !== undefined && typeof script.default !== 'function')
     throw new Error('The script has no default export to play the game with: ' + path.resolve(play));
-  const report = await verifyGame({ chromium, PNG, file, out, script });
+  const report = await verifyGame({ chromium, PNG, file, out, script, startupTimeoutMs });
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   console.log(JSON.stringify(report, null, 2));
   process.exit(report.pass ? 0 : 1);
