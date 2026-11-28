@@ -10,7 +10,12 @@ import { createSharedWebGL2Host } from '@egret/engine/webgl2';
 import { glPorts } from './fixtures/gl-shared-rendering.mjs';
 import { withPorts, capture, admitted, passes } from './fixtures/gpu-shared-rendering.mjs';
 import { prepareEffects2D } from '../packages/engine/dist/rendering/sharedEffects2D.js';
-import { sharedBlendSpace2D, sharedTargetChannel2D } from '../packages/engine/dist/rendering/sharedColor2D.js';
+import {
+  sharedBlendSpace2D,
+  sharedFrameProfileRefusal2D,
+  sharedTargetChannel2D
+} from '../packages/engine/dist/rendering/sharedColor2D.js';
+import { sharedBackingExtent2D } from '../packages/engine/dist/rendering/prepareSharedDraws2D.js';
 import { blendChecks } from '../examples/blend-space/verify.mjs';
 
 const decode = code => (code / 255 <= 0.04045 ? code / 255 / 12.92 : ((code / 255 + 0.055) / 1.055) ** 2.4);
@@ -204,4 +209,55 @@ test('BLD06 the browser check calls srgb right only when every square is the 2D 
   assert.ok(!Object.values(blendChecks('srgb', light, canvas)).every(Boolean));
   assert.ok(Object.values(blendChecks('linear', light, canvas)).every(Boolean));
   assert.ok(!Object.values(blendChecks('linear', same, canvas)).every(Boolean));
+});
+
+// Break caught: let either Host draw a frame of another space, alpha or representation, an opaque frame that clears to
+// less than full alpha, or a backing that is not a positive 32-bit extent within the limit.
+test('BLD07 one rule decides which frames both Hosts draw and the backing they draw them into', () => {
+  const frame = (space, alpha, extra = {}) => ({
+    colorRecipe: space === 'srgb' ? 'egret.srgb-pma/1' : 'egret.linear-srgb-pma/1',
+    targetRepresentation: space === 'srgb' ? 'egret.encoded-srgb-pma8-target/1' : 'egret.srgb-pma8-target/1',
+    outputAlpha: alpha,
+    outputRepresentation: alpha === 'opaque' ? 'egret.srgb-opaque-unorm8/1' : 'egret.srgb-premultiplied-unorm8/1',
+    clearAlpha: alpha === 'opaque' ? 1 : 0,
+    ...extra
+  });
+  for (const space of ['linear', 'srgb'])
+    for (const alpha of ['premultiplied', 'opaque']) {
+      assert.equal(sharedFrameProfileRefusal2D(frame(space, alpha), space, alpha), undefined);
+      assert.equal(
+        sharedFrameProfileRefusal2D(frame(space, alpha), space === 'srgb' ? 'linear' : 'srgb', alpha),
+        'profile'
+      );
+      const other = alpha === 'opaque' ? 'premultiplied' : 'opaque';
+      assert.equal(sharedFrameProfileRefusal2D(frame(space, alpha), space, other), 'profile');
+      assert.equal(sharedFrameProfileRefusal2D(frame(space, other), space, alpha), 'profile');
+    }
+  const mixed = frame('linear', 'premultiplied', { targetRepresentation: 'egret.encoded-srgb-pma8-target/1' });
+  assert.equal(sharedFrameProfileRefusal2D(mixed, 'linear', 'premultiplied'), 'profile');
+  const representation = frame('linear', 'opaque', { outputRepresentation: 'egret.srgb-premultiplied-unorm8/1' });
+  assert.equal(sharedFrameProfileRefusal2D(representation, 'linear', 'opaque'), 'profile');
+  const alphaOnly = frame('linear', 'premultiplied', { outputAlpha: 'opaque' });
+  assert.equal(sharedFrameProfileRefusal2D(alphaOnly, 'linear', 'premultiplied'), 'profile');
+  // An opaque frame must clear to full alpha; the profile is checked first.
+  assert.equal(
+    sharedFrameProfileRefusal2D(frame('linear', 'opaque', { clearAlpha: 0.5 }), 'linear', 'opaque'),
+    'invalid'
+  );
+  assert.equal(
+    sharedFrameProfileRefusal2D(frame('linear', 'opaque', { clearAlpha: 0.5 }), 'srgb', 'opaque'),
+    'profile'
+  );
+  assert.equal(
+    sharedFrameProfileRefusal2D(frame('linear', 'premultiplied', { clearAlpha: 0.5 }), 'linear', 'premultiplied'),
+    undefined
+  );
+
+  assert.deepEqual(sharedBackingExtent2D({ width: 10, height: 7 }, 1.5, 1000), { width: 15, height: 11 });
+  assert.deepEqual(sharedBackingExtent2D({ width: 64, height: 64 }, 1, 64 * 64), { width: 64, height: 64 });
+  assert.equal(sharedBackingExtent2D({ width: 64, height: 64 }, 1, 64 * 64 - 1), undefined);
+  assert.equal(sharedBackingExtent2D({ width: 0, height: 8 }, 1, 1000), undefined);
+  assert.equal(sharedBackingExtent2D({ width: 8, height: 0.25 }, 2, 1000)?.height, 1);
+  assert.equal(sharedBackingExtent2D({ width: 2 ** 32, height: 1 }, 1, Number.MAX_SAFE_INTEGER), undefined);
+  assert.equal(sharedBackingExtent2D({ width: 8, height: 8 }, Number.NaN, 1000), undefined);
 });

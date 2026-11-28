@@ -423,6 +423,29 @@ export function prepareSharedDraws2D(
 ): PreparedSharedFrame2D {
   return prepareSharedGeometry(frame, width, height, options, retention, engineOwned, false);
 }
+/**
+ * The backing pixels a Host draws a frame into at its pixel ratio, or undefined when either side is not a positive
+ * 32-bit extent or the area passes the Host's limit.
+ */
+export function sharedBackingExtent2D(
+  frame: { readonly width: number; readonly height: number },
+  pixelRatio: number,
+  maxBackingPixels: number
+): { readonly width: number; readonly height: number } | undefined {
+  const width = Math.ceil(frame.width * pixelRatio),
+    height = Math.ceil(frame.height * pixelRatio);
+  if (
+    !Number.isSafeInteger(width) ||
+    !Number.isSafeInteger(height) ||
+    width <= 0 ||
+    height <= 0 ||
+    width > 4294967295 ||
+    height > 4294967295 ||
+    width > Math.floor(maxBackingPixels / height)
+  )
+    return undefined;
+  return { width, height };
+}
 /** The browser Host consumes these private representations synchronously during submission. */
 export function prepareSharedDrawsForSubmission2D(
   frame: SharedRenderFrame2D,
