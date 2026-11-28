@@ -4715,6 +4715,29 @@ for (const file of ['src/pointerInput.ts','dist/pointerInput.js'])
     ['static','./internal/routedInput.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 for (const file of ['src/internal/routedInput.ts','dist/internal/routedInput.js','dist/internal/routedInput.d.ts'])
   currentSceneLiteralClosure['packages/engine/'+file] = [['static','@egret/runtime']];
+// The shared capture reads bitmap states and images through their own modules, so it no longer imports Bitmap back.
+function reviseSceneEdges(file, add, remove = []) {
+  const edges = [...currentSceneLiteralClosure[file]];
+  for (const target of remove) {
+    const index = edges.findIndex(edge => edge[1] === target);
+    if (index < 0) throw new Error('S3D1: revised closure edge missing: ' + file + ' ' + target);
+    edges.splice(index, 1);
+  }
+  currentSceneLiteralClosure[file] = [...edges, ...add.map(target => ['static', target])]
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+}
+for (const file of ['packages/runtime/src/Bitmap.ts','packages/runtime/dist/Bitmap.js'])
+  reviseSceneEdges(file, ['./bitmapImage.js','./bitmapImage.js'], ['./Texture.js']);
+reviseSceneEdges('packages/runtime/dist/Bitmap.d.ts', ['./bitmapImage.js']);
+for (const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runtime/dist/sharedFrameCapture.js'])
+  reviseSceneEdges(file, ['./bitmapDisplayState.js','./bitmapImage.js'], ['./Bitmap.js']);
+for (const [file, targets] of Object.entries({
+  'src/bitmapImage.ts':['./AssetLease.js','./AssetLease.js','./EgretError.js','./Texture.js','./Texture.js','@egret/contracts'],
+  'dist/bitmapImage.js':['./AssetLease.js','./EgretError.js','./Texture.js'],
+  'dist/bitmapImage.d.ts':['./AssetLease.js','./Texture.js','@egret/contracts']
+}))
+  currentSceneLiteralClosure['packages/runtime/' + file] = targets.map(target=>['static',target])
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 // The opt-in visual occluder is exported only by the existing native UI entry.
 for (const [file, count] of Object.entries({'src/ui/index.ts':2,'dist/ui/index.js':1,'dist/ui/index.d.ts':2}))
   currentSceneLiteralClosure['packages/engine/'+file]=[...currentSceneLiteralClosure['packages/engine/'+file],...Array.from({length:count},()=>['static','../internal/uiControlReportState.js'])].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
