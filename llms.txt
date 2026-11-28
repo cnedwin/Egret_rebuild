@@ -5,7 +5,7 @@
 ## Choose what you need
 
 - [Create the first 2D interaction](guide/cards/game/first-playable-world.txt) to give the player a visible target, a change in the scene and a next action. Read [action feedback](guide/cards/game/action-body-feedback.txt) for movement, landing or impact.
-- [Start a 3D scene](knowledge-base/en/docs/play3d.md) with a controllable object, a camera and a goal. Load the [rolling-ball game](examples/play/roll3d.mjs) when you need a complete example.
+- [Start a 3D scene](knowledge-base/en/docs/play3d.md) with a controllable object, a camera and a goal. Load the [rolling-ball game](examples/play/roll3d.mjs) when you need a complete example; use `play3dAttached` from a World3D browser entry when you already own a configured renderer, scene and camera.
 - [Work on an existing game](guide/cards/entries/choose-entry.txt) by checking its engine version and imports. Use the [public entry points](knowledge-base/en/docs/entry-points.md) to find the features available in that build.
 - Decide where the game ships before its first screen. A [web page or shared link](guide/cards/ship/ship-web-page.txt), a [phone app in a store](guide/cards/ship/ship-mobile-app.txt), a [WeChat mini game](guide/cards/ship/ship-wechat-minigame.txt) and a [Steam game](guide/cards/ship/ship-steam-desktop.txt) ask different things of input, screens, size, saves and services. A finished browser game becomes a mini game through the [WeChat export](knowledge-base/en/docs/wechat-minigame.md).
 - Build menus, shops, settings and results as [screens described as data](guide/cards/input/game-screens.txt): named parts bound to the state, red dots, questions, key hints and loading, placed in the safe part of any screen and tested by name. Holds, swipes, pinches and dragging into slots are [gestures](guide/cards/input/gestures.txt).
@@ -97,6 +97,7 @@ Text: `label.text = 'Score ' + n` changes it, and `label.color` and `label.size`
 | `game.keys.released('space')` | Whether it came up since the last update |
 | `game.keys.axis()` | Arrows and WASD, a gamepad's d-pad or left stick, or a stick on the glass, as `{ x, y }`, each -1 to 1, y down |
 | `game.keys.look()` | A gamepad's right stick, for looking or aiming; 0 and 0 without one |
+| `game.keys.claim('Tab', () => playing)` | Scope a game-owned shortcut to an active state; returns its release. Native modal focus and ordinary page navigation remain available outside the claim |
 | `game.keys.down('space', 'pad:a')` | A gamepad's buttons are keys named `pad:a`, `pad:b`, `pad:x`, `pad:y`, `pad:l1`, `pad:r1`, `pad:l2`, `pad:r2`, `pad:select`, `pad:start` and `pad:up` … `pad:right` |
 | `game.touchStick()` | A stick on the glass, bottom left unless `{ x, y, radius }`; it counts in `keys.axis()`. It and the buttons below appear once a finger touches the stage, or at once with `always: true`; a mouse does not use them. Make them in `setup`: a restart takes them away |
 | `game.touchButton('A', { x, y, key: 'space' })` | A round button on the glass that holds that key while a finger is on it |
@@ -106,7 +107,8 @@ Text: `label.text = 'Score ' + n` changes it, and `label.color` and `label.size`
 | `game.pointer.swipe` | `'left'`, `'right'`, `'up'` or `'down'` in the update after a swipe, else `undefined` |
 | `game.pointer.over(sprite)` | Whether the pointer is over the sprite |
 | `game.pointer.dx`, `.dy`, `.wheel` | How far the mouse moved and the wheel turned since the last update: for looking about |
-| `game.pointer.lock()`, `game.pointer.unlock()`, `game.pointer.locked` | Hides the cursor and keeps the mouse to the game, for a first-person view. Call `lock` after a click; Escape gives the mouse back |
+| `game.pointer.lock({ unadjustedMovement: true })`, `game.pointer.unlock()`, `game.pointer.locked`, `game.pointer.lockPending` | Request pointer lock from a real click, optionally raw movement, and await a result with status locked, denied, canceled or unavailable. Unlock cancels a pending request or releases the lock; Escape gives the mouse back |
+| `game.pointer.buttons`, `.pressedButtons`, `.releasedButtons` | Browser mouse-button bitmasks, with primary 1, secondary 2, middle 4, including combinations and frame edges |
 | `game.onTap(sprite, () => …)` | Calls the function when the sprite is tapped or clicked; the one in front gets it. A sprite drawn only by its children is hit by their bounds; `{ name: 'Start' }` also makes it a button a screen reader names |
 | `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | Long press, double tap, drag (`d.dx`, `d.dy`, `d.phase`), swipe and two-finger pinch (`scale`, `rotation`) on a sprite, in game units; returns its stop. A drag or long press is no tap |
 | `game.dragAndDrop()` | `.source(sprite, { data, ghost })`, `.target(sprite, { drop, accepts, hover })` and `.dragging`: a picture made by `ghost` follows the finger, and the innermost accepting target takes `data()` |

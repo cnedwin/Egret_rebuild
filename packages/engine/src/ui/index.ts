@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 export { createUiRoot } from './uiRoot.js';
+export { registerScreenOccluder } from '../internal/uiControlReportState.js';
+export type { ScreenOccluderRect, ScreenOccluderOptions, ScreenOccluder } from '../internal/uiControlReportState.js';
 export type {
   LayoutNode,
   UiInvalidationKind,

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Scoped Play input, native screen verification and attached World3D",
+    "body": "Keep logical mouse contacts and button chords during browser pointer lock without illegal native capture. Expose explicit pointer-lock completion and cancellation with an optional raw-movement request, and scoped gameplay shortcuts that leave menu and page navigation intact. Report clipped scroll controls and direct native semantic targets on the Play and World3D surfaces, including declared visual occluders and actual hit-test obstructions. Add a public attached Play3D entry that draws a borrowed configured world on the same engine clock without changing renderer ownership or defaults."
+  },
+  "zh": {
+    "title": "Play 输入归属、原生多屏检查及 World3D 接入",
+    "body": "鼠标锁定期间保留逻辑触点和组合按键，避免浏览器禁止的原生捕获。提供明确的指针锁定完成与取消结果、可选原始位移请求，以及不干扰菜单和页面导航的游戏专用快捷键。Play 和 World3D 多屏检查纳入裁切后的滚动控件与低层原生语义控件，并报告声明的视觉遮挡和实际命中阻挡。新增接入已有配置世界的 Play3D 公开入口，同一个引擎时钟绘制借用的世界，不改变渲染器所有权和默认配置。"
+  }
+}

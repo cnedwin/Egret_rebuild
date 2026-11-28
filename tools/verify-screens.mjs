@@ -77,19 +77,34 @@ export function controlFindings(controls, safe, touch) {
   for (const control of controls) {
     if (!inside(control, safe))
       found.push({ check: 'inSafeArea', severity: 'error', control: label(control), rect: round(control) });
-    if (touch && (control.width < TOUCH_TARGET - 0.5 || control.height < TOUCH_TARGET - 0.5))
+    // An exposed sliver of a deliberately clipped list row is not its
+    // authored touch target. Safety and overlap still use its visible hit box.
+    const target = control.authored ?? control;
+    if (touch && (target.width < TOUCH_TARGET - 0.5 || target.height < TOUCH_TARGET - 0.5))
       found.push({
         check: 'touchTarget',
         severity: 'warning',
         control: label(control),
-        size: [Math.round(control.width), Math.round(control.height)]
+        size: [Math.round(target.width), Math.round(target.height)]
       });
+    if (typeof control.blockedBy === 'string' && control.blockedBy)
+      found.push({ check: 'occluded', severity: 'warning', control: label(control), by: control.blockedBy });
+    for (const by of control.coveredBy ?? [])
+      if (typeof by === 'string' && by)
+        found.push({ check: 'occluded', severity: 'warning', control: label(control), by, source: 'paint' });
   }
   for (let a = 0; a < controls.length; a++)
     for (let b = a + 1; b < controls.length; b++) {
       const one = controls[a],
         other = controls[b];
-      if (inside(one, other, 0.5) || inside(other, one, 0.5)) continue;
+      // Modern receipts distinguish actual ancestors from unrelated controls
+      // that merely happen to be contained. Keep the legacy rule for older
+      // third-party reporters without native identity metadata.
+      const related =
+        one.id !== undefined && other.id !== undefined
+          ? one.ancestors?.includes(other.id) || other.ancestors?.includes(one.id)
+          : inside(one, other, 0.5) || inside(other, one, 0.5);
+      if (related) continue;
       if (overlap(one, other) > 1)
         found.push({ check: 'apart', severity: 'warning', controls: [label(one), label(other)] });
     }

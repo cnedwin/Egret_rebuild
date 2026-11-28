@@ -5,7 +5,7 @@
 // follows, a sun, tests of distance and overlap, and pieces thrown out by a hit; things grouped to move as one,
 // things that glow, lamps, and snow or rain.
 import { EgretError } from '@egret/runtime';
-import type { DisplayObject } from '@egret/runtime';
+import type { DisplayObject, Scope } from '@egret/runtime';
 import { play } from '../play.js';
 import type { PlayGame, PlayOptions } from '../play.js';
 import { Object3D, Scene3D } from '../../rendering/world3d/Object3D.js';
@@ -33,6 +33,9 @@ import { Raycaster3D } from '../../rendering/world3d/Raycast3D.js';
 import { mat4Identity, mat4Multiply, quatToEuler, vec3TransformMat4 } from '../../rendering/world3d/math3D.js';
 import { createWorld3DApp } from './app3D.js';
 import type { World3DApp } from './app3D.js';
+import { createWorld3DView } from './World3DView.js';
+import type { World3DView, World3DViewOptions } from './World3DView.js';
+import type { Renderer3D } from './frame3D.js';
 
 const invalid = (why: string): EgretError => new EgretError('PLAY_OPTIONS_INVALID', { cause: new TypeError(why) });
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
@@ -556,6 +559,111 @@ export interface Play3DGame
 export interface Play3DOptions extends Omit<PlayOptions, 'setup' | 'update' | 'canvas' | 'renderMode'> {
   readonly setup?: (game: Play3DGame) => void | Promise<void>;
   readonly update?: (seconds: number, game: Play3DGame) => void;
+}
+
+/** A Play interface over a caller-configured 3D surface, sharing the Play clock and Scope. */
+export interface Play3DAttachedOptions extends Omit<PlayOptions, 'transparent'> {
+  /**
+   * After optional Play setup, returns the borrowed world to draw. It may load art asynchronously before becoming
+   * active, or return undefined to leave just the native interface visible (for example, a retry panel).
+   */
+  readonly world: (game: PlayGame) => World3DViewOptions | undefined | Promise<World3DViewOptions | undefined>;
+}
+
+export interface Play3DAttachedSession {
+  /** The very same game passed to setup, world, arrange and update. */
+  readonly game: PlayGame;
+  /** The current world subscription, absent during loading, a failed restart, or after disposal. */
+  readonly view: World3DView | undefined;
+}
+
+// This companion owns the view subscription only. A renderer may be reused after its old view retires, but
+// one cannot be attached to two live companion sessions; the caller must also stop any independently run loop.
+const attachedRenderers = new WeakMap<Renderer3D, World3DView>();
+
+/**
+ * Starts transparent Play above an existing 3D canvas. The caller chooses canvas placement and all renderer,
+ * scene and camera settings. No second Engine or animation-frame loop is created.
+ */
+export async function play3dAttached(options: Play3DAttachedOptions): Promise<Play3DAttachedSession> {
+  if (options === null || typeof options !== 'object') throw invalid('play3dAttached takes an object of options');
+  const { world, setup, arrange, ...flatOptions } = options;
+  if (typeof world !== 'function') throw invalid('world is a function');
+  if (setup !== undefined && typeof setup !== 'function') throw invalid('setup is a function');
+  if (arrange !== undefined && typeof arrange !== 'function') throw invalid('arrange is a function');
+  let view: World3DView | undefined;
+  let viewScope: Scope | undefined;
+  let parentRegistered = false;
+  const retire = (): void => {
+    const previous = view,
+      scope = viewScope;
+    view = undefined;
+    viewScope = undefined;
+    if (previous !== undefined && attachedRenderers.get(previous.renderer) === previous)
+      attachedRenderers.delete(previous.renderer);
+    // Closing this generation removes its registrations immediately, instead of retaining each retired view in
+    // the lifetime Scope until the whole game closes. A borrowed renderer is never registered here.
+    scope?.dispose();
+  };
+  const open = (given: PlayGame): void => {
+    if (given.scope.state !== 'open') throw new EgretError('SCOPE_CLOSED');
+  };
+  const game = await play({
+    ...flatOptions,
+    transparent: true,
+    async setup(given) {
+      retire();
+      open(given);
+      if (!parentRegistered) {
+        given.scope.use({ dispose: retire });
+        parentRegistered = true;
+      }
+      await setup?.(given);
+      open(given);
+      const candidate = await world(given);
+      open(given);
+      if (candidate === undefined) return;
+      if (
+        candidate === null ||
+        typeof candidate !== 'object' ||
+        !candidate.renderer?.canvas ||
+        typeof candidate.renderer.render !== 'function' ||
+        !candidate.scene ||
+        !candidate.camera
+      )
+        throw invalid('world returns a renderer, scene and camera, or undefined');
+      const { renderer } = candidate;
+      if (renderer.canvas === given.canvas) throw invalid('world and Play use separate canvases');
+      const existing = attachedRenderers.get(renderer);
+      if (existing !== undefined && !existing.isDisposed) throw invalid('world renderer is already attached');
+      viewScope = given.engine.createScope();
+      try {
+        view = createWorld3DView(given.engine, viewScope, candidate);
+        attachedRenderers.set(renderer, view);
+      } catch (cause) {
+        retire();
+        throw cause;
+      }
+    },
+    ...(arrange === undefined
+      ? {}
+      : {
+          arrange(given: PlayGame): void {
+            try {
+              arrange(given);
+            } catch (cause) {
+              retire();
+              throw cause;
+            }
+          }
+        })
+  });
+  return {
+    game,
+    get view() {
+      return view?.isDisposed ? undefined : view;
+    }
+  };
 }
 
 interface Piece {

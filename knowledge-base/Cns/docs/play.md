@@ -138,7 +138,9 @@ setup(g) {
 
 ## 在页面控件旁嵌入游戏
 
-传入 `parent` 或页面自有的 `canvas` 后，游戏按键由画布焦点决定。点击画布或用 Tab 切到画布即可操作游戏。Tab 和 Shift+Tab 可继续在页面中切焦，获得焦点的 HTML 按钮可用空格或回车正常激活。离开画布时会释放仍按住的键，即使稍后在其他元素上松键，回到游戏也不会继续移动。两个选项都省略时，全屏游戏沿用原有的窗口级快捷键，包括 Tab。
+传入 `parent` 或页面自有的 `canvas` 后，游戏按键由画布焦点决定。点击画布或用 Tab 切到画布即可操作游戏。默认 Tab 和 Shift+Tab 可继续在页面中切焦，获得焦点的 HTML 按钮可用空格或回车正常激活。离开画布时会释放仍按住的键，即使稍后在其他元素上松键，回到游戏也不会继续移动。两个选项都省略时，全屏游戏沿用原有的窗口级快捷键，包括 Tab。
+
+游戏可以显式声明只在游戏过程中接管的浏览器快捷键：`const release = game.keys.claim('Tab', () => playing)`。谓词为真且游戏有键盘焦点时，该键进入游戏键盘快照，不用于非模态视图切焦或页面导航。已打开的模态视图或提问优先于声明。谓词为假时，原生视图焦点及普通嵌入页面导航不变。调用返回的函数可注销声明；重新开始或销毁也会清除游戏的声明。
 
 嵌入的画布没有 `tabindex` 时，游戏会在运行期间补上 `0`；已有的值（如 `-1`）会保留。如果舞台只作装饰、交互全部由 HTML 控件负责，可给舞台容器设置 `inert`。`transparent: true` 会让渲染表面和引擎创建的容器都透出页面背景。调用方提供的画布保留自有样式。
 
@@ -184,11 +186,12 @@ setup(g) {
 | `game.pointer.x`、`.y` | 鼠标或手指的位置，用游戏单位（`ui` 层的单位）；不按键时也跟随鼠标 |
 | `game.toStage(x, y)`、`game.fromStage(x, y)` | 把游戏单位的位置换成舞台上的位置（与 `localToGlobal`、`globalToLocal` 和悬停事件给出的一致），以及反过来。用 `fit: 'expand'` 时两者相差设计区域在舞台上的位置：在 390 × 844 的手机上，720 × 1280 的设计区域从第 139 个单位开始 |
 | `game.pointer.down`、`.pressed`、`.released` | 是否按着、刚按下、刚松开 |
+| `game.pointer.buttons`、`.pressedButtons`、`.releasedButtons` | 游戏表面的鼠标按键位掩码：1 主键、2 次键、4 中键，边沿位保留到下一次 update |
 | `game.pointer.swipe` | 一次滑动结束后的那次 update 里为 `'left'`、`'right'`、`'up'` 或 `'down'` |
 | `game.pointer.over(sprite)` | 指针是否在精灵画出的内容上 |
 | `game.pointer.dx`、`.dy` | 自上次更新以来鼠标移动了多少屏幕像素，指针锁定时也照常计数 |
 | `game.pointer.wheel` | 自上次更新以来鼠标滚轮转了几格，朝向玩家为正。游戏下面的页面不会跟着滚动 |
-| `game.pointer.lock()`、`.unlock()`、`.locked` | 隐藏光标并把鼠标留在游戏里，用于第一人称视角。浏览器只允许在一次点击之后锁定，所以要在点击回调里或 `pressed` 为真时调用；按 Escape 会交还鼠标 |
+| `game.pointer.lock(options?)`、`.unlock()`、`.locked`、`.lockPending` | 在可信用户动作中申请画布指针锁定；`lock` 返回 Promise，其结果为 `status: 'locked' | 'denied' | 'canceled' | 'unavailable'`。`unlock` 取消待定申请并释放锁定；按 Escape 交还鼠标 |
 | `game.onTap(sprite, () => …, { name })` | 精灵被点击或轻触时调用函数。精灵重叠时，前面的那个收到点击。有子节点、自己没有 `hitArea` 的精灵，在它的包围盒（含子节点的绘制）内都能点中，并随子节点移动；自己有绘制、没有子节点的精灵，仍按它画出的内容点中。给了 `name` 时，这个精灵同时是 `semantics` 里同名的按钮：位置与它画出的地方一致，它隐藏时从语义树里略去，它结束时随之消失；在语义树里激活它就等于点击它。函数可以是 `async` 的；它立即或稍后抛出的错误会像 `update` 抛出的错误一样让游戏停下 |
 | `game.gestures(sprite, { hold, doubleTap, drag, swipe, pinch })` | 精灵上的长按、双击、带每一步位移的拖动、滑动和双指缩放，每个只报告一次，位置用游戏单位；返回停止识别的函数。变成拖动或长按的那一下不算点击。有子节点、没有 `hitArea` 的精灵按包围盒点中，与 `onTap` 相同。阈值见[手势](gestures.md) |
 | `game.show(description, { state, bind })` | 用数据描述的界面：由面板、行和列组成，包含文字、按钮、进度条和开关，放在 `game.safe` 里，屏幕变化时重新摆放，竖握手机时可以换用竖屏部件。`bind` 让有名字的部件跟随 `state`（每帧读取），并响应按下。返回视图：`get(name)`、`rect(name)`、`show()`、`hide()`、`close()`。部件和绑定见[用数据描述界面](ui-views.md) |
@@ -197,7 +200,9 @@ setup(g) {
 
 点击回调可接受 `PlayTapActivation`，包含指针 `source`、`pointerId`、真实 Stage 坐标、变换可逆时的局部坐标、命中的显示对象 `target` 及当前监听者 `currentTarget`。语义激活没有指针坐标。点击默认仍冒泡；在回调中同步调用 `stopPropagation()` 可阻止继续到达祖先。对应的视图绑定见[声明式视图激活](ui-views.md#绑定)。
 
-键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。按在舞台上、且下面没有按钮和带 `onTap` 的精灵时，`game.pointer.pressed` 为真：按在它们上面的那一下只属于它们，所以“按哪里就在哪里放东西”的游戏不会把东西放到自己的按钮下面。主指针按住期间，`game.pointer.down` 保持为真，包括按在按钮上的情况。
+键的写法：`'left'`、`'right'`、`'up'`、`'down'`、`'space'`、`'enter'`、`'escape'`、`'shift'`、一个字母、一个数字，或 `KeyboardEvent.code`（如 `'KeyQ'`）。游戏运行时，方向键和空格不会滚动页面。鼠标还没移动时，指针位于舞台中心。按在舞台上、且下面没有按钮和带 `onTap` 的精灵时，`game.pointer.pressed` 为真：按在它们上面的那一下只属于它们，所以“按哪里就在哪里放东西”的游戏不会把东西放到自己的按钮下面。主指针按住期间，`game.pointer.down` 保持为真，包括按在按钮上的情况。鼠标位掩码独立记录多个鼠标键同时按着及分别松开，锁定时也一样。锁定状态变化、指针取消、窗口失焦或页面隐藏会清除鼠标按键快照。这些是输入状态，而不是第二套 UI 激活。
+
+只有玩家明确要求原始位移时，才在可信用户动作中直接调用 `pointer.lock({ unadjustedMovement: true, signal })`；不传选项就沿用浏览器自身策略。被拒绝时不会自动改用另一种策略重试。Promise 只在本画布实际持有指针锁定时返回 `locked`；`unlock()` 或取消首次未完成申请所传的信号会取消该申请。并发调用共享首次申请的 Promise 和策略；其后的选项或信号不会替换首次申请。不让新的申请与已取消的宿主申请重叠：迟到的授予会释放，待宿主返回终态后才可用下一次操作重试。用 `locked` 观察之后的锁定丢失。
 
 在 Play 画布上最先按下的指针负责驱动 `game.pointer`，直到该指针松开或被取消。拖动时，其他手指可点按独立的 UI 控件，拖动坐标、滑动起点和松手状态仍由原指针决定。原指针松开后，已经按住的手指不会自动接管。Galaxy Z Fold7（Android 17、Chrome 157）上的浏览器协议触摸已在 WebGL2 和 WebGPU 验证两种松手顺序、主指滑动、独立点按和取消。
 
