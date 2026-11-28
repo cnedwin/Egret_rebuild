@@ -66,15 +66,19 @@ async function covers(page, expected) {
     'field at ' + JSON.stringify(actual) + ', expected ' + JSON.stringify(expected)
   );
 }
-async function scenario(name, options, body) {
+async function scenario(name, options, body, { beforeLoad, expectedConsoleError } = {}) {
   const context = await browser.newContext(options),
     page = await context.newPage(),
     errors = [];
+  let expectedErrorCount = 0;
   page.on('pageerror', error => errors.push(String(error)));
   page.on('console', message => {
-    if (message.type() === 'error') errors.push(message.text());
+    if (message.type() !== 'error') return;
+    if (expectedConsoleError?.test(message.text())) expectedErrorCount++;
+    else errors.push(message.text());
   });
   try {
+    if (beforeLoad) await page.addInitScript(beforeLoad);
     await page.goto(address);
     await page.waitForFunction(() => globalThis.__egretTextInputExample !== undefined);
     await drawn(page);
@@ -91,6 +95,7 @@ async function scenario(name, options, body) {
       await page.screenshot({ path: path.join(shots, name.replace(/\W+/g, '-') + '.png') });
     }
     assert.deepEqual(errors, []);
+    if (expectedConsoleError) assert.equal(expectedErrorCount, 1);
     results.push('ok    ' + name);
   } catch (error) {
     results.push('FAIL  ' + name + '\n' + String(error.stack ?? error));
@@ -112,6 +117,32 @@ async function compose(page, session, pinyin, chosen) {
   await session.send('Input.insertText', { text: chosen });
   assert.equal((await snapshot(page)).input.composing, false);
 }
+
+await scenario(
+  'a failed first draw stays visible and retries the same title',
+  {},
+  async page => {
+    assert.match((await snapshot(page)).status, /WEB_TEXT_FONT_NOT_READY/);
+    assert.equal(await page.locator('#committed').textContent(), '');
+    assert.equal(await page.evaluate(() => globalThis.titleChecks), 1);
+    await page.mouse.click(...(await at(page, 240, 114)));
+    await drawn(page);
+    assert.ok(await page.evaluate(() => globalThis.titleChecks > 1));
+    assert.equal(await page.locator('#committed').textContent(), 'name: ""\nmotto: ""');
+    assert.doesNotMatch((await snapshot(page)).status, /FAILED|NOT_READY/);
+  },
+  {
+    beforeLoad: () => {
+      globalThis.titleChecks = 0;
+      const check = document.fonts.check.bind(document.fonts);
+      document.fonts.check = (font, text) => {
+        if (text === '门派登记 / Register a sect' && ++globalThis.titleChecks === 1) return false;
+        return check(font, text);
+      };
+    },
+    expectedConsoleError: /WEB_TEXT_FONT_NOT_READY/
+  }
+);
 
 await scenario(
   'a name entered with an input method',

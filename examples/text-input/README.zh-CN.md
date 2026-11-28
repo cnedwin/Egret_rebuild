@@ -34,4 +34,4 @@ node tools/serve-canvas.mjs
 node examples/text-input/verify.mjs <能解析到 "playwright" 的目录>
 ```
 
-该命令在无头 Chromium 中以鼠标和手机模拟运行示例，并通过浏览器协议驱动组合输入。另一次真机检查在 Windows Edge 157（RTX 5090 Laptop）和 Galaxy Z Fold7 Chrome 157（Adreno 830）上每个后端均通过三项用例。手机实际弹出三星键盘，可视视口从 813.7 缩至 423.2 CSS px。文字通过 CDP 输入。真人中日韩组合输入与候选字选择，以及 iPhone Safari、桌面 Firefox 和桌面 Safari 仍待验证。[输入验收 #89](https://github.com/cnedwin/Egret_rebuild/issues/89)
+该命令在无头 Chromium 中以鼠标和手机模拟运行示例，并通过浏览器协议驱动组合输入。另一次真机检查在 Windows Edge 157（RTX 5090 Laptop）和 Galaxy Z Fold7 Chrome 157（Adreno 830）上每个后端均通过三项用例。手机实际弹出三星键盘，可视视口从 813.7 缩至 423.2 CSS px。文字通过 CDP 输入。在实体 iPhone（iOS 27.2.1、Safari 27.2）上，WebGL2 和 WebGPU 都绘出了登记表首帧。两个后端的四个取样点均符合背景、面板和输入框的预期颜色。标题区域的亮色像素分别为 1,312 和 1,310 个。Safari 自动化点按姓名栏，通过程序插入“白鹭”，再按回车提交。此次复验覆盖画面和编辑流程，系统键盘的候选字选择仍待真人操作。桌面 Firefox 和桌面 Safari 仍待验证。[输入验收 #89](https://github.com/cnedwin/Egret_rebuild/issues/89)

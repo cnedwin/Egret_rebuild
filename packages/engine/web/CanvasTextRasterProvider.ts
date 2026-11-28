@@ -40,8 +40,42 @@ function ready(document: Document, font: string, request: TextRasterRequest): vo
   if (!document.fonts.check(font, request.text)) throw new EgretError('WEB_TEXT_FONT_NOT_READY');
 }
 
+// Only contexts created here and branded by the canvas's own DOM realm may
+// use intrinsic defaults that Safari does not expose as JavaScript properties.
+const nativeSurfaces = new WeakSet<TextContext>();
+const intrinsicDefaults: Partial<Record<keyof TextContext, unknown>> = {
+  fontKerning: 'auto',
+  fontStretch: 'normal',
+  fontVariantCaps: 'normal',
+  textRendering: 'auto',
+  filter: 'none'
+};
+
+function identifyNativeSurface(context: TextContext, canvas: HTMLCanvasElement): void {
+  const realm = canvas.ownerDocument?.defaultView;
+  if (
+    !realm ||
+    typeof realm.HTMLCanvasElement !== 'function' ||
+    typeof realm.CanvasRenderingContext2D !== 'function' ||
+    !(canvas instanceof realm.HTMLCanvasElement) ||
+    !(context instanceof realm.CanvasRenderingContext2D)
+  ) return;
+  // Calling the platform getter also checks the underlying Web IDL brand.
+  const getter = Object.getOwnPropertyDescriptor(realm.CanvasRenderingContext2D.prototype, 'canvas')?.get;
+  if (getter && getter.call(context) === canvas) nativeSurfaces.add(context);
+}
+
 function setState<K extends keyof TextContext>(context: TextContext, key: K, value: TextContext[K]): void {
-  if (!(key in context)) throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
+  if (!(key in context)) {
+    if (nativeSurfaces.has(context)) {
+      if (key === 'lang' && typeof value === 'string') {
+        context.canvas.lang = value;
+        if (context.canvas.lang === value) return;
+      }
+      if (Object.hasOwn(intrinsicDefaults, key) && intrinsicDefaults[key] === value) return;
+    }
+    throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
+  }
   context[key] = value;
   if (context[key] !== value) throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
 }
@@ -135,8 +169,15 @@ function surface<T>(
     if (context === undefined || typeof context.getContextAttributes !== 'function')
       throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
     const attributes = context.getContextAttributes();
-    if (attributes.alpha !== true || attributes.colorSpace !== 'srgb')
+    identifyNativeSurface(context, canvas);
+    if (attributes.colorSpace !== 'srgb') throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
+    // An untouched alpha-enabled canvas starts transparent. Only probe when the
+    // native implementation omits alpha from its reported context attributes.
+    if (attributes.alpha !== true && !(
+      attributes.alpha === undefined && nativeSurfaces.has(context) && context.getImageData(0, 0, 1, 1).data[3] === 0
+    )) {
       throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
+    }
     const readbackHint = typeof attributes.willReadFrequently === 'boolean' ? attributes.willReadFrequently : undefined;
     value = work(context, readbackHint);
   } catch (error) {
