@@ -113,6 +113,7 @@ export const ZH_AREAS: readonly (readonly [string, string])[] = [
   ['WEBGL2_READBACK', 'WebGL2 读回'],
   ['WEBGL2_UPLOAD', '分步的 WebGL2 上传'],
   ['WEBGL2', 'WebGL2 Host'],
+  ['WEBGPU_LAYER', 'WebGPU 层'],
   ['WEBGPU_READBACK', 'WebGPU 读回'],
   ['WEBGPU_RECOVERY', 'WebGPU 设备恢复'],
   ['WEBGPU_UPLOAD', '分步的 WebGPU 上传'],

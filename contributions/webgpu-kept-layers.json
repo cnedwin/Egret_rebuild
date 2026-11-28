@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/sharedLayers2D.ts",
+      "originRole": "First-party placement, effect and bake admission rules and limits of kept 2D layers, shared by the WebGL2 and WebGPU shared Hosts; extracted from the existing first-party WebGL2 layer state with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/shared-webgpu-layer-cache.test.mjs",
+      "originRole": "First-party controlled-port unit of the WebGPU Host's kept layers: their option, bake target, placement order and sampling, limits, replacement pins, disposal, effect blocks, close and device loss; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/verify-webgpu-layer-cache.mjs",
+      "originRole": "First-party check of the WebGPU Host's kept layers in a real browser through the Host's own readback: placement at a pixel ratio of two, painter order, motion without uploads, an effect, device loss, recovery and rebuild; independently authored with AI assistance; Apache-2.0. Uses the Playwright the caller names.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

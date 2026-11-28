@@ -28,7 +28,7 @@ Mesh2D 的几何泛型默认 TexturedGeometry2D；clear/dispose 后 getter 保�
 
 可选入口增加 `createSharedWebGPUHost`、`createSharedSceneWebGPUHost`，分别提供 `renderSharedFrame`、`renderSceneSharedFrame`，复用内部 Host/设备/提交所有者。新工厂只声明支持的协议；不支持的旧方法在读取帧内容前拒绝。场景工厂要求显式 outputAlpha 为 opaque，overlay 也必须 opaque；通用二维工厂默认 premultiplied。旧工厂行为不变。Canvas 继续隔离在 `@egret/engine/web`；默认 SDK 不增加浏览器或 Spine 依赖。
 
-`SharedWebGPUHostOptions` 在既有 textured 选项上增加 outputAlpha 和三个页上限：`maxFrameRegions`、`maxFramePageBytes`、`maxReadyPageBytes`。快照依次读取原有 18 个顶层字段、outputAlpha、三个页上限，再读取所选设备策略。页上限在所有更早的选项之后才做判定。`SharedWebGPUReadback.alphaMode` 如实返回 premultiplied 或 opaque；旧读回类型保留原有 premultiplied 字面值。`getSharedStatus()` 返回既有 Host 状态，以及 pendingGeometryBytes、pendingColorBytes 和 pendingCanonicalBytes；最后一项仅统计已接受且仍由提交保有的转换输出，不代表全部临时内存。共享场景另保留既有 `getSceneStatus()` 合同。
+`SharedWebGPUHostOptions` 在既有 textured 选项上增加 outputAlpha 和三个页上限：`maxFrameRegions`、`maxFramePageBytes`、`maxReadyPageBytes`。快照依次读取原有 18 个顶层字段、outputAlpha、三个页上限，再读取所选设备策略。页上限在所有更早的选项之后才做判定。最后读取的 `enableLayers` 为 Host 开启[保留图层](#保留图层)。`SharedWebGPUReadback.alphaMode` 如实返回 premultiplied 或 opaque；旧读回类型保留原有 premultiplied 字面值。`getSharedStatus()` 返回既有 Host 状态，以及 pendingGeometryBytes、pendingColorBytes 和 pendingCanonicalBytes；最后一项仅统计已接受且仍由提交保有的转换输出，不代表全部临时内存。共享场景另保留既有 `getSceneStatus()` 合同。
 
 ## 输入阶段与错误
 
@@ -139,7 +139,41 @@ WebGPU hardware linear 先解码 sRGB texel 再过滤。bounded region 路径接
 
 **批次。** Host 保留它用多个绘制拼接出的每一个批次：这些绘制的打包记录（按顺序），以及拼接后的顶点行数组。下一帧里从同一条命令开始的批次，如果可以确定拼接会取用同样数量的绘制，每个绘制都与第一个绘制相容，每个绘制的顶点行数量和页都与保留批次中对应位置的相同，并且得到的额度也相同，就不再重新拼接。这时，打包记录与批次原有记录不同的那些绘制，它们的顶点行被写到保留数组中原来的位置上；记录相同的绘制不写入任何内容。其余情况下批次重新拼接并保留。由于保留的数组会在之后的帧里被再次写入，分阶段上传的帧（它在之后的帧准备完成后才读取顶点行）得到的是它自己的批次：它既不使用也不替换保留的批次。区域表和上传每一帧都重新生成。
 
-连续两帧都发生变化的绘制，保留时不带多边形和顶点行，直到它有一帧保持不变；这时再准备一次，并完整保留。在几何准备阶段被拒绝的帧不改变此前保留的绘制。在更晚的阶段被拒绝的帧，它已完成的各阶段照常保留各自的结果：保留的始终是某个阶段的完整结果，下一帧仍按上述条件使用。Host 保留的内容上限为 65,536 个绘制和 48 MiB，按下面[预算与生命周期](#预算与生命周期)的逻辑口径计算：一条记录 32 字节加每个字段 8 字节，一个数组 24 字节加每个元素 8 字节，类型化存储按其字节长度，每个保留的绘制另计 256 字节。按最大限制被接受的一帧，保留的内容低于这个上限。放不下的绘制每一帧都重新准备，放不下的打包记录每一帧都重新打包，放不下的批次每一帧都重新拼接。Host 关闭后，或在非活动状态下被要求绘制一帧时，不再保留任何内容；后备尺寸、像素比或限制改变时，丢弃已保留的内容。WebGL2 Host 烘焙到图层里的帧既不使用、也不替换普通帧保留的内容。
+连续两帧都发生变化的绘制，保留时不带多边形和顶点行，直到它有一帧保持不变；这时再准备一次，并完整保留。在几何准备阶段被拒绝的帧不改变此前保留的绘制。在更晚的阶段被拒绝的帧，它已完成的各阶段照常保留各自的结果：保留的始终是某个阶段的完整结果，下一帧仍按上述条件使用。Host 保留的内容上限为 65,536 个绘制和 48 MiB，按下面[预算与生命周期](#预算与生命周期)的逻辑口径计算：一条记录 32 字节加每个字段 8 字节，一个数组 24 字节加每个元素 8 字节，类型化存储按其字节长度，每个保留的绘制另计 256 字节。按最大限制被接受的一帧，保留的内容低于这个上限。放不下的绘制每一帧都重新准备，放不下的打包记录每一帧都重新打包，放不下的批次每一帧都重新拼接。Host 关闭后，或在非活动状态下被要求绘制一帧时，不再保留任何内容；后备尺寸、像素比或限制改变时，丢弃已保留的内容。Host 烘焙到图层里的帧既不使用、也不替换普通帧保留的内容。
+
+## 保留图层
+
+共享 Host 可以把一层内容在 GPU 上画一次并保留下来，例如一块地图或一组静态绘制。之后许多帧只需摆放它，不必重新绘制。
+- WebGL2 Host 始终具备这一能力，见其[可缓存的 2D 图层](webgl2-executor-contract.md#可缓存的-2d-图层)。
+- WebGPU Host 用 `enableLayers: true` 创建时具备这一能力。它的 `createSharedLayer2D()`、`renderSharedFrameWithLayers(frame, placements)` 和 `getSharedLayerStatus()` 遵循同一份合同。
+- 不开启该选项时，WebGPU Host 不创建图层管线，这三个方法以 `WEBGPU_LAYER_DISABLED` 拒绝。
+
+**烘焙。** `update(frame)` 接受透明清屏、premultiplied 输出、边长为整像素的 Engine 捕获，其中只能有以 source-over 绘制、不带效果的矩形和图像。
+- Host 以每个源单位一个纹素，把它画进专为该图层创建的目标；这个目标不从可复用池中取得。
+- 页驻留与普通帧相同。
+- 不触碰 canvas，也不向 canvas 复制任何内容。
+- 替换期间，上一个就绪版本继续可用，直到替换自身的完成证明之后才发布新版本。
+- 采样某个版本的帧会固定该版本。`dispose()` 在最后一个这样的帧退役时释放该版本。
+
+**摆放。** `renderSharedFrameWithLayers` 在任何原生操作之前读取全部摆放。
+- 图层画在帧的清屏之上，按画家顺序，位于该帧所有绘制之前。
+- 每个图层是六个角点，按最近邻采样，并按 Host 像素比缩放。
+- 摆放可以带一个 `effect`：边界，以及相乘和相加的颜色；这要求 Host 同时用 `enableEffects` 创建。像素中心落在边界内的像素取 min(rgb × multiply + alpha × add, alpha)。
+- 在 WebGPU 上，每个摆放有一个 80 字节的块：原点和尺寸、目标尺寸、效果边界、相乘颜色和相加颜色。
+
+**上限。** 两种 Host 读取摆放和效果的规则与上限相同：
+- 512 个存活句柄，每帧 512 个摆放；
+- 每边 2,048 像素；
+- 目标共 32 MiB，包括待完成和被固定的旧版本。
+
+**设备丢失与关闭。** 在 WebGPU 上，版本属于烘焙它的那一代设备。该设备丢失时，图层变为 `stale`，其目标随设备一并失去。恢复后，由应用重新更新图层。关闭 Host 会释放所有图层。
+
+`node tools/verify-webgpu-layer-cache.mjs <playwright-root> <new-output> [chromium]` 在浏览器中通过 Host 自身的读回检查图层，覆盖：
+- 像素比为 2 时的摆放，与独立给出的颜色对照；
+- 画家顺序与透明度；
+- 镜头移动时不写入页；
+- 一个效果；
+- 真实的设备丢失、手动恢复和显式重建。
 
 ## 预算与生命周期
 

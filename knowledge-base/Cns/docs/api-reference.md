@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1546 个导出，其中 22 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1550 个导出，其中 22 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -179,8 +179,12 @@
 | `SharedFrameUploadReady` | 接口 | Upload completion does not imply that this frame has been presented. |
 | `SharedHostResourceStatus` | 接口 | Fresh immutable data; reads do no native work. |
 | `SharedWebGPUHost` | 接口 | A host that draws shared frames with WebGPU: start and stop it, stage frames, read them back, and recover from a lost device. |
-| `SharedWebGPUHostOptions` | 接口 | A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space and recovery. |
+| `SharedWebGPUHostOptions` | 接口 | A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space, recovery and kept layers. |
 | `SharedWebGPUHostStatus` | 接口 | A shared WebGPU host as it is now: its host status, the bytes pending, and its resources. |
+| `SharedWebGPULayer2D` | 接口 | A layer drawn once and kept on the GPU: update it, or dispose of it. |
+| `SharedWebGPULayerEffect2D` | 接口 | How a kept layer is tinted when it is placed: its bounds and its multiplied and added color. |
+| `SharedWebGPULayerPlacement2D` | 接口 | Where a kept layer is placed in a frame, how large, and with what effect. |
+| `SharedWebGPULayerStatus` | 接口 | The kept layers of a host: the bytes they hold, and how many are ready and pending. |
 | `SharedWebGPUReadback` | 接口 | Pixels read back from a shared frame, with their alpha mode and device generation. |
 | `WebGPUHostDiagnostic` | 接口 | Something a WebGPU host reports: a failure, with how serious it is. |
 | `WebGPUHostErrorCode` | 类型 | What went wrong in a WebGPU host. |

@@ -223,7 +223,7 @@ export interface BrowserGameOptions {
    * Off unless given; a frame with an effect is refused without it.
    */
   readonly effects?: boolean;
-  /** Opt into explicit retained GPU background placements when the chosen backend is WebGL2. */
+  /** Opt into explicit retained GPU background placements, on either backend. */
   readonly staticLayers?: boolean;
   /** On demand retains the last frame until visual, screen, native-generation or explicit invalidation changes. */
   readonly renderMode?: BrowserGameRenderMode;
@@ -297,7 +297,7 @@ export interface BrowserGame {
   readonly engine: Engine;
   /** The Host that draws: its status says what it holds and what last went wrong. It ends with the game. */
   readonly host: { getStatus(): { readonly pendingFrames: number }; whenIdle(): Promise<void> };
-  /** Available only on opted-in WebGL2 games. WebGPU and ordinary games keep their original rendering path. */
+  /** Available only on opted-in games, on WebGL2 and WebGPU alike. Other games keep their original rendering path. */
   readonly staticLayers?: BrowserGameStaticLayers;
   /** The stage of the Engine: what is added to it is drawn. */
   readonly stage: Stage;
@@ -596,7 +596,13 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     backend === 'webgpu'
       ? await import('./webgpu.js').then(module => {
           moduleReady = performance.now();
-          return module.createSharedWebGPUHost({ canvas, pixelRatio, blendSpace, enableEffects });
+          return module.createSharedWebGPUHost({
+            canvas,
+            pixelRatio,
+            blendSpace,
+            enableEffects,
+            ...(options.staticLayers === true ? { enableLayers: true } : {})
+          });
         })
       : await import('./webgl2.js').then(module => {
           moduleReady = performance.now();

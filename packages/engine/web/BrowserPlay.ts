@@ -170,7 +170,7 @@ export interface PlayOptions {
   readonly seed?: number | string;
   /** `'auto'` unless given. */
   readonly backend?: 'auto' | BrowserGameBackend;
-  /** Opt into explicit retained GPU backgrounds on WebGL2 (game.browser.staticLayers). */
+  /** Opt into explicit retained GPU backgrounds, on WebGL2 or WebGPU (game.browser.staticLayers). */
   readonly staticLayers?: boolean;
   /** Render pixels per stage unit. Layout, input and semantic bounds stay in stage units. */
   readonly pixelRatio?: number;

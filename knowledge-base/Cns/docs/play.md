@@ -154,9 +154,9 @@ setup(g) {
 
 运行 `pnpm example:browser --port 4173`，在本地打开 `/examples/play/index.html?game=semantic-letterbox`，可查看固定比例的工坊示例。示例源码位于 `examples/play/semantic-letterbox.mjs`，舞台为 640 × 360，绘制缓冲为 480 × 270。`play3d` 的 `pixelRatio` 控制前景 UI，3D 背景由独立的画质设置控制。
 
-## WebGL2 缓存背景
+## GPU 缓存背景
 
-有静态背景地图块的场景可以显式选择 WebGL2 并传入 `staticLayers: true`，通过 `game.browser.staticLayers` 获取缓存能力。用真实 Engine 透明捕获烘焙一次，移除实时源节点后设置位置，在普通世界和 UI 下方合成保留在 GPU 中的纹理；镜头移动只改位置，不用重建背景。设置放置列表（包括替换烘焙完成后）会唤醒按需绘制。限制、回退及生命周期见[浏览器游戏图层契约](browser-game.md#保留在-gpu-中的背景webgl2显式启用)。WebGPU 和普通 Play 的路径不变。
+有静态背景地图块的场景可以传入 `staticLayers: true`，通过 `game.browser.staticLayers` 获取缓存能力，WebGL2 和 WebGPU 都适用。用真实 Engine 透明捕获烘焙一次，移除实时源节点后设置位置，在普通世界和 UI 下方合成保留在 GPU 中的纹理；镜头移动只改位置，不用重建背景。设置放置列表（包括替换烘焙完成后）会唤醒按需绘制。限制、回退及生命周期见[浏览器游戏图层契约](browser-game.md#保留在-gpu-中的背景显式启用)。未启用该选项的 Play 路径不变。
 
 ## 绘制
 

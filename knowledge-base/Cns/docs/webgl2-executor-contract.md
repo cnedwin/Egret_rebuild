@@ -50,7 +50,7 @@ WebGL2 工厂返回 `SharedLayerWebGL2Host`，继承原有宿主接口。每个�
 
 首次放置前等待 `update` 完成。替换烘焙完成前仍可使用上次就绪的版本，已提交帧持有其采样的版本。`dispose()` 让该块退出后续提交，待引用它的帧退役后释放纹理。宿主最多接纳 512 个活动句柄，每帧最多放置 512 项，单边上限 2,048 像素。RGBA8 缓存目标总额为 32 MiB，包含烘焙中和仍被帧持有的旧版本。现有设备、帧预算与背压限制同时适用。`getSharedLayerStatus()` 报告逻辑目标字节和就绪、待完成的句柄数。释放的句柄立即退出计数，在途纹理仍计费至退役。图像上传量由原有共享资源诊断统计。
 
-上下文丢失后，曾就绪的图层变为 `stale`。应用应保留构建配方或源帧，在 `whenReady()` 后重新更新。缓存不可用期间，应用可使用直接绘制或 CPU 烘焙作为回退。关闭宿主会释放全部图层句柄。首批接口覆盖显式 WebGL2 2D 路径，WebGPU 图层和深度合成另行验收。
+上下文丢失后，曾就绪的图层变为 `stale`。应用应保留构建配方或源帧，在 `whenReady()` 后重新更新。缓存不可用期间，应用可使用直接绘制或 CPU 烘焙作为回退。关闭宿主会释放全部图层句柄。用 `enableLayers: true` 创建的 WebGPU Host 按同一份合同保留图层，见[保留图层](shared-render-profile-contract.md#保留图层)。深度合成另行验收。
 
 执行 `node tools/verify-webgl2-layer-cache.mjs <playwright-root> <fresh-output>` 复现 Edge 原生验证。夹具覆盖 DPR 2 下的放置、绘制顺序、透明度、非对称图案的方向、镜头移动复用、真实上下文丢失和显式重建。同一合成夹具在实体 Android Chrome 157（Samsung SM-F966U1、Adreno 830）上得到两组逐字节一致的缓存／直接绘制帧。移动图层未新增上传，真实上下文丢失后显式重建的回读结果一致。性能和设备验收见 [M4.2 计划](m4-core-acceptance-plan.md)。
 

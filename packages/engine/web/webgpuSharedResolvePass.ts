@@ -38,3 +38,62 @@ fn encoded(c: vec3<f32>) -> vec3<f32> {
     multisample: { count: 1, alphaToCoverageEnabled: false }
   });
 }
+/** The bytes of a placement's block: origin and extent, viewport and effect minimum, effect maximum, multiply and add. */
+export const SHARED_LAYER_UNIFORM_BYTES = 80;
+/**
+ * A kept layer drawn into the working target at its placement: six corners, its texels sampled nearest and laid
+ * source-over in premultiplied alpha. With an effect, a pixel whose centre lies in the effect's bounds takes
+ * `min(rgb × multiply + alpha × add, alpha)` and keeps its alpha.
+ */
+export function createSharedWebGPULayerPipeline(
+  shader: (d: GPUShaderModuleDescriptor) => GPUShaderModule,
+  pipeline: (d: GPURenderPipelineDescriptor) => Promise<GPURenderPipeline>,
+  effect: boolean,
+  srgb = false
+): Promise<GPURenderPipeline> {
+  const module = shader({
+    code:
+      `struct Layer { place: vec4<f32>, view: vec4<f32>, bound: vec4<f32>, scale: vec4<f32>, add: vec4<f32> }
+@group(0) @binding(0) var<uniform> layer: Layer;
+@group(0) @binding(1) var layerTexture: texture_2d<f32>;
+@group(0) @binding(2) var layerSampler: sampler;
+struct Corner { @builtin(position) position: vec4<f32>, @location(0) uv: vec2<f32> }
+@vertex fn vertexMain(@builtin(vertex_index) index: u32) -> Corner {
+    let corners = array<vec2<f32>, 6>(vec2<f32>(0.0, 0.0), vec2<f32>(0.0, 1.0), vec2<f32>(1.0, 0.0),
+        vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0), vec2<f32>(1.0, 1.0));
+    let corner = corners[index];
+    let p = (layer.place.xy + layer.place.zw * corner) / layer.view.xy;
+    var out: Corner;
+    out.position = vec4<f32>(2.0 * p.x - 1.0, 1.0 - 2.0 * p.y, 0.0, 1.0);
+    // Row zero of a WebGPU target is its top, so the top of the placement samples the top of the layer.
+    out.uv = corner;
+    return out;
+}
+@fragment fn fragmentMain(input: Corner) -> @location(0) vec4<f32> {
+    var color = textureSample(layerTexture, layerSampler, input.uv);
+` +
+      (effect
+        ? `    let center = input.position.xy;
+    if (all(center >= layer.view.zw) && all(center < layer.bound.xy)) {
+        // Add light in premultiplied space and keep coverage.
+        color = vec4<f32>(min(color.rgb * layer.scale.rgb + color.a * layer.add.rgb, vec3<f32>(color.a)), color.a);
+    }
+`
+        : '') +
+      `    return color;
+}
+`
+  });
+  const over: GPUBlendComponent = { operation: 'add', srcFactor: 'one', dstFactor: 'one-minus-src-alpha' };
+  return pipeline({
+    layout: 'auto',
+    vertex: { module, entryPoint: 'vertexMain' },
+    fragment: {
+      module,
+      entryPoint: 'fragmentMain',
+      targets: [{ format: srgb ? 'rgba8unorm' : 'rgba8unorm-srgb', writeMask: 15, blend: { color: over, alpha: over } }]
+    },
+    primitive: { topology: 'triangle-list', frontFace: 'ccw', cullMode: 'none' },
+    multisample: { count: 1, alphaToCoverageEnabled: false }
+  });
+}

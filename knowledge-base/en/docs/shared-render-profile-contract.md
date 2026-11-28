@@ -28,7 +28,7 @@ Mesh2D gains a geometry type parameter defaulting to TexturedGeometry2D. Its get
 
 Optional entries add `createSharedWebGPUHost` and `createSharedSceneWebGPUHost`, with `renderSharedFrame` and `renderSceneSharedFrame` respectively. They reuse the internal Host/device/submission owner. New factories advertise only supported protocols; an unsupported old method refuses before reading its frame payload. The scene factory requires an explicit outputAlpha of opaque; its overlay must also be opaque. The general 2D factory defaults to premultiplied. Existing factories retain their behavior. Canvas remains isolated in `@egret/engine/web`; the default SDK adds no browser or Spine dependency.
 
-`SharedWebGPUHostOptions` adds outputAlpha and three page bounds to the existing textured options: `maxFrameRegions`, `maxFramePageBytes` and `maxReadyPageBytes`. Its snapshot reads the 18 existing top-level fields, then outputAlpha, then the three page bounds, then the selected device policy. The page bounds are judged after every earlier option. `SharedWebGPUReadback.alphaMode` reports premultiplied or opaque; the old readback type retains its original premultiplied literal. `getSharedStatus()` reports the existing Host status plus pendingGeometryBytes, pendingColorBytes and pendingCanonicalBytes. The last field counts accepted conversion outputs still held by submissions, not total temporary memory. Shared scene additionally retains the existing `getSceneStatus()` contract.
+`SharedWebGPUHostOptions` adds outputAlpha and three page bounds to the existing textured options: `maxFrameRegions`, `maxFramePageBytes` and `maxReadyPageBytes`. Its snapshot reads the 18 existing top-level fields, then outputAlpha, then the three page bounds, then the selected device policy. The page bounds are judged after every earlier option. `enableLayers`, read last, gives the Host [kept layers](#kept-layers). `SharedWebGPUReadback.alphaMode` reports premultiplied or opaque; the old readback type retains its original premultiplied literal. `getSharedStatus()` reports the existing Host status plus pendingGeometryBytes, pendingColorBytes and pendingCanonicalBytes. The last field counts accepted conversion outputs still held by submissions, not total temporary memory. Shared scene additionally retains the existing `getSceneStatus()` contract.
 
 ## Input stages and errors
 
@@ -138,7 +138,41 @@ For a mesh triangle whose authored and placed winding are already qualified as n
 
 **Batches.** A Host keeps every batch it joins out of several draws: the packed records of those draws, in order, and the array of their joined rows. The batch that begins at the same command of the next frame is not joined again when joining would certainly take the same number of draws, each like the first, each with as many rows and the same page as the kept batch has at its place, and would be given the same room. The rows of each draw that has another packed record than the batch had are then written over its rows in the kept array, and nothing is written for a draw that has the same record. In every other case the batch is joined anew, and kept. Because the kept array is written again for a later frame, a frame whose upload is staged, and so reads its rows after later frames are prepared, is given batches of its own: it neither uses nor replaces the kept ones. The region table and the uploads are made for every frame.
 
-A draw that changed in two frames running is kept without its polygons and rows until it has been the same once; it is then prepared once more and kept whole. A frame refused while its geometry is prepared leaves the kept draws as they were. A frame refused at a later stage has kept what the stages it completed keep: what is kept is always the whole result of a stage, and the next frame uses it under the conditions above. What a Host keeps is bounded at 65,536 draws and 48 MiB by the logical measure of [Budgets and lifetime](#budgets-and-lifetime) below: 32 bytes and 8 per field for a record, 24 and 8 per element for an array, the byte length of typed storage, and 256 for each kept draw. A frame the largest limits admit keeps less. A draw there is no room for is prepared for each frame, a packed record there is no room for is packed for each frame, and a batch there is no room for is joined for each frame. A Host that is closed, or is asked for a frame while it is not active, keeps nothing; another backing size, pixel ratio or set of limits drops what is kept. The frames a WebGL2 Host bakes into a layer neither use nor replace what its ordinary frames keep.
+A draw that changed in two frames running is kept without its polygons and rows until it has been the same once; it is then prepared once more and kept whole. A frame refused while its geometry is prepared leaves the kept draws as they were. A frame refused at a later stage has kept what the stages it completed keep: what is kept is always the whole result of a stage, and the next frame uses it under the conditions above. What a Host keeps is bounded at 65,536 draws and 48 MiB by the logical measure of [Budgets and lifetime](#budgets-and-lifetime) below: 32 bytes and 8 per field for a record, 24 and 8 per element for an array, the byte length of typed storage, and 256 for each kept draw. A frame the largest limits admit keeps less. A draw there is no room for is prepared for each frame, a packed record there is no room for is packed for each frame, and a batch there is no room for is joined for each frame. A Host that is closed, or is asked for a frame while it is not active, keeps nothing; another backing size, pixel ratio or set of limits drops what is kept. The frames a Host bakes into a layer neither use nor replace what its ordinary frames keep.
+
+## Kept layers
+
+A shared Host can keep a layer drawn once on the GPU, such as a map chunk or a static draw group. Many frames then place it without drawing it again.
+- The WebGL2 Host always has them, as its [cached 2D layers](webgl2-executor-contract.md#cached-2d-layers) describe.
+- A WebGPU Host has them when it is made with `enableLayers: true`. Its `createSharedLayer2D()`, `renderSharedFrameWithLayers(frame, placements)` and `getSharedLayerStatus()` follow the same contract.
+- Without the option, a WebGPU Host makes no layer pipeline, and the three refuse with `WEBGPU_LAYER_DISABLED`.
+
+**Baking.** `update(frame)` takes a transparent Engine capture with premultiplied output and whole-pixel sides, holding only rectangles and images drawn source-over without effects.
+- The Host draws it at one texel per source unit into a target made for the layer, not one taken from the reusable pool.
+- It uses the same page residency as ordinary frames.
+- The canvas is not touched, and nothing is copied to it.
+- A replacement leaves the last ready revision in use until the replacement's own completion proof; then the replacement is published.
+- Frames that sample a revision pin it. `dispose()` releases a revision when the last of those frames retires.
+
+**Placing.** `renderSharedFrameWithLayers` reads every placement before any native work.
+- The layers are drawn over the frame's clear, in painter order, before every draw of the frame.
+- Each is six corners, sampled nearest and scaled by the Host's pixel ratio.
+- A placement may carry an `effect`: bounds and a multiplied and an added colour. It needs a Host also made with `enableEffects`. Pixels whose centres lie in the bounds take min(rgb × multiply + alpha × add, alpha).
+- On WebGPU each placement has an 80-byte block: its origin and size, the target's size, the effect's bounds, the multiply and the add.
+
+**Limits.** Both Hosts read placements and effects by the same rules and limits:
+- 512 live handles, and 512 placements in a frame;
+- 2,048 pixels on a side;
+- 32 MiB of targets, pending and pinned revisions included.
+
+**Device loss and close.** On WebGPU a revision belongs to the device generation that baked it. When that device is lost, the layers become `stale`, and their targets go with the device. After recovery, the application updates them again. Close disposes every layer.
+
+`node tools/verify-webgpu-layer-cache.mjs <playwright-root> <new-output> [chromium]` checks layers in a browser through the Host's own readback. It covers:
+- placement at a pixel ratio of two, against independent colours;
+- painter order and transparency;
+- camera motion without page writes;
+- an effect;
+- a real device loss, manual recovery and an explicit rebuild.
 
 ## Budgets and lifetime
 

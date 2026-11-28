@@ -8,32 +8,18 @@ import {
 import { glFailure } from './webgl2Native.js';
 import type { GLNativeOwner, GLNativeSession } from './webgl2Native.js';
 import type { SharedWebGL2LayerEffect2D } from './webgl2Types.js';
+import { readSharedLayerEffect2D, readSharedLayerPlacement2D } from './sharedLayers2D.js';
+import type { SharedLayerEffect2D, SharedLayerRead2D } from './sharedLayers2D.js';
 
-export const MAX_LAYER_HANDLES = 512;
-export const MAX_LAYER_EXTENT = 2048;
-export const MAX_LAYER_BYTES = 32 * 1024 * 1024;
+export { MAX_LAYER_HANDLES, sharedLayerBakeRefusal2D } from './sharedLayers2D.js';
+
 export interface LayerRevision {
   readonly owner: GLNativeOwner;
   readonly native: GLNativeSession;
   pins: number;
   retained: boolean;
 }
-interface LayerEffect {
-  readonly left: number;
-  readonly top: number;
-  readonly right: number;
-  readonly bottom: number;
-  readonly scale: readonly [number, number, number];
-  readonly emission: readonly [number, number, number];
-}
-export interface LayerRead {
-  readonly revision: LayerRevision;
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-  readonly effect: LayerEffect | undefined;
-}
+export type LayerRead = SharedLayerRead2D<LayerRevision>;
 export interface LayerProgram {
   readonly program: WebGLProgram;
   readonly origin: WebGLUniformLocation | null;
@@ -50,6 +36,12 @@ export interface LayerProgram {
       }
     | undefined;
 }
+const effectInvalid = (): never => {
+  throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
+};
+const placementInvalid = (): never => {
+  throw glFailure('WEBGL2_LAYER_INVALID');
+};
 
 /** Apply the original logical-to-physical clipping and RGB bounds. */
 export function readWebGL2LayerEffect(
@@ -57,56 +49,15 @@ export function readWebGL2LayerEffect(
   input: SharedWebGL2LayerEffect2D,
   frameWidth: number,
   frameHeight: number
-): LayerEffect | undefined {
-  if (!options.enableEffects || !input || typeof input !== 'object') throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-  const { bounds, multiply, add } = input;
-  if (!bounds || typeof bounds !== 'object') throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-  const { x, y, width, height } = bounds;
-  if (
-    typeof x !== 'number' ||
-    typeof y !== 'number' ||
-    typeof width !== 'number' ||
-    typeof height !== 'number' ||
-    width <= 0 ||
-    height <= 0
-  )
-    throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-  const ratio = options.pixelRatio,
-    left = x * ratio,
-    top = y * ratio,
-    right = (x + width) * ratio,
-    bottom = (y + height) * ratio;
-  if (
-    ![left, top, right, bottom].every(value => Number.isFinite(value) && Math.abs(value) <= 8388608) ||
-    right <= left ||
-    bottom <= top
-  )
-    throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-  const scale = multiply === undefined ? undefined : readLayerColor(multiply, 4);
-  const emission = add === undefined ? undefined : readLayerColor(add, 1);
-  if ((!scale || scale.every(value => value === 1)) && (!emission || emission.every(value => value === 0)))
-    return undefined;
-  // Ceil-sized backing buffers can contain centers beyond the logical frame.
-  const clippedLeft = Math.max(0, left),
-    clippedTop = Math.max(0, top);
-  const clippedRight = Math.min(frameWidth * ratio, right),
-    clippedBottom = Math.min(frameHeight * ratio, bottom);
-  if (clippedRight <= clippedLeft || clippedBottom <= clippedTop) return undefined;
-  return {
-    left: clippedLeft,
-    top: clippedTop,
-    right: clippedRight,
-    bottom: clippedBottom,
-    scale: scale ?? [1, 1, 1],
-    emission: emission ?? [0, 0, 0]
-  };
-}
-function readLayerColor(input: readonly [number, number, number], max: number): readonly [number, number, number] {
-  if (!Array.isArray(input) || input.length !== 3) throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-  const rgb = [input[0], input[1], input[2]] as const;
-  if (!rgb.every(value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= max))
-    throw glFailure('WEBGL2_LAYER_EFFECT_INVALID');
-  return rgb;
+): SharedLayerEffect2D | undefined {
+  return readSharedLayerEffect2D(
+    options.enableEffects,
+    options.pixelRatio,
+    input,
+    frameWidth,
+    frameHeight,
+    effectInvalid
+  );
 }
 
 /** Convert one verified revision's placement after the Host's lifecycle checks. */
@@ -117,43 +68,9 @@ export function readWebGL2LayerPlacement(
   width: unknown,
   height: unknown,
   ratio: number,
-  light: LayerEffect | undefined
+  light: SharedLayerEffect2D | undefined
 ): LayerRead {
-  if (
-    typeof x !== 'number' ||
-    typeof y !== 'number' ||
-    typeof width !== 'number' ||
-    typeof height !== 'number' ||
-    width <= 0 ||
-    height <= 0
-  )
-    throw glFailure('WEBGL2_LAYER_INVALID');
-  const physicalX = x * ratio,
-    physicalY = y * ratio,
-    physicalWidth = width * ratio,
-    physicalHeight = height * ratio;
-  if (
-    ![physicalX, physicalY, physicalWidth, physicalHeight, physicalX + physicalWidth, physicalY + physicalHeight].every(
-      value => Number.isFinite(value) && Math.abs(value) <= 8388608
-    )
-  )
-    throw glFailure('WEBGL2_LAYER_INVALID');
-  const visibleLight =
-    light &&
-    light.left < physicalX + physicalWidth &&
-    light.right > physicalX &&
-    light.top < physicalY + physicalHeight &&
-    light.bottom > physicalY
-      ? light
-      : undefined;
-  return {
-    revision,
-    x: physicalX,
-    y: physicalY,
-    width: physicalWidth,
-    height: physicalHeight,
-    effect: visibleLight
-  };
+  return readSharedLayerPlacement2D(revision, x, y, width, height, ratio, light, placementInvalid);
 }
 
 /** Build program bindings; the Host owns generation invalidation and cache publication. */

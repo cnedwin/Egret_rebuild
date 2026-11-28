@@ -1456,6 +1456,18 @@
 | `WEBGPU_UNCAPTURED_ERROR` | WebGPU 设备在 Host 的操作之外报告了错误。报告的内容在 cause 中。 |
 | `WEBGPU_VALIDATION` | WebGPU 认为 Host 的某个操作无效并拒绝了它。原因在 cause 中。 |
 
+### WEBGPU_LAYER
+
+| 错误码 | 含义 |
+| --- | --- |
+| `WEBGPU_LAYER_BUDGET` | 超出了WebGPU 层的一项上限。 |
+| `WEBGPU_LAYER_DISABLED` | WebGPU 层没有开启。请在其工厂函数的选项中开启。 |
+| `WEBGPU_LAYER_DISPOSED` | WebGPU 层已销毁，不再接受任何操作。 |
+| `WEBGPU_LAYER_EFFECT_INVALID` | 交给WebGPU 层的 `effect` 无效。 |
+| `WEBGPU_LAYER_INVALID` | 交给WebGPU 层的内容无效。 |
+| `WEBGPU_LAYER_NOT_READY` | WebGPU 层还没有就绪。 |
+| `WEBGPU_LAYER_PENDING` | WebGPU 层还有未完成的工作。 |
+
 ### WEBGPU_READBACK
 
 | 错误码 | 含义 |
