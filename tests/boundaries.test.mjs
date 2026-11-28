@@ -1458,7 +1458,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Frame loop: inert copies of its modules and their build output, for the same reason.
     const loopGraphFiles=['web/loop.ts','web/BrowserFrameLoop.ts','dist/web/loop.js','dist/web/loop.d.ts','dist/web/BrowserFrameLoop.js','dist/web/BrowserFrameLoop.d.ts'];
     // Browser game: inert copies of its modules and their build output, for the same reason.
-    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','browserGameParagraph','browserGameGlyphFont','browserGameFamilies','browserTextWork','screenControlGeometry','screenClipGeometry','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
+    const gameGraphFiles=['game','BrowserGame','browserGameLabels','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','browserGameParagraph','browserGameGlyphFont','browserGameFamilies','browserTextWork','screenControlGeometry','screenClipGeometry','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
     // World3D app: names what it imports from the main entry, so it is copied as it is.
     const world3dAppFiles=['web/world3d/app3D.ts','dist/web/world3d/app3D.js','dist/web/world3d/app3D.d.ts'];
     const playFiles=['BrowserPlay','playWidgets','playTouch','gestures','playView','playViewParagraph','playViewScroll','view'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
@@ -1514,6 +1514,8 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'layer-escaped-module':['packages/engine/web/ProbeStaticLayer.ts',"import {createBrowserStaticLayers} from './browserStaticLayers.js';\nvoid createBrowserStaticLayers;\n"],
         'layer-owned-timer':['packages/engine/web/browserStaticLayers.ts',"setTimeout(()=>{},1000);\n"],
         'image-queue-escaped-module':['packages/engine/web/ProbeImageQueue.ts',"import {createGameImageAdmission} from './GameImageAdmission.js';\nvoid createGameImageAdmission;\n"],
+        'labels-escaped-module':['packages/engine/web/ProbeGameLabels.ts',"import {createGameLabels} from './browserGameLabels.js';\nvoid createGameLabels;\n"],
+        'labels-owned-timer':['packages/engine/web/browserGameLabels.ts',"setTimeout(()=>{},0);\n"],
         'overlay-reporter-escaped-module':['packages/engine/web/world3d/ProbeOverlayReporter.ts',"import {createOverlayScreenReporter} from './overlayScreenReport.js';\nvoid createOverlayScreenReporter;\n"],
         'screen-clip-escaped-module':['packages/engine/web/ProbeScreenClip.ts',"import {polygonBounds} from './screenClipGeometry.js';\nvoid polygonBounds;\n"],
         'screen-clip-owned-timer':['packages/engine/web/screenClipGeometry.ts','setTimeout(()=>{},0);\n'],
@@ -2718,6 +2720,8 @@ for(const [name,reason] of [
   ['layer-owned-timer','Browser game: acquired automatic host work'],
   ['layer-optional-gl','M14: WebGL2 module imported outside exact optional closure'],
   ['image-queue-escaped-module','Browser game: implementation module imported outside its entry'],
+  ['labels-escaped-module','Browser game: implementation module imported outside its entry'],
+  ['labels-owned-timer','Browser game: acquired automatic host work'],
   ['overlay-reporter-escaped-module','Semantics: implementation module imported outside its entry'],
   ['screen-clip-escaped-module','Semantics: implementation module imported outside its entry'],
   ['screen-clip-owned-timer','Overlay screen reporter: acquired automatic host work'],

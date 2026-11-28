@@ -8,7 +8,7 @@ evidence:
   - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/src/view/mapview.mjs, line: 21, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
   - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/src/main.mjs, line: 210, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
   - { repo: cnedwin/PortedGamesEgret, path: NineProvinces/ENGINE-NOTES.md, line: 8, commit: de9e10b2592b35548c85c1f6368db1508564def1, pin: 9d801beb0667dac833a57ae20a09b552e862b275 }
-  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/BrowserGame.ts, line: 1208, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
+  - { repo: cnedwin/Egret_rebuild, path: packages/engine/web/browserGameLabels.ts, line: 570, commit: a438ea4d05e01343dcf8f18fb15df08f2fa54254, pin: a438ea4d05e01343dcf8f18fb15df08f2fa54254 }
   - { repo: cnedwin/Egret_rebuild, path: examples/label-budget/verify.mjs, line: 1, commit: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5, pin: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5 }
 engine: 2e53f45fdd7b487ec68110a6f0f9cbc683a73cd5
 ---

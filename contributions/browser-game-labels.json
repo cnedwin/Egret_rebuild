@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/browserGameLabels.ts",
+      "originRole": "First-party labels of the browser game entry: text fields through the game's one text cache, labels packed onto shared pages, paragraph labels, glyph fonts, their drawing lanes and their warnings; moved out of the existing first-party createBrowserGame with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
