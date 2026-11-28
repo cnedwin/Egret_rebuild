@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/src/internal/routedInput.ts",
+      "originRole": "First-party private target admission, cleanup and reentrant operation wrapper shared by the pointer and hover inputs; extracted from the existing first-party pointerInput and hoverInput modules with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
