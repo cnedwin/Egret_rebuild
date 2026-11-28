@@ -326,3 +326,38 @@ test('SAT03 shared clip stacks preserve moving and partially intersected attribu
     return inner;
   });
 });
+
+test('SAT04 strict triangles and quads from a cut retain the original winding and accounting', () => {
+  const make = (x, y) => ({ x, y, u: x + y, v: x - y });
+  const cases = [
+    { xy: [[0, 0], [2, 0], [1, 2]], winding: 1 },
+    { xy: [[0, 0], [0, 2], [2, 2], [2, 0]], winding: -1 },
+    { xy: [[0, 0], [2, 0], [1, 2 ** -70]], winding: 1 },
+    { xy: [[0, 0], [1, 0], [2, 0]], winding: 0 },
+    { xy: [[0, 0], [1, 1], [1, 1], [0, 2]], winding: 0 },
+    { xy: [[0, 0], [2, 2], [0, 2], [2, 0]], winding: 0 },
+    { xy: [[0, 0], [2, 0], [1, 0.5], [0, 2]], winding: 0 },
+    { xy: [[0, 0], [2, 0], [3, 1], [2, 2], [0, 2]], winding: 0 }
+  ];
+  for (const { xy, winding } of cases) {
+    const points = xy.map(([x, y]) => make(x, y));
+    const n = points.length, tuples = n * (n + 1) / 2;
+    for (const limits of [LIMITS, { ...LIMITS, maxClipEdgeTests: n - 1 }, { ...LIMITS, maxTupleComparisons: tuples - 1 }]) {
+      const budget = new TexturedPreparationBudget2D(limits);
+      const p = new Preparation(limits, budget, true, { options: limits, budget });
+      const input = points.slice();
+      const result = p.tryFinishClippedMesh(input);
+      const accepted = winding !== 0 && limits.maxClipEdgeTests >= n && limits.maxTupleComparisons >= tuples;
+      if (accepted) {
+        assert.equal(result, input);
+        assert.deepEqual(result, winding > 0 ? points : points.toReversed());
+      } else {
+        assert.equal(result, undefined);
+        assert.deepEqual(input, points);
+      }
+      assert.equal(budget.predicatesCharged, accepted ? n : 0);
+      assert.equal(p.edgeTests, accepted ? n : 0);
+      assert.equal(budget.tupleComparisonsCharged, accepted ? tuples : 0);
+    }
+  }
+});

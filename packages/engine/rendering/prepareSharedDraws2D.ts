@@ -325,8 +325,8 @@ function policyFor(budget: TexturedPreparationBudget2D) {
     return result.length < 3 ? [] : finishPolygonWinding2D(preparation, result);
   };
   // The clip's own normalization: its input is what the clip made.
-  const normalize = (preparation: Preparation, input: readonly SharedPoint2D[]): SharedPoint2D[] =>
-    finish(preparation, input, false, true);
+  const normalize = (preparation: Preparation, input: SharedPoint2D[]): SharedPoint2D[] =>
+    preparation.tryFinishClippedMesh(input) ?? finish(preparation, input, false, true);
   const normalizeOwned = (preparation: Preparation, input: readonly SharedPoint2D[]): SharedPoint2D[] =>
     finish(preparation, input, true);
   return { policy, normalize, normalizeOwned };

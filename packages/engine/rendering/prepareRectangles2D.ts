@@ -136,6 +136,38 @@ export class Preparation {
     if (!Number.isFinite(value)) fail('precision');
     return value;
   }
+  /**
+   * The output of a real cut has qualified attributes. For a strict triangle or
+   * quadrilateral, equal nonzero cyclic turns prove that every corner is distinct.
+   * Replay the exact original comparisons and turns before accepting that proof.
+   */
+  public tryFinishClippedMesh<P extends PreparedPoint2D>(points: P[]): P[] | undefined {
+    const count = points.length;
+    if (!this.reuseContainedSubjects || (count !== 3 && count !== 4)) return undefined;
+    const turn = (a: P, b: P, c: P): number => -Math.sign(orient2d(a.x, a.y, b.x, b.y, c.x, c.y));
+    const a = points[0]!,
+      b = points[1]!,
+      c = points[2]!;
+    const winding = turn(a, b, c);
+    if (winding !== 1 && winding !== -1) return undefined;
+    if (count === 4) {
+      const d = points[3]!;
+      if (turn(b, c, d) !== winding || turn(c, d, a) !== winding || turn(d, a, b) !== winding) return undefined;
+    }
+    // The old finisher compares each adjacent pair (including closure), then
+    // every distinct pair. Aggregate refusal leaves both ledgers untouched.
+    if (
+      count > this.options.maxClipEdgeTests - this.edgeTests ||
+      !tryReplayPreparedStage2D(this.budget, {
+        predicates: count,
+        tupleComparisons: (count * (count + 1)) / 2,
+        preparedVertices: 0
+      })
+    )
+      return undefined;
+    this.edgeTests += count;
+    return winding < 0 ? points.reverse() : points;
+  }
   /** Intersect only already qualified canonical clip bounds, with the viewport last. */
   public containedClipStackBounds(
     clips: readonly (readonly PreparedPoint2D[])[],
@@ -558,7 +590,7 @@ export function clipPolygon2D<P extends PreparedPoint2D>(
   preparation: Preparation,
   subject: P[],
   clip: readonly PreparedPoint2D[],
-  normalize: (preparation: Preparation, input: readonly P[]) => P[],
+  normalize: (preparation: Preparation, input: P[]) => P[],
   attach: CrossingAttributes<P>,
   policy?: PolygonClipPolicy2D<P>,
   normalization?: 'rectangle' | 'image' | 'mesh'
