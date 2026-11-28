@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Read the supplied Spine binary byte window",
+    "body": "A binary skeleton can be supplied as a subarray of a larger file, including a Node.js Buffer view. The loader reads exactly the supplied bytes and rejects a truncated skeleton even when its missing bytes follow the view."
+  },
+  "zh": {
+    "title": "按提供的字节范围读取 Spine 二进制骨骼",
+    "body": "二进制骨骼可以取自大文件中的一段，包括 Node.js Buffer 子视图。加载器只读取这段字节。即使底层文件紧接着保存了缺失的内容，截断的骨骼也会按原有错误返回。"
+  }
+}
