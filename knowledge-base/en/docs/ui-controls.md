@@ -85,7 +85,7 @@ import { createToggleControl } from '@egret/engine/ui';
 const sound = createToggleControl({ input, target: box, checked: true, onChange: checked => audio.setMuted(!checked) });
 ```
 
-A completed press flips `checked` and reports the new value. `toggle()` is one activation from a key or a script, and does nothing while the control is disabled. `setChecked(value)` sets the value without an activation, also while disabled, and reports a change only when the value differs. `pressed`, `press()` and `release()` are those of the action control inside it.
+A completed press flips `checked` and reports the new value. `toggle()` is one activation from a key or a script, and does nothing while the control is disabled. `setChecked(value)` sets the value without an activation, also while disabled, and reports a change only when the value differs. `pressed`, `press()` and `release()` are those of the action control inside it. Pass `activation` and `tapTolerance` as for an action control, for example `activation: 'releaseInside'` so a press dragged off the switch does not flip it; `capturedRelease` stays the default.
 
 ## One of several
 
@@ -100,7 +100,7 @@ const level = createSelectionGroup({
 });
 ```
 
-This is the state of a radio group, a segmented control, a row of tabs or a listbox with a single selection. `items` are one to 256 entries with distinct keys and distinct targets, in the order movement follows. Without `selected` nothing is selected until an item is chosen; after that one item always is.
+This is the state of a radio group, a segmented control, a row of tabs or a listbox with a single selection. `items` are one to 256 entries with distinct keys and distinct targets, in the order movement follows. Without `selected` nothing is selected until an item is chosen; after that one item always is. `activation` and `tapTolerance` apply to the press of every item, as for an action control: with `'releaseInside'` a press released off its item selects nothing. Movement and `select()` do not use pointer geometry.
 
 A completed press on an item selects it. `select(key)` does the same by name, and `next()`, `previous()`, `first()` and `last()` move the selection among the enabled items. Each returns whether the selection changed. Movement wraps past either end unless `wrap` is false. With nothing selected, `next()` starts at the first enabled item and `previous()` at the last.
 

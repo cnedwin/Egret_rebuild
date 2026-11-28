@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "Toggles and selection groups take the release policy",
+    "body": "createToggleControl and createSelectionGroup take activation and tapTolerance, as createActionControl does. With activation 'releaseInside', a press dragged off a switch or an item and released there neither flips it nor selects it. capturedRelease stays the default."
+  },
+  "zh": {
+    "title": "开关和单选组支持松手位置策略",
+    "body": "createToggleControl 和 createSelectionGroup 与 createActionControl 一样支持 activation 和 tapTolerance。设为 'releaseInside' 时，按下后拖出开关或选项再松手，既不翻转也不选中。默认仍是 capturedRelease。"
+  }
+}
