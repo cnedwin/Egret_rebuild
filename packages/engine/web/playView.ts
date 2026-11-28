@@ -25,6 +25,7 @@ import type {
   ViewVariant
 } from './view.js';
 import { createPlayViewScrolls } from './playViewScroll.js';
+import { clippedDisplayRect } from './screenClipGeometry.js';
 import type { PlayScrollViewport, PlayViewScroll } from './playViewScroll.js';
 
 /** How one named part follows the game's state. Each function is given the state and read every frame. */
@@ -1970,71 +1971,8 @@ function visibleOnStage(node: DisplayObject, stage: DisplayObject, input = false
   return false;
 }
 
-interface Point {
-  readonly x: number;
-  readonly y: number;
-}
-
-const edge = (a: Point, b: Point, c: Point): number => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-
-function corners({ x, y, width, height }: ViewRect, node?: DisplayObject): Point[] {
-  if (width <= 0 || height <= 0) return [];
-  const points = [
-    { x, y },
-    { x: x + width, y },
-    { x: x + width, y: y + height },
-    { x, y: y + height }
-  ];
-  return node === undefined ? points : points.map(at => node.localToGlobal(at.x, at.y));
-}
-
-/** Clip the two actual shapes before enclosing them for the rectangular accessibility projection. */
-function intersect(points: Point[], clip: Point[]): Point[] {
-  if (clip.length === 0 || points.length === 0) return [];
-  const winding = Math.sign(edge(clip[0]!, clip[1]!, clip[2]!));
-  if (!winding) return [];
-  for (let index = 0; index < clip.length && points.length > 0; index++) {
-    const from = clip[index]!,
-      to = clip[(index + 1) % clip.length]!,
-      distances = points.map(point => winding * edge(from, to, point)),
-      out: Point[] = [];
-    for (let at = 0; at < points.length; at++) {
-      const prior = (at + points.length - 1) % points.length,
-        start = points[prior]!,
-        end = points[at]!,
-        a = distances[prior]!,
-        b = distances[at]!;
-      if (a < 0 !== b < 0) {
-        const fraction = a / (a - b);
-        out.push({ x: start.x + (end.x - start.x) * fraction, y: start.y + (end.y - start.y) * fraction });
-      }
-      if (b >= 0) out.push(end);
-    }
-    points = out;
-  }
-  return points;
-}
-
-function visibleRect(node: DisplayObject, area: ViewRect, screen: ViewRect): ViewRect | undefined {
-  if (node.isDisposed) return undefined;
-  let points = corners(area, node);
-  if (points.length === 0 || !edge(points[0]!, points[1]!, points[2]!)) return undefined;
-  for (let at: DisplayObject | undefined = node; at !== undefined && points.length !== 0; at = at.parent) {
-    const clip = at.clipRect;
-    if (clip !== undefined) points = intersect(points, corners(clip, at));
-  }
-  points = intersect(points, corners({ x: 0, y: 0, width: screen.width, height: screen.height }));
-  if (points.length < 3) return undefined;
-  let areaTwice = 0;
-  for (let index = 1; index + 1 < points.length; index++)
-    areaTwice += edge(points[0]!, points[index]!, points[index + 1]!);
-  if (!Number.isFinite(areaTwice) || areaTwice === 0) return undefined;
-  const xs = points.map(point => point.x),
-    ys = points.map(point => point.y),
-    x = Math.min(...xs),
-    y = Math.min(...ys);
-  return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
-}
+const visibleRect = (node: DisplayObject, area: ViewRect, screen: ViewRect): ViewRect | undefined =>
+  clippedDisplayRect(node, area, screen);
 
 /** A rectangle measured from the corner of the one it is in. */
 function relative(rect: ViewRect, parent: ViewRect | undefined): ViewRect {
