@@ -43,6 +43,8 @@ export interface PlayViewBinding<S = unknown> {
   readonly pick?: (state: S) => number;
   readonly format?: (value: number) => string;
   readonly roll?: number;
+  /** Retain the last raster of a non-actionable short text while its next words prepare. Numeric pick defaults to this outside actions. */
+  readonly retainLastText?: boolean;
   /** How full a bar is, 0 to 1. */
   readonly value?: (state: S) => number;
   /** Whether a toggle is on. */
@@ -193,7 +195,7 @@ const MAX_VIEW_IMAGE_LOADS = 4;
 
 const KEYS_OF: Record<ViewPart['type'], readonly (keyof PlayViewBinding)[]> = {
   panel: ['label', 'disabled', 'visible', 'color', 'tap', 'tapTargetOnly', 'pointerOnly', 'badge'],
-  text: ['label', 'text', 'pick', 'format', 'roll', 'visible', 'color', 'badge'],
+  text: ['label', 'text', 'pick', 'format', 'roll', 'retainLastText', 'visible', 'color', 'badge'],
   button: [
     'label',
     'text',
@@ -493,7 +495,7 @@ export function createPlayViews(
           const ok =
             key === 'roll'
               ? typeof value === 'number' && Number.isFinite(value) && value >= 0
-              : key === 'pointerOnly' || key === 'tapTargetOnly'
+              : key === 'pointerOnly' || key === 'tapTargetOnly' || key === 'retainLastText'
                 ? typeof value === 'boolean'
                 : typeof value === 'function';
           if (!ok) throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: name + ': ' + key });
@@ -507,6 +509,8 @@ export function createPlayViews(
       }
       const checkRoles = (part: ViewPart): void => {
         const binding = part.name === undefined ? undefined : bind[part.name];
+        if (part.type === 'text' && part.paragraph !== undefined && binding?.retainLastText !== undefined)
+          throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: part.name + ': retainLastText needs a short text' });
         if (part.type === 'button' && part.role !== 'tab' && binding?.selected !== undefined)
           throw new EgretError('UI_VIEW_BINDING_INVALID', { cause: part.name + ': selected needs a tab role' });
         if (part.type !== 'panel') return;
@@ -896,6 +900,22 @@ export function createPlayViews(
           : undefined;
       const start =
         part.type === 'text' || part.type === 'button' || part.type === 'toggle' ? String(part.text ?? '') : '';
+      const textBinding = part.name === undefined ? undefined : bind[part.name];
+      const retainLastText = (): boolean => {
+        if (part.type !== 'text' || part.paragraph !== undefined) return false;
+        if (textBinding?.retainLastText !== undefined) return textBinding.retainLastText;
+        if (textBinding?.pick === undefined) return false;
+        for (let at = planned.parent; at >= 0; at = plan.parts[at]!.parent) {
+          const ancestor = plan.parts[at]!.part;
+          if (
+            ancestor.type === 'button' ||
+            ancestor.type === 'toggle' ||
+            (ancestor.type === 'panel' && ancestor.name !== undefined && bind[ancestor.name]?.tap !== undefined)
+          )
+            return false;
+        }
+        return true;
+      };
       const words =
         (part.type === 'text' && part.paragraph === undefined) || part.type === 'button' || part.type === 'toggle'
           ? game.text(start, {
@@ -903,6 +923,7 @@ export function createPlayViews(
               size: part.size ?? (part.type === 'text' ? plan.skin.size : Math.round(plan.skin.size * 0.9)),
               align: part.type === 'button' ? 'center' : part.type === 'text' ? (part.align ?? 'left') : 'left',
               baseline: 'middle',
+              ...(part.type === 'text' ? { retainLastText: retainLastText() } : {}),
               ...(part.type === 'text' && part.bold !== undefined ? { bold: part.bold } : {}),
               ...(part.type === 'button' ? { bold: true } : {}),
               ...(part.fontFamily !== undefined ? { fontFamily: part.fontFamily } : {}),

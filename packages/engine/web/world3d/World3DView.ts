@@ -208,7 +208,7 @@ export class World3DView implements Disposable {
       if (options.autoResize ?? true) {
         const ratio = Math.min(typeof devicePixelRatio === 'number' ? devicePixelRatio : 1, options.maxPixelRatio ?? 2);
         this.renderer.resizeToDisplaySize(ratio);
-        const canvas = this.renderer.canvas;
+        const canvas = this.renderer.renderSize ?? this.renderer.canvas;
         if (canvas.height > 0) this.camera.aspect = canvas.width / canvas.height;
       }
       options.onUpdate?.(deltaSeconds, elapsedSeconds);

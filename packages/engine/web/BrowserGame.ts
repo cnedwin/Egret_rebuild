@@ -440,6 +440,13 @@ async function boundedGameImageBytes(response: Response): Promise<Uint8Array<Arr
 }
 
 /** WebGPU where the browser has it and gives an adapter. Asking for an adapter does not touch the canvas, which can hold one kind of context only. */
+// WebKit may discard a one-off frame or stop presenting after a backing resize. Chromium also advertises
+// AppleWebKit in its compatibility UA; these presentation policies apply only to WebKit.
+function isWebKitBrowser(): boolean {
+  const userAgent = globalThis.navigator?.userAgent ?? '';
+  return /AppleWebKit\//.test(userAgent) && !/(?:Chrome|Chromium|Edg|OPR|SamsungBrowser)\//.test(userAgent);
+}
+
 async function chooseBackend(asked: 'auto' | BrowserGameBackend): Promise<BrowserGameBackend> {
   if (asked !== 'auto') return asked;
   const gpu = (globalThis.navigator as { readonly gpu?: { requestAdapter(): Promise<unknown> } } | undefined)?.gpu;
@@ -598,6 +605,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
             pixelRatio,
             blendSpace,
             enableEffects,
+            ...(isWebKitBrowser()
+              ? { presentationResize: 'stable', ...(renderMode === 'on-demand' ? { preserveDrawingBuffer: true } : {}) }
+              : {}),
             ...(options.measureSharedFrames === undefined ? {} : { measureSharedFrames: options.measureSharedFrames }),
             ...(options.webgl2PageBatching === undefined ? {} : { pageBatching: options.webgl2PageBatching })
           });
@@ -733,8 +743,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     // the panel, and lets a frame that holds more images than a frame may go undrawn, with a warning, rather than stop
     // the game.
     const drawFrame = (given: SharedFrameOptions2D): SharedRenderFrame2D | undefined => {
-      // Continuous mode keeps its old frame-time maintenance. On-demand performs it each display step below.
-      if (revision === undefined) {
+      // Only the running on-demand loop prepares labels before deciding whether to draw. External draws
+      // (including Play, whose own clock drives this game) must still perform that maintenance here.
+      if (revision === undefined || loop?.state !== 'running') {
         sweepLabels();
         waitAtlas();
       }

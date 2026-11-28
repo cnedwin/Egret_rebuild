@@ -57,6 +57,9 @@ app.show(scene, camera, { onUpdate: (seconds) => game.update(seconds) });
 
 除非传入 `dynamicResolution: false`，绘制分辨率随帧率变化。平滑后的帧率持续 1.5 秒低于每秒 45 帧时，像素比的比例下降 0.15，最低 0.6；持续 6 秒高于 57 帧时逐步回升。`app.resolutionScale` 给出当前比例，阈值是 `dynamicResolution` 的选项。自己驱动循环的页面可用 `createDynamicResolution3D(options)` 得到同样的控制器：每帧调用 `update(seconds)`，把像素比乘以返回的比例。
 
+在移动 Apple WebKit 页面画布上，默认的 `presentationResize: 'auto'` 启用稳定的 WebGL2 画布呈现策略；自适应绘制分辨率仍然生效，并改变 `app.renderer.renderSize`，而不是强制固定场景分辨率。应用使用这个尺寸计算摄像机宽高比，包括屏幕方向变化。其他宿主可用 `presentationResize: 'stable'` 明确启用；要继续调整画布 backing 可设为 `presentationResize: 'direct'`。WebGPU 与 auto 模式的 OffscreenCanvas 不变。实际限制以及绘制尺寸不同时的额外 GPU 通道见 [World3D 渲染器](world3d.md#稳定的-webgl2-画布呈现)。
+
+
 ## 用代码拼模型
 
 `createGeometryBuilder3D()` 把许多摆好位置、上了颜色的零件合成一个几何体，所以用方块拼成的卡车、一片石头都只需一次绘制。

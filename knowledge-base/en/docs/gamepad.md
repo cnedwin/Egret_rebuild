@@ -12,7 +12,7 @@ English | [简体中文](../../Cns/docs/gamepad.md)
 import { bindGamepadKeys } from '@egret/engine/input/gamepad';
 import { createBrowserGamepadInput } from '@egret/engine/web/gamepad';
 
-const pads = scope.use(createBrowserGamepadInput());
+const pads = scope.use(createBrowserGamepadInput({ optional: true }));
 // Once a frame, with the frame's time: a browser tells nothing of a pad by itself.
 function frame(time) { pads.poll(time); /* game update and draw */ requestAnimationFrame(frame); }
 requestAnimationFrame(frame);
@@ -23,6 +23,8 @@ const { x, y } = pad?.stick('left') ?? { x: 0, y: 0 };
 ```
 
 `poll(timestamp)` reads `navigator.getGamepads()` once and gives the input what every connected pad says. A hidden page is not read. When the page is hidden, or the window loses the person, every button is let go, because what a pad does then is not told. `rumble(pad, { duration, weak, strong })` shakes a pad that can be shaken and says whether it asked; failures go to `onError`.
+
+For a game that also accepts touch or keys, `optional: true` makes an absent Gamepad API or a browser permission-policy `SecurityError` behave like no connected pads; polling and disposing remain valid, and rumble says false. A genuine controller is not emulated, and unrelated failures still surface. The default strict adapter still refuses a missing required host. Play uses the optional adapter.
 
 ## The input
 

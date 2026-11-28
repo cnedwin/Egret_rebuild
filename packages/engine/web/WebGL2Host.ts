@@ -434,6 +434,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
   private retiredUnknownBytes = 0;
   /** Draw calls of the last frame drawn: its draws, effect passes, layers and the resolve to the canvas. */
   private frameDrawCalls = 0;
+  private presentationSize: { readonly width: number; readonly height: number } | undefined;
   private retiredUnknownObjects = 0;
 
   public constructor(input: SharedWebGL2HostOptions) {
@@ -875,7 +876,8 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       this.token = {};
       const token = this.token;
       this.pool = createRetentionLedger<Request, GLNativeOwner>(token, this.resourceReuse);
-      const context = this.surface.getContext('webgl2', ATTRIBUTES) as WebGL2RenderingContext | null;
+      const attributes = Object.freeze({ ...ATTRIBUTES, preserveDrawingBuffer: this.options.preserveDrawingBuffer });
+      const context = this.surface.getContext('webgl2', attributes) as WebGL2RenderingContext | null;
       if (!context) throw glFailure('WEBGL2_CONTEXT_UNAVAILABLE');
       this.context = context;
       this.lostNative = context.isContextLost.bind(context);
@@ -895,7 +897,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       if (
         context.canvas !== this.surface ||
         !attrs ||
-        Object.entries(ATTRIBUTES).some(([key, value]) => (attrs as unknown as Record<string, unknown>)[key] !== value)
+        Object.entries(attributes).some(([key, value]) => (attrs as unknown as Record<string, unknown>)[key] !== value)
       )
         throw glFailure('WEBGL2_CONTEXT_ATTRIBUTES_UNSUPPORTED');
       // Explicitly request the one supported drawing-buffer color space when exposed.
@@ -959,7 +961,10 @@ class SharedGLHost implements SharedLayerWebGL2Host {
       const sources: (readonly [string, string])[] = [
         [sharedWebGL2VertexSource, sampledFragmentSource(false, coded)],
         [sharedWebGL2SolidVertexSource, sharedWebGL2SolidFragment(coded)],
-        [sharedWebGL2ResolveVertexSource, sharedWebGL2ResolveFragment(coded)],
+        [
+          sharedWebGL2ResolveVertexSource,
+          sharedWebGL2ResolveFragment(coded, this.options.presentationResize === 'stable')
+        ],
         ...effectPasses.map(mode => [sharedWebGL2ResolveVertexSource, sharedEffectGLSL(mode, coded)] as const)
       ];
       // The faster UI policy omits this source altogether, including when asynchronous parallel compilation is available.
@@ -2226,15 +2231,21 @@ class SharedGLHost implements SharedLayerWebGL2Host {
   }
   private prepareSurface(record: Record2D): void {
     const native = record.native,
-      { width, height } = record.storage.prepared;
-    if (this.surface.width !== width) this.surface.width = width;
-    this.generationGate(this.token);
-    if (this.surface.height !== height) this.surface.height = height;
-    this.generationGate(this.token);
-    if (this.surface.width !== width || this.surface.height !== height) throw new Error('Canvas rejected dimensions');
-    if (this.context!.drawingBufferWidth !== width || this.context!.drawingBufferHeight !== height)
+      { width, height } = record.storage.prepared,
+      output = this.presentationSize ?? { width, height };
+    if (this.presentationSize === undefined) {
+      if (this.surface.width !== output.width) this.surface.width = output.width;
+      this.generationGate(this.token);
+      if (this.surface.height !== output.height) this.surface.height = output.height;
+      this.generationGate(this.token);
+    }
+    if (this.surface.width !== output.width || this.surface.height !== output.height)
+      throw new Error('Canvas rejected dimensions');
+    if (this.context!.drawingBufferWidth !== output.width || this.context!.drawingBufferHeight !== output.height)
       throw glFailure('WEBGL2_BACKING_LIMIT');
     this.generationGate(this.token);
+    if (this.options.presentationResize === 'stable') this.presentationSize = output;
+    // Intermediate effects, masks and cached layers always use the frame's logical pixel dimensions.
     native.reset(width, height);
   }
 
@@ -2511,6 +2522,11 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     gl.bindTexture(gl.TEXTURE_2D, colorTexture);
     gl.uniform1i(gl.getUniformLocation(this.resolveProgram!, 'workingTexture'), 0);
     gl.uniform1i(gl.getUniformLocation(this.resolveProgram!, 'opaque'), this.options.outputAlpha === 'opaque' ? 1 : 0);
+    if (this.presentationSize !== undefined) {
+      const output = this.presentationSize;
+      gl.viewport(0, 0, output.width, output.height);
+      gl.uniform2f(gl.getUniformLocation(this.resolveProgram!, 'outputSize'), output.width, output.height);
+    }
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     this.frameDrawCalls++;
     if (record.ticket) {

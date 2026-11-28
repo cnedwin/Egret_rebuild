@@ -226,7 +226,7 @@ test('WebGL2 uploads only the changed instance stream and preserves raw edits', 
   }
 });
 
-function shaderPreparationFixture({ parallel = true } = {}) {
+function shaderPreparationFixture({ parallel = true, rendererOptions = {} } = {}) {
   const fixture = webGLFixture();
   const { canvas, gl } = fixture;
   const extension = { COMPLETION_STATUS_KHR: 0x91b1 };
@@ -345,7 +345,7 @@ function shaderPreparationFixture({ parallel = true } = {}) {
   ])
     gl[name] = () => {};
 
-  const renderer = createWebGL2Renderer3D({ canvas });
+  const renderer = createWebGL2Renderer3D({ canvas, ...rendererOptions });
   const geometry = createBoxGeometry3D({});
   const material = createStandardMaterial3D({ alphaMode: 'blend', opacity: 0.22 });
   const mesh = new Mesh3D(geometry, material);
@@ -1580,5 +1580,59 @@ test('World3D prepares automatic companion programs only for passes that can fol
   } finally {
     f.dispose();
     material.dispose();
+  }
+});
+
+test('stable World3D presentation keeps an already presented backing while changing the scene target', () => {
+  const fixture = shaderPreparationFixture({
+    parallel: false,
+    rendererOptions: { presentationResize: 'stable', shadows: false }
+  });
+  const { renderer, canvas } = fixture;
+  const scene = new Scene3D(),
+    camera = createPerspectiveCamera3D({ aspect: 1 });
+  renderer.setSize(16, 16);
+  canvas.clientWidth = canvas.clientHeight = 16;
+  try {
+    assert.deepEqual(renderer.renderSize, { width: 16, height: 16 });
+    assert.equal(renderer.render(scene, camera), true);
+    assert.equal(renderer.resizeToDisplaySize(0.5), true);
+    assert.deepEqual([canvas.width, canvas.height], [16, 16]);
+    assert.deepEqual(renderer.renderSize, { width: 8, height: 8 });
+    assert.equal(renderer.resizeToDisplaySize(0.5), false);
+    const before = fixture.draws;
+    assert.equal(renderer.render(scene, camera), true);
+    assert.equal(fixture.draws - before, 1, 'one GPU presentation draw for the adapted scene');
+    assert.equal(renderer.info.drawCalls, 1);
+    // Explicit caller-owned targets do not acquire a canvas presentation pass.
+    const target = new RenderTarget3D(4, 4);
+    try {
+      const prior = fixture.draws;
+      assert.equal(renderer.render(scene, camera, target), true);
+      assert.equal(fixture.draws, prior);
+    } finally {
+      target.dispose();
+    }
+    assert.equal(renderer.resizeToDisplaySize(1), true);
+    assert.deepEqual(renderer.renderSize, { width: 16, height: 16 });
+    const recovered = fixture.draws;
+    assert.equal(renderer.render(scene, camera), true);
+    assert.equal(fixture.draws, recovered, 'recovery to backing dimensions returns to direct rendering');
+  } finally {
+    renderer.dispose();
+  }
+});
+
+test('direct World3D presentation still changes the actual canvas backing after drawing', () => {
+  const { renderer, canvas } = shaderPreparationFixture({ parallel: false, rendererOptions: { shadows: false } });
+  const scene = new Scene3D(),
+    camera = createPerspectiveCamera3D({ aspect: 1 });
+  renderer.setSize(16, 16);
+  try {
+    assert.equal(renderer.render(scene, camera), true);
+    renderer.setSize(8, 12);
+    assert.deepEqual([canvas.width, canvas.height], [8, 12]);
+  } finally {
+    renderer.dispose();
   }
 });

@@ -49,6 +49,8 @@ export interface Renderer3DInfo {
 /** What both world3d backends provide; views and tools depend on this only. */
 export interface Renderer3D extends Disposable {
   readonly canvas: HTMLCanvasElement | OffscreenCanvas;
+  /** When provided, the actual scene size can differ from the presented canvas backing. */
+  readonly renderSize?: Readonly<{ width: number; height: number }>;
   readonly info: Renderer3DInfo;
   toneMapping: ToneMapping3D;
   exposure: number;

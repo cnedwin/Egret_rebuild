@@ -127,6 +127,45 @@ test('BG01 options are checked, and a page without pads to ask says so', async (
     { create: false }
   ));
 
+test('BG01b optional browser pads are disconnected when the capability is absent or permission-blocked', async () =>
+  fixture(
+    ({ world, put, navigator }) => {
+      for (const host of [
+        undefined,
+        {},
+        { getGamepads: 1 },
+        {
+          getGamepads() {
+            throw new DOMException('Gamepad permission policy', 'SecurityError');
+          }
+        }
+      ]) {
+        put('navigator', host);
+        const pads = createBrowserGamepadInput({ optional: true });
+        pads.poll(16);
+        assert.deepEqual(pads.input.pads, []);
+        assert.equal(pads.rumble(0), false);
+        pads.dispose();
+      }
+      put('navigator', {
+        getGamepads() {
+          throw new Error('unrelated host failure');
+        }
+      });
+      const broken = createBrowserGamepadInput({ optional: true });
+      assert.throws(() => broken.poll(16), /unrelated host failure/);
+      broken.dispose();
+      put('navigator', navigator);
+      const supported = createBrowserGamepadInput({ optional: true });
+      world.pads = [device(0, { 0: 1 })];
+      supported.poll(16);
+      assert.equal(supported.input.pads[0].pressed('a'), true);
+      supported.dispose();
+      assert.throws(() => createBrowserGamepadInput({ optional: 1 }), coded('GAMEPAD_OPTIONS_INVALID'));
+    },
+    { create: false }
+  ));
+
 test('BG02 a poll reads every pad of the page once and gives the input what they say', async () =>
   fixture(({ world, pads, input, buttons }) => {
     // A browser keeps places: empty ones, and one for a pad that was taken away.

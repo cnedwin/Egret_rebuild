@@ -26,7 +26,9 @@ const TOP = [
   'maxTupleComparisons',
   'outputAlpha',
   'restoreTimeoutMs',
-  'measureSharedFrames'
+  'measureSharedFrames',
+  'preserveDrawingBuffer',
+  'presentationResize'
 ];
 const code = name => e => e instanceof egret.EgretError && e.code === 'WEBGL2_' + name;
 async function author(body) {
@@ -129,6 +131,72 @@ test('GL G02 startup qualifies attributes, formats and actual non-power-of-two U
     await h.close();
     assert.equal(f.live().length, 0);
   }
+});
+test('GL G02 preserveDrawingBuffer is optional and the acquired context must match its requested value', async () => {
+  const kept = glPorts({ attributes: { preserveDrawingBuffer: true } }),
+    live = createSharedWebGL2Host({ canvas: kept.canvas, preserveDrawingBuffer: true });
+  await live.start();
+  assert.deepEqual(kept.events.find(row => row[0] === 'getContext').slice(1), [
+    'webgl2',
+    { ...kept.options, preserveDrawingBuffer: true }
+  ]);
+  await live.close();
+  assert.equal(kept.live().length, 0);
+  for (const value of [true, false]) {
+    const f = glPorts({ attributes: { preserveDrawingBuffer: !value } }),
+      h = createSharedWebGL2Host({ canvas: f.canvas, preserveDrawingBuffer: value });
+    await assert.rejects(h.start(), code('CONTEXT_ATTRIBUTES_UNSUPPORTED'));
+    await h.close();
+    assert.equal(f.live().length, 0);
+  }
+});
+test('GL G02 stable presentation retains the first backing while logical frame dimensions change', async () => {
+  for (const blendSpace of ['linear', 'srgb']) {
+    // The fake port must report the attachment encoding of the requested working texture:
+    // RGBA8 for code-space blending (LINEAR), SRGB8_ALPHA8 for linear-light blending (SRGB).
+    const f = glPorts({ workingEncoding: blendSpace === 'srgb' ? 9729 : constantsSRGB() }),
+      h = createSharedWebGL2Host({ canvas: f.canvas, presentationResize: 'stable', blendSpace, enableEffects: true });
+    // The genuine Engine captures its Host's colour recipe; options cannot spoof that frame profile.
+    const engine = await egret.createEngineForProfile({ host: h }, egret.SHARED_FRAME_PROFILE_2D),
+      scope = engine.createScope();
+    const sprite = scope.use(new egret.Sprite());
+    engine.stage.addChild(sprite);
+    sprite.graphics.beginFill(0xff0000).drawRect(0, 0, 4, 4).endFill();
+    try {
+      for (const [width, height] of [
+        [24, 12],
+        [12, 24],
+        [24, 12]
+      ]) {
+        const frame = engine.captureSharedFrame({ width, height });
+        const before = f.events.length;
+        h.renderSharedFrame(frame);
+        await h.whenIdle();
+        const calls = f.events.slice(before);
+        assert.deepEqual([f.canvas.width, f.canvas.height], [24, 12]);
+        assert.deepEqual(calls.filter(row => row[0] === 'viewport')[0].slice(1), [0, 0, width, height]);
+        assert.deepEqual(
+          calls
+            .filter(row => row[0] === 'viewport')
+            .at(-1)
+            .slice(1),
+          [0, 0, 24, 12]
+        );
+        assert.deepEqual(calls.find(row => row[0] === 'uniform2f' && row[1].name === 'outputSize').slice(2), [24, 12]);
+        assert.equal(h.getStatus().pendingFrames, 0);
+      }
+    } finally {
+      scope.dispose();
+      await engine.dispose();
+    }
+    assert.equal(f.live().length, 0);
+  }
+  const f = glPorts();
+  assert.throws(
+    () => createSharedWebGL2Host({ canvas: f.canvas, presentationResize: 'stable', enableReadback: true }),
+    code('OPTIONS_INVALID')
+  );
+  assert.deepEqual(f.events, []);
 });
 function constantsSRGB() {
   return 35904;

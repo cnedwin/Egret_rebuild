@@ -60,7 +60,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `width`, `height` | The size of the stage in the game's own units: whole numbers above 0. The canvas is scaled to fit and keeps this shape | Required |
 | `background` | The colour a frame is cleared to | Black |
 | `transparent` | `true` clears a frame to nothing, so what the page has under the canvas shows through | The background is drawn |
-| `audio` | Enable the built-in effects and music. Set `false` for a silent game or a game with its own mixer | `true` |
+| `audio` | Built-in effects and music. `true` requires Web Audio; `false` leaves sound to the game | Automatic when a live Web Audio constructor is available |
 | `setup(game)` | Builds the game; may be `async` | Nothing is built |
 | `update(seconds, game)` | One step of the game | No step |
 | `parent` | An element to put the canvas in. It fills the element's width; an element with no height of its own takes the stage's shape | The game fills the window |
@@ -180,6 +180,8 @@ A sprite turns and scales about its own origin: the middle of a `rect` or a `cir
 
 Use `fontFamily` (one installed family), `fontWeight` (1–1000; takes precedence over `bold`) and `italic` to style the short raster text. `await score.ready` waits for the current text/color/size revision to be ready; read the promise again after an update. A pending revision superseded, hidden or removed before completion rejects with `AbortError`. Readiness is not a presented frame fence. Axis-aligned UI label raster origins are aligned to backing pixels; the authored sprite positions and world text remain continuous.
 
+For a non-actionable HUD readout, `game.text(0, { retainLastText: true })` keeps its last committed glyphs while the next words are rasterized. The atlas has one request in flight per text; late assignments coalesce to the latest words, so a continuously changing number can make intermediate visible progress instead of all revisions cancelling one another. The visible words may briefly lag the current `text` property. The current revision’s `ready` still refers to the latest assignment, not the old pixels, and an older pending promise still rejects with `AbortError`. Empty words, a color or size change, a hidden or removed text, and an unrecoverable preparation error do not retain the old picture. Do not enable this option for text that describes an action or a safety-critical status. Ordinary text and button captions retain strict replacement; readouts that change every frame may also use the [generated fixed glyph font](browser-game.md).
+
 ## Input
 
 | Ask | Answer |
@@ -216,7 +218,7 @@ The first pointer pressed on the Play canvas owns `game.pointer` until it lifts 
 
 If your game owns its audio, pass `audio: false` to `play` or `play3d`. For the lifetime of the game, Play creates no audio context or audio-unlock listeners and skips synthesis and decoding of all 14 presets. Calling `sfx.define`, `sfx.play`, `sfx.loop` or `music.play` later keeps built-in audio off. A loop handle is already stopped and can be safely stopped again. The game owns pause, resume and cleanup for its own mixer. If `setup` also runs on restart, reuse that mixer across calls.
 
-With `audio: true` or the option omitted, Play prepares the presets before `setup`. Use `game.sfx.muted` to mute this mixer temporarily.
+With `audio: true`, Play requires a live Web Audio constructor and prepares the presets before `setup`. Omit the option to choose sound automatically: if neither standard `AudioContext` nor legacy WebKit `webkitAudioContext` is available, the same game starts silently without creating a fake clock or mixer. If a live constructor is present, the normal sound path is unchanged; errors on a present host are not silently swallowed. An audio-critical game can require `true` and handle `AUDIO_HOST_UNAVAILABLE`. Use `game.sfx.muted` to mute the mixer temporarily.
 
 `game.sfx.play('coin')` plays an effect made in code. The names are `jump`, `coin`, `hit`, `hurt`, `explosion`, `shoot`, `powerup`, `bounce`, `pop`, `click`, `hum`, `wind`, `win` and `lose`. `game.sfx.play('coin', { volume: 0.5, pitch: 1.2 })` changes one play. A name that is not there is refused with `PLAY_SFX_UNKNOWN`, and the message lists the names.
 

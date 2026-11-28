@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Stable WebGL2 World3D presentation across adaptive resize",
+    "body": "Mobile Apple WebKit page canvases now use stable presentation by default through createWorld3DApp. After the first displayed frame, the WebGL2 renderer can resize its internal scene target and present its encoded output through one GPU-only texture-sampling pass to an unchanged canvas backing. The actual scene renderSize drives camera aspect, dynamic resolution and quality adjustments. Explicit caller render targets, low-level direct defaults, WebGPU and automatic OffscreenCanvas behavior are unchanged. A real browser fixture verifies visible pixels against live GL readback across resize, recovery, post-processing, transparency, orientation and the adaptive app."
+  },
+  "zh": {
+    "title": "WebGL2 World3D 自适应尺寸稳定呈现",
+    "body": "移动 Apple WebKit 页面画布上的 createWorld3DApp 默认采用稳定呈现。首次呈现后，WebGL2 渲染器调整内部场景目标，通过一个纯 GPU 纹理采样通道将已编码输出呈现至不变的画布 backing。实际场景 renderSize 用于摄像机宽高比、自适应分辨率与画质调整。调用者传入的独立目标、底层默认直接通道、WebGPU 和自动模式的 OffscreenCanvas 保持不变。真实浏览器用例将可见截图像素与实时 GL 读回对照，覆盖尺寸调整、恢复、后处理、透明、方向变化与高层自适应应用。"
+  }
+}

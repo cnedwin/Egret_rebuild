@@ -21,7 +21,7 @@ mixer.playMusic(theme, { fade: 1 });      // 页面还不能发声时，会等�
 button.onActivate = () => mixer.play(click, { maxInstances: 2 });
 ```
 
-`createBrowserAudio` 会创建一个 `AudioContext`；如果通过 `context` 传入了一个，就使用它，并且不会关闭它。它返回 `mixer`、`context`、`output`（所有声音输出前都会经过的节点，页面自己的分析器可以接在这里）和 `dispose()`。
+`createBrowserAudio` 会创建标准 `AudioContext`，标准构造器不可用时尝试旧 WebKit 前缀构造器；如果通过 `context` 传入了一个，就使用它，并且不会关闭它。明确要求音频但宿主不可用时仍会拒绝。它返回 `mixer`、`context`、`output`（所有声音输出前都会经过的节点，页面自己的分析器可以接在这里）和 `dispose()`。
 
 **单独使用后端。** 同一入口的 `createWebAudioBackend(options)` 就是 Web Audio 那一半，供用 `createAudioMixer` 自己建混音器的页面使用（测试里用自己的后端也是这样建的）。它接受 `context`、`unlockTarget`、`pauseWhenHidden`、`onError` 和 `limiter`，含义见下文。按后端给出的 `locked` 建混音器，再 `attach`，锁定状态就会跟随第一次点击，页面隐藏时也会静音：
 
@@ -195,7 +195,7 @@ mixer.master.setVolume(0.8);
 | `AUDIO_LISTENER_FAILED` | 交给 `subscribe` 的某个监听器抛出了错误。状态已经改变，其他监听器也都先被告知了 |
 | `AUDIO_CLEANUP_FAILED` | 销毁过程中有东西失败了。其余的仍然都已放开；`cleanupErrors` 里是其余的失败 |
 | `AUDIO_CLOSED` | 混音器已被销毁 |
-| `AUDIO_HOST_UNAVAILABLE` | 页面没有 `AudioContext`，也没有传入一个 |
+| `AUDIO_HOST_UNAVAILABLE` | 页面没有标准或前缀 `AudioContext`，也没有传入一个 |
 
 ## 实际运行了什么
 
