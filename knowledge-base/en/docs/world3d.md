@@ -149,6 +149,22 @@ In a fixed three-box scene on Windows Edge 157 with an RTX 5090 Laptop GPU (ANGL
 
 A separate SnowTemple reproduction on the same hardware used one procedural quad with a `CustomShader3D` fragment hook. The first visible frame interval was 87.4 ms without preparation and 4.2 ms after preparation. The separately measured wait inside `LINK_STATUS` was 88.6 ms before preparation. Preparation took 79.4 ms elapsed and 0.6 ms for the initial call. It issued zero draws and polled completion 25 times. The new shader, material, and mesh reused the prepared GL program and made zero calls to link or query link status in the first visible frame. The two frames had identical RGBA8 readbacks. The floor-only control yielded different pixels.
 
+### WebGL2 geometry preparation
+
+When a loading phase will introduce many meshes, `prepareGeometries` prepares an explicit list of live `Geometry3D` objects in the same GPU cache that ordinary draws use. It deduplicates by object identity, including geometries shared across several meshes.
+
+```ts
+await renderer.prepareGeometries([roof.geometry, wall.geometry], {
+  budgetMs: 4,
+  maxPerSlice: 16,
+  signal: loadingController.signal
+});
+```
+
+The method accepts at most 16,384 list entries, a time budget of 0.25–16 ms (default 4), and 1–64 geometries per slice (default 16). It yields before the first batch and between subsequent batches. These are cooperative, per-call CPU submission budgets, not guaranteed frame times: one geometry is uploaded atomically and may exceed the budget; concurrent calls have independent budgets. Vertex/index data and geometry-owned morph storage are prepared, while shader linking, material textures, instance streams and wireframe edge data remain separate work. No draw or GPU completion wait is performed; combine with `preparePrograms` where needed. The next draw reuses resident buffers and normally refreshes data whose versions changed since preparation.
+
+Cancel with an `AbortSignal` to reject with `WORLD3D_RESOURCE_FAILED` (the signal reason is the cause). Renderer or input disposal rejects with `WORLD3D_DISPOSED`; a lost or replaced context rejects with `WORLD3D_CONTEXT_LOST`. Completed entries remain part of the renderer's ordinary geometry cache; do not dispose geometry still needed by the scene. On context recovery, submit a new preparation call.
+
 ### WebGL2 application-frame metrics
 
 Call `measureFrame` around the synchronous render work for one application frame. `PlanarReflection3D` identifies its mirror draw automatically. Direct renders to other targets are reported as offscreen views. `frame.reflections.rendered` counts successful planar reflection renders. `frame.reflections.reused` counts interval skips that keep a prior reflection texture. A reused texture adds no reflection pass or draw calls.

@@ -397,3 +397,24 @@ A page can also take the engine as [one file](single-file.md), with no import ma
 ## November 27 device follow-up
 
 November 27 follow-up: selected physical 2D cases cover both Windows and Fold7 GPUs for 100 short labels, image-budget recovery, 500-label parent removal, view/input and vertical CJK title. See the recorded exact scope and the retained view-helper assertion. [Device observations and remaining coverage](november-27-claude-hardware.md). The separately tested #516 opt-out preserves world coordinates under independently scaled views on both physical devices and APIs.
+
+## Optional Canvas text work budget
+
+A new menu with many uncached labels can do all Canvas text measurement and raster readback in the microtasks of a single input event. Set `textWorkBudgetMs` on `play` (or `createBrowserGame`) to cooperatively admit Canvas work across display frames. For a caller-owned rich-text cache, share the same game-owned scheduler:
+
+```js
+const game = await play({
+  width: 960, height: 540, textWorkBudgetMs: 4,
+  setup(game) {
+    const provider = createCanvasParagraphProvider({ schedule: game.browser.scheduleTextWork });
+    const cache = createParagraphCache(game.engine.assets, { provider });
+    // Pass this one cache to every game.show() with rich paragraphs.
+  }
+});
+```
+
+Omit the option to keep the immediate, existing path. The budget is a positive finite number no greater than 16 milliseconds; it bounds admission between whole synchronous Canvas jobs, not the duration of a single indivisible job. FIFO and a small job-count limit also hold when the clock is coarse. Hidden documents use a later browser task because display frames may be suspended. Cancelling a queued request or disposing its owner removes queued work without waiting for a frame.
+
+To pace only a known expensive view or loading phase, provide `textWorkBudgetWhen: () => state.page === "map"` alongside the numeric budget. The optional predicate is read once for each new Canvas job, including individual measurement and raster work. `true` admits the job under the existing budget; `false` starts that job immediately. Previously queued jobs still follow their original bounded admission, even when this predicate has changed. Omitting it retains all-job pacing. It requires the numeric budget; a callback that throws or returns a non-boolean rejects its job. Cancellation and owner disposal retain their original checks.
+
+This does not change text keys, cache/lease ownership, hit areas, focus, or the meaning of label/view readiness. A newly visible uncached word can become ready over several frames. Measure the time to the new page's important words and all visible words (including paragraphs) as well as maximum frame time; make sure the work was not simply moved to another long frame. `view.textReady(name)` is available for ordinary named labels. The cache's existing admission limits, and the cost of a single paragraph, still apply.

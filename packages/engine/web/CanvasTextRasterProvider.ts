@@ -10,6 +10,8 @@ import type {
   TextRasterRequest
 } from '@egret/engine/text';
 
+import type { CanvasWorkSchedule } from './browserTextWork.js';
+
 // This adapter owns transient surfaces only. The existing cache remains the
 // authority for requests, plan issuance, generations, budgets and image delivery.
 type TextContext = CanvasRenderingContext2D & { lang: string };
@@ -171,8 +173,20 @@ function surface<T>(
   return value as T;
 }
 
-/** Caller-owned fonts and explicit cache invalidation; no waiting or font loading. */
-export function createCanvasTextRasterProvider(): TextRasterProvider {
+export interface CanvasTextRasterProviderOptions {
+  /** Optional shared browser budget for actual Canvas measurements and readbacks. */
+  readonly schedule?: CanvasWorkSchedule;
+}
+
+/** Caller-owned fonts and explicit cache invalidation; no font loading. */
+export function createCanvasTextRasterProvider(options: CanvasTextRasterProviderOptions = {}): TextRasterProvider {
+  if (
+    options === null ||
+    typeof options !== 'object' ||
+    (options.schedule !== undefined && typeof options.schedule !== 'function')
+  )
+    throw new EgretError('WEB_TEXT_PROVIDER_INVALID');
+  const schedule = options.schedule;
   let owner: Document | undefined;
   try {
     if (
@@ -219,46 +233,50 @@ export function createCanvasTextRasterProvider(): TextRasterProvider {
           request.fontGeneration !== context.fontGeneration
         )
           throw new EgretError('WEB_TEXT_PLAN_INVALID');
-        const font = fontFor(request);
-        ready(capturedDocument, font, request);
-        cancelled(context.signal);
-        const plan = surface(
-          capturedDocument,
-          1,
-          1,
-          (canvas, readbackHint) => {
-            drawingState(canvas, request, font);
-            canvas.setTransform(1, 0, 0, 1, 0, 0);
-            const lines = request.sourceLines.map(line =>
-              lineMetrics(canvas.measureText(request.text.slice(line.start, line.end)), request.strokeWidth)
-            );
-            cancelled(context.signal);
-            // Exactly one authentic invocation issuer owns all plan geometry.
-            issued = context.createPlan({ baselineOffset: request.fontSize, lines });
-            plans.set(issued, {
-              used: false,
-              busy: true,
-              quarantined: false,
-              cleanupCause: undefined,
-              measureReadbackHint: readbackHint,
-              rasterReadbackHint: undefined
-            });
-            cancelled(context.signal);
-            return issued;
-          },
-          (errors, failed, cause) => {
-            quarantined = true;
-            if (issued === undefined)
-              return new EgretError('WEB_TEXT_CLEANUP_FAILED', {
-                cause: failed ? cause : errors[0],
-                cleanupErrors: errors
+        const work = () => {
+          cancelled(context.signal);
+          const font = fontFor(request);
+          ready(capturedDocument, font, request);
+          cancelled(context.signal);
+          return surface(
+            capturedDocument,
+            1,
+            1,
+            (canvas, readbackHint) => {
+              drawingState(canvas, request, font);
+              canvas.setTransform(1, 0, 0, 1, 0, 0);
+              const lines = request.sourceLines.map(line =>
+                lineMetrics(canvas.measureText(request.text.slice(line.start, line.end)), request.strokeWidth)
+              );
+              cancelled(context.signal);
+              // Exactly one authentic invocation issuer owns all plan geometry.
+              issued = context.createPlan({ baselineOffset: request.fontSize, lines });
+              plans.set(issued, {
+                used: false,
+                busy: true,
+                quarantined: false,
+                cleanupCause: undefined,
+                measureReadbackHint: readbackHint,
+                rasterReadbackHint: undefined
               });
-            const state = plans.get(issued)!;
-            state.quarantined = true;
-            state.cleanupCause = errors[0];
-            return failed ? cause : errors[0];
-          }
-        );
+              cancelled(context.signal);
+              return issued;
+            },
+            (errors, failed, cause) => {
+              quarantined = true;
+              if (issued === undefined)
+                return new EgretError('WEB_TEXT_CLEANUP_FAILED', {
+                  cause: failed ? cause : errors[0],
+                  cleanupErrors: errors
+                });
+              const state = plans.get(issued)!;
+              state.quarantined = true;
+              state.cleanupCause = errors[0];
+              return failed ? cause : errors[0];
+            }
+          );
+        };
+        const plan = schedule === undefined ? work() : await schedule(work, context.signal);
         cancelled(context.signal);
         return plan;
       } finally {
@@ -290,50 +308,54 @@ export function createCanvasTextRasterProvider(): TextRasterProvider {
         )
           throw new EgretError('WEB_TEXT_PLAN_INVALID');
         cancelled(context.signal);
-        const font = fontFor(request);
-        ready(capturedDocument, font, request);
-        cancelled(context.signal);
-        if (placement === undefined) return undefined;
-        const image = surface(
-          capturedDocument,
-          placement.width,
-          placement.height,
-          (canvas, readbackHint) => {
-            state.rasterReadbackHint = readbackHint;
-            drawingState(canvas, request, font);
-            canvas.setTransform(request.density, 0, 0, request.density, -placement.pixelLeft, -placement.pixelTop);
-            for (const line of plan.metrics.lines) {
-              const text = request.text.slice(line.source.start, line.source.end);
-              if (request.strokeWidth !== undefined) canvas.strokeText(text, 0, line.baselineY);
-              canvas.fillText(text, 0, line.baselineY);
-            }
-            cancelled(context.signal);
-            const pixels = canvas.getImageData(0, 0, placement.width, placement.height);
-            if (
-              pixels.width !== placement.width ||
-              pixels.height !== placement.height ||
-              !(pixels.data instanceof Uint8ClampedArray) ||
-              !(pixels.data.buffer instanceof ArrayBuffer) ||
-              pixels.data.byteLength !== bytes ||
-              pixels.colorSpace !== 'srgb'
-            ) {
-              throw new TypeError('Canvas text readback must be exact tight sRGB rgba8 bytes');
-            }
-            cancelled(context.signal);
-            // A view allocates no second pixel buffer. The existing public
-            // image constructor makes the one owned immutable pixel copy.
-            const view = new Uint8Array(pixels.data.buffer, pixels.data.byteOffset, pixels.data.byteLength);
-            const result = createImageData2D({ width: placement.width, height: placement.height, pixels: view });
-            cancelled(context.signal);
-            return result;
-          },
-          (errors, failed, cause) => {
-            state.quarantined = true;
-            state.cleanupCause = errors[0];
-            return failed ? cause : errors[0];
-          },
-          true
-        );
+        const work = () => {
+          cancelled(context.signal);
+          const font = fontFor(request);
+          ready(capturedDocument, font, request);
+          cancelled(context.signal);
+          if (placement === undefined) return undefined;
+          return surface(
+            capturedDocument,
+            placement.width,
+            placement.height,
+            (canvas, readbackHint) => {
+              state.rasterReadbackHint = readbackHint;
+              drawingState(canvas, request, font);
+              canvas.setTransform(request.density, 0, 0, request.density, -placement.pixelLeft, -placement.pixelTop);
+              for (const line of plan.metrics.lines) {
+                const text = request.text.slice(line.source.start, line.source.end);
+                if (request.strokeWidth !== undefined) canvas.strokeText(text, 0, line.baselineY);
+                canvas.fillText(text, 0, line.baselineY);
+              }
+              cancelled(context.signal);
+              const pixels = canvas.getImageData(0, 0, placement.width, placement.height);
+              if (
+                pixels.width !== placement.width ||
+                pixels.height !== placement.height ||
+                !(pixels.data instanceof Uint8ClampedArray) ||
+                !(pixels.data.buffer instanceof ArrayBuffer) ||
+                pixels.data.byteLength !== bytes ||
+                pixels.colorSpace !== 'srgb'
+              ) {
+                throw new TypeError('Canvas text readback must be exact tight sRGB rgba8 bytes');
+              }
+              cancelled(context.signal);
+              // A view allocates no second pixel buffer. The existing public
+              // image constructor makes the one owned immutable pixel copy.
+              const view = new Uint8Array(pixels.data.buffer, pixels.data.byteOffset, pixels.data.byteLength);
+              const result = createImageData2D({ width: placement.width, height: placement.height, pixels: view });
+              cancelled(context.signal);
+              return result;
+            },
+            (errors, failed, cause) => {
+              state.quarantined = true;
+              state.cleanupCause = errors[0];
+              return failed ? cause : errors[0];
+            },
+            true
+          );
+        };
+        const image = schedule === undefined ? work() : await schedule(work, context.signal);
         cancelled(context.signal);
         return image;
       } finally {

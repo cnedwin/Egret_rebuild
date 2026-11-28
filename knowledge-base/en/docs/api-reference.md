@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1545 exports; 22 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1546 exports; 22 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -239,7 +239,7 @@ For which entry to import from, see [What to import](entry-points.md).
 
 | Name | Kind | What the sources say |
 | --- | --- | --- |
-| `createCanvasTextRasterProvider` | function | Caller-owned fonts and explicit cache invalidation; no waiting or font loading. |
+| `createCanvasTextRasterProvider` | function | Caller-owned fonts and explicit cache invalidation; no font loading. |
 
 ## `@egret/engine/webgl2`
 
@@ -843,6 +843,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `TextureLoadOptions3D` | interface | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
 | `ToneMapping3D` | type | How a renderer maps bright colors into the screen's range. |
 | `TransformControls3D` | class | Drags a transform gizmo with the mouse and touch to move, turn or scale an object. |
+| `WebGL2GeometryPreparationOptions` | interface | Bounded, cooperative preparation of the renderer's ordinary geometry cache. |
 | `WebGL2ProgramVariant3D` | interface | One material program for an expected draw. |
 | `WebGL2Renderer3D` | class | Draws 3D scenes with WebGL2: set its size, render a scene from a camera, and read what it drew. |
 | `WebGL2Renderer3DOptions` | interface | A WebGL2 renderer to make: its canvas and context, its tone mapping and exposure, its shadows, and what is called when the context is lost and restored. |
