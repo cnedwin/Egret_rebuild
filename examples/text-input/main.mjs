@@ -43,8 +43,6 @@ function label(x, y, fontSize, lineHeight) {
 }
 async function write(line, text, color = INK) {
   if (line.text === text && line.color === color) return;
-  line.text = text;
-  line.color = color;
   line.field.setRequest({
     text,
     fontFamily: FAMILY,
@@ -58,6 +56,8 @@ async function write(line, text, color = INK) {
     fillColor: color
   });
   await line.field.prepare();
+  line.text = text;
+  line.color = color;
 }
 
 /** A field: a box and the text the engine draws in it. `box` is in stage units, as pointer positions are. */
@@ -115,10 +115,21 @@ async function draw() {
   committed.textContent = entries.map(item => item.name + ': ' + JSON.stringify(item.value)).join('\n');
 }
 let drawing = Promise.resolve();
+let waitingStatus = status.textContent;
 function redraw() {
-  drawing = drawing.then(draw).catch(cause => {
-    console.error(cause);
-    status.textContent = String(cause);
+  drawing = drawing.then(async () => {
+    try {
+      await draw();
+      // Clear the startup or last render error without overwriting a newer input status.
+      if (status.textContent === waitingStatus) status.textContent = 'Ready. Press a field. / 已就绪，请点击输入框。';
+      waitingStatus = undefined;
+      return true;
+    } catch (cause) {
+      console.error(cause);
+      waitingStatus = String(cause);
+      status.textContent = waitingStatus;
+      return false;
+    }
   });
   return drawing;
 }
@@ -164,7 +175,6 @@ canvas.addEventListener('pointerdown', event => {
   if (item) edit(item);
 });
 await redraw();
-status.textContent = 'Ready. Press a field. / 已就绪，请点击输入框。';
 
 /** What a check reads: plain values only. */
 export const readSnapshot = () => ({
