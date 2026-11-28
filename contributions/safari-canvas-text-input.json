@@ -5,5 +5,6 @@
       "path": "tests/canvas-text-native-defaults.test.mjs",
       "originRole": "First-party Canvas text regression for native contexts that omit default attributes, including rejection of opaque, incompatible or unverified surfaces. Independently authored with AI assistance. Apache-2.0."
     }
-  ]
+  ],
+  "documents": []
 }
