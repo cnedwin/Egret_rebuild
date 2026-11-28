@@ -57,6 +57,9 @@ app.show(scene, camera, { onUpdate: (seconds) => game.update(seconds) });
 
 The drawing resolution follows the frame rate unless `dynamicResolution: false` is passed. When the smoothed rate stays below 45 frames a second for 1.5 seconds, the share of the pixel ratio drops by 0.15, down to 0.6. When it stays above 57 for 6 seconds, the share climbs back. `app.resolutionScale` gives the share in use. The thresholds are options of `dynamicResolution`. `createDynamicResolution3D(options)` gives the same controller to a page that drives its own loop: call `update(seconds)` each frame and multiply the pixel ratio by the share it returns.
 
+On a page canvas in mobile Apple WebKit, the default `presentationResize: 'auto'` uses stable WebGL2 canvas presentation; adaptive drawing resolution remains enabled and changes `app.renderer.renderSize`. It does not force a fixed rendering resolution. The app uses that size for camera aspect, including orientation changes. Use `presentationResize: 'stable'` to request this policy on another host, or `presentationResize: 'direct'` to opt into backing-canvas resizes. WebGPU and OffscreenCanvas in auto mode are unchanged. See [World3D renderers](world3d.md#stable-webgl2-canvas-presentation) for its constraints and the extra GPU pass when the drawing size differs.
+
+
 ## Models made in code
 
 `createGeometryBuilder3D()` puts many placed, coloured parts into one geometry, so a truck made of boxes or a field of stones draws in one call.

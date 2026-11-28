@@ -336,3 +336,28 @@ test('WDT02 World3D loop correlates actual callback timestamp, clock advance and
       else delete globalThis[key];
   }
 });
+
+test('World3D view uses the scene render size, not the stable presented backing, for aspect', () => {
+  const camera = {},
+    renderer = {
+      canvas: { width: 320, height: 720 },
+      renderSize: { width: 640, height: 360 },
+      resizeToDisplaySize() {
+        return true;
+      },
+      render() {
+        return true;
+      }
+    };
+  const view = createWorld3DView(
+    { clock: { onTick: () => ({ dispose() {} }) } },
+    { use() {} },
+    { renderer, camera, scene: {}, updateParticles: false }
+  );
+  try {
+    view.tick(0.016, 0.016);
+    assert.equal(camera.aspect, 640 / 360);
+  } finally {
+    view.dispose();
+  }
+});

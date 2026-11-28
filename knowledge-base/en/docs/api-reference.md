@@ -849,7 +849,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `WebGL2Renderer3DOptions` | interface | A WebGL2 renderer to make: its canvas and context, its tone mapping and exposure, its shadows, and what is called when the context is lost and restored. |
 | `WORLD3D_QUALITY_PRESETS` | value | The three qualities. |
 | `World3DApp` | interface | A 3D app: its Engine, renderer and view, its quality and resolution, and calls that show a scene and start and stop it. |
-| `World3DAppOptions` | interface | A 3D app to make: its backend and quality, its dynamic resolution, its tone mapping, and what is called on an error or a lost device. |
+| `World3DAppOptions` | interface | A 3D app to make: its backend and quality, dynamic resolution, tone mapping and failure callbacks. |
 | `World3DAssetOptions` | interface | How a 3D app loads assets: how URLs are resolved, how many bytes, and how textures and compressed data are decoded. |
 | `World3DBackend` | type | Which GPU interface a 3D app draws with. |
 | `World3DClockSource` | interface | The part of an Engine this view needs: its explicit game clock. |
@@ -953,7 +953,7 @@ For which entry to import from, see [What to import](entry-points.md).
 | `WebGPURenderer3DOptions` | interface | A WebGPU renderer to make: its canvas and device, its tone mapping and exposure, its shadows, and what is called when the device is lost. |
 | `WORLD3D_QUALITY_PRESETS` | value | The three qualities. |
 | `World3DApp` | interface | A 3D app: its Engine, renderer and view, its quality and resolution, and calls that show a scene and start and stop it. |
-| `World3DAppOptions` | interface | A 3D app to make: its backend and quality, its dynamic resolution, its tone mapping, and what is called on an error or a lost device. |
+| `World3DAppOptions` | interface | A 3D app to make: its backend and quality, dynamic resolution, tone mapping and failure callbacks. |
 | `World3DAssetOptions` | interface | How a 3D app loads assets: how URLs are resolved, how many bytes, and how textures and compressed data are decoded. |
 | `World3DBackend` | type | Which GPU interface a 3D app draws with. |
 | `World3DClockSource` | interface | The part of an Engine this view needs: its explicit game clock. |

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Retain and resize WebKit 2D presentation reliably",
+    "body": "WebGL2 games and World3D's 2D overlay using on-demand rendering now retain their drawing buffer on WebKit. A changed scene or awaited texture is presented on its first accepted draw; an unchanged scene retains that picture without a second submit. Continuous rendering and non-WebKit browsers keep the original context attributes. Low-level shared WebGL2 hosts may request `preserveDrawingBuffer: true`, with the same actual-attribute qualification. The real WebKit screenshot regression covers a BrowserGame, Play, and a transparent overlay. WebKit also keeps the first visible WebGL2 backing during orientation or screen-size changes in both render modes. The existing GPU resolve maps the working texture to that backing; the stage, CSS size, effects and input still follow the logical frame. Explicit low-level `presentationResize: 'stable'` rejects exact-size readback; default direct hosts are unchanged. A second actual WebKit regression checks portrait and landscape, transparent clears, effects and both color spaces."
+  },
+  "zh": {
+    "title": "可靠地保留与调整 WebKit 2D 画面",
+    "body": "WebKit 上的按需绘制 WebGL2 游戏和 World3D 2D 叠加层现在保留绘制缓冲。场景变化或异步图片就绪时第一次成功提交即呈现新画面；静止场景不需要再次提交。连续绘制和非 WebKit 浏览器的 context 属性保持不变。底层 shared WebGL2 宿主可显式请求 `preserveDrawingBuffer: true`，仍核对实际属性。真实 WebKit 截图回归覆盖 BrowserGame、Play 和透明叠加层。 WebKit 在任一绘制模式下转屏或调整屏幕尺寸时，也保留首次可见 WebGL2 backing。现有 GPU resolve 映射工作纹理，舞台、CSS 尺寸、效果和输入仍跟随逻辑帧。底层显式 `presentationResize: 'stable'` 不允许同时开启精确尺寸读回；默认直接缩放宿主不变。第二个真实 WebKit 回归检查横竖屏、透明清屏、效果和两种颜色混合空间。"
+  }
+}

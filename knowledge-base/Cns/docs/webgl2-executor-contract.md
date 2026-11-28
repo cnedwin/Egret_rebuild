@@ -79,12 +79,14 @@ RGB 乘数范围为 0 至 4，默认 `[1, 1, 1]`。RGB 加数范围为 0 至 1�
 | maxFrameRegions | 4,096 |
 | maxFramePageBytes / maxReadyPageBytes | 67,108,864 / 134,217,728 |
 | enableReadback | false；只接受布尔值 |
+| preserveDrawingBuffer | false；只接受布尔值 |
+| presentationResize | 默认 `'direct'`；或 `'stable'`，与 enableReadback 不可同时开启 |
 | outputAlpha | 默认 `'premultiplied'`；也可为 `'opaque'` |
 | restoreTimeoutMs | 默认 10,000；不超过 30,000 的正安全整数 |
 
-Scene 选项必须显式提供 `outputAlpha: 'opaque'`。数值上限只能降低；除 pixelRatio 外，数值选项均为正安全整数。不读取未知属性。所有成功读取均只发生一次，并先于语义校验，顺序为：`canvas`、`onDiagnostic`、`pixelRatio`、`maxBackingPixels`、`maxCommands`、`maxClipRectangles`、`maxPreparedVertices`、`maxClipEdgeTests`、`maxUploadBytes`、`maxPendingUploadBytes`、`maxPendingFrames`、`maxReadbackBytes`、`enableReadback`、`maxSourceTriangles`、`maxFrameGeometryBytes`、`maxPendingGeometryBytes`、`maxTupleComparisons`、`outputAlpha`、`restoreTimeoutMs`、`maxFrameRegions`、`maxFramePageBytes`、`maxReadyPageBytes`。最后三项的判定也排在最后。Getter 错误以 `WEBGL2_OPTIONS_INVALID` 保留原始 cause。
+Scene 选项必须显式提供 `outputAlpha: 'opaque'`。数值上限只能降低；除 pixelRatio 外，数值选项均为正安全整数。不读取未知属性。所有成功读取均只发生一次，并先于语义校验，顺序为：`canvas`、`onDiagnostic`、`pixelRatio`、`maxBackingPixels`、`maxCommands`、`maxClipRectangles`、`maxPreparedVertices`、`maxClipEdgeTests`、`maxUploadBytes`、`maxPendingUploadBytes`、`maxPendingFrames`、`maxReadbackBytes`、`enableReadback`、`maxSourceTriangles`、`maxFrameGeometryBytes`、`maxPendingGeometryBytes`、`maxTupleComparisons`、`enableEffects`、`outputAlpha`、`restoreTimeoutMs`、`measureSharedFrames`、`maxFrameRegions`、`maxFramePageBytes`、`maxReadyPageBytes`、`blendSpace`、`pageBatching`、`preserveDrawingBuffer`、`presentationResize`。Getter 错误以 `WEBGL2_OPTIONS_INVALID` 保留原始 cause。
 
-Host 请求 `canvas.getContext('webgl2', {alpha:true, premultipliedAlpha:true, antialias:false, depth:false, stencil:false, preserveDrawingBuffer:false})`，核对实际属性与能力，并建立全部使用到的状态。两种输出模式均保留 alpha 存储；不透明输出写入 alpha 一。调用者在租用期间授予独占 GL 状态访问。浏览器可能返回已有同类型 context；无法检测其历史独占使用。首版不接受原始 context/device、任意属性、扩展选择器、功耗偏好、shader 或资源提供回调。
+Host 请求 `canvas.getContext('webgl2', {alpha:true, premultipliedAlpha:true, antialias:false, depth:false, stencil:false, preserveDrawingBuffer:<所请求的布尔值>})`（默认 false），核对实际属性与能力，并建立全部使用到的状态。两种输出模式均保留 alpha 存储；不透明输出写入 alpha 一。默认 `presentationResize: 'direct'` 按原有方式将可见绘制缓冲调整到帧尺寸；`'stable'` 保留首次准入的可见 backing 尺寸，将独立尺寸的工作目标 resolve 到其中，尺寸不同时在所选混合空间中做 GPU 双线性采样。画布 CSS 尺寸仍可变化。不增加渲染目标，也不进行 CPU 读回。效果和缓存图层仍使用当前帧请求尺寸。因现有读回从默认缓冲返回精确帧像素尺寸，同时请求 `'stable'` 与 `enableReadback: true` 会在获取 context 之前被拒绝，direct 模式的读回契约不变。调用者在租用期间授予独占 GL 状态访问。浏览器可能返回已有同类型 context；无法检测其历史独占使用。首版不接受原始 context/device、任意属性、扩展选择器、功耗偏好、shader 或资源提供回调。
 
 ## 状态、失败与生命周期
 

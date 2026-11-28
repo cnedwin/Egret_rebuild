@@ -805,7 +805,7 @@ export class GpuResources3D {
 
   // ---- render targets -----------------------------------------------------------------
   /** Create or resize the framebuffer of a render target. */
-  target(target: RenderTarget3D): RenderTargetGpu3D {
+  target(target: RenderTarget3D, encodedCanvasOutput = false): RenderTargetGpu3D {
     const gl = this.#gl;
     if (target.isDisposed) throw new World3DError('WORLD3D_DISPOSED', 'render target');
     let entry = this.#targets.get(target);
@@ -845,7 +845,7 @@ export class GpuResources3D {
         gl.texImage2D(
           gl.TEXTURE_2D,
           0,
-          gl.SRGB8_ALPHA8,
+          encodedCanvasOutput ? gl.RGBA8 : gl.SRGB8_ALPHA8,
           target.width,
           target.height,
           0,

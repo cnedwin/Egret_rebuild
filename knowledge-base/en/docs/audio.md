@@ -21,7 +21,7 @@ mixer.playMusic(theme, { fade: 1 });      // waits for the first press if the pa
 button.onActivate = () => mixer.play(click, { maxInstances: 2 });
 ```
 
-`createBrowserAudio` makes an `AudioContext`, or uses the one given as `context` and leaves it open. It returns `mixer`, the `context`, `output` (the node every sound passes on its way out, where an analyser of the page can listen) and `dispose()`.
+`createBrowserAudio` makes a standard `AudioContext`, falls back to the legacy WebKit constructor when standard audio is absent, or uses the one given as `context` and leaves it open. It still refuses a missing required audio host. It returns `mixer`, the `context`, `output` (the node every sound passes on its way out, where an analyser of the page can listen) and `dispose()`.
 
 **The backend alone.** `createWebAudioBackend(options)` of the same entry is the Web Audio half by itself, for a page that makes its mixer with `createAudioMixer`, as its tests do with a backend of their own. It takes `context`, `unlockTarget`, `pauseWhenHidden`, `onError` and `limiter`, as below. Make the mixer locked as the backend says, then attach it, so the lock follows the first press and a hidden page is silent:
 
@@ -195,7 +195,7 @@ Every error is an `EgretError` with one of these codes.
 | `AUDIO_LISTENER_FAILED` | A listener given to `subscribe` threw. The state changed and every other listener was told first |
 | `AUDIO_CLEANUP_FAILED` | Something failed while disposing. Everything else was still let go; `cleanupErrors` has the rest |
 | `AUDIO_CLOSED` | The mixer was disposed |
-| `AUDIO_HOST_UNAVAILABLE` | The page has no `AudioContext` and none was given |
+| `AUDIO_HOST_UNAVAILABLE` | The page has neither standard nor prefixed `AudioContext` and none was given |
 
 ## What was run
 

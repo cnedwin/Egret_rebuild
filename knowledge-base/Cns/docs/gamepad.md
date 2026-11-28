@@ -12,7 +12,7 @@
 import { bindGamepadKeys } from '@egret/engine/input/gamepad';
 import { createBrowserGamepadInput } from '@egret/engine/web/gamepad';
 
-const pads = scope.use(createBrowserGamepadInput());
+const pads = scope.use(createBrowserGamepadInput({ optional: true }));
 // 每帧一次，带上这一帧的时间：浏览器不会主动告知手柄的变化。
 function frame(time) { pads.poll(time); /* 游戏更新与绘制 */ requestAnimationFrame(frame); }
 requestAnimationFrame(frame);
@@ -23,6 +23,8 @@ const { x, y } = pad?.stick('left') ?? { x: 0, y: 0 };
 ```
 
 `poll(timestamp)` 读取一次 `navigator.getGamepads()`，把每个已连接手柄的状态交给输入。页面隐藏时不读取。页面隐藏或窗口失去焦点时，所有按键都会被松开，因为那时手柄发生了什么不会被告知。`rumble(pad, { duration, weak, strong })` 让支持震动的手柄震动，并返回是否发出了请求；失败交给 `onError`。
+
+同时支持键鼠或触屏的游戏可使用 `optional: true`。当 Gamepad API 缺失或权限策略报告 `SecurityError` 时，适配器视为没有已连接手柄，仍可轮询和释放，震动返回 false。不伪造真实手柄，也不吞掉其他错误。默认严格适配器在必需宿主缺失时仍会拒绝；Play 使用可选适配器。
 
 ## 输入
 

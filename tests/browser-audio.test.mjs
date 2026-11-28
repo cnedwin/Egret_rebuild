@@ -339,6 +339,35 @@ test('BA01 options are checked before an output is made', async () =>
     { create: false }
   ));
 
+test('BA01b uses the legacy WebKit live constructor only when standard AudioContext is absent', async () =>
+  fixture(
+    ({ Context, world }) => {
+      const prefixed = Object.getOwnPropertyDescriptor(globalThis, 'webkitAudioContext');
+      try {
+        globalThis.webkitAudioContext = Context;
+        delete globalThis.AudioContext;
+        const audio = createBrowserAudio();
+        assert.ok(audio.context instanceof Context);
+        assert.equal(world.contexts.length, 1);
+        audio.dispose();
+        globalThis.AudioContext = Context;
+        globalThis.webkitAudioContext = class {
+          constructor() {
+            throw new Error('must prefer standard host');
+          }
+        };
+        const standard = createBrowserAudio();
+        assert.ok(standard.context instanceof Context);
+        standard.dispose();
+      } finally {
+        globalThis.AudioContext = Context;
+        if (prefixed) Object.defineProperty(globalThis, 'webkitAudioContext', prefixed);
+        else delete globalThis.webkitAudioContext;
+      }
+    },
+    { create: false }
+  ));
+
 test('BA02 the buses are gains on the way to the output of the page', async () =>
   fixture(
     ({ world, audio, mixer, context }) => {

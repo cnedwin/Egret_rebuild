@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tests/webkit-on-demand-browser.mjs",
+      "originRole": "First-party actual WebKit screenshot regression for retained 2D, Play and transparent overlay presentations without repetitive submission; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/webkit-2d-resize-browser.mjs",
+      "originRole": "First-party actual WebKit screenshot regression for responsive logical targets, stable native backing, transparent composition, effects and color spaces; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

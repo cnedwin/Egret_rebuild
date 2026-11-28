@@ -35,7 +35,9 @@ const TOP = [
   'maxFramePageBytes',
   'maxReadyPageBytes',
   'blendSpace',
-  'pageBatching'
+  'pageBatching',
+  'preserveDrawingBuffer',
+  'presentationResize'
 ];
 const DEFAULTS = Object.freeze({
   pixelRatio: 1,
@@ -60,7 +62,9 @@ const DEFAULTS = Object.freeze({
   maxFramePageBytes: 67108864,
   maxReadyPageBytes: 134217728,
   blendSpace: 'linear',
-  pageBatching: 'multi-page'
+  pageBatching: 'multi-page',
+  preserveDrawingBuffer: false,
+  presentationResize: 'direct'
 });
 const canvas = Object.freeze({
   getContext() {
@@ -122,7 +126,13 @@ test('UNIT GLP01 options snapshot all named getters once and ignore unknown prop
 });
 
 test('UNIT GLP02 a getter cause precedes semantics and stops only later option reads', () => {
-  for (const stop of ['restoreTimeoutMs', 'maxUploadBytes', 'pageBatching']) {
+  for (const stop of [
+    'restoreTimeoutMs',
+    'maxUploadBytes',
+    'pageBatching',
+    'preserveDrawingBuffer',
+    'presentationResize'
+  ]) {
     const trace = [],
       cause = Object.freeze({ stop });
     const input = Object.defineProperties(
@@ -164,6 +174,23 @@ test('UNIT GLP03 option scalar domains preserve lowered caps without coercion', 
   assert.equal(admit({ measureSharedFrames: false }).measureSharedFrames, false);
   for (const value of [null, 0, 1, 'true'])
     assert.throws(() => admit({ measureSharedFrames: value }), { name: 'TypeError', message: 'measureSharedFrames' });
+  assert.equal(admit().configuration.preserveDrawingBuffer, false);
+  for (const value of [false, true])
+    assert.equal(admit({ preserveDrawingBuffer: value }).configuration.preserveDrawingBuffer, value);
+  for (const value of [null, 0, 1, 'true'])
+    assert.throws(() => admit({ preserveDrawingBuffer: value }), {
+      name: 'TypeError',
+      message: 'preserveDrawingBuffer'
+    });
+  assert.equal(admit().configuration.presentationResize, 'direct');
+  for (const value of ['direct', 'stable'])
+    assert.equal(admit({ presentationResize: value }).configuration.presentationResize, value);
+  for (const value of [null, false, 0, {}, 'auto'])
+    assert.throws(() => admit({ presentationResize: value }), { name: 'TypeError', message: 'presentationResize' });
+  assert.throws(() => admit({ presentationResize: 'stable', enableReadback: true }), {
+    name: 'TypeError',
+    message: 'presentationResize'
+  });
   assert.equal(admit().configuration.pageBatching, 'multi-page');
   for (const value of ['multi-page', 'single-page'])
     assert.equal(admit({ pageBatching: value }).configuration.pageBatching, value);

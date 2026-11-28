@@ -163,7 +163,9 @@ export function createWebAudioBackend(options: WebAudioBackendOptions = {}): Web
   if (options === null || typeof options !== 'object' || Array.isArray(options))
     throw new EgretError('AUDIO_OPTIONS_INVALID');
   const { context: given, unlockTarget, pauseWhenHidden = true, onError, limiter: limit } = options;
-  const Live = globalThis.AudioContext,
+  const standard = globalThis.AudioContext,
+    prefixed = (globalThis as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext,
+    Live = typeof standard === 'function' ? standard : prefixed,
     page = globalThis.document;
   if (
     (given !== undefined && (given === null || typeof given !== 'object')) ||
@@ -173,8 +175,12 @@ export function createWebAudioBackend(options: WebAudioBackendOptions = {}): Web
     (limit !== undefined && typeof limit !== 'boolean' && (limit === null || typeof limit !== 'object'))
   )
     throw new EgretError('AUDIO_OPTIONS_INVALID');
-  if (given === undefined && typeof Live !== 'function') throw new EgretError('AUDIO_HOST_UNAVAILABLE');
-  const context: BaseAudioContext = given ?? new Live();
+  const context: BaseAudioContext =
+    given ??
+    (() => {
+      if (typeof Live !== 'function') throw new EgretError('AUDIO_HOST_UNAVAILABLE');
+      return new Live();
+    })();
   /** Only an output that runs in real time can be suspended, resumed and locked. */
   const live = typeof Live === 'function' && context instanceof Live ? context : undefined;
   const buffers = new WeakMap<AudioBackendSound, AudioBuffer>();

@@ -544,3 +544,49 @@ test('BrowserGame afterFrame follows submission and retained display turns exact
     await game.dispose();
   }
 });
+test('BrowserGame only retains the WebGL2 drawing buffer on demand in WebKit', async t => {
+  const doc = page().document;
+  const globals = {
+    document: doc,
+    window: { document: doc, createImageBitmap() {} },
+    ImageBitmap: class {
+      close() {}
+    },
+    navigator: { userAgent: '' }
+  };
+  for (const [name, value] of Object.entries(globals)) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    t.after(() =>
+      previous ? Object.defineProperty(globalThis, name, previous) : Reflect.deleteProperty(globalThis, name)
+    );
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+  }
+  for (const [userAgent, renderMode, preserveDrawingBuffer] of [
+    ['Mozilla/5.0 AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15', 'on-demand', true],
+    ['Mozilla/5.0 AppleWebKit/605.1.15 CriOS/147.0 Mobile Safari/604.1', 'on-demand', true],
+    ['Mozilla/5.0 AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15', 'continuous', false],
+    ['Mozilla/5.0 AppleWebKit/537.36 Chrome/147.0 Safari/537.36', 'on-demand', false],
+    ['Mozilla/5.0 Gecko/20100101 Firefox/147.0', 'on-demand', false]
+  ]) {
+    globals.navigator.userAgent = userAgent;
+    const ports = glPorts({ attributes: { preserveDrawingBuffer } });
+    ports.canvas.getBoundingClientRect = () => ({ width: 128, height: 64 });
+    const game = await createBrowserGame({
+      canvas: ports.canvas,
+      width: 128,
+      height: 64,
+      pixelRatio: 1,
+      backend: 'webgl2',
+      pointer: false,
+      keyboard: false,
+      autoStart: false,
+      renderMode
+    });
+    try {
+      assert.equal(ports.events.find(row => row[0] === 'getContext')[2].preserveDrawingBuffer, preserveDrawingBuffer);
+    } finally {
+      await game.dispose();
+    }
+    assert.equal(ports.live().length, 0);
+  }
+});

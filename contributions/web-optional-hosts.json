@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/verify-optional-hosts.mjs",
+      "originRole": "First-party public Play browser fixture for absent optional live audio and gamepad facilities, strict required audio, and rendered pixels. Apache-2.0."
+    }
+  ],
+  "documents": []
+}

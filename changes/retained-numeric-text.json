@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Retained native numeric readouts",
+    "body": "Keep an already committed HUD text raster during asynchronous word preparation, coalescing requests to avoid starvation. Non-actionable numeric pick bindings opt in by default; choose retainLastText explicitly for other short readouts. Action captions, style changes, empty words, failures and hidden/closed text retain strict lifecycle semantics."
+  },
+  "zh": {
+    "title": "原生数字读数的字形保留",
+    "body": "在异步准备新文字时保留已提交的 HUD 读数字形，合并后续请求避免持续更新使字形无法就绪。非操作型 pick 数字绑定默认启用，其他短读数可显式配置 retainLastText。操作标题、样式变化、空文字、失败、隐藏和关闭保持严格生命周期语义。"
+  }
+}
