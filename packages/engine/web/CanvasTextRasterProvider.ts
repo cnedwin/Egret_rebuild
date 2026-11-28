@@ -184,7 +184,11 @@ function surface<T>(
       if (attributes?.colorSpace !== 'srgb') throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
       if (
         attributes.alpha !== true &&
-        !(attributes.alpha === undefined && nativeSurfaces.has(context) && context.getImageData(0, 0, 1, 1).data[3] === 0)
+        !(
+          attributes.alpha === undefined &&
+          nativeSurfaces.has(context) &&
+          context.getImageData(0, 0, 1, 1).data[3] === 0
+        )
       ) {
         throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
       }
@@ -195,7 +199,8 @@ function surface<T>(
       // Game labels also accept omitted default reports; explicit incompatible values are never admitted.
       throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
     }
-    const readbackHint = typeof attributes?.willReadFrequently === 'boolean' ? attributes.willReadFrequently : undefined;
+    const readbackHint =
+      typeof attributes?.willReadFrequently === 'boolean' ? attributes.willReadFrequently : undefined;
     value = work(context, readbackHint);
   } catch (error) {
     failed = true;

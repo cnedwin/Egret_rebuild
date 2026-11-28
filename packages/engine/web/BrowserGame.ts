@@ -1150,9 +1150,10 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       textCache ??= import('./text.js').then(
         text =>
           (currentTextCache = createTextRasterCache(engine.assets, {
-            provider: text.createCanvasTextRasterProvider(
-              { compatibility: 'game-labels', ...(scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork }) }
-            )
+            provider: text.createCanvasTextRasterProvider({
+              compatibility: 'game-labels',
+              ...(scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork })
+            })
           }))
       );
       const cache = await textCache;
@@ -1490,9 +1491,10 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       textCache ??= import('./text.js').then(
         text =>
           (currentTextCache = createTextRasterCache(engine.assets, {
-            provider: text.createCanvasTextRasterProvider(
-              { compatibility: 'game-labels', ...(scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork }) }
-            )
+            provider: text.createCanvasTextRasterProvider({
+              compatibility: 'game-labels',
+              ...(scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork })
+            })
           }))
       );
       const cache = await textCache;
