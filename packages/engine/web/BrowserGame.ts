@@ -1151,7 +1151,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         text =>
           (currentTextCache = createTextRasterCache(engine.assets, {
             provider: text.createCanvasTextRasterProvider(
-              scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork }
+              { compatibility: 'game-labels', ...(scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork }) }
             )
           }))
       );
@@ -1491,7 +1491,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         text =>
           (currentTextCache = createTextRasterCache(engine.assets, {
             provider: text.createCanvasTextRasterProvider(
-              scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork }
+              { compatibility: 'game-labels', ...(scheduleTextWork === undefined ? {} : { schedule: scheduleTextWork }) }
             )
           }))
       );
