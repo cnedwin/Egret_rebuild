@@ -7,6 +7,7 @@
 import { createImageData2D, IMAGE_LIMITS_2D } from '@egret/contracts';
 import type { CancellationSignal } from '@egret/contracts';
 import { EgretError } from '@egret/runtime';
+import type { CanvasWorkSchedule } from './browserTextWork.js';
 import type {
   ParagraphLine,
   ParagraphProvider,
@@ -53,6 +54,8 @@ export interface CanvasParagraphProviderOptions {
   readonly buildIdentity?: string;
   /** Makes the canvas it draws on; `document.createElement('canvas')` unless given. */
   readonly createCanvas?: () => CanvasParagraphCanvas;
+  /** Optional shared browser budget for width measurement, layout and raster readback. */
+  readonly schedule?: CanvasWorkSchedule;
 }
 /** Lays out and draws paragraphs with a canvas's 2D context; dispose of it when done. */
 export interface CanvasParagraphProvider extends ParagraphProvider {
@@ -195,6 +198,8 @@ interface Laid {
 /** Lays out and draws paragraphs with a canvas's 2D context, with no WebAssembly. */
 export function createCanvasParagraphProvider(options: CanvasParagraphProviderOptions = {}): CanvasParagraphProvider {
   if (options === null || typeof options !== 'object') throw new EgretError('PARAGRAPH_REQUEST_INVALID');
+  const schedule = options.schedule;
+  if (schedule !== undefined && typeof schedule !== 'function') throw new EgretError('PARAGRAPH_REQUEST_INVALID');
   const families = options.families === undefined ? undefined : new Set(options.families.map(name => token(name, 256)));
   if (families !== undefined && (families.size < 1 || families.size > 64))
     throw new EgretError('PARAGRAPH_REQUEST_INVALID');
@@ -351,11 +356,29 @@ export function createCanvasParagraphProvider(options: CanvasParagraphProviderOp
       if (closed) throw new EgretError('PARAGRAPH_PROVIDER_DISPOSED');
       if (context?.signal?.aborted)
         throw new EgretError('PARAGRAPH_PREPARE_CANCELLED', { cause: context.signal.reason });
-      busy = true;
+      const work = (): ParagraphRaster => {
+        if (closed) throw new EgretError('PARAGRAPH_PROVIDER_DISPOSED');
+        if (context?.signal?.aborted)
+          throw new EgretError('PARAGRAPH_PREPARE_CANCELLED', { cause: context.signal.reason });
+        if (busy) throw new EgretError('PARAGRAPH_PROVIDER_BUSY');
+        busy = true;
+        try {
+          return layout(request);
+        } finally {
+          busy = false;
+        }
+      };
+      if (schedule === undefined) return work();
       try {
-        return layout(request);
-      } finally {
-        busy = false;
+        const result = await schedule(work, context.signal);
+        if (context.signal.aborted)
+          throw new EgretError('PARAGRAPH_PREPARE_CANCELLED', { cause: context.signal.reason });
+        if (closed) throw new EgretError('PARAGRAPH_PROVIDER_DISPOSED');
+        return result;
+      } catch (cause) {
+        if (context.signal.aborted)
+          throw new EgretError('PARAGRAPH_PREPARE_CANCELLED', { cause: context.signal.reason });
+        throw cause;
       }
     },
     dispose(this: CanvasParagraphProvider): void {

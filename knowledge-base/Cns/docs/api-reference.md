@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1545 个导出，其中 22 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1546 个导出，其中 22 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -239,7 +239,7 @@
 
 | 名字 | 种类 | 说明 |
 | --- | --- | --- |
-| `createCanvasTextRasterProvider` | 函数 | Caller-owned fonts and explicit cache invalidation; no waiting or font loading. |
+| `createCanvasTextRasterProvider` | 函数 | Caller-owned fonts and explicit cache invalidation; no font loading. |
 
 ## `@egret/engine/webgl2`
 
@@ -843,6 +843,7 @@
 | `TextureLoadOptions3D` | 接口 | Texture loading options; `transcodeKtx2` handles KTX2 payloads the built-in reader cannot use directly. |
 | `ToneMapping3D` | 类型 | How a renderer maps bright colors into the screen's range. |
 | `TransformControls3D` | 类 | Drags a transform gizmo with the mouse and touch to move, turn or scale an object. |
+| `WebGL2GeometryPreparationOptions` | 接口 | Bounded, cooperative preparation of the renderer's ordinary geometry cache. |
 | `WebGL2ProgramVariant3D` | 接口 | One material program for an expected draw. |
 | `WebGL2Renderer3D` | 类 | Draws 3D scenes with WebGL2: set its size, render a scene from a camera, and read what it drew. |
 | `WebGL2Renderer3DOptions` | 接口 | A WebGL2 renderer to make: its canvas and context, its tone mapping and exposure, its shadows, and what is called when the context is lost and restored. |

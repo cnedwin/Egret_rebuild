@@ -146,11 +146,17 @@ export interface PlayOptions {
   readonly beforeRender?: BrowserGameOptions['beforeRender'];
   /** Optional bounded retry policy for render failures; does not retry the simulation update. */
   readonly renderRetry?: BrowserGameOptions['renderRetry'];
+  /** Observes CPU phases and the outcome of each actual Play browser callback without changing the loop. */
+  readonly onFrameTiming?: BrowserGameOptions['onFrameTiming'];
   /**
    * Continuous draws each display frame (the default). On-demand retains a static 2D frame until the scene, input
    * or canvas size changes. The clock and update still run on each display frame.
    */
   readonly renderMode?: 'continuous' | 'on-demand';
+  /** Opt-in budget for Canvas label and paragraph work; omitted keeps the existing immediate path. */
+  readonly textWorkBudgetMs?: number;
+  /** With a text budget, pace new Canvas jobs only while this predicate returns true. */
+  readonly textWorkBudgetWhen?: () => boolean;
   /** Told of what stopped the game. Without it the failure is thrown where the console shows it. */
   readonly onError?: (error: unknown) => void;
   /**
@@ -900,7 +906,7 @@ class PlayingLoop implements PlayLoop {
 /** Starts a game in the page. See the guide `play.md`. */
 export async function play(options: PlayOptions): Promise<PlayGame> {
   if (options === null || typeof options !== 'object') throw invalid('play takes an object of options');
-  const { width, height, background = 0, setup, update, onError } = options;
+  const { width, height, background = 0, setup, update, onError, onFrameTiming } = options;
   if (!Number.isSafeInteger(width) || !Number.isSafeInteger(height) || width <= 0 || height <= 0)
     throw invalid('width and height are whole numbers above 0');
   if (!colour(background)) throw invalid('background is a colour from 0 to 0xffffff');
@@ -912,6 +918,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
   if (renderMode !== 'continuous' && renderMode !== 'on-demand')
     throw invalid("renderMode is 'continuous' or 'on-demand'");
   if (onError !== undefined && typeof onError !== 'function') throw invalid('onError is a function');
+  if (onFrameTiming !== undefined && typeof onFrameTiming !== 'function') throw invalid('onFrameTiming is a function');
   const fitAsked = options.fit ?? 'contain';
   if (!['contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide'].includes(fitAsked))
     throw invalid("fit is 'contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow' or 'fixedWide'");
@@ -1018,6 +1025,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     ...(options.portrait === undefined ? {} : { portrait: options.portrait }),
     ...(options.insets === undefined ? {} : { insets: options.insets }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),
+    ...(options.textWorkBudgetMs === undefined ? {} : { textWorkBudgetMs: options.textWorkBudgetMs }),
+    ...(options.textWorkBudgetWhen === undefined ? {} : { textWorkBudgetWhen: options.textWorkBudgetWhen }),
     pixelRatio: playDensity,
     ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
     ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),
@@ -1042,6 +1051,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     realStep = 0,
     playStep = 0,
     generation = 0;
+  let lastDrawAccepted = false;
   // Rendering keeps its wall-clock cadence; the real Engine clock advances only by gameplay time.
   const playLoop = createBrowserFrameLoop({
     engine: {
@@ -1084,6 +1094,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
           nextLayer = baseBrowser.staticLayers?.revision ?? 0;
         // Drawn as the game draws: a frame of too many images is left undrawn with a warning, not the game stopped.
         const submitted = baseBrowser.drawFrame(frame);
+        if (onFrameTiming !== undefined) lastDrawAccepted = submitted !== undefined;
         if (submitted === undefined) return undefined;
         if (next !== undefined) {
           lastFrame = frame;
@@ -1106,6 +1117,16 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
             lastLayerRevision !== (baseBrowser.staticLayers?.revision ?? 0) ||
             shownRedraw !== redraw ||
             lastFrame !== baseBrowser.frame
+        }),
+    // Play owns the active loop. The BrowserGame below it is deliberately not auto-started.
+    ...(onFrameTiming === undefined
+      ? {}
+      : {
+          onFrameTiming: sample => {
+            const outcome =
+              sample.outcome === 'rendered' ? (lastDrawAccepted ? 'submitted' : 'refused') : sample.outcome;
+            onFrameTiming(Object.freeze({ ...sample, outcome }));
+          }
         }),
     update: () => {
       if (!disposed && playLoop.state === 'running') step(realStep, playStep);

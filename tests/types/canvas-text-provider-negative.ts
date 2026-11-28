@@ -2,9 +2,9 @@ import { createCanvasTextRasterProvider } from '@egret/engine/web/text';
 import type { TextRasterPlan } from '@egret/engine/text';
 const provider=createCanvasTextRasterProvider();
 declare const plan:TextRasterPlan;
-// CANVAS_TEXT_CASE no-options TS2554
-createCanvasTextRasterProvider({});
-// CANVAS_TEXT_CASE no-supplied-document TS2554
+// CANVAS_TEXT_CASE invalid-schedule TS2322
+createCanvasTextRasterProvider({schedule:1});
+// CANVAS_TEXT_CASE no-supplied-document TS2559
 createCanvasTextRasterProvider(document);
 // CANVAS_TEXT_CASE not-constructor TS7009
 new createCanvasTextRasterProvider();

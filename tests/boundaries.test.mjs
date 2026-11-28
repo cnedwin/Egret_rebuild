@@ -238,10 +238,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // The inert synthetic factory reports Node unavailability; it provides no
     // native Canvas, genuine resource, font, TextField or rendering evidence.
     const canvasTextBarrel = "export {createCanvasTextRasterProvider} from './CanvasTextRasterProvider.js';\n";
-    const canvasTextProviderTypes = "import type {TextRasterProvider} from '@egret/engine/text';\nexport declare function createCanvasTextRasterProvider(): TextRasterProvider;\n";
+    const canvasTextProviderImports = "import type {TextRasterProvider} from '@egret/engine/text';\nimport type {CanvasWorkSchedule} from './browserTextWork.js';\n";
+    const canvasTextProviderOptions = "export interface CanvasTextRasterProviderOptions { readonly schedule?: CanvasWorkSchedule; }\n";
+    const canvasTextProviderTypes = canvasTextProviderImports + canvasTextProviderOptions + "export declare function createCanvasTextRasterProvider(options?: CanvasTextRasterProviderOptions): TextRasterProvider;\n";
     const canvasTextProviderBody = "export function createCanvasTextRasterProvider() { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n";
     write('packages/engine/web/text.ts', canvasTextBarrel);
-    write('packages/engine/web/CanvasTextRasterProvider.ts', "import type {TextRasterProvider} from '@egret/engine/text';\nexport function createCanvasTextRasterProvider(): TextRasterProvider { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n");
+    write('packages/engine/web/CanvasTextRasterProvider.ts', canvasTextProviderImports + canvasTextProviderOptions + "export function createCanvasTextRasterProvider(options?: CanvasTextRasterProviderOptions): TextRasterProvider { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n");
     write('packages/engine/dist/web/text.js', canvasTextBarrel);
     write('packages/engine/dist/web/text.d.ts', canvasTextBarrel);
     write('packages/engine/dist/web/CanvasTextRasterProvider.js', canvasTextProviderBody);
@@ -734,6 +736,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     for(const file of ['packages/runtime/src/Bitmap.ts','packages/runtime/dist/Bitmap.js'])reviseFixtureEdges(m15FixtureGraph,file,['./bitmapImage.js','./bitmapImage.js'],['./Texture.js']);
     reviseFixtureEdges(m15FixtureGraph,'packages/runtime/dist/Bitmap.d.ts',['./bitmapImage.js']);
     reviseCaptureEdges(m15FixtureGraph);
+    // The tree records and engine affinity live in two leaf modules, so the visual and managed state read them without importing the tree operations or ownership back.
+    for(const file of ['packages/runtime/src/ownership.ts','packages/runtime/dist/ownership.js'])reviseFixtureEdges(m15FixtureGraph,file,['./engineAffinity.js','./engineAffinity.js']);
+    reviseFixtureEdges(m15FixtureGraph,'packages/runtime/dist/ownership.d.ts',['./engineAffinity.js']);
+    const reviseVisualEdges=graph=>{
+      for(const file of ['packages/runtime/src/displayVisualState.ts','packages/runtime/dist/displayVisualState.js'])reviseFixtureEdges(graph,file,['./displayNodeState.js','./engineAffinity.js'],['./displayTreeState.js','./ownership.js']);
+    };
     m15FixtureGraph['packages/runtime/src/bitmapImage.ts']=[['static','./AssetLease.js'],['static','./AssetLease.js'],['static','./EgretError.js'],['static','./Texture.js'],['static','./Texture.js'],['static','@egret/contracts']];
     m15FixtureGraph['packages/runtime/dist/bitmapImage.js']=[['static','./AssetLease.js'],['static','./EgretError.js'],['static','./Texture.js']];
     m15FixtureGraph['packages/runtime/dist/bitmapImage.d.ts']=[['static','./AssetLease.js'],['static','./Texture.js'],['static','@egret/contracts']];
@@ -850,6 +858,19 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Pointer and hover input share their target admission and operation wrapper through one private module, which imports only the runtime.
     for(const file of ['packages/engine/src/pointerInput.ts','packages/engine/dist/pointerInput.js'])m31FixtureGraph[file]=[...m31FixtureGraph[file],["static","./internal/routedInput.js"]];
     for(const file of ['packages/engine/src/internal/routedInput.ts','packages/engine/dist/internal/routedInput.js','packages/engine/dist/internal/routedInput.d.ts'])m31FixtureGraph[file]=[["static","@egret/runtime"]];
+    for(const file of ['packages/runtime/src/displayTreeState.ts','packages/runtime/dist/displayTreeState.js'])reviseFixtureEdges(m31FixtureGraph,file,['./displayNodeState.js','./displayNodeState.js','./engineAffinity.js'],['./ownership.js']);
+    reviseFixtureEdges(m31FixtureGraph,'packages/runtime/src/displayTreeState.ts',[],['./Stage.js']);
+    reviseFixtureEdges(m31FixtureGraph,'packages/runtime/dist/displayTreeState.d.ts',['./displayNodeState.js'],['./Stage.js']);
+    reviseVisualEdges(m31FixtureGraph);
+    for(const file of ['packages/runtime/src/ui/managedState.ts','packages/runtime/dist/ui/managedState.js'])reviseFixtureEdges(m31FixtureGraph,file,['../displayNodeState.js'],['../displayTreeState.js']);
+    Object.assign(m31FixtureGraph,{
+      'packages/runtime/src/displayNodeState.ts':[['static','./DisplayObject.js'],['static','./DisplayObjectContainer.js'],['static','./EgretError.js'],['static','./Stage.js']],
+      'packages/runtime/dist/displayNodeState.js':[['static','./EgretError.js']],
+      'packages/runtime/dist/displayNodeState.d.ts':[['static','./DisplayObject.js'],['static','./DisplayObjectContainer.js'],['static','./Stage.js']],
+      'packages/runtime/src/engineAffinity.ts':[['static','./ownership.js']],
+      'packages/runtime/dist/engineAffinity.js':[],
+      'packages/runtime/dist/engineAffinity.d.ts':[['static','./ownership.js']],
+    });
     for(const [file,edges]of Object.entries(m31FixtureGraph)){
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
@@ -1400,7 +1421,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Frame loop: inert copies of its modules and their build output, for the same reason.
     const loopGraphFiles=['web/loop.ts','web/BrowserFrameLoop.ts','dist/web/loop.js','dist/web/loop.d.ts','dist/web/BrowserFrameLoop.js','dist/web/BrowserFrameLoop.d.ts'];
     // Browser game: inert copies of its modules and their build output, for the same reason.
-    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','browserGameParagraph','browserGameGlyphFont','browserGameFamilies','screenControlGeometry','screenClipGeometry','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
+    const gameGraphFiles=['game','BrowserGame','BrowserStatsPanel','browserStaticLayers','GameImageAdmission','browserGameParagraph','browserGameGlyphFont','browserGameFamilies','browserTextWork','screenControlGeometry','screenClipGeometry','world3d/overlay3D','world3d/overlayScreenReport'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
     // World3D app: names what it imports from the main entry, so it is copied as it is.
     const world3dAppFiles=['web/world3d/app3D.ts','dist/web/world3d/app3D.js','dist/web/world3d/app3D.d.ts'];
     const playFiles=['BrowserPlay','playWidgets','playTouch','gestures','playView','playViewParagraph','playViewScroll','view'].flatMap(name=>['web/'+name+'.ts','dist/web/'+name+'.js','dist/web/'+name+'.d.ts']);
@@ -2082,6 +2103,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       ['static','./webgl2LayerState.js'],['static','./webgl2LayerState.js']);
     effectFixtureGraph['packages/engine/dist/web/WebGL2Host.js'].push(['static','./webgl2LayerState.js']);
     reviseCaptureEdges(effectFixtureGraph);
+    reviseVisualEdges(effectFixtureGraph);
     // The submission helper is imported by preparation. Its own type-only
     // dependency is erased from JavaScript, while retention materializes it.
     for (const file of [

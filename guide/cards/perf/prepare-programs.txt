@@ -32,6 +32,7 @@ Rules:
 - For a `CustomShader3D` effect, prepare with a detached mesh and the effect material. Keep the shader's `key` stable; changed GLSL needs a new key.
 - Mirror passes have their own variants. On WebGL2 pass `reflection.createPass(camera, hidden)` as `reflection` in the descriptors.
 - Where a variant is hard to describe, draw it once off screen during loading, as FPS's `view.warm` does (a fixture placed far below the map) and as Jelly Pandas does with zero-scale meshes inside the title's mirror pass. Do not advance game time while doing it.
+- If measurements show many cold vertex/index uploads rather than shader linking, WebGL2 `renderer.prepareGeometries` can prepare an explicit deduplicated geometry list in bounded slices. Overlap it with program preparation, cancel when leaving the scene, and compare both the peak frame and total interaction wait. It does not draw, prepare material textures or wait for GPU completion. Enable only where the measured tradeoff is positive.
 - Prepare again after the context is restored.
 - Check it: the devtools `recent-hitch` hint, or a frame-interval log of the first ten seconds of play, should show no frame over about two budgets.
 

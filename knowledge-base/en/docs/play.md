@@ -67,6 +67,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `canvas` | A canvas of the page to draw on, left where it is | One is made |
 | `onError(error)` | Told of what stopped the game | It is thrown where the console shows it |
 | `onWarning(warning)` | Told of a frame near its limit of images, a frame not drawn for holding more, words not drawn, and text, shapes or sprites that `update` made in each of the last 60 frames (`PLAY_MADE_EVERY_FRAME`); see [the browser game](browser-game.md) | Not told |
+| `onFrameTiming(sample)` | Optional CPU timing observer of the actual Play loop: update, decision, Host admission, preparation, rendering and `submitted`, `refused`, `retained`, `backpressure` or other outcomes; see [browser timing](browser-game.md) | No measurement |
 | `seed` | The seed of `game.random` | A new one each time |
 | `saveKey` | The name `game.save` keeps its values under | The page's path |
 | `semantics` | A tree from `createUiSemantics` of `@egret/engine/ui/semantics`: views of `game.show` add their named parts to it, and it is published at the end of every frame, for a [UI tester](ui-testing.md) and for assistive technology | No tree |
@@ -81,6 +82,8 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `arrange(game)` | Places what depends on the screen: called after `setup` and whenever the window changes size or turns | Nothing moves |
 
 Options that cannot make a game are refused with `PLAY_OPTIONS_INVALID`; the message ends with which one.
+
+`onFrameTiming` receives a frozen sample per active browser callback, even for retained or refused 2D frames. The observer does not control the loop: exceptions in it are ignored. CPU submission is not GPU completion or display presentation. Avoid costly work in the observer.
 
 ## Retaining a static 2D frame
 
@@ -394,3 +397,24 @@ A page can also take the engine as [one file](single-file.md), with no import ma
 ## November 27 device follow-up
 
 November 27 follow-up: selected physical 2D cases cover both Windows and Fold7 GPUs for 100 short labels, image-budget recovery, 500-label parent removal, view/input and vertical CJK title. See the recorded exact scope and the retained view-helper assertion. [Device observations and remaining coverage](november-27-claude-hardware.md). The separately tested #516 opt-out preserves world coordinates under independently scaled views on both physical devices and APIs.
+
+## Optional Canvas text work budget
+
+A new menu with many uncached labels can do all Canvas text measurement and raster readback in the microtasks of a single input event. Set `textWorkBudgetMs` on `play` (or `createBrowserGame`) to cooperatively admit Canvas work across display frames. For a caller-owned rich-text cache, share the same game-owned scheduler:
+
+```js
+const game = await play({
+  width: 960, height: 540, textWorkBudgetMs: 4,
+  setup(game) {
+    const provider = createCanvasParagraphProvider({ schedule: game.browser.scheduleTextWork });
+    const cache = createParagraphCache(game.engine.assets, { provider });
+    // Pass this one cache to every game.show() with rich paragraphs.
+  }
+});
+```
+
+Omit the option to keep the immediate, existing path. The budget is a positive finite number no greater than 16 milliseconds; it bounds admission between whole synchronous Canvas jobs, not the duration of a single indivisible job. FIFO and a small job-count limit also hold when the clock is coarse. Hidden documents use a later browser task because display frames may be suspended. Cancelling a queued request or disposing its owner removes queued work without waiting for a frame.
+
+To pace only a known expensive view or loading phase, provide `textWorkBudgetWhen: () => state.page === "map"` alongside the numeric budget. The optional predicate is read once for each new Canvas job, including individual measurement and raster work. `true` admits the job under the existing budget; `false` starts that job immediately. Previously queued jobs still follow their original bounded admission, even when this predicate has changed. Omitting it retains all-job pacing. It requires the numeric budget; a callback that throws or returns a non-boolean rejects its job. Cancellation and owner disposal retain their original checks.
+
+This does not change text keys, cache/lease ownership, hit areas, focus, or the meaning of label/view readiness. A newly visible uncached word can become ready over several frames. Measure the time to the new page's important words and all visible words (including paragraphs) as well as maximum frame time; make sure the work was not simply moved to another long frame. `view.textReady(name)` is available for ordinary named labels. The cache's existing admission limits, and the cost of a single paragraph, still apply.
