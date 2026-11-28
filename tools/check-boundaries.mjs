@@ -4696,6 +4696,12 @@ for (const file of ['packages/engine/web/WebGL2Host.ts','packages/engine/dist/we
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./sharedHostDeferred.js']]
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
+// Both geometry factories admit their arrays through one private contracts module, which imports nothing.
+for (const file of ['packages/contracts/src/SharedGeometry2D.ts','packages/contracts/dist/SharedGeometry2D.js'])
+  currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./geometryAdmission2D.js']]
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+for (const file of ['src/geometryAdmission2D.ts','dist/geometryAdmission2D.js','dist/geometryAdmission2D.d.ts'])
+  currentSceneLiteralClosure['packages/contracts/'+file] = [];
 // Native control reporting shares one read-only private association through the existing pointer alias.
 for (const file of ['src/pointerInput.ts','dist/pointerInput.js','dist/pointerInput.d.ts'])
   currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],

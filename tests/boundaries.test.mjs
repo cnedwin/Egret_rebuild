@@ -533,7 +533,15 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Keep the retained fixture graphs intact; do not derive policy from the checker.
     const m12FixtureGraph = {
     };
-    for (const [file,edges] of Object.entries({...sceneGraph,...m13SharedGraph,...m14FixtureGraph,...m12FixtureGraph})) {
+    // Both geometry factories admit their arrays through one private contracts module, which imports nothing.
+    const geometryAdmissionFixtureGraph = {
+      "packages/contracts/src/SharedGeometry2D.ts":[["static","./geometryAdmission2D.js"]],
+      "packages/contracts/dist/SharedGeometry2D.js":[["static","./geometryAdmission2D.js"]],
+      "packages/contracts/src/geometryAdmission2D.ts":[],
+      "packages/contracts/dist/geometryAdmission2D.js":[],
+      "packages/contracts/dist/geometryAdmission2D.d.ts":[],
+    };
+    for (const [file,edges] of Object.entries({...sceneGraph,...m13SharedGraph,...m14FixtureGraph,...m12FixtureGraph,...geometryAdmissionFixtureGraph})) {
       if (Object.hasOwn(m15FixtureGraph,file)) continue; // Completed after the retained facade scaffolds below.
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
