@@ -1,0 +1,313 @@
+{
+  "date": "2026-11-28",
+  "sourceCommit": "a1d6bc6215ce1fd9af1e9361286525ae737ad347",
+  "scope": "X-D60/2 and X-MTouch/2 selected functional scenarios",
+  "hardware": {
+    "Windows": {
+      "browser": "158.0.4370.45",
+      "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU"
+    },
+    "Fold7": {
+      "model": "SM-F966U1",
+      "android": "17",
+      "browser": "Chrome/157.0.8103.78",
+      "gpu": "Adreno 830"
+    }
+  },
+  "exampleSha256": {
+    "assets.mjs": "702790620b1d1fd6bef5dc11176bf00770f2545bd0e6c4f0ce447ffb4cf2a3a1",
+    "author-x.mjs": "c6e65f27aa8a7afc815a1fc3b49ee7d35681fb45e13101c56f6bd441daa0a3ca",
+    "index.html": "fff18f9b2bfe8d2aa97cca369dd7670c9d81cfadb2dd6b4da2a5e4e6680979bb",
+    "main.mjs": "6be93eda8ccbaa6c34bd6dea53fd8835255bf3388b881b76e2f1b98221e6e35b",
+    "mixed-background.mjs": "86afe38d7fb0d23d1b708e26510446437b65ca4e539b717256be76d7d3276fd7",
+    "mixed-preview.mjs": "47ff666b4dfebbe5ce641052cfe906bad62d5ee42933fd53f724aa65ba5cadaa",
+    "project.json": "d1404fcf3295077f35bb957af8e6ef279d0dcd4d0df2eb7548c4a597cadc31f5",
+    "project.mjs": "2ee1f0412428d7e8f2abdf25577cdea1999d14ab7f4b43fc4ec1f1de3f660f49",
+    "reference.mjs": "b0fd97958b2019f80288d82b0bce950b2f59834d0b0d5abbfb4c4333541412ff",
+    "scene.mjs": "c7f8b2f3b92faee3ed4cb15ba47e9612a9ed8e90ae6e2862eef4df04c8f40033",
+    "serve.mjs": "a3d4f7200750893ee170f06336ef6bdea8a304c071e2930255773e43901749b9",
+    "style.css": "854c2b1157c57b1c9e470175306182e2e088d4901f574f1a2241ff5f91834d45",
+    "timing.mjs": "debf8fd8efbe197ecb26709be24fdc478ed1b84f8b7fb126d9059d1b4b445d25",
+    "touch.mjs": "1c47fad7cd5f8b6a7073c2c5ea672efb556dc84f720dad33721b0b37f7a40525",
+    "ui.mjs": "0cbda6a750feb4210bcdfdc141d3b5a7d787ddba71c504d35ed4a7d5a43fd3f7",
+    "workload.mjs": "61bf4496b8ee1aaaec9da17dca889372b5b2dcfef3f6a3991f174555d50418d7"
+  },
+  "actorIds": [
+    "e_nova",
+    "e_lumen",
+    "e_studio_2",
+    "e_studio_3",
+    "e_studio_4",
+    "e_studio_5",
+    "e_studio_6",
+    "e_studio_7"
+  ],
+  "depthRGBA": {
+    "clear": [
+      16,
+      25,
+      44,
+      255
+    ],
+    "far": [
+      99,
+      120,
+      152,
+      255
+    ],
+    "overlap": [
+      120,
+      152,
+      188,
+      255
+    ]
+  },
+  "matrix": [
+    {
+      "device": "Windows",
+      "backend": "webgpu",
+      "stage": [
+        1024,
+        768
+      ],
+      "logicalScroll": 254.99999240040802,
+      "mapScale": 1,
+      "remainingContacts": 0,
+      "modalDismissed": true,
+      "cancelledRevision": 0,
+      "changedAndOriginalRevisions": [
+        1,
+        2
+      ],
+      "restoredLayerEpochs": [
+        2,
+        3
+      ],
+      "scope": "closed",
+      "composedPngSha256": {
+        "initial": "337a243d69fccdfed69ebef38c02c63b8982bf0827dd87b11a92a1cfa8404235",
+        "recovered": "df87e243f65354de1af822c9dc8a98cb2007e5c6fe6c3222b5df661641b7953e"
+      }
+    },
+    {
+      "device": "Windows",
+      "backend": "webgl2",
+      "stage": [
+        1024,
+        768
+      ],
+      "logicalScroll": 254.99999240040802,
+      "mapScale": 1,
+      "remainingContacts": 0,
+      "modalDismissed": true,
+      "cancelledRevision": 0,
+      "changedAndOriginalRevisions": [
+        1,
+        2
+      ],
+      "restoredLayerEpochs": [
+        2,
+        3
+      ],
+      "scope": "closed",
+      "composedPngSha256": {
+        "initial": "d924399cf5e8dee18e70f9ff1437a62d7b0e8ed7f3e72c11030497c3ee82432a",
+        "recovered": "f424608225fad1d24411e8dd022d5d3a4053ecc92dad4b8a3b1e6fb628836595"
+      }
+    },
+    {
+      "device": "Fold7 landscape",
+      "backend": "webgpu",
+      "stage": [
+        640,
+        360
+      ],
+      "logicalScroll": 76.80002113825077,
+      "mapScale": 1.4836379691051478,
+      "remainingContacts": 0,
+      "modalDismissed": true,
+      "cancelledRevision": 0,
+      "changedAndOriginalRevisions": [
+        1,
+        2
+      ],
+      "restoredLayerEpochs": [
+        2,
+        3
+      ],
+      "scope": "closed",
+      "composedPngSha256": {
+        "initial": "85cd3b420f062a77d35fc0f686e682f9cfe2fa81377961ed509125c1736c0bfc"
+      }
+    },
+    {
+      "device": "Fold7 landscape",
+      "backend": "webgl2",
+      "stage": [
+        640,
+        360
+      ],
+      "logicalScroll": 76.80002113825077,
+      "mapScale": 1.4836379691051478,
+      "remainingContacts": 0,
+      "modalDismissed": true,
+      "cancelledRevision": 0,
+      "changedAndOriginalRevisions": [
+        1,
+        2
+      ],
+      "restoredLayerEpochs": [
+        2,
+        3
+      ],
+      "scope": "closed",
+      "composedPngSha256": {
+        "initial": "a8fe7139e156b6a91d392b7e394162ba1f74bae1a2d793f1855cc9ebee1405f4"
+      }
+    },
+    {
+      "device": "Fold7 portrait",
+      "backend": "webgpu",
+      "stage": [
+        360,
+        640
+      ],
+      "logicalScroll": 76.80009159867546,
+      "mapScale": 1.5174068050236045,
+      "remainingContacts": 0,
+      "modalDismissed": true,
+      "cancelledRevision": 0,
+      "changedAndOriginalRevisions": [
+        1,
+        2
+      ],
+      "restoredLayerEpochs": [
+        2,
+        3
+      ],
+      "scope": "closed",
+      "composedPngSha256": {
+        "initial": "7ae1811448c39944bf5438afb9aa4f9e09e5286651f811a4b5d588666daea653"
+      }
+    },
+    {
+      "device": "Fold7 portrait",
+      "backend": "webgl2",
+      "stage": [
+        360,
+        640
+      ],
+      "logicalScroll": 76.80009159867546,
+      "mapScale": 1.5174068050236045,
+      "remainingContacts": 0,
+      "modalDismissed": true,
+      "cancelledRevision": 0,
+      "changedAndOriginalRevisions": [
+        1,
+        2
+      ],
+      "restoredLayerEpochs": [
+        2,
+        3
+      ],
+      "scope": "closed",
+      "composedPngSha256": {
+        "initial": "bd813114f72848c0c78260792511a3bcfd6969b50c6f0303a448466903d77334"
+      }
+    }
+  ],
+  "desktopKeyboard": [
+    {
+      "backend": "webgpu",
+      "visited": [
+        "studio-roster:hero-0",
+        "studio-roster:hero-1",
+        "studio-roster:skin",
+        "studio-roster:palette",
+        "studio-roster:details"
+      ],
+      "returnedFromModal": "studio-roster:details",
+      "toolbar": "pause",
+      "returnedToCanvas": true,
+      "restoredPlayback": true
+    },
+    {
+      "backend": "webgl2",
+      "visited": [
+        "studio-roster:hero-0",
+        "studio-roster:hero-1",
+        "studio-roster:skin",
+        "studio-roster:palette",
+        "studio-roster:details"
+      ],
+      "returnedFromModal": "studio-roster:details",
+      "toolbar": "pause",
+      "returnedToCanvas": true,
+      "restoredPlayback": true
+    }
+  ],
+  "desktopLossWhileManifestHeld": [
+    {
+      "operation": "palette",
+      "backend": "webgpu",
+      "heldRequests": 1,
+      "phaseBeforeHttpRelease": "failed",
+      "recoveredEpoch": 2,
+      "recoveredRevision": 0,
+      "retriedRevision": 1
+    },
+    {
+      "operation": "palette",
+      "backend": "webgl2",
+      "heldRequests": 1,
+      "phaseBeforeHttpRelease": "failed",
+      "recoveredEpoch": 2,
+      "recoveredRevision": 0,
+      "retriedRevision": 1
+    },
+    {
+      "operation": "projectFile",
+      "backend": "webgpu",
+      "heldRequests": 1,
+      "phaseBeforeHttpRelease": "cancelled",
+      "recoveredEpoch": 2,
+      "recoveredRevision": 0,
+      "retriedRevision": 1
+    },
+    {
+      "operation": "projectFile",
+      "backend": "webgl2",
+      "heldRequests": 1,
+      "phaseBeforeHttpRelease": "cancelled",
+      "recoveredEpoch": 2,
+      "recoveredRevision": 0,
+      "retriedRevision": 1
+    }
+  ],
+  "fold7SparseChordAndAndroidHome": [
+    {
+      "backend": "webgpu",
+      "actions": 1,
+      "heldTicks": 9,
+      "activeAtChord": 2,
+      "activeAfterRelease": 0,
+      "hiddenActive": 0,
+      "resumedActive": 0,
+      "resumedActions": 1,
+      "selection": "e_nova",
+      "revision": 0
+    },
+    {
+      "backend": "webgl2",
+      "actions": 1,
+      "heldTicks": 11,
+      "activeAtChord": 2,
+      "activeAfterRelease": 0,
+      "hiddenActive": 0,
+      "resumedActive": 0,
+      "resumedActions": 1,
+      "selection": "e_nova",
+      "revision": 0
+    }
+  ]
+}
