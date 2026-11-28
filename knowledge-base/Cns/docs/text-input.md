@@ -153,4 +153,4 @@ input.open({ x: 60, y: 1000, width: 600, height: 60, maxLength: 12, onCommit: na
 
 在实体 iPhone（iOS 27.2.1、Safari 27.2）上，WebGL2 和 WebGPU 都绘出了登记表首帧。两个后端的四个取样点均符合背景、面板和输入框的预期颜色。标题区域的亮色像素分别为 1,312 和 1,310 个。Safari 自动化点按姓名栏，通过程序插入“白鹭”，再按回车提交。此次复验覆盖画面和编辑流程，系统键盘的候选字选择仍待真人操作。
 
-新建的 sRGB 画布上下文若省略透明度属性，文字提供器会读取一个像素，确认透明后才使用该画布。上下文缺少语言属性时，会在画布元素上设置文字语言。回归覆盖原生默认属性缺失、不透明或非 sRGB 的画布，以及注入的上下文。构建后运行 `node --test tests/canvas-text-native-defaults.test.mjs`。[示例验证](../../../examples/text-input/README.zh-CN.md)还覆盖首次绘制失败及重试。
+新建的 sRGB 画布上下文若省略透明度属性，文字提供器会读取一个像素，确认透明后才使用该画布。上下文缺少语言属性时，会在画布元素上设置文字语言。回归覆盖原生默认属性缺失、不透明或非 sRGB 的画布，以及注入的上下文。构建后运行 `node --test tests/canvas-text-native-defaults.test.mjs`。[示例验证](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-input/README.zh-CN.md)还覆盖首次绘制失败及重试。
