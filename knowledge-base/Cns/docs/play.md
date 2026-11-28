@@ -67,6 +67,7 @@ await play({
 | `canvas` | 页面里已有的画布，位置保持不变 | 自动创建一个 |
 | `onError(error)` | 游戏被什么停下时得到通知 | 抛到控制台 |
 | `onWarning(warning)` | 告知接近图片上限的帧、因超限没画的帧、没画出来的文字，以及 `update` 在最近 60 帧里每帧都新建的文字、形状或精灵（`PLAY_MADE_EVERY_FRAME`）；见[浏览器游戏](browser-game.md) | 不告知 |
+| `onFrameTiming(sample)` | 可选的实际 Play 循环 CPU 时序观察器：更新、判定、宿主受理、准备、绘制及 `submitted`、`refused`、`retained`、`backpressure` 等结果；见[浏览器时序](browser-game.md) | 不测量 |
 | `seed` | `game.random` 的种子 | 每次都不同 |
 | `saveKey` | `game.save` 保存数据时用的名字 | 页面的路径 |
 | `semantics` | 来自 `@egret/engine/ui/semantics` 的 `createUiSemantics` 创建的语义树：`game.show` 的视图会把有名字的部件加进去，每帧结束时发布，供 [UI 测试器](ui-testing.md)和辅助技术使用 | 没有语义树 |
@@ -81,6 +82,8 @@ await play({
 | `arrange(game)` | 摆放跟屏幕有关的东西：在 `setup` 之后调用，窗口尺寸变化或旋转时再调用 | 什么都不移动 |
 
 无法做出游戏的选项会以 `PLAY_OPTIONS_INVALID` 被拒绝；错误信息的末尾说明是哪一项。
+
+`onFrameTiming` 在每次实际浏览器回调收到一个冻结的样本，即使保留上帧或拒绝 2D 提交也会告知。观察器不控制循环，内部异常不会改变循环结果。CPU 提交时间并不是 GPU 完成或屏幕呈现时间，请不要在观察器里做昂贵的工作。
 
 ## 保留静止的 2D 画面
 
