@@ -4845,19 +4845,14 @@ for(const file of ['packages/engine/web/MouseInput.ts','packages/engine/dist/web
   for(const clause of mouseEdges(mouseRead(file),file)){const allowed=mouseBrowserRules[clause.target]?.[clause.kind];if(!allowed||clause.names.some(name=>!allowed.includes(name))||new Set(clause.names).size!==clause.names.length)throw new Error('MI1: exact input module import closure mismatch: '+file);}
   if(/\.\.[/]src[/]|\b(?:preventDefault|stopPropagation|setPointerCapture|releasePointerCapture|requestAnimationFrame|setTimeout)\s*\(/.test(mouseRead(file)))throw new Error('MI1: browser input forbidden native behavior: '+file);
 }
-const mouseEngine=mouseRead('packages/engine/src/Engine.ts'),mouseStart=mouseRead('packages/engine/src/startEngine.ts'),mouseOwner=mouseRead('packages/engine/src/mouseInput.ts');
-if(!/createDisplayInputOperations\(stage\)/.test(mouseEngine)||!/createMouseInputOwner\(this,/.test(mouseEngine)||!/\.registerScope\(scope\)/.test(mouseEngine))throw new Error('MI1: genuine Engine display/scope assembly guard missing');
-const closing=mouseEngine.indexOf("this.#currentState = 'closing'"),inputGate=mouseEngine.indexOf('this.#mouseInputOwner.close()',closing),owners=mouseEngine.indexOf('this.#assetGroupOwner.close()',closing);
-if(closing<0||inputGate<closing||owners<inputGate)throw new Error('MI1: early Engine input gate order mismatch');
+// The Engine's input assembly, its early input gate on close, per-assembly signal capture and the
+// private display port are held by behavior: tests/mouse-input.test.mjs (own-shadow poison),
+// tests/mouse-input-lifecycle.test.mjs (signal observation) and tests/pointer-input.test.mjs (close
+// order). Startup readiness has no public observer, because no caller holds an Engine before its
+// Host has started, so it stays a source check.
+const mouseStart=mouseRead('packages/engine/src/startEngine.ts'),mouseOwner=mouseRead('packages/engine/src/mouseInput.ts');
 if(!/await\s+host\.start\?\.\(\)\s*;\s*markMouseInputEngineStarted\(engine\)\s*;\s*return\s+engine/.test(mouseStart)
   ||!/if\s*\(!started\)\s*throw\s+new\s+EgretError\(['"]MOUSE_INPUT_INVALID['"]\)/.test(mouseOwner))throw new Error('MI1: successful startup readiness guard missing');
-const ownerAssembly=mouseOwner.indexOf('export function createMouseInputOwner('),signalCapture=mouseOwner.indexOf('new CancellationController().signal');
-if(ownerAssembly<0||signalCapture<ownerAssembly||!/const originalSignals = new WeakMap/.test(mouseOwner))throw new Error('MI1: Signal intrinsic capture must occur per Engine assembly');
-for(const file of ['packages/runtime/src/displayInputOperations.ts','packages/runtime/dist/displayInputOperations.js']) {
-  const code=mouseRead(file);
-  if(!/queryDisplayHit\(stage,\s*x,\s*y,\s*\{\s*maxNodes\s*\}\)/.test(code)||!/dispatchDisplayInputEvent\(target,\s*event,/.test(code)
-    ||/\.hitTest\s*\(|\.dispatchEvent\s*\(|\.eventParent\s*\(|\.assertUsable\s*\(|\.parent\b|\.candidates\b/.test(code))throw new Error('MI1: captured display port must reuse private HT1 and typed route');
-}
 // Exact new target ownership; unrelated files never acquire input authority by
 // importing a dormant value, an erased type, or a dynamic relative edge.
 const mouseApprovedTargets={
@@ -5887,7 +5882,8 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
   if(Object.hasOwn(semanticAllowed,resolved)&&!semanticAllowed[resolved].includes(relative))throw new Error('Semantics: implementation module imported outside its entry: '+relative);
  }
 }
-if(!/const primitives = captureMouseInputRuntimePrimitives\(\)/.test(uiRead('packages/engine/src/keyboardInput.ts'))||!/const INPUT_PARENT = Object.getOwnPropertyDescriptor\(DisplayObject.prototype, 'parent'\)/.test(uiRead('packages/engine/src/internal/mouseInputFactoryState.ts')))throw new Error('M3.3: original eager display admission capture missing');
+// Keyboard admission reads the display tree through getters captured at load; tests/keyboard-input.test.mjs
+// replaces the public accessors after loading and checks that admission neither reads nor needs them.
 // Exact public values remain separate from default UI, Canvas and Engine entries.
 for(const [entry,names] of [['@egret/runtime/ui/editing',['createTextEditState']],['@egret/engine/ui/editing',['createUiTextEditor']],['@egret/engine/web/editing',['createBrowserEditorFontProvider','createBrowserTextEditor']]])
  if(!uiSame(Object.keys(await import(entry)),names))throw new Error('M3.3: native editing public values differ: '+entry);
