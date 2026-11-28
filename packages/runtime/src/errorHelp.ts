@@ -114,6 +114,7 @@ const AREAS: readonly (readonly [string, string])[] = [
   ['WEBGL2_READBACK', 'a WebGL2 readback'],
   ['WEBGL2_UPLOAD', 'a staged WebGL2 upload'],
   ['WEBGL2', 'the WebGL2 Host'],
+  ['WEBGPU_LAYER', 'a WebGPU layer'],
   ['WEBGPU_READBACK', 'a WebGPU readback'],
   ['WEBGPU_RECOVERY', 'WebGPU device recovery'],
   ['WEBGPU_UPLOAD', 'a staged WebGPU upload'],

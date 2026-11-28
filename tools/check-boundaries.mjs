@@ -769,10 +769,12 @@ const m15SessionTypes = ['SharedDeviceSessionState','SharedDeviceSessionStatus',
 const m15UploadTypes = ['SharedFrameUploadOptions','SharedFrameUploadReady','SharedFrameSubmission','SharedFrameUpload'];
 const m15SharedHostTypes = [...m15SessionTypes,...m15UploadTypes];
 const m15SharedHostTypeClauses = "export type { SharedDeviceSessionState, SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js'; export type { SharedFrameUploadOptions, SharedFrameUploadReady, SharedFrameSubmission, SharedFrameUpload } from './sharedFrameUpload.js';";
+// The kept layers of the shared WebGPU Host, as the WebGL2 entry has them.
+const gpuLayerTypes = ['SharedWebGPULayer2D','SharedWebGPULayerEffect2D','SharedWebGPULayerPlacement2D','SharedWebGPULayerStatus'];
 const expectedGPUTypeNames = [
   'WebGPUHostState', 'WebGPUHostErrorCode', 'WebGPUHostFailure',
   'WebGPUHostDiagnostic', 'WebGPUHostOptions', 'WebGPUReadback', 'WebGPUHostStatus',
-  ...sharedGPUTypes, ...m15SharedHostTypes,
+  ...sharedGPUTypes, ...gpuLayerTypes, ...m15SharedHostTypes,
 ].sort();
 const gpuDeclaration = readFileSync(path.join(root, 'packages/engine/dist/web/webgpu.d.ts'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
 const actualGPUTypeNames = [...gpuDeclaration.matchAll(/export type\s*\{([^}]+)\}\s*from\s*["'][^"']+["'];?/g)].flatMap(match => match[1].split(',').map(name => name.trim())).sort();
@@ -847,7 +849,8 @@ const privateSharedGPU = ["SharedStorageLimits2D","SharedStorageFees2D","SharedR
 privateSharedGPU.push("SharedResourcePending2D","SharedResourceImages2D","SharedResourceTotals2D","SharedResourceStatusInput2D","createPageCopyDiagnostics","createUnknownNativeDiagnostics","createReuseDiagnostics","createPendingHighWater","createImagesHighWater","createResourceTotals","raisePendingHighWater","raiseImagesHighWater","addResourceTotal","sharedResourceStatus");
 privateSharedGPU.push("attachSharedSceneCardSources2D","attachSharedSceneSources2D","packSharedSceneCardUniform3D","createSharedWebGPUCardPipeline","createSharedWebGPUTexturedMeshPipeline","packSharedSceneLambertUniform3D","createSharedWebGPULambertMeshPipeline");
 privateSharedGPU.push("sharedFrameProfileRefusal2D","sharedBackingExtent2D","sharedEffectSlots2D","walkSharedEffects2D","SharedEffectWalk2D");
-const privateSharedModules = ["sharedSubmissionStorage2D","sharedRetentionLedger","sharedResourceDiagnostics","packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedHostDeferred","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
+privateSharedGPU.push("SharedLayerEffectInput2D","SharedLayerEffect2D","SharedLayerRead2D","readSharedLayerEffect2D","readSharedLayerPlacement2D","sharedLayerBakeRefusal2D","createSharedWebGPULayerPipeline","SHARED_LAYER_UNIFORM_BYTES");
+const privateSharedModules = ["sharedSubmissionStorage2D","sharedRetentionLedger","sharedResourceDiagnostics","sharedLayers2D","packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedHostDeferred","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
 for(const [entry,values,stem]of meshEntries) {
   const text=readFileSync(path.join(root,stem+'.d.ts'),'utf8')+'\n'+readFileSync(path.join(root,stem+'.js'),'utf8');
   for(const name of [...privateSharedGPU,...privateSharedModules])if(name in values||new RegExp('\\b'+name+'\\b').test(text))throw new Error('M13: private shared helper leaked: '+entry+'/'+name);
@@ -4706,6 +4709,18 @@ for (const [file, targets] of Object.entries({
   'web/sharedResourceDiagnostics.ts':['../rendering/sharedColor2D.js','./sharedDeviceSession.js','./sharedRetentionLedger.js'],
   'dist/web/sharedResourceDiagnostics.js':[],
   'dist/web/sharedResourceDiagnostics.d.ts':['../rendering/sharedColor2D.js','./sharedDeviceSession.js','./sharedRetentionLedger.js']
+}))
+  currentSceneLiteralClosure['packages/engine/' + file] = targets.map(target => ['static', target]);
+// Both Hosts read kept layers' placements and limits from one module; WebGL2 reaches it through its layer state.
+reviseClosureEdges('packages/engine/web/WebGPUHost.ts', ['./sharedLayers2D.js','./sharedLayers2D.js']);
+reviseClosureEdges('packages/engine/dist/web/WebGPUHost.js', ['./sharedLayers2D.js']);
+reviseClosureEdges('packages/engine/web/webgl2LayerState.ts', ['./sharedLayers2D.js','./sharedLayers2D.js','./sharedLayers2D.js']);
+for (const file of ['packages/engine/dist/web/webgl2LayerState.js','packages/engine/dist/web/webgl2LayerState.d.ts'])
+  reviseClosureEdges(file, ['./sharedLayers2D.js','./sharedLayers2D.js']);
+for (const [file, targets] of Object.entries({
+  'web/sharedLayers2D.ts':['@egret/contracts'],
+  'dist/web/sharedLayers2D.js':[],
+  'dist/web/sharedLayers2D.d.ts':['@egret/contracts']
 }))
   currentSceneLiteralClosure['packages/engine/' + file] = targets.map(target => ['static', target]);
 // A Host-owned fully visible quad is encoded by one shared renderer helper. Its return type edge erases in JS.

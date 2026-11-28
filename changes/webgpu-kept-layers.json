@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-29",
+  "en": {
+    "title": "Kept layers on the WebGPU Host",
+    "body": "A shared WebGPU Host made with `enableLayers: true` keeps layers drawn once on the GPU, as the WebGL2 Host does: `createSharedLayer2D()` bakes a transparent capture into a target of its own, `renderSharedFrameWithLayers(frame, placements)` draws the layers under the frame in painter order, sampled nearest, with an optional tint when effects are on, and `getSharedLayerStatus()` reports their bytes and counts. Moving a placement uploads nothing; a lost device leaves the layers stale until they are updated again. `staticLayers: true` in `createBrowserGame` and `play` now works on WebGPU too. A Host without the option is unchanged and refuses layers with `WEBGPU_LAYER_DISABLED`."
+  },
+  "zh": {
+    "title": "WebGPU 宿主支持保留图层",
+    "body": "用 `enableLayers: true` 创建的共享 WebGPU 宿主与 WebGL2 宿主一样，可以把图层在 GPU 上画一次并保留：`createSharedLayer2D()` 把透明捕获烘焙到专属目标，`renderSharedFrameWithLayers(frame, placements)` 按绘制顺序把图层画在帧下方，最近邻采样，开启效果时可附带着色，`getSharedLayerStatus()` 报告其字节数和数量。移动摆放不上传任何内容；设备丢失后图层变为 stale，直到重新更新。`createBrowserGame` 和 `play` 的 `staticLayers: true` 现在在 WebGPU 上同样可用。未开启该选项的宿主行为不变，并以 `WEBGPU_LAYER_DISABLED` 拒绝图层。"
+  }
+}

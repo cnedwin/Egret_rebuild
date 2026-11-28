@@ -594,7 +594,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     }
     append(fakeEngine,"export {createTextureView} from '../../../packages/runtime/dist/index.js';\n");
     append('packages/engine/dist/web/WebGPUHost.js','export function createSharedWebGPUHost() {}\n');
-    for(const relative of ['web/webgpu.ts','dist/web/webgpu.d.ts','dist/web/webgpu.js'])append('packages/engine/'+relative,"export {createSharedWebGPUHost} from './WebGPUHost.js';\n"+(!relative.endsWith('.js')?"export type {SharedWebGPUHost,SharedWebGPUHostOptions,SharedWebGPUHostStatus,SharedWebGPUReadback} from './WebGPUHost.js';\n":''));
+    for(const relative of ['web/webgpu.ts','dist/web/webgpu.d.ts','dist/web/webgpu.js'])append('packages/engine/'+relative,"export {createSharedWebGPUHost} from './WebGPUHost.js';\n"+(!relative.endsWith('.js')?"export type {SharedWebGPUHost,SharedWebGPUHostOptions,SharedWebGPUHostStatus,SharedWebGPUReadback,SharedWebGPULayer2D,SharedWebGPULayerEffect2D,SharedWebGPULayerPlacement2D,SharedWebGPULayerStatus} from './WebGPUHost.js';\n":''));
     append('node_modules/@egret/engine/webgpu.js','export function createSharedWebGPUHost() {}\n');
     // M13_SHARED_FIXTURE_END
 
@@ -751,6 +751,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         ['packages/engine/web/WebGPUHost.ts',['./sharedResourceDiagnostics.js','./sharedResourceDiagnostics.js'],['../rendering/sharedColor2D.js','./sharedRetentionLedger.js']],
         ['packages/engine/dist/web/WebGL2Host.js',['./sharedResourceDiagnostics.js'],[]],
         ['packages/engine/dist/web/WebGPUHost.js',['./sharedResourceDiagnostics.js'],[]],
+        // Both Hosts read kept layers' placements from one module; WebGL2 through its layer state.
+        ['packages/engine/web/WebGPUHost.ts',['./sharedLayers2D.js','./sharedLayers2D.js'],[]],
+        ['packages/engine/dist/web/WebGPUHost.js',['./sharedLayers2D.js'],[]],
+        ['packages/engine/web/webgl2LayerState.ts',['./sharedLayers2D.js','./sharedLayers2D.js','./sharedLayers2D.js'],[]],
+        ['packages/engine/dist/web/webgl2LayerState.js',['./sharedLayers2D.js','./sharedLayers2D.js'],[]],
+        ['packages/engine/dist/web/webgl2LayerState.d.ts',['./sharedLayers2D.js','./sharedLayers2D.js'],[]],
       ]){
         if(!Object.hasOwn(graph,file))continue;
         const edges=[...graph[file]];
@@ -763,6 +769,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       'packages/engine/web/sharedResourceDiagnostics.ts':[['static','../rendering/sharedColor2D.js'],['static','./sharedDeviceSession.js'],['static','./sharedRetentionLedger.js']],
       'packages/engine/dist/web/sharedResourceDiagnostics.js':[],
       'packages/engine/dist/web/sharedResourceDiagnostics.d.ts':[['static','../rendering/sharedColor2D.js'],['static','./sharedDeviceSession.js'],['static','./sharedRetentionLedger.js']],
+      'packages/engine/web/sharedLayers2D.ts':[['static','@egret/contracts']],
+      'packages/engine/dist/web/sharedLayers2D.js':[],
+      'packages/engine/dist/web/sharedLayers2D.d.ts':[['static','@egret/contracts']],
     });
     // The tree records and engine affinity live in two leaf modules, so the visual and managed state read them without importing the tree operations or ownership back.
     for(const file of ['packages/runtime/src/ownership.ts','packages/runtime/dist/ownership.js'])reviseFixtureEdges(m15FixtureGraph,file,['./engineAffinity.js','./engineAffinity.js']);
@@ -2159,9 +2168,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       effectFixtureGraph['packages/engine/'+file]=targets.map(target=>['static',target]);
     }
     Object.assign(effectFixtureGraph,{
-      'packages/engine/web/webgl2LayerState.ts':[['static','./sharedWebGL2Options.js'],['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js'],['static','./webgl2Native.js'],['static','./webgl2Types.js']],
-      'packages/engine/dist/web/webgl2LayerState.js':[['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js']],
-      'packages/engine/dist/web/webgl2LayerState.d.ts':[['static','./sharedWebGL2Options.js'],['static','./webgl2Native.js'],['static','./webgl2Types.js']],
+      'packages/engine/web/webgl2LayerState.ts':[['static','./sharedWebGL2Options.js'],['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js'],['static','./webgl2Native.js'],['static','./webgl2Types.js'],['static','./sharedLayers2D.js'],['static','./sharedLayers2D.js'],['static','./sharedLayers2D.js']],
+      'packages/engine/dist/web/webgl2LayerState.js':[['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js'],['static','./sharedLayers2D.js'],['static','./sharedLayers2D.js']],
+      'packages/engine/dist/web/webgl2LayerState.d.ts':[['static','./sharedWebGL2Options.js'],['static','./webgl2Native.js'],['static','./webgl2Types.js'],['static','./sharedLayers2D.js'],['static','./sharedLayers2D.js']],
+      'packages/engine/web/sharedLayers2D.ts':[['static','@egret/contracts']],
+      'packages/engine/dist/web/sharedLayers2D.js':[],
+      'packages/engine/dist/web/sharedLayers2D.d.ts':[['static','@egret/contracts']],
     });
     for(const [file,edges]of Object.entries(effectFixtureGraph)){
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';

@@ -13,7 +13,11 @@ export type {
   SharedWebGPUHost,
   SharedWebGPUHostOptions,
   SharedWebGPUHostStatus,
-  SharedWebGPUReadback
+  SharedWebGPUReadback,
+  SharedWebGPULayer2D,
+  SharedWebGPULayerEffect2D,
+  SharedWebGPULayerPlacement2D,
+  SharedWebGPULayerStatus
 } from './WebGPUHost.js';
 
 export type {

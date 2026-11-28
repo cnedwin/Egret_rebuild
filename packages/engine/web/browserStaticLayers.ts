@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
-// Bind the explicit WebGL2 layer cache to the ordinary Engine host transaction.
+// Bind the explicit layer cache of the WebGL2 or WebGPU Host to the ordinary Engine host transaction.
 // No canvas readback, texture conversion, or replacement display tree.
 import { EgretError } from '@egret/runtime';
 import type { SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contracts';
 /**
  * Structural public surface of a genuine retained layer. Kept here so the
- * BrowserGame entry does not depend on the optional WebGL2 module/types.
+ * BrowserGame entry depends on neither optional Host module or its types.
  */
 export interface BrowserGameStaticLayer {
   readonly state: 'empty' | 'ready' | 'stale' | 'disposed';
@@ -44,7 +44,7 @@ interface StaticLayerHost extends SharedRenderHostAdapter {
 }
 
 export interface BrowserGameStaticLayers {
-  /** A genuine WebGL2 layer. Await its first update before placing it. */
+  /** A genuine layer of the game's Host. Await its first update before placing it. */
   createLayer(): BrowserGameStaticLayer;
   /**
    * Replace the background placements, in stage coordinates and painter order.

@@ -154,9 +154,9 @@ For a fixed-ratio game, use `fit: 'contain'` and pass the logical stage width an
 
 Run `pnpm example:browser --port 4173` and open `/examples/play/index.html?game=semantic-letterbox` on the local server for the fixed-ratio workshop example in `examples/play/semantic-letterbox.mjs`. The sample uses a 640 × 360 stage and a 480 × 270 drawing buffer. In `play3d`, `pixelRatio` controls the foreground UI. The 3D background uses its own quality settings.
 
-## Retained WebGL2 backgrounds
+## Retained GPU backgrounds
 
-For a scene with static background chunks, `staticLayers: true` with the explicit WebGL2 backend gives `game.browser.staticLayers`. Bake a transparent Engine capture once, detach its live source nodes and set the placements. This composes the retained GPU textures beneath the ordinary world and UI; camera movement can change the placements without rebuilding the background. Setting placements, including after a completed replacement bake, wakes on-demand rendering. See [the browser game layer contract](browser-game.md#retained-gpu-backgrounds-webgl2-opt-in) for the limits, fallback and lifecycle. WebGPU and ordinary Play keep their existing path.
+For a scene with static background chunks, `staticLayers: true` gives `game.browser.staticLayers`, on WebGL2 and WebGPU alike. Bake a transparent Engine capture once, detach its live source nodes and set the placements. This composes the retained GPU textures beneath the ordinary world and UI; camera movement can change the placements without rebuilding the background. Setting placements, including after a completed replacement bake, wakes on-demand rendering. See [the browser game layer contract](browser-game.md#retained-gpu-backgrounds-opt-in) for the limits, fallback and lifecycle. Play without the option keeps its existing path.
 
 ## Drawing
 

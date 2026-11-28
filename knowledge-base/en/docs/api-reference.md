@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1546 exports; 22 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1550 exports; 22 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -179,8 +179,12 @@ For which entry to import from, see [What to import](entry-points.md).
 | `SharedFrameUploadReady` | interface | Upload completion does not imply that this frame has been presented. |
 | `SharedHostResourceStatus` | interface | Fresh immutable data; reads do no native work. |
 | `SharedWebGPUHost` | interface | A host that draws shared frames with WebGPU: start and stop it, stage frames, read them back, and recover from a lost device. |
-| `SharedWebGPUHostOptions` | interface | A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space and recovery. |
+| `SharedWebGPUHostOptions` | interface | A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space, recovery and kept layers. |
 | `SharedWebGPUHostStatus` | interface | A shared WebGPU host as it is now: its host status, the bytes pending, and its resources. |
+| `SharedWebGPULayer2D` | interface | A layer drawn once and kept on the GPU: update it, or dispose of it. |
+| `SharedWebGPULayerEffect2D` | interface | How a kept layer is tinted when it is placed: its bounds and its multiplied and added color. |
+| `SharedWebGPULayerPlacement2D` | interface | Where a kept layer is placed in a frame, how large, and with what effect. |
+| `SharedWebGPULayerStatus` | interface | The kept layers of a host: the bytes they hold, and how many are ready and pending. |
 | `SharedWebGPUReadback` | interface | Pixels read back from a shared frame, with their alpha mode and device generation. |
 | `WebGPUHostDiagnostic` | interface | Something a WebGPU host reports: a failure, with how serious it is. |
 | `WebGPUHostErrorCode` | type | What went wrong in a WebGPU host. |

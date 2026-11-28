@@ -1456,6 +1456,18 @@ The rows are the codes the sources name whole. Some parts put a code together fr
 | `WEBGPU_UNCAPTURED_ERROR` | The WebGPU device reported an error outside any operation of the Host. What it reported is in cause. |
 | `WEBGPU_VALIDATION` | WebGPU refused an operation of the Host as not valid. The cause is in cause. |
 
+### WEBGPU_LAYER
+
+| Code | Meaning |
+| --- | --- |
+| `WEBGPU_LAYER_BUDGET` | A limit of a WebGPU layer was passed. |
+| `WEBGPU_LAYER_DISABLED` | A WebGPU layer is turned off. Turn it on with the option of its factory. |
+| `WEBGPU_LAYER_DISPOSED` | A WebGPU layer was disposed and takes nothing more. |
+| `WEBGPU_LAYER_EFFECT_INVALID` | The effect given to a WebGPU layer is not valid. |
+| `WEBGPU_LAYER_INVALID` | What was given to a WebGPU layer is not valid. |
+| `WEBGPU_LAYER_NOT_READY` | A WebGPU layer is not ready yet. |
+| `WEBGPU_LAYER_PENDING` | A WebGPU layer still has work pending. |
+
 ### WEBGPU_READBACK
 
 | Code | Meaning |

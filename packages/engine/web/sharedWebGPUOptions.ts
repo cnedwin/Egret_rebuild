@@ -6,7 +6,7 @@ export interface SharedPageLimits2D {
   readonly maxFramePageBytes: number;
   readonly maxReadyPageBytes: number;
 }
-/** A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space and recovery. */
+/** A shared WebGPU host's own options: its geometry limits, effects, output alpha, blend space, recovery and kept layers. */
 export interface SharedWebGPUHostOptions extends WebGPUHostOptions, Partial<SharedPageLimits2D> {
   readonly maxSourceTriangles?: number;
   readonly maxFrameGeometryBytes?: number;
@@ -17,6 +17,8 @@ export interface SharedWebGPUHostOptions extends WebGPUHostOptions, Partial<Shar
   /** Where translucent draws mix: `linear` light (the default) or the stored `srgb` codes, as a 2D canvas does. */
   readonly blendSpace?: 'linear' | 'srgb';
   readonly recovery?: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs?: number };
+  /** Keep layers drawn once on the GPU: createSharedLayer2D and renderSharedFrameWithLayers. False by default. */
+  readonly enableLayers?: boolean;
 }
 type BaseConfiguration = Required<
   Omit<
@@ -28,6 +30,7 @@ type BaseConfiguration = Required<
     | 'outputAlpha'
     | 'blendSpace'
     | 'recovery'
+    | 'enableLayers'
     | keyof SharedPageLimits2D
   >
 >;
@@ -37,6 +40,7 @@ export type SharedWebGPUConfiguration = BaseConfiguration &
     readonly outputAlpha: 'premultiplied' | 'opaque';
     readonly blendSpace: 'linear' | 'srgb';
     readonly recovery: { readonly mode: 'manual' | 'automatic'; readonly timeoutMs: number } | undefined;
+    readonly enableLayers: boolean;
   };
 const DEFAULTS: BaseConfiguration = Object.freeze({
   pixelRatio: 1,
@@ -84,7 +88,8 @@ const KEYS = [
   'recovery',
   'enableEffects',
   ...PAGE_KEYS,
-  'blendSpace'
+  'blendSpace',
+  'enableLayers'
 ] as const;
 function object(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -156,9 +161,19 @@ export function admitSharedWebGPUOptions(input: SharedWebGPUHostOptions): {
   }
   const blendSpace = captured.blendSpace === undefined ? 'linear' : captured.blendSpace;
   if (blendSpace !== 'linear' && blendSpace !== 'srgb') throw new TypeError('blendSpace');
+  const enableLayers = captured.enableLayers ?? false;
+  if (typeof enableLayers !== 'boolean') throw new TypeError('enableLayers');
   return {
     surface: captured.canvas as unknown as HTMLCanvasElement,
-    configuration: Object.freeze({ ...configuration, enableEffects, outputAlpha, recovery, ...pages, blendSpace }),
+    configuration: Object.freeze({
+      ...configuration,
+      enableEffects,
+      outputAlpha,
+      recovery,
+      ...pages,
+      blendSpace,
+      enableLayers
+    }),
     borrowed: kind === 'borrow' ? (borrowed as GPUDevice) : undefined,
     callback: captured.onDiagnostic as ((diagnostic: WebGPUHostDiagnostic) => unknown) | undefined
   };

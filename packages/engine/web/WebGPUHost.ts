@@ -63,7 +63,18 @@ import {
 } from './sharedEffectShaders.js';
 import type { SharedEffectPass } from './sharedEffectShaders.js';
 import type { PreparedEffect2D } from '../rendering/sharedEffects2D.js';
-import { createSharedResolvePipeline } from './webgpuSharedResolvePass.js';
+import {
+  createSharedResolvePipeline,
+  createSharedWebGPULayerPipeline,
+  SHARED_LAYER_UNIFORM_BYTES
+} from './webgpuSharedResolvePass.js';
+import {
+  MAX_LAYER_HANDLES,
+  readSharedLayerEffect2D,
+  readSharedLayerPlacement2D,
+  sharedLayerBakeRefusal2D
+} from './sharedLayers2D.js';
+import type { SharedLayerRead2D } from './sharedLayers2D.js';
 import { createWebGPURetentionPool } from './webgpuRetentionPool.js';
 import type {
   RetentionHandle,
@@ -155,7 +166,14 @@ export type WebGPUHostErrorCode =
   | 'WEBGPU_RECOVERY_TIMEOUT'
   | 'WEBGPU_RECOVERY_FAILED'
   | 'WEBGPU_RECOVERY_LIMIT'
-  | 'WEBGPU_GENERATION_EXHAUSTED';
+  | 'WEBGPU_GENERATION_EXHAUSTED'
+  | 'WEBGPU_LAYER_DISABLED'
+  | 'WEBGPU_LAYER_INVALID'
+  | 'WEBGPU_LAYER_EFFECT_INVALID'
+  | 'WEBGPU_LAYER_BUDGET'
+  | 'WEBGPU_LAYER_NOT_READY'
+  | 'WEBGPU_LAYER_PENDING'
+  | 'WEBGPU_LAYER_DISPOSED';
 /** A failure of a WebGPU host: its code, the frame it happened at, the phase, and its cause. */
 export interface WebGPUHostFailure {
   readonly code: WebGPUHostErrorCode;
@@ -221,6 +239,38 @@ export interface SharedWebGPUHostStatus {
   readonly pendingCanonicalBytes: number;
   readonly resources: SharedHostResourceStatus;
 }
+/** A layer drawn once and kept on the GPU: update it, or dispose of it. */
+export interface SharedWebGPULayer2D {
+  readonly state: 'empty' | 'ready' | 'stale' | 'disposed';
+  /** Bake a transparent Engine capture. The current revision remains usable until the replacement completes. */
+  update(frame: SharedRenderFrame2D): Promise<void>;
+  dispose(): void;
+}
+type LayerRGB = readonly [number, number, number];
+/** How a kept layer is tinted when it is placed: its bounds and its multiplied and added color. */
+export interface SharedWebGPULayerEffect2D {
+  /** Half-open rectangle in logical frame coordinates. */
+  readonly bounds: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
+  readonly multiply?: LayerRGB;
+  readonly add?: LayerRGB;
+}
+/** Where a kept layer is placed in a frame, how large, and with what effect. */
+export interface SharedWebGPULayerPlacement2D {
+  readonly layer: SharedWebGPULayer2D;
+  /** Destination bounds in logical frame coordinates, before the host pixel ratio. */
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  readonly effect?: SharedWebGPULayerEffect2D;
+}
+/** The kept layers of a host: the bytes they hold, and how many are ready and pending. */
+export interface SharedWebGPULayerStatus {
+  /** Logical RGBA8 bytes for live targets, including pending and pinned superseded revisions. */
+  readonly residentBytes: number;
+  readonly readyLayers: number;
+  readonly pendingLayers: number;
+}
 /** A host that draws shared frames with WebGPU: start and stop it, stage frames, read them back, and recover from a lost device. */
 export interface SharedWebGPUHost extends Pick<SharedRenderHostAdapter, 'sharedFrameProfile' | 'renderSharedFrame'> {
   readonly surface: HTMLCanvasElement;
@@ -236,8 +286,13 @@ export interface SharedWebGPUHost extends Pick<SharedRenderHostAdapter, 'sharedF
   stageSharedFrame(frame: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
   requestReadback(): Promise<SharedWebGPUReadback>;
   getSharedStatus(): SharedWebGPUHostStatus;
-  /** Draw calls of the last frame encoded: its batches, a pass for each effect and the copy to the canvas. */
+  /** Draw calls of the last frame encoded: its batches, a pass for each effect, kept layers and the copy to the canvas. */
   getFrameDrawCalls(): number;
+  /** A new kept layer, empty until its first update. The Host must be made with `enableLayers: true`. */
+  createSharedLayer2D(): SharedWebGPULayer2D;
+  /** Draw a frame over kept layers: the layers in painter order over the frame's clear, then the frame. */
+  renderSharedFrameWithLayers(frame: SharedRenderFrame2D, layers: readonly SharedWebGPULayerPlacement2D[]): undefined;
+  getSharedLayerStatus(): SharedWebGPULayerStatus;
 }
 type Ticket = ReturnType<typeof deferred<WebGPUReadback | SharedWebGPUReadback>> & { bound: boolean };
 /** Preallocated ownership until a returned target is registered or destroyed. */
@@ -314,6 +369,29 @@ interface GenerationOwner {
   diagnosticUnknown?: boolean;
   finishReadbackLossWait?: () => void;
 }
+/** One baked target of a kept layer, on the generation that made it; frames that sample it pin it. */
+interface LayerRevision {
+  readonly owner: GenerationOwner;
+  readonly resource: OwnedWebGPUTexture;
+  view: GPUTextureView | undefined;
+  readonly bytes: number;
+  pins: number;
+  retained: boolean;
+}
+interface LayerSlot {
+  ready: LayerRevision | undefined;
+  pending: LayerWrite | undefined;
+  wasReady: boolean;
+  disposed: boolean;
+}
+interface LayerWrite {
+  readonly slot: LayerSlot;
+  readonly done: ReturnType<typeof deferred<void>>;
+  submitted: boolean;
+  revision: LayerRevision | undefined;
+}
+type LayerInput = { readonly write: LayerWrite } | { readonly placements: readonly SharedWebGPULayerPlacement2D[] };
+type LayerRead = SharedLayerRead2D<LayerRevision>;
 /** `regions` is the region table as its buffer holds it, present when a draw of the frame has a region. */
 type SharedPlan = {
   storage: SharedSubmissionStorage2D;
@@ -323,6 +401,10 @@ type SharedPlan = {
   ticket: Ticket | undefined;
   batch: PreparedSharedBatchPlan2D;
   regions: Uint32Array<ArrayBuffer> | undefined;
+  /** A bake into a kept layer: its target replaces the working target, and nothing reaches the canvas. */
+  layerWrite: LayerWrite | undefined;
+  /** Kept layers drawn over the clear before the frame's own draws. */
+  layerReads: LayerRead[] | undefined;
 };
 interface SharedRecipe {
   effectTargets: { resource: OwnedWebGPUTexture; view: GPUTextureView }[];
@@ -332,7 +414,9 @@ interface SharedRecipe {
   bindings: Map<PackedSharedDraw2D, GPUBindGroup>;
   regionBindings: Map<PackedSharedDraw2D, GPUBindGroup>;
   color: { resource: OwnedWebGPUTexture; view: GPUTextureView };
-  resolveBinding: GPUBindGroup;
+  /** Absent for a bake, which has no copy to the canvas. */
+  resolveBinding: GPUBindGroup | undefined;
+  layerBindings: GPUBindGroup[];
 }
 type StageWrite =
   | {
@@ -417,6 +501,8 @@ interface Submission {
   failure: EgretError | undefined;
   unsafe: boolean;
   retired: boolean;
+  layerWrite?: LayerWrite | undefined;
+  layerReads?: LayerRead[] | undefined;
 }
 function error(code: WebGPUHostErrorCode, cause?: unknown): EgretError {
   return new EgretError(code, { cause });
@@ -433,6 +519,10 @@ function isObject(value: unknown): value is object {
   return typeof value === 'object' && value !== null;
 }
 const SHARED_OPTIONS = new WeakMap<object, SharedWebGPUConfiguration>();
+/** A Host with layers draws a placement plainly, and with an effect when it was made with effects. */
+function layerVariants(options: SharedWebGPUConfiguration): readonly boolean[] {
+  return options.enableEffects ? [false, true] : [false];
+}
 
 /** The sole lifecycle/submission authority; resource helpers only record settled ownership. */
 class WebGPUHostImplementation {
@@ -509,6 +599,11 @@ class WebGPUHostImplementation {
   >();
   private readonly sharedSamplers = new Map<string, GPUSampler>();
   private effectPipelines = new Map<SharedEffectPass, { pipeline: GPURenderPipeline; layout: GPUBindGroupLayout }>();
+  /** The layer pipelines of a Host made with layers, without and with an effect. */
+  private readonly layerPipelines = new Map<boolean, { pipeline: GPURenderPipeline; layout: GPUBindGroupLayout }>();
+  private readonly layers = new Map<SharedWebGPULayer2D, LayerSlot>();
+  private readonly layerGarbage = new Set<LayerRevision>();
+  private layerBytes = 0;
   private resolvePipeline: GPURenderPipeline | undefined;
   private resolveLayout: GPUBindGroupLayout | undefined;
   private push: ((filter: GPUErrorFilter) => void) | undefined;
@@ -605,8 +700,196 @@ class WebGPUHostImplementation {
             resources: this.resourceStatus()
           }),
         enumerable: true
-      }
+      },
+      createSharedLayer2D: { value: (): SharedWebGPULayer2D => this.createLayer(), enumerable: true },
+      renderSharedFrameWithLayers: {
+        value: (frame: SharedRenderFrame2D, layers: readonly SharedWebGPULayerPlacement2D[]): undefined => {
+          this.active();
+          if (!SHARED_OPTIONS.get(this)?.enableLayers) throw error('WEBGPU_LAYER_DISABLED');
+          return this.renderSharedOwnedFrame(frame, undefined, { placements: layers }) as undefined;
+        },
+        enumerable: true
+      },
+      getSharedLayerStatus: { value: (): SharedWebGPULayerStatus => this.layerStatus(), enumerable: true }
     });
+  }
+  /** A revision is ready while the Host is on the generation that baked it. */
+  private layerReady(revision: LayerRevision | undefined): revision is LayerRevision {
+    return revision !== undefined && revision.owner === this.owner && !revision.owner.invalidated;
+  }
+  private createLayer(): SharedWebGPULayer2D {
+    this.active();
+    if (this.busy) throw error('WEBGPU_REENTRANT');
+    if (!SHARED_OPTIONS.get(this)?.enableLayers) throw error('WEBGPU_LAYER_DISABLED');
+    if (this.layers.size >= MAX_LAYER_HANDLES) throw error('WEBGPU_LAYER_BUDGET');
+    const slot: LayerSlot = { ready: undefined, pending: undefined, wasReady: false, disposed: false };
+    const host = this;
+    const handle: SharedWebGPULayer2D = Object.freeze({
+      get state() {
+        if (slot.disposed || host.state === 'closing' || host.state === 'closed') return 'disposed';
+        if (host.state === 'active' && host.layerReady(slot.ready)) return 'ready';
+        return slot.wasReady ? 'stale' : 'empty';
+      },
+      update: (frame: SharedRenderFrame2D) => this.updateLayer(slot, frame),
+      dispose: () => this.disposeLayer(handle, slot)
+    });
+    this.layers.set(handle, slot);
+    return handle;
+  }
+  private layerStatus(): SharedWebGPULayerStatus {
+    let readyLayers = 0,
+      pendingLayers = 0;
+    // A ready handle is one whose state says so: the Host is active on the generation that baked it.
+    for (const slot of this.layers.values()) {
+      if (this.state === 'active' && this.layerReady(slot.ready)) readyLayers++;
+      if (slot.pending) pendingLayers++;
+    }
+    return Object.freeze({ readyLayers, pendingLayers, residentBytes: this.layerBytes });
+  }
+  private updateLayer(slot: LayerSlot, frame: SharedRenderFrame2D): Promise<void> {
+    const done = deferred<void>();
+    const write: LayerWrite = { slot, done, submitted: false, revision: undefined };
+    try {
+      if (slot.disposed) throw error('WEBGPU_LAYER_DISPOSED');
+      this.active();
+      if (this.busy) throw error('WEBGPU_REENTRANT');
+      if (slot.pending) throw error('WEBGPU_LAYER_PENDING');
+      slot.pending = write;
+      this.renderSharedOwnedFrame(frame, undefined, { write });
+    } catch (cause) {
+      if (!write.submitted && slot.pending === write) slot.pending = undefined;
+      done.reject(cause);
+    }
+    return done.promise;
+  }
+  private disposeLayer(handle: SharedWebGPULayer2D, slot: LayerSlot): void {
+    if (slot.disposed) return;
+    slot.disposed = true;
+    this.layers.delete(handle);
+    slot.pending?.done.reject(error('WEBGPU_LAYER_DISPOSED'));
+    this.dropLayer(slot);
+    if (!this.busy) {
+      this.busy = true;
+      this.cpu = deferred<void>();
+      try {
+        this.sweepLayers();
+      } finally {
+        this.busy = false;
+        this.cpu.resolve();
+      }
+    }
+  }
+  /** The slot lets go of its ready revision; the revision is released once no frame samples it. */
+  private dropLayer(slot: LayerSlot): void {
+    const revision = slot.ready;
+    slot.ready = undefined;
+    if (revision) {
+      revision.retained = false;
+      if (revision.pins === 0) this.layerGarbage.add(revision);
+    }
+  }
+  private unpinLayer(revision: LayerRevision): void {
+    revision.pins--;
+    if (revision.pins === 0 && !revision.retained) this.layerGarbage.add(revision);
+  }
+  private sweepLayers(): void {
+    for (const revision of this.layerGarbage) {
+      this.layerGarbage.delete(revision);
+      this.layerBytes -= revision.bytes;
+      const failures = cleanupWebGPUTexture(revision.resource);
+      if (failures.length) {
+        this.noteUnknownResource(revision.resource);
+        for (const cause of failures) this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', null, true);
+      }
+    }
+  }
+  /** Reads every placement before any native work; a later getter may dispose an earlier revision. */
+  private readLayers(
+    input: readonly SharedWebGPULayerPlacement2D[],
+    frameWidth: number,
+    frameHeight: number,
+    refuse: (code: WebGPUHostErrorCode) => never
+  ): LayerRead[] {
+    if (!Array.isArray(input)) refuse('WEBGPU_LAYER_INVALID');
+    const count = input.length;
+    if (count > MAX_LAYER_HANDLES) refuse('WEBGPU_LAYER_BUDGET');
+    if (!Number.isSafeInteger(count) || count < 0) refuse('WEBGPU_LAYER_INVALID');
+    const options = SHARED_OPTIONS.get(this)!,
+      reads: LayerRead[] = [];
+    const invalid: () => never = () => refuse('WEBGPU_LAYER_INVALID'),
+      effectInvalid: () => never = () => refuse('WEBGPU_LAYER_EFFECT_INVALID');
+    for (let index = 0; index < count; index++) {
+      const item = input[index];
+      if (!item || typeof item !== 'object') invalid();
+      const { layer, x, y, width, height, effect } = item;
+      const light =
+        effect === undefined
+          ? undefined
+          : readSharedLayerEffect2D(
+              options.enableEffects,
+              options.pixelRatio,
+              effect,
+              frameWidth,
+              frameHeight,
+              effectInvalid
+            );
+      this.active();
+      const slot = this.layers.get(layer);
+      if (!slot) invalid();
+      const revision = slot.ready;
+      if (!this.layerReady(revision)) refuse('WEBGPU_LAYER_NOT_READY');
+      reads.push(readSharedLayerPlacement2D(revision, x, y, width, height, options.pixelRatio, light, invalid));
+    }
+    if (reads.some(read => !read.revision.retained)) refuse('WEBGPU_LAYER_NOT_READY');
+    return reads;
+  }
+  /**
+   * Settles what a retired frame did to kept layers: its readers let go of their revisions, and a bake publishes its
+   * target after the completion proof, or gives it back. The bake's target leaves the frame's textures either way.
+   */
+  private finishLayerRecord(record: Submission): void {
+    const reads = record.layerReads;
+    record.layerReads = undefined;
+    for (const read of reads ?? []) this.unpinLayer(read.revision);
+    const write = record.layerWrite;
+    record.layerWrite = undefined;
+    if (!write) {
+      this.sweepLayers();
+      return;
+    }
+    const { slot, revision } = write;
+    let failure = record.failure;
+    if (!failure && slot.disposed) failure = error('WEBGPU_LAYER_DISPOSED');
+    if (!failure && (this.state !== 'active' || !this.layerReady(revision))) failure = this.stateError();
+    if (!failure && (this.unsafe || record.unsafe)) failure = error('WEBGPU_CLOSE_UNSAFE', this.unsafeCause);
+    if (revision) {
+      const index = record.textures.indexOf(revision.resource);
+      if (index >= 0) record.textures.splice(index, 1);
+      if (!failure) {
+        // Readers of the old revision keep their own pins.
+        this.dropLayer(slot);
+        revision.retained = true;
+        slot.ready = revision;
+        slot.wasReady = true;
+      }
+      this.unpinLayer(revision);
+    }
+    this.sweepLayers();
+    if (slot.pending === write) slot.pending = undefined;
+    if (!failure && slot.disposed) failure = error('WEBGPU_LAYER_DISPOSED');
+    if (failure) write.done.reject(failure);
+    else write.done.resolve();
+  }
+  /**
+   * A frame whose native ownership is unknown is not retired: its bake fails, and its target and the revisions it
+   * sampled stay charged with it.
+   */
+  private abandonLayerRecord(record: Submission): void {
+    const write = record.layerWrite;
+    if (!write) return;
+    record.layerWrite = undefined;
+    if (write.slot.pending === write) write.slot.pending = undefined;
+    write.done.reject(record.failure ?? error('WEBGPU_CLOSE_UNSAFE', this.unsafeCause));
   }
   public getStatus(): WebGPUHostStatus {
     return Object.freeze({
@@ -951,6 +1234,9 @@ class WebGPUHostImplementation {
     // Confirmed generation loss invalidates CPU retention before ready stages retire.
     // Otherwise context-invalidated settlement reaches a still-active ledger.
     this.invalidateImageResidency();
+    // Kept layers of the lost generation become stale; their targets went with the device.
+    for (const slot of this.layers.values()) this.dropLayer(slot);
+    this.sweepLayers();
     this.revokeStages(refused);
     this.cancelTicket(refused);
     this.diagnose(failure);
@@ -1110,6 +1396,8 @@ class WebGPUHostImplementation {
           this.proofFailed(cause);
         }
       }
+    for (const slot of this.layers.values()) this.dropLayer(slot);
+    this.sweepLayers();
     this.closeBuffers();
     this.closeImageResidency();
     if (this.configured) {
@@ -1163,6 +1451,7 @@ class WebGPUHostImplementation {
     this.resolvePipeline = undefined;
     this.resolveLayout = undefined;
     this.effectPipelines.clear();
+    this.layerPipelines.clear();
     this.sharedPipelines.clear();
     this.sharedSamplers.clear();
   }
@@ -1383,6 +1672,9 @@ class WebGPUHostImplementation {
           );
           if (SHARED_OPTIONS.get(this)!.enableEffects)
             for (const mode of EFFECT_PASSES) createSharedEffectPipeline(capturedShader, capturedPipeline, mode, coded);
+          if (SHARED_OPTIONS.get(this)!.enableLayers)
+            for (const effect of layerVariants(SHARED_OPTIONS.get(this)!))
+              createSharedWebGPULayerPipeline(capturedShader, capturedPipeline, effect, coded);
           for (const filter of ['nearest', 'linear'] as const)
             for (const u of ['clamp-to-edge', 'repeat', 'mirror-repeat'] as const)
               for (const v of ['clamp-to-edge', 'repeat', 'mirror-repeat'] as const) {
@@ -1434,6 +1726,13 @@ class WebGPUHostImplementation {
               layout = this.method(pipeline, 'getBindGroupLayout', gate)(0);
             gate();
             this.effectPipelines.set(mode, { pipeline, layout });
+          }
+        if (SHARED_OPTIONS.get(this)!.enableLayers)
+          for (const effect of layerVariants(SHARED_OPTIONS.get(this)!)) {
+            const pipeline = roles[index++]!.value,
+              layout = this.method(pipeline, 'getBindGroupLayout', gate)(0);
+            gate();
+            this.layerPipelines.set(effect, { pipeline, layout });
           }
       }
       const configureScopes: Promise<void>[] = [];
@@ -2057,7 +2356,8 @@ class WebGPUHostImplementation {
   }
   private renderSharedOwnedFrame(
     input: SharedRenderFrame2D,
-    staging?: { options: SharedFrameUploadOptions | undefined }
+    staging?: { options: SharedFrameUploadOptions | undefined },
+    layerInput?: LayerInput
   ): undefined | SharedFrameUpload {
     this.active();
     if (this.busy) throw error('WEBGPU_REENTRANT');
@@ -2078,8 +2378,8 @@ class WebGPUHostImplementation {
       try {
         admitted = runOwnedPreparationScope(
           () => {
-            const options = SHARED_OPTIONS.get(this);
-            if (!options) refuse('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
+            const admitted = SHARED_OPTIONS.get(this);
+            if (!admitted) refuse('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
             const frame = readOwnedSharedFrame(input);
             if (!frame) refuse('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
             if (staging) {
@@ -2090,13 +2390,32 @@ class WebGPUHostImplementation {
                 throw cause;
               }
             }
-            const refusal = sharedFrameProfileRefusal2D(frame, options.blendSpace, options.outputAlpha);
+            const layerWrite = layerInput && 'write' in layerInput ? layerInput.write : undefined;
+            const layerReads =
+              layerInput && 'placements' in layerInput
+                ? this.readLayers(layerInput.placements, frame.width, frame.height, refuse)
+                : undefined;
+            // A bake is drawn at one texel per source unit and keeps its alpha.
+            const options = layerWrite ? { ...admitted, pixelRatio: 1 } : admitted;
+            const alpha = layerWrite ? 'premultiplied' : options.outputAlpha;
+            const refusal = sharedFrameProfileRefusal2D(frame, options.blendSpace, alpha);
             if (refusal) refuse(refusal === 'profile' ? 'WEBGPU_FRAME_PROFILE_UNSUPPORTED' : 'WEBGPU_FRAME_INVALID');
+            if (layerWrite) {
+              const bake = sharedLayerBakeRefusal2D(frame, this.layerBytes);
+              if (bake) refuse(bake === 'invalid' ? 'WEBGPU_LAYER_INVALID' : 'WEBGPU_LAYER_BUDGET');
+            }
             const backing = sharedBackingExtent2D(frame, options.pixelRatio, options.maxBackingPixels);
             if (!backing) refuse('WEBGPU_BACKING_LIMIT');
             const { width, height } = backing;
-            const prepared = prepareSharedDrawsForSubmission2D(frame, width, height, options, this.retention),
-              ticket = this.ticket && !this.ticket.bound ? this.ticket : undefined;
+            // A bake is another sequence of frames; it neither takes nor replaces what the ordinary frames keep.
+            const prepared = prepareSharedDrawsForSubmission2D(
+                frame,
+                width,
+                height,
+                options,
+                layerWrite ? undefined : this.retention
+              ),
+              ticket = !layerWrite && this.ticket && !this.ticket.bound ? this.ticket : undefined;
             const storage = planSharedSubmission2D(
               prepared,
               options,
@@ -2143,7 +2462,7 @@ class WebGPUHostImplementation {
             const regions = batch.draws.some(draw => draw.regionWindow >= 0)
               ? packSharedRegionWindows2D(prepared.frame)
               : undefined;
-            return { storage, imagePlan, ...pages, ticket, batch, regions };
+            return { storage, imagePlan, ...pages, ticket, batch, regions, layerWrite, layerReads };
           },
           failure => {
             ownedFailure = failure;
@@ -2768,24 +3087,27 @@ class WebGPUHostImplementation {
     }
     if (p.regions) buffer('uniform', 72, p.regions.byteLength);
     for (const group of prepared.effects.groups) buffer('uniform', 72, group.uniform.byteLength);
+    for (let i = 0; i < (p.layerReads?.length ?? 0); i++) buffer('uniform', 72, SHARED_LAYER_UNIFORM_BYTES);
     const colorId = requests.length;
     // Working targets hold light, encoded by the format on store, or the codes of a space that mixes them.
     const target =
       SHARED_OPTIONS.get(this)!.blendSpace === 'srgb'
         ? ({ format: 'rgba8unorm', recipe: 'egret.encoded-srgb-pma8-target/1' } as const)
         : ({ format: 'rgba8unorm-srgb', recipe: 'egret.srgb-pma8-target/1' } as const);
-    requests.push({
-      kind: 'color',
-      id: colorId,
-      width,
-      height,
-      ...target,
-      usage: 20,
-      byteLength: storage.colorBytes,
-      sampleCount: 1,
-      mipLevelCount: 1,
-      depthOrArrayLayers: 1
-    });
+    // A bake draws into the layer's own target, made for it and kept by the layer, never a pooled one.
+    if (!p.layerWrite)
+      requests.push({
+        kind: 'color',
+        id: colorId,
+        width,
+        height,
+        ...target,
+        usage: 20,
+        byteLength: storage.colorBytes,
+        sampleCount: 1,
+        mipLevelCount: 1,
+        depthOrArrayLayers: 1
+      });
     for (let i = 0; i < prepared.effects.targetCount; i++)
       requests.push({
         kind: 'color',
@@ -2802,9 +3124,9 @@ class WebGPUHostImplementation {
     const bufferPlan = this.bufferPool.plan(requests),
       bufferLeases: (RetentionLease | undefined)[] = new Array(requests.length).fill(undefined);
     for (const lease of bufferPlan.leases) bufferLeases[lease.requestId] = lease;
-    const rawTargets: RawTargetSlot[] = [
-      { requestId: colorId, texture: undefined, destroy: undefined, cleanupAttempted: false }
-    ];
+    const rawTargets: RawTargetSlot[] = p.layerWrite
+      ? []
+      : [{ requestId: colorId, texture: undefined, destroy: undefined, cleanupAttempted: false }];
     for (let i = 0; i < prepared.effects.targetCount; i++)
       rawTargets.push({ requestId: colorId + 1 + i, texture: undefined, destroy: undefined, cleanupAttempted: false });
     this.assertImagePlanCurrent(imagePlan);
@@ -2860,6 +3182,14 @@ class WebGPUHostImplementation {
     };
     this.ledger.add(record);
     batch.transferred = true;
+    if (p.layerWrite) {
+      record.layerWrite = p.layerWrite;
+      p.layerWrite.submitted = true;
+    }
+    if (p.layerReads) {
+      record.layerReads = p.layerReads;
+      for (const read of p.layerReads) read.revision.pins++;
+    }
     this.pendingUploadBytes += record.upload;
     this.pendingReadbackBytes += record.readback;
     this.pendingTextureBytes += record.textureBytes;
@@ -2894,24 +3224,27 @@ class WebGPUHostImplementation {
         gate();
       }
       this.scoped(serial, 'frame', outcomes as Promise<void>[], gate, () => {
-        const oldWidth = this.surface.width;
-        gate();
-        const oldHeight = this.surface.height;
-        gate();
-        if (oldWidth !== width) {
-          this.surface.width = width;
+        // A bake leaves the canvas as it is.
+        if (!record.layerWrite) {
+          const oldWidth = this.surface.width;
           gate();
-        }
-        if (oldHeight !== height) {
-          this.surface.height = height;
+          const oldHeight = this.surface.height;
           gate();
+          if (oldWidth !== width) {
+            this.surface.width = width;
+            gate();
+          }
+          if (oldHeight !== height) {
+            this.surface.height = height;
+            gate();
+          }
+          const actualWidth = this.surface.width;
+          gate();
+          const actualHeight = this.surface.height;
+          gate();
+          if (actualWidth !== width || actualHeight !== height) throw new Error('Canvas rejected dimensions');
+          if (oldWidth !== width || oldHeight !== height) this.configureSurface(gate);
         }
-        const actualWidth = this.surface.width;
-        gate();
-        const actualHeight = this.surface.height;
-        gate();
-        if (actualWidth !== width || actualHeight !== height) throw new Error('Canvas rejected dimensions');
-        if (oldWidth !== width || oldHeight !== height) this.configureSurface(gate);
         const recipe = this.prepareSharedGPU(record, p, colorId, gate);
         staging = ticket ? this.ownedBuffer(storage.staging, 9, record, gate) : undefined;
         touchedQueue = true;
@@ -3095,15 +3428,106 @@ class WebGPUHostImplementation {
       }
       effects.set(group, bindings);
     }
-    const color = this.submissionTarget(record, colorId, gate);
-    const resolveBinding = record.owner!.native.bindGroup({
-      layout: this.resolveLayout!,
-      entries: [{ binding: 0, resource: color.view }]
-    });
-    record.bindings.push(resolveBinding);
-    gate();
+    // Each placement has a block of its own: where it lies, the target's size and its effect.
+    const layerBindings: GPUBindGroup[] = [];
+    const { width, height } = p.storage.prepared;
+    for (const read of p.layerReads ?? []) {
+      const uniform = this.submissionBuffer(record, requestId++, gate).handle.resource,
+        effect = read.effect;
+      const block = new Float32Array(SHARED_LAYER_UNIFORM_BYTES / 4);
+      block.set([read.x, read.y, read.width, read.height, width, height]);
+      if (effect) {
+        block.set([effect.left, effect.top, effect.right, effect.bottom], 6);
+        block.set(effect.scale, 12);
+        block.set(effect.emission, 16);
+      }
+      this.sharedWrite(record, uniform.buffer, block, 16);
+      gate();
+      const role = this.layerPipelines.get(effect !== undefined)!;
+      const binding = record.owner!.native.bindGroup({
+        layout: role.layout,
+        entries: [
+          { binding: 0, resource: { buffer: uniform.buffer, offset: 0, size: SHARED_LAYER_UNIFORM_BYTES } },
+          { binding: 1, resource: read.revision.view! },
+          { binding: 2, resource: this.sharedSamplers.get('nearest:clamp-to-edge:clamp-to-edge')! }
+        ]
+      });
+      record.bindings.push(binding);
+      gate();
+      layerBindings.push(binding);
+    }
+    const color = p.layerWrite
+      ? this.layerTarget(record, p.layerWrite, width, height, gate)
+      : this.submissionTarget(record, colorId, gate);
+    let resolveBinding: GPUBindGroup | undefined;
+    if (!p.layerWrite) {
+      resolveBinding = record.owner!.native.bindGroup({
+        layout: this.resolveLayout!,
+        entries: [{ binding: 0, resource: color.view }]
+      });
+      record.bindings.push(resolveBinding);
+      gate();
+    }
 
-    return { vertices, bindings, regionBindings, color, resolveBinding, effectTargets, effects };
+    return { vertices, bindings, regionBindings, color, resolveBinding, effectTargets, effects, layerBindings };
+  }
+  /**
+   * The target of a bake: made for the layer rather than taken from the pool, owned by the frame until its completion
+   * proof publishes it, and charged to the layers from the moment it exists.
+   */
+  private layerTarget(
+    record: Submission,
+    write: LayerWrite,
+    width: number,
+    height: number,
+    gate: () => void
+  ): { resource: OwnedWebGPUTexture; view: GPUTextureView } {
+    gate();
+    const texture = record.owner!.native.texture({
+      size: { width, height, depthOrArrayLayers: 1 },
+      dimension: '2d',
+      format: SHARED_OPTIONS.get(this)!.blendSpace === 'srgb' ? 'rgba8unorm' : 'rgba8unorm-srgb',
+      mipLevelCount: 1,
+      sampleCount: 1,
+      usage: 4 | 16
+    });
+    const bytes = width * height * 4;
+    // Register the returned object before any getter can reenter close.
+    const resource: OwnedWebGPUTexture = {
+      texture,
+      destroy: () => {
+        throw new TypeError('uncaptured layer destroy');
+      },
+      cleaned: false,
+      logicalByteLength: bytes,
+      generation: record.owner!
+    };
+    record.textures.push(resource);
+    const revision: LayerRevision = {
+      owner: record.owner!,
+      resource,
+      view: undefined,
+      bytes,
+      pins: 1,
+      retained: false
+    };
+    write.revision = revision;
+    this.layerBytes += bytes;
+    let destroy: () => void;
+    try {
+      destroy = this.method(texture, 'destroy', () => undefined);
+    } catch (cause) {
+      record.unsafe = true;
+      this.proofFailed(cause);
+      throw cause;
+    }
+    Object.assign(resource, { destroy });
+    gate();
+    const view = this.method(texture, 'createView', gate)();
+    revision.view = view;
+    record.views.push(view);
+    gate();
+    return { resource, view };
   }
   private drawSharedGPU(
     record: Submission,
@@ -3118,10 +3542,14 @@ class WebGPUHostImplementation {
       { frame, width, height } = storage.prepared,
       serial = record.serial;
     const { vertices, bindings, color, resolveBinding } = recipe;
-    const texture = record.owner!.native.currentTexture();
-    gate();
-    const canvasView = this.method(texture, 'createView', gate)();
-    gate();
+    // A bake draws into its layer alone and never reaches the canvas.
+    let texture: GPUTexture | undefined, canvasView: GPUTextureView | undefined;
+    if (!record.layerWrite) {
+      texture = record.owner!.native.currentTexture();
+      gate();
+      canvasView = this.method(texture, 'createView', gate)();
+      gate();
+    }
     const encoder = record.owner!.native.encoder();
     gate();
     const begin = this.method(encoder, 'beginRenderPass', gate),
@@ -3178,6 +3606,19 @@ class WebGPUHostImplementation {
       };
     };
     let active = openPass(color.view, false, true);
+    // Kept layers lie over the clear, in painter order, under everything the frame draws.
+    const reads = record.layerReads ?? [];
+    for (let index = 0; index < reads.length; index++) {
+      active.pass.setPipeline(this.layerPipelines.get(reads[index]!.effect !== undefined)!.pipeline);
+      if (!active.hasFullViewport) {
+        active.pass.setViewport(0, 0, width, height, 0, 1);
+        active.pass.setScissorRect(0, 0, width, height);
+        active.hasFullViewport = true;
+      }
+      active.pass.setBindGroup(0, recipe.layerBindings[index]!);
+      active.pass.draw(6);
+      this.frameDrawCalls++;
+    }
     const drawOne = (draw: PackedSharedDraw2D): void => {
       const role = this.sharedRole(draw);
       active.pass.setPipeline(role.pipeline);
@@ -3236,26 +3677,28 @@ class WebGPUHostImplementation {
     }
     active.end();
     gate();
-    const resolveRaw = begin({
-      colorAttachments: [
-        { view: canvasView, loadOp: 'clear', storeOp: 'store', clearValue: { r: 0, g: 0, b: 0, a: 0 } }
-      ]
-    });
-    gate();
-    const resolve = capture(resolveRaw, ['setPipeline', 'setViewport', 'setScissorRect', 'setBindGroup', 'draw']),
-      endResolve = this.method(resolveRaw, 'end', gate);
-    resolve.setPipeline(this.resolvePipeline!);
-    resolve.setViewport(0, 0, width, height, 0, 1);
-    resolve.setScissorRect(0, 0, width, height);
-    resolve.setBindGroup(0, resolveBinding);
-    resolve.draw(3);
-    this.frameDrawCalls++;
-    endResolve();
-    gate();
+    if (canvasView) {
+      const resolveRaw = begin({
+        colorAttachments: [
+          { view: canvasView, loadOp: 'clear', storeOp: 'store', clearValue: { r: 0, g: 0, b: 0, a: 0 } }
+        ]
+      });
+      gate();
+      const resolve = capture(resolveRaw, ['setPipeline', 'setViewport', 'setScissorRect', 'setBindGroup', 'draw']),
+        endResolve = this.method(resolveRaw, 'end', gate);
+      resolve.setPipeline(this.resolvePipeline!);
+      resolve.setViewport(0, 0, width, height, 0, 1);
+      resolve.setScissorRect(0, 0, width, height);
+      resolve.setBindGroup(0, resolveBinding!);
+      resolve.draw(3);
+      this.frameDrawCalls++;
+      endResolve();
+      gate();
+    }
     if (staging) {
       try {
         copy!(
-          { texture },
+          { texture: texture! },
           { buffer: staging.buffer, bytesPerRow: storage.rowPitch, rowsPerImage: height },
           { width, height, depthOrArrayLayers: 1 }
         );
@@ -3350,6 +3793,7 @@ class WebGPUHostImplementation {
             : (rejected.reason as EgretError);
       if (this.unsafe) record.unsafe = true;
       if (!record.unsafe) this.retire(record);
+      this.abandonLayerRecord(record);
       if (ticket) {
         if (record.failure) ticket.reject(record.failure);
         else if (!SHARED_OPTIONS.get(this)?.recovery && this.firstFailure)
@@ -3364,6 +3808,7 @@ class WebGPUHostImplementation {
       record.unsafe = true;
       record.failure = this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', serial, true);
       ticket?.reject(record.failure);
+      this.abandonLayerRecord(record);
       done.resolve();
     });
     record.completion = observed(
@@ -3545,6 +3990,8 @@ class WebGPUHostImplementation {
         record.bufferReturns = pool.reserveReturns(leases);
       }
       const retained = new Set(record.bufferReturns?.retained);
+      // A bake's target leaves the frame here, published to its layer or released by the layers.
+      this.finishLayerRecord(record);
       for (const resource of record.resources) for (const cause of cleanupWebGPUBuffer(resource)) failed(cause);
       for (let index = 0; index < record.bufferLeases.length; index++) {
         const lease = record.bufferLeases[index];
@@ -3723,6 +4170,9 @@ class WebGPUHostImplementation {
     this.revokeRecovery(error('WEBGPU_CLOSED'));
     this.revokeStages(error('WEBGPU_CLOSED'));
     this.cancelTicket(error('WEBGPU_CLOSED'));
+    // Close disposes every kept layer; a revision a frame still samples is released when that frame retires.
+    for (const slot of this.layers.values()) this.dropLayer(slot);
+    this.layers.clear();
     this.cleanup().then(barrier.resolve, barrier.reject);
     return barrier.promise;
   }
@@ -3746,6 +4196,7 @@ class WebGPUHostImplementation {
         this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', record.serial, true);
       }
     }
+    this.sweepLayers();
     this.closeBuffers();
     this.closeImageResidency();
     if (this.configured) {
