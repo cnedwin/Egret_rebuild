@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/text-editing/catalog.mjs",
+      "originRole": "First-party variable-height directory example integrating Egret layout, native text and browser semantics; independently authored under Apache-2.0."
+    },
+    {
+      "path": "examples/text-editing/verify-catalog.mjs",
+      "originRole": "First-party focused browser verification of the rendered directory and editor lifecycle; independently authored under Apache-2.0."
+    },
+    {
+      "path": "examples/text-editing/catalog-verification-summary.json",
+      "originRole": "First-party measurements of the catalogue and native editor captured in Windows Edge with the bundled Noto fonts."
+    }
+  ],
+  "documents": []
+}

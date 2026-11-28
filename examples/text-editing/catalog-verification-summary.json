@@ -1,0 +1,121 @@
+{
+  "schema": "egret.virtual-editor-catalog-summary/1",
+  "date": "2026-11-28",
+  "sourceBase": "96db62034d6e5e96b2a777648aacc12650b6e786",
+  "platform": "Windows headless Edge",
+  "browser": "158.0.4370.45",
+  "webglRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 Laptop GPU (0x00002C58) Direct3D11 vs_5_0 ps_5_0, D3D11-32.0.16.2101)",
+  "fontGeneration": "e7551030a9eb90c78ef0d336bb1edcb985d745d9c369b7f79a84e0db5d5c62bc",
+  "profile": {
+    "records": 50000,
+    "root": [
+      680,
+      360
+    ],
+    "canvas": [
+      800,
+      480
+    ],
+    "density": 1,
+    "overscan": 1,
+    "residentCap": 12,
+    "retainedCap": 2
+  },
+  "scenarios": [
+    {
+      "backend": "webgl2",
+      "anchor": {
+        "key": "note-24999",
+        "offset": 7
+      },
+      "selection": [
+        2,
+        8
+      ],
+      "nameRowHeights": [
+        48,
+        62
+      ],
+      "nameEditorHeights": [
+        32,
+        46
+      ],
+      "descriptionLineEnds": [
+        [
+          52,
+          104,
+          151
+        ],
+        [
+          46,
+          92,
+          138,
+          151
+        ]
+      ],
+      "descriptionRowHeights": [
+        154,
+        200
+      ],
+      "descriptionEditorHeights": [
+        138,
+        184
+      ],
+      "cancellation": "UI_EDITOR_FONTS_CANCELLED",
+      "http503": "MANIFEST_GROUP_ACQUIRE_FAILED",
+      "compositionDuringDownload": "EXAMPLE_COMPOSING",
+      "closeWithPendingFont": "UI_EDITOR_FONTS_CANCELLED",
+      "offscreen": 11,
+      "leasesAfterScroll": 0,
+      "closed": true
+    },
+    {
+      "backend": "webgpu",
+      "anchor": {
+        "key": "note-24999",
+        "offset": 7
+      },
+      "selection": [
+        2,
+        8
+      ],
+      "nameRowHeights": [
+        48,
+        62
+      ],
+      "nameEditorHeights": [
+        32,
+        46
+      ],
+      "descriptionLineEnds": [
+        [
+          52,
+          104,
+          151
+        ],
+        [
+          46,
+          92,
+          138,
+          151
+        ]
+      ],
+      "descriptionRowHeights": [
+        154,
+        200
+      ],
+      "descriptionEditorHeights": [
+        138,
+        184
+      ],
+      "cancellation": "UI_EDITOR_FONTS_CANCELLED",
+      "http503": "MANIFEST_GROUP_ACQUIRE_FAILED",
+      "compositionDuringDownload": "EXAMPLE_COMPOSING",
+      "closeWithPendingFont": "UI_EDITOR_FONTS_CANCELLED",
+      "offscreen": 11,
+      "leasesAfterScroll": 0,
+      "closed": true
+    }
+  ],
+  "scope": "Browser-driven input, real font loads, accessibility DOM and native form geometry. Composition events are synthetic. Human IME, screen-reader speech and performance are separate."
+}
