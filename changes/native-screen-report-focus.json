@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Exact transformed clipping and native keyboard focus verification",
+    "body": "The shared Play and World3D screen-control collector intersects transformed clipping polygons before deriving visible hit bounds. It excludes fully clipped controls even when rotated enclosing rectangles overlap, retains authored bounds for target size, and preserves genuine safety and occlusion findings. Browser verification also checks actual Tab navigation through the focused canvas's owned aria-activedescendant projection, without moving focus to the invisible semantic projection."
+  },
+  "zh": {
+    "title": "精确变换裁切与原生键盘焦点验收",
+    "body": "Play 和 World3D 共用的多屏控件采集器先求变换后的裁切多边形交集，再计算可见命中边界。即使旋转后的外包矩形相交，也会排除完全裁切的控件；保留原始命中边界用于触控尺寸检查，并保留真实的安全区及遮挡问题。浏览器验收也通过已获得焦点画布拥有的 aria-activedescendant 语义投影验证实际 Tab 导航，不将焦点转移到不可见投影层。"
+  }
+}

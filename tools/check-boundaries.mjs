@@ -5772,9 +5772,12 @@ const overlayReporterImports={
  'web/world3d/overlayScreenReport.ts':['../game.js','../screen.js','../screenControlReportState.js','../screenControlGeometry.js','../screenControlGeometry.js'],
  'dist/web/world3d/overlayScreenReport.js':['../screenControlReportState.js','../screenControlGeometry.js'],
  'dist/web/world3d/overlayScreenReport.d.ts':['../game.js'],
- 'web/screenControlGeometry.ts':['@egret/runtime','#egret-pointer-input','@egret/runtime','./game.js','./screen.js','./screenControlReportState.js'],
- 'dist/web/screenControlGeometry.js':['@egret/runtime','#egret-pointer-input'],
- 'dist/web/screenControlGeometry.d.ts':['@egret/runtime','./game.js','./screen.js','./screenControlReportState.js']
+ 'web/screenControlGeometry.ts':['@egret/runtime','#egret-pointer-input','@egret/runtime','./game.js','./screen.js','./screenControlReportState.js','./screenClipGeometry.js','./screenClipGeometry.js'],
+ 'dist/web/screenControlGeometry.js':['@egret/runtime','#egret-pointer-input','./screenClipGeometry.js'],
+ 'dist/web/screenControlGeometry.d.ts':['@egret/runtime','./game.js','./screen.js','./screenControlReportState.js'],
+ 'web/screenClipGeometry.ts':['@egret/runtime','./screen.js'],
+ 'dist/web/screenClipGeometry.js':[],
+ 'dist/web/screenClipGeometry.d.ts':['@egret/runtime','./screen.js']
 };
 for(const [file,expected] of Object.entries(overlayReporterImports)){
  const body=uiRead('packages/engine/'+file),observed=uiGraphEdges(body).map(([,target])=>target);
@@ -5792,7 +5795,9 @@ const semanticAllowed={
  'web/screenControlReportState.js':['web/BrowserSemantics.ts','web/world3d/overlayScreenReport.ts','web/screenControlGeometry.ts','web/BrowserPlay.ts'],
  'dist/web/screenControlReportState.js':['dist/web/BrowserSemantics.js','dist/web/world3d/overlayScreenReport.js','dist/web/screenControlGeometry.d.ts','dist/web/BrowserPlay.js'],
  'web/screenControlGeometry.js':['web/BrowserPlay.ts','web/world3d/overlayScreenReport.ts'],
- 'dist/web/screenControlGeometry.js':['dist/web/BrowserPlay.js','dist/web/world3d/overlayScreenReport.js']
+ 'dist/web/screenControlGeometry.js':['dist/web/BrowserPlay.js','dist/web/world3d/overlayScreenReport.js'],
+ 'web/screenClipGeometry.js':['web/screenControlGeometry.ts','web/playView.ts'],
+ 'dist/web/screenClipGeometry.js':['dist/web/screenControlGeometry.js','dist/web/playView.js']
 };
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/dist'))]){
  if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/');

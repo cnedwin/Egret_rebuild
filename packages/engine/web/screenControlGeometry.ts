@@ -7,6 +7,8 @@ import type { DisplayObject } from '@egret/runtime';
 import type { BrowserGame } from './game.js';
 import type { ScreenRect } from './screen.js';
 import type { ScreenControlSemanticNode } from './screenControlReportState.js';
+import { intersectClipPolygons, polygonBounds, rectanglePolygon } from './screenClipGeometry.js';
+import type { ClipPoint } from './screenClipGeometry.js';
 
 export interface NativeScreenControl extends ScreenRect {
   readonly name: string;
@@ -28,7 +30,7 @@ interface Candidate {
   readonly local: ScreenRect;
   readonly hit: ScreenRect;
   readonly authored: ScreenRect;
-  readonly clip?: ScreenRect;
+  readonly clip?: readonly ClipPoint[];
   readonly shown: boolean;
 }
 interface Paint {
@@ -51,21 +53,8 @@ export function screenIntersection(a: ScreenRect, b: ScreenRect): ScreenRect {
     height: Math.max(0, Math.min(a.y + a.height, b.y + b.height) - y)
   };
 }
-function onStage(node: DisplayObject, local: ScreenRect): ScreenRect {
-  const right = local.x + local.width,
-    bottom = local.y + local.height;
-  const corners = [
-    node.localToGlobal(local.x, local.y),
-    node.localToGlobal(right, local.y),
-    node.localToGlobal(local.x, bottom),
-    node.localToGlobal(right, bottom)
-  ];
-  const xs = corners.map(point => point.x),
-    ys = corners.map(point => point.y),
-    x = Math.min(...xs),
-    y = Math.min(...ys);
-  return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
-}
+const clipShape = (shape: ClipPoint[], clip: readonly ClipPoint[] | undefined): ClipPoint[] =>
+  clip === undefined ? shape : intersectClipPolygons(shape, clip);
 const same = (a: ScreenRect, b: ScreenRect): boolean =>
   Math.abs(a.x - b.x) <= 1e-6 &&
   Math.abs(a.y - b.y) <= 1e-6 &&
@@ -100,7 +89,7 @@ function walk(stage: BrowserGame['stage']): { candidates: Candidate[]; paints: P
     node: DisplayObject;
     id: string;
     ancestors: readonly string[];
-    clipped?: ScreenRect;
+    clipped?: readonly ClipPoint[];
     alpha: number;
     pickable: boolean;
   }[] = [{ node: stage, id: '0', ancestors: [], alpha: 1, pickable: true }];
@@ -113,22 +102,26 @@ function walk(stage: BrowserGame['stage']): { candidates: Candidate[]; paints: P
     let clipped = parentClip;
     const clip = node.clipRect;
     if (clip !== undefined) {
-      const stageClip = onStage(node, clip);
-      clipped = clipped === undefined ? stageClip : screenIntersection(clipped, stageClip);
-      if (!usefulScreenRect(clipped)) continue;
+      // Preserve the actual transformed clip polygon through the walk.
+      // Intersecting just its AABB admits controls outside diagonal clips.
+      clipped = clipShape(rectanglePolygon(clip, node), clipped);
+      if (polygonBounds(clipped) === undefined) continue;
     }
     if (alpha > 0)
       for (const claim of screenOccludersFor(node)) {
-        const transformed = onStage(node, claim.rect),
-          rect = clipped === undefined ? transformed : screenIntersection(transformed, clipped);
-        if (usefulScreenRect(rect)) paints.push({ id, ancestors, order: here, name: claim.name, rect });
+        const rect = polygonBounds(clipShape(rectanglePolygon(claim.rect, node), clipped));
+        if (rect !== undefined && usefulScreenRect(rect))
+          paints.push({ id, ancestors, order: here, name: claim.name, rect });
       }
     if (node !== stage && pickable && node.touchEnabled) {
       const local = node.hitArea ?? node.getBounds();
       if (usefulScreenRect(local)) {
-        const authored = onStage(node, local),
-          hit = clipped === undefined ? authored : screenIntersection(authored, clipped);
-        if (usefulScreenRect(hit))
+        const shape = rectanglePolygon(local, node),
+          authored = polygonBounds(shape),
+          hit = polygonBounds(clipShape(shape, clipped));
+        // Do not clip to the safe or canvas rectangle here. The verifier
+        // still needs to see an un-clipped misplaced target to report it.
+        if (authored !== undefined && hit !== undefined && usefulScreenRect(authored) && usefulScreenRect(hit))
           candidates.push({
             node,
             id,
@@ -163,14 +156,15 @@ function matchingClaims(
   if (claims === undefined) return [];
   // Use the semantic painted extent only to find the name/state. The actual
   // report uses the native hit extent, even for a larger focus outline.
-  const visual = onStage(item.node, item.node.getBounds()),
-    exposed = item.clip === undefined ? visual : screenIntersection(visual, item.clip);
+  const shape = rectanglePolygon(item.node.getBounds(), item.node),
+    visual = polygonBounds(shape),
+    exposed = polygonBounds(clipShape(shape, item.clip));
   return claims.filter(
     claim =>
       same(claim.bounds, item.hit) ||
       same(claim.bounds, item.authored) ||
-      same(claim.bounds, visual) ||
-      same(claim.bounds, exposed)
+      (visual !== undefined && same(claim.bounds, visual)) ||
+      (exposed !== undefined && same(claim.bounds, exposed))
   );
 }
 function contains(node: DisplayObject, local: ScreenRect, x: number, y: number): boolean {
