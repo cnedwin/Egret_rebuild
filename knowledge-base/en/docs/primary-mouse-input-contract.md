@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/主鼠标输入契约.md)
 
+> **Deprecated.** `createMouseInput` and `createBitmapButton` stay for the games that use them, and nothing in this contract changes. New code takes contacts from the browser pointer input (`createBrowserPointerInput` of `@egret/engine/web/pointer`, or the input `createBrowserGame` and `play` own), which also gives touch, pen and every mouse button, and makes buttons with [`createActionControl`](ui-controls.md), choosing their looks with `selectUiSkin`. Right clicks are told by [gestures](gestures.md).
+
 MI1 connects the existing display-tree hit test, typed event dispatch and explicit rendering into a Scope-owned browser input adapter. It is a small foundation for interactive 2D UI. Complete UI widgets, touch and pen input, Spine, native platforms and target-device performance remain separate engineering requirements. The implementation is independently authored first-party Egret code, Apache-2.0, and adds no third-party dependency.
 
 The [verification record](../../evidence/primary-mouse-input-verification.json) records source identities, actual results, failures, repairs and acceptance boundaries. This contract specifies behavior; it does not establish that a gate has passed.
