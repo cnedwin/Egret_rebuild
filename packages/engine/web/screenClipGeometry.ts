@@ -13,8 +13,7 @@ const edge = (a: ClipPoint, b: ClipPoint, c: ClipPoint): number =>
 
 const signedAreaTwice = (points: readonly ClipPoint[]): number => {
   let area = 0;
-  for (let index = 1; index + 1 < points.length; index++)
-    area += edge(points[0]!, points[index]!, points[index + 1]!);
+  for (let index = 1; index + 1 < points.length; index++) area += edge(points[0]!, points[index]!, points[index + 1]!);
   return area;
 };
 
@@ -77,6 +76,9 @@ export function clippedDisplayRect(node: DisplayObject, area: ScreenRect, screen
     if (clip !== undefined) points = intersectClipPolygons(points, rectanglePolygon(clip, at));
   }
   if (screen !== undefined)
-    points = intersectClipPolygons(points, rectanglePolygon({ x: 0, y: 0, width: screen.width, height: screen.height }));
+    points = intersectClipPolygons(
+      points,
+      rectanglePolygon({ x: 0, y: 0, width: screen.width, height: screen.height })
+    );
   return polygonBounds(points);
 }

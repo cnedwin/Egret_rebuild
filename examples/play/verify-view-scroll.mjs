@@ -216,10 +216,18 @@ export async function verifyViewScroll(page) {
     const initialFindings = controlFindings(initialReport.controls, initialReport.safe, true);
     assert.ok(initialFindings.some(f => f.check === 'inSafeArea' && f.control === 'outside-safe'));
     assert.ok(
-      initialFindings.some(f => f.check === 'apart' && f.controls.includes('overlap-a') && f.controls.includes('overlap-b'))
+      initialFindings.some(
+        f => f.check === 'apart' && f.controls.includes('overlap-a') && f.controls.includes('overlap-b')
+      )
     );
-    assert.ok(!initialReport.controls.some(c => c.name === 'ancestor-blocked'), 'pointer-disabled ancestor route is not a control');
-    assert.ok(!initialReport.controls.some(c => c.name === 'diagonal-outside'), 'AABB overlap alone cannot make a fully clipped diagonal control visible');
+    assert.ok(
+      !initialReport.controls.some(c => c.name === 'ancestor-blocked'),
+      'pointer-disabled ancestor route is not a control'
+    );
+    assert.ok(
+      !initialReport.controls.some(c => c.name === 'diagonal-outside'),
+      'AABB overlap alone cannot make a fully clipped diagonal control visible'
+    );
     const diagonal = initialReport.controls.find(c => c.name === 'diagonal-partial');
     // Only 23×40 local units remain after both clips. The 45° rotation and
     // 1.5 CSS scale make their enclosing square (23+40)/sqrt(2)*1.5.
