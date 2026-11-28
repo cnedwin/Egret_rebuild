@@ -553,7 +553,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       write(file,original+'\n'+imports+'\n');
     }
     // Only these fixed inert runtime dependencies are reached by the shared capture stub.
-    for(const name of ['Bitmap','displayTransform','displayTreeState','displayVisualState','EgretError','meshCaptureSnapshot','ownership','textDisplayState']) {
+    for(const name of ['Bitmap','bitmapDisplayState','bitmapImage','displayTransform','displayTreeState','displayVisualState','EgretError','meshCaptureSnapshot','ownership','textDisplayState']) {
       const file='packages/runtime/dist/'+name+'.js';if(!existsSync(path.join(root,file)))write(file,'export {};\n');
     }
     // M1.3 inert policy surfaces; copied declarations prove shape only.
@@ -724,6 +724,21 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // the fixed missing literal edges; this never consults the checker source.
     m15FixtureGraph['packages/engine/web/WebGL2Host.ts'].push(['static','./sharedHostDeferred.js']);
     m15FixtureGraph['packages/engine/dist/web/WebGL2Host.js'].push(['static','./sharedHostDeferred.js']);
+    // The shared capture reads bitmap states and images through their own modules, so it no longer imports Bitmap back.
+    const reviseFixtureEdges=(graph,file,add,remove=[])=>{
+      const edges=[...graph[file]];
+      for(const target of remove)edges.splice(edges.findIndex(edge=>edge[1]===target),1);
+      graph[file]=[...edges,...add.map(target=>['static',target])];
+    };
+    const reviseCaptureEdges=graph=>{
+      for(const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runtime/dist/sharedFrameCapture.js'])reviseFixtureEdges(graph,file,['./bitmapDisplayState.js','./bitmapImage.js'],['./Bitmap.js']);
+    };
+    for(const file of ['packages/runtime/src/Bitmap.ts','packages/runtime/dist/Bitmap.js'])reviseFixtureEdges(m15FixtureGraph,file,['./bitmapImage.js','./bitmapImage.js'],['./Texture.js']);
+    reviseFixtureEdges(m15FixtureGraph,'packages/runtime/dist/Bitmap.d.ts',['./bitmapImage.js']);
+    reviseCaptureEdges(m15FixtureGraph);
+    m15FixtureGraph['packages/runtime/src/bitmapImage.ts']=[['static','./AssetLease.js'],['static','./AssetLease.js'],['static','./EgretError.js'],['static','./Texture.js'],['static','./Texture.js'],['static','@egret/contracts']];
+    m15FixtureGraph['packages/runtime/dist/bitmapImage.js']=[['static','./AssetLease.js'],['static','./EgretError.js'],['static','./Texture.js']];
+    m15FixtureGraph['packages/runtime/dist/bitmapImage.d.ts']=[['static','./AssetLease.js'],['static','./Texture.js'],['static','@egret/contracts']];
     for(const [file,edges]of Object.entries(m15FixtureGraph)) {
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
@@ -2068,6 +2083,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     effectFixtureGraph['packages/engine/web/WebGL2Host.ts'].push(
       ['static','./webgl2LayerState.js'],['static','./webgl2LayerState.js']);
     effectFixtureGraph['packages/engine/dist/web/WebGL2Host.js'].push(['static','./webgl2LayerState.js']);
+    reviseCaptureEdges(effectFixtureGraph);
     Object.assign(effectFixtureGraph,{
       'packages/engine/web/webgl2LayerState.ts':[['static','./sharedWebGL2Options.js'],['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js'],['static','./webgl2Native.js'],['static','./webgl2Types.js']],
       'packages/engine/dist/web/webgl2LayerState.js':[['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js']],
