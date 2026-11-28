@@ -439,7 +439,6 @@ async function boundedGameImageBytes(response: Response): Promise<Uint8Array<Arr
   return bytes;
 }
 
-/** WebGPU where the browser has it and gives an adapter. Asking for an adapter does not touch the canvas, which can hold one kind of context only. */
 // WebKit may discard a one-off frame or stop presenting after a backing resize. Chromium also advertises
 // AppleWebKit in its compatibility UA; these presentation policies apply only to WebKit.
 function isWebKitBrowser(): boolean {
@@ -447,6 +446,7 @@ function isWebKitBrowser(): boolean {
   return /AppleWebKit\//.test(userAgent) && !/(?:Chrome|Chromium|Edg|OPR|SamsungBrowser)\//.test(userAgent);
 }
 
+/** WebGPU where the browser has it and gives an adapter. Asking for an adapter does not touch the canvas, which can hold one kind of context only. */
 async function chooseBackend(asked: 'auto' | BrowserGameBackend): Promise<BrowserGameBackend> {
   if (asked !== 'auto') return asked;
   const gpu = (globalThis.navigator as { readonly gpu?: { requestAdapter(): Promise<unknown> } } | undefined)?.gpu;
