@@ -7,7 +7,7 @@ import type { Diagnostic } from '@egret/contracts';
 import { requireMouseInputEngine } from './internal/mouseInputFactoryState.js';
 import { captureUiInputDelivery, registerUiPointerInput } from './internal/uiFactoryState.js';
 // The optional browser screen verifier reads this private input-surface association through the existing alias.
-export { screenControlFor } from './internal/uiControlReportState.js';
+export { screenControlFor, screenOccludersFor } from './internal/uiControlReportState.js';
 import type {
   PointerInput,
   PointerInputOptions,

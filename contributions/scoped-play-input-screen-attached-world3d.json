@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "originRole": "First-party public browser fixture for scoped gameplay keys, locked pointer outcomes, raw request options, button chords and terminal cleanup; independently authored; Apache-2.0.",
+      "criticalComment": true,
+      "path": "examples/play/verify-input-ownership.mjs"
+    },
+    {
+      "originRole": "First-party shared native browser geometry and clipped semantic control reporting, including declared visual obstruction diagnostics; independently authored; Apache-2.0.",
+      "criticalComment": true,
+      "path": "packages/engine/web/screenControlGeometry.ts"
+    },
+    {
+      "originRole": "First-party actual-browser public WebGL2 and WebGPU attached-world lifecycle regression; independently authored; Apache-2.0.",
+      "criticalComment": true,
+      "path": "tests/play3d-attached-browser.mjs"
+    },
+    {
+      "originRole": "First-party public attached Play3D entry validation and option refusal checks; independently authored; Apache-2.0.",
+      "criticalComment": true,
+      "path": "tests/play3d-attached.test.mjs"
+    },
+    {
+      "originRole": "First-party actual-browser screen-report regression for clipped native actions, semantic targets and declared visual occluders; independently authored; Apache-2.0.",
+      "criticalComment": true,
+      "path": "tests/screen-control-report-browser.mjs"
+    }
+  ],
+  "documents": []
+}

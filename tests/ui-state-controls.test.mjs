@@ -40,9 +40,10 @@ async function fixture(run) {
   const down = (x, id = 1) =>
     input.begin({ pointerId: id, pointerType: 'touch', globalX: x, globalY: 10, buttons: 1, timestamp: ++clock });
   const up = (session, x) => input.end(session, { globalX: x, globalY: 10, buttons: 0, timestamp: ++clock });
+  const move = (session, x) => input.move(session, { globalX: x, globalY: 10, buttons: 1, timestamp: ++clock });
   const tap = x => up(down(x), x);
   try {
-    await run({ engine, scope, panel, left, right, options, input, hover, over, down, up, tap });
+    await run({ engine, scope, panel, left, right, options, input, hover, over, down, up, move, tap });
   } finally {
     hover.dispose();
     input.dispose();
@@ -460,7 +461,76 @@ test('SC11 only sound options are admitted, and a refused group leaves no contro
       assert.throws(() => createHoverControl(value), coded('UI_CONTROL_OPTIONS'));
   }));
 
-test('SC12 a strict consumer compiles against the controls, and six misuses are refused', () => {
+test('SC14 a toggle and a selection group take the release policy of an action control', async () =>
+  fixture(({ options, input, down, up, move }) => {
+    // Without a policy a captured press released off the target still completes, as before.
+    const plain = createToggleControl({ input, target: options[0] });
+    up(down(70), 150);
+    assert.equal(plain.checked, true, 'capturedRelease stays the default');
+    plain.dispose();
+    const changes = [];
+    const inside = createToggleControl({
+      input,
+      target: options[0],
+      activation: 'releaseInside',
+      onChange: value => changes.push(value)
+    });
+    up(down(70), 150);
+    assert.equal(inside.checked, false, 'released outside: no flip');
+    assert.equal(inside.pressed, false);
+    let session = down(70);
+    move(session, 150);
+    up(session, 80);
+    assert.equal(inside.checked, true, 'leaving and coming back inside still completes');
+    inside.toggle();
+    assert.deepEqual(changes, [true, false], 'a scripted toggle does not use pointer geometry');
+    inside.dispose();
+    const tapped = createToggleControl({ input, target: options[0], activation: 'tap', tapTolerance: 4 });
+    session = down(70);
+    move(session, 80);
+    up(session, 70);
+    assert.equal(tapped.checked, false, 'a swipe that returns is not a tap');
+    up(down(70), 72);
+    assert.equal(tapped.checked, true);
+    tapped.dispose();
+
+    const picks = [];
+    const group = createSelectionGroup({
+      input,
+      items: [
+        { key: 'a', target: options[0] },
+        { key: 'b', target: options[1] }
+      ],
+      selected: 'a',
+      activation: 'releaseInside',
+      onChange: (key, previous) => picks.push([key, previous])
+    });
+    up(down(120), 190);
+    assert.equal(group.selected, 'a', 'a press on b released off it does not select b');
+    up(down(120), 125);
+    assert.equal(group.selected, 'b');
+    assert.equal(group.next(), true, 'movement among items is not a pointer release');
+    assert.deepEqual(picks, [
+      ['b', 'a'],
+      ['a', 'b']
+    ]);
+    group.dispose();
+    // The policy is checked as an action control checks it; a refused group leaves no control behind.
+    assert.throws(
+      () => createToggleControl({ input, target: options[0], tapTolerance: 4 }),
+      coded('UI_CONTROL_OPTIONS')
+    );
+    assert.throws(
+      () => createSelectionGroup({ input, items: [{ key: 'a', target: options[0] }], activation: 'swipe' }),
+      coded('UI_CONTROL_OPTIONS')
+    );
+    const after = createSelectionGroup({ input, items: [{ key: 'a', target: options[0] }] });
+    up(down(70), 70);
+    assert.equal(after.selected, 'a', 'the refused group took no press of its target');
+    after.dispose();
+  }));
+
+test('SC12 a strict consumer compiles against the controls, and seven misuses are refused', () => {
   const result = spawnSync(
     process.execPath,
     ['node_modules/typescript/bin/tsc', '--project', 'tests/types/ui-state-controls.json', '--pretty', 'false'],

@@ -131,6 +131,37 @@ await play3d({ width: 960, height: 540, setup(game) { … }, update(dt, game) { 
 </script>
 ```
 
+## 保留已经配置的 World3D 渲染器，使用 Play 的时钟
+
+游戏已经有自己的渲染器、画布、场景、相机和画质策略时，可以从任一显式 World3D 浏览器入口调用 `play3dAttached`。它是 `play3d` 的配套入口，不改变 `play3d` 创建新世界的方式。
+
+```js
+import { play3dAttached } from '@egret/engine/webgl2/world3d';
+
+// 页面在 holder 内把现有 World3D 画布放在 Play 界面下方。
+// 渲染器、场景、相机均由游戏配置。
+const session = await play3dAttached({
+  parent: holder, width: 960, height: 540,
+  portrait: { width: 540, height: 960 }, fit: 'expand',
+  setup(game) { game.text('准备就绪', { x: 20, y: 20 }); },
+  async world(game) {
+    await loadAssets();
+    return { renderer, scene, camera, maxPixelRatio: 1.5,
+      onUpdate(dt) { advanceWorld(dt, game); } };
+  },
+});
+const game = session.game;
+console.assert(session.view?.renderer === renderer);
+```
+
+支持普通的 `PlayOptions`（`transparent` 除外，界面始终透明）。可选的 `setup` 先运行，再等待异步 `world` 工厂；`arrange` 和 `update` 保留 Play 原有职责。`world` 收到的正是 `session.game` 返回的同一 `PlayGame`。工厂返回 [World3DView 的选项](world3d-app.md)，包括 `autoResize`、`maxPixelRatio`、`mixers`、`controls`、`updateParticles`、`onUpdate`、`onFrameTiming` 和 `onError`。`autoResize: false` 保留调用方管理的绘制尺寸与投影。入口不会应用画质预设、增添灯光或者修改场景和相机选定的投影参数。
+
+这里只使用一个 Play Engine 时钟，以及由 Play 生命周期 Scope 管理、每一轮结束即清理的 Scope 中的一个视图订阅；`play3dAttached` 不创建 3D 应用、渲染器或额外的动画帧循环。由调用者摆放原有 3D 画布，保证与 2D 画布分离，并在接入前停止已有的独立绘制循环。同一个渲染器不能同时绑定到两次尚存活的配套会话。返回的 `view` 是当前 World3DView；加载中、重启失败、释放后或者工厂返回 `undefined` 时均为空。工厂返回 `undefined` 会保留实际的 Play 原生界面但不绘制世界，例如游戏自己的资源重试界面。
+
+`game.restart()` 会在新一轮 setup 和工厂之前撤掉旧视图订阅，新工厂加载期间旧世界不再绘制，工厂失败后也没有活动视图。Play 的重试、关闭 Promise 保留原有行为。`game.dispose()` 终止自己创建的界面和时钟订阅，但不会代为释放已有渲染器及其画布、场景、相机、控制器或资源。创建者可以明确把自己拥有的渲染器／资源登记到 `game.scope`，或者另行释放；默认是借用。与 `createWorld3DView` 一样，`game.pause()` 停止 Play 的游戏更新和定时器，不会自动停止每个世界绘制回调；需要时显式暂停 `session.view`。
+
+2026 年 11 月 28 日，公有接入会话浏览器用例在 Windows Edge 上分别使用 RTX 5090 Laptop 的 WebGL2（ANGLE D3D11）及 NVIDIA Blackwell WebGPU 适配器。同一组 12 次浏览器回调中，各观察到 12 次 Play Engine 时钟、12 次世界更新、12 次渲染器帧、12 次计时记录。两组的阻塞与失败重启均撤掉上一代视图；连续八次重启、特意触发的 `arrange` 失败、仅界面运行及重试、加载未完成时关闭、重复绑定渲染器拒绝与首次加载失败清理均通过。传入的相机、场景、渲染器配置与借用画布保持原样；关闭游戏后，调用方仍能用同一渲染器绘制。浏览器错误为零。这些是有界的生命周期与提交次数观察，不代表呈现帧率、GPU 执行耗时或手机验收。复跑：`node tests/play3d-attached-browser.mjs <Playwright index.mjs 的绝对路径> webgl2`（或 `webgpu`）；用 `CHROMIUM_PATH` 和 `EGRET_BROWSER_HARDWARE=1` 选择已安装的硬件浏览器。
+
 ## 游戏变大之后
 
 `game.scene` 是 [Scene3D](world3d.md)，`game.app` 是 [World3D 应用](world3d-app.md)：从 glTF 加载的模型、材质、更多的灯光、粒子、物理和后期处理，都可以加到场景里，与 `play3d` 创建的内容并存。`game.camera.node` 和 `thing.node` 就是相机和网格本身。

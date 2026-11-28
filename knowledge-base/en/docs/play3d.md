@@ -131,6 +131,36 @@ await play3d({ width: 960, height: 540, setup(game) { … }, update(dt, game) { 
 </script>
 ```
 
+## Keep a configured World3D renderer and use the Play clock
+
+For a game that already has its own renderer, canvas, scene, camera, and quality policy, use `play3dAttached` from either explicit World3D browser entry. It is a companion to `play3d`, not a change to what `play3d` makes for a fresh world.
+
+```js
+import { play3dAttached } from '@egret/engine/webgl2/world3d';
+
+// The page places its existing World3D canvas below Play's interface in `holder`.
+// These renderer, scene and camera instances are configured by the game.
+const session = await play3dAttached({
+  parent: holder, width: 960, height: 540,
+  portrait: { width: 540, height: 960 }, fit: 'expand',
+  setup(game) { game.text('Ready', { x: 20, y: 20 }); },
+  async world(game) {
+    await loadAssets();
+    return { renderer, scene, camera, maxPixelRatio: 1.5,
+      onUpdate(dt) { advanceWorld(dt, game); } };
+  },
+});
+const game = session.game;
+console.assert(session.view?.renderer === renderer);
+```
+
+All ordinary `PlayOptions` (except `transparent`, which is always true) are accepted. The optional `setup` runs first, followed by the async `world` factory; `arrange` and `update` keep their usual Play roles. `world` receives the same `PlayGame` that `session.game` returns. The factory gives [World3DView options](world3d-app.md), including `autoResize`, `maxPixelRatio`, `mixers`, `controls`, `updateParticles`, `onUpdate`, `onFrameTiming` and `onError`. `autoResize: false` keeps a caller-managed drawing size and projection. The companion neither applies quality presets nor adds lights or changes the scene or camera's chosen projection parameters.
+
+There is one Play Engine clock and one view subscription in a per-generation Scope retired by the Play lifetime scope; `play3dAttached` creates no 3D app, renderer or additional animation-frame loop. Keep the borrowed 3D canvas separate from the 2D canvas, place it yourself, and stop any independent presenter before attaching. The same renderer cannot be attached to two live companion sessions. The returned `view` is the currently attached World3DView; it is undefined during loading, after a refused restart, after disposal, or when the factory returns `undefined`. Returning `undefined` keeps the actual native Play UI active without drawing a world, such as a game's resource-retry screen.
+
+On `game.restart()`, the old view subscription is retired before the new setup and factory. No old world renders during the new factory's loading, and a failed factory leaves no active view. Play's retry and closing promises retain their usual behavior. `game.dispose()` ends its own UI and clock subscription, but neither the existing renderer nor its canvas, scene, camera, controls or assets are disposed on its behalf. The creator may explicitly register an owned renderer/resource in `game.scope`, or release it separately; borrowing is the default. As with `createWorld3DView`, `game.pause()` stops Play's gameplay update and timers, not every world drawing callback; pause `session.view` explicitly if required.
+On November 28, 2026, the public attached-session browser fixture on Windows Edge used the RTX 5090 Laptop through WebGL2 (ANGLE D3D11) and the NVIDIA Blackwell WebGPU adapter. Each run observed 12 Play Engine clock ticks, 12 world updates, 12 renderer frames and 12 timing receipts over the same 12 browser callbacks. Both held and failed restarts retired the previous view; eight successive restarts, a deliberate `arrange` failure, a UI-only run and retry, closing during a pending factory, duplicate-renderer refusal and initial failure cleanup all passed. The supplied camera, scene, renderer settings and borrowed canvas remained intact; after game close the caller rendered with the same renderer. Zero browser errors were recorded. These are bounded lifecycle and submission-count observations, not presented-frame rate, GPU duration or handset acceptance. Re-run `node tests/play3d-attached-browser.mjs <absolute Playwright index.mjs> webgl2` (or `webgpu`); `CHROMIUM_PATH` and `EGRET_BROWSER_HARDWARE=1` select an installed hardware browser.
+
 ## When a game outgrows it
 
 `game.scene` is the [Scene3D](world3d.md) and `game.app` the [World3D app](world3d-app.md): models loaded from glTF, materials, more lights, particles, physics and post-processing are added to the scene beside what `play3d` made. `game.camera.node` and `thing.node` are the camera and the meshes themselves.

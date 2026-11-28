@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/api-reference.md)
 
-This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1520 exports; 12 of them have no sentence in the sources yet.
+This page lists every name that each entry of `@egret/engine` exports: what kind of thing it is, and the first sentence written above it in the sources. It is written by `node tools/api-reference.mjs` from the built declarations, and `tests/api-reference.test.mjs` fails when it is not what they give; do not edit it by hand. 48 entries, 1532 exports; 19 of them have no sentence in the sources yet.
 
 For which entry to import from, see [What to import](entry-points.md).
 
@@ -808,6 +808,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `play3d` | function | Starts a 3D game in the page. |
+| `play3dAttached` | function | Starts transparent Play above an existing 3D canvas. |
+| `Play3DAttachedOptions` | interface | A Play interface over a caller-configured 3D surface, sharing the Play clock and Scope. |
+| `Play3DAttachedSession` | interface |  |
 | `Play3DGame` | interface | Everything a small 3D game is given: its scene and camera, its input, and calls that make, move and light things. |
 | `Play3DOptions` | interface | A small 3D game to start: its setup and update, and the options of a 2D play game. |
 | `PLAY_LOOKS_3D` | value | The looks every game is given, by name. |
@@ -924,6 +927,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `OverlayScreenMarkersOptions3D` | interface | The native stage and the actual 3D canvas whose scene the camera projects. |
 | `pickWorld3DBackend` | function | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | function | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
+| `play3dAttached` | function | Starts transparent Play above an existing 3D canvas. |
+| `Play3DAttachedOptions` | interface | A Play interface over a caller-configured 3D surface, sharing the Play clock and Scope. |
+| `Play3DAttachedSession` | interface |  |
 | `PositionalAudio3D` | class | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | interface | A positional sound to make: its buffer and volume, how it fades with distance, its cone, rate, and whether it is spatial. |
 | `POST3D_LIMITS` | value | The most bloom levels. |
@@ -1117,10 +1123,14 @@ For which entry to import from, see [What to import](entry-points.md).
 | `RangeControl` | interface | A slider: its value and range, whether it is dragged, and calls that set or step it. |
 | `RangeControlOptions` | interface | A range control to make: its input and target, its axis and track, its range and step, and what it calls. |
 | `RangeKeysOptions` | interface | Arrow keys move the value by one step, Page Up and Page Down by a page of steps, Home and End go to its ends. |
+| `registerScreenOccluder` | function | Name a genuinely painted UI face that may cover a control without taking its input. |
 | `RowBindContext` | interface | What binding a row is given: the record, its place, the theme and density, its scope, signal and target. |
 | `RowBinding` | interface | What a bound row shows, and its measured height. |
 | `RowRetention` | interface | A row kept bound after it leaves the viewport; release it to let it go. |
 | `RowUnbindInfo` | interface | A row that was unbound: its key, its binding and content versions, and why. |
+| `ScreenOccluder` | interface |  |
+| `ScreenOccluderOptions` | interface |  |
+| `ScreenOccluderRect` | interface |  |
 | `ScrollAxis` | type | The scroll position of one axis of a clipped viewport an application draws itself. |
 | `ScrollControl` | interface | Scrolling along one axis: the offset and its maximum, the thumb, and calls that scroll by lines, pages or to the ends. |
 | `ScrollControlOptions` | interface | A scroll control to make: its axis, the lengths of its viewport and content, its wheel and thumb, and what it calls. |
@@ -1661,7 +1671,9 @@ For which entry to import from, see [What to import](entry-points.md).
 | `PlayOptions` | interface | A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. |
 | `PlayPin` | interface | A node held against the edges of the screen: `set` holds it otherwise, `dispose` lets it go. |
 | `PlayPinOptions` | interface | What a node is pinned to: the safe part, unless given, or the whole screen. |
-| `PlayPointer` | interface | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
+| `PlayPointer` | interface |  |
+| `PlayPointerLockOptions` | interface | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
+| `PlayPointerLockResult` | interface |  |
 | `PlaySayOptions` | interface | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
 | `PlaySfx` | interface | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
 | `PlayStickOptions` | interface | A touch stick to show: where, how large, and whether it shows without touch. |
