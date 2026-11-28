@@ -5,7 +5,7 @@ import type {BrowserGame,BrowserGameBackend,BrowserGameFit,BrowserGameFrameTimin
 import {animate,Bitmap,Sprite} from '@egret/engine';
 import type {Motion} from '@egret/engine';
 declare const canvas:HTMLCanvasElement;
-const options:BrowserGameOptions={canvas,width:480,height:270,backend:'auto',staticLayers:true,pixelRatio:1.5,clearColor:0x1b1f2a,clearAlpha:1,update(seconds:number){void seconds;},onError(error:unknown){void error;},pointer:true,keyboard:false,stats:true,fit:'contain',fitTo:canvas.parentElement??undefined as never,autoStart:false,measureSharedFrames:true,onFrameTiming(sample:BrowserGameFrameTiming){const outcome:BrowserGameFrameTiming['outcome']=sample.outcome;void outcome;
+const options:BrowserGameOptions={canvas,width:480,height:270,backend:'auto',staticLayers:true,pixelRatio:1.5,clearColor:0x1b1f2a,clearAlpha:1,update(seconds:number){void seconds;},onError(error:unknown){void error;},pointer:true,keyboard:false,stats:true,fit:'contain',fitTo:canvas.parentElement??undefined as never,autoStart:false,measureSharedFrames:true,afterFrame(){},onFrameTiming(sample:BrowserGameFrameTiming){const outcome:BrowserGameFrameTiming['outcome']=sample.outcome;void outcome;const after:number|undefined=sample.afterFrameMs;void after;
 // @ts-expect-error timing samples are immutable
 sample.outcome='submitted';
 }};
@@ -66,3 +66,6 @@ animate(game.engine,game.scope,hero).to({speed:1},1);
 animate(game.engine,game.scope,hero).to({x:1},1,'fast');
 // @ts-expect-error a snapshot is read, not written
 numbers.fps=60;
+
+// @ts-expect-error the frame-end hook is callable
+createBrowserGame({canvas,width:1,height:1,afterFrame:1});

@@ -9,7 +9,7 @@ const host=createSharedWebGL2Host({canvas,pixelRatio:1});
 const frame:SharedFrameOptions2D={width:480,height:270,clearColor:0x1b1f2a,clearAlpha:1};
 // The Engine and a shared Host are what the loop asks for, as they are.
 const asEngine:FrameLoopEngine<SharedFrameOptions2D>=engine,asHost:FrameLoopHost=host;void asEngine;void asHost;
-const options:BrowserFrameLoopOptions<SharedFrameOptions2D>={engine,host,frame,update(deltaSeconds:number){void deltaSeconds;},maxStepSeconds:0.05,maxPendingFrames:2,onError(error:unknown){void error;},onFrameTiming(sample:BrowserFrameTiming){const measured:number=sample.renderMs+sample.updateMs;void measured;
+const options:BrowserFrameLoopOptions<SharedFrameOptions2D>={engine,host,frame,update(deltaSeconds:number){void deltaSeconds;},maxStepSeconds:0.05,maxPendingFrames:2,afterFrame(){},onError(error:unknown){void error;},onFrameTiming(sample:BrowserFrameTiming){const measured:number=sample.renderMs+sample.updateMs+(sample.afterFrameMs??0);void measured;
 // @ts-expect-error timing samples are immutable
 sample.id=0;
 }};
@@ -26,3 +26,6 @@ createBrowserFrameLoop({engine,frame:{width:'wide'}});
 loop.state='running';
 // @ts-expect-error a snapshot is read, not written
 picture.frames=0;
+
+// @ts-expect-error the frame-end hook needs a synchronous callback
+createBrowserFrameLoop({engine,frame,afterFrame:1});

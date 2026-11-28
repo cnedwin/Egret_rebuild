@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Submit an independent World3D view after the 2D frame",
+    "body": "Play and the browser frame loop offer an opt-in same-frame afterFrame callback. A World3D view can keep its clock updates in their original phase and defer the latest draw to drawPending, retaining actual submission acceptance, pause, disposal and failure semantics. This can reduce cross-context WebGL2 synchronization when a transparent 2D host overlays an independent 3D canvas, without skipping resource validation or introducing another animation loop."
+  },
+  "zh": {
+    "title": "在同帧 2D 提交之后绘制独立 World3D 视图",
+    "body": "Play 与浏览器帧循环增加可选的同帧 afterFrame 回调。World3D 视图可保留原时钟更新阶段，将最新绘制安排到 drawPending，仍以真实提交结果、暂停、释放和错误语义为准。这可减轻透明 2D 宿主覆盖独立 3D 画布时的 WebGL2 跨上下文同步等待，不跳过资源验证，也不创建第二个动画循环。"
+  }
+}

@@ -443,6 +443,25 @@ World3D 画布与 2D 舞台表面相互独立。`createWorld3DHost(canvas)` 为�
 
 `createWorld3DView(engine, scope, options)` 在 Scope 下订阅 Engine 时钟。每次 tick 按需调整绘制缓冲大小，调用 `onUpdate`，推进混合器、控制器和粒子发射器，然后渲染。关闭 Scope 即结束视图。渲染器、场景和控制器仍归创建者所有；用 `scope.use(...)` 登记后可随 Scope 一并退役。
 
+使用同一 Play 时钟和独立透明 2D 界面时，视图可以选择 `deferRender: true`。时钟仍逐步执行尺寸调整和模拟更新，视图只保留最新的待绘制工作供同步消费。用 Play 的 `afterFrame` 在同一个浏览器帧回调内，于共享 2D 提交（或保留帧、背压跳帧）之后绘制：
+
+```ts
+let view: World3DView | undefined;
+await play({
+  width: 1280, height: 720,
+  setup(game) {
+    view = createWorld3DView(game.engine, game.scope, { renderer, scene, camera, deferRender: true });
+  },
+  afterFrame() {
+    view?.drawPending();
+  }
+});
+```
+
+默认的 `deferRender: false` 仍由时钟立即驱动绘制。可修改 `view.deferRender` 按场景选择提交顺序，不必重建时钟。模式切换、暂停、更换场景或相机、更新失败和销毁均会退役待绘制工作。未消费的工作在安排的微任务边界过期；请同步消费，不要跨 await 或留到另一个显示回调处理。同一调用轮中的数个追赶步仍逐一推进混合器和其他更新，只绘制最新结果。只有渲染器确实接受该次真实绘制时，`drawPending()` 才返回 true；false 包括没有待绘制工作及渲染器拒绝。实际渲染器处理上下文丢失；恢复后经新 tick 再准备。
+
+延后绘制时，`onFrameTiming` 报告实际尝试的绘制及其结果，累计前面合并的成功更新耗时及时间增量，保留最后的模拟累计时间。墙钟区间可以包含两个阶段之间的共享 2D 提交，`updateMs` 和 `renderMs` 只统计各自工作。更新失败仍会报告，过期或取消的待绘制工作不会被报告为接受。此能力只选择提交顺序，不表示 GPU 完成或实际呈现。
+
 需要在 3D 场景上方显示 2D 界面时，可以把透明的共享 2D 宿主画布叠放在 World3D 画布之上，也可以把 2D 画布作为屏幕层绘制（见“2D 与 3D 同屏”）。把单个 2D 显示对象按深度穿插在 3D 对象之间，仍由可编辑场景路径负责。
 
 `createOrbitControls3D(camera, element, options)` 基于 Pointer Events 提供环绕、平移和缩放，包括双指平移与捏合、阻尼和可选的自动旋转。

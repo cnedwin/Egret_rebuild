@@ -473,3 +473,74 @@ test('game image jobs wait in a bounded FIFO and canceled waiting work does not 
     await new Promise(resolve => server.close(resolve));
   }
 });
+
+test('BrowserGame afterFrame follows submission and retained display turns exactly once', async t => {
+  const doc = page().document,
+    calls = [],
+    samples = [];
+  let requested;
+  const globals = {
+    document: doc,
+    window: { document: doc, createImageBitmap() {} },
+    ImageBitmap: class {
+      close() {}
+    },
+    requestAnimationFrame: callback => {
+      assert.equal(requested, undefined);
+      requested = callback;
+      return 1;
+    },
+    cancelAnimationFrame: () => {
+      requested = undefined;
+    }
+  };
+  for (const [name, value] of Object.entries(globals)) {
+    const previous = Object.getOwnPropertyDescriptor(globalThis, name);
+    t.after(() =>
+      previous ? Object.defineProperty(globalThis, name, previous) : Reflect.deleteProperty(globalThis, name)
+    );
+    Object.defineProperty(globalThis, name, { configurable: true, value });
+  }
+  const { canvas } = glPorts();
+  canvas.getBoundingClientRect = () => ({ width: 128, height: 64 });
+  const options = {
+    canvas,
+    width: 128,
+    height: 64,
+    pixelRatio: 1,
+    backend: 'webgl2',
+    pointer: false,
+    keyboard: false,
+    autoStart: false
+  };
+  await assert.rejects(createBrowserGame({ ...options, afterFrame: 1 }), coded('BROWSER_GAME_OPTIONS_INVALID'));
+  const game = await createBrowserGame({
+    ...options,
+    renderMode: 'on-demand',
+    update: () => calls.push('update'),
+    beforeRender: () => calls.push('before'),
+    afterFrame() {
+      assert.equal(requested, undefined);
+      calls.push('after');
+    },
+    onFrameTiming: s => samples.push(s)
+  });
+  try {
+    game.stage.addChild(game.scope.use(new egret.Sprite())).graphics.beginFill(1).drawRect(0, 0, 8, 8).endFill();
+    game.loop.start();
+    for (const time of [0, 16, 32]) {
+      const callback = requested;
+      assert.equal(typeof callback, 'function');
+      requested = undefined;
+      callback(time);
+    }
+    assert.equal(samples.length, 3);
+    assert.equal(samples[0].outcome, 'submitted');
+    assert.ok(samples.some(s => s.outcome === 'retained'));
+    assert.ok(samples.every(s => Number.isFinite(s.afterFrameMs) && s.afterFrameMs >= 0));
+    assert.equal(calls.filter(x => x === 'after').length, 3);
+    assert.deepEqual(calls.slice(0, 3), ['update', 'before', 'after']);
+  } finally {
+    await game.dispose();
+  }
+});

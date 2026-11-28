@@ -120,13 +120,22 @@ try {
     page.evaluate(
       async ({ mode, backend }) => {
         const { play } = await import('@egret/engine/play');
-        const fixture = { clicks: 0, updates: 0, onKey: false };
+        const fixture = { clicks: 0, updates: 0, onKey: false, after: 0, receipts: 0, retained: 0, ordered: true };
         window.fixture = fixture;
         fixture.game = await play({
           width: 640,
           height: 400,
           backend,
           audio: false,
+          afterFrame() {
+            fixture.after++;
+          },
+          onFrameTiming(sample) {
+            fixture.receipts++;
+            if (sample.outcome === 'retained') fixture.retained++;
+            fixture.ordered &&=
+              fixture.after === fixture.receipts && Number.isFinite(sample.afterFrameMs) && sample.afterFrameMs >= 0;
+          },
           ...(mode === undefined ? {} : { renderMode: mode }),
           setup(game) {
             fixture.mark = game.rect(500, 280, 50, 40, 0x6355ac);
@@ -157,6 +166,16 @@ try {
   report.cases.onDemandIdle = await recordIdle();
   assert.equal(report.cases.onDemandIdle.submissions, 0, 'a static on-demand scene submitted a frame');
   assert.ok(report.cases.onDemandIdle.steps >= 20, 'on-demand should preserve frame-loop stepping');
+  report.cases.afterFrame = await page.evaluate(() => {
+    const { after, receipts, retained, ordered } = window.fixture;
+    return { after, receipts, retained, ordered };
+  });
+  assert.ok(
+    report.cases.afterFrame.ordered &&
+      report.cases.afterFrame.after === report.cases.afterFrame.receipts &&
+      report.cases.afterFrame.retained >= 20,
+    'each Play browser turn must run afterFrame before its receipt, including retained frames'
+  );
 
   async function expectDrawing(name, action) {
     const before = await snapshot();
