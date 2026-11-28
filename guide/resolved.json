@@ -205,6 +205,24 @@
         "TaiwanMahjong#6",
         "PeachCreek#6"
       ]
+    },
+    {
+      "topic": "action-control-outside-release",
+      "status": "resolved",
+      "what": "createActionControl takes activation: 'releaseInside', which activates only when the captured contact ends inside the target's authored hitArea, or 'tap', which also needs the press to stay within tapTolerance. capturedRelease stays the documented default, so holds keep their contact.",
+      "pr": 545,
+      "commit": "8424ff2afb0afdc103b06d51e3fd749f7a8fc379",
+      "notes": [
+        "Rally#6"
+      ]
+    },
+    {
+      "topic": "action-release-inside-policy",
+      "status": "resolved",
+      "what": "Toggles and selection groups take activation and tapTolerance too, and hand them to the press of the switch or of each item: with 'releaseInside' a press released off its target neither flips a toggle nor selects an item. Keys, movement and scripted calls are unchanged.",
+      "notes": [
+        "SnowTemple#6"
+      ]
     }
   ]
 }

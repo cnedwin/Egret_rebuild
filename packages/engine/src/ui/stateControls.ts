@@ -4,7 +4,7 @@ import type { DisplayObject } from '@egret/runtime';
 import type { HoverInput } from '../hoverInputTypes.js';
 import type { PointerInput } from '../pointerInputTypes.js';
 import { createActionControl, createSelectionItemAction } from './controls.js';
-import type { ActionControl } from './controls.js';
+import type { ActionControl, ActionControlOptions } from './controls.js';
 
 /**
  * Hover, toggle and single-selection state for controls an application draws itself.
@@ -37,6 +37,10 @@ export interface ToggleControlOptions {
   readonly checked?: boolean;
   readonly onChange?: (checked: boolean) => void;
   readonly onPressChange?: (pressed: boolean) => void;
+  /** Pointer-only release policy of a press, as an action control's: capturedRelease (default), releaseInside or tap. */
+  readonly activation?: 'capturedRelease' | 'releaseInside' | 'tap';
+  /** With activation 'tap': how far a press may move and still count, in logical stage units. 12 by default. */
+  readonly tapTolerance?: number;
 }
 
 /** A checkbox or switch: whether it is checked and pressed, and calls that toggle or set it. */
@@ -73,6 +77,10 @@ export interface SelectionGroupOptions {
   /** Whether movement past either end continues at the other. Defaults to true. */
   readonly wrap?: boolean;
   readonly onChange?: (selected: string, previous: string | undefined) => void;
+  /** Pointer-only release policy of a press, as an action control's: capturedRelease (default), releaseInside or tap. */
+  readonly activation?: 'capturedRelease' | 'releaseInside' | 'tap';
+  /** With activation 'tap': how far a press may move and still count, in logical stage units. 12 by default. */
+  readonly tapTolerance?: number;
 }
 
 /** One of several: a radio group, a segmented control, or a listbox with a single selection. */
@@ -106,6 +114,18 @@ function displayTarget(value: unknown): DisplayObject {
   if (value === null || typeof value !== 'object' || typeof (value as DisplayObject).on !== 'function')
     throw new EgretError('UI_CONTROL_OPTIONS');
   return value as DisplayObject;
+}
+
+/** The release policy a toggle or a selection group hands to the action control of each press; checked there. */
+function releasePolicy(options: {
+  readonly activation?: 'capturedRelease' | 'releaseInside' | 'tap';
+  readonly tapTolerance?: number;
+}): Pick<ActionControlOptions, 'activation' | 'tapTolerance'> {
+  const { activation, tapTolerance } = options;
+  return {
+    ...(activation === undefined ? {} : { activation }),
+    ...(tapTolerance === undefined ? {} : { tapTolerance })
+  };
 }
 
 function callback<T>(value: T | undefined): T | undefined {
@@ -227,7 +247,8 @@ export function createToggleControl(options: ToggleControlOptions): ToggleContro
     input,
     target,
     onActivate: () => set(!checked),
-    ...(onPressChange === undefined ? {} : { onPressChange })
+    ...(onPressChange === undefined ? {} : { onPressChange }),
+    ...releasePolicy(options)
   });
   let closed = false;
   function open(): void {
@@ -346,6 +367,7 @@ export function createSelectionGroup(options: SelectionGroupOptions): SelectionG
   }
   try {
     // Each item takes its press through an action control; whether the press may select is decided in one place, above.
+    const policy = releasePolicy(options);
     for (const entry of entries)
       entry.action = createSelectionItemAction(
         {
@@ -353,7 +375,8 @@ export function createSelectionGroup(options: SelectionGroupOptions): SelectionG
           target: entry.target,
           onActivate: () => {
             choose(entry);
-          }
+          },
+          ...policy
         },
         () => enabled && entry.enabled && !closed
       );

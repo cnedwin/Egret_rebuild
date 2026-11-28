@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// A strict consumer of the hover, toggle and selection controls: what it may write, and six things it may not.
+// A strict consumer of the hover, toggle and selection controls: what it may write, and seven things it may not.
 import {createHoverControl,createSelectionGroup,createToggleControl} from '@egret/engine/ui';
 import type {HoverControl,HoverControlOptions,SelectionGroup,SelectionGroupOptions,SelectionItem,ToggleControl,ToggleControlOptions} from '@egret/engine/ui';
 import type {HoverInput,HoverNotification,HoverTransition} from '@egret/engine/input/hover';
@@ -13,6 +13,10 @@ const toggleOptions:ToggleControlOptions={input,target,checked:true,onChange:(ch
 const toggle:ToggleControl=createToggleControl(toggleOptions);
 toggle.toggle();toggle.setChecked(false);toggle.press();toggle.release();toggle.setEnabled(true);
 const value:boolean=toggle.checked&&toggle.pressed&&toggle.enabled;void value;toggle.dispose();
+const inside:ToggleControl=createToggleControl({input,target,activation:'releaseInside'});inside.dispose();
+const tapped:SelectionGroup=createSelectionGroup({input,items:[{key:'a',target}],activation:'tap',tapTolerance:6});tapped.dispose();
+// @ts-expect-error the release policy is one of three
+createToggleControl({input,target,activation:'swipe'});
 const items:readonly SelectionItem[]=[{key:'a',target},{key:'b',target:other,enabled:false}];
 const groupOptions:SelectionGroupOptions={input,items,selected:'a',wrap:false,onChange:(selected:string,previous:string|undefined)=>{void selected;void previous;}};
 const group:SelectionGroup=createSelectionGroup(groupOptions);
