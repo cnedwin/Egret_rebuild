@@ -39,7 +39,7 @@
 | ……来自页面 | `createBrowserHoverInput` | `@egret/engine/web/hover` |
 | 手柄 | `createGamepadInput`、`bindGamepadKeys` | `@egret/engine/input/gamepad` |
 | ……来自浏览器 | `createBrowserGamepadInput` | `@egret/engine/web/gamepad` |
-| 位图上只响应鼠标的按钮 | `createMouseInput`、`createBitmapButton` | `@egret/engine/web/input` |
+| 位图上只响应鼠标的按钮（已弃用：请在浏览器指针输入上用 `createActionControl`） | `createMouseInput`、`createBitmapButton` | `@egret/engine/web/input` |
 | 能跟随、缩放和震动的相机 | `createCamera2D` | `@egret/engine/camera` |
 | 瓦片地图，也可从 Tiled 导入 | `createTileMap`、`importTiledMap` | `@egret/engine/tilemap` |
 | 粒子 | `createParticleEmitter` | `@egret/engine/particles` |

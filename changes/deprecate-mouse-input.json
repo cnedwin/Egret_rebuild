@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-26",
+  "en": {
+    "title": "The mouse-only input and bitmap button are deprecated",
+    "body": "createMouseInput and createBitmapButton of @egret/engine/web/input are marked deprecated and keep working unchanged. New code takes contacts from the browser pointer input, which also gives touch, pen and every mouse button, and makes buttons with createActionControl, picking their looks with selectUiSkin."
+  },
+  "zh": {
+    "title": "只认鼠标的输入和位图按钮已弃用",
+    "body": "@egret/engine/web/input 的 createMouseInput 和 createBitmapButton 标记为弃用，行为不变，继续可用。新代码从浏览器指针输入取得触点（同时支持触摸、触控笔和鼠标所有按键），按钮用 createActionControl 来做，外观用 selectUiSkin 选择。"
+  }
+}
