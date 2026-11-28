@@ -44,6 +44,8 @@ export interface World3DViewOptions {
   readonly onUpdate?: (deltaSeconds: number, elapsedSeconds: number) => void;
   /** Opt-in CPU timings for active ticks; observer failures cannot change the view. */
   readonly onFrameTiming?: (sample: World3DViewTiming) => void;
+  /** Prepare on the Engine clock and draw explicitly in the same turn. Defaults to immediate drawing. */
+  readonly deferRender?: boolean;
   /** Keep the drawing buffer and camera aspect matched to the canvas CSS size. Defaults to true. */
   readonly autoResize?: boolean;
   /** Upper bound for the device pixel ratio used by autoResize. Defaults to 2. */
@@ -54,15 +56,27 @@ export interface World3DViewOptions {
   readonly onError?: (cause: unknown) => void;
 }
 
+interface PendingDraw3D {
+  readonly scene: Scene3D;
+  readonly camera: Camera3D;
+  readonly deltaSeconds: number;
+  readonly elapsedSeconds: number;
+  readonly started: number;
+  readonly updateMs: number;
+}
+
 /** Draws a scene from a camera on each tick of the Engine, updating its mixers and controls. */
 export class World3DView implements Disposable {
   readonly renderer: Renderer3D;
-  scene: Scene3D;
-  camera: Camera3D;
+  #scene: Scene3D;
+  #camera: Camera3D;
   readonly mixers: AnimationMixer3D[];
   controls: OrbitControls3D | undefined;
-  /** Skip animation and drawing while true; the clock subscription stays active. */
-  paused = false;
+  #paused = false;
+  #deferRender: boolean;
+  #pending: PendingDraw3D | undefined;
+  #pendingTurn: object | undefined;
+  #updating = 0;
   readonly #subscription: Disposable;
   readonly #options: World3DViewOptions;
   #disposed = false;
@@ -75,13 +89,15 @@ export class World3DView implements Disposable {
       !options?.renderer ||
       !options.scene ||
       !options.camera ||
+      (options.deferRender !== undefined && typeof options.deferRender !== 'boolean') ||
       (options.onFrameTiming !== undefined && typeof options.onFrameTiming !== 'function')
     )
       throw new World3DError('WORLD3D_INPUT_INVALID', 'view options');
     this.#options = options;
     this.renderer = options.renderer;
-    this.scene = options.scene;
-    this.camera = options.camera;
+    this.#scene = options.scene;
+    this.#camera = options.camera;
+    this.#deferRender = options.deferRender ?? false;
     this.mixers = [...(options.mixers ?? [])];
     this.controls = options.controls;
     // The Scope owns this view: closing the Scope ends ticking before the Engine closes.
@@ -94,6 +110,87 @@ export class World3DView implements Disposable {
   get isDisposed(): boolean {
     return this.#disposed;
   }
+  get scene(): Scene3D {
+    return this.#scene;
+  }
+  set scene(value: Scene3D) {
+    if (value !== this.#scene) this.clearPending();
+    this.#scene = value;
+  }
+  get camera(): Camera3D {
+    return this.#camera;
+  }
+  set camera(value: Camera3D) {
+    if (value !== this.#camera) this.clearPending();
+    this.#camera = value;
+  }
+  /** Skip animation and drawing while true; the clock subscription stays active. */
+  get paused(): boolean {
+    return this.#paused;
+  }
+  set paused(value: boolean) {
+    if (value !== this.#paused) this.clearPending();
+    this.#paused = value;
+  }
+  /** Change the submission order without resetting the Engine clock or retaining old work. */
+  get deferRender(): boolean {
+    return this.#deferRender;
+  }
+  set deferRender(value: boolean) {
+    if (typeof value !== 'boolean') throw new World3DError('WORLD3D_INPUT_INVALID', 'deferRender');
+    if (value !== this.#deferRender) this.clearPending();
+    this.#deferRender = value;
+  }
+  private clearPending(): void {
+    this.#pending = undefined;
+    this.#pendingTurn = undefined;
+  }
+  private preparePending(deltaSeconds: number, elapsedSeconds: number, started: number, updateMs: number): void {
+    const previous = this.#pending;
+    this.#pending = {
+      scene: this.scene,
+      camera: this.camera,
+      deltaSeconds: (previous?.deltaSeconds ?? 0) + deltaSeconds,
+      elapsedSeconds,
+      started: previous?.started ?? started,
+      updateMs: (previous?.updateMs ?? 0) + updateMs
+    };
+    if (this.#pendingTurn === undefined) {
+      const turn = {};
+      this.#pendingTurn = turn;
+      queueMicrotask(() => {
+        // No implicit frame request or delayed draw. A missed synchronous consumer
+        // must not replay the old view after a later event or context restoration.
+        if (this.#pendingTurn === turn) this.clearPending();
+      });
+    }
+  }
+  private reportTiming(
+    deltaSeconds: number,
+    elapsedSeconds: number,
+    started: number,
+    updateMs: number,
+    renderMs: number,
+    outcome: World3DViewTiming['outcome']
+  ): void {
+    const observer = this.#options.onFrameTiming;
+    if (observer === undefined) return;
+    const sample = Object.freeze({
+      id: ++this.#timingId,
+      elapsedSeconds,
+      deltaSeconds,
+      callbackStartMs: started,
+      callbackEndMs: performance.now(),
+      updateMs,
+      renderMs,
+      outcome
+    });
+    try {
+      observer(sample);
+    } catch {
+      /* Independent diagnostics must not stop the view. */
+    }
+  }
   /** Advance and draw one frame. Normally driven by the Engine clock. */
   tick(deltaSeconds: number, elapsedSeconds: number): void {
     if (this.#disposed || this.paused) return;
@@ -104,6 +201,9 @@ export class World3DView implements Disposable {
     let renderEnd: number | undefined;
     let updateFailureEnd: number | undefined;
     let outcome: World3DViewTiming['outcome'] = 'failed';
+    let report = true;
+    const deferredAtStart = this.#deferRender;
+    this.#updating++;
     try {
       if (options.autoResize ?? true) {
         const ratio = Math.min(typeof devicePixelRatio === 'number' ? devicePixelRatio : 1, options.maxPixelRatio ?? 2);
@@ -119,11 +219,26 @@ export class World3DView implements Disposable {
           if (object instanceof ParticleEmitter3D && object.visible) object.update(deltaSeconds);
         });
       }
+      if ((this.#deferRender || deferredAtStart) && (this.#disposed || this.paused)) {
+        report = false;
+        return;
+      }
+      if (this.#deferRender) {
+        this.preparePending(
+          deltaSeconds,
+          elapsedSeconds,
+          started,
+          observer === undefined ? 0 : performance.now() - started
+        );
+        report = false;
+        return;
+      }
       if (observer !== undefined) renderStart = performance.now();
       const accepted = this.renderer.render(this.scene, this.camera);
       if (observer !== undefined) renderEnd = performance.now();
       outcome = accepted ? 'rendered' : 'refused';
     } catch (cause) {
+      this.clearPending();
       if (observer !== undefined) {
         if (renderStart !== undefined) renderEnd = performance.now();
         else updateFailureEnd = performance.now();
@@ -131,30 +246,68 @@ export class World3DView implements Disposable {
       if (!options.onError) throw cause;
       options.onError(cause);
     } finally {
-      if (observer !== undefined) {
+      this.#updating--;
+      if (report && observer !== undefined) {
         const ended = performance.now();
-        const sample = Object.freeze({
-          id: ++this.#timingId,
-          elapsedSeconds,
+        this.reportTiming(
           deltaSeconds,
-          callbackStartMs: started,
-          callbackEndMs: ended,
-          updateMs: (renderStart ?? updateFailureEnd ?? ended) - started,
-          renderMs: renderStart === undefined ? 0 : (renderEnd ?? ended) - renderStart,
+          elapsedSeconds,
+          started,
+          (renderStart ?? updateFailureEnd ?? ended) - started,
+          renderStart === undefined ? 0 : (renderEnd ?? ended) - renderStart,
           outcome
-        });
-        try {
-          observer(sample);
-        } catch {
-          /* Independent diagnostics must not stop the view. */
-        }
+        );
       }
+    }
+  }
+  /**
+   * Consume the latest prepared draw synchronously, for example after the shared
+   * 2D submission of the same browser frame. True only when the renderer accepted it.
+   */
+  drawPending(): boolean {
+    if (this.#updating !== 0) return false;
+    const pending = this.#pending;
+    this.clearPending();
+    if (
+      !pending ||
+      !this.#deferRender ||
+      this.#disposed ||
+      this.paused ||
+      pending.scene !== this.scene ||
+      pending.camera !== this.camera
+    )
+      return false;
+    const options = this.#options;
+    const observer = options.onFrameTiming;
+    const renderStart = observer === undefined ? 0 : performance.now();
+    let renderEnd = renderStart;
+    let outcome: World3DViewTiming['outcome'] = 'failed';
+    try {
+      const accepted = this.renderer.render(pending.scene, pending.camera);
+      if (observer !== undefined) renderEnd = performance.now();
+      outcome = accepted ? 'rendered' : 'refused';
+      return accepted;
+    } catch (cause) {
+      if (observer !== undefined) renderEnd = performance.now();
+      if (!options.onError) throw cause;
+      options.onError(cause);
+      return false;
+    } finally {
+      this.reportTiming(
+        pending.deltaSeconds,
+        pending.elapsedSeconds,
+        pending.started,
+        pending.updateMs,
+        renderEnd - renderStart,
+        outcome
+      );
     }
   }
   /** Stop ticking. The renderer, scene and controls stay owned by their creator. */
   dispose(): void {
     if (this.#disposed) return;
     this.#disposed = true;
+    this.clearPending();
     this.#subscription.dispose();
   }
 }

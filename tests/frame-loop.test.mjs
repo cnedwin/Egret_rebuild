@@ -807,3 +807,210 @@ test('FL12 timing subscribers are observational and invalid options fail early',
   assert.equal(loop.state, 'running');
   loop.dispose();
 });
+
+test('afterFrame runs once after each valid display turn, including retained, backpressure and explicit retry', () => {
+  const screen = display(),
+    engine = recorder(0.05),
+    calls = [],
+    samples = [];
+  let mode = 'draw';
+  engine.renderSharedFrame = () => {
+    calls.push('draw');
+    if (mode === 'retry') throw new Error('draw fault');
+  };
+  const loop = createBrowserFrameLoop({
+    engine,
+    frame: FRAME,
+    ...screen,
+    maxStepSeconds: 0.05,
+    catchUpSeconds: 0.15,
+    update: () => calls.push('update'),
+    shouldRender: () => mode !== 'retain',
+    host: { getStatus: () => ({ pendingFrames: mode === 'busy' ? 2 : 0 }) },
+    beforeRender: () => calls.push('prepare'),
+    renderRetry: {
+      maxConsecutive: 1,
+      shouldRetry: () => {
+        calls.push('retry');
+        return true;
+      }
+    },
+    afterFrame() {
+      assert.equal(screen.waiting, false, 'the next frame is not requested before afterFrame');
+      calls.push('after');
+    },
+    onFrameTiming: sample => samples.push(sample)
+  });
+  loop.start();
+  for (const [at, next, expected] of [
+    [0, 'draw', ['update', 'prepare', 'draw', 'after']],
+    [150, 'retain', ['update', 'update', 'update', 'after']],
+    [166, 'busy', ['update', 'after']],
+    [182, 'retry', ['update', 'prepare', 'draw', 'retry', 'after']],
+    [198, 'draw', ['update', 'prepare', 'draw', 'after']]
+  ]) {
+    mode = next;
+    calls.length = 0;
+    screen.present(at);
+    assert.deepEqual(calls, expected, next);
+    assert.equal(screen.waiting, true);
+  }
+  assert.deepEqual(
+    samples.map(s => s.outcome),
+    ['rendered', 'retained', 'backpressure', 'retry', 'rendered']
+  );
+  assert.ok(samples.every(s => Number.isFinite(s.afterFrameMs) && s.afterFrameMs >= 0));
+  assert.equal(loop.snapshot().frames, 2);
+  assert.equal(loop.snapshot().recoveredRenderFailures, 1);
+  loop.dispose();
+});
+
+test('afterFrame never runs for interrupted or fatal frame paths, including render-time disposal or restart', () => {
+  for (const where of ['clock', 'update', 'wanted', 'host', 'prepare', 'frame', 'render', 'retry']) {
+    for (const operation of ['dispose', 'restart', 'throw']) {
+      const screen = display(),
+        engine = recorder(),
+        fault = new Error('fault'),
+        errors = [],
+        samples = [];
+      let loop,
+        after = 0,
+        fired = false;
+      const interrupt = stage => {
+        if (where !== stage || fired) return;
+        fired = true;
+        if (operation === 'dispose') loop.dispose();
+        else if (operation === 'restart') {
+          loop.stop();
+          loop.start();
+        } else throw fault;
+      };
+      engine.advanceTime = () => interrupt('clock');
+      engine.renderSharedFrame = () => {
+        interrupt('render');
+        if (where === 'retry') throw new Error('retry me');
+      };
+      loop = createBrowserFrameLoop({
+        engine,
+        ...screen,
+        frame: () => {
+          interrupt('frame');
+          return FRAME;
+        },
+        update: () => interrupt('update'),
+        shouldRender: () => {
+          interrupt('wanted');
+          return true;
+        },
+        host: {
+          getStatus() {
+            interrupt('host');
+            return { pendingFrames: 0 };
+          }
+        },
+        beforeRender: () => interrupt('prepare'),
+        renderRetry: {
+          maxConsecutive: 1,
+          shouldRetry: () => {
+            interrupt('retry');
+            return where === 'retry';
+          }
+        },
+        afterFrame: () => {
+          after++;
+        },
+        onError: e => errors.push(e),
+        onFrameTiming: s => samples.push(s)
+      });
+      loop.start();
+      screen.present(0);
+      assert.equal(after, 0, where + ':' + operation);
+      assert.equal(samples[0].afterFrameMs, 0);
+      assert.equal(loop.state, operation === 'dispose' ? 'closed' : operation === 'restart' ? 'running' : 'failed');
+      assert.equal(screen.waiting, operation === 'restart');
+      assert.equal(errors.length, operation === 'throw' ? 1 : 0);
+      loop.dispose();
+    }
+  }
+});
+
+test('afterFrame failures are normal loop failures and callback restart/disposal cannot leave duplicate requests', () => {
+  for (const operation of ['stop', 'dispose', 'restart', 'throw', 'restart-throw', 'dispose-throw']) {
+    const screen = display(),
+      engine = recorder(),
+      fault = new Error('afterFrame'),
+      errors = [],
+      samples = [];
+    let loop,
+      called = 0;
+    loop = createBrowserFrameLoop({
+      engine,
+      frame: FRAME,
+      ...screen,
+      afterFrame() {
+        called++;
+        if (operation.startsWith('restart')) {
+          loop.stop();
+          loop.start();
+        }
+        if (operation.startsWith('dispose')) loop.dispose();
+        if (operation === 'stop') loop.stop();
+        if (operation.includes('throw')) throw fault;
+      },
+      onError: e => errors.push(e),
+      onFrameTiming: s => samples.push(s)
+    });
+    loop.start();
+    screen.present(0);
+    assert.equal(called, 1);
+    assert.equal(
+      loop.state,
+      operation.startsWith('dispose')
+        ? 'closed'
+        : operation.includes('throw')
+          ? 'failed'
+          : operation === 'restart'
+            ? 'running'
+            : 'idle'
+    );
+    assert.equal(screen.waiting, operation === 'restart');
+    assert.equal(loop.snapshot().frames, 1, 'the preceding completed draw still counts');
+    assert.deepEqual(errors, operation.includes('throw') ? [fault] : []);
+    assert.equal(samples[0].outcome, operation.includes('throw') ? 'failed' : 'rendered');
+    assert.ok(samples[0].afterFrameMs >= 0);
+    loop.dispose();
+  }
+});
+
+test('afterFrame also follows a direct backpressure refusal; invalid options and default timing stay strict', () => {
+  const screen = display(),
+    engine = recorder(),
+    calls = [],
+    samples = [];
+  for (const afterFrame of [false, 1, null, {}])
+    assert.throws(
+      () => createBrowserFrameLoop({ engine, frame: FRAME, ...screen, afterFrame }),
+      coded('FRAME_LOOP_OPTIONS_INVALID')
+    );
+  engine.renderSharedFrame = () => {
+    throw new egret.EgretError('FRAME_RENDER_FAILED', { cause: new egret.EgretError('WEBGL2_BACKPRESSURE') });
+  };
+  let loop = createBrowserFrameLoop({
+    engine,
+    frame: FRAME,
+    ...screen,
+    afterFrame: () => calls.push('after'),
+    onFrameTiming: s => samples.push(s)
+  });
+  loop.start();
+  screen.present(0);
+  assert.deepEqual(calls, ['after']);
+  assert.equal(samples[0].outcome, 'backpressure');
+  assert.ok(samples[0].afterFrameMs >= 0);
+  loop.dispose();
+  loop = createBrowserFrameLoop({ engine: recorder(), frame: FRAME, ...screen, onFrameTiming: s => samples.push(s) });
+  loop.start();
+  screen.present(16);
+  assert.equal(Object.hasOwn(samples.at(-1), 'afterFrameMs'), false);
+  loop.dispose();
+});

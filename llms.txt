@@ -42,7 +42,7 @@ await play({
 </script>
 ```
 
-`play` makes the canvas, fills the window with it and keeps the stage's shape. Do not add a canvas, CSS or a loop. The page opens from a folder or from a server. `egret2d.js` is beside the page: it is in a release, or `node tools/pack-single-file.mjs` makes it in a checkout. In a project with modules, `import { play } from '@egret/engine/play'` is the same function.
+`play` makes the canvas, fills the window with it and keeps the stage's shape. Do not add a canvas, CSS or a loop. For a deliberately layered independent 3D canvas, use `play({ afterFrame() { ... } })` for synchronous submission after Play's 2D decision, on the same RAF. Keep updates on the normal clock; errors in the frame-end hook stop the loop. See [frame-loop ordering](knowledge-base/en/docs/frame-loop.md). The page opens from a folder or from a server. `egret2d.js` is beside the page: it is in a release, or `node tools/pack-single-file.mjs` makes it in a checkout. In a project with modules, `import { play } from '@egret/engine/play'` is the same function.
 
 ## Rules that are easy to get wrong
 

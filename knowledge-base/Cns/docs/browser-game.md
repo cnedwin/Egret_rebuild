@@ -210,3 +210,5 @@ if (cache) {
 ## 帧循环与宿主分别观测
 
 `createBrowserGame({ ..., onFrameTiming })` 转发[帧循环 CPU 计时](frame-loop.md)样本，并区分 SDK 已提交的 `submitted` 与超图像预算未绘制的 `refused`；其他结果名称不变。按需保留帧时仿真和时钟仍推进。传入 `measureSharedFrames: true` 可启用已有的有界 WebGL2 宿主阶段计时；将 `game.host` 缩窄为 WebGL2 宿主后读取 `getSharedFrameTiming()`。该报告含原生阶段和提交序号，包括提交、栅栏轮询和退役，不能解释为 GPU 执行耗时。WebGPU 不提供这个 WebGL2 专用报告。诊断选项不改变宿主准入、画质、更新频率或绘制策略。观察者应简短同步、保留有限记录。浏览器合成调度及真实呈现需单独追踪。
+
+`createBrowserGame({ ..., afterFrame })` 把同步帧末钩子转发至其自身循环。主画面决定／提交之后（包括保留画面或宿主繁忙时）执行；配置的计时样本带有 `afterFrameMs`。手动 `game.drawFrame()` 不属于浏览器循环回合。

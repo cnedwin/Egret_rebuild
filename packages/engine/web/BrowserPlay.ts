@@ -144,6 +144,8 @@ export interface PlayOptions {
   readonly update?: (seconds: number, game: PlayGame) => void;
   /** Presentation-only work after a wanted frame passes the Host pending-frame check. */
   readonly beforeRender?: BrowserGameOptions['beforeRender'];
+  /** Presentation work after Play's primary 2D submission or retention, on the same browser turn. */
+  readonly afterFrame?: BrowserGameOptions['afterFrame'];
   /** Optional bounded retry policy for render failures; does not retry the simulation update. */
   readonly renderRetry?: BrowserGameOptions['renderRetry'];
   /** Observes CPU phases and the outcome of each actual Play browser callback without changing the loop. */
@@ -919,6 +921,8 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     throw invalid("renderMode is 'continuous' or 'on-demand'");
   if (onError !== undefined && typeof onError !== 'function') throw invalid('onError is a function');
   if (onFrameTiming !== undefined && typeof onFrameTiming !== 'function') throw invalid('onFrameTiming is a function');
+  if (options.afterFrame !== undefined && typeof options.afterFrame !== 'function')
+    throw invalid('afterFrame is a function');
   const fitAsked = options.fit ?? 'contain';
   if (!['contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow', 'fixedWide'].includes(fitAsked))
     throw invalid("fit is 'contain', 'expand', 'fixedWidth', 'fixedHeight', 'fixedNarrow' or 'fixedWide'");
@@ -1108,6 +1112,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     host: baseBrowser.host,
     frame: () => baseBrowser.frame,
     ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
+    ...(options.afterFrame === undefined ? {} : { afterFrame: options.afterFrame }),
     ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),
     ...(revision === undefined
       ? {}
