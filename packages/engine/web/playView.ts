@@ -2015,7 +2015,9 @@ function intersect(points: Point[], clip: Point[]): Point[] {
   return points;
 }
 
-function visibleRect(node: DisplayObject, area: ViewRect, screen: ViewRect): ViewRect | undefined {
+/** Internal shared geometry for the projection and the screen-tool report. A screen-tool
+ * check leaves the canvas boundary unclipped so truly misplaced controls still give a finding. */
+export function clippedDisplayRect(node: DisplayObject, area: ViewRect, screen?: ViewRect): ViewRect | undefined {
   if (node.isDisposed) return undefined;
   let points = corners(area, node);
   if (points.length === 0 || !edge(points[0]!, points[1]!, points[2]!)) return undefined;
@@ -2023,7 +2025,8 @@ function visibleRect(node: DisplayObject, area: ViewRect, screen: ViewRect): Vie
     const clip = at.clipRect;
     if (clip !== undefined) points = intersect(points, corners(clip, at));
   }
-  points = intersect(points, corners({ x: 0, y: 0, width: screen.width, height: screen.height }));
+  if (screen !== undefined)
+    points = intersect(points, corners({ x: 0, y: 0, width: screen.width, height: screen.height }));
   if (points.length < 3) return undefined;
   let areaTwice = 0;
   for (let index = 1; index + 1 < points.length; index++)
@@ -2035,6 +2038,9 @@ function visibleRect(node: DisplayObject, area: ViewRect, screen: ViewRect): Vie
     y = Math.min(...ys);
   return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
 }
+
+const visibleRect = (node: DisplayObject, area: ViewRect, screen: ViewRect): ViewRect | undefined =>
+  clippedDisplayRect(node, area, screen);
 
 /** A rectangle measured from the corner of the one it is in. */
 function relative(rect: ViewRect, parent: ViewRect | undefined): ViewRect {

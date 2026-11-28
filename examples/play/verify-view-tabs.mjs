@@ -6,6 +6,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createFloatingStickServer, route } from './verify-floating-stick.mjs';
+import { readBrowserKeyboardFocus } from './keyboard-focus-probe.mjs';
 
 export async function verifyViewTabs(page) {
   const fixture = await page.evaluateHandle(async () => {
@@ -20,7 +21,11 @@ export async function verifyViewTabs(page) {
     const host = document.createElement('div');
     host.style.cssText = 'position:fixed;inset:0';
     document.body.append(host);
-    let view, projection;
+    const after = document.createElement('button');
+    after.id = 'after-play';
+    after.textContent = 'After Play';
+    document.body.append(after);
+    let view, projection, modal;
     const tab = (name, text, selected) => ({
       type: 'button',
       name,
@@ -165,6 +170,27 @@ export async function verifyViewTabs(page) {
       inspect,
       press: name => tester.press(name),
       focus: name => view.focus(name),
+      openFocusModal() {
+        modal = game.show(
+          {
+            modal: true,
+            label: 'Focus question',
+            root: {
+              type: 'panel',
+              layout: 'column',
+              width: 240,
+              height: 120,
+              anchor: 'center',
+              gap: 6,
+              children: [
+                { type: 'button', name: 'answerFirst', text: 'First answer', height: 48 },
+                { type: 'button', name: 'answerSecond', text: 'Second answer', height: 48 }
+              ]
+            }
+          },
+          { bind: { answerFirst: { tap: () => {} }, answerSecond: { tap: () => {} } }, dismiss: () => modal.close() }
+        );
+      },
       disabled(value) {
         state.gearDisabled = value;
         view.refresh();
@@ -210,6 +236,7 @@ export async function verifyViewTabs(page) {
         await game.dispose();
         semantics.dispose();
         host.remove();
+        after.remove();
       }
     };
   });
@@ -245,6 +272,52 @@ export async function verifyViewTabs(page) {
     snapshot = await read();
     selected(snapshot, 'offers', true);
     selected(snapshot, 'gear', false);
+    // The canvas remains the DOM focus owner while the engine and ARIA
+    // projection follow actual Tab/Shift+Tab. A test using activeElement alone
+    // would incorrectly count this whole sequence as one control.
+    const keyboardFocus = [];
+    async function waitProjection(name) {
+      await page.waitForFunction(
+        label => {
+          const owner = document.activeElement,
+            id = owner?.getAttribute('aria-activedescendant');
+          return (
+            owner?.tagName === 'CANVAS' &&
+            id !== null &&
+            id !== undefined &&
+            document.getElementById(id)?.getAttribute('aria-label') === label
+          );
+        },
+        name,
+        { timeout: 3000 }
+      );
+      const probe = await page.evaluate(readBrowserKeyboardFocus);
+      assert.equal(probe.kind, 'active-descendant');
+      assert.equal(probe.owner.tag, 'CANVAS');
+      assert.equal(probe.owner.role, 'application');
+      assert.equal(probe.target.name, name);
+      assert.equal(probe.target.tabIndex, '-1');
+      assert.ok(probe.visible);
+      keyboardFocus.push(probe.target.id);
+      return probe;
+    }
+    assert(await fixture.evaluate(f => f.focus('offers')));
+    const offersFocus = await waitProjection('Offers');
+    await page.keyboard.press('Tab');
+    const relicsFocus = await waitProjection('Relics');
+    assert.notEqual(relicsFocus.target.id, offersFocus.target.id);
+    await page.keyboard.press('Shift+Tab');
+    assert.equal((await waitProjection('Offers')).target.id, offersFocus.target.id);
+    await fixture.evaluate(f => f.openFocusModal());
+    const firstAnswer = await waitProjection('First answer');
+    await page.keyboard.press('Tab');
+    const secondAnswer = await waitProjection('Second answer');
+    assert.notEqual(firstAnswer.target.id, secondAnswer.target.id);
+    await page.keyboard.press('Tab');
+    assert.equal((await waitProjection('First answer')).target.id, firstAnswer.target.id, 'modal focus cycles');
+    await page.keyboard.press('Escape');
+    assert.equal((await waitProjection('Offers')).target.id, offersFocus.target.id, 'focus returns to the opener');
+
     assert(await fixture.evaluate(f => f.focus('gear')));
     await page.keyboard.press('Enter');
     await page.waitForFunction(f => f.inspect().state.page === 'gear', fixture, { timeout: 3000 });
@@ -287,7 +360,34 @@ export async function verifyViewTabs(page) {
     selected(snapshot, 'offers', false);
     selected(snapshot, 'gear', true);
     assert.deepEqual(snapshot.errors, []);
-    return { passing: true, variants, nodes: snapshot.nodes, state: snapshot.state, ordinaryRole: 'button' };
+    assert(await fixture.evaluate(f => f.focus('ordinary')));
+    await waitProjection('Ordinary');
+    await page.keyboard.press('Tab');
+    await page.waitForFunction(() => document.activeElement?.id === 'after-play');
+    const outside = await page.evaluate(readBrowserKeyboardFocus);
+    assert.equal(outside.kind, 'dom');
+    assert.equal(outside.target.id, 'after-play', 'the final stop of an embedded game releases Tab to the page');
+
+    // Negative controls keep an invalid ARIA relation from being mistaken for
+    // a second reachable control. The actual focus stays on the ordinary page button.
+    await page.evaluate(() => document.activeElement.setAttribute('aria-activedescendant', 'missing-descendant'));
+    assert.equal((await page.evaluate(readBrowserKeyboardFocus)).kind, 'invalid-active-descendant');
+    await page.evaluate(id => document.activeElement.setAttribute('aria-activedescendant', id), keyboardFocus.at(-1));
+    assert.equal(
+      (await page.evaluate(readBrowserKeyboardFocus)).kind,
+      'invalid-active-descendant',
+      'foreign projection'
+    );
+    await page.evaluate(() => document.activeElement.removeAttribute('aria-activedescendant'));
+
+    return {
+      passing: true,
+      variants,
+      nodes: snapshot.nodes,
+      state: snapshot.state,
+      ordinaryRole: 'button',
+      keyboardFocus: { activeDescendants: keyboardFocus, finalDomTarget: outside.target.id }
+    };
   } finally {
     await fixture.evaluate(f => f.dispose());
     await fixture.dispose();

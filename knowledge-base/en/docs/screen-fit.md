@@ -117,6 +117,8 @@ A `play` game also tells the tool, about four times a second, where the nodes it
 
 A control is named by its `name`, the name `onTap` was given, the name of its part in a view, or the words of its button. A node over the whole canvas, such as the backdrop of a modal view or a "tap anywhere" layer, is no control, and the controls it is drawn over are left out while it shows. The tool exits with 1 when a screen has an error. It is Chromium with stand-in insets at each phone's size and pixel ratio, not a phone: a real notch's shape, the browser's own bars and the way a phone hands its insets to the page are not checked.
 
+For Play controls in a scroll panel or another clipped ancestor, the report clips the transformed hit rectangle against every ancestor's clip polygon before taking its axis-aligned envelope. Fully clipped controls, hidden or pointer-disabled ancestor routes are omitted. A partially clipped control reports only its visible hit area; a narrow visible strip can still give a `touchTarget` warning. The report does not intersect controls with the safe area or the canvas boundary to make misplaced controls pass. The Chromium `examples/play/verify-ui.mjs ... scroll` case checks whole and partial rows, a rotated nested clip, a pointer-disabled ancestor, and preserves genuine `inSafeArea` and `apart` findings. These rectangular findings do not prove pixel-level occlusion or hardware touch behaviour.
+
 ### Check several states along a route
 
 Without a script the tool inspects the initial page, usually the title. To inspect the menus, a match or the result in the same run, add the existing verify play script:

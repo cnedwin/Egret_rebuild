@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Native view screen reports respect scroll clipping and keyboard semantics",
+    "body": "Play screen verification reports controls using their effective visible hit bounds, excluding fully clipped scroll rows while retaining partially visible, genuinely unsafe or overlapping targets. Native keyboard focus is exposed through the focused canvas's owned aria-activedescendant projection; browser verification checks real Tab navigation without moving focus to the invisible projection."
+  },
+  "zh": {
+    "title": "原生视图多屏报告遵守滚动裁切和键盘语义焦点",
+    "body": "Play 多屏检查按控件实际可见的命中边界报告，排除完全裁切的滚动行，同时保留部分可见、真正越过安全区或相交的控件。原生键盘焦点由获得焦点的画布通过其拥有的 aria-activedescendant 语义投影公布；浏览器验收检查实际 Tab 导航，不将焦点移到不可见投影层。"
+  }
+}

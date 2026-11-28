@@ -33,7 +33,7 @@ import { MUSIC_MOODS, MUSIC_PARTS, composeMusic, musicMix } from './playMusic.js
 import type { MusicOptions, MusicMood } from './playMusic.js';
 import type { PlayBar, PlayBarOptions, PlayMenuOptions, PlaySayOptions, PlayToastOptions } from './playWidgets.js';
 import { createDragAndDrop, createGestures } from './gestures.js';
-import { createPlayViews } from './playView.js';
+import { clippedDisplayRect, createPlayViews } from './playView.js';
 import type {
   PlayConfirmOptions,
   PlayHint,
@@ -1453,8 +1453,9 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
       height: r.height * down
     });
     const shows = (node: DisplayObject): boolean => {
+      if (!node.touchEnabled) return false;
       for (let at: DisplayObject | undefined = node; at !== undefined; at = at.parent)
-        if (!at.visible || at.alpha <= 0) return false;
+        if (at.isDisposed || !at.visible || at.alpha <= 0 || at.parent?.touchChildren === false) return false;
       return true;
     };
     // Each tappable node that shows, with its box on the page.
@@ -1462,23 +1463,17 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     for (const node of tappable) {
       if (node.isDisposed || !onStage(node) || !shows(node)) continue;
       const local = node.hitArea ?? node.getBounds();
-      if (!(local.width > 0 && local.height > 0)) continue;
-      const corners = [
-        node.localToGlobal(local.x, local.y),
-        node.localToGlobal(local.x + local.width, local.y + local.height)
-      ];
-      const x = Math.min(corners[0]!.x, corners[1]!.x),
-        y = Math.min(corners[0]!.y, corners[1]!.y);
+      // Reject wholly clipped rows and report only the visible portion of a
+      // partial row. Clip the transformed rectangles before deriving an envelope
+      // so a scroll panel can be scaled, reflected or rotated. Do not clip to
+      // the screen itself: a live un-clipped target outside it must still fail.
+      const hit = clippedDisplayRect(node, local);
+      if (hit === undefined) continue;
       const label = (node as { readonly label?: unknown }).label;
       seen.push({
         node,
         name: node.name || tapNames.get(node) || (label instanceof PlayText ? label.text : ''),
-        rect: page({
-          x,
-          y,
-          width: Math.abs(corners[1]!.x - corners[0]!.x),
-          height: Math.abs(corners[1]!.y - corners[0]!.y)
-        })
+        rect: page(hit)
       });
     }
     // A node over the whole canvas takes taps anywhere: the backdrop of a modal view, or "tap to go on". It is no
