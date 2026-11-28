@@ -78,8 +78,10 @@ export { createWorld3DStats } from './stats3D.js';
 export type { World3DStats, World3DStatsOptions } from './stats3D.js';
 export { createWorld3DOverlay } from './overlay3D.js';
 export type { World3DOverlay, World3DOverlayOptions, World3DOverlayStartupTiming } from './overlay3D.js';
-export { play3d, PlayThing3D, PlayLamp3D, PLAY_LOOKS_3D } from './BrowserPlay3D.js';
+export { play3d, play3dAttached, PlayThing3D, PlayLamp3D, PLAY_LOOKS_3D } from './BrowserPlay3D.js';
 export type {
+  Play3DAttachedOptions,
+  Play3DAttachedSession,
   Play3DGame,
   Play3DOptions,
   PlayBurst3D,

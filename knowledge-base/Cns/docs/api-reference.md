@@ -2,7 +2,7 @@
 
 [English](../../en/docs/api-reference.md) | 简体中文
 
-本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1520 个导出，其中 12 个在源码中还没有说明。
+本页列出 `@egret/engine` 每个入口导出的全部名字：它是什么，以及源码中写在它上方的第一句说明。说明取自源码注释，所以是英文。本页由 `node tools/api-reference.mjs` 根据构建出的类型声明生成，`tests/api-reference.test.mjs` 在它与声明不一致时失败；不要手工修改。共 48 个入口、1532 个导出，其中 19 个在源码中还没有说明。
 
 该从哪个入口导入，见[该引哪个入口](entry-points.md)。
 
@@ -808,6 +808,9 @@
 | `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
 | `play3d` | 函数 | Starts a 3D game in the page. |
+| `play3dAttached` | 函数 | Starts transparent Play above an existing 3D canvas. |
+| `Play3DAttachedOptions` | 接口 | A Play interface over a caller-configured 3D surface, sharing the Play clock and Scope. |
+| `Play3DAttachedSession` | 接口 |  |
 | `Play3DGame` | 接口 | Everything a small 3D game is given: its scene and camera, its input, and calls that make, move and light things. |
 | `Play3DOptions` | 接口 | A small 3D game to start: its setup and update, and the options of a 2D play game. |
 | `PLAY_LOOKS_3D` | 值 | The looks every game is given, by name. |
@@ -924,6 +927,9 @@
 | `OverlayScreenMarkersOptions3D` | 接口 | The native stage and the actual 3D canvas whose scene the camera projects. |
 | `pickWorld3DBackend` | 函数 | The backend asked for by the address (`backend=webgpu`), or `fallback`. |
 | `pickWorld3DQuality` | 函数 | The picture quality for this device: the address's `quality`, then a stored choice, then `low` for software rendering, a finger or a window shorter than 600 pixels, `medium` for 4 GB of memory or less, and `high` otherwise. |
+| `play3dAttached` | 函数 | Starts transparent Play above an existing 3D canvas. |
+| `Play3DAttachedOptions` | 接口 | A Play interface over a caller-configured 3D surface, sharing the Play clock and Scope. |
+| `Play3DAttachedSession` | 接口 |  |
 | `PositionalAudio3D` | 类 | A sound placed in the scene. |
 | `PositionalAudioOptions3D` | 接口 | A positional sound to make: its buffer and volume, how it fades with distance, its cone, rate, and whether it is spatial. |
 | `POST3D_LIMITS` | 值 | The most bloom levels. |
@@ -1117,10 +1123,14 @@
 | `RangeControl` | 接口 | A slider: its value and range, whether it is dragged, and calls that set or step it. |
 | `RangeControlOptions` | 接口 | A range control to make: its input and target, its axis and track, its range and step, and what it calls. |
 | `RangeKeysOptions` | 接口 | Arrow keys move the value by one step, Page Up and Page Down by a page of steps, Home and End go to its ends. |
+| `registerScreenOccluder` | 函数 | Name a genuinely painted UI face that may cover a control without taking its input. |
 | `RowBindContext` | 接口 | What binding a row is given: the record, its place, the theme and density, its scope, signal and target. |
 | `RowBinding` | 接口 | What a bound row shows, and its measured height. |
 | `RowRetention` | 接口 | A row kept bound after it leaves the viewport; release it to let it go. |
 | `RowUnbindInfo` | 接口 | A row that was unbound: its key, its binding and content versions, and why. |
+| `ScreenOccluder` | 接口 |  |
+| `ScreenOccluderOptions` | 接口 |  |
+| `ScreenOccluderRect` | 接口 |  |
 | `ScrollAxis` | 类型 | The scroll position of one axis of a clipped viewport an application draws itself. |
 | `ScrollControl` | 接口 | Scrolling along one axis: the offset and its maximum, the thumb, and calls that scroll by lines, pages or to the ends. |
 | `ScrollControlOptions` | 接口 | A scroll control to make: its axis, the lengths of its viewport and content, its wheel and thumb, and what it calls. |
@@ -1661,7 +1671,9 @@
 | `PlayOptions` | 接口 | A whole small game to start: its size and background, where it goes on the page, its setup and update, its seed, backend and save key. |
 | `PlayPin` | 接口 | A node held against the edges of the screen: `set` holds it otherwise, `dispose` lets it go. |
 | `PlayPinOptions` | 接口 | What a node is pinned to: the safe part, unless given, or the whole screen. |
-| `PlayPointer` | 接口 | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
+| `PlayPointer` | 接口 |  |
+| `PlayPointerLockOptions` | 接口 | The pointer of a play game: where it is, what it pressed, swipes, wheel and pointer lock. |
+| `PlayPointerLockResult` | 接口 |  |
 | `PlaySayOptions` | 接口 | A line of dialogue: who says it, the choices offered, its color and how fast it types. |
 | `PlaySfx` | 接口 | The sound effects of a play game: play or loop one by name, define new ones, and set the volume. |
 | `PlayStickOptions` | 接口 | A touch stick to show: where, how large, and whether it shows without touch. |

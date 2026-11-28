@@ -14,7 +14,7 @@ engine: ec17a5a22eff057b89a2926f638eb51938344459
 
 # Fit the page to a phone screen and its safe areas
 
-`play` and `play3d` fill the window. Use `fit: 'expand'` (no bars) and a `portrait` size for either orientation. Keep edge controls in `game.safe` across turns with `game.pin(node, { right: 16, top: 16 })` or arrange them from `game.safe` in `arrange(game)`; see `knowledge-base/en/docs/screen-fit.md`. For a self-laid-out page:
+`play`/`play3d`: `fit: 'expand'` fills the window; `portrait` fits turns. Pin edge controls with `game.pin(node, { right: 16, top: 16 })` or use `game.safe` in `arrange(game)` (see `knowledge-base/en/docs/screen-fit.md`). Self-laid page:
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -28,16 +28,16 @@ html, body { margin: 0; height: 100%; overflow: hidden; }
 .panel { max-height: calc(100dvh - 22px); }
 ```
 
-Later scenes: `node vendor/egret.mjs verify --screens --prepare test/prepare.mjs`; the trusted local callback asserts readiness and returns the scene name. See the screen-fit guide above.
+Later scenes: `node vendor/egret.mjs verify --screens --prepare test/prepare.mjs`; the trusted callback asserts readiness and returns the scene name.
 
 Rules:
 
-- An Egret 5 project of `scaleMode` fixedWidth, fixedHeight, fixedNarrow or fixedWide keeps it: they are values of `fit` too, and the stage then follows the window. Pixel art takes `wholeScale: true`, a whole number of device pixels a unit.
-- Size the canvas with CSS and let the view follow it. `createWorld3DView` resizes the drawing buffer when the canvas's displayed size changes; its `maxPixelRatio` defaults to 2. All three games pass 1.5, so a 3x phone does not draw nine times the CSS pixels.
+- Egret 5 `scaleMode` fixedWidth/fixedHeight/fixedNarrow/fixedWide are `fit` values; the stage follows the window. Pixel art uses `wholeScale: true` for whole device pixels per unit.
+- Size the canvas in CSS; `createWorld3DView` resizes its drawing buffer. `maxPixelRatio` defaults to 2; the games use 1.5 to limit high-DPR cost.
 - Use `100dvh`, not `100vh`: mobile address bars change the visible height.
-- Pad every edge control by `env(safe-area-inset-*)`, which a page has only with `viewport-fit=cover`. Phones in landscape put a notch or a rounded corner under the left or right HUD.
+- Pad edges using `env(safe-area-inset-*)` with `viewport-fit=cover`, including landscape notches.
 - `touch-action: none` on the play area during play only. Menus and long lists (upgrade cards, settings) keep `touch-action: pan-y` so they still scroll.
-- Plan for a short landscape screen. The measured Samsung run in FPS used an 873 × 325 CSS viewport; HUD text, cards and buttons must fit that.
-- Start low on weak devices. `createWorld3DApp` with quality `auto` picks `low` for software rendering, a touch screen or a window under 600 px tall, and `medium` for 4 GB of memory or less; `pickWorld3DQuality` gives the same choice to a game with its own renderer.
+- Keep HUD text, cards and buttons within short landscape viewports: the measured Samsung FPS run used 873 × 325 CSS pixels.
+- `createWorld3DApp` quality `auto`: low for software, touch or height < 600 px; medium for ≤ 4 GB RAM. Custom renderers use `pickWorld3DQuality`.
 - Let the player change quality and language on the title screen, and store the choice (in a `try`: private windows may refuse storage).
-- Ask for fullscreen and pointer lock only from a press, and show a way back when the browser refuses.
+- Request fullscreen and pointer lock from a trusted press; offer recovery on denial. `await game.pointer.lock({ unadjustedMovement: true })` opts into raw movement; only result status `locked` confirms ownership. `unlock()` cancels acquisition. Use `locked` for later loss and the masks for independent mouse buttons.

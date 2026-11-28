@@ -35,6 +35,6 @@ Rules:
 - Pause by itself when the tab is hidden, when fullscreen or pointer lock is lost (FPS), and when the window loses focus during real-time play. Never resume by itself; wait for a press.
 - Decide what a hold means across an overlay. Every hold ends when focus is lost. For an overlay inside the game (a choice page, an inventory), either keep holds so movement goes on when it closes (SnowTemple) or ask for a fresh press. Never let a press from before the menu count as new on resume.
 - Listen for releases on the window in the capture phase; a finger or button lifted over the dialog must still end its hold.
-- A dialog takes focus when it opens (`aria-modal`, its first choice focused), keeps Tab inside and gives focus back to where it was on close. While it is open, the game's keys do nothing.
+- A dialog (`aria-modal`) focuses its first choice, keeps Tab inside and restores focus on close. Scope gameplay shortcuts with `const release = game.keys.claim('Tab', () => playing)`; a false predicate preserves native menu/page navigation. Native modals take priority; call release to unregister.
 - Hold sound and simulation together: pause the music with the game, and do not count paused time towards timers or scores.
 - Test it in Node: open an overlay mid-hold, release over it, close it, and check the next step's input. SnowTemple does this in `test/input-quality.test.mjs`.

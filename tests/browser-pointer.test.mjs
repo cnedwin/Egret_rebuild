@@ -137,6 +137,9 @@ function controlledBrowser() {
     get visibilityState() {
       return read(values, this, 'visibilityState');
     }
+    get pointerLockElement() {
+      return read(values, this, 'pointerLockElement');
+    }
   }
   class Window extends Target {
     getComputedStyle(element) {
@@ -213,7 +216,8 @@ function controlledBrowser() {
     ownerDocument: null,
     parentNode: null,
     defaultView: window,
-    visibilityState: 'visible'
+    visibilityState: 'visible',
+    pointerLockElement: null
   });
   for (const [element, ancestor] of [
     [html, document],
@@ -283,6 +287,14 @@ function controlledBrowser() {
     },
     css(element, name, value) {
       values.get(element).computedStyle.setProperty(name, value);
+    },
+    lock() {
+      values.get(document).pointerLockElement = canvas;
+      emit(document, 'pointerlockchange');
+    },
+    unlock() {
+      values.get(document).pointerLockElement = null;
+      emit(document, 'pointerlockchange');
     },
     hidden() {
       values.get(document).visibilityState = 'hidden';
@@ -691,3 +703,46 @@ test('MP browser listener acquisition preserves first failure when compensating 
     },
     { create: false }
   ));
+
+test('MP browser keeps a logical mouse contact while its canvas owns pointer lock', async () =>
+  fixture(f => {
+    f.browser.lock();
+    f.browser.hooks.capture = () => {
+      throw Error('native capture is forbidden under pointer lock');
+    };
+    f.browser.emit(f.browser.canvas, 'pointerdown', { pointerType: 'mouse', pointerId: 20, buttons: 1 });
+    assert.equal(f.input.state, 'active');
+    assert.equal(f.input.contacts.length, 1);
+    assert.equal(f.browser.captures.size, 0);
+    f.browser.emit(f.browser.window, 'pointermove', { pointerType: 'mouse', pointerId: 20, buttons: 3 });
+    assert.equal(f.notifications.at(-1).contact.buttons, 3);
+    f.browser.emit(f.browser.canvas, 'lostpointercapture', { pointerType: 'mouse', pointerId: 20 });
+    assert.equal(f.input.contacts.length, 1, 'a logical owner never requested native capture');
+    f.browser.emit(f.browser.window, 'pointerup', { pointerType: 'mouse', pointerId: 20, buttons: 0 });
+    assert.equal(f.notifications.at(-1).kind, 'end');
+    assert.equal(f.input.contacts.length, 0);
+    assert.deepEqual(f.diagnostics, []);
+  }));
+
+test('MP browser lock transitions retire only the mouse owner and leave independent touch contacts', async () =>
+  fixture(f => {
+    f.browser.emit(f.browser.canvas, 'pointerdown', { pointerType: 'mouse', pointerId: 20, buttons: 1 });
+    f.browser.emit(f.browser.canvas, 'pointerdown', { pointerType: 'touch', pointerId: 21, buttons: 1 });
+    assert.deepEqual([...f.browser.captures], [20, 21]);
+    f.browser.lock();
+    assert.deepEqual(
+      f.input.contacts.map(c => c.session.pointerId),
+      [21]
+    );
+    assert.equal(f.notifications.at(-1).reason, 'lostcapture');
+    assert.deepEqual([...f.browser.captures], [21]);
+    f.browser.emit(f.browser.canvas, 'pointerdown', { pointerType: 'mouse', pointerId: 20, buttons: 1 });
+    assert.equal(f.input.contacts.length, 2);
+    f.browser.unlock();
+    assert.deepEqual(
+      f.input.contacts.map(c => c.session.pointerId),
+      [21]
+    );
+    assert.equal(f.notifications.at(-1).reason, 'lostcapture');
+    assert.deepEqual(f.diagnostics, []);
+  }));
