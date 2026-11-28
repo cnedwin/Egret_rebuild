@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Render local hit lights and moon shadows in the Android World3D player",
+    "body": "Packaged games can use an exponential fog, direct point lights and one directional shadow map with skinned casters. The Snow Temple example follows an original combat hit on both Android GLES3 and browser WebGL2."
+  },
+  "zh": {
+    "title": "Android 原生三维播放器支持命中点光与月光投影",
+    "body": "打包游戏可使用指数雾、直接点光和一张支持蒙皮角色的方向光阴影图。草料场示例可在 Android GLES3 与浏览器 WebGL2 上对照原作的一次真实战斗命中。"
+  }
+}

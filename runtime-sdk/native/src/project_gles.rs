@@ -145,9 +145,11 @@ impl ProjectPipeline {
     pub(crate) unsafe fn render(&mut self, header: &Header, physical: [u32; 2], vao: u32,
                                 pages: &[u32; PAGE_SLOTS], world_pages: &[u32; PAGE_SLOTS], data_pages: &[u32; PAGE_SLOTS], batches: &[Batch], world: Option<&WorldFrame<'_>>,
                                 mut pending: PendingMeshes) -> bool {
-        let Some((required, maximum)) = crate::project_target_budget::capacity(
-            physical, world.is_some(), &header.effects, batches
+        let shadow_size = world.map_or(0, |scene| scene.lighting.shadow_size);
+        let Some((required, maximum)) = crate::project_target_budget::capacity_with_shadow(
+            physical, world.is_some(), shadow_size, &header.effects, batches
         ) else { return false; };
+        if let Some(pipeline) = &mut self.world { pipeline.trim_shadow(shadow_size); }
         if self.physical != physical { self.effects.trim(0); }
         else { self.effects.trim(maximum); }
         if !self.resize(physical, world.is_some()) || !self.effects.prepare(physical,required) { return false; }
@@ -166,7 +168,7 @@ impl ProjectPipeline {
         if let Some(scene) = world {
             let Some(pipeline) = &mut self.world else { return false; };
             glClear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
-            if !pipeline.draw(scene, pages[0], world_pages, data_pages, &mut pending) { return false; }
+            if !pipeline.draw(scene, pages[0], world_pages, data_pages, &mut pending, self.target, physical) { return false; }
         } else {
             glClear(COLOR_BUFFER_BIT);
         }

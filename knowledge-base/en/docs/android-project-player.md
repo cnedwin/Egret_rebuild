@@ -281,7 +281,7 @@ node --test runtime-sdk/project/large-glb.test.mjs
 
 Use a trimmed arm64 V8 AAR and the external test signing settings described above. In the installed game, `adb shell dumpsys activity org.example.terrain/org.egret.example.LibraryActivity` reports the player counters. After closing the view, `projectClose` includes `canceledAt`, `loadedBytes`, `imports`, `retirements` and `pagesReleased`.
 
-On the Fold7, both successful imports consumed the entire model. Removing it changed 218,886 pixels across 649,904 sampled surface pixels. Reloading reproduced the initial pixels exactly. Closing returned both pages and left zero resident pages. This is the large-GLB resource acceptance for #393. The Snow Temple lighting, shadows, effects and matched frame presentation have separate acceptance criteria. [Device record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-terrain-glb.json)
+On the Fold7, both successful imports consumed the entire model. Removing it changed 218,886 pixels across 649,904 sampled surface pixels. Reloading reproduced the initial pixels exactly. Closing returned both pages and left zero resident pages. For the companion character-lighting and frame-presentation comparison, see [Snow Temple yard lighting](#snow-temple-yard-lighting). [Device record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-terrain-glb.json)
 
 ### Race a textured GLB kart on Android
 
@@ -382,6 +382,38 @@ node out/snowtemple-gate/check-temple-gate.mjs
 Tap **Advance & fight** to approach and engage the enemies. Each manual page pauses the fight until you choose a technique. Defeating every member of the second party opens the yard gate. Lin Chong then walks through the doorway. When he crosses into the forecourt alive, the barrier closes behind him and Lu Qian speaks. The two parties and the meeting share one game instance, including health, techniques, inventory and drops. The earlier `--encounters` profile remains available to play the yard on its own.
 
 On one Galaxy Z Fold7, Chrome WebGL2 and the signed trimmed-V8 GLES3 APK received the same touch sequence. After both yard parties fell, Lin Chong had 120 HP, 99 coins and the chosen technique. The gate opened at simulation tick 2328. On the walk he collected a coin drop. He crossed into the forecourt with 120 HP and 103 coins. The barrier closed behind him, the active brazier checkpoint carried over and Lu Qian’s 5.2-second meeting began. After combat resumed, the first spear hit reduced Lu Qian from 980 to 967 HP. Both hosts matched all 41 damage events through that hit. The second manual page stayed on the ground on the Fold7 route. In the Windows Node rule check Lin Chong picked it up. The check follows the choices actually offered. [Fold7 record](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-temple-gate.json)
+
+### Snow Temple yard lighting
+
+Use this scene to check a skinned character casting a moonlit shadow and a point light reacting to a real hit. The game revision is `4172514ea4369fd9aaf433403423340e8db072ee`. The preparer checks the source files, extracts the original cart, braziers and terrain along the playable route, and keeps the five character GLBs, combat rules and attribution from the temple-gate example. The game files come from a separate checkout. [Game source and credits](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+Build the engine and arm64 AAR from the same checkout. Start with fresh output directories and the external signing settings above. The second preparation command creates a browser copy that imports the engine just built. `out/snow-lit/browser.html` retains the game's bundled browser reference.
+
+```sh
+pnpm run build
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snow-lit --lit-temple
+node runtime-sdk/examples/snowtemple/prepare-matched-browser.mjs out/snow-lit out/snow-matched
+node runtime-sdk/android/player/create-app.mjs --project out/snow-matched --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.snowyard --layout standalone --out out/snow-app
+gradle -p out/snow-app assembleRelease
+python -m http.server 8000 --bind 127.0.0.1 --directory out/snow-matched
+```
+
+With the server running, use `adb reverse tcp:8000 tcp:8000` and open `http://127.0.0.1:8000/browser.html` in Chrome on the phone. Install the Release APK from `out/snow-app/build/outputs/apk/release/` on the same phone. In each host, start a new run, tap **Before hit**, then **Hit/step**. The game advances from tick 422 to 423. Lin Chong deals 13 damage and the swordsman has 71 HP. Toggle **Shadows** and **Hit light** separately, restoring each before the next comparison. **Play** resumes the fight.
+
+For the medium-quality moon shadow, return `{scene, camera, shadows: {mapSize: 1024}}` from `world3D()`. Enable `castShadow` on the directional light and casting meshes, and `receiveShadow` on receivers. The scene uses ambient and hemisphere lighting, exponential fog, the six nearest yard lamps and up to two brief impact lights. A non-fire hit also brightens the target material. This native profile supports a single directional shadow map and up to eight direct point lights. The terrain preserves the source positions, normals and vertex colors with a Standard material. The custom ground-detail shader, impact rings, debris, weather and screen-space post-processing are outside this comparison.
+
+On one Galaxy Z Fold7 at 768 × 432, the browser and APK produced the same held hit and bone-palette hash (`bb05cf67`). With the moon still lit, switching off its shadow brightened 1,391 of 5,687 pixels near the actors' feet in Chrome WebGL2 and 1,371 in trimmed V8/GLES3. Switching on the hit light brightened 10,769 of 11,340 pixels around the impact in Chrome and 10,665 in the APK. These counts require a change of at least 3/255 in one RGB channel. Each host reproduced its own 191,521-pixel scene region exactly after both toggles were restored. The APK also restored that region exactly after backgrounding. [Fold7 measurements, pixel regions and timing boundaries](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-lit-yard.json)
+
+On the Fold7, the first visible game scene appeared 539–915 ms after native process start. With Chrome already running and its HTTP cache disabled, the same scene appeared 2,752–3,168 ms after navigation. The bounds come from the device compositor and two consecutive matching screen captures.
+
+After 30 warm-up frames, the native player recorded 180 combat samples. The p95 times were 2.947 ms for V8 command generation, 0.201 ms for the packet copy and 0.860 ms for the GLES CPU draw call. In Chrome WebGL2 the p95 game update took 1.0 ms and the renderer returned in 1.6 ms. The browser calls WebGL directly. SurfaceFlinger recorded p95 display intervals of 8.288 ms for the APK (178 intervals) and 16.578 ms for Chrome (220 intervals). Separate GPU execution time was unavailable. The sample windows and startup conditions are documented in the device record above.
+
+| Script host | Signed arm64 Release APK | Player AAR |
+| --- | ---: | ---: |
+| System WebView | 5,695,551 bytes (5.43 MiB) | 819,876 bytes |
+| Trimmed V8 | 68,336,517 bytes (65.17 MiB) | 17,611,005 bytes |
+
+Both APKs used the same game script and local test signer. Use trimmed V8 to ship a fixed JavaScript runtime independently of the device's WebView. For a smaller download, choose System WebView after testing the game against the WebView versions your players use. Both script hosts draw through Rust/GLES3. The Fold7 comparison above ran the trimmed-V8 APK and Chrome WebGL2. [Host selection and Android requirements](android-project-player-v8.md)
 
 ### Resident geometry in live Android frames
 

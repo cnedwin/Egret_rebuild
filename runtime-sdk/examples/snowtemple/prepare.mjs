@@ -2,6 +2,7 @@
 // Only the adapter belongs to the SDK. The game owner's unmodified model, motion
 // capture, rules and equipment are staged locally from the pinned browser game.
 import { createHash } from 'node:crypto';
+import { prepareLitYard } from './prepare-yard.mjs';
 import { cp, mkdir, mkdtemp, readFile, writeFile, rename, rm, lstat, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,11 +10,12 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const [input, output, mode] = process.argv.slice(2);
 const duel = mode === '--duel';
-const temple = mode === '--temple-gate';
+const litTemple = mode === '--lit-temple';
+const temple = mode === '--temple-gate' || litTemple;
 const encounters = mode === '--encounters' || temple;
 const yard = mode === '--yard' || duel || encounters;
 if (!input || !output || process.argv.length !== (yard ? 5 : 4))
-  throw new Error('Usage: node prepare.mjs <PortedGamesEgret/SnowTemple> <new-directory> [--yard | --duel | --encounters | --temple-gate]');
+  throw new Error('Usage: node prepare.mjs <PortedGamesEgret/SnowTemple> <new-directory> [--yard | --duel | --encounters | --temple-gate | --lit-temple]');
 const source = path.resolve(input), destination = path.resolve(output);
 try {
   await lstat(destination);
@@ -141,6 +143,13 @@ try {
   const html = await readFile(path.join(tmp, 'browser.html'), 'utf8');
   await writeFile(path.join(tmp, 'browser.html'), html.replace('<!-- GAME_IMPORT_MAP -->',
     '<script type="importmap">' + importMap.toString().replaceAll('<', '\\u003c') + '</script>'));
+  if (litTemple) {
+    const sizes = await prepareLitYard({ source, temporary: tmp, adapter: here });
+    const project = JSON.parse(await readFile(path.join(tmp, 'project.json'), 'utf8'));
+    project.assets.push(...Object.keys(sizes));
+    await writeFile(path.join(tmp, 'project.json'), JSON.stringify(project, null, 2) + '\n');
+    await writeFile(path.join(tmp, 'equipment-sizes.mjs'), 'export default ' + JSON.stringify({ ...lengths, ...sizes }) + ';\n');
+  }
   await rename(tmp, destination);
 } finally {
   await rm(tmp, { recursive: true, force: true });

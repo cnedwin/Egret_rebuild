@@ -6,16 +6,24 @@ const WORKING_SET_BYTES: u64 = 64 * 1024 * 1024;
 
 /// Return the required and maximum cacheable auxiliary color planes. After the last
 /// child has finished, its slot can be reused as scratch for the enclosing group.
-pub(crate) fn capacity(
+#[cfg(test)]
+fn capacity(
     physical: [u32; 2],
     world_depth: bool,
     effects: &[ProjectEffect],
     batches: &[Batch],
 ) -> Option<(usize, usize)> {
+    capacity_with_shadow(physical, world_depth, 0, effects, batches)
+}
+
+pub(crate) fn capacity_with_shadow(
+    physical: [u32; 2], world_depth: bool, shadow_size: u32, effects: &[ProjectEffect], batches: &[Batch],
+) -> Option<(usize, usize)> {
+    let depth_bytes = u64::from(shadow_size).checked_mul(u64::from(shadow_size))?.checked_mul(4)?;
     let plane_bytes = u64::from(physical[0])
         .checked_mul(u64::from(physical[1]))?
         .checked_mul(4)?;
-    let available = (WORKING_SET_BYTES.checked_div(plane_bytes)? as usize)
+    let available = (WORKING_SET_BYTES.checked_sub(depth_bytes)?.checked_div(plane_bytes)? as usize)
         .checked_sub(1 + usize::from(world_depth))?;
     let (mut active, mut needed) = (0usize, 0usize);
     if !effects.is_empty() {
@@ -88,6 +96,11 @@ mod tests {
             capacity([2048, 2048], false, &inside_blurred, &batches),
             Some((3, 3))
         );
+    }
+    #[test]
+    fn directional_shadow_reserves_depth_before_admitting_targets() {
+        assert_eq!(capacity_with_shadow([2048,2048], true, 2048, &[], &[]), Some((0,1)));
+        assert_eq!(capacity_with_shadow([4096,2048], true, 64, &[], &[]), None);
     }
     #[test]
     fn ordinary_frames_and_zero_surfaces_keep_the_original_limits() {

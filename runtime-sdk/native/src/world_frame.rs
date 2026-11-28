@@ -2,6 +2,9 @@
 //! E3D1/2 are self-contained. E3D3/4 add a confirmed predecessor and send
 //! only the changed definitions, with a complete visible draw list and overlay.
 use std::collections::{BTreeMap, BTreeSet};
+#[path = "world_lighting.rs"]
+pub(crate) mod lighting;
+use lighting::Lighting;
 
 pub(crate) const MAGIC: u32 = u32::from_le_bytes(*b"E3D1");
 pub(crate) const TEXTURED_MAGIC: u32 = u32::from_le_bytes(*b"E3D2");
@@ -34,6 +37,7 @@ pub(crate) struct Draw {
     pub geometry: u32,
     pub page: usize,
     pub double_sided: bool,
+    pub lighting_policy: u8,
     pub vertex_colors: bool,
     pub normal_page: usize,
     pub metal_rough_page: usize,
@@ -62,6 +66,7 @@ pub(crate) struct WorldFrame<'a> {
     pub sky: [f32; 3],
     pub ground: [f32; 3],
     pub ambient: [f32; 3],
+    pub lighting: Lighting,
     pub geometry: Vec<Geometry<'a>>,
     pub draws: Vec<Draw>,
     pub overlay: &'a [u8],
@@ -267,7 +272,9 @@ impl<'a> WorldFrame<'a> {
             _ => return None,
         };
         let geometry_count = word(bytes, 12) as usize;
-        let draw_count = word(bytes, 16) as usize;
+        let counts = word(bytes, 16);
+        let draw_count = (counts & 0xffff) as usize;
+        let lighting_bytes = (counts >> 16) as usize;
         let clear = word(bytes, 20).to_be_bytes();
         if geometry_count > MAX_GEOMETRIES || draw_count > crate::frame::MAX_QUADS || clear[3] != 255 {
             return None;
@@ -279,7 +286,9 @@ impl<'a> WorldFrame<'a> {
             || word(overlay, 4) != word(bytes, 4) || word(overlay, 16) & 255 != 0 {
             return None;
         }
-        let draw_offset = hud_offset.checked_sub(draw_count * draw_bytes)?;
+        let draw_end = hud_offset.checked_sub(lighting_bytes)?;
+        let (lighting, policies) = Lighting::parse(&bytes[draw_end..hud_offset], draw_count)?;
+        let draw_offset = draw_end.checked_sub(draw_count * draw_bytes)?;
         let mut rest = bytes.get(FRAME_HEADER..draw_offset)?;
         let id = word(bytes, 4);
         let base = if matches!(magic, DELTA_MAGIC | TEXTURED_DELTA_MAGIC | SKIN_DELTA_MAGIC) {
@@ -322,7 +331,7 @@ impl<'a> WorldFrame<'a> {
         let (defined, geometry) = geometry_list(rest, geometry_count, stride)?;
         let mut live_ids = BTreeSet::new();
         let mut draws = Vec::with_capacity(draw_count);
-        for d in bytes[draw_offset..hud_offset].chunks_exact(draw_bytes) {
+        for (index, d) in bytes[draw_offset..draw_end].chunks_exact(draw_bytes).enumerate() {
             let geometry_id = word(d, 0);
             let albedo = radiance(d, 68)?;
             let [roughness, metallic] = floats(d, 80)?;
@@ -338,7 +347,7 @@ impl<'a> WorldFrame<'a> {
             } else { (0, 0, 0, [1.; 2]) };
             if [page, normal_page, metal_rough_page].into_iter().any(|p| p >= crate::frame::PAGE_SLOTS)
                 || flags > (if stride == SKIN_STRIDE { 3 } else { 1 }) || palette > palettes.len() { return None; }
-            draws.push(Draw { geometry: geometry_id, page, double_sided: flags & 1 != 0, vertex_colors: flags & 2 != 0,
+            draws.push(Draw { geometry: geometry_id, page, lighting_policy: policies.get(index).copied().unwrap_or(0), double_sided: flags & 1 != 0, vertex_colors: flags & 2 != 0,
                 emissive: if stride == SKIN_STRIDE { radiance(d, 116)? } else { [0.; 3] },
                 metal_rough_page, normal_page, normal_scale, palette: palette.checked_sub(1),
                 world: floats(d, 4)?, albedo, roughness, metallic });
@@ -349,7 +358,7 @@ impl<'a> WorldFrame<'a> {
             if !defined.is_subset(&live_ids) { return None; }
         } else { live_ids = defined; }
         Some(Self {
-            id, base, format, batches, live_ids, palettes, pose_bytes,
+            id, base, format, batches, live_ids, palettes, pose_bytes: pose_bytes + lighting_bytes, lighting,
             clear, view_projection: floats(bytes, 24)?, eye: floats(bytes, 88)?, to_sun: floats(bytes, 100)?,
             sun: radiance(bytes, 112)?, sky: radiance(bytes, 124)?, ground: radiance(bytes, 136)?,
             ambient: radiance(bytes, 148)?, geometry, draws, overlay,
@@ -383,6 +392,32 @@ mod tests {
         for i in [0x32524745u32, 38, 960, 540, 0, 0] { bytes.extend(i.to_le_bytes()); }
         bytes
     }
+    #[test]
+    fn frame_owns_the_matching_light_payload_and_keeps_its_hud_offset() {
+        let mut packet = fixture();
+        let hud = packet.split_off(packet.len() - 24);
+        let start = packet.len();
+        packet.resize(start + 160, 0);
+        set(&mut packet, 16, (160 << 16) | 2);
+        packet[start..start+4].copy_from_slice(b"LIT1");
+        set(&mut packet, start + 4, 1);
+        set(&mut packet, start + 8, 1024);
+        set(&mut packet, start + 140, 8f32.to_bits());
+        packet[start + 156] = 7;
+        packet[start + 157] = 9;
+        packet.extend_from_slice(&hud);
+        let frame = WorldFrame::parse(&packet).unwrap();
+        assert_eq!(frame.overlay, &hud);
+        assert!(frame.lighting.enabled);
+        assert_eq!(frame.draws[0].lighting_policy, 7);
+        assert_eq!(frame.draws[1].lighting_policy, 9);
+        for [declared, count] in [[159,2], [160,1], [0xffff,2], [160,0xffff]] {
+            let mut bad = packet.clone();
+            set(&mut bad, 16, (declared << 16) | count);
+            assert!(WorldFrame::parse(&bad).is_none());
+        }
+    }
+
     #[test]
     fn textured_packet_preserves_uv_page_and_face_mode_and_rejects_corrupt_records() {
         let source = fixture();
