@@ -12,7 +12,10 @@ interface Pending {
 }
 
 /** Optional budget between display frames; a single Canvas operation cannot be interrupted. */
-export function createBrowserTextWork(budgetMs: number): { schedule: CanvasWorkSchedule; dispose(): void } {
+export function createBrowserTextWork(
+  budgetMs: number,
+  budgetWhen?: () => boolean
+): { schedule: CanvasWorkSchedule; dispose(): void } {
   const queue: Pending[] = [];
   let spent = 0,
     count = 0,
@@ -72,7 +75,17 @@ export function createBrowserTextWork(budgetMs: number): { schedule: CanvasWorkS
     new Promise<Awaited<T>>((resolve, reject) => {
       if (closed) return reject(new EgretError('SCOPE_CLOSED'));
       if (signal.aborted) return reject(new EgretError('WEB_TEXT_CANCELLED', { cause: signal.reason }));
-      if (queue.length >= maxQueued) return reject(new EgretError('TEXT_CACHE_BUDGET'));
+      // Decide at admission only. Switching the policy cannot accelerate an old queued job.
+      let paced = true;
+      if (budgetWhen !== undefined) {
+        const decision = budgetWhen();
+        if (typeof decision !== 'boolean') return reject(new EgretError('BROWSER_GAME_OPTIONS_INVALID'));
+        // The application's callback can synchronously cancel the request or dispose the host.
+        if (closed) return reject(new EgretError('SCOPE_CLOSED'));
+        if (signal.aborted) return reject(new EgretError('WEB_TEXT_CANCELLED', { cause: signal.reason }));
+        paced = decision;
+      }
+      if (paced && queue.length >= maxQueued) return reject(new EgretError('TEXT_CACHE_BUDGET'));
       let pending = true;
       const retire = (): boolean => {
         if (!pending) return false;
@@ -89,6 +102,7 @@ export function createBrowserTextWork(budgetMs: number): { schedule: CanvasWorkS
         start() {
           if (!retire()) return;
           try {
+            if (closed) return reject(new EgretError('SCOPE_CLOSED'));
             if (signal.aborted) return reject(new EgretError('WEB_TEXT_CANCELLED', { cause: signal.reason }));
             void Promise.resolve(job()).then(resolve, reject);
           } catch (cause) {
@@ -114,8 +128,16 @@ export function createBrowserTextWork(budgetMs: number): { schedule: CanvasWorkS
           abort();
           return;
         }
-        queue.push(entry);
-        drain();
+        if (closed) {
+          entry.cancel(new EgretError('SCOPE_CLOSED'));
+          return;
+        }
+        if (paced) {
+          queue.push(entry);
+          drain();
+        } else {
+          entry.start();
+        }
       } catch (cause) {
         const at = queue.indexOf(entry);
         if (at >= 0) queue.splice(at, 1);

@@ -153,6 +153,8 @@ export interface PlayOptions {
   readonly renderMode?: 'continuous' | 'on-demand';
   /** Opt-in budget for Canvas label and paragraph work; omitted keeps the existing immediate path. */
   readonly textWorkBudgetMs?: number;
+  /** With a text budget, pace new Canvas jobs only while this predicate returns true. */
+  readonly textWorkBudgetWhen?: () => boolean;
   /** Told of what stopped the game. Without it the failure is thrown where the console shows it. */
   readonly onError?: (error: unknown) => void;
   /**
@@ -1021,6 +1023,7 @@ export async function play(options: PlayOptions): Promise<PlayGame> {
     ...(options.insets === undefined ? {} : { insets: options.insets }),
     ...(options.backend === undefined ? {} : { backend: options.backend }),
     ...(options.textWorkBudgetMs === undefined ? {} : { textWorkBudgetMs: options.textWorkBudgetMs }),
+    ...(options.textWorkBudgetWhen === undefined ? {} : { textWorkBudgetWhen: options.textWorkBudgetWhen }),
     pixelRatio: playDensity,
     ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
     ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),

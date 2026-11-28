@@ -12,7 +12,7 @@ import { glPorts } from './fixtures/gl-shared-rendering.mjs';
 import { realm } from './canvas-text-provider-double-helpers.mjs';
 
 const flush = () => new Promise(resolve => setImmediate(resolve));
-async function fixture(t, budget) {
+async function fixture(t, budget, when) {
   const frames = new Map();
   let handle = 0,
     time = 0;
@@ -71,7 +71,8 @@ async function fixture(t, budget) {
     autoStart: false,
     pointer: false,
     keyboard: false,
-    ...(budget === undefined ? {} : { textWorkBudgetMs: budget })
+    ...(budget === undefined ? {} : { textWorkBudgetMs: budget }),
+    ...(when === undefined ? {} : { textWorkBudgetWhen: when })
   });
   return {
     game,
@@ -136,6 +137,133 @@ test('opt-in browser text scheduling uses a real frame boundary, FIFO, cancellat
   } finally {
     await g.dispose();
   }
+});
+
+test('a predicate only changes new work admission, leaving earlier queued jobs within the original budget', async t => {
+  let paced = false,
+    decisions = 0;
+  const f = await fixture(t, 4, () => {
+      decisions++;
+      return paced;
+    }),
+    g = f.game,
+    signal = new AbortController().signal,
+    ran = [];
+  const put = (name, owner = signal) =>
+    g.scheduleTextWork(() => {
+      ran.push(name);
+      f.advance(4);
+      return name;
+    }, owner);
+  try {
+    const one = put('one'),
+      two = put('two');
+    assert.deepEqual(ran, ['one', 'two'], 'ordinary labels start without waiting for a frame');
+    assert.equal(f.frames.size, 0);
+    paced = true;
+    const a = put('budgeted-a'),
+      b = put('budgeted-b');
+    const owner = new AbortController(),
+      dropped = assert.rejects(put('cancelled', owner.signal), { code: 'WEB_TEXT_CANCELLED' });
+    assert.deepEqual(ran, ['one', 'two', 'budgeted-a']);
+    paced = false;
+    const outside = put('prompt-modal');
+    assert.deepEqual(
+      ran,
+      ['one', 'two', 'budgeted-a', 'prompt-modal'],
+      'new immediate work never drains the old queue'
+    );
+    owner.abort();
+    await dropped;
+    assert.equal(await outside, 'prompt-modal');
+    paced = true;
+    const d = put('budgeted-d');
+    assert.deepEqual(ran, ['one', 'two', 'budgeted-a', 'prompt-modal']);
+    paced = false;
+    f.step();
+    assert.equal(await b, 'budgeted-b');
+    assert(!ran.includes('budgeted-d'), 'old admitted work still obeys budget even when predicate is now false');
+    f.step();
+    assert.equal(await d, 'budgeted-d');
+    assert.deepEqual(await Promise.all([one, two, a]), ['one', 'two', 'budgeted-a']);
+    assert.equal(decisions, 7);
+  } finally {
+    await g.dispose();
+  }
+});
+
+test('inactive predicate path refuses cancelled, disposed and invalid work without running jobs', async t => {
+  const owner = new AbortController();
+  let behavior = 'normal',
+    decisions = 0,
+    g;
+  const f = await fixture(t, 4, () => {
+    decisions++;
+    if (behavior === 'abort') owner.abort('during predicate');
+    if (behavior === 'throw') throw Error('predicate failed');
+    if (behavior === 'invalid') return undefined;
+    return false;
+  });
+  g = f.game;
+  const signal = new AbortController().signal;
+  try {
+    behavior = 'abort';
+    await assert.rejects(
+      g.scheduleTextWork(() => assert.fail('cancelled job ran'), owner.signal),
+      { code: 'WEB_TEXT_CANCELLED' }
+    );
+    const before = decisions;
+    await assert.rejects(
+      g.scheduleTextWork(() => assert.fail('pre-cancelled job ran'), owner.signal),
+      { code: 'WEB_TEXT_CANCELLED' }
+    );
+    assert.equal(decisions, before);
+    behavior = 'throw';
+    await assert.rejects(
+      g.scheduleTextWork(() => assert.fail('throwing predicate ran job'), signal),
+      /predicate failed/
+    );
+    behavior = 'invalid';
+    await assert.rejects(
+      g.scheduleTextWork(() => assert.fail('invalid predicate ran job'), signal),
+      { code: 'BROWSER_GAME_OPTIONS_INVALID' }
+    );
+    behavior = 'normal';
+    const broken = {
+      aborted: false,
+      reason: undefined,
+      addEventListener() {
+        throw Error('cannot subscribe');
+      },
+      removeEventListener() {}
+    };
+    await assert.rejects(
+      g.scheduleTextWork(() => assert.fail('broken signal ran'), broken),
+      /cannot subscribe/
+    );
+    assert.equal(await g.scheduleTextWork(() => 9, signal), 9);
+    const snapshot = decisions;
+    await g.dispose();
+    await assert.rejects(
+      g.scheduleTextWork(() => assert.fail('disposed job ran'), signal),
+      { code: 'SCOPE_CLOSED' }
+    );
+    assert.equal(decisions, snapshot);
+  } finally {
+    await g.dispose();
+  }
+});
+
+for (const when of [null, false, 1, 'yes'])
+  test('invalid text budget predicate ' + String(when) + ' is refused', async t => {
+    await assert.rejects(fixture(t, 4, when), { code: 'BROWSER_GAME_OPTIONS_INVALID' });
+  });
+
+test('a text budget predicate requires an actual numeric budget', async t => {
+  await assert.rejects(
+    fixture(t, undefined, () => true),
+    { code: 'BROWSER_GAME_OPTIONS_INVALID' }
+  );
 });
 
 test('the public queue is bounded and malformed signal listener retirement settles the caller', async t => {

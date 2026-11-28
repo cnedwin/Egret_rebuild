@@ -229,6 +229,8 @@ export interface BrowserGameOptions {
   readonly renderMode?: BrowserGameRenderMode;
   /** Opt-in Canvas text work budget (milliseconds between display frames, > 0 and <= 16). */
   readonly textWorkBudgetMs?: number;
+  /** With a budget, pace new Canvas jobs only while this predicate returns true. */
+  readonly textWorkBudgetWhen?: () => boolean;
   /** Opt-in CPU frame timing; submitted does not mean GPU complete or presented. */
   readonly onFrameTiming?: (sample: BrowserGameFrameTiming) => void;
   /** Enable the existing bounded shared WebGL2 Host phase samples (available on game.host). */
@@ -531,6 +533,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     (renderMode !== 'continuous' && renderMode !== 'on-demand') ||
     (options.textWorkBudgetMs !== undefined &&
       (!Number.isFinite(options.textWorkBudgetMs) || options.textWorkBudgetMs <= 0 || options.textWorkBudgetMs > 16)) ||
+    (options.textWorkBudgetWhen !== undefined &&
+      (options.textWorkBudgetMs === undefined || typeof options.textWorkBudgetWhen !== 'function')) ||
     (options.webgl2PageBatching !== undefined &&
       options.webgl2PageBatching !== 'single-page' &&
       options.webgl2PageBatching !== 'multi-page') ||
@@ -621,7 +625,9 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     const scope = engine.createScope(),
       initialFrame: SharedFrameOptions2D = Object.freeze({ width, height, clearColor, clearAlpha });
     const textWork =
-      options.textWorkBudgetMs === undefined ? undefined : scope.use(createBrowserTextWork(options.textWorkBudgetMs));
+      options.textWorkBudgetMs === undefined
+        ? undefined
+        : scope.use(createBrowserTextWork(options.textWorkBudgetMs, options.textWorkBudgetWhen));
     const scheduleTextWork = textWork?.schedule;
     let frame = initialFrame;
     const revision = renderMode === 'on-demand' ? engine.watchDisplayRevision(scope) : undefined;
