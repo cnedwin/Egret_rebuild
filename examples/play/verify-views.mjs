@@ -181,7 +181,7 @@ export async function verifyViews(page, colourAt) {
   try {
     await frames(4);
     // The tester reads the view by its names, as the semantic tree publishes them.
-    let outline = await fixture.evaluate(f => f.tester.outline());
+    const outline = await fixture.evaluate(f => f.tester.outline());
     assert.match(
       outline,
       /group "Shop"\n {2}group "shop"\n {4}text "Gold 100"\n {4}progressbar "Health" \[at 50 of 0–100\]\n {4}switch "Sound" \[checked\]\n {4}button "Buy 60"\n {4}button "Sell all"/
@@ -253,13 +253,39 @@ export async function verifyViews(page, colourAt) {
     assert.equal(buy.width, 360 - 32, 'the button fills the portrait card');
     await click('buy');
     assert.equal(await fixture.evaluate(f => f.state.gold), 480);
-    outline = await fixture.evaluate(f => f.tester.outline());
-    assert.match(
-      outline,
-      /switch "Sound" \[unchecked\]\n {4}button "Buy 60"\n {4}button "Sell all"/,
-      'the same parts, by the same names'
+    // Mouse activation leaves the bought item focused after the responsive rebuild.
+    // Check the published state as well as the outline shown to an agent.
+    const portrait = await fixture.evaluate(f => {
+      const buy = f.tester.find('Shop / Buy 60');
+      return {
+        focus: buy.focused,
+        disabled: buy.disabled,
+        actions: buy.actions,
+        bounds: buy.bounds,
+        bought: f.state.bought,
+        outline: f.tester.outline()
+      };
+    });
+    assert.equal(portrait.focus, true, 'the purchased button keeps focus');
+    assert.equal(portrait.disabled, false);
+    assert.ok(portrait.actions.includes('activate') && portrait.actions.includes('focus'));
+    assert.deepEqual(portrait.bounds, buy, 'published bounds follow the portrait layout');
+    assert.equal(portrait.bought, 2, 'each completed purchase fires once');
+    assert.deepEqual(
+      portrait.outline.split('\n').slice(-3),
+      ['    switch "Sound" [unchecked]', '    button "Buy 60" [focused]', '    button "Sell all"'],
+      'the unfocused siblings and focused purchase appear in order'
     );
-    return { blue: hex(blue), grey: hex(grey), golds: seen.length, variants: ['landscape', 'portrait'], gold: 480 };
+    return {
+      blue: hex(blue),
+      grey: hex(grey),
+      golds: seen.length,
+      variants: ['landscape', 'portrait'],
+      gold: 480,
+      purchases: portrait.bought,
+      focused: 'Buy 60',
+      buyBounds: portrait.bounds
+    };
   } finally {
     await fixture.evaluate(f => f.close());
     await fixture.dispose();
