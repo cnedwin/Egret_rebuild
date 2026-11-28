@@ -4709,6 +4709,12 @@ for (const file of ['src/pointerInput.ts','dist/pointerInput.js','dist/pointerIn
 for (const file of ['src/ui/controls.ts','dist/ui/controls.js','src/ui/rangeControl.ts','dist/ui/rangeControl.js','src/ui/scrollControl.ts','dist/ui/scrollControl.js'])
   currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],
     ['static','../internal/uiControlReportState.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+// Pointer and hover input share their target admission, cleanup and operation wrapper through one private module.
+for (const file of ['src/pointerInput.ts','dist/pointerInput.js'])
+  currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],
+    ['static','./internal/routedInput.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+for (const file of ['src/internal/routedInput.ts','dist/internal/routedInput.js','dist/internal/routedInput.d.ts'])
+  currentSceneLiteralClosure['packages/engine/'+file] = [['static','@egret/runtime']];
 // The opt-in visual occluder is exported only by the existing native UI entry.
 for (const [file, count] of Object.entries({'src/ui/index.ts':2,'dist/ui/index.js':1,'dist/ui/index.d.ts':2}))
   currentSceneLiteralClosure['packages/engine/'+file]=[...currentSceneLiteralClosure['packages/engine/'+file],...Array.from({length:count},()=>['static','../internal/uiControlReportState.js'])].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
@@ -5375,8 +5381,8 @@ const hoverImports={
  'src/hover.ts':['./hoverInput.js','./hoverInputTypes.js'],
  'dist/hover.js':['./hoverInput.js'],
  'dist/hover.d.ts':['./hoverInput.js','./hoverInputTypes.js'],
- 'src/hoverInput.ts':['@egret/runtime','./mouseInput.js','./internal/mouseInputFactoryState.js','./internal/uiFactoryState.js','./hoverInputTypes.js','./hoverInputTypes.js'],
- 'dist/hoverInput.js':['@egret/runtime','./internal/mouseInputFactoryState.js','./internal/uiFactoryState.js'],
+ 'src/hoverInput.ts':['@egret/runtime','./mouseInput.js','./internal/mouseInputFactoryState.js','./internal/uiFactoryState.js','./internal/routedInput.js','./hoverInputTypes.js','./hoverInputTypes.js'],
+ 'dist/hoverInput.js':['@egret/runtime','./internal/mouseInputFactoryState.js','./internal/uiFactoryState.js','./internal/routedInput.js'],
  'dist/hoverInput.d.ts':['./hoverInputTypes.js','./hoverInputTypes.js'],
  'src/hoverInputTypes.ts':['@egret/runtime','./Engine.js'],
  'dist/hoverInputTypes.js':[],

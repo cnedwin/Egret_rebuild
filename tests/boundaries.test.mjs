@@ -832,6 +832,9 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       write(file, readFileSync(path.join(repository,file)));
     // The screen stack's module keeps its one literal edge; the fixture's runtime has no cancellation to run it with.
     write('packages/engine/dist/ui/screenStack.js',"import { EgretError } from '@egret/runtime';\nexport function createUiScreenStack() { void EgretError; }\n");
+    // Pointer and hover input share their target admission and operation wrapper through one private module, which imports only the runtime.
+    for(const file of ['packages/engine/src/pointerInput.ts','packages/engine/dist/pointerInput.js'])m31FixtureGraph[file]=[...m31FixtureGraph[file],["static","./internal/routedInput.js"]];
+    for(const file of ['packages/engine/src/internal/routedInput.ts','packages/engine/dist/internal/routedInput.js','packages/engine/dist/internal/routedInput.d.ts'])m31FixtureGraph[file]=[["static","@egret/runtime"]];
     for(const [file,edges]of Object.entries(m31FixtureGraph)){
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
