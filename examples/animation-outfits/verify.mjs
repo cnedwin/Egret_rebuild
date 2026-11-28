@@ -75,7 +75,7 @@ export async function verify({ playwrightPath, out }) {
     limits: [
       'Desktop default Edge only',
       'Original geometry, not Editor export qualification',
-      'No physical-memory, device-recovery, hot-replacement or performance acceptance'
+      'No physical-memory, device-recovery or performance acceptance'
     ]
   };
   let browser;
@@ -138,6 +138,65 @@ export async function verify({ playwrightPath, out }) {
         assert.deepEqual(sample(initial, 10, 10), [24, 36, 58, 255]);
         assert.deepEqual(sample(initial, 20, 94), [80, 101, 128, 255]);
         row.literalPixelChecks = checked + 2;
+        const pairPixels = p =>
+          [
+            [576, 55],
+            [18, 85],
+            [448, 55],
+            [30, 85]
+          ].map(([x, y]) => sample(p, x, y));
+        const originalPair = pairPixels(initial);
+        const alternatePair = [[240, 64, 128, 255], [64, 96, 255, 255], originalPair[2], originalPair[3]];
+        const sparkUrl = '**/assets/sparks_alt';
+        // Hold only the spark. The actor is ready while its companion still lacks a texture.
+        const entered = Promise.withResolvers(),
+          release = Promise.withResolvers();
+        await page.route(sparkUrl, async route => {
+          entered.resolve();
+          await release.promise;
+          await route.continue().catch(() => {});
+        });
+        const startSwap = () =>
+          page.evaluate(() => {
+            window.pendingPair = window.sceneAPI.replacePair('alternate').then(
+              () => true,
+              () => false
+            );
+          });
+        await startSwap();
+        const timeout = setTimeout(() => entered.reject(Error('Alternate spark request did not arrive')), 15000);
+        try {
+          await entered.promise;
+          assert.deepEqual(pairPixels(await read('pair-pending')), originalPair);
+          await page.evaluate(() => window.sceneAPI.cancelPair());
+        } finally {
+          clearTimeout(timeout);
+          release.resolve();
+        }
+        assert.equal(await page.evaluate(() => window.pendingPair), false);
+        await page.unroute(sparkUrl);
+        assert.deepEqual(pairPixels(await read('pair-cancelled')), originalPair);
+        await page.route(sparkUrl, route => route.fulfill({ status: 503, body: 'Unavailable spark' }));
+        await startSwap();
+        assert.equal(await page.evaluate(() => window.pendingPair), false);
+        assert.deepEqual(pairPixels(await read('pair-refused')), originalPair);
+        await page.unroute(sparkUrl);
+        const beforeSwap = await page.evaluate(() => window.sceneAPI.inspect());
+        await page.locator('[data-action="pair"]').click();
+        await page.waitForFunction(
+          () => window.sceneAPI.inspect().scene?.pairVersion === 'alternate' && !window.sceneAPI.inspect().replacing
+        );
+        const afterSwap = await page.evaluate(() => window.sceneAPI.inspect());
+        assert.deepEqual(afterSwap.scene.counts, { spine: 20, sequences: 200 });
+        assert.deepEqual(afterSwap.scene.events, beforeSwap.scene.events);
+        assert.deepEqual(afterSwap.scene.players[3], beforeSwap.scene.players[3]);
+        assert.deepEqual(afterSwap.scene.sequences[1], beforeSwap.scene.sequences[1]);
+        row.alternatePairPixels = pairPixels(await read('pair-committed'));
+        assert.deepEqual(row.alternatePairPixels, alternatePair);
+        await page.evaluate(() => window.sceneAPI.replacePair('original'));
+        assert.deepEqual(pairPixels(await read('pair-original')), originalPair);
+        assert.equal((await page.evaluate(() => window.sceneAPI.inspect())).loader.liveInstances, 20);
+        row.pairCancelledRefusedRetried = true;
         row.edited = await page.evaluate(() =>
           window.sceneAPI.edit(0, { outfit: 'both', animation: 'sway', plays: 2, rate: 2 })
         );
@@ -185,7 +244,7 @@ export async function verify({ playwrightPath, out }) {
         assert.equal(row.failure.cleanup.loader.liveSetups, 0);
         await page.unroute('**/assets/character');
         let held, enteredResolve;
-        const entered = new Promise(resolve => (enteredResolve = resolve));
+        const closeEntered = new Promise(resolve => (enteredResolve = resolve));
         await page.route('**/assets/character', route => {
           held = route;
           enteredResolve();
@@ -193,7 +252,7 @@ export async function verify({ playwrightPath, out }) {
         await page.evaluate(() => {
           window.pendingOpen = window.sceneAPI.open().catch(() => {});
         });
-        await entered;
+        await closeEntered;
         await page.evaluate(() => {
           window.pendingClose = window.sceneAPI.close();
         });
@@ -230,6 +289,33 @@ export async function verify({ playwrightPath, out }) {
         row.domControlsPassed = true;
         row.final = await page.evaluate(() => window.sceneAPI.close());
         zero(row.final);
+        // Closing a scene also revokes a partially loaded pair. A late response cannot reopen it.
+        await page.evaluate(() => window.sceneAPI.open());
+        const closingEntered = Promise.withResolvers(),
+          closingRelease = Promise.withResolvers();
+        await page.route(sparkUrl, async route => {
+          closingEntered.resolve();
+          await closingRelease.promise;
+          await route.continue().catch(() => {});
+        });
+        await startSwap();
+        const closeTimeout = setTimeout(
+          () => closingEntered.reject(Error('Pending swap never reached its source')),
+          15000
+        );
+        try {
+          await closingEntered.promise;
+          await page.evaluate(() => {
+            window.closingScene = window.sceneAPI.close();
+          });
+        } finally {
+          clearTimeout(closeTimeout);
+          closingRelease.resolve();
+        }
+        assert.equal(await page.evaluate(() => window.pendingPair), false);
+        row.closeWhileReplacing = await page.evaluate(() => window.closingScene);
+        zero(row.closeWhileReplacing);
+        await page.unroute(sparkUrl);
         row.immediateCancel = await page.evaluate(async () => {
           const opening = window.sceneAPI.open().catch(() => {});
           const closing = window.sceneAPI.close();

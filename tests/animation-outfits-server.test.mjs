@@ -15,6 +15,7 @@ test('animation example exposes only bounded scene, artifact and pinned optional
     'work/animation-outfits/manifest.json',
     'work/animation-outfits/assets/character',
     'work/animation-outfits/assets/warm',
+    'work/animation-outfits/assets/sparks_alt',
     'packages/spine/dist/index.js',
     'node_modules/@esotericsoftware/spine-core/dist/index.js'
   ];
@@ -23,6 +24,7 @@ test('animation example exposes only bounded scene, artifact and pinned optional
     'examples/animation-outfits/verify.mjs',
     'work/animation-outfits/sources/character',
     'work/animation-outfits/private.json',
+    'work/animation-outfits/assets/sparks_alt_alt',
     'work/private/config.json',
     '.git/config',
     '.env',
