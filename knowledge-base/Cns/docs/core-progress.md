@@ -10,7 +10,7 @@
 
 | 领域 | 已有实现 | 仍缺失的能力或验收 |
 | --- | --- | --- |
-| 显示与渲染 | 熟悉的显示对象、坐标、显式命中几何和不可变捕获；有序 WebGPU／WebGL2 共享路径、相邻准备／合批、纹理页、有界缓冲／目标复用、Alpha 遮罩、可分离模糊、沿用 Egret 名称的[混合模式](blend-modes.md)、颜色矩阵、发光、投影和描边[滤镜](filters.md)、作为显示对象的[视频](video.md)及[可选 WebGL2 图层缓存](webgl2-executor-contract.md#可缓存的-2d-图层) | 固定桌面帧节奏与未测 GPU 时间、更广泛设备与宿主、完整功能参考；Canvas 文字和图像提供者继续使用 |
+| 显示与渲染 | 熟悉的显示对象、坐标、显式命中几何和不可变捕获；有序 WebGPU／WebGL2 共享路径、相邻准备／合批、纹理页、有界缓冲／目标复用、Alpha 遮罩、可分离模糊、沿用 Egret 名称的[混合模式](blend-modes.md)、颜色矩阵、发光、投影和描边[滤镜](filters.md)、作为显示对象的[视频](video.md)及[可选 WebGL2 图层缓存](webgl2-executor-contract.md#可缓存的-2d-图层) | 更广泛的设备与宿主、屏幕呈现耗时及完整功能参考；Canvas 文字和图像提供者继续使用 |
 | 资源与构建 | 清单接入、资源租约、取消和 PNG／图集／序列帧／字体的构建与缓存复用。三种 Spine 构建器分别接收图集、JSON 骨骼和有大小限制的二进制骨骼导出物。[Spine 内容管线](spine-content-ingress.md) | 更多纹理与压缩变体、授权的编辑器导出物和独立参考图。11 月真机报告覆盖指定 mipmap 与双页 Spine 用例。[设备记录](november-browser-hardware.md) |
 | 动画 | 显式 Engine 时间、Tween、兼容序列替换和共享渲染器上的可选 Spine 播放。独立播放器支持轨道、队列、组合皮肤和有限播放次数。已支持 RESET 和有界跳转／重放，播放保留替换覆盖选定的进行中混合。 | 独立的选定版本参考、导出器变体及组合动画真机生命周期验收。 [#213](https://github.com/cnedwin/Egret_rebuild/pull/213) · [#218](https://github.com/cnedwin/Egret_rebuild/pull/218) · [#219](https://github.com/cnedwin/Egret_rebuild/pull/219) |
 | UI | 托管布局、变高列表与行焦点、主题／皮肤代次、特效和弹出层／模态层。示例已结合语义投影接入开关、选项组、滑条、标签页、进度条、下拉和多选。 | 选定近期控件、视图和缩放已有双后端真机观测；更广控件类型、辅助技术和完整大场景验收仍待测。[UI 语义](ui-semantics.md) |
@@ -49,7 +49,7 @@ SharedFrame2D 是当前唯一的 2D 帧路径。示例通过 `captureSharedFrame
 | 范围 | 已记录证据 | 仍需验收 |
 | --- | --- | --- |
 | 2D 渲染 | 历史软件渲染对比保留 57 个场景的像素基线。已合入的合批暂存修复在 Windows 验证了四组前后像素完全一致。短时 20,000 个位图全移动负载的 WebGPU／WebGL2 rAF p95 在 Windows Edge 从 195.8／55.6 降至 50.0／41.7 毫秒，在 Galaxy Z Fold7 Chrome 从 400.4／133.4 降至 50.2／66.7 毫秒。 | 更广设备、恢复和持续场景仍待验收。此基准在 Fold7 上没有可用的 WebGL2 GPU 计时结果。 [#185](https://github.com/cnedwin/Egret_rebuild/pull/185) · [#187](https://github.com/cnedwin/Egret_rebuild/pull/187) · [#190](https://github.com/cnedwin/Egret_rebuild/pull/190) · [#198](https://github.com/cnedwin/Egret_rebuild/pull/198) · [#199](https://github.com/cnedwin/Egret_rebuild/pull/199) |
-| 桌面帧节奏 | E20 与当前 SharedFrame2D 各采集 12 秒，分别观察到 1,083 和 800 次容量停顿。每次均有两次提交等待原生回调，队列栅栏的回调最后到达。 | 沿用原正式阈值与结果。当前追踪未将 GPU 执行完成关联到单个 JavaScript 栅栏。 [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) |
+| 桌面帧节奏 | 早期 E20 与 SharedFrame2D 诊断各采集 12 秒，分别观察到 1,083 和 800 次容量停顿。每次均有两次提交等待原生回调，队列栅栏的回调最后到达。 | 沿用原正式阈值与结果。当前追踪未将 GPU 执行完成关联到单个 JavaScript 栅栏。 [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) |
 | Android 与 iPhone | Fold7 的前序混合场景未达到 100 毫秒触摸响应目标。当前 World3D 独立示例在 Fold7 上用两个后端验证了 CDP 双触点缩放、Android Home 后返回及干净停止。前序 Rally 检查覆盖 120 帧 WebGL2。 | 真人触摸、iPhone Safari 上的混合场景与输入、辅助技术和更广生命周期仍待验收。 [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90) · [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) · [#179](https://github.com/cnedwin/Egret_rebuild/pull/179) |
 | 画布原生文字输入 | 独立适配层在 Windows Edge 157（RTX 5090 Laptop）与 Galaxy Z Fold7 Chrome 157（Adreno 830）上每个后端均通过三项用例。三星原生键盘实际弹出，可视视口从 813.7 缩至 423.2 CSS px。文字通过 CDP 输入。 | 真人中日韩组合输入、候选确认及取消，以及 iPhone Safari、桌面 Firefox 和 Safari 仍待验证。 [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) · [#195](https://github.com/cnedwin/Egret_rebuild/pull/195) |
 | 托管原生编辑器 | Windows Edge 与 Fold7 Chrome 各完成 12 轮打开与结束，每个后端六轮，交替覆盖原生单行和多行字段。Fold7 每轮实际显示和收起软键盘，可视视口从 487.2 恢复到 813.7 CSS px。关闭正在编辑的页面时，两个后端均释放原生节点、编辑器租约、已加载字体和段落缓存。 | 原生剪贴板、更广输入法、真人操作和辅助技术继续单独验收。 [#89](https://github.com/cnedwin/Egret_rebuild/issues/89) · [#90](https://github.com/cnedwin/Egret_rebuild/issues/90) |
@@ -163,7 +163,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 
 ## 继续开放的证据
 
-M1.1–M1.5 工程已集成。最新固定 Windows 正式对照中，静态／稀疏／全脏 Engine p95 中位数为 **5.0／5.9／5.3 ms**，包含准备的 Host 为 **2.5／3.2／2.8 ms**。三种状态均满足 Engine 8 ms 和准备 4 ms 上界。 稀疏和全脏的按时长加权墙钟间隔 p95 高于 16.7 ms，#55 的节拍验收仍开放。 GPU 时间仍未测，整体 D60 仍待验收。历史失败与最新证据见[验证记录](incremental-frame-preparation-evidence.md)。
+M1.1–M1.5 工程已集成。冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `3ab82995f7ba`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](../../evidence/d60-shared-frame-desktop-20261128.json)
 
 [Android 报告](android-device-validation.md)记录了有限 WebGPU／WebGL2 组件、生命周期与受控恢复，包括 #129 字体注册示例修正和 #130 新增十二个诊断／生命周期用例。历史约 41.4 ms 回调触发条件未复现；精确堆／后备存储观察不能证明物理内存或通用零泄漏验收。已撤回的错误目标启动报告不是 Engine 回归。
 

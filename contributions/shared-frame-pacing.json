@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/evidence/d60-shared-frame-desktop-20261128.json",
+      "originRole": "First-party measurements from a physical Windows GPU, containing all 30 desktop timing windows and separate GPU pass timestamps; prepared with AI assistance, Apache-2.0."
+    }
+  ],
+  "documents": []
+}
