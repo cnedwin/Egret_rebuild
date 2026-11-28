@@ -26,6 +26,7 @@ import { checkReport } from './egret-check.mjs';
 import { STARTER_ENTRIES, TARGETS, writeStarter } from './egret-new.mjs';
 import { notesReport } from './egret-notes.mjs';
 import { SCREENS } from './verify-screens.mjs';
+import { parseStartupTimeout } from './verify-game.mjs';
 
 /** The engine copy of a game holds this file at vendor/egret/tools/egret.mjs, and the runtime at vendor/runtime. */
 const VENDORED = fs.existsSync(path.join(ROOT, 'error-codes.json'));
@@ -42,7 +43,7 @@ function usage() {
     `  ${COMMAND} explain <ERROR_CODE>                                                an error in English and Chinese`,
     `  ${COMMAND} notes [<game folder>] [--check]                                     the game's engine notes the engine has fixed`,
     `  ${COMMAND} check [<game folder>] [--strict] [--json]                           the game's files read for common mistakes`,
-    `  ${COMMAND} verify [<page>] [--playwright <index.mjs>] [--out <dir>] [--play <script>]   the game run in a headless browser`,
+    `  ${COMMAND} verify [<page>] [--playwright <index.mjs>] [--out <dir>] [--play <script>] [--startup-timeout <ms>]   the game run in a headless browser`,
     `  ${COMMAND} verify [<page>] --screens[=<name>,...] [--prepare <script>] [--play <script>] [--playwright <index.mjs>] [--out <dir>]   the game on phones, tablets and a desktop`,
     `  ${COMMAND} new <folder> [--target web|mobile|wechat|steam] [--genre <kind>] [--title <name>]   a game to start from`,
     ''
@@ -129,6 +130,12 @@ export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
         };
       if (new Set(list).size !== list.length) return { error: 'Each screen must be named only once.' };
       named.screens = list;
+    } else if (arg === '--startup-timeout') {
+      try {
+        named.startupTimeout = parseStartupTimeout(args[++i]);
+      } catch (error) {
+        return { error: error.message };
+      }
     } else if (['--playwright', '--out', '--play', '--prepare'].includes(arg)) {
       if (args[i + 1] === undefined || args[i + 1].startsWith('--')) return { error: `${arg} takes a path.` };
       named[arg.slice(2)] = args[++i];
@@ -146,6 +153,8 @@ export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
     };
   if (!fs.existsSync(playwright)) return { error: `There is no Playwright at ${playwright}.` };
   if (named.prepare && !named.screens) return { error: '--prepare requires --screens.' };
+  if (named.startupTimeout !== undefined && named.screens)
+    return { error: '--startup-timeout applies to ordinary verify, not --screens.' };
   const out = path.resolve(
     cwd,
     named.out ?? path.join(os.tmpdir(), `egret-${named.screens ? 'screens' : 'verify'}-${Date.now()}`)
@@ -175,7 +184,18 @@ export function verifyArgs(args, cwd = process.cwd(), find = findPlaywright) {
     };
   }
   const tool = path.join(here, 'verify-game.mjs');
-  return { tool, args: [tool, playwright, page, out, ...(play ? [play] : [])], out };
+  return {
+    tool,
+    args: [
+      tool,
+      playwright,
+      page,
+      out,
+      ...(play ? [play] : []),
+      ...(named.startupTimeout === undefined ? [] : ['--startup-timeout', String(named.startupTimeout)])
+    ],
+    out
+  };
 }
 
 /**

@@ -52,6 +52,45 @@ test('EV01 verify names the page, Playwright, a new output folder and the play s
   }
 });
 
+// Break caught: an unbounded or silently ignored startup deadline, or one leaking into the screen verifier.
+test('EV01A verify forwards a bounded startup timeout to the ordinary verifier only', () => {
+  const game = temporary();
+  try {
+    const page = path.join(game, 'index.html'),
+      playwright = path.join(game, 'pw.mjs'),
+      play = path.join(game, 'play.mjs'),
+      out = path.join(game, 'run');
+    for (const file of [page, playwright, play]) fs.writeFileSync(file, '');
+    const options = ['--playwright', 'pw.mjs', '--out', 'run'];
+    const legacy = verifyArgs(options, game);
+    assert.deepEqual(legacy.args.slice(1), [playwright, page, out]);
+    for (const milliseconds of ['1', '300000']) {
+      const plan = verifyArgs([...options, '--startup-timeout', milliseconds], game);
+      assert.equal(plan.error, undefined);
+      assert.equal(plan.tool, legacy.tool);
+      assert.deepEqual(plan.args.slice(1), [playwright, page, out, '--startup-timeout', milliseconds]);
+    }
+    const scripted = verifyArgs(['--startup-timeout', '12345', '--play', 'play.mjs', ...options], game);
+    assert.equal(scripted.error, undefined);
+    assert.deepEqual(scripted.args.slice(1), [playwright, page, out, play, '--startup-timeout', '12345']);
+    for (const value of ['0', '300001', '-1', '1.5', 'NaN', 'Infinity', 'abc']) {
+      assert.match(verifyArgs([...options, '--startup-timeout', value], game).error, /startup-timeout/);
+    }
+    assert.match(verifyArgs([...options, '--startup-timeout'], game).error, /startup-timeout/);
+    assert.match(verifyArgs(['--startup-timeout', '--play', 'play.mjs', ...options], game).error, /startup-timeout/);
+    for (const args of [
+      ['--screens', '--startup-timeout', '30000'],
+      ['--startup-timeout', '30000', '--screens=phone-notch']
+    ]) {
+      const error = verifyArgs([...options, ...args], game).error;
+      assert.match(error, /startup-timeout/);
+      assert.match(error, /screens/);
+    }
+  } finally {
+    fs.rmSync(game, { recursive: true, force: true });
+  }
+});
+
 // Break caught: a copy whose verify cannot run for want of the tool or of pngjs, or that runs without Playwright.
 test('EV02 the engine copy carries verify-game and pngjs, and verify there names the Playwright it lacks', () => {
   const game = temporary();
