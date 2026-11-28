@@ -223,6 +223,14 @@
       "notes": [
         "SnowTemple#6"
       ]
+    },
+    {
+      "topic": "mouse-right-button",
+      "status": "resolved",
+      "what": "createGestures of @egret/engine/web/gestures tells a still press of the mouse's secondary button to onSecondaryTap, and no mouse press but one of the primary button makes a tap, double tap, long press, drag, swipe or pinch, so a right click no longer counts as a tap. The page's context menu is the game's to stop on its canvas; createMouseInput keeps its primary-button contract.",
+      "notes": [
+        "LubanBridge#5"
+      ]
     }
   ]
 }

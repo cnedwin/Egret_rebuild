@@ -33,10 +33,13 @@ bag.target(slot, { drop: item => put(slot, item), accepts: item => item.kind ===
 | `onDrag` | 触点移动超过 12 单位的容差；之后每次移动，以及结束或取消 | `phase`，这一步的 `dx`、`dy`，以及累计的 `totalX`、`totalY` |
 | `onSwipe` | 拖动结束时，最后十分之一秒的速度超过每秒 600 单位 | `direction`、`speed`、`dx`、`dy` |
 | `onPinch` | 第二个触点按下；第一个触点原来在做的手势结束 | `phase`、相对开始时的 `scale`、以度为单位的 `rotation`、两指中点 |
+| `onSecondaryTap` | 鼠标副键（通常是右键）按下后在容差范围内松开，不论按了多久 | 位置 |
 
 这些都来自 `createGestures({ engine, scope, input, target, ... })`。阈值可以通过选项修改：`slop`、`holdSeconds`、`doubleTapSeconds`、`swipeSpeed`。`createDragAndDrop({ engine, scope, input, layer })` 提供 `source`、`target` 和 `dragging`，每次注册都返回对应的移除函数。两者都随作用域或 `dispose()` 结束。选项不可用时抛出 `GESTURE_OPTIONS_INVALID`；在已结束的对象上注册时抛出 `GESTURE_CLOSED`。
 
 长按按引擎时钟计时，所以游戏暂停时不会触发。任一手指抬起时双指缩放就结束，另一根手指在抬起之前不再参与识别，因此不会变成拖动。
+
+只有触摸、触控笔和鼠标主键会产生点击、双击、长按、拖动、滑动和双指缩放；同时按着主键的按下也算主键。右键按下只交给 `onSecondaryTap`，中键和侧键不产生任何手势。手势不在页面上添加监听，所以右键点击时浏览器仍会弹出菜单：用 `onSecondaryTap` 的游戏要在自己的画布上用 `canvas.addEventListener('contextmenu', event => event.preventDefault())` 拦住它。`@egret/engine/web/input` 的 `createMouseInput` 仍只处理主键。
 
 ## 检查了什么
 
@@ -46,6 +49,7 @@ bag.target(slot, { drop: item => put(slot, item), accepts: item => item.kind ===
 - 按时钟计时的长按，以及长按之后不算点击；
 - 超过容差的拖动、它报告的每一步，以及滑动；
 - 双指缩放的比例和旋转角度；
+- 鼠标按键：静止的右键按下不论按多久都算副键点击，右键和中键不产生点击、拖动或长按，主键照常点击和拖动；
 - 拖放到最里层的目标、没有目标时松手，以及源没有数据；
 - 拒绝无效选项，以及已结束的识别器不再收到任何手势。
 
