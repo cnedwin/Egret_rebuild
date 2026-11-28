@@ -3,7 +3,8 @@
   "files": [
     {
       "path": "packages/engine/web/browserTextWork.ts",
-      "originRole": "First-party optional bounded Canvas text work scheduler with FIFO frame admission, cancellation and scope disposal; independently authored with AI assistance; Apache-2.0."
+      "originRole": "First-party optional bounded Canvas text work scheduler with FIFO frame admission, cancellation and scope disposal; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     },
     {
       "path": "tests/browser-budgeted-text.test.mjs",
