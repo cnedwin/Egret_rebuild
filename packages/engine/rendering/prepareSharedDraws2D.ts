@@ -688,8 +688,11 @@ export function prepareSharedDraws2D(
       const verticesBefore = budget.preparedVerticesCharged,
         predicatesBefore = budget.predicatesCharged,
         tuplesBefore = budget.tupleComparisonsCharged;
-      const reuseClips = engineOwned && command.clips === previousClipList &&
-        clipCost.predicates <= options.maxClipEdgeTests - preparation.edgeTests && budget.tryReplayStageCost(clipCost);
+      const reuseClips =
+        engineOwned &&
+        command.clips === previousClipList &&
+        clipCost.predicates <= options.maxClipEdgeTests - preparation.edgeTests &&
+        budget.tryReplayStageCost(clipCost);
       if (reuseClips) {
         clips = previousClips;
         preparation.edgeTests += clipCost.predicates;

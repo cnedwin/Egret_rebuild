@@ -247,106 +247,209 @@ test('SAT02 clipped, mirrored, rotated and collapsed geometry has the same full 
 test('SAT03 shared clip stacks preserve moving and partially intersected attributes, draw order and budget refusals', async t => {
   let inner;
   const specs = [
-    { transform: { x: 4, y: 4 } },                     // wholly inside
-    { transform: { x: -2, y: 3 } },                    // cuts two triangles with different UVs and colors
-    { transform: { x: 17, y: 14, scaleX: -1 } },       // mirrored, touching an edge
-    { transform: { x: 19, y: 19, rotation: 23 } },     // two real cuts
-    { transform: { x: 17, y: 19, scaleX: 1e-29 } }   // collapsed after placement
+    { transform: { x: 4, y: 4 } }, // wholly inside
+    { transform: { x: -2, y: 3 } }, // cuts two triangles with different UVs and colors
+    { transform: { x: 17, y: 14, scaleX: -1 } }, // mirrored, touching an edge
+    { transform: { x: 19, y: 19, rotation: 23 } }, // two real cuts
+    { transform: { x: 17, y: 19, scaleX: 1e-29 } } // collapsed after placement
   ];
   const rectangle = t.mock.method(Preparation.prototype, 'rectangle');
-  await withFrame(specs, (firstFrame, engine) => {
-    const meshes = firstFrame.commands.filter(command => command.kind === 'mesh');
-    assert.equal(meshes.length, 5);
-    assert.equal(meshes[0].clips.length, 2);
-    assert.ok(meshes.every(command => command.clips === meshes[0].clips));
-    const reference = outcome(firstFrame, LIMITS);
-    assert.ok(reference.budget.preparedVerticesCharged > 0);
-    assert.equal(rectangle.mock.callCount(), 10);
-    rectangle.mock.resetCalls();
-    const actual = outcome(firstFrame, LIMITS, true);
-    assert.deepEqual(actual, reference);
-    assert.equal(rectangle.mock.callCount(), 2);
-    // An original intersection on x=0 lies 1/5 of the way along the authored
-    // red/green edge. UVs, light, dark and opacity use that same exact weight.
-    const hit = actual.entries.filter(entry => entry[0] === 'draw')[1][1].flat().find(p => p.x === 0 && p.y === 3 && p.u === 0.2);
-    assert.deepEqual(hit, {
-      x: 0, y: 3, u: 0.2, v: 0, r: 0.9, g: 0.4, b: 0.45, a: 0.7, dr: 0.2, dg: 0.05, db: 0.5
-    });
-    const { predicatesCharged, tupleComparisonsCharged, preparedVerticesCharged } = actual.budget;
-    for (const limits of [
-      { ...LIMITS, maxClipEdgeTests: 4 },
-      { ...LIMITS, maxTupleComparisons: 7 },
-      { ...LIMITS, maxClipEdgeTests: predicatesCharged - 1 },
-      { ...LIMITS, maxTupleComparisons: tupleComparisonsCharged - 1 },
-      { ...LIMITS, maxPreparedVertices: preparedVerticesCharged - 1 },
-      { ...LIMITS, maxClipEdgeTests: predicatesCharged, maxTupleComparisons: tupleComparisonsCharged }
-    ]) {
-      assert.deepEqual(outcome(firstFrame, limits, true), outcome(firstFrame, limits));
+  await withFrame(
+    specs,
+    (firstFrame, engine) => {
+      const meshes = firstFrame.commands.filter(command => command.kind === 'mesh');
+      assert.equal(meshes.length, 5);
+      assert.equal(meshes[0].clips.length, 2);
+      assert.ok(meshes.every(command => command.clips === meshes[0].clips));
+      const reference = outcome(firstFrame, LIMITS);
+      assert.ok(reference.budget.preparedVerticesCharged > 0);
+      assert.equal(rectangle.mock.callCount(), 10);
+      rectangle.mock.resetCalls();
+      const actual = outcome(firstFrame, LIMITS, true);
+      assert.deepEqual(actual, reference);
+      assert.equal(rectangle.mock.callCount(), 2);
+      // An original intersection on x=0 lies 1/5 of the way along the authored
+      // red/green edge. UVs, light, dark and opacity use that same exact weight.
+      const hit = actual.entries
+        .filter(entry => entry[0] === 'draw')[1][1]
+        .flat()
+        .find(p => p.x === 0 && p.y === 3 && p.u === 0.2);
+      assert.deepEqual(hit, {
+        x: 0,
+        y: 3,
+        u: 0.2,
+        v: 0,
+        r: 0.9,
+        g: 0.4,
+        b: 0.45,
+        a: 0.7,
+        dr: 0.2,
+        dg: 0.05,
+        db: 0.5
+      });
+      const { predicatesCharged, tupleComparisonsCharged, preparedVerticesCharged } = actual.budget;
+      for (const limits of [
+        { ...LIMITS, maxClipEdgeTests: 4 },
+        { ...LIMITS, maxTupleComparisons: 7 },
+        { ...LIMITS, maxClipEdgeTests: predicatesCharged - 1 },
+        { ...LIMITS, maxTupleComparisons: tupleComparisonsCharged - 1 },
+        { ...LIMITS, maxPreparedVertices: preparedVerticesCharged - 1 },
+        { ...LIMITS, maxClipEdgeTests: predicatesCharged, maxTupleComparisons: tupleComparisonsCharged }
+      ]) {
+        assert.deepEqual(outcome(firstFrame, limits, true), outcome(firstFrame, limits));
+      }
+      // A helper caller can hand in a mutable lookalike. Its shared list identity
+      // never grants permission to reuse the first child's qualification.
+      const writable = meshes[0].clips.map(clip => ({ matrix: { ...clip.matrix }, rect: { ...clip.rect } }));
+      let seen = 0;
+      const lookalike = {
+        ...firstFrame,
+        commands: firstFrame.commands.map(command => {
+          if (command.kind !== 'mesh') return command;
+          const child = ++seen;
+          return {
+            ...command,
+            clips: writable,
+            get matrix() {
+              if (child === 2) writable[0].rect.width = 0;
+              return command.matrix;
+            }
+          };
+        })
+      };
+      const mutable = outcome(lookalike, LIMITS);
+      assert.ok(mutable.entries.filter(entry => entry[0] === 'draw')[0][1].length > 0);
+      assert.ok(
+        mutable.entries
+          .filter(entry => entry[0] === 'draw')
+          .slice(1)
+          .every(entry => entry[1].length === 0)
+      );
+      // Change one child while the others keep their geometry, then place every child outside.
+      const single = inner.getChildAt(1);
+      single.x = 3.25;
+      const sparse = engine.captureSharedFrame(SIZE);
+      assert.deepEqual(outcome(sparse, LIMITS, true), outcome(sparse, LIMITS));
+      for (let i = 0; i < inner.numChildren; i++) inner.getChildAt(i).x += 200;
+      const outside = engine.captureSharedFrame(SIZE);
+      const empty = outcome(outside, LIMITS, true);
+      assert.deepEqual(empty, outcome(outside, LIMITS));
+      assert.equal(empty.budget.preparedVerticesCharged, 0);
+      for (let i = 0; i < inner.numChildren; i++) inner.getChildAt(i).x -= 200;
+      // A fresh capture can move each rectangle into another coordinate system.
+      // Requalify the changed stack even if the scene graph and child order persist.
+      for (let i = 1; i <= 7; i++) {
+        inner.x = i / 3;
+        inner.rotation = i % 2 === 1 ? i * 11 : 0;
+        inner.scaleX = i === 5 ? -1 : 1;
+        inner.clipRect = { x: 0, y: 0, width: i === 6 ? 0 : 20, height: 21 - i };
+        const frame = engine.captureSharedFrame(SIZE);
+        assert.deepEqual(outcome(frame, LIMITS, true), outcome(frame, LIMITS));
+      }
+    },
+    (engine, scope) => {
+      const outer = engine.stage.addChild(scope.use(new egret.Sprite()));
+      inner = outer.addChild(scope.use(new egret.Sprite()));
+      outer.clipRect = { x: 0, y: 0, width: 30, height: 30 };
+      inner.clipRect = { x: 0, y: 0, width: 20, height: 20 };
+      return inner;
     }
-    // A helper caller can hand in a mutable lookalike. Its shared list identity
-    // never grants permission to reuse the first child's qualification.
-    const writable = meshes[0].clips.map(clip => ({ matrix: { ...clip.matrix }, rect: { ...clip.rect } }));
-    let seen = 0;
-    const lookalike = { ...firstFrame, commands: firstFrame.commands.map(command => {
-      if (command.kind !== 'mesh') return command;
-      const child = ++seen;
-      return { ...command, clips: writable, get matrix() {
-        if (child === 2) writable[0].rect.width = 0;
-        return command.matrix;
-      } };
-    }) };
-    const mutable = outcome(lookalike, LIMITS);
-    assert.ok(mutable.entries.filter(entry => entry[0] === 'draw')[0][1].length > 0);
-    assert.ok(mutable.entries.filter(entry => entry[0] === 'draw').slice(1).every(entry => entry[1].length === 0));
-    // Change one child while the others keep their geometry, then place every child outside.
-    const single = inner.getChildAt(1);
-    single.x = 3.25;
-    const sparse = engine.captureSharedFrame(SIZE);
-    assert.deepEqual(outcome(sparse, LIMITS, true), outcome(sparse, LIMITS));
-    for (let i = 0; i < inner.numChildren; i++) inner.getChildAt(i).x += 200;
-    const outside = engine.captureSharedFrame(SIZE);
-    const empty = outcome(outside, LIMITS, true);
-    assert.deepEqual(empty, outcome(outside, LIMITS));
-    assert.equal(empty.budget.preparedVerticesCharged, 0);
-    for (let i = 0; i < inner.numChildren; i++) inner.getChildAt(i).x -= 200;
-    // A fresh capture can move each rectangle into another coordinate system.
-    // Requalify the changed stack even if the scene graph and child order persist.
-    for (let i = 1; i <= 7; i++) {
-      inner.x = i / 3;
-      inner.rotation = i % 2 === 1 ? i * 11 : 0;
-      inner.scaleX = i === 5 ? -1 : 1;
-      inner.clipRect = { x: 0, y: 0, width: i === 6 ? 0 : 20, height: 21 - i };
-      const frame = engine.captureSharedFrame(SIZE);
-      assert.deepEqual(outcome(frame, LIMITS, true), outcome(frame, LIMITS));
-    }
-  }, (engine, scope) => {
-    const outer = engine.stage.addChild(scope.use(new egret.Sprite()));
-    inner = outer.addChild(scope.use(new egret.Sprite()));
-    outer.clipRect = { x: 0, y: 0, width: 30, height: 30 };
-    inner.clipRect = { x: 0, y: 0, width: 20, height: 20 };
-    return inner;
-  });
+  );
 });
 
 test('SAT04 strict triangles and quads from a cut retain the original winding and accounting', () => {
   const make = (x, y) => ({ x, y, u: x + y, v: x - y });
   const cases = [
-    { xy: [[0, 0], [2, 0], [1, 2]], winding: 1 },
-    { xy: [[0, 0], [0, 2], [2, 2], [2, 0]], winding: -1 },
-    { xy: [[0, 0], [2, 0], [1, 2 ** -70]], winding: 1 },
-    { xy: [[0, 0], [1, 0], [2, 0]], winding: 0 },
+    {
+      xy: [
+        [0, 0],
+        [2, 0],
+        [1, 2]
+      ],
+      winding: 1
+    },
+    {
+      xy: [
+        [0, 0],
+        [0, 2],
+        [2, 2],
+        [2, 0]
+      ],
+      winding: -1
+    },
+    {
+      xy: [
+        [0, 0],
+        [2, 0],
+        [1, 2 ** -70]
+      ],
+      winding: 1
+    },
+    {
+      xy: [
+        [0, 0],
+        [1, 0],
+        [2, 0]
+      ],
+      winding: 0
+    },
     // The turn exists, but cancellation makes the cheap bound inconclusive.
     // Return the polygon to the original exact procedure with no pre-charge.
-    { xy: [[0, 0], [1, 1], [2, 2 + 2 ** -51]], winding: 0 },
-    { xy: [[0, 0], [1, 1], [1, 1], [0, 2]], winding: 0 },
-    { xy: [[0, 0], [2, 2], [0, 2], [2, 0]], winding: 0 },
-    { xy: [[0, 0], [2, 0], [1, 0.5], [0, 2]], winding: 0 },
-    { xy: [[0, 0], [2, 0], [3, 1], [2, 2], [0, 2]], winding: 0 }
+    {
+      xy: [
+        [0, 0],
+        [1, 1],
+        [2, 2 + 2 ** -51]
+      ],
+      winding: 0
+    },
+    {
+      xy: [
+        [0, 0],
+        [1, 1],
+        [1, 1],
+        [0, 2]
+      ],
+      winding: 0
+    },
+    {
+      xy: [
+        [0, 0],
+        [2, 2],
+        [0, 2],
+        [2, 0]
+      ],
+      winding: 0
+    },
+    {
+      xy: [
+        [0, 0],
+        [2, 0],
+        [1, 0.5],
+        [0, 2]
+      ],
+      winding: 0
+    },
+    {
+      xy: [
+        [0, 0],
+        [2, 0],
+        [3, 1],
+        [2, 2],
+        [0, 2]
+      ],
+      winding: 0
+    }
   ];
   for (const { xy, winding } of cases) {
     const points = xy.map(([x, y]) => make(x, y));
-    const n = points.length, tuples = n * (n + 1) / 2;
-    for (const limits of [LIMITS, { ...LIMITS, maxClipEdgeTests: n - 1 }, { ...LIMITS, maxTupleComparisons: tuples - 1 }]) {
+    const n = points.length,
+      tuples = (n * (n + 1)) / 2;
+    for (const limits of [
+      LIMITS,
+      { ...LIMITS, maxClipEdgeTests: n - 1 },
+      { ...LIMITS, maxTupleComparisons: tuples - 1 }
+    ]) {
       const budget = new TexturedPreparationBudget2D(limits);
       const p = new Preparation(limits, budget, true, { options: limits, budget });
       const input = points.slice();
@@ -369,28 +472,44 @@ test('SAT04 strict triangles and quads from a cut retain the original winding an
 test('SAT05 an exhausted clip ledger cannot call the actual exact predicate during qualification', async () => {
   const file = new URL('../packages/engine/dist/rendering/prepareRectangles2D.js?clip-debit-probe', import.meta.url);
   const real = import.meta.resolve('robust-predicates');
-  const counter = 'data:text/javascript,' + encodeURIComponent(
-    "import { orient2d as original } from " + JSON.stringify(real) + "; " +
-    "export let calls = 0; export function orient2d(...args) { ++calls; return original(...args); }"
-  );
-  const hooks = registerHooks({ resolve(id, context, next) {
-    if (id === 'robust-predicates' && context.parentURL === file.href) return { url: counter, shortCircuit: true };
-    return next(id, context);
-  } });
+  const counter =
+    'data:text/javascript,' +
+    encodeURIComponent(
+      'import { orient2d as original } from ' +
+        JSON.stringify(real) +
+        '; ' +
+        'export let calls = 0; export function orient2d(...args) { ++calls; return original(...args); }'
+    );
+  const hooks = registerHooks({
+    resolve(id, context, next) {
+      if (id === 'robust-predicates' && context.parentURL === file.href) return { url: counter, shortCircuit: true };
+      return next(id, context);
+    }
+  });
   let Probe;
-  try { ({ Preparation: Probe } = await import(file.href)); }
-  finally { hooks.deregister(); }
+  try {
+    ({ Preparation: Probe } = await import(file.href));
+  } finally {
+    hooks.deregister();
+  }
   const counts = await import(counter);
   const limits = { ...LIMITS, maxClipEdgeTests: 1 };
   const budget = new TexturedPreparationBudget2D(limits);
   const preparation = new Probe(limits, budget, true, { options: limits, budget });
-  const strict = [{ x: 0, y: 0 }, { x: 3, y: 0 }, { x: 2, y: 1 }];
+  const strict = [
+    { x: 0, y: 0 },
+    { x: 3, y: 0 },
+    { x: 2, y: 1 }
+  ];
   assert.equal(preparation.sign(...strict), 1);
   assert.equal(counts.calls, 1, 'counted the real robust dependency, not ledger entries');
   assert.equal(budget.predicatesCharged, 1);
   assert.equal(preparation.tryFinishClippedMesh(strict), undefined);
   assert.equal(preparation.tryFinishClippedMesh([strict[0], strict[1], strict[1]]), undefined);
-  assert.throws(() => preparation.sign(...strict), error => error.reason === 'budget');
+  assert.throws(
+    () => preparation.sign(...strict),
+    error => error.reason === 'budget'
+  );
   assert.equal(counts.calls, 1);
   const tupleLimited = { ...LIMITS, maxTupleComparisons: 1 };
   const tupleBudget = new TexturedPreparationBudget2D(tupleLimited);
