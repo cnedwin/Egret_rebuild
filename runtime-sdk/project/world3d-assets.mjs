@@ -5,7 +5,7 @@ const MAX_GLB_BYTES = 8 * 1024 * 1024;
 
 // Accumulate directly into the size declared by the GLB header. Android backs
 // this iterator with one bounded read at a time, and return() releases it early.
-async function readContainer(assets, path, signal) {
+async function readContainer(assets, path, signal, onProgress) {
   const header = new Uint8Array(12);
   let total = 0,
     bytes;
@@ -27,6 +27,11 @@ async function readContainer(assets, path, signal) {
     if (chunk.length > bytes.length - total) throw new RangeError('GLB exceeds its declared size');
     bytes.set(chunk, total);
     total += chunk.length;
+    if (onProgress) {
+      // Exiting the loop closes the current reader before another chunk is requested.
+      onProgress(total, bytes.byteLength);
+      if (signal.aborted) throw signal.reason;
+    }
   }
   if (!bytes || total !== bytes.length) throw new RangeError('Incomplete packaged GLB');
   return bytes;
@@ -60,22 +65,23 @@ export function createProjectGlbLoader(services, pageInUse) {
       retireAll(live);
     }
   });
-  return async function loadGlb(path, { firstPage, signal } = {}) {
+  return async function loadGlb(path, { firstPage, signal, onProgress } = {}) {
     if (closed) throw new Error('GLB scope closed');
     if (signal?.aborted) throw signal.reason;
+    if (onProgress !== undefined && typeof onProgress !== 'function') throw new TypeError('Expected a GLB progress callback');
     const controller = new AbortController();
     const abort = () => controller.abort(signal.reason);
     signal?.addEventListener('abort', abort);
     pending.add(controller);
     try {
-      return await acquire(path, firstPage, controller.signal);
+      return await acquire(path, firstPage, controller.signal, onProgress);
     } finally {
       pending.delete(controller);
       signal?.removeEventListener('abort', abort);
     }
   };
 
-  async function acquire(path, firstPage, signal) {
+  async function acquire(path, firstPage, signal, onProgress) {
     if (!Number.isInteger(firstPage) || firstPage < 1 || firstPage > 255)
       throw new RangeError('Invalid first texture page');
     function checkOpen() {
@@ -83,7 +89,7 @@ export function createProjectGlbLoader(services, pageInUse) {
       if (signal?.aborted) throw signal.reason;
     }
     checkOpen();
-    const bytes = await readContainer(services.assets, path, signal);
+    const bytes = await readContainer(services.assets, path, signal, onProgress);
     checkOpen();
     const asset = await loadGltf3D(bytes, {
       async decodeImage({ bytes: image, mimeType }) {
