@@ -99,6 +99,10 @@
     {
       "path": "examples/outfit-studio/fixed-verification-summary.json",
       "originRole": "First-party Egret fixed scene, controls, or scoped evidence, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
+    },
+    {
+      "path": "examples/outfit-studio/mixed-functional-summary.json",
+      "originRole": "First-party Egret fixed scene, controls, or scoped evidence, implemented with AI assistance under Apache-2.0. Uses existing attributed assets and dependencies."
     }
   ],
   "documents": [

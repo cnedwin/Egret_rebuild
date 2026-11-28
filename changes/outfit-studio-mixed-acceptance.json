@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Outfit Studio mixed-scene controls and recovery",
+    "body": "Verify keyboard traversal and modal focus return on Windows, two-contact input and Android Home on Fold7, and transactional project and palette recovery on both hardware graphics backends. Add an executable mixed desktop keyboard regression."
+  },
+  "zh": {
+    "title": "换装工作室混合场景的操作与恢复",
+    "body": "在 Windows 验证键盘遍历与模态焦点归还，在 Fold7 验证双触点操作与 Android 主屏中断，在两种硬件图形后端验证工程与配色的事务恢复。新增可复跑的混合桌面键盘回归。"
+  }
+}
