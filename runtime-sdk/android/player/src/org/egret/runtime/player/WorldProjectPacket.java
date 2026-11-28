@@ -109,6 +109,32 @@ final class WorldProjectPacket {
         return offset;
     }
 
+    // The high half of the original draw count is zero for every pre-lighting frame.
+    // The optional bounded block precedes the HUD and follows the final draw.
+    private static int lightingStart(ByteBuffer data, int hud, int count) {
+        int length = data.getInt(16) >>> 16;
+        if (length == 0) return hud;
+        int start = hud - length;
+        if (start < HEADER || length < 128 || data.getInt(start) != 0x3154494c) return -1;
+        int points = data.getInt(start + 4), size = data.getInt(start + 8);
+        if (points < 0 || points > 8 || length != 128 + points * 28 + ((count + 3) & ~3) ||
+                (size != 0 && (size < 64 || size > 2048 || (size & (size - 1)) != 0))) return -1;
+        int policies = start + 128 + 28 * points;
+        for (int p = start + 12; p < policies; p += 4) {
+            float value = data.getFloat(p);
+            int offset = p - start;
+            boolean nonnegative = offset < 28 || offset == 32 || offset == 36 ||
+                    (offset >= 116 && offset < 128) || (offset >= 128 && (offset - 128) % 28 >= 12);
+            if (!Float.isFinite(value) || (nonnegative && value < 0)) return -1;
+        }
+        for (int i = 0; policies + i < hud; i++) {
+            int policy = data.get(policies + i) & 255;
+            if ((policy & ~15) != 0 || ((policy & 8) != 0 && (policy & 1) == 0) ||
+                    (size == 0 && (policy & 11) != 0) || (i >= count && policy != 0)) return -1;
+        }
+        return start;
+    }
+
     // A single asset may provide both color and data views with different transfer functions.
     static void visitTexturePages(ByteBuffer data, IntConsumer visit) {
         visitTexturePages(data, visit, page -> {});
@@ -121,7 +147,8 @@ final class WorldProjectPacket {
 
     static void visitTexturePages(ByteBuffer data, IntConsumer color, IntConsumer linear) {
         if (data.limit() < 24 || !isTextured(data.getInt(0))) return;
-        int end = stageOffset(data), draws = data.getInt(16);
+        int draws = data.getInt(16) & 0xffff;
+        int end = lightingStart(data, stageOffset(data), draws);
         int header = headerSize(data.getInt(0)), width = drawSize(data.getInt(0));
         if (end < header || draws < 0 || draws > PlayerGraphics.MAX_QUADS || (long) draws * width > end - header)
             throw new IllegalArgumentException("Invalid World3D draw table");
@@ -189,14 +216,15 @@ final class WorldProjectPacket {
                 fullFormat(previous.format) != fullFormat(format))) throw invalid();
         boolean skinned = isSkinned(format);
         int stride = skinned ? 68 : textured ? 32 : 24, drawBytes = drawSize(format);
-        int geometries = data.getInt(12), draws = data.getInt(16);
+        int geometries = data.getInt(12), draws = data.getInt(16) & 0xffff;
+        int drawEnd = lightingStart(data, end, draws);
         if ((data.getInt(20) & 255) != 255 || geometries < 0 || geometries > 64 ||
-            draws < 0 || draws > PlayerGraphics.MAX_QUADS || (long) draws * drawBytes > end - header) throw invalid();
+            draws < 0 || draws > PlayerGraphics.MAX_QUADS || (long) draws * drawBytes > drawEnd - header) throw invalid();
         for (int offset = 24; offset < HEADER; offset += 4) {
             float value = data.getFloat(offset);
             if (!Float.isFinite(value) || (offset >= 112 && value < 0)) throw invalid();
         }
-        int drawOffset = end - draws * drawBytes, cursor = header;
+        int drawOffset = drawEnd - draws * drawBytes, cursor = header;
         int paletteBytes = skinned ? data.getInt(header - 4) : 0;
         if (paletteBytes < 0 || paletteBytes > drawOffset - header || (paletteBytes & 3) != 0) throw invalid();
         int tailOffset = drawOffset - paletteBytes;
@@ -242,7 +270,7 @@ final class WorldProjectPacket {
         // the native receiver: retire every ID absent from this complete draw list.
         Map<Integer, Definition> visible = delta ? new LinkedHashMap<>() : defined;
         int fullLength = delta ? headerSize(fullFormat(format)) + owned.length - tailOffset : owned.length;
-        for (; cursor < end; cursor += drawBytes) {
+        for (; cursor < drawEnd; cursor += drawBytes) {
             int id = data.getInt(cursor);
             if (!visible.containsKey(id)) {
                 if (!delta || visible.size() >= 64) throw invalid();

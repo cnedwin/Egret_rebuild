@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 import { InstancedMesh3D, RenderList3D } from '@egret/engine/world3d';
 
+import { planWorldLighting } from './world3d-lighting.mjs';
+
 // Full packets are self-contained checkpoints. Deltas carry the complete draw list
 // and only reference geometry retained by the acknowledged draw in the same device epoch.
 const MAGIC = 0x31443345,
@@ -220,13 +222,12 @@ export function createWorldProjectEncoder() {
   // This profile draws individual objects and only shares the underlying GPU geometry.
   list.autoInstanceThreshold = 0;
   let previous;
-  function encode({ scene, camera }, hud, pages, epoch, previousFrameId) {
+  function encode({ scene, camera, shadows }, hud, pages, epoch, previousFrameId) {
     if (!(hud instanceof Uint8Array) || hud.byteLength < 24 || hud.byteLength > BYTE_LIMIT) reject('HUD length');
     const h = new DataView(hud.buffer, hud.byteOffset, hud.byteLength);
     if (!hudFormats.has(h.getUint32(0, true)) || h.getUint8(16) !== 0) reject('transparent HUD required');
     if (
       scene.environment ||
-      scene.fog ||
       scene.clippingPlanes.length ||
       (scene.background !== undefined && !Array.isArray(scene.background))
     )
@@ -240,16 +241,15 @@ export function createWorldProjectEncoder() {
     list.build(scene, camera);
     if (
       list.transparent.length ||
-      list.spotLights.length ||
-      list.pointLights.length ||
-      list.directionalLights.length > 1 ||
       list.opaque.length > 4096
     )
       reject('unsupported lights or draws');
-    const skinFormat = list.opaque.some(({ mesh, material }) =>
+    const {items, bytes: lighting} = planWorldLighting(scene, list, shadows);
+    const lightingBytes = lighting?.byteLength ?? 0;
+    const skinFormat = items.some(({ mesh, material }) =>
       mesh.skeleton || material.vertexColors || material.normalMap || material.metallicRoughnessMap ||
       material.emissive.some((component) => component !== 0));
-    const extended = skinFormat || list.opaque.some(({ material }) => material.map || material.side === 'double');
+    const extended = skinFormat || items.some(({ material }) => material.map || material.side === 'double');
     const format = skinFormat ? SKINNED_MAGIC : extended ? TEXTURED_MAGIC : MAGIC;
     const frameId = h.getUint32(4, true);
     const tracked = Number.isSafeInteger(epoch) && epoch >= 0;
@@ -261,11 +261,11 @@ export function createWorldProjectEncoder() {
     let paletteBytes = 0;
     const limit = extended ? TEXTURED_BYTE_LIMIT : BYTE_LIMIT;
     const geometryBytes = new Map();
-    let size = HEADER + (skinFormat ? 4 : 0) + drawBytes * list.opaque.length + hud.byteLength;
+    let size = HEADER + (skinFormat ? 4 : 0) + drawBytes * items.length + lightingBytes + hud.byteLength;
     let totalGeometry = 0;
     let reusedCount = 0, reusedBytes = 0;
     const base = previous?.format === format ? acknowledged : undefined;
-    for (const item of list.opaque) {
+    for (const item of items) {
       supportedDraw(item);
       const packed = packGeometry(cache, item.geometry, extended, skinFormat);
       const skeleton = item.mesh.skeleton;
@@ -309,7 +309,7 @@ export function createWorldProjectEncoder() {
       frameId,
       hud.byteLength,
       stream ? 0 : geometryBytes.size - reusedCount,
-      list.opaque.length,
+      (lightingBytes << 16) | items.length,
       rgba
     ].forEach((n, i) => v.setUint32(i * 4, n, true));
     vector(v, 24, camera.viewProjectionMatrix, 16);
@@ -357,7 +357,7 @@ export function createWorldProjectEncoder() {
       vector(v, offset + 4, skeleton.boneMatrices, skeleton.boneMatrices.length);
       offset += 4 + skeleton.boneMatrices.byteLength;
     }
-    for (const item of list.opaque) {
+    for (const item of items) {
       v.setUint32(offset, item.geometry.id, true);
       // The palette already contains world transforms. Apply only the original mesh bind matrix.
       vector(v, offset + 4, item.mesh.skeleton ? item.mesh.bindMatrix : item.mesh.matrixWorld, 16);
@@ -381,6 +381,7 @@ export function createWorldProjectEncoder() {
       }
       offset += drawBytes;
     }
+    if (lighting) { bytes.set(lighting, offset); offset += lightingBytes; }
     bytes.set(hud, offset);
     previous = tracked ? {epoch, id: frameId, format: stream ? STREAM_MAGIC : format, geometry: geometryBytes,
       streamDraw: stream ? bytes : undefined, batches,
