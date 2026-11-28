@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "CanvasKit paragraphs report unsupported color fonts at registration",
+    "body": "For standalone TTF and OTF files, an SVG table or COLR version above 0 now returns PARAGRAPH_FONT_COLOR_UNSUPPORTED. An application replacing its font set can keep the previous set on failure. Existing outline and COLRv0 fonts continue to render."
+  },
+  "zh": {
+    "title": "CanvasKit 段落在注册时报告不支持的彩色字体",
+    "body": "独立 TTF 和 OTF 文件带有 SVG 表或版本高于 0 的 COLR 表时，提供器会返回 PARAGRAPH_FONT_COLOR_UNSUPPORTED。应用替换字体集合失败后，可以继续使用上一套字体。现有轮廓字体和 COLRv0 字体仍可绘制。"
+  }
+}

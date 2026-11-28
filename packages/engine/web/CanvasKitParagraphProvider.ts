@@ -343,6 +343,56 @@ export interface NativeFontBorrow {
   readonly face: NativeTypeface;
   release(): void;
 }
+/**
+ * The qualified color profile uses bitmap strikes and COLR v0 layers. Reject a
+ * known incompatible table even if the face also has usable monochrome outlines.
+ * This reads table metadata only; glyph decoding still belongs to CanvasKit.
+ */
+function checkColorGlyphFormat(bytes: Uint8Array): void {
+  if (bytes.byteLength < 4) return;
+  const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let face = 0;
+  if (data.getUint32(0) === 0x74746366) {
+    // ttcf: the fixed provider opens the first face.
+    if (bytes.byteLength < 16 || data.getUint32(8) === 0) throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
+    face = data.getUint32(12);
+    if (face < 16 || face > bytes.byteLength - 12) throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
+  }
+  const signature = data.getUint32(face);
+  const woff = face === 0 && signature === 0x774f4646; // wOFF
+  if (
+    !woff &&
+    signature !== 0x00010000 &&
+    signature !== 0x4f54544f &&
+    signature !== 0x74727565 &&
+    signature !== 0x74797031
+  )
+    return;
+  const start = face + (woff ? 44 : 12);
+  if (start > bytes.byteLength) throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
+  const count = data.getUint16(face + (woff ? 12 : 4)),
+    stride = woff ? 20 : 16;
+  if (start + count * stride > bytes.byteLength) throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
+  for (let i = 0; i < count; i++) {
+    const entry = start + i * stride,
+      tag = data.getUint32(entry);
+    if (tag === 0x53564720) throw new EgretError('PARAGRAPH_FONT_COLOR_UNSUPPORTED'); // SVG followed by a space
+    if (tag !== 0x434f4c52) continue; // COLR
+    const offset = data.getUint32(entry + (woff ? 4 : 8));
+    const stored = data.getUint32(entry + (woff ? 8 : 12));
+    if (stored === 0 || offset > bytes.byteLength - stored) throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
+    // A compressed WOFF table does not expose its COLR version. Keep the old
+    // native-decoder path for that optional wrapper, outside SFNT qualification.
+    if (woff) {
+      const originalLength = data.getUint32(entry + 12);
+      if (stored > originalLength) throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
+      if (stored < originalLength) continue;
+    }
+    if (stored < 2) throw new EgretError('PARAGRAPH_FONT_DECODE_REFUSED');
+    if (data.getUint16(offset) !== 0) throw new EgretError('PARAGRAPH_FONT_COLOR_UNSUPPORTED');
+  }
+}
+
 /** CanvasKit's raw binding takes ownership of the allocation, including a null decode result. */
 export function decodeCanvasKitFont(ck: CanvasKitParagraphModule, data: Uint8Array): NativeTypeface | null {
   const decode = ck.Typeface._MakeTypefaceFromData;
@@ -380,7 +430,9 @@ export function createCanvasKitParagraphProviderOwned(
       throw new TypeError('Paragraph font bytes required');
     fontBytes += font.data.byteLength;
     if (fontBytes > 33554432) throw new RangeError('Paragraph font byte limit exceeded');
-    return { family: font.family, identity: font.identity, data: Uint8Array.from(font.data) };
+    const data = Uint8Array.from(font.data);
+    checkColorGlyphFormat(data);
+    return { family: font.family, identity: font.identity, data };
   });
   let moduleIdentity = moduleIdentities.get(ck);
   if (moduleIdentity === undefined) {
