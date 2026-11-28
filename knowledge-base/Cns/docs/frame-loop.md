@@ -66,9 +66,13 @@ loop.start();
 
 可选的 `beforeRender()` 在 `update`、`shouldRender` 以及 Host 待完成帧检查之后、捕获之前进行仅用于画面的准备。静止或因积压而跳过的帧不调用它；Host 仍可能拒绝一次已初步准入的绘制。不得在此推进游戏逻辑、时钟或语义动画事件。
 
+可用可选的同步 `afterFrame()` 在同一浏览器回调中提交另一个独立的画面：主画面提交、保留上帧、宿主背压跳过或明确允许重试的回合结束后，在请求下一次 RAF 前执行。每个有效显示回合执行一次，不是每个追赶步一次。若在这之前停止、释放、重启或发生致命错误，则不调用它。`afterFrame` 抛错走循环原有失败路径；它不是诊断观察器。它不绕过宿主准入、不等待 GPU 完成，也不保证屏幕已经呈现。玩法更新仍应发生在绘制之前。
+
 默认错误仍停止循环。使用 `renderRetry: { maxConsecutive: 2, shouldRetry(error, consecutiveFailure) { ... } }` 时，游戏可显式接受特定绘制调用错误并于后续显示帧尝试。上限为 1 至 8 的整数；仅成功绘制调用或显式重新启动重置连续失败次数。时间与更新不会重放；更新、帧构建或绘制准备错误仍是致命错误。返回 false、抛错或达到上限后仍失败会停止循环。配置后快照含 `recoveredRenderFailures`，与 Host 背压的 `skipped` 分开。BrowserGame 和 Play 均转发两个选项；已有 Engine 诊断仍会通知。仅用于已独立确认可恢复的绘制错误。
 
 ## 可选的回调计时
+
+配置 `afterFrame` 后，样本还带有与 `renderMs` 分开的 `afterFrameMs`（未执行时为 0）。这是回调的 CPU 墙钟耗时，不是 GPU 呈现时间。
 
 给 `createBrowserFrameLoop` 传入 `onFrameTiming(sample)`，每次运行中的浏览器回调会产生一份不可变样本。每个循环的 `id` 单调递增，`rafTimestampMs` 为实际传入的动画帧时间戳，`callbackStartMs` / `callbackEndMs` 使用浏览器 performance 的时间原点。可与同页其他循环对齐，但不能当作显示呈现。
 

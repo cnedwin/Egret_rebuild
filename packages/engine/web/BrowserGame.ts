@@ -241,6 +241,8 @@ export interface BrowserGameOptions {
   readonly update?: (deltaSeconds: number) => void;
   /** Presentation-only work after frame admission, before capture. */
   readonly beforeRender?: BrowserFrameLoopOptions<unknown>['beforeRender'];
+  /** Synchronous presentation work after this turn's primary submission or retention. */
+  readonly afterFrame?: BrowserFrameLoopOptions<unknown>['afterFrame'];
   /** Optional bounded recovery of a render failure. Game logic and preparation errors still stop the loop. */
   readonly renderRetry?: BrowserFrameLoopOptions<unknown>['renderRetry'];
   /** Told once of what stopped the game's loop. Without it the failure is thrown where the console shows it. */
@@ -542,6 +544,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
     (options.beforeRender !== undefined && typeof options.beforeRender !== 'function') ||
+    (options.afterFrame !== undefined && typeof options.afterFrame !== 'function') ||
     (onFrameTiming !== undefined && typeof onFrameTiming !== 'function') ||
     (options.measureSharedFrames !== undefined && typeof options.measureSharedFrames !== 'boolean') ||
     (options.renderRetry !== undefined &&
@@ -822,6 +825,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
             }
           }),
       ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
+      ...(options.afterFrame === undefined ? {} : { afterFrame: options.afterFrame }),
       ...(options.renderRetry === undefined ? {} : { renderRetry: options.renderRetry }),
       ...(onError === undefined ? {} : { onError }),
       update(seconds: number): void {

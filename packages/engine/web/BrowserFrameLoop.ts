@@ -22,6 +22,8 @@ export interface BrowserFrameTiming {
   readonly hostCheckMs: number;
   readonly prepareMs: number;
   readonly renderMs: number;
+  /** CPU duration of afterFrame, present only when that callback is configured. */
+  readonly afterFrameMs?: number;
   /** Observed only when the loop actually checked Host admission. */
   readonly pendingFrames?: number;
   readonly outcome: 'retained' | 'backpressure' | 'rendered' | 'retry' | 'interrupted' | 'failed';
@@ -41,6 +43,8 @@ export interface BrowserFrameLoopOptions<F> {
   readonly shouldRender?: () => boolean;
   /** Optional presentation-only preparation after the wanted-frame and Host admission checks. The Host may still refuse the attempt. */
   readonly beforeRender?: () => void;
+  /** Synchronous presentation work at the end of each live display turn, after the primary frame decision/submission. */
+  readonly afterFrame?: () => void;
   /** Opt-in bounded recovery of a failed render call, never of clock/update/preparation errors. */
   readonly renderRetry?: {
     readonly maxConsecutive: number;
@@ -101,7 +105,8 @@ const backpressure = (error: unknown): boolean => {
  */
 export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): BrowserFrameLoop {
   if (options === null || typeof options !== 'object') throw invalid();
-  const { engine, frame, host, update, shouldRender, beforeRender, onError, renderRetry, onFrameTiming } = options,
+  const { engine, frame, host, update, shouldRender, beforeRender, afterFrame, onError, renderRetry, onFrameTiming } =
+      options,
     limit = options.maxPendingFrames ?? 2;
   const request =
     options.requestFrame ?? ((callback: (milliseconds: number) => void): number => requestAnimationFrame(callback));
@@ -119,6 +124,7 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
     (update !== undefined && typeof update !== 'function') ||
     (shouldRender !== undefined && typeof shouldRender !== 'function') ||
     (beforeRender !== undefined && typeof beforeRender !== 'function') ||
+    (afterFrame !== undefined && typeof afterFrame !== 'function') ||
     (renderRetry !== undefined &&
       (renderRetry === null ||
         typeof renderRetry !== 'object' ||
@@ -171,8 +177,8 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
     const durations =
       onFrameTiming === undefined
         ? undefined
-        : { updateMs: 0, decisionMs: 0, hostCheckMs: 0, prepareMs: 0, renderMs: 0 };
-    type Phase = 'updateMs' | 'decisionMs' | 'hostCheckMs' | 'prepareMs' | 'renderMs';
+        : { updateMs: 0, decisionMs: 0, hostCheckMs: 0, prepareMs: 0, renderMs: 0, afterFrameMs: 0 };
+    type Phase = 'updateMs' | 'decisionMs' | 'hostCheckMs' | 'prepareMs' | 'renderMs' | 'afterFrameMs';
     let phase: Phase | undefined = 'updateMs',
       phaseStart = started;
     let outcome: BrowserFrameTiming['outcome'] = 'interrupted',
@@ -258,6 +264,13 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
         outcome = 'retained';
         nextPhase?.();
       }
+      // A retained or temporarily refused primary frame can still accompany
+      // another presentation surface. Do not run a superseded turn's work.
+      if (afterFrame !== undefined && currentTick()) {
+        nextPhase?.('afterFrameMs');
+        afterFrame();
+        nextPhase?.();
+      }
       if (state === 'running' && handle === undefined) handle = request(tick);
     } catch (error) {
       nextPhase?.();
@@ -283,12 +296,14 @@ export function createBrowserFrameLoop<F>(options: BrowserFrameLoopOptions<F>): 
     } finally {
       if (onFrameTiming !== undefined && durations !== undefined) {
         nextPhase?.();
+        const { afterFrameMs, ...measured } = durations;
         const sample = Object.freeze({
           id: ++timingId,
           rafTimestampMs: milliseconds,
           callbackStartMs: started,
           callbackEndMs: performance.now(),
-          ...durations,
+          ...measured,
+          ...(afterFrame === undefined ? {} : { afterFrameMs }),
           outcome,
           ...(observedPending === undefined ? {} : { pendingFrames: observedPending })
         });

@@ -444,6 +444,25 @@ On `app.stop()` followed by `app.start()`, a first frame whose gap exceeds the l
 
 `createWorld3DView(engine, scope, options)` subscribes to the Engine clock under a Scope. Each tick resizes the drawing buffer when needed, calls `onUpdate`, advances mixers, controls and particle emitters, and renders. Closing the Scope ends the view. The renderer, scene and controls stay owned by their creator; register them with `scope.use(...)` to retire them with the Scope.
 
+When a separate transparent 2D surface uses the same Play clock, a view can opt into `deferRender: true`. The clock still performs each resize and simulation update, but the view retains only the latest pending draw for synchronous consumption. Use Play's `afterFrame` to draw it after the shared 2D submission (or its retained or backpressured frame) within the same browser callback:
+
+```ts
+let view: World3DView | undefined;
+await play({
+  width: 1280, height: 720,
+  setup(game) {
+    view = createWorld3DView(game.engine, game.scope, { renderer, scene, camera, deferRender: true });
+  },
+  afterFrame() {
+    view?.drawPending();
+  }
+});
+```
+
+The default `deferRender: false` retains the immediate clock-driven draw. The mutable `view.deferRender` flag can select the order for a particular scene without recreating the clock. Changing the flag, pausing, replacing the scene or camera, a failed update, and disposal retire pending work. An unconsumed draw expires at a scheduled microtask boundary; consume it synchronously, never after an await or in another display callback. Several catch-up ticks in the same turn still advance every mixer and update and produce one latest draw. `drawPending()` returns true only if the renderer accepted that actual draw, not when work is prepared; false includes no pending work and a renderer refusal. Context loss is handled by the actual renderer; prepare a new tick after recovery.
+
+With deferred draws, `onFrameTiming` reports the actual attempted draw and its outcome, summing the preceding successful coalesced update times and deltas, and keeping the last elapsed simulation time. The wall interval can include the shared 2D submission between the two phases; `updateMs` and `renderMs` count their own work only. An update failure is still reported, and an expired or cancelled pending draw does not report false acceptance. This selects submission order only, not GPU completion or presentation.
+
 For a 2D interface above a 3D scene, either stack a transparent shared 2D host canvas over the World3D canvas or draw the 2D canvas as a screen layer (see 2D and 3D on one surface). Interleaving individual 2D display objects between 3D objects in depth remains the job of the authored scene path.
 
 `createOrbitControls3D(camera, element, options)` provides orbit, pan and zoom with Pointer Events, including two-finger pan and pinch, damping and optional automatic rotation.

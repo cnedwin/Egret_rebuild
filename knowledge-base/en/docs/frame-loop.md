@@ -66,9 +66,13 @@ The loop takes one step for each frame the display shows, of the length that pas
 
 Use optional `beforeRender()` to prepare presentation-only data after `update`, `shouldRender` and the Host pending-frame check, just before capture. It is not run for a clean or pending-limit frame; the Host may still reject a provisionally admitted attempt. Do not advance gameplay, clocks or semantic animation events here.
 
+Use optional synchronous `afterFrame()` for another independent presentation surface on the same browser callback: after primary submission, or a retained, backpressured or explicitly recoverable retry turn, and before requesting the next RAF. It runs once per valid display turn, not once per catch-up step. Stop, disposal, restart or a fatal failure before this point suppresses it. Exceptions from `afterFrame` stop the loop through its normal error path; it is not a diagnostic observer. It does not bypass Host admission, wait for GPU completion or promise actual display presentation. Keep gameplay updates before rendering.
+
 By default errors still stop the loop. With `renderRetry: { maxConsecutive: 2, shouldRetry(error, consecutiveFailure) { ... } }` a game can explicitly accept specific render-call errors and try on a later display frame. The maximum is an integer from 1 through 8; only a successful render call or an explicit restart resets the streak. Time and updates are never replayed; errors in update, frame construction or preparation remain fatal. Returning false, throwing or exhausting the bound stops the loop. The configured snapshot adds `recoveredRenderFailures`, separate from Host-backpressure `skipped`. BrowserGame and Play forward both options; existing Engine diagnostics are still delivered. Use only for independently understood recoverable render failures.
 
 ## Opt-in callback timing
+
+When `afterFrame` is configured, the sample also contains `afterFrameMs` (zero if not reached), separate from `renderMs`. This time is CPU callback wall duration; it does not include waiting for GPU presentation.
 
 Pass `onFrameTiming(sample)` to `createBrowserFrameLoop` to observe one immutable sample per running browser callback. The per-loop `id` is monotonic; `rafTimestampMs` is the supplied animation-frame timestamp, and `callbackStartMs` / `callbackEndMs` use the browser's performance time origin. They can be compared with another loop in the same page without treating them as display presentation.
 
