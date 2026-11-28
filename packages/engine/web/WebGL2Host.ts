@@ -52,7 +52,6 @@ import {
   sharedPageChainBytes2D,
   sharedTargetChannel2D
 } from '../rendering/sharedColor2D.js';
-import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { runOwnedPreparationScope } from '../rendering/ownedPreparationFailure2D.js';
 import {
   planSharedStorageFees2D,
@@ -69,14 +68,29 @@ import {
 } from './sharedWebGL2Arena.js';
 import type { SharedWebGL2ArenaPlan } from './sharedWebGL2Arena.js';
 import { createRetentionLedger } from './sharedRetentionLedger.js';
+import {
+  addResourceTotal,
+  createImagesHighWater,
+  createPageCopyDiagnostics,
+  createPendingHighWater,
+  createResourceTotals,
+  createReuseDiagnostics,
+  createUnknownNativeDiagnostics,
+  raiseImagesHighWater,
+  raisePendingHighWater,
+  sharedResourceStatus
+} from './sharedResourceDiagnostics.js';
+import type {
+  SharedResourceImages2D,
+  SharedResourcePending2D,
+  SharedResourceTotals2D
+} from './sharedResourceDiagnostics.js';
 import type {
   RetentionLedger,
   LedgerLease,
   LedgerHandle,
   LedgerPlan,
-  KeyedRetentionRequest,
-  RetentionLedgerDiagnostics,
-  NativeUnknownDiagnostics
+  KeyedRetentionRequest
 } from './sharedRetentionLedger.js';
 import { GLNativeSession, glFailure, isGLFailure } from './webgl2Native.js';
 import type { GLNativeOwner, GLNativeResourceDiagnostics } from './webgl2Native.js';
@@ -329,66 +343,12 @@ class SharedGLHost implements SharedLayerWebGL2Host {
   private lostNative: (() => boolean) | undefined;
   // Fixed-size observations only; original records/native owners still authorize every transition.
   private readonly frameTiming: ReturnType<typeof createFrameTiming> | undefined;
-  private readonly resourceCpu: SharedPageCopyDiagnostics2D = {
-    canonicalBytes: 0,
-    scratchBytes: 0,
-    highCanonicalBytes: 0,
-    highScratchBytes: 0,
-    highTemporaryBytes: 0,
-    saturated: false
-  };
-  private readonly resourceUnknown: NativeUnknownDiagnostics = {
-    knownLogicalBytes: 0,
-    objects: 0,
-    highKnownLogicalBytes: 0,
-    highObjects: 0,
-    saturated: false
-  };
-  private readonly resourceReuse: RetentionLedgerDiagnostics = {
-    current: {
-      idleBytes: 0,
-      idleEntries: 0,
-      leasedBytes: 0,
-      leasedEntries: 0,
-      reservedBytes: 0,
-      reservedEntries: 0,
-      detachedBytes: 0,
-      detachedEntries: 0,
-      unknownBytes: 0,
-      unknownEntries: 0
-    },
-    highWater: {
-      idleBytes: 0,
-      idleEntries: 0,
-      leasedBytes: 0,
-      leasedEntries: 0,
-      reservedBytes: 0,
-      reservedEntries: 0,
-      detachedBytes: 0,
-      detachedEntries: 0,
-      unknownBytes: 0,
-      unknownEntries: 0
-    },
-    saturated: false,
-    unknownNative: this.resourceUnknown
-  };
-  private readonly resourceHighPending = {
-    frames: 0,
-    uploadCreditBytes: 0,
-    pageCreditBytes: 0,
-    readbackCreditBytes: 0,
-    geometryCreditBytes: 0,
-    colorCreditBytes: 0
-  };
-  private readonly resourceHighImages = {
-    readyBytes: 0,
-    readyEntries: 0,
-    pinnedReadyBytes: 0,
-    pinnedReadyEntries: 0,
-    allocatedLogicalBytes: 0,
-    reservedCreditBytes: 0
-  };
-  private readonly resourceTotals = { pageWriteCalls: 0, pageWriteBytes: 0, readyCapacityEvictions: 0 };
+  private readonly resourceCpu = createPageCopyDiagnostics();
+  private readonly resourceUnknown = createUnknownNativeDiagnostics();
+  private readonly resourceReuse = createReuseDiagnostics(this.resourceUnknown);
+  private readonly resourceHighPending = createPendingHighWater();
+  private readonly resourceHighImages = createImagesHighWater();
+  private readonly resourceTotals = createResourceTotals();
   private resourceSaturated = false;
   private resourceReadyBytes = 0;
   private resourcePinnedBytes = 0;
@@ -503,113 +463,54 @@ class SharedGLHost implements SharedLayerWebGL2Host {
     }
   }
   private sampleResourcePending(): void {
+    raisePendingHighWater(this.resourceHighPending, this.resourcePending());
+  }
+  /** What is promised and not yet settled, as the owner snapshot counts it. */
+  private resourcePending(): SharedResourcePending2D {
     const owner = this.snapshot();
-    this.resourceHighPending.frames = Math.max(this.resourceHighPending.frames, owner.pendingFrames);
-    this.resourceHighPending.uploadCreditBytes = Math.max(
-      this.resourceHighPending.uploadCreditBytes,
-      owner.pendingUploadBytes
-    );
-    this.resourceHighPending.pageCreditBytes = Math.max(
-      this.resourceHighPending.pageCreditBytes,
-      owner.pendingTextureBytes
-    );
-    this.resourceHighPending.readbackCreditBytes = Math.max(
-      this.resourceHighPending.readbackCreditBytes,
-      owner.pendingReadbackBytes
-    );
-    this.resourceHighPending.geometryCreditBytes = Math.max(
-      this.resourceHighPending.geometryCreditBytes,
-      owner.pendingGeometryBytes
-    );
-    this.resourceHighPending.colorCreditBytes = Math.max(
-      this.resourceHighPending.colorCreditBytes,
-      owner.pendingColorBytes
-    );
+    return {
+      frames: owner.pendingFrames,
+      uploadCreditBytes: owner.pendingUploadBytes,
+      pageCreditBytes: owner.pendingTextureBytes,
+      readbackCreditBytes: owner.pendingReadbackBytes,
+      geometryCreditBytes: owner.pendingGeometryBytes,
+      colorCreditBytes: owner.pendingColorBytes
+    };
   }
   private sampleResourceImages(): void {
-    this.resourceHighImages.readyBytes = Math.max(this.resourceHighImages.readyBytes, this.resourceReadyBytes);
-    this.resourceHighImages.readyEntries = Math.max(this.resourceHighImages.readyEntries, this.pages.size);
-    this.resourceHighImages.pinnedReadyBytes = Math.max(
-      this.resourceHighImages.pinnedReadyBytes,
-      this.resourcePinnedBytes
-    );
-    this.resourceHighImages.pinnedReadyEntries = Math.max(
-      this.resourceHighImages.pinnedReadyEntries,
-      this.resourcePinnedEntries
-    );
-    this.resourceHighImages.allocatedLogicalBytes = Math.max(
-      this.resourceHighImages.allocatedLogicalBytes,
-      this.resourceNative.pageBytes
-    );
-    this.resourceHighImages.reservedCreditBytes = Math.max(
-      this.resourceHighImages.reservedCreditBytes,
-      this.resourceNative.reservedPageBytes
-    );
+    raiseImagesHighWater(this.resourceHighImages, this.resourceImages());
   }
-  private resourceTotal(key: keyof typeof this.resourceTotals, amount: number): void {
-    const old = this.resourceTotals[key];
-    if (amount > Number.MAX_SAFE_INTEGER - old) {
-      this.resourceTotals[key] = Number.MAX_SAFE_INTEGER;
-      this.resourceSaturated = true;
-    } else this.resourceTotals[key] = old + amount;
+  /** The page images kept ready and pinned now, with their native accounting. */
+  private resourceImages(): SharedResourceImages2D {
+    return {
+      readyBytes: this.resourceReadyBytes,
+      readyEntries: this.pages.size,
+      pinnedReadyBytes: this.resourcePinnedBytes,
+      pinnedReadyEntries: this.resourcePinnedEntries,
+      allocatedLogicalBytes: this.resourceNative.pageBytes,
+      reservedCreditBytes: this.resourceNative.reservedPageBytes
+    };
+  }
+  private resourceTotal(key: keyof SharedResourceTotals2D, amount: number): void {
+    if (addResourceTotal(this.resourceTotals, key, amount)) this.resourceSaturated = true;
   }
   /** Read-only logical observations; no native call, callback or state transition. */
   private resourceStatus(): SharedHostResourceStatus {
-    const owner = this.snapshot();
-    return Object.freeze({
-      current: Object.freeze({
-        pending: Object.freeze({
-          frames: owner.pendingFrames,
-          uploadCreditBytes: owner.pendingUploadBytes,
-          pageCreditBytes: owner.pendingTextureBytes,
-          readbackCreditBytes: owner.pendingReadbackBytes,
-          geometryCreditBytes: owner.pendingGeometryBytes,
-          colorCreditBytes: owner.pendingColorBytes
-        }),
-        cpu: Object.freeze({
-          canonicalBytes: this.resourceCpu.canonicalBytes,
-          scratchBytes: this.resourceCpu.scratchBytes,
-          temporaryBytes: this.resourceCpu.canonicalBytes + this.resourceCpu.scratchBytes
-        }),
-        images: Object.freeze({
-          readyBytes: this.resourceReadyBytes,
-          readyEntries: this.pages.size,
-          pinnedReadyBytes: this.resourcePinnedBytes,
-          pinnedReadyEntries: this.resourcePinnedEntries,
-          allocatedLogicalBytes: this.resourceNative.pageBytes,
-          reservedCreditBytes: this.resourceNative.reservedPageBytes
-        }),
-        reusable: Object.freeze({ ...this.resourceReuse.current }),
-        unknownNative: Object.freeze({
-          knownLogicalBytes: this.resourceUnknown.knownLogicalBytes,
-          objects: this.resourceUnknown.objects
-        })
-      }),
-      highWater: Object.freeze({
-        pending: Object.freeze({ ...this.resourceHighPending }),
-        cpu: Object.freeze({
-          canonicalBytes: this.resourceCpu.highCanonicalBytes,
-          scratchBytes: this.resourceCpu.highScratchBytes,
-          temporaryBytes: this.resourceCpu.highTemporaryBytes
-        }),
-        images: Object.freeze({
-          ...this.resourceHighImages,
-          allocatedLogicalBytes: this.resourceNative.highPageBytes,
-          reservedCreditBytes: this.resourceNative.highReservedPageBytes
-        }),
-        reusable: Object.freeze({ ...this.resourceReuse.highWater }),
-        unknownNative: Object.freeze({
-          knownLogicalBytes: this.resourceUnknown.highKnownLogicalBytes,
-          objects: this.resourceUnknown.highObjects
-        })
-      }),
-      totals: Object.freeze({ ...this.resourceTotals }),
-      saturated:
-        this.resourceSaturated ||
-        this.resourceCpu.saturated ||
-        this.resourceReuse.saturated ||
-        this.resourceUnknown.saturated ||
-        this.resourceNative.saturated
+    return sharedResourceStatus({
+      pending: this.resourcePending(),
+      images: this.resourceImages(),
+      cpu: this.resourceCpu,
+      reuse: this.resourceReuse,
+      unknown: this.resourceUnknown,
+      highPending: this.resourceHighPending,
+      // Native page accounting keeps its own lifetime maxima.
+      highImages: {
+        ...this.resourceHighImages,
+        allocatedLogicalBytes: this.resourceNative.highPageBytes,
+        reservedCreditBytes: this.resourceNative.highReservedPageBytes
+      },
+      totals: this.resourceTotals,
+      saturated: this.resourceSaturated || this.resourceNative.saturated
     });
   }
   private stateError(): Error {

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/sharedResourceDiagnostics.ts",
+      "originRole": "First-party logical resource observation records, high-water marks and frozen status shared by the WebGL2 and WebGPU shared Hosts; extracted from the existing first-party Host implementations with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
