@@ -27,7 +27,8 @@ import { assertLive, childAtOf, childCountOf, isDisplayNode, isStageRoot, parent
 import { engineOf } from './ownership.js';
 import { finite, visualOf } from './displayVisualState.js';
 import { composeDisplayTransform } from './displayTransform.js';
-import { bitmapCaptureState, readBitmapImage, readBitmapSource } from './Bitmap.js';
+import { readBitmapState as bitmapCaptureState } from './bitmapDisplayState.js';
+import { readBitmapImage, readBitmapSource } from './bitmapImage.js';
 import { readMeshState } from './meshDisplayState.js';
 import { SHAPE_PAGE, SHAPE_REGION, resolveShape, shapeMaskImage } from './graphicsShape.js';
 import type { ResolvedShape } from './graphicsShape.js';
