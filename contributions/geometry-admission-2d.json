@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/contracts/src/geometryAdmission2D.ts",
+      "originRole": "First-party private array admission shared by the textured and shared 2D geometry factories; extracted from the existing first-party TexturedGeometry2D and SharedGeometry2D modules with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
