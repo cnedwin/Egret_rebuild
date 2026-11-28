@@ -151,4 +151,6 @@ input.open({ x: 60, y: 1000, width: 600, height: 60, maxLength: 12, onCommit: na
 - `tests/browser-text-input.test.mjs`：十三个用例，针对页面的替身运行。它们说明向页面添加了什么、何时添加，文本框放在哪里，哪些事件结束会话，以及长度上限、焦点、按键隔离、错误和释放，并确认严格模式的 TypeScript 使用方可以编译。
 - `examples/text-input/verify.mjs`：在无头 Chromium 里运行示例，分别用鼠标和模拟的手机。组字过程通过浏览器自己的协议驱动：先是未确定的拼音，然后是选定的字。
 
-**未检查：实体输入法、真实手机、Safari 和 Firefox。** 组字规则依据这些浏览器公开说明的平台事件；代码里考虑到的几种特殊情况（组字结束之后才送达的回车、玩家触摸别处时仍保有焦点的文本框、只以换行形式送达的回车）依据它们公开说明的行为写成，没有在这里观察到。
+在实体 iPhone（iOS 27.2.1、Safari 27.2）上，WebGL2 和 WebGPU 都绘出了登记表首帧。两个后端的四个取样点均符合背景、面板和输入框的预期颜色。标题区域的亮色像素分别为 1,312 和 1,310 个。Safari 自动化点按姓名栏，通过程序插入“白鹭”，再按回车提交。此次复验覆盖画面和编辑流程，系统键盘的候选字选择仍待真人操作。
+
+新建的 sRGB 画布上下文若省略透明度属性，文字提供器会读取一个像素，确认透明后才使用该画布。上下文缺少语言属性时，会在画布元素上设置文字语言。回归覆盖原生默认属性缺失、不透明或非 sRGB 的画布，以及注入的上下文。构建后运行 `node --test tests/canvas-text-native-defaults.test.mjs`。[示例验证](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-input/README.zh-CN.md)还覆盖首次绘制失败及重试。

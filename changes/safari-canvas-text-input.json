@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Canvas text in Safari on iPhone",
+    "body": "The text-input example can draw its registration form on iPhone Safari when a newly created 2D canvas omits default context attributes or drawing properties. The text provider checks transparency and the requested color space. The example reports a failed first draw and retries unfinished text when it redraws."
+  },
+  "zh": {
+    "title": "iPhone Safari 的画布文字输入",
+    "body": "iPhone Safari 的新建 2D 画布会省略部分默认上下文属性和绘制属性。文字提供器核对透明度和所请求的色彩空间后，文字输入示例即可绘制登记表。首次绘制失败时，示例会显示错误，重绘时会重试尚未准备好的文字。"
+  }
+}
