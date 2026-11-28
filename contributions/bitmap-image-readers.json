@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/runtime/src/bitmapImage.ts",
+      "originRole": "First-party private bitmap lease image readers shared by Bitmap and the shared frame capture; moved unchanged from the existing first-party Bitmap module with AI assistance so that the capture no longer imports Bitmap; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
