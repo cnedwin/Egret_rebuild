@@ -7,6 +7,7 @@ import type { Engine } from '@egret/engine';
 import { EgretError } from '@egret/runtime';
 import type { Scope } from '@egret/runtime';
 import { createCanvasParagraphProvider } from './CanvasParagraphProvider.js';
+import type { CanvasWorkSchedule } from './browserTextWork.js';
 import { gameFontFamilies } from './browserGameFamilies.js';
 
 /** Style and width for a wrapped native label. A single family is one literal name; use fontFamilies for a list. */
@@ -41,8 +42,8 @@ export interface BrowserGameParagraphLabel {
   dispose(): void;
 }
 
-export function createGameParagraphs(engine: Engine) {
-  const provider = createCanvasParagraphProvider();
+export function createGameParagraphs(engine: Engine, schedule?: CanvasWorkSchedule) {
+  const provider = createCanvasParagraphProvider(schedule === undefined ? {} : { schedule });
   const cache = createParagraphCache(engine.assets, { provider });
   const emptyBounds = Object.freeze({ x: 0, y: 0, width: 0, height: 0 });
   return {

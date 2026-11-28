@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Optional browser text work budget",
+    "body": "Play and BrowserGame can opt into a shared Canvas CPU budget for single-line rasterization and wrapped paragraphs. Cache hits, request identity, admission, readiness and scope ownership remain with the same caches; only actual Canvas work is spread between frames. Caller-owned Canvas paragraph providers can share the game's budget."
+  },
+  "zh": {
+    "title": "可选的浏览器文字工作预算",
+    "body": "Play 与 BrowserGame 可为单行文字光栅化和段落排版启用共享 Canvas CPU 预算。缓存命中、请求身份、准入、就绪与作用域归属仍由原缓存管理，只将实际 Canvas 工作分散到不同帧；调用者创建的 Canvas 段落 provider 也可以共用游戏的预算。"
+  }
+}

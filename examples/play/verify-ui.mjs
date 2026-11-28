@@ -20,6 +20,7 @@ if (
     'host',
     'rich',
     'rich-budget',
+    'text-budget',
     'activation',
     'semantics-geometry',
     'empty-text',
@@ -30,7 +31,7 @@ if (
   process.argv.length > 6
 ) {
   throw new Error(
-    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|rich-budget|activation|semantics-geometry|empty-text|collections|tabs|confirm]'
+    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|rich-budget|text-budget|activation|semantics-geometry|empty-text|collections|tabs|confirm]'
   );
 }
 
@@ -65,6 +66,7 @@ try {
     { id: 'visibility', file: './verify-view-visibility.mjs', method: 'verifyViewVisibility', touch: false },
     { id: 'scroll', file: './verify-view-scroll.mjs', method: 'verifyViewScroll', touch: true },
     { id: 'host', file: './verify-play-ui-host.mjs', method: 'verifyPlayUiHost', touch: false },
+    { id: 'text-budget', file: './verify-view-text-budget.mjs', method: 'verifyViewTextBudget', touch: true },
     { id: 'activation', file: './verify-view-activation.mjs', method: 'verifyViewActivation', touch: true },
     { id: 'empty-text', file: './verify-view-empty-text.mjs', method: 'verifyViewEmptyText', touch: false },
     { id: 'collections', file: './verify-view-collections.mjs', method: 'verifyViewCollections', touch: false },

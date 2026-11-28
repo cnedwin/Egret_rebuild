@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-28",
+  "en": {
+    "title": "Budgeted WebGL2 World3D geometry preparation",
+    "body": "Prepare an explicit deduplicated geometry list in cooperative bounded slices, using the same GPU cache as normal draws. The operation does not draw or link programs, preserves touched GL bindings, and stops on cancellation, resource disposal or context generation changes. Completed resources retain the normal cache lifetime."
+  },
+  "zh": {
+    "title": "WebGL2 World3D 分批几何预备",
+    "body": "显式提交并去重几何列表，按时间和数量预算分批预备，复用正式绘制的 GPU 缓存。过程不绘制或链接程序，恢复所影响的 GL 绑定，并在取消、资源销毁或上下文换代时停止；已完成的资源遵循原有缓存生命周期。"
+  }
+}
