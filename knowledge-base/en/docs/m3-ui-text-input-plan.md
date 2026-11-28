@@ -86,7 +86,7 @@ M3.4 contains an explicit shared-renderer deliverable, reviewed by the rendering
 
 ## 3. M3.1 — automatic layout and variable-height virtualization
 
-**Outcome:** a resizable, scrollable data panel with stable variable-height recycling, not a collection of disconnected layout helpers. Difficulty: high. [The data panel](ui-data-panel.md) covers the layout, stable-key recycling and focus contracts. The [50,000-row browser example](../../../examples/text-editing/README.md#editing-a-50000-row-catalogue) covers a live editor across font and theme changes. Human IME and assistive-technology qualification retain their own device records.
+**Outcome:** a resizable, scrollable data panel with stable variable-height recycling, not a collection of disconnected layout helpers. Difficulty: high. [The data panel](ui-data-panel.md) covers the layout, stable-key recycling and focus contracts. The [50,000-row browser example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/text-editing/README.md#editing-a-50000-row-catalogue) covers a live editor across font and theme changes. Human IME and assistive-technology qualification retain their own device records.
 
 1. Define explicit/min/max sizes, content measurement, padding/gap, horizontal/vertical arrangement and alignment. Resolve constraints in deterministic measure then arrange phases; reject unsatisfied dependency cycles instead of iterating until a timing-dependent result appears.
 2. Separate measurement, placement, paint, interaction and semantic dirtiness. A paint-only change must not trigger measurement; a local width/text change invalidates only the required ancestor/descendant dependencies. Unchanged UI performs no new measure or raster work.
