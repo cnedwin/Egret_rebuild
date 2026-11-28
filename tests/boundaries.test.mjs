@@ -744,6 +744,26 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         if(Object.hasOwn(graph,file))reviseFixtureEdges(graph,file,['@egret/contracts'],['./srgbBytes.js']);
     };
     reviseColorEdges(m15FixtureGraph);
+    // Both shared Hosts keep their logical resource observations through one private module.
+    const reviseHostEdges=graph=>{
+      for(const [file,add,remove]of [
+        ['packages/engine/web/WebGL2Host.ts',['./sharedResourceDiagnostics.js','./sharedResourceDiagnostics.js'],['../rendering/sharedColor2D.js']],
+        ['packages/engine/web/WebGPUHost.ts',['./sharedResourceDiagnostics.js','./sharedResourceDiagnostics.js'],['../rendering/sharedColor2D.js','./sharedRetentionLedger.js']],
+        ['packages/engine/dist/web/WebGL2Host.js',['./sharedResourceDiagnostics.js'],[]],
+        ['packages/engine/dist/web/WebGPUHost.js',['./sharedResourceDiagnostics.js'],[]],
+      ]){
+        if(!Object.hasOwn(graph,file))continue;
+        const edges=[...graph[file]];
+        for(const target of remove){const index=edges.findIndex(edge=>edge[1]===target);if(index>=0)edges.splice(index,1);}
+        graph[file]=[...edges,...add.map(target=>['static',target])];
+      }
+    };
+    reviseHostEdges(m15FixtureGraph);
+    Object.assign(m15FixtureGraph,{
+      'packages/engine/web/sharedResourceDiagnostics.ts':[['static','../rendering/sharedColor2D.js'],['static','./sharedDeviceSession.js'],['static','./sharedRetentionLedger.js']],
+      'packages/engine/dist/web/sharedResourceDiagnostics.js':[],
+      'packages/engine/dist/web/sharedResourceDiagnostics.d.ts':[['static','../rendering/sharedColor2D.js'],['static','./sharedDeviceSession.js'],['static','./sharedRetentionLedger.js']],
+    });
     // The tree records and engine affinity live in two leaf modules, so the visual and managed state read them without importing the tree operations or ownership back.
     for(const file of ['packages/runtime/src/ownership.ts','packages/runtime/dist/ownership.js'])reviseFixtureEdges(m15FixtureGraph,file,['./engineAffinity.js','./engineAffinity.js']);
     reviseFixtureEdges(m15FixtureGraph,'packages/runtime/dist/ownership.d.ts',['./engineAffinity.js']);
@@ -2112,6 +2132,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     effectFixtureGraph['packages/engine/dist/web/WebGL2Host.js'].push(['static','./webgl2LayerState.js']);
     reviseCaptureEdges(effectFixtureGraph);
     reviseColorEdges(effectFixtureGraph);
+    reviseHostEdges(effectFixtureGraph);
     reviseVisualEdges(effectFixtureGraph);
     // The submission helper is imported by preparation. Its own type-only
     // dependency is erased from JavaScript, while retention materializes it.
