@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/play/keyboard-focus-probe.mjs",
+      "originRole": "First-party browser verification of the real keyboard focus owner and its valid owned active descendant; independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/screenClipGeometry.ts",
+      "originRole": "First-party shared exact transformed convex clipping geometry for native UI semantic projection and screen-control diagnostics; extracted and independently adapted from existing first-party Play geometry with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
