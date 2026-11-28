@@ -59,6 +59,8 @@ export interface WebAudioBackend extends AudioBackend {
   readonly locked: boolean;
   /** The mixer made on this backend: its lock follows the output from now on. Once only. */
   attach(mixer: AudioMixer): void;
+  /** Feed a caller-owned Web Audio graph into a named mixer bus after attaching the mixer. */
+  createInput(bus: string, options?: BrowserAudioInputOptions): BrowserAudioInput;
 }
 /** A sound mixer playing through Web Audio, with its context and output node. */
 export interface BrowserAudio {
@@ -66,16 +68,56 @@ export interface BrowserAudio {
   readonly context: BaseAudioContext;
   /** What every sound passes on its way out. An analyser of the page can listen here. */
   readonly output: AudioNode;
+  /** Feed a caller-owned Web Audio graph into a named mixer bus. */
+  createInput(bus: string, options?: BrowserAudioInputOptions): BrowserAudioInput;
   /** The same as disposing the mixer. A scope can own the sound of a game through this. */
   dispose(): void;
 }
 
+/** Initial levels for an external input. Optional pan and lowpass enable those processors. */
+export interface BrowserAudioInputOptions {
+  /** 0 to 1. Defaults to 1. */
+  readonly volume?: number;
+  /** Independent attenuation, 0 to 1. Defaults to 1. */
+  readonly duck?: number;
+  /** Native equal-power stereo pan, -1 to 1. Omitted means no panner. */
+  readonly pan?: number;
+  /** Initial lowpass cutoff in Hz, greater than zero and no higher than Nyquist. Omit to bypass. */
+  readonly lowpass?: number;
+}
+/** An exponential approach to a parameter's new value, with a time constant in seconds. */
+export interface BrowserAudioGlide {
+  /** (0, 60]; by default a short linear ramp prevents steps. */
+  readonly timeConstant?: number;
+}
+/** A mixer-owned input strip; its upstream generators, decoded buffers and transport are caller-owned. */
+export interface BrowserAudioInput {
+  readonly input: AudioNode;
+  readonly disposed: boolean;
+  setVolume(value: number, options?: BrowserAudioGlide): void;
+  setDuck(value: number, options?: BrowserAudioGlide): void;
+  /** Present only when pan was requested and the host has a native stereo panner. */
+  readonly setPan?: (value: number, options?: BrowserAudioGlide) => void;
+  /** Present only if a lowpass filter was requested. */
+  readonly setLowpass?: (frequency: number, options?: BrowserAudioGlide) => void;
+  dispose(): void;
+}
+interface NamedInputBus {
+  readonly node: GainNode;
+  readonly inputs: Set<BrowserAudioInput>;
+}
 /** A straight line a gain follows, kept here because a browser does not always say where a gain is. */
 interface Line {
   readonly from: number;
   readonly to: number;
   readonly start: number;
   readonly end: number;
+}
+interface TargetLine {
+  readonly from: number;
+  readonly to: number;
+  readonly start: number;
+  readonly timeConstant: number;
 }
 interface Pair {
   readonly target: EventTarget;
@@ -95,6 +137,10 @@ interface Stream {
 }
 /** Shorter than a click can be heard, long enough that a step in volume makes none. */
 const SMOOTH = 0.005;
+/** Bound caller-owned strips separately from decoded/streamed voices. */
+const MAX_INPUTS = 64;
+const inRange = (value: unknown, min: number, max: number): value is number =>
+  typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
 const gestures = ['pointerdown', 'pointerup', 'touchend', 'keydown', 'click'] as const;
 const passive: AddEventListenerOptions = Object.freeze({ capture: true, passive: true });
 const at = (line: Line, time: number): number =>
@@ -147,6 +193,8 @@ export function createWebAudioBackend(options: WebAudioBackendOptions = {}): Web
     limiter.connect(context.destination);
   }
   const nodes = new WeakMap<AudioBackendBus, GainNode>();
+  const namedInputs = new Map<string, NamedInputBus>();
+  const inputs = new Set<BrowserAudioInput>();
   const streams = new WeakMap<AudioBackendSound, Stream>();
   /** The media elements that should be heard now. */
   const sounding = new Set<HTMLAudioElement>();
@@ -176,6 +224,126 @@ export function createWebAudioBackend(options: WebAudioBackendOptions = {}): Web
     parameter.linearRampToValueAtTime(value, end);
     return { from, to: value, start: time, end };
   }
+  /** Continuous parameter automation for a strip, even when a new glide interrupts the old one. */
+  function parameterControl(
+    parameter: AudioParam,
+    initial: number,
+    valid: (value: unknown) => boolean,
+    active: () => boolean
+  ) {
+    parameter.value = initial;
+    const time = context.currentTime;
+    let line: Line | TargetLine = { from: initial, to: initial, start: time, end: time };
+    return (value: number, options?: BrowserAudioGlide): void => {
+      if (
+        !valid(value) ||
+        (options !== undefined && (options === null || typeof options !== 'object' || Array.isArray(options)))
+      )
+        throw new EgretError('AUDIO_OPTIONS_INVALID');
+      const constant = options?.timeConstant;
+      if (constant !== undefined && !inRange(constant, Number.MIN_VALUE, 60))
+        throw new EgretError('AUDIO_OPTIONS_INVALID');
+      if (!active()) return;
+      const now = context.currentTime;
+      const from =
+        'timeConstant' in line
+          ? line.to + (line.from - line.to) * Math.exp(-Math.max(0, now - line.start) / line.timeConstant)
+          : at(line, now);
+      parameter.cancelScheduledValues(now);
+      parameter.setValueAtTime(from, now);
+      if (constant === undefined) {
+        const end = now + SMOOTH;
+        parameter.linearRampToValueAtTime(value, end);
+        line = { from, to: value, start: now, end };
+      } else {
+        parameter.setTargetAtTime(value, now, constant);
+        line = { from, to: value, start: now, timeConstant: constant };
+      }
+    };
+  }
+
+  function disconnectAll(stages: readonly AudioNode[]): unknown[] {
+    const failures: unknown[] = [];
+    for (const stage of stages)
+      try {
+        stage.disconnect();
+      } catch (cause) {
+        failures.push(cause);
+      }
+    return failures;
+  }
+
+  function createInput(name: string, inputOptions: BrowserAudioInputOptions = {}): BrowserAudioInput {
+    if (closed) throw new EgretError('AUDIO_CLOSED');
+    if (mixer === undefined) throw new EgretError('AUDIO_OPTIONS_INVALID');
+    const bus = namedInputs.get(name);
+    if (bus === undefined) throw new EgretError('AUDIO_BUS_UNKNOWN');
+    if (inputOptions === null || typeof inputOptions !== 'object' || Array.isArray(inputOptions))
+      throw new EgretError('AUDIO_OPTIONS_INVALID');
+    const { volume = 1, duck = 1, pan, lowpass } = inputOptions;
+    const isLevel = (value: unknown): boolean => inRange(value, 0, 1);
+    const isPan = (value: unknown): boolean => inRange(value, -1, 1);
+    const isCutoff = (value: unknown): boolean => inRange(value, Number.MIN_VALUE, context.sampleRate / 2);
+    if (
+      !isLevel(volume) ||
+      !isLevel(duck) ||
+      (pan !== undefined && !isPan(pan)) ||
+      (lowpass !== undefined && !isCutoff(lowpass))
+    )
+      throw new EgretError('AUDIO_OPTIONS_INVALID');
+    if (inputs.size >= MAX_INPUTS) throw new EgretError('AUDIO_BUDGET');
+    const stages: AudioNode[] = [];
+    let disposed = false;
+    const active = (): boolean => !disposed;
+    const stage = <T extends AudioNode>(node: T): T => {
+      stages.push(node);
+      return node;
+    };
+    try {
+      const input = stage(context.createGain());
+      const filter = lowpass === undefined ? undefined : stage(context.createBiquadFilter());
+      if (filter !== undefined) filter.type = 'lowpass';
+      const setLowpass =
+        filter === undefined ? undefined : parameterControl(filter.frequency, lowpass!, isCutoff, active);
+      const gain = stage(context.createGain());
+      const setVolume = parameterControl(gain.gain, volume, isLevel, active);
+      // An older host can still render the input in the middle, precisely as a game without a panner does.
+      const panner =
+        pan === undefined || typeof context.createStereoPanner !== 'function'
+          ? undefined
+          : stage(context.createStereoPanner());
+      const setPan = panner === undefined ? undefined : parameterControl(panner.pan, pan!, isPan, active);
+      const attenuation = stage(context.createGain());
+      const setDuck = parameterControl(attenuation.gain, duck, isLevel, active);
+      for (let i = 0; i < stages.length; i++) stages[i]!.connect(stages[i + 1] ?? bus.node);
+      const face: BrowserAudioInput = Object.freeze({
+        input,
+        get disposed(): boolean {
+          return disposed;
+        },
+        setVolume,
+        setDuck,
+        ...(setPan === undefined ? {} : { setPan }),
+        ...(setLowpass === undefined ? {} : { setLowpass }),
+        dispose(): void {
+          if (disposed) return;
+          disposed = true;
+          inputs.delete(face);
+          bus.inputs.delete(face);
+          const failed = disconnectAll(stages);
+          if (failed.length)
+            throw new EgretError('AUDIO_CLEANUP_FAILED', { cause: failed[0], cleanupErrors: failed.slice(1) });
+        }
+      });
+      inputs.add(face);
+      bus.inputs.add(face);
+      return face;
+    } catch (cause) {
+      const failed = disconnectAll(stages);
+      throw new EgretError('AUDIO_BACKEND_FAILED', { cause, cleanupErrors: failed });
+    }
+  }
+
   function listen(list: Pair[], target: EventTarget, type: string, listener: EventListener): void {
     target.addEventListener(type, listener, passive);
     list.push({ target, type, listener });
@@ -389,6 +557,7 @@ export function createWebAudioBackend(options: WebAudioBackendOptions = {}): Web
       }
       if (live.state !== 'running') arm();
     },
+    createInput,
     get time(): number {
       return context.currentTime;
     },
@@ -452,7 +621,8 @@ export function createWebAudioBackend(options: WebAudioBackendOptions = {}): Web
       streams.set(sound, { element, node });
       return sound;
     },
-    createBus(parent: AudioBackendBus | undefined): AudioBackendBus {
+    createBus(parent: AudioBackendBus | undefined, name?: string): AudioBackendBus {
+      if (name !== undefined && namedInputs.has(name)) throw new EgretError('AUDIO_OPTIONS_INVALID');
       const node = context.createGain(),
         target = parent === undefined ? (limiter ?? context.destination) : nodes.get(parent);
       if (target === undefined) throw new EgretError('AUDIO_BACKEND_FAILED');
@@ -465,10 +635,26 @@ export function createWebAudioBackend(options: WebAudioBackendOptions = {}): Web
         },
         release(): void {
           nodes.delete(bus);
-          node.disconnect();
+          const failures: unknown[] = [];
+          if (name !== undefined) {
+            const entry = namedInputs.get(name);
+            if (entry?.node === node) {
+              namedInputs.delete(name);
+              for (const input of [...entry.inputs])
+                try {
+                  input.dispose();
+                } catch (cause) {
+                  failures.push(cause);
+                }
+            }
+          }
+          failures.push(...disconnectAll([node]));
+          if (failures.length)
+            throw new EgretError('AUDIO_CLEANUP_FAILED', { cause: failures[0], cleanupErrors: failures.slice(1) });
         }
       };
       nodes.set(bus, node);
+      if (name !== undefined) namedInputs.set(name, { node, inputs: new Set() });
       return bus;
     },
     start(request: AudioBackendStart, ended: () => void): AudioBackendVoice {
@@ -523,6 +709,14 @@ export function createWebAudioBackend(options: WebAudioBackendOptions = {}): Web
     close(): void {
       if (closed) return;
       closed = true;
+      // The standalone backend can be closed too, not only through the mixer that owns its buses.
+      for (const input of [...inputs])
+        try {
+          input.dispose();
+        } catch (cause) {
+          report(cause);
+        }
+      namedInputs.clear();
       unlisten(armed);
       unlisten(pairs);
       limiter?.disconnect();
@@ -571,6 +765,7 @@ export function createBrowserAudio(options: BrowserAudioOptions = {}): BrowserAu
     mixer,
     context: backend.context,
     output: backend.output!,
+    createInput: backend.createInput,
     dispose(): void {
       mixer.dispose();
     }

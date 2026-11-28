@@ -128,10 +128,12 @@ export interface ParagraphProvider {
 }
 export interface ParagraphCacheOptions {
   readonly provider: ParagraphProvider;
+  /** Cached/current unique request slots, 1–128; defaults to 32. */
   readonly maxEntries?: number;
   readonly maxImageBytes?: number;
   /** Logical metadata accounting; independent from raster image bytes. */
   readonly maxGeometryBytes?: number;
+  /** Concurrent provider preparations, 1–128; defaults to 32. */
   readonly maxPendingJobs?: number;
 }
 /** The genuine lease may be used by Bitmap; release it once the display retires. */

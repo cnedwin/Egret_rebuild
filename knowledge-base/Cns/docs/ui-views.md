@@ -224,6 +224,36 @@ function showItems() {
 
 `modal: true` 会在视图后面的所有东西上加一层暗色，并接住所有没点在视图上的按下。
 
+## 选择与编辑数值
+
+选择框复用数据界面的模态焦点、滚动视口和裁剪。给每项一个互不相同的字符串或有限数字值。当前可用项先取得焦点，否则选中第一项可用项。方向键、Tab 和手柄方向键在可用项间移动；Enter、空格、A 和点按选定值。Escape、手柄 B、取消按钮、中止信号或游戏重置和销毁都使它返回 `undefined`。关闭后恢复原界面焦点，选择期间 `game.asking` 为真。
+
+```js
+const result = await game.select([
+  { value: 'red', text: '红' },
+  { value: 'green', text: '绿' },
+  { value: 'blue', text: '蓝', disabled: true }
+], { title: '选择颜色', value: 'green', cancel: '取消' });
+if (result !== undefined) chooseColour(result);
+```
+
+按钮或其他可操作部件可以在按下时直接编辑。 `view.edit(name, options)` 在部件当前可见矩形上打开浏览器已有的[原生文字输入](text-input.md)。请求沿用名称、值、输入模式、字体、输入法组合态和提交/取消回调，不再需要 x、y、width、height。
+
+```js
+const view = game.show({
+  root: { type: 'button', name: 'name', text: '姓名', width: 220, height: 52 }
+}, {
+  bind: {
+    name: { tap: () => view.edit('name', {
+      label: '姓名', value: hero.name, select: 'all', maxLength: 20,
+      onCommit: value => { hero.name = value; }
+    }) }
+  }
+});
+```
+
+若部件无法获得焦点或没有可见矩形，方法返回 false。只要部件仍有效，输入框会跟随列表滚动、键控行重排及屏幕变化；关闭、遮盖、禁用、删除或完全裁剪部件时取消编辑。 `view.editing` 和 `game.editing` 说明当前编辑状态， `view.cancelEdit()` 取消本界面的编辑。数字或小数输入以 `inputMode` 请求相应系统键盘；验证、限制范围、加减步进及数值仍由游戏在原生控件上处理。这是 Play 的浏览器便利接口，不是另一套 DOM 界面或数据格式。
+
 ## 可滚动视图
 
 给固定高度的面板设置 `scroll: 'vertical'`。双列建筑单子可以用一个列面板放多行，每行再放两个按钮。视口裁剪子项，并支持滚轮、触屏拖动和键盘导航。

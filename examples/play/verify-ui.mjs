@@ -19,6 +19,7 @@ if (
     'scroll',
     'host',
     'rich',
+    'rich-budget',
     'activation',
     'semantics-geometry',
     'empty-text',
@@ -29,7 +30,7 @@ if (
   process.argv.length > 6
 ) {
   throw new Error(
-    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|activation|semantics-geometry|empty-text|collections|tabs|confirm]'
+    'Usage: node examples/play/verify-ui.mjs <absolute Playwright index.mjs> <new absolute output directory> <absolute Chromium executable> [visibility|scroll|host|rich|rich-budget|activation|semantics-geometry|empty-text|collections|tabs|confirm]'
   );
 }
 
@@ -69,6 +70,7 @@ try {
     { id: 'collections', file: './verify-view-collections.mjs', method: 'verifyViewCollections', touch: false },
     { id: 'tabs', file: './verify-view-tabs.mjs', method: 'verifyViewTabs', touch: false },
     { id: 'confirm', file: './verify-confirm.mjs', method: 'verifyConfirm', touch: false },
+    { id: 'rich-budget', file: './verify-view-rich-budget.mjs', method: 'verifyViewRichBudget', touch: false },
     {
       id: 'semantics-geometry',
       file: './verify-view-semantics-geometry.mjs',

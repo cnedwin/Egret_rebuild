@@ -60,6 +60,9 @@ function page(options = {}) {
     linearRampToValueAtTime(value, time) {
       this.events.push(['ramp', value, time]);
     }
+    setTargetAtTime(value, time, constant) {
+      this.events.push(['target', value, time, constant]);
+    }
   }
   class Node {
     constructor(kind) {
@@ -85,6 +88,19 @@ function page(options = {}) {
     createGain() {
       const node = new Node('gain');
       node.gain = new Param(1);
+      context.nodes.push(node);
+      return node;
+    },
+    createStereoPanner() {
+      const node = new Node('panner');
+      node.pan = new Param(0);
+      context.nodes.push(node);
+      return node;
+    },
+    createBiquadFilter() {
+      const node = new Node('filter');
+      node.frequency = new Param(350);
+      node.type = 'lowpass';
       context.nodes.push(node);
       return node;
     },
@@ -1496,4 +1512,111 @@ test('BA33 the Web Audio backend alone: a mixer the page makes on it is locked a
       assert.throws(() => createWebAudioBackend({ limiter: 'loud' }), coded('AUDIO_OPTIONS_INVALID'));
     },
     { create: false }
+  ));
+
+test('BA34 a caller-owned source has a named mixer input with independent volume, duck, pan and cutoff', async () =>
+  fixture(
+    ({ audio, mixer, context }) => {
+      const [master, music, ambient, voice] = context.nodes;
+      const track = audio.createInput('ambient', { volume: 0.72, duck: 0.3, pan: -0.4, lowpass: 650 });
+      const source = context.createGain();
+      source.connect(track.input);
+      source.connect(context.destination); // caller's separate connection must be left alone
+      const inlet = track.input;
+      const filter = inlet.to[0];
+      const volume = filter.to[0];
+      const panner = volume.to[0];
+      const duck = panner.to[0];
+      assert.equal(inlet.gain.value, 1);
+      assert.equal(volume.gain.value, 0.72);
+      assert.equal(duck.gain.value, 0.3);
+      assert.equal(filter.kind, 'filter');
+      assert.equal(filter.type, 'lowpass');
+      assert.equal(filter.frequency.value, 650);
+      assert.equal(panner.pan.value, -0.4);
+      assert.deepEqual(duck.to, [ambient]);
+      assert.deepEqual(ambient.to, [master]);
+      assert.equal(mixer.snapshot().voices, 0, 'caller sources are not decoded mixer voices');
+      context.currentTime = 1;
+      track.setVolume(0.36, { timeConstant: 0.12 });
+      track.setDuck(1, { timeConstant: 0.025 });
+      track.setPan(0.5, { timeConstant: 0.075 });
+      track.setLowpass(6300, { timeConstant: 0.12 });
+      assert.deepEqual(volume.gain.events.at(-1), ['target', 0.36, 1, 0.12]);
+      assert.deepEqual(duck.gain.events.at(-1), ['target', 1, 1, 0.025]);
+      assert.deepEqual(panner.pan.events.at(-1), ['target', 0.5, 1, 0.075]);
+      assert.deepEqual(filter.frequency.events.at(-1), ['target', 6300, 1, 0.12]);
+      context.currentTime = 1.06;
+      track.setVolume(0.8);
+      const from = volume.gain.events.at(-2)[1];
+      assert.ok(
+        Math.abs(from - (0.36 + (0.72 - 0.36) * Math.exp(-0.06 / 0.12))) < 1e-9,
+        'interrupted glide begins from its current gain'
+      );
+      mixer.bus('ambient').setMuted(true);
+      assert.equal(ambient.gain.events.at(-1)[1], 0);
+      assert.equal(music.gain.events.length, 0);
+      const second = audio.createInput('voice');
+      assert.equal(second.setPan, undefined, 'unconfigured pan adds no nodes');
+      assert.equal(second.setLowpass, undefined);
+      track.dispose();
+      assert.equal(track.disposed, true);
+      for (const node of [inlet, volume, duck, filter, panner]) assert.deepEqual(node.to, []);
+      assert.ok(source.to.includes(context.destination));
+      assert.notEqual(second.input.to.length, 0);
+      track.dispose();
+      track.setVolume(0.25); // like an ended voice, no later change to a detached input
+      mixer.dispose();
+      assert.equal(second.disposed, true);
+      assert.deepEqual(second.input.to, []);
+      assert.throws(() => audio.createInput('music'), coded('AUDIO_CLOSED'));
+    },
+    { audio: { buses: ['music', 'ambient', 'voice'] }, page: { state: 'running' } }
+  ));
+
+test('BA35 external inputs validate, have bounded capacity, and use the same host suspension', async () =>
+  fixture(async ({ audio, mixer, context, hide, show, document, fire, world }) => {
+    assert.throws(() => audio.createInput('missing'), coded('AUDIO_BUS_UNKNOWN'));
+    for (const options of [null, [], { volume: -1 }, { duck: NaN }, { pan: 2 }, { lowpass: Infinity }]) {
+      const before = context.nodes.length;
+      assert.throws(() => audio.createInput('effects', options), coded('AUDIO_OPTIONS_INVALID'));
+      assert.equal(context.nodes.length, before, 'invalid options allocate nothing');
+    }
+    const track = audio.createInput('effects');
+    assert.throws(() => track.setVolume(NaN), coded('AUDIO_OPTIONS_INVALID'));
+    assert.throws(() => track.setDuck(0.1, { timeConstant: 0 }), coded('AUDIO_OPTIONS_INVALID'));
+    for (let i = 1; i < 64; i++) audio.createInput('effects');
+    assert.throws(() => audio.createInput('music'), coded('AUDIO_BUDGET'));
+    track.dispose();
+    const next = audio.createInput('music');
+    assert.equal(mixer.state, 'locked');
+    fire(document, 'click');
+    await settled();
+    assert.equal(mixer.state, 'running');
+    hide();
+    await settled();
+    assert.equal(mixer.state, 'suspended');
+    assert.equal(context.state, 'suspended');
+    show();
+    await settled();
+    assert.equal(mixer.state, 'running');
+    assert.ok(world.calls.includes('suspend'));
+    audio.dispose();
+    assert.equal(next.disposed, true);
+  }));
+
+test('BA36 external pan is optional on a host without a stereo panner', async () =>
+  fixture(
+    ({ Context }) => {
+      const context = new Context();
+      delete context.createStereoPanner;
+      const audio = createBrowserAudio({ context });
+      const input = audio.createInput('music', { pan: 0.8 });
+      assert.equal(input.setPan, undefined);
+      const [master, music] = context.nodes;
+      assert.equal(input.input.to[0].to[0].to[0], music);
+      assert.deepEqual(music.to, [master]);
+      audio.dispose();
+    },
+    { create: false, page: { state: 'running' } }
   ));

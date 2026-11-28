@@ -66,8 +66,8 @@ export interface AudioBackend {
   decode(bytes: Uint8Array): Promise<AudioBackendSound>;
   /** A file the host plays as it reads it, where it can. The sound it gives says `streamed`. */
   openStream?(url: string): Promise<AudioBackendSound>;
-  /** Without a parent it feeds the output. */
-  createBus(parent: AudioBackendBus | undefined): AudioBackendBus;
+  /** Without a parent it feeds the output. The mixer supplies each bus's name, including master. */
+  createBus(parent: AudioBackendBus | undefined, name?: string): AudioBackendBus;
   /** `ended` is called once, later, when the voice has stopped sounding for any reason. */
   start(request: AudioBackendStart, ended: () => void): AudioBackendVoice;
   suspend(): void;
