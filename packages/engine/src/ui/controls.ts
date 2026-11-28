@@ -18,15 +18,20 @@ export interface MovementValue {
   readonly y: number;
 }
 
-/** A movement control to make: its input and target, its radius and dead zone, and what it calls. */
-export interface MovementControlOptions {
+interface MovementGeometry {
+  /** Full-deflection distance: target-local when center is given, stage units otherwise. */
+  readonly radius: number;
+  /** Distance at or below which the control reports rest. Defaults to a tenth of the radius. */
+  readonly deadZone?: number;
+  /** Fixed point in target-local units. Omit to use the contact's own stage-space origin. */
+  readonly center?: MovementValue;
+}
+
+/** A movement control to make: its input and target, its geometry, and what it calls. */
+export interface MovementControlOptions extends MovementGeometry {
   readonly input: PointerInput;
   /** The surface that owns this control; contacts routed elsewhere are not claimed. */
   readonly target: DisplayObject;
-  /** Full-deflection distance in logical units. */
-  readonly radius: number;
-  /** Distance below which the control reports no movement. Defaults to a tenth of the radius. */
-  readonly deadZone?: number;
   readonly onMovement?: (value: MovementValue) => void;
 }
 
@@ -37,6 +42,8 @@ export interface MovementControl {
   readonly enabled: boolean;
   /** Keyboard or scripted equivalents issue movement through the same value. */
   setDirection(x: number, y: number): void;
+  /** Replace the geometry. A change retires the held contact and returns to rest. */
+  setGeometry(geometry: MovementGeometry): void;
   setEnabled(enabled: boolean): void;
   dispose(): void;
 }
@@ -45,6 +52,10 @@ export interface MovementControl {
 export interface ActionControlOptions {
   readonly input: PointerInput;
   readonly target: DisplayObject;
+  /** Pointer-only release policy. Defaults to capturedRelease, preserving captured delivery. */
+  readonly activation?: 'capturedRelease' | 'releaseInside' | 'tap';
+  /** For tap only: maximum excursion from down, in stage units. Defaults to 12. */
+  readonly tapTolerance?: number;
   readonly onActivate?: () => void;
   readonly onPressChange?: (pressed: boolean) => void;
 }
@@ -85,13 +96,42 @@ function direction(x: number, y: number): MovementValue {
   return Object.freeze({ x: x * scale, y: y * scale });
 }
 
-/** A virtual stick on a target: dragging inside its radius gives a direction. */
-export function createMovementControl(options: MovementControlOptions): MovementControl {
-  checkOptions(options);
-  const { input, target, radius, onMovement } = options;
+function checkedGeometry(options: MovementGeometry): {
+  readonly radius: number;
+  readonly deadZone: number;
+  readonly center: MovementValue | undefined;
+} {
+  if (options === null || typeof options !== 'object' || Array.isArray(options)) {
+    throw new EgretError('UI_CONTROL_OPTIONS');
+  }
+  const { radius, center } = options;
   const deadZone = options.deadZone ?? radius / 10;
   if (!finite(radius) || radius <= 0) throw new EgretError('UI_CONTROL_RADIUS');
   if (!finite(deadZone) || deadZone < 0 || deadZone >= radius) throw new EgretError('UI_CONTROL_RADIUS');
+  if (
+    center !== undefined &&
+    (center === null || typeof center !== 'object' || Array.isArray(center) || !finite(center.x) || !finite(center.y))
+  ) {
+    throw new EgretError('UI_CONTROL_OPTIONS');
+  }
+  return { radius, deadZone, center: center === undefined ? undefined : Object.freeze({ x: center.x, y: center.y }) };
+}
+
+/** A singular target (e.g. an animated scale of zero) has no target-local point. */
+function localPoint(target: DisplayObject, contact: PointerContact): MovementValue | undefined {
+  try {
+    return target.globalToLocal(contact.globalX, contact.globalY);
+  } catch (cause) {
+    if (cause instanceof EgretError && cause.code === 'COORDINATE_TRANSFORM_SINGULAR') return undefined;
+    throw cause;
+  }
+}
+
+/** A virtual stick on a target: dragging from its contact origin or a fixed center gives a direction. */
+export function createMovementControl(options: MovementControlOptions): MovementControl {
+  checkOptions(options);
+  const { input, target, onMovement } = options;
+  let geometry = checkedGeometry(options);
   let closed = false;
   let enabled = true;
   let value = ZERO;
@@ -117,19 +157,34 @@ export function createMovementControl(options: MovementControlOptions): Movement
     // One owning contact. A second contact is refused rather than replacing the first.
     if (owner !== undefined) return;
     owner = { session: event.payload.session, originX: event.payload.globalX, originY: event.payload.globalY };
+    // A fixed stick responds immediately to an off-center down.
+    if (geometry.center !== undefined) move(event);
   }
 
   function move(event: { payload: PointerContact }): void {
     if (closed || owner === undefined || event.payload.session !== owner.session) return;
-    const dx = event.payload.globalX - owner.originX;
-    const dy = event.payload.globalY - owner.originY;
+    let dx: number;
+    let dy: number;
+    if (geometry.center === undefined) {
+      // Preserve the original contact-relative geometry in stage units.
+      dx = event.payload.globalX - owner.originX;
+      dy = event.payload.globalY - owner.originY;
+    } else {
+      const point = localPoint(target, event.payload);
+      if (point === undefined) {
+        release();
+        return;
+      }
+      dx = point.x - geometry.center.x;
+      dy = point.y - geometry.center.y;
+    }
     const distance = Math.hypot(dx, dy);
     // Inside the dead zone the control reports rest, not a debounced direction.
-    if (distance <= deadZone) {
+    if (distance <= geometry.deadZone) {
       publish(ZERO);
       return;
     }
-    const magnitude = Math.min(1, distance / radius);
+    const magnitude = Math.min(1, distance / geometry.radius);
     const scale = magnitude / distance;
     publish(Object.freeze({ x: dx * scale, y: dy * scale }));
   }
@@ -175,6 +230,21 @@ export function createMovementControl(options: MovementControlOptions): Movement
       }
       publish(direction(x, y));
     },
+    setGeometry(options: MovementGeometry) {
+      if (closed) throw new EgretError('UI_CONTROL_CLOSED');
+      const next = checkedGeometry(options);
+      if (
+        next.radius === geometry.radius &&
+        next.deadZone === geometry.deadZone &&
+        next.center?.x === geometry.center?.x &&
+        next.center?.y === geometry.center?.y
+      ) {
+        return;
+      }
+      // A new layout cannot reinterpret or accidentally re-arm the old owning contact.
+      geometry = next;
+      release();
+    },
     setEnabled(next: boolean) {
       if (closed) throw new EgretError('UI_CONTROL_CLOSED');
       if (enabled === next) return;
@@ -207,7 +277,7 @@ export function createMovementControl(options: MovementControlOptions): Movement
   });
 }
 
-/** A button on a target: a press and release inside it activates it. */
+/** A button on a target: a captured press and release activates it by default. */
 export function createActionControl(options: ActionControlOptions): ActionControl {
   return createSelectionItemAction(options, () => true);
 }
@@ -216,9 +286,19 @@ export function createActionControl(options: ActionControlOptions): ActionContro
 export function createSelectionItemAction(options: ActionControlOptions, reportEnabled: () => boolean): ActionControl {
   checkOptions(options);
   const { input, target, onActivate, onPressChange } = options;
+  const activation = options.activation === undefined ? 'capturedRelease' : options.activation;
+  const tapTolerance = options.tapTolerance === undefined ? 12 : options.tapTolerance;
+  if (
+    (activation !== 'capturedRelease' && activation !== 'releaseInside' && activation !== 'tap') ||
+    !finite(tapTolerance) ||
+    tapTolerance < 0 ||
+    (options.tapTolerance !== undefined && activation !== 'tap')
+  ) {
+    throw new EgretError('UI_CONTROL_OPTIONS');
+  }
   let closed = false;
   let enabled = true;
-  let candidate: PointerContact['session'] | undefined;
+  let candidate: { session: PointerContact['session']; x: number; y: number; withinTolerance: boolean } | undefined;
   let held = false;
   let activations = 0;
 
@@ -231,25 +311,59 @@ export function createSelectionItemAction(options: ActionControlOptions, reportE
   function begin(event: { payload: PointerContact }): void {
     if (closed || !enabled) return;
     if (candidate !== undefined) return;
-    candidate = event.payload.session;
+    candidate = {
+      session: event.payload.session,
+      x: event.payload.globalX,
+      y: event.payload.globalY,
+      withinTolerance: true
+    };
     setPressed(true);
   }
 
-  function move(event: { payload: PointerContact }): void {
-    // The contact keeps the button pressed; a movement threshold belongs to the control owner.
-    if (closed || candidate === undefined || event.payload.session !== candidate) return;
+  function noteExcursion(contact: PointerContact): void {
+    if (closed || candidate === undefined || contact.session !== candidate.session) return;
+    // A swipe cannot become a tap again by returning to its start.
+    if (
+      activation === 'tap' &&
+      Math.hypot(contact.globalX - candidate.x, contact.globalY - candidate.y) > tapTolerance
+    ) {
+      candidate.withinTolerance = false;
+    }
+  }
+
+  function releasedInside(contact: PointerContact): boolean {
+    const area = target.hitArea;
+    if (area === undefined) return false;
+    const point = localPoint(target, contact);
+    return (
+      point !== undefined &&
+      point.x >= area.x &&
+      point.y >= area.y &&
+      point.x - area.x < area.width &&
+      point.y - area.y < area.height
+    );
   }
 
   function end(event: { payload: PointerContact }): void {
-    if (closed || candidate === undefined || event.payload.session !== candidate) return;
+    if (closed || candidate === undefined || event.payload.session !== candidate.session) return;
+    // Judge the final sample as well as moves. Retire the owning press even if the geometry query fails.
+    noteExcursion(event.payload);
+    const withinTolerance = candidate.withinTolerance;
     candidate = undefined;
-    setPressed(false);
-    activate();
+    let admitted = false;
+    try {
+      admitted =
+        activation === 'capturedRelease' ||
+        ((activation !== 'tap' || withinTolerance) && releasedInside(event.payload));
+    } finally {
+      setPressed(false);
+    }
+    if (admitted) activate();
   }
 
   function cancel(event: { payload: PointerContact }): void {
     // The refused second contact cancelling must not clear the first one's pending activation.
-    if (closed || candidate === undefined || event.payload.session !== candidate) return;
+    if (closed || candidate === undefined || event.payload.session !== candidate.session) return;
     candidate = undefined;
     setPressed(false);
   }
@@ -262,12 +376,13 @@ export function createSelectionItemAction(options: ActionControlOptions, reportE
 
   const subscriptions = [
     target.on(input.events.begin, begin),
-    target.on(input.events.move, move),
     target.on(input.events.end, end),
     target.on(input.events.cancel, cancel)
   ];
   const observeTerminal = input.observe(notification => {
-    if (closed || candidate === undefined || notification.contact.session !== candidate) return;
+    if (closed || candidate === undefined || notification.contact.session !== candidate.session) return;
+    // Swipes count even if a move was stopped or routed away; the owning end must still be delivered.
+    if (notification.kind === 'move') noteExcursion(notification.contact);
     // A terminal the control's own handler did not consume clears the press without activating.
     if (notification.kind === 'cancel' || notification.kind === 'end') {
       candidate = undefined;

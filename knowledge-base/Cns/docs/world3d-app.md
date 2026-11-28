@@ -152,6 +152,38 @@ markers.update();
 
 元素用 CSS 变换移动，所以给它设 `position: absolute; left: 0; top: 0`。目标在相机后方或超过 `maxDistance` 时，标记隐藏。设了 `clampToEdge` 的标记则停在屏幕边缘，带上 `data-on-edge`，`marker.angle` 给出箭头应指的方向。自己画标记的代码可用 `projectToViewport3D(camera, point, width, height)` 得到同样的投影。
 
+### World3D 叠加层里的原生标记
+
+已有 `World3DOverlay` 的游戏，可以用同一套投影摆放原生显示对象。除叠加层之外，还需要传入实际的 3D 画布：场景的 CSS 视口坐标不一定等于叠加层的逻辑舞台坐标（例如使用 `contain`、`cover` 或独立的 `uiScale` 时）。
+
+```js
+import { Sprite } from '@egret/engine';
+import { createOverlayScreenMarkers3D } from '@egret/engine/webgl2/world3d';
+
+const marks = createOverlayScreenMarkers3D({ overlay: ui, sceneCanvas: canvas, camera });
+const icon = new Sprite();
+icon.graphics.beginFill(0xe8b65a).drawCircle(0, 0, 14).endFill();
+const goal = marks.add(icon, {
+  target: enemy, offset: [0, 2.1, 0],
+  area: 'safe', clampToEdge: true,
+  margin: { left: 12, top: 8, right: 16, bottom: 16 },
+  anchor: { x: 0.5, y: 0.5 }, extent: { width: 32, height: 32 }
+});
+// 更新相机之后、绘制叠加层之前：
+marks.update();
+goal.setVisible(false);         // 标记池中的对象可等待，不再分配显示对象
+goal.retarget([120, 0, -40]);
+goal.setVisible(true);          // 下一次更新会摆放它
+```
+
+- 默认区域为 `'safe'`：实时安全矩形与实际场景、叠加层画布共同可见区域的交集。`'screen'` 使用这个共同可见区域而不扣安全区内缩。`margin` 是一个统一数值或分边的 CSS 像素值，默认零；`extent` 是预留的最小占用范围，单位是**舞台单位**。实际显示对象的测量边界（包括自身的缩放、旋转和子对象）大于预留范围时，取实际边界。
+- 归一化锚点（默认中心）是世界点所对应的美术边界中的位置。不开启贴边时，标记占用范围不能全部放入指定区域就隐藏；开启贴边时，从场景中心沿方向射线摆到允许的边缘，相机背后的目标也可贴边。标记太大放不下或超过 `maxDistance` 时，即使贴边也隐藏。正对相机后方的目标使用下缘。`marker.point.x/y` 是叠加层舞台坐标；`onScreen`、`inFront` 和深度仍描述原始场景投影。`angle` 是场景画布坐标系中的角度，单位是弧度。
+- 加入时显示对象必须存活且没有父节点。标记层通过引擎显示容器借用它，保留它自身的变换、子节点、可见状态及清理所有权；`marker.visible` 指标记层的可摆放状态，不代表调用方美术的其他可见性规则。整个标记层不接受指针输入，即使美术子节点本来可交互。若 HUD 应绘制在标记上方，请先创建标记层，再创建 HUD。无须另设 DOM 标记层或再算一次投影。
+- 相机或屏幕变化后调用 `update()`，标记层不启动额外时钟。`marker.dispose()` 和 `marks.dispose()` 会摘下借用的美术，不销毁它；关闭叠加层也会自动结束标记层（随后叠加层自己的 scope 会销毁由它持有的显示对象）。改目标和切换显示复用同一容器；调用方收回或销毁显示对象后，下一次更新会把它从标记层移出。原有 HTMLElement 辅助接口及其边距默认值不变。
+
+公开行为测试见 `tests/world3d-native-markers.test.mjs`；实际浏览器测试命令为 `node tests/world3d-native-markers-browser.mjs <Playwright index.mjs 绝对路径> [webgl2|webgpu|both]`。该测试使用真正的叠加层、相机、原生绘制目标、指针派发和实时视口变化，不是 3D GPU 耗时或实体手机验收。
+
+
 ## 引擎的 2D 界面叠在场景上
 
 ```js
@@ -224,3 +256,28 @@ console.log(ui.getStartupTiming());
 ## 限制
 
 应用同一时间只用一个相机绘制一个场景。需要第二个视图或画中画的游戏，自行驱动 `World3DView`。设备丢失会报告给 `onDeviceLost`，恢复的办法是重新创建一个应用。
+
+### 原生悬停、场景捕获和相对位移
+
+在 `createWorld3DOverlay` 传入 `hover: true` 启用与 BrowserGame 相同的原生悬停及滚轮适配器，默认关闭。一次接触仍只归属 UI 或场景。移动到空白处清理先前 UI 悬停。转发的指针副本保留源事件的 `movementX/Y`、按钮与坐标，但仍是 DOM 副本，不伪称可信事件。场景原生指针捕获可能让释放直接到达场景；可信的结束事件、新按压、失焦、离页及指针锁定变化都会退役旧的场景归属。指针锁定后的原生浏览器事件直接送达场景。
+
+### 分别观测两层循环
+
+使用简短同步计时回调，保存有限历史。例如：
+
+```js
+const worldRaf = [], viewCpu = [], uiCpu = [];
+const keep = (rows, sample) => { if (rows.length === 120) rows.shift(); rows.push(sample); };
+const app = await createWorld3DApp(sceneCanvas, {
+  dynamicResolution: false, onLoopTiming: sample => keep(worldRaf, sample)
+});
+app.show(scene, camera, { onFrameTiming: sample => keep(viewCpu, sample) });
+const ui = await createWorld3DOverlay(sceneCanvas, {
+  width: 960, height: 540, fit: 'expand', hover: true, renderMode: 'on-demand',
+  onFrameTiming: sample => keep(uiCpu, sample), measureSharedFrames: true
+});
+```
+
+亦可直接给 view 设置 `onFrameTiming`，暂停的 view 不报告活动步。底层 `startWorld3DLoop(engine, onError, { onFrameTiming })` 报告实际 RAF 时间戳、CPU 时钟推进和重锚。用同一浏览器时间原点的 `rafTimestampMs` 对齐 2D 与 3D 循环，按 3D 回调的起止包络配对 view CPU 样本；各循环 id 不等于跨循环全局帧编号。3D view 分开更新和绘制调用，绘制返回 false 标为 refused。2D 样本区分保留、提交、拒绝、背压、重试、失败或中断。`measureSharedFrames` 另外启用已有 WebGL2 Host 的有界时序环（将 `ui.game.host` 缩窄到 WebGL2 后读取）。上述区间不是 GPU 栅栏或显示呈现；WebGL2 需要 GPU 时间时可用已有 renderer 的 `measureFrame(draw, { gpuTiming: true })`，随后 `pollFrameTimings()`，只有 ready 样本代表可用 GPU 计时结果。浏览器合成需独立浏览器追踪。
+
+`node tests/world3d-overlay-timing-browser.mjs <Playwright index.mjs 的绝对路径>` 对照固定 3D 场景、保留原生 UI 和变化的固定字形计数器，计时窗口内不截图。比较同屏幕、画质、后端及硬件；不能仅凭 CPU 样本认定长帧原因。

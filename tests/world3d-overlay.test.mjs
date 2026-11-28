@@ -61,3 +61,11 @@ test('OV04 invalid render mode and effects option are refused before DOM creatio
       code: 'WORLD3D_OVERLAY_OPTIONS_INVALID'
     });
 });
+
+test('OV05 an invalid hover or frame-timing observer is rejected before creating DOM', async () => {
+  const placed = { getBoundingClientRect: () => ({}), parentElement: {} };
+  for (const extra of [{ hover: 'yes' }, { onFrameTiming: true }])
+    await assert.rejects(webgl2.createWorld3DOverlay(placed, { width: 640, height: 360, ...extra }), {
+      code: 'WORLD3D_OVERLAY_OPTIONS_INVALID'
+    });
+});

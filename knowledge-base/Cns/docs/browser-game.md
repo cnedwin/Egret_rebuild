@@ -67,6 +67,37 @@ game.loop.start();
 
 **很多短标签。** `createLabel` 的每个 label 都是一张独立纹理，显示期间还占着文本缓存里的一个位置。缓存最多容纳 64 段不同的文字、128 个 label，而一帧最多从 64 张不同的图片里取图。五十个字签再加一个场景，就会超出这些上限。`await game.createAtlasLabel({ text: '仵作' })` 接受同样的选项，摆放方式也一样：`label.display` 是一个精灵，`label.bounds` 是文字的框（`label.display.x = centre - label.bounds.width / 2`），`text`、`set`、`ready`、`setRasterActive` 和 `dispose` 与上面相同。它的文字由同一个缓存画出，再复制到一张页上，与同时画出的文字共用这张页，缓存里的位置当即归还。2026 年 11 月 26 日在无头 Chromium 里，100 段不同的两字文字全部画出，只用到一张页；换成 `createLabel` 的 label，有 13 段没有画出来，而且没有任何提示。[play](play.md) 的 `game.text` 就用这种方式画字。共用的页达到 16 张时，所有 label 的文字会重新打包到尽量少的页上。等同时画的 label 都交出文字后才做成一张页，最多等四分之一秒。
 
+**限宽标签和明确的候选字体。** `createParagraphLabel` 使用原生 Paragraph，不再由游戏把若干测算出来的短标签拼在一起。传入以舞台单位计量的换行宽度 `width`，以及可选的行高 `lineHeight`、对齐 `textAlign` 和最大行数 `maxLines`。现有 Canvas 段落提供者按实际字体测量和换行，包括中、日、英文的断行规则；限制行数时使用它的固定省略号。等待 `label.ready` 后，`label.metrics` 是已提交的段落度量（包括各行和有行数上限时的 `truncated`），`label.bounds` 是逻辑宽高。新请求准备期间旧图和旧度量一起保留；修改之后重新读取 `ready`，被下一请求取代的 Promise 以 `PARAGRAPH_STALE` 拒绝。用 `set({ maxLines: undefined })` 取消行数限制。标签持有同一个原生 Paragraph 显示对象，使用本游戏的段落缓存，随指定 scope（默认为 game.scope）结束。它支持现有 Canvas 段落提供者的左到右、普通字重样式；其他文字排版或丰富字体样式请配置其他段落提供者。不会增加 HTML 文字控件。
+
+```js
+const description = await game.createParagraphLabel({
+  text: 'Choose a charm · 选择法宝', width: 180, fontSize: 14,
+  fontFamilies: ['Noto Sans SC', 'Arial', 'sans-serif'], locale: 'zh', maxLines: 2
+});
+game.stage.addChild(description.display);
+await description.ready;
+description.set({ width: 120 });
+await description.ready;
+```
+
+每个候选项是一个字体名称，而非 CSS 表达式；使用有顺序的 `fontFamilies` 数组或者单名称 `fontFamily`，不可同时提供两者。原来的 `createLabel`、`createAtlasLabel` 仍将 `fontFamily` 当作字面字体名称，包括其中的逗号。字体选择依赖浏览器实际字体系统；不证明字形覆盖情况，也不代替应用加载字体。采用本方式时浏览器 import map 增加 `@egret/engine/paragraph` 和 `@egret/runtime/paragraph`；首次请求段落标签才加载提供者和缓存。
+
+**变动数字不用重做字体纹理。** 初始化时生成一张固定字宽、可复用的字形图页，然后使用常规[位图字体](bitmap-font.md)。在选中的浏览器字体中测量每个字形，绘制一次白色填充、可选描边，并留透明边距。允许 1～64 个互异的 Unicode 码点、1～128 像素的字号，及可选的 `fontFamilies` 候选名单、`fontWeight`、`italic`、`strokeWidth` 和 `strokeColor`；重复字符或超限图页会被拒绝。独立码点适合数字、计时器和短符号，不用于需要上下文整形的文字。返回的 `font` 与 `pages` 可直接传给 `createBitmapText`。更新文字时只构建原有位图文字的网格几何，不需要重新光栅化字体或创建新的字体纹理；多个计数器共用这一不可变图页。图页归指定 scope（默认 game.scope）所有，先结束全部借用它的位图文字，再通过 `dispose()` 释放字体或结束其 scope。位图文字的颜色也会乘到描边上。像素字号是图页分辨率，可将显示节点缩放到需要的舞台尺寸。
+
+```js
+import { createBitmapText } from '@egret/engine/bitmapfont';
+const counters = await game.createGlyphFont({
+  characters: '0123456789:/+-', fontFamilies: ['Arial', 'sans-serif'],
+  fontSize: 32, fontWeight: 700, strokeWidth: 1, strokeColor: 0x182238
+});
+const score = game.scope.use(createBitmapText({ ...counters, text: '0/100' }));
+score.display.scaleX = score.display.scaleY = 0.5;
+game.stage.addChild(score.display);
+score.text = '37/100'; // 使用同一张图页
+```
+
+使用本能力时 import map 需要 `@egret/engine/bitmapfont`。公共控制测试 `tests/browser-game-text.test.mjs` 验证基于度量的换行与省略、候选名单顺序、归属及请求切换、原有字面字体名称，以及 120 次数字更新没有增加字体光栅化。它验证行为和资源生命周期，不等同于实际字体覆盖或真实设备帧率的验证。
+
 **label 随它的显示对象一起结束。** label 的 `display` 被销毁，或者从某个父节点上取下后那个父节点被销毁，这个 label 会在下一帧结束，归还它在文本缓存里的位置。显示对象与父节点属于不同的 scope 时，父节点销毁只会把它取下，不会销毁它；这里处理的就是这种情况。`game.getLabelStatus()` 会先结束这样的 label 再计数。一个父节点下的 500 个 label 被移除后，缓存里不再有任何 label 的位置，只剩它为复用保留的 31 个光栅。
 
 **一帧的图片。** 一帧最多从 64 张不同的图片里取图，最多 4,096 个矩形，共 64 MiB。`game.getFrameUsage()` 给出上一帧用到的量：`pages`、`regions`、`imageBytes`、`limits`，以及 `refusedFrames`。超出上限的帧不画，循环照常继续：屏幕上保留上一帧，直到有一帧放得下。给了 `onWarning` 时：
@@ -175,3 +206,7 @@ if (cache) {
 释放图层前将其从放置列表清除。原生上下文丢失后，图层变为 stale：清空或替换放置列表，等待 `cache.whenReady()`，再用保留的源配方重新烘焙、放置。游戏结束时关闭宿主并释放其缓存图层。本接入不自动捕获子树，不支持任意前后交错合成、局部帧缓冲重绘或 WebGPU 缓存图层。
 
 公开验证程序 `node tools/verify-play-static-layers.mjs <playwright-root> <chrome> <new-output>` 比较初始画面、移动和局部更新后的直接与缓存像素；受控浏览器游戏测试还比较每帧普通绘制指令与上传字节。这些都是限定范围的验收，不等于手机帧率测试。
+
+## 帧循环与宿主分别观测
+
+`createBrowserGame({ ..., onFrameTiming })` 转发[帧循环 CPU 计时](frame-loop.md)样本，并区分 SDK 已提交的 `submitted` 与超图像预算未绘制的 `refused`；其他结果名称不变。按需保留帧时仿真和时钟仍推进。传入 `measureSharedFrames: true` 可启用已有的有界 WebGL2 宿主阶段计时；将 `game.host` 缩窄为 WebGL2 宿主后读取 `getSharedFrameTiming()`。该报告含原生阶段和提交序号，包括提交、栅栏轮询和退役，不能解释为 GPU 执行耗时。WebGPU 不提供这个 WebGL2 专用报告。诊断选项不改变宿主准入、画质、更新频率或绘制策略。观察者应简短同步、保留有限记录。浏览器合成调度及真实呈现需单独追踪。

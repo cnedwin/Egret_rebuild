@@ -351,7 +351,7 @@ test('FL06 with a real Engine the loop moves its clock and a tween, through a ga
   }
 });
 
-test('FL07 a strict consumer compiles against the entry, and four misuses are refused; the entry has its factory alone', async () => {
+test('FL07 a strict consumer compiles against the entry, and misuses are refused; the entry has its factory alone', async () => {
   const { spawnSync } = await import('node:child_process');
   const result = spawnSync(
     process.execPath,
@@ -737,4 +737,73 @@ test('restart during clock, update, wanted-frame or Host admission does not run 
     assert.equal(loop.snapshot().frames, 1);
     loop.dispose();
   }
+});
+
+test('FL11 opt-in timings distinguish retained frames, Host admission and render calls without changing steps', () => {
+  const screen = display(),
+    engine = recorder(),
+    samples = [];
+  let dirty = false,
+    pending = 0,
+    admissionChecks = 0;
+  const loop = createBrowserFrameLoop({
+    engine,
+    frame: FRAME,
+    ...screen,
+    host: {
+      getStatus() {
+        admissionChecks++;
+        return { pendingFrames: pending };
+      }
+    },
+    shouldRender: () => dirty,
+    onFrameTiming: sample => samples.push(sample)
+  });
+  loop.start();
+  screen.present(1000);
+  dirty = true;
+  pending = 2;
+  screen.present(1016);
+  pending = 0;
+  screen.present(1048);
+  assert.deepEqual(
+    samples.map(s => [s.id, s.rafTimestampMs, s.outcome, s.pendingFrames]),
+    [
+      [1, 1000, 'retained', undefined],
+      [2, 1016, 'backpressure', 2],
+      [3, 1048, 'rendered', 0]
+    ]
+  );
+  for (const sample of samples) {
+    assert.ok(Object.isFrozen(sample));
+    assert.ok(sample.callbackEndMs >= sample.callbackStartMs);
+    for (const k of ['updateMs', 'decisionMs', 'hostCheckMs', 'prepareMs', 'renderMs'])
+      assert.ok(Number.isFinite(sample[k]) && sample[k] >= 0, k);
+  }
+  assert.equal(admissionChecks, 2);
+  assert.equal(loop.snapshot().steps, 3);
+  assert.equal(loop.snapshot().frames, 1);
+  loop.dispose();
+});
+
+test('FL12 timing subscribers are observational and invalid options fail early', () => {
+  const screen = display(),
+    engine = recorder();
+  assert.throws(() => createBrowserFrameLoop({ engine, frame: FRAME, onFrameTiming: true, ...screen }), {
+    code: 'FRAME_LOOP_OPTIONS_INVALID'
+  });
+  const loop = createBrowserFrameLoop({
+    engine,
+    frame: FRAME,
+    onFrameTiming() {
+      throw Error('diagnostics');
+    },
+    ...screen
+  });
+  loop.start();
+  screen.present(1000);
+  screen.present(1016);
+  assert.equal(loop.snapshot().frames, 2);
+  assert.equal(loop.state, 'running');
+  loop.dispose();
 });

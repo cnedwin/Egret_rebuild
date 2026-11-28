@@ -5,6 +5,7 @@ export type {
   BrowserFrameLoop,
   BrowserFrameLoopOptions,
   BrowserFrameLoopSnapshot,
+  BrowserFrameTiming,
   BrowserFrameLoopState,
   FrameLoopEngine,
   FrameLoopHost

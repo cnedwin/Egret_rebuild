@@ -22,6 +22,17 @@ export interface World3DClockSource {
     ): Disposable;
   };
 }
+/** CPU phases of a World3D view tick; a rendered result is not GPU completion. */
+export interface World3DViewTiming {
+  readonly id: number;
+  readonly elapsedSeconds: number;
+  readonly deltaSeconds: number;
+  readonly callbackStartMs: number;
+  readonly callbackEndMs: number;
+  readonly updateMs: number;
+  readonly renderMs: number;
+  readonly outcome: 'rendered' | 'refused' | 'failed';
+}
 /** A 3D view to make: its renderer, scene and camera, its mixers and controls, its update, and how it resizes. */
 export interface World3DViewOptions {
   readonly renderer: Renderer3D;
@@ -31,6 +42,8 @@ export interface World3DViewOptions {
   readonly controls?: OrbitControls3D;
   /** Called every tick before animation and rendering. */
   readonly onUpdate?: (deltaSeconds: number, elapsedSeconds: number) => void;
+  /** Opt-in CPU timings for active ticks; observer failures cannot change the view. */
+  readonly onFrameTiming?: (sample: World3DViewTiming) => void;
   /** Keep the drawing buffer and camera aspect matched to the canvas CSS size. Defaults to true. */
   readonly autoResize?: boolean;
   /** Upper bound for the device pixel ratio used by autoResize. Defaults to 2. */
@@ -53,11 +66,17 @@ export class World3DView implements Disposable {
   readonly #subscription: Disposable;
   readonly #options: World3DViewOptions;
   #disposed = false;
+  #timingId = 0;
 
   constructor(engine: World3DClockSource, scope: Scope, options: World3DViewOptions) {
     if (!engine || typeof engine.clock?.onTick !== 'function')
       throw new World3DError('WORLD3D_INPUT_INVALID', 'engine');
-    if (!options?.renderer || !options.scene || !options.camera)
+    if (
+      !options?.renderer ||
+      !options.scene ||
+      !options.camera ||
+      (options.onFrameTiming !== undefined && typeof options.onFrameTiming !== 'function')
+    )
       throw new World3DError('WORLD3D_INPUT_INVALID', 'view options');
     this.#options = options;
     this.renderer = options.renderer;
@@ -79,6 +98,12 @@ export class World3DView implements Disposable {
   tick(deltaSeconds: number, elapsedSeconds: number): void {
     if (this.#disposed || this.paused) return;
     const options = this.#options;
+    const observer = options.onFrameTiming;
+    const started = observer === undefined ? 0 : performance.now();
+    let renderStart: number | undefined;
+    let renderEnd: number | undefined;
+    let updateFailureEnd: number | undefined;
+    let outcome: World3DViewTiming['outcome'] = 'failed';
     try {
       if (options.autoResize ?? true) {
         const ratio = Math.min(typeof devicePixelRatio === 'number' ? devicePixelRatio : 1, options.maxPixelRatio ?? 2);
@@ -94,10 +119,36 @@ export class World3DView implements Disposable {
           if (object instanceof ParticleEmitter3D && object.visible) object.update(deltaSeconds);
         });
       }
-      this.renderer.render(this.scene, this.camera);
+      if (observer !== undefined) renderStart = performance.now();
+      const accepted = this.renderer.render(this.scene, this.camera);
+      if (observer !== undefined) renderEnd = performance.now();
+      outcome = accepted ? 'rendered' : 'refused';
     } catch (cause) {
+      if (observer !== undefined) {
+        if (renderStart !== undefined) renderEnd = performance.now();
+        else updateFailureEnd = performance.now();
+      }
       if (!options.onError) throw cause;
       options.onError(cause);
+    } finally {
+      if (observer !== undefined) {
+        const ended = performance.now();
+        const sample = Object.freeze({
+          id: ++this.#timingId,
+          elapsedSeconds,
+          deltaSeconds,
+          callbackStartMs: started,
+          callbackEndMs: ended,
+          updateMs: (renderStart ?? updateFailureEnd ?? ended) - started,
+          renderMs: renderStart === undefined ? 0 : (renderEnd ?? ended) - renderStart,
+          outcome
+        });
+        try {
+          observer(sample);
+        } catch {
+          /* Independent diagnostics must not stop the view. */
+        }
+      }
     }
   }
   /** Stop ticking. The renderer, scene and controls stay owned by their creator. */

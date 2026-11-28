@@ -177,7 +177,7 @@ test('BG03 what is not a panel or a sample is refused', () => {
   panel.dispose();
 });
 
-test('BG04 a strict consumer compiles against the entry with the calls a game makes, and seven misuses are refused', async () => {
+test('BG04 a strict consumer compiles against the entry with the calls a game makes, and misuses are refused', async () => {
   const { spawnSync } = await import('node:child_process');
   const result = spawnSync(
     process.execPath,

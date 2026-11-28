@@ -67,6 +67,37 @@ The queue regression in `tests/browser-game.test.mjs` holds actual loopback HTTP
 
 **Many short labels.** Each label of `createLabel` is a texture of its own and holds a place in the text cache while it is shown. The cache holds at most 64 different texts and 128 labels, and a frame draws from at most 64 different images. A board of fifty word tags and a scene passes those limits. `await game.createAtlasLabel({ text: '仵作' })` takes the same options and is placed the same way: `label.display` is a sprite, `label.bounds` the box of the words (`label.display.x = centre - label.bounds.width / 2`), and `text`, `set`, `ready`, `setRasterActive` and `dispose` are as above. Its words are drawn by the same cache, copied onto a page shared with the words drawn with them, and the cache's place is given back at once. On November 26, 2026, in headless Chromium, 100 different texts of two characters were all drawn from one page; with labels of `createLabel` 13 of them were not drawn, and nothing said so. `game.text` of [play](play.md) draws its words this way. When the shared pages number 16, every label's words are packed again onto as few as hold them. A page is made once the labels drawn together have given their words, or after a quarter of a second.
 
+**Wrapped labels and explicit font candidates.** `createParagraphLabel` is the native paragraph path rather than a sequence of separately guessed short labels. Give its wrapping `width` in stage units, optional `lineHeight`, alignment (`textAlign`) and `maxLines`. The existing Canvas paragraph provider measures and wraps the actual font, including Chinese/Japanese and English line breaks; a line cap uses its fixed ellipsis. After `await label.ready`, `label.metrics` is the committed paragraph metrics (including lines and, with a cap, `truncated`) and `label.bounds` is its logical width and height. While a new request is pending the previous image and metrics stay together. Re-read `ready` after a change; a superseded promise rejects with `PARAGRAPH_STALE`. Use `set({ maxLines: undefined })` to remove the cap. The label owns the same native Paragraph display, uses a game-local paragraph cache and ends with the supplied scope (game.scope by default). It supports the existing Canvas provider's left-to-right, normal-weight paragraph style; use a configured paragraph provider for other shaping or rich typography. No HTML text is added.
+
+```js
+const description = await game.createParagraphLabel({
+  text: 'Choose a charm · 选择法宝', width: 180, fontSize: 14,
+  fontFamilies: ['Noto Sans SC', 'Arial', 'sans-serif'], locale: 'zh', maxLines: 2
+});
+game.stage.addChild(description.display);
+await description.ready;
+description.set({ width: 120 });
+await description.ready;
+```
+
+A candidate is one name, not a CSS expression; use the ordered `fontFamilies` array, or the single-name `fontFamily`, not both. The old `createLabel` and `createAtlasLabel` still treat `fontFamily` as a literal name, including any comma. Font family selection uses the browser's actual font system; it does not prove glyph coverage or load fonts for an application. Add `@egret/engine/paragraph` and `@egret/runtime/paragraph` to a browser import map when using this path. The provider and cache load only when the first paragraph label is asked for.
+
+**Changing numbers without changing their font texture.** Build one reusable, fixed-advance glyph page during setup, then use ordinary [bitmap text](bitmap-font.md). Each character is measured in the selected browser font and drawn once, with white fill, optional stroke and clear guard pixels. The atlas accepts 1–64 distinct Unicode code points, a pixel font size of 1–128 and optional ordered `fontFamilies`, `fontWeight`, `italic`, `strokeWidth` and `strokeColor`. It refuses an excessive page or repeated characters. Independent code points suit numbers, timers and similar short symbols, not scripts requiring contextual shaping. The returned `font` and `pages` are passed directly to `createBitmapText`. Subsequent text changes build only that existing bitmap-text mesh geometry; neither new font rasterization nor new font texture allocation is required. Different counters share the one immutable page. The page belongs to the specified scope (default game.scope); dispose all bitmap text borrowers before releasing the font with `dispose()` or ending its scope. The bitmap text's tint also tints its stroke. Pixel size is an atlas resolution, so scale the display to the needed stage size.
+
+```js
+import { createBitmapText } from '@egret/engine/bitmapfont';
+const counters = await game.createGlyphFont({
+  characters: '0123456789:/+-', fontFamilies: ['Arial', 'sans-serif'],
+  fontSize: 32, fontWeight: 700, strokeWidth: 1, strokeColor: 0x182238
+});
+const score = game.scope.use(createBitmapText({ ...counters, text: '0/100' }));
+score.display.scaleX = score.display.scaleY = 0.5;
+game.stage.addChild(score.display);
+score.text = '37/100'; // uses the same page
+```
+
+This opt-in path needs `@egret/engine/bitmapfont` in the import map. The controlled public regression in `tests/browser-game-text.test.mjs` checks measured wrap/clamp, family ordering and scope/intent behavior, legacy literal font spelling and 120 counter updates with no additional font rasterization. It is a behavior and resource-lifetime control, not a claim about native font coverage or hardware frame rate.
+
 **Labels end with their display.** A label whose `display` is disposed, or taken off a parent that is then disposed, is ended at the next frame: its place in the text cache is given back. A display owned by another scope than its parent is taken off, not disposed, when the parent is disposed; that is the case this covers. `game.getLabelStatus()` ends such labels before it counts. After 500 labels under one parent were removed, the cache held no label's place, only the 31 rasters it keeps for reuse.
 
 **A frame's images.** A frame draws from at most 64 different images, 4,096 rectangles of them and 64 MiB. `game.getFrameUsage()` gives what the last frame drew from: `pages`, `regions`, `imageBytes`, the `limits`, and `refusedFrames`. A frame that holds more is not drawn, and the loop goes on: the last frame stays on the screen until one fits. With `onWarning`, the game is told when a frame comes within a fifth of a limit (`FRAME_IMAGES_NEAR_LIMIT`) and when a frame is not drawn (`FRAME_IMAGE_BUDGET`). It is also told when labels hold four fifths of the text cache (`LABEL_CACHE_NEAR_LIMIT`) and when a label's words could not be drawn (`LABEL_NOT_DRAWN`). `play` also tells `PLAY_MADE_EVERY_FRAME` when its `update` made a text, a shape or a sprite in each of the last 60 frames, which should be made once and changed. Each warning is told when it begins, not on every frame, and the engine writes nothing to the console. `game.drawFrame(frame)` draws a frame this way for a loop of the game's own.
@@ -168,3 +199,7 @@ The layers are composited in the array's painter order **before all ordinary sta
 Before disposal, clear a layer from placements. On native context loss the layer becomes stale: clear or replace the placements, await `cache.whenReady()` and rebake from the retained source recipe before placing it again. The game closes its Host and all its retained layers. No automatic display-tree snapshotting, arbitrary z-interleaving, partial framebuffer redraw or WebGPU layer support is claimed by this bridge.
 
 The public fixture `node tools/verify-play-static-layers.mjs <playwright-root> <chrome> <new-output>` compares initial, moved and edited cached pixels against direct rendering. The controlled browser game test also compares ordinary frame commands and upload bytes. These are scoped acceptance checks, not a phone frame-rate claim.
+
+## Separate frame and Host observations
+
+`createBrowserGame({ ..., onFrameTiming })` forwards the [frame-loop CPU timing](frame-loop.md) sample and distinguishes a `submitted` SDK frame from an image-budget `refused` frame; the other outcome names are unchanged. On-demand retained frames continue advancing the simulation/clock without drawing. With `measureSharedFrames: true`, a WebGL2 game also enables its existing bounded native Host timing samples; read `game.host.getSharedFrameTiming()` after narrowing to the WebGL2 Host. That report contains native phase/serial timing, including submission, fence polling and retirement, not GPU execution duration. WebGPU does not provide that WebGL2-specific report. The diagnostic options do not change Host admission, resolution, update frequency or render policy. Use a short synchronous observer and retain a bounded history. Browser compositor scheduling and actual presentation need separate browser tracing.

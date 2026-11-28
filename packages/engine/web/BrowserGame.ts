@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // A game in a page from one call: a Host chosen for the browser, an Engine, a scope, pointer and keyboard input and
 // a frame loop, each made the way its own entry makes it, and all of them ended by one dispose.
-import { EgretError } from '@egret/runtime';
+import { EgretError, Scope as RuntimeScope } from '@egret/runtime';
 import {
   Bitmap,
   copyImageData2DPixels,
@@ -32,8 +32,14 @@ import { decodeBrowserImage, sniffBrowserImageFormat } from './BrowserImageTextu
 import { createGameImageAdmission } from './GameImageAdmission.js';
 import { createTextField, createTextRasterCache } from '@egret/engine/text';
 import type { TextField, TextRasterCache } from '@egret/engine/text';
+import type {
+  BrowserGameParagraphLabel,
+  BrowserGameParagraphLabelCreateOptions,
+  createGameParagraphs
+} from './browserGameParagraph.js';
+import type { BrowserGameGlyphFont, BrowserGameGlyphFontOptions } from './browserGameGlyphFont.js';
 import { createBrowserFrameLoop } from './loop.js';
-import type { BrowserFrameLoop, BrowserFrameLoopOptions } from './loop.js';
+import type { BrowserFrameLoop, BrowserFrameLoopOptions, BrowserFrameTiming } from './loop.js';
 import { createBrowserPointerInput } from './pointer.js';
 import type { PointerInput } from './pointer.js';
 import { createBrowserKeyboardInput } from './keyboard.js';
@@ -179,6 +185,10 @@ export interface BrowserGameStartupTiming {
   readonly firstSubmitMs?: number;
   readonly webgl2?: SharedWebGL2StartupTiming;
 }
+/** A loop sample with the game's image-budget refusal distinguished from a submitted frame. */
+export interface BrowserGameFrameTiming extends Omit<BrowserFrameTiming, 'outcome'> {
+  readonly outcome: Exclude<BrowserFrameTiming['outcome'], 'rendered'> | 'submitted' | 'refused';
+}
 export interface BrowserGameOptions {
   /** The canvas the game is drawn on. The page gives it its size on the screen. */
   readonly canvas: HTMLCanvasElement;
@@ -215,6 +225,10 @@ export interface BrowserGameOptions {
   readonly staticLayers?: boolean;
   /** On demand retains the last frame until visual, screen, native-generation or explicit invalidation changes. */
   readonly renderMode?: BrowserGameRenderMode;
+  /** Opt-in CPU frame timing; submitted does not mean GPU complete or presented. */
+  readonly onFrameTiming?: (sample: BrowserGameFrameTiming) => void;
+  /** Enable the existing bounded shared WebGL2 Host phase samples (available on game.host). */
+  readonly measureSharedFrames?: boolean;
   /** WebGL2-only: single-page omits the multi-page shader at startup, trading extra draws across pages. */
   readonly webgl2PageBatching?: SharedWebGL2PageBatching;
   /** One step of the game, called before each frame with the seconds since the step before. */
@@ -327,6 +341,10 @@ export interface BrowserGame {
    * are drawn as `createLabel` draws them. A label's display, its parent or an ancestor disposed ends it.
    */
   createAtlasLabel(options?: BrowserGameLabelCreateOptions): Promise<BrowserGameAtlasLabel>;
+  /** Measured, width-wrapped text using the existing Canvas paragraph provider and cache. */
+  createParagraphLabel(options: BrowserGameParagraphLabelCreateOptions): Promise<BrowserGameParagraphLabel>;
+  /** Build one reusable immutable page of fixed-advance glyphs for ordinary BitmapText counters. */
+  createGlyphFont(options: BrowserGameGlyphFontOptions): Promise<BrowserGameGlyphFont>;
   /** What the last frame drawn held of a frame's images. */
   getFrameUsage(): BrowserGameFrameUsage;
   /**
@@ -474,7 +492,7 @@ export function gameDiagnostics(onError: ((error: unknown) => void) | undefined)
 export async function createBrowserGame(options: BrowserGameOptions): Promise<BrowserGame> {
   const started = performance.now();
   if (options === null || typeof options !== 'object') throw invalid();
-  const { canvas, width, height, update, onError, onWarning } = options;
+  const { canvas, width, height, update, onError, onWarning, onFrameTiming } = options;
   const asked = options.backend ?? 'auto',
     clearColor = options.clearColor ?? 0,
     clearAlpha = options.clearAlpha ?? 1,
@@ -512,6 +530,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     (update !== undefined && typeof update !== 'function') ||
     (onError !== undefined && typeof onError !== 'function') ||
     (options.beforeRender !== undefined && typeof options.beforeRender !== 'function') ||
+    (onFrameTiming !== undefined && typeof onFrameTiming !== 'function') ||
+    (options.measureSharedFrames !== undefined && typeof options.measureSharedFrames !== 'boolean') ||
     (options.renderRetry !== undefined &&
       (options.renderRetry === null ||
         typeof options.renderRetry !== 'object' ||
@@ -563,6 +583,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
             pixelRatio,
             blendSpace,
             enableEffects,
+            ...(options.measureSharedFrames === undefined ? {} : { measureSharedFrames: options.measureSharedFrames }),
             ...(options.webgl2PageBatching === undefined ? {} : { pageBatching: options.webgl2PageBatching })
           });
         });
@@ -626,6 +647,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         : undefined;
     const panel = (stats = options.stats === true ? createBrowserStatsPanel({ canvas, label: backend }) : undefined);
     let drawn: SharedRenderFrame2D | undefined;
+    let lastDrawAccepted = false;
     // What the last frame drawn held of a frame's images, and the frames not drawn for holding more.
     const FRAME_PAGES = 64,
       FRAME_REGIONS = 4096,
@@ -742,7 +764,14 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     const drawing = {
       clock: engine.clock,
       advanceTime: (seconds: number) => engine.advanceTime(seconds),
-      renderSharedFrame: drawFrame
+      renderSharedFrame:
+        onFrameTiming === undefined
+          ? drawFrame
+          : (given: SharedFrameOptions2D) => {
+              const result = drawFrame(given);
+              lastDrawAccepted = result !== undefined;
+              return result;
+            }
     };
     // With a panel, each step tells it what the last one did.
     const made: BrowserFrameLoop = (loop = createBrowserFrameLoop({
@@ -764,6 +793,15 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
                 lastFrame !== frame ||
                 lastScreen !== screen
               );
+            }
+          }),
+      ...(onFrameTiming === undefined
+        ? {}
+        : {
+            onFrameTiming: (sample: BrowserFrameTiming) => {
+              const outcome =
+                sample.outcome === 'rendered' ? (lastDrawAccepted ? 'submitted' : 'refused') : sample.outcome;
+              onFrameTiming(Object.freeze({ ...sample, outcome }));
             }
           }),
       ...(options.beforeRender === undefined ? {} : { beforeRender: options.beforeRender }),
@@ -862,7 +900,8 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
     const leasePixels = async (
       width: number,
       height: number,
-      pixels: Uint8Array | Uint8ClampedArray
+      pixels: Uint8Array | Uint8ClampedArray,
+      owner = scope
     ): Promise<AssetLease<Texture>> => {
       if (
         !whole(width) ||
@@ -883,7 +922,13 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
       const key = 'painted-' + ++paintedCount;
       painted.set(key, texture);
       try {
-        return scope.use(await engine.assets.acquire(createAssetRef(paintedType, key), { signal: scope.signal }));
+        const lease = await engine.assets.acquire(createAssetRef(paintedType, key), { signal: owner.signal });
+        try {
+          return owner.use(lease);
+        } catch (cause) {
+          lease.release();
+          throw cause;
+        }
       } finally {
         // Not loaded (the scope ended first): the texture is ended here.
         if (painted.delete(key)) texture.dispose();
@@ -1646,6 +1691,66 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         dispose: close
       });
     }
+    // The two extra text paths load only on first use; ordinary labels keep the existing T1 provider and identity.
+    let paragraphLabels: Promise<ReturnType<typeof createGameParagraphs>> | undefined;
+    const createParagraphLabel = async (
+      options: BrowserGameParagraphLabelCreateOptions
+    ): Promise<BrowserGameParagraphLabel> => {
+      if (options === null || typeof options !== 'object' || options.width === undefined) throw invalid();
+      const { scope: owner = scope, ...given } = options;
+      if (!(owner instanceof RuntimeScope) || owner.state !== 'open' || scope.state !== 'open') throw invalid();
+      // Capture family candidates before the optional module is loaded.
+      if (given.fontFamilies !== undefined && (!Array.isArray(given.fontFamilies) || given.fontFamilies.length > 16))
+        throw invalid();
+      const captured = given.fontFamilies === undefined ? given : { ...given, fontFamilies: [...given.fontFamilies] };
+      paragraphLabels ??= import('./browserGameParagraph.js').then(({ createGameParagraphs }) => {
+        if (scope.state !== 'open') throw new EgretError('SCOPE_CLOSED');
+        return createGameParagraphs(engine);
+      });
+      const labels = await paragraphLabels;
+      const label = labels.create(owner, captured, Math.max(0.25, Math.min(4, pixelRatio)), notDrawn);
+      const close = (): void => {
+        liveLabels.delete(live);
+        owner.signal.removeEventListener('abort', close);
+        label.dispose();
+      };
+      const live: LiveLabel = { display: label.display, end: close, parent: undefined };
+      owner.signal.addEventListener('abort', close, { once: true });
+      liveLabels.add(live);
+      return Object.freeze({
+        display: label.display,
+        get text() {
+          return label.text;
+        },
+        set text(value: string) {
+          label.text = value;
+        },
+        get ready() {
+          return label.ready;
+        },
+        get metrics() {
+          return label.metrics;
+        },
+        get bounds() {
+          return label.bounds;
+        },
+        set: label.set,
+        dispose: close
+      });
+    };
+    const createGlyphFont = async (options: BrowserGameGlyphFontOptions): Promise<BrowserGameGlyphFont> => {
+      if (options === null || typeof options !== 'object') throw invalid();
+      const { scope: owner = scope, ...given } = options;
+      if (!(owner instanceof RuntimeScope) || owner.state !== 'open' || scope.state !== 'open') throw invalid();
+      if (given.fontFamilies !== undefined && (!Array.isArray(given.fontFamilies) || given.fontFamilies.length > 16))
+        throw invalid();
+      const captured = given.fontFamilies === undefined ? given : { ...given, fontFamilies: [...given.fontFamilies] };
+      const { buildGameGlyphFont } = await import('./browserGameGlyphFont.js');
+      if (owner.state !== 'open' || scope.state !== 'open') throw new EgretError('SCOPE_CLOSED');
+      return buildGameGlyphFont(canvas.ownerDocument, captured, (width, height, pixels) =>
+        leasePixels(width, height, pixels, owner)
+      );
+    };
     const game: BrowserGame = Object.freeze({
       invalidate,
       getStartupTiming: () =>
@@ -1698,13 +1803,16 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
         });
       },
       createAtlasLabel,
+      createParagraphLabel,
+      createGlyphFont,
       getFrameUsage: () => usage,
       drawFrame,
       async loadTexture(url: string) {
         if (typeof url !== 'string' || url === '') throw invalid();
         return scope.use(await engine.assets.acquire(createAssetRef(imageType, url), { signal: scope.signal }));
       },
-      textureFromPixels: leasePixels,
+      textureFromPixels: (width: number, height: number, pixels: Uint8Array | Uint8ClampedArray) =>
+        leasePixels(width, height, pixels),
       async textureFromCanvas(source: HTMLCanvasElement | OffscreenCanvas) {
         if (source === null || typeof source !== 'object' || typeof source.getContext !== 'function') throw invalid();
         const { width, height } = source;
@@ -1791,6 +1899,7 @@ export async function createBrowserGame(options: BrowserGameOptions): Promise<Br
             cache?.dispose();
             await cache?.whenIdle();
           }
+          if (paragraphLabels !== undefined) (await paragraphLabels.catch(() => undefined))?.dispose();
           await engine.dispose();
           await images.close();
         })());

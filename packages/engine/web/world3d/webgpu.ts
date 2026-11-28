@@ -18,9 +18,9 @@ export {
 } from './assets3D.js';
 export type { World3DAssetOptions } from './assets3D.js';
 export { World3DView, createWorld3DView } from './World3DView.js';
-export type { World3DClockSource, World3DViewOptions } from './World3DView.js';
+export type { World3DClockSource, World3DViewOptions, World3DViewTiming } from './World3DView.js';
 export { createWorld3DHost, startWorld3DLoop } from './host3D.js';
-export type { World3DLoopSource } from './host3D.js';
+export type { World3DLoopSource, World3DLoopOptions, World3DLoopTiming } from './host3D.js';
 export { POST3D_LIMITS, createPostProcessSettings3D, createCustomPost3D } from './post3D.js';
 export type { PostProcessSettings3D, CustomPost3D } from './post3D.js';
 export { FlyControls3D, createFlyControls3D } from './FlyControls3D.js';
@@ -55,8 +55,18 @@ export type {
   World3DQualityPreset,
   World3DShowOptions
 } from './app3D.js';
-export { createScreenMarkers3D } from './markers3D.js';
-export type { ScreenMarker3D, ScreenMarkerOptions3D, ScreenMarkers3D, ScreenMarkersOptions3D } from './markers3D.js';
+export { createScreenMarkers3D, createOverlayScreenMarkers3D } from './markers3D.js';
+export type {
+  ScreenMarker3D,
+  ScreenMarkerOptions3D,
+  ScreenMarkers3D,
+  ScreenMarkersOptions3D,
+  ScreenMarkerInsets3D,
+  OverlayScreenMarkerOptions3D,
+  OverlayScreenMarker3D,
+  OverlayScreenMarkersOptions3D,
+  OverlayScreenMarkers3D
+} from './markers3D.js';
 export { createWorld3DStats } from './stats3D.js';
 export type { World3DStats, World3DStatsOptions } from './stats3D.js';
 export { createWorld3DOverlay } from './overlay3D.js';
