@@ -85,7 +85,7 @@ import { createToggleControl } from '@egret/engine/ui';
 const sound = createToggleControl({ input, target: box, checked: true, onChange: checked => audio.setMuted(!checked) });
 ```
 
-一次完整的按下会翻转 `checked` 并报告新值。`toggle()` 是来自按键或脚本的一次激活，控件被禁用时不起作用。`setChecked(value)` 不经激活直接设置值，禁用时也可以，只有值不同才报告变化。`pressed`、`press()` 和 `release()` 就是其内部动作控件的那几个。
+一次完整的按下会翻转 `checked` 并报告新值。`toggle()` 是来自按键或脚本的一次激活，控件被禁用时不起作用。`setChecked(value)` 不经激活直接设置值，禁用时也可以，只有值不同才报告变化。`pressed`、`press()` 和 `release()` 就是其内部动作控件的那几个。 `activation` 和 `tapTolerance` 与动作控件的写法相同，例如 `activation: 'releaseInside'` 时，按下后拖出开关再松手不会翻转；默认仍是 `capturedRelease`。
 
 ## 多选一
 
@@ -100,7 +100,7 @@ const level = createSelectionGroup({
 });
 ```
 
-这是单选组、分段控件、一排标签或单选列表框的状态。`items` 为 1 到 256 项，键互不相同，目标互不相同，顺序就是移动的顺序。没有 `selected` 时一开始什么都不选中；选过一次之后始终有一项被选中。
+这是单选组、分段控件、一排标签或单选列表框的状态。`items` 为 1 到 256 项，键互不相同，目标互不相同，顺序就是移动的顺序。没有 `selected` 时一开始什么都不选中；选过一次之后始终有一项被选中。`activation` 和 `tapTolerance` 作用于每一项的按下，写法与动作控件相同：用 `'releaseInside'` 时，按下后拖出该项再松手不会选中任何项。移动和 `select()` 不看指针位置。
 
 在某一项上完成一次按下会选中它。`select(key)` 按名称做同样的事，`next()`、`previous()`、`first()` 和 `last()` 在可用的项之间移动选择。它们都返回选择是否发生了变化。移动越过任一端时会绕回，除非 `wrap` 为 false。什么都没选中时，`next()` 从第一个可用项开始，`previous()` 从最后一个开始。
 
