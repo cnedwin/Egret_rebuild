@@ -38,7 +38,7 @@
 
 - **浏览器 PNG。** iPhone 16 Pro Max 的 Safari 27.2 在《灯影·闹天宫》原版复现 PNG 启动错误。修复版通过 WebGL2 和 WebGPU 的游戏启动、普通 PNG 和清单最小用例。结果覆盖固定对照和选定样本的解码像素。 [引擎修复](https://github.com/cnedwin/Egret_rebuild/pull/341) · [iPhone 证据](https://github.com/cnedwin/Egret_rebuild/pull/342)
 - **World3D 计时。** Windows Edge 的固定场景对照在无绘制的空查询中也测到 WebGL2 计时尖峰。仅凭查询读数不足以归因到阴影或主画面渲染。 [计时对照](https://github.com/cnedwin/Egret_rebuild/pull/340)
-- **剩余验收。** 换装工作室已有工程打开及 X-D60/2、X-MTouch/2 混合路线，并已取得限定的 Windows 与 Fold7 证据。场景剩余工作见 [#91](https://github.com/cnedwin/Egret_rebuild/issues/91)，独立性能验收见 [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 和 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92)，更广设备复验见 [#289](https://github.com/cnedwin/Egret_rebuild/issues/289)。
+- **换装工作室。** [#91](https://github.com/cnedwin/Egret_rebuild/issues/91) 选定的混合场景操作、工程取消与重试及图形恢复已在 Windows 和 Fold7 通过。[#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 与 [#92](https://github.com/cnedwin/Egret_rebuild/issues/92) 继续按独立口径验收性能，更多硬件覆盖由 [#289](https://github.com/cnedwin/Egret_rebuild/issues/289) 跟进。[设备与场景矩阵](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/outfit-studio/README.zh-CN.md#当前混合场景验证)
 
 ## 当前图形与设备验证 — 2026-11-14
 
