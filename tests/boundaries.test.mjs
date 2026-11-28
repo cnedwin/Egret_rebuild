@@ -2188,6 +2188,10 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'shared-private-helper':['packages/engine/dist/index.d.ts','','export interface SharedOwnerSnapshot2D {}\n'],
         'shared-extra-edge':['packages/engine/dist/rendering/packSharedDraws2D.js','',"const extra=()=>import('./packSharedMeshGeometry3D.js');\n"],
         'contained-quad-runtime-edge':['packages/engine/dist/rendering/sharedContainedQuad2D.js','',"import './prepareSharedDraws2D.js';\n"],
+        // Runtime layer rules: a value cycle, an import across src and dist, and a dynamic import.
+        'runtime-value-cycle':['packages/runtime/dist/displayNodeState.js','',"import './displayTreeState.js';\n"],
+        'runtime-layer-cross':['packages/runtime/src/displayNodeState.ts','',"import '../dist/EgretError.js';\n"],
+        'runtime-dynamic-import':['packages/runtime/dist/displayNodeState.js','',"const later=()=>import('./EgretError.js');\n"],
       };
       const edit=edits[sharedMutation];assert.ok(edit,'finite M1.3 mutation');const[file,before,after]=edit,original=readFileSync(path.join(root,file),'utf8');
       if(before)assert.equal(original.split(before).length,2,'unique M1.3 mutation anchor');
@@ -2962,6 +2966,16 @@ for(const [name,reason]of [
   ['shared-extra-edge','S3D1: scene entry imported outside approved closure'],
   ['contained-quad-runtime-edge','S3D1: scene entry imported outside approved closure: packages/engine/dist/rendering/sharedContainedQuad2D.js'],
 ])test('M1.3 policy '+name+' requires healthy baseline and assigned refusal',()=>{
+  fixture({imported:'robust-predicates',sharedMutation:name},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);
+  });
+});
+// Runtime imports follow layer rules instead of a row per file.
+for(const [name,reason]of [
+  ['runtime-value-cycle','Runtime layers: value import cycle: packages/runtime/dist/displayNodeState.js -> packages/runtime/dist/displayTreeState.js -> packages/runtime/dist/displayNodeState.js'],
+  ['runtime-layer-cross','Runtime layers: import leaves its layer: packages/runtime/src/displayNodeState.ts ../dist/EgretError.js'],
+  ['runtime-dynamic-import','Runtime layers: dynamic import: packages/runtime/dist/displayNodeState.js'],
+])test('Runtime layer policy '+name+' requires healthy baseline and assigned refusal',()=>{
   fixture({imported:'robust-predicates',sharedMutation:name},result=>{
     assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);
   });

@@ -4729,48 +4729,6 @@ for (const file of ['src/pointerInput.ts','dist/pointerInput.js'])
     ['static','./internal/routedInput.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 for (const file of ['src/internal/routedInput.ts','dist/internal/routedInput.js','dist/internal/routedInput.d.ts'])
   currentSceneLiteralClosure['packages/engine/'+file] = [['static','@egret/runtime']];
-// The shared capture reads bitmap states and images through their own modules, so it no longer imports Bitmap back.
-function reviseSceneEdges(file, add, remove = []) {
-  const edges = [...currentSceneLiteralClosure[file]];
-  for (const target of remove) {
-    const index = edges.findIndex(edge => edge[1] === target);
-    if (index < 0) throw new Error('S3D1: revised closure edge missing: ' + file + ' ' + target);
-    edges.splice(index, 1);
-  }
-  currentSceneLiteralClosure[file] = [...edges, ...add.map(target => ['static', target])]
-    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
-}
-for (const file of ['packages/runtime/src/Bitmap.ts','packages/runtime/dist/Bitmap.js'])
-  reviseSceneEdges(file, ['./bitmapImage.js','./bitmapImage.js'], ['./Texture.js']);
-reviseSceneEdges('packages/runtime/dist/Bitmap.d.ts', ['./bitmapImage.js']);
-for (const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runtime/dist/sharedFrameCapture.js'])
-  reviseSceneEdges(file, ['./bitmapDisplayState.js','./bitmapImage.js'], ['./Bitmap.js']);
-// The tree records and engine affinity live in two leaf modules, so the visual and managed state read
-// them without importing the tree operations or ownership back.
-for (const file of ['packages/runtime/src/displayTreeState.ts','packages/runtime/dist/displayTreeState.js'])
-  reviseSceneEdges(file, ['./displayNodeState.js','./displayNodeState.js','./engineAffinity.js'], ['./ownership.js']);
-reviseSceneEdges('packages/runtime/src/displayTreeState.ts', [], ['./Stage.js']);
-reviseSceneEdges('packages/runtime/dist/displayTreeState.d.ts', ['./displayNodeState.js'], ['./Stage.js']);
-for (const file of ['packages/runtime/src/displayVisualState.ts','packages/runtime/dist/displayVisualState.js'])
-  reviseSceneEdges(file, ['./displayNodeState.js','./engineAffinity.js'], ['./displayTreeState.js','./ownership.js']);
-for (const file of ['packages/runtime/src/ownership.ts','packages/runtime/dist/ownership.js'])
-  reviseSceneEdges(file, ['./engineAffinity.js','./engineAffinity.js']);
-reviseSceneEdges('packages/runtime/dist/ownership.d.ts', ['./engineAffinity.js']);
-for (const file of ['packages/runtime/src/ui/managedState.ts','packages/runtime/dist/ui/managedState.js'])
-  reviseSceneEdges(file, ['../displayNodeState.js'], ['../displayTreeState.js']);
-for (const [file, targets] of Object.entries({
-  'src/displayNodeState.ts':['./DisplayObject.js','./DisplayObjectContainer.js','./EgretError.js','./Stage.js'],
-  'dist/displayNodeState.js':['./EgretError.js'],
-  'dist/displayNodeState.d.ts':['./DisplayObject.js','./DisplayObjectContainer.js','./Stage.js'],
-  'src/engineAffinity.ts':['./ownership.js'],
-  'dist/engineAffinity.js':[],
-  'dist/engineAffinity.d.ts':['./ownership.js'],
-  'src/bitmapImage.ts':['./AssetLease.js','./AssetLease.js','./EgretError.js','./Texture.js','./Texture.js','@egret/contracts'],
-  'dist/bitmapImage.js':['./AssetLease.js','./EgretError.js','./Texture.js'],
-  'dist/bitmapImage.d.ts':['./AssetLease.js','./Texture.js','@egret/contracts']
-}))
-  currentSceneLiteralClosure['packages/runtime/' + file] = targets.map(target=>['static',target])
-    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 // The opt-in visual occluder is exported only by the existing native UI entry.
 for (const [file, count] of Object.entries({'src/ui/index.ts':2,'dist/ui/index.js':1,'dist/ui/index.d.ts':2}))
   currentSceneLiteralClosure['packages/engine/'+file]=[...currentSceneLiteralClosure['packages/engine/'+file],...Array.from({length:count},()=>['static','../internal/uiControlReportState.js'])].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
@@ -4781,6 +4739,46 @@ for (const [file, targets] of Object.entries({
 }))
   currentSceneLiteralClosure['packages/engine/' + file] = targets.map(target=>['static',target])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+// Runtime imports are held by layer rules, not by a row per file: the per-file rows above stay as
+// history and as file lists for other checks, but no runtime row is compared any more. Every runtime
+// file imports only within its own layer (src from src, dist from dist), through literal static
+// specifiers, and the emitted value imports form no cycle. The package scan above already limits
+// bare specifiers to the declared dependency, @egret/contracts, and keeps the core DOM- and Node-free.
+for (const file of Object.keys(currentSceneLiteralClosure))
+  if (file.startsWith('packages/runtime/')) delete currentSceneLiteralClosure[file];
+const runtimeRoot = path.join(root, 'packages/runtime');
+const runtimeValueGraph = new Map();
+for (const layer of ['src', 'dist']) {
+  const layerRoot = path.join(runtimeRoot, layer);
+  for (const file of files(layerRoot)) {
+    if (!/\.(?:ts|js)$/.test(file)) continue;
+    const relative = path.relative(root, file).split(path.sep).join('/'), code = sceneRead(relative);
+    if (/\bimport\s*\(/.test(code)) throw new Error('Runtime layers: dynamic import: ' + relative);
+    const targets = [];
+    for (const [, target] of sceneGraphEdges(code)) {
+      if (!target.startsWith('.')) continue;
+      const resolved = path.resolve(path.dirname(file), target);
+      if (!resolved.startsWith(layerRoot + path.sep)) throw new Error('Runtime layers: import leaves its layer: ' + relative + ' ' + target);
+      targets.push(path.relative(root, resolved).split(path.sep).join('/'));
+    }
+    if (layer === 'dist' && file.endsWith('.js')) runtimeValueGraph.set(relative, targets);
+  }
+}
+{
+  const state = new Map(), trail = [];
+  const visit = file => {
+    state.set(file, 'open');
+    trail.push(file);
+    for (const target of runtimeValueGraph.get(file) ?? []) {
+      if (!runtimeValueGraph.has(target)) continue;
+      if (state.get(target) === 'open') throw new Error('Runtime layers: value import cycle: ' + [...trail.slice(trail.indexOf(target)), target].join(' -> '));
+      if (!state.has(target)) visit(target);
+    }
+    trail.pop();
+    state.set(file, 'done');
+  };
+  for (const file of [...runtimeValueGraph.keys()].sort()) if (!state.has(file)) visit(file);
+}
 for (const [file,edges] of Object.entries(currentSceneLiteralClosure)) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
