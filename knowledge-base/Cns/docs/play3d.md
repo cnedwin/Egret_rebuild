@@ -156,6 +156,8 @@ console.assert(session.view?.renderer === renderer);
 
 支持普通的 `PlayOptions`（`transparent` 除外，界面始终透明）。可选的 `setup` 先运行，再等待异步 `world` 工厂；`arrange` 和 `update` 保留 Play 原有职责。`world` 收到的正是 `session.game` 返回的同一 `PlayGame`。工厂返回 [World3DView 的选项](world3d-app.md)，包括 `autoResize`、`maxPixelRatio`、`mixers`、`controls`、`updateParticles`、`onUpdate`、`onFrameTiming` 和 `onError`。`autoResize: false` 保留调用方管理的绘制尺寸与投影。入口不会应用画质预设、增添灯光或者修改场景和相机选定的投影参数。
 
+顶层 `onFrameTiming` 记录整个 Play 浏览器回调（其中包含接入的世界更新及 2D 提交各阶段），而返回的 World3DView 选项里的独立 `onFrameTiming` 记录世界更新和 3D 渲染提交。这两组时序存在重叠，不能直接相加，也不能当作 GPU 执行时间。
+
 这里只使用一个 Play Engine 时钟，以及由 Play 生命周期 Scope 管理、每一轮结束即清理的 Scope 中的一个视图订阅；`play3dAttached` 不创建 3D 应用、渲染器或额外的动画帧循环。由调用者摆放原有 3D 画布，保证与 2D 画布分离，并在接入前停止已有的独立绘制循环。同一个渲染器不能同时绑定到两次尚存活的配套会话。返回的 `view` 是当前 World3DView；加载中、重启失败、释放后或者工厂返回 `undefined` 时均为空。工厂返回 `undefined` 会保留实际的 Play 原生界面但不绘制世界，例如游戏自己的资源重试界面。
 
 `game.restart()` 会在新一轮 setup 和工厂之前撤掉旧视图订阅，新工厂加载期间旧世界不再绘制，工厂失败后也没有活动视图。Play 的重试、关闭 Promise 保留原有行为。`game.dispose()` 终止自己创建的界面和时钟订阅，但不会代为释放已有渲染器及其画布、场景、相机、控制器或资源。创建者可以明确把自己拥有的渲染器／资源登记到 `game.scope`，或者另行释放；默认是借用。与 `createWorld3DView` 一样，`game.pause()` 停止 Play 的游戏更新和定时器，不会自动停止每个世界绘制回调；需要时显式暂停 `session.view`。

@@ -67,6 +67,7 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `canvas` | A canvas of the page to draw on, left where it is | One is made |
 | `onError(error)` | Told of what stopped the game | It is thrown where the console shows it |
 | `onWarning(warning)` | Told of a frame near its limit of images, a frame not drawn for holding more, words not drawn, and text, shapes or sprites that `update` made in each of the last 60 frames (`PLAY_MADE_EVERY_FRAME`); see [the browser game](browser-game.md) | Not told |
+| `onFrameTiming(sample)` | Optional CPU timing observer of the actual Play loop: update, decision, Host admission, preparation, rendering and `submitted`, `refused`, `retained`, `backpressure` or other outcomes; see [browser timing](browser-game.md) | No measurement |
 | `seed` | The seed of `game.random` | A new one each time |
 | `saveKey` | The name `game.save` keeps its values under | The page's path |
 | `semantics` | A tree from `createUiSemantics` of `@egret/engine/ui/semantics`: views of `game.show` add their named parts to it, and it is published at the end of every frame, for a [UI tester](ui-testing.md) and for assistive technology | No tree |
@@ -81,6 +82,8 @@ That is the whole game. `setup` builds it; `update` runs once a frame with the s
 | `arrange(game)` | Places what depends on the screen: called after `setup` and whenever the window changes size or turns | Nothing moves |
 
 Options that cannot make a game are refused with `PLAY_OPTIONS_INVALID`; the message ends with which one.
+
+`onFrameTiming` receives a frozen sample per active browser callback, even for retained or refused 2D frames. The observer does not control the loop: exceptions in it are ignored. CPU submission is not GPU completion or display presentation. Avoid costly work in the observer.
 
 ## Retaining a static 2D frame
 
