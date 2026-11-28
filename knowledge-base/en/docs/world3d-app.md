@@ -6,6 +6,8 @@ This page covers what most 3D games built their own: starting, models made in co
 
 `createWorld3DApp` starts a 3D game on a canvas. It chooses the backend, makes an Engine on a World3D host, makes a renderer for a picture quality, runs the frame loop, and lowers the drawing resolution while frames are slow. It is exported by both `@egret/engine/webgl2/world3d` and `@egret/engine/webgpu/world3d`.
 
+For a caller-owned renderer and a single Play clock, use [play3dAttached](play3d.md#keep-a-configured-world3d-renderer-and-use-the-play-clock) instead of creating a second World3DApp loop. It borrows the canvas, scene and camera and retains the game's renderer configuration.
+
 **Verification.** Node checks cover backend selection, presets and resolution control. The original software-WebGL2 run covered fallback, geometry merging, markers, the statistics readout and overlay compositing. Windows Edge 157 on an RTX 5090 Laptop GPU and Fold7 Chrome on an Adreno 830 subsequently exercised app start, pause, resize and disposal, markers, skinned retargeting and instance range changes on WebGPU and WebGL2.
 
 In the hardware check of baseline `c049bc38`, the ninth point light had no effect on a 128 × 65 WebGPU target even though selection reported it. A full-target comparison against the same light in the direct path confirmed this on Windows. The 128 × 64 control and both WebGL2 sizes retained the light. With fragment-space row assignment corrected, all 33,280 RGBA8 bytes at 128 × 65 matched the direct path on both devices. This is pixel and lifecycle evidence for the sampled scenes.

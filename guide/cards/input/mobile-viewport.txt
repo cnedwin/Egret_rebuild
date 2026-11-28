@@ -40,4 +40,4 @@ Rules:
 - Plan for a short landscape screen. The measured Samsung run in FPS used an 873 × 325 CSS viewport; HUD text, cards and buttons must fit that.
 - Start low on weak devices. `createWorld3DApp` with quality `auto` picks `low` for software rendering, a touch screen or a window under 600 px tall, and `medium` for 4 GB of memory or less; `pickWorld3DQuality` gives the same choice to a game with its own renderer.
 - Let the player change quality and language on the title screen, and store the choice (in a `try`: private windows may refuse storage).
-- Ask for fullscreen and pointer lock only from a press, and show a way back when the browser refuses.
+- Ask for fullscreen and pointer lock only from a trusted press, and show a way back when the browser refuses. `await game.pointer.lock({ unadjustedMovement: true })` reports a status; only `locked` means this game's canvas owns the lock. Raw movement is opt-in; `unlock()` cancels pending acquisition. Use the button masks for independently held mouse buttons and inspect `locked` for later loss.

@@ -71,6 +71,7 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
       : { width, height };
   };
   const sessions = new Map<number, PointerSession>();
+  const logicalMouse = new Set<PointerSession>();
   let ownedSurface: object | undefined;
   const pairs: Pair[] = [];
   let closed = false;
@@ -104,8 +105,9 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
         failures.push(cause);
       }
     // Clear logical native ownership before release can synchronously emit lostcapture.
-    const ids = [...sessions.keys()];
+    const ids = [...sessions].filter(([, session]) => !logicalMouse.has(session)).map(([id]) => id);
     sessions.clear();
+    logicalMouse.clear();
     for (const id of ids)
       try {
         releaseNative(id);
@@ -137,7 +139,7 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
         if (sessions.get(session.pointerId) === session) {
           sessions.delete(session.pointerId);
           try {
-            releaseNative(session.pointerId);
+            if (!logicalMouse.delete(session)) releaseNative(session.pointerId);
           } catch (cause) {
             failures.push(cause);
           }
@@ -169,6 +171,8 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     const connected = getter(globalThis.Node?.prototype, 'isConnected');
     const defaultView = getter(globalThis.Document?.prototype, 'defaultView');
     const visibility = getter(globalThis.Document?.prototype, 'visibilityState');
+    // Pointer Lock is optional on a browser host. If present, read the native getter once.
+    const lockElement = Object.getOwnPropertyDescriptor(globalThis.Document?.prototype ?? {}, 'pointerLockElement')?.get;
     const inlineStyle = getter(globalThis.HTMLElement?.prototype, 'style');
     const styleValue = method(globalThis.CSSStyleDeclaration?.prototype, 'getPropertyValue');
     const stylePriority = method(globalThis.CSSStyleDeclaration?.prototype, 'getPropertyPriority');
@@ -205,6 +209,8 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
       assertOpen();
       return value;
     }
+    const lockedHere = (): boolean => lockElement !== undefined && dom(lockElement, document) === surface;
+    let mouseLocked = lockedHere();
     function css(style: unknown, name: string): string {
       const value = dom(styleValue, style, [name]);
       if (typeof value !== 'string') throw new EgretError('POINTER_INPUT_SURFACE_INVALID');
@@ -439,14 +445,18 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
         // A begin observer may synchronously cancel, suspend or close the input.
         if (session === undefined || closed || !input.contacts.some(contact => contact.session === session)) return;
         sessions.set(identity.id, session);
-        acquireNative(identity.id, session);
+        // Browsers reject setPointerCapture while this mouse is pointer-locked.
+        // Window move/up delivery still maintains its logical contact.
+        if (identity.type === 'mouse' && lockedHere()) logicalMouse.add(session);
+        else acquireNative(identity.id, session);
         return;
       }
       const session = sessions.get(identity.id);
       if (session === undefined || session.pointerType !== identity.type) return;
       if (kind === 'move') input.move(session, update(event, rect));
       else if (kind === 'up') input.end(session, update(event, rect));
-      else input.cancel(session, kind === 'cancel' ? 'pointercancel' : 'lostcapture');
+      else if (kind !== 'lost' || !logicalMouse.has(session))
+        input.cancel(session, kind === 'cancel' ? 'pointercancel' : 'lostcapture');
     }
     function listen(target: EventTarget, type: string, capture: boolean, action: (event: Event) => void): void {
       assertOpen();
@@ -484,6 +494,14 @@ export function createBrowserPointerInput(options: PointerInputOptions): Pointer
     listen(win, 'pointerup', true, event => pointer(event, 'up'));
     listen(win, 'pointercancel', true, event => pointer(event, 'cancel'));
     listen(surface as EventTarget, 'lostpointercapture', false, event => pointer(event, 'lost'));
+    if (lockElement !== undefined) listen(document, 'pointerlockchange', false, () => {
+      const next = lockedHere();
+      if (next === mouseLocked) return;
+      mouseLocked = next;
+      // A lock transition changes mouse ownership, not an independent touch.
+      for (const session of [...sessions.values()])
+        if (session.pointerType === 'mouse') input.cancel(session, 'lostcapture');
+    });
     listen(win, 'blur', false, () => cancel('blur'));
     listen(win, 'pagehide', false, () => cancel('pagehide'));
     listen(document, 'visibilitychange', false, () => {
