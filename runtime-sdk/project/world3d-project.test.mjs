@@ -13,7 +13,8 @@ import {
   createPerspectiveCamera3D,
   createBoxGeometry3D,
   createStandardMaterial3D,
-  createDirectionalLight3D
+  createDirectionalLight3D,
+  createPointLight3D
 } from '@egret/engine/world3d';
 import { createWorldProjectEncoder } from './world3d-frame.mjs';
 import { installWorld3DPlayerProject } from './world3d-player.mjs';
@@ -63,6 +64,80 @@ test('native World3D carries current indexed meshes, camera/light and a transpar
   another.visible = false;
   assert.equal(new DataView(encode(data, data.hud).buffer).getUint32(16, true), 1);
 });
+test('scene lighting, caster-only draws and recovery retain exactly the same environment', () => {
+  const data = fixture(), encode = createWorldProjectEncoder();
+  const sun = data.scene.children.find(node => node.lightType === 'directional');
+  sun.castShadow = true;
+  sun.shadow.extent = 24;
+  data.shadows = { mapSize: 1024 };
+  data.scene.fog = { kind: 'exponential', density: .016, color: [.026, .036, .07] };
+  data.scene.addChild(createPointLight3D({color: [1, .8, .55], intensity: 12, range: 8})).setPosition(2, 1.6, 3);
+  data.mesh.receiveShadow = true;
+  const caster = new Mesh3D(data.geometry, data.material);
+  caster.setPosition(11, 0, -2);
+  data.scene.addChild(caster);
+  const packet = encode(data, data.hud, undefined, 1, -1);
+  function lighting(bytes) {
+    const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.length);
+    const counts = v.getUint32(16, true), size = counts >>> 16;
+    assert.equal(counts & 65535, 2);
+    assert.equal(size, 128 + 28 + 4);
+    return new DataView(bytes.buffer, bytes.byteOffset + bytes.byteLength - data.hud.length - size, size);
+  }
+  const env = lighting(packet);
+  assert.equal(env.getUint32(0, true), 0x3154494c);
+  assert.equal(env.getUint32(4, true), 1);
+  assert.equal(env.getUint32(8, true), 1024);
+  assert.equal(env.getFloat32(12, true), Math.fround(.016));
+  assert.equal(env.getFloat32(128, true), 2);
+  assert.equal(env.getFloat32(140, true), 8);
+  assert.equal(env.getFloat32(144, true), 12);
+  assert.equal(env.getUint8(156), 7); // Casts, receives and uses fog.
+  assert.ok(env.getUint8(157) & 8); // Outside the view, inside the light volume.
+  new DataView(data.hud.buffer).setUint32(4, 18, true);
+  const delta = encode(data, data.hud, undefined, 1, 17);
+  const checkpoint = encode.recover(1, 18);
+  assert.deepEqual(new Uint8Array(checkpoint.buffer, lighting(checkpoint).byteOffset, env.byteLength),
+    new Uint8Array(delta.buffer, lighting(delta).byteOffset, env.byteLength));
+  data.shadows = {mapSize: 99999};
+  assert.throws(() => encode(data, data.hud), /shadow/i);
+  data.shadows = undefined;
+  for (let i = 0; i < 8; i++) data.scene.addChild(createPointLight3D({intensity: 1, range: 3}));
+  assert.throws(() => encode(data, data.hud), /lights/i);
+});
+
+test('offscreen grouped shadows follow each material slot', () => {
+  const data = fixture(), encode = createWorldProjectEncoder();
+  const sun = data.scene.children.find(node => node.lightType === 'directional');
+  sun.castShadow = true;
+  sun.shadow.extent = 24;
+  data.shadows = { mapSize: 1024 };
+  const hidden = createStandardMaterial3D();
+  hidden.visible = false;
+  const visible = createStandardMaterial3D();
+  const geometry = createBoxGeometry3D(1, 1, 1);
+  geometry.clearGroups().addGroup(0, 3, 0).addGroup(3, geometry.drawCount - 3, 1);
+  const caster = new Mesh3D(geometry, [hidden, visible]);
+  caster.setPosition(11, 0, -2);
+  data.scene.addChild(caster);
+  assert.throws(() => encode(data, data.hud), /grouped offscreen shadow caster/);
+  visible.visible = false;
+  const packet = encode(data, data.hud);
+  assert.equal(new DataView(packet.buffer).getUint32(16, true) & 0xffff, 1);
+});
+
+test('fog requires exactly three color components before a packet is published', () => {
+  const data = fixture(), encode = createWorldProjectEncoder();
+  data.scene.fog = { kind: 'exponential', density: .016, color: [.026, .036, .07] };
+  const reference = encode(data, data.hud);
+  for (const color of [[.026, .036], [.026, .036, .07, 9]]) {
+    data.scene.fog.color = color;
+    assert.throws(() => encode(data, data.hud), /fog color/);
+  }
+  data.scene.fog.color = [.026, .036, .07];
+  assert.deepEqual(encode(data, data.hud), reference);
+});
+
 test('native World3D keeps isolated HUD effects through ordinary and recovery composition', () => {
   const data = fixture(), encode = createWorldProjectEncoder();
   // A transparent HUD containing one isolated group with a one-pixel blur.

@@ -281,7 +281,7 @@ node --test runtime-sdk/project/large-glb.test.mjs
 
 使用裁剪 V8 的 arm64 AAR，并按上文配置外部测试签名。设备安装运行后，用 `adb shell dumpsys activity org.example.terrain/org.egret.example.LibraryActivity` 查看播放器计数。关闭视图后，`projectClose` 给出 `canceledAt`、`loadedBytes`、`imports`、`retirements` 和 `pagesReleased`。
 
-Fold7 两次完整导入均读完模型。卸载模型时，649,904 个取样像素中有 218,886 个明显变化；重载后与原画面逐像素一致。关闭后两次页发布都已归还，驻留页为零。本项覆盖 #393 的大文件资源验收，《风雪山神庙》的灯光、阴影、特效和同场景呈现计时另行验收。[真机记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-terrain-glb.json)
+Fold7 两次完整导入均读完模型。卸载模型时，649,904 个取样像素中有 218,886 个明显变化；重载后与原画面逐像素一致。关闭后两次页发布都已归还，驻留页为零。《风雪山神庙》角色、光照和帧呈现的同机对照见[草料场光照](#草料场光照)。[真机记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-terrain-glb.json)
 
 ### 在 Android 上驾驶带贴图的 GLB 赛车
 
@@ -382,6 +382,38 @@ node out/snowtemple-gate/check-temple-gate.mjs
 点击 **Advance & fight** 后，林冲会靠近敌人并出枪。残页出现时，选一项招式即可继续。第二队全灭后院门才会打开。林冲还要走过门廊，活着进入前庭，身后的屏障才会关闭，陆谦才会开口。两场战斗和会面沿用同一局游戏，保留血量、招式、背包和场内掉落。也可以用原有的 `--encounters` 入口单独玩草料场。
 
 同一台 Galaxy Z Fold7 上，Chrome WebGL2 和裁剪 V8 + GLES3 签名 APK 使用相同的触控操作。两队清场时林冲剩 120 血、99 枚铜钱，保留「借力」。第 2328 个模拟步开启院门。途中拾取铜钱，入院时为 120 血、103 枚铜钱。越过门槛后，身后的屏障关闭，炉边检查点继续生效，触发陆谦的 5.2 秒会面。恢复交战后的首枪使陆谦从 980 血降至 967 血，两端截至这一枪的 41 条伤害记录逐条一致。 Fold7 这条路线没有拾取第二本残页，而 Windows Node 规则回放拾取了它。验收按每局实际出现的选项核对。 [Fold7 真机记录](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-temple-gate.json)
+
+### 草料场光照
+
+这个场景可以查看林冲的蒙皮模型如何投下月影，以及一次实际命中怎样照亮附近地面。原作固定在 `4172514ea4369fd9aaf433403423340e8db072ee`。准备工具从单独提供的游戏工程校验并提取推车、火盆和可玩路线上的地形，沿用院门示例的五个角色 GLB、战斗规则及素材署名。[原作和素材说明](https://github.com/cnedwin/PortedGamesEgret/tree/4172514ea4369fd9aaf433403423340e8db072ee/SnowTemple)
+
+用同一份引擎源码构建浏览器模块和 arm64 AAR，按上文配置外部签名，所有输出均使用新目录。第二条准备命令生成一份使用本次引擎构建的浏览器版本，`out/snow-lit/browser.html` 则保留游戏自带的浏览器参考版本。
+
+```sh
+pnpm run build
+node runtime-sdk/examples/snowtemple/prepare.mjs /path/to/PortedGamesEgret/SnowTemple out/snow-lit --lit-temple
+node runtime-sdk/examples/snowtemple/prepare-matched-browser.mjs out/snow-lit out/snow-matched
+node runtime-sdk/android/player/create-app.mjs --project out/snow-matched --aar out/egret-player.aar --esbuild /path/to/node_modules/esbuild --id org.example.snowyard --layout standalone --out out/snow-app
+gradle -p out/snow-app assembleRelease
+python -m http.server 8000 --bind 127.0.0.1 --directory out/snow-matched
+```
+
+启动静态服务后，执行 `adb reverse tcp:8000 tcp:8000`，用手机 Chrome 打开 `http://127.0.0.1:8000/browser.html`，并在同一手机安装 `out/snow-app/build/outputs/apk/release/` 下的 APK。两端各开一局，依次点 **Before hit**、**Hit/step**。模拟从第 422 步走到 423 步，林冲打出 13 点伤害，刀手剩余 71 点血。分别切换 **Shadows** 和 **Hit light**，每次都先恢复再对照下一项。点 **Play** 继续交战。
+
+要启用中档月影，在 `world3D()` 中返回 `{scene, camera, shadows: {mapSize: 1024}}`，为方向光和投影网格开启 `castShadow`，为受影网格开启 `receiveShadow`。场景使用环境光、半球光、指数雾、邻近的六盏场景灯和最多两盏短暂的命中点光。非火焰命中还会使目标材质短暂变亮。该原生档位支持一张方向光阴影贴图和最多八盏直射点光。地形保留原始顶点位置、法线和顶点色，使用标准材质。此次对照未覆盖原作地面微纹理着色器、冲击环、飞散碎片、天气和屏幕后处理。
+
+Galaxy Z Fold7 上使用 768 × 432 画面，浏览器和 APK 停在同一次命中，骨骼矩阵哈希均为 `bb05cf67`。保留月光照明、只关闭阴影时，角色脚边区域共 5,687 个像素，Chrome WebGL2 有 1,391 个变亮，裁剪 V8／GLES3 有 1,371 个变亮。开启命中点光时，命中区域共 11,340 个像素，Chrome 有 10,769 个变亮，APK 有 10,665 个变亮。计数要求至少一个 RGB 通道变化达到 3/255。分别恢复两个开关后，两端各自场景区域的 191,521 个像素都与切换前完全一致。APK 切后台再返回，该区域也逐像素恢复。[Fold7 实测、取样区域和计时口径](https://github.com/cnedwin/Egret_rebuild/blob/main/runtime-sdk/measurements/fold7-snowtemple-lit-yard.json)
+
+在 Fold7 上，原生进程启动后 539–915 ms 首次看见游戏画面。Chrome 保持运行并关闭 HTTP 缓存后，从页面导航到看见同一场景为 2,752–3,168 ms。时间范围由手机合成器截图确定，连续两次匹配可玩画面才计入。
+
+预热 30 帧后，原生播放器采集了 180 个交战样本。V8 生成命令、复制命令包和 GLES 绘制调用的 CPU 耗时 p95 分别为 2.947、0.201 和 0.860 ms。Chrome WebGL2 的游戏更新和绘制调用 p95 分别为 1.0 和 1.6 ms，浏览器直接调用 WebGL。按 SurfaceFlinger 的实际呈现时间计算，APK 的帧间隔 p95 为 8.288 ms（178 个间隔），Chrome 为 16.578 ms（220 个间隔）。本次未取得独立的 GPU 执行耗时。两端的启动条件与采样窗口见上方实测记录。
+
+| 脚本宿主 | 已签名的 arm64 Release APK | 播放器 AAR |
+| --- | ---: | ---: |
+| 系统 WebView | 5,695,551 字节（5.43 MiB） | 819,876 字节 |
+| 裁剪 V8 | 68,336,517 字节（65.17 MiB） | 17,611,005 字节 |
+
+两个 APK 使用相同的游戏脚本和本地测试签名。希望各机型使用固定 JavaScript 运行时的游戏可以随包提供裁剪 V8。优先控制下载体积时，可在目标机型常用的 WebView 版本上验证游戏后选择系统 WebView。两种脚本宿主均通过 Rust／GLES3 绘制。上文的 Fold7 画面对照使用裁剪 V8 APK 和 Chrome WebGL2。[宿主选型和 Android 系统要求](android-project-player-v8.md)
 
 ### Android 实时帧的几何驻留
 

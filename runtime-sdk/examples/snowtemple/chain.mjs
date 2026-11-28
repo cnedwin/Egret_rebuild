@@ -19,12 +19,13 @@ const troop = (game, foe) => foe !== game.boss;
 
 export async function openScene({ glb, bytes }, temple) {
   const parts = {}, gear = {}, figures = new Map(), arrows = new Map();
-  const run = createEncounters({ throughGate: Boolean(temple) }), { scene, camera } = createActorStage();
+  const run = createEncounters({ throughGate: Boolean(temple) }), { scene, camera } = createActorStage({ defaultLights: !temple?.createLighting });
+  let lighting;
   const arrow = createBoxGeometry3D({ width: 0.045, height: 0.045, depth: 0.85 });
   const arrowMaterial = createStandardMaterial3D({ color: 0xf1d7a5 });
   const floor = createBoxGeometry3D({ width: 38, height: 0.06, depth: temple ? 92 : 62 });
   const floorMaterial = createStandardMaterial3D({ color: 0x647480, roughness: 1 });
-  scene.addChild(new Mesh3D(floor, floorMaterial)).setPosition(0, -0.045, temple ? 0 : 13);
+  if (!temple?.createLighting) scene.addChild(new Mesh3D(floor, floorMaterial)).setPosition(0, -0.045, temple ? 0 : 13);
   const gateway = temple?.createGateway(scene);
   const visibleFoe = (game, foe) => troop(game, foe) || (temple && ['gate', 'boss', 'done'].includes(game.stage));
   const travels = new Map();
@@ -51,18 +52,19 @@ export async function openScene({ glb, bytes }, temple) {
     for (const figure of figures.values()) figure.dispose();
     for (const mesh of arrows.values()) mesh.removeFromParent();
     arrows.clear(); figures.clear(); travels.clear();
-    sampledTick = -1; pending = 0;
+    sampledTick = -1; pending = 0; lighting?.reset();
   }
   function close() {
     clearRound(); scene.removeChildren();
     for (const geometry of Object.values(gear)) geometry.dispose();
-    gateway?.close();
+    gateway?.close(); lighting?.close();
     floor.dispose(); floorMaterial.dispose(); arrow.dispose(); arrowMaterial.dispose();
   }
   function updateView(events = []) {
     const g = run.game, h = g.hero;
     poseLinChong(bind(heroKey, h, 'hero'), g, travel(heroKey, h), true);
     gateway?.update(g.bars);
+    lighting?.update(g, events, run.tick ? DT : 0);
     for (const f of g.foes) {
       if (!visibleFoe(g, f)) continue;
       const figure = bind(f.id, f, f.kind);
@@ -92,13 +94,15 @@ export async function openScene({ glb, bytes }, temple) {
   }
   function next(pick) { const events = run.advance(pick); if (events) updateView(events); }
   function update(dt) {
-    if (paused || !['fighting','settling'].includes(run.phase)) return;
+    if (paused || lighting?.held(run.tick) || !['fighting','settling'].includes(run.phase)) return;
     pending += Math.max(0, Math.min(0.1,dt));
-    while (pending >= DT && ['fighting','settling'].includes(run.phase)) { next(); pending -= DT; }
+    while (pending >= DT && !lighting?.held(run.tick) && ['fighting','settling'].includes(run.phase)) { next(); pending -= DT; }
+    if (lighting?.held(run.tick)) pending = 0;
     if (!['fighting','settling'].includes(run.phase)) pending = 0;
   }
   function input({ type, x, y }) {
     if (paused || type !== 'down' || x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return;
+    if (lighting?.diagnostic(x, y, run)) return;
     if (Math.abs(x-384) <= 75 && Math.abs(y-26) <= 18) { clearRound(); run.reset(); updateView(); return; }
     const button = controls.slice(1).findIndex(([,cx,cy,width]) => Math.abs(cx-x) <= width/2 && Math.abs(cy-y) <= 18);
     if (button < 0) return;
@@ -111,7 +115,7 @@ export async function openScene({ glb, bytes }, temple) {
     const caption = temple?.caption(g, encounter);
     if (caption) encounter.message = caption;
     if (sampledTick !== run.tick) { heroHash=paletteHash(figures.get(heroKey),poseSequence++);sampledTick=run.tick; }
-    return { mode:temple ? 'temple-gate' : 'encounters', tick:run.tick, paused,
+    return { mode:temple ? 'temple-gate' : 'encounters', tick:run.tick, paused, ...(lighting ? { lighting: lighting.state() } : {}),
       hero:{x:h.x,z:h.z,hp:h.hp,state:h.state,paletteHash:heroHash,stamina:h.stamina,will:h.will,gourd:h.gourd},
       enemy:{id:foe.id,kind:foe.kind,x:foe.x,z:foe.z,hp:foe.hp,state:foe.state},
       encounter };
@@ -122,10 +126,11 @@ export async function openScene({ glb, bytes }, temple) {
       parts[kind] = bodyParts(model.scene, kind === 'hero' || kind === 'lu' ? BONES : YARD_BONES);
     }
     for (const name of (temple ? [...weapons, 'glaive', 'glaiveEdge'] : weapons)) gear[name] = equipment(name,await bytes(name+'.bin'));
+    if (temple?.createLighting) lighting = await temple.createLighting(scene, bytes);
     camera.far = 100;
     camera.updateProjectionMatrix();
     updateView();
-    return { scene, camera, input, update, state, close, messages:temple ? [...messages, ...temple.messages] : messages, choiceLabels:Object.values(BOONS).map(b=>b.name),
+    return { scene, camera, input, update, state, close, shadows: lighting?.shadows, probeControls: lighting?.controls, messages:temple ? [...messages, ...temple.messages] : messages, choiceLabels:Object.values(BOONS).map(b=>b.name),
       pause(){paused=true;pending=0;}, resume(){paused=false;pending=0;} };
   } catch(error) { close(); throw error; }
 }
