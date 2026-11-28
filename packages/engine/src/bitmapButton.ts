@@ -294,7 +294,11 @@ function assertSetupOpen(record: ButtonRecord): void {
   if (record.state === 'disposed') throw new EgretError('SCOPE_CLOSED');
 }
 
-/** Share a genuine input; own only the new private sheet, Bitmap and facade. */
+/**
+ * Share a genuine input; own only the new private sheet, Bitmap and facade.
+ * @deprecated Kept for games that use it. New code makes a button with `createActionControl` of `@egret/engine/ui` on
+ * any display object, and picks its up, pressed and disabled looks with `selectUiSkin`.
+ */
 export function createBitmapButton(options: BitmapButtonOptions): BitmapButton {
   if (!recordShape(options)) throw new EgretError('BITMAP_BUTTON_OPTIONS_INVALID');
   const noCheck = (): void => {};

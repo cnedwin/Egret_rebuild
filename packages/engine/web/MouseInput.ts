@@ -236,7 +236,12 @@ const browserPorts: MouseInputNativeFactory = (surface, width, height, assertLiv
   });
 };
 
-/** Primary mouse activation for the admitted ordinary desktop Canvas layout profile. */
+/**
+ * Primary mouse activation for the admitted ordinary desktop Canvas layout profile.
+ * @deprecated Kept for games that use it. New code takes touch, pen and every mouse button from the browser pointer
+ * input (`createBrowserPointerInput` of `@egret/engine/web/pointer`, or the one `createBrowserGame` and `play` own) and
+ * makes buttons with `createActionControl` of `@egret/engine/ui`.
+ */
 export function createMouseInput(options: MouseInputOptions): MouseInput {
   return createMouseInputWithNative(options, browserPorts);
 }
