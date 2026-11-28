@@ -3,6 +3,76 @@
  * source-over Alpha mask, in linear PMA space. Native targets encode sRGB on store; integer loads decode once on read. */
 export type SharedEffectPass = 'horizontal' | 'vertical' | 'spread' | 'composite';
 export const EFFECT_PASSES: readonly SharedEffectPass[] = ['horizontal', 'vertical', 'spread', 'composite'];
+/** What walking a frame's effect groups reads of each one; a prepared effect group carries these. */
+interface SharedEffectGroup2D {
+  readonly enter: number;
+  readonly exit: number;
+  readonly depth: number;
+  readonly radius: number;
+  readonly spread: number;
+}
+/**
+ * The effect targets a group uses, as indices into the frame's list: the source its draws go to, its scratch, and
+ * the source of the group it composites onto, or -1 for the frame's colour target.
+ */
+export function sharedEffectSlots2D(group: { readonly depth: number }): {
+  readonly source: number;
+  readonly scratch: number;
+  readonly parent: number;
+} {
+  return {
+    source: (group.depth - 1) * 2,
+    scratch: (group.depth - 1) * 2 + 1,
+    parent: group.depth === 1 ? -1 : (group.depth - 2) * 2
+  };
+}
+/** What a Host does at each step of a frame's effect groups, on its own targets. */
+export interface SharedEffectWalk2D<Group, Target> {
+  /** A group begins: the draws that follow go to its source, cleared. */
+  enter(target: Target): void;
+  /** A group ends, before its passes. */
+  leave(): void;
+  /** One pass of a group into a target, reading a source; the composite also reads the scratch as the glow. */
+  pass(group: Group, mode: SharedEffectPass, target: Target, source: Target, glow?: Target): void;
+  /** The draws that follow a group go to the target it composited onto. */
+  resume(target: Target): void;
+  /** A command that neither begins nor ends a group. */
+  draw(ordinal: number): void;
+}
+/**
+ * Walks a frame's commands through its effect groups in the order both Hosts run them: a blur across then down
+ * when the group has a radius, a spread for a glow or outline, then the composite onto the group's parent.
+ */
+export function walkSharedEffects2D<Group extends SharedEffectGroup2D, Target>(
+  commands: readonly { readonly ordinal: number }[],
+  groups: readonly Group[],
+  targets: readonly Target[],
+  color: Target,
+  walk: SharedEffectWalk2D<Group, Target>
+): void {
+  const enters = new Map(groups.map(group => [group.enter, group])),
+    exits = new Map(groups.map(group => [group.exit, group]));
+  for (const command of commands) {
+    const enter = enters.get(command.ordinal),
+      exit = exits.get(command.ordinal);
+    if (enter) walk.enter(targets[sharedEffectSlots2D(enter).source]!);
+    else if (exit) {
+      walk.leave();
+      const slots = sharedEffectSlots2D(exit),
+        source = targets[slots.source]!,
+        scratch = targets[slots.scratch]!;
+      if (exit.radius > 0) {
+        walk.pass(exit, 'horizontal', scratch, source);
+        walk.pass(exit, 'vertical', source, scratch);
+      }
+      // A glow or outline: the group's alpha spread across into the scratch target; the composite spreads it down.
+      if (exit.spread >= 0) walk.pass(exit, 'spread', scratch, source);
+      const parent = slots.parent < 0 ? color : targets[slots.parent]!;
+      walk.pass(exit, 'composite', parent, source, scratch);
+      walk.resume(parent);
+    } else walk.draw(command.ordinal);
+  }
+}
 /** The uniform of a group, in vectors of four floats; see prepareEffects2D for what each holds. */
 const VECTORS = 36;
 /** The bytes of one group's uniform, as prepareEffects2D fills it. */

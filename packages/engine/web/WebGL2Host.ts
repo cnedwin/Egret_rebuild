@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { deferred } from './sharedHostDeferred.js';
-import { sharedEffectGLSL, EFFECT_PASSES, EFFECT_UNIFORM_BYTES } from './sharedEffectShaders.js';
+import { sharedEffectGLSL, walkSharedEffects2D, EFFECT_PASSES, EFFECT_UNIFORM_BYTES } from './sharedEffectShaders.js';
 import type { SharedEffectPass } from './sharedEffectShaders.js';
 import type { PreparedEffect2D } from '../rendering/sharedEffects2D.js';
 import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
@@ -34,7 +34,11 @@ import type {
   WebGL2HostErrorCode,
   WebGL2HostDiagnostic
 } from './webgl2Types.js';
-import { prepareSharedDrawsForSubmission2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
+import {
+  prepareSharedDrawsForSubmission2D,
+  sharedBackingExtent2D,
+  SharedPreparationError
+} from '../rendering/prepareSharedDraws2D.js';
 import { SharedPreparationRetention2D } from '../rendering/sharedPreparationRetention2D.js';
 import { GeometryPreparationError } from '../rendering/prepareRectangles2D.js';
 import {
@@ -47,7 +51,7 @@ import { PreparedBatchScratch2D } from '../rendering/preparedBatches2D.js';
 import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
 import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
 import {
-  sharedBlendSpace2D,
+  sharedFrameProfileRefusal2D,
   sharedPageLevelLayout2D,
   sharedPageChainBytes2D,
   sharedTargetChannel2D
@@ -1190,14 +1194,9 @@ class SharedGLHost implements SharedLayerWebGL2Host {
                 : undefined;
             const options = layerWrite ? { ...this.options, pixelRatio: 1 } : this.options;
             const alpha = layerWrite ? 'premultiplied' : options.outputAlpha;
-            if (
-              sharedBlendSpace2D(frame) !== this.options.blendSpace ||
-              frame.outputAlpha !== alpha ||
-              frame.outputRepresentation !==
-                (alpha === 'opaque' ? 'egret.srgb-opaque-unorm8/1' : 'egret.srgb-premultiplied-unorm8/1')
-            )
-              throw glFailure('WEBGL2_FRAME_PROFILE_UNSUPPORTED');
-            if (alpha === 'opaque' && frame.clearAlpha !== 1) throw glFailure('WEBGL2_FRAME_INVALID');
+            const refusal = sharedFrameProfileRefusal2D(frame, this.options.blendSpace, alpha);
+            if (refusal)
+              throw glFailure(refusal === 'profile' ? 'WEBGL2_FRAME_PROFILE_UNSUPPORTED' : 'WEBGL2_FRAME_INVALID');
             if (layerWrite) {
               if (
                 frame.clearAlpha !== 0 ||
@@ -1217,18 +1216,9 @@ class SharedGLHost implements SharedLayerWebGL2Host {
               )
                 throw glFailure('WEBGL2_LAYER_BUDGET');
             }
-            const width = Math.ceil(frame.width * options.pixelRatio),
-              height = Math.ceil(frame.height * options.pixelRatio);
-            if (
-              !Number.isSafeInteger(width) ||
-              !Number.isSafeInteger(height) ||
-              width <= 0 ||
-              height <= 0 ||
-              width > 4294967295 ||
-              height > 4294967295 ||
-              width > Math.floor(options.maxBackingPixels / height)
-            )
-              throw glFailure('WEBGL2_BACKING_LIMIT');
+            const backing = sharedBackingExtent2D(frame, options.pixelRatio, options.maxBackingPixels);
+            if (!backing) throw glFailure('WEBGL2_BACKING_LIMIT');
+            const { width, height } = backing;
             // A frame baked into a layer is another sequence of frames; it neither takes nor replaces what the ordinary frames keep.
             const prepared = prepareSharedDrawsForSubmission2D(
               frame,
@@ -2327,9 +2317,7 @@ class SharedGLHost implements SharedLayerWebGL2Host {
           gl.clear(gl.COLOR_BUFFER_BIT);
         }
       };
-      const groups = record.storage.prepared.effects.groups,
-        enters = new Map(groups.map(g => [g.enter, g])),
-        exits = new Map(groups.map(g => [g.exit, g]));
+      const groups = record.storage.prepared.effects.groups;
       const ranges = new Map(arena.sharedRanges.map(range => [range.draw.prepared.command.ordinal, range]));
       const effectPass = (
         group: PreparedEffect2D,
@@ -2379,29 +2367,19 @@ class SharedGLHost implements SharedLayerWebGL2Host {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, null);
       };
-      for (const command of frame.commands) {
-        const enter = enters.get(command.ordinal),
-          exit = exits.get(command.ordinal);
-        if (enter) {
-          setTarget(targets[(enter.depth - 1) * 2]!, true);
+      walkSharedEffects2D(frame.commands, groups, targets, colorTexture, {
+        enter: target => {
+          setTarget(target, true);
           bindDraw();
-        } else if (exit) {
-          const source = targets[(exit.depth - 1) * 2]!,
-            scratch = targets[(exit.depth - 1) * 2 + 1]!;
-          if (exit.radius > 0) {
-            effectPass(exit, 'horizontal', scratch, source);
-            effectPass(exit, 'vertical', source, scratch);
-          }
-          // A glow or outline: the group's alpha spread across into the scratch target; the composite spreads it down.
-          if (exit.spread >= 0) effectPass(exit, 'spread', scratch, source);
-          const parent = exit.depth === 1 ? colorTexture : targets[(exit.depth - 2) * 2]!;
-          effectPass(exit, 'composite', parent, source, scratch);
-          bindDraw();
-        } else {
-          const range = ranges.get(command.ordinal);
+        },
+        leave: () => undefined,
+        pass: effectPass,
+        resume: bindDraw,
+        draw: ordinal => {
+          const range = ranges.get(ordinal);
           if (range) drawOne(range);
         }
-      }
+      });
     }
     // No page stays bound to a unit only a batch of several pages uses.
     for (let unit = 1; unit < units.length; unit++)
