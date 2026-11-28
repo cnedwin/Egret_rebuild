@@ -2189,11 +2189,15 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
         'shared-extra-edge':['packages/engine/dist/rendering/packSharedDraws2D.js','',"const extra=()=>import('./packSharedMeshGeometry3D.js');\n"],
         'contained-quad-runtime-edge':['packages/engine/dist/rendering/sharedContainedQuad2D.js','',"import './prepareSharedDraws2D.js';\n"],
         // Runtime layer rules: a value cycle, an import across src and dist, and a dynamic import.
-        'runtime-value-cycle':['packages/runtime/dist/displayNodeState.js','',"import './displayTreeState.js';\n"],
+        'runtime-value-cycle':['packages/runtime/dist/displayNodeState.js','',"import './displayNodeState.js';\n"],
         'runtime-layer-cross':['packages/runtime/src/displayNodeState.ts','',"import '../dist/EgretError.js';\n"],
         'runtime-dynamic-import':['packages/runtime/dist/displayNodeState.js','',"const later=()=>import('./EgretError.js');\n"],
+        // Engine layer rules: a browser import of a core source, an unlisted lazy import, and a value cycle.
+        'engine-layer-cross':['packages/engine/web/ProbeLayer.ts','',"import '../src/Engine.js';\n"],
+        'engine-lazy-import':['packages/engine/src/startEngine.ts','',"const lazyClock=()=>import('./gameClock.js');\n"],
+        'engine-value-cycle':['packages/engine/dist/ProbeCycle.js','',"import './ProbeCycle.js';\n"],
       };
-      const edit=edits[sharedMutation];assert.ok(edit,'finite M1.3 mutation');const[file,before,after]=edit,original=readFileSync(path.join(root,file),'utf8');
+      const edit=edits[sharedMutation];assert.ok(edit,'finite M1.3 mutation');const[file,before,after]=edit,original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       if(before)assert.equal(original.split(before).length,2,'unique M1.3 mutation anchor');
       write(file,before?original.replace(before,after):original+after);
     }
@@ -2970,12 +2974,15 @@ for(const [name,reason]of [
     assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);
   });
 });
-// Runtime imports follow layer rules instead of a row per file.
+// Runtime imports, and engine imports outside the GPU Host and rendering closures, follow layer rules.
 for(const [name,reason]of [
-  ['runtime-value-cycle','Runtime layers: value import cycle: packages/runtime/dist/displayNodeState.js -> packages/runtime/dist/displayTreeState.js -> packages/runtime/dist/displayNodeState.js'],
+  ['runtime-value-cycle','Runtime layers: value import cycle: packages/runtime/dist/displayNodeState.js -> packages/runtime/dist/displayNodeState.js'],
   ['runtime-layer-cross','Runtime layers: import leaves its layer: packages/runtime/src/displayNodeState.ts ../dist/EgretError.js'],
   ['runtime-dynamic-import','Runtime layers: dynamic import: packages/runtime/dist/displayNodeState.js'],
-])test('Runtime layer policy '+name+' requires healthy baseline and assigned refusal',()=>{
+  ['engine-layer-cross','Engine layers: import leaves its layer: packages/engine/web/ProbeLayer.ts ../src/Engine.js'],
+  ['engine-lazy-import','Engine layers: lazy import outside the reviewed list: packages/engine/src/startEngine.ts -> ./gameClock.js'],
+  ['engine-value-cycle','Engine layers: value import cycle: packages/engine/dist/ProbeCycle.js -> packages/engine/dist/ProbeCycle.js'],
+])test('Layer policy '+name+' requires healthy baseline and assigned refusal',()=>{
   fixture({imported:'robust-predicates',sharedMutation:name},result=>{
     assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);
   });

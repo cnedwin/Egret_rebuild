@@ -4674,20 +4674,6 @@ const uiScreenStackLiteralClosure = {"packages/engine/src/ui/index.ts":[["static
 // The paragraph barrel forwards the canvas provider and the provider choice; the choice imports both providers.
 const paragraphCanvasLiteralClosure = {"packages/engine/web/paragraph.ts":[["static","./CanvasKitFontSetProvider.js"],["static","./CanvasKitFontSetProvider.js"],["static","./CanvasKitParagraphProvider.js"],["static","./CanvasKitParagraphProvider.js"],["static","./CanvasParagraphProvider.js"],["static","./CanvasParagraphProvider.js"],["static","./ParagraphProviderChoice.js"],["static","./ParagraphProviderChoice.js"]],"packages/engine/dist/web/paragraph.js":[["static","./CanvasKitFontSetProvider.js"],["static","./CanvasKitParagraphProvider.js"],["static","./CanvasParagraphProvider.js"],["static","./ParagraphProviderChoice.js"]],"packages/engine/dist/web/paragraph.d.ts":[["static","./CanvasKitFontSetProvider.js"],["static","./CanvasKitFontSetProvider.js"],["static","./CanvasKitParagraphProvider.js"],["static","./CanvasKitParagraphProvider.js"],["static","./CanvasParagraphProvider.js"],["static","./CanvasParagraphProvider.js"],["static","./ParagraphProviderChoice.js"],["static","./ParagraphProviderChoice.js"]],"packages/engine/web/CanvasParagraphProvider.ts":[["static","./browserTextWork.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/engine/paragraph"],["static","@egret/runtime"]],"packages/engine/dist/web/CanvasParagraphProvider.js":[["static","@egret/contracts"],["static","@egret/runtime"]],"packages/engine/dist/web/CanvasParagraphProvider.d.ts":[["static","./browserTextWork.js"],["static","@egret/engine/paragraph"]],"packages/engine/web/ParagraphProviderChoice.ts":[["static","./CanvasKitParagraphProvider.js"],["static","./CanvasParagraphProvider.js"],["static","@egret/runtime"]],"packages/engine/dist/web/ParagraphProviderChoice.js":[["static","./CanvasKitParagraphProvider.js"],["static","./CanvasParagraphProvider.js"],["static","@egret/runtime"]],"packages/engine/dist/web/ParagraphProviderChoice.d.ts":[["static","./CanvasKitParagraphProvider.js"],["static","./CanvasParagraphProvider.js"]]};
 const currentSceneLiteralClosure = {...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure,...m22SequenceLiteralClosure,...m32ParagraphLiteralClosure,...preparedSubtreeLiteralClosure,...m34EffectLiteralClosure,...fontResourceLiteralClosure,...m34ThemeLiteralClosure,...sequenceResetLiteralClosure,...uiControlsLiteralClosure,...nativeEditingLiteralClosure,...uiLayerLiteralClosure,...uiStateControlsLiteralClosure,...uiScrollControlLiteralClosure,...uiTextFieldLiteralClosure,...uiControlKeysLiteralClosure,...uiRangeControlLiteralClosure,...uiScreenStackLiteralClosure,...paragraphCanvasLiteralClosure};
-// The root retains transaction authority. Its private staging and model modules have only these literal edges.
-const uiRootModuleTargets = {
-  'src/ui/uiRoot.ts': [...currentSceneLiteralClosure['packages/engine/src/ui/uiRoot.ts'].map(([, target]) => target), './uiRootDisplay.js', './uiRootModel.js', './uiRootModel.js'],
-  'dist/ui/uiRoot.js': [...currentSceneLiteralClosure['packages/engine/dist/ui/uiRoot.js'].map(([, target]) => target), './uiRootDisplay.js', './uiRootModel.js'],
-  'src/ui/uiRootModel.ts': ['../internal/uiFactoryState.js', './leafContent.js', './theme.js', './types.js', './virtualList.js', '@egret/runtime', '@egret/runtime', '@egret/runtime/ui', '@egret/runtime/ui'],
-  'dist/ui/uiRootModel.js': ['@egret/runtime', '@egret/runtime/ui'],
-  'dist/ui/uiRootModel.d.ts': ['../internal/uiFactoryState.js', './leafContent.js', './theme.js', './types.js', './virtualList.js', '@egret/runtime', '@egret/runtime', '@egret/runtime/ui'],
-  'src/ui/uiRootDisplay.ts': ['../internal/uiFactoryState.js', './types.js', './uiRootModel.js', '@egret/runtime', '@egret/runtime', '@egret/runtime/ui'],
-  'dist/ui/uiRootDisplay.js': ['@egret/runtime'],
-  'dist/ui/uiRootDisplay.d.ts': ['../internal/uiFactoryState.js', './types.js', './uiRootModel.js', '@egret/runtime', '@egret/runtime/ui'],
-};
-for (const [file, targets] of Object.entries(uiRootModuleTargets))
-  currentSceneLiteralClosure['packages/engine/' + file] = targets.map(target => ['static', target])
-    .sort((a,b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
 if (hasGLTiming) for (const file of ['packages/engine/web/webgl2.ts','packages/engine/dist/web/webgl2.d.ts']) {
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./webgl2Types.js']]
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
@@ -4716,34 +4702,37 @@ for (const file of ['packages/contracts/src/SharedGeometry2D.ts','packages/contr
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 for (const file of ['src/geometryAdmission2D.ts','dist/geometryAdmission2D.js','dist/geometryAdmission2D.d.ts'])
   currentSceneLiteralClosure['packages/contracts/'+file] = [];
-// Native control reporting shares one read-only private association through the existing pointer alias.
-for (const file of ['src/pointerInput.ts','dist/pointerInput.js','dist/pointerInput.d.ts'])
-  currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],
-    ['static','./internal/uiControlReportState.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
-for (const file of ['src/ui/controls.ts','dist/ui/controls.js','src/ui/rangeControl.ts','dist/ui/rangeControl.js','src/ui/scrollControl.ts','dist/ui/scrollControl.js'])
-  currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],
-    ['static','../internal/uiControlReportState.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
-// Pointer and hover input share their target admission, cleanup and operation wrapper through one private module.
-for (const file of ['src/pointerInput.ts','dist/pointerInput.js'])
-  currentSceneLiteralClosure['packages/engine/'+file] = [...currentSceneLiteralClosure['packages/engine/'+file],
-    ['static','./internal/routedInput.js']].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
-for (const file of ['src/internal/routedInput.ts','dist/internal/routedInput.js','dist/internal/routedInput.d.ts'])
-  currentSceneLiteralClosure['packages/engine/'+file] = [['static','@egret/runtime']];
-// The opt-in visual occluder is exported only by the existing native UI entry.
-for (const [file, count] of Object.entries({'src/ui/index.ts':2,'dist/ui/index.js':1,'dist/ui/index.d.ts':2}))
-  currentSceneLiteralClosure['packages/engine/'+file]=[...currentSceneLiteralClosure['packages/engine/'+file],...Array.from({length:count},()=>['static','../internal/uiControlReportState.js'])].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
-for (const [file, targets] of Object.entries({
-  'src/internal/uiControlReportState.ts':['../pointerInputTypes.js','@egret/runtime'],
-  'dist/internal/uiControlReportState.js':[],
-  'dist/internal/uiControlReportState.d.ts':['../pointerInputTypes.js','@egret/runtime']
-}))
-  currentSceneLiteralClosure['packages/engine/' + file] = targets.map(target=>['static',target])
-    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
-// Runtime imports are held by layer rules, not by a row per file: the per-file rows above stay as
-// history and as file lists for other checks, but no runtime row is compared any more. Every runtime
-// file imports only within its own layer (src from src, dist from dist), through literal static
-// specifiers, and the emitted value imports form no cycle. The package scan above already limits
-// bare specifiers to the declared dependency, @egret/contracts, and keeps the core DOM- and Node-free.
+// Runtime imports, and engine imports outside the GPU Host and rendering closures, are held by layer
+// rules rather than a row per file. The per-file rows above stay as history and as file lists for
+// other checks, but only the retained closures are compared. The package scan above still limits bare
+// specifiers to declared dependencies and keeps the cores DOM- and Node-free.
+// Import specifiers of a module, read after its comments are removed. Complete quoted strings are
+// consumed first, so text that only looks like an import inside a string is not one.
+function layerImports(code) {
+  const found = [];
+  for (const match of code.matchAll(/"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*'|\b(?:from\s*|import\s*\(\s*|import\s*)["']([^"']+)["']/g))
+    if (match[1]) found.push({ dynamic: /^import\s*\(/.test(match[0]), target: match[1] });
+  return found;
+}
+// Refuses a cycle in a graph of emitted value imports, naming the whole cycle.
+function assertAcyclic(graph, label) {
+  const state = new Map(), trail = [];
+  const visit = file => {
+    state.set(file, 'open');
+    trail.push(file);
+    for (const target of graph.get(file) ?? []) {
+      if (!graph.has(target)) continue;
+      if (state.get(target) === 'open') throw new Error(label + ': value import cycle: ' + [...trail.slice(trail.indexOf(target)), target].join(' -> '));
+      if (!state.has(target)) visit(target);
+    }
+    trail.pop();
+    state.set(file, 'done');
+  };
+  for (const file of [...graph.keys()].sort()) if (!state.has(file)) visit(file);
+}
+const repositoryPath = file => path.relative(root, file).split(path.sep).join('/');
+// Runtime: every file imports only within its own layer (src from src, dist from dist), through
+// literal static specifiers, and the emitted value imports form no cycle.
 for (const file of Object.keys(currentSceneLiteralClosure))
   if (file.startsWith('packages/runtime/')) delete currentSceneLiteralClosure[file];
 const runtimeRoot = path.join(root, 'packages/runtime');
@@ -4752,33 +4741,24 @@ for (const layer of ['src', 'dist']) {
   const layerRoot = path.join(runtimeRoot, layer);
   for (const file of files(layerRoot)) {
     if (!/\.(?:ts|js)$/.test(file)) continue;
-    const relative = path.relative(root, file).split(path.sep).join('/'), code = sceneRead(relative);
+    const relative = repositoryPath(file), code = sceneRead(relative);
     if (/\bimport\s*\(/.test(code)) throw new Error('Runtime layers: dynamic import: ' + relative);
     const targets = [];
-    for (const [, target] of sceneGraphEdges(code)) {
+    for (const { target } of layerImports(code)) {
       if (!target.startsWith('.')) continue;
       const resolved = path.resolve(path.dirname(file), target);
       if (!resolved.startsWith(layerRoot + path.sep)) throw new Error('Runtime layers: import leaves its layer: ' + relative + ' ' + target);
-      targets.push(path.relative(root, resolved).split(path.sep).join('/'));
+      targets.push(repositoryPath(resolved));
     }
     if (layer === 'dist' && file.endsWith('.js')) runtimeValueGraph.set(relative, targets);
   }
 }
-{
-  const state = new Map(), trail = [];
-  const visit = file => {
-    state.set(file, 'open');
-    trail.push(file);
-    for (const target of runtimeValueGraph.get(file) ?? []) {
-      if (!runtimeValueGraph.has(target)) continue;
-      if (state.get(target) === 'open') throw new Error('Runtime layers: value import cycle: ' + [...trail.slice(trail.indexOf(target)), target].join(' -> '));
-      if (!state.has(target)) visit(target);
-    }
-    trail.pop();
-    state.set(file, 'done');
-  };
-  for (const file of [...runtimeValueGraph.keys()].sort()) if (!state.has(file)) visit(file);
-}
+assertAcyclic(runtimeValueGraph, 'Runtime layers');
+// Engine: the GPU Host and rendering closures keep their exact rows, as AGENTS.md states for the
+// shared WebGL2 and WebGPU Hosts. Every other engine file follows the layer rules checked below.
+const retainedEngineClosure = /^packages\/engine\/(?:dist\/)?(?:rendering\/|web\/(?:WebGL2Host|WebGPUHost|imageProjections2D|prepareSharedSubmission2D|shared[A-Z]\w*|webgl2\w*|webgpu\w*)\.)/;
+for (const file of Object.keys(currentSceneLiteralClosure))
+  if (file.startsWith('packages/engine/') && !retainedEngineClosure.test(file)) delete currentSceneLiteralClosure[file];
 for (const [file,edges] of Object.entries(currentSceneLiteralClosure)) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
@@ -5902,4 +5882,59 @@ for(const [entry,names] of [['@egret/runtime/ui/editing',['createTextEditState']
 for(const [label,values,stem]of [...textEntries,['engine/ui',await import('@egret/engine/ui'),'packages/engine/dist/ui/index']])
  for(const name of ['createTextEditState','createUiTextEditor','createBrowserEditorFontProvider','createBrowserTextEditor','bindTextEditorHost','requireEditorEngine','registerUiRoot','requireUiRoot'])
   if(name in values||new RegExp('\\b'+name+'\\b').test(uiRead(stem+'.d.ts')))throw new Error('M3.3: editing leaked outside optional entry: '+label+'/'+name);
+// Engine layers, checked last so that every named rule above refuses first. By relative path, the
+// DOM-free core (src) imports only the core, the DOM-free rendering composite only itself, and the
+// browser layer (web) itself and rendering; web reaches the core only through package entries. The
+// emitted dist tree keeps the same layers. Modules load each other lazily only where listed, and the
+// emitted static value imports form no cycle.
+const engineRoot = path.join(root, 'packages/engine');
+const engineLayerOf = relative => {
+  const [top, next] = relative.split('/');
+  if (top === 'dist') return next === 'web' ? 'dist/web' : next === 'rendering' ? 'dist/rendering' : 'dist/core';
+  return { src: 'core', web: 'web', rendering: 'rendering' }[top];
+};
+const engineLayerTargets = {
+  core: ['core'], web: ['web', 'rendering'], rendering: ['rendering'],
+  'dist/core': ['dist/core'], 'dist/web': ['dist/web', 'dist/rendering'], 'dist/rendering': ['dist/rendering']
+};
+// Each lazily loaded module, by the file that loads it. Type-position import() in sources and
+// declarations is listed too, because it names a module the same way.
+const engineLazyImports = new Set([
+  ...['web/BrowserGame.ts', 'dist/web/BrowserGame.js'].flatMap(file =>
+    ['./webgpu.js', './webgl2.js', './hover.js', './text.js', './browserGameParagraph.js', './browserGameGlyphFont.js'].map(target => file + ' -> ' + target)),
+  'web/playView.ts -> ./playViewParagraph.js', 'dist/web/playView.js -> ./playViewParagraph.js',
+  ...['web/world3d/app3D.ts', 'dist/web/world3d/app3D.js'].flatMap(file =>
+    ['./WebGPURenderer3D.js', './WebGL2Renderer3D.js'].map(target => file + ' -> ' + target)),
+  ...['rendering/world3d/Mesh3D.ts', 'dist/rendering/world3d/Mesh3D.d.ts'].map(file => file + ' -> ./Camera3D.js'),
+  ...['rendering/world3d/Object3D.ts', 'dist/rendering/world3d/Object3D.d.ts'].flatMap(file =>
+    ['./Texture3D.js', './Material3D.js'].map(target => file + ' -> ' + target)),
+  'dist/displaySubtreeTicket.d.ts -> @egret/runtime'
+]);
+// The save store has a method named import; it is not a module load.
+const engineImportMethods = new Set(['src/saveStore.ts', 'dist/saveStore.js', 'dist/saveStore.d.ts']);
+const engineValueGraph = new Map();
+for (const area of ['src', 'web', 'rendering', 'dist']) {
+  for (const file of files(path.join(engineRoot, area))) {
+    if (!/\.(?:ts|js)$/.test(file)) continue;
+    const relative = path.relative(engineRoot, file).split(path.sep).join('/'), repository = repositoryPath(file);
+    const layer = engineLayerOf(relative), code = sceneRead(repository), imports = layerImports(code);
+    const calls = (code.match(/(?<![.\w$])import\s*\(/g) ?? []).length;
+    if (calls !== imports.filter(entry => entry.dynamic).length && !engineImportMethods.has(relative))
+      throw new Error('Engine layers: non-literal dynamic import: ' + repository);
+    const targets = [];
+    for (const { dynamic, target } of imports) {
+      if (dynamic && !engineLazyImports.has(relative + ' -> ' + target))
+        throw new Error('Engine layers: lazy import outside the reviewed list: ' + repository + ' -> ' + target);
+      // Bare specifiers are the package scan's: it admits each package entry and alias only in named files.
+      if (!target.startsWith('.')) continue;
+      const resolved = path.resolve(path.dirname(file), target);
+      const reached = engineLayerOf(path.relative(engineRoot, resolved).split(path.sep).join('/'));
+      if (!resolved.startsWith(engineRoot + path.sep) || !engineLayerTargets[layer].includes(reached))
+        throw new Error('Engine layers: import leaves its layer: ' + repository + ' ' + target);
+      if (!dynamic) targets.push(repositoryPath(resolved));
+    }
+    if (relative.startsWith('dist/') && relative.endsWith('.js')) engineValueGraph.set(repository, targets);
+  }
+}
+assertAcyclic(engineValueGraph, 'Engine layers');
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
