@@ -34,7 +34,7 @@ import type {
   WebGL2HostErrorCode,
   WebGL2HostDiagnostic
 } from './webgl2Types.js';
-import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
+import { prepareSharedDrawsForSubmission2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
 import { SharedPreparationRetention2D } from '../rendering/sharedPreparationRetention2D.js';
 import { GeometryPreparationError } from '../rendering/prepareRectangles2D.js';
 import {
@@ -1324,13 +1324,12 @@ class SharedGLHost implements SharedLayerWebGL2Host {
             )
               throw glFailure('WEBGL2_BACKING_LIMIT');
             // A frame baked into a layer is another sequence of frames; it neither takes nor replaces what the ordinary frames keep.
-            const prepared = prepareSharedDraws2D(
+            const prepared = prepareSharedDrawsForSubmission2D(
               frame,
               width,
               height,
               options,
-              layerWrite ? undefined : this.retention,
-              true
+              layerWrite ? undefined : this.retention
             );
             const ticket = !layerWrite && !staging && this.ticket && !this.ticket.bound ? this.ticket : undefined;
             const reserve = staging ? options.enableReadback : !!ticket;

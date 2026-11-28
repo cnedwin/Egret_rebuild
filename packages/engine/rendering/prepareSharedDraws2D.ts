@@ -25,6 +25,11 @@ import {
   sharedPageLevels2D
 } from './sharedColor2D.js';
 import type { RetainedSharedDraw2D, SharedPreparationRetention2D } from './sharedPreparationRetention2D.js';
+import {
+  expandSharedContainedQuad2D,
+  writeSharedContainedQuad2D,
+  type SharedContainedQuad2D
+} from './sharedContainedQuad2D.js';
 export class SharedPreparationError extends Error {
   public constructor(public readonly reason: 'frame' | 'profile' | 'precision' | 'budget') {
     super('Shared preparation ' + reason);
@@ -61,6 +66,47 @@ export interface PreparedSharedBarrier2D {
   readonly ordinal: number;
   readonly occurrenceId: number;
 }
+// Only the immediate internal Host submission uses this compact draw. The ordinary
+// geometry entry point always returns plain records with fully materialized own polygon fields.
+const placedQuadIssuer = Symbol();
+class PreparedContainedQuad2D implements PreparedSharedDraw2D {
+  public readonly kind = 'draw';
+  public readonly vertexReservation = 6;
+  #quad: SharedContainedQuad2D | undefined;
+  #expanded: PreparedSharedDraw2D['polygons'] | undefined;
+  public constructor(
+    issuer: symbol,
+    public readonly command: SharedDrawCommand2D,
+    public readonly material: SharedMaterial2D,
+    public readonly region: SharedRegion2D | undefined,
+    public readonly pageIndex: number | undefined,
+    quad: SharedContainedQuad2D
+  ) {
+    if (issuer !== placedQuadIssuer) sharedFailure('frame');
+    this.#quad = quad;
+  }
+  public get polygons(): PreparedSharedDraw2D['polygons'] {
+    if (this.#expanded === undefined) {
+      this.#expanded = expandSharedContainedQuad2D(this.#quad!);
+      this.#quad = undefined;
+    }
+    return this.#expanded;
+  }
+  public static has(draw: PreparedSharedDraw2D): boolean {
+    return #quad in draw && draw.#quad !== undefined;
+  }
+  public static write(
+    draw: PreparedSharedDraw2D,
+    rows: Float32Array<ArrayBuffer>,
+    offset: number,
+    slot: number,
+    opacity: number
+  ): void {
+    writeSharedContainedQuad2D((draw as PreparedContainedQuad2D).#quad!, rows, offset, slot, opacity);
+  }
+}
+export const isPreparedContainedQuad = PreparedContainedQuad2D.has;
+export const writePreparedContainedQuad = PreparedContainedQuad2D.write;
 export type PreparedSharedEntry2D = PreparedSharedDraw2D | PreparedSharedBarrier2D;
 /** What one shared frame may hold at most, whatever a Host is configured to admit. */
 export const SHARED_FRAME_REGIONS_2D = 4096,
@@ -375,6 +421,27 @@ export function prepareSharedDraws2D(
   retention?: SharedPreparationRetention2D,
   engineOwned = false
 ): PreparedSharedFrame2D {
+  return prepareSharedGeometry(frame, width, height, options, retention, engineOwned, false);
+}
+/** The browser Host consumes these private representations synchronously during submission. */
+export function prepareSharedDrawsForSubmission2D(
+  frame: SharedRenderFrame2D,
+  width: number,
+  height: number,
+  options: SharedPreparationOptions2D,
+  retention?: SharedPreparationRetention2D
+): PreparedSharedFrame2D {
+  return prepareSharedGeometry(frame, width, height, options, retention, true, true);
+}
+function prepareSharedGeometry(
+  frame: SharedRenderFrame2D,
+  width: number,
+  height: number,
+  options: SharedPreparationOptions2D,
+  retention: SharedPreparationRetention2D | undefined,
+  engineOwned: boolean,
+  forSubmission: boolean
+): PreparedSharedFrame2D {
   if (frame.profile !== 'egret.shared-frame2d/1' || sharedBlendSpace2D(frame) === undefined) sharedFailure('profile');
   if (
     frame.commands.length > options.maxCommands ||
@@ -512,7 +579,8 @@ export function prepareSharedDraws2D(
   // qualified list in this call. Authored motion changes its numbers in the next frame.
   let previousClipList: SharedDrawCommand2D['clips'] | undefined,
     previousClips: typeof clips = NO_CLIPS,
-    clipBounds: ReturnType<Preparation['containedClipStackBounds']>;
+    clipBounds: ReturnType<Preparation['containedClipStackBounds']>,
+    quadBounds: ReturnType<Preparation['containedClipStackBounds']>;
   const clipCost = { preparedVertices: 0, predicates: 0, tupleComparisons: 0 };
   // What the corners of the command's texture coordinates are qualified against; undefined for a draw without a page.
   let uvDomain: SharedUVDomain2D | undefined;
@@ -521,6 +589,54 @@ export function prepareSharedDraws2D(
   const intersect = (polygon: SharedPoint2D[], clip: readonly PreparedPoint2D[]): SharedPoint2D[] =>
     preparation.tryContainedClip(polygon, clip, 'mesh') ??
     clipPolygon2D(preparation, polygon, clip, normalize, attach, policy, 'mesh');
+  // Only an authenticated stack of canonical rectangular clips reaches here. A
+  // real cut keeps its original classified edge, ordered crossings, and attributes.
+  // A run of inactive planes gets one exact debit against the current corner count.
+  const intersectPartialStack = (input: SharedPoint2D[]): SharedPoint2D[] => {
+    const last = (clips.length + 1) * 4;
+    let polygon = input,
+      span = 0,
+      left = Infinity,
+      right = -Infinity,
+      top = Infinity,
+      bottom = -Infinity;
+    // A retained vertex comes from the input; every new crossing is checked to
+    // lie between both segment endpoints. The original bounds therefore contain
+    // every later polygon, including rounded crossings. They are only a proof
+    // of containment: all other edges retain their ordinary classification.
+    for (const point of polygon) {
+      if (point.x < left) left = point.x;
+      if (point.x > right) right = point.x;
+      if (point.y < top) top = point.y;
+      if (point.y > bottom) bottom = point.y;
+    }
+    const clipAt = (plane: number): readonly PreparedPoint2D[] =>
+      plane < last - 4 ? clips[Math.floor(plane / 4)]! : viewport!;
+    const applyEdge = (plane: number): void => {
+      polygon = clipPolygon2D(preparation, polygon, clipAt(plane), normalize, attach, policy, 'mesh', plane % 4);
+    };
+    // Unpaid atomic spans have no side effects. Finish from the first unpaid
+    // edge so an exhausted budget reports the original charge and first failure.
+    const finishOrdinary = (from: number): SharedPoint2D[] => {
+      for (let p = from; p < last && polygon.length; p++) applyEdge(p);
+      return polygon;
+    };
+    for (let i = 0; i < last; i++) {
+      const c = clipAt(i),
+        edge = i % 4;
+      const inside =
+        edge === 0 ? top >= c[0]!.y : edge === 1 ? right <= c[1]!.x : edge === 2 ? bottom <= c[2]!.y : left >= c[0]!.x;
+      if (inside) {
+        span++;
+        continue;
+      }
+      if (!preparation.tryReplayContainedMeshEdges(polygon.length, span)) return finishOrdinary(i - span);
+      span = 0;
+      applyEdge(i);
+      if (polygon.length === 0) return polygon;
+    }
+    return preparation.tryReplayContainedMeshEdges(polygon.length, span) ? polygon : finishOrdinary(last - span);
+  };
   // A quad of a matrix without rotation or shear, whose corners stay apart once placed, needs none of the general
   // path's tests to be known: its three signs agree and its four corners are distinct, so normalizing keeps them in
   // order, reversed when the placed winding is negative. The general path's charges for those tests (seven predicates
@@ -582,6 +698,51 @@ export function prepareSharedDraws2D(
     coordinate(coordinate(coordinate(coordinate(m.a * x) + coordinate(m.c * 0)) + m.tx) * ratio);
   const placeY = (y: number): number =>
     coordinate(coordinate(coordinate(coordinate(m.b * 0) + coordinate(m.d * y)) + m.ty) * ratio);
+  // A completely contained, axis-aligned solid or unit-UV image has four independent placed coordinates.
+  // Its fan can be encoded directly. A miss pays nothing; the ordinary route retains its exact failure order.
+  const containedQuad = (
+    x: number,
+    y: number,
+    right: number,
+    bottom: number,
+    alpha: number
+  ): SharedContainedQuad2D | undefined => {
+    if (command.opacity === 0 || m.b !== 0 || m.c !== 0 || m.a === 0 || m.d === 0 || !(x < right && y < bottom))
+      return undefined;
+    const bounds = quadBounds;
+    if (bounds === undefined) return undefined;
+    if (uvDomain !== undefined && (uvDomain.width > uvDomain.limit || uvDomain.height > uvDomain.limit))
+      return undefined;
+    let x0: number, x1: number, y0: number, y1: number;
+    try {
+      x0 = placeX(x);
+      x1 = placeX(right);
+      y0 = placeY(y);
+      y1 = placeY(bottom);
+    } catch {
+      return undefined;
+    }
+    if (
+      Math.min(x0, x1) < bounds.left ||
+      Math.max(x0, x1) > bounds.right ||
+      Math.min(y0, y1) < bounds.top ||
+      Math.max(y0, y1) > bounds.bottom ||
+      Math.fround(x0) === Math.fround(x1) ||
+      Math.fround(y0) === Math.fround(y1)
+    )
+      return undefined;
+    const reversed = x1 > x0 !== y1 > y0;
+    if (reversed !== (m.a > 0 !== m.d > 0)) return undefined;
+    // Four distinct placed corners and four containing planes per rectangle. Packed orientation is charged later.
+    const predicates = 7 + 32 * bounds.count;
+    if (
+      predicates > options.maxClipEdgeTests - preparation.edgeTests ||
+      !budget.tryReplayStageCost({ preparedVertices: 6, predicates, tupleComparisons: 10 + 40 * bounds.count })
+    )
+      return undefined;
+    preparation.edgeTests += predicates;
+    return { x0, x1, y0, y1, reversed, red, green, blue, alpha };
+  };
   // `points` are fresh authored corners; they become the backing-space corners in place.
   const accept = (points: OwnedPoint[]): void => {
     if (uvDomain !== undefined) for (const p of points) qualifySharedUVIn(p.u, p.v, uvDomain);
@@ -628,9 +789,11 @@ export function prepareSharedDraws2D(
         polygon = sign < 0 ? points.reverse() : points;
       } else polygon = normalizeOwned(preparation, points);
     }
-    if (clipBounds === undefined || !preparation.tryContainedClipStack(polygon, clipBounds, 'mesh')) {
+    if (clipBounds === undefined) {
       for (const clip of clips) polygon = intersect(polygon, clip);
       polygon = intersect(polygon, viewport!);
+    } else if (polygon.length !== 0 && !preparation.tryContainedClipStack(polygon, clipBounds, 'mesh')) {
+      polygon = intersectPartialStack(polygon);
     }
     if (uvDomain !== undefined) for (const p of polygon) qualifySharedUVIn(p.u, p.v, uvDomain);
     if (polygon.length < 3 || command.opacity === 0) return;
@@ -712,9 +875,13 @@ export function prepareSharedDraws2D(
         previousClipList = engineOwned ? command.clips : undefined;
         previousClips = clips;
         clipBounds = engineOwned ? preparation.containedClipStackBounds(clips, viewport) : undefined;
+        quadBounds =
+          clipBounds ??
+          (forSubmission && clips.length < 2 ? preparation.containedClipStackBounds(clips, viewport, 0) : undefined);
       }
       polygons = [];
       vertexReservation = 0;
+      let compact: SharedContainedQuad2D | undefined;
       uvDomain = sharedUVDomain({ region, material, pageIndex }, frame);
       if (command.kind === 'mesh') {
         const g = frame.geometries[command.geometryIndex]!,
@@ -759,68 +926,85 @@ export function prepareSharedDraws2D(
           blue = decodeSharedSRGBByte(color);
           lastColor = color;
         }
-        const points: OwnedPoint[] = [];
-        for (let corner = 0; corner < 4; corner++) {
-          // Corner order: top-left, top-right, bottom-right, bottom-left.
-          let u = corner === 1 || corner === 2 ? 1 : 0,
-            v = corner >= 2 ? 1 : 0;
-          if (region && material.samplingDomain === 'page') {
-            const p = region.packed,
-              odd = region.quarterTurn === 1 || region.quarterTurn === 3,
-              w = odd ? p.height : p.width,
-              h = odd ? p.width : p.height,
-              s = u * w,
-              t = v * h;
-            const x =
-              region.quarterTurn === 1 ? h - t : region.quarterTurn === 2 ? w - s : region.quarterTurn === 3 ? t : s;
-            const y =
-              region.quarterTurn === 1 ? s : region.quarterTurn === 2 ? h - t : region.quarterTurn === 3 ? w - s : t;
-            const page = frame.pages[pageIndex!]!.source;
-            u = (p.x + x) / page.width;
-            v = (p.y + y) / page.height;
+        // A rotated or cropped page-domain atlas retains its authored UV conversion.
+        if (
+          forSubmission &&
+          (!region ||
+            material.samplingDomain !== 'page' ||
+            (region.quarterTurn === 0 &&
+              region.packed.x === 0 &&
+              region.packed.y === 0 &&
+              region.packed.width === page!.width &&
+              region.packed.height === page!.height))
+        )
+          compact = containedQuad(rect.x, rect.y, right, bottom, a);
+        if (compact !== undefined) vertexReservation = 6;
+        else {
+          const points: OwnedPoint[] = [];
+          for (let corner = 0; corner < 4; corner++) {
+            // Corner order: top-left, top-right, bottom-right, bottom-left.
+            let u = corner === 1 || corner === 2 ? 1 : 0,
+              v = corner >= 2 ? 1 : 0;
+            if (region && material.samplingDomain === 'page') {
+              const p = region.packed,
+                odd = region.quarterTurn === 1 || region.quarterTurn === 3,
+                w = odd ? p.height : p.width,
+                h = odd ? p.width : p.height,
+                s = u * w,
+                t = v * h;
+              const x =
+                region.quarterTurn === 1 ? h - t : region.quarterTurn === 2 ? w - s : region.quarterTurn === 3 ? t : s;
+              const y =
+                region.quarterTurn === 1 ? s : region.quarterTurn === 2 ? h - t : region.quarterTurn === 3 ? w - s : t;
+              const page = frame.pages[pageIndex!]!.source;
+              u = (p.x + x) / page.width;
+              v = (p.y + y) / page.height;
+            }
+            points.push({
+              x: corner === 1 || corner === 2 ? right : rect.x,
+              y: corner >= 2 ? bottom : rect.y,
+              u,
+              v,
+              r: red,
+              g: green,
+              b: blue,
+              a,
+              dr: 0,
+              dg: 0,
+              db: 0
+            });
           }
-          points.push({
-            x: corner === 1 || corner === 2 ? right : rect.x,
-            y: corner >= 2 ? bottom : rect.y,
-            u,
-            v,
-            r: red,
-            g: green,
-            b: blue,
-            a,
-            dr: 0,
-            dg: 0,
-            db: 0
-          });
+          accept(points);
         }
-        accept(points);
       }
       upload = add(upload, 52 * vertexReservation + 128, Number.MAX_SAFE_INTEGER);
-      const made: PreparedSharedDraw2D = {
-        kind: 'draw',
+      const made: PreparedSharedDraw2D =
+        compact !== undefined
+          ? new PreparedContainedQuad2D(placedQuadIssuer, command, material, region, pageIndex, compact)
+          : {
+              kind: 'draw',
+              command,
+              material,
+              region,
+              pageIndex,
+              polygons,
+              vertexReservation
+            };
+      const saved = retention?.keep(
+        command.ordinal,
+        found,
         command,
         material,
         region,
-        pageIndex,
-        polygons,
-        vertexReservation
-      };
-      entries.push(made);
-      retained?.push(
-        retention!.keep(
-          command.ordinal,
-          found,
-          command,
-          material,
-          region,
-          page,
-          geometry,
-          made,
-          budget.preparedVerticesCharged - verticesBefore,
-          budget.predicatesCharged - predicatesBefore,
-          budget.tupleComparisonsCharged - tuplesBefore
-        )
+        page,
+        geometry,
+        made,
+        budget.preparedVerticesCharged - verticesBefore,
+        budget.predicatesCharged - predicatesBefore,
+        budget.tupleComparisonsCharged - tuplesBefore
       );
+      retained?.push(saved);
+      entries.push(saved?.prepared ?? made);
     }
   } catch (cause) {
     retention?.abandon();
