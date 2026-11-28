@@ -4,9 +4,19 @@ English | [中文](../../Cns/docs/m1-rendering-resource-plan.md)
 
 2026-10-21 · Revision 6 · Design and acceptance targets, not completed capabilities
 
-## Current formal timing — 2026-11-12
+## Fixed desktop SharedFrame2D qualification · 2026-11-28
 
-The fixed Windows E20 run met the Engine and preparation targets in all three states. The Engine median-p95 for static, sparse and full-dirty was 5.0, 5.9 and 5.3 ms against 8 ms. The sparse and full-dirty duration-weighted wall-gap p95 was 17.2 and 17.3 ms against 16.7 ms. GPU time is unmeasured. [#55](https://github.com/cnedwin/Egret_rebuild/issues/55) remains open and D60 remains incomplete. The [M1.2 evidence](incremental-frame-preparation-evidence.md) contains the source-bound batch and earlier results.
+The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads. Measured revision `47c5659df0d7`. [D60 paired desktop measurements](incremental-frame-preparation-evidence.md) · [Machine-readable measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json)
+
+## Verification matrix
+
+| Work package | Integrated engineering and reusable evidence | Scope of the result |
+| --- | --- | --- |
+| M1.1. Warm GPU submissions | The WebGPU host reuses resident images and completed vertex/uniform allocations. Warm submissions, changed inputs, simultaneous frames, pressure and shutdown have fixed resource and pixel controls. [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) | Counts establish when resources were copied, uploaded or reused. Desktop frame time is measured under M1.2. |
+| M1.2. Incremental frame preparation and ordered batching | Incremental display capture, ordered cache-key lookup and adjacent batching retain saved frames and clipping order. Static, exactly 1% changed and fully dirty workloads have separate correctness, operation-count and timing records. [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74) · [PR #81](https://github.com/cnedwin/Egret_rebuild/pull/81) · [PR #153](https://github.com/cnedwin/Egret_rebuild/pull/153) | The desktop acceptance row below belongs to the frozen SharedFrame2D SDK pair. Historical TEXTURED timing stays with E19/E20. |
+| M1.3. Shared texture pages and render profile | Atlas-region identity, ordered materials, light/dark tint, sampling and the final resolve have scalar-reference and browser coverage. The fixed 30 cases name 299 color points and 22 coverage-only points. [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) · [Shared-profile evidence](shared-rendering-evidence.md) | The result covers the listed material, sampling and boundary cases. Spine Editor export compatibility has its own version, rights and content criteria. |
+| M1.4. WebGL2 compatibility | The public WebGL2 executor completed the fixed pixel and negative controls. Separate native lifecycle cases exercised dirty-state recovery, saved replay after context loss and closing before restore. [PR #77](https://github.com/cnedwin/Egret_rebuild/pull/77) · [WebGL2 evidence](webgl2-executor-evidence.md) | Backends are compared against each case’s declared reference and tolerances. Desktop WebGPU timing and the standalone WebGL2 pixel comparison cover different questions. |
+| M1.5. Manifests and recovery | Canonical manifests, dependency loading, staged upload, replacement and generation-aware recovery use the existing resource manager and leases. C7 covered seven cases. On Windows Chrome 157, WebGL2 and WebGPU each completed 100 resource cycles, ten native losses and 30 minutes in the foreground. The affected regression covered 24 suites and 36 browser invocations. [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) · [Recovery evidence](resource-recovery-evidence.md) | Cleanup, reference pixels, network and pressure retain the published per-case scope. Phone power/thermals, OS process release and physical VRAM reclamation require separate evidence. |
 
 ## Historical implementation checkpoint — 2026-10-20
 
@@ -59,7 +69,7 @@ Each row is a complete reviewable behavior, not a separate experiment for each h
 
 The exact private function signatures for each package are frozen in its reviewed implementation specification immediately before implementation. Public contracts are not introduced merely to facilitate testing. The first package keeps all existing public signatures; helper extraction does not create another host or lifetime authority.
 
-M1.1 and the functional M1.2 changes are integrated through [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) and [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74). M1.2 formal performance acceptance remains OPEN; its saved incomplete timing runs and short diagnostics are not replaced by functional delivery. M1.3 starts from main 9f899dbe92c5e4d448d3408c3dca2f4c9ade847f. The original program baseline and measurement recipes above/below remain historical references.
+M1.1 and the functional M1.2 changes were integrated in [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) and [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74). The original M1.3 baseline was `9f899dbe92c5e4d448d3408c3dca2f4c9ade847f`. The dated timing records retain the original trials.
 
 The [shared-profile contract](shared-render-profile-contract.md) defines M1.3 as four connected implementation steps within one delivery: genuine CPU inputs and independent references; existing display/lease capture and ordered preparation; shared page/target execution including finite linear B1 and one resolve; then full regression/native acceptance and protected integration. The new scene color recipe is implemented in M1.3; M1.5 adds replacement, recovery and sustained integrated acceptance. This sequence does not add new milestones or make complete Spine an M1 claim.
 
@@ -124,12 +134,12 @@ The PR records the base/candidate, measured scope, failures/repairs and final ma
 
 ## Current closeout sequence
 
-The following status is updated through 2026-10-21, including the later M1.5 delivery. Earlier verification cutoffs remain in their dated records; delivery and merge results are recorded in the corresponding PRs.
+M1.5 was integrated on October 21, 2026. The D60 rendering row records the later paired desktop qualification.
 
 | Outcome | Verified status and next step |
 | --- | --- |
 | Workflow integration and fixed recovery verification | Completed: workflow [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78) and independently reviewed C7 results. |
 | M1.5 regression and protected integration | Delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79), main `4924b471b52927184252191055f902c30c29af52`. Twenty-four browser suites / thirty-six actual calls and C7 have independent review. Complete protected CI passed 290 publication, 4,528 core and 160 F2 tests, with no failures, skips or cancellations. The [evidence record](resource-recovery-evidence.md) preserves the finite scope and original failures. |
-| M1.2 performance and M1 closeout | E20 meets the fixed desktop Engine and preparation targets in all three states. Sparse and full-dirty wall gaps miss their target, GPU timing is unmeasured and D60 remains incomplete. See the [M1.2 evidence](incremental-frame-preparation-evidence.md) for E20 and the original E19 result. |
+| M1.2 performance and M1 closeout | The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads. Measured revision `47c5659df0d7`. [D60 paired desktop measurements](incremental-frame-preparation-evidence.md) · [Machine-readable measurements](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json) |
 
 These are connected outcomes within existing M1. A functional merge cannot close an outstanding performance or platform acceptance row. Unavailable GPU timing, external devices, authorized Editor content and human onboarding remain explicitly unaccepted where evidence is missing.

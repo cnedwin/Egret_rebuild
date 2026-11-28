@@ -4,9 +4,19 @@
 
 2026-10-21 · 版本 6 · 设计与验收目标，不代表能力已完成
 
-## 当前正式计时 — 2026-11-12
+## 桌面 SharedFrame2D 固定场景验收 · 2026-11-28
 
-Windows E20 固定场景的三种状态均达到 Engine 与准备目标。静态、稀疏、全脏的 Engine p95 中位数依次为 5.0、5.9、5.3 ms，目标为 8 ms。稀疏和全脏的按时长加权墙钟间隔 p95 分别为 17.2 和 17.3 ms，目标为 16.7 ms。GPU 时间未测。[#55](https://github.com/cnedwin/Egret_rebuild/issues/55) 仍开放，D60 仍未完成。 原始批次及旧结果见 [M1.2 证据](incremental-frame-preparation-evidence.md)。
+冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `47c5659df0d7`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json)
+
+## 工作包核对
+
+| 工作包 | 已合入工程及可复用证据 | 结论范围 |
+| --- | --- | --- |
+| M1.1 GPU 热态提交 | WebGPU 宿主复用驻留图像和已完成提交的顶点、统一缓冲。热态提交、内容变更、多帧在途、资源压力与关闭均有固定资源及像素对照。[PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) | 计数说明何时发生复制、上传和复用。桌面帧时另在 M1.2 测量。 |
+| M1.2 增量帧准备与有序批处理 | 增量显示捕获、缓存键有序查找和相邻合批保留已存帧及裁剪次序。静态、恰好 1% 变化、全脏负载分别记录正确性、操作计数和耗时。[PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74) · [PR #81](https://github.com/cnedwin/Egret_rebuild/pull/81) · [PR #153](https://github.com/cnedwin/Egret_rebuild/pull/153) | 下表的桌面验收属于固定的两套 SharedFrame2D SDK。早期 TEXTURED 路径的计时保留在 E19、E20 名下。 |
+| M1.3 共享纹理页与渲染配置 | 图集区域身份、材质顺序、明暗双色、采样和最终输出已有独立标量参考与浏览器验证。30 个固定场景包含 299 个颜色校验点和 22 个仅校验覆盖范围的点。[PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) · [共享渲染证据](shared-rendering-evidence.md) | 覆盖已列明的材质、采样及边界。Spine Editor 导出的兼容性另有版本、权利和素材要求。 |
+| M1.4 WebGL2 兼容执行器 | WebGL2 公开入口通过固定像素与反例对照。原生生命周期用例覆盖脏状态修正、上下文丢失后的已存帧回放，以及恢复前关闭。[PR #77](https://github.com/cnedwin/Egret_rebuild/pull/77) · [WebGL2 证据](webgl2-executor-evidence.md) | 各后端按对应样例的参考图和容差核对。桌面 WebGPU 计时与单独的 WebGL2 像素对照各自记录。 |
+| M1.5 资源清单与恢复 | 规范化清单、依赖加载、分阶段上传、替换和按设备代际恢复复用原资源管理器及租约。C7 覆盖七个场景。在 Windows Chrome 157 上，WebGL2、WebGPU 各完成 100 次资源循环、10 次原生设备或上下文丢失，以及前台持续运行 30 分钟。相关回归覆盖 24 套检查及 36 次浏览器调用。[PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) · [恢复证据](resource-recovery-evidence.md) | 清理、参考像素、网络和资源压力保留各用例的采集边界。手机功耗与温控、系统进程释放、物理显存回收另需对应证据。 |
 
 ## 历史实现检查点 — 2026-10-20
 
@@ -59,7 +69,7 @@ M1 工程准入要求环境和既有行为可复现、受保护的 PR CI 实际�
 
 每个工作包实施前，在其经过评审的实现规格中固定具体私有函数签名；不得仅为测试方便增加公共契约。首包保持现有所有公共签名，辅助模块拆分不建立第二个宿主或生命周期权威。
 
-M1.1 与 M1.2 功能改动已分别通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 和 [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74) 集成。M1.2 正式性能验收仍为 OPEN；功能交付不替代已保留的未完成计时与短期诊断。M1.3 从 main 9f899dbe92c5e4d448d3408c3dca2f4c9ade847f 开始，原始项目基线与测量配方继续作为历史参考。
+M1.1 与 M1.2 功能分别通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 和 [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74) 集成。M1.3 的原始基线为 `9f899dbe92c5e4d448d3408c3dca2f4c9ade847f`。各次计时保留在对应日期的记录中。
 
 [共享配置契约](shared-render-profile-contract.md)将 M1.3 规定为同一交付内四个连续实施步骤：真实 CPU 输入与独立参考；既有显示/租约捕获和有序准备；共享页/目标执行及有限线性 B1 和一次 resolve；完整回归/原生验收及受保护集成。新场景颜色配方在 M1.3 实现，M1.5 补齐替换、恢复和持续综合验收。这不增加新里程碑，也不将完整 Spine 提前宣称为 M1 能力。
 
@@ -124,12 +134,12 @@ PR 记录基线/候选、实测范围、失败/修复及最终 main 文件树，
 
 ## 当前收口顺序
 
-下表更新至 2026-10-21，包含后续 M1.5 交付。较早验证截止点保留在各自带日期的记录中，交付与合并结果记录在对应 PR 中。
+M1.5 于 2026 年 10 月 21 日集成。D60 渲染一行按后续的桌面成对测量更新。
 
 | 成果 | 已验证状态与下一步 |
 | --- | --- |
 | 流程集成与固定恢复验证 | 已完成：流程 [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78) 与经独立评审的 C7 结果。 |
 | M1.5 回归与受保护集成 | 已通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付，main 为 `4924b471b52927184252191055f902c30c29af52`。二十四个浏览器套件、三十六次实际调用及 C7 已经独立评审；完整受保护 CI 通过 290 项发布、4,528 项核心及 160 项 F2 测试，失败、跳过、取消均为零。[证据记录](resource-recovery-evidence.md)保留有限范围与原始失败。 |
-| M1.2 性能与 M1 收口 | E20 达到固定桌面三种状态的 Engine 与准备目标。稀疏与全脏墙钟间隔未达标，GPU 时间未测，D60 保持未完成。原始 E19 结果与本轮计时均见[M1.2 证据](incremental-frame-preparation-evidence.md)。 |
+| M1.2 性能与 M1 收口 | 冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `47c5659df0d7`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](https://github.com/cnedwin/Egret_rebuild/blob/main/verification/d60-shared-frame-final-20261128.json) |
 
 以上是既有 M1 中相连的成果。功能合并不能关闭未完成的性能或平台验收项。不可用的 GPU 时间、外部设备、授权 Editor 内容与真人上手验证，在缺少证据时继续明确标为未验收。

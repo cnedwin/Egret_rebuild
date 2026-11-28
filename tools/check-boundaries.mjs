@@ -4696,6 +4696,20 @@ for (const file of ['packages/engine/web/WebGL2Host.ts','packages/engine/dist/we
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./sharedHostDeferred.js']]
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
+// A Host-owned fully visible quad is encoded by one shared renderer helper. Its return type edge erases in JS.
+for (const name of ['rendering/prepareSharedDraws2D.ts','dist/rendering/prepareSharedDraws2D.js','dist/rendering/prepareSharedDraws2D.d.ts']) {
+  const file='packages/engine/'+name;
+  currentSceneLiteralClosure[file]=[...currentSceneLiteralClosure[file],['static','./sharedContainedQuad2D.js']]
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+}
+for (const [name,targets] of Object.entries({
+  'rendering/sharedContainedQuad2D.ts':['./prepareSharedDraws2D.js'],
+  'dist/rendering/sharedContainedQuad2D.js':[],
+  'dist/rendering/sharedContainedQuad2D.d.ts':['./prepareSharedDraws2D.js'],
+  'rendering/sharedPreparationRetention2D.ts':['@egret/contracts','./prepareRectangles2D.js','./prepareSharedDraws2D.js','./prepareSharedDraws2D.js','./packSharedDraws2D.js'],
+  'dist/rendering/sharedPreparationRetention2D.js':['./prepareSharedDraws2D.js'],
+  'dist/rendering/sharedPreparationRetention2D.d.ts':['@egret/contracts','./prepareRectangles2D.js','./prepareSharedDraws2D.js','./packSharedDraws2D.js']
+})) currentSceneLiteralClosure['packages/engine/'+name]=glEdges(targets);
 // Both geometry factories admit their arrays through one private contracts module, which imports nothing.
 for (const file of ['packages/contracts/src/SharedGeometry2D.ts','packages/contracts/dist/SharedGeometry2D.js'])
   currentSceneLiteralClosure[file] = [...currentSceneLiteralClosure[file],['static','./geometryAdmission2D.js']]

@@ -10,6 +10,7 @@ import type {
 } from '@egret/contracts';
 import type { PreparedStageCost2D } from './prepareRectangles2D.js';
 import type { PreparedSharedDraw2D, SharedDrawCommand2D, SharedPoint2D } from './prepareSharedDraws2D.js';
+import { isPreparedContainedQuad } from './prepareSharedDraws2D.js';
 import type { PackedSharedDraw2D } from './packSharedDraws2D.js';
 
 /**
@@ -304,8 +305,7 @@ export class SharedPreparationRetention2D {
     predicates: number,
     tupleComparisons: number
   ): RetainedSharedDraw2D | undefined {
-    const polygons = prepared.polygons,
-      vertexReservation = prepared.vertexReservation,
+    const vertexReservation = prepared.vertexReservation,
       room = this.#limit - this.#nextBytes - this.#batchBytes;
     if (this.#nextCount >= SHARED_RETAINED_DRAWS_2D) return undefined;
     const stood = found === undefined ? this.#kept[ordinal + this.#shift] : undefined,
@@ -347,6 +347,10 @@ export class SharedPreparationRetention2D {
       this.#nextCount++;
       return undefined;
     }
+    const compact = isPreparedContainedQuad(prepared);
+    const quadBytes = 24 + 8 + (24 + 4 * 8) + 4 * POINT_BYTES;
+    if (compact && ENTRY_BYTES + quadBytes > room) return undefined;
+    const polygons = prepared.polygons;
     const bytes = ENTRY_BYTES + polygonBytes(polygons);
     if (bytes > room) return undefined;
     const entry: RetainedSharedDraw2D = {
@@ -361,7 +365,10 @@ export class SharedPreparationRetention2D {
       rows: undefined,
       vertexCount: 0,
       rowsCost: undefined,
-      prepared,
+      // A retained result owns its ordinary polygon data under the original logical size limit.
+      prepared: compact
+        ? { kind: 'draw', command, material, region, pageIndex: prepared.pageIndex, polygons, vertexReservation }
+        : prepared,
       rested: false,
       packed: undefined,
       changes,

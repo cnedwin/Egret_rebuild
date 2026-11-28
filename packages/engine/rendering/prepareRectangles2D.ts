@@ -136,12 +136,55 @@ export class Preparation {
     if (!Number.isFinite(value)) fail('precision');
     return value;
   }
+  /**
+   * The output of a real cut has qualified attributes. For a strict triangle or
+   * quadrilateral, equal nonzero cyclic turns prove that every corner is distinct.
+   * Replay the exact original comparisons and turns before accepting that proof.
+   */
+  public tryFinishClippedMesh<P extends PreparedPoint2D>(points: P[]): P[] | undefined {
+    const count = points.length;
+    if (!this.reuseContainedSubjects || (count !== 3 && count !== 4)) return undefined;
+    // A conservative binary64 filter only. Qualified coordinates lie within
+    // 2**20 and nonzero magnitudes start at 2**-100, so products of their
+    // differences stay normal. Near cancellation goes back to the original
+    // traversal, which charges each actual robust predicate before calling it.
+    const turn = (a: P, b: P, c: P): number => {
+      const left = (a.x - c.x) * (b.y - c.y),
+        right = (a.y - c.y) * (b.x - c.x),
+        det = left - right,
+        error = 8 * Number.EPSILON * (Math.abs(left) + Math.abs(right));
+      return det > error ? 1 : det < -error ? -1 : 0;
+    };
+    const a = points[0]!,
+      b = points[1]!,
+      c = points[2]!;
+    const winding = turn(a, b, c);
+    if (winding !== 1 && winding !== -1) return undefined;
+    if (count === 4) {
+      const d = points[3]!;
+      if (turn(b, c, d) !== winding || turn(c, d, a) !== winding || turn(d, a, b) !== winding) return undefined;
+    }
+    // The old finisher compares each adjacent pair (including closure), then
+    // every distinct pair. Aggregate refusal leaves both ledgers untouched.
+    if (
+      count > this.options.maxClipEdgeTests - this.edgeTests ||
+      !tryReplayPreparedStage2D(this.budget, {
+        predicates: count,
+        tupleComparisons: (count * (count + 1)) / 2,
+        preparedVertices: 0
+      })
+    )
+      return undefined;
+    this.edgeTests += count;
+    return winding < 0 ? points.reverse() : points;
+  }
   /** Intersect only already qualified canonical clip bounds, with the viewport last. */
   public containedClipStackBounds(
     clips: readonly (readonly PreparedPoint2D[])[],
-    viewport: readonly PreparedPoint2D[]
+    viewport: readonly PreparedPoint2D[],
+    minimumClips = 2
   ): ContainedClipStackBounds2D | undefined {
-    if (!this.reuseContainedSubjects || clips.length < 2) return undefined;
+    if (!this.reuseContainedSubjects || clips.length < minimumClips) return undefined;
     let left = -Infinity,
       top = -Infinity,
       right = Infinity,
@@ -197,6 +240,23 @@ export class Preparation {
     if (
       predicates > this.options.maxClipEdgeTests - this.edgeTests ||
       !tryReplayPreparedStage2D(this.budget, { preparedVertices: 0, predicates, tupleComparisons: tuples })
+    )
+      return false;
+    this.edgeTests += predicates;
+    return true;
+  }
+  /** Pay a consecutive run of mesh half-planes proved to contain the current polygon. */
+  public tryReplayContainedMeshEdges(corners: number, edges: number): boolean {
+    if (edges === 0) return true;
+    if (!this.reuseContainedSubjects || corners < 3 || corners > 64) return false;
+    const predicates = 2 * corners * edges;
+    if (
+      predicates > this.options.maxClipEdgeTests - this.edgeTests ||
+      !tryReplayPreparedStage2D(this.budget, {
+        preparedVertices: 0,
+        predicates,
+        tupleComparisons: ((corners * (corners + 1)) / 2) * edges
+      })
     )
       return false;
     this.edgeTests += predicates;
@@ -558,13 +618,15 @@ export function clipPolygon2D<P extends PreparedPoint2D>(
   preparation: Preparation,
   subject: P[],
   clip: readonly PreparedPoint2D[],
-  normalize: (preparation: Preparation, input: readonly P[]) => P[],
+  normalize: (preparation: Preparation, input: P[]) => P[],
   attach: CrossingAttributes<P>,
   policy?: PolygonClipPolicy2D<P>,
-  normalization?: 'rectangle' | 'image' | 'mesh'
+  normalization?: 'rectangle' | 'image' | 'mesh',
+  onlyEdge?: number
 ): P[] {
   if (!clip.length) return [];
-  for (let edge = 0; edge < clip.length && subject.length; edge++) {
+  const end = onlyEdge === undefined ? clip.length : onlyEdge + 1;
+  for (let edge = onlyEdge ?? 0; edge < end && subject.length; edge++) {
     // Only known first-party call sites mark their successful normalization.
     // Preparation independently requires the existing trusted clipping selection.
     if (normalization !== undefined) {
