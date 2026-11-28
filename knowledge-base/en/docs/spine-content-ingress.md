@@ -4,6 +4,8 @@ English | [简体中文](../../Cns/docs/spine-content-ingress.md)
 
 M2.1 provides the optional `@egret/spine` asset SDK. It reads admitted Spine 4.3 JSON and binary setup data through official Core 4.3.13, binds the original atlas pages to Egret textures, and exposes immutable information for the lifetime of the asset group.
 
+A binary metadata provider may return a `Uint8Array` view of an archive, including a Node.js `Buffer` subarray. The loader copies exactly that view before parsing. A valid skeleton can begin at a nonzero offset. A truncated view fails even if the rest of the skeleton is present elsewhere in the same buffer.
+
 ## Version, rights and reference basis
 
 The exact npm dependency is `@esotericsoftware/spine-core@4.3.13`, source `b7beb2ccbbce667a12c02f44d070644f59b04968`. The inspected 1,154,900-byte archive matches registry SHA512; its SHA256 is `761d0f03f84ea073e66a55b11758afb7416cd1494ed20d70c534c324225f52b9`. Editor/export patch numbers differ from runtime-package patches; the supported export series is 4.3. Default admission refuses prerelease headers. Explicit `allowPrerelease: true` permits evaluation while retaining the actual beta label.
