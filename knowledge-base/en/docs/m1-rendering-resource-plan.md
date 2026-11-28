@@ -6,7 +6,7 @@ English | [中文](../../Cns/docs/m1-rendering-resource-plan.md)
 
 ## Fixed desktop SharedFrame2D qualification · 2026-11-28
 
-The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads. Measured revision `3ab82995f7ba`. [D60 paired desktop measurements](incremental-frame-preparation-evidence.md) · [Machine-readable measurements](../../evidence/d60-shared-frame-desktop-20261128.json)
+The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads. Measured revision `3ab82995f7ba`. [D60 paired desktop measurements](incremental-frame-preparation-evidence.md) · [Machine-readable measurements](../../../verification/d60-shared-frame-desktop-20261128.json)
 
 ## Verification matrix
 
@@ -140,6 +140,6 @@ M1.5 was integrated on October 21, 2026. The D60 rendering row records the later
 | --- | --- |
 | Workflow integration and fixed recovery verification | Completed: workflow [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78) and independently reviewed C7 results. |
 | M1.5 regression and protected integration | Delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79), main `4924b471b52927184252191055f902c30c29af52`. Twenty-four browser suites / thirty-six actual calls and C7 have independent review. Complete protected CI passed 290 publication, 4,528 core and 160 F2 tests, with no failures, skips or cancellations. The [evidence record](resource-recovery-evidence.md) preserves the finite scope and original failures. |
-| M1.2 performance and M1 closeout | The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads. Measured revision `3ab82995f7ba`. [D60 paired desktop measurements](incremental-frame-preparation-evidence.md) · [Machine-readable measurements](../../evidence/d60-shared-frame-desktop-20261128.json) |
+| M1.2 performance and M1 closeout | The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads. Measured revision `3ab82995f7ba`. [D60 paired desktop measurements](incremental-frame-preparation-evidence.md) · [Machine-readable measurements](../../../verification/d60-shared-frame-desktop-20261128.json) |
 
 These are connected outcomes within existing M1. A functional merge cannot close an outstanding performance or platform acceptance row. Unavailable GPU timing, external devices, authorized Editor content and human onboarding remain explicitly unaccepted where evidence is missing.

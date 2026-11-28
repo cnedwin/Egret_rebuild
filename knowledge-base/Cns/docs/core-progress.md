@@ -163,7 +163,7 @@ M2–M4 的十一个工作包均保留完整验收要求。下表确认已合并
 
 ## 继续开放的证据
 
-M1.1–M1.5 工程已集成。冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `3ab82995f7ba`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](../../evidence/d60-shared-frame-desktop-20261128.json)
+M1.1–M1.5 工程已集成。冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。实测提交 `3ab82995f7ba`。[D60 桌面成对实测](incremental-frame-preparation-evidence.md) · [结构化实测记录](../../../verification/d60-shared-frame-desktop-20261128.json)
 
 [Android 报告](android-device-validation.md)记录了有限 WebGPU／WebGL2 组件、生命周期与受控恢复，包括 #129 字体注册示例修正和 #130 新增十二个诊断／生命周期用例。历史约 41.4 ms 回调触发条件未复现；精确堆／后备存储观察不能证明物理内存或通用零泄漏验收。已撤回的错误目标启动报告不是 Engine 回归。
 

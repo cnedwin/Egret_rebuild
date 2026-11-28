@@ -6,7 +6,7 @@
 
 冻结版本在 Windows WebGPU 上达到 D60 桌面渲染目标。混合场景、移动设备及其他宿主的预算仍按各自负载验收。
 
-Windows Chrome for Testing 157.0.8103.6，公开 WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`。30 个正式窗口均完成环境核验。各窗口的结果和校验和见[结构化实测记录](../../evidence/d60-shared-frame-desktop-20261128.json)。
+Windows Chrome for Testing 157.0.8103.6，公开 WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`。30 个正式窗口均完成环境核验。各窗口的结果和校验和见[结构化实测记录](../../../verification/d60-shared-frame-desktop-20261128.json)。
 
 | 状态 | 基线引擎 p95 | 候选引擎 p95 | 候选宿主 p95 | 回调间隔 p95 / p99 | 加权间隔 p95 / p99 | GPU 通道区间 p95 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |

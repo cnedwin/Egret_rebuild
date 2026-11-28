@@ -6,7 +6,7 @@ English | [中文](../../Cns/docs/incremental-frame-preparation-evidence.md)
 
 The desktop D60 rendering targets passed on the frozen Windows WebGPU pair. Mixed-scene, mobile and other host budgets retain their own workloads.
 
-Windows Chrome for Testing 157.0.8103.6, public WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`. All 30 timed windows qualified. The report preserves all individual windows and their checksums. [Machine-readable measurements](../../evidence/d60-shared-frame-desktop-20261128.json)
+Windows Chrome for Testing 157.0.8103.6, public WebGPU SDK `56e92dfac4e5` → `3ab82995f7ba`. All 30 timed windows qualified. The report preserves all individual windows and their checksums. [Machine-readable measurements](../../../verification/d60-shared-frame-desktop-20261128.json)
 
 | State | Reference Engine p95 | Candidate Engine p95 | Candidate Host p95 | RAF p95 / p99 | Weighted gap p95 / p99 | GPU pass-span p95 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
