@@ -16,10 +16,12 @@ assert.ok(
     output &&
     path.isAbsolute(playwright) &&
     path.isAbsolute(output) &&
-    ['--check', '--timing'].includes(mode),
-  'Usage: node verify-fixed.mjs <absolute Playwright package> <new absolute output> [--timing]'
+    ['--check', '--timing', '--mixed-focus'].includes(mode),
+  'Usage: node verify-fixed.mjs <absolute Playwright package> <new absolute output> [--check|--timing|--mixed-focus]'
 );
 const measure = mode === '--timing';
+const mixedFocus = mode === '--mixed-focus';
+const headless = !measure && !mixedFocus;
 await fs.mkdir(output);
 const require = createRequire(import.meta.url);
 const { chromium } = require(playwright);
@@ -32,11 +34,11 @@ await once(server, 'listening');
 const origin = 'http://127.0.0.1:' + server.address().port;
 const report = {
   schema: 1,
-  profile: 'X-D60/1',
-  kind: measure ? 'timing' : 'browser correctness',
+  profile: mixedFocus ? 'X-D60/2' : 'X-D60/1',
+  kind: mixedFocus ? 'mixed keyboard navigation' : measure ? 'timing' : 'browser correctness',
   startedAt: new Date().toISOString(),
   playwright: version,
-  headless: !measure,
+  headless,
   os: os.version(),
   cpu: os.cpus()[0]?.model,
   rows: []
@@ -68,7 +70,9 @@ async function begin(browser, backend, load, row) {
     page.on('pageerror', error => row.errors.push(error.message));
     await page.goto(
       origin +
-        '/examples/outfit-studio/index.html?profile=x-d60&backend=' +
+        '/examples/outfit-studio/index.html?profile=' +
+        (mixedFocus ? 'x-d60-2' : 'x-d60') +
+        '&backend=' +
         backend +
         '&load=' +
         load +
@@ -152,6 +156,51 @@ async function begin(browser, backend, load, row) {
     await context.close();
     throw error;
   }
+}
+
+async function mixedKeyboard(page, row) {
+  const initial = await inspect(page);
+  assert.equal(initial.mixed.state, 'ready');
+  const front = page.locator('canvas:not(.studio-background)');
+  const pause = page.locator('#pause');
+
+  // Start outside the game. Every focus transition into, through and out of the canvas uses a real Tab.
+  await page.locator('.profile-links a').last().focus();
+  await page.keyboard.press('Tab');
+  assert.equal(await front.evaluate(canvas => canvas === document.activeElement), true);
+
+  const visited = [];
+  for (let index = 0; index <= initial.ui.keyboard.targetCount; index++) {
+    await page.keyboard.press('Tab');
+    if (await pause.evaluate(button => button === document.activeElement)) break;
+    assert.equal(await front.evaluate(canvas => canvas === document.activeElement), true);
+    const id = (await inspect(page)).ui.keyboard.focusedId;
+    assert.ok(id && !visited.includes(id), 'Tab must visit a new roster action or reach the toolbar');
+    visited.push(id);
+    if (id === 'studio-roster:details') {
+      // Return through both layers using the same input device, without refocusing the canvas.
+      for (const [key, expected] of [
+        ['Enter', 'studio-detail:rename'], ['Enter', 'studio-rename:draft'],
+        ['Escape', 'studio-detail:rename'], ['Escape', id]
+      ]) {
+        await page.keyboard.press(key);
+        await page.waitForFunction(target => globalThis.__egretOutfitStudio.inspect().ui.keyboard.focusedId === target, expected);
+      }
+      assert.deepEqual((await inspect(page)).ui.layers.openStack, []);
+    }
+  }
+  assert.ok(visited.includes('studio-roster:palette') && visited.includes('studio-roster:details'));
+  assert.equal(await pause.evaluate(button => button === document.activeElement), true);
+  for (const expected of [!initial.playing, initial.playing]) {
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(value => globalThis.__egretOutfitStudio.inspect().playing === value, expected);
+  }
+  await page.keyboard.press('Shift+Tab');
+  assert.equal(await front.evaluate(canvas => canvas === document.activeElement), true);
+  const final = await inspect(page);
+  assert.equal(final.selected, initial.selected);
+  assert.equal(final.revision, initial.revision);
+  row.keyboard = { visited, returnedFromModal: 'studio-roster:details', toolbar: 'pause', returnedToCanvas: true, restoredPlayback: final.playing };
 }
 
 async function correctness(page, row) {
@@ -316,14 +365,14 @@ function summarize(data, dpr) {
 
 let browser, timingDpr;
 try {
-  browser = await chromium.launch({ channel: 'msedge', headless: !measure });
+  browser = await chromium.launch({ channel: 'msedge', headless });
   report.browser = browser.version();
   const device = await browser.newBrowserCDPSession();
   const { gpu } = await device.send('SystemInfo.getInfo');
   report.gpu = { devices: gpu.devices, auxAttributes: gpu.auxAttributes };
   await device.detach();
   for (const backend of ['webgpu', 'webgl2']) {
-    for (const load of measure ? ['static', 'sparse', 'full'] : ['sparse']) {
+    for (const load of measure ? ['static', 'sparse', 'full'] : [mixedFocus ? 'static' : 'sparse']) {
       const row = { backend, load, errors: [] };
       report.rows.push(row);
       let casePage;
@@ -344,7 +393,8 @@ try {
           assert.equal(row.final.scene.mutations, workload.mutations[load]);
           assert.equal(row.final.errors.length, 0);
           row.timing = summarize(data, timingDpr);
-        } else await correctness(page, row);
+        } else if (mixedFocus) await mixedKeyboard(page, row);
+        else await correctness(page, row);
         row.cleanup = (await page.evaluate(() => globalThis.__egretOutfitStudio.close())).cleanup;
         assert.equal(row.cleanup.scope, 'closed');
         assert.equal(row.cleanup.host.state, 'closed');
