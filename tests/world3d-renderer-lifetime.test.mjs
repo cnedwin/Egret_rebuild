@@ -385,6 +385,284 @@ function shaderPreparationFixture({ parallel = true } = {}) {
   };
 }
 
+function geometryPreparationFixture() {
+  const f = shaderPreparationFixture({ parallel: false });
+  const { gl } = f;
+  Object.assign(gl, {
+    ARRAY_BUFFER: 0x8892,
+    ELEMENT_ARRAY_BUFFER: 0x8893,
+    UNIFORM_BUFFER: 0x8a11,
+    ARRAY_BUFFER_BINDING: 0x8894,
+    VERTEX_ARRAY_BINDING: 0x85b5,
+    UNPACK_FLIP_Y_WEBGL: 0x9240
+  });
+  const vao = {},
+    buffer = {},
+    oldTexture = {};
+  const state = new Map([
+    [gl.VERTEX_ARRAY_BINDING, vao],
+    [gl.ARRAY_BUFFER_BINDING, buffer],
+    [gl.UNPACK_FLIP_Y_WEBGL, true],
+    [gl.ACTIVE_TEXTURE, gl.TEXTURE0 + 3]
+  ]);
+  const textures = new Map([[gl.TEXTURE0 + 8, oldTexture]]);
+  const getParameter = gl.getParameter;
+  gl.getParameter = parameter =>
+    parameter === gl.TEXTURE_BINDING_2D
+      ? (textures.get(state.get(gl.ACTIVE_TEXTURE)) ?? null)
+      : state.has(parameter)
+        ? state.get(parameter)
+        : getParameter(parameter);
+  gl.bindVertexArray = value => state.set(gl.VERTEX_ARRAY_BINDING, value);
+  gl.bindBuffer = (target, value) => {
+    if (target === gl.ARRAY_BUFFER) state.set(gl.ARRAY_BUFFER_BINDING, value);
+  };
+  gl.activeTexture = unit => state.set(gl.ACTIVE_TEXTURE, unit);
+  gl.bindTexture = (_target, value) => textures.set(state.get(gl.ACTIVE_TEXTURE), value);
+  gl.pixelStorei = (parameter, value) => state.set(parameter, value);
+  gl.isBuffer = gl.isVertexArray = gl.isTexture = () => true;
+  const firstUpload = Promise.withResolvers(),
+    writes = [],
+    refreshes = [],
+    textureWrites = [];
+  gl.bufferData = (target, data) => {
+    writes.push({ target, data });
+    firstUpload.resolve();
+  };
+  gl.bufferSubData = (target, _offset, data) => refreshes.push({ target, data });
+  gl.texImage2D = (...args) => textureWrites.push(args);
+  return {
+    ...f,
+    firstUpload: firstUpload.promise,
+    writes,
+    refreshes,
+    textureWrites,
+    state,
+    textures,
+    vao,
+    buffer,
+    oldTexture,
+    get draws() {
+      return f.draws;
+    },
+    get buffers() {
+      return f.buffers;
+    }
+  };
+}
+
+const geometryArrays = geometry => [
+  ...[...geometry.attributes.values()].map(attribute => attribute.data),
+  ...(geometry.index ? [geometry.index.data] : [])
+];
+const geometryWrites = (writes, geometry) => writes.filter(write => geometryArrays(geometry).includes(write.data));
+
+test('World3D geometry preparation yields, deduplicates and reuses the real first draw buffers', {
+  timeout: 3000
+}, async () => {
+  const f = geometryPreparationFixture(),
+    a = f.mesh.geometry,
+    b = createBoxGeometry3D({ width: 2 });
+  try {
+    const preparation = f.renderer.prepareGeometries([a, a, b], { budgetMs: 4, maxPerSlice: 1 });
+    assert.equal(f.writes.length, 0, 'the first slice does not run synchronously');
+    await Promise.race([f.firstUpload, preparation]);
+    assert.equal(geometryWrites(f.writes, a).length, geometryArrays(a).length);
+    assert.equal(geometryWrites(f.writes, b).length, 0, 'the next geometry waits for another turn');
+    await preparation;
+    assert.equal(geometryWrites(f.writes, b).length, geometryArrays(b).length);
+    assert.equal(f.draws, 0);
+    assert.equal(f.linked.length, 0);
+    assert.equal(f.textureWrites.length, 0);
+    assert.equal(f.state.get(f.gl.VERTEX_ARRAY_BINDING), f.vao);
+    assert.equal(f.state.get(f.gl.ARRAY_BUFFER_BINDING), f.buffer);
+    const count = f.writes.length;
+    await Promise.all([f.renderer.prepareGeometries([a, b]), f.renderer.prepareGeometries([a, b])]);
+    assert.equal(f.writes.length, count, 'resident geometry never uploads twice');
+    const scene = new Scene3D(),
+      camera = createPerspectiveCamera3D({ aspect: 1 });
+    camera.setPosition(0, 0, 6).lookAt(0, 0, 0);
+    scene.addChild(f.mesh);
+    const second = new Mesh3D(b, f.material);
+    second.setPosition(1, 0, 0);
+    scene.addChild(second);
+    assert.equal(f.renderer.render(scene, camera), true);
+    assert.equal(f.draws, 2);
+    assert.equal(geometryWrites(f.writes, a).length, geometryArrays(a).length);
+    assert.equal(geometryWrites(f.writes, b).length, geometryArrays(b).length);
+    assert.equal(f.renderer.info.geometries, 2);
+    const otherWrites = f.refreshes.length;
+    a.getAttribute('normal').touch();
+    assert.equal(f.renderer.render(scene, camera), true);
+    assert.equal(
+      geometryWrites(f.refreshes.slice(otherWrites), a).length,
+      1,
+      'later edits still refresh through normal draw'
+    );
+  } finally {
+    f.dispose();
+    b.dispose();
+  }
+});
+
+test('World3D geometry preparation aborts before or between slices and keeps completed cache entries', {
+  timeout: 3000
+}, async () => {
+  const f = geometryPreparationFixture(),
+    a = f.mesh.geometry,
+    b = createBoxGeometry3D({});
+  const controller = new AbortController(),
+    reason = new Error('left the realm');
+  try {
+    const stopped = new AbortController();
+    stopped.abort(reason);
+    const cancelled = error =>
+      error instanceof World3DError && error.code === 'WORLD3D_RESOURCE_FAILED' && error.cause === reason;
+    await assert.rejects(f.renderer.prepareGeometries([a], { signal: stopped.signal }), cancelled);
+    assert.equal(f.writes.length, 0);
+    const pending = f.renderer.prepareGeometries([a, b], { maxPerSlice: 1, signal: controller.signal });
+    const rejected = assert.rejects(pending, cancelled);
+    await Promise.race([f.firstUpload, rejected]);
+    controller.abort(reason);
+    await rejected;
+    assert.equal(geometryWrites(f.writes, a).length, geometryArrays(a).length);
+    assert.equal(geometryWrites(f.writes, b).length, 0);
+    await f.renderer.prepareGeometries([a, b]);
+    assert.equal(geometryWrites(f.writes, a).length, geometryArrays(a).length);
+    assert.equal(geometryWrites(f.writes, b).length, geometryArrays(b).length);
+    assert.equal(f.draws, 0);
+  } finally {
+    f.dispose();
+    b.dispose();
+  }
+});
+
+test('World3D geometry preparation validates explicit options and disposed geometry before allocation', async () => {
+  const f = geometryPreparationFixture(),
+    a = f.mesh.geometry,
+    dead = createBoxGeometry3D({});
+  try {
+    for (const options of [
+      { maxPerSlice: 0 },
+      { maxPerSlice: 65 },
+      { maxPerSlice: 1.5 },
+      { budgetMs: 0 },
+      { budgetMs: 17 },
+      { budgetMs: NaN }
+    ])
+      await assert.rejects(f.renderer.prepareGeometries([a], options), code('WORLD3D_INPUT_INVALID'));
+    await assert.rejects(f.renderer.prepareGeometries([a, {}]), code('WORLD3D_INPUT_INVALID'));
+    await assert.rejects(f.renderer.prepareGeometries(new Array(16385).fill(a)), code('WORLD3D_BUDGET'));
+    dead.dispose();
+    await assert.rejects(f.renderer.prepareGeometries([a, dead]), code('WORLD3D_DISPOSED'));
+    assert.equal(f.writes.length, 0);
+    await f.renderer.prepareGeometries([a]);
+    assert.equal(geometryWrites(f.writes, a).length, geometryArrays(a).length);
+  } finally {
+    f.dispose();
+    dead.dispose();
+  }
+});
+
+test('World3D geometry preparation rejects stale context generations and prepares again after restore', {
+  timeout: 3000
+}, async () => {
+  const f = geometryPreparationFixture(),
+    a = f.mesh.geometry,
+    b = createBoxGeometry3D({});
+  try {
+    const pending = f.renderer.prepareGeometries([a, b], { maxPerSlice: 1 });
+    const rejected = assert.rejects(pending, code('WORLD3D_CONTEXT_LOST'));
+    await Promise.race([f.firstUpload, rejected]);
+    f.lose();
+    f.restore();
+    await rejected;
+    assert.equal(geometryWrites(f.writes, b).length, 0);
+    f.writes.length = 0;
+    await f.renderer.prepareGeometries([a, b]);
+    assert.equal(geometryWrites(f.writes, a).length, geometryArrays(a).length);
+    assert.equal(geometryWrites(f.writes, b).length, geometryArrays(b).length);
+    assert.equal(f.draws, 0);
+  } finally {
+    f.dispose();
+    b.dispose();
+  }
+});
+
+test('World3D geometry preparation stops when its renderer or upcoming geometry is disposed', {
+  timeout: 3000
+}, async () => {
+  for (const rendererDies of [true, false]) {
+    const f = geometryPreparationFixture(),
+      a = f.mesh.geometry,
+      b = createBoxGeometry3D({});
+    try {
+      const pending = f.renderer.prepareGeometries([a, b], { maxPerSlice: 1 });
+      const rejected = assert.rejects(pending, code('WORLD3D_DISPOSED'));
+      await Promise.race([f.firstUpload, rejected]);
+      if (rendererDies) f.renderer.dispose();
+      else b.dispose();
+      await rejected;
+      assert.equal(geometryWrites(f.writes, b).length, 0);
+    } finally {
+      f.dispose();
+      b.dispose();
+    }
+  }
+});
+
+test('World3D geometry preparation yields on the elapsed budget even before the count cap', {
+  timeout: 3000
+}, async () => {
+  const f = geometryPreparationFixture(),
+    a = f.mesh.geometry,
+    b = createBoxGeometry3D({});
+  const upload = f.gl.bufferData;
+  let delayed = false;
+  f.gl.bufferData = (...args) => {
+    upload(...args);
+    if (!delayed) {
+      delayed = true;
+      const started = performance.now();
+      while (performance.now() - started < 2) {
+        // Simulate a single upload taking longer than the cooperative budget.
+      }
+    }
+  };
+  try {
+    const pending = f.renderer.prepareGeometries([a, b], { maxPerSlice: 64, budgetMs: 0.25 });
+    await Promise.race([f.firstUpload, pending]);
+    assert.equal(geometryWrites(f.writes, a).length, geometryArrays(a).length);
+    assert.equal(geometryWrites(f.writes, b).length, 0);
+    await pending;
+    assert.equal(geometryWrites(f.writes, b).length, geometryArrays(b).length);
+  } finally {
+    f.dispose();
+    b.dispose();
+  }
+});
+
+test('World3D geometry preparation restores morph upload state and reuses its geometry-owned texture', async () => {
+  const f = geometryPreparationFixture(),
+    geometry = f.mesh.geometry;
+  geometry.setMorphTargets([{ name: 'lift', position: new Float32Array(geometry.vertexCount * 3) }]);
+  try {
+    await f.renderer.prepareGeometries([geometry]);
+    assert.equal(f.textureWrites.length, 1);
+    assert.equal(f.state.get(f.gl.ACTIVE_TEXTURE), f.gl.TEXTURE0 + 3);
+    assert.equal(f.state.get(f.gl.UNPACK_FLIP_Y_WEBGL), true);
+    assert.equal(f.textures.get(f.gl.TEXTURE0 + 8), f.oldTexture);
+    assert.equal(f.state.get(f.gl.VERTEX_ARRAY_BINDING), f.vao);
+    assert.equal(f.state.get(f.gl.ARRAY_BUFFER_BINDING), f.buffer);
+    await f.renderer.prepareGeometries([geometry]);
+    assert.equal(f.textureWrites.length, 1);
+    assert.equal(f.draws, 0);
+    assert.equal(f.linked.length, 0);
+  } finally {
+    f.dispose();
+  }
+});
+
 test('World3D program preparation shares pending work, waits before introspection and leaves draw state alone', {
   timeout: 2000
 }, async () => {

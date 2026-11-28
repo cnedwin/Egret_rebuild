@@ -146,6 +146,22 @@ await renderer.preparePrograms([
 
 同一硬件还复跑了 SnowTemple 的独立用例。它用一张程序生成的四边形和 `CustomShader3D` 片元钩子。预准备前，首次显示帧回调间隔为 87.4 ms，单独测得 `LINK_STATUS` 内耗时 88.6 ms。预准备后，首次显示帧回调间隔为 4.2 ms。准备阶段历时 79.4 ms，首次调用耗时 0.6 ms，零绘制，轮询完成状态 25 次。新建着色器、材质和网格复用了准备好的 GL 程序，首次显示时没有新链接，也没有查询链接状态。两次首次显示的 RGBA8 回读逐字节一致，仅绘制地面的对照画面像素不同。
 
+### WebGL2 几何预准备
+
+加载阶段即将引入大量网格时，调用 `prepareGeometries`，将明确列出的尚未销毁的 `Geometry3D` 对象准备到普通绘制使用的同一 GPU 缓存。它按对象身份去重，包括多个网格共享的几何。
+
+```ts
+await renderer.prepareGeometries([roof.geometry, wall.geometry], {
+  budgetMs: 4,
+  maxPerSlice: 16,
+  signal: loadingController.signal
+});
+```
+
+列表最多 16,384 项，单批时间预算为 0.25–16 ms（默认 4），数量上限为 1–64 个几何（默认 16）。首批前和各批之间会主动让出主线程。预算按每次调用计算，控制 CPU 提交节奏而不保证帧耗时：单个几何的上传不可拆分，可能超过预算；并发调用各自计算预算。预准备覆盖顶点、索引及几何专用的形变存储，不包括着色程序链接、材质纹理、实例流或线框边数据。期间不绘制、不等待 GPU 完成；按需与 `preparePrograms` 配合。随后绘制复用常驻缓冲，预准备后版本改变的数据仍按正常流程更新。
+
+使用 `AbortSignal` 可以取消，拒绝时为 `WORLD3D_RESOURCE_FAILED`（以 signal 的 reason 作为 cause）。渲染器或输入已销毁时拒绝为 `WORLD3D_DISPOSED`，上下文丢失或换代时为 `WORLD3D_CONTEXT_LOST`。已完成的条目仍留在普通几何缓存中，不要销毁场景仍要用的几何。上下文恢复后重新发起准备调用。
+
 ### WebGL2 应用帧统计
 
 用 `measureFrame` 包裹一帧应用的同步渲染操作。`PlanarReflection3D` 自动标记镜像绘制。直接绘制到其他渲染目标会记为离屏视图。`frame.reflections.rendered` 统计成功的平面反射绘制，`frame.reflections.reused` 统计因更新间隔而复用上一张纹理的次数。复用帧不增加反射通道或绘制次数。
