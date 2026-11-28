@@ -694,3 +694,28 @@ test('outlined text reuses equal requests, expands ink without changing advance,
   for (const lease of [first.lease, second.lease, changed.lease]) lease.release();
   assert.equal(base.cache.getStatus().activeCallerLeases, 0);
 });
+
+test('game-label compatibility uses fresh Canvas defaults when older WebKit omits optional state reporting', async (t) => {
+  const native = realm(t, {
+    attributes: () => ({ desynchronized: false, willReadFrequently: true }),
+    read: call => ({ width: call.width, height: call.height, data: call.pixels })
+  });
+  for (const key of ['lang', 'fontKerning', 'fontStretch', 'fontVariantCaps', 'letterSpacing', 'wordSpacing', 'textRendering', 'filter']) {
+    Reflect.deleteProperty(native.Context.prototype, key);
+  }
+  const create = await factory();
+  const strict = await setup(t, create());
+  await rejected(strict.cache.acquire(wcRequest({ text: 'strict' })), 'TEXT_MEASURE_FAILED');
+  const compatible = await setup(t, create({ compatibility: 'game-labels' }));
+  const result = await compatible.cache.acquire(wcRequest({ text: '中文', locale: 'zh-Hant' }));
+  assert.equal(result.kind, 'image');
+  assert.notEqual(compatible.wrapper.identity, strict.wrapper.identity);
+  assert.ok(native.canvases.some(canvas => canvas.lang === 'zh-Hant'));
+  release(result);
+});
+
+test('game-label compatibility still rejects explicitly non-sRGB or opaque Canvas reports', async (t) => {
+  realm(t, { attributes: () => ({ alpha: false, colorSpace: 'display-p3' }) });
+  const base = await setup(t, (await factory())({ compatibility: 'game-labels' }));
+  await rejected(base.cache.acquire(wcRequest()), 'TEXT_MEASURE_FAILED');
+});

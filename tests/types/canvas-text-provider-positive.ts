@@ -8,11 +8,13 @@ type Equal<A,B>=(<T>()=>T extends A?1:2)extends(<T>()=>T extends B?1:2)?
   (<T>()=>T extends B?1:2)extends(<T>()=>T extends A?1:2)?true:false:false;
 type Assert<T extends true>=T;
 type Schedule=<T>(job:()=>T,signal:CancellationSignal)=>Promise<Awaited<T>>;
-type Factory=Assert<Equal<typeof createCanvasTextRasterProvider,(options?:{readonly schedule?:Schedule})=>TextRasterProvider>>;
+type Factory=Assert<Equal<typeof createCanvasTextRasterProvider,(options?:{readonly schedule?:Schedule;readonly compatibility?:'game-labels'})=>TextRasterProvider>>;
 declare const engine:Engine,scope:Scope,request:TextRasterRequestInput;
 declare const schedule:Schedule;
 const provider:TextRasterProvider=createCanvasTextRasterProvider();
 const scheduled:TextRasterProvider=createCanvasTextRasterProvider({schedule});
+const compatible:TextRasterProvider=createCanvasTextRasterProvider({compatibility:'game-labels'});
+void compatible;
 const cache=createTextRasterCache(engine.assets,{provider});
 const field=createTextField(engine,scope,cache);
 field.setRequest(request);

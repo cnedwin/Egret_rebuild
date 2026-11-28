@@ -81,7 +81,14 @@ function setState<K extends keyof TextContext>(context: TextContext, key: K, val
   if (context[key] !== value) throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
 }
 
-function drawingState(context: TextContext, request: TextRasterRequest, font: string): void {
+function drawingState(context: TextContext, request: TextRasterRequest, font: string, compatible: boolean): void {
+  // A fresh canvas already has the specified defaults. Older WebKit may not expose
+  // their setters; use those native defaults only for the game-label convenience.
+  // The strict WC1 provider still certifies every explicit state.
+  const defaultState = <K extends keyof TextContext>(key: K, value: TextContext[K]): void => {
+    if (compatible && !(key in context)) return;
+    setState(context, key, value);
+  };
   // A legal font setter serializes canonically, so string equality with the
   // input is not a support test. A distinct, below-T1-size sentinel detects an
   // ignored assignment without creating another Canvas or parsing CSS ourselves.
@@ -92,19 +99,19 @@ function drawingState(context: TextContext, request: TextRasterRequest, font: st
   if (typeof context.font !== 'string' || context.font.length === 0 || context.font === sentinel) {
     throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
   }
-  setState(context, 'lang', request.locale);
+  defaultState('lang', request.locale);
   setState(context, 'direction', request.direction);
   setState(context, 'textAlign', 'left');
   setState(context, 'textBaseline', 'alphabetic');
-  setState(context, 'fontKerning', 'auto');
-  setState(context, 'fontStretch', 'normal');
-  setState(context, 'fontVariantCaps', 'normal');
-  setState(context, 'letterSpacing', '0px');
-  setState(context, 'wordSpacing', '0px');
-  setState(context, 'textRendering', 'auto');
+  defaultState('fontKerning', 'auto');
+  defaultState('fontStretch', 'normal');
+  defaultState('fontVariantCaps', 'normal');
+  defaultState('letterSpacing', '0px');
+  defaultState('wordSpacing', '0px');
+  defaultState('textRendering', 'auto');
   setState(context, 'globalAlpha', 1);
   setState(context, 'globalCompositeOperation', 'source-over');
-  setState(context, 'filter', 'none');
+  defaultState('filter', 'none');
   setState(context, 'shadowBlur', 0);
   setState(context, 'shadowOffsetX', 0);
   setState(context, 'shadowOffsetY', 0);
@@ -150,7 +157,8 @@ function surface<T>(
   height: number,
   work: (context: TextContext, readbackHint: boolean | undefined) => T,
   cleanupFailure: (errors: readonly unknown[], failed: boolean, cause: unknown) => unknown,
-  reportSuccessfulCleanupAtRelease = false
+  reportSuccessfulCleanupAtRelease = false,
+  gameLocale?: string
 ): T {
   let canvas: HTMLCanvasElement | undefined;
   let context: TextContext | undefined;
@@ -162,25 +170,37 @@ function surface<T>(
     canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
+    if (gameLocale !== undefined) canvas.lang = gameLocale;
     if (canvas.width !== width || canvas.height !== height) throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
     // The hint must precede the surface's very first context acquisition.
     context =
       (canvas.getContext('2d', { alpha: true, colorSpace: 'srgb', willReadFrequently: true }) as TextContext | null) ??
       undefined;
-    if (context === undefined || typeof context.getContextAttributes !== 'function')
-      throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
-    const attributes = context.getContextAttributes();
+    if (context === undefined) throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
+    const attributes = typeof context.getContextAttributes === 'function' ? context.getContextAttributes() : undefined;
     identifyNativeSurface(context, canvas);
-    if (attributes.colorSpace !== 'srgb') throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
-    // An untouched alpha-enabled canvas starts transparent. Only probe when the
-    // native implementation omits alpha from its reported context attributes.
-    if (
-      attributes.alpha !== true &&
-      !(attributes.alpha === undefined && nativeSurfaces.has(context) && context.getImageData(0, 0, 1, 1).data[3] === 0)
+    if (gameLocale === undefined) {
+      // Retain the native-surface checks for the strict provider.
+      if (attributes?.colorSpace !== 'srgb') throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
+      if (
+        attributes.alpha !== true &&
+        !(
+          attributes.alpha === undefined &&
+          nativeSurfaces.has(context) &&
+          context.getImageData(0, 0, 1, 1).data[3] === 0
+        )
+      ) {
+        throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
+      }
+    } else if (
+      (attributes?.alpha !== undefined && attributes.alpha !== true) ||
+      (attributes?.colorSpace !== undefined && attributes.colorSpace !== 'srgb')
     ) {
+      // Game labels also accept omitted default reports; explicit incompatible values are never admitted.
       throw new EgretError('WEB_TEXT_STATE_UNSUPPORTED');
     }
-    const readbackHint = typeof attributes.willReadFrequently === 'boolean' ? attributes.willReadFrequently : undefined;
+    const readbackHint =
+      typeof attributes?.willReadFrequently === 'boolean' ? attributes.willReadFrequently : undefined;
     value = work(context, readbackHint);
   } catch (error) {
     failed = true;
@@ -219,6 +239,8 @@ function surface<T>(
 export interface CanvasTextRasterProviderOptions {
   /** Optional shared browser budget for actual Canvas measurements and readbacks. */
   readonly schedule?: CanvasWorkSchedule;
+  /** Game labels may use native defaults omitted by older Canvas implementations; strict WC1 is the default. */
+  readonly compatibility?: 'game-labels';
 }
 
 /** Caller-owned fonts and explicit cache invalidation; no font loading. */
@@ -226,10 +248,12 @@ export function createCanvasTextRasterProvider(options: CanvasTextRasterProvider
   if (
     options === null ||
     typeof options !== 'object' ||
-    (options.schedule !== undefined && typeof options.schedule !== 'function')
+    (options.schedule !== undefined && typeof options.schedule !== 'function') ||
+    (options.compatibility !== undefined && options.compatibility !== 'game-labels')
   )
     throw new EgretError('WEB_TEXT_PROVIDER_INVALID');
   const schedule = options.schedule;
+  const compatible = options.compatibility === 'game-labels';
   let owner: Document | undefined;
   try {
     if (
@@ -255,7 +279,7 @@ export function createCanvasTextRasterProvider(options: CanvasTextRasterProvider
   const plans = new WeakMap<TextRasterPlan, PlanState>();
   const released = new WeakSet<TextRasterPlan>();
   const provider: TextRasterProvider = Object.freeze({
-    identity: 'egret.canvas-text.wc1',
+    identity: compatible ? 'egret.canvas-text.game-labels' : 'egret.canvas-text.wc1',
     supportsStroke: true,
     profile: 'canvas-explicit-lines-v1',
     async measure(
@@ -286,7 +310,7 @@ export function createCanvasTextRasterProvider(options: CanvasTextRasterProvider
             1,
             1,
             (canvas, readbackHint) => {
-              drawingState(canvas, request, font);
+              drawingState(canvas, request, font, compatible);
               canvas.setTransform(1, 0, 0, 1, 0, 0);
               const lines = request.sourceLines.map(line =>
                 lineMetrics(canvas.measureText(request.text.slice(line.start, line.end)), request.strokeWidth)
@@ -316,7 +340,9 @@ export function createCanvasTextRasterProvider(options: CanvasTextRasterProvider
               state.quarantined = true;
               state.cleanupCause = errors[0];
               return failed ? cause : errors[0];
-            }
+            },
+            false,
+            compatible ? request.locale : undefined
           );
         };
         const plan = schedule === undefined ? work() : await schedule(work, context.signal);
@@ -363,7 +389,7 @@ export function createCanvasTextRasterProvider(options: CanvasTextRasterProvider
             placement.height,
             (canvas, readbackHint) => {
               state.rasterReadbackHint = readbackHint;
-              drawingState(canvas, request, font);
+              drawingState(canvas, request, font, compatible);
               canvas.setTransform(request.density, 0, 0, request.density, -placement.pixelLeft, -placement.pixelTop);
               for (const line of plan.metrics.lines) {
                 const text = request.text.slice(line.source.start, line.source.end);
@@ -378,7 +404,7 @@ export function createCanvasTextRasterProvider(options: CanvasTextRasterProvider
                 !(pixels.data instanceof Uint8ClampedArray) ||
                 !(pixels.data.buffer instanceof ArrayBuffer) ||
                 pixels.data.byteLength !== bytes ||
-                pixels.colorSpace !== 'srgb'
+                (pixels.colorSpace !== 'srgb' && !(compatible && pixels.colorSpace === undefined))
               ) {
                 throw new TypeError('Canvas text readback must be exact tight sRGB rgba8 bytes');
               }
@@ -395,7 +421,8 @@ export function createCanvasTextRasterProvider(options: CanvasTextRasterProvider
               state.cleanupCause = errors[0];
               return failed ? cause : errors[0];
             },
-            true
+            true,
+            compatible ? request.locale : undefined
           );
         };
         const image = schedule === undefined ? work() : await schedule(work, context.signal);

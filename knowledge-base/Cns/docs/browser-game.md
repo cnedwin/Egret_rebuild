@@ -212,3 +212,5 @@ if (cache) {
 `createBrowserGame({ ..., onFrameTiming })` 转发[帧循环 CPU 计时](frame-loop.md)样本，并区分 SDK 已提交的 `submitted` 与超图像预算未绘制的 `refused`；其他结果名称不变。按需保留帧时仿真和时钟仍推进。传入 `measureSharedFrames: true` 可启用已有的有界 WebGL2 宿主阶段计时；将 `game.host` 缩窄为 WebGL2 宿主后读取 `getSharedFrameTiming()`。该报告含原生阶段和提交序号，包括提交、栅栏轮询和退役，不能解释为 GPU 执行耗时。WebGPU 不提供这个 WebGL2 专用报告。诊断选项不改变宿主准入、画质、更新频率或绘制策略。观察者应简短同步、保留有限记录。浏览器合成调度及真实呈现需单独追踪。
 
 `createBrowserGame({ ..., afterFrame })` 把同步帧末钩子转发至其自身循环。主画面决定／提交之后（包括保留画面或宿主繁忙时）执行；配置的计时样本带有 `afterFrameMs`。手动 `game.drawFrame()` 不属于浏览器循环回合。
+
+**浏览器标签兼容。** `createLabel` 和 `createAtlasLabel` 使用 Canvas 文字提供者的 `{ compatibility: 'game-labels' }` 模式。浏览器缺少可选 Canvas 状态属性时，新画布采用标准默认状态，画布元素语言取自标签的 locale。仅默认透明 sRGB 画布允许缺省 alpha 或色彩空间报告；显式不兼容的报告仍会被拒绝。保留原生度量和精确 RGBA 字节校验。此模式拥有独立缓存标识，底层默认 `createCanvasTextRasterProvider()` 仍执行严格 WC1 状态验证，字体可用性与字形覆盖仍由调用方负责。

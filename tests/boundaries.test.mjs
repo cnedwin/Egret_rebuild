@@ -239,7 +239,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // native Canvas, genuine resource, font, TextField or rendering evidence.
     const canvasTextBarrel = "export {createCanvasTextRasterProvider} from './CanvasTextRasterProvider.js';\n";
     const canvasTextProviderImports = "import type {TextRasterProvider} from '@egret/engine/text';\nimport type {CanvasWorkSchedule} from './browserTextWork.js';\n";
-    const canvasTextProviderOptions = "export interface CanvasTextRasterProviderOptions { readonly schedule?: CanvasWorkSchedule; }\n";
+    const canvasTextProviderOptions = "export interface CanvasTextRasterProviderOptions { readonly schedule?: CanvasWorkSchedule; readonly compatibility?: 'game-labels'; }\n";
     const canvasTextProviderTypes = canvasTextProviderImports + canvasTextProviderOptions + "export declare function createCanvasTextRasterProvider(options?: CanvasTextRasterProviderOptions): TextRasterProvider;\n";
     const canvasTextProviderBody = "export function createCanvasTextRasterProvider() { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n";
     write('packages/engine/web/text.ts', canvasTextBarrel);
