@@ -736,6 +736,12 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     for(const file of ['packages/runtime/src/Bitmap.ts','packages/runtime/dist/Bitmap.js'])reviseFixtureEdges(m15FixtureGraph,file,['./bitmapImage.js','./bitmapImage.js'],['./Texture.js']);
     reviseFixtureEdges(m15FixtureGraph,'packages/runtime/dist/Bitmap.d.ts',['./bitmapImage.js']);
     reviseCaptureEdges(m15FixtureGraph);
+    // The tree records and engine affinity live in two leaf modules, so the visual and managed state read them without importing the tree operations or ownership back.
+    for(const file of ['packages/runtime/src/ownership.ts','packages/runtime/dist/ownership.js'])reviseFixtureEdges(m15FixtureGraph,file,['./engineAffinity.js','./engineAffinity.js']);
+    reviseFixtureEdges(m15FixtureGraph,'packages/runtime/dist/ownership.d.ts',['./engineAffinity.js']);
+    const reviseVisualEdges=graph=>{
+      for(const file of ['packages/runtime/src/displayVisualState.ts','packages/runtime/dist/displayVisualState.js'])reviseFixtureEdges(graph,file,['./displayNodeState.js','./engineAffinity.js'],['./displayTreeState.js','./ownership.js']);
+    };
     m15FixtureGraph['packages/runtime/src/bitmapImage.ts']=[['static','./AssetLease.js'],['static','./AssetLease.js'],['static','./EgretError.js'],['static','./Texture.js'],['static','./Texture.js'],['static','@egret/contracts']];
     m15FixtureGraph['packages/runtime/dist/bitmapImage.js']=[['static','./AssetLease.js'],['static','./EgretError.js'],['static','./Texture.js']];
     m15FixtureGraph['packages/runtime/dist/bitmapImage.d.ts']=[['static','./AssetLease.js'],['static','./Texture.js'],['static','@egret/contracts']];
@@ -852,6 +858,19 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
     // Pointer and hover input share their target admission and operation wrapper through one private module, which imports only the runtime.
     for(const file of ['packages/engine/src/pointerInput.ts','packages/engine/dist/pointerInput.js'])m31FixtureGraph[file]=[...m31FixtureGraph[file],["static","./internal/routedInput.js"]];
     for(const file of ['packages/engine/src/internal/routedInput.ts','packages/engine/dist/internal/routedInput.js','packages/engine/dist/internal/routedInput.d.ts'])m31FixtureGraph[file]=[["static","@egret/runtime"]];
+    for(const file of ['packages/runtime/src/displayTreeState.ts','packages/runtime/dist/displayTreeState.js'])reviseFixtureEdges(m31FixtureGraph,file,['./displayNodeState.js','./displayNodeState.js','./engineAffinity.js'],['./ownership.js']);
+    reviseFixtureEdges(m31FixtureGraph,'packages/runtime/src/displayTreeState.ts',[],['./Stage.js']);
+    reviseFixtureEdges(m31FixtureGraph,'packages/runtime/dist/displayTreeState.d.ts',['./displayNodeState.js'],['./Stage.js']);
+    reviseVisualEdges(m31FixtureGraph);
+    for(const file of ['packages/runtime/src/ui/managedState.ts','packages/runtime/dist/ui/managedState.js'])reviseFixtureEdges(m31FixtureGraph,file,['../displayNodeState.js'],['../displayTreeState.js']);
+    Object.assign(m31FixtureGraph,{
+      'packages/runtime/src/displayNodeState.ts':[['static','./DisplayObject.js'],['static','./DisplayObjectContainer.js'],['static','./EgretError.js'],['static','./Stage.js']],
+      'packages/runtime/dist/displayNodeState.js':[['static','./EgretError.js']],
+      'packages/runtime/dist/displayNodeState.d.ts':[['static','./DisplayObject.js'],['static','./DisplayObjectContainer.js'],['static','./Stage.js']],
+      'packages/runtime/src/engineAffinity.ts':[['static','./ownership.js']],
+      'packages/runtime/dist/engineAffinity.js':[],
+      'packages/runtime/dist/engineAffinity.d.ts':[['static','./ownership.js']],
+    });
     for(const [file,edges]of Object.entries(m31FixtureGraph)){
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
@@ -2084,6 +2103,7 @@ function fixture({ imported, missingCachedLayerTypes, missingCachedLayerEffectTy
       ['static','./webgl2LayerState.js'],['static','./webgl2LayerState.js']);
     effectFixtureGraph['packages/engine/dist/web/WebGL2Host.js'].push(['static','./webgl2LayerState.js']);
     reviseCaptureEdges(effectFixtureGraph);
+    reviseVisualEdges(effectFixtureGraph);
     Object.assign(effectFixtureGraph,{
       'packages/engine/web/webgl2LayerState.ts':[['static','./sharedWebGL2Options.js'],['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js'],['static','./webgl2Native.js'],['static','./webgl2Types.js']],
       'packages/engine/dist/web/webgl2LayerState.js':[['static','./sharedWebGL2Shaders.js'],['static','./webgl2Native.js']],

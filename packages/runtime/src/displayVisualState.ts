@@ -1,8 +1,8 @@
 import { assertManagedMutable } from "./ui/managedState.js";
 import type { Rectangle2D, SharedMaterial2D } from "@egret/contracts";
 import type { DisplayObject } from "./DisplayObject.js";
-import { assertLive, isDisplayNode } from "./displayTreeState.js";
-import { engineOf } from "./ownership.js";
+import { assertLive, isDisplayNode } from "./displayNodeState.js";
+import { engineOf } from "./engineAffinity.js";
 import { EgretError } from "./EgretError.js";
 
 import type { RenderEffect2D } from "./renderEffect.js";

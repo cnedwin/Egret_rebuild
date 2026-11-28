@@ -1,6 +1,6 @@
 import { EgretError } from '../EgretError.js';
 import type { DisplayObject } from '../DisplayObject.js';
-import { childrenOf, parentOf } from '../displayTreeState.js';
+import { childrenOf, parentOf } from '../displayNodeState.js';
 
 interface ManagedRecord {
   readonly authority: object;

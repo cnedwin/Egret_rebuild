@@ -4731,7 +4731,26 @@ for (const file of ['packages/runtime/src/Bitmap.ts','packages/runtime/dist/Bitm
 reviseSceneEdges('packages/runtime/dist/Bitmap.d.ts', ['./bitmapImage.js']);
 for (const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runtime/dist/sharedFrameCapture.js'])
   reviseSceneEdges(file, ['./bitmapDisplayState.js','./bitmapImage.js'], ['./Bitmap.js']);
+// The tree records and engine affinity live in two leaf modules, so the visual and managed state read
+// them without importing the tree operations or ownership back.
+for (const file of ['packages/runtime/src/displayTreeState.ts','packages/runtime/dist/displayTreeState.js'])
+  reviseSceneEdges(file, ['./displayNodeState.js','./displayNodeState.js','./engineAffinity.js'], ['./ownership.js']);
+reviseSceneEdges('packages/runtime/src/displayTreeState.ts', [], ['./Stage.js']);
+reviseSceneEdges('packages/runtime/dist/displayTreeState.d.ts', ['./displayNodeState.js'], ['./Stage.js']);
+for (const file of ['packages/runtime/src/displayVisualState.ts','packages/runtime/dist/displayVisualState.js'])
+  reviseSceneEdges(file, ['./displayNodeState.js','./engineAffinity.js'], ['./displayTreeState.js','./ownership.js']);
+for (const file of ['packages/runtime/src/ownership.ts','packages/runtime/dist/ownership.js'])
+  reviseSceneEdges(file, ['./engineAffinity.js','./engineAffinity.js']);
+reviseSceneEdges('packages/runtime/dist/ownership.d.ts', ['./engineAffinity.js']);
+for (const file of ['packages/runtime/src/ui/managedState.ts','packages/runtime/dist/ui/managedState.js'])
+  reviseSceneEdges(file, ['../displayNodeState.js'], ['../displayTreeState.js']);
 for (const [file, targets] of Object.entries({
+  'src/displayNodeState.ts':['./DisplayObject.js','./DisplayObjectContainer.js','./EgretError.js','./Stage.js'],
+  'dist/displayNodeState.js':['./EgretError.js'],
+  'dist/displayNodeState.d.ts':['./DisplayObject.js','./DisplayObjectContainer.js','./Stage.js'],
+  'src/engineAffinity.ts':['./ownership.js'],
+  'dist/engineAffinity.js':[],
+  'dist/engineAffinity.d.ts':['./ownership.js'],
   'src/bitmapImage.ts':['./AssetLease.js','./AssetLease.js','./EgretError.js','./Texture.js','./Texture.js','@egret/contracts'],
   'dist/bitmapImage.js':['./AssetLease.js','./EgretError.js','./Texture.js'],
   'dist/bitmapImage.d.ts':['./AssetLease.js','./Texture.js','@egret/contracts']
