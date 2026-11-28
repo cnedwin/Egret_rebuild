@@ -100,9 +100,12 @@ const m15DeepClauses = {
 "packages/engine/web/world3d/app3D.ts":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
 "packages/engine/dist/web/world3d/app3D.js":[{"operation":"import","kind":"value","members":["createEngine"],"target":"@egret/engine"}],
 "packages/engine/dist/web/world3d/app3D.d.ts":[{"operation":"import","kind":"type","members":["Engine"],"target":"@egret/engine"}],
-"packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","createImageData2D","createTexture","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
-"packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createEngineForProfile","createImageData2D","createTexture","isTexture","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"}],
+"packages/engine/web/BrowserGame.ts":[{"operation":"import","kind":"value","members":["createEngineForProfile","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserGame.js":[{"operation":"import","kind":"value","members":["createEngineForProfile","SHARED_FRAME_PROFILE_2D"],"target":"@egret/engine"}],
 "packages/engine/dist/web/BrowserGame.d.ts":[{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","DiagnosticHandler","Engine","Scope","Stage","SharedFrameOptions2D","SharedRenderFrame2D","Texture"],"target":"@egret/engine"}],
+"packages/engine/web/BrowserGameTextures.ts":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createImageData2D","createTexture","isTexture"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","Engine","Scope","Texture"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserGameTextures.js":[{"operation":"import","kind":"value","members":["createAssetRef","createAssetType","createImageData2D","createTexture","isTexture"],"target":"@egret/engine"}],
+"packages/engine/dist/web/BrowserGameTextures.d.ts":[{"operation":"import","kind":"type","members":["AssetLease","Engine","Scope","Texture"],"target":"@egret/engine"}],
 "packages/engine/web/browserGameLabels.ts":[{"operation":"import","kind":"value","members":["Bitmap","copyImageData2DPixels","createAssetRef","createAssetType","createImageData2D","createTexture","isTexture","Sprite"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","DisplayObject","Engine","Scope","Texture"],"target":"@egret/engine"}],
 "packages/engine/dist/web/browserGameLabels.js":[{"operation":"import","kind":"value","members":["Bitmap","copyImageData2DPixels","createAssetRef","createAssetType","createImageData2D","createTexture","isTexture","Sprite"],"target":"@egret/engine"}],
 "packages/engine/dist/web/browserGameLabels.d.ts":[{"operation":"import","kind":"value","members":["Sprite"],"target":"@egret/engine"},{"operation":"import","kind":"type","members":["AssetLease","Engine","Scope","Texture"],"target":"@egret/engine"}],
@@ -5606,7 +5609,7 @@ for(const [label,values,stem] of textEntries){
  const body=uiRead(stem+'.d.ts');
  for(const name of [...gameTypes,...gameValues])if(name in values||new RegExp('\\b'+name+'\\b').test(body))throw new Error('Browser game: leaked to default/other entry: '+label+'/'+name);
 }
-const gameEntries=['./browserTextWork.js','./browserGameLabels.js','./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./image.js','./BrowserImageTextures.js','./GameImageAdmission.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
+const gameEntries=['./browserTextWork.js','./browserGameLabels.js','./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserGameTextures.js','./browserGameScreen.js','./text.js','./BrowserStatsPanel.js','./screen.js','./webgpu.js','./webgl2.js','@egret/runtime','@egret/engine','@egret/engine/text'];
 const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js','./browserGameParagraph.js','./browserGameGlyphFont.js'],'dist/web/game.js':['./BrowserGame.js','./BrowserStatsPanel.js'],'dist/web/game.d.ts':['./BrowserGame.js','./BrowserStatsPanel.js','./browserGameParagraph.js','./browserGameGlyphFont.js'],
  'web/BrowserGame.ts':gameEntries,'dist/web/BrowserGame.js':gameEntries,'dist/web/BrowserGame.d.ts':['./browserTextWork.js','./browserGameLabels.js','./browserGameParagraph.js','./browserGameGlyphFont.js','./browserStaticLayers.js','./loop.js','./pointer.js','./keyboard.js','./hover.js','./BrowserStatsPanel.js','./screen.js','./webgl2.js','@egret/engine','@egret/engine/text'],
  // The labels of a game: the text entry's fields, and the types of the two optional text paths the game loads.
@@ -5620,6 +5623,12 @@ const gameImports={'web/game.ts':['./BrowserGame.js','./BrowserStatsPanel.js','.
  'dist/web/browserGameGlyphFont.js':['@egret/engine/bitmapfont','@egret/runtime','./browserGameFamilies.js'],
  'dist/web/browserGameGlyphFont.d.ts':['@egret/engine/bitmapfont','@egret/runtime'],
  'web/browserGameFamilies.ts':['@egret/runtime'],'dist/web/browserGameFamilies.js':['@egret/runtime'],'dist/web/browserGameFamilies.d.ts':[],
+ // The game's textures: images it loads, decoded by their bytes, and pixels painted in code.
+ 'web/BrowserGameTextures.ts':['@egret/runtime','@egret/engine','./image.js','./BrowserImageTextures.js','./GameImageAdmission.js'],
+ 'dist/web/BrowserGameTextures.js':['@egret/runtime','@egret/engine','./image.js','./BrowserImageTextures.js','./GameImageAdmission.js'],
+ 'dist/web/BrowserGameTextures.d.ts':['@egret/engine'],
+ // How the game's canvas fills its element; it reads only the screen plan's types.
+ 'web/browserGameScreen.ts':['./screen.js'],'dist/web/browserGameScreen.js':[],'dist/web/browserGameScreen.d.ts':['./screen.js'],
  'web/GameImageAdmission.ts':['@egret/contracts','@egret/runtime'],'dist/web/GameImageAdmission.js':['@egret/runtime'],'dist/web/GameImageAdmission.d.ts':['@egret/contracts'],
  'web/browserStaticLayers.ts':['@egret/runtime','@egret/contracts'],'dist/web/browserStaticLayers.js':['@egret/runtime'],'dist/web/browserStaticLayers.d.ts':['@egret/contracts'],
  'web/BrowserStatsPanel.ts':['@egret/runtime','@egret/engine'],'dist/web/BrowserStatsPanel.js':['@egret/runtime'],'dist/web/BrowserStatsPanel.d.ts':['@egret/engine']};
@@ -5659,7 +5668,9 @@ const gameAllowed={
  'web/browserGameLabels.js':['web/BrowserGame.ts'],'dist/web/browserGameLabels.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'],
  'web/browserGameFamilies.js':['web/browserGameParagraph.ts','web/browserGameGlyphFont.ts'],
  'dist/web/browserGameFamilies.js':['dist/web/browserGameParagraph.js','dist/web/browserGameGlyphFont.js'],
- 'web/GameImageAdmission.js':['web/BrowserGame.ts'],'dist/web/GameImageAdmission.js':['dist/web/BrowserGame.js'],
+ 'web/GameImageAdmission.js':['web/BrowserGameTextures.ts'],'dist/web/GameImageAdmission.js':['dist/web/BrowserGameTextures.js'],
+ 'web/BrowserGameTextures.js':['web/BrowserGame.ts'],'dist/web/BrowserGameTextures.js':['dist/web/BrowserGame.js'],
+ 'web/browserGameScreen.js':['web/BrowserGame.ts'],'dist/web/browserGameScreen.js':['dist/web/BrowserGame.js'],
  'web/browserStaticLayers.js':['web/BrowserGame.ts'],'dist/web/browserStaticLayers.js':['dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts'],
  'web/BrowserGame.js':['web/game.ts'],'dist/web/BrowserGame.js':['dist/web/game.js','dist/web/game.d.ts'],
  'web/BrowserStatsPanel.js':['web/game.ts','web/BrowserGame.ts'],'dist/web/BrowserStatsPanel.js':['dist/web/game.js','dist/web/game.d.ts','dist/web/BrowserGame.js','dist/web/BrowserGame.d.ts']};

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/browserGameScreen.ts",
+      "originRole": "First-party canvas fitting of the browser game entry: how the canvas follows its element and the safe-area insets; moved out of the existing first-party createBrowserGame with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

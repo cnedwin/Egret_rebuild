@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "packages/engine/web/BrowserGameTextures.ts",
+      "originRole": "First-party textures of the browser game entry: images it loads by URL, admitted by their decoded bytes, and pixels painted in code; moved out of the existing first-party createBrowserGame with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}
